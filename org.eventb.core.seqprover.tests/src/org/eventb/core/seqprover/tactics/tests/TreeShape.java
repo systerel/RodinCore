@@ -30,7 +30,6 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
-import org.eventb.internal.core.seqprover.eventbExtensions.AbstractRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
@@ -73,16 +72,10 @@ public abstract class TreeShape {
 		return t;
 	}
 	
-	private static class ConjIShape extends TreeShape {
+	private static class ConjIShape extends HypothesisShape {
 
 		public ConjIShape(TreeShape[] expChildren) {
-			super(expChildren);
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			AbstractRewriter.Input i = (AbstractRewriter.Input) input;
-			assertNull(i.getPred());
+			super(null, expChildren);
 		}
 
 		@Override
@@ -91,19 +84,10 @@ public abstract class TreeShape {
 		}
 	}
 
-	private static class DisjEShape extends TreeShape {
+	private static class DisjEShape extends HypothesisShape {
 
-		private final Predicate predicate;
-		
 		public DisjEShape(Predicate predicate, TreeShape[] expChildren) {
-			super(expChildren);
-			this.predicate = predicate;
-		}
-
-		@Override
-		protected void checkInput(IReasonerInput input) {
-			HypothesisReasoner.Input i = (HypothesisReasoner.Input) input;
-			assertEquals(predicate, i.getPred());
+			super(predicate, expChildren);
 		}
 
 		@Override
@@ -156,10 +140,6 @@ public abstract class TreeShape {
 	}
 
 	private static class FunOvrShape extends ManualInferenceShape {
-
-		public FunOvrShape(String position, TreeShape[] expChildren) {
-			super(null, position, expChildren);
-		}
 
 		public FunOvrShape(Predicate predicate, String position,
 				TreeShape[] expChildren) {
@@ -365,7 +345,24 @@ public abstract class TreeShape {
 		}
 
 	}
-	
+
+	private static abstract class HypothesisShape extends TreeShape {
+
+		private final Predicate predicate;
+
+		public HypothesisShape(Predicate predicate, TreeShape[] expChildren) {
+			super(expChildren);
+			this.predicate = predicate;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput rInput) {
+			HypothesisReasoner.Input input = (HypothesisReasoner.Input) rInput;
+			assertEquals(predicate, input.getPred());
+		}
+
+	}
+
 	private static abstract class ManualRewritesShape extends TreeShape {
 
 		private final Predicate predicate;
@@ -383,11 +380,6 @@ public abstract class TreeShape {
 			final AbstractManualRewrites.Input inp = ((AbstractManualRewrites.Input) input);
 			assertEquals(position, inp.getPosition().toString());
 			assertEquals(predicate, inp.getPred());
-		}
-
-		@Override
-		protected String getReasonerID() {
-			return null;
 		}
 
 	}
@@ -411,11 +403,6 @@ public abstract class TreeShape {
 			assertEquals(predicate, inp.getPred());
 		}
 
-		@Override
-		protected String getReasonerID() {
-			return null;
-		}
-
 	}
 
 	private static abstract class PosShape extends TreeShape {
@@ -433,11 +420,6 @@ public abstract class TreeShape {
 			assertEquals(position, inp.getPosition().toString());
 		}
 
-		@Override
-		protected String getReasonerID() {
-			return null;
-		}
-
 	}
 
 	private static abstract class VoidShape extends TreeShape {
@@ -449,11 +431,6 @@ public abstract class TreeShape {
 		@Override
 		protected void checkInput(IReasonerInput input) {
 			assertEquals(input.getClass(), EmptyInput.class);
-		}
-
-		@Override
-		protected String getReasonerID() {
-			return null;
 		}
 
 	}

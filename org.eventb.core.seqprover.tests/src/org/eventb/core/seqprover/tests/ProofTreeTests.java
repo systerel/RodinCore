@@ -203,7 +203,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 	 */
 	@Test
 	public void testPruneDischarged() {
-		IProverSequent sequent = makeSimpleSequent("⊤ ⇒ ⊤ ∧ ⊤");
+		IProverSequent sequent = makeSimpleSequent("1=1 ∧ 2=2 ⇒ 1=1 ∧ 2=2");
 		IProofTree tree = ProverFactory.makeProofTree(sequent, null);
 		IProofTreeNode root = tree.getRoot();
 

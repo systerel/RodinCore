@@ -45,10 +45,10 @@ public class ProofRebuildTests {
 	 */
 	@Test
 	public void rebuildTestConjunction() throws Exception {
-		IProofTreeNode node = makeProofTreeNode(P, Q, R, land(P, Q, P, R));
+		IProofTreeNode node = makeProofTreeNode(P, Q, R, S, land(P, Q, S, R));
 		IProofTreeNode proofSkeleton = makeProofTreeNode(P, Q, R,
-				land(P, Q, P, R));
-		splitGoal(hyp(P), hyp(Q), hyp(P), hyp(R)).create(proofSkeleton);
+				land(P, Q, S, R));
+		splitGoal(hyp(P), hyp(Q), hyp(S), hyp(R)).create(proofSkeleton);
 		IProofTreeNode nodeSimplified = makeProofTreeNode(P, Q, R,
 				land(P, Q, R));
 		assertRebuild(node, (IProofSkeleton) proofSkeleton, null);
@@ -70,7 +70,7 @@ public class ProofRebuildTests {
 				land(P, Q, P, R));
 		assertRebuild(node, (IProofSkeleton) proofSkeleton, null);
 		assertRebuild(nodeAugmented, (IProofSkeleton) proofSkeleton, null);
-		splitGoal(hyp(P), hyp(Q), hyp(P), hyp(R)).check(nodeAugmented);
+		splitGoal(hyp(P), hyp(Q), hyp(R)).check(nodeAugmented);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class ProofRebuildTests {
 		assertRebuild(node, (IProofSkeleton) proofSkeleton, null);
 		assertFalse(ProofBuilder.rebuild(nodeAugmented,
 				((IProofSkeleton) proofSkeleton), null));
-		splitGoal(hyp(P), hyp(Q), hyp(R), hyp(P), open).check(nodeAugmented);
+		splitGoal(hyp(P), hyp(Q), hyp(R), open).check(nodeAugmented);
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class ProofRebuildTests {
 		IProofTreeNode node = makeProofTreeNode(P, Q, R, land(P, Q, P, R));
 		IProofTreeNode proofSkeleton = makeProofTreeNode(P, Q, R,
 				land(P, Q, P, R));
-		splitGoal(hyp(P), hyp(Q), hyp(P), hyp(R)).create(proofSkeleton);
+		splitGoal(hyp(P), hyp(Q), hyp(R)).create(proofSkeleton);
 		IProofTreeNode nodeShuffled = makeProofTreeNode(P, Q, R, land(R, P, Q));
 		assertRebuild(node, (IProofSkeleton) proofSkeleton, null);
 		assertRebuild(nodeShuffled, (IProofSkeleton) proofSkeleton, null);
@@ -131,16 +131,16 @@ public class ProofRebuildTests {
 	 */
 	@Test
 	public void rebuildTestSimplificationImplication() throws Exception {
-		IProofTreeNode node = makeProofTreeNode(P, Q,
-				land(limp(P, Q), limp(P, Q)));
-		IProofTreeNode proof = makeProofTreeNode(P, Q,
-				land(limp(P, Q), limp(P, Q)));
-		splitGoal(splitImplication(hyp(Q)), splitImplication(hyp(Q))).create(
+		IProofTreeNode node = makeProofTreeNode(R,
+				land(limp(P, R), limp(land(P, Q), R)));
+		IProofTreeNode proof = makeProofTreeNode(R,
+				land(limp(P, R), limp(land(P, Q), R)));
+		splitGoal(splitImplication(hyp(R)), splitImplication(hyp(R))).create(
 				proof);
 		assertRebuild(node, (IProofSkeleton) proof, null);
-		IProofTreeNode nodeSimplified = makeProofTreeNode(P, Q, limp(P, Q));
+		IProofTreeNode nodeSimplified = makeProofTreeNode(R, limp(P, R));
 		assertRebuild(nodeSimplified, (IProofSkeleton) proof, null);
-		splitImplication(hyp(Q)).check(nodeSimplified);
+		splitImplication(hyp(R)).check(nodeSimplified);
 	}
 
 	/**
@@ -152,9 +152,9 @@ public class ProofRebuildTests {
 	@Test
 	public void rebuildTestImplications() throws Exception {
 		IProofTreeNode node = makeProofTreeNode(P, Q, R, S,
-				land(limp(P, Q), limp(P, Q), limp(R, S)));
+				land(limp(P, Q), limp(R, Q), limp(R, S)));
 		IProofTreeNode proof = makeProofTreeNode(P, Q, R, S,
-				land(limp(P, Q), limp(P, Q), limp(R, S)));
+				land(limp(P, Q), limp(R, Q), limp(R, S)));
 		splitGoal(splitImplication(hyp(Q)), splitImplication(hyp(Q)),
 				splitImplication(hyp(S))).create(proof);
 		assertRebuild(node, (IProofSkeleton) proof, null);
@@ -197,11 +197,11 @@ public class ProofRebuildTests {
 	@Test
 	public void rebuildDoubleSimplification() throws Exception {
 		IProofTreeNode node = makeProofTreeNode(P, Q, R,
-				land(limp(land(R, P), Q), limp(P, land(Q, Q))));
+				land(limp(land(R, P), Q), limp(P, land(Q, S))));
 		IProofTreeNode proof = makeProofTreeNode(P, Q, R,
-				land(limp(land(R, P), Q), limp(P, land(Q, Q))));
+				land(limp(land(R, P), Q), limp(P, land(Q, S))));
 		splitGoal(splitImplication(hyp(Q)),
-				splitImplication(splitGoal(hyp(Q), hyp(Q)))).create(proof);
+				splitImplication(splitGoal(hyp(Q), hyp(S)))).create(proof);
 		assertRebuild(node, (IProofSkeleton) proof, null);
 		IProofTreeNode nodeSimplified = makeProofTreeNode(P, Q, limp(P, Q));
 		assertRebuild(nodeSimplified, (IProofSkeleton) proof, null);
@@ -215,8 +215,8 @@ public class ProofRebuildTests {
 	 */
 	@Test
 	public void rebuildTreeWithOpenNode() throws Exception {
-		IProofTreeNode proof = makeProofTreeNode(P, land(P, P, P));
-		splitGoal(hyp(P), hyp(P), hyp(P)).create(proof);
+		IProofTreeNode proof = makeProofTreeNode(P, Q, R, land(P, Q, R));
+		splitGoal(hyp(P), hyp(Q), hyp(R)).create(proof);
 		IProofTreeNode[] ProofChildren = proof.getChildNodes();
 		ProofChildren[2].pruneChildren();
 		IProofTreeNode nodeSimplified = makeProofTreeNode(P, P);

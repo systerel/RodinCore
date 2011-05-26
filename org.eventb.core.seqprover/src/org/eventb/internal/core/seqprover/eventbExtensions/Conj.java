@@ -11,8 +11,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Predicate;
@@ -51,12 +55,18 @@ public class Conj extends HypothesisReasoner implements IVersionedReasoner {
 		return makeAntecedents(conjuncts(sequent.goal()));
 	}
 
+	// Use a linked hash set to remove duplicates without loosing the order of
+	// children
 	private Predicate[] conjuncts(Predicate pred) {
 		if (pred.getTag() != LAND) {
 			throw new IllegalArgumentException("Reasoner " + getReasonerID()
 					+ " inapplicable to " + pred);
 		}
-		return ((AssociativePredicate) pred).getChildren();
+		final Predicate[] children = ((AssociativePredicate) pred)
+				.getChildren();
+		final Set<Predicate> conjuncts = new LinkedHashSet<Predicate>(
+				asList(children));
+		return conjuncts.toArray(new Predicate[conjuncts.size()]);
 	}
 
 	private IAntecedent[] makeAntecedents(final Predicate[] newGoals) {
