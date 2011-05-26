@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,9 @@ public class POMTacticPreference extends AutoTacticPreference {
 	            "org.eventb.core.seqprover.funGoalTac",
 	            "org.eventb.core.seqprover.finiteHypBoundedGoalTac",
 	            "org.eventb.core.seqprover.partitionRewriteTac",
+	            "org.eventb.core.seqprover.genMPTac",
 	            "org.eventb.core.seqprover.autoRewriteTac",
+	            "org.eventb.core.seqprover.NNFTac",
 	            "org.eventb.core.seqprover.typeRewriteTac",
 	            "org.eventb.core.seqprover.findContrHypsTac",
 	            "org.eventb.core.seqprover.shrinkImpHypTac",
@@ -62,8 +64,6 @@ public class POMTacticPreference extends AutoTacticPreference {
 	            "com.clearsy.atelierb.provers.core.ml",
 	            "com.clearsy.atelierb.provers.core.p0",
 	            "org.eventb.core.seqprover.dtDestrWDTac",
-	            "org.eventb.core.seqprover.NNFTac",
-	            "org.eventb.core.seqprover.genMPTac",
 		};
 	}
 
