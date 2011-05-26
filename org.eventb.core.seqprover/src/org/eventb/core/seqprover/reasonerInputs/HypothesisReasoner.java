@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.seqprover.reasonerInputs;
 
 import java.util.Set;
@@ -63,21 +73,20 @@ public abstract class HypothesisReasoner implements IReasoner {
 
 	public final Input deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
-
-		Set<Predicate> neededHyps = reader.getNeededHyps();
-		final int length = neededHyps.size();
-		if (length == 0) {
-			return new Input(null);
-		}
-		if (length != 1) {
+		final Set<Predicate> neededHyps = reader.getNeededHyps();
+		final Predicate pred;
+		switch (neededHyps.size()) {
+		case 0:
+			pred = null;
+			break;
+		case 1:
+			pred = neededHyps.iterator().next();
+			break;
+		default:
 			throw new SerializeException(new IllegalStateException(
 					"Expected at most one needed hypothesis!"));
 		}
-		for (Predicate hyp: neededHyps) {
-			return new Input(hyp);
-		}
-		assert false;
-		return null;
+		return new Input(pred);
 	}
 
 	public final IReasonerOutput apply(IProverSequent seq, IReasonerInput rInput,
