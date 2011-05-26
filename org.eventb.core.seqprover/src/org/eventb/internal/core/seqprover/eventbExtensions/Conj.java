@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,59 +7,65 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - Refactored class hierarchy
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import java.util.Arrays;
+import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 
 import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IHypAction;
-import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
+import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
-// TODO : maybe remove the hyp splitting from this rewriter since this is implemented in the ConjD reasoner.
-public class Conj extends AbstractRewriter {
-	
+public class Conj extends HypothesisReasoner implements IVersionedReasoner {
+
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".conj";
-	
+
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
 	@Override
-	protected String getDisplayName(Predicate pred) {
-		if (pred == null) {
-			return "∧ goal";
-		}
-		return "∧ hyp (" + pred + ")";
+	public int getVersion() {
+		return 0;
 	}
 
 	@Override
-	protected IHypAction getHypAction(Predicate pred) {
-		if (pred == null) {
-			return null;
-		}
-		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
+	protected String getDisplay(Predicate pred) {
+		return "∧ goal";
 	}
 
-	@ProverRule({"AND_L", "AND_R"})
+	@ProverRule({ "AND_L", "AND_R" })
 	@Override
-	protected Predicate[] rewrite(Predicate pred, FormulaFactory ff) {
-		// TODO optimize for duplicate sub-formulas
-		if (pred.getTag() == Formula.LAND) {
-			return ((AssociativePredicate) pred).getChildren();
+	protected IAntecedent[] getAntecedents(IProverSequent sequent, Predicate hyp) {
+		if (hyp != null) {
+			throw new IllegalArgumentException("Reasoner " + getReasonerID()
+					+ " inapplicable to a hypothesis");
 		}
-		return null;
+		return makeAntecedents(conjuncts(sequent.goal()));
 	}
 
-	@Override
-	public boolean isApplicable(Predicate pred) {
-		return Lib.isConj(pred);
+	private Predicate[] conjuncts(Predicate pred) {
+		if (pred.getTag() != LAND) {
+			throw new IllegalArgumentException("Reasoner " + getReasonerID()
+					+ " inapplicable to " + pred);
+		}
+		return ((AssociativePredicate) pred).getChildren();
+	}
+
+	private IAntecedent[] makeAntecedents(final Predicate[] newGoals) {
+		final int length = newGoals.length;
+		final IAntecedent[] antecedents = new IAntecedent[length];
+		for (int i = 0; i < length; ++i) {
+			antecedents[i] = makeAntecedent(newGoals[i]);
+		}
+		return antecedents;
 	}
 
 }

@@ -41,6 +41,13 @@ public abstract class HypothesisReasoner implements IReasoner {
 
 		private Predicate pred;
 
+		/**
+		 * The parameter is the hypothesis on which to work. If
+		 * <code>null</code>, the work will deal only with the goal.
+		 * 
+		 * @param pred
+		 *            hypothesis to work with or <code>null</code>
+		 */
 		public Input(Predicate pred) {
 			this.pred = pred;
 		}
@@ -68,7 +75,7 @@ public abstract class HypothesisReasoner implements IReasoner {
 	public final void serializeInput(IReasonerInput rInput,
 			IReasonerInputWriter writer) throws SerializeException {
 		
-		// Nothing to do
+		// Nothing to do, all is in the generated rule
 	}
 
 	public final Input deserializeInput(IReasonerInputReader reader)
