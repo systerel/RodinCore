@@ -10,12 +10,11 @@
  *******************************************************************************/
 package fr.systerel.perf.tests.parser;
 
-import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static fr.systerel.perf.tests.parser.Common.FACTORY;
 import static fr.systerel.perf.tests.parser.Common.TIMES_REPEAT_SCAN;
 import static fr.systerel.perf.tests.parser.Common.makeLexString;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.parser.AbstractGrammar;
