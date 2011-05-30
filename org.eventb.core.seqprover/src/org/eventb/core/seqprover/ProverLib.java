@@ -278,10 +278,15 @@ public class ProverLib {
 	}
 
 	private static boolean isReasonerReusable(final IReasonerDesc reasoner) {
-		final boolean isRegistered = ReasonerRegistry.getReasonerRegistry()
-				.isRegistered(reasoner.getId());
-	
-		return isRegistered && !reasoner.hasVersionConflict();
+		final ReasonerRegistry registry = ReasonerRegistry.getReasonerRegistry();
+		if (!registry.isRegistered(reasoner.getId())) {
+			return false;
+		}
+		if (registry.isDummyReasoner(reasoner.getInstance())) {
+			return false;
+		}
+		
+		return !reasoner.hasVersionConflict();
 	}
 
 	/**
