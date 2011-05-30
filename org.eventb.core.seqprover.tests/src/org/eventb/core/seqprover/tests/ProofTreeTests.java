@@ -13,6 +13,7 @@
 package org.eventb.core.seqprover.tests;
 
 import static java.util.Arrays.asList;
+import static org.eventb.core.seqprover.tests.Util.TEST_PLUGIN_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -24,15 +25,21 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collections;
 import java.util.HashSet;
 
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
+import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.junit.Test;
@@ -45,6 +52,21 @@ import org.junit.Test;
  */
 public class ProofTreeTests extends AbstractProofTreeTests {	
 	
+	private static final IReasoner duplicateReas = SequentProver
+			.getReasonerRegistry().getReasonerDesc(TEST_PLUGIN_ID + ".noId").getInstance();
+	
+	/**
+	 * Rule that duplicates a sequent.
+	 * 
+	 * Non-Discharging
+	 * Goal independent.
+	 */
+	private static final IProofRule duplicate = ProverFactory.makeProofRule(
+			duplicateReas, new EmptyInput(), null, null, IConfidence.DISCHARGED_MAX,
+			"duplicate",
+			new IAntecedent[] { ProverFactory.makeAntecedent(null),
+					ProverFactory.makeAntecedent(null) });
+
 	/**
 	 * Ensures that an initial proof tree is open.
 	 */
@@ -446,7 +468,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		// test getGoal
 		sequent = TestLib.genSeq("1=2 |- 1=2");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
-		BasicTactics.ruleTac(ProofRuleTests.duplicate).apply(proofTree.getRoot(), null);
+		BasicTactics.ruleTac(duplicate).apply(proofTree.getRoot(), null);
 		BasicTactics.onPending(0, Tactics.hyp()).apply(proofTree.getRoot(), null);
 		
 		proofDependencies = proofTree.getProofDependencies();
