@@ -175,7 +175,7 @@ public class Selections {
 			}
 		}
 
-		private void add(ILElement element, Position position) {
+		public void add(ILElement element, Position position) {
 			// an ancestor of an already selected element replaces it
 			removeContainedIn(position);
 			final int index = findInsertionIndex(position);

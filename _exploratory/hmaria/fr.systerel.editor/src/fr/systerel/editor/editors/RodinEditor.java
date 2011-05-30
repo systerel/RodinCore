@@ -91,6 +91,7 @@ public class RodinEditor extends TextEditor {
 	private DNDManager dndManager;
 
 	private IUndoContext  undoContext;
+	private SelectionController selController;
 
 	// private Menu fTextContextMenu;
 
@@ -134,12 +135,12 @@ public class RodinEditor extends TextEditor {
 		
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
-		final SelectionController controller = new SelectionController(
-				styledText, mapper, viewer, overlayEditor);
-		styledText.addMouseListener(controller);
-		styledText.addVerifyKeyListener(controller);
-		styledText.addTraverseListener(controller);
-		dndManager = new DNDManager(controller, styledText, mapper,
+		selController = new SelectionController(styledText, mapper, viewer,
+				overlayEditor);
+		styledText.addMouseListener(selController);
+		styledText.addVerifyKeyListener(selController);
+		styledText.addTraverseListener(selController);
+		dndManager = new DNDManager(selController, styledText, mapper,
 				documentProvider);
 		dndManager.install();
 		
@@ -158,7 +159,7 @@ public class RodinEditor extends TextEditor {
 		
 		
 		// Activate Event-B Editor Context
-		IContextService contextService = (IContextService) getSite()
+		final IContextService contextService = (IContextService) getSite()
 				.getService(IContextService.class);
 		contextService
 				.activateContext(EditorPlugin.PLUGIN_ID
@@ -178,7 +179,7 @@ public class RodinEditor extends TextEditor {
 		if (getUndoContext() != null) {
 			// Create the undo action
 			final IWorkbenchWindow ww = getEditorSite().getWorkbenchWindow();
-			Undo undoAction = new HistoryAction.Undo(ww);
+			final Undo undoAction = new HistoryAction.Undo(ww);
 			PlatformUI
 					.getWorkbench()
 					.getHelpSystem()
@@ -188,9 +189,9 @@ public class RodinEditor extends TextEditor {
 					.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 			registerUndoRedoAction(ITextEditorActionConstants.UNDO, undoAction);
 			undoAction.setEnabled(false);
-			
+
 			// Create the redo action.
-			Redo redoAction = new HistoryAction.Redo(ww);
+			final Redo redoAction = new HistoryAction.Redo(ww);
 			PlatformUI
 					.getWorkbench()
 					.getHelpSystem()
@@ -332,6 +333,22 @@ public class RodinEditor extends TextEditor {
 			});
 		}
 	}
+	
+	public void resync2(final IProgressMonitor monitor) {
+		if (styledText != null && !styledText.isDisposed()) {
+			styledText.getDisplay().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (styledText.isDisposed()) {
+						return;
+					}
+					final int currentOffset = getCurrentOffset();
+					documentProvider.synchronizeRoot(monitor);
+					selectAndReveal(currentOffset, 0);
+				}
+			});
+		}
+	}
 
 	public DocumentMapper getDocumentMapper() {
 		return mapper;
@@ -347,6 +364,10 @@ public class RodinEditor extends TextEditor {
 	
 	public IDocument getDocument() {
 		return documentProvider.getDocument();
+	}
+	
+	public SelectionController getSelectionController() {
+		return selController;
 	}
 
 }

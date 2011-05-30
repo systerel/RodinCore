@@ -179,7 +179,6 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		fireElementDirtyStateChanged(element, true);
 	}
 	
-	
 	public void synchronizeRoot(IProgressMonitor monitor) {
 		if (inputRoot != null)
 		doSynchronize(inputRoot, monitor);

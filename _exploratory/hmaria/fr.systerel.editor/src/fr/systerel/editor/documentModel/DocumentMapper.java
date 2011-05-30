@@ -64,7 +64,7 @@ public class DocumentMapper {
 	private IDocument document;
 	private RodinDocumentProvider documentProvider;
 
-	private OrderedEditorItemMap<IInternalElement> editorElements = new OrderedEditorItemMap<IInternalElement>();
+	private OrderedEditorItemMap editorElements = new OrderedEditorItemMap();
 	private Map<IInternalElementType<?>, EditorSection> sections = new LinkedHashMap<IInternalElementType<?>, EditorSection>();
 
 	/**
@@ -724,6 +724,23 @@ public class DocumentMapper {
 		}
 		return null;
 	}
+	
+	public int findEditorElementOffset(ILElement element) {
+		final EditorElement el = findEditorElement(element);
+		if (el == null)
+			return -1;
+		return el.getOffset();
+	}
+	
+	public EditorElement findEditorElement(ILElement element) {
+		final IInternalElement el = element.getElement();
+		for (EditorElement e : editorElements.getItems()) {
+			final IInternalElement ie = e.getLightElement().getElement();
+			if (ie.equals(el))
+				return e;
+		}
+		return editorElements.get(el);
+	}
 
 	/**
 	 * Find a model position at the given offset.
@@ -759,8 +776,17 @@ public class DocumentMapper {
 		}
 		return null;
 	}
+	
+	public ModelPosition findModelPositionSiblingBefore(int offset,
+			IElementType<?> siblingType) {
+		final ILElement siblingBefore = findElementBefore(offset, siblingType);
+		if (siblingBefore != null) {
+			return new ModelPosition(siblingBefore.getParent(), siblingBefore);
+		}
+		return null;
+	}
 
-	private ILElement findElementBefore(int offset, IElementType<?> type) {
+	public ILElement findElementBefore(int offset, IElementType<?> type) {
 		final Interval intervalBefore = findEditableIntervalBefore(offset);
 		if (intervalBefore == null)
 			return null;

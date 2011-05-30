@@ -62,6 +62,10 @@
             class="fr.systerel.editor.handlers.RemoveHandler"
             commandId="fr.systerel.editor.removeElement">
       </handler>
+      <handler
+            class="fr.systerel.editor.handlers.MoveUpHandler"
+            commandId="fr.systerel.editor.moveUp">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.emf.ecore.extension_parser">
@@ -76,6 +80,10 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
+      <category
+            id="fr.systerel.editor.editionCategory"
+            name="Model Edition Commands">
+      </category>
       <command
             categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.addChild"
@@ -91,10 +99,11 @@
             id="fr.systerel.editor.addSibling"
             name="Add Sibling">
       </command>
-      <category
-            id="fr.systerel.editor.editionCategory"
-            name="Model Edition Commands">
-      </category>
+      <command
+            categoryId="fr.systerel.editor.editionCategory"
+            id="fr.systerel.editor.moveUp"
+            name="Move Up">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -145,6 +154,12 @@
             contextId="fr.systerel.editor.contexts.rodinEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+DEL">
+      </key>
+      <key
+            commandId="fr.systerel.editor.moveUp"
+            contextId="fr.systerel.editor.contexts.rodinEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+ARROW_UP">
       </key>
    </extension>
 

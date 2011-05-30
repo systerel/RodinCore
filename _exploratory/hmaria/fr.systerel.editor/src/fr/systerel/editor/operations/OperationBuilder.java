@@ -148,10 +148,7 @@ class OperationBuilder {
 
 	public OperationTree move(IInternalElement movedElement,
 			IInternalElement newParent, IInternalElement newSibling) {
-		OperationNode op = new OperationNode();
-		op.addCommand(copyElement(newParent, movedElement, newSibling));
-		op.addCommand(deleteElement(movedElement, false));
-		return op;
+		return new Move(movedElement, newParent, newSibling);
 	}
 
 	public <T extends IInternalElement> OperationTree renameElement(

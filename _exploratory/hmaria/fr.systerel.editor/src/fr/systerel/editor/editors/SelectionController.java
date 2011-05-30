@@ -94,22 +94,6 @@ public class SelectionController implements MouseListener, VerifyListener,
 	}
 
 	/**
-	 * Resets the selection
-	 */
-	public void correctSelection() {
-		final int x = styledText.getSelection().x;
-		final int y = styledText.getSelection().y;
-		boolean forward = y == styledText.getCaretOffset();
-		if (forward) {
-			styledText.setSelection(x, x);
-
-		} else {
-			styledText.setSelection(y, y);
-		}
-
-	}
-
-	/**
 	 * Decides whether a given position should be editable or not.
 	 * 
 	 * @param offset
@@ -143,7 +127,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		final int length = enclosingRange.y - start + 1;
 		final Position position = new Position(start, length);
 		selection.toggle(element, position);
-		styledText.setSelection(start);
+		//styledText.setSelection(start);
 		if (DEBUG)
 			System.out.println("selected " + element.getElement() + " in "
 					+ enclosingRange);
@@ -194,6 +178,30 @@ public class SelectionController implements MouseListener, VerifyListener,
 	private void resetSelection(int offset) {
 		selection.clear();
 		styledText.setSelection(offset);
+	}
+	
+	public void selectItems(ILElement[] selected) {
+		selection.clear();
+		for (ILElement e : selected) {
+			final EditorElement editorElem = mapper.findEditorElement(e);
+			if (editorElem == null)
+				continue;
+			final ILElement element = editorElem.getLightElement();
+			if (element.isImplicit())
+				return;
+			final Point enclosingRange = mapper.getEnclosingRange(editorElem);
+			if (enclosingRange == null)
+				return;
+
+			final int start = enclosingRange.x;
+			final int length = enclosingRange.y - start + 1;
+			final Position position = new Position(start, length);
+			selection.add(element, position);
+			// styledText.setSelection(start);
+			if (DEBUG)
+				System.out.println("selected " + element.getElement() + " in "
+						+ enclosingRange);
+		}
 	}
 
 	public void resetSelectionNoEffect(int offset) {

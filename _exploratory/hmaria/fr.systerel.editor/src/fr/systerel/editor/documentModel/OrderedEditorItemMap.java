@@ -24,10 +24,10 @@ import org.rodinp.core.emf.api.itf.ILElement;
 /**
  * Groups of editor items corresponding to a given element.
  */
-public class OrderedEditorItemMap<T> {
+public class OrderedEditorItemMap {
 
-	private final Map<T, EditorElement> items = new HashMap<T, EditorElement>();
-	private final ArrayList<T> order = new ArrayList<T>();
+	private final Map<IInternalElement, EditorElement> items = new HashMap<IInternalElement, EditorElement>();
+	private final ArrayList<IInternalElement> order = new ArrayList<IInternalElement>();
 	
 	public EditorElement addItem(ILElement element) {
 		final ILElement sibling = getSibling(element);
@@ -47,12 +47,12 @@ public class OrderedEditorItemMap<T> {
 		}
 		final EditorElement el = new EditorElement(element);
 		final IInternalElement internalElement = element.getElement();
-		items.put((T) internalElement, el);
-		order.add(pos, (T) internalElement);
+		items.put(internalElement, el);
+		order.add(pos, internalElement);
 		return el;
 	}
 	
-	public void remove(T element) {
+	public void remove(IInternalElement element) {
 		items.remove(element);
 		order.remove(element);
 	}
@@ -67,7 +67,7 @@ public class OrderedEditorItemMap<T> {
 	 *         added one
 	 */
 	public EditorElement getOrCreate(ILElement element) {
-		final T internalElement = (T) element.getElement();
+		final IInternalElement internalElement = (IInternalElement) element.getElement();
 		EditorElement el = items.get(internalElement);
 		if (el == null) {
 			el = new EditorElement(element);
@@ -88,6 +88,6 @@ public class OrderedEditorItemMap<T> {
 	public void clear() {
 		items.clear();
 		order.clear();
-	}	
+	}
 	
 }
