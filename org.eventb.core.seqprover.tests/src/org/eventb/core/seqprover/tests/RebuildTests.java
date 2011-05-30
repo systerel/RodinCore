@@ -135,8 +135,9 @@ public class RebuildTests extends AbstractProofTreeTests {
 		}
 
 		private IReasonerDesc patchedReasoner(IReasonerDesc reasonerDesc) {
-			final String id = reasonerDesc.getVersionedId();
-			return getReasonerRegistry().getReasonerDesc(id + "1");
+			final int patchedVersion = reasonerDesc.getVersion() + 1;
+			final String id = reasonerDesc.getId();
+			return getReasonerRegistry().getReasonerDesc(id + ":"+ patchedVersion);
 		}
 
 		public String getComment() {
