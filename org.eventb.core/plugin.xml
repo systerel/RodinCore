@@ -543,6 +543,11 @@
             kind="string"
             name="%eventBprRIDAttribute">
       </attributeType>
+      <attributeType
+            id="prRSig"
+            kind="string"
+            name="%eventBprRSigAttribute">
+      </attributeType>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

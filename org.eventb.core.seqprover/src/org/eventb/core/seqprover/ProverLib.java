@@ -282,11 +282,12 @@ public class ProverLib {
 		if (!registry.isRegistered(reasoner.getId())) {
 			return false;
 		}
-		if (registry.isDummyReasoner(reasoner.getInstance())) {
+		final IReasoner instance = reasoner.getInstance();
+		if (registry.isDummyReasoner(instance)) {
 			return false;
 		}
-		
-		return !reasoner.hasVersionConflict();
+		return !reasoner.hasVersionConflict()
+				&& !reasoner.hasSignatureConflict();
 	}
 
 	/**

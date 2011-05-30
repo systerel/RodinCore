@@ -119,4 +119,14 @@ public interface IReasonerDesc {
 	 *         registered version.
 	 */
 	boolean hasVersionConflict();
+
+	/**
+	 * Returns whether the described reasoner has an actual signature different
+	 * from the stored one.
+	 * 
+	 * @return<code>true</code> iff the actual signature is different from the
+	 *                          stored signature
+	 * @since 2.2
+	 */
+	boolean hasSignatureConflict();
 }

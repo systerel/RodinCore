@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.basis;
 
+import static org.eventb.core.EventBAttributes.PR_REASONER_SIGNATURE_ATTRIBUTE;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IPRReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
+import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.SequentProver;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -40,9 +43,12 @@ public class PRReasoner extends InternalElement implements IPRReasoner {
 	@Override
 	public IReasonerDesc getReasoner() throws RodinDBException {
 		final String rid = getAttributeValue(EventBAttributes.PR_REASONER_ID_ATTRIBUTE);
-		final IReasonerDesc reasoner = SequentProver.getReasonerRegistry()
-				.getReasonerDesc(rid);
-		return reasoner;
+		final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
+		if (hasAttribute(PR_REASONER_SIGNATURE_ATTRIBUTE)) {
+			final String signature = getAttributeValue(PR_REASONER_SIGNATURE_ATTRIBUTE);
+			return registry.getReasonerDesc(rid, signature);
+		}
+		return registry.getReasonerDesc(rid);
 	}
 
 	@Override

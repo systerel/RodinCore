@@ -32,6 +32,8 @@ package org.eventb.core.seqprover;
  * 
  * @author Farhad Mehta
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IReasonerRegistry {
 
@@ -132,4 +134,26 @@ public interface IReasonerRegistry {
 	 */
 	IReasonerDesc getReasonerDesc(String id);
 
+	/**
+	 * Returns a descriptor of the reasoner with the given id.
+	 * <p>
+	 * The returned descriptor will bear the given signature instead of that of
+	 * the reasoner.
+	 * </p>
+	 * <p>
+	 * As for {@link #getReasonerDesc(String)}, the given parameter can be an
+	 * encoding of both the id and the desired version of a reasoner.
+	 * </p>
+	 * 
+	 * @param id
+	 *            the id of a reasoner; alternatively, the encoding of an id
+	 *            with a version
+	 * @param signature
+	 *            a String
+	 * @return a descriptor of the reasoner with the given id, bearing the given
+	 *         signature
+	 * @since 2.2
+	 * @see IReasonerRegistry#getReasonerDesc(String)
+	 */
+	IReasonerDesc getReasonerDesc(String id, String signature);
 }

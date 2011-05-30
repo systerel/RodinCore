@@ -90,7 +90,7 @@ public class ReasonerRegistry implements IReasonerRegistry {
 
 	// version is considered serialized in the id
 	// desired version may be NO_VERSION
-	public synchronized IReasonerDesc getReasonerDesc(String id) {
+	public synchronized ReasonerDesc getReasonerDesc(String id) {
 		if (registry == null) {
 			loadRegistry();
 		}
@@ -108,6 +108,11 @@ public class ReasonerRegistry implements IReasonerRegistry {
 			}
 		}
 		return desc;
+	}
+	
+	public IReasonerDesc getReasonerDesc(String id, String signature) {
+		final ReasonerDesc desc = getReasonerDesc(id);
+		return desc.copyWithSignature(signature);
 	}
 	
 	// version is considered borne by the reasoner instance
