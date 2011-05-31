@@ -315,16 +315,26 @@ public class ReasonerDesc implements IReasonerDesc {
 	public boolean hasVersionConflict() {
 		return getVersion() != getRegisteredVersion();
 	}
+	
+	// reasoner signature at call time
+	private String getInstanceSignature() {
+		final IReasoner inst = getInstance();
+		if (inst instanceof ISignatureReasoner) {
+			return ((ISignatureReasoner) inst).getSignature();
+		} else {
+			return null;
+		}
+	}
 
 	public boolean hasSignatureConflict() {
-		if (signature == null) {
-			return false;
+		final String instSignature = getInstanceSignature();
+		return !equalOrNull(instSignature, signature);
+	}
+	
+	private static boolean equalOrNull(String s1, String s2) {
+		if (s1 == null || s2 == null) {
+			return s1 == null && s2 == null;
 		}
-		final IReasoner inst = getInstance();
-		if (!(inst instanceof ISignatureReasoner)) {
-			return false;
-		}
-		final String reasSignature = ((ISignatureReasoner) inst).getSignature();
-		return !signature.equals(reasSignature);
+		return s1.equals(s2);
 	}
 }
