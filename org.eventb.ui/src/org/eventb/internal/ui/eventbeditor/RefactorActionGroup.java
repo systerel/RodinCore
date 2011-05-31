@@ -9,7 +9,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.TextActionHandler;
-import org.eclipse.ui.views.navigator.ResourceSelectionUtil;
+import org.eclipse.ui.ide.ResourceSelectionUtil;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 
 public class RefactorActionGroup extends EventBEditableTreeViewerActionGroup {
