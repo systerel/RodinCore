@@ -44,7 +44,12 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
  * @author "Nicolas Beauger"
  */
 public class ReasonerDesc implements IReasonerDesc {
-
+	// TODO there are 3 types of reasoner descriptors:
+	// * live (version from registry, dynamic signature)
+	// * stored (version and signature from proof file)
+	// * unknown
+	// => make 3 types
+	
 	private static final int UNKNOWN_VERSION = NO_VERSION - 1;
 	
 	protected static class ReasonerLoadingException extends Exception {
