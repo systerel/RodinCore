@@ -13,7 +13,6 @@
 package org.eventb.core.seqprover.tests;
 
 import static java.util.Arrays.asList;
-import static org.eventb.core.seqprover.tests.Util.TEST_PLUGIN_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -25,21 +24,15 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collections;
 import java.util.HashSet;
 
-import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
-import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
 import org.junit.Test;
@@ -52,21 +45,6 @@ import org.junit.Test;
  */
 public class ProofTreeTests extends AbstractProofTreeTests {	
 	
-	private static final IReasoner duplicateReas = SequentProver
-			.getReasonerRegistry().getReasonerDesc(TEST_PLUGIN_ID + ".noId").getInstance();
-	
-	/**
-	 * Rule that duplicates a sequent.
-	 * 
-	 * Non-Discharging
-	 * Goal independent.
-	 */
-	private static final IProofRule duplicate = ProverFactory.makeProofRule(
-			duplicateReas, new EmptyInput(), null, null, IConfidence.DISCHARGED_MAX,
-			"duplicate",
-			new IAntecedent[] { ProverFactory.makeAntecedent(null),
-					ProverFactory.makeAntecedent(null) });
-
 	/**
 	 * Ensures that an initial proof tree is open.
 	 */
@@ -405,6 +383,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		final IReasonerDesc impIDesc = getDesc("org.eventb.core.seqprover.impI");
 		final IReasonerDesc lemmaDesc = getDesc("org.eventb.core.seqprover.cut");
 		final IReasonerDesc allIDesc = getDesc("org.eventb.core.seqprover.allI");
+		final IReasonerDesc disjEDesc = getDesc("org.eventb.core.seqprover.disjE");
 		
 		IProverSequent sequent;
 		IProofTree proofTree;
@@ -466,21 +445,22 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 				proofDependencies.getUsedReasoners());
 		
 		// test getGoal
-		sequent = TestLib.genSeq("1=2 |- 1=2");
+		sequent = TestLib.genSeq("1=2 ;; 3=3 ∨ 4=4 |- 1=2");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
-		BasicTactics.ruleTac(duplicate).apply(proofTree.getRoot(), null);
+		Tactics.disjE(TestLib.genPred("3=3 ∨ 4=4")).apply(proofTree.getRoot(),
+				null);
 		BasicTactics.onPending(0, Tactics.hyp()).apply(proofTree.getRoot(), null);
 		
 		proofDependencies = proofTree.getProofDependencies();
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
 		assertNotNull(proofDependencies.getGoal());
-		assertTrue(proofDependencies.getGoal().equals(TestLib.genPred("1=2")));
-		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds("1=2")));
+		assertEquals(TestLib.genPred("1=2"), proofDependencies.getGoal());
+		assertEquals(TestLib.genPreds("1=2", "3=3 ∨ 4=4"),
+				proofDependencies.getUsedHypotheses());
 		assertTrue(proofDependencies.getUsedFreeIdents().isEmpty());
-		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
-		assertEquals(
-				new HashSet<IReasonerDesc>(asList(ProofRuleTests.fakeDesc,
-						hypDesc)), proofDependencies.getUsedReasoners());
+		assertTrue(proofDependencies.getIntroducedFreeIdents().isEmpty());
+		assertEquals(new HashSet<IReasonerDesc>(asList(disjEDesc, hypDesc)),
+				proofDependencies.getUsedReasoners());
 	}
 
 	private static IReasonerDesc getDesc(String id) {
