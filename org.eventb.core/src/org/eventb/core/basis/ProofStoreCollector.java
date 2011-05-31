@@ -12,8 +12,6 @@
  ******************************************************************************/
 package org.eventb.core.basis;
 
-import static org.eventb.core.EventBAttributes.PR_REASONER_SIGNATURE_ATTRIBUTE;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,10 +29,8 @@ import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInputWriter;
-import org.eventb.core.seqprover.ISignatureReasoner;
 import org.eventb.core.seqprover.SerializeException;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter;
@@ -125,13 +121,6 @@ public class ProofStoreCollector implements IProofStoreCollector {
 			prReasoner.create(null, monitor);
 			final IReasonerDesc reasoner = entry.getKey();
 			prReasoner.setReasoner(reasoner, monitor);
-			final IReasoner instance = reasoner.getInstance();
-			if (instance instanceof ISignatureReasoner) {
-				final String signature = ((ISignatureReasoner) instance)
-						.getSignature();
-				prReasoner.setAttributeValue(PR_REASONER_SIGNATURE_ATTRIBUTE,
-						signature, monitor);
-			}
 		}
 	}
 	
