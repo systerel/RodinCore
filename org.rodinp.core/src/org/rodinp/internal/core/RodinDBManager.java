@@ -901,7 +901,7 @@ public class RodinDBManager implements ISaveParticipant {
 					new IWorkspaceRunnable() {
 						@Override
 						public void run(IProgressMonitor progress) throws CoreException {
-							savedState = workspace.addSaveParticipant(RodinCore.getRodinCore(), dbManager);
+							savedState = workspace.addSaveParticipant(RodinCore.PLUGIN_ID, dbManager);
 							if (savedState != null) {
 								// the event type coming from the saved state is always POST_AUTO_BUILD
 								// force it to be POST_CHANGE so that the delta processor can handle it
@@ -978,7 +978,7 @@ public class RodinDBManager implements ISaveParticipant {
 	    savePluginPreferences(RodinCore.PLUGIN_ID);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.removeResourceChangeListener(this.deltaState);
-		workspace.removeSaveParticipant(RodinCore.getRodinCore());
+		workspace.removeSaveParticipant(RodinCore.PLUGIN_ID);
 		
 		RodinIndexer.stop();
 	
