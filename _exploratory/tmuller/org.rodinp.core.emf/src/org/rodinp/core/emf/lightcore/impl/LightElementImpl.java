@@ -822,7 +822,6 @@ public abstract class LightElementImpl extends LightObjectImpl implements LightE
 		if (eRodinElement instanceof IInternalElement) {
 			final IInternalElement iElement = (IInternalElement) eRodinElement;
 			SynchroUtils.loadAttributes(iElement, this, true);
-			SynchroUtils.adaptForElementMoveAndRemove(this);
 			SynchroUtils.adaptRootForImplicitChildren(this);
 		}
 	}

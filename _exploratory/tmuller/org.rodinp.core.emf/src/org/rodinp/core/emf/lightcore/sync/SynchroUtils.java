@@ -34,8 +34,6 @@ import org.rodinp.core.emf.lightcore.adapters.AttributeUpdateAdapter;
 import org.rodinp.core.emf.lightcore.adapters.AttributeUpdateAdapterFactory;
 import org.rodinp.core.emf.lightcore.adapters.DeltaRootAdapter;
 import org.rodinp.core.emf.lightcore.adapters.DeltaRootAdapterFactory;
-import org.rodinp.core.emf.lightcore.adapters.ElementMoveAndRemovalAdapter;
-import org.rodinp.core.emf.lightcore.adapters.ElementMoveAndRemovalAdapterFactory;
 import org.rodinp.core.emf.lightcore.adapters.ImplicitDeltaRootAdapterFactory;
 
 /**
@@ -210,11 +208,6 @@ public class SynchroUtils {
 		if (e.isEIsRoot()) {
 			f.adapt(e, DeltaRootAdapterFactory.class);
 		}
-	}
-
-	public static void adaptForElementMoveAndRemove(LightObject e) {
-		final ElementMoveAndRemovalAdapterFactory f = new ElementMoveAndRemovalAdapterFactory();
-		f.adapt(e, ElementMoveAndRemovalAdapter.class);
 	}
 
 	public static void adaptForAttributeUpdate(LightObject e) {

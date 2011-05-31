@@ -12,7 +12,6 @@ package org.rodinp.core.emf.tests.basics;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.rodinp.core.tests.AbstractRodinDBTests.fBool;
 
@@ -35,31 +34,6 @@ import org.rodinp.core.tests.basis.NamedElement;
  * model, and vice versa.
  */
 public class ModificationTests extends AbstractRodinEMFCoreTest {
-
-	/**
-	 * Checks that an element which is suppressed from the light model is
-	 * actually suppressed from the database
-	 */
-	@Test
-	public void deleteAnElement() throws RodinDBException {
-
-		final ILFile rodinResource = getRodinResource();
-
-		final ILElement root = rodinResource.getRoot();
-
-		final NamedElement ne = getNamedElement(rodinFile.getRoot(), "NE");
-
-		final List<? extends ILElement> children = root.getChildren();
-		assertTrue(children.size() == 1);
-		final ILElement child = children.get(0); // ne
-		assertTrue(child.getElement().equals(ne));
-
-		// we delete ne
-		child.delete();
-		assertTrue(children.isEmpty());
-		// ensures that the element ne has been removed from the database
-		assertFalse(ne.exists());
-	}
 
 	/**
 	 * Tests the suppression of an attribute for an element in the Rodin
@@ -181,33 +155,6 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		assertArrayEquals(ordered2, getIRodinElementChildren(root));
 	}
 
-	/**
-	 * Checks that modifying the order of sub element in the light model is
-	 * transparent to the rodin database
-	 */
-	@Test
-	public void modifyLightElementOrder() throws RodinDBException {
-		final ILFile rodinResource = getRodinResource();
-		final IInternalElement rodinRoot = rodinFile.getRoot();
-		// we create elements, and add one attribute to the first element
-		// beneath the root
-		final NamedElement ne = getNamedElement(rodinRoot, "NE1");
-		final NamedElement ne2 = getNamedElement(rodinRoot, "NE2");
-		final NamedElement ne3 = getNamedElement(rodinRoot, "NE3");
-		final NamedElement[] ordered = { ne, ne2, ne3 };
-		assertArrayEquals(ordered, rodinRoot.getChildren());
-
-		// we get the root element of the light model
-		final ILElement root = rodinResource.getRoot();
-		
-		assertArrayEquals(ordered, getIRodinElementChildren(root));
-		// move ne2 to the first position
-		root.moveChild(0, 1);
-		final NamedElement[] ordered2 = { ne2, ne, ne3 };
-		assertArrayEquals(ordered2, getIRodinElementChildren(root));
-		assertArrayEquals(ordered2, rodinRoot.getChildren());
-	}
-	
 	@Test
 	public void testGetChildPosition() throws RodinDBException {
 		final ILFile rodinResource = getRodinResource();
