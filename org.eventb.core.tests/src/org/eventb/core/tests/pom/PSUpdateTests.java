@@ -727,7 +727,7 @@ public class PSUpdateTests extends BuilderTest {
 	}
 	
 	public void testNoSignatureInReasoner() throws Exception {
-		doSignTest(null, "org.eventb.core.seqprover.trueGoal", true);
+		doSignTest("unexpected for this reasoner", "org.eventb.core.seqprover.trueGoal", true);
 	}
 
 }
