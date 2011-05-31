@@ -778,12 +778,22 @@ public class DocumentMapper {
 	}
 	
 	public ModelPosition findModelPositionSiblingBefore(int offset,
-			IElementType<?> siblingType) {
-		final ILElement siblingBefore = findElementBefore(offset, siblingType);
-		if (siblingBefore != null) {
-			return new ModelPosition(siblingBefore.getParent(), siblingBefore);
+			ILElement parent, IElementType<?> siblingType) {
+		final ILElement sibBefore = findElementBefore(offset, siblingType);
+		if (sibBefore != null && sibBefore.isImplicit())
+			return null;
+		return new ModelPosition(parent, sibBefore);
+	}
+
+	public ModelPosition findModelPositionSiblingAfter(int offset,
+			ILElement parent, IElementType<?> siblingType) {
+		final ILElement elemAfter = findElementAfter(offset, siblingType);
+		if (elemAfter != null) {
+			final Point er = getEnclosingRange(findEditorElement(elemAfter));
+			final ILElement nextS = findElementAfter(er.y + 1, siblingType);
+			return new ModelPosition(parent, nextS);
 		}
-		return null;
+		return new ModelPosition(parent, null);
 	}
 
 	public ILElement findElementBefore(int offset, IElementType<?> type) {

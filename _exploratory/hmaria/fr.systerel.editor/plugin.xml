@@ -66,6 +66,10 @@
             class="fr.systerel.editor.handlers.MoveUpHandler"
             commandId="fr.systerel.editor.moveUp">
       </handler>
+      <handler
+            class="fr.systerel.editor.handlers.MoveDownHandler"
+            commandId="fr.systerel.editor.moveDown">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.emf.ecore.extension_parser">
@@ -103,6 +107,11 @@
             categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.moveUp"
             name="Move Up">
+      </command>
+      <command
+            categoryId="fr.systerel.editor.editionCategory"
+            id="fr.systerel.editor.moveDown"
+            name="Move Down">
       </command>
    </extension>
    <extension
@@ -159,7 +168,13 @@
             commandId="fr.systerel.editor.moveUp"
             contextId="fr.systerel.editor.contexts.rodinEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+ARROW_UP">
+            sequence="M1+M2+ARROW_UP">
+      </key>
+      <key
+            commandId="fr.systerel.editor.moveDown"
+            contextId="fr.systerel.editor.contexts.rodinEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+ARROW_DOWN">
       </key>
    </extension>
 

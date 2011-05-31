@@ -150,14 +150,7 @@ public class DeltaProcessor {
 		final LightElement toMove = findElement(element, root);
 		final LightElement eParent = toMove.getEParent();
 		if (parent instanceof IInternalElement && eParent != null) {
-			final IRodinElement[] children = ((IInternalElement) parent)
-					.getChildren();
-			int i = 0;
-			for (IRodinElement child : children) {
-				if (element.equals(child))
-					break;
-				i++;
-			}
+			final int i = SynchroUtils.getPosFromNextSiblingPos(toMove, eParent);
 			eParent.getEChildren().move(i, toMove);
 		}
 	}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.handlers;
 
+import org.eclipse.swt.graphics.Point;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
@@ -20,32 +21,33 @@ import fr.systerel.editor.documentModel.ModelOperations.ModelPosition;
 /**
  * @author Thomas Muller
  */
-public class MoveUpHandler extends AbstractMoveHandler {
+public class MoveDownHandler extends AbstractMoveHandler {
 
 	@Override
 	protected ModelPosition getMovementPosition(DocumentMapper mapper,
 			ILElement[] selected, IElementType<?> siblingType) {
 		final ILElement parent = getParent(selected);
-		final int offset = findSmallestOffset(selected, mapper);
-		final ModelPosition pos = mapper.findModelPositionSiblingBefore(offset,
+		final int offset = findBiggestOffset(selected, mapper);
+		final ModelPosition pos = mapper.findModelPositionSiblingAfter(offset,
 				parent, siblingType);
 		return pos;
 	}
 
 	/**
-	 * @return returns the smallest offset value of the given elements, or
+	 * @return returns the biggest offset value of the given elements, or
 	 *         <code>-1</code> if no elements is given, or no offset has been
 	 *         found
 	 */
-	private static int findSmallestOffset(ILElement[] elems,
+	private static int findBiggestOffset(ILElement[] elems,
 			DocumentMapper mapper) {
 		int oo = -1;
 		for (ILElement e : elems) {
 			final EditorElement eElement = mapper.findEditorElement(e);
 			if (eElement == null)
 				continue;
-			final int o = eElement.getOffset();
-			if (o < oo || oo == -1) {
+			final Point enclosingRange = mapper.getEnclosingRange(eElement);
+			final int o = enclosingRange.y + 1;
+			if (o > oo || oo == -1) {
 				oo = o;
 			}
 		}

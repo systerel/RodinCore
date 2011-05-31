@@ -176,6 +176,27 @@ public class SynchroUtils {
 		}
 		return null;
 	}
+	
+	public static int getPosFromNextSiblingPos(LightElement moved,
+			LightElement parent) {
+		try {
+			final IInternalElement ns = getNextSibling(parent,
+					moved.getElement());
+			if (ns == null)
+				return parent.getChildren().size() - 1;
+			final LightElement lns = findElement(ns, parent);
+			final int ins = parent.getEChildren().indexOf(lns);
+			final int im = parent.getEChildren().indexOf(moved);
+			if (im > ins) // if the next sibling is before the moved element
+						  // we take the place of the next sibling
+				return ins;
+			else
+				// otherwise we take the place just before
+				return ins - 1;
+		} catch (RodinDBException e) {
+			return parent.getChildren().size() - 1;
+		}
+	}
 
 	public static void adaptRootForDBChanges(LightElement e) {
 		final DeltaRootAdapterFactory f = new DeltaRootAdapterFactory();
