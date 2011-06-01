@@ -853,6 +853,9 @@ public class DocumentMapper {
 				}
 			} else {
 				final Interval interAfter = findEditableIntervalAfter(selOffset);
+				if (interAfter == null) {
+					return null;
+				}
 				final ILElement next = interAfter.getElement();
 				final IInternalElementType<? extends IInternalElement> elementType = next
 						.getElementType();

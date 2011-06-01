@@ -16,7 +16,6 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
@@ -37,6 +36,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
@@ -132,7 +132,6 @@ public class RodinEditor extends TextEditor {
 		visualAnnotationModel = viewer.getVisualAnnotationModel();
 		styledText = viewer.getTextWidget();
 
-		
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
 		selController = new SelectionController(styledText, mapper, viewer,
@@ -164,6 +163,20 @@ public class RodinEditor extends TextEditor {
 		contextService
 				.activateContext(EditorPlugin.PLUGIN_ID
 						+ ".contexts.rodinEditorScope");
+	}
+	
+	@Override
+	protected void createActions() {
+		super.createActions();
+		removeAction(ActionFactory.DELETE.getId());
+		removeAction(ITextEditorActionConstants.SHIFT_RIGHT);
+		removeAction(ITextEditorActionConstants.SHIFT_LEFT);
+	}
+
+	private void removeAction(String actionId) {
+		if (actionId == null)
+			return;
+		setAction(actionId, null);
 	}
 	
 	private IUndoContext getUndoContext() {
@@ -220,12 +233,6 @@ public class RodinEditor extends TextEditor {
 		IActionBars actionBars = getEditorSite().getActionBars();
 		if (actionBars != null)
 			actionBars.setGlobalActionHandler(actionId, action);
-	}
-
-	@Override
-	protected void editorContextMenuAboutToShow(IMenuManager menu) {
-		// TODO Auto-generated method stub
-		super.editorContextMenuAboutToShow(menu);
 	}
 
 	private void setTitleImage(IEventBRoot inputRoot) {

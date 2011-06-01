@@ -83,4 +83,17 @@ public class AddChildHandler extends AbstractEditorHandler {
 		tipMenu.setVisible(true);
 	}
 
+	@Override
+	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
+		final ChildCreationInfo possibility = editor.getDocumentMapper()
+				.getChildCreationPossibility(caretOffset);
+		if (possibility == null) {
+			return false;
+		}
+		if (possibility.getPossibleChildTypes().isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
 }

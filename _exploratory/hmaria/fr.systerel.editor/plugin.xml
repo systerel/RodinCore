@@ -53,22 +53,142 @@
       <handler
             class="fr.systerel.editor.handlers.AddChildHandler"
             commandId="fr.systerel.editor.addChild">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.handlers.AddSiblingHandler"
             commandId="fr.systerel.editor.addSibling">
-      </handler>
-      <handler
-            class="fr.systerel.editor.handlers.RemoveHandler"
-            commandId="fr.systerel.editor.removeElement">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.handlers.MoveUpHandler"
             commandId="fr.systerel.editor.moveUp">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="fr.systerel.editor.handlers.MoveDownHandler"
             commandId="fr.systerel.editor.moveDown">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="fr.systerel.editor.handlers.RemoveHandler"
+            commandId="org.eclipse.ui.edit.delete">
+        <enabledWhen>
+           <with
+                 variable="activeContexts">
+              <iterate
+                    ifEmpty="false"
+                    operator="or">
+                 <equals
+                       value="fr.systerel.editor.contexts.rodinEditorScope">
+                 </equals>
+              </iterate>
+           </with>
+        </enabledWhen>
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
       </handler>
    </extension>
    <extension
@@ -92,11 +212,6 @@
             categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.addChild"
             name="Add Child Command">
-      </command>
-      <command
-            categoryId="fr.systerel.editor.editionCategory"
-            id="fr.systerel.editor.removeElement"
-            name="Remove">
       </command>
       <command
             categoryId="fr.systerel.editor.editionCategory"
@@ -130,8 +245,8 @@
                style="push">
          </command>
          <command
-               commandId="fr.systerel.editor.removeElement"
-               label="Remove"
+               commandId="org.eclipse.ui.edit.delete"
+               label="Delete"
                style="push">
          </command>
       </menuContribution>
@@ -157,12 +272,6 @@
             contextId="fr.systerel.editor.contexts.rodinEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+N">
-      </key>
-      <key
-            commandId="fr.systerel.editor.removeElement"
-            contextId="fr.systerel.editor.contexts.rodinEditorScope"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+DEL">
       </key>
       <key
             commandId="fr.systerel.editor.moveUp"

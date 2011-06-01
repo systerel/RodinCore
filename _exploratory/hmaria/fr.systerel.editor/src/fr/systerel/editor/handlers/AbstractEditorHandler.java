@@ -16,6 +16,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import fr.systerel.editor.EditorPlugin;
@@ -46,5 +50,35 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 	}
 
 	protected abstract void handleSelection(RodinEditor editor, int offset);
+
+	@Override
+	public boolean isEnabled() {
+		final IWorkbenchWindow ww = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (ww == null)
+			return false;
+		final IWorkbenchPage activePage = ww.getActivePage();
+		if (activePage == null)
+			return false;
+		final IWorkbenchPart editor = activePage.getActivePart();
+		if (!(editor instanceof RodinEditor))
+			return false;
+		final RodinEditor rEditor = (RodinEditor) editor;
+		return checkEnablement(rEditor, rEditor.getCurrentOffset());
+	}
+
+	/**
+	 * Implementors should perform enablement checkings using the given
+	 * RodinEditor. Default implementation returns <code>true</code>.
+	 * 
+	 * @param editor
+	 *            the current Rodin Editor
+	 * @param caretOffset
+	 * @return <code>true</code> is the command should be enabled,
+	 *         <code>false</code> otherwise
+	 */
+	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
+		return true;
+	}
 
 }
