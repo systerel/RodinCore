@@ -16,41 +16,6 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="fr.systerel.editor.handlers.CopyHandler"
-            commandId="org.eclipse.ui.edit.copy">
-         <activeWhen>
-            <with
-                  variable="activeFocusControlId">
-               <equals
-                     value="fr.systerel.editor.editors.RodinEditor.editorText">
-               </equals>
-            </with></activeWhen>
-      </handler>
-      <handler
-            class="fr.systerel.editor.handlers.PasteHandler"
-            commandId="org.eclipse.ui.edit.paste">
-         <activeWhen>
-            <with
-                  variable="activeFocusControlId">
-               <equals
-                     value="fr.systerel.editor.editors.RodinEditor.editorText">
-               </equals>
-            </with>
-         </activeWhen>
-      </handler>
-      <handler
-            class="fr.systerel.editor.handlers.CutHandler"
-            commandId="org.eclipse.ui.edit.cut">
-         <activeWhen>
-            <with
-                  variable="activeFocusControlId">
-               <equals
-                     value="fr.systerel.editor.editors.RodinEditor.editorText">
-               </equals>
-            </with>
-         </activeWhen>
-      </handler>
-      <handler
             class="fr.systerel.editor.handlers.AddChildHandler"
             commandId="fr.systerel.editor.addChild">
          <activeWhen>
@@ -163,7 +128,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.RemoveHandler"
+            class="fr.systerel.editor.handlers.DeleteHandler"
             commandId="org.eclipse.ui.edit.delete">
         <enabledWhen>
            <with
