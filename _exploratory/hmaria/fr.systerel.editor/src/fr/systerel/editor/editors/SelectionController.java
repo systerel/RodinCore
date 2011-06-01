@@ -167,7 +167,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 			toggleSelection(offset);
 		} else if (selection.contains(offset)) {
 			final boolean dragging = styledText.dragDetect(e);
-			if (!dragging) {
+			if (!dragging && ((e.button & SWT.BUTTON2) != 0)) {
 				resetSelection(offset);
 			}
 		} else {
