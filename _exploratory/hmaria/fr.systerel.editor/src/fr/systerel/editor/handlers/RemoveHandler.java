@@ -23,7 +23,7 @@ import fr.systerel.editor.operations.OperationFactory;
 /**
  * @author Thomas Muller & Nicolas Beauger
  */
-public class RemoveHandler extends AbstractEditorHandler {
+public class RemoveHandler extends AbstractEditionHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

@@ -12,7 +12,6 @@ package fr.systerel.editor.handlers;
 
 import static java.util.Arrays.asList;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IEditorPart;
@@ -32,7 +31,7 @@ import fr.systerel.editor.editors.SelectionController;
  * @author Thomas Muller
  * 
  */
-public abstract class AbstractMoveHandler extends AbstractHandler {
+public abstract class AbstractMoveHandler extends AbstractEditorHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -97,6 +96,11 @@ public abstract class AbstractMoveHandler extends AbstractHandler {
 
 	protected static ILElement getParent(ILElement[] selected) {
 		return selected[0].getParent();
+	}
+	
+	@Override
+	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
+		return editor.getSelectionController().getSelectedElements().length > 0;
 	}
 
 }

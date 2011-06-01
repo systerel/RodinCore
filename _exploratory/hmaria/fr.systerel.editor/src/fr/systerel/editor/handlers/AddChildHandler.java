@@ -27,7 +27,7 @@ import fr.systerel.editor.operations.AtomicOperation;
 import fr.systerel.editor.operations.History;
 import fr.systerel.editor.operations.OperationFactory;
 
-public class AddChildHandler extends AbstractEditorHandler {
+public class AddChildHandler extends AbstractEditionHandler {
 
 	@Override
 	protected void handleSelection(RodinEditor editor, int offset) {

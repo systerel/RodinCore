@@ -249,6 +249,20 @@
                label="Delete"
                style="push">
          </command>
+         <separator
+               name="fr.systerel.editor.MovementSeparator"
+               visible="true">
+         </separator>
+         <command
+               commandId="fr.systerel.editor.moveUp"
+               label="Move Up"
+               style="push">
+         </command>
+         <command
+               commandId="fr.systerel.editor.moveDown"
+               label="Move Down"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension

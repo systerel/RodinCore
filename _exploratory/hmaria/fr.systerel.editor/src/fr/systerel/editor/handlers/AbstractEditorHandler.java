@@ -11,45 +11,15 @@
 package fr.systerel.editor.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.handlers.HandlerUtil;
 
-import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.editors.RodinEditor;
 
-/**
- * Abstract class for the editor handlers such as add, remove, copy, etc.
- */
+
 public abstract class AbstractEditorHandler extends AbstractHandler {
-
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IEditorPart activeEditor = EditorPlugin.getActivePage()
-				.getActiveEditor();
-		if (!(activeEditor instanceof RodinEditor)) {
-			return null;
-		}
-		final RodinEditor editor = (RodinEditor) activeEditor;
-		final ISelection curSel = HandlerUtil.getActiveMenuSelection(event);
-		final int offset;
-		if (curSel instanceof TextSelection) {
-			offset = ((TextSelection) curSel).getOffset();
-		} else {
-			offset = editor.getCurrentOffset();
-		}
-		handleSelection(editor, offset);
-		return null;
-	}
-
-	protected abstract void handleSelection(RodinEditor editor, int offset);
 
 	@Override
 	public boolean isEnabled() {
@@ -80,5 +50,5 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
 		return true;
 	}
-
+	
 }

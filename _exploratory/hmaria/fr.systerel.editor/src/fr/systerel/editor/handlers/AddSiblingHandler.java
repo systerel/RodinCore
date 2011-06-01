@@ -24,7 +24,7 @@ import fr.systerel.editor.operations.OperationFactory;
 /**
  * Handler to add siblings.
  */
-public class AddSiblingHandler extends AbstractEditorHandler {
+public class AddSiblingHandler extends AbstractEditionHandler {
 
 	@Override
 	protected void handleSelection(RodinEditor editor, int offset) {
