@@ -285,12 +285,12 @@
                visible="true">
          </separator>
          <command
-               commandId="fr.systerel.editor.moveUp"
+               commandId="org.eclipse.ui.edit.text.moveLineUp"
                label="Move Up"
                style="push">
          </command>
          <command
-               commandId="fr.systerel.editor.moveDown"
+               commandId="org.eclipse.ui.edit.text.moveLineDown"
                label="Move Down"
                style="push">
          </command>
