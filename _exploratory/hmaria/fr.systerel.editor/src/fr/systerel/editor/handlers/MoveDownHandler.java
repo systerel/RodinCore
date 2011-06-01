@@ -17,7 +17,6 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import fr.systerel.editor.documentModel.DocumentMapper;
 import fr.systerel.editor.documentModel.EditorElement;
 import fr.systerel.editor.documentModel.ModelOperations.ModelPosition;
-import fr.systerel.editor.editors.RodinEditor;
 
 /**
  * @author Thomas Muller
