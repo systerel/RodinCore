@@ -14,6 +14,7 @@ import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 
 public class OperationFactory {
@@ -183,4 +184,30 @@ public class OperationFactory {
 		return op;
 
 	}
+
+	/**
+	 * Return an operation to copy elements into parent.
+	 * 
+	 * @param parent
+	 *            The parent of the new elements
+	 * 
+	 * @param elements
+	 *            an IInternalElement array. Elements to copy
+	 * 
+	 * @param sibling
+	 *            the sibling element before which the copy should be inserted,
+	 *            or <code>null</code> if the copy should be inserted as the
+	 *            last child of the container
+	 */
+	public static AtomicOperation copyElements(IInternalElement parent,
+			IRodinElement[] elements, IInternalElement sibling) {
+		final OperationBuilder builder = new OperationBuilder();
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(parent), builder.copyElements(parent,
+						elements, sibling));
+		op.setLabel("Copy Element");
+		return op;
+	}
+
+	
 }

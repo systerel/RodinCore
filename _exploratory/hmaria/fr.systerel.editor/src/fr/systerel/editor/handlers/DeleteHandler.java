@@ -10,8 +10,6 @@
  *******************************************************************************/
 package fr.systerel.editor.handlers;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.documentModel.Interval;
@@ -26,23 +24,19 @@ import fr.systerel.editor.operations.OperationFactory;
 public class DeleteHandler extends AbstractEditionHandler {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		return super.execute(event);
-	}
-
-	@Override
-	protected void handleSelection(RodinEditor editor, int offset) {
+	protected String handleSelection(RodinEditor editor, int offset) {
 		final Interval inter = editor.getDocumentMapper()
 				.findFirstElementIntervalAfter(offset);
 		if (inter == null)
-			return;
+			return "No element to delete from here.";
 		final ILElement element = inter.getElement();
 		if (element == null || element.isImplicit()) {
-			return;
+			return "No element to deleted or non deletable element";
 		}
 		final AtomicOperation op = OperationFactory.deleteElement(element
 				.getElement());
 		History.getInstance().addOperation(op);
 		editor.resync(null);
+		return "Element deleted.";
 	}
 }

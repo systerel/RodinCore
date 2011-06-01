@@ -165,12 +165,21 @@ public class RodinEditor extends TextEditor {
 						+ ".contexts.rodinEditorScope");
 	}
 	
+	/**
+	 * It is mandatory to remove the actions so that the commands contributed
+	 * through extension points are taken into account.
+	 */
 	@Override
 	protected void createActions() {
 		super.createActions();
+		removeAction(ActionFactory.CUT.getId());
+		removeAction(ActionFactory.COPY.getId());
+		removeAction(ActionFactory.PASTE.getId());
 		removeAction(ActionFactory.DELETE.getId());
 		removeAction(ITextEditorActionConstants.SHIFT_RIGHT);
 		removeAction(ITextEditorActionConstants.SHIFT_LEFT);
+		removeAction(ITextEditorActionConstants.MOVE_LINE_DOWN);
+		removeAction(ITextEditorActionConstants.MOVE_LINE_UP);
 	}
 
 	private void removeAction(String actionId) {

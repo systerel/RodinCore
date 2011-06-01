@@ -30,12 +30,15 @@ import fr.systerel.editor.operations.OperationFactory;
 public class AddChildHandler extends AbstractEditionHandler {
 
 	@Override
-	protected void handleSelection(RodinEditor editor, int offset) {
+	protected String handleSelection(RodinEditor editor, int offset) {
 		final ChildCreationInfo possibility = editor.getDocumentMapper()
 				.getChildCreationPossibility(offset);
-		if (possibility != null)
+		if (possibility != null) {
 			showTipMenu(editor, offset, possibility,
 					(StyledText) editor.getTextComposite());
+			return null;
+		}
+		return "No possible Child Creation";
 	}
 
 	// TODO make this menu dynamic

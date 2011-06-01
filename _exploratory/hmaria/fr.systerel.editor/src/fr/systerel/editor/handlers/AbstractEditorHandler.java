@@ -11,11 +11,13 @@
 package fr.systerel.editor.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.editors.RodinEditor;
 
 
@@ -49,6 +51,15 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 	 */
 	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
 		return true;
+	}
+	
+	protected static RodinEditor getActiveRodinEditor() {
+		final IEditorPart activeEditor = EditorPlugin.getActivePage()
+				.getActiveEditor();
+		if (!(activeEditor instanceof RodinEditor)) {
+			return null;
+		}
+		return (RodinEditor) activeEditor;
 	}
 	
 }

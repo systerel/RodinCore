@@ -27,16 +27,17 @@ import fr.systerel.editor.operations.OperationFactory;
 public class AddSiblingHandler extends AbstractEditionHandler {
 
 	@Override
-	protected void handleSelection(RodinEditor editor, int offset) {
+	protected String handleSelection(RodinEditor editor, int offset) {
 		final SiblingCreationInfo info = getSiblingCreationInfo(editor, offset);
 		if (info == null) {
-			return;
+			return "No possible Sibling creation";
 		}
 		final AtomicOperation op = OperationFactory.createElementGeneric(
 				info.getParent(), info.getElement().getElementType(),
 				info.getSibling());
 		History.getInstance().addOperation(op);
 		editor.resync(null);
+		return "Added Sibling";
 	}
 	
 	private static SiblingCreationInfo getSiblingCreationInfo(

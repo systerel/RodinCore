@@ -73,7 +73,7 @@
       </handler>
       <handler
             class="fr.systerel.editor.handlers.MoveUpHandler"
-            commandId="fr.systerel.editor.moveUp">
+            commandId="org.eclipse.ui.edit.text.moveLineUp">
          <activeWhen>
             <with
                   variable="activeContexts">
@@ -101,7 +101,63 @@
       </handler>
       <handler
             class="fr.systerel.editor.handlers.MoveDownHandler"
-            commandId="fr.systerel.editor.moveDown">
+            commandId="org.eclipse.ui.edit.text.moveLineDown">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="fr.systerel.editor.handlers.CopyHandler"
+            commandId="org.eclipse.ui.edit.copy">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="fr.systerel.editor.handlers.PasteHandler"
+            commandId="org.eclipse.ui.edit.paste">
          <activeWhen>
             <with
                   variable="activeContexts">
@@ -130,18 +186,18 @@
       <handler
             class="fr.systerel.editor.handlers.DeleteHandler"
             commandId="org.eclipse.ui.edit.delete">
-        <enabledWhen>
-           <with
-                 variable="activeContexts">
-              <iterate
-                    ifEmpty="false"
-                    operator="or">
-                 <equals
-                       value="fr.systerel.editor.contexts.rodinEditorScope">
-                 </equals>
-              </iterate>
-           </with>
-        </enabledWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
          <activeWhen>
             <with
                   variable="activeContexts">
@@ -210,6 +266,16 @@
                style="push">
          </command>
          <command
+               commandId="org.eclipse.ui.edit.copy"
+               label="Copy"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.ui.edit.paste"
+               label="Paste"
+               style="push">
+         </command>
+         <command
                commandId="org.eclipse.ui.edit.delete"
                label="Delete"
                style="push">
@@ -244,25 +310,13 @@
             commandId="fr.systerel.editor.addSibling"
             contextId="fr.systerel.editor.contexts.rodinEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+T">
+            sequence="M1+T">
       </key>
       <key
             commandId="fr.systerel.editor.addChild"
             contextId="fr.systerel.editor.contexts.rodinEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+N">
-      </key>
-      <key
-            commandId="fr.systerel.editor.moveUp"
-            contextId="fr.systerel.editor.contexts.rodinEditorScope"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+ARROW_UP">
-      </key>
-      <key
-            commandId="fr.systerel.editor.moveDown"
-            contextId="fr.systerel.editor.contexts.rodinEditorScope"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+ARROW_DOWN">
+            sequence="M1+M3+N">
       </key>
    </extension>
 
