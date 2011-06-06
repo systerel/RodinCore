@@ -352,7 +352,7 @@ public class RodinEditor extends TextEditor {
 	
 	public void resync2(final IProgressMonitor monitor) {
 		if (styledText != null && !styledText.isDisposed()) {
-			styledText.getDisplay().syncExec(new Runnable() {
+			styledText.getDisplay().asyncExec(new Runnable() {
 				@Override
 				public void run() {
 					if (styledText.isDisposed()) {
