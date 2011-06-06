@@ -10,21 +10,16 @@
  *******************************************************************************/
 package fr.systerel.editor.documentModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
-import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
-import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
-import org.eclipse.emf.edit.provider.resource.ResourceItemProviderAdapterFactory;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -40,6 +35,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
+import org.rodinp.core.emf.lightcore.RodinResource;
 
 import fr.systerel.editor.editors.RodinEditor;
 import fr.systerel.editor.presentation.RodinConfiguration;
@@ -57,15 +53,12 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	private IEditorInput editorInput;
 	private RodinTextGenerator textGenerator;
 
-	private ComposedAdapterFactory adapterFactory;
-	private AdapterFactoryEditingDomain editingDomain;
 	private ILFile inputResource;
 	private final PresentationUpdater elementPresentationChangeAdapter;
 
 	public RodinDocumentProvider(DocumentMapper mapper, RodinEditor editor) {
 		this.documentMapper = mapper;
 		elementPresentationChangeAdapter = new PresentationUpdater(editor, mapper);
-		initializeEditingDomain();
 	}
 
 	@Override
@@ -74,23 +67,6 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		return new AnnotationModel();
 	}
 	
-	protected void initializeEditingDomain() {
-		// Create an adapter factory that yields item providers.
-		adapterFactory = new ComposedAdapterFactory(
-				ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
-		adapterFactory
-				.addAdapterFactory(new ResourceItemProviderAdapterFactory());
-		adapterFactory
-				.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
-		// Create the command stack that will notify this editor as commands are
-		// executed.
-		final BasicCommandStack commandStack = new BasicCommandStack();
-
-		// Create the editing domain with a special command stack.
-		editingDomain = new AdapterFactoryEditingDomain(adapterFactory,
-				commandStack, new HashMap<Resource, Boolean>());
-	}
-
 	/**
 	 * This is the method called to load a resource into the editing domain's
 	 * resource set based on the editor's input.
@@ -98,30 +74,16 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	public Resource getResource(IFile file) {
 		final String projectName = file.getProject().getName();
 		final URI resourceURI = URI.createPlatformResourceURI(projectName + "/"
-				+ getLightFileName(file), true);
-		Exception exception = null;
-		Resource resource = null;
+				+ file.getName(), true);
+		final Resource resource = new RodinResource();
+		resource.setURI(resourceURI);
 		try {
-			// Load the resource through the editing domain.
-			resource = editingDomain.getResourceSet().getResource(resourceURI,
-					true);
-		} catch (Exception e) {
-			exception = e;
-			resource = editingDomain.getResourceSet().getResource(resourceURI,
-					false);
-			System.out
-					.println("A problem occured when retrieving the resource of "
-							+ resourceURI.toString()
-							+ " : "
-							+ exception.getMessage());
+			resource.load(null);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		resource.eAdapters().add(elementPresentationChangeAdapter);
 		return resource;
-	}
-	
-	private String getLightFileName(IFile file) {
-		final String name = file.getName();
-		return name.replaceAll(".buc", ".ebuc").replaceAll(".bum", ".ebum");
 	}
 
 	@Override

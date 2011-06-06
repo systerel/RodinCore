@@ -190,7 +190,6 @@ public class RodinResource extends ResourceImpl implements ILFile {
 
 	public void unloadResource() {
 		unloadRoot();
-		getResourceSet().getResources().remove(this);
 		try {
 			// Make the associated RodinFile consistent if it is has some
 			// unsaved change

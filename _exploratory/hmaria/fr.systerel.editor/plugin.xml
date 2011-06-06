@@ -238,17 +238,6 @@
       </handler>
    </extension>
    <extension
-         point="org.eclipse.emf.ecore.extension_parser">
-      <parser
-            class="org.rodinp.core.emf.lightcore.RodinResourceFactory"
-            type="ebuc">
-      </parser>
-      <parser
-            class="org.rodinp.core.emf.lightcore.RodinResourceFactory"
-            type="ebum">
-      </parser>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <category
             id="fr.systerel.editor.editionCategory"
