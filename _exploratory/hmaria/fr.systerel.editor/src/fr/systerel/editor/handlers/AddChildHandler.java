@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.handlers;
 
+import java.util.Set;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
@@ -45,8 +47,15 @@ public class AddChildHandler extends AbstractEditionHandler {
 	private void showTipMenu(final RodinEditor editor, final int offset,
 			final ChildCreationInfo childInfo, StyledText parent) {
 		final Menu tipMenu = new Menu(parent);
-		for (final IInternalElementType<?> type : childInfo
-				.getPossibleChildTypes()) {
+		final Set<IInternalElementType<?>> pChildTypes = childInfo
+				.getPossibleChildTypes();
+		if (pChildTypes.size() == 1) {
+			final IInternalElementType<?>[] a = pChildTypes
+					.toArray(new IInternalElementType<?>[1]);
+			createChildAndRefresh(editor, childInfo, a[0]);
+			return;
+		}
+		for (final IInternalElementType<?> type : pChildTypes) {
 			final MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
 			item.setText(type.getName());
 			item.addSelectionListener(new SelectionListener() {
@@ -58,26 +67,9 @@ public class AddChildHandler extends AbstractEditionHandler {
 
 				@Override
 				public void widgetSelected(SelectionEvent se) {
-					final ILElement nextSibling = childInfo.getNextSibling();
-					final ILElement childParent = childInfo.getParent();
-					final IInternalElement localNextSibling = (nextSibling == null || nextSibling
-							.getElementType() != type) ? null : nextSibling
-							.getElement();
-					final IInternalElement rootElement = (childParent == null) ? editor
-							.getDocumentMapper().getRoot().getElement()
-							: childParent.getRoot().getElement();
-					final IInternalElement localParent;
-					if (childParent.getElement().equals(rootElement)) {
-						localParent = rootElement;
-					} else {
-						localParent = childParent.getElement();
-					}
-					final AtomicOperation op = OperationFactory
-							.createElementGeneric(localParent, type,
-									localNextSibling);
-					History.getInstance().addOperation(op);
-					editor.resync(null);
+					createChildAndRefresh(editor, childInfo, type);
 				}
+
 			});
 		}
 		final Point loc = parent.getLocationAtOffset(offset);
@@ -86,6 +78,28 @@ public class AddChildHandler extends AbstractEditionHandler {
 		tipMenu.setVisible(true);
 	}
 
+	private void createChildAndRefresh(final RodinEditor editor,
+			final ChildCreationInfo childInfo,
+			final IInternalElementType<?> type) {
+		final ILElement nextSibling = childInfo.getNextSibling();
+		final ILElement childParent = childInfo.getParent();
+		final IInternalElement localNextSibling = (nextSibling == null || nextSibling
+				.getElementType() != type) ? null : nextSibling.getElement();
+		final IInternalElement rootElement = (childParent == null) ? editor
+				.getDocumentMapper().getRoot().getElement() : childParent
+				.getRoot().getElement();
+		final IInternalElement localParent;
+		if (childParent.getElement().equals(rootElement)) {
+			localParent = rootElement;
+		} else {
+			localParent = childParent.getElement();
+		}
+		final AtomicOperation op = OperationFactory.createElementGeneric(
+				localParent, type, localNextSibling);
+		History.getInstance().addOperation(op);
+		editor.resync(null);
+	}
+	
 	@Override
 	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
 		final ChildCreationInfo possibility = editor.getDocumentMapper()
