@@ -7,10 +7,15 @@
       <editor
             class="fr.systerel.editor.editors.RodinEditor"
             default="true"
-            extensions="bum, buc"
             icon="icons/full/clcl16/b_file.gif"
             id="fr.systerel.editor.editors.RodinEditor"
             name="%editorName">
+         <contentTypeBinding
+               contentTypeId="org.eventb.core.contextFile">
+         </contentTypeBinding>
+         <contentTypeBinding
+               contentTypeId="org.eventb.core.machineFile">
+         </contentTypeBinding>
       </editor>
    </extension>
    <extension
@@ -25,7 +30,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -37,7 +42,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -53,7 +58,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -65,7 +70,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -81,7 +86,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -93,7 +98,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -109,7 +114,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -121,7 +126,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -137,7 +142,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -149,7 +154,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -165,7 +170,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -177,7 +182,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -193,7 +198,7 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
@@ -205,11 +210,31 @@
                      ifEmpty="false"
                      operator="or">
                   <equals
-                        value="fr.systerel.editor.contexts.rodinEditorScope">
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
                   </equals>
                </iterate>
             </with>
          </activeWhen>
+      </handler>
+      <handler
+            class="fr.systerel.editor.handlers.refactoring.ShowCustomizePreferences"
+            commandId="fr.systerel.editor.rename.customizePrefixes">
+      </handler>
+      <handler
+            class="fr.systerel.editor.handlers.refactoring.AutoActionLabelRenaming"
+            commandId="fr.systerel.editor.rename.action">
+      </handler>
+      <handler
+            class="fr.systerel.editor.handlers.refactoring.AutoGuardLabelRenaming"
+            commandId="fr.systerel.editor.rename.guard">
+      </handler>
+      <handler
+            class="fr.systerel.editor.handlers.refactoring.AutoInvariantLabelRenaming"
+            commandId="fr.systerel.editor.rename.invariant">
+      </handler>
+      <handler
+            class="fr.systerel.editor.handlers.refactoring.AutoAxiomLabelRenaming"
+            commandId="fr.systerel.editor.rename.axiom">
       </handler>
    </extension>
    <extension
@@ -248,6 +273,34 @@
             categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.moveDown"
             name="Move Down">
+      </command>
+      <category
+            id="fr.systerel.editor.renamingCommandsCategory"
+            name="Renaming Commands">
+      </category>
+      <command
+            categoryId="fr.systerel.editor.renamingCommandsCategory"
+            id="fr.systerel.editor.rename.action"
+            name="Automatic Action Labelling">
+      </command>
+      <command
+            categoryId="fr.systerel.editor.renamingCommandsCategory"
+            id="fr.systerel.editor.rename.guard"
+            name="Automatic Guard Labelling">
+      </command>
+      <command
+            categoryId="fr.systerel.editor.renamingCommandsCategory"
+            id="fr.systerel.editor.rename.invariant"
+            name="Automatic Invariant Labelling">
+      </command>
+      <command
+            categoryId="fr.systerel.editor.renamingCommandsCategory"
+            id="fr.systerel.editor.rename.axiom"
+            name="Automatic Axiom Labelling">
+      </command>
+      <command
+            id="fr.systerel.editor.rename.customizePrefixes"
+            name="Customize prefixes...">
       </command>
    </extension>
    <extension
@@ -295,29 +348,132 @@
                style="push">
          </command>
       </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.contexts">
-      <context
-            description="The context for the Rodin Editor. Used by commands to find handlers."
-            id="fr.systerel.editor.contexts.rodinEditorScope"
-            name="RodinEditor Scope">
-      </context>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               label="Rename">
+            <command
+                  commandId="fr.systerel.editor.rename.action"
+                  label="Automatic Action Labelling"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeContexts">
+                     <iterate
+                           operator="or">
+                        <equals
+                              value="fr.systerel.editor.contexts.rodinEditorMachineScope">
+                        </equals>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="fr.systerel.editor.rename.guard"
+                  label="Automatic Guard Labelling"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeContexts">
+                     <iterate
+                           operator="or">
+                        <equals
+                              value="fr.systerel.editor.contexts.rodinEditorMachineScope">
+                        </equals>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="fr.systerel.editor.rename.invariant"
+                  label="Automatic Invariant Labelling"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeContexts">
+                     <iterate
+                           operator="or">
+                        <equals
+                              value="fr.systerel.editor.contexts.rodinEditorMachineScope">
+                        </equals>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="fr.systerel.editor.rename.axiom"
+                  label="Automatic Axiom Labelling"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeContexts">
+                     <iterate
+                           operator="or">
+                        <equals
+                              value="fr.systerel.editor.contexts.rodinEditorContextScope">
+                        </equals>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+            <separator
+                  name="fr.systerel.editor.renameMenuSeparator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="fr.systerel.editor.rename.customizePrefixes"
+                  label="Customize prefixes..."
+                  style="push">
+            </command>
+            <visibleWhen
+                  checkEnabled="true">
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="fr.systerel.editor.editors.RodinEditor">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </menu>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
             commandId="fr.systerel.editor.addSibling"
-            contextId="fr.systerel.editor.contexts.rodinEditorScope"
+            contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+T">
       </key>
       <key
             commandId="fr.systerel.editor.addChild"
-            contextId="fr.systerel.editor.contexts.rodinEditorScope"
+            contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M3+N">
       </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="A default rodin editor context to be used in xml"
+            id="fr.systerel.editor.contexts.rodinEditorDefaultScope"
+            name="Default Rodin Editor Context">
+      </context>
+      <context
+            description="A machine editor context to be used in xml"
+            id="fr.systerel.editor.contexts.rodinEditorMachineScope"
+            name="Machine Rodin Editor Scope (Editor Context)">
+      </context>
+      <context
+            description="A context editor context to be used in xml"
+            id="fr.systerel.editor.contexts.rodinEditorMachineScope"
+            name="Context Rodin Editor Scope (Editor Context)">
+      </context>
    </extension>
 
 </plugin>

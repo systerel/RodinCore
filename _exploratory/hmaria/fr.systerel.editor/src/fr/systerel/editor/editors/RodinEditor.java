@@ -152,7 +152,8 @@ public class RodinEditor extends TextEditor {
 
 		updateFoldingStructure();
 		updateMarkerStructure();
-		setTitleImage(documentProvider.getInputRoot());
+		final IEventBRoot inputRoot = documentProvider.getInputRoot();
+		setTitleImage(inputRoot);
 
 		viewer.setUndoManager(new RodinUndoManager((RodinFileUndoContext) getUndoContext()));
 		
@@ -160,9 +161,16 @@ public class RodinEditor extends TextEditor {
 		// Activate Event-B Editor Context
 		final IContextService contextService = (IContextService) getSite()
 				.getService(IContextService.class);
-		contextService
-				.activateContext(EditorPlugin.PLUGIN_ID
-						+ ".contexts.rodinEditorScope");
+		
+		if (inputRoot instanceof IMachineRoot) {
+			contextService.activateContext(EditorPlugin.PLUGIN_ID
+					+ ".contexts.rodinEditorMachineScope");
+		} else if (inputRoot instanceof IContextRoot) {
+			contextService.activateContext(EditorPlugin.PLUGIN_ID
+					+ ".contexts.rodinEditorContextScope");
+		}
+		contextService.activateContext(EditorPlugin.PLUGIN_ID
+				+ ".contexts.rodinEditorDefaultScope");
 	}
 	
 	/**

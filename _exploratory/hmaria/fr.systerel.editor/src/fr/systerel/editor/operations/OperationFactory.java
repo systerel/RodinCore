@@ -110,18 +110,16 @@ public class OperationFactory {
 		return op;
 	}
 	
-//
-//	public static <T extends IInternalElement> AtomicOperation renameElements(
-//			IInternalElement root, IInternalElementType<T> type,
-//			IAttributeManipulation factory, String prefix) {
-//		final OperationBuilder builder = new OperationBuilder();
-//		final AtomicOperation op = new AtomicOperation(
-//				getRodinFileUndoContext(root), builder.renameElement(root,
-//						type, factory, prefix));
-//		op.setLabel("Rename Element");
-//		return op;
-//	}
-//
+	public static <T extends IInternalElement> AtomicOperation renameElements(
+			IInternalElement root, IInternalElementType<T> type,
+			IAttributeManipulation factory, String prefix) {
+		final OperationBuilder builder = new OperationBuilder();
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.renameElement(root,
+						type, factory, prefix));
+		op.setLabel("Rename Element");
+		return op;
+	}
 	
 //
 //	/**
