@@ -12,6 +12,9 @@ package fr.systerel.editor.handlers;
 
 import static java.util.Arrays.asList;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IEditorPart;
@@ -29,7 +32,6 @@ import fr.systerel.editor.editors.SelectionController;
 
 /**
  * @author Thomas Muller
- * 
  */
 public abstract class AbstractMoveHandler extends AbstractEditorHandler {
 
@@ -80,7 +82,7 @@ public abstract class AbstractMoveHandler extends AbstractEditorHandler {
 	 * @return the type of the given elements if they all have this type,
 	 *         <code>null</code> otherwise
 	 */
-	private static IElementType<?> checkAndGetSameType(ILElement[] elems) {
+	protected static IElementType<?> checkAndGetSameType(ILElement[] elems) {
 		if (elems.length == 0) {
 			return null;
 		}
@@ -100,7 +102,57 @@ public abstract class AbstractMoveHandler extends AbstractEditorHandler {
 	
 	@Override
 	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
-		return editor.getSelectionController().getSelectedElements().length > 0;
+		final ILElement[] selection = editor.getSelectionController()
+		.getSelectedElements();
+		if (selection.length <= 0) {
+			return false;
+		}
+		return isMovePossible(selection);
+	}
+	
+	protected static ILElement getNextSibling(ILElement element,
+			List<ILElement> sameType) {
+		for (int i = 0; i < sameType.size() - 1; i++) {
+			if (sameType.get(i).equals(element)) {
+				return sameType.get(i + 1);
+			}
+		}
+		return null;
+	}
+
+	protected static ILElement getPreviousSibling(ILElement element,
+			List<ILElement> sameType) {
+		for (int i = sameType.size() - 1; i > 0; i--) {
+			if (sameType.get(i).equals(element)) {
+				return sameType.get(i - 1);
+			}
+		}
+		return null;
+	}
+
+	protected abstract ILElement getSibling(ILElement element,
+			List<ILElement> sameType);
+	
+	protected boolean isMovePossible(ILElement[] selection) {
+		if (selection.length == 0) {
+			return false;
+		}
+		final IElementType<?> type = checkAndGetSameType(selection);
+		if (type == null)
+			return false;
+		final ILElement parent = getParent(selection);
+		final List<ILElement> cot = parent
+				.getChildrenOfType((IInternalElementType<?>) type);
+		final List<ILElement> al = Arrays.asList(selection);
+		for (int i = 0; i <= al.size() - 1; i++) {
+			final ILElement selectedElem = al.get(i);
+			final ILElement sibling = getSibling(selectedElem, cot);
+			if (sibling != null && !sibling.isImplicit()
+					&& !al.contains(sibling)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

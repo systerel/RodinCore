@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.handlers;
 
+import java.util.List;
+
 import org.eclipse.swt.graphics.Point;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -54,4 +56,9 @@ public class MoveDownHandler extends AbstractMoveHandler {
 		return oo;
 	}
 
+	@Override
+	protected ILElement getSibling(ILElement element, List<ILElement> sameType) {
+		return getNextSibling(element, sameType);
+	}
+	
 }

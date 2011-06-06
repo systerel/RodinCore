@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.handlers;
 
+import java.util.List;
+
 import org.rodinp.core.IElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
@@ -50,6 +52,11 @@ public class MoveUpHandler extends AbstractMoveHandler {
 			}
 		}
 		return oo;
+	}
+
+	@Override
+	protected ILElement getSibling(ILElement element, List<ILElement> sameType) {
+		return getPreviousSibling(element, sameType);
 	}
 
 }
