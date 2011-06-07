@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.rodinp.keyboard.tests;
 
 import org.junit.Test;
+import org.rodinp.keyboard.tests.registry.TestSymbolProvider;
 
 /**
  * Test the translation for programmatically contributed symbols.
@@ -31,6 +32,18 @@ public class Text2MathExtensionTestCase extends AbstractText2MathTestCase {
 		String input = "x beta p";
 		String expect = "x \u03b2 p";
 		testTranslator("BetaTest ", input, expect);
+	}
+	
+	@Test
+	public void testRuntimeEpsilonExtensionSymbol() {
+		try {
+			TestSymbolProvider.addSymbol("epsilon", "ε");
+			String input = "x epsilon p";
+			String expect = "x \u03b5 p";
+			testTranslator("EpsilonTest ", input, expect);
+		} finally {
+			TestSymbolProvider.reset();
+		}
 	}
 	
 }
