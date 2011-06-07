@@ -21,7 +21,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eventb.ui.EventBUIPlugin;
 
 import fr.systerel.editor.EditorPlugin;
-import fr.systerel.editor.editors.RodinEditor;
+import fr.systerel.editor.internal.editors.RodinEditor;
 
 /**
  * Abstract class for the editor handlers such as add, remove, copy, etc.

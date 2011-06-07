@@ -15,8 +15,8 @@ import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.rodinp.core.emf.api.itf.ILAttribute;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.editors.RodinEditor;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.editors.RodinEditor;
 
 public class PresentationUpdater extends EContentAdapter {
 

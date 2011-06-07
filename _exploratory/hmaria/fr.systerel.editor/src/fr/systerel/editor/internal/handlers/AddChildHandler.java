@@ -23,7 +23,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.editors.RodinEditor;
+import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
 import fr.systerel.editor.internal.operations.AtomicOperation;
 import fr.systerel.editor.internal.operations.History;

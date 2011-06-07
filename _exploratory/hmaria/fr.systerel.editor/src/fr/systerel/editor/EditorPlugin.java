@@ -25,10 +25,10 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
 import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 
-import fr.systerel.editor.editors.DNDManager;
-import fr.systerel.editor.editors.SelectionController;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.RodinPartitioner;
+import fr.systerel.editor.internal.editors.DNDManager;
+import fr.systerel.editor.internal.editors.SelectionController;
 
 /**
  * The activator class controls the plug-in life cycle

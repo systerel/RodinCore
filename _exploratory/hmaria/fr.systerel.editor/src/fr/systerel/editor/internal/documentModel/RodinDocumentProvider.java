@@ -35,7 +35,7 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.api.itf.ILFileFactory;
 
-import fr.systerel.editor.editors.RodinEditor;
+import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.presentation.RodinConfiguration;
 import fr.systerel.editor.presentation.updaters.PresentationUpdater;
 

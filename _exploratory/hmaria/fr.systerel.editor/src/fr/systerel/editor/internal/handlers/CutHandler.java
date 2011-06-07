@@ -13,7 +13,7 @@ package fr.systerel.editor.internal.handlers;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-import fr.systerel.editor.editors.RodinEditor;
+import fr.systerel.editor.internal.editors.RodinEditor;
 
 /**
  * @author "Thomas Muller"

@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.editors;
+package fr.systerel.editor.internal.editors;
 
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
@@ -24,11 +24,11 @@ import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.editors.Selections.MultipleSelection;
-import fr.systerel.editor.editors.Selections.SelectionEffect;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
+import fr.systerel.editor.internal.editors.Selections.MultipleSelection;
+import fr.systerel.editor.internal.editors.Selections.SelectionEffect;
 
 /**
  * Controls the selection in the RodinEditor and decides when it should be

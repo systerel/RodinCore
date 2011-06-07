@@ -13,7 +13,7 @@ package fr.systerel.editor.internal.actions;
 
 import org.eclipse.jface.action.Action;
 
-import fr.systerel.editor.editors.RodinEditor;
+import fr.systerel.editor.internal.editors.RodinEditor;
 
 /**
  *

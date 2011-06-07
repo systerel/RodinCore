@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.editors;
+package fr.systerel.editor.internal.editors;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
  */
 public class RodinEditorMessages {
 
-	private static final String RESOURCE_BUNDLE= "fr.systerel.editor.editors.RodinEditorMessages";//$NON-NLS-1$
+	private static final String RESOURCE_BUNDLE= "fr.systerel.editor.internal.editors.RodinEditorMessages";//$NON-NLS-1$
 
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
