@@ -38,7 +38,7 @@ public abstract class AbstractRenameElementHandler extends
 		History.getInstance().addOperation(
 				OperationFactory.renameElements(root, type,
 						desc.getManipulation(), prefix));
-		editor.resync2(null);
+		editor.resync(null);
 		return null;
 	}
 

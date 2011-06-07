@@ -58,15 +58,7 @@ public abstract class AbstractMoveHandler extends AbstractEditorHandler {
 			return null;
 		}
 		new Move(pos).perform(asList(selected));
-		rEditor.resync2(null);
-		rEditor.getSite().getShell().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				rEditor.getSelectionController().selectItems(selected);
-
-			}
-		});
+		rEditor.resync(null);
 		return null;
 	}
 

@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -51,6 +52,7 @@ import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 import fr.systerel.editor.EditorPlugin;
@@ -241,13 +243,10 @@ public class RodinEditor extends TextEditor {
 		IAction oldAction = getAction(actionId);
 		if (oldAction instanceof OperationHistoryActionHandler)
 			((OperationHistoryActionHandler) oldAction).dispose();
-
 		if (action == null)
 			return;
-
 		setAction(actionId, action);
-
-		IActionBars actionBars = getEditorSite().getActionBars();
+		final IActionBars actionBars = getEditorSite().getActionBars();
 		if (actionBars != null)
 			actionBars.setGlobalActionHandler(actionId, action);
 	}
@@ -344,31 +343,18 @@ public class RodinEditor extends TextEditor {
 	
 	public void resync(final IProgressMonitor monitor) {
 		if (styledText != null && !styledText.isDisposed()) {
-			styledText.getDisplay().asyncExec(new Runnable() {
+			final Display display = styledText.getDisplay();
+			display.asyncExec(new Runnable() {
 				@Override
 				public void run() {
 					if (styledText.isDisposed()) {
 						return;
 					}
 					final int currentOffset = getCurrentOffset();
+					final ILElement[] sel = selController.getSelectedElements();
 					documentProvider.synchronizeRoot(monitor);
 					selectAndReveal(currentOffset, 0);
-				}
-			});
-		}
-	}
-	
-	public void resync2(final IProgressMonitor monitor) {
-		if (styledText != null && !styledText.isDisposed()) {
-			styledText.getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (styledText.isDisposed()) {
-						return;
-					}
-					final int currentOffset = getCurrentOffset();
-					documentProvider.synchronizeRoot(monitor);
-					selectAndReveal(currentOffset, 0);
+					selController.selectItems(sel);
 				}
 			});
 		}
