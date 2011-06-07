@@ -73,19 +73,6 @@ public class SelectionController implements MouseListener, VerifyListener,
 		return selection.getElements();
 	}
 	
-	/**
-	 * Decides whether a given position should be editable or not.
-	 * 
-	 * @param offset
-	 *            The position to check, in model coordinates.
-	 * @return <code>true</code>, if the region is editable, <code>false</code>
-	 *         otherwise.
-	 */
-	public boolean isEditableRegion(int offset) {
-		boolean editable = mapper.findEditableInterval(offset) != null;
-		return editable;
-	}
-
 	public void mouseDoubleClick(MouseEvent e) {
 		if (DEBUG)
 			System.out.println("double click " + e);
