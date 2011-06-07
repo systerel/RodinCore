@@ -36,8 +36,8 @@ import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.api.itf.ILFileFactory;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
+import fr.systerel.editor.internal.presentation.updaters.PresentationUpdater;
 import fr.systerel.editor.presentation.RodinConfiguration;
-import fr.systerel.editor.presentation.updaters.PresentationUpdater;
 
 /**
  * This is a document provider for rodin machines and contexts. It is intended
