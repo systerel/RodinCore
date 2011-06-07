@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.handlers;
+package fr.systerel.editor.internal.handlers;
 
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.itf.ILElement;

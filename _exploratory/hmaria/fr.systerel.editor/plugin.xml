@@ -21,7 +21,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="fr.systerel.editor.handlers.AddChildHandler"
+            class="fr.systerel.editor.internal.handlers.AddChildHandler"
             commandId="fr.systerel.editor.addChild">
          <activeWhen>
             <with
@@ -49,7 +49,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.AddSiblingHandler"
+            class="fr.systerel.editor.internal.handlers.AddSiblingHandler"
             commandId="fr.systerel.editor.addSibling">
          <activeWhen>
             <with
@@ -77,7 +77,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.MoveUpHandler"
+            class="fr.systerel.editor.internal.handlers.MoveUpHandler"
             commandId="org.eclipse.ui.edit.text.moveLineUp">
          <activeWhen>
             <with
@@ -105,7 +105,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.MoveDownHandler"
+            class="fr.systerel.editor.internal.handlers.MoveDownHandler"
             commandId="org.eclipse.ui.edit.text.moveLineDown">
          <activeWhen>
             <with
@@ -133,7 +133,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.CopyHandler"
+            class="fr.systerel.editor.internal.handlers.CopyHandler"
             commandId="org.eclipse.ui.edit.copy">
          <activeWhen>
             <with
@@ -161,7 +161,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.PasteHandler"
+            class="fr.systerel.editor.internal.handlers.PasteHandler"
             commandId="org.eclipse.ui.edit.paste">
          <activeWhen>
             <with
@@ -189,7 +189,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.DeleteHandler"
+            class="fr.systerel.editor.internal.handlers.DeleteHandler"
             commandId="org.eclipse.ui.edit.delete">
          <enabledWhen>
             <with
@@ -217,23 +217,23 @@
          </activeWhen>
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.refactoring.ShowCustomizePreferences"
+            class="fr.systerel.editor.internal.handlers.refactoring.ShowCustomizePreferences"
             commandId="fr.systerel.editor.rename.customizePrefixes">
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.refactoring.AutoActionLabelRenaming"
+            class="fr.systerel.editor.internal.handlers.refactoring.AutoActionLabelRenaming"
             commandId="fr.systerel.editor.rename.action">
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.refactoring.AutoGuardLabelRenaming"
+            class="fr.systerel.editor.internal.handlers.refactoring.AutoGuardLabelRenaming"
             commandId="fr.systerel.editor.rename.guard">
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.refactoring.AutoInvariantLabelRenaming"
+            class="fr.systerel.editor.internal.handlers.refactoring.AutoInvariantLabelRenaming"
             commandId="fr.systerel.editor.rename.invariant">
       </handler>
       <handler
-            class="fr.systerel.editor.handlers.refactoring.AutoAxiomLabelRenaming"
+            class="fr.systerel.editor.internal.handlers.refactoring.AutoAxiomLabelRenaming"
             commandId="fr.systerel.editor.rename.axiom">
       </handler>
    </extension>

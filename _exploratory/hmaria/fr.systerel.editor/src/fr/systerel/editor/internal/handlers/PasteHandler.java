@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.handlers;
+package fr.systerel.editor.internal.handlers;
 
 import static fr.systerel.editor.operations.OperationUtils.copyElements;
 import static fr.systerel.editor.operations.OperationUtils.showError;

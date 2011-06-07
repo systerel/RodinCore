@@ -8,14 +8,13 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.handlers.refactoring;
+package fr.systerel.editor.internal.handlers.refactoring;
 
-import org.eventb.core.IAxiom;
+import org.eventb.core.IAction;
 
-public class AutoAxiomLabelRenaming extends AbstractRenameElementHandler {
-
-	public AutoAxiomLabelRenaming() {
-		type = IAxiom.ELEMENT_TYPE;
+public class AutoActionLabelRenaming extends AbstractRenameElementHandler {
+	
+	public AutoActionLabelRenaming() {
+		type = IAction.ELEMENT_TYPE;
 	}
-
 }

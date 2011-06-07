@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.handlers;
+package fr.systerel.editor.internal.handlers;
 
 import java.util.Set;
 
@@ -24,7 +24,7 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.editors.RodinEditor;
-import fr.systerel.editor.handlers.context.ChildCreationInfo;
+import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
 import fr.systerel.editor.operations.AtomicOperation;
 import fr.systerel.editor.operations.History;
 import fr.systerel.editor.operations.OperationFactory;

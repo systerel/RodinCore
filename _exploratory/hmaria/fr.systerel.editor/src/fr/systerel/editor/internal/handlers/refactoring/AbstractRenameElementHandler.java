@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.handlers.refactoring;
+package fr.systerel.editor.internal.handlers.refactoring;
 
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
@@ -17,7 +17,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 
 import fr.systerel.editor.editors.RodinEditor;
-import fr.systerel.editor.handlers.AbstractEditionHandler;
+import fr.systerel.editor.internal.handlers.AbstractEditionHandler;
 import fr.systerel.editor.operations.History;
 import fr.systerel.editor.operations.OperationFactory;
 

@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.handlers.context;
+package fr.systerel.editor.internal.handlers.context;
 
 import java.util.Set;
 
