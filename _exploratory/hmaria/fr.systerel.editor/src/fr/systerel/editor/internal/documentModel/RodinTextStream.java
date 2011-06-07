@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.documentModel;
+package fr.systerel.editor.internal.documentModel;
 
 import static fr.systerel.editor.presentation.RodinConfiguration.COMMENT_HEADER_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.KEYWORD_TYPE;

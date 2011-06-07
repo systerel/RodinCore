@@ -1,4 +1,4 @@
-package fr.systerel.editor.documentModel;
+package fr.systerel.editor.internal.documentModel;
 
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;

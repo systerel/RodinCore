@@ -19,7 +19,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.documentModel.DocumentMapper;
 
 /**
  * @author Nicolas Beauger

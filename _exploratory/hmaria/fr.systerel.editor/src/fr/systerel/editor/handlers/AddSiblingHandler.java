@@ -13,10 +13,10 @@ package fr.systerel.editor.handlers;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.documentModel.DocumentMapper;
-import fr.systerel.editor.documentModel.EditorElement;
-import fr.systerel.editor.documentModel.Interval;
 import fr.systerel.editor.editors.RodinEditor;
+import fr.systerel.editor.internal.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.documentModel.EditorElement;
+import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.operations.AtomicOperation;
 import fr.systerel.editor.operations.History;
 import fr.systerel.editor.operations.OperationFactory;

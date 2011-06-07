@@ -24,11 +24,11 @@ import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.documentModel.DocumentMapper;
-import fr.systerel.editor.documentModel.EditorElement;
-import fr.systerel.editor.documentModel.Interval;
 import fr.systerel.editor.editors.Selections.MultipleSelection;
 import fr.systerel.editor.editors.Selections.SelectionEffect;
+import fr.systerel.editor.internal.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.documentModel.EditorElement;
+import fr.systerel.editor.internal.documentModel.Interval;
 
 /**
  * Controls the selection in the RodinEditor and decides when it should be

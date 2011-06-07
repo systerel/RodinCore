@@ -15,8 +15,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.editor.documentModel.EditorElement;
 import fr.systerel.editor.editors.RodinEditor;
+import fr.systerel.editor.internal.documentModel.EditorElement;
 
 public class DeleteAction extends RodinEditorAction {
 

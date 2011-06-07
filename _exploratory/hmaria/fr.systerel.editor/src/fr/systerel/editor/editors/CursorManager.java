@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import fr.systerel.editor.EditorPlugin;
-import fr.systerel.editor.documentModel.Interval;
+import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.presentation.RodinConfiguration;
 
 /**

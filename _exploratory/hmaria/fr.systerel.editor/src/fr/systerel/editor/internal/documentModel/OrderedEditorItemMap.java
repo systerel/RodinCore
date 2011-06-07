@@ -8,9 +8,9 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.documentModel;
+package fr.systerel.editor.internal.documentModel;
 
-import static fr.systerel.editor.documentModel.DocumentElementUtils.getSibling;
+import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getSibling;
 
 import java.util.ArrayList;
 import java.util.Collection;

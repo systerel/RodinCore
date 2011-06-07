@@ -73,10 +73,10 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.location.IAttributeLocation;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
-import fr.systerel.editor.documentModel.DocumentMapper;
-import fr.systerel.editor.documentModel.Interval;
-import fr.systerel.editor.documentModel.RodinTextStream;
 import fr.systerel.editor.internal.actions.StyledTextEditAction;
+import fr.systerel.editor.internal.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.documentModel.Interval;
+import fr.systerel.editor.internal.documentModel.RodinTextStream;
 import fr.systerel.editor.operations.AtomicOperation;
 import fr.systerel.editor.operations.History;
 import fr.systerel.editor.operations.OperationFactory;

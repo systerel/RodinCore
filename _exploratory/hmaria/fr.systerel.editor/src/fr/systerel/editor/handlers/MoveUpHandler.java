@@ -15,9 +15,9 @@ import java.util.List;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.documentModel.DocumentMapper;
-import fr.systerel.editor.documentModel.EditorElement;
-import fr.systerel.editor.documentModel.ModelOperations.ModelPosition;
+import fr.systerel.editor.internal.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.documentModel.EditorElement;
+import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
 
 /**
  * @author Thomas Muller

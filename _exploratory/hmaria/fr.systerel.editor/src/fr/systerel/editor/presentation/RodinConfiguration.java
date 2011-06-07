@@ -44,7 +44,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.rodinp.core.IAttributeType;
 
-import fr.systerel.editor.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.documentModel.DocumentMapper;
 
 /**
  *

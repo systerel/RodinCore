@@ -8,11 +8,11 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.documentModel;
+package fr.systerel.editor.internal.documentModel;
 
-import static fr.systerel.editor.documentModel.DocumentElementUtils.getAttributeDescs;
-import static fr.systerel.editor.documentModel.DocumentElementUtils.getElementDesc;
-import static fr.systerel.editor.documentModel.RodinTextStream.MIN_LEVEL;
+import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getAttributeDescs;
+import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getElementDesc;
+import static fr.systerel.editor.internal.documentModel.RodinTextStream.MIN_LEVEL;
 import static fr.systerel.editor.presentation.RodinConfiguration.BOLD_IMPLICIT_LABEL_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.BOLD_LABEL_TYPE;
 import static fr.systerel.editor.presentation.RodinConfiguration.COMMENT_TYPE;

@@ -24,11 +24,11 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.documentModel.DocumentMapper;
-import fr.systerel.editor.documentModel.ModelOperations.ModelPosition;
-import fr.systerel.editor.documentModel.ModelOperations.Move;
 import fr.systerel.editor.editors.RodinEditor;
 import fr.systerel.editor.editors.SelectionController;
+import fr.systerel.editor.internal.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
+import fr.systerel.editor.internal.documentModel.ModelOperations.Move;
 
 /**
  * @author Thomas Muller

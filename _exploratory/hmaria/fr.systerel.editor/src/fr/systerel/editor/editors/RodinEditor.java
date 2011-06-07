@@ -56,13 +56,13 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 import fr.systerel.editor.EditorPlugin;
-import fr.systerel.editor.documentModel.DocumentMapper;
-import fr.systerel.editor.documentModel.Interval;
-import fr.systerel.editor.documentModel.MarkerAnnotationPosition;
-import fr.systerel.editor.documentModel.RodinDocumentProvider;
 import fr.systerel.editor.internal.actions.HistoryAction;
 import fr.systerel.editor.internal.actions.HistoryAction.Redo;
 import fr.systerel.editor.internal.actions.HistoryAction.Undo;
+import fr.systerel.editor.internal.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.documentModel.Interval;
+import fr.systerel.editor.internal.documentModel.MarkerAnnotationPosition;
+import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
 import fr.systerel.editor.operations.OperationFactory;
 import fr.systerel.editor.operations.RodinFileUndoContext;
 import fr.systerel.editor.presentation.ColorManager;

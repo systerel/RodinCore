@@ -30,10 +30,10 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
-import fr.systerel.editor.documentModel.DocumentMapper;
-import fr.systerel.editor.documentModel.ModelOperations.ModelPosition;
-import fr.systerel.editor.documentModel.ModelOperations.Move;
-import fr.systerel.editor.documentModel.RodinDocumentProvider;
+import fr.systerel.editor.internal.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
+import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
+import fr.systerel.editor.internal.documentModel.ModelOperations.Move;
 
 /**
  * @author Nicolas Beauger

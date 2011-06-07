@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.documentModel;
+package fr.systerel.editor.internal.documentModel;
 
 import java.util.List;
 

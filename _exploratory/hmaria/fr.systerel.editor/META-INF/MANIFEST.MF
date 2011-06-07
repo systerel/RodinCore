@@ -22,4 +22,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: fr.systerel.editor.documentModel;x-friends:="fr.systerel.editor.tests"
+Export-Package: fr.systerel.editor.internal.documentModel;x-friends:="fr.systerel.editor.tests"

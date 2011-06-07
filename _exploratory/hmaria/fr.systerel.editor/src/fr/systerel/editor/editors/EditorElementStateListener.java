@@ -12,7 +12,7 @@ package fr.systerel.editor.editors;
 
 import org.eclipse.ui.texteditor.IElementStateListener;
 
-import fr.systerel.editor.documentModel.RodinDocumentProvider;
+import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
 
 /**
  * A listener for editor input content changes.
