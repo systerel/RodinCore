@@ -54,11 +54,9 @@ public class RodinResource extends ResourceImpl implements ILFile {
 		if ("platform".equals(uri.scheme())) {
 			projectName = URI.decode(uri.segment(segmentCount - 2));
 			final String fileName = URI.decode(uri.segment(segmentCount - 1));
-			final String localfilename = fileName.replace(".ebum", ".bum")
-					.replace(".ebuc", ".buc");
 			rodinProject = RodinCore.getRodinDB().getRodinProject(projectName);
 			project = (IProject) rodinProject.getCorrespondingResource();
-			rodinFile = rodinProject.getRodinFile(localfilename);
+			rodinFile = rodinProject.getRodinFile(fileName);
 			file = rodinFile.getResource();
 		} else if (null == uri.scheme()) {
 			projectName = null;
