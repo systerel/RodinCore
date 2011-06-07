@@ -74,26 +74,6 @@ public class SelectionController implements MouseListener, VerifyListener,
 	}
 	
 	/**
-	 * Checks if a selection is valid.
-	 * 
-	 * @param offset
-	 *            The offset to check, in model coordinates
-	 * @param length
-	 * @return <code>true</code> if the selection is valid, <code>false</code>
-	 *         otherwise.
-	 */
-	public boolean isValidSelection(int offset, int length) {
-		int modelOffset = viewer.widgetOffset2ModelOffset(offset);
-		Interval[] intervals = mapper.findIntervals(modelOffset, length);
-		if (intervals.length == 1) {
-			return true;
-		}
-		final EditorElement element = mapper
-				.findEditorElement(modelOffset, length);
-		return element != null;
-	}
-
-	/**
 	 * Decides whether a given position should be editable or not.
 	 * 
 	 * @param offset

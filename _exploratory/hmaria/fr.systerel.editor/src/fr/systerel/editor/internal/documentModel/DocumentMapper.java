@@ -57,7 +57,6 @@ public class DocumentMapper {
 
 	public static boolean DEBUG;
 
-	private static final Interval[] NO_INTERVAL = new Interval[0];
 	private ArrayList<Interval> intervals = new ArrayList<Interval>();
 	private ILElement root;
 	private Interval previous;
@@ -106,59 +105,6 @@ public class DocumentMapper {
 			}
 		}
 
-	}
-	
-	/**
-	 * Adds an interval to the document mapper just after a given interval. If
-	 * the given previous interval is not found in the list, the new interval is
-	 * added at the end of the list. The intervals must be added in the order
-	 * they appear in the text!
-	 * 
-	 * @param interval
-	 * @param previous
-	 * @throws Exception
-	 */
-	private void addIntervalBefore(Interval interval, Interval next) {
-		final int index = intervals.indexOf(next);
-		if (index > 0 && index <= intervals.size()) {
-			intervals.add(index - 1, interval);
-		} else {
-			try {
-				addInterval(interval);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * returns all intervals that are contained in the range starting from
-	 * offset
-	 * 
-	 * @param offset
-	 *            The offset of the range.
-	 * @param length
-	 *            The length of the range
-	 * @return All intervals that are found in the range.
-	 */
-	public Interval[] findIntervals(int offset, int length) {
-		int fromInterval = findFirstIntervalIndex(offset);
-		if (fromInterval < 0 && intervals.isEmpty()) {
-			return NO_INTERVAL;
-		}
-		final int endIndex = offset + length;
-		fromInterval = Math.max(0, fromInterval);
-		return intervalsStartingBefore(fromInterval, endIndex);
-	}
-
-	private Interval[] intervalsStartingBefore(int fromInterval, int endIndex) {
-		final List<Interval> results = new ArrayList<Interval>();
-		for (int i = fromInterval; i< intervals.size(); i++) {
-			if (intervals.get(i).getOffset() <= endIndex) {
-				results.add(intervals.get(i));
-			}
-		}
-		return results.toArray(new Interval[results.size()]);
 	}
 	
 	public Interval findInterval(int offset) {
