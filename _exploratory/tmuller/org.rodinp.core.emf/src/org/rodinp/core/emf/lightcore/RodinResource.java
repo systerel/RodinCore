@@ -26,6 +26,7 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
+import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -209,4 +210,11 @@ public class RodinResource extends ResourceImpl implements ILFile {
 		root.eSetDeliver(false);
 		root.delete();
 	}
+
+	@Override
+	public void addEContentAdapter(EContentAdapter adapter) {
+		if (eAdapters != null && !eAdapters.contains(adapter))
+			eAdapters.add(adapter);
+	}
+	
 }

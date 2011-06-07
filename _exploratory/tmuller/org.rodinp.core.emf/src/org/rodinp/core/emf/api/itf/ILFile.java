@@ -10,18 +10,26 @@
  *******************************************************************************/
 package org.rodinp.core.emf.api.itf;
 
+import java.io.IOException;
+import java.util.Map;
+
+import org.eclipse.emf.ecore.util.EContentAdapter;
 
 /**
  * @author Nicolas Beauger
  */
 public interface ILFile {
 
+	void load(final Map<?, ?> options) throws IOException;
+
 	ILElement getRoot();
-	
+
 	boolean isEmpty();
-	
+
 	void save();
 
 	void unloadResource();
 	
+	void addEContentAdapter(EContentAdapter adapter);
+
 }

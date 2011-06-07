@@ -18,8 +18,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -35,7 +33,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
-import org.rodinp.core.emf.lightcore.RodinResource;
+import org.rodinp.core.emf.api.itf.ILFileFactory;
 
 import fr.systerel.editor.editors.RodinEditor;
 import fr.systerel.editor.presentation.RodinConfiguration;
@@ -71,18 +69,14 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	 * This is the method called to load a resource into the editing domain's
 	 * resource set based on the editor's input.
 	 */
-	public Resource getResource(IFile file) {
-		final String projectName = file.getProject().getName();
-		final URI resourceURI = URI.createPlatformResourceURI(projectName + "/"
-				+ file.getName(), true);
-		final Resource resource = new RodinResource();
-		resource.setURI(resourceURI);
+	public ILFile getResource(IFile file) {
+		final ILFile resource = ILFileFactory.INSTANCE.createILFile(file);
 		try {
 			resource.load(null);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		resource.eAdapters().add(elementPresentationChangeAdapter);
+		resource.addEContentAdapter(elementPresentationChangeAdapter);
 		return resource;
 	}
 

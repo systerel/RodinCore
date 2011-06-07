@@ -18,11 +18,14 @@ import java.util.HashSet;
 import java.util.Map;
 
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.rodinp.core.emf.api.itf.ILFile;
+import org.rodinp.core.emf.api.itf.ILFileFactory;
 
-public class RodinResourceFactory implements Resource.Factory {
+public class RodinResourceFactory implements Resource.Factory, ILFileFactory {
 	/**
 	 * A map of {@link Resource}s which are handled, i.e., created by this
 	 * factory.
@@ -93,6 +96,19 @@ public class RodinResourceFactory implements Resource.Factory {
 		}
 
 		return null;
+	}
+
+	@Override
+	public ILFile createILFile(IFile file) {
+		final String projectName = file.getProject().getName();
+		final URI resourceURI = URI.createPlatformResourceURI(projectName + "/"
+				+ file.getName(), true);
+		return (ILFile) createResource(resourceURI);
+	}
+
+	@Override
+	public void removeILFile(ILFile file) {
+		removeResource((RodinResource) file);
 	}
 	
 }
