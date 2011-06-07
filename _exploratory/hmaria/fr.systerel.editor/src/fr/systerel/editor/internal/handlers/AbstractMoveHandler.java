@@ -17,8 +17,6 @@ import java.util.List;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.handlers.HandlerUtil;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -37,14 +35,14 @@ public abstract class AbstractMoveHandler extends AbstractEditorHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IEditorPart editor = HandlerUtil.getActiveEditor(event);
-		if (!(editor instanceof RodinEditor)) {
+		final RodinEditor rEditor = getActiveRodinEditor(event);
+		if (rEditor == null) {
 			return null;
 		}
-		final RodinEditor rEditor = (RodinEditor) editor;
 		final SelectionController selController = rEditor
 				.getSelectionController();
 		if (!selController.hasSelectedElements()) {
+			// TODO expand selection
 			return null; // nothing to move up
 		}
 		final ILElement[] selected = selController.getSelectedElements();
@@ -58,7 +56,7 @@ public abstract class AbstractMoveHandler extends AbstractEditorHandler {
 			return null;
 		}
 		new Move(pos).perform(asList(selected));
-		rEditor.resync(null);
+		rEditor.resync(null); // FIXME the selection is no more visible afterwards 
 		return null;
 	}
 

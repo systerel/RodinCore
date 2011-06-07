@@ -22,7 +22,7 @@ public class CutHandler extends AbstractEditorHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final RodinEditor editor = getActiveRodinEditor();
+		final RodinEditor editor = getActiveRodinEditor(event);
 		if (editor == null) {
 			return null;
 		}
