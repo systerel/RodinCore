@@ -20,8 +20,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.editors.text.EditorsUI;
 
-import fr.systerel.editor.operations.History;
-import fr.systerel.editor.operations.RodinFileUndoContext;
+import fr.systerel.editor.internal.operations.History;
+import fr.systerel.editor.internal.operations.RodinFileUndoContext;
 
 /**
  *

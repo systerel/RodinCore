@@ -23,8 +23,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.editors.RodinEditor;
-import fr.systerel.editor.operations.History;
-import fr.systerel.editor.operations.OperationFactory;
+import fr.systerel.editor.internal.operations.History;
+import fr.systerel.editor.internal.operations.OperationFactory;
 
 /**
  * Common protocol for classes that manipulate the history within an event-B

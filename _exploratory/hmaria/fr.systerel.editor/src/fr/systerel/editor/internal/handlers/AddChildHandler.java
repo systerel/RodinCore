@@ -25,9 +25,9 @@ import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
-import fr.systerel.editor.operations.AtomicOperation;
-import fr.systerel.editor.operations.History;
-import fr.systerel.editor.operations.OperationFactory;
+import fr.systerel.editor.internal.operations.AtomicOperation;
+import fr.systerel.editor.internal.operations.History;
+import fr.systerel.editor.internal.operations.OperationFactory;
 
 public class AddChildHandler extends AbstractEditionHandler {
 

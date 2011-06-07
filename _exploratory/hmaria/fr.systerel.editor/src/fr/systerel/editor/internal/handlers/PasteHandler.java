@@ -10,8 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import static fr.systerel.editor.operations.OperationUtils.copyElements;
-import static fr.systerel.editor.operations.OperationUtils.showError;
+import static fr.systerel.editor.internal.operations.OperationUtils.copyElements;
+import static fr.systerel.editor.internal.operations.OperationUtils.showError;
 import static org.eventb.internal.ui.utils.Messages.title_nothingToPaste;
 
 import org.eclipse.swt.dnd.Clipboard;

@@ -63,8 +63,8 @@ import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.documentModel.MarkerAnnotationPosition;
 import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
-import fr.systerel.editor.operations.OperationFactory;
-import fr.systerel.editor.operations.RodinFileUndoContext;
+import fr.systerel.editor.internal.operations.OperationFactory;
+import fr.systerel.editor.internal.operations.RodinFileUndoContext;
 import fr.systerel.editor.presentation.ColorManager;
 import fr.systerel.editor.presentation.RodinConfiguration;
 

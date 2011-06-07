@@ -18,8 +18,8 @@ import org.rodinp.core.IInternalElementType;
 
 import fr.systerel.editor.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.AbstractEditionHandler;
-import fr.systerel.editor.operations.History;
-import fr.systerel.editor.operations.OperationFactory;
+import fr.systerel.editor.internal.operations.History;
+import fr.systerel.editor.internal.operations.OperationFactory;
 
 @SuppressWarnings("restriction")
 public abstract class AbstractRenameElementHandler extends

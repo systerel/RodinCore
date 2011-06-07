@@ -17,9 +17,9 @@ import fr.systerel.editor.editors.RodinEditor;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
-import fr.systerel.editor.operations.AtomicOperation;
-import fr.systerel.editor.operations.History;
-import fr.systerel.editor.operations.OperationFactory;
+import fr.systerel.editor.internal.operations.AtomicOperation;
+import fr.systerel.editor.internal.operations.History;
+import fr.systerel.editor.internal.operations.OperationFactory;
 
 /**
  * Handler to add siblings.

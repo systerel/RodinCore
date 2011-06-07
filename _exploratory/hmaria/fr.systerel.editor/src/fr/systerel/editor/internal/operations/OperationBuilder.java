@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.operations;
+package fr.systerel.editor.internal.operations;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
