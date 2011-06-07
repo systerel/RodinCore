@@ -133,6 +133,9 @@ public abstract class AbstractMoveHandler extends AbstractEditorHandler {
 		if (type == null)
 			return false;
 		final ILElement parent = getParent(selection);
+		if (parent == null) {
+			return false;
+		}
 		final List<ILElement> cot = parent
 				.getChildrenOfType((IInternalElementType<?>) type);
 		final List<ILElement> al = Arrays.asList(selection);
