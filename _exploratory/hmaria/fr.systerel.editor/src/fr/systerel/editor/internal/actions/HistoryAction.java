@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.actions;
+package fr.systerel.editor.internal.actions;
 
 import static org.eclipse.ui.actions.ActionFactory.REDO;
 import static org.eclipse.ui.actions.ActionFactory.UNDO;

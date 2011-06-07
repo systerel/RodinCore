@@ -9,23 +9,27 @@
  *     Systerel - initial API and implementation
   *******************************************************************************/
 
-package fr.systerel.editor.actions;
+package fr.systerel.editor.internal.actions;
 
 import org.eclipse.jface.action.Action;
-
-import fr.systerel.editor.editors.RodinEditor;
+import org.eclipse.swt.custom.StyledText;
 
 /**
+ * Wrapper type for text widget edit actions.
  *
  */
-public class RodinEditorAction extends Action {
+public class StyledTextEditAction extends Action {
 
-	protected RodinEditor editor;
+	private StyledText fTextWidget;
+	private int fAction;
 
-	public RodinEditorAction(RodinEditor editor) {
-		super();
-		this.editor = editor;
+	public StyledTextEditAction(StyledText textWidget, int action) {
+		fTextWidget= textWidget;
+		fAction= action;
 	}
 	
+	public void run() {
+		fTextWidget.invokeAction(fAction);
+	}
 	
 }
