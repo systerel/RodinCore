@@ -16,7 +16,7 @@ import java.util.List;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
+import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 public class EditorElement extends EditorItem {
 

@@ -80,9 +80,9 @@ import fr.systerel.editor.internal.documentModel.RodinTextStream;
 import fr.systerel.editor.internal.operations.AtomicOperation;
 import fr.systerel.editor.internal.operations.History;
 import fr.systerel.editor.internal.operations.OperationFactory;
-import fr.systerel.editor.presentation.IRodinColorConstant;
-import fr.systerel.editor.presentation.RodinConfiguration;
-import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
+import fr.systerel.editor.internal.presentation.IRodinColorConstant;
+import fr.systerel.editor.internal.presentation.RodinConfiguration;
+import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
  * This class manages the little text field that is used to edit an element.

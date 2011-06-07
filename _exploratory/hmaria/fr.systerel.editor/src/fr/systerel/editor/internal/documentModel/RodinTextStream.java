@@ -10,12 +10,12 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
-import static fr.systerel.editor.presentation.RodinConfiguration.COMMENT_HEADER_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.KEYWORD_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.LABEL_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.LEFT_PRESENTATION_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.PRESENTATION_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.getAttributeContentType;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.COMMENT_HEADER_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.KEYWORD_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.LABEL_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.LEFT_PRESENTATION_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.PRESENTATION_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.getAttributeContentType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
+import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
  * A class holding a string builder and computing regions to be processed as

@@ -22,7 +22,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.documentModel.Interval;
-import fr.systerel.editor.presentation.RodinConfiguration;
+import fr.systerel.editor.internal.presentation.RodinConfiguration;
 
 /**
  * Class able to manage the cursors of the editor according to its placement

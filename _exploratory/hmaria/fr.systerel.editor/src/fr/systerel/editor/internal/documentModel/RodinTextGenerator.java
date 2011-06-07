@@ -13,16 +13,16 @@ package fr.systerel.editor.internal.documentModel;
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getAttributeDescs;
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getElementDesc;
 import static fr.systerel.editor.internal.documentModel.RodinTextStream.MIN_LEVEL;
-import static fr.systerel.editor.presentation.RodinConfiguration.BOLD_IMPLICIT_LABEL_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.BOLD_LABEL_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.COMMENT_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.CONTENT_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.IDENTIFIER_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_CONTENT_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.IMPLICIT_LABEL_TYPE;
-import static fr.systerel.editor.presentation.RodinConfiguration.LABEL_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.BOLD_IMPLICIT_LABEL_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.BOLD_LABEL_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.COMMENT_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.CONTENT_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IDENTIFIER_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_CONTENT_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_LABEL_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.LABEL_TYPE;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
@@ -53,7 +53,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
+import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
  * Creates the text for a given root. The intervals and editor elements are

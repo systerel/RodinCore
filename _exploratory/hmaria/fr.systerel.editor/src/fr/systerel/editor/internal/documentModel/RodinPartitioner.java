@@ -27,8 +27,8 @@ import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 
-import fr.systerel.editor.presentation.RodinConfiguration;
-import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
+import fr.systerel.editor.internal.presentation.RodinConfiguration;
+import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
  * Partitions a document according to the intervals. Parts of this class are

@@ -13,8 +13,8 @@ package fr.systerel.editor.internal.documentModel;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.presentation.RodinConfiguration;
-import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
+import fr.systerel.editor.internal.presentation.RodinConfiguration;
+import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
  * Material needed to build an interval in the Rodin Editor document.

@@ -40,8 +40,8 @@ import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
-import fr.systerel.editor.presentation.RodinConfiguration;
-import fr.systerel.editor.presentation.RodinConfiguration.ContentType;
+import fr.systerel.editor.internal.presentation.RodinConfiguration;
+import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
  * Maps <code>Intervals</code> to a document.

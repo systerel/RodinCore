@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
   *******************************************************************************/
-package fr.systerel.editor.presentation;
+package fr.systerel.editor.internal.presentation;
 
 import java.util.HashMap;
 import java.util.Iterator;

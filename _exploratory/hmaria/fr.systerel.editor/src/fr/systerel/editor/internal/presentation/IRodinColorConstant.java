@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 
-package fr.systerel.editor.presentation;
+package fr.systerel.editor.internal.presentation;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;

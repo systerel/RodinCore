@@ -8,28 +8,28 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.presentation;
+package fr.systerel.editor.internal.presentation;
 
-import static fr.systerel.editor.presentation.IRodinColorConstant.ATTRIBUTE;
-import static fr.systerel.editor.presentation.IRodinColorConstant.COMMENT;
-import static fr.systerel.editor.presentation.IRodinColorConstant.COMMENT_DEBUG_BG;
-import static fr.systerel.editor.presentation.IRodinColorConstant.COMMENT_HEADER;
-import static fr.systerel.editor.presentation.IRodinColorConstant.COMMENT_HEADER_DEBUG_BG;
-import static fr.systerel.editor.presentation.IRodinColorConstant.CONTENT;
-import static fr.systerel.editor.presentation.IRodinColorConstant.CONTENT_DEBUG_BG;
-import static fr.systerel.editor.presentation.IRodinColorConstant.DEFAULT;
-import static fr.systerel.editor.presentation.IRodinColorConstant.IDENTIFIER;
-import static fr.systerel.editor.presentation.IRodinColorConstant.IDENTIFIER_DEBUG_BG;
-import static fr.systerel.editor.presentation.IRodinColorConstant.IMPLICIT_ATTRIBUTE;
-import static fr.systerel.editor.presentation.IRodinColorConstant.IMPLICIT_COMMENT;
-import static fr.systerel.editor.presentation.IRodinColorConstant.IMPLICIT_CONTENT;
-import static fr.systerel.editor.presentation.IRodinColorConstant.IMPLICIT_IDENTIFIER;
-import static fr.systerel.editor.presentation.IRodinColorConstant.IMPLICIT_LABEL;
-import static fr.systerel.editor.presentation.IRodinColorConstant.KEYWORD_DEBUG_BG;
-import static fr.systerel.editor.presentation.IRodinColorConstant.LABEL;
-import static fr.systerel.editor.presentation.IRodinColorConstant.LABEL_DEBUG_BG;
-import static fr.systerel.editor.presentation.IRodinColorConstant.SECTION;
-import static fr.systerel.editor.presentation.IRodinColorConstant.SECTION_DEBUG_BG;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.ATTRIBUTE;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.COMMENT;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.COMMENT_DEBUG_BG;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.COMMENT_HEADER;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.COMMENT_HEADER_DEBUG_BG;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.CONTENT;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.CONTENT_DEBUG_BG;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.DEFAULT;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IDENTIFIER;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IDENTIFIER_DEBUG_BG;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_ATTRIBUTE;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_COMMENT;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_CONTENT;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_IDENTIFIER;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_LABEL;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.KEYWORD_DEBUG_BG;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.LABEL;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.LABEL_DEBUG_BG;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.SECTION;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.SECTION_DEBUG_BG;
 
 import java.util.HashMap;
 import java.util.Map;
