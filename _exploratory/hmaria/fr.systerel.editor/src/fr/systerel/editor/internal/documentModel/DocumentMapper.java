@@ -348,7 +348,7 @@ public class DocumentMapper {
 	public Interval findInterval(IRodinElement element) {
 		if (element == null)
 			return null;
-		final EditorElement editorItem = editorElements.get(element);
+		final EditorElement editorItem = findEditorElement(element);
 		if (editorItem != null) {
 			final List<Interval> itemIntervals = editorItem.getIntervals();
 			if (itemIntervals.size() > 0) {
@@ -360,7 +360,7 @@ public class DocumentMapper {
 	
 	public EditorElement findItemContaining(int offset) {
 		for (EditorElement element : editorElements.getItems()) {
-			if (element.contains(offset) && element instanceof EditorElement) {
+			if (element.contains(offset)) {
 				return element;
 			}
 		}
@@ -368,7 +368,7 @@ public class DocumentMapper {
 	}
 
 	public Point getEnclosingPoint(ILElement element) {
-		final EditorElement editorItem = editorElements.get(element.getElement());
+		final EditorElement editorItem = findEditorElement(element);
 		
 		if (editorItem == null) return null;
 		return getEnclosingPoint(editorItem);
@@ -419,7 +419,7 @@ public class DocumentMapper {
 	 * @return the first interval that belongs to the given element
 	 */
 	private Interval findInterval(ILElement element, ContentType contentType) {
-		final EditorElement item = editorElements.get(element.getElement());
+		final EditorElement item = findEditorElement(element);
 		return item.getInterval(contentType);
 	}
 
@@ -693,8 +693,7 @@ public class DocumentMapper {
 	
 	
 	public EditorElement findEditorElement(ILElement element) {
-		final IInternalElement el = element.getElement();
-		return findEditorElement(el);
+		return findEditorElement(element.getElement());
 	}
 
 	public EditorElement findEditorElement(IRodinElement el) {
@@ -797,8 +796,7 @@ public class DocumentMapper {
 			final Interval interval = intervals.get(findIntervalIndex);
 			final ILElement element = interval.getElement();
 			if (element != null) {
-				final EditorElement editElem = editorElements.get(element
-						.getElement());
+				final EditorElement editElem = findEditorElement(element);
 				final Interval interAfter = findEditableIntervalAfter(editElem
 						.getOffset() + editElem.getLength());
 				if (interAfter == null) {
