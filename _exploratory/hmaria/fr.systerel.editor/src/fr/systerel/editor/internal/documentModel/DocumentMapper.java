@@ -742,13 +742,15 @@ public class DocumentMapper {
 		return new ModelPosition(parent, null);
 	}
 
-	public ILElement findElementBefore(int offset, IElementType<?> type) {
+	// TODO with a given parent rather than a type
+	private ILElement findElementBefore(int offset, IElementType<?> type) {
 		final Interval intervalBefore = findEditableIntervalBefore(offset);
 		if (intervalBefore == null)
 			return null;
 		return findElementAt(intervalBefore.getOffset(), type);
 	}
 
+	// TODO with a given parent rather than a type
 	private ILElement findElementAfter(int offset, IElementType<?> type) {
 		final Interval intervalAfter = findEditableIntervalAfter(offset);
 		if (intervalAfter == null)
