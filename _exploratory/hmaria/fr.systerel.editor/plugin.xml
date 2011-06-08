@@ -265,7 +265,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="fr.systerel.editor.internal.handlers.SelectUpHandler"
+            class="fr.systerel.editor.internal.handlers.SelectDownHandler"
             commandId="org.eclipse.ui.edit.text.select.lineDown">
          <activeWhen>
             <with

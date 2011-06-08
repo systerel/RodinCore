@@ -369,7 +369,7 @@ public class DocumentMapper {
 		return null;
 	}
 
-	private Point getEnclosingRange(ILElement element) {
+	public Point getEnclosingRange(ILElement element) {
 		final EditorElement editorItem = editorElements.get(element.getElement());
 		
 		if (editorItem == null) return null;
