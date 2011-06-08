@@ -735,7 +735,7 @@ public class DocumentMapper {
 			ILElement parent, IElementType<?> siblingType) {
 		final ILElement elemAfter = findElementAfter(offset, siblingType);
 		if (elemAfter != null) {
-			final Point er = getEnclosingRange(findEditorElement(elemAfter));
+			final Point er = getEnclosingRange(elemAfter);
 			final ILElement nextS = findElementAfter(er.y + 1, siblingType);
 			return new ModelPosition(parent, nextS);
 		}

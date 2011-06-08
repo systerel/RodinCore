@@ -17,7 +17,6 @@ import org.rodinp.core.IElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
-import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
 
 /**
@@ -44,10 +43,9 @@ public class MoveDownHandler extends AbstractMoveHandler {
 			DocumentMapper mapper) {
 		int oo = -1;
 		for (ILElement e : elems) {
-			final EditorElement eElement = mapper.findEditorElement(e);
-			if (eElement == null)
+			final Point enclosingRange = mapper.getEnclosingRange(e);
+			if (enclosingRange == null)
 				continue;
-			final Point enclosingRange = mapper.getEnclosingRange(eElement);
 			final int o = enclosingRange.y + 1;
 			if (o > oo || oo == -1) {
 				oo = o;
