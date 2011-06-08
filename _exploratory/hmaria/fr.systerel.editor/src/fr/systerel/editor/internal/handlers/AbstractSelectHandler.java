@@ -13,10 +13,8 @@ package fr.systerel.editor.internal.handlers;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.text.Position;
-import org.eclipse.swt.graphics.Point;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.editors.SelectionController;
 
@@ -48,11 +46,7 @@ public abstract class AbstractSelectHandler extends AbstractEditorHandler {
 			if (selController.isSelected(sibling)) {
 				// deselect current
 				selController.toggleSelection(element);
-				final DocumentMapper mapper = rEditor.getDocumentMapper();
-				final Point siblingRange = mapper.getEnclosingRange(sibling);
-				final int start = siblingRange.x;
-				final int length = siblingRange.y - start + 1;
-				reveal = new Position(start, length);
+				reveal = rEditor.getDocumentMapper().getEnclosingPosition(sibling);
 			} else {
 				// select sibling
 				reveal = selController.toggleSelection(sibling);

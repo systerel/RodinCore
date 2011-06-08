@@ -27,8 +27,8 @@ public class SelectDownHandler extends AbstractSelectHandler {
 	@Override
 	protected ILElement getSibling(RodinEditor rEditor, ILElement element) {
 		final DocumentMapper mapper = rEditor.getDocumentMapper();
-		final Point range = mapper.getEnclosingRange(element);
-		final int end = range.y +1;
+		final Point range = mapper.getEnclosingPoint(element);
+		final int end = range.y + 1;
 		final Interval intervalAfter = mapper.findEditableIntervalAfter(end);
 		if (intervalAfter == null) {
 			return null;

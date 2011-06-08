@@ -330,11 +330,9 @@ public class DocumentMapper {
 
 	private void updateElementFolding() {
 		for (EditorElement el : editorElements.getItems()) {
-			final Point range = getEnclosingRange(el);
+			final Position range = getEnclosingPosition(el);
 			if (el.isFoldable() && range != null) {
-				final int foldStart = range.x;
-				final int foldLength = range.y - foldStart + 1;
-				el.setFoldingPosition(foldStart, foldLength);
+				el.setFoldingPosition(range.offset, range.length);
 			} else {
 				el.clearFolding();
 			}
@@ -369,26 +367,40 @@ public class DocumentMapper {
 		return null;
 	}
 
-	public Point getEnclosingRange(ILElement element) {
+	public Point getEnclosingPoint(ILElement element) {
 		final EditorElement editorItem = editorElements.get(element.getElement());
 		
 		if (editorItem == null) return null;
-		return getEnclosingRange(editorItem);
+		return getEnclosingPoint(editorItem);
 	}
 
-	// TODO return a Position
-	public Point getEnclosingRange(EditorElement editorItem) {
+	public Point getEnclosingPoint(EditorElement editorItem) {
 		int start = editorItem.getOffset();
 		int end = start + editorItem.getLength();
 		if (start < 0 || end < 0) return null;
 		final ILElement el = editorItem.getLightElement();
 		for (ILElement child : el.getChildren()) {
-			final Point childRange = getEnclosingRange(child);
+			final Point childRange = getEnclosingPoint(child);
 			if (childRange == null) continue;
 			start = Math.min(start, childRange.x);
 			end = Math.max(end, childRange.y);
 		}
 		return new Point(start, end);
+	}
+	
+	private static Position toPosition(Point p) {
+		if (p == null) return null;
+		final int start = p.x;
+		final int length = p.y - start + 1;
+		return new Position(start, length);
+	}
+	
+	public Position getEnclosingPosition(ILElement element) {
+		return toPosition(getEnclosingPoint(element));
+	}
+	
+	public Position getEnclosingPosition(EditorElement element) {
+		return toPosition(getEnclosingPoint(element));
 	}
 	
 	/**
@@ -735,7 +747,7 @@ public class DocumentMapper {
 			ILElement parent, IElementType<?> siblingType) {
 		final ILElement elemAfter = findElementAfter(offset, siblingType);
 		if (elemAfter != null) {
-			final Point er = getEnclosingRange(elemAfter);
+			final Point er = getEnclosingPoint(elemAfter);
 			final ILElement nextS = findElementAfter(er.y + 1, siblingType);
 			return new ModelPosition(parent, nextS);
 		}

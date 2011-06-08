@@ -97,19 +97,16 @@ public class SelectionController implements MouseListener, VerifyListener,
 	private Position toggleSelection(EditorElement editElem) {
 		final ILElement element = editElem.getLightElement();
 		if (element.isImplicit()) return null;
-		final Point enclosingRange = mapper.getEnclosingRange(editElem);
+		final Position enclosingRange = mapper.getEnclosingPosition(editElem);
 		if (enclosingRange == null) return null;
 		
-		final int start = enclosingRange.x;
-		final int length = enclosingRange.y - start + 1;
-		final Position position = new Position(start, length);
 		// TODO position is only useful if element is not selected
-		selection.toggle(element, position);
+		selection.toggle(element, enclosingRange);
 		//styledText.setSelection(start);
 		if (DEBUG)
 			System.out.println("selected " + element.getElement() + " in "
 					+ enclosingRange);
-		return position;
+		return enclosingRange;
 	}
 
 	public ILElement getSelectionAt(int offset) {
@@ -175,14 +172,11 @@ public class SelectionController implements MouseListener, VerifyListener,
 			final ILElement element = editorElem.getLightElement();
 			if (element.isImplicit())
 				return;
-			final Point enclosingRange = mapper.getEnclosingRange(editorElem);
+			final Position enclosingRange = mapper.getEnclosingPosition(editorElem);
 			if (enclosingRange == null)
 				return;
 
-			final int start = enclosingRange.x;
-			final int length = enclosingRange.y - start + 1;
-			final Position position = new Position(start, length);
-			selection.add(element, position);
+			selection.add(element, enclosingRange);
 			// styledText.setSelection(start);
 			if (DEBUG)
 				System.out.println("selected " + element.getElement() + " in "

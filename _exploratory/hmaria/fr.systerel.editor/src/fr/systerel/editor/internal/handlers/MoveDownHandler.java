@@ -43,7 +43,7 @@ public class MoveDownHandler extends AbstractMoveHandler {
 			DocumentMapper mapper) {
 		int oo = -1;
 		for (ILElement e : elems) {
-			final Point enclosingRange = mapper.getEnclosingRange(e);
+			final Point enclosingRange = mapper.getEnclosingPoint(e);
 			if (enclosingRange == null)
 				continue;
 			final int o = enclosingRange.y + 1;
