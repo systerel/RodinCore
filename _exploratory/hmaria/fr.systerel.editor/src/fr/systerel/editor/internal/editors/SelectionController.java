@@ -81,24 +81,43 @@ public class SelectionController implements MouseListener, VerifyListener,
 		toggleSelection(offset);
 	}
 	
-	private void toggleSelection(int offset) {
+	public Position toggleSelection(int offset) {
 		// select the enclosing element
 		final EditorElement editElem = mapper.findItemContaining(offset);
-		if (editElem == null) return;
+		if (editElem == null) return null;
+		return toggleSelection(editElem);
+	}
+
+	public Position toggleSelection(ILElement element) {
+		final EditorElement editElem = mapper.findEditorElement(element);
+		if (editElem == null) return null;
+		return toggleSelection(editElem);
+	}
+	
+	private Position toggleSelection(EditorElement editElem) {
 		final ILElement element = editElem.getLightElement();
-		if (element.isImplicit()) return;
+		if (element.isImplicit()) return null;
 		final Point enclosingRange = mapper.getEnclosingRange(editElem);
-		if (enclosingRange == null) return;
+		if (enclosingRange == null) return null;
 		
 		final int start = enclosingRange.x;
 		final int length = enclosingRange.y - start + 1;
 		final Position position = new Position(start, length);
+		// TODO position is only useful if element is not selected
 		selection.toggle(element, position);
 		//styledText.setSelection(start);
 		if (DEBUG)
 			System.out.println("selected " + element.getElement() + " in "
 					+ enclosingRange);
+		return position;
+	}
 
+	public ILElement getSelectionAt(int offset) {
+		return selection.getSelectionAt(offset);
+	}
+	
+	public boolean isSelected(ILElement element) {
+		return selection.contains(element); // FIXME or contains a parent ?
 	}
 
 	private int getModelCaretOffset() {
