@@ -236,6 +236,62 @@
             class="fr.systerel.editor.internal.handlers.refactoring.AutoAxiomLabelRenaming"
             commandId="fr.systerel.editor.rename.axiom">
       </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.SelectUpHandler"
+            commandId="org.eclipse.ui.edit.text.select.lineUp">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.SelectUpHandler"
+            commandId="org.eclipse.ui.edit.text.select.lineDown">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -444,6 +500,18 @@
             contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M3+N">
+      </key>
+      <key
+            commandId="org.eclipse.ui.edit.text.select.lineUp"
+            contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+ARROW_UP">
+      </key>
+      <key
+            commandId="org.eclipse.ui.edit.text.select.lineDown"
+            contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+ARROW_DOWN">
       </key>
    </extension>
    <extension

@@ -190,6 +190,8 @@ public class RodinEditor extends TextEditor {
 		removeAction(ITextEditorActionConstants.SHIFT_LEFT);
 		removeAction(ITextEditorActionConstants.MOVE_LINE_DOWN);
 		removeAction(ITextEditorActionConstants.MOVE_LINE_UP);
+		removeAction("org.eclipse.ui.edit.text.select.lineUp");
+		removeAction("org.eclipse.ui.edit.text.select.lineDown");
 	}
 
 	private void removeAction(String actionId) {
@@ -360,6 +362,10 @@ public class RodinEditor extends TextEditor {
 		}
 	}
 
+	public void reveal(int offset, int length) {
+		selectAndReveal(offset, 0, offset, length);
+	}
+	
 	public DocumentMapper getDocumentMapper() {
 		return mapper;
 	}
