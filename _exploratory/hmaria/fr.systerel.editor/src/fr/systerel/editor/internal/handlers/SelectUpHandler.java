@@ -10,60 +10,23 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.text.Position;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.RodinEditor;
-import fr.systerel.editor.internal.editors.SelectionController;
 
 /**
  * @author Nicolas Beauger
  */
-public class SelectUpHandler extends AbstractEditorHandler {
-
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final RodinEditor rEditor = getActiveRodinEditor(event);
-		if (rEditor == null) {
-			return null;
-		}
-		final SelectionController selController = rEditor
-				.getSelectionController();
-		final int offset = rEditor.getCurrentOffset();
-		final ILElement element = selController.getSelectionAt(offset);
-		final Position reveal;
-		if (element == null) {
-			// not selected => expand selection
-			reveal = selController.toggleSelection(offset);
-		} else {
-			final ILElement previous = getPrevious(rEditor, element);
-			if (previous == null) {
-				return null;
-			}
-			if (selController.isSelected(previous)) {
-				// deselect current
-				reveal = selController.toggleSelection(element);
-			} else {
-				// select previous
-				reveal = selController.toggleSelection(previous);
-			}
-		}
-		if (reveal != null) {
-			rEditor.reveal(reveal.offset, reveal.length);
-		}
-		return null;
-	}
+public class SelectUpHandler extends AbstractSelectHandler {
 
 	// TODO move to mapper
 	// get previous sibling (of any type, with same parent, in editor order)
 	// or parent itself
-	private ILElement getPrevious(RodinEditor rEditor, ILElement element) {
+	protected ILElement getSibling(RodinEditor rEditor, ILElement element) {
 		final DocumentMapper mapper = rEditor.getDocumentMapper();
 		final EditorElement editorElement = mapper.findEditorElement(element);
 		final int start = editorElement.getOffset();
