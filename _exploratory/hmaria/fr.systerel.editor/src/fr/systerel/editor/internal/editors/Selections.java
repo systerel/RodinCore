@@ -124,6 +124,12 @@ public class Selections {
 			return indexOf(offset) >= 0;
 		}
 		
+		public ILElement getSelectionAt(int offset) {
+			final int index = indexOf(offset);
+			if (index < 0) return null;
+			return selected.get(index).element;
+		}
+		
 		private int indexOf(ILElement element) {
 			for (int i = 0; i < selected.size(); i++) {
 				final SimpleSelection sel = selected.get(i);
