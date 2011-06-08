@@ -489,7 +489,7 @@ public class DocumentMapper {
 
 	public void elementChanged(ILElement element) {
 		final IInternalElement ie = element.getElement();
-		final EditorElement el = editorElements.get(ie);
+		final EditorElement el = findEditorElement(ie);
 		if (el != null && !ie.exists()) {
 			final List<Interval> intervals = el.getIntervals();
 			if (intervals.size() > 0) {
@@ -690,13 +690,14 @@ public class DocumentMapper {
 		return el.getOffset();
 	}
 	
+	
+	
 	public EditorElement findEditorElement(ILElement element) {
 		final IInternalElement el = element.getElement();
-		for (EditorElement e : editorElements.getItems()) {
-			final IInternalElement ie = e.getLightElement().getElement();
-			if (ie.equals(el))
-				return e;
-		}
+		return findEditorElement(el);
+	}
+
+	public EditorElement findEditorElement(IRodinElement el) {
 		return editorElements.get(el);
 	}
 
