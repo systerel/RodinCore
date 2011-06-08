@@ -51,7 +51,7 @@ public class DisjGoalTacTests {
 	}
 
 	/**
-	 * Ensures that DisjGoalTac succeeds many times.
+	 * Ensures that DisjGoalTac succeeds several times.
 	 */
 	@Test
 	public void applyMany() {
@@ -80,9 +80,7 @@ public class DisjGoalTacTests {
 	 *            the expected tree shape
 	 */
 	private void assertSucceed(final String goalStr, final TreeShape shape) {
-		final IProofTree pt = genProofTree(//
-		goalStr// Goal
-		);
+		final IProofTree pt = genProofTree(goalStr);
 		assertSuccess(pt.getRoot(), shape, tac);
 	}
 
@@ -90,12 +88,11 @@ public class DisjGoalTacTests {
 	 * Assert that the application of the DisjGoalTac on a node made up of one
 	 * goal does not return <code>null</code>.
 	 * 
-	 * @param predStr
+	 * @param goalStr
 	 *            the considered goal in String
 	 */
-	private void assertFails(final String predStr) {
-		final IProofTree pt = genProofTree(predStr // goal
-		);
+	private void assertFails(final String goalStr) {
+		final IProofTree pt = genProofTree(goalStr);
 		assertFailure(pt.getRoot(), tac);
 	}
 

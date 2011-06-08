@@ -1041,7 +1041,7 @@ public class AutoTactics {
 	}
 
 	/**
-	 * Remove disjunction in the goal's root only.
+	 * Replace disjunction occurring at the root of the goal by implication.
 	 * 
 	 * @author Emmanuel Billaud
 	 * @since 2.2
