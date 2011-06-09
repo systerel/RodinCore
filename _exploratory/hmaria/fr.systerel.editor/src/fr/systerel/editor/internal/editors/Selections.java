@@ -65,7 +65,15 @@ public class Selections {
 		
 		private void setBackgroundColor(Position position, Color color) {
 			final int start = position.getOffset();
-			final int length = position.getLength();
+			final int charCount = styledText.getCharCount();
+			if (start > charCount) {
+				return;
+			}
+			int length = position.getLength();
+			final int maxLength = charCount - start;
+			if (length > maxLength) {
+				length = maxLength;
+			}
 			final StyleRange[] styleRanges = styledText.getStyleRanges(start,
 					length);
 			setBackgroundColor(styleRanges, color);
