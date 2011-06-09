@@ -89,12 +89,12 @@ public class Selections {
 		
 		// TODO make a preference
 		private static Color getSelectionBackgroundColorPreference() {
-			return EventBSharedColor.getSystemColor(SWT.COLOR_GREEN);
+			return EventBSharedColor.getSystemColor(SWT.COLOR_GRAY);
 		}
 		
 		// TODO make a preference
 		private static Color getBadSelectionBackgroundColorPreference() {
-			return EventBSharedColor.getSystemColor(SWT.COLOR_RED);
+			return EventBSharedColor.getSystemColor(SWT.COLOR_DARK_YELLOW);
 		}
 	}
 	
