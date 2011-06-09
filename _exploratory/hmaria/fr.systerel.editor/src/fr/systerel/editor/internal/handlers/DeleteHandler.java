@@ -10,10 +10,12 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.RodinEditor;
+import fr.systerel.editor.internal.editors.SelectionController;
 import fr.systerel.editor.internal.operations.AtomicOperation;
 import fr.systerel.editor.internal.operations.History;
 import fr.systerel.editor.internal.operations.OperationFactory;
@@ -25,18 +27,45 @@ public class DeleteHandler extends AbstractEditionHandler {
 
 	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
-		final Interval inter = editor.getDocumentMapper()
-				.findFirstElementIntervalAfter(offset);
-		if (inter == null)
-			return "No element to delete from here.";
-		final ILElement element = inter.getElement();
-		if (element == null || element.isImplicit()) {
-			return "No element to deleted or non deletable element";
+		final SelectionController selection = editor.getSelectionController();
+		final ILElement[] selected = selection.getSelectedElements();
+		final AtomicOperation op;
+		if(selected.length == 0) {
+			op = deleteCurrentElement(editor, offset);
+			if (op == null) {
+				return "No element to delete or non deletable element";
+			}
+		} else {
+			op = deleteElements(selected);
 		}
-		final AtomicOperation op = OperationFactory.deleteElement(element
-				.getElement());
 		History.getInstance().addOperation(op);
 		editor.resync(null);
 		return "Element deleted.";
+	}
+
+	private AtomicOperation deleteElements(ILElement[] selected) {
+		final IInternalElement[] rElements = toIElements(selected);
+		return OperationFactory.deleteElement(rElements, false);
+	}
+	
+	private static IInternalElement[] toIElements(ILElement[] elements) {
+		final IInternalElement[] result = new IInternalElement[elements.length];
+		for (int i = 0; i < elements.length; i++) {
+			final ILElement element = elements[i];
+			result[i] = element.getElement();
+		}
+		return result;
+	}
+
+	private AtomicOperation deleteCurrentElement(RodinEditor editor, int offset) {
+		final Interval inter = editor.getDocumentMapper()
+				.findFirstElementIntervalAfter(offset);
+		if (inter == null)
+			return null;
+		final ILElement element = inter.getElement();
+		if (element == null || element.isImplicit()) {
+			return null;
+		}
+		return OperationFactory.deleteElement(element.getElement());
 	}
 }
