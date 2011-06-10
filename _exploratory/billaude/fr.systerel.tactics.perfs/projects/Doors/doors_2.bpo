@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.poFile org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="CTXHYP" org.eventb.core.poStamp="1">
+<org.eventb.core.poIdentifier name="L" org.eventb.core.type="ℙ(L)"/>
+<org.eventb.core.poIdentifier name="P" org.eventb.core.type="ℙ(P)"/>
+<org.eventb.core.poIdentifier name="aut" org.eventb.core.type="ℙ(P×L)"/>
+<org.eventb.core.poIdentifier name="outside" org.eventb.core.type="L"/>
+<org.eventb.core.poPredicate name="outsidf" org.eventb.core.predicate="aut∈P ↔ L" org.eventb.core.source="/Doors/doors_ctx1.buc|org.eventb.core.contextFile#doors_ctx1|org.eventb.core.axiom#internal_axm1A"/>
+<org.eventb.core.poPredicate name="outsidg" org.eventb.core.predicate="outside∈L" org.eventb.core.source="/Doors/doors_ctx1.buc|org.eventb.core.contextFile#doors_ctx1|org.eventb.core.axiom#internal_axm2A"/>
+<org.eventb.core.poPredicate name="outsidh" org.eventb.core.predicate="P × {outside}⊆aut" org.eventb.core.source="/Doors/doors_ctx1.buc|org.eventb.core.contextFile#doors_ctx1|org.eventb.core.axiom#internal_axm3A"/>
+<org.eventb.core.poPredicate name="outsidi" org.eventb.core.predicate="∃l⦂L·l∈L ∖ {outside}∧P × {l}⊆aut" org.eventb.core.source="/Doors/doors_ctx1.buc|org.eventb.core.contextFile#doors_ctx1|org.eventb.core.axiom#internal_axm4A"/>
+<org.eventb.core.poIdentifier name="com" org.eventb.core.type="ℙ(L×L)"/>
+<org.eventb.core.poIdentifier name="exit" org.eventb.core.type="ℙ(L×L)"/>
+<org.eventb.core.poPredicate name="outsidj" org.eventb.core.predicate="com∈L ↔ L" org.eventb.core.source="/Doors/doors_ctx2.buc|org.eventb.core.contextFile#doors_ctx2|org.eventb.core.axiom#internal_axm1A"/>
+<org.eventb.core.poPredicate name="outsidk" org.eventb.core.predicate="com∩(L ◁ (id ⦂ ℙ(L×L)))=(∅ ⦂ ℙ(L×L))" org.eventb.core.source="/Doors/doors_ctx2.buc|org.eventb.core.contextFile#doors_ctx2|org.eventb.core.axiom#internal_axm2A"/>
+<org.eventb.core.poPredicate name="outsidl" org.eventb.core.predicate="exit∈L ∖ {outside} → L" org.eventb.core.source="/Doors/doors_ctx2.buc|org.eventb.core.contextFile#doors_ctx2|org.eventb.core.axiom#internal_axm3A"/>
+<org.eventb.core.poPredicate name="outsidm" org.eventb.core.predicate="exit⊆com" org.eventb.core.source="/Doors/doors_ctx2.buc|org.eventb.core.contextFile#doors_ctx2|org.eventb.core.axiom#internal_axm4A"/>
+<org.eventb.core.poPredicate name="outsidn" org.eventb.core.predicate="∀s⦂ℙ(L)·s⊆exit∼[s]⇒s=(∅ ⦂ ℙ(L))" org.eventb.core.source="/Doors/doors_ctx2.buc|org.eventb.core.contextFile#doors_ctx2|org.eventb.core.axiom#internal_axm5A"/>
+<org.eventb.core.poPredicate name="outsido" org.eventb.core.predicate="aut ⩥ {outside}⊆aut;exit∼" org.eventb.core.source="/Doors/doors_ctx2.buc|org.eventb.core.contextFile#doors_ctx2|org.eventb.core.axiom#internal_axm6A"/>
+<org.eventb.core.poPredicate name="outsidp" org.eventb.core.predicate="∃l⦂L·l∈L ∖ {outside}∧outside ↦ l∈com∧P × {l}⊆aut" org.eventb.core.source="/Doors/doors_ctx2.buc|org.eventb.core.contextFile#doors_ctx2|org.eventb.core.axiom#internal_axm7A"/>
+<org.eventb.core.poIdentifier name="D" org.eventb.core.type="ℙ(D)"/>
+<org.eventb.core.poIdentifier name="dst" org.eventb.core.type="ℙ(D×L)"/>
+<org.eventb.core.poIdentifier name="org" org.eventb.core.type="ℙ(D×L)"/>
+<org.eventb.core.poPredicate name="outsidq" org.eventb.core.predicate="org∈D → L" org.eventb.core.source="/Doors/doors_ctx3.buc|org.eventb.core.contextFile#doors_ctx3|org.eventb.core.axiom#internal_axm1A"/>
+<org.eventb.core.poPredicate name="outsidr" org.eventb.core.predicate="dst∈D → L" org.eventb.core.source="/Doors/doors_ctx3.buc|org.eventb.core.contextFile#doors_ctx3|org.eventb.core.axiom#internal_axm2A"/>
+<org.eventb.core.poPredicate name="outsids" org.eventb.core.predicate="com=org∼;dst" org.eventb.core.source="/Doors/doors_ctx3.buc|org.eventb.core.contextFile#doors_ctx3|org.eventb.core.axiom#internal_axm3A"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poStamp="5">
+<org.eventb.core.poIdentifier name="dap" org.eventb.core.type="ℙ(P×D)"/>
+<org.eventb.core.poIdentifier name="red" org.eventb.core.type="ℙ(D)"/>
+<org.eventb.core.poIdentifier name="sit" org.eventb.core.type="ℙ(P×L)"/>
+<org.eventb.core.poPredicate name="siu" org.eventb.core.predicate="sit∈P → L" org.eventb.core.source="/Doors/doors_0.bum|org.eventb.core.machineFile#doors_0|org.eventb.core.invariant#internal_inv1I"/>
+<org.eventb.core.poPredicate name="siv" org.eventb.core.predicate="sit⊆aut" org.eventb.core.source="/Doors/doors_0.bum|org.eventb.core.machineFile#doors_0|org.eventb.core.invariant#internal_inv2I"/>
+<org.eventb.core.poPredicate name="siw" org.eventb.core.predicate="∃p⦂P,l⦂L·p ↦ l∈aut∧sit(p)≠l" org.eventb.core.source="/Doors/doors_0.bum|org.eventb.core.machineFile#doors_0|org.eventb.core.invariant#internal_sees2"/>
+<org.eventb.core.poPredicate name="six" org.eventb.core.predicate="∃q⦂P,m⦂L·q ↦ m∈aut∧sit(q) ↦ m∈com" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.invariant#internal_refines2"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poSequent name="INITIALISATION/inv1/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx:"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(∅ ⦂ ℙ(P×D))∈P ⤔ D" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv1I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt1"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt1"/>
+<org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv1I"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#INITIALISATION\/inv1\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD0"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="INITIALISATION/inv2/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx:"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(∅ ⦂ ℙ(P×D));org⊆P × {outside}" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv2I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt1"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt1"/>
+<org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv2I"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#INITIALISATION\/inv2\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD1"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="INITIALISATION/inv3/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx:"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(∅ ⦂ ℙ(P×D));dst⊆aut" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv3I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt1"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt1"/>
+<org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv3I"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#INITIALISATION\/inv3\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD2"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="INITIALISATION/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  establishment" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx:"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(∅ ⦂ ℙ(D))∩ran(∅ ⦂ ℙ(P×D))=(∅ ⦂ ℙ(D))" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt1"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt1"/>
+<org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#INITIALISATION\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD3"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poPredicateSet name="EVTIDENTdoors_ctx:" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#CTXHYP" org.eventb.core.poStamp="5">
+<org.eventb.core.poIdentifier name="red'" org.eventb.core.type="ℙ(D)"/>
+<org.eventb.core.poIdentifier name="sit'" org.eventb.core.type="ℙ(P×L)"/>
+<org.eventb.core.poIdentifier name="dap'" org.eventb.core.type="ℙ(P×D)"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="EVTALLHYPdoors_ctx:" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTIDENTdoors_ctx:" org.eventb.core.poStamp="5"/>
+<org.eventb.core.poSequent name="pass/l/WWD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of witness" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="d∈dom(dst)∧dst∈D ⇸ L" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2|org.eventb.core.witness#internal_wit1"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2|org.eventb.core.witness#internal_wit1"/>
+<org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#pass\/l\/WWD|org.eventb.core.poPredicateSet#SEQHYP"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="pass/p/WWD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of witness" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="d∈dom(dap∼)∧dap∼∈D ⇸ P" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2|org.eventb.core.witness#internal_wit2"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2|org.eventb.core.witness#internal_wit2"/>
+<org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#pass\/p\/WWD|org.eventb.core.poPredicateSet#SEQHYP"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="pass/inv1/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="dap ⩥ {d}∈P ⤔ D" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv1I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv1I"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#pass\/inv1\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD0"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="pass/inv2/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(dap ⩥ {d});org⊆sit{dap∼(d) ↦ dst(d)}" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv2I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv2I"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#pass\/inv2\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD1"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="pass/inv3/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(dap ⩥ {d});dst⊆aut" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv3I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv3I"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#pass\/inv3\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD2"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="pass/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="red∩ran(dap ⩥ {d})=(∅ ⦂ ℙ(D))" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#pass\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYV" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD3"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="pass/grd11/GRD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Guard strengthening (split)" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="dap∼(d) ↦ dst(d)∈aut" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2|org.eventb.core.guard#internal_grd1"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2|org.eventb.core.guard#internal_grd1"/>
+<org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#pass\/grd11\/GRD|org.eventb.core.poPredicateSet#SEQHYP"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="pass/grd12/GRD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Guard strengthening (split)" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="sit(dap∼(d)) ↦ dst(d)∈com" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2|org.eventb.core.guard#internal_grd2"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2|org.eventb.core.guard#internal_grd2"/>
+<org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#pass\/grd12\/GRD|org.eventb.core.poPredicateSet#SEQHYP"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="pass/act1/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of action" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="d∈dom(dap∼)∧dap∼∈D ⇸ P∧d∈dom(dst)∧dst∈D ⇸ L" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2|org.eventb.core.action#internal_act2"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2|org.eventb.core.action#internal_act2"/>
+<org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx;"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="pass/act11/SIM" org.eventb.core.accurate="true" org.eventb.core.poDesc="Action simulation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="sit{dap∼(d) ↦ dst(d)}=sit{dap∼(d) ↦ dst(d)}" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2|org.eventb.core.action#internal_act1"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="ABSTRACT" org.eventb.core.source="/Doors/doors_1.bum|org.eventb.core.machineFile#doors_1|org.eventb.core.event#internal_evt2|org.eventb.core.action#internal_act1"/>
+<org.eventb.core.poSource name="SEQHYT" org.eventb.core.poRole="CONCRETE" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#pass\/act11\/SIM|org.eventb.core.poPredicateSet#SEQHYP"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poPredicateSet name="EVTIDENTdoors_ctx;" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="5">
+<org.eventb.core.poIdentifier name="d" org.eventb.core.type="D"/>
+<org.eventb.core.poIdentifier name="p" org.eventb.core.type="P"/>
+<org.eventb.core.poIdentifier name="l" org.eventb.core.type="L"/>
+<org.eventb.core.poIdentifier name="sit'" org.eventb.core.type="ℙ(P×L)"/>
+<org.eventb.core.poIdentifier name="dap'" org.eventb.core.type="ℙ(P×D)"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="EVTALLHYPdoors_ctx;" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTIDENTdoors_ctx;" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="d∈ran(dap)" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt2|org.eventb.core.guard#internal_grd1"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poSequent name="accept/grd11/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Guard" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTIDENTdoors_ctx="/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="p∈dom(sit)∧sit∈P ⇸ L∧d∈dom(org)∧org∈D ⇸ L" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3|org.eventb.core.guard#internal_grd1"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3|org.eventb.core.guard#internal_grd1"/>
+<org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTIDENTdoors_ctx="/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="accept/grd12/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Guard" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTHYPdoors_ctx='"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="d∈dom(dst)∧dst∈D ⇸ L" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3|org.eventb.core.guard#internal_grd2"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3|org.eventb.core.guard#internal_grd2"/>
+<org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTHYPdoors_ctx='"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="accept/inv1/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx="/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="dap{p ↦ d}∈P ⤔ D" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv1I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv1I"/>
+<org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#accept\/inv1\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD0"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="accept/inv2/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx="/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(dap{p ↦ d});org⊆sit" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv2I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv2I"/>
+<org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#accept\/inv2\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD1"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="accept/inv3/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx="/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(dap{p ↦ d});dst⊆aut" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv3I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv3I"/>
+<org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#accept\/inv3\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD2"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="accept/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx="/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="red∩ran(dap{p ↦ d})=(∅ ⦂ ℙ(D))" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#accept\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD3"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poPredicateSet name="EVTIDENTdoors_ctx=" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="5">
+<org.eventb.core.poIdentifier name="d" org.eventb.core.type="D"/>
+<org.eventb.core.poIdentifier name="p" org.eventb.core.type="P"/>
+<org.eventb.core.poIdentifier name="dap'" org.eventb.core.type="ℙ(P×D)"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="EVTHYPdoors_ctx='" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTIDENTdoors_ctx=" org.eventb.core.poStamp="0">
+<org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="sit(p)=org(d)" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3|org.eventb.core.guard#internal_grd1"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="EVTALLHYPdoors_ctx=" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTHYPdoors_ctx='" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="p ↦ dst(d)∈aut" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3|org.eventb.core.guard#internal_grd2"/>
+<org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="p∉dom(dap)" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3|org.eventb.core.guard#internal_grd3"/>
+<org.eventb.core.poPredicate name="PRD3" org.eventb.core.predicate="d∉red∪ran(dap)" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt3|org.eventb.core.guard#internal_grd4"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poSequent name="refuse/grd11/WD" org.eventb.core.accurate="true" org.eventb.core.poDesc="Well-definedness of Guard" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTIDENTdoors_ctx&gt;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="p∈dom(sit)∧sit∈P ⇸ L∧d∈dom(org)∧org∈D ⇸ L∧(sit(p)=org(d)⇒d∈dom(dst)∧dst∈D ⇸ L)" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt4|org.eventb.core.guard#internal_grd1"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt4|org.eventb.core.guard#internal_grd1"/>
+<org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTIDENTdoors_ctx&gt;"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="refuse/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx&gt;"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(red∪{d})∩ran(dap)=(∅ ⦂ ℙ(D))" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt4"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#refuse\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD3"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poPredicateSet name="EVTIDENTdoors_ctx&gt;" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="5">
+<org.eventb.core.poIdentifier name="d" org.eventb.core.type="D"/>
+<org.eventb.core.poIdentifier name="red'" org.eventb.core.type="ℙ(D)"/>
+<org.eventb.core.poIdentifier name="p" org.eventb.core.type="P"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="EVTALLHYPdoors_ctx&gt;" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTIDENTdoors_ctx&gt;" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="¬(sit(p)=org(d)∧p ↦ dst(d)∈aut∧p∉dom(dap))" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt4|org.eventb.core.guard#internal_grd1"/>
+<org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="d∉red∪ran(dap)" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt4|org.eventb.core.guard#internal_grd2"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poSequent name="off_grn/inv1/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx?"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="dap ⩥ {d}∈P ⤔ D" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv1I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt5"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv1I"/>
+<org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#off_grn\/inv1\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD0"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="off_grn/inv2/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx?"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(dap ⩥ {d});org⊆sit" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv2I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt5"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv2I"/>
+<org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#off_grn\/inv2\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD1"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="off_grn/inv3/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx?"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(dap ⩥ {d});dst⊆aut" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv3I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt5"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv3I"/>
+<org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#off_grn\/inv3\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD2"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="off_grn/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx?"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="red∩ran(dap ⩥ {d})=(∅ ⦂ ℙ(D))" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt5"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#off_grn\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD3"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poPredicateSet name="EVTIDENTdoors_ctx?" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="5">
+<org.eventb.core.poIdentifier name="d" org.eventb.core.type="D"/>
+<org.eventb.core.poIdentifier name="dap'" org.eventb.core.type="ℙ(P×D)"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="EVTALLHYPdoors_ctx?" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTIDENTdoors_ctx?" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="d∈ran(dap)" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt5|org.eventb.core.guard#internal_grd1"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poSequent name="off_red/inv4/INV" org.eventb.core.accurate="true" org.eventb.core.poDesc="Invariant  preservation" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTALLHYPdoors_ctx@"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="(red ∖ {d})∩ran(dap)=(∅ ⦂ ℙ(D))" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt6"/>
+<org.eventb.core.poSource name="SEQHYS" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+<org.eventb.core.poSelHint name="SEQHYT" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poSelHintSnd="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poSequent#off_red\/inv4\/INV|org.eventb.core.poPredicateSet#SEQHYP"/>
+<org.eventb.core.poSelHint name="SEQHYU" org.eventb.core.poSelHintFst="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP|org.eventb.core.poPredicate#PRD3"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poPredicateSet name="EVTIDENTdoors_ctx@" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ALLHYP" org.eventb.core.poStamp="0">
+<org.eventb.core.poIdentifier name="d" org.eventb.core.type="D"/>
+<org.eventb.core.poIdentifier name="red'" org.eventb.core.type="ℙ(D)"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="EVTALLHYPdoors_ctx@" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#EVTIDENTdoors_ctx@" org.eventb.core.poStamp="0">
+<org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="d∈red" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.event#internal_evt6|org.eventb.core.guard#internal_grd1"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/Doors/doors_2.bpo|org.eventb.core.poFile#doors_2|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="5">
+<org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="dap∈P ⤔ D" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv1I"/>
+<org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="dap;org⊆sit" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv2I"/>
+<org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="dap;dst⊆aut" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv3I"/>
+<org.eventb.core.poPredicate name="PRD3" org.eventb.core.predicate="red∩ran(dap)=(∅ ⦂ ℙ(D))" org.eventb.core.source="/Doors/doors_2.bum|org.eventb.core.machineFile#doors_2|org.eventb.core.invariant#internal_inv4I"/>
+</org.eventb.core.poPredicateSet>
+</org.eventb.core.poFile>

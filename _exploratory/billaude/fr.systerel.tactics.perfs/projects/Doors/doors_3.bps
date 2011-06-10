@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.psFile>
+<org.eventb.core.psStatus name="INITIALISATION/inv1/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+<org.eventb.core.psStatus name="INITIALISATION/inv3/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+<org.eventb.core.psStatus name="INITIALISATION/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+<org.eventb.core.psStatus name="INITIALISATION/inv5/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+<org.eventb.core.psStatus name="pass/inv3/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="pass/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="pass/inv5/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="accept/inv1/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+<org.eventb.core.psStatus name="accept/inv3/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="accept/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+<org.eventb.core.psStatus name="accept/inv5/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+<org.eventb.core.psStatus name="accept/grd1/GRD" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="refuse/inv1/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="refuse/inv3/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="refuse/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="refuse/inv5/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="refuse/grd12/GRD" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="off_grn/inv3/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="off_grn/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="off_grn/inv5/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="off_red/inv3/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="off_red/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="off_red/inv5/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="CARD/inv1/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+<org.eventb.core.psStatus name="CARD/inv3/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="CARD/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+<org.eventb.core.psStatus name="ACKN/inv3/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="ACKN/inv4/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="ACKN/inv5/INV" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+</org.eventb.core.psFile>

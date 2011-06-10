@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.eventb.core.machineFile version="5" org.eventb.core.configuration="org.eventb.core.fwd">
+<org.eventb.core.event name="internal_evt1" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="INITIALISATION">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="sit ≔ P×{outside}" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="dap ≔ ∅" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act4" org.eventb.core.assignment="BLR ≔ ∅" org.eventb.core.label="act4"/>
+<org.eventb.core.action name="internal_act5" org.eventb.core.assignment="mCard ≔ ∅" org.eventb.core.label="act5"/>
+<org.eventb.core.action name="internal_act6" org.eventb.core.assignment="mAckn ≔ ∅" org.eventb.core.label="act6"/>
+<org.eventb.core.action name="internal_act7" org.eventb.core.assignment="mAccept ≔ ∅" org.eventb.core.label="act7"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="GRN ≔ ∅" org.eventb.core.label="act3"/>
+<org.eventb.core.action name="internal_act8" org.eventb.core.assignment="mPass ≔ ∅" org.eventb.core.label="act8"/>
+<org.eventb.core.action name="internal_act9" org.eventb.core.assignment="mOff_grn ≔ ∅" org.eventb.core.label="act9"/>
+<org.eventb.core.action name="internal_act10" org.eventb.core.assignment="mRefuse ≔ ∅" org.eventb.core.label="act10"/>
+<org.eventb.core.action name="internal_act11" org.eventb.core.assignment="RED ≔ ∅" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act12" org.eventb.core.assignment="mOff_red ≔ ∅" org.eventb.core.label="act12"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt2" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="pass">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="dap ≔ dap ⩥ {d}" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="sit(dap∼(d)) ≔ dst(d) " org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="mAckn ≔ mAckn ∪ {d}" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act4" org.eventb.core.assignment="mPass ≔ mPass∖{d}" org.eventb.core.label="act3"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="d∈mPass"/>
+<org.eventb.core.parameter name="internal_var2" org.eventb.core.identifier="d"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="pass"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt3" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="accept">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="dap(p) ≔ d" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="mCard ≔ mCard ∖{d↦p}" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="mAccept ≔ mAccept ∪ {d}" org.eventb.core.label="act2"/>
+<org.eventb.core.guard name="internal_grd4" org.eventb.core.label="grd1" org.eventb.core.predicate="d↦p ∈ mCard"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="sit(p) = org(d)"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd12" org.eventb.core.predicate="p↦dst(d) ∈ aut"/>
+<org.eventb.core.guard name="internal_grd3" org.eventb.core.label="grd13" org.eventb.core.predicate="p ∉ dom(dap)"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="p"/>
+<org.eventb.core.parameter name="internal_var2" org.eventb.core.identifier="d"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="accept"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt4" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="refuse">
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="mCard ≔ mCard∖{d↦p}" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="mRefuse ≔ mRefuse ∪ {d}" org.eventb.core.label="act2"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd12" org.eventb.core.predicate="d↦p ∈ mCard"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="¬(sit(p) = org(d) ∧ p↦dst(d) ∈ aut ∧ p∉dom(dap))"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="p"/>
+<org.eventb.core.parameter name="internal_var2" org.eventb.core.identifier="d"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="refuse"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt5" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="off_grn">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="dap ≔ dap ⩥ {d}" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="mAckn ≔ mAckn ∪{d}" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="mOff_grn ≔ mOff_grn∖{d}" org.eventb.core.label="act2"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="d∈ mOff_grn"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="d"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="off_grn"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt6" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="off_red">
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="mAckn ≔ mAckn ∪ {d}" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="mOff_red ≔ mOff_red∖{d}" org.eventb.core.label="act2"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="d∈mOff_red"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="d"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="off_red"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt7" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="CARD">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="BLR ≔ BLR ∪ {d}" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="mCard ≔ mCard ∪ {d↦p}" org.eventb.core.label="act12"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="p ∈ P"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd12" org.eventb.core.predicate="d ∈ D∖BLR"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="p"/>
+<org.eventb.core.parameter name="internal_var2" org.eventb.core.identifier="d"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="CARD"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt8" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="ACKN">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="BLR ≔ BLR∖{d}" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="mAckn ≔ mAckn∖{d}" org.eventb.core.label="act12"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="d ∈ mAckn"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="d"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="ACKN"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt9" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="ACCEPT">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="GRN ≔ GRN ∪ {d}" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="mAccept ≔ mAccept∖{d}" org.eventb.core.label="act12"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="d∈mAccept"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="d"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt12" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="REFUSE">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="RED ≔ RED ∪ {d}" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="mRefuse ≔mRefuse ∖ {d}" org.eventb.core.label="act12"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="d∈mRefuse"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="d"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt10" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="PASS">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="GRN ≔ GRN∖{d}" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="mPass ≔ mPass ∪ {d}" org.eventb.core.label="act12"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="d∈GRN"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="d"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt11" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="OFF_GRN">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="GRN ≔ GRN ∖ {d}" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="mOff_grn ≔ mOff_grn ∪ {d}" org.eventb.core.label="act12"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="d∈GRN"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="d"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt13" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="OFF_RED">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="RED ≔ RED ∖ {d}" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="mOff_red ≔mOff_red ∪ {d}" org.eventb.core.label="act12"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="d∈RED"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="d"/>
+</org.eventb.core.event>
+<org.eventb.core.invariant name="internal_inv1I" org.eventb.core.label="inv1" org.eventb.core.predicate="ran(dap) = mAccept ∪ GRN ∪ mPass ∪ mOff_grn "/>
+<org.eventb.core.invariant name="internal_inv2I" org.eventb.core.label="inv2" org.eventb.core.predicate="mAccept ∩ (GRN ∪ mPass ∪ mOff_grn) = ∅"/>
+<org.eventb.core.invariant name="internal_inv3I" org.eventb.core.label="inv3" org.eventb.core.predicate="GRN ∩ (mPass ∪ mOff_grn) = ∅"/>
+<org.eventb.core.invariant name="internal_inv4I" org.eventb.core.label="inv4" org.eventb.core.predicate="mPass ∩ mOff_grn = ∅"/>
+<org.eventb.core.invariant name="internal_inv5I" org.eventb.core.label="inv5" org.eventb.core.predicate="red = mRefuse ∪ RED ∪ mOff_red "/>
+<org.eventb.core.invariant name="internal_inv6I" org.eventb.core.label="inv6" org.eventb.core.predicate="mRefuse ∩ (RED ∪ mOff_red) = ∅"/>
+<org.eventb.core.invariant name="internal_inv7I" org.eventb.core.label="inv7" org.eventb.core.predicate="RED ∩ mOff_red = ∅"/>
+<org.eventb.core.refinesMachine name="internal_refines1" org.eventb.core.target="doors_3"/>
+<org.eventb.core.seesContext name="internal_sees1" org.eventb.core.target="doors_ctx3"/>
+<org.eventb.core.variable name="internal_var1" org.eventb.core.identifier="sit"/>
+<org.eventb.core.variable name="internal_var2" org.eventb.core.identifier="dap"/>
+<org.eventb.core.variable name="internal_var4" org.eventb.core.identifier="BLR"/>
+<org.eventb.core.variable name="internal_var5" org.eventb.core.identifier="mCard"/>
+<org.eventb.core.variable name="internal_var6" org.eventb.core.identifier="mAckn"/>
+<org.eventb.core.variable name="internal_var7" org.eventb.core.identifier="mAccept"/>
+<org.eventb.core.variable name="internal_var8" org.eventb.core.identifier="GRN"/>
+<org.eventb.core.variable name="internal_var9" org.eventb.core.identifier="mPass"/>
+<org.eventb.core.variable name="internal_var10" org.eventb.core.identifier="mOff_grn"/>
+<org.eventb.core.variable name="internal_var11" org.eventb.core.identifier="mRefuse"/>
+<org.eventb.core.variable name="internal_var12" org.eventb.core.identifier="RED"/>
+<org.eventb.core.variable name="internal_var13" org.eventb.core.identifier="mOff_red"/>
+</org.eventb.core.machineFile>

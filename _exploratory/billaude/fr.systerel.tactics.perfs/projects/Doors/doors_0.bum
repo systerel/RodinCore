@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.machineFile org.eventb.core.configuration="org.eventb.core.fwd" version="5">
+<org.eventb.core.event name="internal_evt1" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="INITIALISATION">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="sit ≔ P×{outside}" org.eventb.core.label="act1"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt2" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="pass">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="sit(p) ≔ l" org.eventb.core.label="act11"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd11" org.eventb.core.predicate="p ↦ l ∈ aut"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd12" org.eventb.core.predicate="sit(p) ≠ l"/>
+<org.eventb.core.parameter name="internal_var1" org.eventb.core.identifier="p"/>
+<org.eventb.core.parameter name="internal_var2" org.eventb.core.identifier="l"/>
+</org.eventb.core.event>
+<org.eventb.core.invariant name="internal_inv1I" org.eventb.core.comment="ffffffffffffffffffff" org.eventb.core.label="inv1" org.eventb.core.predicate="sit ∈ P → L"/>
+<org.eventb.core.invariant name="internal_inv2I" org.eventb.core.label="inv2" org.eventb.core.predicate="sit ⊆ aut"/>
+<org.eventb.core.seesContext name="internal_sees1" org.eventb.core.target="doors_ctx1"/>
+<org.eventb.core.variable name="internal_var1" org.eventb.core.identifier="sit"/>
+<org.eventb.core.invariant name="internal_sees2" org.eventb.core.label="DLF" org.eventb.core.predicate="∃ p,l·(p↦l ∈ aut ∧ sit(p)≠l)" org.eventb.core.theorem="true"/>
+</org.eventb.core.machineFile>

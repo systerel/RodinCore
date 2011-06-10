@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.psFile>
+<org.eventb.core.psStatus name="DLF/WD" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+<org.eventb.core.psStatus name="DLF/THM" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+<org.eventb.core.psStatus name="pass/grd12/WD" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="false"/>
+<org.eventb.core.psStatus name="pass/grd12/GRD" org.eventb.core.confidence="1000" org.eventb.core.poStamp="5" org.eventb.core.psManual="true"/>
+</org.eventb.core.psFile>
