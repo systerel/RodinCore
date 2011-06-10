@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.poFile org.eventb.core.poStamp="2">
+<org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.poStamp="0">
+<org.eventb.core.poIdentifier name="N" org.eventb.core.type="ℙ(N)"/>
+<org.eventb.core.poIdentifier name="f" org.eventb.core.type="ℙ(N×N)"/>
+<org.eventb.core.poIdentifier name="t" org.eventb.core.type="ℙ(N×N)"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poSequent name="thm1/THM" org.eventb.core.accurate="true" org.eventb.core.poDesc="Theorem" org.eventb.core.poStamp="2">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP+"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="t;t⊆t" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm4T"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm4T"/>
+<org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP+"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="thm2/THM" org.eventb.core.accurate="true" org.eventb.core.poDesc="Theorem" org.eventb.core.poStamp="2">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP,"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="t=f∪(t;f)" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm5T"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm5T"/>
+<org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP,"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="thm3/THM" org.eventb.core.accurate="true" org.eventb.core.poDesc="Theorem" org.eventb.core.poStamp="2">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP-"/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="t=f∪(f;t)" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm1T"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm1T"/>
+<org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP-"/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poSequent name="thm4/THM" org.eventb.core.accurate="true" org.eventb.core.poDesc="Theorem" org.eventb.core.poStamp="2">
+<org.eventb.core.poPredicateSet name="SEQHYP" org.eventb.core.parentSet="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP."/>
+<org.eventb.core.poPredicate name="SEQHYQ" org.eventb.core.predicate="∀b⦂ℙ(N)·f[b]⊆b⇒t[b]⊆b" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm6T"/>
+<org.eventb.core.poSource name="SEQHYR" org.eventb.core.poRole="DEFAULT" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm6T"/>
+<org.eventb.core.poSelHint name="SEQHYS" org.eventb.core.poSelHintFst="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poSelHintSnd="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP."/>
+</org.eventb.core.poSequent>
+<org.eventb.core.poPredicateSet name="HYP+" org.eventb.core.parentSet="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="2">
+<org.eventb.core.poPredicate name="PRD0" org.eventb.core.predicate="f∈N ↔ N" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_axm1A"/>
+<org.eventb.core.poPredicate name="PRD1" org.eventb.core.predicate="t∈N ↔ N" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_axm6A"/>
+<org.eventb.core.poPredicate name="PRD2" org.eventb.core.predicate="f⊆t" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_axm7A"/>
+<org.eventb.core.poPredicate name="PRD3" org.eventb.core.predicate="t;f⊆t" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_axm8A"/>
+<org.eventb.core.poPredicate name="PRD4" org.eventb.core.predicate="∀s⦂ℙ(N×N)·f⊆s∧s;f⊆s⇒t⊆s" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_axm9A"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="HYP," org.eventb.core.parentSet="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP+" org.eventb.core.poStamp="2">
+<org.eventb.core.poPredicate name="PRD5" org.eventb.core.predicate="t;t⊆t" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm4T"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="HYP-" org.eventb.core.parentSet="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP," org.eventb.core.poStamp="2">
+<org.eventb.core.poPredicate name="PRD6" org.eventb.core.predicate="t=f∪(t;f)" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm5T"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="HYP." org.eventb.core.parentSet="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP-" org.eventb.core.poStamp="2">
+<org.eventb.core.poPredicate name="PRD7" org.eventb.core.predicate="t=f∪(f;t)" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm1T"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/Closure - Sans PostTactics/cclctx.bpo|org.eventb.core.poFile#cclctx|org.eventb.core.poPredicateSet#HYP." org.eventb.core.poStamp="2">
+<org.eventb.core.poPredicate name="PRD8" org.eventb.core.predicate="∀b⦂ℙ(N)·f[b]⊆b⇒t[b]⊆b" org.eventb.core.source="/Closure - Sans PostTactics/cclctx.buc|org.eventb.core.contextFile#cclctx|org.eventb.core.axiom#internal_thm6T"/>
+</org.eventb.core.poPredicateSet>
+</org.eventb.core.poFile>
