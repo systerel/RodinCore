@@ -43,6 +43,7 @@ import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
@@ -203,8 +204,8 @@ public class RodinEditor extends TextEditor {
 		removeAction(ITextEditorActionConstants.SHIFT_LEFT);
 		removeAction(ITextEditorActionConstants.MOVE_LINE_DOWN);
 		removeAction(ITextEditorActionConstants.MOVE_LINE_UP);
-		removeAction("org.eclipse.ui.edit.text.select.lineUp");
-		removeAction("org.eclipse.ui.edit.text.select.lineDown");
+		removeAction(ITextEditorActionDefinitionIds.SELECT_LINE_UP);
+		removeAction(ITextEditorActionDefinitionIds.SELECT_LINE_DOWN);
 	}
 
 	private void removeAction(String actionId) {
