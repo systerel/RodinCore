@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.scMachineFile org.eventb.core.accurate="true" org.eventb.core.configuration="org.eventb.core.fwd">
+<org.eventb.core.scSeesContext name="'" org.eventb.core.scTarget="/BirthdayBook/BirthdayBook_C0.bcc" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.seesContext#("/>
+<org.eventb.core.scInternalContext name="BirthdayBook_C0">
+<org.eventb.core.scCarrierSet name="Date" org.eventb.core.source="/BirthdayBook/BirthdayBook_C0.buc|org.eventb.core.contextFile#BirthdayBook_C0|org.eventb.core.carrierSet#'" org.eventb.core.type="ℙ(Date)"/>
+<org.eventb.core.scCarrierSet name="Person" org.eventb.core.source="/BirthdayBook/BirthdayBook_C0.buc|org.eventb.core.contextFile#BirthdayBook_C0|org.eventb.core.carrierSet#(" org.eventb.core.type="ℙ(Person)"/>
+</org.eventb.core.scInternalContext>
+<org.eventb.core.scInvariant name="BirthdayBook_C1" org.eventb.core.label="Inv1" org.eventb.core.predicate="birthday∈Person ⇸ Date" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.invariant#)" org.eventb.core.theorem="false"/>
+<org.eventb.core.scVariable name="birthday" org.eventb.core.abstract="false" org.eventb.core.concrete="true" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.variable#*" org.eventb.core.type="ℙ(Person×Date)"/>
+<org.eventb.core.scEvent name="BirthdayBook_C2" org.eventb.core.accurate="true" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="INITIALISATION" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.event#'">
+<org.eventb.core.scAction name="'" org.eventb.core.assignment="birthday ≔ ∅ ⦂ ℙ(Person×Date)" org.eventb.core.label="birthday" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.event#'|org.eventb.core.action#'"/>
+</org.eventb.core.scEvent>
+<org.eventb.core.scEvent name="BirthdayBook_C3" org.eventb.core.accurate="true" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="AddBirthday" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.event#+">
+<org.eventb.core.scGuard name="'" org.eventb.core.label="grd1" org.eventb.core.predicate="p∈Person" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.event#+|org.eventb.core.guard#)" org.eventb.core.theorem="false"/>
+<org.eventb.core.scGuard name="(" org.eventb.core.label="grd2" org.eventb.core.predicate="d∈Date" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.event#+|org.eventb.core.guard#*" org.eventb.core.theorem="false"/>
+<org.eventb.core.scGuard name=")" org.eventb.core.label="grd3" org.eventb.core.predicate="p∉dom(birthday)" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.event#+|org.eventb.core.guard#," org.eventb.core.theorem="false"/>
+<org.eventb.core.scParameter name="d" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.event#+|org.eventb.core.parameter#(" org.eventb.core.type="Date"/>
+<org.eventb.core.scParameter name="p" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.event#+|org.eventb.core.parameter#'" org.eventb.core.type="Person"/>
+<org.eventb.core.scAction name="q" org.eventb.core.assignment="birthday ≔ birthday∪{p ↦ d}" org.eventb.core.label="act1" org.eventb.core.source="/BirthdayBook/BirthdayBook_0.bum|org.eventb.core.machineFile#BirthdayBook_0|org.eventb.core.event#+|org.eventb.core.action#+"/>
+</org.eventb.core.scEvent>
+</org.eventb.core.scMachineFile>

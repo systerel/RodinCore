@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.scContextFile org.eventb.core.accurate="true" org.eventb.core.configuration="org.eventb.core.fwd">
+<org.eventb.core.scCarrierSet name="Date" org.eventb.core.source="/BirthdayBook/BirthdayBook_C0.buc|org.eventb.core.contextFile#BirthdayBook_C0|org.eventb.core.carrierSet#'" org.eventb.core.type="ℙ(Date)"/>
+<org.eventb.core.scCarrierSet name="Person" org.eventb.core.source="/BirthdayBook/BirthdayBook_C0.buc|org.eventb.core.contextFile#BirthdayBook_C0|org.eventb.core.carrierSet#(" org.eventb.core.type="ℙ(Person)"/>
+</org.eventb.core.scContextFile>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.machineFile org.eventb.core.configuration="org.eventb.core.fwd" version="5">
+<org.eventb.core.event name="'" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="INITIALISATION">
+<org.eventb.core.action name="'" org.eventb.core.assignment="birthday ≔ ∅" org.eventb.core.label="birthday"/>
+</org.eventb.core.event>
+<org.eventb.core.seesContext name="(" org.eventb.core.target="BirthdayBook_C0"/>
+<org.eventb.core.invariant name=")" org.eventb.core.label="Inv1" org.eventb.core.predicate="birthday ∈ Person ⇸ Date"/>
+<org.eventb.core.variable name="*" org.eventb.core.identifier="birthday"/>
+<org.eventb.core.event name="+" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="AddBirthday">
+<org.eventb.core.parameter name="'" org.eventb.core.identifier="p"/>
+<org.eventb.core.parameter name="(" org.eventb.core.identifier="d"/>
+<org.eventb.core.guard name=")" org.eventb.core.label="grd1" org.eventb.core.predicate="p ∈ Person"/>
+<org.eventb.core.guard name="*" org.eventb.core.label="grd2" org.eventb.core.predicate="d ∈ Date"/>
+<org.eventb.core.action name="+" org.eventb.core.assignment="birthday ≔ birthday ∪ {p↦d}" org.eventb.core.label="act1"/>
+<org.eventb.core.guard name="," org.eventb.core.label="grd3" org.eventb.core.predicate="p ∉ dom(birthday)"/>
+</org.eventb.core.event>
+</org.eventb.core.machineFile>

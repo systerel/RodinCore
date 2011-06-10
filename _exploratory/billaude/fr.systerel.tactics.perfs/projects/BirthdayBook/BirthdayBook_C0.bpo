@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.poFile org.eventb.core.poStamp="3">
+<org.eventb.core.poPredicateSet name="ABSHYP" org.eventb.core.poStamp="3">
+<org.eventb.core.poIdentifier name="Date" org.eventb.core.type="ℙ(Date)"/>
+<org.eventb.core.poIdentifier name="Person" org.eventb.core.type="ℙ(Person)"/>
+</org.eventb.core.poPredicateSet>
+<org.eventb.core.poPredicateSet name="ALLHYP" org.eventb.core.parentSet="/BirthdayBook/BirthdayBook_C0.bpo|org.eventb.core.poFile#BirthdayBook_C0|org.eventb.core.poPredicateSet#ABSHYP" org.eventb.core.poStamp="3"/>
+</org.eventb.core.poFile>
