@@ -39,6 +39,5 @@ public class MarkerAnnotationPosition {
 	public SimpleMarkerAnnotation getAnnotation() {
 		return annotation;
 	}
-	
 
 }

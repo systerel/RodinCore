@@ -11,26 +11,21 @@
 package fr.systerel.editor.internal.documentModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
-import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
+import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 import org.eventb.core.IEventBRoot;
-import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinMarkerUtil;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.api.itf.ILFileFactory;
@@ -62,6 +57,9 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	@Override
 	protected IAnnotationModel createAnnotationModel(Object element)
 			throws CoreException {
+		if (element instanceof IFileEditorInput)
+			return new ResourceMarkerAnnotationModel(
+					((IFileEditorInput) element).getFile());
 		return new AnnotationModel();
 	}
 	
@@ -150,55 +148,6 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	
 	public IDocument getDocument() {
 		return document;
-	}
-
-	public MarkerAnnotationPosition[] getMarkerAnnotations() {
-		final ArrayList<MarkerAnnotationPosition> results = new ArrayList<MarkerAnnotationPosition>();
-		if (inputRoot == null){
-			return results.toArray(new MarkerAnnotationPosition[0]);
-		}
-		final IRodinElement iRoot = (IRodinElement) inputRoot.getElement();
-		if (!(iRoot instanceof IEventBRoot)) {
-			return results.toArray(new MarkerAnnotationPosition[0]);
-		}
-		final IResource file = ((IEventBRoot) iRoot).getResource();
-		try {
-			final IMarker[] markers = file.findMarkers(
-					RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
-					IResource.DEPTH_INFINITE);
-			for (IMarker marker : markers) {
-				final SimpleMarkerAnnotation annotation = new SimpleMarkerAnnotation(
-						marker);
-				final Position position = findPosition(marker);
-				if (position != null) {
-					results.add(new MarkerAnnotationPosition(position,
-							annotation));
-				}
-
-			}
-
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		return results.toArray(new MarkerAnnotationPosition[results.size()]);
-	}
-
-	/**
-	 * Finds the position in the document for a given marker.
-	 * 
-	 * @param marker
-	 * @return the position of the element corresponding to the marker inside
-	 *         the document.
-	 */
-	private Position findPosition(IMarker marker) {
-		final IRodinElement element = RodinMarkerUtil.getElement(marker);
-		final Interval interval = documentMapper.findInterval(element);
-
-		if (interval != null) {
-			return new Position(interval.getOffset(), interval.getLength());
-		}
-
-		return null;
 	}
 
 	public IEditorInput getEditorInput() {

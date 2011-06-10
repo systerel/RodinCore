@@ -1,0 +1,239 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Systerel and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     Systerel - Initial API and implementation
+ *******************************************************************************/
+package fr.systerel.editor.internal.presentation.updaters;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
+import org.eventb.core.IEventBRoot;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinMarkerUtil;
+import org.rodinp.core.emf.api.itf.ILElement;
+
+import fr.systerel.editor.internal.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.documentModel.EditorElement;
+import fr.systerel.editor.internal.documentModel.Interval;
+import fr.systerel.editor.internal.editors.RodinEditor;
+
+public class ProblemMarkerAnnotationsUpdater {
+
+	/** The workspace. */
+	private IWorkspace workspace;
+	/** The resource. */
+	private IResource resource;
+	/** The associated Rodin Editor */
+	private final RodinEditor editor;
+	/** The annotation model to keep coherent */
+	private final IAnnotationModel annotationModel;
+	/** The map of marker and annotations */
+	private Map<IMarker, Annotation> directAnnotationAccess = new HashMap<IMarker, Annotation>();
+
+	private ResourceChangeListener listener = new ResourceChangeListener();
+	
+	private boolean isUpdating = false;
+	
+	/**
+	 * Internal resource change listener.
+	 */
+	class ResourceChangeListener implements IResourceChangeListener {
+	
+		public void resourceChanged(IResourceChangeEvent e) {
+			final IResourceDelta delta = e.getDelta();
+			if (delta != null && resource != null) {
+				IResourceDelta child = delta.findMember(resource.getFullPath());
+				if (child != null) {
+					update(child.getMarkerDeltas());
+				}
+			}
+		}
+
+	}
+
+	private void update(IMarkerDelta[] markerDeltas) {
+		for (IMarkerDelta d : markerDeltas) {
+			if (d.getKind() == IResourceDelta.REMOVED) {
+				recalculateAnnotations();	
+				break;
+			}
+		}
+	}
+
+	private void removeMarkerAnnotations() {
+		((IAnnotationModelExtension) annotationModel)
+				.replaceAnnotations(
+						(Annotation[]) directAnnotationAccess.values().toArray(
+								new Annotation[directAnnotationAccess.values()
+										.size()]), null);
+		directAnnotationAccess.clear();
+	}
+	
+	/**
+	 * Creates an annotation for the given marker and adds it to this model.
+	 * 
+	 * @param marker
+	 *            the marker
+	 */
+	protected final void addMarkerAnnotation(IMarker marker) {
+		final Position p = findPosition(marker);
+		final Annotation annotation = createMarkerAnnotation(marker);
+		final Position finalPos = updateMarkerPosition(marker, p);
+		if (annotation != null) {
+			annotationModel.addAnnotation(annotation, finalPos);
+			directAnnotationAccess.put(marker, annotation);
+		}
+		displayInfo(marker, "ADD");
+	}
+
+	private void displayInfo(IMarker marker, String context) {
+		try {
+			System.out.println("=============" + context + "===========");
+			System.out.println("*********MARKERSTART***"
+					+ marker.getAttribute(IMarker.CHAR_START));
+			System.out.println("*********MARKEREND*****"
+					+ marker.getAttribute(IMarker.CHAR_END));
+			System.out.println("*****MARKERMESSAGE*****"
+					+ marker.getAttribute(IMarker.MESSAGE));
+			System.out.println("*********ID**************"+ marker.getId());
+			System.out.println("=======================================");
+		} catch (CoreException e) {
+			System.out.println("FAILED TO GET MARKER INFO");
+		}
+	}
+
+	private Position updateMarkerPosition(IMarker marker, Position position) {
+		final IDocument document = editor.getDocument();
+		try {
+			if (position != null) {
+				final int charStart = position.getOffset();
+				int lineNumber = document.getLineOfOffset(charStart) + 1;
+				final int charEnd = charStart + position.getLength();
+				updateMarkerInfo(marker, lineNumber, charStart, charEnd);
+				return position;
+			} else {
+				final IInternalElement inputRoot = editor.getInputRoot();
+				final DocumentMapper mapper = editor.getDocumentMapper();
+				final EditorElement rootEditorElement = mapper
+						.findEditorElement(inputRoot);
+				final Point eR = mapper.getEnclosingPoint(rootEditorElement);
+				position = mapper.getEnclosingPosition(rootEditorElement);
+				updateMarkerInfo(marker, document.getLineOfOffset(eR.x) + 1,
+						eR.x, eR.y);
+				return position;
+			}
+		} catch (BadLocationException e) {
+			// ignore failure
+		}
+		return position;
+	}
+	
+	private void updateMarkerInfo(IMarker marker, int lineNumber,
+			int charStart, int charEnd) {
+		try {
+			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+			marker.setAttribute(IMarker.CHAR_START, charStart);
+			marker.setAttribute(IMarker.CHAR_END, charEnd);
+		} catch (CoreException e) {
+			// ignore failure
+		}
+	}
+
+	private Annotation createMarkerAnnotation(IMarker marker) {
+		return new SimpleMarkerAnnotation(marker);
+	}
+
+	public ProblemMarkerAnnotationsUpdater(RodinEditor rodinEditor,
+			IAnnotationModel annotationModel) {
+		this.editor = rodinEditor;
+		this.resource = editor.getInputRoot().getResource();
+		assert (resource != null);
+		this.workspace = resource.getWorkspace();
+		this.annotationModel = annotationModel;
+		workspace.addResourceChangeListener(listener);
+	}
+	
+	
+
+	public void initializeMarkersAnnotations() {
+		final IInternalElement inputRoot = editor.getInputRoot();
+		if (!(inputRoot instanceof IEventBRoot)) {
+			return;
+		}
+		final IResource file = ((IEventBRoot) inputRoot).getResource();
+		try {
+			final IMarker[] markers = file.findMarkers(
+					RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
+					IResource.DEPTH_INFINITE);
+			for (IMarker marker : markers) {
+				addMarkerAnnotation(marker);
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Finds the position in the document for a given marker.
+	 * 
+	 * @param marker
+	 * @return the position of the element corresponding to the marker inside
+	 *         the document.
+	 */
+	private Position findPosition(IMarker marker) {
+		final IRodinElement element = RodinMarkerUtil.getElement(marker);
+		final DocumentMapper documentMapper = editor.getDocumentMapper();
+		final Interval interval = documentMapper.findInterval(element);
+		if (interval == null)
+			return null;
+		final ILElement ilElement = interval.getElement();
+		final EditorElement eElement = documentMapper
+				.findEditorElement(ilElement);
+		final Point eR = documentMapper.getEnclosingPoint(eElement);
+		if (eR != null) {
+			return new Position(eR.x, eR.y - eR.x);
+		}
+		return null;
+	}
+
+	public void recalculateAnnotations() {
+		if (isUpdating)
+			return;
+		try {
+			isUpdating = true;
+			editor.getSite().getShell().getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					removeMarkerAnnotations();
+					initializeMarkersAnnotations();
+				}
+			});
+		} finally {
+			isUpdating = false;
+		}
+	}
+
+}

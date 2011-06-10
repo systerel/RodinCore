@@ -10,8 +10,6 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
-import java.util.HashMap;
-
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,6 +29,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
@@ -61,12 +60,12 @@ import fr.systerel.editor.internal.actions.HistoryAction.Redo;
 import fr.systerel.editor.internal.actions.HistoryAction.Undo;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
-import fr.systerel.editor.internal.documentModel.MarkerAnnotationPosition;
 import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
 import fr.systerel.editor.internal.operations.OperationFactory;
 import fr.systerel.editor.internal.operations.RodinFileUndoContext;
 import fr.systerel.editor.internal.presentation.ColorManager;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
+import fr.systerel.editor.internal.presentation.updaters.ProblemMarkerAnnotationsUpdater;
 
 public class RodinEditor extends TextEditor {
 
@@ -78,24 +77,30 @@ public class RodinEditor extends TextEditor {
 	private final ColorManager colorManager = new ColorManager();
 	private final DocumentMapper mapper = new DocumentMapper();
 	private final RodinDocumentProvider documentProvider;
-
-	private StyledText styledText;
-	private ProjectionSupport projectionSupport;
-	private ProjectionAnnotationModel projectionAnnotationModel;
-	private OverlayEditor overlayEditor;
-	private IAnnotationModel visualAnnotationModel;
-	private Annotation[] oldPojectionAnnotations = new Annotation[0];
-	private Annotation[] oldMarkers = new Annotation[0];
-
-	private ProjectionViewer viewer;
 	private IElementStateListener stateListener;
 	private CursorManager cursorManager;
 	private DNDManager dndManager;
-
 	private IUndoContext  undoContext;
-	private SelectionController selController;
+	
+	/** The overlay editor to edit elements and attributes */
+	private OverlayEditor overlayEditor;
 
-	// private Menu fTextContextMenu;
+	/** The source viewer on which projection for folding is enabled */
+	private ProjectionViewer viewer;
+	/** The support for folding on the viewer */
+	private ProjectionSupport projectionSupport;
+	/** The annotation model containing folding annotations */
+	private ProjectionAnnotationModel projectionAnnotationModel;
+	/** The basic annotations currently carried by the source viewer */
+	private Annotation[] oldPojectionAnnotations = new Annotation[0];
+	/** The graphical text component carried by the viewer */
+	private StyledText styledText;
+	/** A controller for selection on the styled text */
+	private SelectionController selController;
+	/** The viewer's model of basic annotations (e.g. problem annotations) */
+	private IAnnotationModel annotationModel;
+	/** An updater for problem annotations which listens to the resource changes */
+	private ProblemMarkerAnnotationsUpdater markerAnnotationsUpdater;
 
 	public RodinEditor() {
 		super();
@@ -125,26 +130,32 @@ public class RodinEditor extends TextEditor {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
+		activateAppropriateContext();
+		
 		viewer = (ProjectionViewer) getSourceViewer();
 		projectionSupport = new ProjectionSupport(viewer,
 				getAnnotationAccess(), getSharedColors());
 		projectionSupport.install();
 		viewer.doOperation(ProjectionViewer.TOGGLE);
 		projectionAnnotationModel = viewer.getProjectionAnnotationModel();
-		visualAnnotationModel = viewer.getVisualAnnotationModel();
+		annotationModel = viewer.getAnnotationModel();
+		markerAnnotationsUpdater = new ProblemMarkerAnnotationsUpdater(this,
+				annotationModel);
+
 		styledText = viewer.getTextWidget();
 
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
 		selController = new SelectionController(styledText, mapper, viewer,
 				overlayEditor);
+		viewer.setDocument(getDocument(), annotationModel);
 		styledText.addMouseListener(selController);
 		styledText.addVerifyKeyListener(selController);
 		styledText.addTraverseListener(selController);
 		dndManager = new DNDManager(selController, styledText, mapper,
 				documentProvider);
 		dndManager.install();
-		
+
 		cursorManager = new CursorManager(this, viewer);
 		styledText.addMouseMoveListener(cursorManager);
 
@@ -153,17 +164,19 @@ public class RodinEditor extends TextEditor {
 		styledText.setFont(font);
 
 		updateFoldingStructure();
-		updateMarkerStructure();
-		final IEventBRoot inputRoot = documentProvider.getInputRoot();
-		setTitleImage(inputRoot);
+		markerAnnotationsUpdater.initializeMarkersAnnotations();
 
-		viewer.setUndoManager(new RodinUndoManager((RodinFileUndoContext) getUndoContext()));
+		setTitleImage();
+		viewer.setUndoManager(new RodinUndoManager(
+				(RodinFileUndoContext) getUndoContext()));
+	}
 		
-		
+
+	private void activateAppropriateContext() {
 		// Activate Event-B Editor Context
 		final IContextService contextService = (IContextService) getSite()
-				.getService(IContextService.class);
-		
+		.getService(IContextService.class);
+		final IInternalElement inputRoot = documentProvider.getInputRoot();
 		if (inputRoot instanceof IMachineRoot) {
 			contextService.activateContext(EditorPlugin.PLUGIN_ID
 					+ ".contexts.rodinEditorMachineScope");
@@ -242,7 +255,7 @@ public class RodinEditor extends TextEditor {
 	 * Pushed down from AbstractTextEditor
 	 */
 	private void registerUndoRedoAction(String actionId, HistoryAction action) {
-		IAction oldAction = getAction(actionId);
+		final IAction oldAction = getAction(actionId);
 		if (oldAction instanceof OperationHistoryActionHandler)
 			((OperationHistoryActionHandler) oldAction).dispose();
 		if (action == null)
@@ -253,7 +266,8 @@ public class RodinEditor extends TextEditor {
 			actionBars.setGlobalActionHandler(actionId, action);
 	}
 
-	private void setTitleImage(IEventBRoot inputRoot) {
+	private void setTitleImage() {
+		final IEventBRoot inputRoot = documentProvider.getInputRoot();
 		final IInternalElementType<?> rootType = inputRoot.getElementType();
 		String img = null;
 		if (rootType == IMachineRoot.ELEMENT_TYPE) {
@@ -276,7 +290,6 @@ public class RodinEditor extends TextEditor {
 			IVerticalRuler ruler, int styles) {
 		final ISourceViewer viewer = new ProjectionViewer(parent, ruler,
 				getOverviewRuler(), isOverviewRulerVisible(), styles);
-
 		// ensure decoration support has been created and configured.
 		getSourceViewerDecorationSupport(viewer);
 		return viewer;
@@ -299,31 +312,12 @@ public class RodinEditor extends TextEditor {
 		}
 		oldPojectionAnnotations = annotations;
 	}
-
+	
 	/**
-	 * Replaces the old marker structure with this new one.
+	 * Recalculates the old marker structure.
 	 */
 	public void updateMarkerStructure() {
-		final MarkerAnnotationPosition[] markers = documentProvider
-				.getMarkerAnnotations();
-		final Annotation[] annotations = new Annotation[markers.length];
-		// this will hold the new annotations along
-		// with their corresponding positions
-		final HashMap<Annotation, Position> newAnnotations = new HashMap<Annotation, Position>();
-		int i = 0;
-		for (Annotation annotation : oldMarkers) {
-			visualAnnotationModel.removeAnnotation(annotation);
-		}
-		for (MarkerAnnotationPosition marker : markers) {
-			annotations[i] = marker.getAnnotation();
-			newAnnotations.put(marker.getAnnotation(), marker.getPosition());
-			visualAnnotationModel.addAnnotation(marker.getAnnotation(),
-					marker.getPosition());
-			i++;
-		}
-
-		oldMarkers = annotations;
-
+		markerAnnotationsUpdater.recalculateAnnotations();
 	}
 
 	/**
@@ -353,9 +347,11 @@ public class RodinEditor extends TextEditor {
 						return;
 					}
 					final int currentOffset = getCurrentOffset();
+					final Point oldLocation = styledText.getLocation();
 					final ILElement[] sel = selController.getSelectedElements();
 					documentProvider.synchronizeRoot(monitor);
 					selectAndReveal(currentOffset, 0);
+					styledText.setLocation(oldLocation);
 					selController.selectItems(sel);
 				}
 			});
@@ -368,6 +364,10 @@ public class RodinEditor extends TextEditor {
 	
 	public DocumentMapper getDocumentMapper() {
 		return mapper;
+	}
+	
+	public RodinDocumentProvider getDocumentProvider() {
+		return documentProvider;
 	}
 
 	public int getCurrentOffset() {
