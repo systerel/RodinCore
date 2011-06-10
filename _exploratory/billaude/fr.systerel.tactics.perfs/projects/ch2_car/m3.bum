@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.eventb.core.machineFile version="5" org.eventb.core.configuration="org.eventb.core.fwd">
+<org.eventb.core.event name="internal_evt1" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="INITIALISATION">
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="a ≔ 0" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="b ≔ 0" org.eventb.core.label="act3"/>
+<org.eventb.core.action name="internal_act4" org.eventb.core.assignment="c ≔ 0" org.eventb.core.label="act4"/>
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="ml_tl≔red" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act5" org.eventb.core.assignment="il_tl≔red" org.eventb.core.label="act5"/>
+<org.eventb.core.action name="internal_act6" org.eventb.core.assignment="ml_pass≔1" org.eventb.core.label="act6"/>
+<org.eventb.core.action name="internal_act7" org.eventb.core.assignment="il_pass≔1" org.eventb.core.label="act7"/>
+<org.eventb.core.action name="internal_act8" org.eventb.core.assignment="ml_out_10 ≔ FALSE" org.eventb.core.label="act15"/>
+<org.eventb.core.action name="internal_act9" org.eventb.core.assignment="il_out_10 ≔ FALSE" org.eventb.core.label="qct16"/>
+<org.eventb.core.action name="internal_act10" org.eventb.core.assignment="ml_in_10 ≔ FALSE" org.eventb.core.label="act17"/>
+<org.eventb.core.action name="internal_act11" org.eventb.core.assignment="il_in_10 ≔ FALSE" org.eventb.core.label="act18"/>
+<org.eventb.core.action name="internal_act12" org.eventb.core.assignment="A ≔ 0" org.eventb.core.label="act8"/>
+<org.eventb.core.action name="internal_act13" org.eventb.core.assignment="B ≔ 0" org.eventb.core.label="act9"/>
+<org.eventb.core.action name="internal_act14" org.eventb.core.assignment="C ≔ 0" org.eventb.core.label="act10"/>
+<org.eventb.core.action name="internal_act15" org.eventb.core.assignment="ML_IN_SR ≔ off" org.eventb.core.label="act11"/>
+<org.eventb.core.action name="internal_act16" org.eventb.core.assignment="ML_OUT_SR ≔ off" org.eventb.core.label="act12"/>
+<org.eventb.core.action name="internal_act17" org.eventb.core.assignment="IL_OUT_SR ≔ off" org.eventb.core.label="act13"/>
+<org.eventb.core.action name="internal_act18" org.eventb.core.assignment="IL_IN_SR ≔ off" org.eventb.core.label="act14"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt2" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="ML_out1">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="a≔a+1" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="ml_pass≔1" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="ml_out_10 ≔ FALSE" org.eventb.core.label="act3"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="ml_out_10= TRUE"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="a+b+1&lt;d"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="ML_out1"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt3" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="ML_out2">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="a≔a+1" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="ml_tl≔red" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="ml_pass≔1" org.eventb.core.label="act3"/>
+<org.eventb.core.action name="internal_act4" org.eventb.core.assignment="ml_out_10 ≔ FALSE" org.eventb.core.label="act4"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="ml_out_10 = TRUE"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="a+b+1=d"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="ML_out2"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt4" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="IL_out1">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="b≔b−1" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="c≔c+1" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="il_pass≔1" org.eventb.core.label="act3"/>
+<org.eventb.core.action name="internal_act4" org.eventb.core.assignment="il_out_10 ≔ FALSE" org.eventb.core.label="act4"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="il_out_10 = TRUE"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="b&gt;1"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="IL_out1"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt5" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="IL_out2">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="b≔b−1" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="il_tl≔red" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="c≔c+1" org.eventb.core.label="act3"/>
+<org.eventb.core.action name="internal_act4" org.eventb.core.assignment="il_pass≔1" org.eventb.core.label="act4"/>
+<org.eventb.core.action name="internal_act5" org.eventb.core.assignment="il_out_10 ≔ FALSE" org.eventb.core.label="act5"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="il_out_10 = TRUE"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="b=1"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="IL_out2"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt6" org.eventb.core.convergence="1" org.eventb.core.extended="false" org.eventb.core.label="ML_tl_green">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="ml_tl≔green" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="il_tl≔red" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="ml_pass≔0" org.eventb.core.label="act3"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="ml_tl=red"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="a+b&lt;d"/>
+<org.eventb.core.guard name="internal_grd3" org.eventb.core.label="grd3" org.eventb.core.predicate="c=0"/>
+<org.eventb.core.guard name="internal_grd4" org.eventb.core.label="grd4" org.eventb.core.predicate="il_pass=1"/>
+<org.eventb.core.guard name="internal_grd5" org.eventb.core.label="grd5" org.eventb.core.predicate="il_out_10 = FALSE"/>
+<org.eventb.core.guard name="internal_grd6" org.eventb.core.label="grd6" org.eventb.core.predicate="ML_OUT_SR = on"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="ML_tl_green"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt7" org.eventb.core.convergence="1" org.eventb.core.extended="false" org.eventb.core.label="IL_tl_green">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="il_tl≔green" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="ml_tl≔red" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="il_pass≔0" org.eventb.core.label="act3"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="il_tl=red"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="0&lt;b"/>
+<org.eventb.core.guard name="internal_grd3" org.eventb.core.label="grd3" org.eventb.core.predicate="a=0"/>
+<org.eventb.core.guard name="internal_grd4" org.eventb.core.label="grd4" org.eventb.core.predicate="ml_pass=1"/>
+<org.eventb.core.guard name="internal_grd5" org.eventb.core.label="grd5" org.eventb.core.predicate="ml_out_10 = FALSE"/>
+<org.eventb.core.guard name="internal_grd6" org.eventb.core.label="grd6" org.eventb.core.predicate="IL_OUT_SR = on"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="IL_tl_green"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt8" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="ML_in">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="c ≔ c−1" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="ml_in_10 ≔ FALSE" org.eventb.core.label="act2"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="ml_in_10 = TRUE"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="c&gt;0"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="ML_in"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt9" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="IL_in">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="a ≔ a−1" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="b ≔ b+1" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="il_in_10 ≔ FALSE" org.eventb.core.label="act3"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="il_in_10 = TRUE"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="0 &lt; a"/>
+<org.eventb.core.refinesEvent name="internal_refines1" org.eventb.core.target="IL_in"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt10" org.eventb.core.comment="Physical Events" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="ML_OUT_ARR">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="ML_OUT_SR ≔ on" org.eventb.core.label="act1"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="ML_OUT_SR = off"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="ml_out_10 = FALSE"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt11" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="ML_IN_ARR">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="ML_IN_SR ≔ on" org.eventb.core.label="act1"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="ML_IN_SR = off"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="ml_in_10 = FALSE"/>
+<org.eventb.core.guard name="internal_grd3" org.eventb.core.label="grd3" org.eventb.core.predicate="C &gt; 0"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt12" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="IL_IN_ARR">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="IL_IN_SR ≔ on" org.eventb.core.label="act1"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="IL_IN_SR = off"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="il_in_10 = FALSE"/>
+<org.eventb.core.guard name="internal_grd3" org.eventb.core.label="grd3" org.eventb.core.predicate="A &gt; 0"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt13" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="IL_OUT_AR">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="IL_OUT_SR ≔ on" org.eventb.core.label="act1"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="IL_OUT_SR = off"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="il_out_10 = FALSE"/>
+<org.eventb.core.guard name="internal_grd3" org.eventb.core.label="grd3" org.eventb.core.predicate="B &gt; 0"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt14" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="ML_OUT_DEP">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="ML_OUT_SR ≔ off" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="ml_out_10 ≔ TRUE" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="A ≔ A+1" org.eventb.core.label="act3"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="ML_OUT_SR = on"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="ml_tl = green"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt15" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="ML_IN_DEP">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="ML_IN_SR ≔ off" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="ml_in_10 ≔ TRUE" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="C ≔ C−1" org.eventb.core.label="act3"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="ML_IN_SR = on"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt16" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="IL_IN_DEP">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="IL_IN_SR ≔ off" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="il_in_10 ≔ TRUE" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="A ≔ A−1" org.eventb.core.label="act3"/>
+<org.eventb.core.action name="internal_act4" org.eventb.core.assignment="B ≔ B+1" org.eventb.core.label="act4"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="IL_IN_SR = on"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt17" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="IL_OUT_DEP">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="IL_OUT_SR ≔ off" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="internal_act2" org.eventb.core.assignment="il_out_10 ≔ TRUE" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="internal_act3" org.eventb.core.assignment="B ≔ B−1" org.eventb.core.label="act3"/>
+<org.eventb.core.action name="internal_act4" org.eventb.core.assignment="C ≔ C+1" org.eventb.core.label="act4"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.label="grd1" org.eventb.core.predicate="IL_OUT_SR = on"/>
+<org.eventb.core.guard name="internal_grd2" org.eventb.core.label="grd2" org.eventb.core.predicate="il_tl =  green"/>
+</org.eventb.core.event>
+<org.eventb.core.invariant name="internal_inv1I" org.eventb.core.comment="car on sensor means there is a car" org.eventb.core.label="inv1" org.eventb.core.predicate="IL_IN_SR = on ⇒ A&gt;0"/>
+<org.eventb.core.invariant name="internal_inv2I" org.eventb.core.comment="car on sensor means there is a ca" org.eventb.core.label="inv2" org.eventb.core.predicate="IL_OUT_SR = on ⇒ B&gt;0"/>
+<org.eventb.core.invariant name="internal_inv3I" org.eventb.core.comment="car on sensor means there is a ca" org.eventb.core.label="inv3" org.eventb.core.predicate="ML_IN_SR = on ⇒ C&gt;0"/>
+<org.eventb.core.invariant name="internal_inv4I" org.eventb.core.comment="A car passed, the traffic light must have been green" org.eventb.core.label="inv4" org.eventb.core.predicate="ml_out_10 = TRUE ⇒ ml_tl=green"/>
+<org.eventb.core.invariant name="internal_inv5I" org.eventb.core.comment="A car passed, the traffic light must have been green" org.eventb.core.label="inv5" org.eventb.core.predicate="il_out_10 = TRUE ⇒ il_tl = green"/>
+<org.eventb.core.invariant name="internal_inv6I" org.eventb.core.comment="" org.eventb.core.label="inv6" org.eventb.core.predicate="IL_IN_SR = on ⇒ il_in_10 = FALSE"/>
+<org.eventb.core.invariant name="internal_inv7I" org.eventb.core.comment="" org.eventb.core.label="inv7" org.eventb.core.predicate="IL_OUT_SR = on ⇒ il_out_10 = FALSE"/>
+<org.eventb.core.invariant name="internal_inv8I" org.eventb.core.comment="" org.eventb.core.label="inv8" org.eventb.core.predicate="ML_IN_SR = on ⇒ ml_in_10 = FALSE"/>
+<org.eventb.core.invariant name="internal_inv9I" org.eventb.core.comment="" org.eventb.core.label="inv9" org.eventb.core.predicate="ML_OUT_SR = on ⇒ ml_out_10 = FALSE"/>
+<org.eventb.core.invariant name="internal_inv10I" org.eventb.core.comment="Connection between physical and logical numbers" org.eventb.core.label="inv10" org.eventb.core.predicate="il_in_10 = TRUE ∧ ml_out_10 = TRUE ⇒ A = a"/>
+<org.eventb.core.invariant name="internal_inv11I" org.eventb.core.comment="" org.eventb.core.label="inv11" org.eventb.core.predicate="il_in_10 = FALSE ∧ ml_out_10 = TRUE ⇒ A = a+1"/>
+<org.eventb.core.invariant name="internal_inv12I" org.eventb.core.comment="" org.eventb.core.label="inv12" org.eventb.core.predicate="il_in_10 = TRUE ∧ ml_out_10 = FALSE ⇒ A = a−1"/>
+<org.eventb.core.invariant name="internal_inv13I" org.eventb.core.comment="" org.eventb.core.label="inv13" org.eventb.core.predicate="il_in_10 = FALSE ∧ ml_out_10 = FALSE ⇒ A = a"/>
+<org.eventb.core.invariant name="internal_inv14I" org.eventb.core.comment="" org.eventb.core.label="inv14" org.eventb.core.predicate="il_in_10 = TRUE ∧ il_out_10 = TRUE ⇒ B=b"/>
+<org.eventb.core.invariant name="internal_inv15I" org.eventb.core.comment="" org.eventb.core.label="inv15" org.eventb.core.predicate="il_in_10 = TRUE ∧ il_out_10 = FALSE ⇒ B = b+1"/>
+<org.eventb.core.invariant name="internal_inv16I" org.eventb.core.comment="" org.eventb.core.label="inv16" org.eventb.core.predicate="il_in_10 = FALSE ∧ il_out_10 = TRUE ⇒ B = b−1"/>
+<org.eventb.core.invariant name="internal_inv17I" org.eventb.core.comment="" org.eventb.core.label="inv17" org.eventb.core.predicate="il_in_10 = FALSE ∧ il_out_10 = FALSE ⇒ B=b"/>
+<org.eventb.core.invariant name="internal_inv18I" org.eventb.core.comment="" org.eventb.core.label="inv18" org.eventb.core.predicate="il_out_10 = TRUE ∧ ml_in_10 = TRUE ⇒ C=c"/>
+<org.eventb.core.invariant name="internal_inv19I" org.eventb.core.comment="" org.eventb.core.label="inv19" org.eventb.core.predicate="il_out_10 = TRUE ∧ ml_in_10 = FALSE ⇒ C=c+1"/>
+<org.eventb.core.invariant name="internal_inv20I" org.eventb.core.comment="" org.eventb.core.label="inv20" org.eventb.core.predicate="il_out_10 = FALSE ∧ ml_in_10 = TRUE ⇒ C=c−1"/>
+<org.eventb.core.invariant name="internal_inv21I" org.eventb.core.comment="" org.eventb.core.label="inv21" org.eventb.core.predicate="il_out_10 =FALSE ∧ ml_in_10 = FALSE ⇒ C=c"/>
+<org.eventb.core.invariant name="internal_inv22I" org.eventb.core.comment="Law of physical variables" org.eventb.core.label="inv22" org.eventb.core.predicate="A=0 ∨ C=0"/>
+<org.eventb.core.invariant name="internal_inv23I" org.eventb.core.comment="Law of physical variables" org.eventb.core.label="inv23" org.eventb.core.predicate="A+B+C ≤ d"/>
+<org.eventb.core.invariant name="internal_inv24I" org.eventb.core.comment="" org.eventb.core.label="inv24" org.eventb.core.predicate="A∈ℕ "/>
+<org.eventb.core.invariant name="internal_inv25I" org.eventb.core.comment="" org.eventb.core.label="inv25" org.eventb.core.predicate="B∈ℕ"/>
+<org.eventb.core.invariant name="internal_inv26I" org.eventb.core.comment="" org.eventb.core.label="inv26" org.eventb.core.predicate="C∈ℕ"/>
+<org.eventb.core.refinesMachine name="internal_refines1" org.eventb.core.target="m2"/>
+<org.eventb.core.seesContext name="internal_sees1" org.eventb.core.target="cd"/>
+<org.eventb.core.seesContext name="internal_sees2" org.eventb.core.target="COLOR"/>
+<org.eventb.core.seesContext name="internal_sees3" org.eventb.core.target="SENSOR"/>
+<org.eventb.core.variable name="internal_var2" org.eventb.core.comment="as in previous abstraction" org.eventb.core.identifier="a"/>
+<org.eventb.core.variable name="internal_var4" org.eventb.core.comment="as in previous abstraction" org.eventb.core.identifier="b"/>
+<org.eventb.core.variable name="internal_var3" org.eventb.core.comment="as in previous abstraction" org.eventb.core.identifier="c"/>
+<org.eventb.core.variable name="internal_var1" org.eventb.core.comment="as in previous abstraction" org.eventb.core.identifier="ml_tl"/>
+<org.eventb.core.variable name="internal_var5" org.eventb.core.comment="as in previous abstraction" org.eventb.core.identifier="il_tl"/>
+<org.eventb.core.variable name="internal_var6" org.eventb.core.comment="as in previous abstraction" org.eventb.core.identifier="il_pass"/>
+<org.eventb.core.variable name="internal_var7" org.eventb.core.comment="as in previous abstraction" org.eventb.core.identifier="ml_pass"/>
+<org.eventb.core.variable name="internal_var8" org.eventb.core.comment="Physical number of cars on bridge going to island " org.eventb.core.identifier="A"/>
+<org.eventb.core.variable name="internal_var9" org.eventb.core.comment="Physical number of cars on island" org.eventb.core.identifier="B"/>
+<org.eventb.core.variable name="internal_var10" org.eventb.core.comment="Physical number of cars on bridgegoing to mainland" org.eventb.core.identifier="C"/>
+<org.eventb.core.variable name="internal_var11" org.eventb.core.comment="sensor" org.eventb.core.identifier="ML_OUT_SR"/>
+<org.eventb.core.variable name="internal_var12" org.eventb.core.comment="sensor" org.eventb.core.identifier="ML_IN_SR"/>
+<org.eventb.core.variable name="internal_var13" org.eventb.core.comment="sensor" org.eventb.core.identifier="IL_OUT_SR"/>
+<org.eventb.core.variable name="internal_var14" org.eventb.core.comment="sensor" org.eventb.core.identifier="IL_IN_SR"/>
+<org.eventb.core.variable name="internal_var15" org.eventb.core.comment="wire from sensor to controller" org.eventb.core.identifier="ml_out_10"/>
+<org.eventb.core.variable name="internal_var16" org.eventb.core.comment="wire from sensor to controller" org.eventb.core.identifier="il_out_10"/>
+<org.eventb.core.variable name="internal_var17" org.eventb.core.comment="wire from sensor to controller" org.eventb.core.identifier="ml_in_10"/>
+<org.eventb.core.variable name="internal_var18" org.eventb.core.comment="wire from sensor to controller" org.eventb.core.identifier="il_in_10"/>
+</org.eventb.core.machineFile>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.scContextFile org.eventb.core.accurate="true" org.eventb.core.configuration="org.eventb.core.fwd">
+<org.eventb.core.scAxiom name="'" org.eventb.core.label="axm1" org.eventb.core.predicate="d∈ℕ" org.eventb.core.source="/ch2_car/cd.buc|org.eventb.core.contextFile#cd|org.eventb.core.axiom#internal_axm1A" org.eventb.core.theorem="false"/>
+<org.eventb.core.scAxiom name="(" org.eventb.core.label="axm2" org.eventb.core.predicate="d&gt;0" org.eventb.core.source="/ch2_car/cd.buc|org.eventb.core.contextFile#cd|org.eventb.core.axiom#internal_axm2A" org.eventb.core.theorem="false"/>
+<org.eventb.core.scConstant name="d" org.eventb.core.source="/ch2_car/cd.buc|org.eventb.core.contextFile#cd|org.eventb.core.constant#internal_cst1" org.eventb.core.type="ℤ"/>
+</org.eventb.core.scContextFile>

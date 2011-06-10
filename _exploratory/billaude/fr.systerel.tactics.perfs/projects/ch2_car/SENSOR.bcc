@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.scContextFile org.eventb.core.accurate="true" org.eventb.core.configuration="org.eventb.core.fwd">
+<org.eventb.core.scAxiom name="'" org.eventb.core.label="axm1" org.eventb.core.predicate="Sensor={on,off}" org.eventb.core.source="/ch2_car/SENSOR.buc|org.eventb.core.contextFile#SENSOR|org.eventb.core.axiom#internal_axm1A" org.eventb.core.theorem="false"/>
+<org.eventb.core.scAxiom name="(" org.eventb.core.label="axm2" org.eventb.core.predicate="¬on=off" org.eventb.core.source="/ch2_car/SENSOR.buc|org.eventb.core.contextFile#SENSOR|org.eventb.core.axiom#internal_axm2A" org.eventb.core.theorem="false"/>
+<org.eventb.core.scCarrierSet name="Sensor" org.eventb.core.source="/ch2_car/SENSOR.buc|org.eventb.core.contextFile#SENSOR|org.eventb.core.carrierSet#internal_set1" org.eventb.core.type="ℙ(Sensor)"/>
+<org.eventb.core.scConstant name="off" org.eventb.core.source="/ch2_car/SENSOR.buc|org.eventb.core.contextFile#SENSOR|org.eventb.core.constant#internal_cst2" org.eventb.core.type="Sensor"/>
+<org.eventb.core.scConstant name="on" org.eventb.core.source="/ch2_car/SENSOR.buc|org.eventb.core.contextFile#SENSOR|org.eventb.core.constant#internal_cst1" org.eventb.core.type="Sensor"/>
+</org.eventb.core.scContextFile>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.eventb.core.prFile version="1">
+<org.eventb.core.prProof name="INITIALISATION/inv1/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="">
+<org.eventb.core.prRule name="com.b4free.rodin.core.externalML" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="ml" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="">
+<org.eventb.core.prString name=".arg" org.eventb.core.prSValue="0;1:2000"/>
+</org.eventb.core.prRule>
+<org.eventb.core.prPred name="p0" org.eventb.core.predicate="0∈ℕ"/>
+</org.eventb.core.prProof>
+<org.eventb.core.prProof name="INITIALISATION/inv2/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1">
+<org.eventb.core.prRule name="com.b4free.rodin.core.externalML" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="ml" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1">
+<org.eventb.core.prString name=".arg" org.eventb.core.prSValue="0;1:2000"/>
+</org.eventb.core.prRule>
+<org.eventb.core.prIdent name="d" org.eventb.core.type="ℤ"/>
+<org.eventb.core.prPred name="p1" org.eventb.core.predicate="d∈ℕ"/>
+<org.eventb.core.prPred name="p0" org.eventb.core.predicate="0≤d"/>
+</org.eventb.core.prProof>
+<org.eventb.core.prProof name="thm1/THM" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4">
+<org.eventb.core.prRule name="org.eventb.core.seqprover.mngHyp" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="sl/ds" org.eventb.core.prHyps="">
+<org.eventb.core.prAnte name="0">
+<org.eventb.core.prHypAction name="SELECT0" org.eventb.core.prHyps="p1,p4"/>
+<org.eventb.core.prRule name="com.b4free.rodin.core.externalPP" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="pp" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4">
+<org.eventb.core.prString name=".arg" org.eventb.core.prSValue="R2000"/>
+</org.eventb.core.prRule>
+</org.eventb.core.prAnte>
+</org.eventb.core.prRule>
+<org.eventb.core.prIdent name="d" org.eventb.core.type="ℤ"/>
+<org.eventb.core.prIdent name="n" org.eventb.core.type="ℤ"/>
+<org.eventb.core.prPred name="p1" org.eventb.core.predicate="d&gt;0"/>
+<org.eventb.core.prPred name="p2" org.eventb.core.predicate="n∈ℕ"/>
+<org.eventb.core.prPred name="p3" org.eventb.core.predicate="n≤d"/>
+<org.eventb.core.prPred name="p4" org.eventb.core.predicate="d∈ℕ"/>
+<org.eventb.core.prPred name="p0" org.eventb.core.predicate="n&gt;0∨n&lt;d"/>
+</org.eventb.core.prProof>
+<org.eventb.core.prProof name="ML_out/inv1/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6">
+<org.eventb.core.prRule name="org.eventb.core.seqprover.mngHyp" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="sl/ds" org.eventb.core.prHyps="">
+<org.eventb.core.prAnte name="0">
+<org.eventb.core.prHypAction name="SELECT0" org.eventb.core.prHyps="p4,p1,p3,p5"/>
+<org.eventb.core.prRule name="com.b4free.rodin.core.externalPP" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="PP" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p2,p6,p4,p1,p3,p5">
+<org.eventb.core.prString name=".arg" org.eventb.core.prSValue="R2000"/>
+</org.eventb.core.prRule>
+</org.eventb.core.prAnte>
+</org.eventb.core.prRule>
+<org.eventb.core.prIdent name="d" org.eventb.core.type="ℤ"/>
+<org.eventb.core.prIdent name="n" org.eventb.core.type="ℤ"/>
+<org.eventb.core.prPred name="p1" org.eventb.core.predicate="d&gt;0"/>
+<org.eventb.core.prPred name="p2" org.eventb.core.predicate="n∈ℕ"/>
+<org.eventb.core.prPred name="p3" org.eventb.core.predicate="n≤d"/>
+<org.eventb.core.prPred name="p4" org.eventb.core.predicate="d∈ℕ"/>
+<org.eventb.core.prPred name="p5" org.eventb.core.predicate="n&gt;0∨n&lt;d"/>
+<org.eventb.core.prPred name="p0" org.eventb.core.predicate="n+1∈ℕ"/>
+<org.eventb.core.prPred name="p6" org.eventb.core.predicate="n&lt;d"/>
+</org.eventb.core.prProof>
+<org.eventb.core.prProof name="ML_out/inv2/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6">
+<org.eventb.core.prRule name="com.b4free.rodin.core.externalML" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="ML" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p4,p1,p2,p3,p5,p6">
+<org.eventb.core.prString name=".arg" org.eventb.core.prSValue="0;1:500"/>
+</org.eventb.core.prRule>
+<org.eventb.core.prIdent name="d" org.eventb.core.type="ℤ"/>
+<org.eventb.core.prIdent name="n" org.eventb.core.type="ℤ"/>
+<org.eventb.core.prPred name="p1" org.eventb.core.predicate="d&gt;0"/>
+<org.eventb.core.prPred name="p2" org.eventb.core.predicate="n∈ℕ"/>
+<org.eventb.core.prPred name="p3" org.eventb.core.predicate="n≤d"/>
+<org.eventb.core.prPred name="p4" org.eventb.core.predicate="d∈ℕ"/>
+<org.eventb.core.prPred name="p5" org.eventb.core.predicate="n&gt;0∨n&lt;d"/>
+<org.eventb.core.prPred name="p0" org.eventb.core.predicate="n+1≤d"/>
+<org.eventb.core.prPred name="p6" org.eventb.core.predicate="n&lt;d"/>
+</org.eventb.core.prProof>
+<org.eventb.core.prProof name="ML_in/inv1/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6">
+<org.eventb.core.prRule name="com.b4free.rodin.core.externalML" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="ML" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p5,p1,p2,p4,p6,p3">
+<org.eventb.core.prString name=".arg" org.eventb.core.prSValue="0;1:500"/>
+</org.eventb.core.prRule>
+<org.eventb.core.prIdent name="d" org.eventb.core.type="ℤ"/>
+<org.eventb.core.prIdent name="n" org.eventb.core.type="ℤ"/>
+<org.eventb.core.prPred name="p1" org.eventb.core.predicate="d&gt;0"/>
+<org.eventb.core.prPred name="p2" org.eventb.core.predicate="n∈ℕ"/>
+<org.eventb.core.prPred name="p3" org.eventb.core.predicate="n&gt;0"/>
+<org.eventb.core.prPred name="p4" org.eventb.core.predicate="n≤d"/>
+<org.eventb.core.prPred name="p0" org.eventb.core.predicate="n − 1∈ℕ"/>
+<org.eventb.core.prPred name="p5" org.eventb.core.predicate="d∈ℕ"/>
+<org.eventb.core.prPred name="p6" org.eventb.core.predicate="n&gt;0∨n&lt;d"/>
+</org.eventb.core.prProof>
+<org.eventb.core.prProof name="ML_in/inv2/INV" org.eventb.core.confidence="1000" org.eventb.core.prFresh="" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p1,p2,p3,p4,p5,p6">
+<org.eventb.core.prRule name="com.b4free.rodin.core.externalML" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="ML" org.eventb.core.prGoal="p0" org.eventb.core.prHyps="p5,p1,p2,p4,p6,p3">
+<org.eventb.core.prString name=".arg" org.eventb.core.prSValue="0;1:500"/>
+</org.eventb.core.prRule>
+<org.eventb.core.prIdent name="d" org.eventb.core.type="ℤ"/>
+<org.eventb.core.prIdent name="n" org.eventb.core.type="ℤ"/>
+<org.eventb.core.prPred name="p1" org.eventb.core.predicate="d&gt;0"/>
+<org.eventb.core.prPred name="p2" org.eventb.core.predicate="n∈ℕ"/>
+<org.eventb.core.prPred name="p3" org.eventb.core.predicate="n&gt;0"/>
+<org.eventb.core.prPred name="p4" org.eventb.core.predicate="n≤d"/>
+<org.eventb.core.prPred name="p5" org.eventb.core.predicate="d∈ℕ"/>
+<org.eventb.core.prPred name="p6" org.eventb.core.predicate="n&gt;0∨n&lt;d"/>
+<org.eventb.core.prPred name="p0" org.eventb.core.predicate="n − 1≤d"/>
+</org.eventb.core.prProof>
+</org.eventb.core.prFile>

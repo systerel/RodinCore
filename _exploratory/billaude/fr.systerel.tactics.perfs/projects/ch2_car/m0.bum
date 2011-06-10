@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.eventb.core.machineFile version="5" org.eventb.core.configuration="org.eventb.core.fwd">
+<org.eventb.core.event name="internal_evt1" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="INITIALISATION">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="n≔0" org.eventb.core.label="act1"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt3" org.eventb.core.comment="Leaving the mainland" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="ML_out">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="n≔n+1" org.eventb.core.comment="One more car in the island-bridge" org.eventb.core.label="act1"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.comment="Possible only when maximum not reached yet in the island-bridge" org.eventb.core.label="grd1" org.eventb.core.predicate="n&lt;d"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="internal_evt4" org.eventb.core.comment="Entering the mainland" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="ML_in">
+<org.eventb.core.action name="internal_act1" org.eventb.core.assignment="n≔n−1" org.eventb.core.comment="One car less in the island-bridge" org.eventb.core.label="act1"/>
+<org.eventb.core.guard name="internal_grd1" org.eventb.core.comment="Possible only when some car is in the island/bridge" org.eventb.core.label="grd1" org.eventb.core.predicate="n&gt;0"/>
+</org.eventb.core.event>
+<org.eventb.core.invariant name="internal_inv1I" org.eventb.core.comment="number of cars" org.eventb.core.label="inv1" org.eventb.core.predicate="n∈ℕ "/>
+<org.eventb.core.invariant name="internal_inv2I" org.eventb.core.label="inv2" org.eventb.core.predicate="n≤d"/>
+<org.eventb.core.seesContext name="internal_sees1" org.eventb.core.target="cd"/>
+<org.eventb.core.invariant org.eventb.core.theorem="true" name="internal_thm1T" org.eventb.core.label="thm1" org.eventb.core.predicate="n&gt;0 ∨ n&lt;d"/>
+<org.eventb.core.variable name="internal_var1" org.eventb.core.identifier="n"/>
+</org.eventb.core.machineFile>

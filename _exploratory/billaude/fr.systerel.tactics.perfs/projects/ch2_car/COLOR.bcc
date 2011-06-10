@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.scContextFile org.eventb.core.accurate="true" org.eventb.core.configuration="org.eventb.core.fwd">
+<org.eventb.core.scAxiom name="'" org.eventb.core.label="axm4" org.eventb.core.predicate="Color={green,red}" org.eventb.core.source="/ch2_car/COLOR.buc|org.eventb.core.contextFile#COLOR|org.eventb.core.axiom#internal_axm4A" org.eventb.core.theorem="false"/>
+<org.eventb.core.scAxiom name="(" org.eventb.core.label="axm3" org.eventb.core.predicate="green≠red" org.eventb.core.source="/ch2_car/COLOR.buc|org.eventb.core.contextFile#COLOR|org.eventb.core.axiom#internal_axm3A" org.eventb.core.theorem="false"/>
+<org.eventb.core.scCarrierSet name="Color" org.eventb.core.source="/ch2_car/COLOR.buc|org.eventb.core.contextFile#COLOR|org.eventb.core.carrierSet#internal_set1" org.eventb.core.type="ℙ(Color)"/>
+<org.eventb.core.scConstant name="green" org.eventb.core.source="/ch2_car/COLOR.buc|org.eventb.core.contextFile#COLOR|org.eventb.core.constant#internal_cst1" org.eventb.core.type="Color"/>
+<org.eventb.core.scConstant name="red" org.eventb.core.source="/ch2_car/COLOR.buc|org.eventb.core.contextFile#COLOR|org.eventb.core.constant#internal_cst2" org.eventb.core.type="Color"/>
+</org.eventb.core.scContextFile>
