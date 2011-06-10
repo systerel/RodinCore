@@ -29,7 +29,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
@@ -149,7 +148,6 @@ public class RodinEditor extends TextEditor {
 		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
 		selController = new SelectionController(styledText, mapper, viewer,
 				overlayEditor);
-		viewer.setDocument(getDocument(), annotationModel);
 		styledText.addMouseListener(selController);
 		styledText.addVerifyKeyListener(selController);
 		styledText.addTraverseListener(selController);
@@ -348,11 +346,9 @@ public class RodinEditor extends TextEditor {
 						return;
 					}
 					final int currentOffset = getCurrentOffset();
-					final Point oldLocation = styledText.getLocation();
 					final ILElement[] sel = selController.getSelectedElements();
 					documentProvider.synchronizeRoot(monitor);
 					selectAndReveal(currentOffset, 0);
-					styledText.setLocation(oldLocation);
 					selController.selectItems(sel);
 				}
 			});
