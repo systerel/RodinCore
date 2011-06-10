@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.contextFile org.eventb.core.configuration="org.eventb.core.fwd" version="3">
+<org.eventb.core.axiom name="internal_axm1A" org.eventb.core.comment="" org.eventb.core.label="axm1" org.eventb.core.predicate="a ∈ S ↔ T"/>
+<org.eventb.core.axiom name="internal_axm2A" org.eventb.core.label="axm2" org.eventb.core.predicate="b ∈ T ↔ U"/>
+<org.eventb.core.axiom name="internal_axm3A" org.eventb.core.label="axm3" org.eventb.core.predicate="c ∈ S ↔ U"/>
+<org.eventb.core.carrierSet name="internal_set1" org.eventb.core.identifier="S"/>
+<org.eventb.core.carrierSet name="internal_set2" org.eventb.core.identifier="T"/>
+<org.eventb.core.carrierSet name="internal_set3" org.eventb.core.identifier="U"/>
+<org.eventb.core.constant name="internal_cst1" org.eventb.core.identifier="a"/>
+<org.eventb.core.constant name="internal_cst2" org.eventb.core.identifier="b"/>
+<org.eventb.core.constant name="internal_cst3" org.eventb.core.identifier="c"/>
+<org.eventb.core.axiom name="internal_thm1T" org.eventb.core.label="thm1" org.eventb.core.predicate="a ; b ⊆ c ⇔ b ⊆ (T×U) ∖ (a∼;((S×U) ∖ c))" org.eventb.core.theorem="true"/>
+</org.eventb.core.contextFile>
