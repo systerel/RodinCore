@@ -36,6 +36,12 @@ public class RodinDBCache {
 
 	// average 6629 bytes per openable (includes members)
 	// -> maximum size : 662900*BASE_VALUE bytes
+	// FIXME it is not clear how these values should be set
+	// setting them both to 5 solves memory issues
+	// without apparently hindering performances
+	// (5 is the number of files per compilation unit)
+	// it looks like being used as both
+	// a number of objects (map size) and memory space
 	private static final int DEFAULT_OPENABLE_SIZE = BASE_VALUE * 100;
 
 	private static final int DEFAULT_BUFFER_SIZE = DEFAULT_OPENABLE_SIZE;
