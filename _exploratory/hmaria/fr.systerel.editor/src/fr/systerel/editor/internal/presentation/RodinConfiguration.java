@@ -30,6 +30,9 @@ import static fr.systerel.editor.internal.presentation.IRodinColorConstant.LABEL
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.LABEL_DEBUG_BG;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.SECTION;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.SECTION_DEBUG_BG;
+import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -130,8 +133,8 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 	public static final ContentType PRESENTATION_TYPE = new ContentType(
 			"__presentation_", false, false, CONTENT);
 	
-	public static final ContentType IDENTIFIER_TYPE = new ContentType(
-			"__identifier", true, false, IDENTIFIER);
+	public static final ContentType IDENTIFIER_TYPE = new AttributeContentType(
+			"__identifier", true, false, IDENTIFIER, IDENTIFIER_ATTRIBUTE);
 	public static final ContentType IMPLICIT_IDENTIFIER_TYPE = new ContentType(
 			"__implicit_identifier", false, true, IMPLICIT_IDENTIFIER);
 
@@ -140,18 +143,18 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 	public static final ContentType IMPLICIT_CONTENT_TYPE = new ContentType(
 			"__implicit_content", false, true, IMPLICIT_CONTENT);
 
-	public static final ContentType COMMENT_TYPE = new ContentType("__comment",
-			true, false, COMMENT);
+	public static final ContentType COMMENT_TYPE = new AttributeContentType("__comment",
+			true, false, COMMENT, COMMENT_ATTRIBUTE);
 	public static final ContentType IMPLICIT_COMMENT_TYPE = new ContentType(
 			"__implicit_comment", false, true, IMPLICIT_COMMENT);
 
-	public static final ContentType LABEL_TYPE = new ContentType("__label",
-			true, false, LABEL);
+	public static final ContentType LABEL_TYPE = new AttributeContentType("__label",
+			true, false, LABEL, LABEL_ATTRIBUTE);
 	public static final ContentType IMPLICIT_LABEL_TYPE = new ContentType(
 			"__implicit_label", false, true, IMPLICIT_LABEL);
 
-	public static final ContentType BOLD_LABEL_TYPE = new ContentType("__bold_label",
-			true, false, LABEL);
+	public static final ContentType BOLD_LABEL_TYPE = new AttributeContentType("__bold_label",
+			true, false, LABEL, LABEL_ATTRIBUTE);
 	public static final ContentType BOLD_IMPLICIT_LABEL_TYPE = new ContentType(
 			"__bold_implicit_label", false, true, IMPLICIT_LABEL);
 	
