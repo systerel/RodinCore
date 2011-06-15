@@ -458,4 +458,5 @@ public final class RodinMarkerUtil {
 		return manager.getAttributeType(attrId);
 	}
 
+	// TODO add a method that returns a IInternalLocation from a marker
 }
