@@ -30,10 +30,10 @@ import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.eventb.core.IEventBRoot;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
-import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.EditorElement;
@@ -206,17 +206,20 @@ public class ProblemMarkerAnnotationsUpdater {
 	private Position findPosition(IMarker marker) {
 		final IRodinElement element = RodinMarkerUtil.getElement(marker);
 		final DocumentMapper documentMapper = editor.getDocumentMapper();
-		final Interval interval = documentMapper.findInterval(element);
-		if (interval == null)
+		final EditorElement eElement = documentMapper.findEditorElement(element);
+		if (eElement == null)
 			return null;
-		final ILElement ilElement = interval.getElement();
-		final EditorElement eElement = documentMapper
-				.findEditorElement(ilElement);
-		final Point eR = documentMapper.getEnclosingPoint(eElement);
-		if (eR != null) {
-			return new Position(eR.x, eR.y - eR.x);
+		final IAttributeType attr = RodinMarkerUtil.getAttributeType(marker);
+		if (attr == null) {
+			return documentMapper.getEnclosingPosition(eElement);
 		}
-		return null;
+		final Interval interval = eElement.getInterval(attr);
+		if (interval == null) {
+			return null;
+		}
+		final int offset = interval.getOffset();
+		final int length = interval.getLength();
+		return new Position(offset, length);
 	}
 
 	public void recalculateAnnotations() {
