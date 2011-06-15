@@ -13,9 +13,11 @@ package fr.systerel.editor.internal.documentModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
+import fr.systerel.editor.internal.presentation.RodinConfiguration.AttributeContentType;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 public class EditorElement extends EditorItem {
@@ -65,6 +67,20 @@ public class EditorElement extends EditorItem {
 		return null;
 	}
 
+	public Interval getInterval(IAttributeType attributeType) {
+		for (Interval i : intervals) {
+			final ContentType contentType = i.getContentType();
+			if (!(contentType instanceof AttributeContentType)) {
+				continue;
+			}
+			final IAttributeType ctAttrType = contentType.getAttributeType();
+			if (ctAttrType.equals(attributeType)) {
+				return i;
+			}
+		}
+		return null;
+	}
+	
 	public void addInterval(Interval interval) {
 		// sorted insertion
 		int index = intervals.size();
