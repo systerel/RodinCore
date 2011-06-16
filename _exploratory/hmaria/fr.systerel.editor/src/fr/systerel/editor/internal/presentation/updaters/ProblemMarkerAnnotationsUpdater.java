@@ -217,9 +217,18 @@ public class ProblemMarkerAnnotationsUpdater {
 		if (interval == null) {
 			return null;
 		}
-		final int offset = interval.getOffset();
-		final int length = interval.getLength();
-		return new Position(offset, length);
+		final int charStart = RodinMarkerUtil.getCharStart(marker);
+		final int charEnd = RodinMarkerUtil.getCharEnd(marker);
+		final int posStart;
+		final int length;
+		if (charStart < 0 || charEnd < 0) {
+			posStart = interval.getOffset();
+			length = interval.getLength();
+		} else {
+			posStart = interval.getOffset() + charStart;
+			length = charEnd - charStart;
+		}
+		return new Position(posStart, length);
 	}
 
 	public void recalculateAnnotations() {
