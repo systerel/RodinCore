@@ -41,6 +41,7 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
+import fr.systerel.editor.internal.presentation.RodinConfiguration.AttributeContentType;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
@@ -534,7 +535,7 @@ public class DocumentMapper {
 									.equals(RodinConfiguration.COMMENT_TYPE) || contentType
 									.equals(RodinConfiguration.IMPLICIT_COMMENT_TYPE))) {
 						checkCommented((ICommentedElement) ie, interval);
-					} else if (contentType.isAttributeContentType()) {
+					} else if (contentType instanceof AttributeContentType) {
 						checkAttribute(element, interval);
 					}
 				} catch (RodinDBException e) {

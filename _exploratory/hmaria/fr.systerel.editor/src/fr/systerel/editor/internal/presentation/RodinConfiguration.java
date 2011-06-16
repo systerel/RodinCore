@@ -30,6 +30,9 @@ import static fr.systerel.editor.internal.presentation.IRodinColorConstant.LABEL
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.LABEL_DEBUG_BG;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.SECTION;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.SECTION_DEBUG_BG;
+import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +62,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		private final RGB color;
 
 		public ContentType(String contentName, boolean isEditable,
-				boolean isImplicit, RGB color) {
+		 boolean isImplicit, RGB color) {
 			this.name = contentName;
 			this.isEditable = isEditable;
 			this.isImplicit = isImplicit;
@@ -82,44 +85,28 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			return isImplicit;
 		}
 		
-		public boolean isAttributeContentType() {
-			return false;
-		}
-		
-		public IAttributeType getAttributeType() {
-			return null;
-		}
-		
-		public boolean isBooleanAttributeType() {
-			return false;
-		}
-		
 	}
 	
 	public static class AttributeContentType extends ContentType {
 
+		// note: the attribute type may be null when unknown
 		private final IAttributeType attributeType;
 
-		public AttributeContentType(String contentName, boolean isEditable,
-				boolean isImplicit, RGB color, IAttributeType attributeType) {
-			super(contentName, isEditable, isImplicit, color);
+		public AttributeContentType(String contentName, boolean isImplicit,
+				RGB color, IAttributeType attributeType) {
+			super(contentName, !isImplicit, isImplicit, color);
 			this.attributeType = attributeType;
 		}
-		
+
+		/**
+		 * Returns the attribute type, or <code>null</code> when it is unknown.
+		 * 
+		 * @return an attribute type, or <code>null</code>
+		 */
 		public IAttributeType getAttributeType() {
 			return attributeType;
 		}
 		
-		@Override
-		public boolean isAttributeContentType() {
-			return true;
-		}
-		
-		@Override
-		public boolean isBooleanAttributeType() {
-			return attributeType instanceof IAttributeType.Boolean;
-		}
-
 	}
 
 	// FIXME take care about attribute type extensions
@@ -130,35 +117,36 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 	public static final ContentType PRESENTATION_TYPE = new ContentType(
 			"__presentation_", false, false, CONTENT);
 	
-	public static final ContentType IDENTIFIER_TYPE = new ContentType(
-			"__identifier", true, false, IDENTIFIER);
-	public static final ContentType IMPLICIT_IDENTIFIER_TYPE = new ContentType(
-			"__implicit_identifier", false, true, IMPLICIT_IDENTIFIER);
+	public static final ContentType IDENTIFIER_TYPE = new AttributeContentType(
+			"__identifier", false, IDENTIFIER, IDENTIFIER_ATTRIBUTE);
+	public static final ContentType IMPLICIT_IDENTIFIER_TYPE = new AttributeContentType(
+			"__implicit_identifier", true, IMPLICIT_IDENTIFIER, IDENTIFIER_ATTRIBUTE);
 
-	public static final ContentType CONTENT_TYPE = new ContentType("__content",
-			true, false, CONTENT);
-	public static final ContentType IMPLICIT_CONTENT_TYPE = new ContentType(
-			"__implicit_content", false, true, IMPLICIT_CONTENT);
+	// TODO rename to FORMULA_TYPE
+	public static final ContentType CONTENT_TYPE = new AttributeContentType("__content",
+			false, CONTENT, null);
+	public static final ContentType IMPLICIT_CONTENT_TYPE = new AttributeContentType(
+			"__implicit_content", true, IMPLICIT_CONTENT, null);
 
-	public static final ContentType COMMENT_TYPE = new ContentType("__comment",
-			true, false, COMMENT);
-	public static final ContentType IMPLICIT_COMMENT_TYPE = new ContentType(
-			"__implicit_comment", false, true, IMPLICIT_COMMENT);
+	public static final ContentType COMMENT_TYPE = new AttributeContentType("__comment",
+			false, COMMENT, COMMENT_ATTRIBUTE);
+	public static final ContentType IMPLICIT_COMMENT_TYPE = new AttributeContentType(
+			"__implicit_comment", true, IMPLICIT_COMMENT, COMMENT_ATTRIBUTE);
 
-	public static final ContentType LABEL_TYPE = new ContentType("__label",
-			true, false, LABEL);
-	public static final ContentType IMPLICIT_LABEL_TYPE = new ContentType(
-			"__implicit_label", false, true, IMPLICIT_LABEL);
+	public static final ContentType LABEL_TYPE = new AttributeContentType("__label",
+			false, LABEL, LABEL_ATTRIBUTE);
+	public static final ContentType IMPLICIT_LABEL_TYPE = new AttributeContentType(
+			"__implicit_label", true, IMPLICIT_LABEL, LABEL_ATTRIBUTE);
 
-	public static final ContentType BOLD_LABEL_TYPE = new ContentType("__bold_label",
-			true, false, LABEL);
-	public static final ContentType BOLD_IMPLICIT_LABEL_TYPE = new ContentType(
-			"__bold_implicit_label", false, true, IMPLICIT_LABEL);
+	public static final ContentType BOLD_LABEL_TYPE = new AttributeContentType("__bold_label",
+			false, LABEL, LABEL_ATTRIBUTE);
+	public static final ContentType BOLD_IMPLICIT_LABEL_TYPE = new AttributeContentType(
+			"__bold_implicit_label", true, IMPLICIT_LABEL, LABEL_ATTRIBUTE);
 	
-	public static final ContentType ATTRIBUTE_TYPE = new ContentType(
-			"__attribute", true, false, ATTRIBUTE);
-	public static final ContentType IMPLICIT_ATTRIBUTE_TYPE = new ContentType(
-			"__implicit_attribute", false, true, IMPLICIT_ATTRIBUTE);
+	public static final ContentType ATTRIBUTE_TYPE = new AttributeContentType(
+			"__attribute", false, ATTRIBUTE, null);
+	public static final ContentType IMPLICIT_ATTRIBUTE_TYPE = new AttributeContentType(
+			"__implicit_attribute", true, IMPLICIT_ATTRIBUTE, null);
 
 	public static final ContentType KEYWORD_TYPE = new ContentType("__keyword",
 			false, false, DEFAULT);
@@ -194,7 +182,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 	}
 	
 	public static ContentType getAttributeContentType(IAttributeType type) {
-		return new AttributeContentType("__attribute", true, false, ATTRIBUTE, type);
+		return new AttributeContentType("__attribute", false, ATTRIBUTE, type);
 	}
 	
 	public static ContentType getContentType(String name) {

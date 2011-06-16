@@ -82,6 +82,7 @@ import fr.systerel.editor.internal.operations.History;
 import fr.systerel.editor.internal.operations.OperationFactory;
 import fr.systerel.editor.internal.presentation.IRodinColorConstant;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
+import fr.systerel.editor.internal.presentation.RodinConfiguration.AttributeContentType;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
@@ -96,6 +97,58 @@ public class OverlayEditor implements IAnnotationModelListener,
 	+ ".editorText";
 	private static final int MARGIN = 4;
 
+	private static enum EditType {
+		TEXT {
+			@Override
+			public void doEdit(OverlayEditor editor, Interval interval,
+					int pos) {
+				editor.showEditorText(interval, pos);
+			}
+		}, BOOL {
+			@Override
+			public void doEdit(OverlayEditor editor, Interval interval,
+					int pos) {
+				editor.changeBooleanValue(interval);
+			}
+		}, MULTI {
+			@Override
+			public void doEdit(OverlayEditor editor, Interval interval,
+					int pos) {
+				editor.showTipMenu(interval);				
+			}
+		}, NONE {
+			@Override
+			public void doEdit(OverlayEditor editor, Interval interval,
+					int pos) {
+				// do nothing
+			}
+		};
+		
+		public abstract void doEdit(OverlayEditor editor, Interval interval, int pos);
+		
+		public static void handleEdit(OverlayEditor editor, Interval inter, int pos) {
+			final EditType editType = computeEditType(inter);
+			editType.doEdit(editor, inter, pos);
+		}
+		
+		private static EditType computeEditType(Interval inter) {
+			final ContentType contentType = inter.getContentType();
+			if (!(contentType instanceof AttributeContentType)) {
+				return EditType.NONE;
+			}
+			final IAttributeType attType = ((AttributeContentType) contentType)
+					.getAttributeType();
+			if (attType instanceof IAttributeType.Boolean) {
+				return EditType.BOOL;
+			} else if (inter.getPossibleValues() != null) {
+				return EditType.MULTI;
+			} else {
+				return EditType.TEXT;
+			}
+		}
+
+	}
+	
 	private static class ContentProposalManager {
 		private final ProposalProvider provider;
 		private final EventBContentProposalAdapter contentProposal;
@@ -113,15 +166,21 @@ public class OverlayEditor implements IAnnotationModelListener,
 		public void setCompletionLocation(Interval inter) {
 			final IInternalElement element = inter.getElement().getElement();
 			
-			// FIXME null for predicate and assignment
-			IAttributeType attributeType = inter.getContentType()
+			final ContentType contentType = inter.getContentType();
+			IAttributeType attributeType = null;
+			if (contentType instanceof AttributeContentType) {
+				// FIXME null for predicate and assignment
+				attributeType = ((AttributeContentType) contentType)
 					.getAttributeType();
+			}
 			if (attributeType == null) {
-				// return; FIXME
+				// return; FIXME temporary fix
 				if (element instanceof IPredicateElement)
 					attributeType = EventBAttributes.PREDICATE_ATTRIBUTE;
 				else if (element instanceof IAssignmentElement)
 					attributeType = EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+				else if (element instanceof IExpressionElement)
+					attributeType = EventBAttributes.EXPRESSION_ATTRIBUTE;
 				else
 					return;
 			}
@@ -216,29 +275,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 		final int pos = offset - inter.getOffset();
 		
 		interval = inter;
-		if (!editorText.isVisible()) {
-			if (inter != null) {
-				final ContentType contentType = inter.getContentType();
-				if (!contentType.isAttributeContentType()) {
-					showEditorText(inter, pos);					
-				} else {
-					handleAttributeContentType(inter, contentType);
-				}
-			}
+		if (!editorText.isVisible() && inter != null) {
+			EditType.handleEdit(this, inter, pos);
 		}
-	}
-
-	private void handleAttributeContentType(final Interval inter,
-			final ContentType contentType) {
-		if (!contentType.isBooleanAttributeType()) {
-			final IAttributeManipulation attManip = inter
-					.getAttributeManipulation();
-			if (attManip != null) {
-				showTipMenu(inter);
-			}
-			return;
-		}
-		changeBooleanValue(inter);
 	}
 
 	private void changeBooleanValue(Interval inter) {
@@ -292,11 +331,11 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	private void showTipMenu(final Interval inter) {
-		final Menu tipMenu = new Menu(parent);
 		final String[] possibleValues = inter.getPossibleValues();
 		if (possibleValues == null) {
 			return;
 		}
+		final Menu tipMenu = new Menu(parent);
 		for (final String value : possibleValues) {
 			final MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
 			item.setText(value);
@@ -548,7 +587,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 		
 		// or better: add isMath() to IAttributeManipulation
 		final IInternalElement element = interval.getElement().getElement();
-		final boolean enable = (element instanceof IPredicateElement || element instanceof IAssignmentElement)
+		final boolean enable = (element instanceof IPredicateElement
+				|| element instanceof IAssignmentElement || element instanceof IExpressionElement)
 				&& interval.getContentType().equals(
 						RodinConfiguration.CONTENT_TYPE);
 		if (enable) {

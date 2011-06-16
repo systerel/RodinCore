@@ -10,6 +10,11 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.CONTENT_TYPE;
+import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
+import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,15 +72,24 @@ public class EditorElement extends EditorItem {
 		return null;
 	}
 
-	public Interval getInterval(IAttributeType attributeType) {
+	public Interval getInterval(IAttributeType attrType) {
 		for (Interval i : intervals) {
 			final ContentType contentType = i.getContentType();
 			if (!(contentType instanceof AttributeContentType)) {
 				continue;
 			}
-			final IAttributeType ctAttrType = contentType.getAttributeType();
-			if (ctAttrType.equals(attributeType)) {
+			final IAttributeType ctAttrType = ((AttributeContentType) contentType).getAttributeType();
+			if (attrType.equals(ctAttrType)) {
 				return i;
+			}
+			// FIXME really got to do something to avoid checking
+			// the following everywhere
+			if (contentType.equals(CONTENT_TYPE)) {
+				if (attrType == PREDICATE_ATTRIBUTE
+						|| attrType == ASSIGNMENT_ATTRIBUTE
+						|| attrType == EXPRESSION_ATTRIBUTE) {
+					return i;
+				}
 			}
 		}
 		return null;
