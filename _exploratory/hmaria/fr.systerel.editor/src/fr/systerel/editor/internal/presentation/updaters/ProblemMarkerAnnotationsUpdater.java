@@ -27,7 +27,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IAttributeType;
@@ -139,10 +138,12 @@ public class ProblemMarkerAnnotationsUpdater {
 				final DocumentMapper mapper = editor.getDocumentMapper();
 				final EditorElement rootEditorElement = mapper
 						.findEditorElement(inputRoot);
-				final Point eR = mapper.getEnclosingPoint(rootEditorElement);
-				position = mapper.getEnclosingPosition(rootEditorElement);
-				updateMarkerInfo(marker, document.getLineOfOffset(eR.x) + 1,
-						eR.x, eR.y);
+				final int offset = rootEditorElement.getOffset();
+				final int length = rootEditorElement.getLength();
+				
+				position = new Position(offset, length);
+				updateMarkerInfo(marker, document.getLineOfOffset(offset) + 1,
+						offset, offset + length - 1);
 				return position;
 			}
 		} catch (BadLocationException e) {
