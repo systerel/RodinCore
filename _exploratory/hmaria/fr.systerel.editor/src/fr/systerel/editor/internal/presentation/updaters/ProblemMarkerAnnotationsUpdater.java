@@ -10,6 +10,9 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.presentation.updaters;
 
+import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerConstants.FORMULA_CHAR_END;
+import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerConstants.FORMULA_CHAR_START;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -208,10 +211,13 @@ public class ProblemMarkerAnnotationsUpdater {
 		final IRodinElement element = RodinMarkerUtil.getElement(marker);
 		final DocumentMapper documentMapper = editor.getDocumentMapper();
 		final EditorElement eElement = documentMapper.findEditorElement(element);
-		if (eElement == null)
+		if (eElement == null) {
+			// not an internal location
 			return null;
+		}
 		final IAttributeType attr = RodinMarkerUtil.getAttributeType(marker);
 		if (attr == null) {
+			// not an attribute location
 			return documentMapper.getEnclosingPosition(eElement);
 		}
 		final Interval interval = eElement.getInterval(attr);
@@ -220,15 +226,33 @@ public class ProblemMarkerAnnotationsUpdater {
 		}
 		final int charStart = RodinMarkerUtil.getCharStart(marker);
 		final int charEnd = RodinMarkerUtil.getCharEnd(marker);
-		final int posStart;
-		final int length;
 		if (charStart < 0 || charEnd < 0) {
-			posStart = interval.getOffset();
-			length = interval.getLength();
-		} else {
-			posStart = interval.getOffset() + charStart;
-			length = charEnd - charStart + 1;
+			// not an attribute substring location
+			return new Position(interval.getOffset(), interval.getLength());
 		}
+		
+		return getSubstringPosition(marker, interval, charStart, charEnd);
+	}
+
+	private Position getSubstringPosition(IMarker marker, Interval interval,
+			int charStart, int charEnd) {
+		int fStart = marker.getAttribute(FORMULA_CHAR_START, -1);
+		int fEnd = marker.getAttribute(FORMULA_CHAR_END, -1);
+		if (fStart < 0 || fEnd < 0) {
+			// first access, standard start and end are formula based
+			fStart = charStart;
+			fEnd = charEnd;
+			// store for future use
+			// standard start and end will become editor based
+			try {
+				marker.setAttribute(FORMULA_CHAR_START, fStart);
+				marker.setAttribute(FORMULA_CHAR_END, fEnd);
+			} catch (CoreException e) {
+				// ignore failure
+			}
+		}
+		final int posStart = interval.getOffset() + fStart;
+		final int length = fEnd - fStart + 1;
 		return new Position(posStart, length);
 	}
 
