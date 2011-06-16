@@ -19,7 +19,7 @@ public interface IRodinColorConstant {
 
 	// TODO make preferences
 
-	RGB COMMENT = new RGB(63, 127, 95);
+	RGB COMMENT = new RGB(12000, 127, 95);
 	RGB IMPLICIT_COMMENT = new RGB(95, 150, 95);
 
 	RGB CONTENT = new RGB(0, 0, 192);
