@@ -227,7 +227,7 @@ public class ProblemMarkerAnnotationsUpdater {
 			length = interval.getLength();
 		} else {
 			posStart = interval.getOffset() + charStart;
-			length = charEnd - charStart;
+			length = charEnd - charStart + 1;
 		}
 		return new Position(posStart, length);
 	}
