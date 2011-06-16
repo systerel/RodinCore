@@ -133,7 +133,7 @@ public class ProblemMarkerAnnotationsUpdater {
 			if (position != null) {
 				final int charStart = position.getOffset();
 				int lineNumber = document.getLineOfOffset(charStart) + 1;
-				final int charEnd = charStart + position.getLength();
+				final int charEnd = charStart + position.getLength() - 1;
 				updateMarkerInfo(marker, lineNumber, charStart, charEnd);
 				return position;
 			} else {
