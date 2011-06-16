@@ -30,6 +30,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IAttributeType;
@@ -101,7 +102,7 @@ public class ProblemMarkerAnnotationsUpdater {
 	 *            the marker
 	 */
 	protected final void addMarkerAnnotation(IMarker marker) {
-		final Position p = findPosition(marker);
+		final Point p = findPoint(marker);
 		final Annotation annotation = createMarkerAnnotation(marker);
 		final Position finalPos = updateMarkerPosition(marker, p);
 		if (annotation != null) {
@@ -127,15 +128,15 @@ public class ProblemMarkerAnnotationsUpdater {
 		}
 	}
 
-	private Position updateMarkerPosition(IMarker marker, Position position) {
+	private Position updateMarkerPosition(IMarker marker, Point p) {
 		final IDocument document = editor.getDocument();
 		try {
-			if (position != null) {
-				final int charStart = position.getOffset();
+			if (p != null) {
+				final int charStart = p.x;
 				int lineNumber = document.getLineOfOffset(charStart) + 1;
-				final int charEnd = charStart + position.getLength() - 1;
+				final int charEnd = p.y;
 				updateMarkerInfo(marker, lineNumber, charStart, charEnd);
-				return position;
+				return DocumentMapper.toPosition(p);
 			} else {
 				final IInternalElement inputRoot = editor.getInputRoot();
 				final DocumentMapper mapper = editor.getDocumentMapper();
@@ -144,15 +145,15 @@ public class ProblemMarkerAnnotationsUpdater {
 				final int offset = rootEditorElement.getOffset();
 				final int length = rootEditorElement.getLength();
 				
-				position = new Position(offset, length);
+				final Position pos = new Position(offset, length);
 				updateMarkerInfo(marker, document.getLineOfOffset(offset) + 1,
 						offset, offset + length - 1);
-				return position;
+				return pos;
 			}
 		} catch (BadLocationException e) {
 			// ignore failure
 		}
-		return position;
+		return DocumentMapper.toPosition(p);
 	}
 	
 	private void updateMarkerInfo(IMarker marker, int lineNumber,
@@ -201,13 +202,13 @@ public class ProblemMarkerAnnotationsUpdater {
 	}
 
 	/**
-	 * Finds the position in the document for a given marker.
+	 * Finds the point in the document for a given marker.
 	 * 
 	 * @param marker
-	 * @return the position of the element corresponding to the marker inside
+	 * @return the point of the element corresponding to the marker inside
 	 *         the document.
 	 */
-	private Position findPosition(IMarker marker) {
+	private Point findPoint(IMarker marker) {
 		final IRodinElement element = RodinMarkerUtil.getElement(marker);
 		final DocumentMapper documentMapper = editor.getDocumentMapper();
 		final EditorElement eElement = documentMapper.findEditorElement(element);
@@ -218,7 +219,7 @@ public class ProblemMarkerAnnotationsUpdater {
 		final IAttributeType attr = RodinMarkerUtil.getAttributeType(marker);
 		if (attr == null) {
 			// not an attribute location
-			return documentMapper.getEnclosingPosition(eElement);
+			return documentMapper.getEnclosingPoint(eElement);
 		}
 		final Interval interval = eElement.getInterval(attr);
 		if (interval == null) {
@@ -228,13 +229,13 @@ public class ProblemMarkerAnnotationsUpdater {
 		final int charEnd = RodinMarkerUtil.getCharEnd(marker);
 		if (charStart < 0 || charEnd < 0) {
 			// not an attribute substring location
-			return new Position(interval.getOffset(), interval.getLength());
+			return new Point(interval.getOffset(), interval.getLength());
 		}
 		
 		return getSubstringPosition(marker, interval, charStart, charEnd);
 	}
 
-	private Position getSubstringPosition(IMarker marker, Interval interval,
+	private Point getSubstringPosition(IMarker marker, Interval interval,
 			int charStart, int charEnd) {
 		int fStart = marker.getAttribute(FORMULA_CHAR_START, -1);
 		int fEnd = marker.getAttribute(FORMULA_CHAR_END, -1);
@@ -251,9 +252,10 @@ public class ProblemMarkerAnnotationsUpdater {
 				// ignore failure
 			}
 		}
-		final int posStart = interval.getOffset() + fStart;
-		final int length = fEnd - fStart + 1;
-		return new Position(posStart, length);
+		final int offset = interval.getOffset();
+		final int pStart = offset + fStart;
+		final int pEnd = offset + fEnd;
+		return new Point(pStart, pEnd);
 	}
 
 	public void recalculateAnnotations() {

@@ -389,7 +389,9 @@ public class DocumentMapper {
 		return new Point(start, end);
 	}
 	
-	private static Position toPosition(Point p) {
+	// TODO make a type for editor positions
+	// with API of both Point and Position
+	public static Position toPosition(Point p) {
 		if (p == null) return null;
 		final int start = p.x;
 		final int length = p.y - start + 1;
