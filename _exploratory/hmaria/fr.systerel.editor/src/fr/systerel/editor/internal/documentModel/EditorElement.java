@@ -119,8 +119,12 @@ public class EditorElement extends EditorItem {
 		if (intervals.isEmpty()) {
 			return -1;
 		}
-		final Interval last = intervals.get(intervals.size() - 1);
+		final Interval last = getLastInterval();
 		return last.getLastIndex() - getOffset();
+	}
+
+	private Interval getLastInterval() {
+		return intervals.get(intervals.size() - 1);
 	}
 
 	public boolean isFoldable() {

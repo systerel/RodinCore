@@ -77,7 +77,7 @@ public class DocumentMapper {
 	 */
 	private void addInterval(Interval interval) throws Exception {
 		if (intervals.size() > 0) {
-			if (intervals.get(intervals.size() - 1).compareTo(interval) > 0) {
+			if (getLastInterval().compareTo(interval) > 0) {
 				throw new Exception("Insertion must be sorted");
 			}
 		}
@@ -472,7 +472,7 @@ public class DocumentMapper {
 		if (el != null && !ie.exists()) {
 			final List<Interval> intervals = el.getIntervals();
 			if (intervals.size() > 0) {
-				final Interval interval = intervals.get(intervals.size() - 1);
+				final Interval interval = getLastInterval();
 				adaptAfter(interval, -el.getLength());
 			}
 			editorElements.remove(ie);
@@ -521,6 +521,10 @@ public class DocumentMapper {
 				}
 			}
 		}
+	}
+
+	private Interval getLastInterval() {
+		return intervals.get(intervals.size() - 1);
 	}
 
 	private void checkLabeled(ILabeledElement element, Interval interval)
