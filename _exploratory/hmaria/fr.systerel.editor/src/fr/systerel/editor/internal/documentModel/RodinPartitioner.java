@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
+import static fr.systerel.editor.internal.editors.EditPos.computeLength;
 import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
 
@@ -304,12 +305,16 @@ public class RodinPartitioner extends FastPartitioner {
 				
 				final String contentTypeName = interval.getContentType()
 						.getName();
-				TypedPosition position;
-				if (last_end < interval.getOffset() ) {
-					position = new TypedPosition(last_end, offset-last_end, RodinConfiguration.LABEL_TYPE.getName());
-					fDocument.addPosition(getPositionCategory(), position);
+				
+				final int gapStart = last_end + 1;
+				final int gapEnd = offset - 1;
+				if (gapStart <= gapEnd) {
+					final int gapLength = computeLength(gapStart, gapEnd);
+					final TypedPosition gap = new TypedPosition(gapStart,
+							gapLength, RodinConfiguration.LABEL_TYPE.getName());
+					fDocument.addPosition(getPositionCategory(), gap);
 				}
-				position = new TypedPosition(offset,
+				final TypedPosition position = new TypedPosition(offset,
 						length, contentTypeName);
 				last_end = interval.getLastIndex();
 				fDocument.addPosition(getPositionCategory(), position);
