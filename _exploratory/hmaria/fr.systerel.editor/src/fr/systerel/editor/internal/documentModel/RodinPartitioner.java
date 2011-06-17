@@ -77,14 +77,15 @@ public class RodinPartitioner extends FastPartitioner {
 		try {
 			final int endOffset = enclosing.getEnd();
 			final Position[] category = getPositions();
-			TypedPosition previous = null;
-			TypedPosition current = null;
+			EditPos previous = null;
+			EditPos current = null;
 			int start, end;
 
 			final int startIndex = getFirstIndexEndingAfterOffset(category, offset);
 			final int endIndex = getFirstIndexStartingAfterOffset(category, endOffset);
 			for (int i = startIndex; i < endIndex; i++) {
-				current = (TypedPosition) category[i];
+				final TypedPosition curr = (TypedPosition) category[i];
+				current = newPosOffLen(curr.getOffset(), curr.getLength());
 				final int gapOffset;
 				if (previous == null) {
 					gapOffset = 0;
@@ -98,18 +99,16 @@ public class RodinPartitioner extends FastPartitioner {
 							offset, length))
 							|| (gap.getLength() > 0 && gap.overlapsWith(enclosing))) {
 						start = Math.max(offset, gapOffset);
-						end = Math.min(endOffset,
-								gap.getEnd() + 1);
+						end = Math.min(endOffset, gap.getEnd());
 						list.add(new TypedRegion(start, end - start,
 								IDocument.DEFAULT_CONTENT_TYPE));
 					}
 				}
-				if (current.overlapsWith(offset, length)) {
+				if (current.overlapsWith(enclosing)) {
 					start = Math.max(offset, current.getOffset());
-					end = Math.min(endOffset,
-							current.getOffset() + current.getLength());
+					end = Math.min(endOffset, current.getEnd());
 					if (end - start > 0 || includeZeroLengthPartitions) {
-						list.add(new TypedRegion(start, end - start, current
+						list.add(new TypedRegion(start, end - start, curr
 								.getType()));
 					}
 				}
@@ -117,7 +116,7 @@ public class RodinPartitioner extends FastPartitioner {
 			}
 			if (previous != null) {
 				final int docLast = fDocument.getLength() - 1;
-				final int gapOffset = previous.getOffset() + previous.getLength();
+				final int gapOffset = previous.getEnd() + 1;
 				final EditPos gap = newPosStartEnd(gapOffset, docLast);
 				if ((includeZeroLengthPartitions && overlapsOrTouches(gap,
 						offset, length))
