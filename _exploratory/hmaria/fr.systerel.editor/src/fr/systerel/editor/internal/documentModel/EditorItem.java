@@ -10,8 +10,12 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
+import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
+
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
+
+import fr.systerel.editor.internal.editors.EditPos;
 
 /**
  * This class represents an item in the editor that can spread several intervals
@@ -22,6 +26,8 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 public abstract class EditorItem {
 
 
+	// this position is updated by the annotation model
+	// => keep as is, do not use EditPos instead
 	protected Position foldingPosition;
 	// TODO: check if it is really necessary to save the annotations.
 	protected ProjectionAnnotation foldingAnnotation;
@@ -67,22 +73,25 @@ public abstract class EditorItem {
 		this.foldingAnnotation = foldingAnnotation;
 	}
 
-	public int getOffset() {
+	protected int getOffset() {
 		if (foldingPosition != null) {
 			return foldingPosition.offset;
 		}
 		return -1;
 	}
 
-	public int getLength() {
+	protected int getLength() {
 		if (foldingPosition != null) {
 			return foldingPosition.getLength();
 		}
 		return -1;
 	}
 
+	public EditPos getPos() {
+		return newPosOffLen(getOffset(), getLength(), false);
+	}
+	
 	public boolean contains(int offset) {
-		final int thisOffset = getOffset();
-		return thisOffset <= offset && offset <= thisOffset + getLength();
+		return getPos().includes(offset);
 	}
 }
