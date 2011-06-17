@@ -91,14 +91,9 @@ public class RodinPartitioner extends FastPartitioner {
 					gapOffset = previous.getEnd() + 1;
 				}
 				if (current.getOffset() >= gapOffset) {
-					final EditPos gap = newPosStartEnd(gapOffset,
-							current.getOffset() - 1);
-					if ((includeZeroLengthPartitions && overlapsOrTouches(gap,
-							enclosing))
-							|| (gap.getLength() > 0 && gap.overlapsWith(enclosing))) {
-						list.add(makeRegion(gap, enclosing,
-								IDocument.DEFAULT_CONTENT_TYPE));
-					}
+					final int gapEnd = current.getOffset() - 1;
+					addGap(gapOffset, gapEnd, enclosing, list,
+							includeZeroLengthPartitions);
 				}
 				if (current.overlapsWith(enclosing)) {
 					final EditPos regionPos = getValidPos(current, enclosing);
@@ -112,13 +107,8 @@ public class RodinPartitioner extends FastPartitioner {
 			if (previous != null) {
 				final int docLast = fDocument.getLength() - 1;
 				final int gapOffset = previous.getEnd() + 1;
-				final EditPos gap = newPosStartEnd(gapOffset, docLast);
-				if ((includeZeroLengthPartitions && overlapsOrTouches(gap,
-						enclosing))
-						|| (gap.getLength() > 0 && gap.overlapsWith(enclosing))) {
-					list.add(makeRegion(gap, enclosing,
-							IDocument.DEFAULT_CONTENT_TYPE));
-				}
+				addGap(gapOffset, docLast, enclosing, list,
+						includeZeroLengthPartitions);
 			}
 			if (list.isEmpty())
 				list.add(new TypedRegion(offset, length,
@@ -136,6 +126,15 @@ public class RodinPartitioner extends FastPartitioner {
 		if (DEBUG) 
 			System.out.println("partitioning: " + list);
 		return list.toArray(new TypedRegion[list.size()]);
+	}
+
+	private static void addGap(int gapOffset, int gapEnd, EditPos enclosing,
+			List<ITypedRegion> list, boolean includeZeroLengthPartitions) {
+		final EditPos gap = newPosStartEnd(gapOffset, gapEnd);
+		if ((includeZeroLengthPartitions && overlapsOrTouches(gap, enclosing))
+				|| (gap.getLength() > 0 && gap.overlapsWith(enclosing))) {
+			list.add(makeRegion(gap, enclosing, IDocument.DEFAULT_CONTENT_TYPE));
+		}
 	}
 
 	private static TypedRegion makeRegion(EditPos suggested, EditPos enclosing, String type) {
