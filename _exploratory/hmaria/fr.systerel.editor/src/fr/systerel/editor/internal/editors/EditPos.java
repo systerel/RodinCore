@@ -106,6 +106,11 @@ public class EditPos implements Cloneable {
 	public boolean includes(int index) {
 		return getStart() <= index && index <= getEnd();
 	}
+	
+	public boolean overlapsWith(EditPos other) {
+		return this.getStart() <= other.getEnd()
+				&& other.getStart() <= this.getEnd();
+	}
 
 	public EditPos clone() {
 		return new EditPos(offset, length);
