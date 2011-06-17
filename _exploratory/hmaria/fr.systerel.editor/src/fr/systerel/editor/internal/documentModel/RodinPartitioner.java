@@ -132,6 +132,9 @@ public class RodinPartitioner extends FastPartitioner {
 
 	private static void addGap(int gapOffset, int gapEnd, EditPos enclosing,
 			List<ITypedRegion> list, boolean includeZeroLengthPartitions) {
+		if (gapEnd < gapOffset) {
+			gapEnd = gapOffset;
+		}
 		final EditPos gap = newPosStartEnd(gapOffset, gapEnd);
 		if ((includeZeroLengthPartitions && overlapsOrTouches(gap, enclosing))
 				|| (gap.getLength() > 0 && gap.overlapsWith(enclosing))) {
