@@ -39,10 +39,10 @@ public class Interval implements Comparable<Interval> {
 	private boolean changed;
 	private int indentation;
 	
-	public Interval(int offset, int length, ILElement element, IInternalElementType<?> elementType,
+	public Interval(EditPos pos, ILElement element, IInternalElementType<?> elementType,
 			ContentType contentType, IAttributeManipulation attManip,
 			boolean multiLine, boolean addWhiteSpace) {
-		this.pos = newPosOffLen(offset, length);
+		this.pos = pos;
 		this.element = element;
 		this.attManip = attManip;
 		this.rodinElement = getElement(element);

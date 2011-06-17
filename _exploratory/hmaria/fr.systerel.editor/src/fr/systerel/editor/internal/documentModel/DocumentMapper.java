@@ -263,7 +263,7 @@ public class DocumentMapper {
 	 * none yet. Otherwise updates length and offset. It is expected that this
 	 * method is called in the order the intervals appear in the document.
 	 */
-	private void processInterval(int offset, int length, ILElement element,
+	private void processInterval(EditPos pos, ILElement element,
 			ContentType contentType, IAttributeManipulation manipulation,
 			boolean multiLine, int indentationLevel, boolean addWhitespace) {
 		Interval inter;
@@ -272,10 +272,9 @@ public class DocumentMapper {
 		if (contentType.isEditable()) {
 			inter = findInterval(element, contentType);
 			if (inter != null) {
-				inter.setLength(length);
-				inter.setOffset(offset);
+				inter.setPos(pos);
 			} else {
-				inter = new Interval(offset, length, element, type,
+				inter = new Interval(pos, element, type,
 						contentType, manipulation, multiLine, addWhitespace);
 				inter.setIndentation(indentationLevel);
 				try {
@@ -287,10 +286,9 @@ public class DocumentMapper {
 		} else {
 			if (intervals.indexOf(previous) < intervals.size() - 1) {
 				inter = intervals.get(intervals.indexOf(previous) + 1);
-				inter.setLength(length);
-				inter.setOffset(offset);
+				inter.setPos(pos);
 			} else {
-				inter = new Interval(offset, length, element, type,
+				inter = new Interval(pos, element, type,
 						contentType, manipulation, multiLine, addWhitespace);
 				inter.setIndentation(indentationLevel);
 				try {
@@ -312,7 +310,7 @@ public class DocumentMapper {
 	 * Processes the interval corresponding to the given region description.
 	 */
 	public void processInterval(EditorRegion r) {
-		processInterval(r.getStartOffset(), r.getLength(), r.getElement(),
+		processInterval(r.getPos(), r.getElement(),
 				r.getType(), r.getManipulation(), r.getMultiline(),
 				r.getAdditionalTabs(), r.isAddWhitespace());
 	}
