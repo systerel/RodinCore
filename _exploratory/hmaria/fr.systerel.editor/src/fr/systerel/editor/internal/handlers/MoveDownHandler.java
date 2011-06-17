@@ -12,12 +12,12 @@ package fr.systerel.editor.internal.handlers;
 
 import java.util.List;
 
-import org.eclipse.swt.graphics.Point;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
+import fr.systerel.editor.internal.editors.EditPos;
 
 /**
  * @author Thomas Muller
@@ -43,10 +43,10 @@ public class MoveDownHandler extends AbstractMoveHandler {
 			DocumentMapper mapper) {
 		int oo = -1;
 		for (ILElement e : elems) {
-			final Point enclosingRange = mapper.getEnclosingPoint(e);
-			if (enclosingRange == null)
+			final EditPos enclosingPos = mapper.getEnclosingPosition(e);
+			if (enclosingPos == null)
 				continue;
-			final int o = enclosingRange.y + 1;
+			final int o = enclosingPos.getEnd() + 1;
 			if (o > oo || oo == -1) {
 				oo = o;
 			}

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -81,23 +80,23 @@ public class SelectionController implements MouseListener, VerifyListener,
 		toggleSelection(offset);
 	}
 	
-	public Position toggleSelection(int offset) {
+	public EditPos toggleSelection(int offset) {
 		// select the enclosing element
 		final EditorElement editElem = mapper.findItemContaining(offset);
 		if (editElem == null) return null;
 		return toggleSelection(editElem);
 	}
 
-	public Position toggleSelection(ILElement element) {
+	public EditPos toggleSelection(ILElement element) {
 		final EditorElement editElem = mapper.findEditorElement(element);
 		if (editElem == null) return null;
 		return toggleSelection(editElem);
 	}
 	
-	private Position toggleSelection(EditorElement editElem) {
+	private EditPos toggleSelection(EditorElement editElem) {
 		final ILElement element = editElem.getLightElement();
 		if (element.isImplicit()) return null;
-		final Position enclosingRange = mapper.getEnclosingPosition(editElem);
+		final EditPos enclosingRange = mapper.getEnclosingPosition(editElem);
 		if (enclosingRange == null) return null;
 		
 		// TODO position is only useful if element is not selected
@@ -172,15 +171,15 @@ public class SelectionController implements MouseListener, VerifyListener,
 			final ILElement element = editorElem.getLightElement();
 			if (element.isImplicit())
 				return;
-			final Position enclosingRange = mapper.getEnclosingPosition(editorElem);
-			if (enclosingRange == null)
+			final EditPos enclosingPos = mapper.getEnclosingPosition(editorElem);
+			if (enclosingPos == null)
 				return;
 
-			selection.add(element, enclosingRange);
+			selection.add(element, enclosingPos);
 			// styledText.setSelection(start);
 			if (DEBUG)
 				System.out.println("selected " + element.getElement() + " in "
-						+ enclosingRange);
+						+ enclosingPos);
 		}
 	}
 

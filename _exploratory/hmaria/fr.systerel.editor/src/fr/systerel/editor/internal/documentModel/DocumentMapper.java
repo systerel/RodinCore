@@ -11,6 +11,7 @@
 package fr.systerel.editor.internal.documentModel;
 
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getChildPossibleTypes;
+import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +25,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
-import org.eclipse.swt.graphics.Point;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
 import org.eventb.core.IIdentifierElement;
@@ -39,6 +39,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
+import fr.systerel.editor.internal.editors.EditPos;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.AttributeContentType;
@@ -331,9 +332,9 @@ public class DocumentMapper {
 
 	private void updateElementFolding() {
 		for (EditorElement el : editorElements.getItems()) {
-			final Position range = getEnclosingPosition(el);
+			final EditPos range = getEnclosingPosition(el);
 			if (el.isFoldable() && range != null) {
-				el.setFoldingPosition(range.offset, range.length);
+				el.setFoldingPosition(range.getOffset(), range.getLength());
 			} else {
 				el.clearFolding();
 			}
@@ -368,42 +369,25 @@ public class DocumentMapper {
 		return null;
 	}
 
-	public Point getEnclosingPoint(ILElement element) {
+	public EditPos getEnclosingPosition(ILElement element) {
 		final EditorElement editorItem = findEditorElement(element);
 		
 		if (editorItem == null) return null;
-		return getEnclosingPoint(editorItem);
+		return getEnclosingPosition(editorItem);
 	}
 
-	public Point getEnclosingPoint(EditorElement editorItem) {
+	public EditPos getEnclosingPosition(EditorElement editorItem) {
 		int start = editorItem.getOffset();
 		int end = start + editorItem.getLength();
 		if (start < 0 || end < 0) return null;
 		final ILElement el = editorItem.getLightElement();
 		for (ILElement child : el.getChildren()) {
-			final Point childRange = getEnclosingPoint(child);
-			if (childRange == null) continue;
-			start = Math.min(start, childRange.x);
-			end = Math.max(end, childRange.y);
+			final EditPos childPos = getEnclosingPosition(child);
+			if (childPos == null) continue;
+			start = Math.min(start, childPos.getStart());
+			end = Math.max(end, childPos.getEnd());
 		}
-		return new Point(start, end);
-	}
-	
-	// TODO make a type for editor positions
-	// with API of both Point and Position
-	public static Position toPosition(Point p) {
-		if (p == null) return null;
-		final int start = p.x;
-		final int length = p.y - start + 1;
-		return new Position(start, length);
-	}
-	
-	public Position getEnclosingPosition(ILElement element) {
-		return toPosition(getEnclosingPoint(element));
-	}
-	
-	public Position getEnclosingPosition(EditorElement element) {
-		return toPosition(getEnclosingPoint(element));
+		return newPosStartEnd(start, end);
 	}
 	
 	/**
@@ -750,8 +734,8 @@ public class DocumentMapper {
 			ILElement parent, IElementType<?> siblingType) {
 		final ILElement elemAfter = findElementAfter(offset, siblingType);
 		if (elemAfter != null) {
-			final Point er = getEnclosingPoint(elemAfter);
-			final ILElement nextS = findElementAfter(er.y + 1, siblingType);
+			final EditPos er = getEnclosingPosition(elemAfter);
+			final ILElement nextS = findElementAfter(er.getEnd() + 1, siblingType);
 			return new ModelPosition(parent, nextS);
 		}
 		return new ModelPosition(parent, null);

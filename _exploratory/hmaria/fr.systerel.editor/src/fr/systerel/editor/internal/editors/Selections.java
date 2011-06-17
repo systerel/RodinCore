@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.text.Position;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -37,33 +36,33 @@ public class Selections {
 			this.styledText = styledText;
 		}
 		
-		public void select(Position position) {
+		public void select(EditPos position) {
 			setSelectionBackgroundColor(position);
 		}
 		
-		public void unselect(Position position) {
+		public void unselect(EditPos position) {
 			resetBackgroundColor(position);
 		}
 		
-		public void badSelection(Position position) {
+		public void badSelection(EditPos position) {
 			setBadSelectionBackgroundColor(position);
 		}
 		
-		private void setSelectionBackgroundColor(Position position) {
+		private void setSelectionBackgroundColor(EditPos position) {
 			final Color background = getSelectionBackgroundColorPreference();
 			setBackgroundColor(position, background);
 		}
 		
-		private void setBadSelectionBackgroundColor(Position position) {
+		private void setBadSelectionBackgroundColor(EditPos position) {
 			final Color background = getBadSelectionBackgroundColorPreference();
 			setBackgroundColor(position, background);
 		}
 		
-		private void resetBackgroundColor(Position position) {
+		private void resetBackgroundColor(EditPos position) {
 			setBackgroundColor(position, null);
 		}
 		
-		private void setBackgroundColor(Position position, Color color) {
+		private void setBackgroundColor(EditPos position, Color color) {
 			final int start = position.getOffset();
 			final int charCount = styledText.getCharCount();
 			if (start > charCount) {
@@ -100,9 +99,9 @@ public class Selections {
 	
 	private static class SimpleSelection {
 		public final ILElement element;
-		public final Position position;
+		public final EditPos position;
 		
-		public SimpleSelection(ILElement element, Position position) {
+		public SimpleSelection(ILElement element, EditPos position) {
 			this.element = element;
 			this.position = position;
 		}
@@ -167,7 +166,7 @@ public class Selections {
 			return result;
 		}
 		
-		public void toggle(ILElement element, Position position) {
+		public void toggle(ILElement element, EditPos position) {
 			int index = indexOf(element);
 			if (index < 0) {
 				// a descendant of an already selected element unselects it
@@ -189,7 +188,7 @@ public class Selections {
 			}
 		}
 
-		public void add(ILElement element, Position position) {
+		public void add(ILElement element, EditPos position) {
 			// an ancestor of an already selected element replaces it
 			removeContainedIn(position);
 			final int index = findInsertionIndex(position);
@@ -200,24 +199,24 @@ public class Selections {
 			}
 		}
 		
-		private int findInsertionIndex(Position position) {
+		private int findInsertionIndex(EditPos position) {
 			int i = 0;
 			for (; i < selected.size(); i++) {
 				final SimpleSelection sel = selected.get(i);
-				if (sel.position.offset > position.offset) {
+				if (sel.position.getOffset() > position.getOffset()) {
 					break;
 				}
 			}
 			return i;
 		}
 
-		private void removeContainedIn(Position position) {
+		private void removeContainedIn(EditPos position) {
 			// not applying unselect effects because those of the containing
 			// position will apply
 			final Iterator<SimpleSelection> iter = selected.iterator();
 			while(iter.hasNext()) {
 				final SimpleSelection sel = iter.next();
-				if (position.includes(sel.position.offset)) {
+				if (position.includes(sel.position.getOffset())) {
 					iter.remove();
 				}
 			}

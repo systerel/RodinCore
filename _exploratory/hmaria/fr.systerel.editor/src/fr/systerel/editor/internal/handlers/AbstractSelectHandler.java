@@ -12,9 +12,9 @@ package fr.systerel.editor.internal.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.text.Position;
 import org.rodinp.core.emf.api.itf.ILElement;
 
+import fr.systerel.editor.internal.editors.EditPos;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.editors.SelectionController;
 
@@ -34,7 +34,7 @@ public abstract class AbstractSelectHandler extends AbstractEditorHandler {
 				.getSelectionController();
 		final int offset = rEditor.getCurrentOffset();
 		final ILElement element = selController.getSelectionAt(offset);
-		final Position reveal;
+		final EditPos reveal;
 		if (element == null) {
 			// not selected => expand selection
 			reveal = selController.toggleSelection(offset);
@@ -53,7 +53,7 @@ public abstract class AbstractSelectHandler extends AbstractEditorHandler {
 			}
 		}
 		if (reveal != null) {
-			rEditor.reveal(reveal.offset, reveal.length);
+			rEditor.reveal(reveal);
 		}
 		return null;
 	}

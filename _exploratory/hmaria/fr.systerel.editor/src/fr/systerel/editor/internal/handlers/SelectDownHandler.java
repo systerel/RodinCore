@@ -11,11 +11,11 @@
 package fr.systerel.editor.internal.handlers;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.swt.graphics.Point;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
+import fr.systerel.editor.internal.editors.EditPos;
 import fr.systerel.editor.internal.editors.RodinEditor;
 
 /**
@@ -27,8 +27,8 @@ public class SelectDownHandler extends AbstractSelectHandler {
 	@Override
 	protected ILElement getSibling(RodinEditor rEditor, ILElement element) {
 		final DocumentMapper mapper = rEditor.getDocumentMapper();
-		final Point range = mapper.getEnclosingPoint(element);
-		final int end = range.y + 1;
+		final EditPos pos = mapper.getEnclosingPosition(element);
+		final int end = pos.getEnd() + 1;
 		final Interval intervalAfter = mapper.findEditableIntervalAfter(end);
 		if (intervalAfter == null) {
 			return null;

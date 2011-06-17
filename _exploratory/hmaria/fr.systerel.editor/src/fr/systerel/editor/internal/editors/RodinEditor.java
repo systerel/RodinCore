@@ -355,8 +355,8 @@ public class RodinEditor extends TextEditor {
 		}
 	}
 
-	public void reveal(int offset, int length) {
-		selectAndReveal(offset, 0, offset, length);
+	public void reveal(EditPos pos) {
+		selectAndReveal(pos.getOffset(), 0, pos.getOffset(), pos.getLength());
 	}
 	
 	public DocumentMapper getDocumentMapper() {
