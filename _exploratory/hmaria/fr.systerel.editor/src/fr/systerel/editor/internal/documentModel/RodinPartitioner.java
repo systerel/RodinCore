@@ -10,7 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
-import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
+import static fr.systerel.editor.internal.editors.EditPos.computeLength;
 import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
 
@@ -79,7 +79,6 @@ public class RodinPartitioner extends FastPartitioner {
 			final Position[] category = getPositions();
 			EditPos previous = null;
 			EditPos current = null;
-			int start, end;
 
 			final int startIndex = getFirstIndexEndingAfterOffset(category, offset);
 			final int endIndex = getFirstIndexStartingAfterOffset(category, endOffset);
@@ -98,17 +97,19 @@ public class RodinPartitioner extends FastPartitioner {
 					if ((includeZeroLengthPartitions && overlapsOrTouches(gap,
 							offset, length))
 							|| (gap.getLength() > 0 && gap.overlapsWith(enclosing))) {
-						start = Math.max(offset, gapOffset);
-						end = Math.min(endOffset, gap.getEnd());
-						list.add(new TypedRegion(start, end - start,
+						final int regionStart = Math.max(offset, gapOffset);
+						final int regionEnd = Math.min(endOffset, gap.getEnd());
+						final int regionLength = computeLength(regionStart, regionEnd);
+						list.add(new TypedRegion(regionStart, regionLength,
 								IDocument.DEFAULT_CONTENT_TYPE));
 					}
 				}
 				if (current.overlapsWith(enclosing)) {
-					start = Math.max(offset, current.getOffset());
-					end = Math.min(endOffset, current.getEnd());
-					if (end - start > 0 || includeZeroLengthPartitions) {
-						list.add(new TypedRegion(start, end - start, curr
+					final int regionStart = Math.max(offset, current.getOffset());
+					final int regionEnd = Math.min(endOffset, current.getEnd());
+					final int regionLength = computeLength(regionStart, regionEnd);
+					if (regionEnd > regionStart || includeZeroLengthPartitions) {
+						list.add(new TypedRegion(regionStart, regionLength, curr
 								.getType()));
 					}
 				}
@@ -121,9 +122,10 @@ public class RodinPartitioner extends FastPartitioner {
 				if ((includeZeroLengthPartitions && overlapsOrTouches(gap,
 						offset, length))
 						|| (gap.getLength() > 0 && gap.overlapsWith(enclosing))) {
-					start = Math.max(offset, gapOffset);
-					end = Math.min(endOffset, docLast);
-					list.add(new TypedRegion(start, end - start,
+					final int regionStart = Math.max(offset, gapOffset);
+					final int regionEnd = Math.min(endOffset, docLast);
+					final int regionLength = computeLength(regionStart, regionEnd);
+					list.add(new TypedRegion(regionStart, regionLength,
 							IDocument.DEFAULT_CONTENT_TYPE));
 				}
 			}
