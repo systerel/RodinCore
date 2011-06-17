@@ -25,6 +25,14 @@ public class EditPos implements Cloneable {
 
 	public static final EditPos INVALID_POS = new EditPos(Integer.MAX_VALUE, 0);
 
+	public static int computeEnd(int offset, int length) {
+		return offset + length - 1;
+	}
+	
+	public static int computeLength(int start, int end) {
+		return end - start + 1;
+	}
+	
 	public static EditPos newPosOffLen(int offset, int length) {
 		return newPosOffLen(offset, length, true);
 	}
@@ -54,7 +62,7 @@ public class EditPos implements Cloneable {
 				return INVALID_POS;
 			}
 		}
-		final int length = end - start + 1;
+		final int length = computeLength(start, end);
 		return new EditPos(start, length);
 	}
 
@@ -84,7 +92,7 @@ public class EditPos implements Cloneable {
 	}
 
 	public int getEnd() {
-		return offset + length - 1;
+		return computeEnd(offset,length);
 	}
 
 	public Point toPoint() {
