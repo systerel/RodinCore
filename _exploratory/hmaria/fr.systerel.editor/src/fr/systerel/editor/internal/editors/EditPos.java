@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Point;
  * @author Nicolas Beauger
  * 
  */
-public class EditPos {
+public class EditPos implements Cloneable {
 
 	public static EditPos newPosOffLen(int offset, int length) {
 		return new EditPos(offset, length);
@@ -68,5 +68,51 @@ public class EditPos {
 
 	public boolean includes(int index) {
 		return getStart() <= index && index <= getEnd();
+	}
+	
+	public EditPos clone() {
+		return new EditPos(offset, length);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + length;
+		result = prime * result + offset;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof EditPos)) {
+			return false;
+		}
+		EditPos other = (EditPos) obj;
+		if (length != other.length) {
+			return false;
+		}
+		if (offset != other.offset) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(getStart());
+		sb.append(", ");
+		sb.append(getEnd());
+		sb.append(", (");
+		sb.append(getLength());
+		sb.append(")");
+		return sb.toString();
 	}
 }
