@@ -141,12 +141,10 @@ public class ProblemMarkerAnnotationsUpdater {
 				final DocumentMapper mapper = editor.getDocumentMapper();
 				final EditorElement rootEditorElement = mapper
 						.findEditorElement(inputRoot);
-				final int offset = rootEditorElement.getOffset();
-				final int length = rootEditorElement.getLength();
 				
-				final EditPos pos = newPosOffLen(offset, length);
-				updateMarkerInfo(marker, document.getLineOfOffset(offset) + 1,
-						pos);
+				final EditPos pos = rootEditorElement.getPos();
+				updateMarkerInfo(marker,
+						document.getLineOfOffset(pos.getOffset()) + 1, pos);
 				return pos;
 			}
 		} catch (BadLocationException e) {
