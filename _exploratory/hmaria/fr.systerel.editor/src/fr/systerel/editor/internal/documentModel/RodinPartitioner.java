@@ -94,7 +94,7 @@ public class RodinPartitioner extends FastPartitioner {
 					final EditPos gap = newPosStartEnd(gapOffset,
 							current.getOffset() - 1);
 					if ((includeZeroLengthPartitions && overlapsOrTouches(gap,
-							offset, length))
+							enclosing))
 							|| (gap.getLength() > 0 && gap.overlapsWith(enclosing))) {
 						list.add(makeRegion(gap, enclosing,
 								IDocument.DEFAULT_CONTENT_TYPE));
@@ -114,7 +114,7 @@ public class RodinPartitioner extends FastPartitioner {
 				final int gapOffset = previous.getEnd() + 1;
 				final EditPos gap = newPosStartEnd(gapOffset, docLast);
 				if ((includeZeroLengthPartitions && overlapsOrTouches(gap,
-						offset, length))
+						enclosing))
 						|| (gap.getLength() > 0 && gap.overlapsWith(enclosing))) {
 					list.add(makeRegion(gap, enclosing,
 							IDocument.DEFAULT_CONTENT_TYPE));
@@ -422,7 +422,7 @@ public class RodinPartitioner extends FastPartitioner {
 	 * Returns <code>true</code> if the given ranges overlap with or touch each
 	 * other.
 	 * 
-	 * @param gap
+	 * @param first
 	 *            the first range
 	 * @param offset
 	 *            the offset of the second range
@@ -431,10 +431,9 @@ public class RodinPartitioner extends FastPartitioner {
 	 * @return <code>true</code> if the given ranges overlap with or touch each
 	 *         other
 	 */
-	private static boolean overlapsOrTouches(EditPos gap, int offset,
-			int length) {
-		return gap.getOffset() <= offset + length
-				&& offset <= gap.getOffset() + gap.getLength();
+	private static boolean overlapsOrTouches(EditPos first, EditPos second) {
+		return first.getOffset() <= second.getEnd() + 1
+				&& second.getOffset() <= first.getEnd() + 1;
 	}
 
 	/**
