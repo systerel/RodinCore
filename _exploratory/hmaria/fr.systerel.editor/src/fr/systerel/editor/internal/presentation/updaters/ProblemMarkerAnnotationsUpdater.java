@@ -229,7 +229,8 @@ public class ProblemMarkerAnnotationsUpdater {
 		final int charEnd = RodinMarkerUtil.getCharEnd(marker);
 		if (charStart < 0 || charEnd < 0) {
 			// not an attribute substring location
-			return new Point(interval.getOffset(), interval.getLength());
+			return new Point(interval.getOffset(), interval.getOffset()
+					+ interval.getLength() - 1);
 		}
 		
 		return getSubstringPosition(marker, interval, charStart, charEnd);
