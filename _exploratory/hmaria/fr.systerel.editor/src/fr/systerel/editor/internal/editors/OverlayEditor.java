@@ -306,11 +306,11 @@ public class OverlayEditor implements IAnnotationModelListener,
 		contentProposal.setCompletionLocation(inter);
 		setEventBTranslation(inter);
 		final int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
-		final int end = start + inter.getLength();
+		final int end = start + inter.getLength() - 1;
 		final int clickOffset = start + pos;
 		final String text;
 		if (inter.getLength() > 0) {
-			final String extracted = parent.getText(start, end - 1);
+			final String extracted = parent.getText(start, end);
 			final int level = inter.getIndentation();
 			final boolean multiLine = inter.isMultiLine();
 			final boolean addWhiteSpace = inter.isAddWhiteSpace();
