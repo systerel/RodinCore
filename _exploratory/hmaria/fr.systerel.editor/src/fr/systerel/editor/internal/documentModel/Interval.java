@@ -11,11 +11,14 @@
 
 package fr.systerel.editor.internal.documentModel;
 
+import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
+
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
+import fr.systerel.editor.internal.editors.EditPos;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
@@ -25,8 +28,7 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
  */
 public class Interval implements Comparable<Interval> {
 
-	private int offset;
-	private int length;
+	private EditPos pos;
 
 	private final ILElement element;
 	private final IRodinElement rodinElement;
@@ -40,8 +42,7 @@ public class Interval implements Comparable<Interval> {
 	public Interval(int offset, int length, ILElement element, IInternalElementType<?> elementType,
 			ContentType contentType, IAttributeManipulation attManip,
 			boolean multiLine, boolean addWhiteSpace) {
-		this.offset = offset;
-		this.length = length;
+		this.pos = newPosOffLen(offset, length);
 		this.element = element;
 		this.attManip = attManip;
 		this.rodinElement = getElement(element);
@@ -57,27 +58,31 @@ public class Interval implements Comparable<Interval> {
 	}
 
 	public int compareTo(Interval o) {
-		return offset - o.offset;
+		return pos.getOffset() - o.pos.getOffset();
 	}
 
 	public int getOffset() {
-		return offset;
+		return pos.getOffset();
 	}
 
 	public void setOffset(int offset) {
-		this.offset = offset;
+		this.pos = newPosOffLen(offset, pos.getLength());
 	}
 
 	public int getLength() {
-		return length;
+		return pos.getLength();
 	}
 
 	public void setLength(int length) {
-		this.length = length;
+		this.pos = newPosOffLen(pos.getOffset(), length);
 	}
 
+	public void setPos(EditPos pos) {
+		this.pos = pos;
+	}
+	
 	public int getLastIndex() {
-		return offset + length;
+		return pos.getEnd();
 	}
 	
 	public IRodinElement getRodinElement() {
@@ -133,7 +138,7 @@ public class Interval implements Comparable<Interval> {
 		return indentation;
 	}
 
-	public boolean contains(int pos) {
-		return offset <= pos && pos <= offset + length;
+	public boolean contains(int offset) {
+		return pos.includes(offset); 
 	}
 }
