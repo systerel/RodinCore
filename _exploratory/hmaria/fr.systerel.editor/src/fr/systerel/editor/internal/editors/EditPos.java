@@ -23,21 +23,50 @@ import org.eclipse.swt.graphics.Point;
  */
 public class EditPos implements Cloneable {
 
+	public static final EditPos INVALID_POS = new EditPos(Integer.MAX_VALUE, 0);
+
 	public static EditPos newPosOffLen(int offset, int length) {
+		return newPosOffLen(offset, length, true);
+	}
+
+	public static EditPos newPosOffLen(int offset, int length, boolean checked) {
+		if (!isValid(offset, length)) {
+			if (checked) {
+				throw new IllegalArgumentException("invalid offset/length : "
+						+ offset + ", " + length);
+			} else {
+				return INVALID_POS;
+			}
+		}
 		return new EditPos(offset, length);
 	}
-	
+
 	public static EditPos newPosStartEnd(int start, int end) {
+		return newPosStartEnd(start, end, true);
+	}
+
+	public static EditPos newPosStartEnd(int start, int end, boolean checked) {
+		if (!isValid(start, end)) {
+			if (checked) {
+				throw new IllegalArgumentException("invalid start/end : "
+						+ start + ", " + end);
+			} else {
+				return INVALID_POS;
+			}
+		}
 		final int length = end - start + 1;
 		return new EditPos(start, length);
 	}
-	
+
+	public static boolean isValid(int offsetOrStart, int lengthOrEnd) {
+		return offsetOrStart >= 0 && lengthOrEnd >= 0;
+	}
+
 	private final int offset;
 	private final int length;
 
 	private EditPos(int offset, int length) {
-		Assert.isLegal(offset>=0);
-		Assert.isLegal(length >= 0);
+		Assert.isLegal(isValid(offset, length));
 		this.offset = offset;
 		this.length = length;
 	}
@@ -69,7 +98,7 @@ public class EditPos implements Cloneable {
 	public boolean includes(int index) {
 		return getStart() <= index && index <= getEnd();
 	}
-	
+
 	public EditPos clone() {
 		return new EditPos(offset, length);
 	}
@@ -103,9 +132,12 @@ public class EditPos implements Cloneable {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
+		if (this == INVALID_POS) {
+			return "INVALID POSITION";
+		}
 		final StringBuilder sb = new StringBuilder();
 		sb.append(getStart());
 		sb.append(", ");
