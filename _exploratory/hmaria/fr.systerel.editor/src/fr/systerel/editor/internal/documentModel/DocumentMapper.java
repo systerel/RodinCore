@@ -722,7 +722,7 @@ public class DocumentMapper {
 		final ILElement elemAfter = findElementAfter(offset, siblingType);
 		if (elemAfter != null) {
 			final EditPos er = getEnclosingPosition(elemAfter);
-			final ILElement nextS = findElementAfter(er.getEnd() + 1, siblingType);
+			final ILElement nextS = findElementAfter(er.getEnd(), siblingType);
 			return new ModelPosition(parent, nextS);
 		}
 		return new ModelPosition(parent, null);
