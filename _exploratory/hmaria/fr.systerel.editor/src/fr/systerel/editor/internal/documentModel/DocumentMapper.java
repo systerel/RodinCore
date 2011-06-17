@@ -330,9 +330,9 @@ public class DocumentMapper {
 
 	private void updateElementFolding() {
 		for (EditorElement el : editorElements.getItems()) {
-			final EditPos range = getEnclosingPosition(el);
-			if (el.isFoldable() && range != null) {
-				el.setFoldingPosition(range.getOffset(), range.getLength());
+			final EditPos pos = getEnclosingPosition(el);
+			if (el.isFoldable() && pos != null) {
+				el.setFoldingPosition(pos.getOffset(), pos.getLength());
 			} else {
 				el.clearFolding();
 			}
@@ -377,7 +377,7 @@ public class DocumentMapper {
 	public EditPos getEnclosingPosition(EditorElement editorItem) {
 		int start = editorItem.getOffset();
 		int end = start + editorItem.getLength();
-		if (start < 0 || end < 0) return null;
+		if(!EditPos.isValid(start, end)) return null;
 		final ILElement el = editorItem.getLightElement();
 		for (ILElement child : el.getChildren()) {
 			final EditPos childPos = getEnclosingPosition(child);
@@ -783,7 +783,7 @@ public class DocumentMapper {
 			if (element != null) {
 				final EditorElement editElem = findEditorElement(element);
 				final Interval interAfter = findEditableIntervalAfter(editElem
-						.getOffset() + editElem.getLength());
+						.getPos().getEnd());
 				if (interAfter == null) {
 					return new ChildCreationInfo(
 							getChildPossibleTypes(element),
