@@ -375,8 +375,9 @@ public class DocumentMapper {
 	}
 
 	public EditPos getEnclosingPosition(EditorElement editorItem) {
-		int start = editorItem.getOffset();
-		int end = start + editorItem.getLength();
+		final EditPos pos = editorItem.getPos();
+		int start = pos.getStart();
+		int end = pos.getEnd();
 		if(!EditPos.isValid(start, end)) return null;
 		final ILElement el = editorItem.getLightElement();
 		for (ILElement child : el.getChildren()) {
