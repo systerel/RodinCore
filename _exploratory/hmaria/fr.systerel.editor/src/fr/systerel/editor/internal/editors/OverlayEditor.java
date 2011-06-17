@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
@@ -306,7 +307,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		contentProposal.setCompletionLocation(inter);
 		setEventBTranslation(inter);
 		final int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
-		final int end = start + inter.getLength() - 1;
+		final int end = computeEnd(start, inter.getLength());
 		final int clickOffset = start + pos;
 		final String text;
 		if (inter.getLength() > 0) {
