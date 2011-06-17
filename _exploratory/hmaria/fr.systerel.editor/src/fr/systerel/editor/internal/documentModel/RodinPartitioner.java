@@ -11,6 +11,8 @@
 package fr.systerel.editor.internal.documentModel;
 
 import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
+import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
+import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,7 @@ import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 
+import fr.systerel.editor.internal.editors.EditPos;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
@@ -66,34 +69,37 @@ public class RodinPartitioner extends FastPartitioner {
 	}
 	
 	@Override
-	public ITypedRegion[] computePartitioning(int offset, int length,
+	public ITypedRegion[] computePartitioning(final int offset, final int length,
 			boolean includeZeroLengthPartitions) {
 		checkInitialization();
+		final EditPos enclosing = newPosOffLen(offset, length);
 		final List<ITypedRegion> list = new ArrayList<ITypedRegion>();
 		try {
-			int endOffset = computeEnd(offset, length);
+			final int endOffset = enclosing.getEnd();
 			final Position[] category = getPositions();
 			TypedPosition previous = null;
 			TypedPosition current = null;
-			int start, end, gapOffset;
-			final Position gap = new Position(0);
+			int start, end;
 
-			int startIndex = getFirstIndexEndingAfterOffset(category, offset);
-			int endIndex = getFirstIndexStartingAfterOffset(category, endOffset);
+			final int startIndex = getFirstIndexEndingAfterOffset(category, offset);
+			final int endIndex = getFirstIndexStartingAfterOffset(category, endOffset);
 			for (int i = startIndex; i < endIndex; i++) {
 				current = (TypedPosition) category[i];
-				gapOffset = (previous != null) ? previous.getOffset()
-						+ previous.getLength() : 0;
-				if (current.getOffset() - gapOffset >= 0) {
-					gap.setOffset(gapOffset);
-					gap.setLength(current.getOffset() - gapOffset);
+				final int gapOffset;
+				if (previous == null) {
+					gapOffset = 0;
+				} else {
+					gapOffset = previous.getOffset() + previous.getLength();
+				}
+				if (current.getOffset() >= gapOffset) {
+					final EditPos gap = newPosStartEnd(gapOffset,
+							current.getOffset() - 1);
 					if ((includeZeroLengthPartitions && overlapsOrTouches(gap,
 							offset, length))
-							|| (gap.getLength() > 0 && gap.overlapsWith(offset,
-									length))) {
+							|| (gap.getLength() > 0 && gap.overlapsWith(enclosing))) {
 						start = Math.max(offset, gapOffset);
 						end = Math.min(endOffset,
-								gap.getOffset() + gap.getLength());
+								gap.getEnd() + 1);
 						list.add(new TypedRegion(start, end - start,
 								IDocument.DEFAULT_CONTENT_TYPE));
 					}
@@ -110,15 +116,14 @@ public class RodinPartitioner extends FastPartitioner {
 				previous = current;
 			}
 			if (previous != null) {
-				gapOffset = previous.getOffset() + previous.getLength();
-				gap.setOffset(gapOffset);
-				gap.setLength(fDocument.getLength() - gapOffset);
+				final int docLast = fDocument.getLength() - 1;
+				final int gapOffset = previous.getOffset() + previous.getLength();
+				final EditPos gap = newPosStartEnd(gapOffset, docLast);
 				if ((includeZeroLengthPartitions && overlapsOrTouches(gap,
 						offset, length))
-						|| (gap.getLength() > 0 && gap.overlapsWith(offset,
-								length))) {
+						|| (gap.getLength() > 0 && gap.overlapsWith(enclosing))) {
 					start = Math.max(offset, gapOffset);
-					end = Math.min(endOffset, fDocument.getLength());
+					end = Math.min(endOffset, docLast);
 					list.add(new TypedRegion(start, end - start,
 							IDocument.DEFAULT_CONTENT_TYPE));
 				}
@@ -423,7 +428,7 @@ public class RodinPartitioner extends FastPartitioner {
 	 * @return <code>true</code> if the given ranges overlap with or touch each
 	 *         other
 	 */
-	private static boolean overlapsOrTouches(Position gap, int offset,
+	private static boolean overlapsOrTouches(EditPos gap, int offset,
 			int length) {
 		return gap.getOffset() <= offset + length
 				&& offset <= gap.getOffset() + gap.getLength();
