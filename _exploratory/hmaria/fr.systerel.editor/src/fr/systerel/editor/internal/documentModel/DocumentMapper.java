@@ -309,7 +309,7 @@ public class DocumentMapper {
 	/** 
 	 * Processes the interval corresponding to the given region description.
 	 */
-	public void processInterval(EditorRegion r) {
+	private void processInterval(EditorRegion r) {
 		processInterval(r.getPos(), r.getElement(),
 				r.getType(), r.getManipulation(), r.getMultiline(),
 				r.getAdditionalTabs(), r.isAddWhitespace());
@@ -389,13 +389,6 @@ public class DocumentMapper {
 	}
 	
 	/**
-	 * Finds the first interval that belongs to the given element
-	 */
-	public Interval findInterval(ILElement element) {
-		return findInterval(element.getElement());
-	}
-
-	/**
 	 * Finds the first interval that belongs to the given element and has a
 	 * given contentType.
 	 * 
@@ -420,7 +413,7 @@ public class DocumentMapper {
 		this.root = root;
 	}
 
-	public void resetPrevious() {
+	private void resetPrevious() {
 		previous = null;
 	}
 
@@ -624,7 +617,7 @@ public class DocumentMapper {
 		return null;
 	}
 
-	public void adaptAfter(Interval interval, int delta) {
+	private void adaptAfter(Interval interval, int delta) {
 		adaptIntervalOffsetsFrom(intervals.indexOf(interval) + 1, delta);
 	}
 
@@ -667,15 +660,6 @@ public class DocumentMapper {
 		}
 		return null;
 	}
-	
-	public int findEditorElementOffset(ILElement element) {
-		final EditorElement el = findEditorElement(element);
-		if (el == null)
-			return -1;
-		return el.getOffset();
-	}
-	
-	
 	
 	public EditorElement findEditorElement(ILElement element) {
 		return findEditorElement(element.getElement());
