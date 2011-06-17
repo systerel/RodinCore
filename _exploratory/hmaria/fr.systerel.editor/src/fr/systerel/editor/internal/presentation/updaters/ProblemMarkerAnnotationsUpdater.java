@@ -216,7 +216,7 @@ public class ProblemMarkerAnnotationsUpdater {
 		final IAttributeType attr = RodinMarkerUtil.getAttributeType(marker);
 		if (attr == null) {
 			// not an attribute location
-			return documentMapper.getEnclosingPosition(eElement);
+			return eElement.getPos();
 		}
 		final Interval interval = eElement.getInterval(attr);
 		if (interval == null) {
