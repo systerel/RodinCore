@@ -68,8 +68,8 @@ public class RodinPartitioner extends FastPartitioner {
 	}
 	
 	@Override
-	public ITypedRegion[] computePartitioning(final int offset, final int length,
-			boolean includeZeroLengthPartitions) {
+	public ITypedRegion[] computePartitioning(final int offset,
+			final int length, boolean includeZeroLengthPartitions) {
 		checkInitialization();
 		final EditPos enclosing = newPosOffLen(offset, length);
 		final List<ITypedRegion> list = new ArrayList<ITypedRegion>();
@@ -97,7 +97,8 @@ public class RodinPartitioner extends FastPartitioner {
 				}
 				if (current.overlapsWith(enclosing)) {
 					final EditPos regionPos = getValidPos(current, enclosing);
-					if (regionPos.getLength() > 0 || includeZeroLengthPartitions) {
+					if (regionPos.getLength() > 0
+							|| includeZeroLengthPartitions) {
 						list.add(new TypedRegion(regionPos.getOffset(),
 								regionPos.getLength(), curr.getType()));
 					}
@@ -110,9 +111,10 @@ public class RodinPartitioner extends FastPartitioner {
 				addGap(gapOffset, docLast, enclosing, list,
 						includeZeroLengthPartitions);
 			}
-			if (list.isEmpty())
+			if (list.isEmpty()) {
 				list.add(new TypedRegion(offset, length,
 						IDocument.DEFAULT_CONTENT_TYPE));
+			}
 		} catch (BadPositionCategoryException ex) {
 			ex.printStackTrace();
 			// Make sure we clear the cache
@@ -123,7 +125,7 @@ public class RodinPartitioner extends FastPartitioner {
 			clearPositionCache();
 			throw ex;
 		}
-		if (DEBUG) 
+		if (DEBUG)
 			System.out.println("partitioning: " + list);
 		return list.toArray(new TypedRegion[list.size()]);
 	}
