@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
+import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +71,7 @@ public class RodinPartitioner extends FastPartitioner {
 		checkInitialization();
 		final List<ITypedRegion> list = new ArrayList<ITypedRegion>();
 		try {
-			int endOffset = offset + length;
+			int endOffset = computeEnd(offset, length);
 			final Position[] category = getPositions();
 			TypedPosition previous = null;
 			TypedPosition current = null;
