@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
+import static fr.systerel.editor.internal.editors.EditPos.computeLength;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.CONTENT_TYPE;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
@@ -119,12 +120,15 @@ public class EditorElement extends EditorItem {
 		if (intervals.isEmpty()) {
 			return -1;
 		}
-		final Interval last = getLastInterval();
-		return last.getLastIndex() - getOffset();
+		return computeLength(getOffset(), getEnd());
 	}
 
-	private Interval getLastInterval() {
-		return intervals.get(intervals.size() - 1);
+	private int getEnd() {
+		if (intervals.isEmpty()) {
+			return -1;
+		}
+		final Interval last = intervals.get(intervals.size() - 1);
+		return last.getLastIndex();
 	}
 
 	public boolean isFoldable() {
