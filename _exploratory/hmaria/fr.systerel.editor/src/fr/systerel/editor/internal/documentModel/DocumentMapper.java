@@ -11,6 +11,7 @@
 package fr.systerel.editor.internal.documentModel;
 
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getChildPossibleTypes;
+import static fr.systerel.editor.internal.editors.EditPos.isValidStartEnd;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
 
 import java.util.ArrayList;
@@ -378,7 +379,7 @@ public class DocumentMapper {
 		final EditPos pos = editorItem.getPos();
 		int start = pos.getStart();
 		int end = pos.getEnd();
-		if(!EditPos.isValid(start, end)) return null;
+		if(!isValidStartEnd(start, end, false)) return null;
 		final ILElement el = editorItem.getLightElement();
 		for (ILElement child : el.getChildren()) {
 			final EditPos childPos = getEnclosingPosition(child);
