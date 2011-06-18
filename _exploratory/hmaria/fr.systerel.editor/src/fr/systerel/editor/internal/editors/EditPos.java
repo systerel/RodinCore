@@ -38,7 +38,7 @@ public class EditPos implements Cloneable {
 	}
 
 	public static EditPos newPosOffLen(int offset, int length, boolean checked) {
-		if (!isValid(offset, length)) {
+		if (!isValidOffLen(offset, length, true)) {
 			if (checked) {
 				throw new IllegalArgumentException("invalid offset/length : "
 						+ offset + ", " + length);
@@ -54,7 +54,7 @@ public class EditPos implements Cloneable {
 	}
 
 	public static EditPos newPosStartEnd(int start, int end, boolean checked) {
-		if (!isValid(start, end)) {
+		if (!isValidStartEnd(start, end, true)) {
 			if (checked) {
 				throw new IllegalArgumentException("invalid start/end : "
 						+ start + ", " + end);
@@ -66,15 +66,22 @@ public class EditPos implements Cloneable {
 		return new EditPos(start, length);
 	}
 
-	public static boolean isValid(int offsetOrStart, int lengthOrEnd) {
-		return offsetOrStart >= 0 && lengthOrEnd >= 0;
+	public static boolean isValidOffLen(int offset, int length,
+			boolean emptyAllowed) {
+		return offset >= 0 && emptyAllowed ? length >= 0 : length > 0;
+	}
+
+	public static boolean isValidStartEnd(int start, int end,
+			boolean emptyAllowed) {
+		final int length = computeLength(start, end);
+		return isValidOffLen(start, length, emptyAllowed);
 	}
 
 	private final int offset;
 	private final int length;
 
 	private EditPos(int offset, int length) {
-		Assert.isLegal(isValid(offset, length));
+		Assert.isLegal(isValidOffLen(offset, length, true));
 		this.offset = offset;
 		this.length = length;
 	}
