@@ -227,7 +227,7 @@ public class ProblemMarkerAnnotationsUpdater {
 		}
 		final int charStart = RodinMarkerUtil.getCharStart(marker);
 		// char end is exclusive with Rodin markers
-		final int charEnd = RodinMarkerUtil.getCharEnd(marker) - 1;
+		final int charEnd = RodinMarkerUtil.getCharEnd(marker);
 		if (!isValidStartEnd(charStart, charEnd, false)) {
 			// not an attribute substring location
 			return newPosOffLen(interval.getOffset(), interval.getLength());
@@ -243,7 +243,7 @@ public class ProblemMarkerAnnotationsUpdater {
 		if (fStart < 0 || fEnd < 0) {
 			// first access, standard start and end are formula based
 			fStart = charStart;
-			fEnd = charEnd;
+			fEnd = charEnd - 1;
 			// store for future use
 			// standard start and end will become editor based
 			try {
