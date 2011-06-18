@@ -333,7 +333,7 @@ public class DocumentMapper {
 		for (EditorElement el : editorElements.getItems()) {
 			final EditPos pos = getEnclosingPosition(el);
 			if (el.isFoldable() && pos != null) {
-				el.setFoldingPosition(pos.getOffset(), pos.getLength());
+				el.setFoldingPosition(pos.getOffset(), pos.getLength() + 1);
 			} else {
 				el.clearFolding();
 			}
