@@ -11,6 +11,7 @@
 package fr.systerel.editor.internal.documentModel;
 
 import static fr.systerel.editor.internal.editors.EditPos.computeLength;
+import static fr.systerel.editor.internal.editors.EditPos.isValidStartEnd;
 import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
 
@@ -91,11 +92,9 @@ public class RodinPartitioner extends FastPartitioner {
 				} else {
 					gapOffset = previous.getEnd() + 1;
 				}
-				if (current.getOffset() >= gapOffset) {
-					final int gapEnd = current.getOffset() - 1;
-					addGap(gapOffset, gapEnd, enclosing, list,
-							includeZeroLengthPartitions);
-				}
+				final int gapEnd = current.getOffset() - 1;
+				addGapIfValid(gapOffset, gapEnd, enclosing, list,
+						includeZeroLengthPartitions);
 				if (current.overlapsWith(enclosing)) {
 					final EditPos regionPos = getValidPos(current, enclosing);
 					if (regionPos.getLength() > 0
@@ -109,7 +108,7 @@ public class RodinPartitioner extends FastPartitioner {
 			if (previous != null) {
 				final int docLast = fDocument.getLength() - 1;
 				final int gapOffset = previous.getEnd() + 1;
-				addGap(gapOffset, docLast, enclosing, list,
+				addGapIfValid(gapOffset, docLast, enclosing, list,
 						includeZeroLengthPartitions);
 			}
 			if (list.isEmpty()) {
@@ -131,10 +130,11 @@ public class RodinPartitioner extends FastPartitioner {
 		return list.toArray(new TypedRegion[list.size()]);
 	}
 
-	private static void addGap(int gapOffset, int gapEnd, EditPos enclosing,
-			List<ITypedRegion> list, boolean includeZeroLengthPartitions) {
-		if (gapEnd < gapOffset) {
-			gapEnd = gapOffset;
+	private static void addGapIfValid(int gapOffset, int gapEnd,
+			EditPos enclosing, List<ITypedRegion> list,
+			boolean includeZeroLengthPartitions) {
+		if (!isValidStartEnd(gapOffset, gapEnd, false)) {
+			return;
 		}
 		final EditPos gap = newPosStartEnd(gapOffset, gapEnd);
 		if ((includeZeroLengthPartitions && overlapsOrTouches(gap, enclosing))
@@ -308,7 +308,7 @@ public class RodinPartitioner extends FastPartitioner {
 				
 				final int gapStart = last_end + 1;
 				final int gapEnd = offset - 1;
-				if (gapStart <= gapEnd) {
+				if (isValidStartEnd(gapStart, gapEnd, false)) {
 					final int gapLength = computeLength(gapStart, gapEnd);
 					final TypedPosition gap = new TypedPosition(gapStart,
 							gapLength, RodinConfiguration.LABEL_TYPE.getName());
