@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.presentation.updaters;
 
+import static fr.systerel.editor.internal.editors.EditPos.isValidStartEnd;
 import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
 import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerConstants.FORMULA_CHAR_END;
@@ -158,6 +159,8 @@ public class ProblemMarkerAnnotationsUpdater {
 		try {
 			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 			marker.setAttribute(IMarker.CHAR_START, pos.getStart());
+			// IMarker.CHAR_END claims it is exclusive
+			// but it behaves inclusively (like EditPos)
 			marker.setAttribute(IMarker.CHAR_END, pos.getEnd());
 		} catch (CoreException e) {
 			// ignore failure
@@ -223,8 +226,9 @@ public class ProblemMarkerAnnotationsUpdater {
 			return null;
 		}
 		final int charStart = RodinMarkerUtil.getCharStart(marker);
-		final int charEnd = RodinMarkerUtil.getCharEnd(marker);
-		if (charStart < 0 || charEnd < 0) {
+		// char end is exclusive with Rodin markers
+		final int charEnd = RodinMarkerUtil.getCharEnd(marker) - 1;
+		if (!isValidStartEnd(charStart, charEnd, false)) {
 			// not an attribute substring location
 			return newPosOffLen(interval.getOffset(), interval.getLength());
 		}
