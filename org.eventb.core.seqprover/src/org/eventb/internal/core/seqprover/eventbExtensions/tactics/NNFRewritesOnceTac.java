@@ -42,7 +42,7 @@ public class NNFRewritesOnceTac implements ITactic {
 		final IProverSequent sequent = ptNode.getSequent();
 		final ITactic tactic = getTactic(sequent);
 		if (tactic != null) {
-			tactic.apply(ptNode, pm);
+			return tactic.apply(ptNode, pm);
 		}
 		return "Tactic unapplicable";
 	}
@@ -61,7 +61,7 @@ public class NNFRewritesOnceTac implements ITactic {
 		return null;
 	}
 
-	private static IPosition getPosition(Predicate pred) {
+	public static IPosition getPosition(Predicate pred) {
 		final List<IPosition> listPos = pred.inspect(nnfInspector);
 		if (listPos.isEmpty()) {
 			return null;
@@ -74,6 +74,7 @@ public class NNFRewritesOnceTac implements ITactic {
 	 * form.
 	 */
 	private static IFormulaInspector<IPosition> nnfInspector = new DefaultInspector<IPosition>() {
+
 		@Override
 		public void inspect(UnaryPredicate predicate,
 				IAccumulator<IPosition> accumulator) {
