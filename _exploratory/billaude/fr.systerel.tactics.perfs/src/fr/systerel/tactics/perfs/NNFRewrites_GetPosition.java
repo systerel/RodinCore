@@ -12,13 +12,15 @@ package fr.systerel.tactics.perfs;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.NNFRewritesOnceTac;
 import org.rodinp.core.RodinDBException;
 
 /**
  * Testing performance of getPosition of the NNFRewritesOnceTac.
  * <p>
- * As tests are running in JUnit3, to ingore them re-write them from
+ * As tests are running in JUnit3, to ignore them re-write them from
  * <i>test_XXX</i> to <i>ignore_XXX</i> or just comment them out.
  * </p>
  * 
@@ -38,7 +40,7 @@ public class NNFRewrites_GetPosition extends PerfsTest {
 
 	@Override
 	public String getMRTName() {
-		return "NNFRewrites-getPosition";
+		return "NNFRewrites-getPosition(inspector)";
 	}
 
 	@Override
@@ -47,6 +49,26 @@ public class NNFRewrites_GetPosition extends PerfsTest {
 			NNFRewritesOnceTac.getPosition(pred);
 		}
 		NNFRewritesOnceTac.getPosition(sequent.goal());
+	}
+
+	@Override
+	public ITactic getTactic() {
+		return BasicTactics.loopOnAllPending(new NNFRewritesOnceTac());
+	}
+
+	@Override
+	protected int getFailureNumber() {
+		return 10;
+	}
+
+	@Override
+	protected int getSuccessNumber() {
+		return -1;
+	}
+	
+	@Override
+	protected int getNbPerfTests() {
+		return 15;
 	}
 
 	public void ignore_NnfGP_HeavyProject_Term() throws Exception {
@@ -66,24 +88,24 @@ public class NNFRewrites_GetPosition extends PerfsTest {
 	}
 
 	public void test_NnfGP_SoftProject_list() throws Exception {
-		test_SoftProjects("BirthdayBook", "Celebrity", "ch2_car",
+		test_SoftProjects(10, "BirthdayBook", "Celebrity", "ch2_car",
 				"Closure - Sans PostTactics", "Doors", "Galois");
 	}
-
-	public void ignore_NnfGP_SoftProject_Term() throws Exception {
-		test_SoftProjects("CrCtl_Terminator_0.5.0");
+	
+	public void ignore_NnfGP_RootProject_Term() throws Exception {
+		test_rootProject("CrCtl_Terminator_0.5.0", 5000);
 	}
-
-	public void ignore_NnfGP_SoftProject_XCE() throws Exception {
-		test_SoftProjects("XCoreEncoding");
+	
+	public void ignore_NnfGP_RootProject_XCE() throws Exception {
+		test_rootProject("XCoreEncoding", 5000);
 	}
-
-	public void ignore_NnfGP_SoftProject_XC() throws Exception {
-		test_SoftProjects("XCore");
+	
+	public void ignore_NnfGP_RootProject_XC() throws Exception {
+		test_rootProject("XCore", 5000);
 	}
-
-	public void ignore_NnfGP_SoftProject_R2D2() throws Exception {
-		test_SoftProjects("DC-C479_MOD-m8");
+	
+	public void ignore_NnfGP_RootProject_R2D2() throws Exception {
+		test_rootProject("DC-C479_MOD-m8", 5000);
 	}
 
 }

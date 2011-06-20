@@ -49,12 +49,12 @@ public class Chrono {
 	/**
 	 * Compute the elapsed time between the call of <code>startTime()</code> and
 	 * the call of this method.<br>
-	 * Print in the console that duration.
+	 * Print in the console that duration (in milliseconds).
 	 */
 	public void getTime() {
 		final long loopTime = Calendar.getInstance().getTimeInMillis();
 		final long duration = loopTime - startTime;
-		System.out.println("It took " + duration + " milliseconds.\r");
+		System.out.println(duration);
 	}
 
 }
