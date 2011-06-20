@@ -29,6 +29,10 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 /**
+ * Simplifies the visible hypotheses and goal in a sequent by replacing
+ * sub-predicates <code>P</code> by <code>⊤</code> (or <code>⊥</code>) if
+ * <code>P</code> (or <code>¬P</code>) appears as hypothesis (global and local).
+ * 
  * @author Emmanuel Billaud
  */
 public class GeneralizedModusPonens extends EmptyInputReasoner {
@@ -45,7 +49,7 @@ public class GeneralizedModusPonens extends EmptyInputReasoner {
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		modifHypMap = new HashMap<Predicate, Map<Predicate,List<IPosition>>>();
+		modifHypMap = new HashMap<Predicate, Map<Predicate, List<IPosition>>>();
 
 		hypSet = GenMPC.createHypSet(seq);
 		final Predicate goal = seq.goal();
@@ -53,6 +57,10 @@ public class GeneralizedModusPonens extends EmptyInputReasoner {
 		if (m != null)
 			modifGoalMap = m;
 		for (Predicate hyp : seq.visibleHypIterable()) {
+			if (pm != null && pm.isCanceled()) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Generalized MP has been canceled");
+			}
 			m = GenMPC.analyzePred(hyp, hypSet);
 			if (!m.isEmpty())
 				modifHypMap.put(hyp, m);
@@ -80,7 +88,7 @@ public class GeneralizedModusPonens extends EmptyInputReasoner {
 						"generalized MP", hypActions);
 			}
 			return ProverFactory.reasonerFailure(this, input,
-					"MP generalized no more applicable");
+					"generalized MP no more applicable");
 		}
 	}
 

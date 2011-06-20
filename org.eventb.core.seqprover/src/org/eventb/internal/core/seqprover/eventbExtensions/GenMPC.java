@@ -121,8 +121,8 @@ public class GenMPC {
 	 *            goal)
 	 * @param hypSet
 	 *            the set reference of hypotheses
-	 * @return a set of predicates contained both in <code>pred</code> and
-	 *         <code>hypSet</code>
+	 * @return the map (predicate contained both in <code>origin</code> and
+	 *         <code>hypSet</code> ↦ its position in <code>pred</code>)
 	 */
 	public static Map<Predicate, List<IPosition>> analyzePred(Predicate pred,
 			Set<Predicate> hypSet) {
