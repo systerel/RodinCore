@@ -213,8 +213,8 @@ public class RodinResource extends ResourceImpl implements ILFile {
 
 	@Override
 	public void addEContentAdapter(EContentAdapter adapter) {
-		if (eAdapters != null && !eAdapters.contains(adapter))
-			eAdapters.add(adapter);
+		if (!eAdapters().contains(adapter))
+			eAdapters().add(adapter);
 	}
 	
 }
