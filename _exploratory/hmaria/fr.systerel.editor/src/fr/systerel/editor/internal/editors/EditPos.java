@@ -73,6 +73,8 @@ public class EditPos implements Cloneable {
 
 	public static boolean isValidStartEnd(int start, int end,
 			boolean emptyAllowed) {
+		if (start < 0 || end < 0)
+			return false;
 		final int length = computeLength(start, end);
 		return isValidOffLen(start, length, emptyAllowed);
 	}

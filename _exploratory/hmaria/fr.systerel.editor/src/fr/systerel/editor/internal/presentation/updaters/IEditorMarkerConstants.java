@@ -13,22 +13,36 @@ package fr.systerel.editor.internal.presentation.updaters;
 import org.eclipse.core.resources.IMarker;
 
 /**
- * @author Nicolas Beauger
+ * Attributes used to store information into problem markers after Rodin Editor
+ * has been used.
  * 
+ * @author Nicolas Beauger
  */
 public interface IEditorMarkerConstants {
 
 	/**
-	 * Formula based start marker attribute. {@link IMarker#CHAR_START} contains
-	 * an editor based start index, this one is constant and is used to allow
-	 * for marker updates upon model modifications.
+	 * Tells if the marker is formula based, which means that the marker keeps
+	 * informations about the position of the error within a formula. This
+	 * attribute is false in case of a marker that concerns the whole interval
+	 * of an attribute.
+	 */
+	public static final String FORMULA_BASED = "formulaBased";
+
+	/**
+	 * Formula based start marker attribute. Actually,
+	 * {@link IMarker#CHAR_START} is updated to contain an editor based start
+	 * index. Thus, this current attribute is a backup constant which describes
+	 * the char start of the marker in the formula and is used to allow marker
+	 * updates upon model modifications.
 	 */
 	public static final String FORMULA_CHAR_START = "formulaCharStart";
 
 	/**
-	 * Formula based end marker attribute. {@link IMarker#CHAR_START} contains
-	 * an editor based end index, this one is constant and is used to allow for
-	 * marker updates upon model modifications.
+	 * Formula based start marker attribute. Actually, {@link IMarker#CHAR_END}
+	 * is updated to contain an editor based start index. Thus, this current
+	 * attribute is a backup constant which describes the char start of the
+	 * marker in the formula and is used to allow marker updates upon model
+	 * modifications.
 	 */
 	public static final String FORMULA_CHAR_END = "formulaCharEnd";
 

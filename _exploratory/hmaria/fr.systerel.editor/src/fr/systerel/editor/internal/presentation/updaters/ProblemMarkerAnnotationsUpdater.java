@@ -13,6 +13,7 @@ package fr.systerel.editor.internal.presentation.updaters;
 import static fr.systerel.editor.internal.editors.EditPos.isValidStartEnd;
 import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
+import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerConstants.FORMULA_BASED;
 import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerConstants.FORMULA_CHAR_END;
 import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerConstants.FORMULA_CHAR_START;
 
@@ -33,6 +34,7 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
+import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -143,7 +145,13 @@ public class ProblemMarkerAnnotationsUpdater {
 				final EditorElement rootEditorElement = mapper
 						.findEditorElement(inputRoot);
 				
-				final EditPos pos = rootEditorElement.getPos();
+				final Interval interval = rootEditorElement.getInterval(EventBAttributes.LABEL_ATTRIBUTE);
+				final EditPos pos;
+				if (interval == null) {
+					pos = rootEditorElement.getPos();
+				} else {
+					pos = newPosOffLen(interval.getOffset(), interval.getLength());
+				}
 				updateMarkerInfo(marker,
 						document.getLineOfOffset(pos.getOffset()) + 1, pos);
 				return pos;
@@ -228,12 +236,50 @@ public class ProblemMarkerAnnotationsUpdater {
 		final int charStart = RodinMarkerUtil.getCharStart(marker);
 		// char end is exclusive with Rodin markers
 		final int charEnd = RodinMarkerUtil.getCharEnd(marker);
-		if (!isValidStartEnd(charStart, charEnd, false)) {
-			// not an attribute substring location
-			return newPosOffLen(interval.getOffset(), interval.getLength());
-		}
 		
-		return getSubstringPosition(marker, interval, charStart, charEnd);
+		if (!isFormulaBasedMarkerSet(marker)) {
+			if (!isValidStartEnd(charStart, charEnd, false)) {
+				setFormulaBased(marker, false);
+				// not an attribute substring location
+				return newPosOffLen(interval.getOffset(), interval.getLength());
+			}
+			setFormulaBased(marker, true);
+		}
+		if (isFormulaBasedMarker(marker)) {
+			if (isFormulaStartEndSet(marker)) {
+				int fStart = marker.getAttribute(FORMULA_CHAR_START, -1);
+				int fEnd = marker.getAttribute(FORMULA_CHAR_END, -1);
+				return getNewSubstringPosition(marker, interval, fStart, fEnd);
+			}
+			return getSubstringPosition(marker, interval, charStart, charEnd);				
+		}
+		return newPosOffLen(interval.getOffset(), interval.getLength());
+	}
+
+	private static void setFormulaBased(IMarker marker, boolean value) {
+		try {
+			marker.setAttribute(FORMULA_BASED, value);
+		} catch (CoreException e) {
+			// ignore
+		}
+	}
+	
+	private static boolean isFormulaBasedMarkerSet(IMarker marker) {
+		try {
+			return marker.getAttribute(FORMULA_BASED) != null;
+		} catch (CoreException e) {
+			// ignore
+		}
+		return false;
+	}
+	
+	private static boolean isFormulaBasedMarker(IMarker marker) {
+		return marker.getAttribute(FORMULA_BASED, false);
+	}
+
+	private static boolean isFormulaStartEndSet(IMarker marker) {
+		final boolean b = marker.getAttribute(FORMULA_CHAR_START, -1) >= 0;
+		return b;
 	}
 
 	private EditPos getSubstringPosition(IMarker marker, Interval interval,
@@ -253,6 +299,11 @@ public class ProblemMarkerAnnotationsUpdater {
 				// ignore failure
 			}
 		}
+		return getNewSubstringPosition(marker, interval, fStart, fEnd);
+	}
+	
+	private static EditPos getNewSubstringPosition(IMarker marker,
+			Interval interval, int fStart, int fEnd) {
 		final int offset = interval.getOffset();
 		final int pStart = offset + fStart;
 		final int pEnd = offset + fEnd;
