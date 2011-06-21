@@ -10,10 +10,18 @@
  *******************************************************************************/
 package fr.systerel.tactics.perfs;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.FileLocator;
@@ -106,6 +114,11 @@ import fr.systerel.tactics.perfs.utils.SequentExtractor;
  * maybe even between each application of the tactic given by
  * {@link PerfsTest#getTactic()}.
  * </p>
+ * <p>
+ * <b>!!! WARNING !!!</b> tests should not be interrupted. If so, Extracted
+ * projects may remain in the folder <i><code>projects</code></i> whereas they
+ * do not represent what the archive actually does.
+ * </p>
  * 
  * 
  * @author Emmanuel Billaud
@@ -122,19 +135,25 @@ public abstract class PerfsTest extends BuilderTest {
 	final private String isRan = " is ran ";
 	final private String overSeq = " times over the sequent. #Position : ";
 	final private String of = " of ";
+	private List<String> zipFiles;
 
 	/**
 	 * Method called before each test.
 	 */
 	@Override
-	public void setUp() throws RodinDBException, Exception {
+	public void setUp() throws Exception {
 		super.setUp();
-		final URL entry = getProjectsURL();
-		final URL projectsURL = FileLocator.toFileURL(entry);
-		final File projectsDir = new File(projectsURL.toURI());
-		for (final File project : projectsDir.listFiles()) {
+		zipFiles = new ArrayList<String>();
+		for (final File project : getListFiles()) {
 			if (project.isDirectory() && !project.getName().equals(".svn")) {
 				final IRodinProject p = createRodinProject(project.getName());
+				importProjectFiles(p.getProject(), p.getElementName());
+				continue;
+			}
+			final String unzip = unzip(project);
+			if (unzip != null) {
+				zipFiles.add(unzip);
+				final IRodinProject p = createRodinProject(unzip);
 				importProjectFiles(p.getProject(), p.getElementName());
 			}
 		}
@@ -150,6 +169,13 @@ public abstract class PerfsTest extends BuilderTest {
 	 */
 	@Override
 	public void tearDown() throws Exception {
+		for (final File file : getListFiles()) {
+			for (String fileName : zipFiles) {
+				if (file.getName().equals(fileName)) {
+					delete(file);
+				}
+			}
+		}
 		super.tearDown();
 	}
 
@@ -163,6 +189,22 @@ public abstract class PerfsTest extends BuilderTest {
 	protected URL getProjectsURL() {
 		return Platform.getBundle("fr.systerel.tactics.perfs").getEntry(
 				"projects");
+	}
+
+	/**
+	 * Returns the list of projects contained in the URL given by
+	 * <code>getProjectsURL()</code>.
+	 * 
+	 * @return the list of projects contained in the URL given by
+	 *         <code>getProjectsURL()</code>.
+	 * @throws Exception
+	 *             if an error occurred with the URL.
+	 */
+	private File[] getListFiles() throws Exception {
+		final URL entry = getProjectsURL();
+		final URL projectsURL = FileLocator.toFileURL(entry);
+		final File projectsDir = new File(projectsURL.toURI());
+		return projectsDir.listFiles();
 	}
 
 	/**
@@ -181,6 +223,122 @@ public abstract class PerfsTest extends BuilderTest {
 			list.add(rProject);
 		}
 		return list;
+	}
+
+	/**
+	 * Extract a zip file in the folder <i><code>projects</code></i> of the
+	 * current workspace.
+	 * 
+	 * @param inputFile
+	 *            the file to unzip.
+	 * @return the name of the file unzipped if the operation was successful,
+	 *         <code>null</code> else. If so, it means that :
+	 *         <ul>
+	 *         <li>either the given file <code>inputFile</code> is not a
+	 *         zipfile.</li>
+	 *         <li>or it has already been extracted (if so, it should be
+	 *         manually deleted from the workspace as at the end of the test,
+	 *         each new extracted project from a zipfile is deleted)</li>
+	 *         <li>or an error occurred while extracting.</li>
+	 *         </ul>
+	 */
+	private static String unzip(File inputFile) {
+		ZipFile zipFile = null;
+		InputStream inputStream = null;
+		boolean isFirst = true;
+		String fileName = null;
+
+		try {
+			zipFile = new ZipFile(inputFile);
+			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry zipEntry = entries.nextElement();
+				File createdfile = new File("projects/" + zipEntry.getName());
+
+				if (zipEntry.isDirectory()) {
+					// If the entry in the ZIP file is a directory
+					// then create the directory
+					createdfile.mkdirs();
+				} else {
+					// If the entry in the ZIP file is a file then write the
+					// file in the appropriate directory location (as it is in
+					// the ZIP file)
+					inputStream = zipFile.getInputStream(zipEntry);
+					write(inputStream, createdfile);
+				}
+				if (isFirst) {
+					fileName = createdfile.getName();
+					isFirst = false;
+				}
+			}
+		} catch (IOException ioException) {
+			// The given file is not a zipfile, or has already been extracted,
+			// or an error occurred while extracting.
+			return null;
+		} finally {
+			// Clean up the I/O
+			try {
+				if (zipFile != null) {
+					zipFile.close();
+				}
+				if (inputStream != null) {
+					inputStream.close();
+				}
+			} catch (IOException problemsDuringClose) {
+				System.out.println("Problems during cleaning up the I/O.");
+				return null;
+			}
+		}
+		return fileName;
+	}
+
+	/**
+	 * Write in the file <code>fileToWrite</code> the contents of
+	 * <code>inputStream</code>.
+	 * 
+	 * @param inputStream
+	 *            the source input stream from where the contents will be read
+	 *            to write to the file.
+	 * 
+	 * @param fileToWrite
+	 *            the file to which the contents from the input stream will be
+	 *            written to.
+	 * 
+	 * @throws IOException
+	 *             Any problems while reading from the input stream or writing
+	 *             to the file.
+	 */
+	private static void write(InputStream inputStream, File fileToWrite)
+			throws IOException {
+		BufferedInputStream buffInputStream = new BufferedInputStream(
+				inputStream);
+		FileOutputStream fos = new FileOutputStream(fileToWrite);
+		BufferedOutputStream bos = new BufferedOutputStream(fos);
+		// write bytes
+		int byteData;
+		while ((byteData = buffInputStream.read()) != -1) {
+			bos.write((byte) byteData);
+		}
+		// close all the open streams
+		bos.close();
+		fos.close();
+		buffInputStream.close();
+	}
+
+	/**
+	 * Delete all directories and files contained the the File <code>file</code>
+	 * .
+	 * 
+	 * @param file
+	 *            the file from which all directories and files will be deleted.
+	 */
+	public void delete(File file) {
+		if (file.isDirectory()) {
+			for (File child : file.listFiles()) {
+				delete(child);
+			}
+		}
+		file.delete();
 	}
 
 	/*
