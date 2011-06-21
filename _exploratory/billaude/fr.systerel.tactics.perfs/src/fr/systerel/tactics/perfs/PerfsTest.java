@@ -45,8 +45,8 @@ import fr.systerel.tactics.perfs.utils.Chrono;
 import fr.systerel.tactics.perfs.utils.SequentExtractor;
 
 /**
- * Abstract class use for testing the performance of methods or reasoner or
- * tactics.
+ * Abstract class use for testing the performance of method or reasoner or
+ * tactic.
  * <p>
  * Here is the procedure to create a new test of performance :
  * <ul>
@@ -62,8 +62,8 @@ import fr.systerel.tactics.perfs.utils.SequentExtractor;
  * <i><b>GeneralizedMP</b></i> can be used as examples.</li>
  * </ul>
  * </li>
- * <li>For testing a project, create a new method preceded by the tag
- * <code>@Test</code>. Then, there is three possibilities :</li>
+ * <li>For testing a project, create a new method whose name start with
+ * <b><code>test_</code></b>. Then, there is three possibilities :</li>
  * <ul>
  * <li>Either you consider the project as a big one. In that case, you should
  * use the method <b><code>test_HeavyProject(String projectName)</code></b>. For
@@ -108,6 +108,15 @@ import fr.systerel.tactics.perfs.utils.SequentExtractor;
  * <li><b>XCore</b> > heavy project</li>
  * <li><b>XCoreEncoding</b> > heavy project</li>
  * </ul>
+ * <b>!!! WARNING !!!</b>
+ * <ul>
+ * <li>Tests should not be interrupted. If so, extracted projects may remain in
+ * the folder <i><code>projects</code></i> whereas they do not represent what
+ * the archive actually does.</li>
+ * <li>Projects should not contain the file named <i> <code>.project</code></i>.
+ * Be sure before launching to remove them (they are in the projects (given as
+ * file or zipfile) provided with the plugin).</li>
+ * </ul>
  * <p>
  * <b>Enhancement : </b>instead of applying only the TypeRewriters, it would be
  * smart applying a list of defined tactics at the beginning of the test, and
@@ -115,10 +124,6 @@ import fr.systerel.tactics.perfs.utils.SequentExtractor;
  * {@link PerfsTest#getTactic()}.
  * </p>
  * <p>
- * <b>!!! WARNING !!!</b> tests should not be interrupted. If so, Extracted
- * projects may remain in the folder <i><code>projects</code></i> whereas they
- * do not represent what the archive actually does.
- * </p>
  * 
  * 
  * @author Emmanuel Billaud
