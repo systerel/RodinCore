@@ -17,7 +17,10 @@ import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerCon
 import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerConstants.FORMULA_CHAR_END;
 import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerConstants.FORMULA_CHAR_START;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -62,6 +65,8 @@ public class ProblemMarkerAnnotationsUpdater {
 
 	private ResourceChangeListener listener = new ResourceChangeListener();
 	
+	private List<IMarkerDelta> managedDeltas = new ArrayList<IMarkerDelta>();
+	
 	private boolean isUpdating = false;
 	
 	/**
@@ -83,11 +88,14 @@ public class ProblemMarkerAnnotationsUpdater {
 
 	private void update(IMarkerDelta[] markerDeltas) {
 		for (IMarkerDelta d : markerDeltas) {
+			if (managedDeltas.contains(d))
+				continue;
 			if (d.getKind() == IResourceDelta.REMOVED) {
 				recalculateAnnotations();	
 				break;
 			}
 		}
+		managedDeltas.retainAll(Arrays.asList(markerDeltas));
 	}
 
 	private void removeMarkerAnnotations() {
