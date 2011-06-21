@@ -322,7 +322,13 @@ public class OverlayEditor implements IAnnotationModelListener,
 		}
 		final Point beginPt = (parent.getLocationAtOffset(start));
 		textViewer.setDocument(createDocument(text));
-		final Rectangle bounds = parent.getTextBounds(start, end);
+		
+		final Rectangle bounds;
+		if (start < end) {
+			bounds = parent.getTextBounds(start, end);
+		} else {
+			bounds = parent.getTextBounds(start, start);
+		}
 		editorText.setCaretOffset(clickOffset - start);
 		editorText.setSize(bounds.width + MARGIN, bounds.height);
 		editorText.setLocation(beginPt.x - 2, beginPt.y); // -2 to place on text

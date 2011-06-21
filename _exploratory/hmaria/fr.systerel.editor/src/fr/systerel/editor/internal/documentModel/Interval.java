@@ -81,8 +81,9 @@ public class Interval implements Comparable<Interval> {
 		this.pos = pos;
 	}
 	
+	/** the first caret offset up to the character of this interval */ 
 	public int getLastIndex() {
-		return pos.getEnd();
+		return pos.getEnd() + 1;
 	}
 	
 	public IRodinElement getRodinElement() {
