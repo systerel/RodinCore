@@ -74,9 +74,11 @@ public class RodinEditor extends TextEditor {
 	public static final String EDITOR_SCOPE = EditorPlugin.PLUGIN_ID
 			+ ".contexts.rodinEditorScope";
 
-	private final ColorManager colorManager = new ColorManager();
-	private final DocumentMapper mapper = new DocumentMapper();
 	private final RodinDocumentProvider documentProvider;
+	private ColorManager colorManager;
+	private DocumentMapper mapper;
+	private RodinConfiguration rodinViewerConfiguration;
+	
 	private IElementStateListener stateListener;
 	private CursorManager cursorManager;
 	private DNDManager dndManager;
@@ -103,10 +105,7 @@ public class RodinEditor extends TextEditor {
 	private ProblemMarkerAnnotationsUpdater markerAnnotationsUpdater;
 
 	public RodinEditor() {
-		super();
 		setEditorContextMenuId(EDITOR_ID);
-		setSourceViewerConfiguration(new RodinConfiguration(colorManager,
-				mapper));
 		documentProvider = new RodinDocumentProvider(mapper, this);
 		setDocumentProvider(documentProvider);
 		stateListener = EditorElementStateListener.getNewListener(this,
@@ -128,10 +127,18 @@ public class RodinEditor extends TextEditor {
 	}
 
 	@Override
+	protected void initializeEditor() {
+		super.initializeEditor();
+		colorManager = new ColorManager();
+		mapper = new DocumentMapper();
+		rodinViewerConfiguration = new RodinConfiguration(colorManager, mapper);
+		setSourceViewerConfiguration(rodinViewerConfiguration);
+	}
+	
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		activateAppropriateContext();
-		
 		viewer = (ProjectionViewer) getSourceViewer();
 		projectionSupport = new ProjectionSupport(viewer,
 				getAnnotationAccess(), getSharedColors());

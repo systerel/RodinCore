@@ -37,9 +37,11 @@ import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
@@ -50,7 +52,7 @@ import org.rodinp.core.IAttributeType;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 
 /**
- *
+ * A customization of the SourceViewerConfiguration
  */
 public class RodinConfiguration extends SourceViewerConfiguration {
 
@@ -191,6 +193,8 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 	
 	private ColorManager colorManager;
 	private DocumentMapper documentMapper;
+	private IAnnotationHover annotationHover;
+	private ITextHover textHover;
 
 	public RodinConfiguration(ColorManager colorManager,
 			DocumentMapper documentMapper) {
@@ -199,7 +203,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 	}
 
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return new String[] { IDENTIFIER_TYPE.getName(),
+		return new String[] { IDENTIFIER_TYPE.getName(), PRESENTATION_TYPE.getName(),
 				COMMENT_TYPE.getName(), CONTENT_TYPE.getName() };
 	}
 
@@ -332,4 +336,20 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		reconciler.setRepairer(rdr, LEFT_PRESENTATION_TYPE.getName());
 		return reconciler;
 	}
+	
+	@Override
+	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
+		if (annotationHover == null)
+			annotationHover = new RodinProblemAnnotationHover();
+		return annotationHover;
+	}
+	
+	@Override
+	public ITextHover getTextHover(ISourceViewer sourceViewer,
+			String contentType) {
+		if (textHover == null)
+			textHover = new RodinProblemTextHover(sourceViewer);
+		return textHover;
+	}
+	
 }

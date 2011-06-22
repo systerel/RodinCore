@@ -36,7 +36,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
-import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IAttributeType;
@@ -49,6 +48,7 @@ import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.EditPos;
 import fr.systerel.editor.internal.editors.RodinEditor;
+import fr.systerel.editor.internal.presentation.RodinProblemAnnotation;
 
 public class ProblemMarkerAnnotationsUpdater {
 
@@ -117,7 +117,7 @@ public class ProblemMarkerAnnotationsUpdater {
 		final EditPos p = findPoint(marker);
 		final Annotation annotation = createMarkerAnnotation(marker);
 		final EditPos finalPos = updateMarkerPosition(marker, p);
-		if (annotation != null) {
+		if (annotation != null && finalPos != null) {
 			annotationModel.addAnnotation(annotation, finalPos.toPosition());
 			directAnnotationAccess.put(marker, annotation);
 		}
@@ -152,7 +152,8 @@ public class ProblemMarkerAnnotationsUpdater {
 				final DocumentMapper mapper = editor.getDocumentMapper();
 				final EditorElement rootEditorElement = mapper
 						.findEditorElement(inputRoot);
-				
+				if (rootEditorElement == null)
+					return p;
 				final Interval interval = rootEditorElement.getInterval(EventBAttributes.LABEL_ATTRIBUTE);
 				final EditPos pos;
 				if (interval == null) {
@@ -184,7 +185,7 @@ public class ProblemMarkerAnnotationsUpdater {
 	}
 
 	private Annotation createMarkerAnnotation(IMarker marker) {
-		return new SimpleMarkerAnnotation(marker);
+		return new RodinProblemAnnotation(marker);
 	}
 
 	public ProblemMarkerAnnotationsUpdater(RodinEditor rodinEditor,
@@ -209,6 +210,7 @@ public class ProblemMarkerAnnotationsUpdater {
 			final IMarker[] markers = file.findMarkers(
 					RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
 					IResource.DEPTH_INFINITE);
+			System.out.println("There are " + markers.length + " markers.");
 			for (IMarker marker : markers) {
 				addMarkerAnnotation(marker);
 			}
