@@ -33,8 +33,7 @@ public class RodinProblemTextHover extends DefaultTextHover implements ITextHove
 
 	@Override
 	protected boolean isIncluded(Annotation annotation) {
-		return true;
-		// return annotation instanceof RodinProblemAnnotation;
+		return annotation instanceof RodinProblemAnnotation;
 	}
 
 	@Override
