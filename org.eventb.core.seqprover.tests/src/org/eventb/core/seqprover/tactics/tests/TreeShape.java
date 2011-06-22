@@ -7,9 +7,6 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
- *     Systerel - added FunImgSimp tree shape
- *     Systerel - added ExI, DTDestrWD tree shapes
- *     Systerel - added rm, ri and eqv tree shapes
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
@@ -35,6 +32,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
+import org.eventb.internal.core.seqprover.eventbExtensions.FunImgInclusionGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
@@ -346,6 +344,18 @@ public abstract class TreeShape {
 
 	}
 
+	private static class funImgInclusionShape extends VoidShape {
+
+		public funImgInclusionShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return FunImgInclusionGoal.REASONER_ID;
+		}
+	}
+
 	private static abstract class HypothesisShape extends TreeShape {
 
 		private final Predicate predicate;
@@ -547,6 +557,10 @@ public abstract class TreeShape {
 
 	public static TreeShape dti(String pos, TreeShape... children) {
 		return new DTIShape(null, pos, children);
+	}
+
+	public static TreeShape funImgInclusion(TreeShape... children) {
+		return new funImgInclusionShape(children);
 	}
 
 	protected final TreeShape[] expChildren;
