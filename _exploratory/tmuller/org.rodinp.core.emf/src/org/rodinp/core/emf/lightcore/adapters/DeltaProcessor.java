@@ -148,6 +148,8 @@ public class DeltaProcessor {
 	private void reorderElement(IRodinElement element) throws RodinDBException {
 		final IRodinElement parent = element.getParent();
 		final LightElement toMove = findElement(element, root);
+		if (toMove == null)
+			return;
 		final LightElement eParent = toMove.getEParent();
 		if (parent instanceof IInternalElement && eParent != null) {
 			final int i = SynchroUtils.getPosFromNextSiblingPos(toMove, eParent);
