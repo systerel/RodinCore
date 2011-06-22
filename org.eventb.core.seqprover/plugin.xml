@@ -636,6 +636,12 @@
             id="funImgInclusionGoalTac"
             name="%funImgInclusionGoalTacName">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FunAppInDomGoalAutoTac"
+            description="%funAppInDomGoalTacDesc"
+            id="funAppInDomGoalTac"
+            name="%funAppInDomGoalTacName">
+      </autoTactic>
    </extension>
 
 </plugin>

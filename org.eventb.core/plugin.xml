@@ -1265,6 +1265,7 @@
       <tactic id="org.eventb.core.seqprover.genMPTac"/>
       <tactic id="org.eventb.core.seqprover.DisjGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funImgInclusionGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.funAppInDomGoalTac"/>
    </extension>
    <extension
          point="org.eventb.core.pomTactics">
@@ -1304,6 +1305,7 @@
       <tactic id="org.eventb.core.seqprover.genMPTac"/>
       <tactic id="org.eventb.core.seqprover.DisjGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funImgInclusionGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.funAppInDomGoalTac"/>
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">

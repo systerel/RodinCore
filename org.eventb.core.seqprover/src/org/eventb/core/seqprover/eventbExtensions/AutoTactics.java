@@ -64,6 +64,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewritesL2;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunAppInDomGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.InDomGoalManager;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.NNFRewritesOnceTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
@@ -1087,6 +1088,19 @@ public class AutoTactics {
 			return loopOnAllPending(composeUntilFailure(new DisjToImplGoal(),
 					new ImpGoalTac()));
 		}
+	}
+
+	/**
+	 * @author Emmanuel Billaud
+	 * @since 2.3
+	 */
+	public static class FunAppInDomGoalAutoTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return new FunAppInDomGoalTac();
+		}
+
 	}
 
 	//*************************************************
