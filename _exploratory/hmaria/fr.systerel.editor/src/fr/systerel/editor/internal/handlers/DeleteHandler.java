@@ -27,6 +27,9 @@ public class DeleteHandler extends AbstractEditionHandler {
 
 	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
+		if (editor.isOverlayActive()) {
+			return "No deletion when the overlay editor is active";
+		}
 		final SelectionController selection = editor.getSelectionController();
 		final ILElement[] selected = selection.getSelectedElements();
 		final AtomicOperation op;

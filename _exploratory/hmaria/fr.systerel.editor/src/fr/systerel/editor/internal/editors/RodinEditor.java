@@ -363,6 +363,11 @@ public class RodinEditor extends TextEditor {
 			});
 		}
 	}
+	
+	/** Tells is the overlay is currently visible as the user is editing */
+	public boolean isOverlayActive() {
+		return overlayEditor.isActive();
+	}
 
 	public void reveal(EditPos pos) {
 		selectAndReveal(pos.getOffset(), 0, pos.getOffset(), pos.getLength());

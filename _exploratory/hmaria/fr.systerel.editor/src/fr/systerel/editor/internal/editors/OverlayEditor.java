@@ -395,6 +395,10 @@ public class OverlayEditor implements IAnnotationModelListener,
 		editorPos = null;
 		interval = null;
 	}
+	
+	public boolean isActive() {
+		return editorText.isVisible();
+	}
 
 	/**
 	 * Updates the current interval displayed text.
