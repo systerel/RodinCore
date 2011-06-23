@@ -36,8 +36,7 @@ public class AddChildHandler extends AbstractEditionHandler {
 		final ChildCreationInfo possibility = editor.getDocumentMapper()
 				.getChildCreationPossibility(offset);
 		if (possibility != null) {
-			showTipMenu(editor, offset, possibility,
-					(StyledText) editor.getTextComposite());
+			showTipMenu(editor, offset, possibility, editor.getStyledText());
 			return null;
 		}
 		return "No possible Child Creation";

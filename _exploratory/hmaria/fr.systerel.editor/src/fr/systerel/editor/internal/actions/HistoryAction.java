@@ -15,6 +15,7 @@ import static org.eclipse.ui.actions.ActionFactory.UNDO;
 
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IEditorPart;
@@ -25,6 +26,7 @@ import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.operations.History;
 import fr.systerel.editor.internal.operations.OperationFactory;
+import fr.systerel.editor.internal.operations.RodinFileUndoContext;
 
 /**
  * Common protocol for classes that manipulate the history within an event-B
@@ -128,7 +130,11 @@ public abstract class HistoryAction extends Action implements
 		final IEditorPart editor = getActiveEditor();
 		if (!(editor instanceof RodinEditor))
 			return null;
-		return OperationFactory.getRodinFileUndoContext(((RodinEditor) editor)
+		final RodinEditor rodinEditor = (RodinEditor) editor;
+		if (rodinEditor.isOverlayActive()) {
+			return new ObjectUndoContext(rodinEditor.getDocument());
+		}
+		return OperationFactory.getRodinFileUndoContext(rodinEditor
 				.getInputRoot());
 	}
 
@@ -136,14 +142,23 @@ public abstract class HistoryAction extends Action implements
 	final public void run() {
 		final IUndoContext context = getUndoContext();
 		if (context != null) {
+			abortEditionBeforeAction();
 			doRun(context);
-			refreshEditor();
+			//if (context instanceof RodinFileUndoContext)
+				refreshEditor();
 		}
 	}
 
 	@Override
 	public void historyNotification(OperationHistoryEvent event) {
 		refresh();
+	}
+	
+	public void abortEditionBeforeAction(){
+		final IEditorPart editor = getActiveEditor();
+		if (editor instanceof RodinEditor) {
+			((RodinEditor)editor).abortEditing();
+		}
 	}
 
 	public void refresh() {

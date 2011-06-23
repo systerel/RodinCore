@@ -12,6 +12,8 @@ package fr.systerel.editor.internal.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.custom.ST;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
 
@@ -26,14 +28,23 @@ public class CutHandler extends AbstractEditorHandler {
 		if (editor == null) {
 			return null;
 		}
-		// TODO implement this		
+		if (editor.isOverlayActive()) {
+			final IAction action = editor.getOverlayEditorAction(ST.CUT);
+			if (action != null) {
+				action.run();
+				return "Text cut";		
+			}
+			return "Text cut failed";
+		}
+		// TODO implement this	behaviour for Rodin elements	
 		return null;
 	}
 	
 	
 	@Override
 	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
-		return editor.getSelectionController().getSelectedElements().length > 0;
+		return editor.getSelectionController().getSelectedElements().length > 0
+				|| editor.isOverlayActive();
 	}
 
 }

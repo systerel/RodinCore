@@ -21,7 +21,8 @@ import static org.eventb.internal.ui.EventBUtils.getFormulaFactory;
 import static org.eventb.internal.ui.autocompletion.ContentProposalFactory.getProposalProvider;
 import static org.eventb.internal.ui.autocompletion.ContentProposalFactory.makeContentProposal;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.jface.action.IAction;
@@ -205,7 +206,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	
 	private StyledText editorText;
 	private Interval interval;
-	private ArrayList<IAction> editActions = new ArrayList<IAction>();
+	private Map<Integer, IAction> editActions = new HashMap<Integer, IAction>();
 	private Point editorPos;
 	private Menu fTextContextMenu;
 
@@ -391,7 +392,12 @@ public class OverlayEditor implements IAnnotationModelListener,
 	
 	public void abortEditing() {
 		editorText.removeModifyListener(eventBTranslator);
-		editorText.setVisible(false);
+		editorText.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				editorText.setVisible(false);
+			}
+		});
 		editorPos = null;
 		interval = null;
 	}
@@ -551,8 +557,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	public void menuAboutToShow(IMenuManager manager) {
-
-		for (IAction action : editActions) {
+		for (IAction action : editActions.values()) {
 			if (action.getActionDefinitionId().equals(
 					IWorkbenchCommandConstants.EDIT_COPY)
 					|| action.getActionDefinitionId().equals(
@@ -572,17 +577,21 @@ public class OverlayEditor implements IAnnotationModelListener,
 		action = new StyledTextEditAction(editorText, ST.COPY);
 		action.setText("Copy");
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
-		editActions.add(action);
+		editActions.put(ST.COPY, action);
 
 		action = new StyledTextEditAction(editorText, ST.PASTE);
 		action.setText("Paste");
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
-		editActions.add(action);
+		editActions.put(ST.PASTE, action);
 
 		action = new StyledTextEditAction(editorText, ST.CUT);
 		action.setText("Cut");
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_CUT);
-		editActions.add(action);
+		editActions.put(ST.CUT, action);
+	}
+	
+	public IAction getOverlayAction(int actionConstant) {
+		return editActions.get(actionConstant);
 	}
 
 	public void saveAndExit() {

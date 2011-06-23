@@ -14,6 +14,8 @@ import static fr.systerel.editor.internal.operations.OperationUtils.copyElements
 import static fr.systerel.editor.internal.operations.OperationUtils.showError;
 import static org.eventb.internal.ui.utils.Messages.title_nothingToPaste;
 
+import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.IWorkbench;
 import org.eventb.internal.ui.RodinHandleTransfer;
@@ -32,7 +34,14 @@ public class PasteHandler extends AbstractEditionHandler {
 
 	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
-
+		if (editor.isOverlayActive()) {
+			final IAction action = editor.getOverlayEditorAction(ST.PASTE);
+			if (action != null) {
+				action.run();
+				return "Text pasted";		
+			}
+			return "Text paste failed";
+		}
 		final Interval inter = editor.getDocumentMapper()
 				.findFirstElementIntervalAfter(offset);
 		if (inter == null)
@@ -70,6 +79,8 @@ public class PasteHandler extends AbstractEditionHandler {
 
 	@Override
 	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
+		if (editor.isOverlayActive())
+			return true;
 		// Create the clipboard associated with the workbench.
 		final IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
 		final Clipboard clipboard = new Clipboard(workbench.getDisplay());

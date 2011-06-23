@@ -123,7 +123,7 @@ public class RodinEditor extends TextEditor {
 		super.dispose();
 	}
 
-	public Composite getTextComposite() {
+	public StyledText getStyledText() {
 		return styledText;
 	}
 
@@ -364,9 +364,14 @@ public class RodinEditor extends TextEditor {
 		}
 	}
 	
-	/** Tells is the overlay is currently visible as the user is editing */
+	/** Tells if the overlay is currently visible as the user is editing */
 	public boolean isOverlayActive() {
 		return overlayEditor.isActive();
+	}
+	
+	/** Returns the registered action or <code>null</code> if not found */
+	public IAction getOverlayEditorAction(int actionConstant) {
+		return overlayEditor.getOverlayAction(actionConstant);
 	}
 
 	public void reveal(EditPos pos) {
@@ -395,6 +400,10 @@ public class RodinEditor extends TextEditor {
 	
 	public SelectionController getSelectionController() {
 		return selController;
+	}
+
+	public void abortEditing() {
+		overlayEditor.abortEditing();
 	}
 
 }
