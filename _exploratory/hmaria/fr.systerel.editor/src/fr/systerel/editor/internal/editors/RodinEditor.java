@@ -116,6 +116,7 @@ public class RodinEditor extends TextEditor {
 	public void dispose() {
 		close(false);
 		colorManager.dispose();
+		markerAnnotationsUpdater.dispose();
 		if (stateListener != null)
 			documentProvider.removeElementStateListener(stateListener);
 		documentProvider.unloadResource();
@@ -146,8 +147,9 @@ public class RodinEditor extends TextEditor {
 		viewer.doOperation(ProjectionViewer.TOGGLE);
 		projectionAnnotationModel = viewer.getProjectionAnnotationModel();
 		annotationModel = viewer.getAnnotationModel();
-		markerAnnotationsUpdater = new ProblemMarkerAnnotationsUpdater(this,
-				annotationModel);
+		if (markerAnnotationsUpdater == null)
+			markerAnnotationsUpdater = new ProblemMarkerAnnotationsUpdater(
+					this, annotationModel);
 
 		styledText = viewer.getTextWidget();
 
@@ -345,6 +347,9 @@ public class RodinEditor extends TextEditor {
 	
 	public void resync(final IProgressMonitor monitor) {
 		if (styledText != null && !styledText.isDisposed()) {
+			final int currentOffset = getCurrentOffset();
+			final ILElement[] sel = selController.getSelectedElements();
+			documentProvider.synchronizeRoot(monitor);
 			final Display display = styledText.getDisplay();
 			display.asyncExec(new Runnable() {
 				@Override
@@ -352,9 +357,6 @@ public class RodinEditor extends TextEditor {
 					if (styledText.isDisposed()) {
 						return;
 					}
-					final int currentOffset = getCurrentOffset();
-					final ILElement[] sel = selController.getSelectedElements();
-					documentProvider.synchronizeRoot(monitor);
 					selectAndReveal(currentOffset, 0);
 					selController.selectItems(sel);
 				}

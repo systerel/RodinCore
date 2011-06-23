@@ -17,11 +17,7 @@ import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerCon
 import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerConstants.FORMULA_CHAR_END;
 import static fr.systerel.editor.internal.presentation.updaters.IEditorMarkerConstants.FORMULA_CHAR_START;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -35,7 +31,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IAttributeType;
@@ -51,7 +47,13 @@ import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.presentation.RodinProblemAnnotation;
 
 public class ProblemMarkerAnnotationsUpdater {
-
+	
+	/** Tracing debug option */
+	public static boolean DEBUG;
+	
+	private final static String BASIC_TEXT_ANNOTATION_ERROR_TYPE = "org.eclipse.ui.workbench.texteditor.error";
+	private final static String BASIC_TEXT_ANNOTATION_WARNING_TYPE = "org.eclipse.ui.workbench.texteditor.warning";
+	
 	/** The workspace. */
 	private IWorkspace workspace;
 	/** The resource. */
@@ -61,13 +63,7 @@ public class ProblemMarkerAnnotationsUpdater {
 	/** The annotation model to keep coherent */
 	private final IAnnotationModel annotationModel;
 	/** The map of marker and annotations */
-	private Map<IMarker, Annotation> directAnnotationAccess = new HashMap<IMarker, Annotation>();
-
 	private ResourceChangeListener listener = new ResourceChangeListener();
-	
-	private List<IMarkerDelta> managedDeltas = new ArrayList<IMarkerDelta>();
-	
-	private boolean isUpdating = false;
 	
 	/**
 	 * Internal resource change listener.
@@ -77,7 +73,8 @@ public class ProblemMarkerAnnotationsUpdater {
 		public void resourceChanged(IResourceChangeEvent e) {
 			final IResourceDelta delta = e.getDelta();
 			if (delta != null && resource != null) {
-				IResourceDelta child = delta.findMember(resource.getFullPath());
+				final IResourceDelta child = delta.findMember(resource
+						.getFullPath());
 				if (child != null) {
 					update(child.getMarkerDeltas());
 				}
@@ -88,23 +85,34 @@ public class ProblemMarkerAnnotationsUpdater {
 
 	private void update(IMarkerDelta[] markerDeltas) {
 		for (IMarkerDelta d : markerDeltas) {
-			if (managedDeltas.contains(d))
-				continue;
-			if (d.getKind() == IResourceDelta.REMOVED) {
-				recalculateAnnotations();	
+			if (d.getKind() == IResourceDelta.REMOVED
+					|| d.getKind() == IResourceDelta.ADDED) {
+				recalculateAnnotations();
 				break;
 			}
 		}
-		managedDeltas.retainAll(Arrays.asList(markerDeltas));
 	}
 
 	private void removeMarkerAnnotations() {
-		((IAnnotationModelExtension) annotationModel)
-				.replaceAnnotations(
-						(Annotation[]) directAnnotationAccess.values().toArray(
-								new Annotation[directAnnotationAccess.values()
-										.size()]), null);
-		directAnnotationAccess.clear();
+		final Iterator<?> itr = annotationModel.getAnnotationIterator();
+		while (itr.hasNext()) {
+			final Object next = itr.next();
+			/*
+			 * FIXME this is a workaround to remove the basic (i.e. formula
+			 * based) warning and error annotations to be printed as they are
+			 * put in the annotationModel, but we don't want them.
+			 * */ 
+			if (next instanceof MarkerAnnotation) {
+				final String type = ((MarkerAnnotation) next).getType();
+				if (type.equals(BASIC_TEXT_ANNOTATION_ERROR_TYPE) || type.equals(BASIC_TEXT_ANNOTATION_WARNING_TYPE)) {
+					annotationModel.removeAnnotation((Annotation) next);
+				}
+			}
+			// we remove all the Rodin Problem annotations 
+			if (next instanceof RodinProblemAnnotation) {
+				annotationModel.removeAnnotation((Annotation) next);
+			}	
+		}
 	}
 	
 	/**
@@ -119,9 +127,9 @@ public class ProblemMarkerAnnotationsUpdater {
 		final EditPos finalPos = updateMarkerPosition(marker, p);
 		if (annotation != null && finalPos != null) {
 			annotationModel.addAnnotation(annotation, finalPos.toPosition());
-			directAnnotationAccess.put(marker, annotation);
 		}
-		displayInfo(marker, "ADD");
+		if (DEBUG)
+			displayInfo(marker, "ADD");
 	}
 
 	private void displayInfo(IMarker marker, String context) {
@@ -154,12 +162,14 @@ public class ProblemMarkerAnnotationsUpdater {
 						.findEditorElement(inputRoot);
 				if (rootEditorElement == null)
 					return p;
-				final Interval interval = rootEditorElement.getInterval(EventBAttributes.LABEL_ATTRIBUTE);
+				final Interval interval = rootEditorElement
+						.getInterval(EventBAttributes.LABEL_ATTRIBUTE);
 				final EditPos pos;
 				if (interval == null) {
 					pos = rootEditorElement.getPos();
 				} else {
-					pos = newPosOffLen(interval.getOffset(), interval.getLength());
+					pos = newPosOffLen(interval.getOffset(),
+							interval.getLength());
 				}
 				updateMarkerInfo(marker,
 						document.getLineOfOffset(pos.getOffset()) + 1, pos);
@@ -197,10 +207,9 @@ public class ProblemMarkerAnnotationsUpdater {
 		this.annotationModel = annotationModel;
 		workspace.addResourceChangeListener(listener);
 	}
-	
-	
 
 	public void initializeMarkersAnnotations() {
+		removeMarkerAnnotations();
 		final IInternalElement inputRoot = editor.getInputRoot();
 		if (!(inputRoot instanceof IEventBRoot)) {
 			return;
@@ -210,8 +219,11 @@ public class ProblemMarkerAnnotationsUpdater {
 			final IMarker[] markers = file.findMarkers(
 					RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
 					IResource.DEPTH_INFINITE);
-			System.out.println("There are " + markers.length + " markers.");
 			for (IMarker marker : markers) {
+				final IRodinElement elem = RodinMarkerUtil.getElement(marker);
+				if (!elem.exists()) {
+					marker.delete();
+				}
 				addMarkerAnnotation(marker);
 			}
 		} catch (CoreException e) {
@@ -321,20 +333,16 @@ public class ProblemMarkerAnnotationsUpdater {
 	}
 
 	public void recalculateAnnotations() {
-		if (isUpdating)
-			return;
-		try {
-			isUpdating = true;
-			editor.getSite().getShell().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					removeMarkerAnnotations();
-					initializeMarkersAnnotations();
-				}
-			});
-		} finally {
-			isUpdating = false;
-		}
+		editor.getSite().getShell().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				initializeMarkersAnnotations();
+			}
+		});
+	}
+
+	public void dispose() {
+		workspace.removeResourceChangeListener(listener);
 	}
 
 }

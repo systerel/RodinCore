@@ -29,6 +29,7 @@ import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.RodinPartitioner;
 import fr.systerel.editor.internal.editors.DNDManager;
 import fr.systerel.editor.internal.editors.SelectionController;
+import fr.systerel.editor.internal.presentation.updaters.ProblemMarkerAnnotationsUpdater;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -43,6 +44,7 @@ public class EditorPlugin extends AbstractUIPlugin {
 	private static final String DND_TRACE = PLUGIN_ID + "/debug/dnd"; //$NON-NLS-1$
 	private static final String PARTITION_TRACE = PLUGIN_ID + "/debug/partition"; //$NON-NLS-1$
 	private static final String FOLDING_TRACE = PLUGIN_ID + "/debug/folding"; //$NON-NLS-1$
+	private static final String MARKER_POSITION_TRACE = PLUGIN_ID + "/debug/marker_position"; //$NON-NLS-1$
 
 	// The shared instance
 	private static EditorPlugin plugin;
@@ -94,6 +96,7 @@ public class EditorPlugin extends AbstractUIPlugin {
 		DNDManager.DEBUG = parseOption(DND_TRACE);
 		RodinPartitioner.DEBUG = parseOption(PARTITION_TRACE);
 		DocumentMapper.DEBUG = parseOption(FOLDING_TRACE);
+		ProblemMarkerAnnotationsUpdater.DEBUG = parseOption(MARKER_POSITION_TRACE);
 	}
 
 	private static boolean parseOption(String key) {
