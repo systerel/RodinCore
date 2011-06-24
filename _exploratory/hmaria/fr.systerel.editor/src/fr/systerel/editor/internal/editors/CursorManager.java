@@ -10,17 +10,14 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
 
@@ -30,10 +27,6 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration;
  * provides an arrow original for element selection.
  */
 public class CursorManager implements MouseMoveListener {
-
-	private static final ImageDescriptor iDesc = AbstractUIPlugin
-			.imageDescriptorFromPlugin(EditorPlugin.PLUGIN_ID,
-					"icons/arrow.gif");
 
 	private final RodinEditor editor;
 	private final ProjectionViewer viewer;
@@ -48,8 +41,8 @@ public class CursorManager implements MouseMoveListener {
 	}
 
 	private void initializeArrowCursor() {
-		final ImageData imageData = iDesc.getImageData();
-		this.aCursor = new Cursor(viewer.getControl().getDisplay(), imageData, 0, 8);
+		this.aCursor = new Cursor(viewer.getControl().getDisplay(),
+				SWT.CURSOR_HAND);
 	}
 
 	@Override
