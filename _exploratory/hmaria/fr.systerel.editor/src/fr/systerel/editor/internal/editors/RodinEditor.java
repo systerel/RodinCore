@@ -62,7 +62,6 @@ import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
 import fr.systerel.editor.internal.operations.OperationFactory;
-import fr.systerel.editor.internal.operations.RodinFileUndoContext;
 import fr.systerel.editor.internal.presentation.ColorManager;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.updaters.ProblemMarkerAnnotationsUpdater;
@@ -103,7 +102,7 @@ public class RodinEditor extends TextEditor {
 	private IAnnotationModel annotationModel;
 	/** An updater for problem annotations which listens to the resource changes */
 	private ProblemMarkerAnnotationsUpdater markerAnnotationsUpdater;
-	/** A listener to update overlay editor's contents in case of undirect typing modification (e.g. undo-redo) */
+	/** A listener to update overlay editor's contents in case of indirect typing modification (e.g. undo-redo) */
 	private OverlayBackModificationUpdater overlayUpdater;
 
 	public RodinEditor() {
@@ -183,8 +182,6 @@ public class RodinEditor extends TextEditor {
 		markerAnnotationsUpdater.initializeMarkersAnnotations();
 
 		setTitleImageAndPartName();
-		viewer.setUndoManager(new RodinUndoManager(
-				(RodinFileUndoContext) getUndoContext()));
 	}
 		
 
