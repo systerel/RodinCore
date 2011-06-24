@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
@@ -653,7 +654,16 @@ public class DocumentMapper {
 			interval.setLength(newTextLength);
 		}
 	}
-
+	
+	public void synchronizeIntervalWithoutModifyingDocument(Interval interval,
+			DocumentEvent event) {
+		final int oldTextLength = interval.getLength();
+		final int newTextLength = event.getText().length();
+		final int delta = newTextLength - oldTextLength;
+		adaptAfter(interval, delta);
+		interval.setLength(newTextLength);
+	}
+	
 	public void setDocumentProvider(RodinDocumentProvider documentProvider) {
 		this.documentProvider = documentProvider;
 	}

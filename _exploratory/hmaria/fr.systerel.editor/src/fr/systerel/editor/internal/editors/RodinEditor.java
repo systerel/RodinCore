@@ -103,6 +103,8 @@ public class RodinEditor extends TextEditor {
 	private IAnnotationModel annotationModel;
 	/** An updater for problem annotations which listens to the resource changes */
 	private ProblemMarkerAnnotationsUpdater markerAnnotationsUpdater;
+	/** A listener to update overlay editor's contents in case of undirect typing modification (e.g. undo-redo) */
+	private OverlayBackModificationUpdater overlayUpdater;
 
 	public RodinEditor() {
 		setEditorContextMenuId(EDITOR_ID);
@@ -117,8 +119,10 @@ public class RodinEditor extends TextEditor {
 		close(false);
 		colorManager.dispose();
 		markerAnnotationsUpdater.dispose();
-		if (stateListener != null)
+		if (stateListener != null) {
 			documentProvider.removeElementStateListener(stateListener);
+		}
+		getDocument().removeDocumentListener(overlayUpdater);
 		documentProvider.unloadResource();
 		super.dispose();
 	}
@@ -154,6 +158,10 @@ public class RodinEditor extends TextEditor {
 		styledText = viewer.getTextWidget();
 
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
+		overlayUpdater = new OverlayBackModificationUpdater(
+				overlayEditor);
+		getDocument().addDocumentListener(overlayUpdater);
+		
 		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
 		selController = new SelectionController(styledText, mapper, viewer,
 				overlayEditor);
@@ -174,7 +182,7 @@ public class RodinEditor extends TextEditor {
 		updateFoldingStructure();
 		markerAnnotationsUpdater.initializeMarkersAnnotations();
 
-		setTitleImage();
+		setTitleImageAndPartName();
 		viewer.setUndoManager(new RodinUndoManager(
 				(RodinFileUndoContext) getUndoContext()));
 	}
@@ -274,10 +282,11 @@ public class RodinEditor extends TextEditor {
 			actionBars.setGlobalActionHandler(actionId, action);
 	}
 
-	private void setTitleImage() {
+	private void setTitleImageAndPartName() {
 		final IEventBRoot inputRoot = documentProvider.getInputRoot();
 		final IInternalElementType<?> rootType = inputRoot.getElementType();
 		String img = null;
+		setPartName(inputRoot.getComponentName());
 		if (rootType == IMachineRoot.ELEMENT_TYPE) {
 			img = IEventBSharedImages.IMG_MACHINE;
 		} else if (rootType == IContextRoot.ELEMENT_TYPE) {
@@ -400,10 +409,6 @@ public class RodinEditor extends TextEditor {
 	
 	public SelectionController getSelectionController() {
 		return selController;
-	}
-
-	public void abortEditing() {
-		overlayEditor.abortEditing();
 	}
 
 }

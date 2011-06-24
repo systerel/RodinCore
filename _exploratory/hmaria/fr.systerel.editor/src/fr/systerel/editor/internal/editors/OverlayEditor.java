@@ -30,6 +30,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
@@ -97,7 +98,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID
 	+ ".editorText";
-	private static final int MARGIN = 4;
+	private static final int MARGIN = 15;
 
 	private static enum EditType {
 		TEXT {
@@ -199,6 +200,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private final RodinEditor editor;
 	private final ITextViewer textViewer;
 	
+	private static boolean modifyingText = false;
+
 	private final ModifyListener eventBTranslator = RodinKeyboardPlugin
 			.getDefault().createRodinModifyListener();
 
@@ -207,7 +210,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private StyledText editorText;
 	private Interval interval;
 	private Map<Integer, IAction> editActions = new HashMap<Integer, IAction>();
-	private Point editorPos;
 	private Menu fTextContextMenu;
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper,
@@ -392,18 +394,21 @@ public class OverlayEditor implements IAnnotationModelListener,
 	
 	public void abortEditing() {
 		editorText.removeModifyListener(eventBTranslator);
-		editorText.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				editorText.setVisible(false);
-			}
-		});
-		editorPos = null;
+		setVisible(false);
 		interval = null;
 	}
 	
 	public boolean isActive() {
 		return editorText.isVisible();
+	}
+	
+	public void setVisible(final boolean visible) {
+		editorText.getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				editorText.setVisible(visible);
+			}
+		});
 	}
 
 	/**
@@ -501,32 +506,59 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 
 	/**
-	 * Resizes the editorText widget according to the text modifications.
+	 * Resizes the editorText widget according to the text modifications when
+	 * the user edits the contents of this overlay editor.
 	 */
 	public void modifyText(ExtendedModifyEvent event) {
+		try {
+			modifyingText = true;
 		final String text = editorText.getText();
-		mapper.synchronizeInterval(interval, text);
-		final int offset = interval.getOffset();
-		final int end = interval.getLastIndex();
-		final int height = getHeight(parent.getText(offset, end));
-		editorText.setRedraw(false);
-		if (!editorText.getText().isEmpty()) {
-			final Rectangle textBounds = editorText.getTextBounds(0,
-					editorText.getCharCount() - 1);
-			editorText.setSize(Math.max(MARGIN, textBounds.width + MARGIN), height);
+		modifyText(event, text, editorText, parent, mapper, interval, true);
+		} finally {
+			modifyingText = false;
 		}
-		if (editorPos == null) {
-			editorPos = parent.getLocationAtOffset(offset);
-		}
-		editorText.setLocation(editorPos);
-		editorText.setRedraw(true);
 	}
 
-	private int getHeight(final String extracted) {
+
+	private static void modifyText(ExtendedModifyEvent event, String text,
+			StyledText target, StyledText parent, DocumentMapper mapper,
+			Interval inter, boolean redraw) {
+		mapper.synchronizeInterval(inter, text);
+		final int offset = inter.getOffset();
+		final int end = inter.getLastIndex();
+		final int height = getHeight(parent.getText(offset, end), target);
+		if (!redraw)
+			return;
+		target.setRedraw(false);
+		if (!target.getText().isEmpty()) {
+			final Rectangle textBounds = target.getTextBounds(0,
+					target.getCharCount() - 1);
+			target.setSize(Math.max(MARGIN, textBounds.width + MARGIN), height);
+		}
+		final Point editionPosition = parent.getLocationAtOffset(offset);
+		target.setLocation(editionPosition);
+		target.setRedraw(true);
+	}
+
+	public void refreshOverlayContents(DocumentEvent event) {
+		final int offset = event.getOffset();
+		if (isActive() && !modifyingText && interval.contains(offset)) {
+			mapper.synchronizeIntervalWithoutModifyingDocument(interval, event);
+			final int carPosBckp = editorText.getCaretOffset();
+			editorText.setText(event.getText());
+			final int edTextLength = editorText.getText().length();
+			if (carPosBckp < edTextLength)
+				editorText.setCaretOffset(carPosBckp);
+			else
+				editorText.setCaretOffset(edTextLength);
+		}
+	}
+	
+	private static int getHeight(final String extracted, StyledText reference) {
 		final String regex = "(\r\n)|(\n)|(\r)";
 		final Pattern pattern = Pattern.compile(regex);
 		final String[] split = pattern.split(extracted);
-		final int height = split.length * editorText.getLineHeight();
+		final int height = split.length * reference.getLineHeight();
 		return height;
 	}
 

@@ -26,6 +26,7 @@ import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.operations.History;
 import fr.systerel.editor.internal.operations.OperationFactory;
+import fr.systerel.editor.internal.operations.RodinFileUndoContext;
 
 /**
  * Common protocol for classes that manipulate the history within an event-B
@@ -141,10 +142,8 @@ public abstract class HistoryAction extends Action implements
 	final public void run() {
 		final IUndoContext context = getUndoContext();
 		if (context != null) {
-			abortEditionBeforeAction();
 			doRun(context);
-			//if (context instanceof RodinFileUndoContext)
-				refreshEditor();
+			refreshContents(context);
 		}
 	}
 
@@ -153,10 +152,11 @@ public abstract class HistoryAction extends Action implements
 		refresh();
 	}
 	
-	public void abortEditionBeforeAction(){
+	public void refreshContents(IUndoContext context){
 		final IEditorPart editor = getActiveEditor();
 		if (editor instanceof RodinEditor) {
-			((RodinEditor)editor).abortEditing();
+			if (context instanceof RodinFileUndoContext)
+				refreshEditor();
 		}
 	}
 
