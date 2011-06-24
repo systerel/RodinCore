@@ -353,17 +353,19 @@ public class RodinEditor extends TextEditor {
 	
 	public void resync(final IProgressMonitor monitor) {
 		if (styledText != null && !styledText.isDisposed()) {
-			final int currentOffset = getCurrentOffset();
-			final ILElement[] sel = selController.getSelectedElements();
-			documentProvider.synchronizeRoot(monitor);
 			final Display display = styledText.getDisplay();
 			display.asyncExec(new Runnable() {
 				@Override
 				public void run() {
 					if (styledText.isDisposed()) {
 						return;
-					}
-					selectAndReveal(currentOffset, 0);
+					}	
+					final int currentOffset = getCurrentOffset();
+					final int topIndex = styledText.getTopIndex();
+					final ILElement[] sel = selController.getSelectedElements();
+					documentProvider.synchronizeRoot(monitor);
+					styledText.setTopIndex(topIndex);
+					styledText.setCaretOffset(currentOffset);
 					selController.selectItems(sel);
 				}
 			});
