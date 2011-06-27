@@ -211,6 +211,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private Interval interval;
 	private Map<Integer, IAction> editActions = new HashMap<Integer, IAction>();
 	private Menu fTextContextMenu;
+	
+	/** A backup of the text contained on the opening of the editor. */
+	private String originalText;
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper,
 			ProjectionViewer viewer, RodinEditor editor) {
@@ -323,6 +326,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		} else {
 			text = "";
 		}
+		originalText = text;
 		final Point beginPt = (parent.getLocationAtOffset(start));
 		textViewer.setDocument(createDocument(text));
 		
@@ -392,7 +396,12 @@ public class OverlayEditor implements IAnnotationModelListener,
 		}
 	}
 	
-	public void abortEditing() {
+	public void abortEdition() {
+		editorText.setText(originalText);
+		quitEdition();
+	}
+	
+	public void quitEdition() {
 		editorText.removeModifyListener(eventBTranslator);
 		setVisible(false);
 		interval = null;
@@ -500,7 +509,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 			} else {
 				// if the interval that is currently being edited is hidden from
 				// view abort the editing
-				abortEditing();
+				quitEdition();
 			}
 		}
 	}
@@ -573,9 +582,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 			event.doit = false;
 			saveAndExit();
 		}
-		if (event.character == SWT.ESC) {
-			abortEditing();
-		}
 
 	}
 
@@ -628,7 +634,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 	public void saveAndExit() {
 		updateModelAfterChanges();
-		abortEditing();
+		quitEdition();
 	}
 
 	private void setEventBTranslation(Interval interval) {

@@ -292,6 +292,34 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.AbortHandler"
+            commandId="fr.systerel.editor.abortEditionFreeSelection">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -346,6 +374,10 @@
       <command
             id="fr.systerel.editor.rename.customizePrefixes"
             name="Customize prefixes...">
+      </command>
+      <command
+            id="fr.systerel.editor.abortEditionFreeSelection"
+            name="Abort edition and free selected items">
       </command>
    </extension>
    <extension
@@ -512,6 +544,12 @@
             contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M2+ARROW_DOWN">
+      </key>
+      <key
+            commandId="fr.systerel.editor.abortEditionFreeSelection"
+            contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+ESC">
       </key>
    </extension>
    <extension

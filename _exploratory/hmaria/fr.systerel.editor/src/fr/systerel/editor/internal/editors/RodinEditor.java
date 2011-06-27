@@ -377,6 +377,17 @@ public class RodinEditor extends TextEditor {
 		return overlayEditor.isActive();
 	}
 	
+	/**
+	 * Aborts the current overlay edition. This has no effect if the overlay is
+	 * inactive.
+	 */
+	public void abordEdition() {
+		if (overlayEditor.isActive()) {
+			overlayEditor.abortEdition();
+			doSave(null); // removes the dirty state star			
+		}
+	}
+	
 	/** Returns the registered action or <code>null</code> if not found */
 	public IAction getOverlayEditorAction(int actionConstant) {
 		return overlayEditor.getOverlayAction(actionConstant);

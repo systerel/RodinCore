@@ -187,6 +187,11 @@ public class SelectionController implements MouseListener, VerifyListener,
 		selection.clearNoEffect();
 		styledText.setSelection(offset);
 	}
+	
+	/** Removes all selections */
+	public void clearSelection() {
+		selection.clear();
+	}
 
 	public void mouseUp(MouseEvent e) {
 		if (DEBUG)
@@ -222,7 +227,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 
 	public void verifyKey(VerifyEvent event) {
 		if (event.character == SWT.ESC) {
-			overlayEditor.abortEditing();
+			overlayEditor.quitEdition();
 		}
 		if (event.character == SWT.CR) {
 			overlayEditor.showAtOffset(styledText.getCaretOffset());
