@@ -13,6 +13,7 @@ package org.rodinp.core.emf.api.itf;
 import java.io.IOException;
 import java.util.Map;
 
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 
 /**
@@ -31,5 +32,7 @@ public interface ILFile {
 	void unloadResource();
 	
 	void addEContentAdapter(EContentAdapter adapter);
+
+	void addAdapter(Adapter adapter);
 
 }

@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -213,6 +214,12 @@ public class RodinResource extends ResourceImpl implements ILFile {
 
 	@Override
 	public void addEContentAdapter(EContentAdapter adapter) {
+		if (!eAdapters().contains(adapter))
+			eAdapters().add(adapter);
+	}
+
+	@Override
+	public void addAdapter(Adapter adapter) {
 		if (!eAdapters().contains(adapter))
 			eAdapters().add(adapter);
 	}

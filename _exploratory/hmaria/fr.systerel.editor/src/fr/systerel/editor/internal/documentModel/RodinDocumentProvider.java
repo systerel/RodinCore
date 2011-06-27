@@ -32,6 +32,7 @@ import org.rodinp.core.emf.api.itf.ILFileFactory;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
+import fr.systerel.editor.internal.presentation.updaters.ImplicitPresentationUpdater;
 import fr.systerel.editor.internal.presentation.updaters.PresentationUpdater;
 
 /**
@@ -48,10 +49,12 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 	private ILFile inputResource;
 	private final PresentationUpdater elementPresentationChangeAdapter;
+	private final ImplicitPresentationUpdater implicitPresentationUpdater;
 
 	public RodinDocumentProvider(DocumentMapper mapper, RodinEditor editor) {
 		this.documentMapper = mapper;
 		elementPresentationChangeAdapter = new PresentationUpdater(editor, mapper);
+		implicitPresentationUpdater = new ImplicitPresentationUpdater();
 	}
 
 	@Override
@@ -74,6 +77,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		resource.addAdapter(implicitPresentationUpdater);
 		resource.addEContentAdapter(elementPresentationChangeAdapter);
 		return resource;
 	}
