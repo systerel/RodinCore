@@ -578,12 +578,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 			event.doit = false;
 			return;
 		}
-		if ((event.stateMask == SWT.NONE) && event.character == SWT.CR) {
-			// do not add the return to the text
-			event.doit = false;
-			saveAndExit();
-		}
-
 	}
 
 	/**

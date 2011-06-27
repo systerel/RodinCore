@@ -165,8 +165,6 @@ public class RodinEditor extends TextEditor {
 		selController = new SelectionController(styledText, mapper, viewer,
 				overlayEditor);
 		styledText.addMouseListener(selController);
-		styledText.addVerifyKeyListener(selController);
-		styledText.addTraverseListener(selController);
 		dndManager = new DNDManager(selController, styledText, mapper,
 				documentProvider);
 		dndManager.install();
@@ -379,16 +377,26 @@ public class RodinEditor extends TextEditor {
 	}
 	
 	/**
-	 * Aborts the current overlay edition. This has no effect if the overlay is
-	 * inactive.
+	 * Aborts the current overlay edition. The modification are not saved. This
+	 * has no effect if the overlay is inactive.
 	 */
 	public void abordEdition() {
 		if (overlayEditor.isActive()) {
 			overlayEditor.abortEdition();
-			doSave(null); // removes the dirty state star			
+			doSave(null); // removes the dirty state star
 		}
 	}
-	
+
+	/** Saves the current changes and quit edition. */
+	public void quitAndSaveEdition() {
+		if (overlayEditor.isActive())
+			overlayEditor.saveAndExit();
+	}
+
+	public void openEdition() {
+		overlayEditor.showAtOffset(styledText.getCaretOffset());
+	}
+
 	/** Returns the registered action or <code>null</code> if not found */
 	public IAction getOverlayEditorAction(int actionConstant) {
 		return overlayEditor.getOverlayAction(actionConstant);

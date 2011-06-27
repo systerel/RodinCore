@@ -13,11 +13,8 @@ package fr.systerel.editor.internal.editors;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
@@ -38,8 +35,7 @@ import fr.systerel.editor.internal.editors.Selections.SelectionEffect;
  * folding and the <code>DocumentMapper</code> works with model coordinates and
  * not widget coordinates.
  */
-public class SelectionController implements MouseListener, VerifyListener,
-		VerifyKeyListener, TraverseListener {
+public class SelectionController implements MouseListener, VerifyListener {
 
 	// TODO tracing
 	public static boolean DEBUG;
@@ -225,40 +221,26 @@ public class SelectionController implements MouseListener, VerifyListener,
 		}
 	}
 
-	public void verifyKey(VerifyEvent event) {
-		if (event.character == SWT.ESC) {
-			overlayEditor.quitEdition();
-		}
-		if (event.character == SWT.CR) {
-			overlayEditor.showAtOffset(styledText.getCaretOffset());
-		}
-	}
-
-	public void keyTraversed(TraverseEvent e) {
-		if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
-			goToNextEditRegion();
-			e.doit = false;
-		}
-		if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-			goToPreviousEditRegion();
-			e.doit = false;
-		}
-	}
-
 	public void goToNextEditRegion() {
-		int offset = getModelCaretOffset();
-		Interval next = mapper.findEditableIntervalAfter(offset);
-		int new_offset = viewer.modelOffset2WidgetOffset(next.getOffset());
-		// TODO: check if folding regions need to be expanded.
-		styledText.setSelection(new_offset);
+		final int offset = getModelCaretOffset();
+		final Interval next = mapper.findEditableIntervalAfter(offset);
+		if (next != null) {
+			final int new_offset = viewer.modelOffset2WidgetOffset(next
+					.getOffset());
+			// TODO: check if folding regions need to be expanded.
+			styledText.setSelection(new_offset);
+		}
 	}
 
 	public void goToPreviousEditRegion() {
-		int offset = getModelCaretOffset();
-		Interval next = mapper.findEditableIntervalBefore(offset);
-		int new_offset = viewer.modelOffset2WidgetOffset(next.getOffset());
-		// TODO: check if folding regions need to be expanded.
-		styledText.setSelection(new_offset);
+		final int offset = getModelCaretOffset();
+		final Interval previous = mapper.findEditableIntervalBefore(offset);
+		if (previous != null) {
+			final int new_offset = viewer.modelOffset2WidgetOffset(previous
+					.getOffset());
+			// TODO: check if folding regions need to be expanded.
+			styledText.setSelection(new_offset);
+		}
 	}
 
 }

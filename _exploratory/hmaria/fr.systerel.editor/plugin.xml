@@ -348,6 +348,62 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.TraverseHandlers$TraverseNextHandler"
+            commandId="fr.systerel.editor.traverseNext">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.TraverseHandlers$TraversePreviousHandler"
+            commandId="fr.systerel.editor.traversePrevious">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -406,6 +462,14 @@
       <command
             id="fr.systerel.editor.abortEditionFreeSelection"
             name="Abort edition and free selected items">
+      </command>
+      <command
+            id="fr.systerel.editor.traverseNext"
+            name="Traverse to the next editable interval">
+      </command>
+      <command
+            id="fr.systerel.editor.traversePrevious"
+            name="Traverse to the previous editable interval">
       </command>
    </extension>
    <extension
@@ -578,6 +642,18 @@
             contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+ESC">
+      </key>
+      <key
+            commandId="fr.systerel.editor.traverseNext"
+            contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="TAB">
+      </key>
+      <key
+            commandId="fr.systerel.editor.traversePrevious"
+            contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+TAB">
       </key>
    </extension>
    <extension
