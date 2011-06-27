@@ -157,14 +157,14 @@ public class RodinEditor extends TextEditor {
 		styledText = viewer.getTextWidget();
 
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
-		overlayUpdater = new OverlayBackModificationUpdater(
-				overlayEditor);
+		overlayUpdater = new OverlayBackModificationUpdater(overlayEditor);
 		getDocument().addDocumentListener(overlayUpdater);
 		
 		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
 		selController = new SelectionController(styledText, mapper, viewer,
 				overlayEditor);
 		styledText.addMouseListener(selController);
+		styledText.addVerifyKeyListener(selController);
 		dndManager = new DNDManager(selController, styledText, mapper,
 				documentProvider);
 		dndManager.install();

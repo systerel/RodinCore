@@ -13,6 +13,7 @@ package fr.systerel.editor.internal.editors;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -35,7 +36,8 @@ import fr.systerel.editor.internal.editors.Selections.SelectionEffect;
  * folding and the <code>DocumentMapper</code> works with model coordinates and
  * not widget coordinates.
  */
-public class SelectionController implements MouseListener, VerifyListener {
+public class SelectionController implements MouseListener, VerifyListener,
+		VerifyKeyListener {
 
 	// TODO tracing
 	public static boolean DEBUG;
@@ -218,6 +220,12 @@ public class SelectionController implements MouseListener, VerifyListener {
 			// System.out.println("can not delete after editable has ended");
 			e.doit = false;
 			return;
+		}
+	}
+	
+	public void verifyKey(VerifyEvent event) {
+		if (event.character == SWT.CR) {
+			overlayEditor.showAtOffset(styledText.getCaretOffset());
 		}
 	}
 
