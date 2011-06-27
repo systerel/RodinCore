@@ -213,7 +213,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private Menu fTextContextMenu;
 	
 	/** A backup of the text contained on the opening of the editor. */
-	private String originalText;
+	private String originalText = "";
 
 	public OverlayEditor(StyledText parent, DocumentMapper mapper,
 			ProjectionViewer viewer, RodinEditor editor) {
@@ -397,7 +397,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 	}
 	
 	public void abortEdition() {
-		editorText.setText(originalText);
+		if (!originalText.isEmpty())
+			editorText.setText(originalText);
 		quitEdition();
 	}
 	

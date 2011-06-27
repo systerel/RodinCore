@@ -212,6 +212,7 @@ public class RodinEditor extends TextEditor {
 		removeAction(ActionFactory.COPY.getId());
 		removeAction(ActionFactory.PASTE.getId());
 		removeAction(ActionFactory.DELETE.getId());
+		removeAction(ActionFactory.REFRESH.getId());
 		removeAction(ITextEditorActionConstants.SHIFT_RIGHT);
 		removeAction(ITextEditorActionConstants.SHIFT_LEFT);
 		removeAction(ITextEditorActionConstants.MOVE_LINE_DOWN);

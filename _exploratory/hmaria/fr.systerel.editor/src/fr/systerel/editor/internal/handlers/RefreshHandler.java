@@ -1,3 +1,6 @@
+package fr.systerel.editor.internal.handlers;
+import fr.systerel.editor.internal.editors.RodinEditor;
+
 /*******************************************************************************
  * Copyright (c) 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
@@ -8,22 +11,18 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.internal.handlers;
-
-import fr.systerel.editor.internal.editors.RodinEditor;
 
 /**
- * Unselects the selection if any, and abort the edition within the overlay
- * editor.
- * 
+ * A simple handler to refresh the active Rodin editor.
  * @author "Thomas Muller"
  */
-public class AbortHandler extends AbstractEditionHandler {
+public class RefreshHandler extends AbstractEditionHandler {
+
 
 	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
-		editor.getSelectionController().clearSelection();
 		editor.abordEdition();
+		editor.resync(null);
 		return null;
 	}
 
