@@ -45,6 +45,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	protected final DocumentMapper documentMapper;
 	private final PresentationUpdater elementPresentationChangeAdapter;
 	private final ImplicitPresentationUpdater implicitPresentationUpdater;
+	private final RodinEditor editor;
 	
 	private IDocument document;
 	private ILElement inputRoot;
@@ -56,6 +57,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 	public RodinDocumentProvider(DocumentMapper mapper, RodinEditor editor) {
 		this.documentMapper = mapper;
+		this.editor = editor;
 		elementPresentationChangeAdapter = new PresentationUpdater(editor, mapper);
 		implicitPresentationUpdater = new ImplicitPresentationUpdater();
 	}
@@ -113,9 +115,20 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		return document;
 	}
 
+	/**
+	 * Saves the document.
+	 * <p>
+	 * Note: if the overlay editor is currently open (i.e. the user is currently
+	 * editing an attribute), then the overlay editor is closed and it's
+	 * contents are saved.
+	 * </p>
+	 */
 	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element,
 			IDocument document, boolean overwrite) throws CoreException {
+		if (editor.isOverlayActive()) {
+			editor.quitAndSaveEdition();
+		}
 		((ILFile) inputResource).save();
 	}
 
