@@ -185,7 +185,9 @@ public class DocumentMapper {
 	 */
 	public Interval findEditableIntervalAfter(int offset) {
 		for (Interval interval : intervals) {
-			if (interval.getOffset() > offset && interval.isEditable()) {
+			final ILElement element = interval.getElement();
+			if (interval.getOffset() > offset && interval.isEditable()
+					&& element != null && !element.isImplicit()) {
 				return interval;
 			}
 		}
@@ -221,7 +223,9 @@ public class DocumentMapper {
 			if (interval.getLastIndex() >= offset) {
 				return previous;
 			}
-			if (interval.isEditable()) {
+			final ILElement element = interval.getElement();
+			if (interval.isEditable() && element != null
+					&& !element.isImplicit()) {
 				previous = interval;
 			}
 		}
