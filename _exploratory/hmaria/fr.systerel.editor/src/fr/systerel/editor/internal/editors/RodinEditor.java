@@ -362,7 +362,7 @@ public class RodinEditor extends TextEditor {
 					final int currentOffset = getCurrentOffset();
 					final int topIndex = styledText.getTopIndex();
 					final ILElement[] sel = selController.getSelectedElements();
-					documentProvider.synchronizeRoot(monitor);
+					documentProvider.synchronizeRoot(monitor, true);
 					styledText.setTopIndex(topIndex);
 					styledText.setCaretOffset(currentOffset);
 					selController.selectItems(sel);

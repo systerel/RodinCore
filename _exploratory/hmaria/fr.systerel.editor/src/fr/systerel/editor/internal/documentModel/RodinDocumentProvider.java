@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -41,15 +42,17 @@ import fr.systerel.editor.internal.presentation.updaters.PresentationUpdater;
  */
 public class RodinDocumentProvider extends AbstractDocumentProvider {
 
+	protected final DocumentMapper documentMapper;
+	private final PresentationUpdater elementPresentationChangeAdapter;
+	private final ImplicitPresentationUpdater implicitPresentationUpdater;
+	
 	private IDocument document;
-	protected DocumentMapper documentMapper;
 	private ILElement inputRoot;
 	private IEditorInput editorInput;
 	private RodinTextGenerator textGenerator;
-
 	private ILFile inputResource;
-	private final PresentationUpdater elementPresentationChangeAdapter;
-	private final ImplicitPresentationUpdater implicitPresentationUpdater;
+	
+	protected boolean synchronizing = false;
 
 	public RodinDocumentProvider(DocumentMapper mapper, RodinEditor editor) {
 		this.documentMapper = mapper;
@@ -113,7 +116,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element,
 			IDocument document, boolean overwrite) throws CoreException {
-		((ILFile)inputResource).save();
+		((ILFile) inputResource).save();
 	}
 
 	@Override
@@ -130,16 +133,22 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	}
 
 	public void doSynchronize(Object element, IProgressMonitor monitor) {
-		//System.out.println("synchronizing");
-		fireElementContentAboutToBeReplaced(element);
 		document.set(textGenerator.createText(inputRoot));
-		fireElementContentReplaced(element);
-		fireElementDirtyStateChanged(element, true);
+	}
+	
+	public void synchronizeRoot(IProgressMonitor monitor, boolean silent) {
+		if (silent)
+			synchronizing = true;
+		try {
+			synchronizeRoot(monitor);
+		} finally {
+			synchronizing = false;
+		}
 	}
 	
 	public void synchronizeRoot(IProgressMonitor monitor) {
 		if (inputRoot != null)
-		doSynchronize(inputRoot, monitor);
+			doSynchronize(inputRoot, monitor);
 	}
 
 	public boolean isReadOnly(Object element) {
@@ -176,6 +185,44 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 	public void unloadResource() {
 		inputResource.unloadResource();
+	}
+
+	/**
+	 * Creates a new element info object for the given Rodin Editor Input.
+	 * Overrides the default ElementInfo class.(see
+	 * <code>RodinEditorElementInfo</code> class)
+	 */
+	protected ElementInfo createElementInfo(Object element)
+			throws CoreException {
+		return new RodinEditorElementInfo(createDocument(element),
+				createAnnotationModel(element));
+	}
+
+	
+	/**
+	 * The ElementInfo class contains a flag <code>fCanBeSaved</code> indicating
+	 * that the document can be saved of not. By default, the ElementInfo class
+	 * listens to document changes and sets this 'dirty' state flag to
+	 * <code>true</code>(see <code>documentChanged()</code> method). In our
+	 * case, this is cumbersome, as refreshing the editor shall not modify this
+	 * flag. Indeed, we want to update the document (i.e. set its text) when the
+	 * editor is refreshed (i.e. synchronized), without modifying the 'dirty'
+	 * state flag, as the refreshment is just supposed to change the
+	 * presentation of our document in the editor. Thus, we provide here a way
+	 * to avoid propagating the 'change' info during a refresh.
+	 */
+	protected class RodinEditorElementInfo extends ElementInfo {
+
+		public RodinEditorElementInfo(IDocument document, IAnnotationModel model) {
+			super(document, model);
+		}
+
+		@Override
+		public void documentChanged(DocumentEvent event) {
+			if (!synchronizing)
+				super.documentChanged(event);
+		}
+		
 	}
 	
 }
