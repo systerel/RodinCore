@@ -495,10 +495,12 @@ public class OverlayEditor implements IAnnotationModelListener,
 		}
 	}
 
+	@Override
 	public void modelChanged(IAnnotationModel model) {
 		// do nothing
 	}
 
+	@Override
 	public void modelChanged(AnnotationModelEvent event) {
 		// react to folding of the editor
 
@@ -519,6 +521,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	 * Resizes the editorText widget according to the text modifications when
 	 * the user edits the contents of this overlay editor.
 	 */
+	@Override
 	public void modifyText(ExtendedModifyEvent event) {
 		try {
 			modifyingText = true;
@@ -572,6 +575,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		return height;
 	}
 
+	@Override
 	public void verifyKey(VerifyEvent event) {
 		if (contentProposal.isProposalPopupOpen()) {
 			// do not add the return to the text
@@ -594,6 +598,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		return interval;
 	}
 
+	@Override
 	public void menuAboutToShow(IMenuManager manager) {
 		for (IAction action : editActions.values()) {
 			if (action.getActionDefinitionId().equals(

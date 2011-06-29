@@ -45,12 +45,14 @@ public class DNDManager {
 	public static boolean DEBUG;
 
 	private class Dragger extends DragSourceAdapter {
+		@Override
 		public void dragStart(DragSourceEvent e) {
 			e.doit = controller.hasSelectedElements();
 			if (DEBUG)
 				System.out.println("drag start " + e.doit);
 		}
 
+		@Override
 		public void dragSetData(DragSourceEvent e) {
 			final ILElement[] elements = controller
 					.getSelectedElements();
@@ -68,6 +70,7 @@ public class DNDManager {
 	}
 	
 	private class Dropper extends DropTargetAdapter {
+		@Override
 		public void dragEnter(DropTargetEvent e) {
 			if (DEBUG)
 				System.out.println("drag enter" + e);
@@ -75,6 +78,7 @@ public class DNDManager {
 				e.detail = DND.DROP_COPY;
 		}
 
+		@Override
 		public void dragOperationChanged(DropTargetEvent e) {
 			if (DEBUG)
 				System.out.println("drag operation changed " + e);
@@ -82,6 +86,7 @@ public class DNDManager {
 				e.detail = DND.DROP_COPY;
 		}
 
+		@Override
 		public void drop(DropTargetEvent e) {
 			final int offset = getOffset(e);
 			final IRodinElement[] elements = (IRodinElement[]) e.data;

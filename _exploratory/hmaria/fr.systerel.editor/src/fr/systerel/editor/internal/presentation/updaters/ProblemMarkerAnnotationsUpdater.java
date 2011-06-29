@@ -70,6 +70,7 @@ public class ProblemMarkerAnnotationsUpdater {
 	 */
 	class ResourceChangeListener implements IResourceChangeListener {
 	
+		@Override
 		public void resourceChanged(IResourceChangeEvent e) {
 			final IResourceDelta delta = e.getDelta();
 			if (delta != null && resource != null) {

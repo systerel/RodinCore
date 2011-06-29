@@ -41,6 +41,7 @@ public class RodinDamagerRepairer implements IPresentationDamager,
 		fDefaultTextAttribute = defaultTextAttribute;
 	}
 
+	@Override
 	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent event,
 			boolean documentPartitioningChanged) {
 		if (!documentPartitioningChanged) {
@@ -49,11 +50,13 @@ public class RodinDamagerRepairer implements IPresentationDamager,
 		return partition;
 	}
 
+	@Override
 	public void setDocument(IDocument document) {
 		fDocument = document;
 
 	}
 
+	@Override
 	public void createPresentation(TextPresentation presentation,
 			ITypedRegion damage) {
 		

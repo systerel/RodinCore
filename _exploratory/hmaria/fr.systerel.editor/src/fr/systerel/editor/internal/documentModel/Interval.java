@@ -57,6 +57,7 @@ public class Interval implements Comparable<Interval> {
 		return null;
 	}
 
+	@Override
 	public int compareTo(Interval o) {
 		return pos.getOffset() - o.pos.getOffset();
 	}

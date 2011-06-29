@@ -26,6 +26,7 @@ public class SelectUpHandler extends AbstractSelectHandler {
 	// TODO move to mapper
 	// get previous sibling (of any type, with same parent, in editor order)
 	// or parent itself
+	@Override
 	protected ILElement getSibling(RodinEditor rEditor, ILElement element) {
 		final DocumentMapper mapper = rEditor.getDocumentMapper();
 		final EditorElement editorElement = mapper.findEditorElement(element);

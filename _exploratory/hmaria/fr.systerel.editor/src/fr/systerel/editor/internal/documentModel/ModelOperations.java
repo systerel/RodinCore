@@ -105,6 +105,7 @@ public class ModelOperations {
 			super(modelPos);
 		}
 
+		@Override
 		protected boolean applyTo(ILElement element, ModelPosition pos) {
 			final ILElement targetParent = pos.targetParent;
 			final IInternalElement nextSibling = pos.nextSibling == null ? null

@@ -45,6 +45,7 @@ public class RodinProblemTextHover extends DefaultTextHover implements ITextHove
 
 	private static IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell shell) {
 				return new DefaultInformationControl(shell, true);
 			}

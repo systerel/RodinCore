@@ -168,6 +168,7 @@ public class RodinPartitioner extends FastPartitioner {
 		return getManagingPositionCategories()[0];
 	}
 
+	@Override
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
 		checkInitialization();
 		try {

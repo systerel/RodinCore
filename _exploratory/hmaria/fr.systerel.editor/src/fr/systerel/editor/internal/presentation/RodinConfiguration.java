@@ -202,11 +202,13 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		this.documentMapper = documentMapper;
 	}
 
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] { IDENTIFIER_TYPE.getName(), PRESENTATION_TYPE.getName(),
 				COMMENT_TYPE.getName(), CONTENT_TYPE.getName() };
 	}
 
+	@Override
 	public IPresentationReconciler getPresentationReconciler(
 			ISourceViewer sourceViewer) {
 		final PresentationReconciler reconciler = new PresentationReconciler();

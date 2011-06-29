@@ -114,6 +114,7 @@ public class RodinEditor extends TextEditor {
 		documentProvider.addElementStateListener(stateListener);
 	}
 
+	@Override
 	public void dispose() {
 		close(false);
 		colorManager.dispose();
@@ -337,6 +338,7 @@ public class RodinEditor extends TextEditor {
 	 * Sets the selection. If the selection is a <code>IRodinElement</code> the
 	 * corresponding area in the editor is highlighted
 	 */
+	@Override
 	protected void doSetSelection(ISelection selection) {
 		super.doSetSelection(selection);
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
@@ -412,6 +414,7 @@ public class RodinEditor extends TextEditor {
 		return mapper;
 	}
 	
+	@Override
 	public RodinDocumentProvider getDocumentProvider() {
 		return documentProvider;
 	}

@@ -137,14 +137,17 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		return null;
 	}
 
+	@Override
 	public boolean isModifiable(Object element) {
 		return false;
 	}
 
+	@Override
 	public void changed(Object element) {
 		// do nothing
 	}
 
+	@Override
 	public void doSynchronize(Object element, IProgressMonitor monitor) {
 		document.set(textGenerator.createText(inputRoot));
 	}
@@ -164,6 +167,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			doSynchronize(inputRoot, monitor);
 	}
 
+	@Override
 	public boolean isReadOnly(Object element) {
 		return false;
 	}
@@ -205,6 +209,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	 * Overrides the default ElementInfo class.(see
 	 * <code>RodinEditorElementInfo</code> class)
 	 */
+	@Override
 	protected ElementInfo createElementInfo(Object element)
 			throws CoreException {
 		return new RodinEditorElementInfo(createDocument(element),

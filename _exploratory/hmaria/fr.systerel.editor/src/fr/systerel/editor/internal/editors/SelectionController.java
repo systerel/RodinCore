@@ -70,6 +70,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		return selection.getElements();
 	}
 	
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		if (DEBUG)
 			System.out.println("double click " + e);
@@ -138,6 +139,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		}
 	}
 
+	@Override
 	public void mouseDown(MouseEvent e) {
 		if (DEBUG) System.out.println("mouse down " + e);
 		
@@ -191,6 +193,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		selection.clear();
 	}
 
+	@Override
 	public void mouseUp(MouseEvent e) {
 		if (DEBUG)
 			System.out.println("mouse up " + e);
@@ -201,6 +204,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		}
 	}
 
+	@Override
 	public void verifyText(VerifyEvent e) {
 		int start = viewer.widgetOffset2ModelOffset(e.start);
 
@@ -223,6 +227,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		}
 	}
 	
+	@Override
 	public void verifyKey(VerifyEvent event) {
 		if (event.character == SWT.CR) {
 			overlayEditor.showAtOffset(styledText.getCaretOffset());

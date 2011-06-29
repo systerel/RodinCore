@@ -33,23 +33,28 @@ public class EditorElementStateListener implements IElementStateListener {
 		return new EditorElementStateListener(editor, provider);
 	}
 
+	@Override
 	public void elementContentAboutToBeReplaced(Object element) {
 		// do nothing
 	}
 
+	@Override
 	public void elementContentReplaced(Object element) {
 		provider.setCanSaveDocument(provider.getEditorInput());
 		editor.updateFoldingStructure();
 	}
 
+	@Override
 	public void elementDeleted(Object element) {
 		// do nothing
 	}
 
+	@Override
 	public void elementDirtyStateChanged(Object element, boolean isDirty) {
 		// do nothing
 	}
 
+	@Override
 	public void elementMoved(Object originalElement, Object movedElement) {
 		// do nothing
 	}

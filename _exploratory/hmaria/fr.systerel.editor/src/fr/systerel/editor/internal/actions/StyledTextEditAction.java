@@ -28,6 +28,7 @@ public class StyledTextEditAction extends Action {
 		fAction= action;
 	}
 	
+	@Override
 	public void run() {
 		fTextWidget.invokeAction(fAction);
 	}

@@ -121,6 +121,7 @@ public class EditPos implements Cloneable {
 				&& other.getStart() <= this.getEnd();
 	}
 
+	@Override
 	public EditPos clone() {
 		return new EditPos(offset, length);
 	}
