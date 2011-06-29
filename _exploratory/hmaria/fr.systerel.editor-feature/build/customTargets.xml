@@ -86,6 +86,13 @@
 	        <copy todir="${buildDirectory}/plugins/fr.systerel.editor">
 	            <fileset dir="${builder}/../../fr.systerel.editor" />
 	        </copy>
+		
+			<mkdir dir="${buildDirectory}/plugins" />
+			        <copy todir="${buildDirectory}/plugins/org.rodinp.core.emf">
+			            <fileset dir="${builder}/../../org.rodinp.core.emf" />
+			        </copy>
+			
+		
 	</target>
 
     <!-- Fix product version -->
