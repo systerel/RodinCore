@@ -404,6 +404,34 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.QuickAddChildHandler"
+            commandId="fr.systerel.editor.showAddChild">
+         <activeWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <equals
+                        value="fr.systerel.editor.contexts.rodinEditorDefaultScope">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -415,6 +443,11 @@
             categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.addChild"
             name="Add Child Command">
+         <commandParameter
+               id="typeID"
+               name="Element type ID"
+               optional="false">
+         </commandParameter>
       </command>
       <command
             categoryId="fr.systerel.editor.editionCategory"
@@ -471,17 +504,25 @@
             id="fr.systerel.editor.traversePrevious"
             name="Traverse to the previous editable interval">
       </command>
+      <command
+            id="fr.systerel.editor.showAddChild"
+            name="Show Add Child Menu">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
             locationURI="popup:fr.systerel.editor.editors.RodinEditor?before=additions">
-         <command
-               commandId="fr.systerel.editor.addChild"
+         <menu
+               commandId="fr.systerel.editor.showAddChild"
                label="Add Child"
-               style="push">
-         </command>
+               mnemonic="&amp;d">
+            <dynamic
+                  class="fr.systerel.editor.internal.handlers.DynamicAddChildContributionItem"
+                  id="fr.systerel.editor.addChildPossibilities">
+            </dynamic>
+         </menu>
          <command
                commandId="fr.systerel.editor.addSibling"
                label="Add Sibling"
@@ -620,7 +661,7 @@
             sequence="M1+T">
       </key>
       <key
-            commandId="fr.systerel.editor.addChild"
+            commandId="fr.systerel.editor.showAddChild"
             contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M3+N">

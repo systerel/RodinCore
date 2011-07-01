@@ -10,95 +10,40 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import java.util.Set;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.rodinp.core.IInternalElement;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.RodinCore;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
-import fr.systerel.editor.internal.operations.AtomicOperation;
-import fr.systerel.editor.internal.operations.History;
-import fr.systerel.editor.internal.operations.OperationFactory;
 
-public class AddChildHandler extends AbstractEditionHandler {
+public class AddChildHandler extends AbstractAddChildHandler {
+
+	private static final String TYPE_ID = "typeID";
+	private static final String ERROR = "An error occured. No child was created.";
 
 	@Override
-	protected String handleSelection(RodinEditor editor, int offset) {
-		final ChildCreationInfo possibility = editor.getDocumentMapper()
-				.getChildCreationPossibility(offset);
-		if (possibility != null) {
-			showTipMenu(editor, offset, possibility, editor.getStyledText());
-			return null;
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		try {
+			final String parameter = event.getParameter(TYPE_ID);
+			if (parameter == null || parameter.isEmpty()) {
+				return "No possible Child Creation";
+			}
+			final IInternalElementType<?> elementType = (IInternalElementType<?>) RodinCore
+					.getElementType(parameter);
+			final RodinEditor editor = getActiveRodinEditor(event);
+			if (editor == null)
+				return ERROR;
+			final ChildCreationInfo possibility = editor.getDocumentMapper()
+					.getChildCreationPossibility(editor.getCurrentOffset());
+			createChildAndRefresh(editor, possibility, elementType);
+			return "Child created.";
+		} catch (IllegalArgumentException e) {
+			return ERROR;
 		}
-		return "No possible Child Creation";
-	}
+	};
 
-	// TODO make this menu dynamic
-	private void showTipMenu(final RodinEditor editor, final int offset,
-			final ChildCreationInfo childInfo, StyledText parent) {
-		final Menu tipMenu = new Menu(parent);
-		final Set<IInternalElementType<?>> pChildTypes = childInfo
-				.getPossibleChildTypes();
-		if (pChildTypes.size() == 1) {
-			final IInternalElementType<?>[] a = pChildTypes
-					.toArray(new IInternalElementType<?>[1]);
-			createChildAndRefresh(editor, childInfo, a[0]);
-			return;
-		}
-		for (final IInternalElementType<?> type : pChildTypes) {
-			final MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
-			item.setText(type.getName());
-			item.addSelectionListener(new SelectionListener() {
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent se) {
-					widgetSelected(se);
-				}
-
-				@Override
-				public void widgetSelected(SelectionEvent se) {
-					createChildAndRefresh(editor, childInfo, type);
-				}
-
-			});
-		}
-		final Point loc = parent.getLocationAtOffset(offset);
-		final Point mapped = parent.getDisplay().map(parent, null, loc);
-		tipMenu.setLocation(mapped);
-		tipMenu.setVisible(true);
-	}
-
-	private void createChildAndRefresh(final RodinEditor editor,
-			final ChildCreationInfo childInfo,
-			final IInternalElementType<?> type) {
-		final ILElement nextSibling = childInfo.getNextSibling();
-		final ILElement childParent = childInfo.getParent();
-		final IInternalElement localNextSibling = (nextSibling == null || nextSibling
-				.getElementType() != type) ? null : nextSibling.getElement();
-		final IInternalElement rootElement = (childParent == null) ? editor
-				.getDocumentMapper().getRoot().getElement() : childParent
-				.getRoot().getElement();
-		final IInternalElement localParent;
-		if (childParent.getElement().equals(rootElement)) {
-			localParent = rootElement;
-		} else {
-			localParent = childParent.getElement();
-		}
-		final AtomicOperation op = OperationFactory.createElementGeneric(
-				localParent, type, localNextSibling);
-		History.getInstance().addOperation(op);
-		editor.resync(null);
-	}
-	
 	@Override
 	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
 		final ChildCreationInfo possibility = editor.getDocumentMapper()
