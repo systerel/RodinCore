@@ -8,22 +8,23 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.internal.handlers;
+package org.rodinp.core.emf.api.itf;
 
-import fr.systerel.editor.internal.editors.RodinEditor;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.lightcore.LightElement;
+import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
 /**
- * A simple handler to refresh the active Rodin editor.
+ * A set of utility methods for 'IL' elements.
  * 
  * @author "Thomas Muller"
  */
-public class RefreshHandler extends AbstractEditionHandler {
-
-	@Override
-	protected String handleSelection(RodinEditor editor, int offset) {
-		editor.abordEdition();
-		editor.resync(null, true);
-		return null;
+public class ILUtils {
+	
+	public static IInternalElement getNextSibling(ILElement parent,
+			IInternalElement element) throws RodinDBException {
+		return SynchroUtils.getNextSibling((LightElement) parent, element);
 	}
 
 }

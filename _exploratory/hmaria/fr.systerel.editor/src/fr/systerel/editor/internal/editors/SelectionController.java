@@ -159,7 +159,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 
 	private void resetSelection(int offset) {
 		selection.clear();
-		styledText.setSelection(offset);
+		//styledText.setSelection(offset);
 	}
 	
 	public void selectItems(ILElement[] selected) {

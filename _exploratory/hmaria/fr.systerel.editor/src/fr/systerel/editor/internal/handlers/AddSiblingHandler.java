@@ -11,7 +11,9 @@
 package fr.systerel.editor.internal.handlers;
 
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.api.itf.ILUtils;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.EditorElement;
@@ -36,7 +38,7 @@ public class AddSiblingHandler extends AbstractEditionHandler {
 				info.getParent(), info.getElement().getElementType(),
 				info.getSibling());
 		History.getInstance().addOperation(op);
-		editor.resync(null);
+		editor.resync(null, false);
 		return "Added Sibling";
 	}
 	
@@ -63,7 +65,14 @@ public class AddSiblingHandler extends AbstractEditionHandler {
 		if (info.getElement().isImplicit() || info.isFoundBefore()) {
 			info.setSibling(null);
 		} else {
-			info.setSibling(info.getElement().getElement());
+			try {
+				// we search to insert the sibling after the current element
+				final IInternalElement siblingAfter = ILUtils.getNextSibling(
+						parent, info.getElement().getElement());
+				info.setSibling(siblingAfter);
+			} catch (RodinDBException e) {
+				e.printStackTrace();
+			}
 		}
 		return info;
 	}

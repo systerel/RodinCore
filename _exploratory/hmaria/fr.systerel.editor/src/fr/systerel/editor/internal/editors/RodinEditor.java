@@ -351,8 +351,17 @@ public class RodinEditor extends TextEditor {
 			}
 		}
 	}
-	
-	public void resync(final IProgressMonitor monitor) {
+
+	/**
+	 * Refreshes the editor and avoids making the document dirty if the
+	 * parameter <code>silent</code> is <code>true</code>. Indeed, this
+	 * parameter represents the fact that nothing shall have changed (i.e. the
+	 * user can not save it, as it is not supposed to be anything to save,
+	 * typically in case of the "refresh" of the editor). Note: this is
+	 * necessary, as the resynchronisation will make the underlying document
+	 * change, even if there is no change in the rodin database.
+	 */
+	public void resync(final IProgressMonitor monitor, final boolean silent) {
 		if (styledText != null && !styledText.isDisposed()) {
 			final Display display = styledText.getDisplay();
 			display.asyncExec(new Runnable() {
@@ -363,17 +372,20 @@ public class RodinEditor extends TextEditor {
 					}	
 					final int currentOffset = getCurrentOffset();
 					final int topIndex = styledText.getTopIndex();
-					final ILElement[] sel = selController.getSelectedElements();
-					documentProvider.synchronizeRoot(monitor, true);
+					final ILElement[] selection = selController
+							.getSelectedElements();
+					documentProvider.synchronizeRoot(monitor, silent);
 					updateFoldingStructure();
 					updateMarkerStructure();
 					styledText.setTopIndex(topIndex);
 					styledText.setCaretOffset(currentOffset);
-					selController.selectItems(sel);
+					selController.selectItems(selection);
 				}
 			});
 		}
 	}
+	
+	
 	
 	/** Tells if the overlay is currently visible as the user is editing */
 	public boolean isOverlayActive() {

@@ -73,7 +73,7 @@ public class PasteHandler extends AbstractEditionHandler {
 		if (!(target instanceof IInternalElement) || !target.exists())
 			return "Target does not exist";
 		copyElements((IInternalElement) target, elements);
-		editor.resync(null);
+		editor.resync(null, false);
 		return "Elements pasted";
 	}
 

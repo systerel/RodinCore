@@ -42,7 +42,7 @@ public class DeleteHandler extends AbstractEditionHandler {
 			op = deleteElements(selected);
 		}
 		History.getInstance().addOperation(op);
-		editor.resync(null);
+		editor.resync(null, false);
 		return "Element deleted.";
 	}
 

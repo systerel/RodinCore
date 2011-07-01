@@ -42,7 +42,7 @@ public class ImplicitPresentationUpdater extends AdapterImpl {
 					final IEditorPart ed = ref.getEditor(false);
 					if (ed != null && ed instanceof RodinEditor) {
 						final RodinEditor rodinEditor = (RodinEditor) ed;
-						rodinEditor.resync(null);
+						rodinEditor.resync(null, true);
 					}
 				}
 			}

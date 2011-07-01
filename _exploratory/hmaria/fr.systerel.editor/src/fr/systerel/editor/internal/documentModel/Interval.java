@@ -143,4 +143,9 @@ public class Interval implements Comparable<Interval> {
 	public boolean contains(int offset) {
 		return pos.includes(offset); 
 	}
+	
+	public boolean containsOrTouches(int offset) {
+		return pos.isIncludedOrTouches(offset);
+	}
+	
 }

@@ -253,7 +253,7 @@ public class DocumentMapper {
 			// try the next one
 			if (index + 1 < intervals.size()) {
 				interval = intervals.get(index + 1);
-				if (interval.contains(offset)) {
+				if (interval.containsOrTouches(offset)) {
 					if (interval.isEditable()) {
 						return index + 1;
 					}

@@ -216,7 +216,7 @@ public class Selections {
 			final Iterator<SimpleSelection> iter = selected.iterator();
 			while(iter.hasNext()) {
 				final SimpleSelection sel = iter.next();
-				if (position.includes(sel.position.getOffset())) {
+				if (position.overlapsWith(sel.position)) {
 					iter.remove();
 				}
 			}

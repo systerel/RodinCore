@@ -177,7 +177,7 @@ public abstract class HistoryAction extends Action implements
 		if (!(activeEditor instanceof RodinEditor)) {
 			return;
 		}
-		((RodinEditor)activeEditor).resync(null);
+		((RodinEditor)activeEditor).resync(null, false);
 	}
 
 	protected abstract void doRun(IUndoContext context);
