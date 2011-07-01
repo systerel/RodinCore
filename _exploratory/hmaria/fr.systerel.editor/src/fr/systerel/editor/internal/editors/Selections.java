@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -30,6 +30,10 @@ import org.rodinp.core.emf.api.itf.ILElement;
 public class Selections {
 	
 	public static class SelectionEffect {
+		
+		private static final RGB HOMOGENEOUS = new RGB(160, 200, 220);
+		private static final RGB HETEROGENEOUS = new RGB(205, 195, 195);
+		
 		private final StyledText styledText;
 
 		public SelectionEffect(StyledText styledText) {
@@ -88,12 +92,12 @@ public class Selections {
 		
 		// TODO make a preference
 		private static Color getSelectionBackgroundColorPreference() {
-			return EventBSharedColor.getSystemColor(SWT.COLOR_GRAY);
+			return EventBSharedColor.getColor(HOMOGENEOUS);
 		}
 		
 		// TODO make a preference
 		private static Color getBadSelectionBackgroundColorPreference() {
-			return EventBSharedColor.getSystemColor(SWT.COLOR_DARK_YELLOW);
+			return EventBSharedColor.getColor(HETEROGENEOUS);
 		}
 	}
 	
