@@ -195,6 +195,25 @@ public class DocumentMapper {
 	}
 	
 	/**
+	 * Finds the first interval that starts after a given offset which are from
+	 * editable type. Includes the implicit children intervals.
+	 * 
+	 * @param offset
+	 * @return the first editable interval after the given offset or
+	 *         <code>null</code> if none exists.
+	 */
+	public Interval findPotentiallyEditableIntervalAfter(int offset) {
+		for (Interval interval : intervals) {
+			final ILElement element = interval.getElement();
+			if (interval.getOffset() > offset && interval.isEditable()
+					&& element != null) {
+				return interval;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Finds the first interval that starts after a given offset and has an element.
 	 * 
 	 * @param offset
@@ -786,7 +805,7 @@ public class DocumentMapper {
 			final ILElement element = interval.getElement();
 			if (element != null) {
 				final EditorElement editElem = findEditorElement(element);
-				final Interval interAfter = findEditableIntervalAfter(editElem
+				final Interval interAfter = findPotentiallyEditableIntervalAfter(editElem
 						.getPos().getEnd());
 				if (interAfter == null) {
 					return new ChildCreationInfo(
@@ -800,7 +819,7 @@ public class DocumentMapper {
 							nextElement);
 				}
 			} else {
-				final Interval interAfter = findEditableIntervalAfter(selOffset);
+				final Interval interAfter = findPotentiallyEditableIntervalAfter(selOffset);
 				if (interAfter == null) {
 					return null;
 				}
@@ -808,11 +827,14 @@ public class DocumentMapper {
 				final IInternalElementType<? extends IInternalElement> elementType = next
 						.getElementType();
 				final EditorSection editSection = sections.get(elementType);
-				if (editSection != null) {
+				final Interval parentInterval = findEditableIntervalBefore(selOffset);
+				if (editSection != null && parentInterval != null) {
+					final ILElement sibling = (next.isImplicit()) ? null : next;
+					final ILElement parent = (next.getParent() == null) ? parentInterval
+							.getElement().getParent() : next.getParent();
 					final Set<IInternalElementType<? extends IInternalElement>> singleton = Collections
 							.<IInternalElementType<? extends IInternalElement>> singleton(elementType);
-					return new ChildCreationInfo(singleton, next.getParent(),
-							next);
+					return new ChildCreationInfo(singleton, parent, sibling);
 				}
 			}
 		}
