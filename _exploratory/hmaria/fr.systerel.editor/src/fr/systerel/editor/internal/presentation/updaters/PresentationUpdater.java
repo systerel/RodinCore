@@ -18,12 +18,16 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.editors.RodinEditor;
 
+/**
+ * This updater manage the notifications for the ILElements.
+ * Implicit elements are treated separately by {@link ImplicitPresentationUpdater}.
+ * 
+ * @author "Thomas Muller"
+ */
 public class PresentationUpdater extends EContentAdapter {
 
 	private final DocumentMapper mapper;
 	private final RodinEditor editor;
-	
-	private Notification backupNotification;
 
 	public PresentationUpdater(RodinEditor editor, DocumentMapper mapper) {
 		this.editor = editor;
@@ -32,20 +36,35 @@ public class PresentationUpdater extends EContentAdapter {
 
 	@Override
 	public void notifyChanged(Notification notification) {
+		if (notification.getNewValue() instanceof ILElement
+				&& ((ILElement) notification.getNewValue()).isImplicit()) {
+			return; // we don't care about implicit elements
+		}
+		if (notification.getNotifier() instanceof ILElement
+				&& ((ILElement) notification.getNotifier()).isImplicit()) {
+			return; // we don't care about implicit elements
+		}
+		/*
+		 * Cases where the editor shall be completely resynchronized.
+		 */
+		if ((notification.getEventType() == Notification.REMOVE && notification
+				.getOldValue() instanceof ILElement)
+				|| (notification.getEventType() == Notification.MOVE)) {
+			editor.resync(null, false);
+			return;
+		}
+		if (notification.getEventType() == Notification.ADD
+				&& notification.getNewValue() instanceof ILElement) {
+			editor.resync(null, false);
+			return;
+		}
+		/*
+		 * Other cases where the editor can be finely synchronized: attribute
+		 * update. THIS IS A SECURITY TO MAINTAIN CONSISTENCY, IF OTHER THINGS
+		 * THAT THE EDITOR MODIFY THE RODIN DB.
+		 */
 		final Object oldObject = notification.getOldValue();
 		final Object notifier = notification.getNotifier();
-		
-		// Don't process the same notification again.
-		if (backupNotification != null
-				&& backupNotification.getNewValue() != null
-				&& backupNotification.getNewValue().equals(
-						notification.getNewValue())) {
-			return;
-		}
-		backupNotification = notification;
-		if (notification.isTouch() && !(notifier instanceof ILAttribute)) {
-			return;
-		}
 		final boolean isILElement = !(oldObject instanceof ILElement);
 		if (notifier instanceof ILElement && isILElement) {
 			mapper.elementChanged((ILElement) notifier);

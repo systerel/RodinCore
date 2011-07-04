@@ -17,6 +17,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.rodinp.core.emf.api.itf.ILFile;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
 
@@ -42,6 +43,10 @@ public class ImplicitPresentationUpdater extends AdapterImpl {
 					final IEditorPart ed = ref.getEditor(false);
 					if (ed != null && ed instanceof RodinEditor) {
 						final RodinEditor rodinEditor = (RodinEditor) ed;
+						final ILFile root = rodinEditor.getResource();
+						if (this.target != null && this.target.equals(root)) {
+							continue; // the current editor is fresh
+						}
 						rodinEditor.resync(null, true);
 					}
 				}

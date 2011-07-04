@@ -92,7 +92,14 @@ public class SynchroUtils {
 		for (IAttributeType t : availableTypes) {
 			ids.add(t.getId());
 		}
-		lElement.getEAttributes().retainAll(ids);
+		try {
+			// no need to trigger add/remove notifications in case of a
+			// retainAll() here
+			lElement.eSetDeliver(false);
+			lElement.getEAttributes().retainAll(ids);
+		} finally {
+			lElement.eSetDeliver(true);
+		}
 	}
 
 	public static LightElement findElement(IRodinElement toFind,

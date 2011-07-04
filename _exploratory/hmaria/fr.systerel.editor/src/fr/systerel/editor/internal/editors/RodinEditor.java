@@ -52,6 +52,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 import fr.systerel.editor.EditorPlugin;
@@ -115,32 +116,6 @@ public class RodinEditor extends TextEditor {
 	}
 
 	@Override
-	public void dispose() {
-		close(false);
-		colorManager.dispose();
-		markerAnnotationsUpdater.dispose();
-		if (stateListener != null) {
-			documentProvider.removeElementStateListener(stateListener);
-		}
-		getDocument().removeDocumentListener(overlayUpdater);
-		documentProvider.unloadResource();
-		super.dispose();
-	}
-
-	public StyledText getStyledText() {
-		return styledText;
-	}
-
-	@Override
-	protected void initializeEditor() {
-		super.initializeEditor();
-		colorManager = new ColorManager();
-		mapper = new DocumentMapper();
-		rodinViewerConfiguration = new RodinConfiguration(colorManager, mapper);
-		setSourceViewerConfiguration(rodinViewerConfiguration);
-	}
-	
-	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		activateAppropriateContext();
@@ -154,9 +129,9 @@ public class RodinEditor extends TextEditor {
 		if (markerAnnotationsUpdater == null)
 			markerAnnotationsUpdater = new ProblemMarkerAnnotationsUpdater(
 					this, annotationModel);
-
+	
 		styledText = viewer.getTextWidget();
-
+	
 		overlayEditor = new OverlayEditor(styledText, mapper, viewer, this);
 		overlayUpdater = new OverlayBackModificationUpdater(overlayEditor);
 		getDocument().addDocumentListener(overlayUpdater);
@@ -169,20 +144,71 @@ public class RodinEditor extends TextEditor {
 		dndManager = new DNDManager(selController, styledText, mapper,
 				documentProvider);
 		dndManager.install();
-
+	
 		cursorManager = new CursorManager(this, viewer);
 		styledText.addMouseMoveListener(cursorManager);
-
+	
 		final Font font = JFaceResources
 				.getFont(PreferenceConstants.RODIN_MATH_FONT);
 		styledText.setFont(font);
-
+	
 		updateFoldingStructure();
 		markerAnnotationsUpdater.initializeMarkersAnnotations();
-
+	
 		setTitleImageAndPartName();
 	}
-		
+
+	private void setTitleImageAndPartName() {
+		final IEventBRoot inputRoot = documentProvider.getInputRoot();
+		final IInternalElementType<?> rootType = inputRoot.getElementType();
+		String img = null;
+		setPartName(inputRoot.getComponentName());
+		if (rootType == IMachineRoot.ELEMENT_TYPE) {
+			img = IEventBSharedImages.IMG_MACHINE;
+		} else if (rootType == IContextRoot.ELEMENT_TYPE) {
+			img = IEventBSharedImages.IMG_CONTEXT;
+		}
+		if (img != null) {
+			final ImageRegistry imgReg = EventBUIPlugin.getDefault()
+					.getImageRegistry();
+			setTitleImage(imgReg.get(img));
+		}
+	}
+
+	@Override
+	public void dispose() {
+		close(false);
+		colorManager.dispose();
+		markerAnnotationsUpdater.dispose();
+		if (stateListener != null) {
+			documentProvider.removeElementStateListener(stateListener);
+		}
+		getDocument().removeDocumentListener(overlayUpdater);
+		documentProvider.unloadResource();
+		super.dispose();
+	}
+
+	@Override
+	protected void initializeEditor() {
+		super.initializeEditor();
+		colorManager = new ColorManager();
+		mapper = new DocumentMapper();
+		rodinViewerConfiguration = new RodinConfiguration(colorManager, mapper);
+		setSourceViewerConfiguration(rodinViewerConfiguration);
+	}
+	
+	/**
+	 * Creates a projection viewer to allow folding
+	 */
+	@Override
+	protected ISourceViewer createSourceViewer(Composite parent,
+			IVerticalRuler ruler, int styles) {
+		final ISourceViewer viewer = new ProjectionViewer(parent, ruler,
+				getOverviewRuler(), isOverviewRulerVisible(), styles);
+		// ensure decoration support has been created and configured.
+		getSourceViewerDecorationSupport(viewer);
+		return viewer;
+	}
 
 	private void activateAppropriateContext() {
 		// Activate Event-B Editor Context
@@ -220,20 +246,6 @@ public class RodinEditor extends TextEditor {
 		removeAction(ITextEditorActionDefinitionIds.SELECT_LINE_DOWN);
 	}
 
-	private void removeAction(String actionId) {
-		if (actionId == null)
-			return;
-		setAction(actionId, null);
-	}
-	
-	private IUndoContext getUndoContext() {
-		final IInternalElement inputRoot = getInputRoot();
-		if (inputRoot != null) {
-			undoContext = OperationFactory.getRodinFileUndoContext(inputRoot);
-		}
-		return undoContext;
-	}
-
 	@Override
 	protected void createUndoRedoActions() {
 		if (getUndoContext() != null) {
@@ -249,7 +261,7 @@ public class RodinEditor extends TextEditor {
 					.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 			registerUndoRedoAction(ITextEditorActionConstants.UNDO, undoAction);
 			undoAction.setEnabled(false);
-
+	
 			// Create the redo action.
 			final Redo redoAction = new HistoryAction.Redo(ww);
 			PlatformUI
@@ -262,6 +274,20 @@ public class RodinEditor extends TextEditor {
 			registerUndoRedoAction(ITextEditorActionConstants.REDO, redoAction);
 			redoAction.setEnabled(false);
 		}
+	}
+
+	private void removeAction(String actionId) {
+		if (actionId == null)
+			return;
+		setAction(actionId, null);
+	}
+	
+	private IUndoContext getUndoContext() {
+		final IInternalElement inputRoot = getInputRoot();
+		if (inputRoot != null) {
+			undoContext = OperationFactory.getRodinFileUndoContext(inputRoot);
+		}
+		return undoContext;
 	}
 
 	/**
@@ -277,61 +303,6 @@ public class RodinEditor extends TextEditor {
 		final IActionBars actionBars = getEditorSite().getActionBars();
 		if (actionBars != null)
 			actionBars.setGlobalActionHandler(actionId, action);
-	}
-
-	private void setTitleImageAndPartName() {
-		final IEventBRoot inputRoot = documentProvider.getInputRoot();
-		final IInternalElementType<?> rootType = inputRoot.getElementType();
-		String img = null;
-		setPartName(inputRoot.getComponentName());
-		if (rootType == IMachineRoot.ELEMENT_TYPE) {
-			img = IEventBSharedImages.IMG_MACHINE;
-		} else if (rootType == IContextRoot.ELEMENT_TYPE) {
-			img = IEventBSharedImages.IMG_CONTEXT;
-		}
-		if (img != null) {
-			final ImageRegistry imgReg = EventBUIPlugin.getDefault()
-					.getImageRegistry();
-			setTitleImage(imgReg.get(img));
-		}
-	}
-
-	/**
-	 * Creates a projection viewer to allow folding
-	 */
-	@Override
-	protected ISourceViewer createSourceViewer(Composite parent,
-			IVerticalRuler ruler, int styles) {
-		final ISourceViewer viewer = new ProjectionViewer(parent, ruler,
-				getOverviewRuler(), isOverviewRulerVisible(), styles);
-		// ensure decoration support has been created and configured.
-		getSourceViewerDecorationSupport(viewer);
-		return viewer;
-	}
-
-	/**
-	 * Replaces the old folding structure with the current one.
-	 */
-	public void updateFoldingStructure() {
-		for (Annotation a : oldPojectionAnnotations) {
-			projectionAnnotationModel.removeAnnotation(a);
-		}
-		final Position[] positions = mapper.getFoldingPositions();
-		final Annotation[] annotations = mapper.getFoldingAnnotations();
-		Assert.isLegal(annotations.length == positions.length);
-		// TODO use AnnotationModel.replaceAnnotations(Annotation[], Map)
-		for (int i = 0; i < positions.length; i++) {
-			projectionAnnotationModel.addAnnotation(annotations[i],
-					positions[i]);
-		}
-		oldPojectionAnnotations = annotations;
-	}
-	
-	/**
-	 * Recalculates the old marker structure.
-	 */
-	public void updateMarkerStructure() {
-		markerAnnotationsUpdater.recalculateAnnotations();
 	}
 
 	/**
@@ -353,6 +324,69 @@ public class RodinEditor extends TextEditor {
 	}
 
 	/**
+	 * Aborts the current overlay edition. The modification are not saved. This
+	 * has no effect if the overlay is inactive.
+	 */
+	public void abordEdition() {
+		if (overlayEditor.isActive()) {
+			overlayEditor.abortEdition();
+		}
+	}
+
+	public int getCurrentOffset() {
+		return styledText.getCaretOffset();
+	}
+
+	public DocumentMapper getDocumentMapper() {
+		return mapper;
+	}
+	
+	@Override
+	public RodinDocumentProvider getDocumentProvider() {
+		return documentProvider;
+	}
+
+	public IDocument getDocument() {
+		return documentProvider.getDocument();
+	}
+
+	public IInternalElement getInputRoot() {
+		return documentProvider.getInputRoot();
+	}
+	
+	/** Returns the registered action or <code>null</code> if not found */
+	public IAction getOverlayEditorAction(int actionConstant) {
+		return overlayEditor.getOverlayAction(actionConstant);
+	}
+
+	public ILFile getResource() {
+		return documentProvider.getResource();
+	}
+	
+	public SelectionController getSelectionController() {
+		return selController;
+	}
+
+	public StyledText getStyledText() {
+		return styledText;
+	}
+
+	/** Tells if the overlay is currently visible as the user is editing */
+	public boolean isOverlayActive() {
+		return overlayEditor.isActive();
+	}
+
+	public void openEdition() {
+		overlayEditor.showAtOffset(styledText.getCaretOffset());
+	}
+
+	/** Saves the current changes and quit edition. */
+	public void quitAndSaveEdition() {
+		if (overlayEditor.isActive())
+			overlayEditor.saveAndExit();
+	}
+
+	/**
 	 * Refreshes the editor and avoids making the document dirty if the
 	 * parameter <code>silent</code> is <code>true</code>. Indeed, this
 	 * parameter represents the fact that nothing shall have changed (i.e. the
@@ -364,16 +398,15 @@ public class RodinEditor extends TextEditor {
 	public void resync(final IProgressMonitor monitor, final boolean silent) {
 		if (styledText != null && !styledText.isDisposed()) {
 			final Display display = styledText.getDisplay();
+			final int currentOffset = getCurrentOffset();
+			final int topIndex = styledText.getTopIndex();
+			final ILElement[] selection = selController.getSelectedElements();
 			display.asyncExec(new Runnable() {
 				@Override
 				public void run() {
 					if (styledText.isDisposed()) {
 						return;
-					}	
-					final int currentOffset = getCurrentOffset();
-					final int topIndex = styledText.getTopIndex();
-					final ILElement[] selection = selController
-							.getSelectedElements();
+					}
 					documentProvider.synchronizeRoot(monitor, silent);
 					updateFoldingStructure();
 					updateMarkerStructure();
@@ -384,67 +417,34 @@ public class RodinEditor extends TextEditor {
 			});
 		}
 	}
-	
-	
-	
-	/** Tells if the overlay is currently visible as the user is editing */
-	public boolean isOverlayActive() {
-		return overlayEditor.isActive();
-	}
-	
-	/**
-	 * Aborts the current overlay edition. The modification are not saved. This
-	 * has no effect if the overlay is inactive.
-	 */
-	public void abordEdition() {
-		if (overlayEditor.isActive()) {
-			overlayEditor.abortEdition();
-			doSave(null); // removes the dirty state star
-		}
-	}
-
-	/** Saves the current changes and quit edition. */
-	public void quitAndSaveEdition() {
-		if (overlayEditor.isActive())
-			overlayEditor.saveAndExit();
-	}
-
-	public void openEdition() {
-		overlayEditor.showAtOffset(styledText.getCaretOffset());
-	}
-
-	/** Returns the registered action or <code>null</code> if not found */
-	public IAction getOverlayEditorAction(int actionConstant) {
-		return overlayEditor.getOverlayAction(actionConstant);
-	}
 
 	public void reveal(EditPos pos) {
 		selectAndReveal(pos.getOffset(), 0, pos.getOffset(), pos.getLength());
 	}
-	
-	public DocumentMapper getDocumentMapper() {
-		return mapper;
-	}
-	
-	@Override
-	public RodinDocumentProvider getDocumentProvider() {
-		return documentProvider;
+
+	/**
+	 * Replaces the old folding structure with the current one.
+	 */
+	public void updateFoldingStructure() {
+		for (Annotation a : oldPojectionAnnotations) {
+			projectionAnnotationModel.removeAnnotation(a);
+		}
+		final Position[] positions = mapper.getFoldingPositions();
+		final Annotation[] annotations = mapper.getFoldingAnnotations();
+		Assert.isLegal(annotations.length == positions.length);
+		// TODO use AnnotationModel.replaceAnnotations(Annotation[], Map)
+		for (int i = 0; i < positions.length; i++) {
+			projectionAnnotationModel.addAnnotation(annotations[i],
+					positions[i]);
+		}
+		oldPojectionAnnotations = annotations;
 	}
 
-	public int getCurrentOffset() {
-		return styledText.getCaretOffset();
-	}
-
-	public IInternalElement getInputRoot() {
-		return documentProvider.getInputRoot();
-	}
-	
-	public IDocument getDocument() {
-		return documentProvider.getDocument();
-	}
-	
-	public SelectionController getSelectionController() {
-		return selController;
+	/**
+	 * Recalculates the old marker structure.
+	 */
+	public void updateMarkerStructure() {
+		markerAnnotationsUpdater.recalculateAnnotations();
 	}
 
 }

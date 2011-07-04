@@ -56,7 +56,6 @@ public abstract class AbstractMoveHandler extends AbstractEditorHandler {
 			return null;
 		}
 		new Move(pos).perform(asList(selected));
-		rEditor.resync(null, false);
 		return null;
 	}
 

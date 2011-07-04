@@ -48,7 +48,6 @@ public abstract class AbstractAddChildHandler extends AbstractEditionHandler {
 		final AtomicOperation op = OperationFactory.createElementGeneric(
 				localParent, type, localNextSibling);
 		History.getInstance().addOperation(op);
-		editor.resync(null, false);
 	}
 
 	@Override

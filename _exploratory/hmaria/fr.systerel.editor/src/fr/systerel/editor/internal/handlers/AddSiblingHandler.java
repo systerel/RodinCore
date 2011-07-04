@@ -38,7 +38,6 @@ public class AddSiblingHandler extends AbstractEditionHandler {
 				info.getParent(), info.getElement().getElementType(),
 				info.getSibling());
 		History.getInstance().addOperation(op);
-		editor.resync(null, false);
 		return "Added Sibling";
 	}
 	

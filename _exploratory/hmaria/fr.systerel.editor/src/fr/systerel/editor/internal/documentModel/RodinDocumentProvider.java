@@ -54,6 +54,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	private ILFile inputResource;
 	
 	protected boolean synchronizing = false;
+	private ILFile resource;
 
 	public RodinDocumentProvider(DocumentMapper mapper, RodinEditor editor) {
 		this.documentMapper = mapper;
@@ -72,11 +73,10 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	}
 	
 	/**
-	 * This is the method called to load a resource into the editing domain's
-	 * resource set based on the editor's input.
+	 * This is the method called to load a resource.
 	 */
 	public ILFile getResource(IFile file) {
-		final ILFile resource = ILFileFactory.INSTANCE.createILFile(file);
+		resource = ILFileFactory.INSTANCE.createILFile(file);
 		try {
 			resource.load(null);
 		} catch (IOException e) {
@@ -84,6 +84,14 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		}
 		resource.addAdapter(implicitPresentationUpdater);
 		resource.addEContentAdapter(elementPresentationChangeAdapter);
+		return resource;
+	}
+	
+	/**
+	 * This is the method called to retrieve a resource, returns <code>null</code>
+	 * if the resource has not been created.
+	 */
+	public ILFile getResource() {
 		return resource;
 	}
 

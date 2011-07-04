@@ -311,7 +311,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 	private void showEditorText(Interval inter, int pos) {
 		contentProposal.setCompletionLocation(inter);
-		setEventBTranslation(inter);
+		if (!inter.getContentType().getName().contains("comment"))
+			setEventBTranslation(inter);
 		final int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
 		final int end = computeEnd(start, inter.getLength());
 		final int clickOffset = start + pos;
@@ -433,9 +434,13 @@ public class OverlayEditor implements IAnnotationModelListener,
 		final ILElement element = interval.getElement();
 		final IInternalElement ielement = element.getElement();
 		final String original = editorText.getText();
-		// force translation
-		final String text = RodinKeyboardPlugin.getDefault()
-				.translate(original);
+		final String text;
+		if (!contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
+			// force translation
+			text = RodinKeyboardPlugin.getDefault().translate(original);
+		} else {
+			text = original;
+		}
 		if (ielement instanceof IIdentifierElement
 				&& contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
 			updateAttribute(ielement, IDENTIFIER_ATTRIBUTE, text);
