@@ -69,6 +69,8 @@ import fr.systerel.editor.internal.presentation.updaters.ProblemMarkerAnnotation
 
 public class RodinEditor extends TextEditor {
 
+	public static boolean DEBUG;
+	
 	public static final String EDITOR_ID = EditorPlugin.PLUGIN_ID
 			+ ".editors.RodinEditor";
 	public static final String EDITOR_SCOPE = EditorPlugin.PLUGIN_ID
@@ -407,12 +409,20 @@ public class RodinEditor extends TextEditor {
 					if (styledText.isDisposed()) {
 						return;
 					}
+					final long start = System.currentTimeMillis();
+					if (DEBUG)
+						System.out.println("\\ Start refreshing Rodin Editor.");
 					documentProvider.synchronizeRoot(monitor, silent);
 					updateFoldingStructure();
 					updateMarkerStructure();
 					styledText.setTopIndex(topIndex);
 					styledText.setCaretOffset(currentOffset);
 					selController.selectItems(selection);
+					if (DEBUG) {
+						System.out.println("\\ Finished refreshing Rodin Editor.");
+						final long time = System.currentTimeMillis() - start;
+						System.out.println("\\ Elapsed time : " + time  +"ms.");
+					}
 				}
 			});
 		}

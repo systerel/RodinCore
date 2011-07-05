@@ -28,6 +28,7 @@ import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.RodinPartitioner;
 import fr.systerel.editor.internal.editors.DNDManager;
+import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.editors.SelectionController;
 import fr.systerel.editor.internal.presentation.updaters.ProblemMarkerAnnotationsUpdater;
 
@@ -45,6 +46,8 @@ public class EditorPlugin extends AbstractUIPlugin {
 	private static final String PARTITION_TRACE = PLUGIN_ID + "/debug/partition"; //$NON-NLS-1$
 	private static final String FOLDING_TRACE = PLUGIN_ID + "/debug/folding"; //$NON-NLS-1$
 	private static final String MARKER_POSITION_TRACE = PLUGIN_ID + "/debug/marker_position"; //$NON-NLS-1$
+	private static final String EDITOR_REFRESHING_TIME = PLUGIN_ID + "/debug/editor_refresh_time"; //$NON-NLS-1$
+
 
 	// The shared instance
 	private static EditorPlugin plugin;
@@ -98,6 +101,7 @@ public class EditorPlugin extends AbstractUIPlugin {
 		RodinPartitioner.DEBUG = parseOption(PARTITION_TRACE);
 		DocumentMapper.DEBUG = parseOption(FOLDING_TRACE);
 		ProblemMarkerAnnotationsUpdater.DEBUG = parseOption(MARKER_POSITION_TRACE);
+		RodinEditor.DEBUG = parseOption(EDITOR_REFRESHING_TIME);
 	}
 
 	private static boolean parseOption(String key) {
