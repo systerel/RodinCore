@@ -54,14 +54,15 @@ public class AttributeUpdateAdapter extends AdapterImpl {
 				if (rElement instanceof IInternalElement) {
 					if (attribute.getType() instanceof IAttributeType) {
 						final IInternalElement iElem = (IInternalElement) rElement;
-						setValue(iElem, attribute, notification.getNewValue());						
-					}
-					
-					if (DEBUG) {
-						System.out.println("AttributeUpdateAdapter: new value"
-								+ notification.getNewValue() + " for "
-								+ attribute.getKey());
-					}
+						if (attribute.getKey() != null && attribute.getType() != null) {							
+							setValue(iElem, attribute, notification.getNewValue());						
+							if (DEBUG) {
+								System.out.println("AttributeUpdateAdapter: new value \""
+										+ notification.getNewValue() + "\" for "
+										+ attribute);
+							}
+						}
+					}					
 				}
 			} catch (RodinDBException e) {
 				System.out.println("An error occured when setting"

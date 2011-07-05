@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.rodinp.core.emf.lightcore;
 
+import static java.lang.System.currentTimeMillis;
+import static org.rodinp.core.emf.lightcore.LightCorePlugin.DEBUG;
+import static org.rodinp.core.emf.lightcore.LightCoreUtils.debug;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -130,7 +134,15 @@ public class RodinResource extends ResourceImpl implements ILFile {
 				RodinCore.run(new IWorkspaceRunnable() {
 					public void run(final IProgressMonitor monitor)
 							throws CoreException {
+						final long start = currentTimeMillis();
+						if (DEBUG) {
+							debug("** Starting saving...");
+						}
 						rodinFile.save(null, true);
+						if (DEBUG) {
+							final long end = currentTimeMillis() - start;
+							debug("** Ended saving after " + end + "ms.");
+						}
 					}
 				}, null);
 
@@ -141,7 +153,6 @@ public class RodinResource extends ResourceImpl implements ILFile {
 			// success
 			setTimeStamp(System.currentTimeMillis());
 			isModified = false;
-
 		} finally {
 		}
 	}
