@@ -1,0 +1,2 @@
+org.rodinp.core.emf/debug = true
+org.rodinp.core.emf/debug/deltaprocessor = true

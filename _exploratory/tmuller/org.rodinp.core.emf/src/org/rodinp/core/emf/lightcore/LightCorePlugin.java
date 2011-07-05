@@ -13,23 +13,41 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.rodinp.core.emf.lightcore.adapters.DeltaProcessor;
 
 /**
  * Activator for the RODIN-EMF core plug-in
  */
 public class LightCorePlugin extends Plugin implements BundleActivator {
 
-	public static final String PLUGIN_ID = "org.rodinp.emf.core";
-
-	private static final String MAIN_TRACE = PLUGIN_ID + "/debug";
+	public static final String PLUGIN_ID = "org.rodinp.core.emf";
 
 	public static boolean DEBUG;
+	
+	// Tracing options
+	private static final String MAIN_TRACE = PLUGIN_ID + "/debug"; //$NON-NLS-1$
+	private static final String DELTAPROC_TRACE = PLUGIN_ID +"/debug/deltaprocessor"; //$NON-NLS-1$
+	
+	// The shared instance
+	private static LightCorePlugin PLUGIN;
+
 
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		PLUGIN = this;
 		if (isDebugging())
 			configureDebugOptions();
+	}
+	
+	@Override
+	public void stop(BundleContext context) throws Exception {
+		PLUGIN = null;
+		super.stop(context);
+	}
+	
+	public static LightCorePlugin getDefault() {
+		return PLUGIN;
 	}
 
 	/**
@@ -37,6 +55,8 @@ public class LightCorePlugin extends Plugin implements BundleActivator {
 	 */
 	private void configureDebugOptions() {
 		DEBUG = parseOption(MAIN_TRACE);
+		if (DEBUG)
+		DeltaProcessor.DEBUG = parseOption(DELTAPROC_TRACE);
 	}
 
 	private static boolean parseOption(String key) {

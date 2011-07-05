@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core.emf.lightcore.adapters;
 
+import static org.rodinp.core.emf.lightcore.LightCoreUtils.debug;
 import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.addParentEContentAdapter;
 import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.findElement;
 import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.getPositionAmongSiblings;
@@ -31,6 +32,8 @@ import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
  */
 public class DeltaProcessor {
 
+	public static boolean DEBUG;
+	
 	private final LightElement root;
 	private final IRodinElement rodinRoot;
 	private final DeltaRootAdapter owner;
@@ -52,6 +55,9 @@ public class DeltaProcessor {
 		int kind = delta.getKind();
 		final IRodinElement element = delta.getElement();
 
+		if (DEBUG)
+			debug("Processing RodinDB delta for :" + element.getElementName()
+					+ " :" + delta.toString());
 		
 		// if the delta does not concern the root handled by this processor
 		if (element instanceof IInternalElement
