@@ -74,12 +74,7 @@ public class DeltaProcessor {
 		}
 
 		if (kind == IRodinElementDelta.REMOVED) {
-			if (element instanceof IRodinFile) {
-				final IRodinFile file = (IRodinFile) element;
-				owner.finishListening();
-				// remove the machine from the model
-				removeElement(file.getRoot());
-			} else if (element instanceof IInternalElement) {
+			if (element instanceof IInternalElement) {
 				removeElement(element);
 			}
 			return;
