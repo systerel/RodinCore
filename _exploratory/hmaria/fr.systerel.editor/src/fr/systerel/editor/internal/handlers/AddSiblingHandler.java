@@ -10,13 +10,14 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
+import static org.rodinp.core.emf.api.itf.ILUtils.getNextSibling;
+
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
-import org.rodinp.core.emf.api.itf.ILUtils;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
-import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.operations.AtomicOperation;
@@ -35,7 +36,7 @@ public class AddSiblingHandler extends AbstractEditionHandler {
 			return "No possible Sibling creation";
 		}
 		final AtomicOperation op = OperationFactory.createElementGeneric(
-				info.getParent(), info.getElement().getElementType(),
+				info.getParent(), info.getElementType(),
 				info.getSibling());
 		History.getInstance().addOperation(op);
 		return "Added Sibling";
@@ -45,34 +46,53 @@ public class AddSiblingHandler extends AbstractEditionHandler {
 			RodinEditor editor, int offset) {
 		final SiblingCreationInfo info = new SiblingCreationInfo();
 		final DocumentMapper mapper = editor.getDocumentMapper();
-		final EditorElement item = mapper.findItemContaining(offset);
-		if (item == null) {
-			final Interval inter = mapper.findEditableIntervalBefore(offset);
-			if (inter == null)
-				info.setElement(null);
-			else info.setElement(inter.getElement());
-			info.setFoundBefore(true);
-		} else {
-			info.setElement(item.getLightElement());
-		}
-		if (info.getElement() == null) {
+		final Interval interAfter = mapper
+				.findEditableKindOfIntervalAfter(offset);
+		if (interAfter == null) {
 			return null;
 		}
-		final ILElement parent = info.getElement().getParent();
-		if (parent == null)
+		final ILElement element = interAfter.getElement();
+		if (element == null) {
 			return null;
-		if (info.getElement().isImplicit() || info.isFoundBefore()) {
-			info.setSibling(null);
-		} else {
-			try {
-				// we search to insert the sibling after the current element
-				final IInternalElement siblingAfter = ILUtils.getNextSibling(
-						parent, info.getElement().getElement());
-				info.setSibling(siblingAfter);
-			} catch (RodinDBException e) {
-				e.printStackTrace();
-			}
 		}
+		final ILElement parent = element.getParent();
+		if (parent == null) { // we are next to an implicit element;
+			return getInfoForImplicitKindOfSibling(offset, info, mapper,
+					element);
+		}
+		info.setParent(parent.getElement());
+		info.setElementType(element.getElementType());
+		try {
+			final IInternalElement nextSibling;
+			nextSibling = getNextSibling(parent, element.getElement());
+			info.setSibling(nextSibling);
+			return info;
+		} catch (RodinDBException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static SiblingCreationInfo getInfoForImplicitKindOfSibling(
+			int offset, final SiblingCreationInfo info,
+			final DocumentMapper mapper, final ILElement element) {
+		if (!element.isImplicit()) {
+			return null;
+		}
+		final Interval iBF = mapper.findEditableIntervalBefore(offset);
+		if (iBF == null) {
+			return null;
+		}
+		final ILElement aSiblingBefore = iBF.getElement();
+		if (aSiblingBefore == null) {
+			return null;
+		}
+		final ILElement pBF = aSiblingBefore.getParent();
+		if (pBF == null) {
+			return null;
+		}
+		info.setParent(pBF.getElement());
+		info.setElementType(element.getElementType());
 		return info;
 	}
 	
@@ -84,24 +104,16 @@ public class AddSiblingHandler extends AbstractEditionHandler {
 	
 	protected static class SiblingCreationInfo {
 		
-		private boolean foundBefore = false;
-		private ILElement element;
+		private IInternalElement parent;
+		private IInternalElementType<?> elementType;
 		private IInternalElement sibling;
 		
-		public void setElement(ILElement element) {
-			this.element = element;
-		}
-		
-		public ILElement getElement() {
-			return element;
+		public void setParent(IInternalElement parent) {
+			this.parent = parent;
 		}
 
-		public void setFoundBefore(boolean foundBefore) {
-			this.foundBefore = foundBefore;
-		}
-
-		public boolean isFoundBefore() {
-			return foundBefore;
+		public IInternalElement getParent() {
+			return parent;
 		}
 
 		public void setSibling(IInternalElement sibling) {
@@ -112,10 +124,12 @@ public class AddSiblingHandler extends AbstractEditionHandler {
 			return sibling;
 		}
 		
-		public IInternalElement getParent() {
-			if (element.getParent() == null)
-				return null;
-			return element.getParent().getElement();
+		public void setElementType(IInternalElementType<?> elementType) {
+			this.elementType = elementType;
+		}
+		
+		public IInternalElementType<?> getElementType() {
+			return elementType;
 		}
 		
 	}

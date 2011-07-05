@@ -195,6 +195,25 @@ public class DocumentMapper {
 	}
 	
 	/**
+	 * Finds the first interval that starts after a given offset and has a
+	 * content type which is normally (kind of) editable.
+	 * 
+	 * @param offset
+	 * @return the first kind of editable interval after the given offset or
+	 *         <code>null</code> if none exists.
+	 */
+	public Interval findEditableKindOfIntervalAfter(int offset) {
+		for (Interval interval : intervals) {
+			final ILElement element = interval.getElement();
+			if (interval.getOffset() > offset && interval.isKindOfEditable()
+					&& element != null) {
+				return interval;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Finds the first interval that starts after a given offset which are from
 	 * editable type. Includes the implicit children intervals.
 	 * 

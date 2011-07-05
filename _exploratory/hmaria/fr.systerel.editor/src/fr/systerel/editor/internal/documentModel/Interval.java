@@ -124,6 +124,10 @@ public class Interval implements Comparable<Interval> {
 		return contentType.isEditable();
 	}
 	
+	public boolean isKindOfEditable() {
+		return contentType.isKindOfEditable();
+	}
+	
 	public boolean isMultiLine() {
 		return multiLine;
 	}

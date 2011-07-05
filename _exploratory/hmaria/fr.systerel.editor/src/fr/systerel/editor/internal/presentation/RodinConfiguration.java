@@ -87,6 +87,10 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			return isImplicit;
 		}
 		
+		public boolean isKindOfEditable() {
+			return false;
+		}
+		
 	}
 	
 	public static class AttributeContentType extends ContentType {
@@ -107,6 +111,11 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		 */
 		public IAttributeType getAttributeType() {
 			return attributeType;
+		}
+		
+		@Override
+		public boolean isKindOfEditable() {
+			return true;
 		}
 		
 	}
