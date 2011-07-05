@@ -22,11 +22,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.operations.History;
 import fr.systerel.editor.internal.operations.OperationFactory;
-import fr.systerel.editor.internal.operations.RodinFileUndoContext;
 
 /**
  * Common protocol for classes that manipulate the history within an event-B
@@ -143,7 +141,7 @@ public abstract class HistoryAction extends Action implements
 		final IUndoContext context = getUndoContext();
 		if (context != null) {
 			doRun(context);
-			refreshContents(context);
+			//refreshContents(context);
 		}
 	}
 
@@ -152,32 +150,12 @@ public abstract class HistoryAction extends Action implements
 		refresh();
 	}
 	
-	public void refreshContents(IUndoContext context){
-		final IEditorPart editor = getActiveEditor();
-		if (editor instanceof RodinEditor) {
-			if (context instanceof RodinFileUndoContext)
-				refreshEditor();
-		}
-	}
-
 	public void refresh() {
 		final String text = getActionName() + " " + getLabel();
 		if (!text.equals(getText())) {
 			setText(text);
 		}
 		setEnabled(historyIsEnabled());
-	}
-	
-	public void refreshEditor() {
-		final IWorkbenchPage activePage = EditorPlugin.getActivePage();
-		if (activePage == null) {
-			return;
-		}
-		final IEditorPart activeEditor = activePage.getActiveEditor();
-		if (!(activeEditor instanceof RodinEditor)) {
-			return;
-		}
-		((RodinEditor)activeEditor).resync(null, false);
 	}
 
 	protected abstract void doRun(IUndoContext context);
@@ -187,4 +165,5 @@ public abstract class HistoryAction extends Action implements
 	protected abstract String getLabel();
 
 	protected abstract boolean historyIsEnabled();
+	
 }
