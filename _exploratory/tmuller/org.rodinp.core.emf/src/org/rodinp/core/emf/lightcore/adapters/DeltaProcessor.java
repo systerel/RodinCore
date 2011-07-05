@@ -86,9 +86,6 @@ public class DeltaProcessor {
 		}
 		
 		int flags = delta.getFlags();
-		if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
-			reloadAttributes(element);
-		}
 
 		if (kind == IRodinElementDelta.CHANGED) {
 
