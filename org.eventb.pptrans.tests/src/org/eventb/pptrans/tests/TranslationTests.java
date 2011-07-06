@@ -55,10 +55,13 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest(input, expected, transformExpected, defaultTe);
 	}
 
-	private static void doTest(String input, String expected, boolean transformExpected, ITypeEnvironment te) {
-		Predicate pinput = parse(input, te);
+	private static void doTest(String input, String expected,
+			boolean transformExpected, ITypeEnvironment inputTypenv) {
+		// Clone the input type environment to avoid side effects
+		final ITypeEnvironment te = inputTypenv.clone();
+		final Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
-		if(transformExpected) {
+		if (transformExpected) {
 			pexpected = Translator.reduceToPredicateCalulus(pexpected, ff);
 		}
 		doTest(pinput, pexpected);
