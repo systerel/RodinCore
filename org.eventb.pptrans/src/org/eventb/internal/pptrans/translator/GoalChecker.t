@@ -84,7 +84,7 @@ public abstract class GoalChecker {
 			LiteralPredicate() -> {
 				return true;
 			}
-			(NotEqual|Lt|Le|Gt|Ge)(AE1, AE2) -> {
+			(Lt|Le|Gt|Ge)(AE1, AE2) -> {
 				return isArithmeticExpression(`AE1) && isArithmeticExpression(`AE2);
 			}
 			In(ME1, SE1) -> {

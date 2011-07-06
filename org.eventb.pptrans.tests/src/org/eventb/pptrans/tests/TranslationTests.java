@@ -150,6 +150,10 @@ public class TranslationTests extends AbstractTranslationTests {
 
 		doTest( "s ≠ t",
 				"¬(s = t)", false, br_te);
+		doTest( "x ≠ 0",
+				"¬(x = 0)", false, br_te);
+		doTest( "x ≠ TRUE",
+				"¬(x = TRUE)", false, br_te);
 	}
 
 	public void testBR5_recursion() {
