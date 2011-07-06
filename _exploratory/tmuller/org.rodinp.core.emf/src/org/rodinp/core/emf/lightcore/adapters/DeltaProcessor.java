@@ -16,11 +16,13 @@ import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.findElement;
 import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.getPositionAmongSiblings;
 
 import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notifier;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.InternalElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcoreFactory;
@@ -74,6 +76,17 @@ public class DeltaProcessor {
 		}
 
 		if (kind == IRodinElementDelta.REMOVED) {
+			final Notifier target = owner.getTarget();
+			if (target instanceof ILElement) {
+				final IRodinFile rFile = ((ILElement) target).getElement()
+						.getRodinFile();
+				if (element instanceof IRodinFile && element.equals(rFile)) {
+					owner.finishListening();
+					// remove the machine from the model
+					removeElement(rFile.getRoot());
+					return;
+				}
+			}
 			if (element instanceof IInternalElement) {
 				removeElement(element);
 			}
@@ -170,6 +183,10 @@ public class DeltaProcessor {
 	public void removeElement(IRodinElement toRemove) {
 		LightElement found = findElement(toRemove, root);
 		if (found != null) {
+			if (found.isEIsRoot()) {
+				found.delete();
+				return;
+			}
 			// removes the element from the children of its parent
 			final LightElement parent = found.getEParent();
 			if (parent != null) {
