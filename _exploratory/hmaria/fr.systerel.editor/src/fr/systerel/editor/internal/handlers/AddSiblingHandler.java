@@ -17,12 +17,12 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
+import fr.systerel.editor.internal.actions.operations.AtomicOperation;
+import fr.systerel.editor.internal.actions.operations.History;
+import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.RodinEditor;
-import fr.systerel.editor.internal.operations.AtomicOperation;
-import fr.systerel.editor.internal.operations.History;
-import fr.systerel.editor.internal.operations.OperationFactory;
 
 /**
  * Handler to add siblings.

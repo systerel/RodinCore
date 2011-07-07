@@ -9,7 +9,7 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 
-package fr.systerel.editor.internal.operations;
+package fr.systerel.editor.internal.actions.operations;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;

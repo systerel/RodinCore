@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.internal.operations;
+package fr.systerel.editor.internal.actions.operations;
 
 import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 import static org.eventb.internal.ui.UIUtils.showInfo;

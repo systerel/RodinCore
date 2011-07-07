@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.Assert;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.internal.operations.AtomicOperation;
-import fr.systerel.editor.internal.operations.History;
-import fr.systerel.editor.internal.operations.OperationFactory;
+import fr.systerel.editor.internal.actions.operations.AtomicOperation;
+import fr.systerel.editor.internal.actions.operations.History;
+import fr.systerel.editor.internal.actions.operations.OperationFactory;
 
 /**
  * @author Nicolas Beauger

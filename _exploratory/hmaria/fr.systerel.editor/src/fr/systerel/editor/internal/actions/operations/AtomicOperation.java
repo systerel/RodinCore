@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.internal.operations;
+package fr.systerel.editor.internal.actions.operations;
 
 import java.util.Collection;
 
