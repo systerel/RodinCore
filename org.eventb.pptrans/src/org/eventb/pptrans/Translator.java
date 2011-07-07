@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added translation options
  *******************************************************************************/
 package org.eventb.pptrans;
 
@@ -27,15 +28,36 @@ import org.eventb.internal.pptrans.translator.PredicateSimplification;
  * <li>{@link #simplifyPredicate(Predicate, FormulaFactory)}</li>
  * </ol>
  * <p>
+ * The translation scheme to use when reducing to predicate calculus can be
+ * tailored to specific needs by providing the method with some {@link Option}
+ * parameter.
+ * </p>
+ * <p>
  * The additional method {@link #isInGoal(Predicate)} is provided for test
  * purposes. It allows to check that the result of a translation is indeed in
  * the target sub-language.
  * </p>
  * 
  * @author Matthias Konrad
+ * @author Laurent Voisin
  * @since 0.2
  */
 public class Translator {
+
+	private static final Option[] NO_OPTIONS = new Option[0];
+
+	/**
+	 * Defines translation options that can be passed to the predicate
+	 * reduction method.
+	 */
+	public static enum Option {
+
+		/**
+		 * Apply rule ER9 to all set equalities.
+		 */
+		expandSetEquality();
+
+	}
 
 	private Translator() {
 		// Non-instantiable class
@@ -62,7 +84,8 @@ public class Translator {
 	}
 
 	/**
-	 * Transforms a predicate from Set-Theory to Predicate Calculus.
+	 * Transforms a predicate from Set-Theory to Predicate Calculus. The
+	 * translation scheme used is the default one, without any option enabled.
 	 * 
 	 * @param predicate
 	 *            the predicate to reduce. This predicate must be in a
@@ -73,8 +96,28 @@ public class Translator {
 	 */
 	public static Predicate reduceToPredicateCalulus(Predicate predicate,
 			FormulaFactory ff) {
+		return reduceToPredicateCalulus(predicate, ff, NO_OPTIONS);
+	}
+
+	/**
+	 * Transforms a predicate from Set-Theory to Predicate Calculus. The
+	 * translation scheme can be tailored to specific needs by providing one or
+	 * several options.
+	 * 
+	 * @param predicate
+	 *            the predicate to reduce. This predicate must be in a
+	 *            decomposed form
+	 * @param ff
+	 *            the formula factory to use
+	 * @param options
+	 *            options to be used during translation
+	 * @return a reduced predicate equivalent to the input predicate
+	 * @since 0.5.0
+	 */
+	public static Predicate reduceToPredicateCalulus(Predicate predicate,
+			FormulaFactory ff, Option... options) {
 		return org.eventb.internal.pptrans.translator.Translator
-				.reduceToPredCalc(predicate, ff);
+				.reduceToPredCalc(predicate, ff, options);
 	}
 
 	/**

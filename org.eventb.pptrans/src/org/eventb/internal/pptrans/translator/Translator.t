@@ -10,16 +10,39 @@
  *     Systerel - mathematical language V2
  *     Systerel - added pred and succ (IR47, IR48)
  *     Systerel - move to tom-2.8
+ *     Systerel - added option expandSetEquality
  *******************************************************************************/
-
 package org.eventb.internal.pptrans.translator;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
-import org.eventb.core.ast.*;
+import org.eventb.core.ast.AssociativeExpression;
+import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.BoolExpression;
+import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Identifier;
+import org.eventb.core.ast.MultiplePredicate;
+import org.eventb.core.ast.PowerSetType;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.ProductType;
+import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.SimplePredicate;
+import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.Type;
+import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.expanders.Expanders;
-
+import org.eventb.pptrans.Translator.Option;
 
 /**
  * Implements the predicate reduction rules: BR1-BR8, ER1-ER13, CR1-CR7
@@ -28,14 +51,18 @@ import org.eventb.core.ast.expanders.Expanders;
  */
 @SuppressWarnings({"unused", "cast"})
 public class Translator extends IdentityTranslator {
-	
-	public static Predicate reduceToPredCalc(Predicate pred, FormulaFactory ff) {
 
-		return new Translator(ff).translate(pred);
+	private final boolean expandSetEquality;
+
+	public static Predicate reduceToPredCalc(Predicate pred, FormulaFactory ff,
+			Option[] options) {
+		return new Translator(ff, options).translate(pred);
 	}
 	
-	private Translator(FormulaFactory ff) {
+	private Translator(FormulaFactory ff, Option[] options) {
 		super(ff);
+		final Set<Option> opts = new HashSet<Option>(Arrays.asList(options));
+		expandSetEquality = opts.contains(Option.expandSetEquality);
 	}
 
 	private Predicate mNot(Predicate pred, SourceLocation loc) {
@@ -1381,9 +1408,14 @@ public class Translator extends IdentityTranslator {
 	        *	  			∀x·x∈s ⇔ x∈t
 	        */
 			Equal(s, t) -> {
+				final boolean isSetEquality = `s.getType() instanceof PowerSetType;
+				if (expandSetEquality && isSetEquality) {
+				    return translateSetEq(`s, `t, loc);
+				}
 				if (GoalChecker.isInGoal(pred)) {
 					return pred;
-				} else if (`s.getType() instanceof PowerSetType) {
+				}
+				if (isSetEquality) {
 				    return translateSetEq(`s, `t, loc);
 				}
 			}		 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,9 @@ package org.eventb.pptrans.tests;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+import static org.eventb.pptrans.Translator.isInGoal;
+import static org.eventb.pptrans.Translator.reduceToPredicateCalulus;
+import static org.eventb.pptrans.Translator.Option.expandSetEquality;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -24,7 +27,7 @@ import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
-import org.eventb.pptrans.Translator;
+import org.eventb.pptrans.Translator.Option;
 
 
 /**
@@ -56,25 +59,27 @@ public class TranslationTests extends AbstractTranslationTests {
 	}
 
 	private static void doTest(String input, String expected,
-			boolean transformExpected, ITypeEnvironment inputTypenv) {
+			boolean transformExpected, ITypeEnvironment inputTypenv,
+			Option... options) {
 		// Clone the input type environment to avoid side effects
 		final ITypeEnvironment te = inputTypenv.clone();
 		final Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
 		if (transformExpected) {
-			pexpected = Translator.reduceToPredicateCalulus(pexpected, ff);
+			pexpected = reduceToPredicateCalulus(pexpected, ff, options);
 		}
-		doTest(pinput, pexpected);
+		doTest(pinput, pexpected, options);
 	}
 	
-	private static void doTest(Predicate input, Predicate expected) {
+	private static void doTest(Predicate input, Predicate expected,
+			Option... options) {
 		assertTypeChecked(input);
 		assertTypeChecked(expected);
 
-		Predicate actual = Translator.reduceToPredicateCalulus(input, ff);
+		final Predicate actual = reduceToPredicateCalulus(input, ff, options);
 
 		assertTypeChecked(actual);
-		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual));
+		assertTrue("Result not in goal: " + actual, isInGoal(actual));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
 	
@@ -337,6 +342,8 @@ public class TranslationTests extends AbstractTranslationTests {
 		
 		doTest( "s = t", 
 				"s = t", false, er_te);
+		doTest( "s = t",
+				"∀x·x∈s ⇔ x∈t", false, er_te, expandSetEquality);
 	}
 	
 	public void testER9_simple() {
@@ -1726,7 +1733,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	public void testMathExtension() throws Exception {
 		final Predicate pinput = parse("p = dt", DT_FF.makeTypeEnvironment());
 		try {
-			Translator.reduceToPredicateCalulus(pinput, ff);
+			reduceToPredicateCalulus(pinput, ff);
 			fail("expected UnsupportedOperationException thrown");
 		} catch (UnsupportedOperationException e) {
 			// as expected
