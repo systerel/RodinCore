@@ -13,6 +13,7 @@
  *     Systerel - SIMP_EQUAL_CONSTR*, SIMP_DESTR_CONSTR
  *     Systerel - move to tom-2.8
  *     Systerel - extracted this class from AutoRewriterImpl
+ *     Systerel - SIMP_MULTI_IMP_NOT_*, SIMP_EXISTS_IMP
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -122,11 +123,12 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 @SuppressWarnings("unused")
 public class PredicateSimplifier extends DefaultRewriter {
 
-	public static final int MULTI_IMP = 0x1;
-	public static final int MULTI_EQV_NOT = 0x2;
-	public static final int MULTI_IMP_NOT = 0x4;
-	public static final int MULTI_IMP_OR_AND = 0x8;
-	public static final int QUANT_DISTR = 0x10;
+	public static final int MULTI_IMP = 1 << 0;
+	public static final int MULTI_EQV_NOT = 1 << 1;
+	public static final int MULTI_IMP_NOT = 1 << 2;
+	public static final int MULTI_IMP_OR_AND = 1 << 3;
+	public static final int QUANT_DISTR = 1 << 4;
+	public static final int EXISTS_IMP = 1 << 5;
 
 	// true enables trace messages
 	protected final boolean debug;
@@ -140,7 +142,8 @@ public class PredicateSimplifier extends DefaultRewriter {
 	public final boolean withMultiEqvNot;
 	public final boolean withMultiImpOrAnd;
 	public final boolean withQuantDistr;
-	
+	public final boolean withExistsImp;
+
 	private static final boolean isSet(int options, int flag) {
 		return (options & flag) != 0;
 	}
@@ -162,6 +165,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 		this.withMultiImpNot = isSet(options, MULTI_IMP_NOT);
 		this.withMultiImpOrAnd = isSet(options, MULTI_IMP_OR_AND);
 		this.withQuantDistr = isSet(options, QUANT_DISTR);
+		this.withExistsImp = isSet(options, EXISTS_IMP);
 		this.rewriterName = rewriterName;
 	}
 
@@ -204,7 +208,11 @@ public class PredicateSimplifier extends DefaultRewriter {
 			Predicate... children) {
 		return ff.makeAssociativePredicate(tag, children, null);
 	}
-	
+
+	protected BinaryPredicate makeBinaryPredicate(int tag, Predicate left, Predicate right) {
+		return ff.makeBinaryPredicate(tag, left, right, null);
+	}
+
 	protected QuantifiedPredicate makeQuantifiedPredicate(int tag,
 			BoundIdentDecl[] boundIdentifiers, Predicate child) {
 		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
@@ -502,7 +510,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 		return predicate;
 	}
 
-	@ProverRule({"SIMP_FORALL_AND", "SIMP_EXISTS_OR"}) 
+	@ProverRule({"SIMP_FORALL_AND", "SIMP_EXISTS_OR", "SIMP_EXISTS_IMP"})
 	@Override
 	public Predicate rewrite(QuantifiedPredicate predicate) {
 		final Predicate result;
@@ -530,9 +538,22 @@ public class PredicateSimplifier extends DefaultRewriter {
 					return result;
 				}
 			}
-			
-			// TODO add similar rule with exists and implication
-			
+
+			/**
+			 * SIMP_EXISTS_IMP
+			 *    ∃x·P ⇒ Q == (∃x·P) ⇒ (∃x·Q)
+			 */
+			Exists(bids, Limp(P, Q)) -> {
+				if (withExistsImp) {
+					final Predicate left =
+							makeQuantifiedPredicate(FORALL, `bids, `P);
+					final Predicate right =
+							makeQuantifiedPredicate(EXISTS, `bids, `Q);
+					result = makeBinaryPredicate(LIMP, left, right);
+					trace(predicate, result, "SIMP_EXISTS_IMP");
+					return result;
+				}
+			}
 		}
 		return predicate;
 	}

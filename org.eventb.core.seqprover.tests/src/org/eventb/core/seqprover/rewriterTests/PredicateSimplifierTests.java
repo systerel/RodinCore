@@ -31,6 +31,7 @@ public abstract class PredicateSimplifierTests extends
 	private final boolean withMultiEqvNot;
 	private final boolean withMultiImpOrAnd;
 	private final boolean withQuantDistr;
+	private final boolean withExistsImp;
 
 	// Each inner class allows to run tests with a different set of options.
 	public static class MinimalTests extends PredicateSimplifierTests {
@@ -54,6 +55,7 @@ public abstract class PredicateSimplifierTests extends
 		this.withMultiEqvNot = rewriter.withMultiEqvNot;
 		this.withMultiImpOrAnd = rewriter.withMultiImpOrAnd;
 		this.withQuantDistr = rewriter.withQuantDistr;
+		this.withExistsImp = rewriter.withExistsImp;
 	}
 
 	protected void rewriteCond(boolean condition, String inputImage,
@@ -88,6 +90,11 @@ public abstract class PredicateSimplifierTests extends
 	protected void rewriteQuantDistr(String inputImage, String expectedImage,
 			String... env) {
 		rewriteCond(withQuantDistr, inputImage, expectedImage, env);
+	}
+
+	protected void rewriteExistsImp(String inputImage, String expectedImage,
+			String... env) {
+		rewriteCond(withExistsImp, inputImage, expectedImage, env);
 	}
 
 	/**
@@ -311,6 +318,11 @@ public abstract class PredicateSimplifierTests extends
 						+ " ∨ (y < 1 ∧ x < 1 ∧ z < 1)",
 				"(∃x, y·x > 0 ∧ y > 0 ∧ z > 0) ∨ (∃x, y·y < 2 ∧ x < 2 ∧ z < 2)"
 						+ " ∨ (∃x, y·y < 1 ∧ x < 1 ∧ z < 1)");
+
+		// SIMP_EXISTS_IMP
+		// ∃x·P ⇒ Q == (∃x·P) ⇒ (∃x·Q)
+		rewriteExistsImp("∃x·x > 0 ⇒ x < 2", "(∀x·x > 0) ⇒ (∃x·x < 2)");
+		noRewritePred("∀x·x > 0 ⇒ x < 2");
 
 		// SIMP_FORALL: !x,y,z.P(y) == !y.P(y)
 		rewritePred("∀x,y⦂ℤ·x>0", "∀x·x>0");

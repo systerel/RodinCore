@@ -190,10 +190,6 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		return ff.makeBinaryExpression(tag, left, right, null);
 	}
 
-	protected BinaryPredicate makeBinaryPredicate(int tag, Predicate left, Predicate right) {
-		return ff.makeBinaryPredicate(tag, left, right, null);
-	}
-	
 	protected AtomicExpression makeEmptySet(Type type) {
 		return ff.makeEmptySet(type, null);
 	}
