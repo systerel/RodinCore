@@ -39,7 +39,7 @@ import org.junit.Test;
  *         using the abstract formula rewriter tests
  *         {@link AbstractFormulaRewriterTests}.
  */
-public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTests {
+public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests {
 	
 	private static final IDatatypeExtension DATATYPE = new IDatatypeExtension() {
 
@@ -102,187 +102,11 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	}
 
 	/**
-	 * Tests for rewriting conjunctions.
-	 */
-	@Test
-	public void testConjunction() {
-		// P & ... & true & ... & Q == P & ... & ... & Q
-		rewritePred("x = 1 ∧ ⊤", "x = 1");
-		rewritePred("⊤ ∧ x = 1", "x = 1");
-		noRewritePred("x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("⊤ ∧ x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ ⊤ ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊤", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("⊤ ∧ x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("⊤ ∧ x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊤", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3 ∧ ⊤", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("⊤ ∧ x = 1 ∧ ⊤ ∧ y = 2 ∧ z = 3 ∧ ⊤",
-				"x = 1 ∧ y = 2 ∧ z = 3");
-
-
-		// P & ... & false & ... & Q == false
-		rewritePred("x = 1 ∧ ⊥", "⊥");
-		rewritePred("⊥ ∧ x = 1", "⊥");
-		rewritePred("⊥ ∧ x = 1 ∧ y = 2 ∧ z = 3", "⊥");
-		rewritePred("x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3", "⊥");
-		rewritePred("x = 1 ∧ y = 2 ∧ ⊥ ∧ z = 3", "⊥");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊥", "⊥");
-		rewritePred("⊥ ∧ x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3", "⊥");
-		rewritePred("⊥ ∧ x = 1 ∧ y = 2 ∧ z = 3 ∧ ⊥", "⊥");
-		rewritePred("x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3 ∧ ⊥", "⊥");
-		rewritePred("⊥ ∧ x = 1 ∧ ⊥ ∧ y = 2 ∧ z = 3 ∧ ⊥", "⊥");
-
-
-		// P & ... & Q & ... & Q & ... & R == P & ... & Q & ... & ... & R
-		rewritePred("x = 1 ∧ x = 1", "x = 1");
-		rewritePred("x = 1 ∧ x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ x = 1 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ x = 1", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ y = 2", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ z = 3 ∧ y = 2",
-				"x = 1 ∧ y = 2 ∧ z = 3");
-				
-
-		// P & ... & Q & ... & not(Q) & ... & R == false
-		rewritePred("x = 1 ∧ ¬x = 1", "⊥");
-		rewritePred("¬x = 1 ∧ x = 1 ∧ y = 2 ∧ z = 3", "⊥");
-		rewritePred("x = 1 ∧ ¬x = 1 ∧ y = 2 ∧ z = 3", "⊥");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
-		rewritePred("x = 1 ∧ ¬y = 2 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
-		rewritePred("x = 1 ∧ ¬y = 2 ∧ y = 2 ∧ ¬x = 1 ∧ z = 3 ∧ ¬x = 1", "⊥");
-		rewritePred("y = 2 ∧ ¬x = 1 ∧ z = 3 ∧ ¬x = 1 ∧ x = 1 ∧ ¬y = 2", "⊥");
-	}
-
-	/**
-	 * Tests for rewriting disjunctions.
-	 */
-	@Test
-	public void testDisjunction() {
-		// P or ... or true or ... or Q == true
-		rewritePred("x = 1 ∨ ⊤", "⊤");
-		rewritePred("⊤ ∨ x = 1", "⊤");
-		noRewritePred("x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("⊤ ∨ x = 1 ∨ y = 2 ∨ z = 3", "⊤");
-		rewritePred("x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3", "⊤");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊤", "⊤");
-		rewritePred("⊤ ∨ x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3", "⊤");
-		rewritePred("⊤ ∨ x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊤", "⊤");
-		rewritePred("x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3 ∨ ⊤", "⊤");
-		rewritePred("⊤ ∨ x = 1 ∨ ⊤ ∨ y = 2 ∨ z = 3 ∨ ⊤", "⊤");
-		
-		
-		// P or ... or false or ... or Q == P or ... or ... or Q
-		rewritePred("x = 1 ∨ ⊥", "x = 1");
-		rewritePred("⊥ ∨ x = 1", "x = 1");
-		rewritePred("⊥ ∨ x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
-		noRewritePred("x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊥", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("⊥ ∨ x = 1 ∨ ⊥ ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("⊥ ∨ x = 1 ∨ y = 2 ∨ z = 3 ∨ ⊥", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ ⊥ ∨ y = 2 ∨ z = 3 ∨ ⊥", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("⊥ ∨ x = 1 ∨ ⊥ ∨ y = 2 ∨ z = 3 ∨ ⊥",
-				"x = 1 ∨ y = 2 ∨ z = 3");
-
-		
-		// P or ... or Q or ... or Q or ... or R == P or ... or Q or ... or ... or R
-		rewritePred("x = 1 ∨ x = 1", "x = 1");
-		rewritePred("x = 1 ∨ x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ y = 2 ∨ x = 1 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ x = 1", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ y = 2", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ y = 2 ∨ x = 1 ∨ z = 3 ∨ z = 3",
-				"x = 1 ∨ y = 2 ∨ z = 3");
-		
-		
-		// P or ... or Q or ... or not(Q) or ... or R == true
-		rewritePred("x = 1 ∨ ¬x = 1", "⊤");
-		rewritePred("¬x = 1 ∨ x = 1 ∨ y = 2 ∨ z = 3", "⊤");
-		rewritePred("x = 1 ∨ ¬x = 1 ∨ y = 2 ∨ z = 3", "⊤");
-		rewritePred("x = 1 ∨ y = 2 ∨ ¬x = 1 ∨ z = 3", "⊤");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ ¬x = 1", "⊤");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ y = 2 ∨ ¬y = 2 ∨ ¬x = 1", "⊤");
-	}
-
-	/**
-	 * Tests for rewriting implications.
-	 */
-	@Test
-	public void testImplication() {
-		// true => P == P
-		rewritePred("⊤ ⇒ x = 2", "x = 2");
-		rewritePred("⊤ ⇒ ⊤", "⊤");
-		rewritePred("⊤ ⇒ ⊥", "⊥");
-		
-		
-		// false => P == true
-		rewritePred("⊥ ⇒ x = 2", "⊤");
-		rewritePred("⊥ ⇒ ⊤", "⊤");
-		rewritePred("⊥ ⇒ ⊥", "⊤");
-
-		
-		// P => true == true
-		rewritePred("x = 2 ⇒ ⊤", "⊤");
-
-
-		// P => false == not(P)
-		rewritePred("x = 2 ⇒ ⊥", "¬x = 2");
-
-
-		// P => P == true
-		rewritePred("x = 2 ⇒ x = 2", "⊤");
-		
-	}
-
-	/**
-	 * Tests for rewriting equivalents.
-	 */
-	@Test
-	public void testEquivalent() {
-		// P <=> true == P
-		rewritePred("x = 2 ⇔ ⊤", "x = 2");
-		rewritePred("⊤ ⇔ ⊤", "⊤");
-		rewritePred("⊥ ⇔ ⊤", "⊥");
-
-		
-		// true <=> P == P
-		rewritePred("⊤ ⇔ x = 2", "x = 2");
-		rewritePred("⊤ ⇔ ⊥", "⊥");
-
-		
-		// P <=> false == not(P)
-		rewritePred("x = 2 ⇔ ⊥", "¬x = 2");
-		rewritePred("⊥ ⇔ ⊥", "⊤");
-
-		// false <=> P == not(P)
-		rewritePred("⊥ ⇔ x = 2", "¬x = 2");
-
-		// P <=> P == true
-		rewritePred("x = 2 ⇔ x = 2", "⊤");
-
-	}
-
-	/**
 	 * Tests for rewriting negations. 
 	 */
 	@Test
 	public void testNegation() {
-		// not(true)  ==  false
-		rewritePred("¬⊤", "⊥");
-
-
-		// not(false)  ==  true
-		rewritePred("¬⊥", "⊤");
-		
-
-		// not(not(P))  ==  not(P)
-		rewritePred("¬¬x = 2", "x = 2");
-		rewritePred("¬¬⊤", "⊤");
-		rewritePred("¬¬⊥", "⊥");
-		
+		super.testNegation();
 
 		// not(x /: S))  ==  x : S
 		rewritePred("¬2 ∉ S", "2 ∈ S");
@@ -338,46 +162,6 @@ public abstract class AutoFormulaRewriterTests extends AbstractFormulaRewriterTe
 	   	// not(TRUE = E) == FALSE = E
 		rewritePred("¬ TRUE = E", "FALSE = E");
 		
-	}
-
-	/**
-	 * Tests for rewriting quantifications.
-	 */
-	@Test
-	public void testQuantification() {
-		// !x.(P & Q) == (!x.P) & (!x.Q)
-		rewritePred("∀x·x > 0 ∧ x < 2", "(∀x·x > 0) ∧ (∀x·x < 2)");
-		rewritePred("∀x·x > 0 ∧ x < 2 ∧ x < 1", "(∀x·x > 0) ∧ (∀x·x < 2) ∧ (∀x·x < 1)");
-		rewritePred("∀x, y·(x > 0 ∨ y > 0) ∧ (y < 2 ∨ x < 2)",
-				"(∀x, y·x > 0 ∨ y > 0) ∧ (∀x, y·y < 2 ∨ x < 2)");
-		rewritePred(
-				"∀x, y·(x > 0 ∨ y > 0 ∨ z > 0) ∧ (y < 2 ∨ x < 2 ∨ z < 2) ∧ (y < 1 ∨ x < 1 ∨ z < 1)",
-				"(∀x, y·x > 0 ∨ y > 0 ∨ z > 0) ∧ (∀x, y·y < 2 ∨ x < 2 ∨ z < 2) ∧ (∀x, y·y < 1 ∨ x < 1 ∨ z < 1)");
-
-		// #x.(P or Q) == (#x.P) or (#x.Q)
-		rewritePred("∃x·x > 0 ∨ x < 2", "(∃x·x > 0) ∨ (∃x·x < 2)");
-		rewritePred("∃x·x > 0 ∨ x < 2 ∨ x < 1", "(∃x·x > 0) ∨ (∃x·x < 2) ∨ (∃x·x < 1)");
-		rewritePred("∃x, y·(x > 0 ∧ y > 0) ∨ (y < 2 ∧ x < 2)",
-				"(∃x, y·x > 0 ∧ y > 0) ∨ (∃x, y·y < 2 ∧ x < 2)");
-		rewritePred(
-				"∃x, y·(x > 0 ∧ y > 0 ∧ z > 0) ∨ (y < 2 ∧ x < 2 ∧ z < 2) ∨ (y < 1 ∧ x < 1 ∧ z < 1)",
-				"(∃x, y·x > 0 ∧ y > 0 ∧ z > 0) ∨ (∃x, y·y < 2 ∧ x < 2 ∧ z < 2) ∨ (∃x, y·y < 1 ∧ x < 1 ∧ z < 1)");
-
-		// SIMP_FORALL: !x,y,z.P(y) == !y.P(y)
-		rewritePred("∀x,y⦂ℤ·x>0", "∀x·x>0");
-		rewritePred("∀y⦂ℤ,x·x>0", "∀x·x>0");
-		rewritePred("∀x,y⦂ℤ,z⦂ℤ·x>0", "∀x·x>0");
-		rewritePred("∀y⦂ℤ,x,z⦂ℤ·x>0", "∀x·x>0");
-		rewritePred("∀y⦂ℤ,z⦂ℤ,x·x>0", "∀x·x>0");
-		rewritePred("∀x,y⦂ℤ,t,z⦂ℤ·x>0 ∨ t>0", "∀x,t·x>0 ∨ t>0");
-
-		// SIMP_EXISTS: #x,y,z.P(y) == #y.P(y)
-		rewritePred("∃x,y⦂ℤ·x>0", "∃x·x>0");
-		rewritePred("∃y⦂ℤ,x·x>0", "∃x·x>0");
-		rewritePred("∃x,y⦂ℤ,z⦂ℤ·x>0", "∃x·x>0");
-		rewritePred("∃y⦂ℤ,x,z⦂ℤ·x>0", "∃x·x>0");
-		rewritePred("∃y⦂ℤ,z⦂ℤ,x·x>0", "∃x·x>0");
-		rewritePred("∃x,y⦂ℤ,t,z⦂ℤ·x>0 ∧ t>0", "∃x,t·x>0 ∧ t>0");
 	}
 
 	/**

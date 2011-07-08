@@ -56,6 +56,7 @@
 		<delete file="${rewriter.src}/InclusionSetMinusLeftRewriterImpl.java" />
 		<delete file="${rewriter.src}/InclusionSetMinusRightRewriterImpl.java" />
 		<delete file="${rewriter.src}/PartitionRewriterImpl.java" />
+		<delete file="${rewriter.src}/PredicateSimplifier.java" />
 		<delete file="${rewriter.src}/RanCompRewriterImpl.java" />
 		<delete file="${rewriter.src}/RanDistLeftRewriterImpl.java" />
 		<delete file="${rewriter.src}/RanDistRightRewriterImpl.java" />

@@ -118,13 +118,11 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
  * Basic automated rewriter for the Event-B sequent prover.
  */
 @SuppressWarnings("unused")
-public class AutoRewriterImpl extends DefaultRewriter {
+public class AutoRewriterImpl extends PredicateSimplifier {
 
 	public static boolean DEBUG;
 
 	private final DivisionUtils du;
-	
-	private final DLib dLib;
 	
 	private final AutoRewrites.Level level;
 
@@ -138,16 +136,17 @@ public class AutoRewriterImpl extends DefaultRewriter {
 
 	private final IntegerLiteral number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
 
-	@ProverRule( { "SIMP_FORALL", "SIMP_EXISTS", "SIMP_LIT_MINUS" })
-	/*
-	 * Rules SIMP_FORALL, SIMP_EXISTS, and SIMP_LIT_MINUS are implemented by the
-	 * fact that this rewriter is auto-flattening (first parameter is true in
-	 * the call to the abstract constructor). Unfortunately, it is not possible
-	 * to trace auto-flattening.
-	 */
+	private static int optionsForLevel(Level level) {
+		int result = 0;
+		result |= MULTI_IMP | QUANT_DISTR;
+		if (level.from(Level.L2)) {
+			result |= MULTI_EQV_NOT | MULTI_IMP_OR_AND;
+		}
+		return result;
+	}
+
 	public AutoRewriterImpl(FormulaFactory ff, Level level) {
-		super(true, ff);
-		dLib = DLib.mDLib(ff);
+		super(DLib.mDLib(ff), optionsForLevel(level), DEBUG, "AutoRewriter");
 		du = new DivisionUtils(dLib);
 		this.level = level;
 		this.level1 = level.from(Level.L1);
@@ -219,15 +218,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return ff.makeBoundIdentifier(index, null, type);
 	}
 
-	protected <T> boolean contains(T[] array, T key) {
-		for (T element : array) {
-			if (element.equals(key)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	protected boolean notLocallyBound(Formula<?> form, int nbBound) {
 		for (BoundIdentifier ident : form.getBoundIdentifiers()) {
 			if (ident.getBoundIndex() < nbBound) {
@@ -322,31 +312,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 		return makeSetExtension(newChildren);
 	}
 
-	private static <T extends Formula<T>> void trace(T from, T to, String rule,
-			String... otherRules) {
-		if (!DEBUG) {
-			return;
-		}
-		if (from == to) {
-			return;
-		}
-		final StringBuilder sb = new StringBuilder();
-		sb.append("AutoRewriter: ");
-		sb.append(from);
-		sb.append("  \u219d  ");
-		sb.append(to);
-
-		sb.append("   (");
-		sb.append(rule);
-		for (final String r : otherRules) {
-			sb.append(" | ");
-			sb.append(r);
-		}
-		sb.append(")");
-
-		System.out.println(sb);
-	}
-	
 	protected RelationalPredicate makeIsEmpty(Expression set) {
 		return makeRelationalPredicate(EQUAL, set,
 			makeEmptySet(set.getType()));
@@ -600,258 +565,19 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    return predicate;
 	}
 
-    @ProverRule( { "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE",
-    		"SIMP_MULTI_AND", "SIMP_MULTI_AND_NOT",
-			"SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE",
-    		"SIMP_MULTI_OR", "SIMP_MULTI_OR_NOT" })
-	@Override
-	public Predicate rewrite(AssociativePredicate predicate) {
-		final Predicate result;
-	    %match (Predicate predicate) {
-	    	/**
-             * SIMP_SPECIAL_AND_BTRUE
-	    	 * Conjunction 1: P ∧ ... ∧ ⊤ ∧ ... ∧ Q  == P ∧ ... ∧ Q
-             * SIMP_SPECIAL_AND_BFALSE
-	    	 * Conjunction 2: P ∧ ... ∧ ⊥ ∧ ... ∧ Q  == ⊥
-             * SIMP_MULTI_AND
-	    	 * Conjunction 3: P ∧ ... ∧ Q ∧ ... ∧ Q ∧ ... ∧ R  == P ∧ ... ∧ Q ∧ ... ∧ R
-             * SIMP_MULTI_AND_NOT
-	    	 * Conjunction 4: P ∧ ... ∧ Q ∧ ... ∧ ¬Q ∧ ... ∧ R  == ⊥
-	    	 */
-	    	Land(_) -> {
-    			result = simplifyLand(predicate, dLib);
-				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE",
-						"SIMP_MULTI_AND", "SIMP_MULTI_AND_NOT");
-				return result;
-			}
-
-	    	/**
-             * SIMP_SPECIAL_OR_BTRUE
-	    	 * Disjunction 1: P ⋁ ... ⋁ ⊤ ⋁ ... ⋁ Q  == ⊤
-             * SIMP_SPECIAL_OR_BFALSE
-	    	 * Disjunction 2: P ⋁ ... ⋁ ⊥ ⋁ ... ⋁ Q  == P ⋁ ... ⋁ Q
-             * SIMP_MULTI_OR
-	    	 * Disjunction 3: P ⋁ ... ⋁ Q ⋁ ... ⋁ Q ⋁ ... ⋁ R  == P ⋁ ... ⋁ Q ⋁ ... ⋁ R
-             * SIMP_MULTI_OR_NOT
-	    	 * Disjunction 4: P ⋁ ... ⋁ Q ⋁ ... ⋁ ¬Q ⋁ ... ⋁ R  == P ⋁ ... ⋁ Q ⋁ ... ⋁ R
-	    	 */
-	    	Lor(_) -> {
-    			result = simplifyLor(predicate, dLib);
-				trace(predicate, result, "SIMP_SPECIAL_OR_BTRUE", "SIMP_SPECIAL_OR_BFALSE",
-						"SIMP_MULTI_OR", "SIMP_MULTI_OR_NOT");
-				return result;
-			}
-	    }
-	    return predicate;
-	}
-
-    @ProverRule( { "SIMP_SPECIAL_IMP_BTRUE_L", "SIMP_SPECIAL_IMP_BFALSE_L",
-			"SIMP_SPECIAL_IMP_BTRUE_R", "SIMP_SPECIAL_IMP_BFALSE_R",
-			"SIMP_MULTI_IMP", "SIMP_MULTI_EQV", "SIMP_SPECIAL_EQV_BTRUE",
-			"SIMP_SPECIAL_EQV_BFALSE", "SIMP_MULTI_IMP_OR",
-			"SIMP_MULTI_IMP_AND_NOT_R", "SIMP_MULTI_IMP_AND_NOT_L",
-			"SIMP_MULTI_EQV_NOT" })
-	@Override
-	public Predicate rewrite(BinaryPredicate predicate) {
-		final Predicate result;
-	    %match (Predicate predicate) {
-	    	/**
-             * SIMP_SPECIAL_IMP_BTRUE_L
-	    	 * Implication 1: ⊤ ⇒ P == P
-	    	 */
-	    	Limp(BTRUE(), P) -> {
-	    		result = `P;
-	    		trace(predicate, result, "SIMP_SPECIAL_IMP_BTRUE_L");
-				return result;
-            }
-
-	    	/**
-             * SIMP_SPECIAL_IMP_BFALSE_L
-	    	 * Implication 2: ⊥ ⇒ P == ⊤
-	    	 */
-	    	Limp(BFALSE(), _) -> {
-	    		result = dLib.True();
-	    		trace(predicate, result, "SIMP_SPECIAL_IMP_BFALSE_L");
-				return result;
- 	    	}
-
-	    	/**
-             * SIMP_SPECIAL_IMP_BTRUE_R
-	    	 * Implication 3: P ⇒ ⊤ == ⊤
-	    	 */
-	    	Limp(_, BTRUE()) -> {
-	    		result = predicate.getRight();
-	    		trace(predicate, result, "SIMP_SPECIAL_IMP_BTRUE_R");
-				return result;
- 	    	}
-	    	
-	    	/**
-             * SIMP_SPECIAL_IMP_BFALSE_R
-	    	 * Implication 4: P ⇒ ⊥ == ¬P
-	    	 */
-	    	Limp(P, BFALSE()) -> {
-	    		result = dLib.makeNeg(`P);
-	    		trace(predicate, result, "SIMP_SPECIAL_IMP_BFALSE_R");
-				return result;
- 	    	}
-
-	    	/**
-             * SIMP_MULTI_IMP
-	    	 * Implication 5: P ⇒ P == ⊤
-	    	 */
-	    	Limp(P, P) -> {
-	    		result = dLib.True();
-	    		trace(predicate, result, "SIMP_MULTI_IMP");
-				return result;
- 	    	}
-
-	    	/**
-             * SIMP_MULTI_EQV
-	    	 * Equivalent 5: P ⇔ P == ⊤
-	    	 */
-	    	Leqv(P, P) -> {
-	    		result = dLib.True();
-	    		trace(predicate, result, "SIMP_MULTI_EQV");
-				return result;
- 	    	}
-
-	    	/**
-             * SIMP_SPECIAL_EQV_BTRUE
-	    	 * Equivalent 1: P ⇔ ⊤ == P
-	    	 */
-	    	Leqv(P, BTRUE()) -> {
-	    		result = `P;
-	    		trace(predicate, result, "SIMP_SPECIAL_EQV_BTRUE");
-				return result;
- 	    	}
-
-	    	/**
-             * SIMP_SPECIAL_EQV_BTRUE
-	    	 * Equivalent 2: ⊤ ⇔ P = P
-	    	 */
-	    	Leqv(BTRUE(), P) -> {
-	    		result = `P;
-	    		trace(predicate, result, "SIMP_SPECIAL_EQV_BTRUE");
-				return result;
- 	    	}
-
-	    	/**
-             * SIMP_SPECIAL_EQV_BFALSE
-	    	 * Equivalent 3: P ⇔ ⊥ = ¬P
-	    	 */
-	    	Leqv(P, BFALSE()) -> {
-	    		result = dLib.makeNeg(`P);
-	    		trace(predicate, result, "SIMP_SPECIAL_EQV_BFALSE");
-				return result;
- 	    	}
-
-	    	/**
-             * SIMP_SPECIAL_EQV_BFALSE
-	    	 * Equivalent 4: ⊥ ⇔ P == ¬P
-	    	 */
-	    	Leqv(BFALSE(), P) -> {
-	    		result = dLib.makeNeg(`P);
-	    		trace(predicate, result, "SIMP_SPECIAL_EQV_BFALSE");
-				return result;
- 	    	}
-
-			/**
-			 * SIMP_MULTI_EQV_NOT
-			 *     P ⇔ ¬P == ⊥
-			 *    ¬P ⇔  P == ⊥
-			 */
-			Leqv(P, Not(P)) -> {
-			 	if (level2) {
-			 		result = dLib.False();
-			 		trace(predicate, result, "SIMP_MULTI_EQV_NOT");
-			 		return result;
-			 	}
-			 }
-			Leqv(Not(P), P) -> {
-			 	if (level2) {
-			 		result = dLib.False();
-			 		trace(predicate, result, "SIMP_MULTI_EQV_NOT");
-			 		return result;
-			 	}
-			 }
-
-	    	/**
-             * SIMP_MULTI_IMP_OR
-	    	 *    P ∧ ... ∧ Q ∧ ... ∧ R ⇒ Q == ⊤
-	    	 */
-	    	Limp(Land(pList(_*, Q, _*)), Q) -> {
-	    		if (level2) {
-		    		result = dLib.True();
-		    		trace(predicate, result, "SIMP_MULTI_IMP_OR");
-					return result;
-				}
- 	    	}
-
- 	    	/**
-             * SIMP_MULTI_IMP_AND_NOT_R
-	    	 *    P ∧ ... ∧ Q ∧ ... ∧ R ⇒ ¬Q == ¬(P ∧ ... ∧ Q ∧ ... ∧ R)
-	    	 *
-             * SIMP_MULTI_IMP_AND_NOT_L
-	    	 *    P ∧ ... ∧ ¬Q ∧ ... ∧ R ⇒ Q == ¬(P ∧ ... ∧ ¬Q ∧ ... ∧ R)
-	    	 */
-	    	Limp(and@Land(children), Q) -> {
-	    		/* Tom-2.8 doc says the following should work:
-	    		 *    Limp(and@Land(pList(_*, nQ, _*)), Q)
-	    		 *    && (nQ << Predicate dLib.makeNeg(Q))
-	    		 * but this raises an internal error in Tom!
-	    		 */
-	    		if (level2 && contains(`children, dLib.makeNeg(`Q))) {
-		    		result = dLib.makeNeg(`and);
-		    		trace(predicate, result, "SIMP_MULTI_IMP_AND_NOT_R",
-		    				"SIMP_MULTI_IMP_AND_NOT_L");
-					return result;
-				}
- 	    	}
-
-	    }
-	    return predicate;
-	}
-
-    @ProverRule( { "SIMP_SPECIAL_NOT_BTRUE", "SIMP_SPECIAL_NOT_BFALSE",
-			"SIMP_NOT_NOT", "SIMP_NOT_LE", "SIMP_NOT_GE", "SIMP_NOT_GT",
+    @ProverRule( { "SIMP_NOT_LE", "SIMP_NOT_GE", "SIMP_NOT_GT",
 			"SIMP_NOT_LT", "SIMP_SPECIAL_NOT_EQUAL_FALSE_R",
 			"SIMP_SPECIAL_NOT_EQUAL_TRUE_R", "SIMP_SPECIAL_NOT_EQUAL_FALSE_L",
 			"SIMP_SPECIAL_NOT_EQUAL_TRUE_L" })
 	@Override
 	public Predicate rewrite(UnaryPredicate predicate) {
+		final Predicate attempt = super.rewrite(predicate);
+		if (attempt != predicate) {
+			return attempt;
+		}
+
 		final Predicate result;
 	    %match (Predicate predicate) {
-
-	    	/**
-             * SIMP_SPECIAL_NOT_BTRUE
-	    	 * Negation 1: ¬⊤ == ⊥
-	    	 */
-	    	Not(BTRUE()) -> {
-	    		result = dLib.False();
-	    		trace(predicate, result, "SIMP_SPECIAL_NOT_BTRUE");
-				return result;
-			}
-
-	    	/**
-             * SIMP_SPECIAL_NOT_BFALSE
-	    	 * Negation 2: ¬⊥ == ⊤
-	    	 */
-			Not(BFALSE()) -> {
-				result =  dLib.True();
-	    		trace(predicate, result, "SIMP_SPECIAL_NOT_BFALSE");
-				return result;
-			}
-
-	    	/**
-             * SIMP_NOT_NOT
-	    	 * Negation 3: ¬¬P == P
-	    	 */
-			Not(Not(P)) -> {
-				result =  `P;
-	    		trace(predicate, result, "SIMP_NOT_NOT");
-				return result;
-			}
-
 	    	/**
              * SIMP_NOT_LE
 	    	 * Negation 8: ¬ a ≤ b == a > b
@@ -936,48 +662,6 @@ public class AutoRewriterImpl extends DefaultRewriter {
 	    return predicate;
 	}
 
-    @ProverRule({"SIMP_FORALL_AND", "SIMP_EXISTS_OR"}) 
-	@Override
-	public Predicate rewrite(QuantifiedPredicate predicate) {
-		final Predicate result;
-	    %match (Predicate predicate) {
-
-	    	/**
-             * SIMP_FORALL_AND
-	    	 * Quantification 1: ∀x·(P ∧ ... ∧ Q) == (∀x·P) ∧ ... ∧ ∀(x·Q)
-	    	 */
-	    	ForAll(boundIdentifiers, Land(children)) -> {
-	    		Predicate [] predicates = new Predicate[`children.length];
-	    		for (int i = 0; i < `children.length; ++i) {
-					Predicate qPred = makeQuantifiedPredicate(FORALL, `boundIdentifiers, `children[i]);
-					predicates[i] = qPred;
-				}
-
-	    		result = makeAssociativePredicate(LAND, predicates);
-	    		trace(predicate, result, "SIMP_FORALL_AND");
-				return result;
-	    	}
-
-	    	/**
-             * SIMP_EXISTS_OR
-	    	 * Quantification 2: ∃x·(P ⋁ ... ⋁ Q) == (∃x·P) ⋁ ... ⋁ ∃(x·Q)
-	    	 */
-			Exists(boundIdentifiers, Lor(children)) -> {
-	    		Predicate [] predicates = new Predicate[`children.length];
-	    		for (int i = 0; i < `children.length; ++i) {
-					Predicate qPred = makeQuantifiedPredicate(EXISTS, `boundIdentifiers, `children[i]);
-					predicates[i] = qPred;
-				}
-
-	    		result = makeAssociativePredicate(LOR, predicates);
-	    		trace(predicate, result, "SIMP_EXISTS_OR");
-				return result;
-	    	}
-	    	
-	    }
-	    return predicate;
-	}
-	
     @ProverRule( { "SIMP_MULTI_EQUAL", "SIMP_MULTI_NOTEQUAL", "SIMP_MULTI_LE",
 			"SIMP_MULTI_GE", "SIMP_MULTI_LT", "SIMP_MULTI_GT",
 			"SIMP_EQUAL_MAPSTO", "SIMP_SPECIAL_EQUAL_TRUE", "SIMP_NOTEQUAL",

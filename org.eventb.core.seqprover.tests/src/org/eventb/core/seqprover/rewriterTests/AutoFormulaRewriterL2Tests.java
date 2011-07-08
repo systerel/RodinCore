@@ -35,63 +35,6 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	}
 
 	/**
-	 * Ensures that rule SIMP_MULTI_IMP_OR is implemented correctly.
-	 */
-	@Test
-	public void testSIMP_MULTI_IMP_OR() {
-		rewritePred("a=0 ∧ b=1 ⇒ a=0", "⊤");
-		rewritePred("a=0 ∧ b=1 ⇒ b=1", "⊤");
-
-		rewritePred("a=0 ∧ b=1 ∧ c=2 ⇒ a=0", "⊤");
-		rewritePred("a=0 ∧ b=1 ∧ c=2 ⇒ b=1", "⊤");
-		rewritePred("a=0 ∧ b=1 ∧ c=2 ⇒ c=2", "⊤");
-
-		noRewritePred("a=0 ∧ b=1 ⇒ a=1");
-	}
-
-	/**
-	 * Ensures that rule SIMP_MULTI_IMP_AND_NOT_R is implemented correctly.
-	 */
-	@Test
-	public void testSIMP_MULTI_IMP_AND_NOT_R() {
-		rewritePred("a=0 ∧ b=1 ⇒ ¬a=0", "¬(a=0 ∧ b=1)");
-		rewritePred("a=0 ∧ b=1 ⇒ ¬b=1", "¬(a=0 ∧ b=1)");
-
-		rewritePred("a=0 ∧ b=1 ∧ c=2⇒ ¬a=0", "¬(a=0 ∧ b=1 ∧ c=2)");
-		rewritePred("a=0 ∧ b=1 ∧ c=2⇒ ¬b=1", "¬(a=0 ∧ b=1 ∧ c=2)");
-		rewritePred("a=0 ∧ b=1 ∧ c=2⇒ ¬c=2", "¬(a=0 ∧ b=1 ∧ c=2)");
-
-		noRewritePred("a=0 ∧ b=1 ⇒ ¬a=1");
-	}
-
-	/**
-	 * Ensures that rule SIMP_MULTI_IMP_AND_NOT_L is implemented correctly.
-	 */
-	@Test
-	public void testSIMP_MULTI_IMP_AND_NOT_L() {
-		rewritePred("¬a=0 ∧  b=1 ⇒ a=0", "¬(¬a=0 ∧  b=1)");
-		rewritePred(" a=0 ∧ ¬b=1 ⇒ b=1", "¬( a=0 ∧ ¬b=1)");
-
-		rewritePred("¬a=0 ∧  b=1 ∧  c=2 ⇒ a=0", "¬(¬a=0 ∧  b=1 ∧  c=2)");
-		rewritePred(" a=0 ∧ ¬b=1 ∧  c=2 ⇒ b=1", "¬( a=0 ∧ ¬b=1 ∧  c=2)");
-		rewritePred(" a=0 ∧  b=1 ∧ ¬c=2 ⇒ c=2", "¬( a=0 ∧  b=1 ∧ ¬c=2)");
-
-		noRewritePred("¬a=0 ∧ b=1 ⇒ a=1");
-	}
-
-	/**
-	 * Ensures that rule SIMP_MULTI_EQV_NOT is implemented correctly.
-	 */
-	@Test
-	public void testSIMP_MULTI_EQV_NOT() {
-		rewritePred(" a=0 ⇔ ¬a=0", "⊥");
-		rewritePred("¬b=1 ⇔  b=1", "⊥");
-
-		noRewritePred(" a=0 ⇔ ¬a=1");
-		noRewritePred("¬a=0 ⇔  b=1");
-	}
-
-	/**
 	 * Ensures that rule SIMP_SUBSETEQ_SING is implemented correctly.
 	 */
 	@Test
