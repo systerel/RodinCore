@@ -318,18 +318,6 @@ public class PredicateSimplifier extends DefaultRewriter {
 				}
 			}
 
-			// FIXME move the next rule further below 
-
-			/**
-			 * SIMP_MULTI_EQV
-			 *    P ⇔ P == ⊤
-			 */
-			Leqv(P, P) -> {
-				result = dLib.True();
-				trace(predicate, result, "SIMP_MULTI_EQV");
-				return result;
-			}
-
 			/**
 			 * SIMP_SPECIAL_EQV_BTRUE
 			 *    P ⇔ ⊤ == P
@@ -347,6 +335,16 @@ public class PredicateSimplifier extends DefaultRewriter {
 			Leqv(BTRUE(), P) -> {
 				result = `P;
 				trace(predicate, result, "SIMP_SPECIAL_EQV_BTRUE");
+				return result;
+			}
+
+			/**
+			 * SIMP_MULTI_EQV
+			 *    P ⇔ P == ⊤
+			 */
+			Leqv(P, P) -> {
+				result = dLib.True();
+				trace(predicate, result, "SIMP_MULTI_EQV");
 				return result;
 			}
 
