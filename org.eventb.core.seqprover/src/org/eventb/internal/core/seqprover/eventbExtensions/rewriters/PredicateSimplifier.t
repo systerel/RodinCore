@@ -124,8 +124,9 @@ public class PredicateSimplifier extends DefaultRewriter {
 
 	public static final int MULTI_IMP = 0x1;
 	public static final int MULTI_EQV_NOT = 0x2;
-	public static final int MULTI_IMP_OR_AND = 0x4;
-	public static final int QUANT_DISTR = 0x8;
+	public static final int MULTI_IMP_NOT = 0x4;
+	public static final int MULTI_IMP_OR_AND = 0x8;
+	public static final int QUANT_DISTR = 0x10;
 
 	// true enables trace messages
 	protected final boolean debug;
@@ -135,6 +136,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 	
 	// Enabled options (public for testing purposes only)
 	public final boolean withMultiImp;
+	public final boolean withMultiImpNot;
 	public final boolean withMultiEqvNot;
 	public final boolean withMultiImpOrAnd;
 	public final boolean withQuantDistr;
@@ -157,6 +159,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 		this.debug = debug;
 		this.withMultiImp = isSet(options, MULTI_IMP);
 		this.withMultiEqvNot = isSet(options, MULTI_EQV_NOT);
+		this.withMultiImpNot = isSet(options, MULTI_IMP_NOT);
 		this.withMultiImpOrAnd = isSet(options, MULTI_IMP_OR_AND);
 		this.withQuantDistr = isSet(options, QUANT_DISTR);
 		this.rewriterName = rewriterName;
@@ -431,6 +434,31 @@ public class PredicateSimplifier extends DefaultRewriter {
 					return result;
 				}
 			}
+
+			/**
+			 * SIMP_MULTI_IMP_NOT_L
+			 *    ¬P ⇒  P == P
+			 */
+			Limp(Not(P), P) -> {
+				if (withMultiImpNot) {
+					result = `P;
+					trace(predicate, result, "SIMP_MULTI_IMP_NOT_L");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_MULTI_IMP_NOT_R
+			 *     P ⇒ ¬P == ¬P
+			 */
+			Limp(P, notP@Not(P)) -> {
+				if (withMultiImpNot) {
+					result = `notP;
+					trace(predicate, result, "SIMP_MULTI_IMP_NOT_R");
+					return result;
+				}
+			}
+
 		}
 		return predicate;
 	}

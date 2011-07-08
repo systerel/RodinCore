@@ -27,6 +27,7 @@ public abstract class PredicateSimplifierTests extends
 		AbstractFormulaRewriterTests {
 
 	private final boolean withMultiImp;
+	private final boolean withMultiImpNot;
 	private final boolean withMultiEqvNot;
 	private final boolean withMultiImpOrAnd;
 	private final boolean withQuantDistr;
@@ -49,6 +50,7 @@ public abstract class PredicateSimplifierTests extends
 	public PredicateSimplifierTests(PredicateSimplifier rewriter) {
 		super(rewriter);
 		this.withMultiImp = rewriter.withMultiImp;
+		this.withMultiImpNot = rewriter.withMultiImpNot;
 		this.withMultiEqvNot = rewriter.withMultiEqvNot;
 		this.withMultiImpOrAnd = rewriter.withMultiImpOrAnd;
 		this.withQuantDistr = rewriter.withQuantDistr;
@@ -71,6 +73,11 @@ public abstract class PredicateSimplifierTests extends
 	protected void rewriteMultiEqvNot(String inputImage, String expectedImage,
 			String... env) {
 		rewriteCond(withMultiEqvNot, inputImage, expectedImage, env);
+	}
+
+	protected void rewriteMultiImpNot(String inputImage, String expectedImage,
+			String... env) {
+		rewriteCond(withMultiImpNot, inputImage, expectedImage, env);
 	}
 
 	protected void rewriteMultiImpOrAnd(String inputImage,
@@ -380,6 +387,24 @@ public abstract class PredicateSimplifierTests extends
 
 		noRewritePred(" a=0 ⇔ ¬a=1");
 		noRewritePred("¬a=0 ⇔  b=1");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MULTI_IMP_NOT_L is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_IMP_NOT_L() {
+		rewriteMultiImpNot("¬a=1 ⇒ a=1", "a=1");
+		noRewritePred("¬a=0 ⇒ a=1");
+	}
+
+	/**
+	 * Ensures that rule SIMP_MULTI_IMP_NOT_R is implemented correctly.
+	 */
+	@Test
+	public void testSIMP_MULTI_IMP_NOT_R() {
+		rewriteMultiImpNot("a=0 ⇒ ¬a=0", "¬a=0");
+		noRewritePred("a=0 ⇒ ¬a=1");
 	}
 
 }
