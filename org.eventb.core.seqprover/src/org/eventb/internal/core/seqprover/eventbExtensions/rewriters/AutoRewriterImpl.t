@@ -616,7 +616,7 @@ public class AutoRewriterImpl extends DefaultRewriter {
              * SIMP_MULTI_AND
 	    	 * Conjunction 3: P ∧ ... ∧ Q ∧ ... ∧ Q ∧ ... ∧ R  == P ∧ ... ∧ Q ∧ ... ∧ R
              * SIMP_MULTI_AND_NOT
-	    	 * Conjunction 4: P ∧ ... ∧ Q ∧ ... ∧ ¬Q ∧ ... ∧ R  == P ∧ ... ∧ Q ∧ ... ∧ R
+	    	 * Conjunction 4: P ∧ ... ∧ Q ∧ ... ∧ ¬Q ∧ ... ∧ R  == ⊥
 	    	 */
 	    	Land(_) -> {
     			result = simplifyLand(predicate, dLib);
