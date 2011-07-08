@@ -17,104 +17,27 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import static java.math.BigInteger.ONE;
-import static java.math.BigInteger.ZERO;
-import static org.eventb.core.ast.Formula.BFALSE;
-import static org.eventb.core.ast.Formula.BINTER;
-import static org.eventb.core.ast.Formula.BTRUE;
-import static org.eventb.core.ast.Formula.BUNION;
-import static org.eventb.core.ast.Formula.CONVERSE;
-import static org.eventb.core.ast.Formula.CPROD;
-import static org.eventb.core.ast.Formula.CSET;
-import static org.eventb.core.ast.Formula.DOMRES;
-import static org.eventb.core.ast.Formula.DOMSUB;
-import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
-import static org.eventb.core.ast.Formula.EXPN;
-import static org.eventb.core.ast.Formula.FALSE;
 import static org.eventb.core.ast.Formula.FORALL;
-import static org.eventb.core.ast.Formula.GE;
-import static org.eventb.core.ast.Formula.GT;
-import static org.eventb.core.ast.Formula.IN;
-import static org.eventb.core.ast.Formula.KCARD;
-import static org.eventb.core.ast.Formula.KDOM;
-import static org.eventb.core.ast.Formula.KFINITE;
-import static org.eventb.core.ast.Formula.KMAX;
-import static org.eventb.core.ast.Formula.KMIN;
-import static org.eventb.core.ast.Formula.KRAN;
 import static org.eventb.core.ast.Formula.LAND;
-import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
-import static org.eventb.core.ast.Formula.LT;
-import static org.eventb.core.ast.Formula.MAPSTO;
-import static org.eventb.core.ast.Formula.MINUS;
-import static org.eventb.core.ast.Formula.NOT;
-import static org.eventb.core.ast.Formula.PLUS;
-import static org.eventb.core.ast.Formula.POW;
-import static org.eventb.core.ast.Formula.RANRES;
-import static org.eventb.core.ast.Formula.RELIMAGE;
-import static org.eventb.core.ast.Formula.SETMINUS;
-import static org.eventb.core.ast.Formula.SUBSET;
-import static org.eventb.core.ast.Formula.SUBSETEQ;
-import static org.eventb.core.ast.Formula.TRUE;
-import static org.eventb.core.ast.Formula.UNMINUS;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyComp;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyInter;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyLand;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyLor;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyMult;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyOvr;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyPlus;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyUnion;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunctionalCheck.functionalCheck;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PartialLambdaPatternCheck.partialLambdaPatternCheck;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetExtensionSimplifier.simplifyMax;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetExtensionSimplifier.simplifyMin;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
 
-import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
-import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.Identifier;
-import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.Type;
-import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorRewriting;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 
 /**
  * Implements syntactic simplification of event-B predicates based on some
@@ -135,7 +58,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 	private final String rewriterName;
 
 	protected final DLib dLib;
-	
+
 	// Enabled options (public for testing purposes only)
 	public final boolean withMultiImp;
 	public final boolean withMultiImpNot;
@@ -194,7 +117,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 
 		System.out.println(sb);
 	}
-	
+
 	protected <T> boolean contains(T[] array, T key) {
 		for (T element : array) {
 			if (element.equals(key)) {
@@ -203,7 +126,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 		}
 		return false;
 	}
-	
+
 	protected AssociativePredicate makeAssociativePredicate(int tag,
 			Predicate... children) {
 		return ff.makeAssociativePredicate(tag, children, null);
@@ -283,7 +206,8 @@ public class PredicateSimplifier extends DefaultRewriter {
 			"SIMP_MULTI_IMP", "SIMP_MULTI_EQV", "SIMP_SPECIAL_EQV_BTRUE",
 			"SIMP_SPECIAL_EQV_BFALSE", "SIMP_MULTI_IMP_OR",
 			"SIMP_MULTI_IMP_AND_NOT_R", "SIMP_MULTI_IMP_AND_NOT_L",
-			"SIMP_MULTI_EQV_NOT" })
+			"SIMP_MULTI_EQV_NOT", "SIMP_MULTI_IMP_NOT_L",
+			"SIMP_MULTI_IMP_NOT_R" })
 	@Override
 	public Predicate rewrite(BinaryPredicate predicate) {
 		final Predicate result;
@@ -317,7 +241,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 				trace(predicate, result, "SIMP_SPECIAL_IMP_BTRUE_R");
 				return result;
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_IMP_BFALSE_R
 			 *    P ⇒ ⊥ == ¬P
@@ -517,7 +441,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 		%match (Predicate predicate) {
 			/**
 			 * SIMP_FORALL_AND
-			 *    ∀x·(P ∧ ... ∧ Q) == (∀x·P) ∧ ... ∧ ∀(x·Q)
+			 *    ∀x·P ∧ ... ∧ Q == (∀x·P) ∧ ... ∧ (∀x·Q)
 			 */
 			ForAll(bids, Land(children)) -> {
 				if (withQuantDistr) {
@@ -529,7 +453,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 
 			/**
 			 * SIMP_EXISTS_OR
-			 *    ∃x·(P ⋁ ... ⋁ Q) == (∃x·P) ⋁ ... ⋁ ∃(x·Q)
+			 *    ∃x·P ⋁ ... ⋁ Q == (∃x·P) ⋁ ... ⋁ (∃x·Q)
 			 */
 			Exists(bids, Lor(children)) -> {
 				if (withQuantDistr) {
@@ -557,5 +481,5 @@ public class PredicateSimplifier extends DefaultRewriter {
 		}
 		return predicate;
 	}
-	
+
 }

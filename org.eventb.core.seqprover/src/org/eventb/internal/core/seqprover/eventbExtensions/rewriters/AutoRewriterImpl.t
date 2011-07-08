@@ -27,7 +27,6 @@ import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.DOMRES;
 import static org.eventb.core.ast.Formula.DOMSUB;
 import static org.eventb.core.ast.Formula.EQUAL;
-import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.EXPN;
 import static org.eventb.core.ast.Formula.FALSE;
 import static org.eventb.core.ast.Formula.FORALL;
@@ -59,8 +58,6 @@ import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyComp;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyInter;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyLand;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyLor;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyMult;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyOvr;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyPlus;
@@ -81,21 +78,14 @@ import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
-import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedExpression.Form;
@@ -123,15 +113,15 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	public static boolean DEBUG;
 
 	private final DivisionUtils du;
-	
+
 	private final AutoRewrites.Level level;
 
 	// Cached enabled levels
 	private final boolean level1;
 	private final boolean level2;
-	
+
 	protected final IntegerLiteral number0 = ff.makeIntegerLiteral(ZERO, null);
-	
+
 	protected final IntegerLiteral number1 = ff.makeIntegerLiteral(ONE, null);
 
 	private final IntegerLiteral number2 = ff.makeIntegerLiteral(new BigInteger("2"), null);
@@ -165,11 +155,11 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Expression right) {
 		return ff.makeRelationalPredicate(tag, left, right, null);
 	}
-	
+
 	protected AssociativePredicate makeAssociativePredicate(int tag, Predicate... children) {
 		return ff.makeAssociativePredicate(tag, children, null);
 	}
-	
+
 	protected QuantifiedPredicate makeQuantifiedPredicate(int tag, BoundIdentDecl[] boundIdentifiers, Predicate child) {
 		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
 	}
@@ -177,7 +167,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	protected SetExtension makeSetExtension(Collection<Expression> expressions) {
 		return ff.makeSetExtension(expressions, null);
 	}
-	
+
 	protected SetExtension makeSetExtension(Expression... expressions) {
 		return ff.makeSetExtension(expressions, null);
 	}
@@ -193,7 +183,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	protected AtomicExpression makeEmptySet(Type type) {
 		return ff.makeEmptySet(type, null);
 	}
-		
+
 	protected AssociativeExpression makeAssociativeExpression(int tag, Expression... children) {
 		return ff.makeAssociativeExpression(tag, children, null);
 	}
@@ -205,11 +195,11 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	protected SimplePredicate makeSimplePredicate(int tag, Expression expression) {
 		return ff.makeSimplePredicate(tag, expression, null);
 	}
-	
+
 	protected QuantifiedExpression makeQuantifiedExpression(int tag, BoundIdentDecl[] boundIdentifiers, Predicate pred, Expression expr, Form form) {
 		return ff.makeQuantifiedExpression(tag, boundIdentifiers, pred, expr, null, form);
 	}
-	
+
 	protected BoundIdentifier makeBoundIdentifier(int index, Type type) {
 		return ff.makeBoundIdentifier(index, null, type);
 	}
@@ -249,7 +239,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		System.arraycopy(children, index+1, newChildren, index, length - index - 1);
 		return ff.makeAssociativeExpression(tag, newChildren, null);
 	}
-	
+
 	private Expression simplifyExtremumOfUnion(Expression[] children, int tag) {
 		final int length = children.length;
 		final Expression[] newChildren = new Expression[length];
@@ -269,7 +259,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		}
 		return makeUnaryExpression(tag,	makeAssociativeExpression(BUNION, newChildren));
 	}
-	
+
 	private Expression extractSingletonWithTag(Expression expression, int tag) {
 	    %match (Expression expression) {
 	    	SetExtension(eList(op@(Min | Max)(T))) -> {
@@ -280,7 +270,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    }
 	    return null;
 	}
-	
+
 	private Expression simplifySetextOfMapsto(Expression[] children, Expression image) {
 		for (Expression child : children) {
 			if (child.getTag() != MAPSTO) {
@@ -293,7 +283,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		}
 		return image;
 	}
-	
+
 	private Expression convertSetextOfMapsto(Expression[] children) {
 		final Expression[] newChildren = new Expression[children.length];
 		for (int i = 0 ; i < children.length ; i++) {
@@ -312,22 +302,22 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		return makeRelationalPredicate(EQUAL, set,
 			makeEmptySet(set.getType()));
 	}
-	
+
 	protected SimplePredicate makeFinite(Expression set) {
 		return makeSimplePredicate(KFINITE, set);
 	}
-	
+
 	protected UnaryExpression makeCard(Expression set) {
 		return makeUnaryExpression(KCARD, set);
 	}
-	
+
 	protected Predicate makeNotEqual(Expression left, Expression right) {
 		return makeUnaryPredicate(NOT,
 			makeRelationalPredicate(EQUAL, left, right));
 	}
 
 	%include {FormulaV2.tom}
-	
+
 	@ProverRule( { "SIMP_SPECIAL_FINITE", "SIMP_FINITE_SETENUM",
 			"SIMP_FINITE_BUNION", "SIMP_FINITE_POW", "DERIV_FINITE_CPROD",
 			"SIMP_FINITE_CONVERSE", "SIMP_FINITE_UPTO",
@@ -350,7 +340,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				trace(predicate, result, "SIMP_SPECIAL_FINITE");
 				return result;
 			}
-			
+
 			/**
 			 * SIMP_FINITE_NATURAL
 			 *    finite(ℕ) == ⊥
@@ -362,7 +352,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_FINITE_NATURAL1
 			 *    finite(ℕ1) == ⊥
@@ -374,7 +364,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_FINITE_INTEGER
 			 *    finite(ℤ) == ⊥
@@ -386,7 +376,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_FINITE_BOOL
 			 *    finite(BOOL) == ⊤
@@ -398,7 +388,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_FINITE_ID
 			 *    finite(id) == finite(S) (where id has type S↔S)
@@ -483,7 +473,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				trace(predicate, result, "SIMP_FINITE_UPTO");
 				return result;
 			}
-			
+
 			/**
 			 * SIMP_FINITE_LAMBDA
 			 *    finite({x · P ∣ E ↦ F}) == finite({x · P ∣ E})
@@ -496,7 +486,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_FINITE_ID_DOMRES
 			 *    finite(E ◁ id) == finite(E)
@@ -507,8 +497,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					trace(predicate, result, "SIMP_FINITE_ID_DOMRES");
 					return result;
 				}
-			} 
-			 
+			}
+
 			/**
 			 * SIMP_FINITE_PRJ1
 			 *    finite(prj1) == finite(S × T) where prj1 has type ℙ(S×T×S)
@@ -520,7 +510,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			 
+
 			/**
 			 * SIMP_FINITE_PRJ2
 			 *    finite(prj2) == finite(S × T) where prj2 has type ℙ(S×T×T)
@@ -653,7 +643,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "SIMP_SPECIAL_NOT_EQUAL_TRUE_L");
 				return result;
 			}
-			
+
 	    }
 	    return predicate;
 	}
@@ -718,7 +708,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "SIMP_MULTI_LE");
 				return result;
 	    	}
-			
+
 	    	/**
              * SIMP_MULTI_GE
 	    	 * Arithmetic: E ≥ E == ⊤
@@ -728,7 +718,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "SIMP_MULTI_GE");
 				return result;
 	    	}
-			
+
 			/**
              * SIMP_MULTI_LT
 	    	 * Arithmetic: E < E == ⊥
@@ -738,7 +728,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "SIMP_MULTI_LT");
 				return result;
 	    	}
-			
+
 			/**
              * SIMP_MULTI_GE
 	    	 * Arithmetic: E > E == ⊥
@@ -748,7 +738,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "SIMP_MULTI_GT");
 				return result;
 	    	}
-			
+
 			/**
              * SIMP_EQUAL_MAPSTO
 	    	 * Equality 3: E ↦ F = G ↦ H == E = G ∧ F = H
@@ -761,7 +751,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "SIMP_EQUAL_MAPSTO");
 				return result;
 	    	}
-	    	
+
 	    	/**
              * SIMP_SPECIAL_EQUAL_TRUE
 	    	 * Equality 4: TRUE = FALSE == ⊥
@@ -835,7 +825,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "SIMP_SPECIAL_SUBSETEQ");
 				return result;
 	    	}
-	    	
+
 	    	/**
              * SIMP_MULTI_SUBSETEQ
 	    	 * Set Theory: S ⊆ S == ⊤
@@ -845,7 +835,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "SIMP_MULTI_SUBSETEQ");
 				return result;
 	    	}
-			
+
 	    	/**
              * SIMP_SUBSETEQ_BUNION
 	    	 * Set Theory: S ⊆ A ∪ ... ∪ S ∪ ... ∪ B == ⊤
@@ -855,7 +845,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "SIMP_SUBSETEQ_BUNION");
 	    		return result;
 	    	}
-			
+
 	    	/**
              * SIMP_SUBSETEQ_BINTER
 	    	 * Set Theory: A ∩ ... ∩ S ∩ ... ∩ B ⊆ S == ⊤
@@ -865,7 +855,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				trace(predicate, result, "SIMP_SUBSETEQ_BINTER");
 				return result;
 	    	}
-			
+
 			/**
              * DERIV_SUBSETEQ_BUNION
 	    	 * Set Theory: A ∪ ... ∪ B ⊆ S == A ⊆ S ∧ ... ∧ B ⊆ S
@@ -880,7 +870,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "DERIV_SUBSETEQ_BUNION");
 				return result;
 	    	}
-			
+
 			/**
              * DERIV_SUBSETEQ_BINTER
 	    	 * Set Theory: S ⊆ A ∩ ... ∩ B  == S ⊆ A ∧ ... ∧ S ⊆ B
@@ -895,7 +885,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "DERIV_SUBSETEQ_BINTER");
 				return result;
 	    	}
-			
+
 			/**
              * SIMP_SPECIAL_IN
 	    	 * Set Theory 7: E ∈ ∅ == ⊥
@@ -904,7 +894,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		result = dLib.False();
 	    		trace(predicate, result, "SIMP_SPECIAL_IN");
 				return result;
-	    	}	    	
+	    	}
 
 			/**
 	    	 * SIMP_MULTI_IN
@@ -945,7 +935,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 		return result;
 	    	 	}
 	    	}
-		
+
 			/**
              * SIMP_EQUAL_SING
 	    	 * Set Theory 19: {E} = {F} == E = F   if E, F is a single expression
@@ -955,7 +945,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				trace(predicate, result, "SIMP_EQUAL_SING");
 				return result;
 	    	}
-	    	
+
 	    	/**
              * SIMP_LIT_EQUAL
 	    	 * Arithmetic 16: i = j == ⊤  or  i = j == ⊥ (by computation)
@@ -1005,7 +995,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "SIMP_LIT_GT");
 				return result;
 	    	}
-	    	
+
 	    	/**
 	    	 * Cardinality:
              * SIMP_SPECIAL_EQUAL_CARD
@@ -1074,7 +1064,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 	    	/**
              * SIMP_LIT_EQUAL_KBOOL_TRUE
-	    	 * Boolean: TRUE = bool(P) == P  
+	    	 * Boolean: TRUE = bool(P) == P
 	    	 */
 	    	Equal(TRUE(), Bool(P)) -> {
 	    		result = `P;
@@ -1084,7 +1074,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 	    	/**
              * SIMP_LIT_EQUAL_KBOOL_TRUE
-	    	 * Boolean: bool(P) = TRUE == P  
+	    	 * Boolean: bool(P) = TRUE == P
 	    	 */
 	    	Equal(Bool(P), TRUE()) -> {
 	    		result = `P;
@@ -1094,7 +1084,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 	    	/**
              * SIMP_LIT_EQUAL_KBOOL_FALSE
-	    	 * Boolean: FALSE = bool(P) == ¬P  
+	    	 * Boolean: FALSE = bool(P) == ¬P
 	    	 */
 	    	Equal(FALSE(), Bool(P)) -> {
 	    		result = makeUnaryPredicate(NOT, `P);
@@ -1104,14 +1094,14 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 	    	/**
              * SIMP_LIT_EQUAL_KBOOL_FALSE
-	    	 * Boolean: bool(P) = FALSE == ¬P  
+	    	 * Boolean: bool(P) = FALSE == ¬P
 	    	 */
 	    	Equal(Bool(P), FALSE()) -> {
 	    		result = makeUnaryPredicate(NOT, `P);
 	    		trace(predicate, result, "SIMP_LIT_EQUAL_KBOOL_FALSE");
 				return result;
 	    	}
-	    	
+
             /**
              * SIMP_EQUAL_CONSTR
              * cons(a1, b1) = cons(a2, b2)  ==  a1 = a2 & b1 = b2
@@ -1158,7 +1148,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_SUBSET_R
 			 *    S ⊂ ∅ == ⊥
@@ -1170,7 +1160,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_SUBSET
 			 *    S ⊂ S == ⊥
@@ -1182,7 +1172,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_EQUAL_REL
 			 *    A ↔ B = ∅ == ⊥
@@ -1194,7 +1184,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_EQUAL_RELDOM
 			 *    A  B = ∅ == ¬(A = ∅) ∧ B = ∅
@@ -1212,7 +1202,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_CARD_NATURAL
 			 *    card(S) ∈ ℕ == ⊤
@@ -1224,7 +1214,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_CARD_NATURAL1
 			 *    card(S) ∈ ℕ1 == ¬ S = ∅
@@ -1236,7 +1226,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_LIT_IN_NATURAL
 			 *    i ∈ ℕ == ⊤  (where i is a non−negative literal)
@@ -1257,7 +1247,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					}
 				}
 			}
-			
+
 			/**
 			 * SIMP_LIT_IN_NATURAL1
 			 *    i ∈ ℕ1 == ⊤ (where i is a positive literal)
@@ -1326,7 +1316,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
  	    			}
  	    		}
  	    	}
-			
+
 			/**
 			 * SIMP_IN_FUNIMAGE
 			 *    E ↦ F(E) ∈ F == ⊤
@@ -1338,7 +1328,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_IN_FUNIMAGE_CONVERSE_L
 			 *    F∼(E) ↦ E ∈ F == ⊤
@@ -1350,7 +1340,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_IN_FUNIMAGE_CONVERSE_R
 			 *    F(E) ↦ E ∈ F∼ == ⊤
@@ -1362,7 +1352,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_EQUAL_BINTER
 			 *    S ∩ .. ∩ T ∩ .. ∩ U = T == T ⊆ S ∩ .. ∩ U
@@ -1376,7 +1366,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_EQUAL_BUNION
 			 *    S ∪ .. ∪ T ∪ .. ∪ U = T == S ∪ .. ∪ U  ⊆ T
@@ -1390,7 +1380,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_SUBSET_L
 			 *    ∅ ⊂ S == S ≠ ∅
@@ -1402,7 +1392,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SUBSETEQ_COMPSET_L
 			 *    {x · P(x) ∣ E(x)} ⊆ S == ∀y · P(y) ⇒ E(y) ∈ S
@@ -1417,7 +1407,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_EQUAL_COMPSET
 			 *    {x · P(x) ∣ E} = ∅ == ∀x · ¬P(x)
@@ -1434,7 +1424,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    }
 	    return predicate;
 	}
-    
+
     private static boolean isDTConstructor(ExtendedExpression expr) {
     	final IExpressionExtension extension = expr.getExtension();
     	final Object origin = extension.getOrigin();
@@ -1444,7 +1434,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
     	final IDatatype datatype = (IDatatype) origin;
     	return datatype.isConstructor(extension);
 	}
-	
+
 	@ProverRule( { "SIMP_SPECIAL_BINTER", "SIMP_SPECIAL_BUNION",
 			"SIMP_TYPE_BINTER", "SIMP_TYPE_BUNION","SIMP_MULTI_BINTER",
             "SIMP_MULTI_BUNION", "SIMP_SPECIAL_PLUS", "SIMP_SPECIAL_PROD_1",
@@ -1526,7 +1516,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    			return expression;
 	    		}
 	    	}
-	    	
+
 	    	/**
 	    	 * SIMP_SPECIAL_FCOMP
              *    r ; .. ;  ∅ ; .. ; s == ∅
@@ -1543,7 +1533,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
    					return result;
 	    		}
 	    	}
-	
+
 	    	/**
 	    	 * SIMP_SPECIAL_BCOMP
              *    r ∘ .. ∘  ∅ ∘ .. ∘ s == ∅
@@ -1559,14 +1549,14 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	   				return result;
 	    		}
 	    	}
-			
+
             /**
              * SIMP_SPECIAL_OVERL
 			 *    r  ..  ∅  ..  s  ==  r  ..  s
 			 * SIMP_TYPE_OVERL_CPROD
 			 *    r  ..  Ty  ..  s == Ty  ..  s (where Ty is a type expression)
 			 * SIMP_MULTI_OVERL
-			 *    r1  ‥  rn == r1  ‥  ri−1  ri+1  ‥  rn 
+			 *    r1  ‥  rn == r1  ‥  ri−1  ri+1  ‥  rn
 			 *		(where there is such j that 1 ≤ i < j ≤ n and ri and rj are syntactically equal)
 			 */
 			Ovr(_) -> {
@@ -1580,7 +1570,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    			return expression;
 	    		}
      		}
-     		
+
      		/**
 			 * SIMP_FCOMP_ID_L
 			 *    (S ◁ id) ; r == S ◁ r
@@ -1592,7 +1582,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_FCOMP_ID_R
 			 *    r ; (S ◁ id) == r ▷ S
@@ -1604,7 +1594,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-	    	
+
 	    	/**
 	    	 * SIMP_TYPE_FCOMP_R
 	    	 *    r ; Ty == dom(r) × Tb (where Ty is a type expression and Ty = Ta × Tb)
@@ -1618,7 +1608,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 	    		}
 	    	}
-	    	
+
 	    	/**
 	    	 * SIMP_TYPE_FCOMP_L
 	    	 *    Ty ; r == Ta × ran(r) (where Ty is a type expression and Ty = Ta × Tb)
@@ -1629,10 +1619,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    						`Ta,
 	    						makeUnaryExpression(KRAN, `r));
 	    			trace(expression, result, "SIMP_TYPE_FCOMP_L");
-					return result;	
+					return result;
 	    		}
 	    	}
-	    	
+
 	    	/**
 	    	 * SIMP_TYPE_BCOMP_L
 	    	 *    Ty ∘ r == dom(r) × Tb (where Ty is a type expression and Ty = Ta × Tb)
@@ -1643,10 +1633,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    						makeUnaryExpression(KDOM, `r),
 	    						`Tb);
 	    			trace(expression, result, "SIMP_TYPE_BCOMP_L");
-					return result;	
+					return result;
 	    		}
 	    	}
-	    	
+
 	    	/**
 	    	 * SIMP_TYPE_BCOMP_R
 	    	 *    r ∘ Ty == Ta × ran(r) (where Ty is a type expression and Ty = Ta × Tb)
@@ -1657,10 +1647,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    						`Ta,
 	    						makeUnaryExpression(KRAN, `r));
 	    			trace(expression, result, "SIMP_TYPE_BCOMP_R");
-					return result;	
+					return result;
 	    		}
 	    	}
-	    	
+
 	    }
 	    return expression;
 	}
@@ -1755,7 +1745,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		    		return result;
 				}
 	    	}
-	    	
+
 			/**
 	    	 * SIMP_TYPE_SETMINUS_SETMINUS
              * Set Theory: U ∖ (U ∖ S) == S
@@ -1767,7 +1757,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		    		return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_MINUS
              * Arithmetic: E − E == 0
@@ -1818,7 +1808,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		    		return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_DIV_0
              * Arithmetic: 0 ÷ E = 0
@@ -1832,7 +1822,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			}
 
 			/**
-	    	 * SIMP_MULTI_DIV_PROD 
+	    	 * SIMP_MULTI_DIV_PROD
              * Arithmetic: (X ∗ ... ∗ E ∗ ... ∗ Y) ÷ E == X ∗ ... ∗ Y
 	    	 */
 	    	Div(mul@Mul(eList(_*, E, _*)), E) -> {
@@ -1909,7 +1899,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				}
 				return expression;
 	    	}
-	    	
+
 	    	/**
 	    	 * SIMP_FUNIMAGE_FUNIMAGE_CONVERSE
              * Set Theory: f(f∼(E)) = E
@@ -1958,11 +1948,11 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					Expression map1 = `children1[i];
 					Expression map2 = `children2[i];
 					if (!(Lib.isMapping(map1) && Lib.isMapping(map2)))
-						return expression;	
-					
+						return expression;
+
 					BinaryExpression bExp1 = (BinaryExpression) map1;
 					BinaryExpression bExp2 = (BinaryExpression) map2;
-					
+
 					if (!(bExp1.getRight().equals(bExp2.getLeft()) &&
 							 bExp2.getRight().equals(bExp1.getLeft())))
 						return expression;
@@ -1991,7 +1981,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(expression, result, "SIMP_SPECIAL_RELIMAGE_L");
 	    		return result;
 			}
-			
+
 			/**
 			 * SIMP_TYPE_RELIMAGE
 			 *    r[Ty] == ran(r) (where Ty is a type expression)
@@ -2003,7 +1993,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    			return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_RELIMAGE_DOM
 			 *    r[dom(r)] == ran(r)
@@ -2015,7 +2005,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    			return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RELIMAGE_ID
 			 *    id[T] == T
@@ -2027,7 +2017,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    			return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_RELIMAGE_CPROD_SING
 			 *    ({E}×S)[{E}] == S (where E is a single expression)
@@ -2039,7 +2029,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    			return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_RELIMAGE_SING_MAPSTO
 			 *    {E ↦ F}[{E}] == {F} (where E is a single expression)
@@ -2051,7 +2041,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    			return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_RELIMAGE_CONVERSE_RANSUB
 			 *    (r ⩥ S)∼[S] == ∅
@@ -2063,7 +2053,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    			return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_RELIMAGE_CONVERSE_RANRES
 			 *    (r ▷ S)∼[S] == r∼[S]
@@ -2072,12 +2062,12 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2) {
 					result = makeBinaryExpression(RELIMAGE,
 								makeUnaryExpression(CONVERSE, `r),
-								`S); 
+								`S);
 					trace(expression, result, "SIMP_MULTI_RELIMAGE_CONVERSE_RANRES");
 	    			return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RELIMAGE_CONVERSE_DOMSUB
 			 *    (S ⩤ r)∼[T] == r∼[T]∖S
@@ -2087,12 +2077,12 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					result = makeBinaryExpression(SETMINUS,
 								makeBinaryExpression(RELIMAGE,
 									makeUnaryExpression(CONVERSE, `r),
-									`T), `S); 
+									`T), `S);
 					trace(expression, result, "SIMP_RELIMAGE_CONVERSE_DOMSUB");
 	    			return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_RELIMAGE_DOMSUB
 			 *    (S ⩤ r)[S] == ∅
@@ -2104,7 +2094,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    			return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_FUNIMAGE_CPROD
              * Set Theory: (S × {E})(x) == E
@@ -2127,7 +2117,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
                 	return result;
                 }
             }
-            
+
             /**
 			 * SIMP_SPECIAL_CPROD_R
 			 *    S × ∅ == ∅
@@ -2139,7 +2129,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_CPROD_L
 			 *    ∅ × S == ∅
@@ -2151,7 +2141,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_DOMRES_L
 			 *    ∅ ◁ r == ∅
@@ -2163,7 +2153,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			 
+
 			/**
 			 * SIMP_SPECIAL_DOMRES_R
 			 *    S ◁ ∅ == ∅
@@ -2175,7 +2165,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_TYPE_DOMRES
 			 *    Ty ◁ r == r (where Ty is a type expression)
@@ -2187,7 +2177,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_DOMRES_DOM
 			 *    dom(r) ◁ r == r
@@ -2199,7 +2189,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_DOMRES_RAN
 			 *    ran(r) ◁ r∼ == r∼
@@ -2211,7 +2201,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_RANRES_R
 			 *    r ▷ ∅ == ∅
@@ -2223,7 +2213,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_RANRES_L
 			 *    ∅ ▷ S == ∅
@@ -2235,7 +2225,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 			 	}
 			 }
-			
+
 			/**
 			 * SIMP_TYPE_RANRES
 			 *    r ▷ Ty == r (where Ty is a type expression)
@@ -2247,7 +2237,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_RANRES_RAN
 			 *    r ▷ ran(r) == r
@@ -2259,7 +2249,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_RANRES_DOM
 			 *    r∼ ▷ dom(r) == r∼
@@ -2270,8 +2260,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					trace(expression, result, "SIMP_MULTI_RANRES_DOM");
 					return result;
 				}
-			}	
-			
+			}
+
 			/**
 			 * SIMP_SPECIAL_DOMSUB_L
 			 *    ∅ ⩤ r == r
@@ -2283,7 +2273,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 			 	}
 			 }
-			 
+
 			 /**
 			  * SIMP_SPECIAL_DOMSUB_R
 			  *    S ⩤ ∅ == ∅
@@ -2292,10 +2282,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 	if (level2) {
 			 		result = `empty;
 			 		trace(expression, result, "SIMP_SPECIAL_DOMSUB_R");
-					return result;			 		
+					return result;
 			 	}
 			 }
-			 
+
 			 /**
 			  * SIMP_TYPE_DOMSUB
 			  *    Ty ⩤ r == ∅ (where Ty is a type expression)
@@ -2304,10 +2294,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 	if (level2 && `Ty.isATypeExpression()) {
 			 		result = makeEmptySet(expression.getType());
 			 		trace(expression, result, "SIMP_TYPE_DOMSUB");
-					return result;		
+					return result;
 			 	}
 			 }
-			 
+
 			 /**
 			  * SIMP_MULTI_DOMSUB_DOM
 			  *    dom(r) ⩤ r == ∅
@@ -2316,10 +2306,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 	if (level2) {
 			 		result = makeEmptySet(expression.getType());
 			 		trace(expression, result, "SIMP_MULTI_DOMSUB_DOM");
-					return result;	
+					return result;
 			 	}
 			 }
-			 
+
 			/**
 			 * SIMP_SPECIAL_RANSUB_R
 			 *    r ⩥ ∅ == r
@@ -2328,10 +2318,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2) {
 					result = `r;
 					trace(expression, result, "SIMP_SPECIAL_RANSUB_R");
-					return result;	
+					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_RANSUB_L
 			 *    ∅ ⩥ S == ∅
@@ -2340,10 +2330,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2) {
 					result = `empty;
 					trace(expression, result, "SIMP_SPECIAL_RANSUB_L");
-					return result;	
+					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_TYPE_RANSUB
 			 *    r ⩥ Ty == ∅ (where Ty is a type expression)
@@ -2352,10 +2342,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2 && `Ty.isATypeExpression()) {
 					result = makeEmptySet(expression.getType());
 					trace(expression, result, "SIMP_TYPE_RANSUB");
-					return result;	
+					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_RANSUB_RAN
 			 *    r ⩥ ran(r) == ∅
@@ -2364,10 +2354,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2) {
 					result = makeEmptySet(expression.getType());
 					trace(expression, result, "SIMP_MULTI_RANSUB_RAN");
-					return result;						
+					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_DPROD_R
 			 *    r ⊗ ∅ == ∅
@@ -2379,7 +2369,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_DPROD_L
 			 *    ∅ ⊗ r == ∅
@@ -2391,7 +2381,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_PPROD_R
 			 *    r ∥ ∅ == ∅ (parallel product ||)
@@ -2403,7 +2393,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_PPROD_L
 			 *    ∅ ∥ r == ∅ (parallel product ||)
@@ -2415,7 +2405,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_REL_R
 			 *    S ↔ ∅ == {∅}
@@ -2425,13 +2415,13 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 *    S ⤀ ∅ == {∅}
 			 */
 			(Rel | Srel | Pfun | Pinj | Psur)(_, EmptySet()) -> {
-				if (level2) {			
+				if (level2) {
 					result = makeSetExtension(makeEmptySet(expression.getType().getBaseType()));
 					trace(expression, result, "SIMP_SPECIAL_REL_R");
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_REL_L
 			 *    ∅ ↔ S == {∅}
@@ -2448,7 +2438,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_FUNIMAGE_PRJ1
 			 *    prj1(E ↦ F) == E
@@ -2472,7 +2462,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			 
+
 			/**
 			 * SIMP_FUNIMAGE_ID
 			 *    id(x) = x
@@ -2484,7 +2474,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_EQUAL_RELDOMRAN
 			 *    ∅  ∅
@@ -2498,7 +2488,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_DPROD_CPROD
 			 *    (S × T) ⊗ (U × V) == (S ∩ U) × (T × V)
@@ -2512,7 +2502,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_PPROD_CPROD
 			 *    (S × T) ∥ (U × V) == (S × U) × (T × V)
@@ -2526,7 +2516,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_MOD_0
 			 *    0 mod E == 0
@@ -2537,8 +2527,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					trace(expression, result, "SIMP_SPECIAL_MOD_0");
 					return result;
 				}
-			}		
-			
+			}
+
 			/**
 			 * SIMP_SPECIAL_MOD_1
 			 *    E mod 1 == 0
@@ -2550,7 +2540,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_MOD
 			 *    E mod E == 0
@@ -2562,7 +2552,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_LIT_UPTO
 			 *    i‥j == ∅ (where i and j are literals and j < i)
@@ -2574,7 +2564,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_FUNIMAGE_SETENUM_LL
 			 *    {A ↦ E, .. , B ↦ E}(x) == E
@@ -2589,7 +2579,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					}
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_FUNIMAGE_SETENUM_LR
 			 *    {E, .. , x ↦ y, .. , F}(x) == y
@@ -2601,7 +2591,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_FUNIMAGE_BUNION_SETENUM
 			 *    {r ∪ .. ∪ {E, .. , x ↦ y, .. , F})(x) == y
@@ -2613,7 +2603,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_DOMRES_DOMRES_ID
 			 *    S ◁ (T ◁ id) == (S ∩ T) ◁ id
@@ -2652,7 +2642,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RANSUB_DOMRES_ID
 			 *    (S ◁ id) ⩥ T == (S ∖ T) ◁ id
@@ -2665,7 +2655,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_DOMRES_DOMSUB_ID
 			 *    S ◁ (T ⩤ id) == (S ∖ T) ◁ id
@@ -2678,7 +2668,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RANRES_DOMSUB_ID
 			 *    (S ⩤ id) ▷ T == (T ∖ S) ◁ id
@@ -2691,7 +2681,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_DOMSUB_DOMSUB_ID
 			 *    S ⩤ (T ⩤ id) == (S ∪ T) ⩤ id
@@ -2704,7 +2694,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RANSUB_DOMSUB_ID
 			 *    (S ⩤ id) ⩥ T == (S ∪ T) ⩤ id
@@ -2717,7 +2707,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RANRES_ID
 			 *    id ▷ S == S ◁ id
@@ -2729,7 +2719,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RANSUB_ID
 			 *    id ⩥ S == S ⩤ id
@@ -2741,7 +2731,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_DOMSUB_RAN
 			 *    ran(r) ⩤ r∼ == ∅
@@ -2753,7 +2743,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_RANSUB_DOM
 			 *    r∼ ⩥ dom(r) == ∅
@@ -2765,7 +2755,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RELIMAGE_DOMRES_ID
 			 *    (S ◁ id)[T] == S ∩ T
@@ -2777,7 +2767,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RELIMAGE_DOMSUB_ID
 			 *    (S ⩤ id)[T] == T ∖ S
@@ -2789,7 +2779,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 		}
 	    return expression;
 	}
@@ -2847,8 +2837,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 			/**
              * SIMP_DOM_SETENUM
-	    	 * Set Theory 15: dom(x ↦ a, ..., y ↦ b) = {x, ..., y} 
-	    	 *                (Also remove duplicate in the resulting set) 
+	    	 * Set Theory 15: dom(x ↦ a, ..., y ↦ b) = {x, ..., y}
+	    	 *                (Also remove duplicate in the resulting set)
 	    	 */
 	    	Dom(SetExtension(members)) -> {
    				Collection<Expression> domain = new LinkedHashSet<Expression>();
@@ -2866,7 +2856,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(expression, result, "SIMP_DOM_SETENUM");
 	    		return result;
 	    	}
-		
+
 			/**
              * SIMP_RAN_SETENUM
 	    	 * Set Theory 16: ran(x ↦ a, ..., y ↦ b) = {a, ..., b}
@@ -2897,7 +2887,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(expression, result, "SIMP_MINUS_MINUS");
 	    		return result;
 	    	}
-			
+
 			/**
              * SIMP_SPECIAL_CARD
 	    	 * Cardinality: card(∅) == 0
@@ -2928,14 +2918,14 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(expression, result, "SIMP_CARD_POW");
 	    		return result;
 			}
-			
+
 			/**
              * SIMP_CARD_BUNION
 	    	 * Cardinality:    card(S(1) ∪ ... ∪ S(n))
 	    	 *               = card(S(1)) + ...  + card(S(n))
              *                 − (card(S(1) ∩ S(2)) + ... + card(S(n−1) ∩ S(n)))
              *                 + (card(S(1) ∩ S(2) ∩ S(3)) + ... + card(S(n−2) ∩ S(n−1) ∩ S(n)))
-             *                 − ...                         
+             *                 − ...
              *                 + ((−1)^(n-1) ∗ card(S(1) ∩ ... ∩ S(n)))
 	    	 */
 	    	Card(BUnion(children)) -> {
@@ -2943,7 +2933,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		Expression [] subFormulas = new Expression[length];
 	    		for (int i = 1; i <= length; ++i) {
 					List<List<Expression>> expressions = getExpressions(`children, 0, i);
-					
+
 					List<Expression> newChildren = new ArrayList<Expression>(expressions.size());
 					for (List<Expression> list : expressions) {
 						Expression inter;
@@ -2955,12 +2945,12 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 						Expression card = makeCard(inter);
 						newChildren.add(card);
 					}
-					if (newChildren.size() != 1) 
+					if (newChildren.size() != 1)
 						subFormulas[i-1] = makeAssociativeExpression(
 								PLUS, newChildren);
 					else
 						subFormulas[i-1] = newChildren.iterator().next();
-	    		} 
+	    		}
 	    		Expression temp = subFormulas[0];
 	    		boolean positive = false;
 	    		for (int i = 1; i < length; ++i) {
@@ -2981,7 +2971,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(expression, result, "SIMP_CARD_BUNION");
 	    		return result;
 	    	}
-			
+
 			/**
              * SIMP_SPECIAL_DOM
 			 * Set Theory: dom(∅) == ∅
@@ -2991,7 +2981,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(expression, result, "SIMP_SPECIAL_DOM");
 	    		return result;
 			}
-			
+
 			/**
              * SIMP_SPECIAL_RAN
 			 * Set Theory: ran(∅) == ∅
@@ -3001,7 +2991,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(expression, result, "SIMP_SPECIAL_RAN");
 	    		return result;
 			}
-						
+
 			/**
 			 * SIMP_SPECIAL_POW
 			 *    ℙ(∅) == {∅}
@@ -3010,10 +3000,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2) {
 					result = makeSetExtension(`empty);
 					trace(expression, result, "SIMP_SPECIAL_POW");
-					return result; 
+					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_POW1
 			 *    ℙ1(∅) == ∅
@@ -3022,10 +3012,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2) {
 					result = makeEmptySet(expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_POW1");
-					return result; 
+					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_DOM_CONVERSE
 			 *    dom(r∼) == ran(r)
@@ -3037,7 +3027,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-	    
+
 	    	/**
 	     	 * SIMP_RAN_CONVERSE
 	     	 *    ran(r∼) == dom(r)
@@ -3049,7 +3039,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	     			return result;
 	     		}
 	     	}
-	     	
+
 	     	/**
 	     	 * SIMP_CONVERSE_ID
 	     	 *    id∼ == id
@@ -3061,7 +3051,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	     			return result;
 	     		}
 	     	}
-	     	
+
 	     	/**
 			 * SIMP_SPECIAL_CONVERSE
 			 *    ∅∼ == ∅
@@ -3073,7 +3063,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    			return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_DOM_CPROD
 			 *    dom(E×E) == E
@@ -3085,7 +3075,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MULTI_RAN_CPROD
 			 *    ran(E×E) == E
@@ -3097,7 +3087,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_KUNION_POW
 			 *    union(ℙ(S)) == S
@@ -3109,7 +3099,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_KUNION_POW1
 			 *    union(ℙ1(S)) == S
@@ -3121,7 +3111,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_KUNION
 			 *    union({∅}) == ∅
@@ -3133,7 +3123,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_SPECIAL_KINTER
 			 *    inter({∅}) == ∅
@@ -3157,7 +3147,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_DOM_ID
 			 *    dom(id) == S (where id has type ℙ(S×S))
@@ -3170,7 +3160,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RAN_ID
 			 *    ran(id) == S (where id has type ℙ(S×S))
@@ -3183,7 +3173,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_DOM_PRJ1
 			 *    dom(prj1) == S × T (where prj1 has type ℙ(S×T×S))
@@ -3193,10 +3183,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					final Type st = `prj1.getType().getSource();
 					result = st.toExpression(ff);
 					trace(expression, result, "SIMP_DOM_PRJ1");
-					return result;		
+					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_DOM_PRJ2
 			 *    dom(prj2) == S × T (where prj2 has type ℙ(S×T×T))
@@ -3206,10 +3196,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					final Type st = `prj2.getType().getSource();
 					result = st.toExpression(ff);
 					trace(expression, result, "SIMP_DOM_PRJ2");
-					return result;		
+					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RAN_PRJ1
 			 *    ran(prj1) == S (where prj1 has type ℙ(S×T×S))
@@ -3219,10 +3209,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					final Type st = `prj1.getType().getTarget();
 					result = st.toExpression(ff);
 					trace(expression, result, "SIMP_RAN_PRJ1");
-					return result;		
+					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RAN_PRJ2
 			 *    ran(prj2) == T (where prj2 has type ℙ(S×T×T))
@@ -3232,10 +3222,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					final Type st = `prj2.getType().getTarget();
 					result = st.toExpression(ff);
 					trace(expression, result, "SIMP_RAN_PRJ2");
-					return result;		
+					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_TYPE_DOM
 			 *    dom(Ty) == Ta (where Ty is a type expression equal to Ta×Tb)
@@ -3244,10 +3234,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2 && `Ta.isATypeExpression() && `Tb.isATypeExpression()) {
 					result = `Ta;
 					trace(expression, result, "SIMP_TYPE_DOM");
-					return result;		
+					return result;
 				}
 			}
-			 
+
 			/**
 			 * SIMP_TYPE_RAN
 			 *    ran(Ty) == Tb (where Ty is a type expression equal to Ta×Tb)
@@ -3259,7 +3249,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MIN_SING
 			 *    min({E}) == E (where E is a single expression)
@@ -3271,7 +3261,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MAX_SING
 			 *    max({E}) == E (where E is a single expression)
@@ -3283,7 +3273,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MIN_NATURAL
 			 *    min(ℕ) == 0
@@ -3307,7 +3297,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MIN_UPTO
 			 *    min(E‥F) == E
@@ -3319,7 +3309,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			 
+
 			/**
 			 * SIMP_MAX_UPTO
 			 *    max(E‥F) == F
@@ -3331,7 +3321,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_CARD_CONVERSE
 			 *    card(r∼) == card(r)
@@ -3343,7 +3333,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_CONVERSE_CPROD
 			 *    (A × B)∼ == B × A
@@ -3355,7 +3345,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_CONVERSE_COMPSET
 			 *    {X · P ∣ x ↦ y}∼ = {X · P ∣ y ↦ x}
@@ -3382,7 +3372,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_RAN_LAMBDA
 			 *    ran({x · P ∣ E ↦ F}) = {x · P ∣ F}
@@ -3395,7 +3385,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_MIN_BUNION_SING
 			 *    min(S ∪ .. ∪ {min(T)} ∪ .. ∪ U) == min(S ∪ .. ∪ T ∪ .. ∪ U)
@@ -3411,7 +3401,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					}
 				}
 			}
-			
+
 			/**
 			 * SIMP_MAX_BUNION_SING
 			 *    max(S ∪ .. ∪ {max(T)} ∪ .. ∪ U) == max(S ∪ .. ∪ T ∪ .. ∪ U)
@@ -3427,7 +3417,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					}
 				}
 			}
-			
+
 			/**
 			 * SIMP_LIT_MIN
 			 *    min({E, .. , i, .. , j, .. , H}) = min({E, .. , i, .. , H})
@@ -3443,7 +3433,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					}
 				}
 			}
-			 
+
 			/**
 			 * SIMP_LIT_MAX
 			 *    max({E, .. , i, .. , j, .. , H}) = max({E, .. , i, .. , H})
@@ -3459,7 +3449,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					}
 				}
 			}
-			
+
 			/**
 			 * SIMP_CARD_ID
 			 *    card(id) == card(S) where id has type ℙ(S×S)
@@ -3475,7 +3465,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_CARD_ID_DOMRES
 			 *    card(E ◁ id) == card(E)
@@ -3491,7 +3481,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 			/**
 			 * SIMP_CARD_LAMBDA
 			 *    card({x · P ∣ E ↦ F}) == card({x · P ∣ E})
@@ -3505,15 +3495,15 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
 			}
-			
+
 	    }
 	    return expression;
 	}
 
-	@ProverRule( { "SIMP_SPECIAL_KBOOL_BFALSE", "SIMP_SPECIAL_KBOOL_BTRUE" }) 
+	@ProverRule( { "SIMP_SPECIAL_KBOOL_BFALSE", "SIMP_SPECIAL_KBOOL_BTRUE" })
     @Override
 	public Expression rewrite(BoolExpression expression) {
-		final Expression result; 
+		final Expression result;
 	    %match (Expression expression) {
 	   		/**
              * SIMP_SPECIAL_KBOOL_BFALSE
@@ -3527,7 +3517,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 	   		/**
              * SIMP_SPECIAL_KBOOL_BTRUE
-	    	 * Set Theory:	bool(⊤) = TRUE  
+	    	 * Set Theory:	bool(⊤) = TRUE
 	    	 */
 	    	Bool(BTRUE()) -> {
 				result = ff.makeAtomicExpression(TRUE, null);
@@ -3556,8 +3546,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		}
 		return result;
 	}
-    
-    @ProverRule( {"SIMP_MULTI_SETENUM" } ) 
+
+    @ProverRule( {"SIMP_MULTI_SETENUM" } )
 	@Override
 	public Expression rewrite(SetExtension expression) {
     	final Expression result;
@@ -3578,11 +3568,11 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		    		return result;
 				}
 	    	}
-	    	
+
 		}
 	    return expression;
 	}
-    
+
 	@ProverRule({ "SIMP_DESTR_CONSTR", "SIMP_SPECIAL_COND_BTRUE",
 			"SIMP_SPECIAL_COND_BFALSE", "SIMP_MULTI_COND" })
 	@Override
@@ -3603,7 +3593,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					return result;
 				}
     		}
-    		
+
     		/**
     		 * SIMP_SPECIAL_COND_BTRUE:
     		 * COND(true, E_1, E_2) == E_1
@@ -3645,8 +3635,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
     	}
     	return expression;
     }
-    
-        
+
+
     @ProverRule( { "SIMP_SPECIAL_COMPSET_BFALSE",
     			"SIMP_SPECIAL_COMPSET_BTRUE", "SIMP_SPECIAL_QUNION",
     			"SIMP_COMPSET_IN", "SIMP_COMPSET_SUBSETEQ" } )
@@ -3654,7 +3644,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
     public Expression rewrite(QuantifiedExpression expression) {
     	final Expression result;
     	%match (Expression expression) {
-    	
+
     		/**
 	    	 * SIMP_SPECIAL_COMPSET_BFALSE
 	    	 *    {x · ⊥ ∣ x} == ∅
@@ -3666,7 +3656,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		    		return result;
 	    		}
 	    	}
-	    	
+
 	    	/**
 	    	 * SIMP_SPECIAL_COMPSET_BTRUE
 	    	 *    {x · ⊤ ∣ x} == Ty (where the type of x is Ty)
@@ -3678,7 +3668,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		    		return result;
 	    		}
 	    	}
-	    	
+
 	    	/**
 	    	 * SIMP_SPECIAL_QUNION
 	    	 *    ⋃x · ⊥ ∣ E == ∅
@@ -3690,7 +3680,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		    		return result;
 	    		}
 	    	}
-	    	
+
 	    	/**
 	    	 * SIMP_COMPSET_IN
 	    	 *    {x · x∈S ∣ x} == S
@@ -3704,7 +3694,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
     				return result;
 	    		}
 	    	}
-	    	
+
 	    	/**
 	    	 * SIMP_COMPSET_SUBSETEQ
 	    	 *    {x · x⊆S ∣ x} == ℙ(S)
@@ -3717,7 +3707,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
     				return result;
 	    		}
 	    	}
-	 
+
     	}
     	return expression;
     }
