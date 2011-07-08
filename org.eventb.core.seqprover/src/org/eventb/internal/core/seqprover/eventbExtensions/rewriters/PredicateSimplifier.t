@@ -207,6 +207,17 @@ public class PredicateSimplifier extends DefaultRewriter {
 		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
 	}
 
+	private Predicate distributeQuantifier(int tag, BoundIdentDecl[] bids,
+			Predicate... children) {
+		final int length = children.length;
+		final Predicate[] newChildren = new Predicate[length];
+		for (int i = 0; i < length; ++i) {
+			newChildren[i] = makeQuantifiedPredicate(tag, bids, children[i]);
+		}
+
+		return makeAssociativePredicate(tag == FORALL ? LAND : LOR, newChildren);
+	}
+
 	%include {FormulaV2.tom}
 
 	@ProverRule( { "SIMP_SPECIAL_AND_BTRUE", "SIMP_SPECIAL_AND_BFALSE",
@@ -468,23 +479,15 @@ public class PredicateSimplifier extends DefaultRewriter {
 	public Predicate rewrite(QuantifiedPredicate predicate) {
 		final Predicate result;
 		%match (Predicate predicate) {
-
 			/**
 			 * SIMP_FORALL_AND
 			 *    ∀x·(P ∧ ... ∧ Q) == (∀x·P) ∧ ... ∧ ∀(x·Q)
 			 */
-			ForAll(boundIdentifiers, Land(children)) -> {
-				// FIXME factor out common code forall-exists
+			ForAll(bids, Land(children)) -> {
 				if (withQuantDistr) {
-				Predicate [] predicates = new Predicate[`children.length];
-				for (int i = 0; i < `children.length; ++i) {
-					Predicate qPred = makeQuantifiedPredicate(FORALL, `boundIdentifiers, `children[i]);
-					predicates[i] = qPred;
-				}
-
-				result = makeAssociativePredicate(LAND, predicates);
-				trace(predicate, result, "SIMP_FORALL_AND");
-				return result;
+					result = distributeQuantifier(FORALL, `bids, `children);
+					trace(predicate, result, "SIMP_FORALL_AND");
+					return result;
 				}
 			}
 
@@ -492,17 +495,11 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 * SIMP_EXISTS_OR
 			 *    ∃x·(P ⋁ ... ⋁ Q) == (∃x·P) ⋁ ... ⋁ ∃(x·Q)
 			 */
-			Exists(boundIdentifiers, Lor(children)) -> {
+			Exists(bids, Lor(children)) -> {
 				if (withQuantDistr) {
-				Predicate [] predicates = new Predicate[`children.length];
-				for (int i = 0; i < `children.length; ++i) {
-					Predicate qPred = makeQuantifiedPredicate(EXISTS, `boundIdentifiers, `children[i]);
-					predicates[i] = qPred;
-				}
-
-				result = makeAssociativePredicate(LOR, predicates);
-				trace(predicate, result, "SIMP_EXISTS_OR");
-				return result;
+					result = distributeQuantifier(EXISTS, `bids, `children);
+					trace(predicate, result, "SIMP_EXISTS_OR");
+					return result;
 				}
 			}
 			
