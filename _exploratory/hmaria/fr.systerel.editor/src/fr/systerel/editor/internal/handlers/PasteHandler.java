@@ -10,8 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import static fr.systerel.editor.internal.actions.operations.OperationUtils.copyElements;
-import static fr.systerel.editor.internal.actions.operations.OperationUtils.showError;
+import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.copyElements;
 import static org.eventb.internal.ui.utils.Messages.title_nothingToPaste;
 
 import org.eclipse.jface.action.IAction;
@@ -26,6 +25,7 @@ import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.RodinEditor;
+import fr.systerel.editor.internal.editors.RodinEditorUtils;
 
 /**
  * @author "Thomas Muller"
@@ -65,7 +65,7 @@ public class PasteHandler extends AbstractEditionHandler {
 		// Check for the existing of the elements to be pasted.
 		for (IRodinElement e : elements) {
 			if (!e.exists()) {
-				showError(title_nothingToPaste, "The element " + element
+				RodinEditorUtils.showError(title_nothingToPaste, "The element " + element
 						+ "does not exist");
 			}
 		}

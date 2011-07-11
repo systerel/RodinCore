@@ -16,7 +16,7 @@ import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 
-import fr.systerel.editor.internal.actions.operations.History;
+import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
 import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.AbstractEditionHandler;
@@ -35,7 +35,7 @@ public abstract class AbstractRenameElementHandler extends
 		final IAttributeDesc desc = ElementDescRegistry.getInstance()
 				.getElementDesc(type).getAutoNameAttribute();
 
-		History.getInstance().addOperation(
+		RodinEditorHistory.getInstance().addOperation(
 				OperationFactory.renameElements(root, type,
 						desc.getManipulation(), prefix));
 		return null;

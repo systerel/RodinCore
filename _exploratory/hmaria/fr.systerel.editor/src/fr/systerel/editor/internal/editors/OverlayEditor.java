@@ -78,8 +78,8 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 import fr.systerel.editor.internal.actions.StyledTextEditAction;
 import fr.systerel.editor.internal.actions.operations.AtomicOperation;
-import fr.systerel.editor.internal.actions.operations.History;
 import fr.systerel.editor.internal.actions.operations.OperationFactory;
+import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.documentModel.RodinTextStream;
@@ -391,7 +391,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 			}
 			final AtomicOperation op = OperationFactory.changeAttribute(manip,
 					ielement, value);
-			History.getInstance().addOperation(op);
+			RodinEditorHistory.getInstance().addOperation(op);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -491,7 +491,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 					|| !element.getAttributeValue(type).equals(newValue)) {
 				final AtomicOperation op = OperationFactory.changeAttribute(
 						element, newValue);
-				History.getInstance().addOperation(op);
+				RodinEditorHistory.getInstance().addOperation(op);
 			}
 		} catch (RodinDBException e) {
 			System.err

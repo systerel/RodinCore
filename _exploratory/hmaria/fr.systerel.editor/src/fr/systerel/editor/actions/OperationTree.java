@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.internal.actions.operations;
+package fr.systerel.editor.actions;
 
 import java.util.Collection;
 
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
-interface OperationTree {
+public interface OperationTree {
 	
 	String getLabel();
 	
@@ -31,6 +31,9 @@ interface OperationTree {
 			throws RodinDBException;
 
 	void setParent(IInternalElement element) ;
+	
 	Collection<IInternalElement> getCreatedElements();
+	
 	IInternalElement getCreatedElement();
+	
 }

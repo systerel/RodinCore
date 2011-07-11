@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
+
+import fr.systerel.editor.actions.OperationBuilder;
 
 public class OperationFactory {
 
@@ -39,18 +41,16 @@ public class OperationFactory {
 	public static <T extends IInternalElement> AtomicOperation createElementGeneric(
 			IInternalElement parent, final IInternalElementType<T> type,
 			final IInternalElement sibling) {
-		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
 				getRodinFileUndoContext(parent.getRoot()),
-				builder.createDefaultElement(parent, type, sibling));
+				OperationBuilder.getDefault().createDefaultElement(parent, type, sibling));
 		op.setLabel("Create Element");
 		return op;
 	}
-
+	
 	public static AtomicOperation deleteElement(IInternalElement element) {
-		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
-				getRodinFileUndoContext(element), builder.deleteElement(
+				getRodinFileUndoContext(element), OperationBuilder.getDefault().deleteElement(
 						element, true));
 		op.setLabel("Delete Element");
 		return op;
@@ -60,9 +60,8 @@ public class OperationFactory {
 			boolean force) {
 		assert elements != null;
 		assert elements.length > 0;
-		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
-				getRodinFileUndoContext(elements[0]), builder.deleteElement(
+				getRodinFileUndoContext(elements[0]), OperationBuilder.getDefault().deleteElement(
 						elements, force));
 		op.setLabel("Delete Element");
 		return op;
@@ -86,10 +85,9 @@ public class OperationFactory {
 	 */
 	public static <E extends IInternalElement> AtomicOperation changeAttribute(
 			IAttributeManipulation manipulation, E element, String value) {
-		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
 				getRodinFileUndoContext(element.getRoot()),
-				builder.changeAttribute(manipulation, element, value));
+				OperationBuilder.getDefault().changeAttribute(manipulation, element, value));
 		op.setLabel("Change Attribute");
 		return op;
 	}
@@ -102,10 +100,9 @@ public class OperationFactory {
 	 */
 	public static <E extends IInternalElement> AtomicOperation changeAttribute(
 			E element, IAttributeValue value) {
-		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
 				getRodinFileUndoContext(element.getRoot()),
-				builder.changeAttribute(element, value));
+				OperationBuilder.getDefault().changeAttribute(element, value));
 		op.setLabel("Change Attribute");
 		return op;
 	}
@@ -113,40 +110,13 @@ public class OperationFactory {
 	public static <T extends IInternalElement> AtomicOperation renameElements(
 			IInternalElement root, IInternalElementType<T> type,
 			IAttributeManipulation factory, String prefix) {
-		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
-				getRodinFileUndoContext(root), builder.renameElement(root,
-						type, factory, prefix));
+				getRodinFileUndoContext(root), OperationBuilder.getDefault()
+						.renameElement(root, type, factory, prefix));
 		op.setLabel("Rename Element");
 		return op;
 	}
-	
-//
-//	/**
-//	 * Return an operation to copy elements into parent.
-//	 * 
-//	 * @param parent
-//	 *            The parent of the new elements
-//	 * 
-//	 * @param elements
-//	 *            an IInternalElement array. Elements to copy
-//	 * 
-//	 * @param sibling
-//	 *            the sibling element before which the copy should be inserted,
-//	 *            or <code>null</code> if the copy should be inserted as the
-//	 *            last child of the container
-//	 */
-//	public static AtomicOperation copyElements(IInternalElement parent,
-//			IRodinElement[] elements, IInternalElement sibling) {
-//		final OperationBuilder builder = new OperationBuilder();
-//		final AtomicOperation op = new AtomicOperation(
-//				getRodinFileUndoContext(parent), builder.copyElements(parent,
-//						elements, sibling));
-//		op.setLabel("Copy Element");
-//		return op;
-//	}
-//
-//
+
 	/**
 	 * Create an Operation to move an element.
 	 * <p>
@@ -174,10 +144,9 @@ public class OperationFactory {
 	public static AtomicOperation move(IInternalElement root,
 			IInternalElement movedElement, IInternalElement newParent,
 			IInternalElement nextSibling) {
-		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
-				getRodinFileUndoContext(root), builder.move(movedElement,
-						newParent, nextSibling));
+				getRodinFileUndoContext(root), OperationBuilder.getDefault()
+						.move(movedElement, newParent, nextSibling));
 		op.setLabel("Move");
 		return op;
 
@@ -199,10 +168,9 @@ public class OperationFactory {
 	 */
 	public static AtomicOperation copyElements(IInternalElement parent,
 			IRodinElement[] elements, IInternalElement sibling) {
-		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
-				getRodinFileUndoContext(parent), builder.copyElements(parent,
-						elements, sibling));
+				getRodinFileUndoContext(parent), OperationBuilder.getDefault()
+						.copyElements(parent, elements, sibling));
 		op.setLabel("Copy Element");
 		return op;
 	}

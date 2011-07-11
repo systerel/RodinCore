@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,9 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
+import fr.systerel.editor.actions.*;
 
-class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
+public class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 
 	private IInternalElement parent;
 	private final IInternalElementType<T> type;
@@ -45,8 +46,7 @@ class CreateElementGeneric<T extends IInternalElement> extends OperationLeaf {
 		final IInternalElement root = parent.getRoot();
 		element = ElementDescRegistry.getInstance().createElement(root,
 				parent, type, sibling);
-		final OperationBuilder builder = new OperationBuilder();
-		operationDelete = builder.deleteElement(element, true);
+		operationDelete = OperationBuilder.getDefault().deleteElement(element, true);
 	}
 
 	@Override

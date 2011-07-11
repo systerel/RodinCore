@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.ImplicitChildProviderAssociation;
@@ -36,9 +37,15 @@ import fr.systerel.editor.internal.presentation.updaters.ProblemMarkerAnnotation
  * The activator class controls the plug-in life cycle
  */
 public class EditorPlugin extends AbstractUIPlugin {
+	
+	// The constant indicating debug
+	public static boolean DEBUG;
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "fr.systerel.editor";
+
+	// The debug prefix for debug messages
+	public static final String DEBUG_PREFIX = "***** RodinEditor :";
 
 	// Tracing options
 	private static final String SELECTION_TRACE = PLUGIN_ID + "/debug/selection"; //$NON-NLS-1$
@@ -51,8 +58,6 @@ public class EditorPlugin extends AbstractUIPlugin {
 
 	// The shared instance
 	private static EditorPlugin plugin;
-	
-	public static boolean DEBUG;
 	
 	/**
 	 * The constructor
@@ -141,7 +146,6 @@ public class EditorPlugin extends AbstractUIPlugin {
 	
 	/**
 	 * Get the active workbench page.
-	 * <p>
 	 * 
 	 * @return current active workbench page
 	 */
@@ -151,12 +155,20 @@ public class EditorPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Getting the current active page from the active workbench window.
-	 * <p>
 	 * 
 	 * @return current active workbench page
 	 */
 	private IWorkbenchPage internalGetActivePage() {
-		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		return getActiveWorkbenchWindow().getActivePage();
+	}
+
+	/**
+	 * Get the current active workbench window.
+	 * 
+	 * @return the current active workbench window
+	 */
+	public static IWorkbenchWindow getActiveWorkbenchWindow() {
+		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
-class DeleteElementLeaf extends OperationLeaf {
+import fr.systerel.editor.actions.OperationTree;
+
+public class DeleteElementLeaf extends OperationLeaf {
 
 	private final IInternalElement element;
 	private final boolean force;

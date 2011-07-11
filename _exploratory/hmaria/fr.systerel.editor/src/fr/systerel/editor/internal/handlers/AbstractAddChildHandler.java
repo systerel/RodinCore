@@ -15,7 +15,7 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.actions.operations.AtomicOperation;
-import fr.systerel.editor.internal.actions.operations.History;
+import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
 import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
@@ -47,7 +47,7 @@ public abstract class AbstractAddChildHandler extends AbstractEditionHandler {
 		}
 		final AtomicOperation op = OperationFactory.createElementGeneric(
 				localParent, type, localNextSibling);
-		History.getInstance().addOperation(op);
+		RodinEditorHistory.getInstance().addOperation(op);
 	}
 
 	@Override

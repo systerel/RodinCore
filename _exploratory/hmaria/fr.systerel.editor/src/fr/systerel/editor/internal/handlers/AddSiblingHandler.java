@@ -18,7 +18,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.actions.operations.AtomicOperation;
-import fr.systerel.editor.internal.actions.operations.History;
+import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
 import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
@@ -38,7 +38,7 @@ public class AddSiblingHandler extends AbstractEditionHandler {
 		final AtomicOperation op = OperationFactory.createElementGeneric(
 				info.getParent(), info.getElementType(),
 				info.getSibling());
-		History.getInstance().addOperation(op);
+		RodinEditorHistory.getInstance().addOperation(op);
 		return "Added Sibling";
 	}
 	

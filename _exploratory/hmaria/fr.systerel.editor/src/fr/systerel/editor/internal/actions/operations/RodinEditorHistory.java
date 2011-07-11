@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.actions.operations;
 
+import static fr.systerel.editor.internal.editors.RodinEditorUtils.showUnexpectedError;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,18 +26,21 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.eventb.internal.ui.UIUtils;
 
-public class History {
+import fr.systerel.editor.actions.IRodinHistory;
 
-	private static History singleton;
+
+public class RodinEditorHistory implements IRodinHistory {
+
+	private static IRodinHistory singleton;
 	private final IOperationHistory history;
 	private int limit;
 	private final Set<IUndoContext> contexts;
 	final String PROPERTY_NAME = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE;
 
-	private History() {
-		history = PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
+	private RodinEditorHistory() {
+		history = PlatformUI.getWorkbench().getOperationSupport()
+				.getOperationHistory();
 		limit = getPreferencesLimit();
 		contexts = new HashSet<IUndoContext>();
 		EditorsUI.getPreferenceStore().addPropertyChangeListener(
@@ -53,9 +58,9 @@ public class History {
 		return EditorsUI.getPreferenceStore().getInt(PROPERTY_NAME);
 	}
 
-	public static synchronized History getInstance() {
+	public static synchronized IRodinHistory getInstance() {
 		if (singleton == null) {
-			singleton = new History();
+			singleton = new RodinEditorHistory();
 		}
 		return singleton;
 	}
@@ -66,6 +71,7 @@ public class History {
 		}
 	}
 
+	@Override
 	public void addOperation(AtomicOperation operation) {
 		if (operation == null) {
 			return;
@@ -77,8 +83,8 @@ public class History {
 		try {
 			history.execute(operation, null, null);
 		} catch (ExecutionException e) {
-			UIUtils.showUnexpectedError(e.getCause(),
-					"when executing operation:" + operation.getLabel());
+			showUnexpectedError(e.getCause(), "when executing operation:"
+					+ operation.getLabel());
 		}
 		setLimit(operation.getContexts());
 	}
@@ -91,31 +97,34 @@ public class History {
 		}
 		return true;
 	}
-	
-	
+
+	@Override
 	public void redo(IUndoContext context) {
 		try {
 			history.redo(context, null, null);
 		} catch (ExecutionException e) {
-			UIUtils.showUnexpectedError(e.getCause(), "when redoing operation:"
+			showUnexpectedError(e.getCause(), "when redoing operation:"
 					+ context.getLabel());
 		}
 	}
 
+	@Override
 	public void undo(IUndoContext context) {
 		try {
 			history.undo(context, null, null);
 		} catch (ExecutionException e) {
-			UIUtils.showUnexpectedError(e.getCause(), "when undoing operation:"
+			showUnexpectedError(e.getCause(), "when undoing operation:"
 					+ context.getLabel());
 		}
 	}
 
+	@Override
 	public void dispose(IUndoContext context) {
 		contexts.remove(context);
 		history.dispose(context, true, true, true);
 	}
 
+	@Override
 	public String getNextUndoLabel(IUndoContext context) {
 		final IUndoableOperation op = history.getUndoOperation(context);
 		if (op != null && op.canUndo()) {
@@ -125,19 +134,23 @@ public class History {
 		}
 	}
 
+	@Override
 	public void setLimit(int limit) {
 		this.limit = limit;
 		setLimit(contexts.toArray(new IUndoContext[contexts.size()]));
 	}
 
+	@Override
 	public boolean isUndo(IUndoContext context) {
 		return history.canUndo(context);
 	}
 
+	@Override
 	public boolean isRedo(IUndoContext context) {
 		return history.canRedo(context);
 	}
 
+	@Override
 	public String getNextRedoLabel(IUndoContext context) {
 		final IUndoableOperation op = history.getRedoOperation(context);
 		if (op != null && op.canRedo()) {
@@ -147,6 +160,7 @@ public class History {
 		}
 	}
 
+	@Override
 	public void addOperationHistoryListener(IOperationHistoryListener listener) {
 		history.addOperationHistoryListener(listener);
 	}

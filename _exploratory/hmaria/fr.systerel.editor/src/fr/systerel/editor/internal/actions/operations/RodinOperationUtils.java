@@ -10,8 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.actions.operations;
 
+import static fr.systerel.editor.internal.editors.RodinEditorUtils.showInfo;
 import static org.eventb.internal.ui.EventBUtils.isReadOnly;
-import static org.eventb.internal.ui.UIUtils.showInfo;
 import static org.eventb.internal.ui.utils.Messages.dialogs_pasteNotAllowed;
 import static org.eventb.internal.ui.utils.Messages.dialogs_readOnlyElement;
 import static org.eventb.internal.ui.utils.Messages.title_canNotPaste;
@@ -20,27 +20,22 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
-import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
+import fr.systerel.editor.EditorPlugin;
+import fr.systerel.editor.internal.editors.RodinEditorUtils;
+
 /**
- * @author "Thomas Muller"
  *
  */
-public class OperationUtils {
+public class RodinOperationUtils {
 	
 	/**
 	 * Perform a copy operation through the undo history.
@@ -48,7 +43,7 @@ public class OperationUtils {
 	 * If the element type of elements to copy and the target are equals, the
 	 * new elements is placed after target. Else the new element is placed at
 	 * the end of the children list.
-	 * 
+	 * </p>
 	 * @param target
 	 *            The selected element.
 	 * @param elements
@@ -72,14 +67,14 @@ public class OperationUtils {
 				e.printStackTrace();
 			}
 		} else {
-			UIUtils.showError(
+			RodinEditorUtils.showError(
 					title_canNotPaste,
 					dialogs_pasteNotAllowed(typeNotAllowed.getName(), target
 							.getElementType().getName()));
 			return;
 		}
-		if (EventBEditorUtils.DEBUG)
-			EventBEditorUtils.debug("PASTE SUCCESSFULLY");
+		if (EditorPlugin.DEBUG)
+			RodinEditorUtils.debug("PASTE SUCCESSFULLY");
 	}
 	
 	/**
@@ -87,7 +82,7 @@ public class OperationUtils {
 	 */
 	private static void copyElements(IRodinElement[] handleData,
 			IRodinElement target, IRodinElement nextSibling) {
-		History.getInstance().addOperation(
+		RodinEditorHistory.getInstance().addOperation(
 				OperationFactory.copyElements((IInternalElement) target,
 						handleData, (IInternalElement) nextSibling));
 	}
@@ -122,7 +117,7 @@ public class OperationUtils {
 				return element.getElementName();
 			}
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "when checking for read-only element");
+			RodinEditorUtils.log(e, "when checking for read-only element");
 		}
 		return "";
 	}
@@ -165,31 +160,6 @@ public class OperationUtils {
 			}
 		}
 		return true;
-	}
-	
-	private static void syncExec(Runnable runnable) {
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		display.syncExec(runnable);
-	}
-	
-	private static Shell getShell() {
-		return EventBUIPlugin.getActiveWorkbenchWindow().getShell();
-	}
-	
-	/**
-	 * Opens an error dialog to the user displaying the given message.
-	 * 
-	 * @param message
-	 *            The dialog message displayed
-	 * @param title 
-	 */
-	public static void showError(final String title, final String message) {
-		syncExec(new Runnable() {
-			@Override
-			public void run() {
-				MessageDialog.openError(getShell(), title, message);
-			}
-		});
 	}
 
 }

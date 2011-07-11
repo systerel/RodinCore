@@ -399,10 +399,10 @@ public class RodinEditor extends TextEditor {
 	 */
 	public void resync(final IProgressMonitor monitor, final boolean silent) {
 		if (styledText != null && !styledText.isDisposed()) {
-			final Display display = styledText.getDisplay();
 			final int currentOffset = getCurrentOffset();
 			final int topIndex = styledText.getTopIndex();
 			final ILElement[] selection = selController.getSelectedElements();
+			final Display display = styledText.getDisplay();
 			display.asyncExec(new Runnable() {
 				@Override
 				public void run() {
@@ -419,9 +419,10 @@ public class RodinEditor extends TextEditor {
 					styledText.setCaretOffset(currentOffset);
 					selController.selectItems(selection);
 					if (DEBUG) {
-						System.out.println("\\ Finished refreshing Rodin Editor.");
+						System.out
+								.println("\\ Finished refreshing Rodin Editor.");
 						final long time = System.currentTimeMillis() - start;
-						System.out.println("\\ Elapsed time : " + time  +"ms.");
+						System.out.println("\\ Elapsed time : " + time + "ms.");
 					}
 				}
 			});

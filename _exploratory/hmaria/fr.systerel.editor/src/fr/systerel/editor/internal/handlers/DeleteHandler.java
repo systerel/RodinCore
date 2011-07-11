@@ -14,8 +14,9 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.actions.operations.AtomicOperation;
-import fr.systerel.editor.internal.actions.operations.History;
+import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
 import fr.systerel.editor.internal.actions.operations.OperationFactory;
+import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.editors.SelectionController;
@@ -41,7 +42,7 @@ public class DeleteHandler extends AbstractEditionHandler {
 		} else {
 			op = deleteElements(selected);
 		}
-		History.getInstance().addOperation(op);
+		RodinEditorHistory.getInstance().addOperation(op);
 		return "Element deleted.";
 	}
 
@@ -60,6 +61,10 @@ public class DeleteHandler extends AbstractEditionHandler {
 	}
 
 	private AtomicOperation deleteCurrentElement(RodinEditor editor, int offset) {
+		final EditorElement item = editor.getDocumentMapper().findItemContaining(offset);
+		if (item != null  && item.getLightElement() != null) {
+			return OperationFactory.deleteElement(item.getLightElement().getElement());
+		}
 		final Interval inter = editor.getDocumentMapper()
 				.findFirstElementIntervalAfter(offset);
 		if (inter == null)

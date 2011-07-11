@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009 Systerel and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2008, 2011 Systerel and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
  * Contributors:
- *     Systerel - initial API and implementation
+ *     Systerel - Initial API and implementation
  *******************************************************************************/
 package fr.systerel.editor.internal.actions;
 
@@ -22,7 +22,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import fr.systerel.editor.internal.actions.operations.History;
+import fr.systerel.editor.actions.IRodinHistory;
+import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
 import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.editors.RodinEditor;
 
@@ -111,7 +112,7 @@ public abstract class HistoryAction extends Action implements
 	protected IWorkbenchWindow workbenchWindow;
 
 	// Short-cut for accessing the history
-	protected static final History history = History.getInstance();
+	protected static final IRodinHistory history = RodinEditorHistory.getInstance();
 
 	public HistoryAction(String id, String text) {
 		super(id);

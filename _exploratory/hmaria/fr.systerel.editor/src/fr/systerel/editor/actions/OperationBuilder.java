@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.internal.actions.operations;
+package fr.systerel.editor.actions;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -24,8 +24,27 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
-@SuppressWarnings("restriction")
-class OperationBuilder {
+import fr.systerel.editor.internal.actions.operations.ChangeAttribute;
+import fr.systerel.editor.internal.actions.operations.ChangeAttributeWithManipulation;
+import fr.systerel.editor.internal.actions.operations.CopyElement;
+import fr.systerel.editor.internal.actions.operations.CreateElementGeneric;
+import fr.systerel.editor.internal.actions.operations.CreateIdenticalElement;
+import fr.systerel.editor.internal.actions.operations.DeleteElementLeaf;
+import fr.systerel.editor.internal.actions.operations.Move;
+import fr.systerel.editor.internal.actions.operations.OperationCreateElement;
+import fr.systerel.editor.internal.actions.operations.OperationNode;
+
+public class OperationBuilder {
+
+	private final static OperationBuilder INSTANCE = new OperationBuilder();
+
+	private OperationBuilder() {
+		// singleton
+	}
+
+	public static OperationBuilder getDefault() {
+		return INSTANCE;
+	}
 
 	public OperationTree deleteElement(IInternalElement element, boolean force) {
 		final OperationTree cmdCreate = getCommandCreateElement(element);
@@ -41,7 +60,7 @@ class OperationBuilder {
 		return op;
 	}
 
-	private <T extends IInternalElement> OperationCreateElement getCreateElement(
+	public <T extends IInternalElement> OperationCreateElement getCreateElement(
 			IInternalElement parent, IInternalElementType<T> type,
 			IInternalElement sibling, IAttributeValue[] values) {
 		OperationCreateElement op = new OperationCreateElement(
@@ -53,15 +72,28 @@ class OperationBuilder {
 	/**
 	 * Return an operation to create an IInternalElement with a string attribute
 	 */
-	public <T extends IInternalElement> OperationCreateElement createElementOneStringAttribute(
-			IInternalElement parent, IInternalElementType<T> typeElement,
+	public <T extends IInternalElement> OperationTree createElementOneStringAttribute(
+			IInternalElement root, IInternalElementType<T> elementType,
 			IInternalElement sibling, IAttributeType.String type, String string) {
-		final List<IAttributeValue>values = new LinkedList<IAttributeValue>();
+		final List<IAttributeValue> values = new LinkedList<IAttributeValue>();
 		if (string != null) {
 			values.add(type.makeValue(string));
 		}
-		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
-		return getCreateElement(parent, typeElement, sibling, array);
+		final IAttributeValue[] array = values
+				.toArray(new IAttributeValue[values.size()]);
+		return getCreateElement(root, elementType, sibling, array);
+	}
+
+	public <T extends IInternalElement> OperationTree createElementOneStringAttribute(
+			IInternalElement root, IInternalElementType<T> elementType,
+			org.rodinp.core.IAttributeType.String type, String[] identifiers) {
+		assert identifiers != null;
+		final OperationNode op = new OperationNode();
+		for (int i = 0; i < identifiers.length; i++) {
+			op.addCommand(createElementOneStringAttribute(root, elementType,
+					null, type, identifiers[i]));
+		}
+		return op;
 	}
 
 	/**
@@ -96,12 +128,9 @@ class OperationBuilder {
 		cmd.addCommand(new CreateIdenticalElement(element));
 		try {
 			if (element.hasChildren()) {
-				cmd
-						.addCommand(getCommandCreateChildren(element
-								.getChildren()));
+				cmd.addCommand(getCommandCreateChildren(element.getChildren()));
 			}
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return cmd;
@@ -131,7 +160,7 @@ class OperationBuilder {
 		final ChangeAttribute op = new ChangeAttribute(element, value);
 		return op;
 	}
-	
+
 	private OperationTree copyElement(IInternalElement parent,
 			IInternalElement element, IInternalElement sibling) {
 		return new CopyElement(parent, element, sibling);
@@ -141,7 +170,8 @@ class OperationBuilder {
 			IRodinElement[] elements, IInternalElement sibling) {
 		OperationNode op = new OperationNode();
 		for (IRodinElement element : elements) {
-			op.addCommand(copyElement(parent, (IInternalElement) element, sibling));
+			op.addCommand(copyElement(parent, (IInternalElement) element,
+					sibling));
 		}
 		return op;
 	}
@@ -158,9 +188,9 @@ class OperationBuilder {
 		try {
 			final List<T> elements = new ArrayList<T>();
 			UIUtils.addImplicitChildrenOfType(elements, parent, type);
-			
-			BigInteger counter = new BigInteger(UIUtils
-					.getFreeElementLabelIndex(elements, prefix));
+
+			BigInteger counter = new BigInteger(
+					UIUtils.getFreeElementLabelIndex(elements, prefix));
 			for (IInternalElement element : parent.getChildrenOfType(type)) {
 				op.addCommand(changeAttribute(factory, element, prefix
 						+ counter));
@@ -171,9 +201,37 @@ class OperationBuilder {
 				op.addCommand(renameElement(ie, type, factory, prefix));
 			}
 		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return op;
 	}
+
+	public <T extends IInternalElement> OperationCreateElement createElementTwoStringAttribute(
+			IInternalElement parent, IInternalElementType<T> typeElement,
+			IAttributeType.String type1, IAttributeType.String type2,
+			String string1, String string2) {
+		final List<IAttributeValue>values = new LinkedList<IAttributeValue>();
+		if (string1 != null) {
+			values.add(type1.makeValue(string1));
+		}
+		if (string2 != null) {
+			values.add(type2.makeValue(string2));
+		}
+		final IAttributeValue[] array = values.toArray(new IAttributeValue[values.size()]);
+		return getCreateElement(parent, typeElement, null, array);
+	}
+
+
+	public <T extends IInternalElement> OperationNode createElementTwoStringAttribute(
+			IInternalElement parent, IInternalElementType<T> typeElement,
+			IAttributeType.String type1, IAttributeType.String type2,
+			String[] string1, String[] string2) {
+		OperationNode op = new OperationNode();
+		for (int i = 0; i < string1.length; i++) {
+			op.addCommand(createElementTwoStringAttribute(parent, typeElement,
+					type1, type2, string1[i], string2[i]));
+		}
+		return op;
+	}
+
 }

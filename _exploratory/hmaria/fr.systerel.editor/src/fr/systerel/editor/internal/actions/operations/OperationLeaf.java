@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,14 +15,15 @@ import java.util.Collection;
 
 import org.rodinp.core.IInternalElement;
 
-abstract class OperationLeaf extends AbstractEventBOperation implements OperationTree {
+import fr.systerel.editor.actions.OperationTree;
+
+public abstract class OperationLeaf extends AbstractEventBOperation implements OperationTree {
 
 	private ArrayList<IInternalElement> createdElements;
 
 	public OperationLeaf(String label) {
 		super(label);
 		createdElements = new ArrayList<IInternalElement>();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

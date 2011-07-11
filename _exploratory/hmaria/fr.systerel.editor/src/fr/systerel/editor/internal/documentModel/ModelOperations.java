@@ -17,7 +17,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.actions.operations.AtomicOperation;
-import fr.systerel.editor.internal.actions.operations.History;
+import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
 import fr.systerel.editor.internal.actions.operations.OperationFactory;
 
 /**
@@ -113,7 +113,7 @@ public class ModelOperations {
 			final AtomicOperation op = OperationFactory.move(targetParent
 					.getRoot().getElement(), element.getElement(), targetParent
 					.getElement(), nextSibling);
-			History.getInstance().addOperation(op);
+			RodinEditorHistory.getInstance().addOperation(op);
 			return true;
 		}
 	}
