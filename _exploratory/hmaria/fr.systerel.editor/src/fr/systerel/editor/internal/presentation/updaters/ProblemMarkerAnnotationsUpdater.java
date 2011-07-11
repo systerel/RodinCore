@@ -189,9 +189,8 @@ public class ProblemMarkerAnnotationsUpdater {
 		try {
 			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 			marker.setAttribute(IMarker.CHAR_START, pos.getStart());
-			// IMarker.CHAR_END claims it is exclusive
-			// but it behaves inclusively (like EditPos)
-			marker.setAttribute(IMarker.CHAR_END, pos.getEnd());
+			// IMarker.CHAR_END is exclusive
+			marker.setAttribute(IMarker.CHAR_END, pos.getEnd() + 1);
 		} catch (CoreException e) {
 			// ignore failure
 		}
@@ -260,7 +259,7 @@ public class ProblemMarkerAnnotationsUpdater {
 		}
 		final int charStart = RodinMarkerUtil.getCharStart(marker);
 		// char end is exclusive with Rodin markers
-		final int charEnd = RodinMarkerUtil.getCharEnd(marker);
+		final int charEnd = RodinMarkerUtil.getCharEnd(marker) - 1;
 		
 		if (!isFormulaBasedMarkerSet(marker)) {
 			if (!isValidStartEnd(charStart, charEnd, false)) {
@@ -273,7 +272,9 @@ public class ProblemMarkerAnnotationsUpdater {
 		if (isFormulaBasedMarker(marker)) {
 			if (isFormulaStartEndSet(marker)) {
 				int fStart = marker.getAttribute(FORMULA_CHAR_START, -1);
-				int fEnd = marker.getAttribute(FORMULA_CHAR_END, -1);
+				// char end is inclusive with EditPos
+				// TODO make EditPos exclusive
+				int fEnd = marker.getAttribute(FORMULA_CHAR_END, -1) - 1;
 				return getNewSubstringPosition(marker, interval, fStart, fEnd);
 			}
 			return getSubstringPosition(marker, interval, charStart, charEnd);				
@@ -314,7 +315,7 @@ public class ProblemMarkerAnnotationsUpdater {
 		if (fStart < 0 || fEnd < 0) {
 			// first access, standard start and end are formula based
 			fStart = charStart;
-			fEnd = charEnd - 1;
+			fEnd = charEnd;
 			// store for future use
 			// standard start and end will become editor based
 			try {
