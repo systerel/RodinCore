@@ -600,7 +600,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 	@Override
 	public void verifyKey(VerifyEvent event) {
-		if (contentProposal.isProposalPopupOpen()) {
+		if (contentProposal.isProposalPopupOpen() && event.character == SWT.CR) {
 			// do not add the return to the text
 			event.doit = false;
 			return;
