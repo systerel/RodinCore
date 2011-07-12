@@ -54,7 +54,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 
 	TreeEditor editor;
 
-	IEventBInputText text;
+	IEventBInputText inputText;
 
 	TreeItem item;
 
@@ -79,7 +79,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 		 */
 		@Override
 		public void handleEvent(Event event) {
-			Text textWidget = text.getTextWidget();
+			Text textWidget = inputText.getTextWidget();
 			final String contents = textWidget.getText();
 			switch (event.type) {
 			case SWT.FocusOut:
@@ -88,7 +88,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 				commit(element, column, RodinKeyboardPlugin.getDefault()
 						.translate(contents));
 				textWidget.getParent().dispose();
-				text.dispose();
+				inputText.dispose();
 				break;
 			case SWT.Verify:
 				// UIUtils.debug("Verify");
@@ -129,14 +129,14 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 					commit(element, column, RodinKeyboardPlugin.getDefault()
 							.translate(contents));
 					textWidget.getParent().dispose();
-					text.dispose();
+					inputText.dispose();
 					event.doit = false;
 					tree.setFocus();
 					break;
 				case SWT.TRAVERSE_ESCAPE:
 					commit(element, column, original);
 					textWidget.getParent().dispose();
-					text.dispose();
+					inputText.dispose();
 					event.doit = false;
 					tree.setFocus();
 					break;
@@ -144,7 +144,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 					commit(element, column, RodinKeyboardPlugin.getDefault()
 							.translate(contents));
 					textWidget.getParent().dispose();
-					text.dispose();
+					inputText.dispose();
 					nextEditableCell();
 					event.doit = false;
 					break;
@@ -152,7 +152,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 					commit(element, column, RodinKeyboardPlugin.getDefault()
 							.translate(contents));
 					textWidget.getParent().dispose();
-					text.dispose();
+					inputText.dispose();
 					prevEditableCell();
 					event.doit = false;
 					break;
@@ -208,7 +208,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 			TreeItem item, IRodinElement element, int column, int delay) {
 		super(text.getTextWidget(), delay);
 		this.adapter = getProposalAdapter(element, column, text.getTextWidget());
-		this.text = text;
+		this.inputText = text;
 		this.element = element;
 		this.editor = editor;
 		this.column = column;
@@ -245,7 +245,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 	 */
 	@Override
 	protected void response() {
-		Text textWidget = text.getTextWidget();
+		Text textWidget = inputText.getTextWidget();
 		String contents = textWidget.getText();
 		commit(element, column, contents);
 	}

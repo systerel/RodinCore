@@ -113,14 +113,14 @@ public class CommentToolTip {
 
 		private ICommentedElement element;
 
-		private IEventBInputText text;
+		private IEventBInputText inputText;
 
 		String original;
 
 		public TextListener(IEventBInputText text, int delay,
 				ICommentedElement element) {
 			super(text.getTextWidget(), delay);
-			this.text = text;
+			this.inputText = text;
 			this.element = element;
 			try {
 				this.original = FACTORY.getValue(element, null);
@@ -134,14 +134,14 @@ public class CommentToolTip {
 			switch (event.type) {
 			case SWT.FocusOut:
 				response();
-				text.dispose();
+				inputText.dispose();
 				helpShell.dispose();
 				break;
 			case SWT.Traverse:
 				switch (event.detail) {
 				case SWT.TRAVERSE_ESCAPE:
 					UIUtils.setStringAttribute(element, FACTORY, original, null);
-					text.dispose();
+					inputText.dispose();
 					helpShell.dispose();
 					break;
 				}
@@ -153,7 +153,7 @@ public class CommentToolTip {
 			if (EventBEditorUtils.DEBUG)
 				EventBEditorUtils.debug("Set comment for "
 						+ element.getElementName());
-			final String value = text.getTextWidget().getText();
+			final String value = inputText.getTextWidget().getText();
 			UIUtils.setStringAttribute(element, FACTORY, value, null);
 		}
 
