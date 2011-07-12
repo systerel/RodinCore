@@ -279,12 +279,21 @@ public class OverlayEditor implements IAnnotationModelListener,
 		}
 		if (inter.getElement().isImplicit())
 			return;
-		final int pos = offset - inter.getOffset();
 		
 		interval = inter;
 		if (!editorText.isVisible() && inter != null) {
+			final int pos = editorToOverlayOffset(offset);
 			EditType.handleEdit(this, inter, pos);
 		}
+	}
+	
+	private int editorToOverlayOffset(int offset) {
+		final int startOffset = interval.getOffset();
+		final int startLine = parent.getLineAtOffset(startOffset);
+		final int targetLine = parent.getLineAtOffset(offset);
+		final int overlayLine = targetLine - startLine;
+		final int indentation = interval.getIndentation();
+		return offset - startOffset - overlayLine * indentation;
 	}
 
 	private void changeBooleanValue(Interval inter) {
@@ -315,7 +324,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 			setEventBTranslation(inter);
 		final int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
 		final int end = computeEnd(start, inter.getLength());
-		final int clickOffset = start + pos;
 		final String text;
 		if (inter.getLength() > 0) {
 			final String extracted = parent.getText(start, end);
@@ -337,7 +345,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		} else {
 			bounds = parent.getTextBounds(start, start);
 		}
-		editorText.setCaretOffset(clickOffset - start);
+		editorText.setCaretOffset(pos);
 		editorText.setSize(bounds.width + MARGIN, bounds.height);
 		editorText.setLocation(beginPt.x - 2, beginPt.y); // -2 to place on text
 		editorText.setFont(parent.getFont());
@@ -406,7 +414,17 @@ public class OverlayEditor implements IAnnotationModelListener,
 	public void quitEdition() {
 		editorText.removeModifyListener(eventBTranslator);
 		setVisible(false);
+		final int newEditorOffset = overlayToEditorOffset();
+		parent.setCaretOffset(newEditorOffset);
 		interval = null;
+	}
+	
+	private int overlayToEditorOffset() {
+		final int startOffset = interval.getOffset();
+		final int overlayOffset = editorText.getCaretOffset();
+		final int line = editorText.getLineAtOffset(overlayOffset);
+		final int indentation = interval.getIndentation();
+		return startOffset + overlayOffset + line * indentation;
 	}
 	
 	public boolean isActive() {
