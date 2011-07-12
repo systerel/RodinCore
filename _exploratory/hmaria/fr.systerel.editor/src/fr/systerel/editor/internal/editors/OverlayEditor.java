@@ -339,14 +339,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 		final Point beginPt = (parent.getLocationAtOffset(start));
 		textViewer.setDocument(createDocument(text));
 		
-		final Rectangle bounds;
-		if (start < end) {
-			bounds = parent.getTextBounds(start, end);
-		} else {
-			bounds = parent.getTextBounds(start, start);
-		}
 		editorText.setCaretOffset(pos);
-		editorText.setSize(bounds.width + MARGIN, bounds.height);
+		editorText.setSize(editorText.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		editorText.setLocation(beginPt.x - 2, beginPt.y); // -2 to place on text
 		editorText.setFont(parent.getFont());
 		editorText.setVisible(true);
