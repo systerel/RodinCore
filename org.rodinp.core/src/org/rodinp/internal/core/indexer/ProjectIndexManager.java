@@ -44,6 +44,10 @@ import org.rodinp.internal.core.indexer.tables.RodinIndex;
  * The ProjectIndexManager (PIM) stores and maintains index tables for a single
  * project.
  * 
+ * TODO instead of synchronizing everything, take a snapshot of the tables
+ * before any change, then manage exclusive access to writers, meanwhile read of
+ * the snapshot shall be non exclusive. Would prevents blocking while building.
+ * 
  * @author Nicolas Beauger
  * 
  */
