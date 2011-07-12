@@ -36,6 +36,7 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
@@ -108,6 +109,10 @@ public class RodinEditor extends TextEditor {
 	/** A listener to update overlay editor's contents in case of indirect typing modification (e.g. undo-redo) */
 	private OverlayBackModificationUpdater overlayUpdater;
 
+	private IContextActivation specificContext;
+
+	private IContextActivation defaultContext;
+
 	public RodinEditor() {
 		setEditorContextMenuId(EDITOR_ID);
 		documentProvider = new RodinDocumentProvider(mapper, this);
@@ -120,7 +125,7 @@ public class RodinEditor extends TextEditor {
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		activateAppropriateContext();
+		activateRodinEditorContext();
 		viewer = (ProjectionViewer) getSourceViewer();
 		projectionSupport = new ProjectionSupport(viewer,
 				getAnnotationAccess(), getSharedColors());
@@ -212,20 +217,31 @@ public class RodinEditor extends TextEditor {
 		return viewer;
 	}
 
-	private void activateAppropriateContext() {
+	public void activateRodinEditorContext() {
 		// Activate Event-B Editor Context
 		final IContextService contextService = (IContextService) getSite()
-		.getService(IContextService.class);
+				.getService(IContextService.class);
 		final IInternalElement inputRoot = documentProvider.getInputRoot();
 		if (inputRoot instanceof IMachineRoot) {
-			contextService.activateContext(EditorPlugin.PLUGIN_ID
-					+ ".contexts.rodinEditorMachineScope");
+			specificContext = contextService
+					.activateContext(EditorPlugin.PLUGIN_ID
+							+ ".contexts.rodinEditorMachineScope");
 		} else if (inputRoot instanceof IContextRoot) {
-			contextService.activateContext(EditorPlugin.PLUGIN_ID
-					+ ".contexts.rodinEditorContextScope");
+			specificContext = contextService
+					.activateContext(EditorPlugin.PLUGIN_ID
+							+ ".contexts.rodinEditorContextScope");
 		}
-		contextService.activateContext(EditorPlugin.PLUGIN_ID
+		defaultContext = contextService.activateContext(EditorPlugin.PLUGIN_ID
 				+ ".contexts.rodinEditorDefaultScope");
+	}
+	
+	public void deactivateRodinEditorContext() {
+		final IContextService contextService = (IContextService) getSite()
+				.getService(IContextService.class);
+		if (specificContext != null)
+			contextService.deactivateContext(specificContext);
+		if (defaultContext != null)
+			contextService.deactivateContext(defaultContext);
 	}
 	
 	/**
