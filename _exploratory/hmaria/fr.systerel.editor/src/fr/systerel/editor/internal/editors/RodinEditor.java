@@ -385,7 +385,7 @@ public class RodinEditor extends TextEditor {
 	/** Saves the current changes and quit edition. */
 	public void quitAndSaveEdition() {
 		if (overlayEditor.isActive())
-			overlayEditor.saveAndExit();
+			overlayEditor.updateModelAfterChanges();
 	}
 
 	/**
