@@ -378,10 +378,6 @@ public class RodinEditor extends TextEditor {
 		return overlayEditor.isActive();
 	}
 
-	public void openEdition() {
-		overlayEditor.showAtOffset(styledText.getCaretOffset());
-	}
-
 	/** Saves the current changes and quit edition. */
 	public void quitAndSaveEdition() {
 		if (overlayEditor.isActive())
