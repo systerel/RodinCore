@@ -46,7 +46,7 @@ public class CopyHandler extends AbstractEditorHandler {
 			final IAction copyAction = editor.getOverlayEditorAction(ST.COPY);
 			if (copyAction != null) {
 				copyAction.run();
-				return "Text copied";		
+				return "Copied text from overlay";		
 			}
 			return "Text copy failed";
 		}
@@ -69,9 +69,19 @@ public class CopyHandler extends AbstractEditorHandler {
 		final IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
 		final Clipboard clipboard = new Clipboard(workbench.getDisplay());
 
+		if (elements.isEmpty()) {
+			// Copies selected text
+			final String text = editor.getStyledText().getSelectionText();
+			if (text.isEmpty())
+				return "No selection: copy failed";
+			clipboard.setContents(new Object[] { text },
+					new Transfer[] { TextTransfer.getInstance() });
+			return "Copied text from editor";
+		}
+		
 		// Copies internal element
 		// Copies as Rodin Handle & Text transfer
-		StringBuffer buf = new StringBuffer();
+		final StringBuffer buf = new StringBuffer();
 		int i = 0;
 		for (IRodinElement element : elements) {
 			if (i > 0)
@@ -86,13 +96,7 @@ public class CopyHandler extends AbstractEditorHandler {
 				new Transfer[] { RodinHandleTransfer.getInstance(),
 						TextTransfer.getInstance() });
 
-		return "Copy Rodin element successfully";
-	}
-
-	@Override
-	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
-		return editor.getSelectionController().getSelectedElements().length > 0
-				|| editor.isOverlayActive();
+		return "Copied Rodin element successfully";
 	}
 
 }
