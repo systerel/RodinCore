@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
@@ -173,6 +174,9 @@ public class DNDManager {
 	}
 
 	public void install() {
+		// FIXME DropTarget fails brutally with windows
+		if (isWin32()) return;
+		
 		styledText.setDragDetect(false);
 		// remove standard DND
 		styledText.setData(DND.DRAG_SOURCE_KEY, null);
@@ -189,6 +193,10 @@ public class DNDManager {
 		target.addDropListener(new Dropper());
 		
 		// TODO customize DragSourceEffect, DropTargetEffect
+	}
+
+	private static boolean isWin32() {
+		return Platform.getOS().equals(Platform.OS_WIN32);
 	}
 
 }
