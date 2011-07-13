@@ -11,7 +11,7 @@
 	<target name="allElements">
 		<antcall target="allElementsDelegator" />
 	</target>
-	
+
 	<!-- ===================================================================== -->
 	<!-- ===================================================================== -->
 	<target name="getBaseComponents" depends="checkLocalBase" unless="skipBase">
@@ -71,36 +71,37 @@
 	<!-- ===================================================================== -->
 	<target name="postSetup">
 		<antcall target="getBaseComponents" />
-        <antcall target="copySources" />
-        <!--<antcall target="fixVersions" />-->
+		<antcall target="copySources" />
+		<!--<antcall target="fixVersions" />-->
 	</target>
 
 	<target name="copySources">
-	      <!-- Copy feature and plug-in sources -->
-	        <mkdir dir="${buildDirectory}/features" />
-	        <copy todir="${buildDirectory}/features/fr.systerel.editor">
-	            <fileset dir="${builder}/../../fr.systerel.editor-feature" />
-	        </copy>
-	        
-	        <mkdir dir="${buildDirectory}/plugins" />
-	        <copy todir="${buildDirectory}/plugins/fr.systerel.editor">
-	            <fileset dir="${builder}/../../fr.systerel.editor" />
-	        </copy>
-		
-			<mkdir dir="${buildDirectory}/plugins" />
-			        <copy todir="${buildDirectory}/plugins/org.rodinp.core.emf">
-			            <fileset dir="${builder}/../../org.rodinp.core.emf" />
-			        </copy>
-			
-		
+		<!-- Copy feature and plug-in sources -->
+		<mkdir dir="${buildDirectory}/features" />
+		<copy todir="${buildDirectory}/features/fr.systerel.editor">
+			<fileset dir="${builder}/../../fr.systerel.editor-feature" />
+		</copy>
+
+		<mkdir dir="${buildDirectory}/plugins" />
+		<copy todir="${buildDirectory}/plugins/fr.systerel.editor">
+			<fileset dir="${builder}/../../fr.systerel.editor" />
+		</copy>
+
+		<mkdir dir="${buildDirectory}/plugins" />
+		<copy todir="${buildDirectory}/plugins/fr.systerel.editor.help">
+			<fileset dir="${builder}/../../fr.systerel.editor.help" />
+		</copy>
+
+		<mkdir dir="${buildDirectory}/plugins" />
+		<copy todir="${buildDirectory}/plugins/org.rodinp.core.emf">
+			<fileset dir="${builder}/../../org.rodinp.core.emf" />
+		</copy>
+
 	</target>
 
-    <!-- Fix product version -->
-	<target name="fixVersions"
-		description="Fix product name and artefact versions">
-		<replace
-			file="${buildDirectory}/plugins/org.rodinp.platform/Rodin.product"
-			summary="true">
+	<!-- Fix product version -->
+	<target name="fixVersions" description="Fix product name and artefact versions">
+		<replace file="${buildDirectory}/plugins/org.rodinp.platform/Rodin.product" summary="true">
 			<replacefilter token="%productName" value="Rodin Platform"/>
 			<replacefilter token="@version@" value="${buildVersion}"/>
 		</replace>
@@ -111,7 +112,7 @@
 		</replace>
 	</target>
 
-	
+
 	<!-- ===================================================================== -->
 	<!-- Steps to do before fetching the build elements -->
 	<!-- ===================================================================== -->
@@ -135,7 +136,7 @@
 	<!-- ===================================================================== -->
 	<target name="postProcessRepos">
 	</target>
-	
+
 	<!-- ===================================================================== -->
 	<!-- Steps to do before generating the build scripts. -->
 	<!-- ===================================================================== -->
