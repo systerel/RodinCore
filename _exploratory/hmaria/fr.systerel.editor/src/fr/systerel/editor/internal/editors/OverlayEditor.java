@@ -539,11 +539,11 @@ public class OverlayEditor implements IAnnotationModelListener,
 			StyledText target, StyledText parent, DocumentMapper mapper,
 			Interval inter, boolean redraw) {
 		mapper.synchronizeInterval(inter, text);
+		if (!redraw)
+			return;
 		final int offset = inter.getOffset();
 		final int end = inter.getLastIndex();
 		final int height = getHeight(parent.getText(offset, end), target);
-		if (!redraw)
-			return;
 		target.setRedraw(false);
 		if (!target.getText().isEmpty()) {
 			final Rectangle textBounds = target.getTextBounds(0,
