@@ -480,24 +480,9 @@ public class OverlayEditor implements IAnnotationModelListener,
 		}
 	}
 	
-	public void updateAttribute(IInternalElement element, IAttributeType type,
+	public void updateAttribute(IInternalElement element, IAttributeType.String type,
 			String textValue) {
-		final IAttributeValue.String newValue;
-		if (type == IDENTIFIER_ATTRIBUTE) {
-			newValue = IDENTIFIER_ATTRIBUTE.makeValue(textValue);
-		} else if (type == LABEL_ATTRIBUTE) {
-			newValue = LABEL_ATTRIBUTE.makeValue(textValue);
-		} else if (type == EXPRESSION_ATTRIBUTE) {
-			newValue = EXPRESSION_ATTRIBUTE.makeValue(textValue);
-		} else if (type == PREDICATE_ATTRIBUTE) {
-			newValue = PREDICATE_ATTRIBUTE.makeValue(textValue);
-		} else if (type == ASSIGNMENT_ATTRIBUTE) {
-			newValue = ASSIGNMENT_ATTRIBUTE.makeValue(textValue);
-		} else if (type == COMMENT_ATTRIBUTE) {
-			newValue = COMMENT_ATTRIBUTE.makeValue(textValue);
-		} else {
-			newValue = null;
-		}
+		final IAttributeValue.String newValue = type.makeValue(textValue);
 		try {
 			if (!element.hasAttribute(type)
 					|| !element.getAttributeValue(type).equals(newValue)) {
@@ -553,7 +538,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private static void modifyText(ExtendedModifyEvent event, String text,
 			StyledText target, StyledText parent, DocumentMapper mapper,
 			Interval inter, boolean redraw) {
-		mapper.synchronizeInterval(inter, text);
+//		mapper.synchronizeInterval(inter, text);
 		final int offset = inter.getOffset();
 		final int end = inter.getLastIndex();
 		final int height = getHeight(parent.getText(offset, end), target);
