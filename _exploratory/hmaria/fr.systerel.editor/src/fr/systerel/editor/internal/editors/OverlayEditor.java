@@ -538,7 +538,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private static void modifyText(ExtendedModifyEvent event, String text,
 			StyledText target, StyledText parent, DocumentMapper mapper,
 			Interval inter, boolean redraw) {
-//		mapper.synchronizeInterval(inter, text);
+		mapper.synchronizeInterval(inter, text);
 		final int offset = inter.getOffset();
 		final int end = inter.getLastIndex();
 		final int height = getHeight(parent.getText(offset, end), target);
