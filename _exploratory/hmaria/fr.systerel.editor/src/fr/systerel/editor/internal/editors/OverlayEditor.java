@@ -537,16 +537,19 @@ public class OverlayEditor implements IAnnotationModelListener,
 			Interval inter) {
 		mapper.synchronizeInterval(inter, text);
 		target.setRedraw(false);
-		if (!target.getText().isEmpty()) {
-			final Point size = target.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			if (!size.equals(target.getSize())) {
-				target.setSize(size);
+		try {
+			if (!target.getText().isEmpty()) {
+				final Point size = target.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				if (!size.equals(target.getSize())) {
+					target.setSize(size);
+				}
 			}
+			final int offset = inter.getOffset();
+			final Point editionPosition = parent.getLocationAtOffset(offset);
+			target.setLocation(editionPosition);
+		} finally {
+			target.setRedraw(true);
 		}
-		final int offset = inter.getOffset();
-		final Point editionPosition = parent.getLocationAtOffset(offset);
-		target.setLocation(editionPosition);
-		target.setRedraw(true);
 	}
 
 	public void refreshOverlayContents(DocumentEvent event) {
