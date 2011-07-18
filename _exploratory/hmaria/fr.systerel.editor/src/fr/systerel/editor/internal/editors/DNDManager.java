@@ -10,19 +10,23 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import static fr.systerel.editor.internal.editors.RodinEditorUtils.showInfo;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eventb.internal.ui.RodinHandleTransfer;
@@ -32,9 +36,9 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
-import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
 import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
 import fr.systerel.editor.internal.documentModel.ModelOperations.Move;
+import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
 
 /**
  * @author Nicolas Beauger
@@ -174,29 +178,45 @@ public class DNDManager {
 	}
 
 	public void install() {
-		// FIXME DropTarget fails brutally with windows
-		if (isWin32()) return;
-		
 		styledText.setDragDetect(false);
 		// remove standard DND
 		styledText.setData(DND.DRAG_SOURCE_KEY, null);
 		styledText.setData(DND.DROP_TARGET_KEY, null);
 
-		final DragSource source = new DragSource(styledText, DND.DROP_COPY
-				| DND.DROP_MOVE);
-		source.setTransfer(new Transfer[] { RodinHandleTransfer.getInstance() });
-		source.addDragListener(new Dragger());
-		
-		final DropTarget target = new DropTarget(styledText, DND.DROP_DEFAULT
-				| DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
-		target.setTransfer(new Transfer[] { RodinHandleTransfer.getInstance() });
-		target.addDropListener(new Dropper());
-		
-		// TODO customize DragSourceEffect, DropTargetEffect
-	}
+		DragSource source = null;
+		DropTarget target = null;
+		try {
+			source = new DragSource(styledText, DND.DROP_COPY | DND.DROP_MOVE);
+			source.setTransfer(new Transfer[] { RodinHandleTransfer
+					.getInstance() });
+			source.addDragListener(new Dragger());
 
-	private static boolean isWin32() {
-		return Platform.getOS().equals(Platform.OS_WIN32);
+			target = new DropTarget(styledText, DND.DROP_DEFAULT
+					| DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
+			target.setTransfer(new Transfer[] { RodinHandleTransfer
+					.getInstance() });
+			target.addDropListener(new Dropper());
+		} catch (SWTError e) {
+			// happens on MS Windows platform
+			// not logging to avoid popup about workbench instability
+			// recover
+			if (source != null) {
+				for (DragSourceListener listener : source.getDragListeners()) {
+					source.removeDragListener(listener);
+				}
+				source.dispose();
+			}
+			if (target != null) {
+				for (DropTargetListener listener : target.getDropListeners()) {
+					target.removeDropListener(listener);
+				}
+				target.dispose();
+			}
+			showInfo("Rodin Editor",
+					"Drag-and-drop has been disabled in Rodin Editor because:\n"
+							+ e.getMessage());
+		}
+		// TODO customize DragSourceEffect, DropTargetEffect
 	}
 
 }
