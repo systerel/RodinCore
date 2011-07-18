@@ -535,13 +535,13 @@ public class OverlayEditor implements IAnnotationModelListener,
 	private static void modifyText(ExtendedModifyEvent event, String text,
 			StyledText target, StyledText parent, DocumentMapper mapper,
 			Interval inter) {
-		mapper.synchronizeInterval(inter, text);
 		target.setRedraw(false);
 		try {
 			if (!target.getText().isEmpty()) {
 				final Point size = target.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				if (!size.equals(target.getSize())) {
 					target.setSize(size);
+					mapper.synchronizeInterval(inter, text);
 				}
 			}
 			final int offset = inter.getOffset();
