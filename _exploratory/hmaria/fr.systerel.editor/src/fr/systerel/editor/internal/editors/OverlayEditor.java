@@ -525,7 +525,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		try {
 			modifyingText = true;
 		final String text = editorText.getText();
-		modifyText(event, text, editorText, parent, mapper, interval, true);
+		modifyText(event, text, editorText, parent, mapper, interval);
 		} finally {
 			modifyingText = false;
 		}
@@ -534,10 +534,8 @@ public class OverlayEditor implements IAnnotationModelListener,
 
 	private static void modifyText(ExtendedModifyEvent event, String text,
 			StyledText target, StyledText parent, DocumentMapper mapper,
-			Interval inter, boolean redraw) {
+			Interval inter) {
 		mapper.synchronizeInterval(inter, text);
-		if (!redraw)
-			return;
 		target.setRedraw(false);
 		if (!target.getText().isEmpty()) {
 			final Point size = target.computeSize(SWT.DEFAULT, SWT.DEFAULT);
