@@ -10,7 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
-import static fr.systerel.editor.internal.editors.RodinEditorUtils.showInfo;
+import static fr.systerel.editor.internal.editors.RodinEditorUtils.log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -198,7 +198,10 @@ public class DNDManager {
 			target.addDropListener(new Dropper());
 		} catch (SWTError e) {
 			// happens on MS Windows platform
-			// not logging to avoid popup about workbench instability
+			log(null,
+					"Drag-and-drop has been disabled in Rodin Editor because:\n"
+							+ e.getMessage());
+			// not logging SWT error to avoid popup about workbench instability
 			// recover
 			if (source != null) {
 				for (DragSourceListener listener : source.getDragListeners()) {
@@ -212,9 +215,6 @@ public class DNDManager {
 				}
 				target.dispose();
 			}
-			showInfo("Rodin Editor",
-					"Drag-and-drop has been disabled in Rodin Editor because:\n"
-							+ e.getMessage());
 		}
 		// TODO customize DragSourceEffect, DropTargetEffect
 	}
