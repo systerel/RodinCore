@@ -23,7 +23,6 @@ import static org.eventb.internal.ui.autocompletion.ContentProposalFactory.makeC
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -50,7 +49,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -97,8 +95,7 @@ public class OverlayEditor implements IAnnotationModelListener,
 		VerifyKeyListener, IMenuListener {
 
 	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID
-	+ ".editorText";
-	private static final int MARGIN = 15;
+			+ ".editorText";
 
 	private static enum EditType {
 		TEXT {
@@ -541,15 +538,14 @@ public class OverlayEditor implements IAnnotationModelListener,
 		mapper.synchronizeInterval(inter, text);
 		if (!redraw)
 			return;
-		final int offset = inter.getOffset();
-		final int end = inter.getLastIndex();
-		final int height = getHeight(parent.getText(offset, end), target);
 		target.setRedraw(false);
 		if (!target.getText().isEmpty()) {
-			final Rectangle textBounds = target.getTextBounds(0,
-					target.getCharCount() - 1);
-			target.setSize(Math.max(MARGIN, textBounds.width + MARGIN), height);
+			final Point size = target.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			if (!size.equals(target.getSize())) {
+				target.setSize(size);
+			}
 		}
+		final int offset = inter.getOffset();
 		final Point editionPosition = parent.getLocationAtOffset(offset);
 		target.setLocation(editionPosition);
 		target.setRedraw(true);
@@ -569,14 +565,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 		}
 	}
 	
-	private static int getHeight(final String extracted, StyledText reference) {
-		final String regex = "(\r\n)|(\n)|(\r)";
-		final Pattern pattern = Pattern.compile(regex);
-		final String[] split = pattern.split(extracted);
-		final int height = split.length * reference.getLineHeight();
-		return height;
-	}
-
 	@Override
 	public void verifyKey(VerifyEvent event) {
 		if (contentProposal.isProposalPopupOpen() && event.character == SWT.CR) {
