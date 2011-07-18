@@ -20,7 +20,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.rodinp.core.RodinDBException;
 
 import fr.systerel.editor.EditorPlugin;
