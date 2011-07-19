@@ -429,6 +429,11 @@
       		class="org.eventb.internal.core.seqprover.eventbExtensions.FunImgInclusionGoal"
       		id="funImgInclusionG"
       		name="%funImgInclusionGName"/>
+      <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.AbstrExpr"
+            id="ae"
+            name="%aeName">
+      </reasoner>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
