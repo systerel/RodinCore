@@ -432,6 +432,23 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.InsertHandler"
+            commandId="org.eventb.ui.edit.insert">
+         <activeWhen>
+            <with
+                  variable="activeEditorId">
+               <and>
+                  <with
+                        variable="activeEditorId">
+                     <equals
+                           value="fr.systerel.editor.editors.RodinEditor">
+                     </equals>
+                  </with>
+               </and>
+            </with>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
