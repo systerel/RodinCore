@@ -14,6 +14,7 @@ package org.eventb.core.tests.pom;
 
 import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.impI;
+import static org.eventb.core.seqprover.tactics.BasicTactics.replayTac;
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 
 import java.util.Collections;
@@ -351,21 +352,25 @@ public class ProofSerializationTests extends TestCase {
 				+ "<org.eventb.core.prPred name=\"p2\" org.eventb.core.predicate=\"¬⊥⇒¬0=0\"/>"
 				+ "</org.eventb.core.prProof>"
 				+ "</org.eventb.core.prFile>";
-		
-		final IPRRoot prFile = ResourceUtils.createPRFile(rodinProject, "oldProofFile", contents);
+
+		final IPRRoot prFile = ResourceUtils.createPRFile(rodinProject,
+				"oldProofFile", contents);
 		final IPRProof proof = prFile.getProof("oldContrapHyp");
 
 		final IProverSequent sequent = TestLib.genSeq("0=0⇒⊥ |- 0≠0");
 		Predicate hyp = TestLib.genPred("0=0⇒⊥");
 		final IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
 		final IProofTreeNode root = proofTree.getRoot();
-		
+
 		Tactics.contImpHyp(hyp, IPosition.ROOT).apply(root, null);
 		new AutoRewriteTac().apply(root.getFirstOpenDescendant(), null);
-		new AutoTactics.FalseHypTac().apply(root.getFirstOpenDescendant(), null);
+		new AutoTactics.FalseHypTac()
+				.apply(root.getFirstOpenDescendant(), null);
 		assertTrue(proofTree.isClosed());
-		
+
 		checkDeserialization(proof, proofTree, true);
+
+		checkReplay(proofTree, proof);
 	}
 
 	public void testAbstrExpr_Bug3370087() throws Exception {
@@ -411,17 +416,31 @@ public class ProofSerializationTests extends TestCase {
 		final IPRProof proof = prFile.getProof("oldAE");
 
 		final IProverSequent sequent = TestLib.genSeq("|- 0≥0");
-		final IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
-		final IProofTreeNode root = proofTree.getRoot();
+		final IProofTree expected = ProverFactory.makeProofTree(sequent, null);
+		final IProofTreeNode expectedRoot = expected.getRoot();
 
-		Tactics.abstrExprThenEq("0").apply(root, null);
-		new TrueGoalTac().apply(root.getFirstOpenDescendant(), null);
-		new AutoTactics.FalseHypTac()
-				.apply(root.getFirstOpenDescendant(), null);
-		new AutoRewriteTac().apply(root.getFirstOpenDescendant(), null);
-		new TrueGoalTac().apply(root.getFirstOpenDescendant(), null);
-		assertTrue(proofTree.isClosed());
+		Tactics.abstrExprThenEq("0").apply(expectedRoot, null);
+		new TrueGoalTac().apply(expectedRoot.getFirstOpenDescendant(), null);
+		new AutoTactics.FalseHypTac().apply(
+				expectedRoot.getFirstOpenDescendant(), null);
+		new AutoRewriteTac().apply(expectedRoot.getFirstOpenDescendant(), null);
+		new TrueGoalTac().apply(expectedRoot.getFirstOpenDescendant(), null);
+		assertTrue(expected.isClosed());
 
-		checkDeserialization(proof, proofTree, true);
+		checkDeserialization(proof, expected, true);
+
+		checkReplay(expected, proof);
+	}
+
+	// check repaired input correctly applies  
+	private static void checkReplay(final IProofTree expected,
+			final IPRProof proof) throws RodinDBException {
+		final IProofSkeleton oldSkel = proof.getSkeleton(ff, null);
+		final IProofTree replayTree = ProverFactory.makeProofTree(
+				expected.getSequent(), null);
+		final IProofTreeNode oldRoot = replayTree.getRoot();
+		final Object result = replayTac(oldSkel).apply(oldRoot, null);
+		assertEquals(null, result);
+		assertTrue(expected.isClosed());
 	}
 }
