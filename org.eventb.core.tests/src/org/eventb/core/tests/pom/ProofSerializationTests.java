@@ -327,6 +327,9 @@ public class ProofSerializationTests extends TestCase {
 		checkDeserialization(proof, proofTree, true);
 	}
 	
+	// reasoner doubleImplGoalRewrites used not to be registered
+	// as a consequence its input was not serialized
+	// verify ability to repair and replay with broken inputs
 	public void testContrapInHyp_Bug3370087() throws Exception {
 		// input for doubleImplGoalRewrites is missing
 		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
@@ -441,6 +444,6 @@ public class ProofSerializationTests extends TestCase {
 		final IProofTreeNode oldRoot = replayTree.getRoot();
 		final Object result = replayTac(oldSkel).apply(oldRoot, null);
 		assertEquals(null, result);
-		assertTrue(expected.isClosed());
+		assertTrue(replayTree.isClosed());
 	}
 }
