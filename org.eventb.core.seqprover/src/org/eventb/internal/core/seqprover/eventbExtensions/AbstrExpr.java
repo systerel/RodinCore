@@ -132,15 +132,20 @@ public class AbstrExpr extends SingleExprInputReasoner implements
 		
 		final FreeIdentifier ident = addedFreeIdents[0];
 		final Set<Predicate> addedHyps = antecedents[1].getAddedHyps();
-		if (addedHyps.size() != 1) return null;
+		final Expression expr = findAeExpr(ident, addedHyps);
+		if (expr == null) return null;
 		
-		final Predicate hyp = addedHyps.iterator().next();
-		if (hyp.getTag() != Formula.EQUAL) return null;
-		
-		final RelationalPredicate eq = (RelationalPredicate) hyp;
-		if (!eq.getLeft().equals(ident)) return null;
-		
-		final Expression expr = eq.getRight();
 		return new SingleExprInput(expr);
+	}
+
+	private static Expression findAeExpr(FreeIdentifier aeIdent, Set<Predicate> hyps) {
+		for (Predicate hyp : hyps) {
+			if (hyp.getTag() != Formula.EQUAL) continue;
+			final RelationalPredicate eq = (RelationalPredicate) hyp;
+			if (eq.getLeft().equals(aeIdent)) {
+				return eq.getRight();
+			}
+		}
+		return null;
 	}
 }

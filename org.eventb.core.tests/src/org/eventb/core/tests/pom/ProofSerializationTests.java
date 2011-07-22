@@ -557,4 +557,52 @@ public class ProofSerializationTests extends TestCase {
 
 		checkReplay(expected.getSequent(), proof);
 	}
+	
+	public void testAbstrExpr_WD_Bug3370087() throws Exception {
+		// input for ae is missing and input has non trivial WD
+		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+			+"<org.eventb.core.prFile version=\"1\">"
+			+"<org.eventb.core.prProof name=\"ae_with_wd\" org.eventb.core.confidence=\"1000\" org.eventb.core.prFresh=\"ae\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"p1\" org.eventb.core.psManual=\"true\">"
+			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.ae\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"ae (card(s))\" org.eventb.core.prHyps=\"\">"
+			+"<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p1\">"
+			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.hyp\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"hyp\" org.eventb.core.prGoal=\"p1\" org.eventb.core.prHyps=\"p1\"/>"
+			+"</org.eventb.core.prAnte>"
+			+"<org.eventb.core.prAnte name=\"1\" org.eventb.core.prHyps=\"p1,p2\">"
+			+"<org.eventb.core.prIdent name=\"ae\" org.eventb.core.type=\"ℤ\"/>"
+			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.he:1\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"he with ae=card(s)\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"p2\">"
+			+"<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p3\">"
+			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.eq:1\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"eh with ae=card(s)\" org.eventb.core.prGoal=\"p3\" org.eventb.core.prHyps=\"p2\">"
+			+"<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p0\">"
+			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.autoRewritesL2:0\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"simplification rewrites\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\">"
+			+"<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p4\">"
+			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.trueGoal\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⊤ goal\" org.eventb.core.prGoal=\"p4\" org.eventb.core.prHyps=\"\"/>"
+			+"</org.eventb.core.prAnte>"
+			+"</org.eventb.core.prRule>"
+			+"</org.eventb.core.prAnte>"
+			+"</org.eventb.core.prRule>"
+			+"</org.eventb.core.prAnte>"
+			+"</org.eventb.core.prRule>"
+			+"</org.eventb.core.prAnte>"
+			+"</org.eventb.core.prRule>"
+			+"<org.eventb.core.prIdent name=\"s\" org.eventb.core.type=\"ℙ(BOOL)\"/>"
+			+"<org.eventb.core.prPred name=\"p4\" org.eventb.core.predicate=\"⊤\"/>"
+			+"<org.eventb.core.prPred name=\"p2\" org.eventb.core.predicate=\"ae=card(s)\">"
+			+"<org.eventb.core.prIdent name=\"ae\" org.eventb.core.type=\"ℤ\"/>"
+			+"</org.eventb.core.prPred>"
+			+"<org.eventb.core.prPred name=\"p3\" org.eventb.core.predicate=\"ae≥0\">"
+			+"<org.eventb.core.prIdent name=\"ae\" org.eventb.core.type=\"ℤ\"/>"
+			+"</org.eventb.core.prPred>"
+			+"<org.eventb.core.prPred name=\"p1\" org.eventb.core.predicate=\"finite(s)\"/>"
+			+"<org.eventb.core.prPred name=\"p0\" org.eventb.core.predicate=\"card(s)≥0\"/>"
+			+"</org.eventb.core.prProof>"
+			+"</org.eventb.core.prFile>";
+
+		final IPRRoot prFile = ResourceUtils.createPRFile(rodinProject,
+				"oldProofFile", contents);
+		final IPRProof proof = prFile.getProof("ae_with_wd");
+
+		final IProverSequent sequent = TestLib.genSeq("s∈ℙ(BOOL) ;; finite(s) |- card(s)≥0");
+
+		checkReplay(sequent, proof);
+	}
 }
