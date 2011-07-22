@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eventb.core.seqprover" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Filtering for maintenance release 2.2.2, trunk is consistent" id="924844039">
+            <message_arguments>
+                <message_argument value="2.2.2.qualifier"/>
+                <message_argument value="2.2.0.r11814"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

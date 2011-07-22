@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - deserialization of reasoner version through IReasonerDesc
  *     Systerel - used nested classes instead of anonymous ones
+ *     Systerel - added broken input repair mechanism
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -32,6 +33,7 @@ import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
+import org.eventb.core.seqprover.IRepairableInputReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
 import org.rodinp.core.IInternalElementType;
@@ -108,16 +110,9 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		final int confidence = getConfidence();
 		final IReasonerDesc reasonerDesc = getReasonerDesc(store);
 
-		final IReasonerInput input;
-		try {
-			IReasonerInputReader deserializer = 
-				new ProofStoreReader.Bridge(this, store, confidence,
-						display, goal, neededHyps, antecedents);
-				
-			input = reasonerDesc.getInstance().deserializeInput(deserializer);
-		} catch (SerializeException e) {
-			throw (RodinDBException) e.getCause();
-		}
+		final IReasonerInputReader deserializer = new ProofStoreReader.Bridge(this, store, confidence,
+				display, goal, neededHyps, antecedents);
+		final IReasonerInput input = getInput(reasonerDesc, deserializer);
 		
 		final IProofRule proofRule = ProverFactory.makeProofRule(
 				reasonerDesc,
@@ -131,6 +126,23 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 		final IProofSkeleton skeleton = new ProofSkeleton(children, comment,
 				proofRule);
 		return skeleton;
+	}
+
+	private static IReasonerInput getInput(IReasonerDesc reasonerDesc,
+			IReasonerInputReader deserializer) throws RodinDBException {
+		try {
+			return reasonerDesc.getInstance().deserializeInput(deserializer);
+		} catch (SerializeException e) {
+			final IReasoner reasoner = reasonerDesc.getInstance();
+			if (reasoner instanceof IRepairableInputReasoner) {
+				final IReasonerInput repaired = ((IRepairableInputReasoner) reasoner)
+						.repair(deserializer);
+				if (repaired != null) {
+					return repaired;
+				}
+			}
+			throw (RodinDBException) e.getCause();
+		}
 	}
 
 	@Override
