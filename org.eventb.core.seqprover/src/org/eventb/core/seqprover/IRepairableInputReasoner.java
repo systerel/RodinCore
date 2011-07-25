@@ -17,7 +17,7 @@ package org.eventb.core.seqprover;
  * @since 2.2 (.2)
  * 
  */
-public interface IRepairableInputReasoner extends IReasoner {
+public interface IRepairableInputReasoner {
 
 	/**
 	 * Tries to repair an input after a {@link SerializeException} has occurred.
