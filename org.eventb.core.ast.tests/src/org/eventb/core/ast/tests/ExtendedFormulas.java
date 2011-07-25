@@ -10,17 +10,18 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
 import static java.util.Arrays.asList;
-import static org.eventb.core.ast.Formula.LAND;
+import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeChildTypes;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
 
-import java.util.ArrayList;
+import java.math.BigInteger;
 import java.util.HashSet;
-import java.util.List;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
@@ -70,23 +71,21 @@ public class ExtendedFormulas {
 			return symbol;
 		}
 
+		/*
+		 * Return silly predicates that are easy to check from the outside:
+		 * finite({1}) if WD strict, finite({0}) otherwise.
+		 */
 		@Override
 		public Predicate getWDPredicate(IExtendedFormula formula,
 				IWDMediator wdMediator) {
-			if (wdStrict) {
-				return wdMediator.makeTrueWD();
-			}
-
-			// Simulate WD strictness
 			final FormulaFactory ff = wdMediator.getFormulaFactory();
-			final List<Predicate> wds = new ArrayList<Predicate>();
-			for (final Predicate pred : formula.getChildPredicates()) {
-				wds.add(pred.getWDPredicate(ff));
-			}
-			for (final Expression expr : formula.getChildExpressions()) {
-				wds.add(expr.getWDPredicate(ff));
-			}
-			return ff.makeAssociativePredicate(LAND, wds, null);
+			return makeFiniteSingleton(wdStrict ? ONE : ZERO, ff);
+		}
+
+		private Predicate makeFiniteSingleton(BigInteger value,
+				FormulaFactory ff) {
+			return ff.makeSimplePredicate(KFINITE, ff.makeSetExtension(
+					ff.makeIntegerLiteral(value, null), null), null);
 		}
 
 		@Override
@@ -214,7 +213,7 @@ public class ExtendedFormulas {
 	/**
 	 * Non WD strict (lazy) predicate extension with four children.
 	 * <p>
-	 * Example: <code>fooS(⊤, 1, ⊥, 2)</code>
+	 * Example: <code>fooL(⊤, 1, ⊥, 2)</code>
 	 * </p>
 	 */
 	public static final IPredicateExtension fooL = new PredicateExtension(
@@ -232,7 +231,7 @@ public class ExtendedFormulas {
 	/**
 	 * Non WD strict (lazy) expression extension with four children.
 	 * <p>
-	 * Example: <code>barS(⊤, 1, ⊥, 2)</code>
+	 * Example: <code>barL(⊤, 1, ⊥, 2)</code>
 	 * </p>
 	 */
 	public static final IExpressionExtension barL = new ExpressionExtension(
