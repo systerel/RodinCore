@@ -710,16 +710,32 @@ public class TestWD extends AbstractTests {
 		// non WD strict expression
 		assertWDLemma(env, "1=(barL(1=1÷x, 1÷y, 1=1÷z, 1÷t))", "finite({0})");
 	}
-	
-	public void testDestructorWD() throws Exception {
-		final ITypeEnvironment listEnv = LIST_FAC.makeTypeEnvironment();
-		listEnv.addName("x", INTEGER);
-		listEnv.addName("l", LIST_INT_TYPE);
 
-		assertWDLemma(listEnv, "x = head(l)",
-				"∃ head0⦂ℤ, tail1⦂List(ℤ)· l = cons(head0, tail1)");
-		assertWDLemma(listEnv, "∀l1⦂List(BOOL),l2· l1=l2 ⇒ tail(l1) = l2",
-				"∀l1⦂List(BOOL),l2· l1=l2 ⇒ (∃h,t· l1 = cons(h, t))");
+	/**
+	 * Unit test for data type extensions
+	 */
+	public void testDatatype() throws Exception {
+		final ITypeEnvironment env = LIST_FAC.makeTypeEnvironment();
+		env.addName("l", LIST_INT_TYPE);
+
+		// Type constructor
+		assertWDLemma(env, "l ∈ List({1÷x})", "x≠0");
+
+		// Value constructors
+		assertWDLemma(env, "l = nil", "⊤");
+		assertWDLemma(env, "l = cons(1÷x, nil)", "x≠0");
+		assertWDLemma(env, "l = cons(1÷x, tail(l))",
+				"x≠0  ∧ (∃h,t·l=cons(h,t))");
+
+		// Destructors
+		assertWDLemma(env, "x = head(l)", "∃h,t· l = cons(h, t)");
+		assertWDLemma(env, "x = tail(l)", "∃h,t· l = cons(h, t)");
+
+		// Mixed cases
+		assertWDLemma(env, "x = head(cons(1÷x, l))",
+				"(∃h,t· cons(1÷x, l) = cons(h, t)) ∧ x≠0");
+		assertWDLemma(env, "l = tail(cons(1÷x, l))",
+				"(∃h,t· cons(1÷x, l) = cons(h, t)) ∧ x≠0");
 	}
 
 }
