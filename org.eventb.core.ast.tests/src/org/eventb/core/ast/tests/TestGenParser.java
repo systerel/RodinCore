@@ -776,8 +776,8 @@ public class TestGenParser extends AbstractTests {
 			try {
 				mediator.addPriority(getId(), "plus");
 			} catch (CycleError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				fail("A cycle error was detected"
+						+ " when adding priorities for plus " + e);
 			}
 		}
 
@@ -1164,7 +1164,10 @@ public class TestGenParser extends AbstractTests {
 						BI_1,
 						BI_0, null),
 				ff.makeBinaryExpression(MAPSTO,
-						// FIXME why are bound identifiers typed here and not elsewhere ?
+						// Note : these bound identifiers (which occur on the
+						// left-hand side of the top-level maplet) must be typed
+						// as they are typed from the bound identifier
+						// declarations when parsing the lambda construct.
 						ff.makeBinaryExpression(MAPSTO,	bi1_INT, bi0_S, null),
 						ff.makeAssociativeExpression(PLUS, 
 								Arrays.<Expression> asList(BI_1, BI_0), null),
