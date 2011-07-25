@@ -46,9 +46,6 @@ public class TestWD extends AbstractTests {
 			"S", POW(S)//
 	);
 
-	// static final List<TestFormula<?>> tests = new
-	// ArrayList<TestFormula<?>>();
-
 	private static abstract class TestFormula<T extends Formula<T>> {
 
 		final T input;
@@ -64,22 +61,13 @@ public class TestWD extends AbstractTests {
 			typeCheck(input, env);
 			typeCheck(originalPredicate, env);
 			typeCheck(simplifiedPredicate, env);
-			// tests.add(this);
 		}
 
-		// private static final WDComputer computer = new WDComputer(ff);
-
 		public void test() {
-			// final Predicate actual = computer.getWDLemma(input);
 			final Predicate actual = input.getWDPredicate(factory);
 			assertTrue("Ill-formed WD predicate", actual.isWellFormed());
 			assertTrue("Untyped WD predicate", actual.isTypeChecked());
 			assertEquals(simplifiedPredicate, actual);
-
-			// final Predicate impAct = new WDImprover(ff).improve(actual);
-			// assertTrue("Ill-formed WD predicate", impAct.isWellFormed());
-			// assertTrue("Untyped WD predicate", impAct.isTypeChecked());
-			// assertEquals(improvedExpected, impAct);
 		}
 
 		public abstract T parse(String image);
@@ -704,15 +692,6 @@ public class TestWD extends AbstractTests {
 				"(b<c⇒c=0) ⇒ x∈dom(g) ∧ g∈S ⇸ ℙ(S) ∧ x∈dom(f) ∧ f∈S ⇸ ℙ(S)");
 	}
 
-	// public void testPerformance() throws Exception {
-	// final int LOOP = 10000;
-	// for (int i = 0; i < LOOP; ++ i) {
-	// for (TestFormula<?> t: tests) {
-	// t.test();
-	// }
-	// }
-	// }
-
 	/**
 	 * Unit test for mathematical extensions
 	 */
@@ -736,12 +715,11 @@ public class TestWD extends AbstractTests {
 		final ITypeEnvironment listEnv = LIST_FAC.makeTypeEnvironment();
 		listEnv.addName("x", INTEGER);
 		listEnv.addName("l", LIST_INT_TYPE);
-		
+
 		assertWDLemma(listEnv, "x = head(l)",
 				"∃ head0⦂ℤ, tail1⦂List(ℤ)· l = cons(head0, tail1)");
-
-		assertWDLemma(listEnv, "∀l1⦂List(BOOL),l2⦂List(BOOL)· l1=l2 ⇒ tail(l1) = l2",
-				"∀l1⦂List(BOOL),l2⦂List(BOOL)· l1=l2 ⇒ (∃head0⦂BOOL, tail1⦂List(BOOL)· l1 = cons(head0, tail1))");
-
+		assertWDLemma(listEnv, "∀l1⦂List(BOOL),l2· l1=l2 ⇒ tail(l1) = l2",
+				"∀l1⦂List(BOOL),l2· l1=l2 ⇒ (∃h,t· l1 = cons(h, t))");
 	}
+
 }
