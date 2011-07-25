@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,9 @@ import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
+import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
+import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
+import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
 import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
 
@@ -3097,4 +3100,19 @@ public class TestGenParser extends AbstractTests {
 		// the following throws IndexOutOfBoundsException when bug is present
 		ff.getGrammarView();
 	}
+
+	/**
+	 * Ensures that a prefix operator contributed by an extension is compatible
+	 * with equality.
+	 */
+	public void testExprExtWithEquals() {
+		final Expression extended = EFF.makeExtendedExpression(barS,
+				mList(ZERO, ONE), mList(LIT_BTRUE, LIT_BTRUE), null);
+		doPredicateTest("barS(⊤, 0, ⊤, 1) = 0",
+				EFF.makeRelationalPredicate(EQUAL, extended, ZERO, null), EFF);
+		//FIXME this test is known to fail.
+		doPredicateTest("0 = barS(⊤, 0, ⊤, 1)",
+				EFF.makeRelationalPredicate(EQUAL, ZERO, extended, null), EFF);
+	}
+
 }
