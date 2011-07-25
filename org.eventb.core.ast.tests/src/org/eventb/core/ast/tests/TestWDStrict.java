@@ -95,13 +95,13 @@ import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.Formula.TSUR;
 import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.core.ast.Formula.UPTO;
-import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
-import static org.eventb.core.ast.extension.ExtensionFactory.NO_CHILD;
-import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
-import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
-import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
+import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
+import static org.eventb.core.ast.tests.ExtendedFormulas.barL;
+import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
+import static org.eventb.core.ast.tests.ExtendedFormulas.fooL;
+import static org.eventb.core.ast.tests.ExtendedFormulas.fooS;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
@@ -127,33 +127,12 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_EXPR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.ICompatibilityMediator;
-import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.IExtendedFormula;
-import org.eventb.core.ast.extension.IExtensionKind;
-import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
-import org.eventb.core.ast.extension.IPredicateExtension;
-import org.eventb.core.ast.extension.IPriorityMediator;
-import org.eventb.core.ast.extension.ITypeCheckMediator;
-import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.core.ast.extension.IWDMediator;
 
 /**
  * Unit tests for WD strictness.
@@ -162,135 +141,14 @@ import org.eventb.core.ast.extension.IWDMediator;
  */
 public class TestWDStrict extends AbstractTests {
 
-	private static final Expression[] NO_EXPRS = new Expression[0];
-	private static final Predicate[] NO_PREDS = new Predicate[0];
-
 	private static final BoundIdentDecl[] bids = mList(mBoundIdentDecl("x"));
 
 	private static final FreeIdentifier id_x = mFreeIdentifier("x");
 
 	private static final Predicate T = mLiteralPredicate(BTRUE);
 
-	/**
-	 * Common implementation for simple extensions used in tests.
-	 */
-	private static abstract class AtomicExtension implements IFormulaExtension {
-
-		private final String symbol;
-		private final boolean strict;
-		private final FormulaType ftype;
-
-		public AtomicExtension(String symbol, boolean strict, FormulaType ftype) {
-			this.symbol = symbol;
-			this.strict = strict;
-			this.ftype = ftype;
-		}
-
-		@Override
-		public String getSyntaxSymbol() {
-			return symbol;
-		}
-
-		@Override
-		public Predicate getWDPredicate(IExtendedFormula formula,
-				IWDMediator wdMediator) {
-			return wdMediator.makeTrueWD();
-		}
-
-		@Override
-		public boolean conjoinChildrenWD() {
-			return strict;
-		}
-
-		@Override
-		public String getId() {
-			return symbol;
-		}
-
-		@Override
-		public IExtensionKind getKind() {
-			return makePrefixKind(ftype, NO_CHILD);
-		}
-
-		@Override
-		public Object getOrigin() {
-			return null;
-		}
-
-		@Override
-		public void addCompatibilities(ICompatibilityMediator mediator) {
-			// None
-		}
-
-		@Override
-		public void addPriorities(IPriorityMediator mediator) {
-			// None
-		}
-
-	}
-
-	/**
-	 * Common implementation for simple predicate extensions used in tests.
-	 */
-	private static class AtomicPredExt extends AtomicExtension implements
-			IPredicateExtension {
-
-		public AtomicPredExt(String symbol, boolean strict) {
-			super(symbol, strict, PREDICATE);
-		}
-
-		@Override
-		public String getGroupId() {
-			return ATOMIC_PRED.getId();
-		}
-
-		@Override
-		public void typeCheck(ExtendedPredicate predicate,
-				ITypeCheckMediator tcMediator) {
-			// Nothing to do
-		}
-
-	}
-
-	/**
-	 * Common implementation for simple expression extensions used in tests.
-	 */
-	private static class AtomicExprExt extends AtomicExtension implements
-			IExpressionExtension {
-
-		public AtomicExprExt(String symbol, boolean strict) {
-			super(symbol, strict, EXPRESSION);
-		}
-
-		@Override
-		public String getGroupId() {
-			return ATOMIC_EXPR.getId();
-		}
-
-		@Override
-		public Type synthesizeType(Expression[] childExprs,
-				Predicate[] childPreds, ITypeMediator mediator) {
-			return INT_TYPE;
-		}
-
-		@Override
-		public Type typeCheck(ExtendedExpression predicate,
-				ITypeCheckMediator tcMediator) {
-			return INT_TYPE;
-		}
-
-		@Override
-		public boolean verifyType(Type proposedType, Expression[] childExprs,
-				Predicate[] childPreds) {
-			return INT_TYPE.equals(proposedType);
-		}
-
-		@Override
-		public boolean isATypeConstructor() {
-			return false;
-		}
-
-	}
+	private static final Expression[] TWO_EXPRS = new Expression[] { id_x, id_x };
+	private static final Predicate[] TWO_PREDS = new Predicate[] { T, T };
 
 	private static void assertWDStrict(Formula<?> formula) {
 		assertTrue(formula.isWDStrict());
@@ -609,21 +467,14 @@ public class TestWDStrict extends AbstractTests {
 	 * operators.
 	 */
 	public void testWDStrictExtensions() {
-		final IPredicateExtension sp = new AtomicPredExt("sp", true);
-		final IPredicateExtension np = new AtomicPredExt("np", false);
-		final IExpressionExtension se = new AtomicExprExt("se", true);
-		final IExpressionExtension ne = new AtomicExprExt("ne", false);
-		final Set<IFormulaExtension> exts = new HashSet<IFormulaExtension>(
-				Arrays.asList(sp, np, se, ne));
-		final FormulaFactory eff = getInstance(exts);
-
-		assertWDStrict(eff.makeExtendedPredicate(sp, NO_EXPRS, NO_PREDS, null));
-		assertWDStrict(eff.makeExtendedExpression(se, NO_EXPRS, NO_PREDS, null));
-
-		assertNotWDStrict(eff.makeExtendedPredicate(np, NO_EXPRS, NO_PREDS,
+		assertWDStrict(EFF.makeExtendedPredicate(fooS, TWO_EXPRS, TWO_PREDS,
 				null));
-		assertNotWDStrict(eff.makeExtendedExpression(ne, NO_EXPRS, NO_PREDS,
+		assertWDStrict(EFF.makeExtendedExpression(barS, TWO_EXPRS, TWO_PREDS,
 				null));
+		assertNotWDStrict(EFF.makeExtendedPredicate(fooL, TWO_EXPRS, TWO_PREDS,
+				null));
+		assertNotWDStrict(EFF.makeExtendedExpression(barL, TWO_EXPRS,
+				TWO_PREDS, null));
 	}
 
 	/**
