@@ -107,8 +107,9 @@ public abstract class AbstractTests extends TestCase {
 				"CONS", 1);
 	
 	public static void assertSuccess(String message, IResult result) {
-		assertTrue(message, result.isSuccess());
-		assertFalse(message, result.hasProblem());
+		if (!result.isSuccess() || result.hasProblem()) {
+			fail(message + result.getProblems());
+		}
 	}
 
 	public static void assertFailure(String message, IResult result) {
