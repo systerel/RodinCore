@@ -72,12 +72,9 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 		final ForwardInfHypAction fwd = getFwd(antecedents[0]);
 		if(fwd == null) return null;
 		
-		final Collection<Predicate> hyps = fwd.getHyps();
-		final Collection<Predicate> infHyps = fwd.getInferredHyps();
-		if (hyps.size() != 1 || infHyps.size() != 1) return null;
-		
-		final Predicate hyp = hyps.iterator().next();
-		final Predicate infHyp = infHyps.iterator().next();
+		final Predicate hyp = getUniqueElement(fwd.getHyps());
+		final Predicate infHyp = getUniqueElement(fwd.getInferredHyps());
+		if (hyp == null || infHyp == null) return null;
 		
 		final IPosition position = findContraPosition(hyp, infHyp,
 				reader.getFormulaFactory());
@@ -85,6 +82,14 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 			return null;
 		
 		return new Input(hyp, position);
+	}
+
+	private static Predicate getUniqueElement(Collection<Predicate> preds) {
+		if (preds.size() != 1) {
+			return null;
+		}
+		return preds.iterator().next();
+
 	}
 
 	private static ForwardInfHypAction getFwd(IAntecedent antecedent) {

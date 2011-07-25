@@ -130,10 +130,10 @@ public class PRProofRule extends EventBProofElement implements IPRProofRule {
 
 	private static IReasonerInput getInput(IReasonerDesc reasonerDesc,
 			IReasonerInputReader deserializer) throws RodinDBException {
+		final IReasoner reasoner = reasonerDesc.getInstance();
 		try {
-			return reasonerDesc.getInstance().deserializeInput(deserializer);
+			return reasoner.deserializeInput(deserializer);
 		} catch (SerializeException e) {
-			final IReasoner reasoner = reasonerDesc.getInstance();
 			if (reasoner instanceof IRepairableInputReasoner) {
 				final IReasonerInput repaired = ((IRepairableInputReasoner) reasoner)
 						.repair(deserializer);
