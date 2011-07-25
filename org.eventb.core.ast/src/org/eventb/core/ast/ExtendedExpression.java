@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  * 
  * Contributors:
  *     Systerel - initial API and implementation
- *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -444,29 +443,10 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		ExtensionHelper.addGivenTypes(set, childExpressions, childPredicates);
 	}
 
-	// FIXME duplicate code with ExtendedPredicate; problem: filter.select(this)
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
-		if (acc.childrenSkipped()) {
-			return;
-		}
-		acc.enterChildren();
-		for (Expression child: childExpressions) {
-			child.inspect(acc);
-			if (acc.allSkipped()) {
-				break;
-			}
-			acc.nextChild();
-		}
-		for (Predicate child: childPredicates) {
-			child.inspect(acc);
-			if (acc.allSkipped()) {
-				break;
-			}
-			acc.nextChild();
-		}
-		acc.leaveChildren();
+		ExtensionHelper.inspectChildren(acc, childExpressions, childPredicates);
 	}
 
 	@Override

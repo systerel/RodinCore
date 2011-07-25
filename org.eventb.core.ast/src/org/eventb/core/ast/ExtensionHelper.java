@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
@@ -25,9 +26,11 @@ import org.eventb.internal.core.parser.IParserPrinter;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
 /**
- * @author "Nicolas Beauger"
- * @since 2.0
+ * Common code for classes {@link ExtendedExpression} and
+ * {@link ExtendedPredicate}.
  * 
+ * @author Nicolas Beauger
+ * @since 2.0
  */
 /* package */class ExtensionHelper {
 
@@ -163,6 +166,31 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 		final IOperatorInfo<? extends Formula<?>> opInfo = grammar.getParser(
 				properties, syntaxSymbol, tag, opId, groupId);
 		return opInfo.makeParser(mediator.getKind());
+	}
+
+	public static <F> void inspectChildren(FindingAccumulator<F> acc,
+			Expression[] childExpressions, Predicate[] childPredicates) {
+		if (acc.childrenSkipped()) {
+			return;
+		}
+		acc.enterChildren();
+		for (Expression child : childExpressions) {
+			child.inspect(acc);
+			if (acc.allSkipped()) {
+				break;
+			}
+			acc.nextChild();
+		}
+		if (!acc.allSkipped()) {
+			for (Predicate child : childPredicates) {
+				child.inspect(acc);
+				if (acc.allSkipped()) {
+					break;
+				}
+				acc.nextChild();
+			}
+		}
+		acc.leaveChildren();
 	}
 
 }
