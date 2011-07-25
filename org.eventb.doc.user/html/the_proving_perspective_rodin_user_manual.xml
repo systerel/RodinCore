@@ -1,38 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 <toc label="The Proving Perspective (Rodin User Manual)">
+  <topic label="Overview" href="html/the_proving_perspective_rodin_user_manual.html#Overview">
+  </topic>
   <topic label="Loading a Proof" href="html/the_proving_perspective_rodin_user_manual.html#Loading_a_Proof">
   </topic>
   <topic label="The Proof Tree" href="html/the_proving_perspective_rodin_user_manual.html#The_Proof_Tree">
-   <topic label="Description of the Proof Tree" href="html/the_proving_perspective_rodin_user_manual.html#Description_of_the_Proof_Tree">
-   </topic>
    <topic label="Decoration" href="html/the_proving_perspective_rodin_user_manual.html#Decoration">
    </topic>
    <topic label="Navigation within the Proof Tree" href="html/the_proving_perspective_rodin_user_manual.html#Navigation_within_the_Proof_Tree">
    </topic>
-   <topic label="Hiding" href="html/the_proving_perspective_rodin_user_manual.html#Hiding">
-   </topic>
-   <topic label="Pruning" href="html/the_proving_perspective_rodin_user_manual.html#Pruning">
-   </topic>
-   <topic label="Copy/Paste" href="html/the_proving_perspective_rodin_user_manual.html#Copy.2FPaste">
+   <topic label="Manipulating the Proof Tree" href="html/the_proving_perspective_rodin_user_manual.html#Manipulating_the_Proof_Tree">
+    <topic label="Hiding" href="html/the_proving_perspective_rodin_user_manual.html#Hiding">
+    </topic>
+    <topic label="Pruning" href="html/the_proving_perspective_rodin_user_manual.html#Pruning">
+    </topic>
+    <topic label="Copy/Paste" href="html/the_proving_perspective_rodin_user_manual.html#Copy.2FPaste">
+    </topic>
    </topic>
   </topic>
   <topic label="Goal and Selected Hypotheses" href="html/the_proving_perspective_rodin_user_manual.html#Goal_and_Selected_Hypotheses">
+   <topic label="Applying Proof Rules" href="html/the_proving_perspective_rodin_user_manual.html#Applying_Proof_Rules">
+    <topic label="Rewrite Rules" href="html/the_proving_perspective_rodin_user_manual.html#Rewrite_Rules">
+    </topic>
+    <topic label="Inference Rules" href="html/the_proving_perspective_rodin_user_manual.html#Inference_Rules">
+    </topic>
+   </topic>
   </topic>
-  <topic label="Rewrite Rules" href="html/the_proving_perspective_rodin_user_manual.html#Rewrite_Rules">
+  <topic label="The Proof Control View" href="html/the_proving_perspective_rodin_user_manual.html#The_Proof_Control_View">
+   <topic label="The Smiley" href="html/the_proving_perspective_rodin_user_manual.html#The_Smiley">
+   </topic>
+   <topic label="The Editing Area" href="html/the_proving_perspective_rodin_user_manual.html#The_Editing_Area">
+   </topic>
+   <topic label="ML/PP and Hypotheses" href="html/the_proving_perspective_rodin_user_manual.html#ML.2FPP_and_Hypotheses">
+    <topic label="ML" href="html/the_proving_perspective_rodin_user_manual.html#ML">
+    </topic>
+    <topic label="PP" href="html/the_proving_perspective_rodin_user_manual.html#PP">
+    </topic>
+   </topic>
   </topic>
-  <topic label="Inference Rules" href="html/the_proving_perspective_rodin_user_manual.html#Inference_Rules">
+  <topic label="The Search Hypotheses View" href="html/the_proving_perspective_rodin_user_manual.html#The_Search_Hypotheses_View">
   </topic>
-  <topic label="The Proof Control Window" href="html/the_proving_perspective_rodin_user_manual.html#The_Proof_Control_Window">
+  <topic label="The Cache Hypotheses Window" href="html/the_proving_perspective_rodin_user_manual.html#The_Cache_Hypotheses_Window">
   </topic>
-  <topic label="The Smiley" href="html/the_proving_perspective_rodin_user_manual.html#The_Smiley">
+  <topic label="Proof Information View" href="html/the_proving_perspective_rodin_user_manual.html#Proof_Information_View">
   </topic>
-  <topic label="The Operator "Buttons"" href="html/the_proving_perspective_rodin_user_manual.html#The_Operator_.22Buttons.22">
+  <topic label="Rule Details View" href="html/the_proving_perspective_rodin_user_manual.html#Rule_Details_View">
   </topic>
-  <topic label="The Search Hypotheses Window" href="html/the_proving_perspective_rodin_user_manual.html#The_Search_Hypotheses_Window">
-  </topic>
-  <topic label="The Automatic Post-tactic" href="html/the_proving_perspective_rodin_user_manual.html#The_Automatic_Post-tactic">
-   <topic label="Preferences for the Post-tactic" href="html/the_proving_perspective_rodin_user_manual.html#Preferences_for_the_Post-tactic">
+  <topic label="Auto-tactic and Post-tactic" href="html/the_proving_perspective_rodin_user_manual.html#Auto-tactic_and_Post-tactic">
+   <topic label="Principles" href="html/the_proving_perspective_rodin_user_manual.html#Principles">
+   </topic>
+   <topic label="Preferences for the selected auto and post tactic profile" href="html/the_proving_perspective_rodin_user_manual.html#Preferences_for_the_selected_auto_and_post_tactic_profile">
+   </topic>
+   <topic label="Preferences for available profiles" href="html/the_proving_perspective_rodin_user_manual.html#Preferences_for_available_profiles">
+   </topic>
+   <topic label="Project specific settings" href="html/the_proving_perspective_rodin_user_manual.html#Project_specific_settings">
    </topic>
   </topic>
 </toc>
