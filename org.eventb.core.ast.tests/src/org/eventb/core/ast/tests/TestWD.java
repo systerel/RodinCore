@@ -702,13 +702,11 @@ public class TestWD extends AbstractTests {
 				"finite({1}) ∧ y≠0 ∧ t≠0 ∧ x≠0 ∧ z≠0");
 		// non WD strict predicate
 		assertWDLemma(env, "fooL(1=1÷x, 1÷y, 1=1÷z, 1÷t)", "finite({0})");
-
 		// WD strict expression
-		// FIXME twice parser requires parentheses around expression extensions!
-		assertWDLemma(env, "1=(barS(1=1÷x, 1÷y, 1=1÷z, 1÷t))",
+		assertWDLemma(env, "1=barS(1=1÷x, 1÷y, 1=1÷z, 1÷t)",
 				"finite({1}) ∧ y≠0 ∧ t≠0 ∧ x≠0 ∧ z≠0");
 		// non WD strict expression
-		assertWDLemma(env, "1=(barL(1=1÷x, 1÷y, 1=1÷z, 1÷t))", "finite({0})");
+		assertWDLemma(env, "1=barL(1=1÷x, 1÷y, 1=1÷z, 1÷t)", "finite({0})");
 	}
 
 	/**

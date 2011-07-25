@@ -139,16 +139,21 @@ public class SubParsers {
 
 	
 	private static abstract class PrefixNudParser<R> extends AbstractNudParser<R> {
-		
-		protected PrefixNudParser(int kind, int tag) {
+
+		// True if this operator is syntactically closed, e.g. surrounded by
+		// mandatory brackets (including leading reserved word).
+		private final boolean closed;
+
+		protected PrefixNudParser(int kind, int tag, boolean closed) {
 			super(kind, tag);
+			this.closed = closed;
 		}
 		
 		@Override
 		public final SubParseResult<R> nud(ParserContext pc) throws SyntaxError {
 			pc.accept(kind);
 			final R right = parseRight(pc);
-			return new SubParseResult<R>(right, kind);
+			return new SubParseResult<R>(right, kind, closed);
 		}
 		
 		/**
@@ -173,7 +178,7 @@ public class SubParsers {
 		private final INudParser<C> childParser;
 		
 		protected ParenNudParser(int kind, int tag, INudParser<C> childParser) {
-			super(kind, tag);
+			super(kind, tag, true);
 			this.childParser = childParser;
 		}
 
@@ -243,7 +248,7 @@ public class SubParsers {
 			pc.accept(kind);
 			final SourceLocation loc = pc.getSourceLocation();
 			final R value = makeValue(pc, tokenVal, loc);
-			return new SubParseResult<R>(value, kind);
+			return new SubParseResult<R>(value, kind, true);
 		}
 
 		protected abstract int getKind(AbstractGrammar grammar);
@@ -475,7 +480,8 @@ public class SubParsers {
 						ProblemSeverities.Error));
 			}
 			final FreeIdentifier freeIdent = (FreeIdentifier) ident;
-			return new SubParseResult<FreeIdentifier>(freeIdent, pc.getGrammar().getKind(IDENT));
+			return new SubParseResult<FreeIdentifier>(freeIdent,
+					pc.getGrammar().getKind(IDENT), true);
 		}
 
 		@Override
@@ -753,7 +759,7 @@ public class SubParsers {
 	public static class AtomicExpressionParser extends PrefixNudParser<AtomicExpression> {
 	
 		public AtomicExpressionParser(int kind, int tag) {
-			super(kind, tag);
+			super(kind, tag, true);
 		}
 	
 		@Override
@@ -767,7 +773,7 @@ public class SubParsers {
 	public static class ExtendedAtomicExpressionParser extends PrefixNudParser<ExtendedExpression> {
 		
 		public ExtendedAtomicExpressionParser(int kind, int tag) {
-			super(kind, tag);
+			super(kind, tag, true);
 		}
 	
 		@Override
@@ -991,7 +997,7 @@ public class SubParsers {
 	public static class LiteralPredicateParser extends PrefixNudParser<LiteralPredicate> {
 
 		public LiteralPredicateParser(int kind, int tag) {
-			super(kind, tag);
+			super(kind, tag, true);
 		}
 
 		@Override
@@ -1004,8 +1010,8 @@ public class SubParsers {
 
 	public static class UnaryPredicateParser extends PrefixNudParser<UnaryPredicate> {
 
-		public UnaryPredicateParser(int kind, int tag) {
-			super(kind, tag);
+		public UnaryPredicateParser(int kind, int tag, boolean closed) {
+			super(kind, tag, closed);
 		}
 
 		@Override
@@ -1049,7 +1055,7 @@ public class SubParsers {
 	public static class QuantifiedPredicateParser extends QuantifiedParser<QuantifiedPredicate> {
 
 		public QuantifiedPredicateParser(int kind, int tag) {
-			super(kind, tag);
+			super(kind, tag, false);
 		}
 
 		@Override
@@ -1145,7 +1151,7 @@ public class SubParsers {
 	public static final class SetExtParser extends PrefixNudParser<SetExtension> {
 		
 		public SetExtParser(int kind) {
-			super(kind, SETEXT);
+			super(kind, SETEXT, true);
 		}
 
 		@Override
@@ -1185,8 +1191,8 @@ public class SubParsers {
 	}
 	
 	static abstract class QuantifiedParser<R> extends PrefixNudParser<R> implements IQuantifiedParser<R> {
-		protected QuantifiedParser(int kind, int tag) {
-			super(kind, tag);
+		protected QuantifiedParser(int kind, int tag, boolean closed) {
+			super(kind, tag, closed);
 		}
 
 		private String[] localNames = null;
@@ -1209,7 +1215,11 @@ public class SubParsers {
 	public static class ExplicitQuantExpr extends QuantifiedParser<QuantifiedExpression> {
 		
 		public ExplicitQuantExpr(int kind, int tag) {
-			super(kind, tag);
+			this(kind, tag, false);
+		}
+
+		protected ExplicitQuantExpr(int kind, int tag, boolean closed) {
+			super(kind, tag, closed);
 		}
 
 		@Override
@@ -1248,7 +1258,7 @@ public class SubParsers {
 	public static class CSetExplicit extends ExplicitQuantExpr {
 		
 		public CSetExplicit(int kind) {
-			super(kind, CSET);
+			super(kind, CSET, true);
 		}
 
 		@Override
@@ -1268,7 +1278,11 @@ public class SubParsers {
 	public static class ImplicitQuantExpr extends QuantifiedParser<QuantifiedExpression> {
 		
 		public ImplicitQuantExpr(int kind, int tag) {
-			super(kind, tag);
+			this(kind, tag, false);
+		}
+
+		protected ImplicitQuantExpr(int kind, int tag, boolean closed) {
+			super(kind, tag, closed);
 		}
 
 		@Override
@@ -1310,7 +1324,7 @@ public class SubParsers {
 	public static class CSetImplicit extends ImplicitQuantExpr {
 
 		public CSetImplicit(int kind) {
-			super(kind, CSET);
+			super(kind, CSET, true);
 		}
 
 		@Override
@@ -1330,7 +1344,7 @@ public class SubParsers {
 	public static class CSetLambda extends QuantifiedParser<QuantifiedExpression> {
 		
 		public CSetLambda(int kind) {
-			super(kind, CSET);
+			super(kind, CSET, false);
 		}
 
 		@Override

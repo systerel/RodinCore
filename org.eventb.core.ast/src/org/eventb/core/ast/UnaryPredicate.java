@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public class UnaryPredicate extends Predicate {
 
 		@Override
 		public IParserPrinter<UnaryPredicate> makeParser(int kind) {
-			return new UnaryPredicateParser(kind, tag);
+			return new UnaryPredicateParser(kind, tag, false);
 		}
 
 		@Override

@@ -25,6 +25,7 @@ import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.GT;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KCARD;
+import static org.eventb.core.ast.Formula.KDOM;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.Formula.KID;
 import static org.eventb.core.ast.Formula.KID_GEN;
@@ -719,6 +720,19 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("A§B", expected, extFac);
 	}
 
+	public void testBinaryWithClosedOperands() throws Exception {
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(DIRECT_PRODUCT));
+		final Expression expected = extFac.makeExtendedExpression(
+				DIRECT_PRODUCT, Arrays.<Expression> asList(
+						extFac.makeUnaryExpression(KDOM,
+								extFac.makeFreeIdentifier("A", null), null),
+						extFac.makeUnaryExpression(KDOM,
+								extFac.makeFreeIdentifier("B", null), null)),
+				Collections.<Predicate> emptySet(), null);
+		doExpressionTest("dom(A)§dom(B)", expected, extFac);
+	}
+
 	public void testExtensionInFormula() throws Exception {
 		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
 				.<IFormulaExtension> singleton(DIRECT_PRODUCT));
@@ -733,10 +747,16 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("(A§B) ∪ (A§B)", expected, extFac);
 	}
 
-	private static final IExpressionExtension MONEY = new IExpressionExtension() {
+	private static class Money implements IExpressionExtension {
 		private static final String SYNTAX_SYMBOL = "€";
 		private static final String OPERATOR_ID = "Money";
 		
+		private final boolean arithmetic;
+
+		public Money(boolean arithmetic) {
+			this.arithmetic = arithmetic;
+		}
+
 		@Override
 		public Type synthesizeType(Expression[] childExprs,
 				Predicate[] childPreds, ITypeMediator mediator) {
@@ -773,6 +793,9 @@ public class TestGenParser extends AbstractTests {
 
 		@Override
 		public void addPriorities(IPriorityMediator mediator) {
+			if (! arithmetic) {
+				return;
+			}
 			try {
 				mediator.addPriority(getId(), "plus");
 			} catch (CycleError e) {
@@ -783,7 +806,7 @@ public class TestGenParser extends AbstractTests {
 
 		@Override
 		public String getGroupId() {
-			return ARITHMETIC.getId();
+			return arithmetic ? ARITHMETIC.getId() : OPERATOR_ID;
 		}
 
 		@Override
@@ -822,7 +845,9 @@ public class TestGenParser extends AbstractTests {
 			return null;
 		}
 
-	};
+	}
+
+	private static final IExpressionExtension MONEY = new Money(true);
 
 	// verify that the newly introduced symbol cannot be an identifier
 	public void testExtensionSymbol() throws Exception {
@@ -896,6 +921,22 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("A € (B € C)", expected, extFac);
 	}
 	
+	public void testAssociativeWithClosedOperands() throws Exception {
+		final Money money = new Money(false);
+		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
+				.<IFormulaExtension> singleton(money));
+		final Expression expected = extFac.makeExtendedExpression(money, Arrays
+				.<Expression> asList(
+						extFac.makeUnaryExpression(KDOM,
+								extFac.makeFreeIdentifier("A", null), null),
+						extFac.makeUnaryExpression(KDOM,
+								extFac.makeFreeIdentifier("B", null), null),
+						extFac.makeUnaryExpression(KDOM,
+								extFac.makeFreeIdentifier("C", null), null)),
+				Collections.<Predicate> emptySet(), null);
+		doExpressionTest("dom(A) € dom(B) € dom(C)", expected, extFac);
+	}
+
 	public void testEqual() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(EQUAL,
 				FRID_A,
@@ -3113,7 +3154,6 @@ public class TestGenParser extends AbstractTests {
 				mList(ZERO, ONE), mList(LIT_BTRUE, LIT_BTRUE), null);
 		doPredicateTest("barS(⊤, 0, ⊤, 1) = 0",
 				EFF.makeRelationalPredicate(EQUAL, extended, ZERO, null), EFF);
-		//FIXME this test is known to fail.
 		doPredicateTest("0 = barS(⊤, 0, ⊤, 1)",
 				EFF.makeRelationalPredicate(EQUAL, ZERO, extended, null), EFF);
 	}
