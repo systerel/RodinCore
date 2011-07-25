@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Rodin Tutorial">
+  <topic label="Introduction" href="html/introduction_rodin_tutorial.html">
+   <link toc="introduction_rodin_tutorial.xml" />  </topic>
+  <topic label="1 A First Example: The Birthday Book" href="html/a_first_example_the_birthday_book_rodin_tutorial.html">
+   <link toc="a_first_example_the_birthday_book_rodin_tutorial.xml" />  </topic>
+  <topic label="2 The Celebrity Problem" href="html/the_celebrity_problem_rodin_tutorial.html">
+   <link toc="the_celebrity_problem_rodin_tutorial.xml" />  </topic>
+  <topic label="3 Customizing a perspective suitable for RODIN" href="html/customizing_a_perspective_suitable_for_rodin_rodin_tutorial.html">
+   <link toc="customizing_a_perspective_suitable_for_rodin_rodin_tutorial.xml" />  </topic>
+  <topic label="4 Location Access Controller" href="html/location_access_controller_rodin_tutorial.html">
+   <link toc="location_access_controller_rodin_tutorial.xml" />  </topic>
+  <topic label="5 Mathematical proofs" href="html/mathematical_proofs_rodin_tutorial.html">
+   <link toc="mathematical_proofs_rodin_tutorial.xml" />  </topic>
+</toc>
