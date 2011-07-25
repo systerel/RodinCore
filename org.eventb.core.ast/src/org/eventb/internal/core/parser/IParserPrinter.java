@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,10 +33,10 @@ public interface IParserPrinter<T> {
 			this(parsed, parsedKind, false);
 		}
 		
-		public SubParseResult(R parsed, int parsedKind, boolean isParenthesized) {
+		public SubParseResult(R parsed, int parsedKind, boolean isClosed) {
 			this.parsed = parsed;
 			this.parsedKind = parsedKind;
-			this.isClosed = isParenthesized;
+			this.isClosed = isClosed;
 		}
 
 		public R getParsed() {
