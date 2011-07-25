@@ -3,7 +3,7 @@
 <html dir="ltr" lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
-				<meta content="The Proving Perspective (Rodin User Manual),The Proving Perspective (Rodin User Manual),All Rewrite Rules,Arithmetic Rewrite Rules,Index (Rodin User Manual),Inference Rules,Relation Rewrite Rules,Rodin Proving Perspective,Set Rewrite Rules,The Event-B Explorer (Rodin User Manual),The Mathematical Language (Rodin User Manual)" name="keywords" />
+				<meta content="The Proving Perspective (Rodin User Manual),All Rewrite Rules,Arithmetic Rewrite Rules,Index (Rodin User Manual),Inference Rules,Proof Rules,Relation Rewrite Rules,Rodin Proving Perspective,Set Rewrite Rules,The Event-B Explorer (Rodin User Manual),The Mathematical Language (Rodin User Manual)" name="keywords" />
 		<link href="http://wiki.event-b.org/favicon.ico" rel="shortcut icon" />
 		<link href="http://wiki.event-b.org/opensearch_desc.php" rel="search" title="Event-B (English)" type="application/opensearchdescription+xml" />
 <link href="http://wiki.event-b.org/index.php?title=Special:Recentchanges&amp;feed=rss" rel="alternate" title="Event-B RSS Feed" type="application/rss+xml" />
@@ -43,7 +43,7 @@ var wgUserGroups = null;
 var wgUserLanguage = "en";
 var wgContentLanguage = "en";
 var wgBreakFrames = false;
-var wgCurRevisionId = "6861";
+var wgCurRevisionId = "9735";
 var wgVersion = "1.12.0";
 var wgEnableAPI = true;
 var wgEnableWriteAPI = true;
@@ -74,119 +74,170 @@ var wgEnableWriteAPI = true;
 <tr>
 <td> <table class="toc" id="toc" summary="Contents"><tr><td><div id="toctitle"><h2>Contents</h2></div>
 <ul>
-<li class="toclevel-1"><a href="#Loading_a_Proof"><span class="tocnumber">1</span> <span class="toctext">Loading a Proof</span></a></li>
-<li class="toclevel-1"><a href="#The_Proof_Tree"><span class="tocnumber">2</span> <span class="toctext">The Proof Tree</span></a>
+<li class="toclevel-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a></li>
+<li class="toclevel-1"><a href="#Loading_a_Proof"><span class="tocnumber">2</span> <span class="toctext">Loading a Proof</span></a></li>
+<li class="toclevel-1"><a href="#The_Proof_Tree"><span class="tocnumber">3</span> <span class="toctext">The Proof Tree</span></a>
 <ul>
-<li class="toclevel-2"><a href="#Description_of_the_Proof_Tree"><span class="tocnumber">2.1</span> <span class="toctext">Description of the Proof Tree</span></a></li>
-<li class="toclevel-2"><a href="#Decoration"><span class="tocnumber">2.2</span> <span class="toctext">Decoration</span></a></li>
-<li class="toclevel-2"><a href="#Navigation_within_the_Proof_Tree"><span class="tocnumber">2.3</span> <span class="toctext">Navigation within the Proof Tree</span></a></li>
-<li class="toclevel-2"><a href="#Hiding"><span class="tocnumber">2.4</span> <span class="toctext">Hiding</span></a></li>
-<li class="toclevel-2"><a href="#Pruning"><span class="tocnumber">2.5</span> <span class="toctext">Pruning</span></a></li>
-<li class="toclevel-2"><a href="#Copy.2FPaste"><span class="tocnumber">2.6</span> <span class="toctext">Copy/Paste</span></a></li>
+<li class="toclevel-2"><a href="#Decoration"><span class="tocnumber">3.1</span> <span class="toctext">Decoration</span></a></li>
+<li class="toclevel-2"><a href="#Navigation_within_the_Proof_Tree"><span class="tocnumber">3.2</span> <span class="toctext">Navigation within the Proof Tree</span></a></li>
+<li class="toclevel-2"><a href="#Manipulating_the_Proof_Tree"><span class="tocnumber">3.3</span> <span class="toctext">Manipulating the Proof Tree</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Hiding"><span class="tocnumber">3.3.1</span> <span class="toctext">Hiding</span></a></li>
+<li class="toclevel-3"><a href="#Pruning"><span class="tocnumber">3.3.2</span> <span class="toctext">Pruning</span></a></li>
+<li class="toclevel-3"><a href="#Copy.2FPaste"><span class="tocnumber">3.3.3</span> <span class="toctext">Copy/Paste</span></a></li>
 </ul>
 </li>
-<li class="toclevel-1"><a href="#Goal_and_Selected_Hypotheses"><span class="tocnumber">3</span> <span class="toctext">Goal and Selected Hypotheses</span></a></li>
-<li class="toclevel-1"><a href="#Rewrite_Rules"><span class="tocnumber">4</span> <span class="toctext">Rewrite Rules</span></a></li>
-<li class="toclevel-1"><a href="#Inference_Rules"><span class="tocnumber">5</span> <span class="toctext">Inference Rules</span></a></li>
-<li class="toclevel-1"><a href="#The_Proof_Control_Window"><span class="tocnumber">6</span> <span class="toctext">The Proof Control Window</span></a></li>
-<li class="toclevel-1"><a href="#The_Smiley"><span class="tocnumber">7</span> <span class="toctext">The Smiley</span></a></li>
-<li class="toclevel-1"><a href="#The_Operator_.22Buttons.22"><span class="tocnumber">8</span> <span class="toctext">The Operator "Buttons"</span></a></li>
-<li class="toclevel-1"><a href="#The_Search_Hypotheses_Window"><span class="tocnumber">9</span> <span class="toctext">The Search Hypotheses Window</span></a></li>
-<li class="toclevel-1"><a href="#The_Automatic_Post-tactic"><span class="tocnumber">10</span> <span class="toctext">The Automatic Post-tactic</span></a>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Goal_and_Selected_Hypotheses"><span class="tocnumber">4</span> <span class="toctext">Goal and Selected Hypotheses</span></a>
 <ul>
-<li class="toclevel-2"><a href="#Preferences_for_the_Post-tactic"><span class="tocnumber">10.1</span> <span class="toctext">Preferences for the Post-tactic</span></a></li>
+<li class="toclevel-2"><a href="#Applying_Proof_Rules"><span class="tocnumber">4.1</span> <span class="toctext">Applying Proof Rules</span></a>
+<ul>
+<li class="toclevel-3"><a href="#Rewrite_Rules"><span class="tocnumber">4.1.1</span> <span class="toctext">Rewrite Rules</span></a></li>
+<li class="toclevel-3"><a href="#Inference_Rules"><span class="tocnumber">4.1.2</span> <span class="toctext">Inference Rules</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#The_Proof_Control_View"><span class="tocnumber">5</span> <span class="toctext">The Proof Control View</span></a>
+<ul>
+<li class="toclevel-2"><a href="#The_Smiley"><span class="tocnumber">5.1</span> <span class="toctext">The Smiley</span></a></li>
+<li class="toclevel-2"><a href="#The_Editing_Area"><span class="tocnumber">5.2</span> <span class="toctext">The Editing Area</span></a></li>
+<li class="toclevel-2"><a href="#ML.2FPP_and_Hypotheses"><span class="tocnumber">5.3</span> <span class="toctext">ML/PP and Hypotheses</span></a>
+<ul>
+<li class="toclevel-3"><a href="#ML"><span class="tocnumber">5.3.1</span> <span class="toctext">ML</span></a></li>
+<li class="toclevel-3"><a href="#PP"><span class="tocnumber">5.3.2</span> <span class="toctext">PP</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#The_Search_Hypotheses_View"><span class="tocnumber">6</span> <span class="toctext">The Search Hypotheses View</span></a></li>
+<li class="toclevel-1"><a href="#The_Cache_Hypotheses_Window"><span class="tocnumber">7</span> <span class="toctext">The Cache Hypotheses Window</span></a></li>
+<li class="toclevel-1"><a href="#Proof_Information_View"><span class="tocnumber">8</span> <span class="toctext">Proof Information View</span></a></li>
+<li class="toclevel-1"><a href="#Rule_Details_View"><span class="tocnumber">9</span> <span class="toctext">Rule Details View</span></a></li>
+<li class="toclevel-1"><a href="#Auto-tactic_and_Post-tactic"><span class="tocnumber">10</span> <span class="toctext">Auto-tactic and Post-tactic</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Principles"><span class="tocnumber">10.1</span> <span class="toctext">Principles</span></a></li>
+<li class="toclevel-2"><a href="#Preferences_for_the_selected_auto_and_post_tactic_profile"><span class="tocnumber">10.2</span> <span class="toctext">Preferences for the selected auto and post tactic profile</span></a></li>
+<li class="toclevel-2"><a href="#Preferences_for_available_profiles"><span class="tocnumber">10.3</span> <span class="toctext">Preferences for available profiles</span></a></li>
+<li class="toclevel-2"><a href="#Project_specific_settings"><span class="tocnumber">10.4</span> <span class="toctext">Project specific settings</span></a></li>
 </ul>
 </li>
 </ul>
 </td></tr></table><script type="text/javascript"> if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } </script>
 </td></tr></table>
-<p>The Proving Perspective is made of a number of windows: the proof tree, the goal, the selected hypotheses, the proof control, the proof information, and the searched hypotheses. In subsequent sections, we study these windows, but before that let us see how one can load a proof.
+<a name="Overview"></a><h2> <span class="mw-headline"> Overview </span></h2>
+<p>When proof obligations (POs) are not discharged automatically the user can attempt to discharge them interactively using the Proving Perspective. This page provides an overview of the Proving Perspective and its use. If the Proving Perspective is not visible as a tab on the top right-hand corner of the main interface, the user can switch to it via "Window -&gt; Open Perspective".
+</p><p>The Proving Perspective consists of a number of views: the Proof Tree, the Goal, the Selected Hypotheses, the Proof Control, the Search Hypotheses, the Cache Hypotheses and the Proof Information. In the discussion that follows we look at each of these views individually. Below is a screenshot of the Proving Perspective:
 </p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:ProvPers.png" title="ProvPers.png"><img alt="" border="0" height="543" src="images/provpers.png" width="948" /></a></span></div></div>
 <a name="Loading_a_Proof"></a><h2> <span class="mw-headline"> Loading a Proof </span></h2>
-<p>In order to load a proof, enter the Proof Obligation window, select the project, select and expand the component, finally select the proof obligation: the corresponding proof will be loaded. As a consequence:
+<p>To work on an un-discharged PO it is necessary to load the proof into the Proving Perspective. To do this switch to the Proving Perspective; select the project from the Event-B Explorer; select and expand the component (context or machine); and finally select (double-click) the proof obligation of interest. A number of views will be updated with details of the corresponding proof.
 </p>
-<ul><li> the proof tree is loaded in the Proof Tree window. As we shall see in section <a href="#The_Proof_Tree" title="The Proving Perspective (Rodin User Manual)">6.2</a>, each node of the proof tree is associated with a sequent.
-</li><li> In case the proof tree has some "pending" nodes (whose sequents are not discharged yet) then the sequent corresponding to the first pending node is decomposed: its goal is loaded in the Goal window (section <a href="#Goal_and_Selected_Hypotheses" title="The Proving Perspective (Rodin User Manual)">6.3</a>), whereas parts of its hypotheses (the "selected" ones) are loaded in the Selected Hypotheses window (section <a href="#Goal_and_Selected_Hypotheses" title="The Proving Perspective (Rodin User Manual)">6.3</a>).
-</li><li> In case the proof tree has no pending node, then the sequent of the root node is loaded as explained previously.
-</li></ul>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:ExplorerView.png" title="ExplorerView.png"><img alt="" border="0" height="459" src="images/explorerview.png" width="383" /></a></span></div></div>
+<p>Note that pressing <a class="image" href="http://wiki.event-b.org/index.php/Image:Discharged.gif" title="Image:Discharged.gif"><img alt="Image:Discharged.gif" border="0" height="16" src="images/discharged.gif" width="16" /></a> button on the top left hand side of the Event-B Explorer will remove all discharged proof obligations (PO's) from the view.
+</p>
 <a name="The_Proof_Tree"></a><h2> <span class="mw-headline"> The Proof Tree </span></h2>
-<a name="Description_of_the_Proof_Tree"></a><h3> <span class="mw-headline"> Description of the Proof Tree </span></h3>
-<p>The proof tree can be seen in the corresponding window as shown in the following screen shot:
+<p>The proof tree view provides a graphical representation of each individual proof step, as seen in the following screenshot:
 </p>
-<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:Um-0095.png" title="Um-0095.png"><img alt="" border="0" height="370" src="images/um_0095.png" width="416" /></a></span></div></div>
-<p>Each line in the proof tree corresponds to a node which is a sequent. A line is right shifted when the corresponding node is a direct descendant of the node of the previous line. Here is an illustration of the previous tree:
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:ProTree.png" title="ProTree.png"><img alt="" border="0" height="478" src="images/protree.png" width="549" /></a></span></div></div>
+<p>Each node in the tree corresponds to a sequent. A line is right shifted when the corresponding node is a direct descendant of the node of the previous line. Each node is labelled with a comment which indicates which rule has been applied, or which prover discharged the proof. By selecting a node in the proof tree, the corresponding sequent is loaded: the hypotheses of the sequent are loaded to the Selected Hypotheses window, and the goal of the sequent is loaded to the Goal view.
 </p>
-<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:Tree.png" title="Tree.png"><img alt="" border="0" height="462" src="images/tree.png" width="559" /></a></span></div></div>
-<p>Each node is labelled with a comment explaining how it can be discharged. By selecting a node in the proof tree, the corresponding sequent is decomposed and loaded in the Goal and Selected Hypotheses windows as explained in section <a href="#Loading_a_Proof" title="The Proving Perspective (Rodin User Manual)">6.1</a>.
+<a name="Decoration"></a><h3> <span class="mw-headline"> Decoration</span></h3>
+<p>The leaves of the tree are decorated with one of three icons:
 </p>
-<a name="Decoration"></a><h3> <span class="mw-headline"> Decoration </span></h3>
-<p>The leaves of the tree are decorated with three kinds of logos:
-</p>
-<ul><li> a green logo with a "<img alt="\surd " class="tex" src="images/math_f4f2.png" />" in it means that this leaf is discharged,
-</li><li> a red logo with a "?" in it means that this leaf is not discharged,
-</li><li> a blue logo with a "R" in it means that this leaf has been reviewed.
+<ul><li> <a class="image" href="http://wiki.event-b.org/index.php/Image:Discharged.gif" title="Image:Discharged.gif"><img alt="Image:Discharged.gif" border="0" height="16" src="images/discharged.gif" width="16" /></a> means that this leaf is discharged,
+</li><li> <a class="image" href="http://wiki.event-b.org/index.php/Image:Pending.gif" title="Image:Pending.gif"><img alt="Image:Pending.gif" border="0" height="16" src="images/pending.gif" width="16" /></a> means that this leaf is not discharged,
+</li><li> <a class="image" href="http://wiki.event-b.org/index.php/Image:Reviewed.gif" title="Image:Reviewed.gif"><img alt="Image:Reviewed.gif" border="0" height="16" src="images/reviewed.gif" width="16" /></a> means that this leaf has been reviewed.
 </li></ul>
-<p>Internal nodes in the proof tree are decorated in the same (but lighter) way. Note that a "reviewed" leaf is one that is not discharged yet by the prover. Instead, it has been "seen" by the user who decided to have it discharged later. Marking nodes as "reviewed" is very convenient in order to perform an interactive proof in a gradual fashion. In order to discharge a "reviewed" node, select it and prune the tree at that node (section <a href="#Pruning" title="The Proving Perspective (Rodin User Manual)">6.2.5</a>): the node will become "red" again (undischarged) and you can now try to discharge it.
+<p>Internal nodes in the proof tree are decorated in reverse colours. Note that a "reviewed" leaf is one that is not discharged yet by the prover. Instead, it has been "seen" by the user who decided to postpone the proof. Marking nodes as "reviewed" is very convenient since the provers will ignore these leaves and focus on specific areas of interest. This allows interactive proof in a gradual fashion. In order to discharge a "reviewed" node, select it and prune the tree at that node: the node will become "brown" again (undischarged) and you can now try to discharge it.
 </p>
-<a name="Navigation_within_the_Proof_Tree"></a><h3> <span class="mw-headline"> Navigation within the Proof Tree </span></h3>
-<p>On top of the proof tree window one can see three buttons:
+<a name="Navigation_within_the_Proof_Tree"></a><h3> <span class="mw-headline"> Navigation within the Proof Tree</span></h3>
+<p>On top of the proof tree view, one can see three buttons:
 </p>
-<ul><li> the "G" buttons allows you to see the goal of the sequent corresponding to the node
-</li><li> the "+" button allows you to fully expand the proof tree
-</li><li> the "-" allows you to fully collapse the tree: only the root stays visible.
+<ul><li> the "<b>G</b>" buttons allows you to see the goal of the sequent corresponding to each node,
+</li><li> the "<b>+</b>" button allows you to fully expand the proof tree,
+</li><li> the "<b>-</b>" allows you to fully collapse the tree: only the root stays visible.
 </li></ul>
-<a name="Hiding"></a><h3> <span class="mw-headline"> Hiding </span></h3>
-<p>The little triangle next to each node in the proof tree allows you to expand or collapse the subtree starting at that node.
+<a name="Manipulating_the_Proof_Tree"></a><h3> <span class="mw-headline"> Manipulating the Proof Tree</span></h3>
+<a name="Hiding"></a><h4> <span class="mw-headline"> Hiding </span></h4>
+<p>The little square (with a "+" or "-" inside) next to each node in the proof tree allows you to expand or collapse the subtree starting at that node.
 </p>
-<a name="Pruning"></a><h3> <span class="mw-headline"> Pruning </span></h3>
-<p>The proof tree can be pruned from a node: it means that the subtree starting at that node is eliminated. The node in question becomes a leaf and is red decorated. This allows you to resume the proof from that node. After selecting a sequent in the proof tree, pruning can be performed in two ways:
+<a name="Pruning"></a><h4> <span class="mw-headline"> Pruning </span></h4>
+<p>The proof tree can be pruned at a selected node; the subtree of the selected node is removed from the proof tree. The selected node becomes a leaf and is decorated with <a class="image" href="http://wiki.event-b.org/index.php/Image:Pending.gif" title="Image:Pending.gif"><img alt="Image:Pending.gif" border="0" height="16" src="images/pending.gif" width="16" /></a> . The proof activity can then be resumed from this node. After selecting a node in the proof tree pruning can be performed in two ways:
 </p>
 <ul><li> by right-clicking and then selecting "Prune",
-</li><li> by pressing the "Scissors" button in the proof control window (section <a href="#The_Proof_Control_Window" title="The Proving Perspective (Rodin User Manual)">6.4</a>).
+</li><li> by clicking on the <a class="image" href="http://wiki.event-b.org/index.php/Image:Pn_prover.gif" title="Image:Pn_prover.gif"><img alt="Image:Pn_prover.gif" border="0" height="16" src="images/pn_prover.gif" width="16" /></a> button in the proof control view.
 </li></ul>
-<p>Note that after pruning, the post-tactic (section <a href="#The_Automatic_Post-tactic" title="The Proving Perspective (Rodin User Manual)">6.8</a>) is not applied to the new current sequent: if needed you have to press the "post-tactic" button in the Proof Control window (section <a href="#The_Proof_Control_Window" title="The Proving Perspective (Rodin User Manual)">6.4</a>). This happens in particular when you want to redo a proof from the beginning: you prune the proof tree from the root node and then you have to press the "post-tactic" button in order to be in exactly the same situation as the one delivered automatically initially.
-</p><p>When you want to redo a proof from a certain node, it might be advisable to do it after copying the tree so that in case your new proof fails you can still resume the previous situation by pasting the copied version (see next section).
+<p>Note that after pruning, the post-tactic is not applied to the new current sequent. The post-tactic should be applied manually, if required, by clicking on the post-tactic button in the Proof Control view. This is useful, in particular, when you want to redo a proof from the beginning. The proof tree can be pruned at its root node and then the proof can proceed again, with invocation of internal or external provers; or with interactive proof.
+</p><p>Before pruning a particular node, the node (and its subtree) can be copied to the clipboard. If the new proof strategy subsequently fails, the copied version can be pasted back into the pruned node (see the next section).
 </p>
-<a name="Copy.2FPaste"></a><h3> <span class="mw-headline"> Copy/Paste </span></h3>
-<p>By selecting a node in the proof tree and then clicking on the right key of the mouse, you can copy the part of the proof tree starting at that sequent: it can later be pasted in the same way. This allows you to reuse part of a proof tree in the same (or even another) proof.
+<a name="Copy.2FPaste"></a><h4> <span class="mw-headline"> Copy/Paste </span></h4>
+<p>By selecting a node in the proof tree and then right-clicking with the mouse, you can copy the part of the proof tree starting at that sequent (the node and its subtree). Pasting the node and subtree back in is done in a similar manner, with a right mouse click on a proof node. This allows reuse of part of a proof tree in the same, or even in another, proof.
 </p>
 <a name="Goal_and_Selected_Hypotheses"></a><h2> <span class="mw-headline"> Goal and Selected Hypotheses </span></h2>
-<p>The "Goal" and "Selected Hypotheses" windows display the current sequent you have to prove at a given moment in the proof. Here is an example:
+<p>The nodes in the proof tree view correspond to sequents. A user will work with one selected node, and thus one sequent, at a time; attempting various strategies in an effort to show that the sequent goal is true. The "Goal" and "Selected Hypotheses" views provide information to the user about the currently selected sequent. Here is an example:
 </p>
-<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:Um-0098.png" title="Um-0098.png"><img alt="" border="0" height="360" src="images/um_0098.png" width="307" /></a></span></div></div>
-<p>A selected hypothesis can be deselected by first clicking in the box situated next to it (you can click on several boxes) and then by pressing the red (-) button at the top of the selected hypothesis window:
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:GoalHyp.png" title="GoalHyp.png"><img alt="" border="0" height="304" src="images/goalhyp.png" width="483" /></a></span></div></div>
+<p>A hypothesis can be removed from the list of selected hypotheses by selecting the check the box situated next to it (you can click on several boxes) and then by clicking on the <a class="image" href="http://wiki.event-b.org/index.php/Image:Remove.gif" title="Image:remove.gif"><img alt="Image:remove.gif" border="0" height="16" src="images/remove.gif" width="16" /></a> button at the top of the selected hypotheses window:
 </p>
-<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:Um-0099.png" title="Um-0099.png"><img alt="" border="0" height="359" src="images/um_0099.png" width="286" /></a></span></div></div>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:GoalHypSelect.png" title="GoalHypSelect.png"><img alt="" border="0" height="303" src="images/goalhypselect.png" width="450" /></a></span></div></div>
 <p>Here is the result:
 </p>
-<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:Um-0100.png" title="Um-0100.png"><img alt="" border="0" height="293" src="images/um_0100.png" width="289" /></a></span></div></div>
-<p>Notice that the deselected hypotheses are not lost: you can get them back by means of the Searched Hypotheses window (section <a href="#srchhyp" title="The Proving Perspective (Rodin User Manual)">6.7</a>).
-</p><p>The three other buttons next to the red (-) button allow you to do the reverse operation, namely keeping some hypotheses. The (ct) button next to the goal allows you to do a proof by contradiction: pressing it makes the negation of the goal being a selected hypothesis whereas the goal becomes "false". The (ct) button next to a selected hypothesis allows you to do another kind of proof by contradiction: pressing it makes the negation of the hypothesis the goal whereas the negated goal becomes an hypothesis.
-</p>
-<a name="Rewrite_Rules"></a><h2> <span class="mw-headline"> Rewrite Rules </span></h2>
-<p>Rewrite rules are applied either automatically (A) or manually (M).
-</p><p>A rule may be applied:
-</p>
-<ul><li> Automatically (A), when post tactics are enabled. These rules are equivalence simplification laws.
-</li><li> Manually (M), through an interactive command. These rules gathers non equivalence laws, definition laws, distributivity laws and derived laws.
-</li></ul>
-<p>Rewrite rules are applied from left to right either in the goal or in the selected hypotheses, when their <i>side condition</i> hold.
-</p><p>Each rule is named after the following elements:
-</p>
-<ul><li> The law category: simplification law (SIMP), definition law (DEF), distributivity law (DISTRI), or else derived law (DERIV).
-</li><li> Particularity on terminal elements of the left part of the rule (optional): special element (SPECIAL) such as the empty-set, type expression (TYPE), same element occurring more then once (MULTI), literal (LIT). A type expression is either a basic type (<img alt="\intg, \Bool" class="tex" src="images/math_147c.png" />, any carrier set), or <img alt="\pow" class="tex" src="images/math_fa7e.png" />(type expression), or type expression<img alt="\cprod" class="tex" src="images/math_bd8c.png" />type expression.
-</li><li> One or more elements describing from top to down the left part of the rule, eg. predicate AND, expression BUNION.
-</li><li> Detail to localize those elements (optional): left (L), right (R).
-</li></ul>
-<p>Rewrite rules having an equivalence operator in their left part may also describe other rules. eg: the rule:
-</p><p><img alt="  \True  = \False  \;\;\defi\;\;  \bfalse " class="tex" src="images/math_a31d.png" />
-</p><p>should also produce the rule:
-</p><p><img alt="  \False  = \True  \;\;\defi\;\;  \bfalse " class="tex" src="images/math_3447.png" />
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:GoalHypSelectRes.png" title="GoalHypSelectRes.png"><img alt="" border="0" height="302" src="images/goalhypselectres.png" width="422" /></a></span></div></div>
+<p>Note that the deselected hypotheses are not lost: you can find them again using the Search Hypotheses <a class="image" href="http://wiki.event-b.org/index.php/Image:Sh_prover.gif" title="Image:sh_prover.gif"><img alt="Image:sh_prover.gif" border="0" height="16" src="images/sh_prover.gif" width="16" /></a> button in the Proof Control view. Other buttons are used as follows: 
 </p><p><br />
-For associative operators in connection with distributive laws as in:
 </p>
-<center><img alt=" P \land (Q \lor \ldots \lor R) " class="tex" src="images/math_c0d9.png" /></center>
-<p>it has been decided to put the "button" on the first associative/commutative operator (here <img alt="\lor " class="tex" src="images/math_22ce.png" />). Pressing that button will generate a menu: the first option of this menu will be to distribute all associative/commutative operators, the second option will be to distribute only the first associative/commutative operator. In the following presentation, to simplify matters, we write associative/commutative operators with two parameters only, but it must always be understood implicitly that we have a sequence of them. For instance, we shall never write <img alt=" Q \lor \ldots \lor R " class="tex" src="images/math_19e8.png" /> but <img alt=" Q \lor R " class="tex" src="images/math_e5ba.png" /> instead. Rules are sorted according to their purpose.
+<ul><li> <a class="image" href="http://wiki.event-b.org/index.php/Image:Select_all_prover.gif" title="Image:select_all_prover.gif"><img alt="Image:select_all_prover.gif" border="0" height="16" src="images/select_all_prover.gif" width="16" /></a> select all hypotheses. 
+</li></ul>
+<p><br />
+</p>
+<ul><li> <a class="image" href="http://wiki.event-b.org/index.php/Image:Inv_prover.gif" title="Image:inv_prover.gif"><img alt="Image:inv_prover.gif" border="0" height="16" src="images/inv_prover.gif" width="16" /></a> invert the selection.
+</li></ul>
+<p><br />
+</p>
+<ul><li> <a class="image" href="http://wiki.event-b.org/index.php/Image:Falsify_prover.gif" title="Image:falsify_prover.gif"><img alt="Image:falsify_prover.gif" border="0" height="16" src="images/falsify_prover.gif" width="16" /></a> next to the goal - proof by contradiction 1: The negation of the <b>goal</b> becomes a selected hypothesis and the goal becomes "<b>⊥</b>". 
+</li></ul>
+<p><br />
+</p>
+<ul><li> <a class="image" href="http://wiki.event-b.org/index.php/Image:Falsify_prover.gif" title="Image:falsify_prover.gif"><img alt="Image:falsify_prover.gif" border="0" height="16" src="images/falsify_prover.gif" width="16" /></a> next to a selected hypothesis - proof by contradiction 2: The negation of the <b>hypothesis</b> becomes the goal and the negated goal becomes a selected hypothesis.
+</li></ul>
+<p><br />
+</p>
+<a name="Applying_Proof_Rules"></a><h3> <span class="mw-headline"> Applying Proof Rules </span></h3>
+<p>A user wishing to attempt an interactive proof has a number of proof rules available, and these may be either rewrite rules or inference rules. In the Goal and the Selected Hypotheses views various operators may appear in red coloured font. The red font indicates that some interactive proof rule(s) are applicable and may be applied as a step in the proof attempt. When the mouse hovers over such an operator a number of applicable rules may be displayed; the user may choose to apply one of the rules by clicking on it.
+</p><p>Other proof rules can be applied when green buttons appear in the Goal and Selected Hypotheses views. Examples are proof by contradiction <a class="image" href="http://wiki.event-b.org/index.php/Image:Falsify_prover.gif" title="Image:falsify_prover.gif"><img alt="Image:falsify_prover.gif" border="0" height="16" src="images/falsify_prover.gif" width="16" /></a>, that we have already encountered; and <a class="image" href="http://wiki.event-b.org/index.php/Image:ConjI_prover.gif" title="Image:ConjI_prover.gif"><img alt="Image:ConjI_prover.gif" border="0" height="16" src="images/conji_prover.gif" width="16" /></a> for conjunction introduction in the goal. 
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:ApplyRewRule.png" title="ApplyRewRule.png"><img alt="" border="0" height="230" src="images/applyrewrule.png" width="517" /></a></span></div></div>
+<p>To instantiate a quantifier the user enters the desired expression in the box behind the quantifier and clicks on the quantifier:
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:InstQuantifier.png" title="InstQuantifier.png"><img alt="" border="0" height="144" src="images/instquantifier.png" width="327" /></a></span></div></div>
+<a name="Rewrite_Rules"></a><h4> <span class="mw-headline"> Rewrite Rules </span></h4>
+<p>Rewrite rules are one-directional equalities (and equivalences) that can be used to simplify formulas (the goal or a single hypothesis). A rewrite rule is applied from left to right when its <i>side condition</i> holds; it can be applied either in the goal predicate, or in one of the selected hypotheses.
+</p><p>A rewrite rule is applied either automatically (<b>A</b>) or manually (<b>M</b>):
+</p>
+<ul><li> automatically, when post-tactics are run.
+</li><li> automatically, when auto-tactics are run.
+</li><li> manually, through an interactive command. These rules gather non equivalence laws, definition laws, distributivity laws and derived laws.
+</li></ul>
+<p>Automatic rewrite rules are equivalence simplification laws.
+</p><p>Each rule name indicates the rule's characteristics according to the following convention:
+</p>
+<ul><li> the law category: simplification law (SIMP), definition law (DEF), distributivity law (DISTRI), or else derived law (DERIV).
+</li><li> the root operator of the formula on the left-hand side of the rule, e.g. predicate AND, expression BUNION.
+</li><li> (optionally) the terminal elements on the left-hand side of the rule: special element (SPECIAL) such as the empty-set, type expression (TYPE), same element occurring more than once (MULTI), literal (LIT). A type expression is either a basic type (<img alt="\intg, \Bool" class="tex" src="images/math_147c.png" />, any carrier set), or <img alt="\pow" class="tex" src="images/math_fa7e.png" />(type expression), or type expression<img alt="\cprod" class="tex" src="images/math_bd8c.png" />type expression.
+</li><li> (optionally) some other description of a characteristic, e.g. left (L), right (R).
+</li></ul>
+<p>Rewrite rules having a symmetric operator on the left-hand side may also describe other rules. eg: the rule:
+</p>
+<center><img alt="  \True  = \False  \;\;\defi\;\;  \bfalse " class="tex" src="images/math_a31d.png" /></center>
+<p>should also produce the rule:
+</p>
+<center><img alt="  \False  = \True  \;\;\defi\;\;  \bfalse " class="tex" src="images/math_3447.png" /></center>
+<p>For associative operators in connection with distributive laws as in:
+</p>
+<center><img alt=" P   \land (Q~ {\color{red}{\lor}} \ldots \lor R) " class="tex" src="images/math_2c56.png" /></center>
+<p>it has been decided to highlight the first associative/commutative operator (the <img alt="{\color{red}{\lor}} " class="tex" src="images/math_1637.png" />). A menu is presented when hovering the mouse over the operator: the first menu option distributes all associative/commutative operators, the second option distributes only the first associative/commutative operator. In order to simplify the explanation we write associative/commutative operators with two parameters only. However, <i>we must emphasise here</i>, that generally we may have a sequence of more than two parameters. So, we write <img alt=" Q \lor R " class="tex" src="images/math_e5ba.png" /> instead of <img alt=" Q \lor \ldots \lor R " class="tex" src="images/math_19e8.png" />. Rules are sorted according to their purpose.
 </p><p>Rules marked with a star in the first column are implemented in the current prover.  Rules without a star are planned for implementation.
 </p><p>Rewrite rules are split into:
 </p>
@@ -196,9 +247,9 @@ For associative operators in connection with distributive laws as in:
 </li></ul>
 <p>They are also available in a single large page <a href="http://wiki.event-b.org/index.php/All_Rewrite_Rules" title="All Rewrite Rules">All Rewrite Rules</a>.
 </p>
-<a name="Inference_Rules"></a><h2> <span class="mw-headline"> Inference Rules </span></h2>
-<p>Inference rules are applied either automatically (A) or manually (M).
-</p><p>Inference rules applied automatically are applied at the end of each proof step when the post-tactic is enabled. They have the following possible effects:
+<a name="Inference_Rules"></a><h4> <span class="mw-headline"> Inference Rules </span></h4>
+<p>Inference rules (see <a href="http://wiki.event-b.org/index.php/Proof_Rules" title="Proof Rules">Proof Rules</a>) are applied either automatically (A) or manually (M).
+</p><p>Inference rules applied automatically are applied at the end of each proof step. They have the following possible effects:
 </p>
 <ul><li> they discharge the goal,
 </li><li> they simplify the goal and add a selected hypothesis,
@@ -206,78 +257,170 @@ For associative operators in connection with distributive laws as in:
 </li><li> they simplify a selected hypothesis,
 </li><li> they simplify a selected hypothesis by decomposing it into several simpler selected hypotheses.
 </li></ul>
-<p>Inference rules applied manually are used to perform an interactive proof. They can be invoked by pressing "buttons" which corresponds to emphasized (red) operators in the goal or the hypotheses. A menu is proposed when there are several options.
-</p><p>See the <a href="http://wiki.event-b.org/index.php/Inference_Rules" title="Inference Rules">Inference Rules</a> list.
+<p>Inference rules applied manually are used to perform an interactive proof. They can be invoked by clicking on the red highlighted operators in the goal or the hypotheses. A menu is presented when there are several options.
+</p><p>See <a href="http://wiki.event-b.org/index.php/Inference_Rules" title="Inference Rules">Inference Rules</a> list.
 </p>
-<a name="The_Proof_Control_Window"></a><h2> <span class="mw-headline"> The Proof Control Window </span></h2>
-<p>The Proof Control window contains the buttons which you can use to perform an interactive proof. Next is a screen shot where you can see successively from top to bottom:
+<a name="The_Proof_Control_View"></a><h2> <span class="mw-headline"> The Proof Control View</span></h2>
+<p>The Proof Control view contains the buttons which you can use to perform an interactive proof.
 </p>
-<ul><li> some selected hypotheses,
-</li><li> the goal,
-</li><li> the "Proof Control" window,
-</li><li> a small editing area within which you can enter parameters used by some buttons of the Proof Control window
-</li><li> the smiley (section <a href="#The_Simley" title="The Proving Perspective (Rodin User Manual)">6.5</a>)
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:PControl.png" title="PControl.png"><img alt="" border="0" height="438" src="images/pcontrol.png" width="930" /></a></span></div></div>
+<p>The Proof Control view offers a number of buttons whose effects we briefly describe next; moving from left to right on the toolbar:
+</p>
+<ul><li> (<b>nPP</b>) invokes the new predicate prover, a drop-down list indicates alternative strategies.
+</li><li> (<b>R</b>) indicates that a node has been reviewed: in an attempt by the user to carry out proofs in a stepwise fashion, they might decide to postpone the task of discharging some proofs until a later stage. To do this the proofs can be marked as reviewed by choosing the proof node and clicking on this button. This indicates that by visually checking the proof the user is convinced that they can discharge it later, but they do not want to do it right now.
+</li><li> (<b>p0</b>) the PP and ML provers can be invoked from the drop-down list using different forces.
+</li><li> (<b>dc</b>) do proof by cases: the proof is split into two branches. In the first branch:- the predicate supplied by the user is added to the Selected Hypotheses, and the user attempts to discharge this branch. In the second branch&nbsp;:- the predicate supplied by the user is negated and added to the Selected Hypotheses; the user then attempts to discharge this branch.
 </li></ul>
-<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:Um-0101.png" title="Um-0101.png"><img alt="" border="0" height="438" src="images/um_0101.png" width="534" /></a></span></div></div>
-<p>The Proof Control window offers a number of buttons which we succinctly describe from left to right:
-</p>
-<ul><li> (p0): the prover PP attempts to prove the goal (other cases in the list)
-</li><li> (R) review: In an attempt by the user to carry out proofs in a gradual fashion, they might decide to postpone the task of discharging some interactive proofs for a later stage.  In this case they have the possibility to mark these proofs as reviewed (by choosing the proof node and pressing the blue button with a “R” letter on the top-left corner of the Proof Control view).  This means that by visually checking this proof, the user convinced that they can discharge it later but they do not want to do it right now.
-</li><li> (dc) proof by cases: the goal is proved first under the predicate written in the editing area and then under its negation,
-</li><li> (ah) lemma: the predicate in the editing area is proved and then added as a new selected hypothesis,
-</li><li> (ae) abstract expression: the expression in the editing area is given a fresh name,
-</li><li> the auto-prover attempts to discharge the goal. The auto-prover is the one which is applied automatically on all proof obligations (as generated automatically by the proof obligation generator after a "save") without any intervention of the user. With this button, you can call yourself the auto-prover within an interactive proof.
-</li><li> the post-tactic is executed (see section <a href="#The_Automatic_Post-tactic" title="The Proving Perspective (Rodin User Manual)">6.8</a>),
-</li><li> lasso: load in the Selected Hypotheses window those unseen hypotheses containing identifiers which are common with identifiers in the goal and selected hypotheses,
-</li><li> backtrack form the current node (i.e., prune its parent),
-</li><li> scissors: prune the proof tree from the node selected in the proof tree,
-</li><li> show (in the Search Hypotheses window) hypotheses containing the character string as in the editing area,
-</li><li> <b>Cache Hypotheses Button</b>: By pressing <i>"Cache Hypotheses"</i> button the tool displays the <i>"Cache Hypotheses"</i> view. This view displays all hypotheses that are related to the current goal. Some of these hypotheses might not been chosen as current active hypotheses (this is the set of hypotheses that considered by the prover to discharge the current goal). By opening the cached hypotheses view the user can manually select and add some of them to the current active hypotheses view.
-</li><li> load the previous non-discharged proof obligation,
-</li><li> load the next undischarged proof obligation,
-</li><li> (i) show information corresponding to the current proof obligation in the corresponding window. This information correspond to the elements that took directly part in the proof obligation generation (events, invariant, etc.),
-</li><li> goto the next pending node of the current proof tree,
-</li><li> load the next reviewed node of the current proof tree.
+<ul><li> (<b>ah</b>) add a new lemma: the predicate in the editing area should be proved by the user. It is then added as a new selected hypothesis.
+</li><li> (<b>ae</b>) abstract expression: the expression in the editing area is given a fresh name.
+</li><li> <b>the robot</b>: invokes the auto-prover which attempts to discharge the goal. The auto-prover is applied automatically on all proof obligations after a "save" without any intervention of the user. Using this button, you can invoke the auto-prover within an interactive proof.
+</li><li> the <b>post-tactic</b> is executed ,
+</li><li> <b>lasoo</b>: load into the Selected Hypotheses window those hidden hypotheses that contain identifiers in common with the goal, and with the selected hypotheses.
+</li><li> <b>backtrack</b> form the current node (i.e., prune its parent),
+</li><li> <b>scissors</b>: prune the proof tree from the node selected in the proof tree,
+</li><li> <b>Search Hypotheses</b>: find hypotheses containing the character string in the editing area, and display in the Search Hypothesis view.
+</li><li> <b>Cache Hypotheses</b>: press this to display the <i>"Cache Hypotheses"</i> view. This view displays all hypotheses that are related to the current goal.
+</li><li> load the <b>previous</b> undischarged proof obligation,
+</li><li> load the <b>next</b> undischarged proof obligation,
+</li><li> <b>(i)</b> show information corresponding to the current proof obligation in the corresponding window. This information correspond to the elements that directly took part in the proof obligation generation (events, invariant, etc.),
+</li><li> goto the next <b>pending</b> node of the current proof tree,
+</li><li> load the next <b>reviewed</b> node of the current proof tree.
+</li><li> <b>Disable/Enable Post-tactics</b>: allows the user to choose whether post-tactics run after each interactive proof step.
 </li></ul>
-<a name="The_Smiley"></a><h2> <span class="mw-headline"> The Smiley </span></h2>
-<p>The smiley can take three different colors: (1) red, meaning that the proof tree contains one or more non-discharged sequents, (2) blue, meaning that all non-discharged sequents of the proof tree have been reviewed, (3) green, meaning that all sequents of the proof tree are discharged.
+<a name="The_Smiley"></a><h3> <span class="mw-headline"> The Smiley </span></h3>
+<p>The smiley can be one of three different colors: (1) red, indicates that the proof tree contains one or more undischarged sequents, (2) blue, indicates that all undischarged sequents of the proof tree have been reviewed, (3) green, indicates that all sequents of the proof tree are discharged.
 </p>
-<a name="The_Operator_.22Buttons.22"></a><h2> <span class="mw-headline"> The Operator "Buttons" </span></h2>
-<p>In the goal and in the selected, searched, or cache hypotheses some operators are colored in red. It means that they are "buttons" you can press. When doing so, the meaning (sometimes several) is shown in a menu where you can select various options. The operation performed by these options is described in sections <a href="#Interactive_Rewrite_Rules" title="The Proving Perspective (Rodin User Manual)">6.9.1</a> and <a href="#Interactive_Inference_Rules" title="The Proving Perspective (Rodin User Manual)">6.9.2</a>.
+<a name="The_Editing_Area"></a><h3> <span class="mw-headline"> The Editing Area </span></h3>
+<p>The editing area allows the user to supply parameters for proof commands. For example, when the user attempts to add a new hypothesis (by clicking on the lemma <b>ah</b> button), the new hypothesis should have been written by the user in the editing area.
 </p>
-<a name="The_Search_Hypotheses_Window"></a><h2> <span class="mw-headline"> The Search Hypotheses Window </span></h2>
+<a name="ML.2FPP_and_Hypotheses"></a><h3> <span class="mw-headline"> ML/PP and Hypotheses </span></h3>
+<a name="ML"></a><h4> <span class="mw-headline"> ML </span></h4>
+<p>ML (mono-lemma) prover appears in the drop-down list under the button (<b>pp</b>) as M0, M1, M2, M3, ML.
+The different configuration (e.g., M0) refer to the proof force of the ML prover. <b>All hypotheses</b> are passed to ML.
+</p>
+<a name="PP"></a><h4> <span class="mw-headline"> PP </span></h4>
+<p>PP (predicate prover) appears in the drop-down list under the button (<b>pp</b>) as P0, P1, PP. 
+</p>
+<ul><li> P0 uses <b>all selected hypotheses</b> (the ones in <b>Selected Hypotheses</b> window).
+</li><li> P1 employs a <b>lasoo</b> operation to the selected hypotheses and the goal, and uses the resulting hypotheses.
+</li><li> PP uses <b>all hypotheses</b>.
+</li></ul>
+<a name="The_Search_Hypotheses_View"></a><h2> <span class="mw-headline"> The Search Hypotheses View</span></h2>
 <p>By typing a string in the <b>Proof Control</b> window and pressing the <b>Search Hypotheses</b> button a window is provided which contains the hypotheses having a character string in common with the one entered by the user in the editing area. For example, if we search for hypotheses involving the character string "cr", then after pressing the <b>Search Hypothesis</b> button on the proof control window, we obtain the following:
 </p>
 <div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:Um-0102.png" title="Um-0102.png"><img alt="" border="0" height="305" src="images/um_0102.png" width="518" /></a></span></div></div>
-<p>This view also integrates a "quick search" area (A), that allows us to search quickly hypothesis involving short character strings such as "cr". A <b>search hypothesis button (B)</b> that behaves the same as the button of the proving window, a <b>refresh button (C)</b> that updates the window manually for more control, and a <b>drop down menu (D)</b> to set the preferences of the view up. 
+<p>This view also integrates a "quick search" area (A), that allows us to search quickly hypotheses involving short character strings such as "cr". A <b>search hypothesis button (B)</b> that behaves the same as the button of the proving window, a <b>refresh button (C)</b> that updates the window manually for more control, and a <b>drop down menu (D)</b> to set the preferences of the view up. 
 </p><p>By pressing <b>return</b> key or the button (B) (once a short string has been given in the input area (A)), hypotheses can be searched quickly as if we used the <b>Proof Control</b> as described before.
 </p><p>The drop down menu (D) is accessible to set some preferences over the searched hypotheses&nbsp;:
 </p>
 <div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:SearchHyp_view_menu.png" title="SearchHyp view menu.png"><img alt="" border="0" height="306" src="images/searchhyp_view_menu.png" width="520" /></a></span></div></div>
 <p>If we change preferences for the search, we might need to "update" manually the view with the button (C).
 By selecting "Consider hidden hypotheses in search" option, we can review all hypotheses that have been unselected in the selected hypotheses window(more info about<a href="http://wiki.event-b.org/index.php/Rodin_Proving_Perspective#Goal_and_Selected_Hypotheses" title="Rodin Proving Perspective"> selected/hidden hypotheses</a>...).
-</p><p>In the next step any of these hypotheses can be selected and then by pressing the <b>(+)button</b> they will be moved to the <b>Selected Hypotheses</b> window . Adding these hypotheses to the set <b>Selected Hypotheses</b> means that they will be visible to the prover. This means that they can be used during the next interactive proof phase. Accordingly by selecting any numbers of hypotheses and pressing the <b>(-)button</b> they will be removed from the <b>Search Hypotheses</b> window. The <b>(-)button</b> also appears above the selected hypotheses, and allow the user to remove any hypothesis form the <b>Selected Hypotheses</b> window. The other button which is situated in the left-hand-side of all hypotheses is the <b>(ct) Button</b>. By pressing the <b>(ct) Button</b> the negation of the corresponding hypothesis is taken as a new hypothesis. For this purpose we have to prove it first and therefore it appears as a new goal which the user must discharge it first and then proceed with the previous goal.
 </p>
-<a name="The_Automatic_Post-tactic"></a><h2> <span class="mw-headline"> The Automatic Post-tactic </span></h2>
-<p>In this section, we present the various rewrite or inference rules which are applied automatically as a systematic post-tactic after each proof step. Note that the post-tactic can be disabled by using the "<b>P</b><img alt="\! \! \! \! /" class="tex" src="images/math_2377.png" />" button situated on the right of the proof control window.
-</p><p>The post-tactic is made of two different rules: rewrite rules, which are applied on any sub-formula of the goal or selected hypotheses (section <a href="#Rewrite_Rules" title="The Proving Perspective (Rodin User Manual)">6.8.1</a>) and inference rules which are applied on the current sequent (section <a href="#Automatic_Inference_Rules" title="The Proving Perspective (Rodin User Manual)">6.8.2</a>).
-</p><p><br />
-</p><p><br />
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:SearchHyp.png" title="SearchHyp.png"><img alt="" border="0" height="685" src="images/searchhyp.png" width="418" /></a></span></div></div>
+<p>To move any of these hypotheses to the <b>Selected Hypotheses</b> window, select those required (using the check boxes) and press the <a class="image" href="http://wiki.event-b.org/index.php/Image:Add.gif" title="Image:Add.gif"><img alt="Image:Add.gif" border="0" height="16" src="images/add.gif" width="16" /></a> button. Adding these hypotheses to the selected hypotheses means that they will be visible to the prover. They can then be used during the next interactive proof phase. 
+</p><p>To remove hypotheses from the <b>Search Hypotheses</b> window use the <a class="image" href="http://wiki.event-b.org/index.php/Image:Remove.gif" title="Image:Remove.gif"><img alt="Image:Remove.gif" border="0" height="16" src="images/remove.gif" width="16" /></a> button. This button also appears above the selected hypotheses, and allows the user to remove any hypothesis from the <b>Selected Hypotheses</b> window. 
+</p><p>The other button, situated to the left each hypotheses, is the <a class="image" href="http://wiki.event-b.org/index.php/Image:Falsify_prover.gif" title="Image:falsify_prover.gif"><img alt="Image:falsify_prover.gif" border="0" height="16" src="images/falsify_prover.gif" width="16" /></a> button. clicking on this will attempt a proof by contradiction. The effect is the same as if the hypothesis were in the <b>Selected Hypotheses</b>.
 </p>
-<a name="Preferences_for_the_Post-tactic"></a><h3> <span class="mw-headline"> Preferences for the Post-tactic </span></h3>
-<p>The post-tactic can be configured by means of a preference page which can be obtained as follows: press the "Window" button on the top tooolbar. On the coming menu, press the "Preferences" button. On the coming menu, press the "Event-B" menue, then the "Sequent Prover’, and finally the "Post-Tactic" button. This yilds the following window:
+<a name="The_Cache_Hypotheses_Window"></a><h2> <span class="mw-headline"> The Cache Hypotheses Window </span></h2>
+<p>This window allows the user to keep track of recently manipulated (e.g., used, removed, selected) hypotheses for any PO. For example, when the user applies a rewrite to an hypothesis, a new hypothesis (after the rewriting) is selected, and the original hypothesis is deselected and put in the <b>Cache Hypotheses</b> window.
+</p><p>Similar operations (to that of the <b>Selected Hypotheses</b> and <b>Search Hypotheses</b> windows) such as removing, selecting and proof by contradiction (<b>ct</b>) are also available for the cached hypotheses. Interactive proof steps (e.g., rewriting) can also be carried out from the <b>Cache Hypotheses</b> window as well as the <b>Search Hypotheses</b> window.
 </p>
-<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:Um-0147.png" title="Um-0147.png"><img alt="" border="0" height="723" src="images/um_0147.png" width="905" /></a></span></div></div>
-<p>In the left part you can see the ordered sequence of individual tactics composing the post-tactic, whereas the right part contains further tactics you can incorporate in the left part. By selecting a tactic you can move it from on part to the other or change the order in the left part.
+<a name="Proof_Information_View"></a><h2> <span class="mw-headline"> Proof Information View </span></h2>
+<p>This view displays information so that the user can relate a proof obligation to the model. For example, typical information for an event invariant preservation PO includes the event; as well as the invariant in question. In the following example, the hyperlinks 'CreateToken' and 'inv2' can be used to navigate to the containing machine. 
 </p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:PInfo.png" title="PInfo.png"><img alt="" border="0" height="400" src="images/pinfo.png" width="421" /></a></span></div></div>
+<a name="Rule_Details_View"></a><h2> <span class="mw-headline"> Rule Details View </span></h2>
+<p>This view displays the information relative to a given proof tree node, on which a rule was applied.<br />
+A command is available when right-clicking on a proof tree node, in order to reveal the Rule Details View (See picture below).
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:ShowRuleDetailsView.png" title="ShowRuleDetailsView.png"><img alt="" border="0" height="144" src="images/showruledetailsview.png" width="284" /></a></span></div></div>
+<p>By default, this view is a fast view. A button (identified by the view's icon) is then available at the bottom left of the workbench, to show up this view.
+</p><p>Here is an overview of the Rule details view&nbsp;:
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:RuleDetailsView.png" title="RuleDetailsView.png"><img alt="" border="0" height="449" src="images/ruledetailsview.png" width="517" /></a></span></div></div>
+<p>A quick view on the applied rule contents is provided. On the picture above, we display the contents of the rule named "∀ hyp mp" where an input has been used to instantiate an hypothesis.<br /> One can see quickly which was the input used by the instanciation (following <b>instantiated with</b>), and which was the hypothesis considered by this rule (this is given by the hypothesis of <b>Input Sequent</b>).<br />
+Furthermore, it is possible to view the antecedents created by this rule in details (i.e. child proof tree nodes) and the actions performed on hypotheses&nbsp;: selection, deselection, etc.
+</p>
+<a name="Auto-tactic_and_Post-tactic"></a><h2> <span class="mw-headline"> Auto-tactic and Post-tactic </span></h2>
+<p>The auto-tactic applies a combination (i.e. ordered list) of <i>rewrite</i>, <i>inference</i> tactics and <i>external provers</i> automatically to newly generated proof obligations. However, they can also be invoked by the user by clicking on the <a class="image" href="http://wiki.event-b.org/index.php/Image:Auto_prover.png" title="Image:auto_prover.png"><img alt="Image:auto_prover.png" border="0" height="15" src="images/auto_prover.png" width="15" /></a> button in the <b>Proof Control</b> view. Note that the automatic application of the auto-prover can be quickly toggled with the <i>Prove automatically</i> menu item available from the <i>Project</i> menu. See the picture below.
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:AutoPostTactics_Preference_Capture7.png" title="AutoPostTactics Preference Capture7.png"><img alt="" border="0" height="256" src="images/autoposttactics_preference_capture7.png" width="351" /></a></span></div></div>
+<p>The post-tactic is also a combination of <i>rewrite</i>, <i>inference</i> tactics and <i>external provers</i>, and is applied <u>automatically after each interactive proof step</u>. However, it can also be invoked manually by clicking on the <a class="image" href="http://wiki.event-b.org/index.php/Image:Broom_prover.gif" title="Image:Broom_prover.gif"><img alt="Image:Broom_prover.gif" border="0" height="15" src="images/broom_prover.gif" width="16" /></a> button in the <b>Proof Control</b> view.
+</p><p>Note that the post-tactic can be disabled quickly by clicking on the little arrow (marked with an A on the figure below) of the <b>Proof Control</b> view (right upper corner) and then on "Disable post-tactic" (B):
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:Disable_xp_prover.png" title="Disable xp prover.png"><img alt="" border="0" height="124" src="images/disable_xp_prover.png" width="393" /></a></span></div></div>
+<a name="Principles"></a><h3> <span class="mw-headline"> Principles </span></h3>
+<p>The ordered list of  <i>rewrite</i>, <i>inference</i> tactics and <i>external provers</i> that should be applied is called a <b>profile</b>. There are two default profiles, one for the auto-tactic and one for the post-tactic. These default profiles are immutable in time, but can be duplicated for further modification by the user. Indeed, the user can edit a profile and select it to run as automatic or post tactic. The idea is to have a set of available tactic profiles to be used as needed.
+Moreover, these edited profiles are shipped with projects if defined at this scope, or can be imported or exported if defined at a workspace level, which is very useful to share them. 
+</p><p>There are two ways to run the automatic or post tactics:
+</p>
+<ul><li> the manual way consists into clicking on the <a class="image" href="http://wiki.event-b.org/index.php/Image:Auto_prover.png" title="Image:auto_prover.png"><img alt="Image:auto_prover.png" border="0" height="15" src="images/auto_prover.png" width="15" /></a> button, or the <a class="image" href="http://wiki.event-b.org/index.php/Image:Broom_prover.gif" title="Image:Broom_prover.gif"><img alt="Image:Broom_prover.gif" border="0" height="15" src="images/broom_prover.gif" width="16" /></a> button in the Proof Control view, to respectively launch the auto-tactic (with the selected auto-tactic profile) and the post-tactic (with the selected post-tactic profile).
+</li><li> the automatical way if such preference is activated. (Auto-tactic after each proof step, and post-tactic at each step and rebuild) The mandatory condition for post-tactics or auto-tactics to automatically run is that they should be activated from their preference or property.
+</li></ul>
+<p>The user can separately define tactic profiles and assign them to post and auto tactics. Therefore, there are two tabs in the "Auto/Post Tactic" preference page to address these choices. These tabs will be descibed in the two next sections.
+</p>
+<a name="Preferences_for_the_selected_auto_and_post_tactic_profile"></a><h3> <span class="mw-headline"> Preferences for the selected auto and post tactic profile </span></h3>
+<p>This section describes the "Auto/Post Tactic" tab of the "Auto/Post Tactic" preference page.
+</p><p>There are two scopes to set up preferences for the auto and post tactics&nbsp;: at workspace level, and at project level.
+Note that if the automatic application of tactics (auto or post) is decided only at workspace level, and this choice is held at project level.
+</p><p>To access these preferences, one as to go open the "Auto/Post Tactic" preference page that can be found after "Window &gt; Preference &gt; Sequent Prover".
+</p><p>The figure below shows the "Auto/Post Tactic" preference page:
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:AutoPostTactic_Preference_Capture1.png" title="AutoPostTactic Preference Capture1.png"><img alt="" border="0" height="487" src="images/650px_autoposttactic_preference_capture1.png" width="650" /></a></span></div></div>
+<p>The buttons 1 and 2 are activating/deactivating the automatic use of respectively auto and post tactics.
+One can also see on this picture the selected profile to be use as auto and post tactic.<br />
+<b>Note that there is always a profile selected, and this profile can be changed whether the tactic are automatically launched or not, as there is alway a way to manually launch auto and post tactics.</b><br />
+On the preference appearing above, the <i>Default Auto Tactic Profile</i> is used to compose the automatic tactic, and the <i>Default Post Tactic Profile</i> is used to compose the post-tactic.
+</p><p>The figure below shows the "Auto/Post Tactic" Preference page with both auto-tactic and post-tactic to automatically run, and where the user selects the profile "MyFirstTacticProfile" to be used as auto-tactic profile.
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:AutoPostTactic_Preference_Capture4.png" title="AutoPostTactic Preference Capture4.png"><img alt="" border="0" height="495" src="images/650px_autoposttactic_preference_capture4.png" width="650" /></a></span></div></div>
+<a name="Preferences_for_available_profiles"></a><h3> <span class="mw-headline"> Preferences for available profiles </span></h3>
+<p>This section describes the "Profile" tab of the "Auto/Post Tactic" preference page.
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:AutoPostTactic_Preference_Capture2.png" title="AutoPostTactic Preference Capture2.png"><img alt="" border="0" height="499" src="images/650px_autoposttactic_preference_capture2.png" width="650" /></a></span></div></div>
+<p>The figure above shows the contents of the profile tab. 
+There are two visible lists&nbsp;: a list of profiles on the left the tactics or provers that compose these profiles (Profile Details). Here one can see the contents of the Defaut Auto Tactic Profile.
+</p><p>There are 4 buttons available to the user&nbsp;:
+</p>
+<ul><li>New&nbsp;: to create a new profile "from scratch",  
+</li><li>Edit&nbsp;: to edit an existing (editable) profile,
+</li><li>Remove&nbsp;: to remove a profile definitively,
+</li><li>Duplicate&nbsp;: to duplicate a selected profile for further slight modification,
+</li></ul>
+<p>Default profiles can not be edited nor removed. That is why they are greyed on the image above.
+</p><p>On the picture below appears the dialog available to edit or create a profile. Here we create a profile named 'MyFirstTacticProfile'. 
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:AutoPostTactic_Preference_Capture3.png" title="AutoPostTactic Preference Capture3.png"><img alt="" border="0" height="544" src="images/650px_autoposttactic_preference_capture3.png" width="650" /></a></span></div></div>
+<p>The list of the right represents the available and unselected tactics. The list of the left is the profile contents, and represents the selected tactics to be <b>applied from the top to down</b>. 
+The user can select some available tactic from the list of the right using the "&gt;&gt;" button or unselect some tactics from the list of the left using the "&lt;&lt;" button.
+The user can re-order contiguous selection of selected tactics using the "Up" and "Down" button.
+By clicking on "Finish" the profile will be saved and available for use in the auto and post tactics.
+</p>
+<a name="Project_specific_settings"></a><h3> <span class="mw-headline"> Project specific settings </span></h3>
+<p>The user can select profiles locally to project. 
+To do so, one has to select the "Auto/Post Tactic" property page available from <b>right-click &gt; Properties</b> on a project, or by clicking the <b>Configure project specific settings</b> link on the "Auto/Post Tactic" preference page. This property page appears on the picture below, opened on the Auto/Post tactic tab.
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:AutoPostTactic_Preference_Capture5.png" title="AutoPostTactic Preference Capture5.png"><img alt="" border="0" height="347" src="images/600px_autoposttactic_preference_capture5.png" width="600" /></a></span></div></div>
+<p>Note that the enablement of automatic use of post and auto tactics is decided at a workspace level.
+</p><p>The picture below shows the Profiles tab of the Auto/Post Tactic page for a project specific setting: 
+</p><p>At the project level, there is a contextual menu available on right click from the list of defined profiles.
+</p>
+<div class="center"><div class="floatnone"><span><a class="image" href="http://wiki.event-b.org/index.php/Image:AutoPostTactic_Preference_Capture6.png" title="AutoPostTactic Preference Capture6.png"><img alt="" border="0" height="434" src="images/600px_autoposttactic_preference_capture6.png" width="600" /></a></span></div></div>
+<p>This contextual menu offers two options to the user&nbsp;:
+</p>
+<ul><li><b>Import Workspace Profiles</b> to retrieve all the defined profiles in the workspace,
+</li><li><b>Export to Workspace Profiles</b> to push a selected profile up in the list of workspace profiles.
+</li></ul>
+
 <!-- 
 NewPP limit report
-Preprocessor node count: 91/1000000
+Preprocessor node count: 104/1000000
 Post-expand include size: 1101/2097152 bytes
 Template argument size: 374/2097152 bytes
 -->
 
-<!-- Saved in parser cache with key mediawiki_eventb:pcache:idhash:71-0!1!0!!en!2!edit=0 and timestamp 20110516154804 -->
+<!-- Saved in parser cache with key mediawiki_eventb:pcache:idhash:71-0!1!0!!en!2!edit=0 and timestamp 20110725163011 -->
 <div class="printfooter">
 Retrieved from "<a href="">http://wiki.event-b.org/index.php/The_Proving_Perspective_%28Rodin_User_Manual%29</a>"</div>
 			<div id="catlinks"><p class="catlinks"><a href="http://wiki.event-b.org/index.php/Special:Categories" title="Special:Categories">Categories</a>: <span dir="ltr"><a href="http://wiki.event-b.org/index.php/Category:User_documentation" title="Category:User documentation">User documentation</a></span> | <span dir="ltr"><a href="http://wiki.event-b.org/index.php/Category:Rodin_Platform" title="Category:Rodin Platform">Rodin Platform</a></span> | <span dir="ltr"><a href="http://wiki.event-b.org/index.php/Category:User_manual" title="Category:User manual">User manual</a></span></p></div>			<!-- end content --><!-- ('div', {'class': 'visualClear'}) ('/div', {}) --></div></div></div>
@@ -296,8 +439,8 @@ Retrieved from "<a href="">http://wiki.event-b.org/index.php/The_Proving_Perspec
 			<!-- ('div', {'class': 'visualClear'}) ('/div', {}) -->
 			<div id="footerHacked">
 				<ul id="f-list">
-				<li id="lastmod"> This page was last modified 12:15, 30 August 2010.</li>
-				<li id="viewcount">This page has been accessed 3,985 times.</li>
+				<li id="lastmod"> This page was last modified 16:28, 25 July 2011.</li>
+				<li id="viewcount">This page has been accessed 5,024 times.</li>
 				<li id="privacy"><a href="http://wiki.event-b.org/index.php/Event-B:Privacy_policy" title="Event-B:Privacy policy">Privacy policy</a></li>
 				<li id="about"><a href="http://wiki.event-b.org/index.php/Event-B:About" title="Event-B:About">About Event-B</a></li>
 				<li id="disclaimer"><a href="http://wiki.event-b.org/index.php/Event-B:General_disclaimer" title="Event-B:General disclaimer">Disclaimers</a></li>
@@ -307,4 +450,4 @@ Retrieved from "<a href="">http://wiki.event-b.org/index.php/The_Proving_Perspec
 	
 		<script type="text/javascript">if (window.runOnloadHook) runOnloadHook();</script>
 </div>
-<!-- Served in 0.221 secs. --><br /></body></html>
+<!-- Served in 0.238 secs. --><br /></body></html>
