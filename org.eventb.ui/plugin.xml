@@ -1814,12 +1814,12 @@
       <key
             commandId="org.eventb.ui.prove.nextHighlight"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M2+&lt;">
+            sequence="M1+&gt;">
       </key>
       <key
             commandId="org.eventb.ui.prove.previousHighlight"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="&lt;">
+            sequence="M1+&lt;">
       </key>
    </extension>
    <extension
@@ -1983,6 +1983,34 @@
                </with>
             </or>
          </activeWhen>
+         <enabledWhen>
+            <or>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.Goal">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.editors.ProverUI">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.SearchHypothesis">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.CacheHypothesis">
+                  </equals>
+               </with>
+            </or>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.prover.handlers.RestoreStyles"
@@ -2015,6 +2043,34 @@
                </with>
             </or>
          </activeWhen>
+         <enabledWhen>
+            <or>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.Goal">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.editors.ProverUI">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.SearchHypothesis">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.CacheHypothesis">
+                  </equals>
+               </with>
+            </or>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.prover.handlers.NextHighlight"
@@ -2047,6 +2103,34 @@
                </with>
             </or>
          </activeWhen>
+         <enabledWhen>
+            <or>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.Goal">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.editors.ProverUI">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.SearchHypothesis">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.CacheHypothesis">
+                  </equals>
+               </with>
+            </or>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.prover.handlers.PreviousHighlight"
@@ -2079,6 +2163,34 @@
                </with>
             </or>
          </activeWhen>
+         <enabledWhen>
+            <or>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.Goal">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.editors.ProverUI">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.SearchHypothesis">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.CacheHypothesis">
+                  </equals>
+               </with>
+            </or>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.prover.handlers.ToggleHightlighting"
@@ -2111,6 +2223,34 @@
                </with>
             </or>
          </activeWhen>
+         <enabledWhen>
+            <or>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.Goal">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.editors.ProverUI">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.SearchHypothesis">
+                  </equals>
+               </with>
+               <with
+                     variable="activePartId">
+                  <equals
+                        value="org.eventb.ui.views.CacheHypothesis">
+                  </equals>
+               </with>
+            </or>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
