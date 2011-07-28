@@ -77,6 +77,9 @@ public class SelectionController implements MouseListener, VerifyListener,
 		final int offset = getOffset(e);
 		if (offset < 0) return;
 		toggleSelection(offset);
+		// clear the native and cumbersome selection
+		// that occurs after double click
+		styledText.setSelection(offset);
 	}
 	
 	public EditPos toggleSelection(int offset) {
