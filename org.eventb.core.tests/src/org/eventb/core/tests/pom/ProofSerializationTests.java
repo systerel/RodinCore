@@ -9,12 +9,14 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added used reasoners to proof dependencies
+ *     Systerel - externalized xml proof files
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
 import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.impI;
 import static org.eventb.core.seqprover.tactics.BasicTactics.replayTac;
+import static org.eventb.core.tests.ResourceUtils.importProjectFiles;
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 
 import java.util.Collections;
@@ -52,7 +54,6 @@ import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.core.tests.ResourceUtils;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -86,6 +87,10 @@ public class ProofSerializationTests extends TestCase {
 		assertTrue(ProverLib.deepEquals(proofTree.getRoot(), skel));
 		
 		assertEquals(hasDeps, proof.getProofDependencies(ff, null).hasDeps());
+	}
+
+	private void importProofSerializationProofs() throws Exception {
+		importProjectFiles(rodinProject.getProject(), "ProofSerialization");
 	}
 
 	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -297,24 +302,26 @@ public class ProofSerializationTests extends TestCase {
 		}
 	}
 
+	private IPRRoot getProofRoot(String proofFileName) throws Exception {
+		final IPRRoot[] proofRoots = rodinProject.getRootElementsOfType(IPRRoot.ELEMENT_TYPE);
+		for (IPRRoot proofRoot : proofRoots) {
+			final String elementName = proofRoot.getElementName();
+			if (elementName.equals(proofFileName)) {
+				return proofRoot;
+			}
+		}
+		fail("could not find proof " + proofFileName);
+		return null;
+	}
+
 	// before 2.2, versioned reasoner ids were stored in rule element names
 	// from 2.2 on, rule element name bears a reference to a IPRReasoner
 	// located in proof root
 	// ensure that old storage is still readable
 	public void testReasonerStorageCompatibility() throws Exception {
-		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-				+ "<org.eventb.core.prFile version=\"1\">"
-				+ "<org.eventb.core.prProof name=\"oldProof\" org.eventb.core.confidence=\"1000\" org.eventb.core.prFresh=\"\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.impI\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⇒ goal\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p1\" org.eventb.core.prHyps=\"p1\">"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.trueGoal\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⊤ goal\" org.eventb.core.prGoal=\"p1\" org.eventb.core.prHyps=\"\"/>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "<org.eventb.core.prPred name=\"p1\" org.eventb.core.predicate=\"⊤\"/>"
-				+ "<org.eventb.core.prPred name=\"p0\" org.eventb.core.predicate=\"⊤⇒⊤\"/>"
-				+ "</org.eventb.core.prProof>"
-				+ "</org.eventb.core.prFile>";
-		final IPRRoot prFile = ResourceUtils.createPRFile(rodinProject, "oldProofFile", contents);
+		importProofSerializationProofs();
+		
+		final IPRRoot prFile = getProofRoot("reasonerStorage");
 		final IPRProof proof = prFile.getProof("oldProof");
 
 		final IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
@@ -343,33 +350,10 @@ public class ProofSerializationTests extends TestCase {
 	// as a consequence its input was not serialized
 	// verify ability to repair and replay with broken inputs
 	public void testContrapInHyp_Bug3370087() throws Exception {
-		// input for doubleImplGoalRewrites is missing
-		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-				+ "<org.eventb.core.prFile version=\"1\">"
-				+ "<org.eventb.core.prProof name=\"oldContrapHyp\" org.eventb.core.confidence=\"1000\" org.eventb.core.prFresh=\"\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"p1\" org.eventb.core.psManual=\"true\">"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.doubleImplGoalRewrites\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"mp impl (0=0⇒⊥)\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\">"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF0\" org.eventb.core.prHyps=\"p1\" org.eventb.core.prInfHyps=\"p2\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE1\" org.eventb.core.prHyps=\"p1\"/>"
-				+ "<org.eventb.core.prHypAction name=\"SELECT2\" org.eventb.core.prHyps=\"p2\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.autoRewritesL2:0\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"simplification rewrites\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p3\">"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF0\" org.eventb.core.prHyps=\"p2\" org.eventb.core.prInfHyps=\"p3\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE1\" org.eventb.core.prHyps=\"p2\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.falseHyp\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⊥ hyp\" org.eventb.core.prHyps=\"p3\"/>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "<org.eventb.core.prPred name=\"p3\" org.eventb.core.predicate=\"⊥\"/>"
-				+ "<org.eventb.core.prPred name=\"p0\" org.eventb.core.predicate=\"0≠0\"/>"
-				+ "<org.eventb.core.prPred name=\"p1\" org.eventb.core.predicate=\"0=0⇒⊥\"/>"
-				+ "<org.eventb.core.prPred name=\"p2\" org.eventb.core.predicate=\"¬⊥⇒¬0=0\"/>"
-				+ "</org.eventb.core.prProof>"
-				+ "</org.eventb.core.prFile>";
+		importProofSerializationProofs();
 
-		final IPRRoot prFile = ResourceUtils.createPRFile(rodinProject,
-				"oldProofFile", contents);
+		// input for doubleImplGoalRewrites is missing
+		final IPRRoot prFile = getProofRoot("contrapInHyp");
 		final IPRProof proof = prFile.getProof("oldContrapHyp");
 
 		final IProverSequent sequent = TestLib.genSeq("0=0⇒⊥ |- 0≠0");
@@ -390,104 +374,10 @@ public class ProofSerializationTests extends TestCase {
 
 	// same as above in a more complex predicate
 	public void testContrapInHyp2_Bug3370087() throws Exception {
-		// input for doubleImplGoalRewrites is missing
-		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-				+ "<org.eventb.core.prFile version=\"1\">"
-				+ "<org.eventb.core.prProof name=\"cplx\" org.eventb.core.confidence=\"1000\" org.eventb.core.prFresh=\"\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"p1,p2,p3\" org.eventb.core.prSets=\"S\" org.eventb.core.psManual=\"true\">"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.doubleImplGoalRewrites\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"mp impl ([[0]]⊆t⇒t=s)\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\">"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF0\" org.eventb.core.prHyps=\"p1\" org.eventb.core.prInfHyps=\"p4\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE1\" org.eventb.core.prHyps=\"p1\"/>"
-				+ "<org.eventb.core.prHypAction name=\"SELECT2\" org.eventb.core.prHyps=\"p4\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.autoRewritesL2:0\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"simplification rewrites\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\">"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF0\" org.eventb.core.prHyps=\"p2\" org.eventb.core.prInfHyps=\"p5,p6\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE1\" org.eventb.core.prHyps=\"p2\"/>"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF2\" org.eventb.core.prHyps=\"p3\" org.eventb.core.prInfHyps=\"p7\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE3\" org.eventb.core.prHyps=\"p3\"/>"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF4\" org.eventb.core.prHyps=\"p4\" org.eventb.core.prInfHyps=\"p8\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE5\" org.eventb.core.prHyps=\"p4\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.typeRewrites:1\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"type rewrites\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\">"
-				+ "<org.eventb.core.prHypAction name=\"HIDE0\" org.eventb.core.prHyps=\"p5\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.autoImpE\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"auto ImpE\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\">"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF0\" org.eventb.core.prHyps=\"p7,p8\" org.eventb.core.prInfHyps=\"p9\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE1\" org.eventb.core.prHyps=\"p8\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.doubleImplGoalRewrites\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"mp impl (s⊆[[0]]⇒(¬t=s⇒¬[[0]]⊆t))\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\">"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF0\" org.eventb.core.prHyps=\"p9\" org.eventb.core.prInfHyps=\"p10\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE1\" org.eventb.core.prHyps=\"p9\"/>"
-				+ "<org.eventb.core.prHypAction name=\"SELECT2\" org.eventb.core.prHyps=\"p10\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.allD\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"∀ hyp (inst s)\" org.eventb.core.prHyps=\"p10\">"
-				+ "<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p11\">"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.trueGoal\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⊤ goal\" org.eventb.core.prGoal=\"p11\" org.eventb.core.prHyps=\"\"/>"
-				+ "</org.eventb.core.prAnte>"
-				+ "<org.eventb.core.prAnte name=\"1\" org.eventb.core.prHyps=\"p12\">"
-				+ "<org.eventb.core.prHypAction name=\"DESELECT0\" org.eventb.core.prHyps=\"p10\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.autoRewritesL2:0\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"simplification rewrites\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\">"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF0\" org.eventb.core.prHyps=\"p12\" org.eventb.core.prInfHyps=\"p13\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE1\" org.eventb.core.prHyps=\"p12\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.doubleImplGoalRewrites\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"mp impl (¬t=s⇒¬s⊆t)\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\">"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF0\" org.eventb.core.prHyps=\"p13\" org.eventb.core.prInfHyps=\"p14\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE1\" org.eventb.core.prHyps=\"p13\"/>"
-				+ "<org.eventb.core.prHypAction name=\"SELECT2\" org.eventb.core.prHyps=\"p14\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.autoRewritesL2:0\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"simplification rewrites\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\">"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF0\" org.eventb.core.prHyps=\"p14\" org.eventb.core.prInfHyps=\"p15\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE1\" org.eventb.core.prHyps=\"p14\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.autoImpE\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"auto ImpE\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\">"
-				+ "<org.eventb.core.prHypAction name=\"FORWARD_INF0\" org.eventb.core.prHyps=\"p6,p15\" org.eventb.core.prInfHyps=\"p0\"/>"
-				+ "<org.eventb.core.prHypAction name=\"HIDE1\" org.eventb.core.prHyps=\"p15\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.hyp\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"hyp\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"p0\"/>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "<org.eventb.core.prExprRef name=\".exprs\" org.eventb.core.prRef=\"e0\"/>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "<org.eventb.core.prIdent name=\"s\" org.eventb.core.type=\"ℙ(S)\"/>"
-				+ "<org.eventb.core.prIdent name=\"t\" org.eventb.core.type=\"ℙ(S)\"/>"
-				+ "<org.eventb.core.prPred name=\"p11\" org.eventb.core.predicate=\"⊤\"/>"
-				+ "<org.eventb.core.prPred name=\"p1\" org.eventb.core.predicate=\"s≠(∅ ⦂ ℙ(S))⇒(∀x⦂ℙ(S)·s⊆x⇒(x⊆t⇒t=s))\"/>"
-				+ "<org.eventb.core.prPred name=\"p2\" org.eventb.core.predicate=\"s∈ℙ(S)∧s⊆t\"/>"
-				+ "<org.eventb.core.prPred name=\"p12\" org.eventb.core.predicate=\"¬(¬t=s⇒¬s⊆t)⇒¬s⊆s\"/>"
-				+ "<org.eventb.core.prPred name=\"p5\" org.eventb.core.predicate=\"s∈ℙ(S)\"/>"
-				+ "<org.eventb.core.prPred name=\"p15\" org.eventb.core.predicate=\"s⊆t⇒t=s\"/>"
-				+ "<org.eventb.core.prPred name=\"p8\" org.eventb.core.predicate=\"¬s=(∅ ⦂ ℙ(S))⇒(∀x⦂ℙ(S)·s⊆x⇒(¬t=s⇒¬x⊆t))\"/>"
-				+ "<org.eventb.core.prPred name=\"p10\" org.eventb.core.predicate=\"∀x⦂ℙ(S)·¬(¬t=s⇒¬x⊆t)⇒¬s⊆x\"/>"
-				+ "<org.eventb.core.prPred name=\"p14\" org.eventb.core.predicate=\"¬¬s⊆t⇒¬¬t=s\"/>"
-				+ "<org.eventb.core.prPred name=\"p4\" org.eventb.core.predicate=\"s≠(∅ ⦂ ℙ(S))⇒(∀x⦂ℙ(S)·s⊆x⇒(¬t=s⇒¬x⊆t))\"/>"
-				+ "<org.eventb.core.prPred name=\"p9\" org.eventb.core.predicate=\"∀x⦂ℙ(S)·s⊆x⇒(¬t=s⇒¬x⊆t)\"/>"
-				+ "<org.eventb.core.prPred name=\"p0\" org.eventb.core.predicate=\"t=s\"/>"
-				+ "<org.eventb.core.prPred name=\"p6\" org.eventb.core.predicate=\"s⊆t\"/>"
-				+ "<org.eventb.core.prPred name=\"p3\" org.eventb.core.predicate=\"s≠(∅ ⦂ ℙ(S))\"/>"
-				+ "<org.eventb.core.prPred name=\"p13\" org.eventb.core.predicate=\"¬t=s⇒¬s⊆t\"/>"
-				+ "<org.eventb.core.prPred name=\"p7\" org.eventb.core.predicate=\"¬s=(∅ ⦂ ℙ(S))\"/>"
-				+ "<org.eventb.core.prExpr name=\"e0\" org.eventb.core.expression=\"s\"/>"
-				+ "</org.eventb.core.prProof>"
-				+ "</org.eventb.core.prFile>";
+		importProofSerializationProofs();
 
-		final IPRRoot prFile = ResourceUtils.createPRFile(rodinProject,
-				"oldProofFile", contents);
+		// input for doubleImplGoalRewrites is missing
+		final IPRRoot prFile = getProofRoot("contrapInHyp2");
 		final IPRProof proof = prFile.getProof("cplx");
 
 		final IProverSequent sequent = TestLib.genSeq(
@@ -500,45 +390,10 @@ public class ProofSerializationTests extends TestCase {
 	}
 
 	public void testAbstrExpr_Bug3370087() throws Exception {
-		// input for ae is missing
-		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-				+ "<org.eventb.core.prFile version=\"1\">"
-				+ "<org.eventb.core.prProof name=\"oldAE\" org.eventb.core.confidence=\"1000\" org.eventb.core.prFresh=\"ae\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\" org.eventb.core.psManual=\"true\">"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.ae\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"ae (0)\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p1\">"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.trueGoal\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⊤ goal\" org.eventb.core.prGoal=\"p1\" org.eventb.core.prHyps=\"\"/>"
-				+ "</org.eventb.core.prAnte>"
-				+ "<org.eventb.core.prAnte name=\"1\" org.eventb.core.prHyps=\"p2\">"
-				+ "<org.eventb.core.prIdent name=\"ae\" org.eventb.core.type=\"ℤ\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.he:1\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"he with ae=0\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"p2\">"
-				+ "<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p3\">"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.mngHyp\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"sl/ds\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\">"
-				+ "<org.eventb.core.prHypAction name=\"DESELECT0\" org.eventb.core.prHyps=\"p2\"/>"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.autoRewritesL2:0\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"simplification rewrites\" org.eventb.core.prGoal=\"p3\" org.eventb.core.prHyps=\"\">"
-				+ "<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p1\">"
-				+ "<org.eventb.core.prRule name=\"org.eventb.core.seqprover.trueGoal\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⊤ goal\" org.eventb.core.prGoal=\"p1\" org.eventb.core.prHyps=\"\"/>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "</org.eventb.core.prAnte>"
-				+ "</org.eventb.core.prRule>"
-				+ "<org.eventb.core.prPred name=\"p3\" org.eventb.core.predicate=\"ae≥ae\">"
-				+ "<org.eventb.core.prIdent name=\"ae\" org.eventb.core.type=\"ℤ\"/>"
-				+ "</org.eventb.core.prPred>"
-				+ "<org.eventb.core.prPred name=\"p1\" org.eventb.core.predicate=\"⊤\"/>"
-				+ "<org.eventb.core.prPred name=\"p0\" org.eventb.core.predicate=\"0≥0\"/>"
-				+ "<org.eventb.core.prPred name=\"p2\" org.eventb.core.predicate=\"ae=0\">"
-				+ "<org.eventb.core.prIdent name=\"ae\" org.eventb.core.type=\"ℤ\"/>"
-				+ "</org.eventb.core.prPred>"
-				+ "</org.eventb.core.prProof>"
-				+ "</org.eventb.core.prFile>";
+		importProofSerializationProofs();
 
-		final IPRRoot prFile = ResourceUtils.createPRFile(rodinProject,
-				"oldProofFile", contents);
+		// input for ae is missing
+		final IPRRoot prFile = getProofRoot("ae");
 		final IPRProof proof = prFile.getProof("oldAE");
 
 		final IProverSequent sequent = TestLib.genSeq("|- 0≥0");
@@ -559,46 +414,10 @@ public class ProofSerializationTests extends TestCase {
 	}
 	
 	public void testAbstrExpr_WD_Bug3370087() throws Exception {
-		// input for ae is missing and input has non trivial WD
-		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-			+"<org.eventb.core.prFile version=\"1\">"
-			+"<org.eventb.core.prProof name=\"ae_with_wd\" org.eventb.core.confidence=\"1000\" org.eventb.core.prFresh=\"ae\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"p1\" org.eventb.core.psManual=\"true\">"
-			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.ae\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"ae (card(s))\" org.eventb.core.prHyps=\"\">"
-			+"<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p1\">"
-			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.hyp\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"hyp\" org.eventb.core.prGoal=\"p1\" org.eventb.core.prHyps=\"p1\"/>"
-			+"</org.eventb.core.prAnte>"
-			+"<org.eventb.core.prAnte name=\"1\" org.eventb.core.prHyps=\"p1,p2\">"
-			+"<org.eventb.core.prIdent name=\"ae\" org.eventb.core.type=\"ℤ\"/>"
-			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.he:1\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"he with ae=card(s)\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"p2\">"
-			+"<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p3\">"
-			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.eq:1\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"eh with ae=card(s)\" org.eventb.core.prGoal=\"p3\" org.eventb.core.prHyps=\"p2\">"
-			+"<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p0\">"
-			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.autoRewritesL2:0\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"simplification rewrites\" org.eventb.core.prGoal=\"p0\" org.eventb.core.prHyps=\"\">"
-			+"<org.eventb.core.prAnte name=\"0\" org.eventb.core.prGoal=\"p4\">"
-			+"<org.eventb.core.prRule name=\"org.eventb.core.seqprover.trueGoal\" org.eventb.core.confidence=\"1000\" org.eventb.core.prDisplay=\"⊤ goal\" org.eventb.core.prGoal=\"p4\" org.eventb.core.prHyps=\"\"/>"
-			+"</org.eventb.core.prAnte>"
-			+"</org.eventb.core.prRule>"
-			+"</org.eventb.core.prAnte>"
-			+"</org.eventb.core.prRule>"
-			+"</org.eventb.core.prAnte>"
-			+"</org.eventb.core.prRule>"
-			+"</org.eventb.core.prAnte>"
-			+"</org.eventb.core.prRule>"
-			+"<org.eventb.core.prIdent name=\"s\" org.eventb.core.type=\"ℙ(BOOL)\"/>"
-			+"<org.eventb.core.prPred name=\"p4\" org.eventb.core.predicate=\"⊤\"/>"
-			+"<org.eventb.core.prPred name=\"p2\" org.eventb.core.predicate=\"ae=card(s)\">"
-			+"<org.eventb.core.prIdent name=\"ae\" org.eventb.core.type=\"ℤ\"/>"
-			+"</org.eventb.core.prPred>"
-			+"<org.eventb.core.prPred name=\"p3\" org.eventb.core.predicate=\"ae≥0\">"
-			+"<org.eventb.core.prIdent name=\"ae\" org.eventb.core.type=\"ℤ\"/>"
-			+"</org.eventb.core.prPred>"
-			+"<org.eventb.core.prPred name=\"p1\" org.eventb.core.predicate=\"finite(s)\"/>"
-			+"<org.eventb.core.prPred name=\"p0\" org.eventb.core.predicate=\"card(s)≥0\"/>"
-			+"</org.eventb.core.prProof>"
-			+"</org.eventb.core.prFile>";
+		importProofSerializationProofs();
 
-		final IPRRoot prFile = ResourceUtils.createPRFile(rodinProject,
-				"oldProofFile", contents);
+		// input for ae is missing and input has non trivial WD
+		final IPRRoot prFile = getProofRoot("ae_WD");
 		final IPRProof proof = prFile.getProof("ae_with_wd");
 
 		final IProverSequent sequent = TestLib.genSeq("s∈ℙ(BOOL) ;; finite(s) |- card(s)≥0");
