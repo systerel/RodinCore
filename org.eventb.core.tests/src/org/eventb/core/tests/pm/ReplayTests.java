@@ -37,10 +37,6 @@ public class ReplayTests extends BuilderTest {
 		assertUndischarged("c", "axm4/THM");
 	}
 
-	private void importProject(String prjName) throws Exception {
-		importProjectFiles(rodinProject.getProject(), prjName);
-	}
-
 	private void assertUndischarged(String compName, String... pos)
 			throws CoreException {
 		final Set<String> actual = getUndischarged(compName);

@@ -14,19 +14,13 @@ package org.eventb.core.tests;
 
 import static org.eventb.core.EventBPlugin.getProofManager;
 import static org.eventb.core.EventBPlugin.getUserSupportManager;
+import static org.eventb.core.tests.ResourceUtils.importProjectFiles;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -36,8 +30,6 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBProject;
@@ -212,50 +204,6 @@ public abstract class BuilderTest extends TestCase {
 		}
 	}
 
-	/**
-	 * Imports files of a template project into an already existing project.
-	 * 
-	 * @param dest
-	 *            destination project. Must already exist and be configured
-	 * @param srcName
-	 *            name of the source project which lies in the
-	 *            <code>projects</code> folder of this plug-in
-	 * @throws Exception
-	 *             in case of error
-	 */
-	public void importProjectFiles(IProject dest, String srcName)
-			throws Exception {
-		final URL entry = getProjectsURL();
-		final URL projectsURL = FileLocator.toFileURL(entry);
-		final File projectsDir = new File(projectsURL.toURI());
-		for (final File project : projectsDir.listFiles()) {
-			if (project.isDirectory() && project.getName().equals(srcName))
-				importFiles(dest, project, true);
-		}
-	}
-
-	protected URL getProjectsURL() {
-		return Platform.getBundle(PLUGIN_ID).getEntry("projects");
-	}
-
-	private static void importFiles(IProject project, File root, boolean isRoot)
-			throws IOException, CoreException {
-		for (final File file : root.listFiles()) {
-			final String filename = file.getName();
-			if (file.isFile()) {
-				final InputStream is = new FileInputStream(file);
-				final String name = (isRoot) ? filename : root.getName() + "/"
-						+ filename;
-				final IFile target = project.getFile(name);
-				target.create(is, false, null);
-			} else if (file.isDirectory() && !filename.equals(".svn")) {
-				final IFolder folder = project.getFolder(filename);
-				folder.create(true, false, null);
-				importFiles(project, file, false);
-			}
-		}
-	}
-
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -288,6 +236,10 @@ public abstract class BuilderTest extends TestCase {
 		return result;
 	}
 	
+	protected void importProject(String prjName) throws Exception {
+		importProjectFiles(rodinProject.getProject(), prjName);
+	}
+
 	@Override
 	protected void tearDown() throws Exception {
 		// Delete all Rodin projects
