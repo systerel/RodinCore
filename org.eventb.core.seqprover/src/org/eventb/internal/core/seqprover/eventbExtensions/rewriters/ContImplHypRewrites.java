@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added broken input repair mechanism
+ *     Systerel - checked applicability to given predicate
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -17,6 +18,7 @@ import java.util.List;
 
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.DefaultFilter;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
@@ -56,10 +58,13 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
-		BinaryPredicate predicate = (BinaryPredicate) pred
-				.getSubFormula(position);
-		IFormulaRewriter rewriter = new ContImplRewriter(true, ff);
-		Predicate newSubPredicate = rewriter.rewrite(predicate);
+		final Formula<?> subFormula = pred.getSubFormula(position);
+		if (subFormula.getTag() != Formula.LIMP) {
+			return null;
+		}
+		final BinaryPredicate predicate = (BinaryPredicate) subFormula;
+		final IFormulaRewriter rewriter = new ContImplRewriter(true, ff);
+		final Predicate newSubPredicate = rewriter.rewrite(predicate);
 		return pred.rewriteSubFormula(position, newSubPredicate, ff);
 	}
 
