@@ -12,7 +12,6 @@ package org.eventb.core.ast.tests;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
-import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeChildTypes;
@@ -21,7 +20,6 @@ import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPR
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
 
 import java.math.BigInteger;
-import java.util.HashSet;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
@@ -240,7 +238,6 @@ public class ExtendedFormulas {
 	/**
 	 * Formula factory with the four extensions described above.
 	 */
-	public static final FormulaFactory EFF = getInstance(new HashSet<IFormulaExtension>(
-			asList(fooS, fooL, barS, barL)));
+	public static final FormulaFactory EFF = getInstance(fooS, fooL, barS, barL);
 
 }

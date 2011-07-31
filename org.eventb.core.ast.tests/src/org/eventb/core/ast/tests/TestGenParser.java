@@ -710,8 +710,8 @@ public class TestGenParser extends AbstractTests {
 	};
 
 	public void testExtensionDirectProduct() throws Exception {
-		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(DIRECT_PRODUCT));
+		final FormulaFactory extFac = FormulaFactory
+				.getInstance(DIRECT_PRODUCT);
 		final Expression expected = extFac.makeExtendedExpression(DIRECT_PRODUCT,
 				Arrays.<Expression> asList(
 						extFac.makeFreeIdentifier("A", null),
@@ -721,8 +721,8 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	public void testBinaryWithClosedOperands() throws Exception {
-		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(DIRECT_PRODUCT));
+		final FormulaFactory extFac = FormulaFactory
+				.getInstance(DIRECT_PRODUCT);
 		final Expression expected = extFac.makeExtendedExpression(
 				DIRECT_PRODUCT, Arrays.<Expression> asList(
 						extFac.makeUnaryExpression(KDOM,
@@ -734,8 +734,8 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	public void testExtensionInFormula() throws Exception {
-		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(DIRECT_PRODUCT));
+		final FormulaFactory extFac = FormulaFactory
+				.getInstance(DIRECT_PRODUCT);
 		final Expression prodAB = extFac.makeExtendedExpression(DIRECT_PRODUCT,
 				Arrays.<Expression> asList(
 						extFac.makeFreeIdentifier("A", null),
@@ -853,8 +853,7 @@ public class TestGenParser extends AbstractTests {
 	public void testExtensionSymbol() throws Exception {
 		final String strAEuroB = "A€B";
 		
-		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(MONEY));
+		final FormulaFactory extFac = FormulaFactory.getInstance(MONEY);
 		
 		assertTrue(
 				"€ symbol should be a valid part of identifier for default factory",
@@ -882,8 +881,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testAssociativeExtension() throws Exception {
-		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(MONEY));
+		final FormulaFactory extFac = FormulaFactory.getInstance(MONEY);
 		final Expression expected = extFac.makeExtendedExpression(MONEY,
 				Arrays.<Expression> asList(
 						extFac.makeFreeIdentifier("A", null),
@@ -894,8 +892,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testAssociativeExtensionUnparseL() throws Exception {
-		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(MONEY));
+		final FormulaFactory extFac = FormulaFactory.getInstance(MONEY);
 		final Expression expected = extFac.makeExtendedExpression(MONEY,
 				Arrays.<Expression> asList(
 						extFac.makeExtendedExpression(MONEY,
@@ -908,8 +905,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testAssociativeExtensionUnparseR() throws Exception {
-		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(MONEY));
+		final FormulaFactory extFac = FormulaFactory.getInstance(MONEY);
 		final Expression expected = extFac.makeExtendedExpression(MONEY,
 				Arrays.<Expression> asList(
 						extFac.makeFreeIdentifier("A", null),
@@ -923,8 +919,7 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testAssociativeWithClosedOperands() throws Exception {
 		final Money money = new Money(false);
-		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(money));
+		final FormulaFactory extFac = FormulaFactory.getInstance(money);
 		final Expression expected = extFac.makeExtendedExpression(money, Arrays
 				.<Expression> asList(
 						extFac.makeUnaryExpression(KDOM,
@@ -1911,8 +1906,7 @@ public class TestGenParser extends AbstractTests {
 	public void testExtensionSymbolEMax() throws Exception {
 		final String emax = "emax";
 		
-		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(EMAX));
+		final FormulaFactory extFac = FormulaFactory.getInstance(EMAX);
 		
 		assertTrue(
 				"emax symbol should be a valid part of identifier for default factory",
@@ -1931,8 +1925,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testEMax() throws Exception {
-		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(EMAX));
+		final FormulaFactory extFac = FormulaFactory.getInstance(EMAX);
 		final Expression expected = extFac.makeExtendedExpression(EMAX,
 				Arrays.<Expression> asList(
 						extFac.makeFreeIdentifier("A", null),
@@ -1943,8 +1936,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testEMaxInvalidNumberOfChildren() throws Exception {
-		final FormulaFactory extFac = FormulaFactory.getInstance(Collections
-				.<IFormulaExtension> singleton(EMAX));
+		final FormulaFactory extFac = FormulaFactory.getInstance(EMAX);
 		final IParseResult result = parseExprRes("emax(a)", extFac,
 				LanguageVersion.LATEST);
 		assertFailure(result, new ASTProblem(new SourceLocation(0, 6),
@@ -2663,7 +2655,7 @@ public class TestGenParser extends AbstractTests {
 	};
 
 	private static final FormulaFactory PRIME_FAC = FormulaFactory
-			.getInstance(Collections.<IFormulaExtension> singleton(EXT_PRIME));
+			.getInstance(EXT_PRIME);
 
 	public void testPredicateExtension() throws Exception {
 		final ExtendedPredicate expected = PRIME_FAC.makeExtendedPredicate(
@@ -2937,8 +2929,7 @@ public class TestGenParser extends AbstractTests {
 	
 	private static final IExpressionExtension COND = FormulaFactory.getCond();
 
-	private static FormulaFactory FAC_COND = FormulaFactory
-			.getInstance(Collections.<IFormulaExtension> singleton(COND));
+	private static FormulaFactory FAC_COND = FormulaFactory.getInstance(COND);
 
 	private static ExtendedExpression makeCond(Predicate condition, Expression expr1,
 			Expression expr2, SourceLocation location) {
@@ -3073,17 +3064,13 @@ public class TestGenParser extends AbstractTests {
 		
 	}
 	
-	private static Set<IFormulaExtension> makeExtns(IFormulaExtension... extensions) {
-		return new HashSet<IFormulaExtension>(asList(extensions));
-	}
-	
 	public void testIdUnicityGiven() throws Exception {
 		final String id = "unic_id0";
 		final DummyExtn ext_s1_id0 = new DummyExtn("unic_s1", id);
 		final DummyExtn ext_s2_id0 = new DummyExtn("unic_s2", id);
 		
 		try {
-			FormulaFactory.getInstance(makeExtns(ext_s1_id0, ext_s2_id0));
+			FormulaFactory.getInstance(ext_s1_id0, ext_s2_id0);
 			fail("duplicate id in given extensions");
 		} catch (IllegalArgumentException e) {
 			// as expected
@@ -3097,7 +3084,7 @@ public class TestGenParser extends AbstractTests {
 		final DummyExtn ext_s5_id3 = new DummyExtn(symbol, "unic_id3");
 		
 		try {
-			FormulaFactory.getInstance(makeExtns(ext_s5_id2, ext_s5_id3));
+			FormulaFactory.getInstance(ext_s5_id2, ext_s5_id3);
 			fail("duplicate symbol in given extensions");
 		} catch (IllegalArgumentException e) {
 			// as expected
@@ -3110,17 +3097,17 @@ public class TestGenParser extends AbstractTests {
 		final DummyExtn ext_s6_id4 = new DummyExtn(symbol, "unic_id4");
 		final DummyExtn ext_s6_id5 = new DummyExtn(symbol, "unic_id5");
 		
-		FormulaFactory.getInstance(makeExtns(ext_s6_id4));
+		FormulaFactory.getInstance(ext_s6_id4);
 		
 		// same symbol with different ids is authorized
-		FormulaFactory.getInstance(makeExtns(ext_s6_id5));
+		FormulaFactory.getInstance(ext_s6_id5);
 	}
 	
 	public void testOverridingStandardId() throws Exception {
 		final DummyExtn ext_s7_idLand = new DummyExtn("unic_s7", BCOMP_ID);
 		
 		try {
-			FormulaFactory.getInstance(makeExtns(ext_s7_idLand));
+			FormulaFactory.getInstance(ext_s7_idLand);
 			fail("overriding standard id");
 		} catch (IllegalArgumentException e) {
 			// as expected
@@ -3132,7 +3119,7 @@ public class TestGenParser extends AbstractTests {
 		final DummyExtn ext_partition_id6 = new DummyExtn("partition", "unic_id6");
 		
 		try {
-			FormulaFactory.getInstance(makeExtns(ext_partition_id6));
+			FormulaFactory.getInstance(ext_partition_id6);
 			fail("overriding standard symbol");
 		} catch (IllegalArgumentException e) {
 			// as expected

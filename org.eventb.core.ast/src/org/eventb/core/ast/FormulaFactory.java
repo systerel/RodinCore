@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import static org.eventb.internal.core.parser.BMathV1.B_MATH_V1;
 import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -97,6 +98,12 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Return an instance of a formula factory supporting the given extensions
+	 * (and only them) in addition to the regular event-B mathematical language.
+	 * 
+	 * @param extensions
+	 *            mathematical extensions to support
+	 * @return a formula factory supporting the given extensions
 	 * @since 2.0
 	 */
 	public static FormulaFactory getInstance(Set<IFormulaExtension> extensions) {
@@ -124,6 +131,20 @@ public class FormulaFactory {
 			INSTANCE_CACHE.put(actualExtns, factory);
 			return factory;
 		}
+	}
+
+	/**
+	 * Return an instance of a formula factory supporting the given extensions
+	 * (and only them) in addition to the regular event-B mathematical language.
+	 * 
+	 * @param extensions
+	 *            mathematical extensions to support
+	 * @return a formula factory supporting the given extensions
+	 * @since 2.3
+	 */
+	public static FormulaFactory getInstance(IFormulaExtension... extensions) {
+		return getInstance(new LinkedHashSet<IFormulaExtension>(
+				Arrays.asList(extensions)));
 	}
 
 	private static void checkSymbols(Set<IFormulaExtension> actualExtns) {
