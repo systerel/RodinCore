@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,37 +10,17 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.reasonerExtentionTests.InductiveDatatype;
-import org.eventb.core.seqprover.reasonerExtentionTests.SimpleDatatype;
 
 /**
  * @author Nicolas Beauger
  *
  */
 public class DTInductionTests extends AbstractManualInferenceTests {
-
-	private static final IDatatype SIMPLE_DT = DEFAULT_FACTORY
-			.makeDatatype(SimpleDatatype.getInstance());
-	private static final IDatatype INDUCTIVE_DT = DEFAULT_FACTORY
-			.makeDatatype(InductiveDatatype.getInstance());
-	private static final Set<IFormulaExtension> EXTENSIONS = new HashSet<IFormulaExtension>();
-	static {
-		EXTENSIONS.addAll(SIMPLE_DT.getExtensions());
-		EXTENSIONS.addAll(INDUCTIVE_DT.getExtensions());
-	}
-
-	private static final FormulaFactory DT_FAC = FormulaFactory
-			.getInstance(EXTENSIONS);
 
 	private static final String P1 = "∀ l⦂SD · l=l1";
 	private static final String resultP1_0 = "{l1=SD}[][][l1=cons0] |- ∀ l⦂SD · l=l1";

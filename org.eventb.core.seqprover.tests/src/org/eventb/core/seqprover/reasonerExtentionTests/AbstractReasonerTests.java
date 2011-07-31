@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,8 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -76,6 +79,25 @@ public abstract class AbstractReasonerTests {
 
 
 	protected static final FormulaFactory DEFAULT_FACTORY = FormulaFactory.getDefault();
+
+	private static final IDatatype SIMPLE_DT = DEFAULT_FACTORY
+			.makeDatatype(SimpleDatatype.getInstance());
+	private static final IDatatype INDUCTIVE_DT = DEFAULT_FACTORY
+			.makeDatatype(InductiveDatatype.getInstance());
+	private static final Set<IFormulaExtension> EXTENSIONS = new HashSet<IFormulaExtension>();
+	static {
+		EXTENSIONS.addAll(SIMPLE_DT.getExtensions());
+		EXTENSIONS.addAll(INDUCTIVE_DT.getExtensions());
+	}
+
+	/**
+	 * A factory supporting the simple and inductive datatype extensions.
+	 * 
+	 * @see SimpleDatatype
+	 * @see InductiveDatatype
+	 */
+	public static final FormulaFactory DT_FAC = FormulaFactory
+			.getInstance(EXTENSIONS);
 
 	protected final FormulaFactory ff;
 
