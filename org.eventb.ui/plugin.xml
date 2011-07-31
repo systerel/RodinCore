@@ -1956,302 +1956,95 @@
             class="org.eventb.internal.ui.prover.handlers.SearchHighlight"
             commandId="org.eventb.ui.prove.highlight">
          <activeWhen>
-           <or>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.Goal">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.editors.ProverUI">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.SearchHypothesis">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.CacheHypothesis">
-                  </equals>
-               </with>
-            </or>
+             <reference
+                   definitionId="org.eventb.ui.inProverUI">
+             </reference>
          </activeWhen>
          <enabledWhen>
-            <or>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.Goal">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.editors.ProverUI">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.SearchHypothesis">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.CacheHypothesis">
-                  </equals>
-               </with>
-            </or>
+             <reference
+                   definitionId="org.eventb.ui.inProverUI">
+             </reference>
          </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.prover.handlers.RestoreStyles"
             commandId="org.eventb.ui.prove.restoreStyles">
          <activeWhen>
-            <or>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.Goal">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.editors.ProverUI">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.SearchHypothesis">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.CacheHypothesis">
-                  </equals>
-               </with>
-            </or>
+             <reference
+                   definitionId="org.eventb.ui.inProverUI">
+             </reference>
          </activeWhen>
          <enabledWhen>
-            <or>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.Goal">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.editors.ProverUI">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.SearchHypothesis">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.CacheHypothesis">
-                  </equals>
-               </with>
-            </or>
+             <reference
+                   definitionId="org.eventb.ui.inProverUI">
+             </reference>
          </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.prover.handlers.NextHighlight"
             commandId="org.eventb.ui.prove.nextHighlight">
          <activeWhen>
-            <or>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.Goal">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.editors.ProverUI">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.SearchHypothesis">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.CacheHypothesis">
-                  </equals>
-               </with>
-            </or>
+             <reference
+                   definitionId="org.eventb.ui.inProverUI">
+             </reference>
          </activeWhen>
          <enabledWhen>
-            <or>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.Goal">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.editors.ProverUI">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.SearchHypothesis">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.CacheHypothesis">
-                  </equals>
-               </with>
-            </or>
+             <reference
+                   definitionId="org.eventb.ui.inProverUI">
+             </reference>
          </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.prover.handlers.PreviousHighlight"
             commandId="org.eventb.ui.prove.previousHighlight">
          <activeWhen>
-            <or>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.Goal">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.editors.ProverUI">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.SearchHypothesis">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.CacheHypothesis">
-                  </equals>
-               </with>
-            </or>
+             <reference
+                   definitionId="org.eventb.ui.inProverUI">
+             </reference>
          </activeWhen>
          <enabledWhen>
-            <or>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.Goal">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.editors.ProverUI">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.SearchHypothesis">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.CacheHypothesis">
-                  </equals>
-               </with>
-            </or>
+             <reference
+                   definitionId="org.eventb.ui.inProverUI">
+             </reference>
          </enabledWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.prover.handlers.ToggleHightlighting"
             commandId="org.eventb.ui.prove.toggleHighlight">
          <activeWhen>
-            <or>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.Goal">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.editors.ProverUI">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.SearchHypothesis">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.CacheHypothesis">
-                  </equals>
-               </with>
-            </or>
+             <reference
+                   definitionId="org.eventb.ui.inProverUI">
+             </reference>
          </activeWhen>
          <enabledWhen>
-            <or>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.Goal">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.editors.ProverUI">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.SearchHypothesis">
-                  </equals>
-               </with>
-               <with
-                     variable="activePartId">
-                  <equals
-                        value="org.eventb.ui.views.CacheHypothesis">
-                  </equals>
-               </with>
-            </or>
+             <reference
+                   definitionId="org.eventb.ui.inProverUI">
+             </reference>
          </enabledWhen>
       </handler>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eventb.ui.inProverUI">
+         <with
+               variable="activePartId">
+            <or>
+               <equals
+                     value="org.eventb.ui.views.Goal">
+               </equals>
+               <equals
+                     value="org.eventb.ui.editors.ProverUI">
+               </equals>
+               <equals
+                     value="org.eventb.ui.views.SearchHypothesis">
+               </equals>
+               <equals
+                     value="org.eventb.ui.views.CacheHypothesis">
+               </equals>
+            </or>
+         </with>
+      </definition>
    </extension>
    <extension
          point="org.eventb.ui.editorItems">
