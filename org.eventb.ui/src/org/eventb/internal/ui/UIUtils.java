@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -52,12 +53,16 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.EventBAttributes;
@@ -70,6 +75,7 @@ import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.internal.ui.prover.ProverUI;
+import org.eventb.internal.ui.utils.LegacyCommandAction;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IAttributeType;
@@ -1015,6 +1021,41 @@ public class UIUtils {
 			combo.add(value);
 		}
 		combo.setText(currentText);
+	}
+
+	/**
+	 * Indicates that a global action is to be implemented by a command.
+	 * <p>
+	 * This method must be used only if the global action is not already
+	 * retrofitted to use commands, which is the case for instance for navigate
+	 * actions. If the global action has already been retrofitted (e.g.,
+	 * <code>org.eclipse.ui.file.new</code>), there is nothing to do.
+	 * </p>
+	 * <p>
+	 * <b>Note</b>: Clients must eventually call
+	 * <code>bars.updateActionBars()</code> for this change to be taken into
+	 * account.
+	 * </p>
+	 * 
+	 * @param site
+	 *            site for which the command should be registered (editor, view,
+	 *            view page, etc.)
+	 * @param bars
+	 *            action bars for the given site
+	 * @param globalAction
+	 *            global action from {@link ActionFactory}
+	 *            <code>http://www.eclipse.org/forums/index.php/mv/msg/107499/329140/#msg_329140</code>
+	 * @see <a
+	 *      href="http://www.eclipse.org/forums/index.php/mv/msg/107499/329140/#msg_329140"
+	 *      >http://www.eclipse.org/forums/index.php/mv/msg/107499/329140/#msg_329140</a>
+	 */
+	public static void addGlobalActionHandler(final IWorkbenchSite site,
+			final IActionBars bars, final ActionFactory globalAction) {
+		final String commandId = globalAction.getCommandId();
+		final String actionId = globalAction.getId();
+		final IWorkbenchWindow window = site.getWorkbenchWindow();
+		final IAction bridge = new LegacyCommandAction(window, commandId);
+		bars.setGlobalActionHandler(actionId, bridge);
 	}
 
 }
