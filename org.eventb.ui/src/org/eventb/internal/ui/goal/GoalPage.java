@@ -42,6 +42,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.Predicate;
@@ -54,6 +56,7 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBSharedColor;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.prover.CharacterPairHighlighter;
@@ -240,9 +243,18 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	 * Setup the action bars
 	 */
 	private void contributeToActionBars() {
-		IActionBars bars = getSite().getActionBars();
+		final IPageSite site = getSite();
+		final IActionBars bars = site.getActionBars();
+
+		// Setup global actions
+		UIUtils.addGlobalActionHandler(site, bars, ActionFactory.NEXT);
+		UIUtils.addGlobalActionHandler(site, bars, ActionFactory.PREVIOUS);
+
 		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
+
+		// Commit changes
+		bars.updateActionBars();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IUserSupport;
@@ -28,6 +30,7 @@ import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
+import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -123,13 +126,24 @@ public abstract class HypothesisPage extends Page implements
 	 * Utility method for setup the action bars.
 	 */
 	private void contributeToActionBars() {
-		IActionBars bars = getSite().getActionBars();
+		final IPageSite site = getSite();
+		final IActionBars bars = site.getActionBars();
+
+		// Setup global actions
+		UIUtils.addGlobalActionHandler(site, bars, ActionFactory.NEXT);
+		UIUtils.addGlobalActionHandler(site, bars, ActionFactory.PREVIOUS);
+
 		// Setup the local pull down menu.
 		fillLocalPullDown(bars.getMenuManager());
+
 		// Setup the local tool bar.
 		fillLocalToolBar(bars.getToolBarManager());
+
 		// Setup the context menu.
 		fillContextMenu(bars.getMenuManager());
+
+		// Commit changes
+		bars.updateActionBars();
 	}
 
 	/*

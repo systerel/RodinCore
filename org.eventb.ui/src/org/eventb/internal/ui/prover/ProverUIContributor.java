@@ -16,11 +16,13 @@ package org.eventb.internal.ui.prover;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -79,6 +81,13 @@ public class ProverUIContributor extends MultiPageEditorActionBarContributor {
 			actionBars.setGlobalActionHandler(
 					IDEActionFactory.BOOKMARK.getId(), getAction(editor,
 							IDEActionFactory.BOOKMARK.getId()));
+
+			// Contribute next and previous action for navigating highlighted
+			// text
+			final IWorkbenchPartSite site = part.getSite();
+			UIUtils.addGlobalActionHandler(site, actionBars, ActionFactory.NEXT);
+			UIUtils.addGlobalActionHandler(site, actionBars, ActionFactory.PREVIOUS);
+
 			actionBars.updateActionBars();
 		}
 	}
