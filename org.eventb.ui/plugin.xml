@@ -1751,16 +1751,6 @@
             name="%commands.restoreStyles.name">
       </command>
       <command
-            description="%commands.nextHighlight.description"
-            id="org.eventb.ui.prove.nextHighlight"
-            name="%commands.nextHighlight.name">
-      </command>
-      <command
-            description="%commands.previousHighlight.description"
-            id="org.eventb.ui.prove.previousHighlight"
-            name="%commands.previousHighlight.name">
-      </command>
-      <command
             description="%commands.toggleHighlighting.description"
             id="org.eventb.ui.prove.toggleHighlight"
             name="%commands.toggleHighlighting.name">
@@ -1810,16 +1800,6 @@
             commandId="org.eventb.ui.prove.restoreStyles"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="ESC">
-      </key>
-      <key
-            commandId="org.eventb.ui.prove.nextHighlight"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+&gt;">
-      </key>
-      <key
-            commandId="org.eventb.ui.prove.previousHighlight"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+&lt;">
       </key>
    </extension>
    <extension
@@ -1982,7 +1962,7 @@
       </handler>
       <handler
             class="org.eventb.internal.ui.prover.handlers.NextHighlight"
-            commandId="org.eventb.ui.prove.nextHighlight">
+            commandId="org.eclipse.ui.navigate.next">
          <activeWhen>
              <reference
                    definitionId="org.eventb.ui.inProverUI">
@@ -1996,7 +1976,7 @@
       </handler>
       <handler
             class="org.eventb.internal.ui.prover.handlers.PreviousHighlight"
-            commandId="org.eventb.ui.prove.previousHighlight">
+            commandId="org.eclipse.ui.navigate.previous">
          <activeWhen>
              <reference
                    definitionId="org.eventb.ui.inProverUI">
