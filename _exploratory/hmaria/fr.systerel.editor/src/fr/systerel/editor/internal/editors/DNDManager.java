@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
@@ -29,6 +30,7 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Event;
 import org.eventb.internal.ui.RodinHandleTransfer;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
@@ -49,7 +51,14 @@ public class DNDManager {
 
 	public static boolean DEBUG;
 
-	private class Dragger extends DragSourceAdapter {
+	private static class Dragger extends DragSourceAdapter {
+		
+		private final SelectionController controller;
+		
+		public Dragger(SelectionController controller) {
+			this.controller = controller;
+		}
+		
 		@Override
 		public void dragStart(DragSourceEvent e) {
 			e.doit = controller.hasSelectedElements();
@@ -74,13 +83,25 @@ public class DNDManager {
 
 	}
 	
-	private class Dropper extends DropTargetAdapter {
+	private static class Dropper extends DropTargetAdapter {
+		
+		private final SelectionController controller;
+		private final DocumentMapper mapper;
+		private final StyledText styledText;
+		
+		
+		public Dropper(StyledText styledText, SelectionController controller, DocumentMapper mapper) {
+			this.controller = controller;
+			this.mapper = mapper;
+			this.styledText = styledText;
+		}
+		
 		@Override
 		public void dragEnter(DropTargetEvent e) {
 			if (DEBUG)
 				System.out.println("drag enter" + e);
 			if (e.detail == DND.DROP_DEFAULT)
-				e.detail = DND.DROP_COPY;
+				e.detail = DND.DROP_MOVE;
 		}
 
 		@Override
@@ -88,7 +109,13 @@ public class DNDManager {
 			if (DEBUG)
 				System.out.println("drag operation changed " + e);
 			if (e.detail == DND.DROP_DEFAULT)
-				e.detail = DND.DROP_COPY;
+				e.detail = DND.DROP_MOVE;
+		}
+		
+		@Override
+		public void dragOver(DropTargetEvent event) {
+			// Provide visual feedback
+			event.feedback = DND.FEEDBACK_SELECT | DND.FEEDBACK_SCROLL;
 		}
 
 		@Override
@@ -101,10 +128,19 @@ public class DNDManager {
 				System.out.println("at " + offset);
 			}
 			processDrop(elements, offset);
+			releaseSelection();
+		}
 
-			// works only because style ranges are totally recomputed
-			// upon drop completion (editor resynchronisation)
-			controller.resetSelectionNoEffect(offset);
+		/**
+		 * Frees the cumbersome selection after drop, that occurs on Mac and
+		 * Windows platform which seem to absorb the mouse down/up event. This
+		 * is a patch as it was impossible to locate the exact cause of such
+		 * behavior.
+		 */
+		private void releaseSelection() {
+			final Event event = new Event();
+			event.button = SWT.BUTTON1;
+			styledText.notifyListeners(SWT.MouseUp, event);
 		}
 
 		private int getOffset(DropTargetEvent e) {
@@ -127,7 +163,6 @@ public class DNDManager {
 			if (elems == null)
 				return;
 			new Move(pos).perform(elems);
-			documentProvider.doSynchronize(mapper.getRoot(), null);
 		}
 
 		private List<ILElement> toLElements(IRodinElement[] elements) {
@@ -167,37 +202,22 @@ public class DNDManager {
 	private final SelectionController controller;
 	private final StyledText styledText;
 	private final DocumentMapper mapper;
-	private final RodinDocumentProvider documentProvider;
 
 	public DNDManager(SelectionController controller, StyledText styledText,
 			DocumentMapper mapper, RodinDocumentProvider documentProvider) {
 		this.controller = controller;
 		this.styledText = styledText;
 		this.mapper = mapper;
-		this.documentProvider = documentProvider;
 	}
 
 	public void install() {
-		styledText.setDragDetect(false);
-		// remove standard DND
-		styledText.setData(DND.DRAG_SOURCE_KEY, null);
-		styledText.setData(DND.DROP_TARGET_KEY, null);
-
 		DragSource source = null;
 		DropTarget target = null;
 		try {
-			source = new DragSource(styledText, DND.DROP_COPY | DND.DROP_MOVE);
-			source.setTransfer(new Transfer[] { RodinHandleTransfer
-					.getInstance() });
-			source.addDragListener(new Dragger());
-
-			target = new DropTarget(styledText, DND.DROP_DEFAULT
-					| DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
-			target.setTransfer(new Transfer[] { RodinHandleTransfer
-					.getInstance() });
-			target.addDropListener(new Dropper());
+			source = createDragSource(styledText, controller);
+			target = createDropTarget(styledText, controller, mapper);
 		} catch (SWTError e) {
-			// happens on MS Windows platform
+			// could happen on specific OS platforms
 			log(null,
 					"Drag-and-drop has been disabled in Rodin Editor because:\n"
 							+ e.getMessage());
@@ -218,5 +238,26 @@ public class DNDManager {
 		}
 		// TODO customize DragSourceEffect, DropTargetEffect
 	}
-
+	
+	private static DragSource createDragSource(final StyledText styledText,
+			SelectionController controller) {
+		final DragSource source = new DragSource(styledText, DND.DROP_MOVE);
+		final Transfer[] types = new Transfer[] { RodinHandleTransfer
+				.getInstance() };
+		source.setTransfer(types);
+		source.addDragListener(new Dragger(controller));
+		return source;
+	}
+	
+	private static DropTarget createDropTarget(final StyledText styledText,
+			SelectionController controller, DocumentMapper mapper) {
+		final DropTarget target = new DropTarget(styledText, DND.DROP_DEFAULT
+				| DND.DROP_MOVE);
+		final Transfer[] types = new Transfer[] { RodinHandleTransfer
+				.getInstance() };
+		target.setTransfer(types);
+		target.addDropListener(new Dropper(styledText, controller, mapper));
+		return target;
+	}
+	
 }

@@ -204,6 +204,12 @@ public class RodinEditor extends TextEditor {
 		setSourceViewerConfiguration(rodinViewerConfiguration);
 	}
 	
+	@Override
+	protected void initializeDragAndDrop(ISourceViewer viewer) {
+		// Removing the drag and drop initialization done above by the
+		// AbstractTextEditor
+	}
+	
 	/**
 	 * Creates a projection viewer to allow folding
 	 */

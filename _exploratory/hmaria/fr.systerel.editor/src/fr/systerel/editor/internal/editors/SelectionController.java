@@ -185,11 +185,6 @@ public class SelectionController implements MouseListener, VerifyListener,
 						+ enclosingPos);
 		}
 	}
-
-	public void resetSelectionNoEffect(int offset) {
-		selection.clearNoEffect();
-		styledText.setSelection(offset);
-	}
 	
 	/** Removes all selections */
 	public void clearSelection() {
@@ -202,7 +197,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 			System.out.println("mouse up " + e);
 
 		// no selection
-		if (viewer.getSelectedRange().y == 0) {
+		if (viewer.getSelectedRange().y == 0 && e.x != 0 && e.y != 0) {
 			overlayEditor.showAtOffset(styledText.getCaretOffset());
 		}
 	}
