@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.rodinp.core.IParent;
@@ -993,7 +994,7 @@ public class RodinDBManager implements ISaveParticipant {
 	}
 
 	private static void savePluginPreferences(String pluginId) {
-		final InstanceScope instanceScope = new InstanceScope();
+		final IScopeContext instanceScope = InstanceScope.INSTANCE;
 		try {
 			instanceScope.getNode(pluginId).flush();
 		} catch (BackingStoreException e) {
