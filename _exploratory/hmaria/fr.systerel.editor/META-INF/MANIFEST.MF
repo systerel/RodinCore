@@ -6,7 +6,7 @@ Bundle-Version: 0.5.0.qualifier
 Bundle-Activator: fr.systerel.editor.EditorPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.jface.text,
- org.rodinp.keyboard;'bundle-version="1.1.0",
+ org.rodinp.keyboard,
  org.rodinp.core.emf,
  org.eclipse.emf.edit,
  org.eventb.ui
