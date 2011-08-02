@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
+import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertFailure;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertSuccess;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertTacticRegistered;
-import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.genProofTree;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.eqv;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
-import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.junit.Test;
@@ -43,80 +43,66 @@ public class AutoEqvTacTests {
 	}
 
 	/**
-	 * Ensures that the EqvRewrites tactic succeeds once on a goal
-	 */
-	@Test
-	public void applyOnceGoal() {
-		final IProofTree pt = genProofTree(//
-				"s ⊆ ℤ ",//
-				"r ∈ s ↔ s", //
-				"(s ≠ ∅) ⇔ (r≠∅)" //
-				// 2 sub-goals: s≠∅ ⇒ r≠∅
-				//              r≠∅ ⇒ s≠∅
-		);
-		assertSuccess(pt.getRoot(), eqv("", empty, empty), GOAL_TAC);
-	}
-
-	/**
-	 * Ensures that the EqvRewrites tactic succeeds recursively on hypotheses
-	 */
-	@Test
-	public void applyRecursivelyHyp() {
-		final IProofTree pt = genProofTree(//
-				"a∈ℤ",// hyp1
-				"b∈ℤ",// hyp2
-				"a≠b⇔(b≠a⇔a≠b)", // hyp3
-				"⊥" //goal
-				);
-		//1:
-		//	a≠b⇔(b≠a⇔a≠b)
-		//  ⊢	a≠b⇒(b≠a⇔a≠b)
-		//		(b≠a⇔a≠b)⇒a≠b
-		//2:
-		// a≠b⇒(b≠a⇔a≠b)
-		// ⊢	a≠b⇒(b≠a⇒a≠b)∧(a≠b⇒b≠a)
-		//3:
-		// (b≠a⇔a≠b)⇒a≠b
-		// ⊢	(b≠a⇒a≠b)∧(a≠b⇒b≠a)⇒a≠b
-		assertSuccess(pt.getRoot(), eqv("", eqv("1", eqv("0", empty))), HYP_TAC);
-	}
-
-	/**
-	 * Ensures that the EqvRewrites tactic succeeds once on an hypothesis
+	 * Ensures that the EqvRewrites tactic succeeds once on an hypothesis.
 	 */
 	@Test
 	public void applyOnceHyp() {
-		final IProofTree pt = genProofTree(//
-				"s ⊆ ℤ ",//
-				"r ∈ s ↔ s", //
-				"(s ≠ ∅) ⇔ (r≠∅)", //
-				"⊥" //
-		);
-		// 1 subgoal: ⊥
-		assertSuccess(pt.getRoot(), eqv("", empty), HYP_TAC);
+		assertSuccess(genSeq("s ⊆ ℤ ;; r ∈ s ↔ s ;; (s ≠ ∅) ⇔ (r≠∅) |- ⊥"),
+				eqv("", empty), HYP_TAC);
 	}
 
 	/**
-	 * Ensures that the EqvRewrites tactic succeeds recursively on the goal
+	 * Ensures that the EqvRewrites tactic succeeds once on several hypotheses.
+	 */
+	@Test
+	public void applyManyHyp() {
+		assertSuccess(genSeq("1=1 ⇔ 2=2 ;; 3=3 ⇔ 4=4 |- ⊥"),
+				eqv("", eqv("", empty)), HYP_TAC);
+	}
+
+	/**
+	 * Ensures that the EqvRewrites tactic succeeds recursively on hypotheses.
+	 */
+	@Test
+	public void applyRecursivelyHyp() {
+		assertSuccess(genSeq("a∈ℤ ;; b∈ℤ ;; a≠b ⇔ (b≠a ⇔ a≠b) |- ⊥"),
+				eqv("", eqv("1", eqv("0", empty))), HYP_TAC);
+	}
+
+	/**
+	 * Ensures that the EqvRewrites tactic fails when no hypothesis can be
+	 * rewritten (even if the goal can).
+	 */
+	@Test
+	public void noApplyHyp() {
+		assertFailure(genSeq("1=1 ;; 2=2 |- 3=3 ⇔ 4=4"), HYP_TAC);
+	}
+
+	/**
+	 * Ensures that the EqvRewrites tactic succeeds once on a goal.
+	 */
+	@Test
+	public void applyOnceGoal() {
+		assertSuccess(genSeq("s ⊆ ℤ ;; r ∈ s ↔ s |- (s ≠ ∅) ⇔ (r≠∅)"),
+				eqv("", empty, empty), GOAL_TAC);
+	}
+
+	/**
+	 * Ensures that the EqvRewrites tactic succeeds recursively on the goal.
 	 */
 	@Test
 	public void applyRecusivelyGoal() {
-		final IProofTree pt = genProofTree(//
-				"a∈ℤ",// hyp1
-				"b∈ℤ",// hyp2
-				"a≠b⇔(b≠a⇔a≠b)" // goal
-		);
-		//Step 1 (eqv): 
-		// ⊢	a≠b⇔(b≠a⇔a≠b)
-		//2 sub-goals :
-		//	⊢	a≠b⇒(b≠a⇔a≠b)
-			//Step2 (eqv):
-			//	⊢ a≠b⇒(b≠a⇒a≠b)∧(a≠b⇒b≠a)
-		//  ⊢	(b≠a⇔a≠b)⇒a≠b
-			//Step2 (eqv):
-			//  ⊢ (b≠a⇒a≠b)∧(a≠b⇒b≠a)⇒a≠b
-		assertSuccess(pt.getRoot(), eqv("", eqv("1", empty), eqv("0", empty)),
-				GOAL_TAC);
+		assertSuccess(genSeq("a∈ℤ ;; b∈ℤ |- a≠b⇔(b≠a⇔a≠b)"),
+				eqv("", eqv("1", empty), eqv("0", empty)), GOAL_TAC);
+	}
+
+	/**
+	 * Ensures that the EqvRewrites tactic fails when the goal cannot be
+	 * rewritten (even if some hypothesis can).
+	 */
+	@Test
+	public void noApplyGoal() {
+		assertFailure(genSeq("1=1 ;; 3=3 ⇔ 4=4 |- 2=2"), GOAL_TAC);
 	}
 
 }

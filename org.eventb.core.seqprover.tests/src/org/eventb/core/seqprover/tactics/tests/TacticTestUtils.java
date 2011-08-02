@@ -70,6 +70,24 @@ public class TacticTestUtils {
 	}
 
 	/**
+	 * Asserts that the application of the given tactic to a proof tree node
+	 * containing the given sequent returns <code>null</code> and that the
+	 * resulting tree shape is equal to the given <code>expected</code> tree
+	 * shape.
+	 * 
+	 * @param sequentStr
+	 *            a proof sequent in String form
+	 * @param expected
+	 *            the expected tree shape
+	 * @param tactic
+	 *            the tactic to apply
+	 */
+	public static void assertSuccess(String sequentStr,
+			TreeShape expected, ITactic tactic) {
+		assertSuccess(genSeq(sequentStr), expected, tactic);
+	}
+
+	/**
 	 * Asserts that the application of the given tactic fails and does not
 	 * modify the proof tree.
 	 * 
@@ -94,6 +112,19 @@ public class TacticTestUtils {
 	public static void assertFailure(IProverSequent sequent, ITactic tactic) {
 		final IProofTreeNode node = makeProofTree(sequent, null).getRoot();
 		assertFailure(node, tactic);
+	}
+
+	/**
+	 * Asserts that the application of the given tactic to a proof tree node
+	 * containing the given sequent fails and does not modify the proof tree.
+	 * 
+	 * @param sequentStr
+	 *            a proof sequent in String form
+	 * @param tactic
+	 *            the tactic to apply
+	 */
+	public static void assertFailure(String sequentStr, ITactic tactic) {
+		assertFailure(genSeq(sequentStr), tactic);
 	}
 
 	/**
