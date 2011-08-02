@@ -11,12 +11,11 @@
 package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.ast.Formula.BFALSE;
-import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertFailure;
-import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertSuccess;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.genProofTree;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.rn;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTree;
@@ -32,20 +31,15 @@ import org.junit.Test;
  */
 public class NNFRewritesAutoTacTests {
 
-	private static final Predicate FALSE = TestLib.ff.makeLiteralPredicate(
-			BFALSE, null);
-
-	private static final ITactic tac = new AutoTactics.NNFRewritesAutoTac();
 	private static final String TAC_ID = "org.eventb.core.seqprover.NNFTac";
+	private static final ITactic TAC = new AutoTactics.NNFRewritesAutoTac();
 
 	/**
 	 * Assert that auto tactic is registered.
 	 */
 	@Test
 	public void assertRegistered() {
-		final String[] tacticIds =  {TAC_ID};
-		final ITactic[] tactics = { tac };
-		TacticTestUtils.assertTacticsRegistered(tacticIds, tactics);
+		TacticTestUtils.assertTacticRegistered(TAC_ID, TAC);
 	}
 
 	/**
@@ -123,12 +117,8 @@ public class NNFRewritesAutoTacTests {
 	public void applyHybrid() {
 		final Predicate pred1 = genPred("¬(1=1 ∧ 2=2)");
 		final Predicate pred2 = genPred("¬¬3=3");
-
-		final IProofTree pt2Pred = genProofTree(pred1, pred2, FALSE);
-		assertSuccess(pt2Pred.getRoot(), rn(pred1, "",rn(pred2, "", empty)), tac);
-
-		final IProofTree pt1_1 = genProofTree(pred1, pred2);
-		assertSuccess(pt1_1.getRoot(), rn(pred1, "",rn("", empty)), tac);
+		assertSuccess(rn(pred1, "", rn(pred2, "", empty)), pred1, pred2, FALSE);
+		assertSuccess(rn(pred1, "", rn("", empty)), pred1, pred2);
 	}
 
 	/**
@@ -144,24 +134,24 @@ public class NNFRewritesAutoTacTests {
 	@Test
 	public void failOnce() {
 		final String pDSNE = "¬ S=(∅⦂ℙ(ℤ))"; // DEF_SPECIAL_NOT_EQUAL
-		assertFailsHyp(pDSNE);
-		assertFailsGoal(pDSNE);
+		assertFailureHyp(pDSNE);
+		assertFailureGoal(pDSNE);
 
 		final String pDSNEswitch = "¬ (∅⦂ℙ(ℤ))=S"; // Expressions' place switch
-		assertFailsHyp(pDSNEswitch);
-		assertFailsGoal(pDSNEswitch);
+		assertFailureHyp(pDSNEswitch);
+		assertFailureGoal(pDSNEswitch);
 
 		final String pEqv = "¬(1=1 ⇔ 2=2)";
-		assertFailsHyp(pEqv);
-		assertFailsGoal(pEqv);
+		assertFailureHyp(pEqv);
+		assertFailureGoal(pEqv);
 
 		final String pNoChange = "(1=1 ∧ 2=2)";
-		assertFailsHyp(pNoChange);
-		assertFailsGoal(pNoChange);
+		assertFailureHyp(pNoChange);
+		assertFailureGoal(pNoChange);
 
 		final String pNotExp = "¬1=1";
-		assertFailsHyp(pNotExp);
-		assertFailsGoal(pNotExp);
+		assertFailureHyp(pNotExp);
+		assertFailureGoal(pNotExp);
 	}
 
 	//************************************************************************
@@ -170,57 +160,76 @@ public class NNFRewritesAutoTacTests {
 	//
 	//************************************************************************
 
+	private static final Predicate FALSE = TestLib.ff.makeLiteralPredicate(
+			BFALSE, null);
+
 	/**
 	 * Assert that the application of the NnfRewriter on a node made up of one
-	 * hypothesis (the goal is ⊥) returns <code>null</code> and that the 
-	 * resulting tree shape is equal to the given <code>shape</code> tree shape.
+	 * hypothesis (the goal being ⊥) succeeds and that the resulting tree shape
+	 * is equal to the given tree shape.
 	 * 
 	 * @param hyp
-	 * 			the considered hypothesis
+	 *            the considered hypothesis
 	 * @param shape
-	 * 			the expected tree shape
+	 *            the expected tree shape
 	 */
-	private void assertSuccessHyp(final Predicate hyp, final TreeShape shape) {
-		final IProofTree pt = genProofTree(hyp, FALSE);
-		assertSuccess(pt.getRoot(), shape, tac);
+	private static void assertSuccessHyp(final Predicate hyp,
+			final TreeShape shape) {
+		assertSuccess(shape, hyp, FALSE);
 	}
 
 	/**
 	 * Assert that the application of the NnfRewriter on a node made up of one
-	 * goal returns <code>null</code> and that the resulting tree shape is equal
-	 * to the given <code>shape</code> tree shape.
+	 * goal succeeds and that the resulting tree shape is equal to the given
+	 * tree shape.
 	 * 
 	 * @param goal
-	 * 			the considered goal
+	 *            the considered goal
 	 * @param shape
-	 * 			the expected tree shape
+	 *            the expected tree shape
 	 */
-	private void assertSuccessGoal(final Predicate goal, final TreeShape shape) {
-		final IProofTree pt = genProofTree(goal);
-		assertSuccess(pt.getRoot(), shape, tac);
+	private static void assertSuccessGoal(final Predicate goal,
+			final TreeShape shape) {
+		assertSuccess(shape, goal);
+	}
+
+	/**
+	 * Assert that the application of the NnfRewriter on a node made up of the
+	 * given sequent succeeds and that the resulting tree shape is equal to the
+	 * given tree shape.
+	 * 
+	 * @param predicates
+	 *            selected hypotheses and goal of the sequent
+	 * @param shape
+	 *            the expected tree shape
+	 */
+	private static void assertSuccess(final TreeShape shape,
+			final Predicate... predicates) {
+		TacticTestUtils.assertSuccess(genSeq(predicates), shape, TAC);
 	}
 
 	/**
 	 * Assert that the application of the NnfRewriter on a node made up of one
-	 * hypothesis (the goal is ⊥) does not return <code>null</code>.
+	 * hypothesis (the goal being ⊥) fails and does not modify the proof tree.
 	 * 
 	 * @param predStr
-	 * 			the considered hypothesis in String
+	 *            the considered hypothesis as a String
 	 */
-	private void assertFailsHyp(final String predStr) {
+	private static void assertFailureHyp(final String predStr) {
 		final IProofTree pt = genProofTree(predStr, "⊥");
-		assertFailure(pt.getRoot(), tac);
+		TacticTestUtils.assertFailure(pt.getRoot(), TAC);
 	}
 
 	/**
 	 * Assert that the application of the NnfRewriter on a node made up of one
-	 * goal does not return <code>null</code>.
+	 * goal fails and does not modify the proof tree.
 	 * 
 	 * @param predStr
-	 * 			the considered goal in String
+	 *            the considered goal as a String
 	 */
-	private void assertFailsGoal(final String predStr) {
+	private static void assertFailureGoal(final String predStr) {
 		final IProofTree pt = genProofTree(predStr);
-		assertFailure(pt.getRoot(), tac);
+		TacticTestUtils.assertFailure(pt.getRoot(), TAC);
 	}
+
 }

@@ -259,7 +259,8 @@ public class TestLib {
 
 	/**
 	 * Creates a new proof sequent. The type environment is inferred from the
-	 * given predicates.
+	 * given predicates. It is assumed that the given predicates do not use any
+	 * mathematical extension.
 	 * 
 	 * @param predicates
 	 *            selected hypotheses and goal in this order

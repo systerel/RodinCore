@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
+import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -41,12 +42,31 @@ public class TacticTestUtils {
 	 *            the considered proof tree node
 	 * @param expected
 	 *            the expected tree shape
-	 * @param tac
-	 *            the tactic tested
+	 * @param tactic
+	 *            the tactic to apply
 	 */
 	public static void assertSuccess(IProofTreeNode node, TreeShape expected,
-			ITactic tac) {
-		TreeShape.assertSuccess(node, expected, tac);
+			ITactic tactic) {
+		TreeShape.assertSuccess(node, expected, tactic);
+	}
+
+	/**
+	 * Asserts that the application of the given tactic to a proof tree node
+	 * containing the given sequent returns <code>null</code> and that the
+	 * resulting tree shape is equal to the given <code>expected</code> tree
+	 * shape.
+	 * 
+	 * @param sequent
+	 *            a proof sequent
+	 * @param expected
+	 *            the expected tree shape
+	 * @param tactic
+	 *            the tactic to apply
+	 */
+	public static void assertSuccess(IProverSequent sequent,
+			TreeShape expected, ITactic tactic) {
+		final IProofTreeNode node = makeProofTree(sequent, null).getRoot();
+		assertSuccess(node, expected, tactic);
 	}
 
 	/**
@@ -55,11 +75,25 @@ public class TacticTestUtils {
 	 * 
 	 * @param node
 	 *            the considered proof tree node
-	 * @param tac
-	 *            the tactic tested
+	 * @param tactic
+	 *            the tactic to apply
 	 */
-	public static void assertFailure(IProofTreeNode node, ITactic tac) {
-		TreeShape.assertFailure(node, tac);
+	public static void assertFailure(IProofTreeNode node, ITactic tactic) {
+		TreeShape.assertFailure(node, tactic);
+	}
+
+	/**
+	 * Asserts that the application of the given tactic to a proof tree node
+	 * containing the given sequent fails and does not modify the proof tree.
+	 * 
+	 * @param sequent
+	 *            a proof sequent
+	 * @param tactic
+	 *            the tactic to apply
+	 */
+	public static void assertFailure(IProverSequent sequent, ITactic tactic) {
+		final IProofTreeNode node = makeProofTree(sequent, null).getRoot();
+		assertFailure(node, tactic);
 	}
 
 	/**
@@ -69,13 +103,13 @@ public class TacticTestUtils {
 	 * 
 	 * @param id
 	 *            the id of the tactic that should be registered
-	 * @param tac
+	 * @param tactic
 	 *            the instance of the tactic to compare the runtime class with
 	 */
-	public static void assertTacticRegistered(String id, ITactic tac) {
+	public static void assertTacticRegistered(String id, ITactic tactic) {
 		final ITacticDescriptor desc = tacRegistry.getTacticDescriptor(id);
 		assertNotNull(desc);
-		assertEquals(tac.getClass(), desc.getTacticInstance().getClass());
+		assertEquals(tactic.getClass(), desc.getTacticInstance().getClass());
 	}
 
 	/**
@@ -85,17 +119,17 @@ public class TacticTestUtils {
 	 * 
 	 * @param tacticIds
 	 *            the array of tactic ids to assert the registration
-	 * @param tacs
+	 * @param tactics
 	 *            the array of corresponding tactic instances
 	 */
 	public static void assertTacticsRegistered(String[] tacticIds,
-			ITactic[] tacs) {
+			ITactic[] tactics) {
 		assertEquals(
 				"Tactic ids and tactic instances arrays should have the same length",
-				tacticIds.length, tacs.length);
+				tacticIds.length, tactics.length);
 		int i = 0;
 		for (String id : tacticIds) {
-			assertTacticRegistered(id, tacs[i]);
+			assertTacticRegistered(id, tactics[i]);
 			i++;
 		}
 	}
@@ -104,39 +138,39 @@ public class TacticTestUtils {
 	 * Generates a proof tree from the given predicates, where the last
 	 * predicate is the goal.
 	 * 
-	 * @param preds
-	 *            the predicates contained in the proof tree to create
+	 * @param predicateStrings
+	 *            predicates as strings (selected hypotheses and goal)
 	 * @return a proof tree made out of the given predicates
 	 */
-	public static IProofTree genProofTree(String... preds) {
-		final IProverSequent seq = genSeq(preds);
-		return ProverFactory.makeProofTree(seq, null);
+	public static IProofTree genProofTree(String... predicateStrings) {
+		final IProverSequent sequent = genSeq(predicateStrings);
+		return ProverFactory.makeProofTree(sequent, null);
 	}
 
 	/**
 	 * Generates a proof tree from the given predicates, where the last
 	 * predicate is the goal.
 	 * 
-	 * @param preds
+	 * @param predicates
 	 *            selected hypotheses and then goal
 	 * @return a proof tree made out of the given predicates
 	 */
-	public static IProofTree genProofTree(Predicate... preds) {
-		final IProverSequent seq = TestLib.genSeq(preds);
+	public static IProofTree genProofTree(Predicate... predicates) {
+		final IProverSequent seq = TestLib.genSeq(predicates);
 		return ProverFactory.makeProofTree(seq, null);
 	}
 
-	private static IProverSequent genSeq(String... preds) {
-		final int nbHyps = preds.length - 1;
+	private static IProverSequent genSeq(String... predicates) {
+		final int nbHyps = predicates.length - 1;
 		final StringBuilder b = new StringBuilder();
 		String sep = "";
 		for (int i = 0; i < nbHyps; i++) {
 			b.append(sep);
 			sep = ";;";
-			b.append(preds[i]);
+			b.append(predicates[i]);
 		}
 		b.append("|-");
-		b.append(preds[nbHyps]);
+		b.append(predicates[nbHyps]);
 		return TestLib.genSeq(b.toString());
 	}
 
