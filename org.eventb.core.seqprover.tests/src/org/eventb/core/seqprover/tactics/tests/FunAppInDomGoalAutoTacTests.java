@@ -12,6 +12,7 @@ package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertFailure;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertSuccess;
+import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertTacticRegistered;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgGoal;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgInclusion;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.totalDom;
@@ -39,17 +40,15 @@ import org.junit.Test;
  */
 public class FunAppInDomGoalAutoTacTests {
 
-	private static final ITactic tac = new AutoTactics.FunAppInDomGoalAutoTac();
 	private static final String TAC_ID = "org.eventb.core.seqprover.funAppInDomGoalTac";
+	private static final ITactic TAC = new AutoTactics.FunAppInDomGoalAutoTac();
 
 	/**
 	 * Assert that auto tactic is registered.
 	 */
 	@Test
 	public void assertRegistered() {
-		final String[] tacticIds = { TAC_ID };
-		final ITactic[] tactics = { tac };
-		TacticTestUtils.assertTacticsRegistered(tacticIds, tactics);
+		assertTacticRegistered(TAC_ID, TAC);
 	}
 
 	/**
@@ -209,7 +208,7 @@ public class FunAppInDomGoalAutoTacTests {
 		final IProverSequent sequent = ProverFactory.makeSequent(typeEnv,
 				hypotheses, goal);
 		final IProofTree pt = ProverFactory.makeProofTree(sequent, null);
-		assertSuccess(pt.getRoot(), myTreeShape(f_hyp, substitute), tac);
+		assertSuccess(pt.getRoot(), myTreeShape(f_hyp, substitute), TAC);
 	}
 
 	/**
@@ -239,7 +238,7 @@ public class FunAppInDomGoalAutoTacTests {
 		final IProverSequent sequent = ProverFactory.makeSequent(typeEnv,
 				hypotheses, goal);
 		final IProofTree pt = ProverFactory.makeProofTree(sequent, null);
-		assertFailure(pt.getRoot(), tac);
+		assertFailure(pt.getRoot(), TAC);
 	}
 
 	/**

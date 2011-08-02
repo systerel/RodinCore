@@ -11,6 +11,7 @@
 package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertSuccess;
+import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertTacticRegistered;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.genProofTree;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.eqv;
@@ -26,20 +27,19 @@ import org.junit.Test;
  */
 public class AutoEqvTacTests {
 
-	private static final ITactic goalTac = new AutoTactics.EqvRewritesGoalAutoTac();
-	private static final ITactic hypTac = new AutoTactics.EqvRewritesHypAutoTac();
+	private static final String HYP_TAC_ID = "org.eventb.core.seqprover.eqvHypTac";
+	private static final ITactic HYP_TAC = new AutoTactics.EqvRewritesHypAutoTac();
 
 	private static final String GOAL_TAC_ID = "org.eventb.core.seqprover.eqvGoalTac";
-	private static final String HYP_TAC_ID = "org.eventb.core.seqprover.eqvHypTac";
+	private static final ITactic GOAL_TAC = new AutoTactics.EqvRewritesGoalAutoTac();
 
 	/**
 	 * Assert that both hypothesis and goal auto tactics are registered
 	 */
 	@Test
 	public void assertRegistered() {
-		final String[] tacticIds =  {HYP_TAC_ID, GOAL_TAC_ID};
-		final ITactic[] tactics = { hypTac, goalTac };
-		TacticTestUtils.assertTacticsRegistered(tacticIds, tactics);
+		assertTacticRegistered(HYP_TAC_ID, HYP_TAC);
+		assertTacticRegistered(GOAL_TAC_ID, GOAL_TAC);
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class AutoEqvTacTests {
 				// 2 sub-goals: s≠∅ ⇒ r≠∅
 				//              r≠∅ ⇒ s≠∅
 		);
-		assertSuccess(pt.getRoot(), eqv("", empty, empty), goalTac);
+		assertSuccess(pt.getRoot(), eqv("", empty, empty), GOAL_TAC);
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class AutoEqvTacTests {
 		//3:
 		// (b≠a⇔a≠b)⇒a≠b
 		// ⊢	(b≠a⇒a≠b)∧(a≠b⇒b≠a)⇒a≠b
-		assertSuccess(pt.getRoot(), eqv("", eqv("1", eqv("0", empty))), hypTac);
+		assertSuccess(pt.getRoot(), eqv("", eqv("1", eqv("0", empty))), HYP_TAC);
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class AutoEqvTacTests {
 				"⊥" //
 		);
 		// 1 subgoal: ⊥
-		assertSuccess(pt.getRoot(), eqv("", empty), hypTac);
+		assertSuccess(pt.getRoot(), eqv("", empty), HYP_TAC);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class AutoEqvTacTests {
 			//Step2 (eqv):
 			//  ⊢ (b≠a⇒a≠b)∧(a≠b⇒b≠a)⇒a≠b
 		assertSuccess(pt.getRoot(), eqv("", eqv("1", empty), eqv("0", empty)),
-				goalTac);
+				GOAL_TAC);
 	}
 
 }

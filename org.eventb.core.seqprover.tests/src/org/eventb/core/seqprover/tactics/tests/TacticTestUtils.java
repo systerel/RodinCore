@@ -113,28 +113,6 @@ public class TacticTestUtils {
 	}
 
 	/**
-	 * Asserts that all the items of the given pair of parameter arrays are
-	 * registered. Note that arrays must have the same length as each id must
-	 * have a corresponding tactic instance.
-	 * 
-	 * @param tacticIds
-	 *            the array of tactic ids to assert the registration
-	 * @param tactics
-	 *            the array of corresponding tactic instances
-	 */
-	public static void assertTacticsRegistered(String[] tacticIds,
-			ITactic[] tactics) {
-		assertEquals(
-				"Tactic ids and tactic instances arrays should have the same length",
-				tacticIds.length, tactics.length);
-		int i = 0;
-		for (String id : tacticIds) {
-			assertTacticRegistered(id, tactics[i]);
-			i++;
-		}
-	}
-
-	/**
 	 * Generates a proof tree from the given predicates, where the last
 	 * predicate is the goal.
 	 * 

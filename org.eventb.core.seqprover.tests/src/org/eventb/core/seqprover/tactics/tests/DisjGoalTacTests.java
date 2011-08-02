@@ -12,6 +12,7 @@ package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertFailure;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertSuccess;
+import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertTacticRegistered;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.genProofTree;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.dti;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.impI;
@@ -29,17 +30,15 @@ import org.junit.Test;
  */
 public class DisjGoalTacTests {
 
-	private static final ITactic tac = new AutoTactics.DisjGoalTac();
 	private static final String TAC_ID = "org.eventb.core.seqprover.DisjGoalTac";
+	private static final ITactic TAC = new AutoTactics.DisjGoalTac();
 
 	/**
 	 * Assert that auto tactic is registered.
 	 */
 	@Test
 	public void assertRegistered() {
-		final String[] tacticIds = { TAC_ID };
-		final ITactic[] tactics = { tac };
-		TacticTestUtils.assertTacticsRegistered(tacticIds, tactics);
+		assertTacticRegistered(TAC_ID, TAC);
 	}
 
 	/**
@@ -81,7 +80,7 @@ public class DisjGoalTacTests {
 	 */
 	private void assertSucceed(final String goalStr, final TreeShape shape) {
 		final IProofTree pt = genProofTree(goalStr);
-		assertSuccess(pt.getRoot(), shape, tac);
+		assertSuccess(pt.getRoot(), shape, TAC);
 	}
 
 	/**
@@ -93,7 +92,7 @@ public class DisjGoalTacTests {
 	 */
 	private void assertFails(final String goalStr) {
 		final IProofTree pt = genProofTree(goalStr);
-		assertFailure(pt.getRoot(), tac);
+		assertFailure(pt.getRoot(), TAC);
 	}
 
 	/**

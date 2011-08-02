@@ -11,6 +11,7 @@
 package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertSuccess;
+import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertTacticRegistered;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.genProofTree;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.ri;
@@ -27,20 +28,19 @@ import org.junit.Test;
  */
 public class AutoRmiTacTests {
 
-	private static final ITactic goalTac = new AutoTactics.RmiGoalAutoTac();
-	private static final ITactic hypTac = new AutoTactics.RmiHypAutoTac();
+	private static final String HYP_TAC_ID = "org.eventb.core.seqprover.rmiHypTac";
+	private static final ITactic HYP_TAC = new AutoTactics.RmiHypAutoTac();
 
 	private static final String GOAL_TAC_ID = "org.eventb.core.seqprover.rmiGoalTac";
-	private static final String HYP_TAC_ID = "org.eventb.core.seqprover.rmiHypTac";
+	private static final ITactic GOAL_TAC = new AutoTactics.RmiGoalAutoTac();
 
 	/**
 	 * Assert that both hypothesis and goal auto tactics are registered
 	 */
 	@Test
 	public void assertRegistered() {
-		final String[] tacticIds =  {HYP_TAC_ID, GOAL_TAC_ID};
-		final ITactic[] tactics = { hypTac, goalTac };
-		TacticTestUtils.assertTacticsRegistered(tacticIds, tactics);
+		assertTacticRegistered(HYP_TAC_ID, HYP_TAC);
+		assertTacticRegistered(GOAL_TAC_ID, GOAL_TAC);
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class AutoRmiTacTests {
 				"y ∈ ℤ", //
 				"x↦y ∈ id" //
 		);
-		assertSuccess(pt.getRoot(), rm("", empty), goalTac);
+		assertSuccess(pt.getRoot(), rm("", empty), GOAL_TAC);
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class AutoRmiTacTests {
 		// |- r⊆s × s
 		// |- ∀x,x0 · x ↦ x0∈r ⇒ x ↦ x0∈s × s
 		// |- ∀x,x0 · x ↦ x0∈r ⇒ x∈s ∧ x0∈s
-		assertSuccess(pt.getRoot(), rm("", ri("", rm("2.1", empty))), goalTac);
+		assertSuccess(pt.getRoot(), rm("", ri("", rm("2.1", empty))), GOAL_TAC);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class AutoRmiTacTests {
 				"x⊆ℤ ",//
 				"⊥" //
 		);
-		assertSuccess(pt.getRoot(), ri("", empty), hypTac);
+		assertSuccess(pt.getRoot(), ri("", empty), HYP_TAC);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class AutoRmiTacTests {
 				"⊥" // goal
 		);
 		assertSuccess(pt.getRoot(), rm("", ri("", ri("", rm("2.1", empty)))),
-				hypTac);
+				HYP_TAC);
 	}
 
 }
