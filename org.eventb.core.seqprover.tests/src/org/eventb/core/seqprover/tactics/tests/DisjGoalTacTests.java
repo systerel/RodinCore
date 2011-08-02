@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
-import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertFailure;
-import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertSuccess;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertTacticRegistered;
-import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.genProofTree;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.dti;
-import static org.eventb.core.seqprover.tactics.tests.TreeShape.impI;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
+import static org.eventb.core.seqprover.tactics.tests.TreeShape.impI;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
-import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.junit.Test;
@@ -46,7 +43,7 @@ public class DisjGoalTacTests {
 	 */
 	@Test
 	public void applyOnce() {
-		assertSucceed("1=1 ∨ 2=2", disjGoal(empty));
+		assertSuccess("1=1 ∨ 2=2", disjGoal(empty));
 	}
 
 	/**
@@ -54,7 +51,7 @@ public class DisjGoalTacTests {
 	 */
 	@Test
 	public void applyMany() {
-		assertSucceed("1=1 ∨ 2=2 ∨ 3=3 ∨ 4=4",
+		assertSuccess("1=1 ∨ 2=2 ∨ 3=3 ∨ 4=4",
 				disjGoal(disjGoal(disjGoal(empty))));
 	}
 
@@ -62,46 +59,42 @@ public class DisjGoalTacTests {
 	 * Ensures that DisjGoalTac fails when the goal is not a disjunction.
 	 */
 	@Test
-	public void notDisj() {
-		assertFails("1=1⇒2=2");
-		assertFails("(1=1∨2=2)∧(3=3∨4=4)");
-		assertFails("¬(1=1∨2=2)");
+	public void failure() {
+		assertFailure("1=1⇒2=2");
+		assertFailure("(1=1∨2=2)∧(3=3∨4=4)");
+		assertFailure("¬(1=1∨2=2)");
 	}
 
 	/**
-	 * Assert that the application of the DisjGoalTac on a node made up of one
-	 * goal returns <code>null</code> and that the resulting tree shape is equal
-	 * to the given <code>shape</code> tree shape.
+	 * Assert that the application of the DisjGoalTac on a node made up of the
+	 * given goal succeeds and produces the given tree shape.
 	 * 
 	 * @param goalStr
 	 *            the considered goal
 	 * @param shape
 	 *            the expected tree shape
 	 */
-	private void assertSucceed(final String goalStr, final TreeShape shape) {
-		final IProofTree pt = genProofTree(goalStr);
-		assertSuccess(pt.getRoot(), shape, TAC);
+	private static void assertSuccess(final String goalStr, final TreeShape shape) {
+		TacticTestUtils.assertSuccess(genSeq("|-" + goalStr), shape, TAC);
 	}
 
 	/**
-	 * Assert that the application of the DisjGoalTac on a node made up of one
-	 * goal does not return <code>null</code>.
+	 * Assert that the application of the DisjGoalTac on a node made up of the
+	 * given goal fails and does not modify the proof tree.
 	 * 
 	 * @param goalStr
 	 *            the considered goal in String
 	 */
-	private void assertFails(final String goalStr) {
-		final IProofTree pt = genProofTree(goalStr);
-		assertFailure(pt.getRoot(), TAC);
+	private static void assertFailure(final String goalStr) {
+		TacticTestUtils.assertFailure(genSeq("|- " + goalStr), TAC);
 	}
 
 	/**
 	 * Returns a Treeshape corresponding to one application of DisjGoalTac.
 	 * 
 	 * @param child
-	 *            the TreeShape child (should be either empty or an other
-	 *            disjGoal TreeShape).
-	 * @return a Treeshape corresponding to one application of DisjGoalTac.
+	 *            the TreeShape child
+	 * @return a Treeshape corresponding to one application of DisjGoalTac
 	 */
 	private static TreeShape disjGoal(TreeShape child) {
 		return dti("", impI(child));
