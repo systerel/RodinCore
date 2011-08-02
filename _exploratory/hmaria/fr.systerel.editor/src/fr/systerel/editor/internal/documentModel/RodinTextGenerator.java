@@ -62,7 +62,7 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 public class RodinTextGenerator {
 
 	private final DocumentMapper documentMapper;
-	private static final int TWO_TABS_INDENT = 2;
+	private static final int ONE_TABS_INDENT = 1;
 
 	private RodinTextStream stream;
 
@@ -90,14 +90,14 @@ public class RodinTextGenerator {
 		final IElementDesc desc = ElementDescRegistry.getInstance()
 				.getElementDesc(element);
 		stream.addSectionRegion(desc.getPrefix());
-		stream.incrementIndentation(TWO_TABS_INDENT);
-		stream.appendPresentationTabs(e, TWO_TABS_INDENT);
+		stream.incrementIndentation(ONE_TABS_INDENT);
+		stream.appendPresentationTabs(e, ONE_TABS_INDENT);
 		processCommentedElement(e, true, 0);
 		stream.appendLineSeparator();
 		stream.appendLeftPresentationTabs(e);
 		stream.addLabelRegion(element.getElementName(), e);
 		processOtherAttributes(e);
-		stream.decrementIndentation(TWO_TABS_INDENT);
+		stream.decrementIndentation(ONE_TABS_INDENT);
 		traverse(monitor, e);
 	}
 
@@ -120,7 +120,7 @@ public class RodinTextGenerator {
 			} else {
 				stream.addKeywordRegion(childDesc.getPrefix());
 			}
-			stream.incrementIndentation(TWO_TABS_INDENT);
+			stream.incrementIndentation(ONE_TABS_INDENT);
 			for (ILElement in : c) {
 				stream.appendLeftPresentationTabs(in);
 				processElement(in);
@@ -130,13 +130,16 @@ public class RodinTextGenerator {
 					stream.appendLineSeparator();
 				}
 			}
-			stream.decrementIndentation(TWO_TABS_INDENT);
+			stream.decrementIndentation(ONE_TABS_INDENT);
 			final int length = stream.getLength() - start;
 			if (start != -1 && !noChildren) {
 				documentMapper.addEditorSection(rel.getChildType(), start, length);
 				start = -1;
 			}
 		}
+		final String childrenSuffix = desc.getChildrenSuffix();
+		if (!childrenSuffix.isEmpty())
+			stream.addKeywordRegion(childrenSuffix);
 	}
 
 	/**
@@ -231,7 +234,7 @@ public class RodinTextGenerator {
 			IAttributeType.String attrType) {
 		processStringEventBAttribute(element, attrType,
 				getContentType(element, IMPLICIT_CONTENT_TYPE, CONTENT_TYPE),
-				true, TWO_TABS_INDENT);
+				true, ONE_TABS_INDENT);
 	}
 
 	private void processIdentifierElement(ILElement element) {
