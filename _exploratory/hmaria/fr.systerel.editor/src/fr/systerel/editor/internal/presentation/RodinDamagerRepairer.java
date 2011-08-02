@@ -67,10 +67,13 @@ public class RodinDamagerRepairer implements IPresentationDamager,
 		final StyledText sText = editor.getStyledText();
 		Color background = fDefaultTextAttribute.getBackground();
 		if (sText != null && !sText.isDisposed()) {
-			final StyleRange range = sText.getStyleRangeAtOffset(damage
-					.getOffset());
-			if (range != null) {
-				background = range.background;
+			try {
+				final StyleRange range = sText.getStyleRangeAtOffset(damage
+						.getOffset());
+				if (range != null)
+					background = range.background;
+			} catch (IllegalArgumentException e) {
+				// ignore and apply the default background
 			}
 		}
 		final StyleRange range = new StyleRange(damage.getOffset(),
