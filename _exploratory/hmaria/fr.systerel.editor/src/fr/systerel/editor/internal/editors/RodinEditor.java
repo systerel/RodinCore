@@ -200,7 +200,7 @@ public class RodinEditor extends TextEditor {
 		super.initializeEditor();
 		colorManager = new ColorManager();
 		mapper = new DocumentMapper();
-		rodinViewerConfiguration = new RodinConfiguration(colorManager, mapper);
+		rodinViewerConfiguration = new RodinConfiguration(colorManager, this);
 		setSourceViewerConfiguration(rodinViewerConfiguration);
 	}
 	

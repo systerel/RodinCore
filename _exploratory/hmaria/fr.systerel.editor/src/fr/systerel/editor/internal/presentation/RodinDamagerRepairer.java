@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,10 @@ import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
 import org.eclipse.jface.text.presentation.IPresentationRepairer;
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
+
+import fr.systerel.editor.internal.editors.RodinEditor;
 
 /**
  *
@@ -34,10 +38,11 @@ public class RodinDamagerRepairer implements IPresentationDamager,
 	protected IDocument fDocument;
 	/** The default text attribute if non is returned as data by the current token */
 	protected TextAttribute fDefaultTextAttribute;
+	private final RodinEditor editor;
 	
-	public RodinDamagerRepairer(TextAttribute defaultTextAttribute) {
+	public RodinDamagerRepairer(RodinEditor editor, TextAttribute defaultTextAttribute) {
 		Assert.isNotNull(defaultTextAttribute);
-
+		this.editor = editor;
 		fDefaultTextAttribute = defaultTextAttribute;
 	}
 
@@ -59,11 +64,19 @@ public class RodinDamagerRepairer implements IPresentationDamager,
 	@Override
 	public void createPresentation(TextPresentation presentation,
 			ITypedRegion damage) {
-		
-		StyleRange range = new StyleRange(damage.getOffset(), damage.getLength(),
-				fDefaultTextAttribute.getForeground(), fDefaultTextAttribute.getBackground(), fDefaultTextAttribute.getStyle() );
+		final StyledText sText = editor.getStyledText();
+		Color background = fDefaultTextAttribute.getBackground();
+		if (sText != null && !sText.isDisposed()) {
+			final StyleRange range = sText.getStyleRangeAtOffset(damage
+					.getOffset());
+			if (range != null) {
+				background = range.background;
+			}
+		}
+		final StyleRange range = new StyleRange(damage.getOffset(),
+				damage.getLength(), fDefaultTextAttribute.getForeground(),
+				background, fDefaultTextAttribute.getStyle());
 		presentation.addStyleRange(range);
-
 	}
 
 }

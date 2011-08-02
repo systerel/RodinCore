@@ -49,6 +49,7 @@ public interface IRodinColorConstant {
 	RGB DEFAULT_DEBUG_BG = new RGB(170, 70, 70);
 	RGB SECTION_DEBUG_BG = new RGB(170, 170, 70);
 	RGB KEYWORD_DEBUG_BG = new RGB(190, 50, 0);
+	RGB PRESENTATION_DEBUG_BG = new RGB(190, 190, 0);
 
 	RGB BACKGROUND = new RGB(250, 250, 250);
 	Color BG_COLOR = EventBSharedColor.getColor(BACKGROUND);
