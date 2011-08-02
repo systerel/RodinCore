@@ -13,6 +13,7 @@ package org.eventb.core.seqprover.tests;
 
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -168,15 +169,7 @@ public class TestLib {
 		final Set<Predicate> defaultHyps = genPredSet(te, defaultHypsImage);
 		final Set<Predicate> selectedHyps = genPredSet(te, selHypsImage);
 		final Predicate goal = genPred(te, goalImage);
-
-		final Set<Predicate> globalHyps = new LinkedHashSet<Predicate>();
-		globalHyps.addAll(hiddenHyps);
-		globalHyps.addAll(defaultHyps);
-		globalHyps.addAll(selectedHyps);
-
-		return ProverFactory.makeSequent(te, globalHyps, hiddenHyps,
-				selectedHyps, goal);
-
+		return genFullSeq(te, hiddenHyps, defaultHyps, selectedHyps, goal);
 	}
 
 	public static IProverSequent genFullSeq(String typeEnvImage,
@@ -213,6 +206,67 @@ public class TestLib {
 
 		final ITypeEnvironment typenv = genTypeEnv(typeEnvImage, factory);
 		return genFullSeq(typenv, hiddenHypsImage, defaultHypsImage, selHypsImage, goalImage);
+	}
+
+	/**
+	 * Creates a new proof sequent.
+	 * 
+	 * @param typenv
+	 *            type environment
+	 * @param hiddenHyps
+	 *            hidden hypotheses
+	 * @param defaultHyps
+	 *            visible hypotheses that are not selected
+	 * @param selectedHyps
+	 *            selected hypotheses
+	 * @param goal
+	 *            goal
+	 * @return a new proof sequent
+	 */
+	public static IProverSequent genFullSeq(final ITypeEnvironment typenv,
+			final Set<Predicate> hiddenHyps, final Set<Predicate> defaultHyps,
+			final Set<Predicate> selectedHyps, final Predicate goal) {
+		final Set<Predicate> globalHyps = new LinkedHashSet<Predicate>();
+		globalHyps.addAll(hiddenHyps);
+		globalHyps.addAll(defaultHyps);
+		globalHyps.addAll(selectedHyps);
+		return ProverFactory.makeSequent(typenv, globalHyps, hiddenHyps,
+				selectedHyps, goal);
+	}
+
+	/**
+	 * Creates a new proof sequent. The type environment is inferred from the
+	 * given predicates.
+	 * 
+	 * @param factory
+	 *            formula factory used to create the predicates
+	 * @param predicates
+	 *            selected hypotheses and goal in this order
+	 * @return a new proof sequent
+	 */
+	public static IProverSequent genSeq(final FormulaFactory factory,
+			final Predicate... predicates) {
+		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		for (final Predicate pred : predicates) {
+			typenv.addAll(pred.getFreeIdentifiers());
+		}
+		final int nbHyps = predicates.length - 1;
+		final Set<Predicate> hyps = new LinkedHashSet<Predicate>(Arrays.asList(
+				predicates).subList(0, nbHyps));
+		final Predicate goal = predicates[nbHyps];
+		return ProverFactory.makeSequent(typenv, hyps, null, hyps, goal);
+	}
+
+	/**
+	 * Creates a new proof sequent. The type environment is inferred from the
+	 * given predicates.
+	 * 
+	 * @param predicates
+	 *            selected hypotheses and goal in this order
+	 * @return a new proof sequent
+	 */
+	public static IProverSequent genSeq(final Predicate... predicates) {
+		return genSeq(ff, predicates);
 	}
 
 	private static final Pattern typEnvPairPattern = Pattern

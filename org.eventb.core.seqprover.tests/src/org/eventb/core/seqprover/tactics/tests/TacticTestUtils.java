@@ -13,6 +13,7 @@ package org.eventb.core.seqprover.tactics.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -109,6 +110,19 @@ public class TacticTestUtils {
 	 */
 	public static IProofTree genProofTree(String... preds) {
 		final IProverSequent seq = genSeq(preds);
+		return ProverFactory.makeProofTree(seq, null);
+	}
+
+	/**
+	 * Generates a proof tree from the given predicates, where the last
+	 * predicate is the goal.
+	 * 
+	 * @param preds
+	 *            selected hypotheses and then goal
+	 * @return a proof tree made out of the given predicates
+	 */
+	public static IProofTree genProofTree(Predicate... preds) {
+		final IProverSequent seq = TestLib.genSeq(preds);
 		return ProverFactory.makeProofTree(seq, null);
 	}
 

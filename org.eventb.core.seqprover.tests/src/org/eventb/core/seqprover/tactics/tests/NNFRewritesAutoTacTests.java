@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
+import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertFailure;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertSuccess;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.genProofTree;
@@ -21,6 +22,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
+import org.eventb.core.seqprover.tests.TestLib;
 import org.junit.Test;
 
 /**
@@ -29,6 +31,9 @@ import org.junit.Test;
  * Unit tests for the auto tactic NnfrewritesAutoTac
  */
 public class NNFRewritesAutoTacTests {
+
+	private static final Predicate FALSE = TestLib.ff.makeLiteralPredicate(
+			BFALSE, null);
 
 	private static final ITactic tac = new AutoTactics.NNFRewritesAutoTac();
 	private static final String TAC_ID = "org.eventb.core.seqprover.NNFTac";
@@ -119,15 +124,10 @@ public class NNFRewritesAutoTacTests {
 		final Predicate pred1 = genPred("¬(1=1 ∧ 2=2)");
 		final Predicate pred2 = genPred("¬¬3=3");
 
-		final IProofTree pt2Pred = genProofTree(//
-				pred1.toString(),// hyp1
-				pred2.toString(),// hyp2
-				"⊥"); // goal
+		final IProofTree pt2Pred = genProofTree(pred1, pred2, FALSE);
 		assertSuccess(pt2Pred.getRoot(), rn(pred1, "",rn(pred2, "", empty)), tac);
 
-		final IProofTree pt1_1 = genProofTree(//
-				pred1.toString(),// hyp
-				pred2.toString());// goal
+		final IProofTree pt1_1 = genProofTree(pred1, pred2);
 		assertSuccess(pt1_1.getRoot(), rn(pred1, "",rn("", empty)), tac);
 	}
 
@@ -181,10 +181,7 @@ public class NNFRewritesAutoTacTests {
 	 * 			the expected tree shape
 	 */
 	private void assertSuccessHyp(final Predicate hyp, final TreeShape shape) {
-		final IProofTree pt = genProofTree(//
-				hyp.toString(),// hyp
-				"⊥" // goal
-		);
+		final IProofTree pt = genProofTree(hyp, FALSE);
 		assertSuccess(pt.getRoot(), shape, tac);
 	}
 
@@ -199,9 +196,7 @@ public class NNFRewritesAutoTacTests {
 	 * 			the expected tree shape
 	 */
 	private void assertSuccessGoal(final Predicate goal, final TreeShape shape) {
-		final IProofTree pt = genProofTree(//
-				goal.toString()// Goal
-		);
+		final IProofTree pt = genProofTree(goal);
 		assertSuccess(pt.getRoot(), shape, tac);
 	}
 
@@ -213,10 +208,7 @@ public class NNFRewritesAutoTacTests {
 	 * 			the considered hypothesis in String
 	 */
 	private void assertFailsHyp(final String predStr) {
-		final IProofTree pt = genProofTree(
-				predStr,// hyp
-				"⊥" // goal
-				);
+		final IProofTree pt = genProofTree(predStr, "⊥");
 		assertFailure(pt.getRoot(), tac);
 	}
 
@@ -228,9 +220,7 @@ public class NNFRewritesAutoTacTests {
 	 * 			the considered goal in String
 	 */
 	private void assertFailsGoal(final String predStr) {
-		final IProofTree pt = genProofTree(
-				predStr // goal
-				);
+		final IProofTree pt = genProofTree(predStr);
 		assertFailure(pt.getRoot(), tac);
 	}
 }
