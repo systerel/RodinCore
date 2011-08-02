@@ -17,7 +17,6 @@ import static fr.systerel.editor.internal.presentation.IRodinColorConstant.COMME
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.COMMENT_HEADER_DEBUG_BG;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.CONTENT;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.CONTENT_DEBUG_BG;
-import static fr.systerel.editor.internal.presentation.IRodinColorConstant.DEFAULT;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IDENTIFIER;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IDENTIFIER_DEBUG_BG;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_ATTRIBUTE;
@@ -25,12 +24,13 @@ import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLI
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_CONTENT;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_IDENTIFIER;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_LABEL;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.KEYWORD;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.KEYWORD_DEBUG_BG;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.LABEL;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.LABEL_DEBUG_BG;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.PRESENTATION_DEBUG_BG;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.SECTION;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.SECTION_DEBUG_BG;
-import static fr.systerel.editor.internal.presentation.IRodinColorConstant.PRESENTATION_DEBUG_BG;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
@@ -202,7 +202,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			null);
 
 	public static final ContentType KEYWORD_TYPE = new ContentType("__keyword",
-			false, false, DEFAULT, KEYWORD_DEBUG_BG);
+			false, false, KEYWORD, KEYWORD_DEBUG_BG);
 	public static final ContentType SECTION_TYPE = new ContentType("__section",
 			false, false, SECTION_DEBUG_BG, SECTION);
 	public static final ContentType COMMENT_HEADER_TYPE = new ContentType(
