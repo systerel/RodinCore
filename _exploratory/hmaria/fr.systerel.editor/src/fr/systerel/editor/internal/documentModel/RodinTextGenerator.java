@@ -92,7 +92,7 @@ public class RodinTextGenerator {
 		stream.addSectionRegion(desc.getPrefix());
 		stream.incrementIndentation(ONE_TABS_INDENT);
 		stream.appendPresentationTabs(e, ONE_TABS_INDENT);
-		processCommentedElement(e, true, 0);
+		processCommentedElement(e, false);
 		stream.appendLineSeparator();
 		stream.appendLeftPresentationTabs(e);
 		stream.addLabelRegion(element.getElementName(), e);
@@ -214,13 +214,13 @@ public class RodinTextGenerator {
 		stream.addElementRegion(value, element, t, multiline, additionnalTabs);
 	}
 
-	private void processCommentedElement(ILElement element, boolean appendTabs,
-			int additionnalTabs) {
-		stream.addCommentHeaderRegion(element, appendTabs);
+	private void processCommentedElement(ILElement element, boolean appendReturn) {
+		stream.addPresentationRegion(" ", element);
+		stream.addCommentHeaderRegion(element);
 		processStringEventBAttribute(element, COMMENT_ATTRIBUTE,
 				getContentType(element, IMPLICIT_COMMENT_TYPE, COMMENT_TYPE),
-				true, additionnalTabs);
-		if (!appendTabs)
+				true, 0);
+		if (appendReturn)
 			stream.appendLineSeparator();
 	}
 
@@ -249,6 +249,8 @@ public class RodinTextGenerator {
 				IDENTIFIER_ATTRIBUTE,
 				getContentType(element, IMPLICIT_IDENTIFIER_TYPE,
 						IDENTIFIER_TYPE), false, 0);
+		if (!element.getAttributes().isEmpty())
+			stream.addPresentationRegion("\t", element);
 	}
 
 	private void processLabeledElement(ILElement element) {
@@ -281,7 +283,7 @@ public class RodinTextGenerator {
 		}
 		if (rodinElement instanceof ILabeledElement) {
 			if (rodinElement instanceof ICommentedElement) {
-				processCommentedElement(element, false, 0);
+				processCommentedElement(element, true);
 				commentToProcess = false;
 			}
 			processLabeledElement(element);
@@ -296,10 +298,9 @@ public class RodinTextGenerator {
 		}
 		if (rodinElement instanceof IAssignmentElement) {
 			processAssignmentElement(element);
-
 		}
 		if (rodinElement instanceof ICommentedElement && commentToProcess) {
-			processCommentedElement(element, true, 1);
+			processCommentedElement(element, false);
 		}
 		// display attributes at the end
 		processOtherAttributes(element);

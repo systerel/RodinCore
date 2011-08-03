@@ -128,9 +128,7 @@ public class RodinTextStream {
 		addElementRegion(text, element, PRESENTATION_TYPE, false);
 	}
 
-	protected void addCommentHeaderRegion(ILElement element, boolean appendTabs) {
-		if (appendTabs)
-			addPresentationRegion(String.valueOf(TAB), element);
+	protected void addCommentHeaderRegion(ILElement element) {
 		addElementRegion(COMMENT_HEADER_DELIMITER, element,
 				COMMENT_HEADER_TYPE, false);
 	}
