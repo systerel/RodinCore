@@ -266,18 +266,26 @@ public class ProblemMarkerAnnotationsUpdater {
 				return newPosOffLen(interval.getOffset(), interval.getLength());
 			}
 			setFormulaBased(marker, true);
+			return handleFormulaBasedMarker(marker, interval, charStart,
+					charEnd);
 		}
 		if (isFormulaBasedMarker(marker)) {
-			if (isFormulaStartEndSet(marker)) {
-				int fStart = marker.getAttribute(FORMULA_CHAR_START, -1);
-				// char end is inclusive with EditPos
-				// TODO make EditPos exclusive
-				int fEnd = marker.getAttribute(FORMULA_CHAR_END, -1);
-				return getNewSubstringPosition(marker, interval, fStart, fEnd);
-			}
-			return getSubstringPosition(marker, interval, charStart, charEnd);				
+			return handleFormulaBasedMarker(marker, interval, charStart,
+					charEnd);
 		}
 		return newPosOffLen(interval.getOffset(), interval.getLength());
+	}
+
+	private EditPos handleFormulaBasedMarker(IMarker marker,
+			final Interval interval, final int charStart, final int charEnd) {
+		if (isFormulaStartEndSet(marker)) {
+			int fStart = marker.getAttribute(FORMULA_CHAR_START, -1);
+			// char end is inclusive with EditPos
+			// TODO make EditPos exclusive
+			int fEnd = marker.getAttribute(FORMULA_CHAR_END, -1);
+			return getNewSubstringPosition(marker, interval, fStart, fEnd);
+		}
+		return getSubstringPosition(marker, interval, charStart, charEnd);
 	}
 
 	private static void setFormulaBased(IMarker marker, boolean value) {
