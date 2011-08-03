@@ -199,9 +199,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	protected void replaceTextInDocument(int offset, int length, String text) {
 		if (document != null) {
 			try {
-				fireElementContentAboutToBeReplaced(document);
 				document.replace(offset, length, text);
-				fireElementContentReplaced(document);
 			} catch (BadLocationException e) {
 				e.printStackTrace();
 			}
