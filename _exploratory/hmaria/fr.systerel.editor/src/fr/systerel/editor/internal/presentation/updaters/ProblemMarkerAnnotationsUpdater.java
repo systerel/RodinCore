@@ -38,14 +38,12 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
-import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.EditPos;
 import fr.systerel.editor.internal.editors.RodinEditor;
-import fr.systerel.editor.internal.editors.SelectionController;
 import fr.systerel.editor.internal.presentation.RodinProblemAnnotation;
 
 public class ProblemMarkerAnnotationsUpdater {
@@ -274,7 +272,7 @@ public class ProblemMarkerAnnotationsUpdater {
 				int fStart = marker.getAttribute(FORMULA_CHAR_START, -1);
 				// char end is inclusive with EditPos
 				// TODO make EditPos exclusive
-				int fEnd = marker.getAttribute(FORMULA_CHAR_END, -1) - 1;
+				int fEnd = marker.getAttribute(FORMULA_CHAR_END, -1);
 				return getNewSubstringPosition(marker, interval, fStart, fEnd);
 			}
 			return getSubstringPosition(marker, interval, charStart, charEnd);				
@@ -337,19 +335,7 @@ public class ProblemMarkerAnnotationsUpdater {
 	}
 
 	public void recalculateAnnotations() {
-		final SelectionController sc = editor.getSelectionController();
-		editor.getSite().getShell().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				ILElement[] selectedElements = null;
-				if (sc != null) {
-					selectedElements = sc.getSelectedElements();
-				}
-				initializeMarkersAnnotations();
-				if (selectedElements != null)
-					sc.selectItems(selectedElements);
-			}
-		});
+		initializeMarkersAnnotations();
 	}
 
 	public void dispose() {

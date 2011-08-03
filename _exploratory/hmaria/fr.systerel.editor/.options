@@ -4,4 +4,5 @@ fr.systerel.editor/debug/dnd = false
 fr.systerel.editor/debug/partition = false
 fr.systerel.editor/debug/folding = false
 fr.systerel.editor/debug/editor_refresh_time = false
+fr.systerel.editor/debug/marker_position = false
 fr.systerel.editor/debug/debug_content_types = false
