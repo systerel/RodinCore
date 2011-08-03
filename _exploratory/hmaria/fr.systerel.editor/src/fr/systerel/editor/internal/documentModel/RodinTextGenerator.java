@@ -104,6 +104,9 @@ public class RodinTextGenerator {
 	@SuppressWarnings("restriction")
 	private void traverse(IProgressMonitor mon, ILElement e) {
 		final IElementDesc desc = getElementDesc(e);
+		if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
+			stream.incrementIndentation(ONE_TABS_INDENT);
+		}
 		for (IElementRelationship rel : desc.getChildRelationships()) {
 			final List<ILElement> c = retrieveChildrenToProcess(rel, e);
 			final IElementDesc childDesc = getElementDesc(rel.getChildType());
@@ -113,9 +116,6 @@ public class RodinTextGenerator {
 			final boolean noChildren = c.isEmpty();
 			if (noChildren) {
 				continue;
-			}
-			if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
-				stream.incrementIndentation(ONE_TABS_INDENT);
 			}
 			start = stream.getLength();
 			if (stream.getLevel() < MIN_LEVEL) {
@@ -133,9 +133,6 @@ public class RodinTextGenerator {
 					stream.appendLineSeparator();
 				}
 			}
-			if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
-				stream.decrementIndentation(ONE_TABS_INDENT);
-			}
 			stream.decrementIndentation(ONE_TABS_INDENT);
 			final int length = stream.getLength() - start;
 			if (start != -1 && !noChildren) {
@@ -146,6 +143,9 @@ public class RodinTextGenerator {
 		final String childrenSuffix = desc.getChildrenSuffix();
 		if (!childrenSuffix.isEmpty())
 			stream.addKeywordRegion(childrenSuffix);
+		if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
+			stream.decrementIndentation(ONE_TABS_INDENT);
+		}
 	}
 
 	/**
