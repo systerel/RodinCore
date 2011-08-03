@@ -15,6 +15,7 @@ import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.get
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.rodinp.core.IInternalElement;
@@ -82,7 +83,11 @@ public class OrderedEditorItemMap {
 	}
 	
 	public Collection<EditorElement> getItems() {
-		return items.values();
+		final List<EditorElement> l = new ArrayList<EditorElement>();
+		for (IInternalElement e : order) {
+			l.add(items.get(e));
+		}
+		return l;
 	}
 	
 	public void clear() {
