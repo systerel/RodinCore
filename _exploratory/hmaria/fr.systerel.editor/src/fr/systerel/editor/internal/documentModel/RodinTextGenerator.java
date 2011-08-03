@@ -135,7 +135,7 @@ public class RodinTextGenerator {
 			}
 			stream.decrementIndentation(ONE_TABS_INDENT);
 			final int length = stream.getLength() - start;
-			if (start != -1 && !noChildren) {
+			if (start != -1 && !noChildren && stream.getLevel() <= MIN_LEVEL) {
 				documentMapper.addEditorSection(rel.getChildType(), start, length);
 				start = -1;
 			}
@@ -173,6 +173,7 @@ public class RodinTextGenerator {
 		int i = 0;
 		final IInternalElement rElement = element.getElement();
 		for (IAttributeDesc d : getAttributeDescs(element.getElementType())) {
+			stream.addPresentationRegion(" ", element);
 			String value = "";
 			try {
 				if (i == 0)
@@ -201,7 +202,6 @@ public class RodinTextGenerator {
 				value = "failure while loading";
 				e.printStackTrace();
 			}
-			stream.addPresentationRegion(" ", element);
 		}
 		stream.appendLineSeparator();
 	}
