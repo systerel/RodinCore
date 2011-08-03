@@ -114,6 +114,9 @@ public class RodinTextGenerator {
 			if (noChildren) {
 				continue;
 			}
+			if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
+				stream.incrementIndentation(ONE_TABS_INDENT);
+			}
 			start = stream.getLength();
 			if (stream.getLevel() < MIN_LEVEL) {
 				stream.addSectionRegion(childDesc.getPrefix());
@@ -129,6 +132,9 @@ public class RodinTextGenerator {
 					stream.appendLineSeparator();
 					stream.appendLineSeparator();
 				}
+			}
+			if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
+				stream.decrementIndentation(ONE_TABS_INDENT);
 			}
 			stream.decrementIndentation(ONE_TABS_INDENT);
 			final int length = stream.getLength() - start;
