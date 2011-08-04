@@ -1,14 +1,36 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - implemented parameterized auto tactics
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.IParameterDesc;
+import org.eventb.core.seqprover.IParameterDesc.ParameterType;
+import org.eventb.core.seqprover.IParameterSetting;
+import org.eventb.core.seqprover.IParameterValuation;
+import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ITacticParameterizer;
 import org.eventb.core.seqprover.SequentProver;
 
 /**
@@ -34,7 +56,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	 */
 	public static boolean DEBUG;
 	
-	private Map<String,TacticDescriptor> registry;
+	private Map<String, AbstractTacticDescriptor> registry;
 	
 	/**
 	 * Private default constructor enforces that only one instance of this class
@@ -78,14 +100,14 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		return getTacticDescriptor(id).getTacticDescription();
 	}
 
-	public  synchronized TacticDescriptor getTacticDescriptor(String id) throws IllegalArgumentException{
+	public  synchronized AbstractTacticDescriptor getTacticDescriptor(String id) throws IllegalArgumentException{
 		if (registry == null) {
 			loadRegistry();
 		}
-		TacticDescriptor tacticDesc = registry.get(id);
+		AbstractTacticDescriptor tacticDesc = registry.get(id);
 		if (tacticDesc == null) {
 			// Unknown tactic id, throw exception.
-			throw new IllegalArgumentException("Tactic with id:" + id + "not registered.");
+			throw new IllegalArgumentException("Tactic with id:" + id + " not registered.");
 		}
 		return tacticDesc;
 	}
@@ -95,108 +117,119 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	 */
 	private synchronized void loadRegistry() {
 		if (registry != null) {
-			// Prevents loading by two thread in parallel
+			// Prevents loading by two threads in parallel
 			return;
 		}
-		registry = new HashMap<String, TacticDescriptor>();
+		registry = new HashMap<String, AbstractTacticDescriptor>();
 		final IExtensionRegistry xRegistry = Platform.getExtensionRegistry();
 		final IExtensionPoint xPoint = xRegistry.getExtensionPoint(TACTICS_ID);
-		for (IConfigurationElement element: xPoint.getConfigurationElements()) {
-			final TacticDescriptor tacticDesc = new TacticDescriptor(element);
-			final String id = tacticDesc.getTacticID();
-			if (id != null) {
-				TacticDescriptor oldInfo = registry.put(id, tacticDesc);
-				if (oldInfo != null) {
-					registry.put(id, oldInfo);
-					Util.log(null,
-							"Duplicate tactic extension " + id + " ignored"
-					);
-				} else {
-					if (DEBUG) System.out.println(
-							"Registered tactic extension " + id);
+		for (IConfigurationElement element : xPoint.getConfigurationElements()) {
+			try {
+				final AbstractTacticDescriptor tacticDesc = loadTacticDescriptor(element);
+				final String id = tacticDesc.getTacticID();
+				if (id != null) {
+					AbstractTacticDescriptor oldInfo = registry.put(id,
+							tacticDesc);
+					if (oldInfo != null) {
+						registry.put(id, oldInfo);
+						Util.log(null, "Duplicate tactic extension " + id
+								+ " ignored");
+					} else {
+						if (DEBUG)
+							System.out.println("Registered tactic extension "
+									+ id);
+					}
 				}
+			} catch (Exception e) {
+				// logged before
+				continue;
 			}
 		}
 	}
+
+	private static AbstractTacticDescriptor loadTacticDescriptor(IConfigurationElement element) {
+		final String id = checkAndMakeId(element);
+		final String name = element.getAttribute("name");
+		final IConfigurationElement[] children = element.getChildren("tacticParameter");
+		if (children.length == 0) {
+			return new TacticDescriptor(element, id, name);
+		} else {
+			final Collection<IParameterDesc> paramDescs = loadTacticParameters(children);
+			return new ParamTacticDescriptor(element, id, name, paramDescs);
+		}
+	}
+
+	private static Collection<IParameterDesc> loadTacticParameters(
+			final IConfigurationElement[] children) {
+		final Collection<IParameterDesc> paramDescs = new ArrayList<IParameterDesc>(
+				children.length);
+		final Set<String> knownLabels = new HashSet<String>(children.length);
+		for (IConfigurationElement paramConfig : children) {
+			final IParameterDesc param = ParameterDesc.load(paramConfig);
+			final String label = param.getLabel();
+			final boolean newLabel = knownLabels.add(label);
+			if (newLabel) {
+				paramDescs.add(param);
+			} else {
+				throw new IllegalArgumentException(
+						"duplicate tactic parameter label: " + label);
+			}
+		}
+		return paramDescs;
+	}
+
+	private static String checkAndMakeId(IConfigurationElement element) {
+		final String localId = element.getAttribute("id");
+		final String id;
+		if (localId.indexOf('.') != -1) {
+			id = null;
+			Util.log(null,
+					"Invalid id: " + localId + " (must not contain a dot)");
+		} else if (containsWhitespace(localId)) {
+			id = null;
+			Util.log(null,
+					"Invalid id: " + localId + " (must not contain a whitespace)");
+		} else {
+			final String nameSpace = element.getNamespaceIdentifier();
+			id = nameSpace + "." + localId;
+		}
+		return id;
+	}
 	
+	/**
+	 * Checks if a string contains a whitespace character
+	 * 
+	 * @param str
+	 * 		String to check for.
+	 * @return
+	 * 		<code>true</code> iff the string contains a whitespace character.
+	 */
+	private static boolean containsWhitespace(String str){
+		for (int i = 0; i < str.length(); i++) {
+			if (Character.isWhitespace(str.charAt(i))) return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Private helper class implementing lazy loading of tactic instances
 	 */
-	private static class TacticDescriptor implements ITacticDescriptor{
+	private abstract static class AbstractTacticDescriptor implements ITacticDescriptor {
 
-		private final IConfigurationElement configurationElement;
-		private final String id;
+		protected final IConfigurationElement configurationElement;
+		protected final String id;
 		private final String name;
-		
 		/**
-		 * Tactic instance and description lazily loaded using <code>configurationElement</code>
+		 * Tactic description lazily loaded using <code>configurationElement</code>
 		 */
-		private ITactic instance;
 		private String description;
-		
-		protected TacticDescriptor(IConfigurationElement element) {
-			this.configurationElement = element;
-			final String localId = element.getAttribute("id");
-			if (localId.indexOf('.') != -1) {
-				this.id = null;
-				Util.log(null,
-						"Invalid id: " + localId + " (must not contain a dot)");
-			} else if (containsWhitespace(localId)) {
-				this.id = null;
-				Util.log(null,
-						"Invalid id: " + localId + " (must not contain a whitespace)");
-			} else {
-				final String nameSpace = element.getNamespaceIdentifier();
-				this.id = nameSpace + "." + localId;
-			}
-			this.name = element.getAttribute("name");
-		}
-		
-		/**
-		 * Checks if a string contains a whitespace character
-		 * 
-		 * @param str
-		 * 		String to check for.
-		 * @return
-		 * 		<code>true</code> iff the string contains a whitespace character.
-		 */
-		private static boolean containsWhitespace(String str){
-			for (int i = 0; i < str.length(); i++) {
-				if (Character.isWhitespace(str.charAt(i))) return true;
-			}
-			return false;
-		}
-		
-		public synchronized ITactic getTacticInstance() throws IllegalArgumentException{
-			if (instance != null) {
-				return instance;
-			}
-
-			if (configurationElement == null) {
-				throw new IllegalArgumentException("Null configuration element");
-			}
 			
-			// Try creating an instance of the specified class
-			try {
-				instance = (ITactic) 
-					configurationElement.createExecutableExtension("class");
-			} catch (Exception e) {
-				final String className = 
-					configurationElement.getAttribute("class");
-				final String errorMsg = "Error instantiating class " + className +
-										" for tactic " + id;
-				Util.log(e,
-						errorMsg);
-				if (DEBUG) System.out.println(
-						errorMsg);
-				throw new IllegalArgumentException(errorMsg,e);
-			}
-
-			if (DEBUG) System.out.println(
-					"Successfully loaded tactic " + id);
-			return instance;
+		public AbstractTacticDescriptor(IConfigurationElement element, String id, String name) {
+			this.configurationElement = element;
+			this.id = id;
+			this.name = name;
 		}
-		
+
 		public synchronized String getTacticDescription() throws IllegalArgumentException{
 			if (description != null) {
 				return description;
@@ -220,6 +253,334 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			return name;
 		}
 
+		protected Object loadInstance() {
+			if (configurationElement == null) {
+				throw new IllegalArgumentException("Null configuration element");
+			}
+
+			// Try creating an instance of the specified class
+			try {
+				final Object loadedInstance = configurationElement.createExecutableExtension("class");
+				if (!checkInstance(loadedInstance)) {
+					throw new IllegalArgumentException("unexpected instance");
+				}
+				if (DEBUG) System.out.println(
+					"Successfully loaded tactic " + id);
+
+				return loadedInstance;
+			} catch (Exception e) {
+				final String className = 
+					configurationElement.getAttribute("class");
+				final String errorMsg = "Error instantiating class " + className +
+										" for tactic " + id;
+				Util.log(e, errorMsg);
+				if (DEBUG)
+					System.out.println(errorMsg);
+				throw new IllegalArgumentException(errorMsg,e);
+			}
+
+		}
+
+		protected abstract boolean checkInstance(Object instance);
+
 	}
 
+	private static class TacticDescriptor extends AbstractTacticDescriptor {
+		
+		/**
+		 * Tactic instance lazily loaded using <code>configurationElement</code>
+		 */
+		private ITactic instance;
+		
+		protected TacticDescriptor(IConfigurationElement element, String id, String name) {
+			super(element, id, name);
+		}
+
+		public synchronized ITactic getTacticInstance() {
+			if (instance != null) {
+				return instance;
+			}
+			instance = (ITactic) loadInstance();
+			return instance;
+		}
+
+		@Override
+		protected boolean checkInstance(Object instance) {
+			return instance instanceof ITactic;
+		}
+		
+	}
+	
+	private static class ParamTacticDescriptor extends AbstractTacticDescriptor
+			implements IParamTacticDescriptor {
+
+		/**
+		 * Tactic instance lazily loaded using <code>configurationElement</code>
+		 */
+		private ITacticParameterizer parameterizer;
+		private final Collection<IParameterDesc> parameterDescs;
+
+		protected ParamTacticDescriptor(IConfigurationElement element,
+				String id, String name,
+				Collection<IParameterDesc> parameterDescs) {
+			super(element, id, name);
+			this.parameterDescs = parameterDescs;
+		}
+
+		@Override
+		public ITactic getTacticInstance() throws IllegalArgumentException {
+			return getTacticInstance(makeParameterSetting());
+		}
+
+		@Override
+		public Collection<IParameterDesc> getParameterDescs() {
+			return Collections.unmodifiableCollection(parameterDescs);
+		}
+
+		@Override
+		public IParameterSetting makeParameterSetting() {
+			return new ParameterSetting(parameterDescs);
+		}
+
+		@Override
+		public ITactic getTacticInstance(IParameterValuation valuation) {
+			if (parameterizer == null) {
+				parameterizer = (ITacticParameterizer) loadInstance();
+			}
+			// FIXME can return null
+			return parameterizer.getTactic(valuation);
+		}
+
+		@Override
+		protected boolean checkInstance(Object instance) {
+			return instance instanceof ITacticParameterizer;
+		}
+
+	}
+	
+	private static abstract class ParameterValue<T> {
+		private T value;
+		
+		public ParameterValue(IParameterDesc desc) {
+			setValue(desc.getDefaultValue());
+		}
+
+		protected abstract T asValue(Object o);
+		
+		public Object getValue() {
+			return value;
+		}
+
+		public void setValue(Object value) {
+			this.value = asValue(value);
+		}
+		
+	}
+	
+	private static class BoolParameterValue extends ParameterValue<Boolean> {
+
+		public BoolParameterValue(IParameterDesc desc) {
+			super(desc);
+		}
+
+		@Override
+		protected Boolean asValue(Object o) {
+			return (Boolean) o;
+		}
+		
+	}
+	
+	private static class IntParameterValue extends ParameterValue<Integer> {
+
+		public IntParameterValue(IParameterDesc desc) {
+			super(desc);
+		}
+
+		@Override
+		protected Integer asValue(Object o) {
+			return (Integer) o;
+		}
+	}
+	private static class LongParameterValue extends ParameterValue<Long> {
+
+		public LongParameterValue(IParameterDesc desc) {
+			super(desc);
+		}
+
+		@Override
+		protected Long asValue(Object o) {
+			return (Long) o;
+		}
+	}
+	
+	private static class StringParameterValue extends ParameterValue<String> {
+
+		public StringParameterValue(IParameterDesc desc) {
+			super(desc);
+		}
+
+		@Override
+		protected String asValue(Object o) {
+			return (String) o;
+		}
+	}
+	
+	private static class ParameterSetting implements IParameterSetting {
+
+		private final Map<String, ParameterValue<?>> valuation = new LinkedHashMap<String, ParameterValue<?>>();
+
+		public ParameterSetting(Collection<IParameterDesc> paramDescs) {
+			ParameterValue<?> value = null;
+			for (IParameterDesc desc : paramDescs) {
+				switch (desc.getType()) {
+				case BOOL:
+					value = new BoolParameterValue(desc);
+					break;
+				case INT:
+					value = new IntParameterValue(desc);
+					break;
+				case LONG:
+					value = new LongParameterValue(desc);
+					break;
+				case STRING:
+					value = new StringParameterValue(desc);
+					break;
+				default:
+					assert false;
+				}
+				valuation.put(desc.getLabel(), value);
+			}
+		}
+
+		private ParameterValue<?> checkAndGet(String label, ParameterType expectedType) {
+			final ParameterValue<?> paramValue = valuation.get(label);
+			if (paramValue == null) {
+				throw new IllegalArgumentException("unknown label "+label);
+			}
+			if (!expectedType.check(paramValue.getValue())) {
+				throw new IllegalArgumentException("parameter " + label
+						+ " does not have type " + expectedType);
+			}
+			return paramValue;
+		}
+
+		private void checkAndSet(String label, ParameterType expectedType, Object value) {
+			final ParameterValue<?> paramValue = checkAndGet(label, expectedType);
+			paramValue.setValue(value);
+		}
+
+		@Override
+		public void setBoolean(String label, Boolean value) {
+			checkAndSet(label, ParameterType.BOOL, value);
+		}
+
+		@Override
+		public void setInt(String label, Integer value) {
+			checkAndSet(label, ParameterType.INT, value);
+		}
+
+		@Override
+		public void setLong(String label, Long value) {
+			checkAndSet(label, ParameterType.LONG, value);
+		}
+
+		@Override
+		public void setString(String label, String value) {
+			checkAndSet(label, ParameterType.STRING, value);
+		}
+
+		@Override
+		public boolean getBoolean(String label) {
+			final ParameterValue<?> paramValue = checkAndGet(label,
+					ParameterType.BOOL);
+			return (Boolean) paramValue.getValue();
+		}
+
+		@Override
+		public int getInt(String label) {
+			final ParameterValue<?> paramValue = checkAndGet(label,
+					ParameterType.INT);
+			return (Integer) paramValue.getValue();
+		}
+
+		@Override
+		public long getLong(String label) {
+			final ParameterValue<?> paramValue = checkAndGet(label,
+					ParameterType.LONG);
+			return (Long) paramValue.getValue();
+		}
+
+		@Override
+		public String getString(String label) {
+			final ParameterValue<?> paramValue = checkAndGet(label,
+					ParameterType.STRING);
+			return (String) paramValue.getValue();
+		}
+		
+	}
+	
+	private static class ParameterDesc implements IParameterDesc {
+
+		private final String label;
+		private final ParameterType type;
+		private final Object defaultValue;
+		private final String description;
+
+		private ParameterDesc(String label, ParameterType type,
+				Object defaultValue, String description) {
+			this.label = label;
+			this.type = type;
+			this.defaultValue = defaultValue;
+			this.description = description;
+		}
+
+		public static IParameterDesc load(IConfigurationElement element) {
+			final String label = element.getAttribute("label");
+			final String sType = element.getAttribute("type");
+			final ParameterType type = getType(sType);
+			final String sDefault = element.getAttribute("default");
+			final Object defaultValue = type.parse(sDefault);
+			String description = element.getAttribute("description");
+			if (description == null) description = "";
+			return new ParameterDesc(label, type, defaultValue, description);
+		}
+
+		private static ParameterType getType(String typeName) {
+			if (typeName.equals("Boolean")) {
+				return ParameterType.BOOL;
+			}
+			if (typeName.equals("Integer")) {
+				return ParameterType.INT;
+			}
+			if (typeName.equals("Long")) {
+				return ParameterType.LONG;
+			}
+			if (typeName.equals("String")) {
+				return ParameterType.STRING;
+			}
+			throw new IllegalArgumentException(
+					"invalid tactic parameter type name: " + typeName);
+		}
+		
+		@Override
+		public String getLabel() {
+			return label;
+		}
+
+		@Override
+		public ParameterType getType() {
+			return type;
+		}
+
+		@Override
+		public Object getDefaultValue() {
+			return defaultValue;
+		}
+
+		@Override
+		public String getDescription() {
+			return description;
+		}
+		
+	}
 }

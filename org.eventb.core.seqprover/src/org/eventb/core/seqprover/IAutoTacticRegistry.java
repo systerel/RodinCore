@@ -7,8 +7,13 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added parameterized tactics
  *******************************************************************************/
 package org.eventb.core.seqprover;
+
+import java.util.Collection;
+
+
 
 /**
  * Common protocol for accessing the Auto Tactic Registry.
@@ -154,62 +159,94 @@ public interface IAutoTacticRegistry {
 	
 	
 	/**
-	 * An {@link ITacticDescriptor} provides a wrapper around the information contained in 
-	 * a tactic extension.
+	 * An {@link ITacticDescriptor} provides a wrapper around the information
+	 * contained in a tactic extension.
 	 * 
 	 * <p>
-	 * Each tactic extension corresponds to a tactic descriptor.
-	 * The tactic descriptor for a tactic extension can be obtained using the 
-	 * {@link IAutoTacticRegistry#getTacticDescriptor(String)} method. 
+	 * Each tactic extension corresponds to a tactic descriptor. The tactic
+	 * descriptor for a tactic extension can be obtained using the
+	 * {@link IAutoTacticRegistry#getTacticDescriptor(String)} method.
 	 * </p>
 	 * 
+	 * @noimplement This interface is not intended to be implemented by clients.
+	 * @noextend This interface is not intended to be extended by clients.
 	 * @author Farhad Mehta
-	 *
+	 * 
 	 */
-	public interface ITacticDescriptor{
-		
+	public interface ITacticDescriptor {
+
 		/**
 		 * Returns the id of the tactic extension.
 		 * 
 		 * @return the id of the tactic extension
 		 */
 		String getTacticID();
-		
+
 		/**
 		 * Returns the name of the tactic extension.
 		 * 
 		 * @return the name of the tactic extension
 		 */
 		String getTacticName();
-		
+
 		/**
 		 * Returns the description of the tactic extension.
 		 * 
 		 * <p>
-		 * In case no description is provided for a registered tactic, the empty string is returned.
+		 * In case no description is provided for a registered tactic, the empty
+		 * string is returned.
 		 * </p>
 		 * 
-		 * @return the description of the tactic with the given id, or the empty string if no description is provided.
+		 * @return the description of the tactic with the given id, or the empty
+		 *         string if no description is provided.
 		 * 
 		 */
 		String getTacticDescription();
 
 		/**
-		 * Returns the singeleton instance of the tactic corresponding to the tactic extension.
+		 * Returns the singleton instance of the tactic corresponding to the
+		 * tactic extension.
 		 * <p>
-		 * In case there is a problem instantiating the tactic class, an {@link IllegalArgumentException}
-		 * is thrown.
+		 * In case there is a problem instantiating the tactic class, an
+		 * {@link IllegalArgumentException} is thrown.
 		 * </p>
 		 * 
 		 * @return an instance of the tactic
 		 * 
 		 * @throws IllegalArgumentException
-		 * 			in case there is a problem instantiating the tactic
+		 *             in case there is a problem instantiating the tactic
 		 */
 		ITactic getTacticInstance() throws IllegalArgumentException;
-		
+
 	}
 	
-	
+	/**
+	 * Adds parameter related API.
+	 * 
+	 * @since 2.3
+	 */
+	public interface IParamTacticDescriptor extends ITacticDescriptor {
+		
+
+		/**
+		 * Returns a collection of parameter descriptors.
+		 * 
+		 * @return a collection of parameter descriptors
+		 */
+		Collection<IParameterDesc> getParameterDescs();
+
+		/**
+		 * @since 2.3
+		 */
+		IParameterSetting makeParameterSetting();
+
+		/**
+		 * Returns an instance of the tactic with the given parameters.
+		 * 
+		 * @since 2.3
+		 */
+		ITactic getTacticInstance(IParameterValuation valuation);
+		
+	}
 
 }

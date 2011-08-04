@@ -1,16 +1,35 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - implemented parameterized auto tactics
+ *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticExtentionTests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collection;
 
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IAutoTacticRegistry.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.IParameterDesc;
+import org.eventb.core.seqprover.IParameterDesc.ParameterType;
+import org.eventb.core.seqprover.IParameterSetting;
+import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticExtentionTests.IdentityTactic.FailTactic;
+import org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics.FakeTactic;
+import org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics.TacWithParams;
 import org.junit.Test;
 
 /**
@@ -20,6 +39,7 @@ import org.junit.Test;
  * 
  * @author Farhad Mehta
  * @author Laurent Voisin
+ * @author Nicolas Beauger
  */
 public class AutoTacticRegistryTest {
 
@@ -179,6 +199,126 @@ public class AutoTacticRegistryTest {
 			assertFalse("Erroneous tactic id should not be registered",
 					id.contains("erroneous"));
 		}
+	}
+
+	// check an extension with each type of parameters and verify the descriptors
+	@Test
+	public void testParameterDesc() {
+		final IParamTacticDescriptor tacDesc = (IParamTacticDescriptor) registry
+				.getTacticDescriptor(TacWithParams.TACTIC_ID);
+		final Collection<IParameterDesc> paramDescs = tacDesc.getParameterDescs();
+		assertParamDesc(paramDescs, "bool1", "BOOL", "true",
+		 "bool2", "BOOL", "false",
+		 "int1", "INT", "314"
+		, "long1", "LONG", "9223372036854775807"
+		, "string1", "STRING", "formulæ");
+		
+	}
+
+	@Test
+	public void testTacticInstanceOfParam() throws Exception {
+		assertNotKnown(TacWithParams.TACTIC_ID);
+	}
+	
+	@Test
+	public void testDefaultParameterValues() throws Exception {
+		final IParamTacticDescriptor tacDesc = (IParamTacticDescriptor) registry
+				.getTacticDescriptor(TacWithParams.TACTIC_ID);
+		final IParameterSetting parameters = tacDesc.makeParameterSetting();
+
+		// unmodified parameters
+		final FakeTactic unmodifiedTactic = (FakeTactic) tacDesc
+				.getTacticInstance(parameters);
+		unmodifiedTactic.assertParameterValues(true, false, 314,
+				0x7fffffffffffffffL, "formulæ");
+		
+		// same if we ask for the default instance
+		final FakeTactic defaultInstance = (FakeTactic) tacDesc
+				.getTacticInstance();
+		defaultInstance.assertParameterValues(true, false, 314,
+				0x7fffffffffffffffL, "formulæ");
+	}
+	
+	@Test
+	public void testSetParameterValues() throws Exception {
+		final IParamTacticDescriptor tacDesc = (IParamTacticDescriptor) registry
+				.getTacticDescriptor(TacWithParams.TACTIC_ID);
+		final IParameterSetting parameters = tacDesc.makeParameterSetting();
+		
+		parameters.setBoolean("bool1", false);
+		parameters.setBoolean("bool2", true);
+		parameters.setInt("int1", 51);
+		parameters.setLong("long1", Long.MIN_VALUE);
+		parameters.setString("string1", "blue");
+
+		final FakeTactic customTactic = (FakeTactic) tacDesc
+				.getTacticInstance(parameters);
+		customTactic.assertParameterValues(false, true, 51,
+				Long.MIN_VALUE, "blue");
+	}
+	
+	// label, type, default value
+	private static void assertParamDesc(Collection<IParameterDesc> paramDesc,
+			String... labelTypeDefault) {
+		for (IParameterDesc desc : paramDesc) {
+			final int i = indexOf(desc.getLabel(), labelTypeDefault);
+			assertTrue(i>=0);
+			assertEquals(labelTypeDefault[i], desc.getLabel());
+			final ParameterType paramType = ParameterType.valueOf(labelTypeDefault[i + 1]);
+			assertEquals(paramType, desc.getType());
+			assertEquals(paramType.parse(labelTypeDefault[i + 2]),
+					desc.getDefaultValue());
+		}
+	}
+
+	private static int indexOf(String label, String[] labelTypeDefault) {
+		for (int i = 0; i < labelTypeDefault.length; i += 3) {
+			if (labelTypeDefault[i].equals(label)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	// class not instance of ITactic nor ITacticParameterizer
+	@Test
+	public void testBadInstanceNoImplement() throws Exception {
+		assertNotKnown("org.eventb.core.seqprover.tests.badInstance");
+	}
+	
+	// class instance of both ITactic and ITacticParameterizer => error
+	@Test
+	public void testInstanceImplementsBoth() throws Exception {
+		assertNotKnown("org.eventb.core.seqprover.tests.both");
+	}
+	
+	
+	// class instance of ITactic with parameters => error
+	@Test
+	public void testSimpleTacticWithParams() throws Exception {
+		assertNotKnown("org.eventb.core.seqprover.tests.tacWithParam");
+
+	}
+	
+	// class instance of ITacticParameterizer without parameters => degenerated case, accepted
+	@Test
+	public void testParameterizerWithoutParam() throws Exception {
+		assertKnown("org.eventb.core.seqprover.tests.noParam");
+	}
+	
+	// default value does not parse with given type => error
+	@Test
+	public void testNotParseableDefaultValues() throws Exception {
+		// boolean is true if equalsIgnoreCase("true") else false => always parseable
+		assertNotKnown("org.eventb.core.seqprover.tests.notParseableInt");
+		assertNotKnown("org.eventb.core.seqprover.tests.notParseableLong");
+		// a string is always parseable
+	}
+	
+	// duplicate label => error
+	@Test
+	public void testDuplicateLabel() throws Exception {
+		assertNotKnown("org.eventb.core.seqprover.tests.duplLabel");
 	}
 	
 }
