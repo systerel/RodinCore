@@ -15,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -80,6 +81,25 @@ public class AutoTacticRegistryTest {
 				Arrays.asList(ids).contains(id));
 	}
 	
+	private void assertInstanceLoadingFailure(String id) {
+		assertKnown(id);
+		final ITacticDescriptor desc = registry.getTacticDescriptor(id);
+		// Illegal Argument Expected
+		try {
+			desc.getTacticInstance();
+			fail("illegal argument exception expected");
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
+	}
+	
+	private void assertInstanceLoadingSuccess(String id) {
+		assertKnown(id);
+		final ITacticDescriptor desc = registry.getTacticDescriptor(id);
+		// no exception expected
+		desc.getTacticInstance();
+	}
+
 	/**
 	 * Test method for {@link IAutoTacticRegistry#isRegistered(String)} and
 	 * {@link IAutoTacticRegistry#getRegisteredIDs()}.
@@ -216,11 +236,6 @@ public class AutoTacticRegistryTest {
 	}
 
 	@Test
-	public void testTacticInstanceOfParam() throws Exception {
-		assertNotKnown(TacWithParams.TACTIC_ID);
-	}
-	
-	@Test
 	public void testDefaultParameterValues() throws Exception {
 		final IParamTacticDescriptor tacDesc = (IParamTacticDescriptor) registry
 				.getTacticDescriptor(TacWithParams.TACTIC_ID);
@@ -283,29 +298,28 @@ public class AutoTacticRegistryTest {
 	// class not instance of ITactic nor ITacticParameterizer
 	@Test
 	public void testBadInstanceNoImplement() throws Exception {
-		assertNotKnown("org.eventb.core.seqprover.tests.badInstance");
+		assertInstanceLoadingFailure("org.eventb.core.seqprover.tests.badInstance");
 	}
-	
-	// class instance of both ITactic and ITacticParameterizer => error
-	@Test
-	public void testInstanceImplementsBoth() throws Exception {
-		assertNotKnown("org.eventb.core.seqprover.tests.both");
-	}
-	
 	
 	// class instance of ITactic with parameters => error
 	@Test
 	public void testSimpleTacticWithParams() throws Exception {
-		assertNotKnown("org.eventb.core.seqprover.tests.tacWithParam");
-
+		assertInstanceLoadingFailure("org.eventb.core.seqprover.tests.tacWithParam");
 	}
 	
-	// class instance of ITacticParameterizer without parameters => degenerated case, accepted
+	// class instance of ITacticParameterizer without parameters => error
 	@Test
 	public void testParameterizerWithoutParam() throws Exception {
-		assertKnown("org.eventb.core.seqprover.tests.noParam");
+		assertInstanceLoadingFailure("org.eventb.core.seqprover.tests.noParam");
 	}
 	
+	// class instance of both ITactic and ITacticParameterizer => accepted, only
+	// the relevant interface is used
+	@Test
+	public void testInstanceImplementsBoth() throws Exception {
+		assertInstanceLoadingSuccess("org.eventb.core.seqprover.tests.both");
+	}
+
 	// default value does not parse with given type => error
 	@Test
 	public void testNotParseableDefaultValues() throws Exception {

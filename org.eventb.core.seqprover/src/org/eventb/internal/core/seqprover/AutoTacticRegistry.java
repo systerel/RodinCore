@@ -150,12 +150,15 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	private static AbstractTacticDescriptor loadTacticDescriptor(IConfigurationElement element) {
 		final String id = checkAndMakeId(element);
 		final String name = element.getAttribute("name");
+		String description = element.getAttribute("description");
+		if (description == null) description = "";
 		final IConfigurationElement[] children = element.getChildren("tacticParameter");
 		if (children.length == 0) {
-			return new TacticDescriptor(element, id, name);
+			return new TacticDescriptor(element, id, name, description);
 		} else {
 			final Collection<IParameterDesc> paramDescs = loadTacticParameters(children);
-			return new ParamTacticDescriptor(element, id, name, paramDescs);
+			return new ParamTacticDescriptor(element, id, name, description,
+					paramDescs);
 		}
 	}
 
@@ -219,30 +222,17 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		protected final IConfigurationElement configurationElement;
 		protected final String id;
 		private final String name;
-		/**
-		 * Tactic description lazily loaded using <code>configurationElement</code>
-		 */
-		private String description;
-			
-		public AbstractTacticDescriptor(IConfigurationElement element, String id, String name) {
+		private final String description;
+		
+		public AbstractTacticDescriptor(IConfigurationElement element, String id, String name, String description) {
 			this.configurationElement = element;
 			this.id = id;
 			this.name = name;
+			this.description = description;
 		}
 
 		public synchronized String getTacticDescription() throws IllegalArgumentException{
-			if (description != null) {
-				return description;
-			}
-
-			if (configurationElement == null) {
-				throw new IllegalArgumentException("Null configuration element");
-			}
-			
-			description = configurationElement.getAttribute("description");
-			if (description == null) description = "";
 			return description;
-			
 		}
 		
 		public String getTacticID() {
@@ -292,8 +282,9 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		 */
 		private ITactic instance;
 		
-		protected TacticDescriptor(IConfigurationElement element, String id, String name) {
-			super(element, id, name);
+		public TacticDescriptor(IConfigurationElement element, String id,
+				String name, String description) {
+			super(element, id, name, description);
 		}
 
 		public synchronized ITactic getTacticInstance() {
@@ -320,10 +311,10 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		private ITacticParameterizer parameterizer;
 		private final Collection<IParameterDesc> parameterDescs;
 
-		protected ParamTacticDescriptor(IConfigurationElement element,
+		public ParamTacticDescriptor(IConfigurationElement element,
 				String id, String name,
-				Collection<IParameterDesc> parameterDescs) {
-			super(element, id, name);
+				String description, Collection<IParameterDesc> parameterDescs) {
+			super(element, id, name, description);
 			this.parameterDescs = parameterDescs;
 		}
 

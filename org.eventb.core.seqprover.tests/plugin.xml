@@ -109,7 +109,7 @@
             name="Implements Both ITactic and ITacticParameterizer">
       </autoTactic>
       <autoTactic
-            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$TacWithParam"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$SimpleTacWithParam"
             id="tacWithParam"
             name="implements ITactic with parameter">
          <tacticParameter

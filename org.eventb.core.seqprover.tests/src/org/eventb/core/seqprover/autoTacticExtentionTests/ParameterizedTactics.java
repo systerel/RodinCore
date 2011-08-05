@@ -92,7 +92,7 @@ public class ParameterizedTactics {
 		
 	}
 	
-	public static class TacWithParam implements ITactic {
+	public static class SimpleTacWithParam implements ITactic {
 
 		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
