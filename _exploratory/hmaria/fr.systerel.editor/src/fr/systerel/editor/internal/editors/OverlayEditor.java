@@ -34,8 +34,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.AnnotationModelEvent;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.SWT;
@@ -90,9 +88,8 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
  * This class manages the little text field that is used to edit an element.
  */
 @SuppressWarnings("restriction")
-public class OverlayEditor implements IAnnotationModelListener,
-		IAnnotationModelListenerExtension, ExtendedModifyListener,
-		VerifyKeyListener, IMenuListener {
+public class OverlayEditor implements IAnnotationModelListenerExtension,
+		ExtendedModifyListener, VerifyKeyListener, IMenuListener {
 
 	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID
 			+ ".editorText";
@@ -492,11 +489,6 @@ public class OverlayEditor implements IAnnotationModelListener,
 					.println("Problems occured when updating the database after attribute edition"
 							+ e.getMessage());
 		}
-	}
-
-	@Override
-	public void modelChanged(IAnnotationModel model) {
-		// do nothing
 	}
 
 	@Override

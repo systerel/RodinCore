@@ -143,7 +143,6 @@ public class RodinEditor extends TextEditor {
 		overlayUpdater = new OverlayBackModificationUpdater(overlayEditor);
 		getDocument().addDocumentListener(overlayUpdater);
 		
-		projectionAnnotationModel.addAnnotationModelListener(overlayEditor);
 		selController = new SelectionController(styledText, mapper, viewer,
 				overlayEditor);
 		styledText.addMouseListener(selController);
@@ -417,9 +416,6 @@ public class RodinEditor extends TextEditor {
 	 */
 	public void resync(final IProgressMonitor monitor, final boolean silent) {
 		if (styledText != null && !styledText.isDisposed()) {
-			final int currentOffset = getCurrentOffset();
-			final int topIndex = styledText.getTopIndex();
-			final ILElement[] selection = selController.getSelectedElements();
 			final Display display = styledText.getDisplay();
 			display.asyncExec(new Runnable() {
 				@Override
@@ -427,6 +423,9 @@ public class RodinEditor extends TextEditor {
 					if (styledText.isDisposed()) {
 						return;
 					}
+					final int currentOffset = getCurrentOffset();
+					final int topIndex = styledText.getTopIndex();
+					final ILElement[] selection = selController.getSelectedElements();
 					final long start = System.currentTimeMillis();
 					if (DEBUG)
 						System.out.println("\\ Start refreshing Rodin Editor.");

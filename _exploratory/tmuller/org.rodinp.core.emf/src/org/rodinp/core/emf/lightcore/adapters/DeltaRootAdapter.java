@@ -15,7 +15,6 @@ import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.lightcore.LightElement;
 
 /**
@@ -38,12 +37,7 @@ public class DeltaRootAdapter extends AdapterImpl implements
 
 	@Override
 	public void elementChanged(ElementChangedEvent event) {
-		try {
-			processor.processDelta(event.getDelta());
-		} catch (RodinDBException e) {
-			System.out.println("Could not process database delta: ");
-			e.printStackTrace();
-		}
+		processor.processDelta(event.getDelta());
 	}
 
 	@Override

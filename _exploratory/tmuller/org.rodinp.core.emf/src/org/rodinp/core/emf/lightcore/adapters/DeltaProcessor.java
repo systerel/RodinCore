@@ -11,9 +11,6 @@
 package org.rodinp.core.emf.lightcore.adapters;
 
 import static org.rodinp.core.emf.lightcore.LightCoreUtils.debug;
-import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.addParentEContentAdapter;
-import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.findElement;
-import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.getPositionAmongSiblings;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
@@ -21,12 +18,10 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
-import org.rodinp.core.emf.lightcore.InternalElement;
 import org.rodinp.core.emf.lightcore.LightElement;
-import org.rodinp.core.emf.lightcore.LightcoreFactory;
-import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
+import org.rodinp.core.emf.lightcore.adapters.dboperations.DeltaProcessManager;
+import org.rodinp.core.emf.lightcore.adapters.dboperations.ElementOperation;
 
 /**
  * Processes deltas from the database in order to update the EMF light core
@@ -35,7 +30,7 @@ import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 public class DeltaProcessor {
 
 	public static boolean DEBUG;
-	
+
 	private final LightElement root;
 	private final IRodinElement rodinRoot;
 	private final DeltaRootAdapter owner;
@@ -52,15 +47,14 @@ public class DeltaProcessor {
 	 * @param delta
 	 *            The delta from the Rodin Database
 	 */
-	public void processDelta(final IRodinElementDelta delta)
-			throws RodinDBException {
+	public void processDelta(final IRodinElementDelta delta) {
 		int kind = delta.getKind();
 		final IRodinElement element = delta.getElement();
 
 		if (DEBUG)
 			debug("Processing RodinDB delta for :" + element.getElementName()
 					+ " :" + delta.toString());
-		
+
 		// if the delta does not concern the root handled by this processor
 		if (element instanceof IInternalElement
 				&& (!((IInternalElement) element).getRoot().equals(rodinRoot))) {
@@ -70,7 +64,8 @@ public class DeltaProcessor {
 		// if the element is from this root and doesn't exists in the EMF model
 		if (kind == IRodinElementDelta.ADDED) {
 			if (element instanceof IInternalElement) {
-				addElement(element);
+				DeltaProcessManager.getDefault().enqueueOperation(
+						new ElementOperation.AddElementOperation(element, root));
 			}
 			return;
 		}
@@ -83,16 +78,18 @@ public class DeltaProcessor {
 				if (element instanceof IRodinFile && element.equals(rFile)) {
 					owner.finishListening();
 					// remove the machine from the model
-					removeElement(rFile.getRoot());
+					DeltaProcessManager.getDefault().enqueueOperation(
+							new ElementOperation.RemoveElementOperation(rFile.getRoot(), root));
 					return;
 				}
 			}
 			if (element instanceof IInternalElement) {
-				removeElement(element);
+				DeltaProcessManager.getDefault().enqueueOperation(
+						new ElementOperation.RemoveElementOperation(element, root));
 			}
 			return;
 		}
-		
+
 		int flags = delta.getFlags();
 
 		if (kind == IRodinElementDelta.CHANGED) {
@@ -106,11 +103,11 @@ public class DeltaProcessor {
 			}
 
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				reorderElement(element);
+				DeltaProcessManager.getDefault().enqueueOperation(
+						new ElementOperation.ReorderElementOperation(element, root));
 				return;
 			}
 
-			// FIXME not sure I should handle this
 			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
 				if (element instanceof IRodinFile) {
 					final IRodinElementDelta[] deltas = delta
@@ -123,77 +120,11 @@ public class DeltaProcessor {
 			}
 
 			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
-				reloadAttributes(element);
+				DeltaProcessManager.getDefault().enqueueOperation(
+						new ElementOperation.ReloadAttributesElementOperation(element, root));
 				return;
 			}
 		}
-	}
-
-	// recursive addition
-	private void addElement(IRodinElement element) throws RodinDBException {
-		if (!(element instanceof IInternalElement))
-			return;
-		final InternalElement e = LightcoreFactory.eINSTANCE
-				.createInternalElement();
-		e.setERodinElement(element);
-		e.setReference(element.getElementName() + "["
-				+ element.getElementType().getName() + "]");
-		e.setEIsRoot(element.isRoot());
-		e.setERoot(root);
-		e.load();
-		final IRodinElement parent = element.getParent();
-		if (parent instanceof IInternalElement) {
-			final LightElement eParent = findElement(parent, root);
-			if (eParent != null) {
-				final int pos = getPositionAmongSiblings(eParent,
-						(IInternalElement) element);
-				eParent.addElement(e, pos);
-				addParentEContentAdapter(eParent, e);
-			}
-		}
-		for (IRodinElement child : ((IInternalElement) element).getChildren()) {
-			addElement(child);
-		}
-	}
-	
-	private void reorderElement(IRodinElement element) throws RodinDBException {
-		final IRodinElement parent = element.getParent();
-		final LightElement toMove = findElement(element, root);
-		if (toMove == null)
-			return;
-		final LightElement eParent = toMove.getEParent();
-		if (parent instanceof IInternalElement && eParent != null) {
-			final int i = SynchroUtils.getPosFromNextSiblingPos(toMove, eParent);
-			eParent.getEChildren().move(i, toMove);
-		}
-	}
-
-	public void reloadElement(IRodinElement toRefresh) {
-		final LightElement e = findElement(toRefresh, root);
-		if (e != null)
-			e.load();
-	}
-
-	public void reloadAttributes(IRodinElement toReload) {
-		final LightElement found = findElement(toReload, root);
-		if (toReload instanceof IInternalElement && found != null)
-			SynchroUtils.reloadAttributes((IInternalElement) toReload, found);
-	}
-
-	public void removeElement(IRodinElement toRemove) {
-		LightElement found = findElement(toRemove, root);
-		if (found != null) {
-			if (found.isEIsRoot()) {
-				found.delete();
-				return;
-			}
-			// removes the element from the children of its parent
-			final LightElement parent = found.getEParent();
-			if (parent != null) {
-				parent.getEChildren().remove(found);
-			}
-		}
-		found = null;
 	}
 
 }
