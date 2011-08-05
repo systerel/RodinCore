@@ -15,10 +15,11 @@ package org.eventb.core.seqprover;
  * to be implemented by clients who contribute tactics with parameters.
  * 
  * @author Nicolas Beauger
- * @since 2.3
- * 
+ * @since 2.3 
  */
 public interface ITacticParameterizer {
+	// TODO consider adding a method to validate a valuation (in case some
+	// valuations could be invalid), with details about what is going wrong
 
 	/**
 	 * Returns an instance of the parameterized tactic using the given

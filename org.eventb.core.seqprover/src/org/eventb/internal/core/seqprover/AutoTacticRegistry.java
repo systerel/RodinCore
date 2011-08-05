@@ -32,6 +32,7 @@ import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticParameterizer;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.tactics.BasicTactics;
 
 /**
  * Singeleton class implementing the auto tactic registry.
@@ -219,8 +220,8 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	 */
 	private abstract static class AbstractTacticDescriptor implements ITacticDescriptor {
 
-		protected final IConfigurationElement configurationElement;
-		protected final String id;
+		private final IConfigurationElement configurationElement;
+		private final String id;
 		private final String name;
 		private final String description;
 		
@@ -338,8 +339,28 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			if (parameterizer == null) {
 				parameterizer = (ITacticParameterizer) loadInstance();
 			}
-			// FIXME can return null
-			return parameterizer.getTactic(valuation);
+			return makeCheckedTactic(valuation);
+		}
+
+		private ITactic makeCheckedTactic(IParameterValuation valuation) {
+			try {
+				final ITactic tactic = parameterizer.getTactic(valuation);
+				if (tactic == null) {
+					return logAndMakeFailure(new NullPointerException(
+							"null instance returned"), valuation);
+				}
+				return tactic;
+			} catch (Throwable t) {
+				return logAndMakeFailure(t, valuation);
+			}
+		}
+
+		private ITactic logAndMakeFailure(Throwable t,
+				IParameterValuation valuation) {
+			Util.log(t, "while making parameterized tactic " + getTacticID()
+					+ " with parameter valuation " + valuation);
+			return BasicTactics
+					.failTac("failed to create parameterized tactic");
 		}
 
 		@Override
@@ -416,6 +437,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		}
 	}
 	
+	// TODO toString()
 	private static class ParameterSetting implements IParameterSetting {
 
 		private final Map<String, ParameterValue<?>> valuation = new LinkedHashMap<String, ParameterValue<?>>();

@@ -14,6 +14,7 @@ package org.eventb.core.seqprover.autoTacticExtentionTests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -81,7 +82,7 @@ public class AutoTacticRegistryTest {
 				Arrays.asList(ids).contains(id));
 	}
 	
-	private void assertInstanceLoadingFailure(String id) {
+	private void assertParameterizerLoadingFailure(String id) {
 		assertKnown(id);
 		final ITacticDescriptor desc = registry.getTacticDescriptor(id);
 		// Illegal Argument Expected
@@ -93,11 +94,19 @@ public class AutoTacticRegistryTest {
 		}
 	}
 	
+	private void assertTacticInstantiatingFailure(String id) {
+		assertKnown(id);
+		final ITacticDescriptor desc = registry.getTacticDescriptor(id);
+		final ITactic tactic = desc.getTacticInstance();
+		assertNotNull(tactic.apply(null, null));
+	}
+	
 	private void assertInstanceLoadingSuccess(String id) {
 		assertKnown(id);
 		final ITacticDescriptor desc = registry.getTacticDescriptor(id);
 		// no exception expected
-		desc.getTacticInstance();
+		final ITactic tactic = desc.getTacticInstance();
+		assertNull(tactic.apply(null, null));
 	}
 
 	/**
@@ -298,19 +307,29 @@ public class AutoTacticRegistryTest {
 	// class not instance of ITactic nor ITacticParameterizer
 	@Test
 	public void testBadInstanceNoImplement() throws Exception {
-		assertInstanceLoadingFailure("org.eventb.core.seqprover.tests.badInstance");
+		assertParameterizerLoadingFailure("org.eventb.core.seqprover.tests.badInstance");
 	}
 	
 	// class instance of ITactic with parameters => error
 	@Test
 	public void testSimpleTacticWithParams() throws Exception {
-		assertInstanceLoadingFailure("org.eventb.core.seqprover.tests.tacWithParam");
+		assertParameterizerLoadingFailure("org.eventb.core.seqprover.tests.tacWithParam");
 	}
 	
 	// class instance of ITacticParameterizer without parameters => error
 	@Test
 	public void testParameterizerWithoutParam() throws Exception {
-		assertInstanceLoadingFailure("org.eventb.core.seqprover.tests.noParam");
+		assertParameterizerLoadingFailure("org.eventb.core.seqprover.tests.noParam");
+	}
+
+	@Test
+	public void testParameterizerNullInstance() throws Exception {
+		assertTacticInstantiatingFailure("org.eventb.core.seqprover.tests.paramNullInstance");
+	}
+	
+	@Test
+	public void testParameterizerThrowsException() throws Exception {
+		assertTacticInstantiatingFailure("org.eventb.core.seqprover.tests.paramThrowsException");
 	}
 	
 	// class instance of both ITactic and ITacticParameterizer => accepted, only

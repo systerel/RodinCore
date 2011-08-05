@@ -12,6 +12,8 @@ package org.eventb.core.seqprover.autoTacticExtentionTests;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ConcurrentModificationException;
+
 import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -46,7 +48,7 @@ public class ParameterizedTactics {
 	
 		@Override
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			throw new IllegalStateException("not supposed to be called");
+			return null;
 		}
 		
 		public void assertParameterValues(boolean expBool1, boolean expBool2,
@@ -106,6 +108,24 @@ public class ParameterizedTactics {
 		@Override
 		public ITactic getTactic(IParameterValuation parameters) {
 			return null;
+		}
+		
+	}
+	
+	public static class ParamNullInstance implements ITacticParameterizer {
+
+		@Override
+		public ITactic getTactic(IParameterValuation parameters) {
+			return null;
+		}
+		
+	}
+	
+	public static class ParamThrowsException implements ITacticParameterizer {
+
+		@Override
+		public ITactic getTactic(IParameterValuation parameters) {
+			throw new ConcurrentModificationException();
 		}
 		
 	}

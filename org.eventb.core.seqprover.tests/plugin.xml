@@ -158,5 +158,27 @@
                type="Boolean">
          </tacticParameter>
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$ParamNullInstance"
+            id="paramNullInstance"
+            name="Parameterizer making null instance">
+         <tacticParameter
+               default="false"
+               description="just to make it an acceptable parameterizer"
+               label="label"
+               type="Boolean">
+         </tacticParameter>
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$ParamThrowsException"
+            id="paramThrowsException"
+            name="Parameterizer throwing an exception">
+         <tacticParameter
+               default="false"
+               description="just to make it an acceptable parameterizer"
+               label="label"
+               type="Boolean">
+         </tacticParameter>
+      </autoTactic>
    </extension>
 </plugin>

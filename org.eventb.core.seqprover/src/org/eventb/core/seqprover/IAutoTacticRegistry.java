@@ -228,6 +228,8 @@ public interface IAutoTacticRegistry {
 	/**
 	 * Adds parameter related API.
 	 * 
+	 * @noimplement This interface is not intended to be implemented by clients.
+	 * @noextend This interface is not intended to be extended by clients.
 	 * @since 2.3
 	 */
 	public interface IParamTacticDescriptor extends ITacticDescriptor {
@@ -249,11 +251,14 @@ public interface IAutoTacticRegistry {
 		IParameterSetting makeParameterSetting();
 
 		/**
-		 * Returns an instance of the tactic with the given parameters.
+		 * Returns an instance of the tactic with the given parameters. Returns
+		 * a failure tactic in case there is a problem calling the
+		 * parameterizer.
 		 * 
-		 * @return a tactic instance
+		 * @return a tactic
 		 * @throws IllegalArgumentException
-		 *             in case there is a problem instantiating the tactic
+		 *             in case there is a problem instantiating the
+		 *             parameterizer
 		 * @since 2.3
 		 */
 		ITactic getTacticInstance(IParameterValuation valuation)
