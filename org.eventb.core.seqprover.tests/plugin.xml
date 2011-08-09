@@ -181,4 +181,44 @@
          </tacticParameter>
       </autoTactic>
    </extension>
+   <extension
+         point="org.eventb.core.seqprover.tacticCombinators">
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$FakeTacComb"
+            description="records which tactic it&apos;s been applied to, then fails"
+            id="tacComb"
+            minArity="0"
+            name="Fake Tactic Combinator">
+      </combinator>
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$OneOrMore"
+            description="1 or more tactics"
+            id="combOneOrMore"
+            minArity="1"
+            name="One or More">
+      </combinator>
+      <combinator
+            boundArity="true"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$Two"
+            id="combTwo"
+            minArity="2"
+            name="Two Combined">
+      </combinator>
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$Zero"
+            id="combZero"
+            minArity="0"
+            name="Zero Combined">
+      </combinator>
+      <combinator
+            boundArity="true"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$NoParseable"
+            id="noParseArity"
+            minArity="this is not a number"
+            name="No Parseable Arity">
+      </combinator>
+   </extension>
 </plugin>

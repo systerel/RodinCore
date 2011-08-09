@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - implemented parameterized auto tactics
+ *     Systerel - implemented tactic combinators
  *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticExtentionTests;
 
@@ -20,8 +21,11 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IAutoTacticRegistry.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
@@ -32,6 +36,11 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticExtentionTests.IdentityTactic.FailTactic;
 import org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics.FakeTactic;
 import org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics.TacWithParams;
+import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.FakeTacComb;
+import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.NoParseable;
+import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.OneOrMore;
+import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.Two;
+import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.Zero;
 import org.junit.Test;
 
 /**
@@ -353,5 +362,55 @@ public class AutoTacticRegistryTest {
 	public void testDuplicateLabel() throws Exception {
 		assertNotKnown("org.eventb.core.seqprover.tests.duplLabel");
 	}
+	
+	@Test
+	public void testCombinedTacticDescriptor() throws Exception {
+		assertKnown(FakeTacComb.TACTIC_ID);
+		final ICombinedTacticDescriptor desc = (ICombinedTacticDescriptor) registry
+				.getTacticDescriptor(FakeTacComb.TACTIC_ID);
+		ITacticDescriptor tacticDescIdentity = registry
+				.getTacticDescriptor(IdentityTactic.TACTIC_ID);
+		final List<ITacticDescriptor> combined = Arrays
+				.asList(tacticDescIdentity);
+		final ITactic instance = desc.getTacticInstance(combined);
+
+		final Object result = instance.apply(null, null);
+		assertEquals(FakeTacComb.MESSAGE, result);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCombinedGetInstanceNoArg() throws Exception {
+		final ICombinedTacticDescriptor desc = (ICombinedTacticDescriptor) registry
+				.getTacticDescriptor(FakeTacComb.TACTIC_ID);
+		// must throw illegal argument exception
+		desc.getTacticInstance();
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCombinedOneOrMore() throws Exception {
+		final ICombinedTacticDescriptor desc = (ICombinedTacticDescriptor) registry
+				.getTacticDescriptor(OneOrMore.TACTIC_ID);
+		// must throw illegal argument exception
+		desc.getTacticInstance(Collections.<ITacticDescriptor> emptyList());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCombinedTwo() throws Exception {
+		final ICombinedTacticDescriptor desc = (ICombinedTacticDescriptor) registry
+				.getTacticDescriptor(Two.TACTIC_ID);
+		// must throw illegal argument exception
+		desc.getTacticInstance(Arrays.<ITacticDescriptor> asList(desc, desc));
+	}
+	
+	@Test
+	public void testCombinedZero() throws Exception {
+		assertNotKnown(Zero.TACTIC_ID);
+	}
+	
+	@Test
+	public void testCombinedNoParseable() throws Exception {
+		assertNotKnown(NoParseable.TACTIC_ID);
+	}
+	
 	
 }
