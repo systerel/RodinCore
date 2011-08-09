@@ -95,7 +95,7 @@ public class TacticDescriptors {
 
 	}
 
-	static class TacticDescriptor extends AbstractTacticDescriptor {
+	public static class TacticDescriptor extends AbstractTacticDescriptor {
 
 		/**
 		 * Tactic instance lazily loaded using <code>configurationElement</code>
@@ -122,7 +122,7 @@ public class TacticDescriptors {
 
 	}
 
-	static class ParamTacticDescriptor extends AbstractTacticDescriptor
+	public static class ParamTacticDescriptor extends AbstractTacticDescriptor
 			implements IParamTacticDescriptor {
 
 		/**
