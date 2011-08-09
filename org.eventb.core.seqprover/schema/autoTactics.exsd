@@ -49,8 +49,8 @@
 
    <element name="autoTactic">
       <complexType>
-         <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="tacticParameter"/>
+         <sequence>
+            <element ref="tacticParameter" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
