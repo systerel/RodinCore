@@ -8,10 +8,12 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added parameterized tactics
+ *     Systerel - added tactic combinators
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Common protocol for accessing the Auto Tactic Registry.
@@ -266,4 +268,53 @@ public interface IAutoTacticRegistry {
 
 	}
 
+	/**
+	 * Common protocol for tactic combinators.
+	 * 
+	 * @noimplement This interface is not intended to be implemented by clients.
+	 * @noextend This interface is not intended to be extended by clients.
+	 * @author Nicolas Beauger
+	 * @since 2.3
+	 */
+	public interface ICombinedTacticDescriptor extends ITacticDescriptor {
+
+		/**
+		 * Returns the tactic combining given tactics.
+		 * 
+		 * @param tactics
+		 *            a list of tactic descriptors
+		 * @return the combined tactic
+		 * @throws IllegalArgumentException
+		 *             if the size of the given list is not valid regarding
+		 *             specified arity
+		 */
+		ITactic getTacticInstance(List<ITacticDescriptor> tactics)
+				throws IllegalArgumentException;
+
+		/**
+		 * Returns the minimum arity of this combinator. This is the minimum
+		 * required size of the list given to {@link #getTacticInstance(List)}.
+		 * 
+		 * @return an integer greater than or equal to 1
+		 */
+		int getMinArity();
+		
+		/**
+		 * Returns whether the arity of this combinator is bound.
+		 * <p>
+		 * If <code>true</code>, the size of the list given to
+		 * {@link #getTacticInstance(List)} must be equal to
+		 * {@link #getMinArity()}.
+		 * </p>
+		 * <p>
+		 * If <code>false</code>, the size of the list given to
+		 * {@link #getTacticInstance(List)} must be greater than or equal to
+		 * {@link #getMinArity()}.
+		 * </p>
+		 * 
+		 * @return
+		 */
+		boolean isArityBound();
+	}
+	
 }
