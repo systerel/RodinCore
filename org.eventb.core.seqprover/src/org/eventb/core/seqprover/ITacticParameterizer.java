@@ -11,7 +11,7 @@
 package org.eventb.core.seqprover;
 
 /**
- * Common protocol for making parameterized tactics. This interface is intended
+ * Common protocol for tactic parameterizers. This interface is intended
  * to be implemented by clients who contribute tactics with parameters.
  * 
  * @author Nicolas Beauger
