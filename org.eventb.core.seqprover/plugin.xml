@@ -6,6 +6,7 @@
          name="%point.reasoners" 
          schema="schema/reasoners.exsd"/>
    <extension-point id="autoTactics" name="%point.autoTactics" schema="schema/autoTactics.exsd"/>
+   <extension-point id="tacticCombinators" name="%point.tacticCombinators" schema="schema/tacticCombinators.exsd"/>
    <extension
          point="org.eventb.core.seqprover.reasoners">
       <reasoner
