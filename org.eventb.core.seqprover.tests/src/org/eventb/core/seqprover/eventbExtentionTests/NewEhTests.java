@@ -35,6 +35,11 @@ public class NewEhTests extends AbstractReasonerTests {
 						TestLib.genSeq(" 1=2 ;; 1+1 = 2 |- 1+1+1 = 3 "),
 						new HypothesisReasoner.Input(TestLib.genPred("1=2")),
 						"{}[][1+1=2][1=2;; 2+2=2] |- 2+2+2=3"
+						),
+				new SuccessfullReasonerApplication(
+						TestLib.genSeq(" 1+2 = 12 |- 0+1+2+3 = 123 "),
+						new HypothesisReasoner.Input(TestLib.genPred("1+2=12")),
+						"{}[][][1+2=12] |- 0+12+3=123"
 						)
 		};
 	}
