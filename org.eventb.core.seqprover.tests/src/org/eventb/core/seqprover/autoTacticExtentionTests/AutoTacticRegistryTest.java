@@ -41,6 +41,7 @@ import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.NoPa
 import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.OneOrMore;
 import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.Two;
 import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.Zero;
+import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
 import org.junit.Test;
 
 /**
@@ -368,10 +369,8 @@ public class AutoTacticRegistryTest {
 		assertKnown(FakeTacComb.TACTIC_ID);
 		final ICombinedTacticDescriptor desc = (ICombinedTacticDescriptor) registry
 				.getTacticDescriptor(FakeTacComb.TACTIC_ID);
-		ITacticDescriptor tacticDescIdentity = registry
-				.getTacticDescriptor(IdentityTactic.TACTIC_ID);
-		final List<ITacticDescriptor> combined = Arrays
-				.asList(tacticDescIdentity);
+		final List<ITactic> combined = Collections
+				.<ITactic> singletonList(new TrueGoalTac());
 		final ITactic instance = desc.getTacticInstance(combined);
 
 		final Object result = instance.apply(null, null);
@@ -391,7 +390,7 @@ public class AutoTacticRegistryTest {
 		final ICombinedTacticDescriptor desc = (ICombinedTacticDescriptor) registry
 				.getTacticDescriptor(OneOrMore.TACTIC_ID);
 		// must throw illegal argument exception
-		desc.getTacticInstance(Collections.<ITacticDescriptor> emptyList());
+		desc.getTacticInstance(Collections.<ITactic> emptyList());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -399,16 +398,20 @@ public class AutoTacticRegistryTest {
 		final ICombinedTacticDescriptor desc = (ICombinedTacticDescriptor) registry
 				.getTacticDescriptor(Two.TACTIC_ID);
 		// must throw illegal argument exception
-		desc.getTacticInstance(Arrays.<ITacticDescriptor> asList(desc, desc));
+		final List<ITactic> combined = Collections
+				.<ITactic> singletonList(new TrueGoalTac());
+		desc.getTacticInstance(combined);
 	}
 	
 	@Test
 	public void testCombinedZero() throws Exception {
+		// combinator specifying 0 as arity
 		assertNotKnown(Zero.TACTIC_ID);
 	}
 	
 	@Test
 	public void testCombinedNoParseable() throws Exception {
+		// combinator specifying an unparseable arity
 		assertNotKnown(NoParseable.TACTIC_ID);
 	}
 	

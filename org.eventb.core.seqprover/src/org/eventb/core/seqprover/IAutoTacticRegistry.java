@@ -288,7 +288,7 @@ public interface IAutoTacticRegistry {
 		 *             if the size of the given list is not valid regarding
 		 *             specified arity
 		 */
-		ITactic getTacticInstance(List<ITacticDescriptor> tactics)
+		ITactic getTacticInstance(List<ITactic> tactics)
 				throws IllegalArgumentException;
 
 		/**

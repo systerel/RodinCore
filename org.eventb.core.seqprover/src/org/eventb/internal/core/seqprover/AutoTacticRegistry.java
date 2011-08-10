@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - implemented parameterized auto tactics
+ *     Systerel - implemented tactic combinators
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
@@ -27,6 +28,7 @@ import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.seqprover.TacticDescriptors.AbstractTacticDescriptor;
+import org.eventb.internal.core.seqprover.TacticDescriptors.CombinedTacticDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.ParamTacticDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.TacticDescriptor;
 import org.eventb.internal.core.seqprover.paramTactics.ParameterDesc;
@@ -44,6 +46,8 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	
 	private static String TACTICS_ID =
 		SequentProver.PLUGIN_ID + ".autoTactics";
+	private static String COMBINATORS_ID =
+			SequentProver.PLUGIN_ID + ".tacticCombinators";
 
 	private static IAutoTacticRegistry SINGLETON_INSTANCE = new AutoTacticRegistry();
 
@@ -119,8 +123,13 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			return;
 		}
 		registry = new HashMap<String, AbstractTacticDescriptor>();
+		loadTacticDescriptors(TACTICS_ID);
+		loadTacticDescriptors(COMBINATORS_ID);
+	}
+
+	private void loadTacticDescriptors(String extPointId) {
 		final IExtensionRegistry xRegistry = Platform.getExtensionRegistry();
-		final IExtensionPoint xPoint = xRegistry.getExtensionPoint(TACTICS_ID);
+		final IExtensionPoint xPoint = xRegistry.getExtensionPoint(extPointId);
 		for (IConfigurationElement element : xPoint.getConfigurationElements()) {
 			try {
 				final AbstractTacticDescriptor tacticDesc = loadTacticDescriptor(element);
@@ -145,23 +154,34 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		}
 	}
 
+	// configuration element can represent either:
+	// - a simple auto tactic
+	// - a parameterized auto tactic
+	// - a tactic combinator
+	// they share common attributes, while others are specific
 	private static AbstractTacticDescriptor loadTacticDescriptor(IConfigurationElement element) {
+		// common attributes
 		final String id = checkAndMakeId(element);
 		final String name = element.getAttribute("name");
 		String description = element.getAttribute("description");
 		if (description == null) description = "";
+		
+		// specific loading
+		if (element.getDeclaringExtension().getExtensionPointUniqueIdentifier().equals(COMBINATORS_ID)) {
+			return loadCombinator(element, id, name, description);
+		}
 		final IConfigurationElement[] children = element.getChildren("tacticParameter");
 		if (children.length == 0) {
 			return new TacticDescriptor(element, id, name, description);
 		} else {
-			final Collection<IParameterDesc> paramDescs = loadTacticParameters(children);
+			final Collection<IParameterDesc> paramDescs = loadTacticParameters(children, id);
 			return new ParamTacticDescriptor(element, id, name, description,
 					paramDescs);
 		}
 	}
 
 	private static Collection<IParameterDesc> loadTacticParameters(
-			final IConfigurationElement[] children) {
+			final IConfigurationElement[] children, String id) {
 		final Collection<IParameterDesc> paramDescs = new ArrayList<IParameterDesc>(
 				children.length);
 		final Set<String> knownLabels = new HashSet<String>(children.length);
@@ -172,11 +192,32 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			if (newLabel) {
 				paramDescs.add(param);
 			} else {
-				throw new IllegalArgumentException(
+				final IllegalArgumentException e = new IllegalArgumentException(
 						"duplicate tactic parameter label: " + label);
+				Util.log(e, "while loading parameterized tactic " + id);
+				throw e;
 			}
 		}
 		return paramDescs;
+	}
+
+	private static CombinedTacticDescriptor loadCombinator(
+			IConfigurationElement element, String id, String name,
+			String description) {
+		final String sMinArity = element.getAttribute("minArity");
+		final int minArity = Integer.parseInt(sMinArity);
+		if (minArity <= 0 ) {
+			final IllegalArgumentException e = new IllegalArgumentException(
+					"invalid arity: " + sMinArity
+							+ " expected a number greater than or equal to 1");
+			Util.log(e, "while loading tactic combinator " + id);
+			throw e;
+			
+		}
+		final String sBoundArity = element.getAttribute("boundArity");
+		final boolean isArityBound = Boolean.parseBoolean(sBoundArity);
+		return new CombinedTacticDescriptor(element, id, name, description,
+				minArity, isArityBound);
 	}
 
 	private static String checkAndMakeId(IConfigurationElement element) {

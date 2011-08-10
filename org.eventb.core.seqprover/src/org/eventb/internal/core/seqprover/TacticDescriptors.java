@@ -12,14 +12,17 @@ package org.eventb.internal.core.seqprover;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IAutoTacticRegistry.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterSetting;
 import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ITacticCombinator;
 import org.eventb.core.seqprover.ITacticParameterizer;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.paramTactics.ParameterSetting;
@@ -93,6 +96,12 @@ public class TacticDescriptors {
 
 		protected abstract boolean checkInstance(Object instance);
 
+		protected static ITactic logAndMakeFailure(Throwable t,
+				String logMessage, String failTacMessage) {
+			Util.log(t, logMessage);
+			return BasicTactics.failTac(failTacMessage);
+		}
+
 	}
 
 	public static class TacticDescriptor extends AbstractTacticDescriptor {
@@ -165,26 +174,97 @@ public class TacticDescriptors {
 			try {
 				final ITactic tactic = parameterizer.getTactic(valuation);
 				if (tactic == null) {
-					return logAndMakeFailure(new NullPointerException(
-							"null instance returned"), valuation);
+					throw new NullPointerException(
+							"null tactic returned by parameterizer");
 				}
 				return tactic;
 			} catch (Throwable t) {
-				return logAndMakeFailure(t, valuation);
+				return logAndMakeFailure(t, "while making parameterized tactic " + getTacticID()
+									+ " with parameter valuation " + valuation, "failed to create parameterized tactic "
+						+ getTacticName());
 			}
-		}
-
-		private ITactic logAndMakeFailure(Throwable t,
-				IParameterValuation valuation) {
-			Util.log(t, "while making parameterized tactic " + getTacticID()
-					+ " with parameter valuation " + valuation);
-			return BasicTactics
-					.failTac("failed to create parameterized tactic");
 		}
 
 		@Override
 		protected boolean checkInstance(Object instance) {
 			return instance instanceof ITacticParameterizer;
+		}
+
+	}
+
+	public static class CombinedTacticDescriptor extends
+			AbstractTacticDescriptor implements ICombinedTacticDescriptor {
+
+		private final int minArity;
+		private final boolean isArityBound;
+		private ITacticCombinator combinator;
+
+		public CombinedTacticDescriptor(IConfigurationElement element,
+				String id, String name, String description, int minArity,
+				boolean isArityBound) {
+			super(element, id, name, description);
+			this.minArity = minArity;
+			this.isArityBound = isArityBound;
+		}
+
+		@Override
+		public ITactic getTacticInstance() throws IllegalArgumentException {
+			throw new IllegalArgumentException(
+					"Combined tactic called without tactic arguments: "
+							+ getTacticID());
+		}
+
+		@Override
+		public ITactic getTacticInstance(List<ITactic> tactics)
+				throws IllegalArgumentException {
+			if (combinator == null) {
+				combinator = (ITacticCombinator) loadInstance();
+			}
+			return makeCheckedTactic(tactics);
+		}
+
+		private ITactic makeCheckedTactic(List<ITactic> tactics) {
+			final int size = tactics.size();
+			if (!checkCombinedArity(size)) {
+				throw new IllegalArgumentException(
+						"Invalid number of combined tactics, expected "
+								+ minArity + (isArityBound ? " exactly, " : " or more, ")
+								+ "but was " + size);
+			}
+			try {
+				final ITactic tactic = combinator.getTactic(tactics);
+				if (tactic == null) {
+					throw new NullPointerException(
+							"null tactic returned by combinator");
+				}
+				return tactic;
+			} catch (Throwable t) {
+				return logAndMakeFailure(t, "while making combined tactic "
+						+ getTacticID() + " with tactics " + tactics,
+						"failed to create combined tactic " + getTacticName());
+			}
+		}
+
+		private boolean checkCombinedArity(int size) {
+			if (isArityBound)
+				return size == minArity;
+			else
+				return size >= minArity;
+		}
+
+		@Override
+		public int getMinArity() {
+			return minArity;
+		}
+
+		@Override
+		public boolean isArityBound() {
+			return isArityBound;
+		}
+
+		@Override
+		protected boolean checkInstance(Object instance) {
+			return instance instanceof ITacticCombinator;
 		}
 
 	}

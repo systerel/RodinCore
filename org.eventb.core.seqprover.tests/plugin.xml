@@ -188,7 +188,7 @@
             class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$FakeTacComb"
             description="records which tactic it&apos;s been applied to, then fails"
             id="tacComb"
-            minArity="0"
+            minArity="1"
             name="Fake Tactic Combinator">
       </combinator>
       <combinator
