@@ -15,7 +15,6 @@ import static org.eclipse.swt.SWT.NONE;
 import java.util.Arrays;
 
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -41,8 +40,8 @@ import org.eclipse.swt.widgets.Menu;
  */
 public class DetailedList {
 
-	final List list;
-	final List details;
+	private final List list;
+	private final Composite details;
 	private final Composite buttons;
 
 	private final int minWidth = 200;
@@ -59,7 +58,7 @@ public class DetailedList {
 
 		list = new List(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL);
-		details = new List(composite, SWT.BORDER | SWT.FILL | SWT.NO_FOCUS
+		details = new Composite(composite, SWT.BORDER | SWT.FILL| SWT.NO_FOCUS
 				| SWT.V_SCROLL);
 		buttons = new Composite(composite, SWT.NONE);
 
@@ -68,7 +67,7 @@ public class DetailedList {
 		final GridData gd = getFillData();
 		gd.minimumWidth = minWidth;
 		list.setLayoutData(gd);
-		details.setLayoutData(GridDataFactory.copyData(gd));
+		details.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 		list.addSelectionListener(new SelectionAdapter() {
@@ -131,7 +130,7 @@ public class DetailedList {
 	public void removeSelectedElement() {
 		if (list.getSelectionCount() >= 0) {
 			list.remove(list.getSelectionIndices());
-			details.removeAll();
+			provider.clear();
 		}
 	}
 
@@ -222,7 +221,7 @@ public class DetailedList {
 
 	public void setEnabled(boolean enabled) {
 		list.setEnabled(enabled);
-		details.setEnabled(enabled);
+		details.setEnabled(enabled);// TODO check if applies to children
 		for (Control child : buttons.getChildren()) {
 			final Button button = (Button) child;
 			button.setEnabled(enabled);
@@ -234,11 +233,11 @@ public class DetailedList {
 	 */
 	public void updateDetails() {
 		if (provider != null && list.getSelectionCount() == 1) {
-			details.setItems(provider.getDetails(getSelectedItem()));
+			provider.putDetails(getSelectedItem(), details);
 		} else {
-			details.removeAll();
+			provider.clear();
 		}
-		details.redraw();
+		details.redraw(); // TODO check if applies to children
 	}
 
 	private String getSelectedItem() {
