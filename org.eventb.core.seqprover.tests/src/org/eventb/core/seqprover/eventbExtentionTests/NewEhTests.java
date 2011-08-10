@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,13 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added mathematical extension related tests 
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
+import org.eventb.core.seqprover.reasonerExtentionTests.ExtendedOperators.AssocExt;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
@@ -23,6 +26,12 @@ import org.eventb.internal.core.seqprover.eventbExtensions.Eq;
  */
 public class NewEhTests extends AbstractReasonerTests {
 
+	private static final FormulaFactory FF_WITH_ASSOC = FormulaFactory.getInstance(AssocExt.getInstance());
+	
+	public NewEhTests() {
+		super(FF_WITH_ASSOC);
+	}
+	
 	@Override
 	public String getReasonerID() {
 		return (new Eq()).getReasonerID();
@@ -30,17 +39,29 @@ public class NewEhTests extends AbstractReasonerTests {
 	
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		return new SuccessfullReasonerApplication[]{
+		return new SuccessfullReasonerApplication[] {
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq(" 1=2 ;; 1+1 = 2 |- 1+1+1 = 3 "),
 						new HypothesisReasoner.Input(TestLib.genPred("1=2")),
-						"{}[][1+1=2][1=2;; 2+2=2] |- 2+2+2=3"
-						),
+						"{}[][1+1=2][1=2;; 2+2=2] |- 2+2+2=3"),
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq(" 1+2 = 12 |- 0+1+2+3 = 123 "),
 						new HypothesisReasoner.Input(TestLib.genPred("1+2=12")),
-						"{}[][][1+2=12] |- 0+12+3=123"
-						)
+						"{}[][][1+2=12] |- 0+12+3=123"),
+				new SuccessfullReasonerApplication(
+						// bug 3389537
+						TestLib.genSeq(
+								" 1●2 = 12 ;; 1●2 + 1●2 = 2 |- 1 + 1●2 + 1 = 1●2 ",
+								FF_WITH_ASSOC), new HypothesisReasoner.Input(
+								TestLib.genPred("1●2 = 12", FF_WITH_ASSOC)),
+						"{}[][1●2 + 1●2 = 2][1●2 = 12;; 12+12=2] |- 1+12+1=12"),
+				new SuccessfullReasonerApplication(
+						// bug 3389537
+						TestLib.genSeq(
+								" 1●2 = 12 ;; 0●1●2●3 = 123 |- 0 = 1 + 1●2●3 + 1",
+								FF_WITH_ASSOC), new HypothesisReasoner.Input(
+								TestLib.genPred("1●2 = 12", FF_WITH_ASSOC)),
+						"{}[][0●1●2●3 = 123][1●2=12;; 0●12●3 = 123] |- 0 = 1 + 12●3 + 1"),
 		};
 	}
 
