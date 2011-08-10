@@ -112,6 +112,7 @@ public final class Messages {
 	public static String preferencepage_postautotactic_tab_autoposttactics;
 	public static String preferencepage_postautotactic_tab_profiles;
 	public static String preferencepage_postautotactic_profiledetails_header;
+	public static String preferencepage_postautotactic_tacticdetails_header;
 	public static String preferencepage_postautotactic_newbutton;
 	public static String preferencepage_postautotactic_editbutton;
 	public static String preferencepage_postautotactic_removebutton;
