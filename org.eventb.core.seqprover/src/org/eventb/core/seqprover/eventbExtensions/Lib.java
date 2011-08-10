@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,8 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -46,6 +48,7 @@ import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -419,6 +422,16 @@ public final class Lib {
 		}
 
 		@Override
+		public Expression rewrite(ExtendedExpression expression) {
+			return this.<Expression> doRewrite(expression);
+		}
+
+		@Override
+		public Predicate rewrite(ExtendedPredicate predicate) {
+			return this.<Predicate> doRewrite(predicate);
+		}
+		
+		@Override
 		public Expression rewrite(FreeIdentifier identifier) {
 			return this.<Expression> doRewrite(identifier);
 		}
@@ -436,6 +449,11 @@ public final class Lib {
 		@Override
 		public Predicate rewrite(MultiplePredicate predicate) {
 			return this.<Predicate> doRewrite(predicate);
+		}
+
+		@Override
+		public Predicate rewrite(PredicateVariable predVar) {
+			return this.<Predicate> doRewrite(predVar);
 		}
 
 		@Override
