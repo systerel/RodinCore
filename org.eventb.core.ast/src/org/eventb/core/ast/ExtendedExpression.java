@@ -473,13 +473,16 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 				|| childExpressions.length + childPredicates.length <= index)
 			throw new IllegalArgumentException(
 					"Position is outside the formula");
+		// result type remains unchanged because rewritten child and replacement
+		// bear the same type;
+		// it must be given though, because type synthesizing could fail   
 		if (index < childExpressions.length) {
 			Expression[] newChildExpressions = childExpressions.clone();
 			newChildExpressions[index] = rewriter
 					.rewrite(childExpressions[index]);
 			return rewriter.factory.makeExtendedExpression(extension,
 					newChildExpressions, childPredicates.clone(),
-					getSourceLocation());
+					getSourceLocation(), getType());
 		} else {
 			index = index - childExpressions.length;
 			Predicate[] newChildPredicates = childPredicates.clone();
@@ -487,7 +490,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 					.rewrite(childPredicates[index]);
 			return rewriter.factory.makeExtendedExpression(extension,
 					childExpressions.clone(), newChildPredicates,
-					getSourceLocation());
+					getSourceLocation(), getType());
 		}
 	}
 
