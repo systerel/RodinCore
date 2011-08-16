@@ -92,6 +92,11 @@ public final class Lib {
 	 */
 	public static final FreeIdentifier[] NO_FREE_IDENT = new FreeIdentifier[0]; 
 	
+	/**
+	 * @since 2.3
+	 */
+	public static final Predicate[] NO_PREDICATE = new Predicate[0];
+	
 	public static boolean isTrue(Predicate P) {
 		return P.getTag() == Formula.BTRUE;
 	}
@@ -302,7 +307,7 @@ public final class Lib {
 	}
 
 	static class EquivalenceRewriter extends FixedRewriter<Predicate> {
-
+		// TODO consider associative matching as in EqualityRewriter
 		public EquivalenceRewriter(Predicate from, Predicate to,
 				FormulaFactory ff) {
 			super(from, to, ff);
@@ -317,47 +322,81 @@ public final class Lib {
 			super(from, to, ff);
 		}
 
+		private static Expression[] associativeRewrite(Expression[] exprs, Expression[] match, Expression into) {
+			// i will be index of the first rewritten child
+			int i;
+			for (i = 0; i < exprs.length; ++i) {
+				if (exprs[i].equals(match[0])) {
+					break;
+				}
+			}
+			
+			if (i + match.length > exprs.length)
+				return exprs;
+			
+			for (int j = 1; j < match.length; ++j) {
+				if (!match[j].equals(exprs[i + j])) {
+					return exprs;
+				}
+			}
+			
+			// Replace "rewriteChildren.length" children from index i by "to"
+			Expression[] newChildren = new Expression[exprs.length
+			                                          - match.length + 1];
+			System.arraycopy(exprs, 0, newChildren, 0, i);
+			newChildren[i] = into;
+			System.arraycopy(exprs, i + match.length,
+					newChildren, i + 1, exprs.length - i
+					- match.length);
+			return newChildren;
+		}
+		
+		// given expression is considered associative and has same type as from
+		private Expression associativeRewrite(Expression expr,
+				Expression[] exprChildren, Expression[] fromChildren) {
+			
+			final Expression[] newChildren = associativeRewrite(exprChildren,
+					fromChildren, to);
+			if (newChildren == exprChildren) {
+				return expr;
+			}
+			if (newChildren.length == 1) {
+				return newChildren[0];
+			}
+			final Expression result;
+			if (expr instanceof ExtendedExpression) {
+				result = ff.makeExtendedExpression(
+						((ExtendedExpression) expr).getExtension(),
+						newChildren, NO_PREDICATE, null, expr.getType());
+			} else {
+				result = ff.makeAssociativeExpression(expr.getTag(),
+						newChildren, null);
+			}
+			return result.flatten(ff);
+		}
+		
 		@Override
 		public Expression rewrite(AssociativeExpression expression) {
-			int tag = expression.getTag();
+			final int tag = expression.getTag();
 			if (from.getTag() == tag) {
-				AssociativeExpression aExp = (AssociativeExpression) from;
-				Expression[] children = expression.getChildren();
-				Expression[] rewriteChildren = aExp.getChildren();
+				final Expression[] exprChildren = expression.getChildren();
+				final Expression[] fromChildren = ((AssociativeExpression) from)
+						.getChildren();
+				return associativeRewrite(expression, exprChildren,
+						fromChildren);
+			}
+			return super.rewrite(expression);
+		}
 
-				// i will be index of the first rewritten child
-				int i;
-				for (i = 0; i < children.length; ++i) {
-					if (children[i].equals(rewriteChildren[0])) {
-						break;
-					}
-				}
-
-				if (i + rewriteChildren.length > children.length)
-					return expression;
-
-				for (int j = 1; j < rewriteChildren.length; ++j) {
-					if (!rewriteChildren[j].equals(children[i + j])) {
-						return expression;
-					}
-				}
-
-				// Replace "rewriteChildren.length" children from index i by
-				// "to"
-				Expression[] newChildren = new Expression[children.length
-						- rewriteChildren.length + 1];
-				System.arraycopy(children, 0, newChildren, 0, i);
-				newChildren[i] = to;
-				System.arraycopy(children, i + rewriteChildren.length,
-						newChildren, i + 1, children.length - i
-								- rewriteChildren.length);
-
-				if (newChildren.length == 1) {
-					return newChildren[0];
-				}
-				AssociativeExpression result = ff.makeAssociativeExpression(
-						tag, newChildren, null);
-				return result.flatten(ff);
+		@Override
+		public Expression rewrite(ExtendedExpression expression) {
+			final int tag = expression.getTag();
+			final boolean associative = expression.getExtension().getKind()
+					.getProperties().isAssociative();
+			if (from.getTag() == tag && associative) {
+				return associativeRewrite(expression,
+						expression.getChildExpressions(),
+						((ExtendedExpression) from).getChildExpressions());
 			}
 			return super.rewrite(expression);
 		}
