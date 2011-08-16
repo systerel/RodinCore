@@ -2212,13 +2212,12 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <p>
 	 * The given position must designate a sub-formula. The replaced and new
 	 * sub-formula must be of the same kind (bound identifier declaration,
-	 * expression or predicate), and be both type-checked. Moreover, the must
+	 * expression or predicate), and be both type-checked. Moreover, they must
 	 * bear the same time (except for predicates which do not bear a type).
 	 * <p>
 	 * </p>
 	 * This operation is not supported for assignments, nor untyped formulas.
-	 * The returned formula is type-checked.
-	 * </p>
+	 * The returned formula is type-checked. </p>
 	 * 
 	 * @param position
 	 *            the position of the sub-formula to rewrite
