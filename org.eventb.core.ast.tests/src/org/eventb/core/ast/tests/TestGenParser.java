@@ -604,7 +604,7 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(new SourceLocation(3, 5), childFalseOrFalse.getSourceLocation());
 	}
 	
-	private static final IExpressionExtension DIRECT_PRODUCT = new IExpressionExtension() {
+	public static final IExpressionExtension DIRECT_PRODUCT = new IExpressionExtension() {
 
 		@Override
 		public Predicate getWDPredicate(IExtendedFormula formula,
@@ -847,7 +847,7 @@ public class TestGenParser extends AbstractTests {
 
 	}
 
-	private static final IExpressionExtension MONEY = new Money(true);
+	public static final IExpressionExtension MONEY = new Money(true);
 
 	// verify that the newly introduced symbol cannot be an identifier
 	public void testExtensionSymbol() throws Exception {
@@ -1815,7 +1815,7 @@ public class TestGenParser extends AbstractTests {
 		
 	}
 	
-	private static final IExpressionExtension EMAX = new IExpressionExtension() {
+	public static final IExpressionExtension EMAX = new IExpressionExtension() {
 		private static final String SYNTAX_SYMBOL = "emax";
 		private static final String OPERATOR_ID = "Extension Maximum";
 		
@@ -2595,7 +2595,7 @@ public class TestGenParser extends AbstractTests {
 		assertEquals("∀x⦂ℤ·⊤", predStr);
 	}
 	
-	private static final IPredicateExtension EXT_PRIME = new IPredicateExtension() {
+	public static final IPredicateExtension EXT_PRIME = new IPredicateExtension() {
 		private static final String SYMBOL = "prime";
 		private static final String ID = "Ext Prime";
 		

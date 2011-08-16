@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,11 @@
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
+ *     Systerel - added mathematical extensions
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FORALL;
@@ -31,9 +33,16 @@ import static org.eventb.core.ast.Formula.POW;
 import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
+import static org.eventb.core.ast.tests.AbstractTests.LIST_DT;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
+import static org.eventb.core.ast.tests.TestGenParser.EXT_PRIME;
+import static org.eventb.core.ast.tests.TestGenParser.MONEY;
 
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -47,6 +56,8 @@ import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -63,6 +74,7 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.ast.extension.IFormulaExtension;
 
 /**
  * Provides simplistic methods for creating new formulae without too much
@@ -76,7 +88,14 @@ import org.eventb.core.ast.UnaryPredicate;
  */
 public class FastFactory {
 
-	public static FormulaFactory ff = FormulaFactory.getDefault();
+	public static final Predicate[] NO_PREDICATE = new Predicate[0];
+	public static final Expression[] NO_EXPRESSION = new Expression[0];
+	
+	private static final Set<IFormulaExtension> EXTNS = new HashSet<IFormulaExtension>(Arrays.asList(EXT_PRIME, MONEY));
+	static {
+		EXTNS.addAll(LIST_DT.getExtensions());
+	}
+	public static FormulaFactory ff = FormulaFactory.getInstance(EXTNS);
 
 	public static AssociativeExpression mAssociativeExpression(
 			Expression... children) {
@@ -325,5 +344,37 @@ public class FastFactory {
 
 	public static PredicateVariable mPredicateVariable(String name) {
 		return ff.makePredicateVariable(name, null);
+	}
+	
+	public static ExtendedPredicate mExtendedPredicate(Expression e) {
+		return ff.makeExtendedPredicate(EXT_PRIME, Collections.singleton(e),
+				Collections.<Predicate> emptySet(), null);
+	}
+	
+	public static ExtendedExpression mExtendedExpression(
+			Expression... expressions) {
+		return ff
+				.makeExtendedExpression(MONEY, expressions, NO_PREDICATE, null);
+	}
+
+	public static ExtendedExpression mListCons(Expression... expressions) {
+		final Type listType;
+		if (expressions.length == 0) {
+			listType = null;
+		} else {
+			final Type eType = expressions[0].getType();
+			listType = ff.makeParametricType(singletonList(eType),
+					LIST_DT.getTypeConstructor());
+		}
+		ExtendedExpression result = ff.makeExtendedExpression(
+				LIST_DT.getConstructor("NIL"), NO_EXPRESSION, NO_PREDICATE,
+				null, listType);
+		for (int i = expressions.length - 1; i >= 0; i--) {
+			final Expression[] exprs = new Expression[] { expressions[i],
+					result };
+			result = ff.makeExtendedExpression(LIST_DT.getConstructor("CONS"),
+					exprs, NO_PREDICATE, null, listType);
+		}
+		return result;
 	}
 }

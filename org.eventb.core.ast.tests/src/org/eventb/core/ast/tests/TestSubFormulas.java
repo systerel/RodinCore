@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - added support for predicate variables
  *     Systerel - added support for mathematical extensions
  *     Systerel - added tests for child index
+ *     Systerel - added tests for mathematical extensions
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
@@ -40,9 +41,12 @@ import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
+import static org.eventb.core.ast.tests.FastFactory.mExtendedExpression;
+import static org.eventb.core.ast.tests.FastFactory.mExtendedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
+import static org.eventb.core.ast.tests.FastFactory.mListCons;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mMaplet;
 import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
@@ -85,6 +89,7 @@ import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
@@ -92,7 +97,6 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.ast.QuantifiedExpression.Form;
 
 public class TestSubFormulas extends TestCase {
 
@@ -1007,6 +1011,15 @@ public class TestSubFormulas extends TestCase {
 				mUnaryPredicate(NOT, equals),
 				mUnaryPredicate(NOT, btrue)
 		);
+		checkRootPosition(
+				mExtendedPredicate(id_x),
+				mExtendedPredicate(id_y));
+		checkRootPosition(
+				mExtendedExpression(id_x, id_y),
+				mExtendedExpression(id_y, id_x));
+		checkRootPosition(
+				mListCons(id_x, id_y),
+				mListCons(id_y, id_x));
 	}
 	
 	/**
@@ -1033,6 +1046,14 @@ public class TestSubFormulas extends TestCase {
 								mBinaryExpression(MINUS, id_X, id_y))
 				)
 		);
+		checkPositions(idFilter,
+				mExtendedExpression(id_x, id_y),
+				"0",
+				mExtendedExpression(id_X, id_y));
+		checkPositions(idFilter,
+				mListCons(id_x),
+				"0",
+				mListCons(id_X));
 	}
 	
 	private final IFormulaRewriter identity = new DefaultRewriter(false, ff);
