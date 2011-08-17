@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -41,6 +40,8 @@ import java.util.List;
  * 
  * @author Farhad Mehta
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IAutoTacticRegistry {
 
@@ -90,6 +91,31 @@ public interface IAutoTacticRegistry {
 	 */
 	ITacticDescriptor getTacticDescriptor(String tacticID)
 			throws IllegalArgumentException;
+
+	/**
+	 * Returns instantiators for all registered parameterized tactics.
+	 * <p>
+	 * The order of the returned array is of no significance and may change
+	 * across multiple calls of the method.
+	 * </p>
+	 * 
+	 * @return an array of instantiators
+	 * @return
+	 * @since 2.3
+	 */
+	IParamTacticInstantiator[] getParamTacticInstantiators();
+
+	/**
+	 * Returns instantiators for all registered tactic combinators.
+	 * <p>
+	 * The order of the returned array is of no significance and may change
+	 * across multiple calls of the method.
+	 * </p>
+	 * 
+	 * @return an array of instantiators
+	 * @since 2.3
+	 */
+	ICombinedTacticInstantiator[] getCombinedTacticInstantiators();
 
 	/**
 	 * Returns an instance of the tactic extension with the given id.
@@ -228,93 +254,32 @@ public interface IAutoTacticRegistry {
 	}
 
 	/**
-	 * Adds parameter related API.
+	 * Common protocol for instantiated parameterized tactic descriptors.
 	 * 
+	 * @author Nicolas Beauger
+	 * @since 2.3
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 * @noextend This interface is not intended to be extended by clients.
-	 * @since 2.3
 	 */
-	public interface IParamTacticDescriptor extends ITacticDescriptor {
+	interface IParamTacticDescriptor extends ITacticDescriptor {
 
 		/**
-		 * Returns a collection of parameter descriptors.
+		 * Returns the valuation of the described parameterized tactic.
 		 * 
-		 * @return a collection of parameter descriptors
+		 * @return a parameter valuation
 		 */
-		Collection<IParameterDesc> getParameterDescs();
-
-		/**
-		 * Returns a parameter setting initialized with default parameter
-		 * values.
-		 * 
-		 * @return a parameter setting
-		 * @since 2.3
-		 */
-		IParameterSetting makeParameterSetting();
-
-		/**
-		 * Returns an instance of the tactic with the given parameters. Returns
-		 * a failure tactic in case there is a problem calling the
-		 * parameterizer.
-		 * 
-		 * @return a tactic
-		 * @throws IllegalArgumentException
-		 *             in case there is a problem instantiating the
-		 *             parameterizer
-		 * @since 2.3
-		 */
-		ITactic getTacticInstance(IParameterValuation valuation)
-				throws IllegalArgumentException;
-
+		IParameterValuation getValuation();
 	}
 
 	/**
-	 * Common protocol for tactic combinators.
+	 * Common protocol for instantiated combined tactic descriptors.
 	 * 
-	 * @noimplement This interface is not intended to be implemented by clients.
-	 * @noextend This interface is not intended to be extended by clients.
 	 * @author Nicolas Beauger
 	 * @since 2.3
+	 * @noimplement This interface is not intended to be implemented by clients.
+	 * @noextend This interface is not intended to be extended by clients.
 	 */
-	public interface ICombinedTacticDescriptor extends ITacticDescriptor {
-
-		/**
-		 * Returns the tactic combining given tactics.
-		 * 
-		 * @param tactics
-		 *            a list of tactic descriptors
-		 * @return the combined tactic
-		 * @throws IllegalArgumentException
-		 *             if the size of the given list is not valid regarding
-		 *             specified arity
-		 */
-		ITactic getTacticInstance(List<ITactic> tactics)
-				throws IllegalArgumentException;
-
-		/**
-		 * Returns the minimum arity of this combinator. This is the minimum
-		 * required size of the list given to {@link #getTacticInstance(List)}.
-		 * 
-		 * @return an integer greater than or equal to 1
-		 */
-		int getMinArity();
-		
-		/**
-		 * Returns whether the arity of this combinator is bound.
-		 * <p>
-		 * If <code>true</code>, the size of the list given to
-		 * {@link #getTacticInstance(List)} must be equal to
-		 * {@link #getMinArity()}.
-		 * </p>
-		 * <p>
-		 * If <code>false</code>, the size of the list given to
-		 * {@link #getTacticInstance(List)} must be greater than or equal to
-		 * {@link #getMinArity()}.
-		 * </p>
-		 * 
-		 * @return
-		 */
-		boolean isArityBound();
+	interface ICombinedTacticDescriptor extends ITacticDescriptor {
+		List<ITacticDescriptor> getCombinedTactics();
 	}
-	
 }

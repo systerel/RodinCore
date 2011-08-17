@@ -24,17 +24,19 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.ICombinedTacticInstantiator;
+import org.eventb.core.seqprover.IParamTacticInstantiator;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.internal.core.seqprover.TacticDescriptors.AbstractTacticDescriptor;
-import org.eventb.internal.core.seqprover.TacticDescriptors.CombinedTacticDescriptor;
-import org.eventb.internal.core.seqprover.TacticDescriptors.ParamTacticDescriptor;
+import org.eventb.internal.core.seqprover.TacticDescriptors.CombinedTacticInstantiator;
+import org.eventb.internal.core.seqprover.TacticDescriptors.ParamTacticInstantiator;
 import org.eventb.internal.core.seqprover.TacticDescriptors.TacticDescriptor;
+import org.eventb.internal.core.seqprover.TacticDescriptors.UninstantiableTacticDescriptor;
 import org.eventb.internal.core.seqprover.paramTactics.ParameterDesc;
 
 /**
- * Singeleton class implementing the auto tactic registry.
+ * Singleton class implementing the auto tactic registry.
  * 
  * 
  * @see org.eventb.core.seqprover.IAutoTacticRegistry
@@ -58,7 +60,9 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	 */
 	public static boolean DEBUG;
 	
-	private Map<String, AbstractTacticDescriptor> registry;
+	private Map<String, ITacticDescriptor> registry;
+	private final Map<String, IParamTacticInstantiator> paramInstantiators = new HashMap<String, IParamTacticInstantiator>();
+	private final Map<String, ICombinedTacticInstantiator> combinedInstantiators = new HashMap<String, ICombinedTacticInstantiator>();
 	
 	/**
 	 * Private default constructor enforces that only one instance of this class
@@ -96,17 +100,16 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		return getTacticDescriptor(id).getTacticName();
 	}
 	
-
 	@Deprecated
 	public String getTacticDescription(String id) throws IllegalArgumentException {
 		return getTacticDescriptor(id).getTacticDescription();
 	}
 
-	public  synchronized AbstractTacticDescriptor getTacticDescriptor(String id) throws IllegalArgumentException{
+	public  synchronized ITacticDescriptor getTacticDescriptor(String id) throws IllegalArgumentException{
 		if (registry == null) {
 			loadRegistry();
 		}
-		AbstractTacticDescriptor tacticDesc = registry.get(id);
+		final ITacticDescriptor tacticDesc = registry.get(id);
 		if (tacticDesc == null) {
 			// Unknown tactic id, throw exception.
 			throw new IllegalArgumentException("Tactic with id:" + id + " not registered.");
@@ -122,7 +125,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			// Prevents loading by two threads in parallel
 			return;
 		}
-		registry = new HashMap<String, AbstractTacticDescriptor>();
+		registry = new HashMap<String, ITacticDescriptor>();
 		loadTacticDescriptors(TACTICS_ID);
 		loadTacticDescriptors(COMBINATORS_ID);
 	}
@@ -132,25 +135,23 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		final IExtensionPoint xPoint = xRegistry.getExtensionPoint(extPointId);
 		for (IConfigurationElement element : xPoint.getConfigurationElements()) {
 			try {
-				final AbstractTacticDescriptor tacticDesc = loadTacticDescriptor(element);
-				final String id = tacticDesc.getTacticID();
-				if (id != null) {
-					AbstractTacticDescriptor oldInfo = registry.put(id,
-							tacticDesc);
-					if (oldInfo != null) {
-						registry.put(id, oldInfo);
-						Util.log(null, "Duplicate tactic extension " + id
-								+ " ignored");
-					} else {
-						if (DEBUG)
-							System.out.println("Registered tactic extension "
-									+ id);
-					}
-				}
+				loadTacticExtension(element);
 			} catch (Exception e) {
 				// logged before
 				continue;
 			}
+		}
+	}
+
+	private static <T> void putCheckDuplicate(Map<String, T> map, String id,
+			T t) {
+		final T old = map.put(id, t);
+		if (old != null) {
+			map.put(id, old);
+			Util.log(null, "Duplicate tactic extension " + id + " ignored");
+		} else {
+			if (DEBUG)
+				System.out.println("Registered tactic extension " + id);
 		}
 	}
 
@@ -159,27 +160,78 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	// - a parameterized auto tactic
 	// - a tactic combinator
 	// they share common attributes, while others are specific
-	private static AbstractTacticDescriptor loadTacticDescriptor(IConfigurationElement element) {
+	private void loadTacticExtension(IConfigurationElement element) {
 		// common attributes
-		final String id = checkAndMakeId(element);
-		final String name = element.getAttribute("name");
-		String description = element.getAttribute("description");
-		if (description == null) description = "";
-		
-		// specific loading
-		if (element.getDeclaringExtension().getExtensionPointUniqueIdentifier().equals(COMBINATORS_ID)) {
-			return loadCombinator(element, id, name, description);
+		final UninstantiableTacticDescriptor baseDesc = loadBaseDesc(element);
+		if (baseDesc == null) {
+			return;
 		}
-		final IConfigurationElement[] children = element.getChildren("tacticParameter");
-		if (children.length == 0) {
-			return new TacticDescriptor(element, id, name, description);
+		final String id = baseDesc.getTacticID();
+
+		// specific loading
+		if (isCombinator(element)) {
+			final ICombinedTacticInstantiator comb = loadCombinator(baseDesc,
+					element);
+			putCheckDuplicate(combinedInstantiators, id, comb);
+			return;
+		} else if (hasParameters(element)) {
+			final IParamTacticInstantiator param = loadParameterized(baseDesc,
+					element);
+			putCheckDuplicate(paramInstantiators, id, param);
+			// add tactic with default parameters
+			final ITacticDescriptor defaultDesc = param.instantiate(param
+					.makeParameterSetting());
+			putCheckDuplicate(registry, id, defaultDesc);
 		} else {
-			final Collection<IParameterDesc> paramDescs = loadTacticParameters(children, id);
-			return new ParamTacticDescriptor(element, id, name, description,
-					paramDescs);
+			final ITacticDescriptor desc = loadSimpleTactic(baseDesc, element);
+			putCheckDuplicate(registry, id, desc);
 		}
 	}
 
+	private static UninstantiableTacticDescriptor loadBaseDesc(IConfigurationElement element) {
+		final String id = checkAndMakeId(element);
+		if (id == null) {
+			return null;
+		}
+		final String name = element.getAttribute("name");
+		String description = element.getAttribute("description");
+		if (description == null)
+			description = "";
+
+		return new UninstantiableTacticDescriptor(
+				id, name, description);
+
+	}
+
+	private static boolean isCombinator(IConfigurationElement element) {
+		return element.getDeclaringExtension()
+				.getExtensionPointUniqueIdentifier().equals(COMBINATORS_ID);
+	}
+	
+	private static boolean hasParameters(
+			IConfigurationElement element) {
+		return getParameters(element).length > 0;
+	}
+
+	private static IConfigurationElement[] getParameters(
+			IConfigurationElement element) {
+		return element.getChildren("tacticParameter");
+	}
+	
+	private static ITacticDescriptor loadSimpleTactic(
+			UninstantiableTacticDescriptor desc, IConfigurationElement element) {
+		return new TacticDescriptor(element, desc.getTacticID(),
+				desc.getTacticName(), desc.getTacticDescription());
+	}
+	
+	private static IParamTacticInstantiator loadParameterized(
+			UninstantiableTacticDescriptor baseDesc, IConfigurationElement element) {
+		final Collection<IParameterDesc> paramDescs = loadTacticParameters(
+				getParameters(element), baseDesc.getTacticID());
+		return new ParamTacticInstantiator(
+				baseDesc, paramDescs, element);
+	}
+	
 	private static Collection<IParameterDesc> loadTacticParameters(
 			final IConfigurationElement[] children, String id) {
 		final Collection<IParameterDesc> paramDescs = new ArrayList<IParameterDesc>(
@@ -201,23 +253,22 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		return paramDescs;
 	}
 
-	private static CombinedTacticDescriptor loadCombinator(
-			IConfigurationElement element, String id, String name,
-			String description) {
+	private static ICombinedTacticInstantiator loadCombinator(
+			UninstantiableTacticDescriptor desc, IConfigurationElement element) {
 		final String sMinArity = element.getAttribute("minArity");
 		final int minArity = Integer.parseInt(sMinArity);
-		if (minArity <= 0 ) {
+		if (minArity <= 0) {
 			final IllegalArgumentException e = new IllegalArgumentException(
 					"invalid arity: " + sMinArity
 							+ " expected a number greater than or equal to 1");
-			Util.log(e, "while loading tactic combinator " + id);
+			Util.log(e, "while loading tactic combinator " + desc.getTacticID());
 			throw e;
-			
 		}
+
 		final String sBoundArity = element.getAttribute("boundArity");
 		final boolean isArityBound = Boolean.parseBoolean(sBoundArity);
-		return new CombinedTacticDescriptor(element, id, name, description,
-				minArity, isArityBound);
+		return new CombinedTacticInstantiator(desc, minArity, isArityBound,
+				element);
 	}
 
 	private static String checkAndMakeId(IConfigurationElement element) {
@@ -251,5 +302,23 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			if (Character.isWhitespace(str.charAt(i))) return true;
 		}
 		return false;
+	}
+
+	@Override
+	public IParamTacticInstantiator[] getParamTacticInstantiators() {
+		if (registry == null) {
+			loadRegistry();
+		}
+		return paramInstantiators.values().toArray(
+				new IParamTacticInstantiator[paramInstantiators.size()]);
+	}
+
+	@Override
+	public ICombinedTacticInstantiator[] getCombinedTacticInstantiators() {
+		if (registry == null) {
+			loadRegistry();
+		}
+		return combinedInstantiators.values().toArray(
+				new ICombinedTacticInstantiator[combinedInstantiators.size()]);
 	}
 }

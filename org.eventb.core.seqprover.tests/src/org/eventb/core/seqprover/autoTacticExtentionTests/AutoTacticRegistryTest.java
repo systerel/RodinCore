@@ -25,9 +25,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ICombinedTacticDescriptor;
-import org.eventb.core.seqprover.IAutoTacticRegistry.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ICombinedTacticInstantiator;
+import org.eventb.core.seqprover.IParamTacticInstantiator;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterDesc.ParameterType;
 import org.eventb.core.seqprover.IParameterSetting;
@@ -41,7 +41,6 @@ import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.NoPa
 import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.OneOrMore;
 import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.Two;
 import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.Zero;
-import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
 import org.junit.Test;
 
 /**
@@ -93,11 +92,11 @@ public class AutoTacticRegistryTest {
 	}
 	
 	private void assertParameterizerLoadingFailure(String id) {
-		assertKnown(id);
-		final ITacticDescriptor desc = registry.getTacticDescriptor(id);
-		// Illegal Argument Expected
+		final IParamTacticInstantiator param = findParam(id);
+		final IParameterSetting defaultValuation = param.makeParameterSetting();
 		try {
-			desc.getTacticInstance();
+			// Illegal Argument Expected
+			param.instantiate(defaultValuation);
 			fail("illegal argument exception expected");
 		} catch (IllegalArgumentException e) {
 			// as expected
@@ -243,8 +242,7 @@ public class AutoTacticRegistryTest {
 	// check an extension with each type of parameters and verify the descriptors
 	@Test
 	public void testParameterDesc() {
-		final IParamTacticDescriptor tacDesc = (IParamTacticDescriptor) registry
-				.getTacticDescriptor(TacWithParams.TACTIC_ID);
+		final IParamTacticInstantiator tacDesc = findParam(TacWithParams.TACTIC_ID);
 		final Collection<IParameterDesc> paramDescs = tacDesc.getParameterDescs();
 		assertParamDesc(paramDescs, "bool1", "BOOL", "true",
 		 "bool2", "BOOL", "false",
@@ -254,29 +252,38 @@ public class AutoTacticRegistryTest {
 		
 	}
 
+	private IParamTacticInstantiator findParam(String id) {
+		final IParamTacticInstantiator[] paramTacticInstantiators = registry
+				.getParamTacticInstantiators();
+		for (IParamTacticInstantiator param : paramTacticInstantiators) {
+			if (param.getTacticDescriptor().getTacticID().equals(id)) {
+				return param;
+			}
+		}
+		return null;
+	}
+	
+	public void testgetInstanceUninstantiatedParamDesc() throws Exception {
+		fail("to be implemented");
+	}
+
+	// verifies that the tactic with default parameter values is registered
 	@Test
 	public void testDefaultParameterValues() throws Exception {
-		final IParamTacticDescriptor tacDesc = (IParamTacticDescriptor) registry
+		final ITacticDescriptor tacDesc = registry
 				.getTacticDescriptor(TacWithParams.TACTIC_ID);
-		final IParameterSetting parameters = tacDesc.makeParameterSetting();
 
 		// unmodified parameters
 		final FakeTactic unmodifiedTactic = (FakeTactic) tacDesc
-				.getTacticInstance(parameters);
+				.getTacticInstance();
 		unmodifiedTactic.assertParameterValues(true, false, 314,
 				0x7fffffffffffffffL, "formulæ");
 		
-		// same if we ask for the default instance
-		final FakeTactic defaultInstance = (FakeTactic) tacDesc
-				.getTacticInstance();
-		defaultInstance.assertParameterValues(true, false, 314,
-				0x7fffffffffffffffL, "formulæ");
 	}
 	
 	@Test
 	public void testSetParameterValues() throws Exception {
-		final IParamTacticDescriptor tacDesc = (IParamTacticDescriptor) registry
-				.getTacticDescriptor(TacWithParams.TACTIC_ID);
+		final IParamTacticInstantiator tacDesc = findParam(TacWithParams.TACTIC_ID);
 		final IParameterSetting parameters = tacDesc.makeParameterSetting();
 		
 		parameters.setBoolean("bool1", false);
@@ -286,7 +293,7 @@ public class AutoTacticRegistryTest {
 		parameters.setString("string1", "blue");
 
 		final FakeTactic customTactic = (FakeTactic) tacDesc
-				.getTacticInstance(parameters);
+				.instantiate(parameters).getTacticInstance();
 		customTactic.assertParameterValues(false, true, 51,
 				Long.MIN_VALUE, "blue");
 	}
@@ -315,9 +322,10 @@ public class AutoTacticRegistryTest {
 	}
 
 	// class not instance of ITactic nor ITacticParameterizer
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void testBadInstanceNoImplement() throws Exception {
-		assertParameterizerLoadingFailure("org.eventb.core.seqprover.tests.badInstance");
+		final ITacticDescriptor desc = registry.getTacticDescriptor("org.eventb.core.seqprover.tests.badInstance");
+		desc.getTacticInstance();
 	}
 	
 	// class instance of ITactic with parameters => error
@@ -327,9 +335,10 @@ public class AutoTacticRegistryTest {
 	}
 	
 	// class instance of ITacticParameterizer without parameters => error
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void testParameterizerWithoutParam() throws Exception {
-		assertParameterizerLoadingFailure("org.eventb.core.seqprover.tests.noParam");
+		final ITacticDescriptor desc = registry.getTacticDescriptor("org.eventb.core.seqprover.tests.noParam");
+		desc.getTacticInstance();
 	}
 
 	@Test
@@ -363,44 +372,49 @@ public class AutoTacticRegistryTest {
 	public void testDuplicateLabel() throws Exception {
 		assertNotKnown("org.eventb.core.seqprover.tests.duplLabel");
 	}
-	
+
+	private ICombinedTacticInstantiator findComb(String id) {
+		for (ICombinedTacticInstantiator comb : registry
+				.getCombinedTacticInstantiators()) {
+			if (comb.getTacticDescriptor().getTacticID().equals(id)) {
+				return comb;
+			}
+		}
+		return null;
+	}
+
 	@Test
 	public void testCombinedTacticDescriptor() throws Exception {
-		assertKnown(FakeTacComb.TACTIC_ID);
-		final ICombinedTacticDescriptor desc = (ICombinedTacticDescriptor) registry
-				.getTacticDescriptor(FakeTacComb.TACTIC_ID);
-		final List<ITactic> combined = Collections
-				.<ITactic> singletonList(new TrueGoalTac());
-		final ITactic instance = desc.getTacticInstance(combined);
+		final ICombinedTacticInstantiator comb = findComb(FakeTacComb.TACTIC_ID);
+		final List<ITacticDescriptor> combined = Collections
+				.singletonList(registry
+						.getTacticDescriptor(IdentityTactic.TACTIC_ID));
+		final ITactic instance = comb.instantiate(combined).getTacticInstance();
 
 		final Object result = instance.apply(null, null);
 		assertEquals(FakeTacComb.MESSAGE, result);
 	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testCombinedGetInstanceNoArg() throws Exception {
-		final ICombinedTacticDescriptor desc = (ICombinedTacticDescriptor) registry
-				.getTacticDescriptor(FakeTacComb.TACTIC_ID);
-		// must throw illegal argument exception
-		desc.getTacticInstance();
+	
+	public void testgetInstanceUninstantiatedCombinedDesc() throws Exception {
+		
 	}
-
+	
 	@Test(expected = IllegalArgumentException.class)
 	public void testCombinedOneOrMore() throws Exception {
-		final ICombinedTacticDescriptor desc = (ICombinedTacticDescriptor) registry
+		final ICombinedTacticInstantiator desc = (ICombinedTacticInstantiator) registry
 				.getTacticDescriptor(OneOrMore.TACTIC_ID);
 		// must throw illegal argument exception
-		desc.getTacticInstance(Collections.<ITactic> emptyList());
+		desc.instantiate(Collections.<ITacticDescriptor> emptyList());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCombinedTwo() throws Exception {
-		final ICombinedTacticDescriptor desc = (ICombinedTacticDescriptor) registry
+		final ICombinedTacticInstantiator desc = (ICombinedTacticInstantiator) registry
 				.getTacticDescriptor(Two.TACTIC_ID);
 		// must throw illegal argument exception
-		final List<ITactic> combined = Collections
-				.<ITactic> singletonList(new TrueGoalTac());
-		desc.getTacticInstance(combined);
+		final List<ITacticDescriptor> combined = Collections
+				.<ITacticDescriptor> singletonList(registry.getTacticDescriptor(IdentityTactic.TACTIC_ID));
+		desc.instantiate(combined);
 	}
 	
 	@Test
