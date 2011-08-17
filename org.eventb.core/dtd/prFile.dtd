@@ -1,0 +1,203 @@
+<!--
+   Copyright (c) 2006-09 ETH Zurich and others.
+
+   All rights reserved. This program and the accompanying materials
+   are made available under the terms of the Eclipse Public License v1.0
+   which accompanies this distribution, and is available at
+   http://www.eclipse.org/legal/epl-v10.html
+   
+   Contributors:
+   		ETH Zurich - Initial API and implementation
+   		
+   DTD for Event-B proof files.
+
+   This DTD concerns proof files that are manipulated by the proof obligation
+   manager.
+-->
+
+<!-- Element Names -->
+<!ENTITY % prFile            "org.eventb.core.prFile">
+<!ENTITY % prProof           "org.eventb.core.prProof">
+<!ENTITY % prIdent           "org.eventb.core.prIdent">
+<!ENTITY % prProofRule       "org.eventb.core.prRule">
+<!ENTITY % prPred            "org.eventb.core.prPred">
+<!ENTITY % prExpr            "org.eventb.core.prExpr">
+<!ENTITY % prRuleAntecedent  "org.eventb.core.prAnte">
+<!ENTITY % prHypAction       "org.eventb.core.prHypAction">
+<!ENTITY % prStrInp          "org.eventb.core.prString">
+<!ENTITY % prPredRef         "org.eventb.core.prPredRef">
+<!ENTITY % prExprRef         "org.eventb.core.prExprRef">
+
+
+<!-- Attribute Names -->
+<!ENTITY % confidence        "org.eventb.core.confidence">
+<!ENTITY % prGoal            "org.eventb.core.prGoal">
+<!ENTITY % prHyps            "org.eventb.core.prHyps">
+<!ENTITY % prInfHyps         "org.eventb.core.prInfHyps">
+<!ENTITY % prStoreRef	     "org.eventb.core.prRef">
+<!ENTITY % prString          "org.eventb.core.prSValue">
+<!ENTITY % prIdents          "org.eventb.core.prFresh">
+<!ENTITY % type              "org.eventb.core.type">
+<!ENTITY % predicate         "org.eventb.core.predicate">
+<!ENTITY % expression        "org.eventb.core.expression">
+<!ENTITY % comment           "org.eventb.core.comment">
+<!ENTITY % prDisplay         "org.eventb.core.prDisplay">
+<!ENTITY % prSets            "org.eventb.core.prSets">
+
+
+<!-- Attribute Values -->
+<!ENTITY % int "CDATA">
+    <!-- an integer in decimal -->
+
+<!ENTITY % String "CDATA">
+    <!-- a string of characters -->
+
+<!ENTITY % PredRef "CDATA">
+    <!-- a reference to a predicate in the store (its name) -->
+
+<!ENTITY % PredRefs "CDATA">
+    <!-- a list of references to predicates or expressions in the store (names
+         separated by commas) -->
+
+<!ENTITY % ExprRefs "CDATA">
+    <!-- a list of references to expressions in the store (names
+         separated by commas) -->
+
+<!ENTITY % IdentList "CDATA">
+    <!-- a list of identifier names separated by commas -->
+
+<!ENTITY % MathExpr "CDATA">
+    <!-- an expression in the mathematical language -->
+
+<!ENTITY % MathIdent "CDATA">
+    <!-- an identifier in the mathematical language -->
+
+<!ENTITY % MathPred "CDATA">
+    <!-- a predicate in the mathematical language -->
+
+<!ENTITY % MathType "CDATA">
+    <!-- a type in the mathematical language -->
+
+<!-- Common Attribute Declarations -->
+<!ENTITY % CommentAttDecl "%comment; CDATA #IMPLIED">
+    <!-- declaration of the comment attribute -->
+
+<!ENTITY % NameAttDecl "name CDATA #REQUIRED">
+    <!-- declaration of the name attribute, common to all elements -->
+
+<!ENTITY % IdentAttDecl "contents %MathIdent; #REQUIRED">
+    <!-- declaration of the identifier attribute, for variables -->
+
+<!ENTITY % ExprAttDecl "contents %MathExpr; #REQUIRED">
+    <!-- declaration of the expression attribute, for variants -->
+
+
+
+<!--============= Start of element type declarations =============-->
+
+<!ELEMENT %prFile;
+  ( %prProof;
+  )*
+  >
+<!--ATTRLIST %prFile;-->
+
+<!-- TODO make contents compulsory -->
+<!ELEMENT %prProof; 
+  ( %prProofRule;
+  , (%prIdent;)*
+  , (%prPred;)*
+  , (%prExpr;)*
+  )?
+  >
+<!ATTLIST %prProof;
+  %NameAttDecl;
+  %confidence;  %int;          #IMPLIED
+  %prGoal;      %PredRef;      #IMPLIED
+  %prHyps;      %PredRefs;     #IMPLIED
+  %prIdents;    %IdentList;    #IMPLIED
+  %prSets;      %IdentList;    #IMPLIED
+  %CommentAttDecl;
+  >
+
+<!ELEMENT %prProofRule;
+  ( (%prRuleAntecedent;)*
+  , ( %prStrInp;
+    | %prPredRef;
+    | %prExprRef;
+    )*
+  )
+  >
+<!ATTLIST %prProofRule;
+  %NameAttDecl;
+  %confidence;  %int;          #REQUIRED
+  %prGoal;      %PredRef;      #IMPLIED
+  %prHyps;      %PredRefs;     #IMPLIED
+  %prDisplay;   %String;       #REQUIRED
+  >
+
+<!ELEMENT %prRuleAntecedent;
+  ( ( %prHypAction;
+    | %prIdent;
+    )*
+  , (%prProofRule;)?
+  )
+  >
+<!ATTLIST %prRuleAntecedent;
+  %NameAttDecl;
+  %prGoal;      %PredRef;      #IMPLIED
+  %prHyps;      %PredRefs;     #IMPLIED
+  %CommentAttDecl;
+  >
+
+<!ELEMENT %prHypAction;
+ ( %prIdent;
+ )*
+ >
+<!ATTLIST %prHypAction;
+  %NameAttDecl;
+  %prHyps;      %PredRefs;     #REQUIRED
+  %prInfHyps;   %PredRefs;     #IMPLIED
+  >
+
+<!ELEMENT %prStrInp; EMPTY>
+<!ATTLIST %prStrInp;
+  %NameAttDecl;
+  %prString;    %String;       #REQUIRED
+  >
+
+<!ELEMENT %prPredRef; EMPTY>
+<!ATTLIST %prPredRef;
+  %NameAttDecl;
+  %prStoreRef;  %PredRefs;     #REQUIRED
+  >
+
+<!ELEMENT %prExprRef; EMPTY>
+<!ATTLIST %prExprRef;
+  %NameAttDecl;
+  %prStoreRef;  %ExprRefs;     #REQUIRED
+  >
+
+<!ELEMENT %prIdent; EMPTY>
+<!ATTLIST %prIdent;
+  %NameAttDecl;
+  %type;        %MathType;     #REQUIRED
+  >
+
+<!ELEMENT %prPred;
+  ( %prIdent;
+  )*
+  >
+<!ATTLIST %prPred;
+  %NameAttDecl;
+  %predicate;   %MathPred;     #REQUIRED
+  >
+
+<!ELEMENT %prExpr;
+  ( %prIdent;
+  )*
+  >
+<!ATTLIST %prExpr;
+  %NameAttDecl;
+  %expression;  %MathExpr;     #REQUIRED
+  >
+

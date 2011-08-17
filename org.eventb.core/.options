@@ -1,0 +1,16 @@
+org.eventb.core/debug = true
+org.eventb.core/debug/sc = false
+org.eventb.core/debug/sc/state = false
+org.eventb.core/debug/sc/moduleconf = false
+org.eventb.core/debug/sc/modules = false
+org.eventb.core/debug/sc/markers = false
+org.eventb.core/debug/pog = false
+org.eventb.core/debug/pog/state = false
+org.eventb.core/debug/pog/moduleconf = false
+org.eventb.core/debug/pog/modules = false
+org.eventb.core/debug/pog/trivial = false
+org.eventb.core/debug/pom = false
+org.eventb.core/debug/pom/recalculate = false
+org.eventb.core/debug/poloader = false
+org.eventb.core/debug/pm = false
+org.eventb.core/perf/pom/proofReuse = false
