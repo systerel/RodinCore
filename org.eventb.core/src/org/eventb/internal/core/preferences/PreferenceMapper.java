@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eventb.core.preferences.IPrefElementTranslator;
+import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
 
 /**
  * Maps a preference to a {@link java.util.Map}.
@@ -59,6 +60,9 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 			} else {
 				final String key = entry[0];
 				final T value = translator.inject(entry[1]);
+				if (value == null) {
+					throw PreferenceException.getInstance();
+				}
 				map.put(key, value);
 			}
 		}

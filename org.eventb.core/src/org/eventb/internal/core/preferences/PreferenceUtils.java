@@ -14,6 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.ICombinedTacticInstantiator;
+import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
+
 /**
  * Utility class for preferences using.
  */
@@ -24,6 +30,21 @@ public class PreferenceUtils {
 	 * Client should not try to reset this flag.
 	 */
 	public static boolean DEBUG = false;
+	
+	public static class PreferenceException extends RuntimeException {
+
+		private static final long serialVersionUID = -4388540765121161963L;
+		
+		private static final PreferenceException INSTANCE = new PreferenceException();
+		
+		private PreferenceException() {
+			// singleton
+		}
+		
+		public static PreferenceException getInstance() {
+			return INSTANCE;
+		}
+	}
 	
 	/**
 	 * Returns a string representation of a list of input objects. The objects
@@ -66,6 +87,14 @@ public class PreferenceUtils {
 			result.add((String) st.nextElement());
 		}
 		return result.toArray(new String[result.size()]);
+	}
+
+	// for compatibility
+	public static ITacticDescriptor loopOnAllPending(List<ITacticDescriptor> descs, String id) {
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		final ICombinedTacticInstantiator inst = reg
+				.getCombinedTacticInstantiator(AutoTactics.LoopOnAllPending.COMBINATOR_ID);
+		return inst.instantiate(descs, id);
 	}
 
 }

@@ -13,6 +13,7 @@ package org.eventb.internal.core.preferences;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
+import static org.eventb.internal.core.preferences.PreferenceUtils.loopOnAllPending;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pom.POMTacticPreference;
+import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
 
 /**
  * Facade for the managment of auto and post tactics.
@@ -43,9 +45,9 @@ import org.eventb.internal.core.pom.POMTacticPreference;
 public class AutoPostTacticManager implements IAutoPostTacticManager {
 
 	/**
-	 * This string identifies the qualifier used to store de tactic preferences
-	 * by the UI. It shows a dependency to the UI which is the price to pay if
-	 * one wants to use the PreferenceStore API owned by Jface.
+	 * This string identifies the qualifier used to store tactic preferences by
+	 * the UI. It shows a dependency to the UI which is the price to pay if one
+	 * wants to use the PreferenceStore API owned by Jface.
 	 */
 	private static final String PREF_QUALIFIER = "org.eventb.ui";
 
@@ -59,16 +61,15 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 	private final IPreferencesService preferencesService;
 
 	// Profiles cache to avoid systematic re-calculation of the profiles.
-	private final CachedPreferenceMap<List<ITacticDescriptor>> profilesCache;
+	private final CachedPreferenceMap<ITacticDescriptor> profilesCache;
 
 	private AutoPostTacticManager() {
-		final IPrefElementTranslator<List<ITacticDescriptor>> preferenceElementList = new ListPreference<ITacticDescriptor>(
-				new TacticPrefElement());
-		profilesCache = new CachedPreferenceMap<List<ITacticDescriptor>>(
-				preferenceElementList);
+		final IPrefElementTranslator<ITacticDescriptor> preferenceElement = new TacticPrefElement();
+		profilesCache = new CachedPreferenceMap<ITacticDescriptor>(
+				preferenceElement);
 		preferencesService = Platform.getPreferencesService();
-		autoTacPref.setSelectedDescriptors(autoTacPref.getDefaultDescriptors());
-		postTacPref.setSelectedDescriptors(postTacPref.getDefaultDescriptors());
+		autoTacPref.setSelectedDescriptor(autoTacPref.getDefaultDescriptor());
+		postTacPref.setSelectedDescriptor(postTacPref.getDefaultDescriptor());
 	}
 
 	public static IAutoPostTacticManager getDefault() {
@@ -100,7 +101,16 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 			return auto ? autoTacPref.getSelectedComposedTactic() : postTacPref
 					.getSelectedComposedTactic();
 		}
-		profilesCache.inject(profiles);
+		try {
+			profilesCache.inject(profiles);
+		} catch (PreferenceException e) {
+			// backward compatibility: was stored as lists of tactics
+			// try to recover
+			final boolean success = recover(profiles);
+			if (!success) {
+				Util.log(e, "while loading tactic preference:\n" + profiles);
+			}
+		}
 		final String choice;
 		if (auto) {
 			choice = preferencesService.getString(PREF_QUALIFIER,
@@ -111,7 +121,29 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 		}
 		return getCorrespondingTactic(choice, auto);
 	}
-	
+
+	private boolean recover(String profiles) {
+		final IPrefElementTranslator<List<ITacticDescriptor>> oldPreference = new ListPreference<ITacticDescriptor>(
+				new TacticPrefElement());
+		final CachedPreferenceMap<List<ITacticDescriptor>> oldCache = new CachedPreferenceMap<List<ITacticDescriptor>>(
+				oldPreference);
+		try {
+			oldCache.inject(profiles);
+		} catch (PreferenceException x) {
+			Util.log(x, "while trying to recover tactic preference");
+			// give up
+			return false;
+		}
+		for (IPrefMapEntry<List<ITacticDescriptor>> entry : oldCache
+				.getEntries()) {
+			final String id = entry.getKey();
+			final List<ITacticDescriptor> value = entry.getValue();
+			final ITacticDescriptor tac = loopOnAllPending(value, id);
+			profilesCache.add(id, tac);
+		}
+		return true;
+	}
+
 	private ITactic getCorrespondingTactic(String choice, boolean auto) {
 		final ITactic composedTactic;
 		if (auto)
@@ -129,17 +161,16 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 	}
 
 	private ITactic getTactic(String choice, IAutoTacticPreference pref) {
-		final List<ITacticDescriptor> profileDescriptors;
-		final IPrefMapEntry<List<ITacticDescriptor>> entry = profilesCache
+		final IPrefMapEntry<ITacticDescriptor> entry = profilesCache
 				.getEntry(choice);
 		if (entry == null) {
 			return null;
 		}
-		profileDescriptors = entry.getValue();
-		if (profileDescriptors == null) {
+		final ITacticDescriptor profileDescriptor = entry.getValue();
+		if (profileDescriptor == null) {
 			return null;
 		}
-		pref.setSelectedDescriptors(profileDescriptors);
+		pref.setSelectedDescriptor(profileDescriptor);
 		return pref.getSelectedComposedTactic();
 	}
 
