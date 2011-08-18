@@ -96,7 +96,7 @@ public class AutoTacticRegistryTest {
 		final IParameterSetting defaultValuation = param.makeParameterSetting();
 		try {
 			// Illegal Argument Expected
-			param.instantiate(defaultValuation);
+			param.instantiate(defaultValuation, "id");
 			fail("illegal argument exception expected");
 		} catch (IllegalArgumentException e) {
 			// as expected
@@ -293,7 +293,7 @@ public class AutoTacticRegistryTest {
 		parameters.setString("string1", "blue");
 
 		final FakeTactic customTactic = (FakeTactic) tacDesc
-				.instantiate(parameters).getTacticInstance();
+				.instantiate(parameters, "id").getTacticInstance();
 		customTactic.assertParameterValues(false, true, 51,
 				Long.MIN_VALUE, "blue");
 	}
@@ -389,7 +389,7 @@ public class AutoTacticRegistryTest {
 		final List<ITacticDescriptor> combined = Collections
 				.singletonList(registry
 						.getTacticDescriptor(IdentityTactic.TACTIC_ID));
-		final ITactic instance = comb.instantiate(combined).getTacticInstance();
+		final ITactic instance = comb.instantiate(combined, "id").getTacticInstance();
 
 		final Object result = instance.apply(null, null);
 		assertEquals(FakeTacComb.MESSAGE, result);
@@ -404,7 +404,7 @@ public class AutoTacticRegistryTest {
 		final ICombinedTacticInstantiator desc = (ICombinedTacticInstantiator) registry
 				.getTacticDescriptor(OneOrMore.TACTIC_ID);
 		// must throw illegal argument exception
-		desc.instantiate(Collections.<ITacticDescriptor> emptyList());
+		desc.instantiate(Collections.<ITacticDescriptor> emptyList(), "id");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -414,7 +414,7 @@ public class AutoTacticRegistryTest {
 		// must throw illegal argument exception
 		final List<ITacticDescriptor> combined = Collections
 				.<ITacticDescriptor> singletonList(registry.getTacticDescriptor(IdentityTactic.TACTIC_ID));
-		desc.instantiate(combined);
+		desc.instantiate(combined, "id");
 	}
 	
 	@Test

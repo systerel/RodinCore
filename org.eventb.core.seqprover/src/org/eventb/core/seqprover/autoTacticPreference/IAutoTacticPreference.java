@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - used tactic combinators
  *******************************************************************************/
-
 package org.eventb.core.seqprover.autoTacticPreference;
 
 import java.util.Collection;
@@ -32,7 +32,8 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
  *         </ul>
  *         </p>
  * @since 1.0
- * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IAutoTacticPreference {
 
@@ -61,9 +62,19 @@ public interface IAutoTacticPreference {
 	 * <p>
 	 * 
 	 * @return array of tactic descriptors {@link ITacticDescriptor}.
+	 * @deprecated use {@link #getDefaultDescriptor()}
 	 */
+	@Deprecated
 	public abstract List<ITacticDescriptor> getDefaultDescriptors();
 
+	/**
+	 * Returns the descriptor of the default tactic.
+	 * 
+	 * @return
+	 * @since 2.3
+	 */
+	ITacticDescriptor getDefaultDescriptor();
+	
 	/**
 	 * Enable/Disable the tactic container.
 	 * 
@@ -96,11 +107,22 @@ public interface IAutoTacticPreference {
 	public ITactic getDefaultComposedTactic();
 
 	/**
+	 * Sets selected descriptor to the given tactic descriptor.
+	 * 
+	 * @param tacticDesc
+	 *            a tactic descriptor
+	 * @since 2.3
+	 */
+	void setSelectedDescriptor(ITacticDescriptor tacticDesc);
+	
+	/**
 	 * Set the contained tactics to be an array of tactic descriptors.
 	 * 
 	 * @param tacticDescs
 	 *            a list of tactic descriptors {@link ITacticDescriptor}.
+	 * @deprecated use {@link #setSelectedDescriptor(ITacticDescriptor)}
 	 */
+	@Deprecated
 	public void setSelectedDescriptors(List<ITacticDescriptor> tacticDescs);
 
 }

@@ -1,6 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used tactic combinators
+ *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticPreference;
-
-import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +18,12 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ICombinedTacticInstantiator;
+import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.internal.core.seqprover.tacticPreference.TacticPreferenceUtils;
 
 /**
@@ -28,7 +39,7 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 
 	private ITactic defaultComposedTactic = null;
 	
-	private List<ITacticDescriptor> selectedDescriptors;
+	private ITacticDescriptor selectedDescriptor;
 	
 	// The identifier of the extension point.
 	private String registryID;
@@ -134,32 +145,32 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	 */
 	public ITactic getSelectedComposedTactic() {
 		if (selectedComposedTactic == null) {
-			selectedComposedTactic = composeTactics(selectedDescriptors);
+			selectedComposedTactic = selectedDescriptor.getTacticInstance();
 		}
 		return selectedComposedTactic;
 	}
 
-	protected ITactic composeTactics(List<ITacticDescriptor> tacticDescs) {
-		ITactic [] tactics = new ITactic[tacticDescs.size()];
-		int i = 0;
-		for (ITacticDescriptor tacticDesc : tacticDescs) {
-			tactics[i] = tacticDesc.getTacticInstance();
-			++i;
-		}
-		return loopOnAllPending(tactics);
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	public void setSelectedDescriptor(ITacticDescriptor tacticDesc) {
+		selectedDescriptor = tacticDesc;
+		selectedComposedTactic = null;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#setSelectedDescriptors(org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor[])
 	 */
 	public void setSelectedDescriptors(List<ITacticDescriptor> tacticDescs) {
-		selectedDescriptors = tacticDescs;
+		selectedDescriptor = loopOnAllPending(tacticDescs, registryID
+				+ ".selected");
 		selectedComposedTactic = null;
 	}
 
 	public ITactic getDefaultComposedTactic() {
 		if (defaultComposedTactic == null) {
-			defaultComposedTactic = composeTactics(getDefaultDescriptors());
+			defaultComposedTactic = getDefaultDescriptor().getTacticInstance();
 		}
 		return defaultComposedTactic;
 	}
@@ -169,6 +180,23 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	 */
 	public List<ITacticDescriptor>  getDefaultDescriptors() {
 		return stringsToTacticDescriptors(getDefaultIDs());
+	}
+	
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	public ITacticDescriptor getDefaultDescriptor() {
+		return loopOnAllPending(getDefaultDescriptors(), registryID
+				+ ".default");
+	}
+
+	// for compatibility
+	private static ITacticDescriptor loopOnAllPending(List<ITacticDescriptor> descs, String id) {
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		final ICombinedTacticInstantiator inst = reg
+				.getCombinedTacticInstantiator(AutoTactics.LoopOnAllPending.COMBINATOR_ID);
+		return inst.instantiate(descs, id);
 	}
 
 	protected abstract String [] getDefaultIDs();

@@ -52,15 +52,20 @@ public interface IParamTacticInstantiator {
 	IParameterSetting makeParameterSetting();
 
 	/**
-	 * Returns an instance of the tactic with the given parameters. Returns a
-	 * failure tactic in case there is a problem calling the parameterizer.
+	 * Returns an instance of the tactic with the given parameters and the given
+	 * id. Returns a failure tactic in case there is a problem calling the
+	 * parameterizer.
 	 * 
+	 * @param valuation
+	 *            a parameter valuation
+	 * @param id
+	 *            the id of the resulting tactic
 	 * @return a tactic
 	 * @throws IllegalArgumentException
 	 *             in case there is a problem instantiating the parameterizer
 	 * @since 2.3
 	 */
-	IParamTacticDescriptor instantiate(IParameterValuation valuation)
+	IParamTacticDescriptor instantiate(IParameterValuation valuation, String id)
 			throws IllegalArgumentException;
 
 }

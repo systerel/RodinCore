@@ -106,6 +106,17 @@ public interface IAutoTacticRegistry {
 	IParamTacticInstantiator[] getParamTacticInstantiators();
 
 	/**
+	 * Returns parameterizer descriptor with given id, or <code>null</code> if
+	 * it is not registered.
+	 * 
+	 * @param id
+	 *            a parameterizer id
+	 * @return a parameterizer descriptor, or <code>null</code>
+	 * @since 2.3
+	 */
+	IParamTacticInstantiator getParamTacticInstantiator(String id);
+
+	/**
 	 * Returns instantiators for all registered tactic combinators.
 	 * <p>
 	 * The order of the returned array is of no significance and may change
@@ -116,6 +127,17 @@ public interface IAutoTacticRegistry {
 	 * @since 2.3
 	 */
 	ICombinedTacticInstantiator[] getCombinedTacticInstantiators();
+
+	/**
+	 * Returns combinator descriptor with given id, or <code>null</code> if it
+	 * is not registered.
+	 * 
+	 * @param id
+	 *            a combinator id
+	 * @return a combinator descriptor, or <code>null</code>
+	 * @since 2.3
+	 */
+	ICombinedTacticInstantiator getCombinedTacticInstantiator(String id);
 
 	/**
 	 * Returns an instance of the tactic extension with the given id.
@@ -264,6 +286,13 @@ public interface IAutoTacticRegistry {
 	interface IParamTacticDescriptor extends ITacticDescriptor {
 
 		/**
+		 * Returns the id of the parameterizer used to instantiate this tactic.
+		 * 
+		 * @return a combinator id
+		 */
+		String getParameterizerId();
+
+		/**
 		 * Returns the valuation of the described parameterized tactic.
 		 * 
 		 * @return a parameter valuation
@@ -280,6 +309,19 @@ public interface IAutoTacticRegistry {
 	 * @noextend This interface is not intended to be extended by clients.
 	 */
 	interface ICombinedTacticDescriptor extends ITacticDescriptor {
+
+		/**
+		 * Returns the id of the combinator used to instantiate this tactic.
+		 * 
+		 * @return a combinator id
+		 */
+		String getCombinatorId();
+
+		/**
+		 * Returns the list of combined tactics.
+		 * 
+		 * @return a list of tactic descriptors
+		 */
 		List<ITacticDescriptor> getCombinedTactics();
 	}
 }

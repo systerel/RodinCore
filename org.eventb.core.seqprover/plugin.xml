@@ -654,5 +654,16 @@
             name="%funAppInDomGoalTacName">
       </autoTactic>
    </extension>
+   <extension
+         point="org.eventb.core.seqprover.tacticCombinators">
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$LoopOnAllPending"
+            description="loops on all pending proof nodes"
+            id="loopOnAllPending"
+            minArity="1"
+            name="%loopOnAllPendingName">
+      </combinator>
+   </extension>
 
 </plugin>

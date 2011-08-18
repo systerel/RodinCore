@@ -181,15 +181,16 @@ public class TacticDescriptors {
 		}
 
 		@Override
-		public IParamTacticDescriptor instantiate(IParameterValuation valuation)
+		public IParamTacticDescriptor instantiate(
+				IParameterValuation valuation, String id)
 				throws IllegalArgumentException {
 			if (parameterizer == null) {
 				parameterizer = loadInstance(element,
 						ITacticParameterizer.class, descriptor.getTacticID());
 			}
-			return new ParamTacticDescriptor(descriptor.getTacticID(),
-					descriptor.getTacticName(),
-					descriptor.getTacticDescription(), parameterizer, valuation);
+			return new ParamTacticDescriptor(id, descriptor.getTacticName(),
+					descriptor.getTacticDescription(), parameterizer,
+					descriptor.getTacticID(), valuation);
 		}
 
 	}
@@ -197,15 +198,17 @@ public class TacticDescriptors {
 	public static class ParamTacticDescriptor extends AbstractTacticDescriptor
 			implements IParamTacticDescriptor {
 
-		private final IParameterValuation valuation;
 		private final ITacticParameterizer parameterizer;
+		private final String parameterizerId;
+		private final IParameterValuation valuation;
 		private ITactic tactic;
 
 		public ParamTacticDescriptor(String id, String name,
 				String description, ITacticParameterizer parameterizer,
-				IParameterValuation valuation) {
+				String parameterizerId, IParameterValuation valuation) {
 			super(id, name, description);
 			this.parameterizer = parameterizer;
+			this.parameterizerId = parameterizerId;
 			this.valuation = valuation;
 		}
 
@@ -228,6 +231,11 @@ public class TacticDescriptors {
 						"failed to create parameterized tactic "
 								+ getTacticName());
 			}
+		}
+
+		@Override
+		public String getParameterizerId() {
+			return parameterizerId;
 		}
 
 		@Override
@@ -262,7 +270,7 @@ public class TacticDescriptors {
 
 		@Override
 		public ICombinedTacticDescriptor instantiate(
-				List<ITacticDescriptor> tactics)
+				List<ITacticDescriptor> tactics, String id)
 				throws IllegalArgumentException {
 			if (combinator == null) {
 				combinator = loadInstance(element, ITacticCombinator.class,
@@ -276,9 +284,9 @@ public class TacticDescriptors {
 								+ (isArityBound ? " exactly, " : " or more, ")
 								+ "but was " + size);
 			}
-			return new CombinedTacticDescriptor(descriptor.getTacticID(),
-					descriptor.getTacticName(),
-					descriptor.getTacticDescription(), combinator, tactics);
+			return new CombinedTacticDescriptor(id, descriptor.getTacticName(),
+					descriptor.getTacticDescription(), combinator,
+					descriptor.getTacticID(), tactics);
 		}
 
 		private boolean checkCombinedArity(int size) {
@@ -304,15 +312,17 @@ public class TacticDescriptors {
 			AbstractTacticDescriptor implements ICombinedTacticDescriptor {
 
 		private final ITacticCombinator combinator;
+		private final String combinatorId;
 		private final List<ITacticDescriptor> combinedDescs;
 		private final List<ITactic> combined;
 		private ITactic tactic;
 
 		public CombinedTacticDescriptor(String id, String name,
 				String description, ITacticCombinator combinator,
-				List<ITacticDescriptor> combinedDescs) {
+				String combinatorId, List<ITacticDescriptor> combinedDescs) {
 			super(id, name, description);
 			this.combinator = combinator;
+			this.combinatorId = combinatorId;
 			this.combinedDescs = combinedDescs;
 			this.combined = new ArrayList<ITactic>(combinedDescs.size());
 		}
@@ -338,6 +348,11 @@ public class TacticDescriptors {
 						+ getTacticID() + " with tactics " + combinedDescs,
 						"failed to create combined tactic " + getTacticName());
 			}
+		}
+
+		@Override
+		public String getCombinatorId() {
+			return combinatorId;
 		}
 
 		@Override

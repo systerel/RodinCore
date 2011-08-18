@@ -17,7 +17,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
  * Common protocol for combined tactic instantiators.
- * 
+ * TODO rename into ICombinatorDescriptor, same  for param instantiator
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @author Nicolas Beauger
@@ -42,12 +42,14 @@ public interface ICombinedTacticInstantiator {
 	 * 
 	 * @param tactics
 	 *            a list of tactic descriptors
+	 * @param id
+	 *            the id of the resulting tactic
 	 * @return the combined tactic
 	 * @throws IllegalArgumentException
 	 *             if the size of the given list is not valid regarding
 	 *             specified arity
 	 */
-	ICombinedTacticDescriptor instantiate(List<ITacticDescriptor> tactics)
+	ICombinedTacticDescriptor instantiate(List<ITacticDescriptor> tactics, String id)
 			throws IllegalArgumentException;
 
 	/**

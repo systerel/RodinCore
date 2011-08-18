@@ -179,8 +179,8 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 					element);
 			putCheckDuplicate(paramInstantiators, id, param);
 			// add tactic with default parameters
-			final ITacticDescriptor defaultDesc = param.instantiate(param
-					.makeParameterSetting());
+			final ITacticDescriptor defaultDesc = param.instantiate(
+					param.makeParameterSetting(), id + ".default");
 			putCheckDuplicate(registry, id, defaultDesc);
 		} else {
 			final ITacticDescriptor desc = loadSimpleTactic(baseDesc, element);
@@ -314,11 +314,27 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	}
 
 	@Override
+	public IParamTacticInstantiator getParamTacticInstantiator(String id) {
+		if (registry == null) {
+			loadRegistry();
+		}
+		return paramInstantiators.get(id);
+	}
+
+	@Override
 	public ICombinedTacticInstantiator[] getCombinedTacticInstantiators() {
 		if (registry == null) {
 			loadRegistry();
 		}
 		return combinedInstantiators.values().toArray(
 				new ICombinedTacticInstantiator[combinedInstantiators.size()]);
+	}
+	
+	@Override
+	public ICombinedTacticInstantiator getCombinedTacticInstantiator(String id) {
+		if (registry == null) {
+			loadRegistry();
+		}
+		return combinedInstantiators.get(id);
 	}
 }
