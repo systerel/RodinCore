@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.paramTactics;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterDesc.ParameterType;
@@ -26,9 +29,15 @@ import org.eventb.internal.core.seqprover.paramTactics.ParameterValues.StringPar
 // TODO toString()
 public class ParameterSetting implements IParameterSetting {
 
+	private final Collection<IParameterDesc> paramDescs;
 	private final Map<String, AbstractParameterValue<?>> valuation = new LinkedHashMap<String, AbstractParameterValue<?>>();
 
 	public ParameterSetting(Collection<IParameterDesc> paramDescs) {
+		this.paramDescs = new ArrayList<IParameterDesc>(paramDescs);
+		initDefaultValuation();
+	}
+
+	private void initDefaultValuation() {
 		AbstractParameterValue<?> value = null;
 		for (IParameterDesc desc : paramDescs) {
 			switch (desc.getType()) {
@@ -49,6 +58,11 @@ public class ParameterSetting implements IParameterSetting {
 			}
 			valuation.put(desc.getLabel(), value);
 		}
+	}
+
+	@Override
+	public Collection<IParameterDesc> getParameterDescs() {
+		return Collections.unmodifiableCollection(paramDescs);
 	}
 
 	private AbstractParameterValue<?> checkAndGet(String label, ParameterType expectedType) {
@@ -114,6 +128,19 @@ public class ParameterSetting implements IParameterSetting {
 		final AbstractParameterValue<?> paramValue = checkAndGet(label,
 				ParameterType.STRING);
 		return (String) paramValue.getValue();
+	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		for (Entry<String, AbstractParameterValue<?>> val : valuation
+				.entrySet()) {
+			sb.append(val.getKey());
+			sb.append(" = ");
+			sb.append(val.getValue());
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 	
 }

@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
+import java.util.Collection;
+
 /**
- * Common protocol for parameter values.
+ * Common protocol for parameter valuations.
  * 
  * @author Nicolas Beauger
  * @since 2.3
@@ -19,6 +21,13 @@ package org.eventb.core.seqprover;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IParameterValuation {
+
+	/**
+	 * Returns descriptors for parameters of this valuation.
+	 * 
+	 * @return a collection of parameter descriptors
+	 */
+	Collection<IParameterDesc> getParameterDescs();
 
 	boolean getBoolean(String label);
 

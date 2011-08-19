@@ -22,10 +22,8 @@ import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
-import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterValuation;
-import org.eventb.core.seqprover.SequentProver;
 
 /**
  * @author Nicolas Beauger
@@ -95,11 +93,8 @@ public class TacticDetailsProvider implements IDetailsProvider {
 			detailList.setVisible(true);
 		} else if (desc instanceof IParamTacticDescriptor) {
 			final IParamTacticDescriptor paramDesc = (IParamTacticDescriptor) desc;
-			final IParameterizerDescriptor parameterizer = SequentProver
-					.getAutoTacticRegistry().getParameterizerDescriptor(
-							paramDesc.getParameterizerId());
-			final Collection<IParameterDesc> params = parameterizer.getParameterDescs();
 			final IParameterValuation valuation = paramDesc.getValuation();
+			final Collection<IParameterDesc> params = valuation.getParameterDescs();
 			final TableColumn labelCol = paramTable.getColumn(0);
 			labelCol.setText("label");//TODO at init time
 			final TableColumn valueCol = paramTable.getColumn(1);

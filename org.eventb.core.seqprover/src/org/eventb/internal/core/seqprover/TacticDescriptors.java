@@ -166,11 +166,6 @@ public class TacticDescriptors {
 		}
 
 		@Override
-		public Collection<IParameterDesc> getParameterDescs() {
-			return Collections.unmodifiableCollection(parameterDescs);
-		}
-
-		@Override
 		public IParameterSetting makeParameterSetting() {
 			return new ParameterSetting(parameterDescs);
 		}

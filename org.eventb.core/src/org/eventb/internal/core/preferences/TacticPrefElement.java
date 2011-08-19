@@ -115,18 +115,14 @@ public class TacticPrefElement implements
 		@Override
 		public String extract(IParamTacticDescriptor desc) {
 			final StringBuilder sb = new StringBuilder();
-			final IAutoTacticRegistry reg = SequentProver
-					.getAutoTacticRegistry();
 			final String parameterizerId = desc.getParameterizerId();
-			final IParameterizerDescriptor parameterizer = reg
-					.getParameterizerDescriptor(parameterizerId);
-
+			
 			sb.append(parameterizerId);
 			sb.append(SEPARATOR_ID);
 			sb.append(desc.getTacticID());
 
 			final IParameterValuation valuation = desc.getValuation();
-			for (IParameterDesc paramDesc : parameterizer.getParameterDescs()) {
+			for (IParameterDesc paramDesc : valuation.getParameterDescs()) {
 				sb.append(SEPARATOR_PARAM);
 				sb.append(paramDesc.getLabel());
 				sb.append(SEPARATOR_TYPE);

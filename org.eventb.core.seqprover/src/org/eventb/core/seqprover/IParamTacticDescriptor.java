@@ -21,8 +21,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IParamTacticDescriptor extends ITacticDescriptor {
-	// TODO this API is heavy, generally we don't know the parameters and
-	// have to fetch them through the parameterizer
+
 	/**
 	 * Returns the id of the parameterizer used to instantiate this tactic.
 	 * 

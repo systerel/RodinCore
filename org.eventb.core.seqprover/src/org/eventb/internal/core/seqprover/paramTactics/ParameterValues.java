@@ -35,6 +35,10 @@ public class ParameterValues {
 			this.value = asValue(value);
 		}
 		
+		@Override
+		public String toString() {
+			return value.toString();
+		}
 	}
 
 	public static class BoolParameterValue extends AbstractParameterValue<Boolean> {

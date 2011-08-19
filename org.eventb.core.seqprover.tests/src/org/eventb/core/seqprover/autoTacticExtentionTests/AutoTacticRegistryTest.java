@@ -244,7 +244,8 @@ public class AutoTacticRegistryTest {
 	@Test
 	public void testParameterDesc() {
 		final IParameterizerDescriptor parameterizer = findParam(TacWithParams.TACTIC_ID);
-		final Collection<IParameterDesc> paramDescs = parameterizer.getParameterDescs();
+		final Collection<IParameterDesc> paramDescs = parameterizer
+				.makeParameterSetting().getParameterDescs();
 		assertParamDesc(paramDescs, "bool1", "BOOL", "true",
 		 "bool2", "BOOL", "false",
 		 "int1", "INT", "314"

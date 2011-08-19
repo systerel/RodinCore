@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
-import java.util.Collection;
-
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
@@ -38,13 +36,6 @@ public interface IParameterizerDescriptor {
 	 * @return a tactic descriptor
 	 */
 	ITacticDescriptor getTacticDescriptor();
-
-	/**
-	 * Returns a collection of parameter descriptors.
-	 * 
-	 * @return a collection of parameter descriptors
-	 */
-	Collection<IParameterDesc> getParameterDescs();
 
 	/**
 	 * Returns a parameter setting initialized with default parameter values.
