@@ -13,4 +13,5 @@ org.eventb.core/debug/pom = false
 org.eventb.core/debug/pom/recalculate = false
 org.eventb.core/debug/poloader = false
 org.eventb.core/debug/pm = false
+org.eventb.core/debug/preferences = false
 org.eventb.core/perf/pom/proofReuse = false
