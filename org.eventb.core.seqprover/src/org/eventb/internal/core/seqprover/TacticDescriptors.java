@@ -20,7 +20,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
-import org.eventb.core.seqprover.IParamTacticInstantiator;
+import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterSetting;
 import org.eventb.core.seqprover.IParameterValuation;
@@ -144,8 +144,8 @@ public class TacticDescriptors {
 
 	}
 
-	public static class ParamTacticInstantiator implements
-			IParamTacticInstantiator {
+	public static class ParameterizerDescriptor implements
+			IParameterizerDescriptor {
 
 		private final UninstantiableTacticDescriptor descriptor;
 		private final Collection<IParameterDesc> parameterDescs;
@@ -156,7 +156,7 @@ public class TacticDescriptors {
 		 */
 		private ITacticParameterizer parameterizer;
 
-		public ParamTacticInstantiator(
+		public ParameterizerDescriptor(
 				UninstantiableTacticDescriptor descriptor,
 				Collection<IParameterDesc> parameterDescs,
 				IConfigurationElement element) {

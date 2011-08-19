@@ -15,13 +15,17 @@ import java.util.Collection;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
- * Adds parameter related API.
+ * Common protocol for parameterizer descriptors.
+ * <p>
+ * Parameterizers are contributed by providing tactic parameters to auto tactic
+ * extensions.
+ * </p>
  * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 2.3
  */
-public interface IParamTacticInstantiator {
+public interface IParameterizerDescriptor {
 
 	/**
 	 * Returns the descriptor of the tactic to instantiate.

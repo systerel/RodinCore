@@ -102,7 +102,7 @@ public interface IAutoTacticRegistry {
 	 * @return
 	 * @since 2.3
 	 */
-	IParamTacticInstantiator[] getParamTacticInstantiators();
+	IParameterizerDescriptor[] getParamTacticInstantiators();
 
 	/**
 	 * Returns parameterizer descriptor with given id, or <code>null</code> if
@@ -113,7 +113,7 @@ public interface IAutoTacticRegistry {
 	 * @return a parameterizer descriptor, or <code>null</code>
 	 * @since 2.3
 	 */
-	IParamTacticInstantiator getParamTacticInstantiator(String id);
+	IParameterizerDescriptor getParamTacticInstantiator(String id);
 
 	/**
 	 * Returns descriptors for all registered tactic combinators.

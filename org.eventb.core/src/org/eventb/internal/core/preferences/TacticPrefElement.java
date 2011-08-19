@@ -22,7 +22,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
-import org.eventb.core.seqprover.IParamTacticInstantiator;
+import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterDesc.ParameterType;
 import org.eventb.core.seqprover.IParameterSetting;
@@ -118,7 +118,7 @@ public class TacticPrefElement implements
 			final IAutoTacticRegistry reg = SequentProver
 					.getAutoTacticRegistry();
 			final String parameterizerId = desc.getParameterizerId();
-			final IParamTacticInstantiator parameterizer = reg
+			final IParameterizerDescriptor parameterizer = reg
 					.getParamTacticInstantiator(parameterizerId);
 
 			sb.append(parameterizerId);
@@ -163,7 +163,7 @@ public class TacticPrefElement implements
 			if (sId.length != 2) return null;
 			final String parameterizerId = sId[0];
 
-			final IParamTacticInstantiator parameterizer = reg
+			final IParameterizerDescriptor parameterizer = reg
 					.getParamTacticInstantiator(parameterizerId);
 			final IParameterSetting paramSetting = parameterizer.makeParameterSetting();
 			

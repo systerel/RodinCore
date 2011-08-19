@@ -25,12 +25,12 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
-import org.eventb.core.seqprover.IParamTacticInstantiator;
+import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.seqprover.TacticDescriptors.CombinatorDescriptor;
-import org.eventb.internal.core.seqprover.TacticDescriptors.ParamTacticInstantiator;
+import org.eventb.internal.core.seqprover.TacticDescriptors.ParameterizerDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.TacticDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.UninstantiableTacticDescriptor;
 import org.eventb.internal.core.seqprover.paramTactics.ParameterDesc;
@@ -61,7 +61,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	public static boolean DEBUG;
 	
 	private Map<String, ITacticDescriptor> registry;
-	private final Map<String, IParamTacticInstantiator> paramInstantiators = new HashMap<String, IParamTacticInstantiator>();
+	private final Map<String, IParameterizerDescriptor> parameterizers = new HashMap<String, IParameterizerDescriptor>();
 	private final Map<String, ICombinatorDescriptor> combinators = new HashMap<String, ICombinatorDescriptor>();
 	
 	/**
@@ -175,12 +175,12 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			putCheckDuplicate(combinators, id, comb);
 			return;
 		} else if (hasParameters(element)) {
-			final IParamTacticInstantiator param = loadParameterized(baseDesc,
+			final IParameterizerDescriptor parameterizer = loadParameterizer(baseDesc,
 					element);
-			putCheckDuplicate(paramInstantiators, id, param);
+			putCheckDuplicate(parameterizers, id, parameterizer);
 			// add tactic with default parameters
-			final ITacticDescriptor defaultDesc = param.instantiate(
-					param.makeParameterSetting(), id + ".default");
+			final ITacticDescriptor defaultDesc = parameterizer.instantiate(
+					parameterizer.makeParameterSetting(), id + ".default");
 			putCheckDuplicate(registry, id, defaultDesc);
 		} else {
 			final ITacticDescriptor desc = loadSimpleTactic(baseDesc, element);
@@ -224,12 +224,11 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 				desc.getTacticName(), desc.getTacticDescription());
 	}
 	
-	private static IParamTacticInstantiator loadParameterized(
+	private static IParameterizerDescriptor loadParameterizer(
 			UninstantiableTacticDescriptor baseDesc, IConfigurationElement element) {
 		final Collection<IParameterDesc> paramDescs = loadTacticParameters(
 				getParameters(element), baseDesc.getTacticID());
-		return new ParamTacticInstantiator(
-				baseDesc, paramDescs, element);
+		return new ParameterizerDescriptor(baseDesc, paramDescs, element);
 	}
 	
 	private static Collection<IParameterDesc> loadTacticParameters(
@@ -305,20 +304,20 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	}
 
 	@Override
-	public IParamTacticInstantiator[] getParamTacticInstantiators() {
+	public IParameterizerDescriptor[] getParamTacticInstantiators() {
 		if (registry == null) {
 			loadRegistry();
 		}
-		return paramInstantiators.values().toArray(
-				new IParamTacticInstantiator[paramInstantiators.size()]);
+		return parameterizers.values().toArray(
+				new IParameterizerDescriptor[parameterizers.size()]);
 	}
 
 	@Override
-	public IParamTacticInstantiator getParamTacticInstantiator(String id) {
+	public IParameterizerDescriptor getParamTacticInstantiator(String id) {
 		if (registry == null) {
 			loadRegistry();
 		}
-		return paramInstantiators.get(id);
+		return parameterizers.get(id);
 	}
 
 	@Override
