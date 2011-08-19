@@ -75,7 +75,7 @@ public class TacticPrefElement implements
 			final ITacticDescriptor tacticDescriptor = tacticRegistry
 					.getTacticDescriptor(str);
 			if (!isDeclared(tacticDescriptor)) {
-				printDebug("Tactic is not declared in this scope" + str);
+				printDebug("Tactic is not declared in this scope " + str);
 				return null;
 
 			}
@@ -187,7 +187,7 @@ public class TacticPrefElement implements
 		// even if they are parameterized or combined
 		// they are stored in extension independently
 		// hence the use of the simple translator
-		private final ListPreference<ITacticDescriptor> listTrans = new ListPreference<IAutoTacticRegistry.ITacticDescriptor>(
+		private final ListPreference<ITacticDescriptor> listTrans = new ListPreference<ITacticDescriptor>(
 				new SimpleTacticTranslator());
 
 		public CombinedTacticTranslator() {
