@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.ICombinedTacticInstantiator;
+import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
@@ -194,9 +194,9 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	// for compatibility
 	private static ITacticDescriptor loopOnAllPending(List<ITacticDescriptor> descs, String id) {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-		final ICombinedTacticInstantiator inst = reg
+		final ICombinatorDescriptor comb = reg
 				.getCombinedTacticInstantiator(AutoTactics.LoopOnAllPending.COMBINATOR_ID);
-		return inst.instantiate(descs, id);
+		return comb.instantiate(descs, id);
 	}
 
 	protected abstract String [] getDefaultIDs();

@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
-import org.eventb.core.seqprover.ICombinedTacticInstantiator;
+import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticInstantiator;
 import org.eventb.core.seqprover.IParameterDesc;
@@ -245,8 +245,8 @@ public class TacticDescriptors {
 
 	}
 
-	public static class CombinedTacticInstantiator implements
-			ICombinedTacticInstantiator {
+	public static class CombinatorDescriptor implements
+			ICombinatorDescriptor {
 
 		private final UninstantiableTacticDescriptor descriptor;
 		private final int minArity;
@@ -254,7 +254,7 @@ public class TacticDescriptors {
 		private final IConfigurationElement element;
 		private ITacticCombinator combinator;
 
-		public CombinedTacticInstantiator(
+		public CombinatorDescriptor(
 				UninstantiableTacticDescriptor descriptor, int minArity,
 				boolean isArityBound, IConfigurationElement element) {
 			this.descriptor = descriptor;

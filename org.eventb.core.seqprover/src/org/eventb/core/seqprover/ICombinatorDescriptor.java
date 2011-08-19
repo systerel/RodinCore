@@ -15,14 +15,14 @@ import java.util.List;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
- * Common protocol for combined tactic instantiators.
- * TODO rename into ICombinatorDescriptor, same  for param instantiator
+ * Common protocol for tactic combinator descriptors.
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @author Nicolas Beauger
  * @since 2.3
  */
-public interface ICombinedTacticInstantiator {
+public interface ICombinatorDescriptor {
 
 	/**
 	 * Returns the descriptor of the tactic to instantiate.
@@ -48,8 +48,8 @@ public interface ICombinedTacticInstantiator {
 	 *             if the size of the given list is not valid regarding
 	 *             specified arity
 	 */
-	ICombinedTacticDescriptor instantiate(List<ITacticDescriptor> tactics, String id)
-			throws IllegalArgumentException;
+	ICombinedTacticDescriptor instantiate(List<ITacticDescriptor> tactics,
+			String id) throws IllegalArgumentException;
 
 	/**
 	 * Returns the minimum arity of this combinator. This is the minimum

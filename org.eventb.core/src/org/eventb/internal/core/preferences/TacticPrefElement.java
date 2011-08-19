@@ -20,7 +20,7 @@ import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
-import org.eventb.core.seqprover.ICombinedTacticInstantiator;
+import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticInstantiator;
 import org.eventb.core.seqprover.IParameterDesc;
@@ -215,7 +215,7 @@ public class TacticPrefElement implements
 			final String[] sId = s.split(SEPARATOR_ID);
 			if (sId.length != 2) return null;
 			final String combinatorId = sId[0];
-			final ICombinedTacticInstantiator combinator = reg
+			final ICombinatorDescriptor combinator = reg
 					.getCombinedTacticInstantiator(combinatorId);
 			final String[] sComb = sId[1].split(SEPARATOR_COMBINED, 2);
 			if (sId.length != 2) return null;

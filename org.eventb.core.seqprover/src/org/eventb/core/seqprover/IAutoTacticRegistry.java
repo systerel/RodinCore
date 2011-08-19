@@ -116,16 +116,16 @@ public interface IAutoTacticRegistry {
 	IParamTacticInstantiator getParamTacticInstantiator(String id);
 
 	/**
-	 * Returns instantiators for all registered tactic combinators.
+	 * Returns descriptors for all registered tactic combinators.
 	 * <p>
 	 * The order of the returned array is of no significance and may change
 	 * across multiple calls of the method.
 	 * </p>
 	 * 
-	 * @return an array of instantiators
+	 * @return an array of combinator descriptors
 	 * @since 2.3
 	 */
-	ICombinedTacticInstantiator[] getCombinedTacticInstantiators();
+	ICombinatorDescriptor[] getCombinedTacticInstantiators();
 
 	/**
 	 * Returns combinator descriptor with given id, or <code>null</code> if it
@@ -136,7 +136,7 @@ public interface IAutoTacticRegistry {
 	 * @return a combinator descriptor, or <code>null</code>
 	 * @since 2.3
 	 */
-	ICombinedTacticInstantiator getCombinedTacticInstantiator(String id);
+	ICombinatorDescriptor getCombinedTacticInstantiator(String id);
 
 	/**
 	 * Returns an instance of the tactic extension with the given id.

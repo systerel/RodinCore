@@ -24,12 +24,12 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.ICombinedTacticInstantiator;
+import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IParamTacticInstantiator;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.internal.core.seqprover.TacticDescriptors.CombinedTacticInstantiator;
+import org.eventb.internal.core.seqprover.TacticDescriptors.CombinatorDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.ParamTacticInstantiator;
 import org.eventb.internal.core.seqprover.TacticDescriptors.TacticDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.UninstantiableTacticDescriptor;
@@ -62,7 +62,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	
 	private Map<String, ITacticDescriptor> registry;
 	private final Map<String, IParamTacticInstantiator> paramInstantiators = new HashMap<String, IParamTacticInstantiator>();
-	private final Map<String, ICombinedTacticInstantiator> combinedInstantiators = new HashMap<String, ICombinedTacticInstantiator>();
+	private final Map<String, ICombinatorDescriptor> combinators = new HashMap<String, ICombinatorDescriptor>();
 	
 	/**
 	 * Private default constructor enforces that only one instance of this class
@@ -170,9 +170,9 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 
 		// specific loading
 		if (isCombinator(element)) {
-			final ICombinedTacticInstantiator comb = loadCombinator(baseDesc,
+			final ICombinatorDescriptor comb = loadCombinator(baseDesc,
 					element);
-			putCheckDuplicate(combinedInstantiators, id, comb);
+			putCheckDuplicate(combinators, id, comb);
 			return;
 		} else if (hasParameters(element)) {
 			final IParamTacticInstantiator param = loadParameterized(baseDesc,
@@ -253,7 +253,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		return paramDescs;
 	}
 
-	private static ICombinedTacticInstantiator loadCombinator(
+	private static ICombinatorDescriptor loadCombinator(
 			UninstantiableTacticDescriptor desc, IConfigurationElement element) {
 		final String sMinArity = element.getAttribute("minArity");
 		final int minArity = Integer.parseInt(sMinArity);
@@ -267,7 +267,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 
 		final String sBoundArity = element.getAttribute("boundArity");
 		final boolean isArityBound = Boolean.parseBoolean(sBoundArity);
-		return new CombinedTacticInstantiator(desc, minArity, isArityBound,
+		return new CombinatorDescriptor(desc, minArity, isArityBound,
 				element);
 	}
 
@@ -322,19 +322,19 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	}
 
 	@Override
-	public ICombinedTacticInstantiator[] getCombinedTacticInstantiators() {
+	public ICombinatorDescriptor[] getCombinedTacticInstantiators() {
 		if (registry == null) {
 			loadRegistry();
 		}
-		return combinedInstantiators.values().toArray(
-				new ICombinedTacticInstantiator[combinedInstantiators.size()]);
+		return combinators.values().toArray(
+				new ICombinatorDescriptor[combinators.size()]);
 	}
 	
 	@Override
-	public ICombinedTacticInstantiator getCombinedTacticInstantiator(String id) {
+	public ICombinatorDescriptor getCombinedTacticInstantiator(String id) {
 		if (registry == null) {
 			loadRegistry();
 		}
-		return combinedInstantiators.get(id);
+		return combinators.get(id);
 	}
 }

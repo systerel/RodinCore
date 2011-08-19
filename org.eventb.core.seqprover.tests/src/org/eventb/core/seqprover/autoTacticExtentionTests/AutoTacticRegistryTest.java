@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.ICombinedTacticInstantiator;
+import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IParamTacticInstantiator;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterDesc.ParameterType;
@@ -373,8 +373,8 @@ public class AutoTacticRegistryTest {
 		assertNotKnown("org.eventb.core.seqprover.tests.duplLabel");
 	}
 
-	private ICombinedTacticInstantiator findComb(String id) {
-		for (ICombinedTacticInstantiator comb : registry
+	private ICombinatorDescriptor findComb(String id) {
+		for (ICombinatorDescriptor comb : registry
 				.getCombinedTacticInstantiators()) {
 			if (comb.getTacticDescriptor().getTacticID().equals(id)) {
 				return comb;
@@ -385,7 +385,7 @@ public class AutoTacticRegistryTest {
 
 	@Test
 	public void testCombinedTacticDescriptor() throws Exception {
-		final ICombinedTacticInstantiator comb = findComb(FakeTacComb.TACTIC_ID);
+		final ICombinatorDescriptor comb = findComb(FakeTacComb.TACTIC_ID);
 		final List<ITacticDescriptor> combined = Collections
 				.singletonList(registry
 						.getTacticDescriptor(IdentityTactic.TACTIC_ID));
@@ -401,7 +401,7 @@ public class AutoTacticRegistryTest {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testCombinedOneOrMore() throws Exception {
-		final ICombinedTacticInstantiator desc = (ICombinedTacticInstantiator) registry
+		final ICombinatorDescriptor desc = (ICombinatorDescriptor) registry
 				.getTacticDescriptor(OneOrMore.TACTIC_ID);
 		// must throw illegal argument exception
 		desc.instantiate(Collections.<ITacticDescriptor> emptyList(), "id");
@@ -409,7 +409,7 @@ public class AutoTacticRegistryTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCombinedTwo() throws Exception {
-		final ICombinedTacticInstantiator desc = (ICombinedTacticInstantiator) registry
+		final ICombinatorDescriptor desc = (ICombinatorDescriptor) registry
 				.getTacticDescriptor(Two.TACTIC_ID);
 		// must throw illegal argument exception
 		final List<ITacticDescriptor> combined = Collections
