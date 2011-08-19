@@ -11,6 +11,7 @@
 package org.eventb.ui.preferences.tests;
 
 import static java.lang.Math.abs;
+import static java.util.Arrays.asList;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -38,8 +39,9 @@ import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.preferences.autotactics.TacticPreferenceConstants;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
+import org.eventb.core.seqprover.ICombinedTacticDescriptor;
+import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
@@ -94,7 +96,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		assertEquals("The number of stored profiles is not correct",
 				expected.size(), actual.size());
 		for (IPrefMapEntry<ITacticDescriptor> profile : actual) {
-			assertList(expected.get(profile.getKey()), profile.getValue(),
+			assertTacDesc(expected.get(profile.getKey()), profile.getValue(),
 					profile.getKey());
 		}
 	}
@@ -161,7 +163,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		assertEquals("The number of stored profiles is not correct",
 				expected.size(), actual.size());
 		for (IPrefMapEntry<ITacticDescriptor> profile : actual) {
-			assertList(expected.get(profile.getKey()), profile.getValue(),
+			assertTacDesc(expected.get(profile.getKey()), profile.getValue(),
 					profile.getKey());
 		}
 	}
@@ -176,20 +178,86 @@ public class TacticsPreferencesTest extends EventBUITest {
 		return combinator.instantiate(modified, "modified");
 	}
 
-	private void assertList(ITacticDescriptor expectedDesc,
-			ITacticDescriptor actualDesc, String name) {
-		if (!(expectedDesc instanceof ICombinedTacticDescriptor && actualDesc instanceof ICombinedTacticDescriptor)) {
-			fail("expected combined descriptors");
-		}
-		final List<ITacticDescriptor> expected = ((ICombinedTacticDescriptor) expectedDesc)
-				.getCombinedTactics();
-		final List<ITacticDescriptor> actual = ((ICombinedTacticDescriptor) actualDesc)
-				.getCombinedTactics();
-		assertEquals("The number of tactics is not equals", expected.size(),
-				actual.size());
-		assertTrue(expected.containsAll(actual));
+	public void testStoreLoadDeepCombined() throws Exception {
+		final List<ITacticDescriptor> available = new ArrayList<ITacticDescriptor>(TacticPreferenceUtils
+				.getAvailableTactics());
+		final ITacticDescriptor desc = loopOnAllPending(asList(
+				loopOnAllPending(asList(available.get(0), available.get(1))),
+				available.get(2)));
+		final Map<String, ITacticDescriptor> expected = new HashMap<String, ITacticDescriptor>();
+		final String name = "Profile deep loop";
+		expected.put(name, desc);
+
+		assertStoreLoad(expected);
 	}
 
+	public void testStoreLoadParam() throws Exception {
+		
+		// TODO test param
+	}
+	
+	// TODO test combined of param
+	
+	
+	private static void assertStoreLoad(final Map<String, ITacticDescriptor> expected) {
+		final IPreferenceStore store = EventBUIPlugin.getDefault()
+				.getPreferenceStore();
+		// tactics1 is used to store the preference
+		final TacticsProfilesCache tactics1 = new TacticsProfilesCache(store);
+		for (Entry<String, ITacticDescriptor> entry : expected.entrySet()) {
+			tactics1.add(entry.getKey(), entry.getValue());
+		}
+		tactics1.store();
+
+		// tactics2 is used to modify the existing preference
+		final TacticsProfilesCache tactics2 = new TacticsProfilesCache(store);
+		tactics2.load();
+		final List<IPrefMapEntry<ITacticDescriptor>> actual = tactics2
+				.getEntries();
+		assertEquals("The number of stored profiles is not correct",
+				expected.size(), actual.size());
+		for (IPrefMapEntry<ITacticDescriptor> profile : actual) {
+			assertTacDesc(expected.get(profile.getKey()), profile.getValue(),
+					profile.getKey());
+		}
+	}
+	
+	private static void assertTacDesc(ITacticDescriptor expectedDesc,
+			ITacticDescriptor actualDesc, String name) {
+		assertEquals(expectedDesc.getTacticID(), actualDesc.getTacticID());
+		if (expectedDesc instanceof ICombinedTacticDescriptor) {
+			assertTrue(actualDesc instanceof ICombinedTacticDescriptor);
+			assertCombDesc((ICombinedTacticDescriptor) expectedDesc,
+					(ICombinedTacticDescriptor) actualDesc);
+		} else if (expectedDesc instanceof IParamTacticDescriptor) {
+			assertTrue(actualDesc instanceof IParamTacticDescriptor);
+			assertParamDesc((IParamTacticDescriptor) expectedDesc,
+					(IParamTacticDescriptor) actualDesc);
+		}
+	}
+
+	private static void assertCombDesc(ICombinedTacticDescriptor expectedDesc,
+			ICombinedTacticDescriptor actualDesc) {
+		final List<ITacticDescriptor> expected = expectedDesc
+				.getCombinedTactics();
+		final List<ITacticDescriptor> actual = actualDesc.getCombinedTactics();
+		
+		assertEquals("Wrong size of combined tactics", expected.size(),
+				actual.size());
+		for (int i = 0; i < expected.size(); i++) {
+			assertEquals(expected.get(i).getTacticID(), actual.get(i)
+					.getTacticID());
+		}
+	}
+
+	private static void assertParamDesc(IParamTacticDescriptor expectedDesc,
+			IParamTacticDescriptor actualDesc) {
+		assertEquals(expectedDesc.getParameterizerId(),
+				actualDesc.getParameterizerId());
+		assertEquals(expectedDesc.getValuation(),
+				actualDesc.getParameterizerId());
+	}
+	
 	/**
 	 * Returns a sublist of a given list. The size of the list and the order of
 	 * elements are chosen randomly.
@@ -203,9 +271,10 @@ public class TacticsPreferencesTest extends EventBUITest {
 		final List<ITacticDescriptor> list = new ArrayList<ITacticDescriptor>();
 		list.addAll(available);
 		Collections.shuffle(list);
-		// random integer in 0 .. length of the list
-		final int index = abs(new Random(new Date().getTime()).nextInt()
+		// random integer in 1 .. length of the list
+		int index = abs(new Random(new Date().getTime()).nextInt()
 				% list.size());
+		index = Math.max(index, 1);
 		final List<ITacticDescriptor> subList = list.subList(0, index);
 		
 		return loopOnAllPending(subList);
@@ -255,8 +324,8 @@ public class TacticsPreferencesTest extends EventBUITest {
 		final ICombinedTacticDescriptor projectPostSelected = (ICombinedTacticDescriptor) getSelectedDesc((AutoTacticPreference) postTac);
 		
 		// We check that the selected profile is the project one
-		assertList(prjDesc, projectAutoSelected, prjProfileName);
-		assertList(prjDesc, projectPostSelected, prjProfileName);
+		assertTacDesc(prjDesc, projectAutoSelected, prjProfileName);
+		assertTacDesc(prjDesc, projectPostSelected, prjProfileName);
 		
 		// WE CLEAR ALL PROJECT PROPERTIES!
 		// Now the workspace preferences shall be used
@@ -275,7 +344,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		manager.getSelectedAutoTactics(c);
 		final ICombinedTacticDescriptor wsSelected = (ICombinedTacticDescriptor) getSelectedDesc((AutoTacticPreference) autoTac);
 		// We check that the selected profile is the workspace one
-		assertList(wsDescs, wsSelected, wsProfileName);
+		assertTacDesc(wsDescs, wsSelected, wsProfileName);
 	}
 	
 	/**
@@ -404,7 +473,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 
 		final ITacticDescriptor projectAutoSelected = getSelectedDesc((AutoTacticPreference) autoTac);
 		// We check that the selected profile is the project specific one
-		assertList(projectAutoSelected, defaultDescriptor, dftAutoProfileName);
+		assertTacDesc(projectAutoSelected, defaultDescriptor, dftAutoProfileName);
 	}
 
 }
