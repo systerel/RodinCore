@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
-import java.util.List;
 
 /**
  * Common protocol for accessing the Auto Tactic Registry.
@@ -273,55 +272,5 @@ public interface IAutoTacticRegistry {
 		 */
 		ITactic getTacticInstance() throws IllegalArgumentException;
 
-	}
-
-	/**
-	 * Common protocol for instantiated parameterized tactic descriptors.
-	 * 
-	 * @author Nicolas Beauger
-	 * @since 2.3
-	 * @noimplement This interface is not intended to be implemented by clients.
-	 * @noextend This interface is not intended to be extended by clients.
-	 */
-	interface IParamTacticDescriptor extends ITacticDescriptor {
-
-		/**
-		 * Returns the id of the parameterizer used to instantiate this tactic.
-		 * 
-		 * @return a combinator id
-		 */
-		String getParameterizerId();
-
-		/**
-		 * Returns the valuation of the described parameterized tactic.
-		 * 
-		 * @return a parameter valuation
-		 */
-		IParameterValuation getValuation();
-	}
-
-	/**
-	 * Common protocol for instantiated combined tactic descriptors.
-	 * 
-	 * @author Nicolas Beauger
-	 * @since 2.3
-	 * @noimplement This interface is not intended to be implemented by clients.
-	 * @noextend This interface is not intended to be extended by clients.
-	 */
-	interface ICombinedTacticDescriptor extends ITacticDescriptor {
-
-		/**
-		 * Returns the id of the combinator used to instantiate this tactic.
-		 * 
-		 * @return a combinator id
-		 */
-		String getCombinatorId();
-
-		/**
-		 * Returns the list of combined tactics.
-		 * 
-		 * @return a list of tactic descriptors
-		 */
-		List<ITacticDescriptor> getCombinedTactics();
 	}
 }

@@ -12,7 +12,6 @@ package org.eventb.core.seqprover;
 
 import java.util.Collection;
 
-import org.eventb.core.seqprover.IAutoTacticRegistry.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**

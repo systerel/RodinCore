@@ -16,10 +16,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ICombinedTacticDescriptor;
-import org.eventb.core.seqprover.IAutoTacticRegistry.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticInstantiator;
+import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticInstantiator;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterSetting;
