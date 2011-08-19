@@ -19,14 +19,14 @@ import org.eventb.core.preferences.ListPreference;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
+import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
-import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterDesc.ParameterType;
 import org.eventb.core.seqprover.IParameterSetting;
 import org.eventb.core.seqprover.IParameterValuation;
+import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 
 /**
@@ -37,22 +37,38 @@ import org.eventb.core.seqprover.SequentProver;
 public class TacticPrefElement implements
 		IPrefElementTranslator<ITacticDescriptor> {
 
+	private static final char OPEN = '[';
+	private static final char CLOSE = ']';
 	private static final String SEPARATOR_ID = "#";
 	private static final String SEPARATOR_PARAM = "@";
 	private static final String SEPARATOR_TYPE = "$";
 	private static final String SEPARATOR_PARAM_VALUE = "=";
-	private static final String SEPARATOR_COMBINED = "!";
 
-	private static class SimpleTacticTranslator implements
+	// translates to/from an id
+	// does not record parameter valuation, supposed to be recorded independently in auto/post
+	// propagates simple translation through combined tactics
+	private static class TacticRefTranslator implements
 			IPrefElementTranslator<ITacticDescriptor> {
 
-		public SimpleTacticTranslator() {
-			// avoid synthetic access
+		private TacticRefTranslator() {
+			// singleton
 		}
 
+		private static final TacticRefTranslator DEFAULT = new TacticRefTranslator();
+		
+		public static TacticRefTranslator getDefault() {
+			return DEFAULT;
+		}
+		
 		@Override
 		public String extract(ITacticDescriptor desc) {
-			return desc.getTacticID();
+			if (desc instanceof ICombinedTacticDescriptor) {
+				final String combStr = CombinedTacticTranslator.getDefault()
+						.extract((ICombinedTacticDescriptor) desc);
+				return combStr;
+			} else { // param or simple
+				return desc.getTacticID();
+			}
 		}
 
 		private static boolean isDeclared(ITacticDescriptor tacticDesc) {
@@ -64,22 +80,30 @@ public class TacticPrefElement implements
 		
 		@Override
 		public ITacticDescriptor inject(String str) {
-			final IAutoTacticRegistry tacticRegistry = SequentProver
+			final IAutoTacticRegistry reg = SequentProver
 					.getAutoTacticRegistry();
-			if (!tacticRegistry.isRegistered(str)) {
-				printDebug("Trying to inject a tactic which is not registered "
-						+ str);
-				return null;
+			if (reg.isRegistered(str)) {
+				// simple
+				final ITacticDescriptor tacticDescriptor = reg
+						.getTacticDescriptor(str);
+				if (!isDeclared(tacticDescriptor)) {
+					printDebug("Tactic is not declared in this scope " + str);
+					return null;
+					
+				}
+				return tacticDescriptor;
 			}
-
-			final ITacticDescriptor tacticDescriptor = tacticRegistry
-					.getTacticDescriptor(str);
-			if (!isDeclared(tacticDescriptor)) {
-				printDebug("Tactic is not declared in this scope " + str);
-				return null;
-
+			final ICombinedTacticDescriptor comb = CombinedTacticTranslator
+					.getDefault().inject(str);
+			if (comb != null) {
+				// combined
+				return comb;
 			}
-			return tacticDescriptor;
+			// parameterized
+			// FIXME fetch param tactic from reference 
+			// => access store or delay (return a special descriptor)
+			printDebug("maybe a parameterized tactic " + str);
+			return null;
 		}
 
 	}
@@ -87,10 +111,16 @@ public class TacticPrefElement implements
 	private static class ParamTacticTranslator implements
 			IPrefElementTranslator<IParamTacticDescriptor> {
 
-		public ParamTacticTranslator() {
-			// avoid synthetic access
+		private ParamTacticTranslator() {
+			// singleton
 		}
 
+		private static final ParamTacticTranslator DEFAULT = new ParamTacticTranslator();
+		
+		public static ParamTacticTranslator getDefault() {
+			return DEFAULT;
+		}
+		
 		@Override
 		public String extract(IParamTacticDescriptor desc) {
 			final StringBuilder sb = new StringBuilder();
@@ -135,7 +165,7 @@ public class TacticPrefElement implements
 		@Override
 		public IParamTacticDescriptor inject(String s) {
 			final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-			final String[] sId = s.split(SEPARATOR_ID);
+			final String[] sId = s.split(SEPARATOR_ID, 2);
 			if (sId.length != 2) return null;
 			final String parameterizerId = sId[0];
 
@@ -147,10 +177,10 @@ public class TacticPrefElement implements
 			if (sParam.length == 0) return null;
 			final String tacticID = sParam[0];
 			for (int i = 1; i < sParam.length; i++) {
-				final String[] sType = sParam[i].split(SEPARATOR_TYPE);
+				final String[] sType = sParam[i].split(SEPARATOR_TYPE, 2);
 				if (sType.length != 2) return null;
 				final String label = sType[0];
-				final String[] sValue = sType[1].split(SEPARATOR_PARAM_VALUE);
+				final String[] sValue = sType[1].split(SEPARATOR_PARAM_VALUE, 2);
 				if (sValue.length != 2) return null;
 				final ParameterType type = ParameterType.valueOf(sValue[0]);
 				final Object value = type.parse(sValue[1]);
@@ -163,77 +193,112 @@ public class TacticPrefElement implements
 	private static class CombinedTacticTranslator implements
 			IPrefElementTranslator<ICombinedTacticDescriptor> {
 
+		private static final CombinedTacticTranslator DEFAULT = new CombinedTacticTranslator();
+		
+		public static CombinedTacticTranslator getDefault() {
+			return DEFAULT;
+		}
+		
 		// here we just store references to combined tactics
-		// even if they are parameterized or combined
+		// even if they are parameterized
 		// they are stored in extension independently
-		// hence the use of the simple translator
+		// hence the use of the reference translator
 		private final ListPreference<ITacticDescriptor> listTrans = new ListPreference<ITacticDescriptor>(
-				new SimpleTacticTranslator());
+				TacticRefTranslator.getDefault());
 
-		public CombinedTacticTranslator() {
-			// avoid synthetic access
+		private CombinedTacticTranslator() {
+			// singleton
 		}
 
+		
+		
 		@Override
 		public String extract(ICombinedTacticDescriptor combinator) {
 			final StringBuilder sb = new StringBuilder();
 			sb.append(combinator.getCombinatorId());
 			sb.append(SEPARATOR_ID);
 			sb.append(combinator.getTacticID());
-			sb.append(SEPARATOR_COMBINED);
+			sb.append(OPEN);
 			sb.append(listTrans.extract(combinator.getCombinedTactics()));
+			sb.append(CLOSE);
 			return sb.toString();
 		}
 
 		@Override
 		public ICombinedTacticDescriptor inject(String s) {
 			final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-			final String[] sId = s.split(SEPARATOR_ID);
+			final String[] sId = s.split(SEPARATOR_ID, 2);
 			if (sId.length != 2) return null;
 			final String combinatorId = sId[0];
 			final ICombinatorDescriptor combinator = reg
 					.getCombinatorDescriptor(combinatorId);
-			final String[] sComb = sId[1].split(SEPARATOR_COMBINED, 2);
-			if (sId.length != 2) return null;
-			final String tacticId = sComb[0];
-			final List<ITacticDescriptor> combined = listTrans.inject(sComb[1]);
+			if (combinator == null) return null;
+			final int openIndex = sId[1].indexOf(OPEN);
+			if (openIndex < 0) return null;
+			
+			final String tacticId = sId[1].substring(0, openIndex);
+			final String afterOpen = sId[1].substring(openIndex + 1);
+			final int indexToClose = indexToClose(afterOpen);
+			if (indexToClose < 0) return null;
+			final String combs = afterOpen.substring(0, indexToClose);
+			// FIXME list trans splits on ',' even inside combined sub tactics
+			final List<ITacticDescriptor> combined = listTrans.inject(combs);
 			if (combined == null) return null;
 			return combinator.instantiate(combined, tacticId);
 		}
-	}
 
-	private final SimpleTacticTranslator simple = new SimpleTacticTranslator();
-	private final ParamTacticTranslator param = new ParamTacticTranslator();
-	private final CombinedTacticTranslator combined = new CombinedTacticTranslator();
+
+
+		private static int indexToClose(String string) {
+			int open = 0;
+			for (int i = 0; i < string.length(); i++) {
+				final char c = string.charAt(i);
+				switch (c) {
+				case OPEN:
+					open++;
+					break;
+				case CLOSE:
+					if (open == 0) {
+						return i;
+					}
+					open--;
+					break;
+				}
+			}
+			return -1;
+		}
+	}
 
 	@Override
 	public String extract(ITacticDescriptor desc) {
 		if (desc instanceof ICombinedTacticDescriptor) {
-			return combined.extract((ICombinedTacticDescriptor) desc);
+			return CombinedTacticTranslator.getDefault().extract(
+					(ICombinedTacticDescriptor) desc);
 		}
 		if (desc instanceof IParamTacticDescriptor) {
-			return param.extract((IParamTacticDescriptor) desc);
+			return ParamTacticTranslator.getDefault().extract(
+					(IParamTacticDescriptor) desc);
 		}
-		return simple.extract(desc);
+		return TacticRefTranslator.getDefault().extract(desc);
 	}
 
 	@Override
 	public ITacticDescriptor inject(String str) {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		if (reg.isRegistered(str)) {
-			return simple.inject(str);
+			return TacticRefTranslator.getDefault().inject(str);
 		}
-		final String[] split = str.split(SEPARATOR_ID);
+		final String[] split = str.split(SEPARATOR_ID, 2);
 		if (split.length != 2) {
 			printDebug("unrecognized tactic preference format: " + str);
 			return null;
 		}
 		final String id = split[0];
 		if (reg.getCombinatorDescriptor(id) != null) {
-			return combined.inject(str);
+			return CombinedTacticTranslator.getDefault().inject(str);
 		}
 		if (reg.getParameterizerDescriptor(id) != null) {
-			return param.inject(str);
+			return ParamTacticTranslator.getDefault().inject(str);
 		}
 		printDebug("unknown id: " + id);
 
