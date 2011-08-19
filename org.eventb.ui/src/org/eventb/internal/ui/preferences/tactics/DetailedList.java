@@ -166,6 +166,7 @@ public class DetailedList {
 
 	public void setDetailsProvider(IDetailsProvider provider) {
 		this.provider = provider;
+		provider.setParentComposite(details);
 	}
 
 	/**
@@ -233,7 +234,7 @@ public class DetailedList {
 	 */
 	public void updateDetails() {
 		if (provider != null && list.getSelectionCount() == 1) {
-			provider.putDetails(getSelectedItem(), details);
+			provider.putDetails(getSelectedItem());
 		} else {
 			provider.clear();
 		}

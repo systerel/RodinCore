@@ -76,14 +76,14 @@ public class TacticPreferenceUtils {
 		final IAutoPostTacticManager manager = EventBPlugin
 				.getAutoPostTacticManager();
 		// Default value for profile list
-		final List<ITacticDescriptor> defaultAutoTactics = manager
-				.getAutoTacticPreference().getDefaultDescriptors();
-		final List<ITacticDescriptor> defaultPostTactics = manager
-				.getPostTacticPreference().getDefaultDescriptors();
+		final ITacticDescriptor defaultAutoTactic = manager
+				.getAutoTacticPreference().getDefaultDescriptor();
+		final ITacticDescriptor defaultPostTactic = manager
+				.getPostTacticPreference().getDefaultDescriptor();
 		final TacticsProfilesCache tacticsCache = new TacticsProfilesCache(
 				store);
-		tacticsCache.add(getDefaultAutoTactics(), defaultAutoTactics);
-		tacticsCache.add(getDefaultPostTactics(), defaultPostTactics);
+		tacticsCache.add(getDefaultAutoTactics(), defaultAutoTactic);
+		tacticsCache.add(getDefaultPostTactics(), defaultPostTactic);
 		tacticsCache.storeDefault();
 
 		// Default value for post-tactic registry

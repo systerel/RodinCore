@@ -159,11 +159,11 @@ public class PostAutoTacticPreferencePage extends
 				preferencepage_posttactic_selectedtacticprofiledescription,
 				tab, isPropertyPage());
 
-		cache.addListener(new ICacheListener<List<ITacticDescriptor>>() {
+		cache.addListener(new ICacheListener<ITacticDescriptor>() {
 
 			@Override
 			public void cacheChanged(
-					CachedPreferenceMap<List<ITacticDescriptor>> map) {
+					CachedPreferenceMap<ITacticDescriptor> map) {
 				final String[] names = getSortedProfileNames();
 				autoTactic.setItems(names);
 				postTactic.setItems(names);
@@ -195,11 +195,11 @@ public class PostAutoTacticPreferencePage extends
 		tacticList = new DetailedList("",
 				preferencepage_postautotactic_tacticdetails_header, parent);
 		tacticList.setDetailsProvider(new TacticDetailsProvider(cache));
-		cache.addListener(new ICacheListener<List<ITacticDescriptor>>() {
+		cache.addListener(new ICacheListener<ITacticDescriptor>() {
 
 			@Override
 			public void cacheChanged(
-					CachedPreferenceMap<List<ITacticDescriptor>> map) {
+					CachedPreferenceMap<ITacticDescriptor> map) {
 				updateButtonAndDetails();
 				updateTacticsList();
 			}
@@ -267,7 +267,7 @@ public class PostAutoTacticPreferencePage extends
 
 			@Override
 			public void run() {
-				final List<IPrefMapEntry<List<ITacticDescriptor>>> profilesWS = workspaceCache
+				final List<IPrefMapEntry<ITacticDescriptor>> profilesWS = workspaceCache
 						.getEntries();
 				cache.addAll(profilesWS);
 			}
@@ -276,11 +276,11 @@ public class PostAutoTacticPreferencePage extends
 
 		final IAction exportAction = new Action() {
 
-			private List<IPrefMapEntry<List<ITacticDescriptor>>> getSelectedProfiles() {
+			private List<IPrefMapEntry<ITacticDescriptor>> getSelectedProfiles() {
 				final String[] selection = tacticList.getSelection();
-				final List<IPrefMapEntry<List<ITacticDescriptor>>> result = new ArrayList<IPrefMapEntry<List<ITacticDescriptor>>>();
+				final List<IPrefMapEntry<ITacticDescriptor>> result = new ArrayList<IPrefMapEntry<ITacticDescriptor>>();
 				for (String name : selection) {
-					final IPrefMapEntry<List<ITacticDescriptor>> profile = cache
+					final IPrefMapEntry<ITacticDescriptor> profile = cache
 							.getEntry(name);
 					if (profile != null) {
 						result.add(profile);
@@ -294,7 +294,7 @@ public class PostAutoTacticPreferencePage extends
 			public void run() {
 				// Adds profiles into the cache and gets profiles which wasn't
 				// already in the cache
-				final List<IPrefMapEntry<List<ITacticDescriptor>>> added = workspaceCache
+				final List<IPrefMapEntry<ITacticDescriptor>> added = workspaceCache
 						.addAll(getSelectedProfiles());
 
 				// If there is a preference page, adds profiles into the
@@ -302,7 +302,7 @@ public class PostAutoTacticPreferencePage extends
 				final AbstractFieldPreferenceAndPropertyPage parentPage = getWorkspacePreferencePage();
 				if (parentPage instanceof PostAutoTacticPreferencePage) {
 					final PostAutoTacticPreferencePage wsTacticPage = (PostAutoTacticPreferencePage) parentPage;
-					for (IPrefMapEntry<List<ITacticDescriptor>> profile : added) {
+					for (IPrefMapEntry<ITacticDescriptor> profile : added) {
 						wsTacticPage.tacticList.addElement(profile.getKey());
 					}
 				}
@@ -360,7 +360,7 @@ public class PostAutoTacticPreferencePage extends
 		if (selection.length == 1) {
 			final String name = selection[0];
 			final String copy = getFreeCopyName(name);
-			final IPrefMapEntry<List<ITacticDescriptor>> profile = cache
+			final IPrefMapEntry<ITacticDescriptor> profile = cache
 					.getEntry(name);
 			if (profile != null) {
 				cache.add(copy, profile.getValue());

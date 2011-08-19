@@ -51,7 +51,7 @@ public class EditProfilWizard extends Wizard {
 	// the profile name to edit or empty. Not null
 	private String profileName;
 
-	private IPrefMapEntry<List<ITacticDescriptor>> profile = null;
+	private IPrefMapEntry<ITacticDescriptor> profile = null;
 
 	private final List<ITacticDescriptor> selected;
 
@@ -66,13 +66,13 @@ public class EditProfilWizard extends Wizard {
 		this.cache = cache;
 		created = false;
 		this.profileName = profileName;
-		final IPrefMapEntry<List<ITacticDescriptor>> selectedProfile = cache
-				.getEntry(profileName);
-		if (selectedProfile != null) {
-			this.selected = selectedProfile.getValue();
-		} else {
+//		final IPrefMapEntry<ListITacticDescriptor>> selectedProfile = cache
+//				.getEntry(profileName);
+//		if (selectedProfile != null) {
+//			this.selected = selectedProfile.getValue();
+//		} else {
 			this.selected = emptyList();
-		}
+//		}
 	}
 
 	@Override
@@ -96,10 +96,10 @@ public class EditProfilWizard extends Wizard {
 		}
 		profile = cache.getEntry(page.getProfileName());
 		if (profile == null) {
-			cache.add(page.getProfileName(), page.getSelectedTactics());
+//			cache.add(page.getProfileName(), page.getSelectedTactics());
 			profile = cache.getEntry(page.getProfileName());
 		} else {
-			profile.setValue(page.getSelectedTactics());
+//			profile.setValue(page.getSelectedTactics());
 		}
 		return true;
 	}
@@ -222,7 +222,7 @@ public class EditProfilWizard extends Wizard {
 	/**
 	 * Returns the edited profile.
 	 */
-	public IPrefMapEntry<List<ITacticDescriptor>> getProfile() {
+	public IPrefMapEntry<ITacticDescriptor> getProfile() {
 		return profile;
 	}
 }

@@ -21,15 +21,21 @@ import org.eclipse.swt.widgets.Composite;
 public interface IDetailsProvider {
 
 	/**
+	 * Sets the parent composite in which to put the details.
+	 * 
+	 * @param parent
+	 *            the parent details composite
+	 */
+	void setParentComposite(Composite parent);
+
+	/**
 	 * Puts the details of the given element to be displayed in the given parent
 	 * composite.
 	 * 
 	 * @param element
 	 *            the element to retrieve details from
-	 * @param parent
-	 *            the parent details composite
 	 */
-	void putDetails(String element, Composite parent);
+	void putDetails(String element);
 
 	/**
 	 * Clears all details
