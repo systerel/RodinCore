@@ -425,10 +425,14 @@
       		id="finiteDefRewrites"
       		name="%finiteDefRewritesName">
       </reasoner>
-      <reasoner
+       <reasoner
       		class="org.eventb.internal.core.seqprover.eventbExtensions.MembershipGoal"
       		id="mbGoal"
       		name="%mbGoalName"/>
+      <reasoner
+     		class="org.eventb.internal.core.seqprover.eventbExtensions.MapOvrGoal"
+      		id="mapOvrG"
+      		name="%mapOvrGName"/>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.AbstrExpr"
             id="ae"
@@ -651,6 +655,12 @@
             description="%funAppInDomGoalTacDesc"
             id="funAppInDomGoalTac"
             name="%funAppInDomGoalTacName">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$MapOvrGoalAutoTac"
+            description="%mapOvrGoalTacDesc"
+            id="mapOvrGoalTac"
+            name="%mapOvrGoalTacName">
       </autoTactic>
    </extension>
 

@@ -65,6 +65,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunAppInDomGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.InDomGoalManager;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MapOvrGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MembershipGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.NNFRewritesOnceTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
@@ -1271,6 +1272,21 @@ public class AutoTactics {
 		@Override
 		protected ITactic getSingInstance() {
 			return BasicTactics.loopOnAllPending(new NNFRewritesOnceTac());
+		}
+
+	}
+
+	/**
+	 * Remove mapplet overriding of total function in goal (f<+{x↦y}∈A→B).
+	 * 
+	 * @author Emmanuel Billaud
+	 * @since 2.3
+	 */
+	public static class MapOvrGoalAutoTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return new MapOvrGoalTac();
 		}
 
 	}
