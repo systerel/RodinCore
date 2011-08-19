@@ -154,5 +154,38 @@ public class ParameterSetting implements IParameterSetting {
 		final AbstractParameterValue<?> value = checkAndGet(label);
 		return value.getValue();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((paramDescs == null) ? 0 : paramDescs.hashCode());
+		result = prime * result
+				+ ((valuation == null) ? 0 : valuation.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ParameterSetting other = (ParameterSetting) obj;
+		if (paramDescs == null) {
+			if (other.paramDescs != null)
+				return false;
+		} else if (!paramDescs.equals(other.paramDescs))
+			return false;
+		if (valuation == null) {
+			if (other.valuation != null)
+				return false;
+		} else if (!valuation.equals(other.valuation))
+			return false;
+		return true;
+	}
 	
 }
