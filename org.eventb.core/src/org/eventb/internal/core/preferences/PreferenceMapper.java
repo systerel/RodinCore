@@ -26,6 +26,9 @@ import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
  */
 public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T>> {
 
+	// FIXME keep as is only for compatibility,
+	// but use a single xml string for all map entries (enables references !)
+	
 	// String separator for elements of a map
 	protected static final String SEPARATOR_MAP = ";";
 	// String separator between key and values of map entries

@@ -11,11 +11,29 @@
 package org.eventb.internal.core.preferences;
 
 import static org.eventb.core.EventBPlugin.getAutoPostTacticManager;
+import static org.eventb.internal.core.preferences.PreferenceUtils.getDocument;
+import static org.eventb.internal.core.preferences.PreferenceUtils.makeDocument;
+import static org.eventb.internal.core.preferences.PreferenceUtils.serializeDocument;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.COMBINATOR_ID;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.LABEL;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.PARAMETERIZER_ID;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.TACTIC_ID;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.TYPE;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.getAttribute;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.setAttribute;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.COMBINED;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETER;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETERIZED;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETERIZED_REF;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.SIMPLE;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.assertName;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.createElement;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.hasName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.preferences.IPrefElementTranslator;
-import org.eventb.core.preferences.ListPreference;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
@@ -28,6 +46,12 @@ import org.eventb.core.seqprover.IParameterSetting;
 import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.internal.core.Util;
+import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * The preference element translator for tactic descriptors.
@@ -37,38 +61,93 @@ import org.eventb.core.seqprover.SequentProver;
 public class TacticPrefElement implements
 		IPrefElementTranslator<ITacticDescriptor> {
 
-	private static final char OPEN = '[';
-	private static final char CLOSE = ']';
-	private static final String SEPARATOR_ID = "#";
-	private static final String SEPARATOR_PARAM = "@";
-	private static final String SEPARATOR_TYPE = "$";
-	private static final String SEPARATOR_PARAM_VALUE = "=";
+	
+	private static interface IXMLPref<T> {
+		void put(T pref, Document doc, Node parent);
+		T get(Node e);
+	}
 
-	// translates to/from an id
-	// does not record parameter valuation, supposed to be recorded independently in auto/post
-	// propagates simple translation through combined tactics
-	private static class TacticRefTranslator implements
-			IPrefElementTranslator<ITacticDescriptor> {
+	private static class Selector implements IXMLPref<ITacticDescriptor> {
 
-		private TacticRefTranslator() {
-			// singleton
+		private final boolean refOnly;
+
+		private Selector(boolean refOnly) {
+			this.refOnly = refOnly;
 		}
-
-		private static final TacticRefTranslator DEFAULT = new TacticRefTranslator();
 		
-		public static TacticRefTranslator getDefault() {
-			return DEFAULT;
+		private static final Selector REF_INSTANCE = new Selector(true);
+		private static final Selector FULL_INSTANCE = new Selector(false);
+		
+		public static Selector getFull() {
+			return FULL_INSTANCE;
+		}
+		
+		public static Selector getRef() {
+			return REF_INSTANCE;
 		}
 		
 		@Override
-		public String extract(ITacticDescriptor desc) {
+		public void put(ITacticDescriptor desc, Document doc, Node parent) {
 			if (desc instanceof ICombinedTacticDescriptor) {
-				final String combStr = CombinedTacticTranslator.getDefault()
-						.extract((ICombinedTacticDescriptor) desc);
-				return combStr;
-			} else { // param or simple
-				return desc.getTacticID();
+				CombinedTacticTranslator.getDefault().put(
+						(ICombinedTacticDescriptor) desc, doc, parent);
+			} else if (desc instanceof IParamTacticDescriptor) {
+				if (refOnly) {
+					ParamRef.getDefault().put((IParamTacticDescriptor) desc,
+							doc, parent);
+				} else {
+					ParamTacticTranslator.getDefault().put(
+							(IParamTacticDescriptor) desc, doc, parent);
+				}
+			} else {
+
+				SimpleTactic.getDefault().put(desc, doc, parent);
 			}
+
+		}
+
+		@Override
+		public ITacticDescriptor get(Node e) {
+			if (hasName(e, SIMPLE)) {
+				return SimpleTactic.getDefault().get(e);
+			}
+			if (hasName(e, PARAMETERIZED)) {
+				return ParamTacticTranslator.getDefault().get(e);
+			}
+			if (hasName(e, PARAMETERIZED_REF)) {
+				return ParamRef.getDefault().get(e);
+			}
+			if (hasName(e, COMBINED)) {
+				return CombinedTacticTranslator.getDefault().get(e);
+			}
+			printDebug("unreadable node: " + e);
+			throw PreferenceException.getInstance();
+		}
+
+	}
+	
+	// translates to/from an id
+	// does not record parameter valuation, supposed to be recorded independently in auto/post
+	// propagates simple translation through combined tactics
+	private static class SimpleTactic implements
+			IXMLPref<ITacticDescriptor> {
+
+		private SimpleTactic() {
+			// singleton
+		}
+
+		private static final SimpleTactic DEFAULT = new SimpleTactic();
+		
+		public static SimpleTactic getDefault() {
+			return DEFAULT;
+		}
+
+		@Override
+		public void put(ITacticDescriptor desc, Document doc, Node parent) {
+			final Element simple = createElement(doc, SIMPLE);
+			setAttribute(simple, TACTIC_ID, desc.getTacticID());
+
+			parent.appendChild(simple);
 		}
 
 		private static boolean isDeclared(ITacticDescriptor tacticDesc) {
@@ -77,39 +156,30 @@ public class TacticPrefElement implements
 				return true;
 			return manager.getPostTacticPreference().isDeclared(tacticDesc);
 		}
-		
+
 		@Override
-		public ITacticDescriptor inject(String str) {
+		public ITacticDescriptor get(Node e) {
+			assertName(e, SIMPLE);
 			final IAutoTacticRegistry reg = SequentProver
 					.getAutoTacticRegistry();
-			if (reg.isRegistered(str)) {
-				// simple
-				final ITacticDescriptor tacticDescriptor = reg
-						.getTacticDescriptor(str);
-				if (!isDeclared(tacticDescriptor)) {
-					printDebug("Tactic is not declared in this scope " + str);
-					return null;
-					
-				}
-				return tacticDescriptor;
+			final String tacticId = getAttribute(e, TACTIC_ID);
+			if (!reg.isRegistered(tacticId)) {
+				printDebug("Tactic is not registered " + tacticId);
+				return null;
 			}
-			final ICombinedTacticDescriptor comb = CombinedTacticTranslator
-					.getDefault().inject(str);
-			if (comb != null) {
-				// combined
-				return comb;
+			final ITacticDescriptor tacticDescriptor = reg
+					.getTacticDescriptor(tacticId);
+			if (!isDeclared(tacticDescriptor)) {
+				printDebug("Tactic is not declared in this scope " + tacticId);
+				return null;
 			}
-			// parameterized
-			// FIXME fetch param tactic from reference 
-			// => access store or delay (return a special descriptor)
-			printDebug("maybe a parameterized tactic " + str);
-			return null;
+			return tacticDescriptor;
 		}
 
 	}
 
 	private static class ParamTacticTranslator implements
-			IPrefElementTranslator<IParamTacticDescriptor> {
+			IXMLPref<IParamTacticDescriptor> {
 
 		private ParamTacticTranslator() {
 			// singleton
@@ -121,27 +191,23 @@ public class TacticPrefElement implements
 			return DEFAULT;
 		}
 		
-		@Override
-		public String extract(IParamTacticDescriptor desc) {
-			final StringBuilder sb = new StringBuilder();
-			final String parameterizerId = desc.getParameterizerId();
-			
-			sb.append(parameterizerId);
-			sb.append(SEPARATOR_ID);
-			sb.append(desc.getTacticID());
 
+		@Override
+		public void put(IParamTacticDescriptor desc, Document doc, Node parent) {
+			final Element parameterized = createElement(doc, PARAMETERIZED);
+			setAttribute(parameterized, TACTIC_ID, desc.getTacticID());
+			setAttribute(parameterized, PARAMETERIZER_ID, desc.getParameterizerId());
+			
 			final IParameterValuation valuation = desc.getValuation();
-			for (IParameterDesc paramDesc : valuation.getParameterDescs()) {
-				sb.append(SEPARATOR_PARAM);
-				final String label = paramDesc.getLabel();
-				sb.append(label);
-				sb.append(SEPARATOR_TYPE);
-				sb.append(paramDesc.getType());
-				sb.append(SEPARATOR_PARAM_VALUE);
-				final String value = valuation.get(label).toString();
-				sb.append(value);
+			for (IParameterDesc param : valuation.getParameterDescs()) {
+				final Element parameter = createElement(doc, PARAMETER);
+				final String label = param.getLabel();
+				setAttribute(parameter, LABEL, label);
+				setAttribute(parameter, TYPE, param.getType().toString());
+				parameter.setTextContent(valuation.get(label).toString());
+				parameterized.appendChild(parameter);
 			}
-			return sb.toString();
+			parent.appendChild(parameterized);
 		}
 
 		private static void setValue(IParameterSetting paramSetting,
@@ -163,35 +229,61 @@ public class TacticPrefElement implements
 		}
 
 		@Override
-		public IParamTacticDescriptor inject(String s) {
-			final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-			final String[] sId = s.split(SEPARATOR_ID, 2);
-			if (sId.length != 2) return null;
-			final String parameterizerId = sId[0];
+		public IParamTacticDescriptor get(Node e) {
+			assertName(e, PARAMETERIZED);
+			final String tacticId = getAttribute(e, TACTIC_ID);
+			final String parameterizerId = getAttribute(e, PARAMETERIZER_ID);
 
+			final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 			final IParameterizerDescriptor parameterizer = reg
 					.getParameterizerDescriptor(parameterizerId);
+			if (parameterizer == null) return null;
 			final IParameterSetting paramSetting = parameterizer.makeParameterSetting();
-			
-			final String[] sParam = sId[1].split(SEPARATOR_PARAM);
-			if (sParam.length == 0) return null;
-			final String tacticID = sParam[0];
-			for (int i = 1; i < sParam.length; i++) {
-				final String[] sType = sParam[i].split(SEPARATOR_TYPE, 2);
-				if (sType.length != 2) return null;
-				final String label = sType[0];
-				final String[] sValue = sType[1].split(SEPARATOR_PARAM_VALUE, 2);
-				if (sValue.length != 2) return null;
-				final ParameterType type = ParameterType.valueOf(sValue[0]);
-				final Object value = type.parse(sValue[1]);
+
+			final NodeList childNodes = e.getChildNodes();
+			for (int i = 0; i < childNodes.getLength(); i++) {
+				final Node param = childNodes.item(i);
+				assertName(param, PARAMETER);
+				final String label = getAttribute(param, LABEL);
+				final String sType = getAttribute(param, TYPE);
+				final ParameterType type = ParameterType.valueOf(sType);
+				
+				final Object value = type.parse(param.getTextContent());
 				setValue(paramSetting, label, type, value);
 			}
-			return parameterizer.instantiate(paramSetting, tacticID);
+			return parameterizer.instantiate(paramSetting, tacticId);
+		}
+
+	}
+	
+	private static class ParamRef implements IXMLPref<IParamTacticDescriptor> {
+
+		private ParamRef() {
+			// singleton
+		}
+
+		private static final ParamRef DEFAULT = new ParamRef();
+
+		public static ParamRef getDefault() {
+			return DEFAULT;
+		}
+		@Override
+		public void put(IParamTacticDescriptor desc, Document doc, Node parent) {
+			final Element parameterizedRef = createElement(doc, PARAMETERIZED_REF);
+			setAttribute(parameterizedRef, TACTIC_ID, desc.getTacticID());
+			parent.appendChild(parameterizedRef);
+		}
+
+		@Override
+		public IParamTacticDescriptor get(Node e) {
+			// FIXME ensure tactic id uniqueness (avoid ref ambiguity !)
+			// FIXME how to do that ? => ok when doc contains everything
+			return null;
 		}
 	}
 
 	private static class CombinedTacticTranslator implements
-			IPrefElementTranslator<ICombinedTacticDescriptor> {
+			IXMLPref<ICombinedTacticDescriptor> {
 
 		private static final CombinedTacticTranslator DEFAULT = new CombinedTacticTranslator();
 		
@@ -202,107 +294,73 @@ public class TacticPrefElement implements
 		// here we just store references to combined tactics
 		// even if they are parameterized
 		// they are stored in extension independently
-		// hence the use of the reference translator
-		private final ListPreference<ITacticDescriptor> listTrans = new ListPreference<ITacticDescriptor>(
-				TacticRefTranslator.getDefault());
+		// hence the use of the reference selector
 
 		private CombinedTacticTranslator() {
 			// singleton
 		}
 
-		
-		
 		@Override
-		public String extract(ICombinedTacticDescriptor combinator) {
-			final StringBuilder sb = new StringBuilder();
-			sb.append(combinator.getCombinatorId());
-			sb.append(SEPARATOR_ID);
-			sb.append(combinator.getTacticID());
-			sb.append(OPEN);
-			sb.append(listTrans.extract(combinator.getCombinedTactics()));
-			sb.append(CLOSE);
-			return sb.toString();
+		public void put(ICombinedTacticDescriptor combinator, Document doc,
+				Node parent) {
+			final Element combined = createElement(doc, COMBINED);
+			setAttribute(combined, TACTIC_ID, combinator.getTacticID());
+			setAttribute(combined, COMBINATOR_ID, combinator.getCombinatorId());
+			for (ITacticDescriptor comb : combinator.getCombinedTactics()) {
+				Selector.getRef().put(comb, doc, combined);
+			}
+			parent.appendChild(combined);
 		}
 
 		@Override
-		public ICombinedTacticDescriptor inject(String s) {
+		public ICombinedTacticDescriptor get(Node combined) {
+			assertName(combined, COMBINED);
+			final String tacticId = getAttribute(combined, TACTIC_ID);
+			final String combinatorId = getAttribute(combined, COMBINATOR_ID);
+			
 			final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-			final String[] sId = s.split(SEPARATOR_ID, 2);
-			if (sId.length != 2) return null;
-			final String combinatorId = sId[0];
 			final ICombinatorDescriptor combinator = reg
 					.getCombinatorDescriptor(combinatorId);
 			if (combinator == null) return null;
-			final int openIndex = sId[1].indexOf(OPEN);
-			if (openIndex < 0) return null;
-			
-			final String tacticId = sId[1].substring(0, openIndex);
-			final String afterOpen = sId[1].substring(openIndex + 1);
-			final int indexToClose = indexToClose(afterOpen);
-			if (indexToClose < 0) return null;
-			final String combs = afterOpen.substring(0, indexToClose);
-			// FIXME list trans splits on ',' even inside combined sub tactics
-			final List<ITacticDescriptor> combined = listTrans.inject(combs);
-			if (combined == null) return null;
-			return combinator.instantiate(combined, tacticId);
-		}
-
-
-
-		private static int indexToClose(String string) {
-			int open = 0;
-			for (int i = 0; i < string.length(); i++) {
-				final char c = string.charAt(i);
-				switch (c) {
-				case OPEN:
-					open++;
-					break;
-				case CLOSE:
-					if (open == 0) {
-						return i;
-					}
-					open--;
-					break;
-				}
+			final NodeList childNodes = combined.getChildNodes();
+			final int length = childNodes.getLength();
+			final List<ITacticDescriptor> combs = new ArrayList<ITacticDescriptor>(
+					length);
+			for (int i = 0; i < length; i++) {
+				final Node comb = childNodes.item(i);
+				final ITacticDescriptor combDesc = Selector.getRef().get(comb);
+				if (combDesc == null) return null;
+				combs.add(combDesc);
 			}
-			return -1;
+			return combinator.instantiate(combs, tacticId);
 		}
+
 	}
 
 	@Override
 	public String extract(ITacticDescriptor desc) {
-		if (desc instanceof ICombinedTacticDescriptor) {
-			return CombinedTacticTranslator.getDefault().extract(
-					(ICombinedTacticDescriptor) desc);
+		try {
+			Document doc = getDocument();
+			Selector.getFull().put(desc, doc, doc);
+			
+			return serializeDocument(doc);
+		} catch (Exception e) {
+			Util.log(e,
+					"while storing tactic preference for " + desc.getTacticID());
 		}
-		if (desc instanceof IParamTacticDescriptor) {
-			return ParamTacticTranslator.getDefault().extract(
-					(IParamTacticDescriptor) desc);
-		}
-		return TacticRefTranslator.getDefault().extract(desc);
+		return "";
 	}
 
 	@Override
 	public ITacticDescriptor inject(String str) {
-		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-		if (reg.isRegistered(str)) {
-			return TacticRefTranslator.getDefault().inject(str);
-		}
-		final String[] split = str.split(SEPARATOR_ID, 2);
-		if (split.length != 2) {
-			printDebug("unrecognized tactic preference format: " + str);
+		Document doc;
+		try {
+			doc = makeDocument(str);
+			return Selector.getFull().get(doc.getFirstChild());
+		} catch (Exception e) {
+			Util.log(e, "while retrieving tactic preference from:\n" + str);
 			return null;
 		}
-		final String id = split[0];
-		if (reg.getCombinatorDescriptor(id) != null) {
-			return CombinedTacticTranslator.getDefault().inject(str);
-		}
-		if (reg.getParameterizerDescriptor(id) != null) {
-			return ParamTacticTranslator.getDefault().inject(str);
-		}
-		printDebug("unknown id: " + id);
-
-		return null;
 	}
 
 	static void printDebug(String msg) {
