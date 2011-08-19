@@ -47,6 +47,7 @@ import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.Util;
+import org.eventb.internal.core.preferences.PreferenceUtils.IXMLPref;
 import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -59,14 +60,9 @@ import org.w3c.dom.NodeList;
  * @since 2.1
  */
 public class TacticPrefElement implements
-		IPrefElementTranslator<ITacticDescriptor> {
+		IPrefElementTranslator<ITacticDescriptor>, IXMLPref<ITacticDescriptor> {
 
 	
-	private static interface IXMLPref<T> {
-		void put(T pref, Document doc, Node parent);
-		T get(Node e);
-	}
-
 	private static class Selector implements IXMLPref<ITacticDescriptor> {
 
 		private final boolean refOnly;
@@ -341,8 +337,7 @@ public class TacticPrefElement implements
 	public String extract(ITacticDescriptor desc) {
 		try {
 			Document doc = getDocument();
-			Selector.getFull().put(desc, doc, doc);
-			
+			put(desc, doc, doc);
 			return serializeDocument(doc);
 		} catch (Exception e) {
 			Util.log(e,
@@ -356,7 +351,7 @@ public class TacticPrefElement implements
 		Document doc;
 		try {
 			doc = makeDocument(str);
-			return Selector.getFull().get(doc.getFirstChild());
+			return get(doc);
 		} catch (Exception e) {
 			Util.log(e, "while retrieving tactic preference from:\n" + str);
 			return null;
@@ -367,6 +362,16 @@ public class TacticPrefElement implements
 		if (PreferenceUtils.DEBUG) {
 			System.out.println(msg);
 		}
+	}
+	
+	@Override
+	public void put(ITacticDescriptor desc, Document doc, Node parent) {
+		Selector.getFull().put(desc, doc, doc);
+	}
+
+	@Override
+	public ITacticDescriptor get(Node doc) {
+		return Selector.getFull().get(doc.getFirstChild());
 	}
 
 }

@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eventb.core.preferences.IPrefElementTranslator;
+import org.eventb.internal.core.preferences.PreferenceUtils.IXMLPref;
 import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
 
 /**
@@ -53,6 +54,12 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 			return null;
 		}
 		final Map<String, T> map = new HashMap<String, T>();
+		
+		if (translator instanceof IXMLPref) {
+			// TODO try to fetch everything as a single xml string, else recover
+			// => stop recovering in APTM
+		}
+		
 		final String[] stringMap = PreferenceUtils.parseString(pref,
 				SEPARATOR_MAP);
 		for (String elt : stringMap) {
@@ -81,6 +88,7 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 	 */
 	@Override
 	public String extract(Map<String, T> map) {
+		// TODO extract everything to a single xml string
 		final List<String> strEntries = new ArrayList<String>();
 		for (Entry<String, T> entry : map.entrySet()) {
 			strEntries.add(mapEntryToString(entry.getKey(), entry.getValue()));
