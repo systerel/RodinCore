@@ -65,11 +65,17 @@ public class ParameterSetting implements IParameterSetting {
 		return Collections.unmodifiableCollection(paramDescs);
 	}
 
-	private AbstractParameterValue<?> checkAndGet(String label, ParameterType expectedType) {
+	private AbstractParameterValue<?> checkAndGet(String label) {
 		final AbstractParameterValue<?> paramValue = valuation.get(label);
 		if (paramValue == null) {
-			throw new IllegalArgumentException("unknown label "+label);
+			throw new IllegalArgumentException("unknown label " + label);
 		}
+		return paramValue;
+	}
+
+	private AbstractParameterValue<?> checkAndGet(String label,
+			ParameterType expectedType) {
+		final AbstractParameterValue<?> paramValue = checkAndGet(label);
 		if (!expectedType.check(paramValue.getValue())) {
 			throw new IllegalArgumentException("parameter " + label
 					+ " does not have type " + expectedType);
@@ -141,6 +147,12 @@ public class ParameterSetting implements IParameterSetting {
 			sb.append("\n");
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public Object get(String label) {
+		final AbstractParameterValue<?> value = checkAndGet(label);
+		return value.getValue();
 	}
 	
 }

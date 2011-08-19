@@ -91,27 +91,6 @@ public class TacticPrefElement implements
 			// avoid synthetic access
 		}
 
-		private static String getStringValue(IParameterDesc paramDesc,
-				final IParameterValuation valuation) {
-			final String label = paramDesc.getLabel();
-			switch (paramDesc.getType()) {
-			case BOOL:
-				final boolean b = valuation.getBoolean(label);
-				return Boolean.toString(b);
-			case INT:
-				final int i = valuation.getInt(label);
-				return Integer.toString(i);
-			case LONG:
-				final long l = valuation.getLong(label);
-				return Long.toString(l);
-			case STRING:
-				return valuation.getString(label);
-			default:
-				assert false;
-				return null;
-			}
-		}
-
 		@Override
 		public String extract(IParamTacticDescriptor desc) {
 			final StringBuilder sb = new StringBuilder();
@@ -124,11 +103,12 @@ public class TacticPrefElement implements
 			final IParameterValuation valuation = desc.getValuation();
 			for (IParameterDesc paramDesc : valuation.getParameterDescs()) {
 				sb.append(SEPARATOR_PARAM);
-				sb.append(paramDesc.getLabel());
+				final String label = paramDesc.getLabel();
+				sb.append(label);
 				sb.append(SEPARATOR_TYPE);
 				sb.append(paramDesc.getType());
 				sb.append(SEPARATOR_PARAM_VALUE);
-				final String value = getStringValue(paramDesc, valuation);
+				final String value = valuation.get(label).toString();
 				sb.append(value);
 			}
 			return sb.toString();
