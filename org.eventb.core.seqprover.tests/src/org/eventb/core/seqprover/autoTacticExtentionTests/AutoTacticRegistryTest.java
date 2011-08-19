@@ -374,8 +374,7 @@ public class AutoTacticRegistryTest {
 	}
 
 	private ICombinatorDescriptor findComb(String id) {
-		for (ICombinatorDescriptor comb : registry
-				.getCombinedTacticInstantiators()) {
+		for (ICombinatorDescriptor comb : registry.getCombinatorDescriptors()) {
 			if (comb.getTacticDescriptor().getTacticID().equals(id)) {
 				return comb;
 			}

@@ -125,7 +125,7 @@ public interface IAutoTacticRegistry {
 	 * @return an array of combinator descriptors
 	 * @since 2.3
 	 */
-	ICombinatorDescriptor[] getCombinedTacticInstantiators();
+	ICombinatorDescriptor[] getCombinatorDescriptors();
 
 	/**
 	 * Returns combinator descriptor with given id, or <code>null</code> if it
@@ -136,7 +136,7 @@ public interface IAutoTacticRegistry {
 	 * @return a combinator descriptor, or <code>null</code>
 	 * @since 2.3
 	 */
-	ICombinatorDescriptor getCombinedTacticInstantiator(String id);
+	ICombinatorDescriptor getCombinatorDescriptor(String id);
 
 	/**
 	 * Returns an instance of the tactic extension with the given id.

@@ -216,7 +216,7 @@ public class TacticPrefElement implements
 			if (sId.length != 2) return null;
 			final String combinatorId = sId[0];
 			final ICombinatorDescriptor combinator = reg
-					.getCombinedTacticInstantiator(combinatorId);
+					.getCombinatorDescriptor(combinatorId);
 			final String[] sComb = sId[1].split(SEPARATOR_COMBINED, 2);
 			if (sId.length != 2) return null;
 			final String tacticId = sComb[0];
@@ -253,7 +253,7 @@ public class TacticPrefElement implements
 			return null;
 		}
 		final String id = split[0];
-		if (reg.getCombinedTacticInstantiator(id) != null) {
+		if (reg.getCombinatorDescriptor(id) != null) {
 			return combined.inject(str);
 		}
 		if (reg.getParamTacticInstantiator(id) != null) {

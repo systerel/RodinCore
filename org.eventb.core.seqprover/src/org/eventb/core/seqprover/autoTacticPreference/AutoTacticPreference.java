@@ -195,7 +195,7 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	private static ITacticDescriptor loopOnAllPending(List<ITacticDescriptor> descs, String id) {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final ICombinatorDescriptor comb = reg
-				.getCombinedTacticInstantiator(AutoTactics.LoopOnAllPending.COMBINATOR_ID);
+				.getCombinatorDescriptor(AutoTactics.LoopOnAllPending.COMBINATOR_ID);
 		return comb.instantiate(descs, id);
 	}
 

@@ -322,7 +322,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	}
 
 	@Override
-	public ICombinatorDescriptor[] getCombinedTacticInstantiators() {
+	public ICombinatorDescriptor[] getCombinatorDescriptors() {
 		if (registry == null) {
 			loadRegistry();
 		}
@@ -331,7 +331,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	}
 	
 	@Override
-	public ICombinatorDescriptor getCombinedTacticInstantiator(String id) {
+	public ICombinatorDescriptor getCombinatorDescriptor(String id) {
 		if (registry == null) {
 			loadRegistry();
 		}
