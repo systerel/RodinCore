@@ -92,7 +92,7 @@ public interface IAutoTacticRegistry {
 			throws IllegalArgumentException;
 
 	/**
-	 * Returns instantiators for all registered parameterized tactics.
+	 * Returns descriptors for all registered tactic parameterizers.
 	 * <p>
 	 * The order of the returned array is of no significance and may change
 	 * across multiple calls of the method.
@@ -102,7 +102,7 @@ public interface IAutoTacticRegistry {
 	 * @return
 	 * @since 2.3
 	 */
-	IParameterizerDescriptor[] getParamTacticInstantiators();
+	IParameterizerDescriptor[] getParameterizerDescriptors();
 
 	/**
 	 * Returns parameterizer descriptor with given id, or <code>null</code> if
@@ -113,7 +113,7 @@ public interface IAutoTacticRegistry {
 	 * @return a parameterizer descriptor, or <code>null</code>
 	 * @since 2.3
 	 */
-	IParameterizerDescriptor getParamTacticInstantiator(String id);
+	IParameterizerDescriptor getParameterizerDescriptor(String id);
 
 	/**
 	 * Returns descriptors for all registered tactic combinators.

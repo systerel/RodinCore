@@ -119,7 +119,7 @@ public class TacticPrefElement implements
 					.getAutoTacticRegistry();
 			final String parameterizerId = desc.getParameterizerId();
 			final IParameterizerDescriptor parameterizer = reg
-					.getParamTacticInstantiator(parameterizerId);
+					.getParameterizerDescriptor(parameterizerId);
 
 			sb.append(parameterizerId);
 			sb.append(SEPARATOR_ID);
@@ -164,7 +164,7 @@ public class TacticPrefElement implements
 			final String parameterizerId = sId[0];
 
 			final IParameterizerDescriptor parameterizer = reg
-					.getParamTacticInstantiator(parameterizerId);
+					.getParameterizerDescriptor(parameterizerId);
 			final IParameterSetting paramSetting = parameterizer.makeParameterSetting();
 			
 			final String[] sParam = sId[1].split(SEPARATOR_PARAM);
@@ -256,7 +256,7 @@ public class TacticPrefElement implements
 		if (reg.getCombinatorDescriptor(id) != null) {
 			return combined.inject(str);
 		}
-		if (reg.getParamTacticInstantiator(id) != null) {
+		if (reg.getParameterizerDescriptor(id) != null) {
 			return param.inject(str);
 		}
 		printDebug("unknown id: " + id);

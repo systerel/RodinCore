@@ -255,7 +255,7 @@ public class AutoTacticRegistryTest {
 
 	private IParameterizerDescriptor findParam(String id) {
 		final IParameterizerDescriptor[] parameterizers = registry
-				.getParamTacticInstantiators();
+				.getParameterizerDescriptors();
 		for (IParameterizerDescriptor param : parameterizers) {
 			if (param.getTacticDescriptor().getTacticID().equals(id)) {
 				return param;

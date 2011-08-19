@@ -304,7 +304,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	}
 
 	@Override
-	public IParameterizerDescriptor[] getParamTacticInstantiators() {
+	public IParameterizerDescriptor[] getParameterizerDescriptors() {
 		if (registry == null) {
 			loadRegistry();
 		}
@@ -313,7 +313,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	}
 
 	@Override
-	public IParameterizerDescriptor getParamTacticInstantiator(String id) {
+	public IParameterizerDescriptor getParameterizerDescriptor(String id) {
 		if (registry == null) {
 			loadRegistry();
 		}

@@ -95,7 +95,9 @@ public class TacticDetailsProvider implements IDetailsProvider {
 			detailList.setVisible(true);
 		} else if (desc instanceof IParamTacticDescriptor) {
 			final IParamTacticDescriptor paramDesc = (IParamTacticDescriptor) desc;
-			final IParameterizerDescriptor parameterizer = SequentProver.getAutoTacticRegistry().getParamTacticInstantiator(paramDesc.getParameterizerId());
+			final IParameterizerDescriptor parameterizer = SequentProver
+					.getAutoTacticRegistry().getParameterizerDescriptor(
+							paramDesc.getParameterizerId());
 			final Collection<IParameterDesc> params = parameterizer.getParameterDescs();
 			final IParameterValuation valuation = paramDesc.getValuation();
 			final TableColumn labelCol = paramTable.getColumn(0);
