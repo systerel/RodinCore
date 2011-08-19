@@ -25,10 +25,8 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.FunImgInclusionGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites;
 
 /**
@@ -39,7 +37,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRew
  * <li>If it succeeds, we try to re-write dom(g) using
  * <code>TotalDomRewrites</code>.</li>
  * <li>Finally, if it succeeds, we try to discharge the goal using
- * <code>FunImgInclusionGoal</code>. If the goal is discharged, then the tactics
+ * <code>MembershipGoal</code>. If the goal is discharged, then the tactics
  * are applied.</li>
  * </ul>
  * These tests are done for every possible case of re-writing
@@ -74,9 +72,7 @@ public class FunAppInDomGoalTac implements ITactic {
 					if (grandChildPtNode == null) {
 						continue;
 					}
-					final Object dischargeResult = BasicTactics.reasonerTac(
-							new FunImgInclusionGoal(), new EmptyInput()).apply(
-							grandChildPtNode, pm);
+					final Object dischargeResult = new MembershipGoalTac().apply(grandChildPtNode, pm); 
 					if (dischargeResult != null) {
 						childPtNode.pruneChildren();
 						continue;

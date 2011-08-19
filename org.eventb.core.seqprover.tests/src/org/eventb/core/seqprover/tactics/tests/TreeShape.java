@@ -24,6 +24,7 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
+import org.eventb.core.seqprover.reasonerInputs.HypothesesReasoner;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
@@ -32,7 +33,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.FunImgInclusionGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
@@ -46,6 +46,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembe
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveNegation;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
+import org.junit.Assert;
 
 /**
  * Common implementation for verifying rule applications to a proof subtree. The
@@ -344,15 +345,15 @@ public abstract class TreeShape {
 
 	}
 
-	private static class funImgInclusionShape extends VoidShape {
+	private static class MBGoalShape extends HypothesesShape {
 
-		public funImgInclusionShape(TreeShape[] expChildren) {
-			super(expChildren);
+		public MBGoalShape(Predicate[] predicates, TreeShape[] expChildren) {
+			super(predicates, expChildren);
 		}
 
 		@Override
 		protected String getReasonerID() {
-			return FunImgInclusionGoal.REASONER_ID;
+			return "org.eventb.core.seqprover.mbGoal";
 		}
 	}
 
@@ -369,6 +370,23 @@ public abstract class TreeShape {
 		protected void checkInput(IReasonerInput rInput) {
 			HypothesisReasoner.Input input = (HypothesisReasoner.Input) rInput;
 			assertEquals(predicate, input.getPred());
+		}
+
+	}
+
+	private static abstract class HypothesesShape extends TreeShape {
+
+		private final Predicate[] predicates;
+
+		public HypothesesShape(Predicate[] predicates, TreeShape[] expChildren) {
+			super(expChildren);
+			this.predicates = predicates;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput rInput) {
+			HypothesesReasoner.Input input = (HypothesesReasoner.Input) rInput;
+			Assert.assertArrayEquals(predicates, input.getPred());
 		}
 
 	}
@@ -559,8 +577,8 @@ public abstract class TreeShape {
 		return new DTIShape(null, pos, children);
 	}
 
-	public static TreeShape funImgInclusion(TreeShape... children) {
-		return new funImgInclusionShape(children);
+	public static TreeShape mbg(Predicate[] predicates, TreeShape... children) {
+		return new MBGoalShape(predicates, children);
 	}
 
 	protected final TreeShape[] expChildren;

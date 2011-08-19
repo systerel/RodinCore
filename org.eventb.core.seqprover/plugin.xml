@@ -426,9 +426,9 @@
       		name="%finiteDefRewritesName">
       </reasoner>
       <reasoner
-      		class="org.eventb.internal.core.seqprover.eventbExtensions.FunImgInclusionGoal"
-      		id="funImgInclusionG"
-      		name="%funImgInclusionGName"/>
+      		class="org.eventb.internal.core.seqprover.eventbExtensions.MembershipGoal"
+      		id="mbGoal"
+      		name="%mbGoalName"/>
       <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.AbstrExpr"
             id="ae"
@@ -641,10 +641,10 @@
             name="%DisjGoalTacName">
       </autoTactic>
       <autoTactic
-            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FunImgInclusionGoalTac"
-            description="%funImgInclusionGoalTacDesc"
-            id="funImgInclusionGoalTac"
-            name="%funImgInclusionGoalTacName">
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$MembershipGoalAutoTac"
+            description="%mbGoalTacDesc"
+            id="mbGoalTac"
+            name="%mbGoalTacName">
       </autoTactic>
       <autoTactic
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FunAppInDomGoalAutoTac"

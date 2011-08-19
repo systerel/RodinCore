@@ -56,7 +56,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteHypBoundedGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.FunImgInclusionGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
@@ -66,6 +65,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunAppInDomGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.InDomGoalManager;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MembershipGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.NNFRewritesOnceTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
 
@@ -461,20 +461,19 @@ public class AutoTactics {
 
 	/**
 	 * Auto-tactic to discharge a sequent such as :
-	 * <ul>f(x)∈S, S⊆T ⊦ f(x)∈T
+	 * <ul>
+	 * f(x)∈S, S⊆T ⊦ f(x)∈T
 	 * </ul>
 	 * 
 	 * @author Emmanuel Billaud
 	 * @since 2.3
 	 * 
 	 */
-	public static class FunImgInclusionGoalTac extends
-			AbsractLazilyConstrTactic {
+	public static class MembershipGoalAutoTac extends AbsractLazilyConstrTactic {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return BasicTactics.reasonerTac(new FunImgInclusionGoal(),
-					EMPTY_INPUT);
+			return new MembershipGoalTac();
 		}
 		
 	}

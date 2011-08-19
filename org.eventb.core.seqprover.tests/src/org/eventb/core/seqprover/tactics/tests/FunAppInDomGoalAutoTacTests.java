@@ -14,7 +14,7 @@ import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertFail
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertSuccess;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertTacticRegistered;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgGoal;
-import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgInclusion;
+import static org.eventb.core.seqprover.tactics.tests.TreeShape.mbg;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.totalDom;
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
@@ -69,19 +69,17 @@ public class FunAppInDomGoalAutoTacTests {
 		final ITypeEnvironment typeEnvStr = genTypeEnv("f=ℙ(ℤ×ℤ), g=ℙ(ℤ×ℤ), A=ℙ(ℤ), C=ℙ(ℤ), B=ℙ(ℤ), D=ℙ(ℤ), x=ℤ");
 		final Expression substitue = genExpr(typeEnvStr, "C");
 		final Predicate goal = genPred(typeEnvStr, "f(x)∈dom(g)");
-		for (Inclusion incl : Inclusion.values()) {
-			final Predicate inclu = genPred(typeEnvStr, "B" + incl.getImage()
-					+ "C");
-			for (FunAndRel far : FunAndRel.values()) {
-				final Predicate f_TopS = genPred(typeEnvStr,
-						"f∈A" + far.getImage() + "B");
-				for (TFunAndTRel tfatr : TFunAndTRel.values()) {
-					final Predicate g_TopS = genPred(typeEnvStr,
-							"g∈C" + tfatr.getImage() + "D");
-					assertSucceeded(goal, inclu, f_TopS, g_TopS, substitue,
-							typeEnvStr);
+		final Predicate member = genPred(typeEnvStr, "f(x)∈B");
+		final Predicate inclu = genPred(typeEnvStr, "B⊆C");
+		for (FunAndRel far : FunAndRel.values()) {
+			final Predicate f_TopS = genPred(typeEnvStr, "f∈A" + far.getImage()
+					+ "B");
+			for (TFunAndTRel tfatr : TFunAndTRel.values()) {
+				final Predicate g_TopS = genPred(typeEnvStr,
+						"g∈C" + tfatr.getImage() + "D");
+				assertSucceeded(goal, member, inclu, f_TopS, g_TopS, substitue,
+						typeEnvStr);
 
-				}
 			}
 		}
 	}
@@ -104,19 +102,15 @@ public class FunAppInDomGoalAutoTacTests {
 		final ITypeEnvironment typeEnvStr = genTypeEnv("f=ℙ(ℤ×ℤ), g=ℙ(ℤ×ℤ), A=ℙ(ℤ), C=ℙ(ℤ), B=ℙ(ℤ), D=ℙ(ℤ), x=ℤ");
 		final Expression substitue = genExpr(typeEnvStr, "C");
 		final Predicate goal = genPred(typeEnvStr, "f(x)∈dom(g)");
-		for (Inclusion incl : Inclusion.values()) {
-			final Predicate inclu = genPred(typeEnvStr, "B" + incl.getImage()
-					+ "C");
-			for (FunAndRel far : FunAndRel.values()) {
-				final Predicate f_TopS = genPred(typeEnvStr,
-						"f∈A" + far.getImage() + "B");
-				for (PFunAndPRel tfatr : PFunAndPRel.values()) {
-					final Predicate g_TopS = genPred(typeEnvStr,
-							"g∈C" + tfatr.getImage() + "D");
-					assertFailed(goal, inclu, f_TopS, g_TopS, substitue,
-							typeEnvStr);
+		final Predicate inclu = genPred(typeEnvStr, "B⊆C");
+		for (FunAndRel far : FunAndRel.values()) {
+			final Predicate f_TopS = genPred(typeEnvStr, "f∈A" + far.getImage()
+					+ "B");
+			for (PFunAndPRel tfatr : PFunAndPRel.values()) {
+				final Predicate g_TopS = genPred(typeEnvStr,
+						"g∈C" + tfatr.getImage() + "D");
+				assertFailed(goal, inclu, f_TopS, g_TopS, substitue, typeEnvStr);
 
-				}
 			}
 		}
 	}
@@ -127,9 +121,8 @@ public class FunAppInDomGoalAutoTacTests {
 	 * <li>the goal is not an inclusion</li>
 	 * <li>right member of the goal is not a domain</li>
 	 * <li>left member of the goal is not a function application</li>
-	 * <li>there is not the needed inclusion as hypothesis 1/3</li>
-	 * <li>there is not the needed inclusion as hypothesis 2/3</li>
-	 * <li>there is not the needed inclusion as hypothesis 3/3</li>
+	 * <li>there is not the needed inclusion as hypothesis 1/2</li>
+	 * <li>there is not the needed inclusion as hypothesis 2/2</li>
 	 * <li>definition of one the function is not an inclusion 1/2</li>
 	 * <li>there is twice a definition of a function 1/2</li>
 	 * <li>definition of one the function is not an inclusion 2/2</li>
@@ -155,9 +148,6 @@ public class FunAppInDomGoalAutoTacTests {
 		assertFailed(ER3_goal, OK_inclu, OK_f_TopS, OK_g_TopS, substitue,
 				typeEnvStr);
 
-		final Predicate ER1_inclu = genPred(typeEnvStr, "B=C");
-		assertFailed(OK_goal, ER1_inclu, OK_f_TopS, OK_g_TopS, substitue,
-				typeEnvStr);
 		final Predicate ER2_inclu = genPred(typeEnvStr, "B⊆A");
 		assertFailed(OK_goal, ER2_inclu, OK_f_TopS, OK_g_TopS, substitue,
 				typeEnvStr);
@@ -187,6 +177,8 @@ public class FunAppInDomGoalAutoTacTests {
 	 * 
 	 * @param goal
 	 *            the goal of the sequent
+	 * @param member
+	 *            the created predicate
 	 * @param inclu
 	 *            the inclusion hypothesis
 	 * @param f_hyp
@@ -198,9 +190,10 @@ public class FunAppInDomGoalAutoTacTests {
 	 * @param typeEnv
 	 *            the type environment of the sequent
 	 */
-	private void assertSucceeded(final Predicate goal, final Predicate inclu,
-			final Predicate f_hyp, final Predicate g_hyp,
-			final Expression substitute, final ITypeEnvironment typeEnv) {
+	private void assertSucceeded(final Predicate goal, Predicate member,
+			final Predicate inclu, final Predicate f_hyp,
+			final Predicate g_hyp, final Expression substitute,
+			final ITypeEnvironment typeEnv) {
 		final Set<Predicate> hypotheses = new HashSet<Predicate>();
 		hypotheses.add(inclu);
 		hypotheses.add(f_hyp);
@@ -208,7 +201,10 @@ public class FunAppInDomGoalAutoTacTests {
 		final IProverSequent sequent = ProverFactory.makeSequent(typeEnv,
 				hypotheses, goal);
 		final IProofTree pt = ProverFactory.makeProofTree(sequent, null);
-		assertSuccess(pt.getRoot(), myTreeShape(f_hyp, substitute), TAC);
+		Predicate[] input = new Predicate[2];
+		input[0] = inclu;
+		input[1] = member;
+		assertSuccess(pt.getRoot(), myTreeShape(f_hyp, substitute, input), TAC);
 	}
 
 	/**
@@ -248,25 +244,29 @@ public class FunAppInDomGoalAutoTacTests {
 	 * <code>hyp</code></li>
 	 * <li>totalDom : apply on the goal, on the position "1", with the
 	 * expression substitution <code>substitute</code></li>
-	 * <li>funImgInclusionGoal</li>
+	 * <li>mbGoal</li>
 	 * </ul>
 	 * 
 	 * @param hyp
 	 *            the hypothesis used for the funImgGoal tree shape
 	 * @param substitute
 	 *            the expression used for the totalDom tree shape
+	 * @param predicates
+	 *            all hte predicates used in input of the reasoner
+	 *            MembershipGoal
 	 * @return a tree shape with the following tree structure :
 	 *         <ul>
 	 *         <li>funImgGoal : apply on the root of the goal with the
 	 *         hypothesis <code>hyp</code></li>
 	 *         <li>totalDom : apply on the goal, on the position "1", with the
 	 *         expression substitution <code>substitute</code></li>
-	 *         <li>funImgInclusionGoal</li>
+	 *         <li>mbGoal</li>
 	 *         </ul>
 	 */
-	private TreeShape myTreeShape(Predicate hyp, Expression substitute) {
+	private TreeShape myTreeShape(Predicate hyp, Expression substitute,
+			Predicate[] predicates) {
 		return funImgGoal(hyp, "0",
-				totalDom(null, "1", substitute, funImgInclusion()));
+				totalDom(null, "1", substitute, mbg(predicates)));
 	}
 
 	/**
@@ -341,27 +341,6 @@ public class FunAppInDomGoalAutoTacTests {
 		private String image;
 
 		PFunAndPRel(String image) {
-			this.image = image;
-		}
-
-		String getImage() {
-			return this.image;
-		}
-	}
-
-	/**
-	 * Enumeration of two inclusions :
-	 * <ul>
-	 * <li>subseteq : "⊆"</li>
-	 * <li>subset : "⊂"</li>
-	 * </ul>
-	 * 
-	 */
-	private enum Inclusion {
-		subseteq("⊆"), subset("⊂");
-		private String image;
-
-		Inclusion(String image) {
 			this.image = image;
 		}
 
