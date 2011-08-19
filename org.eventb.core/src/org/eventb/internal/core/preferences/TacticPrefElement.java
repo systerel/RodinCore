@@ -205,7 +205,7 @@ public class TacticPrefElement implements
 			sb.append(SEPARATOR_ID);
 			sb.append(combinator.getTacticID());
 			sb.append(SEPARATOR_COMBINED);
-			listTrans.extract(combinator.getCombinedTactics());
+			sb.append(listTrans.extract(combinator.getCombinedTactics()));
 			return sb.toString();
 		}
 
@@ -217,8 +217,8 @@ public class TacticPrefElement implements
 			final String combinatorId = sId[0];
 			final ICombinedTacticInstantiator combinator = reg
 					.getCombinedTacticInstantiator(combinatorId);
-			final String[] sComb = sId[1].split(SEPARATOR_COMBINED);
-			if (sId.length == 0) return null;
+			final String[] sComb = sId[1].split(SEPARATOR_COMBINED, 2);
+			if (sId.length != 2) return null;
 			final String tacticId = sComb[0];
 			final List<ITacticDescriptor> combined = listTrans.inject(sComb[1]);
 			if (combined == null) return null;
