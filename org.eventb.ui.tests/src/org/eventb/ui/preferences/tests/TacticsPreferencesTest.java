@@ -169,8 +169,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 	private static ICombinedTacticDescriptor removeFirst(ICombinedTacticDescriptor desc) {
 		final String combinatorId = desc.getCombinatorId();
 		final ICombinatorDescriptor combinator = SequentProver
-				.getAutoTacticRegistry().getCombinedTacticInstantiator(
-						combinatorId);
+				.getAutoTacticRegistry().getCombinatorDescriptor(combinatorId);
 		final List<ITacticDescriptor> tactics = desc.getCombinedTactics();
 		final List<ITacticDescriptor> modified =  new ArrayList<ITacticDescriptor>(tactics);
 		modified.remove(0);
@@ -214,7 +213,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 
 	private static ITacticDescriptor loopOnAllPending(List<ITacticDescriptor> tactics) {
 		final ICombinatorDescriptor combinator = SequentProver
-				.getAutoTacticRegistry().getCombinedTacticInstantiator(
+				.getAutoTacticRegistry().getCombinatorDescriptor(
 						LoopOnAllPending.COMBINATOR_ID);
 		return combinator.instantiate(tactics, "testLoop");
 	}
