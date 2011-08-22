@@ -10,6 +10,12 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.ui.IEditorPart;
+
+import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.editors.RodinEditor;
 
 /**
@@ -18,10 +24,16 @@ import fr.systerel.editor.internal.editors.RodinEditor;
  * 
  * @author "Thomas Muller"
  */
-public class AbortHandler extends AbstractEditionHandler {
+public class AbortHandler extends AbstractHandler {
 
 	@Override
-	protected String handleSelection(RodinEditor editor, int offset) {
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		final IEditorPart activeEditor = EditorPlugin.getActivePage()
+				.getActiveEditor();
+		if (!(activeEditor instanceof RodinEditor)) {
+			return "The current active editor is not a Rodin Editor";
+		}
+		final RodinEditor editor = (RodinEditor) activeEditor;
 		editor.getSelectionController().clearSelection();
 		editor.abordEdition();
 		return null;

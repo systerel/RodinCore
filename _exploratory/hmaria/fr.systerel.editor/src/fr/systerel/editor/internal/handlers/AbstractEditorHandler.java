@@ -37,7 +37,8 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 		if (!(editor instanceof RodinEditor))
 			return false;
 		final RodinEditor rEditor = (RodinEditor) editor;
-		return checkEnablement(rEditor, rEditor.getCurrentOffset());
+		return !rEditor.isOverlayActive()
+				&& checkEnablement(rEditor, rEditor.getCurrentOffset());
 	}
 
 	/**
