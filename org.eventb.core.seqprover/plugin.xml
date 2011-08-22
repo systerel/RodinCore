@@ -662,6 +662,12 @@
             id="mapOvrGoalTac"
             name="%mapOvrGoalTacName">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$TotalDomToCProdAutoTac"
+            description="%totalDomToCProdTacDesc"
+            id="totalDomToCProdTac"
+            name="%totalDomToCProdTacName">
+      </autoTactic>
    </extension>
 
 </plugin>

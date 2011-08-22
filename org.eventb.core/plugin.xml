@@ -1267,6 +1267,7 @@
       <tactic id="org.eventb.core.seqprover.mbGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funAppInDomGoalTac"/>
       <tactic id="org.eventb.core.seqprover.mapOvrGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.totalDomToCProdTac"/>
    </extension>
    <extension
          point="org.eventb.core.pomTactics">
@@ -1308,6 +1309,7 @@
       <tactic id="org.eventb.core.seqprover.mbGoalTac"/>
       <tactic id="org.eventb.core.seqprover.funAppInDomGoalTac"/>
       <tactic id="org.eventb.core.seqprover.mapOvrGoalTac"/>
+      <tactic id="org.eventb.core.seqprover.totalDomToCProdTac"/>
    </extension>
    <extension
          point="org.rodinp.core.fileElementVersions">

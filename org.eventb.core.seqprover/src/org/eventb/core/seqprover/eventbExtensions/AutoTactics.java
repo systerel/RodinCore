@@ -69,6 +69,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MapOvrGoalTac
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MembershipGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.NNFRewritesOnceTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TotalDomToCProdTac;
 
 
 /**
@@ -1287,6 +1288,23 @@ public class AutoTactics {
 		@Override
 		protected ITactic getSingInstance() {
 			return new MapOvrGoalTac();
+		}
+
+	}
+
+	/**
+	 * Re-writes a domain if it can be substituted by a cartesian product. It
+	 * applies only in goal matching : <code>x↦y∈dom(g)</code>.
+	 * 
+	 * @author Emmanuel Billaud
+	 * @since 2.3
+	 */
+	public static class TotalDomToCProdAutoTac extends
+			AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return new TotalDomToCProdTac();
 		}
 
 	}
