@@ -196,13 +196,23 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		replaceTextInDocument(interval.getOffset(), interval.getLength(), text);
 	}
 	
-	protected void replaceTextInDocument(int offset, int length, String text) {
+	protected void replaceTextInDocument(final int offset, final int length,
+			final String text) {
 		if (document != null) {
-			try {
-				document.replace(offset, length, text);
-			} catch (BadLocationException e) {
-				e.printStackTrace();
-			}
+			editor.getStyledText().getDisplay().syncExec(new Runnable() {
+
+				@Override
+				public void run() {
+					if (document != null) {
+						try {
+							document.replace(offset, length, text);
+						} catch (BadLocationException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+			});
 		}
 	}
 
