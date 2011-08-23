@@ -141,10 +141,6 @@ public class FunInterImgTests extends AbstractManualInferenceTests {
 				" ⊤ |- " + P6,
 				null,
 				"0.0",
-				// position is not WD strict
-				" ⊤ |- " + P1,
-				null,
-				"1.0",
 		};
 	}
 
