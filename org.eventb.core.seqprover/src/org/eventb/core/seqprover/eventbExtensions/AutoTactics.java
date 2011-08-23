@@ -56,7 +56,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
 import org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteHypBoundedGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens;
+import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonensL1;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
@@ -1356,7 +1356,7 @@ public class AutoTactics {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return BasicTactics.reasonerTac(new GeneralizedModusPonens(),
+			return BasicTactics.reasonerTac(new GeneralizedModusPonensL1(),
 					EMPTY_INPUT);
 		}
 	}

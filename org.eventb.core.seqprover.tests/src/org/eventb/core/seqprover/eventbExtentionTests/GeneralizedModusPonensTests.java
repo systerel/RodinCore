@@ -13,18 +13,23 @@ package org.eventb.core.seqprover.eventbExtentionTests;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens;
+import org.eventb.internal.core.seqprover.eventbExtensions.AbstractGenMP;
 
 /**
- * @author Emmanuel Billaud
+ * Units tests for reasoners GeneralizedModusPonens.
  * 
- * Units tests for the auto-tactic GeneralizedModusPonens
+ * @author Emmanuel Billaud
  */
-public class GeneralizedModusPonensTests extends AbstractReasonerTests {
+public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests {
+	private final String REASONER_ID;
+
+	public GeneralizedModusPonensTests(AbstractGenMP reasoner) {
+		REASONER_ID = reasoner.getReasonerID();
+	}
 
 	@Override
 	public String getReasonerID() {
-		return (new GeneralizedModusPonens()).getReasonerID();
+		return REASONER_ID;
 	}
 
 	@Override
@@ -64,8 +69,8 @@ public class GeneralizedModusPonensTests extends AbstractReasonerTests {
 						"{P=ℙ(ℤ)}[][][¬1∈P] |- ⊥⇒2∈P"),
 				// Apply once in goal 2/2 (FALSE)
 				new SuccessfullReasonerApplication(
-						TestLib.genSeq("  ¬1∈P |- ¬1∈P⇒2∈P "), new EmptyInput(),
-						"{P=ℙ(ℤ)}[][][¬1∈P] |- ¬⊥⇒2∈P"),
+						TestLib.genSeq("  ¬1∈P |- ¬1∈P⇒2∈P "),
+						new EmptyInput(), "{P=ℙ(ℤ)}[][][¬1∈P] |- ¬⊥⇒2∈P"),
 				// Apply in both hypothesis and goal
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq(" 1∈P ;; (1∈P⇒2∈P)⇒3∈P |- 2∈P⇒1∈P "),
@@ -118,7 +123,7 @@ public class GeneralizedModusPonensTests extends AbstractReasonerTests {
 				// An hypothesis and its negation in goal
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq(" 1∈P |- ¬1∈P "), new EmptyInput()),
-				// An goal and its negation in hypothesis 
+				// An goal and its negation in hypothesis
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq(" ¬1∈P |- 1∈P "), new EmptyInput()),
 				// Two associative predicates equivalent but not exactly equal
@@ -141,7 +146,8 @@ public class GeneralizedModusPonensTests extends AbstractReasonerTests {
 						new EmptyInput()),
 				// Predicate ⊤ and ⊥ are not replaced
 				new UnsuccessfullReasonerApplication(
-						TestLib.genSeq(" ⊥ ;; ⊤ ;; (⊤∨⊥) |- ⊤ "), new EmptyInput()),
+						TestLib.genSeq(" ⊥ ;; ⊤ ;; (⊤∨⊥) |- ⊤ "),
+						new EmptyInput()),
 				// Avoid infinite loop
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq(" ⊥ ;; ¬⊤ |- ¬⊤ "), new EmptyInput()), };
