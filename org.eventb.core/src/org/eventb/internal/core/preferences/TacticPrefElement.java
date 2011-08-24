@@ -324,6 +324,7 @@ public class TacticPrefElement implements
 					length);
 			for (int i = 0; i < length; i++) {
 				final Node comb = childNodes.item(i);
+				if (!(comb instanceof Element)) continue;
 				final ITacticDescriptor combDesc = Selector.getRef().get(comb);
 				if (combDesc == null) return null;
 				combs.add(combDesc);
