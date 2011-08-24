@@ -77,7 +77,7 @@ public abstract class AbstractGenMP extends EmptyInputReasoner {
 		final RewriteHypsOutput output = rewriteHyps(seq, modifHypMap, level);
 		final List<IHypAction> hypActions = output.getHypActions();
 		final boolean isGoalDependent = output.isGoalDependent();
-		if (rewrittenGoal != null) {
+		if (rewrittenGoal != null) { // The goal is re-written.
 			final IAntecedent ant;
 			if (!hypActions.isEmpty()) {
 				ant = makeAntecedent(rewrittenGoal, null, null, hypActions);
@@ -86,13 +86,14 @@ public abstract class AbstractGenMP extends EmptyInputReasoner {
 			}
 			return makeProofRule(this, input, goal, neededHyps,
 					"generalized MP", ant);
-		} else if (isGoalDependent) {
-			reasonerFailure(this, input, "failure computing re-writing");
+		} else if (isGoalDependent) { // the goal is not re-written but is used 
+			// to re-write hypotheses. There should necessarily be IHypActions.
 			if (hypActions.isEmpty()) {
+				return reasonerFailure(this, input, "failure computing re-writing");
 			}
 			final IAntecedent ant = makeAntecedent(goal, null, null, hypActions);
 			return makeProofRule(this, input, goal, "generalized MP", ant);
-		} else {
+		} else { // the goal is re-written and is not used to re-write hypotheses.
 			if (!hypActions.isEmpty()) {
 				return makeProofRule(this, input, "generalized MP", hypActions);
 			}
