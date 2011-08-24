@@ -239,6 +239,7 @@ public class TacticPrefElement implements
 			final NodeList childNodes = e.getChildNodes();
 			for (int i = 0; i < childNodes.getLength(); i++) {
 				final Node param = childNodes.item(i);
+				if (!(param instanceof Element)) continue;
 				assertName(param, PARAMETER);
 				final String label = getAttribute(param, LABEL);
 				final String sType = getAttribute(param, TYPE);
@@ -352,7 +353,7 @@ public class TacticPrefElement implements
 		Document doc;
 		try {
 			doc = makeDocument(str);
-			return get(doc);
+			return get(doc.getDocumentElement());
 		} catch (Exception e) {
 			Util.log(e, "while retrieving tactic preference from:\n" + str);
 			return null;
@@ -371,8 +372,8 @@ public class TacticPrefElement implements
 	}
 
 	@Override
-	public ITacticDescriptor get(Node doc) {
-		return Selector.getFull().get(doc.getFirstChild());
+	public ITacticDescriptor get(Node node) {
+		return Selector.getFull().get(node);
 	}
 
 }
