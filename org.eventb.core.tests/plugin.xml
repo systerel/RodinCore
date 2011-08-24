@@ -90,5 +90,54 @@
             id="org.eventb.core.tests.primeFormulaExtensionProvider">
       </formulaExtensionProvider>
    </extension>
+   <extension
+         point="org.eventb.core.seqprover.autoTactics">
+      <autoTactic
+            class="org.eventb.core.tests.preferences.TestingAutoTactics$SimpleTestAutoTac"
+            id="simple"
+            name="Simple Auto Tactic">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.tests.preferences.TestingAutoTactics$ParamerizerTestAutoTac"
+            id="param"
+            name="Parameterized Auto Tactic">
+         <tacticParameter
+               default="true"
+               label="b"
+               type="Boolean">
+         </tacticParameter>
+         <tacticParameter
+               default="314"
+               label="i"
+               type="Integer">
+         </tacticParameter>
+         <tacticParameter
+               default="500000"
+               label="l"
+               type="Long">
+         </tacticParameter>
+         <tacticParameter
+               default="&quot;def&quot;"
+               label="s"
+               type="String">
+         </tacticParameter>
+      </autoTactic>
+   </extension>
+   <extension
+         point="org.eventb.core.seqprover.tacticCombinators">
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.tests.preferences.TestingAutoTactics$CombTestAutoTac"
+            id="combinator"
+            minArity="1"
+            name="Test Combinator">
+      </combinator>
+   </extension>
+   <extension
+         point="org.eventb.core.pomTactics">
+      <tactic
+            id="org.eventb.core.tests.simple">
+      </tactic>
+   </extension>
 
 </plugin>
