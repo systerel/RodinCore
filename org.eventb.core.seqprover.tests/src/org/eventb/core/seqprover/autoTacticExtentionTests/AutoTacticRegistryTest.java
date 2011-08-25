@@ -27,6 +27,7 @@ import java.util.List;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
+import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterDesc.ParameterType;
@@ -430,5 +431,13 @@ public class AutoTacticRegistryTest {
 		assertNotKnown(NoParseable.TACTIC_ID);
 	}
 	
-	
+	@Test
+	public void testValuationEquals() throws Exception {
+		final IParamTacticDescriptor tacDesc = (IParamTacticDescriptor) registry
+				.getTacticDescriptor(TacWithParams.TACTIC_ID);
+		final IParameterizerDescriptor parameterizer = registry.getParameterizerDescriptor(tacDesc.getParameterizerId());
+		final IParameterSetting setting1 = parameterizer.makeParameterSetting();
+		final IParameterSetting setting2 = parameterizer.makeParameterSetting();
+		assertEquals(setting1, setting2);
+	}
 }
