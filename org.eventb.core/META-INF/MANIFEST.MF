@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.core; singleton:=true
-Bundle-Version: 2.2.0.qualifier
+Bundle-Version: 2.3.0.qualifier
 Bundle-Activator: org.eventb.core.EventBPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -29,6 +29,7 @@ Export-Package: org.eventb.core,
  org.eventb.internal.core.pog;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.pog.modules;x-internal:=true,
  org.eventb.internal.core.pom;x-friends:="org.eventb.core.tests",
+ org.eventb.internal.core.preferences;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.sc;x-internal:=true,
  org.eventb.internal.core.sc.modules;x-friends:="org.eventb.core.tests",
  org.eventb.internal.core.sc.symbolTable;x-internal:=true,

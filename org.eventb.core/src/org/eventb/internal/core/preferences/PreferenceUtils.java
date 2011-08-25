@@ -119,7 +119,7 @@ public class PreferenceUtils {
 	}
 
 	public static enum XMLElementTypes {
-		SIMPLE, PARAMETERIZED, PARAMETER, COMBINED, PARAMETERIZED_REF;
+		TACTIC_PREF, PREF_UNIT, SIMPLE, PARAMETERIZED, PARAMETER, COMBINED, PREF_UNIT_REF;
 		@Override
 		public String toString() {
 			return super.toString().toLowerCase();
@@ -147,7 +147,7 @@ public class PreferenceUtils {
 	}
 
 	public static enum XMLAttributeTypes {
-		TACTIC_ID, PARAMETERIZER_ID, LABEL, TYPE, COMBINATOR_ID;
+		PREF_UNIT_NAME, TACTIC_ID, PARAMETERIZER_ID, LABEL, TYPE, COMBINATOR_ID;
 
 		@Override
 		public String toString() {
@@ -235,6 +235,17 @@ public class PreferenceUtils {
 		transformer.transform(source, outputTarget);
 
 		return s.toString("UTF8"); //$NON-NLS-1$			
+	}
+	
+	public static Node getUniqueChild(Node node) {
+		final NodeList unitChildren = node.getChildNodes();
+		for (int j = 0; j < unitChildren.getLength(); j++) {
+			final Node child = unitChildren.item(j);
+			if (child instanceof Element) {
+				return child;
+			}
+		}
+		throw PreferenceException.getInstance();
 	}
 
 }

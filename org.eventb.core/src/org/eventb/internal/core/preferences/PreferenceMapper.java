@@ -11,6 +11,17 @@
 package org.eventb.internal.core.preferences;
 
 import static org.eventb.internal.core.Util.log;
+import static org.eventb.internal.core.preferences.PreferenceUtils.getDocument;
+import static org.eventb.internal.core.preferences.PreferenceUtils.getUniqueChild;
+import static org.eventb.internal.core.preferences.PreferenceUtils.serializeDocument;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.PREF_UNIT_NAME;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.getAttribute;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.setAttribute;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PREF_UNIT;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.TACTIC_PREF;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.assertName;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.createElement;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.getElementsByTagName;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,17 +30,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eventb.core.preferences.IPrefElementTranslator;
+import org.eventb.internal.core.Util;
 import org.eventb.internal.core.preferences.PreferenceUtils.IXMLPref;
 import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Maps a preference to a {@link java.util.Map}.
  */
-public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T>> {
+public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, PrefUnit<T>>> {
 
-	// FIXME keep as is only for compatibility,
-	// but use a single xml string for all map entries (enables references !)
-	
 	// String separator for elements of a map
 	protected static final String SEPARATOR_MAP = ";";
 	// String separator between key and values of map entries
@@ -49,31 +62,54 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 	 * @return a object map corresponding to the preference
 	 */
 	@Override
-	public Map<String, T> inject(String pref) {
+	public Map<String, PrefUnit<T>> inject(String pref) {
 		if (pref == null) {
 			return null;
 		}
-		final Map<String, T> map = new HashMap<String, T>();
+		final Map<String, PrefUnit<T>> map = new HashMap<String, PrefUnit<T>>();
 		
 		if (translator instanceof IXMLPref) {
-			// TODO try to fetch everything as a single xml string, else recover
-			// => stop recovering in APTM
-		}
-		
-		final String[] stringMap = PreferenceUtils.parseString(pref,
-				SEPARATOR_MAP);
-		for (String elt : stringMap) {
-			final String[] entry = PreferenceUtils.parseString(elt,
-					SEPARATOR_MAP_ELEMENT);
-			if (entry.length != 2) {
-				log(null, "Invalid entry for the preference element: " + elt);
-			} else {
-				final String key = entry[0];
-				final T value = translator.inject(entry[1]);
-				if (value == null) {
-					throw PreferenceException.getInstance();
+			final IXMLPref<T> xmlTrans = (IXMLPref<T>) translator;
+			try {
+				final Document doc = PreferenceUtils.makeDocument(pref);
+				final Element tacticPref = doc.getDocumentElement();
+				assertName(tacticPref, TACTIC_PREF);
+				final NodeList units = getElementsByTagName(tacticPref,
+						PREF_UNIT);
+				for (int i = 0; i < units.getLength(); i++) {
+					final Element unit = (Element) units.item(i);
+					
+					assertName(unit, PREF_UNIT);
+					final String unitName = getAttribute(unit, PREF_UNIT_NAME);
+					final Node child = getUniqueChild(unit);
+						
+					final T value = xmlTrans.get(child);
+					map.put(unitName, new PrefUnit<T>(value));
 				}
-				map.put(key, value);
+			} catch (Exception e) {
+				Util.log(e, "while storing tactic preference");
+				throw PreferenceException.getInstance();
+			}
+		} else {
+
+			final String[] stringMap = PreferenceUtils.parseString(pref,
+					SEPARATOR_MAP);
+			for (String elt : stringMap) {
+				final String[] entry = PreferenceUtils.parseString(elt,
+						SEPARATOR_MAP_ELEMENT);
+				if (entry.length != 2) {
+					log(null, "Invalid entry for the preference element: "
+							+ elt);
+				} else {
+					final String key = entry[0];
+					final T value = translator.inject(entry[1]);
+					if (value == null) {
+						// FIXME may be due to missing plug-in (combinator or
+						// parameterizer contribution)
+						throw PreferenceException.getInstance();
+					}
+					map.put(key, new PrefUnit<T>(value));
+				}
 			}
 		}
 		return map;
@@ -87,11 +123,34 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 	 * @return a string representing the extracted map
 	 */
 	@Override
-	public String extract(Map<String, T> map) {
-		// TODO extract everything to a single xml string
+	public String extract(Map<String, PrefUnit<T>> map) {
+		if (translator instanceof IXMLPref) {
+			final IXMLPref<T> xmlTrans = (IXMLPref<T>) translator;
+			try {
+				final Document doc = getDocument();
+				final Element tacticPref = createElement(doc, TACTIC_PREF);
+
+				for (Entry<String, PrefUnit<T>> entry : map.entrySet()) {
+					final Element unit = createElement(doc, PREF_UNIT);
+					final String unitName = entry.getKey();
+					setAttribute(unit, PREF_UNIT_NAME, unitName);
+					unit.setIdAttribute(PREF_UNIT_NAME.toString(), true);
+					final T element = entry.getValue().getElement();
+					xmlTrans.put(element, doc, unit);
+					tacticPref.appendChild(unit);
+				}
+				doc.appendChild(tacticPref);
+				return serializeDocument(doc);
+			} catch (Exception e) {
+				Util.log(e, "while storing tactic preference");
+				throw PreferenceException.getInstance();
+			}
+		}
+		// old storage
 		final List<String> strEntries = new ArrayList<String>();
-		for (Entry<String, T> entry : map.entrySet()) {
-			strEntries.add(mapEntryToString(entry.getKey(), entry.getValue()));
+		for (Entry<String, PrefUnit<T>> entry : map.entrySet()) {
+			final T element = entry.getValue().getElement();
+			strEntries.add(mapEntryToString(entry.getKey(), element));
 		}
 		return PreferenceUtils.flatten(strEntries, SEPARATOR_MAP);
 	}

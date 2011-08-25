@@ -16,6 +16,8 @@ package org.eventb.core.preferences;
  * @param <T>
  *            the type of the entry
  * @since 2.1
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IPrefMapEntry<T> {
 
@@ -32,6 +34,15 @@ public interface IPrefMapEntry<T> {
 	 * @return a value
 	 */
 	public T getValue();
+
+	/**
+	 * Sets the key associated to the entry.
+	 * 
+	 * @param key
+	 *            the new value of the key
+	 * @since 2.3
+	 */
+	public void setKey(String key);
 
 	/**
 	 * Set the value associated to the entry.

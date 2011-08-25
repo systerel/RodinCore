@@ -12,11 +12,13 @@ package org.eventb.internal.core.preferences;
 
 import static org.eventb.core.EventBPlugin.getAutoPostTacticManager;
 import static org.eventb.internal.core.preferences.PreferenceUtils.getDocument;
+import static org.eventb.internal.core.preferences.PreferenceUtils.getUniqueChild;
 import static org.eventb.internal.core.preferences.PreferenceUtils.makeDocument;
 import static org.eventb.internal.core.preferences.PreferenceUtils.serializeDocument;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.COMBINATOR_ID;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.LABEL;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.PARAMETERIZER_ID;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.PREF_UNIT_NAME;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.TACTIC_ID;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.TYPE;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.getAttribute;
@@ -24,7 +26,7 @@ import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeT
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.COMBINED;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETER;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETERIZED;
-import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETERIZED_REF;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PREF_UNIT_REF;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.SIMPLE;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.assertName;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.createElement;
@@ -89,8 +91,7 @@ public class TacticPrefElement implements
 						(ICombinedTacticDescriptor) desc, doc, parent);
 			} else if (desc instanceof IParamTacticDescriptor) {
 				if (refOnly) {
-					ParamRef.getDefault().put((IParamTacticDescriptor) desc,
-							doc, parent);
+					UnitRef.getDefault().put(desc, doc, parent);
 				} else {
 					ParamTacticTranslator.getDefault().put(
 							(IParamTacticDescriptor) desc, doc, parent);
@@ -110,8 +111,8 @@ public class TacticPrefElement implements
 			if (hasName(e, PARAMETERIZED)) {
 				return ParamTacticTranslator.getDefault().get(e);
 			}
-			if (hasName(e, PARAMETERIZED_REF)) {
-				return ParamRef.getDefault().get(e);
+			if (hasName(e, PREF_UNIT_REF)) {
+				return UnitRef.getDefault().get(e);
 			}
 			if (hasName(e, COMBINED)) {
 				return CombinedTacticTranslator.getDefault().get(e);
@@ -253,29 +254,38 @@ public class TacticPrefElement implements
 
 	}
 	
-	private static class ParamRef implements IXMLPref<IParamTacticDescriptor> {
+	private static class UnitRef implements IXMLPref<ITacticDescriptor> {
 
-		private ParamRef() {
+		private UnitRef() {
 			// singleton
 		}
 
-		private static final ParamRef DEFAULT = new ParamRef();
+		private static final UnitRef DEFAULT = new UnitRef();
 
-		public static ParamRef getDefault() {
+		public static UnitRef getDefault() {
 			return DEFAULT;
 		}
+		
 		@Override
-		public void put(IParamTacticDescriptor desc, Document doc, Node parent) {
-			final Element parameterizedRef = createElement(doc, PARAMETERIZED_REF);
-			setAttribute(parameterizedRef, TACTIC_ID, desc.getTacticID());
-			parent.appendChild(parameterizedRef);
+		public void put(ITacticDescriptor desc, Document doc, Node parent) {
+			final Element ref = createElement(doc, PREF_UNIT_REF);
+			setAttribute(ref, PREF_UNIT_NAME, desc.getTacticID());
+			parent.appendChild(ref);
 		}
 
 		@Override
-		public IParamTacticDescriptor get(Node e) {
-			// FIXME ensure tactic id uniqueness (avoid ref ambiguity !)
-			// FIXME how to do that ? => ok when doc contains everything
-			return null;
+		public ITacticDescriptor get(Node e) {
+			assertName(e, PREF_UNIT_REF);
+			final String unitName = getAttribute(e, PREF_UNIT_NAME);
+			final Element unit = e.getOwnerDocument().getElementById(unitName);
+			if (unit == null) {
+				// reference to an unknown element
+				throw PreferenceException.getInstance();
+			}
+			// FIXME a mere copy of unit is not linked to it (is not updated)  
+			// return a reference instead !
+			final Node tactic = getUniqueChild(unit);
+			return Selector.getFull().get(tactic);
 		}
 	}
 
@@ -304,7 +314,7 @@ public class TacticPrefElement implements
 			setAttribute(combined, TACTIC_ID, combinator.getTacticID());
 			setAttribute(combined, COMBINATOR_ID, combinator.getCombinatorId());
 			for (ITacticDescriptor comb : combinator.getCombinedTactics()) {
-				Selector.getRef().put(comb, doc, combined);
+				Selector.getFull().put(comb, doc, combined); //FIXME Selector.getRef() 
 			}
 			parent.appendChild(combined);
 		}
@@ -338,7 +348,7 @@ public class TacticPrefElement implements
 	@Override
 	public String extract(ITacticDescriptor desc) {
 		try {
-			Document doc = getDocument();
+			final Document doc = getDocument();
 			put(desc, doc, doc);
 			return serializeDocument(doc);
 		} catch (Exception e) {
