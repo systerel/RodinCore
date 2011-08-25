@@ -378,7 +378,7 @@ public class TacticPrefElement implements
 	
 	@Override
 	public void put(ITacticDescriptor desc, Document doc, Node parent) {
-		Selector.getFull().put(desc, doc, doc);
+		Selector.getFull().put(desc, doc, parent);
 	}
 
 	@Override
