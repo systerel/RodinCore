@@ -12,7 +12,7 @@ package org.eventb.core.preferences.autotactics;
 
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefElementTranslator;
-import org.eventb.core.preferences.IPreferenceUnit;
+import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IReferenceMaker;
 import org.eventb.core.preferences.IXMLPrefSerializer;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
@@ -36,7 +36,7 @@ public class TacticPreferenceFactory {
 	 * @return a xml preference serializer
 	 * @since 2.3
 	 */
-	public static IXMLPrefSerializer<IPreferenceUnit<ITacticDescriptor>> makeTacticXMLSerializer() {
+	public static IXMLPrefSerializer<IPrefMapEntry<ITacticDescriptor>> makeTacticXMLSerializer() {
 		return new PrefUnitTranslator();
 	}
 
@@ -44,7 +44,7 @@ public class TacticPreferenceFactory {
 
 		@Override
 		public ITacticDescriptor makeReference(
-				IPreferenceUnit<ITacticDescriptor> prefUnit) {
+				IPrefMapEntry<ITacticDescriptor> prefUnit) {
 			return new TacticDescriptorRef(prefUnit);
 		}
 	};

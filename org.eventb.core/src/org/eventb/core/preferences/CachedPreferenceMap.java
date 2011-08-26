@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.internal.core.preferences.PrefUnit;
 import org.eventb.internal.core.preferences.PreferenceMapper;
 
 /**
@@ -30,11 +29,19 @@ import org.eventb.internal.core.preferences.PreferenceMapper;
  */
 public class CachedPreferenceMap<T> {
 
-	protected Map<String, IPreferenceUnit<T>> cache = new HashMap<String, IPreferenceUnit<T>>();
-
-	protected final IPrefElementTranslator<Map<String, IPreferenceUnit<T>>> prefMap;
+	protected Map<String, T> cache = new HashMap<String, T>();
 	
-	private final IReferenceMaker<T> refMaker;
+	// to make references work, it is important to return the same map entry for
+	// as long as the corresponding preference exists; that is, even if its name
+	// and/or value change
+	private final Map<String, MapEntry> accessedEntries = new HashMap<String, MapEntry>();
+	
+	protected final IPrefElementTranslator<Map<String, T>> prefMap;
+	
+	/**
+	 * @since 2.3
+	 */
+	protected final IReferenceMaker<T> refMaker;
 
 	private final Set<ICacheListener<T>> listeners = new HashSet<ICacheListener<T>>();
 
@@ -46,7 +53,7 @@ public class CachedPreferenceMap<T> {
 	/**
 	 * @since 2.3
 	 */
-	public CachedPreferenceMap(IXMLPrefSerializer<IPreferenceUnit<T>> translator, IReferenceMaker<T> refMaker) {
+	public CachedPreferenceMap(IXMLPrefSerializer<IPrefMapEntry<T>> translator, IReferenceMaker<T> refMaker) {
 		this(new PreferenceMapper<T>(translator), refMaker);
 	}
 
@@ -63,6 +70,7 @@ public class CachedPreferenceMap<T> {
 	 */
 	public void inject(String pref) {
 		cache = prefMap.inject(pref);
+		accessedEntries.clear();
 		notifyListeners();
 	}
 
@@ -88,6 +96,7 @@ public class CachedPreferenceMap<T> {
 	 */
 	public void add(String name, T value) {
 		doAddCacheEntry(name, value);
+		// TODO test if actually added, else don't notify
 		notifyListeners();
 	}
 
@@ -110,10 +119,11 @@ public class CachedPreferenceMap<T> {
 		return added;
 	}
 
-	private boolean doAddCacheEntry(String key, T entry) {
+	private boolean doAddCacheEntry(String key, T value) {
 		if (exists(key))
 			return false;
-		cache.put(key, new PrefUnit<T>(key, entry));
+		cache.put(key, value);
+		accessedEntries.remove(key);
 		return true;
 	}
 
@@ -137,7 +147,7 @@ public class CachedPreferenceMap<T> {
 	public List<IPrefMapEntry<T>> getEntries() {
 		final List<IPrefMapEntry<T>> entries = new ArrayList<IPrefMapEntry<T>>();
 		for (String key : cache.keySet()) {
-			entries.add(new MapEntry(key));
+			entries.add(getEntry(key));
 		}
 		return entries;
 	}
@@ -155,7 +165,12 @@ public class CachedPreferenceMap<T> {
 		if (!cache.containsKey(name)) {
 			return null;
 		}
-		return new MapEntry(name);
+		MapEntry entry = accessedEntries.get(name);
+		if (entry == null) {
+			entry = new MapEntry(name);
+			accessedEntries.put(name, entry);
+		}
+		return entry;
 	}
 
 	/**
@@ -168,20 +183,6 @@ public class CachedPreferenceMap<T> {
 	}
 
 	/**
-	 * @since 2.3
-	 */
-	public T getReference(String key) {
-		if (refMaker == null) {
-			return null;
-		}
-		final IPreferenceUnit<T> prefUnit = cache.get(key);
-		if (prefUnit == null) {
-			return null;
-		}
-		return prefUnit.getReference(refMaker);
-	}
-	
-	/**
 	 * Remove the entries with the given names from the cache
 	 * 
 	 * @param names
@@ -190,6 +191,7 @@ public class CachedPreferenceMap<T> {
 	public void remove(String... names) {
 		for (String key : names) {
 			cache.remove(key);
+			accessedEntries.remove(key);
 		}
 		notifyListeners();
 	}
@@ -209,36 +211,28 @@ public class CachedPreferenceMap<T> {
 
 		@Override
 		public T getValue() {
-			final IPreferenceUnit<T> prefUnit = cache.get(name);
-			if (prefUnit == null) {
-				return null;
-			}
-			return prefUnit.getElement();
+			return cache.get(name);
 		}
 
 		@Override
 		public void setKey(String key) {
-			final IPreferenceUnit<T> prefUnit = cache.remove(name);
+			final T value = cache.remove(name);
 			name = key;
-			if (prefUnit == null) {
+			if (value == null) {
 				return;
 			}
-			prefUnit.setName(name);
-			setValue(prefUnit);
+			setValue(value);
 		}
 
 		@Override
 		public void setValue(T value) {
-			final IPreferenceUnit<T> prefUnit = cache.get(name);
-			if (prefUnit == null) {
-				return;
-			}
-			prefUnit.setElement(value);
+			cache.put(name, value);
+			notifyListeners();
 		}
 
-		private void setValue(final IPreferenceUnit<T> prefUnit) {
-			cache.put(name, prefUnit);
-			notifyListeners();
+		@Override
+		public T getReference() {
+			return refMaker.makeReference(this);
 		}
 
 	}

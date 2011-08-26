@@ -26,10 +26,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eventb.core.preferences.IPrefElementTranslator;
-import org.eventb.core.preferences.IPreferenceUnit;
+import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IXMLPrefSerializer;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
+import org.eventb.internal.core.preferences.PreferenceUtils.ReadPrefMapEntry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -38,7 +39,7 @@ import org.w3c.dom.NodeList;
 /**
  * Maps a preference to a {@link java.util.Map}.
  */
-public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, IPreferenceUnit<T>>> {
+public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T>> {
 
 	// String separator for elements of a map
 	protected static final String SEPARATOR_MAP = ";";
@@ -47,18 +48,18 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, I
 
 	private final IPrefElementTranslator<T> translator;
 
-	private final IXMLPrefSerializer<IPreferenceUnit<T>> xmlTranslator;
+	private final IXMLPrefSerializer<IPrefMapEntry<T>> xmlTranslator;
 	
 	public PreferenceMapper(IPrefElementTranslator<T> translator) {
 		this(translator, null);
 	}
 	
-	public PreferenceMapper(IXMLPrefSerializer<IPreferenceUnit<T>> xmlTranslator) {
+	public PreferenceMapper(IXMLPrefSerializer<IPrefMapEntry<T>> xmlTranslator) {
 		this(null, xmlTranslator);
 	}
 	
 	private PreferenceMapper(IPrefElementTranslator<T> translator,
-			IXMLPrefSerializer<IPreferenceUnit<T>> xmlTranslator) {
+			IXMLPrefSerializer<IPrefMapEntry<T>> xmlTranslator) {
 		this.translator = translator;
 		this.xmlTranslator = xmlTranslator;
 	}
@@ -71,11 +72,11 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, I
 	 * @return a object map corresponding to the preference
 	 */
 	@Override
-	public Map<String, IPreferenceUnit<T>> inject(String pref) {
+	public Map<String, T> inject(String pref) {
 		if (pref == null) {
 			return null;
 		}
-		final Map<String, IPreferenceUnit<T>> map = new HashMap<String, IPreferenceUnit<T>>();
+		final Map<String, T> map = new HashMap<String, T>();
 		
 		if (xmlTranslator != null) {
 			try {
@@ -87,9 +88,9 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, I
 				for (int i = 0; i < units.getLength(); i++) {
 					
 					final Node unitElem = units.item(i);
-					final IPreferenceUnit<T> unit = xmlTranslator.get(unitElem);
+					final IPrefMapEntry<T> unit = xmlTranslator.get(unitElem);
 					
-					map.put(unit.getName(), unit);
+					map.put(unit.getKey(), unit.getValue());
 				}
 			} catch (Exception e) {
 				Util.log(e, "while storing tactic preference");
@@ -113,7 +114,7 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, I
 						// parameterizer contribution)
 						throw PreferenceException.getInstance();
 					}
-					map.put(key, new PrefUnit<T>(key, value));
+					map.put(key, value);
 				}
 			}
 		}
@@ -128,14 +129,16 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, I
 	 * @return a string representing the extracted map
 	 */
 	@Override
-	public String extract(Map<String, IPreferenceUnit<T>> map) {
+	public String extract(Map<String, T> map) {
 		if (xmlTranslator != null) {
 			try {
 				final Document doc = getDocument();
 				final Element tacticPref = createElement(doc, TACTIC_PREF);
 
-				for (Entry<String, IPreferenceUnit<T>> entry : map.entrySet()) {
-					xmlTranslator.put(entry.getValue(), doc, tacticPref);
+				for (Entry<String, T> entry : map.entrySet()) {
+					final ReadPrefMapEntry<T> prefEntry = new ReadPrefMapEntry<T>(
+							entry.getKey(), entry.getValue());
+					xmlTranslator.put(prefEntry, doc, tacticPref);
 				}
 				doc.appendChild(tacticPref);
 				return serializeDocument(doc);
@@ -146,8 +149,8 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, I
 		}
 		// old storage
 		final List<String> strEntries = new ArrayList<String>();
-		for (Entry<String, IPreferenceUnit<T>> entry : map.entrySet()) {
-			final T element = entry.getValue().getElement();
+		for (Entry<String, T> entry : map.entrySet()) {
+			final T element = entry.getValue();
 			strEntries.add(mapEntryToString(entry.getKey(), element));
 		}
 		return PreferenceUtils.flatten(strEntries, SEPARATOR_MAP);

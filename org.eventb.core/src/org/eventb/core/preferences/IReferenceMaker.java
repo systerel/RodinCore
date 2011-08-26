@@ -23,5 +23,5 @@ package org.eventb.core.preferences;
  */
 public interface IReferenceMaker<T> {
 
-	T makeReference(IPreferenceUnit<T> prefUnit);
+	T makeReference(IPrefMapEntry<T> prefEntry);
 }

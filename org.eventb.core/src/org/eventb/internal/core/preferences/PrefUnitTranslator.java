@@ -33,7 +33,7 @@ import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTyp
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.preferences.IPreferenceUnit;
+import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IXMLPrefSerializer;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
@@ -48,6 +48,7 @@ import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
+import org.eventb.internal.core.preferences.PreferenceUtils.ReadPrefMapEntry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -58,7 +59,7 @@ import org.w3c.dom.NodeList;
  * 
  */
 public class PrefUnitTranslator implements
-		IXMLPrefSerializer<IPreferenceUnit<ITacticDescriptor>> {
+		IXMLPrefSerializer<IPrefMapEntry<ITacticDescriptor>> {
 
 	private static class Selector implements IXMLPrefSerializer<ITacticDescriptor> {
 
@@ -356,24 +357,24 @@ public class PrefUnitTranslator implements
 	}
 
 	@Override
-	public void put(IPreferenceUnit<ITacticDescriptor> unit, Document doc, Node parent) {
+	public void put(IPrefMapEntry<ITacticDescriptor> unit, Document doc, Node parent) {
 		final Element unitElem = createElement(doc, PREF_UNIT);
-		final String unitName = unit.getName();
+		final String unitName = unit.getKey();
 		setAttribute(unitElem, PREF_UNIT_NAME, unitName);
 		unitElem.setIdAttribute(PREF_UNIT_NAME.toString(), true);
-		final ITacticDescriptor element = unit.getElement();
+		final ITacticDescriptor element = unit.getValue();
 		Selector.getFull().put(element, doc, unitElem);
 		parent.appendChild(unitElem);
 	}
 
 	@Override
-	public IPreferenceUnit<ITacticDescriptor> get(Node unitElem) {
+	public IPrefMapEntry<ITacticDescriptor> get(Node unitElem) {
 		assertName(unitElem, PREF_UNIT);
 		final String unitName = getAttribute(unitElem, PREF_UNIT_NAME);
 		final Node child = getUniqueChild(unitElem);
 			
 		final ITacticDescriptor desc = Selector.getFull().get(child);
-		return new PrefUnit<ITacticDescriptor>(unitName, desc);
+		return new ReadPrefMapEntry<ITacticDescriptor>(unitName, desc);
 	}
 
 }

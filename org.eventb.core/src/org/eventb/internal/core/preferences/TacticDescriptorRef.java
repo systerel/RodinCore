@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.preferences;
 
-import org.eventb.core.preferences.IPreferenceUnit;
+import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ITactic;
 
@@ -21,14 +21,14 @@ import org.eventb.core.seqprover.ITactic;
 public class TacticDescriptorRef implements ITacticDescriptorRef {
 
 	private static final String INVALID_PREFERENCE_ENTRY = "invalid tactic reference";
-	private final IPreferenceUnit<ITacticDescriptor> prefUnit;
+	private final IPrefMapEntry<ITacticDescriptor> prefUnit;
 	
-	public TacticDescriptorRef(IPreferenceUnit<ITacticDescriptor> prefUnit) {
+	public TacticDescriptorRef(IPrefMapEntry<ITacticDescriptor> prefUnit) {
 		this.prefUnit = prefUnit;
 	}
 
 	private ITacticDescriptor getDesc() {
-		return prefUnit.getElement();
+		return prefUnit.getValue();
 	}
 
 	@Override

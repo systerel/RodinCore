@@ -51,5 +51,13 @@ public interface IPrefMapEntry<T> {
 	 *            the new value of the entry
 	 */
 	public void setValue(T value);
+	
+	/**
+	 * Returns an object that references the value of this entry.
+	 * <p>Returned object always has the same behaviour as the value of this entry, even if the value changes.</p>
+	 * @return a reference
+	 * @since 2.3
+	 */
+	T getReference();
 
 }

@@ -27,6 +27,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
@@ -66,6 +67,43 @@ public class PreferenceUtils {
 		}
 	}
 
+	public static class ReadPrefMapEntry<T> implements IPrefMapEntry<T> {
+
+		private final String key;
+		private final T value;
+		
+		public ReadPrefMapEntry(String key, T value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		@Override
+		public String getKey() {
+			return key;
+		}
+
+		@Override
+		public T getValue() {
+			return value;
+		}
+
+		@Override
+		public void setKey(String key) {
+			// do nothing
+		}
+
+		@Override
+		public void setValue(T value) {
+			// do nothing
+		}
+
+		@Override
+		public T getReference() {
+			return null;
+		}
+		
+	}
+	
 	/**
 	 * Returns a string representation of a list of input objects. The objects
 	 * are separated by a given character.
