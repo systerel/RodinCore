@@ -170,8 +170,6 @@ public class TacticPreferenceTests extends TestCase {
 				TacticPreferenceFactory.getTacticRefMaker());
 	}
 
-	// TODO test mapEntry.setKey
-	
 	private static void assertExtractInject(CachedPreferenceMap<ITacticDescriptor> map) {
 		final String extracted = map.extract();
 		final CachedPreferenceMap<ITacticDescriptor> injected = makeCachedPrefMap();
@@ -253,19 +251,18 @@ public class TacticPreferenceTests extends TestCase {
 				TacticPreferenceFactory.getTacticRefMaker());
 		final String paramName = "param";
 		final IParamTacticDescriptor param = makeParam(true, 5, 92L,
-				"original");
+				"param");
 		map.add(paramName, param);
 	
 		final String combinedName = "combined";
-		map.add(combinedName, makeCombined(makeRef(map, paramName)));
+		final ICombinedTacticDescriptor combined = makeCombined(makeRef(map, paramName));
+		map.add(combinedName, combined);
 
 		assertExtractInject(map);
 	}
 
-	// TODO test mapEntry.setKey
-	
 	// verify that the reference always points to the good descriptor
-	// even if it changes
+	// even if it changes (key and/or value)
 	public void testRef() throws Exception {
 		final CachedPreferenceMap<ITacticDescriptor> map = new CachedPreferenceMap<ITacticDescriptor>(
 				TacticPreferenceFactory.getTacticPrefElement(),
@@ -280,11 +277,16 @@ public class TacticPreferenceTests extends TestCase {
 				.getEntry(combinedName);
 		assertCombined(combinedEntry.getValue(), original);
 	
+		// change descriptor
 		final IParamTacticDescriptor modified = makeParam(false, 6, 0,
 				"modified");
 		final IPrefMapEntry<ITacticDescriptor> paramEntry = map
 				.getEntry(paramName);
 		paramEntry.setValue(modified);
+
+		// change preference key
+		final String modifiedParamName = paramName + " modified";
+		paramEntry.setKey(modifiedParamName);
 	
 		assertCombined(combinedEntry.getValue(), modified);
 	}
@@ -328,7 +330,6 @@ public class TacticPreferenceTests extends TestCase {
 		map.add(selfName, combined);
 		final ITacticDescriptor selfRef = makeRef(map, selfName);
 		final ICombinedTacticDescriptor selfCombined = makeCombined(selfRef);
-		// TODO test map.add(selfName, selfRef)
 		final IPrefMapEntry<ITacticDescriptor> selfEntry = map
 				.getEntry(selfName);
 		try {
