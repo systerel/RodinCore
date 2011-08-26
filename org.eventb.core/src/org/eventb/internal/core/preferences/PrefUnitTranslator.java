@@ -15,7 +15,7 @@ import static org.eventb.internal.core.preferences.PreferenceUtils.getUniqueChil
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.COMBINATOR_ID;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.LABEL;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.PARAMETERIZER_ID;
-import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.PREF_UNIT_NAME;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.PREF_KEY;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.TACTIC_ID;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.TYPE;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.getAttribute;
@@ -24,7 +24,7 @@ import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTyp
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETER;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETERIZED;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PREF_UNIT;
-import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PREF_UNIT_REF;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PREF_REF;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.SIMPLE;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.assertName;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.createElement;
@@ -63,35 +63,26 @@ public class PrefUnitTranslator implements
 
 	private static class Selector implements IXMLPrefSerializer<ITacticDescriptor> {
 
-		private final boolean refOnly;
-
-		private Selector(boolean refOnly) {
-			this.refOnly = refOnly;
+		private Selector() {
 		}
 
-		private static final Selector REF_INSTANCE = new Selector(true);
-		private static final Selector FULL_INSTANCE = new Selector(false);
+		private static final Selector INSTANCE = new Selector();
 
-		public static Selector getFull() {
-			return FULL_INSTANCE;
-		}
-
-		public static Selector getRef() {
-			return REF_INSTANCE;
+		public static Selector getInstance() {
+			return INSTANCE;
 		}
 
 		@Override
 		public void put(ITacticDescriptor desc, Document doc, Node parent) {
+			if (desc instanceof ITacticDescriptorRef) {
+				TacticRef.getDefault().put((ITacticDescriptorRef) desc, doc, parent);
+			}
 			if (desc instanceof ICombinedTacticDescriptor) {
 				CombinedTacticTranslator.getDefault().put(
 						(ICombinedTacticDescriptor) desc, doc, parent);
 			} else if (desc instanceof IParamTacticDescriptor) {
-				if (refOnly) {
-					UnitRef.getDefault().put(desc, doc, parent);
-				} else {
-					ParamTacticTranslator.getDefault().put(
-							(IParamTacticDescriptor) desc, doc, parent);
-				}
+				ParamTacticTranslator.getDefault().put(
+						(IParamTacticDescriptor) desc, doc, parent);
 			} else {
 
 				SimpleTactic.getDefault().put(desc, doc, parent);
@@ -107,8 +98,8 @@ public class PrefUnitTranslator implements
 			if (hasName(e, PARAMETERIZED)) {
 				return ParamTacticTranslator.getDefault().get(e);
 			}
-			if (hasName(e, PREF_UNIT_REF)) {
-				return UnitRef.getDefault().get(e);
+			if (hasName(e, PREF_REF)) {
+				return TacticRef.getDefault().get(e);
 			}
 			if (hasName(e, COMBINED)) {
 				return CombinedTacticTranslator.getDefault().get(e);
@@ -254,38 +245,33 @@ public class PrefUnitTranslator implements
 
 	}
 
-	private static class UnitRef implements IXMLPrefSerializer<ITacticDescriptor> {
+	private static class TacticRef implements IXMLPrefSerializer<ITacticDescriptorRef> {
 
-		private UnitRef() {
+		private TacticRef() {
 			// singleton
 		}
 
-		private static final UnitRef DEFAULT = new UnitRef();
+		private static final TacticRef DEFAULT = new TacticRef();
 
-		public static UnitRef getDefault() {
+		public static TacticRef getDefault() {
 			return DEFAULT;
 		}
 
 		@Override
-		public void put(ITacticDescriptor desc, Document doc, Node parent) {
-			final Element ref = createElement(doc, PREF_UNIT_REF);
-			setAttribute(ref, PREF_UNIT_NAME, desc.getTacticID());
+		public void put(ITacticDescriptorRef desc, Document doc, Node parent) {
+			final Element ref = createElement(doc, PREF_REF);
+			final String key = desc.getPrefEntry().getKey();
+			setAttribute(ref, PREF_KEY, key);
 			parent.appendChild(ref);
 		}
 
 		@Override
-		public ITacticDescriptor get(Node e) {
-			assertName(e, PREF_UNIT_REF);
-			final String unitName = getAttribute(e, PREF_UNIT_NAME);
-			final Element unit = e.getOwnerDocument().getElementById(unitName);
-			if (unit == null) {
-				// reference to an unknown element
-				throw PreferenceException.getInstance();
-			}
-			// FIXME a mere copy of unit is not linked to it (is not updated)
-			// return a reference instead !
-			final Node tactic = getUniqueChild(unit);
-			return Selector.getFull().get(tactic);
+		public ITacticDescriptorRef get(Node e) {
+			assertName(e, PREF_REF);
+			final String key = getAttribute(e, PREF_KEY);
+			final ReadPrefMapEntry<ITacticDescriptor> entry = new ReadPrefMapEntry<ITacticDescriptor>(key, null);
+			return new TacticDescriptorRef(entry);
+			// FIXME must be resolved after full loading
 		}
 	}
 
@@ -298,11 +284,6 @@ public class PrefUnitTranslator implements
 			return DEFAULT;
 		}
 
-		// here we just store references to combined tactics
-		// even if they are parameterized
-		// they are stored in extension independently
-		// hence the use of the reference selector
-
 		private CombinedTacticTranslator() {
 			// singleton
 		}
@@ -314,8 +295,7 @@ public class PrefUnitTranslator implements
 			setAttribute(combined, TACTIC_ID, combinator.getTacticID());
 			setAttribute(combined, COMBINATOR_ID, combinator.getCombinatorId());
 			for (ITacticDescriptor comb : combinator.getCombinedTactics()) {
-				Selector.getFull().put(comb, doc, combined); // FIXME
-																// Selector.getRef()
+				Selector.getInstance().put(comb, doc, combined);
 			}
 			parent.appendChild(combined);
 		}
@@ -340,7 +320,7 @@ public class PrefUnitTranslator implements
 				final Node comb = childNodes.item(i);
 				if (!(comb instanceof Element))
 					continue;
-				final ITacticDescriptor combDesc = Selector.getRef().get(comb);
+				final ITacticDescriptor combDesc = Selector.getInstance().get(comb);
 				if (combDesc == null)
 					return null;
 				combs.add(combDesc);
@@ -360,20 +340,20 @@ public class PrefUnitTranslator implements
 	public void put(IPrefMapEntry<ITacticDescriptor> unit, Document doc, Node parent) {
 		final Element unitElem = createElement(doc, PREF_UNIT);
 		final String unitName = unit.getKey();
-		setAttribute(unitElem, PREF_UNIT_NAME, unitName);
-		unitElem.setIdAttribute(PREF_UNIT_NAME.toString(), true);
+		setAttribute(unitElem, PREF_KEY, unitName);
+		unitElem.setIdAttribute(PREF_KEY.toString(), true);
 		final ITacticDescriptor element = unit.getValue();
-		Selector.getFull().put(element, doc, unitElem);
+		Selector.getInstance().put(element, doc, unitElem);
 		parent.appendChild(unitElem);
 	}
 
 	@Override
 	public IPrefMapEntry<ITacticDescriptor> get(Node unitElem) {
 		assertName(unitElem, PREF_UNIT);
-		final String unitName = getAttribute(unitElem, PREF_UNIT_NAME);
+		final String unitName = getAttribute(unitElem, PREF_KEY);
 		final Node child = getUniqueChild(unitElem);
 			
-		final ITacticDescriptor desc = Selector.getFull().get(child);
+		final ITacticDescriptor desc = Selector.getInstance().get(child);
 		return new ReadPrefMapEntry<ITacticDescriptor>(unitName, desc);
 	}
 

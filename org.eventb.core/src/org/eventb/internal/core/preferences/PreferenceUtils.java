@@ -157,7 +157,7 @@ public class PreferenceUtils {
 	}
 
 	public static enum XMLElementTypes {
-		TACTIC_PREF, PREF_UNIT, SIMPLE, PARAMETERIZED, PARAMETER, COMBINED, PREF_UNIT_REF;
+		TACTIC_PREF, PREF_UNIT, SIMPLE, PARAMETERIZED, PARAMETER, COMBINED, PREF_REF;
 		@Override
 		public String toString() {
 			return super.toString().toLowerCase();
@@ -185,7 +185,7 @@ public class PreferenceUtils {
 	}
 
 	public static enum XMLAttributeTypes {
-		PREF_UNIT_NAME, TACTIC_ID, PARAMETERIZER_ID, LABEL, TYPE, COMBINATOR_ID;
+		PREF_KEY, TACTIC_ID, PARAMETERIZER_ID, LABEL, TYPE, COMBINATOR_ID;
 
 		@Override
 		public String toString() {

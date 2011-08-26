@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.preferences;
 
+import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
@@ -22,8 +23,8 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
  * @author Nicolas Beauger
  * @since 2.3
  * @noimplement This interface is not intended to be implemented by clients.
- * @noextend This interface is not intended to be extended by clients.
- * TODO move to public API if required
+ * @noextend This interface is not intended to be extended by clients. TODO move
+ *           to public API if required
  */
 public interface ITacticDescriptorRef extends ITacticDescriptor {
 	/**
@@ -32,4 +33,11 @@ public interface ITacticDescriptorRef extends ITacticDescriptor {
 	 * @return <code>true</code> iff this reference is valid
 	 */
 	boolean isValidReference();
+
+	/**
+	 * Returns the preference map entry this descriptor refers to.
+	 * 
+	 * @return a preference map entry
+	 */
+	IPrefMapEntry<ITacticDescriptor> getPrefEntry();
 }

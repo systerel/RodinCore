@@ -21,14 +21,14 @@ import org.eventb.core.seqprover.ITactic;
 public class TacticDescriptorRef implements ITacticDescriptorRef {
 
 	private static final String INVALID_PREFERENCE_ENTRY = "invalid tactic reference";
-	private final IPrefMapEntry<ITacticDescriptor> prefUnit;
+	private final IPrefMapEntry<ITacticDescriptor> prefMapEntry;
 	
-	public TacticDescriptorRef(IPrefMapEntry<ITacticDescriptor> prefUnit) {
-		this.prefUnit = prefUnit;
+	public TacticDescriptorRef(IPrefMapEntry<ITacticDescriptor> prefMapEntry) {
+		this.prefMapEntry = prefMapEntry;
 	}
 
 	private ITacticDescriptor getDesc() {
-		return prefUnit.getValue();
+		return prefMapEntry.getValue();
 	}
 
 	@Override
@@ -73,4 +73,8 @@ public class TacticDescriptorRef implements ITacticDescriptorRef {
 		return getDesc() != null;
 	}
 
+	@Override
+	public IPrefMapEntry<ITacticDescriptor> getPrefEntry() {
+		return prefMapEntry;
+	}
 }
