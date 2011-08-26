@@ -170,11 +170,6 @@ public class PreferenceUtils {
 		}
 	}
 
-	public static interface IXMLPref<T> {
-		void put(T pref, Document doc, Node parent);
-		T get(Node e);
-	}
-
 	/**
 	 * Returns a Document that can be used to build a DOM tree
 	 * 

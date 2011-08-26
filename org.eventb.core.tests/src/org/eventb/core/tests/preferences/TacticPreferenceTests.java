@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.preferences;
 
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -164,15 +166,9 @@ public class TacticPreferenceTests extends TestCase {
 		}
 	}
 
-	private static CachedPreferenceMap<ITacticDescriptor> makeCachedPrefMap() {
-		return new CachedPreferenceMap<ITacticDescriptor>(
-				TacticPreferenceFactory.getTacticPrefElement(),
-				TacticPreferenceFactory.getTacticRefMaker());
-	}
-
 	private static void assertExtractInject(CachedPreferenceMap<ITacticDescriptor> map) {
 		final String extracted = map.extract();
-		final CachedPreferenceMap<ITacticDescriptor> injected = makeCachedPrefMap();
+		final CachedPreferenceMap<ITacticDescriptor> injected = makeTacticPreferenceMap();
 		injected.inject(extracted);
 		assertCachedPreferenceMap(map, injected);
 	}
@@ -246,9 +242,7 @@ public class TacticPreferenceTests extends TestCase {
 	}
 
 	public void testCombinedRef() throws Exception {
-		final CachedPreferenceMap<ITacticDescriptor> map = new CachedPreferenceMap<ITacticDescriptor>(
-				TacticPreferenceFactory.getTacticPrefElement(),
-				TacticPreferenceFactory.getTacticRefMaker());
+		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String paramName = "param";
 		final IParamTacticDescriptor param = makeParam(true, 5, 92L,
 				"param");
@@ -264,9 +258,7 @@ public class TacticPreferenceTests extends TestCase {
 	// verify that the reference always points to the good descriptor
 	// even if it changes (key and/or value)
 	public void testRef() throws Exception {
-		final CachedPreferenceMap<ITacticDescriptor> map = new CachedPreferenceMap<ITacticDescriptor>(
-				TacticPreferenceFactory.getTacticPrefElement(),
-				TacticPreferenceFactory.getTacticRefMaker());
+		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String paramName = "param";
 		final IParamTacticDescriptor original = makeParam(true, 5, 92L,
 				"original");
@@ -292,7 +284,7 @@ public class TacticPreferenceTests extends TestCase {
 	}
 
 	public void testSelfRef() throws Exception {
-		final CachedPreferenceMap<ITacticDescriptor> map = makeCachedPrefMap();
+		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String selfName = "self";
 		final ITacticDescriptor simple = makeSimple();
 		map.add(selfName, simple);
@@ -308,7 +300,7 @@ public class TacticPreferenceTests extends TestCase {
 	}
 
 	public void testSelfRefRemoveAdd() throws Exception {
-		final CachedPreferenceMap<ITacticDescriptor> map = makeCachedPrefMap();
+		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String selfName = "self";
 		final ITacticDescriptor simple = makeSimple();
 		map.add(selfName, simple);
@@ -324,7 +316,7 @@ public class TacticPreferenceTests extends TestCase {
 	}
 
 	public void testCombinedSelfRef() throws Exception {
-		final CachedPreferenceMap<ITacticDescriptor> map = makeCachedPrefMap();
+		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String selfName = "self";
 		final ICombinedTacticDescriptor combined = makeCombined(makeSimple());
 		map.add(selfName, combined);

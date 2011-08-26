@@ -18,11 +18,18 @@ import org.eventb.core.preferences.IReferenceMaker;
  */
 public class PrefUnit<T> implements IPreferenceUnit<T> {
 
+	private String name;
 	private T element;
 	private T reference = null;
 
-	public PrefUnit(T element) {
+	public PrefUnit(String name, T element) {
+		this.name = name;
 		this.element = element;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	@Override
@@ -30,6 +37,7 @@ public class PrefUnit<T> implements IPreferenceUnit<T> {
 		return element;
 	}
 
+	@Override
 	public T getReference(IReferenceMaker<T> refMaker) {
 		if (reference == null) {
 			reference = refMaker.makeReference(this);
@@ -37,6 +45,12 @@ public class PrefUnit<T> implements IPreferenceUnit<T> {
 		return reference;
 	}
 
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	@Override
 	public void setElement(T element) {
 		this.element = element;
 

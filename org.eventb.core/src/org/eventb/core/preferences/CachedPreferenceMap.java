@@ -30,28 +30,31 @@ import org.eventb.internal.core.preferences.PreferenceMapper;
  */
 public class CachedPreferenceMap<T> {
 
-	protected Map<String, PrefUnit<T>> cache;
+	protected Map<String, IPreferenceUnit<T>> cache = new HashMap<String, IPreferenceUnit<T>>();
 
-	protected final IPrefElementTranslator<Map<String, PrefUnit<T>>> prefMap;
-
-	private final Set<ICacheListener<T>> listeners;
-
+	protected final IPrefElementTranslator<Map<String, IPreferenceUnit<T>>> prefMap;
+	
 	private final IReferenceMaker<T> refMaker;
 
+	private final Set<ICacheListener<T>> listeners = new HashSet<ICacheListener<T>>();
+
+	@Deprecated
 	public CachedPreferenceMap(IPrefElementTranslator<T> translator) {
-		this(translator, null);
+		this(new PreferenceMapper<T>(translator), null);
 	}
 	
 	/**
 	 * @since 2.3
 	 */
-	public CachedPreferenceMap(IPrefElementTranslator<T> translator, IReferenceMaker<T> refMaker) {
-		this.prefMap = new PreferenceMapper<T>(translator);
-		this.refMaker = refMaker;
-		this.cache = new HashMap<String, PrefUnit<T>>();
-		this.listeners = new HashSet<ICacheListener<T>>();
+	public CachedPreferenceMap(IXMLPrefSerializer<IPreferenceUnit<T>> translator, IReferenceMaker<T> refMaker) {
+		this(new PreferenceMapper<T>(translator), refMaker);
 	}
 
+	private CachedPreferenceMap(PreferenceMapper<T> prefMap, IReferenceMaker<T> refMaker) {
+		this.prefMap = prefMap;
+		this.refMaker = refMaker;
+	}
+	
 	/**
 	 * Loads the cache with elements created from the given string parameter.
 	 * 
@@ -110,7 +113,7 @@ public class CachedPreferenceMap<T> {
 	private boolean doAddCacheEntry(String key, T entry) {
 		if (exists(key))
 			return false;
-		cache.put(key, new PrefUnit<T>(entry));
+		cache.put(key, new PrefUnit<T>(key, entry));
 		return true;
 	}
 
@@ -171,7 +174,7 @@ public class CachedPreferenceMap<T> {
 		if (refMaker == null) {
 			return null;
 		}
-		final PrefUnit<T> prefUnit = cache.get(key);
+		final IPreferenceUnit<T> prefUnit = cache.get(key);
 		if (prefUnit == null) {
 			return null;
 		}
@@ -206,7 +209,7 @@ public class CachedPreferenceMap<T> {
 
 		@Override
 		public T getValue() {
-			final PrefUnit<T> prefUnit = cache.get(name);
+			final IPreferenceUnit<T> prefUnit = cache.get(name);
 			if (prefUnit == null) {
 				return null;
 			}
@@ -215,25 +218,25 @@ public class CachedPreferenceMap<T> {
 
 		@Override
 		public void setKey(String key) {
-			final PrefUnit<T> prefUnit = cache.remove(name);
+			final IPreferenceUnit<T> prefUnit = cache.remove(name);
 			name = key;
 			if (prefUnit == null) {
 				return;
 			}
+			prefUnit.setName(name);
 			setValue(prefUnit);
 		}
 
 		@Override
 		public void setValue(T value) {
-			final PrefUnit<T> prefUnit = cache.get(name);
+			final IPreferenceUnit<T> prefUnit = cache.get(name);
 			if (prefUnit == null) {
 				return;
 			}
-			
 			prefUnit.setElement(value);
 		}
 
-		private void setValue(final PrefUnit<T> prefUnit) {
+		private void setValue(final IPreferenceUnit<T> prefUnit) {
 			cache.put(name, prefUnit);
 			notifyListeners();
 		}

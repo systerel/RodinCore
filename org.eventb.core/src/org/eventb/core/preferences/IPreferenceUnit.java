@@ -11,7 +11,7 @@
 package org.eventb.core.preferences;
 
 /**
- * Common protocol for preference units.
+ * Common protocol for preference units. TODO replace by IPrefManEntry, adding support for references
  * 
  * @author Nicolas Beauger
  * @since 2.3
@@ -20,6 +20,14 @@ package org.eventb.core.preferences;
  */
 public interface IPreferenceUnit<T> {
 
+	String getName();
+	
 	T getElement();
+
+	T getReference(IReferenceMaker<T> refMaker);
+
+	void setName(String name);
+	
+	void setElement(T element);
 
 }
