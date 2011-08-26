@@ -23,8 +23,8 @@ public class TacticDescriptorRef implements ITacticDescriptorRef {
 	private static final String INVALID_PREFERENCE_ENTRY = "invalid tactic reference";
 	private final IPrefMapEntry<ITacticDescriptor> prefMapEntry;
 	
-	public TacticDescriptorRef(IPrefMapEntry<ITacticDescriptor> prefMapEntry) {
-		this.prefMapEntry = prefMapEntry;
+	public TacticDescriptorRef(IPrefMapEntry<ITacticDescriptor> prefUnit) {
+		this.prefMapEntry = prefUnit;
 	}
 
 	private ITacticDescriptor getDesc() {

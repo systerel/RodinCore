@@ -18,7 +18,8 @@ import org.w3c.dom.Node;
  * 
  * @author Nicolas Beauger
  * 
- * @param <T> the type of preference to serialize / deserialize 
+ * @param <T>
+ *            the type of preference to serialize / deserialize
  * @since 2.3
  */
 public interface IXMLPrefSerializer<T> {
@@ -33,7 +34,7 @@ public interface IXMLPrefSerializer<T> {
 	 * @param parent
 	 *            the parent of the serialized preference
 	 */
-	void put(T pref, Document doc, Node parent);
+	void put(IPrefMapEntry<T> pref, Document doc, Node parent);
 
 	/**
 	 * Deserializes the given node.
@@ -43,5 +44,16 @@ public interface IXMLPrefSerializer<T> {
 	 * @return the deserialization result, or <code>null</code> if
 	 *         deserialization failed
 	 */
-	T get(Node n);
+	IPrefMapEntry<T> get(Node n);
+
+	/**
+	 * Replaces the reference placeholders, contained in the given preference,
+	 * by actual references obtained from the given map.
+	 * 
+	 * @param pref
+	 *            a preference
+	 * @param map
+	 *            a preference map
+	 */
+	void resolveReferences(IPrefMapEntry<T> pref, CachedPreferenceMap<T> map);
 }

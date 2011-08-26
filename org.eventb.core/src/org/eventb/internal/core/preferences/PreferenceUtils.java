@@ -104,6 +104,14 @@ public class PreferenceUtils {
 		
 	}
 	
+	public static class UnresolvedPrefMapEntry<T> extends ReadPrefMapEntry<T> {
+
+		public UnresolvedPrefMapEntry(String key) {
+			super(key, null);
+		}
+		
+	}
+	
 	/**
 	 * Returns a string representation of a list of input objects. The objects
 	 * are separated by a given character.

@@ -25,8 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefElementTranslator;
 import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.preferences.IMapRefSolver;
 import org.eventb.core.preferences.IXMLPrefSerializer;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
@@ -39,7 +41,7 @@ import org.w3c.dom.NodeList;
 /**
  * Maps a preference to a {@link java.util.Map}.
  */
-public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T>> {
+public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T>>, IMapRefSolver<T> {
 
 	// String separator for elements of a map
 	protected static final String SEPARATOR_MAP = ";";
@@ -48,18 +50,18 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 
 	private final IPrefElementTranslator<T> translator;
 
-	private final IXMLPrefSerializer<IPrefMapEntry<T>> xmlTranslator;
+	private final IXMLPrefSerializer<T> xmlTranslator;
 	
 	public PreferenceMapper(IPrefElementTranslator<T> translator) {
 		this(translator, null);
 	}
 	
-	public PreferenceMapper(IXMLPrefSerializer<IPrefMapEntry<T>> xmlTranslator) {
+	public PreferenceMapper(IXMLPrefSerializer<T> xmlTranslator) {
 		this(null, xmlTranslator);
 	}
 	
 	private PreferenceMapper(IPrefElementTranslator<T> translator,
-			IXMLPrefSerializer<IPrefMapEntry<T>> xmlTranslator) {
+			IXMLPrefSerializer<T> xmlTranslator) {
 		this.translator = translator;
 		this.xmlTranslator = xmlTranslator;
 	}
@@ -156,6 +158,16 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 		return PreferenceUtils.flatten(strEntries, SEPARATOR_MAP);
 	}
 
+	@Override
+	public void resolveReferences(CachedPreferenceMap<T> map) {
+		if (xmlTranslator == null) {
+			return;
+		}
+		for (IPrefMapEntry<T> entry : map.getEntries()) {
+			xmlTranslator.resolveReferences(entry, map);
+		}
+	}
+
 	/**
 	 * Returns a string representing the given key and value of an element of a
 	 * map.
@@ -174,5 +186,6 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 		buffer.append(val);
 		return buffer.toString();
 	}
+
 
 }

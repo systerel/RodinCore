@@ -36,7 +36,7 @@ public class TacticPreferenceFactory {
 	 * @return a xml preference serializer
 	 * @since 2.3
 	 */
-	public static IXMLPrefSerializer<IPrefMapEntry<ITacticDescriptor>> makeTacticXMLSerializer() {
+	public static IXMLPrefSerializer<ITacticDescriptor> makeTacticXMLSerializer() {
 		return new PrefUnitTranslator();
 	}
 

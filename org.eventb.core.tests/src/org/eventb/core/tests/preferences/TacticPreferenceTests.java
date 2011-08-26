@@ -116,9 +116,9 @@ public class TacticPreferenceTests extends TestCase {
 	private static void assertRef(ITacticDescriptorRef ref,
 			ITacticDescriptor desc) {
 		assertTrue(ref.isValidReference());
-		assertSame(desc.getTacticID(), ref.getTacticID());
-		assertSame(desc.getTacticName(), ref.getTacticName());
-		assertSame(desc.getTacticDescription(), ref.getTacticDescription());
+		assertEquals(desc.getTacticID(), ref.getTacticID());
+		assertEquals(desc.getTacticName(), ref.getTacticName());
+		assertEquals(desc.getTacticDescription(), ref.getTacticDescription());
 		assertSame(desc.getTacticInstance(), ref.getTacticInstance());
 	}
 

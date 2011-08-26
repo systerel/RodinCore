@@ -53,7 +53,7 @@ public class CachedPreferenceMap<T> {
 	/**
 	 * @since 2.3
 	 */
-	public CachedPreferenceMap(IXMLPrefSerializer<IPrefMapEntry<T>> translator, IReferenceMaker<T> refMaker) {
+	public CachedPreferenceMap(IXMLPrefSerializer<T> translator, IReferenceMaker<T> refMaker) {
 		this(new PreferenceMapper<T>(translator), refMaker);
 	}
 
@@ -68,9 +68,16 @@ public class CachedPreferenceMap<T> {
 	 * @param pref
 	 *            the information to load the cache with
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void inject(String pref) {
-		cache = prefMap.inject(pref);
+		// to do before resolving references
 		accessedEntries.clear();
+
+		cache = prefMap.inject(pref);
+		if (prefMap instanceof IMapRefSolver) {
+			// prefMap is a PreferenceMapper, so it always holds
+			((IMapRefSolver) prefMap).resolveReferences(this);
+		}
 		notifyListeners();
 	}
 

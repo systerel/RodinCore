@@ -33,6 +33,7 @@ import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTyp
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IXMLPrefSerializer;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
@@ -49,6 +50,7 @@ import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
 import org.eventb.internal.core.preferences.PreferenceUtils.ReadPrefMapEntry;
+import org.eventb.internal.core.preferences.PreferenceUtils.UnresolvedPrefMapEntry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -59,9 +61,46 @@ import org.w3c.dom.NodeList;
  * 
  */
 public class PrefUnitTranslator implements
-		IXMLPrefSerializer<IPrefMapEntry<ITacticDescriptor>> {
+		IXMLPrefSerializer<ITacticDescriptor> {
 
-	private static class Selector implements IXMLPrefSerializer<ITacticDescriptor> {
+	private static interface IInternalXMLSerializer<T> {
+		
+		/**
+		 * Serializes the given preference into the given parent.
+		 * 
+		 * @param pref
+		 *            a preference
+		 * @param doc
+		 *            the document where serialization takes place
+		 * @param parent
+		 *            the parent of the serialized preference
+		 */
+		void put(T pref, Document doc, Node parent);
+
+		/**
+		 * Deserializes the given node.
+		 * 
+		 * @param n
+		 *            a node
+		 * @return the deserialization result, or <code>null</code> if
+		 *         deserialization failed
+		 */
+		T get(Node n);
+
+		/**
+		 * Replaces the reference placeholders, contained in the given
+		 * preference, by actual references obtained from the given map.
+		 * 
+		 * @param pref
+		 *            a preference
+		 * @param map
+		 *            a preference map
+		 */
+		T resolveReferences(T pref, CachedPreferenceMap<ITacticDescriptor> map);
+
+	}
+	
+	private static class Selector implements IInternalXMLSerializer<ITacticDescriptor> {
 
 		private Selector() {
 		}
@@ -76,18 +115,30 @@ public class PrefUnitTranslator implements
 		public void put(ITacticDescriptor desc, Document doc, Node parent) {
 			if (desc instanceof ITacticDescriptorRef) {
 				TacticRef.getDefault().put((ITacticDescriptorRef) desc, doc, parent);
-			}
-			if (desc instanceof ICombinedTacticDescriptor) {
+			} else if (desc instanceof ICombinedTacticDescriptor) {
 				CombinedTacticTranslator.getDefault().put(
 						(ICombinedTacticDescriptor) desc, doc, parent);
 			} else if (desc instanceof IParamTacticDescriptor) {
 				ParamTacticTranslator.getDefault().put(
 						(IParamTacticDescriptor) desc, doc, parent);
 			} else {
-
 				SimpleTactic.getDefault().put(desc, doc, parent);
 			}
 
+		}
+
+		@Override
+		public ITacticDescriptor resolveReferences(ITacticDescriptor desc,
+				CachedPreferenceMap<ITacticDescriptor> map) {
+			if (desc instanceof ITacticDescriptorRef) {
+				return TacticRef.getDefault().resolveReferences(
+						(ITacticDescriptorRef) desc, map);
+			} else if (desc instanceof ICombinedTacticDescriptor) {
+				return CombinedTacticTranslator.getDefault().resolveReferences(
+						(ICombinedTacticDescriptor) desc, map);
+			}
+			// else nothing to do
+			return desc;
 		}
 
 		@Override
@@ -114,7 +165,8 @@ public class PrefUnitTranslator implements
 	// does not record parameter valuation, supposed to be recorded
 	// independently in auto/post
 	// propagates simple translation through combined tactics
-	private static class SimpleTactic implements IXMLPrefSerializer<ITacticDescriptor> {
+	private static class SimpleTactic implements
+			IInternalXMLSerializer<ITacticDescriptor> {
 
 		private SimpleTactic() {
 			// singleton
@@ -160,10 +212,16 @@ public class PrefUnitTranslator implements
 			return tacticDescriptor;
 		}
 
+		@Override
+		public ITacticDescriptor resolveReferences(ITacticDescriptor pref,
+				CachedPreferenceMap<ITacticDescriptor> map) {
+			return pref;
+		}
+
 	}
 
 	private static class ParamTacticTranslator implements
-			IXMLPrefSerializer<IParamTacticDescriptor> {
+			IInternalXMLSerializer<IParamTacticDescriptor> {
 
 		private ParamTacticTranslator() {
 			// singleton
@@ -243,9 +301,16 @@ public class PrefUnitTranslator implements
 			return parameterizer.instantiate(paramSetting, tacticId);
 		}
 
+		@Override
+		public IParamTacticDescriptor resolveReferences(
+				IParamTacticDescriptor pref,
+				CachedPreferenceMap<ITacticDescriptor> map) {
+			return pref;
+		}
+
 	}
 
-	private static class TacticRef implements IXMLPrefSerializer<ITacticDescriptorRef> {
+	private static class TacticRef implements IInternalXMLSerializer<ITacticDescriptorRef>{
 
 		private TacticRef() {
 			// singleton
@@ -269,14 +334,28 @@ public class PrefUnitTranslator implements
 		public ITacticDescriptorRef get(Node e) {
 			assertName(e, PREF_REF);
 			final String key = getAttribute(e, PREF_KEY);
-			final ReadPrefMapEntry<ITacticDescriptor> entry = new ReadPrefMapEntry<ITacticDescriptor>(key, null);
+			final IPrefMapEntry<ITacticDescriptor> entry = new UnresolvedPrefMapEntry<ITacticDescriptor>(
+					key);
 			return new TacticDescriptorRef(entry);
-			// FIXME must be resolved after full loading
+		}
+
+		@Override
+		public ITacticDescriptorRef resolveReferences(ITacticDescriptorRef pref,
+				CachedPreferenceMap<ITacticDescriptor> map) {
+			// prefEntry is an UnresolvedPrefMapEntry: contains only a key
+			final IPrefMapEntry<ITacticDescriptor> unresEntry = pref.getPrefEntry();
+			final String key = unresEntry.getKey();
+			final IPrefMapEntry<ITacticDescriptor> entry = map.getEntry(key);
+			if (entry == null) {
+				// remains unresolved
+				return pref;
+			}
+			return new TacticDescriptorRef(entry);
 		}
 	}
 
 	private static class CombinedTacticTranslator implements
-			IXMLPrefSerializer<ICombinedTacticDescriptor> {
+			IInternalXMLSerializer<ICombinedTacticDescriptor> {
 
 		private static final CombinedTacticTranslator DEFAULT = new CombinedTacticTranslator();
 
@@ -328,6 +407,33 @@ public class PrefUnitTranslator implements
 			return combinator.instantiate(combs, tacticId);
 		}
 
+		@Override
+		public ICombinedTacticDescriptor resolveReferences(
+				ICombinedTacticDescriptor desc,
+				CachedPreferenceMap<ITacticDescriptor> map) {
+			final List<ITacticDescriptor> combined = desc.getCombinedTactics();
+			final List<ITacticDescriptor> newCombs = new ArrayList<ITacticDescriptor>(combined.size());
+			boolean changed = false;
+			for (ITacticDescriptor comb : combined) {
+				final ITacticDescriptor newComb = Selector.getInstance()
+						.resolveReferences(comb, map);
+				newCombs.add(newComb);
+				changed |= newComb != comb;
+			}
+			if (!changed) {
+				return desc;
+			}
+			final String combinatorId = desc.getCombinatorId();
+			final ICombinatorDescriptor combinator = SequentProver
+					.getAutoTacticRegistry().getCombinatorDescriptor(
+							combinatorId);
+			if (combinator == null) {
+				// should not happen, as deserialization would have failed before
+				return desc;
+			}
+			return combinator.instantiate(newCombs, desc.getTacticID());
+		}
+
 	}
 
 	static void printDebug(String msg) {
@@ -355,6 +461,19 @@ public class PrefUnitTranslator implements
 			
 		final ITacticDescriptor desc = Selector.getInstance().get(child);
 		return new ReadPrefMapEntry<ITacticDescriptor>(unitName, desc);
+	}
+
+	@Override
+	public void resolveReferences(
+			IPrefMapEntry<ITacticDescriptor> entry,
+			CachedPreferenceMap<ITacticDescriptor> map) {
+		final ITacticDescriptor desc = entry.getValue();
+		final ITacticDescriptor newDesc = Selector.getInstance()
+				.resolveReferences(desc, map);
+		if (newDesc == desc) {
+			return;
+		}
+		entry.setValue(newDesc);
 	}
 
 }
