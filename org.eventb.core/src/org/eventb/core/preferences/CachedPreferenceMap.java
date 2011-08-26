@@ -95,9 +95,9 @@ public class CachedPreferenceMap<T> {
 	 *            the value of the entry to be added in the cache
 	 */
 	public void add(String name, T value) {
-		doAddCacheEntry(name, value);
-		// TODO test if actually added, else don't notify
-		notifyListeners();
+		if (doAddCacheEntry(name, value)) {
+			notifyListeners();
+		}
 	}
 
 	/**
