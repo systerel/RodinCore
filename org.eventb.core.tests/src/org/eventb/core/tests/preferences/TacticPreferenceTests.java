@@ -76,6 +76,7 @@ public class TacticPreferenceTests extends TestCase {
 	}
 
 	private static void assertParam(ITacticDescriptor desc, IParameterValuation valuation) {
+		assertNotNull(desc);
 		assertTrue(desc instanceof IParamTacticDescriptor);
 		assertEquals(valuation, ((IParamTacticDescriptor) desc).getValuation());
 	}
@@ -88,7 +89,7 @@ public class TacticPreferenceTests extends TestCase {
 				"combined id");
 	}
 
-	private static void assertCombined(ITacticDescriptor actual,
+	private static void assertCombined(ITacticDescriptor actual, boolean sameMap,
 			ITacticDescriptor... tactics) {
 		assertNotNull(actual);
 		assertTrue(actual instanceof ICombinedTacticDescriptor);
@@ -101,7 +102,7 @@ public class TacticPreferenceTests extends TestCase {
 		for (int i = 0; i < tactics.length; i++) {
 			final ITacticDescriptor expected = tactics[i];
 			final ITacticDescriptor actDesc = actualTactics.get(i);
-			assertGenericDesc(expected, actDesc);
+			assertGenericDesc(expected, actDesc, sameMap);
 		}
 	}
 
@@ -113,20 +114,28 @@ public class TacticPreferenceTests extends TestCase {
 		return (ITacticDescriptorRef) ref;
 	}
 	
-	private static void assertRef(ITacticDescriptorRef ref,
-			ITacticDescriptor desc) {
-		assertTrue(ref.isValidReference());
-		assertEquals(desc.getTacticID(), ref.getTacticID());
-		assertEquals(desc.getTacticName(), ref.getTacticName());
-		assertEquals(desc.getTacticDescription(), ref.getTacticDescription());
-		assertSame(desc.getTacticInstance(), ref.getTacticInstance());
+	private static void assertRef(ITacticDescriptorRef expected,
+			ITacticDescriptor actual, boolean sameInstance) {
+		assertTrue(actual instanceof ITacticDescriptorRef);
+		final ITacticDescriptorRef actRef = (ITacticDescriptorRef) actual;
+		assertTrue(actRef.isValidReference());
+		assertEquals(expected.getTacticID(), actRef.getTacticID());
+		assertEquals(expected.getTacticName(), actRef.getTacticName());
+		assertEquals(expected.getTacticDescription(), actRef.getTacticDescription());
+		if(sameInstance) {
+			assertSame(expected.getTacticInstance(), actRef.getTacticInstance());
+		} else {
+			final ITacticDescriptor expDesc = expected.getPrefEntry().getValue();
+			final ITacticDescriptor actualDesc = actRef.getPrefEntry().getValue();
+			assertGenericDesc(expDesc, actualDesc, sameInstance);
+		}
 	}
 
 	private static void assertGenericDesc(ITacticDescriptor expected,
-			ITacticDescriptor actual) {
+			ITacticDescriptor actual, boolean sameMap) {
 		assertNotNull(actual);
-		if (actual instanceof ITacticDescriptorRef) {
-			assertRef((ITacticDescriptorRef)actual, expected);
+		if (expected instanceof ITacticDescriptorRef) {
+			assertRef((ITacticDescriptorRef)expected, actual, sameMap);
 			return;
 		}
 	
@@ -135,7 +144,7 @@ public class TacticPreferenceTests extends TestCase {
 					.getCombinedTactics();
 			final ITacticDescriptor[] combs = combinedTactics
 					.toArray(new ITacticDescriptor[combinedTactics.size()]);
-			assertCombined(actual, combs);
+			assertCombined(actual, sameMap, combs);
 		} else if (expected instanceof IParamTacticDescriptor) {
 				assertParam(actual,
 					((IParamTacticDescriptor) expected).getValuation());
@@ -164,7 +173,7 @@ public class TacticPreferenceTests extends TestCase {
 			assertEquals(expEntry.getKey(), actEntry.getKey());
 			final ITacticDescriptor expDesc = expEntry.getValue();
 			final ITacticDescriptor actDesc = actEntry.getValue();
-			assertGenericDesc(expDesc, actDesc);
+			assertGenericDesc(expDesc, actDesc, false);
 		}
 	}
 
@@ -233,7 +242,7 @@ public class TacticPreferenceTests extends TestCase {
 		map.add(combinedName, makeCombined(makeRef(map, paramName)));
 		final IPrefMapEntry<ITacticDescriptor> combinedEntry = map
 				.getEntry(combinedName);
-		assertCombined(combinedEntry.getValue(), original);
+		assertCombined(combinedEntry.getValue(), true, makeRef(map, paramName));
 	
 		// change descriptor
 		final IParamTacticDescriptor modified = makeParam(false, 6, 0,
@@ -246,7 +255,7 @@ public class TacticPreferenceTests extends TestCase {
 		final String modifiedParamName = paramName + " modified";
 		paramEntry.setKey(modifiedParamName);
 	
-		assertCombined(combinedEntry.getValue(), modified);
+		assertCombined(combinedEntry.getValue(), true, makeRef(map, modifiedParamName));
 	}
 
 	public void testSelfRef() throws Exception {
