@@ -10,15 +10,20 @@
  *******************************************************************************/
 package org.eventb.core.tests.preferences;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.preferences.IPreferenceCheckResult;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
@@ -286,6 +291,11 @@ public class TacticPreferenceTests extends TestCase {
 		final ITacticDescriptor selfRef = makeRef(map, selfName);
 
 		map.remove(selfName);
+		
+		final IPreferenceCheckResult result = map.preAddCheck(selfName, selfRef);
+		assertTrue(result.hasError());
+		final List<String> cycle = result.getCycle();
+		assertEquals(Collections.singletonList(selfName), cycle);
 		try {
 			map.add(selfName, selfRef);
 			map.getEntry(selfName).getValue().getTacticInstance();
@@ -332,5 +342,28 @@ public class TacticPreferenceTests extends TestCase {
 			// as expected
 		}
 
+	}
+	public void testCrossRefPreAddCheck() throws Exception {
+		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
+		final String cross1Name = "cross1";
+		final ITacticDescriptor simple = makeSimple();
+		map.add(cross1Name, simple);
+		final ITacticDescriptor cross1Ref = makeRef(map, cross1Name);
+		final String cross2Name = "cross2";
+		map.add(cross2Name, cross1Ref);
+		final ITacticDescriptorRef cross2Ref = makeRef(map, cross2Name);
+		
+		map.remove(cross1Name);
+		
+		final IPreferenceCheckResult result = map.preAddCheck(cross1Name, cross2Ref);
+		assertTrue(result.hasError());
+		final List<String> cycle = result.getCycle();
+		assertEqualsAnyOrder(asList(cross1Name, cross2Name), cycle);
+	}
+
+	private static <T> void assertEqualsAnyOrder(List<T> expList, List<T> actList) {
+		final Set<T> expSet = new HashSet<T>(expList);
+		final Set<T> actSet = new HashSet<T>(actList);
+		assertEquals(expSet, actSet);
 	}
 }

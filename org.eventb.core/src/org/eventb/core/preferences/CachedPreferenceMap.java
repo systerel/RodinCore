@@ -18,8 +18,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.preferences.PrefEntryGraph;
+import org.eventb.internal.core.preferences.PreferenceCheckResult;
 import org.eventb.internal.core.preferences.PreferenceMapper;
 import org.eventb.internal.core.preferences.PreferenceUtils.ReadPrefMapEntry;
+import org.eventb.internal.core.tool.graph.Node;
 
 /**
  * A parameterized cache encapsulating a map of elements of type<code>T</code>
@@ -135,25 +137,23 @@ public class CachedPreferenceMap<T> {
 	}
 
 	void doPreAddCheck(String key, T value) {
-		if (preAddCheck(key, value) != null)
+		if (preAddCheck(key, value).hasError())
 			throw new IllegalArgumentException("cannot add " + key
 					+ " to preferences because it introduces cyclic references");
 	}
 
 	/**
 	 * Checks whether adding given key with given value into given map
-	 * introduces self or cross references.
+	 * introduces cyclic references.
 	 * 
 	 * @param key
 	 *            a new map key
 	 * @param value
 	 *            a value about to be added
-	 * @return <code>true</code> if addition is safe regarding self and cross
-	 *         references
+	 * @return a {@link IPreferenceCheckResult}
 	 * @since 2.3
 	 */
-	// TODO change return type ?
-	public String preAddCheck(String key, T value) {
+	public IPreferenceCheckResult preAddCheck(String key, T value) {
 
 		final PrefEntryGraph<T> graph = new PrefEntryGraph<T>("preference map",
 				refMaker);
@@ -164,9 +164,16 @@ public class CachedPreferenceMap<T> {
 		try {
 			graph.analyse();
 		} catch (IllegalStateException e) {
-			return e.getMessage();
+			final PreferenceCheckResult result = new PreferenceCheckResult();
+			final List<Node<IPrefMapEntry<T>>> nodeCycle = graph.getCycle();
+			final List<String> cycle = new ArrayList<String>(nodeCycle.size());
+			for (Node<IPrefMapEntry<T>> node : nodeCycle) {
+				cycle.add(node.getId());
+			}
+			result.setCycle(cycle);
+			return result;
 		}
-		return null;
+		return PreferenceCheckResult.getNoError();
 	}
 
 	/**
