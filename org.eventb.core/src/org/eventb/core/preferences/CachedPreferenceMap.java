@@ -17,9 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.preferences.autotactics.TacticPreferenceFactory;
+import org.eventb.internal.core.Util;
 import org.eventb.internal.core.preferences.PrefEntryGraph;
 import org.eventb.internal.core.preferences.PreferenceCheckResult;
 import org.eventb.internal.core.preferences.PreferenceMapper;
+import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
 import org.eventb.internal.core.preferences.PreferenceUtils.ReadPrefMapEntry;
 import org.eventb.internal.core.tool.graph.Node;
 
@@ -76,15 +79,30 @@ public class CachedPreferenceMap<T> {
 
 	/**
 	 * Loads the cache with elements created from the given string parameter.
+	 * <p>
+	 * If inject fails, an IllegalArgumentException is thrown. Possible reason
+	 * could be that the given preference has been serialized using old format.
+	 * If so, use {@link TacticPreferenceFactory#recoverOldPreference(String)}
+	 * to try to recover.
+	 * </p>
 	 * 
 	 * @param pref
 	 *            the information to load the cache with
+	 * @throws IllegalArgumentException
+	 *             in case of failure
+	 * @since 2.3
 	 */
-	public void inject(String pref) {
+	public void inject(String pref) throws IllegalArgumentException {
 		// to do before resolving references
 		accessedEntries.clear();
-
-		cache = prefMap.inject(pref);
+		try {
+			cache = prefMap.inject(pref);
+		} catch (PreferenceException e) {
+			// failed
+			final String message = "could not load preference from: " + pref;
+			Util.log(e, message);
+			throw new IllegalArgumentException(message);
+		}
 		prefMap.resolveReferences(this);
 		notifyListeners();
 	}
@@ -254,6 +272,17 @@ public class CachedPreferenceMap<T> {
 		notifyListeners();
 	}
 
+	/**
+	 * Clears all entries from the cache.
+	 * 
+	 * @since 2.3
+	 */
+	public void clear() {
+		cache.clear();
+		accessedEntries.clear();
+		notifyListeners();
+	}
+	
 	private class MapEntry implements IPrefMapEntry<T> {
 
 		private String name;

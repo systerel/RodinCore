@@ -19,7 +19,7 @@ import org.eventb.core.preferences.IXMLPrefSerializer;
 /**
  * This class stores the contents of a map as a string.
  */
-public class StorablePreferenceMap<T> extends CachedPreferenceMap<T> implements IEventBPreference {
+public abstract class StorablePreferenceMap<T> extends CachedPreferenceMap<T> implements IEventBPreference {
 
 	private final String preference;
 
@@ -43,11 +43,29 @@ public class StorablePreferenceMap<T> extends CachedPreferenceMap<T> implements 
 	}
 
 	public void load() {
-		inject(store.getString(preference));
+		load(store.getString(preference));
 	}
 
 	public void loadDefault() {
-		inject(store.getDefaultString(preference));
+		load(store.getDefaultString(preference));
 	}
 
+	protected abstract CachedPreferenceMap<T> recover(String pref);
+	
+	private void load(String pref) {
+		try {
+			inject(pref);
+		} catch (IllegalArgumentException e) {
+			// backward compatibility: try to recover
+			final CachedPreferenceMap<T> map = recover(pref);
+			if(map == null) {
+				// problem logged by inject()
+				throw e;
+			}
+			clear();
+			addAll(map.getEntries());
+		}
+
+	}
+	
 }

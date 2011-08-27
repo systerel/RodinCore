@@ -13,8 +13,10 @@ package org.eventb.internal.ui.preferences.tactics;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticRefMaker;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticXMLSerializer;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.recoverOldPreference;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 public class TacticsProfilesCache extends
@@ -25,4 +27,9 @@ public class TacticsProfilesCache extends
 				makeTacticRefMaker());
 	}
 
+	@Override
+	protected CachedPreferenceMap<ITacticDescriptor> recover(String pref) {
+		return recoverOldPreference(pref);
+	}
+	
 }

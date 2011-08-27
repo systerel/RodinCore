@@ -14,9 +14,7 @@ import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
-import static org.eventb.internal.core.preferences.PreferenceUtils.loopOnAllPending;
-
-import java.util.List;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.recoverOldPreference;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -25,11 +23,8 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.preferences.CachedPreferenceMap;
-import org.eventb.core.preferences.IPrefElementTranslator;
 import org.eventb.core.preferences.IPrefMapEntry;
-import org.eventb.core.preferences.ListPreference;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
-import org.eventb.core.preferences.autotactics.TacticPreferenceFactory;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
@@ -37,7 +32,6 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.pm.PostTacticPreference;
 import org.eventb.internal.core.pom.POMTacticPreference;
-import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
 
 /**
  * Facade for the managment of auto and post tactics.
@@ -103,12 +97,16 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 		}
 		try {
 			profilesCache.inject(profiles);
-		} catch (PreferenceException e) {
+		} catch (IllegalArgumentException e) {
 			// backward compatibility: was stored as lists of tactics
 			// try to recover
-			final boolean success = recover(profiles);
-			if (!success) {
+			final CachedPreferenceMap<ITacticDescriptor> recovered = recoverOldPreference(profiles);
+			
+			if (recovered == null) {
 				Util.log(e, "while loading tactic preference:\n" + profiles);
+			} else {
+				profilesCache.clear();
+				profilesCache.addAll(recovered.getEntries());
 			}
 		}
 		final String choice;
@@ -120,30 +118,6 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 					P_POSTTACTIC_CHOICE, null, contexts);			
 		}
 		return getCorrespondingTactic(choice, auto);
-	}
-
-	@SuppressWarnings("deprecation")
-	private boolean recover(String profiles) {
-		final IPrefElementTranslator<List<ITacticDescriptor>> oldPreference = new ListPreference<ITacticDescriptor>(
-				TacticPreferenceFactory.getTacticPrefElement());
-		final CachedPreferenceMap<List<ITacticDescriptor>> oldCache = new CachedPreferenceMap<List<ITacticDescriptor>>(
-				oldPreference);
-		try {
-			oldCache.inject(profiles);
-		} catch (PreferenceException x) {
-			Util.log(x, "while trying to recover tactic preference");
-			// give up
-			return false;
-		}
-		// FIXME clear profilesCache
-		for (IPrefMapEntry<List<ITacticDescriptor>> entry : oldCache
-				.getEntries()) {
-			final String id = entry.getKey();
-			final List<ITacticDescriptor> value = entry.getValue();
-			final ITacticDescriptor tac = loopOnAllPending(value, id);
-			profilesCache.add(id, tac);
-		}
-		return true;
 	}
 
 	private ITactic getCorrespondingTactic(String choice, boolean auto) {

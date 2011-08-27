@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eventb.core.preferences.autotactics;
 
+import static org.eventb.internal.core.preferences.PreferenceUtils.loopOnAllPending;
+
+import java.util.List;
+
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefElementTranslator;
+import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IReferenceMaker;
 import org.eventb.core.preferences.IXMLPrefSerializer;
+import org.eventb.core.preferences.ListPreference;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.internal.core.Util;
 import org.eventb.internal.core.preferences.PrefUnitTranslator;
+import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
 import org.eventb.internal.core.preferences.TacticPrefElement;
 import org.eventb.internal.core.preferences.TacticReferenceMaker;
 
@@ -35,6 +43,43 @@ public class TacticPreferenceFactory {
 		return new TacticPrefElement();
 	}
 
+	/**
+	 * Recovers a preference stored using old format into a preference map using
+	 * new format.
+	 * 
+	 * @param oldPref
+	 *            a serialized preference
+	 * @return a new preference map, or <code>null</code> if recover failed.
+	 * @since 2.3
+	 */
+	@SuppressWarnings("deprecation")
+	public static CachedPreferenceMap<ITacticDescriptor> recoverOldPreference(String oldPref) {
+		final IPrefElementTranslator<List<ITacticDescriptor>> oldPreference = new ListPreference<ITacticDescriptor>(
+				TacticPreferenceFactory.getTacticPrefElement());
+		final CachedPreferenceMap<List<ITacticDescriptor>> oldCache = new CachedPreferenceMap<List<ITacticDescriptor>>(
+				oldPreference);
+		try {
+			oldCache.inject(oldPref);
+		} catch (PreferenceException x) {
+			Util.log(x, "while trying to recover tactic preference");
+			// give up
+			return null;
+		}
+		
+		final CachedPreferenceMap<ITacticDescriptor> newPrefMap = makeTacticPreferenceMap();
+		// adapt old cache to new cache
+		
+		for (IPrefMapEntry<List<ITacticDescriptor>> entry : oldCache
+				.getEntries()) {
+			final String id = entry.getKey();
+			final List<ITacticDescriptor> value = entry.getValue();
+			final ITacticDescriptor tac = loopOnAllPending(value, id);
+			newPrefMap.add(id, tac);
+		}
+		return newPrefMap;
+
+	}
+	
 	/**
 	 * Returns a xml preference serializer for preference units of tactic
 	 * descriptors.
