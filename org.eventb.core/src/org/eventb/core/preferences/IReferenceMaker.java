@@ -24,4 +24,14 @@ package org.eventb.core.preferences;
 public interface IReferenceMaker<T> {
 
 	T makeReference(IPrefMapEntry<T> prefEntry);
+
+	/**
+	 * Returns an array of preference keys that are referenced by the given
+	 * preference;
+	 * 
+	 * @param pref
+	 *            a preference
+	 * @return an array of keys with no duplicate
+	 */
+	String[] getReferencedKeys(T pref);
 }

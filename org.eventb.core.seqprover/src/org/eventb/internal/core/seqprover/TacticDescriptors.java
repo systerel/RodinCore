@@ -338,8 +338,8 @@ public class TacticDescriptors {
 							"null tactic returned by combinator");
 				}
 				return tactic;
-			} catch (Throwable t) {
-				return logAndMakeFailure(t, "while making combined tactic "
+			} catch (Exception e) {
+				return logAndMakeFailure(e, "while making combined tactic "
 						+ getTacticID() + " with tactics " + combinedDescs,
 						"failed to create combined tactic " + getTacticName());
 			}

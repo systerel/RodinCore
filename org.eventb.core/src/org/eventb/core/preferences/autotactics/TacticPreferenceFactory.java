@@ -12,13 +12,12 @@ package org.eventb.core.preferences.autotactics;
 
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefElementTranslator;
-import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IReferenceMaker;
 import org.eventb.core.preferences.IXMLPrefSerializer;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.internal.core.preferences.PrefUnitTranslator;
-import org.eventb.internal.core.preferences.TacticDescriptorRef;
 import org.eventb.internal.core.preferences.TacticPrefElement;
+import org.eventb.internal.core.preferences.TacticReferenceMaker;
 
 /**
  * @since 2.1
@@ -40,15 +39,6 @@ public class TacticPreferenceFactory {
 		return new PrefUnitTranslator();
 	}
 
-	private static final IReferenceMaker<ITacticDescriptor> TACTIC_REFERENCE_MAKER = new IReferenceMaker<ITacticDescriptor>() {
-
-		@Override
-		public ITacticDescriptor makeReference(
-				IPrefMapEntry<ITacticDescriptor> prefUnit) {
-			return new TacticDescriptorRef(prefUnit);
-		}
-	};
-
 	/**
 	 * Returns a tactic descriptor reference reference maker.
 	 * 
@@ -56,7 +46,7 @@ public class TacticPreferenceFactory {
 	 * @since 2.3
 	 */
 	public static IReferenceMaker<ITacticDescriptor> getTacticRefMaker() {
-		return TACTIC_REFERENCE_MAKER;
+		return TacticReferenceMaker.getInstance();
 	}
 
 	/**

@@ -17,6 +17,7 @@ package org.eventb.core.preferences;
  * these references are resolved when the whole preference map has been
  * deserialized.
  * </p>
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * 

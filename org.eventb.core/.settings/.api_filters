@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eventb.core" version="2">
+    <resource path="src/org/eventb/core/preferences/CachedPreferenceMap.java" type="org.eventb.core.preferences.CachedPreferenceMap">
+        <filter id="388018290">
+            <message_arguments>
+                <message_argument value="org.eventb.core.preferences.CachedPreferenceMap"/>
+                <message_argument value="prefMap"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eventb/internal/core/preferences/ITacticDescriptorRef.java" type="org.eventb.internal.core.preferences.ITacticDescriptorRef">
         <filter comment="required to reference tactic descriptors seemlessly" id="571473929">
             <message_arguments>

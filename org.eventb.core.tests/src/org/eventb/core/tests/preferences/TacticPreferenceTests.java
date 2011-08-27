@@ -267,7 +267,11 @@ public class TacticPreferenceTests extends TestCase {
 		final IPrefMapEntry<ITacticDescriptor> selfEntry = map
 				.getEntry(selfName);
 		try {
+			// this should throw IllegalArgumentException
 			selfEntry.setValue(selfRef);
+			// this is what happens if the previous does not throw exception
+			selfEntry.getValue().getTacticInstance();
+			// just in case, but the above should raise StackOverflowError
 			fail("expected illegal argument exception because of self reference");
 		} catch (IllegalArgumentException e) {
 			// as expected
@@ -284,6 +288,7 @@ public class TacticPreferenceTests extends TestCase {
 		map.remove(selfName);
 		try {
 			map.add(selfName, selfRef);
+			map.getEntry(selfName).getValue().getTacticInstance();
 			fail("expected illegal argument exception because of self reference");
 		} catch (IllegalArgumentException e) {
 			// as expected
@@ -301,9 +306,31 @@ public class TacticPreferenceTests extends TestCase {
 				.getEntry(selfName);
 		try {
 			selfEntry.setValue(selfCombined);
+			selfEntry.getValue().getTacticInstance();
 			fail("expected illegal argument exception because of self reference");
 		} catch (IllegalArgumentException e) {
 			// as expected
 		}
+	}
+	
+	public void testCrossRef() throws Exception {
+		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
+		final String cross1Name = "cross1";
+		final ITacticDescriptor simple = makeSimple();
+		map.add(cross1Name, simple);
+		final ITacticDescriptor cross1Ref = makeRef(map, cross1Name);
+		final String cross2Name = "cross2";
+		map.add(cross2Name, cross1Ref);
+		final ITacticDescriptorRef cross2Ref = makeRef(map, cross2Name);
+		final IPrefMapEntry<ITacticDescriptor> cross1Entry = map
+				.getEntry(cross1Name);
+		try {
+			cross1Entry.setValue(cross2Ref);
+			cross1Entry.getValue().getTacticInstance();
+			fail("expected illegal argument exception because of self reference");
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
+
 	}
 }

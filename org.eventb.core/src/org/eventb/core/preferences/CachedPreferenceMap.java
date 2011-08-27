@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.internal.core.preferences.PrefEntryGraph;
 import org.eventb.internal.core.preferences.PreferenceMapper;
+import org.eventb.internal.core.preferences.PreferenceUtils.ReadPrefMapEntry;
 
 /**
  * A parameterized cache encapsulating a map of elements of type<code>T</code>
@@ -30,14 +32,14 @@ import org.eventb.internal.core.preferences.PreferenceMapper;
 public class CachedPreferenceMap<T> {
 
 	protected Map<String, T> cache = new HashMap<String, T>();
-	
+
 	// to make references work, it is important to return the same map entry for
 	// as long as the corresponding preference exists; that is, even if its name
 	// and/or value change
 	private final Map<String, MapEntry> accessedEntries = new HashMap<String, MapEntry>();
-	
-	protected final IPrefElementTranslator<Map<String, T>> prefMap;
-	
+
+	private final PreferenceMapper<T> prefMap;
+
 	/**
 	 * @since 2.3
 	 */
@@ -49,35 +51,33 @@ public class CachedPreferenceMap<T> {
 	public CachedPreferenceMap(IPrefElementTranslator<T> translator) {
 		this(new PreferenceMapper<T>(translator), null);
 	}
-	
+
 	/**
 	 * @since 2.3
 	 */
-	public CachedPreferenceMap(IXMLPrefSerializer<T> translator, IReferenceMaker<T> refMaker) {
+	public CachedPreferenceMap(IXMLPrefSerializer<T> translator,
+			IReferenceMaker<T> refMaker) {
 		this(new PreferenceMapper<T>(translator), refMaker);
 	}
 
-	private CachedPreferenceMap(PreferenceMapper<T> prefMap, IReferenceMaker<T> refMaker) {
+	private CachedPreferenceMap(PreferenceMapper<T> prefMap,
+			IReferenceMaker<T> refMaker) {
 		this.prefMap = prefMap;
 		this.refMaker = refMaker;
 	}
-	
+
 	/**
 	 * Loads the cache with elements created from the given string parameter.
 	 * 
 	 * @param pref
 	 *            the information to load the cache with
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void inject(String pref) {
 		// to do before resolving references
 		accessedEntries.clear();
 
 		cache = prefMap.inject(pref);
-		if (prefMap instanceof IMapRefSolver) {
-			// prefMap is a PreferenceMapper, so it always holds
-			((IMapRefSolver) prefMap).resolveReferences(this);
-		}
+		prefMap.resolveReferences(this);
 		notifyListeners();
 	}
 
@@ -114,8 +114,7 @@ public class CachedPreferenceMap<T> {
 	 *            the entries to add
 	 * @return the entries which were actually added to the cache
 	 */
-	public List<IPrefMapEntry<T>> addAll(
-			List<IPrefMapEntry<T>> entries) {
+	public List<IPrefMapEntry<T>> addAll(List<IPrefMapEntry<T>> entries) {
 		final List<IPrefMapEntry<T>> added = new ArrayList<IPrefMapEntry<T>>();
 		for (IPrefMapEntry<T> entry : entries) {
 			if (doAddCacheEntry(entry.getKey(), entry.getValue())) {
@@ -129,9 +128,45 @@ public class CachedPreferenceMap<T> {
 	private boolean doAddCacheEntry(String key, T value) {
 		if (exists(key))
 			return false;
+		doPreAddCheck(key, value);
 		cache.put(key, value);
 		accessedEntries.remove(key);
 		return true;
+	}
+
+	void doPreAddCheck(String key, T value) {
+		if (preAddCheck(key, value) != null)
+			throw new IllegalArgumentException("cannot add " + key
+					+ " to preferences because it introduces cyclic references");
+	}
+
+	/**
+	 * Checks whether adding given key with given value into given map
+	 * introduces self or cross references.
+	 * 
+	 * @param key
+	 *            a new map key
+	 * @param value
+	 *            a value about to be added
+	 * @return <code>true</code> if addition is safe regarding self and cross
+	 *         references
+	 * @since 2.3
+	 */
+	// TODO change return type ?
+	public String preAddCheck(String key, T value) {
+
+		final PrefEntryGraph<T> graph = new PrefEntryGraph<T>("preference map",
+				refMaker);
+		graph.addAll(getEntries());
+
+		final ReadPrefMapEntry<T> newEntry = new ReadPrefMapEntry<T>(key, value);
+		graph.add(newEntry);
+		try {
+			graph.analyse();
+		} catch (IllegalStateException e) {
+			return e.getMessage();
+		}
+		return null;
 	}
 
 	/**
@@ -233,6 +268,7 @@ public class CachedPreferenceMap<T> {
 
 		@Override
 		public void setValue(T value) {
+			doPreAddCheck(name, value);
 			cache.put(name, value);
 			notifyListeners();
 		}
