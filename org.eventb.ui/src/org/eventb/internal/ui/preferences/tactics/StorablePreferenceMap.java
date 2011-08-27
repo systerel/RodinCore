@@ -12,7 +12,8 @@ package org.eventb.internal.ui.preferences.tactics;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eventb.core.preferences.CachedPreferenceMap;
-import org.eventb.core.preferences.IPrefElementTranslator;
+import org.eventb.core.preferences.IReferenceMaker;
+import org.eventb.core.preferences.IXMLPrefSerializer;
 
 
 /**
@@ -26,8 +27,8 @@ public class StorablePreferenceMap<T> extends CachedPreferenceMap<T> implements 
 	private final IPreferenceStore store;
 
 	public StorablePreferenceMap(IPreferenceStore store, String preference,
-			IPrefElementTranslator<T> translator) {
-		super(translator);
+			IXMLPrefSerializer<T> translator, IReferenceMaker<T> refMaker) {
+		super(translator, refMaker);
 		this.store = store;
 		this.preference = preference;
 	}

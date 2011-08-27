@@ -45,7 +45,7 @@ public class TacticPreferenceFactory {
 	 * @return a tactic descriptor reference maker
 	 * @since 2.3
 	 */
-	public static IReferenceMaker<ITacticDescriptor> getTacticRefMaker() {
+	public static IReferenceMaker<ITacticDescriptor> makeTacticRefMaker() {
 		return TacticReferenceMaker.getInstance();
 	}
 
@@ -58,7 +58,7 @@ public class TacticPreferenceFactory {
 	 */
 	public static CachedPreferenceMap<ITacticDescriptor> makeTacticPreferenceMap() {
 		return new CachedPreferenceMap<ITacticDescriptor>(
-				makeTacticXMLSerializer(), getTacticRefMaker());
+				makeTacticXMLSerializer(), makeTacticRefMaker());
 	}
 
 }
