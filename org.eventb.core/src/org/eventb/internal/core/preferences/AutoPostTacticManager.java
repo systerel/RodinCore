@@ -29,6 +29,7 @@ import org.eventb.core.preferences.IPrefElementTranslator;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.ListPreference;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
+import org.eventb.core.preferences.autotactics.TacticPreferenceFactory;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
@@ -121,9 +122,10 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 		return getCorrespondingTactic(choice, auto);
 	}
 
+	@SuppressWarnings("deprecation")
 	private boolean recover(String profiles) {
 		final IPrefElementTranslator<List<ITacticDescriptor>> oldPreference = new ListPreference<ITacticDescriptor>(
-				new TacticPrefElement());
+				TacticPreferenceFactory.getTacticPrefElement());
 		final CachedPreferenceMap<List<ITacticDescriptor>> oldCache = new CachedPreferenceMap<List<ITacticDescriptor>>(
 				oldPreference);
 		try {
@@ -133,6 +135,7 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 			// give up
 			return false;
 		}
+		// FIXME clear profilesCache
 		for (IPrefMapEntry<List<ITacticDescriptor>> entry : oldCache
 				.getEntries()) {
 			final String id = entry.getKey();

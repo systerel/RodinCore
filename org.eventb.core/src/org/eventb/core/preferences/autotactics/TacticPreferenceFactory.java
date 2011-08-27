@@ -24,6 +24,13 @@ import org.eventb.internal.core.preferences.TacticReferenceMaker;
  */
 public class TacticPreferenceFactory {
 
+	/**
+	 * Returns the old preference format translator
+	 * 
+	 * @return a preference translator
+	 * @deprecated use {@link #makeTacticXMLSerializer()} for new format
+	 */
+	@Deprecated
 	public static IPrefElementTranslator<ITacticDescriptor> getTacticPrefElement() {
 		return new TacticPrefElement();
 	}
