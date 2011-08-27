@@ -13,6 +13,7 @@ package org.eventb.internal.core.preferences;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
 import static org.eventb.internal.core.preferences.PreferenceUtils.loopOnAllPending;
 
 import java.util.List;
@@ -64,9 +65,7 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 	private final CachedPreferenceMap<ITacticDescriptor> profilesCache;
 
 	private AutoPostTacticManager() {
-		final IPrefElementTranslator<ITacticDescriptor> preferenceElement = new TacticPrefElement();
-		profilesCache = new CachedPreferenceMap<ITacticDescriptor>(
-				preferenceElement);
+		profilesCache = makeTacticPreferenceMap();
 		preferencesService = Platform.getPreferencesService();
 		autoTacPref.setSelectedDescriptor(autoTacPref.getDefaultDescriptor());
 		postTacPref.setSelectedDescriptor(postTacPref.getDefaultDescriptor());
