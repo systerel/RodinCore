@@ -102,9 +102,8 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 			// try to recover
 			final CachedPreferenceMap<ITacticDescriptor> recovered = recoverOldPreference(profiles);
 			
-			if (recovered == null) {
-				Util.log(e, "while loading tactic preference:\n" + profiles);
-			} else {
+			if (recovered != null) {
+				// problem already logged by inject()
 				profilesCache.clear();
 				profilesCache.addAll(recovered.getEntries());
 			}
