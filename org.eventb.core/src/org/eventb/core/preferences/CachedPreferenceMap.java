@@ -49,6 +49,12 @@ public class CachedPreferenceMap<T> {
 
 	private final Set<ICacheListener<T>> listeners = new HashSet<ICacheListener<T>>();
 
+	/**
+	 * Old serialization format.
+	 * 
+	 * @param translator a preference translator
+	 * @deprecated use {@link #CachedPreferenceMap(IXMLPrefSerializer, IReferenceMaker)}
+	 */
 	@Deprecated
 	public CachedPreferenceMap(IPrefElementTranslator<T> translator) {
 		this(new PreferenceMapper<T>(translator), null);
@@ -154,7 +160,10 @@ public class CachedPreferenceMap<T> {
 	 * @since 2.3
 	 */
 	public IPreferenceCheckResult preAddCheck(String key, T value) {
-
+		if (refMaker == null) {
+			return PreferenceCheckResult.getNoError();
+		}
+		
 		final PrefEntryGraph<T> graph = new PrefEntryGraph<T>("preference map",
 				refMaker);
 		graph.addAll(getEntries());
