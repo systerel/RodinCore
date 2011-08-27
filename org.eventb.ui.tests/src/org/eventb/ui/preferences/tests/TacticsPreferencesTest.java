@@ -191,12 +191,10 @@ public class TacticsPreferencesTest extends EventBUITest {
 		assertStoreLoad(expected);
 	}
 
-	public void testStoreLoadParam() throws Exception {
-		
-		// TODO test param
+	public void testRecoverOldStorage() throws Exception {
+		//TODO
+		fail();
 	}
-	
-	// TODO test combined of param
 	
 	
 	private static void assertStoreLoad(final Map<String, ITacticDescriptor> expected) {
@@ -244,10 +242,17 @@ public class TacticsPreferencesTest extends EventBUITest {
 		
 		assertEquals("Wrong size of combined tactics", expected.size(),
 				actual.size());
-		for (int i = 0; i < expected.size(); i++) {
-			assertEquals(expected.get(i).getTacticID(), actual.get(i)
-					.getTacticID());
+		final List<String> expIds = getIds(expected);
+		final List<String> actIds = getIds(actual);
+		assertEquals(expIds, actIds);
+	}
+
+	private static List<String> getIds(List<ITacticDescriptor> descs) {
+		final List<String> result = new ArrayList<String>(descs.size());
+		for (ITacticDescriptor desc : descs) {
+			result.add(desc.getTacticID());
 		}
+		return result;
 	}
 
 	private static void assertParamDesc(IParamTacticDescriptor expectedDesc,
@@ -271,10 +276,10 @@ public class TacticsPreferencesTest extends EventBUITest {
 		final List<ITacticDescriptor> list = new ArrayList<ITacticDescriptor>();
 		list.addAll(available);
 		Collections.shuffle(list);
-		// random integer in 1 .. length of the list
+		// random integer in 2 .. length of the list
 		int index = abs(new Random(new Date().getTime()).nextInt()
 				% list.size());
-		index = Math.max(index, 1);
+		index = Math.max(index, 2);
 		final List<ITacticDescriptor> subList = list.subList(0, index);
 		
 		return loopOnAllPending(subList);
@@ -441,9 +446,8 @@ public class TacticsPreferencesTest extends EventBUITest {
 			i++;
 		}
 		// Saving project profile
-		final ITacticDescriptor prjDesc = getTacticDescList(autoTac,
-				defaultAutoDescs);
-		storeProfile(scStore, prjDesc, dftAutoProfileName);
+		final ITacticDescriptor defaultAuto = autoTac.getDefaultDescriptor();
+		storeProfile(scStore, defaultAuto, dftAutoProfileName);
 		// **************************************************************
 		// IMPORTANT ! Forces serialization of the choice at project scope
 		scStore.putValue(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE,
@@ -453,8 +457,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 				.getPreferenceStore();
 		final String wsProfileName = "WSProfile 1";
 		// Saving workspace profile
-		final ITacticDescriptor wsDesc = getTacticDescList(autoTac,
-				wsTacticIDs);
+		final ITacticDescriptor wsDesc = getTacticDescList(autoTac, wsTacticIDs);
 		storeProfile(wsStore, wsDesc, wsProfileName);
 		wsStore.setValue(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE,
 				wsProfileName);
@@ -473,7 +476,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 
 		final ITacticDescriptor projectAutoSelected = getSelectedDesc((AutoTacticPreference) autoTac);
 		// We check that the selected profile is the project specific one
-		assertTacDesc(projectAutoSelected, defaultDescriptor, dftAutoProfileName);
+		assertTacDesc(defaultDescriptor, projectAutoSelected, dftAutoProfileName);
 	}
 
 }
