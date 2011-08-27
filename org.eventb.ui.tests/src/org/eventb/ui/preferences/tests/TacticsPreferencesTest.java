@@ -258,15 +258,18 @@ public class TacticsPreferencesTest extends EventBUITest {
 	
 	private static void assertTacDesc(ITacticDescriptor expectedDesc,
 			ITacticDescriptor actualDesc) {
-		assertEquals(expectedDesc.getTacticID(), actualDesc.getTacticID());
 		if (expectedDesc instanceof ICombinedTacticDescriptor) {
+			// neglect tactic id to allow recovery
 			assertTrue(actualDesc instanceof ICombinedTacticDescriptor);
 			assertCombDesc((ICombinedTacticDescriptor) expectedDesc,
 					(ICombinedTacticDescriptor) actualDesc);
-		} else if (expectedDesc instanceof IParamTacticDescriptor) {
-			assertTrue(actualDesc instanceof IParamTacticDescriptor);
-			assertParamDesc((IParamTacticDescriptor) expectedDesc,
-					(IParamTacticDescriptor) actualDesc);
+		} else {
+			assertEquals(expectedDesc.getTacticID(), actualDesc.getTacticID());
+			if (expectedDesc instanceof IParamTacticDescriptor) {
+				assertTrue(actualDesc instanceof IParamTacticDescriptor);
+				assertParamDesc((IParamTacticDescriptor) expectedDesc,
+						(IParamTacticDescriptor) actualDesc);
+			}
 		}
 	}
 
