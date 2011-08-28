@@ -138,6 +138,9 @@
       <tactic
             id="org.eventb.core.tests.simple">
       </tactic>
+      <tactic
+            id="org.eventb.core.tests.tracingTactic">
+      </tactic>
    </extension>
 
 </plugin>
