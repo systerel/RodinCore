@@ -8,10 +8,14 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - changed list of default tactics
+ *     Systerel - implemented getDefaultDescriptor()
  ******************************************************************************/
 package org.eventb.internal.core.pom;
 
+import static org.eventb.internal.core.preferences.PreferenceUtils.loopOnAllPending;
+
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 
 public class POMTacticPreference extends AutoTacticPreference {
@@ -34,37 +38,36 @@ public class POMTacticPreference extends AutoTacticPreference {
 		return instance;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sequenprover.tacticPreference.TacticPreference#getDefaultIDs()
-	 */
+	private static final String[] DEFAULT_IDS = new String[] {
+		"org.eventb.core.seqprover.trueGoalTac",
+		"org.eventb.core.seqprover.falseHypTac",
+		"org.eventb.core.seqprover.goalInHypTac",
+		"org.eventb.core.seqprover.funGoalTac",
+		"org.eventb.core.seqprover.finiteHypBoundedGoalTac",
+		"org.eventb.core.seqprover.partitionRewriteTac",
+		"org.eventb.core.seqprover.genMPTac",
+		"org.eventb.core.seqprover.autoRewriteTac",
+		"org.eventb.core.seqprover.NNFTac",
+		"org.eventb.core.seqprover.typeRewriteTac",
+		"org.eventb.core.seqprover.findContrHypsTac",
+		"org.eventb.core.seqprover.shrinkImpHypTac",
+		"org.eventb.core.seqprover.funOvrGoalTac",
+		"org.eventb.core.seqprover.clarifyGoalTac",
+		"org.eventb.core.seqprover.onePointGoalTac",
+		"org.eventb.core.seqprover.funOvrHypTac",
+		"org.eventb.core.seqprover.funImgSimpTac",
+		"org.eventb.core.seqprover.onePointHypTac",
+		"org.eventb.core.seqprover.eqHypTac",
+		"org.eventb.core.seqprover.InDomGoalTac",
+		"org.eventb.core.seqprover.FunImgInGoalTac",
+		"com.clearsy.atelierb.provers.core.ml",
+		"com.clearsy.atelierb.provers.core.p0",
+		"org.eventb.core.seqprover.dtDestrWDTac",
+	};
+
 	@Override
-	protected String [] getDefaultIDs() {
-		return new String[] {
-	            "org.eventb.core.seqprover.trueGoalTac",
-	            "org.eventb.core.seqprover.falseHypTac",
-	            "org.eventb.core.seqprover.goalInHypTac",
-	            "org.eventb.core.seqprover.funGoalTac",
-	            "org.eventb.core.seqprover.finiteHypBoundedGoalTac",
-	            "org.eventb.core.seqprover.partitionRewriteTac",
-	            "org.eventb.core.seqprover.genMPTac",
-	            "org.eventb.core.seqprover.autoRewriteTac",
-	            "org.eventb.core.seqprover.NNFTac",
-	            "org.eventb.core.seqprover.typeRewriteTac",
-	            "org.eventb.core.seqprover.findContrHypsTac",
-	            "org.eventb.core.seqprover.shrinkImpHypTac",
-	            "org.eventb.core.seqprover.funOvrGoalTac",
-	            "org.eventb.core.seqprover.clarifyGoalTac",
-	            "org.eventb.core.seqprover.onePointGoalTac",
-	            "org.eventb.core.seqprover.funOvrHypTac",
-	            "org.eventb.core.seqprover.funImgSimpTac",
-	            "org.eventb.core.seqprover.onePointHypTac",
-	            "org.eventb.core.seqprover.eqHypTac",
-	            "org.eventb.core.seqprover.InDomGoalTac",
-	            "org.eventb.core.seqprover.FunImgInGoalTac",
-	            "com.clearsy.atelierb.provers.core.ml",
-	            "com.clearsy.atelierb.provers.core.p0",
-	            "org.eventb.core.seqprover.dtDestrWDTac",
-		};
+	public ITacticDescriptor getDefaultDescriptor() {
+		return loopOnAllPending(DEFAULT_IDS, AUTOTACTICS_ID + ".default");
 	}
 
 }

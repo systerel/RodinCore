@@ -163,6 +163,30 @@ public class PreferenceUtils {
 				.getCombinatorDescriptor(AutoTactics.LoopOnAllPending.COMBINATOR_ID);
 		return comb.instantiate(descs, id);
 	}
+	
+	/**
+	 * Returns a 'loop on all pending' tactic descriptor on auto tactics with
+	 * given ids; the resulting tactic ears the given id.
+	 * 
+	 * @param tacticIDs
+	 *            an array of auto tactic ids
+	 * @param id
+	 *            the id of the resulting tactic
+	 * @return a tactic descriptor
+	 */
+	public static ITacticDescriptor loopOnAllPending(String[] tacticIDs,
+			String id) {
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		final ArrayList<ITacticDescriptor> descs = new ArrayList<ITacticDescriptor>();
+		for (String descId : tacticIDs) {
+			if (!reg.isRegistered(descId)) {
+				continue;
+			}
+			final ITacticDescriptor desc = reg.getTacticDescriptor(descId);
+			descs.add(desc);
+		}
+		return loopOnAllPending(descs, id);
+	}
 
 	public static enum XMLElementTypes {
 		TACTIC_PREF, PREF_UNIT, SIMPLE, PARAMETERIZED, PARAMETER, COMBINED, PREF_REF;
