@@ -1794,12 +1794,12 @@
       <key
             commandId="org.eventb.ui.prove.highlight"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M2+S">
+            sequence="M2+M3+S">
       </key>
       <key
             commandId="org.eventb.ui.prove.restoreStyles"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="ESC">
+            sequence="M3+ESC">
       </key>
    </extension>
    <extension
