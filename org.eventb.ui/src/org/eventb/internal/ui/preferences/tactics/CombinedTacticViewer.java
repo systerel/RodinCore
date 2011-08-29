@@ -16,9 +16,11 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eventb.core.seqprover.ICombinedTacticDescriptor;
+import org.eclipse.swt.widgets.Tree;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 
 /**
  * @author Nicolas Beauger
@@ -107,16 +109,22 @@ public class CombinedTacticViewer {
 	}
 
 	public void createContents(Composite parent) {
-		treeViewer = new TreeViewer(parent);
+		treeViewer = new TreeViewer(parent, SWT.FILL 
+				| SWT.H_SCROLL | SWT.V_SCROLL);
+		final Tree tree = treeViewer.getTree();
+		tree.setLayout(parent.getLayout());
+		tree.setLayoutData(parent.getLayoutData());
 		treeViewer.setContentProvider(new TacticContentProvider());
 		treeViewer.setLabelProvider(new TacticLabelProvider());
-
 	}
 
 	public void setInput(ICombinedTacticDescriptor desc) {
-		if (treeViewer != null) {
-			treeViewer.setInput(new CombInput(desc));
+		if (treeViewer == null) {
+			return;
 		}
+		treeViewer.setInput(new CombInput(desc));
+		treeViewer.expandAll();
+		treeViewer.getTree().pack();
 	}
 
 	public void dispose() {
@@ -125,7 +133,11 @@ public class CombinedTacticViewer {
 		}
 	}
 
-	public void expandAll() {
-		treeViewer.expandAll();
+	public void show() {
+		treeViewer.getTree().setVisible(true);
+	}
+	
+	public void hide() {
+		treeViewer.getTree().setVisible(false);
 	}
 }
