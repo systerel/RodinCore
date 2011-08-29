@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Control;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.preferences.autotactics.TacticPreferenceConstants;
@@ -95,4 +96,20 @@ public class TacticPreferenceUtils {
 		store.setDefault(P_AUTOTACTIC_CHOICE, getDefaultAutoTactics());
 	}
 	
+
+	/**
+	 * packs given control and all its ancestors
+	 * 
+	 * @param control
+	 * FIXME not so clean
+	 */
+	public static void packAll(Control control, int height) {
+		for (int i = 0; i < height; i++) {
+			control.pack();
+			control = control.getParent();
+			if (control == null)
+				return;
+		}
+	}
+
 }

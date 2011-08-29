@@ -181,6 +181,7 @@ public class DetailedList {
 	 */
 	public void setList(String[] items) {
 		list.setItems(items);
+		list.pack();
 	}
 
 	/**
