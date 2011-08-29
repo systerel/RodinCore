@@ -264,7 +264,7 @@ public class TacticDescriptors {
 		}
 
 		@Override
-		public ICombinedTacticDescriptor instantiate(
+		public ICombinedTacticDescriptor combine(
 				List<ITacticDescriptor> tactics, String id)
 				throws IllegalArgumentException {
 			if (combinator == null) {

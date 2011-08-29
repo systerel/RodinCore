@@ -220,7 +220,7 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final ICombinatorDescriptor comb = reg
 				.getCombinatorDescriptor(AutoTactics.LoopOnAllPending.COMBINATOR_ID);
-		return comb.instantiate(descs, id);
+		return comb.combine(descs, id);
 	}
 
 	@Deprecated

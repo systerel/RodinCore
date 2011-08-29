@@ -404,7 +404,7 @@ public class PrefUnitTranslator implements
 					return null;
 				combs.add(combDesc);
 			}
-			return combinator.instantiate(combs, tacticId);
+			return combinator.combine(combs, tacticId);
 		}
 
 		@Override
@@ -431,7 +431,7 @@ public class PrefUnitTranslator implements
 				// should not happen, as deserialization would have failed before
 				return desc;
 			}
-			return combinator.instantiate(newCombs, desc.getTacticID());
+			return combinator.combine(newCombs, desc.getTacticID());
 		}
 
 	}

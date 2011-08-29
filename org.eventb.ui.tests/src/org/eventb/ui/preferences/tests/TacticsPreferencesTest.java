@@ -176,7 +176,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		final List<ITacticDescriptor> tactics = desc.getCombinedTactics();
 		final List<ITacticDescriptor> modified =  new ArrayList<ITacticDescriptor>(tactics);
 		modified.remove(0);
-		return combinator.instantiate(modified, "modified");
+		return combinator.combine(modified, "modified");
 	}
 
 	public void testStoreLoadDeepCombined() throws Exception {
@@ -328,7 +328,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		final ICombinatorDescriptor combinator = SequentProver
 				.getAutoTacticRegistry().getCombinatorDescriptor(
 						LoopOnAllPending.COMBINATOR_ID);
-		return combinator.instantiate(tactics, "testLoop");
+		return combinator.combine(tactics, "testLoop");
 	}
 	
 	/**

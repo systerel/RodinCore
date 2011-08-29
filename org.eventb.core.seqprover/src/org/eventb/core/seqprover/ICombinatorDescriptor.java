@@ -48,7 +48,7 @@ public interface ICombinatorDescriptor {
 	 *             if the size of the given list is not valid regarding
 	 *             specified arity
 	 */
-	ICombinedTacticDescriptor instantiate(List<ITacticDescriptor> tactics,
+	ICombinedTacticDescriptor combine(List<ITacticDescriptor> tactics,
 			String id) throws IllegalArgumentException;
 
 	/**

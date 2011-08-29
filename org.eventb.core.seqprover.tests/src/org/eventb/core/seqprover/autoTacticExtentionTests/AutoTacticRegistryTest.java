@@ -391,7 +391,7 @@ public class AutoTacticRegistryTest {
 		final List<ITacticDescriptor> combined = Collections
 				.singletonList(registry
 						.getTacticDescriptor(IdentityTactic.TACTIC_ID));
-		final ITactic instance = comb.instantiate(combined, "id").getTacticInstance();
+		final ITactic instance = comb.combine(combined, "id").getTacticInstance();
 
 		final Object result = instance.apply(null, null);
 		assertEquals(FakeTacComb.MESSAGE, result);
@@ -406,7 +406,7 @@ public class AutoTacticRegistryTest {
 		final ICombinatorDescriptor desc = (ICombinatorDescriptor) registry
 				.getTacticDescriptor(OneOrMore.TACTIC_ID);
 		// must throw illegal argument exception
-		desc.instantiate(Collections.<ITacticDescriptor> emptyList(), "id");
+		desc.combine(Collections.<ITacticDescriptor> emptyList(), "id");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -416,7 +416,7 @@ public class AutoTacticRegistryTest {
 		// must throw illegal argument exception
 		final List<ITacticDescriptor> combined = Collections
 				.<ITacticDescriptor> singletonList(registry.getTacticDescriptor(IdentityTactic.TACTIC_ID));
-		desc.instantiate(combined, "id");
+		desc.combine(combined, "id");
 	}
 	
 	@Test

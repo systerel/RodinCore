@@ -90,7 +90,7 @@ public class TacticPreferenceTests extends TestCase {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final ICombinatorDescriptor combinator = reg
 				.getCombinatorDescriptor(CombTestAutoTac.COMBINATOR_ID);
-		return combinator.instantiate(Arrays.asList(tactics),
+		return combinator.combine(Arrays.asList(tactics),
 				"combined id");
 	}
 
