@@ -10,19 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
-import static java.util.Collections.emptyList;
-import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_description;
-import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_detailsdescription;
-import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_nameheader;
+import static org.eventb.internal.ui.utils.Messages.*;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profileexists;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profilemustbespecified;
-import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profilemusthaveatactic;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_title;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -30,57 +23,78 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ICombinedTacticDescriptor;
+import org.eventb.core.seqprover.IParamTacticDescriptor;
+import org.eventb.core.seqprover.IParameterizerDescriptor;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.ui.preferences.AbstractEventBPreferencePage;
-import org.eventb.internal.ui.preferences.TwoListSelection;
 
 public class EditProfilWizard extends Wizard {
+	// wizard map:
+	// if new (selected == null && created == false)
+	// ChoiceParamCombined
+	// if param
+	// ChoiceParameterizer
+	// EditProfile
+	// if edit (selected != null && created == true)
+	// EditProfile
 
-	// The wizard page.
-	private EditProfilWizardPage page;
+	private final ChoiceParamCombined choiceParamCombined = new ChoiceParamCombined();
+	final ChoiceParameterizer choiceParameterizer = new ChoiceParameterizer();
+	final EditProfilWizardPage editProfile = new EditProfilWizardPage();
 
-	private final TacticsProfilesCache cache;
+	final TacticsProfilesCache cache;
 	// indicates if the wizard has to create the profile
-	private final boolean created;
+	final boolean created;
 	// the profile name to edit or empty. Not null
-	private String profileName;
+	String profileName;
 
 	private IPrefMapEntry<ITacticDescriptor> profile = null;
 
-	private final List<ITacticDescriptor> selected;
+	ITacticDescriptor selected;
+
+	TacticKind kind = null;
 
 	public EditProfilWizard(TacticsProfilesCache cache) {
 		this.cache = cache;
 		this.created = true;
 		this.profileName = "";
-		this.selected = emptyList();
+		this.selected = null;
 	}
 
 	public EditProfilWizard(TacticsProfilesCache cache, String profileName) {
 		this.cache = cache;
 		created = false;
 		this.profileName = profileName;
-//		final IPrefMapEntry<ListITacticDescriptor>> selectedProfile = cache
-//				.getEntry(profileName);
-//		if (selectedProfile != null) {
-//			this.selected = selectedProfile.getValue();
-//		} else {
-			this.selected = emptyList();
-//		}
+		final IPrefMapEntry<ITacticDescriptor> selectedProfile = cache
+				.getEntry(profileName);
+		if (selectedProfile != null) {
+			this.selected = selectedProfile.getValue();
+		} else {
+			this.selected = null;
+		}
 	}
 
 	@Override
 	public void addPages() {
-		page = new EditProfilWizardPage(cache, wizard_editprofil_title,
-				created, profileName, selected);
-		page.setTitle(wizard_editprofil_title);
-		addPage(page);
+		if (selected == null) {
+			addPage(choiceParamCombined);
+			addPage(choiceParameterizer);
+		}
+		addPage(editProfile);
 	}
 
 	/**
@@ -91,46 +105,185 @@ public class EditProfilWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		// renames the profile if it already exist
-		if (!created && !profileName.equals(page.getProfileName())) {
+		if (!created && !profileName.equals(editProfile.getProfileName())) {
 			cache.remove(profileName);
 		}
-		profile = cache.getEntry(page.getProfileName());
+		profile = cache.getEntry(editProfile.getProfileName());
 		if (profile == null) {
-//			cache.add(page.getProfileName(), page.getSelectedTactics());
-			profile = cache.getEntry(page.getProfileName());
+			cache.add(editProfile.getProfileName(),
+					editProfile.getResultDescriptor());
+			profile = cache.getEntry(editProfile.getProfileName());
 		} else {
-//			profile.setValue(page.getSelectedTactics());
+			profile.setValue(editProfile.getResultDescriptor());
 		}
 		return true;
 	}
 
-	static class EditProfilWizardPage extends WizardPage {
-		// input text for profile name
-		private Text profile;
-		// widget to associate tactics to profile
-		private TwoListSelection<ITacticDescriptor> selection;
-		// indicates if the wizard have to create the profile
-		private final boolean created;
-		// list of selected tactics
-		private final List<ITacticDescriptor> selected;
+	@Override
+	public boolean canFinish() {
+		return editProfile.getResultDescriptor() != null;
+	}
 
-		private final TacticsProfilesCache cache;
+	private static enum TacticKind {
+		COMBINED("Combined tactic"), PARAMETERIZED("Parameterized tactic");
 
-		private final String editedProfile;
+		private final String text;
 
-		protected EditProfilWizardPage(TacticsProfilesCache cache,
-				String pageName, boolean created, String profilName,
-				List<ITacticDescriptor> selected) {
-			super(wizard_editprofil_title);
-			this.cache = cache;
-			setDescription(wizard_editprofil_description);
-			this.selected = selected;
-			editedProfile = profilName;
-			this.created = created;
+		private TacticKind(String text) {
+			this.text = text;
+		}
+
+		public String getText() {
+			return text;
+		}
+	}
+
+	private class ChoiceParamCombined extends WizardPage {
+
+		private final Button[] radioButtons = new Button[TacticKind.values().length];
+
+		TacticKind choice = TacticKind.COMBINED;
+
+		public ChoiceParamCombined() {
+			super("Profile kind choice");
 		}
 
 		@Override
 		public void createControl(Composite parent) {
+			// create parent control
+			final Composite composite = new Composite(parent, SWT.NONE);
+			final GridLayout compLayout = new GridLayout();
+			compLayout.numColumns = 1;
+			composite.setLayout(compLayout);
+			AbstractEventBPreferencePage.setFillParent(composite);
+			setControl(composite);
+
+			final Font font = parent.getFont();
+
+			final Group group = new Group(composite, SWT.NONE);
+			group.setFont(font);
+			group.setText("Choose which kind of profile to create");
+
+			final GridLayout layout = new GridLayout();
+			layout.numColumns = 1;
+			group.setLayout(layout);
+
+			final TacticKind[] choices = TacticKind.values();
+			for (int i = 0; i < choices.length; i++) {
+				final TacticKind ch = choices[i];
+				final Button radio = new Button(group, SWT.RADIO | SWT.LEFT);
+				radioButtons[i] = radio;
+				radio.setText(ch.getText());
+				radio.setData(ch);
+				radio.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent event) {
+						kind = (TacticKind) event.widget.getData();
+					}
+				});
+			}
+			radioButtons[TacticKind.COMBINED.ordinal()].setSelection(true);
+			kind = TacticKind.COMBINED;
+		}
+
+		@Override
+		public IWizardPage getNextPage() {
+			if (kind == null) {
+				return null;
+			}
+			switch (kind) {
+			case COMBINED:
+				return editProfile;
+			case PARAMETERIZED:
+				return choiceParameterizer;
+			default:
+				throw new IllegalStateException("illegal choice: " + choice);
+			}
+		}
+	}
+
+	static IParameterizerDescriptor[] getChoices() {
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		return reg.getParameterizerDescriptors();
+	}
+
+	private class ChoiceParameterizer extends WizardPage {
+
+		final IParameterizerDescriptor[] choices;
+		IParameterizerDescriptor choice = null;
+
+		protected ChoiceParameterizer() {
+			super("Choice of Parameterized Tactic");
+			this.choices = getChoices();
+		}
+
+		@Override
+		public void createControl(Composite parent) {
+			// create parent control
+			final Composite composite = new Composite(parent, SWT.NONE);
+			final GridLayout compLayout = new GridLayout();
+			compLayout.numColumns = 1;
+			composite.setLayout(compLayout);
+			AbstractEventBPreferencePage.setFillParent(composite);
+			setControl(composite);
+
+			setTitle("Choice of a tactic");
+			if (choices.length == 0) {
+				setDescription("Found no tactic to parameterize");
+				return;
+			}
+			setDescription("Choose a tactic to parameterize");
+			setMessage("Select one of:");
+			final String[] names = new String[choices.length];
+			for (int i = 0; i < choices.length; i++) {
+				names[i] = choices[i].getTacticDescriptor().getTacticName();
+			}
+
+			final List list = new List(composite, NONE);
+			list.setItems(names);
+			list.addSelectionListener(new SelectionListener() {
+
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					widgetDefaultSelected(e);
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					final int selectionIndex = list.getSelectionIndex();
+					if (selectionIndex < 0) {
+						return;
+					}
+					choice = choices[selectionIndex];
+					ChoiceParameterizer.this.setPageComplete(true);
+				}
+			});
+			list.pack();
+			composite.pack();
+		}
+
+		@Override
+		public IWizardPage getNextPage() {
+			if (choice == null)
+				return null;
+			selected = choice.instantiate(choice.makeParameterSetting(), choice
+					.getTacticDescriptor().getTacticID() + ".custom");
+			return editProfile;
+		}
+	}
+
+	private class EditProfilWizardPage extends WizardPage {
+		// input text for profile name
+		private Text profileText;
+
+		public EditProfilWizardPage() {
+			super(wizard_editprofil_title);
+			setDescription(wizard_editprofil_description);
+		}
+
+		@Override
+		public void createControl(Composite parent) {
+
 			// create parent control
 			final Composite composite = new Composite(parent, SWT.NONE);
 			final GridLayout layout = new GridLayout();
@@ -139,50 +292,51 @@ public class EditProfilWizard extends Wizard {
 			AbstractEventBPreferencePage.setFillParent(composite);
 			setControl(composite);
 
+			setTitle(wizard_editprofil_title);
+
 			// create input text for profile name
 			final Label labelProfil = new Label(composite, SWT.FILL);
 			labelProfil.setText(wizard_editprofil_nameheader);
-			profile = new Text(composite, SWT.BORDER);
-			profile.setText(editedProfile);
-			profile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			profile.addModifyListener(new ModifyListener() {
+			profileText = new Text(composite, SWT.BORDER);
+			profileText.setText(profileName);
+			profileText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			profileText.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {
 					updateStatus();
 				}
 			});
-			// create label
-			final Label labelList = new Label(composite, NONE);
-			labelList.setText(wizard_editprofil_detailsdescription);
-			// create 2 list for available tactics and associated tactics
-			selection = new TwoListSelection<ITacticDescriptor>(composite,
-					new TwoListSelection.ILabelProvider() {
-						@Override
-						public String getLabel(Object object) {
-							return ((ITacticDescriptor) object).getTacticName();
-						}
-					});
-			selection.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					updateStatus();
-				}
-			});
-			final Collection<ITacticDescriptor> available = TacticPreferenceUtils
-					.getAvailableTactics();
-			available.removeAll(selected);
-			setLists(available, selected);
 
+			if (selected instanceof IParamTacticDescriptor) {
+				ParamTacticViewer viewer = new ParamTacticViewer();
+				viewer.createContents(composite);
+				viewer.setInput((IParamTacticDescriptor) selected);
+			} else {
+
+				// selected is a combined or ref or simple: treat equally with a
+				// tree editor
+				// TODO
+				if (selected instanceof ICombinedTacticDescriptor) {// FIXME
+																	// wrong
+																	// test,
+																	// just to
+																	// see
+					final CombinedTacticViewer viewer = new CombinedTacticViewer();
+					viewer.createContents(composite);
+					viewer.setInput((ICombinedTacticDescriptor) selected);
+					viewer.show();
+					composite.pack();
+					parent.pack();
+				}
+			}
 			updateStatus();
 		}
 
-		public void setLists(Collection<ITacticDescriptor> newAvailable,
-				Collection<ITacticDescriptor> newSelected) {
-			selection.setLists(newAvailable, newSelected);
-		}
-
 		public String getProfileName() {
-			return profile.getText();
+			if (profileText == null || profileText.isDisposed()) {
+				return "";
+			}
+			return profileText.getText();
 		}
 
 		/**
@@ -190,8 +344,9 @@ public class EditProfilWizard extends Wizard {
 		 * 
 		 * @return the list of selected objects.
 		 */
-		public ArrayList<ITacticDescriptor> getSelectedTactics() {
-			return selection.getSelectedObjects();
+		public ITacticDescriptor getResultDescriptor() {
+			// FIXME must be computed after editing
+			return selected;
 		}
 
 		/**
@@ -200,8 +355,10 @@ public class EditProfilWizard extends Wizard {
 		void updateStatus() {
 			String message = null;
 			boolean complete = true;
-			final String name = profile.getText();
-			if (created || !profile.getText().equals(editedProfile)) {
+			if (profileText == null)
+				return;
+			final String name = profileText.getText();
+			if (created || !profileText.getText().equals(profileName)) {
 				if (cache.exists(name)) {
 					message = wizard_editprofil_profileexists;
 					complete = false;
@@ -209,10 +366,6 @@ public class EditProfilWizard extends Wizard {
 					message = wizard_editprofil_profilemustbespecified;
 					complete = false;
 				}
-			}
-			if (selection.getSelectedObjects().size() == 0) {
-				message = wizard_editprofil_profilemusthaveatactic;
-				complete = false;
 			}
 			setErrorMessage(message);
 			setPageComplete(complete);
@@ -225,4 +378,5 @@ public class EditProfilWizard extends Wizard {
 	public IPrefMapEntry<ITacticDescriptor> getProfile() {
 		return profile;
 	}
+
 }
