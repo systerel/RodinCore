@@ -10,20 +10,13 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
-import java.util.Collection;
-import java.util.List;
+import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.packAll;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
-import org.eventb.core.seqprover.IParameterDesc;
-import org.eventb.core.seqprover.IParameterValuation;
 
 /**
  * @author Nicolas Beauger
@@ -31,19 +24,12 @@ import org.eventb.core.seqprover.IParameterValuation;
  */
 public class TacticDetailsProvider implements IDetailsProvider {
 
-	private static final int STYLE = SWT.BORDER
-			| SWT.FILL | SWT.NO_FOCUS | SWT.V_SCROLL;
-
-	private static final GridData GD = new GridData(SWT.FILL, SWT.FILL, true,
-			true);
-
-	private static final int EDITABLE_COLUMN = 1;
-	
 	private final TacticsProfilesCache cache;
 	private Composite parent;
-	// TODO remove when no more used
-	private org.eclipse.swt.widgets.List detailList;
-	private Table paramTable;
+
+	private final SimpleTacticViewer simpleViewer = new SimpleTacticViewer();
+	private final ParamTacticViewer paramViewer = new ParamTacticViewer();
+	private final CombinedTacticViewer combViewer = new CombinedTacticViewer();
 	
 	public TacticDetailsProvider(TacticsProfilesCache cache) {
 		this.cache = cache;
@@ -56,25 +42,14 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		}
 		this.parent = parent;
 		disposeAll();
-		initAll();
+		simpleViewer.createContents(parent);
+		paramViewer.createContents(parent);
+		combViewer.createContents(parent);
 	}
 	
-	private void initAll() {
-		detailList = new org.eclipse.swt.widgets.List(parent, STYLE);
-		detailList.setLayoutData(GD);
-		detailList.setVisible(false);
-		
-		paramTable = new Table(parent, STYLE);
-		paramTable.setLayoutData(GD);
-		paramTable.setVisible(false);
-		
-	}
-
 	private void disposeAll() {
-		if (detailList != null) {
-			detailList.dispose();
-			detailList = null;
-		}
+		paramViewer.dispose();
+		combViewer.dispose();
 	}
 
 	@Override
@@ -82,59 +57,28 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		final IPrefMapEntry<ITacticDescriptor> profile = cache
 				.getEntry(element);
 		final ITacticDescriptor desc = profile.getValue();
+		hideAll();
 		if (desc instanceof ICombinedTacticDescriptor) {
-			//FIXME recursively make a tree
-			final List<ITacticDescriptor> tactics = ((ICombinedTacticDescriptor) desc).getCombinedTactics();
-			final String[] result = new String[tactics.size()];
-			for (int i = 0; i < result.length; i++) {
-				result[i] = tactics.get(i).getTacticName();
-			}
-			detailList.setItems(result);
-			detailList.setVisible(true);
+			combViewer.setInput((ICombinedTacticDescriptor) desc);
+			combViewer.show();
 		} else if (desc instanceof IParamTacticDescriptor) {
-			final IParamTacticDescriptor paramDesc = (IParamTacticDescriptor) desc;
-			final IParameterValuation valuation = paramDesc.getValuation();
-			final Collection<IParameterDesc> params = valuation.getParameterDescs();
-			final TableColumn labelCol = paramTable.getColumn(0);
-			labelCol.setText("label");//TODO at init time
-			final TableColumn valueCol = paramTable.getColumn(1);
-			valueCol.setText("value");
-			paramTable.setItemCount(params.size());
-			paramTable.setLinesVisible(true);
-//			for (IParameterDesc param : params) {
-//				final String label = param.getLabel();
-//				labelCol.add(label);
-//				switch(param.getType()) {
-//				case BOOL:
-//					final boolean b = valuation.getBoolean(label);
-//					// put a checkbox
-//					break;
-//				case INT:
-//					final int i = valuation.getInt(label);
-//					// put a text box that accepts only digits
-//					break;
-//				case LONG:
-//					final long l = valuation.getLong(label);
-//					// put a text box that accepts only digits
-//					break;
-//				case STRING:
-//					final String s = valuation.getString(label);
-//					// put a text box
-//					break;
-//				
-//				}
-//			}
-			
+			paramViewer.setInput((IParamTacticDescriptor) desc);
+			paramViewer.show();
 		} else {
-			final String description = desc.getTacticDescription();
-			// put a text with the description
+			simpleViewer.setInput(desc);
+			simpleViewer.show();
 		}
+		packAll(parent, 12);
 	}
-
+	
+	private void hideAll()  {
+		paramViewer.hide();
+		combViewer.hide();
+	}
+	
 	@Override
 	public void clear() {
-		detailList.removeAll();
-		paramTable.clearAll();
+		hideAll();
 	}
 
 }
