@@ -164,10 +164,9 @@ public class ParamTacticViewer {
 		final String[] names = new String[] { "label", "type", "value",
 				"default", "description" };
 		for (String name : names) {
-			final TableColumn col = new TableColumn(table, SWT.NONE);
+			final TableColumn col = new TableColumn(table, SWT.WRAP);
 			col.setText(name);
-			col.pack(); // TODO that may be the problem with container in
-						// details provider, check StatisticsView
+			col.pack();
 		}
 	}
 
@@ -176,6 +175,7 @@ public class ParamTacticViewer {
 			return;
 		}
 		tableViewer.setInput(desc);
+		tableViewer.getTable().pack();
 	}
 
 	public void dispose() {
@@ -184,4 +184,11 @@ public class ParamTacticViewer {
 		}
 	}
 
+	public void show() {
+		tableViewer.getTable().setVisible(true);
+	}
+	
+	public void hide() {
+		tableViewer.getTable().setVisible(false);
+	}
 }
