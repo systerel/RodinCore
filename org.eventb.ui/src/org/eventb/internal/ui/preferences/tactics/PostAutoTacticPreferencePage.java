@@ -26,6 +26,7 @@ import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotacti
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_newbutton;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_removebutton;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_tab_autoposttactics;
+import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_tab_profiles;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_tacticdetails_header;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_posttactic_enablementdescription;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_posttactic_selectedtacticprofiledescription;
@@ -122,10 +123,10 @@ public class PostAutoTacticPreferencePage extends
 		folder.setLayoutData(new GridData(FILL_BOTH));
 		final Composite tabAutoPost = getTab(folder,
 				preferencepage_postautotactic_tab_autoposttactics);
-		final Composite tabTactics = getTab(folder,
-				"Tactics");
+		final Composite tabProfiles = getTab(folder,
+				preferencepage_postautotactic_tab_profiles);
 		createAutoPostTab(tabAutoPost);
-		createTacticsTab(tabTactics);
+		createProfilesTab(tabProfiles);
 	}
 
 	private void initializeCaches() {
@@ -188,7 +189,7 @@ public class PostAutoTacticPreferencePage extends
 		updateProfilesButton();
 	}
 
-	private void createTacticsTab(Composite parent) {
+	private void createProfilesTab(Composite parent) {
 		setLayout(parent, 2);
 		setFillParent(parent);
 
