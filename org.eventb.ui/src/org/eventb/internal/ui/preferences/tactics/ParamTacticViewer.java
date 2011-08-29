@@ -23,6 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
@@ -33,7 +34,7 @@ import org.eventb.core.seqprover.IParameterValuation;
  * @author Nicolas Beauger
  * 
  */
-public class ParamTacticViewer {
+public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescriptor> {
 
 	private static class Param {
 		final IParameterDesc desc;
@@ -149,6 +150,7 @@ public class ParamTacticViewer {
 
 	private TableViewer tableViewer;
 
+	@Override
 	public void createContents(Composite parent) {
 		tableViewer = new TableViewer(parent);
 		createColumns();
@@ -170,6 +172,7 @@ public class ParamTacticViewer {
 		}
 	}
 
+	@Override
 	public void setInput(IParamTacticDescriptor desc) {
 		if (tableViewer == null) {
 			return;
@@ -178,17 +181,8 @@ public class ParamTacticViewer {
 		tableViewer.getTable().pack();
 	}
 
-	public void dispose() {
-		if (tableViewer != null) {
-			tableViewer.getTable().dispose();
-		}
-	}
-
-	public void show() {
-		tableViewer.getTable().setVisible(true);
-	}
-	
-	public void hide() {
-		tableViewer.getTable().setVisible(false);
+	@Override
+	protected Control getControl() {
+		return tableViewer.getTable();
 	}
 }

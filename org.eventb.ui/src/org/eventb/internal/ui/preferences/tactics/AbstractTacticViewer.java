@@ -10,36 +10,40 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
-public class SimpleTacticViewer extends AbstractTacticViewer<ITacticDescriptor> {
-	private Label label;
+public abstract class AbstractTacticViewer<T extends ITacticDescriptor> {
 
-	@Override
-	public void createContents(Composite parent) {
-		label =  new Label(parent, SWT.LEFT | SWT.WRAP);
-	}
+	protected abstract Control getControl();
+
+	public abstract void createContents(Composite parent);
 	
-	@Override
-	public void setInput(ITacticDescriptor desc) {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(desc.getTacticName());
-		sb.append(":\n");
-		sb.append(desc.getTacticDescription());
-		label.setText(sb.toString());
-		label.pack();
-	}
+	public abstract void setInput(T desc);
 	
-	@Override
-	protected Control getControl() {
-		return label;
+	public void dispose() {
+		final Control control = getControl();
+		if (control != null) {
+			control.dispose();
+		}
+	}
+
+	public void show() {
+		final Control control = getControl();
+		if (control != null) {
+			control.setVisible(true);
+		}
+	}
+
+	public void hide() {
+		final Control control = getControl();
+		if (control != null) {
+			control.setVisible(false);
+		}
 	}
 }
