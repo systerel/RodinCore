@@ -132,6 +132,9 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ICombinedTacticDe
 
 	@Override
 	protected Control getControl() {
+		if (treeViewer == null) {
+			return null;
+		}
 		return treeViewer.getTree();
 	}
 }

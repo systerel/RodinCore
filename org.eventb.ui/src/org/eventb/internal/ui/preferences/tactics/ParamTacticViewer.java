@@ -183,6 +183,9 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 
 	@Override
 	protected Control getControl() {
+		if (tableViewer == null) {
+			return null;
+		}
 		return tableViewer.getTable();
 	}
 }
