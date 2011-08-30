@@ -139,6 +139,15 @@ public class EditProfilWizard extends Wizard {
 		}
 	}
 
+	static Composite createParentComposite(Composite parent) {
+		final Composite composite = new Composite(parent, SWT.NONE);
+		final GridLayout compLayout = new GridLayout();
+		compLayout.numColumns = 1;
+		composite.setLayout(compLayout);
+		AbstractEventBPreferencePage.setFillParent(composite);
+		return composite;
+	}
+
 	private class ChoiceParamCombined extends WizardPage {
 
 		private final Button[] radioButtons = new Button[TacticKind.values().length];
@@ -152,11 +161,7 @@ public class EditProfilWizard extends Wizard {
 		@Override
 		public void createControl(Composite parent) {
 			// create parent control
-			final Composite composite = new Composite(parent, SWT.NONE);
-			final GridLayout compLayout = new GridLayout();
-			compLayout.numColumns = 1;
-			composite.setLayout(compLayout);
-			AbstractEventBPreferencePage.setFillParent(composite);
+			final Composite composite = createParentComposite(parent);
 			setControl(composite);
 
 			final Font font = parent.getFont();
@@ -221,11 +226,7 @@ public class EditProfilWizard extends Wizard {
 		@Override
 		public void createControl(Composite parent) {
 			// create parent control
-			final Composite composite = new Composite(parent, SWT.NONE);
-			final GridLayout compLayout = new GridLayout();
-			compLayout.numColumns = 1;
-			composite.setLayout(compLayout);
-			AbstractEventBPreferencePage.setFillParent(composite);
+			final Composite composite = createParentComposite(parent);
 			setControl(composite);
 
 			setTitle("Choice of a tactic");
@@ -284,11 +285,7 @@ public class EditProfilWizard extends Wizard {
 		public void createControl(Composite parent) {
 
 			// create parent control
-			final Composite composite = new Composite(parent, SWT.NONE);
-			final GridLayout layout = new GridLayout();
-			layout.numColumns = 1;
-			composite.setLayout(layout);
-			AbstractEventBPreferencePage.setFillParent(composite);
+			final Composite composite = createParentComposite(parent);
 			setControl(composite);
 
 			setTitle(wizard_editprofil_title);
