@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
@@ -149,9 +150,11 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 	}
 
 	private TableViewer tableViewer;
+	private Label tacticName;
 
 	@Override
 	public void createContents(Composite parent) {
+		tacticName = new Label(parent, SWT.NONE);
 		tableViewer = new TableViewer(parent);
 		createColumns();
 		tableViewer.setLabelProvider(new ParamLabelProvider());
@@ -168,19 +171,28 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		for (String name : names) {
 			final TableColumn col = new TableColumn(table, SWT.WRAP);
 			col.setText(name);
-			col.pack();
 		}
 	}
 
 	@Override
 	public void setInput(IParamTacticDescriptor desc) {
-		if (tableViewer == null) {
+		if (tableViewer == null || tacticName == null) {
 			return;
 		}
+		tacticName.setText(desc.getTacticName());
 		tableViewer.setInput(desc);
-		tableViewer.getTable().pack();
+		resize(tableViewer);
 	}
 
+	private static void resize(TableViewer viewer) {
+		final Table table = viewer.getTable();
+		final TableColumn[] columns = table.getColumns();
+		for (TableColumn column : columns) {
+			column.pack();
+		}
+		table.pack();
+	}
+	
 	@Override
 	protected Control getControl() {
 		if (tableViewer == null) {
