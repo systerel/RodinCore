@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
-import static org.eventb.internal.ui.utils.Messages.*;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_description;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_nameheader;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profileexists;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profilemustbespecified;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_title;
@@ -94,7 +95,7 @@ public class EditProfilWizard extends Wizard {
 			addPage(choiceParamCombined);
 			addPage(choiceParameterizer);
 		}
-		addPage(editProfile);
+		// edit profile must be created when selected is set
 	}
 
 	/**
@@ -257,8 +258,6 @@ public class EditProfilWizard extends Wizard {
 					ChoiceParameterizer.this.setPageComplete(true);
 				}
 			});
-			list.pack();
-			composite.pack();
 		}
 
 		@Override
@@ -278,6 +277,7 @@ public class EditProfilWizard extends Wizard {
 		public EditProfilWizardPage() {
 			super(wizard_editprofil_title);
 			setDescription(wizard_editprofil_description);
+			setWizard(EditProfilWizard.this);
 		}
 
 		@Override
