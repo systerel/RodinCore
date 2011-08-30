@@ -35,7 +35,7 @@ public interface IParameterDesc {
 		INT {
 			@Override
 			public Integer parse(String image) {
-				return Integer.valueOf(image);
+				return Integer.decode(image);
 			}
 
 			@Override
@@ -46,7 +46,7 @@ public interface IParameterDesc {
 		LONG {
 			@Override
 			public Long parse(String image) {
-				return Long.valueOf(image);
+				return Long.decode(image);
 			}
 
 			@Override
