@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.preferences;
 
-import static org.eventb.core.EventBPlugin.getAutoPostTacticManager;
 import static org.eventb.internal.core.preferences.PreferenceUtils.getUniqueChild;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.COMBINATOR_ID;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeTypes.LABEL;
@@ -23,8 +22,8 @@ import static org.eventb.internal.core.preferences.PreferenceUtils.XMLAttributeT
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.COMBINED;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETER;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PARAMETERIZED;
-import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PREF_UNIT;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PREF_REF;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PREF_UNIT;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.SIMPLE;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.assertName;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.createElement;
@@ -36,7 +35,6 @@ import java.util.List;
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IXMLPrefSerializer;
-import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
@@ -186,13 +184,6 @@ public class PrefUnitTranslator implements
 			parent.appendChild(simple);
 		}
 
-		private static boolean isDeclared(ITacticDescriptor tacticDesc) {
-			final IAutoPostTacticManager manager = getAutoPostTacticManager();
-			if (manager.getAutoTacticPreference().isDeclared(tacticDesc))
-				return true;
-			return manager.getPostTacticPreference().isDeclared(tacticDesc);
-		}
-
 		@Override
 		public ITacticDescriptor get(Node e) {
 			assertName(e, SIMPLE);
@@ -205,10 +196,6 @@ public class PrefUnitTranslator implements
 			}
 			final ITacticDescriptor tacticDescriptor = reg
 					.getTacticDescriptor(tacticId);
-			if (!isDeclared(tacticDescriptor)) {
-				printDebug("Tactic is not declared in this scope " + tacticId);
-				return null;
-			}
 			return tacticDescriptor;
 		}
 

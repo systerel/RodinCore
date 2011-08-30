@@ -51,7 +51,6 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	public AutoTacticPreference(String registryID) {
 		this.registryID = registryID;
 		this.defaultDescriptor = getDefaultDescriptor();
-		checkDescriptor(defaultDescriptor);
 		setSelectedDescriptors(getDeclaredDescriptors());
 	}
 
@@ -161,28 +160,10 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	 */
 	@Override
 	public void setSelectedDescriptor(ITacticDescriptor tacticDesc) {
-		checkDescriptor(tacticDesc);
 		selectedDescriptor = tacticDesc;
 		selectedComposedTactic = null;
 	}
 	
-	// a valid descriptor is either
-	// - a declared descriptor
-	// - a combination of valid descriptors
-	private void checkDescriptor(ITacticDescriptor desc) {
-		if (desc instanceof ICombinedTacticDescriptor) {
-			final List<ITacticDescriptor> combined = ((ICombinedTacticDescriptor) desc)
-					.getCombinedTactics();
-			for (ITacticDescriptor comb : combined) {
-				checkDescriptor(comb);
-			}
-		} else if (!isDeclared(desc)) {
-			throw new IllegalArgumentException("invalid tactic for "
-					+ registryID + ": " + desc.getTacticName() + " ("
-					+ desc.getTacticID() + ")");
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#setSelectedDescriptors(org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor[])
 	 */
@@ -202,6 +183,7 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#getDefaultDescriptors()
 	 */
+	@Deprecated
 	public List<ITacticDescriptor> getDefaultDescriptors() {
 		if (defaultDescriptor instanceof ICombinedTacticDescriptor) {
 			return ((ICombinedTacticDescriptor) defaultDescriptor).getCombinedTactics();
