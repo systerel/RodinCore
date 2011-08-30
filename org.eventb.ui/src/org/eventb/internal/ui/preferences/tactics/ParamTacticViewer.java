@@ -10,14 +10,23 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -29,6 +38,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
+import org.eventb.core.seqprover.IParameterDesc.ParameterType;
 import org.eventb.core.seqprover.IParameterValuation;
 
 /**
@@ -38,10 +48,10 @@ import org.eventb.core.seqprover.IParameterValuation;
 public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescriptor> {
 
 	private static class Param {
-		final IParameterDesc desc;
-		final String value;
+		private final IParameterDesc desc;
+		private Object value;
 
-		public Param(IParameterDesc desc, String value) {
+		public Param(IParameterDesc desc, Object value) {
 			super();
 			this.desc = desc;
 			this.value = value;
@@ -51,8 +61,12 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			return desc;
 		}
 
-		public String getValue() {
+		public Object getValue() {
 			return value;
+		}
+		
+		public void setValue(Object value) {
+			this.value = value;
 		}
 	}
 
@@ -100,7 +114,7 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			case 1: // type
 				return desc.getType().toString();
 			case 2: // value
-				return param.getValue();
+				return param.getValue().toString();
 			case 3: // default
 				return desc.getDefaultValue().toString();
 			case 4: // description
@@ -142,13 +156,145 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 					parameterDescs.size());
 			for (IParameterDesc param : parameterDescs) {
 				final String label = param.getLabel();
-				final String value = valuation.get(label).toString();
+				final Object value = valuation.get(label);
 				result.add(new Param(param, value));
 			}
 			return result.toArray(new Object[result.size()]);
 		}
 	}
 
+	private static class NumberEditorValidator implements ICellEditorValidator {
+		// either INT or LONG
+		private final ParameterType type;
+
+		public NumberEditorValidator(ParameterType type) {
+			this.type = type;
+		}
+
+		@Override
+		public String isValid(Object value) {
+			if (!(value instanceof String)) {
+				throw new IllegalArgumentException("expected a String");
+			}
+			try {
+				type.parse((String) value);
+				return null;
+			} catch (NumberFormatException e) {
+				return "invalid number " + value + " : " + e.getMessage();
+			}
+		}
+		
+	}
+	
+	private static class ParamEditingSupport extends EditingSupport {
+
+		// boolean editing support
+		private static final String[] BOOL_STRINGS = new String[] {
+				FALSE.toString(), TRUE.toString() };
+
+		private static final Boolean[] BOOL_VALUES = new Boolean[] { FALSE,
+				TRUE };
+
+		private static int getIndex(Boolean b) {
+			return b ? 1 : 0;
+		}
+
+		private final TableViewer tableViewer;
+
+		public ParamEditingSupport(TableViewer viewer) {
+			super(viewer);
+			tableViewer = viewer;
+		}
+
+		@Override
+		protected CellEditor getCellEditor(Object element) {
+			if (!(element instanceof Param)) {
+				return null;
+			}
+			final Param param = (Param) element;
+			final ParameterType type = param.getDesc().getType();
+			
+			if (type == ParameterType.BOOL) {
+				return new ComboBoxCellEditor(tableViewer.getTable(), BOOL_STRINGS);
+			}
+			final TextCellEditor editor = new TextCellEditor(tableViewer.getTable());
+			if (type == ParameterType.STRING) {
+				return editor;
+			}
+			editor.setValidator(new NumberEditorValidator(type));
+			return editor;
+		}
+
+		@Override
+		protected boolean canEdit(Object element) {
+			return element instanceof Param;
+		}
+
+		@Override
+		protected Object getValue(Object element) {
+			if (!(element instanceof Param)) {
+				return null;
+			}
+			final Param param = (Param) element;
+			final ParameterType type = param.getDesc().getType();
+			final Object value = param.getValue();
+			if (type == ParameterType.BOOL) {
+				// index in combo box
+				return getIndex((Boolean) value);
+			}
+			if (type == ParameterType.STRING) {
+				return value;
+			}
+			// INT & LONG
+			// must be a String for the text cell editor
+			return value.toString();
+		}
+
+		@Override
+		protected void setValue(Object element, Object value) {
+			if (!(element instanceof Param)) {
+				return;
+			}
+			final Param param = (Param) element;
+			final ParameterType type = param.getDesc().getType();
+
+			if (!checkEditorValue(value, type)) {
+				return;
+			}
+
+			final Object paramValue; // conversion from value
+			switch (type) {
+			case BOOL:
+				final int index = (Integer) value;
+				paramValue = BOOL_VALUES[index];
+				break;
+			case STRING:
+				paramValue = value;
+				break;
+			case INT:
+			case LONG:
+				paramValue = type.parse((String) value);
+				break;
+			default:
+				throw new IllegalStateException("unreachable case reached");
+			}
+			param.setValue(paramValue);
+			tableViewer.refresh(element);
+			final Table table = tableViewer.getTable();
+			final TableColumn valueColumn = table.getColumn(VALUE_COLUMN_INDEX);
+			valueColumn.pack();
+		}
+
+		private static boolean checkEditorValue(Object value, ParameterType type) {
+			if (type == ParameterType.BOOL) {
+				// index in combo box
+				return value instanceof Integer;
+			}
+			return value instanceof String;
+		}
+		
+	}
+	
 	private TableViewer tableViewer;
 	private Label tacticName;
 
@@ -157,19 +303,31 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		tacticName = new Label(parent, SWT.NONE);
 		tableViewer = new TableViewer(parent);
 		createColumns();
+		tableViewer.setColumnProperties(COLUMN_NAMES);
 		tableViewer.setLabelProvider(new ParamLabelProvider());
 		tableViewer.setContentProvider(new ParamContentProvider());
 	}
-
+	private static final String[] COLUMN_NAMES = new String[] { "label", "type", "value",
+			"default", "description" };
+	private static final int VALUE_COLUMN_INDEX = 2;
+	
 	private void createColumns() {
 		final Table table = tableViewer.getTable();
-		table.setLayout(new RowLayout(SWT.VERTICAL));
+		table.setLayout(new RowLayout(SWT.VERTICAL | SWT.FULL_SELECTION));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		final String[] names = new String[] { "label", "type", "value",
-				"default", "description" };
-		for (String name : names) {
-			final TableColumn col = new TableColumn(table, SWT.WRAP);
+
+		for (int i = 0; i < COLUMN_NAMES.length; i++) {
+			final String name = COLUMN_NAMES[i];
+			final TableColumn col;
+			if (i == VALUE_COLUMN_INDEX) {
+				final TableViewerColumn colViewer = new TableViewerColumn(
+						tableViewer, SWT.WRAP);
+				colViewer.setEditingSupport(new ParamEditingSupport(tableViewer));
+				col = colViewer.getColumn();
+			} else {
+				col = new TableColumn(table, SWT.WRAP);
+			}
 			col.setText(name);
 		}
 	}
