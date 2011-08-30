@@ -45,12 +45,12 @@ import org.eventb.internal.ui.preferences.AbstractEventBPreferencePage;
 public class EditProfilWizard extends Wizard {
 	// wizard map:
 	// if new (selected == null && created == false)
-	// ChoiceParamCombined
-	// if param
-	// ChoiceParameterizer
-	// EditProfile
+	//   ChoiceParamCombined
+	//   if param
+	//     ChoiceParameterizer
+	//   EditProfile
 	// if edit (selected != null && created == true)
-	// EditProfile
+	//   EditProfile
 
 	private final ChoiceParamCombined choiceParamCombined = new ChoiceParamCombined();
 	final ChoiceParameterizer choiceParameterizer = new ChoiceParameterizer();
@@ -233,7 +233,6 @@ public class EditProfilWizard extends Wizard {
 				return;
 			}
 			setDescription("Choose a tactic to parameterize");
-			setMessage("Select one of:");
 			final String[] names = new String[choices.length];
 			for (int i = 0; i < choices.length; i++) {
 				names[i] = choices[i].getTacticDescriptor().getTacticName();
