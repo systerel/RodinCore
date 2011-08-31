@@ -64,7 +64,7 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		} else if (desc instanceof IParamTacticDescriptor) {
 			paramViewer.setInput((IParamTacticDescriptor) desc);
 			paramViewer.show();
-		} else {
+		} else if (desc != null) {
 			simpleViewer.setInput(desc);
 			simpleViewer.show();
 		}

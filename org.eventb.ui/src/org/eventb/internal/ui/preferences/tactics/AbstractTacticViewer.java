@@ -26,6 +26,8 @@ public abstract class AbstractTacticViewer<T extends ITacticDescriptor> {
 	
 	public abstract void setInput(T desc);
 	
+	public abstract T getEditResult();
+	
 	public void dispose() {
 		final Control control = getControl();
 		if (control != null) {

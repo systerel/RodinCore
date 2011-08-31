@@ -22,6 +22,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
  */
 public class SimpleTacticViewer extends AbstractTacticViewer<ITacticDescriptor> {
 	private Label label;
+	private ITacticDescriptor desc;
 
 	@Override
 	public void createContents(Composite parent) {
@@ -30,6 +31,7 @@ public class SimpleTacticViewer extends AbstractTacticViewer<ITacticDescriptor> 
 	
 	@Override
 	public void setInput(ITacticDescriptor desc) {
+		this.desc = desc;
 		final StringBuilder sb = new StringBuilder();
 		sb.append(desc.getTacticName());
 		sb.append(":\n");
@@ -41,5 +43,10 @@ public class SimpleTacticViewer extends AbstractTacticViewer<ITacticDescriptor> 
 	@Override
 	protected Control getControl() {
 		return label;
+	}
+
+	@Override
+	public ITacticDescriptor getEditResult() {
+		return desc;
 	}
 }

@@ -137,4 +137,10 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ICombinedTacticDe
 		}
 		return treeViewer.getTree();
 	}
+
+	@Override
+	public ICombinedTacticDescriptor getEditResult() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

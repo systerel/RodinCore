@@ -36,8 +36,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
+import org.eventb.core.seqprover.IParameterSetting;
+import org.eventb.core.seqprover.IParameterizerDescriptor;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IParameterDesc.ParameterType;
 import org.eventb.core.seqprover.IParameterValuation;
 
@@ -130,7 +134,7 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			IStructuredContentProvider {
 
 		public ParamContentProvider() {
-			// TODO Auto-generated constructor stub
+			// avoid synthetic access
 		}
 
 		@Override
@@ -357,5 +361,29 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			return null;
 		}
 		return tableViewer.getTable();
+	}
+	
+	@Override
+	public IParamTacticDescriptor getEditResult() {
+		final Object input = tableViewer.getInput();
+		if (!(input instanceof IParamTacticDescriptor)) {
+			return null;
+		}
+		final IParamTacticDescriptor desc = (IParamTacticDescriptor) input;
+		final String parameterizerId = desc.getParameterizerId();
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		final IParameterizerDescriptor parameterizer = reg
+				.getParameterizerDescriptor(parameterizerId);
+		final IParameterSetting paramSetting = parameterizer
+				.makeParameterSetting();
+		final int numParams = tableViewer.getTable().getItemCount();
+		for (int i=0;i<numParams;i++) {
+			final Param param = (Param) tableViewer.getElementAt(i);
+			final String label = param.getDesc().getLabel();
+			final Object value = param.getValue();
+			paramSetting.set(label, value);
+		}
+		return parameterizer.instantiate(paramSetting, parameterizerId
+				+ ".custom");
 	}
 }

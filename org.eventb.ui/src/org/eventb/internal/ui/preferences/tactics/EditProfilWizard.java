@@ -114,19 +114,19 @@ public class EditProfilWizard extends Wizard {
 					+ profileName);
 			profile.setKey(editProfileName);
 		}
+		final ITacticDescriptor resultDesc = editProfile.getResultDescriptor();
 		if (profile == null) {
-			cache.add(editProfileName,
-					editProfile.getResultDescriptor());
+			cache.add(editProfileName, resultDesc);
 			profile = cache.getEntry(editProfileName);
 		} else {
-			profile.setValue(editProfile.getResultDescriptor());
+			profile.setValue(resultDesc);
 		}
 		return true;
 	}
 
 	@Override
 	public boolean canFinish() {
-		return editProfile.getResultDescriptor() != null;
+		return editProfile.isPageComplete();
 	}
 
 	private static enum TacticKind {
@@ -278,7 +278,10 @@ public class EditProfilWizard extends Wizard {
 	private class EditProfilWizardPage extends WizardPage {
 		// input text for profile name
 		private Text profileText;
-
+		private ParamTacticViewer paramViewer = null;
+		private CombinedTacticViewer combViewer = null;
+		private SimpleTacticViewer simpleViewer = null;
+		
 		public EditProfilWizardPage() {
 			super(wizard_editprofil_title);
 			setDescription(wizard_editprofil_description);
@@ -308,9 +311,9 @@ public class EditProfilWizard extends Wizard {
 			});
 
 			if (selected instanceof IParamTacticDescriptor) {
-				ParamTacticViewer viewer = new ParamTacticViewer();
-				viewer.createContents(composite);
-				viewer.setInput((IParamTacticDescriptor) selected);
+				paramViewer = new ParamTacticViewer();
+				paramViewer.createContents(composite);
+				paramViewer.setInput((IParamTacticDescriptor) selected);
 			} else {
 
 				// selected is a combined or ref or simple: treat equally with a
@@ -345,8 +348,16 @@ public class EditProfilWizard extends Wizard {
 		 * @return the list of selected objects.
 		 */
 		public ITacticDescriptor getResultDescriptor() {
-			// FIXME must be computed after editing
-			return selected;
+			if (paramViewer != null) {
+				return paramViewer.getEditResult();
+			}
+			if (combViewer != null) {
+				return combViewer.getEditResult();
+			}
+			if(simpleViewer != null) {
+				return simpleViewer.getEditResult();
+			}
+			return null;
 		}
 
 		/**
