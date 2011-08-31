@@ -259,7 +259,11 @@ public class CachedPreferenceMap<T> {
 	}
 
 	/**
-	 * Remove the entries with the given names from the cache
+	 * Remove the entries with the given names from the cache.
+	 * <p>
+	 * Important: don't use <code>remove()</code> then <code>add()</code> to
+	 * rename an entry. Instead, use <code>getEntry().setKey()</code>.
+	 * </p>
 	 * 
 	 * @param names
 	 *            the names of the entries to remove
