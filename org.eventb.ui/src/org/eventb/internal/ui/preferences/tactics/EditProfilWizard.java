@@ -95,8 +95,10 @@ public class EditProfilWizard extends Wizard {
 		if (selected == null) {
 			addPage(choiceParamCombined);
 			addPage(choiceParameterizer);
+			// edit profile page must be added when selected is set
+		} else {
+			addPage(editProfile);
 		}
-		// edit profile must be created when selected is set
 	}
 
 	/**
