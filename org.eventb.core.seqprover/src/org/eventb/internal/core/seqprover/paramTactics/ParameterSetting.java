@@ -26,7 +26,6 @@ import org.eventb.internal.core.seqprover.paramTactics.ParameterValues.IntParame
 import org.eventb.internal.core.seqprover.paramTactics.ParameterValues.LongParameterValue;
 import org.eventb.internal.core.seqprover.paramTactics.ParameterValues.StringParameterValue;
 
-// TODO toString()
 public class ParameterSetting implements IParameterSetting {
 
 	private final Collection<IParameterDesc> paramDescs;
@@ -106,6 +105,12 @@ public class ParameterSetting implements IParameterSetting {
 	@Override
 	public void setString(String label, String value) {
 		checkAndSet(label, ParameterType.STRING, value);
+	}
+
+	@Override
+	public void set(String label, Object value) {
+		final AbstractParameterValue<?> paramValue = checkAndGet(label);
+		paramValue.setValue(value);
 	}
 
 	@Override

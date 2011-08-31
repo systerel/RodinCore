@@ -25,7 +25,7 @@ package org.eventb.core.seqprover;
 public interface IParameterSetting extends IParameterValuation {
 
 	/**
-	 * Set the parameter with the given label to the given value
+	 * Set the parameter with the given label to the given value.
 	 * 
 	 * @param label
 	 *            a parameter label
@@ -37,7 +37,7 @@ public interface IParameterSetting extends IParameterValuation {
 	void setBoolean(String label, Boolean value);
 
 	/**
-	 * Set the parameter with the given label to the given value
+	 * Set the parameter with the given label to the given value.
 	 * 
 	 * @param label
 	 *            a parameter label
@@ -49,7 +49,7 @@ public interface IParameterSetting extends IParameterValuation {
 	void setInt(String label, Integer value);
 
 	/**
-	 * Set the parameter with the given label to the given value
+	 * Set the parameter with the given label to the given value.
 	 * 
 	 * @param label
 	 *            a parameter label
@@ -61,7 +61,7 @@ public interface IParameterSetting extends IParameterValuation {
 	void setLong(String label, Long value);
 
 	/**
-	 * Set the parameter with the given label to the given value
+	 * Set the parameter with the given label to the given value.
 	 * 
 	 * @param label
 	 *            a parameter label
@@ -72,4 +72,14 @@ public interface IParameterSetting extends IParameterValuation {
 	 */
 	void setString(String label, String value);
 
+	/**
+	 * Set the parameter with the given label to the given value. The given
+	 * value must be of the type that corresponds to the given label.
+	 * 
+	 * @param label
+	 *            a parameter label
+	 * @param value
+	 *            the new value
+	 */
+	void set(String label, Object value);
 }
