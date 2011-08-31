@@ -69,6 +69,7 @@ public class TacticDetailsProvider implements IDetailsProvider {
 	@Override
 	public void putDetails(String element) {
 		currentProfile = cache.getEntry(element);
+		if (currentProfile == null) return;
 		final ITacticDescriptor desc = currentProfile.getValue();
 		hideAll();
 		if (desc instanceof ICombinedTacticDescriptor) {
