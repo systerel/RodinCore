@@ -41,4 +41,16 @@ public interface IDetailsProvider {
 	 * Clears all details
 	 */
 	void clear();
+	
+	/**
+	 * Returns whether current details are different from saved ones.
+	 * 
+	 * @return <code>true</code> iff details are different from saved ones
+	 */
+	public boolean hasChanges();
+	
+	/**
+	 * If details changed, display a popup that proposes to save changes.
+	 */
+	void save();
 }

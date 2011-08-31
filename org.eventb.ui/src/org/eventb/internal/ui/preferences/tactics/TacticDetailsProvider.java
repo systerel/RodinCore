@@ -20,7 +20,7 @@ import org.eventb.core.seqprover.IParamTacticDescriptor;
 
 /**
  * @author Nicolas Beauger
- *
+ * TODO split into simple parameterized combined
  */
 public class TacticDetailsProvider implements IDetailsProvider {
 
@@ -30,6 +30,7 @@ public class TacticDetailsProvider implements IDetailsProvider {
 	private final SimpleTacticViewer simpleViewer = new SimpleTacticViewer();
 	private final ParamTacticViewer paramViewer = new ParamTacticViewer();
 	private final CombinedTacticViewer combViewer = new CombinedTacticViewer();
+	private IPrefMapEntry<ITacticDescriptor> currentProfile = null;
 	
 	public TacticDetailsProvider(TacticsProfilesCache cache) {
 		this.cache = cache;
@@ -52,11 +53,23 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		combViewer.dispose();
 	}
 
+	public ITacticDescriptor getEditResult() {
+		if (currentProfile == null) {
+			// not editing
+			return null;
+		}
+		// only parameterized tactics can be edited through details
+		if (paramViewer.getInput() != currentProfile.getValue()) {
+			// not editing a parameterized tactic
+			return null;
+		}
+		return paramViewer.getEditResult();
+	}
+	
 	@Override
 	public void putDetails(String element) {
-		final IPrefMapEntry<ITacticDescriptor> profile = cache
-				.getEntry(element);
-		final ITacticDescriptor desc = profile.getValue();
+		currentProfile = cache.getEntry(element);
+		final ITacticDescriptor desc = currentProfile.getValue();
 		hideAll();
 		if (desc instanceof ICombinedTacticDescriptor) {
 			combViewer.setInput((ICombinedTacticDescriptor) desc);
@@ -70,10 +83,27 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		}
 		packAll(parent, 12);
 	}
+
+	@Override
+	public boolean hasChanges() {
+		final ITacticDescriptor currentEditResult = getEditResult();
+		return (currentEditResult != null && currentEditResult != currentProfile
+				.getValue());
+	}
+	
+	@Override
+	public void save() {
+		if (currentProfile == null) {
+			return;
+		}
+		final ITacticDescriptor currentEditResult = getEditResult();
+		currentProfile.setValue(currentEditResult);
+	}
 	
 	private void hideAll()  {
 		paramViewer.hide();
 		combViewer.hide();
+		simpleViewer.hide();
 	}
 	
 	@Override

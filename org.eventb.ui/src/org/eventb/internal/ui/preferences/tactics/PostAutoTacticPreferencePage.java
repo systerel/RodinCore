@@ -438,7 +438,7 @@ public class PostAutoTacticPreferencePage extends
 		duplicate.setEnabled(enableEq1);
 	}
 
-	private Composite getTab(TabFolder folder, String title) {
+	private static Composite getTab(TabFolder folder, String title) {
 		final TabItem tab = new TabItem(folder, NONE);
 		final Composite composite = new Composite(folder, NONE);
 		tab.setControl(composite);
@@ -485,6 +485,7 @@ public class PostAutoTacticPreferencePage extends
 
 	@Override
 	public void performApply() {
+		tacticList.saveCurrentIfChanges(false);
 		if (getWorkspacePreferencePage() == null) {
 			workspaceCache.store();
 		}

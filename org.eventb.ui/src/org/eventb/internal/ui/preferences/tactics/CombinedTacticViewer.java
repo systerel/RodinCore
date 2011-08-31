@@ -125,7 +125,13 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ICombinedTacticDe
 		if (treeViewer == null) {
 			return;
 		}
-		treeViewer.setInput(new CombInput(desc));
+		final CombInput input;
+		if (desc == null) {
+			input = null;
+		} else {
+			input = new CombInput(desc);
+		}
+		treeViewer.setInput(input);
 		treeViewer.expandAll();
 		treeViewer.getTree().pack();
 	}
@@ -140,6 +146,12 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ICombinedTacticDe
 
 	@Override
 	public ICombinedTacticDescriptor getEditResult() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ICombinedTacticDescriptor getInput() {
 		// TODO Auto-generated method stub
 		return null;
 	}

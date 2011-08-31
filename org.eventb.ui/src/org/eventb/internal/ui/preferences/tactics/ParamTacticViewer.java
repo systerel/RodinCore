@@ -39,11 +39,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
+import org.eventb.core.seqprover.IParameterDesc.ParameterType;
 import org.eventb.core.seqprover.IParameterSetting;
+import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IParameterDesc.ParameterType;
-import org.eventb.core.seqprover.IParameterValuation;
 
 /**
  * @author Nicolas Beauger
@@ -341,8 +341,12 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		if (tableViewer == null || tacticName == null) {
 			return;
 		}
-		tacticName.setText(desc.getTacticName());
 		tableViewer.setInput(desc);
+		if (desc == null) {
+			tacticName.setText("");
+			return;
+		}
+		tacticName.setText(desc.getTacticName());
 		resize(tableViewer);
 	}
 
@@ -365,17 +369,32 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 	
 	@Override
 	public IParamTacticDescriptor getEditResult() {
-		final Object input = tableViewer.getInput();
-		if (!(input instanceof IParamTacticDescriptor)) {
-			return null;
-		}
-		final IParamTacticDescriptor desc = (IParamTacticDescriptor) input;
+		final IParamTacticDescriptor desc = getInput();
+		if (desc == null) return null;
 		final String parameterizerId = desc.getParameterizerId();
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final IParameterizerDescriptor parameterizer = reg
 				.getParameterizerDescriptor(parameterizerId);
-		final IParameterSetting paramSetting = parameterizer
+		final IParameterSetting currentValuation = parameterizer
 				.makeParameterSetting();
+		setCurrentValuation(currentValuation);
+		if (currentValuation.equals(desc.getValuation())) {
+			return desc;
+		}
+		return parameterizer.instantiate(currentValuation, parameterizerId
+				+ ".custom");
+	}
+
+	@Override
+	public IParamTacticDescriptor getInput() {
+		final Object input = tableViewer.getInput();
+		if (!(input instanceof IParamTacticDescriptor)) {
+			return null;
+		}
+		return (IParamTacticDescriptor) input;
+	}
+
+	private void setCurrentValuation(IParameterSetting paramSetting) {
 		final int numParams = tableViewer.getTable().getItemCount();
 		for (int i=0;i<numParams;i++) {
 			final Param param = (Param) tableViewer.getElementAt(i);
@@ -383,7 +402,5 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			final Object value = param.getValue();
 			paramSetting.set(label, value);
 		}
-		return parameterizer.instantiate(paramSetting, parameterizerId
-				+ ".custom");
 	}
 }

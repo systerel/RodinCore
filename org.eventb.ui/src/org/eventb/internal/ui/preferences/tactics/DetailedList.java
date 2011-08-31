@@ -11,6 +11,7 @@
 package org.eventb.internal.ui.preferences.tactics;
 
 import static org.eclipse.swt.SWT.NONE;
+import static org.eventb.internal.ui.UIUtils.showQuestion;
 
 import java.util.Arrays;
 
@@ -223,7 +224,7 @@ public class DetailedList {
 
 	public void setEnabled(boolean enabled) {
 		list.setEnabled(enabled);
-		details.setEnabled(enabled);// TODO check if applies to children
+		details.setEnabled(enabled);
 		for (Control child : buttons.getChildren()) {
 			final Button button = (Button) child;
 			button.setEnabled(enabled);
@@ -235,11 +236,12 @@ public class DetailedList {
 	 */
 	public void updateDetails() {
 		if (provider != null && list.getSelectionCount() == 1) {
+			saveCurrentIfChanges(true);
 			provider.putDetails(getSelectedItem());
 		} else {
 			provider.clear();
 		}
-		details.redraw(); // TODO check if applies to children
+		details.redraw();
 	}
 
 	private String getSelectedItem() {
@@ -261,4 +263,18 @@ public class DetailedList {
 		list.getMenu().setEnabled(enabled);
 	}
 	
+	public void saveCurrentIfChanges(boolean ask) {
+		if (provider.hasChanges()) {
+			final boolean save ;
+			if (ask) {
+				save = showQuestion("Current profile has unsaved changes: save ?");
+			} else {
+				save = true;
+			}
+			if (save) {
+				provider.save();
+			}
+		}
+	}
+
 }

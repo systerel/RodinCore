@@ -26,6 +26,18 @@ public abstract class AbstractTacticViewer<T extends ITacticDescriptor> {
 	
 	public abstract void setInput(T desc);
 	
+	public abstract T getInput();
+	
+	/**
+	 * Returns the value of the descriptor with currently displayed state.
+	 * <p>
+	 * If there are changes, a new descriptor is returned. If there are no
+	 * changes, the input instance is returned. Therefore, it is possible to
+	 * determine if changes occurred by comparing (==) input and edit result.
+	 * </p>
+	 * 
+	 * @return a tactic descriptor
+	 */
 	public abstract T getEditResult();
 	
 	public void dispose() {

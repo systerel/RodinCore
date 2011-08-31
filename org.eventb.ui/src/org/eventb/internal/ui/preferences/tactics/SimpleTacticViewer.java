@@ -32,6 +32,7 @@ public class SimpleTacticViewer extends AbstractTacticViewer<ITacticDescriptor> 
 	@Override
 	public void setInput(ITacticDescriptor desc) {
 		this.desc = desc;
+		if (desc == null) return;
 		final StringBuilder sb = new StringBuilder();
 		sb.append(desc.getTacticName());
 		sb.append(":\n");
@@ -47,6 +48,11 @@ public class SimpleTacticViewer extends AbstractTacticViewer<ITacticDescriptor> 
 
 	@Override
 	public ITacticDescriptor getEditResult() {
+		return desc;
+	}
+	
+	@Override
+	public ITacticDescriptor getInput() {
 		return desc;
 	}
 }
