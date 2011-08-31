@@ -16,6 +16,7 @@ import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profileexi
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profilemustbespecified;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_title;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
@@ -106,14 +107,17 @@ public class EditProfilWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		// renames the profile if it already exist
-		if (!created && !profileName.equals(editProfile.getProfileName())) {
-			cache.remove(profileName);
+		final String editProfileName = editProfile.getProfileName();
+		profile = cache.getEntry(profileName);
+		if (!created && !profileName.equals(editProfileName)) {
+			Assert.isNotNull(profile, "profile should already exist: "
+					+ profileName);
+			profile.setKey(editProfileName);
 		}
-		profile = cache.getEntry(editProfile.getProfileName());
 		if (profile == null) {
-			cache.add(editProfile.getProfileName(),
+			cache.add(editProfileName,
 					editProfile.getResultDescriptor());
-			profile = cache.getEntry(editProfile.getProfileName());
+			profile = cache.getEntry(editProfileName);
 		} else {
 			profile.setValue(editProfile.getResultDescriptor());
 		}
