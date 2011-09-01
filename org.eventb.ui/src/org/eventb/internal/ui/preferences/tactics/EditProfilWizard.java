@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.SequentProver;
@@ -281,13 +280,14 @@ public class EditProfilWizard extends Wizard {
 		// input text for profile name
 		private Text profileText;
 		private ParamTacticViewer paramViewer = null;
-		private CombinedTacticViewer combViewer = null;
+		private CombinedTacticEditor combEditor = null;
 		private SimpleTacticViewer simpleViewer = null;
 		
 		public EditProfilWizardPage() {
 			super(wizard_editprofil_title);
 			setDescription(wizard_editprofil_description);
 			setWizard(EditProfilWizard.this);
+			setPageComplete(false);
 		}
 
 		@Override
@@ -317,22 +317,14 @@ public class EditProfilWizard extends Wizard {
 				paramViewer.createContents(composite);
 				paramViewer.setInput((IParamTacticDescriptor) selected);
 			} else {
-
 				// selected is a combined or ref or simple: treat equally with a
-				// tree editor
-				// TODO
-				if (selected instanceof ICombinedTacticDescriptor) {// FIXME
-																	// wrong
-																	// test,
-																	// just to
-																	// see
-					final CombinedTacticViewer viewer = new CombinedTacticViewer();
-					viewer.createContents(composite);
-					viewer.setInput((ICombinedTacticDescriptor) selected);
-					viewer.show();
-					composite.pack();
-					parent.pack();
-				}
+				// combined tactic editor
+				combEditor = new CombinedTacticEditor();
+				combEditor.createContents(composite);
+				combEditor.setInput(selected);
+				combEditor.show();
+				composite.pack();
+				parent.pack();
 			}
 			updateStatus();
 		}
@@ -353,8 +345,8 @@ public class EditProfilWizard extends Wizard {
 			if (paramViewer != null) {
 				return paramViewer.getEditResult();
 			}
-			if (combViewer != null) {
-				return combViewer.getEditResult();
+			if (combEditor != null) {
+				return combEditor.getEditResult();
 			}
 			if(simpleViewer != null) {
 				return simpleViewer.getEditResult();
