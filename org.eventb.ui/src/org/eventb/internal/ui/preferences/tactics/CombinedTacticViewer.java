@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
@@ -114,8 +116,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ICombinedTacticDe
 		treeViewer = new TreeViewer(parent, SWT.FILL 
 				| SWT.H_SCROLL | SWT.V_SCROLL);
 		final Tree tree = treeViewer.getTree();
-		tree.setLayout(parent.getLayout());
-		tree.setLayoutData(parent.getLayoutData());
+		tree.setLayout(new GridLayout());
+		tree.setLayoutData(new GridData());
 		treeViewer.setContentProvider(new TacticContentProvider());
 		treeViewer.setLabelProvider(new TacticLabelProvider());
 	}
