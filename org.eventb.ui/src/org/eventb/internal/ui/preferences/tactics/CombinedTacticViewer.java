@@ -29,8 +29,10 @@ import org.eventb.core.seqprover.ICombinedTacticDescriptor;
  * @author Nicolas Beauger
  * 
  */
-public class CombinedTacticViewer extends AbstractTacticViewer<ICombinedTacticDescriptor>{
+public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor>{
 
+	static final Object[] NO_OBJECT = new Object[0];
+	
 	private TreeViewer treeViewer;
 
 	private final class TacticLabelProvider extends LabelProvider {
@@ -40,8 +42,9 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ICombinedTacticDe
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof ITacticDescriptor) {
-				return ((ITacticDescriptor) element).getTacticName();
+			if (element instanceof CombNode) {
+				final CombNode combNode = (CombNode) element;
+				return combNode.getDesc().getTacticName();
 			}
 			return null;
 		}
@@ -66,23 +69,33 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ICombinedTacticDe
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (!(inputElement instanceof CombInput)) {
-				return null;
+			if (!(inputElement instanceof ITacticDescriptor)) {
+				return NO_OBJECT;
 			}
-			return new Object[] { ((CombInput) inputElement).getD() };
+			ITacticDescriptor desc = (ITacticDescriptor) inputElement;
+			final CombNode combNode = new CombNode(desc);
+			return new Object[] { combNode };
 		}
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (!(parentElement instanceof ICombinedTacticDescriptor)) {
-				return null;
+			if (!(parentElement instanceof CombNode)) {
+				return NO_OBJECT;
 			}
-			final ICombinedTacticDescriptor combDesc = (ICombinedTacticDescriptor) parentElement;
+			final CombNode combParent = (CombNode) parentElement;
+			final ITacticDescriptor desc = combParent.getDesc();
+			if (!(desc instanceof ICombinedTacticDescriptor)) {
+				return NO_OBJECT;
+			}
+			final ICombinedTacticDescriptor combDesc = (ICombinedTacticDescriptor) desc;
 			final List<ITacticDescriptor> combinedTactics = combDesc
 					.getCombinedTactics();
-
-			return combinedTactics
-					.toArray(new ITacticDescriptor[combinedTactics.size()]);
+			final CombNode[] combChildren = new CombNode[combinedTactics.size()];
+			for (int i = 0; i < combChildren.length; i++) {
+				final ITacticDescriptor childDesc = combinedTactics.get(i);
+				combChildren[i] = new  CombNode(childDesc);
+			}
+			return combChildren;
 		}
 
 		@Override
@@ -92,22 +105,21 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ICombinedTacticDe
 
 		@Override
 		public boolean hasChildren(Object element) {
-			return element instanceof ICombinedTacticDescriptor
-					|| element instanceof CombInput;
+			return element instanceof CombNode;
 		}
 	}
 
 	// required to display the root element
-	private static class CombInput {
-		private final ICombinedTacticDescriptor d;
+	private static class CombNode {
+		private final ITacticDescriptor desc;
 
-		public CombInput(ICombinedTacticDescriptor d) {
+		public CombNode(ITacticDescriptor desc) {
 			super();
-			this.d = d;
+			this.desc = desc;
 		}
 
-		public ICombinedTacticDescriptor getD() {
-			return d;
+		public ITacticDescriptor getDesc() {
+			return desc;
 		}
 	}
 
@@ -123,23 +135,17 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ICombinedTacticDe
 	}
 
 	@Override
-	public void setInput(ICombinedTacticDescriptor desc) {
+	public void setInput(ITacticDescriptor desc) {
 		if (treeViewer == null) {
 			return;
 		}
-		final CombInput input;
-		if (desc == null) {
-			input = null;
-		} else {
-			input = new CombInput(desc);
-		}
-		treeViewer.setInput(input);
+		treeViewer.setInput(desc);
 		treeViewer.expandAll();
 		treeViewer.getTree().pack();
 	}
 
 	@Override
-	protected Control getControl() {
+	public Control getControl() {
 		if (treeViewer == null) {
 			return null;
 		}
@@ -147,14 +153,17 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ICombinedTacticDe
 	}
 
 	@Override
-	public ICombinedTacticDescriptor getEditResult() {
+	public ITacticDescriptor getEditResult() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ICombinedTacticDescriptor getInput() {
-		// TODO Auto-generated method stub
-		return null;
+	public ITacticDescriptor getInput() {
+		final Object input = treeViewer.getInput();
+		if (!(input instanceof ITacticDescriptor)) {
+			return null;
+		}
+		return (ITacticDescriptor) input;
 	}
 }
