@@ -15,7 +15,6 @@ import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.p
 import org.eclipse.swt.widgets.Composite;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 
 /**
@@ -27,7 +26,6 @@ public class TacticDetailsProvider implements IDetailsProvider {
 	private final TacticsProfilesCache cache;
 	private Composite parent;
 
-	private final SimpleTacticViewer simpleViewer = new SimpleTacticViewer();
 	private final ParamTacticViewer paramViewer = new ParamTacticViewer();
 	private final CombinedTacticViewer combViewer = new CombinedTacticViewer();
 	private IPrefMapEntry<ITacticDescriptor> currentProfile = null;
@@ -43,7 +41,6 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		}
 		this.parent = parent;
 		disposeAll();
-		simpleViewer.createContents(parent);
 		paramViewer.createContents(parent);
 		combViewer.createContents(parent);
 	}
@@ -72,15 +69,12 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		if (currentProfile == null) return;
 		final ITacticDescriptor desc = currentProfile.getValue();
 		hideAll();
-		if (desc instanceof ICombinedTacticDescriptor) {
-			combViewer.setInput((ICombinedTacticDescriptor) desc);
-			combViewer.show();
-		} else if (desc instanceof IParamTacticDescriptor) {
+		if (desc instanceof IParamTacticDescriptor) {
 			paramViewer.setInput((IParamTacticDescriptor) desc);
 			paramViewer.show();
-		} else if (desc != null) {
-			simpleViewer.setInput(desc);
-			simpleViewer.show();
+		} else {
+			combViewer.setInput(desc);
+			combViewer.show();
 		}
 		packAll(parent, 12);
 	}
@@ -104,7 +98,6 @@ public class TacticDetailsProvider implements IDetailsProvider {
 	private void hideAll()  {
 		paramViewer.hide();
 		combViewer.hide();
-		simpleViewer.hide();
 	}
 	
 	@Override

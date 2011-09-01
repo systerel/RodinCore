@@ -360,7 +360,7 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 	}
 	
 	@Override
-	protected Control getControl() {
+	public Control getControl() {
 		if (tableViewer == null) {
 			return null;
 		}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -22,8 +23,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
+import org.eventb.core.seqprover.SequentProver;
 
 /**
  * @author Nicolas Beauger
@@ -31,20 +37,21 @@ import org.eventb.core.seqprover.ICombinedTacticDescriptor;
  */
 public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor>{
 
-	static final Object[] NO_OBJECT = new Object[0];
+	static final ITacticNode[] NO_NODE = new ITacticNode[0];
 	
 	private TreeViewer treeViewer;
 
-	private final class TacticLabelProvider extends LabelProvider {
-		public TacticLabelProvider() {
+	public static final class TacticNodeLabelProvider extends LabelProvider {
+		
+		public TacticNodeLabelProvider() {
 			// avoid synthetic access
 		}
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof CombNode) {
-				final CombNode combNode = (CombNode) element;
-				return combNode.getDesc().getTacticName();
+			if (element instanceof ITacticNode) {
+				final ITacticNode node = (ITacticNode) element;
+				return node.getText();
 			}
 			return null;
 		}
@@ -69,33 +76,20 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (!(inputElement instanceof ITacticDescriptor)) {
-				return NO_OBJECT;
+			final ITacticNode combNode = makeTacticNode(inputElement);
+			if (combNode == null) {
+				return NO_NODE;
 			}
-			ITacticDescriptor desc = (ITacticDescriptor) inputElement;
-			final CombNode combNode = new CombNode(desc);
 			return new Object[] { combNode };
 		}
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (!(parentElement instanceof CombNode)) {
-				return NO_OBJECT;
+			if (!(parentElement instanceof ITacticNode)) {
+				return NO_NODE;
 			}
-			final CombNode combParent = (CombNode) parentElement;
-			final ITacticDescriptor desc = combParent.getDesc();
-			if (!(desc instanceof ICombinedTacticDescriptor)) {
-				return NO_OBJECT;
-			}
-			final ICombinedTacticDescriptor combDesc = (ICombinedTacticDescriptor) desc;
-			final List<ITacticDescriptor> combinedTactics = combDesc
-					.getCombinedTactics();
-			final CombNode[] combChildren = new CombNode[combinedTactics.size()];
-			for (int i = 0; i < combChildren.length; i++) {
-				final ITacticDescriptor childDesc = combinedTactics.get(i);
-				combChildren[i] = new  CombNode(childDesc);
-			}
-			return combChildren;
+			final ITacticNode combParent = (ITacticNode) parentElement;
+			return combParent.getChildren();
 		}
 
 		@Override
@@ -105,33 +99,199 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		@Override
 		public boolean hasChildren(Object element) {
-			return element instanceof CombNode;
+			return element instanceof ITacticNode;
 		}
 	}
 
-	// required to display the root element
-	private static class CombNode {
-		private final ITacticDescriptor desc;
+	public static interface ITacticNode {
+		String getText();
+		ITacticDescriptor getResultDesc();
+		boolean hasChildren();
+		ITacticNode[] getChildren();
+		boolean isValid();
+	}
+	
+	public static ITacticNode makeTacticNode(Object descriptor) {
+		if (descriptor instanceof ITacticDescriptor) {
+			if (descriptor instanceof ICombinedTacticDescriptor) {
+				return new CombinatorNode(
+						(ICombinedTacticDescriptor) descriptor);
+			} else {
+				// simple or ref (no param here)
+				return new SimpleNode((ITacticDescriptor) descriptor);
+			}
+		}
+		if (descriptor instanceof ICombinatorDescriptor) {
+			return new CombinatorNode((ICombinatorDescriptor) descriptor);
+		}
+		return null;
+	}
 
-		public CombNode(ITacticDescriptor desc) {
-			super();
+	public static class SimpleNode implements ITacticNode {
+
+		private final ITacticDescriptor desc;
+		
+		public SimpleNode(ITacticDescriptor desc) {
 			this.desc = desc;
 		}
-
-		public ITacticDescriptor getDesc() {
+		
+		@Override
+		public ITacticDescriptor getResultDesc() {
 			return desc;
+		}
+
+		@Override
+		public boolean hasChildren() {
+			return false;
+		}
+
+		@Override
+		public ITacticNode[] getChildren() {
+			return NO_NODE;
+		}
+
+		@Override
+		public boolean isValid() {
+			return true;
+		}
+
+		@Override
+		public String getText() {
+			return desc.getTacticName();
+		}
+		
+	}
+	
+	public static class CombinatorNode implements ITacticNode {
+		private final ICombinatorDescriptor combinator;
+		private final List<ITacticNode> children;
+
+		public CombinatorNode(ICombinatorDescriptor combinator) {
+			this.combinator = combinator;
+			this.children = new ArrayList<ITacticNode>();
+		}
+
+		public CombinatorNode(ICombinedTacticDescriptor desc) {
+			final String combinatorId = desc.getCombinatorId();
+			final IAutoTacticRegistry reg = SequentProver
+					.getAutoTacticRegistry();
+			this.combinator = reg.getCombinatorDescriptor(combinatorId);
+			if (combinator == null) {
+				throw new IllegalArgumentException("invalid combinator: "
+						+ combinatorId);
+			}
+			final List<ITacticDescriptor> combined = desc.getCombinedTactics();
+			this.children = computeNodes(combined);
+		}
+		
+		private static List<ITacticNode> computeNodes(
+				List<ITacticDescriptor> descs) {
+			final List<ITacticNode> combChildren = new ArrayList<ITacticNode>(
+					descs.size());
+			for (ITacticDescriptor desc : descs) {
+				combChildren.add(makeTacticNode(desc));
+			}
+			return combChildren;
+		}
+		
+		@Override
+		public ITacticDescriptor getResultDesc() {
+			if (!isValid()) {
+				throw new IllegalStateException(
+						"computing an invalid descriptor from "
+								+ combinator.getTacticDescriptor()
+										.getTacticID());
+			}
+			final List<ITacticDescriptor> childDescs = new ArrayList<ITacticDescriptor>(
+					children.size());
+			for (ITacticNode child : children) {
+				final ITacticDescriptor childDesc = child.getResultDesc();
+				childDescs.add(childDesc);
+			}
+			final String combinedId = combinator.getTacticDescriptor()
+					.getTacticID() + ".combined";
+			return combinator.combine(childDescs, combinedId);
+		}
+		
+		@Override
+		public boolean hasChildren() {
+			return true;
+		}
+		
+		@Override
+		public ITacticNode[] getChildren() {
+			return children.toArray(new ITacticNode[children.size()]);
+		}
+
+		@Override
+		public boolean isValid() {
+			for (ITacticNode child : children) {
+				if (!child.isValid()) {
+					return false;
+				}
+			}
+			
+			final int arity = children.size();
+			
+			final int minArity = combinator.getMinArity();
+			if (combinator.isArityBound()) {
+				return arity == minArity;
+			}
+			return arity >= minArity;
+		}
+
+		@Override
+		public String getText() {
+			return combinator.getTacticDescriptor().getTacticName();
 		}
 	}
 
+	public static class ProfileNode implements ITacticNode {
+
+		private final IPrefMapEntry<ITacticDescriptor> entry;
+		
+		public ProfileNode(IPrefMapEntry<ITacticDescriptor> entry) {
+			this.entry = entry;
+		}
+
+		@Override
+		public String getText() {
+			return entry.getKey();
+		}
+
+		@Override
+		public ITacticDescriptor getResultDesc() {
+			return entry.getReference();
+		}
+
+		@Override
+		public boolean hasChildren() {
+			return false;
+		}
+
+		@Override
+		public ITacticNode[] getChildren() {
+			return NO_NODE;
+		}
+
+		@Override
+		public boolean isValid() {
+			return entry.getValue() != null;
+		}
+		
+	}
+	
 	@Override
 	public void createContents(Composite parent) {
 		treeViewer = new TreeViewer(parent, SWT.FILL 
 				| SWT.H_SCROLL | SWT.V_SCROLL);
 		final Tree tree = treeViewer.getTree();
 		tree.setLayout(new GridLayout());
-		tree.setLayoutData(new GridData());
+		final GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		layoutData.minimumWidth = 200;
+		tree.setLayoutData(layoutData);
 		treeViewer.setContentProvider(new TacticContentProvider());
-		treeViewer.setLabelProvider(new TacticLabelProvider());
+		treeViewer.setLabelProvider(new TacticNodeLabelProvider());
 	}
 
 	@Override
@@ -154,8 +314,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 	@Override
 	public ITacticDescriptor getEditResult() {
-		// TODO Auto-generated method stub
-		return null;
+		final TreeItem topItem = treeViewer.getTree().getTopItem();
+		return null;// FIXME
 	}
 
 	@Override

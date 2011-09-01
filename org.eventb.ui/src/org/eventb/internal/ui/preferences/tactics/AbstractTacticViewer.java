@@ -20,7 +20,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
  */
 public abstract class AbstractTacticViewer<T extends ITacticDescriptor> {
 
-	protected abstract Control getControl();
+	public abstract Control getControl();
 
 	public abstract void createContents(Composite parent);
 	

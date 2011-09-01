@@ -281,7 +281,6 @@ public class EditProfilWizard extends Wizard {
 		private Text profileText;
 		private ParamTacticViewer paramViewer = null;
 		private CombinedTacticEditor combEditor = null;
-		private SimpleTacticViewer simpleViewer = null;
 		
 		public EditProfilWizardPage() {
 			super(wizard_editprofil_title);
@@ -319,7 +318,7 @@ public class EditProfilWizard extends Wizard {
 			} else {
 				// selected is a combined or ref or simple: treat equally with a
 				// combined tactic editor
-				combEditor = new CombinedTacticEditor();
+				combEditor = new CombinedTacticEditor(cache);
 				combEditor.createContents(composite);
 				combEditor.setInput(selected);
 				combEditor.show();
@@ -347,9 +346,6 @@ public class EditProfilWizard extends Wizard {
 			}
 			if (combEditor != null) {
 				return combEditor.getEditResult();
-			}
-			if(simpleViewer != null) {
-				return simpleViewer.getEditResult();
 			}
 			return null;
 		}
