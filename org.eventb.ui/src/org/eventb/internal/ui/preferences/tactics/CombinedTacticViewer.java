@@ -35,6 +35,7 @@ import org.eventb.core.seqprover.SequentProver;
  * @author Nicolas Beauger
  * 
  */
+// TODO deal with fonts
 public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor>{
 
 	static final ITacticNode[] NO_NODE = new ITacticNode[0];
@@ -312,12 +313,35 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		return treeViewer.getTree();
 	}
 
-	@Override
-	public ITacticDescriptor getEditResult() {
+	private ITacticNode getTopNode() {
 		final TreeItem topItem = treeViewer.getTree().getTopItem();
-		return null;// FIXME
+		if (topItem == null) {
+			return null;
+		}
+		final Object data = topItem.getData();
+		if (!(data instanceof ITacticNode)) {
+			return null;
+		}
+		return (ITacticNode) data;
 	}
 
+	@Override
+	public ITacticDescriptor getEditResult() {
+		final ITacticNode topNode = getTopNode();
+		if (topNode == null) {
+			return null;
+		}
+		return topNode.getResultDesc();
+	}
+
+	public boolean isResultValid() {
+		final ITacticNode topNode = getTopNode();
+		if (topNode == null) {
+			return false;
+		}
+		return topNode.isValid();
+	}
+	
 	@Override
 	public ITacticDescriptor getInput() {
 		final Object input = treeViewer.getInput();

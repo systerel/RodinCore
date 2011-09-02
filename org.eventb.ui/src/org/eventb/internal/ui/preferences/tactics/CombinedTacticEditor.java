@@ -159,6 +159,9 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	public ITacticDescriptor getEditResult() {
 		return combViewer.getEditResult();
 	}
-	
+
+	public boolean isResultValid() {
+		return combViewer.isResultValid();
+	}
 	
 }

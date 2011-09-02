@@ -116,6 +116,9 @@ public class EditProfilWizard extends Wizard {
 			profile.setKey(editProfileName);
 		}
 		final ITacticDescriptor resultDesc = editProfile.getResultDescriptor();
+		if (resultDesc == null) {
+			return false;
+		}
 		if (profile == null) {
 			cache.add(editProfileName, resultDesc);
 			profile = cache.getEntry(editProfileName);
@@ -367,6 +370,11 @@ public class EditProfilWizard extends Wizard {
 					message = wizard_editprofil_profilemustbespecified;
 					complete = false;
 				}
+			}
+			if (combEditor != null && !combEditor.isResultValid()) {
+				// TODO update status when tree changes
+				message = "A profile can not be empty";
+				complete = false;
 			}
 			setErrorMessage(message);
 			setPageComplete(complete);
