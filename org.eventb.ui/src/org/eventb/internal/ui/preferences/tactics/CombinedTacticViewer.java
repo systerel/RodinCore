@@ -13,11 +13,21 @@ package org.eventb.internal.ui.preferences.tactics;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.TreeDragSourceEffect;
+import org.eclipse.swt.dnd.TreeDropTargetEffect;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -35,12 +45,9 @@ import org.eventb.core.seqprover.SequentProver;
  * @author Nicolas Beauger
  * 
  */
-// TODO deal with fonts
 public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor>{
 
 	static final ITacticNode[] NO_NODE = new ITacticNode[0];
-	
-	private TreeViewer treeViewer;
 
 	public static final class TacticNodeLabelProvider extends LabelProvider {
 		
@@ -77,7 +84,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			final ITacticNode combNode = makeTacticNode(inputElement);
+			final ITacticNode combNode = makeTacticNode(null, inputElement);
 			if (combNode == null) {
 				return NO_NODE;
 			}
@@ -95,31 +102,43 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		@Override
 		public Object getParent(Object element) {
-			return null;
+			if (!(element instanceof ITacticNode)) {
+				return null;
+			}
+			final ITacticNode comb = (ITacticNode) element;
+			return comb.getParent();
 		}
 
 		@Override
 		public boolean hasChildren(Object element) {
-			return element instanceof ITacticNode;
+			if (element instanceof ITacticNode) {
+				final ITacticNode node = (ITacticNode) element;
+				return node.hasChildren();
+			}
+			return false;
 		}
 	}
 
 	public static interface ITacticNode {
 		String getText();
 		ITacticDescriptor getResultDesc();
+		ITacticNode getParent();
 		boolean hasChildren();
 		ITacticNode[] getChildren();
 		boolean isValid();
+		void drop(ITacticNode droppedNode);
+		void addChild(ITacticNode droppedNode, LeafNode nextSibling);
+		boolean canAcceptDrop();
 	}
-	
-	public static ITacticNode makeTacticNode(Object descriptor) {
+
+	public static ITacticNode makeTacticNode(ITacticNode parent, Object descriptor) {
 		if (descriptor instanceof ITacticDescriptor) {
 			if (descriptor instanceof ICombinedTacticDescriptor) {
 				return new CombinatorNode(
 						(ICombinedTacticDescriptor) descriptor);
 			} else {
 				// simple or ref (no param here)
-				return new SimpleNode((ITacticDescriptor) descriptor);
+				return new SimpleNode(parent, (ITacticDescriptor) descriptor);
 			}
 		}
 		if (descriptor instanceof ICombinatorDescriptor) {
@@ -128,7 +147,61 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		return null;
 	}
 
-	public static class SimpleNode implements ITacticNode {
+	public static abstract class LeafNode implements ITacticNode {
+		
+		private final ITacticNode parent;
+
+		public LeafNode() {
+			this(null);
+		}
+		
+		public LeafNode(ITacticNode parent) {
+			this.parent = parent;
+		}
+		
+		@Override
+		public ITacticNode getParent() {
+			return parent;
+		}
+		@Override
+		public boolean hasChildren() {
+			return false;
+		}
+
+
+		@Override
+		public ITacticNode[] getChildren() {
+			return NO_NODE;
+		}
+
+		@Override
+		public boolean canAcceptDrop() {
+			if (parent == null) {
+			return false;
+			}
+			return parent.canAcceptDrop();
+		}
+		
+		@Override
+		public void drop(ITacticNode droppedNode) {
+			if (parent == null) {
+				return;
+			}
+			parent.addChild(droppedNode, this);
+		}
+		
+		@Override
+		public void addChild(ITacticNode droppedNode, LeafNode leafNode) {
+			throw new UnsupportedOperationException("a leaf has no child !");
+		}
+		
+		@Override
+		public String toString() {
+			return getText();
+		}
+	}
+	
+	public static class SimpleNode extends LeafNode {
 
 		private final ITacticDescriptor desc;
 		
@@ -136,19 +209,14 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			this.desc = desc;
 		}
 		
+		public SimpleNode(ITacticNode parent, ITacticDescriptor desc) {
+			super(parent);
+			this.desc = desc;
+		}
+		
 		@Override
 		public ITacticDescriptor getResultDesc() {
 			return desc;
-		}
-
-		@Override
-		public boolean hasChildren() {
-			return false;
-		}
-
-		@Override
-		public ITacticNode[] getChildren() {
-			return NO_NODE;
 		}
 
 		@Override
@@ -185,12 +253,12 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			this.children = computeNodes(combined);
 		}
 		
-		private static List<ITacticNode> computeNodes(
+		private List<ITacticNode> computeNodes(
 				List<ITacticDescriptor> descs) {
 			final List<ITacticNode> combChildren = new ArrayList<ITacticNode>(
 					descs.size());
 			for (ITacticDescriptor desc : descs) {
-				combChildren.add(makeTacticNode(desc));
+				combChildren.add(makeTacticNode(this, desc));
 			}
 			return combChildren;
 		}
@@ -216,7 +284,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		
 		@Override
 		public boolean hasChildren() {
-			return true;
+			return !children.isEmpty();
 		}
 		
 		@Override
@@ -245,13 +313,74 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		public String getText() {
 			return combinator.getTacticDescriptor().getTacticName();
 		}
+
+		@Override
+		public void drop(ITacticNode droppedNode) {
+			addChild(droppedNode, null);
+		}
+
+		@Override
+		public ITacticNode getParent() {
+			return null;
+		}
+
+		@Override
+		public void addChild(ITacticNode droppedNode, LeafNode nextSibling) {
+			final ITacticNode newChild = makeNewChild(droppedNode);
+			final int index;
+			if (nextSibling == null) {
+				// insert at the end
+				index = children.size();
+			} else {
+				index = children.indexOf(nextSibling);
+				if (index < 0) {
+					throw new IllegalArgumentException("no such child: "
+							+ droppedNode.getText() + " in " + getText());
+				}
+			}
+			children.add(index, newChild);
+		}
+		
+		// make a new instance to distinguish dragged from dropped
+		private ITacticNode makeNewChild(ITacticNode node) {
+			if(node instanceof CombinatorNode) {
+				// avoid computing result desc as it may be invalid
+				final CombinatorNode combNode = (CombinatorNode) node;
+				final CombinatorNode newChild = new CombinatorNode(combNode.combinator);
+				newChild.children.addAll(combNode.children);
+				return newChild;
+			}
+			return makeTacticNode(this, node.getResultDesc());
+		}
+		
+		@Override
+		public String toString() {
+			return getText();
+		}
+
+		@Override
+		public boolean canAcceptDrop() {
+			// avoid adding too many children
+			if (!combinator.isArityBound()) {
+				return true;
+			}
+			// bound => min = max
+			final int maxArity = combinator.getMinArity();
+			
+			return children.size() < maxArity;
+		}
 	}
 
-	public static class ProfileNode implements ITacticNode {
+	public static class ProfileNode extends LeafNode {
 
 		private final IPrefMapEntry<ITacticDescriptor> entry;
 		
 		public ProfileNode(IPrefMapEntry<ITacticDescriptor> entry) {
+			this.entry = entry;
+		}
+		
+		public ProfileNode(ITacticNode parent, IPrefMapEntry<ITacticDescriptor> entry) {
+			super(parent);
 			this.entry = entry;
 		}
 
@@ -266,21 +395,13 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 
 		@Override
-		public boolean hasChildren() {
-			return false;
-		}
-
-		@Override
-		public ITacticNode[] getChildren() {
-			return NO_NODE;
-		}
-
-		@Override
 		public boolean isValid() {
 			return entry.getValue() != null;
 		}
 		
 	}
+	
+	private TreeViewer treeViewer;
 	
 	@Override
 	public void createContents(Composite parent) {
@@ -313,6 +434,111 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		return treeViewer.getTree();
 	}
 
+	public void addDragAndDropSupport() {
+		final Tree tree = treeViewer.getTree();
+		final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
+				.getTransfer() };
+		
+		final TreeDragSourceEffect drag = new TreeDragSourceEffect(tree) {
+			@Override
+			public void dragSetData(DragSourceEvent event) {
+				
+//				final Tree t = (Tree) getControl();
+//				if (t.getSelectionCount() != 1) {
+//					return;
+//				}
+//				final TreeItem selection = t.getSelection()[0];
+//				final Object data = selection.getData();
+//				event.data = data;
+			}
+			@Override
+			public void dragFinished(DragSourceEvent event) {
+				super.dragFinished(event);
+			}
+		};
+		// TODO use drop0
+		final ViewerDropAdapter drop0 = new ViewerDropAdapter(treeViewer) {
+			
+			@Override
+			public boolean validateDrop(Object target, int operation,
+					TransferData transferType) {
+				
+				if (target == null) {
+					// OK if tree is empty
+					return tree.getItems().length == 0;
+				}
+				if (!(target instanceof ITacticNode)) {
+					return false;
+				}
+				final ITacticNode targetNode = (ITacticNode) target;
+				
+				return targetNode.canAcceptDrop();
+			}
+			
+			@Override
+			public boolean performDrop(Object data) {
+				final DropTargetEvent currentEvent = getCurrentEvent();
+				if (!(data instanceof ITacticNode)) {
+					return false;
+				}
+				final ITacticNode droppedNode = (ITacticNode) data;
+				final Object target = getCurrentTarget();
+				if (!(target instanceof ITacticNode)) {
+					return false;
+				}
+				ITacticNode targetNode = (ITacticNode) target;
+				targetNode.drop(droppedNode);
+				final TreeViewer viewer = (TreeViewer) getViewer();
+				final ITacticNode parentNode = targetNode.getParent();
+				if (parentNode == null) {
+					viewer.refresh(targetNode);
+				} else {
+					viewer.refresh(parentNode);
+				}
+
+				return true;
+			}
+		};
+		drop0.setScrollExpandEnabled(true);
+		
+		final TreeDropTargetEffect drop = new TreeDropTargetEffect(tree) {
+			@Override
+			public void drop(DropTargetEvent event) {
+				final Object droppedData = event.item.getData();
+				if (!(droppedData instanceof ITacticNode)) {
+					return;
+				}
+				final ITacticNode droppedNode = (ITacticNode) droppedData;
+				final Point pt = tree.toControl(event.x, event.y);
+				final TreeItem item = tree.getItem(pt);
+				if (item == null) {
+					return;
+				}
+				final Object targetData = item.getData();
+				if (!(droppedData instanceof ITacticNode)) {
+					return;
+				}
+				final ITacticNode targetNode = (ITacticNode) targetData;
+				targetNode.drop(droppedNode);
+				final ITacticNode parentNode = targetNode.getParent();
+				if (parentNode == null) {
+					treeViewer.refresh(targetNode);
+				} else {
+					treeViewer.refresh(parentNode);
+				}
+				
+			}
+			
+			@Override
+			public void dropAccept(DropTargetEvent event) {
+				// TODO Auto-generated method stub
+				super.dropAccept(event);
+			}
+		};
+		treeViewer.addDragSupport(DND.DROP_MOVE, transferTypes, drag);
+		treeViewer.addDropSupport(DND.DROP_MOVE, transferTypes, drop);
+	}
+	
 	private ITacticNode getTopNode() {
 		final TreeItem topItem = treeViewer.getTree().getTopItem();
 		if (topItem == null) {

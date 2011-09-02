@@ -66,6 +66,8 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		simpleList.setLabelProvider(labelProvider);
 		
 		combViewer.createContents(composite);
+		combViewer.addDragAndDropSupport();
+		// TODO add a remove action (key+right click)
 		
 		final Composite combAndRef = makeGrid(composite, 1);
 		final Group combGroup = makeGroup(combAndRef);

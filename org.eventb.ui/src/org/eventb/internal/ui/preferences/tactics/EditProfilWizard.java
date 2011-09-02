@@ -373,7 +373,7 @@ public class EditProfilWizard extends Wizard {
 			}
 			if (combEditor != null && !combEditor.isResultValid()) {
 				// TODO update status when tree changes
-				message = "A profile can not be empty";
+				message = "Invalid tactic";
 				complete = false;
 			}
 			setErrorMessage(message);
