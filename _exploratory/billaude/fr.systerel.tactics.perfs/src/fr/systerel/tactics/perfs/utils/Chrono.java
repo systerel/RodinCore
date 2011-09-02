@@ -37,7 +37,7 @@ import java.util.Calendar;
  * @author Emmanuel Billaud
  */
 public class Chrono {
-	private long startTime;
+	private long startTime = -1;
 
 	/**
 	 * Save in a parameter the time when this method has been called.
@@ -49,9 +49,14 @@ public class Chrono {
 	/**
 	 * Compute the elapsed time between the call of <code>startTime()</code> and
 	 * the call of this method.<br>
-	 * Print in the console that duration (in milliseconds).
+	 * Print in the console that duration (in milliseconds).<br>
+	 * If <code>startTime()</code> has never been called before that method,
+	 * then nothing is printed in the console.
 	 */
 	public void getTime() {
+		if (startTime == -1) {
+			return;
+		}
 		final long loopTime = Calendar.getInstance().getTimeInMillis();
 		final long duration = loopTime - startTime;
 		System.out.println(duration);

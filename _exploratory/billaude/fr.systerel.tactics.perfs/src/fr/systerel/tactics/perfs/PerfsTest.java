@@ -152,14 +152,14 @@ public abstract class PerfsTest extends BuilderTest {
 		for (final File project : getListFiles()) {
 			if (project.isDirectory() && !project.getName().equals(".svn")) {
 				final IRodinProject p = createRodinProject(project.getName());
-				importProjectFiles(p.getProject(), p.getElementName());
+				importProject(p.getElementName());
 				continue;
 			}
 			final String unzip = unzip(project);
 			if (unzip != null) {
 				zipFiles.add(unzip);
 				final IRodinProject p = createRodinProject(unzip);
-				importProjectFiles(p.getProject(), p.getElementName());
+				importProject(p.getElementName());
 			}
 		}
 		x = new SequentExtractor(false);
@@ -190,7 +190,6 @@ public abstract class PerfsTest extends BuilderTest {
 	/**
 	 * Give the URL of the folder containing the projects we want to use.
 	 */
-	@Override
 	protected URL getProjectsURL() {
 		return Platform.getBundle("fr.systerel.tactics.perfs").getEntry(
 				"projects");
