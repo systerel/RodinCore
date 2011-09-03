@@ -132,7 +132,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 				.getCombinatorDescriptors();
 		final CombinatorNode[] combNodes = new CombinatorNode[combinators.length];
 		for (int i = 0; i < combinators.length; i++) {
-			combNodes[i] = new CombinatorNode(combinators[i]);
+			combNodes[i] = new CombinatorNode(null, combinators[i]);
 		}
 		combList.add(combNodes);
 	}

@@ -133,7 +133,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	public static ITacticNode makeTacticNode(ITacticNode parent, Object descriptor) {
 		if (descriptor instanceof ITacticDescriptor) {
 			if (descriptor instanceof ICombinedTacticDescriptor) {
-				return new CombinatorNode(
+				return new CombinatorNode(parent,
 						(ICombinedTacticDescriptor) descriptor);
 			} else {
 				// simple or ref (no param here)
@@ -141,20 +141,17 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			}
 		}
 		if (descriptor instanceof ICombinatorDescriptor) {
-			return new CombinatorNode((ICombinatorDescriptor) descriptor);
+			return new CombinatorNode(parent,
+					(ICombinatorDescriptor) descriptor);
 		}
-		return null;
+		throw new IllegalArgumentException("illegal descriptor : " + descriptor);
 	}
 
-	public static abstract class LeafNode implements ITacticNode {
-		
-		private final ITacticNode parent;
+	public static abstract class AbstractTacticNode implements ITacticNode {
+		protected final ITacticNode parent;
 
-		public LeafNode() {
-			this(null);
-		}
-		
-		public LeafNode(ITacticNode parent) {
+		public AbstractTacticNode(ITacticNode parent) {
+			super();
 			this.parent = parent;
 		}
 		
@@ -162,6 +159,33 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		public ITacticNode getParent() {
 			return parent;
 		}
+		
+		@Override
+		public void delete() {
+			if (parent == null) {
+				// FIXME delete root
+				return;
+			}
+			parent.deleteChild(this);
+		}
+		
+		@Override
+		public String toString() {
+			return getText();
+		}
+
+	}
+	
+	public static abstract class LeafNode extends AbstractTacticNode {
+		
+		public LeafNode() {
+			this(null);
+		}
+		
+		public LeafNode(ITacticNode parent) {
+			super(parent);
+		}
+	
 		@Override
 		public boolean hasChildren() {
 			return false;
@@ -190,15 +214,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 		
 		@Override
-		public void delete() {
-			if (parent == null) {
-				// FIXME delete root
-				return;
-			}
-			parent.deleteChild(this);
-		}
-		
-		@Override
 		public void deleteChild(ITacticNode child) {
 			// nothing to do
 		}
@@ -206,11 +221,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		@Override
 		public void addChild(ITacticNode droppedNode, LeafNode leafNode) {
 			throw new UnsupportedOperationException("a leaf has no child !");
-		}
-		
-		@Override
-		public String toString() {
-			return getText();
 		}
 	}
 	
@@ -244,16 +254,18 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		
 	}
 	
-	public static class CombinatorNode implements ITacticNode {
+	public static class CombinatorNode extends AbstractTacticNode {
 		private final ICombinatorDescriptor combinator;
 		private final List<ITacticNode> children;
 
-		public CombinatorNode(ICombinatorDescriptor combinator) {
+		public CombinatorNode(ITacticNode parent, ICombinatorDescriptor combinator) {
+			super(parent);
 			this.combinator = combinator;
 			this.children = new ArrayList<ITacticNode>();
 		}
 
-		public CombinatorNode(ICombinedTacticDescriptor desc) {
+		public CombinatorNode(ITacticNode parent, ICombinedTacticDescriptor desc) {
+			super(parent);
 			final String combinatorId = desc.getCombinatorId();
 			final IAutoTacticRegistry reg = SequentProver
 					.getAutoTacticRegistry();
@@ -333,11 +345,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 
 		@Override
-		public ITacticNode getParent() {
-			return null;
-		}
-
-		@Override
 		public void addChild(ITacticNode droppedNode, LeafNode nextSibling) {
 			final ITacticNode newChild = makeNewChild(droppedNode);
 			final int index;
@@ -359,7 +366,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			if(node instanceof CombinatorNode) {
 				// avoid computing result desc as it may be invalid
 				final CombinatorNode combNode = (CombinatorNode) node;
-				final CombinatorNode newChild = new CombinatorNode(combNode.combinator);
+				final CombinatorNode newChild = new CombinatorNode(this, combNode.combinator);
 				newChild.children.addAll(combNode.children);
 				return newChild;
 			}
@@ -381,12 +388,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			final int maxArity = combinator.getMinArity();
 			
 			return children.size() < maxArity;
-		}
-
-		@Override
-		public void delete() {
-			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
@@ -509,6 +510,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				final ITacticNode targetNode = (ITacticNode) target;
 				
 				return targetNode.canAcceptDrop();
+				// FIXME do not accept drop in descendants
 			}
 			
 			@Override
