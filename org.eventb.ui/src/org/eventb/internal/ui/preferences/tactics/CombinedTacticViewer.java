@@ -22,12 +22,9 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.dnd.TreeDragSourceEffect;
-import org.eclipse.swt.dnd.TreeDropTargetEffect;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -129,6 +126,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		void drop(ITacticNode droppedNode);
 		void addChild(ITacticNode droppedNode, LeafNode nextSibling);
 		boolean canAcceptDrop();
+		void delete();
+		void deleteChild(ITacticNode child);
 	}
 
 	public static ITacticNode makeTacticNode(ITacticNode parent, Object descriptor) {
@@ -188,6 +187,20 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				return;
 			}
 			parent.addChild(droppedNode, this);
+		}
+		
+		@Override
+		public void delete() {
+			if (parent == null) {
+				// FIXME delete root
+				return;
+			}
+			parent.deleteChild(this);
+		}
+		
+		@Override
+		public void deleteChild(ITacticNode child) {
+			// nothing to do
 		}
 		
 		@Override
@@ -369,6 +382,20 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			
 			return children.size() < maxArity;
 		}
+
+		@Override
+		public void delete() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void deleteChild(ITacticNode child) {
+			final boolean removed = children.remove(child);
+			if (!removed) {
+				throw new IllegalArgumentException("no such child: " + child);
+			}
+		}
 	}
 
 	public static class ProfileNode extends LeafNode {
@@ -434,30 +461,39 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		return treeViewer.getTree();
 	}
 
+	void refresh(ITacticNode changedNode) {
+		final ITacticNode parentNode = changedNode.getParent();
+		if (parentNode == null) {
+			treeViewer.refresh(changedNode);
+		} else {
+			treeViewer.refresh(parentNode);
+		}
+	}
+	
 	public void addDragAndDropSupport() {
 		final Tree tree = treeViewer.getTree();
 		final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
 				.getTransfer() };
 		
 		final TreeDragSourceEffect drag = new TreeDragSourceEffect(tree) {
-			@Override
-			public void dragSetData(DragSourceEvent event) {
-				
-//				final Tree t = (Tree) getControl();
-//				if (t.getSelectionCount() != 1) {
-//					return;
-//				}
-//				final TreeItem selection = t.getSelection()[0];
-//				final Object data = selection.getData();
-//				event.data = data;
-			}
+
 			@Override
 			public void dragFinished(DragSourceEvent event) {
+				final TreeItem[] selection = tree.getSelection();
+				for (TreeItem treeItem : selection) {
+					final Object data = treeItem.getData();
+					if (!(data instanceof ITacticNode)) {
+						continue;
+					}
+					final ITacticNode node = (ITacticNode) data;
+					node.delete();
+					refresh(node);
+				}
 				super.dragFinished(event);
 			}
 		};
-		// TODO use drop0
-		final ViewerDropAdapter drop0 = new ViewerDropAdapter(treeViewer) {
+
+		final ViewerDropAdapter drop = new ViewerDropAdapter(treeViewer) {
 			
 			@Override
 			public boolean validateDrop(Object target, int operation,
@@ -477,11 +513,13 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			
 			@Override
 			public boolean performDrop(Object data) {
-				final DropTargetEvent currentEvent = getCurrentEvent();
-				if (!(data instanceof ITacticNode)) {
+				// FIXME valid only when dragging inside tree viewer
+				// use selection service instead
+				final Object selected = getSelectedObject();
+				if (!(selected instanceof ITacticNode)) {
 					return false;
 				}
-				final ITacticNode droppedNode = (ITacticNode) data;
+				final ITacticNode droppedNode = (ITacticNode) selected;
 				final Object target = getCurrentTarget();
 				if (!(target instanceof ITacticNode)) {
 					return false;
@@ -499,42 +537,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				return true;
 			}
 		};
-		drop0.setScrollExpandEnabled(true);
+		drop.setScrollExpandEnabled(true);
 		
-		final TreeDropTargetEffect drop = new TreeDropTargetEffect(tree) {
-			@Override
-			public void drop(DropTargetEvent event) {
-				final Object droppedData = event.item.getData();
-				if (!(droppedData instanceof ITacticNode)) {
-					return;
-				}
-				final ITacticNode droppedNode = (ITacticNode) droppedData;
-				final Point pt = tree.toControl(event.x, event.y);
-				final TreeItem item = tree.getItem(pt);
-				if (item == null) {
-					return;
-				}
-				final Object targetData = item.getData();
-				if (!(droppedData instanceof ITacticNode)) {
-					return;
-				}
-				final ITacticNode targetNode = (ITacticNode) targetData;
-				targetNode.drop(droppedNode);
-				final ITacticNode parentNode = targetNode.getParent();
-				if (parentNode == null) {
-					treeViewer.refresh(targetNode);
-				} else {
-					treeViewer.refresh(parentNode);
-				}
-				
-			}
-			
-			@Override
-			public void dropAccept(DropTargetEvent event) {
-				// TODO Auto-generated method stub
-				super.dropAccept(event);
-			}
-		};
 		treeViewer.addDragSupport(DND.DROP_MOVE, transferTypes, drag);
 		treeViewer.addDropSupport(DND.DROP_MOVE, transferTypes, drop);
 	}
