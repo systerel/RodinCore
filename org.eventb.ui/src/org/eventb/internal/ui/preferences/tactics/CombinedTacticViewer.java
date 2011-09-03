@@ -104,6 +104,9 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		@Override
 		public void dragFinished(DragSourceEvent event) {
+			if (!event.doit) {
+				return;
+			}
 			final Tree tree = (Tree) getControl();
 			final TreeItem[] selection = tree.getSelection();
 			for (TreeItem treeItem : selection) {
@@ -112,8 +115,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 					continue;
 				}
 				final ITacticNode node = (ITacticNode) data;
-				// FIXME not if drop was not performed
-				// TODO make a 'trash' composite
 				node.delete();
 				viewer.refresh(node);
 			}
