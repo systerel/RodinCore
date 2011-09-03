@@ -28,7 +28,6 @@ import org.eclipse.swt.dnd.TreeDragSourceEffect;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.preferences.IPrefMapEntry;
@@ -45,6 +44,82 @@ import org.eventb.core.seqprover.SequentProver;
 public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor>{
 
 	static final ITacticNode[] NO_NODE = new ITacticNode[0];
+
+	private static class TacticDrop extends ViewerDropAdapter {
+		private final CombinedTacticViewer tacticViewer;
+
+		public TacticDrop(TreeViewer treeViewer, CombinedTacticViewer tacticViewer) {
+			super(treeViewer);
+			this.tacticViewer = tacticViewer;
+			
+		}
+
+		@Override
+		public boolean validateDrop(Object target, int operation,
+				TransferData transferType) {
+			
+			if (target == null) {
+				// OK if tree is empty
+				final Tree tree = tacticViewer.getControl();
+				return tree.getItems().length == 0;
+			}
+			if (!(target instanceof ITacticNode)) {
+				return false;
+			}
+			final ITacticNode targetNode = (ITacticNode) target;
+			
+			return targetNode.canAcceptDrop();
+			// FIXME do not accept drop in descendants
+		}
+
+		@Override
+		public boolean performDrop(Object data) {
+			// FIXME valid only when dragging inside tree viewer
+			// use selection service instead
+			final Object selected = getSelectedObject();
+			if (!(selected instanceof ITacticNode)) {
+				return false;
+			}
+			final ITacticNode droppedNode = (ITacticNode) selected;
+			final Object target = getCurrentTarget();
+			if (!(target instanceof ITacticNode)) {
+				return false;
+			}
+			ITacticNode targetNode = (ITacticNode) target;
+			targetNode.drop(droppedNode);
+			tacticViewer.refresh(targetNode);
+
+			return true;
+		}
+	}
+
+	private static class TacticDragEffect extends TreeDragSourceEffect {
+
+		private final CombinedTacticViewer viewer;
+
+		public TacticDragEffect(CombinedTacticViewer viewer) {
+			super(viewer.getControl());
+			this.viewer = viewer;
+		}
+
+		@Override
+		public void dragFinished(DragSourceEvent event) {
+			final Tree tree = (Tree) getControl();
+			final TreeItem[] selection = tree.getSelection();
+			for (TreeItem treeItem : selection) {
+				final Object data = treeItem.getData();
+				if (!(data instanceof ITacticNode)) {
+					continue;
+				}
+				final ITacticNode node = (ITacticNode) data;
+				// FIXME not if drop was not performed
+				// TODO make a 'trash' composite
+				node.delete();
+				viewer.refresh(node);
+			}
+			super.dragFinished(event);
+		}
+	}
 
 	public static final class TacticNodeLabelProvider extends LabelProvider {
 		
@@ -455,7 +530,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	}
 
 	@Override
-	public Control getControl() {
+	public Tree getControl() {
 		if (treeViewer == null) {
 			return null;
 		}
@@ -472,73 +547,12 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	}
 	
 	public void addDragAndDropSupport() {
-		final Tree tree = treeViewer.getTree();
 		final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
 				.getTransfer() };
 		
-		final TreeDragSourceEffect drag = new TreeDragSourceEffect(tree) {
+		final TreeDragSourceEffect drag = new TacticDragEffect(this);
 
-			@Override
-			public void dragFinished(DragSourceEvent event) {
-				final TreeItem[] selection = tree.getSelection();
-				for (TreeItem treeItem : selection) {
-					final Object data = treeItem.getData();
-					if (!(data instanceof ITacticNode)) {
-						continue;
-					}
-					final ITacticNode node = (ITacticNode) data;
-					node.delete();
-					refresh(node);
-				}
-				super.dragFinished(event);
-			}
-		};
-
-		final ViewerDropAdapter drop = new ViewerDropAdapter(treeViewer) {
-			
-			@Override
-			public boolean validateDrop(Object target, int operation,
-					TransferData transferType) {
-				
-				if (target == null) {
-					// OK if tree is empty
-					return tree.getItems().length == 0;
-				}
-				if (!(target instanceof ITacticNode)) {
-					return false;
-				}
-				final ITacticNode targetNode = (ITacticNode) target;
-				
-				return targetNode.canAcceptDrop();
-				// FIXME do not accept drop in descendants
-			}
-			
-			@Override
-			public boolean performDrop(Object data) {
-				// FIXME valid only when dragging inside tree viewer
-				// use selection service instead
-				final Object selected = getSelectedObject();
-				if (!(selected instanceof ITacticNode)) {
-					return false;
-				}
-				final ITacticNode droppedNode = (ITacticNode) selected;
-				final Object target = getCurrentTarget();
-				if (!(target instanceof ITacticNode)) {
-					return false;
-				}
-				ITacticNode targetNode = (ITacticNode) target;
-				targetNode.drop(droppedNode);
-				final TreeViewer viewer = (TreeViewer) getViewer();
-				final ITacticNode parentNode = targetNode.getParent();
-				if (parentNode == null) {
-					viewer.refresh(targetNode);
-				} else {
-					viewer.refresh(parentNode);
-				}
-
-				return true;
-			}
-		};
+		final ViewerDropAdapter drop = new TacticDrop(treeViewer, this);
 		drop.setScrollExpandEnabled(true);
 		
 		treeViewer.addDragSupport(DND.DROP_MOVE, transferTypes, drag);
