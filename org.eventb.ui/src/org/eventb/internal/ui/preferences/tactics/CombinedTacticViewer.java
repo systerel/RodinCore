@@ -91,7 +91,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				return false;
 			}
 
-			// FIXME do not accept drop in descendants
 			// TODO add user feedback why drop is refused (bound arity)
 		}
 
@@ -563,6 +562,15 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		@Override
 		public boolean canDrop(List<ITacticNode> nodes) {
+			final List<ITacticNode> hierarchy = new ArrayList<ITacticNode>();
+			addAncestors(this, hierarchy);
+			
+			hierarchy.retainAll(nodes);
+			if (!hierarchy.isEmpty()) {
+				// trying to drop this or an ancestor
+				return false;
+			}
+			
 			// avoid adding too many children
 			if (!combinator.isArityBound()) {
 				return true;
@@ -579,6 +587,14 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			final int maxArity = combinator.getMinArity();
 			
 			return sizeAfterDrop < maxArity;
+		}
+		
+		private static void addAncestors(ITacticNode node, List<ITacticNode> nodes) {
+			nodes.add(node);
+			final ITacticNode parent = node.getParent();
+			if (parent != null) {
+				addAncestors(parent, nodes);
+			}
 		}
 
 		@Override
