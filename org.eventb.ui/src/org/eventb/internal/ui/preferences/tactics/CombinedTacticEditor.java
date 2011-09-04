@@ -70,7 +70,6 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		
 		combViewer.createContents(composite);
 		combViewer.addEditSupport();
-		// TODO add a remove action (key+right click)
 		
 		final Composite combAndRef = makeGrid(composite, 1);
 		final Group combGroup = makeGroup(combAndRef);
@@ -84,6 +83,9 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		refGroup.setLayout(new GridLayout());
 		refList = new ListViewer(refGroup, SWT.SINGLE);
 		refList.setLabelProvider(labelProvider);
+		
+		// TODO add a "Description" group containing current selection
+		// description
 	}
 
 	private static Group makeGroup(final Composite parent) {

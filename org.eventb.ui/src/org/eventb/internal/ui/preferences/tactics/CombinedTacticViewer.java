@@ -91,7 +91,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				return false;
 			}
 
-			// TODO add user feedback why drop is refused (bound arity)
 		}
 
 		@Override
