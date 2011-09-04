@@ -73,18 +73,20 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 			final ITacticNode parent = targetNode.getParent();
 
+			final List<ITacticNode> selectedNodes = getSelectedNodes();
+			
 			switch (getCurrentLocation()) {
 			case LOCATION_NONE:
 				// should not happen if target != null
 				return false;
 			case LOCATION_ON:
 				if (!(targetNode instanceof LeafNode)) {
-					return targetNode.canAcceptDrop();
+					return targetNode.canDrop(selectedNodes);
 				}
 				// no break on purpose: drop on leaf
 			case LOCATION_BEFORE:
 			case LOCATION_AFTER:
-				return parent != null && parent.canAcceptDrop();
+				return parent != null && parent.canDrop(selectedNodes);
 			default:
 				return false;
 			}
@@ -320,8 +322,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		boolean hasChildren();
 		ITacticNode[] getChildren();
 		boolean isValid();
-		void addChild(ITacticNode droppedNode, ITacticNode nextSibling);
-		boolean canAcceptDrop();
+		void addChild(ITacticNode node, ITacticNode nextSibling);
+		boolean canDrop(List<ITacticNode> nodes);
 		void delete();
 		void deleteChild(ITacticNode child);
 	}
@@ -394,7 +396,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 
 		@Override
-		public boolean canAcceptDrop() {
+		public boolean canDrop(List<ITacticNode> nodes) {
 			return false;
 		}
 		
@@ -404,7 +406,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 		
 		@Override
-		public void addChild(ITacticNode droppedNode, ITacticNode leafNode) {
+		public void addChild(ITacticNode node, ITacticNode nextSibling) {
 			throw new UnsupportedOperationException("a leaf has no child !");
 		}
 	}
@@ -526,8 +528,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 
 		@Override
-		public void addChild(ITacticNode droppedNode, ITacticNode nextSibling) {
-			final ITacticNode newChild = makeNewChild(droppedNode);
+		public void addChild(ITacticNode node, ITacticNode nextSibling) {
+			final ITacticNode newChild = makeNewChild(node);
 			final int index;
 			if (nextSibling == null) {
 				// insert at the end
@@ -536,7 +538,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				index = children.indexOf(nextSibling);
 				if (index < 0) {
 					throw new IllegalArgumentException("no such child: "
-							+ droppedNode.getText() + " in " + getText());
+							+ node.getText() + " in " + getText());
 				}
 			}
 			children.add(index, newChild);
@@ -560,16 +562,23 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 
 		@Override
-		public boolean canAcceptDrop() {
+		public boolean canDrop(List<ITacticNode> nodes) {
 			// avoid adding too many children
 			if (!combinator.isArityBound()) {
 				return true;
 			}
+
+			int sizeAfterDrop = children.size();
+			for (ITacticNode node : nodes) {
+				if (!children.contains(node)) {
+					sizeAfterDrop++;
+				}
+			}
+			
 			// bound => min = max
 			final int maxArity = combinator.getMinArity();
 			
-			return children.size() < maxArity;
-			// FIXME it disables moving in same parent
+			return sizeAfterDrop < maxArity;
 		}
 
 		@Override
