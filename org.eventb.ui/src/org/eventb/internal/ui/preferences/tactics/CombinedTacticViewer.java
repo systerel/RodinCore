@@ -76,13 +76,11 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		@Override
 		public boolean performDrop(Object data) {
-			final ISelection selection = LocalSelectionTransfer.getTransfer()
-					.getSelection();
-			if (!(selection instanceof IStructuredSelection)) {
+			final List<ITacticNode> selectedNodes = getSelectedNodes();
+			if (selectedNodes == null) {
 				return false;
 			}
-			final IStructuredSelection sel = (IStructuredSelection) selection;
-
+			
 			final Object target = getCurrentTarget();
 			if (!(target instanceof ITacticNode)) {
 				return false;
@@ -90,16 +88,30 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			final ITacticNode targetNode = (ITacticNode) target;
 			
 			final CombinedTacticViewer viewer = (CombinedTacticViewer) getViewer();
-			for (Object selected : sel.toList()) {
-				if (!(selected instanceof ITacticNode)) {
-					continue;
-				}
-				final ITacticNode droppedNode = (ITacticNode) selected;
+			for (ITacticNode droppedNode : selectedNodes) {
 				targetNode.drop(droppedNode);
 				viewer.refresh(targetNode);
 			}
 
 			return true;
+		}
+		
+		private static List<ITacticNode> getSelectedNodes() {
+			final ISelection selection = LocalSelectionTransfer.getTransfer()
+					.getSelection();
+			if (!(selection instanceof IStructuredSelection)) {
+				return null;
+			}
+			final IStructuredSelection sel = (IStructuredSelection) selection;
+			final List<ITacticNode> selNodes = new ArrayList<ITacticNode>();
+			for (Object selected : sel.toList()) {
+				if (selected instanceof ITacticNode) {
+					selNodes.add((ITacticNode) selected);
+				} else {
+					return null;
+				}
+			}
+			return selNodes;
 		}
 	}
 
