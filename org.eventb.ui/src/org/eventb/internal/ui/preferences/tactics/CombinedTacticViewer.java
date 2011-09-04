@@ -360,7 +360,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		@Override
 		public void delete() {
 			if (parent == null) {
-				// FIXME delete root
 				return;
 			}
 			parent.deleteChild(this);
@@ -443,11 +442,13 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	public static class CombinatorNode extends AbstractTacticNode {
 		private final ICombinatorDescriptor combinator;
 		private final List<ITacticNode> children;
+		private final String text;
 
 		public CombinatorNode(ITacticNode parent, ICombinatorDescriptor combinator) {
 			super(parent);
 			this.combinator = combinator;
 			this.children = new ArrayList<ITacticNode>();
+			this.text = computeText(combinator);
 		}
 
 		public CombinatorNode(ITacticNode parent, ICombinedTacticDescriptor desc) {
@@ -462,6 +463,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			}
 			final List<ITacticDescriptor> combined = desc.getCombinedTactics();
 			this.children = computeNodes(combined);
+			this.text = computeText(combinator);
 		}
 		
 		private List<ITacticNode> computeNodes(
@@ -474,6 +476,20 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			return combChildren;
 		}
 		
+		private static String computeText(ICombinatorDescriptor combinator) {
+			final String tacticName = combinator.getTacticDescriptor().getTacticName();
+			final StringBuilder sb = new StringBuilder();
+			sb.append(tacticName);
+			sb.append(" [");
+			final int minArity = combinator.getMinArity();
+			sb.append(minArity);
+			if (!combinator.isArityBound()) {
+				sb.append(" or more");
+			}
+			sb.append("]");
+			return sb.toString();
+		}
+
 		@Override
 		public ITacticDescriptor getResultDesc() {
 			if (!isValid()) {
@@ -522,8 +538,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		@Override
 		public String getText() {
-			return combinator.getTacticDescriptor().getTacticName();
-			// TODO add information about arity
+			return text;
 		}
 
 		@Override
