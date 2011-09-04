@@ -13,6 +13,7 @@ package org.eventb.internal.ui.preferences.tactics;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -166,6 +167,23 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 
 	public boolean isResultValid() {
 		return combViewer.isResultValid();
+	}
+
+	@Override
+	public ISelection getSelection() {
+		return combViewer.getSelection();
+	}
+
+	@Override
+	public void refresh() {
+		combViewer.refresh();
+		
+	}
+
+	@Override
+	public void setSelection(ISelection selection, boolean reveal) {
+		combViewer.setSelection(selection, reveal);
+		
 	}
 	
 }

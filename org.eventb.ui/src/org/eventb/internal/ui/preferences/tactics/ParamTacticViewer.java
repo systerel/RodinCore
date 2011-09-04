@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -402,5 +403,22 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			final Object value = param.getValue();
 			paramSetting.set(label, value);
 		}
+	}
+
+	@Override
+	public ISelection getSelection() {
+		return tableViewer.getSelection();
+	}
+
+	@Override
+	public void refresh() {
+		tableViewer.refresh();
+		
+	}
+
+	@Override
+	public void setSelection(ISelection selection, boolean reveal) {
+		tableViewer.setSelection(selection, reveal);
+		
 	}
 }

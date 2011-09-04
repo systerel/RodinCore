@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
+import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
@@ -18,15 +19,11 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
  * @author Nicolas Beauger
  * 
  */
-public abstract class AbstractTacticViewer<T extends ITacticDescriptor> {
-
-	public abstract Control getControl();
+public abstract class AbstractTacticViewer<T extends ITacticDescriptor> extends ContentViewer {
 
 	public abstract void createContents(Composite parent);
 	
 	public abstract void setInput(T desc);
-	
-	public abstract T getInput();
 	
 	/**
 	 * Returns the value of the descriptor with currently displayed state.
