@@ -549,7 +549,10 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				// avoid computing result desc as it may be invalid
 				final CombinatorNode combNode = (CombinatorNode) node;
 				final CombinatorNode newChild = new CombinatorNode(this, combNode.combinator);
-				newChild.children.addAll(combNode.children);
+				for(ITacticNode combChild: combNode.children) {
+					final ITacticNode newChildChild = makeNewChild(combChild);
+					newChild.children.add(newChildChild);
+				}
 				return newChild;
 			}
 			return makeTacticNode(this, node.getResultDesc());
