@@ -11,13 +11,13 @@
 package org.eventb.internal.ui.preferences.tactics;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -76,21 +76,28 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		@Override
 		public boolean performDrop(Object data) {
-			// FIXME valid only when dragging inside tree viewer
-			// use selection fetched from transfer instead
-			final Object selected = getSelectedObject();
-			if (!(selected instanceof ITacticNode)) {
+			final ISelection selection = LocalSelectionTransfer.getTransfer()
+					.getSelection();
+			if (!(selection instanceof IStructuredSelection)) {
 				return false;
 			}
-			final ITacticNode droppedNode = (ITacticNode) selected;
+			final IStructuredSelection sel = (IStructuredSelection) selection;
+
 			final Object target = getCurrentTarget();
 			if (!(target instanceof ITacticNode)) {
 				return false;
 			}
 			final ITacticNode targetNode = (ITacticNode) target;
-			targetNode.drop(droppedNode);
+			
 			final CombinedTacticViewer viewer = (CombinedTacticViewer) getViewer();
-			viewer.refresh(targetNode);
+			for (Object selected : sel.toList()) {
+				if (!(selected instanceof ITacticNode)) {
+					continue;
+				}
+				final ITacticNode droppedNode = (ITacticNode) selected;
+				targetNode.drop(droppedNode);
+				viewer.refresh(targetNode);
+			}
 
 			return true;
 		}
@@ -142,14 +149,12 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			super.dragFinished(event);
 		}
 
-		private void deleteDraggedNodes(ITreeSelection treeSel) {
-			final Iterator<?> iterator = treeSel.iterator();
-			while (iterator.hasNext()) {
-				final Object data = iterator.next();
-				if (!(data instanceof ITacticNode)) {
+		private void deleteDraggedNodes(ITreeSelection sel) {
+			for (Object selected : sel.toList()) {
+				if (!(selected instanceof ITacticNode)) {
 					continue;
 				}
-				final ITacticNode node = (ITacticNode) data;
+				final ITacticNode node = (ITacticNode) selected;
 				node.delete();
 				viewer.refresh(node);
 			}
