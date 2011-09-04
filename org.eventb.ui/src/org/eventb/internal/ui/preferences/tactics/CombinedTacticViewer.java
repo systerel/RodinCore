@@ -11,6 +11,7 @@
 package org.eventb.internal.ui.preferences.tactics;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -62,9 +63,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				TransferData transferType) {
 			if (target == null) {
 				// OK if tree is empty
-				final CombinedTacticViewer viewer = (CombinedTacticViewer) getViewer();
-				final Tree tree = viewer.getControl();
-				return tree.getItems().length == 0;
+				return getViewer().getInput() == null;
 			}
 			if (!(target instanceof ITacticNode)) {
 				return false;
@@ -106,33 +105,47 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			this.viewer = viewer;
 		}
 
-//		@Override
-//		public void dragStart(DragSourceEvent event) {
-//			viewer.treeViewer.getSelection();
-//		}
-//		
-//		@Override
-//		public void dragSetData(DragSourceEvent event) {
-//			final ISelection selection = LocalSelectionTransfer.getTransfer()
-//					.getSelection();
-//
-//			if (LocalSelectionTransfer.getTransfer()
-//					.isSupportedType(event.dataType)) {
-//				event.data = selection;
-//			} else {
-//				event.doit = false;
-//			}
-//		}
+		@Override
+		public void dragStart(DragSourceEvent event) {
+			super.dragStart(event);
+			final ISelection selection = viewer.getSelection();
+			if (!selection.isEmpty()) {
+				LocalSelectionTransfer.getTransfer().setSelection(selection);
+			}
+		}
+		
+		@Override
+		public void dragSetData(DragSourceEvent event) {
+			final ISelection selection = LocalSelectionTransfer.getTransfer()
+					.getSelection();
+
+			if (LocalSelectionTransfer.getTransfer()
+					.isSupportedType(event.dataType)) {
+				event.data = selection;
+			} else {
+				event.doit = false;
+			}
+		}
 
 		@Override
 		public void dragFinished(DragSourceEvent event) {
-			if (!event.doit) { // FIXME false even when successful
+			if (!event.doit) {
 				return;
 			}
-			final Tree tree = (Tree) getControl();
-			final TreeItem[] selection = tree.getSelection();
-			for (TreeItem treeItem : selection) {
-				final Object data = treeItem.getData();
+			final ISelection selection = LocalSelectionTransfer.getTransfer()
+					.getSelection();
+			if (!(selection instanceof ITreeSelection)) {
+				return;
+			}
+			deleteDraggedNodes((ITreeSelection) selection);
+			LocalSelectionTransfer.getTransfer().setSelection(null);
+			super.dragFinished(event);
+		}
+
+		private void deleteDraggedNodes(ITreeSelection treeSel) {
+			final Iterator<?> iterator = treeSel.iterator();
+			while (iterator.hasNext()) {
+				final Object data = iterator.next();
 				if (!(data instanceof ITacticNode)) {
 					continue;
 				}
@@ -140,7 +153,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				node.delete();
 				viewer.refresh(node);
 			}
-			super.dragFinished(event);
 		}
 	}
 
