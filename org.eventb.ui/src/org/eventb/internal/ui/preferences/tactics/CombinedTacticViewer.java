@@ -156,7 +156,10 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				}
 				final ITacticNode node = (ITacticNode) selected;
 				node.delete();
-				viewer.refresh(node);
+				final ITacticNode parent = node.getParent();
+				if (parent != null) {
+					viewer.refresh(parent);
+				}
 			}
 		}
 	}
@@ -621,13 +624,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		return treeViewer.getTree();
 	}
 
-	void refresh(ITacticNode changedNode) {
-		final ITacticNode parentNode = changedNode.getParent();
-		if (parentNode == null) {
-			treeViewer.refresh();
-		} else {
-			treeViewer.refresh(parentNode);
-		}
+	public void refresh(ITacticNode node) {
+		treeViewer.refresh(node);
 	}
 	
 	public void addEditSupport() {
