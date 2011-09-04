@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
@@ -108,7 +109,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		@Override
 		public void dragFinished(DragSourceEvent event) {
-			if (!event.doit) {
+			if (!event.doit) { // FIXME false even when successful
 				return;
 			}
 			final Tree tree = (Tree) getControl();
@@ -525,8 +526,20 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				return;
 			}
 			final ITreeSelection treeSel = (ITreeSelection) selection;
-//			final TreePath[] paths = treeSel.getPaths();
-			// TODO remove child path when parent path is present
+			final TreePath[] paths = treeSel.getPaths();
+			if (paths.length == 0) {
+				return;
+			}
+			// TODO filter child path when parent path is present
+			final TreePath path = paths[0];
+			final int segmentCount = path.getSegmentCount();
+			if (segmentCount == 1) {
+				// deleting root
+				// TODO may not be convenient when dragging from outside
+				// consider making an invisible root
+				viewer.setInput(null);
+				return;
+			}
 			final Object firstElement = treeSel.getFirstElement();
 			if (!(firstElement instanceof ITacticNode)) {
 				return;
