@@ -13,8 +13,12 @@ package org.eventb.internal.ui.preferences.tactics;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -505,6 +509,38 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		
 	}
 	
+	public static class DeleteNodeAction extends Action {
+		private final TreeViewer viewer;
+
+		public DeleteNodeAction(TreeViewer viewer) {
+			this.viewer = viewer;
+			setActionDefinitionId("org.eclipse.ui.edit.delete");
+			setText("delete");
+		}
+		
+		@Override
+		public void run() {
+			final ISelection selection = viewer.getSelection();
+			if (!(selection instanceof ITreeSelection)) {
+				return;
+			}
+			final ITreeSelection treeSel = (ITreeSelection) selection;
+//			final TreePath[] paths = treeSel.getPaths();
+			// TODO remove child path when parent path is present
+			final Object firstElement = treeSel.getFirstElement();
+			if (!(firstElement instanceof ITacticNode)) {
+				return;
+			}
+			final ITacticNode node = (ITacticNode) firstElement;
+			final ITacticNode parent = node.getParent();
+			node.delete();
+			if (parent != null)	{
+				viewer.refresh(parent);
+			}
+		}
+	}
+	
+	
 	private TreeViewer treeViewer;
 	
 	@Override
@@ -541,13 +577,18 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	void refresh(ITacticNode changedNode) {
 		final ITacticNode parentNode = changedNode.getParent();
 		if (parentNode == null) {
-			treeViewer.refresh(changedNode);
+			treeViewer.refresh();
 		} else {
 			treeViewer.refresh(parentNode);
 		}
 	}
 	
-	public void addDragAndDropSupport() {
+	public void addEditSupport() {
+		addDND();
+		addPopupMenu();
+	}
+
+	private void addDND() {
 		final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
 				.getTransfer() };
 		
@@ -560,6 +601,13 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		treeViewer.addDropSupport(DND.DROP_MOVE, transferTypes, drop);
 	}
 	
+	private void addPopupMenu() {
+		final Tree tree = treeViewer.getTree();
+		final MenuManager mgr = new MenuManager();
+		mgr.add(new DeleteNodeAction(treeViewer));
+		tree.setMenu(mgr.createContextMenu(tree));
+	}
+
 	private ITacticNode getTopNode() {
 		final TreeItem topItem = treeViewer.getTree().getTopItem();
 		if (topItem == null) {

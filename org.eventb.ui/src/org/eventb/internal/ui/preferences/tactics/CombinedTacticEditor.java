@@ -36,6 +36,8 @@ import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.TacticNod
  *
  */
 public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor> {
+	// TODO make a 'trash' composite where user can drop tactic nodes 
+	// (destroys ? stores with a viewer ?)
 
 	private final TacticsProfilesCache cache;
 	private final CombinedTacticViewer combViewer = new CombinedTacticViewer();
@@ -66,7 +68,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		simpleList.setLabelProvider(labelProvider);
 		
 		combViewer.createContents(composite);
-		combViewer.addDragAndDropSupport();
+		combViewer.addEditSupport();
 		// TODO add a remove action (key+right click)
 		
 		final Composite combAndRef = makeGrid(composite, 1);
