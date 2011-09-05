@@ -75,6 +75,15 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		}
 	}
 
+	private static enum Columns {
+		LABEL,
+		VALUE, TYPE, DEFAULT, DESCRIPTION;
+		
+		public String getText() {
+			return toString().toLowerCase();
+		}
+	}
+
 	private static class ParamLabelProvider implements ITableLabelProvider {
 
 		public ParamLabelProvider() {
@@ -113,16 +122,18 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			}
 			final Param param = (Param) element;
 			final IParameterDesc desc = param.getDesc();
-			switch (columnIndex) {
-			case 0: // label
+			
+			final Columns column = Columns.values()[columnIndex];
+			switch (column) {
+			case LABEL:
 				return desc.getLabel();
-			case 1: // value
+			case VALUE:
 				return param.getValue().toString();
-			case 2: // type
+			case TYPE:
 				return desc.getType().toString();
-			case 3: // default
+			case DEFAULT:
 				return desc.getDefaultValue().toString();
-			case 4: // description
+			case DESCRIPTION:
 				return desc.getDescription();
 			default:
 				return null;
@@ -286,7 +297,8 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			param.setValue(paramValue);
 			tableViewer.refresh(element);
 			final Table table = tableViewer.getTable();
-			final TableColumn valueColumn = table.getColumn(VALUE_COLUMN_INDEX);
+			final int valueColumnIndex = Columns.VALUE.ordinal();
+			final TableColumn valueColumn = table.getColumn(valueColumnIndex);
 			valueColumn.pack();
 		}
 
@@ -308,34 +320,37 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		tacticName = new Label(parent, SWT.NONE);
 		tableViewer = new TableViewer(parent);
 		createColumns();
-		tableViewer.setColumnProperties(COLUMN_NAMES);
 		tableViewer.setLabelProvider(new ParamLabelProvider());
 		tableViewer.setContentProvider(new ParamContentProvider());
 	}
-
-	private static final String[] COLUMN_NAMES = new String[] { "label",
-			"value", "type", "default", "description" };
-	private static final int VALUE_COLUMN_INDEX = 1;
 	
 	private void createColumns() {
+		final Columns[] columns = Columns.values();
+		final String[] columnNames = new String[columns.length];
+		for (int i = 0; i < columns.length; i++) {
+			columnNames[i] = columns[i].getText();
+		}
+		
+
 		final Table table = tableViewer.getTable();
 		table.setLayout(new RowLayout(SWT.VERTICAL | SWT.FULL_SELECTION));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		for (int i = 0; i < COLUMN_NAMES.length; i++) {
-			final String name = COLUMN_NAMES[i];
+		for (Columns column : columns) {
 			final TableColumn col;
-			if (i == VALUE_COLUMN_INDEX) {
+			if (column == Columns.VALUE) {
 				final TableViewerColumn colViewer = new TableViewerColumn(
 						tableViewer, SWT.WRAP);
-				colViewer.setEditingSupport(new ParamEditingSupport(tableViewer));
+				colViewer
+						.setEditingSupport(new ParamEditingSupport(tableViewer));
 				col = colViewer.getColumn();
 			} else {
 				col = new TableColumn(table, SWT.WRAP);
 			}
-			col.setText(name);
+			col.setText(column.getText());
 		}
+		tableViewer.setColumnProperties(columnNames);
 	}
 
 	@Override
