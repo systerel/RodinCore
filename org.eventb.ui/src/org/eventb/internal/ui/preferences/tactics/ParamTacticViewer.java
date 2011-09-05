@@ -116,10 +116,10 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			switch (columnIndex) {
 			case 0: // label
 				return desc.getLabel();
-			case 1: // type
-				return desc.getType().toString();
-			case 2: // value
+			case 1: // value
 				return param.getValue().toString();
+			case 2: // type
+				return desc.getType().toString();
 			case 3: // default
 				return desc.getDefaultValue().toString();
 			case 4: // description
@@ -281,7 +281,7 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 				paramValue = type.parse((String) value);
 				break;
 			default:
-				throw new IllegalStateException("unreachable case reached");
+				throw new IllegalStateException("unknown type: " + type);
 			}
 			param.setValue(paramValue);
 			tableViewer.refresh(element);
@@ -312,9 +312,10 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		tableViewer.setLabelProvider(new ParamLabelProvider());
 		tableViewer.setContentProvider(new ParamContentProvider());
 	}
-	private static final String[] COLUMN_NAMES = new String[] { "label", "type", "value",
-			"default", "description" };
-	private static final int VALUE_COLUMN_INDEX = 2;
+
+	private static final String[] COLUMN_NAMES = new String[] { "label",
+			"value", "type", "default", "description" };
+	private static final int VALUE_COLUMN_INDEX = 1;
 	
 	private void createColumns() {
 		final Table table = tableViewer.getTable();
