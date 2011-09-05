@@ -17,6 +17,8 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -102,7 +104,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			}
 			
 			final Object target = getCurrentTarget();
-			if (!(target instanceof ITacticNode)) {
+			if (!(target instanceof ITacticNode) && !isTreeEmpty()) {
+				// pointing empty space on non empty tree
 				return false;
 			}
 			final ITacticNode targetNode = (ITacticNode) target;
@@ -112,8 +115,10 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			
 			switch (getCurrentLocation()) {
 			case LOCATION_NONE:
-				// FIXME if empty tree, viewer.setInput(selection), target may be null
-				return false;
+				// empty tree, checked above (target == null)
+				parent = null;
+				nextSibling = null;
+				break;
 			case LOCATION_ON:
 				if (!(targetNode instanceof LeafNode)) {
 					parent = targetNode;
@@ -145,6 +150,10 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			}
 			drop(selectedNodes, parent, nextSibling);
 			return true;
+		}
+		
+		private boolean isTreeEmpty() {
+			return getViewer().getInput() == null;
 		}
 		
 		private boolean drop(List<ITacticNode> nodes, ITacticNode parent,
@@ -358,23 +367,28 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		boolean canDrop(List<ITacticNode> nodes);
 		void delete();
 		void deleteChild(ITacticNode child);
+		ITacticNode copyWithParent(ITacticNode newParent);
 	}
 
-	public static ITacticNode makeTacticNode(ITacticNode parent, Object descriptor) {
-		if (descriptor instanceof ITacticDescriptor) {
-			if (descriptor instanceof ICombinedTacticDescriptor) {
+	public static ITacticNode makeTacticNode(ITacticNode parent, Object descOrNode) {
+		if (descOrNode instanceof ITacticDescriptor) {
+			if (descOrNode instanceof ICombinedTacticDescriptor) {
 				return new CombinatorNode(parent,
-						(ICombinedTacticDescriptor) descriptor);
+						(ICombinedTacticDescriptor) descOrNode);
 			} else {
 				// simple or ref (no param here)
-				return new SimpleNode(parent, (ITacticDescriptor) descriptor);
+				return new SimpleNode(parent, (ITacticDescriptor) descOrNode);
 			}
 		}
-		if (descriptor instanceof ICombinatorDescriptor) {
+		if (descOrNode instanceof ICombinatorDescriptor) {
 			return new CombinatorNode(parent,
-					(ICombinatorDescriptor) descriptor);
+					(ICombinatorDescriptor) descOrNode);
 		}
-		throw new IllegalArgumentException("illegal descriptor : " + descriptor);
+		if (descOrNode instanceof ITacticNode) {
+			final ITacticNode node = (ITacticNode) descOrNode;
+			return node.copyWithParent(parent);
+		}
+		throw new IllegalArgumentException("illegal descriptor : " + descOrNode);
 	}
 
 	public static abstract class AbstractTacticNode implements ITacticNode {
@@ -468,6 +482,11 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		@Override
 		public String getText() {
 			return desc.getTacticName();
+		}
+
+		@Override
+		public ITacticNode copyWithParent(ITacticNode newParent) {
+			return new SimpleNode(newParent, desc);
 		}
 		
 	}
@@ -576,7 +595,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		@Override
 		public void addChild(ITacticNode node, ITacticNode nextSibling) {
-			final ITacticNode newChild = makeNewChild(node);
+			final ITacticNode newChild = makeNewChild(this, node);
 			final int index;
 			if (nextSibling == null) {
 				// insert at the end
@@ -592,18 +611,18 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 		
 		// make a new instance to distinguish dragged from dropped
-		private ITacticNode makeNewChild(ITacticNode node) {
+		private static ITacticNode makeNewChild(ITacticNode parent, ITacticNode node) {
 			if(node instanceof CombinatorNode) {
 				// avoid computing result desc as it may be invalid
 				final CombinatorNode combNode = (CombinatorNode) node;
-				final CombinatorNode newChild = new CombinatorNode(this, combNode.combinator);
+				final CombinatorNode newChild = new CombinatorNode(parent, combNode.combinator);
 				for(ITacticNode combChild: combNode.children) {
-					final ITacticNode newChildChild = makeNewChild(combChild);
+					final ITacticNode newChildChild = makeNewChild(newChild, combChild);
 					newChild.children.add(newChildChild);
 				}
 				return newChild;
 			}
-			return makeTacticNode(this, node.getResultDesc());
+			return makeTacticNode(parent, node.getResultDesc());// TODO (this, node);
 		}
 		
 		@Override
@@ -655,6 +674,11 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				throw new IllegalArgumentException("no such child: " + child);
 			}
 		}
+
+		@Override
+		public ITacticNode copyWithParent(ITacticNode newParent) {
+			return makeNewChild(newParent, this);
+		}
 	}
 
 	public static class ProfileNode extends LeafNode {
@@ -683,6 +707,11 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		@Override
 		public boolean isValid() {
 			return entry.getValue() != null;
+		}
+
+		@Override
+		public ITacticNode copyWithParent(ITacticNode newParent) {
+			return new ProfileNode(newParent, entry);
 		}
 		
 	}
@@ -824,12 +853,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	}
 	
 	@Override
-	public ITacticDescriptor getInput() {
-		final Object input = treeViewer.getInput();
-		if (!(input instanceof ITacticDescriptor)) {
-			return null;
-		}
-		return (ITacticDescriptor) input;
+	public Object getInput() {
+		return treeViewer.getInput();
 	}
 
 	@Override
@@ -846,4 +871,25 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	public void setSelection(ISelection selection, boolean reveal) {
 		treeViewer.setSelection(selection, reveal);
 	}
+	
+	@Override
+	public IContentProvider getContentProvider() {
+		return treeViewer.getContentProvider();
+	}
+
+	@Override
+	public IBaseLabelProvider getLabelProvider() {
+		return treeViewer.getLabelProvider();
+	}
+
+	@Override
+	public void setInput(Object input) {
+		treeViewer.setInput(input);
+	}
+	
+	@Override
+	public void setSelection(ISelection selection) {
+		treeViewer.setSelection(selection);
+	}
+	
 }

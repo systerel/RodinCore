@@ -160,12 +160,8 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	}
 
 	@Override
-	public ITacticDescriptor getInput() {
-		final Object input = combViewer.getInput();
-		if (!(input instanceof ITacticDescriptor)) {
-			return null;
-		}
-		return (ITacticDescriptor) input;
+	public Object getInput() {
+		return combViewer.getInput();
 	}
 
 	@Override
