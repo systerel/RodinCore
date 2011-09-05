@@ -22,6 +22,7 @@ import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -371,6 +372,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		void delete();
 		void deleteChild(ITacticNode child);
 		ITacticNode copyWithParent(ITacticNode newParent);
+		String getDescription();
 	}
 
 	public static ITacticNode makeTacticNode(ITacticNode parent, Object descOrNode) {
@@ -490,6 +492,11 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		@Override
 		public ITacticNode copyWithParent(ITacticNode newParent) {
 			return new SimpleNode(newParent, desc);
+		}
+
+		@Override
+		public String getDescription() {
+			return desc.getTacticDescription();
 		}
 		
 	}
@@ -682,6 +689,11 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		public ITacticNode copyWithParent(ITacticNode newParent) {
 			return makeNewChild(newParent, this);
 		}
+
+		@Override
+		public String getDescription() {
+			return combinator.getTacticDescriptor().getTacticDescription();
+		}
 	}
 
 	public static class ProfileNode extends LeafNode {
@@ -716,6 +728,11 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		public ITacticNode copyWithParent(ITacticNode newParent) {
 			return new ProfileNode(newParent, entry);
 		}
+
+		@Override
+		public String getDescription() {
+			return getText();
+		}
 		
 	}
 	
@@ -744,8 +761,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			final int segmentCount = path.getSegmentCount();
 			if (segmentCount == 1) {
 				// deleting root
-				// TODO may not be convenient when dragging from outside
-				// consider making an invisible root
 				viewer.setInput(null);
 				viewer.refresh();
 				return;
@@ -942,5 +957,16 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	public void dispose() {
 		listeners.clear();
 		super.dispose();
+	}
+	
+	@Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		treeViewer.addSelectionChangedListener(listener);
+	}
+	
+	@Override
+	public void removeSelectionChangedListener(
+			ISelectionChangedListener listener) {
+		treeViewer.removeSelectionChangedListener(listener);
 	}
 }

@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
+import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.packAll;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -23,6 +28,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
@@ -34,15 +40,50 @@ import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ITacticNo
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ITacticRefreshListener;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ProfileNode;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.SimpleNode;
-import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ViewerSelectionDragEffect;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.TacticNodeLabelProvider;
+import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ViewerSelectionDragEffect;
 
 /**
  * @author Nicolas Beauger
  *
  */
 public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor> {
-	// TODO extend CombinedTacticViewer rather than compose
+	
+	private static final int STYLE =  SWT.FILL | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
+
+	private static class TacSelListener implements ISelectionChangedListener {
+		
+		private final Label label;
+		
+		public TacSelListener(Label label) {
+			this.label = label;
+		}
+
+		@Override
+		public void selectionChanged(SelectionChangedEvent event) {
+			if (label == null || label.isDisposed()) {
+				return;
+			}
+			final ISelection selection = event.getSelection();
+			if (selection == null) {
+				label.setText("No selected tactic");
+				return;
+			}
+			if (!(selection instanceof IStructuredSelection) || selection.isEmpty()) {
+				return;
+			}
+			final IStructuredSelection sel = (IStructuredSelection) selection;
+			final Object first = sel.getFirstElement();
+			if (!(first instanceof ITacticNode)) {
+				return;
+			}
+			final ITacticNode node = (ITacticNode) first;
+			final String description = node.getDescription();
+			label.setText(description);
+			packAll(label, 3);
+		}
+
+	}
 	
 	// TODO make a 'trash' composite where user can drop tactic nodes 
 	// (destroys ? stores with a viewer ?)
@@ -53,6 +94,9 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	private ListViewer simpleList;
 	private ListViewer combList;
 	private ListViewer refList;
+	Label descrLabel;
+
+	private TacSelListener tacSelListener;
 
 	public CombinedTacticEditor(TacticsProfilesCache profiles) {
 		this.cache = profiles;
@@ -72,13 +116,28 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		combViewer.createContents(composite);
 		combViewer.addEditSupport();
 		
-		final Composite combAndRef = makeGrid(composite, 1);
-		combList = makeListViewer(combAndRef, "Combinators");
+		final Composite combRefDescr = makeGrid(composite, 1);
+		combList = makeListViewer(combRefDescr, "Combinators");
 		
-		refList = makeListViewer(combAndRef, "Profiles");
+		refList = makeListViewer(combRefDescr, "Profiles");
 		
-		// TODO add a "Description" group containing current selection
-		// description
+		final Group descrGroup = makeGroup(combRefDescr, "Description");
+		descrLabel = new Label(descrGroup, SWT.WRAP);
+		tacSelListener = new TacSelListener(descrLabel);
+		
+		addDescriptionListener();
+	}
+
+	private void addDescriptionListener() {
+		simpleList.addSelectionChangedListener(tacSelListener);
+		combList.addSelectionChangedListener(tacSelListener);
+		refList.addSelectionChangedListener(tacSelListener);
+	}
+
+	private void removeDescriptionListener() {
+		simpleList.removeSelectionChangedListener(tacSelListener);
+		combList.removeSelectionChangedListener(tacSelListener);
+		refList.removeSelectionChangedListener(tacSelListener);
 	}
 
 	private static ListViewer makeListViewer(Composite parent, String text) {
@@ -86,10 +145,8 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
 				.getTransfer() };
 
-		final Group simpleGroup = makeGroup(parent);
-		simpleGroup.setText(text);
-		simpleGroup.setLayout(new GridLayout());
-		final ListViewer viewer = new ListViewer(simpleGroup, SWT.SINGLE);
+		final Group group = makeGroup(parent, text);
+		final ListViewer viewer = new ListViewer(group, SWT.SINGLE);
 		viewer.setLabelProvider(labelProvider);
 		final ViewerSelectionDragEffect simpleDrag = new ViewerSelectionDragEffect(
 				viewer);
@@ -97,9 +154,11 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		return viewer;
 	}
 	
-	private static Group makeGroup(final Composite parent) {
-		final int style =  SWT.FILL | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
-		return new Group(parent, style);
+	private static Group makeGroup(Composite parent, String text) {
+		final Group group = new Group(parent, STYLE);
+		group.setText(text);
+		group.setLayout(new GridLayout());
+		return group;
 	}
 
 	private static Composite makeGrid(Composite parent, int numColumns) {
@@ -199,5 +258,10 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		combViewer.removedTacticRefreshListener(listener);
 	}
 
+	@Override
+	public void dispose() {
+		removeDescriptionListener();
+		super.dispose();
+	}
 	
 }
