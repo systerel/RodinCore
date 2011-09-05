@@ -622,7 +622,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				}
 				return newChild;
 			}
-			return makeTacticNode(parent, node.getResultDesc());// TODO (this, node);
+			return makeTacticNode(parent, node);
 		}
 		
 		@Override
