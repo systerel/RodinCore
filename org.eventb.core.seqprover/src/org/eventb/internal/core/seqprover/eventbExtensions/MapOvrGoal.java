@@ -16,7 +16,11 @@ import static org.eventb.core.ast.Formula.TFUN;
 import static org.eventb.core.ast.Formula.TREL;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -27,16 +31,18 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MapOvrGoalTac;
 
 /**
- * Split goal such as <code>f<+{x↦y}∈A<i>op</i>B</code> as follows :
+ * Split goal such as <code>f<+{x↦y}∈A<i>op1</i>B</code> as follows :
  * <ul>
- * <li><code>f∈A<i>op</i>B</code> if it is contained in the sequent's hypotheses
- * </li>
  * <li><code>x∈A</code></li>
  * <li><code>y∈B</code></li>
  * </ul>
- * With <i>op</i> a relation among :
+ * iff there exists a hypothesis such as <code>f∈A<i>op2</i>B</code> from which
+ * we can infer this : <code>f∈A<i>op1</i>B ⇒ f∈A<i>op2</i>B</code>. For more
+ * information about those inference, check {@link FunAndRel}.<br>
+ * With <i>op1</i> a relation among :
  * <ul>
  * <li>RELATION : ↔</li>
  * <li>TOTAL RELATION : </li>
@@ -63,17 +69,16 @@ public class MapOvrGoal extends HypothesisReasoner {
 		final FormulaFactory ff = sequent.getFormulaFactory();
 		final DLib lib = DLib.mDLib(ff);
 
-		final int goalTypeRelation = preCompute(sequent.goal());
+		final FunAndRel goalTypeRelation = preCompute(sequent.goal());
 		checkInput(sequent, pred, goalTypeRelation);
 
 		final Predicate secondSubGoal = lib.makeInclusion(x, _A);
 		final Predicate thirdSubGoal = lib.makeInclusion(y, _B);
 
-		final IAntecedent firstAnt = makeAntecedent(pred);
-		final IAntecedent secondAnt = makeAntecedent(secondSubGoal);
-		final IAntecedent thirdAnt = makeAntecedent(thirdSubGoal);
+		final IAntecedent firstAnt = makeAntecedent(secondSubGoal);
+		final IAntecedent secondAnt = makeAntecedent(thirdSubGoal);
 
-		return new IAntecedent[] { firstAnt, secondAnt, thirdAnt };
+		return new IAntecedent[] { firstAnt, secondAnt };
 	}
 
 	/**
@@ -84,9 +89,9 @@ public class MapOvrGoal extends HypothesisReasoner {
 	 * 
 	 * @param goal
 	 *            the considered goal
-	 * @return the tag of the relation <i>op</i> if the goal is valid.
+	 * @return the type of the goal represented as a FunAndRel type.
 	 */
-	private int preCompute(final Predicate goal) {
+	private FunAndRel preCompute(final Predicate goal) {
 		if (!Lib.isInclusion(goal)) {
 			throw new IllegalArgumentException("Goal is not an Inclusion");
 		}
@@ -117,7 +122,7 @@ public class MapOvrGoal extends HypothesisReasoner {
 		f = (Expression) goalLeft.getChild(0);
 		x = Lib.getLeft(mapplet);
 		y = Lib.getRight(mapplet);
-		return goalTypeRelation;
+		return FunAndRel.makeFunAndRel(goalTypeRelation);
 	}
 
 	/**
@@ -145,19 +150,17 @@ public class MapOvrGoal extends HypothesisReasoner {
 	}
 
 	/**
-	 * Checks that the input is such as <code>f∈A<i>op</i>B</code> and that
-	 * <code>f</code> and <code>A</code> and <code>B</code> and
-	 * <code><i>op</i></code> are the same as the one present in the goal.
+	 * Checks that the input is such as <code>f∈A<i>op</i>B</code>.
 	 * 
 	 * @param sequent
 	 *            the sequent on which the reasoner is applied
 	 * @param pred
 	 *            the input
 	 * @param goalTypeRelation
-	 *            the tag of the relation in the goal
+	 *            the relation of the goal represented as a FunAndRel type.
 	 */
 	private void checkInput(IProverSequent sequent, Predicate pred,
-			final int goalTypeRelation) {
+			final FunAndRel goalTypeRelation) {
 		if (pred == null) {
 			throw new IllegalArgumentException("The predicate is null");
 		}
@@ -170,14 +173,14 @@ public class MapOvrGoal extends HypothesisReasoner {
 					"The predicate in input is not an Inclusion");
 		}
 		final Expression predRight = ((RelationalPredicate) pred).getRight();
-		final int predTypeRelation = getTypeRelation(predRight);
-		if (predTypeRelation == -1) {
-			throw new IllegalArgumentException(
-					"Right member of the inclusion of the input is not a Relation or a Total Relation or a Partial Function or a Total Function");
+		final FunAndRel predTypeRelation = FunAndRel.makeFunAndRel(predRight
+				.getTag());
+		if (predTypeRelation == null) {
+			throw new IllegalArgumentException("Relation or function unknown.");
 		}
-		if (goalTypeRelation != predTypeRelation) {
+		if (!goalTypeRelation.isInferredBy(predTypeRelation)) {
 			throw new IllegalArgumentException(
-					"The relations in the input and in the goal are different");
+					"No inference can be made with those two relations");
 		}
 		final Expression predA = Lib.getLeft(predRight);
 		final Expression predB = Lib.getRight(predRight);
@@ -199,4 +202,70 @@ public class MapOvrGoal extends HypothesisReasoner {
 	protected String getDisplay(Predicate pred) {
 		return "Remove  in goal";
 	}
+
+	/**
+	 * Class used to get the order of the relations. For example :
+	 * <code>f∈A⤖B ⇒ f∈A↠B</code>. We say that "↠" is inferred from "⤖".<br>
+	 * Each modifications of this class should be reflected on her twin situated
+	 * here {@link MapOvrGoalTac}.
+	 */
+	private enum FunAndRel {
+		TBIJ, TSUR(TBIJ), PSUR(TSUR), TINJ(TBIJ), PINJ(TINJ), TFUN(TINJ, TSUR), PFUN(
+				TFUN, PINJ, PSUR), STREL(TSUR), SREL(STREL), TREL(TFUN, STREL), REL(
+				PFUN, SREL, TREL);
+		private final FunAndRel[] isInferredBy;
+
+		FunAndRel(FunAndRel... isInferredBy) {
+			this.isInferredBy = isInferredBy;
+		}
+
+		static FunAndRel makeFunAndRel(int tag) {
+			switch (tag) {
+			case Formula.REL:
+				return REL;
+			case Formula.TREL:
+				return TREL;
+			case Formula.SREL:
+				return SREL;
+			case Formula.STREL:
+				return STREL;
+			case Formula.PFUN:
+				return PFUN;
+			case Formula.TFUN:
+				return TFUN;
+			case Formula.PINJ:
+				return PINJ;
+			case Formula.TINJ:
+				return TINJ;
+			case Formula.PSUR:
+				return PSUR;
+			case Formula.TSUR:
+				return TSUR;
+			case Formula.TBIJ:
+				return TBIJ;
+			default:
+				return null;
+			}
+		}
+
+		private Set<FunAndRel> getHigherRel() {
+			Set<FunAndRel> set = new HashSet<FunAndRel>();
+			set.add(this);
+			for (FunAndRel far : this.isInferredBy) {
+				set.addAll(far.getHigherRel());
+			}
+			return set;
+		}
+
+		boolean isInferredBy(FunAndRel tested) {
+			for (FunAndRel far : this.getHigherRel()) {
+				if (tested.equals(far)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+	}
+
 }

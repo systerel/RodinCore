@@ -15,8 +15,12 @@ import static org.eventb.core.ast.Formula.REL;
 import static org.eventb.core.ast.Formula.TFUN;
 import static org.eventb.core.ast.Formula.TREL;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -32,14 +36,15 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.MapOvrGoal;
 
 /**
- * Split goal such as <code>f<+{x↦y}∈A<i>op</i>B</code> as follows :
+ * Split goal such as <code>f<+{x↦y}∈A<i>op1</i>B</code> as follows :
  * <ul>
- * <li><code>f∈A<i>op</i>B</code> if it is contained in the sequent's hypotheses
- * </li>
  * <li><code>x∈A</code></li>
  * <li><code>y∈B</code></li>
  * </ul>
- * With <i>op</i> a relation among :
+ * iff there exists a hypothesis such as <code>f∈A<i>op2</i>B</code> from which
+ * we can infer this : <code>f∈A<i>op1</i>B ⇒ f∈A<i>op2</i>B</code>. For more
+ * information about those inference, check {@link FunAndRel}.<br>
+ * With <i>op1</i> a relation among :
  * <ul>
  * <li>RELATION : ↔</li>
  * <li>TOTAL RELATION : </li>
@@ -63,16 +68,19 @@ public class MapOvrGoalTac implements ITactic {
 		if (result != null) {
 			return result;
 		}
-		final BinaryExpression op = ff.makeBinaryExpression(tag, _A, _B, null);
-		final Predicate testedPred = lib.makeInclusion(f, op);
-		if (sequent.containsHypothesis(testedPred)) {
-			final HypothesisReasoner.Input input = new HypothesisReasoner.Input(
-					testedPred);
-			return BasicTactics.reasonerTac(new MapOvrGoal(), input).apply(
-					ptNode, pm);
-		} else {
-			return "There misses hypothesis";
+		final FunAndRel farGoal = FunAndRel.makeFunAndRel(tag);
+		for (FunAndRel far : farGoal.getHigherRel()) {
+			final BinaryExpression op = ff.makeBinaryExpression(far.intoTag(),
+					_A, _B, null);
+			final Predicate testedPred = lib.makeInclusion(f, op);
+			if (sequent.containsHypothesis(testedPred)) {
+				final HypothesisReasoner.Input input = new HypothesisReasoner.Input(
+						testedPred);
+				return BasicTactics.reasonerTac(new MapOvrGoal(), input).apply(
+						ptNode, pm);
+			}
 		}
+		return "There misses hypothesis";
 	}
 
 	/**
@@ -135,6 +143,90 @@ public class MapOvrGoalTac implements ITactic {
 			return tag;
 		default:
 			return -1;
+		}
+	}
+
+	/**
+	 * Class used to get the order of the relations. For example :
+	 * <code>f∈A⤖B ⇒ f∈A↠B</code>. We say that "↠" is inferred from "⤖".<br>
+	 * Each modifications of this class should be reflected on her twin situated
+	 * here {@link MapOvrGoal}.
+	 */
+	private enum FunAndRel {
+		TBIJ, TSUR(TBIJ), PSUR(TSUR), TINJ(TBIJ), PINJ(TINJ), TFUN(TINJ, TSUR), PFUN(
+				TFUN, PINJ, PSUR), STREL(TSUR), SREL(STREL), TREL(TFUN, STREL), REL(
+				PFUN, SREL, TREL);
+		private final FunAndRel[] isInferredBy;
+
+		FunAndRel(FunAndRel... isInferredBy) {
+			this.isInferredBy = isInferredBy;
+		}
+
+		static FunAndRel makeFunAndRel(int tag) {
+			switch (tag) {
+			case Formula.REL:
+				return REL;
+			case Formula.TREL:
+				return TREL;
+			case Formula.SREL:
+				return SREL;
+			case Formula.STREL:
+				return STREL;
+			case Formula.PFUN:
+				return PFUN;
+			case Formula.TFUN:
+				return TFUN;
+			case Formula.PINJ:
+				return PINJ;
+			case Formula.TINJ:
+				return TINJ;
+			case Formula.PSUR:
+				return PSUR;
+			case Formula.TSUR:
+				return TSUR;
+			case Formula.TBIJ:
+				return TBIJ;
+			default:
+				return null;
+			}
+		}
+
+		private int intoTag() {
+			switch (this) {
+			case REL:
+				return Formula.REL;
+			case TREL:
+				return Formula.TREL;
+			case SREL:
+				return Formula.SREL;
+			case STREL:
+				return Formula.STREL;
+			case PFUN:
+				return Formula.PFUN;
+			case TFUN:
+				return Formula.TFUN;
+			case PINJ:
+				return Formula.PINJ;
+			case TINJ:
+				return Formula.TINJ;
+			case PSUR:
+				return Formula.PSUR;
+			case TSUR:
+				return Formula.TSUR;
+			case TBIJ:
+				return Formula.TBIJ;
+			default:
+				return -1;
+			}
+		}
+
+		private Set<FunAndRel> getHigherRel() {
+			Set<FunAndRel> set = new HashSet<FunAndRel>();
+			set.add(this);
+			for (FunAndRel far : this.isInferredBy) {
+				set.addAll(far.getHigherRel());
+			}
+			return set;
 		}
 	}
 
