@@ -766,6 +766,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 	public void refresh(ITacticNode node) {
 		treeViewer.refresh(node);
+		treeViewer.expandToLevel(node, 1);
 	}
 	
 	public void addEditSupport() {
