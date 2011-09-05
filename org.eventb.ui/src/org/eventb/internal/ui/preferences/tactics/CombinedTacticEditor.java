@@ -21,6 +21,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -54,6 +56,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	private static class TacSelListener implements ISelectionChangedListener {
 		
 		private final Label label;
+		private Viewer currentSource = null;
 		
 		public TacSelListener(Label label) {
 			this.label = label;
@@ -81,6 +84,14 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 			final String description = node.getDescription();
 			label.setText(description);
 			packAll(label, 3);
+			
+			final Object newSource = event.getSource();
+			if (newSource instanceof Viewer && newSource != currentSource) {
+				if (currentSource != null) {
+					currentSource.setSelection(StructuredSelection.EMPTY);
+				}
+				currentSource = (Viewer) newSource;
+			}
 		}
 
 	}
