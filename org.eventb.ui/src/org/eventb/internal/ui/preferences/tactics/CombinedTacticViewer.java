@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEffect;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
@@ -182,11 +183,44 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 	}
 
-	private static class TacticDragEffect extends TreeDragSourceEffect {
+	public static class ViewerSelectionDragEffect extends DragSourceEffect {
 
+		private final Viewer viewer;
+		
+		public ViewerSelectionDragEffect(Viewer viewer) {
+			super(viewer.getControl());
+			this.viewer = viewer;
+		}
+		
+		@Override
+		public void dragStart(DragSourceEvent event) {
+			super.dragStart(event);
+			final ISelection selection = viewer.getSelection();
+			if (!selection.isEmpty()) {
+				LocalSelectionTransfer.getTransfer().setSelection(selection);
+			}
+		}
+		
+		@Override
+		public void dragSetData(DragSourceEvent event) {
+			final ISelection selection = LocalSelectionTransfer.getTransfer()
+					.getSelection();
+
+			if (LocalSelectionTransfer.getTransfer()
+					.isSupportedType(event.dataType)) {
+				event.data = selection;
+			} else {
+				event.doit = false;
+			}
+		}
+
+	}
+	
+	private static class TacticViewerDragEffect extends TreeDragSourceEffect {
+		// TODO factorize duplicate code with ViewerSelectionDragEffect
 		private final CombinedTacticViewer viewer;
 
-		public TacticDragEffect(CombinedTacticViewer viewer) {
+		public TacticViewerDragEffect(CombinedTacticViewer viewer) {
 			super(viewer.getControl());
 			this.viewer = viewer;
 		}
@@ -743,7 +777,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
 				.getTransfer() };
 		
-		final TreeDragSourceEffect drag = new TacticDragEffect(this);
+		final TreeDragSourceEffect drag = new TacticViewerDragEffect(this);
 
 		final ViewerDropAdapter drop = new TacticDrop(this);
 		drop.setScrollExpandEnabled(true);

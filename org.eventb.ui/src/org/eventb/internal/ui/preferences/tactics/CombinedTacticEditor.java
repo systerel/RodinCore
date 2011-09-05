@@ -13,9 +13,12 @@ package org.eventb.internal.ui.preferences.tactics;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -30,6 +33,7 @@ import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.Combinato
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ITacticNode;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ProfileNode;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.SimpleNode;
+import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ViewerSelectionDragEffect;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.TacticNodeLabelProvider;
 
 /**
@@ -60,34 +64,36 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	public void createContents(Composite parent) {
 		composite = makeGrid(parent, 3);
 		
-		final TacticNodeLabelProvider labelProvider = new TacticNodeLabelProvider();
-		
-		final Group simpleGroup = makeGroup(composite);
-		simpleGroup.setText("Tactics");
-		simpleGroup.setLayout(new GridLayout());
-		simpleList = new ListViewer(simpleGroup, SWT.SINGLE);
-		simpleList.setLabelProvider(labelProvider);
+		simpleList = makeListViewer(composite, "Tactics");
 		
 		combViewer.createContents(composite);
 		combViewer.addEditSupport();
 		
 		final Composite combAndRef = makeGrid(composite, 1);
-		final Group combGroup = makeGroup(combAndRef);
-		combGroup.setText("Combinators");
-		combGroup.setLayout(new GridLayout());
-		combList = new ListViewer(combGroup, SWT.SINGLE);
-		combList.setLabelProvider(labelProvider);
+		combList = makeListViewer(combAndRef, "Combinators");
 		
-		final Group refGroup = makeGroup(combAndRef);
-		refGroup.setText("Profiles");
-		refGroup.setLayout(new GridLayout());
-		refList = new ListViewer(refGroup, SWT.SINGLE);
-		refList.setLabelProvider(labelProvider);
+		refList = makeListViewer(combAndRef, "Profiles");
 		
 		// TODO add a "Description" group containing current selection
 		// description
 	}
 
+	private static ListViewer makeListViewer(Composite parent, String text) {
+		final TacticNodeLabelProvider labelProvider = new TacticNodeLabelProvider();
+		final Transfer[] transferTypes = new Transfer[] { LocalSelectionTransfer
+				.getTransfer() };
+
+		final Group simpleGroup = makeGroup(parent);
+		simpleGroup.setText(text);
+		simpleGroup.setLayout(new GridLayout());
+		final ListViewer viewer = new ListViewer(simpleGroup, SWT.SINGLE);
+		viewer.setLabelProvider(labelProvider);
+		final ViewerSelectionDragEffect simpleDrag = new ViewerSelectionDragEffect(
+				viewer);
+		viewer.addDragSupport(DND.DROP_MOVE, transferTypes, simpleDrag);
+		return viewer;
+	}
+	
 	private static Group makeGroup(final Composite parent) {
 		final int style =  SWT.FILL | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 		return new Group(parent, style);
