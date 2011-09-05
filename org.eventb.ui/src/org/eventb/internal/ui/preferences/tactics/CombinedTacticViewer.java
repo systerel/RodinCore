@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
+import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.packAll;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -162,6 +164,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			if (parent == null) {
 				if (nodes.size() == 1) {
 					viewer.setInput(nodes.get(0));
+					viewer.refresh();
 					return true;
 				}
 				return false;
@@ -717,9 +720,9 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	}
 	
 	public static class DeleteNodeAction extends Action {
-		private final TreeViewer viewer;
+		private final CombinedTacticViewer viewer;
 
-		public DeleteNodeAction(TreeViewer viewer) {
+		public DeleteNodeAction(CombinedTacticViewer viewer) {
 			this.viewer = viewer;
 			setActionDefinitionId("org.eclipse.ui.edit.delete");
 			setText("delete");
@@ -744,6 +747,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				// TODO may not be convenient when dragging from outside
 				// consider making an invisible root
 				viewer.setInput(null);
+				viewer.refresh();
 				return;
 			}
 			final Object firstElement = treeSel.getFirstElement();
@@ -759,8 +763,12 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 	}
 	
+	public static interface ITacticRefreshListener {
+		void tacticRefreshed();
+	}
 	
 	private TreeViewer treeViewer;
+	private final List<ITacticRefreshListener> listeners = new ArrayList<ITacticRefreshListener>();
 	
 	@Override
 	public void createContents(Composite parent) {
@@ -770,6 +778,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		tree.setLayout(new GridLayout());
 		final GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		layoutData.minimumWidth = 200;
+		layoutData.minimumHeight = 200;
 		tree.setLayoutData(layoutData);
 		treeViewer.setContentProvider(new TacticContentProvider());
 		treeViewer.setLabelProvider(new TacticNodeLabelProvider());
@@ -782,7 +791,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 		treeViewer.setInput(desc);
 		treeViewer.expandAll();
-		treeViewer.getTree().pack();
 	}
 
 	@Override
@@ -793,9 +801,52 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		return treeViewer.getTree();
 	}
 
+	public void addTacticRefreshListener(ITacticRefreshListener listener) {
+		if(!listeners.contains(listener)) {
+			listeners.add(listener);
+		}
+	}
+	
+	public void removedTacticRefreshListener(ITacticRefreshListener listener) {
+		listeners.remove(listener);
+	}
+	
+	private void notifyListeners() {
+		for(ITacticRefreshListener listener:listeners) {
+			listener.tacticRefreshed();
+		}
+	}
+	
 	public void refresh(ITacticNode node) {
 		treeViewer.refresh(node);
 		treeViewer.expandToLevel(node, 1);
+		internalPack(treeViewer.getTree());
+		notifyListeners();
+	}
+
+	@Override
+	public void refresh() {
+		treeViewer.refresh();
+		internalPack(treeViewer.getTree());
+		notifyListeners();
+	}
+
+	private static void internalPack(Composite c) {
+		packAll(c, 8);
+		
+//		final Point size = c.getSize();
+//		final Point preferredSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+//		preferredSize.x = Math.max(preferredSize.x, size.x);
+//		preferredSize.y = Math.max(preferredSize.y, size.y);
+//		if (!preferredSize.equals(size)) {
+//			c.setSize(preferredSize);
+//			c.redraw();
+//			final Composite parent = c.getParent();
+//			if (parent != null) {
+//				internalPack(parent);
+//			}
+//		}
+
 	}
 	
 	public void addEditSupport() {
@@ -817,9 +868,9 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	}
 	
 	private void addPopupMenu() {
-		final Tree tree = treeViewer.getTree();
 		final MenuManager mgr = new MenuManager();
-		mgr.add(new DeleteNodeAction(treeViewer));
+		mgr.add(new DeleteNodeAction(this));
+		final Tree tree = treeViewer.getTree();
 		tree.setMenu(mgr.createContextMenu(tree));
 	}
 
@@ -863,11 +914,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	}
 
 	@Override
-	public void refresh() {
-		treeViewer.refresh();
-	}
-
-	@Override
 	public void setSelection(ISelection selection, boolean reveal) {
 		treeViewer.setSelection(selection, reveal);
 	}
@@ -891,5 +937,10 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	public void setSelection(ISelection selection) {
 		treeViewer.setSelection(selection);
 	}
-	
+
+	@Override
+	public void dispose() {
+		listeners.clear();
+		super.dispose();
+	}
 }

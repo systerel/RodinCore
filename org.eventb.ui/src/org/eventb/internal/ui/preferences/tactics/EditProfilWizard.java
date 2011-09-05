@@ -42,6 +42,7 @@ import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.ui.preferences.AbstractEventBPreferencePage;
+import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ITacticRefreshListener;
 
 public class EditProfilWizard extends Wizard {
 	// wizard map:
@@ -324,6 +325,12 @@ public class EditProfilWizard extends Wizard {
 				combEditor = new CombinedTacticEditor(cache);
 				combEditor.createContents(composite);
 				combEditor.setInput(selected);
+				combEditor.addTacticRefreshListener(new ITacticRefreshListener() {
+					@Override
+					public void tacticRefreshed() {
+						updateStatus();
+					}
+				});
 				combEditor.show();
 				composite.pack();
 				parent.pack();

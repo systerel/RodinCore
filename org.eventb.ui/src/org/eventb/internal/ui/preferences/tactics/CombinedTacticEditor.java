@@ -31,6 +31,7 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.ui.preferences.AbstractEventBPreferencePage;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.CombinatorNode;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ITacticNode;
+import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ITacticRefreshListener;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ProfileNode;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.SimpleNode;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ViewerSelectionDragEffect;
@@ -41,6 +42,8 @@ import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.TacticNod
  *
  */
 public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor> {
+	// TODO extend CombinedTacticViewer rather than compose
+	
 	// TODO make a 'trash' composite where user can drop tactic nodes 
 	// (destroys ? stores with a viewer ?)
 
@@ -181,13 +184,20 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	@Override
 	public void refresh() {
 		combViewer.refresh();
-		
 	}
 
 	@Override
 	public void setSelection(ISelection selection, boolean reveal) {
 		combViewer.setSelection(selection, reveal);
-		
 	}
+	
+	public void addTacticRefreshListener(ITacticRefreshListener listener) {
+		combViewer.addTacticRefreshListener(listener);
+	}
+	
+	public void removedTacticRefreshListener(ITacticRefreshListener listener) {
+		combViewer.removedTacticRefreshListener(listener);
+	}
+
 	
 }
