@@ -184,8 +184,7 @@ public class PostAutoTacticPreferencePage extends
 		composite.setLayout(layout);
 	}
 
-	protected void updateButtonAndDetails() {
-		tacticList.updateDetails();
+	protected void updateButtons() {
 		updateProfilesButton();
 	}
 
@@ -201,7 +200,7 @@ public class PostAutoTacticPreferencePage extends
 			@Override
 			public void cacheChanged(
 					CachedPreferenceMap<ITacticDescriptor> map) {
-				updateButtonAndDetails();
+				updateButtons();
 				updateTacticsList();
 			}
 
@@ -250,7 +249,7 @@ public class PostAutoTacticPreferencePage extends
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				updateButtonAndDetails();
+				updateButtons();
 			}
 
 		});
@@ -407,7 +406,7 @@ public class PostAutoTacticPreferencePage extends
 		tacticList.clear();
 		tacticList.setList(labels);
 		tacticList.setSelection(selection);
-		updateButtonAndDetails();
+		updateButtons();
 	}
 
 	protected String[] getSortedProfileNames() {
@@ -462,7 +461,7 @@ public class PostAutoTacticPreferencePage extends
 		@Override
 		public void setEnabled(boolean enabled) {
 			tacticList.setEnabled(enabled);
-			updateButtonAndDetails();
+			updateButtons();
 			autoTactic.setEnabled(enabled);
 			postTactic.setEnabled(enabled);
 		}
