@@ -659,7 +659,7 @@
       <combinator
             boundArity="false"
             class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$LoopOnAllPending"
-            description="loops on all pending proof nodes"
+            description="%loopOnAllPendingDescription"
             id="loopOnAllPending"
             minArity="1"
             name="%loopOnAllPendingName">
