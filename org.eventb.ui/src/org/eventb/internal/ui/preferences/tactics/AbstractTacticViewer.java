@@ -37,23 +37,27 @@ public abstract class AbstractTacticViewer<T extends ITacticDescriptor> extends 
 	 */
 	public abstract T getEditResult();
 	
+	private static boolean checkControl(Control control) {
+		return control != null && !control.isDisposed();
+	}
+
 	public void dispose() {
 		final Control control = getControl();
-		if (control != null) {
+		if (checkControl(control)) {
 			control.dispose();
 		}
 	}
 
 	public void show() {
 		final Control control = getControl();
-		if (control != null) {
+		if (checkControl(control)) {
 			control.setVisible(true);
 		}
 	}
 
 	public void hide() {
 		final Control control = getControl();
-		if (control != null) {
+		if (checkControl(control)) {
 			control.setVisible(false);
 		}
 	}

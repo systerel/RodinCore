@@ -17,6 +17,7 @@ import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profilemus
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_title;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
@@ -56,7 +57,6 @@ public class EditProfilWizard extends Wizard {
 
 	private final ChoiceParamCombined choiceParamCombined = new ChoiceParamCombined();
 	final ChoiceParameterizer choiceParameterizer = new ChoiceParameterizer();
-	final EditProfilWizardPage editProfile = new EditProfilWizardPage();
 
 	final TacticsProfilesCache cache;
 	// indicates if the wizard has to create the profile
@@ -66,7 +66,7 @@ public class EditProfilWizard extends Wizard {
 
 	private IPrefMapEntry<ITacticDescriptor> profile = null;
 
-	ITacticDescriptor selected;
+	final ITacticDescriptor selected;
 
 	TacticKind kind = null;
 
@@ -97,10 +97,34 @@ public class EditProfilWizard extends Wizard {
 			addPage(choiceParameterizer);
 			// edit profile page must be added when selected is set
 		} else {
-			addPage(editProfile);
+			addPage(makeEditPage());
 		}
 	}
 
+	private WizardPage makeEditPage() {
+		if (selected instanceof IParamTacticDescriptor) {
+			return new ParamEditPage((IParamTacticDescriptor) selected);
+		} else {
+			return new CombEditPage(selected);
+		}
+	}
+	
+	private EditProfilWizardPage<?> getEditPage() {
+		final IWizardContainer container = getContainer();
+		if (container == null) {
+			return null;
+		}
+		final IWizardPage currentPage = container.getCurrentPage();
+		if (currentPage == null) {
+			return null;
+		}
+		
+		if (!(currentPage instanceof EditProfilWizardPage<?>)) {
+			return null;
+		}
+		return (EditProfilWizardPage<?>) currentPage;
+	}
+	
 	/**
 	 * If new profile, create the profile with selected tactics. Else change the
 	 * tactics list of existing profile. The modification is only in the
@@ -108,15 +132,19 @@ public class EditProfilWizard extends Wizard {
 	 */
 	@Override
 	public boolean performFinish() {
+		final EditProfilWizardPage<?> editPage = getEditPage();
+		if (editPage == null) {
+			return false;
+		}
 		// renames the profile if it already exist
-		final String editProfileName = editProfile.getProfileName();
+		final String editProfileName = editPage.getProfileName();
 		profile = cache.getEntry(profileName);
 		if (!created && !profileName.equals(editProfileName)) {
 			Assert.isNotNull(profile, "profile should already exist: "
 					+ profileName);
 			profile.setKey(editProfileName);
 		}
-		final ITacticDescriptor resultDesc = editProfile.getResultDescriptor();
+		final ITacticDescriptor resultDesc = editPage.getResultDescriptor();
 		if (resultDesc == null) {
 			return false;
 		}
@@ -131,7 +159,8 @@ public class EditProfilWizard extends Wizard {
 
 	@Override
 	public boolean canFinish() {
-		return editProfile.isPageComplete();
+		final EditProfilWizardPage<?> editPage = getEditPage();
+		return editPage != null && editPage.isPageComplete();
 	}
 
 	private static enum TacticKind {
@@ -208,7 +237,7 @@ public class EditProfilWizard extends Wizard {
 			}
 			switch (kind) {
 			case COMBINED:
-				return editProfile;
+				return new CombEditPage(selected);
 			case PARAMETERIZED:
 				return choiceParameterizer;
 			default:
@@ -272,32 +301,37 @@ public class EditProfilWizard extends Wizard {
 
 		@Override
 		public IWizardPage getNextPage() {
-			if (choice == null)
+			if (choice == null) {
 				return null;
-			selected = choice.instantiate(choice.makeParameterSetting(), choice
-					.getTacticDescriptor().getTacticID() + ".custom");
-			return editProfile;
+			}
+			final String id = choice.getTacticDescriptor().getTacticID()
+					+ ".custom";
+			final IParamTacticDescriptor param = choice.instantiate(
+					choice.makeParameterSetting(), id);
+			return new ParamEditPage(param);
 		}
 	}
 
-	private class EditProfilWizardPage extends WizardPage {
+	private abstract class EditProfilWizardPage<T extends ITacticDescriptor> extends WizardPage {
 		// input text for profile name
 		private Text profileText;
-		private ParamTacticViewer paramViewer = null;
-		private CombinedTacticEditor combEditor = null;
+		protected final T edited;
+		private Composite composite = null;
 		
-		public EditProfilWizardPage() {
+		public EditProfilWizardPage(T edited) {
 			super(wizard_editprofil_title);
+			this.edited = edited;
 			setDescription(wizard_editprofil_description);
 			setWizard(EditProfilWizard.this);
 			setPageComplete(false);
 		}
 
+		protected abstract void createViewer(Composite parent);
+		
 		@Override
 		public void createControl(Composite parent) {
 
-			// create parent control
-			final Composite composite = createParentComposite(parent);
+			composite = createParentComposite(parent);
 			setControl(composite);
 
 			setTitle(wizard_editprofil_title);
@@ -314,27 +348,11 @@ public class EditProfilWizard extends Wizard {
 					updateStatus();
 				}
 			});
-
-			if (selected instanceof IParamTacticDescriptor) {
-				paramViewer = new ParamTacticViewer();
-				paramViewer.createContents(composite);
-				paramViewer.setInput((IParamTacticDescriptor) selected);
-			} else {
-				// selected is a combined or ref or simple: treat equally with a
-				// combined tactic editor
-				combEditor = new CombinedTacticEditor(cache);
-				combEditor.createContents(composite);
-				combEditor.setInput(selected);
-				combEditor.addTacticRefreshListener(new ITacticRefreshListener() {
-					@Override
-					public void tacticRefreshed() {
-						updateStatus();
-					}
-				});
-				combEditor.show();
-				composite.pack();
-				parent.pack();
-			}
+			
+			createViewer(composite);
+			
+			composite.pack();
+			parent.pack();
 			updateStatus();
 		}
 
@@ -346,24 +364,17 @@ public class EditProfilWizard extends Wizard {
 		}
 
 		/**
-		 * Gets the list of selected objects.
+		 * Gets the resulting descriptor.
 		 * 
-		 * @return the list of selected objects.
+		 * @return a tactic descriptor
 		 */
-		public ITacticDescriptor getResultDescriptor() {
-			if (paramViewer != null) {
-				return paramViewer.getEditResult();
-			}
-			if (combEditor != null) {
-				return combEditor.getEditResult();
-			}
-			return null;
-		}
+		public  abstract T getResultDescriptor();
 
+		protected abstract boolean isResultValid();
 		/**
 		 * Update the status of this dialog.
 		 */
-		void updateStatus() {
+		protected void updateStatus() {
 			String message = null;
 			boolean complete = true;
 			if (profileText == null)
@@ -378,16 +389,79 @@ public class EditProfilWizard extends Wizard {
 					complete = false;
 				}
 			}
-			if (combEditor != null && !combEditor.isResultValid()) {
-				// TODO update status when tree changes
-				message = "Invalid tactic";
-				complete = false;
+			if (complete) {
+				final boolean resultValid = isResultValid();
+				if (!resultValid) {
+					message = "Invalid tactic";
+					complete = false;
+				}
 			}
 			setErrorMessage(message);
 			setPageComplete(complete);
 		}
 	}
 
+	private class ParamEditPage extends EditProfilWizardPage<IParamTacticDescriptor> {
+
+		private ParamTacticViewer paramViewer = null;
+
+		public ParamEditPage(IParamTacticDescriptor edited) {
+			super(edited);
+		}
+
+		@Override
+		protected void createViewer(Composite parent) {
+			paramViewer = new ParamTacticViewer();
+			paramViewer.createContents(parent);
+			paramViewer.setInput(edited);
+		}
+
+		@Override
+		public IParamTacticDescriptor getResultDescriptor() {
+			return paramViewer.getEditResult();
+		}
+
+		@Override
+		protected boolean isResultValid() {
+			return true;
+		}
+		
+	}
+	
+	private class CombEditPage extends EditProfilWizardPage<ITacticDescriptor> {
+
+		private CombinedTacticEditor combEditor = null;
+
+		public CombEditPage(ITacticDescriptor edited) {
+			super(edited);
+		}
+
+		@Override
+		protected void createViewer(Composite parent) {
+			combEditor = new CombinedTacticEditor(cache);
+			combEditor.createContents(parent);
+			combEditor.setInput(edited);
+			combEditor.addTacticRefreshListener(new ITacticRefreshListener() {
+				@Override
+				public void tacticRefreshed() {
+					updateStatus();
+				}
+			});
+			combEditor.show();
+		}
+
+		@Override
+		public ITacticDescriptor getResultDescriptor() {
+			return combEditor.getEditResult();
+		}
+
+		@Override
+		protected boolean isResultValid() {
+			return combEditor.isResultValid();
+		}
+		
+	}
+	
 	/**
 	 * Returns the edited profile.
 	 */

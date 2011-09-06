@@ -890,7 +890,11 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	}
 
 	private ITacticNode getTopNode() {
-		final TreeItem topItem = treeViewer.getTree().getTopItem();
+		final Tree tree = treeViewer.getTree();
+		if (tree.isDisposed()) {
+			return null;
+		}
+		final TreeItem topItem = tree.getTopItem();
 		if (topItem == null) {
 			return null;
 		}
