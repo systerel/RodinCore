@@ -463,6 +463,19 @@ public abstract class TreeShape {
 
 	}
 
+	private static class MapOvrGShape extends HypothesisShape {
+
+		public MapOvrGShape(Predicate predicate, TreeShape... expChildren) {
+			super(predicate, expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return "org.eventb.core.seqprover.mapOvrG";
+		}
+
+	}
+
 	public static final TreeShape empty = new EmptyShape();
 
 	/**
@@ -579,6 +592,10 @@ public abstract class TreeShape {
 
 	public static TreeShape mbg(Predicate[] predicates, TreeShape... children) {
 		return new MBGoalShape(predicates, children);
+	}
+
+	public static TreeShape mapOvrG(Predicate predicate, TreeShape... chidlren) {
+		return new MapOvrGShape(predicate, chidlren);
 	}
 
 	protected final TreeShape[] expChildren;
