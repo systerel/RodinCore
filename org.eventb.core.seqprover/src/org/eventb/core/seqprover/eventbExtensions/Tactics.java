@@ -142,6 +142,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpAndRewri
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ImpOrRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusLeftRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.InclusionSetMinusRightRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.LocalEqRewrite;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PartitionRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanCompRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RanDistLeftRewrites;
@@ -750,6 +751,15 @@ public class Tactics {
 
 	public static boolean eqE_applicable(Predicate hyp) {
 		return Lib.isEq(hyp);
+	}
+
+	/**
+	 * @since 2.3
+	 */
+	public static ITactic localEqRewrite(Predicate predicate,
+			IPosition position, Predicate equality) {
+		return BasicTactics.reasonerTac(new LocalEqRewrite(),
+				new LocalEqRewrite.Input(predicate, position, equality));
 	}
 
 //	/**

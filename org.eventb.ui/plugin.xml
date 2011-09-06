@@ -1646,6 +1646,16 @@
             target="any"
             tooltip="%proofTactic.finiteDef.tooltip">
       </tactic>
+      <tactic
+            icon="icons/pending.gif"
+            id="org.eventb.ui.locEq"
+            interrupt="true"
+            name="%proofTactic.locEq.name"
+            priority="5"
+            tacticProvider="org.eventb.internal.ui.prover.tactics.LocalEqRewriteProvider"
+            target="any"
+            tooltip="%proofTactic.locEq.tooltip">
+      </tactic>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

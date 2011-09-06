@@ -448,6 +448,10 @@
             id="doubleImplGoalRewrites"
             name="%doubleImplGoalRewritesName">
       </reasoner>
+      <reasoner
+     		class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.LocalEqRewrite"
+      		id="locEq"
+      		name="%locEqName"/>
    </extension>
    <extension
          point="org.eventb.core.seqprover.autoTactics">
