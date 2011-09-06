@@ -46,7 +46,7 @@ import org.eventb.core.ast.UnaryExpression;
  * 
  * @author Emmanuel Billaud
  */
-public abstract class Rule<T extends Predicate> implements Cloneable {
+public abstract class Rule<T extends Predicate> {
 
 	private static final Rule<?>[] NO_RULES = new Rule<?>[0];
 
