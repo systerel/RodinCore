@@ -187,12 +187,7 @@ public abstract class Rule<T extends Predicate> {
 			inCondition(inPred);
 			final RelationalPredicate inclusionPred = inclusion.consequent;
 			subsetCondition(inclusionPred);
-			if (!inPred.getRight().equals(inclusionPred.getLeft())) {
-				throw new IllegalArgumentException("Right expression of "
-						+ inPred.toString()
-						+ " is not equal to the left expression of "
-						+ inclusionPred.toString());
-			}
+			equalityCondition(inPred.getRight(), inclusionPred.getLeft());
 			int tag;
 			if (inPred.getTag() == IN) {
 				tag = IN;
@@ -238,19 +233,10 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate ovrInclPred = ovrInclusion.consequent;
 			subsetCondition(ovrInclPred);
 			final Expression ovr = ovrInclPred.getLeft();
-			if (ovr.getTag() != OVR) {
-				throw new IllegalArgumentException(ovr.toString()
-						+ " should denote an overriding.");
-			}
+			ovrCondition(ovr);
 			final Expression[] children = ((AssociativeExpression) ovr)
 					.getChildren();
-			if (!inclPred.getRight().equals(children[0])) {
-				throw new IllegalArgumentException(
-						"First member of the overriding ("
-								+ children[0].toString()
-								+ ") should be equal to the right member of the inclusion ("
-								+ inclPred.getRight().toString() + ").");
-			}
+			equalityCondition(inclPred.getRight(), children[0]);
 			Expression[] newChidlren = new Expression[children.length];
 			newChidlren[0] = inclPred.getLeft();
 			System.arraycopy(children, 1, newChidlren, 1, children.length - 1);
@@ -292,17 +278,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate setminusPred = setminusRule.consequent;
 			subsetCondition(setminusPred);
 			final Expression setminus = setminusPred.getLeft();
-			if (setminus.getTag() != SETMINUS) {
-				throw new IllegalArgumentException(setminus.toString()
-						+ " should denote a set difference.");
-			}
+			setminusCondition(setminus);
 			final BinaryExpression binSetminus = (BinaryExpression) setminus;
-			final Expression left = binSetminus.getLeft();
-			final Expression right = inclusionPred.getRight();
-			if (!left.equals(right)) {
-				throw new IllegalArgumentException(left.toString()
-						+ " should be equal to " + right.toString());
-			}
+			equalityCondition(binSetminus.getLeft(), inclusionPred.getRight());
 			final BinaryExpression newSetminus = inclusionRule.ff
 					.makeBinaryExpression(SETMINUS, inclusionPred.getLeft(),
 							binSetminus.getRight(), null);
@@ -343,17 +321,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate setminusPred = setminusRule.consequent;
 			subsetCondition(setminusPred);
 			final Expression setminus = setminusPred.getLeft();
-			if (setminus.getTag() != SETMINUS) {
-				throw new IllegalArgumentException(setminus.toString()
-						+ " should denote a set difference.");
-			}
+			setminusCondition(setminus);
 			final BinaryExpression binSetminus = (BinaryExpression) setminus;
-			final Expression right = binSetminus.getRight();
-			final Expression left = inclusionPred.getLeft();
-			if (!right.equals(left)) {
-				throw new IllegalArgumentException(right.toString()
-						+ " should be equal to " + left.toString());
-			}
+			equalityCondition(binSetminus.getRight(), inclusionPred.getLeft());
 			final BinaryExpression newSetminus = inclusionRule.ff
 					.makeBinaryExpression(SETMINUS, binSetminus.getLeft(),
 							inclusionPred.getRight(), null);
@@ -396,17 +366,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate setminusPred = setminusRule.consequent;
 			inCondition(setminusPred);
 			final Expression setminus = setminusPred.getRight();
-			if (setminus.getTag() != SETMINUS) {
-				throw new IllegalArgumentException(setminus.toString()
-						+ " should denote a set difference.");
-			}
+			setminusCondition(setminus);
 			final BinaryExpression binSetminus = (BinaryExpression) setminus;
-			final Expression setminusLeft = binSetminus.getLeft();
-			final Expression inclLeft = inclusionPred.getLeft();
-			if (!setminusLeft.equals(inclLeft)) {
-				throw new IllegalArgumentException(setminusLeft.toString()
-						+ " should be equal to " + inclLeft.toString());
-			}
+			equalityCondition(binSetminus.getLeft(), inclusionPred.getLeft());
 			final BinaryExpression newSetminus = inclusionRule.ff
 					.makeBinaryExpression(SETMINUS, inclusionPred.getRight(),
 							binSetminus.getRight(), null);
@@ -449,17 +411,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate setminusPred = setminusRule.consequent;
 			inCondition(setminusPred);
 			final Expression setminus = setminusPred.getRight();
-			if (setminus.getTag() != SETMINUS) {
-				throw new IllegalArgumentException(setminus.toString()
-						+ " should denote a set difference.");
-			}
+			setminusCondition(setminus);
 			final BinaryExpression binSetminus = (BinaryExpression) setminus;
-			final Expression setminusRight = binSetminus.getRight();
-			final Expression inclRight = inclusionPred.getRight();
-			if (!setminusRight.equals(inclRight)) {
-				throw new IllegalArgumentException(setminusRight.toString()
-						+ " should be equal to " + inclRight.toString());
-			}
+			equalityCondition(binSetminus.getRight(), inclusionPred.getRight());
 			final BinaryExpression newSetminus = inclusionRule.ff
 					.makeBinaryExpression(SETMINUS, binSetminus.getLeft(),
 							inclusionPred.getLeft(), null);
@@ -500,17 +454,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate ranresPred = ranresRule.consequent;
 			subsetCondition(ranresPred);
 			final Expression ranres = ranresPred.getLeft();
-			if (ranres.getTag() != RANRES) {
-				throw new IllegalArgumentException(ranres.toString()
-						+ " should denote a range restriction.");
-			}
+			ranresCondition(ranres);
 			final BinaryExpression binRanres = (BinaryExpression) ranres;
-			final Expression left = binRanres.getLeft();
-			final Expression right = inclusionPred.getRight();
-			if (!left.equals(right)) {
-				throw new IllegalArgumentException(left.toString()
-						+ " should be equal to " + right.toString());
-			}
+			equalityCondition(binRanres.getLeft(), inclusionPred.getRight());
 			final BinaryExpression newRanres = inclusionRule.ff
 					.makeBinaryExpression(RANRES, inclusionPred.getLeft(),
 							binRanres.getRight(), null);
@@ -551,17 +497,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate ranresPred = ranresRule.consequent;
 			subsetCondition(ranresPred);
 			final Expression ranres = ranresPred.getLeft();
-			if (ranres.getTag() != RANRES) {
-				throw new IllegalArgumentException(ranres.toString()
-						+ " should denote a range restriction.");
-			}
+			ranresCondition(ranres);
 			final BinaryExpression binRanres = (BinaryExpression) ranres;
-			final Expression ranresRight = binRanres.getRight();
-			final Expression inclRight = inclusionPred.getRight();
-			if (!ranresRight.equals(inclRight)) {
-				throw new IllegalArgumentException(ranresRight.toString()
-						+ " should be equal to " + inclRight.toString());
-			}
+			equalityCondition(binRanres.getRight(), inclusionPred.getRight());
 			final BinaryExpression newRanres = inclusionRule.ff
 					.makeBinaryExpression(RANRES, binRanres.getLeft(),
 							inclusionPred.getLeft(), null);
@@ -603,17 +541,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate ranresPred = ranresRule.consequent;
 			inCondition(ranresPred);
 			final Expression ranres = ranresPred.getRight();
-			if (ranres.getTag() != RANRES) {
-				throw new IllegalArgumentException(ranres.toString()
-						+ " should denote a range restriction.");
-			}
+			ranresCondition(ranres);
 			final BinaryExpression binRanres = (BinaryExpression) ranres;
-			final Expression ranresLeft = binRanres.getLeft();
-			final Expression inclLeft = inclusionPred.getLeft();
-			if (!ranresLeft.equals(inclLeft)) {
-				throw new IllegalArgumentException(ranresLeft.toString()
-						+ " should be equal to " + inclLeft.toString());
-			}
+			equalityCondition(binRanres.getLeft(), inclusionPred.getLeft());
 			final BinaryExpression newRanres = inclusionRule.ff
 					.makeBinaryExpression(RANRES, inclusionPred.getRight(),
 							binRanres.getRight(), null);
@@ -654,17 +584,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate ranresPred = ranresRule.consequent;
 			inCondition(ranresPred);
 			final Expression ranres = ranresPred.getRight();
-			if (ranres.getTag() != RANRES) {
-				throw new IllegalArgumentException(ranres.toString()
-						+ " should denote a range restriction.");
-			}
+			ranresCondition(ranres);
 			final BinaryExpression binRanres = (BinaryExpression) ranres;
-			final Expression ranresRight = binRanres.getRight();
-			final Expression inclLeft = inclusionPred.getLeft();
-			if (!ranresRight.equals(inclLeft)) {
-				throw new IllegalArgumentException(ranresRight.toString()
-						+ " should be equal to " + inclLeft.toString());
-			}
+			equalityCondition(binRanres.getRight(), inclusionPred.getLeft());
 			final BinaryExpression newRanres = inclusionRule.ff
 					.makeBinaryExpression(RANRES, binRanres.getLeft(),
 							inclusionPred.getRight(), null);
@@ -704,17 +626,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate domresPred = domresRule.consequent;
 			subsetCondition(domresPred);
 			final Expression domres = domresPred.getLeft();
-			if (domres.getTag() != DOMRES) {
-				throw new IllegalArgumentException(domres.toString()
-						+ " should denote a domain restriction.");
-			}
+			domresCondition(domres);
 			final BinaryExpression binDomres = (BinaryExpression) domres;
-			final Expression left = binDomres.getLeft();
-			final Expression right = inclusionPred.getRight();
-			if (!left.equals(right)) {
-				throw new IllegalArgumentException(left.toString()
-						+ " should be equal to " + right.toString());
-			}
+			equalityCondition(binDomres.getLeft(), inclusionPred.getRight());
 			final BinaryExpression newDomres = inclusionRule.ff
 					.makeBinaryExpression(DOMRES, inclusionPred.getLeft(),
 							binDomres.getRight(), null);
@@ -755,17 +669,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate domresPred = domresRule.consequent;
 			subsetCondition(domresPred);
 			final Expression domres = domresPred.getLeft();
-			if (domres.getTag() != DOMRES) {
-				throw new IllegalArgumentException(domres.toString()
-						+ " should denote a domain restriction.");
-			}
+			domresCondition(domres);
 			final BinaryExpression binDomres = (BinaryExpression) domres;
-			final Expression domresRight = binDomres.getRight();
-			final Expression inclRight = inclusionPred.getRight();
-			if (!domresRight.equals(inclRight)) {
-				throw new IllegalArgumentException(domresRight.toString()
-						+ " should be equal to " + inclRight.toString());
-			}
+			equalityCondition(binDomres.getRight(), inclusionPred.getRight());
 			final BinaryExpression newDomres = inclusionRule.ff
 					.makeBinaryExpression(DOMRES, binDomres.getLeft(),
 							inclusionPred.getLeft(), null);
@@ -807,17 +713,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate domresPred = domresRule.consequent;
 			inCondition(domresPred);
 			final Expression domres = domresPred.getRight();
-			if (domres.getTag() != DOMRES) {
-				throw new IllegalArgumentException(domres.toString()
-						+ " should denote a domain restriction.");
-			}
+			domresCondition(domres);
 			final BinaryExpression binDomres = (BinaryExpression) domres;
-			final Expression domresLeft = binDomres.getLeft();
-			final Expression inclLeft = inclusionPred.getLeft();
-			if (!domresLeft.equals(inclLeft)) {
-				throw new IllegalArgumentException(domresLeft.toString()
-						+ " should be equal to " + inclLeft.toString());
-			}
+			equalityCondition(binDomres.getLeft(), inclusionPred.getLeft());
 			final BinaryExpression newDomres = inclusionRule.ff
 					.makeBinaryExpression(DOMRES, inclusionPred.getRight(),
 							binDomres.getRight(), null);
@@ -858,17 +756,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate domresPred = domresRule.consequent;
 			inCondition(domresPred);
 			final Expression domres = domresPred.getRight();
-			if (domres.getTag() != DOMRES) {
-				throw new IllegalArgumentException(domres.toString()
-						+ " should denote a domain restriction.");
-			}
+			domresCondition(domres);
 			final BinaryExpression binDomres = (BinaryExpression) domres;
-			final Expression domresRight = binDomres.getRight();
-			final Expression inclLeft = inclusionPred.getLeft();
-			if (!domresRight.equals(inclLeft)) {
-				throw new IllegalArgumentException(domresRight.toString()
-						+ " should be equal to " + inclLeft.toString());
-			}
+			equalityCondition(binDomres.getRight(), inclusionPred.getLeft());
 			final BinaryExpression newDomres = inclusionRule.ff
 					.makeBinaryExpression(DOMRES, binDomres.getLeft(),
 							inclusionPred.getRight(), null);
@@ -908,17 +798,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate ransubPred = ransubRule.consequent;
 			subsetCondition(ransubPred);
 			final Expression ransub = ransubPred.getLeft();
-			if (ransub.getTag() != RANSUB) {
-				throw new IllegalArgumentException(ransub.toString()
-						+ " should denote a range substraction.");
-			}
+			ransubCondition(ransub);
 			final BinaryExpression binRansub = (BinaryExpression) ransub;
-			final Expression left = binRansub.getLeft();
-			final Expression right = inclusionPred.getRight();
-			if (!left.equals(right)) {
-				throw new IllegalArgumentException(left.toString()
-						+ " should be equal to " + right.toString());
-			}
+			equalityCondition(binRansub.getLeft(), inclusionPred.getRight());
 			final BinaryExpression newRansub = inclusionRule.ff
 					.makeBinaryExpression(RANSUB, inclusionPred.getLeft(),
 							binRansub.getRight(), null);
@@ -958,17 +840,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate ransubPred = ransubRule.consequent;
 			subsetCondition(ransubPred);
 			final Expression ransub = ransubPred.getLeft();
-			if (ransub.getTag() != RANSUB) {
-				throw new IllegalArgumentException(ransub.toString()
-						+ " should denote a range substraction.");
-			}
+			ransubCondition(ransub);
 			final BinaryExpression binRansub = (BinaryExpression) ransub;
-			final Expression right = binRansub.getRight();
-			final Expression left = inclusionPred.getLeft();
-			if (!right.equals(left)) {
-				throw new IllegalArgumentException(right.toString()
-						+ " should be equal to " + left.toString());
-			}
+			equalityCondition(binRansub.getRight(), inclusionPred.getLeft());
 			final BinaryExpression newRansub = inclusionRule.ff
 					.makeBinaryExpression(RANSUB, binRansub.getLeft(),
 							inclusionPred.getRight(), null);
@@ -1010,17 +884,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate ransubPred = ransubRule.consequent;
 			inCondition(ransubPred);
 			final Expression ransub = ransubPred.getRight();
-			if (ransub.getTag() != RANSUB) {
-				throw new IllegalArgumentException(ransub.toString()
-						+ " should denote a range substraction.");
-			}
+			ransubCondition(ransub);
 			final BinaryExpression binRansub = (BinaryExpression) ransub;
-			final Expression ransubLeft = binRansub.getLeft();
-			final Expression inclLeft = inclusionPred.getLeft();
-			if (!ransubLeft.equals(inclLeft)) {
-				throw new IllegalArgumentException(ransubLeft.toString()
-						+ " should be equal to " + inclLeft.toString());
-			}
+			equalityCondition(binRansub.getLeft(), inclusionPred.getLeft());
 			final BinaryExpression newRansub = inclusionRule.ff
 					.makeBinaryExpression(RANSUB, inclusionPred.getRight(),
 							binRansub.getRight(), null);
@@ -1061,17 +927,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate ransubPred = ransubRule.consequent;
 			inCondition(ransubPred);
 			final Expression ransub = ransubPred.getRight();
-			if (ransub.getTag() != RANSUB) {
-				throw new IllegalArgumentException(ransub.toString()
-						+ " should denote a range substraction.");
-			}
+			ransubCondition(ransub);
 			final BinaryExpression binRansub = (BinaryExpression) ransub;
-			final Expression ransubRight = binRansub.getRight();
-			final Expression inclRight = inclusionPred.getRight();
-			if (!ransubRight.equals(inclRight)) {
-				throw new IllegalArgumentException(ransubRight.toString()
-						+ " should be equal to " + inclRight.toString());
-			}
+			equalityCondition(binRansub.getRight(), inclusionPred.getRight());
 			final BinaryExpression newRansub = inclusionRule.ff
 					.makeBinaryExpression(RANSUB, binRansub.getLeft(),
 							inclusionPred.getLeft(), null);
@@ -1110,17 +968,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate domsubPred = domsubRule.consequent;
 			subsetCondition(domsubPred);
 			final Expression domsub = domsubPred.getLeft();
-			if (domsub.getTag() != DOMSUB) {
-				throw new IllegalArgumentException(domsub.toString()
-						+ " should denote a domain substraction.");
-			}
+			domsubCondition(domsub);
 			final BinaryExpression binDomsub = (BinaryExpression) domsub;
-			final Expression domsubLeft = binDomsub.getLeft();
-			final Expression inclLeft = inclusionPred.getLeft();
-			if (!domsubLeft.equals(inclLeft)) {
-				throw new IllegalArgumentException(domsubLeft.toString()
-						+ " should be equal to " + inclLeft.toString());
-			}
+			equalityCondition(binDomsub.getLeft(), inclusionPred.getLeft());
 			final BinaryExpression newDomsub = inclusionRule.ff
 					.makeBinaryExpression(DOMSUB, inclusionPred.getRight(),
 							binDomsub.getRight(), null);
@@ -1161,17 +1011,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate domsubPred = domsubRule.consequent;
 			subsetCondition(domsubPred);
 			final Expression domsub = domsubPred.getLeft();
-			if (domsub.getTag() != DOMSUB) {
-				throw new IllegalArgumentException(domsub.toString()
-						+ " should denote a domain substraction.");
-			}
+			domsubCondition(domsub);
 			final BinaryExpression binDomsub = (BinaryExpression) domsub;
-			final Expression domsubRight = binDomsub.getRight();
-			final Expression inclRight = inclusionPred.getRight();
-			if (!domsubRight.equals(inclRight)) {
-				throw new IllegalArgumentException(domsubRight.toString()
-						+ " should be equal to " + inclRight.toString());
-			}
+			equalityCondition(binDomsub.getRight(), inclusionPred.getRight());
 			final BinaryExpression newDomsub = inclusionRule.ff
 					.makeBinaryExpression(DOMSUB, binDomsub.getLeft(),
 							inclusionPred.getLeft(), null);
@@ -1214,17 +1056,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate domsubPred = domsubRule.consequent;
 			inCondition(domsubPred);
 			final Expression domsub = domsubPred.getRight();
-			if (domsub.getTag() != DOMSUB) {
-				throw new IllegalArgumentException(domsub.toString()
-						+ " should denote a domain substraction.");
-			}
+			domsubCondition(domsub);
 			final BinaryExpression binDomsub = (BinaryExpression) domsub;
-			final Expression domsubLeft = binDomsub.getLeft();
-			final Expression inclRight = inclusionPred.getRight();
-			if (!domsubLeft.equals(inclRight)) {
-				throw new IllegalArgumentException(domsubLeft.toString()
-						+ " should be equal to " + inclRight.toString());
-			}
+			equalityCondition(binDomsub.getLeft(), inclusionPred.getRight());
 			final BinaryExpression newDomsub = inclusionRule.ff
 					.makeBinaryExpression(DOMSUB, inclusionPred.getLeft(),
 							binDomsub.getRight(), null);
@@ -1265,17 +1099,9 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate domsubPred = domsubRule.consequent;
 			inCondition(domsubPred);
 			final Expression domsub = domsubPred.getRight();
-			if (domsub.getTag() != DOMSUB) {
-				throw new IllegalArgumentException(domsub.toString()
-						+ " should denote a domain substraction.");
-			}
+			domsubCondition(domsub);
 			final BinaryExpression binDomsub = (BinaryExpression) domsub;
-			final Expression domsubRight = binDomsub.getRight();
-			final Expression inclLeft = inclusionPred.getLeft();
-			if (!domsubRight.equals(inclLeft)) {
-				throw new IllegalArgumentException(domsubRight.toString()
-						+ " should be equal to " + inclLeft.toString());
-			}
+			equalityCondition(binDomsub.getRight(), inclusionPred.getLeft());
 			final BinaryExpression newDomsub = inclusionRule.ff
 					.makeBinaryExpression(DOMSUB, binDomsub.getLeft(),
 							inclusionPred.getRight(), null);
@@ -1316,19 +1142,10 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate ovrInclPred = ovrInclusion.consequent;
 			inCondition(ovrInclPred);
 			final Expression ovr = ovrInclPred.getRight();
-			if (ovr.getTag() != OVR) {
-				throw new IllegalArgumentException(ovr.toString()
-						+ " should denote an overriding.");
-			}
+			ovrCondition(ovr);
 			final Expression[] children = ((AssociativeExpression) ovr)
 					.getChildren();
-			if (!inclPred.getLeft().equals(children[0])) {
-				throw new IllegalArgumentException(
-						"First member of the overriding ("
-								+ children[0].toString()
-								+ ") should be equal to the right member of the inclusion ("
-								+ inclPred.getRight().toString() + ").");
-			}
+			equalityCondition(inclPred.getLeft(), children[0]);
 			Expression[] newChidlren = new Expression[children.length];
 			newChidlren[0] = inclPred.getRight();
 			System.arraycopy(children, 1, newChidlren, 1, children.length - 1);
@@ -1604,17 +1421,10 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate cprodInclPred = cprodIncl.consequent;
 			subsetCondition(cprodInclPred);
 			final Expression cprod = cprodInclPred.getLeft();
-			if (cprod.getTag() != CPROD) {
-				throw new IllegalArgumentException(cprod.toString()
-						+ " should denote a cartesian product.");
-			}
-			final Expression left = ((BinaryExpression) cprod).getLeft();
-			final Expression right = ((BinaryExpression) cprod).getRight();
-			if (!left.equals(inclPred.getRight())) {
-				throw new IllegalArgumentException(left.toString()
-						+ " should be equal to "
-						+ inclPred.getRight().toString());
-			}
+			cprodCondition(cprod);
+			final BinaryExpression binCprod = (BinaryExpression) cprod;
+			final Expression right = binCprod.getRight();
+			equalityCondition(binCprod.getLeft(), inclPred.getRight());
 			final BinaryExpression newCprod = inclusion.ff
 					.makeBinaryExpression(CPROD, inclPred.getLeft(), right,
 							null);
@@ -1653,17 +1463,10 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate cprodInclPred = cprodIncl.consequent;
 			subsetCondition(cprodInclPred);
 			final Expression cprod = cprodInclPred.getLeft();
-			if (cprod.getTag() != CPROD) {
-				throw new IllegalArgumentException(cprod.toString()
-						+ " should denote a cartesian product.");
-			}
-			final Expression left = ((BinaryExpression) cprod).getLeft();
-			final Expression right = ((BinaryExpression) cprod).getRight();
-			if (!right.equals(inclPred.getRight())) {
-				throw new IllegalArgumentException(right.toString()
-						+ " should be equal to "
-						+ inclPred.getRight().toString());
-			}
+			cprodCondition(cprod);
+			final BinaryExpression binCprod = (BinaryExpression) cprod;
+			final Expression left = binCprod.getLeft();
+			equalityCondition(binCprod.getRight(), inclPred.getRight());
 			final BinaryExpression newCprod = inclusion.ff
 					.makeBinaryExpression(CPROD, left, inclPred.getLeft(), null);
 			return inclusion.ff.makeRelationalPredicate(cprodInclPred.getTag(),
@@ -1703,17 +1506,10 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate cprodInclPred = cprodIncl.consequent;
 			inCondition(cprodInclPred);
 			final Expression cprod = cprodInclPred.getRight();
-			if (cprod.getTag() != CPROD) {
-				throw new IllegalArgumentException(cprod.toString()
-						+ " should denote a cartesian product.");
-			}
-			final Expression left = ((BinaryExpression) cprod).getLeft();
-			final Expression right = ((BinaryExpression) cprod).getRight();
-			if (!left.equals(inclPred.getLeft())) {
-				throw new IllegalArgumentException(left.toString()
-						+ " should be equal to "
-						+ inclPred.getRight().toString());
-			}
+			cprodCondition(cprod);
+			final BinaryExpression binCprod = (BinaryExpression) cprod;
+			final Expression right = binCprod.getRight();
+			equalityCondition(binCprod.getLeft(), inclPred.getLeft());
 			final BinaryExpression newCprod = inclusion.ff
 					.makeBinaryExpression(CPROD, inclPred.getRight(), right,
 							null);
@@ -1753,17 +1549,10 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate cprodInclPred = cprodIncl.consequent;
 			inCondition(cprodInclPred);
 			final Expression cprod = cprodInclPred.getRight();
-			if (cprod.getTag() != CPROD) {
-				throw new IllegalArgumentException(cprod.toString()
-						+ " should denote a cartesian product.");
-			}
-			final Expression left = ((BinaryExpression) cprod).getLeft();
-			final Expression right = ((BinaryExpression) cprod).getRight();
-			if (!right.equals(inclPred.getLeft())) {
-				throw new IllegalArgumentException(left.toString()
-						+ " should be equal to "
-						+ inclPred.getRight().toString());
-			}
+			cprodCondition(cprod);
+			final BinaryExpression binCprod = (BinaryExpression) cprod;
+			final Expression left = binCprod.getLeft();
+			equalityCondition(binCprod.getRight(), inclPred.getLeft());
 			final BinaryExpression newCprod = inclusion.ff
 					.makeBinaryExpression(CPROD, left, inclPred.getRight(),
 							null);
@@ -1810,10 +1599,7 @@ public abstract class Rule<T extends Predicate> {
 				}
 				break;
 			case IN:
-				if (left.getTag() != MAPSTO) {
-					throw new IllegalArgumentException(left.toString()
-							+ " should denote a mapping");
-				}
+				mapstoCondition(left);
 				domLeft = ((BinaryExpression) left).getLeft();
 				break;
 			default:
@@ -1870,10 +1656,7 @@ public abstract class Rule<T extends Predicate> {
 				}
 				break;
 			case IN:
-				if (left.getTag() != MAPSTO) {
-					throw new IllegalArgumentException(left.toString()
-							+ " should denote a mapping");
-				}
+				mapstoCondition(left);
 				ranLeft = ((BinaryExpression) left).getRight();
 				break;
 			default:
@@ -2031,10 +1814,7 @@ public abstract class Rule<T extends Predicate> {
 						+ " should denote a domain.");
 			}
 			final Expression cprod = ((UnaryExpression) dom).getChild();
-			if (cprod.getTag() != CPROD) {
-				throw new IllegalArgumentException(cprod.toString()
-						+ " should denote a cartesian product.");
-			}
+			cprodCondition(cprod);
 			final Expression newExp = ((BinaryExpression) cprod).getLeft();
 			return ff.makeRelationalPredicate(predicate.getTag(), newExp,
 					predicate.getRight(), null);
@@ -2067,10 +1847,7 @@ public abstract class Rule<T extends Predicate> {
 						+ " should denote a domain.");
 			}
 			final Expression cprod = ((UnaryExpression) dom).getChild();
-			if (cprod.getTag() != CPROD) {
-				throw new IllegalArgumentException(cprod.toString()
-						+ " should denote a cartesian product.");
-			}
+			cprodCondition(cprod);
 			final Expression newExp = ((BinaryExpression) cprod).getLeft();
 			return ff.makeRelationalPredicate(predicate.getTag(),
 					predicate.getLeft(), newExp, null);
@@ -2102,10 +1879,7 @@ public abstract class Rule<T extends Predicate> {
 						+ " should denote a domain.");
 			}
 			final Expression cprod = ((UnaryExpression) ran).getChild();
-			if (cprod.getTag() != CPROD) {
-				throw new IllegalArgumentException(cprod.toString()
-						+ " should denote a cartesian product.");
-			}
+			cprodCondition(cprod);
 			final Expression newExp = ((BinaryExpression) cprod).getRight();
 			return ff.makeRelationalPredicate(predicate.getTag(), newExp,
 					predicate.getRight(), null);
@@ -2138,10 +1912,7 @@ public abstract class Rule<T extends Predicate> {
 						+ " should denote a domain.");
 			}
 			final Expression cprod = ((UnaryExpression) ran).getChild();
-			if (cprod.getTag() != CPROD) {
-				throw new IllegalArgumentException(cprod.toString()
-						+ " should denote a cartesian product.");
-			}
+			cprodCondition(cprod);
 			final Expression newExp = ((BinaryExpression) cprod).getRight();
 			return ff.makeRelationalPredicate(predicate.getTag(),
 					predicate.getLeft(), newExp, null);
@@ -2174,10 +1945,7 @@ public abstract class Rule<T extends Predicate> {
 						+ " should denote a converse.");
 			}
 			final Expression cprod = ((UnaryExpression) converse).getChild();
-			if (cprod.getTag() != CPROD) {
-				throw new IllegalArgumentException(cprod.toString()
-						+ " should denote a cartesian product.");
-			}
+			cprodCondition(cprod);
 			final BinaryExpression binCProd = (BinaryExpression) cprod;
 			final Expression newExp = ff.makeBinaryExpression(CPROD,
 					binCProd.getRight(), binCProd.getLeft(), null);
@@ -2212,10 +1980,7 @@ public abstract class Rule<T extends Predicate> {
 						+ " should denote a converse.");
 			}
 			final Expression cprod = ((UnaryExpression) converse).getChild();
-			if (cprod.getTag() != CPROD) {
-				throw new IllegalArgumentException(cprod.toString()
-						+ " should denote a cartesian product.");
-			}
+			cprodCondition(cprod);
 			final BinaryExpression binCProd = (BinaryExpression) cprod;
 			final Expression newExp = ff.makeBinaryExpression(CPROD,
 					binCProd.getRight(), binCProd.getLeft(), null);
@@ -2281,10 +2046,7 @@ public abstract class Rule<T extends Predicate> {
 			final FormulaFactory ff = rule.ff;
 			inCondition(predicate);
 			final Expression right = predicate.getRight();
-			if (right.getTag() != SETMINUS) {
-				throw new IllegalArgumentException(right.toString()
-						+ " should denote a Setminus.");
-			}
+			setminusCondition(right);
 			final Expression newExp = ((BinaryExpression) right).getLeft();
 			return ff.makeRelationalPredicate(predicate.getTag(),
 					predicate.getLeft(), newExp, null);
@@ -2312,10 +2074,7 @@ public abstract class Rule<T extends Predicate> {
 			final FormulaFactory ff = rule.ff;
 			inCondition(predicate);
 			final Expression right = predicate.getRight();
-			if (right.getTag() != RANRES) {
-				throw new IllegalArgumentException(right.toString()
-						+ " should denote a range restriction.");
-			}
+			ranresCondition(right);
 			final Expression newExp = ((BinaryExpression) right).getLeft();
 			return ff.makeRelationalPredicate(predicate.getTag(),
 					predicate.getLeft(), newExp, null);
@@ -2343,10 +2102,7 @@ public abstract class Rule<T extends Predicate> {
 			final FormulaFactory ff = rule.ff;
 			inCondition(predicate);
 			final Expression right = predicate.getRight();
-			if (right.getTag() != RANSUB) {
-				throw new IllegalArgumentException(right.toString()
-						+ " should denote a range substraction.");
-			}
+			ransubCondition(right);
 			final Expression newExp = ((BinaryExpression) right).getLeft();
 			return ff.makeRelationalPredicate(predicate.getTag(),
 					predicate.getLeft(), newExp, null);
@@ -2374,10 +2130,7 @@ public abstract class Rule<T extends Predicate> {
 			final FormulaFactory ff = rule.ff;
 			inCondition(predicate);
 			final Expression right = predicate.getRight();
-			if (right.getTag() != DOMRES) {
-				throw new IllegalArgumentException(right.toString()
-						+ " should denote a domain restriction.");
-			}
+			domresCondition(right);
 			final Expression newExp = ((BinaryExpression) right).getRight();
 			return ff.makeRelationalPredicate(predicate.getTag(),
 					predicate.getLeft(), newExp, null);
@@ -2405,10 +2158,7 @@ public abstract class Rule<T extends Predicate> {
 			final FormulaFactory ff = rule.ff;
 			inCondition(predicate);
 			final Expression right = predicate.getRight();
-			if (right.getTag() != DOMSUB) {
-				throw new IllegalArgumentException(right.toString()
-						+ " should denote a domain substraction.");
-			}
+			domsubCondition(right);
 			final Expression newExp = ((BinaryExpression) right).getRight();
 			return ff.makeRelationalPredicate(predicate.getTag(),
 					predicate.getLeft(), newExp, null);
@@ -2514,10 +2264,7 @@ public abstract class Rule<T extends Predicate> {
 			final FormulaFactory ff = rule.ff;
 			subsetCondition(predicate);
 			final Expression left = predicate.getLeft();
-			if (left.getTag() != OVR) {
-				throw new IllegalArgumentException(left.toString()
-						+ " should denote an overriding");
-			}
+			ovrCondition(left);
 			final AssociativeExpression ovr = (AssociativeExpression) left;
 			final int ovrChildCount = ovr.getChildCount();
 			if (expression.getTag() == OVR) {
@@ -2643,6 +2390,70 @@ public abstract class Rule<T extends Predicate> {
 			throw new IllegalArgumentException(
 					predicate.toString()
 							+ " should denote a subset (proper or not) or in particular case a membership.");
+		}
+	}
+
+	private static void equalityCondition(final Expression firstExpression,
+			final Expression secondExpression) {
+		if (!firstExpression.equals(secondExpression)) {
+			throw new IllegalArgumentException(firstExpression.toString()
+					+ " should be equal to " + secondExpression.toString());
+		}
+	}
+
+	private static void ovrCondition(final Expression expression) {
+		if (expression.getTag() != OVR) {
+			throw new IllegalArgumentException(expression.toString()
+					+ " should denote an overriding.");
+		}
+	}
+
+	private static void setminusCondition(final Expression expression) {
+		if (expression.getTag() != SETMINUS) {
+			throw new IllegalArgumentException(expression.toString()
+					+ " should denote a set difference.");
+		}
+	}
+
+	private static void ranresCondition(final Expression expression) {
+		if (expression.getTag() != RANRES) {
+			throw new IllegalArgumentException(expression.toString()
+					+ " should denote a range restriction.");
+		}
+	}
+
+	private static void domresCondition(final Expression expression) {
+		if (expression.getTag() != DOMRES) {
+			throw new IllegalArgumentException(expression.toString()
+					+ " should denote a domain restriction.");
+		}
+	}
+
+	private static void ransubCondition(final Expression expression) {
+		if (expression.getTag() != RANSUB) {
+			throw new IllegalArgumentException(expression.toString()
+					+ " should denote a range substraction.");
+		}
+	}
+
+	private static void domsubCondition(final Expression expression) {
+		if (expression.getTag() != DOMSUB) {
+			throw new IllegalArgumentException(expression.toString()
+					+ " should denote a domain substraction.");
+		}
+	}
+
+	private static void cprodCondition(final Expression expression) {
+		if (expression.getTag() != CPROD) {
+			throw new IllegalArgumentException(expression.toString()
+					+ " should denote a cartesian product.");
+		}
+	}
+
+	private static void mapstoCondition(final Expression expression) {
+		if (expression.getTag() != MAPSTO) {
+			throw new IllegalArgumentException(expression.toString()
+					+ " should denote a mapping");
 		}
 	}
 
