@@ -16,6 +16,8 @@ import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profileexi
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profilemustbespecified;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_title;
 
+import java.util.Set;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -396,11 +398,20 @@ public class EditProfilWizard extends Wizard {
 					message = "Invalid tactic";
 					complete = false;
 				} else {
+					// if creating, check with new name;
+					// if replacing, check with old name (removed from cycle
+					// computation)
+					final String addName = created ? name : profileName;
 					final IPreferenceCheckResult checkResult = cache
-							.preAddCheck(name, getResultDescriptor());
+							.preAddCheck(addName, getResultDescriptor());
 					if (checkResult.hasError()) {
-						message = "cyclic references ! including: "
-								+ checkResult.getCycle();
+						final Set<String> unresRefs = checkResult.getUnresolvedReferences();
+						final java.util.List<String> cycle = checkResult.getCycle();
+						if (unresRefs != null) {
+							message = "unresolved references: " + unresRefs;
+						} else if (cycle != null) {
+							message = "cyclic references: " + cycle;
+						}
 						complete = false;
 					}
 				}
