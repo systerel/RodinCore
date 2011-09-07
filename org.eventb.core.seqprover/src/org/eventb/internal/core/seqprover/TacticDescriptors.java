@@ -17,17 +17,16 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
+import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
-import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterSetting;
 import org.eventb.core.seqprover.IParameterValuation;
+import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticCombinator;
 import org.eventb.core.seqprover.ITacticParameterizer;
-import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.paramTactics.ParameterSetting;
 
 /**
@@ -96,12 +95,6 @@ public class TacticDescriptors {
 			return name;
 		}
 
-	}
-
-	private static ITactic logAndMakeFailure(Throwable t, String logMessage,
-			String failTacMessage) {
-		Util.log(t, logMessage);
-		return BasicTactics.failTac(failTacMessage);
 	}
 
 	public static class UninstantiableTacticDescriptor extends
@@ -212,20 +205,12 @@ public class TacticDescriptors {
 			if (tactic != null) {
 				return tactic;
 			}
-			try {
-				tactic = parameterizer.getTactic(valuation);
-				if (tactic == null) {
-					throw new NullPointerException(
-							"null tactic returned by parameterizer");
-				}
-				return tactic;
-			} catch (Throwable t) {
-				return logAndMakeFailure(t,
-						"while making parameterized tactic " + getTacticID()
-								+ " with parameter valuation " + valuation,
-						"failed to create parameterized tactic "
-								+ getTacticName());
+			tactic = parameterizer.getTactic(valuation);
+			if (tactic == null) {
+				throw new NullPointerException(
+						"null tactic returned by parameterizer");
 			}
+			return tactic;
 		}
 
 		@Override
@@ -327,22 +312,16 @@ public class TacticDescriptors {
 			if (tactic != null) {
 				return tactic;
 			}
-			try {
-				for (ITacticDescriptor desc : combinedDescs) {
-					final ITactic combinedInst = desc.getTacticInstance();
-					combined.add(combinedInst);
-				}
-				tactic = combinator.getTactic(combined);
-				if (tactic == null) {
-					throw new NullPointerException(
-							"null tactic returned by combinator");
-				}
-				return tactic;
-			} catch (Exception e) {
-				return logAndMakeFailure(e, "while making combined tactic "
-						+ getTacticID() + " with tactics " + combinedDescs,
-						"failed to create combined tactic " + getTacticName());
+			for (ITacticDescriptor desc : combinedDescs) {
+				final ITactic combinedInst = desc.getTacticInstance();
+				combined.add(combinedInst);
 			}
+			tactic = combinator.getTactic(combined);
+			if (tactic == null) {
+				throw new NullPointerException(
+						"null tactic returned by combinator");
+			}
+			return tactic;
 		}
 
 		@Override

@@ -26,6 +26,8 @@ import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
+import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.core.seqprover.Util;
 import org.eventb.internal.core.seqprover.tacticPreference.TacticPreferenceUtils;
 
 /**
@@ -143,6 +145,12 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 		return enabled;
 	}
 
+	private static ITactic logAndMakeFailure(Throwable t, String logMessage,
+			String failTacMessage) {
+		Util.log(t, logMessage);
+		return BasicTactics.failTac(failTacMessage);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -150,7 +158,15 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	 */
 	public ITactic getSelectedComposedTactic() {
 		if (selectedComposedTactic == null) {
+			try {
 			selectedComposedTactic = selectedDescriptor.getTacticInstance();
+			} catch (Exception e) {
+				return logAndMakeFailure(e,
+						"while making selected tactic " + selectedDescriptor.getTacticID()
+								,
+						"failed to create selected tactic "
+								+ selectedDescriptor.getTacticName());
+			}
 		}
 		return selectedComposedTactic;
 	}
