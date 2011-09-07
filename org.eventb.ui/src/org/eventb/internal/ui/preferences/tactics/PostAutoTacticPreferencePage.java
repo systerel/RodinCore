@@ -221,6 +221,7 @@ public class PostAutoTacticPreferencePage extends
 					public void handleEvent(Event event) {
 						editProfile();
 						updateTacticsList();
+						updateButtons();
 					}
 
 				});
@@ -406,7 +407,7 @@ public class PostAutoTacticPreferencePage extends
 		tacticList.clear();
 		tacticList.setList(labels);
 		tacticList.setSelection(selection);
-		updateButtons();
+		tacticList.updateDetails();
 	}
 
 	protected String[] getSortedProfileNames() {
