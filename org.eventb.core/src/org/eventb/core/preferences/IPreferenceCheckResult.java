@@ -11,6 +11,7 @@
 package org.eventb.core.preferences;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Common protocol for preference check results.
@@ -24,4 +25,6 @@ public interface IPreferenceCheckResult {
 	boolean hasError();
 	
 	List<String> getCycle();
+	
+	Set<String> getUnresolvedReferences();
 }

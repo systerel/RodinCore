@@ -13,6 +13,7 @@ package org.eventb.core.preferences;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -169,6 +170,10 @@ public class CachedPreferenceMap<T> {
 	/**
 	 * Checks whether adding given key with given value into given map
 	 * introduces cyclic references.
+	 * <p>
+	 * If the given key already exists, it is considered as a replacement, so
+	 * the corresponding entry is not taken into account, only the new one.
+	 * </p>
 	 * 
 	 * @param key
 	 *            a new map key
@@ -184,7 +189,22 @@ public class CachedPreferenceMap<T> {
 		
 		final PrefEntryGraph<T> graph = new PrefEntryGraph<T>("preference map",
 				refMaker);
-		graph.addAll(getEntries());
+		final List<IPrefMapEntry<T>> entries = getEntries();
+		// if key already exists, it is a replacement, remove it
+		final Iterator<IPrefMapEntry<T>> iterator = entries.iterator();
+		while(iterator.hasNext()) {
+			final IPrefMapEntry<T> next = iterator.next();
+			if (next.getKey().equals(key)) {
+				iterator.remove();
+			}
+		}
+		
+		graph.addAll(entries);
+		
+		// corresponds to references to deleted entries out of added entry
+		// avoid external reference problems
+		// not adding 'key' to avoid duplicating the node below
+		graph.addUnresolvedExcept(key);
 
 		final ReadPrefMapEntry<T> newEntry = new ReadPrefMapEntry<T>(key, value);
 		graph.add(newEntry);
@@ -192,6 +212,14 @@ public class CachedPreferenceMap<T> {
 			graph.analyse();
 		} catch (IllegalStateException e) {
 			final PreferenceCheckResult result = new PreferenceCheckResult();
+			
+			// if there are unresolved references in added entry
+			final Set<String> unresRefs = graph.addUnresolvedExcept(null);
+			if (!unresRefs.isEmpty()) {
+				result.setUnresolvedReferences(unresRefs);
+				return result;
+			}
+			
 			final List<Node<IPrefMapEntry<T>>> nodeCycle = graph.getCycle();
 			final List<String> cycle = new ArrayList<String>(nodeCycle.size());
 			for (Node<IPrefMapEntry<T>> node : nodeCycle) {
