@@ -46,7 +46,7 @@ public class TacticDescriptorRef implements ITacticDescriptorRef {
 		if (desc == null) {
 			return INVALID_PREFERENCE_ENTRY;
 		}
-		return desc.getTacticName();
+		return prefMapEntry.getKey();
 	}
 
 	@Override
