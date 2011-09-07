@@ -20,7 +20,7 @@ import org.eventb.core.seqprover.ITactic;
  */
 public class TacticDescriptorRef implements ITacticDescriptorRef {
 
-	private static final String INVALID_PREFERENCE_ENTRY = "invalid tactic reference";
+	private static final String INVALID_REFERENCE = "INVALID REFERENCE: ";
 	private final IPrefMapEntry<ITacticDescriptor> prefMapEntry;
 	
 	public TacticDescriptorRef(IPrefMapEntry<ITacticDescriptor> prefUnit) {
@@ -31,11 +31,19 @@ public class TacticDescriptorRef implements ITacticDescriptorRef {
 		return prefMapEntry.getValue();
 	}
 
+	// entry key must be accessed dynamically (may change)
+	private String makeInvalidReference() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(INVALID_REFERENCE);
+		sb.append(prefMapEntry.getKey());
+		return sb.toString();
+	}
+	
 	@Override
 	public String getTacticID() {
 		final ITacticDescriptor desc = getDesc();
 		if (desc == null) {
-			return INVALID_PREFERENCE_ENTRY;
+			return makeInvalidReference();
 		}
 		return desc.getTacticID();
 	}
@@ -44,7 +52,7 @@ public class TacticDescriptorRef implements ITacticDescriptorRef {
 	public String getTacticName() {
 		final ITacticDescriptor desc = getDesc();
 		if (desc == null) {
-			return INVALID_PREFERENCE_ENTRY;
+			return makeInvalidReference();
 		}
 		return prefMapEntry.getKey();
 	}
@@ -53,7 +61,7 @@ public class TacticDescriptorRef implements ITacticDescriptorRef {
 	public String getTacticDescription() {
 		final ITacticDescriptor desc = getDesc();
 		if (desc == null) {
-			return INVALID_PREFERENCE_ENTRY;
+			return makeInvalidReference();
 		}
 		return desc.getTacticDescription();
 	}
@@ -62,7 +70,7 @@ public class TacticDescriptorRef implements ITacticDescriptorRef {
 	public ITactic getTacticInstance() throws IllegalArgumentException {
 		final ITacticDescriptor desc = getDesc();
 		if (desc == null) {
-			throw new IllegalArgumentException(INVALID_PREFERENCE_ENTRY);
+			throw new IllegalArgumentException(makeInvalidReference());
 		}
 		
 		return desc.getTacticInstance();
