@@ -256,7 +256,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			UninstantiableTacticDescriptor desc, IConfigurationElement element) {
 		final String sMinArity = element.getAttribute("minArity");
 		final int minArity = Integer.parseInt(sMinArity);
-		if (minArity <= 0) {
+		if (minArity < 0) {
 			final IllegalArgumentException e = new IllegalArgumentException(
 					"invalid arity: " + sMinArity
 							+ " expected a number greater than or equal to 1");

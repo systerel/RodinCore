@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticExtentionTests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class TacticCombinators {
 
 	public static class FakeTacComb implements ITacticCombinator {
 
-		public static final String TACTIC_ID = "org.eventb.core.seqprover.tests.tacComb";
+		public static final String COMBINATOR_ID = "org.eventb.core.seqprover.tests.tacComb";
 		public static final String MESSAGE = "FakeTacComb applied";
 
 		@Override
@@ -42,7 +43,7 @@ public class TacticCombinators {
 
 	public static class OneOrMore implements ITacticCombinator {
 
-		public static final String TACTIC_ID = "org.eventb.core.seqprover.tests.combOneOrMore";
+		public static final String COMBINATOR_ID = "org.eventb.core.seqprover.tests.combOneOrMore";
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
@@ -55,7 +56,7 @@ public class TacticCombinators {
 
 	public static class Two implements ITacticCombinator {
 
-		public static final String TACTIC_ID = "org.eventb.core.seqprover.tests.combTwo";
+		public static final String COMBINATOR_ID = "org.eventb.core.seqprover.tests.combTwo";
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
@@ -68,11 +69,11 @@ public class TacticCombinators {
 
 	public static class Zero implements ITacticCombinator {
 
-		public static final String TACTIC_ID = "org.eventb.core.seqprover.tests.combZero";
+		public static final String COMBINATOR_ID = "org.eventb.core.seqprover.tests.combZero";
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
-			Assert.fail("arity is zero: should not be callable");
+			assertEquals(0, tactics.size());
 
 			return FAIL_TAC;
 		}
@@ -81,7 +82,7 @@ public class TacticCombinators {
 
 	public static class NoParseable implements ITacticCombinator {
 
-		public static final String TACTIC_ID = "org.eventb.core.seqprover.tests.noParseArity";
+		public static final String COMBINATOR_ID = "org.eventb.core.seqprover.tests.noParseArity";
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {

@@ -392,7 +392,7 @@ public class AutoTacticRegistryTest {
 
 	@Test
 	public void testCombinedTacticDescriptor() throws Exception {
-		final ICombinatorDescriptor comb = findComb(FakeTacComb.TACTIC_ID);
+		final ICombinatorDescriptor comb = findComb(FakeTacComb.COMBINATOR_ID);
 		final List<ITacticDescriptor> combined = Collections
 				.singletonList(registry
 						.getTacticDescriptor(IdentityTactic.TACTIC_ID));
@@ -409,7 +409,7 @@ public class AutoTacticRegistryTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testCombinedOneOrMore() throws Exception {
 		final ICombinatorDescriptor desc = (ICombinatorDescriptor) registry
-				.getTacticDescriptor(OneOrMore.TACTIC_ID);
+				.getTacticDescriptor(OneOrMore.COMBINATOR_ID);
 		// must throw illegal argument exception
 		desc.combine(Collections.<ITacticDescriptor> emptyList(), "id");
 	}
@@ -417,7 +417,7 @@ public class AutoTacticRegistryTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testCombinedTwo() throws Exception {
 		final ICombinatorDescriptor desc = (ICombinatorDescriptor) registry
-				.getTacticDescriptor(Two.TACTIC_ID);
+				.getTacticDescriptor(Two.COMBINATOR_ID);
 		// must throw illegal argument exception
 		final List<ITacticDescriptor> combined = Collections
 				.<ITacticDescriptor> singletonList(registry.getTacticDescriptor(IdentityTactic.TACTIC_ID));
@@ -427,13 +427,13 @@ public class AutoTacticRegistryTest {
 	@Test
 	public void testCombinedZero() throws Exception {
 		// combinator specifying 0 as arity
-		assertNotKnown(Zero.TACTIC_ID);
+		assertNotNull(registry.getCombinatorDescriptor(Zero.COMBINATOR_ID));
 	}
 	
 	@Test
 	public void testCombinedNoParseable() throws Exception {
 		// combinator specifying an unparseable arity
-		assertNotKnown(NoParseable.TACTIC_ID);
+		assertNotKnown(NoParseable.COMBINATOR_ID);
 	}
 	
 	@Test
