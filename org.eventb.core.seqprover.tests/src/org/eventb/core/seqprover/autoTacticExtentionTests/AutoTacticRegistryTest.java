@@ -90,6 +90,11 @@ public class AutoTacticRegistryTest {
 		final String[] ids = registry.getRegisteredIDs();
 		assertFalse("Id " + id + " occurs in list " + ids,
 				Arrays.asList(ids).contains(id));
+		
+		assertNull(registry.getCombinatorDescriptor(id));
+
+		assertNull(registry.getParameterizerDescriptor(id));
+		
 	}
 	
 	private void assertParameterizerLoadingFailure(String id) {
