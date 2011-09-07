@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.preferences.IPreferenceCheckResult;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
@@ -394,6 +395,14 @@ public class EditProfilWizard extends Wizard {
 				if (!resultValid) {
 					message = "Invalid tactic";
 					complete = false;
+				} else {
+					final IPreferenceCheckResult checkResult = cache
+							.preAddCheck(name, getResultDescriptor());
+					if (checkResult.hasError()) {
+						message = "cyclic references ! including: "
+								+ checkResult.getCycle();
+						complete = false;
+					}
 				}
 			}
 			setErrorMessage(message);
