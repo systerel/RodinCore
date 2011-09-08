@@ -354,8 +354,6 @@ public class EditProfilWizard extends Wizard {
 			
 			createViewer(composite);
 			
-			composite.pack();
-			parent.pack();
 			updateStatus();
 		}
 

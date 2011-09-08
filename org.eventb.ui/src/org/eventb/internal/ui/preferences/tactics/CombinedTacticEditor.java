@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -36,7 +37,6 @@ import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.internal.ui.preferences.AbstractEventBPreferencePage;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.CombinatorNode;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ITacticNode;
 import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ITacticRefreshListener;
@@ -51,8 +51,6 @@ import org.eventb.internal.ui.preferences.tactics.CombinedTacticViewer.ViewerSel
  */
 public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor> {
 	
-	private static final int STYLE =  SWT.FILL | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
-
 	private static class TacSelListener implements ISelectionChangedListener {
 		
 		private final Label label;
@@ -157,7 +155,9 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 				.getTransfer() };
 
 		final Group group = makeGroup(parent, text);
-		final ListViewer viewer = new ListViewer(group, SWT.SINGLE);
+		final ListViewer viewer = new ListViewer(group);
+		viewer.getList().setLayoutData(group.getLayoutData());
+		
 		viewer.setLabelProvider(labelProvider);
 		final ViewerSelectionDragEffect simpleDrag = new ViewerSelectionDragEffect(
 				viewer);
@@ -166,19 +166,24 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	}
 	
 	private static Group makeGroup(Composite parent, String text) {
-		final Group group = new Group(parent, STYLE);
+		final Group group = new Group(parent, SWT.NO_FOCUS);
 		group.setText(text);
 		group.setLayout(new GridLayout());
+		final GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		layoutData.minimumWidth = 200;
+		layoutData.minimumHeight = 200;
+		group.setLayoutData(layoutData);
 		return group;
 	}
 
 	private static Composite makeGrid(Composite parent, int numColumns) {
-		final Composite composite = new Composite(parent, SWT.FILL
-				| SWT.NO_FOCUS | SWT.V_SCROLL);
+		final Composite composite = new Composite(parent, SWT.NO_FOCUS);
 		final GridLayout compLayout = new GridLayout();
 		compLayout.numColumns = numColumns;
 		composite.setLayout(compLayout);
-		AbstractEventBPreferencePage.setFillParent(composite);
+		final GridData gridData = new GridData(SWT.BEGINNING, SWT.BEGINNING,
+				true, true);
+		composite.setLayoutData(gridData);
 		return composite;
 	}
 
@@ -188,12 +193,6 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		combViewer.setInput(desc);
 		initCombinators();
 		initProfiles();
-		
-		simpleList.getControl().pack();
-		combViewer.getControl().pack();
-		combList.getControl().pack();
-		refList.getControl().pack();
-		TacticPreferenceUtils.packAll(composite, 8);
 	}
 
 	private void initAutoTactics() {

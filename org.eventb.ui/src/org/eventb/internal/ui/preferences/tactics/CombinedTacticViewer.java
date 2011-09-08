@@ -787,8 +787,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	
 	@Override
 	public void createContents(Composite parent) {
-		treeViewer = new TreeViewer(parent, SWT.FILL 
-				| SWT.H_SCROLL | SWT.V_SCROLL);
+		treeViewer = new TreeViewer(parent);
 		final Tree tree = treeViewer.getTree();
 		tree.setLayout(new GridLayout());
 		final GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
