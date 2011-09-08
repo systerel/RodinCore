@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -157,6 +158,9 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		viewer.getList().setLayoutData(group.getLayoutData());
 		
 		viewer.setLabelProvider(labelProvider);
+		
+		viewer.setComparator(new ViewerComparator());
+		
 		final ViewerSelectionDragEffect simpleDrag = new ViewerSelectionDragEffect(
 				viewer);
 		viewer.addDragSupport(DND.DROP_MOVE, transferTypes, simpleDrag);
