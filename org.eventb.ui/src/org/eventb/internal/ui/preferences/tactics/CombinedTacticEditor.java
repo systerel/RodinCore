@@ -129,11 +129,11 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		
 		refList = makeListViewer(combRefDescr, "Profiles");
 		
-		final Group descrGroup = makeGroup(combRefDescr, "Description");
-		descrLabel = new Label(descrGroup, SWT.WRAP);
-		tacSelListener = new TacSelListener(descrLabel);
-		
-		addDescriptionListener();
+//		final Group descrGroup = makeGroup(combRefDescr, "Description");
+//		descrLabel = new Label(descrGroup, SWT.WRAP);
+//		tacSelListener = new TacSelListener(descrLabel);
+//		
+//		addDescriptionListener();
 	}
 
 	private void addDescriptionListener() {
