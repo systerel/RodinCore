@@ -59,8 +59,7 @@ public class DetailedList {
 
 		list = new List(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL);
-		details = new Composite(composite, SWT.BORDER | SWT.FILL| SWT.NO_FOCUS
-				| SWT.V_SCROLL);
+		details = new Composite(composite, SWT.BORDER | SWT.FILL| SWT.NO_FOCUS);
 		buttons = new Composite(composite, SWT.NONE);
 
 		setTableLayout(buttons, 1);
