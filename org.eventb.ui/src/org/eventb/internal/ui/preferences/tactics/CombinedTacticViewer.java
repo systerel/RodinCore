@@ -805,6 +805,9 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 		treeViewer.setInput(desc);
 		treeViewer.expandAll();
+
+		// makes top item available
+		treeViewer.getTree().layout(false);
 	}
 
 	@Override
