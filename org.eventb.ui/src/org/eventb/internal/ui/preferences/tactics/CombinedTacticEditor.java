@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
-import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.packAll;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +79,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 			final ITacticNode node = (ITacticNode) first;
 			final String description = node.getDescription();
 			label.setText(description);
-			packAll(label, 3);
+			label.pack();
 			
 			final Object newSource = event.getSource();
 			if (newSource instanceof Viewer && newSource != currentSource) {
