@@ -757,23 +757,24 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				return;
 			}
 			// TODO filter child path when parent path is present
-			final TreePath path = paths[0];
-			final int segmentCount = path.getSegmentCount();
-			if (segmentCount == 1) {
-				// deleting root
-				viewer.setInput(null);
-				viewer.refresh();
-				return;
-			}
-			final Object firstElement = treeSel.getFirstElement();
-			if (!(firstElement instanceof ITacticNode)) {
-				return;
-			}
-			final ITacticNode node = (ITacticNode) firstElement;
-			final ITacticNode parent = node.getParent();
-			node.delete();
-			if (parent != null)	{
-				viewer.refresh(parent);
+			for (TreePath path : paths) {
+				final int segmentCount = path.getSegmentCount();
+				if (segmentCount == 1) {
+					// deleting root
+					viewer.setInput(null);
+					viewer.refresh();
+					return;
+				}
+				final Object element = path.getLastSegment();
+				if (!(element instanceof ITacticNode)) {
+					continue;
+				}
+				final ITacticNode node = (ITacticNode) element;
+				final ITacticNode parent = node.getParent();
+				node.delete();
+				if (parent != null) {
+					viewer.refresh(parent);
+				}
 			}
 		}
 	}
