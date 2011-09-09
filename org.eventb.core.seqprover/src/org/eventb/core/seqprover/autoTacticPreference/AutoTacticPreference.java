@@ -159,11 +159,10 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	public ITactic getSelectedComposedTactic() {
 		if (selectedComposedTactic == null) {
 			try {
-			selectedComposedTactic = selectedDescriptor.getTacticInstance();
+				selectedComposedTactic = selectedDescriptor.getTacticInstance();
 			} catch (Exception e) {
-				return logAndMakeFailure(e,
-						"while making selected tactic " + selectedDescriptor.getTacticID()
-								,
+				return logAndMakeFailure(e, "while making selected tactic "
+						+ selectedDescriptor.getTacticID(),
 						"failed to create selected tactic "
 								+ selectedDescriptor.getTacticName());
 			}
