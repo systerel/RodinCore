@@ -15,6 +15,18 @@ import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_nameheader
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profileexists;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profilemustbespecified;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_title;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_choice_combined;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_choice_parameterized;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_error_cyclicrefs;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_error_invalidtactic;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_error_unresolvedrefs;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_page_choice_message;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_page_choice_title;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_page_choiceparam;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_page_choiceparam_message;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_page_choiceparam_nonefound;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_page_choiceparam_title;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_shouldexist;
 
 import java.util.Set;
 
@@ -143,7 +155,7 @@ public class EditProfilWizard extends Wizard {
 		final String editProfileName = editPage.getProfileName();
 		profile = cache.getEntry(profileName);
 		if (!created && !profileName.equals(editProfileName)) {
-			Assert.isNotNull(profile, "profile should already exist: "
+			Assert.isNotNull(profile, wizard_editprofile_shouldexist
 					+ profileName);
 			profile.setKey(editProfileName);
 		}
@@ -167,7 +179,8 @@ public class EditProfilWizard extends Wizard {
 	}
 
 	private static enum TacticKind {
-		COMBINED("Combined tactic"), PARAMETERIZED("Parameterized tactic");
+		COMBINED(wizard_editprofile_choice_combined),
+		PARAMETERIZED(wizard_editprofile_choice_parameterized);
 
 		private final String text;
 
@@ -196,7 +209,7 @@ public class EditProfilWizard extends Wizard {
 		TacticKind choice = TacticKind.COMBINED;
 
 		public ChoiceParamCombined() {
-			super("Profile kind choice");
+			super(wizard_editprofile_page_choice_title);
 		}
 
 		@Override
@@ -209,7 +222,7 @@ public class EditProfilWizard extends Wizard {
 
 			final Group group = new Group(composite, SWT.NONE);
 			group.setFont(font);
-			group.setText("Choose which kind of profile to create");
+			group.setText(wizard_editprofile_page_choice_message);
 
 			final GridLayout layout = new GridLayout();
 			layout.numColumns = 1;
@@ -260,7 +273,7 @@ public class EditProfilWizard extends Wizard {
 		IParameterizerDescriptor choice = null;
 
 		protected ChoiceParameterizer() {
-			super("Choice of Parameterized Tactic");
+			super(wizard_editprofile_page_choiceparam);
 			this.choices = getChoices();
 		}
 
@@ -270,12 +283,12 @@ public class EditProfilWizard extends Wizard {
 			final Composite composite = createParentComposite(parent);
 			setControl(composite);
 
-			setTitle("Choice of a tactic");
+			setTitle(wizard_editprofile_page_choiceparam_title);
 			if (choices.length == 0) {
-				setDescription("Found no tactic to parameterize");
+				setDescription(wizard_editprofile_page_choiceparam_nonefound);
 				return;
 			}
-			setDescription("Choose a tactic to parameterize");
+			setDescription(wizard_editprofile_page_choiceparam_message);
 			final String[] names = new String[choices.length];
 			for (int i = 0; i < choices.length; i++) {
 				names[i] = choices[i].getTacticDescriptor().getTacticName();
@@ -393,7 +406,7 @@ public class EditProfilWizard extends Wizard {
 			if (complete) {
 				final boolean resultValid = isResultValid();
 				if (!resultValid) {
-					message = "Invalid tactic";
+					message = wizard_editprofile_error_invalidtactic;
 					complete = false;
 				} else {
 					// if creating, check with new name;
@@ -406,9 +419,11 @@ public class EditProfilWizard extends Wizard {
 						final Set<String> unresRefs = checkResult.getUnresolvedReferences();
 						final java.util.List<String> cycle = checkResult.getCycle();
 						if (unresRefs != null) {
-							message = "unresolved references: " + unresRefs;
+							message = wizard_editprofile_error_unresolvedrefs
+									+ unresRefs;
 						} else if (cycle != null) {
-							message = "cyclic references: " + cycle;
+							message = wizard_editprofile_error_cyclicrefs
+									+ cycle;
 						}
 						complete = false;
 					}

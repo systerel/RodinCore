@@ -136,6 +136,18 @@ public final class Messages {
 	public static String wizard_editprofil_nameheader;
 	public static String wizard_editprofil_profileexists;
 	public static String wizard_editprofil_profilemustbespecified;
+	public static String wizard_editprofile_shouldexist;
+	public static String wizard_editprofile_choice_combined;
+	public static String wizard_editprofile_choice_parameterized;
+	public static String wizard_editprofile_error_cyclicrefs;
+	public static String wizard_editprofile_error_invalidtactic;
+	public static String wizard_editprofile_error_unresolvedrefs;
+	public static String wizard_editprofile_page_choice_message;
+	public static String wizard_editprofile_page_choice_title;
+	public static String wizard_editprofile_page_choiceparam;
+	public static String wizard_editprofile_page_choiceparam_message;
+	public static String wizard_editprofile_page_choiceparam_nonefound;
+	public static String wizard_editprofile_page_choiceparam_title;
 	
 	// Attribute Manipulation
 	public static String attributeManipulation_extended_true;
