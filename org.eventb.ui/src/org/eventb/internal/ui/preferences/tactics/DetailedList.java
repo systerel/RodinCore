@@ -12,6 +12,7 @@ package org.eventb.internal.ui.preferences.tactics;
 
 import static org.eclipse.swt.SWT.NONE;
 import static org.eventb.internal.ui.UIUtils.showQuestion;
+import static org.eventb.internal.ui.utils.Messages.tacticlist_currentunsaved;
 
 import java.util.Arrays;
 
@@ -266,7 +267,7 @@ public class DetailedList {
 		if (provider.hasChanges()) {
 			final boolean save ;
 			if (ask) {
-				save = showQuestion("Current profile has unsaved changes: save ?");
+				save = showQuestion(tacticlist_currentunsaved);
 			} else {
 				save = true;
 			}

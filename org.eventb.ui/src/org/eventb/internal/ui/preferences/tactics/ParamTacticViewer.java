@@ -190,13 +190,13 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		@Override
 		public String isValid(Object value) {
 			if (!(value instanceof String)) {
-				throw new IllegalArgumentException("expected a String");
+				throw new IllegalArgumentException("expected a String"); //$NON-NLS-1$
 			}
 			try {
 				type.parse((String) value);
 				return null;
 			} catch (NumberFormatException e) {
-				return "invalid number " + value + " : " + e.getMessage();
+				return "invalid number " + value + " : " + e.getMessage(); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		
@@ -292,7 +292,7 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 				paramValue = type.parse((String) value);
 				break;
 			default:
-				throw new IllegalStateException("unknown type: " + type);
+				throw new IllegalStateException("unknown type: " + type); //$NON-NLS-1$
 			}
 			param.setValue(paramValue);
 			tableViewer.refresh(element);
@@ -399,7 +399,7 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			return desc;
 		}
 		return parameterizer.instantiate(currentValuation, parameterizerId
-				+ ".custom");
+				+ ".custom"); //$NON-NLS-1$
 	}
 
 	@Override

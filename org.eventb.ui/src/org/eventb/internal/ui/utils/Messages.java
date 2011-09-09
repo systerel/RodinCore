@@ -152,6 +152,9 @@ public final class Messages {
 	public static String wizard_editprofile_combedit_list_profiles;
 	public static String wizard_editprofile_combedit_list_tactics;
 	public static String wizard_editprofile_combedit_noselectedtactic;
+	public static String tacticviewer_combined_action_delete;
+	public static String tacticviewer_combined_unboundarity;
+	public static String tacticlist_currentunsaved;
 
 	// Attribute Manipulation
 	public static String attributeManipulation_extended_true;

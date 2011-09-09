@@ -11,6 +11,8 @@
 package org.eventb.internal.ui.preferences.tactics;
 
 import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.packAll;
+import static org.eventb.internal.ui.utils.Messages.tacticviewer_combined_action_delete;
+import static org.eventb.internal.ui.utils.Messages.tacticviewer_combined_unboundarity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -393,7 +395,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			final ITacticNode node = (ITacticNode) descOrNode;
 			return node.copyWithParent(parent);
 		}
-		throw new IllegalArgumentException("illegal descriptor : " + descOrNode);
+		throw new IllegalArgumentException("illegal descriptor : " + descOrNode); //$NON-NLS-1$
 	}
 
 	public static abstract class AbstractTacticNode implements ITacticNode {
@@ -457,7 +459,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		
 		@Override
 		public void addChild(ITacticNode node, ITacticNode nextSibling) {
-			throw new UnsupportedOperationException("a leaf has no child !");
+			throw new UnsupportedOperationException("a leaf has no child !"); //$NON-NLS-1$
 		}
 	}
 	
@@ -520,7 +522,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 					.getAutoTacticRegistry();
 			this.combinator = reg.getCombinatorDescriptor(combinatorId);
 			if (combinator == null) {
-				throw new IllegalArgumentException("invalid combinator: "
+				throw new IllegalArgumentException("invalid combinator: " //$NON-NLS-1$
 						+ combinatorId);
 			}
 			final List<ITacticDescriptor> combined = desc.getCombinedTactics();
@@ -546,7 +548,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			final int minArity = combinator.getMinArity();
 			sb.append(minArity);
 			if (!combinator.isArityBound()) {
-				sb.append(" or more");
+				sb.append(tacticviewer_combined_unboundarity);
 			}
 			sb.append("]");
 			return sb.toString();
@@ -556,7 +558,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		public ITacticDescriptor getResultDesc() {
 			if (!isValid()) {
 				throw new IllegalStateException(
-						"computing an invalid descriptor from "
+						"computing an invalid descriptor from " //$NON-NLS-1$
 								+ combinator.getTacticDescriptor()
 										.getTacticID());
 			}
@@ -567,7 +569,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 				childDescs.add(childDesc);
 			}
 			final String combinedId = combinator.getTacticDescriptor()
-					.getTacticID() + ".combined";
+					.getTacticID() + ".combined"; //$NON-NLS-1$
 			return combinator.combine(childDescs, combinedId);
 		}
 		
@@ -613,8 +615,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			} else {
 				index = children.indexOf(nextSibling);
 				if (index < 0) {
-					throw new IllegalArgumentException("no such child: "
-							+ node.getText() + " in " + getText());
+					throw new IllegalArgumentException("no such child: " //$NON-NLS-1$
+							+ node.getText() + " in " + getText()); //$NON-NLS-1$
 				}
 			}
 			children.add(index, newChild);
@@ -681,7 +683,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		public void deleteChild(ITacticNode child) {
 			final boolean removed = children.remove(child);
 			if (!removed) {
-				throw new IllegalArgumentException("no such child: " + child);
+				throw new IllegalArgumentException("no such child: " + child); //$NON-NLS-1$
 			}
 		}
 
@@ -741,8 +743,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 		public DeleteNodeAction(CombinedTacticViewer viewer) {
 			this.viewer = viewer;
-			setActionDefinitionId("org.eclipse.ui.edit.delete");
-			setText("delete");
+			setActionDefinitionId("org.eclipse.ui.edit.delete"); //$NON-NLS-1$
+			setText(tacticviewer_combined_action_delete);
 		}
 		
 		@Override
