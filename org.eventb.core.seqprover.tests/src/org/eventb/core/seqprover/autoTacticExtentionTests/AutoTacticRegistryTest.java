@@ -113,8 +113,13 @@ public class AutoTacticRegistryTest {
 	private void assertTacticInstantiatingFailure(String id) {
 		assertKnown(id);
 		final ITacticDescriptor desc = registry.getTacticDescriptor(id);
-		final ITactic tactic = desc.getTacticInstance();
-		assertNotNull(tactic.apply(null, null));
+		try {
+			desc.getTacticInstance();
+			fail("expected illegal argument exception");
+		} catch (IllegalArgumentException e) {
+			// as expected
+		}
+
 	}
 	
 	private void assertInstanceLoadingSuccess(String id) {

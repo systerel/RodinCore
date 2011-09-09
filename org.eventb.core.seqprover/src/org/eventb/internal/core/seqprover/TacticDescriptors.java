@@ -205,9 +205,13 @@ public class TacticDescriptors {
 			if (tactic != null) {
 				return tactic;
 			}
-			tactic = parameterizer.getTactic(valuation);
+			try {
+				tactic = parameterizer.getTactic(valuation);
+			} catch (Throwable t) {
+				throw new IllegalArgumentException(t);
+			}
 			if (tactic == null) {
-				throw new NullPointerException(
+				throw new IllegalArgumentException(
 						"null tactic returned by parameterizer");
 			}
 			return tactic;
@@ -316,9 +320,13 @@ public class TacticDescriptors {
 				final ITactic combinedInst = desc.getTacticInstance();
 				combined.add(combinedInst);
 			}
-			tactic = combinator.getTactic(combined);
+			try {
+				tactic = combinator.getTactic(combined);
+			} catch (Throwable t) {
+				throw new IllegalArgumentException(t);
+			}
 			if (tactic == null) {
-				throw new NullPointerException(
+				throw new IllegalArgumentException(
 						"null tactic returned by combinator");
 			}
 			return tactic;
