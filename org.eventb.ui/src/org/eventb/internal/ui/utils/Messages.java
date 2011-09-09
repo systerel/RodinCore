@@ -148,7 +148,11 @@ public final class Messages {
 	public static String wizard_editprofile_page_choiceparam_message;
 	public static String wizard_editprofile_page_choiceparam_nonefound;
 	public static String wizard_editprofile_page_choiceparam_title;
-	
+	public static String wizard_editprofile_combedit_list_combinators;
+	public static String wizard_editprofile_combedit_list_profiles;
+	public static String wizard_editprofile_combedit_list_tactics;
+	public static String wizard_editprofile_combedit_noselectedtactic;
+
 	// Attribute Manipulation
 	public static String attributeManipulation_extended_true;
 	public static String attributeManipulation_extended_false;

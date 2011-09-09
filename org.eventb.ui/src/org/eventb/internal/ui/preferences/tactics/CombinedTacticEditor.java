@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_combedit_list_combinators;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_combedit_list_profiles;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_combedit_list_tactics;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofile_combedit_noselectedtactic;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +81,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 			}
 			final ISelection selection = event.getSelection();
 			if (selection == null) {
-				label.setText("No selected tactic");
+				label.setText(wizard_editprofile_combedit_noselectedtactic);
 				return;
 			}
 			if (!(selection instanceof IStructuredSelection) || selection.isEmpty()) {
@@ -131,15 +136,15 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	public void createContents(Composite parent) {
 		composite = makeGrid(parent, 3);
 		
-		simpleList = makeListViewer(composite, "Tactics");
+		simpleList = makeListViewer(composite, wizard_editprofile_combedit_list_tactics);
 		
 		combViewer.createContents(composite);
 		combViewer.addEditSupport();
 		
 		final Composite combRefDescr = makeGrid(composite, 1);
-		combList = makeListViewer(combRefDescr, "Combinators");
+		combList = makeListViewer(combRefDescr, wizard_editprofile_combedit_list_combinators);
 		
-		refList = makeListViewer(combRefDescr, "Profiles");
+		refList = makeListViewer(combRefDescr, wizard_editprofile_combedit_list_profiles);
 		
 //		final Group descrGroup = makeGroup(combRefDescr, "Description");
 //		descrLabel = new Label(descrGroup, SWT.WRAP);
