@@ -111,6 +111,9 @@ public class PrefUnitTranslator implements
 
 		@Override
 		public void put(ITacticDescriptor desc, Document doc, Node parent) {
+			if (desc == null) {
+				return;
+			}
 			if (desc instanceof ITacticDescriptorRef) {
 				TacticRef.getDefault().put((ITacticDescriptorRef) desc, doc, parent);
 			} else if (desc instanceof ICombinedTacticDescriptor) {
@@ -388,7 +391,7 @@ public class PrefUnitTranslator implements
 					continue;
 				final ITacticDescriptor combDesc = Selector.getInstance().get(comb);
 				if (combDesc == null)
-					return null;
+					continue;
 				combs.add(combDesc);
 			}
 			return combinator.combine(combs, tacticId);
