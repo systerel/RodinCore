@@ -805,9 +805,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		}
 		treeViewer.setInput(desc);
 		treeViewer.expandAll();
-
-		// makes top item available
-		treeViewer.getTree().layout(false);
 	}
 
 	@Override
@@ -896,10 +893,15 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 		if (tree.isDisposed()) {
 			return null;
 		}
-		final TreeItem topItem = tree.getTopItem();
-		if (topItem == null) {
+		// tree.getTopItem() is not reliable
+		final TreeItem[] items = tree.getItems();
+		if (items.length == 0) {
 			return null;
 		}
+		if (items.length > 1) {
+			return null;
+		}
+		final TreeItem topItem = items[0];
 		final Object data = topItem.getData();
 		if (!(data instanceof ITacticNode)) {
 			return null;
