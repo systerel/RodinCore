@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
-
 /**
  * Common protocol for accessing tactic parameters.
- * 
- * TODO mediator 
+ * <p>
+ * Instances of this class are used to parameterize tactics. They can be
+ * obtained through {@link IParameterizerDescriptor#makeParameterSetting()},
+ * modified, then given as argument to
+ * {@link IParameterizerDescriptor#instantiate(IParameterValuation, String)}.
+ * </p>
  * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.

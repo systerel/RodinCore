@@ -15,6 +15,11 @@ import java.util.Collection;
 /**
  * Common protocol for parameter valuations.
  * 
+ * <p>
+ * Parameter valuations are used to parameterize tactics. They can be obtained
+ * through {@link IParameterizerDescriptor#makeParameterSetting()}.
+ * </p>
+ * 
  * @author Nicolas Beauger
  * @since 2.3
  * @noimplement This interface is not intended to be implemented by clients.

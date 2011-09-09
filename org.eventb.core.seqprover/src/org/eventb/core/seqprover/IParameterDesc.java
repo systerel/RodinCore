@@ -11,7 +11,7 @@
 package org.eventb.core.seqprover;
 
 /**
- * Common protocol for parameter descriptors. TODO type parameter values ?
+ * Common protocol for parameter descriptors.
  * 
  * @author Nicolas Beauger
  * @since 2.3
@@ -70,12 +70,36 @@ public interface IParameterDesc {
 		public abstract Object parse(String image);
 	}
 
+	/**
+	 * Returns the label of the described parameter.
+	 * 
+	 * @return a label
+	 */
 	String getLabel();
 
+	/**
+	 * Returns the type of the described parameter.
+	 * 
+	 * @return a parameter type
+	 */
 	ParameterType getType();
 
+	/**
+	 * Returns the default value of the described parameter.
+	 * <p>
+	 * The java type of the default value corresponds to the parameter type, as
+	 * returned by {@link #getType()}.
+	 * </p>
+	 * 
+	 * @return an object
+	 */
 	Object getDefaultValue();
 
+	/**
+	 * Returns the description of the described parameter.
+	 * 
+	 * @return a string
+	 */
 	String getDescription();
 
 }

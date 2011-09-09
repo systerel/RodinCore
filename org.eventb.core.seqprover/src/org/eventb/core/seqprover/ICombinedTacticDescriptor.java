@@ -15,17 +15,22 @@ import java.util.List;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
- * Common protocol for instantiated combined tactic descriptors.
+ * Common protocol for combined tactic descriptors.
+ * <p>
+ * Instances of this interface are the result of
+ * {@link ICombinatorDescriptor#combine(List, String)}.
+ * </p>
  * 
  * @author Nicolas Beauger
  * @since 2.3
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
+ * @see ICombinatorDescriptor
  */
 public interface ICombinedTacticDescriptor extends ITacticDescriptor {
 
 	/**
-	 * Returns the id of the combinator used to instantiate this tactic.
+	 * Returns the id of the combinator used to make the described tactic.
 	 * 
 	 * @return a combinator id
 	 */

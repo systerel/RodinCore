@@ -13,8 +13,11 @@ package org.eventb.core.seqprover;
 import java.util.List;
 
 /**
- * Common protocol for tactic combinators. This interface is intended to be
- * implemented by clients who contribute tactic combinators.
+ * Common protocol for tactic combinators.
+ * <p>
+ * This interface is intended to be implemented by clients who contribute tactic
+ * combinators (extension point 'tacticCombinators').
+ * </p>
  * 
  * @author Nicolas Beauger
  * @since 2.3
@@ -24,6 +27,10 @@ public interface ITacticCombinator {
 
 	/**
 	 * Returns a combined tactic out if the given tactics.
+	 * <p>
+	 * The size of the given list is guaranteed to respect the arity specified
+	 * in the extension.
+	 * </p>
 	 * 
 	 * @param tactics
 	 *            a list of tactics

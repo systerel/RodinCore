@@ -18,7 +18,7 @@ import java.util.Set;
 import org.eventb.core.preferences.IPreferenceCheckResult;
 
 /**
- * @author nico
+ * @author Nicolas Beauger
  * 
  */
 public class PreferenceCheckResult implements IPreferenceCheckResult {

@@ -14,6 +14,10 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
  * Common protocol for instantiated parameterized tactic descriptors.
+ * <p>
+ * Instances of this interface are the result of
+ * {@link IParameterizerDescriptor#instantiate(IParameterValuation, String)}.
+ * </p>
  * 
  * @author Nicolas Beauger
  * @since 2.3
@@ -23,7 +27,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 public interface IParamTacticDescriptor extends ITacticDescriptor {
 
 	/**
-	 * Returns the id of the parameterizer used to instantiate this tactic.
+	 * Returns the id of the parameterizer used to make the described tactic.
 	 * 
 	 * @return a combinator id
 	 */

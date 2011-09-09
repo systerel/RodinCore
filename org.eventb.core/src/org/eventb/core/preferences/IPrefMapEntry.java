@@ -29,14 +29,14 @@ public interface IPrefMapEntry<T> {
 	public String getKey();
 
 	/**
-	 * Returns the value of the entry.
+	 * Returns the current value of this entry.
 	 * 
 	 * @return a value
 	 */
 	public T getValue();
 
 	/**
-	 * Sets the key associated to the entry.
+	 * Sets the key associated to this entry.
 	 * 
 	 * @param key
 	 *            the new value of the key
@@ -45,16 +45,20 @@ public interface IPrefMapEntry<T> {
 	public void setKey(String key);
 
 	/**
-	 * Set the value associated to the entry.
+	 * Set the value associated to this entry.
 	 * 
 	 * @param value
 	 *            the new value of the entry
 	 */
 	public void setValue(T value);
-	
+
 	/**
 	 * Returns an object that references the value of this entry.
-	 * <p>Returned object always has the same behaviour as the value of this entry, even if the value changes.</p>
+	 * <p>
+	 * Returned object always has the same behaviour as the value of this entry,
+	 * even if the value changes.
+	 * </p>
+	 * 
 	 * @return a reference
 	 * @since 2.3
 	 */

@@ -18,8 +18,9 @@ import java.util.List;
 
 /**
  * Class used to represent and manipulate a string (e.g. a preference) which is
- * a list of elements. 
- * @see IPrefElementTranslator 
+ * a list of elements.
+ * 
+ * @see IPrefElementTranslator
  * @since 2.1
  */
 public class ListPreference<T> implements IPrefElementTranslator<List<T>> {

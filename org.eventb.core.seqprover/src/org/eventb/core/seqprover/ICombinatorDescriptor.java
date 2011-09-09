@@ -16,6 +16,10 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
  * Common protocol for tactic combinator descriptors.
+ * <p>
+ * Tactic combinators are contributed through the 'tacticCombinators' extension
+ * point.
+ * </p>
  * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -25,11 +29,15 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 public interface ICombinatorDescriptor {
 
 	/**
-	 * Returns the descriptor of the tactic to instantiate.
+	 * Returns the descriptor of this combinator, viewed as a tactic.
 	 * <p>
 	 * Returned descriptor can NOT be instantiated. Any attempt to call
 	 * {@link ITacticDescriptor#getTacticInstance()} on returned object will
-	 * throw an {@link UnsupportedOperationException}.
+	 * throw an {@link UnsupportedOperationException}. Call
+	 * {@link #combine(List, String)} instead.
+	 * </p>
+	 * <p>
+	 * All other operations are supported (id, name, description).
 	 * </p>
 	 * 
 	 * @return a tactic descriptor
@@ -37,7 +45,7 @@ public interface ICombinatorDescriptor {
 	ITacticDescriptor getTacticDescriptor();
 
 	/**
-	 * Returns the tactic combining given tactics.
+	 * Returns a descriptor of the tactic combining given tactics.
 	 * 
 	 * @param tactics
 	 *            a list of tactic descriptors
@@ -48,14 +56,14 @@ public interface ICombinatorDescriptor {
 	 *             if the size of the given list is not valid regarding
 	 *             specified arity
 	 */
-	ICombinedTacticDescriptor combine(List<ITacticDescriptor> tactics,
-			String id) throws IllegalArgumentException;
+	ICombinedTacticDescriptor combine(List<ITacticDescriptor> tactics, String id)
+			throws IllegalArgumentException;
 
 	/**
 	 * Returns the minimum arity of this combinator. This is the minimum
 	 * required size of the list given to {@link #getTacticInstance(List)}.
 	 * 
-	 * @return an integer greater than or equal to 1
+	 * @return an integer greater than or equal to 0
 	 */
 	int getMinArity();
 
@@ -71,7 +79,7 @@ public interface ICombinatorDescriptor {
 	 * {@link #getMinArity()}.
 	 * </p>
 	 * 
-	 * @return
+	 * @return a boolean
 	 */
 	boolean isArityBound();
 }

@@ -11,15 +11,16 @@
 package org.eventb.core.seqprover;
 
 /**
- * Common protocol for tactic parameterizers. This interface is intended
- * to be implemented by clients who contribute tactics with parameters.
+ * Common protocol for tactic parameterizers.
+ * <p>
+ * This interface is intended to be implemented by clients who contribute
+ * tactics with parameters.
+ * </p>
  * 
  * @author Nicolas Beauger
- * @since 2.3 
+ * @since 2.3
  */
 public interface ITacticParameterizer {
-	// TODO consider adding a method to validate a valuation (in case some
-	// valuations could be invalid), with details about what is going wrong
 
 	/**
 	 * Returns an instance of the parameterized tactic using the given
@@ -27,8 +28,7 @@ public interface ITacticParameterizer {
 	 * 
 	 * @param parameters
 	 *            tactic parameters, as described by the extension
-	 * @return a tactic, or <code>null</code> if the tactic could not be built
-	 *         because of the parameters
+	 * @return a parameterized tactic
 	 */
 	ITactic getTactic(IParameterValuation parameters);
 }

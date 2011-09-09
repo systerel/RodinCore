@@ -26,11 +26,12 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 public interface IParameterizerDescriptor {
 
 	/**
-	 * Returns the descriptor of the tactic to instantiate.
+	 * Returns the descriptor of this parameterizer, viewed as a tactic.
 	 * <p>
 	 * Returned descriptor can NOT be instantiated. Any attempt to call
 	 * {@link ITacticDescriptor#getTacticInstance()} on returned object will
-	 * throw an {@link UnsupportedOperationException}.
+	 * throw an {@link UnsupportedOperationException}. Call
+	 * {@link #instantiate(IParameterValuation, String)} instead.
 	 * </p>
 	 * 
 	 * @return a tactic descriptor
@@ -46,9 +47,12 @@ public interface IParameterizerDescriptor {
 	IParameterSetting makeParameterSetting();
 
 	/**
-	 * Returns an instance of the tactic with the given parameters and the given
-	 * id. Returns a failure tactic in case there is a problem calling the
-	 * parameterizer.
+	 * Returns a descriptor of the tactic with the given parameters and the
+	 * given id.
+	 * <p>
+	 * A parameter valuation can be customized by
+	 * {@link #makeParameterSetting()}.
+	 * </p>
 	 * 
 	 * @param valuation
 	 *            a parameter valuation

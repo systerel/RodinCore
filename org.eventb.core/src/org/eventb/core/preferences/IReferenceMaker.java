@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.preferences;
 
-
 /**
  * Common protocol for reference makers.
  * <p>
- * References makers make a reference of type T from an object of type T.
+ * References makers make a reference of type T from an entry of T.
  * </p>
  * 
  * @author Nicolas Beauger
@@ -23,6 +22,13 @@ package org.eventb.core.preferences;
  */
 public interface IReferenceMaker<T> {
 
+	/**
+	 * Returns a reference to the value of the given entry.
+	 * 
+	 * @param prefEntry
+	 *            a preference entry
+	 * @return a T reference
+	 */
 	T makeReference(IPrefMapEntry<T> prefEntry);
 
 	/**
