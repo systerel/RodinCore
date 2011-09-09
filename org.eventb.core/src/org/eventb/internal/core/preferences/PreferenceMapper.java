@@ -88,14 +88,13 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 				final NodeList units = getElementsByTagName(tacticPref,
 						PREF_UNIT);
 				for (int i = 0; i < units.getLength(); i++) {
-					
-					final Node unitElem = units.item(i);
-					final IPrefMapEntry<T> unit = xmlTranslator.get(unitElem);
-					
-					map.put(unit.getKey(), unit.getValue());
+					final IPrefMapEntry<T> unit = loadUnit(units, i, pref);
+					if (unit != null) {
+						map.put(unit.getKey(), unit.getValue());
+					}
 				}
 			} catch (Exception e) {
-				Util.log(e, "while storing tactic preference");
+				Util.log(e, "while loading tactic preference");
 				throw PreferenceException.getInstance();
 			}
 		} else {
@@ -122,6 +121,21 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 		}
 		return map;
 	}
+
+	private IPrefMapEntry<T> loadUnit(final NodeList units, int i, String pref) {
+		final Node unitElem = units.item(i);
+		try {
+			return xmlTranslator.get(unitElem);
+		} catch (PreferenceException e) {
+			// failed
+			final String message = "error while loading preference unit "
+					+ i + " from: " + pref;
+			Util.log(e, message);
+			return null;
+		}
+	}
+	
+	
 
 	/**
 	 * Extracts the map model to string for serialization.
