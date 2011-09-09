@@ -59,8 +59,18 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 			this.label = label;
 		}
 
+		public TacSelListener() {
+			this(null);
+		}
+
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
+			updateLabel(event);
+			
+			emptyCurrentSelection(event);
+		}
+
+		private void updateLabel(SelectionChangedEvent event) {
 			if (label == null || label.isDisposed()) {
 				return;
 			}
@@ -81,7 +91,9 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 			final String description = node.getDescription();
 			label.setText(description);
 			label.pack();
-			
+		}
+
+		private void emptyCurrentSelection(SelectionChangedEvent event) {
 			final Object newSource = event.getSource();
 			if (newSource instanceof Viewer && newSource != currentSource) {
 				if (currentSource != null) {
@@ -133,7 +145,8 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 //		descrLabel = new Label(descrGroup, SWT.WRAP);
 //		tacSelListener = new TacSelListener(descrLabel);
 //		
-//		addDescriptionListener();
+		tacSelListener = new TacSelListener();
+		addDescriptionListener();
 	}
 
 	private void addDescriptionListener() {
