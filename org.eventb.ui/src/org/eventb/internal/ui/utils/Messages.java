@@ -59,7 +59,6 @@ public final class Messages {
 	public static String editorPage_synthethicViewPage_tabTitle;
 	
 	public static String editorAction_paste_title;
-	public static String editorAction_paste_toolTip;
 	public static String editorAction_copy_title;
 	public static String editorAction_copy_toolTip;
 	
@@ -93,25 +92,18 @@ public final class Messages {
 	public static String preferencepage_contexteditor_editorpagedescription;
 	public static String preferencepage_machineeditor_description;
 	public static String preferencepage_machineeditor_editorpagedescription;
-	public static String preferencepage_editorpage_tab_title;
 	public static String preferencepage_modellingui_description;
 	public static String preferencepage_modellingui_expandSections;
 	
-	public static String preferencepage_seqprover_enablementdescription;
 	public static String preferencepage_pomtactic_title;
-	public static String preferencepage_pomtactic_description;
 	public static String preferencepage_pomtactic_enablementdescription;
-	public static String preferencepage_pomtactic_selectedtacticsdescription;
 	public static String preferencepage_pomtactic_selectedtacticprofiledescription;
 	public static String preferencepage_posttactic_title;
-	public static String preferencepage_posttactic_description;
 	public static String preferencepage_posttactic_enablementdescription;
-	public static String preferencepage_posttactic_selectedtacticsdescription;
 	public static String preferencepage_posttactic_selectedtacticprofiledescription;
 	public static String preferencepage_postautotactic_description;
 	public static String preferencepage_postautotactic_tab_autoposttactics;
 	public static String preferencepage_postautotactic_tab_profiles;
-	public static String preferencepage_postautotactic_profiledetails_header;
 	public static String preferencepage_postautotactic_tacticdetails_header;
 	public static String preferencepage_postautotactic_newbutton;
 	public static String preferencepage_postautotactic_editbutton;
@@ -133,9 +125,6 @@ public final class Messages {
 	public static String preferencepage_colorsandfonts_showborders;
 	public static String preferencepage_colorsandfonts_textForeground;
 	public static String preferencepage_colorsandfonts_commentForeground;
-	public static String preferencepage_colorsandfonts_requiredfieldbackground;
-	public static String preferencepage_colorsandfonts_dirtystatecolor;
-	public static String preferencepage_colorsandfonts_boxbordercolor;
 	public static String preferencepage_prefixSettings_description;
 	public static String preferencepage_configureLink;
 	public static String preferencepage_prefixSettings_propIDTitle;
@@ -145,10 +134,8 @@ public final class Messages {
 	public static String wizard_editprofil_title;
 	public static String wizard_editprofil_description;
 	public static String wizard_editprofil_nameheader;
-	public static String wizard_editprofil_detailsdescription;
 	public static String wizard_editprofil_profileexists;
 	public static String wizard_editprofil_profilemustbespecified;
-	public static String wizard_editprofil_profilemusthaveatactic;
 	
 	// Attribute Manipulation
 	public static String attributeManipulation_extended_true;
@@ -209,7 +196,6 @@ public final class Messages {
 	public static String dialogs_projectSelection_title;
 	public static String dialogs_projectSelection_description;
 	public static String dialogs_new_component_title;
-	public static String dialogs_new_component_message;
 	
 	//Dialog titles
 	public static String title_error;
