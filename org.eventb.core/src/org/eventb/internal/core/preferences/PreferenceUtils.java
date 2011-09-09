@@ -32,7 +32,7 @@ import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
+import org.eventb.core.seqprover.eventbExtensions.TacticCombinators;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -160,7 +160,7 @@ public class PreferenceUtils {
 			List<ITacticDescriptor> descs, String id) {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final ICombinatorDescriptor comb = reg
-				.getCombinatorDescriptor(AutoTactics.LoopOnAllPending.COMBINATOR_ID);
+				.getCombinatorDescriptor(TacticCombinators.LoopOnAllPending.COMBINATOR_ID);
 		return comb.combine(descs, id);
 	}
 	

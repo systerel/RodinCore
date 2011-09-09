@@ -658,7 +658,7 @@
          point="org.eventb.core.seqprover.tacticCombinators">
       <combinator
             boundArity="false"
-            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$LoopOnAllPending"
+            class="org.eventb.core.seqprover.eventbExtensions.TacticCombinators$LoopOnAllPending"
             description="%loopOnAllPendingDescription"
             id="loopOnAllPending"
             minArity="1"

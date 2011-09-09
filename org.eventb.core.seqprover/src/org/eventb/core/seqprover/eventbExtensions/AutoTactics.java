@@ -49,8 +49,6 @@ import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.ITacticCombinator;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasoners.Hyp;
@@ -1367,32 +1365,4 @@ public class AutoTactics {
 		}
 	}
 	
-	
-	
-	//*************************************************
-	//
-	//				Tactic Combinators
-	//
-	//*************************************************
-
-	/**
-	 * The 'loop on all pending' tactic combinator.
-	 * 
-	 * @author Nicolas Beauger
-	 * @since 2.3
-	 * 
-	 */
-	public static class LoopOnAllPending implements ITacticCombinator {
-
-		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
-				+ ".loopOnAllPending";
-		
-		@Override
-		public ITactic getTactic(List<ITactic> tactics) {
-			final ITactic[] tacs = tactics.toArray(new ITactic[tactics.size()]);
-			return BasicTactics.loopOnAllPending(tacs);
-		}
-
-	}
-
 }

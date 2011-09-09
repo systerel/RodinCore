@@ -25,7 +25,7 @@ import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
+import org.eventb.core.seqprover.eventbExtensions.TacticCombinators;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.Util;
 import org.eventb.internal.core.seqprover.tacticPreference.TacticPreferenceUtils;
@@ -216,7 +216,7 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	private static ITacticDescriptor loopOnAllPending(List<ITacticDescriptor> descs, String id) {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final ICombinatorDescriptor comb = reg
-				.getCombinatorDescriptor(AutoTactics.LoopOnAllPending.COMBINATOR_ID);
+				.getCombinatorDescriptor(TacticCombinators.LoopOnAllPending.COMBINATOR_ID);
 		return comb.combine(descs, id);
 	}
 

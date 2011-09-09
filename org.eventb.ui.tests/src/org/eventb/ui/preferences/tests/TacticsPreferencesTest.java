@@ -48,7 +48,7 @@ import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
-import org.eventb.core.seqprover.eventbExtensions.AutoTactics.LoopOnAllPending;
+import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.LoopOnAllPending;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils;
 import org.eventb.internal.ui.preferences.tactics.TacticsProfilesCache;
