@@ -11,7 +11,6 @@
 package org.eventb.internal.ui.preferences.tactics;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static org.eclipse.swt.layout.GridData.FILL_BOTH;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
@@ -25,10 +24,10 @@ import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotacti
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_export_ws_profiles;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_import_ws_profiles;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_newbutton;
-import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_profiledetails_header;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_removebutton;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_tab_autoposttactics;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_tab_profiles;
+import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_tacticdetails_header;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_posttactic_enablementdescription;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_posttactic_selectedtacticprofiledescription;
 
@@ -84,19 +83,20 @@ public class PostAutoTacticPreferencePage extends
 	 * export profile tab > export
 	 */
 	protected TacticsProfilesCache workspaceCache = null;
-	// Tactics tab : auto-tactic group
+	// Auto/Post Tactics tab : auto-tactic group
 	protected EnabledComboEditor autoTactic;
-	// Tactics tab : post-tactic group
+	// Auto/Post Tactics tab : post-tactic group
 	protected EnabledComboEditor postTactic;
-	// Profiles tab : list of profiles
-	protected DetailedList profilesList;
-	// Profiles tab : button edit
+	// Tactics tab : list of Tactics
+	protected DetailedList tacticList;
+	// Tactics tab : button edit
 	protected Button edit;
-	// Profiles tab : button remove
+	// Tactics tab : button remove
 	protected Button remove;
-	// Profiles tab : button duplicate
+	// Tactics tab : button duplicate
 	protected Button duplicate;
-
+	
+	
 	public PostAutoTacticPreferencePage() {
 		super(PAGE_ID);
 	}
@@ -121,12 +121,12 @@ public class PostAutoTacticPreferencePage extends
 		 */
 		final TabFolder folder = new TabFolder(parent, NONE);
 		folder.setLayoutData(new GridData(FILL_BOTH));
-		final Composite tabTactic = getTab(folder,
+		final Composite tabAutoPost = getTab(folder,
 				preferencepage_postautotactic_tab_autoposttactics);
 		final Composite tabProfiles = getTab(folder,
 				preferencepage_postautotactic_tab_profiles);
-		createTacticsTab(tabTactic);
-		createProfilsTab(tabProfiles);
+		createAutoPostTab(tabAutoPost);
+		createProfilesTab(tabProfiles);
 	}
 
 	private void initializeCaches() {
@@ -145,7 +145,7 @@ public class PostAutoTacticPreferencePage extends
 		}
 	}
 
-	private void createTacticsTab(Composite tab) {
+	private void createAutoPostTab(Composite tab) {
 		setLayout(tab, 1);
 		autoTactic = new EnabledComboEditor(getPreferenceStore(),
 				Messages.preferencepage_pomtactic_title, P_AUTOTACTIC_ENABLE,
@@ -160,11 +160,11 @@ public class PostAutoTacticPreferencePage extends
 				preferencepage_posttactic_selectedtacticprofiledescription,
 				tab, isPropertyPage());
 
-		cache.addListener(new ICacheListener<List<ITacticDescriptor>>() {
+		cache.addListener(new ICacheListener<ITacticDescriptor>() {
 
 			@Override
 			public void cacheChanged(
-					CachedPreferenceMap<List<ITacticDescriptor>> map) {
+					CachedPreferenceMap<ITacticDescriptor> map) {
 				final String[] names = getSortedProfileNames();
 				autoTactic.setItems(names);
 				postTactic.setItems(names);
@@ -184,29 +184,28 @@ public class PostAutoTacticPreferencePage extends
 		composite.setLayout(layout);
 	}
 
-	protected void updateButtonAndDetails() {
-		profilesList.updateDetails();
+	protected void updateButtons() {
 		updateProfilesButton();
 	}
 
-	private void createProfilsTab(Composite parent) {
+	private void createProfilesTab(Composite parent) {
 		setLayout(parent, 2);
 		setFillParent(parent);
 
-		profilesList = new DetailedList("",
-				preferencepage_postautotactic_profiledetails_header, parent);
-		profilesList.setDetailsProvider(new TacticsProvider());
-		cache.addListener(new ICacheListener<List<ITacticDescriptor>>() {
+		tacticList = new DetailedList("",
+				preferencepage_postautotactic_tacticdetails_header, parent);
+		tacticList.setDetailsProvider(new TacticDetailsProvider(cache));
+		cache.addListener(new ICacheListener<ITacticDescriptor>() {
 
 			@Override
 			public void cacheChanged(
-					CachedPreferenceMap<List<ITacticDescriptor>> map) {
-				updateButtonAndDetails();
-				updateProfilesList();
+					CachedPreferenceMap<ITacticDescriptor> map) {
+				updateButtons();
+				updateTacticsList();
 			}
 
 		});
-		profilesList.addButton(preferencepage_postautotactic_newbutton,
+		tacticList.addButton(preferencepage_postautotactic_newbutton,
 				new Listener() {
 
 					@Override
@@ -215,17 +214,18 @@ public class PostAutoTacticPreferencePage extends
 					}
 
 				});
-		edit = profilesList.addButton(preferencepage_postautotactic_editbutton,
+		edit = tacticList.addButton(preferencepage_postautotactic_editbutton,
 				new Listener() {
 
 					@Override
 					public void handleEvent(Event event) {
 						editProfile();
-						updateProfilesList();
+						updateTacticsList();
+						updateButtons();
 					}
 
 				});
-		remove = profilesList.addButton(
+		remove = tacticList.addButton(
 				preferencepage_postautotactic_removebutton, new Listener() {
 
 					@Override
@@ -234,7 +234,7 @@ public class PostAutoTacticPreferencePage extends
 					}
 
 				});
-		duplicate = profilesList.addButton(
+		duplicate = tacticList.addButton(
 				preferencepage_postautotactic_duplicatebutton, new Listener() {
 
 					@Override
@@ -246,11 +246,11 @@ public class PostAutoTacticPreferencePage extends
 		edit.setEnabled(false);
 		remove.setEnabled(false);
 		duplicate.setEnabled(false);
-		profilesList.addSelectionListener(new SelectionAdapter() {
+		tacticList.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				updateButtonAndDetails();
+				updateButtons();
 			}
 
 		});
@@ -268,7 +268,7 @@ public class PostAutoTacticPreferencePage extends
 
 			@Override
 			public void run() {
-				final List<IPrefMapEntry<List<ITacticDescriptor>>> profilesWS = workspaceCache
+				final List<IPrefMapEntry<ITacticDescriptor>> profilesWS = workspaceCache
 						.getEntries();
 				cache.addAll(profilesWS);
 			}
@@ -277,11 +277,11 @@ public class PostAutoTacticPreferencePage extends
 
 		final IAction exportAction = new Action() {
 
-			private List<IPrefMapEntry<List<ITacticDescriptor>>> getSelectedProfiles() {
-				final String[] selection = profilesList.getSelection();
-				final List<IPrefMapEntry<List<ITacticDescriptor>>> result = new ArrayList<IPrefMapEntry<List<ITacticDescriptor>>>();
+			private List<IPrefMapEntry<ITacticDescriptor>> getSelectedProfiles() {
+				final String[] selection = tacticList.getSelection();
+				final List<IPrefMapEntry<ITacticDescriptor>> result = new ArrayList<IPrefMapEntry<ITacticDescriptor>>();
 				for (String name : selection) {
-					final IPrefMapEntry<List<ITacticDescriptor>> profile = cache
+					final IPrefMapEntry<ITacticDescriptor> profile = cache
 							.getEntry(name);
 					if (profile != null) {
 						result.add(profile);
@@ -295,7 +295,7 @@ public class PostAutoTacticPreferencePage extends
 			public void run() {
 				// Adds profiles into the cache and gets profiles which wasn't
 				// already in the cache
-				final List<IPrefMapEntry<List<ITacticDescriptor>>> added = workspaceCache
+				final List<IPrefMapEntry<ITacticDescriptor>> added = workspaceCache
 						.addAll(getSelectedProfiles());
 
 				// If there is a preference page, adds profiles into the
@@ -303,21 +303,21 @@ public class PostAutoTacticPreferencePage extends
 				final AbstractFieldPreferenceAndPropertyPage parentPage = getWorkspacePreferencePage();
 				if (parentPage instanceof PostAutoTacticPreferencePage) {
 					final PostAutoTacticPreferencePage wsTacticPage = (PostAutoTacticPreferencePage) parentPage;
-					for (IPrefMapEntry<List<ITacticDescriptor>> profile : added) {
-						wsTacticPage.profilesList.addElement(profile.getKey());
+					for (IPrefMapEntry<ITacticDescriptor> profile : added) {
+						wsTacticPage.tacticList.addElement(profile.getKey());
 					}
 				}
 			}
 		};
 
-		profilesList.addSelectionListener(new SelectionAdapter() {
+		tacticList.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enableExport = true;
-				final int selectionCount = profilesList.getSelectionCount();
+				final int selectionCount = tacticList.getSelectionCount();
 				if (selectionCount <= 2) {
-					for (String str : profilesList.getSelection()) {
+					for (String str : tacticList.getSelection()) {
 						enableExport = !(str.equals(DEFAULT_AUTO_TACTICS)
 								|| str.equals(DEFAULT_POST_TACTICS));
 					}
@@ -331,7 +331,7 @@ public class PostAutoTacticPreferencePage extends
 		exportAction.setEnabled(false);
 		popupMenu.add(importAction);
 		popupMenu.add(exportAction);
-		profilesList.setMenu(popupMenu);
+		tacticList.setMenu(popupMenu);
 	}
 
 	protected void newProfile() {
@@ -342,7 +342,7 @@ public class PostAutoTacticPreferencePage extends
 	}
 
 	protected void editProfile() {
-		final String[] selection = profilesList.getSelection();
+		final String[] selection = tacticList.getSelection();
 		if (selection.length == 1) {
 			final String name = selection[0];
 			final EditProfilWizard wizard = new EditProfilWizard(cache, name);
@@ -353,15 +353,15 @@ public class PostAutoTacticPreferencePage extends
 	}
 
 	protected void removeProfile() {
-		cache.remove(profilesList.getSelection());
+		cache.remove(tacticList.getSelection());
 	}
 
 	protected void duplicateTactic() {
-		final String[] selection = profilesList.getSelection();
+		final String[] selection = tacticList.getSelection();
 		if (selection.length == 1) {
 			final String name = selection[0];
 			final String copy = getFreeCopyName(name);
-			final IPrefMapEntry<List<ITacticDescriptor>> profile = cache
+			final IPrefMapEntry<ITacticDescriptor> profile = cache
 					.getEntry(name);
 			if (profile != null) {
 				cache.add(copy, profile.getValue());
@@ -401,13 +401,13 @@ public class PostAutoTacticPreferencePage extends
 	/**
 	 * Set the list of profiles with profile name in the cache.
 	 */
-	protected void updateProfilesList() {
+	protected void updateTacticsList() {
 		final String[] labels = getSortedProfileNames();
-		final String[] selection = profilesList.getSelection();
-		profilesList.clear();
-		profilesList.setList(labels);
-		profilesList.setSelection(selection);
-		updateButtonAndDetails();
+		final String[] selection = tacticList.getSelection();
+		tacticList.clear();
+		tacticList.setList(labels);
+		tacticList.setSelection(selection);
+		tacticList.updateDetails();
 	}
 
 	protected String[] getSortedProfileNames() {
@@ -427,7 +427,7 @@ public class PostAutoTacticPreferencePage extends
 	}
 
 	private void updateProfilesButton() {
-		final Collection<String> selection = asList(profilesList.getSelection());
+		final Collection<String> selection = asList(tacticList.getSelection());
 		final boolean enableNoDefault = !selection
 				.contains(DEFAULT_AUTO_TACTICS)
 				&& !selection.contains(DEFAULT_POST_TACTICS);
@@ -438,31 +438,12 @@ public class PostAutoTacticPreferencePage extends
 		duplicate.setEnabled(enableEq1);
 	}
 
-	private Composite getTab(TabFolder folder, String title) {
+	private static Composite getTab(TabFolder folder, String title) {
 		final TabItem tab = new TabItem(folder, NONE);
 		final Composite composite = new Composite(folder, NONE);
 		tab.setControl(composite);
 		tab.setText(title);
 		return composite;
-	}
-
-	class TacticsProvider implements IDetailsProvider {
-		@Override
-		public String[] getDetails(String element) {
-			final IPrefMapEntry<List<ITacticDescriptor>> profile = cache
-					.getEntry(element);
-			final List<ITacticDescriptor> tactics;
-			if (profile == null) {
-				tactics = emptyList();
-			} else {
-				tactics = profile.getValue();
-			}
-			final String[] result = new String[tactics.size()];
-			for (int i = 0; i < result.length; i++) {
-				result[i] = tactics.get(i).getTacticName();
-			}
-			return result;
-		}
 	}
 
 	/**
@@ -480,8 +461,8 @@ public class PostAutoTacticPreferencePage extends
 
 		@Override
 		public void setEnabled(boolean enabled) {
-			profilesList.setEnabled(enabled);
-			updateButtonAndDetails();
+			tacticList.setEnabled(enabled);
+			updateButtons();
 			autoTactic.setEnabled(enabled);
 			postTactic.setEnabled(enabled);
 		}
@@ -504,6 +485,7 @@ public class PostAutoTacticPreferencePage extends
 
 	@Override
 	public void performApply() {
+		tacticList.saveCurrentIfChanges(false);
 		if (getWorkspacePreferencePage() == null) {
 			workspaceCache.store();
 		}

@@ -11,11 +11,12 @@
 package org.eventb.internal.ui.preferences.tactics;
 
 import static org.eclipse.swt.SWT.NONE;
+import static org.eventb.internal.ui.UIUtils.showQuestion;
+import static org.eventb.internal.ui.utils.Messages.tacticlist_currentunsaved;
 
 import java.util.Arrays;
 
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -41,8 +42,8 @@ import org.eclipse.swt.widgets.Menu;
  */
 public class DetailedList {
 
-	final List list;
-	final List details;
+	private final List list;
+	private final Composite details;
 	private final Composite buttons;
 
 	private final int minWidth = 200;
@@ -59,8 +60,7 @@ public class DetailedList {
 
 		list = new List(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL);
-		details = new List(composite, SWT.BORDER | SWT.FILL | SWT.NO_FOCUS
-				| SWT.V_SCROLL);
+		details = new Composite(composite, SWT.BORDER | SWT.FILL| SWT.NO_FOCUS);
 		buttons = new Composite(composite, SWT.NONE);
 
 		setTableLayout(buttons, 1);
@@ -68,7 +68,7 @@ public class DetailedList {
 		final GridData gd = getFillData();
 		gd.minimumWidth = minWidth;
 		list.setLayoutData(gd);
-		details.setLayoutData(GridDataFactory.copyData(gd));
+		details.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 		list.addSelectionListener(new SelectionAdapter() {
@@ -131,7 +131,7 @@ public class DetailedList {
 	public void removeSelectedElement() {
 		if (list.getSelectionCount() >= 0) {
 			list.remove(list.getSelectionIndices());
-			details.removeAll();
+			provider.clear();
 		}
 	}
 
@@ -167,6 +167,7 @@ public class DetailedList {
 
 	public void setDetailsProvider(IDetailsProvider provider) {
 		this.provider = provider;
+		provider.setParentComposite(details);
 	}
 
 	/**
@@ -181,6 +182,7 @@ public class DetailedList {
 	 */
 	public void setList(String[] items) {
 		list.setItems(items);
+		list.pack();
 	}
 
 	/**
@@ -234,9 +236,10 @@ public class DetailedList {
 	 */
 	public void updateDetails() {
 		if (provider != null && list.getSelectionCount() == 1) {
-			details.setItems(provider.getDetails(getSelectedItem()));
+			saveCurrentIfChanges(true);
+			provider.putDetails(getSelectedItem());
 		} else {
-			details.removeAll();
+			provider.clear();
 		}
 		details.redraw();
 	}
@@ -260,4 +263,18 @@ public class DetailedList {
 		list.getMenu().setEnabled(enabled);
 	}
 	
+	public void saveCurrentIfChanges(boolean ask) {
+		if (provider.hasChanges()) {
+			final boolean save ;
+			if (ask) {
+				save = showQuestion(tacticlist_currentunsaved);
+			} else {
+				save = true;
+			}
+			if (save) {
+				provider.save();
+			}
+		}
+	}
+
 }
