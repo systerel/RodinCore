@@ -96,7 +96,9 @@ public abstract class Rule<T extends Predicate> {
 		return relCons.getRight().equals(relCons.getLeft());
 	}
 
-	public boolean equals(Rule<T> other) {
+	// This is not the regular equals() method from Object
+	// TODO see if really needed
+	public boolean equalsRule(Rule<T> other) {
 		if (this == other) {
 			return true;
 		}
