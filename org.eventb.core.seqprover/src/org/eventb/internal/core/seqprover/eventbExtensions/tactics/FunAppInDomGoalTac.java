@@ -299,54 +299,15 @@ public class FunAppInDomGoalTac implements ITactic {
 	}
 
 	/**
-	 * Return <code>true</code> if the ptNode has one of the two the following
-	 * tree structures :
-	 * <ul>
-	 * <li>
-	 * 
-	 * <pre>
-	 * ptNode
-	 *  └── child
-	 *      └── grandChild (closed)
-	 * </pre>
-	 * 
-	 * </li>
-	 * <li>
-	 * 
-	 * <pre>
-	 * ptNode(opened)
-	 * </pre>
-	 * 
-	 * </li>
-	 * </ul>
-	 * Returns <code>false</code> either
+	 * Returns whether the given node has any pending descendant (i.e., is
+	 * either open or closed).
 	 * 
 	 * @param ptNode
 	 *            the considered proof tree node
-	 * @return true if <code>ptNode</code> has no child but is opened or if it
-	 *         has only one child which has only one child (closed), false else.
+	 * @return <code>true</code> iff the given node has no pending descendant
 	 */
 	private boolean finalCondition(IProofTreeNode ptNode) {
-		if (!ptNode.hasChildren()) {
-			return true;
-		}
-		final IProofTreeNode[] childNodes = ptNode.getChildNodes();
-		if (childNodes.length != 1) {
-			return false;
-		}
-		final IProofTreeNode child = childNodes[0];
-		if (!child.hasChildren()) {
-			return false;
-		}
-		final IProofTreeNode[] grandChildNodes = child.getChildNodes();
-		if (grandChildNodes.length != 1) {
-			return false;
-		}
-		final IProofTreeNode grandChild = grandChildNodes[0];
-		if (grandChild.isOpen()) {
-			return false;
-		}
-		return true;
+		return ptNode.isOpen() || ptNode.isClosed();
 	}
 
 }
