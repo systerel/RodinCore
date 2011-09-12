@@ -69,7 +69,7 @@
             id="erroneous id"
             name="Erroneous id (contains a whitespace)"/>
       <autoTactic
-            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$TacWithParams"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$TacParameterizer"
             id="tacParam"
             name="Tactic with Parameters">
          <tacticParameter

@@ -28,15 +28,15 @@ import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
-import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterDesc.ParameterType;
 import org.eventb.core.seqprover.IParameterSetting;
+import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticExtentionTests.IdentityTactic.FailTactic;
 import org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics.FakeTactic;
-import org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics.TacWithParams;
+import org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics.TacParameterizer;
 import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.FakeTacComb;
 import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.NoParseable;
 import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.OneOrMore;
@@ -111,8 +111,10 @@ public class AutoTacticRegistryTest {
 	}
 	
 	private void assertTacticInstantiatingFailure(String id) {
-		assertKnown(id);
-		final ITacticDescriptor desc = registry.getTacticDescriptor(id);
+		final IParameterizerDescriptor param = registry.getParameterizerDescriptor(id);
+		assertNotNull(param);
+		final IParamTacticDescriptor desc = param.instantiate(
+				param.makeParameterSetting(), id + "_instantiated");
 		try {
 			desc.getTacticInstance();
 			fail("expected illegal argument exception");
@@ -254,7 +256,7 @@ public class AutoTacticRegistryTest {
 	// check an extension with each type of parameters and verify the descriptors
 	@Test
 	public void testParameterDesc() {
-		final IParameterizerDescriptor parameterizer = findParam(TacWithParams.TACTIC_ID);
+		final IParameterizerDescriptor parameterizer = registry.getParameterizerDescriptor(TacParameterizer.PARAMETERIZER_ID);
 		final Collection<IParameterDesc> paramDescs = parameterizer
 				.makeParameterSetting().getParameterDescs();
 		assertParamDesc(paramDescs, "bool1", "BOOL", "true",
@@ -280,23 +282,9 @@ public class AutoTacticRegistryTest {
 		fail("to be implemented");
 	}
 
-	// verifies that the tactic with default parameter values is registered
-	@Test
-	public void testDefaultParameterValues() throws Exception {
-		final ITacticDescriptor tacDesc = registry
-				.getTacticDescriptor(TacWithParams.TACTIC_ID);
-
-		// unmodified parameters
-		final FakeTactic unmodifiedTactic = (FakeTactic) tacDesc
-				.getTacticInstance();
-		unmodifiedTactic.assertParameterValues(true, false, 314,
-				0x7fffffffffffffffL, "formulæ");
-		
-	}
-	
 	@Test
 	public void testSetParameterValues() throws Exception {
-		final IParameterizerDescriptor parameterizer = findParam(TacWithParams.TACTIC_ID);
+		final IParameterizerDescriptor parameterizer = registry.getParameterizerDescriptor(TacParameterizer.PARAMETERIZER_ID);
 		final IParameterSetting parameters = parameterizer.makeParameterSetting();
 		
 		parameters.setBoolean("bool1", false);
@@ -443,9 +431,7 @@ public class AutoTacticRegistryTest {
 	
 	@Test
 	public void testValuationEquals() throws Exception {
-		final IParamTacticDescriptor tacDesc = (IParamTacticDescriptor) registry
-				.getTacticDescriptor(TacWithParams.TACTIC_ID);
-		final IParameterizerDescriptor parameterizer = registry.getParameterizerDescriptor(tacDesc.getParameterizerId());
+		final IParameterizerDescriptor parameterizer = registry.getParameterizerDescriptor(TacParameterizer.PARAMETERIZER_ID);
 		final IParameterSetting setting1 = parameterizer.makeParameterSetting();
 		final IParameterSetting setting2 = parameterizer.makeParameterSetting();
 		assertEquals(setting1, setting2);

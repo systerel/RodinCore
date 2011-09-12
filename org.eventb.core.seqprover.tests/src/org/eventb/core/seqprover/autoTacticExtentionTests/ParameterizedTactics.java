@@ -62,9 +62,9 @@ public class ParameterizedTactics {
 	
 	}
 
-	public static class TacWithParams implements ITacticParameterizer {
+	public static class TacParameterizer implements ITacticParameterizer {
 
-		public static final String TACTIC_ID = "org.eventb.core.seqprover.tests.tacParam";
+		public static final String PARAMETERIZER_ID = "org.eventb.core.seqprover.tests.tacParam";
 
 		private static final String PRM_BOOL1 = "bool1";
 		private static final String PRM_BOOL2 = "bool2";

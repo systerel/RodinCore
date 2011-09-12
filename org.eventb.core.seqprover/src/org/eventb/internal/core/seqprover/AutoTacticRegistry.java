@@ -178,10 +178,6 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			final IParameterizerDescriptor parameterizer = loadParameterizer(baseDesc,
 					element);
 			putCheckDuplicate(parameterizers, id, parameterizer);
-			// add tactic with default parameters
-			final ITacticDescriptor defaultDesc = parameterizer.instantiate(
-					parameterizer.makeParameterSetting(), id + ".default");
-			putCheckDuplicate(registry, id, defaultDesc);
 		} else {
 			final ITacticDescriptor desc = loadSimpleTactic(baseDesc, element);
 			putCheckDuplicate(registry, id, desc);
