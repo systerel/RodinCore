@@ -29,6 +29,8 @@ import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 
+import java.util.Arrays;
+
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
@@ -40,9 +42,12 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.UnaryExpression;
 
 /**
- * Class used for reasoner which condense severals inference rules in only one
- * ProofRule. This class help to ensure that the final inference rule is valid.
- * It is used in MembershipGoal as example.
+ * Class used for reasoner which condense several inference rules in a single
+ * ProofRule. This class helps to ensure that the final inference rule is valid.
+ * It is used by reasoner MembershipGoal for instance.
+ * <p>
+ * Instances of this class are immutable.
+ * </p>
  * 
  * @author Emmanuel Billaud
  */
@@ -55,9 +60,23 @@ public abstract class Rule<T extends Predicate> {
 	protected final Rule<?>[] antecedents;
 
 	protected Rule(T consequent, FormulaFactory ff, Rule<?>... antecedents) {
+		if (ff == null) {
+			throw new NullPointerException("null formula factory");
+		}
+		if (consequent == null) {
+			throw new NullPointerException("null consequent");
+		}
+		if (antecedents == null) {
+			throw new NullPointerException("null array of antecedents");
+		}
+		for (Rule<?> antecedent : antecedents) {
+			if (antecedent == null) {
+				throw new NullPointerException("null antecedent");
+			}
+		}
 		this.consequent = consequent;
 		this.ff = ff;
-		this.antecedents = antecedents;
+		this.antecedents = antecedents.clone();
 	}
 
 	public T getConsequent() {
@@ -77,34 +96,23 @@ public abstract class Rule<T extends Predicate> {
 		return relCons.getRight().equals(relCons.getLeft());
 	}
 
-	public boolean equals(Rule<T> comparedRule) {
-		if (this == comparedRule) {
+	public boolean equals(Rule<T> other) {
+		if (this == other) {
 			return true;
 		}
-		if (!this.ff.equals(comparedRule.ff)) {
+		if (!this.ff.equals(other.ff)) {
 			return false;
 		}
-		if (!this.consequent.equals(comparedRule.consequent)) {
+		if (!this.consequent.equals(other.consequent)) {
 			return false;
 		}
-		final Rule<?>[] rules = this.antecedents;
-		final Rule<?>[] rules2 = comparedRule.antecedents;
-		if (rules.length != rules2.length) {
-			return false;
-		}
-		for (int i = 0; i < rules.length; i++) {
-			if (!rules[i].equals(rules2[i])) {
-				return false;
-			}
-		}
-		return true;
+		return Arrays.equals(this.antecedents, other.antecedents);
 	}
 
 	public static class Hypothesis<T extends Predicate> extends Rule<T> {
 
 		public Hypothesis(T pred, FormulaFactory ff) {
 			super(pred, ff, NO_RULES);
-			assert !(ff == null);
 		}
 
 	}
@@ -113,14 +121,11 @@ public abstract class Rule<T extends Predicate> {
 
 		public Expr(Expression expression, FormulaFactory ff) {
 			super(computeConsequent(expression, ff), ff, NO_RULES);
-			assert !(ff == null);
-			assert expression.isWDStrict();
+			assert expression.isWDStrict();//FIXME why
 		}
 
 		private static RelationalPredicate computeConsequent(
 				Expression expression, FormulaFactory ff) {
-			assert !(ff == null);
-			assert expression.isWDStrict();
 			return ff.makeRelationalPredicate(SUBSETEQ, expression, expression,
 					null);
 		}
