@@ -17,6 +17,7 @@ import org.eventb.internal.core.seqprover.AutoTacticRegistry;
 import org.eventb.internal.core.seqprover.ProverChecks;
 import org.eventb.internal.core.seqprover.ProverSequent;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
+import org.eventb.internal.core.seqprover.eventbExtensions.MembershipGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.osgi.framework.BundleContext;
 
@@ -45,6 +46,8 @@ public class SequentProver extends Plugin {
 			+ "/debug/xProver"; //$NON-NLS-1$
 	private static final String AUTO_REWRITER_TRACE = PLUGIN_ID
 			+ "/debug/autoRewriter"; //$NON-NLS-1$
+	private static final String MEMBERSHIP_GOAL_TRACE = PLUGIN_ID
+			+ "/debug/mbGoal"; //$NON-NLS-1$
 	
 	/**
 	 * The shared instance.
@@ -85,6 +88,7 @@ public class SequentProver extends Plugin {
 		AutoTacticRegistry.DEBUG = parseOption(TACTIC_REGISTRY_TRACE);
 		XProverReasoner.DEBUG = parseOption(XPROVER_TRACE);
 		AutoRewriterImpl.DEBUG = parseOption(AUTO_REWRITER_TRACE);
+		MembershipGoal.DEBUG = parseOption(MEMBERSHIP_GOAL_TRACE);
 	}
 
 	private static boolean parseOption(String key) {

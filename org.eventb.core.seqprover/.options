@@ -6,3 +6,4 @@ org.eventb.core.seqprover/debug/reasonerRegistry = false
 org.eventb.core.seqprover/debug/tacticRegistry = false
 org.eventb.core.seqprover/debug/xProver = false
 org.eventb.core.seqprover/debug/autoRewriter = false
+org.eventb.core.seqprover/debug/mbGoal = false

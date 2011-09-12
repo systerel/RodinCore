@@ -64,6 +64,12 @@ import org.eventb.internal.core.seqprover.eventbExtensions.MyPosition;
  * @author Emmanuel Billaud
  */
 public class MembershipGoal extends HypothesesReasoner {
+
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
+			+ ".mbGoal";
+
+	public static boolean DEBUG = false;
+
 	private static Expression member, set;
 	private static Expression startPoint;
 	private static Map<MyPosition, Rule<RelationalPredicate>> mapMember;
@@ -71,9 +77,6 @@ public class MembershipGoal extends HypothesesReasoner {
 	private static Predicate memberHyp;
 
 	private static String errorMsg;
-
-	public static final String REASONER_ID = SequentProver.PLUGIN_ID
-			+ ".mbGoal";
 
 	@Override
 	public String getReasonerID() {
