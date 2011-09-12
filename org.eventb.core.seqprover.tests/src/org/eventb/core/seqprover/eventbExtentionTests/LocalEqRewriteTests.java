@@ -34,39 +34,62 @@ public class LocalEqRewriteTests extends AbstractReasonerTests {
 
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ), C=ℙ(ℤ), D=ℙ(ℤ)");
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ), C=ℙ(ℤ), D=ℙ(ℤ), x=ℙ(ℤ)");
 		return new SuccessfullReasonerApplication[] {
-				// Apply in the hypothesis 1/2
+				// Apply in the hypothesis 1/5
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq(" A∈ℙ(ℤ) ;; x=A∪B ;; x∩C⊆D |- ⊤ "),
 						new LocalEqRewrite.Input(genPred(typeEnv, "x∩C⊆D"),
 								makePosition("0.0"), genPred(typeEnv, "x=A∪B")),
 						"{A=ℙ(ℤ), C=ℙ(ℤ)}[x∩C⊆D][][A∈ℙ(ℤ) ;; x=A∪B ;; (A∪B)∩C⊆D] |- ⊤"),
-				// Apply in the hypothesis 2/2
+				// Apply in the hypothesis 2/5
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq(" A∈ℙ(ℤ) ;; A∪B=x ;; x∩C⊆D |- ⊤ "),
 						new LocalEqRewrite.Input(genPred(typeEnv, "x∩C⊆D"),
 								makePosition("0.0"), genPred(typeEnv, "A∪B=x")),
 						"{A=ℙ(ℤ), C=ℙ(ℤ)}[x∩C⊆D][][A∈ℙ(ℤ) ;; A∪B=x ;; (A∪B)∩C⊆D] |- ⊤"),
-				// Apply in the hypothesis 1/2
+				// Apply in the hypothesis 3/5
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq(" A∈ℙ(ℤ) ;; D∈ℙ(ℤ) ;; x=A∪B ;; y=D∪x ;; y∩C⊆D |- ⊤ "),
 						new LocalEqRewrite.Input(genPred(typeEnv, "y=D∪x"),
 								makePosition("1.1"), genPred(typeEnv, "x=A∪B")),
 						"{A=ℙ(ℤ), C=ℙ(ℤ), D=ℙ(ℤ)}[y=D∪x][][A∈ℙ(ℤ) ;; D∈ℙ(ℤ) ;; x=A∪B ;; y=D∪(A∪B) ;; y∩C⊆D] |- ⊤"),
-				// Apply in the goal 1/2
+				// Apply in the hypothesis 4/5
+				new SuccessfullReasonerApplication(
+						TestLib.genSeq(" A∈ℙ(ℤ) ;; x=A∪B ;; x=y |- ⊤ "),
+						new LocalEqRewrite.Input(genPred(typeEnv, "x=y"),
+								makePosition("0"), genPred(typeEnv, "x=A∪B")),
+						"{A=ℙ(ℤ), x=ℙ(ℤ)}[x=y][][A∈ℙ(ℤ) ;; x=A∪B ;; A∪B=y] |- ⊤"),
+				// Apply in the hypothesis 5/5
+				new SuccessfullReasonerApplication(
+						TestLib.genSeq(" A∈ℙ(ℤ) ;; x=A∪B ;; y=x |- ⊤ "),
+						new LocalEqRewrite.Input(genPred(typeEnv, "y=x"),
+								makePosition("1"), genPred(typeEnv, "x=A∪B")),
+						"{A=ℙ(ℤ), x=ℙ(ℤ)}[y=x][][A∈ℙ(ℤ) ;; x=A∪B ;; y=A∪B] |- ⊤"),
+				// Apply in the goal 1/4
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq(" A∈ℙ(ℤ) ;; x=A∪B |- x∩C⊆D "),
 						new LocalEqRewrite.Input(null, makePosition("0.0"),
 								genPred(typeEnv, "x=A∪B")),
 						"{A=ℙ(ℤ), C=ℙ(ℤ)}[][][A∈ℙ(ℤ) ;; x=A∪B] |- (A∪B)∩C⊆D"),
-				// Apply in the goal 2/2
+				// Apply in the goal 2/4
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq(" A∈ℙ(ℤ) ;; A∪B=x |- x∩C⊆D "),
 						new LocalEqRewrite.Input(null, makePosition("0.0"),
 								genPred(typeEnv, "A∪B=x")),
 						"{A=ℙ(ℤ), C=ℙ(ℤ)}[][][A∈ℙ(ℤ) ;; A∪B=x] |- (A∪B)∩C⊆D"),
-				};
+				// Apply in the goal 3/4
+				new SuccessfullReasonerApplication(
+						TestLib.genSeq(" A∈ℙ(ℤ) ;; x=A∪B |- x=y "),
+						new LocalEqRewrite.Input(null, makePosition("0"),
+								genPred(typeEnv, "x=A∪B")),
+						"{A=ℙ(ℤ)}[][][A∈ℙ(ℤ) ;; x=A∪B] |- A∪B=y"),
+				// Apply in the goal 4/4
+				new SuccessfullReasonerApplication(
+						TestLib.genSeq(" A∈ℙ(ℤ) ;; x=A∪B |- y=x "),
+						new LocalEqRewrite.Input(null, makePosition("1"),
+								genPred(typeEnv, "x=A∪B")),
+						"{A=ℙ(ℤ)}[][][A∈ℙ(ℤ) ;; x=A∪B] |- y=A∪B"), };
 	}
 
 	@Override
@@ -96,8 +119,7 @@ public class LocalEqRewriteTests extends AbstractReasonerTests {
 						TestLib.genSeq(" A∈ℙ(ℤ) ;; A∩B=A∪B ;; (A∩B)∩C⊆D |- ⊤ "),
 						new LocalEqRewrite.Input(genPred(typeEnv, "(A∩B)∩C⊆D"),
 								makePosition("0.0"),
-								genPred(typeEnv, "A∩B=A∪B"))),
-				};
+								genPred(typeEnv, "A∩B=A∪B"))), };
 	}
 
 }

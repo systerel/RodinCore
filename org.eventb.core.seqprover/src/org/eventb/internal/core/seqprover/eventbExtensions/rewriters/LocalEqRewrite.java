@@ -44,8 +44,7 @@ import org.eventb.core.seqprover.SerializeException;
 /**
  * Rewrite an identifier at a given position in the goal or in a hypothesis
  * using the predicate given in input. This predicate must denote an equality,
- * and the identifier must be one of the sides of the operator.
- * <br>
+ * and the identifier must be one of the sides of the operator. <br>
  * Here are the rules implemented (x is the identifier) :<br>
  * H, f(E), x=E ⊢ G(x)<br>
  * --------------------<br>
@@ -150,16 +149,12 @@ public class LocalEqRewrite implements IReasoner {
 			throw new SerializeException(new IllegalStateException(neededHyp
 					+ " does not denote an equality"));
 		}
-		final Expression[] testIdent = testIdent((RelationalPredicate) neededHyp);
-		if (testIdent == null) {
+		final Formula<?> subFormula = rewritten.getSubFormula(position);
+		final Expression exp = testIdent((RelationalPredicate) neededHyp,
+				(Expression) subFormula);
+		if (exp == null) {
 			throw new SerializeException(new IllegalStateException(neededHyp
 					+ " is not related to any identifier"));
-		}
-		final Expression ident = testIdent[0];
-		final Formula<?> subFormula = rewritten.getSubFormula(position);
-		if (!ident.equals(subFormula)) {
-			throw new SerializeException(new IllegalStateException(ident
-					+ " is not equal to " + subFormula));
 		}
 		if (isGoal) {
 			return new Input(null, position, neededHyp);
@@ -186,16 +181,16 @@ public class LocalEqRewrite implements IReasoner {
 			return reasonerFailure(this, input, equality
 					+ " does not denote an equality");
 		}
-		final Expression[] testIdent = testIdent((RelationalPredicate) equality);
-		if (testIdent == null) {
-			return reasonerFailure(this, input, equality
-					+ " is not related to any identifier");
-		}
-		final Expression ident = testIdent[0];
-		final Expression exp = testIdent[1];
 		if (pred == null) {
 			final Predicate goal = seq.goal();
-			final Formula<?> subFormula = goal.getSubFormula(position);
+			final Expression ident = (Expression) goal.getSubFormula(position);
+			final Expression exp = testIdent((RelationalPredicate) equality,
+					ident);
+			if (exp == null) {
+				return reasonerFailure(this, input, equality
+						+ " is not related to any identifier");
+			}
+			final Formula<?> subFormula = ident;
 			if (!ident.equals(subFormula)) {
 				return reasonerFailure(this, input, ident + " is not equal to "
 						+ subFormula);
@@ -208,7 +203,14 @@ public class LocalEqRewrite implements IReasoner {
 				return reasonerFailure(this, input, pred
 						+ " is not a hypothesis of the given sequent");
 			}
-			final Formula<?> subFormula = pred.getSubFormula(position);
+			final Expression ident = (Expression) pred.getSubFormula(position);
+			final Expression exp = testIdent((RelationalPredicate) equality,
+					ident);
+			if (exp == null) {
+				return reasonerFailure(this, input, equality
+						+ " is not related to any identifier");
+			}
+			final Formula<?> subFormula = ident;
 			if (!ident.equals(subFormula)) {
 				return reasonerFailure(this, input, ident + " is not equal to "
 						+ subFormula);
@@ -220,23 +222,19 @@ public class LocalEqRewrite implements IReasoner {
 			List<IHypAction> hypAct = new ArrayList<IHypAction>();
 			hypAct.add(makeForwardInfHypAction(neededHyps, singleton(newHyp)));
 			hypAct.add(makeHideHypAction(singleton(pred)));
-			return makeProofRule(this, input, neededHyps, "lae in "+pred, hypAct);
+			return makeProofRule(this, input, neededHyps,
+					"lae in " + pred.toString(), hypAct);
 		}
 	}
 
-	private Expression[] testIdent(RelationalPredicate pred) {
+	private Expression testIdent(RelationalPredicate pred, Expression ident) {
 		final Expression left = pred.getLeft();
 		final Expression right = pred.getRight();
-		Expression[] result = new Expression[2];
-		if (left.getTag() == FREE_IDENT) {
-			result[0] = left;
-			result[1] = right;
-			return result;
+		if (left.getTag() == FREE_IDENT && left.equals(ident)) {
+			return right;
 		}
-		if (right.getTag() == FREE_IDENT) {
-			result[0] = right;
-			result[1] = left;
-			return result;
+		if (right.getTag() == FREE_IDENT && right.equals(ident)) {
+			return left;
 		}
 		return null;
 
