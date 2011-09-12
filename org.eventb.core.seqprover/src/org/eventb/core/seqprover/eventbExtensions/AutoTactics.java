@@ -1362,6 +1362,28 @@ public class AutoTactics {
 		}
 	}
 
+
+	//*************************************************
+	//
+	//				Selection
+	//
+	//*************************************************
+	
+	/**
+	 * The lasso tactic.
+	 * 
+	 * @see Tactics#lasoo()
+	 * @since 2.3
+	 */
+	public static class LassoTac extends AbsractLazilyConstrTactic {
+
+		@Override
+		protected ITactic getSingInstance() {
+			return Tactics.lasoo();
+		}
+	}
+
+	
 	
 	//*************************************************
 	//

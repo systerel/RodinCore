@@ -678,6 +678,12 @@
             id="totalDomToCProdTac"
             name="%totalDomToCProdTacName">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$LassoTac"
+            description="%lassoDescription"
+            id="lasso"
+            name="%lassoName">
+      </autoTactic>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tacticCombinators">
