@@ -53,8 +53,6 @@ import org.eventb.core.ast.UnaryExpression;
  */
 public abstract class Rule<T extends Predicate> {
 
-	private static final Rule<?>[] NO_RULES = new Rule<?>[0];
-
 	protected final T consequent;
 	protected final FormulaFactory ff;
 	protected final Rule<?>[] antecedents;
@@ -114,7 +112,7 @@ public abstract class Rule<T extends Predicate> {
 	public static class Hypothesis<T extends Predicate> extends Rule<T> {
 
 		public Hypothesis(T pred, FormulaFactory ff) {
-			super(pred, ff, NO_RULES);
+			super(pred, ff);
 		}
 
 	}
@@ -122,7 +120,7 @@ public abstract class Rule<T extends Predicate> {
 	public static class Expr extends Rule<RelationalPredicate> {
 
 		public Expr(Expression expression, FormulaFactory ff) {
-			super(computeConsequent(expression, ff), ff, NO_RULES);
+			super(computeConsequent(expression, ff), ff);
 			assert expression.isWDStrict();//FIXME why
 		}
 
@@ -170,10 +168,10 @@ public abstract class Rule<T extends Predicate> {
 		/**
 		 * x∈A, A⊆B ⊢ x∈B <br>
 		 * x∈A, A⊂B ⊢ x∈B <br>
-		 * A⊆B, B⊆C ⊢ B⊆C <br>
-		 * A⊆B, B⊂C ⊢ B⊂C <br>
-		 * A⊂B, B⊆C ⊢ B⊂C <br>
-		 * A⊂B, B⊂C ⊢ B⊂C
+		 * A⊆B, B⊆C ⊢ A⊆C <br>
+		 * A⊆B, B⊂C ⊢ A⊂C <br>
+		 * A⊂B, B⊆C ⊢ A⊂C <br>
+		 * A⊂B, B⊂C ⊢ A⊂C
 		 * 
 		 * @param in
 		 *            x∈A / Z⊆A / Z⊂A

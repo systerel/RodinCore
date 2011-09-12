@@ -138,7 +138,7 @@ public class MembershipGoalTac implements ITactic {
 					}
 					path.add(rPred);
 					final HypothesesReasoner.Input input = new HypothesesReasoner.Input(
-							path.toArray(new Predicate[1]));
+							path.toArray(new Predicate[path.size()]));
 					return BasicTactics
 							.reasonerTac(new MembershipGoal(), input).apply(
 									ptNode, pm);
