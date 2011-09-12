@@ -43,7 +43,7 @@ import org.eventb.internal.core.seqprover.Util;
  * </ul>
  * </p>
  * <p>
- * Optionnaly, one can use an extended reasoner input (rather than the default
+ * Optionally, one can use an extended reasoner input (rather than the default
  * one). When this is the case, one has to also override the
  * <code>serializeInput</code> and <code>deserializeInput</code> methods. An
  * example of such an extension is described in the unit tests of this plugin
