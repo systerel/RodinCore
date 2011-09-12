@@ -10,9 +10,36 @@
  *******************************************************************************/
 package org.eventb.internal.core.preferences;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ICombinatorDescriptor;
+import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.TacticCombinators;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Utility class for preferences using.
@@ -24,6 +51,66 @@ public class PreferenceUtils {
 	 * Client should not try to reset this flag.
 	 */
 	public static boolean DEBUG = false;
+
+	public static class PreferenceException extends RuntimeException {
+
+		private static final long serialVersionUID = -4388540765121161963L;
+
+		private static final PreferenceException INSTANCE = new PreferenceException();
+
+		private PreferenceException() {
+			// singleton
+		}
+
+		public static PreferenceException getInstance() {
+			return INSTANCE;
+		}
+	}
+
+	public static class ReadPrefMapEntry<T> implements IPrefMapEntry<T> {
+
+		private final String key;
+		private final T value;
+		
+		public ReadPrefMapEntry(String key, T value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		@Override
+		public String getKey() {
+			return key;
+		}
+
+		@Override
+		public T getValue() {
+			return value;
+		}
+
+		@Override
+		public void setKey(String key) {
+			// do nothing
+		}
+
+		@Override
+		public void setValue(T value) {
+			// do nothing
+		}
+
+		@Override
+		public T getReference() {
+			return null;
+		}
+		
+	}
+	
+	public static class UnresolvedPrefMapEntry<T> extends ReadPrefMapEntry<T> {
+
+		public UnresolvedPrefMapEntry(String key) {
+			super(key, null);
+		}
+		
+	}
 	
 	/**
 	 * Returns a string representation of a list of input objects. The objects
@@ -66,6 +153,164 @@ public class PreferenceUtils {
 			result.add((String) st.nextElement());
 		}
 		return result.toArray(new String[result.size()]);
+	}
+
+	// for compatibility
+	public static ITacticDescriptor loopOnAllPending(
+			List<ITacticDescriptor> descs, String id) {
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		final ICombinatorDescriptor comb = reg
+				.getCombinatorDescriptor(TacticCombinators.LoopOnAllPending.COMBINATOR_ID);
+		return comb.combine(descs, id);
+	}
+	
+	/**
+	 * Returns a 'loop on all pending' tactic descriptor on auto tactics with
+	 * given ids; the resulting tactic ears the given id.
+	 * 
+	 * @param tacticIDs
+	 *            an array of auto tactic ids
+	 * @param id
+	 *            the id of the resulting tactic
+	 * @return a tactic descriptor
+	 */
+	public static ITacticDescriptor loopOnAllPending(String[] tacticIDs,
+			String id) {
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		final ArrayList<ITacticDescriptor> descs = new ArrayList<ITacticDescriptor>();
+		for (String descId : tacticIDs) {
+			if (!reg.isRegistered(descId)) {
+				continue;
+			}
+			final ITacticDescriptor desc = reg.getTacticDescriptor(descId);
+			descs.add(desc);
+		}
+		return loopOnAllPending(descs, id);
+	}
+
+	public static enum XMLElementTypes {
+		TACTIC_PREF, PREF_UNIT, SIMPLE, PARAMETERIZED, PARAMETER, COMBINED, PREF_REF;
+		@Override
+		public String toString() {
+			return super.toString().toLowerCase();
+		}
+
+		public static Element createElement(Document doc, XMLElementTypes name) {
+			return doc.createElement(name.toString());
+		}
+
+		public static boolean hasName(Node node, XMLElementTypes name) {
+			return node.getNodeName().equals(name.toString());
+		}
+
+		public static NodeList getElementsByTagName(Element node,
+				XMLElementTypes nodeType) {
+			return node.getElementsByTagName(nodeType.toString());
+		}
+
+		public static void assertName(Node node, XMLElementTypes name)
+				throws PreferenceException {
+			if (!hasName(node, name)) {
+				throw PreferenceException.getInstance();
+			}
+		}
+	}
+
+	public static enum XMLAttributeTypes {
+		PREF_KEY, TACTIC_ID, PARAMETERIZER_ID, LABEL, TYPE, COMBINATOR_ID;
+
+		@Override
+		public String toString() {
+			return super.toString().toLowerCase();
+		}
+
+		public static String getAttribute(Node node,
+				XMLAttributeTypes attributeType) throws PreferenceException {
+			final NamedNodeMap attributes = node.getAttributes();
+			final Node att = attributes.getNamedItem(attributeType.toString());
+			if (att == null) {
+				throw PreferenceException.getInstance();
+			}
+			return att.getNodeValue();
+		}
+
+		public static void setAttribute(Element node,
+				XMLAttributeTypes attributeType, String value) {
+			node.setAttribute(attributeType.toString(), value);
+		}
+	}
+
+	/**
+	 * Returns a Document that can be used to build a DOM tree
+	 * 
+	 * @return the Document
+	 * @throws ParserConfigurationException
+	 *             if an exception occurs creating the document builder
+	 */
+	public static Document getDocument() throws ParserConfigurationException {
+		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+
+		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+		Document doc = docBuilder.newDocument();
+		return doc;
+	}
+	
+	/**
+	 * Makes a DOM document from the given string.
+	 * 
+	 * @param str
+	 *            xml content
+	 * @return a document
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	public static Document makeDocument(String str)
+			throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+
+		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+		return docBuilder.parse(new InputSource(new StringReader(str)));
+	}
+	
+	/**
+	 * Serializes a XML document into a string - encoded in UTF8 format, with
+	 * platform line separators.
+	 * 
+	 * @param doc
+	 *            document to serialize
+	 * @return the document as a string
+	 * @throws TransformerException
+	 *             if an unrecoverable error occurs during the serialization
+	 * @throws IOException
+	 *             if the encoding attempted to be used is not supported
+	 */
+	public static String serializeDocument(Document doc)
+			throws TransformerException, IOException {
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+
+		TransformerFactory factory = TransformerFactory.newInstance();
+
+		Transformer transformer = factory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+
+		DOMSource source = new DOMSource(doc);
+		StreamResult outputTarget = new StreamResult(s);
+		transformer.transform(source, outputTarget);
+
+		return s.toString("UTF8"); //$NON-NLS-1$			
+	}
+	
+	public static Node getUniqueChild(Node node) {
+		final NodeList unitChildren = node.getChildNodes();
+		for (int j = 0; j < unitChildren.getLength(); j++) {
+			final Node child = unitChildren.item(j);
+			if (child instanceof Element) {
+				return child;
+			}
+		}
+		throw PreferenceException.getInstance();
 	}
 
 }

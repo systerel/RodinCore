@@ -11,6 +11,13 @@
 package org.eventb.internal.core.preferences;
 
 import static org.eventb.internal.core.Util.log;
+import static org.eventb.internal.core.preferences.PreferenceUtils.getDocument;
+import static org.eventb.internal.core.preferences.PreferenceUtils.serializeDocument;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PREF_UNIT;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.TACTIC_PREF;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.assertName;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.createElement;
+import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.getElementsByTagName;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,12 +25,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefElementTranslator;
+import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.preferences.IMapRefSolver;
+import org.eventb.core.preferences.IXMLPrefSerializer;
+import org.eventb.internal.core.Util;
+import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
+import org.eventb.internal.core.preferences.PreferenceUtils.ReadPrefMapEntry;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Maps a preference to a {@link java.util.Map}.
  */
-public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T>> {
+public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T>>, IMapRefSolver<T> {
 
 	// String separator for elements of a map
 	protected static final String SEPARATOR_MAP = ";";
@@ -32,8 +50,20 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 
 	private final IPrefElementTranslator<T> translator;
 
+	private final IXMLPrefSerializer<T> xmlTranslator;
+	
 	public PreferenceMapper(IPrefElementTranslator<T> translator) {
+		this(translator, null);
+	}
+	
+	public PreferenceMapper(IXMLPrefSerializer<T> xmlTranslator) {
+		this(null, xmlTranslator);
+	}
+	
+	private PreferenceMapper(IPrefElementTranslator<T> translator,
+			IXMLPrefSerializer<T> xmlTranslator) {
 		this.translator = translator;
+		this.xmlTranslator = xmlTranslator;
 	}
 
 	/**
@@ -49,21 +79,63 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 			return null;
 		}
 		final Map<String, T> map = new HashMap<String, T>();
-		final String[] stringMap = PreferenceUtils.parseString(pref,
-				SEPARATOR_MAP);
-		for (String elt : stringMap) {
-			final String[] entry = PreferenceUtils.parseString(elt,
-					SEPARATOR_MAP_ELEMENT);
-			if (entry.length != 2) {
-				log(null, "Invalid entry for the preference element: " + elt);
-			} else {
-				final String key = entry[0];
-				final T value = translator.inject(entry[1]);
-				map.put(key, value);
+		
+		if (xmlTranslator != null) {
+			try {
+				final Document doc = PreferenceUtils.makeDocument(pref);
+				final Element tacticPref = doc.getDocumentElement();
+				assertName(tacticPref, TACTIC_PREF);
+				final NodeList units = getElementsByTagName(tacticPref,
+						PREF_UNIT);
+				for (int i = 0; i < units.getLength(); i++) {
+					final IPrefMapEntry<T> unit = loadUnit(units, i, pref);
+					if (unit != null) {
+						map.put(unit.getKey(), unit.getValue());
+					}
+				}
+			} catch (Exception e) {
+				Util.log(e, "while loading tactic preference");
+				throw PreferenceException.getInstance();
+			}
+		} else {
+
+			final String[] stringMap = PreferenceUtils.parseString(pref,
+					SEPARATOR_MAP);
+			for (String elt : stringMap) {
+				final String[] entry = PreferenceUtils.parseString(elt,
+						SEPARATOR_MAP_ELEMENT);
+				if (entry.length != 2) {
+					log(null, "Invalid entry for the preference element: "
+							+ elt);
+				} else {
+					final String key = entry[0];
+					final T value = translator.inject(entry[1]);
+					if (value == null) {
+						// FIXME may be due to missing plug-in (combinator or
+						// parameterizer contribution)
+						throw PreferenceException.getInstance();
+					}
+					map.put(key, value);
+				}
 			}
 		}
 		return map;
 	}
+
+	private IPrefMapEntry<T> loadUnit(final NodeList units, int i, String pref) {
+		final Node unitElem = units.item(i);
+		try {
+			return xmlTranslator.get(unitElem);
+		} catch (PreferenceException e) {
+			// failed
+			final String message = "error while loading preference unit "
+					+ i + " from: " + pref;
+			Util.log(e, message);
+			return null;
+		}
+	}
+	
+	
 
 	/**
 	 * Extracts the map model to string for serialization.
@@ -74,11 +146,40 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 	 */
 	@Override
 	public String extract(Map<String, T> map) {
+		if (xmlTranslator != null) {
+			try {
+				final Document doc = getDocument();
+				final Element tacticPref = createElement(doc, TACTIC_PREF);
+
+				for (Entry<String, T> entry : map.entrySet()) {
+					final ReadPrefMapEntry<T> prefEntry = new ReadPrefMapEntry<T>(
+							entry.getKey(), entry.getValue());
+					xmlTranslator.put(prefEntry, doc, tacticPref);
+				}
+				doc.appendChild(tacticPref);
+				return serializeDocument(doc);
+			} catch (Exception e) {
+				Util.log(e, "while storing tactic preference");
+				throw PreferenceException.getInstance();
+			}
+		}
+		// old storage
 		final List<String> strEntries = new ArrayList<String>();
 		for (Entry<String, T> entry : map.entrySet()) {
-			strEntries.add(mapEntryToString(entry.getKey(), entry.getValue()));
+			final T element = entry.getValue();
+			strEntries.add(mapEntryToString(entry.getKey(), element));
 		}
 		return PreferenceUtils.flatten(strEntries, SEPARATOR_MAP);
+	}
+
+	@Override
+	public void resolveReferences(CachedPreferenceMap<T> map) {
+		if (xmlTranslator == null) {
+			return;
+		}
+		for (IPrefMapEntry<T> entry : map.getEntries()) {
+			xmlTranslator.resolveReferences(entry, map);
+		}
 	}
 
 	/**
@@ -99,5 +200,6 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 		buffer.append(val);
 		return buffer.toString();
 	}
+
 
 }
