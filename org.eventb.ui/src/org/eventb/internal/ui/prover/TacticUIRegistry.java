@@ -321,10 +321,13 @@ public class TacticUIRegistry {
 		public List<ITacticApplication> getApplications(IUserSupport us,
 				Predicate hyp, String globalInput) {
 
-			IProofTreeNode node = null;
-			IProofState currentPO = us.getCurrentPO();
-			if (currentPO != null) {
-				node = currentPO.getCurrentNode();
+			final IProofState currentPO = us.getCurrentPO();
+			if(currentPO == null) {
+				return Collections.emptyList();
+			}
+			final IProofTreeNode node = currentPO.getCurrentNode();
+			if(node == null) {
+				return Collections.emptyList();
 			}
 
 			return appliProvider
