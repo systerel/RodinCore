@@ -80,20 +80,6 @@ public class ParameterizedTactics {
 		}
 	}
 	
-	public static class Both implements ITactic, ITacticParameterizer {
-
-		@Override
-		public ITactic getTactic(IParameterValuation parameters) {
-			return null;
-		}
-
-		@Override
-		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			return null;
-		}
-		
-	}
-	
 	public static class SimpleTacWithParam implements ITactic {
 
 		@Override

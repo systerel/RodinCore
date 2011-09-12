@@ -124,14 +124,6 @@ public class AutoTacticRegistryTest {
 
 	}
 	
-	private void assertInstanceLoadingSuccess(String id) {
-		assertKnown(id);
-		final ITacticDescriptor desc = registry.getTacticDescriptor(id);
-		// no exception expected
-		final ITactic tactic = desc.getTacticInstance();
-		assertNull(tactic.apply(null, null));
-	}
-
 	/**
 	 * Test method for {@link IAutoTacticRegistry#isRegistered(String)} and
 	 * {@link IAutoTacticRegistry#getRegisteredIDs()}.
@@ -252,6 +244,14 @@ public class AutoTacticRegistryTest {
 					id.contains("erroneous"));
 		}
 	}
+	
+	// class not instance of ITactic
+	@Test(expected = IllegalArgumentException.class)
+	public void testBadInstance() throws Exception {
+		final ITacticDescriptor desc = registry.getTacticDescriptor("org.eventb.core.seqprover.tests.badInstance");
+		assertNotNull(desc);
+		desc.getTacticInstance();
+	}
 
 	// check an extension with each type of parameters and verify the descriptors
 	@Test
@@ -322,7 +322,7 @@ public class AutoTacticRegistryTest {
 		return -1;
 	}
 
-	// class not instance of ITactic nor ITacticParameterizer
+	// class not instance of ITacticParameterizer
 	@Test(expected = IllegalArgumentException.class)
 	public void testBadInstanceNoImplement() throws Exception {
 		final ITacticDescriptor desc = registry.getTacticDescriptor("org.eventb.core.seqprover.tests.badInstance");
@@ -352,13 +352,6 @@ public class AutoTacticRegistryTest {
 		assertTacticInstantiatingFailure("org.eventb.core.seqprover.tests.paramThrowsException");
 	}
 	
-	// class instance of both ITactic and ITacticParameterizer => accepted, only
-	// the relevant interface is used
-	@Test
-	public void testInstanceImplementsBoth() throws Exception {
-		assertInstanceLoadingSuccess("org.eventb.core.seqprover.tests.both");
-	}
-
 	// default value does not parse with given type => error
 	@Test
 	public void testNotParseableDefaultValues() throws Exception {

@@ -97,7 +97,29 @@
             id="simple"
             name="Simple Auto Tactic">
       </autoTactic>
-      <autoTactic
+   </extension>
+   <extension
+         point="org.eventb.core.seqprover.tacticCombinators">
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.tests.preferences.TestingAutoTactics$CombTestAutoTac"
+            id="combinator"
+            minArity="1"
+            name="Test Combinator">
+      </combinator>
+   </extension>
+   <extension
+         point="org.eventb.core.pomTactics">
+      <tactic
+            id="org.eventb.core.tests.simple">
+      </tactic>
+      <tactic
+            id="org.eventb.core.tests.tracingTactic">
+      </tactic>
+   </extension>
+   <extension
+         point="org.eventb.core.seqprover.tacticParameterizers">
+      <parameterizer
             class="org.eventb.core.tests.preferences.TestingAutoTactics$ParamerizerTestAutoTac"
             id="param"
             name="Parameterized Auto Tactic">
@@ -121,26 +143,7 @@
                label="s"
                type="String">
          </tacticParameter>
-      </autoTactic>
-   </extension>
-   <extension
-         point="org.eventb.core.seqprover.tacticCombinators">
-      <combinator
-            boundArity="false"
-            class="org.eventb.core.tests.preferences.TestingAutoTactics$CombTestAutoTac"
-            id="combinator"
-            minArity="1"
-            name="Test Combinator">
-      </combinator>
-   </extension>
-   <extension
-         point="org.eventb.core.pomTactics">
-      <tactic
-            id="org.eventb.core.tests.simple">
-      </tactic>
-      <tactic
-            id="org.eventb.core.tests.tracingTactic">
-      </tactic>
+      </parameterizer>
    </extension>
 
 </plugin>

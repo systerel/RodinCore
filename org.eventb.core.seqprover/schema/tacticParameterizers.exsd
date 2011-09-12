@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eventb.core.seqprover" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eventb.core.seqprover" id="tacticCombinators" name="Tactic Combinators"/>
+         <meta.schema plugin="org.eventb.core.seqprover" id="tacticParameterizers" name="Tactic Parameterizers"/>
       </appInfo>
       <documentation>
-         This extension point accepts definition of tactic combinators.
+         This extension point accepts definition of tactic parameterizers.
       </documentation>
    </annotation>
 
@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="combinator" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="parameterizer" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,19 +47,70 @@
       </complexType>
    </element>
 
-   <element name="combinator">
+   <element name="tacticParameter">
       <complexType>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique label, in the scope of this tactic, that can be used by the parameterizer to fetch the parameter value.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type" use="required">
+            <annotation>
+               <documentation>
+                  The type of this parameter.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="Boolean">
+                  </enumeration>
+                  <enumeration value="Integer">
+                  </enumeration>
+                  <enumeration value="Long">
+                  </enumeration>
+                  <enumeration value="String">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="default" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The default value of this parameter. Must be a valid value of the given type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A human-readable description of the parameter.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parameterizer">
+      <complexType>
+         <sequence>
+            <element ref="tacticParameter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the unique identifier for this tactic (simple id token, unique for tactics within the extension namespace). The token cannot contain a dot (.) or whitespace. The unique identifier is internally prepended with the id of the plugin that contributes it.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a human readable name for this tactic
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -69,35 +120,21 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the fully-qualified name of an implementation of  &lt;code&gt;org.eventb.core.seqprover.ITacticParameterizer&lt;/code&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eventb.core.seqprover.ITacticCombinator"/>
+                  <meta.attribute kind="java" basedOn=":org.eventb.core.seqprover.ITacticParameterizer"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  
+                  a description of what this auto tactic does
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
                </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="minArity" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the minimum number of tactics to combine
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="boundArity" type="boolean" use="required">
-            <annotation>
-               <documentation>
-                  whether the arity of this combinator is bound
-               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -117,7 +154,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Examples can be found in this very plug-in.
+         Examples can be found in org.eventb.core.seqprover.tests
       </documentation>
    </annotation>
 

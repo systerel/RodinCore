@@ -46,8 +46,12 @@ import org.eventb.internal.core.seqprover.paramTactics.ParameterDesc;
  */
 public class AutoTacticRegistry implements IAutoTacticRegistry {
 	
+	// TODO make loader class hierarchy for simple, parameterizer, combinator
+	
 	private static String TACTICS_ID =
 		SequentProver.PLUGIN_ID + ".autoTactics";
+	private static String PARAMETERIZERS_ID =
+			SequentProver.PLUGIN_ID + ".tacticParameterizers";
 	private static String COMBINATORS_ID =
 			SequentProver.PLUGIN_ID + ".tacticCombinators";
 
@@ -127,6 +131,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		}
 		registry = new HashMap<String, ITacticDescriptor>();
 		loadTacticDescriptors(TACTICS_ID);
+		loadTacticDescriptors(PARAMETERIZERS_ID);
 		loadTacticDescriptors(COMBINATORS_ID);
 	}
 
@@ -174,7 +179,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 					element);
 			putCheckDuplicate(combinators, id, comb);
 			return;
-		} else if (hasParameters(element)) {
+		} else if (isParameterizer(element)) {
 			final IParameterizerDescriptor parameterizer = loadParameterizer(baseDesc,
 					element);
 			putCheckDuplicate(parameterizers, id, parameterizer);
@@ -204,9 +209,9 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 				.getExtensionPointUniqueIdentifier().equals(COMBINATORS_ID);
 	}
 	
-	private static boolean hasParameters(
-			IConfigurationElement element) {
-		return getParameters(element).length > 0;
+	private static boolean isParameterizer(IConfigurationElement element) {
+		return element.getDeclaringExtension()
+				.getExtensionPointUniqueIdentifier().equals(PARAMETERIZERS_ID);
 	}
 
 	private static IConfigurationElement[] getParameters(
