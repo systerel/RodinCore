@@ -21,8 +21,8 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
 /**
- * Common implementation for reasoners that work on many hypotheses and
- * mark it as the sole needed hypotheses in their generated rule.
+ * Common implementation for reasoners that take as input a list of hypotheses
+ * and mark them as the only needed hypotheses in their generated rule.
  * 
  * @author Emmanuel Billaud
  * @since 2.3
@@ -31,25 +31,25 @@ public abstract class HypothesesReasoner implements IReasoner {
 
 	public static final class Input implements IReasonerInput {
 
-		private Predicate[] preds;
+		private final Predicate[] preds;
 
 		/**
-		 * The parameter is the hypothesis on which to work. If
-		 * <code>null</code>, the work will deal only with the goal.
+		 * Creates an input with the given hypotheses.
 		 * 
 		 * @param preds
-		 *            hypotheses to work with or <code>null</code>
+		 *            hypotheses to work with
 		 */
 		public Input(Predicate... preds) {
+			if (preds == null) {
+				throw new NullPointerException("null list of hypotheses");
+			}
 			this.preds = preds;
 		}
 
 		@Override
 		public void applyHints(ReplayHints hints) {
-			if (preds != null) {
-				for (Predicate pred : preds) {
-					pred = hints.applyHints(pred);
-				}
+			for (int i = 0; i < preds.length; i++) {
+				preds[i] = hints.applyHints(preds[i]);
 			}
 		}
 
@@ -75,16 +75,7 @@ public abstract class HypothesesReasoner implements IReasoner {
 	public final Input deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
 		final Set<Predicate> neededHyps = reader.getNeededHyps();
-		if (neededHyps.size() == 0) {
-			return new Input((Predicate) null);
-		}
-		Predicate[] hyps = new Predicate[neededHyps.size()];
-		int count = 0; 
-		for (Predicate hyp : neededHyps) {
-			hyps[count] = hyp;
-			count++;
-		}
-		return new Input(hyps);
+		return new Input(neededHyps.toArray(new Predicate[neededHyps.size()]));
 	}
 
 }

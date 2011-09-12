@@ -464,9 +464,7 @@ public class AutoTactics {
 
 	/**
 	 * Auto-tactic to discharge a sequent such as :
-	 * <ul>
-	 * f(x)∈S, S⊆T ⊦ f(x)∈T
-	 * </ul>
+	 * <code>f(x)∈S, S⊆T ⊦ f(x)∈T</code>
 	 * 
 	 * @author Emmanuel Billaud
 	 * @since 2.3
