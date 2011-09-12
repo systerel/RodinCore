@@ -68,5 +68,157 @@
             class="org.eventb.core.seqprover.autoTacticExtentionTests.IdentityTactic"
             id="erroneous id"
             name="Erroneous id (contains a whitespace)"/>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$TacWithParams"
+            id="tacParam"
+            name="Tactic with Parameters">
+         <tacticParameter
+               default="true"
+               label="bool1"
+               type="Boolean">
+         </tacticParameter>
+         <tacticParameter
+               default="false"
+               label="bool2"
+               type="Boolean">
+         </tacticParameter>
+         <tacticParameter
+               default="314"
+               label="int1"
+               type="Integer">
+         </tacticParameter>
+         <tacticParameter
+               default="9223372036854775807"
+               label="long1"
+               type="Long">
+         </tacticParameter>
+         <tacticParameter
+               default="formulæ"
+               label="string1"
+               type="String">
+         </tacticParameter>
+      </autoTactic>
+      <autoTactic
+            class="java.lang.Object"
+            id="badInstance"
+            name="Does not implement any required interface">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$Both"
+            id="both"
+            name="Implements Both ITactic and ITacticParameterizer">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$SimpleTacWithParam"
+            id="tacWithParam"
+            name="implements ITactic with parameter">
+         <tacticParameter
+               default="true"
+               label="label"
+               type="Boolean">
+         </tacticParameter>
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$ParamTacNoParam"
+            id="noParam"
+            name="Parameterizer without parameter">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$FakeTactic"
+            id="notParseableInt"
+            name="No Parseable Integer">
+         <tacticParameter
+               default="12.5"
+               label="label"
+               type="Integer">
+         </tacticParameter>
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$FakeTactic"
+            id="notParseableLong"
+            name="No Parseable Long">
+         <tacticParameter
+               default="9223372036854775807999"
+               label="label"
+               type="Long">
+         </tacticParameter>
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$FakeTactic"
+            id="duplLabel"
+            name="Duplicate Label">
+         <tacticParameter
+               default="true"
+               label="dupl"
+               type="Boolean">
+         </tacticParameter>
+         <tacticParameter
+               default="true"
+               label="dupl"
+               type="Boolean">
+         </tacticParameter>
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$ParamNullInstance"
+            id="paramNullInstance"
+            name="Parameterizer making null instance">
+         <tacticParameter
+               default="false"
+               description="just to make it an acceptable parameterizer"
+               label="label"
+               type="Boolean">
+         </tacticParameter>
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics$ParamThrowsException"
+            id="paramThrowsException"
+            name="Parameterizer throwing an exception">
+         <tacticParameter
+               default="false"
+               description="just to make it an acceptable parameterizer"
+               label="label"
+               type="Boolean">
+         </tacticParameter>
+      </autoTactic>
+   </extension>
+   <extension
+         point="org.eventb.core.seqprover.tacticCombinators">
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$FakeTacComb"
+            description="records which tactic it&apos;s been applied to, then fails"
+            id="tacComb"
+            minArity="1"
+            name="Fake Tactic Combinator">
+      </combinator>
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$OneOrMore"
+            description="1 or more tactics"
+            id="combOneOrMore"
+            minArity="1"
+            name="One or More">
+      </combinator>
+      <combinator
+            boundArity="true"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$Two"
+            id="combTwo"
+            minArity="2"
+            name="Two Combined">
+      </combinator>
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$Zero"
+            id="combZero"
+            minArity="0"
+            name="Zero Combined">
+      </combinator>
+      <combinator
+            boundArity="true"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$NoParseable"
+            id="noParseArity"
+            minArity="this is not a number"
+            name="No Parseable Arity">
+      </combinator>
    </extension>
 </plugin>

@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eventb.core">
+<schema targetNamespace="org.eventb.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eventb.core" id="autoTactics" name="%point.autoTactics"/>
@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="autoTactic" minOccurs="0" maxOccurs="unbounded"/>
@@ -44,6 +49,9 @@
 
    <element name="autoTactic">
       <complexType>
+         <sequence>
+            <element ref="tacticParameter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -64,10 +72,14 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully-qualified name of an implementation of &lt;code&gt;org.eventb.core.seqprover.ITactic&lt;/code&gt;
+                  the fully-qualified name of an implementation of:
+&lt;ul&gt;
+&lt;li&gt; &lt;code&gt;org.eventb.core.seqprover.ITactic&lt;/code&gt; if no parameters are defined; &lt;/li&gt;&lt;li&gt;&lt;code&gt;org.eventb.core.seqprover.ITacticParameterizer&lt;/code&gt; if parameters are defined
+&lt;/li&gt;
+&lt;/ul&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eventb.core.seqprover.ITactic"/>
+                  <meta.attribute kind="java" basedOn=":org.eventb.core.ITactic or org.eventb.core.seqprover.ITacticParameterizer"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -75,6 +87,54 @@
             <annotation>
                <documentation>
                   a description of what this auto tactic does
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="tacticParameter">
+      <complexType>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique label, in the scope of this tactic, that can be used by the parameterizer to fetch the parameter value.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type" use="required">
+            <annotation>
+               <documentation>
+                  The type of this parameter.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="Boolean">
+                  </enumeration>
+                  <enumeration value="Integer">
+                  </enumeration>
+                  <enumeration value="Long">
+                  </enumeration>
+                  <enumeration value="String">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="default" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The default value of this parameter. Must be a valid value of the given type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A human-readable description of the parameter.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>

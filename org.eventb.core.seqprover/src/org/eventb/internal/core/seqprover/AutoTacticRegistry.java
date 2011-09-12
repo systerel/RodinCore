@@ -1,18 +1,42 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - implemented parameterized auto tactics
+ *     Systerel - implemented tactic combinators
+ *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.ICombinatorDescriptor;
+import org.eventb.core.seqprover.IParameterizerDescriptor;
+import org.eventb.core.seqprover.IParameterDesc;
+import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.internal.core.seqprover.TacticDescriptors.CombinatorDescriptor;
+import org.eventb.internal.core.seqprover.TacticDescriptors.ParameterizerDescriptor;
+import org.eventb.internal.core.seqprover.TacticDescriptors.TacticDescriptor;
+import org.eventb.internal.core.seqprover.TacticDescriptors.UninstantiableTacticDescriptor;
+import org.eventb.internal.core.seqprover.paramTactics.ParameterDesc;
 
 /**
- * Singeleton class implementing the auto tactic registry.
+ * Singleton class implementing the auto tactic registry.
  * 
  * 
  * @see org.eventb.core.seqprover.IAutoTacticRegistry
@@ -24,6 +48,8 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	
 	private static String TACTICS_ID =
 		SequentProver.PLUGIN_ID + ".autoTactics";
+	private static String COMBINATORS_ID =
+			SequentProver.PLUGIN_ID + ".tacticCombinators";
 
 	private static IAutoTacticRegistry SINGLETON_INSTANCE = new AutoTacticRegistry();
 
@@ -34,7 +60,9 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	 */
 	public static boolean DEBUG;
 	
-	private Map<String,TacticDescriptor> registry;
+	private Map<String, ITacticDescriptor> registry;
+	private final Map<String, IParameterizerDescriptor> parameterizers = new HashMap<String, IParameterizerDescriptor>();
+	private final Map<String, ICombinatorDescriptor> combinators = new HashMap<String, ICombinatorDescriptor>();
 	
 	/**
 	 * Private default constructor enforces that only one instance of this class
@@ -72,20 +100,19 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		return getTacticDescriptor(id).getTacticName();
 	}
 	
-
 	@Deprecated
 	public String getTacticDescription(String id) throws IllegalArgumentException {
 		return getTacticDescriptor(id).getTacticDescription();
 	}
 
-	public  synchronized TacticDescriptor getTacticDescriptor(String id) throws IllegalArgumentException{
+	public  synchronized ITacticDescriptor getTacticDescriptor(String id) throws IllegalArgumentException{
 		if (registry == null) {
 			loadRegistry();
 		}
-		TacticDescriptor tacticDesc = registry.get(id);
+		final ITacticDescriptor tacticDesc = registry.get(id);
 		if (tacticDesc == null) {
 			// Unknown tactic id, throw exception.
-			throw new IllegalArgumentException("Tactic with id:" + id + "not registered.");
+			throw new IllegalArgumentException("Tactic with id:" + id + " not registered.");
 		}
 		return tacticDesc;
 	}
@@ -95,131 +122,218 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	 */
 	private synchronized void loadRegistry() {
 		if (registry != null) {
-			// Prevents loading by two thread in parallel
+			// Prevents loading by two threads in parallel
 			return;
 		}
-		registry = new HashMap<String, TacticDescriptor>();
+		registry = new HashMap<String, ITacticDescriptor>();
+		loadTacticDescriptors(TACTICS_ID);
+		loadTacticDescriptors(COMBINATORS_ID);
+	}
+
+	private void loadTacticDescriptors(String extPointId) {
 		final IExtensionRegistry xRegistry = Platform.getExtensionRegistry();
-		final IExtensionPoint xPoint = xRegistry.getExtensionPoint(TACTICS_ID);
-		for (IConfigurationElement element: xPoint.getConfigurationElements()) {
-			final TacticDescriptor tacticDesc = new TacticDescriptor(element);
-			final String id = tacticDesc.getTacticID();
-			if (id != null) {
-				TacticDescriptor oldInfo = registry.put(id, tacticDesc);
-				if (oldInfo != null) {
-					registry.put(id, oldInfo);
-					Util.log(null,
-							"Duplicate tactic extension " + id + " ignored"
-					);
-				} else {
-					if (DEBUG) System.out.println(
-							"Registered tactic extension " + id);
-				}
+		final IExtensionPoint xPoint = xRegistry.getExtensionPoint(extPointId);
+		for (IConfigurationElement element : xPoint.getConfigurationElements()) {
+			try {
+				loadTacticExtension(element);
+			} catch (Exception e) {
+				// logged before
+				continue;
 			}
 		}
+	}
+
+	private static <T> void putCheckDuplicate(Map<String, T> map, String id,
+			T t) {
+		final T old = map.put(id, t);
+		if (old != null) {
+			map.put(id, old);
+			Util.log(null, "Duplicate tactic extension " + id + " ignored");
+		} else {
+			if (DEBUG)
+				System.out.println("Registered tactic extension " + id);
+		}
+	}
+
+	// configuration element can represent either:
+	// - a simple auto tactic
+	// - a parameterized auto tactic
+	// - a tactic combinator
+	// they share common attributes, while others are specific
+	private void loadTacticExtension(IConfigurationElement element) {
+		// common attributes
+		final UninstantiableTacticDescriptor baseDesc = loadBaseDesc(element);
+		if (baseDesc == null) {
+			return;
+		}
+		final String id = baseDesc.getTacticID();
+
+		// specific loading
+		if (isCombinator(element)) {
+			final ICombinatorDescriptor comb = loadCombinator(baseDesc,
+					element);
+			putCheckDuplicate(combinators, id, comb);
+			return;
+		} else if (hasParameters(element)) {
+			final IParameterizerDescriptor parameterizer = loadParameterizer(baseDesc,
+					element);
+			putCheckDuplicate(parameterizers, id, parameterizer);
+			// add tactic with default parameters
+			final ITacticDescriptor defaultDesc = parameterizer.instantiate(
+					parameterizer.makeParameterSetting(), id + ".default");
+			putCheckDuplicate(registry, id, defaultDesc);
+		} else {
+			final ITacticDescriptor desc = loadSimpleTactic(baseDesc, element);
+			putCheckDuplicate(registry, id, desc);
+		}
+	}
+
+	private static UninstantiableTacticDescriptor loadBaseDesc(IConfigurationElement element) {
+		final String id = checkAndMakeId(element);
+		if (id == null) {
+			return null;
+		}
+		final String name = element.getAttribute("name");
+		String description = element.getAttribute("description");
+		if (description == null)
+			description = "";
+
+		return new UninstantiableTacticDescriptor(
+				id, name, description);
+
+	}
+
+	private static boolean isCombinator(IConfigurationElement element) {
+		return element.getDeclaringExtension()
+				.getExtensionPointUniqueIdentifier().equals(COMBINATORS_ID);
+	}
+	
+	private static boolean hasParameters(
+			IConfigurationElement element) {
+		return getParameters(element).length > 0;
+	}
+
+	private static IConfigurationElement[] getParameters(
+			IConfigurationElement element) {
+		return element.getChildren("tacticParameter");
+	}
+	
+	private static ITacticDescriptor loadSimpleTactic(
+			UninstantiableTacticDescriptor desc, IConfigurationElement element) {
+		return new TacticDescriptor(element, desc.getTacticID(),
+				desc.getTacticName(), desc.getTacticDescription());
+	}
+	
+	private static IParameterizerDescriptor loadParameterizer(
+			UninstantiableTacticDescriptor baseDesc, IConfigurationElement element) {
+		final Collection<IParameterDesc> paramDescs = loadTacticParameters(
+				getParameters(element), baseDesc.getTacticID());
+		return new ParameterizerDescriptor(baseDesc, paramDescs, element);
+	}
+	
+	private static Collection<IParameterDesc> loadTacticParameters(
+			final IConfigurationElement[] children, String id) {
+		final Collection<IParameterDesc> paramDescs = new ArrayList<IParameterDesc>(
+				children.length);
+		final Set<String> knownLabels = new HashSet<String>(children.length);
+		for (IConfigurationElement paramConfig : children) {
+			final IParameterDesc param = ParameterDesc.load(paramConfig);
+			final String label = param.getLabel();
+			final boolean newLabel = knownLabels.add(label);
+			if (newLabel) {
+				paramDescs.add(param);
+			} else {
+				final IllegalArgumentException e = new IllegalArgumentException(
+						"duplicate tactic parameter label: " + label);
+				Util.log(e, "while loading parameterized tactic " + id);
+				throw e;
+			}
+		}
+		return paramDescs;
+	}
+
+	private static ICombinatorDescriptor loadCombinator(
+			UninstantiableTacticDescriptor desc, IConfigurationElement element) {
+		final String sMinArity = element.getAttribute("minArity");
+		final int minArity = Integer.parseInt(sMinArity);
+		if (minArity < 0) {
+			final IllegalArgumentException e = new IllegalArgumentException(
+					"invalid arity: " + sMinArity
+							+ " expected a number greater than or equal to 1");
+			Util.log(e, "while loading tactic combinator " + desc.getTacticID());
+			throw e;
+		}
+
+		final String sBoundArity = element.getAttribute("boundArity");
+		final boolean isArityBound = Boolean.parseBoolean(sBoundArity);
+		return new CombinatorDescriptor(desc, minArity, isArityBound,
+				element);
+	}
+
+	private static String checkAndMakeId(IConfigurationElement element) {
+		final String localId = element.getAttribute("id");
+		final String id;
+		if (localId.indexOf('.') != -1) {
+			id = null;
+			Util.log(null,
+					"Invalid id: " + localId + " (must not contain a dot)");
+		} else if (containsWhitespace(localId)) {
+			id = null;
+			Util.log(null,
+					"Invalid id: " + localId + " (must not contain a whitespace)");
+		} else {
+			final String nameSpace = element.getNamespaceIdentifier();
+			id = nameSpace + "." + localId;
+		}
+		return id;
 	}
 	
 	/**
-	 * Private helper class implementing lazy loading of tactic instances
+	 * Checks if a string contains a whitespace character
+	 * 
+	 * @param str
+	 * 		String to check for.
+	 * @return
+	 * 		<code>true</code> iff the string contains a whitespace character.
 	 */
-	private static class TacticDescriptor implements ITacticDescriptor{
-
-		private final IConfigurationElement configurationElement;
-		private final String id;
-		private final String name;
-		
-		/**
-		 * Tactic instance and description lazily loaded using <code>configurationElement</code>
-		 */
-		private ITactic instance;
-		private String description;
-		
-		protected TacticDescriptor(IConfigurationElement element) {
-			this.configurationElement = element;
-			final String localId = element.getAttribute("id");
-			if (localId.indexOf('.') != -1) {
-				this.id = null;
-				Util.log(null,
-						"Invalid id: " + localId + " (must not contain a dot)");
-			} else if (containsWhitespace(localId)) {
-				this.id = null;
-				Util.log(null,
-						"Invalid id: " + localId + " (must not contain a whitespace)");
-			} else {
-				final String nameSpace = element.getNamespaceIdentifier();
-				this.id = nameSpace + "." + localId;
-			}
-			this.name = element.getAttribute("name");
+	private static boolean containsWhitespace(String str){
+		for (int i = 0; i < str.length(); i++) {
+			if (Character.isWhitespace(str.charAt(i))) return true;
 		}
-		
-		/**
-		 * Checks if a string contains a whitespace character
-		 * 
-		 * @param str
-		 * 		String to check for.
-		 * @return
-		 * 		<code>true</code> iff the string contains a whitespace character.
-		 */
-		private static boolean containsWhitespace(String str){
-			for (int i = 0; i < str.length(); i++) {
-				if (Character.isWhitespace(str.charAt(i))) return true;
-			}
-			return false;
-		}
-		
-		public synchronized ITactic getTacticInstance() throws IllegalArgumentException{
-			if (instance != null) {
-				return instance;
-			}
-
-			if (configurationElement == null) {
-				throw new IllegalArgumentException("Null configuration element");
-			}
-			
-			// Try creating an instance of the specified class
-			try {
-				instance = (ITactic) 
-					configurationElement.createExecutableExtension("class");
-			} catch (Exception e) {
-				final String className = 
-					configurationElement.getAttribute("class");
-				final String errorMsg = "Error instantiating class " + className +
-										" for tactic " + id;
-				Util.log(e,
-						errorMsg);
-				if (DEBUG) System.out.println(
-						errorMsg);
-				throw new IllegalArgumentException(errorMsg,e);
-			}
-
-			if (DEBUG) System.out.println(
-					"Successfully loaded tactic " + id);
-			return instance;
-		}
-		
-		public synchronized String getTacticDescription() throws IllegalArgumentException{
-			if (description != null) {
-				return description;
-			}
-
-			if (configurationElement == null) {
-				throw new IllegalArgumentException("Null configuration element");
-			}
-			
-			description = configurationElement.getAttribute("description");
-			if (description == null) description = "";
-			return description;
-			
-		}
-		
-		public String getTacticID() {
-			return id;
-		}
-		
-		public String getTacticName() {
-			return name;
-		}
-
+		return false;
 	}
 
+	@Override
+	public IParameterizerDescriptor[] getParameterizerDescriptors() {
+		if (registry == null) {
+			loadRegistry();
+		}
+		return parameterizers.values().toArray(
+				new IParameterizerDescriptor[parameterizers.size()]);
+	}
+
+	@Override
+	public IParameterizerDescriptor getParameterizerDescriptor(String id) {
+		if (registry == null) {
+			loadRegistry();
+		}
+		return parameterizers.get(id);
+	}
+
+	@Override
+	public ICombinatorDescriptor[] getCombinatorDescriptors() {
+		if (registry == null) {
+			loadRegistry();
+		}
+		return combinators.values().toArray(
+				new ICombinatorDescriptor[combinators.size()]);
+	}
+	
+	@Override
+	public ICombinatorDescriptor getCombinatorDescriptor(String id) {
+		if (registry == null) {
+			loadRegistry();
+		}
+		return combinators.get(id);
+	}
 }

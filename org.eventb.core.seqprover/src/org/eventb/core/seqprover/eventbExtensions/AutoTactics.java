@@ -14,6 +14,7 @@
  *     Systerel - added FunImgSimpTac tactic (simplify)
  *     Systerel - added DTDestrWDTac tactic (discharge)
  *     Systerel - added tactics to combine rm and ri
+ *     Systerel - added tactic combinators
  ******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
@@ -1396,5 +1397,5 @@ public class AutoTactics {
 			return instance.apply(ptNode, pm);
 		}
 	}
-
+	
 }

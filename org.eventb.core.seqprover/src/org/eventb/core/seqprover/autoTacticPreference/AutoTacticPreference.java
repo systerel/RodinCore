@@ -1,18 +1,33 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - used tactic combinators
+ *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticPreference;
 
-import static org.eventb.core.seqprover.tactics.BasicTactics.loopOnAllPending;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ICombinatorDescriptor;
+import org.eventb.core.seqprover.ICombinedTacticDescriptor;
+import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.TacticCombinators;
+import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.core.seqprover.Util;
 import org.eventb.internal.core.seqprover.tacticPreference.TacticPreferenceUtils;
 
 /**
@@ -28,13 +43,16 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 
 	private ITactic defaultComposedTactic = null;
 	
-	private List<ITacticDescriptor> selectedDescriptors;
+	private ITacticDescriptor selectedDescriptor;
+	
+	private final ITacticDescriptor defaultDescriptor;
 	
 	// The identifier of the extension point.
-	private String registryID;
+	private final String registryID;
 
 	public AutoTacticPreference(String registryID) {
 		this.registryID = registryID;
+		this.defaultDescriptor = getDefaultDescriptor();
 		setSelectedDescriptors(getDeclaredDescriptors());
 	}
 
@@ -127,6 +145,12 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 		return enabled;
 	}
 
+	private static ITactic logAndMakeFailure(Throwable t, String logMessage,
+			String failTacMessage) {
+		Util.log(t, logMessage);
+		return BasicTactics.failTac(failTacMessage);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -134,32 +158,39 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	 */
 	public ITactic getSelectedComposedTactic() {
 		if (selectedComposedTactic == null) {
-			selectedComposedTactic = composeTactics(selectedDescriptors);
+			try {
+				selectedComposedTactic = selectedDescriptor.getTacticInstance();
+			} catch (Exception e) {
+				return logAndMakeFailure(e, "while making selected tactic "
+						+ selectedDescriptor.getTacticID(),
+						"failed to create selected tactic "
+								+ selectedDescriptor.getTacticName());
+			}
 		}
 		return selectedComposedTactic;
 	}
 
-	protected ITactic composeTactics(List<ITacticDescriptor> tacticDescs) {
-		ITactic [] tactics = new ITactic[tacticDescs.size()];
-		int i = 0;
-		for (ITacticDescriptor tacticDesc : tacticDescs) {
-			tactics[i] = tacticDesc.getTacticInstance();
-			++i;
-		}
-		return loopOnAllPending(tactics);
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	public void setSelectedDescriptor(ITacticDescriptor tacticDesc) {
+		selectedDescriptor = tacticDesc;
+		selectedComposedTactic = null;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#setSelectedDescriptors(org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor[])
 	 */
 	public void setSelectedDescriptors(List<ITacticDescriptor> tacticDescs) {
-		selectedDescriptors = tacticDescs;
-		selectedComposedTactic = null;
+		final ITacticDescriptor loop = loopOnAllPending(tacticDescs, registryID
+				+ ".selected");
+		setSelectedDescriptor(loop);
 	}
 
 	public ITactic getDefaultComposedTactic() {
 		if (defaultComposedTactic == null) {
-			defaultComposedTactic = composeTactics(getDefaultDescriptors());
+			defaultComposedTactic = defaultDescriptor.getTacticInstance();
 		}
 		return defaultComposedTactic;
 	}
@@ -167,25 +198,32 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	/* (non-Javadoc)
 	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#getDefaultDescriptors()
 	 */
-	public List<ITacticDescriptor>  getDefaultDescriptors() {
-		return stringsToTacticDescriptors(getDefaultIDs());
+	@Deprecated
+	public List<ITacticDescriptor> getDefaultDescriptors() {
+		if (defaultDescriptor instanceof ICombinedTacticDescriptor) {
+			return ((ICombinedTacticDescriptor) defaultDescriptor).getCombinedTactics();
+		}
+		return Collections.singletonList(defaultDescriptor);
+	}
+	
+	@Deprecated
+	protected ITactic composeTactics(List<ITacticDescriptor> tacticDescs) {
+		return loopOnAllPending(tacticDescs, registryID + ".deprecatedComposition")
+				.getTacticInstance();
 	}
 
-	protected abstract String [] getDefaultIDs();
-
-	private List<ITacticDescriptor> stringsToTacticDescriptors(
-			String[] tacticIDs) {
+	// for compatibility
+	private static ITacticDescriptor loopOnAllPending(List<ITacticDescriptor> descs, String id) {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-		final List<ITacticDescriptor> result = new ArrayList<ITacticDescriptor>();
-		for (String id : tacticIDs) {
-			if (reg.isRegistered(id)) {
-				final ITacticDescriptor desc = reg.getTacticDescriptor(id);
-				if (isDeclared(desc)) {
-					result.add(desc);
-				}
-			}
-		}
-		return result;
+		final ICombinatorDescriptor comb = reg
+				.getCombinatorDescriptor(TacticCombinators.LoopOnAllPending.COMBINATOR_ID);
+		return comb.combine(descs, id);
+	}
+
+	@Deprecated
+	protected String [] getDefaultIDs() {
+		throw new IllegalStateException(
+				"this method must not be called anymore");
 	}
 
 }

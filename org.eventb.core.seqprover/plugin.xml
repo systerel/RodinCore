@@ -6,6 +6,7 @@
          name="%point.reasoners" 
          schema="schema/reasoners.exsd"/>
    <extension-point id="autoTactics" name="%point.autoTactics" schema="schema/autoTactics.exsd"/>
+   <extension-point id="tacticCombinators" name="%point.tacticCombinators" schema="schema/tacticCombinators.exsd"/>
    <extension
          point="org.eventb.core.seqprover.reasoners">
       <reasoner
@@ -677,6 +678,17 @@
             id="totalDomToCProdTac"
             name="%totalDomToCProdTacName">
       </autoTactic>
+   </extension>
+   <extension
+         point="org.eventb.core.seqprover.tacticCombinators">
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.seqprover.eventbExtensions.TacticCombinators$LoopOnAllPending"
+            description="%loopOnAllPendingDescription"
+            id="loopOnAllPending"
+            minArity="1"
+            name="%loopOnAllPendingName">
+      </combinator>
    </extension>
 
 </plugin>
