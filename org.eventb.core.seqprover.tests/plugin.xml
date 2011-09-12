@@ -73,12 +73,22 @@
             id="badInstance"
             name="Does not implement ITactic">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests$TracingSuccess"
+            id="tracingSuccess"
+            name="Tracing Success">
+      </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests$TracingFailure"
+            id="tracingFailure"
+            name="Tracing Failure">
+      </autoTactic>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tacticCombinators">
       <combinator
             boundArity="false"
-            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$FakeTacComb"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators$FakeTacComb"
             description="records which tactic it&apos;s been applied to, then fails"
             id="tacComb"
             minArity="1"
@@ -86,7 +96,7 @@
       </combinator>
       <combinator
             boundArity="false"
-            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$OneOrMore"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators$OneOrMore"
             description="1 or more tactics"
             id="combOneOrMore"
             minArity="1"
@@ -94,21 +104,21 @@
       </combinator>
       <combinator
             boundArity="true"
-            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$Two"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators$Two"
             id="combTwo"
             minArity="2"
             name="Two Combined">
       </combinator>
       <combinator
             boundArity="false"
-            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$Zero"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators$Zero"
             id="combZero"
             minArity="0"
             name="Zero Combined">
       </combinator>
       <combinator
             boundArity="true"
-            class="org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators$NoParseable"
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators$NoParseable"
             id="noParseArity"
             minArity="this is not a number"
             name="No Parseable Arity">

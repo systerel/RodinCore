@@ -24,7 +24,7 @@ import org.junit.Assert;
  * @author Nicolas Beauger
  * 
  */
-public class TacticCombinators {
+public class TestTacticCombinators {
 
 	private static final ITactic FAIL_TAC = BasicTactics
 			.failTac("it's just a fake tactic");

@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticCombinator;
 import org.eventb.core.seqprover.SequentProver;
@@ -54,4 +57,37 @@ public class TacticCombinators {
 
 	}
 
+	public static class Sequence implements ITacticCombinator {
+		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
+				+ ".sequence";
+
+		@Override
+		public ITactic getTactic(List<ITactic> tactics) {
+			// avoid concurrence issues
+			final List<ITactic> copy = new ArrayList<ITactic>(tactics);
+			return new ITactic() {
+
+				@Override
+				public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+					boolean success = false;
+					Object finalResult = null;
+					for (ITactic tactic : copy) {
+						final Object result = tactic.apply(ptNode, pm);
+						if (result == null) {
+							success = true;
+						} else {
+							finalResult = result;
+						}
+					}
+					if (success) {
+						return null;
+					} else {
+						return finalResult;
+					}
+				}
+			};
+		}
+		
+	}
+	
 }

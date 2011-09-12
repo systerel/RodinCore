@@ -696,6 +696,14 @@
             minArity="1"
             name="%loopOnAllPendingName">
       </combinator>
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.seqprover.eventbExtensions.TacticCombinators$Sequence"
+            description="%sequenceDescription"
+            id="sequence"
+            minArity="1"
+            name="%sequenceName">
+      </combinator>
    </extension>
 
 </plugin>

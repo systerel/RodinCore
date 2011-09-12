@@ -37,11 +37,11 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticExtentionTests.IdentityTactic.FailTactic;
 import org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics.FakeTactic;
 import org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics.TacParameterizer;
-import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.FakeTacComb;
-import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.NoParseable;
-import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.OneOrMore;
-import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.Two;
-import org.eventb.core.seqprover.autoTacticExtentionTests.TacticCombinators.Zero;
+import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.FakeTacComb;
+import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.NoParseable;
+import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.OneOrMore;
+import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.Two;
+import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.Zero;
 import org.junit.Test;
 
 /**
