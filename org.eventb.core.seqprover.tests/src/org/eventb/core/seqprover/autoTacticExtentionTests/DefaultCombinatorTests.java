@@ -14,6 +14,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
+import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingFailure.FAILURE;
+import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingSuccess.SUCCESS;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.ComposeUntilFailure;
+import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.ComposeUntilSuccess;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.Sequence;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,20 +74,20 @@ public class DefaultCombinatorTests {
 
 	public static class TracingSuccess extends AbstractTracingTactic {
 
-		public static String TACTIC_ID = "org.eventb.core.seqprover.tests.tracingSuccess";
+		public static String SUCCESS = "org.eventb.core.seqprover.tests.tracingSuccess";
 
 		public TracingSuccess() {
-			super(TACTIC_ID, null);
+			super(SUCCESS, null);
 		}
 
 	}
 
 	public static class TracingFailure extends AbstractTracingTactic {
 
-		public static String TACTIC_ID = "org.eventb.core.seqprover.tests.tracingFailure";
+		public static String FAILURE = "org.eventb.core.seqprover.tests.tracingFailure";
 
 		public TracingFailure() {
-			super(TACTIC_ID, "fail");
+			super(FAILURE, "fail");
 		}
 
 	}
@@ -93,9 +97,9 @@ public class DefaultCombinatorTests {
 		trace.setLength(0);
 	}
 
-	private static void assertApply(ITactic tac, String seqStr,
-			boolean successExpected) {
-		final IProverSequent sequent = genSeq(seqStr);
+	private static void assertApply(ITactic tac, boolean successExpected,
+			String... traceIds) {
+		final IProverSequent sequent = genSeq("|- ⊥");
 		final IProofTree tree = makeProofTree(sequent, "test");
 		final IProofTreeNode root = tree.getRoot();
 		final Object result = tac.apply(root, null);
@@ -104,7 +108,7 @@ public class DefaultCombinatorTests {
 		} else {
 			assertNotNull(result);
 		}
-
+		assertTrace(traceIds);
 	}
 
 	private static ITactic combine(String combId, String... tacIds) {
@@ -124,34 +128,84 @@ public class DefaultCombinatorTests {
 
 	@Test
 	public void testSequenceSucceed() throws Exception {
-		final ITactic seqFail = combine(Sequence.COMBINATOR_ID,
-				TracingSuccess.TACTIC_ID);
-		assertApply(seqFail, "|- ⊥", true);
-		assertTrace(TracingSuccess.TACTIC_ID);
+		final ITactic seqFail = combine(Sequence.COMBINATOR_ID, SUCCESS);
+		assertApply(seqFail, true, SUCCESS);
 	}
 
 	@Test
 	public void testSequenceFail() throws Exception {
-		final ITactic seqFail = combine(Sequence.COMBINATOR_ID,
-				TracingFailure.TACTIC_ID);
-		assertApply(seqFail, "|- ⊥", false);
-		assertTrace(TracingFailure.TACTIC_ID);
+		final ITactic seqFail = combine(Sequence.COMBINATOR_ID, FAILURE);
+		assertApply(seqFail, false, FAILURE);
 	}
 
 	@Test
 	public void testSequenceSuccFail() throws Exception {
-		final ITactic seqSuccFail = combine(Sequence.COMBINATOR_ID,
-				TracingSuccess.TACTIC_ID, TracingFailure.TACTIC_ID);
-		assertApply(seqSuccFail, "|- ⊥", true);
-		assertTrace(TracingSuccess.TACTIC_ID, TracingFailure.TACTIC_ID);
+		final ITactic seqSuccFail = combine(Sequence.COMBINATOR_ID, SUCCESS,
+				FAILURE);
+		assertApply(seqSuccFail, true, SUCCESS, FAILURE);
 	}
 
 	@Test
 	public void testSequenceFailSucc() throws Exception {
-		final ITactic seqFailSucc = combine(Sequence.COMBINATOR_ID,
-				TracingFailure.TACTIC_ID, TracingSuccess.TACTIC_ID);
-		assertApply(seqFailSucc, "|- ⊥", true);
-		assertTrace(TracingFailure.TACTIC_ID, TracingSuccess.TACTIC_ID);
+		final ITactic seqFailSucc = combine(Sequence.COMBINATOR_ID, FAILURE,
+				SUCCESS);
+		assertApply(seqFailSucc, true, FAILURE, SUCCESS);
+	}
+
+	@Test
+	public void testCompSucc_Succ() throws Exception {
+		final ITactic compSucc = combine(ComposeUntilSuccess.COMBINATOR_ID,
+				SUCCESS);
+		assertApply(compSucc, true, SUCCESS);
+	}
+
+	@Test
+	public void testCompSucc_Fail() throws Exception {
+		final ITactic compFail = combine(ComposeUntilSuccess.COMBINATOR_ID,
+				FAILURE);
+		assertApply(compFail, false, FAILURE);
+	}
+
+	@Test
+	public void testCompSucc_SuccFail() throws Exception {
+		final ITactic compSuccFail = combine(ComposeUntilSuccess.COMBINATOR_ID,
+				SUCCESS, FAILURE);
+		assertApply(compSuccFail, true, SUCCESS);
+	}
+
+	@Test
+	public void testCompSucc_FailSucc() throws Exception {
+		final ITactic compFailSucc = combine(ComposeUntilSuccess.COMBINATOR_ID,
+				FAILURE, SUCCESS);
+		assertApply(compFailSucc, true, FAILURE, SUCCESS);
+	}
+
+	@Test
+	public void testCompFail_Succ() throws Exception {
+		final ITactic compSucc = combine(ComposeUntilFailure.COMBINATOR_ID,
+				SUCCESS);
+		assertApply(compSucc, true, SUCCESS);
+	}
+
+	@Test
+	public void testCompFail_Fail() throws Exception {
+		final ITactic compFail = combine(ComposeUntilFailure.COMBINATOR_ID,
+				FAILURE);
+		assertApply(compFail, false, FAILURE);
+	}
+
+	@Test
+	public void testCompFail_SuccFail() throws Exception {
+		final ITactic compSuccFail = combine(ComposeUntilFailure.COMBINATOR_ID,
+				SUCCESS, FAILURE);
+		assertApply(compSuccFail, true, SUCCESS, FAILURE);
+	}
+
+	@Test
+	public void testCompFail_FailSucc() throws Exception {
+		final ITactic compFailSucc = combine(ComposeUntilFailure.COMBINATOR_ID,
+				FAILURE, SUCCESS);
+		assertApply(compFailSucc, false, FAILURE);
 	}
 
 }

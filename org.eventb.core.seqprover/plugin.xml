@@ -704,6 +704,22 @@
             minArity="1"
             name="%sequenceName">
       </combinator>
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.seqprover.eventbExtensions.TacticCombinators$ComposeUntilSuccess"
+            description="%compSuccDescription"
+            id="composeUntilSuccess"
+            minArity="1"
+            name="%compSuccName">
+      </combinator>
+      <combinator
+            boundArity="false"
+            class="org.eventb.core.seqprover.eventbExtensions.TacticCombinators$ComposeUntilFailure"
+            description="%compFailDescription"
+            id="composeUntilFailure"
+            minArity="1"
+            name="%compFailName">
+      </combinator>
    </extension>
 
 </plugin>
