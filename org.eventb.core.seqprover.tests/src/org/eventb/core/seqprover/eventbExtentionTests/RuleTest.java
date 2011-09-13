@@ -48,7 +48,7 @@ public class RuleTest {
 
 	@Test
 	public void domain() {
-		final ITypeEnvironment typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironment typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ), L1=ℙ(ℤ×ℤ×ℤ×(ℤ×ℤ)), L2=ℙ(ℤ×(ℤ×ℤ)×(ℤ×ℤ))");
 		applyDomain(typeEnv, "f⊆g", "dom(f)⊆dom(g)");
 		applyDomain(typeEnv, "f⊂g", "dom(f)⊂dom(g)");
 		applyDomain(typeEnv, "f∼⊆g", "ran(f)⊆dom(g)");
@@ -71,7 +71,7 @@ public class RuleTest {
 
 	@Test
 	public void range() {
-		final ITypeEnvironment typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironment typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ), L1=ℙ(ℤ×ℤ×ℤ×(ℤ×ℤ)), L2=ℙ(ℤ×(ℤ×ℤ)×(ℤ×ℤ))");
 		applyRange(typeEnv, "f⊆g", "ran(f)⊆ran(g)");
 		applyRange(typeEnv, "f⊂g", "ran(f)⊂ran(g)");
 		applyRange(typeEnv, "f∼⊆g", "dom(f)⊆ran(g)");
@@ -101,6 +101,12 @@ public class RuleTest {
 		applyConverse(typeEnv, "f∼⊂g", "f⊂g∼");
 		applyConverse(typeEnv, "f⊆g∼", "f∼⊆g");
 		applyConverse(typeEnv, "f⊂g∼", "f∼⊂g");
+
+		applyConverse(typeEnv, "f◁id⊆H", "id▷f⊆H∼");
+		applyConverse(typeEnv, "H⊆f◁id", "H∼⊆id▷f");
+		applyConverse(typeEnv, "id▷f⊆H", "id▷f⊆H∼");
+		applyConverse(typeEnv, "H⊆id▷f", "H∼⊆id▷f");
+
 	}
 
 	private void applyConverse(final ITypeEnvironment typeEnv,
@@ -485,6 +491,542 @@ public class RuleTest {
 		final Rule.SimpConvCProdRight simpConv = new Rule.SimpConvCProdRight(
 				hyp);
 		Assert.assertEquals(simpConv.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpConvDomresLeft() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "(A◁f)∼⊆g";
+		applySimpConvDomresLeft(typeEnv, subseteq, "f∼▷A⊆g");
+		final String subset = "(A◁f)∼⊂g";
+		applySimpConvDomresLeft(typeEnv, subset, "f∼▷A⊂g");
+	}
+
+	private void applySimpConvDomresLeft(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpConvDomresLeft simp = new Rule.SimpConvDomresLeft(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpConvDomresRight() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "g⊆(A◁f)∼";
+		applySimpConvDomresRight(typeEnv, subseteq, "g⊆f∼▷A");
+		final String subset = "g⊂(A◁f)∼";
+		applySimpConvDomresRight(typeEnv, subset, "g⊂f∼▷A");
+	}
+
+	private void applySimpConvDomresRight(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpConvDomresRight simp = new Rule.SimpConvDomresRight(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpConvDomsubLeft() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "(A⩤f)∼⊆g";
+		applySimpConvDomsubLeft(typeEnv, subseteq, "f∼⩥A⊆g");
+		final String subset = "(A⩤f)∼⊂g";
+		applySimpConvDomsubLeft(typeEnv, subset, "f∼⩥A⊂g");
+	}
+
+	private void applySimpConvDomsubLeft(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpConvDomsubLeft simp = new Rule.SimpConvDomsubLeft(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpConvDomsubRight() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "g⊆(A⩤f)∼";
+		applySimpConvDomsubRight(typeEnv, subseteq, "g⊆f∼⩥A");
+		final String subset = "g⊂(A⩤f)∼";
+		applySimpConvDomsubRight(typeEnv, subset, "g⊂f∼⩥A");
+	}
+
+	private void applySimpConvDomsubRight(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpConvDomsubRight simp = new Rule.SimpConvDomsubRight(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpConvRanresLeft() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "(f▷A)∼⊆g";
+		applySimpConvRanresLeft(typeEnv, subseteq, "A◁f∼⊆g");
+		final String subset = "(f▷A)∼⊂g";
+		applySimpConvRanresLeft(typeEnv, subset, "A◁f∼⊂g");
+	}
+
+	private void applySimpConvRanresLeft(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpConvRanresLeft simp = new Rule.SimpConvRanresLeft(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpConvRanresRight() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "g⊆(f▷A)∼";
+		applySimpConvRanresRight(typeEnv, subseteq, "g⊆A◁f∼");
+		final String subset = "g⊂(f▷A)∼";
+		applySimpConvRanresRight(typeEnv, subset, "g⊂A◁f∼");
+	}
+
+	private void applySimpConvRanresRight(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpConvRanresRight simp = new Rule.SimpConvRanresRight(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpConvRansubLeft() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "(f⩥A)∼⊆g";
+		applySimpConvRansubLeft(typeEnv, subseteq, "A⩤f∼⊆g");
+		final String subset = "(f⩥A)∼⊂g";
+		applySimpConvRansubLeft(typeEnv, subset, "A⩤f∼⊂g");
+	}
+
+	private void applySimpConvRansubLeft(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpConvRansubLeft simp = new Rule.SimpConvRansubLeft(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpConvRansubRight() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "g⊆(f⩥A)∼";
+		applySimpConvRansubRight(typeEnv, subseteq, "g⊆A⩤f∼");
+		final String subset = "g⊂(f⩥A)∼";
+		applySimpConvRansubRight(typeEnv, subset, "g⊂A⩤f∼");
+	}
+
+	private void applySimpConvRansubRight(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpConvRansubRight simp = new Rule.SimpConvRansubRight(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpDomDomRanresPrj1Left() {
+		final ITypeEnvironment typeEnv = genTypeEnv("g=ℙ(ℤ)");
+		final String subseteq = "dom(dom((prj1⦂ℤ×ℤ↔ℤ)▷f))⊆g";
+		applySimpDomDomRanresPrj1Left(typeEnv, subseteq, "f⊆g");
+		final String subset = "dom(dom((prj1⦂ℤ×ℤ↔ℤ)▷f))⊂g";
+		applySimpDomDomRanresPrj1Left(typeEnv, subset, "f⊂g");
+	}
+
+	private void applySimpDomDomRanresPrj1Left(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpDomDomRanresPrj1Left simp = new Rule.SimpDomDomRanresPrj1Left(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpDomDomRanresPrj1LefRight() {
+		final ITypeEnvironment typeEnv = genTypeEnv("g=ℙ(ℤ)");
+		final String subseteq = "g⊆dom(dom((prj1⦂ℤ×ℤ↔ℤ)▷f))";
+		applySimpDomDomRanresPrj1Right(typeEnv, subseteq, "g⊆f");
+		final String subset = "g⊂dom(dom((prj1⦂ℤ×ℤ↔ℤ)▷f))";
+		applySimpDomDomRanresPrj1Right(typeEnv, subset, "g⊂f");
+	}
+
+	private void applySimpDomDomRanresPrj1Right(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpDomDomRanresPrj1Right simp = new Rule.SimpDomDomRanresPrj1Right(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpDomDomresLeft() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "dom(A◁f)⊆B";
+		applySimpDomDomresLeft(typeEnv, subseteq, "dom(f)∩A⊆B");
+		final String subseteqId = "dom(A◁id)⊆B";
+		applySimpDomDomresLeft(typeEnv, subseteqId, "A⊆B");
+		final String subseteqPrj1 = "dom(f◁prj1)⊆g";
+		applySimpDomDomresLeft(typeEnv, subseteqPrj1, "f⊆g");
+		final String subseteqPrj2 = "dom(f◁prj2)⊆g";
+		applySimpDomDomresLeft(typeEnv, subseteqPrj2, "f⊆g");
+		final String subset = "dom(A◁f)⊂B";
+		applySimpDomDomresLeft(typeEnv, subset, "dom(f)∩A⊂B");
+	}
+
+	private void applySimpDomDomresLeft(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpDomDomresLeft simp = new Rule.SimpDomDomresLeft(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpDomDomresRight() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "B⊆dom(A◁f)";
+		applySimpDomDomresRight(typeEnv, subseteq, "B⊆dom(f)∩A");
+		final String subseteqId = "B⊆dom(A◁id)";
+		applySimpDomDomresRight(typeEnv, subseteqId, "B⊆A");
+		final String subseteqPrj1 = "g⊆dom(f◁prj1)";
+		applySimpDomDomresRight(typeEnv, subseteqPrj1, "g⊆f");
+		final String subseteqPrj2 = "g⊆dom(f◁prj2)";
+		applySimpDomDomresRight(typeEnv, subseteqPrj2, "g⊆f");
+		final String subset = "B⊂dom(A◁f)";
+		applySimpDomDomresRight(typeEnv, subset, "B⊂dom(f)∩A");
+	}
+
+	private void applySimpDomDomresRight(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpDomDomresRight simp = new Rule.SimpDomDomresRight(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpDomDomsubLeft() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "dom(A⩤f)⊆B";
+		applySimpDomDomsubLeft(typeEnv, subseteq, "dom(f)∖A⊆B");
+		final String subset = "dom(A⩤f)⊂B";
+		applySimpDomDomsubLeft(typeEnv, subset, "dom(f)∖A⊂B");
+	}
+
+	private void applySimpDomDomsubLeft(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpDomDomsubLeft simp = new Rule.SimpDomDomsubLeft(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpDomDomsubRight() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "B⊆dom(A⩤f)";
+		applySimpDomDomsubRight(typeEnv, subseteq, "B⊆dom(f)∖A");
+		final String subset = "B⊂dom(A⩤f)";
+		applySimpDomDomsubRight(typeEnv, subset, "B⊂dom(f)∖A");
+	}
+
+	private void applySimpDomDomsubRight(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpDomDomsubRight simp = new Rule.SimpDomDomsubRight(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpDomRanresIdLeft() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "dom(id▷f)⊆g";
+		applySimpDomRanresIdLeft(typeEnv, subseteq, "f⊆g");
+		final String subset = "dom(id▷f)⊂g";
+		applySimpDomRanresIdLeft(typeEnv, subset, "f⊂g");
+	}
+
+	private void applySimpDomRanresIdLeft(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpDomRanresIdLeft simp = new Rule.SimpDomRanresIdLeft(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpDomRanresIdRight() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "g⊆dom(id▷f)";
+		applySimpDomRanresIdRight(typeEnv, subseteq, "g⊆f");
+		final String subset = "g⊂dom(id▷f)";
+		applySimpDomRanresIdRight(typeEnv, subset, "g⊂f");
+	}
+
+	private void applySimpDomRanresIdRight(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpDomRanresIdRight simp = new Rule.SimpDomRanresIdRight(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpRanDomRanresPrj2Left() {
+		final ITypeEnvironment typeEnv = genTypeEnv("f=ℙ(ℤ)");
+		final String subseteq = "ran(dom((prj2⦂ℤ×ℤ↔ℤ)▷f))⊆g";
+		applySimpRanDomRanresPrj2Left(typeEnv, subseteq, "f⊆g");
+		final String subset = "ran(dom((prj2⦂ℤ×ℤ↔ℤ)▷f))⊂g";
+		applySimpRanDomRanresPrj2Left(typeEnv, subset, "f⊂g");
+	}
+
+	private void applySimpRanDomRanresPrj2Left(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpRanDomRanresPrj2Left simp = new Rule.SimpRanDomRanresPrj2Left(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpRanDomRanresPrj2Right() {
+		final ITypeEnvironment typeEnv = genTypeEnv("f=ℙ(ℤ)");
+		final String subseteq = "g⊆ran(dom((prj2⦂ℤ×ℤ↔ℤ)▷f))";
+		applySimpRanDomRanresPrj2Right(typeEnv, subseteq, "g⊆f");
+		final String subset = "g⊂ran(dom((prj2⦂ℤ×ℤ↔ℤ)▷f))";
+		applySimpRanDomRanresPrj2Right(typeEnv, subset, "g⊂f");
+	}
+
+	private void applySimpRanDomRanresPrj2Right(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpRanDomRanresPrj2Right simp = new Rule.SimpRanDomRanresPrj2Right(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpRanDomresKxxLeft() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteqPrj1 = "ran(f◁prj1)⊆A";
+		applySimpRanDomresKxxLeft(typeEnv, subseteqPrj1, "dom(f)⊆A");
+		final String subset = "ran(f◁prj1)⊂A";
+		applySimpRanDomresKxxLeft(typeEnv, subset, "dom(f)⊂A");
+		final String subseteqId = "ran(A◁id)⊆B";
+		applySimpRanDomresKxxLeft(typeEnv, subseteqId, "A⊆B");
+		final String subseteqPrj2 = "ran(f◁prj2)⊆A";
+		applySimpRanDomresKxxLeft(typeEnv, subseteqPrj2, "ran(f)⊆A");
+	}
+
+	private void applySimpRanDomresKxxLeft(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpRanDomresKxxLeft simp = new Rule.SimpRanDomresKxxLeft(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpRanDomresKxxRight() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteqPrj1 = "A⊆ran(f◁prj1)";
+		applySimpRanDomresKxxRight(typeEnv, subseteqPrj1, "A⊆dom(f)");
+		final String subset = "A⊂ran(f◁prj1)";
+		applySimpRanDomresKxxRight(typeEnv, subset, "A⊂dom(f)");
+		final String subseteqId = "B⊆ran(A◁id)";
+		applySimpRanDomresKxxRight(typeEnv, subseteqId, "B⊆A");
+		final String subseteqPrj2 = "A⊆ran(f◁prj2)";
+		applySimpRanDomresKxxRight(typeEnv, subseteqPrj2, "A⊆ran(f)");
+	}
+
+	private void applySimpRanDomresKxxRight(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpRanDomresKxxRight simp = new Rule.SimpRanDomresKxxRight(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpRanRanresLeft() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "ran(f▷A)⊆B";
+		applySimpRanRanresLeft(typeEnv, subseteq, "ran(f)∩A⊆B");
+		final String subset = "ran(f▷A)⊂B";
+		applySimpRanRanresLeft(typeEnv, subset, "ran(f)∩A⊂B");
+		final String subseteqId = "ran(id▷A)⊆B";
+		applySimpRanRanresLeft(typeEnv, subseteqId, "A⊆B");
+		final String subseteqPrj1 = "ran((prj1⦂ℤ×ℤ↔ℤ)▷A)⊆B";
+		applySimpRanRanresLeft(typeEnv, subseteqPrj1, "A⊆B");
+		final String subseteqPrj2 = "ran((prj2⦂ℤ×ℤ↔ℤ)▷A)⊆B";
+		applySimpRanRanresLeft(typeEnv, subseteqPrj2, "A⊆B");
+	}
+
+	private void applySimpRanRanresLeft(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpRanRanresLeft simp = new Rule.SimpRanRanresLeft(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpRanRanresRight() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "B⊆ran(f▷A)";
+		applySimpRanRanresRight(typeEnv, subseteq, "B⊆ran(f)∩A");
+		final String subset = "B⊂ran(f▷A)";
+		applySimpRanRanresRight(typeEnv, subset, "B⊂ran(f)∩A");
+		final String subseteqId = "B⊆ran(id▷A)";
+		applySimpRanRanresRight(typeEnv, subseteqId, "B⊆A");
+		final String subseteqPrj1 = "B⊆ran((prj1⦂ℤ×ℤ↔ℤ)▷A)";
+		applySimpRanRanresRight(typeEnv, subseteqPrj1, "B⊆A");
+		final String subseteqPrj2 = "B⊆ran((prj2⦂ℤ×ℤ↔ℤ)▷A)";
+		applySimpRanRanresRight(typeEnv, subseteqPrj2, "B⊆A");
+	}
+
+	private void applySimpRanRanresRight(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpRanRanresRight simp = new Rule.SimpRanRanresRight(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpRanRansubLeft() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "ran(f⩥A)⊆B";
+		applySimpRanRansubLeft(typeEnv, subseteq, "ran(f)∖A⊆B");
+		final String subset = "ran(f⩥A)⊂B";
+		applySimpRanRansubLeft(typeEnv, subset, "ran(f)∖A⊂B");
+	}
+
+	private void applySimpRanRansubLeft(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpRanRansubLeft simp = new Rule.SimpRanRansubLeft(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
+	}
+
+	@Test
+	public void simpRanRansubRight() {
+		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final String subseteq = "B⊆ran(f⩥A)";
+		applySimpRanRansubRight(typeEnv, subseteq, "B⊆ran(f)∖A");
+		final String subset = "B⊂ran(f⩥A)";
+		applySimpRanRansubRight(typeEnv, subset, "B⊂ran(f)∖A");
+	}
+
+	private void applySimpRanRansubRight(final ITypeEnvironment typeEnv,
+			String predicate, String modifiedPredicate) {
+		final Predicate pred = genPred(typeEnv, predicate);
+		final Predicate modifiedpred = genPred(typeEnv, modifiedPredicate);
+		final RelationalPredicate rPred = (RelationalPredicate) pred;
+		final Rule.Hypothesis<RelationalPredicate> hyp = new Rule.Hypothesis<RelationalPredicate>(
+				rPred, ff);
+		final Rule.SimpRanRansubRight simp = new Rule.SimpRanRansubRight(
+				hyp);
+		Assert.assertEquals(simp.getConsequent(), modifiedpred);
 	}
 
 	@Test

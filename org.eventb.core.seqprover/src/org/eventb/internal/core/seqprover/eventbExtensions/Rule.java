@@ -19,6 +19,9 @@ import static org.eventb.core.ast.Formula.DOMSUB;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KDOM;
+import static org.eventb.core.ast.Formula.KID_GEN;
+import static org.eventb.core.ast.Formula.KPRJ1_GEN;
+import static org.eventb.core.ast.Formula.KPRJ2_GEN;
 import static org.eventb.core.ast.Formula.KRAN;
 import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.OVR;
@@ -1576,8 +1579,7 @@ public abstract class Rule<T extends Predicate> {
 		 * x↦y∈A ⊢ x∈dom(A) <br>
 		 * A⊂B ⊢ dom(A)⊆dom(B) <br>
 		 * A∼⊂B ⊢ ran(A)⊆dom(B) <br>
-		 * A⊂B∼ ⊢ dom(A)⊆ran(B) <br>
-		 * x↦y∈A ⊢ x∈dom(A)
+		 * A⊂B∼ ⊢ dom(A)⊆ran(B) 
 		 * 
 		 * @param rule
 		 */
@@ -1590,18 +1592,12 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate predicate = rule.consequent;
 			final FormulaFactory ff = rule.ff;
 			final Expression right = predicate.getRight();
-			Expression domRight;
 			final Expression left = predicate.getLeft();
 			Expression domLeft;
 			switch (predicate.getTag()) {
 			case SUBSET:
 			case SUBSETEQ:
-				if (left.getTag() == CONVERSE) {
-					Expression child = ((UnaryExpression) left).getChild();
-					domLeft = ff.makeUnaryExpression(KRAN, child, null);
-				} else {
-					domLeft = ff.makeUnaryExpression(KDOM, left, null);
-				}
+				domLeft = computeDomainApplication(ff, left);
 				break;
 			case IN:
 				mapstoCondition(left);
@@ -1612,14 +1608,19 @@ public abstract class Rule<T extends Predicate> {
 						predicate.toString()
 								+ " should denote either a subset, or, in particular cases, a membership");
 			}
-			if (right.getTag() == CONVERSE) {
-				Expression child = ((UnaryExpression) right).getChild();
-				domRight = ff.makeUnaryExpression(KRAN, child, null);
-			} else {
-				domRight = ff.makeUnaryExpression(KDOM, right, null);
-			}
+			final Expression domRight = computeDomainApplication(ff, right);
 			return ff.makeRelationalPredicate(predicate.getTag(), domLeft,
 					domRight, null);
+		}
+
+		private static Expression computeDomainApplication(
+				final FormulaFactory ff, final Expression expression) {
+			if (expression.getTag() == CONVERSE) {
+				final Expression childC = ((UnaryExpression) expression)
+						.getChild();
+				return Range.computeRangeApplication(ff, childC);
+			}
+			return ff.makeUnaryExpression(KDOM, expression, null);
 		}
 
 	}
@@ -1647,18 +1648,12 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate predicate = rule.consequent;
 			final FormulaFactory ff = rule.ff;
 			final Expression right = predicate.getRight();
-			Expression ranRight;
 			final Expression left = predicate.getLeft();
 			Expression ranLeft;
 			switch (predicate.getTag()) {
 			case SUBSET:
 			case SUBSETEQ:
-				if (left.getTag() == CONVERSE) {
-					Expression child = ((UnaryExpression) left).getChild();
-					ranLeft = ff.makeUnaryExpression(KDOM, child, null);
-				} else {
-					ranLeft = ff.makeUnaryExpression(KRAN, left, null);
-				}
+				ranLeft = computeRangeApplication(ff, left);
 				break;
 			case IN:
 				mapstoCondition(left);
@@ -1669,14 +1664,19 @@ public abstract class Rule<T extends Predicate> {
 						predicate.toString()
 								+ " should denote either a subset, or, in particular cases, a membership");
 			}
-			if (right.getTag() == CONVERSE) {
-				Expression child = ((UnaryExpression) right).getChild();
-				ranRight = ff.makeUnaryExpression(KDOM, child, null);
-			} else {
-				ranRight = ff.makeUnaryExpression(KRAN, right, null);
-			}
+			final Expression ranRight = computeRangeApplication(ff, right);
 			return ff.makeRelationalPredicate(predicate.getTag(), ranLeft,
 					ranRight, null);
+		}
+
+		private static Expression computeRangeApplication(
+				final FormulaFactory ff, final Expression expression) {
+			if (expression.getTag() == CONVERSE) {
+				final Expression childC = ((UnaryExpression) expression)
+						.getChild();
+				return Domain.computeDomainApplication(ff, childC);
+			}
+			return ff.makeUnaryExpression(KRAN, expression, null);
 		}
 	}
 
@@ -1721,22 +1721,34 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate predicate = rule.consequent;
 			final FormulaFactory ff = rule.ff;
 			subsetCondition(predicate);
-			final Expression right = predicate.getRight();
-			Expression convRight;
-			if (right.getTag() == CONVERSE) {
-				convRight = ((UnaryExpression) right).getChild();
-			} else {
-				convRight = ff.makeUnaryExpression(CONVERSE, right, null);
-			}
-			final Expression left = predicate.getLeft();
-			Expression convLeft;
-			if (left.getTag() == CONVERSE) {
-				convLeft = ((UnaryExpression) left).getChild();
-			} else {
-				convLeft = ff.makeUnaryExpression(CONVERSE, left, null);
-			}
+			final Expression convRight = computeConverseApplication(ff,
+					predicate.getRight());
+			final Expression convLeft = computeConverseApplication(ff,
+					predicate.getLeft());
 			return ff.makeRelationalPredicate(predicate.getTag(), convLeft,
 					convRight, null);
+		}
+
+		private static Expression computeConverseApplication(
+				final FormulaFactory ff, final Expression expression) {
+			switch (expression.getTag()) {
+			case CONVERSE:
+				return ((UnaryExpression) expression).getChild();
+			case RANRES:
+				final BinaryExpression ranres = (BinaryExpression) expression;
+				if (ranres.getLeft().getTag() == KID_GEN) {
+					return expression;
+				}
+				break;
+			case DOMRES:
+				final BinaryExpression domres = (BinaryExpression) expression;
+				if (domres.getRight().getTag() == KID_GEN) {
+					return ff.makeBinaryExpression(RANRES, domres.getRight(),
+							domres.getLeft(), null);
+				}
+				break;
+			}
+			return ff.makeUnaryExpression(CONVERSE, expression, null);
 		}
 
 	}
@@ -1814,10 +1826,7 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate predicate = rule.consequent;
 			final FormulaFactory ff = rule.ff;
 			final Expression dom = predicate.getLeft();
-			if (dom.getTag() != KDOM) {
-				throw new IllegalArgumentException(dom.toString()
-						+ " should denote a domain.");
-			}
+			domainCondition(dom);
 			final Expression cprod = ((UnaryExpression) dom).getChild();
 			cprodCondition(cprod);
 			final Expression newExp = ((BinaryExpression) cprod).getLeft();
@@ -1847,10 +1856,7 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate predicate = rule.consequent;
 			final FormulaFactory ff = rule.ff;
 			final Expression dom = predicate.getRight();
-			if (dom.getTag() != KDOM) {
-				throw new IllegalArgumentException(dom.toString()
-						+ " should denote a domain.");
-			}
+			domainCondition(dom);
 			final Expression cprod = ((UnaryExpression) dom).getChild();
 			cprodCondition(cprod);
 			final Expression newExp = ((BinaryExpression) cprod).getLeft();
@@ -1879,10 +1885,7 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate predicate = rule.consequent;
 			final FormulaFactory ff = rule.ff;
 			final Expression ran = predicate.getLeft();
-			if (ran.getTag() != KRAN) {
-				throw new IllegalArgumentException(ran.toString()
-						+ " should denote a domain.");
-			}
+			rangeCondition(ran);
 			final Expression cprod = ((UnaryExpression) ran).getChild();
 			cprodCondition(cprod);
 			final Expression newExp = ((BinaryExpression) cprod).getRight();
@@ -1912,10 +1915,7 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate predicate = rule.consequent;
 			final FormulaFactory ff = rule.ff;
 			final Expression ran = predicate.getRight();
-			if (ran.getTag() != KRAN) {
-				throw new IllegalArgumentException(ran.toString()
-						+ " should denote a domain.");
-			}
+			rangeCondition(ran);
 			final Expression cprod = ((UnaryExpression) ran).getChild();
 			cprodCondition(cprod);
 			final Expression newExp = ((BinaryExpression) cprod).getRight();
@@ -1945,10 +1945,7 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate predicate = rule.consequent;
 			final FormulaFactory ff = rule.ff;
 			final Expression converse = predicate.getLeft();
-			if (converse.getTag() != CONVERSE) {
-				throw new IllegalArgumentException(converse.toString()
-						+ " should denote a converse.");
-			}
+			converseCondition(converse);
 			final Expression cprod = ((UnaryExpression) converse).getChild();
 			cprodCondition(cprod);
 			final BinaryExpression binCProd = (BinaryExpression) cprod;
@@ -1980,10 +1977,7 @@ public abstract class Rule<T extends Predicate> {
 			final RelationalPredicate predicate = rule.consequent;
 			final FormulaFactory ff = rule.ff;
 			final Expression converse = predicate.getRight();
-			if (converse.getTag() != CONVERSE) {
-				throw new IllegalArgumentException(converse.toString()
-						+ " should denote a converse.");
-			}
+			converseCondition(converse);
 			final Expression cprod = ((UnaryExpression) converse).getChild();
 			cprodCondition(cprod);
 			final BinaryExpression binCProd = (BinaryExpression) cprod;
@@ -1991,6 +1985,904 @@ public abstract class Rule<T extends Predicate> {
 					binCProd.getRight(), binCProd.getLeft(), null);
 			return ff.makeRelationalPredicate(predicate.getTag(),
 					predicate.getLeft(), newExp, null);
+		}
+
+	}
+
+	public static class SimpConvDomresRight extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> (A◁f)∼ ⊢ C <i>R</i> f∼▷A
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpConvDomresRight(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression converse = predicate.getRight();
+			converseCondition(converse);
+			final Expression domres = ((UnaryExpression) converse).getChild();
+			domresCondition(domres);
+			final BinaryExpression binDomres = (BinaryExpression) domres;
+			final UnaryExpression conv = ff.makeUnaryExpression(CONVERSE,
+					binDomres.getRight(), null);
+			final Expression newExp = ff.makeBinaryExpression(RANRES, conv,
+					binDomres.getLeft(), null);
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					predicate.getLeft(), newExp, null);
+		}
+
+	}
+
+	public static class SimpConvDomresLeft extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * (A◁f)∼ <i>R</i> C ⊢ f∼▷A <i>R</i> C
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpConvDomresLeft(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression converse = predicate.getLeft();
+			converseCondition(converse);
+			final Expression domres = ((UnaryExpression) converse).getChild();
+			domresCondition(domres);
+			final BinaryExpression binDomres = (BinaryExpression) domres;
+			final UnaryExpression conv = ff.makeUnaryExpression(CONVERSE,
+					binDomres.getRight(), null);
+			final Expression newExp = ff.makeBinaryExpression(RANRES, conv,
+					binDomres.getLeft(), null);
+			return ff.makeRelationalPredicate(predicate.getTag(), newExp,
+					predicate.getRight(), null);
+		}
+
+	}
+
+	public static class SimpConvRanresRight extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> (f▷A)∼ ⊢ C <i>R</i> A◁f∼
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpConvRanresRight(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression converse = predicate.getRight();
+			converseCondition(converse);
+			final Expression ranres = ((UnaryExpression) converse).getChild();
+			ranresCondition(ranres);
+			final BinaryExpression binRanres = (BinaryExpression) ranres;
+			final UnaryExpression conv = ff.makeUnaryExpression(CONVERSE,
+					binRanres.getLeft(), null);
+			final Expression newExp = ff.makeBinaryExpression(DOMRES,
+					binRanres.getRight(), conv, null);
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					predicate.getLeft(), newExp, null);
+		}
+
+	}
+
+	public static class SimpConvRanresLeft extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * (f▷A)∼ <i>R</i> C ⊢ A◁f∼ <i>R</i> C
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpConvRanresLeft(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression converse = predicate.getLeft();
+			converseCondition(converse);
+			final Expression ranres = ((UnaryExpression) converse).getChild();
+			ranresCondition(ranres);
+			final BinaryExpression binRanres = (BinaryExpression) ranres;
+			final UnaryExpression conv = ff.makeUnaryExpression(CONVERSE,
+					binRanres.getLeft(), null);
+			final Expression newExp = ff.makeBinaryExpression(DOMRES,
+					binRanres.getRight(), conv, null);
+			return ff.makeRelationalPredicate(predicate.getTag(), newExp,
+					predicate.getRight(), null);
+		}
+
+	}
+
+	public static class SimpConvDomsubRight extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> (A⩤f)∼ ⊢ C <i>R</i> f∼⩥A
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpConvDomsubRight(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression converse = predicate.getRight();
+			converseCondition(converse);
+			final Expression domsub = ((UnaryExpression) converse).getChild();
+			domsubCondition(domsub);
+			final BinaryExpression binDomres = (BinaryExpression) domsub;
+			final UnaryExpression conv = ff.makeUnaryExpression(CONVERSE,
+					binDomres.getRight(), null);
+			final Expression newExp = ff.makeBinaryExpression(RANSUB, conv,
+					binDomres.getLeft(), null);
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					predicate.getLeft(), newExp, null);
+		}
+
+	}
+
+	public static class SimpConvDomsubLeft extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * (A⩤f)∼ <i>R</i> C ⊢ f∼⩥A <i>R</i> C
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpConvDomsubLeft(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression converse = predicate.getLeft();
+			converseCondition(converse);
+			final Expression domsub = ((UnaryExpression) converse).getChild();
+			domsubCondition(domsub);
+			final BinaryExpression binDomsub = (BinaryExpression) domsub;
+			final UnaryExpression conv = ff.makeUnaryExpression(CONVERSE,
+					binDomsub.getRight(), null);
+			final Expression newExp = ff.makeBinaryExpression(RANSUB, conv,
+					binDomsub.getLeft(), null);
+			return ff.makeRelationalPredicate(predicate.getTag(), newExp,
+					predicate.getRight(), null);
+		}
+
+	}
+
+	public static class SimpConvRansubRight extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> (f⩥A)∼ ⊢ C <i>R</i> A⩤f∼
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpConvRansubRight(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression converse = predicate.getRight();
+			converseCondition(converse);
+			final Expression ransub = ((UnaryExpression) converse).getChild();
+			ransubCondition(ransub);
+			final BinaryExpression binRansub = (BinaryExpression) ransub;
+			final UnaryExpression conv = ff.makeUnaryExpression(CONVERSE,
+					binRansub.getLeft(), null);
+			final Expression newExp = ff.makeBinaryExpression(DOMSUB,
+					binRansub.getRight(), conv, null);
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					predicate.getLeft(), newExp, null);
+		}
+
+	}
+
+	public static class SimpConvRansubLeft extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * (f⩥A)∼ <i>R</i> C ⊢ A⩤f∼ <i>R</i> C
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpConvRansubLeft(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression converse = predicate.getLeft();
+			converseCondition(converse);
+			final Expression ransub = ((UnaryExpression) converse).getChild();
+			ransubCondition(ransub);
+			final BinaryExpression binRansub = (BinaryExpression) ransub;
+			final UnaryExpression conv = ff.makeUnaryExpression(CONVERSE,
+					binRansub.getLeft(), null);
+			final Expression newExp = ff.makeBinaryExpression(DOMSUB,
+					binRansub.getRight(), conv, null);
+			return ff.makeRelationalPredicate(predicate.getTag(), newExp,
+					predicate.getRight(), null);
+		}
+
+	}
+
+	public static class SimpDomDomresRight extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> dom(A◁f) ⊢ C <i>R</i> dom(f)∩A<br>
+		 * C <i>R</i> dom(A◁prj1) ⊢ C <i>R</i> A<br>
+		 * C <i>R</i> dom(A◁prj2) ⊢ C <i>R</i> A<br>
+		 * C <i>R</i> dom(A◁id) ⊢ C <i>R</i> A
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpDomDomresRight(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression domain = predicate.getRight();
+			domainCondition(domain);
+			final Expression domres = ((UnaryExpression) domain).getChild();
+			domresCondition(domres);
+			final BinaryExpression binDomres = (BinaryExpression) domres;
+			switch (binDomres.getRight().getTag()) {
+			case KPRJ1_GEN:
+			case KPRJ2_GEN:
+			case KID_GEN:
+				return ff.makeRelationalPredicate(predicate.getTag(),
+						predicate.getLeft(), binDomres.getLeft(), null);
+			}
+			final UnaryExpression dom = ff.makeUnaryExpression(KDOM,
+					binDomres.getRight(), null);
+			final Expression[] children = { dom, binDomres.getLeft() };
+			final Expression newExp = ff.makeAssociativeExpression(BINTER,
+					children, null);
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					predicate.getLeft(), newExp, null);
+		}
+
+	}
+
+	public static class SimpDomDomresLeft extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * dom(A◁f) <i>R</i> C ⊢ dom(f)∩A <i>R</i> C<br>
+		 * dom(f◁prj1) <i>R</i> g ⊢ f <i>R</i> g<br>
+		 * dom(f◁prj2) <i>R</i> g ⊢ f <i>R</i> g<br>
+		 * dom(f◁id) <i>R</i> g ⊢ f <i>R</i> g
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpDomDomresLeft(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression domain = predicate.getLeft();
+			domainCondition(domain);
+			final Expression domres = ((UnaryExpression) domain).getChild();
+			domresCondition(domres);
+			final BinaryExpression binDomres = (BinaryExpression) domres;
+			switch (binDomres.getRight().getTag()) {
+			case KPRJ1_GEN:
+			case KPRJ2_GEN:
+			case KID_GEN:
+				return ff.makeRelationalPredicate(predicate.getTag(),
+						binDomres.getLeft(), predicate.getRight(), null);
+			}
+			final UnaryExpression dom = ff.makeUnaryExpression(KDOM,
+					binDomres.getRight(), null);
+			final Expression[] children = { dom, binDomres.getLeft() };
+			final Expression newExp = ff.makeAssociativeExpression(BINTER,
+					children, null);
+			return ff.makeRelationalPredicate(predicate.getTag(), newExp,
+					predicate.getRight(), null);
+		}
+
+	}
+
+	public static class SimpRanRanresRight extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> ran(f▷A) ⊢ C <i>R</i> ran(f)∩A<br>
+		 * C <i>R</i> ran(prj1▷A) ⊢ C <i>R</i> A<br>
+		 * C <i>R</i> ran(prj2▷A) ⊢ C <i>R</i> A<br>
+		 * C <i>R</i> ran(id▷A) ⊢ C <i>R</i> A
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpRanRanresRight(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression range = predicate.getRight();
+			rangeCondition(range);
+			final Expression ranres = ((UnaryExpression) range).getChild();
+			ranresCondition(ranres);
+			final BinaryExpression binRanres = (BinaryExpression) ranres;
+			switch (binRanres.getLeft().getTag()) {
+			case KPRJ1_GEN:
+			case KPRJ2_GEN:
+			case KID_GEN:
+				return ff.makeRelationalPredicate(predicate.getTag(),
+						predicate.getLeft(), binRanres.getRight(), null);
+			}
+			final UnaryExpression ran = ff.makeUnaryExpression(KRAN,
+					binRanres.getLeft(), null);
+			final Expression[] children = { ran, binRanres.getRight() };
+			final Expression newExp = ff.makeAssociativeExpression(BINTER,
+					children, null);
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					predicate.getLeft(), newExp, null);
+		}
+
+	}
+
+	public static class SimpRanRanresLeft extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * ran(f▷A) <i>R</i> C ⊢ ran(f)∩A <i>R</i> C<br>
+		 * ran(prj1▷A) <i>R</i> C ⊢ A <i>R</i> C<br>
+		 * ran(prj2▷A) <i>R</i> C ⊢ A <i>R</i> C<br>
+		 * ran(id▷A) <i>R</i> C ⊢ A <i>R</i> C
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpRanRanresLeft(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression range = predicate.getLeft();
+			rangeCondition(range);
+			final Expression ranres = ((UnaryExpression) range).getChild();
+			ranresCondition(ranres);
+			final BinaryExpression binRanres = (BinaryExpression) ranres;
+			switch (binRanres.getLeft().getTag()) {
+			case KPRJ1_GEN:
+			case KPRJ2_GEN:
+			case KID_GEN:
+				return ff.makeRelationalPredicate(predicate.getTag(),
+						binRanres.getRight(), predicate.getRight(), null);
+			}
+			final UnaryExpression ran = ff.makeUnaryExpression(KRAN,
+					binRanres.getLeft(), null);
+			final Expression[] children = { ran, binRanres.getRight() };
+			final Expression newExp = ff.makeAssociativeExpression(BINTER,
+					children, null);
+			return ff.makeRelationalPredicate(predicate.getTag(), newExp,
+					predicate.getRight(), null);
+		}
+
+	}
+
+	public static class SimpDomDomsubRight extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> dom(A⩤f) ⊢ C <i>R</i> dom(f)∖A
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpDomDomsubRight(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression domain = predicate.getRight();
+			domainCondition(domain);
+			final Expression domsub = ((UnaryExpression) domain).getChild();
+			domsubCondition(domsub);
+			final BinaryExpression binDomsub = (BinaryExpression) domsub;
+			final UnaryExpression dom = ff.makeUnaryExpression(KDOM,
+					binDomsub.getRight(), null);
+			final Expression newExp = ff.makeBinaryExpression(SETMINUS, dom,
+					binDomsub.getLeft(), null);
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					predicate.getLeft(), newExp, null);
+		}
+
+	}
+
+	public static class SimpDomDomsubLeft extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * dom(A⩤f) <i>R</i> C ⊢ dom(f)∖A <i>R</i> C
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpDomDomsubLeft(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression domain = predicate.getLeft();
+			domainCondition(domain);
+			final Expression domsub = ((UnaryExpression) domain).getChild();
+			domsubCondition(domsub);
+			final BinaryExpression binDomsub = (BinaryExpression) domsub;
+			final UnaryExpression dom = ff.makeUnaryExpression(KDOM,
+					binDomsub.getRight(), null);
+			final Expression newExp = ff.makeBinaryExpression(SETMINUS, dom,
+					binDomsub.getLeft(), null);
+			return ff.makeRelationalPredicate(predicate.getTag(), newExp,
+					predicate.getRight(), null);
+		}
+
+	}
+
+	public static class SimpRanRansubRight extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> ran(f⩥A) ⊢ C <i>R</i> ran(f)∖A
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpRanRansubRight(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression range = predicate.getRight();
+			rangeCondition(range);
+			final Expression ransub = ((UnaryExpression) range).getChild();
+			ransubCondition(ransub);
+			final BinaryExpression binRansub = (BinaryExpression) ransub;
+			final UnaryExpression ran = ff.makeUnaryExpression(KRAN,
+					binRansub.getLeft(), null);
+			final Expression newExp = ff.makeBinaryExpression(SETMINUS, ran,
+					binRansub.getRight(), null);
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					predicate.getLeft(), newExp, null);
+		}
+
+	}
+
+	public static class SimpRanRansubLeft extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * ran(f⩥A) <i>R</i> C ⊢ ran(f)∖A <i>R</i> C
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpRanRansubLeft(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression range = predicate.getLeft();
+			rangeCondition(range);
+			final Expression ransub = ((UnaryExpression) range).getChild();
+			ransubCondition(ransub);
+			final BinaryExpression binRansub = (BinaryExpression) ransub;
+			final UnaryExpression ran = ff.makeUnaryExpression(KRAN,
+					binRansub.getLeft(), null);
+			final Expression newExp = ff.makeBinaryExpression(SETMINUS, ran,
+					binRansub.getRight(), null);
+			return ff.makeRelationalPredicate(predicate.getTag(), newExp,
+					predicate.getRight(), null);
+		}
+
+	}
+
+	public static class SimpRanDomresKxxLeft extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * ran(f◁prj1) <i>R</i> C ⊢ dom(f) <i>R</i> C<br>
+		 * ran(f◁prj2) <i>R</i> C ⊢ ran(f) <i>R</i> C<br>
+		 * ran(f◁id) <i>R</i> C ⊢ f <i>R</i> C
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpRanDomresKxxLeft(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression range = predicate.getLeft();
+			rangeCondition(range);
+			final Expression domres = ((UnaryExpression) range).getChild();
+			domresCondition(domres);
+			final BinaryExpression binDomres = (BinaryExpression) domres;
+			final Expression left = binDomres.getLeft();
+			switch (binDomres.getRight().getTag()) {
+			case KPRJ1_GEN:
+				final UnaryExpression dom = ff.makeUnaryExpression(KDOM, left,
+						null);
+				return ff.makeRelationalPredicate(predicate.getTag(),
+						dom, predicate.getRight(), null);
+			case KPRJ2_GEN:
+				final UnaryExpression ran = ff.makeUnaryExpression(KRAN, left,
+						null);
+				return ff.makeRelationalPredicate(predicate.getTag(),
+						ran, predicate.getRight(), null);
+			case KID_GEN:
+				return ff.makeRelationalPredicate(predicate.getTag(),
+						left, predicate.getRight(), null);
+			default:
+				throw new IllegalArgumentException(
+						"Cannot simplify this predicate.");
+			}
+		}
+
+	}
+
+	public static class SimpRanDomresKxxRight extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> ran(f◁prj1) ⊢ C <i>R</i> dom(f)<br>
+		 * C <i>R</i> ran(f◁prj2) ⊢ C <i>R</i> ran(f)<br>
+		 * C <i>R</i> ran(f◁id) ⊢ C <i>R</i> f
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpRanDomresKxxRight(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression range = predicate.getRight();
+			rangeCondition(range);
+			final Expression domres = ((UnaryExpression) range).getChild();
+			domresCondition(domres);
+			final BinaryExpression binDomres = (BinaryExpression) domres;
+			final Expression left = binDomres.getLeft();
+			switch (binDomres.getRight().getTag()) {
+			case KPRJ1_GEN:
+				final UnaryExpression dom = ff.makeUnaryExpression(KDOM, left,
+						null);
+				return ff.makeRelationalPredicate(predicate.getTag(),
+						predicate.getLeft(), dom, null);
+			case KPRJ2_GEN:
+				final UnaryExpression ran = ff.makeUnaryExpression(KRAN, left,
+						null);
+				return ff.makeRelationalPredicate(predicate.getTag(),
+						predicate.getLeft(), ran, null);
+			case KID_GEN:
+				return ff.makeRelationalPredicate(predicate.getTag(),
+						predicate.getLeft(), left, null);
+			default:
+				throw new IllegalArgumentException(
+						"Cannot simplify this predicate.");
+			}
+		}
+
+	}
+
+	public static class SimpDomRanresIdLeft extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * dom(id▷f) <i>R</i> C ⊢ f <i>R</i> C
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpDomRanresIdLeft(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression domain = predicate.getLeft();
+			domainCondition(domain);
+			final Expression ranres = ((UnaryExpression) domain).getChild();
+			ranresCondition(ranres);
+			final BinaryExpression binranres = (BinaryExpression) ranres;
+			if (binranres.getLeft().getTag() != KID_GEN) {
+				throw new IllegalArgumentException(
+						"Cannot simplify this predicate.");
+			}
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					binranres.getRight(), predicate.getRight(), null);
+		}
+
+	}
+
+	public static class SimpDomRanresIdRight extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> dom(id▷f) ⊢ C <i>R</i> f
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpDomRanresIdRight(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression domain = predicate.getRight();
+			domainCondition(domain);
+			final Expression ranres = ((UnaryExpression) domain).getChild();
+			ranresCondition(ranres);
+			final BinaryExpression binranres = (BinaryExpression) ranres;
+			if (binranres.getLeft().getTag() != KID_GEN) {
+				throw new IllegalArgumentException(
+						"Cannot simplify this predicate.");
+			}
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					predicate.getLeft(), binranres.getRight(), null);
+		}
+
+	}
+
+	public static class SimpRanDomRanresPrj2Left extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * ran(dom(prj2▷f)) <i>R</i> C ⊢ f <i>R</i> C
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpRanDomRanresPrj2Left(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression range = predicate.getLeft();
+			rangeCondition(range);
+			final Expression domain = ((UnaryExpression) range).getChild();
+			domainCondition(domain);
+			final Expression ranres = ((UnaryExpression) domain).getChild();
+			ranresCondition(ranres);
+			final BinaryExpression binranres = (BinaryExpression) ranres;
+			if (binranres.getLeft().getTag() != KPRJ2_GEN) {
+				throw new IllegalArgumentException(
+						"Cannot simplify this predicate.");
+			}
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					binranres.getRight(), predicate.getRight(), null);
+		}
+
+	}
+
+	public static class SimpRanDomRanresPrj2Right extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> ran(dom(prj2▷f)) ⊢ C <i>R</i> f
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpRanDomRanresPrj2Right(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression range = predicate.getRight();
+			rangeCondition(range);
+			final Expression domain = ((UnaryExpression) range).getChild();
+			domainCondition(domain);
+			final Expression ranres = ((UnaryExpression) domain).getChild();
+			ranresCondition(ranres);
+			final BinaryExpression binranres = (BinaryExpression) ranres;
+			if (binranres.getLeft().getTag() != KPRJ2_GEN) {
+				throw new IllegalArgumentException(
+						"Cannot simplify this predicate.");
+			}
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					predicate.getLeft(), binranres.getRight(), null);
+		}
+
+	}
+
+	public static class SimpDomDomRanresPrj1Left extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * dom(dom(prj1▷f)) <i>R</i> C ⊢ f <i>R</i> C
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpDomDomRanresPrj1Left(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression domain1 = predicate.getLeft();
+			domainCondition(domain1);
+			final Expression domain2 = ((UnaryExpression) domain1).getChild();
+			domainCondition(domain2);
+			final Expression ranres = ((UnaryExpression) domain2).getChild();
+			ranresCondition(ranres);
+			final BinaryExpression binranres = (BinaryExpression) ranres;
+			if (binranres.getLeft().getTag() != KPRJ1_GEN) {
+				throw new IllegalArgumentException(
+						"Cannot simplify this predicate.");
+			}
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					binranres.getRight(), predicate.getRight(), null);
+		}
+
+	}
+
+	public static class SimpDomDomRanresPrj1Right extends
+			UnaryRule<RelationalPredicate> {
+
+		/**
+		 * C <i>R</i> dom(dom(prj1▷f)) ⊢ C <i>R</i> f
+		 * <p>
+		 * Where <i>R</i> denote one of these :{EQUAL, NOTEQUAL, LT, LE, GT, GE,
+		 * IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ, NOTSUBSETEQ}
+		 * 
+		 * @param rule
+		 */
+		public SimpDomDomRanresPrj1Right(Rule<RelationalPredicate> rule) {
+			super(rule, computeConsequent(rule));
+		}
+
+		private static RelationalPredicate computeConsequent(
+				Rule<RelationalPredicate> rule) {
+			final RelationalPredicate predicate = rule.consequent;
+			final FormulaFactory ff = rule.ff;
+			final Expression domain1 = predicate.getRight();
+			domainCondition(domain1);
+			final Expression domain2 = ((UnaryExpression) domain1).getChild();
+			domainCondition(domain2);
+			final Expression ranres = ((UnaryExpression) domain2).getChild();
+			ranresCondition(ranres);
+			final BinaryExpression binranres = (BinaryExpression) ranres;
+			if (binranres.getLeft().getTag() != KPRJ1_GEN ) {
+				throw new IllegalArgumentException(
+						"Cannot simplify this predicate.");
+			}
+			return ff.makeRelationalPredicate(predicate.getTag(),
+					predicate.getLeft(), binranres.getRight(), null);
 		}
 
 	}
@@ -2459,6 +3351,27 @@ public abstract class Rule<T extends Predicate> {
 		if (expression.getTag() != MAPSTO) {
 			throw new IllegalArgumentException(expression.toString()
 					+ " should denote a mapping");
+		}
+	}
+
+	private static void converseCondition(final Expression expression) {
+		if (expression.getTag() != CONVERSE) {
+			throw new IllegalArgumentException(expression.toString()
+					+ " should denote a converse");
+		}
+	}
+
+	private static void domainCondition(final Expression expression) {
+		if (expression.getTag() != KDOM) {
+			throw new IllegalArgumentException(expression.toString()
+					+ " should denote a domain");
+		}
+	}
+
+	private static void rangeCondition(final Expression expression) {
+		if (expression.getTag() != KRAN) {
+			throw new IllegalArgumentException(expression.toString()
+					+ " should denote a range");
 		}
 	}
 
