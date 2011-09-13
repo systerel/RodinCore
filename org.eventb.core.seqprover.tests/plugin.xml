@@ -83,6 +83,11 @@
             id="tracingFailure"
             name="Tracing Failure">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests$TracingSuccess3"
+            id="tracingSuccess3"
+            name="Tracing Success 3">
+      </autoTactic>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tacticCombinators">

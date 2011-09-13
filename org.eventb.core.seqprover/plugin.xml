@@ -720,6 +720,14 @@
             minArity="1"
             name="%compFailName">
       </combinator>
+      <combinator
+            boundArity="true"
+            class="org.eventb.core.seqprover.eventbExtensions.TacticCombinators$Loop"
+            description="%loopDescription"
+            id="loop"
+            minArity="1"
+            name="%loopName">
+      </combinator>
    </extension>
 
 </plugin>

@@ -13,6 +13,7 @@ package org.eventb.core.seqprover.eventbExtensions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
@@ -50,6 +51,7 @@ public class TacticCombinators {
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
+			Assert.isLegal(tactics.size() >= 1, "illegal tactics: " + tactics);
 			final ITactic[] tacs = tactics.toArray(new ITactic[tactics.size()]);
 			return BasicTactics.loopOnAllPending(tacs);
 		}
@@ -68,6 +70,7 @@ public class TacticCombinators {
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
+			Assert.isLegal(tactics.size() >= 1, "illegal tactics: " + tactics);
 			// avoid concurrence issues
 			final List<ITactic> copy = new ArrayList<ITactic>(tactics);
 			return new ITactic() {
@@ -108,6 +111,7 @@ public class TacticCombinators {
 		
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
+			Assert.isLegal(tactics.size() >= 1, "illegal tactics: " + tactics);
 			final ITactic[] tacs = tactics.toArray(new ITactic[tactics.size()]);
 			return BasicTactics.composeUntilSuccess(tacs);
 		}
@@ -127,6 +131,7 @@ public class TacticCombinators {
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
+			Assert.isLegal(tactics.size() >= 1, "illegal tactics: " + tactics);
 			// avoid concurrence issues
 			final List<ITactic> copy = new ArrayList<ITactic>(tactics);
 			return new ITactic() {
@@ -156,4 +161,22 @@ public class TacticCombinators {
 
 	}
 
+	/**
+	 * The 'loop' tactic combinator.
+	 * 
+	 * @author Nicolas Beauger
+	 * 
+	 */
+	public static class Loop implements ITacticCombinator {
+
+		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
+				+ ".loop";
+		
+		@Override
+		public ITactic getTactic(List<ITactic> tactics) {
+			Assert.isLegal(tactics.size() == 1, "illegal tactics: " + tactics);
+			return BasicTactics.repeat(tactics.get(0));
+		}
+		
+	}
 }

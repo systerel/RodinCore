@@ -16,6 +16,7 @@ import static junit.framework.Assert.assertNull;
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingFailure.FAILURE;
 import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingSuccess.SUCCESS;
+import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingSuccess3.SUCCESS_3;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.ComposeUntilFailure;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.ComposeUntilSuccess;
+import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.Loop;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.Sequence;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,9 +81,32 @@ public class DefaultCombinatorTests {
 		public TracingSuccess() {
 			super(SUCCESS, null);
 		}
-
+		
 	}
 
+	public static class TracingSuccess3 extends AbstractTracingTactic {
+
+		public static String SUCCESS_3 = "org.eventb.core.seqprover.tests.tracingSuccess3";
+
+		private static final int LIMIT = 3;
+		private int current = 0;
+
+		public TracingSuccess3() {
+			super(SUCCESS_3, null);
+		}
+
+		@Override
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			if (current == LIMIT) {
+				return "failure after " + LIMIT + " applications";
+			}
+			current++;
+			return super.apply(ptNode, pm);
+		}
+
+	}
+	
+	
 	public static class TracingFailure extends AbstractTracingTactic {
 
 		public static String FAILURE = "org.eventb.core.seqprover.tests.tracingFailure";
@@ -111,11 +136,17 @@ public class DefaultCombinatorTests {
 		assertTrace(traceIds);
 	}
 
-	private static ITactic combine(String combId, String... tacIds) {
+	private static ICombinatorDescriptor getCombDesc(String combId) {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final ICombinatorDescriptor combDesc = reg
 				.getCombinatorDescriptor(combId);
 		assertNotNull(combDesc);
+		return combDesc;
+	}
+	
+	private static ITactic combine(String combId, String... tacIds) {
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		final ICombinatorDescriptor combDesc = getCombDesc(combId);
 		final List<ITacticDescriptor> tacs = new ArrayList<ITacticDescriptor>();
 		for (String tacId : tacIds) {
 			final ITacticDescriptor tacDesc = reg.getTacticDescriptor(tacId);
@@ -206,6 +237,20 @@ public class DefaultCombinatorTests {
 		final ITactic compFailSucc = combine(ComposeUntilFailure.COMBINATOR_ID,
 				FAILURE, SUCCESS);
 		assertApply(compFailSucc, false, FAILURE);
+	}
+
+	@Test
+	public void testLoop_Succ() throws Exception {
+		final ITactic loopSucc = combine(Loop.COMBINATOR_ID,
+				SUCCESS_3);
+		assertApply(loopSucc, true, SUCCESS_3, SUCCESS_3, SUCCESS_3);
+	}
+
+	@Test
+	public void testLoop_Fail() throws Exception {
+		final ITactic loopFail = combine(Loop.COMBINATOR_ID,
+				FAILURE);
+		assertApply(loopFail, false, FAILURE);
 	}
 
 }
