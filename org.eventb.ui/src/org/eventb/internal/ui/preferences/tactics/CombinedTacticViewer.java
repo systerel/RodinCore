@@ -668,7 +668,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 			// bound => min = max
 			final int maxArity = combinator.getMinArity();
 			
-			return sizeAfterDrop < maxArity;
+			return sizeAfterDrop <= maxArity;
 		}
 		
 		private static void addAncestors(ITacticNode node, List<ITacticNode> nodes) {
