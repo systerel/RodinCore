@@ -108,7 +108,7 @@ public class TacticCombinators {
 
 		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
 				+ ".composeUntilSuccess";
-		
+
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
 			Assert.isLegal(tactics.size() >= 1, "illegal tactics: " + tactics);
@@ -171,21 +171,20 @@ public class TacticCombinators {
 
 		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
 				+ ".loop";
-		
+
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
 			Assert.isLegal(tactics.size() == 1, "illegal tactics: " + tactics);
 			return BasicTactics.repeat(tactics.get(0));
 		}
-		
+
 	}
-	
-	
+
 	/**
 	 * The 'on all pending' tactic combinator.
 	 * 
 	 * @author Nicolas Beauger
-	 *
+	 * 
 	 */
 	public static class OnAllPending implements ITacticCombinator {
 
@@ -199,5 +198,40 @@ public class TacticCombinators {
 		}
 
 	}
-	
+
+	/**
+	 * The 'attempt' tactic combinator.
+	 * 
+	 * @author Nicolas Beauger
+	 * 
+	 */
+	public static class Attempt implements ITacticCombinator {
+
+		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
+				+ ".attempt";
+
+		@Override
+		public ITactic getTactic(List<ITactic> tactics) {
+			Assert.isLegal(tactics.size() == 1, "illegal tactics: " + tactics);
+			final ITactic tactic = tactics.get(0);
+
+			return new ITactic() {
+
+				@Override
+				public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+					if (ptNode.isClosed()) {
+						return "node is closed";
+					}
+					tactic.apply(ptNode, pm);
+					if (ptNode.getFirstOpenDescendant() == null) {
+						return null;
+					}
+					BasicTactics.prune().apply(ptNode, pm);
+					return "attempt failed";
+				}
+			};
+		}
+
+	}
+
 }

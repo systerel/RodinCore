@@ -10,16 +10,19 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticExtentionTests;
 
+import static java.util.Collections.singletonList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
+import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingDischarge.DISCHARGE;
 import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingFailure.FAILURE;
 import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingSuccess.SUCCESS;
 import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingSuccess3.SUCCESS_3;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.seqprover.IAutoTacticRegistry;
@@ -30,14 +33,21 @@ import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.Attempt;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.ComposeUntilFailure;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.ComposeUntilSuccess;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.Loop;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.OnAllPending;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.Sequence;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
+import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
+import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -121,7 +131,39 @@ public class DefaultCombinatorTests {
 		}
 
 	}
+	
+	public static class TracingDischarge extends AbstractTracingTactic {
+		
+		private static class DischargeReasoner extends EmptyInputReasoner {
 
+			@Override
+			public String getReasonerID() {
+				return "discharge";
+			}
+
+			@Override
+			public IReasonerOutput apply(IProverSequent seq,
+					IReasonerInput input, IProofMonitor pm) {
+				return ProverFactory.makeProofRule(this,
+						input, null, "discharge anything");
+			}
+			
+		}
+		
+		public static String DISCHARGE = "org.eventb.core.seqprover.tests.tracingDischarge";
+
+		public TracingDischarge() {
+			super(DISCHARGE, null);
+		}
+
+		@Override
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			final ITactic tac = BasicTactics.reasonerTac(new DischargeReasoner(), new EmptyInput());
+			tac.apply(ptNode, pm);
+			return super.apply(ptNode, pm);
+		}
+	}
+	
 	@Before
 	public void init() {
 		trace.setLength(0);
@@ -137,6 +179,13 @@ public class DefaultCombinatorTests {
 		final IProofTree tree = makeProofTree(sequent, "test");
 		final IProofTreeNode root = tree.getRoot();
 		return root;
+	}
+
+	private static IProofTreeNode makeSplit4Node() {
+		final IProofTreeNode node = makeSimpleNode("a=TRUE ∧ b=FALSE ∧ c=TRUE ∧ d=FALSE");
+		final Object result = Tactics.conjI().apply(node, null);
+		assertNull(result);
+		return node;
 	}
 
 	private static void assertApply(ITactic tac, boolean successExpected,
@@ -164,12 +213,18 @@ public class DefaultCombinatorTests {
 		return combDesc;
 	}
 
-	private static ITactic combine(String combId, String... tacIds) {
+	private static ITacticDescriptor getTacDesc(String tacId) {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		final ITacticDescriptor tacDesc = reg.getTacticDescriptor(tacId);
+		assertNotNull(tacDesc);
+		return tacDesc;
+	}
+
+	private static ITactic combine(String combId, String... tacIds) {
 		final ICombinatorDescriptor combDesc = getCombDesc(combId);
 		final List<ITacticDescriptor> tacs = new ArrayList<ITacticDescriptor>();
 		for (String tacId : tacIds) {
-			final ITacticDescriptor tacDesc = reg.getTacticDescriptor(tacId);
+			final ITacticDescriptor tacDesc = getTacDesc(tacId);
 			tacs.add(tacDesc);
 		}
 		final ICombinedTacticDescriptor combined = combDesc.combine(tacs,
@@ -273,9 +328,7 @@ public class DefaultCombinatorTests {
 
 	@Test
 	public void testOnAllPending_Success() throws Exception {
-		final IProofTreeNode node = makeSimpleNode("a=TRUE ∧ b=FALSE ∧ c=TRUE ∧ d=FALSE");
-		final Object result = Tactics.conjI().apply(node, null);
-		assertNull(result);
+		final IProofTreeNode node = makeSplit4Node();
 		final ITactic onAllPendingSuccess = combine(OnAllPending.COMBINATOR_ID,
 				SUCCESS_3);
 		assertApply(onAllPendingSuccess, node, true, SUCCESS_3, SUCCESS_3,
@@ -284,12 +337,64 @@ public class DefaultCombinatorTests {
 
 	@Test
 	public void testOnAllPending_Failure() throws Exception {
-		final IProofTreeNode node = makeSimpleNode("a=TRUE ∧ b=FALSE ∧ c=TRUE ∧ d=FALSE");
-		final Object result = Tactics.conjI().apply(node, null);
-		assertNull(result);
+		final IProofTreeNode node = makeSplit4Node();
 		final ITactic onAllPendingSuccess = combine(OnAllPending.COMBINATOR_ID,
 				FAILURE);
 		assertApply(onAllPendingSuccess, node, false, FAILURE, FAILURE,
 				FAILURE, FAILURE);
+	}
+	
+	@Test
+	public void testAttempt_Success() throws Exception {
+		final ITactic attemptSucc = combine(Attempt.COMBINATOR_ID, SUCCESS);
+		// SUCCESS lets the tree unchanged, so the node is still undischarged
+		assertApply(attemptSucc, false, SUCCESS);
+	}
+	
+	@Test
+	public void testAttempt_Failure() throws Exception {
+		final ITactic attemptFail = combine(Attempt.COMBINATOR_ID, FAILURE);
+		// FAILURE lets the tree unchanged, so the node is still undischarged
+		assertApply(attemptFail, false, FAILURE);
+	}
+	
+	@Test
+	public void testAttempt_Discharge() throws Exception {
+		final ITactic attemptDisch = combine(Attempt.COMBINATOR_ID, DISCHARGE);
+		assertApply(attemptDisch, true, DISCHARGE);
+	}
+	
+	@Test
+	public void testAttempt_OnAllPendingDischarge() throws Exception {
+		final IProofTreeNode node = makeSplit4Node();
+		final ICombinatorDescriptor attempt = getCombDesc(Attempt.COMBINATOR_ID);
+		final ICombinatorDescriptor onAllPending = getCombDesc(OnAllPending.COMBINATOR_ID);
+		final ITacticDescriptor discharge = getTacDesc(DISCHARGE);
+		final ICombinedTacticDescriptor onAllPendingDischarge = onAllPending
+				.combine(singletonList(discharge), "onAllPendingDischarge");
+		final ICombinedTacticDescriptor attemptOnAllPendingDischarge = attempt
+				.combine(
+						Collections
+								.<ITacticDescriptor> singletonList(onAllPendingDischarge),
+						"attemptOnAllPendingDischarge");
+		assertApply(attemptOnAllPendingDischarge.getTacticInstance(), node,
+				true, DISCHARGE, DISCHARGE, DISCHARGE, DISCHARGE);
+	}
+
+	@Test
+	public void testAttempt_OnAllPendingSuccess() throws Exception {
+		final IProofTreeNode node = makeSplit4Node();
+		final ICombinatorDescriptor attempt = getCombDesc(Attempt.COMBINATOR_ID);
+		final ICombinatorDescriptor onAllPending = getCombDesc(OnAllPending.COMBINATOR_ID);
+		final ITacticDescriptor success = getTacDesc(SUCCESS);
+		final ICombinedTacticDescriptor onAllPendingDischarge = onAllPending
+				.combine(singletonList(success), "onAllPendingSuccess");
+		final ICombinedTacticDescriptor attemptOnAllPendingSuccess = attempt
+				.combine(
+						Collections
+								.<ITacticDescriptor> singletonList(onAllPendingDischarge),
+						"attemptOnAllPendingSuccess");
+		assertApply(attemptOnAllPendingSuccess.getTacticInstance(), node,
+				false, SUCCESS, SUCCESS, SUCCESS, SUCCESS);
 	}
 }

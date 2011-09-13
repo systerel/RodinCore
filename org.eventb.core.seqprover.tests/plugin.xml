@@ -88,6 +88,11 @@
             id="tracingSuccess3"
             name="Tracing Success 3">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests$TracingDischarge"
+            id="tracingDischarge"
+            name="Tracing Discharge">
+      </autoTactic>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tacticCombinators">

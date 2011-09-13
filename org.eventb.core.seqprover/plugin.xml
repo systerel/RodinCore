@@ -736,6 +736,14 @@
             minArity="1"
             name="%onAllPendingName">
       </combinator>
+      <combinator
+            boundArity="true"
+            class="org.eventb.core.seqprover.eventbExtensions.TacticCombinators$Attempt"
+            description="%attemptDescription"
+            id="attempt"
+            minArity="1"
+            name="%attemptName">
+      </combinator>
    </extension>
 
 </plugin>
