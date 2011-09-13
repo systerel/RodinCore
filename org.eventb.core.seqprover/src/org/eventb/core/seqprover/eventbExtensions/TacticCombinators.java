@@ -179,4 +179,25 @@ public class TacticCombinators {
 		}
 		
 	}
+	
+	
+	/**
+	 * The 'on all pending' tactic combinator.
+	 * 
+	 * @author Nicolas Beauger
+	 *
+	 */
+	public static class OnAllPending implements ITacticCombinator {
+
+		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
+				+ ".onAllPending";
+
+		@Override
+		public ITactic getTactic(List<ITactic> tactics) {
+			Assert.isLegal(tactics.size() == 1, "illegal tactics: " + tactics);
+			return BasicTactics.onAllPending(tactics.get(0));
+		}
+
+	}
+	
 }
