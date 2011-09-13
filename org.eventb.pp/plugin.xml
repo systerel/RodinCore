@@ -50,5 +50,32 @@
           id="org.eventb.pp.ppUnrestricted">
     </tactic>
  </extension>
+ <extension
+       point="org.eventb.core.seqprover.tacticParameterizers">
+    <parameterizer
+          class="org.eventb.internal.pp.AutoTactics$PPParameterizer"
+          description="%ppParamDescription"
+          id="ppParam"
+          name="%ppParamName">
+       <tacticParameter
+             default="2000"
+             description="%timeoutDesc"
+             label="timeout"
+             type="Long">
+       </tacticParameter>
+       <tacticParameter
+             default="false"
+             description="%restrictedDesc"
+             label="restricted"
+             type="Boolean">
+       </tacticParameter>
+       <tacticParameter
+             default="3000"
+             description="%maxStepsDesc"
+             label="maxSteps"
+             type="Integer">
+       </tacticParameter>
+    </parameterizer>
+ </extension>
 
 </plugin>

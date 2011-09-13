@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,13 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added a parameterizer for PP
  *******************************************************************************/
 package org.eventb.internal.pp;
 
+import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ITacticParameterizer;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics.AbsractLazilyConstrTactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.pp.PPCore;
@@ -69,7 +72,7 @@ public class AutoTactics {
 	/**
 	 * Tries to discharge a sequent using PP, using all visible hypotheses
 	 * (timeout = 2 seconds)
-	 * (maxSteps = 10000)
+	 * (maxSteps = 3000)
 	 * 
 	 * @author Farhad Mehta
 	 *
@@ -82,5 +85,25 @@ public class AutoTactics {
 		}
 	}
 	
-	
+	public static class PPParameterizer implements ITacticParameterizer {
+
+		// label for the 'restricted' tactic parameter
+		private static final String RESTRICTED = "restricted";
+
+		// label for the 'timeout' tactic parameter
+		private static final String TIMEOUT = "timeout";
+
+		// label for the 'maxSteps' tactic parameter
+		private static final String MAX_STEPS = "maxSteps";
+
+		
+		@Override
+		public ITactic getTactic(IParameterValuation parameters) {
+			final boolean restricted = parameters.getBoolean(RESTRICTED);
+			final long timeout = parameters.getLong(TIMEOUT);
+			final int maxSteps = parameters.getInt(MAX_STEPS);
+			return PPCore.newPP(restricted, timeout, maxSteps);
+		}
+		
+	}
 }
