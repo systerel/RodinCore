@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eventb.core.tests;
 import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -21,9 +23,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
+import org.eventb.core.sc.GraphProblem;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.RodinMarkerUtil;
 
 /**
  * Tests exercising build on whole projects.
@@ -64,6 +68,23 @@ public class ProjectBuildTests extends EventBTest {
 				printMarker(marker, System.out);
 			}
 			fail("Project shouldn't contain any marker");
+		}
+	}
+	
+	private static void assertMarkers(IRodinProject rp,
+			GraphProblem... problems) throws CoreException {
+		final IResource res = rp.getResource();
+		final IMarker[] markers = res.findMarkers(null, true, DEPTH_INFINITE);
+		assertEquals(problems.length, markers.length);
+		final List<String> expCodes = new ArrayList<String>();
+		for (GraphProblem problem : problems) {
+			expCodes.add(problem.getErrorCode());
+		}
+		for (IMarker marker : markers) {
+			final Object errorCode = marker
+					.getAttribute(RodinMarkerUtil.ERROR_CODE);
+			assertTrue("unexpected error code: " + errorCode,
+					expCodes.contains(errorCode));
 		}
 	}
 
@@ -134,7 +155,7 @@ public class ProjectBuildTests extends EventBTest {
 		saveRodinFileOf(abs);
 
 		runBuilder();
-		assertNoMarker(abs.getRodinProject());
+		assertMarkers(abs.getRodinProject(), GraphProblem.UnknownConfigurationWarning);
 		assertGenerated(abs);
 		
 		assertEquals(newConfig, abs.getSCMachineRoot().getConfiguration());

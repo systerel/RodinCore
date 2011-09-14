@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added config in message for problem LoadingRootModuleError
+ *     Systerel - added warnings for unknown configuration ids
  *******************************************************************************/
 package org.eventb.core.sc;
 
@@ -88,17 +89,19 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 			ISCStateRepository repository, 
 			IProgressMonitor monitor) throws CoreException {
 		
-		file.getResource().deleteMarkers(
-				RodinMarkerUtil.RODIN_PROBLEM_MARKER, 
-				true, 
-				IResource.DEPTH_INFINITE);
-		
 		rootModule.initModule(file, repository, monitor);
 	
 		rootModule.process(file, target, repository, monitor);
 		
 		rootModule.endModule(file, repository, monitor);	
 	
+	}
+
+	private static void deleteAllRodinMarkers(IRodinFile file) throws CoreException {
+		file.getResource().deleteMarkers(
+				RodinMarkerUtil.RODIN_PROBLEM_MARKER, 
+				true, 
+				IResource.DEPTH_INFINITE);
 	}
 
 	private void printModuleTree(String config, IRodinFile file, IModuleFactory moduleFactory) {
@@ -164,6 +167,8 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 	
 		printModuleTree(config, rodinFile, moduleFactory);
 	
+		addUnknownConfigWarnings(rodinFile, config);
+		
 		final IInternalElementType<?> elementType = rodinFile
 				.getRootElementType();
 		final ISCProcessorModule rootModule = (ISCProcessorModule) moduleFactory
@@ -173,6 +178,13 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 					GraphProblem.LoadingRootModuleError, config);
 		}
 		return rootModule;
+	}
+	
+	private static void addUnknownConfigWarnings(IRodinFile sourceFile, String config) throws RodinDBException {
+		for (String configId : SCModuleManager.getInstance().getUnknownConfigIds(config)) {
+			SCUtil.createProblemMarker(sourceFile,
+					GraphProblem.UnknownConfigurationWarning, configId);
+		}
 	}
 	
 	@Override
@@ -206,6 +218,8 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 						
 						setSCTmpConfiguration((IEventBRoot) scTmpFile.getRoot(), config);
 						
+						deleteAllRodinMarkers(sourceFile);
+
 						final ISCProcessorModule rootModule = getRootModule(sourceFile, config);
 					
 						if (rootModule != null) {

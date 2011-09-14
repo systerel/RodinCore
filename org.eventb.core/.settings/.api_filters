@@ -8,6 +8,13 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eventb/core/sc/GraphProblem.java" type="org.eventb.core.sc.GraphProblem">
+        <filter id="1177550852">
+            <message_arguments>
+                <message_argument value="UnknownConfigurationWarning"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eventb/internal/core/preferences/ITacticDescriptorRef.java" type="org.eventb.internal.core.preferences.ITacticDescriptorRef">
         <filter comment="required to reference tactic descriptors seemlessly" id="571473929">
             <message_arguments>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - added scuser_LoadingRootModuleError
  *     University of Dusseldorf - added theorem attribute
  *     Systerel - added InvalidTypeExpressionError
+ *     Systerel - added UnknownConfiguration
  *******************************************************************************/
 package org.eventb.internal.core.sc;
 
@@ -47,6 +48,7 @@ public final class Messages {
 
 	public static String scuser_LoadingRootModuleError;
 	public static String scuser_ConfigurationMissing;
+	public static String scuser_UnknownConfiguration;
 	public static String scuser_IdentifierUndef;
 	public static String scuser_PredicateUndef;
 	public static String scuser_ExpressionUndef;

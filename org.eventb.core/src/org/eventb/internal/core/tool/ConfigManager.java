@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - allowed for multiple configurations in input files
+ *     Systerel - added getUnknownConfigs()
  *******************************************************************************/
 package org.eventb.internal.core.tool;
 
@@ -16,7 +17,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -115,12 +115,13 @@ public abstract class ConfigManager<T, C extends ConfigWithClosure<T>> extends S
 		return configs.get(id);
 	}
 	
+	private static String[] splitConfigIds(String configIds) {
+		return configIds.split(CONFIG_DELIM);
+	}
+	
 	public List<T> getConfigClosure(String configIds) {
 		final List<T> result = new ArrayList<T>();
-		final StringTokenizer tokenizer = new StringTokenizer(configIds,
-				CONFIG_DELIM);
-		while (tokenizer.hasMoreTokens()) {
-			final String configId = tokenizer.nextToken();
+		for (String configId : splitConfigIds(configIds)) {
 			addConfigClosure(result, configId);
 		}
 		return result;
@@ -130,6 +131,17 @@ public abstract class ConfigManager<T, C extends ConfigWithClosure<T>> extends S
 		C config = getConfig(configId);
 		if (config != null)
 			moduleList.addAll(config.computeClosure(configs));
+	}
+
+	public List<String> getUnknownConfigs(String configIds) {
+		final List<String> result = new ArrayList<String>();
+		for (String configId : splitConfigIds(configIds)) {
+			final C config = getConfig(configId);
+			if (config == null) {
+				result.add(configId);
+			}
+		}
+		return result;
 	}
 	
 	protected abstract String getName();

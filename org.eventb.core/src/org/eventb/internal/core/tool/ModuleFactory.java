@@ -34,10 +34,10 @@ import org.rodinp.core.IInternalElementType;
  */
 public class ModuleFactory implements IModuleFactory {
 	
-	protected Map<ModuleDesc<?>, List<ModuleDesc<? extends IFilterModule>>> filterMap;
-	protected Map<ModuleDesc<?>, List<ModuleDesc<? extends IProcessorModule>>> processorMap;
-	private Map<IInternalElementType<?>, ModuleDesc<?>> rootMap;
-
+	protected final Map<ModuleDesc<?>, List<ModuleDesc<? extends IFilterModule>>> filterMap = new HashMap<ModuleDesc<?>, List<ModuleDesc<? extends IFilterModule>>>();
+	protected final Map<ModuleDesc<?>, List<ModuleDesc<? extends IProcessorModule>>> processorMap = new HashMap<ModuleDesc<?>, List<ModuleDesc<? extends IProcessorModule>>>();
+	private final Map<IInternalElementType<?>, ModuleDesc<?>> rootMap = new HashMap<IInternalElementType<?>, ModuleDesc<?>>();
+	
 	protected void addFilterToFactory(
 			ModuleDesc<?> key, 
 			ModuleDesc<? extends IFilterModule> filter) {
@@ -71,19 +71,13 @@ public class ModuleFactory implements IModuleFactory {
 	}
 	
 	public ModuleFactory(ModuleGraph graph, Map<String, ModuleDesc<?>> modules) {
-		filterMap = 
-			new HashMap<ModuleDesc<?>, List<ModuleDesc<? extends IFilterModule>>>();
-		processorMap = 
-			new HashMap<ModuleDesc<?>, List<ModuleDesc<? extends IProcessorModule>>>();
-		rootMap = 
-			new HashMap<IInternalElementType<?>, ModuleDesc<?>>();
 		for (Node<ModuleDesc<?>> node : graph.getSorted())
 			node.getObject().addToModuleFactory(this, modules);
 	}
 	
-	IFilterModule[] NO_FILTERS = new IFilterModule[0];
-	IProcessorModule[] NO_PROCESSORS = new IProcessorModule[0];
-
+	private static final IFilterModule[] NO_FILTERS = new IFilterModule[0];
+	private static final IProcessorModule[] NO_PROCESSORS = new IProcessorModule[0];
+	
 	@Override
 	public IFilterModule[] getFilterModules(IModuleType<?> parent) {
 		List<IFilterModule> list = getModules(filterMap, parent, "filter");

@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     University of Dusseldorf - added theorem attribute
  *     Systerel - added config in message for problem LoadingRootModuleError
+ *     Systerel - added UnknownConfigurationWarning
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -69,6 +70,7 @@ public class GraphProblemTest extends TestCase {
 	private static Spec[] specs = new Spec[] {
 			spec(GraphProblem.LoadingRootModuleError, 1),
 			spec(GraphProblem.ConfigurationMissingError, 1),
+			spec(GraphProblem.UnknownConfigurationWarning, 1),
 			spec(GraphProblem.IdentifierUndefError, 0),
 			spec(GraphProblem.PredicateUndefError, 0),
 			spec(GraphProblem.ExpressionUndefError, 0),
