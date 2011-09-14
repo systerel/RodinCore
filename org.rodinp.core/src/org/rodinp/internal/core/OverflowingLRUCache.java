@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * Strongly inspired by org.eclipse.jdt.internal.core.OverflowingLRUCache.java which is
  * 
  * Copyright (c) 2000, 2004 IBM Corporation and others.
@@ -150,6 +150,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 		return new LRUCacheEnumerator<V>(head);
 	}
 
+	@Override
 	public double fillingRatio() {
 		return (fCurrentSpace + fOverflow) * 100.0 / fSpaceLimit;
 	}
@@ -234,21 +235,6 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	 * Returns a new instance of the receiver.
 	 */
 	protected abstract OverflowingLRUCache<K,V> newInstance(int size, int overflow);
-
-	/**
-	 * Answers the value in the cache at the given key. If the value is not in
-	 * the cache, returns null
-	 * 
-	 * This function does not modify timestamps.
-	 */
-	public V peek(K key) {
-
-		LRUCacheEntry<K,V> entry = fEntryTable.get(key);
-		if (entry == null) {
-			return null;
-		}
-		return entry._fValue;
-	}
 
 	/**
 	 * For testing purposes only
@@ -419,18 +405,6 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 		privateAdd(key, value, newSpace);
 
 		return value;
-	}
-
-	/**
-	 * Removes and returns the value in the cache for the given key. If the key
-	 * is not in the cache, returns null.
-	 * 
-	 * @param key
-	 *            Key of object to remove from cache.
-	 * @return Value removed from cache.
-	 */
-	public V remove(K key) {
-		return removeKey(key);
 	}
 
 	/**
