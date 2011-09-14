@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - added config in message for problem LoadingRootModuleError
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
@@ -66,7 +67,7 @@ public class GraphProblemTest extends TestCase {
 	
 	@SuppressWarnings("deprecation")
 	private static Spec[] specs = new Spec[] {
-			spec(GraphProblem.LoadingRootModuleError, 0),
+			spec(GraphProblem.LoadingRootModuleError, 1),
 			spec(GraphProblem.ConfigurationMissingError, 1),
 			spec(GraphProblem.IdentifierUndefError, 0),
 			spec(GraphProblem.PredicateUndefError, 0),

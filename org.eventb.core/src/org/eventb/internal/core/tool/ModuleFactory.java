@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - no exception when root module not found
  *******************************************************************************/
 package org.eventb.internal.core.tool;
 
@@ -129,7 +130,8 @@ public class ModuleFactory implements IModuleFactory {
 	public IProcessorModule getRootModule(IInternalElementType<?> type) {
 		ModuleDesc<?> desc = rootMap.get(type);
 		if (desc == null)
-			throw new IllegalArgumentException("No root module for " + type.getId());
+			// may be a configuration from a missing plug-in
+			return null;
 		try {
 			final IProcessorModule module = (IProcessorModule) desc.createInstance();
 			setModuleFactory(module);

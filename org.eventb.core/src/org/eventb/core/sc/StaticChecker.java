@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added config in message for problem LoadingRootModuleError
  *******************************************************************************/
 package org.eventb.core.sc;
 
@@ -169,7 +170,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 				.getRootModule(elementType);
 		if (rootModule == null) {
 			SCUtil.createProblemMarker(rodinFile,
-					GraphProblem.LoadingRootModuleError);
+					GraphProblem.LoadingRootModuleError, config);
 		}
 		return rootModule;
 	}
