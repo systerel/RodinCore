@@ -19,6 +19,7 @@ import java.util.List;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.Composition;
 
 /**
  * Represents an inclusion predicate as used in the Membership Goal reasoner.
@@ -77,13 +78,14 @@ public class Inclusion extends Generator {
 		return rationale.makeRule();
 	}
 
-	public List<Goal> generate(Goal goal) {
+	public List<Goal> generate(final Goal goal) {
 		final List<Goal> result = new ArrayList<Goal>();
 		if (right.equals(goal.set())) {
 			result.add(new Goal(goal.member(), left, rf) {
 				@Override
-				public Rule<?> makeRule(Rule<?> rule) {
-					return rf.compose(rule, Inclusion.this.makeRule());
+				public Rationale makeRationale(Rationale rat) {
+					return new Composition(goal.predicate(), rat,
+							Inclusion.this.rationale);
 				}
 			});
 		}

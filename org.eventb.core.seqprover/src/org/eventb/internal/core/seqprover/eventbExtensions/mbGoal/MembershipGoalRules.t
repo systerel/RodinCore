@@ -253,4 +253,15 @@ public class MembershipGoalRules {
 				+ child);
 	}
 
+	public Rule<RelationalPredicate> lastOvr(Rule<?> child) {
+		final Predicate childConsequent = child.getConsequent();
+		%match (childConsequent) {
+			(Subset|SubsetEq)(Ovr(eList(_*, g)), S) -> {
+				return relational(childConsequent.getTag(), `g, `S, child);
+			}
+		}
+		throw new IllegalArgumentException("Can't find a relational set in: "
+				+ child);
+	}
+
 }

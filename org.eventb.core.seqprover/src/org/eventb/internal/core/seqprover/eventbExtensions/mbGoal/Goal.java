@@ -74,6 +74,6 @@ public abstract class Goal {
 		return this.predicate.equals(other.predicate);
 	}
 
-	public abstract Rule<?> makeRule(Rule<?> rule);
+	public abstract Rationale makeRationale(Rationale rat);
 	
 }

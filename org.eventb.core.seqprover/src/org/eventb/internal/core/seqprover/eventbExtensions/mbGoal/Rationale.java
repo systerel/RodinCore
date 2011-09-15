@@ -34,6 +34,24 @@ public abstract class Rationale {
 
 	}
 
+	public static class Composition extends Rationale {
+
+		private final Rationale in;
+		private final Rationale subset;
+
+		public Composition(Predicate predicate, Rationale in, Rationale subset) {
+			super(predicate, in.ruleFactory());
+			this.in = in;
+			this.subset = subset;
+		}
+
+		@Override
+		public Rule<?> makeRule() {
+			return rf.compose(in.makeRule(), subset.makeRule());
+		}
+
+	}
+
 	private static abstract class Unary extends Rationale {
 
 		private final Rationale child;
@@ -134,6 +152,19 @@ public abstract class Rationale {
 		@Override
 		public Rule<?> makeRule(Rule<?> childRule) {
 			return rf.eqToSubset(leftToRight, childRule);
+		}
+
+	}
+
+	public static class LastOverride extends Unary {
+
+		public LastOverride(Predicate predicate, Rationale child) {
+			super(predicate, child);
+		}
+
+		@Override
+		public Rule<?> makeRule(Rule<?> childRule) {
+			return rf.lastOvr(childRule);
 		}
 
 	}

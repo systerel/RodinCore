@@ -58,8 +58,8 @@ public class MembershipGoalImpl {
 		}
 		this.goal = new Goal(goal) {
 			@Override
-			public Rule<?> makeRule(Rule<?> rule) {
-				return rule;
+			public Rationale makeRationale(Rationale rat) {
+				return rat;
 			}
 		};
 		this.ff = ff;
@@ -82,7 +82,7 @@ public class MembershipGoalImpl {
 	/**
 	 * Tells whether there is a proof for the goal from hypotheses.
 	 */
-	public Rule<?> search() {
+	public Rationale search() {
 		return search(goal);
 	}
 
@@ -102,29 +102,29 @@ public class MembershipGoalImpl {
 	 *            membership to discharge
 	 * @return a justification for the given membership
 	 */
-	public Rule<?> search(Goal goal) {
+	public Rationale search(Goal goal) {
 		if (tried.contains(goal)) {
 			// Don't loop
 			return null;
 		}
 		tried.add(goal);
-		final Rule<?> result = doSearch(goal);
+		final Rationale result = doSearch(goal);
 		tried.remove(goal);
 		return result;
 	}
 
 	// Must be called only by search
-	private Rule<?> doSearch(Goal goal) {
+	private Rationale doSearch(Goal goal) {
 		final Predicate predicate = goal.predicate();
 		final Rationale rationale = knownMemberships.get(predicate);
 		if (rationale != null) {
-			return rationale.makeRule();
+			return rationale;
 		}
 		for (final Generator hyp : inclHyps) {
 			for (final Goal subGoal : hyp.generate(goal)) {
-				final Rule<?> rule = search(subGoal);
-				if (rule != null) {
-					return subGoal.makeRule(rule);
+				final Rationale rat = search(subGoal);
+				if (rat != null) {
+					return subGoal.makeRationale(rat);
 				}
 			}
 		}

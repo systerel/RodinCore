@@ -56,6 +56,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.RanP
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.SetExtensionMember;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.RelationToCartesian;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.EqualToSubset;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.LastOverride;
 
 /**
  * Extract useful membership predicates from a set of hypotheses.  Usefulness
@@ -128,9 +129,10 @@ public class MembershipExtractor extends AbstractExtractor {
 			SetExtension(eList(_*,x,_*)), S -> {
 				extractIn(new SetExtensionMember(`x, rf.in(`x, `S), rat));
 			}
-
+			Ovr(eList(_*, g)), S -> {
+				extractSubset(new LastOverride(rf.subset(strict, `g, `S), rat));
+			}
 			// TODO same with extensions such as union around eset.
-			// TODO same when eset is last member of overriding.
 
 		}
 	}

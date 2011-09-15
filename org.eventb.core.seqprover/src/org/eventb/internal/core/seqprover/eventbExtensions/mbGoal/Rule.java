@@ -70,8 +70,8 @@ public class Rule<T extends Predicate> {
 			throw new NullPointerException("null consequent");
 		}
 		if (!consequent.isTypeChecked()) {
-			throw new IllegalArgumentException("consequent is not type-checked"
-					+ consequent);
+			throw new IllegalArgumentException(
+					"consequent is not type-checked: " + consequent);
 		}
 		if (antecedents == null) {
 			throw new NullPointerException("null array of antecedents");

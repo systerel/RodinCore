@@ -8,7 +8,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoalImpl;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rule;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -34,14 +36,15 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 			// Ensure expected is consistent
 			assertEquals(goal, expected.getConsequent());
 
-			final Rule<?> actual = impl.search();
-			assertNotNull("Should have found a proof", actual);
+			final Rationale rat = impl.search();
+			assertNotNull("Should have found a proof", rat);
+			final Rule<?> actual = rat.makeRule();
 			assertTrue(impl.verify(actual));
 			assertEquals(expected, actual);
 		}
 
 		public void assertNotFound() {
-			final Rule<?> actual = impl.search();
+			final Rationale actual = impl.search();
 			assertNull(actual);
 		}
 
@@ -122,6 +125,18 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 	}
 
 	/**
+	 * Ensures that a set membership can be extracted from the relational
+	 * property of an overriding.
+	 */
+	@Test
+	public void mapletOverride() {
+		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ",
+				"f  {x↦y} ∈ A ⤔ B");
+		it.assertFound(rf.domPrjS(it.setExtMember("x↦y",
+				rf.lastOvr(rf.relToCprod(it.hyp("f  {x↦y} ∈ A ⤔ B"))))));
+	}
+
+	/**
 	 * Ensures that membership to a relational set is not lost when deriving
 	 * fancy hypotheses.
 	 */
@@ -139,8 +154,8 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 	 */
 	@Test
 	public void derivedInclusion() {
-		final TestItem it = new TestItem("x ∈ D", "x=ℤ×ℤ", "x ∈ A",
-				"A ∈ B ⤖ C", "B×C = D");
+		final TestItem it = new TestItem("x ∈ D", "x=ℤ×ℤ",//
+				"x ∈ A", "A ∈ B ⤖ C", "B×C = D");
 		it.assertFound(rf.compose(
 				rf.compose(it.hyp("x ∈ A"), rf.relToCprod(it.hyp("A ∈ B ⤖ C"))),
 				rf.eqToSubset(true, it.hyp("B×C = D"))));
@@ -151,10 +166,22 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 	 */
 	@Test
 	public void cprodOnPath() {
-		final TestItem it = new TestItem("x ∈ dom(f)", "x=ℤ, y=ℤ",
+		final TestItem it = new TestItem("x ∈ dom(f)", "x=ℤ, y=ℤ",//
 				"x↦y ∈ A×B", "A×B ⊆ f");
 		it.assertFound(rf.compose(rf.domPrj(it.hyp("x↦y ∈ A×B")),
 				rf.domPrj(it.hyp("A×B ⊆ f"))));
+	}
+
+	/**
+	 * Ensures that a function domain is correctly inferred.
+	 */
+	@Test
+	@Ignore("Not yet implemented")
+	public void funDomain() {
+		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ",//
+				"x↦y ∈ f", "f ∈ A ⤖ B");
+		it.assertFound(rf.compose(rf.domPrj(it.hyp("x↦y ∈ f")),
+				rf.domPrj(rf.relToCprod(it.hyp("f ∈ A ⤖ B")))));
 	}
 
 }
