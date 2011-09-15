@@ -13,6 +13,9 @@ package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -22,31 +25,24 @@ import org.eventb.core.ast.RelationalPredicate;
  * 
  * @author Laurent Voisin
  */
-public abstract class Inclusion extends Rationale {
+public abstract class Inclusion extends Generator {
 
-	public static Inclusion asHypothesis(Predicate predicate) {
-		return new Inclusion(predicate) {
-			@Override
-			public Rule<?> getRule(MembershipGoalImpl impl) {
-				return impl.hypothesis(this);
-			}
-		};
-	}
+	private final Predicate predicate;
 
 	private final boolean isStrict;
-	
+
 	// Left and right member of this inclusion
 	private final Expression left;
 	private final Expression right;
 
 	public Inclusion(Predicate predicate) {
-		super(predicate);
+		this.predicate = predicate;
 		switch (predicate.getTag()) {
-		case SUBSETEQ:
-			this.isStrict = false;
-			break;
 		case SUBSET:
 			this.isStrict = true;
+			break;
+		case SUBSETEQ:
+			this.isStrict = false;
 			break;
 		default:
 			throw new IllegalArgumentException("Not an inclusion :" + predicate);
@@ -54,6 +50,10 @@ public abstract class Inclusion extends Rationale {
 		final RelationalPredicate rel = (RelationalPredicate) predicate;
 		this.left = rel.getLeft();
 		this.right = rel.getRight();
+	}
+
+	public Predicate predicate() {
+		return predicate;
 	}
 
 	public boolean isStrict() {
@@ -68,6 +68,24 @@ public abstract class Inclusion extends Rationale {
 		return right;
 	}
 
-	public abstract Rule<?> getRule(MembershipGoalImpl impl);
+	@Override
+	public String toString() {
+		return "Gen: " + predicate.toString();
+	}
+
+	public abstract Rule<?> makeRule();
+
+	public List<Goal> generate(Goal goal, final MembershipGoalImpl impl) {
+		final List<Goal> result = new ArrayList<Goal>();
+		if (right.equals(goal.set())) {
+			result.add(new Goal(goal.member(), left, impl) {
+				@Override
+				public Rule<?> makeRule(Rule<?> rule) {
+					return impl.compose(rule, Inclusion.this.makeRule());
+				}
+			});
+		}
+		return result;
+	}
 
 }

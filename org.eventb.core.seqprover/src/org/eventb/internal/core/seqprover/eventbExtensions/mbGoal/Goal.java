@@ -13,40 +13,36 @@ package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 import static org.eventb.core.ast.Formula.IN;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 
 /**
- * Represents a membership predicate as used in the Membership Goal reasoner.
+ * Represents a membership predicate that the Membership Goal reasoner try to
+ * discharge. Therefore, the truthness of this predicate is yet unknown.
  * 
  * @author Laurent Voisin
  */
-public class Membership extends Rationale {
+public abstract class Goal {
 
-	public static Membership asHypothesis(Predicate predicate) {
-		return new Membership(predicate) {
-			@Override
-			public Rule<?> getRule(MembershipGoalImpl impl) {
-				return impl.hypothesis(this);
-			}
-		};
-	}
-
+	private final Predicate predicate;
 	private final Expression member;
 	private final Expression set;
 
-	public Membership(Predicate predicate) {
-		super(predicate);
+	public Goal(Predicate predicate) {
+		this.predicate = predicate;
 		final RelationalPredicate rel = (RelationalPredicate) predicate;
 		this.member = rel.getLeft();
 		this.set = rel.getRight();
 	}
 
-	public Membership(Expression member, Expression set, FormulaFactory ff) {
-		super(ff.makeRelationalPredicate(IN, member, set, null));
+	public Goal(Expression member, Expression set, MembershipGoalImpl impl) {
+		this.predicate = impl.ff.makeRelationalPredicate(IN, member, set, null);
 		this.member = member;
 		this.set = set;
+	}
+
+	public Predicate predicate() {
+		return predicate;
 	}
 
 	public Expression member() {
@@ -58,12 +54,27 @@ public class Membership extends Rationale {
 	}
 
 	@Override
-	public Rule<?> getRule(MembershipGoalImpl impl) {
-		return impl.searchNoLoop(this);
+	public String toString() {
+		return "G: " + predicate.toString();
 	}
 
-	public boolean match(Predicate other) {
-		return this.predicate.equals(other);
+	@Override
+	public int hashCode() {
+		return predicate.hashCode();
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Goal)) {
+			return false;
+		}
+		final Goal other = (Goal) obj;
+		return this.predicate.equals(other.predicate);
+	}
+
+	public abstract Rule<?> makeRule(Rule<?> rule);
+	
 }
