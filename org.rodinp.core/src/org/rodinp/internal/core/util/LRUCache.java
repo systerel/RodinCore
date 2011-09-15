@@ -72,13 +72,16 @@ public class LRUCache<K, V> implements Cloneable {
 		 */
 		public LRUCacheEntry<KI, VI> _fNext;
 
+		public final boolean isHard;
+		
 		/**
 		 * Creates a new instance of the receiver with the provided values for
 		 * key, value, and space.
 		 */
-		public LRUCacheEntry(KI key, VI value) {
+		public LRUCacheEntry(KI key, VI value, boolean isHard) {
 			_fKey = key;
 			_fValue = value;
+			this.isHard = isHard;
 		}
 
 		/**
@@ -114,24 +117,24 @@ public class LRUCache<K, V> implements Cloneable {
 			if (entry != null) {
 				return entry;
 			}
-//			final V soft = getSoft(key);
-//			if (soft != null) {
-//				return new LRUCacheEntry<K,V>(key, soft);
-//			}
+			final V soft = getSoft(key);
+			if (soft != null) {
+				return new LRUCacheEntry<K,V>(key, soft, false);
+			}
 			return null;
 		}
 		
-//		private V getSoft(K key) {
-//			final SoftReference<V> softReference = softEntryTable.get(key);
-//			if (softReference == null) {
-//				return null;
-//			}
-//			final V v = softReference.get();
-//			if (v == null) {
-//				softEntryTable.remove(key);
-//			}
-//			return v;
-//		}
+		private V getSoft(K key) {
+			final SoftReference<V> softReference = softEntryTable.get(key);
+			if (softReference == null) {
+				return null;
+			}
+			final V v = softReference.get();
+			if (v == null) {
+				softEntryTable.remove(key);
+			}
+			return v;
+		}
 		
 		public void putEntry(LRUCacheEntry<K, V> entry) {
 			fEntryTable.put(entry._fKey, entry);
@@ -276,8 +279,12 @@ public class LRUCache<K, V> implements Cloneable {
 		if (entry == null) {
 			return null;
 		}
-		//FIXME assumes in hard cache
-		this.updateTimestamp(entry);
+		if (entry.isHard) {
+			this.updateTimestamp(entry);
+		} else {
+			cache.removeEntry(key); // from soft
+			put(entry._fKey, entry._fValue); // make hard
+		}
 		return entry._fValue;
 	}
 
@@ -372,7 +379,7 @@ public class LRUCache<K, V> implements Cloneable {
 
 		LRUCacheEntry<K, V> entry;
 
-		entry = new LRUCacheEntry<K, V>(key, value);
+		entry = new LRUCacheEntry<K, V>(key, value, true);
 		this.privateAddEntry(entry, false);
 	}
 
@@ -425,7 +432,10 @@ public class LRUCache<K, V> implements Cloneable {
 	}
 
 	protected final void queueRemove(LRUCacheEntry<K, V> entry) {
-		// FIXME not on soft entries
+		if (!entry.isHard) {
+			return;
+		}
+		
 		final LRUCacheEntry<K, V> previous = entry._fPrevious;
 		final LRUCacheEntry<K, V> next = entry._fNext;
 
@@ -459,10 +469,9 @@ public class LRUCache<K, V> implements Cloneable {
 
 		/* Check whether there's an entry in the cache */
 		entry = cache.getEntry(key);
-		// FIXME assumes in hard cache
 		if (entry != null) {
 
-			if (getCurrentSpace() <= getSpaceLimit()) {
+			if (entry.isHard && getCurrentSpace() <= getSpaceLimit()) {
 				updateTimestamp(entry);
 				entry._fValue = value;
 				return value;

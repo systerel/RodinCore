@@ -317,10 +317,9 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 
 		/* Check whether there's an entry in the cache */
 		LRUCacheEntry<K,V> entry = cache.getEntry(key);
-		// FIXME assumes hard entry
 		if (entry != null) {
 
-			if (getCurrentSpace() <= getSpaceLimit()) {
+			if (entry.isHard && getCurrentSpace() <= getSpaceLimit()) {
 				updateTimestamp(entry);
 				entry._fValue = value;
 				fOverflow = 0;
