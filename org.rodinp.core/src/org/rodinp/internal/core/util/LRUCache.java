@@ -395,14 +395,16 @@ public class LRUCache<K, V> implements Cloneable {
 	 */
 	protected void privateRemoveEntry(LRUCacheEntry<K, V> entry, boolean shuffle) {
 
-		LRUCacheEntry<K, V> previous, next;
-
-		previous = entry._fPrevious;
-		next = entry._fNext;
-
+		queueRemove(entry);
+		
 		if (!shuffle) {
 			cache.removeEntry(entry._fKey);
 		}
+	}
+
+	protected void queueRemove(LRUCacheEntry<K, V> entry) {
+		final LRUCacheEntry<K, V> previous = entry._fPrevious;
+		final LRUCacheEntry<K, V> next = entry._fNext;
 
 		/* if this was the first entry */
 		if (previous == null) {

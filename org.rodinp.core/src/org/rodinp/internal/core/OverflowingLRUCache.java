@@ -288,21 +288,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 				}
 			}
 		}
-		LRUCacheEntry<K,V> previous = entry._fPrevious;
-		LRUCacheEntry<K,V> next = entry._fNext;
-
-		/* if this was the first entry */
-		if (previous == null) {
-			fEntryQueue = next;
-		} else {
-			previous._fNext = next;
-		}
-		/* if this was the last entry */
-		if (next == null) {
-			fEntryQueueTail = previous;
-		} else {
-			next._fPrevious = previous;
-		}
+		queueRemove(entry);
 	}
 
 	/**
