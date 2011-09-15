@@ -54,7 +54,7 @@ import org.eventb.core.ast.UnaryExpression;
  * 
  * @author Emmanuel Billaud
  */
-public abstract class Rule<T extends Predicate> {
+public class Rule<T extends Predicate> {
 
 	protected final T consequent;
 	protected final FormulaFactory ff;
@@ -112,6 +112,10 @@ public abstract class Rule<T extends Predicate> {
 		return Arrays.equals(this.antecedents, other.antecedents);
 	}
 
+	public String toString() {
+		return "Rule: " + consequent + " (" + antecedents.length + ")";
+	}
+
 	public static class Hypothesis<T extends Predicate> extends Rule<T> {
 
 		public Hypothesis(T pred, FormulaFactory ff) {
@@ -145,10 +149,10 @@ public abstract class Rule<T extends Predicate> {
 		}
 	}
 
-	public static abstract class BinaryRule<T extends Predicate> extends
+	public static class BinaryRule<T extends Predicate> extends
 			Rule<T> {
 
-		public BinaryRule(Rule<T> rule1, Rule<T> rule2, T consequent) {
+		public BinaryRule(Rule<?> rule1, Rule<?> rule2, T consequent) {
 			super(consequent, rule1.ff, rule1, rule2);
 			if (!rule1.ff.equals(rule2.ff)) {
 				throw new IllegalArgumentException(

@@ -20,6 +20,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoalRules;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rule;
 import org.junit.Test;
 
@@ -29,7 +30,10 @@ import org.junit.Test;
  * @author Emmanuel Billaud
  */
 public class RuleTest {
-	private final FormulaFactory ff = FormulaFactory.getDefault();
+
+	private static final FormulaFactory ff = FormulaFactory.getDefault();
+
+	private static final MembershipGoalRules rf = new MembershipGoalRules(ff);
 
 	@Test
 	public void hypothesis() {
@@ -1056,7 +1060,7 @@ public class RuleTest {
 				rMemb, ff);
 		final Rule.Hypothesis<RelationalPredicate> subsetRule = new Rule.Hypothesis<RelationalPredicate>(
 				rSub, ff);
-		final Rule.Composition composition = new Rule.Composition(memberRule,
+		final Rule<RelationalPredicate> composition = rf.compose(memberRule,
 				subsetRule);
 		Assert.assertEquals(composition.getConsequent(), composed);
 	}

@@ -23,6 +23,9 @@
 	<property name="inference.src"
 		location="${src}/org/eventb/internal/core/seqprover/eventbExtensions" />
 
+	<property name="mbGoal.src"
+		location="${src}/org/eventb/internal/core/seqprover/eventbExtensions/mbGoal" />
+
 	<target name="init" description="Create the initial time stamp">
 		<tstamp />
 	</target>
@@ -86,6 +89,8 @@
 		<delete file="${inference.src}/FunSingletonImg.java" />
 		<delete file="${inference.src}/OnePointFilterUtils.java" />
 		<delete file="${inference.src}/OnePointFilter.java" />
+
+		<delete file="${mbGoal.src}/MembershipGoalRules.java" />
     </target>
 	
 </project>
