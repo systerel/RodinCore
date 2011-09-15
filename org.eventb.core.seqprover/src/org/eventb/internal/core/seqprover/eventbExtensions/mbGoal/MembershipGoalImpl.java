@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.Hypothesis;
 
 /**
  * Common implementation of the Membership goal reasoner and tactic.
@@ -62,12 +63,7 @@ public class MembershipGoalImpl {
 			switch (hyp.getTag()) {
 			case SUBSET:
 			case SUBSETEQ:
-				result.add(new Inclusion(hyp) {
-					@Override
-					public Rule<?> makeRule() {
-						return rf.hypothesis(predicate());
-					}
-				});
+				result.add(new Inclusion(new Hypothesis(hyp, rf)));
 				break;
 			case EQUAL:
 				// TODO implement double inclusion
@@ -153,7 +149,7 @@ public class MembershipGoalImpl {
 			return rationale.makeRule();
 		}
 		for (final Inclusion hyp : inclHyps) {
-			for (final Goal subGoal : hyp.generate(goal, this)) {
+			for (final Goal subGoal : hyp.generate(goal)) {
 				final Rule<?> rule = search(subGoal);
 				if (rule != null) {
 					return subGoal.makeRule(rule);
@@ -161,10 +157,6 @@ public class MembershipGoalImpl {
 			}
 		}
 		return null;
-	}
-
-	public Rule<?> compose(Rule<?> left, Rule<?> right) {
-		return rf.compose(left, right);
 	}
 
 }

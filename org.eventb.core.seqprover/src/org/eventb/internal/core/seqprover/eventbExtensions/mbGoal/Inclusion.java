@@ -26,9 +26,10 @@ import org.eventb.core.ast.RelationalPredicate;
  * @author Laurent Voisin
  * @author Emmanuel Billaud
  */
-public abstract class Inclusion extends Generator {
+public class Inclusion extends Generator {
 
-	private final Predicate predicate;
+	private final MembershipGoalRules rf;
+	private final Rationale rationale;
 
 	private final boolean isStrict;
 
@@ -36,8 +37,10 @@ public abstract class Inclusion extends Generator {
 	private final Expression left;
 	private final Expression right;
 
-	public Inclusion(Predicate predicate) {
-		this.predicate = predicate;
+	public Inclusion(Rationale rationale) {
+		this.rf = rationale.ruleFactory();
+		this.rationale = rationale;
+		final Predicate predicate = rationale.predicate();
 		switch (predicate.getTag()) {
 		case SUBSET:
 			this.isStrict = true;
@@ -51,10 +54,6 @@ public abstract class Inclusion extends Generator {
 		final RelationalPredicate rel = (RelationalPredicate) predicate;
 		this.left = rel.getLeft();
 		this.right = rel.getRight();
-	}
-
-	public Predicate predicate() {
-		return predicate;
 	}
 
 	public boolean isStrict() {
@@ -71,18 +70,20 @@ public abstract class Inclusion extends Generator {
 
 	@Override
 	public String toString() {
-		return "Gen: " + predicate.toString();
+		return "Gen: " + rationale;
 	}
 
-	public abstract Rule<?> makeRule();
+	public final Rule<?> makeRule() {
+		return rationale.makeRule();
+	}
 
-	public List<Goal> generate(Goal goal, final MembershipGoalImpl impl) {
+	public List<Goal> generate(Goal goal) {
 		final List<Goal> result = new ArrayList<Goal>();
 		if (right.equals(goal.set())) {
-			result.add(new Goal(goal.member(), left, impl) {
+			result.add(new Goal(goal.member(), left, rf) {
 				@Override
 				public Rule<?> makeRule(Rule<?> rule) {
-					return impl.compose(rule, Inclusion.this.makeRule());
+					return rf.compose(rule, Inclusion.this.makeRule());
 				}
 			});
 		}

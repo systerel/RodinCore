@@ -141,11 +141,20 @@ public abstract class Rationale {
 		return predicate;
 	}
 
+	public MembershipGoalRules ruleFactory() {
+		return rf;
+	}
+
 	/**
 	 * Returns a justification for this predicate.
 	 * 
 	 * @return a justification as a rule
 	 */
 	public abstract Rule<?> makeRule();
+
+	@Override
+	public String toString() {
+		return "Rat: " + predicate;
+	}
 
 }

@@ -20,6 +20,6 @@ import java.util.List;
  */
 public abstract class Generator {
 
-	public abstract List<Goal> generate(Goal goal, MembershipGoalImpl impl);
+	public abstract List<Goal> generate(Goal goal);
 
 }

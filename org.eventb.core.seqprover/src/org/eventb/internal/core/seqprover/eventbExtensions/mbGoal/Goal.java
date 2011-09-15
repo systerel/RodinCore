@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 
-import static org.eventb.core.ast.Formula.IN;
-
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -36,8 +34,8 @@ public abstract class Goal {
 		this.set = rel.getRight();
 	}
 
-	public Goal(Expression member, Expression set, MembershipGoalImpl impl) {
-		this.predicate = impl.ff.makeRelationalPredicate(IN, member, set, null);
+	public Goal(Expression member, Expression set, MembershipGoalRules rf) {
+		this.predicate = rf.in(member, set);
 		this.member = member;
 		this.set = set;
 	}
