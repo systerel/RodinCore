@@ -92,6 +92,7 @@
 
 		<delete file="${mbGoal.src}/MembershipGoalRules.java" />
 		<delete file="${mbGoal.src}/AbstractExtractor.java" />
+		<delete file="${mbGoal.src}/GeneratorExtractor.java" />
 		<delete file="${mbGoal.src}/MembershipExtractor.java" />
     </target>
 	

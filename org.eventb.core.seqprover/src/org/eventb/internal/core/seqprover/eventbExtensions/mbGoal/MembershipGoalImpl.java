@@ -10,12 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 
-import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.IN;
-import static org.eventb.core.ast.Formula.SUBSET;
-import static org.eventb.core.ast.Formula.SUBSETEQ;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +20,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.Hypothesis;
 
 /**
  * Common implementation of the Membership goal reasoner and tactic.
@@ -47,7 +42,7 @@ public class MembershipGoalImpl {
 	private final Map<Predicate, Rationale> knownMemberships;
 
 	// Subset of hypotheses that take an inclusion form
-	private final List<Inclusion> inclHyps;
+	private final List<Generator> inclHyps;
 
 	// Initial goal
 	private final Goal goal;
@@ -55,29 +50,6 @@ public class MembershipGoalImpl {
 	// Goals already tried in this search thread
 	// Used to prevent loops
 	private final Set<Goal> tried;
-
-	private static final List<Inclusion> extractInclusions(Set<Predicate> hyps,
-			final MembershipGoalRules rf) {
-		final List<Inclusion> result = new ArrayList<Inclusion>();
-		for (final Predicate hyp : hyps) {
-			switch (hyp.getTag()) {
-			case SUBSET:
-			case SUBSETEQ:
-				result.add(new Inclusion(new Hypothesis(hyp, rf)));
-				break;
-			case EQUAL:
-				// TODO implement double inclusion
-				break;
-			case IN:
-				// TODO implement membership in relation set
-				break;
-			default:
-				// Ignore
-				break;
-			}
-		}
-		return result;
-	}
 
 	public MembershipGoalImpl(Predicate goal, Set<Predicate> hyps,
 			FormulaFactory ff) {
@@ -95,7 +67,7 @@ public class MembershipGoalImpl {
 		this.tried = new HashSet<Goal>();
 		this.hyps = hyps;
 		this.knownMemberships = new HashMap<Predicate, Rationale>();
-		this.inclHyps = extractInclusions(hyps, rf);
+		this.inclHyps = new GeneratorExtractor(rf, hyps).extract();
 		computeKnownMemberships();
 	}
 
@@ -148,7 +120,7 @@ public class MembershipGoalImpl {
 		if (rationale != null) {
 			return rationale.makeRule();
 		}
-		for (final Inclusion hyp : inclHyps) {
+		for (final Generator hyp : inclHyps) {
 			for (final Goal subGoal : hyp.generate(goal)) {
 				final Rule<?> rule = search(subGoal);
 				if (rule != null) {

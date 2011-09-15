@@ -53,30 +53,42 @@ public abstract class Rationale {
 
 	}
 
-	public static class DomProjection extends Unary {
+	public static abstract class Projection extends Unary {
 
-		public DomProjection(Predicate predicate, Rationale child,
-				MembershipGoalRules rf) {
+		protected final boolean simplify;
+
+		public Projection(boolean simplify, Predicate predicate,
+				Rationale child, MembershipGoalRules rf) {
 			super(predicate, child, rf);
-		}
-
-		@Override
-		public Rule<?> makeRule(Rule<?> childRule) {
-			return rf.domPrj(childRule);
+			this.simplify = simplify;
 		}
 
 	}
 
-	public static class RanProjection extends Unary {
+	public static class DomProjection extends Projection {
 
-		public RanProjection(Predicate predicate, Rationale child,
-				MembershipGoalRules rf) {
-			super(predicate, child, rf);
+		public DomProjection(boolean simplify, Predicate predicate,
+				Rationale child, MembershipGoalRules rf) {
+			super(simplify, predicate, child, rf);
 		}
 
 		@Override
 		public Rule<?> makeRule(Rule<?> childRule) {
-			return rf.ranPrj(childRule);
+			return simplify ? rf.domPrjS(childRule) : rf.domPrj(childRule);
+		}
+
+	}
+
+	public static class RanProjection extends Projection {
+
+		public RanProjection(boolean simplify, Predicate predicate,
+				Rationale child, MembershipGoalRules rf) {
+			super(simplify, predicate, child, rf);
+		}
+
+		@Override
+		public Rule<?> makeRule(Rule<?> childRule) {
+			return simplify ? rf.ranPrjS(childRule) : rf.ranPrj(childRule);
 		}
 
 	}

@@ -57,7 +57,7 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 				assertTrue(hyps.containsAll(rule.getHypotheses()));
 
 				// Ensure expected has been obtained
-				assertEquals(expecteds[count++], rule);
+				assertEquals("#" + count, expecteds[count++], rule);
 			}
 		}
 
@@ -101,43 +101,14 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 
 	/**
 	 * Ensures that the extractor can split maplet on the left-hand side, taking
-	 * the left component.
-	 */
-	@Test
-	public void mapletLeft() {
-		final TestItem it = new TestItem("x=ℤ, y=ℤ", "x", "x↦y ∈ A×B");
-		it.assertExtraction(rf.domPrj(it.hyp("x↦y ∈ A×B")));
-	}
-
-	/**
-	 * Ensures that the extractor can split maplet on the left-hand side, taking
-	 * the right component.
-	 */
-	@Test
-	public void mapletRight() {
-		final TestItem it = new TestItem("x=ℤ, y=ℤ", "y", "x↦y ∈ A×B");
-		it.assertExtraction(rf.ranPrj(it.hyp("x↦y ∈ A×B")));
-	}
-
-	/**
-	 * Ensures that the extractor can split maplet on the left-hand side, taking
 	 * both component.
 	 */
 	@Test
 	public void mapletBoth() {
 		final String hyp = "x↦x ∈ A×B";
 		final TestItem it = new TestItem("x=ℤ", "x", hyp);
-		it.assertExtraction(rf.domPrj(it.hyp(hyp)), rf.ranPrj(it.hyp(hyp)));
-	}
-
-	/**
-	 * Ensures that the extractor can split maplet on the left-hand side deeply.
-	 */
-	@Test
-	public void mapletDeep() {
-		final String hyp = "a↦(b↦c)↦d ∈ A×(B×C)×D";
-		final TestItem it = new TestItem("a=ℤ, b=ℤ, c=ℤ, d=ℤ", "c", hyp);
-		it.assertExtraction(rf.ranPrj(rf.ranPrj(rf.domPrj(it.hyp(hyp)))));
+		it.assertExtraction(rf.domPrjS(it.hyp(hyp)), rf.ranPrjS(it.hyp(hyp)),
+				rf.domPrj(it.hyp(hyp)), rf.ranPrj(it.hyp(hyp)));
 	}
 
 	/**
@@ -148,7 +119,14 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 	public void mapletDeepSeveral() {
 		final String hyp = "a↦(b↦a)↦a ∈ A×(B×C)×D";
 		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
-		it.assertExtraction(rf.domPrj(rf.domPrj(it.hyp(hyp))),
+		it.assertExtraction(
+				rf.domPrjS(rf.domPrjS(it.hyp(hyp))),
+				rf.ranPrjS(rf.ranPrjS(rf.domPrjS(it.hyp(hyp)))),
+				rf.ranPrj(rf.ranPrjS(rf.domPrjS(it.hyp(hyp)))),
+				rf.domPrj(rf.domPrjS(it.hyp(hyp))),
+				rf.ranPrj(rf.ranPrj(rf.domPrjS(it.hyp(hyp)))),
+				rf.ranPrjS(it.hyp(hyp)),//
+				rf.domPrj(rf.domPrj(it.hyp(hyp))),
 				rf.ranPrj(rf.ranPrj(rf.domPrj(it.hyp(hyp)))),
 				rf.ranPrj(it.hyp(hyp)));
 	}
@@ -195,7 +173,9 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 		final String hyp = "{a↦b, b↦a} ∈ A ⇸ B";
 		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
 		it.assertExtraction(
+				rf.domPrjS(it.setExtMember("a↦b", rf.relToCprod(it.hyp(hyp)))),
 				rf.domPrj(it.setExtMember("a↦b", rf.relToCprod(it.hyp(hyp)))),
+				rf.ranPrjS(it.setExtMember("b↦a", rf.relToCprod(it.hyp(hyp)))),
 				rf.ranPrj(it.setExtMember("b↦a", rf.relToCprod(it.hyp(hyp)))));
 	}
 

@@ -109,8 +109,13 @@ public class MembershipGoalRules {
 		return ff.makeRelationalPredicate(IN, member, set, null);
 	}
 
+	public Predicate subset(boolean strict, Expression member, Expression set) {
+		final int tag = strict ? SUBSET : SUBSETEQ;
+		return ff.makeRelationalPredicate(tag, member, set, null);
+	}
+
 	public Predicate subseteq(Expression member, Expression set) {
-		return ff.makeRelationalPredicate(SUBSETEQ, member, set, null);
+		return subset(false, member, set);
 	}
 
 	public Expression dom(Expression child) {
@@ -157,11 +162,24 @@ public class MembershipGoalRules {
 	public Rule<RelationalPredicate> domPrj(Rule<?> child) {
 		final Predicate childConsequent = child.getConsequent();
 		%match (childConsequent) {
-			In(Mapsto(x,_), Cprod(A,_)) -> {
-				return in(`x, `A, child);
-			}
 			In(Mapsto(x,_), S) -> {
 				return in(`x, dom(`S), child);
+			}
+			(Subset|SubsetEq)(A, B) -> {
+				if (`A.getType().getSource() != null) {
+					return relational(childConsequent.getTag(), dom(`A), dom(`B), child);
+				}
+			}
+		}
+		throw new IllegalArgumentException("Can't project on domain for "
+				+ child);
+	}
+
+	public Rule<RelationalPredicate> domPrjS(Rule<?> child) {
+		final Predicate childConsequent = child.getConsequent();
+		%match (childConsequent) {
+			In(Mapsto(x,_), Cprod(A,_)) -> {
+				return in(`x, `A, child);
 			}
 		}
 		throw new IllegalArgumentException("Can't project on domain for "
@@ -171,11 +189,24 @@ public class MembershipGoalRules {
 	public Rule<RelationalPredicate> ranPrj(Rule<?> child) {
 		final Predicate childConsequent = child.getConsequent();
 		%match (childConsequent) {
-			In(Mapsto(_,y), Cprod(_,B)) -> {
-				return in(`y, `B, child);
-			}
 			In(Mapsto(_,y), S) -> {
 				return in(`y, ran(`S), child);
+			}
+			(Subset|SubsetEq)(A, B) -> {
+				if (`A.getType().getTarget() != null) {
+					return relational(childConsequent.getTag(), ran(`A), ran(`B), child);
+				}
+			}
+		}
+		throw new IllegalArgumentException("Can't project on range for "
+				+ child);
+	}
+
+	public Rule<RelationalPredicate> ranPrjS(Rule<?> child) {
+		final Predicate childConsequent = child.getConsequent();
+		%match (childConsequent) {
+			In(Mapsto(_,y), Cprod(_,B)) -> {
+				return in(`y, `B, child);
 			}
 		}
 		throw new IllegalArgumentException("Can't project on range for "

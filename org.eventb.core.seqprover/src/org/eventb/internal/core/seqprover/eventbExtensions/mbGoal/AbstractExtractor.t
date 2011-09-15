@@ -59,7 +59,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.Equa
 
 /**
  * Common implementation for extracting useful direct and derived hypotheses
- * from a given set.
+ * from a given set. Predicates can be either given hypotheses or some
+ * predicates derived soundly from hypotheses.
  * 
  * @author Laurent Voisin
  * @author Emmanuel Billaud
@@ -123,10 +124,10 @@ public abstract class AbstractExtractor {
 		final RelationalPredicate rpred = (RelationalPredicate) pred;
 		final Expression left = rpred.getLeft();
 		final Expression right = rpred.getRight();
-		extractSubset(left, right, rat);
+		extractSubset(tag == SUBSET, left, right, rat);
 	}
 
-	protected abstract void extractSubset(Expression left, Expression right,
-			Rationale rat);
+	protected abstract void extractSubset(boolean strict, Expression left,
+			Expression right, Rationale rat);
 
 }

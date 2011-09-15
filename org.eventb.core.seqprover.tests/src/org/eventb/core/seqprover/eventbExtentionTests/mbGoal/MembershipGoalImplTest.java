@@ -1,12 +1,12 @@
 package org.eventb.core.seqprover.eventbExtentionTests.mbGoal;
 
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoalImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rule;
 import org.junit.Test;
@@ -21,17 +21,21 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 
 	private static class TestItem extends AbstractMbGoalTests.TestItem {
 
+		private final Predicate goal;
 		private final MembershipGoalImpl impl;
 
 		TestItem(String goalImage, String typenvImage, String... hypImages) {
 			super(typenvImage, hypImages);
-			final Predicate goal = TestLib.genPred(typenv, goalImage);
+			this.goal = genPred(typenv, goalImage);
 			this.impl = new MembershipGoalImpl(goal, hyps, ff);
 		}
 
 		public void assertFound(Rule<?> expected) {
+			// Ensure expected is consistent
+			assertEquals(goal, expected.getConsequent());
+
 			final Rule<?> actual = impl.search();
-			assertNotNull(actual);
+			assertNotNull("Should have found a proof", actual);
 			assertTrue(impl.verify(actual));
 			assertEquals(expected, actual);
 		}
@@ -106,14 +110,14 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 	@Test
 	public void splitHyp() {
 		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ", "x↦y ∈ A×B");
-		it.assertFound(rf.domPrj(it.hyp("x↦y ∈ A×B")));
+		it.assertFound(rf.domPrjS(it.hyp("x↦y ∈ A×B")));
 	}
 
 	@Test
 	public void mapletAsRelation() {
 		final String hyp = "{x↦y} ∈ A ⇸ B";
 		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ", hyp);
-		it.assertFound(rf.domPrj(it.setExtMember("x↦y",
+		it.assertFound(rf.domPrjS(it.setExtMember("x↦y",
 				rf.relToCprod(it.hyp(hyp)))));
 	}
 
@@ -127,6 +131,30 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 		final TestItem it = new TestItem("{x↦y} ∈ S", "x=ℤ, y=ℤ", hyp,
 				"A⇸B ⊆ S");
 		it.assertFound(rf.compose(it.hyp(hyp), it.hyp("A⇸B ⊆ S")));
+	}
+
+	/**
+	 * Ensures that useful inclusions can be derived from several form of
+	 * hypothesis.
+	 */
+	@Test
+	public void derivedInclusion() {
+		final TestItem it = new TestItem("x ∈ D", "x=ℤ×ℤ", "x ∈ A",
+				"A ∈ B ⤖ C", "B×C = D");
+		it.assertFound(rf.compose(
+				rf.compose(it.hyp("x ∈ A"), rf.relToCprod(it.hyp("A ∈ B ⤖ C"))),
+				rf.eqToSubset(true, it.hyp("B×C = D"))));
+	}
+
+	/**
+	 * Ensures that a cartesian product can be used in intermediary inclusion.
+	 */
+	@Test
+	public void cprodOnPath() {
+		final TestItem it = new TestItem("x ∈ dom(f)", "x=ℤ, y=ℤ",
+				"x↦y ∈ A×B", "A×B ⊆ f");
+		it.assertFound(rf.compose(rf.domPrj(it.hyp("x↦y ∈ A×B")),
+				rf.domPrj(it.hyp("A×B ⊆ f"))));
 	}
 
 }

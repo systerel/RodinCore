@@ -58,80 +58,44 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.Rela
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.EqualToSubset;
 
 /**
- * Extract useful membership predicates from a set of hypotheses.  Usefulness
- * means having the given expression as left-hand side.  Predicates can be either
- * a given hypothesis or some predicate derived soundly from a hypothesis.
+ * Extract useful inclusion predicates from a set of hypotheses.
  * 
  * @author Laurent Voisin
  * @author Emmanuel Billaud
  */
 @SuppressWarnings("unused")
-public class MembershipExtractor extends AbstractExtractor {
+public class GeneratorExtractor extends AbstractExtractor {
 
-	private final Expression member;
-	private final List<Rationale> result;
+	private final List<Generator> result;
 
 	%include {FormulaV2.tom}
 
-	public MembershipExtractor(MembershipGoalRules rf, Expression member,
-			Set<Predicate> hyps) {
+	public GeneratorExtractor(MembershipGoalRules rf, Set<Predicate> hyps) {
 		super(rf, hyps);
-		this.member = member;
-		this.result = new ArrayList<Rationale>();
+		this.result = new ArrayList<Generator>();
 	}
 
-	public List<Rationale> extract() {
+	public List<Generator> extract() {
 		for (Predicate hyp : hyps) {
 			extract(hyp);
 		}
 		return result;
 	}
 
-	/* TODO
-	 * Idea for later: also remember negative membership for fast exit
-	 * when membership is know to not hold. However, this might prevent
-	 * discharging when faced with contradictory hypotheses.
-	 */
-
-	protected void extractIn(final Rationale rat) {
-		final Predicate pred = rat.predicate();
-		%match (pred) {
-			In(x, _) && x << Expression member -> {
-				result.add(rat);
-
-				// TODO Also simplify rhs when restrictive
-				// TODO a: dom(f;g;h) => a: dom(f;g) and similar
-				// TODO a: A <| f => a: f and similar
-				// TODO a: dom(A <| f) => a: A and similar
-				// TODO a: A /\ B => a: A and similar
-				// TODO a: A \ B => a: A
-
-				// Found a matching member, don't recurse anymore.
-				return;
-			}
-			In(Mapsto(x, y), Cprod(A, B)) -> {
-				extractIn(new DomProjection(true, rf.in(`x, `A), rat, rf));
-				extractIn(new RanProjection(true, rf.in(`y, `B), rat, rf));
-			}
-			In(Mapsto(x, y), S) -> {
-				extractIn(new DomProjection(false, rf.in(`x, rf.dom(`S)), rat, rf));
-				extractIn(new RanProjection(false, rf.in(`y, rf.ran(`S)), rat, rf));
-			}
-		}
-		// Must be after detection of useful membership
-		super.extractIn(rat);
-	}
-
 	protected void extractSubset(boolean strict, Expression left,
 			Expression right, Rationale rat) {
 		%match (Expression left, Expression right) {
-			SetExtension(eList(_*,x,_*)), S -> {
-				extractIn(new SetExtensionMember(`x, rf.in(`x, `S), rat, rf));
+			_, _ -> {
+				result.add(new Inclusion(rat));
 			}
-
-			// TODO same with extensions such as union around eset.
-			// TODO same when eset is last member of overriding.
-
+			A, B -> {
+				if (`A.getType().getSource() != null) {
+					extractSubset(new DomProjection(false, rf.subset(
+						strict, rf.dom(`A), rf.dom(`B)), rat, rf));
+					extractSubset(new RanProjection(false, rf.subset(
+						strict, rf.ran(`A), rf.ran(`B)), rat, rf));
+				}
+			}
 		}
 	}
 
