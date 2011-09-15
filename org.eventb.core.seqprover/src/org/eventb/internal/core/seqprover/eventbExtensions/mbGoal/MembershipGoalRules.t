@@ -95,8 +95,13 @@ public class MembershipGoalRules {
 		return relational(SUBSETEQ, member, set, antecedents);
 	}
 
-	public Rule<RelationalPredicate> compose(Rule<RelationalPredicate> left,
-			Rule<RelationalPredicate> right) {
+	public <T extends Predicate> Rule<T> hypothesis(T hyp) {
+		return new Rule.Hypothesis<T>(hyp, ff);
+	}
+
+	// TODO put back RelationalPredicate as type argument?
+	public Rule<RelationalPredicate> compose(Rule<?> left,
+			Rule<?> right) {
 		final Predicate leftConsequent = left.getConsequent(); 
 		final Predicate rightConsequent = right.getConsequent(); 
 		%match (leftConsequent, rightConsequent) {
