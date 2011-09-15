@@ -15,6 +15,7 @@ import static java.util.Arrays.asList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRefinementManager;
@@ -114,16 +115,27 @@ public class RefinementTests extends AbstractRodinDBTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		final IRodinDB rodinDB = RodinCore.getRodinDB();
-		final IRodinProject[] projecs = rodinDB.getRodinProjects();
-		for (IRodinProject prj : projecs) {
-			prj.getProject().delete(true, null);
-		}
+		clearDB();
+		
 		REG.clear();
 		LOGGER.clear();
 		project = createRodinProject("RefTestPrj");
 	}
 
+	private static void clearDB() throws RodinDBException, CoreException {
+		final IRodinDB rodinDB = RodinCore.getRodinDB();
+		final IRodinProject[] projecs = rodinDB.getRodinProjects();
+		for (IRodinProject prj : projecs) {
+			prj.getProject().delete(true, null);
+		}
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		clearDB();
+		super.tearDown();
+	}
+	
 	private IInternalElement makeRoot(String bareName, String extension) {
 		final IRodinFile rodinFile = project.getRodinFile(bareName + "."
 				+ extension);
