@@ -58,7 +58,7 @@ public class MembershipGoalImpl {
 	}
 
 	private static final List<Inclusion> extractInclusions(Set<Predicate> hyps,
-			final MembershipGoalImpl impl) {
+			final MembershipGoalRules rf) {
 		final List<Inclusion> result = new ArrayList<Inclusion>();
 		for (final Predicate hyp : hyps) {
 			switch (hyp.getTag()) {
@@ -67,7 +67,7 @@ public class MembershipGoalImpl {
 				result.add(new Inclusion(hyp) {
 					@Override
 					public Rule<?> makeRule() {
-						return impl.hypothesis(predicate());
+						return rf.hypothesis(predicate());
 					}
 				});
 				break;
@@ -98,18 +98,22 @@ public class MembershipGoalImpl {
 		this.tried = new HashSet<Goal>();
 		this.hyps = hyps;
 		this.msHyps = extractMemberships(hyps);
-		this.inclHyps = extractInclusions(hyps, this);
+		this.inclHyps = extractInclusions(hyps, rf);
 	}
 
 	/**
 	 * Tells whether there is a proof for the goal from hypotheses.
 	 */
 	public Rule<?> search() {
-		final Rule<?> rule = search(goal);
-		if (rule != null) {
-			assert rule.consequent.equals(goal.predicate());
+		return search(goal);
+	}
+
+	public boolean verify(Rule<?> rule) {
+		if (!rule.consequent.equals(goal.predicate())) {
+			return false;
 		}
-		return rule;
+		final Set<Predicate> neededHyps = rule.getHypotheses();
+		return hyps.containsAll(neededHyps);
 	}
 
 	public Rule<?> search(Goal goal) {
@@ -139,7 +143,7 @@ public class MembershipGoalImpl {
 	private Rule<?> doSearch(Goal goal) {
 		final Predicate predicate = goal.predicate();
 		if (msHyps.contains(predicate)) {
-			return hypothesis(predicate);
+			return rf.hypothesis(predicate);
 		}
 		for (final Inclusion hyp : inclHyps) {
 			for (final Goal subGoal : hyp.generate(goal, this)) {
@@ -152,13 +156,8 @@ public class MembershipGoalImpl {
 		return null;
 	}
 
-	public Rule<?> hypothesis(Predicate predicate) {
-		assert hyps.contains(predicate);
-		return rf.hypothesis(predicate);
-	}
-
-	public Rule<?> compose(Rule<?> rule, Rule<?> rule2) {
-		return rf.compose(rule, rule2);
+	public Rule<?> compose(Rule<?> left, Rule<?> right) {
+		return rf.compose(left, right);
 	}
 
 }

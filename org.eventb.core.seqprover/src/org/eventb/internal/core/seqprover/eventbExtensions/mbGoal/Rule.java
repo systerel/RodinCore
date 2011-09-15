@@ -33,6 +33,8 @@ import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BinaryExpression;
@@ -130,10 +132,27 @@ public class Rule<T extends Predicate> {
 		return "Rule: " + consequent + " (" + antecedents.length + ")";
 	}
 
+	public final Set<Predicate> getHypotheses() {
+		final Set<Predicate> result = new HashSet<Predicate>();
+		getHypotheses(result);
+		return result;
+	}
+
+	protected void getHypotheses(Set<Predicate> hypSet) {
+		for (Rule<?> antecedent : antecedents) {
+			antecedent.getHypotheses(hypSet);
+		}
+	}
+
 	public static class Hypothesis<T extends Predicate> extends Rule<T> {
 
 		public Hypothesis(T pred, FormulaFactory ff) {
 			super(pred, ff);
+		}
+
+		@Override
+		protected void getHypotheses(Set<Predicate> hypSet) {
+			hypSet.add(consequent);
 		}
 
 	}

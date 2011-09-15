@@ -1,6 +1,9 @@
 package org.eventb.core.seqprover.eventbExtentionTests.mbGoal;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -36,11 +39,14 @@ public class MembershipGoalImplTest {
 
 		public void assertFound(Rule<?> expected) {
 			final Rule<?> actual = impl.search();
+			assertNotNull(actual);
+			assertTrue(impl.verify(actual));
 			assertEquals(expected, actual);
 		}
 
 		public void assertNotFound() {
-			assertFound(null);
+			final Rule<?> actual = impl.search();
+			assertNull(actual);
 		}
 
 		public Rule<?> hyp(String hypImage) {
