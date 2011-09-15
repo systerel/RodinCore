@@ -20,8 +20,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.RelationalPredicate;
 
 public class MembershipGoalImpl {
 
@@ -47,11 +49,15 @@ public class MembershipGoalImpl {
 	// Used to prevent loops
 	private final Set<Goal> tried;
 
-	private static final Set<Predicate> extractMemberships(Set<Predicate> hyps) {
+	private static final Set<Predicate> extractMemberships(Set<Predicate> hyps,
+			Expression member) {
 		final Set<Predicate> result = new HashSet<Predicate>();
 		for (final Predicate hyp : hyps) {
 			if (hyp.getTag() == IN) {
-				result.add(hyp);
+				final RelationalPredicate rel = (RelationalPredicate) hyp;
+				if (rel.getLeft().equals(member)) {
+					result.add(hyp);
+				}
 			}
 		}
 		return result;
@@ -87,6 +93,9 @@ public class MembershipGoalImpl {
 
 	public MembershipGoalImpl(Predicate goal, Set<Predicate> hyps,
 			FormulaFactory ff) {
+		if (goal == null || goal.getTag() != IN) {
+			throw new IllegalArgumentException("Not a membership : " + goal);
+		}
 		this.goal = new Goal(goal) {
 			@Override
 			public Rule<?> makeRule(Rule<?> rule) {
@@ -97,7 +106,7 @@ public class MembershipGoalImpl {
 		this.rf = new MembershipGoalRules(ff);
 		this.tried = new HashSet<Goal>();
 		this.hyps = hyps;
-		this.msHyps = extractMemberships(hyps);
+		this.msHyps = extractMemberships(hyps, this.goal.member());
 		this.inclHyps = extractInclusions(hyps, rf);
 	}
 
