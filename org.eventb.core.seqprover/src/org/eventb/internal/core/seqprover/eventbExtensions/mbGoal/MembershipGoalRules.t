@@ -50,6 +50,9 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rule.BinaryRul
 
 /**
  * Internal rules used by the Membership Goal reasoner for justification.
+ * 
+ * @author Laurent Voisin
+ * @author Emmanuel Billaud
  */
 @SuppressWarnings("unused")
 public class MembershipGoalRules {
@@ -57,7 +60,7 @@ public class MembershipGoalRules {
 	private final FormulaFactory ff;
 
 	%include {FormulaV2.tom}
-	
+
 	public MembershipGoalRules(FormulaFactory ff) {
 		this.ff = ff;
 	}
@@ -125,8 +128,8 @@ public class MembershipGoalRules {
 	// TODO put back RelationalPredicate as type argument?
 	public Rule<RelationalPredicate> compose(Rule<?> left,
 			Rule<?> right) {
-		final Predicate leftConsequent = left.getConsequent(); 
-		final Predicate rightConsequent = right.getConsequent(); 
+		final Predicate leftConsequent = left.getConsequent();
+		final Predicate rightConsequent = right.getConsequent();
 		%match (leftConsequent, rightConsequent) {
 			In(x, A), SubsetEq(A, B) -> {
 				return in(`x, `B, left, right);

@@ -25,6 +25,12 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 
+/**
+ * Common implementation of the Membership goal reasoner and tactic.
+ * 
+ * @author Laurent Voisin
+ * @author Emmanuel Billaud
+ */
 public class MembershipGoalImpl {
 
 	// Formula factory to use everywhere
@@ -39,7 +45,7 @@ public class MembershipGoalImpl {
 	// Memberships that have a rationale
 	private final Map<Predicate, Rationale> knownMemberships;
 
-	// Subset of hypotheses that take an inclusionform
+	// Subset of hypotheses that take an inclusion form
 	private final List<Inclusion> inclHyps;
 
 	// Initial goal
@@ -120,10 +126,6 @@ public class MembershipGoalImpl {
 		return hyps.containsAll(neededHyps);
 	}
 
-	public Rule<?> search(Goal goal) {
-		return searchNoLoop(goal);
-	}
-
 	/**
 	 * Tells whether there is a proof for the goal from hypotheses. The member
 	 * variable <code>tried</code> is used to prevent looping.
@@ -132,7 +134,7 @@ public class MembershipGoalImpl {
 	 *            membership to discharge
 	 * @return a justification for the given membership
 	 */
-	public Rule<?> searchNoLoop(Goal goal) {
+	public Rule<?> search(Goal goal) {
 		if (tried.contains(goal)) {
 			// Don't loop
 			return null;
@@ -143,7 +145,7 @@ public class MembershipGoalImpl {
 		return result;
 	}
 
-	// Must be called only by searchNoLoop
+	// Must be called only by search
 	private Rule<?> doSearch(Goal goal) {
 		final Predicate predicate = goal.predicate();
 		final Rationale rationale = knownMemberships.get(predicate);
@@ -152,7 +154,7 @@ public class MembershipGoalImpl {
 		}
 		for (final Inclusion hyp : inclHyps) {
 			for (final Goal subGoal : hyp.generate(goal, this)) {
-				final Rule<?> rule = searchNoLoop(subGoal);
+				final Rule<?> rule = search(subGoal);
 				if (rule != null) {
 					return subGoal.makeRule(rule);
 				}

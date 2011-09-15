@@ -24,6 +24,7 @@ import org.eventb.core.ast.RelationalPredicate;
  * Represents an inclusion predicate as used in the Membership Goal reasoner.
  * 
  * @author Laurent Voisin
+ * @author Emmanuel Billaud
  */
 public abstract class Inclusion extends Generator {
 

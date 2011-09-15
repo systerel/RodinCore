@@ -17,6 +17,7 @@ import org.eventb.core.ast.Predicate;
  * A predicate that we can justify by a rule if needed.
  * 
  * @author Laurent Voisin
+ * @author Emmanuel Billaud
  */
 public abstract class Rationale {
 

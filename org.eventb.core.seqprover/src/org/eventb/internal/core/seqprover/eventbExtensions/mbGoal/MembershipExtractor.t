@@ -61,6 +61,9 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.Equa
  * Extract useful membership predicates from a set of hypotheses.  Usefulness
  * means having the given expression as left-hand side.  Predicates can be either
  * a given hypothesis or some predicate derived soundly from a hypothesis.
+ * 
+ * @author Laurent Voisin
+ * @author Emmanuel Billaud
  */
 @SuppressWarnings("unused")
 public class MembershipExtractor {

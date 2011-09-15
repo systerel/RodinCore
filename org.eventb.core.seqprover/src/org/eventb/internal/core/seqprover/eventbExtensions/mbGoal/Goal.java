@@ -21,6 +21,7 @@ import org.eventb.core.ast.RelationalPredicate;
  * discharge. Therefore, the truthness of this predicate is yet unknown.
  * 
  * @author Laurent Voisin
+ * @author Emmanuel Billaud
  */
 public abstract class Goal {
 

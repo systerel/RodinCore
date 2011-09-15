@@ -16,6 +16,7 @@ import java.util.List;
  * Represents a mechanism that produces new subgoals from a goal.
  * 
  * @author Laurent Voisin
+ * @author Emmanuel Billaud
  */
 public abstract class Generator {
 
