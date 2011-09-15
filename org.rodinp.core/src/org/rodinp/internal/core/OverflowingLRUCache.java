@@ -125,8 +125,10 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	 * object.
 	 * 
 	 */
-	protected abstract boolean close(LRUCacheEntry<K,V> entry);
+	protected abstract boolean canClose(LRUCacheEntry<K,V> entry);
 
+	protected abstract boolean doClose(LRUCacheEntry<K,V> entry);
+	
 	/**
 	 * Returns an enumerator of the values in the cache with the most recently
 	 * used first.
@@ -274,7 +276,9 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 			if (external) {
 				cache.removeEntry(entry._fKey);
 			} else {
-				if (!close(entry))
+				if (!canClose(entry))
+					return;
+				if (!doClose(entry))
 					return;
 				// buffer close will recursively call #privateRemoveEntry with
 				// external==true

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * Strongly inspired by org.eclipse.jdt.internal.core.ElementCache.java which is
  * 
  * Copyright (c) 2000, 2004 IBM Corporation and others.
@@ -41,16 +41,12 @@ public class OpenableCache extends
 	 * element.
 	 */
 	@Override
-	protected boolean close(LRUCacheEntry<Openable, OpenableElementInfo> entry) {
-		Openable element = entry._fKey;
+	protected boolean doClose(LRUCacheEntry<Openable, OpenableElementInfo> entry) {
+		final Openable element = entry._fKey;
 		try {
-			if (!element.canBeRemovedFromCache()) {
-				return false;
-			} else {
-				element.close();
-				return true;
-			}
-		} catch (RodinDBException npe) {
+			element.close();
+			return true;
+		} catch (RodinDBException e) {
 			return false;
 		}
 	}
@@ -61,6 +57,13 @@ public class OpenableCache extends
 	@Override
 	protected OpenableCache newInstance(int newSize, int overflow) {
 		return new OpenableCache(newSize, overflow);
+	}
+
+	@Override
+	protected boolean canClose(
+			LRUCacheEntry<Openable, OpenableElementInfo> entry) {
+		final Openable element = entry._fKey;
+		return element.canBeRemovedFromCache();
 	}
 
 }

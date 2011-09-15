@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public class BufferCache extends OverflowingLRUCache<IRodinFile, Buffer> {
 	}
 
 	@Override
-	protected boolean close(LRUCacheEntry<IRodinFile, Buffer> entry) {
+	protected boolean canClose(LRUCacheEntry<IRodinFile, Buffer> entry) {
 		Buffer buffer = entry._fValue;
 		return !buffer.hasUnsavedChanges();
 	}
@@ -35,6 +35,13 @@ public class BufferCache extends OverflowingLRUCache<IRodinFile, Buffer> {
 	protected OverflowingLRUCache<IRodinFile, Buffer> newInstance(int newSize,
 			int overflow) {
 		return null;
+	}
+
+	@Override
+	protected boolean doClose(
+			org.rodinp.internal.core.util.LRUCache.LRUCacheEntry<IRodinFile, Buffer> entry) {
+		// nothing to do
+		return true;
 	}
 
 }
