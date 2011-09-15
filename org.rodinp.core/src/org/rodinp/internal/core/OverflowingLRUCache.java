@@ -182,10 +182,9 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	protected boolean makeSpace(int space) {
 
 		final int limit = getSpaceLimit();
-		final int currentSpace = getCurrentSpace();
 		if (fOverflow == 0) {
 			/* if space is already available */
-			if (currentSpace + space <= limit) {
+			if (getCurrentSpace() + space <= limit) {
 				return true;
 			}
 		}
@@ -201,7 +200,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 			// (by a call to get(Object) for example)
 			fTimestampsOn = false;
 
-			while (currentSpace + spaceNeeded > limit && entry != null) {
+			while (getCurrentSpace() + spaceNeeded > limit && entry != null) {
 				// FIXME don't remove: move to soft
 				this.privateRemoveEntry(entry, false, false);
 				entry = entry._fPrevious;
@@ -211,13 +210,13 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 		}
 
 		/* check again, since we may have aquired enough space */
-		if (currentSpace + space <= limit) {
+		if (getCurrentSpace() + space <= limit) {
 			fOverflow = 0;
 			return true;
 		}
 
 		/* update fOverflow */
-		fOverflow = currentSpace + space - limit;
+		fOverflow = getCurrentSpace() + space - limit;
 		return false;
 	}
 
