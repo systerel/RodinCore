@@ -12,6 +12,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 
 import static org.eventb.core.ast.Formula.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,18 +33,27 @@ public class MembershipGoalImpl {
 
 	// Available hypotheses
 	private final List<Predicate> hyps;
+	private final Set<Membership> msHyps;
 
-	// Member in the initial goal
-	private final Expression goalMember;
+	// Initial goal
+	private final Membership goal;
 
-	// Set in the initial goal
-	private final Expression goalSet;
+	private static final Set<Membership> extractMembership(
+			List<Predicate> hyps) {
+		final Set<Membership> result = new HashSet<Membership>();
+		for (final Predicate hyp : hyps) {
+			if (hyp.getTag() == IN) {
+				result.add(new Membership(hyp));
+			}
+		}
+		return result;
+	}
 
-	public MembershipGoalImpl(Expression goalMember, Expression goalSet,
-			List<Predicate> hyps, FormulaFactory ff) {
-		this.goalMember = goalMember;
-		this.goalSet = goalSet;
+	public MembershipGoalImpl(Predicate goal, List<Predicate> hyps,
+			FormulaFactory ff) {
+		this.goal = new Membership(goal);
 		this.hyps = hyps;
+		this.msHyps = extractMembership(hyps);
 		this.ff = ff;
 		this.rf = new MembershipGoalRules(ff);
 	}
@@ -52,37 +62,50 @@ public class MembershipGoalImpl {
 	 * Tells whether there is a proof for the goal from hypotheses.
 	 */
 	public boolean search() {
-		return search(goalMember, goalSet) != null;
+		return search(goal) != null;
+	}
+
+	public Rule<?> search(Membership ms) {
+		return searchNoLoop(ms, new HashSet<Membership>());
 	}
 
 	/**
-	 * Tells whether there is a proof for the goal from hypotheses.
+	 * Tells whether there is a proof for the goal from hypotheses. The second
+	 * parameter is used to prevent looping.
+	 * 
+	 * @param ms
+	 *            membership to discharge
+	 * @param tried
+	 *            membership already tried previously
+	 * @return a justification for the given membership
 	 */
-	// FIXME Can loop forever
-	public Rule<?> search(Expression member, Expression set) {
+	private Rule<?> searchNoLoop(Membership ms, Set<Membership> tried) {
+		if (tried.contains(ms)) {
+			// Don't loop
+			return null;
+		}
+		tried.add(ms);
+		final Rule<?> result = search(ms, tried);
+		tried.remove(ms);
+		return result;
+	}
+
+	// Must be called only by searchNoLoop
+	private Rule<?> search(Membership ms, Set<Membership> tried) {
+		if (msHyps.contains(ms)) {
+			return rf.hypothesis(ms.predicate());
+		}
 		for (Predicate hyp : hyps) {
-			if (match(hyp, member, set)) {
-				return rf.hypothesis(hyp);
-			}
-			if (set.equals(getRight(hyp))) {
-				final Rule<?> rule = search(member, getLeft(hyp));
+			if (ms.set().equals(getRight(hyp))) {
+				final Membership child = new Membership(ms.member(),
+						getLeft(hyp), ff);
+				final Rule<?> rule = searchNoLoop(child, tried);
 				if (rule != null) {
 					return rf.compose(rule, rf.hypothesis(hyp));
 				}
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Tells whether the given predicate is "member ∈ set".
-	 */
-	private boolean match(Predicate pred, Expression member, Expression set) {
-		if (pred.getTag() != IN) {
-			return false;
-		}
-		final RelationalPredicate rel = (RelationalPredicate) pred;
-		return member.equals(rel.getLeft()) && set.equals(rel.getRight());
 	}
 
 	private Expression getLeft(Predicate pred) {
@@ -93,7 +116,7 @@ public class MembershipGoalImpl {
 		final RelationalPredicate rel = (RelationalPredicate) pred;
 		return rel.getLeft();
 	}
-	
+
 	private Expression getRight(Predicate pred) {
 		final int tag = pred.getTag();
 		if (tag != SUBSET && tag != SUBSETEQ) {
@@ -102,5 +125,5 @@ public class MembershipGoalImpl {
 		final RelationalPredicate rel = (RelationalPredicate) pred;
 		return rel.getRight();
 	}
-	
+
 }
