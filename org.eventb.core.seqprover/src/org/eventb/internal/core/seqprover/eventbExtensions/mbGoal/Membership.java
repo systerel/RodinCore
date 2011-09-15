@@ -22,27 +22,31 @@ import org.eventb.core.ast.RelationalPredicate;
  * 
  * @author Laurent Voisin
  */
-public class Membership {
+public class Membership extends Rationale {
 
-	private final Predicate predicate;
+	public static Membership asHypothesis(Predicate predicate) {
+		return new Membership(predicate) {
+			@Override
+			public Rule<?> getRule(MembershipGoalImpl impl) {
+				return impl.hypothesis(this);
+			}
+		};
+	}
+
 	private final Expression member;
 	private final Expression set;
 
 	public Membership(Predicate predicate) {
-		this.predicate = predicate;
+		super(predicate);
 		final RelationalPredicate rel = (RelationalPredicate) predicate;
 		this.member = rel.getLeft();
 		this.set = rel.getRight();
 	}
 
 	public Membership(Expression member, Expression set, FormulaFactory ff) {
+		super(ff.makeRelationalPredicate(IN, member, set, null));
 		this.member = member;
 		this.set = set;
-		this.predicate = ff.makeRelationalPredicate(IN, member, set, null);
-	}
-
-	public Predicate predicate() {
-		return predicate;
 	}
 
 	public Expression member() {
@@ -53,30 +57,13 @@ public class Membership {
 		return set;
 	}
 
+	@Override
+	public Rule<?> getRule(MembershipGoalImpl impl) {
+		return impl.searchNoLoop(this);
+	}
+
 	public boolean match(Predicate other) {
 		return this.predicate.equals(other);
-	}
-
-	@Override
-	public String toString() {
-		return predicate.toString();
-	}
-
-	@Override
-	public int hashCode() {
-		return predicate.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null || this.getClass() != obj.getClass()) {
-			return false;
-		}
-		final Membership other = (Membership) obj;
-		return this.predicate.equals(other.predicate);
 	}
 
 }

@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 
-import static org.eventb.core.ast.Formula.*;
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.SUBSET;
+import static org.eventb.core.ast.Formula.SUBSETEQ;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -33,17 +33,22 @@ public class MembershipGoalImpl {
 
 	// Available hypotheses
 	private final List<Predicate> hyps;
-	private final Set<Membership> msHyps;
+
+	// Subset of hypotheses that take a membership form
+	private final Set<Predicate> msHyps;
 
 	// Initial goal
 	private final Membership goal;
 
-	private static final Set<Membership> extractMembership(
-			List<Predicate> hyps) {
-		final Set<Membership> result = new HashSet<Membership>();
+	// Goals already tried in this search thread
+	// Used to prevent loops
+	private final Set<Membership> tried;
+
+	private static final Set<Predicate> extractMembership(List<Predicate> hyps) {
+		final Set<Predicate> result = new HashSet<Predicate>();
 		for (final Predicate hyp : hyps) {
 			if (hyp.getTag() == IN) {
-				result.add(new Membership(hyp));
+				result.add(hyp);
 			}
 		}
 		return result;
@@ -56,6 +61,7 @@ public class MembershipGoalImpl {
 		this.msHyps = extractMembership(hyps);
 		this.ff = ff;
 		this.rf = new MembershipGoalRules(ff);
+		this.tried = new HashSet<Membership>();
 	}
 
 	/**
@@ -66,42 +72,42 @@ public class MembershipGoalImpl {
 	}
 
 	public Rule<?> search(Membership ms) {
-		return searchNoLoop(ms, new HashSet<Membership>());
+		return ms.getRule(this);
 	}
 
 	/**
-	 * Tells whether there is a proof for the goal from hypotheses. The second
-	 * parameter is used to prevent looping.
+	 * Tells whether there is a proof for the goal from hypotheses. The member
+	 * variable <code>tried</code> is used to prevent looping.
 	 * 
 	 * @param ms
 	 *            membership to discharge
-	 * @param tried
-	 *            membership already tried previously
 	 * @return a justification for the given membership
 	 */
-	private Rule<?> searchNoLoop(Membership ms, Set<Membership> tried) {
+	Rule<?> searchNoLoop(Membership ms) {
 		if (tried.contains(ms)) {
 			// Don't loop
 			return null;
 		}
 		tried.add(ms);
-		final Rule<?> result = search(ms, tried);
+		final Rule<?> result = doSearch(ms);
 		tried.remove(ms);
 		return result;
 	}
 
 	// Must be called only by searchNoLoop
-	private Rule<?> search(Membership ms, Set<Membership> tried) {
-		if (msHyps.contains(ms)) {
-			return rf.hypothesis(ms.predicate());
+	private Rule<?> doSearch(Membership ms) {
+		final Predicate predicate = ms.predicate();
+		if (msHyps.contains(predicate)) {
+			return Membership.asHypothesis(predicate).getRule(this);
 		}
 		for (Predicate hyp : hyps) {
 			if (ms.set().equals(getRight(hyp))) {
 				final Membership child = new Membership(ms.member(),
 						getLeft(hyp), ff);
-				final Rule<?> rule = searchNoLoop(child, tried);
+				final Rule<?> rule = child.getRule(this);
 				if (rule != null) {
-					return rf.compose(rule, rf.hypothesis(hyp));
+					return rf.compose(rule, Inclusion.asHypothesis(hyp)
+							.getRule(this));
 				}
 			}
 		}
@@ -124,6 +130,13 @@ public class MembershipGoalImpl {
 		}
 		final RelationalPredicate rel = (RelationalPredicate) pred;
 		return rel.getRight();
+	}
+
+	Rule<?> hypothesis(Rationale rat) {
+		final Predicate predicate = rat.predicate();
+		// FIXME optimize hyps for search
+		assert hyps.contains(predicate);
+		return rf.hypothesis(predicate);
 	}
 
 }
