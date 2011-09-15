@@ -53,6 +53,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.DomProjection;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.Hypothesis;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.RanProjection;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.SetExtensionMember;
 
 /**
  * Extract useful membership predicates from a set of hypotheses.  Usefulness
@@ -89,6 +90,9 @@ public class MembershipExtractor {
 			In(_, _) -> {
 				extractIn(new Hypothesis(hyp, rf));
 			}
+			(Subset|SubsetEq)(A, B) -> {
+				extractSubset(`A, `B, new Hypothesis(hyp, rf));
+			}
 
 			// TODO also extension sets included or equal into something
 			// TODO same with extensions such as union around eset.
@@ -124,6 +128,14 @@ public class MembershipExtractor {
 			_, In(Mapsto(x, y), S) -> {
 				extractIn(new DomProjection(rf.in(`x, rf.dom(`S)), rat, rf));
 				extractIn(new RanProjection(rf.in(`y, rf.ran(`S)), rat, rf));
+			}
+		}
+	}
+
+	private void extractSubset(Expression left, Expression right, Rationale rat) {
+		%match (Expression left, Expression right) {
+			SetExtension(eList(_*,x,_*)), S -> {
+				extractIn(new SetExtensionMember(`x, rf.in(`x, `S), rat, rf));
 			}
 		}
 	}

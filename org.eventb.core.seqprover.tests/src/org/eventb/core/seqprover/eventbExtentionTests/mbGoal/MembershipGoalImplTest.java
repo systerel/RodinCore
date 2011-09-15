@@ -109,4 +109,11 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 		it.assertFound(rf.domPrj(it.hyp("x↦y ∈ A×B")));
 	}
 
+	@Test
+	public void mapletAsRelation() {
+		final String hyp = "{x↦y} ⊆ A×B";
+		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ", hyp);
+		it.assertFound(rf.domPrj(it.setExtMember("x↦y", it.hyp(hyp))));
+	}
+
 }

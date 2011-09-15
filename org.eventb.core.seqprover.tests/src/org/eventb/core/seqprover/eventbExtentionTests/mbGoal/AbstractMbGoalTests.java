@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests.mbGoal;
 
+import static org.eventb.core.seqprover.tests.TestLib.genExpr;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -45,6 +48,11 @@ public class AbstractMbGoalTests {
 		public Rule<?> hyp(String hypImage) {
 			final Predicate hyp = TestLib.genPred(typenv, hypImage);
 			return rf.hypothesis(hyp);
+		}
+
+		public Rule<?> setExtMember(String memberImage, Rule<?> child) {
+			final Expression member = genExpr(typenv, memberImage);
+			return rf.setExtMember(member, child);
 		}
 
 	}

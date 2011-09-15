@@ -11,6 +11,7 @@
 package org.eventb.core.seqprover.eventbExtentionTests.mbGoal;
 
 import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +20,6 @@ import java.util.List;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipExtractor;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rule;
@@ -39,7 +39,7 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 
 		TestItem(String typenvImage, String memberImage, String... hypImages) {
 			super(typenvImage, hypImages);
-			this.member = TestLib.genExpr(typenv, memberImage);
+			this.member = genExpr(typenv, memberImage);
 			this.extractor = new MembershipExtractor(rf, member, hyps);
 		}
 
@@ -163,6 +163,26 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
 		it.assertExtraction(rf.domPrj(rf.domPrj(it.hyp(hyp))),
 				rf.ranPrj(it.hyp(hyp)));
+	}
+
+	/**
+	 * Ensures that the extractor can interpret a set extension inclusion.
+	 */
+	@Test
+	public void setExtEq() {
+		final String hyp = "{a, b} ⊆ f";
+		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
+		it.assertExtraction(it.setExtMember("a", it.hyp(hyp)));
+	}
+
+	/**
+	 * Ensures that the extractor can interpret a set extension strict inclusion.
+	 */
+	@Test
+	public void setExt() {
+		final String hyp = "{a, b} ⊂ f";
+		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
+		it.assertExtraction(it.setExtMember("a", it.hyp(hyp)));
 	}
 
 }

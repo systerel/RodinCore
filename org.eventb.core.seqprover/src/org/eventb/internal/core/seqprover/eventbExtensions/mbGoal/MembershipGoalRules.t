@@ -171,4 +171,15 @@ public class MembershipGoalRules {
 				+ child);
 	}
 
+	public Rule<RelationalPredicate> setExtMember(Expression member, Rule<?> child) {
+		final Predicate childConsequent = child.getConsequent();
+		%match (Expression member, childConsequent) {
+			x, (Subset|SubsetEq)(SetExtension(eList(_*,x,_*)), S) -> {
+				return in(`x, `S, child);
+			}
+		}
+		throw new IllegalArgumentException("Can't extract set extension member "
+				+ member + " from "	+ child);
+	}
+
 }

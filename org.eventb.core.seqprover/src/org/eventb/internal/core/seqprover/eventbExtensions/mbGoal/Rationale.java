@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 
 /**
@@ -33,7 +34,7 @@ public abstract class Rationale {
 	}
 
 	public static class DomProjection extends Rationale {
-		
+
 		private final Rationale child;
 
 		public DomProjection(Predicate predicate, Rationale child,
@@ -50,7 +51,7 @@ public abstract class Rationale {
 	}
 
 	public static class RanProjection extends Rationale {
-		
+
 		private final Rationale child;
 
 		public RanProjection(Predicate predicate, Rationale child,
@@ -62,6 +63,25 @@ public abstract class Rationale {
 		@Override
 		public Rule<?> makeRule() {
 			return rf.ranPrj(child.makeRule());
+		}
+
+	}
+
+	public static class SetExtensionMember extends Rationale {
+
+		private final Rationale child;
+		private final Expression member;
+
+		public SetExtensionMember(Expression member, Predicate predicate,
+				Rationale child, MembershipGoalRules rf) {
+			super(predicate, rf);
+			this.child = child;
+			this.member = member;
+		}
+
+		@Override
+		public Rule<?> makeRule() {
+			return rf.setExtMember(member, child.makeRule());
 		}
 
 	}
