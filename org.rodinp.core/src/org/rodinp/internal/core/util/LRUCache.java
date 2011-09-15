@@ -44,7 +44,8 @@ public class LRUCache<K, V> implements Cloneable {
 	 * 
 	 * @see LRUCache
 	 */
-	protected static class LRUCacheEntry<KI, VI> {
+	// TODO put back protected when eclipse bug #216692 is fixed
+	public static class LRUCacheEntry<KI, VI> {
 
 		/**
 		 * Hash table key
@@ -170,10 +171,6 @@ public class LRUCache<K, V> implements Cloneable {
 		return newCache;
 	}
 
-	public double fillingRatio() {
-		return (fCurrentSpace) * 100.0 / fSpaceLimit;
-	}
-
 	/**
 	 * Flushes all entries from the cache.
 	 */
@@ -208,17 +205,6 @@ public class LRUCache<K, V> implements Cloneable {
 		this.privateRemoveEntry(entry, false);
 	}
 
-	protected V internalGet(K key, boolean updateTimestamps) {
-		LRUCacheEntry<K, V> entry = fEntryTable.get(key);
-		if (entry == null) {
-			return null;
-		}
-		if (updateTimestamps) {
-			this.updateTimestamp(entry);
-		}
-		return entry._fValue;
-	}
-	
 	/**
 	 * Answers the value in the cache at the given key. If the value is not in
 	 * the cache, returns null
@@ -227,20 +213,15 @@ public class LRUCache<K, V> implements Cloneable {
 	 *            Hash table key of object to retrieve
 	 * @return Retreived object, or null if object does not exist
 	 */
-	public final V get(K key) {
-		return internalGet(key, true);
-	}
-	
-	/**
-	 * Answers the value in the cache at the given key.
-	 * If the value is not in the cache, returns null
-	 *
-	 * This function does not modify timestamps.
-	 * @param key the key
-	 * @return the object
-	 */
-	public final V peek(K key) {
-		return internalGet(key, false);
+	public V get(K key) {
+
+		LRUCacheEntry<K, V> entry = fEntryTable.get(key);
+		if (entry == null) {
+			return null;
+		}
+
+		this.updateTimestamp(entry);
+		return entry._fValue;
 	}
 
 	/**
@@ -255,6 +236,14 @@ public class LRUCache<K, V> implements Cloneable {
 	 */
 	public int getSpaceLimit() {
 		return fSpaceLimit;
+	}
+
+	/**
+	 * Returns an Enumeration of the keys currently in the cache.
+	 */
+	public Enumeration<K> keys() {
+
+		return fEntryTable.keys();
 	}
 
 	/**
@@ -461,7 +450,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 *            Key of object to remove from cache.
 	 * @return Value removed from cache.
 	 */
-	public V remove(K key) {
+	public V removeKey(K key) {
 
 		LRUCacheEntry<K, V> entry = fEntryTable.get(key);
 		if (entry == null) {

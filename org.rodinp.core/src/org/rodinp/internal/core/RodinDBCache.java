@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
  *     Systerel - removed deprecated methods and occurrence count
  *     Systerel - separation of file and root element
  *     Systerel - fixed invalid buffer removal during file conversion
- *     Systerel - used a SoftLRUCache
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -30,6 +29,8 @@ import org.rodinp.core.IRodinProject;
  */
 public class RodinDBCache {
 
+	private static final int BASE_VALUE = 20;
+
 	// average 25552 bytes per project.
 	private static final int DEFAULT_PROJECT_SIZE = 5;
 
@@ -41,7 +42,7 @@ public class RodinDBCache {
 	// (5 is the number of files per compilation unit)
 	// it looks like being used as both
 	// a number of objects (map size) and memory space
-	private static final int DEFAULT_OPENABLE_SIZE = 5;
+	private static final int DEFAULT_OPENABLE_SIZE = BASE_VALUE * 100;
 
 	private static final int DEFAULT_BUFFER_SIZE = DEFAULT_OPENABLE_SIZE;
 	

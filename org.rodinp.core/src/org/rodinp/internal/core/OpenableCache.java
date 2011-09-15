@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2011 ETH Zurich and others.
+ * Copyright (c) 2005-2006 ETH Zurich.
  * Strongly inspired by org.eclipse.jdt.internal.core.ElementCache.java which is
  * 
  * Copyright (c) 2000, 2004 IBM Corporation and others.
@@ -11,19 +11,25 @@
 package org.rodinp.internal.core;
 
 import org.rodinp.core.RodinDBException;
-import org.rodinp.internal.core.util.SoftLRUCache;
 
 /**
  * An LRU cache of <code>Openable</code>s.
  */
 public class OpenableCache extends
-		SoftLRUCache<Openable, OpenableElementInfo> {
+		OverflowingLRUCache<Openable, OpenableElementInfo> {
 
 	/**
 	 * Constructs a new element cache of the given size.
 	 */
 	public OpenableCache(int size) {
 		super(size);
+	}
+
+	/**
+	 * Constructs a new element cache of the given size.
+	 */
+	public OpenableCache(int size, int overflow) {
+		super(size, overflow);
 	}
 
 	/**
@@ -49,10 +55,12 @@ public class OpenableCache extends
 		}
 	}
 
+	/**
+	 * Returns a new instance of the receiver.
+	 */
 	@Override
-	protected SoftLRUCache<Openable, OpenableElementInfo> newSoftLRUInstance(
-			int size) {
-		return new OpenableCache(size);
+	protected OpenableCache newInstance(int size, int overflow) {
+		return new OpenableCache(size, overflow);
 	}
 
 }
