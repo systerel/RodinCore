@@ -102,7 +102,7 @@ public class LRUCache<K, V> implements Cloneable {
 		 */
 		private final Hashtable<K, LRUCacheEntry<K, V>> fEntryTable;
 		
-		private final Hashtable<K, SoftReference<LRUCacheEntry<K, V>>> softEntryTable = new Hashtable<K, SoftReference<LRUCacheEntry<K, V>>>();
+		private final Hashtable<K, SoftReference<V>> softEntryTable = new Hashtable<K, SoftReference<V>>();
 		
 		public HardAndSoftCache(int hardSize) {
 			fSpaceLimit = hardSize;
@@ -110,19 +110,27 @@ public class LRUCache<K, V> implements Cloneable {
 		}
 		
 		public LRUCacheEntry<K, V> getEntry(K key) {
-//			final LRUCacheEntry<K, V> softEntry = getSoftEntry(key);
-//			if (softEntry != null) {
-//				return softEntry;
+			final LRUCacheEntry<K, V> entry = fEntryTable.get(key);
+			if (entry != null) {
+				return entry;
+			}
+//			final V soft = getSoft(key);
+//			if (soft != null) {
+//				return new LRUCacheEntry<K,V>(key, soft);
 //			}
-			return fEntryTable.get(key);
+			return null;
 		}
 		
-//		private LRUCacheEntry<K, V> getSoftEntry(K key) {
-//			final SoftReference<LRUCacheEntry<K, V>> softReference = softEntryTable.get(key);
+//		private V getSoft(K key) {
+//			final SoftReference<V> softReference = softEntryTable.get(key);
 //			if (softReference == null) {
 //				return null;
 //			}
-//			return softReference.get();
+//			final V v = softReference.get();
+//			if (v == null) {
+//				softEntryTable.remove(key);
+//			}
+//			return v;
 //		}
 		
 		public void putEntry(LRUCacheEntry<K, V> entry) {
@@ -140,7 +148,7 @@ public class LRUCache<K, V> implements Cloneable {
 			if (entry == null) {
 				return;
 			}
-			softEntryTable.put(key, new SoftReference<LRUCacheEntry<K,V>>(entry));
+			softEntryTable.put(key, new SoftReference<V>(entry._fValue));
 		}
 		
 		public void clear() {
@@ -417,6 +425,7 @@ public class LRUCache<K, V> implements Cloneable {
 	}
 
 	protected final void queueRemove(LRUCacheEntry<K, V> entry) {
+		// FIXME not on soft entries
 		final LRUCacheEntry<K, V> previous = entry._fPrevious;
 		final LRUCacheEntry<K, V> next = entry._fNext;
 
