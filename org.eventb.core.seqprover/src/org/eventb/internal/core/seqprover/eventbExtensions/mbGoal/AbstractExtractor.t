@@ -58,81 +58,75 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.Rela
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.EqualToSubset;
 
 /**
- * Extract useful membership predicates from a set of hypotheses.  Usefulness
- * means having the given expression as left-hand side.  Predicates can be either
- * a given hypothesis or some predicate derived soundly from a hypothesis.
+ * Common implementation for extracting useful direct and derived hypotheses
+ * from a given set.
  * 
  * @author Laurent Voisin
  * @author Emmanuel Billaud
  */
 @SuppressWarnings("unused")
-public class MembershipExtractor extends AbstractExtractor {
+public abstract class AbstractExtractor {
 
-	private final Expression member;
-	private final List<Rationale> result;
+	protected final MembershipGoalRules rf;
+	protected final Set<Predicate> hyps;
 
 	%include {FormulaV2.tom}
 
-	public MembershipExtractor(MembershipGoalRules rf, Expression member,
-			Set<Predicate> hyps) {
-		super(rf, hyps);
-		this.member = member;
-		this.result = new ArrayList<Rationale>();
+	protected AbstractExtractor(MembershipGoalRules rf, Set<Predicate> hyps) {
+		this.rf = rf;
+		this.hyps = hyps;
 	}
 
-	public List<Rationale> extract() {
-		for (Predicate hyp : hyps) {
-			extract(hyp);
-		}
-		return result;
-	}
-
-	/* TODO
-	 * Idea for later: also remember negative membership for fast exit
-	 * when membership is know to not hold. However, this might prevent
-	 * discharging when faced with contradictory hypotheses.
+	/**
+	 * Extracts from one given hypothesis.
 	 */
+	protected final void extract(Predicate hyp) {
+		final Rationale rat = new Hypothesis(hyp, rf);
+		%match (hyp) {
+			In(_, _) -> {
+				extractIn(rat);
+			}
+			(Subset|SubsetEq)(_, _) -> {
+				extractSubset(rat);
+			}
+			Equal(A, B) -> {
+				// Ensure `A is a set
+				if (`A.getType().getBaseType() != null) {
+					extractSubset(new EqualToSubset(true, rf.subseteq(`A, `B),
+							rat, rf));
+					extractSubset(new EqualToSubset(false, rf.subseteq(`B, `A),
+							rat, rf));
+				}
+			}
+		}
+	}
 
-	protected void extractIn(final Rationale rat) {
+	protected void extractIn(Rationale rat) {
 		final Predicate pred = rat.predicate();
 		%match (pred) {
-			In(x, _) && x << Expression member -> {
-				result.add(rat);
-
-				// TODO Also simplify rhs when restrictive
-				// TODO a: dom(f;g;h) => a: dom(f;g) and similar
-				// TODO a: A <| f => a: f and similar
-				// TODO a: dom(A <| f) => a: A and similar
-				// TODO a: A /\ B => a: A and similar
-				// TODO a: A \ B => a: A
-
-				return;
-			}
-			In(Mapsto(x, y), Cprod(A, B)) -> {
-				extractIn(new DomProjection(rf.in(`x, `A), rat, rf));
-				extractIn(new RanProjection(rf.in(`y, `B), rat, rf));
-				return;
-			}
-			In(Mapsto(x, y), S) -> {
-				extractIn(new DomProjection(rf.in(`x, rf.dom(`S)), rat, rf));
-				extractIn(new RanProjection(rf.in(`y, rf.ran(`S)), rat, rf));
+			In(x, (Rel|Trel|Srel|Strel
+				  |Pfun|Tfun|Pinj|Tinj|Psur|Tsur|Tbij)(A, B)) -> {
+				final Predicate child = rf.subseteq(`x, rf.cprod(`A, `B));
+				extractSubset(new RelationToCartesian(child, rat, rf));
 			}
 		}
-		// Must be after detection of useful membership
-		super.extractIn(rat);
 	}
 
-	protected void extractSubset(Expression left, Expression right,
-			Rationale rat) {
-		%match (Expression left, Expression right) {
-			SetExtension(eList(_*,x,_*)), S -> {
-				extractIn(new SetExtensionMember(`x, rf.in(`x, `S), rat, rf));
-			}
-
-			// TODO same with extensions such as union around eset.
-			// TODO same when eset is last member of overriding.
-
-		}
+	/*
+	 * Intermediate method to deconstruct the inclusion so that we're not
+	 * bothered with the two cases (SUBSETEQ and SUBSET) afterwards.
+	 */
+	protected final void extractSubset(Rationale rat) {
+		final Predicate pred = rat.predicate();
+		final int tag = pred.getTag();
+		assert tag == SUBSETEQ || tag == SUBSET;
+		final RelationalPredicate rpred = (RelationalPredicate) pred;
+		final Expression left = rpred.getLeft();
+		final Expression right = rpred.getRight();
+		extractSubset(left, right, rat);
 	}
+
+	protected abstract void extractSubset(Expression left, Expression right,
+			Rationale rat);
 
 }

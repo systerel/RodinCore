@@ -117,4 +117,16 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 				rf.relToCprod(it.hyp(hyp)))));
 	}
 
+	/**
+	 * Ensures that membership to a relational set is not lost when deriving
+	 * fancy hypotheses.
+	 */
+	@Test
+	public void inRelationSet() {
+		final String hyp = "{x↦y} ∈ A ⇸ B";
+		final TestItem it = new TestItem("{x↦y} ∈ S", "x=ℤ, y=ℤ", hyp,
+				"A⇸B ⊆ S");
+		it.assertFound(rf.compose(it.hyp(hyp), it.hyp("A⇸B ⊆ S")));
+	}
+
 }
