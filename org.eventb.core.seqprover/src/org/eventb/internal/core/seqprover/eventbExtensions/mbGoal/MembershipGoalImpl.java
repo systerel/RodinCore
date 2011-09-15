@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofMonitor;
 
 /**
  * Common implementation of the Membership goal reasoner and tactic.
@@ -51,8 +52,11 @@ public class MembershipGoalImpl {
 	// Used to prevent loops
 	private final Set<Goal> tried;
 
+	// Used to cancel too long execution
+	private final IProofMonitor pm;
+
 	public MembershipGoalImpl(Predicate goal, Set<Predicate> hyps,
-			FormulaFactory ff) {
+			FormulaFactory ff, IProofMonitor pm) {
 		if (goal == null || goal.getTag() != IN) {
 			throw new IllegalArgumentException("Not a membership : " + goal);
 		}
@@ -67,13 +71,14 @@ public class MembershipGoalImpl {
 		this.tried = new HashSet<Goal>();
 		this.hyps = hyps;
 		this.knownMemberships = new HashMap<Predicate, Rationale>();
-		this.inclHyps = new GeneratorExtractor(rf, hyps).extract();
+		this.inclHyps = new GeneratorExtractor(rf, hyps, pm).extract();
 		computeKnownMemberships();
+		this.pm = pm;
 	}
 
 	private void computeKnownMemberships() {
 		final MembershipExtractor extractor = new MembershipExtractor(rf,
-				this.goal.member(), hyps);
+				this.goal.member(), hyps, pm);
 		for (final Rationale rat : extractor.extract()) {
 			knownMemberships.put(rat.predicate, rat);
 		}
@@ -102,19 +107,21 @@ public class MembershipGoalImpl {
 	 *            membership to discharge
 	 * @return a justification for the given membership
 	 */
-	public Rationale search(Goal goal) {
+	private Rationale search(Goal goal) {
 		if (tried.contains(goal)) {
 			// Don't loop
 			return null;
 		}
 		tried.add(goal);
 		final Rationale result = doSearch(goal);
-		tried.remove(goal);
 		return result;
 	}
 
 	// Must be called only by search
 	private Rationale doSearch(Goal goal) {
+		if (pm != null && pm.isCanceled()) {
+			return null;
+		}
 		final Predicate predicate = goal.predicate();
 		final Rationale rationale = knownMemberships.get(predicate);
 		if (rationale != null) {

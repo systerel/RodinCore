@@ -45,6 +45,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverRule;
@@ -75,8 +76,8 @@ public class MembershipExtractor extends AbstractExtractor {
 	%include {FormulaV2.tom}
 
 	public MembershipExtractor(MembershipGoalRules rf, Expression member,
-			Set<Predicate> hyps) {
-		super(rf, hyps);
+			Set<Predicate> hyps, IProofMonitor pm) {
+		super(rf, hyps, pm);
 		this.member = member;
 		this.result = new ArrayList<Rationale>();
 	}
@@ -95,6 +96,9 @@ public class MembershipExtractor extends AbstractExtractor {
 	 */
 
 	protected void extractIn(final Rationale rat) {
+		if (pm != null && pm.isCanceled()) {
+			return;
+		}
 		final Predicate pred = rat.predicate();
 		%match (pred) {
 			In(x, _) && x << Expression member -> {
@@ -125,6 +129,9 @@ public class MembershipExtractor extends AbstractExtractor {
 
 	protected void extractSubset(boolean strict, Expression left,
 			Expression right, Rationale rat) {
+		if (pm != null && pm.isCanceled()) {
+			return;
+		}
 		%match (Expression left, Expression right) {
 			SetExtension(eList(_*,x,_*)), S -> {
 				extractIn(new SetExtensionMember(`x, rf.in(`x, `S), rat));

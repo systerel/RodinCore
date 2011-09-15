@@ -45,6 +45,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverRule;
@@ -70,8 +71,9 @@ public class GeneratorExtractor extends AbstractExtractor {
 
 	%include {FormulaV2.tom}
 
-	public GeneratorExtractor(MembershipGoalRules rf, Set<Predicate> hyps) {
-		super(rf, hyps);
+	public GeneratorExtractor(MembershipGoalRules rf, Set<Predicate> hyps, 
+			IProofMonitor pm) {
+		super(rf, hyps, pm);
 		this.result = new ArrayList<Generator>();
 	}
 
@@ -84,6 +86,9 @@ public class GeneratorExtractor extends AbstractExtractor {
 
 	protected void extractSubset(boolean strict, Expression left,
 			Expression right, Rationale rat) {
+		if (pm != null && pm.isCanceled()) {
+			return;
+		}
 		%match (Expression left, Expression right) {
 			_, _ -> {
 				result.add(new Inclusion(rat));

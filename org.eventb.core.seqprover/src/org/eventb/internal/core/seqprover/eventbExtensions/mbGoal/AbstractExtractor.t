@@ -45,6 +45,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverRule;
@@ -70,18 +71,24 @@ public abstract class AbstractExtractor {
 
 	protected final MembershipGoalRules rf;
 	protected final Set<Predicate> hyps;
+	protected final IProofMonitor pm;
 
 	%include {FormulaV2.tom}
 
-	protected AbstractExtractor(MembershipGoalRules rf, Set<Predicate> hyps) {
+	protected AbstractExtractor(MembershipGoalRules rf, Set<Predicate> hyps, 
+			IProofMonitor pm) {
 		this.rf = rf;
 		this.hyps = hyps;
+		this.pm = pm;
 	}
 
 	/**
 	 * Extracts from one given hypothesis.
 	 */
 	protected final void extract(Predicate hyp) {
+		if (pm != null && pm.isCanceled()) {
+			return;
+		}
 		final Rationale rat = new Hypothesis(hyp, rf);
 		%match (hyp) {
 			In(_, _) -> {
@@ -103,6 +110,9 @@ public abstract class AbstractExtractor {
 	}
 
 	protected void extractIn(Rationale rat) {
+		if (pm != null && pm.isCanceled()) {
+			return;
+		}
 		final Predicate pred = rat.predicate();
 		%match (pred) {
 			In(x, (Rel|Trel|Srel|Strel
@@ -118,6 +128,9 @@ public abstract class AbstractExtractor {
 	 * bothered with the two cases (SUBSETEQ and SUBSET) afterwards.
 	 */
 	protected final void extractSubset(Rationale rat) {
+		if (pm != null && pm.isCanceled()) {
+			return;
+		}
 		final Predicate pred = rat.predicate();
 		final int tag = pred.getTag();
 		assert tag == SUBSETEQ || tag == SUBSET;
