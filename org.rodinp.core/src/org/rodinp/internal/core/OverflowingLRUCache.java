@@ -203,8 +203,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 			fTimestampsOn = false;
 
 			while (getCurrentSpace() + spaceNeeded > limit && entry != null) {
-				// FIXME don't remove: move to soft
-				this.privateRemoveEntry(entry, false, false);
+				removeForSpace(entry);
 				entry = entry._fPrevious;
 			}
 		} finally {
@@ -222,6 +221,13 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 		return false;
 	}
 
+	@Override
+	protected void removeForSpace(LRUCacheEntry<K, V> entry) {
+		if (!canClose(entry))
+			return;
+		super.removeForSpace(entry);
+	}
+	
 	/**
 	 * Returns a new instance of the receiver.
 	 */

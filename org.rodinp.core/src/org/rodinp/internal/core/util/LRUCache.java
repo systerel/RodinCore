@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.util;
 
+import java.lang.ref.SoftReference;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -101,7 +102,7 @@ public class LRUCache<K, V> implements Cloneable {
 		 */
 		private final Hashtable<K, LRUCacheEntry<K, V>> fEntryTable;
 		
-//		private final Hashtable<K, SoftReference<LRUCacheEntry<K, V>>> softEntryTable = new Hashtable<K, SoftReference<LRUCacheEntry<K, V>>>();
+		private final Hashtable<K, SoftReference<LRUCacheEntry<K, V>>> softEntryTable = new Hashtable<K, SoftReference<LRUCacheEntry<K, V>>>();
 		
 		public HardAndSoftCache(int hardSize) {
 			fSpaceLimit = hardSize;
@@ -130,12 +131,21 @@ public class LRUCache<K, V> implements Cloneable {
 		
 		public void removeEntry(K key) {
 			fEntryTable.remove(key);
-//			softEntryTable.remove(key);
+			softEntryTable.remove(key);
+		}
+		
+		public void moveToSoft(K key) {
+			softEntryTable.remove(key);
+			final LRUCacheEntry<K, V> entry = fEntryTable.remove(key);
+			if (entry == null) {
+				return;
+			}
+			softEntryTable.put(key, new SoftReference<LRUCacheEntry<K,V>>(entry));
 		}
 		
 		public void clear() {
 			fEntryTable.clear();
-//			softEntryTable.clear();
+			softEntryTable.clear();
 		}
 		
 		public int getHardSize() {
@@ -335,8 +345,7 @@ public class LRUCache<K, V> implements Cloneable {
 
 		/* Free up space by removing oldest entries */
 		while (getCurrentSpace() + space > limit && fEntryQueueTail != null) {
-			// FIXME do'nt remove, put in soft cache
-			this.privateRemoveEntry(fEntryQueueTail, false);
+			removeForSpace(fEntryQueueTail);
 		}
 		return true;
 	}
@@ -386,6 +395,11 @@ public class LRUCache<K, V> implements Cloneable {
 		fEntryQueue = entry;
 	}
 
+	protected void removeForSpace(LRUCacheEntry<K, V> entry) {
+		queueRemove(entry);
+		cache.moveToSoft(entry._fKey);
+	}
+	
 	/**
 	 * Removes the entry from the entry queue.
 	 * 
@@ -402,7 +416,7 @@ public class LRUCache<K, V> implements Cloneable {
 		}
 	}
 
-	protected void queueRemove(LRUCacheEntry<K, V> entry) {
+	protected final void queueRemove(LRUCacheEntry<K, V> entry) {
 		final LRUCacheEntry<K, V> previous = entry._fPrevious;
 		final LRUCacheEntry<K, V> next = entry._fNext;
 
