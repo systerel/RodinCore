@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.seqprover.eventbExtensions;
+package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 
 import static org.eventb.core.ast.Formula.CONVERSE;
 import static org.eventb.core.ast.Formula.KDOM;

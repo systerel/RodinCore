@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.seqprover.eventbExtentionTests;
+package org.eventb.core.seqprover.eventbExtentionTests.mbGoal;
 
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 
@@ -18,7 +18,7 @@ import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.HypothesesReasoner;
 import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.internal.core.seqprover.eventbExtensions.MembershipGoal;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoal;
 
 /**
  * Unit tests for the reasoner MembershipGoal

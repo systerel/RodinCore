@@ -50,8 +50,8 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesesReasoner;
 import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.internal.core.seqprover.eventbExtensions.MembershipGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.MyPosition;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoal;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MyPosition;
 
 /**
  * Try to find hypotheses to apply the reasoner MembershipGoal in order to

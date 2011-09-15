@@ -17,7 +17,7 @@ import org.eventb.internal.core.seqprover.AutoTacticRegistry;
 import org.eventb.internal.core.seqprover.ProverChecks;
 import org.eventb.internal.core.seqprover.ProverSequent;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
-import org.eventb.internal.core.seqprover.eventbExtensions.MembershipGoal;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.osgi.framework.BundleContext;
 

@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.seqprover.eventbExtentionTests;
+package org.eventb.core.seqprover.eventbExtentionTests.mbGoal;
 
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
@@ -20,7 +20,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.internal.core.seqprover.eventbExtensions.Rule;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rule;
 import org.junit.Test;
 
 /**

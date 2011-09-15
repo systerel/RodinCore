@@ -433,7 +433,7 @@
       		name="%finiteDefRewritesName">
       </reasoner>
        <reasoner
-      		class="org.eventb.internal.core.seqprover.eventbExtensions.MembershipGoal"
+      		class="org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoal"
       		id="mbGoal"
       		name="%mbGoalName"/>
       <reasoner
