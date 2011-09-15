@@ -33,55 +33,97 @@ public abstract class Rationale {
 
 	}
 
-	public static class DomProjection extends Rationale {
+	private static abstract class Unary extends Rationale {
 
 		private final Rationale child;
+
+		public Unary(Predicate predicate, Rationale child,
+				MembershipGoalRules rf) {
+			super(predicate, rf);
+			this.child = child;
+		}
+
+		@Override
+		public final Rule<?> makeRule() {
+			return makeRule(child.makeRule());
+		}
+
+		public abstract Rule<?> makeRule(Rule<?> childRule);
+
+	}
+
+	public static class DomProjection extends Unary {
 
 		public DomProjection(Predicate predicate, Rationale child,
 				MembershipGoalRules rf) {
-			super(predicate, rf);
-			this.child = child;
+			super(predicate, child, rf);
 		}
 
 		@Override
-		public Rule<?> makeRule() {
-			return rf.domPrj(child.makeRule());
+		public Rule<?> makeRule(Rule<?> childRule) {
+			return rf.domPrj(childRule);
 		}
 
 	}
 
-	public static class RanProjection extends Rationale {
-
-		private final Rationale child;
+	public static class RanProjection extends Unary {
 
 		public RanProjection(Predicate predicate, Rationale child,
 				MembershipGoalRules rf) {
-			super(predicate, rf);
-			this.child = child;
+			super(predicate, child, rf);
 		}
 
 		@Override
-		public Rule<?> makeRule() {
-			return rf.ranPrj(child.makeRule());
+		public Rule<?> makeRule(Rule<?> childRule) {
+			return rf.ranPrj(childRule);
 		}
 
 	}
 
-	public static class SetExtensionMember extends Rationale {
+	public static class SetExtensionMember extends Unary {
 
-		private final Rationale child;
 		private final Expression member;
 
 		public SetExtensionMember(Expression member, Predicate predicate,
 				Rationale child, MembershipGoalRules rf) {
-			super(predicate, rf);
-			this.child = child;
+			super(predicate, child, rf);
 			this.member = member;
 		}
 
 		@Override
-		public Rule<?> makeRule() {
-			return rf.setExtMember(member, child.makeRule());
+		public Rule<?> makeRule(Rule<?> childRule) {
+			return rf.setExtMember(member, childRule);
+		}
+
+	}
+
+	public static class RelationToCartesian extends Unary {
+
+		public RelationToCartesian(Predicate predicate, Rationale child,
+				MembershipGoalRules rf) {
+			super(predicate, child, rf);
+		}
+
+		@Override
+		public Rule<?> makeRule(Rule<?> childRule) {
+			return rf.relToCprod(childRule);
+		}
+
+	}
+
+	public static class EqualToSubset extends Unary {
+
+		private final boolean leftToRight;
+
+		public EqualToSubset(boolean leftToRight, Predicate predicate,
+				Rationale child, MembershipGoalRules rf) {
+			super(predicate, child, rf);
+			this.leftToRight = leftToRight;
+		}
+
+		@Override
+		public Rule<?> makeRule(Rule<?> childRule) {
+			return rf.eqToSubset(leftToRight, childRule);
 		}
 
 	}

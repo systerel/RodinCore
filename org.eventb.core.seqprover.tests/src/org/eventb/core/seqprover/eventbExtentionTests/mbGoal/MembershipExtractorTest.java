@@ -176,13 +176,39 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 	}
 
 	/**
-	 * Ensures that the extractor can interpret a set extension strict inclusion.
+	 * Ensures that the extractor can interpret a set extension strict
+	 * inclusion.
 	 */
 	@Test
 	public void setExt() {
 		final String hyp = "{a, b} ⊂ f";
 		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
 		it.assertExtraction(it.setExtMember("a", it.hyp(hyp)));
+	}
+
+	/**
+	 * Ensures that the extractor can interpret a set extension seen as a
+	 * relation.
+	 */
+	@Test
+	public void setExtAsRelation() {
+		final String hyp = "{a↦b, b↦a} ∈ A ⇸ B";
+		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
+		it.assertExtraction(
+				rf.domPrj(it.setExtMember("a↦b", rf.relToCprod(it.hyp(hyp)))),
+				rf.ranPrj(it.setExtMember("b↦a", rf.relToCprod(it.hyp(hyp)))));
+	}
+
+	/**
+	 * Ensures that the extractor can interpret an equality as a subset relation
+	 * from left to right.
+	 */
+	@Test
+	public void equalityAsSubsetLeft() {
+		final String hyp = "{a↦b} = f";
+		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
+		it.assertExtraction(rf.domPrj(it.setExtMember("a↦b",
+				rf.eqToSubset(true, it.hyp(hyp)))));
 	}
 
 }

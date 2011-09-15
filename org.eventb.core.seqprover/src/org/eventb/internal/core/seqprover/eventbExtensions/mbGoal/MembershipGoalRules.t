@@ -106,12 +106,20 @@ public class MembershipGoalRules {
 		return ff.makeRelationalPredicate(IN, member, set, null);
 	}
 
+	public Predicate subseteq(Expression member, Expression set) {
+		return ff.makeRelationalPredicate(SUBSETEQ, member, set, null);
+	}
+
 	public Expression dom(Expression child) {
 		return ff.makeUnaryExpression(KDOM, child, null);
 	}
 
 	public Expression ran(Expression child) {
 		return ff.makeUnaryExpression(KRAN, child, null);
+	}
+
+	public Expression cprod(Expression left, Expression right) {
+		return ff.makeBinaryExpression(CPROD, left, right, null);
 	}
 
 	// TODO put back RelationalPredicate as type argument?
@@ -180,6 +188,35 @@ public class MembershipGoalRules {
 		}
 		throw new IllegalArgumentException("Can't extract set extension member "
 				+ member + " from "	+ child);
+	}
+
+	public Rule<RelationalPredicate> relToCprod(Rule<?> child) {
+		final Predicate childConsequent = child.getConsequent();
+		%match (childConsequent) {
+			In(x, (Rel|Trel|Srel|Strel
+				  |Pfun|Tfun|Pinj|Tinj|Psur|Tsur|Tbij)(A, B)) -> {
+				return subseteq(`x, cprod(`A, `B), child);
+			}
+		}
+		throw new IllegalArgumentException("Can't find a relational set in: "
+				+ child);
+	}
+
+	public Rule<RelationalPredicate> eqToSubset(boolean leftToRight,
+			Rule<?> child) {
+		final Predicate childConsequent = child.getConsequent();
+		%match (childConsequent) {
+			Equal(A, B) -> {
+				assert `A.getType().getBaseType() != null;
+				if (leftToRight) {
+					return subseteq(`A, `B, child);
+				} else {
+					return subseteq(`B, `A, child);
+				}
+			}
+		}
+		throw new IllegalArgumentException("Can't find set equality in: "
+				+ child);
 	}
 
 }

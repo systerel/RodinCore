@@ -54,6 +54,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.DomP
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.Hypothesis;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.RanProjection;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.SetExtensionMember;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.RelationToCartesian;
+import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale.EqualToSubset;
 
 /**
  * Extract useful membership predicates from a set of hypotheses.  Usefulness
@@ -69,7 +71,7 @@ public class MembershipExtractor {
 	private final List<Rationale> result;
 
 	%include {FormulaV2.tom}
-	
+
 	public MembershipExtractor(MembershipGoalRules rf, Expression member,
 			Set<Predicate> hyps) {
 		this.rf = rf;
@@ -86,17 +88,23 @@ public class MembershipExtractor {
 	}
 
 	private void extract(final Predicate hyp) {
+		final Rationale rat = new Hypothesis(hyp, rf);
 		%match (hyp) {
 			In(_, _) -> {
-				extractIn(new Hypothesis(hyp, rf));
+				extractIn(rat);
 			}
-			(Subset|SubsetEq)(A, B) -> {
-				extractSubset(`A, `B, new Hypothesis(hyp, rf));
+			(Subset|SubsetEq)(_, _) -> {
+				extractSubset(rat);
 			}
-
-			// TODO also extension sets included or equal into something
-			// TODO same with extensions such as union around eset.
-			// TODO same when eset is last member of overriding.
+			Equal(A, B) -> {
+				// Ensure `A is a set
+				if (`A.getType().getBaseType() != null) {
+					extractSubset(new EqualToSubset(true, rf.subseteq(`A, `B),
+							rat, rf));
+					extractSubset(new EqualToSubset(false, rf.subseteq(`B, `A),
+							rat, rf));
+				}
+			}
 
 			// TODO Simplify rhs when restrictive
 			// TODO a: dom(f;g;h) => a: dom(f;g) and similar
@@ -112,31 +120,48 @@ public class MembershipExtractor {
 			 */
 		}
 	}
-		
+
 	private void extractIn(final Rationale rat) {
-		final Predicate pred = 	rat.predicate();
-		%match (Expression member, pred) {
-			x, In(x, _) -> {
+		final Predicate pred = rat.predicate();
+		%match (pred) {
+			In(x, _) && x << Expression member -> {
 				result.add(rat);
 				return;
 			}
-			_, In(Mapsto(x, y), Cprod(A, B)) -> {
+			In(Mapsto(x, y), Cprod(A, B)) -> {
 				extractIn(new DomProjection(rf.in(`x, `A), rat, rf));
 				extractIn(new RanProjection(rf.in(`y, `B), rat, rf));
 				return;
 			}
-			_, In(Mapsto(x, y), S) -> {
+			In(Mapsto(x, y), S) -> {
 				extractIn(new DomProjection(rf.in(`x, rf.dom(`S)), rat, rf));
 				extractIn(new RanProjection(rf.in(`y, rf.ran(`S)), rat, rf));
+			}
+			In(x, (Rel|Trel|Srel|Strel
+				  |Pfun|Tfun|Pinj|Tinj|Psur|Tsur|Tbij)(A, B)) -> {
+				final Expression left = `x;
+				final Expression right = rf.cprod(`A, `B);
+				final Predicate child = rf.subseteq(left,right);
+				extractSubset(new RelationToCartesian(child, rat, rf));
 			}
 		}
 	}
 
-	private void extractSubset(Expression left, Expression right, Rationale rat) {
+	private void extractSubset(Rationale rat) {
+		final Predicate pred = rat.predicate();
+		final int tag = pred.getTag();
+		assert tag == SUBSETEQ || tag == SUBSET;
+		final RelationalPredicate rpred = (RelationalPredicate) pred;
+		final Expression left = rpred.getLeft();
+		final Expression right = rpred.getRight();
 		%match (Expression left, Expression right) {
 			SetExtension(eList(_*,x,_*)), S -> {
 				extractIn(new SetExtensionMember(`x, rf.in(`x, `S), rat, rf));
 			}
+
+			// TODO same with extensions such as union around eset.
+			// TODO same when eset is last member of overriding.
+
 		}
 	}
 
