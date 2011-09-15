@@ -94,9 +94,9 @@ public abstract class AbstractExtractor {
 				// Ensure `A is a set
 				if (`A.getType().getBaseType() != null) {
 					extractSubset(new EqualToSubset(true, rf.subseteq(`A, `B),
-							rat, rf));
+							rat));
 					extractSubset(new EqualToSubset(false, rf.subseteq(`B, `A),
-							rat, rf));
+							rat));
 				}
 			}
 		}
@@ -108,7 +108,7 @@ public abstract class AbstractExtractor {
 			In(x, (Rel|Trel|Srel|Strel
 				  |Pfun|Tfun|Pinj|Tinj|Psur|Tsur|Tbij)(A, B)) -> {
 				final Predicate child = rf.subseteq(`x, rf.cprod(`A, `B));
-				extractSubset(new RelationToCartesian(child, rat, rf));
+				extractSubset(new RelationToCartesian(child, rat));
 			}
 		}
 	}

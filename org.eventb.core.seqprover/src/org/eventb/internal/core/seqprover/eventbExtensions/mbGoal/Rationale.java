@@ -38,9 +38,8 @@ public abstract class Rationale {
 
 		private final Rationale child;
 
-		public Unary(Predicate predicate, Rationale child,
-				MembershipGoalRules rf) {
-			super(predicate, rf);
+		public Unary(Predicate predicate, Rationale child) {
+			super(predicate, child.ruleFactory());
 			this.child = child;
 		}
 
@@ -57,9 +56,8 @@ public abstract class Rationale {
 
 		protected final boolean simplify;
 
-		public Projection(boolean simplify, Predicate predicate,
-				Rationale child, MembershipGoalRules rf) {
-			super(predicate, child, rf);
+		public Projection(boolean simplify, Predicate predicate, Rationale child) {
+			super(predicate, child);
 			this.simplify = simplify;
 		}
 
@@ -68,8 +66,8 @@ public abstract class Rationale {
 	public static class DomProjection extends Projection {
 
 		public DomProjection(boolean simplify, Predicate predicate,
-				Rationale child, MembershipGoalRules rf) {
-			super(simplify, predicate, child, rf);
+				Rationale child) {
+			super(simplify, predicate, child);
 		}
 
 		@Override
@@ -82,8 +80,8 @@ public abstract class Rationale {
 	public static class RanProjection extends Projection {
 
 		public RanProjection(boolean simplify, Predicate predicate,
-				Rationale child, MembershipGoalRules rf) {
-			super(simplify, predicate, child, rf);
+				Rationale child) {
+			super(simplify, predicate, child);
 		}
 
 		@Override
@@ -98,8 +96,8 @@ public abstract class Rationale {
 		private final Expression member;
 
 		public SetExtensionMember(Expression member, Predicate predicate,
-				Rationale child, MembershipGoalRules rf) {
-			super(predicate, child, rf);
+				Rationale child) {
+			super(predicate, child);
 			this.member = member;
 		}
 
@@ -112,9 +110,8 @@ public abstract class Rationale {
 
 	public static class RelationToCartesian extends Unary {
 
-		public RelationToCartesian(Predicate predicate, Rationale child,
-				MembershipGoalRules rf) {
-			super(predicate, child, rf);
+		public RelationToCartesian(Predicate predicate, Rationale child) {
+			super(predicate, child);
 		}
 
 		@Override
@@ -129,8 +126,8 @@ public abstract class Rationale {
 		private final boolean leftToRight;
 
 		public EqualToSubset(boolean leftToRight, Predicate predicate,
-				Rationale child, MembershipGoalRules rf) {
-			super(predicate, child, rf);
+				Rationale child) {
+			super(predicate, child);
 			this.leftToRight = leftToRight;
 		}
 

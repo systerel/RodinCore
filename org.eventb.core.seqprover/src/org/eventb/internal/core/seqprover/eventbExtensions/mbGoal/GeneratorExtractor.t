@@ -91,9 +91,9 @@ public class GeneratorExtractor extends AbstractExtractor {
 			A, B -> {
 				if (`A.getType().getSource() != null) {
 					extractSubset(new DomProjection(false, rf.subset(
-						strict, rf.dom(`A), rf.dom(`B)), rat, rf));
+						strict, rf.dom(`A), rf.dom(`B)), rat));
 					extractSubset(new RanProjection(false, rf.subset(
-						strict, rf.ran(`A), rf.ran(`B)), rat, rf));
+						strict, rf.ran(`A), rf.ran(`B)), rat));
 				}
 			}
 		}

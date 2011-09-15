@@ -110,12 +110,12 @@ public class MembershipExtractor extends AbstractExtractor {
 				return;
 			}
 			In(Mapsto(x, y), Cprod(A, B)) -> {
-				extractIn(new DomProjection(true, rf.in(`x, `A), rat, rf));
-				extractIn(new RanProjection(true, rf.in(`y, `B), rat, rf));
+				extractIn(new DomProjection(true, rf.in(`x, `A), rat));
+				extractIn(new RanProjection(true, rf.in(`y, `B), rat));
 			}
 			In(Mapsto(x, y), S) -> {
-				extractIn(new DomProjection(false, rf.in(`x, rf.dom(`S)), rat, rf));
-				extractIn(new RanProjection(false, rf.in(`y, rf.ran(`S)), rat, rf));
+				extractIn(new DomProjection(false, rf.in(`x, rf.dom(`S)), rat));
+				extractIn(new RanProjection(false, rf.in(`y, rf.ran(`S)), rat));
 			}
 		}
 		// Must be after detection of useful membership
@@ -126,7 +126,7 @@ public class MembershipExtractor extends AbstractExtractor {
 			Expression right, Rationale rat) {
 		%match (Expression left, Expression right) {
 			SetExtension(eList(_*,x,_*)), S -> {
-				extractIn(new SetExtensionMember(`x, rf.in(`x, `S), rat, rf));
+				extractIn(new SetExtensionMember(`x, rf.in(`x, `S), rat));
 			}
 
 			// TODO same with extensions such as union around eset.
