@@ -19,6 +19,9 @@ import static org.eventb.core.ast.Formula.DOMSUB;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.KDOM;
+import static org.eventb.core.ast.Formula.KID_GEN;
+import static org.eventb.core.ast.Formula.KPRJ1_GEN;
+import static org.eventb.core.ast.Formula.KPRJ2_GEN;
 import static org.eventb.core.ast.Formula.KRAN;
 import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.OVR;
@@ -1034,7 +1037,9 @@ public class MembershipGoal extends HypothesesReasoner {
 				: null;
 		final Rule.Expr expr = new Rule.Expr(expression, rule.ff);
 		final MyPosition children = position.removeFirstChild();
-
+		final Rule.Domain domain = new Rule.Domain(expr);
+		final Rule.Range range = new Rule.Range(expr);
+		final Rule.Converse converse = new Rule.Converse(expr);
 		switch (expression.getTag()) {
 		case CPROD:
 			map.put(expression, new PosRule(position, rule));
@@ -1045,7 +1050,7 @@ public class MembershipGoal extends HypothesesReasoner {
 				final BinaryExpression cprod = rule.ff.makeBinaryExpression(
 						CPROD, biExpCRight, biExpCLeft, null);
 				final Rule.SimpConvCProdRight sccpr = new Rule.SimpConvCProdRight(
-						new Rule.Converse(expr));
+						converse);
 				final Rule<RelationalPredicate> finalizedCONV = finalizeRule(
 						children, sccpr);
 				final Rule.Composition compCONV = new Rule.Composition(rule,
@@ -1091,6 +1096,234 @@ public class MembershipGoal extends HypothesesReasoner {
 					.addChildStartNorm(CONVERSE);
 			map.put(child, new PosRule(plusCONVERSE, rule));
 			map.putAll(getEquivalentExp(child, plusCONVERSE, rule));
+			break;
+		// TODO à partir d'ici
+		case RANRES:
+			map.put(expression, new PosRule(position, rule));
+			switch (position.getFirstChild()) {
+			case KRAN:
+				final Rule.SimpRanRanresRight ranRanres = new Rule.SimpRanRanresRight(
+						range);
+				final Rule<RelationalPredicate> finalizedRanRanres = finalizeRule(
+						children, ranRanres);
+				final Rule.Composition compRanRanres = new Rule.Composition(
+						rule, finalizedRanRanres);
+				switch (binExp.getLeft().getTag()) {
+				case KPRJ1_GEN:
+				case KPRJ2_GEN:
+				case KID_GEN:
+					map.putAll(getEquivalentExp(binExp.getRight(), children,
+							compRanRanres));
+					break;
+				default: // TODO mettre pourquoi on ne traite pas le cas ran(f)
+							// (déjà traité d'autre part)
+					final Expression[] members = {
+							rule.ff.makeUnaryExpression(KRAN, binExp.getLeft(),
+									null), binExp.getRight() };
+					final AssociativeExpression inter = rule.ff
+							.makeAssociativeExpression(BINTER, members, null);
+					map.put(inter, new PosRule(children, finalizedRanRanres));
+					final Rule.ContBInter contBInter = new Rule.ContBInter(
+							ranRanres, binExp.getRight());
+					final Rule.Composition comp = new Rule.Composition(rule,
+							finalizeRule(children, contBInter));
+					map.putAll(getEquivalentExp(binExp.getRight(), children,
+							comp));
+				}
+				break;
+			case KDOM:
+				switch (binExp.getLeft().getTag()) {
+				case KPRJ1_GEN:
+					if (children.getFirstChild() == KDOM) {
+						final Rule.SimpDomDomRanresPrj1Right domDomRanresPrj1 = new Rule.SimpDomDomRanresPrj1Right(
+								new Rule.Domain(domain));
+						final Rule.Composition compDomDomRanresPrj1 = new Rule.Composition(
+								rule, finalizeRule(children.removeFirstChild(),
+										domDomRanresPrj1));
+						map.putAll(getEquivalentExp(binExp.getRight(),
+								children.removeFirstChild(),
+								compDomDomRanresPrj1));
+					}
+					break;
+				case KPRJ2_GEN:
+					if (children.getFirstChild() == KRAN) {
+						final Rule.SimpRanDomRanresPrj2Right ranDomRanresPrj2 = new Rule.SimpRanDomRanresPrj2Right(
+								new Rule.Range(domain));
+						final Rule.Composition compRanDomRanresPrj2 = new Rule.Composition(
+								rule, finalizeRule(children.removeFirstChild(),
+										ranDomRanresPrj2));
+						map.putAll(getEquivalentExp(binExp.getRight(),
+								children.removeFirstChild(),
+								compRanDomRanresPrj2));
+					}
+					break;
+				case KID_GEN:
+					final Rule.SimpDomRanresIdRight domRanresId = new Rule.SimpDomRanresIdRight(
+							domain);
+					map.putAll(getEquivalentExp(
+							binExp.getRight(),
+							children,
+							new Rule.Composition(rule, finalizeRule(children,
+									domRanresId))));
+					break;
+				}
+				break;
+			case CONVERSE:
+				if (binExp.getLeft().getTag() == KID_GEN) {
+					final Rule.Composition compConvRanres = new Rule.Composition(
+							rule, finalizeRule(children, converse));
+					map.putAll(getEquivalentExp(binExp, children,
+							compConvRanres));
+				} else {
+					final Rule.SimpConvRanresRight convRanres = new Rule.SimpConvRanresRight(
+							converse);
+					final Rule.Composition compConvRanres = new Rule.Composition(
+							rule, finalizeRule(children, convRanres));
+					final BinaryExpression simpConvRanres = rule.ff
+							.makeBinaryExpression(DOMRES, binExp.getRight(),
+									rule.ff.makeUnaryExpression(CONVERSE,
+											binExp.getLeft(), null), null);
+					map.putAll(getEquivalentExp(simpConvRanres, children,
+							compConvRanres));
+				}
+				break;
+			default:
+			}
+			break;
+		case DOMRES:
+			map.put(expression, new PosRule(position, rule));
+			switch (position.getFirstChild()) {
+			case KRAN:
+				Rule.Composition compSimpRanDomres = null;
+				try {
+					compSimpRanDomres = new Rule.Composition(rule,
+							finalizeRule(children,
+									new Rule.SimpRanDomresKxxRight(range)));
+				} catch (IllegalArgumentException iae) {
+					// TODO: handle exception
+					break;
+				}
+				switch (binExp.getRight().getTag()) {
+				case KPRJ1_GEN:
+					final UnaryExpression srdkdom = rule.ff
+							.makeUnaryExpression(KDOM, binExp.getLeft(), null);
+					map.putAll(getEquivalentExp(srdkdom, children,
+							compSimpRanDomres));
+					break;
+				case KPRJ2_GEN:
+					final UnaryExpression srdkran = rule.ff
+							.makeUnaryExpression(KRAN, binExp.getLeft(), null);
+					;
+					map.putAll(getEquivalentExp(srdkran, children,
+							compSimpRanDomres));
+					break;
+				case KID_GEN:
+					map.putAll(getEquivalentExp(binExp.getLeft(), children,
+							compSimpRanDomres));
+					break;
+				default:
+				}
+				break;
+			case KDOM:
+				final Rule.SimpDomDomresRight domDomres = new Rule.SimpDomDomresRight(
+						domain);
+				final Rule.Composition compDomDomres = new Rule.Composition(
+						rule, finalizeRule(children, domDomres));
+				switch (position.getFirstChild()) {
+				case KPRJ1_GEN:
+				case KPRJ2_GEN:
+				case KID_GEN:
+					map.putAll(getEquivalentExp(binExp.getLeft(), children,
+							compDomDomres));
+				default:
+					final Expression[] members = {
+							rule.ff.makeUnaryExpression(KDOM,
+									binExp.getRight(), null), binExp.getLeft() };
+					final AssociativeExpression inter = rule.ff
+							.makeAssociativeExpression(BINTER, members, null);
+					map.put(inter, new PosRule(children, compDomDomres));
+					final Rule.ContBInter domDomresBInter = new Rule.ContBInter(
+							compDomDomres, binExp.getLeft());
+					map.putAll(getEquivalentExp(binExp.getLeft(), children,
+							domDomresBInter));
+				}
+			case CONVERSE:
+				if (binExp.getRight().getTag() == KID_GEN) {
+					final Rule.Composition compConvDomres = new Rule.Composition(
+							rule, finalizeRule(children, converse));
+					final BinaryExpression newRanres = rule.ff
+							.makeBinaryExpression(RANRES, binExp.getRight(),
+									binExp.getLeft(), null);
+					map.putAll(getEquivalentExp(newRanres, children,
+							compConvDomres));
+				} else {
+					final Rule.SimpConvDomresRight convDomres = new Rule.SimpConvDomresRight(
+							converse);
+					final Rule.Composition compConvDomres = new Rule.Composition(
+							rule, finalizeRule(children, convDomres));
+					final UnaryExpression conv = rule.ff.makeUnaryExpression(
+							CONVERSE, binExp.getRight(), null);
+					final BinaryExpression simpConv = rule.ff
+							.makeBinaryExpression(RANRES, conv,
+									binExp.getLeft(), null);
+					map.putAll(getEquivalentExp(simpConv, children,
+							compConvDomres));
+				}
+			default:
+			}
+			break;
+		case RANSUB:
+			map.put(expression, new PosRule(position, rule));
+			switch (position.getFirstChild()) {
+			case KRAN:
+				switch (binExp.getLeft().getTag()) {
+				case KPRJ1_GEN:
+				case KPRJ2_GEN:
+				case KID_GEN:
+					break;
+				default:
+					final Rule.SimpRanRansubRight ranRansub = new Rule.SimpRanRansubRight(
+							range);
+					final Rule.Composition compRanRansub = new Rule.Composition(
+							rule, finalizeRule(children, ranRansub));
+					final UnaryExpression ran = rule.ff.makeUnaryExpression(
+							KRAN, binExp.getLeft(), null);
+					final BinaryExpression setminus = rule.ff
+							.makeBinaryExpression(SETMINUS, ran,
+									binExp.getRight(), null);
+					map.put(setminus, new PosRule(children, compRanRansub));
+					break;
+				}
+			case CONVERSE:
+
+			default:
+			}
+			break;
+		case DOMSUB:
+			map.put(expression, new PosRule(position, rule));
+			switch (position.getFirstChild()) {
+			case KDOM:
+				switch (binExp.getRight().getTag()) {
+				case KPRJ1_GEN:
+				case KPRJ2_GEN:
+				case KID_GEN:
+					break;
+				default:
+					final Rule.SimpDomDomsubRight domDomsub = new Rule.SimpDomDomsubRight(
+							domain);
+					final Rule.Composition compDomDomsub = new Rule.Composition(
+							rule, finalizeRule(children, domDomsub));
+					final UnaryExpression dom = rule.ff.makeUnaryExpression(
+							KDOM, binExp.getRight(), null);
+					final BinaryExpression setminus = rule.ff
+							.makeBinaryExpression(SETMINUS, dom,
+									binExp.getLeft(), null);
+					map.put(setminus, new PosRule(children, compDomDomsub));
+					break;
+				}
+			case CONVERSE:
+			default:
+			}
 			break;
 		default:
 			map.put(expression, new PosRule(position, rule));
