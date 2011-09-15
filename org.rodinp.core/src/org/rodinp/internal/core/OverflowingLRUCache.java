@@ -149,7 +149,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	}
 
 	public double fillingRatio() {
-		return (fCurrentSpace + fOverflow) * 100.0 / getSpaceLimit();
+		return (getCurrentSpace() + fOverflow) * 100.0 / getSpaceLimit();
 	}
 
 	/**
@@ -182,9 +182,10 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	protected boolean makeSpace(int space) {
 
 		final int limit = getSpaceLimit();
+		final int currentSpace = getCurrentSpace();
 		if (fOverflow == 0) {
 			/* if space is already available */
-			if (fCurrentSpace + space <= limit) {
+			if (currentSpace + space <= limit) {
 				return true;
 			}
 		}
@@ -200,7 +201,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 			// (by a call to get(Object) for example)
 			fTimestampsOn = false;
 
-			while (fCurrentSpace + spaceNeeded > limit && entry != null) {
+			while (currentSpace + spaceNeeded > limit && entry != null) {
 				this.privateRemoveEntry(entry, false, false);
 				entry = entry._fPrevious;
 			}
@@ -209,13 +210,13 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 		}
 
 		/* check again, since we may have aquired enough space */
-		if (fCurrentSpace + space <= limit) {
+		if (currentSpace + space <= limit) {
 			fOverflow = 0;
 			return true;
 		}
 
 		/* update fOverflow */
-		fOverflow = fCurrentSpace + space - limit;
+		fOverflow = currentSpace + space - limit;
 		return false;
 	}
 
@@ -272,8 +273,6 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 		if (!shuffle) {
 			if (external) {
 				cache.removeEntry(entry._fKey);
-				fCurrentSpace -= entry._fSpace;
-				privateNotifyDeletionFromCache(entry);
 			} else {
 				if (!close(entry))
 					return;
@@ -285,8 +284,6 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 				} else {
 					// basic removal
 					cache.removeEntry(entry._fKey);
-					fCurrentSpace -= entry._fSpace;
-					privateNotifyDeletionFromCache(entry);
 				}
 			}
 		}
@@ -325,7 +322,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 		/* Check whether there's an entry in the cache */
 		int newSpace = spaceFor(value);
 		LRUCacheEntry<K,V> entry = cache.getEntry(key);
-
+		// FIXME assumes hard entry
 		if (entry != null) {
 
 			/**
@@ -334,12 +331,11 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 			 * cache within budget
 			 */
 			int oldSpace = entry._fSpace;
-			int newTotal = fCurrentSpace - oldSpace + newSpace;
+			int newTotal = getCurrentSpace() - oldSpace + newSpace;
 			if (newTotal <= getSpaceLimit()) {
 				updateTimestamp(entry);
 				entry._fValue = value;
 				entry._fSpace = newSpace;
-				fCurrentSpace = newTotal;
 				fOverflow = 0;
 				return value;
 			} else {

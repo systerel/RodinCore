@@ -95,7 +95,7 @@ public class LRUCache<K, V> implements Cloneable {
 		}
 	}
 
-	protected static class HardCache<K, V> {
+	protected static class HardAndSoftCache<K, V> {
 		
 		/**
 		 * Maximum space allowed in hard cache
@@ -107,14 +107,28 @@ public class LRUCache<K, V> implements Cloneable {
 		 */
 		private final Hashtable<K, LRUCacheEntry<K, V>> fEntryTable;
 		
-		public HardCache(int hardSize) {
+//		private final Hashtable<K, SoftReference<LRUCacheEntry<K, V>>> softEntryTable = new Hashtable<K, SoftReference<LRUCacheEntry<K, V>>>();
+		
+		public HardAndSoftCache(int hardSize) {
 			fSpaceLimit = hardSize;
 			fEntryTable = new Hashtable<K, LRUCacheEntry<K, V>>(hardSize);
 		}
 		
 		public LRUCacheEntry<K, V> getEntry(K key) {
+//			final LRUCacheEntry<K, V> softEntry = getSoftEntry(key);
+//			if (softEntry != null) {
+//				return softEntry;
+//			}
 			return fEntryTable.get(key);
 		}
+		
+//		private LRUCacheEntry<K, V> getSoftEntry(K key) {
+//			final SoftReference<LRUCacheEntry<K, V>> softReference = softEntryTable.get(key);
+//			if (softReference == null) {
+//				return null;
+//			}
+//			return softReference.get();
+//		}
 		
 		public void putEntry(LRUCacheEntry<K, V> entry) {
 			fEntryTable.put(entry._fKey, entry);
@@ -122,13 +136,15 @@ public class LRUCache<K, V> implements Cloneable {
 		
 		public void removeEntry(K key) {
 			fEntryTable.remove(key);
+//			softEntryTable.remove(key);
 		}
 		
 		public void clear() {
 			fEntryTable.clear();
+//			softEntryTable.clear();
 		}
 		
-		public int size() {
+		public int getHardSize() {
 			return fEntryTable.size();
 		}
 
@@ -142,16 +158,11 @@ public class LRUCache<K, V> implements Cloneable {
 	}
 	
 	/**
-	 * Amount of cache space used so far
-	 */
-	protected int fCurrentSpace;
-
-	/**
 	 * Counter for handing out sequential timestamps
 	 */
 	protected int fTimestampCounter;
 
-	protected final HardCache<K, V> cache;
+	protected final HardAndSoftCache<K, V> cache;
 	
 	/**
 	 * Start of queue (most recently used entry)
@@ -183,9 +194,9 @@ public class LRUCache<K, V> implements Cloneable {
 	 *            Size of Cache
 	 */
 	public LRUCache(int size) {
-		fTimestampCounter = fCurrentSpace = 0;
+		fTimestampCounter = 0;
 		fEntryQueue = fEntryQueueTail = null;
-		cache = new HardCache<K, V>(size);
+		cache = new HardAndSoftCache<K, V>(size);
 	}
 
 	/**
@@ -211,12 +222,10 @@ public class LRUCache<K, V> implements Cloneable {
 	 * Flushes all entries from the cache.
 	 */
 	public void flush() {
-		fCurrentSpace = 0;
 		LRUCacheEntry<K, V> entry = fEntryQueueTail; // Remember last entry
 		cache.clear(); // Clear it out
 		fEntryQueue = fEntryQueueTail = null;
-		while (entry != null) { // send deletion notifications in LRU order
-			privateNotifyDeletionFromCache(entry);
+		while (entry != null) {
 			entry = entry._fPrevious;
 		}
 	}
@@ -255,7 +264,7 @@ public class LRUCache<K, V> implements Cloneable {
 		if (entry == null) {
 			return null;
 		}
-
+		//FIXME assumes in hard cache
 		this.updateTimestamp(entry);
 		return entry._fValue;
 	}
@@ -264,7 +273,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 * Returns the amount of space that is current used in the cache.
 	 */
 	public int getCurrentSpace() {
-		return fCurrentSpace;
+		return cache.getHardSize();
 	}
 
 	/**
@@ -321,7 +330,7 @@ public class LRUCache<K, V> implements Cloneable {
 		limit = this.getSpaceLimit();
 
 		/* if space is already available */
-		if (fCurrentSpace + space <= limit) {
+		if (getCurrentSpace() + space <= limit) {
 			return true;
 		}
 
@@ -331,7 +340,8 @@ public class LRUCache<K, V> implements Cloneable {
 		}
 
 		/* Free up space by removing oldest entries */
-		while (fCurrentSpace + space > limit && fEntryQueueTail != null) {
+		while (getCurrentSpace() + space > limit && fEntryQueueTail != null) {
+			// FIXME do'nt remove, put in soft cache
 			this.privateRemoveEntry(fEntryQueueTail, false);
 		}
 		return true;
@@ -366,7 +376,6 @@ public class LRUCache<K, V> implements Cloneable {
 
 		if (!shuffle) {
 			cache.putEntry(entry);
-			fCurrentSpace += entry._fSpace;
 		}
 
 		entry._fTimestamp = fTimestampCounter++;
@@ -381,15 +390,6 @@ public class LRUCache<K, V> implements Cloneable {
 		}
 
 		fEntryQueue = entry;
-	}
-
-	/**
-	 * An entry has been removed from the cache, for example because it has
-	 * fallen off the bottom of the LRU queue. Subclasses could over-ride this
-	 * to implement a persistent cache below the LRU cache.
-	 */
-	protected void privateNotifyDeletionFromCache(LRUCacheEntry<K, V> entry) {
-		// Default is NOP.
 	}
 
 	/**
@@ -408,8 +408,6 @@ public class LRUCache<K, V> implements Cloneable {
 
 		if (!shuffle) {
 			cache.removeEntry(entry._fKey);
-			fCurrentSpace -= entry._fSpace;
-			privateNotifyDeletionFromCache(entry);
 		}
 
 		/* if this was the first entry */
@@ -444,7 +442,7 @@ public class LRUCache<K, V> implements Cloneable {
 		/* Check whether there's an entry in the cache */
 		newSpace = spaceFor(value);
 		entry = cache.getEntry(key);
-
+		// FIXME assumes in hard cache
 		if (entry != null) {
 
 			/**
@@ -458,7 +456,6 @@ public class LRUCache<K, V> implements Cloneable {
 				updateTimestamp(entry);
 				entry._fValue = value;
 				entry._fSpace = newSpace;
-				this.fCurrentSpace = newTotal;
 				return value;
 			} else {
 				privateRemoveEntry(entry, false);
@@ -502,7 +499,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 */
 	@Override
 	public String toString() {
-		return "LRUCache " + (fCurrentSpace * 100.0 / cache.getSpaceLimit()) + "% full\n" + //$NON-NLS-1$ //$NON-NLS-2$
+		return "LRUCache " + (getCurrentSpace() * 100.0 / cache.getSpaceLimit()) + "% full\n" + //$NON-NLS-1$ //$NON-NLS-2$
 				this.toStringContents();
 	}
 
@@ -532,7 +529,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 */
 	protected String toStringContents() {
 		StringBuffer result = new StringBuffer();
-		ComparableEntry[] elements = new ComparableEntry[cache.size()];
+		ComparableEntry[] elements = new ComparableEntry[cache.getHardSize()];
 		ICacheEnumeration<K, V> enumeration = keysAndValues();
 
 		// Get the elements of the cache
