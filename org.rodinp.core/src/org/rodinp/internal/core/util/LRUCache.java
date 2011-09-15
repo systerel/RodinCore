@@ -62,11 +62,6 @@ public class LRUCache<K, V> implements Cloneable {
 		public int _fTimestamp;
 
 		/**
-		 * Cache footprint of this entry
-		 */
-		public int _fSpace;
-
-		/**
 		 * Previous entry in queue
 		 */
 		public LRUCacheEntry<KI, VI> _fPrevious;
@@ -80,10 +75,9 @@ public class LRUCache<K, V> implements Cloneable {
 		 * Creates a new instance of the receiver with the provided values for
 		 * key, value, and space.
 		 */
-		public LRUCacheEntry(KI key, VI value, int space) {
+		public LRUCacheEntry(KI key, VI value) {
 			_fKey = key;
 			_fValue = value;
-			_fSpace = space;
 		}
 
 		/**
@@ -212,7 +206,7 @@ public class LRUCache<K, V> implements Cloneable {
 		/* Preserve order of entries by copying from oldest to newest */
 		qEntry = this.fEntryQueueTail;
 		while (qEntry != null) {
-			newCache.privateAdd(qEntry._fKey, qEntry._fValue, qEntry._fSpace);
+			newCache.privateAdd(qEntry._fKey, qEntry._fValue);
 			qEntry = qEntry._fPrevious;
 		}
 		return newCache;
@@ -355,13 +349,13 @@ public class LRUCache<K, V> implements Cloneable {
 	}
 
 	/**
-	 * Adds an entry for the given key/value/space.
+	 * Adds an entry for the given key/value.
 	 */
-	protected void privateAdd(K key, V value, int space) {
+	protected void privateAdd(K key, V value) {
 
 		LRUCacheEntry<K, V> entry;
 
-		entry = new LRUCacheEntry<K, V>(key, value, space);
+		entry = new LRUCacheEntry<K, V>(key, value);
 		this.privateAddEntry(entry, false);
 	}
 
@@ -436,33 +430,23 @@ public class LRUCache<K, V> implements Cloneable {
 	 */
 	public V put(K key, V value) {
 
-		int newSpace, oldSpace, newTotal;
 		LRUCacheEntry<K, V> entry;
 
 		/* Check whether there's an entry in the cache */
-		newSpace = spaceFor(value);
 		entry = cache.getEntry(key);
 		// FIXME assumes in hard cache
 		if (entry != null) {
 
-			/**
-			 * Replace the entry in the cache if it would not overflow the
-			 * cache. Otherwise flush the entry and re-add it so as to keep
-			 * cache within budget
-			 */
-			oldSpace = entry._fSpace;
-			newTotal = getCurrentSpace() - oldSpace + newSpace;
-			if (newTotal <= getSpaceLimit()) {
+			if (getCurrentSpace() <= getSpaceLimit()) {
 				updateTimestamp(entry);
 				entry._fValue = value;
-				entry._fSpace = newSpace;
 				return value;
 			} else {
 				privateRemoveEntry(entry, false);
 			}
 		}
-		if (makeSpace(newSpace)) {
-			privateAdd(key, value, newSpace);
+		if (makeSpace(1)) {
+			privateAdd(key, value);
 		}
 		return value;
 	}
@@ -484,13 +468,6 @@ public class LRUCache<K, V> implements Cloneable {
 		V value = entry._fValue;
 		this.privateRemoveEntry(entry, false);
 		return value;
-	}
-
-	/**
-	 * Returns the space taken by the given value.
-	 */
-	protected int spaceFor(V value) {
-		return 1;
 	}
 
 	/**

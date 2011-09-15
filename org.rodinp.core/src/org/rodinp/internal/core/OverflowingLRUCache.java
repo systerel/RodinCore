@@ -110,7 +110,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 		/* Preserve order of entries by copying from oldest to newest */
 		qEntry = this.fEntryQueueTail;
 		while (qEntry != null) {
-			newCache.privateAdd(qEntry._fKey, qEntry._fValue, qEntry._fSpace);
+			newCache.privateAdd(qEntry._fKey, qEntry._fValue);
 			qEntry = qEntry._fPrevious;
 		}
 		return newCache;
@@ -202,6 +202,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 			fTimestampsOn = false;
 
 			while (currentSpace + spaceNeeded > limit && entry != null) {
+				// FIXME don't remove: move to soft
 				this.privateRemoveEntry(entry, false, false);
 				entry = entry._fPrevious;
 			}
@@ -320,22 +321,13 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 			shrink();
 
 		/* Check whether there's an entry in the cache */
-		int newSpace = spaceFor(value);
 		LRUCacheEntry<K,V> entry = cache.getEntry(key);
 		// FIXME assumes hard entry
 		if (entry != null) {
 
-			/**
-			 * Replace the entry in the cache if it would not overflow the
-			 * cache. Otherwise flush the entry and re-add it so as to keep
-			 * cache within budget
-			 */
-			int oldSpace = entry._fSpace;
-			int newTotal = getCurrentSpace() - oldSpace + newSpace;
-			if (newTotal <= getSpaceLimit()) {
+			if (getCurrentSpace() <= getSpaceLimit()) {
 				updateTimestamp(entry);
 				entry._fValue = value;
-				entry._fSpace = newSpace;
 				fOverflow = 0;
 				return value;
 			} else {
@@ -344,11 +336,11 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 		}
 
 		// attempt to make new space
-		makeSpace(newSpace);
+		makeSpace(1);
 
 		// add without worring about space, it will
 		// be handled later in a makeSpace call
-		privateAdd(key, value, newSpace);
+		privateAdd(key, value);
 
 		return value;
 	}

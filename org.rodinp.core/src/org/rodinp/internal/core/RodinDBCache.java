@@ -32,7 +32,7 @@ public class RodinDBCache {
 	// average 25552 bytes per project.
 	private static final int DEFAULT_PROJECT_SIZE = 5;
 
-	// max number of files in hard cache
+	// number of files in hard cache (absolute minimum = 3)
 	private static final int DEFAULT_OPENABLE_SIZE = 5;
 
 	private static final int DEFAULT_BUFFER_SIZE = DEFAULT_OPENABLE_SIZE;
