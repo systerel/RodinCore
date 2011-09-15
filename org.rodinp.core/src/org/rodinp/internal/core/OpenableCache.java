@@ -59,8 +59,8 @@ public class OpenableCache extends
 	 * Returns a new instance of the receiver.
 	 */
 	@Override
-	protected OpenableCache newInstance(int size, int overflow) {
-		return new OpenableCache(size, overflow);
+	protected OpenableCache newInstance(int newSize, int overflow) {
+		return new OpenableCache(newSize, overflow);
 	}
 
 }

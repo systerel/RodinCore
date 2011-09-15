@@ -98,11 +98,17 @@ public class LRUCache<K, V> implements Cloneable {
 	protected static class HardCache<K, V> {
 		
 		/**
+		 * Maximum space allowed in hard cache
+		 */
+		private final int fSpaceLimit;
+
+		/**
 		 * Hash table for fast random access to cache entries
 		 */
 		private final Hashtable<K, LRUCacheEntry<K, V>> fEntryTable;
 		
 		public HardCache(int hardSize) {
+			fSpaceLimit = hardSize;
 			fEntryTable = new Hashtable<K, LRUCacheEntry<K, V>>(hardSize);
 		}
 		
@@ -126,6 +132,10 @@ public class LRUCache<K, V> implements Cloneable {
 			return fEntryTable.size();
 		}
 
+		public int getSpaceLimit() {
+			return fSpaceLimit;
+		}
+
 		public Enumeration<LRUCacheEntry<K, V>> elements() {
 			return fEntryTable.elements();
 		}
@@ -135,11 +145,6 @@ public class LRUCache<K, V> implements Cloneable {
 	 * Amount of cache space used so far
 	 */
 	protected int fCurrentSpace;
-
-	/**
-	 * Maximum space allowed in cache
-	 */
-	protected int fSpaceLimit;
 
 	/**
 	 * Counter for handing out sequential timestamps
@@ -181,7 +186,6 @@ public class LRUCache<K, V> implements Cloneable {
 		fTimestampCounter = fCurrentSpace = 0;
 		fEntryQueue = fEntryQueueTail = null;
 		cache = new HardCache<K, V>(size);
-		fSpaceLimit = size;
 	}
 
 	/**
@@ -191,7 +195,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 */
 	@Override
 	public LRUCache<K, V> clone() {
-		LRUCache<K, V> newCache = newInstance(fSpaceLimit);
+		LRUCache<K, V> newCache = newInstance(getSpaceLimit());
 		LRUCacheEntry<K, V> qEntry;
 
 		/* Preserve order of entries by copying from oldest to newest */
@@ -267,7 +271,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 * Returns the maximum amount of space available in the cache.
 	 */
 	public int getSpaceLimit() {
-		return fSpaceLimit;
+		return cache.getSpaceLimit();
 	}
 
 	/**
@@ -336,8 +340,8 @@ public class LRUCache<K, V> implements Cloneable {
 	/**
 	 * Returns a new LRUCache instance
 	 */
-	protected LRUCache<K, V> newInstance(int size) {
-		return new LRUCache<K, V>(size);
+	protected LRUCache<K, V> newInstance(int newSize) {
+		return new LRUCache<K, V>(newSize);
 	}
 
 	/**
@@ -486,19 +490,6 @@ public class LRUCache<K, V> implements Cloneable {
 	}
 
 	/**
-	 * Sets the maximum amount of space that the cache can store
-	 * 
-	 * @param limit
-	 *            Number of units of cache space
-	 */
-	public void setSpaceLimit(int limit) {
-		if (limit < fSpaceLimit) {
-			makeSpace(fSpaceLimit - limit);
-		}
-		fSpaceLimit = limit;
-	}
-
-	/**
 	 * Returns the space taken by the given value.
 	 */
 	protected int spaceFor(V value) {
@@ -511,7 +502,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 */
 	@Override
 	public String toString() {
-		return "LRUCache " + (fCurrentSpace * 100.0 / fSpaceLimit) + "% full\n" + //$NON-NLS-1$ //$NON-NLS-2$
+		return "LRUCache " + (fCurrentSpace * 100.0 / cache.getSpaceLimit()) + "% full\n" + //$NON-NLS-1$ //$NON-NLS-2$
 				this.toStringContents();
 	}
 

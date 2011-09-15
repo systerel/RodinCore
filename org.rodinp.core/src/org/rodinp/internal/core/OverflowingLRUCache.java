@@ -104,7 +104,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	@Override
 	public OverflowingLRUCache<K,V> clone() {
 
-		OverflowingLRUCache<K,V> newCache = newInstance(fSpaceLimit, fOverflow);
+		OverflowingLRUCache<K,V> newCache = newInstance(getSpaceLimit(), fOverflow);
 		LRUCacheEntry<K,V> qEntry;
 
 		/* Preserve order of entries by copying from oldest to newest */
@@ -149,7 +149,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	}
 
 	public double fillingRatio() {
-		return (fCurrentSpace + fOverflow) * 100.0 / fSpaceLimit;
+		return (fCurrentSpace + fOverflow) * 100.0 / getSpaceLimit();
 	}
 
 	/**
@@ -181,7 +181,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	@Override
 	protected boolean makeSpace(int space) {
 
-		int limit = fSpaceLimit;
+		final int limit = getSpaceLimit();
 		if (fOverflow == 0) {
 			/* if space is already available */
 			if (fCurrentSpace + space <= limit) {
@@ -190,7 +190,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 		}
 
 		/* Free up space by removing oldest entries */
-		int spaceNeeded = (int) ((1 - fLoadFactor) * fSpaceLimit);
+		int spaceNeeded = (int) ((1 - fLoadFactor) * limit);
 		spaceNeeded = (spaceNeeded > space) ? spaceNeeded : space;
 		LRUCacheEntry<K,V> entry = fEntryQueueTail;
 
@@ -222,7 +222,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	/**
 	 * Returns a new instance of the receiver.
 	 */
-	protected abstract OverflowingLRUCache<K,V> newInstance(int size, int overflow);
+	protected abstract OverflowingLRUCache<K,V> newInstance(int newSize, int overflow);
 
 	/**
 	 * Answers the value in the cache at the given key. If the value is not in
@@ -335,7 +335,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 			 */
 			int oldSpace = entry._fSpace;
 			int newTotal = fCurrentSpace - oldSpace + newSpace;
-			if (newTotal <= fSpaceLimit) {
+			if (newTotal <= getSpaceLimit()) {
 				updateTimestamp(entry);
 				entry._fValue = value;
 				entry._fSpace = newSpace;
@@ -384,20 +384,6 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 			fLoadFactor = newLoadFactor;
 		else
 			throw new IllegalArgumentException(Messages.cache_invalidLoadFactor);
-	}
-
-	/**
-	 * Sets the maximum amount of space that the cache can store
-	 * 
-	 * @param limit
-	 *            Number of units of cache space
-	 */
-	@Override
-	public void setSpaceLimit(int limit) {
-		if (limit < fSpaceLimit) {
-			makeSpace(fSpaceLimit - limit);
-		}
-		fSpaceLimit = limit;
 	}
 
 	/**

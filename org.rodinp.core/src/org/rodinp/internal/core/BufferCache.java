@@ -32,7 +32,7 @@ public class BufferCache extends OverflowingLRUCache<IRodinFile, Buffer> {
 	}
 
 	@Override
-	protected OverflowingLRUCache<IRodinFile, Buffer> newInstance(int size,
+	protected OverflowingLRUCache<IRodinFile, Buffer> newInstance(int newSize,
 			int overflow) {
 		return null;
 	}
