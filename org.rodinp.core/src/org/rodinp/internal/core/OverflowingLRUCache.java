@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * Strongly inspired by org.eclipse.jdt.internal.core.OverflowingLRUCache.java which is
  * 
  * Copyright (c) 2000, 2004 IBM Corporation and others.
@@ -26,35 +26,36 @@ import org.rodinp.internal.core.util.Messages;
  * <p>
  * The cache will remove elements which successfully close and all elements
  * which are explicitly removed.
- * 
+ * </p>
  * <p>
  * If the cache cannot remove enough old elements to add new elements it will
- * grow beyond <code>fSpaceLimit</code>. Later, it will attempt to shink back
+ * grow beyond <code>fSpaceLimit</code>. Later, it will attempt to shrink back
  * to the maximum space limit.
- * 
+ * </p>
+ * <p>
  * The method <code>close</code> should attempt to close the element. If the
  * element is successfully closed it will return true and the element will be
  * removed from the cache. Otherwise the element will remain in the cache.
- * 
+ * </p>
  * <p>
  * The cache implicitly attempts shrinks on calls to <code>put</code>and
- * <code>setSpaceLimit</code>. Explicitly calling the <code>shrink</code>
- * method will also cause the cache to attempt to shrink.
- * 
+ * <code>setSpaceLimit</code>. Explicitly calling the <code>shrink</code> method
+ * will also cause the cache to attempt to shrink.
+ * </p>
  * <p>
- * The cache calculates the used space of all elements which implement
- * <code>ILRUCacheable</code>. All other elements are assumed to be of size
- * one.
- * 
+ * The used space of every element is one. Hence, the notion of used space is
+ * actually a number of hardly cached elements.
+ * </p>
  * <p>
  * Use the <code>#peek(Object)</code> and <code>#disableTimestamps()</code>
  * method to circumvent the timestamp feature of the cache. This feature is
  * intended to be used only when the <code>#close(LRUCacheEntry)</code> method
  * causes changes to the cache. For example, if a parent closes its children
- * when </code>#close(LRUCacheEntry)</code> is called, it should be careful
- * not to change the LRU linked list. It can be sure it is not causing problems
- * by calling <code>#peek(Object)</code> instead of <code>#get(Object)</code>
+ * when </code>#close(LRUCacheEntry)</code> is called, it should be careful not
+ * to change the LRU linked list. It can be sure it is not causing problems by
+ * calling <code>#peek(Object)</code> instead of <code>#get(Object)</code>
  * method.
+ * </p>
  * 
  * @see LRUCache
  */

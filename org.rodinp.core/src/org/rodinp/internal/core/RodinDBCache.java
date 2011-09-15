@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,20 +29,11 @@ import org.rodinp.core.IRodinProject;
  */
 public class RodinDBCache {
 
-	private static final int BASE_VALUE = 20;
-
 	// average 25552 bytes per project.
 	private static final int DEFAULT_PROJECT_SIZE = 5;
 
-	// average 6629 bytes per openable (includes members)
-	// -> maximum size : 662900*BASE_VALUE bytes
-	// FIXME it is not clear how these values should be set
-	// setting them both to 5 solves memory issues
-	// without apparently hindering performances
-	// (5 is the number of files per compilation unit)
-	// it looks like being used as both
-	// a number of objects (map size) and memory space
-	private static final int DEFAULT_OPENABLE_SIZE = BASE_VALUE * 100;
+	// max number of files in hard cache
+	private static final int DEFAULT_OPENABLE_SIZE = 5;
 
 	private static final int DEFAULT_BUFFER_SIZE = DEFAULT_OPENABLE_SIZE;
 	

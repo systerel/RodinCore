@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * Strongly inspired by org.eclipse.jdt.internal.core.util.LRUCache.java which is
  * 
  * Copyright (c) 2000, 2004 IBM Corporation and others.
@@ -24,16 +24,16 @@ import org.rodinp.core.IRodinElement;
  * 
  * <p>
  * The data structure is based on the LRU virtual memory paging scheme.
- * 
+ * </p>
  * <p>
- * Objects can take up a variable amount of cache space by implementing the
- * <code>ILRUCacheable</code> interface.
- * 
+ * Every object takes up an amount of cache space of one. Hence, the notion of
+ * used space is actually a number of hardly cached elements.
+ * </p>
  * <p>
  * This implementation is NOT thread-safe. Synchronization wrappers would have
  * to be added to ensure atomic insertions and deletions from the cache.
+ * </p>
  * 
- * @see org.rodinp.internal.core.util.ILRUCacheable
  */
 public class LRUCache<K, V> implements Cloneable {
 
@@ -44,8 +44,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 * 
 	 * @see LRUCache
 	 */
-	// TODO put back protected when eclipse bug #216692 is fixed
-	public static class LRUCacheEntry<KI, VI> {
+	protected static class LRUCacheEntry<KI, VI> {
 
 		/**
 		 * Hash table key
@@ -478,12 +477,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 * Returns the space taken by the given value.
 	 */
 	protected int spaceFor(V value) {
-
-		if (value instanceof ILRUCacheable) {
-			return ((ILRUCacheable) value).getCacheFootprint();
-		} else {
-			return 1;
-		}
+		return 1;
 	}
 
 	/**
