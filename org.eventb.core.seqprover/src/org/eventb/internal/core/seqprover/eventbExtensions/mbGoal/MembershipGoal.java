@@ -939,7 +939,7 @@ public class MembershipGoal extends HypothesesReasoner {
 				final Rule<RelationalPredicate> eqExpRule = eqExpValue
 						.getRule();
 				if (eqExpKey.equals(expContKey) && position.equals(eqExpPos)
-						&& eqExpRule.equalsRule(computedRule)) {
+						&& eqExpRule.equals(computedRule)) {
 					map.put(eqExpKey, eqExpValue);
 				} else {
 					map.putAll(getExpressionsContaining(eqExpKey, eqExpPos,

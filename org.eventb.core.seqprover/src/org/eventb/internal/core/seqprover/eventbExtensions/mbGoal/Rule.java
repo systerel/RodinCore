@@ -99,10 +99,14 @@ public class Rule<T extends Predicate> {
 
 	// This is not the regular equals() method from Object
 	// TODO see if really needed
-	public boolean equalsRule(Rule<T> other) {
-		if (this == other) {
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
 		}
+		if (object == null || this.getClass() != object.getClass()) {
+			return false;
+		}
+		final Rule<?> other = (Rule<?>) object;
 		if (!this.ff.equals(other.ff)) {
 			return false;
 		}
@@ -110,6 +114,16 @@ public class Rule<T extends Predicate> {
 			return false;
 		}
 		return Arrays.equals(this.antecedents, other.antecedents);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ff.hashCode();
+		result = prime * result + consequent.hashCode();
+		result = prime * result + Arrays.hashCode(antecedents);
+		return result;
 	}
 
 	public String toString() {
