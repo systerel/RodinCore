@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 ETH Zurich and others.
+ * Copyright (c) 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,8 +95,23 @@ public class MembershipGoalRules {
 		return relational(SUBSETEQ, member, set, antecedents);
 	}
 
+	/**
+	 * Rule whose consequent is a given hypothesis.
+	 */
 	public <T extends Predicate> Rule<T> hypothesis(T hyp) {
 		return new Rule.Hypothesis<T>(hyp, ff);
+	}
+
+	public Predicate in(Expression member, Expression set) {
+		return ff.makeRelationalPredicate(IN, member, set, null);
+	}
+
+	public Expression dom(Expression child) {
+		return ff.makeUnaryExpression(KDOM, child, null);
+	}
+
+	public Expression ran(Expression child) {
+		return ff.makeUnaryExpression(KRAN, child, null);
 	}
 
 	// TODO put back RelationalPredicate as type argument?
@@ -126,6 +141,34 @@ public class MembershipGoalRules {
 		}
 		throw new IllegalArgumentException("Can't compose " + left
 				+ " with " + right);
+	}
+
+	public Rule<RelationalPredicate> domPrj(Rule<?> child) {
+		final Predicate childConsequent = child.getConsequent();
+		%match (childConsequent) {
+			In(Mapsto(x,_), Cprod(A,_)) -> {
+				return in(`x, `A, child);
+			}
+			In(Mapsto(x,_), S) -> {
+				return in(`x, dom(`S), child);
+			}
+		}
+		throw new IllegalArgumentException("Can't project on domain for "
+				+ child);
+	}
+
+	public Rule<RelationalPredicate> ranPrj(Rule<?> child) {
+		final Predicate childConsequent = child.getConsequent();
+		%match (childConsequent) {
+			In(Mapsto(_,y), Cprod(_,B)) -> {
+				return in(`y, `B, child);
+			}
+			In(Mapsto(_,y), S) -> {
+				return in(`y, ran(`S), child);
+			}
+		}
+		throw new IllegalArgumentException("Can't project on range for "
+				+ child);
 	}
 
 }

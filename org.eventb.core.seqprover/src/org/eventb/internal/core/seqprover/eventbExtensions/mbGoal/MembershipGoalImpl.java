@@ -16,14 +16,14 @@ import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.RelationalPredicate;
 
 public class MembershipGoalImpl {
 
@@ -36,8 +36,8 @@ public class MembershipGoalImpl {
 	// Available hypotheses
 	private final Set<Predicate> hyps;
 
-	// Subset of hypotheses that take a membership form
-	private final Set<Predicate> msHyps;
+	// Memberships that have a rationale
+	private final Map<Predicate, Rationale> knownMemberships;
 
 	// Subset of hypotheses that take an inclusionform
 	private final List<Inclusion> inclHyps;
@@ -48,20 +48,6 @@ public class MembershipGoalImpl {
 	// Goals already tried in this search thread
 	// Used to prevent loops
 	private final Set<Goal> tried;
-
-	private static final Set<Predicate> extractMemberships(Set<Predicate> hyps,
-			Expression member) {
-		final Set<Predicate> result = new HashSet<Predicate>();
-		for (final Predicate hyp : hyps) {
-			if (hyp.getTag() == IN) {
-				final RelationalPredicate rel = (RelationalPredicate) hyp;
-				if (rel.getLeft().equals(member)) {
-					result.add(hyp);
-				}
-			}
-		}
-		return result;
-	}
 
 	private static final List<Inclusion> extractInclusions(Set<Predicate> hyps,
 			final MembershipGoalRules rf) {
@@ -106,8 +92,17 @@ public class MembershipGoalImpl {
 		this.rf = new MembershipGoalRules(ff);
 		this.tried = new HashSet<Goal>();
 		this.hyps = hyps;
-		this.msHyps = extractMemberships(hyps, this.goal.member());
+		this.knownMemberships = new HashMap<Predicate, Rationale>();
 		this.inclHyps = extractInclusions(hyps, rf);
+		computeKnownMemberships();
+	}
+
+	private void computeKnownMemberships() {
+		final MembershipExtractor extractor = new MembershipExtractor(rf,
+				this.goal.member(), hyps);
+		for (final Rationale rat : extractor.extract()) {
+			knownMemberships.put(rat.predicate, rat);
+		}
 	}
 
 	/**
@@ -151,8 +146,9 @@ public class MembershipGoalImpl {
 	// Must be called only by searchNoLoop
 	private Rule<?> doSearch(Goal goal) {
 		final Predicate predicate = goal.predicate();
-		if (msHyps.contains(predicate)) {
-			return rf.hypothesis(predicate);
+		final Rationale rationale = knownMemberships.get(predicate);
+		if (rationale != null) {
+			return rationale.makeRule();
 		}
 		for (final Inclusion hyp : inclHyps) {
 			for (final Goal subGoal : hyp.generate(goal, this)) {

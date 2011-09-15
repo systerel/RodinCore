@@ -5,34 +5,26 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoalImpl;
-import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoalRules;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rule;
 import org.junit.Test;
 
-public class MembershipGoalImplTest {
+/**
+ * Acceptance tests for the common implementation of the Membership Goal
+ * reasoner and tactic.
+ * 
+ * @author Laurent Voisin
+ */
+public class MembershipGoalImplTest extends AbstractMbGoalTests {
 
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
+	private static class TestItem extends AbstractMbGoalTests.TestItem {
 
-	private static final MembershipGoalRules rf = new MembershipGoalRules(ff);
-
-	private static class TestItem {
-		private final ITypeEnvironment typenv;
 		private final MembershipGoalImpl impl;
 
 		TestItem(String goalImage, String typenvImage, String... hypImages) {
-			this.typenv = TestLib.genTypeEnv(typenvImage);
-			final Set<Predicate> hyps = new LinkedHashSet<Predicate>();
-			for (String hypImage : hypImages) {
-				hyps.add(TestLib.genPred(typenv, hypImage));
-			}
+			super(typenvImage, hypImages);
 			final Predicate goal = TestLib.genPred(typenv, goalImage);
 			this.impl = new MembershipGoalImpl(goal, hyps, ff);
 		}
@@ -47,11 +39,6 @@ public class MembershipGoalImplTest {
 		public void assertNotFound() {
 			final Rule<?> actual = impl.search();
 			assertNull(actual);
-		}
-
-		public Rule<?> hyp(String hypImage) {
-			final Predicate hyp = TestLib.genPred(typenv, hypImage);
-			return rf.hypothesis(hyp);
 		}
 
 	}
@@ -108,6 +95,18 @@ public class MembershipGoalImplTest {
 		final TestItem it = new TestItem("x ∈ A", "x=ℤ, A=ℙ(ℤ)", "B ⊆ A",
 				"C ⊆ B", "D ⊆ A");
 		it.assertNotFound();
+	}
+
+	@Test
+	public void useless() {
+		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ", "y ∈ A");
+		it.assertNotFound();
+	}
+
+	@Test
+	public void splitHyp() {
+		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ", "x↦y ∈ A×B");
+		it.assertFound(rf.domPrj(it.hyp("x↦y ∈ A×B")));
 	}
 
 }
