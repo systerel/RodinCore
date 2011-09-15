@@ -95,6 +95,42 @@ public class LRUCache<K, V> implements Cloneable {
 		}
 	}
 
+	protected static class HardCache<K, V> {
+		
+		/**
+		 * Hash table for fast random access to cache entries
+		 */
+		private final Hashtable<K, LRUCacheEntry<K, V>> fEntryTable;
+		
+		public HardCache(int hardSize) {
+			fEntryTable = new Hashtable<K, LRUCacheEntry<K, V>>(hardSize);
+		}
+		
+		public LRUCacheEntry<K, V> getEntry(K key) {
+			return fEntryTable.get(key);
+		}
+		
+		public void putEntry(LRUCacheEntry<K, V> entry) {
+			fEntryTable.put(entry._fKey, entry);
+		}
+		
+		public void removeEntry(K key) {
+			fEntryTable.remove(key);
+		}
+		
+		public void clear() {
+			fEntryTable.clear();
+		}
+		
+		public int size() {
+			return fEntryTable.size();
+		}
+
+		public Enumeration<LRUCacheEntry<K, V>> elements() {
+			return fEntryTable.elements();
+		}
+	}
+	
 	/**
 	 * Amount of cache space used so far
 	 */
@@ -110,11 +146,8 @@ public class LRUCache<K, V> implements Cloneable {
 	 */
 	protected int fTimestampCounter;
 
-	/**
-	 * Hash table for fast random access to cache entries
-	 */
-	protected Hashtable<K, LRUCacheEntry<K, V>> fEntryTable;
-
+	protected final HardCache<K, V> cache;
+	
 	/**
 	 * Start of queue (most recently used entry)
 	 */
@@ -147,7 +180,7 @@ public class LRUCache<K, V> implements Cloneable {
 	public LRUCache(int size) {
 		fTimestampCounter = fCurrentSpace = 0;
 		fEntryQueue = fEntryQueueTail = null;
-		fEntryTable = new Hashtable<K, LRUCacheEntry<K, V>>(size);
+		cache = new HardCache<K, V>(size);
 		fSpaceLimit = size;
 	}
 
@@ -176,7 +209,7 @@ public class LRUCache<K, V> implements Cloneable {
 	public void flush() {
 		fCurrentSpace = 0;
 		LRUCacheEntry<K, V> entry = fEntryQueueTail; // Remember last entry
-		fEntryTable = new Hashtable<K, LRUCacheEntry<K, V>>(); // Clear it out
+		cache.clear(); // Clear it out
 		fEntryQueue = fEntryQueueTail = null;
 		while (entry != null) { // send deletion notifications in LRU order
 			privateNotifyDeletionFromCache(entry);
@@ -195,7 +228,7 @@ public class LRUCache<K, V> implements Cloneable {
 
 		LRUCacheEntry<K, V> entry;
 
-		entry = fEntryTable.get(key);
+		entry = cache.getEntry(key);
 
 		/* If entry does not exist, return */
 		if (entry == null)
@@ -214,7 +247,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 */
 	public V get(K key) {
 
-		LRUCacheEntry<K, V> entry = fEntryTable.get(key);
+		LRUCacheEntry<K, V> entry = cache.getEntry(key);
 		if (entry == null) {
 			return null;
 		}
@@ -238,21 +271,13 @@ public class LRUCache<K, V> implements Cloneable {
 	}
 
 	/**
-	 * Returns an Enumeration of the keys currently in the cache.
-	 */
-	public Enumeration<K> keys() {
-
-		return fEntryTable.keys();
-	}
-
-	/**
 	 * Returns an enumeration that iterates over all the keys and values
 	 * currently in the cache.
 	 */
 	public ICacheEnumeration<K, V> keysAndValues() {
 		return new ICacheEnumeration<K, V>() {
 
-			Enumeration<LRUCacheEntry<K, V>> fValues = fEntryTable.elements();
+			Enumeration<LRUCacheEntry<K, V>> fValues = cache.elements();
 
 			LRUCacheEntry<K, V> fEntry;
 
@@ -336,7 +361,7 @@ public class LRUCache<K, V> implements Cloneable {
 	protected void privateAddEntry(LRUCacheEntry<K, V> entry, boolean shuffle) {
 
 		if (!shuffle) {
-			fEntryTable.put(entry._fKey, entry);
+			cache.putEntry(entry);
 			fCurrentSpace += entry._fSpace;
 		}
 
@@ -378,7 +403,7 @@ public class LRUCache<K, V> implements Cloneable {
 		next = entry._fNext;
 
 		if (!shuffle) {
-			fEntryTable.remove(entry._fKey);
+			cache.removeEntry(entry._fKey);
 			fCurrentSpace -= entry._fSpace;
 			privateNotifyDeletionFromCache(entry);
 		}
@@ -414,7 +439,7 @@ public class LRUCache<K, V> implements Cloneable {
 
 		/* Check whether there's an entry in the cache */
 		newSpace = spaceFor(value);
-		entry = fEntryTable.get(key);
+		entry = cache.getEntry(key);
 
 		if (entry != null) {
 
@@ -451,7 +476,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 */
 	public V removeKey(K key) {
 
-		LRUCacheEntry<K, V> entry = fEntryTable.get(key);
+		LRUCacheEntry<K, V> entry = cache.getEntry(key);
 		if (entry == null) {
 			return null;
 		}
@@ -516,7 +541,7 @@ public class LRUCache<K, V> implements Cloneable {
 	 */
 	protected String toStringContents() {
 		StringBuffer result = new StringBuffer();
-		ComparableEntry[] elements = new ComparableEntry[fEntryTable.size()];
+		ComparableEntry[] elements = new ComparableEntry[cache.size()];
 		ICacheEnumeration<K, V> enumeration = keysAndValues();
 
 		// Get the elements of the cache

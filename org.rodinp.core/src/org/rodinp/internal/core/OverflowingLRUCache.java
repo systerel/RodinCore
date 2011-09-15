@@ -11,9 +11,6 @@
 package org.rodinp.internal.core;
 
 import java.text.NumberFormat;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
 
 import org.rodinp.internal.core.util.LRUCache;
 import org.rodinp.internal.core.util.Messages;
@@ -156,15 +153,6 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	}
 
 	/**
-	 * For internal testing only. This method exposed only for testing purposes!
-	 * 
-	 * @return Hashtable of entries
-	 */
-	public Hashtable<K,LRUCacheEntry<K,V>> getEntryTable() {
-		return fEntryTable;
-	}
-
-	/**
 	 * Returns the load factor for the cache. The load factor determines how
 	 * much space is reclaimed when the cache exceeds its space limit.
 	 * 
@@ -244,64 +232,11 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 	 */
 	public V peek(K key) {
 
-		LRUCacheEntry<K,V> entry = fEntryTable.get(key);
+		LRUCacheEntry<K,V> entry = cache.getEntry(key);
 		if (entry == null) {
 			return null;
 		}
 		return entry._fValue;
-	}
-
-	/**
-	 * For testing purposes only
-	 */
-	public void printStats() {
-		int forwardListLength = 0;
-		LRUCacheEntry<K,V> entry = fEntryQueue;
-		while (entry != null) {
-			forwardListLength++;
-			entry = entry._fNext;
-		}
-		System.out.println("Forward length: " + forwardListLength); //$NON-NLS-1$
-
-		int backwardListLength = 0;
-		entry = fEntryQueueTail;
-		while (entry != null) {
-			backwardListLength++;
-			entry = entry._fPrevious;
-		}
-		System.out.println("Backward length: " + backwardListLength); //$NON-NLS-1$
-
-		Enumeration<K> keys = fEntryTable.keys();
-		class Temp {
-			public Class<?> fClass;
-
-			public int fCount;
-
-			public Temp(Class<?> aClass) {
-				fClass = aClass;
-				fCount = 1;
-			}
-
-			@Override
-			public String toString() {
-				return "Class: " + fClass + " has " + fCount + " entries."; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
-			}
-		}
-		HashMap<Class<?>,Temp> classCounter = new HashMap<Class<?>,Temp>();
-		while (keys.hasMoreElements()) {
-			entry = fEntryTable.get(keys.nextElement());
-			Class<?> key = entry._fValue.getClass();
-			Temp t = classCounter.get(key);
-			if (t == null) {
-				classCounter.put(key, new Temp(key));
-			} else {
-				t.fCount++;
-			}
-		}
-
-		for (Temp t: classCounter.values()) {
-			System.out.println(t);
-		}
 	}
 
 	/**
@@ -336,7 +271,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 
 		if (!shuffle) {
 			if (external) {
-				fEntryTable.remove(entry._fKey);
+				cache.removeEntry(entry._fKey);
 				fCurrentSpace -= entry._fSpace;
 				privateNotifyDeletionFromCache(entry);
 			} else {
@@ -345,11 +280,11 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 				// buffer close will recursively call #privateRemoveEntry with
 				// external==true
 				// thus entry will already be removed if reaching this point.
-				if (fEntryTable.get(entry._fKey) == null) {
+				if (cache.getEntry(entry._fKey) == null) {
 					return;
 				} else {
 					// basic removal
-					fEntryTable.remove(entry._fKey);
+					cache.removeEntry(entry._fKey);
 					fCurrentSpace -= entry._fSpace;
 					privateNotifyDeletionFromCache(entry);
 				}
@@ -389,7 +324,7 @@ public abstract class OverflowingLRUCache<K, V> extends LRUCache<K, V> {
 
 		/* Check whether there's an entry in the cache */
 		int newSpace = spaceFor(value);
-		LRUCacheEntry<K,V> entry = fEntryTable.get(key);
+		LRUCacheEntry<K,V> entry = cache.getEntry(key);
 
 		if (entry != null) {
 
