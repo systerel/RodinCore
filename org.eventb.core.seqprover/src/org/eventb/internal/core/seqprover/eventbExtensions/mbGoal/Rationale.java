@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,12 +25,25 @@ import org.eventb.core.ast.Predicate;
 public abstract class Rationale {
 
 	/**
-	 * Return all the predicates used as hypothesis to make the current
+	 * Accumulates all the predicates used as hypothesis to make the current
+	 * Rationale.
+	 * 
+	 * @param set
+	 *            a set accumulating all findings so far
+	 */
+	protected abstract void getLeafs(Set<Predicate> set);
+
+	/**
+	 * Returns all the predicates used as hypothesis to make the current
 	 * Rationale.
 	 * 
 	 * @return a set of Predicate
 	 */
-	public abstract Set<Predicate> getLeafs();
+	public Set<Predicate> getLeafs() {
+		final HashSet<Predicate> set = new HashSet<Predicate>();
+		getLeafs(set);
+		return set;
+	}
 
 	public static class Hypothesis extends Rationale {
 
@@ -45,8 +57,8 @@ public abstract class Rationale {
 		}
 
 		@Override
-		public Set<Predicate> getLeafs() {
-			return Collections.singleton(predicate);
+		public void getLeafs(Set<Predicate> set) {
+			set.add(predicate);
 		}
 
 	}
@@ -68,11 +80,9 @@ public abstract class Rationale {
 		}
 
 		@Override
-		public Set<Predicate> getLeafs() {
-			Set<Predicate> result = new HashSet<Predicate>();
-			result.addAll(in.getLeafs());
-			result.addAll(subset.getLeafs());
-			return result;
+		public void getLeafs(Set<Predicate> set) {
+			in.getLeafs(set);
+			subset.getLeafs(set);
 		}
 
 	}
@@ -94,8 +104,8 @@ public abstract class Rationale {
 		public abstract Rule<?> makeRule(Rule<?> childRule);
 
 		@Override
-		public Set<Predicate> getLeafs() {
-			return child.getLeafs();
+		public void getLeafs(Set<Predicate> set) {
+			child.getLeafs(set);
 		}
 
 	}
