@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
 
+import static org.eventb.core.ast.Formula.IN;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,8 +47,12 @@ public class MembershipGoalTac implements ITactic {
 		final IProverSequent sequent = ptNode.getSequent();
 		final FormulaFactory ff = sequent.getFormulaFactory();
 		final Set<Predicate> hyps = getUsefullHyps(sequent);
-		final MembershipGoalImpl mbGoalImpl = new MembershipGoalImpl(
-				sequent.goal(), hyps, ff, pm);
+		final Predicate goal = sequent.goal();
+		if (goal.getTag() != IN) {
+			return goal + " is not an inclusion";
+		}
+		final MembershipGoalImpl mbGoalImpl = new MembershipGoalImpl(goal,
+				hyps, ff, pm);
 		final Rationale search = mbGoalImpl.search();
 		if (search == null) {
 			return "Cannot find a path";

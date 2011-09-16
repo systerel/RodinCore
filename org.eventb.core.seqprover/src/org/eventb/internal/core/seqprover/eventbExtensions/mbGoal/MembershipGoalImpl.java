@@ -57,9 +57,7 @@ public class MembershipGoalImpl {
 
 	public MembershipGoalImpl(Predicate goal, Set<Predicate> hyps,
 			FormulaFactory ff, IProofMonitor pm) {
-		if (goal == null || goal.getTag() != IN) {
-			throw new IllegalArgumentException("Not a membership : " + goal);
-		}
+		assert goal.getTag() == IN;
 		this.goal = new Goal(goal) {
 			@Override
 			public Rationale makeRationale(Rationale rat) {
