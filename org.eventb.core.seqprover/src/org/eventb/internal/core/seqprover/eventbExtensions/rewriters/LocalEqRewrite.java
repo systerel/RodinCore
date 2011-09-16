@@ -133,6 +133,10 @@ public class LocalEqRewrite implements IReasoner {
 		}
 	}
 
+	/*
+	 * Try to re-create the input using the two hypotheses and position
+	 * serialized, as well as the predicate created by the rule.
+	 */
 	private Input makeInput(Predicate[] hyps, IPosition position,
 			FormulaFactory ff) {
 		final Predicate hyp0 = hyps[0];
@@ -198,8 +202,9 @@ public class LocalEqRewrite implements IReasoner {
 	}
 
 	/*
-	 * Deserializes two hypotheses, one being rewritten and the other being the
-	 * equality that defines the substitution.
+	 * Deserializes three hypotheses, one being rewritten, one being the
+	 * equality that defines the substitution, and the last one in the array is
+	 * the result of the re-writing.
 	 */
 	private Predicate[] deserializeHypotheses(IReasonerInputReader reader)
 			throws SerializeException {
@@ -254,63 +259,66 @@ public class LocalEqRewrite implements IReasoner {
 		}
 		final FormulaFactory ff = seq.getFormulaFactory();
 		final Input myInput = (Input) input;
-		final Predicate pred = myInput.getPred();
+		final Predicate hyp = myInput.getPred();
 		final IPosition position = myInput.getPosition();
-		final Predicate equality = myInput.getEquality();
-		if (!seq.containsHypothesis(equality)) {
-			return reasonerFailure(this, input, equality
+		final Predicate eqPred = myInput.getEquality();
+		if (!seq.containsHypothesis(eqPred)) {
+			return reasonerFailure(this, input, eqPred
 					+ " is not a hypothesis of the given sequent");
 		}
-		if (equality.getTag() != EQUAL) {
-			return reasonerFailure(this, input, equality
+		if (eqPred.getTag() != EQUAL) {
+			return reasonerFailure(this, input, eqPred
 					+ " does not denote an equality");
 		}
-		if (pred == null) {
+		if (hyp == null) {
 			final Predicate goal = seq.goal();
-			final Expression ident = (Expression) goal.getSubFormula(position);
-			final Expression exp = testIdent((RelationalPredicate) equality,
-					ident);
-			if (exp == null) {
-				return reasonerFailure(this, input, equality
-						+ " is not related to any identifier");
+			final Predicate newGoal = rewrite(goal, position, eqPred, ff);
+			if (newGoal == null) {
+				return reasonerFailure(this, input,
+						"The goal cannot be re-written with the given input.");
 			}
-			final Formula<?> subFormula = ident;
-			if (!ident.equals(subFormula)) {
-				return reasonerFailure(this, input, ident + " is not equal to "
-						+ subFormula);
-			}
-			final Predicate newGoal = goal.rewriteSubFormula(position, exp, ff);
-			return makeProofRule(this, input, goal, equality, "lae in goal",
+			return makeProofRule(this, input, goal, eqPred, "lae in goal",
 					makeAntecedent(newGoal));
 		} else {
-			if (!(seq.containsHypothesis(pred))) {
-				return reasonerFailure(this, input, pred
+			if (!(seq.containsHypothesis(hyp))) {
+				return reasonerFailure(this, input, hyp
 						+ " is not a hypothesis of the given sequent");
 			}
-			final Expression ident = (Expression) pred.getSubFormula(position);
-			final Expression exp = testIdent((RelationalPredicate) equality,
-					ident);
-			if (exp == null) {
-				return reasonerFailure(this, input, equality
-						+ " is not related to any identifier");
+			final Predicate newHyp = rewrite(hyp, position, eqPred, ff);
+			if (newHyp == null) {
+				return reasonerFailure(this, input,
+						"The hypothesis cannot be re-written with the given input.");
 			}
-			final Formula<?> subFormula = ident;
-			if (!ident.equals(subFormula)) {
-				return reasonerFailure(this, input, ident + " is not equal to "
-						+ subFormula);
-			}
-			final Predicate newHyp = pred.rewriteSubFormula(position, exp, ff);
 			final Set<Predicate> neededHyps = new HashSet<Predicate>();
-			neededHyps.add(pred);
-			neededHyps.add(equality);
+			neededHyps.add(hyp);
+			neededHyps.add(eqPred);
 			List<IHypAction> hypAct = new ArrayList<IHypAction>();
 			hypAct.add(makeForwardInfHypAction(neededHyps, singleton(newHyp)));
-			hypAct.add(makeHideHypAction(singleton(pred)));
-			return makeProofRule(this, input, null,
-					"lae in " + pred.toString(), hypAct);
+			hypAct.add(makeHideHypAction(singleton(hyp)));
+			return makeProofRule(this, input, null, "lae in " + hyp.toString(),
+					hypAct);
 		}
 	}
 
+	/**
+	 * Try to re-write the predicate <code>pred</code> using the given position,
+	 * and the predicate denoting an equality. Returns the predicte re-written.
+	 */
+	private Predicate rewrite(final Predicate pred, final IPosition position,
+			final Predicate equality, final FormulaFactory ff) {
+		final Expression ident = (Expression) pred.getSubFormula(position);
+		final Expression exp = testIdent((RelationalPredicate) equality, ident);
+		if (exp == null) {
+			return null;
+		}
+		return pred.rewriteSubFormula(position, exp, ff);
+	}
+
+	/**
+	 * Check that the left side or the right side of the predicate
+	 * <code>pred</code> denoting an equality is an identifier equal to ident.
+	 * Returns the other side of the equality.
+	 */
 	private Expression testIdent(RelationalPredicate pred, Expression ident) {
 		final Expression left = pred.getLeft();
 		final Expression right = pred.getRight();
