@@ -33,7 +33,7 @@ public class RodinDBCache {
 	private static final int DEFAULT_PROJECT_SIZE = 5;
 
 	// number of files in hard cache (absolute minimum = 3)
-	private static final int DEFAULT_OPENABLE_SIZE = 5;
+	private static final int DEFAULT_OPENABLE_SIZE = 3;
 
 	private static final int DEFAULT_BUFFER_SIZE = DEFAULT_OPENABLE_SIZE;
 	
