@@ -87,7 +87,7 @@ public abstract class AbstractFormulaRewriterTests {
 		protected abstract void checkCompatibility(T input, T expected);
 
 		private ITypeEnvironment makeTypeEnvironment(String... env) {
-			assertTrue(env.length % 2 == 0);
+			assertTrue("invalid environment specification", env.length % 2 == 0);
 			final ITypeEnvironment typenv = factory.makeTypeEnvironment();
 			for (int i = 0; i < env.length; i += 2) {
 				final String name = env[i];

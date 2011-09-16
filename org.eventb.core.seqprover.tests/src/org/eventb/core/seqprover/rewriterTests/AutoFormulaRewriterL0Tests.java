@@ -17,7 +17,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 public class AutoFormulaRewriterL0Tests extends AutoFormulaRewriterTests {
 
 	// The automatic rewriter for testing.
-	private static final AutoRewriterImpl rewriter = new AutoRewriterImpl(
+	private static final AutoRewriterImpl REWRITER_L0 = new AutoRewriterImpl(
 			DT_FAC, Level.L0);
 
 	/**
@@ -26,6 +26,10 @@ public class AutoFormulaRewriterL0Tests extends AutoFormulaRewriterTests {
 	 * Create an formula rewriter test with the input is the automatic rewriter.
 	 */
 	public AutoFormulaRewriterL0Tests() {
+		this(REWRITER_L0);
+	}
+
+	protected AutoFormulaRewriterL0Tests(AutoRewriterImpl rewriter) {
 		super(rewriter);
 	}
 

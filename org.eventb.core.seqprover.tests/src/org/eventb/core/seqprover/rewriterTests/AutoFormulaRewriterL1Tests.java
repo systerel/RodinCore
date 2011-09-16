@@ -19,10 +19,10 @@ import org.junit.Test;
  * using the abstract auto formula rewriter tests
  * {@link AbstractAutoFormulaRewriterTests}.
  */
-public class AutoFormulaRewriterL1Tests extends AutoFormulaRewriterTests {
+public class AutoFormulaRewriterL1Tests extends AutoFormulaRewriterL0Tests {
 
 	// The automatic rewriter for testing.
-	private static final AutoRewriterImpl rewriter = new AutoRewriterImpl(
+	private static final AutoRewriterImpl REWRITER_L1 = new AutoRewriterImpl(
 			DT_FAC, Level.L1);
 
 	/**
@@ -31,6 +31,10 @@ public class AutoFormulaRewriterL1Tests extends AutoFormulaRewriterTests {
 	 * Create an formula rewriter test with the input is the automatic rewriter.
 	 */
 	public AutoFormulaRewriterL1Tests() {
+		this(REWRITER_L1);
+	}
+
+	protected AutoFormulaRewriterL1Tests(AutoRewriterImpl rewriter) {
 		super(rewriter);
 	}
 

@@ -1439,7 +1439,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					final Predicate aInA = makeRelationalPredicate(IN, `a, `A);
 					final Predicate bInB = makeRelationalPredicate(IN, `b, `B);
 					result = makeAssociativePredicate(LAND, aInA, bInB);
-					trace(predicate, result, "YOUR_NAME");
+					trace(predicate, result, "MY_NAME");
 					return result;
 				}
 			}
@@ -1451,7 +1451,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			In(E, SetMinus(_, SetExtension(eList(_*, E, _*)))) -> {
 				if (level3) {
 					result = dLib.False();
-					trace(predicate, result, "5");
+					trace(predicate, result, "MY_NAME_5");
 					return result;
 				}
 			}
@@ -1460,10 +1460,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 * MY_NAME_6
 			 * E∈A∪...∪{..., E, ...}∪ ... ∪Z
 			 */
-			In(E, BUnion(eList(_*,SetExtension(eList(_*, E, _*)), _*))) -> {
+			In(E, BUnion(eList(_*, SetExtension(eList(_*, E, _*)), _*))) -> {
 				if (level3) {
 					result = dLib.True();
-					trace(predicate, result, "6");
+					trace(predicate, result, "MY_NAME_6");
 					return result;
 				}
 			}
@@ -2844,7 +2844,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			PRED() -> {
 				if (level3) {
 					result = makeUnaryExpression(CONVERSE, makeAtomicExpression(KSUCC));
-					trace(expression, result, "7");
+					trace(expression, result, "MY_NAME_7");
 					return result;
 				}
 			}
@@ -3620,9 +3620,11 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 *    dom(succ) == ℤ
 			 */
 			Dom(SUCC()) -> {
-				result = makeAtomicExpression(INTEGER);
-				trace(expression, result, "DEF_DOM_SUCC");
-				return result;
+				if (level3) {
+					result = makeAtomicExpression(INTEGER);
+					trace(expression, result, "DEF_DOM_SUCC");
+					return result;
+				}
 			}
 
 			/**
@@ -3630,9 +3632,11 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 *    ran(succ) == ℤ
 			 */
 			Ran(SUCC()) -> {
-				result = makeAtomicExpression(INTEGER);
-				trace(expression, result, "DEF_RAN_SUCC");
-				return result;
+				if (level3) {
+					result = makeAtomicExpression(INTEGER);
+					trace(expression, result, "DEF_RAN_SUCC");
+					return result;
+				}
 			}
 
 	    }

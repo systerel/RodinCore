@@ -19,13 +19,17 @@ import org.junit.Test;
  * using the abstract auto formula rewriter tests
  * {@link AbstractAutoFormulaRewriterTests}.
  */
-public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterTests {
+public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 
 	// The automatic rewriter for testing.
-	private static final AutoRewriterImpl rewriter = new AutoRewriterImpl(
+	private static final AutoRewriterImpl REWRITER_L3 = new AutoRewriterImpl(
 			DT_FAC, Level.L3);
 
 	public AutoFormulaRewriterL3Tests() {
+		this(REWRITER_L3);
+	}
+
+	protected AutoFormulaRewriterL3Tests(AutoRewriterImpl rewriter) {
 		super(rewriter);
 	}
 

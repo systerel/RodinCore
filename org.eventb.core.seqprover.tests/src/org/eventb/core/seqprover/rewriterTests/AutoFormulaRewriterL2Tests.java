@@ -19,11 +19,13 @@ import org.junit.Test;
  * using the abstract auto formula rewriter tests
  * {@link AbstractAutoFormulaRewriterTests}.
  */
-public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
+public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 
 	// The automatic rewriter for testing.
-	private static final AutoRewriterImpl rewriter = new AutoRewriterImpl(
+	private static final AutoRewriterImpl REWRITER_L2 = new AutoRewriterImpl(
 			DT_FAC, Level.L2);
+
+	private final boolean level2;
 
 	/**
 	 * Constructor.
@@ -31,7 +33,12 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 	 * Create an formula rewriter test with the input is the automatic rewriter.
 	 */
 	public AutoFormulaRewriterL2Tests() {
+		this(REWRITER_L2);
+	}
+
+	protected AutoFormulaRewriterL2Tests(AutoRewriterImpl rewriter) {
 		super(rewriter);
+		this.level2 = rewriter.getLevel() == Level.L2;
 	}
 
 	/**
@@ -1038,10 +1045,20 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		noRewriteExpr("card({x, y · x↦y∈S ∣ y↦x})", "S", "ℙ(T×U)");
 		noRewriteExpr("card({x, y · x↦y+1∈S ∣ x↦y+1})", "S", "ℙ(T×ℤ)");
 
-		noRewriteExpr("card({x · x∈S∪{x} ∣ x})", "S", "ℙ(T)");
-		noRewriteExpr("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", "S", "ℙ(T×U)");
-		noRewriteExpr("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})", //
-				"S", "ℙ(T)", "U", "ℙ(V)");
+		if (level2) {
+			noRewriteExpr("card({x · x∈S∪{x} ∣ x})", "S", "ℙ(T)");
+			noRewriteExpr("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", "S", "ℙ(T×U)");
+			noRewriteExpr("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})", //
+					"S", "ℙ(T)", "U", "ℙ(V)");
+		} else {
+			rewriteExpr("card({x · x∈S∪{x} ∣ x})", "card(T)", //
+					"S", "ℙ(T)", "T", "ℙ(T)");
+			rewriteExpr("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", "card(T×U)", //
+					"S", "ℙ(T×U)", "T", "ℙ(T)", "U", "ℙ(U)");
+			rewriteExpr("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})",
+					"card({x, y · x∈S ∧ y∈U∪{y} ∣ x↦y})", //
+					"S", "ℙ(T)", "U", "ℙ(V)");
+		}
 	}
 
 	/**
@@ -1636,8 +1653,15 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterTests {
 		noRewriteExpr("{x, y · x↦y∈S ∣ y↦x}", "S", "ℙ(T×U)");
 		noRewriteExpr("{x, y · x↦y+1∈S ∣ x↦y+1}", "S", "ℙ(T×ℤ)");
 
-		noRewriteExpr("{x · x∈S∪{x} ∣ x}", "S", "ℙ(T)");
-		noRewriteExpr("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}", "S", "ℙ(T)", "U", "ℙ(V)");
+		if (level2) {
+			noRewriteExpr("{x · x∈S∪{x} ∣ x}", "S", "ℙ(T)");
+			noRewriteExpr("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}", "S", "ℙ(T)", "U", "ℙ(V)");
+		} else {
+			rewriteExpr("{x · x∈S∪{x} ∣ x}", "T", "S", "ℙ(T)", "T", "ℙ(T)");
+			rewriteExpr("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}",
+					"{x, y · x∈S ∧ y∈U∪{y} ∣ x↦y}", //
+					"S", "ℙ(T)", "U", "ℙ(V)");
+		}
 		noRewriteExpr("{x, y⦂ℙ(T) · x∈y ∣ x}", "T", "ℙ(T)");
 	}
 
