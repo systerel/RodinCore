@@ -31,10 +31,8 @@ import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TypeRewriteTac;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites.Input;
@@ -135,8 +133,7 @@ public class InDomGoalManager {
 			}			
 		} else {		
 			//Can't use composeUntilFailure because typeRewrites is not always necessary
-			(BasicTactics.reasonerTac(new AutoRewrites(), new EmptyInput()))
-			.apply(ptNode, pm);
+			Tactics.autoRewrite().apply(ptNode, pm);
 			ptNode = ptNode.getFirstOpenDescendant();
 			if (Tactics.hyp().apply(ptNode, pm) == null) {
 				return null;

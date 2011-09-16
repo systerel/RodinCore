@@ -124,6 +124,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractMan
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AndOrDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ArithRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompImgRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.CompUnionDistRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.ContImplHypRewrites;
@@ -454,6 +455,16 @@ public class Tactics {
 				iter.remove();
 			}
 		}
+	}
+
+	/**
+	 * Runs the auto formula rewriter that normalizes all predicates of the
+	 * sequent at the given node.
+	 * 
+	 * @since 2.3
+	 */
+	public static ITactic autoRewrite() {
+		return BasicTactics.reasonerTac(AutoRewrites.DEFAULT, EMPTY_INPUT);
 	}
 	
 	// Tactics applicable on the goal

@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-/**
- * Level 3 of the auto-rewriter implementing rewriting of membership in a
- * Cartesian product.
- * 
- * @author Emmanuel Billaud
- */
-public class AutoRewritesL3 extends AutoRewrites {
 
-	public AutoRewritesL3() {
-		super(Level.L3);
+/**
+ * @author Laurent Voisin
+ */
+public class AutoRewritesL0 extends AutoRewrites {
+
+	public AutoRewritesL0() {
+		super(Level.L0);
 	}
 
 }
