@@ -72,7 +72,7 @@ public abstract class Rationale {
 			Set<Predicate> result = new HashSet<Predicate>();
 			result.addAll(in.getLeafs());
 			result.addAll(subset.getLeafs());
-			return null;
+			return result;
 		}
 
 	}

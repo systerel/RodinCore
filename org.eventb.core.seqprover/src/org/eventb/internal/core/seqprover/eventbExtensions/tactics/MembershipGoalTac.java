@@ -48,6 +48,9 @@ public class MembershipGoalTac implements ITactic {
 		final MembershipGoalImpl mbGoalImpl = new MembershipGoalImpl(
 				sequent.goal(), hyps, ff, pm);
 		final Rationale search = mbGoalImpl.search();
+		if (search == null) {
+			return "Cannot find a path";
+		}
 		final Set<Predicate> neededHyps = search.getLeafs();
 		final HypothesesReasoner.Input input = new HypothesesReasoner.Input(
 				neededHyps.toArray(new Predicate[neededHyps.size()]));
