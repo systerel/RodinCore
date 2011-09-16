@@ -17,9 +17,9 @@ import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonen
  * 
  * @author Emmanuel Billaud
  */
-public class GeneralizedModusPonensTestsL0 extends GeneralizedModusPonensTests {
+public class GeneralizedModusPonensL0Tests extends GeneralizedModusPonensTests {
 
-	public GeneralizedModusPonensTestsL0() {
+	public GeneralizedModusPonensL0Tests() {
 		super(new GeneralizedModusPonens());
 	}
 
