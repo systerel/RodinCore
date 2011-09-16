@@ -33,12 +33,15 @@ import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.GE;
 import static org.eventb.core.ast.Formula.GT;
 import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.INTEGER;
 import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.KDOM;
 import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.ast.Formula.KPRED;
 import static org.eventb.core.ast.Formula.KMAX;
 import static org.eventb.core.ast.Formula.KMIN;
 import static org.eventb.core.ast.Formula.KRAN;
+import static org.eventb.core.ast.Formula.KSUCC;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LIMP;
@@ -119,6 +122,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	// Cached enabled levels
 	private final boolean level1;
 	private final boolean level2;
+	private final boolean level3;
 
 	protected final IntegerLiteral number0 = ff.makeIntegerLiteral(ZERO, null);
 
@@ -141,6 +145,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		this.level = level;
 		this.level1 = level.from(Level.L1);
 		this.level2 = level.from(Level.L2);
+		this.level3 = level.from(Level.L3);
 	}
 
 	public AutoRewrites.Level getLevel() {
@@ -202,6 +207,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 	protected BoundIdentifier makeBoundIdentifier(int index, Type type) {
 		return ff.makeBoundIdentifier(index, null, type);
+	}
+
+	protected AtomicExpression makeAtomicExpression(int tag) {
+		return ff.makeAtomicExpression(tag, null);
 	}
 
 	protected boolean notLocallyBound(Formula<?> form, int nbBound) {
@@ -673,7 +682,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_IN_FUNIMAGE_CONVERSE_L", "SIMP_IN_FUNIMAGE_CONVERSE_R",
 			"SIMP_MULTI_EQUAL_BINTER", "SIMP_MULTI_EQUAL_BUNION",
 			"SIMP_SPECIAL_SUBSET_L", "SIMP_SUBSETEQ_COMPSET_L",
-			"SIMP_SPECIAL_EQUAL_COMPSET" })
+			"SIMP_SPECIAL_EQUAL_COMPSET", "MY_NAME", "MY_NAME_5", "MY_NAME_6" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final Predicate result;
@@ -1417,6 +1426,44 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					final Predicate pred = makeUnaryPredicate(NOT, `P);
 					result = makeQuantifiedPredicate(FORALL, `bidl, pred);
 					trace(predicate, result, "SIMP_SPECIAL_EQUAL_COMPSET");
+					return result;
+				}
+			}
+			
+			/**
+			 * MY_NAME
+			 * a↦b ∈ A×B == a∈A ∧ b∈B
+			 */
+			In(Mapsto(a,b), Cprod(A,B)) -> {
+				if (level3) {
+					final Predicate aInA = makeRelationalPredicate(IN, `a, `A);
+					final Predicate bInB = makeRelationalPredicate(IN, `b, `B);
+					result = makeAssociativePredicate(LAND, aInA, bInB);
+					trace(predicate, result, "YOUR_NAME");
+					return result;
+				}
+			}
+
+			/**
+			 * MY_NAME_5
+			 * E∈S∖{..., E, ...} == ⊥
+			 */
+			In(E, SetMinus(_, SetExtension(eList(_*, E, _*)))) -> {
+				if (level3) {
+					result = dLib.False();
+					trace(predicate, result, "5");
+					return result;
+				}
+			}
+
+			/**
+			 * MY_NAME_6
+			 * E∈A∪...∪{..., E, ...}∪ ... ∪Z
+			 */
+			In(E, BUnion(eList(_*,SetExtension(eList(_*, E, _*)), _*))) -> {
+				if (level3) {
+					result = dLib.True();
+					trace(predicate, result, "6");
 					return result;
 				}
 			}
@@ -2784,6 +2831,28 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    return expression;
 	}
 
+	@ProverRule( { "MY_NAME_7" })
+	@Override
+	public Expression rewrite(AtomicExpression expression) {
+		final Expression result;
+		%match (Expression expression) {
+			
+			/**
+			 * MY_NAME_7
+			 * pred == succ∼
+			 */
+			PRED() -> {
+				if (level3) {
+					result = makeUnaryExpression(CONVERSE, makeAtomicExpression(KSUCC));
+					trace(expression, result, "7");
+					return result;
+				}
+			}
+
+		}
+		return expression;
+	}
+
 	@ProverRule( { "SIMP_CONVERSE_CONVERSE", "SIMP_CONVERSE_SETENUM",
 			"SIMP_DOM_SETENUM", "SIMP_RAN_SETENUM", "SIMP_MINUS_MINUS",
 			"SIMP_SPECIAL_CARD", "SIMP_CARD_SING", "SIMP_CARD_POW",
@@ -2803,7 +2872,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_MAX_BUNION_SING", "SIMP_LIT_MIN", "SIMP_LIT_MAX",
 			 "SIMP_CARD_ID", "SIMP_CARD_PRJ1", "SIMP_CARD_PRJ2",
 			 "SIMP_CARD_PRJ1_DOMRES", "SIMP_CARD_PRJ2_DOMRES",
-			 "SIMP_CARD_LAMBDA" })
+			 "SIMP_CARD_LAMBDA", "SIMP_MULTI_DOM_DOMSUB", 
+			 "SIMP_MULTI_DOM_DOMRES", "SIMP_MULTI_RAN_RANSUB",
+			 "SIMP_MULTI_RAN_RANRES", "DEF_DOM_SUCC", "DEF_RAN_SUCC" })
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
 		final Expression result;
@@ -3494,6 +3565,74 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					trace(expression, result, "SIMP_CARD_LAMBDA");
 					return result;
 				}
+			}
+			
+			/**
+			 * SIMP_MULTI_DOM_DOMSUB
+			 *    dom(A⩤f) == dom(f)∖A
+			 */
+			Dom(DomSub(A, f)) -> {
+				if (level3) {
+					result = makeBinaryExpression(SETMINUS, makeUnaryExpression(KDOM, `f), `A);
+					trace(expression, result, "SIMP_MULTI_DOM_DOMSUB");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_MULTI_DOM_DOMRES
+			 *    dom(A◁f) == dom(f)∩A
+			 */
+			Dom(DomRes(A, f)) -> {
+				if (level3) {
+					result = makeAssociativeExpression(BINTER, makeUnaryExpression(KDOM, `f), `A);
+					trace(expression, result, "SIMP_MULTI_DOM_DOMRES");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_MULTI_RAN_RANSUB
+			 *    ran(f⩥A) == ran(f)∖A
+			 */
+			Ran(RanSub(f, A)) -> {
+				if (level3) {
+					result = makeBinaryExpression(SETMINUS, makeUnaryExpression(KRAN, `f), `A);
+					trace(expression, result, "SIMP_MULTI_RAN_RANSUB");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_MULTI_RAN_RANRES
+			 *    ran(f▷A) == ran(f)∩A
+			 */
+			Ran(RanRes(f, A)) -> {
+				if (level3) {
+					result = makeAssociativeExpression(BINTER, makeUnaryExpression(KRAN, `f), `A);
+					trace(expression, result, "SIMP_MULTI_RAN_RANRES");
+					return result;
+				}
+			}
+
+			/**
+			 * DEF_DOM_SUCC
+			 *    dom(succ) == ℤ
+			 */
+			Dom(SUCC()) -> {
+				result = makeAtomicExpression(INTEGER);
+				trace(expression, result, "DEF_DOM_SUCC");
+				return result;
+			}
+
+			/**
+			 * DEF_RAN_SUCC
+			 *    ran(succ) == ℤ
+			 */
+			Ran(SUCC()) -> {
+				result = makeAtomicExpression(INTEGER);
+				trace(expression, result, "DEF_RAN_SUCC");
+				return result;
 			}
 
 	    }
