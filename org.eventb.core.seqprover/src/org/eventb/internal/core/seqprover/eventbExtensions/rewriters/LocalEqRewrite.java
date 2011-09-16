@@ -20,7 +20,9 @@ import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +33,9 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -66,11 +70,12 @@ import org.eventb.core.seqprover.SerializeException;
  * @author Emmanuel Billaud
  */
 public class LocalEqRewrite implements IReasoner {
+
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".locEq";
 
-	public static class Input extends AbstractManualRewrites.Input {
+	private static final String POSITION_KEY = "pos";
 
-		public static final String POSITION_KEY = "pos";
+	public static class Input extends AbstractManualRewrites.Input {
 
 		final Predicate equality;
 
@@ -99,67 +104,146 @@ public class LocalEqRewrite implements IReasoner {
 	@Override
 	public void serializeInput(IReasonerInput input, IReasonerInputWriter writer)
 			throws SerializeException {
-		writer.putString(Input.POSITION_KEY, ((Input) input).getPosition()
-				.toString());
+		writer.putString(POSITION_KEY, ((Input) input).getPosition().toString());
 	}
 
 	@Override
 	public IReasonerInput deserializeInput(IReasonerInputReader reader)
 			throws SerializeException {
-		final String posString = reader.getString(Input.POSITION_KEY);
-		if (reader.getAntecedents().length != 1) {
-			throw new SerializeException(new IllegalStateException(
-					"There should be exactly one antecedent"));
-		}
-		final IPosition position = FormulaFactory.makePosition(posString);
-		final Set<Predicate> neededHyps = reader.getNeededHyps();
-		final Predicate[] array = neededHyps.toArray(new Predicate[0]);
-		final Predicate goal = reader.getGoal();
-		if (goal != null) {
+		final IPosition position = deserializePosition(reader);
+		if (reader.getGoal() != null) {
+			// Goal rewriting
+			final Set<Predicate> neededHyps = reader.getNeededHyps();
 			if (neededHyps.size() != 1) {
 				throw new SerializeException(new IllegalStateException(
 						"There should be only one needed hypothesis"));
 			}
-			final Predicate neededHyp = array[0];
-			return computeInput(position, goal, neededHyp, true);
+			final Predicate neededHyp = neededHyps.iterator().next();
+			return new Input(null, position, neededHyp);
 		} else {
-			if (neededHyps.size() != 2) {
+			// Hypothesis rewriting
+			final Predicate[] hyps = deserializeHypotheses(reader);
+			final FormulaFactory ff = reader.getFormulaFactory();
+			final Input input = makeInput(hyps, position, ff);
+			if (input == null) {
 				throw new SerializeException(new IllegalStateException(
-						"There should be exactly two hypotheses"));
+						"Cannot proceed re-writing with the given hypotheses"));
 			}
-			final Predicate pred0 = array[0];
-			final Predicate pred1 = array[1];
-			try {
-				return computeInput(position, pred0, pred1, false);
-			} catch (SerializeException se1) {
-				try {
-					return computeInput(position, pred1, pred0, false);
-				} catch (SerializeException se2) {
-					throw new SerializeException(new IllegalStateException(
-							"Impossible to proceed re-writing"));
-				}
-			}
+			return input;
 		}
 	}
 
-	private IReasonerInput computeInput(final IPosition position,
-			final Predicate rewritten, final Predicate neededHyp, boolean isGoal)
+	private Input makeInput(Predicate[] hyps, IPosition position,
+			FormulaFactory ff) {
+		final Predicate hyp0 = hyps[0];
+		final Predicate hyp1 = hyps[1];
+		final Predicate result = hyps[2];
+		final Input input0 = makeInput(hyp0, hyp1, position, result, ff);
+		if (input0 != null) {
+			return input0;
+		}
+		final Input input1 = makeInput(hyp1, hyp0, position, result, ff);
+		if (input1 != null) {
+			return input1;
+		}
+		return null;
+	}
+
+	private Input makeInput(Predicate equality, Predicate toRewrite,
+			IPosition position, Predicate result, FormulaFactory ff) {
+		if (equality.getTag() != EQUAL) {
+			return null;
+		}
+		final Formula<?> replaced = toRewrite.getSubFormula(position);
+		if (replaced == null) {
+			return null;
+		}
+		final RelationalPredicate rEq = (RelationalPredicate) equality;
+		final Expression right = rEq.getRight();
+		final Expression left = rEq.getLeft();
+		if (makeInput(right, left, replaced, toRewrite, position, result, ff)) {
+			return new Input(toRewrite, position, equality);
+		}
+		if (makeInput(left, right, replaced, toRewrite, position, result, ff)) {
+			return new Input(toRewrite, position, equality);
+		}
+		return null;
+	}
+
+	private boolean makeInput(Expression ident, Expression substitute,
+			Formula<?> replaced, Predicate toRewrite, IPosition position,
+			Predicate result, FormulaFactory ff) {
+		if (ident.getTag() != FREE_IDENT) {
+			return false;
+		}
+		if (!ident.equals(replaced)) {
+			return false;
+		}
+		final Predicate rewritten = toRewrite.rewriteSubFormula(position,
+				substitute, ff);
+		if (!rewritten.equals(result)) {
+			return false;
+		}
+		return true;
+	}
+
+	private IPosition deserializePosition(IReasonerInputReader reader)
 			throws SerializeException {
-		if (neededHyp.getTag() != EQUAL) {
-			throw new SerializeException(new IllegalStateException(neededHyp
-					+ " does not denote an equality"));
+		final String posString = reader.getString(POSITION_KEY);
+		try {
+			return FormulaFactory.makePosition(posString);
+		} catch (IllegalArgumentException e) {
+			throw new SerializeException(e);
 		}
-		final Formula<?> subFormula = rewritten.getSubFormula(position);
-		final Expression exp = testIdent((RelationalPredicate) neededHyp,
-				(Expression) subFormula);
-		if (exp == null) {
-			throw new SerializeException(new IllegalStateException(neededHyp
-					+ " is not related to any identifier"));
+	}
+
+	/*
+	 * Deserializes two hypotheses, one being rewritten and the other being the
+	 * equality that defines the substitution.
+	 */
+	private Predicate[] deserializeHypotheses(IReasonerInputReader reader)
+			throws SerializeException {
+		final IForwardInfHypAction fwd = deserializeForwardInf(reader);
+		final Collection<Predicate> hyps = fwd.getHyps();
+		if (hyps.size() != 2) {
+			throw new SerializeException(new IllegalStateException(
+					"There should be exactly two hypotheses in the inference"));
 		}
-		if (isGoal) {
-			return new Input(null, position, neededHyp);
+		final Collection<Predicate> inferredHyps = fwd.getInferredHyps();
+		if (inferredHyps.size() != 1) {
+			throw new SerializeException(new IllegalStateException(
+					"There should be exactly one inferred hypothesis"));
 		}
-		return new Input(rewritten, position, neededHyp);
+		final Iterator<Predicate> iterator = hyps.iterator();
+		final Predicate[] result = { iterator.next(), iterator.next(),
+				inferredHyps.iterator().next() };
+		return result;
+	}
+
+	private IForwardInfHypAction deserializeForwardInf(
+			IReasonerInputReader reader) throws SerializeException {
+		final IAntecedent antecedent = deserializeAntecedent(reader);
+		final List<IHypAction> actions = antecedent.getHypActions();
+		if (actions.size() < 1) {
+			throw new SerializeException(new IllegalStateException(
+					"There should be at least one action"));
+		}
+		final IHypAction first = actions.get(0);
+		if (!(first instanceof IForwardInfHypAction)) {
+			throw new SerializeException(new IllegalStateException(
+					"First action shall be a forward inference"));
+		}
+		return (IForwardInfHypAction) first;
+	}
+
+	private IAntecedent deserializeAntecedent(IReasonerInputReader reader)
+			throws SerializeException {
+		final IAntecedent[] antecedents = reader.getAntecedents();
+		if (antecedents.length != 1) {
+			throw new SerializeException(new IllegalStateException(
+					"There should be exactly one antecedent"));
+		}
+		return antecedents[0];
 	}
 
 	@Override
@@ -222,7 +306,7 @@ public class LocalEqRewrite implements IReasoner {
 			List<IHypAction> hypAct = new ArrayList<IHypAction>();
 			hypAct.add(makeForwardInfHypAction(neededHyps, singleton(newHyp)));
 			hypAct.add(makeHideHypAction(singleton(pred)));
-			return makeProofRule(this, input, neededHyps,
+			return makeProofRule(this, input, null,
 					"lae in " + pred.toString(), hypAct);
 		}
 	}
