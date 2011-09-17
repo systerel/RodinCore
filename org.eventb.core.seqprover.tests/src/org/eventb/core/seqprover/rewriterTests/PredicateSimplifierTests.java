@@ -32,6 +32,7 @@ public abstract class PredicateSimplifierTests extends
 	private final boolean withMultiImpOrAnd;
 	private final boolean withQuantDistr;
 	private final boolean withExistsImp;
+	private final boolean withMultiAndOr;
 
 	// Each inner class allows to run tests with a different set of options.
 	public static class MinimalTests extends PredicateSimplifierTests {
@@ -56,6 +57,7 @@ public abstract class PredicateSimplifierTests extends
 		this.withMultiImpOrAnd = rewriter.withMultiImpOrAnd;
 		this.withQuantDistr = rewriter.withQuantDistr;
 		this.withExistsImp = rewriter.withExistsImp;
+		this.withMultiAndOr = rewriter.withMultiAndOr;
 	}
 
 	protected void rewriteCond(boolean condition, String inputImage,
@@ -97,6 +99,11 @@ public abstract class PredicateSimplifierTests extends
 		rewriteCond(withExistsImp, inputImage, expectedImage, env);
 	}
 
+	protected void rewriteMultiAndOr(String inputImage, String expectedImage,
+			String... env) {
+		rewriteCond(withMultiAndOr, inputImage, expectedImage, env);
+	}
+
 	/**
 	 * Tests for rewriting conjunctions.
 	 */
@@ -132,25 +139,32 @@ public abstract class PredicateSimplifierTests extends
 
 		// SIMP_MULTI_AND:
 		// P & ... & Q & ... & Q & ... & R == P & ... & Q & ... & ... & R
-		rewritePred("x = 1 ∧ x = 1", "x = 1");
-		rewritePred("x = 1 ∧ x = 1 ∧ y = 2 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ x = 1 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ x = 1", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ y = 2", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ z = 3", "x = 1 ∧ y = 2 ∧ z = 3");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ z = 3 ∧ y = 2",
+		rewriteMultiAndOr("x = 1 ∧ x = 1", "x = 1");
+		rewriteMultiAndOr("x = 1 ∧ x = 1 ∧ y = 2 ∧ z = 3",
+				"x = 1 ∧ y = 2 ∧ z = 3");
+		rewriteMultiAndOr("x = 1 ∧ y = 2 ∧ x = 1 ∧ z = 3",
+				"x = 1 ∧ y = 2 ∧ z = 3");
+		rewriteMultiAndOr("x = 1 ∧ y = 2 ∧ z = 3 ∧ x = 1",
+				"x = 1 ∧ y = 2 ∧ z = 3");
+		rewriteMultiAndOr("x = 1 ∧ y = 2 ∧ z = 3 ∧ y = 2",
+				"x = 1 ∧ y = 2 ∧ z = 3");
+		rewriteMultiAndOr("x = 1 ∧ y = 2 ∧ z = 3 ∧ z = 3",
+				"x = 1 ∧ y = 2 ∧ z = 3");
+		rewriteMultiAndOr("x = 1 ∧ y = 2 ∧ z = 3 ∧ z = 3 ∧ y = 2",
 				"x = 1 ∧ y = 2 ∧ z = 3");
 
 		// SIMP_MULTI_AND_NOT:
 		// P & ... & Q & ... & not(Q) & ... & R == false
-		rewritePred("x = 1 ∧ ¬x = 1", "⊥");
-		rewritePred("¬x = 1 ∧ x = 1 ∧ y = 2 ∧ z = 3", "⊥");
-		rewritePred("x = 1 ∧ ¬x = 1 ∧ y = 2 ∧ z = 3", "⊥");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
-		rewritePred("x = 1 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
-		rewritePred("x = 1 ∧ ¬y = 2 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
-		rewritePred("x = 1 ∧ ¬y = 2 ∧ y = 2 ∧ ¬x = 1 ∧ z = 3 ∧ ¬x = 1", "⊥");
-		rewritePred("y = 2 ∧ ¬x = 1 ∧ z = 3 ∧ ¬x = 1 ∧ x = 1 ∧ ¬y = 2", "⊥");
+		rewriteMultiAndOr("x = 1 ∧ ¬x = 1", "⊥");
+		rewriteMultiAndOr("¬x = 1 ∧ x = 1 ∧ y = 2 ∧ z = 3", "⊥");
+		rewriteMultiAndOr("x = 1 ∧ ¬x = 1 ∧ y = 2 ∧ z = 3", "⊥");
+		rewriteMultiAndOr("x = 1 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
+		rewriteMultiAndOr("x = 1 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
+		rewriteMultiAndOr("x = 1 ∧ ¬y = 2 ∧ y = 2 ∧ z = 3 ∧ ¬x = 1", "⊥");
+		rewriteMultiAndOr("x = 1 ∧ ¬y = 2 ∧ y = 2 ∧ ¬x = 1 ∧ z = 3 ∧ ¬x = 1",
+				"⊥");
+		rewriteMultiAndOr("y = 2 ∧ ¬x = 1 ∧ z = 3 ∧ ¬x = 1 ∧ x = 1 ∧ ¬y = 2",
+				"⊥");
 	}
 
 	/**
@@ -187,23 +201,29 @@ public abstract class PredicateSimplifierTests extends
 		// SIMP_MULTI_OR:
 		// P or ... or Q or ... or Q or ... or R == P or ... or Q or ... or ...
 		// or R
-		rewritePred("x = 1 ∨ x = 1", "x = 1");
-		rewritePred("x = 1 ∨ x = 1 ∨ y = 2 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ y = 2 ∨ x = 1 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ x = 1", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ y = 2", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ z = 3", "x = 1 ∨ y = 2 ∨ z = 3");
-		rewritePred("x = 1 ∨ y = 2 ∨ x = 1 ∨ z = 3 ∨ z = 3",
+		rewriteMultiAndOr("x = 1 ∨ x = 1", "x = 1");
+		rewriteMultiAndOr("x = 1 ∨ x = 1 ∨ y = 2 ∨ z = 3",
+				"x = 1 ∨ y = 2 ∨ z = 3");
+		rewriteMultiAndOr("x = 1 ∨ y = 2 ∨ x = 1 ∨ z = 3",
+				"x = 1 ∨ y = 2 ∨ z = 3");
+		rewriteMultiAndOr("x = 1 ∨ y = 2 ∨ z = 3 ∨ x = 1",
+				"x = 1 ∨ y = 2 ∨ z = 3");
+		rewriteMultiAndOr("x = 1 ∨ y = 2 ∨ z = 3 ∨ y = 2",
+				"x = 1 ∨ y = 2 ∨ z = 3");
+		rewriteMultiAndOr("x = 1 ∨ y = 2 ∨ z = 3 ∨ z = 3",
+				"x = 1 ∨ y = 2 ∨ z = 3");
+		rewriteMultiAndOr("x = 1 ∨ y = 2 ∨ x = 1 ∨ z = 3 ∨ z = 3",
 				"x = 1 ∨ y = 2 ∨ z = 3");
 
 		// SIMP_MULTI_OR_NOT:
 		// P or ... or Q or ... or not(Q) or ... or R == true
-		rewritePred("x = 1 ∨ ¬x = 1", "⊤");
-		rewritePred("¬x = 1 ∨ x = 1 ∨ y = 2 ∨ z = 3", "⊤");
-		rewritePred("x = 1 ∨ ¬x = 1 ∨ y = 2 ∨ z = 3", "⊤");
-		rewritePred("x = 1 ∨ y = 2 ∨ ¬x = 1 ∨ z = 3", "⊤");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ ¬x = 1", "⊤");
-		rewritePred("x = 1 ∨ y = 2 ∨ z = 3 ∨ y = 2 ∨ ¬y = 2 ∨ ¬x = 1", "⊤");
+		rewriteMultiAndOr("x = 1 ∨ ¬x = 1", "⊤");
+		rewriteMultiAndOr("¬x = 1 ∨ x = 1 ∨ y = 2 ∨ z = 3", "⊤");
+		rewriteMultiAndOr("x = 1 ∨ ¬x = 1 ∨ y = 2 ∨ z = 3", "⊤");
+		rewriteMultiAndOr("x = 1 ∨ y = 2 ∨ ¬x = 1 ∨ z = 3", "⊤");
+		rewriteMultiAndOr("x = 1 ∨ y = 2 ∨ z = 3 ∨ ¬x = 1", "⊤");
+		rewriteMultiAndOr("x = 1 ∨ y = 2 ∨ z = 3 ∨ y = 2 ∨ ¬y = 2 ∨ ¬x = 1",
+				"⊤");
 	}
 
 	/**

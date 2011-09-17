@@ -132,7 +132,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 	private static int optionsForLevel(Level level) {
 		int result = 0;
-		result |= MULTI_IMP | QUANT_DISTR;
+		result |= MULTI_IMP | QUANT_DISTR | MULTI_AND_OR;
 		if (level.from(Level.L2)) {
 			result |= MULTI_EQV_NOT | MULTI_IMP_OR_AND;
 		}

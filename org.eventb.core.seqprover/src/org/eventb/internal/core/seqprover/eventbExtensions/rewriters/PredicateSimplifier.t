@@ -52,6 +52,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 	public static final int MULTI_IMP_OR_AND = 1 << 3;
 	public static final int QUANT_DISTR = 1 << 4;
 	public static final int EXISTS_IMP = 1 << 5;
+	public static final int MULTI_AND_OR = 1 << 6;
 
 	// true enables trace messages
 	protected final boolean debug;
@@ -66,6 +67,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 	public final boolean withMultiImpOrAnd;
 	public final boolean withQuantDistr;
 	public final boolean withExistsImp;
+	public final boolean withMultiAndOr;
 
 	private static final boolean isSet(int options, int flag) {
 		return (options & flag) != 0;
@@ -89,6 +91,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 		this.withMultiImpOrAnd = isSet(options, MULTI_IMP_OR_AND);
 		this.withQuantDistr = isSet(options, QUANT_DISTR);
 		this.withExistsImp = isSet(options, EXISTS_IMP);
+		this.withMultiAndOr = isSet(options, MULTI_AND_OR);
 		this.rewriterName = rewriterName;
 	}
 
@@ -173,7 +176,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 *    P ∧ ... ∧ Q ∧ ... ∧ ¬Q ∧ ... ∧ R  == ⊥
 			 */
 			Land(_) -> {
-				result = simplifyLand(predicate, dLib);
+				result = simplifyLand(predicate, dLib, withMultiAndOr);
 				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE",
 						"SIMP_SPECIAL_AND_BFALSE", "SIMP_MULTI_AND",
 						"SIMP_MULTI_AND_NOT");
@@ -191,7 +194,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 *    P ⋁ ... ⋁ Q ⋁ ... ⋁ ¬Q ⋁ ... ⋁ R  == P ⋁ ... ⋁ Q ⋁ ... ⋁ R
 			 */
 			Lor(_) -> {
-				result = simplifyLor(predicate, dLib);
+				result = simplifyLor(predicate, dLib, withMultiAndOr);
 				trace(predicate, result, "SIMP_SPECIAL_OR_BTRUE",
 						"SIMP_SPECIAL_OR_BFALSE", "SIMP_MULTI_OR",
 						"SIMP_MULTI_OR_NOT");
