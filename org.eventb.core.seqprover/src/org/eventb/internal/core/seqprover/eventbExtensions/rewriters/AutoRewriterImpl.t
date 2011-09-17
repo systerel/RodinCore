@@ -117,7 +117,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 	private final DivisionUtils du;
 
-	private final AutoRewrites.Level level;
+	private final Level level;
 
 	// Cached enabled levels
 	private final boolean level1;
@@ -136,6 +136,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		if (level.from(Level.L2)) {
 			result |= MULTI_EQV_NOT | MULTI_IMP_OR_AND;
 		}
+		if (level.from(Level.L3)) {
+			result |= MULTI_IMP_NOT | EXISTS_IMP;
+		}
 		return result;
 	}
 
@@ -148,7 +151,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		this.level3 = level.from(Level.L3);
 	}
 
-	public AutoRewrites.Level getLevel() {
+	public Level getLevel() {
 		return level;
 	}
 

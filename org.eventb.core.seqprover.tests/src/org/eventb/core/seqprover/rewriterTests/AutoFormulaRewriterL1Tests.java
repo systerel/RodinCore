@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,9 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
@@ -25,17 +28,26 @@ public class AutoFormulaRewriterL1Tests extends AutoFormulaRewriterL0Tests {
 	private static final AutoRewriterImpl REWRITER_L1 = new AutoRewriterImpl(
 			DT_FAC, Level.L1);
 
-	/**
-	 * Constructor.
-	 * <p>
-	 * Create an formula rewriter test with the input is the automatic rewriter.
-	 */
 	public AutoFormulaRewriterL1Tests() {
 		this(REWRITER_L1);
 	}
 
 	protected AutoFormulaRewriterL1Tests(AutoRewriterImpl rewriter) {
 		super(rewriter);
+	}
+
+	/**
+	 * Ensures that the predicate simplifier is correctly parameterized.
+	 */
+	@Test
+	public void checkOptions() {
+		assertTrue(REWRITER_L1.withMultiImp);
+		assertFalse(REWRITER_L1.withMultiImpNot);
+		assertFalse(REWRITER_L1.withMultiEqvNot);
+		assertFalse(REWRITER_L1.withMultiImpOrAnd);
+		assertTrue(REWRITER_L1.withQuantDistr);
+		assertFalse(REWRITER_L1.withExistsImp);
+		assertTrue(REWRITER_L1.withMultiAndOr);
 	}
 
 	/**

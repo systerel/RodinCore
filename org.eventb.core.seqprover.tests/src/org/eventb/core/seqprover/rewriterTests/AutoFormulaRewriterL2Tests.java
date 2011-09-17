@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.junit.Test;
@@ -27,11 +30,6 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 
 	private final boolean level2;
 
-	/**
-	 * Constructor.
-	 * <p>
-	 * Create an formula rewriter test with the input is the automatic rewriter.
-	 */
 	public AutoFormulaRewriterL2Tests() {
 		this(REWRITER_L2);
 	}
@@ -39,6 +37,20 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 	protected AutoFormulaRewriterL2Tests(AutoRewriterImpl rewriter) {
 		super(rewriter);
 		this.level2 = rewriter.getLevel() == Level.L2;
+	}
+
+	/**
+	 * Ensures that the predicate simplifier is correctly parameterized.
+	 */
+	@Test
+	public void checkOptions() {
+		assertTrue(REWRITER_L2.withMultiImp);
+		assertFalse(REWRITER_L2.withMultiImpNot);
+		assertTrue(REWRITER_L2.withMultiEqvNot);
+		assertTrue(REWRITER_L2.withMultiImpOrAnd);
+		assertTrue(REWRITER_L2.withQuantDistr);
+		assertFalse(REWRITER_L2.withExistsImp);
+		assertTrue(REWRITER_L2.withMultiAndOr);
 	}
 
 	/**

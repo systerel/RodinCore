@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.junit.Test;
@@ -31,6 +33,20 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 
 	protected AutoFormulaRewriterL3Tests(AutoRewriterImpl rewriter) {
 		super(rewriter);
+	}
+
+	/**
+	 * Ensures that the predicate simplifier is correctly parameterized.
+	 */
+	@Test
+	public void checkOptions() {
+		assertTrue(REWRITER_L3.withMultiImp);
+		assertTrue(REWRITER_L3.withMultiImpNot); // NEW
+		assertTrue(REWRITER_L3.withMultiEqvNot);
+		assertTrue(REWRITER_L3.withMultiImpOrAnd);
+		assertTrue(REWRITER_L3.withQuantDistr);
+		assertTrue(REWRITER_L3.withExistsImp);
+		assertTrue(REWRITER_L3.withMultiAndOr);
 	}
 
 	/**
@@ -114,6 +130,24 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 	@Test
 	public void testDEF_RAN_SUCC() {
 		rewriteExpr("ran(succ)", "ℤ");
+	}
+
+	/**
+	 * Ensures that rule SIMP_EXISTS_IMP is correctly integrated.
+	 */
+	@Test
+	public void testSIMP_EXISTS_IMP() {
+		rewritePred("∃x⦂ℤ·(x∈A ⇒ x∈B)", "(∀x⦂ℤ·x∈A) ⇒ (∃x⦂ℤ·x∈B)");
+	}
+
+	/**
+	 * Ensures that rules SIMP_MULTI_IMP_NOT_L and SIMP_MULTI_IMP_NOT_R are
+	 * correctly integrated.
+	 */
+	@Test
+	public void testSIMP_MULTI_IMP_NOT() {
+		rewritePred("¬x∈A ⇒  x∈A", " x∈A", "x", "ℤ");
+		rewritePred(" x∈A ⇒ ¬x∈A", "¬x∈A", "x", "ℤ");
 	}
 
 }
