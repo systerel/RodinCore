@@ -19,6 +19,7 @@ import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
@@ -35,6 +36,14 @@ public abstract class IdentityTranslatorBase {
 	
 	protected IdentityTranslatorBase(FormulaFactory ff) {
 		this.ff = ff;
+	}
+
+	protected static <T extends Formula<T>> T ifChanged(T original, T formula) {
+		if (original.equals(formula)) {
+			return original;
+		} else {
+			return formula;
+		}
 	}
 
 	protected abstract Expression translate(Expression expr);

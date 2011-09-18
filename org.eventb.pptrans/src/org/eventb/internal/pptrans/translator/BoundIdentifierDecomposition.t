@@ -113,7 +113,7 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 	}
 	
 	private Expression translateQExpr(int tag, BoundIdentDecl[] is,
-			Predicate pred, Expression expr, SourceLocation loc) {
+			Predicate pred, Expression expr, Expression parent) {
 		final BoundIdentifierDecomposition ic =
 				new BoundIdentifierDecomposition(ff, mapletOffsets, count);
 		final DecomposedQuant quant = new DecomposedQuant(ff);
@@ -128,11 +128,12 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 				new Substitute(quantifier, ic.count + quant.offset()));
 		} 	
 		ic.count += quant.offset();
-		return quant.makeQuantifiedExpression(
-			tag,
-			ic.translate(pred),
-			ic.translate(expr),
-			loc);
+		final SourceLocation loc = parent.getSourceLocation();
+		return ifChanged(parent, quant.makeQuantifiedExpression(
+				tag,
+				ic.translate(pred),
+				ic.translate(expr),
+				loc));
 	}
 	
 	@Override
@@ -140,13 +141,13 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 		SourceLocation loc = expr.getSourceLocation();		
 		%match (Expression expr) {
 			Cset(is, P, E) -> {
-				return translateQExpr(CSET, `is, `P, `E, loc);
+				return translateQExpr(CSET, `is, `P, `E, expr);
 			}
 			Qunion(is, P, E) -> {
-				return translateQExpr(QUNION, `is, `P, `E, loc);
+				return translateQExpr(QUNION, `is, `P, `E, expr);
 			}
 			Qinter(is, P, E) -> {
-				return translateQExpr(QINTER, `is, `P, `E, loc);
+				return translateQExpr(QINTER, `is, `P, `E, expr);
 			}
 			BoundIdentifier(idx) -> {
 				Substitute p = mapletOffsets.get(`idx);
@@ -157,7 +158,7 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 	}
 	
 	private Predicate translateQPred(int tag, BoundIdentDecl[] is,
-			Predicate pred, SourceLocation loc) {
+			Predicate pred, Predicate parent) {
 		BoundIdentifierDecomposition ic = 
 				new BoundIdentifierDecomposition(ff, mapletOffsets, count);
 		DecomposedQuant quant = new DecomposedQuant(ff);
@@ -172,18 +173,19 @@ public class BoundIdentifierDecomposition extends IdentityTranslator {
 				new Substitute(quantifier, ic.count + quant.offset()));
 		} 	
 		ic.count += quant.offset();
-		return quant.makeQuantifiedPredicate(tag, ic.translate(pred), loc);
+		final SourceLocation loc = parent.getSourceLocation();
+		return ifChanged(parent,
+				quant.makeQuantifiedPredicate(tag, ic.translate(pred), loc));
 	}
 
 	@Override
 	protected Predicate translate(Predicate pred) {
-		SourceLocation loc = pred.getSourceLocation();		
 		%match (Predicate pred) {
 			ForAll(is, P) -> {
-				return translateQPred(FORALL, `is, `P, loc);
+				return translateQPred(FORALL, `is, `P, pred);
 			}
 			Exists(is, P) -> {
-				return translateQPred(EXISTS, `is, `P, loc);
+				return translateQPred(EXISTS, `is, `P, pred);
 			}
 		}
 		return super.translate(pred);
