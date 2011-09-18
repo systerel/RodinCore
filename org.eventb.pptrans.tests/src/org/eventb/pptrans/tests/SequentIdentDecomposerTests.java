@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
-import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.pptrans.Translator;
 
 /**
@@ -23,16 +20,6 @@ import org.eventb.pptrans.Translator;
  * @author Laurent Voisin
  */
 public class SequentIdentDecomposerTests extends AbstractTranslationTests {
-
-	private ISimpleSequent make(String goalImage, String... hypImages) {
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
-		final Predicate[] hyps = new Predicate[hypImages.length];
-		for (int i = 0; i < hyps.length; i++) {
-			hyps[i] = parse(hypImages[i], typenv);
-		}
-		final Predicate goal = parse(goalImage, typenv);
-		return SimpleSequents.make(hyps, goal, ff);
-	}
 
 	/**
 	 * Ensures that the same sequent is returned if no decomposition occurs.

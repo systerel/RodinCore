@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2 (BR8, IR39, IR43, IR44)
  *     Systerel - added pred and succ (IR47, IR48)
+ *     Systerel - added sequent translation
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
@@ -27,6 +28,8 @@ import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.pptrans.Translator.Option;
 
 
@@ -1730,13 +1733,23 @@ public class TranslationTests extends AbstractTranslationTests {
 
 	private static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
 
-	public void testMathExtension() throws Exception {
-		final Predicate pinput = parse("p = dt", DT_FF.makeTypeEnvironment());
-		try {
-			reduceToPredicateCalulus(pinput, ff);
-			fail("expected UnsupportedOperationException thrown");
-		} catch (UnsupportedOperationException e) {
-			// as expected
-		}
+	/**
+	 * Ensure that mathematical extensions get discarded by the translation.
+	 */
+	public void testMathExtension() {
+		final Predicate pred = parse("p = dt", DT_FF.makeTypeEnvironment());
+		final ISimpleSequent sequent = SimpleSequents.make(null, pred, DT_FF);
+		final ISimpleSequent expected = SimpleSequents.make(null, null, DT_FF);
+		assertEquals(expected, reduceToPredicateCalulus(sequent));
 	}
+
+	/**
+	 * Ensures that all predicates of a sequent get translated.
+	 */
+	public void testSequent() {
+		final ISimpleSequent sequent = make("1↦2 ∈ succ", "1↦3 ∈ succ");
+		final ISimpleSequent expected = make("2 = 1 + 1", "3 = 1 + 1");
+		assertEquals(expected, reduceToPredicateCalulus(sequent));
+	}
+
 }

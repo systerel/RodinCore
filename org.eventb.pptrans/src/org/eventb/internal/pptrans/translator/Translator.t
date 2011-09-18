@@ -59,7 +59,7 @@ public class Translator extends IdentityTranslator {
 		return new Translator(ff, options).translate(pred);
 	}
 	
-	private Translator(FormulaFactory ff, Option[] options) {
+	public Translator(FormulaFactory ff, Option[] options) {
 		super(ff);
 		final Set<Option> opts = new HashSet<Option>(Arrays.asList(options));
 		expandSetEquality = opts.contains(Option.expandSetEquality);

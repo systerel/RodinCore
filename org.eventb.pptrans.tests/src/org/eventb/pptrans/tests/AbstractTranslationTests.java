@@ -21,6 +21,8 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.SimpleSequents;
 
 public abstract class AbstractTranslationTests extends TestCase {
 	
@@ -67,6 +69,16 @@ public abstract class AbstractTranslationTests extends TestCase {
 
 	public static void assertTypeChecked(Formula<?> formula) {
 		assertTrue("Formula is not typed: " + formula, formula.isTypeChecked());
+	}
+
+	protected ISimpleSequent make(String goalImage, String... hypImages) {
+		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final Predicate[] hyps = new Predicate[hypImages.length];
+		for (int i = 0; i < hyps.length; i++) {
+			hyps[i] = parse(hypImages[i], typenv);
+		}
+		final Predicate goal = parse(goalImage, typenv);
+		return SimpleSequents.make(hyps, goal, ff);
 	}
 
 }

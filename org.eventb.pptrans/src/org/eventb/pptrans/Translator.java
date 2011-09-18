@@ -8,16 +8,20 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added translation options
+ *     Systerel - added sequent translation
  *******************************************************************************/
 package org.eventb.pptrans;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.ITrackedPredicate;
+import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.internal.pptrans.translator.BoundIdentifierDecomposition;
 import org.eventb.internal.pptrans.translator.GoalChecker;
 import org.eventb.internal.pptrans.translator.IdentifierDecomposer;
 import org.eventb.internal.pptrans.translator.PredicateSimplification;
+import org.eventb.internal.pptrans.translator.SequentTranslator;
 
 /**
  * Provides access to the Translator of the Predicate Prover. The intended use
@@ -139,6 +143,31 @@ public class Translator {
 	}
 
 	/**
+	 * Transforms a sequent from Set-Theory to Predicate Calculus. The
+	 * translation scheme can be tailored to specific needs by providing one or
+	 * several options.
+	 * <p>
+	 * This transformation does not support mathematical extensions. Any
+	 * predicate of the given sequent that contains a mathematical extension is
+	 * discarded. Such removal makes the returned sequent strictly stronger than
+	 * the given sequent.
+	 * </p>
+	 * 
+	 * @param sequent
+	 *            the sequent to reduce. All predicates of the sequent must be
+	 *            in a decomposed form
+	 * @param options
+	 *            options to be used during translation
+	 * @return a reduced predicate stronger or equivalent to the input predicate
+	 * @since 0.6.0
+	 * @see #decomposeIdentifiers(ISimpleSequent)
+	 */
+	public static ISimpleSequent reduceToPredicateCalulus(ISimpleSequent sequent,
+			Option... options) {
+		return sequent.apply(new SequentTranslator(sequent, options));
+	}
+
+	/**
 	 * Simplifies the given predicate using some basic simplification rules.
 	 * 
 	 * @param predicate
@@ -146,6 +175,8 @@ public class Translator {
 	 * @param ff
 	 *            the formula factory to use
 	 * @return a simplified predicate equivalent to the input predicate
+	 * @see SimpleSequents#simplify(ISimpleSequent,
+	 *      org.eventb.core.seqprover.transformer.SimpleSequents.SimplificationOption...)
 	 */
 	public static Predicate simplifyPredicate(Predicate predicate,
 			FormulaFactory ff) {
@@ -165,6 +196,25 @@ public class Translator {
 	 */
 	public static boolean isInGoal(Predicate predicate) {
 		return GoalChecker.isInGoal(predicate);
+	}
+
+	/**
+	 * Tells whether the given sequent is in the target sub-language of the PP
+	 * translator.
+	 * 
+	 * @param sequent
+	 *            a sequent to test
+	 * @return <code>true</code> iff the given sequent is in the target
+	 *         sub-language of the PP translator
+	 */
+	public static boolean isInGoal(ISimpleSequent sequent) {
+		for (ITrackedPredicate tpred : sequent.getPredicates()) {
+			final Predicate pred = tpred.getPredicate();
+			if (!GoalChecker.isInGoal(pred)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
