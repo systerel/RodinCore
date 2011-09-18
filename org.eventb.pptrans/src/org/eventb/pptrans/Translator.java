@@ -13,9 +13,10 @@ package org.eventb.pptrans;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.internal.pptrans.translator.BoundIdentifierDecomposition;
-import org.eventb.internal.pptrans.translator.FreeIdentifierDecomposition;
 import org.eventb.internal.pptrans.translator.GoalChecker;
+import org.eventb.internal.pptrans.translator.IdentifierDecomposer;
 import org.eventb.internal.pptrans.translator.PredicateSimplification;
 
 /**
@@ -65,6 +66,21 @@ public class Translator {
 
 	/**
 	 * Decomposes every free or bound identifier of Cartesian product type in
+	 * the given sequent. These identifiers are replaced by a combination of
+	 * fresh identifiers in the returned sequent. This transformation thus
+	 * preserves validity, modulo some possible change to the type environment.
+	 * 
+	 * @param sequent
+	 *            sequent to process
+	 * @return an equivalent sequent that contains no identifier of Cartesian
+	 *         product type
+	 */
+	public static ISimpleSequent decomposeIdentifiers(ISimpleSequent sequent) {
+		return sequent.apply(new IdentifierDecomposer(sequent));
+	}
+
+	/**
+	 * Decomposes every free or bound identifier of Cartesian product type in
 	 * the given predicate.
 	 * 
 	 * @param predicate
@@ -74,11 +90,13 @@ public class Translator {
 	 * @return an equivalent predicate that contains no identifier of Cartesian
 	 *         product type, except for the quantification of the free
 	 *         identifiers
+	 * @deprecated Use {@link #decomposeIdentifiers(ISimpleSequent)} instead
 	 */
+	@Deprecated
 	public static Predicate decomposeIdentifiers(Predicate predicate,
 			FormulaFactory ff) {
-		predicate = FreeIdentifierDecomposition.decomposeIdentifiers(predicate,
-				ff);
+		predicate = org.eventb.internal.pptrans.translator.FreeIdentifierDecomposition
+				.decomposeIdentifiers(predicate, ff);
 		return BoundIdentifierDecomposition.decomposeBoundIdentifiers(
 				predicate, ff);
 	}
@@ -148,4 +166,5 @@ public class Translator {
 	public static boolean isInGoal(Predicate predicate) {
 		return GoalChecker.isInGoal(predicate);
 	}
+
 }

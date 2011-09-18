@@ -6,7 +6,8 @@ Bundle-Version: 0.5.0.qualifier
 Bundle-Vendor: %pluginProvider
 Bundle-Localization: plugin
 Require-Bundle: org.eventb.core.ast,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eventb.core.seqprover;bundle-version="2.3.0"
 Export-Package: org.eventb.pptrans
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

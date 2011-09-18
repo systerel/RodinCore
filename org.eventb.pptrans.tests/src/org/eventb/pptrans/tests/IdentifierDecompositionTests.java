@@ -35,6 +35,7 @@ import org.eventb.pptrans.Translator;
  * @author Laurent Voisin
  * @see org.eventb.pptrans.Translator#decomposeIdentifiers(Predicate, FormulaFactory)
  */
+@SuppressWarnings({ "deprecation", "javadoc" })
 public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	
 	protected final ITypeEnvironment te;

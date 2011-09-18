@@ -44,6 +44,7 @@ public class DocTests extends AbstractTranslationTests {
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void doDecompTest(String inputString, String expectedString, ITypeEnvironment te) {
 		final Predicate input = parse(inputString, te);
 		final Predicate expected = parse(expectedString, te);

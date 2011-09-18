@@ -18,6 +18,13 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 
+/**
+ * This is the original implementation of free identifier decomposition. It is
+ * now superseded by the new implementation that provides a sequent transformer.
+ * 
+ * @author Matthias Konrad
+ */
+@Deprecated
 public abstract class FreeIdentifierDecomposition {
 	
 	public static Predicate decomposeIdentifiers(Predicate pred, FormulaFactory ff) {
