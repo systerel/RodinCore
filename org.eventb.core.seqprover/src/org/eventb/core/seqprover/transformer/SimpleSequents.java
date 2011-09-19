@@ -17,7 +17,7 @@ import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Pred
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_EQV_NOT;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_IMP;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_IMP_NOT;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_IMP_OR_AND;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_IMP_AND;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.QUANT_DISTR;
 import static org.eventb.internal.core.seqprover.transformer.TrackedPredicate.makeGoal;
 import static org.eventb.internal.core.seqprover.transformer.TrackedPredicate.makeHyp;
@@ -135,7 +135,7 @@ public class SimpleSequents {
 		 * <li>SIMP_MULTI_IMP_NOT_L</li>
 		 * <li>SIMP_MULTI_IMP_NOT_R</li>
 		 * <li>SIMP_MULTI_EQV_NOT</li>
-		 * <li>SIMP_MULTI_IMP_OR</li> TODO ill named
+		 * <li>SIMP_MULTI_IMP_AND</li>
 		 * <li>SIMP_MULTI_IMP_AND_NOT_R</li>
 		 * <li>SIMP_MULTI_IMP_AND_NOT_L</li>
 		 * <li>SIMP_FORALL_AND</li>
@@ -144,7 +144,7 @@ public class SimpleSequents {
 		 * </ul>
 		 */
 		aggressiveSimplification(MULTI_AND_OR | MULTI_IMP | MULTI_IMP_NOT
-				| MULTI_EQV_NOT | MULTI_IMP_OR_AND | QUANT_DISTR | EXISTS_IMP);
+				| MULTI_EQV_NOT | MULTI_IMP_AND | QUANT_DISTR | EXISTS_IMP);
 
 		final int flags;
 

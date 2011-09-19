@@ -47,7 +47,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 		assertTrue(REWRITER_L2.withMultiImp);
 		assertFalse(REWRITER_L2.withMultiImpNot);
 		assertTrue(REWRITER_L2.withMultiEqvNot);
-		assertTrue(REWRITER_L2.withMultiImpOrAnd);
+		assertTrue(REWRITER_L2.withMultiImpAnd);
 		assertTrue(REWRITER_L2.withQuantDistr);
 		assertFalse(REWRITER_L2.withExistsImp);
 		assertTrue(REWRITER_L2.withMultiAndOr);

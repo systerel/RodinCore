@@ -29,7 +29,7 @@ public abstract class PredicateSimplifierTests extends
 	private final boolean withMultiImp;
 	private final boolean withMultiImpNot;
 	private final boolean withMultiEqvNot;
-	private final boolean withMultiImpOrAnd;
+	private final boolean withMultiImpAnd;
 	private final boolean withQuantDistr;
 	private final boolean withExistsImp;
 	private final boolean withMultiAndOr;
@@ -54,7 +54,7 @@ public abstract class PredicateSimplifierTests extends
 		this.withMultiImp = rewriter.withMultiImp;
 		this.withMultiImpNot = rewriter.withMultiImpNot;
 		this.withMultiEqvNot = rewriter.withMultiEqvNot;
-		this.withMultiImpOrAnd = rewriter.withMultiImpOrAnd;
+		this.withMultiImpAnd = rewriter.withMultiImpAnd;
 		this.withQuantDistr = rewriter.withQuantDistr;
 		this.withExistsImp = rewriter.withExistsImp;
 		this.withMultiAndOr = rewriter.withMultiAndOr;
@@ -84,9 +84,9 @@ public abstract class PredicateSimplifierTests extends
 		rewriteCond(withMultiImpNot, inputImage, expectedImage, env);
 	}
 
-	protected void rewriteMultiImpOrAnd(String inputImage,
+	protected void rewriteMultiImpAnd(String inputImage,
 			String expectedImage, String... env) {
-		rewriteCond(withMultiImpOrAnd, inputImage, expectedImage, env);
+		rewriteCond(withMultiImpAnd, inputImage, expectedImage, env);
 	}
 
 	protected void rewriteQuantDistr(String inputImage, String expectedImage,
@@ -362,16 +362,16 @@ public abstract class PredicateSimplifierTests extends
 	}
 
 	/**
-	 * Ensures that rule SIMP_MULTI_IMP_OR is implemented correctly.
+	 * Ensures that rule SIMP_MULTI_IMP_AND is implemented correctly.
 	 */
 	@Test
-	public void testSIMP_MULTI_IMP_OR() {
-		rewriteMultiImpOrAnd("a=0 ∧ b=1 ⇒ a=0", "⊤");
-		rewriteMultiImpOrAnd("a=0 ∧ b=1 ⇒ b=1", "⊤");
+	public void testSIMP_MULTI_IMP_AND() {
+		rewriteMultiImpAnd("a=0 ∧ b=1 ⇒ a=0", "⊤");
+		rewriteMultiImpAnd("a=0 ∧ b=1 ⇒ b=1", "⊤");
 
-		rewriteMultiImpOrAnd("a=0 ∧ b=1 ∧ c=2 ⇒ a=0", "⊤");
-		rewriteMultiImpOrAnd("a=0 ∧ b=1 ∧ c=2 ⇒ b=1", "⊤");
-		rewriteMultiImpOrAnd("a=0 ∧ b=1 ∧ c=2 ⇒ c=2", "⊤");
+		rewriteMultiImpAnd("a=0 ∧ b=1 ∧ c=2 ⇒ a=0", "⊤");
+		rewriteMultiImpAnd("a=0 ∧ b=1 ∧ c=2 ⇒ b=1", "⊤");
+		rewriteMultiImpAnd("a=0 ∧ b=1 ∧ c=2 ⇒ c=2", "⊤");
 
 		noRewritePred("a=0 ∧ b=1 ⇒ a=1");
 	}
@@ -381,12 +381,12 @@ public abstract class PredicateSimplifierTests extends
 	 */
 	@Test
 	public void testSIMP_MULTI_IMP_AND_NOT_R() {
-		rewriteMultiImpOrAnd("a=0 ∧ b=1 ⇒ ¬a=0", "¬(a=0 ∧ b=1)");
-		rewriteMultiImpOrAnd("a=0 ∧ b=1 ⇒ ¬b=1", "¬(a=0 ∧ b=1)");
+		rewriteMultiImpAnd("a=0 ∧ b=1 ⇒ ¬a=0", "¬(a=0 ∧ b=1)");
+		rewriteMultiImpAnd("a=0 ∧ b=1 ⇒ ¬b=1", "¬(a=0 ∧ b=1)");
 
-		rewriteMultiImpOrAnd("a=0 ∧ b=1 ∧ c=2⇒ ¬a=0", "¬(a=0 ∧ b=1 ∧ c=2)");
-		rewriteMultiImpOrAnd("a=0 ∧ b=1 ∧ c=2⇒ ¬b=1", "¬(a=0 ∧ b=1 ∧ c=2)");
-		rewriteMultiImpOrAnd("a=0 ∧ b=1 ∧ c=2⇒ ¬c=2", "¬(a=0 ∧ b=1 ∧ c=2)");
+		rewriteMultiImpAnd("a=0 ∧ b=1 ∧ c=2⇒ ¬a=0", "¬(a=0 ∧ b=1 ∧ c=2)");
+		rewriteMultiImpAnd("a=0 ∧ b=1 ∧ c=2⇒ ¬b=1", "¬(a=0 ∧ b=1 ∧ c=2)");
+		rewriteMultiImpAnd("a=0 ∧ b=1 ∧ c=2⇒ ¬c=2", "¬(a=0 ∧ b=1 ∧ c=2)");
 
 		noRewritePred("a=0 ∧ b=1 ⇒ ¬a=1");
 	}
@@ -396,14 +396,14 @@ public abstract class PredicateSimplifierTests extends
 	 */
 	@Test
 	public void testSIMP_MULTI_IMP_AND_NOT_L() {
-		rewriteMultiImpOrAnd("¬a=0 ∧  b=1 ⇒ a=0", "¬(¬a=0 ∧  b=1)");
-		rewriteMultiImpOrAnd(" a=0 ∧ ¬b=1 ⇒ b=1", "¬( a=0 ∧ ¬b=1)");
+		rewriteMultiImpAnd("¬a=0 ∧  b=1 ⇒ a=0", "¬(¬a=0 ∧  b=1)");
+		rewriteMultiImpAnd(" a=0 ∧ ¬b=1 ⇒ b=1", "¬( a=0 ∧ ¬b=1)");
 
-		rewriteMultiImpOrAnd("¬a=0 ∧  b=1 ∧  c=2 ⇒ a=0",
+		rewriteMultiImpAnd("¬a=0 ∧  b=1 ∧  c=2 ⇒ a=0",
 				"¬(¬a=0 ∧  b=1 ∧  c=2)");
-		rewriteMultiImpOrAnd(" a=0 ∧ ¬b=1 ∧  c=2 ⇒ b=1",
+		rewriteMultiImpAnd(" a=0 ∧ ¬b=1 ∧  c=2 ⇒ b=1",
 				"¬( a=0 ∧ ¬b=1 ∧  c=2)");
-		rewriteMultiImpOrAnd(" a=0 ∧  b=1 ∧ ¬c=2 ⇒ c=2",
+		rewriteMultiImpAnd(" a=0 ∧  b=1 ∧ ¬c=2 ⇒ c=2",
 				"¬( a=0 ∧  b=1 ∧ ¬c=2)");
 
 		noRewritePred("¬a=0 ∧ b=1 ⇒ a=1");

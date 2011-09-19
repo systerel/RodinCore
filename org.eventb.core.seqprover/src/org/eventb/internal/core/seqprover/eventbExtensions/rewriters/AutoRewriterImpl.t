@@ -134,7 +134,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		int result = 0;
 		result |= MULTI_IMP | QUANT_DISTR | MULTI_AND_OR;
 		if (level.from(Level.L2)) {
-			result |= MULTI_EQV_NOT | MULTI_IMP_OR_AND;
+			result |= MULTI_EQV_NOT | MULTI_IMP_AND;
 		}
 		if (level.from(Level.L3)) {
 			result |= MULTI_IMP_NOT | EXISTS_IMP;

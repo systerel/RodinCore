@@ -49,7 +49,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 	public static final int MULTI_IMP = 1 << 0;
 	public static final int MULTI_EQV_NOT = 1 << 1;
 	public static final int MULTI_IMP_NOT = 1 << 2;
-	public static final int MULTI_IMP_OR_AND = 1 << 3;
+	public static final int MULTI_IMP_AND = 1 << 3;
 	public static final int QUANT_DISTR = 1 << 4;
 	public static final int EXISTS_IMP = 1 << 5;
 	public static final int MULTI_AND_OR = 1 << 6;
@@ -64,7 +64,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 	public final boolean withMultiImp;
 	public final boolean withMultiImpNot;
 	public final boolean withMultiEqvNot;
-	public final boolean withMultiImpOrAnd;
+	public final boolean withMultiImpAnd;
 	public final boolean withQuantDistr;
 	public final boolean withExistsImp;
 	public final boolean withMultiAndOr;
@@ -88,7 +88,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 		this.withMultiImp = isSet(options, MULTI_IMP);
 		this.withMultiEqvNot = isSet(options, MULTI_EQV_NOT);
 		this.withMultiImpNot = isSet(options, MULTI_IMP_NOT);
-		this.withMultiImpOrAnd = isSet(options, MULTI_IMP_OR_AND);
+		this.withMultiImpAnd = isSet(options, MULTI_IMP_AND);
 		this.withQuantDistr = isSet(options, QUANT_DISTR);
 		this.withExistsImp = isSet(options, EXISTS_IMP);
 		this.withMultiAndOr = isSet(options, MULTI_AND_OR);
@@ -207,7 +207,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 	@ProverRule( { "SIMP_SPECIAL_IMP_BTRUE_L", "SIMP_SPECIAL_IMP_BFALSE_L",
 			"SIMP_SPECIAL_IMP_BTRUE_R", "SIMP_SPECIAL_IMP_BFALSE_R",
 			"SIMP_MULTI_IMP", "SIMP_MULTI_EQV", "SIMP_SPECIAL_EQV_BTRUE",
-			"SIMP_SPECIAL_EQV_BFALSE", "SIMP_MULTI_IMP_OR",
+			"SIMP_SPECIAL_EQV_BFALSE", "SIMP_MULTI_IMP_AND",
 			"SIMP_MULTI_IMP_AND_NOT_R", "SIMP_MULTI_IMP_AND_NOT_L",
 			"SIMP_MULTI_EQV_NOT", "SIMP_MULTI_IMP_NOT_L",
 			"SIMP_MULTI_IMP_NOT_R" })
@@ -338,13 +338,13 @@ public class PredicateSimplifier extends DefaultRewriter {
 			}
 
 			/**
-			 * SIMP_MULTI_IMP_OR
+			 * SIMP_MULTI_IMP_AND
 			 *    P ∧ ... ∧ Q ∧ ... ∧ R ⇒ Q == ⊤
 			 */
 			Limp(Land(pList(_*, Q, _*)), Q) -> {
-				if (withMultiImpOrAnd) {
+				if (withMultiImpAnd) {
 					result = dLib.True();
-					trace(predicate, result, "SIMP_MULTI_IMP_OR");
+					trace(predicate, result, "SIMP_MULTI_IMP_AND");
 					return result;
 				}
 			}
@@ -362,7 +362,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 				 *    && (nQ << Predicate dLib.makeNeg(Q))
 				 * but this raises an internal error in Tom!
 				 */
-				if (withMultiImpOrAnd && contains(`children, dLib.makeNeg(`Q))) {
+				if (withMultiImpAnd && contains(`children, dLib.makeNeg(`Q))) {
 					result = dLib.makeNeg(`and);
 					trace(predicate, result, "SIMP_MULTI_IMP_AND_NOT_R",
 							"SIMP_MULTI_IMP_AND_NOT_L");

@@ -43,7 +43,7 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 		assertTrue(REWRITER_L3.withMultiImp);
 		assertTrue(REWRITER_L3.withMultiImpNot); // NEW
 		assertTrue(REWRITER_L3.withMultiEqvNot);
-		assertTrue(REWRITER_L3.withMultiImpOrAnd);
+		assertTrue(REWRITER_L3.withMultiImpAnd);
 		assertTrue(REWRITER_L3.withQuantDistr);
 		assertTrue(REWRITER_L3.withExistsImp);
 		assertTrue(REWRITER_L3.withMultiAndOr);

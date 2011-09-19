@@ -178,7 +178,7 @@ public class SequentSimplifierTest extends AbstractTransformerTests {
 	}
 
 	@Test
-	public void AR9_SIMP_MULTI_IMP_OR() {
+	public void AR9_SIMP_MULTI_IMP_AND() {
 		assertChanged("0=0 ∧ 1=1 ⇒ 0=0", "⊤", aggr);
 	}
 
