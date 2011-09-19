@@ -62,7 +62,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewritesL2;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunAppInDomGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.InDomGoalManager;
@@ -491,11 +491,11 @@ public class AutoTactics {
 	 * @author Farhad Mehta
 	 *
 	 */
-	public static class AutoRewriteTac  extends AbsractLazilyConstrTactic{
+	public static class AutoRewriteTac extends AbsractLazilyConstrTactic{
 
 		@Override
 		protected ITactic getSingInstance() {
-			return BasicTactics.reasonerTac(new AutoRewritesL2(),EMPTY_INPUT);
+			return BasicTactics.reasonerTac(AutoRewrites.DEFAULT, EMPTY_INPUT);
 		}
 	}
 	

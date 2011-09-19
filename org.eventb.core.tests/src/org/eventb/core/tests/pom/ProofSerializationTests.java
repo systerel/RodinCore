@@ -49,7 +49,6 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
-import org.eventb.core.seqprover.eventbExtensions.AutoTactics.AutoRewriteTac;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
@@ -87,6 +86,13 @@ public class ProofSerializationTests extends TestCase {
 		assertTrue(ProverLib.deepEquals(proofTree.getRoot(), skel));
 		
 		assertEquals(hasDeps, proof.getProofDependencies(ff, null).hasDeps());
+	}
+
+	private static ITactic autoRewriteL2() {
+		final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
+		final IReasonerDesc desc = registry
+				.getReasonerDesc("org.eventb.core.seqprover.autoRewritesL2");
+		return BasicTactics.reasonerTac(desc.getInstance(), new EmptyInput());
 	}
 
 	private void importProofSerializationProofs() throws Exception {
@@ -362,7 +368,7 @@ public class ProofSerializationTests extends TestCase {
 		final IProofTreeNode root = proofTree.getRoot();
 
 		Tactics.contImpHyp(hyp, IPosition.ROOT).apply(root, null);
-		new AutoRewriteTac().apply(root.getFirstOpenDescendant(), null);
+		autoRewriteL2().apply(root.getFirstOpenDescendant(), null);
 		new AutoTactics.FalseHypTac()
 				.apply(root.getFirstOpenDescendant(), null);
 		assertTrue(proofTree.isClosed());
@@ -404,7 +410,7 @@ public class ProofSerializationTests extends TestCase {
 		new TrueGoalTac().apply(expectedRoot.getFirstOpenDescendant(), null);
 		new AutoTactics.FalseHypTac().apply(
 				expectedRoot.getFirstOpenDescendant(), null);
-		new AutoRewriteTac().apply(expectedRoot.getFirstOpenDescendant(), null);
+		autoRewriteL2().apply(expectedRoot.getFirstOpenDescendant(), null);
 		new TrueGoalTac().apply(expectedRoot.getFirstOpenDescendant(), null);
 		assertTrue(expected.isClosed());
 
