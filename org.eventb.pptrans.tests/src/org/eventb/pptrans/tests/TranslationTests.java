@@ -14,6 +14,7 @@
 package org.eventb.pptrans.tests;
 
 import static java.util.Collections.emptyList;
+import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
@@ -32,6 +33,7 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.ITrackedPredicate;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.pptrans.Translator.Option;
 
@@ -64,6 +66,18 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest(input, expected, transformExpected, defaultTe);
 	}
 
+	private static Predicate translate(Predicate goal, FormulaFactory factory,
+			Option[] options) {
+		final ISimpleSequent sequent = SimpleSequents.make(NONE, goal, factory);
+		final ISimpleSequent result = reduceToPredicateCalulus(sequent, options);
+		final ITrackedPredicate[] tpreds = result.getPredicates();
+		if (tpreds.length > 0) {
+			return tpreds[0].getPredicate();
+		} else {
+			return factory.makeLiteralPredicate(BFALSE, null);
+		}
+	}
+
 	private static void doTest(String input, String expected,
 			boolean transformExpected, ITypeEnvironment inputTypenv,
 			Option... options) {
@@ -72,7 +86,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		final Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
 		if (transformExpected) {
-			pexpected = reduceToPredicateCalulus(pexpected, ff, options);
+			pexpected = translate(pexpected, ff, options);
 		}
 		doTest(pinput, pexpected, options);
 	}
@@ -82,7 +96,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		assertTypeChecked(input);
 		assertTypeChecked(expected);
 
-		final Predicate actual = reduceToPredicateCalulus(input, ff, options);
+		final Predicate actual = translate(input, ff, options);
 
 		assertTypeChecked(actual);
 		assertTrue("Result not in goal: " + actual, isInGoal(actual));
@@ -615,7 +629,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "f(a)  ∈ S",
 				"∃x·x=f(a) ∧ x∈S", 
 				true, 
-				mTypeEnvironment(mList("f"), mList(REL(S, T))));
+				mTypeEnvironment(mList("f"), mList(REL(T, U))));
 	}
 	
 	public void testIR3_additional_5() {
@@ -623,7 +637,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "f(a)  ∈ S",
 				"∃x1,x2·x1↦x2=f(a) ∧ x1↦x2∈S ", 
 				true,
-				 mTypeEnvironment(mList("f"), mList(REL(S, CPROD(T, U)))));
+				 mTypeEnvironment(mList("f"), mList(REL(T, CPROD(U, V)))));
 	}
 	
 	/**

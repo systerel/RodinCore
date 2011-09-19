@@ -118,28 +118,8 @@ public class Translator {
 	 */
 	public static Predicate reduceToPredicateCalulus(Predicate predicate,
 			FormulaFactory ff) {
-		return reduceToPredicateCalulus(predicate, ff, NO_OPTIONS);
-	}
-
-	/**
-	 * Transforms a predicate from Set-Theory to Predicate Calculus. The
-	 * translation scheme can be tailored to specific needs by providing one or
-	 * several options.
-	 * 
-	 * @param predicate
-	 *            the predicate to reduce. This predicate must be in a
-	 *            decomposed form
-	 * @param ff
-	 *            the formula factory to use
-	 * @param options
-	 *            options to be used during translation
-	 * @return a reduced predicate equivalent to the input predicate
-	 * @since 0.5.0
-	 */
-	public static Predicate reduceToPredicateCalulus(Predicate predicate,
-			FormulaFactory ff, Option... options) {
 		return org.eventb.internal.pptrans.translator.Translator
-				.reduceToPredCalc(predicate, ff, options);
+				.reduceToPredCalc(predicate, ff, NO_OPTIONS);
 	}
 
 	/**
@@ -159,7 +139,7 @@ public class Translator {
 	 * @param options
 	 *            options to be used during translation
 	 * @return a reduced predicate stronger or equivalent to the input predicate
-	 * @since 0.6.0
+	 * @since 0.5.0
 	 * @see #decomposeIdentifiers(ISimpleSequent)
 	 */
 	public static ISimpleSequent reduceToPredicateCalulus(ISimpleSequent sequent,
