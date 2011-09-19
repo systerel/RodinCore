@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.transformer;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.EXISTS_IMP;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_AND_OR;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_EQV_NOT;
@@ -53,8 +55,8 @@ public class SimpleSequents {
 	 *            formula factory for the given predicates
 	 * @return a new simple sequent with the given hypotheses and goal
 	 */
-	public static ISimpleSequent make(Predicate[] hypotheses, Predicate goal,
-			FormulaFactory factory) {
+	public static ISimpleSequent make(Iterable<Predicate> hypotheses,
+			Predicate goal, FormulaFactory factory) {
 		final List<TrackedPredicate> preds = makeTrackedPredicates(hypotheses,
 				goal);
 		final TrackedPredicate trivial = getTrivial(preds);
@@ -64,11 +66,33 @@ public class SimpleSequents {
 		return new SimpleSequent(factory, preds);
 	}
 
+	/**
+	 * Returns a new simple sequent created with the given predicates. All
+	 * non-null predicates must be type-checked. Null predicates will be
+	 * ignored.
+	 * 
+	 * @param hypotheses
+	 *            sequent hypotheses, can be or contain <code>null</code>
+	 * @param goal
+	 *            sequent goal, can be <code>null</code>
+	 * @param factory
+	 *            formula factory for the given predicates
+	 * @return a new simple sequent with the given hypotheses and goal
+	 */
+	public static ISimpleSequent make(Predicate[] hypotheses, Predicate goal,
+			FormulaFactory factory) {
+		final List<Predicate> list;
+		if (hypotheses == null) {
+			list = emptyList();
+		} else {
+			list = asList(hypotheses);
+		}
+		return make(list, goal, factory);
+	}
+
 	private static List<TrackedPredicate> makeTrackedPredicates(
-			Predicate[] hypotheses, Predicate goal) {
-		final int capacity = (hypotheses != null ? hypotheses.length : 0) + 1;
-		final List<TrackedPredicate> preds = new ArrayList<TrackedPredicate>(
-				capacity);
+			Iterable<Predicate> hypotheses, Predicate goal) {
+		final List<TrackedPredicate> preds = new ArrayList<TrackedPredicate>();
 		if (hypotheses != null) {
 			for (Predicate hyp : hypotheses) {
 				if (hyp != null) {

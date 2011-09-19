@@ -13,12 +13,15 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static java.util.Collections.emptyList;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.pptrans.Translator.isInGoal;
 import static org.eventb.pptrans.Translator.reduceToPredicateCalulus;
 import static org.eventb.pptrans.Translator.Option.expandSetEquality;
+
+import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -1733,13 +1736,15 @@ public class TranslationTests extends AbstractTranslationTests {
 
 	private static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
 
+	private static final List<Predicate> NONE = emptyList();
+
 	/**
 	 * Ensure that mathematical extensions get discarded by the translation.
 	 */
 	public void testMathExtension() {
 		final Predicate pred = parse("p = dt", DT_FF.makeTypeEnvironment());
-		final ISimpleSequent sequent = SimpleSequents.make(null, pred, DT_FF);
-		final ISimpleSequent expected = SimpleSequents.make(null, null, DT_FF);
+		final ISimpleSequent sequent = SimpleSequents.make(NONE, pred, DT_FF);
+		final ISimpleSequent expected = SimpleSequents.make(NONE, null, DT_FF);
 		assertEquals(expected, reduceToPredicateCalulus(sequent));
 	}
 
