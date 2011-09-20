@@ -14,3 +14,8 @@ of the jar file org.eventb.ui located in the plugins directory.
 
 Make sure you are running the Java virtual machine 1.5 or later
 from Sun.
+
+Important Note: p2.inf MUST NOT END WITH A BACKSLASH ('\')
+ (a backslash followed by a new line is OK).
+ Else, exported products contain no executable.
+  
