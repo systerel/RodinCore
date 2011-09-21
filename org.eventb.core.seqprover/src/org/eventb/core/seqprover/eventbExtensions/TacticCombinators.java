@@ -81,6 +81,9 @@ public class TacticCombinators {
 					Object finalResult = "failed";
 					for (ITactic tactic : copy) {
 						final Object result = tactic.apply(ptNode, pm);
+						if (pm != null && pm.isCanceled()) {
+							return "cancelled";
+						}
 						if (result == null) {
 							success = true;
 						} else {
@@ -142,6 +145,9 @@ public class TacticCombinators {
 					Object finalResult = "failed";
 					for (ITactic tactic : copy) {
 						final Object result = tactic.apply(ptNode, pm);
+						if (pm != null && pm.isCanceled()) {
+							return "cancelled";
+						}
 						if (result == null) {
 							success = true;
 						} else {
@@ -223,6 +229,9 @@ public class TacticCombinators {
 						return "node is closed";
 					}
 					tactic.apply(ptNode, pm);
+					if (pm != null && pm.isCanceled()) {
+						return "cancelled";
+					}
 					if (ptNode.getFirstOpenDescendant() == null) {
 						return null;
 					}
