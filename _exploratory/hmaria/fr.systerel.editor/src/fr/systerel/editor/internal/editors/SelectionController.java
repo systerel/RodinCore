@@ -10,7 +10,18 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -19,6 +30,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.ui.ISelectionService;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
@@ -37,7 +49,7 @@ import fr.systerel.editor.internal.editors.Selections.SelectionEffect;
  * not widget coordinates.
  */
 public class SelectionController implements MouseListener, VerifyListener,
-		VerifyKeyListener {
+		VerifyKeyListener, ISelectionProvider {
 
 	// TODO tracing
 	public static boolean DEBUG;
@@ -49,6 +61,9 @@ public class SelectionController implements MouseListener, VerifyListener,
 	private OverlayEditor overlayEditor;
 	private final MultipleSelection selection;
 
+
+	private final ListenerList postSelectionChangedListeners;
+
 	public SelectionController(StyledText styledText, DocumentMapper mapper,
 			ProjectionViewer viewer, OverlayEditor overlayEditor) {
 		super();
@@ -56,6 +71,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		this.viewer = viewer;
 		this.mapper = mapper;
 		this.overlayEditor = overlayEditor;
+		this.postSelectionChangedListeners = new ListenerList();
 		selection = new MultipleSelection(new SelectionEffect(styledText));
 	}
 
@@ -103,11 +119,15 @@ public class SelectionController implements MouseListener, VerifyListener,
 		
 		// TODO position is only useful if element is not selected
 		selection.toggle(element, enclosingRange);
-		//styledText.setSelection(start);
+		firePostSelectionChanged(new SelectionChangedEvent(this, getSelection()));
 		if (DEBUG)
 			System.out.println("selected " + element.getElement() + " in "
 					+ enclosingRange);
 		return enclosingRange;
+	}
+
+	private ISelection adaptCurrentSelection() {
+		return new StructuredSelection(selection.getElements());
 	}
 
 	public ILElement getSelectionAt(int offset) {
@@ -162,7 +182,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 
 	private void resetSelection(int offset) {
 		selection.clear();
-		//styledText.setSelection(offset);
+		firePostSelectionChanged(new SelectionChangedEvent(this, getSelection()));
 	}
 	
 	public void selectItems(ILElement[] selected) {
@@ -177,13 +197,13 @@ public class SelectionController implements MouseListener, VerifyListener,
 			final EditPos enclosingPos = mapper.getEnclosingPosition(editorElem);
 			if (enclosingPos == null)
 				return;
-
 			selection.add(element, enclosingPos);
 			// styledText.setSelection(start);
 			if (DEBUG)
 				System.out.println("selected " + element.getElement() + " in "
 						+ enclosingPos);
 		}
+		firePostSelectionChanged(new SelectionChangedEvent(this, getSelection()));
 	}
 	
 	/** Removes all selections */
@@ -251,6 +271,73 @@ public class SelectionController implements MouseListener, VerifyListener,
 					.getOffset());
 			// TODO: check if folding regions need to be expanded.
 			styledText.setSelection(new_offset);
+		}
+	}
+
+	/**
+	 * Returns the selection in terms of a structured selection.
+	 */
+	@Override
+	public ISelection getSelection() {
+		return adaptCurrentSelection();
+	}
+
+	@Override
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		postSelectionChangedListeners.add(listener);
+	}
+
+	@Override
+	public void removeSelectionChangedListener(
+			ISelectionChangedListener listener) {
+		postSelectionChangedListeners.remove(listener);
+	}
+
+	/**
+	 * Sets the ILElements contained by the selection iteratively if the given
+	 * selection is an instance of StructuredSelection.
+	 * 
+	 * This method comes from {@link ISelectionProvider} and is kept for
+	 * backward compatibility, but the clients should use the
+	 * {@link ISelectionService} instead.
+	 */
+	@Override
+	public void setSelection(ISelection selection) {
+		if (selection instanceof StructuredSelection) {
+			final List<ILElement> elements = new ArrayList<ILElement>();
+			final Iterator<?> itr = ((StructuredSelection) selection)
+					.iterator();
+			while (itr.hasNext()) {
+				final Object sel = itr.next();
+				if (sel instanceof ILElement) {
+					elements.add((ILElement) sel);
+				}
+			}
+			selectItems(elements.toArray(new ILElement[elements.size()]));
+			firePostSelectionChanged(new SelectionChangedEvent(viewer,
+					new StructuredSelection(elements)));
+		}
+	}
+	
+	/**
+	 * Notifies any post selection listeners that a post selection event has
+	 * been received. Only listeners registered at the time this method is
+	 * called are notified.
+	 * 
+	 * @param event
+	 *            a selection changed event
+	 * 
+	 * @see #addPostSelectionChangedListener(ISelectionChangedListener)
+	 */
+	protected void firePostSelectionChanged(final SelectionChangedEvent event) {
+		final Object[] listeners = postSelectionChangedListeners.getListeners();
+		for (int i = 0; i < listeners.length; ++i) {
+			final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+			SafeRunnable.run(new SafeRunnable() {
+				public void run() {
+					l.selectionChanged(event);
+				}
+			});
 		}
 	}
 

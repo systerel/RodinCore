@@ -145,6 +145,7 @@ public class RodinEditor extends TextEditor {
 		
 		selController = new SelectionController(styledText, mapper, viewer,
 				overlayEditor);
+		getSite().setSelectionProvider(selController);
 		styledText.addMouseListener(selController);
 		styledText.addVerifyKeyListener(selController);
 		dndManager = new DNDManager(selController, styledText, mapper,
