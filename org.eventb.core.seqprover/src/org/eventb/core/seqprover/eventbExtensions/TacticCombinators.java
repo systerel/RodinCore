@@ -20,6 +20,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticCombinator;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.internal.core.seqprover.Messages;
 
 /**
  * This class contains internal classes for tactic combinators.
@@ -34,6 +35,14 @@ import org.eventb.core.seqprover.tactics.BasicTactics;
  */
 public class TacticCombinators {
 
+	private static void assertOneOrMore(List<ITactic> tactics) {
+		Assert.isLegal(tactics.size() >= 1, Messages.tactic_illegalOneOrMore);
+	}
+
+	private static void assertOne(List<ITactic> tactics) {
+		Assert.isLegal(tactics.size() == 1, Messages.tactic_illegalOne(tactics));
+	}
+
 	private TacticCombinators() {
 		// not intended to be instantiated
 	}
@@ -47,11 +56,11 @@ public class TacticCombinators {
 	public static class LoopOnAllPending implements ITacticCombinator {
 
 		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
-				+ ".loopOnAllPending";
+				+ ".loopOnAllPending"; //$NON-NLS-1$
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
-			Assert.isLegal(tactics.size() >= 1, "illegal tactics: " + tactics);
+			assertOneOrMore(tactics);
 			final ITactic[] tacs = tactics.toArray(new ITactic[tactics.size()]);
 			return BasicTactics.loopOnAllPending(tacs);
 		}
@@ -66,11 +75,11 @@ public class TacticCombinators {
 	 */
 	public static class Sequence implements ITacticCombinator {
 		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
-				+ ".sequence";
+				+ ".sequence"; //$NON-NLS-1$
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
-			Assert.isLegal(tactics.size() >= 1, "illegal tactics: " + tactics);
+			assertOneOrMore(tactics);
 			// avoid concurrence issues
 			final List<ITactic> copy = new ArrayList<ITactic>(tactics);
 			return new ITactic() {
@@ -78,11 +87,11 @@ public class TacticCombinators {
 				@Override
 				public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 					boolean success = false;
-					Object finalResult = "failed";
+					Object finalResult = Messages.tactic_failed;
 					for (ITactic tactic : copy) {
 						final Object result = tactic.apply(ptNode, pm);
 						if (pm != null && pm.isCanceled()) {
-							return "cancelled";
+							return Messages.tactic_cancelled;
 						}
 						if (result == null) {
 							success = true;
@@ -110,11 +119,11 @@ public class TacticCombinators {
 	public static class ComposeUntilSuccess implements ITacticCombinator {
 
 		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
-				+ ".composeUntilSuccess";
+				+ ".composeUntilSuccess"; //$NON-NLS-1$
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
-			Assert.isLegal(tactics.size() >= 1, "illegal tactics: " + tactics);
+			assertOneOrMore(tactics);
 			final ITactic[] tacs = tactics.toArray(new ITactic[tactics.size()]);
 			return BasicTactics.composeUntilSuccess(tacs);
 		}
@@ -130,11 +139,11 @@ public class TacticCombinators {
 	public static class ComposeUntilFailure implements ITacticCombinator {
 
 		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
-				+ ".composeUntilFailure";
+				+ ".composeUntilFailure"; //$NON-NLS-1$
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
-			Assert.isLegal(tactics.size() >= 1, "illegal tactics: " + tactics);
+			assertOneOrMore(tactics);
 			// avoid concurrence issues
 			final List<ITactic> copy = new ArrayList<ITactic>(tactics);
 			return new ITactic() {
@@ -142,11 +151,11 @@ public class TacticCombinators {
 				@Override
 				public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 					boolean success = false;
-					Object finalResult = "failed";
+					Object finalResult = Messages.tactic_failed;
 					for (ITactic tactic : copy) {
 						final Object result = tactic.apply(ptNode, pm);
 						if (pm != null && pm.isCanceled()) {
-							return "cancelled";
+							return Messages.tactic_cancelled;
 						}
 						if (result == null) {
 							success = true;
@@ -176,11 +185,11 @@ public class TacticCombinators {
 	public static class Loop implements ITacticCombinator {
 
 		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
-				+ ".loop";
+				+ ".loop"; //$NON-NLS-1$
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
-			Assert.isLegal(tactics.size() == 1, "illegal tactics: " + tactics);
+			assertOne(tactics);
 			return BasicTactics.repeat(tactics.get(0));
 		}
 
@@ -195,11 +204,11 @@ public class TacticCombinators {
 	public static class OnAllPending implements ITacticCombinator {
 
 		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
-				+ ".onAllPending";
+				+ ".onAllPending"; //$NON-NLS-1$
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
-			Assert.isLegal(tactics.size() == 1, "illegal tactics: " + tactics);
+			assertOne(tactics);
 			return BasicTactics.onAllPending(tactics.get(0));
 		}
 
@@ -214,11 +223,11 @@ public class TacticCombinators {
 	public static class Attempt implements ITacticCombinator {
 
 		public static final String COMBINATOR_ID = SequentProver.PLUGIN_ID
-				+ ".attempt";
+				+ ".attempt"; //$NON-NLS-1$
 
 		@Override
 		public ITactic getTactic(List<ITactic> tactics) {
-			Assert.isLegal(tactics.size() == 1, "illegal tactics: " + tactics);
+			assertOne(tactics);
 			final ITactic tactic = tactics.get(0);
 
 			return new ITactic() {
@@ -226,17 +235,17 @@ public class TacticCombinators {
 				@Override
 				public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 					if (ptNode.isClosed()) {
-						return "node is closed";
+						return Messages.tactic_nodeClosed;
 					}
 					tactic.apply(ptNode, pm);
 					if (pm != null && pm.isCanceled()) {
-						return "cancelled";
+						return Messages.tactic_cancelled;
 					}
 					if (ptNode.getFirstOpenDescendant() == null) {
 						return null;
 					}
 					BasicTactics.prune().apply(ptNode, pm);
-					return "attempt failed";
+					return Messages.tactic_attemptFailed;
 				}
 			};
 		}

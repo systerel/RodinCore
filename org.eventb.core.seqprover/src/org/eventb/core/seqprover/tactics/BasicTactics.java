@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added support for cancellation in several tacticals
+ *******************************************************************************/
 package org.eventb.core.seqprover.tactics;
 
 import java.util.Arrays;
@@ -12,6 +23,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.proofBuilder.ProofBuilder;
+import org.eventb.internal.core.seqprover.Messages;
 
 /**
  * This class contains static methods that return basic tactics.
@@ -144,7 +156,7 @@ public class BasicTactics {
 				for(IProofTreeNode subgoal : subgoals){
 					if (tactic.apply(subgoal, pm) == null) applicable = null;
 					if (pm != null && pm.isCanceled()) {
-						return "cancelled";
+						return Messages.tactic_cancelled;
 					}
 				}
 				return applicable;
@@ -196,13 +208,13 @@ public class BasicTactics {
 				boolean applicable = false;
 				Object tacticApp = tactic.apply(pt, pm);
 				if (pm != null && pm.isCanceled()) {
-					return "cancelled";
+					return Messages.tactic_cancelled;
 				}
 				while(tacticApp == null){
 					applicable = true;
 					tacticApp = tactic.apply(pt, pm);
 					if (pm != null && pm.isCanceled()) {
-						return "cancelled";
+						return Messages.tactic_cancelled;
 					}
 				};
 				return applicable ? null : tacticApp;
@@ -329,7 +341,7 @@ public class BasicTactics {
 					for (ITactic tactic : tactics) {
 						tactic.apply(node, pm);
 						if (pm != null && pm.isCanceled()) {
-							return "cancelled";
+							return Messages.tactic_cancelled;
 						}
 						if (! node.isOpen())
 						{
@@ -406,7 +418,7 @@ public class BasicTactics {
 				for (ITactic tactic : tactics){
 					Object tacticApp = tactic.apply(pt, pm);
 					if (pm != null && pm.isCanceled()) {
-						return "cancelled";
+						return Messages.tactic_cancelled;
 					}
 					if (tacticApp == null) return null; 
 				}
