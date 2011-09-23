@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.rodinp.keyboard;
 
+import org.rodinp.internal.keyboard.translators.Symbol;
+
+
 /**
  * Class defining a extension symbol programmatically. This class emulates
  * symbol elements of the symbols extension point. See
@@ -21,12 +24,10 @@ package org.rodinp.keyboard;
  * @since 1.1
  * 
  */
-public class ExtensionSymbol {
+public class ExtensionSymbol extends Symbol {
 
 	private final String id;
 	private final String name;
-	private final String combo;
-	private final String translation;
 
 	/**
 	 * A new symbol intended to extend the keyboard.
@@ -45,10 +46,9 @@ public class ExtensionSymbol {
 	 */
 	public ExtensionSymbol(String id, String name, String combo,
 			String translation) {
+		super(combo, translation);
 		this.id = id;
 		this.name = name;
-		this.combo = combo;
-		this.translation = translation;
 	}
 
 	/**
@@ -75,8 +75,9 @@ public class ExtensionSymbol {
 	 * 
 	 * @return the combo of this symbol
 	 */
+	@Override
 	public String getCombo() {
-		return combo;
+		return super.getCombo();
 	}
 
 	/**
@@ -85,8 +86,9 @@ public class ExtensionSymbol {
 	 * 
 	 * @return the translation of this symbol
 	 */
+	@Override
 	public String getTranslation() {
-		return translation;
+		return super.getTranslation();
 	}
 
 }

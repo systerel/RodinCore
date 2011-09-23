@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - supported contribution through extension and at runtime
  *******************************************************************************/
 package org.rodinp.internal.keyboard;
 
@@ -27,14 +28,6 @@ import org.rodinp.internal.keyboard.translators.Symbols;
  */
 public class Text2MathTranslator {
 
-	private static Map<String, Collection<Symbol>> mathSymbols = null;
-
-	private static int maxMathSize = 0;
-
-	private static Map<String, Collection<Symbol>> symbols = null;
-
-	private static int maxSize = 0;
-
 	/**
 	 * Translate the input string into Event-B Mathematical Language.
 	 * <p>
@@ -45,11 +38,10 @@ public class Text2MathTranslator {
 	 *         Language
 	 */
 	public static String translate(String str) {
-		SymbolRegistry registry = SymbolRegistry.getDefault();
-		if (mathSymbols == null) {
-			mathSymbols = registry.getMathSymbols();
-			maxMathSize = registry.getMaxMathSymbolSize();
-		}
+		final SymbolRegistry registry = SymbolRegistry.getDefault();
+		final Map<String, Collection<Symbol>> mathSymbols = registry
+				.getMathSymbols();
+		final int maxMathSize = registry.getMaxMathSymbolSize();
 
 		// Math
 		String key = "";
@@ -74,10 +66,9 @@ public class Text2MathTranslator {
 		}
 
 		// Text
-		if (symbols == null) {
-			symbols = registry.getTextSymbols();
-			maxSize = registry.getMaxTextSymbolSize();
-		}
+		final Map<String, Collection<Symbol>> symbols = registry
+				.getTextSymbols();
+		final int maxSize = registry.getMaxTextSymbolSize();
 
 		for (i = maxSize; i > 0; i--) {
 			key = Symbols.generateKey(i);

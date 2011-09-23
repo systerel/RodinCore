@@ -10,6 +10,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - modified loadRegistry() to handle programmatic contributions
+ *     Systerel - refactored to support programmatic contributions at runtime
  *******************************************************************************/
 package org.rodinp.internal.keyboard.translators;
 
@@ -30,11 +31,11 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 public class SymbolRegistry {
 
-	private String SYMBOLS_ID = RodinKeyboardPlugin.PLUGIN_ID + ".symbols";
+	private static final String SYMBOLS_ID = RodinKeyboardPlugin.PLUGIN_ID + ".symbols";
 
-	private String SYMBOL_EXTENSION = "symbol";
+	private static final String SYMBOL_EXTENSION = "symbol";
 	
-	private String SYMBOL_PROVIDER_EXTENSION = "symbolProvider";
+	private static final String SYMBOL_PROVIDER_EXTENSION = "symbolProvider";
 	
 	private static SymbolRegistry instance;
 	
@@ -52,14 +53,16 @@ public class SymbolRegistry {
 	
 	private Symbols textSymbols = null;
 	
+	private List<ISymbolsProvider> symbolProviders = null;
+	
 	public Map<String, Collection<Symbol>> getMathSymbols() {
 		loadRegistry();
-		return mathSymbols.getSymbols();
+		return mathSymbols.getSymbols(getMathProviderSymbols());
 	}
 	
 	public Map<String, Collection<Symbol>> getTextSymbols() {
 		loadRegistry();
-		return textSymbols.getSymbols();
+		return textSymbols.getSymbols(getTextProviderSymbols());
 	}
 	
 	private synchronized void loadRegistry() {
@@ -69,6 +72,7 @@ public class SymbolRegistry {
 		}
 		mathSymbols = new Symbols();
 		textSymbols = new Symbols();
+		symbolProviders = new ArrayList<ISymbolsProvider>();
 
 		final List<String> registeredIDs = new ArrayList<String>();
 
@@ -91,26 +95,53 @@ public class SymbolRegistry {
 
 			}
 			if (element.getName().equals(SYMBOL_PROVIDER_EXTENSION)) {
-				// FIXME this does not enable new combos to be defined at runtime
 				assert element.getName().equals(SYMBOL_PROVIDER_EXTENSION);
 				final ISymbolsProvider provider = getSymbolProvider(element);
 				if (provider == null) {
 					continue;
 				}
-				final List<ExtensionSymbol> symbols = provider
-						.getExtensionSymbols();
-				for (ExtensionSymbol symbol : symbols) {
-					final String id = provider.getNamespaceIdentifier() + "."
-							+ symbol.getId();
-					final String combo = symbol.getCombo();
-					final String translation = symbol.getTranslation();
-					addSymbol(id, combo, translation, registeredIDs);
+				symbolProviders.add(provider);
+			}
+		}
+	}
+	
+	private List<ExtensionSymbol> getTextProviderSymbols() {
+		final List<ExtensionSymbol> math = new ArrayList<ExtensionSymbol>();
+		final List<ExtensionSymbol> text = new ArrayList<ExtensionSymbol>();
+		addProviderSymbols(text, math);
+		return text;
+	}
+	
+	private List<ExtensionSymbol> getMathProviderSymbols() {
+		final List<ExtensionSymbol> math = new ArrayList<ExtensionSymbol>();
+		final List<ExtensionSymbol> text = new ArrayList<ExtensionSymbol>();
+		addProviderSymbols(text, math);
+		return math;
+	}
+	
+	private void addProviderSymbols(List<ExtensionSymbol> text,
+			List<ExtensionSymbol> math) {
+		for (ISymbolsProvider provider : symbolProviders) {
+			final List<ExtensionSymbol> symbols = provider
+					.getExtensionSymbols();
+			for (ExtensionSymbol symbol : symbols) {
+				final String combo = symbol.getCombo();
+				if (!isValid(symbol)) {
 					continue;
+				}
+				if (isTextSymbol(combo)) {
+					text.add(symbol);
+				} else {
+					math.add(symbol);
 				}
 			}
 		}
 	}
 	
+	private static boolean isValid(ExtensionSymbol symbol) {
+		return symbol.getCombo() != null && symbol.getTranslation() != null;
+	}
+
 	private boolean addSymbol(String id, String combo, String translation,
 			List<String> registeredIds) {
 		if (!isNotRegistered(registeredIds, id)) {
