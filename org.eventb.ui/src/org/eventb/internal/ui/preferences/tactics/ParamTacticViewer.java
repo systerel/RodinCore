@@ -231,7 +231,8 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			final ParameterType type = param.getDesc().getType();
 			
 			if (type == ParameterType.BOOL) {
-				return new ComboBoxCellEditor(tableViewer.getTable(), BOOL_STRINGS);
+				return new ComboBoxCellEditor(tableViewer.getTable(),
+						BOOL_STRINGS, SWT.READ_ONLY);
 			}
 			final TextCellEditor editor = new TextCellEditor(tableViewer.getTable());
 			if (type == ParameterType.STRING) {
