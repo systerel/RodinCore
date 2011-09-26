@@ -715,7 +715,7 @@ public class ProofState implements IProofState {
 		} else {
 			deltaProcessor.informationChanged(userSupport,
 					new UserSupportInformation(info,
-							IUserSupportInformation.MAX_PRIORITY));
+							IUserSupportInformation.ERROR_PRIORITY));
 			return false;
 		}
 	}

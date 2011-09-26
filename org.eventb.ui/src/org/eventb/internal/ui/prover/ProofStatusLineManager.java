@@ -12,20 +12,34 @@ public class ProofStatusLineManager {
 	public ProofStatusLineManager (IActionBars actionBars) {
 		this.actionBars = actionBars;
 	}
+	
 	/**
 	 * Set the information (in the bottom of the page).
 	 * <p>
+	 * 
 	 * @param information
-	 *            the string (information from the UserSupport).
+	 *            information from the UserSupport
 	 */
-	private void setInformation(final String information) {
+	private void setInformation(final IUserSupportInformation information) {
 		final IStatusLineManager slManager = actionBars.getStatusLineManager();
 		Display display = Display.getCurrent();
 		display.syncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				slManager.setMessage(information);
+				if (information == null) {
+					slManager.setErrorMessage(null);
+					slManager.setMessage(null);
+					return;
+				}
+				final String message = information.getInformation().toString();
+				final int priority = information.getPriority();
+				if(priority == IUserSupportInformation.ERROR_PRIORITY) {
+					slManager.setErrorMessage(message);
+				} else {
+					slManager.setErrorMessage(null);
+					slManager.setMessage(message);
+				}
 			}
 
 		});
@@ -44,21 +58,20 @@ public class ProofStatusLineManager {
 
 		int size = information.length;
 		if (size == 0) {
-			setInformation("");
+			setInformation(null);
 			return;
 		}
 
 		// Trying to print the latest message with highest priority.
-		for (int priority = IUserSupportInformation.MAX_PRIORITY; IUserSupportInformation.MIN_PRIORITY <= priority; --priority) {
+		for (int priority = IUserSupportInformation.ERROR_PRIORITY; IUserSupportInformation.MIN_PRIORITY <= priority; --priority) {
 			for (int i = information.length - 1; 0 <= i; --i) {
 				if (information[i].getPriority() == priority) {
-					setInformation(information[i].getInformation()
-							.toString());
+					setInformation(information[i]);
 					return;
 				}
 			}
 		}
-		setInformation("");
+		setInformation(null);
 	}
 
 }

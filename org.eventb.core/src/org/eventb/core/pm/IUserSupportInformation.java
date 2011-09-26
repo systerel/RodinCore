@@ -14,9 +14,15 @@ package org.eventb.core.pm;
 
 /**
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IUserSupportInformation {
 
+	/**
+	 * @since 2.3
+	 */
+	public static final int ERROR_PRIORITY = 3;
+	
 	public static final int MAX_PRIORITY = 2;
 
 	public static final int MIN_PRIORITY = 1;
