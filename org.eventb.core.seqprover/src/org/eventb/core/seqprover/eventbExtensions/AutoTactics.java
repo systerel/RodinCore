@@ -70,7 +70,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MapOvrGoalTac
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MembershipGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.NNFRewritesOnceTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
-import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TotalDomToCProdTac;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TDomToCprod.TotalDomToCProdTac;
 
 
 /**
