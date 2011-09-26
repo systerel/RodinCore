@@ -10,16 +10,18 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 
+import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FREE_IDENT;
 import static org.eventb.internal.ui.utils.Messages.tactics_replaceWith;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
@@ -88,60 +90,94 @@ public class LocalEqRewriteProvider implements ITacticProvider {
 
 	/**
 	 * The inspector finding all the occurrences of identifiers appearing on one
-	 * side of an equality, except the one of that equqlity.
+	 * side of an equality, except the one of that equality.
 	 */
 	public static class LocalEqRewriteAppliInspector extends
 			DefaultApplicationInspector {
 
-		private final Set<RelationalPredicate> setEquality;
+		private final Map<Expression, Set<Substitution>> substitutionMap;
 		private final Predicate hypothesis;
 
-		public LocalEqRewriteAppliInspector(Predicate hyp,
-				Set<RelationalPredicate> setEquality, Predicate predicate) {
+		public LocalEqRewriteAppliInspector(Predicate hyp, Predicate predicate,
+				IProverSequent sequent) {
 			super(predicate);
-			this.setEquality = setEquality;
+			this.substitutionMap = getSubstitutes(sequent);
 			this.hypothesis = hyp;
 		}
 
 		@Override
 		public void inspect(FreeIdentifier identifier,
 				IAccumulator<ITacticApplication> accumulator) {
-			for (RelationalPredicate pred : setEquality) {
-				if (pred.equals(hyp)) {
+			if (!substitutionMap.containsKey(identifier)) {
+				return;
+			}
+			for (Substitution subs : substitutionMap.get(identifier)) {
+				final Predicate equality = subs.getEquality();
+				if (equality.equals(hyp)) {
 					continue;
 				}
-				final Expression left = pred.getLeft();
-				final Expression right = pred.getRight();
-				final IPosition position = accumulator.getCurrentPosition();
-				if (identifier.equals(left)) {
-					final String hyperlinkLabel = tactics_replaceWith(
-							identifier.toString(), right.toString());
-					accumulator.add(new LocalEqApplication(hypothesis,
-							position, pred, hyperlinkLabel));
-				} else if (identifier.equals(right)) {
-					final String hyperlinkLabel = tactics_replaceWith(
-							identifier.toString(), left.toString());
-					accumulator.add(new LocalEqApplication(hypothesis,
-							position, pred, hyperlinkLabel));
+				final String hyperlinkLabel = tactics_replaceWith(
+						identifier.toString(), subs.getSubstitute().toString());
+				accumulator.add(new LocalEqApplication(hypothesis, accumulator
+						.getCurrentPosition(), equality, hyperlinkLabel));
+			}
+		}
+
+		private Map<Expression, Set<Substitution>> getSubstitutes(
+				IProverSequent seq) {
+			Map<Expression, Set<Substitution>> map = new HashMap<Expression, Set<Substitution>>();
+			for (Predicate visHyp : seq.visibleHypIterable()) {
+				if (visHyp.getTag() != EQUAL) {
+					continue;
+				}
+				final RelationalPredicate rHyp = (RelationalPredicate) visHyp;
+				final Expression left = rHyp.getLeft();
+				final Expression right = rHyp.getRight();
+				if (right.getTag() == FREE_IDENT) {
+					addToMap(right, visHyp, left, map);
+				}
+				if (left.getTag() == FREE_IDENT) {
+					addToMap(left, visHyp, right, map);
 				}
 			}
+			return map;
+		}
+
+		private void addToMap(Expression replace, Predicate equality,
+				Expression substitute, Map<Expression, Set<Substitution>> map) {
+			final Substitution sub = new Substitution(substitute, equality);
+			if (map.containsKey(replace)) {
+				map.get(replace).add(sub);
+				return;
+			}
+			final Set<Substitution> set = new HashSet<Substitution>();
+			set.add(sub);
+			map.put(replace, set);
 		}
 	}
 
-	private Set<RelationalPredicate> computeSetEquality(IProverSequent seq) {
-		Set<RelationalPredicate> computedSet = new HashSet<RelationalPredicate>();
-		for (Predicate hyp : seq.visibleHypIterable()) {
-			if (hyp.getTag() != Formula.EQUAL) {
-				continue;
-			}
-			final RelationalPredicate rHyp = (RelationalPredicate) hyp;
-			if (rHyp.getLeft().getTag() != FREE_IDENT
-					&& rHyp.getRight().getTag() != FREE_IDENT) {
-				continue;
-			}
-			computedSet.add(rHyp);
+	public static class Substitution {
+		private final Expression substitute;
+		private final Predicate equality;
+
+		public Substitution(Expression substitute, Predicate equality) {
+			this.substitute = substitute;
+			this.equality = equality;
 		}
-		return computedSet;
+
+		public Expression getSubstitute() {
+			return substitute;
+		}
+
+		public Predicate getEquality() {
+			return equality;
+		}
+
+		@Override
+		public String toString() {
+			return equality.toString();
+		}
+
 	}
 
 	@Override
@@ -150,7 +186,7 @@ public class LocalEqRewriteProvider implements ITacticProvider {
 		final IProverSequent sequent = node.getSequent();
 		final Predicate predicate = (hyp == null) ? sequent.goal() : hyp;
 		return predicate.inspect(new LocalEqRewriteAppliInspector(hyp,
-				computeSetEquality(sequent), predicate));
+				predicate, sequent));
 	}
 
 }
