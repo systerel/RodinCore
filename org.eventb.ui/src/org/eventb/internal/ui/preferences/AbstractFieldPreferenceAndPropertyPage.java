@@ -40,6 +40,7 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.EventBUIPlugin;
 import org.osgi.service.prefs.BackingStoreException;
+import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 
 /**
@@ -209,15 +210,32 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 		return null;
 	}
 
+	@Override
+	public void applyData(Object data) {
+		if (!(data instanceof IRodinElement)) {
+			return;
+		}
+		final IRodinElement element = (IRodinElement) data;
+		final IProject handled = element.getRodinProject().getProject();
+		
+		// open if not already done
+		getShell().open();
+		configureProjectSettings(handled);
+	}
+	
 	/**
 	 * Creates a new preferences page and opens it.
 	 */
 	private void configureProjectSettings() {
+		final IProject handled = getSelectedProject();
+		configureProjectSettings(handled);
+	}
+
+	private void configureProjectSettings(IProject handled) {
+		if (handled == null) {
+			return;
+		}
 		try {
-			final IProject handled = getSelectedProject();
-			if (handled == null) {
-				return;
-			}
 			// create a new instance of the current class
 			final AbstractFieldPreferenceAndPropertyPage page = this.getClass()
 					.newInstance();

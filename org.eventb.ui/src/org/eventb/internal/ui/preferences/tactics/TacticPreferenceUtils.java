@@ -14,19 +14,28 @@ import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_autotactic_defaultprofilename;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_posttactic_defaultprofilename;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.preferences.autotactics.TacticPreferenceConstants;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.ui.EventBUIPlugin;
+import org.osgi.service.prefs.BackingStoreException;
+import org.rodinp.core.IRodinElement;
 
 public class TacticPreferenceUtils {
 
@@ -112,4 +121,28 @@ public class TacticPreferenceUtils {
 		}
 	}
 
+	
+	/**
+	 * Returns whether the given element has project specific settings
+	 * concerning tactic profiles.
+	 * 
+	 * @param element
+	 *            a rodin element
+	 * @return <code>true</code> iff given element has project specific tactic
+	 *         preferences
+	 */
+	public static boolean hasProjectSpecificTactics(IRodinElement element) {
+		final IProject project = element.getRodinProject().getProject();
+		final IScopeContext sc = new ProjectScope(project);
+		final IEclipsePreferences node = sc.getNode(EventBUIPlugin.PLUGIN_ID);
+		try {
+			final String[] keys = node.keys();
+			if (keys.length == 0)
+				return false;
+			return Arrays.asList(keys).contains(P_TACTICSPROFILES);
+		} catch (BackingStoreException e) {
+			// never happens on ProjectPreferences
+			return false;
+		}
+	}
 }

@@ -22,6 +22,7 @@ package org.eventb.internal.ui.proofcontrol;
 
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
+import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.hasProjectSpecificTactics;
 import static org.eventb.internal.ui.prover.CharacterPairHighlighter.highlight;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
@@ -115,6 +116,7 @@ import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.ITacticApplication;
+import org.rodinp.core.IRodinFile;
 
 /**
  * @author htson
@@ -802,10 +804,19 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			
 			@Override
 			public void run() {
+				final IRodinFile file = editor.getUserSupport().getInput();
+
 				final String pageId = PreferenceConstants.AUTO_POST_TACTIC_PREFERENCE_PAGE_ID;
 				final String[] displayedIds = new String[] { pageId };
+				
+				final Object data;
+				if (hasProjectSpecificTactics(file)) {
+					data = file;
+				} else {
+					data = null;
+				}
 				final Dialog dialog = PreferencesUtil.createPreferenceDialogOn(
-						null, pageId, displayedIds, null);
+						null, pageId, displayedIds, data);
 				dialog.open();
 			}
 			
