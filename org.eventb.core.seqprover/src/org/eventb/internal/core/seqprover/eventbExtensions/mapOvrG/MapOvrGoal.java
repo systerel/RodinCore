@@ -8,17 +8,15 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
+package org.eventb.internal.core.seqprover.eventbExtensions.mapOvrG;
+
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
-import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.eventb.internal.core.seqprover.eventbExtensions.mapOvrG.MapOvrGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.mapOvrG.MapOvrGoalImpl;
 
 /**
  * Split goal such as <code>f<+{x↦y}∈A<i>op1</i>B</code> as follows :
@@ -39,23 +37,39 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mapOvrG.MapOvrGoalImp
  * 
  * @author Emmanuel Billaud
  */
-public class MapOvrGoalTac implements ITactic {
+public class MapOvrGoal extends HypothesisReasoner {
+	
+	public static final String REASONER_ID = SequentProver.PLUGIN_ID
+			+ ".mapOvrG";
 
 	@Override
-	public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-		final IProverSequent sequent = ptNode.getSequent();
+	public String getReasonerID() {
+		return REASONER_ID;
+	}
+
+	@Override
+	protected IAntecedent[] getAntecedents(IProverSequent sequent,
+			Predicate pred) throws IllegalArgumentException {
 		final MapOvrGoalImpl mapOvrGoalImpl = new MapOvrGoalImpl(sequent);
 		if (!mapOvrGoalImpl.checkGoal()) {
-			return "Goal does not possessed the correct form.";
+			throw new IllegalArgumentException(
+					"Goal does not possessed the correct form.");
 		}
-		final Predicate neededHyp = mapOvrGoalImpl.findNeededHyp(sequent);
-		if (neededHyp == null) {
-			return "There is no hypothesis which allow to infer the goal.";
+		if (!mapOvrGoalImpl.infersGoal(pred)) {
+			throw new IllegalArgumentException(
+					"Given predicate does not infer a part of the goal.");
 		}
-		final HypothesisReasoner.Input input = new HypothesisReasoner.Input(
-				neededHyp);
-		return BasicTactics.reasonerTac(new MapOvrGoal(), input).apply(ptNode,
-				pm);
+		final Predicate[] subgoals = mapOvrGoalImpl.createSubgoals();
+
+		final IAntecedent firstAnt = makeAntecedent(subgoals[0]);
+		final IAntecedent secondAnt = makeAntecedent(subgoals[1]);
+
+		return new IAntecedent[] { firstAnt, secondAnt };
+	}
+
+	@Override
+	protected String getDisplay(Predicate pred) {
+		return "Remove  in goal";
 	}
 
 }

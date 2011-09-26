@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.*;
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
+import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
+
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
-import org.eventb.core.seqprover.tests.TestLib;
-import org.eventb.internal.core.seqprover.eventbExtensions.MapOvrGoal;
 
 /**
  * Unit tests for the MapOvrGoal reasoner.
@@ -22,83 +25,58 @@ import org.eventb.internal.core.seqprover.eventbExtensions.MapOvrGoal;
  */
 public class MapOvrGoalTests extends AbstractReasonerTests {
 
+	private static final String notInfering = "Given predicate does not infer a part of the goal.";
+	private static final String goalShape = "Goal does not possessed the correct form.";
+
+	private final String hypsStr = " A⊆ℤ ;; B⊆ℤ ;; f∈A ";
+	private final String typenvStr = "{f=ℙ(ℤ×ℤ), A=ℙ(ℤ), B=ℙ(ℤ), y=ℤ, x=ℤ}[][][";
+
 	@Override
 	public String getReasonerID() {
-		return (new MapOvrGoal()).getReasonerID();
+		return "org.eventb.core.seqprover.mapOvrG";
 	}
 
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		return new SuccessfullReasonerApplication[] {
-				// Basic test : REL -- REL
-				createSuccessfullReasonerApplication("↔", "↔"),
-				// Basic test : REL -- SREL
-				createSuccessfullReasonerApplication("↔", ""),
-				// Basic test : REL -- TREL
-				createSuccessfullReasonerApplication("↔", ""),
-				// Basic test : REL -- STREL
-				createSuccessfullReasonerApplication("↔", ""),
-				// Basic test : REL -- PFUN
-				createSuccessfullReasonerApplication("↔", "⇸"),
-				// Basic test : REL -- TFUN
-				createSuccessfullReasonerApplication("↔", "→"),
-				// Basic test : REL -- PINJ
-				createSuccessfullReasonerApplication("↔", "⤔"),
-				// Basic test : REL -- TINJ
-				createSuccessfullReasonerApplication("↔", "↣"),
-				// Basic test : REL -- PSUR
-				createSuccessfullReasonerApplication("↔", "⤀"),
-				// Basic test : REL -- TSUR
-				createSuccessfullReasonerApplication("↔", "↠"),
-				// Basic test : REL -- TBIJ
-				createSuccessfullReasonerApplication("↔", "⤖"),
-				// Basic test : TREL -- TREL
-				createSuccessfullReasonerApplication("", ""),
-				// Basic test : TREL -- STREL
-				createSuccessfullReasonerApplication("", ""),
-				// Basic test : TREL -- TFUN
-				createSuccessfullReasonerApplication("", "→"),
-				// Basic test : TREL -- TINJ
-				createSuccessfullReasonerApplication("", "↣"),
-				// Basic test : TREL -- TSUR
-				createSuccessfullReasonerApplication("", "↠"),
-				// Basic test : TREL -- TBIJ
-				createSuccessfullReasonerApplication("", "⤖"),
-				// Basic test : PFUN -- PFUN
-				createSuccessfullReasonerApplication("⇸", "⇸"),
-				// Basic test : PFUN -- TFUN
-				createSuccessfullReasonerApplication("⇸", "→"),
-				// Basic test : PFUN -- PINJ
-				createSuccessfullReasonerApplication("⇸", "⤔"),
-				// Basic test : PFUN -- TINJ
-				createSuccessfullReasonerApplication("⇸", "↣"),
-				// Basic test : PFUN -- PSUR
-				createSuccessfullReasonerApplication("⇸", "⤀"),
-				// Basic test : PFUN -- TSUR
-				createSuccessfullReasonerApplication("⇸", "↠"),
-				// Basic test : PFUN -- TBIJ
-				createSuccessfullReasonerApplication("⇸", "↠"),
-				// Basic test : TFUN -- TFUN
-				createSuccessfullReasonerApplication("→", "→"),
-				// Basic test : TFUN -- TINJ
-				createSuccessfullReasonerApplication("→", "↣"),
-				// Basic test : TFUN -- TSUR
-				createSuccessfullReasonerApplication("→", "↠"),
-				// Basic test : TFUN -- TBIJ
-				createSuccessfullReasonerApplication("→", "↠"), };
+				createSuccessfullReasonerApplication(rel, rel),
+				createSuccessfullReasonerApplication(rel, srel),
+				createSuccessfullReasonerApplication(rel, trel),
+				createSuccessfullReasonerApplication(rel, strel),
+				createSuccessfullReasonerApplication(rel, pfun),
+				createSuccessfullReasonerApplication(rel, tfun),
+				createSuccessfullReasonerApplication(rel, pinj),
+				createSuccessfullReasonerApplication(rel, tinj),
+				createSuccessfullReasonerApplication(rel, psur),
+				createSuccessfullReasonerApplication(rel, tsur),
+				createSuccessfullReasonerApplication(rel, tbij),
+				createSuccessfullReasonerApplication(trel, trel),
+				createSuccessfullReasonerApplication(trel, strel),
+				createSuccessfullReasonerApplication(trel, tfun),
+				createSuccessfullReasonerApplication(trel, tinj),
+				createSuccessfullReasonerApplication(trel, tsur),
+				createSuccessfullReasonerApplication(trel, tbij),
+				createSuccessfullReasonerApplication(pfun, pfun),
+				createSuccessfullReasonerApplication(pfun, tfun),
+				createSuccessfullReasonerApplication(pfun, pinj),
+				createSuccessfullReasonerApplication(pfun, tinj),
+				createSuccessfullReasonerApplication(pfun, psur),
+				createSuccessfullReasonerApplication(pfun, tsur),
+				createSuccessfullReasonerApplication(pfun, tbij),
+				createSuccessfullReasonerApplication(tfun, tfun),
+				createSuccessfullReasonerApplication(tfun, tinj),
+				createSuccessfullReasonerApplication(tfun, tsur),
+				createSuccessfullReasonerApplication(tfun, tbij), };
 	}
 
 	private SuccessfullReasonerApplication createSuccessfullReasonerApplication(
 			String opGoal, String opHyp) {
-		return new SuccessfullReasonerApplication(
-				TestLib.genSeq(" A=ℤ ;; B=ℤ ;; f∈A " + opHyp
-						+ " B |- f{x ↦ y}∈A " + opGoal + " B "),
-				new HypothesisReasoner.Input(TestLib.genPred(
-						TestLib.genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∈A " + opHyp + " B")),
-				"{f=ℙ(ℤ×ℤ), A=ℙ(ℤ), B=ℙ(ℤ), y=ℤ, x=ℤ}[][][A=ℤ ;; B=ℤ ;; f∈A "
-						+ opHyp + " B] |- x∈A",
-				"{f=ℙ(ℤ×ℤ), A=ℙ(ℤ), B=ℙ(ℤ), y=ℤ, x=ℤ}[][][A=ℤ ;; B=ℤ ;; f∈A "
-						+ opHyp + " B] |- y∈B");
+		return new SuccessfullReasonerApplication(genSeq(hypsStr + opHyp
+				+ " B |- f{x ↦ y}∈A " + opGoal + " B "),
+				new HypothesisReasoner.Input(genPred(genTypeEnv("f=ℙ(ℤ×ℤ)"),
+						"f∈A " + opHyp + " B")), typenvStr + hypsStr + opHyp
+						+ " B] |- x∈A", typenvStr + hypsStr + opHyp
+						+ " B] |- y∈B");
 	}
 
 	@Override
@@ -106,95 +84,70 @@ public class MapOvrGoalTests extends AbstractReasonerTests {
 		return new UnsuccessfullReasonerApplication[] {
 				// Goal is not an Inclusion
 				new UnsuccessfullReasonerApplication(
-						TestLib.genSeq(" ⊤ |- f{x ↦ y}∉ℙ(ℤ) → ℙ(ℤ) "),
-						new HypothesisReasoner.Input(null)),
+						genSeq(" ⊤ |- f{x ↦ y}∉ℙ(ℤ) → ℙ(ℤ) "),
+						new HypothesisReasoner.Input(null), goalShape),
 				// Left member is not an Overriding
 				new UnsuccessfullReasonerApplication(
-						TestLib.genSeq(" ⊤ |- f∖{x ↦ y}∈ℙ(ℤ) → ℙ(ℤ) "),
-						new HypothesisReasoner.Input(null)),
+						genSeq(" ⊤ |- f∖{x ↦ y}∈ℙ(ℤ) → ℙ(ℤ) "),
+						new HypothesisReasoner.Input(null), goalShape),
 				// The function is not override by a singleton
 				new UnsuccessfullReasonerApplication(
-						TestLib.genSeq(" ⊤ |- fg∈ℙ(ℤ) → ℙ(ℤ) "),
-						new HypothesisReasoner.Input(null)),
+						genSeq(" ⊤ |- fg∈ℙ(ℤ) → ℙ(ℤ) "),
+						new HypothesisReasoner.Input(null), goalShape),
 				// The singleton is not a mapplet
 				new UnsuccessfullReasonerApplication(
-						TestLib.genSeq(" ⊤ |- f{a}∈ℙ(ℤ) → ℙ(ℤ) "),
-						new HypothesisReasoner.Input(null)),
+						genSeq(" ⊤ |- f{a}∈ℙ(ℤ) → ℙ(ℤ) "),
+						new HypothesisReasoner.Input(null), goalShape),
 				// Input is not contained in hypothesis
 				new UnsuccessfullReasonerApplication(
-						TestLib.genSeq(" A=ℤ ;; B=ℤ ;; f∈A  B|- f{x ↦ y}∈A → B "),
-						new HypothesisReasoner.Input(TestLib.genPred(
-								TestLib.genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∈A → B"))),
-				// Input is not contained in hypothesis
-				new UnsuccessfullReasonerApplication(
-						TestLib.genSeq(" A=ℤ ;; B=ℤ ;; f∈A → B|- f{x ↦ y}∈A → B "),
-						new HypothesisReasoner.Input(TestLib.genPred(
-								TestLib.genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∈A  B"))),
+						genSeq(" A=ℤ ;; B=ℤ ;; f∈A  B|- f{x ↦ y}∈A → B "),
+						new HypothesisReasoner.Input(genPred(
+								genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∈A → B")),
+						"Nonexistent hypothesis: "
+								+ genPred(genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∈A → B")),
 				// Input is incorrect
 				new UnsuccessfullReasonerApplication(
-						TestLib.genSeq(" A=ℤ ;; B=ℤ ;; f∈A → B|- f{x ↦ y}∈A → B "),
-						new HypothesisReasoner.Input(TestLib.genPred(
-								TestLib.genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∉A → B"))),
+						genSeq(" A=ℤ ;; B=ℤ ;; f∈A → B ;; f∉A → B |- f{x ↦ y}∈A → B "),
+						new HypothesisReasoner.Input(genPred(
+								genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∉A → B")),
+						notInfering),
 				// Input is incorrect
 				new UnsuccessfullReasonerApplication(
-						TestLib.genSeq(" A=ℤ ;; B=ℤ ;; f∈A → B|- f{x ↦ y}∈A → B "),
-						new HypothesisReasoner.Input(TestLib.genPred(
-								TestLib.genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∈C"))),
-				// Fails on type relation : SREL
-				createUnsuccessfullApplication("", ""),
-				// Fails on type relation : STREL
-				createUnsuccessfullApplication("", ""),
-				// Fails on type relation : PINJ
-				createUnsuccessfullApplication("⤔", "⤔"),
-				// Fails on type relation : TINJ
-				createUnsuccessfullApplication("↣", "↣"),
-				// Fails on type relation : PSUR
-				createUnsuccessfullApplication("⤀", "⤀"),
-				// Fails on type relation : TSUR
-				createUnsuccessfullApplication("↠", "↠"),
-				// Fails on type relation : TBIJ
-				createUnsuccessfullApplication("⤖", "⤖"),
-				// Fails on type relation : TREL -- REL
-				createUnsuccessfullApplication("", "↔"),
-				// Fails on type relation : TREL -- SREL
-				createUnsuccessfullApplication("", ""),
-				// Fails on type relation : TREL -- PFUN
-				createUnsuccessfullApplication("", "⇸"),
-				// Fails on type relation : TREL -- PINJ
-				createUnsuccessfullApplication("", "⤔"),
-				// Fails on type relation : TREL -- PSUR
-				createUnsuccessfullApplication("", "⤀"),
-				// Fails on type relation : PFUN -- REL
-				createUnsuccessfullApplication("⇸", "↔"),
-				// Fails on type relation : PFUN -- TREL
-				createUnsuccessfullApplication("⇸", ""),
-				// Fails on type relation : PFUN -- SREL
-				createUnsuccessfullApplication("⇸", ""),
-				// Fails on type relation : PFUN -- STREL
-				createUnsuccessfullApplication("⇸", ""),
-				// Fails on type relation : TFUN -- REL
-				createUnsuccessfullApplication("→", "↔"),
-				// Fails on type relation : TFUN -- TREL
-				createUnsuccessfullApplication("→", ""),
-				// Fails on type relation : TFUN -- SREL
-				createUnsuccessfullApplication("→", ""),
-				// Fails on type relation : TFUN -- STREL
-				createUnsuccessfullApplication("→", ""),
-				// Fails on type relation : TFUN -- PFUN
-				createUnsuccessfullApplication("→", "⇸"),
-				// Fails on type relation : TFUN -- PINJ
-				createUnsuccessfullApplication("→", "⤔"),
-				// Fails on type relation : TFUN -- PSUR
-				createUnsuccessfullApplication("→", "⤀"),};
+						genSeq(" A=ℤ ;; B=ℤ ;; f∈A → B ;; f∈C |- f{x ↦ y}∈A → B "),
+						new HypothesisReasoner.Input(genPred(
+								genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∈C")), notInfering),
+				// Fails on type relation
+				createUnsuccessfullApplication(srel, srel, goalShape),
+				createUnsuccessfullApplication(strel, strel, goalShape),
+				createUnsuccessfullApplication(pinj, pinj, goalShape),
+				createUnsuccessfullApplication(tinj, tinj, goalShape),
+				createUnsuccessfullApplication(psur, psur, goalShape),
+				createUnsuccessfullApplication(tsur, tsur, goalShape),
+				createUnsuccessfullApplication(tbij, tbij, goalShape),
+				createUnsuccessfullApplication(trel, rel, notInfering),
+				createUnsuccessfullApplication(trel, srel, notInfering),
+				createUnsuccessfullApplication(trel, pfun, notInfering),
+				createUnsuccessfullApplication(trel, pinj, notInfering),
+				createUnsuccessfullApplication(trel, psur, notInfering),
+				createUnsuccessfullApplication(pfun, rel, notInfering),
+				createUnsuccessfullApplication(pfun, trel, notInfering),
+				createUnsuccessfullApplication(pfun, srel, notInfering),
+				createUnsuccessfullApplication(pfun, strel, notInfering),
+				createUnsuccessfullApplication(tfun, rel, notInfering),
+				createUnsuccessfullApplication(tfun, trel, notInfering),
+				createUnsuccessfullApplication(tfun, srel, notInfering),
+				createUnsuccessfullApplication(tfun, strel, notInfering),
+				createUnsuccessfullApplication(tfun, pfun, notInfering),
+				createUnsuccessfullApplication(tfun, pinj, notInfering),
+				createUnsuccessfullApplication(tfun, psur, notInfering), };
 	}
 
 	private UnsuccessfullReasonerApplication createUnsuccessfullApplication(
-			String opGoal, String opHyp) {
-		return new UnsuccessfullReasonerApplication(
-				TestLib.genSeq(" A=ℤ ;; B=ℤ ;; f∈A " + opHyp
-						+ " B|- f{x ↦ y}∈A " + opGoal + " B "),
-				new HypothesisReasoner.Input(TestLib.genPred(
-						TestLib.genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∈A " + opHyp + " B")));
+			String opGoal, String opHyp, String reason) {
+		return new UnsuccessfullReasonerApplication(genSeq(hypsStr + opHyp
+				+ " B|- f{x ↦ y}∈A " + opGoal + " B "),
+				new HypothesisReasoner.Input(genPred(genTypeEnv("f=ℙ(ℤ×ℤ)"),
+						"f∈A " + opHyp + " B")), reason);
 	}
 
 }

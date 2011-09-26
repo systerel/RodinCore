@@ -10,21 +10,20 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.*;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertFailure;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertSuccess;
 import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertTacticRegistered;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.mapOvrG;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
-
-import java.util.Collections;
 
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.junit.Test;
 
@@ -53,70 +52,41 @@ public class MapOvrGoalAutoTacTests {
 	@Test
 	public void apply() {
 		final ITypeEnvironment typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ), A=ℙ(ℤ), B=ℙ(ℤ), x=ℤ, y=ℤ");
-		// Basic test : REL -- REL
-		assertSucceeded(typeEnv, "↔", "↔");
-		// Basic test : REL -- SREL
-		assertSucceeded(typeEnv, "↔", "");
-		// Basic test : REL -- TREL
-		assertSucceeded(typeEnv, "↔", "");
-		// Basic test : REL -- STREL
-		assertSucceeded(typeEnv, "↔", "");
-		// Basic test : REL -- PFUN
-		assertSucceeded(typeEnv, "↔", "⇸");
-		// Basic test : REL -- TFUN
-		assertSucceeded(typeEnv, "↔", "→");
-		// Basic test : REL -- PINJ
-		assertSucceeded(typeEnv, "↔", "⤔");
-		// Basic test : REL -- TINJ
-		assertSucceeded(typeEnv, "↔", "↣");
-		// Basic test : REL -- PSUR
-		assertSucceeded(typeEnv, "↔", "⤀");
-		// Basic test : REL -- TSUR
-		assertSucceeded(typeEnv, "↔", "↠");
-		// Basic test : REL -- TBIJ
-		assertSucceeded(typeEnv, "↔", "⤖");
-		// Basic test : TREL -- TREL
-		assertSucceeded(typeEnv, "", "");
-		// Basic test : TREL -- STREL
-		assertSucceeded(typeEnv, "", "");
-		// Basic test : TREL -- TFUN
-		assertSucceeded(typeEnv, "", "→");
-		// Basic test : TREL -- TINJ
-		assertSucceeded(typeEnv, "", "↣");
-		// Basic test : TREL -- TSUR
-		assertSucceeded(typeEnv, "", "↠");
-		// Basic test : TREL -- TBIJ
-		assertSucceeded(typeEnv, "", "⤖");
-		// Basic test : PFUN -- PFUN
-		assertSucceeded(typeEnv, "⇸", "⇸");
-		// Basic test : PFUN -- TFUN
-		assertSucceeded(typeEnv, "⇸", "→");
-		// Basic test : PFUN -- PINJ
-		assertSucceeded(typeEnv, "⇸", "⤔");
-		// Basic test : PFUN -- TINJ
-		assertSucceeded(typeEnv, "⇸", "↣");
-		// Basic test : PFUN -- PSUR
-		assertSucceeded(typeEnv, "⇸", "⤀");
-		// Basic test : PFUN -- TSUR
-		assertSucceeded(typeEnv, "⇸", "↠");
-		// Basic test : PFUN -- TBIJ
-		assertSucceeded(typeEnv, "⇸", "↠");
-		// Basic test : TFUN -- TFUN
-		assertSucceeded(typeEnv, "→", "→");
-		// Basic test : TFUN -- TINJ
-		assertSucceeded(typeEnv, "→", "↣");
-		// Basic test : TFUN -- TSUR
-		assertSucceeded(typeEnv, "→", "↠");
-		// Basic test : TFUN -- TBIJ
-		assertSucceeded(typeEnv, "→", "↠");
+		assertSucceeded(typeEnv, rel, rel);
+		assertSucceeded(typeEnv, rel, srel);
+		assertSucceeded(typeEnv, rel, trel);
+		assertSucceeded(typeEnv, rel, strel);
+		assertSucceeded(typeEnv, rel, pfun);
+		assertSucceeded(typeEnv, rel, tfun);
+		assertSucceeded(typeEnv, rel, pinj);
+		assertSucceeded(typeEnv, rel, tinj);
+		assertSucceeded(typeEnv, rel, psur);
+		assertSucceeded(typeEnv, rel, tsur);
+		assertSucceeded(typeEnv, rel, tbij);
+		assertSucceeded(typeEnv, trel, trel);
+		assertSucceeded(typeEnv, trel, strel);
+		assertSucceeded(typeEnv, trel, tfun);
+		assertSucceeded(typeEnv, trel, tinj);
+		assertSucceeded(typeEnv, trel, tsur);
+		assertSucceeded(typeEnv, trel, tbij);
+		assertSucceeded(typeEnv, pfun, pfun);
+		assertSucceeded(typeEnv, pfun, tfun);
+		assertSucceeded(typeEnv, pfun, pinj);
+		assertSucceeded(typeEnv, pfun, tinj);
+		assertSucceeded(typeEnv, pfun, psur);
+		assertSucceeded(typeEnv, pfun, tsur);
+		assertSucceeded(typeEnv, pfun, tbij);
+		assertSucceeded(typeEnv, tfun, tfun);
+		assertSucceeded(typeEnv, tfun, tinj);
+		assertSucceeded(typeEnv, tfun, tsur);
+		assertSucceeded(typeEnv, tfun, tbij);
 	}
 
 	private void assertSucceeded(final ITypeEnvironment typeEnv,
 			final String opGoal, final String opHyp) {
 		final Predicate goal = genPred(typeEnv, goalString + opGoal + stringB);
 		final Predicate hyp = genPred(typeEnv, hypString + opHyp + stringB);
-		final IProverSequent sequent = ProverFactory.makeSequent(typeEnv,
-				Collections.singleton(hyp), goal);
+		final IProverSequent sequent = genSeq(hyp, goal);
 		assertSuccess(sequent, mapOvrG(hyp, empty, empty), TAC);
 	}
 
@@ -131,69 +101,43 @@ public class MapOvrGoalAutoTacTests {
 		assertFailed(typeEnv, "fg∈A → B");
 		// The singleton is not a mapplet
 		assertFailed(typeEnv, "f{a}∈A → B");
-		// Fails on type relation : SREL
-		assertFailedOnTypeRelation(typeEnv, "", "");
-		// Fails on type relation : STREL
-		assertFailedOnTypeRelation(typeEnv, "", "");
-		// Fails on type relation : PINJ
-		assertFailedOnTypeRelation(typeEnv, "⤔", "⤔");
-		// Fails on type relation : TINJ
-		assertFailedOnTypeRelation(typeEnv, "↣", "↣");
-		// Fails on type relation : PSUR
-		assertFailedOnTypeRelation(typeEnv, "⤀", "⤀");
-		// Fails on type relation : TSUR
-		assertFailedOnTypeRelation(typeEnv, "↠", "↠");
-		// Fails on type relation : TBIJ
-		assertFailedOnTypeRelation(typeEnv, "⤖", "⤖");
-		// Fails on type relation : TREL -- REL
-		assertFailedOnTypeRelation(typeEnv, "", "↔");
-		// Fails on type relation : TREL -- SREL
-		assertFailedOnTypeRelation(typeEnv, "", "");
-		// Fails on type relation : TREL -- PFUN
-		assertFailedOnTypeRelation(typeEnv, "", "⇸");
-		// Fails on type relation : TREL -- PINJ
-		assertFailedOnTypeRelation(typeEnv, "", "⤔");
-		// Fails on type relation : TREL -- PSUR
-		assertFailedOnTypeRelation(typeEnv, "", "⤀");
-		// Fails on type relation : PFUN -- REL
-		assertFailedOnTypeRelation(typeEnv, "⇸", "↔");
-		// Fails on type relation : PFUN -- TREL
-		assertFailedOnTypeRelation(typeEnv, "⇸", "");
-		// Fails on type relation : PFUN -- SREL
-		assertFailedOnTypeRelation(typeEnv, "⇸", "");
-		// Fails on type relation : PFUN -- STREL
-		assertFailedOnTypeRelation(typeEnv, "⇸", "");
-		// Fails on type relation : TFUN -- REL
-		assertFailedOnTypeRelation(typeEnv, "→", "↔");
-		// Fails on type relation : TFUN -- TREL
-		assertFailedOnTypeRelation(typeEnv, "→", "");
-		// Fails on type relation : TFUN -- SREL
-		assertFailedOnTypeRelation(typeEnv, "→", "");
-		// Fails on type relation : TFUN -- STREL
-		assertFailedOnTypeRelation(typeEnv, "→", "");
-		// Fails on type relation : TFUN -- PFUN
-		assertFailedOnTypeRelation(typeEnv, "→", "⇸");
-		// Fails on type relation : TFUN -- PINJ
-		assertFailedOnTypeRelation(typeEnv, "→", "⤔");
-		// Fails on type relation : TFUN -- PSUR
-		assertFailedOnTypeRelation(typeEnv, "→", "⤀");
+		assertFailedOnTypeRelation(typeEnv, srel, srel);
+		assertFailedOnTypeRelation(typeEnv, strel, strel);
+		assertFailedOnTypeRelation(typeEnv, pinj, pinj);
+		assertFailedOnTypeRelation(typeEnv, tinj, tinj);
+		assertFailedOnTypeRelation(typeEnv, psur, psur);
+		assertFailedOnTypeRelation(typeEnv, tsur, tsur);
+		assertFailedOnTypeRelation(typeEnv, tbij, tbij);
+		assertFailedOnTypeRelation(typeEnv, trel, rel);
+		assertFailedOnTypeRelation(typeEnv, trel, srel);
+		assertFailedOnTypeRelation(typeEnv, trel, pfun);
+		assertFailedOnTypeRelation(typeEnv, trel, pinj);
+		assertFailedOnTypeRelation(typeEnv, trel, psur);
+		assertFailedOnTypeRelation(typeEnv, pfun, rel);
+		assertFailedOnTypeRelation(typeEnv, pfun, trel);
+		assertFailedOnTypeRelation(typeEnv, pfun, srel);
+		assertFailedOnTypeRelation(typeEnv, pfun, strel);
+		assertFailedOnTypeRelation(typeEnv, tfun, rel);
+		assertFailedOnTypeRelation(typeEnv, tfun, trel);
+		assertFailedOnTypeRelation(typeEnv, tfun, srel);
+		assertFailedOnTypeRelation(typeEnv, tfun, strel);
+		assertFailedOnTypeRelation(typeEnv, tfun, pfun);
+		assertFailedOnTypeRelation(typeEnv, tfun, pinj);
+		assertFailedOnTypeRelation(typeEnv, tfun, psur);
 	}
 
 	private void assertFailedOnTypeRelation(final ITypeEnvironment typeEnv,
 			final String opGoal, final String opHyp) {
 		final Predicate goal = genPred(typeEnv, goalString + opGoal + stringB);
 		final Predicate hyp = genPred(typeEnv, hypString + opHyp + stringB);
-		final IProverSequent sequent = ProverFactory.makeSequent(typeEnv,
-				Collections.singleton(hyp), goal);
+		final IProverSequent sequent = genSeq(hyp, goal);
 		assertFailure(sequent, TAC);
 	}
 
 	private void assertFailed(final ITypeEnvironment typeEnv,
 			final String goalStr) {
 		final Predicate goal = genPred(typeEnv, goalStr);
-		final Predicate hyp = genPred("⊤");
-		final IProverSequent sequent = ProverFactory.makeSequent(typeEnv,
-				Collections.singleton(hyp), goal);
+		final IProverSequent sequent = genSeq(goal);
 		assertFailure(sequent, TAC);
 	}
 }

@@ -440,7 +440,7 @@
       		id="mbGoal"
       		name="%mbGoalName"/>
       <reasoner
-     		class="org.eventb.internal.core.seqprover.eventbExtensions.MapOvrGoal"
+     		class="org.eventb.internal.core.seqprover.eventbExtensions.mapOvrG.MapOvrGoal"
       		id="mapOvrG"
       		name="%mapOvrGName"/>
       <reasoner
