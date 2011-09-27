@@ -35,7 +35,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
@@ -57,31 +57,27 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	
 	private static class TacSelListener implements ISelectionChangedListener {
 		
-		private final Label label;
+		private final Text descr;
 		private Viewer currentSource = null;
 		
-		public TacSelListener(Label label) {
-			this.label = label;
-		}
-
-		public TacSelListener() {
-			this(null);
+		public TacSelListener(Text text) {
+			this.descr = text;
 		}
 
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
-			updateLabel(event);
+			updateDescr(event);
 			
 			emptyCurrentSelection(event);
 		}
 
-		private void updateLabel(SelectionChangedEvent event) {
-			if (label == null || label.isDisposed()) {
+		private void updateDescr(SelectionChangedEvent event) {
+			if (descr == null || descr.isDisposed()) {
 				return;
 			}
 			final ISelection selection = event.getSelection();
 			if (selection == null) {
-				label.setText(wizard_editprofile_combedit_noselectedtactic);
+				descr.setText(wizard_editprofile_combedit_noselectedtactic);
 				return;
 			}
 			if (!(selection instanceof IStructuredSelection) || selection.isEmpty()) {
@@ -94,8 +90,8 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 			}
 			final ITacticNode node = (ITacticNode) first;
 			final String description = node.getDescription();
-			label.setText(description);
-			label.pack();
+			descr.setBounds(descr.getParent().getClientArea());
+			descr.setText(description);
 		}
 
 		private void emptyCurrentSelection(SelectionChangedEvent event) {
@@ -119,7 +115,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	private ListViewer simpleList;
 	private ListViewer combList;
 	private ListViewer refList;
-	Label descrLabel;
+	Text descrLabel;
 
 	private TacSelListener tacSelListener;
 
@@ -146,11 +142,15 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		
 		refList = makeListViewer(combRefDescr, wizard_editprofile_combedit_list_profiles);
 		
-//		final Group descrGroup = makeGroup(combRefDescr, "Description");
-//		descrLabel = new Label(descrGroup, SWT.WRAP);
-//		tacSelListener = new TacSelListener(descrLabel);
-//		
-		tacSelListener = new TacSelListener();
+		final Group descrGroup = makeGroup(combRefDescr, "Description");
+		descrLabel = new Text(descrGroup, SWT.WRAP | SWT.V_SCROLL
+				| SWT.READ_ONLY);
+		final GridData layoutData = new GridData();
+		layoutData.exclude = true;
+		descrLabel.setLayoutData(layoutData);
+		descrLabel.setBounds(descrGroup.getClientArea());
+		
+		tacSelListener = new TacSelListener(descrLabel);
 		addDescriptionListener();
 	}
 
