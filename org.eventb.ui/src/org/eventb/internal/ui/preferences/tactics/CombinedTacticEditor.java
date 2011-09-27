@@ -116,7 +116,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	private ListViewer simpleList;
 	private ListViewer combList;
 	private ListViewer refList;
-	Text descrLabel;
+	private Text descrText;
 
 	private TacSelListener tacSelListener;
 
@@ -144,19 +144,24 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		refList = makeListViewer(combRefDescr, wizard_editprofile_combedit_list_profiles);
 		
 		final Group descrGroup = makeGroup(combRefDescr, "Description");
-		descrLabel = new Text(descrGroup, SWT.WRAP | SWT.V_SCROLL
+		descrText = makeDescription(descrGroup);
+		tacSelListener = new TacSelListener(descrText);
+		addDescriptionListener();
+	}
+
+	private static Text makeDescription(final Composite parent) {
+		final Text text = new Text(parent, SWT.WRAP | SWT.V_SCROLL
 				| SWT.READ_ONLY);
 		final GridData layoutData = new GridData();
-		layoutData.exclude = true;
-		descrLabel.setLayoutData(layoutData);
-		descrGroup.addControlListener(new ControlAdapter() {
+		layoutData.exclude = true; // avoid packing
+		text.setLayoutData(layoutData);
+		parent.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
-				descrLabel.setBounds(descrGroup.getClientArea());
+				text.setBounds(parent.getClientArea());
 			}
 		});
-		tacSelListener = new TacSelListener(descrLabel);
-		addDescriptionListener();
+		return text;
 	}
 
 	private void addDescriptionListener() {
