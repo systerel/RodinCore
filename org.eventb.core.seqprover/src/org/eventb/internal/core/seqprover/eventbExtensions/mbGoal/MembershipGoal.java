@@ -46,7 +46,6 @@ public class MembershipGoal extends HypothesesReasoner {
 	// TODO Trace extractor functioning and research progress
 	public static boolean DEBUG = false;
 
-
 	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -55,42 +54,41 @@ public class MembershipGoal extends HypothesesReasoner {
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		final IProofMonitor myPM = (pm == null) ? PM: pm;
+		final IProofMonitor myPM = (pm == null) ? PM : pm;
 		final Predicate goal = seq.goal();
 		final FormulaFactory ff = seq.getFormulaFactory();
 		if (goal.getTag() != IN) {
 			return ProverFactory.reasonerFailure(this, input,
 					"Goal must be a membership.");
 		}
-		if (!(input instanceof HypothesesReasoner.Input)) {
-			return ProverFactory.reasonerFailure(this, input,
-					"The input must be a HypothesesReasoner Input.");
+		try {
+			final Set<Predicate> neededHyps = verifyInput(input, seq);
+			final MembershipGoalImpl mbGoalImpl = new MembershipGoalImpl(goal,
+					neededHyps, ff, myPM);
+			final Rationale search = mbGoalImpl.search();
+			if (search == null) {
+				return ProverFactory.reasonerFailure(this, input,
+						"Cannot discharge the goal.");
+			}
+			final Rule<?> rule = search.makeRule();
+			assert rule.getConsequent().equals(goal);
+			return ProverFactory.makeProofRule(this, input, goal, neededHyps,
+					"Membership in goal", new IAntecedent[0]);
+		} catch (IllegalArgumentException e) {
+			return ProverFactory.reasonerFailure(this, input, e.getMessage());
 		}
-		final Set<Predicate> neededHyps = verifyInput(
-				(HypothesesReasoner.Input) input, seq);
-		if (neededHyps == null) {
-			return ProverFactory.reasonerFailure(this, input,
-					"Given predicate is not a hypothesis of the sequent.");
-		}
-		final MembershipGoalImpl mbGoalImpl = new MembershipGoalImpl(goal,
-				neededHyps, ff, myPM);
-		final Rationale search = mbGoalImpl.search();
-		if (search == null) {
-			return ProverFactory.reasonerFailure(this, input,
-					"Cannot discharge the goal.");
-		}
-		final Rule<?> rule = search.makeRule();
-		assert rule.getConsequent().equals(goal);
-		return ProverFactory.makeProofRule(this, input, goal, neededHyps,
-				"Membership in goal", new IAntecedent[0]);
 	}
 
-	private Set<Predicate> verifyInput(HypothesesReasoner.Input input,
-			IProverSequent seq) {
-		final Predicate[] hyps = input.getPred();
+	private Set<Predicate> verifyInput(IReasonerInput input, IProverSequent seq) {
+		if (!(input instanceof HypothesesReasoner.Input)) {
+			throw new IllegalArgumentException(
+					"The input must be a HypothesesReasoner Input.");
+		}
+		final Predicate[] hyps = ((HypothesesReasoner.Input) input).getPred();
 		final List<Predicate> listHyps = Arrays.asList(hyps);
 		if (!seq.containsHypotheses(listHyps)) {
-			return null;
+			throw new IllegalArgumentException(
+					"Given predicates are not hypotheses of the sequent.");
 		}
 		return new HashSet<Predicate>(listHyps);
 	}

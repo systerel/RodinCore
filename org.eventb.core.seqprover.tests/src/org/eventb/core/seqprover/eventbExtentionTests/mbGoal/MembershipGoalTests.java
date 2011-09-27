@@ -132,18 +132,18 @@ public class MembershipGoalTests extends AbstractReasonerTests {
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq("B∈ℙ(ℤ) |- x∈B"),
 						new HypothesesReasoner.Input(genPred("⊤")),
-						"Given predicate is not a hypothesis of the sequent."),
+						"Given predicates are not hypotheses of the sequent."),
 				//
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq("B∈ℙ(ℤ) |- x∈B"),
 						new HypothesesReasoner.Input(null, genPred("⊤")),
-						"Given predicate is not a hypothesis of the sequent."),
+						"Given predicates are not hypotheses of the sequent."),
 				//
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq("B∈ℙ(ℤ) |- x∈B"),
 						new HypothesesReasoner.Input(genPred(typeEnv, "x∈B"),
 								genPred(typeEnv, "x∈C")),
-						"Given predicate is not a hypothesis of the sequent."),
+						"Given predicates are not hypotheses of the sequent."),
 				//
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq(" B∈ℙ(ℤ) ;; B⊂C ;; C⊆D ;; D⊂E ;; E⊆F ;; x∈B |- x∈F "),
