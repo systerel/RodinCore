@@ -28,6 +28,9 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
@@ -107,12 +110,23 @@ public class TacticPreferenceUtils {
 	
 
 	/**
-	 * packs given control and its shell
+	 * Resizes the given control and packs the shell. The new width is the
+	 * preferred width. The height grows if needed (preferred height), but does
+	 * not decrease unless it exceeds client area.
 	 * 
 	 * @param control
 	 */
 	public static void packAll(Control control) {
-		control.pack();
+		final Point size = control.getSize();
+		final Rectangle clientArea = control.getParent().getClientArea();
+		final Point preferredSize = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		preferredSize.y = Math.max(preferredSize.y, size.y);
+		preferredSize.y = Math.min(preferredSize.y, clientArea.height);
+		if (!preferredSize.equals(size)) {
+			control.setSize(preferredSize);
+			control.redraw();
+		}
+		
 		control.getShell().pack();
 	}
 

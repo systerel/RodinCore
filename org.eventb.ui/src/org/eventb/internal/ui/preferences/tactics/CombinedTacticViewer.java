@@ -850,20 +850,6 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 
 	private static void internalPack(Composite c) {
 		packAll(c);
-		
-//		final Point size = c.getSize();
-//		final Point preferredSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-//		preferredSize.x = Math.max(preferredSize.x, size.x);
-//		preferredSize.y = Math.max(preferredSize.y, size.y);
-//		if (!preferredSize.equals(size)) {
-//			c.setSize(preferredSize);
-//			c.redraw();
-//			final Composite parent = c.getParent();
-//			if (parent != null) {
-//				internalPack(parent);
-//			}
-//		}
-
 	}
 	
 	public void addEditSupport() {
