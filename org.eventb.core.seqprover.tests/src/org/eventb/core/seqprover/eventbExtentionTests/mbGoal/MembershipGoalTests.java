@@ -48,6 +48,11 @@ public class MembershipGoalTests extends AbstractReasonerTests {
 						TestLib.genSeq(" B∈ℙ(ℤ) ;; B⊆C ;; x∈B |- x∈C "),
 						new HypothesesReasoner.Input(genPred(typeEnv, "x∈B"),
 								genPred(typeEnv, "B⊆C"))),
+				// Basic test : works with SUBSETEQ
+				new SuccessfullReasonerApplication(
+						TestLib.genSeq(" B∈ℙ(ℤ) ;; f∈ℙ(ℤ×ℤ) ;; B⊆C ;; f(x)∈B |- f(x)∈C "),
+						new HypothesesReasoner.Input(genPred(typeEnv, "f(x)∈B"),
+								genPred(typeEnv, "B⊆C"))),
 				// Basic test : works with SUBSET
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq(" B∈ℙ(ℤ) ;; B⊂C ;; x∈B |- x∈C "),
@@ -118,7 +123,7 @@ public class MembershipGoalTests extends AbstractReasonerTests {
 		return new UnsuccessfullReasonerApplication[] {
 				//
 				new UnsuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊤"),
-						EmptyInput, "Goal does not denote a membership."),
+						EmptyInput, "Goal must be a membership."),
 
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq("B∈ℙ(ℤ) |- x∈B"), EmptyInput,
@@ -146,7 +151,7 @@ public class MembershipGoalTests extends AbstractReasonerTests {
 								genPred(typeEnv, "B⊂C"),
 								genPred(typeEnv, "C⊆D"), TestLib.genPred(
 										TestLib.genTypeEnv("E=ℙ(ℤ)"), "E⊆F")),
-						"Cannot find a path."),
+						"Cannot discharge the goal."),
 
 		};
 	}

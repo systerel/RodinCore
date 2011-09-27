@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests.mbGoal;
 
+import static org.eventb.core.seqprover.ProverLib.PM;
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 
 import java.util.LinkedHashSet;
@@ -19,6 +20,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoalRules;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rule;
@@ -27,6 +29,7 @@ public class AbstractMbGoalTests {
 
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 	protected static final MembershipGoalRules rf = new MembershipGoalRules(ff);
+	protected static final IProofMonitor pm = PM;
 
 	public AbstractMbGoalTests() {
 		super();

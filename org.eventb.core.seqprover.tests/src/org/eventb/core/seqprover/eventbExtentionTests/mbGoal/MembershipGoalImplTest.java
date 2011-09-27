@@ -29,7 +29,7 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 		TestItem(String goalImage, String typenvImage, String... hypImages) {
 			super(typenvImage, hypImages);
 			this.goal = genPred(typenv, goalImage);
-			this.impl = new MembershipGoalImpl(goal, hyps, ff, null);
+			this.impl = new MembershipGoalImpl(goal, hyps, ff, pm);
 		}
 
 		public void assertFound(Rule<?> expected) {

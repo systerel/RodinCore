@@ -96,7 +96,7 @@ public class MembershipExtractor extends AbstractExtractor {
 	 */
 
 	protected void extractIn(final Rationale rat) {
-		if (pm != null && pm.isCanceled()) {
+		if (pm.isCanceled()) {
 			return;
 		}
 		final Predicate pred = rat.predicate();
@@ -129,7 +129,7 @@ public class MembershipExtractor extends AbstractExtractor {
 
 	protected void extractSubset(boolean strict, Expression left,
 			Expression right, Rationale rat) {
-		if (pm != null && pm.isCanceled()) {
+		if (pm.isCanceled()) {
 			return;
 		}
 		%match (Expression left, Expression right) {

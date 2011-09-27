@@ -86,7 +86,7 @@ public abstract class AbstractExtractor {
 	 * Extracts from one given hypothesis.
 	 */
 	protected final void extract(Predicate hyp) {
-		if (pm != null && pm.isCanceled()) {
+		if (pm.isCanceled()) {
 			return;
 		}
 		final Rationale rat = new Hypothesis(hyp, rf);

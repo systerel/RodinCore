@@ -86,7 +86,7 @@ public class GeneratorExtractor extends AbstractExtractor {
 
 	protected void extractSubset(boolean strict, Expression left,
 			Expression right, Rationale rat) {
-		if (pm != null && pm.isCanceled()) {
+		if (pm.isCanceled()) {
 			return;
 		}
 		%match (Expression left, Expression right) {

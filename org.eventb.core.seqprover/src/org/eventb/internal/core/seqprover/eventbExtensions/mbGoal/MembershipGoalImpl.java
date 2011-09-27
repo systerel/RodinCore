@@ -52,7 +52,7 @@ public class MembershipGoalImpl {
 	// Used to prevent loops
 	private final Set<Goal> tried;
 
-	// Used to cancel too long execution
+	// To support cancellation by end user
 	private final IProofMonitor pm;
 
 	public MembershipGoalImpl(Predicate goal, Set<Predicate> hyps,
@@ -69,9 +69,9 @@ public class MembershipGoalImpl {
 		this.tried = new HashSet<Goal>();
 		this.hyps = hyps;
 		this.knownMemberships = new HashMap<Predicate, Rationale>();
+		this.pm = pm;
 		this.inclHyps = new GeneratorExtractor(rf, hyps, pm).extract();
 		computeKnownMemberships();
-		this.pm = pm;
 	}
 
 	private void computeKnownMemberships() {
@@ -117,7 +117,7 @@ public class MembershipGoalImpl {
 
 	// Must be called only by search
 	private Rationale doSearch(Goal goal) {
-		if (pm != null && pm.isCanceled()) {
+		if (pm.isCanceled()) {
 			return null;
 		}
 		final Predicate predicate = goal.predicate();

@@ -40,7 +40,7 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 		TestItem(String typenvImage, String memberImage, String... hypImages) {
 			super(typenvImage, hypImages);
 			this.member = genExpr(typenv, memberImage);
-			this.extractor = new MembershipExtractor(rf, member, hyps, null);
+			this.extractor = new MembershipExtractor(rf, member, hyps, pm);
 		}
 
 		public void assertExtraction(Rule<?>... expecteds) {

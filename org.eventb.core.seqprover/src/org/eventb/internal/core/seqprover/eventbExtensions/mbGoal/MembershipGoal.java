@@ -11,6 +11,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 
 import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.seqprover.ProverLib.PM;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -42,7 +43,7 @@ public class MembershipGoal extends HypothesesReasoner {
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".mbGoal";
 
-	// TODO Delete this attribute and everything which is connected to this.
+	// TODO Trace extractor functioning and research progress
 	public static boolean DEBUG = false;
 
 
@@ -54,11 +55,12 @@ public class MembershipGoal extends HypothesesReasoner {
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
+		final IProofMonitor myPM = (pm == null) ? PM: pm;
 		final Predicate goal = seq.goal();
 		final FormulaFactory ff = seq.getFormulaFactory();
 		if (goal.getTag() != IN) {
 			return ProverFactory.reasonerFailure(this, input,
-					"Goal does not denote a membership.");
+					"Goal must be a membership.");
 		}
 		if (!(input instanceof HypothesesReasoner.Input)) {
 			return ProverFactory.reasonerFailure(this, input,
@@ -71,11 +73,11 @@ public class MembershipGoal extends HypothesesReasoner {
 					"Given predicate is not a hypothesis of the sequent.");
 		}
 		final MembershipGoalImpl mbGoalImpl = new MembershipGoalImpl(goal,
-				neededHyps, ff, pm);
+				neededHyps, ff, myPM);
 		final Rationale search = mbGoalImpl.search();
 		if (search == null) {
 			return ProverFactory.reasonerFailure(this, input,
-					"Cannot find a path.");
+					"Cannot discharge the goal.");
 		}
 		final Rule<?> rule = search.makeRule();
 		assert rule.getConsequent().equals(goal);

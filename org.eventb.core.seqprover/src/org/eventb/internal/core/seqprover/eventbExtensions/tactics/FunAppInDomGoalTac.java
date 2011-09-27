@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
 
+import static org.eventb.core.seqprover.ProverLib.PM;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,27 +54,32 @@ public class FunAppInDomGoalTac implements ITactic {
 	@Override
 	public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 		try {
+			final IProofMonitor myPM = (pm == null) ? PM : pm;
 			Set<Predicate> set_f_AopB = new HashSet<Predicate>();
 			Set<Expression> setDomain_g = new HashSet<Expression>();
 			final Object resultPreCompute = preCompute(ptNode, set_f_AopB,
-					setDomain_g);
+					setDomain_g, myPM);
 			if (resultPreCompute != null) {
 				return resultPreCompute;
 			}
 
 			for (Predicate f_AopB : set_f_AopB) {
 				final IProofTreeNode childPtNode = applyFunImageGoal(f_AopB,
-						ptNode, pm);
+						ptNode, myPM);
 				if (childPtNode == null) {
 					continue;
 				}
 				for (Expression domain_g : setDomain_g) {
 					final IProofTreeNode grandChildPtNode = applyTotalDomRewrites(
-							domain_g, childPtNode, pm);
+							domain_g, childPtNode, myPM);
+					if (myPM.isCanceled()) {
+						return "The tatic has been cancelled";
+					}
 					if (grandChildPtNode == null) {
 						continue;
 					}
-					final Object dischargeResult = new MembershipGoalTac().apply(grandChildPtNode, pm); 
+					final Object dischargeResult = new MembershipGoalTac()
+							.apply(grandChildPtNode, myPM);
 					if (dischargeResult != null) {
 						childPtNode.pruneChildren();
 						continue;
@@ -262,13 +269,15 @@ public class FunAppInDomGoalTac implements ITactic {
 	 *            a set of every expression "A" matching <code>g ∈ A op B</code>
 	 *            (with "op" either a total relation or a total function)
 	 *            (should be empty)
+	 * @param pm
+	 *            support cancellation (must not be <code>null</code>
 	 * @return <code>null</code> iff the sequent's goal of the given
 	 *         IProofTreeNode <code>ptNode</code> matches
 	 *         <code>f(x)∈dom(g)</code> and <code>set_f_AopB</code> and
 	 *         <code>setDomain_g</code> are non empty in the end.
 	 */
 	private Object preCompute(IProofTreeNode ptNode, Set<Predicate> set_f_AopB,
-			Set<Expression> setDomain_g) {
+			Set<Expression> setDomain_g, IProofMonitor pm) {
 		final IProverSequent sequent = ptNode.getSequent();
 		final Predicate goal = sequent.goal();
 
@@ -288,6 +297,9 @@ public class FunAppInDomGoalTac implements ITactic {
 
 		for (Predicate hyp : sequent.hypIterable()) {
 			createSets(f, set_f_AopB, g, setDomain_g, hyp);
+			if (pm.isCanceled()) {
+				return "Tactic has been cancelled.";
+			}
 		}
 		if (set_f_AopB.isEmpty()) {
 			return "Cannot find set for the function application";
