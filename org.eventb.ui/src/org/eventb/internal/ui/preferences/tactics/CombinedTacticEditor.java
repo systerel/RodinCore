@@ -178,7 +178,8 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 
 		final Group group = makeGroup(parent, text);
 		final ListViewer viewer = new ListViewer(group);
-		viewer.getList().setLayoutData(group.getLayoutData());
+		viewer.getList().setLayoutData(
+				new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		viewer.setLabelProvider(labelProvider);
 		
