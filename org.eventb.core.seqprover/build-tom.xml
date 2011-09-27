@@ -26,6 +26,9 @@
 	<property name="mbGoal.src"
 		location="${src}/org/eventb/internal/core/seqprover/eventbExtensions/mbGoal" />
 
+	<property name="TDomToCprod.src"
+		location="${src}/org/eventb/internal/core/seqprover/eventbExtensions/tactics/TDomToCprod" />
+
 	<target name="init" description="Create the initial time stamp">
 		<tstamp />
 	</target>
@@ -94,6 +97,8 @@
 		<delete file="${mbGoal.src}/AbstractExtractor.java" />
 		<delete file="${mbGoal.src}/GeneratorExtractor.java" />
 		<delete file="${mbGoal.src}/MembershipExtractor.java" />
+
+		<delete file="${TDomToCprod.src}/TotalDomToCprodTacImpl.java" />
     </target>
 	
 </project>
