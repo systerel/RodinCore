@@ -212,7 +212,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final GridLayout compLayout = new GridLayout();
 		compLayout.numColumns = numColumns;
 		composite.setLayout(compLayout);
-		final GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING,
+		final GridData gridData = new GridData(SWT.FILL, SWT.FILL,
 				true, true);
 		composite.setLayoutData(gridData);
 		return composite;
@@ -222,7 +222,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final Composite composite = new Composite(parent, SWT.NO_FOCUS);
 		final GridLayout compLayout = new GridLayout(1, false);
 		composite.setLayout(compLayout);
-		final GridData gridData = new GridData(SWT.END, SWT.BEGINNING,
+		final GridData gridData = new GridData(SWT.END, SWT.FILL,
 				true, true);
 		composite.setLayoutData(gridData);
 		return composite;
