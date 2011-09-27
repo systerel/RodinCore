@@ -23,8 +23,11 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -313,6 +316,34 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		
 	}
 	
+	private static class EditOnSelection implements ISelectionChangedListener {
+		
+		private final TableViewer viewer;
+		private Param current = null;
+
+		public EditOnSelection(TableViewer viewer) {
+			this.viewer = viewer;
+		}
+		
+		@Override
+		public void selectionChanged(SelectionChangedEvent event) {
+			final ISelection selection = event.getSelection();
+			if (!(selection instanceof IStructuredSelection)) {
+				return;
+			}
+			IStructuredSelection sel = (IStructuredSelection) selection;
+			final Object elem = sel.getFirstElement();
+			if (!(elem instanceof Param)) {
+				return;
+			}
+			Param param = (Param) elem;
+			if (param == current) return;
+			current = param;
+			viewer.cancelEditing();
+			viewer.editElement(current, Columns.VALUE.ordinal());
+		}
+	}
+	
 	private TableViewer tableViewer;
 	private Label tacticName;
 
@@ -323,6 +354,7 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		createColumns();
 		tableViewer.setLabelProvider(new ParamLabelProvider());
 		tableViewer.setContentProvider(new ParamContentProvider());
+		tableViewer.addSelectionChangedListener(new EditOnSelection(tableViewer));
 	}
 	
 	private void createColumns() {
