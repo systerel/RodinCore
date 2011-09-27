@@ -30,6 +30,8 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -90,7 +92,6 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 			}
 			final ITacticNode node = (ITacticNode) first;
 			final String description = node.getDescription();
-			descr.setBounds(descr.getParent().getClientArea());
 			descr.setText(description);
 		}
 
@@ -148,8 +149,12 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final GridData layoutData = new GridData();
 		layoutData.exclude = true;
 		descrLabel.setLayoutData(layoutData);
-		descrLabel.setBounds(descrGroup.getClientArea());
-		
+		descrGroup.addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent e) {
+				descrLabel.setBounds(descrGroup.getClientArea());
+			}
+		});
 		tacSelListener = new TacSelListener(descrLabel);
 		addDescriptionListener();
 	}
