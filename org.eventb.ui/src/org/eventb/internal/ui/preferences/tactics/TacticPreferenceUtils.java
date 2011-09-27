@@ -107,18 +107,13 @@ public class TacticPreferenceUtils {
 	
 
 	/**
-	 * packs given control and all its ancestors
+	 * packs given control and its shell
 	 * 
 	 * @param control
-	 * FIXME not so clean
 	 */
-	public static void packAll(Control control, int height) {
-		for (int i = 0; i < height; i++) {
-			control.pack();
-			control = control.getParent();
-			if (control == null)
-				return;
-		}
+	public static void packAll(Control control) {
+		control.pack();
+		control.getShell().pack();
 	}
 
 	

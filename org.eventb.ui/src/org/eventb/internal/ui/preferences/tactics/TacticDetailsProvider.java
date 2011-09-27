@@ -72,11 +72,11 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		if (desc instanceof IParamTacticDescriptor) {
 			paramViewer.setInput((IParamTacticDescriptor) desc);
 			paramViewer.show();
-			packAll(paramViewer.getControl(), 13);
+			packAll(paramViewer.getControl());
 		} else {
 			combViewer.setInput(desc);
 			combViewer.show();
-			packAll(combViewer.getControl(), 13);
+			packAll(combViewer.getControl());
 		}
 	}
 

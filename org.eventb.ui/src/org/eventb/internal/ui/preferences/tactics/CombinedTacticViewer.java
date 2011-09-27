@@ -849,7 +849,7 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	}
 
 	private static void internalPack(Composite c) {
-		packAll(c, 8);
+		packAll(c);
 		
 //		final Point size = c.getSize();
 //		final Point preferredSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
