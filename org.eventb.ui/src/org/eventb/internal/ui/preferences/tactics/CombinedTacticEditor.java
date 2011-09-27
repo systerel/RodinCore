@@ -137,7 +137,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		combViewer.createContents(composite);
 		combViewer.addEditSupport();
 		
-		final Composite combRefDescr = makeGrid(composite, 1);
+		final Composite combRefDescr = makeRightRow(composite);
 		combList = makeListViewer(combRefDescr, wizard_editprofile_combedit_list_combinators);
 		
 		refList = makeListViewer(combRefDescr, wizard_editprofile_combedit_list_profiles);
@@ -201,7 +201,17 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final GridLayout compLayout = new GridLayout();
 		compLayout.numColumns = numColumns;
 		composite.setLayout(compLayout);
-		final GridData gridData = new GridData(SWT.BEGINNING, SWT.BEGINNING,
+		final GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING,
+				true, true);
+		composite.setLayoutData(gridData);
+		return composite;
+	}
+
+	private static Composite makeRightRow(Composite parent) {
+		final Composite composite = new Composite(parent, SWT.NO_FOCUS);
+		final GridLayout compLayout = new GridLayout(1, false);
+		composite.setLayout(compLayout);
+		final GridData gridData = new GridData(SWT.END, SWT.BEGINNING,
 				true, true);
 		composite.setLayoutData(gridData);
 		return composite;
