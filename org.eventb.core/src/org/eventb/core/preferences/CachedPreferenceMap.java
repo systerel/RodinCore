@@ -143,6 +143,7 @@ public class CachedPreferenceMap<T> {
 	 */
 	public List<IPrefMapEntry<T>> addAll(List<IPrefMapEntry<T>> entries) {
 		final List<IPrefMapEntry<T>> added = new ArrayList<IPrefMapEntry<T>>();
+		// FIXME sort according to dependencies, to avoid unresolved references
 		for (IPrefMapEntry<T> entry : entries) {
 			if (doAddCacheEntry(entry.getKey(), entry.getValue())) {
 				added.add(entry);
@@ -162,9 +163,21 @@ public class CachedPreferenceMap<T> {
 	}
 
 	void doPreAddCheck(String key, T value) {
-		if (preAddCheck(key, value).hasError())
+		final IPreferenceCheckResult checkResult = preAddCheck(key, value);
+		if (checkResult.hasError()) {
+			String reason = "unknown reason";
+			final Set<String> unres = checkResult.getUnresolvedReferences();
+			if (unres != null) {
+				reason = "it contains unresolved reference(s) to " + unres;
+			} else {
+				final List<String> cycle = checkResult.getCycle();
+				if (cycle != null) {
+					reason = "it introduces cyclic references " + cycle;
+				}
+			}
 			throw new IllegalArgumentException("cannot add " + key
-					+ " to preferences because it introduces cyclic references");
+					+ " to preferences because " + reason);
+		}
 	}
 
 	/**
