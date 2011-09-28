@@ -34,7 +34,6 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -350,7 +349,8 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 	@Override
 	public void createContents(Composite parent) {
 		tacticName = new Label(parent, SWT.NONE);
-		tableViewer = new TableViewer(parent);
+		tableViewer = new TableViewer(parent, SWT.FULL_SELECTION | SWT.MULTI
+				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		createColumns();
 		tableViewer.setLabelProvider(new ParamLabelProvider());
 		tableViewer.setContentProvider(new ParamContentProvider());
@@ -366,7 +366,6 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		
 
 		final Table table = tableViewer.getTable();
-		table.setLayout(new RowLayout(SWT.VERTICAL | SWT.FULL_SELECTION));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
