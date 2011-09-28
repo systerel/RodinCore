@@ -143,14 +143,29 @@ public class CachedPreferenceMap<T> {
 	 */
 	public List<IPrefMapEntry<T>> addAll(List<IPrefMapEntry<T>> entries) {
 		final List<IPrefMapEntry<T>> added = new ArrayList<IPrefMapEntry<T>>();
-		// FIXME sort according to dependencies, to avoid unresolved references
-		for (IPrefMapEntry<T> entry : entries) {
+		final List<IPrefMapEntry<T>> sorted = checkAndSort(entries);
+		for (IPrefMapEntry<T> entry : sorted) {
 			if (doAddCacheEntry(entry.getKey(), entry.getValue())) {
 				added.add(entry);
 			}
 		}
 		notifyListeners();
 		return added;
+	}
+
+	private List<IPrefMapEntry<T>> checkAndSort(List<IPrefMapEntry<T>> entries) {
+		final PrefEntryGraph<T> graph = new PrefEntryGraph<T>("preference map",
+				refMaker);
+		graph.addAll(entries);
+		final IPreferenceCheckResult checkResult = check(graph);
+		assertLegalResult("inconsistent preference entries: ", checkResult);
+		final List<Node<IPrefMapEntry<T>>> sorted = graph.getSorted();
+		final List<IPrefMapEntry<T>> result = new ArrayList<IPrefMapEntry<T>>(
+				sorted.size());
+		for (Node<IPrefMapEntry<T>> node : sorted) {
+			result.add(node.getObject());
+		}
+		return result;
 	}
 
 	private boolean doAddCacheEntry(String key, T value) {
@@ -164,19 +179,24 @@ public class CachedPreferenceMap<T> {
 
 	void doPreAddCheck(String key, T value) {
 		final IPreferenceCheckResult checkResult = preAddCheck(key, value);
+		assertLegalResult("cannot add " + key + " to preferences because of ",
+				checkResult);
+	}
+
+	private static void assertLegalResult(String preErrorMessage,
+			final IPreferenceCheckResult checkResult) {
 		if (checkResult.hasError()) {
 			String reason = "unknown reason";
 			final Set<String> unres = checkResult.getUnresolvedReferences();
 			if (unres != null) {
-				reason = "it contains unresolved reference(s) to " + unres;
+				reason = "unresolved reference(s) to " + unres;
 			} else {
 				final List<String> cycle = checkResult.getCycle();
 				if (cycle != null) {
-					reason = "it introduces cyclic references " + cycle;
+					reason = "cyclic references " + cycle;
 				}
 			}
-			throw new IllegalArgumentException("cannot add " + key
-					+ " to preferences because " + reason);
+			throw new IllegalArgumentException(preErrorMessage + reason);
 		}
 	}
 
@@ -221,8 +241,13 @@ public class CachedPreferenceMap<T> {
 
 		final ReadPrefMapEntry<T> newEntry = new ReadPrefMapEntry<T>(key, value);
 		graph.add(newEntry);
+		return check(graph);
+	}
+
+	private IPreferenceCheckResult check(PrefEntryGraph<T> graph) {
 		try {
 			graph.analyse();
+			return PreferenceCheckResult.getNoError();
 		} catch (IllegalStateException e) {
 			final PreferenceCheckResult result = new PreferenceCheckResult();
 			
@@ -241,7 +266,6 @@ public class CachedPreferenceMap<T> {
 			result.setCycle(cycle);
 			return result;
 		}
-		return PreferenceCheckResult.getNoError();
 	}
 
 	/**
