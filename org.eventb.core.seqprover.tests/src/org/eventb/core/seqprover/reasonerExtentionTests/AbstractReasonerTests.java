@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added replay tests for successful reasoners
+ *     Systerel - added factory with math extensions
  *******************************************************************************/
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
@@ -76,8 +77,6 @@ import org.junit.Test;
  */
 public abstract class AbstractReasonerTests {
 
-
-
 	protected static final FormulaFactory DEFAULT_FACTORY = FormulaFactory.getDefault();
 
 	private static final IDatatype SIMPLE_DT = DEFAULT_FACTORY
@@ -88,13 +87,16 @@ public abstract class AbstractReasonerTests {
 	static {
 		EXTENSIONS.addAll(SIMPLE_DT.getExtensions());
 		EXTENSIONS.addAll(INDUCTIVE_DT.getExtensions());
+		EXTENSIONS.add(PrimePredicate.getInstance());
 	}
 
 	/**
-	 * A factory supporting the simple and inductive datatype extensions.
+	 * A factory supporting the simple and inductive datatype extensions,
+	 * together with the prime predicate.
 	 * 
 	 * @see SimpleDatatype
 	 * @see InductiveDatatype
+	 * @see PrimePredicate
 	 */
 	public static final FormulaFactory DT_FAC = FormulaFactory
 			.getInstance(EXTENSIONS);
