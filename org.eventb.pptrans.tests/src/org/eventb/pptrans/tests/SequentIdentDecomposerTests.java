@@ -49,4 +49,17 @@ public class SequentIdentDecomposerTests extends AbstractTranslationTests {
 		assertEquals(expected, Translator.decomposeIdentifiers(sequent));
 	}
 
+	/**
+	 * Ensures that math extensions are not supported.
+	 */
+	public void testMathExtensions() throws Exception {
+		final ISimpleSequent sequent = make(DT_FF, "p = dt");
+		try {
+			Translator.decomposeIdentifiers(sequent);
+			fail("Should have raised an exception");
+		} catch (UnsupportedOperationException e) {
+			// success
+		}
+	}
+
 }

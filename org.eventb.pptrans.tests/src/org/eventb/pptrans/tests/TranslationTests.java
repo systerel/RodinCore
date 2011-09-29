@@ -13,25 +13,17 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
-import static java.util.Collections.emptyList;
 import static org.eventb.core.ast.Formula.BFALSE;
-import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.pptrans.Translator.isInGoal;
 import static org.eventb.pptrans.Translator.reduceToPredicateCalulus;
 import static org.eventb.pptrans.Translator.Option.expandSetEquality;
 
-import java.util.List;
-
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
@@ -47,6 +39,7 @@ import org.eventb.pptrans.Translator.Option;
  */
 
 public class TranslationTests extends AbstractTranslationTests {
+
 	protected static final Type S = ff.makeGivenType("S");
 	protected static final Type T = ff.makeGivenType("T");
 	protected static final Type U = ff.makeGivenType("U");
@@ -1723,42 +1716,12 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment("a", "T", "b", "U"));
 	}
 	
-	private static final IDatatypeExtension DT_TYPE = new IDatatypeExtension() {
-		
-		@Override
-		public String getTypeName() {
-			return "DT";
-		}
-		
-		@Override
-		public String getId() {
-			return "DT.id";
-		}
-		
-		@Override
-		public void addTypeParameters(ITypeConstructorMediator mediator) {
-			// none
-		}
-		
-		@Override
-		public void addConstructors(IConstructorMediator mediator) {
-			mediator.addConstructor("dt", "dt.id");
-		}
-	};
-	
-	private static final IDatatype DT = ff.makeDatatype(DT_TYPE);
-
-	private static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
-
-	private static final List<Predicate> NONE = emptyList();
-
 	/**
 	 * Ensure that mathematical extensions get discarded by the translation.
 	 */
 	public void testMathExtension() {
-		final Predicate pred = parse("p = dt", DT_FF.makeTypeEnvironment());
-		final ISimpleSequent sequent = SimpleSequents.make(NONE, pred, DT_FF);
-		final ISimpleSequent expected = SimpleSequents.make(NONE, null, DT_FF);
+		final ISimpleSequent sequent = make(DT_FF, "p = dt");
+		final ISimpleSequent expected = make(DT_FF, null);
 		assertEquals(expected, reduceToPredicateCalulus(sequent));
 	}
 

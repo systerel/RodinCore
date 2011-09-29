@@ -11,7 +11,12 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static java.util.Collections.emptyList;
+import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.LanguageVersion.V2;
+
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.eventb.core.ast.Formula;
@@ -21,6 +26,10 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
 
@@ -32,6 +41,38 @@ public abstract class AbstractTranslationTests extends TestCase {
 	protected static final Type BOOL = ff.makeBooleanType();
 	protected static final Type INT_SET = POW(INT);
 	protected static final Type ty_S = ff.makeGivenType("S");
+
+	/**
+	 * A simple datatype extension.
+	 */
+	private static final IDatatypeExtension DT_TYPE = new IDatatypeExtension() {
+
+		@Override
+		public String getTypeName() {
+			return "DT";
+		}
+
+		@Override
+		public String getId() {
+			return "DT.id";
+		}
+
+		@Override
+		public void addTypeParameters(ITypeConstructorMediator mediator) {
+			// none
+		}
+
+		@Override
+		public void addConstructors(IConstructorMediator mediator) {
+			mediator.addConstructor("dt", "dt.id");
+		}
+	};
+
+	private static final IDatatype DT = ff.makeDatatype(DT_TYPE);
+
+	protected static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
+
+	protected static final List<Predicate> NONE = emptyList();
 
 	protected static Type POW(Type base) {
 		return ff.makePowerSetType(base);
@@ -71,14 +112,20 @@ public abstract class AbstractTranslationTests extends TestCase {
 		assertTrue("Formula is not typed: " + formula, formula.isTypeChecked());
 	}
 
-	protected ISimpleSequent make(String goalImage, String... hypImages) {
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+	protected ISimpleSequent make(FormulaFactory factory, String goalImage,
+			String... hypImages) {
+		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
 		final Predicate[] hyps = new Predicate[hypImages.length];
 		for (int i = 0; i < hyps.length; i++) {
 			hyps[i] = parse(hypImages[i], typenv);
 		}
-		final Predicate goal = parse(goalImage, typenv);
-		return SimpleSequents.make(hyps, goal, ff);
+		final Predicate goal = goalImage == null ? null : parse(goalImage,
+				typenv);
+		return SimpleSequents.make(hyps, goal, factory);
+	}
+
+	protected ISimpleSequent make(String goalImage, String... hypImages) {
+		return make(ff, goalImage, hypImages);
 	}
 
 }

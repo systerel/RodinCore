@@ -73,11 +73,17 @@ public class Translator {
 	 * the given sequent. These identifiers are replaced by a combination of
 	 * fresh identifiers in the returned sequent. This transformation thus
 	 * preserves validity, modulo some possible change to the type environment.
+	 * <p>
+	 * This transformation does not support mathematical extensions.
+	 * </p>
 	 * 
 	 * @param sequent
 	 *            sequent to process
 	 * @return an equivalent sequent that contains no identifier of Cartesian
 	 *         product type
+	 * @throws UnsupportedOperationException
+	 *             if some predicate of the given sequent contains a
+	 *             mathematical extension operator
 	 */
 	public static ISimpleSequent decomposeIdentifiers(ISimpleSequent sequent) {
 		return sequent.apply(new IdentifierDecomposer(sequent));
