@@ -446,7 +446,9 @@ public class ProofState implements IProofState {
 	public void setProofTree(IProgressMonitor monitor) throws RodinDBException {
 		if (UserSupportUtils.DEBUG)
 			UserSupportUtils.debug("Saving: " + pa.getName());
-		pa.commit(true, true, monitor);
+		if (pa != null && !pa.isDisposed()) {
+			pa.commit(true, true, monitor);
+		}
 		setDirty(false);
 	}
 
@@ -546,6 +548,9 @@ public class ProofState implements IProofState {
 	 */
 	@Override
 	public boolean isProofReusable() throws RodinDBException {
+		if (pa == null || pa.isDisposed()) {
+			return false;
+		}
 		final IProverSequent seq = POLoader.readPO(status.getPOSequent(), pa
 				.getFormulaFactory());
 		return ProverLib.proofReusable(pt.getProofDependencies(), seq);
