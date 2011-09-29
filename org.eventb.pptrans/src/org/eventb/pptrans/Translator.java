@@ -54,6 +54,7 @@ public class Translator {
 	/**
 	 * Defines translation options that can be passed to the predicate
 	 * reduction method.
+	 * @since 0.5
 	 */
 	public static enum Option {
 
@@ -84,6 +85,7 @@ public class Translator {
 	 * @throws UnsupportedOperationException
 	 *             if some predicate of the given sequent contains a
 	 *             mathematical extension operator
+	 * @since 0.5
 	 */
 	public static ISimpleSequent decomposeIdentifiers(ISimpleSequent sequent) {
 		return sequent.apply(new IdentifierDecomposer(sequent));
@@ -145,7 +147,7 @@ public class Translator {
 	 * @param options
 	 *            options to be used during translation
 	 * @return a reduced predicate stronger or equivalent to the input predicate
-	 * @since 0.5.0
+	 * @since 0.5
 	 * @see #decomposeIdentifiers(ISimpleSequent)
 	 */
 	public static ISimpleSequent reduceToPredicateCalulus(ISimpleSequent sequent,
@@ -192,6 +194,7 @@ public class Translator {
 	 *            a sequent to test
 	 * @return <code>true</code> iff the given sequent is in the target
 	 *         sub-language of the PP translator
+	 * @since 0.5
 	 */
 	public static boolean isInGoal(ISimpleSequent sequent) {
 		for (ITrackedPredicate tpred : sequent.getPredicates()) {
