@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.internal.core.seqprover.transformer.LanguageFilter;
 import org.eventb.internal.core.seqprover.transformer.SequentSimplifier;
 import org.eventb.internal.core.seqprover.transformer.SimpleSequent;
 import org.eventb.internal.core.seqprover.transformer.TrackedPredicate;
@@ -199,6 +200,33 @@ public class SimpleSequents {
 			flags |= option.flags;
 		}
 		return sequent.apply(new SequentSimplifier(factory, flags));
+	}
+
+	/**
+	 * Filters the given sequent by removing all predicates that contain a
+	 * mathematical extension or an operator with one of the given tags.
+	 * <p>
+	 * Predicates that contain a mathematical extension are predicates that
+	 * contain either an extended expression, or an extended predicate operator,
+	 * or an expression whose type contains a parametric type.
+	 * </p>
+	 * <p>
+	 * The result sequent is associated to the default formula factory, rather
+	 * than the formula factory of the original sequent to reflect the language
+	 * restriction enforced by this filter.
+	 * </p>
+	 * 
+	 * @param sequent
+	 *            sequent to simplify
+	 * @param tags
+	 *            tags of additional core operators to filter out
+	 * @return a sequent stronger than the given one, restricted to the core
+	 *         mathematical language and that do not contain the given operators
+	 * @see FormulaFactory#getDefault()
+	 */
+	public static final ISimpleSequent filterLanguage(ISimpleSequent sequent,
+			int... tags) {
+		return sequent.apply(new LanguageFilter(tags));
 	}
 
 	private SimpleSequents() {

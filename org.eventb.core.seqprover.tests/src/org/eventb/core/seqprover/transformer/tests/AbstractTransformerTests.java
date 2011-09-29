@@ -64,6 +64,11 @@ public class AbstractTransformerTests {
 		}
 	};
 
+	protected static ISimpleSequent makeSequent(FormulaFactory factory,
+			String goalImage, String... hypImages) {
+		return makeSequent(factory.makeTypeEnvironment(), goalImage, hypImages);
+	}
+
 	protected static ISimpleSequent makeSequent(ITypeEnvironment typenv,
 			String goalImage, String... hypImages) {
 		final int length = hypImages.length;
