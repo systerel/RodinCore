@@ -685,7 +685,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_IN_FUNIMAGE_CONVERSE_L", "SIMP_IN_FUNIMAGE_CONVERSE_R",
 			"SIMP_MULTI_EQUAL_BINTER", "SIMP_MULTI_EQUAL_BUNION",
 			"SIMP_SPECIAL_SUBSET_L", "SIMP_SUBSETEQ_COMPSET_L",
-			"SIMP_SPECIAL_EQUAL_COMPSET", "MY_NAME", "MY_NAME_5", "MY_NAME_6" })
+			"SIMP_SPECIAL_EQUAL_COMPSET", "DEF_IN_MAPSTO", "DERIV_MULTI_IN_SETMINUS", 
+			"DERIV_MULTI_IN_BUNION" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
 		final Predicate result;
@@ -1434,7 +1435,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			}
 			
 			/**
-			 * MY_NAME
+			 * DEF_IN_MAPSTO
 			 * a↦b ∈ A×B == a∈A ∧ b∈B
 			 */
 			In(Mapsto(a,b), Cprod(A,B)) -> {
@@ -1442,31 +1443,31 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					final Predicate aInA = makeRelationalPredicate(IN, `a, `A);
 					final Predicate bInB = makeRelationalPredicate(IN, `b, `B);
 					result = makeAssociativePredicate(LAND, aInA, bInB);
-					trace(predicate, result, "MY_NAME");
+					trace(predicate, result, "DEF_IN_MAPSTO");
 					return result;
 				}
 			}
 
 			/**
-			 * MY_NAME_5
+			 * DERIV_MULTI_IN_SETMINUS
 			 * E∈S∖{..., E, ...} == ⊥
 			 */
 			In(E, SetMinus(_, SetExtension(eList(_*, E, _*)))) -> {
 				if (level3) {
 					result = dLib.False();
-					trace(predicate, result, "MY_NAME_5");
+					trace(predicate, result, "DERIV_MULTI_IN_SETMINUS");
 					return result;
 				}
 			}
 
 			/**
-			 * MY_NAME_6
-			 * E∈A∪...∪{..., E, ...}∪ ... ∪Z
+			 * DERIV_MULTI_IN_BUNION
+			 * E∈A∪...∪{..., E, ...}∪ ... ∪Z == ⊤
 			 */
 			In(E, BUnion(eList(_*, SetExtension(eList(_*, E, _*)), _*))) -> {
 				if (level3) {
 					result = dLib.True();
-					trace(predicate, result, "MY_NAME_6");
+					trace(predicate, result, "DERIV_MULTI_IN_BUNION");
 					return result;
 				}
 			}
@@ -2834,20 +2835,20 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    return expression;
 	}
 
-	@ProverRule( { "MY_NAME_7" })
+	@ProverRule( { "DEF_PRED" })
 	@Override
 	public Expression rewrite(AtomicExpression expression) {
 		final Expression result;
 		%match (Expression expression) {
 			
 			/**
-			 * MY_NAME_7
+			 * DEF_PRED
 			 * pred == succ∼
 			 */
 			PRED() -> {
 				if (level3) {
 					result = makeUnaryExpression(CONVERSE, makeAtomicExpression(KSUCC));
-					trace(expression, result, "MY_NAME_7");
+					trace(expression, result, "DEF_PRED");
 					return result;
 				}
 			}
@@ -2875,9 +2876,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_MAX_BUNION_SING", "SIMP_LIT_MIN", "SIMP_LIT_MAX",
 			 "SIMP_CARD_ID", "SIMP_CARD_PRJ1", "SIMP_CARD_PRJ2",
 			 "SIMP_CARD_PRJ1_DOMRES", "SIMP_CARD_PRJ2_DOMRES",
-			 "SIMP_CARD_LAMBDA", "SIMP_MULTI_DOM_DOMSUB", 
-			 "SIMP_MULTI_DOM_DOMRES", "SIMP_MULTI_RAN_RANSUB",
-			 "SIMP_MULTI_RAN_RANRES", "DEF_DOM_SUCC", "DEF_RAN_SUCC" })
+			 "SIMP_CARD_LAMBDA", "DERIV_DOM_DOMSUB", 
+			 "DERIV_DOM_DOMRES", "DERIV_RAN_RANSUB",
+			 "DERIV_RAN_RANRES", "SIMP_DOM_SUCC", "SIMP_RAN_SUCC" })
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
 		final Expression result;
@@ -3571,73 +3572,73 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			}
 			
 			/**
-			 * SIMP_MULTI_DOM_DOMSUB
+			 * DERIV_DOM_DOMSUB
 			 *    dom(A⩤f) == dom(f)∖A
 			 */
 			Dom(DomSub(A, f)) -> {
 				if (level3) {
 					result = makeBinaryExpression(SETMINUS, makeUnaryExpression(KDOM, `f), `A);
-					trace(expression, result, "SIMP_MULTI_DOM_DOMSUB");
+					trace(expression, result, "DERIV_DOM_DOMSUB");
 					return result;
 				}
 			}
 
 			/**
-			 * SIMP_MULTI_DOM_DOMRES
+			 * DERIV_DOM_DOMRES
 			 *    dom(A◁f) == dom(f)∩A
 			 */
 			Dom(DomRes(A, f)) -> {
 				if (level3) {
 					result = makeAssociativeExpression(BINTER, makeUnaryExpression(KDOM, `f), `A);
-					trace(expression, result, "SIMP_MULTI_DOM_DOMRES");
+					trace(expression, result, "DERIV_DOM_DOMRES");
 					return result;
 				}
 			}
 
 			/**
-			 * SIMP_MULTI_RAN_RANSUB
+			 * DERIV_RAN_RANSUB
 			 *    ran(f⩥A) == ran(f)∖A
 			 */
 			Ran(RanSub(f, A)) -> {
 				if (level3) {
 					result = makeBinaryExpression(SETMINUS, makeUnaryExpression(KRAN, `f), `A);
-					trace(expression, result, "SIMP_MULTI_RAN_RANSUB");
+					trace(expression, result, "DERIV_RAN_RANSUB");
 					return result;
 				}
 			}
 
 			/**
-			 * SIMP_MULTI_RAN_RANRES
+			 * DERIV_RAN_RANRES
 			 *    ran(f▷A) == ran(f)∩A
 			 */
 			Ran(RanRes(f, A)) -> {
 				if (level3) {
 					result = makeAssociativeExpression(BINTER, makeUnaryExpression(KRAN, `f), `A);
-					trace(expression, result, "SIMP_MULTI_RAN_RANRES");
+					trace(expression, result, "DERIV_RAN_RANRES");
 					return result;
 				}
 			}
 
 			/**
-			 * DEF_DOM_SUCC
+			 * SIMP_DOM_SUCC
 			 *    dom(succ) == ℤ
 			 */
 			Dom(SUCC()) -> {
 				if (level3) {
 					result = makeAtomicExpression(INTEGER);
-					trace(expression, result, "DEF_DOM_SUCC");
+					trace(expression, result, "SIMP_DOM_SUCC");
 					return result;
 				}
 			}
 
 			/**
-			 * DEF_RAN_SUCC
+			 * SIMP_RAN_SUCC
 			 *    ran(succ) == ℤ
 			 */
 			Ran(SUCC()) -> {
 				if (level3) {
 					result = makeAtomicExpression(INTEGER);
-					trace(expression, result, "DEF_RAN_SUCC");
+					trace(expression, result, "SIMP_RAN_SUCC");
 					return result;
 				}
 			}

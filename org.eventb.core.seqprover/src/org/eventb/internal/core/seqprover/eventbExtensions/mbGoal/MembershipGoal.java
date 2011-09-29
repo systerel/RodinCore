@@ -26,6 +26,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.reasonerInputs.HypothesesReasoner;
 
@@ -51,6 +52,10 @@ public class MembershipGoal extends HypothesesReasoner {
 		return REASONER_ID;
 	}
 
+	@ProverRule({ "SUBSET_SUBSETEQ", "DOM_SUBSET", "RAN_SUBSET",
+			"EQUAL_SUBSETEQ_LR", "EQUAL_SUBSETEQ_RL", "IN_DOM_CPROD",
+			"IN_RAN_CPROD", "IN_DOM_REL", "IN_RAN_REL", "SETENUM_SUBSET",
+			"OVR_RIGHT_SUBSET", "RELSET_SUBSET_CPROD", "DERIV_IN_SUBSET" })
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {

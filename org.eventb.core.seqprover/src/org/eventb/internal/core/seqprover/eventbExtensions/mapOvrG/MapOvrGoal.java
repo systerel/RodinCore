@@ -15,6 +15,7 @@ import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
@@ -38,7 +39,7 @@ import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
  * @author Emmanuel Billaud
  */
 public class MapOvrGoal extends HypothesisReasoner {
-	
+
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".mapOvrG";
 
@@ -47,6 +48,7 @@ public class MapOvrGoal extends HypothesisReasoner {
 		return REASONER_ID;
 	}
 
+	@ProverRule({ "SIM_OV_REL", "SIM_OV_TREL", "SIM_OV_PFUN", "SIM_OV_TFUN" })
 	@Override
 	protected IAntecedent[] getAntecedents(IProverSequent sequent,
 			Predicate pred) throws IllegalArgumentException {
