@@ -47,7 +47,6 @@ public abstract class AutoRewrites extends AbstractAutoRewrites implements
 		// compatibility of reasoner ids.
 		L0(4), L1(1), L2(0), L3(0);
 
-		// FIXME put back the method call when releasing
 		public static final Level LATEST = Level.latest();
 
 		private static final Level latest() {
