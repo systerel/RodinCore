@@ -11,7 +11,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
 
 import static org.eventb.core.ast.Formula.IN;
-import static org.eventb.core.seqprover.ProverLib.PM;
+import static org.eventb.internal.core.seqprover.Util.getNullProofMonitor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -47,7 +47,7 @@ public class MembershipGoalTac implements ITactic {
 	@Override
 	public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 
-		final IProofMonitor myPM = (pm == null) ? PM: pm;
+		final IProofMonitor myPM = (pm == null) ? getNullProofMonitor(): pm;
 		final IProverSequent sequent = ptNode.getSequent();
 		final FormulaFactory ff = sequent.getFormulaFactory();
 		final Set<Predicate> hyps = getUsefulHyps(sequent);

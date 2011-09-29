@@ -422,31 +422,5 @@ public class ProverLib {
 			return null;
 		}
 	}
-	
-	/**
-	 * Simple proof monitor.
-	 * @since 2.3
-	 */
-	public static ProofMonitor PM = new ProofMonitor();
-
-	private static class ProofMonitor implements IProofMonitor {
-
-		private boolean canceled;
-
-		@Override
-		public boolean isCanceled() {
-			return canceled;
-		}
-
-		@Override
-		public void setCanceled(boolean value) {
-			canceled = value;
-		}
-
-		@Override
-		public void setTask(String name) {
-			// Ignore
-		}
-	}
 
 }

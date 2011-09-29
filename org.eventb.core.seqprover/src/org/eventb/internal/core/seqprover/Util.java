@@ -10,6 +10,7 @@ package org.eventb.internal.core.seqprover;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.SequentProver;
 
 /**
@@ -36,6 +37,35 @@ public abstract class Util {
 			message, 
 			exc); 
 		SequentProver.getDefault().getLog().log(status);
+	}
+
+	public static IProofMonitor getNullProofMonitor() {
+		return PM;
+	}
+
+	/**
+	 * Simple proof monitor.
+	 */
+	private final static ProofMonitor PM = new ProofMonitor();
+	
+	private static class ProofMonitor implements IProofMonitor {
+
+		private boolean canceled;
+
+		@Override
+		public boolean isCanceled() {
+			return canceled;
+		}
+
+		@Override
+		public void setCanceled(boolean value) {
+			canceled = value;
+		}
+
+		@Override
+		public void setTask(String name) {
+			// Ignore
+		}
 	}
 
 }

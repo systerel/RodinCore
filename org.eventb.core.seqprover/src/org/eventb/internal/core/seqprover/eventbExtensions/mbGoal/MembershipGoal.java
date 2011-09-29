@@ -11,7 +11,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 
 import static org.eventb.core.ast.Formula.IN;
-import static org.eventb.core.seqprover.ProverLib.PM;
+import static org.eventb.internal.core.seqprover.Util.getNullProofMonitor;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -58,7 +58,7 @@ public class MembershipGoal extends HypothesesReasoner {
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		final IProofMonitor myPM = (pm == null) ? PM : pm;
+		final IProofMonitor myPM = (pm == null) ? getNullProofMonitor() : pm;
 		final Predicate goal = seq.goal();
 		final FormulaFactory ff = seq.getFormulaFactory();
 		if (goal.getTag() != IN) {

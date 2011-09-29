@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests.mbGoal;
 
-import static org.eventb.core.seqprover.ProverLib.PM;
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
+import static org.eventb.internal.core.seqprover.Util.getNullProofMonitor;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -29,7 +29,7 @@ public class AbstractMbGoalTests {
 
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 	protected static final MembershipGoalRules rf = new MembershipGoalRules(ff);
-	protected static final IProofMonitor pm = PM;
+	protected static final IProofMonitor pm = getNullProofMonitor();
 
 	public AbstractMbGoalTests() {
 		super();

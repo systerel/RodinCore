@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
 
-import static org.eventb.core.seqprover.ProverLib.PM;
+import static org.eventb.internal.core.seqprover.Util.getNullProofMonitor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -54,7 +54,7 @@ public class FunAppInDomGoalTac implements ITactic {
 	@Override
 	public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 		try {
-			final IProofMonitor myPM = (pm == null) ? PM : pm;
+			final IProofMonitor myPM = (pm == null) ? getNullProofMonitor() : pm;
 			Set<Predicate> set_f_AopB = new HashSet<Predicate>();
 			Set<Expression> setDomain_g = new HashSet<Expression>();
 			final Object resultPreCompute = preCompute(ptNode, set_f_AopB,
