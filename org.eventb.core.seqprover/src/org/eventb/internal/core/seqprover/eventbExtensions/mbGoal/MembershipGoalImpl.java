@@ -11,6 +11,7 @@
 package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 
 import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoal.DEBUG;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,6 +56,13 @@ public class MembershipGoalImpl {
 	// To support cancellation by end user
 	private final IProofMonitor pm;
 
+	private static final String child = "├── ";
+	private static final String space = "│   ";
+	private static final String end = "└── ";
+	private static final String EMPTY_STRING = "";
+	private String indent = child;
+	private String finish;
+
 	public MembershipGoalImpl(Predicate goal, Set<Predicate> hyps,
 			FormulaFactory ff, IProofMonitor pm) {
 		assert goal.getTag() == IN;
@@ -72,6 +80,17 @@ public class MembershipGoalImpl {
 		this.pm = pm;
 		this.inclHyps = new GeneratorExtractor(rf, hyps, pm).extract();
 		computeKnownMemberships();
+		if (DEBUG) {
+			System.out.println("# Goal to discharge : " + goal);
+			System.out
+					.println("# Informations about the goal's member : "
+							+ knownMemberships.keySet());
+			System.out
+					.println("# Inclusions inferred from hypotheses :"
+							+ inclHyps);
+			System.out.println(indent + this.goal);
+
+		}
 	}
 
 	private void computeKnownMemberships() {
@@ -107,6 +126,13 @@ public class MembershipGoalImpl {
 	 */
 	private Rationale search(Goal goal) {
 		if (tried.contains(goal)) {
+			if (DEBUG) {
+				addIndentDEBUG();
+				makeEndDEBUG();
+				System.out.println(finish + "### " + goal
+						+ " has already been tested ###");
+				removeIndentDEBUG();
+			}
 			// Don't loop
 			return null;
 		}
@@ -123,17 +149,46 @@ public class MembershipGoalImpl {
 		final Predicate predicate = goal.predicate();
 		final Rationale rationale = knownMemberships.get(predicate);
 		if (rationale != null) {
+			if (DEBUG) {
+				makeEndDEBUG();
+				System.out.println(finish + "Goal can be discharged thanks to "
+						+ rationale);
+			}
 			return rationale;
+		}
+		if (DEBUG) {
+			addIndentDEBUG();
 		}
 		for (final Generator hyp : inclHyps) {
 			for (final Goal subGoal : hyp.generate(goal)) {
+				if (DEBUG) {
+					System.out.println(indent + subGoal + " (" + hyp + ")");
+				}
 				final Rationale rat = search(subGoal);
 				if (rat != null) {
 					return subGoal.makeRationale(rat);
 				}
 			}
 		}
+		if (DEBUG) {
+			removeIndentDEBUG();
+		}
 		return null;
+	}
+
+	private void addIndentDEBUG() {
+		indent = space + indent;
+	}
+
+	private void removeIndentDEBUG() {
+		if (indent.equals(child)) {
+			return;
+		}
+		indent = indent.replaceFirst(space, EMPTY_STRING);
+	}
+
+	private void makeEndDEBUG() {
+		finish = indent.replaceFirst(child, end);
 	}
 
 }

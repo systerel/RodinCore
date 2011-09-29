@@ -44,7 +44,6 @@ public class MembershipGoal extends HypothesesReasoner {
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".mbGoal";
 
-	// TODO Trace extractor functioning and research progress
 	public static boolean DEBUG = false;
 
 	@Override
