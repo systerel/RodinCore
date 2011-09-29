@@ -12,7 +12,9 @@ package org.eventb.internal.pptrans.translator;
 
 import static org.eventb.core.ast.Formula.MAPSTO;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eventb.core.ast.BoundIdentDecl;
@@ -56,21 +58,34 @@ public class IdentifierDecomposer implements ISequentTransformer {
 		computeSubstitution();
 	}
 
+	/*
+	 * The substitution must be computed in two steps, as the type environment
+	 * gets modified when computing the substitutes.
+	 */
 	private void computeSubstitution() {
+		final List<FreeIdentifier> toDecompose = getMapletIdentifiers();
+		for (final FreeIdentifier ident : toDecompose) {
+			addSubstitution(ident);
+		}
+	}
+
+	private List<FreeIdentifier> getMapletIdentifiers() {
+		final List<FreeIdentifier> result = new ArrayList<FreeIdentifier>();
 		final IIterator iter = typenv.getIterator();
 		while (iter.hasNext()) {
 			iter.advance();
 			final Type type = iter.getType();
 			if (type instanceof ProductType) {
-				addSubstitution(iter.getName(), type);
+				result.add(ff.makeFreeIdentifier(iter.getName(), null, type));
 			}
 		}
+		return result;
 	}
 
-	private void addSubstitution(final String name, final Type type) {
-		final String prefix = name + "_1";
-		final Expression maplet = getSubstitute(prefix, type);
-		substitution.put(ff.makeFreeIdentifier(name, null, type), maplet);
+	private void addSubstitution(final FreeIdentifier ident) {
+		final String prefix = ident.getName() + "_1";
+		final Expression maplet = getSubstitute(prefix, ident.getType());
+		substitution.put(ident, maplet);
 	}
 
 	private Expression getSubstitute(String prefix, Type type) {

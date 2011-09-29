@@ -50,6 +50,18 @@ public class SequentIdentDecomposerTests extends AbstractTranslationTests {
 	}
 
 	/**
+	 * Another free identifier decomposition test that raised a
+	 * ConcurrentModificationException in Java 6.
+	 */
+	public void testConcurrentModification() throws Exception {
+		final ISimpleSequent sequent = make("a ∈ A × C", "A ⊆ {1,2}",
+				"B ⊆ {1,2}", "a ∈ A × B", "B ⊆ C");
+		final ISimpleSequent expected = make("a_1↦a_2 ∈ A × C", "A ⊆ {1,2}",
+				"B ⊆ {1,2}", "a_1↦a_2 ∈ A × B", "B ⊆ C");
+		assertEquals(expected, Translator.decomposeIdentifiers(sequent));
+	}
+
+	/**
 	 * Ensures that math extensions are not supported.
 	 */
 	public void testMathExtensions() throws Exception {
