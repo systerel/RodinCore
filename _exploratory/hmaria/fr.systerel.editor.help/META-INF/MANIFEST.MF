@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Rodin Editor Help
-Bundle-SymbolicName: fr.systerel.editor.help;singleton:=true
-Bundle-Version: 0.5.0.qualifier
-Bundle-Vendor: Systerel
-Require-Bundle: org.eclipse.help;bundle-version="3.5.0"
