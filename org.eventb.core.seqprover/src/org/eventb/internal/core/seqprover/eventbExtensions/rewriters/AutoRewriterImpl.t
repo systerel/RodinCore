@@ -2876,9 +2876,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_MAX_BUNION_SING", "SIMP_LIT_MIN", "SIMP_LIT_MAX",
 			 "SIMP_CARD_ID", "SIMP_CARD_PRJ1", "SIMP_CARD_PRJ2",
 			 "SIMP_CARD_PRJ1_DOMRES", "SIMP_CARD_PRJ2_DOMRES",
-			 "SIMP_CARD_LAMBDA", "DERIV_DOM_DOMSUB", 
-			 "DERIV_DOM_DOMRES", "DERIV_RAN_RANSUB",
-			 "DERIV_RAN_RANRES", "SIMP_DOM_SUCC", "SIMP_RAN_SUCC" })
+			 "SIMP_CARD_LAMBDA", "SIMP_MULTI_DOM_DOMSUB", 
+			 "SIMP_MULTI_DOM_DOMRES", "SIMP_MULTI_RAN_RANSUB",
+			 "SIMP_MULTI_RAN_RANRES", "SIMP_DOM_SUCC", "SIMP_RAN_SUCC" })
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
 		final Expression result;
@@ -3572,49 +3572,49 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			}
 			
 			/**
-			 * DERIV_DOM_DOMSUB
+			 * SIMP_MULTI_DOM_DOMSUB
 			 *    dom(A⩤f) == dom(f)∖A
 			 */
 			Dom(DomSub(A, f)) -> {
 				if (level3) {
 					result = makeBinaryExpression(SETMINUS, makeUnaryExpression(KDOM, `f), `A);
-					trace(expression, result, "DERIV_DOM_DOMSUB");
+					trace(expression, result, "SIMP_MULTI_DOM_DOMSUB");
 					return result;
 				}
 			}
 
 			/**
-			 * DERIV_DOM_DOMRES
+			 * SIMP_MULTI_DOM_DOMRES
 			 *    dom(A◁f) == dom(f)∩A
 			 */
 			Dom(DomRes(A, f)) -> {
 				if (level3) {
 					result = makeAssociativeExpression(BINTER, makeUnaryExpression(KDOM, `f), `A);
-					trace(expression, result, "DERIV_DOM_DOMRES");
+					trace(expression, result, "SIMP_MULTI_DOM_DOMRES");
 					return result;
 				}
 			}
 
 			/**
-			 * DERIV_RAN_RANSUB
+			 * SIMP_MULTI_RAN_RANSUB
 			 *    ran(f⩥A) == ran(f)∖A
 			 */
 			Ran(RanSub(f, A)) -> {
 				if (level3) {
 					result = makeBinaryExpression(SETMINUS, makeUnaryExpression(KRAN, `f), `A);
-					trace(expression, result, "DERIV_RAN_RANSUB");
+					trace(expression, result, "SIMP_MULTI_RAN_RANSUB");
 					return result;
 				}
 			}
 
 			/**
-			 * DERIV_RAN_RANRES
+			 * SIMP_MULTI_RAN_RANRES
 			 *    ran(f▷A) == ran(f)∩A
 			 */
 			Ran(RanRes(f, A)) -> {
 				if (level3) {
 					result = makeAssociativeExpression(BINTER, makeUnaryExpression(KRAN, `f), `A);
-					trace(expression, result, "DERIV_RAN_RANRES");
+					trace(expression, result, "SIMP_MULTI_RAN_RANRES");
 					return result;
 				}
 			}
