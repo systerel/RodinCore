@@ -107,6 +107,46 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 
 	}
 	
+	private static enum TacticCategories {
+		DISCHARGE("Discharge"), MIXED("Mixed"), SIMPLIFY("Simplify"), SPLIT(
+				"Split"), OTHER("");
+
+		private final String key;
+
+		private TacticCategories(String key) {
+			this.key = key;
+		}
+
+		public static int getCategory(String text) {
+			for (TacticCategories tacCat : values()) {
+				if (text.contains(tacCat.key)) {
+					return tacCat.ordinal();
+				}
+			}
+			return OTHER.ordinal();
+		}
+	}
+	
+	private static final class TacticNodeComparator extends ViewerComparator {
+
+		public TacticNodeComparator() {
+			// avoid synthetic access
+		}
+	
+		@Override
+		public int category(Object element) {
+			if (!(element instanceof ITacticNode)) {
+				return -1;
+			}
+			final ITacticNode node = (ITacticNode) element;
+			// FIXME poor hack, not developer-friendly
+			// works only with core autotactics
+			// support categorization in autotactic extension point instead
+			final String text = node.getText();
+			return TacticCategories.getCategory(text);
+		}
+	}
+
 	// TODO make a 'trash' composite where user can drop tactic nodes 
 	// (destroys ? stores with a viewer ?)
 
@@ -134,6 +174,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		composite = makeGrid(parent, 3);
 		
 		simpleList = makeListViewer(composite, wizard_editprofile_combedit_list_tactics);
+		simpleList.setComparator(new TacticNodeComparator());
 		
 		combViewer.createContents(composite);
 		combViewer.addEditSupport();
