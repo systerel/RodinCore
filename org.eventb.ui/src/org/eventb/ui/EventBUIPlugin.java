@@ -43,6 +43,7 @@ import org.eventb.internal.ui.proofSkeletonView.ProofSkeletonView;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
 import org.eventb.internal.ui.proofinformation.ProofInformationUtils;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils;
+import org.eventb.internal.ui.prover.HypothesisComposite;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
 import org.osgi.framework.Bundle;
@@ -95,6 +96,9 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 			+ "/debug/eventbeditor"; //$NON-NLS-1$
 
 	private static final String PROVERUI_TRACE = PLUGIN_ID + "/debug/proverui"; //$NON-NLS-1$
+
+	private static final String PROVERUI_PERF = PLUGIN_ID
+			+ "/debug/proverui/perf"; //$NON-NLS-1$
 
 	private static final String PROOFCONTROL_TRACE = PLUGIN_ID
 			+ "/debug/proofcontrol"; //$NON-NLS-1$
@@ -237,6 +241,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 		UIUtils.DEBUG = parseOption(GLOBAL_TRACE);
 		EventBEditorUtils.DEBUG = parseOption(EVENTBEDITOR_TRACE);
 		ProverUIUtils.DEBUG = parseOption(PROVERUI_TRACE);
+		HypothesisComposite.PERF = parseOption(PROVERUI_PERF);
 		ProofControlUtils.DEBUG = parseOption(PROOFCONTROL_TRACE);
 		ProofTreeUIUtils.DEBUG = parseOption(PROOFTREEUI_TRACE);
 		ProofInformationUtils.DEBUG = parseOption(PROOFINFORMATION_TRACE);

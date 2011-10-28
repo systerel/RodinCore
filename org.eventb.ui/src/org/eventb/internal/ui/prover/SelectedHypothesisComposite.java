@@ -69,7 +69,7 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 	public SelectedHypothesisComposite(IUserSupport userSupport,
 			ScrolledForm parentForm, ProverUI proverUI) {
 		super(userSupport, IProofStateDelta.F_NODE
-				| IProofStateDelta.F_PROOFTREE, proverUI);
+				| IProofStateDelta.F_PROOFTREE, proverUI, "SelHyp");
 		this.parentForm = parentForm;
 	}
 

@@ -81,7 +81,7 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		// for the cache.
 		super(userSupport, IProofStateDelta.F_NODE
 				| IProofStateDelta.F_PROOFTREE | IProofStateDelta.F_CACHE,
-				proverUI);
+				proverUI, "CacheHyp");
 	}
 
 	/*

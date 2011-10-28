@@ -41,7 +41,7 @@ public class GoalComposite extends HypothesisComposite {
 
 	public GoalComposite(IUserSupport userSupport, ProverUI proverUI) {
 		super(userSupport, IProofStateDelta.F_NODE | IProofStateDelta.F_CACHE,
-				proverUI);
+				proverUI, "Goal");
 	}
 
 	@Override

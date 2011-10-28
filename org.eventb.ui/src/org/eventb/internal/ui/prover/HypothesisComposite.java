@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eventb.internal.ui.prover.TimeTracker.newTracker;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -54,8 +56,6 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
-import org.eventb.internal.ui.searchhypothesis.SearchHypothesisComposite;
-import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
@@ -89,6 +89,8 @@ public abstract class HypothesisComposite implements
 		IUserSupportManagerChangedListener, SelectionListener,
 		IPropertyChangeListener {
 
+	public static boolean PERF = false;
+
 	private static final IUserSupportManager USM = EventBPlugin
 			.getUserSupportManager();
 
@@ -114,6 +116,8 @@ public abstract class HypothesisComposite implements
 	private final ProverUI proverUI;
 
 	private final int flags;
+
+	protected final TimeTracker tracker;
 
 	private ScrolledComposite sc;
 
@@ -146,14 +150,17 @@ public abstract class HypothesisComposite implements
 	 * @param proverUI
 	 *            the main prover editor associated with this Hypothesis
 	 *            Composite. This value must not be <code>null</code>.
+	 * @param viewName
+	 *            view name for debugging purposes
 	 */
 	public HypothesisComposite(IUserSupport userSupport, int flags,
-			ProverUI proverUI) {
+			ProverUI proverUI, String viewName) {
 		Assert.isNotNull(userSupport, "The User Support must not be null"); // $NON-NLS-1$
 		Assert.isNotNull(proverUI, "The main prover editor must not be null"); // $NON-NLS-1$
 		this.userSupport = userSupport;
 		this.proverUI = proverUI;
 		this.flags = flags;
+		this.tracker = newTracker(viewName, PERF);
 	}
 
 	/**
@@ -354,11 +361,6 @@ public abstract class HypothesisComposite implements
 	private void reinitialise(Iterable<Predicate> hyps, IProverSequent sequent,
 			boolean enabled) {
 
-		final boolean traced = ProverUIUtils.DEBUG;
-		long start = 0;
-		if (traced) {
-			start = System.currentTimeMillis();
-		}
 		if (styledText != null) {
 			styledText.dispose();
 		}
@@ -367,12 +369,7 @@ public abstract class HypothesisComposite implements
 		assert styledText != null;
 		styledText.setRedraw(false);
 		
-		if (traced) {
-			final long elapsed = System.currentTimeMillis() - start;
-			ProverUIUtils.debug("Clearing rows and text took " + elapsed
-					+ " ms.");
-			start = System.currentTimeMillis();
-		}
+		tracker.endSubtask("Clearing rows and text");
 
 		final ControlMaker checkBoxMaker = new CheckBoxMaker(styledText);
 		final ControlMaker appliMaker = new PredAppliCommandMaker(styledText);
@@ -389,12 +386,7 @@ public abstract class HypothesisComposite implements
 			rows.add(row);
 		}
 		
-		if (traced) {
-			final long elapsed = System.currentTimeMillis() - start;
-			SearchHypothesisUtils.debug("Creating rows took " + elapsed
-					+ " ms.");
-			start = System.currentTimeMillis();
-		}
+		tracker.endSubtask("Creating rows");
 
 		final String indentation = ProverUIUtils.getControlSpacing(NB_CONTROLS,
 				NB_TABS_LEFT - NB_CONTROLS);
@@ -410,12 +402,7 @@ public abstract class HypothesisComposite implements
 			row.attachButtons();
 		}
 
-		if (traced) {
-			final long elapsed = System.currentTimeMillis() - start;
-			SearchHypothesisUtils.debug("painting styledText took " + elapsed
-					+ " ms.");
-			start = System.currentTimeMillis();
-		}
+		tracker.endSubtask("Painting styledText");
 
 		// update the status of the tool bar items.
 		updateToolbarItems();
@@ -426,11 +413,7 @@ public abstract class HypothesisComposite implements
 		styledText.addPaintObjectListener(controlPainter);
 		styledText.setRedraw(true);
 		
-		if (traced) {
-			final long elapsed = System.currentTimeMillis() - start;
-			SearchHypothesisUtils.debug("reflow + toolbars took " + elapsed
-					+ " ms.");
-		}
+		tracker.endSubtask("Reflow + toolbars");
 	}
 
 	private void totalClearance() {

@@ -1,6 +1,7 @@
 org.eventb.ui/debug = true
 org.eventb.ui/debug/eventbeditor = false
 org.eventb.ui/debug/proverui = false
+org.eventb.ui/debug/proverui/perf = false
 org.eventb.ui/debug/proofcontrol = false
 org.eventb.ui/debug/prooftreeui = false
 org.eventb.ui/debug/proofinformation = false

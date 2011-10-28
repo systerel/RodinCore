@@ -66,7 +66,7 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 	 */
 	public SearchHypothesisComposite(IUserSupport userSupport,
 			ProverUI proverUI) {
-		super(userSupport, IProofStateDelta.F_SEARCH, proverUI);
+		super(userSupport, IProofStateDelta.F_SEARCH, proverUI, "SearchHyp");
 	}
 
 	/*

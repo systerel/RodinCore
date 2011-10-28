@@ -63,12 +63,14 @@ import org.eventb.internal.ui.prover.CharacterPairHighlighter;
 import org.eventb.internal.ui.prover.CheckBoxMaker;
 import org.eventb.internal.ui.prover.ControlMaker;
 import org.eventb.internal.ui.prover.ControlPainter;
+import org.eventb.internal.ui.prover.HypothesisComposite;
 import org.eventb.internal.ui.prover.PredAppliCommandMaker;
 import org.eventb.internal.ui.prover.PredicateRow;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticHyperlinkManager;
+import org.eventb.internal.ui.prover.TimeTracker;
 import org.eventb.internal.ui.prover.YellowBoxMaker;
 import org.rodinp.keyboard.preferences.PreferenceConstants;
 
@@ -86,6 +88,8 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	private static final int LINE_SPACING = 2; //px
 
 	protected final IUserSupport userSupport;
+
+	private final TimeTracker tracker;
 
 	protected ScrolledComposite sc;
 
@@ -116,6 +120,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		super();
 		this.proverUI = proverUI;
 		this.userSupport = userSupport;
+		this.tracker = TimeTracker.newTracker("Goal", HypothesisComposite.PERF);
 	}
 
 	@Override
@@ -190,11 +195,13 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	 *            the current proof tree node.
 	 */
 	public void setGoal(IProofTreeNode node) {
+		tracker.start();
 		if (styledText != null) {
 			styledText.dispose();
 			styledText = null;
 		}
 		totalClearance();
+		tracker.endSubtask("Clearing");
 		styledText = new StyledText(sc, SWT.NONE);
 		styledText.setFont(font);
 		styledText.setEditable(false);
@@ -207,9 +214,12 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		cl = ProverUIUtils.getCaretListener(sc, 0);
 		styledText.addCaretListener(cl);
 		createGoalText(node);
+		tracker.endSubtask("Creating text");
 		sc.setContent(styledText);
 		sc.setMinSize(styledText.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		proverUI.getHighlighter().refreshHighlight();
+		tracker.endSubtask("Finalize");
+		tracker.endTask("setGoal");
 	}
 
 	private void createGoalText(final IProofTreeNode node) {
