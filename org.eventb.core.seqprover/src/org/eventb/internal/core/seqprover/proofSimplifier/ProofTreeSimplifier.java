@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,12 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.internal.core.seqprover.proofSimplifier;
 
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.ProverLib.deepEquals;
 import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
+import static org.eventb.internal.core.seqprover.Util.getNullProofMonitor;
 
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofSkeleton;
@@ -21,7 +21,6 @@ import org.eventb.core.seqprover.IProofTree;
 
 /**
  * @author Nicolas Beauger
- * 
  */
 public class ProofTreeSimplifier extends Simplifier<IProofTree> {
 
@@ -47,7 +46,7 @@ public class ProofTreeSimplifier extends Simplifier<IProofTree> {
 					"Cannot simplify a non closed proof tree");
 		}
 		if (monitor == null) {
-			monitor = new NullProofMonitor();
+			monitor = getNullProofMonitor();
 		}
 		final SkeletonSimplifier simplifier = new SkeletonSimplifier();
 		// FIXME Fix RuleSimplifer throws assertion exceptions.
@@ -70,19 +69,4 @@ public class ProofTreeSimplifier extends Simplifier<IProofTree> {
 		}
 	}
 
-	private static class NullProofMonitor implements IProofMonitor {
-
-		public boolean isCanceled() {
-			return false;
-		}
-
-		public void setCanceled(boolean value) {
-			// nothing to do
-		}
-
-		public void setTask(String name) {
-			// nothing to do
-		}
-
-	}
 }

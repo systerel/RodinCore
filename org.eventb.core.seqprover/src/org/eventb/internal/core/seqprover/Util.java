@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - null proof monitor
  *******************************************************************************/
-
 package org.eventb.internal.core.seqprover;
 
 import org.eclipse.core.runtime.IStatus;
@@ -39,27 +42,28 @@ public abstract class Util {
 		SequentProver.getDefault().getLog().log(status);
 	}
 
+	/**
+	 * Returns a place-holder proof monitor which is never cancelled. This
+	 * monitor comes in handy as a replacement for a null pointer.
+	 * 
+	 * @return a proof monitor
+	 */
 	public static IProofMonitor getNullProofMonitor() {
-		return PM;
+		return NULL_PROOF_MONITOR;
 	}
 
-	/**
-	 * Simple proof monitor.
-	 */
-	private final static ProofMonitor PM = new ProofMonitor();
-	
-	private static class ProofMonitor implements IProofMonitor {
+	private static final IProofMonitor NULL_PROOF_MONITOR = new NullProofMonitor();
 
-		private boolean canceled;
+	private static class NullProofMonitor implements IProofMonitor {
 
 		@Override
 		public boolean isCanceled() {
-			return canceled;
+			return false;
 		}
 
 		@Override
 		public void setCanceled(boolean value) {
-			canceled = value;
+			// Ignore
 		}
 
 		@Override

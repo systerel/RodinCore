@@ -58,7 +58,9 @@ public class MembershipGoal extends HypothesesReasoner {
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		final IProofMonitor myPM = (pm == null) ? getNullProofMonitor() : pm;
+		if (pm == null) {
+			pm = getNullProofMonitor();
+		}
 		final Predicate goal = seq.goal();
 		final FormulaFactory ff = seq.getFormulaFactory();
 		if (goal.getTag() != IN) {
@@ -68,7 +70,7 @@ public class MembershipGoal extends HypothesesReasoner {
 		try {
 			final Set<Predicate> neededHyps = verifyInput(input, seq);
 			final MembershipGoalImpl mbGoalImpl = new MembershipGoalImpl(goal,
-					neededHyps, ff, myPM);
+					neededHyps, ff, pm);
 			final Rationale search = mbGoalImpl.search();
 			if (search == null) {
 				return ProverFactory.reasonerFailure(this, input,

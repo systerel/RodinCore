@@ -54,32 +54,34 @@ public class FunAppInDomGoalTac implements ITactic {
 	@Override
 	public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 		try {
-			final IProofMonitor myPM = (pm == null) ? getNullProofMonitor() : pm;
+			if (pm == null) {
+				pm = getNullProofMonitor();
+			}
 			Set<Predicate> set_f_AopB = new HashSet<Predicate>();
 			Set<Expression> setDomain_g = new HashSet<Expression>();
 			final Object resultPreCompute = preCompute(ptNode, set_f_AopB,
-					setDomain_g, myPM);
+					setDomain_g, pm);
 			if (resultPreCompute != null) {
 				return resultPreCompute;
 			}
 
 			for (Predicate f_AopB : set_f_AopB) {
 				final IProofTreeNode childPtNode = applyFunImageGoal(f_AopB,
-						ptNode, myPM);
+						ptNode, pm);
 				if (childPtNode == null) {
 					continue;
 				}
 				for (Expression domain_g : setDomain_g) {
 					final IProofTreeNode grandChildPtNode = applyTotalDomRewrites(
-							domain_g, childPtNode, myPM);
-					if (myPM.isCanceled()) {
+							domain_g, childPtNode, pm);
+					if (pm.isCanceled()) {
 						return "The tatic has been cancelled";
 					}
 					if (grandChildPtNode == null) {
 						continue;
 					}
 					final Object dischargeResult = new MembershipGoalTac()
-							.apply(grandChildPtNode, myPM);
+							.apply(grandChildPtNode, pm);
 					if (dischargeResult != null) {
 						childPtNode.pruneChildren();
 						continue;

@@ -47,7 +47,9 @@ public class MembershipGoalTac implements ITactic {
 	@Override
 	public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
 
-		final IProofMonitor myPM = (pm == null) ? getNullProofMonitor(): pm;
+		if (pm == null) {
+			pm = getNullProofMonitor();
+		}
 		final IProverSequent sequent = ptNode.getSequent();
 		final FormulaFactory ff = sequent.getFormulaFactory();
 		final Set<Predicate> hyps = getUsefulHyps(sequent);
@@ -56,7 +58,7 @@ public class MembershipGoalTac implements ITactic {
 			return goal + " is not a membership";
 		}
 		final MembershipGoalImpl mbGoalImpl = new MembershipGoalImpl(goal,
-				hyps, ff, myPM);
+				hyps, ff, pm);
 		final Rationale search = mbGoalImpl.search();
 		if (search == null) {
 			return "Cannot discharge the goal";
@@ -65,7 +67,7 @@ public class MembershipGoalTac implements ITactic {
 		final HypothesesReasoner.Input input = new HypothesesReasoner.Input(
 				neededHyps.toArray(new Predicate[neededHyps.size()]));
 		return BasicTactics.reasonerTac(new MembershipGoal(), input).apply(
-				ptNode, myPM);
+				ptNode, pm);
 
 	}
 
