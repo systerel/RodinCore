@@ -126,6 +126,9 @@ public abstract class HypothesisComposite implements
 
 	private CharacterPairHighlighter ch;
 
+	// True if the view is not synchronized with the user support.
+	private boolean dirty;
+
 	/**
 	 * Constructor.
 	 * <p>
@@ -309,24 +312,19 @@ public abstract class HypothesisComposite implements
 	 * hypothesis rows. This must be called within the UI Threads.
 	 */
 	protected void refresh() {
-		final boolean traced = SearchHypothesisUtils.DEBUG
-				&& (this instanceof SearchHypothesisComposite);
-		long start = 0;
-		if (traced) {
-			SearchHypothesisUtils.debug("Start refreshing view");
-			start = System.currentTimeMillis();
+		if (!control.isVisible()) {
+			tracker.trace("No refresh");
+			dirty = true;
+			return;
 		}
-
+		tracker.start();
 		final IProofState ps = userSupport.getCurrentPO();
 		final IProverSequent sequent = getProverSequent(ps);
 		final Iterable<Predicate> hyps = getHypotheses(ps);
 		final boolean enabled = isEnabled(ps);
 		reinitialise(hyps, sequent, enabled);
-		if (traced) {
-			final long elapsed = System.currentTimeMillis() - start;
-			SearchHypothesisUtils.debug("Refreshing view took " + elapsed
-					+ " ms.");
-		}
+		dirty = false;
+		tracker.endTask("refresh");
 	}
 
 	/**
@@ -518,9 +516,9 @@ public abstract class HypothesisComposite implements
 
 		final boolean needRefresh = needRefresh(affectedUserSupport);
 
-		if (needRefresh && styledText != null) {
+		if (needRefresh && control != null) {
 			
-			final Display display = styledText.getDisplay();
+			final Display display = control.getDisplay();
 			display.syncExec(new Runnable() {
 				@Override
 				public void run() {
@@ -589,6 +587,10 @@ public abstract class HypothesisComposite implements
 	 * Pass the focus to the scrolled form.
 	 */
 	public void setFocus() {
+		if (dirty) {
+			tracker.trace("Refresh on focus gain");
+			refresh();
+		}
 		styledText.setFocus();
 	}
 
