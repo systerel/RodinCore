@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added more getters
  ******************************************************************************/
 package org.eventb.core.pm;
 
@@ -121,6 +122,30 @@ public interface IProofState extends IProofTreeChangedListener {
 	 *         otherwise.
 	 */
 	public abstract IProofTreeNode getNextPendingSubgoal(IProofTreeNode node);
+
+	/**
+	 * Return an iterable on the selected hypotheses at the current proof tree
+	 * node. If there is no proof tree, returns an iterable on an empty
+	 * collection.
+	 * 
+	 * @return an iterable on a collection of selected hypotheses at the current
+	 *         proof tree node
+	 * @since 2.4
+	 */
+	public abstract Iterable<Predicate> getSelected();
+
+	/**
+	 * Filters out predicates that are not actual hypotheses of the current
+	 * proof tree node. If there is no proof tree, returns an empty collection.
+	 * 
+	 * @param preds
+	 *            a collection of predicates to filter
+	 * @return a sub-collection of the given collection containing only
+	 *         hypotheses at the current proof tree node
+	 * @since 2.4
+	 */
+	public abstract Collection<Predicate> filterHypotheses(
+			Collection<Predicate> preds);
 
 	/**
 	 * Add a collection of hypotheses to the cache.

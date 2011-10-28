@@ -11,9 +11,11 @@
  *     Systerel - added proof simplification on commit
  *     Systerel - removed post-tactics call when saving
  *     Systerel - got formula factory from proof attempt
+ *     Systerel - added more getters
  ******************************************************************************/
 package org.eventb.internal.core.pm;
 
+import static java.util.Collections.emptyList;
 import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
 
 import java.util.ArrayList;
@@ -345,6 +347,15 @@ public class ProofState implements IProofState {
 		return getNextPendingSubgoal(pt.getRoot());
 	}
 
+	@Override
+	public Iterable<Predicate> getSelected() {
+		final IProverSequent sequent = getCurrentSequent();
+		if (sequent == null) {
+			return emptyList();
+		}
+		return sequent.selectedHypIterable();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -389,6 +400,29 @@ public class ProofState implements IProofState {
 	@Override
 	public Collection<Predicate> getCached() {
 		return cached;
+	}
+
+	@Override
+	public Collection<Predicate> filterHypotheses(Collection<Predicate> preds) {
+		final IProverSequent sequent = getCurrentSequent();
+		if (sequent == null) {
+			return emptyList();
+		}
+		final Collection<Predicate> result = new ArrayList<Predicate>();
+		for (final Predicate pred : preds) {
+			if (sequent.containsHypothesis(pred)) {
+				result.add(pred);
+			}
+		}
+		return result;
+	}
+
+	private IProverSequent getCurrentSequent() {
+		final IProofTreeNode node = getCurrentNode();
+		if (node == null) {
+			return null;
+		}
+		return node.getSequent();
 	}
 
 	/*

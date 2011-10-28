@@ -8,9 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added tests for additional getters of IProofState
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 
 import java.util.Collection;
@@ -27,6 +29,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.pm.UserSupport;
@@ -554,4 +557,59 @@ public class TestUserSupports extends TestPM {
 		final Collection<Predicate> searchedWithHidden = currentPO.getSearched();
 		assertEquals("Unexpected search size", 3, searchedWithHidden.size());
 	}
+
+	public void testSelected() throws Exception {
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
+		final IProofState currentPO = userSupport.getCurrentPO();
+
+		// Empty proof tree -> empty iterable
+		assertIterable(currentPO.getSelected());
+
+		// With selected hypothesis -> non-empty iterable
+		final IProofTreeNode start = currentPO.getCurrentNode();
+		userSupport.applyTactic(Tactics.lemma("3 = 3"), false, monitor);
+		currentPO.setCurrentNode(start.getChildNodes()[2]);
+		assertIterable(currentPO.getSelected(), "3=3");
+
+		// Unload proof tree -> empty iterable
+		currentPO.unloadProofTree();
+		assertIterable(currentPO.getSelected());
+	}
+
+	private static void assertIterable(Iterable<Predicate> iterable,
+			Object... expected) {
+		final Iterator<Predicate> iter = iterable.iterator();
+		for (final Object object : expected) {
+			assertTrue("Missing predicate " + object, iter.hasNext());
+			assertEquals(object.toString(), iter.next().toString());
+		}
+		assertFalse(iter.hasNext());
+	}
+
+	public void testFilterHypotheses() throws Exception {
+		// Select the first undischarged PO.
+		userSupport.nextUndischargedPO(false, monitor);
+		final IProofState currentPO = userSupport.getCurrentPO();
+		final IProverSequent sequent = currentPO.getCurrentNode().getSequent();
+		final Predicate hyp1 = sequent.hypIterable().iterator().next();
+
+		final IProofTreeNode start = currentPO.getCurrentNode();
+		userSupport.applyTactic(Tactics.lemma("4=4"), false, monitor);
+		// Goto second child
+		currentPO.setCurrentNode(start.getChildNodes()[1]);
+		final Predicate hyp4 = currentPO.getCurrentNode().getSequent().goal();
+		assertIterable(currentPO.filterHypotheses(asList(hyp1)), hyp1);
+		assertIterable(currentPO.filterHypotheses(asList(hyp1, hyp4)), hyp1);
+		assertIterable(currentPO.filterHypotheses(asList(hyp4)));
+
+		// Goto last child
+		currentPO.setCurrentNode(start.getChildNodes()[2]);
+		assertIterable(currentPO.filterHypotheses(asList(hyp1, hyp4)), hyp1,
+				hyp4);
+
+		currentPO.unloadProofTree();
+		assertIterable(currentPO.filterHypotheses(asList(hyp1, hyp4)));
+	}
+
 }

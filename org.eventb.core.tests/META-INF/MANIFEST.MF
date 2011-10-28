@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test Event-B Core Plug-in
 Bundle-SymbolicName: org.eventb.core.tests;singleton:=true
-Bundle-Version: 2.3.0.qualifier
+Bundle-Version: 2.4.0.qualifier
 Bundle-Vendor: Rodin
 Require-Bundle: org.eventb.core,
  org.eclipse.core.runtime,
