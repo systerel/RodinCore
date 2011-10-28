@@ -59,9 +59,7 @@ public class MembershipGoalImpl {
 	private static final String child = "├── ";
 	private static final String space = "│   ";
 	private static final String end = "└── ";
-	private static final String EMPTY_STRING = "";
-	private String indent = child;
-	private String finish;
+	private String indent = "";
 
 	public MembershipGoalImpl(Predicate goal, Set<Predicate> hyps,
 			FormulaFactory ff, IProofMonitor pm) {
@@ -81,23 +79,19 @@ public class MembershipGoalImpl {
 		this.inclHyps = new GeneratorExtractor(rf, hyps, pm).extract();
 		computeKnownMemberships();
 		if (DEBUG) {
-			System.out.println("# Goal to discharge : " + goal);
-			System.out
-					.println("# Informations about the goal's member : "
-							+ knownMemberships.keySet());
-			System.out
-					.println("# Inclusions inferred from hypotheses :"
-							+ inclHyps);
-			System.out.println(indent + this.goal);
-
+			trace("# Goal to discharge : " + goal);
+			trace("# Information about the goal lhs : "
+					+ knownMemberships.keySet());
+			trace("# Inclusions inferred from hypotheses :" + inclHyps);
+			traceIndented(goal.toString());
 		}
 	}
 
 	private void computeKnownMemberships() {
 		final MembershipExtractor extractor = new MembershipExtractor(rf,
-				this.goal.member(), hyps, pm);
+				goal.member(), hyps, pm);
 		for (final Rationale rat : extractor.extract()) {
-			knownMemberships.put(rat.predicate, rat);
+			knownMemberships.put(rat.predicate(), rat);
 		}
 	}
 
@@ -105,6 +99,9 @@ public class MembershipGoalImpl {
 	 * Tells whether there is a proof for the goal from hypotheses.
 	 */
 	public Rationale search() {
+		if (knownMemberships.isEmpty()) {
+			return null;
+		}
 		return search(goal);
 	}
 
@@ -125,20 +122,15 @@ public class MembershipGoalImpl {
 	 * @return a justification for the given membership
 	 */
 	private Rationale search(Goal goal) {
-		if (tried.contains(goal)) {
+		if (!tried.add(goal)) {
 			if (DEBUG) {
-				addIndentDEBUG();
-				makeEndDEBUG();
-				System.out.println(finish + "### " + goal
-						+ " has already been tested ###");
-				removeIndentDEBUG();
+				indent();
+				traceClosing("### Already tried");
+				dedent();
 			}
-			// Don't loop
-			return null;
+			return null; // not found
 		}
-		tried.add(goal);
-		final Rationale result = doSearch(goal);
-		return result;
+		return doSearch(goal);
 	}
 
 	// Must be called only by search
@@ -150,19 +142,17 @@ public class MembershipGoalImpl {
 		final Rationale rationale = knownMemberships.get(predicate);
 		if (rationale != null) {
 			if (DEBUG) {
-				makeEndDEBUG();
-				System.out.println(finish + "Goal can be discharged thanks to "
-						+ rationale);
+				traceClosing("Discharged by " + rationale);
 			}
 			return rationale;
 		}
 		if (DEBUG) {
-			addIndentDEBUG();
+			indent();
 		}
 		for (final Generator hyp : inclHyps) {
 			for (final Goal subGoal : hyp.generate(goal)) {
 				if (DEBUG) {
-					System.out.println(indent + subGoal + " (" + hyp + ")");
+					traceIndented(subGoal + " (" + hyp + ")");
 				}
 				final Rationale rat = search(subGoal);
 				if (rat != null) {
@@ -171,24 +161,31 @@ public class MembershipGoalImpl {
 			}
 		}
 		if (DEBUG) {
-			removeIndentDEBUG();
+			dedent();
 		}
 		return null;
 	}
 
-	private void addIndentDEBUG() {
+	private void trace(String msg) {
+		System.out.println(msg);
+	}
+
+	private void traceIndented(String msg) {
+		trace(indent + child + msg);
+	}
+
+	private void traceClosing(String msg) {
+		trace(indent + end + msg);
+	}
+
+	private void indent() {
 		indent = space + indent;
 	}
 
-	private void removeIndentDEBUG() {
-		if (indent.equals(child)) {
-			return;
+	private void dedent() {
+		if (indent.length() > 0) {
+			indent = indent.substring(space.length());
 		}
-		indent = indent.replaceFirst(space, EMPTY_STRING);
-	}
-
-	private void makeEndDEBUG() {
-		finish = indent.replaceFirst(child, end);
 	}
 
 }

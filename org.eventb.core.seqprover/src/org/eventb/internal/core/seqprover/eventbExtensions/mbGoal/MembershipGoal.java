@@ -46,6 +46,8 @@ public class MembershipGoal extends HypothesesReasoner {
 
 	public static boolean DEBUG = false;
 
+	private static final IAntecedent[] NO_ANTECEDENTS = new IAntecedent[0];
+
 	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
@@ -62,13 +64,13 @@ public class MembershipGoal extends HypothesesReasoner {
 			pm = getNullProofMonitor();
 		}
 		final Predicate goal = seq.goal();
-		final FormulaFactory ff = seq.getFormulaFactory();
 		if (goal.getTag() != IN) {
 			return ProverFactory.reasonerFailure(this, input,
 					"Goal must be a membership.");
 		}
 		try {
 			final Set<Predicate> neededHyps = verifyInput(input, seq);
+			final FormulaFactory ff = seq.getFormulaFactory();
 			final MembershipGoalImpl mbGoalImpl = new MembershipGoalImpl(goal,
 					neededHyps, ff, pm);
 			final Rationale search = mbGoalImpl.search();
@@ -76,10 +78,9 @@ public class MembershipGoal extends HypothesesReasoner {
 				return ProverFactory.reasonerFailure(this, input,
 						"Cannot discharge the goal.");
 			}
-			final Rule<?> rule = search.makeRule();
-			assert rule.getConsequent().equals(goal);
+			assert mbGoalImpl.verify(search.makeRule());  // self-check
 			return ProverFactory.makeProofRule(this, input, goal, neededHyps,
-					"Membership in goal", new IAntecedent[0]);
+					"Membership in goal", NO_ANTECEDENTS);
 		} catch (IllegalArgumentException e) {
 			return ProverFactory.reasonerFailure(this, input, e.getMessage());
 		}
