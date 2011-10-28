@@ -52,6 +52,7 @@ import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.ui.EventBSharedColor;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisComposite;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
@@ -560,11 +561,10 @@ public abstract class HypothesisComposite implements
 		final int psKind = affectedProofState.getKind();
 		switch (psKind) {
 		case IProofStateDelta.ADDED:
-			// This case should not happened since the proof state
-			// must exist before creating this.
-			if (ProverUIUtils.DEBUG)
-				ProverUIUtils
-						.debug("Error: Delta said that the proof state is added"); // $NON-NLS-1$
+			// This case should not happen since the proof state
+			// must exist before creating this composite.
+			UIUtils.log(new AssertionError(),
+					"Error: Delta said that the proof state is added"); // $NON-NLS-1$
 			return false; // Do nothing
 		case IProofStateDelta.REMOVED:
 			// Do nothing in this case, this will be handled
