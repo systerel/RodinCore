@@ -1,21 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- * 
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.ui.cachehypothesis;
 
-import static java.util.Collections.emptyList;
-
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -28,7 +22,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
@@ -214,26 +207,9 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.prover.HypothesisComposite#getHypotheses(org.eventb.core.pm.IProofState)
-	 */
 	@Override
 	public Iterable<Predicate> getHypotheses(IProofState ps) {
-		if (ps == null) {
-			return emptyList();
-		}
-
-		// Filter the cached predicates with hypotheses only
-		final IProverSequent sequent = ps.getCurrentNode().getSequent();
-		final Collection<Predicate> validCached = new ArrayList<Predicate>();
-		for (final Predicate pred : ps.getCached()) {
-			if (sequent.containsHypothesis(pred)) {
-				validCached.add(pred);
-			}
-		}
-		return validCached;
+		return ps.filterHypotheses(ps.getCached());
 	}
 
 	/*

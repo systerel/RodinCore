@@ -12,7 +12,6 @@
 
 package org.eventb.internal.ui.prover;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -26,7 +25,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
@@ -174,19 +172,9 @@ public class SelectedHypothesisComposite extends HypothesisComposite {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.prover.HypothesisComposite#getHypotheses(org.eventb.core.pm.IProofState)
-	 */
 	@Override
 	public Iterable<Predicate> getHypotheses(IProofState ps) {
-		if (ps != null) {
-			IProofTreeNode currentNode = ps.getCurrentNode();
-			if (currentNode != null)
-				return currentNode.getSequent().selectedHypIterable();
-		}
-		return new ArrayList<Predicate>();
+		return ps.getSelected();
 	}
 
 	/*

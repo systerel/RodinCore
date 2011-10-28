@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eventb.internal.ui.searchhypothesis;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -191,26 +189,9 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.prover.HypothesisComposite#getHypotheses(org.eventb.core.pm.IProofState)
-	 */
 	@Override
 	public Iterable<Predicate> getHypotheses(IProofState ps) {
-		// Get the searched hypotheses associated with the proof state.
-		Collection<Predicate> searched = new ArrayList<Predicate>();
-		if (ps != null) {
-			searched = ps.getSearched();
-		}
-
-		// Return the valid searched hypotheses only.
-		final Collection<Predicate> validSearched = new ArrayList<Predicate>();
-		for (Predicate search : searched) {
-			if (ps.getCurrentNode().getSequent().containsHypothesis(search))
-				validSearched.add(search);
-		}
-		return validSearched;
+		return ps.filterHypotheses(ps.getSearched());
 	}
 
 	/*

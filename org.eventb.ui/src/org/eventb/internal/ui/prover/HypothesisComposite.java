@@ -15,6 +15,7 @@ package org.eventb.internal.ui.prover;
 import static org.eventb.internal.ui.prover.TimeTracker.newTracker;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -327,9 +328,18 @@ public abstract class HypothesisComposite implements
 		}
 		tracker.start();
 		final IProofState ps = userSupport.getCurrentPO();
-		final IProverSequent sequent = getProverSequent(ps);
-		final Iterable<Predicate> hyps = getHypotheses(ps);
-		final boolean enabled = isEnabled(ps);
+		final IProverSequent sequent;
+		final Iterable<Predicate> hyps;
+		final boolean enabled;
+		if (ps == null) {
+			sequent = null;
+			hyps = Collections.emptyList();
+			enabled = false;
+		} else {
+			sequent = getProverSequent(ps);
+			hyps = getHypotheses(ps);
+			enabled = isEnabled(ps);
+		}
 		reinitialise(hyps, sequent, enabled);
 		dirty = false;
 		tracker.endTask("refresh");

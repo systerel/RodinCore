@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.goal;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -98,11 +96,7 @@ public class GoalComposite extends HypothesisComposite {
 
 	@Override
 	public Iterable<Predicate> getHypotheses(IProofState ps) {
-		Collection<Predicate> cached = new ArrayList<Predicate>();
-		if (ps != null) {
-			cached = ps.getCached();
-		}
-		return cached;
+		return ps.filterHypotheses(ps.getCached());
 	}
 
 	@Override
