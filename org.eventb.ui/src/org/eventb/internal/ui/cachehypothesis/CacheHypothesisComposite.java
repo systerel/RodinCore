@@ -12,6 +12,8 @@
 
 package org.eventb.internal.ui.cachehypothesis;
 
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
@@ -26,6 +28,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
@@ -218,18 +221,17 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 	 */
 	@Override
 	public Iterable<Predicate> getHypotheses(IProofState ps) {
-		Collection<Predicate> cached = new ArrayList<Predicate>();
-
-		// Get the cached hypotheses associated with the proof state.
-		if (ps != null) {
-			cached = ps.getCached();
+		if (ps == null) {
+			return emptyList();
 		}
 
-		// Return the valid cached hypotheses only.
-		Collection<Predicate> validCached = new ArrayList<Predicate>();
-		for (Predicate cache : cached) {
-			if (ps.getCurrentNode().getSequent().containsHypothesis(cache))
-				validCached.add(cache);
+		// Filter the cached predicates with hypotheses only
+		final IProverSequent sequent = ps.getCurrentNode().getSequent();
+		final Collection<Predicate> validCached = new ArrayList<Predicate>();
+		for (final Predicate pred : ps.getCached()) {
+			if (sequent.containsHypothesis(pred)) {
+				validCached.add(pred);
+			}
 		}
 		return validCached;
 	}
@@ -243,8 +245,9 @@ public class CacheHypothesisComposite extends HypothesisComposite {
 	public void updateToolbarItems() {
 		if (CacheHypothesisUtils.DEBUG)
 			CacheHypothesisUtils.debug("Update toolbar item: Add, Remove");
-		addItem.setEnabled(!this.getSelectedHyps().isEmpty());
-		removeItem.setEnabled(!this.getSelectedHyps().isEmpty());
+		final boolean someHypothesisIsSelected = !getSelectedHyps().isEmpty();
+		addItem.setEnabled(someHypothesisIsSelected);
+		removeItem.setEnabled(someHypothesisIsSelected);
 	}
 
 	/*

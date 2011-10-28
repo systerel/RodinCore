@@ -510,7 +510,7 @@ public class ProofState implements IProofState {
 	 * @see org.eventb.core.pm.IProofState#proofRebuilt(org.eventb.internal.core.ProofMonitor)
 	 */
 	@Override
-	public void proofRebuilt(ProofMonitor monitor) throws RodinDBException {
+	public void proofRebuilt(IProofMonitor monitor) throws RodinDBException {
 		final IProofSkeleton proofSkeleton = pt.getRoot().copyProofSkeleton();
 		createFreshProofAttempt(null); //TODO add monitor here.
 		BasicTactics.rebuildTac(proofSkeleton).apply(pt.getRoot(), monitor);

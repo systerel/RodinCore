@@ -21,7 +21,6 @@ import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -231,7 +230,7 @@ public interface IProofState extends IProofTreeChangedListener {
 	 * @throws RodinDBException
 	 *             if some problems occurred.
 	 */
-	public abstract void proofRebuilt(ProofMonitor monitor)
+	public abstract void proofRebuilt(IProofMonitor monitor)
 			throws RodinDBException;
 
 	/**
