@@ -25,25 +25,22 @@ import org.eventb.core.ast.Predicate;
 public abstract class Rationale {
 
 	/**
-	 * Accumulates all the predicates used as hypothesis to make the current
-	 * Rationale.
-	 * 
-	 * @param set
-	 *            a set accumulating all findings so far
-	 */
-	protected abstract void getLeafs(Set<Predicate> set);
-
-	/**
 	 * Returns all the predicates used as hypothesis to make the current
 	 * Rationale.
 	 * 
-	 * @return a set of Predicate
+	 * @return an array of all needed hypotheses
 	 */
-	public Set<Predicate> getLeafs() {
+	public Predicate[] getLeafs() {
 		final HashSet<Predicate> set = new HashSet<Predicate>();
 		getLeafs(set);
-		return set;
+		return set.toArray(new Predicate[set.size()]);
 	}
+
+	/*
+	 * Accumulates all the predicates used as hypothesis to make the current
+	 * Rationale i.e., the leafs of the Rationale tree.
+	 */
+	protected abstract void getLeafs(Set<Predicate> set);
 
 	public static class Hypothesis extends Rationale {
 

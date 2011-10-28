@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
 
+import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.SUBSET;
+import static org.eventb.core.ast.Formula.SUBSETEQ;
+import static org.eventb.core.seqprover.tactics.BasicTactics.reasonerTac;
 import static org.eventb.internal.core.seqprover.Util.getNullProofMonitor;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -25,8 +27,7 @@ import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.reasonerInputs.HypothesesReasoner;
-import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.eventb.core.seqprover.reasonerInputs.HypothesesReasoner.Input;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.MembershipGoalImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale;
@@ -39,7 +40,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.mbGoal.Rationale;
  * <code>H, x∈A, A⊆B ... C⊂D ⊢ x∈D</code> iff A⊆B⊂ ... ⊆ ... ⊂ ... ⊆C⊂D
  * </pre>
  * 
- * 
  * @author Emmanuel Billaud
  */
 public class MembershipGoalTac implements ITactic {
@@ -51,44 +51,43 @@ public class MembershipGoalTac implements ITactic {
 			pm = getNullProofMonitor();
 		}
 		final IProverSequent sequent = ptNode.getSequent();
-		final FormulaFactory ff = sequent.getFormulaFactory();
-		final Set<Predicate> hyps = getUsefulHyps(sequent);
 		final Predicate goal = sequent.goal();
 		if (goal.getTag() != IN) {
 			return goal + " is not a membership";
 		}
+		final FormulaFactory ff = sequent.getFormulaFactory();
+		final Set<Predicate> hyps = getUsefulHyps(sequent);
 		final MembershipGoalImpl mbGoalImpl = new MembershipGoalImpl(goal,
 				hyps, ff, pm);
-		final Rationale search = mbGoalImpl.search();
-		if (search == null) {
+		final Rationale rationale = mbGoalImpl.search();
+		if (rationale == null) {
 			return "Cannot discharge the goal";
 		}
-		final Set<Predicate> neededHyps = search.getLeafs();
-		final HypothesesReasoner.Input input = new HypothesesReasoner.Input(
-				neededHyps.toArray(new Predicate[neededHyps.size()]));
-		return BasicTactics.reasonerTac(new MembershipGoal(), input).apply(
-				ptNode, pm);
-
+		final Input input = new Input(rationale.getLeafs());
+		return reasonerTac(new MembershipGoal(), input).apply(ptNode, pm);
 	}
 
 	private static Set<Predicate> getUsefulHyps(IProverSequent sequent) {
-		Set<Predicate> hyps = new HashSet<Predicate>();
-		for (Predicate hyp : sequent.visibleHypIterable()) {
+		final Set<Predicate> hyps = new HashSet<Predicate>();
+		for (final Predicate hyp : sequent.visibleHypIterable()) {
 			switch (hyp.getTag()) {
-			case Formula.IN:
-			case Formula.SUBSET:
-			case Formula.SUBSETEQ:
+			case IN:
+			case SUBSET:
+			case SUBSETEQ:
 				hyps.add(hyp);
 				break;
-			case Formula.EQUAL:
-				final RelationalPredicate rHyp = (RelationalPredicate) hyp;
-				final Expression left = rHyp.getLeft();
-				if (left.getType().getBaseType() != null) {
+			case EQUAL:
+				if (isSetEquality((RelationalPredicate) hyp)) {
 					hyps.add(hyp);
 				}
+				break;
 			}
 		}
 		return hyps;
+	}
+
+	public static boolean isSetEquality(RelationalPredicate rHyp) {
+		return rHyp.getLeft().getType().getBaseType() != null;
 	}
 
 }
