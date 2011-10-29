@@ -1,26 +1,74 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eventb.ui" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.internal.cocoa.AbstractWindowHandler">
+        <filter comment="Base eclipse change exposed by the re-export: ignore" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.internal.cocoa.AbstractWindowHandler"/>
+                <message_argument value="org.eventb.ui_2.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.internal.cocoa.ArrangeWindowsHandler">
+        <filter comment="Base eclipse change exposed by the re-export: ignore" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.internal.cocoa.ArrangeWindowsHandler"/>
+                <message_argument value="org.eventb.ui_2.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.internal.cocoa.CloseDialogHandler">
-        <filter comment="Hide API breakage from Cocoa plug-in" id="305422471">
+        <filter comment="Base eclipse change exposed by the re-export: ignore" id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.CloseDialogHandler"/>
-                <message_argument value="org.eventb.ui_2.2.0"/>
+                <message_argument value="org.eventb.ui_2.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.internal.cocoa.CocoaTitlePathUpdater">
+        <filter comment="Base eclipse change exposed by the re-export: ignore" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.internal.cocoa.CocoaTitlePathUpdater"/>
+                <message_argument value="org.eventb.ui_2.3.0"/>
             </message_arguments>
         </filter>
     </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.internal.cocoa.CocoaUIEnhancer">
-        <filter id="305422471">
+        <filter comment="Base eclipse change exposed by the re-export: ignore" id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.CocoaUIEnhancer"/>
-                <message_argument value="org.eventb.ui_2.2.0"/>
+                <message_argument value="org.eventb.ui_2.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.internal.cocoa.CocoaUtil">
+        <filter comment="Base eclipse change exposed by the re-export: ignore" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.internal.cocoa.CocoaUtil"/>
+                <message_argument value="org.eventb.ui_2.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.internal.cocoa.MinimizeWindowHandler">
+        <filter comment="Base eclipse change exposed by the re-export: ignore" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.internal.cocoa.MinimizeWindowHandler"/>
+                <message_argument value="org.eventb.ui_2.3.0"/>
             </message_arguments>
         </filter>
     </resource>
     <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.internal.cocoa.SWTCocoaEnhancerDelegate">
-        <filter id="305422471">
+        <filter comment="Base eclipse change exposed by the re-export: ignore" id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.SWTCocoaEnhancerDelegate"/>
-                <message_argument value="org.eventb.ui_2.2.0"/>
+                <message_argument value="org.eventb.ui_2.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.ui.internal.cocoa.ZoomWindowHandler">
+        <filter comment="Base eclipse change exposed by the re-export: ignore" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.internal.cocoa.ZoomWindowHandler"/>
+                <message_argument value="org.eventb.ui_2.3.0"/>
             </message_arguments>
         </filter>
     </resource>
