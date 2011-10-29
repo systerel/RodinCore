@@ -23,34 +23,33 @@ public class DropdownInfo {
 	// FIXME remove variable (should be computed earlier)
 	private final Map<String, TacticUIInfo> globalRegistry;
 
-	IConfigurationElement configuration;
+	private final String id;
+	private final String toolbar;
 
-	String toolbar;
+	private volatile Collection<String> tactics; // FIXME Should be final
 
-	Collection<String> tactics;
-
-	public DropdownInfo(Map<String, TacticUIInfo> globalRegistry,
+	public DropdownInfo(Map<String, TacticUIInfo> globalRegistry, String id,
 			IConfigurationElement configuration) {
 		this.globalRegistry = globalRegistry;
-		this.configuration = configuration;
+		this.id = id;
+		// FIXME what if not present?
 		this.toolbar = configuration.getAttribute("toolbar");
 	}
 
 	public String getID() {
-		return configuration.getAttribute("id");
+		return id;
 	}
 
 	public String getToolbar() {
 		return toolbar;
 	}
 
+	// FIXME this method is not thread safe
 	public Collection<String> getTactics() {
 		assert globalRegistry != null;
 
 		if (tactics == null) {
 			tactics = new ArrayList<String>();
-			final String id = configuration.getAttribute("id");
-
 			for (String tacticID : globalRegistry.keySet()) {
 				final TacticUIInfo info = globalRegistry.get(tacticID);
 				if (id.equals(info.getDropdown())) {

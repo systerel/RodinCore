@@ -72,7 +72,7 @@ public class ExtensionParser {
 				if (configuration.getName().equals(toolbarStr)) {
 					ToolbarInfo oldInfo = toolbarRegistry.put(id,
 							new ToolbarInfo(globalRegistry, dropdownRegistry,
-									configuration));
+									id));
 
 					if (oldInfo != null) {
 						toolbarRegistry.put(id, oldInfo);
@@ -85,7 +85,7 @@ public class ExtensionParser {
 					if (configuration.getName().equals(dropdownStr)) {
 						DropdownInfo oldInfo = dropdownRegistry
 								.put(id, new DropdownInfo(globalRegistry,
-										configuration));
+										id, configuration));
 
 						if (oldInfo != null) {
 							dropdownRegistry.put(id, oldInfo);

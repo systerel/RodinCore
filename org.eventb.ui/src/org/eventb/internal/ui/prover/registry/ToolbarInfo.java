@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 
 public class ToolbarInfo {
@@ -24,27 +23,26 @@ public class ToolbarInfo {
 	private final Map<String, TacticUIInfo> globalRegistry;
 	private final Map<String, DropdownInfo> dropdownRegistry;
 
-	IConfigurationElement configuration;
+	private final String id;
 
-	Collection<String> dropdowns;
+	private volatile Collection<String> dropdowns; // FIXME Should be final
 
-	Collection<String> tactics;
+	private volatile Collection<String> tactics; // FIXME Should be final
 
 	public ToolbarInfo(Map<String, TacticUIInfo> globalRegistry,
 			Map<String, DropdownInfo> dropdownRegistry,
-			IConfigurationElement configuration) {
+			String id) {
 		this.globalRegistry = globalRegistry;
 		this.dropdownRegistry = dropdownRegistry;
-		this.configuration = configuration;
+		this.id = id;
 	}
 
+	// FIXME this method is not thread safe
 	public Collection<String> getDropdowns() {
 		assert dropdownRegistry != null;
 
 		if (dropdowns == null) {
 			dropdowns = new ArrayList<String>();
-			final String id = configuration.getAttribute("id");
-
 			for (String key : dropdownRegistry.keySet()) {
 				DropdownInfo info = dropdownRegistry.get(key);
 				if (id.equals(info.getToolbar())) {
@@ -60,13 +58,12 @@ public class ToolbarInfo {
 		return dropdowns;
 	}
 
+	// FIXME this method is not thread safe
 	public Collection<String> getTactics() {
 		assert globalRegistry != null;
 
 		if (tactics == null) {
 			tactics = new ArrayList<String>();
-			final String id = configuration.getAttribute("id");
-
 			for (String key : globalRegistry.keySet()) {
 				final TacticUIInfo info = globalRegistry.get(key);
 				if (id.equals(info.getToolbar())) {
