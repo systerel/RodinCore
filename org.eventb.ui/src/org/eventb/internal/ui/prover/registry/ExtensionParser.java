@@ -29,6 +29,11 @@ import org.eventb.internal.ui.prover.TacticUIRegistry;
  */
 public class ExtensionParser {
 
+	// Possible tags of extensions
+	private static final String TACTIC_TAG = "tactic";
+	private static final String TOOLBAR_TAG = "toolbar";
+	private static final String DROPDOWN_TAG = "dropdown";
+
 	private static final String TARGET_ANY = "any"; //$NON-NLS-0$
 
 	private static final String TARGET_GOAL = "goal"; //$NON-NLS-0$
@@ -47,17 +52,23 @@ public class ExtensionParser {
 	private final Map<String, ToolbarInfo> toolbarRegistry = new LinkedHashMap<String, ToolbarInfo>();
 	private final Map<String, DropdownInfo> dropdownRegistry = new LinkedHashMap<String, DropdownInfo>();
 
+	/*
+	 * FIXME Make a too phase analysis. In the first phase, sort the
+	 * configuration elements by type. In the second phase, build the final
+	 * objects and register them in the appropriate data structures.
+	 */
 	public void parse(IConfigurationElement[] configurations) {
 		for (IConfigurationElement configuration : configurations) {
 			String id = configuration.getAttribute("id"); //$NON-NLS-1$
 			if (id == null)
+				// FIXME log error
 				continue;
-			final String tacticStr = "tactic";
-			if (configuration.getName().equals(tacticStr)) {
+			final String tag = configuration.getName();
+			if (tag.equals(TACTIC_TAG)) {
 				// Check for duplication first
 				String target = configuration.getAttribute("target");
 				if (findInAnyTacticRegistry(id) != null) {
-					printDebugConfExists(id, target + " " + tacticStr);
+					printDebugConfExists(id, target + " " + TACTIC_TAG);
 					continue;
 				}
 
@@ -65,35 +76,27 @@ public class ExtensionParser {
 				final TacticUIInfo info = loader.load();
 				if (info != null) {
 					putInRegistry(info, target);
-					printDebugRegistration(id, tacticStr);
+					printDebugRegistration(id, TACTIC_TAG);
 				}
-			} else {
-				final String toolbarStr = "toolbar";
-				if (configuration.getName().equals(toolbarStr)) {
-					ToolbarInfo oldInfo = toolbarRegistry.put(id,
-							new ToolbarInfo(globalRegistry, dropdownRegistry,
-									id));
+			} else if (tag.equals(TOOLBAR_TAG)) {
+				ToolbarInfo oldInfo = toolbarRegistry.put(id, new ToolbarInfo(
+						globalRegistry, dropdownRegistry, id));
 
-					if (oldInfo != null) {
-						toolbarRegistry.put(id, oldInfo);
-						printDebugConfExists(id, toolbarStr);
-					} else {
-						printDebugRegistration(id, toolbarStr);
-					}
+				if (oldInfo != null) {
+					toolbarRegistry.put(id, oldInfo);
+					printDebugConfExists(id, TOOLBAR_TAG);
 				} else {
-					final String dropdownStr = "dropdown";
-					if (configuration.getName().equals(dropdownStr)) {
-						DropdownInfo oldInfo = dropdownRegistry
-								.put(id, new DropdownInfo(globalRegistry,
-										id, configuration));
+					printDebugRegistration(id, TOOLBAR_TAG);
+				}
+			} else if (tag.equals(DROPDOWN_TAG)) {
+				DropdownInfo oldInfo = dropdownRegistry.put(id,
+						new DropdownInfo(globalRegistry, id, configuration));
 
-						if (oldInfo != null) {
-							dropdownRegistry.put(id, oldInfo);
-							printDebugConfExists(id, dropdownStr);
-						} else {
-							printDebugRegistration(id, dropdownStr);
-						}
-					}
+				if (oldInfo != null) {
+					dropdownRegistry.put(id, oldInfo);
+					printDebugConfExists(id, DROPDOWN_TAG);
+				} else {
+					printDebugRegistration(id, DROPDOWN_TAG);
 				}
 			}
 		}
@@ -131,7 +134,7 @@ public class ExtensionParser {
 				ProverUIUtils.debug("Error while trying to put info " + id
 						+ " in a registry");
 		} else {
-			printDebugRegistration(id, "tactic");
+			printDebugRegistration(id, TACTIC_TAG);
 		}
 	}
 
@@ -174,6 +177,7 @@ public class ExtensionParser {
 		return globalRegistry.get(id);
 	}
 
+	// FIXME log error rather than trace
 	private static void printDebugConfExists(String id, String kind) {
 		if (ProverUIUtils.DEBUG)
 			ProverUIUtils.debug("Configuration already exists for " + kind
