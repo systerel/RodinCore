@@ -100,6 +100,25 @@ public class TacticUIRegistry {
 		globalRegistry = parser.getGlobalRegistry();
 		toolbarRegistry = parser.getToolbarRegistry();
 		dropdownRegistry = parser.getDropdownRegistry();
+
+		if (ProverUIUtils.DEBUG) {
+			show(goalTacticRegistry, "goalTacticRegistry");
+			show(goalCommandRegistry, "goalCommandRegistry");
+			show(hypothesisTacticRegistry, "hypothesisTacticRegistry");
+			show(hypothesisCommandRegistry, "hypothesisCommandRegistry");
+			show(anyTacticRegistry, "anyTacticRegistry");
+			show(anyCommandRegistry, "anyCommandRegistry");
+			show(globalRegistry, "globalRegistry");
+			show(toolbarRegistry, "toolbarRegistry");
+			show(dropdownRegistry, "dropdownRegistry");
+		}
+	}
+
+	private void show(Map<String, ?> registry, String name) {
+		System.out.println("Contents of registry : " + name + ":");
+		for (final String id : registry.keySet()) {
+			System.out.println("\t" + id);
+		}
 	}
 
 	/**
