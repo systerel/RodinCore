@@ -82,7 +82,7 @@ public class MarkerTests extends ModifyingResourceTests {
 		}
 	}
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
+	@SuppressWarnings({"rawtypes"})
 	private void assertMarkerAtributes(IMarker marker, Map<String, Object> attrs)
 			throws Exception {
 
