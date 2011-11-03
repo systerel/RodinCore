@@ -86,6 +86,12 @@ public class OnePointRule extends HypothesisReasoner implements
 		final FormulaFactory ff = sequent.getFormulaFactory();
 		final Predicate applyTo = appliesToGoal ? sequent.goal() : pred;
 
+		if (!(applyTo instanceof QuantifiedPredicate)) {
+			throw new IllegalArgumentException(
+					"One point rule applied to not quantified predicate "
+							+ applyTo);
+		}
+		
 		final OnePointProcessorInference processor = new OnePointProcessorInference(
 				(QuantifiedPredicate) applyTo, ff);
 		processor.matchAndInstantiate();
