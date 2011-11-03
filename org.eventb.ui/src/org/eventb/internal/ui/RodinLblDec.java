@@ -212,10 +212,13 @@ public class RodinLblDec {
 		}
 	}
 
-	public static class WarningDec extends RodinElemLblDec {
+	public static abstract class RodinSeverityLblDec extends RodinElemLblDec {
 
-		public WarningDec() {
-			super(IMG_WARNING_OVERLAY_PATH);
+		private final int decSeverity;
+
+		public RodinSeverityLblDec(String ovrPath, int decSeverity) {
+			super(ovrPath);
+			this.decSeverity = decSeverity;
 		}
 
 		@Override
@@ -223,22 +226,21 @@ public class RodinLblDec {
 				throws CoreException {
 			final IMarkerRegistry registry = MarkerRegistry.getDefault();
 			final int severity = registry.getMaxMarkerSeverity(element);
-			return severity == IMarker.SEVERITY_WARNING;
+			return severity == decSeverity;
 		}
 	}
 
-	public static class ErrorDec extends RodinElemLblDec {
+	public static class WarningDec extends RodinSeverityLblDec {
+
+		public WarningDec() {
+			super(IMG_WARNING_OVERLAY_PATH, IMarker.SEVERITY_WARNING);
+		}
+	}
+
+	public static class ErrorDec extends RodinSeverityLblDec {
 
 		public ErrorDec() {
-			super(IMG_ERROR_OVERLAY_PATH);
-		}
-
-		@Override
-		protected boolean isDecorated(IRodinElement element)
-				throws CoreException {
-			final IMarkerRegistry registry = MarkerRegistry.getDefault();
-			final int severity = registry.getMaxMarkerSeverity(element);
-			return severity == IMarker.SEVERITY_ERROR;
+			super(IMG_ERROR_OVERLAY_PATH, IMarker.SEVERITY_ERROR);
 		}
 	}
 
