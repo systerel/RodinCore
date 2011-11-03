@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     Rodin @ ETH Zurich - initial API and implementation
+ *     Systerel - only find markers in accessible resources
  ******************************************************************************/
 
 package org.eventb.internal.ui.markers;
@@ -30,6 +31,8 @@ import org.rodinp.core.RodinMarkerUtil;
  */
 public class MarkerRegistry implements IMarkerRegistry {
 
+	private static final IMarker[] NO_MARKER = new IMarker[0];
+	
 	private static IMarkerRegistry instance;
 	
 	private MarkerRegistry() {
@@ -43,13 +46,21 @@ public class MarkerRegistry implements IMarkerRegistry {
 		return instance;
 	}
 	
+	private static IMarker[] findMarkers(IRodinElement element)
+			throws CoreException {
+		final IResource resource = element.getResource();
+		if (!resource.isAccessible()) {
+			return NO_MARKER;
+		}
+		return resource.findMarkers(RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
+				IResource.DEPTH_INFINITE);
+	}
+
 	@Override
 	public IMarker[] getMarkers(IRodinElement element) throws CoreException {
 		assert element != null;
 		ArrayList<IMarker> list = new ArrayList<IMarker>();
-		IResource resource = element.getResource();
-		IMarker[] markers = resource.findMarkers(RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
-				IResource.DEPTH_INFINITE);
+		IMarker[] markers = findMarkers(element);
 		for (IMarker marker : markers) {
 			IRodinElement rodinElement;
 			try {
@@ -69,10 +80,7 @@ public class MarkerRegistry implements IMarkerRegistry {
 	public int getMaxMarkerSeverity(IRodinElement element) throws CoreException {
 		assert element != null;
 		int severity = -1;
-		IResource resource = element.getResource();
-		IMarker[] markers = resource.findMarkers(
-				RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
-				IResource.DEPTH_INFINITE);
+		IMarker[] markers = findMarkers(element);
 		for (IMarker marker : markers) {
 			IRodinElement rodinElement;
 			try {
@@ -103,10 +111,7 @@ public class MarkerRegistry implements IMarkerRegistry {
 		assert element != null;
 		assert attributeType != null;
 		int severity = -1;
-		IResource resource = element.getResource();
-		IMarker[] markers = resource.findMarkers(
-				RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
-				IResource.DEPTH_INFINITE);
+		IMarker[] markers = findMarkers(element);
 		for (IMarker marker : markers) {
 			IRodinElement rodinElement;
 			try {
@@ -135,10 +140,7 @@ public class MarkerRegistry implements IMarkerRegistry {
 			IAttributeType attributeType) throws CoreException {
 		assert element != null;
 		ArrayList<IMarker> list = new ArrayList<IMarker>();
-		IResource resource = element.getResource();
-		IMarker[] markers = resource.findMarkers(
-				RodinMarkerUtil.RODIN_PROBLEM_MARKER, true,
-				IResource.DEPTH_INFINITE);
+		IMarker[] markers = findMarkers(element);
 		for (IMarker marker : markers) {
 			IRodinElement rodinElement;
 			try {
