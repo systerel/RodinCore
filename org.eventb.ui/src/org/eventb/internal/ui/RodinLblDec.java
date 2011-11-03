@@ -225,8 +225,13 @@ public class RodinLblDec {
 		protected boolean isDecorated(IRodinElement element)
 				throws CoreException {
 			final IMarkerRegistry registry = MarkerRegistry.getDefault();
-			final int severity = registry.getMaxMarkerSeverity(element);
-			return severity == decSeverity;
+			
+			try {
+				final int severity = registry.getMaxMarkerSeverity(element);
+				return severity == decSeverity;
+			} catch (CoreException e) {
+				return false;
+			}
 		}
 	}
 
