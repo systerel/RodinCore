@@ -2945,6 +2945,32 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE, FAC_COND, true);
 	}
 	
+	private static Expression makeMaxCond(Expression a, Expression b) {
+		return makeCond(ff.makeRelationalPredicate(Formula.LE, a, b, null), b, a, null);
+	}
+	
+	public void testCondWD() throws Exception {
+		final Expression max_a_b = makeMaxCond(FRID_a, FRID_b);
+//		final Predicate a_le_b = FAC_COND.makeRelationalPredicate(Formula.LE, FRID_a, FRID_b, null);
+//		final Predicate not_a_le_b = FAC_COND.makeUnaryPredicate(Formula.NOT, a_le_b, null);
+//		final Predicate expectedWD = FAC_COND.makeAssociativePredicate(Formula.LAND, new Predicate[] {
+//				FAC_COND.makeBinaryPredicate(Formula.LIMP,
+//						a_le_b,
+//						LIT_BTRUE,
+//						null),
+//				FAC_COND.makeBinaryPredicate(Formula.LIMP,
+//						not_a_le_b,
+//						LIT_BTRUE, null),
+//		}, null);
+		// original as above, but because of WD simplifier:
+		final Predicate expectedWD = LIT_BTRUE;
+		
+		max_a_b.typeCheck(FAC_COND.makeTypeEnvironment());
+		final Predicate actualWD = max_a_b.getWDPredicate(FAC_COND);
+		
+		assertEquals(expectedWD, actualWD);
+	}
+	
 	public void testExtraParentheses() throws Exception {
 		assertFailure(ff.parseExpression(")", LATEST, null),
 				makeError(0, 0, UnmatchedTokens), makeError(0, 0, PrematureEOF));
