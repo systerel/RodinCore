@@ -17,6 +17,7 @@
  *     Systerel - fixed Hyperlink.setImage() calls
  *     Systerel - removed direct access to tactic preferences
  *     Systerel - added support for autocompletion 
+ *     Systerel - dynamic label for open preferences (with scope)  
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
@@ -117,6 +118,7 @@ import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.ITacticApplication;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 
 /**
  * @author htson
@@ -854,8 +856,17 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		for (GlobalTacticToolItem item : toolItems) {
 			item.updateStatus(userSupport, textWidget.getText());
 		}
+	}
 
-		return;
+	void updateActions(IUserSupport userSupport) {
+		final IRodinProject project = userSupport.getInput().getRodinProject();
+		final String scope;
+		if (hasProjectSpecificTactics(project)) {
+			scope = project.getElementName();
+		} else {
+			scope = "Workspace";
+		}
+		openPreferences.setText("Preferences (" + scope + ")...");
 	}
 
 	/*
@@ -921,6 +932,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						// items.
 						updateToolItems(editor.getUserSupport());
 						updateSmiley();
+						updateActions(userSupport);
 						scrolledForm.reflow(true);
 					} else if ((flags & IUserSupportDelta.F_STATE) != 0) {
 						// If the changes occurs in some proof states.	
