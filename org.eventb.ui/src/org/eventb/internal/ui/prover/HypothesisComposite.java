@@ -698,6 +698,9 @@ public abstract class HypothesisComposite implements
 	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
+		if (styledText == null || styledText.isDisposed()) {
+			return;
+		}
 		if (event.getProperty().equals(PreferenceConstants.RODIN_MATH_FONT)) {
 			font = JFaceResources
 					.getFont(PreferenceConstants.RODIN_MATH_FONT);
