@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.ui.proofSkeletonView.ProofSkeletonView;
 
 /**
  * Abstract class for views that display information about currently selected
@@ -85,7 +86,7 @@ public abstract class AbstractProofNodeView extends ViewPart implements
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (!(part instanceof ProofTreeUI)) {
+		if (!(part instanceof ProofTreeUI || part instanceof ProofSkeletonView)) {
 			return;
 		}
 		refreshOnSelectionChanged(selection);
