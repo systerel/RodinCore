@@ -40,7 +40,7 @@ public abstract class AbstractProofNodeView extends ViewPart implements
 	private IProofTreeNode currentNode = null;
 	private Font currentFont = null;
 
-	protected abstract void initializeControl(final Composite parent);
+	protected abstract void initializeControl(final Composite parent, Font font);
 
 	protected abstract void refreshContents(IProofTreeNode node, Font font);
 
@@ -52,10 +52,10 @@ public abstract class AbstractProofNodeView extends ViewPart implements
 				.getSelectionService();
 		// add myself as a global selection listener
 		selectionService.addSelectionListener(this);
-
-		initializeControl(parent);
-
 		currentFont = JFaceResources.getFont(RODIN_MATH_FONT);
+
+		initializeControl(parent, currentFont);
+
 		JFaceResources.getFontRegistry().addListener(this);
 		// prime the selection to display contents
 		refreshOnSelectionChanged(getSite().getPage().getSelection());

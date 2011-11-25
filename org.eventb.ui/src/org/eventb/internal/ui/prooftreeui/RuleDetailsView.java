@@ -43,7 +43,7 @@ public class RuleDetailsView extends AbstractProofNodeView {
 	private RuleDetailsProvider rdp = null;
 
 	@Override
-	protected void initializeControl(final Composite parent) {
+	protected void initializeControl(final Composite parent, Font font) {
 		final GridLayout gl = new GridLayout(1, false);
 		gl.marginHeight = ZERO;
 		gl.marginWidth = ZERO;
