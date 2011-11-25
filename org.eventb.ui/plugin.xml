@@ -71,6 +71,14 @@
             name="%view.RuleDetails"
             restorable="true">
       </view>
+      <view
+            category="org.eventb.ui"
+            class="org.eventb.internal.ui.prooftreeui.TypeEnvView"
+            icon="icons/full/ctool16/info_prover_rule.gif"
+            id="org.eventb.ui.views.TypeEnv"
+            name="%view.TypeEnv"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
