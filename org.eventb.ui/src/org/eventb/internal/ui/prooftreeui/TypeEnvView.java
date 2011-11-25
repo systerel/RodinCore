@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.ui.EventBUIPlugin;
 
 /**
  * A view that displays the type environment of the currently selected proof
@@ -39,6 +40,13 @@ import org.eventb.core.seqprover.IProofTreeNode;
  * 
  */
 public class TypeEnvView extends AbstractProofNodeView {
+
+	/**
+	 * The identifier of the Rule Details View (value
+	 * <code>"org.eventb.ui.views.TypeEnv"</code>).
+	 */
+	public static final String VIEW_ID = EventBUIPlugin.PLUGIN_ID
+			+ ".views.TypeEnv";
 
 	private static class Ident {
 

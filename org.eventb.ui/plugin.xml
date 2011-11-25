@@ -456,6 +456,15 @@
                tooltip="%popupMenu.showRuleDetails.tooltip">
          </action>
          <action
+               class="org.eventb.internal.ui.prooftreeui.ShowTypeEnv"
+               enablesFor="1"
+               icon="icons/full/ctool16/info_prover_rule.gif"
+               id="org.eventb.ui.showTypeEnv"
+               label="%popupMenu.showTypeEnv.label"
+               menubarPath="additions"
+               tooltip="%popupMenu.showTypeEnv.tooltip">
+         </action>
+         <action
                class="org.eventb.internal.ui.prooftreeui.Prune"
                enablesFor="1"
                icon="icons/full/ctool16/pn_prover.gif"
