@@ -18,7 +18,10 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -132,18 +135,64 @@ public class TypeEnvView extends AbstractProofNodeView {
 
 	}
 
+	private static class ColumnComparator extends ViewerComparator {
+		
+		private int column = 0;
+		private boolean ascending = true;
+
+		public ColumnComparator() {
+			// avoid synthetic access
+		}
+
+		public int getColumn() {
+			return column;
+		}
+		
+		public void setColumn(int column) {
+			this.column = column;
+		}
+		
+		public boolean isAscending() {
+			return ascending;
+		}
+		
+		public void setAscending(boolean ascending) {
+			this.ascending = ascending;
+		}
+		
+		@Override
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			final Ident ident1 = (Ident) e1;
+			final Ident ident2 = (Ident) e2;
+			final int ascendCompare;
+			if (column == 0) {
+				ascendCompare = ident1.name.compareTo(ident2.name);
+			} else {
+				ascendCompare = ident1.type.compareTo(ident2.type);
+			}
+			if (ascending) {
+				return ascendCompare;
+			} else {
+				return -ascendCompare;
+			}
+		}
+	}
+	
 	private static final String[] COLUMN_NAMES = new String[] { "Identifier",
 			"Type" };
 
-	private TableViewer tableViewer;
+	TableViewer tableViewer;
 
 	@Override
 	protected void initializeControl(Composite parent, Font font) {
 		tableViewer = new TableViewer(parent, SWT.FULL_SELECTION | SWT.FILL
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		createColumns(font);
+		final ColumnComparator comparator = new ColumnComparator();
+		tableViewer.setComparator(comparator);
 		tableViewer.setLabelProvider(new TypeEnvLabelProvider());
 		tableViewer.setContentProvider(new TypeEnvContentProvider());
+		createColumns(font);
+		initColumnSorting(comparator);
 	}
 
 	private void createColumns(Font font) {
@@ -152,10 +201,35 @@ public class TypeEnvView extends AbstractProofNodeView {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		for (String columnName : COLUMN_NAMES) {
+		
+		for (int i = 0; i < COLUMN_NAMES.length; i++) {
+			final String columnName = COLUMN_NAMES[i];
 			final TableColumn col = new TableColumn(table, SWT.WRAP);
 			col.setText(columnName);
 			col.pack();
+		}
+	}
+
+	private void initColumnSorting(final ColumnComparator comparator) {
+		final TableColumn[] columns = tableViewer.getTable().getColumns();
+		
+		for (int i = 0; i < columns.length; i++) {
+			final int columnNumber = i;
+			columns[i].addSelectionListener(new SelectionAdapter() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (comparator.getColumn() == columnNumber) {
+						// already sorting with this column's comparator: toggle
+						// ascending.
+						comparator.setAscending(!comparator.isAscending());
+					} else {
+						comparator.setColumn(columnNumber);
+						comparator.setAscending(true);
+					}
+					tableViewer.refresh(false);
+				}
+			});
 		}
 	}
 
