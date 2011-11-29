@@ -149,6 +149,8 @@ public class POLoaderTest extends BuilderTest {
 			assertNotNull("Error generating prover sequent", seq);
 			assertEquals("Sequents for " + poSequent.getElementName() + " do not match",
 					expectedSequents[i],seq.toString());
+			assertSame("wrong origin for " + poSequent.getElementName(),
+					poSequent, seq.getOrigin());
 		}
 		
 	}
