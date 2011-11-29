@@ -45,7 +45,7 @@ public abstract class XProverReasoner2 extends AbstractXProverReasoner {
 	final AbstractXProverCall makeCall(IReasonerInput input,
 			Iterable<Predicate> hypotheses, Predicate goal,
 			FormulaFactory factory, Object origin, IProofMonitor pm) {
-		final ISimpleSequent sequent = make(hypotheses, goal, factory);
+		final ISimpleSequent sequent = make(hypotheses, goal, factory, origin);
 		return newProverCall(input, sequent, pm);
 	}
 

@@ -54,19 +54,67 @@ public class SimpleSequents {
 	 *            sequent goal, can be <code>null</code>
 	 * @param factory
 	 *            formula factory for the given predicates
+	 * @param origin
+	 *            origin of the sequent
 	 * @return a new simple sequent with the given hypotheses and goal
+	 * @since 2.4
 	 */
 	public static ISimpleSequent make(Iterable<Predicate> hypotheses,
-			Predicate goal, FormulaFactory factory) {
+			Predicate goal, FormulaFactory factory, Object origin) {
 		final List<TrackedPredicate> preds = makeTrackedPredicates(hypotheses,
 				goal);
 		final TrackedPredicate trivial = getTrivial(preds);
 		if (trivial != null) {
-			return new SimpleSequent(factory, trivial);
+			return new SimpleSequent(factory, trivial, origin);
 		}
-		return new SimpleSequent(factory, preds);
+		return new SimpleSequent(factory, preds, origin);
+	}
+	
+	/**
+	 * Returns a new simple sequent created with the given predicates. All
+	 * non-null predicates must be type-checked. Null predicates will be
+	 * ignored.
+	 * 
+	 * @param hypotheses
+	 *            sequent hypotheses, can be or contain <code>null</code>
+	 * @param goal
+	 *            sequent goal, can be <code>null</code>
+	 * @param factory
+	 *            formula factory for the given predicates
+	 * @return a new simple sequent with the given hypotheses and goal
+	 */
+	public static ISimpleSequent make(Iterable<Predicate> hypotheses,
+			Predicate goal, FormulaFactory factory) {
+		return make(hypotheses, goal, factory, null);
 	}
 
+	/**
+	 * Returns a new simple sequent created with the given predicates. All
+	 * non-null predicates must be type-checked. Null predicates will be
+	 * ignored.
+	 * 
+	 * @param hypotheses
+	 *            sequent hypotheses, can be or contain <code>null</code>
+	 * @param goal
+	 *            sequent goal, can be <code>null</code>
+	 * @param factory
+	 *            formula factory for the given predicates
+	 * @param origin
+	 *            the origin of the sequent
+	 * @return a new simple sequent with the given hypotheses and goal
+	 * @since 2.4
+	 */
+	public static ISimpleSequent make(Predicate[] hypotheses, Predicate goal,
+			FormulaFactory factory, Object origin) {
+		final List<Predicate> list;
+		if (hypotheses == null) {
+			list = emptyList();
+		} else {
+			list = asList(hypotheses);
+		}
+		return make(list, goal, factory, origin);
+	}
+	
 	/**
 	 * Returns a new simple sequent created with the given predicates. All
 	 * non-null predicates must be type-checked. Null predicates will be
@@ -82,15 +130,9 @@ public class SimpleSequents {
 	 */
 	public static ISimpleSequent make(Predicate[] hypotheses, Predicate goal,
 			FormulaFactory factory) {
-		final List<Predicate> list;
-		if (hypotheses == null) {
-			list = emptyList();
-		} else {
-			list = asList(hypotheses);
-		}
-		return make(list, goal, factory);
+		return make(hypotheses, goal, factory, null);
 	}
-
+	
 	private static List<TrackedPredicate> makeTrackedPredicates(
 			Iterable<Predicate> hypotheses, Predicate goal) {
 		final List<TrackedPredicate> preds = new ArrayList<TrackedPredicate>();

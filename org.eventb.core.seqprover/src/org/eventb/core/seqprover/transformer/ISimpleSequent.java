@@ -84,6 +84,14 @@ public interface ISimpleSequent {
 	ITrackedPredicate[] getPredicates();
 
 	/**
+	 * Returns the origin of this sequent.
+	 * 
+	 * @return an object, or <code>null</code>
+	 * @since 2.4
+	 */
+	Object getOrigin();
+	
+	/**
 	 * Tells whether the given object is equal to this sequent, that is whether
 	 * the given object is another sequent made of equal hypotheses and goal, in
 	 * the same order.

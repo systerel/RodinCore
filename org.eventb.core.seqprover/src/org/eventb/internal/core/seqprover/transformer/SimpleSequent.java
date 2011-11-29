@@ -33,8 +33,9 @@ import org.eventb.core.seqprover.transformer.ISimpleSequent;
  */
 public class SimpleSequent implements ISimpleSequent {
 
-	final ITypeEnvironment typenv;
-	final TrackedPredicate[] predicates;
+	private final ITypeEnvironment typenv;
+	private final TrackedPredicate[] predicates;
+	private final Object origin;
 
 	private static TrackedPredicate[] filter(List<TrackedPredicate> preds) {
 		final List<TrackedPredicate> newPreds = new ArrayList<TrackedPredicate>(
@@ -47,14 +48,17 @@ public class SimpleSequent implements ISimpleSequent {
 		return newPreds.toArray(new TrackedPredicate[newPreds.size()]);
 	}
 
-	public SimpleSequent(FormulaFactory factory, List<TrackedPredicate> preds) {
+	public SimpleSequent(FormulaFactory factory, List<TrackedPredicate> preds,
+			Object origin) {
 		this.typenv = factory.makeTypeEnvironment();
 		this.predicates = filter(preds);
+		this.origin = origin;
 		fillTypeEnvironment();
 	}
 
-	public SimpleSequent(FormulaFactory factory, TrackedPredicate trivial) {
-		this(factory, singletonList(trivial));
+	public SimpleSequent(FormulaFactory factory, TrackedPredicate trivial,
+			Object origin) {
+		this(factory, singletonList(trivial), origin);
 		assert trivial.holdsTrivially();
 	}
 
@@ -99,6 +103,11 @@ public class SimpleSequent implements ISimpleSequent {
 	}
 
 	@Override
+	public Object getOrigin() {
+		return origin;
+	}
+	
+	@Override
 	public ISimpleSequent apply(ISequentTransformer transformer) {
 		final List<TrackedPredicate> newPreds = new ArrayList<TrackedPredicate>(
 				predicates.length);
@@ -111,14 +120,14 @@ public class SimpleSequent implements ISimpleSequent {
 				continue;
 			}
 			if (newPred.holdsTrivially()) {
-				return new SimpleSequent(ff, newPred);
+				return new SimpleSequent(ff, newPred, origin);
 			}
 			newPreds.add(newPred);
 		}
 		if (!changed) {
 			return this;
 		}
-		return new SimpleSequent(ff, newPreds);
+		return new SimpleSequent(ff, newPreds, origin);
 	}
 
 	@Override
