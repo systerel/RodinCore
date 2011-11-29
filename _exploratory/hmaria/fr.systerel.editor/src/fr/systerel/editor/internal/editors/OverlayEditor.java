@@ -324,7 +324,8 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			final int level = inter.getIndentation();
 			final boolean multiLine = inter.isMultiLine();
 			final boolean addWhiteSpace = inter.isAddWhiteSpace();
-			text = RodinTextStream.deprocessMulti(level, multiLine,
+			final String align = inter.getAlignement();
+			text = RodinTextStream.deprocessMulti(align, multiLine,
 					addWhiteSpace, extracted);
 		} else {
 			text = "";

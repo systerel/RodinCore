@@ -13,6 +13,7 @@ package fr.systerel.editor.internal.documentModel;
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getAttributeDescs;
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getElementDesc;
 import static fr.systerel.editor.internal.documentModel.RodinTextStream.MIN_LEVEL;
+import static fr.systerel.editor.internal.documentModel.RodinTextStream.getTabs;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.BOLD_IMPLICIT_LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.BOLD_LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.COMMENT_TYPE;
@@ -61,13 +62,14 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
  */
 public class RodinTextGenerator {
 
-	private final DocumentMapper documentMapper;
+	private final DocumentMapper mapper;
 	private static final int ONE_TABS_INDENT = 1;
 
 	private RodinTextStream stream;
 
-	public RodinTextGenerator(DocumentMapper documentMapper) {
-		this.documentMapper = documentMapper;
+	public RodinTextGenerator(DocumentMapper mapper) {
+		this.mapper = mapper;
+
 	}
 
 	/**
@@ -77,10 +79,10 @@ public class RodinTextGenerator {
 	 *            The machine or context that is displayed in the document.
 	 */
 	public String createText(ILElement inputRoot) {
-		documentMapper.reinitialize();
+		mapper.reinitialize();
 		stream = new RodinTextStream();
 		traverseRoot(null, inputRoot);
-		documentMapper.processIntervals(stream.getRegions());
+		mapper.processIntervals(stream.getRegions());
 		return stream.getText();
 	}
 
@@ -92,11 +94,14 @@ public class RodinTextGenerator {
 		stream.addSectionRegion(desc.getPrefix());
 		stream.incrementIndentation(ONE_TABS_INDENT);
 		stream.appendPresentationTabs(e, ONE_TABS_INDENT);
-		processCommentedElement(e, false);
-		stream.appendLineSeparator();
-		stream.appendLeftPresentationTabs(e);
+		final TextAlignator sizer = new TextAlignator();
+		stream.appendAlignementTab(e);
 		stream.addLabelRegion(element.getElementName(), e);
-		processOtherAttributes(e);
+		sizer.append(element.getElementName());
+		processOtherAttributes(e, sizer);
+		stream.appendAlignementTab(e);
+		processCommentedElement(e, sizer);
+		stream.appendLineSeparator();
 		stream.decrementIndentation(ONE_TABS_INDENT);
 		traverse(monitor, e);
 	}
@@ -130,13 +135,12 @@ public class RodinTextGenerator {
 				traverse(mon, in);
 				if (in.getElementType() == IEvent.ELEMENT_TYPE) {
 					stream.appendLineSeparator();
-					stream.appendLineSeparator();
 				}
 			}
 			stream.decrementIndentation(ONE_TABS_INDENT);
 			final int length = stream.getLength() - start;
 			if (start != -1 && !noChildren && stream.getLevel() <= MIN_LEVEL) {
-				documentMapper.addEditorSection(rel.getChildType(), start, length);
+				mapper.addEditorSection(rel.getChildType(), start, length);
 				start = -1;
 			}
 		}
@@ -163,38 +167,44 @@ public class RodinTextGenerator {
 		return result;
 	}
 
-
-
 	/**
 	 * Processes the attributes other than comments.
 	 */
 	@SuppressWarnings("restriction")
-	private void processOtherAttributes(ILElement element) {
+	private void processOtherAttributes(ILElement element, TextAlignator sizer) {
 		int i = 0;
 		final IInternalElement rElement = element.getElement();
+		boolean addTab = false;
 		for (IAttributeDesc d : getAttributeDescs(element.getElementType())) {
-			stream.addPresentationRegion(" ", element);
+			addTab = true;
+			final String space = " ";
+			stream.addPresentationRegion(space, element);
+			sizer.append(space);
 			String value = "";
 			try {
 				if (i == 0)
-					stream.addPresentationRegion(" ", element);
+					stream.addPresentationRegion(space, element);
+				sizer.append(space);
 				final IAttributeManipulation manipulation = d.getManipulation();
 				if (!manipulation.hasValue(rElement, null)
 						&& manipulation.getPossibleValues(rElement, null) != null) {
 					value = "--undefined--";
 				} else {
-					value = manipulation.getValue(rElement, null);					
+					value = manipulation.getValue(rElement, null);
 				}
 				if (!value.isEmpty()) {
 					final String prefix = d.getPrefix();
 					if (!prefix.isEmpty()) {
 						stream.addPresentationRegion(prefix, element);
+						sizer.append(prefix);
 					}
 					stream.addAttributeRegion(value, element, manipulation,
 							d.getAttributeType());
+					sizer.append(value);
 					final String suffix = d.getSuffix();
 					if (!suffix.isEmpty()) {
 						stream.addPresentationRegion(suffix, element);
+						sizer.append(suffix);
 					}
 					i++;
 				}
@@ -203,63 +213,77 @@ public class RodinTextGenerator {
 				e.printStackTrace();
 			}
 		}
-		stream.appendLineSeparator();
+		if (addTab) {
+			sizer.append(RodinTextStream.TAB);
+			stream.appendAlignementTab(element);
+		}
 	}
 
 	private void processStringEventBAttribute(ILElement element,
 			IAttributeType.String type, ContentType t, boolean multiline,
-			int additionnalTabs) {
+			String alignmentStr) {
 		final String attribute = element.getAttribute(type);
 		final String value = (attribute != null) ? attribute : "";
-		stream.addElementRegion(value, element, t, multiline, additionnalTabs);
+		stream.addElementRegion(value, element, t, multiline, alignmentStr);
 	}
 
-	private void processCommentedElement(ILElement element, boolean appendReturn) {
-		stream.addPresentationRegion(" ", element);
+	private void processCommentedElement(ILElement element, TextAlignator sizer) {
 		stream.addCommentHeaderRegion(element);
+		sizer.appendCheckForMultiline("");
 		processStringEventBAttribute(element, COMMENT_ATTRIBUTE,
 				getContentType(element, IMPLICIT_COMMENT_TYPE, COMMENT_TYPE),
-				true, 0);
-		if (appendReturn)
-			stream.appendLineSeparator();
+				true,
+				getTabs(stream.getLevel()) + sizer.getAllAlignementString());
 	}
 
-	private void processPredicateElement(ILElement element) {
-		processFormula(element, PREDICATE_ATTRIBUTE);
+	private void processPredicateElement(ILElement element, TextAlignator sizer) {
+		processFormula(element, PREDICATE_ATTRIBUTE, sizer);
 	}
 
-	private void processAssignmentElement(ILElement element) {
-		processFormula(element, ASSIGNMENT_ATTRIBUTE);
+	private void processAssignmentElement(ILElement element, TextAlignator sizer) {
+		processFormula(element, ASSIGNMENT_ATTRIBUTE, sizer);
 	}
 
-	private void processExpressionElement(ILElement element) {
-		processFormula(element, EXPRESSION_ATTRIBUTE);
+	private void processExpressionElement(ILElement element, TextAlignator sizer) {
+		processFormula(element, EXPRESSION_ATTRIBUTE, sizer);
 	}
 
 	private void processFormula(ILElement element,
-			IAttributeType.String attrType) {
+			IAttributeType.String attrType, TextAlignator sizer) {
+		sizer.appendCheckForMultiline(element.getAttribute(attrType));
 		processStringEventBAttribute(element, attrType,
 				getContentType(element, IMPLICIT_CONTENT_TYPE, CONTENT_TYPE),
-				true, ONE_TABS_INDENT);
+				true,
+				getTabs(stream.getLevel()) + sizer.getFirstAlignementString());
+		stream.appendAlignementTab(element);
+		sizer.append(RodinTextStream.TAB);
 	}
 
-	private void processIdentifierElement(ILElement element) {
+	private void processIdentifierElement(ILElement element, TextAlignator sizer) {
+		final String identifierAttribute = element
+				.getAttribute(IDENTIFIER_ATTRIBUTE);
 		processStringEventBAttribute(
 				element,
 				IDENTIFIER_ATTRIBUTE,
 				getContentType(element, IMPLICIT_IDENTIFIER_TYPE,
-						IDENTIFIER_TYPE), false, 0);
-		if (!element.getAttributes().isEmpty())
-			stream.addPresentationRegion("\t", element);
+						IDENTIFIER_TYPE), false, "");
+		sizer.append(identifierAttribute);
+		if (!element.getAttributes().isEmpty()) {
+			final String s = RodinTextStream.getTabs(1);
+			stream.addPresentationRegion(s, element);
+			sizer.append(s);
+		}
 	}
 
-	private void processLabeledElement(ILElement element) {
-		stream.appendLeftPresentationTabs(element);
+	private void processLabeledElement(ILElement element, TextAlignator sizer) {
 		final String labelAttribute = element.getAttribute(LABEL_ATTRIBUTE);
 		processStringEventBAttribute(element, LABEL_ATTRIBUTE,
-				getLabelType(element), false, 0);
+				getLabelType(element), false, "");
+		sizer.append(labelAttribute);
 		if (labelAttribute != null) {
-			stream.addPresentationRegion(":\t", element);
+			final String s = ":" + RodinTextStream.getTabs(1);
+			stream.addPresentationRegion(s, element);
+			sizer.append(s);
 		}
 		if (!element.getChildren().isEmpty()
 				&& element.getAttributes().isEmpty()) {
@@ -277,33 +301,31 @@ public class RodinTextGenerator {
 
 	private void processElement(ILElement element) {
 		final IRodinElement rodinElement = (IRodinElement) element.getElement();
-		boolean commentToProcess = true;
 		if (!rodinElement.exists()) {
 			return;
 		}
+		final TextAlignator sizer = new TextAlignator();
 		if (rodinElement instanceof ILabeledElement) {
-			if (rodinElement instanceof ICommentedElement) {
-				processCommentedElement(element, true);
-				commentToProcess = false;
-			}
-			processLabeledElement(element);
+			processLabeledElement(element, sizer);
 		} else if (rodinElement instanceof IIdentifierElement) {
-			processIdentifierElement(element);
+			processIdentifierElement(element, sizer);
 		}
 		if (rodinElement instanceof IExpressionElement) {
-			processExpressionElement(element);
+			processExpressionElement(element, sizer);
 		}
 		if (rodinElement instanceof IPredicateElement) {
-			processPredicateElement(element);
+			processPredicateElement(element, sizer);
 		}
 		if (rodinElement instanceof IAssignmentElement) {
-			processAssignmentElement(element);
-		}
-		if (rodinElement instanceof ICommentedElement && commentToProcess) {
-			processCommentedElement(element, false);
+			processAssignmentElement(element, sizer);
 		}
 		// display attributes at the end
-		processOtherAttributes(element);
+		processOtherAttributes(element, sizer);
+		// display the comments at the end for compacity
+		if (rodinElement instanceof ICommentedElement) {
+			processCommentedElement(element, sizer);
+		}
+		stream.appendLineSeparator();
 	}
 
 	private static ContentType getContentType(ILElement element,
@@ -312,6 +334,40 @@ public class RodinTextGenerator {
 			return implicitType;
 		}
 		return type;
+	}
+
+	private static class TextAlignator {
+
+		final private StringBuilder b;
+		private boolean singleLine = true;
+
+		public TextAlignator() {
+			this.b = new StringBuilder();
+		}
+
+		public void appendCheckForMultiline(String str) {
+			singleLine = b.toString().split("(\r\n)|(\r)|(\n)").length <= 1;
+			append(str);
+		}
+
+		public void append(String str) {
+			b.append(str);
+		}
+
+		public String getAllAlignementString() {
+			final String[] split = b.toString().split("(\r\n)|(\r)|(\n)");
+			final String r = split[split.length - 1].replaceAll("[^\t]", " ");
+			if (singleLine)
+				return r;
+			return getFirstAlignementString() + r;
+		}
+
+		public String getFirstAlignementString() {
+			final String string = b.toString();
+			final String[] split = string.split("\t");
+			final String r = split[0].replaceAll("[^\t]", " ");
+			return r.concat("\t");
+		}
 	}
 
 }

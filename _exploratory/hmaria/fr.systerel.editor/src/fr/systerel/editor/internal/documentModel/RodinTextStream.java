@@ -34,8 +34,7 @@ public class RodinTextStream {
 
 	public static int MIN_LEVEL = 1;
 	private static final String COMMENT_HEADER_DELIMITER = "\u203A"; // the comment "›" character
-	private static final Character TAB = '\u0009';
-	private static final int NO_TABS = 0;
+	public static final String TAB = "\t";
 	private static final String WHITESPACE = " ";
 	private static final Object LINESEPARATOR = System
 			.getProperty("line.separator");
@@ -44,34 +43,34 @@ public class RodinTextStream {
 	private int level = MIN_LEVEL;
 	private List<EditorRegion> regions;
 	
-	public static String processMulti(boolean multiLine, int level,
+	public static String processMulti(boolean multiLine, String alignString,
 			boolean addWhiteSpace, String text) {
 		if (!multiLine || text == null)
 			return text;
 		final String regex = "(\r\n)|(\r)|(\n)";
 		if (addWhiteSpace)
-			return text.replaceAll(regex, "$0" + getTabs(level) + WHITESPACE);
-		return text.replaceAll(regex, "$0" + getTabs(level));
+			return text.replaceAll(regex, "$0" + alignString + WHITESPACE);
+		return text.replaceAll(regex, "$0" + alignString);
 	}
 
-	public static String deprocessMulti(int level, boolean multiLine,
+	public static String deprocessMulti(String align, boolean multiLine,
 			boolean tabbed, String text) {
 		if (!multiLine)
 			return text;
-		return deprocessMulti(level, tabbed, text);
+		return deprocessMulti(align, tabbed, text);
 	}
 
-	public static String deprocessMulti(int level, boolean addWhitespace,
+	public static String deprocessMulti(String align, boolean addWhitespace,
 			String text) {
 		final String commonPatternStart = "((\r\n)|(\r)|(\n))(";
 		// Tells that it should take into account one (only) matching pattern
 		final String commonPatternEnd = "){1}";
 		if (addWhitespace) {
-			return text.replaceAll(commonPatternStart + getTabs(level)
-					+ WHITESPACE + commonPatternEnd, "$1");
+			return text.replaceAll(commonPatternStart + align + WHITESPACE
+					+ commonPatternEnd, "$1");
 		}
-		return text.replaceAll(commonPatternStart + getTabs(level)
-				+ commonPatternEnd, "$1");
+		return text.replaceAll(commonPatternStart + align + commonPatternEnd,
+				"$1");
 	}
 
 	public RodinTextStream() {
@@ -81,22 +80,21 @@ public class RodinTextStream {
 
 	protected void addElementRegion(String text, ILElement element,
 			ContentType contentType, boolean multiLine) {
-		addElementRegion(text, element, contentType, null, multiLine, NO_TABS);
+		addElementRegion(text, element, contentType, null, multiLine, "");
 	}
 
 	protected void addElementRegion(String text, ILElement element,
-			ContentType contentType, boolean multiLine, int additionalTabs) {
+			ContentType contentType, boolean multiLine, String alignmentStr) {
 		addElementRegion(text, element, contentType, null, multiLine,
-				additionalTabs);
+				alignmentStr);
 	}
 
 	protected void addElementRegion(String text, ILElement element,
 			ContentType contentType, IAttributeManipulation manipulation,
-			boolean multiLine, int additionalTabs) {
+			boolean multiLine, String alignmentStr) {
 		final int start = builder.length();
 		final EditorRegion region = getElementRegion(start, getLevel(), text,
-				element, contentType, manipulation, multiLine, getLevel()
-						+ additionalTabs);
+				element, contentType, manipulation, multiLine, alignmentStr);
 		builder.append(region.getText());
 		regions.add(region);
 	}
@@ -104,20 +102,19 @@ public class RodinTextStream {
 	public EditorRegion getElementRegion(int startOffset, int level,
 			String elementText, ILElement element, ContentType contentType,
 			IAttributeManipulation manipulation, boolean multiline,
-			int additionalTabs) {
+			String alignmentStr) {
 		return new EditorRegion(startOffset, level, elementText, element,
-				contentType, manipulation, multiline, additionalTabs);
+				contentType, manipulation, multiline, alignmentStr);
 	}
 
 	protected void addAttributeRegion(String text, ILElement element,
 			IAttributeManipulation manipulation, IAttributeType attributeType) {
 		addElementRegion(text, element, getAttributeContentType(attributeType),
-				manipulation, false, NO_TABS);
+				manipulation, false, "");
 	}
 
 	protected void addLabelRegion(String text, ILElement element) {
 		addElementRegion(text, element, LABEL_TYPE, false);
-		addPresentationRegion((String) LINESEPARATOR, element);
 	}
 
 	protected void addLeftPresentationRegion(String text, ILElement element) {
@@ -140,14 +137,13 @@ public class RodinTextStream {
 	}
 
 	protected void addSectionRegion(String title) {
-		if (level > 0)
-			appendPresentationTabs(null);
+		appendPresentationTabs(null);
 		addElementRegion(title, null, KEYWORD_TYPE, false);
 		appendLineSeparator();
 	}
 
 	public static String getTabs(int number) {
-		StringBuilder tabs = new StringBuilder();
+		final StringBuilder tabs = new StringBuilder();
 		for (int i = 0; i < number; i++) {
 			tabs.append(TAB);
 		}
@@ -178,10 +174,6 @@ public class RodinTextStream {
 		return builder.length();
 	}
 	
-	public String getTabsForCurrentLevel() {
-		return getTabs(level);
-	}
-	
 	public String getText() {
 		return builder.toString();
 	}
@@ -195,7 +187,7 @@ public class RodinTextStream {
 	}
 	
 	public void appendPresentationTabs(ILElement e) {
-		addPresentationRegion(getTabs(level), null);
+		addPresentationRegion(getTabs(level), e);
 	}
 
 	public void incrementIndentation(int i) {
@@ -204,6 +196,10 @@ public class RodinTextStream {
 	
 	public void decrementIndentation(int i) {
 		level -= i;
+	}
+
+	public void appendAlignementTab(ILElement e) {
+		addPresentationRegion(TAB, e);
 	}
 	
 }

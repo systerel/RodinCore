@@ -308,7 +308,7 @@ public class DocumentMapper {
 	 */
 	private void processInterval(EditPos pos, ILElement element,
 			ContentType contentType, IAttributeManipulation manipulation,
-			boolean multiLine, int indentationLevel, boolean addWhitespace) {
+			boolean multiLine, String align, boolean addWhitespace) {
 		Interval inter;
 		final IInternalElementType<?> type = (element == null) ? null : element
 				.getElementType();
@@ -319,7 +319,7 @@ public class DocumentMapper {
 			} else {
 				inter = new Interval(pos, element, type,
 						contentType, manipulation, multiLine, addWhitespace);
-				inter.setIndentation(indentationLevel);
+				inter.setAlignement(align);
 				try {
 					addIntervalAfter(inter, previous);
 				} catch (Exception e) {
@@ -333,7 +333,7 @@ public class DocumentMapper {
 			} else {
 				inter = new Interval(pos, element, type,
 						contentType, manipulation, multiLine, addWhitespace);
-				inter.setIndentation(indentationLevel);
+				inter.setAlignement(align);
 				try {
 					addInterval(inter);
 				} catch (Exception e) {
@@ -355,7 +355,7 @@ public class DocumentMapper {
 	private void processInterval(EditorRegion r) {
 		processInterval(r.getPos(), r.getElement(),
 				r.getType(), r.getManipulation(), r.getMultiline(),
-				r.getAdditionalTabs(), r.isAddWhitespace());
+				r.getAlignement(), r.isAddWhitespace());
 	}
 
 	/**
@@ -683,7 +683,7 @@ public class DocumentMapper {
 	 */
 	public void synchronizeInterval(Interval interval, String newText) {
 		final String pNewText = RodinTextStream.processMulti(
-				interval.isMultiLine(), interval.getIndentation(),
+				interval.isMultiLine(), interval.getAlignement(),
 				interval.isAddWhiteSpace(), newText);
 		final String old_text = getTextFromDocument(interval);
 		if (!pNewText.equals(old_text)) {

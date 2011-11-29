@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
+
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,6 +27,8 @@ import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.StyledText;
@@ -54,7 +58,6 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
-import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.actions.HistoryAction;
@@ -68,7 +71,7 @@ import fr.systerel.editor.internal.presentation.ColorManager;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.updaters.ProblemMarkerAnnotationsUpdater;
 
-public class RodinEditor extends TextEditor {
+public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 
 	public static boolean DEBUG;
 	
@@ -92,14 +95,18 @@ public class RodinEditor extends TextEditor {
 
 	/** The source viewer on which projection for folding is enabled */
 	private ProjectionViewer viewer;
+	/** The font used by the underlying viewer */
+	private Font font;
+	/** The graphical text component carried by the viewer */
+	private StyledText styledText;
+	
 	/** The support for folding on the viewer */
 	private ProjectionSupport projectionSupport;
 	/** The annotation model containing folding annotations */
 	private ProjectionAnnotationModel projectionAnnotationModel;
 	/** The basic annotations currently carried by the source viewer */
 	private Annotation[] oldPojectionAnnotations = new Annotation[0];
-	/** The graphical text component carried by the viewer */
-	private StyledText styledText;
+
 	/** A controller for selection on the styled text */
 	private SelectionController selController;
 	/** The viewer's model of basic annotations (e.g. problem annotations) */
@@ -155,8 +162,8 @@ public class RodinEditor extends TextEditor {
 		cursorManager = new CursorManager(this, viewer);
 		styledText.addMouseMoveListener(cursorManager);
 	
-		final Font font = JFaceResources
-				.getFont(PreferenceConstants.RODIN_MATH_FONT);
+		font = JFaceResources.getFont(RODIN_MATH_FONT);
+		JFaceResources.getFontRegistry().addListener(this);
 		styledText.setFont(font);
 	
 		updateFoldingStructure();
@@ -186,11 +193,14 @@ public class RodinEditor extends TextEditor {
 	public void dispose() {
 		close(false);
 		colorManager.dispose();
-		markerAnnotationsUpdater.dispose();
+		if (markerAnnotationsUpdater != null){
+			markerAnnotationsUpdater.dispose();			
+		}
 		if (stateListener != null) {
 			documentProvider.removeElementStateListener(stateListener);
 		}
 		getDocument().removeDocumentListener(overlayUpdater);
+		JFaceResources.getFontRegistry().removeListener(this);
 		documentProvider.unloadResource();
 		super.dispose();
 	}
@@ -398,6 +408,18 @@ public class RodinEditor extends TextEditor {
 	/** Tells if the overlay is currently visible as the user is editing */
 	public boolean isOverlayActive() {
 		return overlayEditor.isActive();
+	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(RODIN_MATH_FONT)) {
+			font = JFaceResources.getFont(RODIN_MATH_FONT);
+			if (styledText == null || styledText.isDisposed()) {
+				return;
+			}
+			styledText.setFont(font);
+			resync(null, true);
+		}
 	}
 
 	/** Saves the current changes and quit edition. */

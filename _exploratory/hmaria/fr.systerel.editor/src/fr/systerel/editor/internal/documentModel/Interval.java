@@ -38,6 +38,7 @@ public class Interval implements Comparable<Interval> {
 	private final boolean addWhiteSpace;
 	private boolean changed;
 	private int indentation;
+	private String align;
 	
 	public Interval(EditPos pos, ILElement element, IInternalElementType<?> elementType,
 			ContentType contentType, IAttributeManipulation attManip,
@@ -150,6 +151,14 @@ public class Interval implements Comparable<Interval> {
 	
 	public boolean containsOrTouches(int offset) {
 		return pos.isIncludedOrTouches(offset);
+	}
+
+	public String getAlignement() {
+		return align;
+	}
+
+	public void setAlignement(String align) {
+		this.align = align;
 	}
 	
 }

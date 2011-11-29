@@ -32,22 +32,22 @@ public class EditorRegion {
 	private final ContentType type;
 	private final IAttributeManipulation manipulation;
 	private final Boolean multiline;
-	private final int additionalTabs;
+	private final String alignmentStr;
 
 	public EditorRegion(int startOffset, int level, String text,
 			ILElement element, ContentType type,
 			IAttributeManipulation manipulation, boolean multiline,
-			int additionalTabs) {
+			String alignmentStr) {
 		this.addWhitespace = (type == RodinConfiguration.COMMENT_TYPE || type == RodinConfiguration.IMPLICIT_COMMENT_TYPE);
 		this.level = level;
 		this.elementText = RodinTextStream.processMulti(multiline,
-				additionalTabs, addWhitespace, text);
+				alignmentStr, addWhitespace, text);
 		this.pos = newPosOffLen(startOffset, elementText.length());
 		this.element = element;
 		this.type = type;
 		this.manipulation = manipulation;
 		this.multiline = multiline;
-		this.additionalTabs = additionalTabs;
+		this.alignmentStr = alignmentStr;
 	}
 	
 	public EditPos getPos() {
@@ -75,7 +75,11 @@ public class EditorRegion {
 	}
 
 	public int getAdditionalTabs() {
-		return additionalTabs;
+		return level;
+	}
+	
+	public String getAlignement() {
+		return alignmentStr;
 	}
 	
 	public boolean isAddWhitespace() {
