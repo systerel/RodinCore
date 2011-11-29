@@ -46,43 +46,47 @@ public class ImplicitDeltaProcessor {
 	 */
 	public void processDelta(final IRodinElementDelta delta)
 			throws RodinDBException {
+		if (traverseDelta(delta)) {
+			DeltaProcessManager.getDefault().enqueueOperation(
+					new ElementOperation.RecalculateImplicitElementOperation(
+							delta.getElement(), root));
+		}
+	}
+	
+	public boolean traverseDelta(final IRodinElementDelta delta) {
 		int kind = delta.getKind();
 		final IRodinElement element = delta.getElement();
-
 		if (kind == IRodinElementDelta.REMOVED) {
 			if (element instanceof IRodinFile
 					&& element.equals(rodinRoot.getRodinFile())) {
 				// remove the machine from the model
 				owner.finishListening();
-				return;
+				return false;
 			}
 		}
-
 		if (kind == IRodinElementDelta.ADDED) {
 			if (element instanceof IRodinDB || element instanceof IRodinProject
 					|| element instanceof IRodinFile) {
 				// not enough modification to modify implicit children
-				return;
+				return false;
 			}
 		}
-
 		if (element instanceof IRodinDB || element instanceof IRodinProject
 				|| element instanceof IRodinFile) {
+			boolean needRecalculate = false;
 			for (IRodinElementDelta d : delta.getAffectedChildren()) {
-				processDelta(d);
+				needRecalculate |= traverseDelta(d);
 			}
-			return;
+			return needRecalculate;
 		}
 		// if the delta does not concern a modification in the project we
 		// return;
 		final IRodinProject rodinProject = element.getRodinProject();
 		if (rodinProject != null
 				&& !(rodinProject.equals(rodinRoot.getRodinProject()))) {
-			return;
+			return false;
 		}
-		DeltaProcessManager.getDefault().enqueueOperation(
-				new ElementOperation.RecalculateImplicitElementOperation(
-						element, root));
+		return true;
 	}
 
 }

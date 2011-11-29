@@ -19,63 +19,35 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Nicolas Beauger
  * 
  * NOTE : imported from org.rodinp.internal.core.indexer.DeltaQueue;
+ *        Simplified to the simple case of queue and dequeue.
  */
 public class DBOperationQueue {
 
 	private final BlockingQueue<ElementOperation> queue;
 
-	private final CountUpDownLatch latch = new CountUpDownLatch(0);
-
 	public DBOperationQueue() {
 		this.queue = new LinkedBlockingQueue<ElementOperation>();
 	}
 
-	// Concurrency: no synchronization is required in the {contains;put} block
-	// The possible situations are the following:
-	// 1/ queue.contains(file) is true, then queue.take is called and takes file
-	// => the condition becomes false but put is not called.
-	// This is not a problem since the taker will process an up to date version
-	// of the file (after the current delta event that caused a possible put)
-	//
-	// 2/ queue.contains(file) is false, then queue.take is called before put
-	// but it cannot take the file to put since it is not yet present !
-	public void put(ElementOperation operation, boolean allowDuplicate)
+	public void put(ElementOperation operation)
 			throws InterruptedException {
-		if (allowDuplicate || !queue.contains(operation)) {
 			if (DeltaProcessManager.DEBUG) {
 				System.out.println("DBOperationQueue: Enqueuing operation "
 						+ operation.getElement().getPath() + " type: "
 						+ operation.getType());
 			}
-			latch.countUp();
 			queue.put(operation);
-		}
 	}
 
 	public ElementOperation take() throws InterruptedException {
 		return queue.take();
 	}
 
-	public void drainTo(Collection<? super ElementOperation> c) {
-		queue.drainTo(c);
-	}
-
-	public void deltaProcessed() {
-		latch.countDown();
-	}
-
-	public void awaitEmptyQueue() throws InterruptedException {
-		latch.await();
-	}
-
-	public boolean isProcessed() {
-		return latch.getCount() == 0;
-	}
-
 	public void putAll(Collection<? extends ElementOperation> c)
 			throws InterruptedException {
 		for (ElementOperation op : c) {
-			put(op, false);
+			put(op);
 		}
 	}
+	
 }

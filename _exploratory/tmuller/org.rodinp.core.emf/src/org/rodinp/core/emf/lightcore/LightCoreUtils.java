@@ -22,4 +22,9 @@ public class LightCoreUtils {
 		System.out.println(message);
 	}
 
+	public static void log(Exception e) {
+		System.out.println("--- An exception occured ---");
+		System.out.println(e.getMessage());
+	}
+
 }

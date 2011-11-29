@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core.emf.lightcore.adapters.dboperations;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.CancellationException;
+import static org.rodinp.core.emf.lightcore.LightCoreUtils.log;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -23,25 +20,20 @@ import org.eclipse.core.runtime.jobs.Job;
 public class DeltaProcessManager {
 
 	public static boolean DEBUG = false;
-	private static DeltaProcessManager instance;
+	private static DeltaProcessManager instance = new DeltaProcessManager();
 	private static DeltaProcessJob deltaProcessJob;
 	
 	private DBOperationQueuer queuer;
 	private DBOperationQueue queue;
 
-	private final List<ElementOperation> currentOperations;
-
 	private volatile boolean deltaProcessingEnabled = true;
 
 	private DeltaProcessManager() {
-		currentOperations = new ArrayList<ElementOperation>();
 		queue = new DBOperationQueue();
 		queuer = new DBOperationQueuer(queue);
 	}
 
-	public static synchronized DeltaProcessManager getDefault() {
-		if (instance == null)
-			instance = new DeltaProcessManager();
+	public static DeltaProcessManager getDefault() {
 		return instance;
 	}
 
@@ -61,7 +53,7 @@ public class DeltaProcessManager {
 			try {
 				while (true) {
 					try {
-						queue.put(operation, allowDuplicate);
+						queue.put(operation);
 						return;
 					} catch (InterruptedException e) {
 						interrupted.set(true);
@@ -90,53 +82,35 @@ public class DeltaProcessManager {
 	 * @param daemonMonitor
 	 *            the progress monitor that handles the delta processingF system
 	 *            cancellation.
-	 * @throws InterruptedException 
 	 */
-	public void start(IProgressMonitor daemonMonitor) throws InterruptedException {
+	public void start(IProgressMonitor daemonMonitor) {
 		boolean stop = false;
 		do {
 			try {
 				stop = daemonMonitor.isCanceled();
-				final ElementOperation headOperation = queuer.take();
-				currentOperations.add(headOperation);
-				queue.drainTo(currentOperations);
 				if (deltaProcessingEnabled) {
 					processCurrentOperations(daemonMonitor);
 				}
 			} catch (InterruptedException e) {
 				stop = true;
-				throw e;
+				log(e);
+				Thread.currentThread().interrupt();
 			}
 		} while (!stop);
 	}
 	
 	public static void startDeltaProcess() {
-		deltaProcessJob = new DeltaProcessJob("Delta Processor Manager");
+		deltaProcessJob = new DeltaProcessJob("RodinEditor Delta Processor Manager");
 		deltaProcessJob.setPriority(Job.INTERACTIVE);
-		deltaProcessJob.setSystem(true);
+		deltaProcessJob.setSystem(true); // don't show because always running
 		deltaProcessJob.schedule();
 	}
 
 
 	private void processCurrentOperations(IProgressMonitor monitor)
 			throws InterruptedException {
-		final int maxAttempts = 3;
-		final Iterator<ElementOperation> iter = currentOperations.iterator();
-		while (iter.hasNext()) {
-			final ElementOperation operation = iter.next();
-			int attempts = 0;
-			boolean success = false;
-			do {
-				try {
-					operation.perform();
-					success = true;
-				} catch (CancellationException e) {
-					attempts++;
-				}
-			} while (!success && attempts < maxAttempts);
-			queue.deltaProcessed();
-			iter.remove();
-		}
+		final ElementOperation headOperation = queuer.take();
+		headOperation.perform();
 	}
 	
 	public static void stopDeltaProcess() {
@@ -157,19 +131,14 @@ public class DeltaProcessManager {
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			try {
-				if (DEBUG) {
-					Thread.currentThread().setName(this.getName());
-				}
-				DeltaProcessManager.getDefault().start(monitor);
-				if (monitor.isCanceled()) {
-					return Status.CANCEL_STATUS;
-				}
-				return Status.OK_STATUS;
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
+			if (DEBUG) {
+				Thread.currentThread().setName(this.getName());
+			}
+			DeltaProcessManager.getDefault().start(monitor);
+			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
+			return Status.OK_STATUS;
 		}
 		
 		public void stop() {
