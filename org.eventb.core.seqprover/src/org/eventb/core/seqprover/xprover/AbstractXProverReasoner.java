@@ -95,7 +95,7 @@ public abstract class AbstractXProverReasoner implements IReasoner {
 
 		final FormulaFactory factory = sequent.getFormulaFactory();
 
-		final Object origin = null;// TODO sequent.getOrigin();
+		final Object origin = sequent.getOrigin();
 
 		final AbstractXProverCall call = makeCall(input, hypotheses, goal,
 				factory, origin, pm);
