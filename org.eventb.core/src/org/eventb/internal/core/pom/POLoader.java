@@ -9,10 +9,12 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added formula factory parameter
  *     Systerel - changed condition for including WD predicates
+ *     Systerel - set the origin of the resulting prover sequent
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
 import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.seqprover.ProverFactory.makeSequent;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.breakPossibleConjunct;
 
@@ -53,7 +55,6 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.RodinDBException;
 
@@ -98,7 +99,7 @@ public final class POLoader {
 		loadHypotheses(poSeq, selHints, hypotheses, selHyps, typeEnv, factory);
 		final Predicate goal = readGoal(poSeq, typeEnv, factory);
 		if (! isWDPO(poSeq)) addWDpredicates(goal, hypotheses, factory);
-		return ProverFactory.makeSequent(typeEnv,hypotheses,selHyps,goal);
+		return makeSequent(typeEnv, hypotheses, selHyps, goal, poSeq);
 	}
 	
 	/**

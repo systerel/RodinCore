@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *     Systerel - got formula factory from proof component
+ *     Systerel - set the origin of the built sequent
  *******************************************************************************/
 package org.eventb.internal.core;
 
@@ -76,7 +77,7 @@ public class ProofSkeletonBuilder {
 		if (!check(env, hyps, goal)) {
 			return null;
 		}
-		return ProverFactory.makeSequent(env, hyps, goal);
+		return ProverFactory.makeSequent(env, hyps, null, goal, pr);
 	}
 
 	private static boolean check(ITypeEnvironment env,
