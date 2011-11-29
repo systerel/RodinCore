@@ -1,21 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH Zurich - initial API and implementation
- *     Systerel - extracted a super class to make new API
+ *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.seqprover.xprover;
+
+import static org.eventb.core.seqprover.transformer.SimpleSequents.make;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
 
 /**
  * Abstract base class for running an external prover as a reasoner.
@@ -28,32 +30,23 @@ import org.eventb.core.seqprover.IReasonerInput;
  * methods:
  * <ul>
  * <li><code>getReasonerId</code> returns the id of the reasoner,</li>
- * <li><code>newProverCall</code> returns a new object encapsulating a run of
+ * <li><code>newProverCall</code> returns a new object encapsulating a call of
  * the external prover on a given sequent</li>
  * </ul>
  * </p>
- * <p>
- * Optionally, one can use an extended reasoner input (rather than the default
- * one). When this is the case, one has to also override the
- * <code>serializeInput</code> and <code>deserializeInput</code> methods. An
- * example of such an extension is described in the unit tests of this plugin
- * (see class
- * <code>org.eventb.core.seqprover.xprover.tests.ExtendedInputTests</code>).
- * </p>
  * 
- * @author François Terrier
- * @author Laurent Voisin
- * @since 1.0
+ * @author Nicolas Beauger
+ * @since 2.4
+ * 
  */
-public abstract class XProverReasoner extends AbstractXProverReasoner {
-
-	public static boolean DEBUG = false;
+public abstract class XProverReasoner2 extends AbstractXProverReasoner {
 
 	@Override
 	final AbstractXProverCall makeCall(IReasonerInput input,
 			Iterable<Predicate> hypotheses, Predicate goal,
 			FormulaFactory factory, Object origin, IProofMonitor pm) {
-		return newProverCall(input, hypotheses, goal, pm);
+		final ISimpleSequent sequent = make(hypotheses, goal, factory);
+		return newProverCall(input, sequent, pm);
 	}
 
 	/**
@@ -63,15 +56,13 @@ public abstract class XProverReasoner extends AbstractXProverReasoner {
 	 * @param input
 	 *            the input to this reasoner (can contain additional parameters
 	 *            specific to the external prover)
-	 * @param hypotheses
-	 *            hypotheses of the sequent to prove
-	 * @param goal
-	 *            goal of the sequent to prove
+	 * @param sequent
+	 *            the sequent to prove
 	 * @param pm
 	 *            proof monitor (might be <code>null</code>)
-	 * @return a new run of the external prover
+	 * @return a new call of the external prover
 	 */
-	public abstract XProverCall newProverCall(IReasonerInput input,
-			Iterable<Predicate> hypotheses, Predicate goal, IProofMonitor pm);
+	public abstract XProverCall2 newProverCall(IReasonerInput input,
+			ISimpleSequent sequent, IProofMonitor pm);
 
 }

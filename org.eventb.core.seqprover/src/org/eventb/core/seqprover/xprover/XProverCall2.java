@@ -1,22 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     ETH Zurich - initial API and implementation
- *     Systerel - improved documentation about concurrency
- *     Systerel - extracted a super class to make new API
+ *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.seqprover.xprover;
-
-import java.util.ArrayList;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
 
 /**
  * Common protocol for running an external prover.
@@ -42,14 +39,12 @@ import org.eventb.core.seqprover.IReasonerInput;
  * this class.
  * </p>
  * 
- * @author Laurent Voisin
- * @since 1.0
+ * @author Nicolas Beauger
+ * @since 2.4
  */
-public abstract class XProverCall extends AbstractXProverCall {
-	
-	protected final ArrayList<Predicate> hypotheses;
-	
-	protected final Predicate goal;
+public abstract class XProverCall2 extends AbstractXProverCall {
+
+	protected final ISimpleSequent sequent;
 
 	/**
 	 * Creates a new instance of this class.
@@ -59,22 +54,15 @@ public abstract class XProverCall extends AbstractXProverCall {
 	 * the {@link #run()} method.
 	 * </p>
 	 * 
-	 * @param hypotheses
-	 *            hypotheses of the sequent to discharge
-	 * @param goal
-	 *            goal of the sequent to discharge
+	 * @param sequent
+	 *            the sequent to discharge
 	 * @param pm
 	 *            proof monitor (might be <code>null</code>) used for
 	 *            cancellation
 	 */
-	protected XProverCall(Iterable<Predicate> hypotheses, Predicate goal,
-			IProofMonitor pm) {
+	protected XProverCall2(ISimpleSequent sequent, IProofMonitor pm) {
 		super(pm);
-		this.hypotheses = new ArrayList<Predicate>();
-		for (Predicate hyp : hypotheses) {
-			this.hypotheses.add(hyp);
-		}
-		this.goal = goal;
+		this.sequent = sequent;
 	}
-	
+
 }
