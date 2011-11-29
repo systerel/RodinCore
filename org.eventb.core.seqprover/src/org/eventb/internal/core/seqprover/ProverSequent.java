@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - type-checking is now done with class TypeChecker
  *     Systerel - added check about predicate variables
  *     Systerel - added unselected added hypotheses
+ *     Systerel - added origin
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
 
@@ -84,6 +85,7 @@ public final class ProverSequent implements IInternalProverSequent{
 	
 	private final Predicate goal;
 
+	private final Object origin;
 	
 	/**
 	 * Static immutable variables.
@@ -105,87 +107,6 @@ public final class ProverSequent implements IInternalProverSequent{
 	public Predicate goal() {
 		return this.goal;
 	}
-	
-	/**
-	 * Constructs a new Prover Sequent from the given parameters.
-	 * 
-	 * <p>
-	 * Note : <br>
-	 * The parameters provided to construct the sequent must be consistent
-	 * in order to construct a proper sequent. In particular:
-	 * <ul>
-	 * <li> All predicates (i.e. all hypotheses and the goal) must be type checked.
-	 * <li> The type environment provided should contain all free identifiers and carrier
-	 * sets appearing in the predicates of the sequent and can be used to successfully
-	 * type check them.
-	 * <li> All hypotheses to be selected must also be present in the set of 
-	 * hypotheses provided.
-	 * </ul>
-	 * These checks need to be done before calling this method. The behaviour of the
-	 * sequent prover is undefined if these checks are not done.
-	 * </p>
-	 * 
-	 * @param typeEnv
-	 * 		The type environment for the sequent. This parameter must not be <code>null</code>.
-	 * 		It should be ensured that all predicates can be type checked using this
-	 * 		type environment. 
-	 * @param globalHypotheses
-	 * 		The set of global hypotheses, or <code>null</code> iff this set is intended to
-	 * 		be empty.
-	 * @param selectedHypotheses
-	 * 		The set of hypotheses to select. The set of hypotheses to select should be
-	 * 		contained in the set of initial hypotheses
-	 * @param goal
-	 * 		The goal. This parameter must not be <code>null</code>.
-	 */
-	public ProverSequent(ITypeEnvironment typeEnvironment,Collection<Predicate> globalHypotheses, Collection<Predicate> selectedHypotheses,Predicate goal){
-		this.typeEnvironment = typeEnvironment.clone();
-		this.globalHypotheses = globalHypotheses == null ? NO_HYPS : new LinkedHashSet<Predicate>(globalHypotheses);
-		this.localHypotheses = NO_HYPS;
-		this.hiddenHypotheses = NO_HYPS;
-		this.selectedHypotheses = selectedHypotheses == null ? NO_HYPS : new LinkedHashSet<Predicate>(selectedHypotheses);
-		this.goal = goal;
-		traceCreation();
-	}
-	
-	
-	/**
-	 * Constructs a new sequent with the given parameters.
-	 * 
-	 * <p>
-	 * Note : <br>
-	 * The parameters provided to construct the sequent must be consistent
-	 * in order to construct a proper sequent. In particular:
-	 * <ul>
-	 * <li> All predicates (i.e. all hypotheses and the goal) must be type checked.
-	 * <li> The type environment provided should contain all free identifiers and carrier
-	 * sets appearing in the predicates of the sequent and can be used to successfully
-	 * type check them.
-	 * </ul>
-	 * These checks need to be done before calling this method. The behaviour of the
-	 * sequent prover is undefined if these checks are not done.
-	 * </p>
-	 * 
-	 * @param typeEnv
-	 * 		The type environment for the sequent. This parameter must not be <code>null</code>.
-	 * 		It should be ensured that all predicates can be type checked using this
-	 * 		type environment. 
-	 * @param globalHypotheses
-	 * 		The set of hypotheses, or <code>null</code> iff this set is intended to
-	 * 		be empty.
-	 * @param goal
-	 * 		The goal. This parameter must not be <code>null</code>.
-	 */
-	public ProverSequent(ITypeEnvironment typeEnvironment,Collection<Predicate> globalHypotheses,Predicate goal){
-		this.typeEnvironment = typeEnvironment.clone();
-		this.globalHypotheses = globalHypotheses == null ? NO_HYPS : new LinkedHashSet<Predicate>(globalHypotheses);
-		this.localHypotheses = NO_HYPS;
-		this.hiddenHypotheses = NO_HYPS;
-		this.selectedHypotheses = NO_HYPS;
-		this.goal = goal;
-		traceCreation();
-	}
-	
 	
 	/**
 	 * Constructs a new Prover Sequent incrementally, from an old one, selectively replacing the
@@ -230,6 +151,8 @@ public final class ProverSequent implements IInternalProverSequent{
 		if (goal == null) this.goal = seq.goal;
 		else this.goal = goal;
 
+		this.origin = seq.origin;
+
 		traceCreation();
 	}
 	
@@ -272,13 +195,14 @@ public final class ProverSequent implements IInternalProverSequent{
 	 */
 	public ProverSequent(ITypeEnvironment typeEnv, Collection<Predicate> globalHypSet,
 			Collection<Predicate> hiddenHypSet, Collection<Predicate> selectedHypSet,
-			Predicate goal) {
+			Predicate goal, Object origin) {
 		this.typeEnvironment = typeEnv.clone();
 		this.globalHypotheses = globalHypSet == null ? NO_HYPS : new LinkedHashSet<Predicate>(globalHypSet);
 		this.localHypotheses = NO_HYPS;
 		this.hiddenHypotheses = hiddenHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(hiddenHypSet);;
 		this.selectedHypotheses = selectedHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(selectedHypSet);
 		this.goal = goal;
+		this.origin = origin;
 		traceCreation();
 	}
 
