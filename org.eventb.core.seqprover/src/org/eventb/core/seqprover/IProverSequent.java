@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - extended interface with getFormulaFactory() method
+ *     Systerel - extended interface with getOrigin() method
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -229,5 +230,14 @@ public interface IProverSequent{
 	 * @since 2.0
 	 */
 	FormulaFactory getFormulaFactory();
-	
+
+
+	/**
+	 * Returns the origin of this sequent.
+	 * 
+	 * @return an object, or <code>null</code>
+	 * @since 2.4
+	 */
+	Object getOrigin();
+
 }

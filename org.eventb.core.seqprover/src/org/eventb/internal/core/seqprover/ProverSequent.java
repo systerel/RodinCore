@@ -509,6 +509,11 @@ public final class ProverSequent implements IInternalProverSequent{
 		return typeEnvironment.getFormulaFactory();
 	}
 	
+	@Override
+	public Object getOrigin() {
+		return origin;
+	}
+	
 }
 
 
