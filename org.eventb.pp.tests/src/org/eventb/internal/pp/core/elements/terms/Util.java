@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,16 +112,6 @@ public class Util {
 		final CancellationChecker cancellation = CancellationChecker.newChecker(null);
 		final ClauseBuilder cBuilder = new ClauseBuilder(cancellation);
 		cBuilder.loadClausesFromContext(context, table);
-		return cBuilder;
-	}
-	
-	public static ClauseBuilder doPhaseOneAndTwo(String predicate) {
-		final AbstractContext context = new AbstractContext();
-		final Predicate pred = parsePredicate(predicate);
-		context.load(pred, false);
-		final CancellationChecker cancellation = CancellationChecker.newChecker(null);
-		final ClauseBuilder cBuilder = new ClauseBuilder(cancellation);
-		cBuilder.loadClausesFromContext(context);
 		return cBuilder;
 	}
 	
