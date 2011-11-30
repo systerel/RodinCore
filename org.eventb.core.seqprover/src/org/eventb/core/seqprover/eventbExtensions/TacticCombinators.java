@@ -252,4 +252,21 @@ public class TacticCombinators {
 
 	}
 
+	/**
+	 * Applies given tactic after lasso. Equivalent to:
+	 * Attempt(Sequence(lasso, OnAllPending(tactic)))
+	 * 
+	 * @author Nicolas Beauger
+	 * @since 2.4
+	 */
+	public static class AttemptAfterLasso implements ITacticCombinator {
+	
+		@Override
+		public ITactic getTactic(List<ITactic> tactics) {
+			assertOne(tactics);
+			return Tactics.afterLasoo(tactics.get(0));
+		}
+		
+	}
+
 }

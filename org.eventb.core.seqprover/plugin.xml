@@ -747,6 +747,14 @@
             minArity="1"
             name="%attemptName">
       </combinator>
+      <combinator
+            boundArity="true"
+            class="org.eventb.core.seqprover.eventbExtensions.TacticCombinators$AttemptAfterLasso"
+            description="%attemptLassoDescription"
+            id="attemptAfterLasso"
+            minArity="1"
+            name="%attemptLassoName">
+      </combinator>
    </extension>
 
 </plugin>
