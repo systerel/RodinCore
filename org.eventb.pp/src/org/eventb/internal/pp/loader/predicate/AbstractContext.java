@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 ETH Zurich.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - adapted to XProver v2 API
  *******************************************************************************/
 
 package org.eventb.internal.pp.loader.predicate;
@@ -13,6 +17,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.ITrackedPredicate;
 import org.eventb.internal.pp.loader.formula.descriptor.ArithmeticDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.DisjunctiveClauseDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.EqualityDescriptor;
@@ -49,6 +55,14 @@ public class AbstractContext implements IContext {
 
 	protected final List<INormalizedFormula> results = new ArrayList<INormalizedFormula>();
 
+	@Override
+	public void load(ISimpleSequent sequent) {
+		for (ITrackedPredicate predicate : sequent.getPredicates()) {
+			load(predicate.getPredicate(), predicate.getOriginal(),
+					!predicate.isHypothesis());
+		}
+	}
+	// TODO clean up these load methods that are used only in tests
 	@Override
 	public void load(Predicate predicate, Predicate originalPredicate,
 			boolean isGoal) {

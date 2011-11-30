@@ -1,28 +1,31 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - adapted to XProver v2 API
  *******************************************************************************/
 
 package org.eventb.internal.pp;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.xprover.XProverCall;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.ITrackedPredicate;
+import org.eventb.core.seqprover.xprover.XProverCall2;
 import org.eventb.core.seqprover.xprover.XProverInput;
 import org.eventb.core.seqprover.xprover.XProverReasoner;
+import org.eventb.core.seqprover.xprover.XProverReasoner2;
 
 /**
  * Implementation of {@link XProverReasoner} for PP.
@@ -30,7 +33,7 @@ import org.eventb.core.seqprover.xprover.XProverReasoner;
  * @author François Terrier
  *
  */
-public class PPReasoner extends XProverReasoner implements IVersionedReasoner {
+public class PPReasoner extends XProverReasoner2 implements IVersionedReasoner {
 
 	public static final String REASONER_ID = "org.eventb.pp.pp";
 	
@@ -42,10 +45,11 @@ public class PPReasoner extends XProverReasoner implements IVersionedReasoner {
 	}
 	
 	@Override
-	public XProverCall newProverCall(IReasonerInput input, Iterable<Predicate> hypotheses, Predicate goal, IProofMonitor pm) {
-		if (PPReasoner.DEBUG) PPReasoner.constructTest(hypotheses, goal);
+	public XProverCall2 newProverCall(IReasonerInput input,
+			ISimpleSequent sequent, IProofMonitor pm) {
+		if (PPReasoner.DEBUG) PPReasoner.constructTest(sequent);
 		
-		return new PPProverCall((XProverInput)input,hypotheses,goal,pm);
+		return new PPProverCall((XProverInput)input,sequent,pm);
 	}
 
 	@Override
@@ -60,17 +64,21 @@ public class PPReasoner extends XProverReasoner implements IVersionedReasoner {
 		return new PPInput(reader);
 	}
 
-	public static void constructTest(Iterable<Predicate> hypotheses,
-			Predicate goal) {
+	public static void constructTest(ISimpleSequent sequent) {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("doTest(\n");
-		appendTypeEnvironment(builder, hypotheses, goal);
+		appendTypeEnvironment(builder, sequent.getTypeEnvironment());
 		builder.append(", mSet(\n");
 		String sep = "\t";
-		for (Predicate predicate : hypotheses) {
+		Predicate goal = null;
+		for (ITrackedPredicate predicate : sequent.getPredicates()) {
 			builder.append(sep);
 			sep = ",\n\t";
-			appendString(builder, predicate);
+			if (predicate.isHypothesis()) {
+				appendString(builder, predicate.getPredicate());
+			} else {
+				goal = predicate.getPredicate();
+			}
 		}
 		builder.append("\n), ");
 		appendString(builder, goal);
@@ -79,36 +87,19 @@ public class PPReasoner extends XProverReasoner implements IVersionedReasoner {
 	}
 
 	private static void appendTypeEnvironment(StringBuilder builder,
-			Iterable<Predicate> hypotheses, Predicate goal) {
+			ITypeEnvironment typeEnv) {
 		builder.append("mList(\n");
-		final FreeIdentifier[] idents = collectFreeIdentifiers(hypotheses, goal);
 		String sep = "\t";
-		for (final FreeIdentifier ident : idents) {
+		final IIterator iterator = typeEnv.getIterator();
+		while(iterator.hasNext()) {
+			iterator.advance();
 			builder.append(sep);
 			sep = ",\n\t";
-			appendString(builder, ident.getName());
+			appendString(builder, iterator.getName());
 			builder.append(", ");
-			appendString(builder, ident.getType());
+			appendString(builder, iterator.getType());
 		}
 		builder.append("\n)");
-	}
-
-	private static FreeIdentifier[] collectFreeIdentifiers(
-			Iterable<Predicate> hypotheses, Predicate goal) {
-		final Set<FreeIdentifier> idents = new HashSet<FreeIdentifier>();
-		for (Predicate predicate : hypotheses) {
-			idents.addAll(Arrays.asList(predicate.getFreeIdentifiers()));
-		}
-		idents.addAll(Arrays.asList(goal.getFreeIdentifiers()));
-		final FreeIdentifier[] result = new FreeIdentifier[idents.size()];
-		idents.toArray(result);
-		Arrays.sort(result, new Comparator<FreeIdentifier>() {
-			@Override
-			public int compare(FreeIdentifier o1, FreeIdentifier o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
-		return result;
 	}
 
 	private static void appendString(StringBuilder builder, Object obj) {

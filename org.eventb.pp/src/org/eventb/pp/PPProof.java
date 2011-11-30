@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,16 +9,22 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added cancellation tests
  *     Systerel - added sequent normalization
+ *     Systerel - adapted to XProver v2 API
  *******************************************************************************/
 package org.eventb.pp;
 
+import static org.eventb.core.seqprover.transformer.SimpleSequents.make;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.ITrackedPredicate;
 import org.eventb.internal.pp.CancellationChecker;
+import org.eventb.internal.pp.PPTranslator;
 import org.eventb.internal.pp.core.ClauseDispatcher;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateTable;
@@ -34,8 +40,6 @@ import org.eventb.internal.pp.core.simplifiers.LiteralSimplifier;
 import org.eventb.internal.pp.core.simplifiers.OnePointRule;
 import org.eventb.internal.pp.loader.clause.ClauseBuilder;
 import org.eventb.internal.pp.loader.predicate.AbstractContext;
-import org.eventb.internal.pp.sequent.InputPredicate;
-import org.eventb.internal.pp.sequent.InputSequent;
 import org.eventb.internal.pp.sequent.SimpleTracer;
 import org.eventb.pp.PPResult.Result;
 
@@ -77,7 +81,7 @@ public class PPProof {
 
 	private final CancellationChecker cancellation;
 
-	private final InputSequent sequent;
+	private ISimpleSequent sequent;
 	
 	private VariableContext context;
 	private PredicateTable table;
@@ -89,20 +93,20 @@ public class PPProof {
 	
 	public PPProof(Predicate[] hypotheses, Predicate goal, IPPMonitor monitor) {
 		this.cancellation = CancellationChecker.newChecker(monitor);
-		this.sequent = new InputSequent(hypotheses, goal, ff, cancellation);
-	}
-
-	public PPProof(Set<Predicate> hypotheses, Predicate goal, IPPMonitor monitor) {
-		this.cancellation = CancellationChecker.newChecker(monitor);
-		this.sequent = new InputSequent(hypotheses, goal, ff, cancellation);
+		this.sequent = make(hypotheses, goal, ff, null);
 	}
 
 	public PPProof(Iterable<Predicate> hypotheses, Predicate goal,
 			IPPMonitor monitor) {
 		this.cancellation = CancellationChecker.newChecker(monitor);
-		this.sequent = new InputSequent(hypotheses, goal, ff, cancellation);
+		this.sequent = make(hypotheses, goal, ff, null);
 	}
 	
+	public PPProof(ISimpleSequent sSequent, IPPMonitor monitor) {
+		this.cancellation = CancellationChecker.newChecker(monitor);
+		this.sequent = sSequent;
+	}
+
 	/**
 	 * Returns the result of this proof.
 	 * 
@@ -112,7 +116,7 @@ public class PPProof {
 		return result;
 	}
 	
-	private void proofFound(InputPredicate predicate) {
+	private void proofFound(ITrackedPredicate predicate) {
 		final SimpleTracer tracer = new SimpleTracer(predicate);
 		result = new PPResult(Result.valid, tracer);
 	}
@@ -123,12 +127,23 @@ public class PPProof {
 	
 	@Deprecated
 	public List<Predicate> getTranslatedHypotheses() {
-		return sequent.getTranslatedHypotheses();
+		final List<Predicate> result = new ArrayList<Predicate>();
+		for (ITrackedPredicate predicate : sequent.getPredicates()) {
+			if (predicate.isHypothesis()) {
+				result.add(predicate.getPredicate());
+			}
+		}
+		return result;
 	}
 	
 	@Deprecated
 	public Predicate getTranslatedGoal() {
-		return sequent.getTranslatedGoal();
+		for (ITrackedPredicate predicate : sequent.getPredicates()) {
+			if (!predicate.isHypothesis()) {
+				return predicate.getPredicate();
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -136,7 +151,7 @@ public class PPProof {
 	 * and goal to predicate calculus.
 	 */
 	public void translate() {
-		sequent.translate();
+		sequent = PPTranslator.translate(sequent, cancellation);
 		cancellation.check();
 		runHook(translateHook);
 	}
@@ -159,14 +174,13 @@ public class PPProof {
 	}
 
 	protected void load(AbstractContext loadContext){
-		for (InputPredicate predicate : sequent.getPredicates()) {
-			if (predicate.loadPhaseOne(loadContext)) {
-				proofFound(predicate);
-				debugResult();
-				return;
-			}
-			cancellation.check();
+		final ITrackedPredicate trivial = sequent.getTrivialPredicate();
+		if (trivial != null) {
+			proofFound(trivial);
+			debugResult();
+			return;
 		}
+		loadContext.load(sequent);
 
 		final ClauseBuilder cBuilder = new ClauseBuilder(cancellation);
 		cBuilder.loadClausesFromContext(loadContext);

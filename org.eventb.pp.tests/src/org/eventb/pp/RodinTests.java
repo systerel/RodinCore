@@ -45,8 +45,8 @@ public class RodinTests extends AbstractRodinTest {
 		env.addName("s", REL(ty_T, ty_T));
 		env.addName("org", REL(ty_T, ty_S));
 		env.addName("sit", REL(ty_T, ty_S));
-		env.addName("M", POW(POW(ty_M)));
-		env.addName("N", POW(ty_M));
+		env.addName("M", POW(ty_M));
+		env.addName("N", POW(POW(ty_M)));
 	}
 
 	protected static void doTest(Set<String> hypotheses, String goal,
@@ -599,8 +599,8 @@ public class RodinTests extends AbstractRodinTest {
 		// !x Rxx,
 		// !x!y#z (Rxz & Ryz)
 		// |- !x!y (Rxy | Ryx);
-		doTest(mSet("∀N,T·N∈M∧T∈M⇒(∃x·(∀x0·x0∈x⇔x0∈N∧x0∈T)∧x∈M)", "E∈M",
-				"∀x·x∈ae⇒x∈N", "∀x·x∈N⇒x∈ae", "¬(∀x·x∈ae⇔x∈N)"), "ae=N", true);
+		doTest(mSet("∀A,T·A∈N∧T∈N⇒(∃x·(∀x0·x0∈x⇔x0∈A∧x0∈T)∧x∈N)", "E∈N",
+				"∀x·x∈ae⇒x∈A", "∀x·x∈A⇒x∈ae", "¬(∀x·x∈ae⇔x∈A)"), "ae=A", true);
 		doTest(mSet("∀x·∀y·∀z·x↦y∈r ∧ y↦z∈r ⇒ x↦z∈r", "∀x·x↦x∈r",
 				"∀x·∀y·∃z·x↦z∈r ∧ y↦z∈r"), "∀x·∀y·x↦y∈r ∨ y↦x∈r", false, 500);
 		doTest(mSet("r∼[q]⊆q", "ran(r) ∖ dom(r)⊆q", "q⊆ran(r)",
@@ -938,7 +938,7 @@ public class RodinTests extends AbstractRodinTest {
 			doTest(mSet("∃y·y = k ∧ y ∈ x"), "k∈x", true);
 
 			doTest(mSet("X ⊆ B", "B ⊆ X"), "∀x·x∈X ⇔ x∈B", true);
-			doTest(mSet("X ⊆ M", "M ⊆ X"), "M = X", true);
+			doTest(mSet("X ⊆ N", "N ⊆ X"), "N = X", true);
 			doTest(mSet("X ⊆ B", "B ⊆ X"), "X = B", true);
 			doTest(mSet("x ⊆ B"), "B ∖ (B ∖ x) = x", true);
 			doTest(mSet("x ⊆ B"), "B ∖ (B ∖ x) = x", true);

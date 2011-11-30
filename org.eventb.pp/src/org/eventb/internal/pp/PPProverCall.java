@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - added cancellation tests
  *     Systerel - fixed assertions in isValid() and others
  *     Systerel - changed proof display to NewPP to avoid ambiguity
+ *     Systerel - adapted to XProver v2 API
  *******************************************************************************/
 package org.eventb.internal.pp;
 
@@ -19,7 +20,9 @@ import java.util.concurrent.CancellationException;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.xprover.XProverCall;
+import org.eventb.core.seqprover.xprover.XProverCall2;
 import org.eventb.core.seqprover.xprover.XProverInput;
 import org.eventb.pp.IPPMonitor;
 import org.eventb.pp.PPProof;
@@ -32,14 +35,14 @@ import org.eventb.pp.PPResult.Result;
  * @author François Terrier
  * 
  */
-public class PPProverCall extends XProverCall implements IPPMonitor {
+public class PPProverCall extends XProverCall2 implements IPPMonitor {
 
 	private final int maxSteps;
 	private PPResult result;
 
-	public PPProverCall(XProverInput input, Iterable<Predicate> hypothesis,
-			Predicate goal, IProofMonitor pm) {
-		super(hypothesis, goal, pm);
+	public PPProverCall(XProverInput input, ISimpleSequent sequent,
+			IProofMonitor pm) {
+		super(sequent, pm);
 		maxSteps = ((PPInput) input).getMaxSteps();
 	}
 
@@ -66,7 +69,7 @@ public class PPProverCall extends XProverCall implements IPPMonitor {
 	@Override
 	public void run() {
 		try {
-			final PPProof prover = new PPProof(hypotheses, goal, this);
+			final PPProof prover = new PPProof(sequent, this);
 			checkCancellation();
 			prover.translate();
 			checkCancellation();

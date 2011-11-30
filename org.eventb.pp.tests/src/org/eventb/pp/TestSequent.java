@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 ETH Zurich and others.
+ * Copyright (c) 2008, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation of RodinTests
  *     Systerel - created this class from RodinTests + some refactoring
  *     Systerel - mathematical language V2
+ *     Systerel - clean up while adapting to XProver v2 API
  *******************************************************************************/
 package org.eventb.pp;
 
@@ -20,18 +21,24 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.internal.pp.sequent.InputPredicate;
-import org.eventb.internal.pp.sequent.InputSequent;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.ITrackedPredicate;
+import org.eventb.internal.pp.CancellationChecker;
+import org.eventb.internal.pp.PPTranslator;
 
 /**
  * Implements a typed sequent for use in tests.
  */
 public class TestSequent {
+
+	private static final CancellationChecker NO_CHECKER = CancellationChecker
+			.newChecker(null);
 
 	private static List<Predicate> parseHypotheses(Iterable<String> hypotheses, FormulaFactory ff) {
 		final List<Predicate> result = new ArrayList<Predicate>();
@@ -99,14 +106,30 @@ public class TestSequent {
 		return goal;
 	}
 
-	public void assertTranslatedSequentOf(InputSequent is) {
-		assertEquals(typenv, is.typeEnvironment());
-		final InputPredicate[] preds = is.getPredicates();
-		int i = 0;
-		for (final Predicate hyp: hypotheses()) {
-			assertEquals(hyp, preds[i++].translatedPredicate());
+	public void assertTranslatedSequentOf(ISimpleSequent input) {
+		final ISimpleSequent actual = PPTranslator.translate(input, NO_CHECKER);
+
+		assertEquals(typenv, actual.getTypeEnvironment());
+		final ITrackedPredicate[] preds = actual.getPredicates();
+
+		Predicate actualGoal = null;
+		int hypIndex = 0;
+		for (ITrackedPredicate pred : preds) {
+			if (pred.isHypothesis()) {
+				final Predicate expectedHyp = hypotheses.get(hypIndex);
+				assertEquals(expectedHyp, pred.getPredicate());
+				hypIndex++;
+			} else {
+				actualGoal = pred.getPredicate();
+			}
 		}
-		assertEquals(goal, preds[i].translatedPredicate());
+		assertEquals("Wrong number of hypotheses", hypotheses.size(), hypIndex);
+		if (actualGoal == null) {
+			// goal is false
+			actualGoal = typenv.getFormulaFactory().makeLiteralPredicate(
+					Formula.BFALSE, null);
+		}
+		assertEquals(goal, actualGoal);
 	}
 
 }

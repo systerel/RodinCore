@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.pp;
 
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
+import static org.eventb.core.seqprover.transformer.SimpleSequents.make;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -22,6 +23,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.internal.pp.PPInput;
 import org.eventb.internal.pp.PPProverCall;
 import org.junit.Before;
@@ -77,7 +79,8 @@ public class CancellationTests {
 	public void setUp() {
 		PPInput input = new PPInput(false, 1000, 1000);
 		Iterable<Predicate> hyps = Collections.emptySet();
-		call = new PPProverCall(input, hyps, makeGoal(), monitor);
+		final ISimpleSequent sequent = make(hyps, makeGoal(), ff);
+		call = new PPProverCall(input, sequent, monitor);
 	}
 
 	private Predicate makeGoal() {

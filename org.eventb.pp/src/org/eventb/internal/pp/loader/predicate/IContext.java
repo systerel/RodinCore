@@ -1,17 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2011 ETH Zurich and otheres.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added a load() method from a simple sequent
  *******************************************************************************/
-
 package org.eventb.internal.pp.loader.predicate;
 
 import java.util.Collection;
 import java.util.List;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.internal.pp.loader.formula.descriptor.IndexedDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.LiteralDescriptor;
 import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
@@ -29,6 +33,13 @@ import org.eventb.internal.pp.loader.formula.descriptor.PredicateDescriptor;
  */
 public interface IContext {
 
+	/**
+	 * Loads the given sequent in this context.
+	 * 
+	 * @param sequent
+	 */
+	void load(ISimpleSequent sequent);
+	
 	/**
 	 * Loads the given predicate in this context.
 	 * <p>

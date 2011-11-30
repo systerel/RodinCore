@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,22 +21,22 @@ import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
-import org.eventb.internal.pp.CancellationChecker;
-import org.eventb.internal.pp.sequent.InputSequent;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.SimpleSequents;
+import org.eventb.internal.pp.PPTranslator;
 import org.eventb.pp.AbstractRodinTest;
 import org.eventb.pp.TestSequent;
 import org.junit.Test;
 
 /**
- * Unit tests for class {@link InputSequent}.
+ * Unit tests for class {@link PPTranslator}.
  * 
  * @author Laurent Voisin
  */
-public class TestInputSequent extends AbstractRodinTest {
+public class TestPPTranslator extends AbstractRodinTest {
 
 	private static final List<String> NO_TE = emptyList();
-	private static final CancellationChecker NO_CHECKER = CancellationChecker
-			.newChecker(null);
+	private static final List<String> NO_HYP = emptyList();
 	
 	private static final IDatatypeExtension DT_TYPE = new IDatatypeExtension() {
 		
@@ -65,16 +65,16 @@ public class TestInputSequent extends AbstractRodinTest {
 	
 	private static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
 
-	private static InputSequent makeInputSequent(TestSequent s) {
-		return new InputSequent(s.hypotheses(), s.goal(), ff, NO_CHECKER);
+	private static ISimpleSequent makeInputSequent(TestSequent s) {
+		return SimpleSequents.make(s.hypotheses(), s.goal(), ff);
 	}
 
-	private static InputSequent makeInputSequent(List<String> typenv,
+	private static ISimpleSequent makeInputSequent(List<String> typenv,
 			List<String> hyps, String goal, FormulaFactory factory) {
 		return makeInputSequent(new TestSequent(typenv, hyps, goal, factory));
 	}
 
-	private static InputSequent makeInputSequent(List<String> typenv,
+	private static ISimpleSequent makeInputSequent(List<String> typenv,
 			List<String> hyps, String goal) {
 		return makeInputSequent(typenv, hyps, goal, ff);
 	}
@@ -94,10 +94,9 @@ public class TestInputSequent extends AbstractRodinTest {
 	 */
 	@Test
 	public void closedSequent() throws Exception {
-		final TestSequent sequent = makeTestSequent(NO_TE, asList("⊤"), "⊤");
-		final InputSequent is = makeInputSequent(sequent);
-		is.translate();
-		sequent.assertTranslatedSequentOf(is);
+		final ISimpleSequent is = makeInputSequent(NO_TE, NO_HYP, "⊤");
+		final TestSequent expected = makeTestSequent(NO_TE, NO_HYP, "⊤");
+		expected.assertTranslatedSequentOf(is);
 	}
 
 	/**
@@ -106,10 +105,8 @@ public class TestInputSequent extends AbstractRodinTest {
 	 */
 	@Test
 	public void simpleSequent() throws Exception {
-		final InputSequent is = makeInputSequent(NO_TE, asList("a = 0"),
+		final ISimpleSequent is = makeInputSequent(NO_TE, asList("a = 0"),
 				"b = 1");
-		is.translate();
-
 		final TestSequent expected = makeTestSequent(
 				asList("a", "ℤ", "b", "ℤ"), asList("a = 0"), "b = 1");
 		expected.assertTranslatedSequentOf(is);
@@ -120,9 +117,8 @@ public class TestInputSequent extends AbstractRodinTest {
 	 */
 	@Test
 	public void normalization() throws Exception {
-		final InputSequent is = makeInputSequent(NO_TE, asList("p = 0 ↦ TRUE"),
+		final ISimpleSequent is = makeInputSequent(NO_TE, asList("p = 0 ↦ TRUE"),
 				"q = FALSE ↦ 1");
-		is.translate();
 		final TestSequent expected = makeTestSequent(asList("p_1", "ℤ", "p_2",
 				"BOOL", "q_1", "BOOL", "q_2", "ℤ"),
 				asList("p_1 = 0 ∧ p_2 = TRUE"), "¬ q_1 = TRUE ∧ q_2 = 1");
@@ -135,9 +131,8 @@ public class TestInputSequent extends AbstractRodinTest {
 	 */
 	@Test
 	public void normalizationDouble() throws Exception {
-		final InputSequent is = makeInputSequent(NO_TE,
+		final ISimpleSequent is = makeInputSequent(NO_TE,
 				asList("p = 0 ↦ 1  ↦ (2 ↦ 3)"), "p = q ↦ r");
-		is.translate();
 		final TestSequent expected = makeTestSequent(NO_TE,
 				asList("p_1 = 0 ∧ p_2 = 1 ∧ p_3 = 2 ∧ p_4 = 3"),
 				"p_1 = q_1 ∧ p_2 = q_2 ∧ p_3 = r_1 ∧ p_4 = r_2");
@@ -149,9 +144,8 @@ public class TestInputSequent extends AbstractRodinTest {
 	 */
 	@Test
 	public void normalizationConflict() throws Exception {
-		final InputSequent is = makeInputSequent(NO_TE, asList("p = 0 ↦ 1",
+		final ISimpleSequent is = makeInputSequent(NO_TE, asList("p = 0 ↦ 1",
 				"p_1 = 2"), "p_2 = TRUE");
-		is.translate();
 		final TestSequent expected = makeTestSequent(NO_TE, asList(
 				"p_3 = 0 ∧ p_4 = 1", "p_1 = 2"), "p_2 = TRUE");
 		expected.assertTranslatedSequentOf(is);
@@ -166,12 +160,10 @@ public class TestInputSequent extends AbstractRodinTest {
 		final List<String> tEnv = asList("p", "DT", "a", "ℤ", "x", "DT");
 		final List<String> inHyps = asList("p = dt", "a = 0", "x ∈ DT",
 				"∀y⦂DT,z⦂DT·y=z");
-		final List<String> transHyps = asList("⊤", "a = 0", "⊤",
-				"∀y⦂DT,z⦂DT·y=z");
+		final List<String> transHyps = asList("a = 0");
 		final String goal = "a < a";
-		final InputSequent is = makeInputSequent(tEnv, inHyps, goal, DT_FF);
-		final TestSequent exp = makeTestSequent(tEnv, transHyps, goal, DT_FF);
-		is.translate();
+		final ISimpleSequent is = makeInputSequent(tEnv, inHyps, goal, DT_FF);
+		final TestSequent exp = makeTestSequent(asList("a", "ℤ"), transHyps, goal, DT_FF);
 		exp.assertTranslatedSequentOf(is);
 	}
 
@@ -183,9 +175,8 @@ public class TestInputSequent extends AbstractRodinTest {
 	public void testExtensionsInGoal() throws Exception {
 		final List<String> tEnv = asList("p", "DT", "a", "ℤ");
 		final List<String> hyp = asList("a = 0");
-		final InputSequent is = makeInputSequent(tEnv, hyp, "p = dt", DT_FF);
-		final TestSequent expected = makeTestSequent(tEnv, hyp, "⊥", DT_FF);
-		is.translate();
+		final ISimpleSequent is = makeInputSequent(tEnv, hyp, "p = dt", DT_FF);
+		final TestSequent expected = makeTestSequent(asList("a", "ℤ"), hyp, "⊥", DT_FF);
 		expected.assertTranslatedSequentOf(is);
 	}
 
@@ -197,11 +188,10 @@ public class TestInputSequent extends AbstractRodinTest {
 	public void testExtensionsInTypeEnv() throws Exception {
 		final List<String> tEnv = asList("a", "ℤ", "x", "DT");
 		final List<String> inHyps = asList("a = 0", "x ∈ DT");
-		final List<String> transHyps = asList("a = 0", "⊤");
+		final List<String> transHyps = asList("a = 0");
 		final String goal = "∀y⦂DT·y=x";
-		final InputSequent is = makeInputSequent(tEnv, inHyps, goal, DT_FF);
-		final TestSequent exp = makeTestSequent(tEnv, transHyps, goal, DT_FF);
-		is.translate();
+		final ISimpleSequent is = makeInputSequent(tEnv, inHyps, goal, DT_FF);
+		final TestSequent exp = makeTestSequent(asList("a", "ℤ"), transHyps, "⊥", DT_FF);
 		exp.assertTranslatedSequentOf(is);
 	}
 
