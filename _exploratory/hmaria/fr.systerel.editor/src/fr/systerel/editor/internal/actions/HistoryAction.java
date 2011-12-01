@@ -20,7 +20,9 @@ import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 import fr.systerel.editor.actions.IRodinHistory;
 import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
@@ -138,19 +140,34 @@ public abstract class HistoryAction extends Action implements
 	}
 
 	@Override
+	public void historyNotification(OperationHistoryEvent event) {
+		refresh();
+	}
+
+	@Override
 	final public void run() {
 		final IUndoContext context = getUndoContext();
 		if (context != null) {
 			doRun(context);
-			//refreshContents(context);
+			refreshContents(); // refreshes in case of attribute change
 		}
 	}
 
-	@Override
-	public void historyNotification(OperationHistoryEvent event) {
-		refresh();
+	public void refreshContents() {
+		final IWorkbenchWindow ww = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (ww == null)
+			return;
+		final IWorkbenchPage activePage = ww.getActivePage();
+		if (activePage == null)
+			return;
+		final IWorkbenchPart editor = activePage.getActivePart();
+		if (!(editor instanceof RodinEditor))
+			return;
+		final RodinEditor rEditor = (RodinEditor) editor;
+		rEditor.resync(null, false);
 	}
-	
+
 	public void refresh() {
 		final String text = getActionName() + " " + getLabel();
 		if (!text.equals(getText())) {
