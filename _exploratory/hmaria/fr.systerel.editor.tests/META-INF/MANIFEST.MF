@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Rodin Editor Tests
 Bundle-SymbolicName: fr.systerel.editor.tests
-Bundle-Version: 0.5.0.qualifier
+Bundle-Version: 0.6.0.qualifier
 Bundle-Vendor: Systerel
 Require-Bundle: org.eclipse.core.runtime,
  org.junit;bundle-version="4.8.1",
