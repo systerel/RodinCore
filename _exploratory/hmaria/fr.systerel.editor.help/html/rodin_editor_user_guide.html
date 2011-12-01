@@ -43,7 +43,7 @@ var wgUserGroups = null;
 var wgUserLanguage = "en";
 var wgContentLanguage = "en";
 var wgBreakFrames = false;
-var wgCurRevisionId = "9710";
+var wgCurRevisionId = "10805";
 var wgVersion = "1.12.0";
 var wgEnableAPI = true;
 var wgEnableWriteAPI = true;
@@ -63,7 +63,7 @@ var wgEnableWriteAPI = true;
 	<div id="globalWrapperHacked">
 		<div id="column-content">
 	<div id="content">
-		<a id="top" name="topa"></a>
+		<a id="top" name="top"></a>
 				<h1 class="firstHeading">Rodin Editor User Guide</h1>
 		<div id="bodyContent">
 			<h3 id="siteSub">From Event-B</h3>
@@ -88,11 +88,14 @@ var wgEnableWriteAPI = true;
 </li>
 <li class="toclevel-1"><a href="#Tips_.26_Tricks"><span class="tocnumber">4</span> <span class="toctext">Tips &amp; Tricks</span></a></li>
 </ul>
+</li>
+</ul>
 </td></tr></table><script type="text/javascript"> if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } </script>
 <a name="Introduction"></a><h2> <span class="mw-headline"> Introduction </span></h2>
 <p>The Rodin Editor plug-in provides a structured editor to model in Event-B withing Rodin. This editor uses a textual representation, and edition is done through an overlay text editor and action depending on the caret position in the text.<br />
 For more details about the principles of this editor,  see <a href="http://wiki.event-b.org/index.php/Rodin_Editor" title="Rodin Editor">the Rodin Editor Plug-in page</a>.<br />
-<b>IMPORTANT</b>&nbsp;:  <i>we identified a source of concurrency issue in the current version (0.5.0) of the plug-in.</i><br />
+</p><p><b>IMPORTANT FOR RODIN 2.2</b>&nbsp;:  <i>we identified a source of concurrency issue in the current version (0.5.0) of the plug-in.</i><br />
+<b> Try to use Rodin 2.3 or above and compatible Rodin Editor versions.</b>
 <b>To avoid any trouble, please do not generate files while having some Rodin Editor open, and edit only one model per project at once.</b>
 </p>
 <a name="Installation"></a><h2> <span class="mw-headline"> Installation </span></h2>
@@ -101,7 +104,7 @@ For more details about the principles of this editor,  see <a href="http://wiki.
 </p>
 <ol><li> In the menu choose Help -&gt; Install New Software...
 </li><li> In the Work with dropdown list, choose the location URL: Rodin - <a class="external free" href="http://rodin-b-sharp.sourceforge.net/updates" rel="nofollow" title="http://rodin-b-sharp.sourceforge.net/updates">http://rodin-b-sharp.sourceforge.net/updates</a>
-</li><li> Select the Rodin Editor feature then click the check box
+</li><li> Select the Edition section then the Rodin Editor feature then click the check box
 </li><li> Click Next, after some time, the Install Details page appears
 </li><li> Click Next and accept the license
 </li><li> Click Finish
@@ -227,7 +230,7 @@ or a gray background if they are of different types. See the picture below.
 To do so, go to Window &gt; Preferences and then General &gt; Key. A table appears were you can find and edit the shortcuts.
 </p>
 <a name="Tips_.26_Tricks"></a><h2> <span class="mw-headline"> Tips &amp; Tricks </span></h2>
-<p>A command currently (i.e. in Rodin 2.2) disable the possibility to use the ESC instead of ALT+ESC sequence. This is quite cumbersome, and can be tuned!
+<p>A command currently disable the possibility to use the ESC instead of ALT+ESC sequence. This is quite cumbersome, and can be tuned!
 To do so, open the preference table for key shortcuts (described above) and after ensuring you disabled the filters of uncategorized commands (using the Filters... dialog)
 search for the command named "Restore Styles". This is the command to release the highlights in the proving views. You can then swith the sequence of this command to ALT+ESC and change the value of the "Abort edition and free selected items" command to ESC. After applying these settings, the shortcuts will be modified as wished above.
 </p>
@@ -238,7 +241,7 @@ Post-expand include size: 207/2097152 bytes
 Template argument size: 0/2097152 bytes
 -->
 
-<!-- Saved in parser cache with key mediawiki_eventb:pcache:idhash:1619-0!1!0!!en!2!edit=0 and timestamp 20110713140833 -->
+<!-- Saved in parser cache with key mediawiki_eventb:pcache:idhash:1619-0!1!0!!en!2!edit=0 and timestamp 20111201170456 -->
 <div class="printfooter">
 Retrieved from "<a href="">http://wiki.event-b.org/index.php/Rodin_Editor_User_Guide</a>"</div>
 						<!-- end content --><!-- ('div', {'class': 'visualClear'}) ('/div', {}) --></div></div></div>
@@ -257,8 +260,8 @@ Retrieved from "<a href="">http://wiki.event-b.org/index.php/Rodin_Editor_User_G
 			<!-- ('div', {'class': 'visualClear'}) ('/div', {}) -->
 			<div id="footerHacked">
 				<ul id="f-list">
-				<li id="lastmod"> This page was last modified 14:08, 13 July 2011.</li>
-				<li id="viewcount">This page has been accessed 17 times.</li>
+				<li id="lastmod"> This page was last modified 17:04, 1 December 2011.</li>
+				<li id="viewcount">This page has been accessed 335 times.</li>
 				<li id="privacy"><a href="http://wiki.event-b.org/index.php/Event-B:Privacy_policy" title="Event-B:Privacy policy">Privacy policy</a></li>
 				<li id="about"><a href="http://wiki.event-b.org/index.php/Event-B:About" title="Event-B:About">About Event-B</a></li>
 				<li id="disclaimer"><a href="http://wiki.event-b.org/index.php/Event-B:General_disclaimer" title="Event-B:General disclaimer">Disclaimers</a></li>
@@ -268,4 +271,4 @@ Retrieved from "<a href="">http://wiki.event-b.org/index.php/Rodin_Editor_User_G
 	
 		<script type="text/javascript">if (window.runOnloadHook) runOnloadHook();</script>
 </div>
-<!-- Served in 0.286 secs. --><br /></body></html>
+<!-- Served in 0.318 secs. --><br /></body></html>
