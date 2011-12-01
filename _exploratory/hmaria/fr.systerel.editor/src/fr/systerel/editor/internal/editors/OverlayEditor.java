@@ -395,7 +395,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 	
 	public void abortEdition() {
-		if (!originalText.isEmpty())
+		if (!originalText.isEmpty() && editor.isDirty())
 			editorText.setText(originalText);
 		quitEdition();
 	}
