@@ -40,7 +40,6 @@ public class CutHandler extends AbstractEditorHandler {
 		return null;
 	}
 	
-	
 	@Override
 	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
 		return editor.getSelectionController().getSelectedElements().length > 0

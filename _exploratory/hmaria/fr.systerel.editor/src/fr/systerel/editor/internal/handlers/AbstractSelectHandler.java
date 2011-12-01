@@ -10,8 +10,6 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.editors.EditPos;
@@ -20,44 +18,53 @@ import fr.systerel.editor.internal.editors.SelectionController;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
-public abstract class AbstractSelectHandler extends AbstractEditorHandler {
+public abstract class AbstractSelectHandler extends AbstractEditionHandler {
+
+	@Override
+	public boolean isEnabled() {
+		final RodinEditor editor = getActiveRodinEditor();
+		return editor != null;
+	}
 	
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final RodinEditor rEditor = getActiveRodinEditor(event);
-		if (rEditor == null) {
-			return null;
+	protected String handleSelection(RodinEditor editor, int offset) {
+		if (editor.isOverlayActive()) {
+			handleOverlayAction(editor);
+			return "";
 		}
-		final SelectionController selController = rEditor
+		final SelectionController selController = editor
 				.getSelectionController();
-		final int offset = rEditor.getCurrentOffset();
 		final ILElement element = selController.getSelectionAt(offset);
 		final EditPos reveal;
 		if (element == null) {
 			// not selected => expand selection
 			reveal = selController.toggleSelection(offset);
 		} else {
-			final ILElement sibling = getSibling(rEditor, element);
+			final ILElement sibling = getSibling(editor, element);
 			if (sibling == null) {
-				return null;
+				return "";
 			}
 			if (selController.isSelected(sibling)) {
 				// deselect current
 				selController.toggleSelection(element);
-				reveal = rEditor.getDocumentMapper().getEnclosingPosition(sibling);
+				reveal = editor.getDocumentMapper().getEnclosingPosition(
+						sibling);
 			} else {
 				// select sibling
 				reveal = selController.toggleSelection(sibling);
 			}
 		}
 		if (reveal != null) {
-			rEditor.reveal(reveal);
+			editor.reveal(reveal);
 		}
-		return null;
-	}
+		return "";
+	};
 
-	protected abstract ILElement getSibling(RodinEditor rEditor, ILElement element);
+	protected abstract ILElement getSibling(RodinEditor rEditor,
+			ILElement element);
+	
+	protected abstract void handleOverlayAction(RodinEditor editor);
 
 }

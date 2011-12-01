@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eventb.ui.EventBUIPlugin;
 
@@ -29,13 +30,25 @@ import fr.systerel.editor.internal.editors.RodinEditor;
 public abstract class AbstractEditionHandler extends AbstractEditorHandler {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IEditorPart activeEditor = EditorPlugin.getActivePage()
+	public boolean isEnabled() {
+		final IWorkbenchPage activePage = EditorPlugin.getActivePage();
+		if (activePage == null)
+			return false;
+		final IEditorPart activeEditor = activePage
 				.getActiveEditor();
 		if (!(activeEditor instanceof RodinEditor)) {
-			return "The current active editor is not a Rodin Editor";
+			return false;
 		}
 		final RodinEditor editor = (RodinEditor) activeEditor;
+		return super.isEnabled() && !editor.isOverlayActive();
+	}
+	
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		final RodinEditor editor = getActiveRodinEditor();
+		if (editor == null) {
+			return "The current active editor is not a Rodin Editor";
+		}
 		final ISelection curSel = HandlerUtil.getActiveMenuSelection(event);
 		final int offset;
 		if (curSel instanceof TextSelection) {

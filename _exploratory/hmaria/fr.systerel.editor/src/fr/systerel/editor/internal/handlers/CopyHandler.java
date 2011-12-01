@@ -35,7 +35,7 @@ import fr.systerel.editor.internal.editors.RodinEditor;
  * @author "Thomas Muller"
  */
 public class CopyHandler extends AbstractEditorHandler {
-
+	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final RodinEditor editor = getActiveRodinEditor(event);

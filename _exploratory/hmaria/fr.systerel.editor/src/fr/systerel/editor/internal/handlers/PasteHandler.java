@@ -33,12 +33,19 @@ import fr.systerel.editor.internal.editors.RodinEditorUtils;
 public class PasteHandler extends AbstractEditionHandler {
 
 	@Override
+	public boolean isEnabled() {
+		final RodinEditor rEditor = getActiveRodinEditor();
+		return super.isEnabled()
+				|| (rEditor != null && rEditor.isOverlayActive());
+	}
+
+	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
 		if (editor.isOverlayActive()) {
 			final IAction action = editor.getOverlayEditorAction(ST.PASTE);
 			if (action != null) {
 				action.run();
-				return "Text pasted";		
+				return "Text pasted";
 			}
 			return "Text paste failed";
 		}
@@ -65,8 +72,8 @@ public class PasteHandler extends AbstractEditionHandler {
 		// Check for the existing of the elements to be pasted.
 		for (IRodinElement e : elements) {
 			if (!e.exists()) {
-				RodinEditorUtils.showError(title_nothingToPaste, "The element " + element
-						+ "does not exist");
+				RodinEditorUtils.showError(title_nothingToPaste, "The element "
+						+ element + "does not exist");
 			}
 		}
 		final IRodinElement target = element.getElement();

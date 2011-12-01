@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.swt.IFocusService;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
@@ -203,7 +204,9 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	
 	private StyledText editorText;
 	private Interval interval;
+	private Map<Integer, IAction> ctxMenuEditActions = new HashMap<Integer, IAction>();
 	private Map<Integer, IAction> editActions = new HashMap<Integer, IAction>();
+	
 	private Menu fTextContextMenu;
 	
 	/** A backup of the text contained on the opening of the editor. */
@@ -584,7 +587,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 
 	@Override
 	public void menuAboutToShow(IMenuManager manager) {
-		for (IAction action : editActions.values()) {
+		for (IAction action : ctxMenuEditActions.values()) {
 			if (action.getActionDefinitionId().equals(
 					IWorkbenchCommandConstants.EDIT_COPY)
 					|| action.getActionDefinitionId().equals(
@@ -604,20 +607,34 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		action = new StyledTextEditAction(editorText, ST.COPY);
 		action.setText("Copy");
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
-		editActions.put(ST.COPY, action);
+		ctxMenuEditActions.put(ST.COPY, action);
 
 		action = new StyledTextEditAction(editorText, ST.PASTE);
 		action.setText("Paste");
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
-		editActions.put(ST.PASTE, action);
+		ctxMenuEditActions.put(ST.PASTE, action);
 
 		action = new StyledTextEditAction(editorText, ST.CUT);
 		action.setText("Cut");
 		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_CUT);
-		editActions.put(ST.CUT, action);
+		ctxMenuEditActions.put(ST.CUT, action);
+		
+		action = new StyledTextEditAction(editorText, ST.SELECT_LINE_UP);
+		action.setText("Select Line Up");
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_LINE_UP);
+		editActions.put(ST.SELECT_LINE_UP, action);
+		
+		action = new StyledTextEditAction(editorText, ST.SELECT_LINE_DOWN);
+		action.setText("Select Line Down");
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_LINE_DOWN);
+		editActions.put(ST.SELECT_LINE_DOWN, action);
+		
 	}
 	
 	public IAction getOverlayAction(int actionConstant) {
+		final IAction action = ctxMenuEditActions.get(actionConstant);
+		if (action != null)
+			return action;
 		return editActions.get(actionConstant);
 	}
 

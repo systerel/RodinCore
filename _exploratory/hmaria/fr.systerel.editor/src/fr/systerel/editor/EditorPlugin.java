@@ -161,7 +161,10 @@ public class EditorPlugin extends AbstractUIPlugin {
 	 * @return current active workbench page
 	 */
 	private IWorkbenchPage internalGetActivePage() {
-		return getActiveWorkbenchWindow().getActivePage();
+		final IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
+		if (activeWorkbenchWindow == null)
+			return null;
+		return activeWorkbenchWindow.getActivePage();
 	}
 
 	/**

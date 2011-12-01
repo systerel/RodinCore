@@ -15,8 +15,6 @@ import static java.util.Arrays.asList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -31,32 +29,28 @@ import fr.systerel.editor.internal.editors.SelectionController;
 /**
  * @author Thomas Muller
  */
-public abstract class AbstractMoveHandler extends AbstractEditorHandler {
+public abstract class AbstractMoveHandler extends AbstractEditionHandler {
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final RodinEditor rEditor = getActiveRodinEditor(event);
-		if (rEditor == null) {
-			return null;
-		}
+	public String handleSelection(RodinEditor rEditor, int offset) {
 		final SelectionController selController = rEditor
 				.getSelectionController();
 		if (!selController.hasSelectedElements()) {
 			// TODO expand selection
-			return null; // nothing to move up
+			return "Nothing to move up"; // nothing to move up
 		}
 		final ILElement[] selected = selController.getSelectedElements();
 		final IElementType<?> siblingType = checkAndGetSameType(selected);
 		if (siblingType == null)
-			return null;
+			return "";
 		final DocumentMapper mapper = rEditor.getDocumentMapper();
 		final ModelPosition pos = getMovementPosition(mapper, selected,
 				siblingType);
 		if (pos == null) {
-			return null;
+			return "";
 		}
 		new Move(pos).perform(asList(selected));
-		return null;
+		return "";
 	}
 
 	protected abstract ModelPosition getMovementPosition(DocumentMapper mapper,

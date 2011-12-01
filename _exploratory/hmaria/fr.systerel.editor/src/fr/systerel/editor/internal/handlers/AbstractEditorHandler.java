@@ -13,12 +13,9 @@ package fr.systerel.editor.internal.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.editors.RodinEditor;
 
 
@@ -26,19 +23,8 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 
 	@Override
 	public boolean isEnabled() {
-		final IWorkbenchWindow ww = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (ww == null)
-			return false;
-		final IWorkbenchPage activePage = ww.getActivePage();
-		if (activePage == null)
-			return false;
-		final IWorkbenchPart editor = activePage.getActivePart();
-		if (!(editor instanceof RodinEditor))
-			return false;
-		final RodinEditor rEditor = (RodinEditor) editor;
-		return !rEditor.isOverlayActive()
-				&& checkEnablement(rEditor, rEditor.getCurrentOffset());
+		final RodinEditor rEditor = getActiveRodinEditor();
+		return rEditor!= null	&& checkEnablement(rEditor, rEditor.getCurrentOffset());
 	}
 
 	/**
@@ -61,6 +47,15 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 			return null;
 		}
 		return (RodinEditor) editor;
+	}
+	
+	protected static RodinEditor getActiveRodinEditor() {
+		final IEditorPart activeEditor = EditorPlugin.getActivePage()
+				.getActiveEditor();
+		if (!(activeEditor instanceof RodinEditor)) {
+			return null;
+		}
+		return (RodinEditor) activeEditor;
 	}
 	
 }
