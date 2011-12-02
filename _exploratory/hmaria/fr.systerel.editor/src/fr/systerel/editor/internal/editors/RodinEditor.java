@@ -10,11 +10,14 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import static org.eclipse.ui.actions.ActionFactory.REDO;
+import static org.eclipse.ui.actions.ActionFactory.UNDO;
 import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
@@ -36,15 +39,14 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
-import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -61,8 +63,6 @@ import org.rodinp.core.emf.api.itf.ILFile;
 
 import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.actions.HistoryAction;
-import fr.systerel.editor.internal.actions.HistoryAction.Redo;
-import fr.systerel.editor.internal.actions.HistoryAction.Undo;
 import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
@@ -287,37 +287,13 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	@Override
 	protected void createUndoRedoActions() {
 		if (getUndoContext() != null) {
-			// Create the undo action
 			final IWorkbenchWindow ww = getEditorSite().getWorkbenchWindow();
-			final Undo undoAction = new HistoryAction.Undo(ww);
-			PlatformUI
-					.getWorkbench()
-					.getHelpSystem()
-					.setHelp(undoAction,
-							IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-			undoAction
-					.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
-			registerUndoRedoAction(ITextEditorActionConstants.UNDO, undoAction);
-			undoAction.setEnabled(false);
-	
-			// Create the redo action.
-			final Redo redoAction = new HistoryAction.Redo(ww);
-			PlatformUI
-					.getWorkbench()
-					.getHelpSystem()
-					.setHelp(redoAction,
-							IAbstractTextEditorHelpContextIds.REDO_ACTION);
-			redoAction
-					.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
-			registerUndoRedoAction(ITextEditorActionConstants.REDO, redoAction);
-			redoAction.setEnabled(false);
+			final Action undoAction = new HistoryAction.Undo(ww);
+			final Action redoAction = new HistoryAction.Redo(ww);
+			final IPartListener listener = new PartListener();
+			setHistoryHandler(UNDO.getId(), undoAction, listener);
+			setHistoryHandler(REDO.getId(), redoAction, listener);
 		}
-	}
-
-	private void removeAction(String actionId) {
-		if (actionId == null)
-			return;
-		setAction(actionId, null);
 	}
 	
 	private IUndoContext getUndoContext() {
@@ -326,6 +302,23 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 			undoContext = OperationFactory.getRodinFileUndoContext(inputRoot);
 		}
 		return undoContext;
+	}
+
+	/**
+	 * Set a global action handler for a undo/redo action and add the given part
+	 * listener.
+	 * */
+	private void setHistoryHandler(String actionId, IAction handler,
+			IPartListener listener) {
+		if (!(getGlobalActionHandler(actionId) == handler)) {
+			registerUndoRedoAction(actionId, (HistoryAction) handler);
+			getEditorSite().getPage().addPartListener(listener);
+		}
+	}
+
+	private IAction getGlobalActionHandler(String actionId) {
+		final IActionBars bars = getEditorSite().getActionBars();
+		return bars.getGlobalActionHandler(actionId);
 	}
 
 	/**
@@ -341,8 +334,58 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		final IActionBars actionBars = getEditorSite().getActionBars();
 		if (actionBars != null)
 			actionBars.setGlobalActionHandler(actionId, action);
+		action.setEnabled(false);
 	}
 
+	/**
+	 * A listener to update the undo/redo action when the Event-B editor is
+	 * activated.
+	 */
+	class PartListener implements IPartListener {
+		
+		private void refreshUndoRedoAction() {
+			final IAction undoAction = getGlobalActionHandler(UNDO.getId());
+			final IAction redoAction = getGlobalActionHandler(REDO.getId());
+	
+			if (undoAction instanceof HistoryAction
+					&& redoAction instanceof HistoryAction) {
+				((HistoryAction) undoAction).refresh();
+				((HistoryAction) redoAction).refresh();
+			}
+		}
+	
+		@Override
+		public void partActivated(IWorkbenchPart part) {
+			refreshUndoRedoAction();
+		}
+	
+		@Override
+		public void partBroughtToTop(IWorkbenchPart part) {
+			// do nothing
+		}
+	
+		@Override
+		public void partClosed(IWorkbenchPart part) {
+			// do nothing
+		}
+	
+		@Override
+		public void partDeactivated(IWorkbenchPart part) {
+			// do nothing
+		}
+	
+		@Override
+		public void partOpened(IWorkbenchPart part) {
+			// do nothing
+		}
+	}
+
+	private void removeAction(String actionId) {
+		if (actionId == null)
+			return;
+		setAction(actionId, null);
+	}
+	
 	/**
 	 * Sets the selection. If the selection is a <code>IRodinElement</code> the
 	 * corresponding area in the editor is highlighted
