@@ -11,11 +11,9 @@
 package fr.systerel.editor.tests;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.text.Position;
 import org.eventb.core.IAxiom;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,16 +30,16 @@ public class DocumentMapperTests {
 		return new Position(offset, length);
 	}
 
-	private static Position[] posArray(int... offLens) {
-		assertTrue(offLens.length % 2 == 0);
-		final Position[] positions = new Position[offLens.length / 2];
-		for (int i = 0; i < positions.length; i++) {
-			final int offset = offLens[2 * i];
-			final int length = offLens[2 * i + 1];
-			positions[i] = pos(offset, length);
-		}
-		return positions;
-	}
+//	private static Position[] posArray(int... offLens) {
+//		assertTrue(offLens.length % 2 == 0);
+//		final Position[] positions = new Position[offLens.length / 2];
+//		for (int i = 0; i < positions.length; i++) {
+//			final int offset = offLens[2 * i];
+//			final int length = offLens[2 * i + 1];
+//			positions[i] = pos(offset, length);
+//		}
+//		return positions;
+//	}
 
 	private void assertFoldingPositions(Position... expected) {
 		final Position[] foldingPositions = mapper.getFoldingPositions();
