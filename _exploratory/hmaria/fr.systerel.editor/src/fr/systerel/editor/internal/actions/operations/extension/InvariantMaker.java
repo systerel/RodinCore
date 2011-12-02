@@ -15,7 +15,7 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.IInvariant;
 
 import fr.systerel.editor.actions.IEventBDialog;
-import fr.systerel.editor.actions.OperationUtils;
+import fr.systerel.editor.internal.actions.operations.OperationUtils;
 import fr.systerel.editor.internal.dialogs.NewDerivedPredicateDialog;
 
 public class InvariantMaker extends AbstractRodinEditorWizardElementMaker {

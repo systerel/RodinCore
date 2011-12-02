@@ -8,12 +8,11 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.actions;
+package fr.systerel.editor.internal.actions.operations;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 
-import fr.systerel.editor.internal.actions.operations.AtomicOperation;
-import fr.systerel.editor.internal.actions.operations.OperationNode;
+import fr.systerel.editor.actions.IRodinHistory;
 
 /**
  * Class to add and execute operation trees in an {@link IRodinHistory}.

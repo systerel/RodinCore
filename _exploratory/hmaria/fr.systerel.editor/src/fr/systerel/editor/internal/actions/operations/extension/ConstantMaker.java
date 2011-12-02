@@ -15,8 +15,8 @@ import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IInternalElement;
 
 import fr.systerel.editor.actions.IEventBDialog;
-import fr.systerel.editor.actions.OperationTree;
-import fr.systerel.editor.actions.OperationUtils;
+import fr.systerel.editor.internal.actions.operations.OperationTree;
+import fr.systerel.editor.internal.actions.operations.OperationUtils;
 import fr.systerel.editor.internal.dialogs.NewConstantDialog;
 
 public class ConstantMaker extends AbstractRodinEditorWizardElementMaker {

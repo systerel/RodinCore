@@ -24,7 +24,7 @@ import org.rodinp.core.RodinDBException;
 // TODO changer, utiliser les operation de base
 
 /* operation pour recreer un element. Uitliser lors du delete */
-public class CreateIdenticalElement extends OperationLeaf {
+class CreateIdenticalElement extends OperationLeaf {
 
 	final IInternalElement element;
 

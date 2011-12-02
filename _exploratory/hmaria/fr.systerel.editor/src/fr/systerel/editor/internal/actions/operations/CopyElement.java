@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,9 +27,6 @@ import org.eventb.internal.ui.EventBUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
-
-import fr.systerel.editor.actions.OperationBuilder;
-import fr.systerel.editor.actions.OperationTree;
 
 public class CopyElement extends OperationLeaf {
 
@@ -89,11 +86,12 @@ public class CopyElement extends OperationLeaf {
 				+ EventBUtils.getFreeChildNameIndex(defaultParent, copyType,
 						copyId);
 		source.copy(defaultParent, sibling, nameCopy, false, null);
+		builder = new OperationBuilder();
 		element = defaultParent.getInternalElement(source.getElementType(),
 				nameCopy);
 
 		if (element != null) {
-			operationDelete = OperationBuilder.getDefault().deleteElement(element, true);
+			operationDelete = builder.deleteElement(element, true);
 		}
 	}
 

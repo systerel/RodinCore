@@ -14,7 +14,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eventb.core.IEventBRoot;
 
 import fr.systerel.editor.actions.IEventBDialog;
-import fr.systerel.editor.actions.OperationUtils;
+import fr.systerel.editor.internal.actions.operations.OperationUtils;
 import fr.systerel.editor.internal.dialogs.NewVariantDialog;
 
 public class VariantMaker extends AbstractRodinEditorWizardElementMaker {

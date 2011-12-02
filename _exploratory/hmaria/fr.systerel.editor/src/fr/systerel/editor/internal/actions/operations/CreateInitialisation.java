@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.internal.actions.operations.extension;
+package fr.systerel.editor.internal.actions.operations;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,9 +20,7 @@ import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
-import fr.systerel.editor.internal.actions.operations.OperationLeaf;
-
-class CreateInitialisation extends OperationLeaf {
+public class CreateInitialisation extends OperationLeaf {
 
 	private IMachineRoot root;
 	private String actLabel;
@@ -34,7 +32,7 @@ class CreateInitialisation extends OperationLeaf {
 	private IAction action;
 
 	// TODO a retravailler en utilisant les autres Operation
-	CreateInitialisation(IMachineRoot root, final String actLabel,
+	public CreateInitialisation(IMachineRoot root, final String actLabel,
 			final String actSub) {
 		super("CreateInitialisation");
 		this.root = root;

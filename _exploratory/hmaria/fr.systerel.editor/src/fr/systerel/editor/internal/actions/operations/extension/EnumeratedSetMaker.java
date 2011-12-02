@@ -15,7 +15,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 
 import fr.systerel.editor.actions.IEventBDialog;
-import fr.systerel.editor.actions.OperationUtils;
+import fr.systerel.editor.internal.actions.operations.OperationUtils;
 import fr.systerel.editor.internal.dialogs.NewEnumeratedSetDialog;
 
 public class EnumeratedSetMaker extends AbstractRodinEditorWizardElementMaker {

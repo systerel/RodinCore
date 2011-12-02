@@ -42,10 +42,11 @@ import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 
-import fr.systerel.editor.actions.OperationBuilder;
-import fr.systerel.editor.actions.OperationTree;
+import fr.systerel.editor.internal.actions.operations.CreateInitialisation;
+import fr.systerel.editor.internal.actions.operations.OperationBuilder;
 import fr.systerel.editor.internal.actions.operations.OperationCreateElement;
 import fr.systerel.editor.internal.actions.operations.OperationNode;
+import fr.systerel.editor.internal.actions.operations.OperationTree;
 
 /**
  * Static methods customizing the OperationFactory for Event-B elements. This is
@@ -62,24 +63,27 @@ public class EventBOperationFactory {
 		assert tab1 != null && tab2 != null;
 		assert tab1.length == tab2.length;
 	}
-
+	
+	private static OperationBuilder builder = new OperationBuilder();
+	
 	public static OperationTree createConstant(IInternalElement root,
 			String identifier) {
-		return OperationBuilder.getDefault().createElementOneStringAttribute(
+		
+		return builder.createElementOneStringAttribute(
 				root, IConstant.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE,
 				identifier);
 	}
 
 	public static OperationTree createCarrierSet(IInternalElement root,
 			String[] identifier) {
-		return OperationBuilder.getDefault().createElementOneStringAttribute(
+		return builder.createElementOneStringAttribute(
 				root, ICarrierSet.ELEMENT_TYPE, IDENTIFIER_ATTRIBUTE,
 				identifier);
 	}
 
 	public static OperationTree createCarrierSet(IInternalElement root,
 			String identifier) {
-		return OperationBuilder.getDefault().createElementOneStringAttribute(
+		return builder.createElementOneStringAttribute(
 				root, ICarrierSet.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE,
 				identifier);
 	}
@@ -112,7 +116,7 @@ public class EventBOperationFactory {
 		}
 		final IAttributeValue[] valuesArray = values
 				.toArray(new IAttributeValue[values.size()]);
-		return OperationBuilder.getDefault().getCreateElement(parent, type,
+		return builder.getCreateElement(parent, type,
 				null, valuesArray);
 	}
 
@@ -197,7 +201,7 @@ public class EventBOperationFactory {
 				createParameter(mRoot, paramNames),
 				createElementLabelPredicate(mRoot, IGuard.ELEMENT_TYPE,
 						grdLabels, grdPredicates, grdIsTheorem),
-				OperationBuilder.getDefault().createElementTwoStringAttribute(
+				builder.createElementTwoStringAttribute(
 						mRoot, IAction.ELEMENT_TYPE, LABEL_ATTRIBUTE,
 						ASSIGNMENT_ATTRIBUTE, actLabels, actSubstitutions) };
 		return t;
@@ -211,13 +215,13 @@ public class EventBOperationFactory {
 		values.add(CONVERGENCE_ATTRIBUTE.makeValue(ORDINARY.getCode()));
 		final IAttributeValue[] array = values
 				.toArray(new IAttributeValue[values.size()]);
-		return OperationBuilder.getDefault().getCreateElement(root,
+		return builder.getCreateElement(root,
 				IEvent.ELEMENT_TYPE, null, array);
 	}
 
 	private static OperationTree createParameter(IMachineRoot root,
 			String identifier) {
-		return OperationBuilder.getDefault().createElementOneStringAttribute(
+		return builder.createElementOneStringAttribute(
 				root, IParameter.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE,
 				identifier);
 	}
@@ -247,7 +251,7 @@ public class EventBOperationFactory {
 	
 	private static OperationTree createVariable(IMachineRoot root,
 			String identifier) {
-		return OperationBuilder.getDefault().createElementOneStringAttribute(
+		return builder.createElementOneStringAttribute(
 				root, IVariable.ELEMENT_TYPE, null, IDENTIFIER_ATTRIBUTE,
 				identifier);
 	}
@@ -285,7 +289,7 @@ public class EventBOperationFactory {
 	
 	public static OperationTree createVariant(IInternalElement root,
 			String predicate) {
-		return OperationBuilder.getDefault().createElementOneStringAttribute(
+		return builder.createElementOneStringAttribute(
 				root, IVariant.ELEMENT_TYPE, null, EXPRESSION_ATTRIBUTE,
 				predicate);
 	}

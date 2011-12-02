@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Systerel and others.
+ * Copyright (c) 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
-public class ChangeAttributeWithManipulation extends OperationLeaf {
+class ChangeAttributeWithManipulation extends OperationLeaf {
 	private final IAttributeManipulation manipulation;
 	private final IInternalElement element;
 	private String valueDo;
