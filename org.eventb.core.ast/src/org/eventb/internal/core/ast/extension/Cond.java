@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,9 +64,10 @@ public class Cond implements IExpressionExtension {
 	@Override
 	public Predicate getWDPredicate(IExtendedFormula formula,
 			IWDMediator wdMediator) {
-		// (cond => WD(e1)) & (not cond => WD(e2))
+		// WD(cond) & (cond => WD(e1)) & (not cond => WD(e2))
 		final FormulaFactory ff = wdMediator.getFormulaFactory();
 		final Predicate cond = formula.getChildPredicates()[0];
+		final Predicate wdCond = cond.getWDPredicate(ff);
 		final Expression[] exprs = formula.getChildExpressions();
 		final Predicate wdE1 = exprs[0].getWDPredicate(ff);
 		final Predicate wdE2 = exprs[1].getWDPredicate(ff);
@@ -76,7 +77,7 @@ public class Cond implements IExpressionExtension {
 				null);
 
 		return ff.makeAssociativePredicate(LAND,
-				Arrays.<Predicate> asList(condE1, notCondE2), null);
+				Arrays.<Predicate> asList(wdCond, condE1, notCondE2), null);
 	}
 
 	@Override

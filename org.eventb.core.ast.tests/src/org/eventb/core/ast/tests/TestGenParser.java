@@ -2951,22 +2951,28 @@ public class TestGenParser extends AbstractTests {
 	
 	public void testCondWD() throws Exception {
 		final Expression max_a_b = makeMaxCond(FRID_a, FRID_b);
-//		final Predicate a_le_b = FAC_COND.makeRelationalPredicate(Formula.LE, FRID_a, FRID_b, null);
-//		final Predicate not_a_le_b = FAC_COND.makeUnaryPredicate(Formula.NOT, a_le_b, null);
-//		final Predicate expectedWD = FAC_COND.makeAssociativePredicate(Formula.LAND, new Predicate[] {
-//				FAC_COND.makeBinaryPredicate(Formula.LIMP,
-//						a_le_b,
-//						LIT_BTRUE,
-//						null),
-//				FAC_COND.makeBinaryPredicate(Formula.LIMP,
-//						not_a_le_b,
-//						LIT_BTRUE, null),
-//		}, null);
-		// original as above, but because of WD simplifier:
+		// WD is 'true & a<b=>true & not(a<b)=>true', but after WD simplifier:
 		final Predicate expectedWD = LIT_BTRUE;
 		
 		max_a_b.typeCheck(FAC_COND.makeTypeEnvironment());
 		final Predicate actualWD = max_a_b.getWDPredicate(FAC_COND);
+		
+		assertEquals(expectedWD, actualWD);
+	}
+	
+	
+	public void testCondWDnotTrivial() throws Exception {
+		final Expression expr = parseExpr(
+				"COND(a÷b=1,card({a,b}),card({0,1,2}))", FAC_COND,
+				LanguageVersion.LATEST);
+		expr.typeCheck(FAC_COND.makeTypeEnvironment());
+
+		final Predicate expectedWD = parsePredicate(
+				"b≠0 ∧ (a÷b=1⇒finite({a,b})) ∧ (¬ a÷b=1⇒finite({0,1,2}))",
+				FAC_COND);
+		expectedWD.typeCheck(FAC_COND.makeTypeEnvironment());
+	
+		final Predicate actualWD = expr.getWDPredicate(FAC_COND);
 		
 		assertEquals(expectedWD, actualWD);
 	}
