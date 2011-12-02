@@ -88,7 +88,6 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 /**
  * This class manages the little text field that is used to edit an element.
  */
-@SuppressWarnings("restriction")
 public class OverlayEditor implements IAnnotationModelListenerExtension,
 		ExtendedModifyListener, VerifyKeyListener, IMenuListener {
 
