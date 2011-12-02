@@ -42,9 +42,10 @@ public interface IMarkerRegistry {
 	 * @param element
 	 *            a Rodin element, this must not be <code>null</code>.
 	 * 
-	 * @return Return the maximum severity of the markers found. Return -1 if no
-	 *         markers found.
-	 * @throws CoreException if some problems occur
+	 * @return the maximum severity of the markers found, or -1 if no markers
+	 *         were found
+	 * @throws CoreException
+	 *             if some problems occur
 	 */
 	public abstract int getMaxMarkerSeverity(IRodinElement element) throws CoreException;
 
@@ -72,8 +73,8 @@ public interface IMarkerRegistry {
 	 *            a Rodin element, this must not be <code>null</code>.
 	 * @param attributeType
 	 *            an attribute type, this must not be <code>null</code>
-	 * @return Return the maximum severity of the markers found. Return -1 if no
-	 *         markers found.
+	 * @return the maximum severity of the markers found, or -1 if no markers
+	 *         were found
 	 * @throws CoreException
 	 *             if some problems occur
 	 */
