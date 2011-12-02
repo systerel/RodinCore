@@ -8,7 +8,6 @@ Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.jface.text,
  org.rodinp.keyboard,
  org.rodinp.core.emf,
- org.eclipse.emf.edit,
  org.eventb.ui
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
