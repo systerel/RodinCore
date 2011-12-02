@@ -12,14 +12,12 @@ package fr.systerel.editor.internal.actions.operations;
 
 import java.util.Collection;
 
-import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-
 
 public class AtomicOperation extends AbstractEventBOperation {
 
@@ -35,13 +33,13 @@ public class AtomicOperation extends AbstractEventBOperation {
 				public void run(IProgressMonitor m) throws RodinDBException {
 					doRun(m, info);
 				}
-			}, monitor);
+			}, context.getRodinFile().getSchedulingRule(), monitor);
 		}
 	}
 
 	protected final OperationTree operation;
 
-	final IUndoContext context;
+	final RodinFileUndoContext context;
 
 	private final AbstractNavigation execute = new AbstractNavigation() {
 		@Override
@@ -67,7 +65,7 @@ public class AtomicOperation extends AbstractEventBOperation {
 		}
 	};
 
-	public AtomicOperation(IUndoContext context, OperationTree operation) {
+	public AtomicOperation(RodinFileUndoContext context, OperationTree operation) {
 		super(operation.getLabel());
 		this.operation = operation;
 		this.context = context;

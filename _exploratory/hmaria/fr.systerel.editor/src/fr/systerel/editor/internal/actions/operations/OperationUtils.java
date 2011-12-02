@@ -10,8 +10,6 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.actions.operations;
 
-import org.eclipse.core.commands.operations.IUndoContext;
-
 import fr.systerel.editor.actions.IRodinHistory;
 
 /**
@@ -24,7 +22,7 @@ public class OperationUtils {
 	}
 
 	public static void executeAtomic(IRodinHistory history,
-			IUndoContext context, String operationLabel,
+			RodinFileUndoContext context, String operationLabel,
 			OperationTree... operations) {
 		final OperationNode cmd = new OperationNode();
 		for (OperationTree op : operations) {
@@ -36,7 +34,7 @@ public class OperationUtils {
 	}
 
 	public static void executeAtomic(IRodinHistory history,
-			IUndoContext context, String operationLabel,
+			RodinFileUndoContext context, String operationLabel,
 			OperationTree operations) {
 		final AtomicOperation atom = new AtomicOperation(context, operations);
 		history.addOperation(atom);

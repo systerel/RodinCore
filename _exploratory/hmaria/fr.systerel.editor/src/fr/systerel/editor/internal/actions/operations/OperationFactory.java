@@ -326,7 +326,32 @@ public class OperationFactory {
 		return op;
 	}
 
+	/**
+	 * Change the attribute of an element
+	 * 
+	 * @param value
+	 *            if value is null, the attribute is removed. Else it is changed
+	 */
+	public static <E extends IInternalElement> AtomicOperation changeAttribute(
+			E element, IAttributeValue value) {
+		final OperationBuilder builder = new OperationBuilder();
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(element.getRoot()),
+				builder.changeAttribute(element, value));
+		op.setLabel("Change Attribute");
+		return op;
+	}
 
+	public static <T extends IInternalElement> AtomicOperation renameElements(
+			IInternalElement root, IInternalElementType<T> type,
+			IAttributeManipulation factory, String prefix) {
+		final OperationBuilder builder = new OperationBuilder();
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(root), builder.renameElement(root,
+						type, factory, prefix));
+		op.setLabel("Rename Element");
+		return op;
+	}
 
 	public static AtomicOperation createGuard(IInternalElement event,
 			String label, String predicate, IInternalElement sibling) {
@@ -383,33 +408,6 @@ public class OperationFactory {
 	}
 
 	/**
-	 * Change the attribute of an element
-	 * 
-	 * @param value
-	 *            if value is null, the attribute is removed. Else it is changed
-	 */
-	public static <E extends IInternalElement> AtomicOperation changeAttribute(
-			E element, IAttributeValue value) {
-		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(
-				getRodinFileUndoContext(element.getRoot()),
-				builder.changeAttribute(element, value));
-		op.setLabel("Change Attribute");
-		return op;
-	}
-	
-	public static <T extends IInternalElement> AtomicOperation renameElements(
-			IInternalElement root, IInternalElementType<T> type,
-			IAttributeManipulation factory, String prefix) {
-		final OperationBuilder builder = new OperationBuilder();
-		final AtomicOperation op = new AtomicOperation(
-				getRodinFileUndoContext(root), builder.renameElement(root,
-						type, factory, prefix));
-		op.setLabel("Rename Element");
-		return op;
-	}
-	
-		/**
 	 * Return an operation to create an IInternalElement with the given type and
 	 * a string attribute.
 	 * 

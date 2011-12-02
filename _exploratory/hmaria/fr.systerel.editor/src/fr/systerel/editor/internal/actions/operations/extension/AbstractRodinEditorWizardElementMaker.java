@@ -10,7 +10,6 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.actions.operations.extension;
 
-import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eventb.core.IEventBRoot;
@@ -20,6 +19,7 @@ import fr.systerel.editor.actions.IRodinHistory;
 import fr.systerel.editor.actions.IWizardElementMaker;
 import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
+import fr.systerel.editor.internal.actions.operations.RodinFileUndoContext;
 import fr.systerel.editor.internal.editors.RodinEditorUtils;
 
 public abstract class AbstractRodinEditorWizardElementMaker implements
@@ -58,7 +58,7 @@ public abstract class AbstractRodinEditorWizardElementMaker implements
 	}
 
 	@Override
-	public IUndoContext getUndoContext() {
+	public RodinFileUndoContext getUndoContext() {
 		return OperationFactory.getRodinFileUndoContext(getRoot());
 	}
 
