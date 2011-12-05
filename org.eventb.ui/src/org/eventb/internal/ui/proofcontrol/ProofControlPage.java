@@ -97,6 +97,7 @@ import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
+import org.eventb.core.preferences.autotactics.TacticPreferenceConstants;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -141,7 +142,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	IEventBControl textInput;
 	StyledText textWidget;
 
-	ProverUI editor;
+	final ProverUI editor;
 
 	ScrolledForm scrolledForm;
 
@@ -681,6 +682,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		contributeToActionBars();
 
 		updateToolItems(editor.getUserSupport());
+		updateActions(editor.getUserSupport());
 		updateSmiley();
 		coolBar.pack();
 		pgComp.setVisible(false);
@@ -1002,7 +1004,8 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(P_POSTTACTIC_ENABLE)) {
+		final String property = event.getProperty();
+		if (property.equals(P_POSTTACTIC_ENABLE)) {
 			final Object newValue = event.getNewValue();
 			boolean b;
 			if (newValue instanceof String) {
@@ -1014,8 +1017,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				throw new IllegalArgumentException();
 			}
 			expertMode.setChecked(b);
+		} else if (property.equals(TacticPreferenceConstants.P_TACTICSPROFILES)) {
+			updateActions(editor.getUserSupport());
 		}
-
 	}
 
 	@Override
