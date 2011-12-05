@@ -18,7 +18,9 @@ import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
 
 /**
- * Translator for PP.
+ * Translator for PP. The unique method of this class runs in turn the various
+ * sequent transformers that translate from plain event-B to predicate calculus.
+ * This code has been extracted here to facilitate tests.
  * 
  * @author Nicolas Beauger
  * 
