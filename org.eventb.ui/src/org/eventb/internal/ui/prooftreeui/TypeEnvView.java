@@ -50,13 +50,47 @@ public class TypeEnvView extends AbstractProofNodeView {
 
 	private static class Ident {
 
-		public final String name;
-		public final String type;
+		private static final String[] COLUMN_NAMES = new String[] {
+				"Identifier", "Type" };
 
-		public Ident(String name, String type) {
-			super();
+		private final String name;
+		private final String type;
+
+		public static Ident[] valueOf(ITypeEnvironment tEnv) {
+			final List<Ident> result = new ArrayList<Ident>();
+			final IIterator iter = tEnv.getIterator();
+			while (iter.hasNext()) {
+				iter.advance();
+				result.add(new Ident(iter.getName(), iter.getType().toString()));
+			}
+			return result.toArray(new Ident[result.size()]);
+		}
+
+		private Ident(String name, String type) {
 			this.name = name;
 			this.type = type;
+		}
+
+		public static int getNumberOfColumns() {
+			return COLUMN_NAMES.length;
+		}
+
+		public static String getColumnTitle(int columnIndex) {
+			return COLUMN_NAMES[columnIndex];
+		}
+
+		public String getColumnText(int columnIndex) {
+			if (columnIndex == 0) {
+				return name;
+			} else {
+				return type;
+			}
+		}
+
+		public int compareTo(Ident other, int columnIndex) {
+			final String thisValue = this.getColumnText(columnIndex);
+			final String otherValue = other.getColumnText(columnIndex);
+			return thisValue.compareTo(otherValue);
 		}
 
 	}
@@ -97,13 +131,7 @@ public class TypeEnvView extends AbstractProofNodeView {
 			if (!(element instanceof Ident)) {
 				return null;
 			}
-			final Ident ident = (Ident) element;
-			if (columnIndex == 0) {
-				return ident.name;
-			} else {
-				return ident.type;
-			}
-
+			return ((Ident) element).getColumnText(columnIndex);
 		}
 
 	}
@@ -130,21 +158,13 @@ public class TypeEnvView extends AbstractProofNodeView {
 			if (!(inputElement instanceof ITypeEnvironment)) {
 				return null;
 			}
-			final ITypeEnvironment tEnv = (ITypeEnvironment) inputElement;
-			final List<Ident> result = new ArrayList<Ident>();
-
-			final IIterator iter = tEnv.getIterator();
-			while (iter.hasNext()) {
-				iter.advance();
-				result.add(new Ident(iter.getName(), iter.getType().toString()));
-			}
-			return result.toArray(new Ident[result.size()]);
+			return Ident.valueOf((ITypeEnvironment) inputElement);
 		}
 
 	}
 
 	private static class ColumnComparator extends ViewerComparator {
-		
+
 		private int column = 0;
 		private boolean ascending = true;
 
@@ -155,29 +175,24 @@ public class TypeEnvView extends AbstractProofNodeView {
 		public int getColumn() {
 			return column;
 		}
-		
+
 		public void setColumn(int column) {
 			this.column = column;
 		}
-		
+
 		public boolean isAscending() {
 			return ascending;
 		}
-		
+
 		public void setAscending(boolean ascending) {
 			this.ascending = ascending;
 		}
-		
+
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			final Ident ident1 = (Ident) e1;
 			final Ident ident2 = (Ident) e2;
-			final int ascendCompare;
-			if (column == 0) {
-				ascendCompare = ident1.name.compareTo(ident2.name);
-			} else {
-				ascendCompare = ident1.type.compareTo(ident2.type);
-			}
+			final int ascendCompare = ident1.compareTo(ident2, column);
 			if (ascending) {
 				return ascendCompare;
 			} else {
@@ -185,9 +200,6 @@ public class TypeEnvView extends AbstractProofNodeView {
 			}
 		}
 	}
-	
-	private static final String[] COLUMN_NAMES = new String[] { "Identifier",
-			"Type" };
 
 	TableViewer tableViewer;
 
@@ -209,9 +221,8 @@ public class TypeEnvView extends AbstractProofNodeView {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		
-		for (int i = 0; i < COLUMN_NAMES.length; i++) {
-			final String columnName = COLUMN_NAMES[i];
+		for (int i = 0; i < Ident.getNumberOfColumns(); i++) {
+			final String columnName = Ident.getColumnTitle(i);
 			final TableColumn col = new TableColumn(table, SWT.WRAP);
 			col.setText(columnName);
 			col.pack();
@@ -220,11 +231,11 @@ public class TypeEnvView extends AbstractProofNodeView {
 
 	private void initColumnSorting(final ColumnComparator comparator) {
 		final TableColumn[] columns = tableViewer.getTable().getColumns();
-		
+
 		for (int i = 0; i < columns.length; i++) {
 			final int columnNumber = i;
 			columns[i].addSelectionListener(new SelectionAdapter() {
-				
+
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (comparator.getColumn() == columnNumber) {
