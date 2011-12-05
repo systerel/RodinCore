@@ -102,9 +102,9 @@ public class PPProof {
 		this.sequent = make(hypotheses, goal, ff, null);
 	}
 	
-	public PPProof(ISimpleSequent sSequent, IPPMonitor monitor) {
+	public PPProof(ISimpleSequent sequent, IPPMonitor monitor) {
 		this.cancellation = CancellationChecker.newChecker(monitor);
-		this.sequent = sSequent;
+		this.sequent = sequent;
 	}
 
 	/**
