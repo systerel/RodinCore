@@ -233,7 +233,10 @@ public interface IProverSequent{
 
 
 	/**
-	 * Returns the origin of this sequent.
+	 * Returns the origin of this sequent as an object. For instance, within the
+	 * event-B feature, this method will return a handle to the Proof Obligation
+	 * (<code>IPOSequent</code>) or Proof (<code>IPRProof</code>) from which
+	 * this sequent is derived.
 	 * 
 	 * @return an object, or <code>null</code>
 	 * @since 2.4
