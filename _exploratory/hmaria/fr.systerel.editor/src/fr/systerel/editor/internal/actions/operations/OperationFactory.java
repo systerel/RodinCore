@@ -222,7 +222,7 @@ public class OperationFactory {
 			final IInternalElement sibling) {
 		final OperationBuilder builder = new OperationBuilder();
 		final AtomicOperation op = new AtomicOperation(
-				getRodinFileUndoContext(parent.getRoot()), builder.createDefaultElement(
+				getRodinFileUndoContext(parent), builder.createDefaultElement(
 						parent, type, sibling));
 		op.setLabel("Create Element");
 		return op;
