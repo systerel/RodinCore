@@ -37,26 +37,10 @@ public interface IContext {
 	 * Loads the given sequent in this context.
 	 * 
 	 * @param sequent
+	 *            the sequent to load
 	 */
 	void load(ISimpleSequent sequent);
 	
-	/**
-	 * Loads the given predicate in this context.
-	 * <p>
-	 * If <code>isGoal</code> is <code>true</code>, the predicate will be
-	 * loaded as a goal (negated).
-	 * </p>
-	 * 
-	 * @param predicate
-	 *            the predicate to load
-	 * @param originalPredicate
-	 *            the original predicate (for origin tracking)
-	 * @param isGoal
-	 *            <code>true</code> iff the predicate should be loaded as a
-	 *            goal
-	 */
-	void load(Predicate predicate, Predicate originalPredicate, boolean isGoal);
-
 	/**
 	 * Loads the given predicate in this context.
 	 * <p>

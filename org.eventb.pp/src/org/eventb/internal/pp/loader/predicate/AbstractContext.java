@@ -62,9 +62,8 @@ public class AbstractContext implements IContext {
 					!predicate.isHypothesis());
 		}
 	}
-	// TODO clean up these load methods that are used only in tests
-	@Override
-	public void load(Predicate predicate, Predicate originalPredicate,
+
+	private void load(Predicate predicate, Predicate originalPredicate,
 			boolean isGoal) {
 		final PredicateLoader loader = getPredicateLoader(predicate,
 				originalPredicate, isGoal);
@@ -72,7 +71,7 @@ public class AbstractContext implements IContext {
 		results.add(loader.getResult());
 	}
 
-	protected PredicateLoader getPredicateLoader(Predicate predicate,
+	private PredicateLoader getPredicateLoader(Predicate predicate,
 			Predicate originalPredicate, boolean isGoal) {
 		return new PredicateLoader(this, predicate, originalPredicate, isGoal);
 	}
