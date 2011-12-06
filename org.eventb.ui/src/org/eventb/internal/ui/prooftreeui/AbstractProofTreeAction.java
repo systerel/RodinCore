@@ -18,6 +18,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
@@ -128,4 +131,20 @@ public abstract class AbstractProofTreeAction implements IObjectActionDelegate {
 				applyPostTactic);
 	}
 
+	protected static void showView(String viewId) {
+		final IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (workbenchWindow == null) {
+			return;
+		}
+		final IWorkbenchPage activePage = workbenchWindow.getActivePage();
+		if (activePage == null) {
+			return;
+		}
+		try {
+			activePage.showView(viewId, null, IWorkbenchPage.VIEW_VISIBLE);
+		} catch (PartInitException e) {
+			// Nothing to do here
+		}
+	}
 }

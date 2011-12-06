@@ -12,10 +12,6 @@
 package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Action that shows the type environment view.
@@ -31,21 +27,7 @@ public class ShowTypeEnv extends AbstractProofTreeAction {
 
 	@Override
 	public void run(IAction action) {
-		final IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (workbenchWindow == null) {
-			return;
-		}
-		final IWorkbenchPage activePage = workbenchWindow.getActivePage();
-		if (activePage == null) {
-			return;
-		}
-		try {
-			activePage.showView(TypeEnvView.VIEW_ID, null,
-					IWorkbenchPage.VIEW_VISIBLE);
-		} catch (PartInitException e) {
-			// Nothing to do here
-		}
+		showView(TypeEnvView.VIEW_ID);
 	}
 
 	@Override
