@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -63,7 +63,7 @@ public class EventBTreeLabelProvider implements ITableLabelProvider,
 	// The font used in the tree viewer
 	private Font font = null;
 
-	private EventBEditableTreeViewer viewer;
+	private final EventBEditableTreeViewer viewer;
 
 	/**
 	 * Constructor.
