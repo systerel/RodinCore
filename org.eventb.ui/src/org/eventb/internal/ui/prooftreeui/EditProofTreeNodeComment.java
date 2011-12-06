@@ -14,7 +14,6 @@ package org.eventb.internal.ui.prooftreeui;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -40,9 +39,7 @@ public class EditProofTreeNodeComment extends AbstractProofTreeAction {
 	
 	@Override
 	public void run(IAction action) {
-		final IStructuredSelection ssel = extractStructuredSelection();
-		assertIsProofTreeNode(ssel);
-		final IProofTreeNode node = (IProofTreeNode) ssel.getFirstElement();
+		final IProofTreeNode node = (IProofTreeNode) selection.getFirstElement();
 		final String currentComment = node
 				.getComment();
 		final InputDialog dialog = new MultiLineInputDialog(shell,

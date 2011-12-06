@@ -27,7 +27,7 @@ import org.eventb.ui.EventBUIPlugin;
 
 public abstract class AbstractProofTreeAction implements IObjectActionDelegate {
 
-	private ISelection selection;
+	protected IStructuredSelection selection;
 
 	private final boolean enabledOnOpenNode;
 
@@ -47,23 +47,22 @@ public abstract class AbstractProofTreeAction implements IObjectActionDelegate {
 
 	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
-		this.selection = sel;
+		this.selection = extractProofTreeNode(sel);
 		action.setEnabled(isEnabled(action, selection));
 	}
 
 	protected boolean isEnabled(IAction action, ISelection sel) {
-		final IStructuredSelection ssel = extractStructuredSelection();
-		if (ssel.size() != 1) {
+		if (selection.size() != 1) {
 			traceDisabledness("There should be exactly one selected element",
 					action);
 			return false;
 		}
-		if (!(ssel.getFirstElement() instanceof IProofTreeNode)) {
+		if (!(selection.getFirstElement() instanceof IProofTreeNode)) {
 			traceDisabledness(
 					"The selected element should be a IProofTreeNode", action);
 			return false;
 		}
-		final IProofTreeNode node = (IProofTreeNode) ssel.getFirstElement();
+		final IProofTreeNode node = (IProofTreeNode) selection.getFirstElement();
 		if (enabledOnOpenNode != node.isOpen()) {
 			traceDisabledness("The proof tree node should be "
 					+ (enabledOnOpenNode ? "open" : "not open"), action);
@@ -81,14 +80,12 @@ public abstract class AbstractProofTreeAction implements IObjectActionDelegate {
 		}
 	}
 
-	public IStructuredSelection extractStructuredSelection() {
-		assert selection instanceof IStructuredSelection;
-		return (IStructuredSelection) selection;
-	}
-
-	public void assertIsProofTreeNode(IStructuredSelection ssel) {
+	private static IStructuredSelection extractProofTreeNode(ISelection sel) {
+		assert sel instanceof IStructuredSelection;
+		final IStructuredSelection ssel = (IStructuredSelection) sel;
 		assert (ssel.size() == 1);
 		assert (ssel.getFirstElement() instanceof IProofTreeNode);
+		return ssel;
 	}
 
 	public void setUserSupport(IWorkbenchPart targetPart) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others. 
+ * Copyright (c) 2007, 2011 ETH Zurich and others. 
  *  
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -14,14 +14,11 @@ package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 
-public class Paste extends AbstractProofTreeAction implements
-		IObjectActionDelegate {
+public class Paste extends AbstractProofTreeAction {
 
 	public Paste() {
 		super(true);
@@ -34,9 +31,6 @@ public class Paste extends AbstractProofTreeAction implements
 
 	@Override
 	public void run(IAction action) {
-		final IStructuredSelection ssel = extractStructuredSelection();
-		assertIsProofTreeNode(ssel);
-
 		assert ProofTreeUI.buffer instanceof IProofSkeleton;
 		final IProofSkeleton copyNode = (IProofSkeleton) ProofTreeUI.buffer;
 
