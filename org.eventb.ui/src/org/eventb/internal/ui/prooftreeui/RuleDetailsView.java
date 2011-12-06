@@ -51,15 +51,11 @@ public class RuleDetailsView extends AbstractProofNodeView {
 		sc.setLayout(gl);
 		sc.setExpandVertical(true);
 		sc.setExpandHorizontal(true);
+		rdp = new RuleDetailsProvider(sc, font);
 	}
 
 	@Override
-	protected void refreshContents(IProofTreeNode node, Font font) {
-		if (rdp == null) {
-			rdp = new RuleDetailsProvider(sc, font);
-		} else {
-			rdp.setFont(font);
-		}
+	protected void refreshContents(IProofTreeNode node) {
 		final IProofRule rule = node.getRule();
 		if (rule == null) {
 			sc.setVisible(false);
@@ -71,6 +67,11 @@ public class RuleDetailsView extends AbstractProofNodeView {
 		sc.setContent(details);
 		sc.setMinSize(details.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		sc.setRedraw(true);
+	}
+	
+	@Override
+	protected void fontChanged(Font font) {
+		rdp.setFont(font);
 	}
 	
 	@Override

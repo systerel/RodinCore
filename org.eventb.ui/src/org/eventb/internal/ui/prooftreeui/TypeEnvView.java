@@ -253,10 +253,13 @@ public class TypeEnvView extends AbstractProofNodeView {
 	}
 
 	@Override
-	protected void refreshContents(IProofTreeNode node, Font font) {
-		tableViewer.getTable().setFont(font);
+	protected void refreshContents(IProofTreeNode node) {
 		final ITypeEnvironment typeEnv = node.getSequent().typeEnvironment();
 		tableViewer.setInput(typeEnv);
 	}
 
+	@Override
+	protected void fontChanged(Font font) {
+		tableViewer.getTable().setFont(font);
+	}
 }

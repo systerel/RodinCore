@@ -42,7 +42,8 @@ public abstract class AbstractProofNodeView extends ViewPart implements
 
 	protected abstract void initializeControl(final Composite parent, Font font);
 
-	protected abstract void refreshContents(IProofTreeNode node, Font font);
+	protected abstract void refreshContents(IProofTreeNode node);
+	protected abstract void fontChanged(Font font);
 
 	@Override
 	public void createPartControl(final Composite parent) {
@@ -78,7 +79,7 @@ public abstract class AbstractProofNodeView extends ViewPart implements
 			}
 			if (element instanceof IProofTreeNode) {
 				currentNode = (IProofTreeNode) element;
-				refreshContents(currentNode, currentFont);
+				refreshContents(currentNode);
 			}
 		}
 	}
@@ -111,7 +112,7 @@ public abstract class AbstractProofNodeView extends ViewPart implements
 		if (event.getProperty().equals(RODIN_MATH_FONT)) {
 			currentFont = JFaceResources.getFont(RODIN_MATH_FONT);
 			if (currentNode != null) {
-				refreshContents(currentNode, currentFont);
+				fontChanged(currentFont);
 			}
 		}
 	}
