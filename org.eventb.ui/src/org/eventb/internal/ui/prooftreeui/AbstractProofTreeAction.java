@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel.
+ * Copyright (c) 2010, 2011 Systerel.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -27,7 +27,7 @@ import org.eventb.ui.EventBUIPlugin;
 
 public abstract class AbstractProofTreeAction implements IObjectActionDelegate {
 
-	protected IStructuredSelection selection;
+	private IProofTreeNode selection;
 
 	private final boolean enabledOnOpenNode;
 
@@ -40,6 +40,10 @@ public abstract class AbstractProofTreeAction implements IObjectActionDelegate {
 		this.enabledOnOpenNode = canBeOpen;
 	}
 
+	public IProofTreeNode getSelection() {
+		return selection;
+	}
+	
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		this.shell = targetPart.getSite().getShell();
@@ -47,23 +51,17 @@ public abstract class AbstractProofTreeAction implements IObjectActionDelegate {
 
 	@Override
 	public void selectionChanged(IAction action, ISelection sel) {
-		this.selection = extractProofTreeNode(sel);
-		action.setEnabled(isEnabled(action, selection));
+		final IProofTreeNode node = extractProofTreeNode(action, sel);
+		if (node == null) {
+			action.setEnabled(false);
+			return;
+		}
+		this.selection = node;
+		action.setEnabled(isEnabled(action));
 	}
 
-	protected boolean isEnabled(IAction action, ISelection sel) {
-		if (selection.size() != 1) {
-			traceDisabledness("There should be exactly one selected element",
-					action);
-			return false;
-		}
-		if (!(selection.getFirstElement() instanceof IProofTreeNode)) {
-			traceDisabledness(
-					"The selected element should be a IProofTreeNode", action);
-			return false;
-		}
-		final IProofTreeNode node = (IProofTreeNode) selection.getFirstElement();
-		if (enabledOnOpenNode != node.isOpen()) {
+	protected boolean isEnabled(IAction action) {
+		if (enabledOnOpenNode != selection.isOpen()) {
 			traceDisabledness("The proof tree node should be "
 					+ (enabledOnOpenNode ? "open" : "not open"), action);
 			return false;
@@ -74,21 +72,33 @@ public abstract class AbstractProofTreeAction implements IObjectActionDelegate {
 		return true;
 	}
 
-	protected void traceDisabledness(final String message, IAction action) {
+	protected static void traceDisabledness(final String message, IAction action) {
 		if (ProofTreeUIUtils.DEBUG) {
 			ProofTreeUIUtils.debug(message + ", disable " + action.getId());
 		}
 	}
 
-	private static IStructuredSelection extractProofTreeNode(ISelection sel) {
-		assert sel instanceof IStructuredSelection;
+	private static IProofTreeNode extractProofTreeNode(IAction action,
+			ISelection sel) {
+		if (!(sel instanceof IStructuredSelection)) {
+			return null;
+		}
 		final IStructuredSelection ssel = (IStructuredSelection) sel;
-		assert (ssel.size() == 1);
-		assert (ssel.getFirstElement() instanceof IProofTreeNode);
-		return ssel;
+		if (ssel.size() != 1) {
+			traceDisabledness("There should be exactly one selected element",
+					action);
+			return null;
+		}
+		final Object firstElement = ssel.getFirstElement();
+		if (!(firstElement instanceof IProofTreeNode)) {
+			traceDisabledness(
+					"The selected element should be a IProofTreeNode", action);
+			return null;
+		}
+		return (IProofTreeNode) firstElement;
 	}
 
-	public void setUserSupport(IWorkbenchPart targetPart) {
+	protected void setUserSupport(IWorkbenchPart targetPart) {
 		if (targetPart instanceof ProofTreeUI) {
 			final ProofTreeUI ui = (ProofTreeUI) targetPart;
 			final ProofTreeUIPage page = (ProofTreeUIPage) ui.getCurrentPage();
@@ -99,7 +109,7 @@ public abstract class AbstractProofTreeAction implements IObjectActionDelegate {
 		}
 	}
 
-	public boolean isInProofSkeletonView(IAction action) {
+	protected static boolean isInProofSkeletonView(IAction action) {
 		final IWorkbenchPage page = EventBUIPlugin.getActivePage();
 		if (page == null) {
 			return false;
@@ -108,7 +118,7 @@ public abstract class AbstractProofTreeAction implements IObjectActionDelegate {
 		return part instanceof ProofSkeletonView;
 	}
 
-	public boolean isUserSupportPresent(IAction action) {
+	protected boolean isUserSupportPresent(IAction action) {
 		return userSupport != null;
 	}
 

@@ -13,7 +13,6 @@
 package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
@@ -34,7 +33,7 @@ public class Prune extends AbstractProofTreeAction {
 	}
 
 	@Override
-	protected boolean isEnabled(IAction action, ISelection sel) {
+	protected boolean isEnabled(IAction action) {
 		if (isInProofSkeletonView(action)) {
 			traceDisabledness("In proof skeleton view", action);
 			return false;
@@ -43,7 +42,7 @@ public class Prune extends AbstractProofTreeAction {
 			traceDisabledness("No user support present", action);
 			return false;
 		}
-		return super.isEnabled(action, sel);
+		return super.isEnabled(action);
 	}
 	
 }

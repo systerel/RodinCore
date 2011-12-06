@@ -12,7 +12,6 @@
 package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -50,7 +49,7 @@ public class ShowTypeEnv extends AbstractProofTreeAction {
 	}
 
 	@Override
-	protected boolean isEnabled(IAction action, ISelection sel) {
+	protected boolean isEnabled(IAction action) {
 		// do not take open/close node condition into account
 		return true;
 	}

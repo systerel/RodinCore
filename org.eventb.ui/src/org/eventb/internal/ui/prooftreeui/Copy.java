@@ -13,7 +13,6 @@
 package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.action.IAction;
-import org.eventb.core.seqprover.IProofTreeNode;
 
 public class Copy extends AbstractProofTreeAction {
 
@@ -23,8 +22,7 @@ public class Copy extends AbstractProofTreeAction {
 
 	@Override
 	public void run(IAction action) {
-		ProofTreeUI.buffer = ((IProofTreeNode) selection.getFirstElement())
-				.copyProofSkeleton();
+		ProofTreeUI.buffer = getSelection().copyProofSkeleton();
 		if (ProofTreeUIUtils.DEBUG)
 			ProofTreeUIUtils.debug("Copied : " + ProofTreeUI.buffer);
 	}

@@ -13,7 +13,6 @@ package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -39,9 +38,8 @@ public class EditProofTreeNodeComment extends AbstractProofTreeAction {
 	
 	@Override
 	public void run(IAction action) {
-		final IProofTreeNode node = (IProofTreeNode) selection.getFirstElement();
-		final String currentComment = node
-				.getComment();
+		final IProofTreeNode selection = getSelection();
+		final String currentComment = selection.getComment();
 		final InputDialog dialog = new MultiLineInputDialog(shell,
 				Messages.EditProofTreeNodeComment_title,
 				null,
@@ -57,14 +55,14 @@ public class EditProofTreeNodeComment extends AbstractProofTreeAction {
 		}
 
 		try {
-			userSupport.setComment(newComment, node);
+			userSupport.setComment(newComment, selection);
 		} catch (RodinDBException e) {
 			UIUtils.log(e, "while setting proof node comment: " + newComment); //$NON-NLS-1$
 		}
 	}
 
 	@Override
-	protected boolean isEnabled(IAction action, ISelection sel) {
+	protected boolean isEnabled(IAction action) {
 		if (isInProofSkeletonView(action)) {
 			traceDisabledness("In proof skeleton view", action); //$NON-NLS-1$
 			return false;

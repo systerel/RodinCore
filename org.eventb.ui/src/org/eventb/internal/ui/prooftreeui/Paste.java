@@ -13,7 +13,6 @@
 package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.tactics.BasicTactics;
@@ -41,7 +40,7 @@ public class Paste extends AbstractProofTreeAction {
 	}
 
 	@Override
-	protected boolean isEnabled(IAction action, ISelection sel) {
+	protected boolean isEnabled(IAction action) {
 		if (isInProofSkeletonView(action)) {
 			traceDisabledness("In proof skeleton view", action);
 			return false;
@@ -58,7 +57,7 @@ public class Paste extends AbstractProofTreeAction {
 			traceDisabledness("The copy buffer is not a proof skeleton", action);
 			return false;
 		}
-		return super.isEnabled(action, sel);
+		return super.isEnabled(action);
 	}
 
 }
