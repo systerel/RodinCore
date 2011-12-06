@@ -13,13 +13,10 @@
  *******************************************************************************/
 package org.eventb.pp;
 
-import static org.eventb.core.seqprover.transformer.SimpleSequents.make;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
@@ -61,8 +58,6 @@ import org.eventb.pp.PPResult.Result;
  */
 public class PPProof {
 
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
-
 	/**
 	 * Debug flag for <code>PROVER_TRACE</code>
 	 */
@@ -90,12 +85,6 @@ public class PPProof {
 	private PPResult result;
 	
 	private ClauseDispatcher proofStrategy;
-	
-	public PPProof(Iterable<Predicate> hypotheses, Predicate goal,
-			IPPMonitor monitor) {
-		this.cancellation = CancellationChecker.newChecker(monitor);
-		this.sequent = make(hypotheses, goal, ff, null);
-	}
 	
 	public PPProof(ISimpleSequent sequent, IPPMonitor monitor) {
 		this.cancellation = CancellationChecker.newChecker(monitor);
