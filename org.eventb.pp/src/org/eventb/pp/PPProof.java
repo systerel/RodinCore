@@ -91,11 +91,6 @@ public class PPProof {
 	
 	private ClauseDispatcher proofStrategy;
 	
-	public PPProof(Predicate[] hypotheses, Predicate goal, IPPMonitor monitor) {
-		this.cancellation = CancellationChecker.newChecker(monitor);
-		this.sequent = make(hypotheses, goal, ff, null);
-	}
-
 	public PPProof(Iterable<Predicate> hypotheses, Predicate goal,
 			IPPMonitor monitor) {
 		this.cancellation = CancellationChecker.newChecker(monitor);
