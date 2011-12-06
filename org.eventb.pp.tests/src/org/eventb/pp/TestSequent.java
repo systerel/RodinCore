@@ -10,6 +10,7 @@
  *     Systerel - created this class from RodinTests + some refactoring
  *     Systerel - mathematical language V2
  *     Systerel - clean up while adapting to XProver v2 API
+ *     Systerel - used simple sequents
  *******************************************************************************/
 package org.eventb.pp;
 
@@ -21,14 +22,13 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
-import org.eventb.core.seqprover.transformer.ITrackedPredicate;
+import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.internal.pp.CancellationChecker;
 import org.eventb.internal.pp.PPTranslator;
 
@@ -64,72 +64,55 @@ public class TestSequent {
 		return result;
 	}
 
-	private final ITypeEnvironment typenv;
-	private final List<Predicate> hypotheses;
-	private final Predicate goal;
-
-	public TestSequent(ITypeEnvironment typeEnvironment,
-			Iterable<String> hypotheses, String goal) {
-		this.typenv = typeEnvironment.clone();
-		this.hypotheses = parseHypotheses(hypotheses, typeEnvironment.getFormulaFactory());
-		this.goal = parsePredicate(goal, typeEnvironment.getFormulaFactory());
-		typeCheck();
+	public static ISimpleSequent makeSequent(List<String> typenvList, Iterable<String> hypotheses,
+				String goal, FormulaFactory ff) {
+		final ITypeEnvironment tenv = parseTypeEnvironment(typenvList, ff);
+		return makeSequent(tenv, hypotheses, goal, ff);
 	}
 
+	public static ISimpleSequent makeSequent(ITypeEnvironment initTypeEnv,
+			Iterable<String> hypotheses, String goal, FormulaFactory ff) {
+		final List<Predicate> pHyps = parseHypotheses(hypotheses, ff);
+		final Predicate pGoal = parsePredicate(goal, ff);
+		
+		final ITypeEnvironment typeEnv = initTypeEnv.clone();
+		for (Predicate hyp : pHyps) {
+			typeCheck(hyp, typeEnv);
+		}
+		typeCheck(pGoal, typeEnv);
+		
+		return SimpleSequents.make(pHyps, pGoal, ff);
+	}
+	
+	private static void typeCheck(Predicate predicate, ITypeEnvironment typEnv) {
+		final ITypeCheckResult result = predicate.typeCheck(typEnv);
+		assertTrue(predicate + " " + result.toString(), result.isSuccess());
+		typEnv.addAll(result.getInferredEnvironment());
+	}
+
+	
+	private final ISimpleSequent sequent;
+
+	public TestSequent(ISimpleSequent sequent) {
+		this.sequent = sequent;
+	}
+	
 	public TestSequent(List<String> typenvList, Iterable<String> hypotheses,
 				String goal, FormulaFactory ff) {
-		this(parseTypeEnvironment(typenvList, ff), hypotheses, goal);
+		this(makeSequent(typenvList, hypotheses, goal, ff));
 	}
-
-	private void typeCheck() {
-		for (Predicate pred : hypotheses) {
-			typeCheck(pred);
-		}
-		typeCheck(goal);
-	}
-
-	private void typeCheck(Predicate predicate) {
-		final ITypeCheckResult result = predicate.typeCheck(typenv);
-		assertTrue(predicate + " " + result.toString(), result.isSuccess());
-		typenv.addAll(result.getInferredEnvironment());
-	}
-
+	
 	public ITypeEnvironment typeEnvironment() {
-		return typenv;
-	}
-
-	public List<Predicate> hypotheses() {
-		return hypotheses;
-	}
-
-	public Predicate goal() {
-		return goal;
+		return sequent.getTypeEnvironment();
 	}
 
 	public void assertTranslatedSequentOf(ISimpleSequent input) {
 		final ISimpleSequent actual = PPTranslator.translate(input, NO_CHECKER);
+		assertEquals(sequent, actual);
+	}
 
-		assertEquals(typenv, actual.getTypeEnvironment());
-		final ITrackedPredicate[] preds = actual.getPredicates();
-
-		Predicate actualGoal = null;
-		int hypIndex = 0;
-		for (ITrackedPredicate pred : preds) {
-			if (pred.isHypothesis()) {
-				final Predicate expectedHyp = hypotheses.get(hypIndex);
-				assertEquals(expectedHyp, pred.getPredicate());
-				hypIndex++;
-			} else {
-				actualGoal = pred.getPredicate();
-			}
-		}
-		assertEquals("Wrong number of hypotheses", hypotheses.size(), hypIndex);
-		if (actualGoal == null) {
-			// goal is false
-			actualGoal = typenv.getFormulaFactory().makeLiteralPredicate(
-					Formula.BFALSE, null);
-		}
-		assertEquals(goal, actualGoal);
+	public ISimpleSequent getSimpleSequent() {
+		return sequent;
 	}
 
 }

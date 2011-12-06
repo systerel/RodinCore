@@ -22,7 +22,6 @@ import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
-import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.internal.pp.PPTranslator;
 import org.eventb.pp.AbstractRodinTest;
 import org.eventb.pp.TestSequent;
@@ -65,13 +64,9 @@ public class TestPPTranslator extends AbstractRodinTest {
 	
 	private static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
 
-	private static ISimpleSequent makeInputSequent(TestSequent s) {
-		return SimpleSequents.make(s.hypotheses(), s.goal(), ff);
-	}
-
-	private static ISimpleSequent makeInputSequent(List<String> typenv,
+	private static ISimpleSequent makeInputSequent(List<String> typenvList,
 			List<String> hyps, String goal, FormulaFactory factory) {
-		return makeInputSequent(new TestSequent(typenv, hyps, goal, factory));
+		return TestSequent.makeSequent(typenvList, hyps, goal, factory);
 	}
 
 	private static ISimpleSequent makeInputSequent(List<String> typenv,
