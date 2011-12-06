@@ -458,7 +458,7 @@
          <action
                class="org.eventb.internal.ui.prooftreeui.ShowTypeEnv"
                enablesFor="1"
-               icon="icons/full/ctool16/info_prover_rule.gif"
+               icon="icons/full/ctool16/info_type_env.gif"
                id="org.eventb.ui.showTypeEnv"
                label="%popupMenu.showTypeEnv.label"
                menubarPath="additions"
