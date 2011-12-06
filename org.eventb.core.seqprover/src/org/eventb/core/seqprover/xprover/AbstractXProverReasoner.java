@@ -17,7 +17,6 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
@@ -29,6 +28,8 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.SerializeException;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.internal.core.seqprover.Messages;
 import org.eventb.internal.core.seqprover.Util;
 
@@ -76,9 +77,10 @@ public abstract class AbstractXProverReasoner implements IReasoner {
 	 *            proof monitor (might be <code>null</code>)
 	 * @return a new call of the external prover
 	 */
+	// TODO this method can be removed when switching to API 2
+	// and replaced by direct call to newProverCall()
 	abstract AbstractXProverCall makeCall(IReasonerInput input,
-			Iterable<Predicate> hypotheses, Predicate goal,
-			FormulaFactory factory, Object origin, IProofMonitor pm);
+			ISimpleSequent sequent, IProofMonitor pm);
 
 	public final IReasonerOutput apply(IProverSequent sequent,
 			IReasonerInput reasonerInput, IProofMonitor pm) {
@@ -95,12 +97,10 @@ public abstract class AbstractXProverReasoner implements IReasoner {
 		}
 		final Predicate goal = sequent.goal();
 
-		final FormulaFactory factory = sequent.getFormulaFactory();
-
-		final Object origin = sequent.getOrigin();
-
-		final AbstractXProverCall call = makeCall(input, hypotheses, goal,
-				factory, origin, pm);
+		final ISimpleSequent sSequent = SimpleSequents.make(hypotheses, goal,
+				sequent.getFormulaFactory(), sequent.getOrigin());
+		
+		final AbstractXProverCall call = makeCall(input, sSequent, pm);
 		final FutureTask<Object> task = new FutureTask<Object>(call, null);
 		call.setTask(task);
 		try {

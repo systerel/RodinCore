@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.xprover;
 
-import static org.eventb.core.seqprover.transformer.SimpleSequents.make;
-
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -43,9 +39,7 @@ public abstract class XProverReasoner2 extends AbstractXProverReasoner {
 
 	@Override
 	final AbstractXProverCall makeCall(IReasonerInput input,
-			Iterable<Predicate> hypotheses, Predicate goal,
-			FormulaFactory factory, Object origin, IProofMonitor pm) {
-		final ISimpleSequent sequent = make(hypotheses, goal, factory, origin);
+			ISimpleSequent sequent, IProofMonitor pm) {
 		return newProverCall(input, sequent, pm);
 	}
 

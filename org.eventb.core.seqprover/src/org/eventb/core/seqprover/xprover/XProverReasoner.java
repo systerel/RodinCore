@@ -11,11 +11,15 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.xprover;
 
-import org.eventb.core.ast.FormulaFactory;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.ITrackedPredicate;
 
 /**
  * Abstract base class for running an external prover as a reasoner.
@@ -51,8 +55,17 @@ public abstract class XProverReasoner extends AbstractXProverReasoner {
 
 	@Override
 	final AbstractXProverCall makeCall(IReasonerInput input,
-			Iterable<Predicate> hypotheses, Predicate goal,
-			FormulaFactory factory, Object origin, IProofMonitor pm) {
+			ISimpleSequent sequent, IProofMonitor pm) {
+		final List<Predicate> hypotheses = new ArrayList<Predicate>();
+		Predicate goal = null;
+		for (ITrackedPredicate tracked : sequent.getPredicates()) {
+			final Predicate pred = tracked.getPredicate();
+			if (tracked.isHypothesis()) {
+				hypotheses.add(pred);
+			} else {
+				goal = pred;
+			}
+		}
 		return newProverCall(input, hypotheses, goal, pm);
 	}
 
