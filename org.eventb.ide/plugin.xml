@@ -89,6 +89,9 @@
          <viewShortcut
                id="org.eventb.ui.views.RuleDetails">
          </viewShortcut>
+         <viewShortcut
+               id="org.eventb.ui.views.TypeEnv">
+         </viewShortcut>
       </perspectiveExtension>
       <perspectiveExtension targetID="org.eventb.ui.perspective.eventb">
          <view
