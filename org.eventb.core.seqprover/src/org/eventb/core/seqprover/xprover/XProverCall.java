@@ -44,7 +44,9 @@ import org.eventb.core.seqprover.IReasonerInput;
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @deprecated use {@link XProverCall2} instead
  */
+@Deprecated
 public abstract class XProverCall extends AbstractXProverCall {
 	
 	protected final ArrayList<Predicate> hypotheses;

@@ -81,7 +81,7 @@ public class ProcessMonitor {
 				public void run() {
 					if (cancellable.isCancelled()) {
 						process.destroy();
-						if (XProverReasoner.DEBUG) {
+						if (AbstractXProverReasoner.DEBUG) {
 							System.out.println("Destroying external prover.");
 						}
 					}
@@ -106,7 +106,7 @@ public class ProcessMonitor {
 		while (true) {
 			try {
 				process.exitValue();
-				if (XProverReasoner.DEBUG) {
+				if (AbstractXProverReasoner.DEBUG) {
 					System.out.println("External prover is now terminated.");
 				}
 				break;

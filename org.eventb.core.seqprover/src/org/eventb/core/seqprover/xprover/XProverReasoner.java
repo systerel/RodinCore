@@ -44,10 +44,10 @@ import org.eventb.core.seqprover.IReasonerInput;
  * @author François Terrier
  * @author Laurent Voisin
  * @since 1.0
+ * @deprecated use {@link XProverReasoner2} instead
  */
+@Deprecated
 public abstract class XProverReasoner extends AbstractXProverReasoner {
-
-	public static boolean DEBUG = false;
 
 	@Override
 	final AbstractXProverCall makeCall(IReasonerInput input,

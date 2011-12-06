@@ -68,20 +68,20 @@ public abstract class AbstractXProverCall implements Runnable, Cancellable {
 	 */
 	public final boolean isCancelled() {
 		if (proofMonitor != null && proofMonitor.isCanceled()) {
-			if (XProverReasoner.DEBUG) {
+			if (AbstractXProverReasoner.DEBUG) {
 				System.out
 						.println("External prover has been cancelled by proof monitor");
 			}
 			return true;
 		}
 		if (task != null && task.isCancelled()) {
-			if (XProverReasoner.DEBUG) {
+			if (AbstractXProverReasoner.DEBUG) {
 				System.out
 						.println("External prover has been cancelled by timeout");
 			}
 			return true;
 		}
-		if (XProverReasoner.DEBUG) {
+		if (AbstractXProverReasoner.DEBUG) {
 			System.out.println("External prover has not been cancelled yet");
 		}
 		return false;

@@ -46,6 +46,8 @@ import org.eventb.internal.core.seqprover.Util;
  */
 public abstract class AbstractXProverReasoner implements IReasoner {
 
+	public static boolean DEBUG = false;
+
 	public void serializeInput(IReasonerInput rInput,
 			IReasonerInputWriter writer) throws SerializeException {
 		((XProverInput) rInput).serialize(writer);

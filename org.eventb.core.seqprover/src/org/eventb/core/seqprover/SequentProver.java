@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eventb.core.seqprover;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eventb.core.seqprover.xprover.XProverReasoner;
+import org.eventb.core.seqprover.xprover.AbstractXProverReasoner;
 import org.eventb.internal.core.seqprover.AutoTacticRegistry;
 import org.eventb.internal.core.seqprover.ProverChecks;
 import org.eventb.internal.core.seqprover.ProverSequent;
@@ -86,7 +86,7 @@ public class SequentProver extends Plugin {
 		ProverChecks.DEBUG = parseOption(PROVER_CHECKS_TRACE);
 		ReasonerRegistry.DEBUG = parseOption(REASONER_REGISTRY_TRACE);
 		AutoTacticRegistry.DEBUG = parseOption(TACTIC_REGISTRY_TRACE);
-		XProverReasoner.DEBUG = parseOption(XPROVER_TRACE);
+		AbstractXProverReasoner.DEBUG = parseOption(XPROVER_TRACE);
 		AutoRewriterImpl.DEBUG = parseOption(AUTO_REWRITER_TRACE);
 		MembershipGoal.DEBUG = parseOption(MEMBERSHIP_GOAL_TRACE);
 	}
