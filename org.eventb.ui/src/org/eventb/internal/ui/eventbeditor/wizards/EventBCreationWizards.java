@@ -17,6 +17,7 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.internal.ui.eventbeditor.dialogs.EventBDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewConstantDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewDerivedPredicateDialog;
+import org.eventb.internal.ui.eventbeditor.dialogs.NewEnumeratedSetDialog;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 
@@ -66,6 +67,28 @@ public class EventBCreationWizards {
 			final boolean[] axmIsThm = constantDialog.getAxiomIsTheorem();
 			return OperationFactory.createConstantWizard((IContextRoot) root,
 					identifier, axmNames, axmSubs, axmIsThm);
+		}
+
+	}
+	
+	public static class NewEnumeratedSetWizard extends AbstractEventBCreationWizard {
+
+		@Override
+		protected EventBDialog createDialog(IEventBRoot root, Shell shell) {
+			return new NewEnumeratedSetDialog((IContextRoot) root, shell,
+					"New Enumerated Set");
+		}
+
+		@Override
+		public AtomicOperation getCreationOperation(IEventBRoot root,
+				EventBDialog dialog) {
+			final NewEnumeratedSetDialog enumDialod = (NewEnumeratedSetDialog) dialog;
+			final String name = enumDialod.getName();
+			final String[] elements = enumDialod.getElements();
+			if (name == null)
+				return null;
+			return OperationFactory.createEnumeratedSetWizard(
+					(IContextRoot) root, name, elements);
 		}
 
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - added checkAndSetFieldValues()
+ *     Systerel - refactored after wizard refactoring
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -29,7 +30,7 @@ import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.IEventBInputText;
-import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.eventb.internal.ui.UIUtils;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 
@@ -54,22 +55,17 @@ public class NewEnumeratedSetDialog extends EventBDialog {
 	/**
 	 * Constructor.
 	 * 
-	 * @param editor
-	 *            the editor that called the dialog
 	 * @param root
 	 *            the root element to which enumerated sets will be added
 	 * @param parentShell
 	 *            the parent shell of the dialog
 	 * @param title
 	 *            the title of the dialog
-	 * @param defaultName
-	 *            the default set name
 	 */
-	public NewEnumeratedSetDialog(IEventBEditor<IContextRoot> editor,
-			IContextRoot root, Shell parentShell, String title,
-			String defaultName) {
+	public NewEnumeratedSetDialog(IContextRoot root, Shell parentShell, String title) {
 		super(parentShell, root, title);
-		this.defaultName = defaultName;
+		this.defaultName = UIUtils.getFreeElementIdentifier(root,
+				ICarrierSet.ELEMENT_TYPE);
 		elementTexts = new ArrayList<IEventBInputText>();
 	}
 

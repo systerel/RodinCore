@@ -23,6 +23,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.internal.ui.eventbeditor.wizards.AbstractEventBCreationWizard;
 import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.eventb.ui.tests.integration.EventBUIIntegrationUtils;
@@ -47,47 +48,16 @@ public class EventBCreationWizardTest extends AbstractUIIntegrationTest {
 	 */
 	@Test
 	public void testNewAxiomWizard() throws CoreException {
-		final IWorkbenchPage page = ww.getActivePage();
 		final Display display = workbench.getDisplay();
-
-		final boolean confirm = askForTestExecution(display,
-				"New Axioms Wizard Test",
+		final boolean skip = prepareTestAndOpenContextEditor(
+				"New Axiom Wizard Test",
 				"Enter a valid axiom or more and press OK.\n"
-						+ "Press Cancel to skip the test.");
-		if (!confirm)
+						+ "Press Cancel to skip the test.", display);
+		if (skip)
 			return;
-
-		EventBUIIntegrationUtils.openEditor(display, page,
-				eventBContextEditorID, ctx);
-		final IEditorPart activeEditor = page.getActiveEditor();
-		assertTrue(activeEditor instanceof IEventBEditor<?>);
-		final IEventBEditor<?> editor = (IEventBEditor<?>) activeEditor;
-		// We check that the active editor is the one we want
-		final IEditorInput editorInput = activeEditor.getEditorInput();
-		assertTrue((editorInput instanceof FileEditorInput));
-		assertEquals(((FileEditorInput) editorInput).getFile(), ctx
-				.getRodinFile().getResource());
-		display.syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				// Launch the dialog for interactive test.
-				final EventBCreationWizards.NewAxiomsWizard wizard = new EventBCreationWizards.NewAxiomsWizard();
-				final AtomicOperation op = wizard
-						.openDialog((IEventBEditor<?>) activeEditor);
-				// We check that the element is added in the editor
-				if (op != null) {
-					assertTrue(
-							"The element has not been added to the EventB editor",
-							editor.isNewElement(op.getCreatedElement()));
-					// We check that the operation has been added to the history
-					assertTrue(History.getInstance().isUndo(
-							OperationFactory.getContext(ctx)));
-				}
-			}
-
-		});
-
+		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckContextEditor();
+		checkWizard(display, activeEditor,
+				new EventBCreationWizards.NewAxiomsWizard());
 	}
 
 	/**
@@ -101,36 +71,74 @@ public class EventBCreationWizardTest extends AbstractUIIntegrationTest {
 	 */
 	@Test
 	public void testNewConstantsWizard() throws CoreException {
-		final IWorkbenchPage page = ww.getActivePage();
 		final Display display = workbench.getDisplay();
-
-		final boolean confirm = askForTestExecution(display,
-				"New Constants Wizard Test",
-				"Enter a valid constant or more and press OK.\n"
-						+ "Press Cancel to skip the test.");
-		if (!confirm)
+		final boolean skip = prepareTestAndOpenContextEditor(
+				"New Constant Wizard Test",
+				"Enter a valid constant or add more and finally press OK.\n"
+						+ "Press Cancel to skip the test.", display);
+		if (skip)
 			return;
+		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckContextEditor();
+		checkWizard(display, activeEditor,
+				new EventBCreationWizards.NewConstantsWizard());
+	}
 
-		EventBUIIntegrationUtils.openEditor(display, page,
-				eventBContextEditorID, ctx);
+	/**
+	 * This is an interactive test. This test runs the "NewEnumeratedSetWizard"
+	 * on an empty context. It ensures that when a correct input has been given,
+	 * and the OK button is pressed, then the created element is a new element
+	 * for the EventB editor, and the operation has been added to the undo-redo
+	 * history.
+	 * 
+	 * @throws CoreException
+	 */
+	@Test
+	public void testNewEnumeratedSetWizard() throws CoreException {
+		final Display display = workbench.getDisplay();
+		final boolean skip = prepareTestAndOpenContextEditor(
+				"New Enumerated Set Wizard Test",
+				"Enter a valid enumerated set and press OK.\n"
+						+ "Press Cancel to skip the test.", display);
+		if (skip)
+			return;
+		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckContextEditor();
+		checkWizard(display, activeEditor,
+				new EventBCreationWizards.NewEnumeratedSetWizard());
+	}
 
-		final IEditorPart activeEditor = page.getActiveEditor();
+	/**
+	 * Returns <code>true</code> if the test shall be skipped.
+	 */
+	private boolean prepareTestAndOpenContextEditor(String title,
+			String message, Display display) {
+		final IWorkbenchPage page = ww.getActivePage();
+		final boolean confirm = askForTestExecution(display, title, message);
+		if (confirm)
+			EventBUIIntegrationUtils.openEditor(display, page,
+					eventBContextEditorID, ctx);
+		return !confirm;
+	}
+
+	private IEventBEditor<?> getAndCheckContextEditor() {
+		final IEditorPart activeEditor = ww.getActivePage().getActiveEditor();
 		assertTrue(activeEditor instanceof IEventBEditor<?>);
-		final IEventBEditor<?> editor = (IEventBEditor<?>) activeEditor;
-
 		// We check that the active editor is the one we want
 		final IEditorInput editorInput = activeEditor.getEditorInput();
 		assertTrue((editorInput instanceof FileEditorInput));
 		assertEquals(((FileEditorInput) editorInput).getFile(), ctx
 				.getRodinFile().getResource());
+		return (IEventBEditor<?>) activeEditor;
+	}
+
+	private void checkWizard(Display display, final IEventBEditor<?> editor,
+			final AbstractEventBCreationWizard wizard) {
+
 		display.syncExec(new Runnable() {
 
 			@Override
 			public void run() {
 				// Launch the dialog for interactive test.
-				final EventBCreationWizards.NewConstantsWizard wizard = new EventBCreationWizards.NewConstantsWizard();
-				final AtomicOperation op = wizard
-						.openDialog((IEventBEditor<?>) activeEditor);
+				final AtomicOperation op = wizard.openDialog(editor);
 				// We check that the element is added in the editor
 				if (op != null) {
 					assertTrue(

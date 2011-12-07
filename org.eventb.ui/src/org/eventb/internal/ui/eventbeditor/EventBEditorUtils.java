@@ -71,7 +71,6 @@ import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewCarrierSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewDerivedPredicateDialog;
-import org.eventb.internal.ui.eventbeditor.dialogs.NewEnumeratedSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEventDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewVariableDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewVariantDialog;
@@ -895,32 +894,6 @@ public class EventBEditorUtils {
 		final AtomicOperation operation = OperationFactory
 				.createCarrierSetWizard(root, names);
 		addOperationToHistory(operation, editor);
-	}
-
-	/**
-	 * Utility method to create new carrier sets using a modal dialog.
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method.
-	 * @param root
-	 *            the root element to which new enumerated sets will be added
-	 */
-	public static void newEnumeratedSet(IEventBEditor<IContextRoot> editor,
-			IContextRoot root) {
-		final String identifier = UIUtils.getFreeElementIdentifier(root,
-				ICarrierSet.ELEMENT_TYPE);
-		final NewEnumeratedSetDialog dialog = new NewEnumeratedSetDialog(
-				editor, root, Display.getCurrent().getActiveShell(),
-				"New Enumerated Set", identifier);
-
-		dialog.open();
-		final String name = dialog.getName();
-		final String[] elements = dialog.getElements();
-		if (name != null) {
-			final AtomicOperation operation = OperationFactory
-					.createEnumeratedSetWizard(root, name, elements);
-			addOperationToHistory(operation, editor);
-		}
 	}
 
 	public static IRodinElement getAbstractElement(IRodinElement concreteElement)
