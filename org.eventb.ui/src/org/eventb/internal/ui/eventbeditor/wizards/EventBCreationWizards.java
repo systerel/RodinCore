@@ -16,8 +16,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.basis.ContextRoot;
+import org.eventb.core.basis.MachineRoot;
 import org.eventb.internal.ui.eventbeditor.dialogs.EventBDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewCarrierSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewConstantDialog;
@@ -140,5 +142,28 @@ public class EventBCreationWizards {
 		}
 
 	}
+	
+	public static class NewInvariantsWizard extends
+			AbstractEventBCreationWizard {
+
+		@Override
+		protected EventBDialog createDialog(IEventBRoot root, Shell shell) {
+			return new NewDerivedPredicateDialog<IInvariant>(root, shell,
+					"New Invariants", IInvariant.ELEMENT_TYPE);
+		}
+
+		@Override
+		public AtomicOperation getCreationOperation(IEventBRoot root,
+				EventBDialog dialog) {
+			final NewDerivedPredicateDialog<?> iDialog = (NewDerivedPredicateDialog<?>) dialog;
+			final String[] names = iDialog.getNewNames();
+			final String[] contents = iDialog.getNewContents();
+			final boolean[] isTheorem = iDialog.getIsTheorem();
+			return OperationFactory.createInvariantWizard((MachineRoot) root,
+					names, contents, isTheorem);
+		}
+
+	}
+
 
 }

@@ -69,10 +69,8 @@ import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.dialogs.NewDerivedPredicateDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEventDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewVariableDialog;
-import org.eventb.internal.ui.eventbeditor.dialogs.NewVariantDialog;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
@@ -775,30 +773,6 @@ public class EventBEditorUtils {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Utility method to create new invariants using a modal dialog.
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method
-	 * @param root
-	 *            the root element to which new invariants will be added
-	 */
-	public static void newInvariants(final IEventBEditor<IMachineRoot> editor,
-			IMachineRoot root) {
-		final NewDerivedPredicateDialog<IInvariant> dialog = new NewDerivedPredicateDialog<IInvariant>(
-				root, Display.getCurrent().getActiveShell(), "New Invariants",
-				IInvariant.ELEMENT_TYPE);
-		dialog.open();
-		if (dialog.getReturnCode() == InputDialog.CANCEL)
-			return; // Cancel
-		final String[] names = dialog.getNewNames();
-		final String[] contents = dialog.getNewContents();
-		final boolean[] isTheorem = dialog.getIsTheorem();
-		final AtomicOperation operation = OperationFactory
-				.createInvariantWizard(root, names, contents, isTheorem);
-		addOperationToHistory(operation, editor);
 	}
 
 	/**
