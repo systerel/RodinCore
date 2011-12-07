@@ -69,7 +69,6 @@ import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.dialogs.NewCarrierSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewDerivedPredicateDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEventDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewVariableDialog;
@@ -865,34 +864,6 @@ public class EventBEditorUtils {
 		AtomicOperation operation = OperationFactory.createEvent(
 				editor.getRodinInput(), name, paramNames, grdNames,
 				grdPredicates, grdIsTheorem, actNames, actSubstitutions);
-		addOperationToHistory(operation, editor);
-	}
-	
-
-	/**
-	 * Utility method to create new carrier sets using a modal dialog.
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method
-	 * @param root
-	 *            the root element to which new carrier sets will be added
-	 */
-	public static void newCarrierSets(IEventBEditor<IContextRoot> editor,
-			IContextRoot root) {
-		final String identifier = UIUtils.getFreeElementIdentifier(root,
-				ICarrierSet.ELEMENT_TYPE);
-		final NewCarrierSetDialog dialog = new NewCarrierSetDialog(editor,
-				root, Display.getCurrent().getActiveShell(),
-				"New Carrier Sets", "Identifier", identifier);
-
-		dialog.open();
-		if (dialog.getReturnCode() == InputDialog.CANCEL)
-			return; // Cancel
-		final Collection<String> attributes = dialog.getNames();
-		final String[] names = attributes
-				.toArray(new String[attributes.size()]);
-		final AtomicOperation operation = OperationFactory
-				.createCarrierSetWizard(root, names);
 		addOperationToHistory(operation, editor);
 	}
 

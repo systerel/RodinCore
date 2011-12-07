@@ -107,6 +107,29 @@ public class EventBCreationWizardTest extends AbstractUIIntegrationTest {
 	}
 
 	/**
+	 * This is an interactive test. This test runs the "NewCarrierSetsWizard" on
+	 * an empty context. It ensures that when a correct input has been given,
+	 * and the OK button is pressed, then the created element is a new element
+	 * for the EventB editor, and the operation has been added to the undo-redo
+	 * history.
+	 * 
+	 * @throws CoreException
+	 */
+	@Test
+	public void testNewCarrierSetsWizard() throws CoreException {
+		final Display display = workbench.getDisplay();
+		final boolean skip = prepareTestAndOpenContextEditor(
+				"New Carrier Set Wizard Test",
+				"Enter a valid carrier set or more and press OK.\n"
+						+ "Press Cancel to skip the test.", display);
+		if (skip)
+			return;
+		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckContextEditor();
+		checkWizard(display, activeEditor,
+				new EventBCreationWizards.NewCarrierSetsWizard());
+	}
+
+	/**
 	 * Returns <code>true</code> if the test shall be skipped.
 	 */
 	private boolean prepareTestAndOpenContextEditor(String title,

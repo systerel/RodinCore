@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.wizards;
 
+import java.util.Collection;
+
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.basis.ContextRoot;
 import org.eventb.internal.ui.eventbeditor.dialogs.EventBDialog;
+import org.eventb.internal.ui.eventbeditor.dialogs.NewCarrierSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewConstantDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewDerivedPredicateDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEnumeratedSetDialog;
@@ -70,8 +74,9 @@ public class EventBCreationWizards {
 		}
 
 	}
-	
-	public static class NewEnumeratedSetWizard extends AbstractEventBCreationWizard {
+
+	public static class NewEnumeratedSetWizard extends
+			AbstractEventBCreationWizard {
 
 		@Override
 		protected EventBDialog createDialog(IEventBRoot root, Shell shell) {
@@ -89,6 +94,28 @@ public class EventBCreationWizards {
 				return null;
 			return OperationFactory.createEnumeratedSetWizard(
 					(IContextRoot) root, name, elements);
+		}
+
+	}
+
+	public static class NewCarrierSetsWizard extends
+			AbstractEventBCreationWizard {
+
+		@Override
+		protected EventBDialog createDialog(IEventBRoot root, Shell shell) {
+			return new NewCarrierSetDialog((ContextRoot) root, shell,
+					"New Carrier Sets", "Identifier");
+		}
+
+		@Override
+		public AtomicOperation getCreationOperation(IEventBRoot root,
+				EventBDialog dialog) {
+			final NewCarrierSetDialog csDialog = (NewCarrierSetDialog) dialog;
+			final Collection<String> attributes = csDialog.getNames();
+			final String[] names = attributes.toArray(new String[attributes
+					.size()]);
+			return OperationFactory.createCarrierSetWizard((IContextRoot) root,
+					names);
 		}
 
 	}

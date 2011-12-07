@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - used EventBSharedColor
  *     Systerel - added checkAndSetFieldValues()
+ *     Systerel - modified according to wizard refactoring
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -25,10 +26,10 @@ import java.util.List;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.ICarrierSet;
-import org.eventb.core.IContextRoot;
+import org.eventb.core.basis.ContextRoot;
 import org.eventb.internal.ui.EventBText;
 import org.eventb.internal.ui.IEventBInputText;
-import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.eventb.internal.ui.UIUtils;
 
 /**
  * @author htson
@@ -51,8 +52,6 @@ public class NewCarrierSetDialog extends EventBDialog {
 	/**
 	 * Constructor.
 	 *
-	 * @param editor
-	 * 			the editor that made the call to this method
 	 * @param root
 	 * 			the root element to which a carrier set will be added
 	 * @param parentShell
@@ -61,15 +60,13 @@ public class NewCarrierSetDialog extends EventBDialog {
 	 *            the title of the dialog
 	 * @param message
 	 *            the text message of the dialog
-	 * @param defaultPrefix
-	 *            the default prefix of for the attributes
 	 */
-	public NewCarrierSetDialog(IEventBEditor<IContextRoot> editor,
-			IContextRoot root, Shell parentShell, String title, String message,
-			String defaultPrefix) {
+	public NewCarrierSetDialog(ContextRoot root, Shell parentShell,
+			String title, String message) {
 		super(parentShell, root, title);
 		this.message = message;
-		this.defaultPrefix = defaultPrefix;
+		this.defaultPrefix = UIUtils.getFreeElementIdentifier(root,
+				ICarrierSet.ELEMENT_TYPE);
 		namesTexts = new ArrayList<IEventBInputText>();
 		namesResults = new ArrayList<String>();
 	}
