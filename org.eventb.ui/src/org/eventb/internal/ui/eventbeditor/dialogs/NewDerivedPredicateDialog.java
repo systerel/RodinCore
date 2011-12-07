@@ -34,7 +34,6 @@ import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElementType;
 
 /**
@@ -64,8 +63,6 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 	/**
 	 * Constructor.
 	 * 
-	 * @param editor
-	 *            the editor that called this dialog
 	 * @param root
 	 *            the root element of the editor
 	 * @param parentShell
@@ -75,7 +72,7 @@ public class NewDerivedPredicateDialog<T extends ILabeledElement> extends
 	 * @param type
 	 *            the element type for wizard
 	 */
-	public NewDerivedPredicateDialog(IEventBEditor<?> editor, IEventBRoot root,
+	public NewDerivedPredicateDialog(IEventBRoot root,
 			Shell parentShell, String title, IInternalElementType<?> type) {
 		super(parentShell, root, title);
 		this.type = type;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@
  *     Systerel - added checkAndShowReadOnly
  *     Systerel - replaced Messages.bind() by a static method
  *     Systerel - add widget to edit theorem attribute in new dialogs
+ *     Systerel - moved wizard behaviour to dedicated classes 
  ******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
@@ -827,9 +828,8 @@ public class EventBEditorUtils {
 	public static void newInvariants(final IEventBEditor<IMachineRoot> editor,
 			IMachineRoot root) {
 		final NewDerivedPredicateDialog<IInvariant> dialog = new NewDerivedPredicateDialog<IInvariant>(
-				editor, root, Display.getCurrent().getActiveShell(),
-				"New Invariants", IInvariant.ELEMENT_TYPE);
-
+				root, Display.getCurrent().getActiveShell(), "New Invariants",
+				IInvariant.ELEMENT_TYPE);
 		dialog.open();
 		if (dialog.getReturnCode() == InputDialog.CANCEL)
 			return; // Cancel
@@ -959,31 +959,6 @@ public class EventBEditorUtils {
 					.createEnumeratedSetWizard(root, name, elements);
 			addOperationToHistory(operation, editor);
 		}
-	}
-
-	/**
-	 * Utility method to create new axioms using a modal dialog.
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method
-	 * @param root
-	 *            the root element to which new axioms will be added
-	 */
-	public static void newAxioms(final IEventBEditor<IContextRoot> editor,
-			IContextRoot root) {
-		final NewDerivedPredicateDialog<IAxiom> dialog = new NewDerivedPredicateDialog<IAxiom>(
-				editor, root, Display.getCurrent().getActiveShell(),
-				"New Axioms", IAxiom.ELEMENT_TYPE);
-		dialog.open();
-		if (dialog.getReturnCode() == InputDialog.CANCEL)
-			return; // Cancel
-
-		final String[] names = dialog.getNewNames();
-		final String[] contents = dialog.getNewContents();
-		final boolean[] isTheorem = dialog.getIsTheorem();
-		final AtomicOperation operation = OperationFactory.createAxiomWizard(
-				root, names, contents, isTheorem);
-		addOperationToHistory(operation, editor);
 	}
 
 	public static IRodinElement getAbstractElement(IRodinElement concreteElement)
