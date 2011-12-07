@@ -38,10 +38,9 @@ import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ProviderModifyListener;
 import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.Triplet;
+import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards.NewConstantsWizard;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 
@@ -63,17 +62,17 @@ public class NewConstantDialog extends EventBDialog {
 
 	private Collection<Triplet<IEventBInputText, IEventBInputText, Button>> axiomTexts;
 	
-	private final IEventBEditor<IContextRoot> editor;
-
 	private Composite composite;
 	
 	private ProviderModifyListener providerListener;
+
+	private final NewConstantsWizard wizard;
 	
 	/**
 	 * Constructor.
 	 * 
-	 * @param editor
-	 *            the editor that called this dialog
+	 * @param wizard
+	 *            the parent wizard of this dialog
 	 * @param root
 	 *            the context root to which constants will be added
 	 * @param parentShell
@@ -81,10 +80,10 @@ public class NewConstantDialog extends EventBDialog {
 	 * @param title
 	 *            the title of the dialog
 	 */
-	public NewConstantDialog(IEventBEditor<IContextRoot> editor, IContextRoot root,
+	public NewConstantDialog(NewConstantsWizard wizard, IContextRoot root,
 			Shell parentShell, String title) {
 		super(parentShell, root, title);
-		this.editor = editor;
+		this.wizard = wizard;
 		axmPrefix = getAxiomPrefix();
 	}
 
@@ -185,15 +184,14 @@ public class NewConstantDialog extends EventBDialog {
 	}
 
 	private String getNewAxiomName() {
-		final String axmIndex = UIUtils.getFreeElementLabelIndex(editor
-				.getRodinInput(), IAxiom.ELEMENT_TYPE, axmPrefix);
+		final String axmIndex = UIUtils.getFreeElementLabelIndex(root,
+				IAxiom.ELEMENT_TYPE, axmPrefix);
 		final int index = Integer.parseInt(axmIndex) + axiomTexts.size();
 		return axmPrefix + index;
 	}
 	
 	private void addValues() {
-		EventBEditorUtils.newConstant(editor, identifierResult,
-				getAxiomNames(), getAxiomPredicates(), getAxiomIsTheorem());
+		wizard.getAndRegisterCreationOperation(this);
 	}
 	
 	private void initialise() {

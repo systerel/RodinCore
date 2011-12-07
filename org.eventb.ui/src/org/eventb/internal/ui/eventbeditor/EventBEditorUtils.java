@@ -70,7 +70,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewCarrierSetDialog;
-import org.eventb.internal.ui.eventbeditor.dialogs.NewConstantDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewDerivedPredicateDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEnumeratedSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEventDialog;
@@ -767,43 +766,6 @@ public class EventBEditorUtils {
 		addOperationToHistory(operation, editor);
 	}
 	
-	/**
-	 * Utility method to create a constant with its type axiom using a modal
-	 * dialog.
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method
-	 * @param root
-	 *            the root element to which new constants will be added
-	 */
-	public static void intelligentNewConstant(
-			final IEventBEditor<IContextRoot> editor, IContextRoot root) {
-
-		final NewConstantDialog dialog = new NewConstantDialog(editor, root,
-				Display.getCurrent().getActiveShell(), "New Constant");
-
-		dialog.open();
-
-		if (dialog.getReturnCode() == InputDialog.CANCEL)
-			return; // Cancel
-
-		final String identifier = dialog.getIdentifier();
-		final String[] axmNames = dialog.getAxiomNames();
-		final String[] axmSubs = dialog.getAxiomPredicates();
-		final boolean[] axmIsThm = dialog.getAxiomIsTheorem();
-		newConstant(editor, identifier, axmNames, axmSubs, axmIsThm);
-	}
-
-	public static void newConstant(IEventBEditor<IContextRoot> editor,
-			String identifier, String[] axmNames, String[] axmSubs,
-			boolean[] axmIsThm) {
-		AtomicOperation operation = OperationFactory
-				.createConstantWizard(editor.getRodinInput(), identifier,
-						axmNames, axmSubs, axmIsThm);
-		History.getInstance().addOperation(operation);
-		addNewElements(editor, operation);
-	}
-
 	public static IEvent getInitialisation(IMachineRoot root)
 			throws RodinDBException {
 		final IRodinElement[] events = root
@@ -1030,14 +992,6 @@ public class EventBEditorUtils {
 			editor.addNewElement(element);
 		}
 	}
-
-	private static void addNewElements(IEventBEditor<?> editor,
-			AtomicOperation op) {
-		for (IInternalElement element : op.getCreatedElements()) {
-			editor.addNewElement(element);
-		}
-	}
-
 
 	/**
 	 * Add the operation to the history and add the new element to the editor

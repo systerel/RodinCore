@@ -14,14 +14,13 @@ package org.eventb.internal.ui.eventbeditor.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eventb.core.IContextRoot;
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
 
 public class NewConstants extends AbstractNewActionDelegate<IContextRoot> {
 
 	@Override
 	public void runAction(IAction action) {
-		final IContextRoot root = editor.getRodinInput();
-		EventBEditorUtils.intelligentNewConstant(editor, root);
+		new EventBCreationWizards.NewConstantsWizard().openDialog(editor);
 	}
 
 }

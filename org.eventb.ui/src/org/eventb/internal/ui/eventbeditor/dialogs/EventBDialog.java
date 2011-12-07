@@ -634,4 +634,8 @@ public abstract class EventBDialog extends Dialog {
 				element, attributeType);
 		return new WizardProposalProvider(location, ff);
 	}
+	
+	public IEventBRoot getRoot() {
+		return root;
+	}
 }
