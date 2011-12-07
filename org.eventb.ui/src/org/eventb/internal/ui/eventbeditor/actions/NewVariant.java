@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - introduced read only elements through new super class
  *     Systerel - redirected dialog opening and externalized strings
+ *     Systerel - refactored using NewVariantWizard
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.actions;
 
@@ -21,7 +22,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariant;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
 import org.rodinp.core.RodinDBException;
 
 public class NewVariant extends AbstractNewActionDelegate<IMachineRoot> {
@@ -36,12 +37,13 @@ public class NewVariant extends AbstractNewActionDelegate<IMachineRoot> {
 			EventBUIExceptionHandler.handleGetChildrenException(e);
 			return;
 		}
-		if (length != 0)
+		if (length != 0) {
 			UIUtils
-					.showError(title_variantExists,
-							dialogs_variantAlreadyExists);
-		else
-			EventBEditorUtils.newVariant(editor, root);
+			.showError(title_variantExists,
+					dialogs_variantAlreadyExists);
+			return;
+		}
+		new EventBCreationWizards.NewVariantWizard().openDialog(editor);
 	}
 
 }

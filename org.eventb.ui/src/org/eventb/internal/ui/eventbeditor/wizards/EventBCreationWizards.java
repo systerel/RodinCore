@@ -16,12 +16,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
+import org.eventb.core.IMachineRoot;
 import org.eventb.core.basis.ContextRoot;
 import org.eventb.internal.ui.eventbeditor.dialogs.EventBDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewCarrierSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewConstantDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewDerivedPredicateDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEnumeratedSetDialog;
+import org.eventb.internal.ui.eventbeditor.dialogs.NewVariantDialog;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 
@@ -116,6 +118,25 @@ public class EventBCreationWizards {
 					.size()]);
 			return OperationFactory.createCarrierSetWizard((IContextRoot) root,
 					names);
+		}
+
+	}
+	
+	public static class NewVariantWizard extends AbstractEventBCreationWizard {
+
+		@Override
+		protected EventBDialog createDialog(IEventBRoot root, Shell shell) {
+			return new NewVariantDialog((IMachineRoot) root, shell,
+					"New Variant", "Expression");
+		}
+
+		@Override
+		public AtomicOperation getCreationOperation(IEventBRoot root,
+				EventBDialog dialog) {
+			final NewVariantDialog variantDialog = (NewVariantDialog) dialog;
+			final String expression = variantDialog.getExpression();
+			return OperationFactory.createVariantWizard((IMachineRoot) root,
+					expression);
 		}
 
 	}

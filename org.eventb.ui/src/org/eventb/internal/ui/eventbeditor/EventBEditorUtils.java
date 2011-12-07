@@ -802,29 +802,6 @@ public class EventBEditorUtils {
 	}
 
 	/**
-	 * Utility method to create a new variant using a modal dialog.
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method
-	 * @param root
-	 *            the root element to which new variants will be added
-	 */
-	public static void newVariant(final IEventBEditor<IMachineRoot> editor,
-			IMachineRoot root) {
-		final NewVariantDialog dialog = new NewVariantDialog(editor, root,
-				Display.getCurrent().getActiveShell(), "New Variant",
-				"Expression");
-		dialog.open();
-		if (dialog.getReturnCode() == InputDialog.CANCEL)
-			return; // Cancel
-
-		final String expression = dialog.getExpression();
-		final AtomicOperation operation = OperationFactory.createVariantWizard(
-				root, expression);
-		addOperationToHistory(operation, editor);
-	}
-
-	/**
 	 * Utility method to create an event with its parameters, guards and actions
 	 * using a modal dialog.
 	 * 

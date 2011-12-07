@@ -10,31 +10,19 @@
  *******************************************************************************/
 package org.eventb.ui.tests.integration.wizards;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
-import org.eventb.internal.ui.eventbeditor.operations.History;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
-import org.eventb.internal.ui.eventbeditor.wizards.AbstractEventBCreationWizard;
 import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
 import org.eventb.ui.eventbeditor.IEventBEditor;
-import org.eventb.ui.tests.integration.EventBUIIntegrationUtils;
 import org.junit.Test;
 
 /**
  * Tests to check the integration of element creation wizards associated to the
- * EventB editor.
+ * Context EventB editor.
  * 
  * @author Thomas Muller
  */
-public class ContextElementsCreationWizardTest extends AbstractUIIntegrationTest {
+public class ContextElementsCreationWizardTest extends AbstractCreationWizardTest {
 
 	/**
 	 * This is an interactive test. This test runs the "NewAxiomsWizard" on an
@@ -54,7 +42,7 @@ public class ContextElementsCreationWizardTest extends AbstractUIIntegrationTest
 						+ "Press Cancel to skip the test.", display);
 		if (skip)
 			return;
-		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckContextEditor();
+		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckEditor(ctx);
 		checkWizard(display, activeEditor,
 				new EventBCreationWizards.NewAxiomsWizard());
 	}
@@ -77,7 +65,7 @@ public class ContextElementsCreationWizardTest extends AbstractUIIntegrationTest
 						+ "Press Cancel to skip the test.", display);
 		if (skip)
 			return;
-		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckContextEditor();
+		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckEditor(ctx);
 		checkWizard(display, activeEditor,
 				new EventBCreationWizards.NewConstantsWizard());
 	}
@@ -100,7 +88,7 @@ public class ContextElementsCreationWizardTest extends AbstractUIIntegrationTest
 						+ "Press Cancel to skip the test.", display);
 		if (skip)
 			return;
-		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckContextEditor();
+		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckEditor(ctx);
 		checkWizard(display, activeEditor,
 				new EventBCreationWizards.NewEnumeratedSetWizard());
 	}
@@ -123,56 +111,11 @@ public class ContextElementsCreationWizardTest extends AbstractUIIntegrationTest
 						+ "Press Cancel to skip the test.", display);
 		if (skip)
 			return;
-		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckContextEditor();
+		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckEditor(ctx);
 		checkWizard(display, activeEditor,
 				new EventBCreationWizards.NewCarrierSetsWizard());
 	}
 
-	/**
-	 * Returns <code>true</code> if the test shall be skipped.
-	 */
-	private boolean prepareTestAndOpenContextEditor(String title,
-			String message, Display display) {
-		final IWorkbenchPage page = ww.getActivePage();
-		final boolean confirm = EventBUIIntegrationUtils.askForTestExecution(display, title, message);
-		if (confirm)
-			EventBUIIntegrationUtils.openEditor(display, page,
-					eventBContextEditorID, ctx);
-		return !confirm;
-	}
-
-	private IEventBEditor<?> getAndCheckContextEditor() {
-		final IEditorPart activeEditor = ww.getActivePage().getActiveEditor();
-		assertTrue(activeEditor instanceof IEventBEditor<?>);
-		// We check that the active editor is the one we want
-		final IEditorInput editorInput = activeEditor.getEditorInput();
-		assertTrue((editorInput instanceof FileEditorInput));
-		assertEquals(((FileEditorInput) editorInput).getFile(), ctx
-				.getRodinFile().getResource());
-		return (IEventBEditor<?>) activeEditor;
-	}
-
-	private void checkWizard(Display display, final IEventBEditor<?> editor,
-			final AbstractEventBCreationWizard wizard) {
-
-		display.syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				// Launch the dialog for interactive test.
-				final AtomicOperation op = wizard.openDialog(editor);
-				// We check that the element is added in the editor
-				if (op != null) {
-					assertTrue(
-							"The element has not been added to the EventB editor",
-							editor.isNewElement(op.getCreatedElement()));
-					// We check that the operation has been added to the history
-					assertTrue(History.getInstance().isUndo(
-							OperationFactory.getContext(ctx)));
-				}
-			}
-
-		});
-	}
+	
 
 }
