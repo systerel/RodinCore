@@ -29,7 +29,6 @@ import static org.eventb.internal.ui.utils.Messages.title_canNotPaste;
 import static org.eventb.ui.EventBUIPlugin.getAxm_Default;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -70,7 +69,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEventDialog;
-import org.eventb.internal.ui.eventbeditor.dialogs.NewVariableDialog;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
@@ -699,67 +697,6 @@ public class EventBEditorUtils {
 
 		// try to select the column to edit element
 		viewer.selectItem(item, column);
-	}
-
-	/**
-	 * Utility method to create a variable with its type invariant and
-	 * initialization using a modal dialog.
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method
-	 * @param root
-	 *            the root element that the variable and its invariant,
-	 *            initialization will be created in
-	 */
-	public static void intelligentNewVariable(final IEventBEditor<IMachineRoot> editor,
-			final IMachineRoot root) {
-
-		final String prefix = PreferenceUtils.getAutoNamePrefix(editor.getRodinInput(),
-				IInvariant.ELEMENT_TYPE);
-
-		final NewVariableDialog dialog = new NewVariableDialog(
-				editor, root, Display.getCurrent().getActiveShell(), "New Variable",
-				prefix);
-
-		dialog.open();
-
-		if (dialog.getReturnCode() == InputDialog.CANCEL)
-			return; // Cancel
-
-		final String varName = dialog.getName();
-		final Collection<Triplet<String, String, Boolean>> invariant = dialog
-				.getInvariants();
-		final String actName = dialog.getInitActionName();
-		final String actSub = dialog.getInitActionSubstitution();
-		newVariable(editor, varName, invariant, actName, actSub);
-	}
-
-	/**
-	 * Returns a command that creates a new variable with the given invariants
-	 * and initialization.
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method
-	 * @param varName
-	 *            the name of the created variable
-	 * @param invariant
-	 *            a collection of invariants, possibly empty if no invariants
-	 *            are desired
-	 * @param actName
-	 *            the initialization action label, or <code>null</code> if no
-	 *            initialization is desired
-	 * @param actSub
-	 *            the initialization assignment predicate , or <code>null</code>
-	 *            if no initialization is desired
-	 */
-	public static void newVariable(IEventBEditor<IMachineRoot> editor,
-			String varName,
-			final Collection<Triplet<String, String, Boolean>> invariant,
-			String actName, String actSub) {
-		final AtomicOperation operation = OperationFactory
-				.createVariableWizard(editor.getRodinInput(), varName,
-						invariant, actName, actSub);
-		addOperationToHistory(operation, editor);
 	}
 	
 	public static IEvent getInitialisation(IMachineRoot root)

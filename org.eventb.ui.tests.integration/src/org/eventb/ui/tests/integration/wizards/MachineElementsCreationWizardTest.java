@@ -71,4 +71,27 @@ public class MachineElementsCreationWizardTest extends
 				new EventBCreationWizards.NewInvariantsWizard());
 	}
 	
+	/**
+	 * This is an interactive test. This test runs the "NewVariablesWizard" on
+	 * an empty machine. It ensures that when a correct input has been given,
+	 * and the OK button is pressed, then the created element is a new element
+	 * for the EventB editor, and the operation has been added to the undo-redo
+	 * history.
+	 * 
+	 * @throws CoreException
+	 */
+	@Test
+	public void testNewVariablesWizard() throws CoreException {
+		final Display display = workbench.getDisplay();
+		final boolean skip = prepareTestAndOpenMachineEditor(
+				"New Variables Wizard Test",
+				"Enter a valid variable and press OK.\n"
+						+ "Press Cancel to skip the test.", display);
+		if (skip)
+			return;
+		final IEventBEditor<?> activeEditor = (IEventBEditor<?>) getAndCheckEditor(mch);
+		checkWizard(display, activeEditor,
+				new EventBCreationWizards.NewVariablesWizard());
+	}
+	
 }

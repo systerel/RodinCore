@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Systerel - used label prefix set by user
  *     Systerel - replaced setFieldValues() with checkAndSetFieldValues()
  *     Systerel - add widget to edit theorem attribute
+ *     Systerel - refactored to use the NewVariablesWizard
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -42,7 +43,8 @@ import org.eventb.internal.ui.autocompletion.ProviderModifyListener;
 import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.Triplet;
-import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.eventb.internal.ui.eventbeditor.wizards.AbstractEventBCreationWizard;
+import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 
@@ -52,6 +54,7 @@ import org.rodinp.core.IInternalElementType;
  *         This class extends the Dialog class and provides an input dialog for
  *         creating a new variable along with its type invariant and
  *         initilisation.
+ *         </p>
  */
 public class NewVariableDialog extends EventBDialog {
 
@@ -75,15 +78,15 @@ public class NewVariableDialog extends EventBDialog {
 
 	private IEventBInputText initSubstitutionText;
 
-	private final IEventBEditor<IMachineRoot> editor;
-
 	private ProviderModifyListener providerListener;
+
+	private final AbstractEventBCreationWizard wizard;
 	
 	/**
 	 * Constructor.
 	 * 
-	 * @param editor
-	 *            the editor that made the call to this method
+	 * @param wizard
+	 *            the parent wizard of this dialog
 	 * @param root
 	 *            the root element to which variable will be added
 	 * @param parentShell
@@ -91,19 +94,19 @@ public class NewVariableDialog extends EventBDialog {
 	 * @param title
 	 *            the title of the dialog
 	 */
-	public NewVariableDialog(IEventBEditor<IMachineRoot> editor,
-			IMachineRoot root, Shell parentShell, String title,
-			String invPrefix) {
+	public NewVariableDialog(AbstractEventBCreationWizard wizard,
+			IMachineRoot root, Shell parentShell, String title) {
 		super(parentShell, root, title);
-		this.editor = editor;
-		this.invPrefix = invPrefix;
+		this.wizard = wizard;
+		this.invPrefix = PreferenceUtils.getAutoNamePrefix(root,
+				IInvariant.ELEMENT_TYPE);
 		this.invIndex = getInvariantFirstIndex();
 		invariantsTexts = new ArrayList<Triplet<IEventBInputText, IEventBInputText, Button>>();
 	}
 
 	private String getInvariantFirstIndex() {
-		return UIUtils.getFreeElementLabelIndex(editor.getRodinInput(),
-				IInvariant.ELEMENT_TYPE, invPrefix);
+		return UIUtils.getFreeElementLabelIndex(root, IInvariant.ELEMENT_TYPE,
+				invPrefix);
 	}
 	
 	/*
@@ -206,12 +209,7 @@ public class NewVariableDialog extends EventBDialog {
 	}
 	
 	private void addValues() {
-		final String varName = getName();
-		final Collection<Triplet<String, String, Boolean>> invariant = getInvariants();
-		final String actName = getInitActionName();
-		final String actSub = getInitActionSubstitution();
-		EventBEditorUtils.newVariable(editor, varName, invariant, actName,
-				actSub);
+		wizard.getAndRegisterCreationOperation(this);
 	}
 
 	private void initialise() {
@@ -234,13 +232,12 @@ public class NewVariableDialog extends EventBDialog {
 	}
 
 	private String getFreeVariable() {
-		return UIUtils.getFreeElementIdentifier(editor.getRodinInput(),
-				IVariable.ELEMENT_TYPE);
+		return UIUtils.getFreeElementIdentifier(root, IVariable.ELEMENT_TYPE);
 	}
-	
+
 	private String getFreeInitialisationActionName() {
-		return EventBEditorUtils.getFreeInitialisationActionName(editor
-				.getRodinInput());
+		return EventBEditorUtils
+				.getFreeInitialisationActionName((IMachineRoot) root);
 	}
 	
 	private boolean checkAndSetFieldValues() {

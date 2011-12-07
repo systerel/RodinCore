@@ -20,11 +20,13 @@ import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.basis.ContextRoot;
 import org.eventb.core.basis.MachineRoot;
+import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.eventbeditor.dialogs.EventBDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewCarrierSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewConstantDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewDerivedPredicateDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEnumeratedSetDialog;
+import org.eventb.internal.ui.eventbeditor.dialogs.NewVariableDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewVariantDialog;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
@@ -163,6 +165,29 @@ public class EventBCreationWizards {
 					names, contents, isTheorem);
 		}
 
+	}
+	
+	public static class NewVariablesWizard extends AbstractEventBCreationWizard {
+
+		@Override
+		protected EventBDialog createDialog(IEventBRoot root, Shell shell) {
+			return new NewVariableDialog(this, (IMachineRoot) root, shell,
+					"New Variable");
+		}
+
+		@Override
+		public AtomicOperation getCreationOperation(IEventBRoot root,
+				EventBDialog dialog) {
+			final NewVariableDialog vDialog = (NewVariableDialog) dialog;
+			final String varName = vDialog.getName();
+			final Collection<Triplet<String, String, Boolean>> invariant = vDialog
+					.getInvariants();
+			final String actName = vDialog.getInitActionName();
+			final String actSub = vDialog.getInitActionSubstitution();
+			return OperationFactory.createVariableWizard((IMachineRoot) root,
+					varName, invariant, actName, actSub);
+		}
+		
 	}
 
 
