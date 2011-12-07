@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Systerel - used label prefix set by user
  *     Systerel - replaced setFieldValues() with checkAndSetFieldValues()
  *     Systerel - add widget to edit theorem attribute
+ *     Systerel - refactored to use NewEventsWizard
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
@@ -29,8 +30,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -50,14 +49,11 @@ import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ProviderModifyListener;
 import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
-import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.Triplet;
+import org.eventb.internal.ui.eventbeditor.wizards.AbstractEventBCreationWizard;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinCore;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -93,8 +89,6 @@ public class NewEventDialog extends EventBDialog {
 
 	private int actCount;
 
-	protected final IEventBEditor<IMachineRoot> editor;
-	
 	private Composite composite;
 	
 	private final String guardPrefix;
@@ -102,12 +96,14 @@ public class NewEventDialog extends EventBDialog {
 	private final String actPrefix;
 
 	private ProviderModifyListener providerListener;
+
+	private final AbstractEventBCreationWizard wizard;
 	
 	/**
 	 * Constructor.
 	 * 
-	 * @param editor
-	 *            the editor that called this dialog
+	 * @param wizard
+	 *            the parent wizard of this dialog
 	 * @param root
 	 *            the root element to which events will be added
 	 * @param parentShell
@@ -115,10 +111,10 @@ public class NewEventDialog extends EventBDialog {
 	 * @param title
 	 *            the title of the dialog
 	 */
-	public NewEventDialog(IEventBEditor<IMachineRoot> editor, IMachineRoot root, Shell parentShell,
+	public NewEventDialog(AbstractEventBCreationWizard wizard, IMachineRoot root, Shell parentShell,
 			String title) {
 		super(parentShell, root, title);
-		this.editor = editor;
+		this.wizard = wizard;
 		initValue();
 		dirtyTexts = new HashSet<Text>();
 		
@@ -136,7 +132,7 @@ public class NewEventDialog extends EventBDialog {
 	}
 
 	private String getAutoNamePrefix(IInternalElementType<?> type) {
-		return PreferenceUtils.getAutoNamePrefix(editor.getRodinInput(), type);
+		return PreferenceUtils.getAutoNamePrefix(root, type);
 	}
 	
 	/*
@@ -363,33 +359,7 @@ public class NewEventDialog extends EventBDialog {
 	}
 	
 	private void addValues() {
-		try {
-			RodinCore.run(new IWorkspaceRunnable() {
-
-				@Override
-				public void run(IProgressMonitor pm) throws RodinDBException {
-
-					final String[] grdNames = getGrdLabels();
-					final String[] lGrdPredicates = getGrdPredicates();
-					final boolean[] grdIsTheorem = getGrdIsTheorem();
-					
-					final String[] actNames = getActLabels();
-					final String[] lActSub = getActSubstitutions();
-
-					final String[] paramNames = parsResult
-							.toArray(new String[parsResult.size()]);
-					
-					EventBEditorUtils.newEvent(editor, labelResult, paramNames,
-							grdNames, lGrdPredicates, grdIsTheorem, actNames,
-							lActSub);
-				}
-
-			}, null);
-
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		wizard.getAndRegisterCreationOperation(this);
 	}
 
 	private void initialise() {

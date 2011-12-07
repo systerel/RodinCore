@@ -26,6 +26,7 @@ import org.eventb.internal.ui.eventbeditor.dialogs.NewCarrierSetDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewConstantDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewDerivedPredicateDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewEnumeratedSetDialog;
+import org.eventb.internal.ui.eventbeditor.dialogs.NewEventDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewVariableDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewVariantDialog;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
@@ -125,7 +126,7 @@ public class EventBCreationWizards {
 		}
 
 	}
-	
+
 	public static class NewVariantWizard extends AbstractEventBCreationWizard {
 
 		@Override
@@ -144,7 +145,7 @@ public class EventBCreationWizards {
 		}
 
 	}
-	
+
 	public static class NewInvariantsWizard extends
 			AbstractEventBCreationWizard {
 
@@ -166,7 +167,7 @@ public class EventBCreationWizards {
 		}
 
 	}
-	
+
 	public static class NewVariablesWizard extends AbstractEventBCreationWizard {
 
 		@Override
@@ -187,8 +188,34 @@ public class EventBCreationWizards {
 			return OperationFactory.createVariableWizard((IMachineRoot) root,
 					varName, invariant, actName, actSub);
 		}
-		
+
 	}
 
+	public static class NewEventsWizard extends AbstractEventBCreationWizard {
+
+		@Override
+		protected EventBDialog createDialog(IEventBRoot root, Shell shell) {
+			return new NewEventDialog(this, (IMachineRoot) root, shell,
+					"New Events");
+		}
+
+		@Override
+		public AtomicOperation getCreationOperation(IEventBRoot root,
+				EventBDialog dialog) {
+			final NewEventDialog eDialog = (NewEventDialog) dialog;
+			final String name = eDialog.getLabel();
+			final String[] paramNames = eDialog.getParameters();
+			final String[] grdNames = eDialog.getGrdLabels();
+			final String[] grdPredicates = eDialog.getGrdPredicates();
+			final boolean[] grdIsTheorem = eDialog.getGrdIsTheorem();
+			final String[] actNames = eDialog.getActLabels();
+			final String[] actSubstitutions = eDialog.getActSubstitutions();
+			return OperationFactory.createEvent((IMachineRoot) root, name,
+					paramNames, grdNames, grdPredicates, grdIsTheorem,
+					actNames, actSubstitutions);
+
+		}
+
+	}
 
 }

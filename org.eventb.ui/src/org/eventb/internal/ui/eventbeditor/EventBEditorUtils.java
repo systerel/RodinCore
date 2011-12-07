@@ -33,14 +33,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.EventBAttributes;
@@ -68,7 +66,6 @@ import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.eventbeditor.dialogs.NewEventDialog;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
@@ -711,50 +708,7 @@ public class EventBEditorUtils {
 		}
 		return null;
 	}
-
-	/**
-	 * Utility method to create an event with its parameters, guards and actions
-	 * using a modal dialog.
-	 * 
-	 * @param editor
-	 *            the editor that made the call to this method
-	 * @param root
-	 *            the root element to which new events will be added
-	 */
-	public static void newEvent(IEventBEditor<IMachineRoot> editor,
-			IMachineRoot root) {
-
-		final NewEventDialog dialog = new NewEventDialog(editor, root,
-				Display.getCurrent().getActiveShell(), "New Events");
-
-		dialog.open();
-
-		if (dialog.getReturnCode() == InputDialog.CANCEL)
-			return; // Cancel
-
-		final String name = dialog.getLabel();
-		final String[] paramNames = dialog.getParameters();
-		final String[] grdNames = dialog.getGrdLabels();
-		final String[] grdPredicates = dialog.getGrdPredicates();
-		final boolean[] grdIsTheorem = dialog.getGrdIsTheorem();
-		final String[] actNames = dialog.getActLabels();
-		final String[] actSubstitutions = dialog.getActSubstitutions();
-
-		newEvent(editor, name, paramNames, grdNames, grdPredicates,
-				grdIsTheorem, actNames, actSubstitutions);
-
-	}
-
-	public static void newEvent(IEventBEditor<IMachineRoot> editor,
-			String name, String[] paramNames, String[] grdNames,
-			String[] grdPredicates, boolean[] grdIsTheorem, String[] actNames,
-			String[] actSubstitutions) {
-		AtomicOperation operation = OperationFactory.createEvent(
-				editor.getRodinInput(), name, paramNames, grdNames,
-				grdPredicates, grdIsTheorem, actNames, actSubstitutions);
-		addOperationToHistory(operation, editor);
-	}
-
+	
 	public static IRodinElement getAbstractElement(IRodinElement concreteElement)
 			throws RodinDBException {
 		IRodinFile rodinFile = (IRodinFile) concreteElement.getOpenable();
