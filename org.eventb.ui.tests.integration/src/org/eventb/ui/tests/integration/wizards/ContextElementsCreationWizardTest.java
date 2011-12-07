@@ -14,7 +14,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -35,7 +34,7 @@ import org.junit.Test;
  * 
  * @author Thomas Muller
  */
-public class EventBCreationWizardTest extends AbstractUIIntegrationTest {
+public class ContextElementsCreationWizardTest extends AbstractUIIntegrationTest {
 
 	/**
 	 * This is an interactive test. This test runs the "NewAxiomsWizard" on an
@@ -135,7 +134,7 @@ public class EventBCreationWizardTest extends AbstractUIIntegrationTest {
 	private boolean prepareTestAndOpenContextEditor(String title,
 			String message, Display display) {
 		final IWorkbenchPage page = ww.getActivePage();
-		final boolean confirm = askForTestExecution(display, title, message);
+		final boolean confirm = EventBUIIntegrationUtils.askForTestExecution(display, title, message);
 		if (confirm)
 			EventBUIIntegrationUtils.openEditor(display, page,
 					eventBContextEditorID, ctx);
@@ -174,35 +173,6 @@ public class EventBCreationWizardTest extends AbstractUIIntegrationTest {
 			}
 
 		});
-	}
-
-	private static boolean askForTestExecution(final Display display,
-			final String testTitle, final String message) {
-		final RunnableWithResult r = new RunnableWithResult() {
-
-			private boolean result;
-
-			@Override
-			public void run() {
-				result = MessageDialog.openConfirm(display.getActiveShell(),
-						testTitle, message);
-			}
-
-			@Override
-			public Object getResult() {
-				return result;
-			}
-
-		};
-		display.syncExec(r); // open the dialog
-		return (Boolean) r.getResult();
-
-	}
-
-	private interface RunnableWithResult extends Runnable {
-
-		Object getResult();
-
 	}
 
 }

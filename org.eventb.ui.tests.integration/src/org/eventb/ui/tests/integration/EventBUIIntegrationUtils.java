@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -36,6 +37,12 @@ import org.rodinp.core.RodinDBException;
  * @author Thomas Muller
  */
 public class EventBUIIntegrationUtils {
+
+	private interface RunnableWithResult extends Runnable {
+	
+		Object getResult();
+	
+	}
 
 	/**
 	 * Utility method to get a handle to a context root with the given name. The
@@ -127,6 +134,29 @@ public class EventBUIIntegrationUtils {
 			}
 		});
 
+	}
+
+	public static boolean askForTestExecution(final Display display,
+			final String testTitle, final String message) {
+		final EventBUIIntegrationUtils.RunnableWithResult r = new EventBUIIntegrationUtils.RunnableWithResult() {
+	
+			private boolean result;
+	
+			@Override
+			public void run() {
+				result = MessageDialog.openConfirm(display.getActiveShell(),
+						testTitle, message);
+			}
+	
+			@Override
+			public Object getResult() {
+				return result;
+			}
+	
+		};
+		display.syncExec(r); // open the dialog
+		return (Boolean) r.getResult();
+	
 	}
 
 }
