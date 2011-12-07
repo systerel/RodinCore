@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<org.rodinp.core.tests.versionFileC version="1">
-<org.rodinp.core.tests.versionEA name="x"/>
-<org.rodinp.core.tests.versionEA name="y" org.rodinp.core.tests.versionStrAttr="Byebye"/>
-</org.rodinp.core.tests.versionFileC>

@@ -1,9 +1,0 @@
-"INVALID, Derived from Rubin Useful Tautologies(14a), p31":
-|- P | Q <-> P | R;
-
-
-"VALID, Rubin Useful Tautologies(14a), p31":
-|- P | (Q & R) <-> (P | Q) & (P | R);
-
-"INVALID, dummy theorem (should be last)":
-|- P
