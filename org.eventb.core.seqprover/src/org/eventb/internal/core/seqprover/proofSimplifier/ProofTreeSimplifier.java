@@ -11,7 +11,6 @@
 package org.eventb.internal.core.seqprover.proofSimplifier;
 
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
-import static org.eventb.core.seqprover.ProverLib.deepEquals;
 import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
 import static org.eventb.internal.core.seqprover.Util.getNullProofMonitor;
 
@@ -60,7 +59,7 @@ public class ProofTreeSimplifier extends Simplifier<IProofTree> {
 			final boolean success = rebuild(result.getRoot(), simplified,
 					monitor);
 			checkCancel(monitor);
-			if (!success || !result.isClosed() || deepEquals(tree, result)) {
+			if (!success || !result.isClosed()) {
 				return null;
 			}
 			return result;

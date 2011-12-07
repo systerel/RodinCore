@@ -417,7 +417,11 @@ public class ProverLib {
 	 */
 	public static IProofTree simplify(IProofTree prTree, IProofMonitor monitor) {
 		try {
-			return new ProofTreeSimplifier().simplify(prTree, monitor);
+			final IProofTree result = new ProofTreeSimplifier().simplify(prTree, monitor);
+			if (result != null && deepEquals(prTree, result)) {
+				return null;
+			}
+			return result;
 		} catch (CancelException e) {
 			return null;
 		}

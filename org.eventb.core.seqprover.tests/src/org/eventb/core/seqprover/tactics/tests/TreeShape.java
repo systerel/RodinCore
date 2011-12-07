@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
+import static org.eventb.core.ast.FormulaFactory.makePosition;
+import static org.eventb.core.seqprover.SequentProver.getReasonerRegistry;
+import static org.eventb.core.seqprover.tactics.BasicTactics.reasonerTac;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -21,7 +24,9 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
+import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.reasonerInputs.HypothesesReasoner;
@@ -114,6 +119,11 @@ public abstract class TreeShape {
 		protected String getReasonerID() {
 			return ExI.REASONER_ID;
 		}
+
+		@Override
+		protected IReasonerInput getInput() {
+			return new MultipleExprInput(inst);
+		}
 	}
 
 	private static class EmptyShape extends TreeShape {
@@ -135,6 +145,11 @@ public abstract class TreeShape {
 		protected String getReasonerID() {
 			assert false;
 			return null;
+		}
+
+		@Override
+		protected IReasonerInput getInput() {
+			return new EmptyInput();
 		}
 	}
 
@@ -225,6 +240,10 @@ public abstract class TreeShape {
 			return TotalDomRewrites.REASONER_ID;
 		}
 
+		@Override
+		protected IReasonerInput getInput() {
+			return new TotalDomRewrites.Input(predicate, makePosition(position), substitute);
+		}
 	}
 
 	private static class HypShape extends VoidShape {
@@ -372,6 +391,10 @@ public abstract class TreeShape {
 			assertEquals(predicate, input.getPred());
 		}
 
+		@Override
+		protected IReasonerInput getInput() {
+			return new HypothesisReasoner.Input(predicate);
+		}
 	}
 
 	private static abstract class HypothesesShape extends TreeShape {
@@ -389,12 +412,16 @@ public abstract class TreeShape {
 			Assert.assertArrayEquals(predicates, input.getPred());
 		}
 
+		@Override
+		protected IReasonerInput getInput() {
+			return new HypothesesReasoner.Input(predicates);
+		}
 	}
 
 	private static abstract class ManualRewritesShape extends TreeShape {
 
-		private final Predicate predicate;
-		private final String position;
+		protected final Predicate predicate;
+		protected final String position;
 
 		private ManualRewritesShape(Predicate predicate, String position,
 				TreeShape[] expChildren) {
@@ -410,6 +437,10 @@ public abstract class TreeShape {
 			assertEquals(predicate, inp.getPred());
 		}
 
+		@Override
+		protected IReasonerInput getInput() {
+			return new AbstractManualRewrites.Input(predicate, makePosition(position));
+		}
 	}
 	
 	private static abstract class ManualInferenceShape extends TreeShape {
@@ -431,6 +462,10 @@ public abstract class TreeShape {
 			assertEquals(predicate, inp.getPred());
 		}
 
+		@Override
+		protected IReasonerInput getInput() {
+			return new AbstractManualInference.Input(predicate, makePosition(position));
+		}
 	}
 
 	private static abstract class PosShape extends TreeShape {
@@ -448,6 +483,11 @@ public abstract class TreeShape {
 			assertEquals(position, inp.getPosition().toString());
 		}
 
+		@Override
+		protected IReasonerInput getInput() {
+			// FIXME no predicate ? means goal here
+			return new AbstractManualRewrites.Input(null, makePosition(position));
+		}
 	}
 
 	private static abstract class VoidShape extends TreeShape {
@@ -461,6 +501,10 @@ public abstract class TreeShape {
 			assertEquals(input.getClass(), EmptyInput.class);
 		}
 
+		@Override
+		protected IReasonerInput getInput() {
+			return new EmptyInput();
+		}
 	}
 
 	private static class MapOvrGShape extends HypothesisShape {
@@ -623,5 +667,28 @@ public abstract class TreeShape {
 
 	protected abstract void checkInput(IReasonerInput input);
 
+	protected abstract IReasonerInput getInput();
+	
 	protected abstract String getReasonerID();
+	
+	private static final IReasonerRegistry REASONER_REG = getReasonerRegistry();
+	
+	public void apply(IProofTreeNode node) {
+		final String reasonerID = getReasonerID();
+		final IReasoner reasoner = REASONER_REG.getReasonerDesc(reasonerID).getInstance();
+		final ITactic tactic = reasonerTac(reasoner, getInput());
+		
+		tactic.apply(node, null);
+		
+		final IProofTreeNode[] childNodes = node.getChildNodes();
+		final TreeShape[] childShapes = expChildren;
+		assertEquals(childShapes.length, childNodes.length);
+		
+		for (int i = 0; i < childShapes.length; i++) {
+			final IProofTreeNode childNode = childNodes[i];
+			final TreeShape childShape = childShapes[i];
+			childShape.apply(childNode);
+		}
+	}
+
 }
