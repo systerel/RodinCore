@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Systerel - increased index of label when add new input
  *     Systerel - replaced setFieldValues() with checkAndSetFieldValues()
  *     Systerel - add widget to edit theorem attribute
+ *     Systerel - refactored according to wizard refactoring
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.dialogs;
 
