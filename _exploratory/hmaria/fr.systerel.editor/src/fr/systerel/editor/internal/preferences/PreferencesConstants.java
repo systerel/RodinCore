@@ -8,14 +8,18 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.internal.handlers.refactoring;
+package fr.systerel.editor.internal.preferences;
 
-import org.eventb.core.IInvariant;
+/**
+ * Preference constants for the Rodin Editor.
+ * 
+ * @author Thomas Muller
+ */
+public class PreferencesConstants {
 
-public class AutoInvariantLabelRenaming extends AbstractRenameElementHandler {
-
-	public AutoInvariantLabelRenaming() {
-		type = IInvariant.ELEMENT_TYPE;
-	}
+	/**
+	 * Unique identifier of the preference page for the prefix settings.
+	 */
+	public static final String PREFIX_PREFERENCE_PAGE_ID = "org.eventb.ui.preferences.prefixPage";
 	
 }

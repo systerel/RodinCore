@@ -10,12 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers.refactoring;
 
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
-import org.eventb.internal.ui.eventbeditor.operations.History;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
-import org.eventb.internal.ui.preferences.PreferenceUtils;
-import org.rodinp.core.IInternalElement;
+import org.eventb.core.IEventBRoot;
+import org.eventb.ui.ElementOperationDirector;
 import org.rodinp.core.IInternalElementType;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
@@ -28,15 +24,8 @@ public abstract class AbstractRenameElementHandler extends
 
 	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
-		final IInternalElement root = editor.getInputRoot();
-
-		final String prefix = PreferenceUtils.getAutoNamePrefix(root, type);
-		final IAttributeDesc desc = ElementDescRegistry.getInstance()
-				.getElementDesc(type).getAutoNameAttribute();
-
-		History.getInstance().addOperation(
-				OperationFactory.renameElements(root, type,
-						desc.getManipulation(), prefix));
+		final IEventBRoot root = editor.getInputRoot();
+		ElementOperationDirector.autoRenameElements(root, type);
 		editor.resync(null, false);
 		return null;
 	}
