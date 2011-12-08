@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - added Input.getPred()
+ *******************************************************************************/
 package org.eventb.core.seqprover.reasonerInputs;
 
 import java.util.ArrayList;
@@ -26,14 +37,14 @@ import org.eventb.internal.core.seqprover.ReasonerFailure;
  * mark it as the sole required hypothesis for first forward inference of the sole antecedent of the generated rule.
  * 
  * <p>
- * Such reasoners generate rules that are goal independant, 
+ * Such reasoners generate rules that are goal independent, 
  * with exactly one antecedent whose first hyp action
  * is a forward hypothesis. 
  * </p>
  * 
  * <p>
- * Such reasoners are designed to be used in an ineractive setting. The required hyp of the forward inference is
- * hidden, and the inferred hypoptheses are selected. Subclasses may add more hyp actions by overriding the appropriate
+ * Such reasoners are designed to be used in an interactive setting. The required hyp of the forward inference is
+ * hidden, and the inferred hypotheses are selected. Subclasses may add more hyp actions by overriding the appropriate
  * method.
  * </p>
  * 
@@ -44,7 +55,7 @@ public abstract class ForwardInfReasoner implements IReasoner {
 	
 	public static final class Input implements IReasonerInput {
 
-		Predicate pred;
+		private Predicate pred;
 
 		public Input(Predicate pred) {
 			this.pred = pred;
@@ -62,6 +73,12 @@ public abstract class ForwardInfReasoner implements IReasoner {
 			return false;
 		}
 
+		/**
+		 * @since 2.4
+		 */
+		public Predicate getPred() {
+			return pred;
+		}
 	}
 	
 	public final void serializeInput(IReasonerInput rInput,
