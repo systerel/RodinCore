@@ -30,16 +30,19 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerRegistry;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
+import org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner;
 import org.eventb.core.seqprover.reasonerInputs.HypothesesReasoner;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
+import org.eventb.internal.core.seqprover.eventbExtensions.ConjF;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
+import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
@@ -86,6 +89,18 @@ public abstract class TreeShape {
 		@Override
 		protected String getReasonerID() {
 			return Conj.REASONER_ID;
+		}
+	}
+
+	private static class ConjFShape extends FwdInferenceShape {
+
+		public ConjFShape(Predicate predicate, TreeShape[] expChildren) {
+			super(predicate, expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return ConjF.REASONER_ID;
 		}
 	}
 
@@ -351,6 +366,21 @@ public abstract class TreeShape {
 
 	}
 
+	private static class ImpEShape extends HypothesisShape {
+
+		public ImpEShape(Predicate predicate, TreeShape[] expChildren) {
+			super(predicate, expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return ImpE.REASONER_ID;
+		}
+
+	}
+
+	
+	
 	private static class DTIShape extends ManualRewritesShape {
 
 		public DTIShape(Predicate predicate, String position,
@@ -469,6 +499,28 @@ public abstract class TreeShape {
 		}
 	}
 
+	private static abstract class FwdInferenceShape extends TreeShape {
+
+		private final Predicate predicate;
+
+		private FwdInferenceShape(Predicate predicate,
+				TreeShape[] expChildren) {
+			super(expChildren);
+			this.predicate = predicate;
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			final ForwardInfReasoner.Input inp = ((ForwardInfReasoner.Input) input);
+			assertEquals(predicate, inp.getPred());
+		}
+
+		@Override
+		protected IReasonerInput getInput() {
+			return new ForwardInfReasoner.Input(predicate);
+		}
+	}
+
 	private static abstract class PosShape extends TreeShape {
 
 		private final String position;
@@ -578,6 +630,10 @@ public abstract class TreeShape {
 		return new ConjIShape(children);
 	}
 
+	public static TreeShape conjF(Predicate hyp, TreeShape... children) {
+		return new ConjFShape(hyp, children);
+	}
+
 	public static TreeShape disjE(Predicate pred, TreeShape... children) {
 		return new DisjEShape(pred, children);
 	}
@@ -625,6 +681,10 @@ public abstract class TreeShape {
 
 	public static TreeShape impI(TreeShape... children) {
 		return new ImpIShape(children);
+	}
+
+	public static TreeShape impE(Predicate hyp, TreeShape... children) {
+		return new ImpEShape(hyp, children);
 	}
 
 	public static TreeShape dti(Predicate hyp, String pos, TreeShape... children) {
