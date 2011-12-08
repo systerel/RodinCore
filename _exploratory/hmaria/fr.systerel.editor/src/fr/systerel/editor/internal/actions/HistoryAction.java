@@ -23,8 +23,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eventb.internal.ui.eventbeditor.operations.History;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.ui.ElementOperationDirector;
 import org.eventb.ui.eventbeditor.IRodinHistory;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
@@ -114,7 +113,8 @@ public abstract class HistoryAction extends Action implements
 	protected IWorkbenchWindow workbenchWindow;
 
 	// Short-cut for accessing the history
-	protected static final IRodinHistory history = History.getInstance();
+	protected static final IRodinHistory history = ElementOperationDirector
+			.getHistory();
 
 	public HistoryAction(String id, String text) {
 		super(id);
@@ -135,7 +135,7 @@ public abstract class HistoryAction extends Action implements
 		if (rodinEditor.isOverlayActive()) {
 			return new ObjectUndoContext(rodinEditor.getDocument());
 		}
-		return OperationFactory.getRodinFileUndoContext(rodinEditor
+		return ElementOperationDirector.getRodinFileUndoContext(rodinEditor
 				.getInputRoot());
 	}
 

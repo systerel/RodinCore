@@ -12,8 +12,9 @@ package fr.systerel.editor.internal.dialogs.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
+import org.eventb.ui.ElementOperationDirector;
+import org.eventb.ui.eventbeditor.IRodinHistory;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.AbstractEditorHandler;
@@ -25,12 +26,15 @@ import fr.systerel.editor.internal.handlers.AbstractEditorHandler;
  */
 public class WizardHandlers {
 
+	public static final IRodinHistory history = ElementOperationDirector.getHistory();
+	
+	
 	public static class NewVariableWizardHandler extends AbstractEditorHandler {
 
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewVariablesWizard().openDialog(editor.getInputRoot(), editor.getEditorSite().getShell(), History.getInstance());
+			new EventBCreationWizards.NewVariablesWizard().openDialog(editor.getInputRoot(), editor.getEditorSite().getShell());
 			return null;
 		}
 	
@@ -41,7 +45,7 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewVariantWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			new EventBCreationWizards.NewVariantWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 		
@@ -52,7 +56,7 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewEventsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			new EventBCreationWizards.NewEventsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 
@@ -63,7 +67,7 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewInvariantsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			new EventBCreationWizards.NewInvariantsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 
@@ -74,7 +78,7 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewCarrierSetsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			new EventBCreationWizards.NewCarrierSetsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 
@@ -85,7 +89,7 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewConstantsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			new EventBCreationWizards.NewConstantsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 
@@ -96,7 +100,7 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewEnumeratedSetWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			new EventBCreationWizards.NewEnumeratedSetWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 
@@ -108,7 +112,7 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewAxiomsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			new EventBCreationWizards.NewAxiomsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 

@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eventb.ui;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eventb.core.IEventBRoot;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
+import org.eventb.ui.eventbeditor.IRodinHistory;
 import org.rodinp.core.IInternalElementType;
 
 /**
@@ -27,6 +29,19 @@ import org.rodinp.core.IInternalElementType;
  */
 public class ElementOperationDirector {
 
+	
+	/**
+	 * Method to retrieve the {@link IUndoContext} associated to the given root.
+	 */
+	public static IUndoContext getRodinFileUndoContext(IEventBRoot root) {
+		return OperationFactory.getRodinFileUndoContext(root);
+	}
+	
+	public static IRodinHistory getHistory() {
+		return History.getInstance();
+	}
+	
+	
 	/**
 	 * Method to rename automatically all the elements of the given root of a
 	 * given type with the prefix set for this element type through the
