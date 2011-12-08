@@ -117,7 +117,44 @@ public class NoSimplificationTests {
 				 * Dependencies:
 				 * {0->1, 0->2}
 				 */
-				test("x=0 ;; y=1 |- x=0 ∧ y=1", conjI(hyp(), hyp()))
+				test("x=0 ;; y=1 |- x=0 ∧ y=1", conjI(hyp(), hyp())),
+				
+				///////////////////
+				// 4 nodes tests //
+				///////////////////
+				/**
+				 * Proof tree:
+				 *  0
+				 *  1
+				 * 2 3
+				 * Dependencies:
+				 * {0->1, 1->2, 1->3}
+				 */
+				test("¬¬x=0 ⇒ y=0 ;; x=0 |- y=0",
+						rn(p("¬¬x=0 ⇒ y=0"), "0",
+								impE(p("x=0 ⇒ y=0"),
+										hyp(),
+										hyp()))),
+				/**
+				 * Proof tree:
+				 *  0
+				 *  1
+				 * 2 3
+				 * Dependencies:
+				 * {0->2, 0->3, 1->2, 1->3}
+				 */
+				test("x=0 ∧ y=1 |- x=0 ∧ y=1",
+						conjF(p("x=0 ∧ y=1"),
+								conjI(hyp(), hyp()))),
+				/**
+				 * Proof tree:
+				 *  0
+				 * 1 2
+				 *    3
+				 * Dependencies:
+				 * {0->1, 0->2, 2->3}
+				 */
+				test("|- ⊤∧¬¬⊤", conjI(trueGoal(), rn("", trueGoal())))
 		);
 	}
 
