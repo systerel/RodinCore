@@ -40,6 +40,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ConjF;
 import org.eventb.internal.core.seqprover.eventbExtensions.DTDistinctCase;
 import org.eventb.internal.core.seqprover.eventbExtensions.DisjE;
 import org.eventb.internal.core.seqprover.eventbExtensions.ExI;
+import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunImageGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.FunOvr;
 import org.eventb.internal.core.seqprover.eventbExtensions.ImpE;
@@ -284,6 +285,19 @@ public abstract class TreeShape {
 		@Override
 		protected String getReasonerID() {
 			return TrueGoal.REASONER_ID;
+		}
+
+	}
+
+	private static class FalseHypShape extends VoidShape {
+
+		public FalseHypShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return FalseHyp.REASONER_ID;
 		}
 
 	}
@@ -624,6 +638,10 @@ public abstract class TreeShape {
 
 	public static TreeShape trueGoal(TreeShape... children) {
 		return new TrueGoalShape(children);
+	}
+	
+	public static TreeShape falseHyp(TreeShape... children) {
+		return new FalseHypShape(children);
 	}
 	
 	public static TreeShape conjI(TreeShape... children) {
