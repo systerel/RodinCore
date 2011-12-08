@@ -31,7 +31,7 @@ import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
-import org.eventb.internal.ui.RodinHandleTransfer;
+import org.eventb.ui.ElementOperationDirector;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -241,8 +241,8 @@ public class DNDManager {
 	private static DragSource createDragSource(final StyledText styledText,
 			SelectionController controller) {
 		final DragSource source = new DragSource(styledText, DND.DROP_MOVE);
-		final Transfer[] types = new Transfer[] { RodinHandleTransfer
-				.getInstance() };
+		final Transfer[] types = new Transfer[] { ElementOperationDirector
+				.getRodinHandleTransfer() };
 		source.setTransfer(types);
 		source.addDragListener(new Dragger(controller));
 		return source;
@@ -252,8 +252,8 @@ public class DNDManager {
 			SelectionController controller, DocumentMapper mapper) {
 		final DropTarget target = new DropTarget(styledText, DND.DROP_DEFAULT
 				| DND.DROP_MOVE);
-		final Transfer[] types = new Transfer[] { RodinHandleTransfer
-				.getInstance() };
+		final Transfer[] types = new Transfer[] { ElementOperationDirector
+				.getRodinHandleTransfer() };
 		target.setTransfer(types);
 		target.addDropListener(new Dropper(styledText, controller, mapper));
 		return target;

@@ -11,7 +11,9 @@
 package org.eventb.ui;
 
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.swt.dnd.Transfer;
 import org.eventb.core.IEventBRoot;
+import org.eventb.internal.ui.RodinHandleTransfer;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -39,6 +41,10 @@ public class ElementOperationDirector {
 	
 	public static IRodinHistory getHistory() {
 		return History.getInstance();
+	}
+	
+	public static Transfer getRodinHandleTransfer() {
+		return RodinHandleTransfer.getInstance();
 	}
 	
 	
