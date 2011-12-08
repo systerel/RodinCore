@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added changeAttribute(E element, IAttributeValue value)
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.operations;
 
@@ -447,6 +448,12 @@ class OperationBuilder {
 			IAttributeManipulation factory, E element, String value) {
 		final ChangeAttributeWithManipulation op = new ChangeAttributeWithManipulation(
 				factory, element, value);
+		return op;
+	}
+	
+	public <E extends IInternalElement> OperationTree changeAttribute(
+			E element, IAttributeValue value) {
+		final ChangeAttribute op = new ChangeAttribute(element, value);
 		return op;
 	}
 

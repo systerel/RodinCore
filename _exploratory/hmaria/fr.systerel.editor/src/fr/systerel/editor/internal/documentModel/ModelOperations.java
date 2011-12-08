@@ -13,12 +13,11 @@ package fr.systerel.editor.internal.documentModel;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.ui.eventbeditor.IAtomicOperation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.itf.ILElement;
-
-import fr.systerel.editor.internal.actions.operations.AtomicOperation;
-import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
-import fr.systerel.editor.internal.actions.operations.OperationFactory;
 
 /**
  * @author Nicolas Beauger
@@ -110,10 +109,10 @@ public class ModelOperations {
 			final ILElement targetParent = pos.targetParent;
 			final IInternalElement nextSibling = pos.nextSibling == null ? null
 					: pos.nextSibling.getElement();
-			final AtomicOperation op = OperationFactory.move(targetParent
+			final IAtomicOperation op = OperationFactory.move(targetParent
 					.getRoot().getElement(), element.getElement(), targetParent
 					.getElement(), nextSibling);
-			RodinEditorHistory.getInstance().addOperation(op);
+			History.getInstance().addOperation(op);
 			return true;
 		}
 	}

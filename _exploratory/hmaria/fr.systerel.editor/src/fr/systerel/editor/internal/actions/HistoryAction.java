@@ -23,10 +23,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.ui.eventbeditor.IRodinHistory;
 
-import fr.systerel.editor.actions.IRodinHistory;
-import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
-import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.editors.RodinEditor;
 
 /**
@@ -114,7 +114,7 @@ public abstract class HistoryAction extends Action implements
 	protected IWorkbenchWindow workbenchWindow;
 
 	// Short-cut for accessing the history
-	protected static final IRodinHistory history = RodinEditorHistory.getInstance();
+	protected static final IRodinHistory history = History.getInstance();
 
 	public HistoryAction(String id, String text) {
 		super(id);
@@ -143,13 +143,17 @@ public abstract class HistoryAction extends Action implements
 	public void historyNotification(OperationHistoryEvent event) {
 		refresh();
 	}
-
+	
 	@Override
 	final public void run() {
 		final IUndoContext context = getUndoContext();
 		if (context != null) {
-			doRun(context);
-			refreshContents(); // refreshes in case of attribute change
+			if (context instanceof ObjectUndoContext) {
+				doRun(context);
+			} else {
+				doRun(context);
+				refreshContents(); // refreshes in case of attribute change				
+			}
 		}
 	}
 

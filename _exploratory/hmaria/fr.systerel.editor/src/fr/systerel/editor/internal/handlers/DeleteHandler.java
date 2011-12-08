@@ -10,12 +10,12 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.ui.eventbeditor.IAtomicOperation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.internal.actions.operations.AtomicOperation;
-import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
-import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.RodinEditor;
@@ -33,7 +33,7 @@ public class DeleteHandler extends AbstractEditionHandler {
 		}
 		final SelectionController selection = editor.getSelectionController();
 		final ILElement[] selected = selection.getSelectedElements();
-		final AtomicOperation op;
+		final IAtomicOperation op;
 		if(selected.length == 0) {
 			op = deleteCurrentElement(editor, offset);
 			if (op == null) {
@@ -42,11 +42,11 @@ public class DeleteHandler extends AbstractEditionHandler {
 		} else {
 			op = deleteElements(selected);
 		}
-		RodinEditorHistory.getInstance().addOperation(op);
+		History.getInstance().addOperation(op);
 		return "Element deleted.";
 	}
 
-	private AtomicOperation deleteElements(ILElement[] selected) {
+	private IAtomicOperation deleteElements(ILElement[] selected) {
 		final IInternalElement[] rElements = toIElements(selected);
 		return OperationFactory.deleteElement(rElements, false);
 	}
@@ -60,7 +60,7 @@ public class DeleteHandler extends AbstractEditionHandler {
 		return result;
 	}
 
-	private AtomicOperation deleteCurrentElement(RodinEditor editor, int offset) {
+	private IAtomicOperation deleteCurrentElement(RodinEditor editor, int offset) {
 		final EditorElement item = editor.getDocumentMapper().findItemContaining(offset);
 		if (item != null  && item.getLightElement() != null) {
 			return OperationFactory.deleteElement(item.getLightElement().getElement());

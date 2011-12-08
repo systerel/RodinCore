@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - added a changeAttribute method taking a single element value
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.operations;
 
@@ -18,6 +19,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -286,7 +288,7 @@ public class OperationFactory {
 		return new RodinFileUndoContext(rodinFile);
 	}
 
-	private static RodinFileUndoContext getRodinFileUndoContext(
+	public static RodinFileUndoContext getRodinFileUndoContext(
 			IInternalElement root) {
 		return getRodinFileUndoContext(root.getRodinFile());
 	}
@@ -295,6 +297,19 @@ public class OperationFactory {
 		return getRodinFileUndoContext(root.getRodinFile());
 	}
 
+	/**
+	 *
+	 */
+	public static <E extends IInternalElement> AtomicOperation changeAttribute(
+			IAttributeManipulation manipulation, E element, String value) {
+		final OperationBuilder builder = new OperationBuilder();
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(element.getRoot()),
+				builder.changeAttribute(manipulation, element, value));
+		op.setLabel("Change Attribute");
+		return op;
+	}
+	
 	/**
 	 * Change the attribute of a element with a factory
 	 * 
@@ -308,6 +323,22 @@ public class OperationFactory {
 		final AtomicOperation op = new AtomicOperation(
 				getRodinFileUndoContext(file), builder.changeAttribute(factory,
 						element, value));
+		op.setLabel("Change Attribute");
+		return op;
+	}
+
+	/**
+	 * Change the attribute of an element
+	 * 
+	 * @param value
+	 *            if value is null, the attribute is removed. Else it is changed
+	 */
+	public static <E extends IInternalElement> AtomicOperation changeAttribute(
+			E element, IAttributeValue value) {
+		final OperationBuilder builder = new OperationBuilder();
+		final AtomicOperation op = new AtomicOperation(
+				getRodinFileUndoContext(element.getRoot()),
+				builder.changeAttribute(element, value));
 		op.setLabel("Change Attribute");
 		return op;
 	}

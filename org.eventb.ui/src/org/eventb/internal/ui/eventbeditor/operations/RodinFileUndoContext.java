@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - changed visibility to public
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.operations;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.rodinp.core.IRodinFile;
 
-class RodinFileUndoContext implements IUndoContext {
+public class RodinFileUndoContext implements IUndoContext {
 	final IRodinFile rodinFile;
 
 	public RodinFileUndoContext(IRodinFile rodinFile) {

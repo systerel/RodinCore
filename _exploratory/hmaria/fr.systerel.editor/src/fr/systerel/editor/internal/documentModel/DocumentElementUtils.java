@@ -29,7 +29,6 @@ public class DocumentElementUtils {
 		LABEL_ATTRIBUTE, PREDICATE_ATTRIBUTE, EXPRESSION_ATTRIBUTE};
 	
 	// Retrieves the element desc from the registry for the given element e
-	@SuppressWarnings("restriction")
 	public static IElementDesc getElementDesc(ILElement e) {
 		final IRodinElement rodinElement = (IRodinElement) e.getElement();
 		return ElementDescRegistry.getInstance().getElementDesc(rodinElement);
@@ -42,12 +41,10 @@ public class DocumentElementUtils {
 	 * @param type
 	 *            the element type to retrieve the descriptor for
 	 */
-	@SuppressWarnings("restriction")
 	public static IElementDesc getElementDesc(IInternalElementType<?> type) {
 		return ElementDescRegistry.getInstance().getElementDesc(type);
 	}
 
-	@SuppressWarnings("restriction")
 	public static List<IAttributeDesc> getAttributeDescs(
 			IInternalElementType<?> elementType) {
 		final List<IAttributeDesc> descs = new ArrayList<IAttributeDesc>();

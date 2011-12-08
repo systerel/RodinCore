@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - refactored to implement IRodinHistory
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.operations;
 
@@ -19,14 +20,16 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.eventbeditor.IAtomicOperation;
+import org.eventb.ui.eventbeditor.IRodinHistory;
 
-public class History {
+public class History implements IRodinHistory {
 
 	private static History singleton;
 	private final IOperationHistory history;
@@ -35,7 +38,8 @@ public class History {
 	final String PROPERTY_NAME = AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE;
 
 	private History() {
-		history = OperationHistoryFactory.getOperationHistory();
+		history = PlatformUI.getWorkbench().getOperationSupport()
+				.getOperationHistory();
 		limit = getPreferencesLimit();
 		contexts = new HashSet<IUndoContext>();
 		EditorsUI.getPreferenceStore().addPropertyChangeListener(
@@ -66,10 +70,14 @@ public class History {
 		}
 	}
 
-	public void addOperation(AtomicOperation operation) {
+	@Override
+	public void addOperation(IAtomicOperation operation) {
 		if (operation == null) {
 			return;
 		}
+//		if (!isRodinUndoContext(operation)) {
+//			return;
+//		}
 		contexts.addAll(Arrays.asList(operation.getContexts()));
 		try {
 			history.execute(operation, null, null);
@@ -78,8 +86,18 @@ public class History {
 					"when executing operation:" + operation.getLabel());
 		}
 		setLimit(operation.getContexts());
-	}
+	}	
+	
+//	private boolean isRodinUndoContext(IAtomicOperation operation) {
+//		for (IUndoContext ct : operation.getContexts()) {
+//			if (!(ct instanceof RodinFileUndoContext)) {
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 
+	@Override
 	public void redo(IUndoContext context) {
 		try {
 			history.redo(context, null, null);
@@ -89,6 +107,7 @@ public class History {
 		}
 	}
 
+	@Override
 	public void undo(IUndoContext context) {
 		try {
 			history.undo(context, null, null);
@@ -98,11 +117,13 @@ public class History {
 		}
 	}
 
+	@Override
 	public void dispose(IUndoContext context) {
 		contexts.remove(context);
 		history.dispose(context, true, true, true);
 	}
 
+	@Override
 	public String getNextUndoLabel(IUndoContext context) {
 		final IUndoableOperation op = history.getUndoOperation(context);
 		if (op != null && op.canUndo()) {
@@ -112,19 +133,23 @@ public class History {
 		}
 	}
 
-	void setLimit(int limit) {
+	@Override
+	public void setLimit(int limit) {
 		this.limit = limit;
 		setLimit(contexts.toArray(new IUndoContext[contexts.size()]));
 	}
 
+	@Override
 	public boolean isUndo(IUndoContext context) {
 		return history.canUndo(context);
 	}
 
+	@Override
 	public boolean isRedo(IUndoContext context) {
 		return history.canRedo(context);
 	}
 
+	@Override
 	public String getNextRedoLabel(IUndoContext context) {
 		final IUndoableOperation op = history.getRedoOperation(context);
 		if (op != null && op.canRedo()) {
@@ -134,6 +159,7 @@ public class History {
 		}
 	}
 
+	@Override
 	public void addOperationHistoryListener(IOperationHistoryListener listener) {
 		history.addOperationHistoryListener(listener);
 	}

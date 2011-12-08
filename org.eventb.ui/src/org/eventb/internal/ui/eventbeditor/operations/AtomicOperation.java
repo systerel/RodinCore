@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - exposed IAtomicOperation interface
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.operations;
 
@@ -15,11 +16,12 @@ import java.util.Collection;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.ui.eventbeditor.IAtomicOperation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public class AtomicOperation extends AbstractEventBOperation {
+public class AtomicOperation extends AbstractEventBOperation implements IAtomicOperation {
 
 	abstract class AbstractNavigation {
 
@@ -90,10 +92,12 @@ public class AtomicOperation extends AbstractEventBOperation {
 		undo.run(monitor, info);
 	}
 
+	@Override
 	public IInternalElement getCreatedElement() {
 		return operation.getCreatedElement();
 	}
 
+	@Override
 	public Collection<IInternalElement> getCreatedElements() {
 		return operation.getCreatedElements();
 	}

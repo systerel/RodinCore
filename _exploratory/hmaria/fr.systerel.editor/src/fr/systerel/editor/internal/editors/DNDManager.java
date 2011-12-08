@@ -46,7 +46,6 @@ import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
  * @author Nicolas Beauger
  * 
  */
-@SuppressWarnings("restriction")
 public class DNDManager {
 
 	public static boolean DEBUG;

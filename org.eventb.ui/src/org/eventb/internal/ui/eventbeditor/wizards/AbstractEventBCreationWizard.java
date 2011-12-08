@@ -14,9 +14,10 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.IEventBRoot;
 import org.eventb.internal.ui.eventbeditor.dialogs.EventBDialog;
-import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.ui.eventbeditor.IAtomicOperation;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.eventb.ui.eventbeditor.IRodinHistory;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -35,7 +36,7 @@ import org.rodinp.core.IInternalElement;
 public abstract class AbstractEventBCreationWizard {
 
 	private IEventBEditor<?> fEditor;
-	private History fHistory;
+	private IRodinHistory fHistory;
 
 	/**
 	 * Creates a dialog to assist element creation.
@@ -60,7 +61,7 @@ public abstract class AbstractEventBCreationWizard {
 	 * @return the atomic operation corresponding to the element creation that
 	 *         has been created
 	 */
-	public abstract AtomicOperation getCreationOperation(IEventBRoot root,
+	public abstract IAtomicOperation getCreationOperation(IEventBRoot root,
 			EventBDialog dialog);
 
 	/**
@@ -72,9 +73,9 @@ public abstract class AbstractEventBCreationWizard {
 	 *            the {@link IEventBEditor} to be called back
 	 * @return the atomic operation performed
 	 */
-	public AtomicOperation openDialog(IEventBEditor<?> editor) {
+	public IAtomicOperation openDialog(IEventBEditor<?> editor) {
 		fEditor = editor;
-		final AtomicOperation op = openDialog(
+		final IAtomicOperation op = openDialog(
 				(IEventBRoot) editor.getRodinInput(), editor.getSite()
 						.getShell(), History.getInstance());
 		return op;
@@ -86,19 +87,21 @@ public abstract class AbstractEventBCreationWizard {
 	 * 
 	 * @param root
 	 *            the root element for which elements will be created
+	 * @param shell
+	 *            the parent shell
 	 * @param history
 	 *            the undo-redo managing history to which the element creation
 	 *            atomic operation is added
 	 * @return the atomic operation corresponding to the element creation
 	 */
-	public AtomicOperation openDialog(IEventBRoot root, Shell activeShell,
-			History history) {
+	public IAtomicOperation openDialog(IEventBRoot root, Shell shell,
+			IRodinHistory history) {
 		fHistory = history;
-		final EventBDialog dialog = createDialog(root, activeShell);
+		final EventBDialog dialog = createDialog(root, shell);
 		dialog.open();
 		if (dialog.getReturnCode() == InputDialog.CANCEL)
 			return null; // Cancel
-		final AtomicOperation op = getAndRegisterCreationOperation(dialog);
+		final IAtomicOperation op = getAndRegisterCreationOperation(dialog);
 		return op;
 	}
 
@@ -114,8 +117,8 @@ public abstract class AbstractEventBCreationWizard {
 	 * 
 	 * @return the created operation
 	 */
-	public AtomicOperation getAndRegisterCreationOperation(EventBDialog dialog) {
-		final AtomicOperation op = getCreationOperation(dialog.getRoot(),
+	public IAtomicOperation getAndRegisterCreationOperation(EventBDialog dialog) {
+		final IAtomicOperation op = getCreationOperation(dialog.getRoot(),
 				dialog);
 		fHistory.addOperation(op);
 		if (fEditor != null) {
@@ -135,7 +138,7 @@ public abstract class AbstractEventBCreationWizard {
 	 *            the corresponding atomic operation performed
 	 */
 	private static void addNewElement(IEventBEditor<?> editor,
-			AtomicOperation op) {
+			IAtomicOperation op) {
 		final IInternalElement element = op.getCreatedElement();
 		if (element != null) {
 			editor.addNewElement(element);

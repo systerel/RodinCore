@@ -63,6 +63,9 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.autocompletion.EventBContentProposalAdapter;
 import org.eventb.internal.ui.autocompletion.ProposalProvider;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.ui.eventbeditor.IAtomicOperation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
@@ -74,9 +77,6 @@ import org.rodinp.core.location.IAttributeLocation;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 import fr.systerel.editor.internal.actions.StyledTextEditAction;
-import fr.systerel.editor.internal.actions.operations.AtomicOperation;
-import fr.systerel.editor.internal.actions.operations.OperationFactory;
-import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.documentModel.RodinTextStream;
@@ -388,9 +388,9 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			if (value.equals(oldValue)) {
 				return;
 			}
-			final AtomicOperation op = OperationFactory.changeAttribute(manip,
+			final IAtomicOperation op = OperationFactory.changeAttribute(manip,
 					ielement, value);
-			RodinEditorHistory.getInstance().addOperation(op);
+			History.getInstance().addOperation(op);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -483,9 +483,9 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		try {
 			if (!element.hasAttribute(type)
 					|| !element.getAttributeValue(type).equals(newValue)) {
-				final AtomicOperation op = OperationFactory.changeAttribute(
+				final IAtomicOperation op = OperationFactory.changeAttribute(
 						element, newValue);
-				RodinEditorHistory.getInstance().addOperation(op);
+				History.getInstance().addOperation(op);
 			}
 		} catch (RodinDBException e) {
 			System.err

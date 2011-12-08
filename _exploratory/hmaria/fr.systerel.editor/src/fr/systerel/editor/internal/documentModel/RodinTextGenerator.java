@@ -86,7 +86,6 @@ public class RodinTextGenerator {
 		return stream.getText();
 	}
 
-	@SuppressWarnings({ "restriction" })
 	private void traverseRoot(IProgressMonitor monitor, ILElement e) {
 		final IInternalElement element = e.getElement();
 		final IElementDesc desc = ElementDescRegistry.getInstance()
@@ -106,7 +105,6 @@ public class RodinTextGenerator {
 		traverse(monitor, e);
 	}
 
-	@SuppressWarnings("restriction")
 	private void traverse(IProgressMonitor mon, ILElement e) {
 		final IElementDesc desc = getElementDesc(e);
 		if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
@@ -158,7 +156,6 @@ public class RodinTextGenerator {
 	 * way to retrieve children including implicit ones, we ask the implicit
 	 * child providers to get this list of visible children
 	 */
-	@SuppressWarnings("restriction")
 	private List<ILElement> retrieveChildrenToProcess(IElementRelationship rel,
 			ILElement elt) {
 		final ArrayList<ILElement> result = new ArrayList<ILElement>();
@@ -170,7 +167,6 @@ public class RodinTextGenerator {
 	/**
 	 * Processes the attributes other than comments.
 	 */
-	@SuppressWarnings("restriction")
 	private void processOtherAttributes(ILElement element, TextAlignator sizer) {
 		int i = 0;
 		final IInternalElement rElement = element.getElement();

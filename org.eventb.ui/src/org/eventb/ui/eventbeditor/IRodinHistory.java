@@ -8,16 +8,17 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package fr.systerel.editor.actions;
+package org.eventb.ui.eventbeditor;
 
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 
-import fr.systerel.editor.internal.actions.operations.AtomicOperation;
-
+/**
+ * @since 2.4
+ */
 public interface IRodinHistory {
 
-	public void addOperation(AtomicOperation operation);
+	public void addOperation(IAtomicOperation operation);
 
 	public void redo(IUndoContext context);
 

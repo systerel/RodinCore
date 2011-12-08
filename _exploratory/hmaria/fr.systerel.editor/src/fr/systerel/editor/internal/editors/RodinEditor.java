@@ -53,6 +53,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IInternalElement;
@@ -63,7 +64,6 @@ import org.rodinp.core.emf.api.itf.ILFile;
 
 import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.actions.HistoryAction;
-import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
@@ -431,7 +431,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		return documentProvider.getDocument();
 	}
 
-	public IInternalElement getInputRoot() {
+	public IEventBRoot getInputRoot() {
 		return documentProvider.getInputRoot();
 	}
 	

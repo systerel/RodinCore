@@ -10,13 +10,13 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.ui.eventbeditor.IAtomicOperation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
-import fr.systerel.editor.internal.actions.operations.AtomicOperation;
-import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
-import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
 
@@ -45,9 +45,9 @@ public abstract class AbstractAddChildHandler extends AbstractEditionHandler {
 		} else {
 			localParent = childParent.getElement();
 		}
-		final AtomicOperation op = OperationFactory.createElementGeneric(
+		final IAtomicOperation op = OperationFactory.createElementGeneric(
 				localParent, type, localNextSibling);
-		RodinEditorHistory.getInstance().addOperation(op);
+		History.getInstance().addOperation(op);
 	}
 
 	@Override

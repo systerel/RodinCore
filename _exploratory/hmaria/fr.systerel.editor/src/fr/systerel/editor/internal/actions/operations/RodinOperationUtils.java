@@ -24,6 +24,8 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -82,7 +84,7 @@ public class RodinOperationUtils {
 	 */
 	private static void copyElements(IRodinElement[] handleData,
 			IRodinElement target, IRodinElement nextSibling) {
-		RodinEditorHistory.getInstance().addOperation(
+		History.getInstance().addOperation(
 				OperationFactory.copyElements((IInternalElement) target,
 						handleData, (IInternalElement) nextSibling));
 	}

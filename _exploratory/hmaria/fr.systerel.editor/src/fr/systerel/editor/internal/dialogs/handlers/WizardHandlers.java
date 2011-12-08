@@ -11,29 +11,12 @@
 package fr.systerel.editor.internal.dialogs.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eventb.core.IAxiom;
-import org.eventb.core.ICarrierSet;
-import org.eventb.core.IEventBRoot;
-import org.eventb.core.IInvariant;
-import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.preferences.PreferenceUtils;
+import org.eclipse.core.commands.ExecutionException;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
 
-import fr.systerel.editor.internal.actions.operations.extension.AxiomMaker;
-import fr.systerel.editor.internal.actions.operations.extension.CarrierSetMaker;
-import fr.systerel.editor.internal.actions.operations.extension.ConstantMaker;
-import fr.systerel.editor.internal.actions.operations.extension.EnumeratedSetMaker;
-import fr.systerel.editor.internal.actions.operations.extension.EventMaker;
-import fr.systerel.editor.internal.actions.operations.extension.InvariantMaker;
-import fr.systerel.editor.internal.actions.operations.extension.VariableMaker;
-import fr.systerel.editor.internal.actions.operations.extension.VariantMaker;
-import fr.systerel.editor.internal.dialogs.NewCarrierSetDialog;
-import fr.systerel.editor.internal.dialogs.NewConstantDialog;
-import fr.systerel.editor.internal.dialogs.NewDerivedPredicateDialog;
-import fr.systerel.editor.internal.dialogs.NewEnumeratedSetDialog;
-import fr.systerel.editor.internal.dialogs.NewEventDialog;
-import fr.systerel.editor.internal.dialogs.NewVariableDialog;
-import fr.systerel.editor.internal.dialogs.NewVariantDialog;
 import fr.systerel.editor.internal.editors.RodinEditor;
+import fr.systerel.editor.internal.handlers.AbstractEditorHandler;
 
 /**
  * Handlers to create and open element creation wizards.
@@ -42,126 +25,91 @@ import fr.systerel.editor.internal.editors.RodinEditor;
  */
 public class WizardHandlers {
 
-	public static class NewVariableWizardHandler extends
-			RodinEditorWizards<NewVariableDialog> {
-
-		/**
-		 * Handlers for machine related wizards.
-		 */
+	public static class NewVariableWizardHandler extends AbstractEditorHandler {
 
 		@Override
-		public void createDialog(ExecutionEvent event, RodinEditor editor) {
-			final IEventBRoot inputRoot = (IEventBRoot) editor.getInputRoot();
-			final VariableMaker variableMaker = new VariableMaker(editor,
-					inputRoot);
-
-			final String prefix = PreferenceUtils.getAutoNamePrefix(inputRoot,
-					IInvariant.ELEMENT_TYPE);
-
-			this.dialog = new NewVariableDialog(variableMaker, "New Variable",
-					prefix);
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			final RodinEditor editor = getActiveRodinEditor();
+			new EventBCreationWizards.NewVariablesWizard().openDialog(editor.getInputRoot(), editor.getEditorSite().getShell(), History.getInstance());
+			return null;
 		}
+	
 	}
 
-	public static class NewVariantWizardHandler extends
-			RodinEditorWizards<NewVariantDialog> {
+	public static class NewVariantWizardHandler extends AbstractEditorHandler {
 
 		@Override
-		public void createDialog(ExecutionEvent event, RodinEditor editor) {
-			final IEventBRoot inputRoot = (IEventBRoot) editor.getInputRoot();
-			final VariantMaker variantMaker = new VariantMaker(editor,
-					inputRoot);
-			this.dialog = new NewVariantDialog(variantMaker, "New variant",
-					"Expression");
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			final RodinEditor editor = getActiveRodinEditor();
+			new EventBCreationWizards.NewVariantWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			return null;
+		}
+		
+	}
+
+	public static class NewEventWizardHandler extends AbstractEditorHandler {
+
+		@Override
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			final RodinEditor editor = getActiveRodinEditor();
+			new EventBCreationWizards.NewEventsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			return null;
 		}
 
 	}
 
-	public static class NewEventWizardHandler extends
-			RodinEditorWizards<NewEventDialog> {
+	public static class NewInvariantWizardHandler extends AbstractEditorHandler {
 
 		@Override
-		public void createDialog(ExecutionEvent event, RodinEditor editor) {
-
-			final IEventBRoot inputRoot = (IEventBRoot) editor.getInputRoot();
-			final EventMaker eventMaker = new EventMaker(editor, inputRoot);
-			this.dialog = new NewEventDialog(eventMaker, "New Event");
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			final RodinEditor editor = getActiveRodinEditor();
+			new EventBCreationWizards.NewInvariantsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			return null;
 		}
 
 	}
 
-	public static class NewInvariantWizardHandler extends
-			RodinEditorWizards<NewDerivedPredicateDialog<IInvariant>> {
+	public static class NewCarrierSetWizardHandler extends AbstractEditorHandler {
 
 		@Override
-		public void createDialog(ExecutionEvent event, RodinEditor editor) {
-
-			final IEventBRoot inputRoot = (IEventBRoot) editor.getInputRoot();
-			final InvariantMaker invMaker = new InvariantMaker(editor,
-					inputRoot);
-			this.dialog = new NewDerivedPredicateDialog<IInvariant>(invMaker,
-					"New Invariants", IInvariant.ELEMENT_TYPE);
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			final RodinEditor editor = getActiveRodinEditor();
+			new EventBCreationWizards.NewCarrierSetsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			return null;
 		}
 
 	}
 
-	/**
-	 * Handlers for context related handlers.
-	 */
-
-	public static class NewCarrierSetWizardHandler extends
-			RodinEditorWizards<NewCarrierSetDialog> {
+	public static class NewConstantWizardHandler extends AbstractEditorHandler {
 
 		@Override
-		public void createDialog(ExecutionEvent event, RodinEditor editor) {
-			final IEventBRoot inputRoot = (IEventBRoot) editor.getInputRoot();
-			final CarrierSetMaker maker = new CarrierSetMaker(editor, inputRoot);
-			final String identifier = UIUtils.getFreeElementIdentifier(
-					inputRoot, ICarrierSet.ELEMENT_TYPE);
-			this.dialog = new NewCarrierSetDialog(maker, "New Carrier Sets",
-					"Identifier", identifier);
-
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			final RodinEditor editor = getActiveRodinEditor();
+			new EventBCreationWizards.NewConstantsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			return null;
 		}
 
 	}
 
-	public static class NewConstantWizardHandler extends
-			RodinEditorWizards<NewConstantDialog> {
+	public static class NewEnumeratedSetWizardHandler extends AbstractEditorHandler {
 
 		@Override
-		public void createDialog(ExecutionEvent event, RodinEditor editor) {
-			final IEventBRoot root = (IEventBRoot) editor.getInputRoot();
-			final ConstantMaker maker = new ConstantMaker(editor, root);
-			this.dialog = new NewConstantDialog(maker, "New Constant");
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			final RodinEditor editor = getActiveRodinEditor();
+			new EventBCreationWizards.NewEnumeratedSetWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			return null;
 		}
+
 
 	}
 
-	public static class NewEnumeratedSetWizardHandler extends
-			RodinEditorWizards<NewEnumeratedSetDialog> {
+	public static class NewAxiomWizardHandler extends AbstractEditorHandler {
 
 		@Override
-		public void createDialog(ExecutionEvent event, RodinEditor editor) {
-			final IEventBRoot root = (IEventBRoot) editor.getInputRoot();
-			final String defaultName = UIUtils.getFreeElementIdentifier(root,
-					ICarrierSet.ELEMENT_TYPE);
-			final EnumeratedSetMaker maker = new EnumeratedSetMaker(editor,
-					root);
-			this.dialog = new NewEnumeratedSetDialog(maker,
-					"New enumerated set", defaultName);
-		}
-
-	}
-
-	public static class NewAxiomWizardHandler extends
-			RodinEditorWizards<NewDerivedPredicateDialog<IAxiom>> {
-
-		@Override
-		public void createDialog(ExecutionEvent event, RodinEditor editor) {
-			final IEventBRoot root = (IEventBRoot) editor.getInputRoot();
-			final AxiomMaker maker = new AxiomMaker(editor, root);
-			this.dialog = new NewDerivedPredicateDialog<IAxiom>(maker,
-					"New axioms", IAxiom.ELEMENT_TYPE);
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			final RodinEditor editor = getActiveRodinEditor();
+			new EventBCreationWizards.NewAxiomsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell(), History.getInstance());
+			return null;
 		}
 
 	}

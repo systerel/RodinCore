@@ -19,7 +19,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 
-@SuppressWarnings("restriction")
 public class ShowCustomizePreferences extends AbstractHandler {
 
 	@Override

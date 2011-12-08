@@ -31,6 +31,7 @@ import org.eventb.internal.ui.eventbeditor.dialogs.NewVariableDialog;
 import org.eventb.internal.ui.eventbeditor.dialogs.NewVariantDialog;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.ui.eventbeditor.IAtomicOperation;
 
 /**
  * Utility methods to support the creation of EventB elements using wizards.
@@ -46,7 +47,7 @@ public class EventBCreationWizards {
 		}
 
 		@Override
-		public AtomicOperation getCreationOperation(IEventBRoot root,
+		public IAtomicOperation getCreationOperation(IEventBRoot root,
 				EventBDialog dialog) {
 			if (!(dialog instanceof NewDerivedPredicateDialog<?>))
 				return null;
@@ -69,7 +70,7 @@ public class EventBCreationWizards {
 		}
 
 		@Override
-		public AtomicOperation getCreationOperation(IEventBRoot root,
+		public IAtomicOperation getCreationOperation(IEventBRoot root,
 				EventBDialog dialog) {
 			final NewConstantDialog constantDialog = (NewConstantDialog) dialog;
 			final String identifier = constantDialog.getIdentifier();
@@ -92,7 +93,7 @@ public class EventBCreationWizards {
 		}
 
 		@Override
-		public AtomicOperation getCreationOperation(IEventBRoot root,
+		public IAtomicOperation getCreationOperation(IEventBRoot root,
 				EventBDialog dialog) {
 			final NewEnumeratedSetDialog enumDialod = (NewEnumeratedSetDialog) dialog;
 			final String name = enumDialod.getName();
@@ -115,7 +116,7 @@ public class EventBCreationWizards {
 		}
 
 		@Override
-		public AtomicOperation getCreationOperation(IEventBRoot root,
+		public IAtomicOperation getCreationOperation(IEventBRoot root,
 				EventBDialog dialog) {
 			final NewCarrierSetDialog csDialog = (NewCarrierSetDialog) dialog;
 			final Collection<String> attributes = csDialog.getNames();
@@ -136,7 +137,7 @@ public class EventBCreationWizards {
 		}
 
 		@Override
-		public AtomicOperation getCreationOperation(IEventBRoot root,
+		public IAtomicOperation getCreationOperation(IEventBRoot root,
 				EventBDialog dialog) {
 			final NewVariantDialog variantDialog = (NewVariantDialog) dialog;
 			final String expression = variantDialog.getExpression();

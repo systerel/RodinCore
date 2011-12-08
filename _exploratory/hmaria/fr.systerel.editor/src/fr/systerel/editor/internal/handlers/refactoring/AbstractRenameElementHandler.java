@@ -12,16 +12,15 @@ package fr.systerel.editor.internal.handlers.refactoring;
 
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 
-import fr.systerel.editor.internal.actions.operations.RodinEditorHistory;
-import fr.systerel.editor.internal.actions.operations.OperationFactory;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.AbstractEditionHandler;
 
-@SuppressWarnings("restriction")
 public abstract class AbstractRenameElementHandler extends
 		AbstractEditionHandler {
 
@@ -35,7 +34,7 @@ public abstract class AbstractRenameElementHandler extends
 		final IAttributeDesc desc = ElementDescRegistry.getInstance()
 				.getElementDesc(type).getAutoNameAttribute();
 
-		RodinEditorHistory.getInstance().addOperation(
+		History.getInstance().addOperation(
 				OperationFactory.renameElements(root, type,
 						desc.getManipulation(), prefix));
 		editor.resync(null, false);
