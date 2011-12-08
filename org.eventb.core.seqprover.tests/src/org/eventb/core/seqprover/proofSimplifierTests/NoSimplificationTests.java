@@ -51,6 +51,14 @@ public class NoSimplificationTests {
 		return genPred(predicate);
 	}
 	
+	private static Predicate[] p(String... predicates) {
+		final Predicate[] result = new Predicate[predicates.length];
+		for (int i=0;i<predicates.length;i++) {
+			result[i] = genPred(predicates[i]);
+		}
+		return result;
+	}
+	
 	@Parameters
 	public static List<Object[]> getTestCases() throws Exception {
 		return Arrays.<Object[]>asList(
@@ -154,7 +162,43 @@ public class NoSimplificationTests {
 				 * Dependencies:
 				 * {0->1, 0->2, 2->3}
 				 */
-				test("|- ⊤∧¬¬⊤", conjI(trueGoal(), rn("", trueGoal())))
+				test("|- ⊤∧¬¬⊤", conjI(trueGoal(), rn("", trueGoal()))),
+				
+				///////////////////
+				// 5 nodes tests //
+				///////////////////
+				/**
+				 * Proof tree:
+				 *   0
+				 * 1   2
+				 *    3 4
+				 * Dependencies:
+				 * {0->1, 0->2, 2->3, 2->4}
+				 */
+				test("x=0 ∨ (x=0 ∨ x=0) |- x=0",
+						disjE(p("x=0 ∨ (x=0 ∨ x=0)"),
+								hyp(),
+								disjE(p("x=0 ∨ x=0"),
+										hyp(),
+										hyp()))),
+				
+				/**
+				 * Proof tree:
+				 *   0
+				 * 1   2
+				 *    3 4
+				 * Dependencies:
+				 * {0->1, 0->3, 2->3, 2->4}
+				 * 2 could be applied first, but 
+				 * the user chosen order must be preserved
+				 */
+				test("⊥ ∨ x∈{0,1} ;; ⊥ ∨ {0,1}⊆C |- x∈C",
+						disjE(p("⊥ ∨ x∈{0,1}"),
+								falseHyp(),
+								disjE(p("⊥ ∨ {0,1}⊆C"),
+										falseHyp(),
+										mbg(p("x∈{0,1}","{0,1}⊆C")))))
+										
 		);
 	}
 
