@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
@@ -678,7 +679,10 @@ public abstract class TreeShape {
 		final IReasoner reasoner = REASONER_REG.getReasonerDesc(reasonerID).getInstance();
 		final ITactic tactic = reasonerTac(reasoner, getInput());
 		
-		tactic.apply(node, null);
+		final Object failure = tactic.apply(node, null);
+		if (failure != null) {
+			fail(failure.toString());
+		}
 		
 		final IProofTreeNode[] childNodes = node.getChildNodes();
 		final TreeShape[] childShapes = expChildren;

@@ -12,11 +12,13 @@ package org.eventb.core.seqprover.proofSimplifierTests;
 
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.*;
-import static org.eventb.core.seqprover.tests.TestLib.*;
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.tactics.tests.TreeShape;
@@ -45,6 +47,10 @@ public class NoSimplificationTests {
 		return new Object[] { sequent, shape };
 	}
 
+	private static Predicate p(String predicate) {
+		return genPred(predicate);
+	}
+	
 	@Parameters
 	public static List<Object[]> getTestCases() throws Exception {
 		return Arrays.<Object[]>asList(
@@ -69,8 +75,49 @@ public class NoSimplificationTests {
 				 * Dependencies:
 				 * {0->1}
 				 */
-				test("¬¬x=0|- x=0", rn(genPred("¬¬x=0"), "", hyp()))
+				test("¬¬x=0|- x=0", rn(p("¬¬x=0"), "", hyp())),
 				
+				///////////////////
+				// 3 nodes tests //
+				///////////////////
+				/**
+				 * Proof tree:
+				 * 0
+				 * 1
+				 * 2
+				 * Dependencies:
+				 * {0->1, 0->2, 1->2}
+				 */
+				test("|- x=0 ⇒ ¬¬x=0", impI(rn("", hyp()))),
+				
+				/**
+				 * Proof tree:
+				 * 0
+				 * 1
+				 * 2
+				 * Dependencies:
+				 * {0->2, 1->2}
+				 */
+				test("¬¬x=0 |- x∈{0}", rm("", rn(p("¬¬x=0"),"", hyp()))),
+				
+				/**
+				 * Proof tree:
+				 * 0
+				 * 1
+				 * 2
+				 * Dependencies:
+				 * {0->1, 1->2}
+				 */
+				test("|- x=0 ⇒ (x=0 ⇒ ⊤)", impI(impI(trueGoal()))),
+				
+				/**
+				 * Proof tree:
+				 *  0
+				 * 1 2
+				 * Dependencies:
+				 * {0->1, 0->2}
+				 */
+				test("x=0 ;; y=1 |- x=0 ∧ y=1", conjI(hyp(), hyp()))
 		);
 	}
 
