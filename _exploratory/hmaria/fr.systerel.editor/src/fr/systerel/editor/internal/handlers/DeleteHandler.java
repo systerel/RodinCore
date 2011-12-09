@@ -10,7 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import org.eventb.ui.ElementOperationFacade;
+import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
@@ -44,7 +44,7 @@ public class DeleteHandler extends AbstractEditionHandler {
 
 	private void deleteElements(ILElement[] selected) {
 		final IInternalElement[] rElements = toIElements(selected);
-		ElementOperationFacade.deleteElement(rElements, true);
+		ElementManipulationFacade.deleteElement(rElements, true);
 	}
 
 	private static IInternalElement[] toIElements(ILElement[] elements) {
@@ -60,7 +60,7 @@ public class DeleteHandler extends AbstractEditionHandler {
 		final EditorElement item = editor.getDocumentMapper()
 				.findItemContaining(offset);
 		if (item != null && item.getLightElement() != null) {
-			return ElementOperationFacade.deleteElement(item
+			return ElementManipulationFacade.deleteElement(item
 					.getLightElement().getElement());
 		}
 		final Interval inter = editor.getDocumentMapper()
@@ -71,7 +71,7 @@ public class DeleteHandler extends AbstractEditionHandler {
 		if (element == null || element.isImplicit()) {
 			return false;
 		}
-		return ElementOperationFacade.deleteElement(element.getElement());
+		return ElementManipulationFacade.deleteElement(element.getElement());
 	}
 	
 }

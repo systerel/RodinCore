@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package org.eventb.ui;
+package org.eventb.ui.manipulation;
 
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.IEventBRoot;

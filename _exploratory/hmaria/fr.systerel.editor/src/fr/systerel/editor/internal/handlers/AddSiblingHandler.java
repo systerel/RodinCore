@@ -12,7 +12,7 @@ package fr.systerel.editor.internal.handlers;
 
 import static org.rodinp.core.emf.api.itf.ILUtils.getNextSibling;
 
-import org.eventb.ui.ElementOperationFacade;
+import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
@@ -33,7 +33,7 @@ public class AddSiblingHandler extends AbstractEditionHandler {
 		if (info == null) {
 			return "No possible Sibling creation";
 		}
-		ElementOperationFacade.createElementGeneric(info.getParent(),
+		ElementManipulationFacade.createElementGeneric(info.getParent(),
 				info.getElementType(), info.getSibling());
 		return "Added Sibling";
 	}

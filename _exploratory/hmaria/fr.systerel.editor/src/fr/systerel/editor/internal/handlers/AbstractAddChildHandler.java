@@ -10,7 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import org.eventb.ui.ElementOperationFacade;
+import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -43,7 +43,7 @@ public abstract class AbstractAddChildHandler extends AbstractEditionHandler {
 		} else {
 			localParent = childParent.getElement();
 		}
-		ElementOperationFacade.createElementGeneric(
+		ElementManipulationFacade.createElementGeneric(
 				localParent, type, localNextSibling);
 	}
 

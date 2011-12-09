@@ -25,7 +25,7 @@ import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
-import org.eventb.ui.ElementOperationFacade;
+import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IElementType;
@@ -63,17 +63,17 @@ public class RodinOperationUtils {
 		final IElementType<?> typeNotAllowed = elementTypeNotAllowed(elements,
 				target);
 		if (typeNotAllowed == null) {
-			ElementOperationFacade.copyElements(elements, target, null);
+			ElementManipulationFacade.copyElements(elements, target, null);
 		} else if (haveSameType(elements, target)) {
 			try {
-				ElementOperationFacade.copyElements(elements, target.getParent(),
+				ElementManipulationFacade.copyElements(elements, target.getParent(),
 						target.getNextSibling());
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
 		} else {
 			RodinEditorUtils.showError(
-					title_canNotPaste,
+					"Cannot Paste",
 					dialogs_pasteNotAllowed(typeNotAllowed.getName(), target
 							.getElementType().getName()));
 			return;
@@ -163,7 +163,7 @@ public class RodinOperationUtils {
 		try {
 			if (!element.hasAttribute(type)
 					|| !element.getAttributeValue(type).equals(newValue)) {
-				ElementOperationFacade.changeAttribute(element, newValue);
+				ElementManipulationFacade.changeAttribute(element, newValue);
 			}
 		} catch (RodinDBException e) {
 			System.err
@@ -185,7 +185,7 @@ public class RodinOperationUtils {
 			if (value.equals(oldValue)) {
 				return;
 			}
-			ElementOperationFacade.changeAttribute(ielement, manip, oldValue);
+			ElementManipulationFacade.changeAttribute(ielement, manip, oldValue);
 		} catch (RodinDBException e) {
 			System.err.println("Problems occured when updating the dat" + ""
 					+ "" + "" + "abase after attribute edition"
@@ -195,7 +195,7 @@ public class RodinOperationUtils {
 	
 	public static void move(IInternalElement parent, IInternalElement element,
 			IInternalElement nextSibling) {
-		ElementOperationFacade.move(parent, element, nextSibling);
+		ElementManipulationFacade.move(parent, element, nextSibling);
 	}
 	
 }

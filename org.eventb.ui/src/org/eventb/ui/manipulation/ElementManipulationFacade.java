@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - Initial API and implementation
  *******************************************************************************/
-package org.eventb.ui;
+package org.eventb.ui.manipulation;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.swt.dnd.Transfer;
@@ -35,7 +35,7 @@ import org.rodinp.core.IRodinElement;
  * @author Thomas Muller
  * @since 2.4
  */
-public class ElementOperationFacade {
+public class ElementManipulationFacade {
 
 	/**
 	 * Method to retrieve the {@link IUndoContext} associated to the given root.

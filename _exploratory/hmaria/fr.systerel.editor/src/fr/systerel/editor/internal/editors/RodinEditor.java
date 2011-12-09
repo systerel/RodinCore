@@ -53,9 +53,9 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
-import org.eventb.ui.ElementOperationFacade;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -295,7 +295,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	private IUndoContext getUndoContext() {
 		final IEventBRoot root = getInputRoot();
 		if (root != null) {
-			undoContext = ElementOperationFacade.getRodinFileUndoContext(root);
+			undoContext = ElementManipulationFacade.getRodinFileUndoContext(root);
 		}
 		return undoContext;
 	}

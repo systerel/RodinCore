@@ -17,8 +17,8 @@ import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IWorkbench;
-import org.eventb.ui.ElementOperationFacade;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
@@ -60,7 +60,7 @@ public class PasteHandler extends AbstractEditionHandler {
 		}
 		final Clipboard clipboard = getClipBoard();
 		// Try to handle by using a rodin handle transfer.
-		final Transfer rodinHandleTransfer = ElementOperationFacade
+		final Transfer rodinHandleTransfer = ElementManipulationFacade
 				.getRodinHandleTransfer();
 		final IRodinElement[] elements = (IRodinElement[]) clipboard
 				.getContents(rodinHandleTransfer);
@@ -93,7 +93,7 @@ public class PasteHandler extends AbstractEditionHandler {
 		final Clipboard clipboard = new Clipboard(workbench.getDisplay());
 
 		// Try to handle by using a rodin handle transfer.
-		final Transfer rodinHandleTransfer = ElementOperationFacade
+		final Transfer rodinHandleTransfer = ElementManipulationFacade
 				.getRodinHandleTransfer();
 		final IRodinElement[] elements = (IRodinElement[]) clipboard
 				.getContents(rodinHandleTransfer);
