@@ -30,7 +30,7 @@ import org.junit.runners.Parameterized;
  * 
  */
 @RunWith(Parameterized.class)
-public class AbstractSimplificationTests {
+public abstract class AbstractSimplificationTests {
 
 	private static IProofTree simplify(IProofTree pt) throws Exception {
 		return new ProofTreeSimplifier().simplify(pt, null);
