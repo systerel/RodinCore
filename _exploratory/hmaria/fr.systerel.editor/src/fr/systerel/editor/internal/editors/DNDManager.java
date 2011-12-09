@@ -35,7 +35,7 @@ import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
-import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
+import org.rodinp.core.emf.api.itf.ILUtils;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
@@ -167,7 +167,7 @@ public class DNDManager {
 		private List<ILElement> toLElements(IRodinElement[] elements) {
 			final List<ILElement> result = new ArrayList<ILElement>(elements.length);
 			for (IRodinElement element : elements) {
-				final ILElement lElement = SynchroUtils.findElement(element,
+				final ILElement lElement = ILUtils.findElement(element,
 						mapper.getRoot());
 				if (lElement == null)
 					return null;
