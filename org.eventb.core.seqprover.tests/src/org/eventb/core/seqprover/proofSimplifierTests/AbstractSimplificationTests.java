@@ -67,7 +67,7 @@ public abstract class AbstractSimplificationTests {
 	}
 
 	@Test
-	public void identityTest() throws Exception {
+	public void simplificationTest() throws Exception {
 		final IProofTree pt = genProofTree();
 		final IProofTree simplified = simplify(pt);
 		expected.check(simplified.getRoot());
