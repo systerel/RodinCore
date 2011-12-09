@@ -274,8 +274,68 @@ public class NodeRemovalTests extends AbstractSimplificationTests {
 						// expected		
 						impE(p("⊤ ⇒ ¬¬⊤ ∧ ⊥"),
 								trueGoal(),
-								hyp()))
-
+								hyp())),
+								
+				/**
+				 * Proof tree:
+				 *  0
+				 *  1
+				 * 2 3
+				 * Dependencies:
+				 * {0->3, 1->2}
+				 * Expected:
+				 * 0
+				 * 3
+				 */
+				test("¬¬⊥ |- ⊤ ∧ ⊥",
+						// initial
+						rn(p("¬¬⊥"), "",
+								conjI(
+										trueGoal(),
+										falseHyp())),
+						// expected		
+						rn(p("¬¬⊥"), "",
+								falseHyp())),
+								
+				/**
+				 * Proof tree:
+				 *  0
+				 *  1
+				 * 2 3
+				 * Dependencies:
+				 * {0->2, 0->3}
+				 * Expected:
+				 * 0
+				 * 2
+				 */
+				test("⊤ ∨ ⊤ |- ⊥ ⇒ ⊤",
+						// initial
+						impI(
+								disjE(p("⊤ ∨ ⊤"),
+										falseHyp(),
+										trueGoal())),
+						// expected		
+						impI(
+								falseHyp())),
+								
+				/**
+				 * Proof tree:
+				 *  0
+				 *  1
+				 * 2 3
+				 * Dependencies:
+				 * {}
+				 * Expected:
+				 * 2
+				 */
+				test("⊥ ;; ⊤ ∨ ⊤ ;; ¬¬⊤ |- ⊤",
+						// initial
+						rn(p("¬¬⊤"), "",
+								disjE(p("⊤ ∨ ⊤"),
+										falseHyp(),
+										trueGoal())),
+						// expected		
+						falseHyp())
 				
 
 				);
