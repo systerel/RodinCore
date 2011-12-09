@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="Rodin Editor User Guide">
+  <topic label="Introduction" href="html/rodin_editor_user_guide.html#Introduction">
+  </topic>
+  <topic label="Installation" href="html/rodin_editor_user_guide.html#Installation">
+   <topic label="Setup" href="html/rodin_editor_user_guide.html#Setup">
+   </topic>
+   <topic label="Release Notes" href="html/rodin_editor_user_guide.html#Release_Notes">
+   </topic>
+  </topic>
+  <topic label="Editing" href="html/rodin_editor_user_guide.html#Editing">
+   <topic label="Create a context, add elements to it" href="html/rodin_editor_user_guide.html#Create_a_context.2C_add_elements_to_it">
+   </topic>
+   <topic label="Select, Move and delete elements" href="html/rodin_editor_user_guide.html#Select.2C_Move_and_delete_elements">
+   </topic>
+   <topic label="Using keyboard shorcuts" href="html/rodin_editor_user_guide.html#Using_keyboard_shorcuts">
+   </topic>
+   <topic label="Customize this list" href="html/rodin_editor_user_guide.html#Customize_this_list">
+   </topic>
+  </topic>
+  <topic label="Tips &amp; Tricks" href="html/rodin_editor_user_guide.html#Tips_.26_Tricks">
+  </topic>
+</toc>
