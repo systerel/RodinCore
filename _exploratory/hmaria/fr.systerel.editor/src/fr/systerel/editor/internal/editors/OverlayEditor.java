@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.changeAttribute;
 import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
@@ -63,11 +64,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.autocompletion.EventBContentProposalAdapter;
 import org.eventb.internal.ui.autocompletion.ProposalProvider;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
-import org.eventb.internal.ui.eventbeditor.operations.History;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
-import org.eventb.ui.eventbeditor.IAtomicOperation;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
@@ -307,7 +304,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 				toSet = v;
 			}
 			if (toSet != null)
-				updateAttributeValueWithManipulation(inter.getElement(), manip,
+				changeAttribute(inter.getElement(), manip,
 						toSet);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
@@ -323,7 +320,6 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		final String text;
 		if (inter.getLength() > 0) {
 			final String extracted = parent.getText(start, end);
-			final int level = inter.getIndentation();
 			final boolean multiLine = inter.isMultiLine();
 			final boolean addWhiteSpace = inter.isAddWhiteSpace();
 			final String align = inter.getAlignement();
@@ -365,7 +361,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 					final ILElement element = inter.getElement();
 					final IAttributeManipulation attManip = inter
 							.getAttributeManipulation();
-					updateAttributeValueWithManipulation(element, attManip, value);
+					changeAttribute(element, attManip, value);
 				}
 			});
 		}
@@ -373,27 +369,6 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		final Point mapped = parent.getDisplay().map(parent, null, loc);
 		tipMenu.setLocation(mapped);
 		tipMenu.setVisible(true);
-	}
-	
-	public void updateAttributeValueWithManipulation(ILElement element,
-			IAttributeManipulation manip, String value) {
-		final IInternalElement ielement = element.getElement();
-		final String oldValue;
-		try {
-			if (manip.hasValue(ielement, null)) {
-				oldValue = manip.getValue(ielement, null);
-			} else {
-				oldValue = null;
-			}
-			if (value.equals(oldValue)) {
-				return;
-			}
-			final IAtomicOperation op = OperationFactory.changeAttribute(manip,
-					ielement, value);
-			History.getInstance().addOperation(op);
-		} catch (RodinDBException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public void abortEdition() {
@@ -452,45 +427,28 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		}
 		if (ielement instanceof IIdentifierElement
 				&& contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
-			updateAttribute(ielement, IDENTIFIER_ATTRIBUTE, text);
+			changeAttribute(ielement, IDENTIFIER_ATTRIBUTE, text);
 		}
 		if (ielement instanceof ILabeledElement
 				&& contentType.equals(RodinConfiguration.LABEL_TYPE)
 				|| contentType.equals(RodinConfiguration.BOLD_LABEL_TYPE)) {
-			updateAttribute(ielement, LABEL_ATTRIBUTE, text);
+			changeAttribute(ielement, LABEL_ATTRIBUTE, text);
 		}
 		if (ielement instanceof IExpressionElement
 				&& contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-			updateAttribute(ielement, EXPRESSION_ATTRIBUTE, text);
+			changeAttribute(ielement, EXPRESSION_ATTRIBUTE, text);
 		}
 		if (ielement instanceof IPredicateElement
 				&& contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-			updateAttribute(ielement, PREDICATE_ATTRIBUTE, text);
+			changeAttribute(ielement, PREDICATE_ATTRIBUTE, text);
 		}
 		if (ielement instanceof IAssignmentElement
 				&& contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-			updateAttribute(ielement, ASSIGNMENT_ATTRIBUTE, text);
+			changeAttribute(ielement, ASSIGNMENT_ATTRIBUTE, text);
 		}
 		if (ielement instanceof ICommentedElement
 				&& contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
-			updateAttribute(ielement, COMMENT_ATTRIBUTE, text);
-		}
-	}
-	
-	public void updateAttribute(IInternalElement element, IAttributeType.String type,
-			String textValue) {
-		final IAttributeValue.String newValue = type.makeValue(textValue);
-		try {
-			if (!element.hasAttribute(type)
-					|| !element.getAttributeValue(type).equals(newValue)) {
-				final IAtomicOperation op = OperationFactory.changeAttribute(
-						element, newValue);
-				History.getInstance().addOperation(op);
-			}
-		} catch (RodinDBException e) {
-			System.err
-					.println("Problems occured when updating the database after attribute edition"
-							+ e.getMessage());
+			changeAttribute(ielement, COMMENT_ATTRIBUTE, text);
 		}
 	}
 

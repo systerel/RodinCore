@@ -10,19 +10,20 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.copyElements;
 import static org.eventb.internal.ui.utils.Messages.title_nothingToPaste;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IWorkbench;
-import org.eventb.internal.ui.RodinHandleTransfer;
+import org.eventb.ui.ElementOperationFacade;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
+import fr.systerel.editor.internal.actions.operations.RodinOperationUtils;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.editors.RodinEditorUtils;
@@ -59,8 +60,8 @@ public class PasteHandler extends AbstractEditionHandler {
 		}
 		final Clipboard clipboard = getClipBoard();
 		// Try to handle by using a rodin handle transfer.
-		final RodinHandleTransfer rodinHandleTransfer = RodinHandleTransfer
-				.getInstance();
+		final Transfer rodinHandleTransfer = ElementOperationFacade
+				.getRodinHandleTransfer();
 		final IRodinElement[] elements = (IRodinElement[]) clipboard
 				.getContents(rodinHandleTransfer);
 
@@ -68,7 +69,7 @@ public class PasteHandler extends AbstractEditionHandler {
 		// nothing.
 		if (elements == null)
 			return "Nothing to paste";
-
+  
 		// Check for the existing of the elements to be pasted.
 		for (IRodinElement e : elements) {
 			if (!e.exists()) {
@@ -79,7 +80,7 @@ public class PasteHandler extends AbstractEditionHandler {
 		final IRodinElement target = element.getElement();
 		if (!(target instanceof IInternalElement) || !target.exists())
 			return "Target does not exist";
-		copyElements((IInternalElement) target, elements);
+		RodinOperationUtils.copyElements((IInternalElement) target, elements);
 		return "Elements pasted";
 	}
 
@@ -92,8 +93,8 @@ public class PasteHandler extends AbstractEditionHandler {
 		final Clipboard clipboard = new Clipboard(workbench.getDisplay());
 
 		// Try to handle by using a rodin handle transfer.
-		final RodinHandleTransfer rodinHandleTransfer = RodinHandleTransfer
-				.getInstance();
+		final Transfer rodinHandleTransfer = ElementOperationFacade
+				.getRodinHandleTransfer();
 		final IRodinElement[] elements = (IRodinElement[]) clipboard
 				.getContents(rodinHandleTransfer);
 		// enable only if there are elements to paste

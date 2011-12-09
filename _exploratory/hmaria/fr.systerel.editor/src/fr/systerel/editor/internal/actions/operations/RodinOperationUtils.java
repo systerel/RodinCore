@@ -24,12 +24,15 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.operations.History;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.ui.ElementOperationFacade;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.editors.RodinEditorUtils;
@@ -60,10 +63,10 @@ public class RodinOperationUtils {
 		final IElementType<?> typeNotAllowed = elementTypeNotAllowed(elements,
 				target);
 		if (typeNotAllowed == null) {
-			copyElements(elements, target, null);
+			ElementOperationFacade.copyElements(elements, target, null);
 		} else if (haveSameType(elements, target)) {
 			try {
-				copyElements(elements, target.getParent(),
+				ElementOperationFacade.copyElements(elements, target.getParent(),
 						target.getNextSibling());
 			} catch (RodinDBException e) {
 				e.printStackTrace();
@@ -77,16 +80,6 @@ public class RodinOperationUtils {
 		}
 		if (EditorPlugin.DEBUG)
 			RodinEditorUtils.debug("PASTE SUCCESSFULLY");
-	}
-	
-	/**
-	 * Perform a copy operation through the undo history.
-	 */
-	private static void copyElements(IRodinElement[] handleData,
-			IRodinElement target, IRodinElement nextSibling) {
-		History.getInstance().addOperation(
-				OperationFactory.copyElements((IInternalElement) target,
-						handleData, (IInternalElement) nextSibling));
 	}
 	
 	/**
@@ -163,5 +156,45 @@ public class RodinOperationUtils {
 		}
 		return true;
 	}
+	
+	public static void changeAttribute(IInternalElement element,
+			IAttributeType.String type, String textValue) {
+		final IAttributeValue.String newValue = type.makeValue(textValue);
+		try {
+			if (!element.hasAttribute(type)
+					|| !element.getAttributeValue(type).equals(newValue)) {
+				ElementOperationFacade.changeAttribute(element, newValue);
+			}
+		} catch (RodinDBException e) {
+			System.err
+					.println("Problems occured when updating the database after attribute edition"
+							+ e.getMessage());
+		}
+	}
 
+	public static void changeAttribute(ILElement element,
+			IAttributeManipulation manip, String value) {
+		final IInternalElement ielement = element.getElement();
+		final String oldValue;
+		try {
+			if (manip.hasValue(ielement, null)) {
+				oldValue = manip.getValue(ielement, null);
+			} else {
+				oldValue = null;
+			}
+			if (value.equals(oldValue)) {
+				return;
+			}
+			ElementOperationFacade.changeAttribute(ielement, manip, oldValue);
+		} catch (RodinDBException e) {
+			System.err.println("Problems occured when updating the dat" + ""
+					+ "" + "" + "abase after attribute edition"
+					+ e.getMessage());
+		}
+	}
+	
+	public static void move(IInternalElement element, IInternalElement parent, IInternalElement nextSibling) {
+		ElementOperationFacade.move(parent, element, nextSibling);
+	}
+	
 }

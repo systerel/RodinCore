@@ -22,8 +22,8 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IWorkbench;
-import org.eventb.internal.ui.RodinHandleTransfer;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.ElementOperationFacade;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -93,7 +93,7 @@ public class CopyHandler extends AbstractEditorHandler {
 				new Object[] {
 						elements.toArray(new IRodinElement[elements.size()]),
 						buf.toString() },
-				new Transfer[] { RodinHandleTransfer.getInstance(),
+				new Transfer[] { ElementOperationFacade.getRodinHandleTransfer(),
 						TextTransfer.getInstance() });
 
 		return "Copied Rodin element successfully";
