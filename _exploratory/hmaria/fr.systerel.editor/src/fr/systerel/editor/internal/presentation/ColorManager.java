@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,18 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 public class ColorManager {
+	
+	private static ColorManager fColorManager = new ColorManager(); 
 
+	
+	private ColorManager() {
+		// singleton
+	}
+	
+	public static ColorManager getDefault() {
+		return fColorManager;
+	}
+	
 	protected Map<RGB, Color> fColorTable = new HashMap<RGB, Color>(10);
 
 	public void dispose() {
@@ -27,6 +38,7 @@ public class ColorManager {
 		while (e.hasNext())
 			 ((Color) e.next()).dispose();
 	}
+	
 	public Color getColor(RGB rgb) {
 		Color color = (Color) fColorTable.get(rgb);
 		if (color == null) {
@@ -35,4 +47,5 @@ public class ColorManager {
 		}
 		return color;
 	}
+	
 }

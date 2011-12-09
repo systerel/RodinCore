@@ -53,7 +53,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.ui.ElementOperationFacade;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IInternalElement;
@@ -67,7 +67,6 @@ import fr.systerel.editor.internal.actions.HistoryAction;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
-import fr.systerel.editor.internal.presentation.ColorManager;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.updaters.ProblemMarkerAnnotationsUpdater;
 
@@ -81,7 +80,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 			+ ".contexts.rodinEditorScope";
 
 	private final RodinDocumentProvider documentProvider;
-	private ColorManager colorManager;
 	private DocumentMapper mapper;
 	private RodinConfiguration rodinViewerConfiguration;
 	
@@ -192,7 +190,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	@Override
 	public void dispose() {
 		close(false);
-		colorManager.dispose();
 		if (markerAnnotationsUpdater != null){
 			markerAnnotationsUpdater.dispose();			
 		}
@@ -208,9 +205,8 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	@Override
 	protected void initializeEditor() {
 		super.initializeEditor();
-		colorManager = new ColorManager();
 		mapper = new DocumentMapper();
-		rodinViewerConfiguration = new RodinConfiguration(colorManager, this);
+		rodinViewerConfiguration = new RodinConfiguration(this);
 		setSourceViewerConfiguration(rodinViewerConfiguration);
 	}
 	
@@ -297,9 +293,9 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	}
 	
 	private IUndoContext getUndoContext() {
-		final IInternalElement inputRoot = getInputRoot();
-		if (inputRoot != null) {
-			undoContext = OperationFactory.getRodinFileUndoContext(inputRoot);
+		final IEventBRoot root = getInputRoot();
+		if (root != null) {
+			undoContext = ElementOperationFacade.getRodinFileUndoContext(root);
 		}
 		return undoContext;
 	}

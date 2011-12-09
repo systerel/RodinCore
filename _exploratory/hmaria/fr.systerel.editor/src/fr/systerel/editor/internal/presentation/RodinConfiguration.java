@@ -234,13 +234,11 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		return typesByName.get(name);
 	}
 
-	private ColorManager colorManager;
 	private RodinEditor editor;
 	private IAnnotationHover annotationHover;
 	private ITextHover textHover;
 
-	public RodinConfiguration(ColorManager colorManager, RodinEditor editor) {
-		this.colorManager = colorManager;
+	public RodinConfiguration(RodinEditor editor) {
 		this.editor = editor;
 	}
 
@@ -259,24 +257,21 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		final PresentationReconciler reconciler = new PresentationReconciler();
 		RodinDamagerRepairer rdr;
 		for (ContentType contentType : contentTypes) {
-			rdr = new RodinDamagerRepairer(editor, createTextAttribute(
-					contentType, colorManager));
+			rdr = new RodinDamagerRepairer(editor, createTextAttribute(contentType));
 			reconciler.setDamager(rdr, contentType.getName());
 			reconciler.setRepairer(rdr, contentType.getName());
 		}
 		return reconciler;
 	}
 
-	private static TextAttribute createTextAttribute(ContentType type,
-			ColorManager manager) {
-		return new TextAttribute(manager.getColor(type.getColor()),
-				getBackgroundColor(manager, type), type.getStyles());
+	private static TextAttribute createTextAttribute(ContentType type) {
+		return new TextAttribute(ColorManager.getDefault().getColor(
+				type.getColor()), getBackgroundColor(type), type.getStyles());
 	}
 
-	private static Color getBackgroundColor(ColorManager manager,
-			ContentType type) {
-		return (DEBUG) ? manager.getColor(type.getDebugBackgroundColor())
-				: null;
+	private static Color getBackgroundColor(ContentType type) {
+		return (DEBUG) ? ColorManager.getDefault().getColor(
+				type.getDebugBackgroundColor()) : null;
 	}
 
 	@Override

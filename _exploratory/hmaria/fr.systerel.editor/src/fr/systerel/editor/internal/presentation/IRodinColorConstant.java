@@ -13,7 +13,6 @@ package fr.systerel.editor.internal.presentation;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eventb.internal.ui.EventBSharedColor;
 
 public interface IRodinColorConstant {
 
@@ -53,5 +52,5 @@ public interface IRodinColorConstant {
 	RGB PRESENTATION_DEBUG_BG = new RGB(190, 190, 0);
 
 	RGB BACKGROUND = new RGB(250, 250, 250);
-	Color BG_COLOR = EventBSharedColor.getColor(BACKGROUND);
+	Color BG_COLOR = ColorManager.getDefault().getColor(BACKGROUND);
 }
