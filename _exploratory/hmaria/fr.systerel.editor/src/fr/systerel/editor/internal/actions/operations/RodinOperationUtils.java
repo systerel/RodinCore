@@ -193,7 +193,8 @@ public class RodinOperationUtils {
 		}
 	}
 	
-	public static void move(IInternalElement element, IInternalElement parent, IInternalElement nextSibling) {
+	public static void move(IInternalElement parent, IInternalElement element,
+			IInternalElement nextSibling) {
 		ElementOperationFacade.move(parent, element, nextSibling);
 	}
 	
