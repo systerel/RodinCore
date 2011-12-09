@@ -18,10 +18,11 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eventb.internal.ui.EventBSharedColor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ILElement;
+
+import fr.systerel.editor.internal.presentation.ColorManager;
 
 /**
  * @author Nicolas Beauger
@@ -92,12 +93,12 @@ public class Selections {
 		
 		// TODO make a preference
 		private static Color getSelectionBackgroundColorPreference() {
-			return EventBSharedColor.getColor(HOMOGENEOUS);
+			return ColorManager.getDefault().getColor(HOMOGENEOUS);
 		}
 		
 		// TODO make a preference
 		private static Color getBadSelectionBackgroundColorPreference() {
-			return EventBSharedColor.getColor(HETEROGENEOUS);
+			return ColorManager.getDefault().getColor(HETEROGENEOUS);
 		}
 	}
 	
