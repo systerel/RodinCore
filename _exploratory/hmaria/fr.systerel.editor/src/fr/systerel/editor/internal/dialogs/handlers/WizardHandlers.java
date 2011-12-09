@@ -12,7 +12,6 @@ package fr.systerel.editor.internal.dialogs.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
 import org.eventb.ui.ElementCreationWizardFacade;
 import org.eventb.ui.ElementOperationFacade;
 import org.eventb.ui.eventbeditor.IRodinHistory;
@@ -27,9 +26,9 @@ import fr.systerel.editor.internal.handlers.AbstractEditorHandler;
  */
 public class WizardHandlers {
 
-	public static final IRodinHistory history = ElementOperationFacade.getHistory();
-	
-	
+	public static final IRodinHistory history = ElementOperationFacade
+			.getHistory();
+
 	public static class NewVariableWizardHandler extends AbstractEditorHandler {
 
 		@Override
@@ -47,10 +46,11 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewVariantWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
+			ElementCreationWizardFacade.openNewVariantWizard(
+					editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
-		
+
 	}
 
 	public static class NewEventWizardHandler extends AbstractEditorHandler {
@@ -58,7 +58,8 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewEventsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
+			ElementCreationWizardFacade.openNewEventWizard(
+					editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 
@@ -69,18 +70,21 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewInvariantsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
+			ElementCreationWizardFacade.openNewInvariantWizard(
+					editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 
 	}
 
-	public static class NewCarrierSetWizardHandler extends AbstractEditorHandler {
+	public static class NewCarrierSetWizardHandler extends
+			AbstractEditorHandler {
 
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewCarrierSetsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
+			ElementCreationWizardFacade.openNewCarrierSetWizard(
+					editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 
@@ -91,21 +95,23 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewConstantsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
+			ElementCreationWizardFacade.openNewConstantsWizard(
+					editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 
 	}
 
-	public static class NewEnumeratedSetWizardHandler extends AbstractEditorHandler {
+	public static class NewEnumeratedSetWizardHandler extends
+			AbstractEditorHandler {
 
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewEnumeratedSetWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
+			ElementCreationWizardFacade.openNewEnumeratedSetWizard(
+					editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
-
 
 	}
 
@@ -114,11 +120,11 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewAxiomsWizard().openDialog(editor.getInputRoot(), editor.getSite().getShell());
+			ElementCreationWizardFacade.openNewAxiomWizard(
+					editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
 
 	}
-	
-	
+
 }
