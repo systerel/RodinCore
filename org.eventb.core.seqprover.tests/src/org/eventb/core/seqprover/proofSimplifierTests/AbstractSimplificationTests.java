@@ -40,6 +40,10 @@ public abstract class AbstractSimplificationTests {
 		return genPred(predicate);
 	}
 
+	protected static Object[] test(String sequent, TreeShape initial, TreeShape expected) {
+		return new Object[] { sequent, initial, expected };
+	}
+
 	protected static Predicate[] p(String... predicates) {
 		final Predicate[] result = new Predicate[predicates.length];
 		for (int i = 0; i < predicates.length; i++) {

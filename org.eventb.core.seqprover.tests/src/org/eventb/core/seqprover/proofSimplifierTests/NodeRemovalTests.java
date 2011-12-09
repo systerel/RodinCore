@@ -25,24 +25,11 @@ import org.junit.runners.Parameterized.Parameters;
  */
 public class NodeRemovalTests extends AbstractSimplificationTests {
 
-	private static Object[] test(String sequent, TreeShape shape,
-			TreeShape expected) {
-		return new Object[] { sequent, shape, expected };
-	}
-
 	public NodeRemovalTests(String sequent, TreeShape initial,
 			TreeShape expected) {
 		super(sequent, initial, expected);
 	}
 
-	/**
-	 * @return
-	 * @throws Exception
-	 */
-	/**
-	 * @return
-	 * @throws Exception
-	 */
 	@Parameters
 	public static List<Object[]> getTestCases() throws Exception {
 		return Arrays.<Object[]> asList(
