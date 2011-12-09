@@ -13,6 +13,7 @@ package fr.systerel.editor.internal.dialogs.handlers;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
+import org.eventb.ui.ElementCreationWizardFacade;
 import org.eventb.ui.ElementOperationFacade;
 import org.eventb.ui.eventbeditor.IRodinHistory;
 
@@ -34,10 +35,11 @@ public class WizardHandlers {
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
 			final RodinEditor editor = getActiveRodinEditor();
-			new EventBCreationWizards.NewVariablesWizard().openDialog(editor.getInputRoot(), editor.getEditorSite().getShell());
+			ElementCreationWizardFacade.openNewVariablesWizard(
+					editor.getInputRoot(), editor.getSite().getShell());
 			return null;
 		}
-	
+
 	}
 
 	public static class NewVariantWizardHandler extends AbstractEditorHandler {
