@@ -57,7 +57,8 @@ public class NoSimplificationTests extends AbstractSimplificationTests {
 				 * Dependencies:
 				 * {}
 				 */
-				test("|- ⊤", trueGoal()),
+				test("|- ⊤",
+						trueGoal()),
 				
 				//////////////////
 				// 2 nodes test //
@@ -69,7 +70,9 @@ public class NoSimplificationTests extends AbstractSimplificationTests {
 				 * Dependencies:
 				 * {0->1}
 				 */
-				test("¬¬x=0|- x=0", rn(p("¬¬x=0"), "", hyp())),
+				test("¬¬x=0|- x=0",
+						rn(p("¬¬x=0"), "",
+								hyp())),
 				
 				///////////////////
 				// 3 nodes tests //
@@ -82,7 +85,10 @@ public class NoSimplificationTests extends AbstractSimplificationTests {
 				 * Dependencies:
 				 * {0->1, 0->2, 1->2}
 				 */
-				test("|- x=0 ⇒ ¬¬x=0", impI(rn("", hyp()))),
+				test("|- x=0 ⇒ ¬¬x=0",
+						impI(
+								rn("",
+										hyp()))),
 				
 				/**
 				 * Proof tree:
@@ -92,7 +98,10 @@ public class NoSimplificationTests extends AbstractSimplificationTests {
 				 * Dependencies:
 				 * {0->2, 1->2}
 				 */
-				test("¬¬x=0 |- x∈{0}", rm("", rn(p("¬¬x=0"),"", hyp()))),
+				test("¬¬x=0 |- x∈{0}",
+						rm("",
+								rn(p("¬¬x=0"),"",
+										hyp()))),
 				
 				/**
 				 * Proof tree:
@@ -102,7 +111,10 @@ public class NoSimplificationTests extends AbstractSimplificationTests {
 				 * Dependencies:
 				 * {0->1, 1->2}
 				 */
-				test("|- x=0 ⇒ (x=0 ⇒ ⊤)", impI(impI(trueGoal()))),
+				test("|- x=0 ⇒ (x=0 ⇒ ⊤)",
+						impI(
+								impI(
+										trueGoal()))),
 				
 				/**
 				 * Proof tree:
@@ -111,7 +123,10 @@ public class NoSimplificationTests extends AbstractSimplificationTests {
 				 * Dependencies:
 				 * {0->1, 0->2}
 				 */
-				test("x=0 ;; y=1 |- x=0 ∧ y=1", conjI(hyp(), hyp())),
+				test("x=0 ;; y=1 |- x=0 ∧ y=1", 
+						conjI(
+								hyp(),
+								hyp())),
 				
 				///////////////////
 				// 4 nodes tests //
@@ -139,7 +154,9 @@ public class NoSimplificationTests extends AbstractSimplificationTests {
 				 */
 				test("x=0 ∧ y=1 |- x=0 ∧ y=1",
 						conjF(p("x=0 ∧ y=1"),
-								conjI(hyp(), hyp()))),
+								conjI(
+										hyp(),
+										hyp()))),
 				/**
 				 * Proof tree:
 				 *  0
@@ -148,7 +165,11 @@ public class NoSimplificationTests extends AbstractSimplificationTests {
 				 * Dependencies:
 				 * {0->1, 0->2, 2->3}
 				 */
-				test("|- ⊤∧¬¬⊤", conjI(trueGoal(), rn("", trueGoal()))),
+				test("|- ⊤∧¬¬⊤", 
+						conjI(
+								trueGoal(), 
+								rn("", 
+										trueGoal()))),
 				
 				///////////////////
 				// 5 nodes tests //
