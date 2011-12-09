@@ -35,6 +35,14 @@ public class NodeRemovalTests extends AbstractSimplificationTests {
 		super(sequent, initial, expected);
 	}
 
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	/**
+	 * @return
+	 * @throws Exception
+	 */
 	@Parameters
 	public static List<Object[]> getTestCases() throws Exception {
 		return Arrays.<Object[]> asList(
@@ -141,6 +149,8 @@ public class NodeRemovalTests extends AbstractSimplificationTests {
 								trueGoal())),
 
 				/**
+				 * Choice of left subproof by default.
+				 * 
 				 * Proof tree:
 				 *  0
 				 * 1 2
@@ -172,9 +182,102 @@ public class NodeRemovalTests extends AbstractSimplificationTests {
 								falseHyp(),
 								trueGoal()),
 						// expected		
-						trueGoal())
+						trueGoal()),
 
 						
+				///////////////////
+				// 4 nodes tests //
+				///////////////////
+
+				/**
+				 * Proof tree:
+				 * 0
+				 * 1
+				 * 2
+				 * 3
+				 * Dependencies:
+				 * {1->2}
+				 * Expected:
+				 * 0
+				 * 3
+				 */
+				test(" ¬¬⊥ |- ¬¬x∈{0}",
+						// initial
+						rn(p("¬¬⊥"), "",
+								rn("",
+										rm("",
+												falseHyp()))),
+						// expected		
+						rn(p("¬¬⊥"), "",
+								falseHyp())),
+
+				/**
+				 * Choice of shortest subproof.
+				 * 
+				 * Proof tree:
+				 *   0
+				 *  1 3
+				 * 2
+				 * Dependencies:
+				 * {1->2}
+				 * Expected:
+				 * 3
+				 */
+				test(" ⊤ ∨ ⊤ ;; ⊥ |- ⊤ ⇒ ⊤",
+						// initial
+						disjE(p("⊤ ∨ ⊤"),
+								impI(
+										trueGoal()),
+								falseHyp()),
+						// expected		
+						falseHyp()),
+
+				/**
+				 * Proof tree:
+				 *   0
+				 *  1 2
+				 *     3
+				 * Dependencies:
+				 * {0->1, 0->3}
+				 * Expected:
+				 *  0
+				 * 1 3
+				 */
+				test(" ¬¬⊤  |- ⊤ ∧ ⊤",
+						// initial
+						conjI(
+								trueGoal(),
+								rn(p("¬¬⊤"), ""),
+										trueGoal()),
+						// expected
+						conjI(
+								trueGoal(),
+								trueGoal())),
+						
+				/**
+				 * Proof tree:
+				 *   0
+				 *  1 2
+				 *     3
+				 * Dependencies:
+				 * {0->1, 0->2, 0->3}
+				 * Expected:
+				 *  0
+				 * 1 3
+				 */
+				test("⊤ ⇒ ¬¬⊤ ∧ ⊥ |- ⊥",
+						// initial
+						impE(p("⊤ ⇒ ¬¬⊤ ∧ ⊥"),
+								trueGoal(),
+								rn(p("¬¬⊤"), "",
+										hyp())),
+						// expected		
+						impE(p("⊤ ⇒ ¬¬⊤ ∧ ⊥"),
+								trueGoal(),
+								hyp()))
+
+				
+
 				);
 	}
 
