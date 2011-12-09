@@ -16,9 +16,10 @@ import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.autocompletion.IEventBContentProposalProvider;
 import org.rodinp.core.location.IAttributeLocation;
 
-public class ProposalProvider extends AbstractProposalProvider {
+public class ProposalProvider extends AbstractProposalProvider implements IEventBContentProposalProvider {
 
 	private static final IContentProposal[] NO_PROPOSALS = new IContentProposal[0];
 
@@ -47,6 +48,7 @@ public class ProposalProvider extends AbstractProposalProvider {
 	/**
 	 * @param location the location to set
 	 */
+	@Override
 	public void setLocation(IAttributeLocation location) {
 		this.location = location;
 	}

@@ -36,6 +36,7 @@ Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.syster
  org.eventb.internal.ui.prover;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.utils;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.wizards;x-friends:="fr.systerel.explorer,org.eventb.ui.tests",
+  org.eventb.ui.autocompletion,
  org.eventb.ui,
  org.eventb.ui.eventbeditor,
  org.eventb.ui.prettyprint,

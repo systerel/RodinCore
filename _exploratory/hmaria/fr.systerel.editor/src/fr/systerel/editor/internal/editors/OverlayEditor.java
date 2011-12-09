@@ -18,9 +18,6 @@ import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
-import static org.eventb.internal.ui.EventBUtils.getFormulaFactory;
-import static org.eventb.internal.ui.autocompletion.ContentProposalFactory.getProposalProvider;
-import static org.eventb.internal.ui.autocompletion.ContentProposalFactory.makeContentProposal;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,14 +53,15 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
 import org.eventb.core.ICommentedElement;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExpressionElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.internal.ui.autocompletion.EventBContentProposalAdapter;
-import org.eventb.internal.ui.autocompletion.ProposalProvider;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.ui.autocompletion.EventBContentProposalFactory;
+import org.eventb.ui.autocompletion.IEventBContentProposalAdapter;
+import org.eventb.ui.autocompletion.IEventBContentProposalProvider;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -144,28 +142,29 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 	
 	private static class ContentProposalManager {
-		private final ProposalProvider provider;
-		private final EventBContentProposalAdapter contentProposal;
+		private final IEventBContentProposalProvider provider;
+		private final IEventBContentProposalAdapter contentProposal;
 
 		public ContentProposalManager(StyledText text, IInternalElement root) {
-			final FormulaFactory factory = getFormulaFactory(root);
-			provider = getProposalProvider(null, factory);
-			contentProposal = makeContentProposal(text, provider);
+			provider = EventBContentProposalFactory.getProposalProvider(null,
+					(IEventBRoot) root);
+			contentProposal = EventBContentProposalFactory
+					.getContentProposalAdapter(text, provider);
 		}
-		
+
 		public boolean isProposalPopupOpen() {
 			return contentProposal.isProposalPopupOpen();
 		}
-		
+
 		public void setCompletionLocation(Interval inter) {
 			final IInternalElement element = inter.getElement().getElement();
-			
+
 			final ContentType contentType = inter.getContentType();
 			IAttributeType attributeType = null;
 			if (contentType instanceof AttributeContentType) {
 				// FIXME null for predicate and assignment
 				attributeType = ((AttributeContentType) contentType)
-					.getAttributeType();
+						.getAttributeType();
 			}
 			if (attributeType == null) {
 				// return; FIXME temporary fix

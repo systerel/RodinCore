@@ -11,11 +11,11 @@
 package org.eventb.internal.ui.autocompletion;
 
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
-import org.eclipse.jface.fieldassist.IContentProposalListener2;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.IControlContentAdapter;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+import org.eventb.ui.autocompletion.IEventBContentProposalAdapter;
 
 /**
  * Encapsulates a <code>ContentProposalAdapter</code> while tracking whether the
@@ -23,7 +23,7 @@ import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
  * 
  * @author Aurélien Gilles
  */
-public class EventBContentProposalAdapter implements IContentProposalListener2 {
+public class EventBContentProposalAdapter implements IEventBContentProposalAdapter {
 
 	private boolean proposalPopupOpen;
 	private final ContentProposalAdapter adaptee;
@@ -37,11 +37,7 @@ public class EventBContentProposalAdapter implements IContentProposalListener2 {
 		adaptee.addContentProposalListener(this);
 	}
 
-	/**
-	 * Returns whether the content proposal pop-up is open.
-	 * 
-	 * @return <code>true</code> iff the proposal pop-up is open
-	 */
+	@Override
 	public boolean isProposalPopupOpen() {
 		return proposalPopupOpen;
 	}
