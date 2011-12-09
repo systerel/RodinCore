@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eventb.ui.manipulation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.Transfer;
 import org.eventb.core.IEventBRoot;
+import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.RodinHandleTransfer;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
+import org.eventb.internal.ui.eventbeditor.handlers.CopyHandler;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
@@ -50,6 +57,25 @@ public class ElementManipulationFacade {
 
 	public static Transfer getRodinHandleTransfer() {
 		return RodinHandleTransfer.getInstance();
+	}
+
+	/**
+	 * Copies both names and handles of the given elements in a clipboard build
+	 * with the given display.
+	 * 
+	 * @param elementsToCopy
+	 *            the elements to copy
+	 * @param clipboard
+	 *            the clipboard to get the copied elements
+	 */
+	public static void copyElementsToClipboard(
+			final Collection<IRodinElement> elementsToCopy,
+			final Clipboard clipboard) {
+		Collection<IRodinElement> elements = new ArrayList<IRodinElement>();
+		for (IRodinElement element : elementsToCopy) {
+			elements = UIUtils.addToTreeSet(elements, element);
+		}
+		CopyHandler.copyToClipboard(elements, clipboard);
 	}
 
 	/**
@@ -190,6 +216,17 @@ public class ElementManipulationFacade {
 		final AtomicOperation op = OperationFactory.move(targetParent, element,
 				targetParent, nextSibling);
 		getHistory().addOperation(op);
+	}
+
+	/**
+	 * Tells if the given element is read-only.
+	 * 
+	 * @param element
+	 *            the current element
+	 * @return <code>true</code> iff the element is read-only
+	 */
+	public static boolean isReadOnly(IInternalElement element) {
+		return EventBUtils.isReadOnly(element);
 	}
 
 }

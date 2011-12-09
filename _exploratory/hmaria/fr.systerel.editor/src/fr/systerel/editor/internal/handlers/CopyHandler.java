@@ -11,7 +11,6 @@
 package fr.systerel.editor.internal.handlers;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -22,7 +21,6 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.IWorkbench;
-import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.manipulation.ElementManipulationFacade;
 import org.rodinp.core.IInternalElement;
@@ -46,7 +44,7 @@ public class CopyHandler extends AbstractEditorHandler {
 			final IAction copyAction = editor.getOverlayEditorAction(ST.COPY);
 			if (copyAction != null) {
 				copyAction.run();
-				return "Copied text from overlay";		
+				return "Copied text from overlay";
 			}
 			return "Text copy failed";
 		}
@@ -58,18 +56,11 @@ public class CopyHandler extends AbstractEditorHandler {
 			if (element != null)
 				ems.add(element);
 		}
-		Collection<IRodinElement> elements = new ArrayList<IRodinElement>();
-		// Collect the list of Rodin Elements to be copied.
-		// If an ancestor of an element is already selected, the element will
-		// not be added.
-		for (IRodinElement element : ems) {
-			elements = UIUtils.addToTreeSet(elements, element);
-		}
 		// Get the clipboard for the current workbench display.
 		final IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
 		final Clipboard clipboard = new Clipboard(workbench.getDisplay());
 
-		if (elements.isEmpty()) {
+		if (ems.isEmpty()) {
 			// Copies selected text
 			final String text = editor.getStyledText().getSelectionText();
 			if (text.isEmpty())
@@ -78,24 +69,7 @@ public class CopyHandler extends AbstractEditorHandler {
 					new Transfer[] { TextTransfer.getInstance() });
 			return "Copied text from editor";
 		}
-		
-		// Copies internal element
-		// Copies as Rodin Handle & Text transfer
-		final StringBuffer buf = new StringBuffer();
-		int i = 0;
-		for (IRodinElement element : elements) {
-			if (i > 0)
-				buf.append("\n");
-			buf.append(element);
-			i++;
-		}
-		clipboard.setContents(
-				new Object[] {
-						elements.toArray(new IRodinElement[elements.size()]),
-						buf.toString() },
-				new Transfer[] { ElementManipulationFacade.getRodinHandleTransfer(),
-						TextTransfer.getInstance() });
-
+		ElementManipulationFacade.copyElementsToClipboard(ems, clipboard);
 		return "Copied Rodin element successfully";
 	}
 

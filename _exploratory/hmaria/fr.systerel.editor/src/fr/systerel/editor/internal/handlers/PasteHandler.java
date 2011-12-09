@@ -10,8 +10,6 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import static org.eventb.internal.ui.utils.Messages.title_nothingToPaste;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.dnd.Clipboard;
@@ -73,14 +71,14 @@ public class PasteHandler extends AbstractEditionHandler {
 		// Check for the existing of the elements to be pasted.
 		for (IRodinElement e : elements) {
 			if (!e.exists()) {
-				RodinEditorUtils.showError(title_nothingToPaste, "The element "
+				RodinEditorUtils.showError("Nothing to paste", "The element "
 						+ element + "does not exist");
 			}
 		}
 		final IRodinElement target = element.getElement();
 		if (!(target instanceof IInternalElement) || !target.exists())
 			return "Target does not exist";
-		RodinOperationUtils.copyElements((IInternalElement) target, elements);
+		RodinOperationUtils.pasteElements((IInternalElement) target, elements);
 		return "Elements pasted";
 	}
 

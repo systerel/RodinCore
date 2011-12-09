@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - added the static method copyToClipboard
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.handlers;
 
@@ -135,7 +136,23 @@ public class CopyHandler extends AbstractHandler implements IHandler {
 
 		// Copies internal element
 		// Copies as Rodin Handle & Text transfer
-		StringBuffer buf = new StringBuffer();
+		copyToClipboard(elements, clipboard);
+
+		return "Copy Rodin element successfully";
+	}
+	
+	/**
+	 * Copies both names and handles of the given elements in a clipboard build
+	 * with the given display.
+	 * 
+	 * @param elements
+	 *            the elements to copy
+	 * @param clipboard
+	 *            the clipboard to get the copied elements
+	 */
+	public static void copyToClipboard(
+			final Collection<IRodinElement> elements, final Clipboard clipboard) {
+		final StringBuffer buf = new StringBuffer();
 		int i = 0;
 		for (IRodinElement element : elements) {
 			if (i > 0)
@@ -143,14 +160,12 @@ public class CopyHandler extends AbstractHandler implements IHandler {
 			buf.append(element);
 			i++;
 		}
-		clipboard
-				.setContents(new Object[] {
+		clipboard.setContents(
+				new Object[] {
 						elements.toArray(new IRodinElement[elements.size()]),
-						buf.toString() }, new Transfer[] {
-						RodinHandleTransfer.getInstance(),
+						buf.toString() },
+				new Transfer[] { RodinHandleTransfer.getInstance(),
 						TextTransfer.getInstance() });
-
-		return "Copy Rodin element successfully";
 	}
 
 	/**

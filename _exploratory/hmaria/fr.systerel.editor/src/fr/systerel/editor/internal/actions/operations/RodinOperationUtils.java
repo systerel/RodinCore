@@ -11,10 +11,7 @@
 package fr.systerel.editor.internal.actions.operations;
 
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.showInfo;
-import static org.eventb.internal.ui.EventBUtils.isReadOnly;
-import static org.eventb.internal.ui.utils.Messages.dialogs_pasteNotAllowed;
 import static org.eventb.internal.ui.utils.Messages.dialogs_readOnlyElement;
-import static org.eventb.internal.ui.utils.Messages.title_canNotPaste;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -41,47 +38,38 @@ import fr.systerel.editor.internal.editors.RodinEditorUtils;
  *
  */
 public class RodinOperationUtils {
-	
+
 	/**
-	 * Perform a copy operation through the undo history.
-	 * <p>
-	 * If the element type of elements to copy and the target are equals, the
-	 * new elements is placed after target. Else the new element is placed at
-	 * the end of the children list.
-	 * </p>
+	 * 
 	 * @param target
-	 *            The selected element.
 	 * @param elements
-	 *            the elements to copy
 	 */
-	public static void copyElements(IInternalElement target,
+	public static void pasteElements(IInternalElement target,
 			IRodinElement[] elements) {
 		if (checkAndShowReadOnly(target)) {
 			return;
 		}
-
 		final IElementType<?> typeNotAllowed = elementTypeNotAllowed(elements,
 				target);
 		if (typeNotAllowed == null) {
 			ElementManipulationFacade.copyElements(elements, target, null);
 		} else if (haveSameType(elements, target)) {
 			try {
-				ElementManipulationFacade.copyElements(elements, target.getParent(),
-						target.getNextSibling());
+				ElementManipulationFacade.copyElements(elements,
+						target.getParent(), target.getNextSibling());
 			} catch (RodinDBException e) {
 				e.printStackTrace();
 			}
 		} else {
-			RodinEditorUtils.showError(
-					"Cannot Paste",
-					dialogs_pasteNotAllowed(typeNotAllowed.getName(), target
-							.getElementType().getName()));
+			RodinEditorUtils.showError("Cannot Paste", "Cannot paste a "
+					+ typeNotAllowed.getName() + " element in a "
+					+ target.getElementType().getName() + " element.");
 			return;
 		}
 		if (EditorPlugin.DEBUG)
 			RodinEditorUtils.debug("PASTE SUCCESSFULLY");
 	}
-	
+
 	/**
 	 * Returns whether the given element is read only. Additionally, if the
 	 * given element is read only, this method informs the user through an info
@@ -95,7 +83,8 @@ public class RodinOperationUtils {
 		if (!(element instanceof IInternalElement)) {
 			return false;
 		}
-		final boolean readOnly = isReadOnly((IInternalElement) element);
+		final boolean readOnly = ElementManipulationFacade
+				.isReadOnly((IInternalElement) element);
 		if (readOnly) {
 			showInfo(dialogs_readOnlyElement(getDisplayName(element)));
 		}
@@ -104,10 +93,10 @@ public class RodinOperationUtils {
 
 	private static String getDisplayName(IRodinElement element) {
 		try {
-			if(element instanceof ILabeledElement) {
-				return ((ILabeledElement)element).getLabel();
+			if (element instanceof ILabeledElement) {
+				return ((ILabeledElement) element).getLabel();
 			} else if (element instanceof IIdentifierElement) {
-				return ((IIdentifierElement)element).getIdentifierString();
+				return ((IIdentifierElement) element).getIdentifierString();
 			} else if (element instanceof IEventBRoot) {
 				return element.getElementName();
 			}
@@ -116,7 +105,7 @@ public class RodinOperationUtils {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Returns the type of an element that is not allowed to be pasted as child
 	 * of target.
@@ -135,7 +124,7 @@ public class RodinOperationUtils {
 		}
 		return null;
 	}
-	
+
 	private static Set<IElementType<?>> getAllowedChildTypes(
 			IRodinElement target) {
 		final IElementType<?> targetType = target.getElementType();
@@ -156,7 +145,7 @@ public class RodinOperationUtils {
 		}
 		return true;
 	}
-	
+
 	public static void changeAttribute(IInternalElement element,
 			IAttributeType.String type, String textValue) {
 		final IAttributeValue.String newValue = type.makeValue(textValue);
@@ -185,17 +174,18 @@ public class RodinOperationUtils {
 			if (value.equals(oldValue)) {
 				return;
 			}
-			ElementManipulationFacade.changeAttribute(ielement, manip, oldValue);
+			ElementManipulationFacade
+					.changeAttribute(ielement, manip, oldValue);
 		} catch (RodinDBException e) {
 			System.err.println("Problems occured when updating the dat" + ""
 					+ "" + "" + "abase after attribute edition"
 					+ e.getMessage());
 		}
 	}
-	
+
 	public static void move(IInternalElement parent, IInternalElement element,
 			IInternalElement nextSibling) {
 		ElementManipulationFacade.move(parent, element, nextSibling);
 	}
-	
+
 }
