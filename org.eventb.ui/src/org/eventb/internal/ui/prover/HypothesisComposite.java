@@ -379,7 +379,7 @@ public abstract class HypothesisComposite implements
 		tracker.endSubtask("Clearing rows and text");
 
 		final ControlMaker checkBoxMaker = new CheckBoxMaker(styledText);
-		final ControlMaker appliMaker = new PredAppliCommandMaker(styledText);
+		final ControlMaker appliMaker = new PredicateApplicationMaker(styledText);
 		final IContentProposalProvider proposalProvider = ContentProposalFactory
 				.getProposalProvider(userSupport);
 		final YellowBoxMaker yellowBoxMaker = new YellowBoxMaker(styledText,

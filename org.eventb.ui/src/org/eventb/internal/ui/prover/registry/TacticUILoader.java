@@ -45,8 +45,8 @@ public class TacticUILoader {
 		final String tooltip = configuration.getAttribute("tooltip"); //$NON-NLS-1$
 		final int priority = getPriority();
 		final String name = configuration.getAttribute("name");
-		final String dropdown = getOptionalAttribute("dropdown");
-		final String toolbar = getOptionalAttribute("toolbar");
+		String dropdown = getOptionalAttribute("dropdown");
+		String toolbar = getOptionalAttribute("toolbar");
 		final String skipPostTacticStr = configuration
 				.getAttribute("skipPostTactic");
 		final boolean skipPostTactic = (skipPostTacticStr != null && skipPostTacticStr
@@ -63,36 +63,29 @@ public class TacticUILoader {
 							+ id);
 			return null;
 		}
+		if (proofCommand != null && target != Target.global) {
+			ProverUIUtils.debug("A proof command must have a global target: "
+					+ id);
+			return null;
+		}
+		if (dropdown != null && target != Target.global) {
+			ProverUIUtils.debug("Ignored dropdown attribute of local tactic: "
+					+ id);
+			dropdown = null;
+		}
+		if (toolbar != null && target != Target.global) {
+			ProverUIUtils.debug("Ignored toolbar attribute of local tactic: "
+					+ id);
+			toolbar = null;
+		}
 
 		final String instanceAttribute = tacticProvider == null ? pcAttribute
 				: tpAttribute;
+		final Object candidate ;
 		final TacticUIInfo result;
 		try {
-			final Object candidate = configuration
+			candidate = configuration
 					.createExecutableExtension(instanceAttribute);
-
-			if (tacticProvider != null) {
-				final ITacticProvider appliProvider = getAppliProvider(
-						candidate, id, tooltip, iconDesc);
-				if (appliProvider == null) {
-					result = null;
-				} else {
-					result = new TacticProviderInfo(id, target, iconDesc, interrupt,
-							tooltip, priority, name, dropdown, toolbar,
-							skipPostTactic, appliProvider);
-				}
-
-			} else {
-				if (!(candidate instanceof IProofCommand)) {
-					result = null;
-				} else {
-					result = new ProofCommandInfo(id, target, iconDesc, interrupt,
-							tooltip, priority, name, dropdown, toolbar,
-							skipPostTactic, (IProofCommand) candidate);
-				}
-			}
-			printDebugInfo(tacticProvider, result, id);
-			return result;
 		} catch (CoreException e) {
 			if (ProverUIUtils.DEBUG) {
 				ProverUIUtils.debug("Cannot instantiate class from "
@@ -102,6 +95,25 @@ public class TacticUILoader {
 			return null;
 		}
 
+		if (tacticProvider != null) {
+			if (candidate instanceof ITacticProvider) {
+				result = new TacticProviderInfo(id, target, iconDesc,
+						interrupt, tooltip, priority, name, dropdown, toolbar,
+						skipPostTactic, (ITacticProvider) candidate);
+			} else {
+				result = null;
+			}
+		} else {
+			if (candidate instanceof IProofCommand) {
+				result = new ProofCommandInfo(id, target, iconDesc, interrupt,
+						tooltip, priority, name, dropdown, toolbar,
+						skipPostTactic, (IProofCommand) candidate);
+			} else {
+				result = null;
+			}
+		}
+		printDebugInfo(tacticProvider, result, id);
+		return result;
 	}
 
 	private Target getTarget() {
@@ -139,14 +151,6 @@ public class TacticUILoader {
 		IContributor contributor = configuration.getContributor();
 		String iconName = configuration.getAttribute("icon"); //$NON-NLS-1$
 		return EventBImage.getImageDescriptor(contributor.getName(), iconName);
-	}
-
-	private static ITacticProvider getAppliProvider(Object candidate,
-			String id, String tip, ImageDescriptor iconDesc) {
-		if (candidate instanceof ITacticProvider) {
-			return (ITacticProvider) candidate;
-		}
-		return null;
 	}
 
 	private static void printDebugInfo(String tacticProvider,

@@ -12,7 +12,11 @@
 package org.eventb.internal.ui.prover.registry;
 
 import static org.eclipse.core.runtime.Status.OK_STATUS;
-import static org.eventb.internal.ui.prover.registry.ErrorStatuses.*;
+import static org.eventb.internal.ui.prover.registry.ErrorStatuses.duplicateId;
+import static org.eventb.internal.ui.prover.registry.ErrorStatuses.invalidId;
+import static org.eventb.internal.ui.prover.registry.ErrorStatuses.loadingErrors;
+import static org.eventb.internal.ui.prover.registry.ErrorStatuses.missingId;
+import static org.eventb.internal.ui.prover.registry.ErrorStatuses.unknownElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +28,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
-import org.eventb.internal.ui.prover.registry.TacticUIInfo.Target;
 
 /**
  * Utility class for parsing the extensions contributed to extension point
@@ -175,11 +178,8 @@ public class ExtensionParser {
 	private static final String DROPDOWN_TAG = "dropdown";
 
 	private final List<TacticProviderInfo> goalTactics = new ArrayList<TacticProviderInfo>();
-	private final List<ProofCommandInfo> goalCommands = new ArrayList<ProofCommandInfo>();
 	private final List<TacticProviderInfo> hypothesisTactics = new ArrayList<TacticProviderInfo>();
-	private final List<ProofCommandInfo> hypothesisCommands = new ArrayList<ProofCommandInfo>();
 	private final List<TacticProviderInfo> anyTactics = new ArrayList<TacticProviderInfo>();
-	private final List<ProofCommandInfo> anyCommands = new ArrayList<ProofCommandInfo>();
 	private final Map<String, TacticUIInfo> globalRegistry = new LinkedHashMap<String, TacticUIInfo>();
 	private final Map<String, TacticUIInfo> allTacticRegistry = new HashMap<String, TacticUIInfo>();
 	private final Map<String, ToolbarInfo> toolbarRegistry = new LinkedHashMap<String, ToolbarInfo>();
@@ -211,7 +211,7 @@ public class ExtensionParser {
 		}
 
 		tactics.parse();
-		mergeListsOfTacticsAndCommands();
+		mergeListsOfTactics();
 		dropdowns.parse();
 		toolbars.parse();
 	}
@@ -223,11 +223,9 @@ public class ExtensionParser {
 	 * start with. However the simpler solution would change the order of
 	 * tactics and commands and thus break backward compatibility.
 	 */
-	private void mergeListsOfTacticsAndCommands() {
+	private void mergeListsOfTactics() {
 		goalTactics.addAll(anyTactics);
-		goalCommands.addAll(anyCommands);
 		hypothesisTactics.addAll(anyTactics);
-		hypothesisCommands.addAll(anyCommands);
 	}
 
 	public IStatus getStatus() {
@@ -244,39 +242,21 @@ public class ExtensionParser {
 		final String id = info.getID();
 		allTacticRegistry.put(id, info);
 
-		final Target target = info.getTarget();
-		boolean error = false;
-		if (target == Target.goal) {
-			if (info instanceof TacticProviderInfo) {
-				goalTactics.add((TacticProviderInfo) info);
-			} else if (info instanceof ProofCommandInfo) {
-				goalCommands.add((ProofCommandInfo) info);
-			} else
-				error = true;
-		} else if (target == Target.hypothesis) {
-			if (info instanceof TacticProviderInfo) {
-				hypothesisTactics.add((TacticProviderInfo) info);
-			} else if (info instanceof ProofCommandInfo) {
-				hypothesisCommands.add((ProofCommandInfo) info);
-			} else
-				error = true;
-		} else if (target == Target.any) {
-			if (info instanceof TacticProviderInfo) {
-				anyTactics.add((TacticProviderInfo) info);
-			} else if (info instanceof ProofCommandInfo) {
-				anyCommands.add((ProofCommandInfo) info);
-			} else
-				error = true;
-		} else {
+		switch (info.getTarget()) {
+		case goal:
+			goalTactics.add((TacticProviderInfo) info);
+			break;
+		case hypothesis:
+			hypothesisTactics.add((TacticProviderInfo) info);
+			break;
+		case any:
+			anyTactics.add((TacticProviderInfo) info);
+			break;
+		case global:
 			globalRegistry.put(id, info);
+			break;
 		}
-		if (error) {
-			if (ProverUIUtils.DEBUG)
-				ProverUIUtils.debug("Error while trying to put info " + id
-						+ " in a registry");
-		} else {
-			printDebugRegistration(id, TACTIC_TAG);
-		}
+		printDebugRegistration(id, TACTIC_TAG);
 	}
 
 	private static void printDebugRegistration(String id, String kind) {
@@ -288,16 +268,8 @@ public class ExtensionParser {
 		return goalTactics;
 	}
 
-	public List<ProofCommandInfo> getGoalCommands() {
-		return goalCommands;
-	}
-
 	public List<TacticProviderInfo> getHypothesisTactics() {
 		return hypothesisTactics;
-	}
-
-	public List<ProofCommandInfo> getHypothesisCommands() {
-		return hypothesisCommands;
 	}
 
 	public Map<String, TacticUIInfo> getGlobalRegistry() {

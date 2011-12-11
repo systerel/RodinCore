@@ -27,19 +27,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eventb.core.pm.IUserSupport;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
 /**
- * Class able to create controls to place in the predicate row which will allow
- * the user to apply predicate applications or commands.
+ * Class able to create controls to place in a predicate row which will allow
+ * the user to apply predicate applications.
  * 
  * @author "Thomas Muller"
  */
-public class PredAppliCommandMaker extends ControlMaker {
+public class PredicateApplicationMaker extends ControlMaker {
 
-	public PredAppliCommandMaker(Composite parent) {
+	public PredicateApplicationMaker(Composite parent) {
 		super(parent);
 	}
 
@@ -55,23 +54,17 @@ public class PredAppliCommandMaker extends ControlMaker {
 		button.setEnabled(false);
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 		final List<IPredicateApplication> tactics;
-		final List<ICommandApplication> commands;
 
-		final IUserSupport us = row.getUserSupport();
 		if (row.isGoal()) {
 			tactics = retainPredicateApplications(tacticUIRegistry, row);
-			commands = tacticUIRegistry.getCommandApplicationsToGoal(us);
 		} else {
 			tactics = retainPredicateApplications(tacticUIRegistry, row);
-			commands = tacticUIRegistry.getCommandApplicationsToHypothesis(us,
-					row.getPredicate());
 		}
-		final int comSize = commands.size();
 		final int tacSize = tactics.size();
-		if (tacSize == 0 && comSize == 0){
+		if (tacSize == 0){
 			return new Link(text, SWT.NONE);
 		}
-		if (tacSize == 1 && comSize == 0) {
+		if (tacSize == 1) {
 			final ITacticApplication appli = tactics.get(0);
 			final Link tacLink = new Link(text, SWT.NONE);
 			final IPredicateApplication predAppli = (IPredicateApplication) appli;
@@ -81,15 +74,6 @@ public class PredAppliCommandMaker extends ControlMaker {
 			tacLink.addSelectionListener(getTacticSelectionListener(row,
 					tacticUIRegistry, appli));
 			return tacLink;
-		}
-		if (tacSize == 0 && comSize == 1) {
-			final ICommandApplication command = commands.get(0);
-			final Link comLink = new Link(text, SWT.NONE);
-			final String tooltip = command.getTooltip();
-			comLink.setText(getText(tooltip));
-			comLink.setToolTipText(tooltip);
-			comLink.addSelectionListener(getCommandListener(row, command));
-			return comLink;
 		}
 		button.setEnabled(true);
 		final Menu menu = new Menu(button);
@@ -105,7 +89,7 @@ public class PredAppliCommandMaker extends ControlMaker {
 			}
 		};
 		button.addSelectionListener(predAppliListener);
-		createImageHyperlinks(row, menu, tacticUIRegistry, tactics, commands);
+		createImageHyperlinks(row, menu, tacticUIRegistry, tactics);
 		return button;
 	}
 
@@ -125,11 +109,10 @@ public class PredAppliCommandMaker extends ControlMaker {
 	}
 
 	/**
-	 * Utility methods to create menu items for applicable tactics and commands
+	 * Utility methods to create menu items for applicable tactics
 	 */
 	private static void createImageHyperlinks(PredicateRow row, Menu menu,
-			TacticUIRegistry registry, List<IPredicateApplication> tactics,
-			List<ICommandApplication> commands) {
+			TacticUIRegistry registry, List<IPredicateApplication> tactics) {
 		for (final ITacticApplication tacticAppli : tactics) {
 			if (!(tacticAppli instanceof IPredicateApplication))
 				continue;
@@ -139,12 +122,6 @@ public class PredAppliCommandMaker extends ControlMaker {
 			final SelectionListener tacListener = getTacticSelectionListener(
 					row, registry, predAppli);
 			addMenuItem(menu, icon, tooltip, row.isEnabled(), tacListener);
-		}
-		for (final ICommandApplication commandAppli : commands) {
-			final SelectionListener hlListener = getCommandListener(row,
-					commandAppli);
-			addMenuItem(menu, commandAppli.getIcon(),
-					commandAppli.getTooltip(), row.isEnabled(), hlListener);
 		}
 	}
 
@@ -165,21 +142,6 @@ public class PredAppliCommandMaker extends ControlMaker {
 			public void widgetSelected(SelectionEvent e) {
 				row.apply(appli,
 						tacticUIRegistry.isSkipPostTactic(appli.getTacticID()));
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-		};
-	}
-
-	private static SelectionListener getCommandListener(final PredicateRow row,
-			final ICommandApplication command) {
-		return new SelectionListener() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				row.apply(command);
 			}
 
 			@Override

@@ -60,7 +60,7 @@
             <meta.element labelAttribute="id" icon="icon"/>
          </appInfo>
          <documentation>
-            This element is declares a new proof tactic with the Proving User Interface, including the location and the implementation of this proof tactic. One of the attributes &lt;code&gt;tacticProvider&lt;/code&gt; or &lt;code&gt;proofCommand&lt;/code&gt; must be specified. If both of them are present, &lt;code&gt;tacticProvider&lt;/code&gt; is preferred over &lt;code&gt;proofCommand&lt;/code&gt;.
+            This element declares a new proof tactic with the Proving User Interface, including its location and implementation. One of the attributes &lt;code&gt;tacticProvider&lt;/code&gt; or &lt;code&gt;proofCommand&lt;/code&gt; must be specified, but not both. Moreover, if &lt;code&gt;proofCommand&lt;/code&gt; is specified, then the &lt;code&gt;target&lt;/code&gt; must be &lt;code&gt;global&lt;/code&gt;.
          </documentation>
       </annotation>
       <complexType>
@@ -126,7 +126,7 @@
          <attribute name="tacticProvider" type="string">
             <annotation>
                <documentation>
-                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;code&gt;org.eventb.ui.prover.ITacticProvider&lt;/code&gt;. There is a default implementation &lt;code&gt;org.eventb.ui.prover.DefaultTacticProvider&lt;/code&gt;.
+                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;code&gt;org.eventb.ui.prover.ITacticProvider&lt;/code&gt;. There is a default implementation &lt;code&gt;org.eventb.ui.prover.DefaultTacticProvider&lt;/code&gt;. If this attribute is set, then attribute &lt;code&gt;proofCommand&lt;/code&gt; must not be set.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eventb.ui.prover.ITacticProvider"/>
@@ -136,7 +136,7 @@
          <attribute name="proofCommand" type="string">
             <annotation>
                <documentation>
-                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;code&gt;org.eventb.ui.prover.IProofCommand&lt;/code&gt;.
+                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;code&gt;org.eventb.ui.prover.IProofCommand&lt;/code&gt;. If this attribute is set, then attribute &lt;code&gt;tacticProvider&lt;/code&gt; must not be set and attribute &lt;code&gt;target&lt;/code&gt; must be &lt;code&gt;global&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eventb.ui.prover.IProofCommand"/>

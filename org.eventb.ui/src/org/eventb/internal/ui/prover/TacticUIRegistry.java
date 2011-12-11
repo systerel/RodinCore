@@ -58,10 +58,8 @@ public class TacticUIRegistry {
 
 	// The registry stored Element UI information
 	private final List<TacticProviderInfo> goalTactics;
-	private final List<ProofCommandInfo> goalCommands;
 
 	private final List<TacticProviderInfo> hypothesisTactics;
-	private final List<ProofCommandInfo> hypothesisCommands;
 
 	private final Map<String, TacticUIInfo> globalRegistry;
 
@@ -91,9 +89,7 @@ public class TacticUIRegistry {
 		}
 
 		goalTactics = parser.getGoalTactics();
-		goalCommands = parser.getGoalCommands();
 		hypothesisTactics= parser.getHypothesisTactics();
-		hypothesisCommands = parser.getHypothesisCommands();
 		globalRegistry = parser.getGlobalRegistry();
 		allTacticRegistry = parser.getAllTacticRegistry();
 		toolbarRegistry = parser.getToolbarRegistry();
@@ -101,9 +97,7 @@ public class TacticUIRegistry {
 
 		if (ProverUIUtils.DEBUG) {
 			show(goalTactics, "goalTactics");
-			show(goalCommands, "goalCommands");
 			show(hypothesisTactics, "hypothesisTactics");
-			show(hypothesisCommands, "hypothesisCommands");
 			show(globalRegistry, "globalRegistry");
 			show(allTacticRegistry, "allTacticRegistry");
 			show(toolbarRegistry, "toolbarRegistry");
@@ -145,17 +139,6 @@ public class TacticUIRegistry {
 		return result;
 	}
 
-	public List<ICommandApplication> getCommandApplicationsToGoal(
-			IUserSupport us) {
-		final List<ICommandApplication> result = new ArrayList<ICommandApplication>();
-		for (ProofCommandInfo info : goalCommands) {
-			if (info.isApplicable(us, null, null)) {
-				result.add(info.getCommandApplication());
-			}
-		}
-		return result;
-	}
-
 	public List<ITacticApplication> getTacticApplicationsToHypothesis(
 			IUserSupport us, Predicate hyp) {
 		final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
@@ -163,18 +146,6 @@ public class TacticUIRegistry {
 			final List<ITacticApplication> applications = info
 					.getApplicationsToHypothesis(us, hyp);
 			result.addAll(applications);
-		}
-		return result;
-	}
-
-	public List<ICommandApplication> getCommandApplicationsToHypothesis(
-			IUserSupport us, Predicate hyp) {
-		final List<ICommandApplication> result = new ArrayList<ICommandApplication>();
-		for (ProofCommandInfo info : hypothesisCommands) {
-			if (info.isApplicable(us, null, null)) {
-				result.add(info.getCommandApplication());
-
-			}
 		}
 		return result;
 	}

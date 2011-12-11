@@ -64,7 +64,7 @@ import org.eventb.internal.ui.prover.CheckBoxMaker;
 import org.eventb.internal.ui.prover.ControlMaker;
 import org.eventb.internal.ui.prover.ControlPainter;
 import org.eventb.internal.ui.prover.HypothesisComposite;
-import org.eventb.internal.ui.prover.PredAppliCommandMaker;
+import org.eventb.internal.ui.prover.PredicateApplicationMaker;
 import org.eventb.internal.ui.prover.PredicateRow;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -230,7 +230,7 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 		manager.appendText("\t\uFFFC\t");
 		
 		final ControlMaker checkboxMaker = new CheckBoxMaker(styledText);
-		final ControlMaker appliMaker = new PredAppliCommandMaker(styledText);
+		final ControlMaker appliMaker = new PredicateApplicationMaker(styledText);
 		final IContentProposalProvider provider = ContentProposalFactory
 				.getProposalProvider(userSupport);
 		final YellowBoxMaker yellowBoxMaker = new YellowBoxMaker(styledText,
