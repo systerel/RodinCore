@@ -13,7 +13,7 @@ package org.eventb.ui.prover;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * A tactic application not located located inside a formula.
+ * A tactic application not located inside a formula.
  * <p>
  * Implementors of this interface will be applied through an icon hyperlink
  * beside a hypothesis or goal predicate text.
