@@ -15,6 +15,7 @@ import static org.eclipse.core.runtime.Status.OK_STATUS;
 import static org.eventb.internal.ui.prover.registry.ErrorStatuses.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,6 +181,7 @@ public class ExtensionParser {
 	private final Map<String, TacticProviderInfo> anyTacticRegistry = new LinkedHashMap<String, TacticProviderInfo>();
 	private final Map<String, ProofCommandInfo> anyCommandRegistry = new LinkedHashMap<String, ProofCommandInfo>();
 	private final Map<String, TacticUIInfo> globalRegistry = new LinkedHashMap<String, TacticUIInfo>();
+	private final Map<String, TacticUIInfo> allTacticRegistry = new HashMap<String, TacticUIInfo>();
 	private final Map<String, ToolbarInfo> toolbarRegistry = new LinkedHashMap<String, ToolbarInfo>();
 	private final Map<String, DropdownInfo> dropdownRegistry = new LinkedHashMap<String, DropdownInfo>();
 
@@ -225,6 +227,8 @@ public class ExtensionParser {
 
 	private void putInRegistry(TacticUIInfo info) {
 		final String id = info.getID();
+		allTacticRegistry.put(id, info);
+
 		final Target target = info.getTarget();
 		boolean error = false;
 		if (target == Target.goal) {
@@ -291,6 +295,10 @@ public class ExtensionParser {
 
 	public Map<String, TacticUIInfo> getGlobalRegistry() {
 		return globalRegistry;
+	}
+
+	public Map<String, TacticUIInfo> getAllTacticRegistry() {
+		return allTacticRegistry;
 	}
 
 	public Map<String, ToolbarInfo> getToolbarRegistry() {

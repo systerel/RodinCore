@@ -53,14 +53,6 @@ public class TacticUIRegistry {
 	// <code>"org.eventb.ui.proofTactics"</code>).
 	public static final String PROOFTACTICS_ID = PLUGIN_ID + ".proofTactics"; //$NON-NLS-1$
 
-	private static final String TARGET_ANY = "any";
-
-	private static final String TARGET_GOAL = "goal";
-
-	private static final String TARGET_HYPOTHESIS = "hypothesis";
-
-	public static final String TARGET_GLOBAL = "global"; // FIXME why public
-
 	// The static instance of this singleton class
 	private static final TacticUIRegistry instance = new TacticUIRegistry();
 
@@ -75,6 +67,10 @@ public class TacticUIRegistry {
 	private final Map<String, ProofCommandInfo> anyCommandRegistry;
 
 	private final Map<String, TacticUIInfo> globalRegistry;
+
+	// Temporary registry of all tactics created during refactoring.
+	// This maps contains the union of all other tactic maps.
+	private final Map<String, TacticUIInfo> allTacticRegistry;
 
 	private final Map<String, ToolbarInfo> toolbarRegistry;
 
@@ -104,6 +100,7 @@ public class TacticUIRegistry {
 		anyTacticRegistry = parser.getAnyTacticRegistry();
 		anyCommandRegistry = parser.getAnyCommandRegistry();
 		globalRegistry = parser.getGlobalRegistry();
+		allTacticRegistry = parser.getAllTacticRegistry();
 		toolbarRegistry = parser.getToolbarRegistry();
 		dropdownRegistry = parser.getDropdownRegistry();
 
@@ -115,6 +112,7 @@ public class TacticUIRegistry {
 			show(anyTacticRegistry, "anyTacticRegistry");
 			show(anyCommandRegistry, "anyCommandRegistry");
 			show(globalRegistry, "globalRegistry");
+			show(allTacticRegistry, "allTacticRegistry");
 			show(toolbarRegistry, "toolbarRegistry");
 			show(dropdownRegistry, "dropdownRegistry");
 		}
@@ -135,47 +133,6 @@ public class TacticUIRegistry {
 	 */
 	public static TacticUIRegistry getDefault() {
 		return instance;
-	}
-
-	// FIXME duplicated code with ExtensionParser
-	private TacticUIInfo findInAnyTacticRegistry(String id) {
-		TacticUIInfo info = findInTacticRegistry(id, TARGET_GOAL);
-		if (info != null)
-			return info;
-		info = findInTacticRegistry(id, TARGET_HYPOTHESIS);
-		if (info != null)
-			return info;
-		info = findInTacticRegistry(id, TARGET_ANY);
-		if (info != null)
-			return info;
-		return findInTacticRegistry(id, TARGET_GLOBAL);
-	}
-
-	// FIXME duplicated code with ExtensionParser
-	private TacticUIInfo findInTacticRegistry(String id, String target) {
-		TacticUIInfo info;
-		if (target.equals(TARGET_GOAL)) {
-			info = goalTacticRegistry.get(id);
-			if (info != null)
-				return info;
-			return goalCommandRegistry.get(id);
-		}
-
-		if (target.equals(TARGET_HYPOTHESIS)) {
-			info = hypothesisTacticRegistry.get(id);
-			if (info != null)
-				return info;
-			return hypothesisCommandRegistry.get(id);
-		}
-
-		if (target.equals(TARGET_ANY)) {
-			info = anyTacticRegistry.get(id);
-			if (info != null)
-				return info;
-			return anyCommandRegistry.get(id);
-		}
-
-		return globalRegistry.get(id);
 	}
 
 	public List<ITacticApplication> getTacticApplicationsToGoal(IUserSupport us) {
@@ -249,7 +206,7 @@ public class TacticUIRegistry {
 	}
 
 	public Image getIcon(String tacticID) {
-		final TacticUIInfo info = findInAnyTacticRegistry(tacticID);
+		final TacticUIInfo info = allTacticRegistry.get(tacticID);
 		if (info != null)
 			return info.getIcon();
 
@@ -257,7 +214,7 @@ public class TacticUIRegistry {
 	}
 
 	public String getTip(String tacticID) {
-		final TacticUIInfo info = findInAnyTacticRegistry(tacticID);
+		final TacticUIInfo info = allTacticRegistry.get(tacticID);
 
 		if (info != null)
 			return info.getTooltip();
@@ -266,15 +223,15 @@ public class TacticUIRegistry {
 	}
 
 	public boolean isSkipPostTactic(String tacticID) {
-		final TacticUIInfo info = findInAnyTacticRegistry(tacticID);
+		final TacticUIInfo info = allTacticRegistry.get(tacticID);
 		if (info != null)
 			return info.isSkipPostTactic();
 
 		return false;
 	}
 
-	public boolean isInterruptable(String tacticID, String target) {
-		TacticUIInfo info = findInTacticRegistry(tacticID, target);
+	public boolean isInterruptable(String tacticID) {
+		final TacticUIInfo info = allTacticRegistry.get(tacticID);
 		if (info != null)
 			return info.isInterruptable();
 

@@ -231,7 +231,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						final IUserSupport userSupport = editor
 								.getUserSupport();
 						boolean interruptable = registry.isInterruptable(
-								tacticID, TacticUIRegistry.TARGET_GLOBAL);
+								tacticID);
 						final boolean skipPostTactic = registry
 								.isSkipPostTactic(tacticID);
 						Object application = registry.getGlobalApplication(
@@ -279,8 +279,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			item.setToolTipText(registry.getTip(tacticID));
 
 			final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
-					item, tacticID, registry.isInterruptable(tacticID,
-							TacticUIRegistry.TARGET_GLOBAL));
+					item, tacticID, registry.isInterruptable(tacticID));
 
 			item.addSelectionListener(new SelectionAdapter() {
 
@@ -299,7 +298,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					final IUserSupport userSupport = editor
 					.getUserSupport();
 					final boolean interruptable = registry.isInterruptable(
-							tacticID, TacticUIRegistry.TARGET_GLOBAL);
+							tacticID);
 					final boolean skipPostTactic = registry
 							.isSkipPostTactic(tacticID);
 					Object application = TacticUIRegistry
