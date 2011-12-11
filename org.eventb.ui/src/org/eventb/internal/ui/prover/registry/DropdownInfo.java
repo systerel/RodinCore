@@ -12,32 +12,27 @@
 package org.eventb.internal.ui.prover.registry;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 
-public class DropdownInfo {
+public class DropdownInfo extends AbstractInfo {
 
 	// FIXME remove variable (should be computed earlier)
 	private final Map<String, TacticUIInfo> globalRegistry;
 
-	private final String id;
 	private final String toolbar;
 
-	private volatile Collection<String> tactics; // FIXME Should be final
+	private volatile List<TacticUIInfo> tactics; // FIXME Should be final
 
 	public DropdownInfo(Map<String, TacticUIInfo> globalRegistry, String id,
 			IConfigurationElement configuration) {
+		super(id);
 		this.globalRegistry = globalRegistry;
-		this.id = id;
 		// FIXME what if not present?
 		this.toolbar = configuration.getAttribute("toolbar");
-	}
-
-	public String getID() {
-		return id;
 	}
 
 	public String getToolbar() {
@@ -45,15 +40,15 @@ public class DropdownInfo {
 	}
 
 	// FIXME this method is not thread safe
-	public Collection<String> getTactics() {
+	public List<TacticUIInfo> getTactics() {
 		assert globalRegistry != null;
 
 		if (tactics == null) {
-			tactics = new ArrayList<String>();
+			tactics = new ArrayList<TacticUIInfo>();
 			for (String tacticID : globalRegistry.keySet()) {
 				final TacticUIInfo info = globalRegistry.get(tacticID);
 				if (id.equals(info.getDropdown())) {
-					tactics.add(info.getID());
+					tactics.add(info);
 					if (ProverUIUtils.DEBUG)
 						ProverUIUtils.debug("Attached tactic " + tacticID
 								+ " to dropdown " + id);

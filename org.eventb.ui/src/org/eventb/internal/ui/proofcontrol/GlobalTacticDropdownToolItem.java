@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
+import org.eventb.internal.ui.prover.registry.DropdownInfo;
+import org.eventb.internal.ui.prover.registry.TacticUIInfo;
 
 /**
  * @author htson
@@ -32,11 +34,11 @@ public abstract class GlobalTacticDropdownToolItem {
 
 	private ToolItem item;
 
-	private String ID;
+	private DropdownInfo info;
 
 	private GlobalDropdownSelectionListener listener;
 
-	String active = null;
+	TacticUIInfo active = null;  // FIXME why package ?
 
 	static final TacticUIRegistry registry = TacticUIRegistry.getDefault();
 
@@ -66,24 +68,24 @@ public abstract class GlobalTacticDropdownToolItem {
 		 * Adds an item (ProofTactic) to the dropdown list
 		 * 
 		 */
-		public void add(String tacticID) {
+		public void add(TacticUIInfo tactic) {
 			if (menu.getItemCount() == 0) { // First Item becomes default item
-				active = tacticID;
-				dropdown.setToolTipText(registry.getTip(tacticID));
-				dropdown.setImage(registry.getIcon(tacticID));
+				active = tactic;
+				dropdown.setToolTipText(tactic.getTooltip());
+				dropdown.setImage(tactic.getIcon());
 			}
 			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-			menuItem.setImage(registry.getIcon(tacticID));
-			menuItem.setText(registry.getTip(tacticID));
+			menuItem.setImage(tactic.getIcon());
+			menuItem.setText(tactic.getTooltip());
 
-			menuItem.setData(tacticID);
+			menuItem.setData(tactic);
 			menuItem.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent event) {
-					MenuItem selected = (MenuItem) event.widget;
-					active = (String) selected.getData();
-					dropdown.setToolTipText(registry.getTip(active));
-					dropdown.setImage(registry.getIcon(active));
+					final MenuItem selected = (MenuItem) event.widget;
+					active = (TacticUIInfo) selected.getData();
+					dropdown.setToolTipText(active.getTooltip());
+					dropdown.setImage(active.getIcon());
 
 					dropdown.getParent().redraw();
 					apply(active);
@@ -117,18 +119,9 @@ public abstract class GlobalTacticDropdownToolItem {
 		}
 	}
 
-	/**
-	 * Contructor.
-	 * <p>
-	 * 
-	 * @param item
-	 *            The tool item to be used as a dropdown
-	 * @param ID
-	 *            The id (extension ID) of the dropdown
-	 */
-	public GlobalTacticDropdownToolItem(ToolItem item, String ID) {
+	public GlobalTacticDropdownToolItem(ToolItem item, DropdownInfo info) {
 		this.item = item;
-		this.ID = ID;
+		this.info = info;
 		listener = new GlobalDropdownSelectionListener(item);
 		item.addSelectionListener(listener);
 	}
@@ -138,7 +131,7 @@ public abstract class GlobalTacticDropdownToolItem {
 	 * <p>
 	 * 
 	 */
-	public abstract void apply(String tacticID);
+	public abstract void apply(TacticUIInfo tactic);
 
 	/**
 	 * Add a tactic to the dropdown.
@@ -146,7 +139,7 @@ public abstract class GlobalTacticDropdownToolItem {
 	 * 
 	 * @param tactic
 	 */
-	public void addTactic(String tactic) {
+	public void addTactic(TacticUIInfo tactic) {
 		listener.add(tactic);
 	}
 
@@ -163,7 +156,7 @@ public abstract class GlobalTacticDropdownToolItem {
 	}
 
 	private boolean shouldBeEnabled(IUserSupport us, String input) {
-		final Object application = registry.getGlobalApplication(active, us, input);
+		final Object application = active.getGlobalApplication(us, input);
 		return application != null;
 	}
 
@@ -174,7 +167,7 @@ public abstract class GlobalTacticDropdownToolItem {
 	 * @return the String represents the extension ID of this dropdown
 	 */
 	public String getID() {
-		return ID;
+		return info.getID();
 	}
 
 }

@@ -165,8 +165,7 @@ public class ExtensionParser {
 		@Override
 		protected void parse(String id, IConfigurationElement element)
 				throws ErroneousElement {
-			toolbarRegistry.put(id, new ToolbarInfo(globalRegistry,
-					dropdownRegistry, id));
+			toolbars.add(new ToolbarInfo(globalRegistry, dropdownRegistry, id));
 			printDebugRegistration(id, TOOLBAR_TAG);
 		}
 
@@ -182,7 +181,7 @@ public class ExtensionParser {
 	private final List<TacticProviderInfo> anyTactics = new ArrayList<TacticProviderInfo>();
 	private final Map<String, TacticUIInfo> globalRegistry = new LinkedHashMap<String, TacticUIInfo>();
 	private final Map<String, TacticUIInfo> allTacticRegistry = new HashMap<String, TacticUIInfo>();
-	private final Map<String, ToolbarInfo> toolbarRegistry = new LinkedHashMap<String, ToolbarInfo>();
+	private final List<ToolbarInfo> toolbars = new ArrayList<ToolbarInfo>();
 	private final Map<String, DropdownInfo> dropdownRegistry = new LinkedHashMap<String, DropdownInfo>();
 
 	private final List<IStatus> errors = new ArrayList<IStatus>();
@@ -272,16 +271,12 @@ public class ExtensionParser {
 		return hypothesisTactics;
 	}
 
-	public Map<String, TacticUIInfo> getGlobalRegistry() {
-		return globalRegistry;
-	}
-
 	public Map<String, TacticUIInfo> getAllTacticRegistry() {
 		return allTacticRegistry;
 	}
 
-	public Map<String, ToolbarInfo> getToolbarRegistry() {
-		return toolbarRegistry;
+	public List<ToolbarInfo> getToolbars() {
+		return toolbars;
 	}
 
 	public Map<String, DropdownInfo> getDropdownRegistry() {

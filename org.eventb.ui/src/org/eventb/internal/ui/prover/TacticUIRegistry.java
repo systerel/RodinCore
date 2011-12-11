@@ -11,12 +11,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import static java.util.Collections.unmodifiableSet;
+import static java.util.Collections.unmodifiableList;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +28,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.prover.registry.DropdownInfo;
+import org.eventb.internal.ui.prover.registry.AbstractInfo;
 import org.eventb.internal.ui.prover.registry.ExtensionParser;
-import org.eventb.internal.ui.prover.registry.ProofCommandInfo;
 import org.eventb.internal.ui.prover.registry.TacticProviderInfo;
 import org.eventb.internal.ui.prover.registry.TacticUIInfo;
 import org.eventb.internal.ui.prover.registry.ToolbarInfo;
@@ -61,15 +59,11 @@ public class TacticUIRegistry {
 
 	private final List<TacticProviderInfo> hypothesisTactics;
 
-	private final Map<String, TacticUIInfo> globalRegistry;
-
 	// Temporary registry of all tactics created during refactoring.
 	// This maps contains the union of all other tactic maps.
 	private final Map<String, TacticUIInfo> allTacticRegistry;
 
-	private final Map<String, ToolbarInfo> toolbarRegistry;
-
-	private final Map<String, DropdownInfo> dropdownRegistry;
+	private final List<ToolbarInfo> toolbars;
 
 	/**
 	 * The unique instance of this class is created when initializing the static
@@ -90,18 +84,14 @@ public class TacticUIRegistry {
 
 		goalTactics = parser.getGoalTactics();
 		hypothesisTactics= parser.getHypothesisTactics();
-		globalRegistry = parser.getGlobalRegistry();
 		allTacticRegistry = parser.getAllTacticRegistry();
-		toolbarRegistry = parser.getToolbarRegistry();
-		dropdownRegistry = parser.getDropdownRegistry();
+		toolbars = parser.getToolbars();
 
 		if (ProverUIUtils.DEBUG) {
 			show(goalTactics, "goalTactics");
 			show(hypothesisTactics, "hypothesisTactics");
-			show(globalRegistry, "globalRegistry");
 			show(allTacticRegistry, "allTacticRegistry");
-			show(toolbarRegistry, "toolbarRegistry");
-			show(dropdownRegistry, "dropdownRegistry");
+			show(toolbars, "toolbars");
 		}
 	}
 
@@ -112,9 +102,9 @@ public class TacticUIRegistry {
 		}
 	}
 
-	private void show(Collection<? extends TacticUIInfo> list, String name) {
+	private void show(Collection<? extends AbstractInfo> list, String name) {
 		System.out.println("Contents of registry : " + name + ":");
-		for (final TacticUIInfo info : list) {
+		for (final AbstractInfo info : list) {
 			System.out.println("\t" + info.getID());
 		}
 	}
@@ -175,79 +165,8 @@ public class TacticUIRegistry {
 		return false;
 	}
 
-	public boolean isInterruptable(String tacticID) {
-		final TacticUIInfo info = allTacticRegistry.get(tacticID);
-		if (info != null)
-			return info.isInterruptable();
-
-		return false;
-	}
-
-	public Collection<String> getToolbars() {
-		return unmodifiableSet(toolbarRegistry.keySet());
-	}
-
-	public Collection<String> getToolbarDropdowns(String toolbar) {
-		ToolbarInfo info = toolbarRegistry.get(toolbar);
-		if (info != null) {
-			return info.getDropdowns();
-		}
-
-		return new ArrayList<String>(0);
-	}
-
-	public Collection<String> getDropdownTactics(String dropdownID) {
-		DropdownInfo info = dropdownRegistry.get(dropdownID);
-		if (info == null) {
-			return Collections.emptyList();
-		}
-
-		return info.getTactics();
-	}
-
-	public Collection<String> getToolbarTactics(String toolbarID) {
-		ToolbarInfo info = toolbarRegistry.get(toolbarID);
-		if (info == null) {
-			return Collections.emptyList();
-		}
-
-		return info.getTactics();
-	}
-
-	// returns a ITacticApplication or ICommandApplication if applicable
-	// returns null if not applicable
-	public Object getGlobalApplication(String tacticID, IUserSupport us,
-			String globalInput) {
-		final TacticUIInfo info = globalRegistry.get(tacticID);
-		if (info instanceof TacticProviderInfo) {
-			final List<ITacticApplication> applications = ((TacticProviderInfo) info)
-					.getApplications(us, null, globalInput);
-			// TODO document protocol in extension point
-			switch (applications.size()) {
-			case 0:
-				// not applicable
-				return null;
-			case 1:
-				// sole application
-				return applications.get(0);
-			default:
-				// more than 1 application is ambiguous and forbidden by
-				// protocol
-				final String message = "could not provide global tactic application for tactic "
-						+ tacticID
-						+ "\nReason: unexpected number of applications: "
-						+ applications.size();
-				UIUtils.log(null, message);
-				ProverUIUtils.debug(message);
-				return null;
-			}
-		} else if (info instanceof ProofCommandInfo) {
-			final ProofCommandInfo pcInfo = (ProofCommandInfo) info;
-			if (pcInfo.isApplicable(us, null, globalInput)) {
-				return pcInfo.getCommandApplication();
-			}
-		}
-		return null;
+	public List<ToolbarInfo> getToolbars() {
+		return unmodifiableList(toolbars);
 	}
 
 }

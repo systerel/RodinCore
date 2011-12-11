@@ -14,6 +14,7 @@ package org.eventb.internal.ui.proofcontrol;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
+import org.eventb.internal.ui.prover.registry.TacticUIInfo;
 
 /**
  * @author htson
@@ -27,23 +28,14 @@ public class GlobalTacticToolItem {
 
 	ToolItem item;
 
-	String tacticID;
+	TacticUIInfo tactic;  // FIXME why package ?
 
 	boolean interrupt;
 
-	/**
-	 * Constructor.
-	 * <p>
-	 * 
-	 * @param item
-	 *            The Tool Item in the Proof Control Page
-	 * @param tacticID
-	 *            The actual Global Tactic
-	 */
-	public GlobalTacticToolItem(ToolItem item, String tacticID,
+	public GlobalTacticToolItem(ToolItem item, TacticUIInfo tactic,
 			boolean interrupt) {
 		this.item = item;
-		this.tacticID = tacticID;
+		this.tactic = tactic;
 		this.interrupt = interrupt;
 	}
 
@@ -70,8 +62,7 @@ public class GlobalTacticToolItem {
 	}
 
 	private boolean shouldBeEnabled(IUserSupport us, String input) {
-		final Object application = registry.getGlobalApplication(tacticID, us,
-				input);
+		final Object application = tactic.getGlobalApplication(us, input);
 		return application != null;
 	}
 
@@ -81,8 +72,8 @@ public class GlobalTacticToolItem {
 	 * 
 	 * @return the global tactic associated with this.
 	 */
-	public String getTactic() {
-		return tacticID;
+	public TacticUIInfo getTactic() {
+		return tactic;
 	}
 
 	public boolean isInterruptable() {

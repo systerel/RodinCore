@@ -14,10 +14,10 @@ package org.eventb.internal.ui.prover.registry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.internal.ui.prover.ICommandApplication;
 import org.eventb.ui.prover.IProofCommand;
 
 public class ProofCommandInfo extends TacticUIInfo {
+
 	private final CommandApplication commandApplication;
 
 	public ProofCommandInfo(String id, Target target, ImageDescriptor iconDesc,
@@ -36,7 +36,12 @@ public class ProofCommandInfo extends TacticUIInfo {
 				globalInput);
 	}
 
-	public ICommandApplication getCommandApplication() {
-		return commandApplication;
+	@Override
+	public Object getGlobalApplication(IUserSupport us, String globalInput) {
+		if (isApplicable(us, null, globalInput)) {
+			return commandApplication;
+		}
+		return null;
 	}
+
 }

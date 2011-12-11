@@ -13,9 +13,10 @@ package org.eventb.internal.ui.prover.registry;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 
-public abstract class TacticUIInfo {
+public abstract class TacticUIInfo extends AbstractInfo {
 
 	/**
 	 * Enumeration internalizing the target attribute of UI tactics.
@@ -24,7 +25,6 @@ public abstract class TacticUIInfo {
 		hypothesis, goal, global, any;
 	}
 
-	protected final String id;
 	protected final Target target;
 	protected final ImageDescriptor iconDesc;
 	protected final boolean interrupt;
@@ -40,7 +40,7 @@ public abstract class TacticUIInfo {
 	public TacticUIInfo(String id, Target target, ImageDescriptor iconDesc,
 			boolean interrupt, String tooltip, int priority, String name,
 			String dropdown, String toolbar, boolean skipPostTactic) {
-		this.id = id;
+		super(id);
 		this.target = target;
 		this.iconDesc = iconDesc;
 		this.interrupt = interrupt;
@@ -79,10 +79,6 @@ public abstract class TacticUIInfo {
 		return dropdown;
 	}
 
-	public String getID() {
-		return id;
-	}
-
 	public boolean isInterruptable() {
 		return interrupt;
 	}
@@ -94,4 +90,9 @@ public abstract class TacticUIInfo {
 	public boolean isSkipPostTactic() {
 		return skipPostTactic;
 	}
+
+	// returns a ITacticApplication or ICommandApplication if applicable
+	// returns null if not applicable
+	public abstract Object getGlobalApplication(IUserSupport us, String globalInput);
+
 }

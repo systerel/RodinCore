@@ -12,42 +12,39 @@
 package org.eventb.internal.ui.prover.registry;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eventb.internal.ui.prover.ProverUIUtils;
 
-public class ToolbarInfo {
+public class ToolbarInfo extends AbstractInfo {
 
 	// FIXME remove both variables (should be computed earlier)
 	private final Map<String, TacticUIInfo> globalRegistry;
 	private final Map<String, DropdownInfo> dropdownRegistry;
 
-	private final String id;
+	private volatile List<DropdownInfo> dropdowns; // FIXME Should be final
 
-	private volatile Collection<String> dropdowns; // FIXME Should be final
-
-	private volatile Collection<String> tactics; // FIXME Should be final
+	private volatile List<TacticUIInfo> tactics; // FIXME Should be final
 
 	public ToolbarInfo(Map<String, TacticUIInfo> globalRegistry,
 			Map<String, DropdownInfo> dropdownRegistry,
 			String id) {
+		super(id);
 		this.globalRegistry = globalRegistry;
 		this.dropdownRegistry = dropdownRegistry;
-		this.id = id;
 	}
 
 	// FIXME this method is not thread safe
-	public Collection<String> getDropdowns() {
+	public List<DropdownInfo> getDropdowns() {
 		assert dropdownRegistry != null;
 
 		if (dropdowns == null) {
-			dropdowns = new ArrayList<String>();
-			for (String key : dropdownRegistry.keySet()) {
-				DropdownInfo info = dropdownRegistry.get(key);
+			dropdowns = new ArrayList<DropdownInfo>();
+			for (final DropdownInfo info : dropdownRegistry.values()) {
 				if (id.equals(info.getToolbar())) {
-					String dropdownID = info.getID();
-					dropdowns.add(dropdownID);
+					final String dropdownID = info.getID();
+					dropdowns.add(info);
 					if (ProverUIUtils.DEBUG)
 						ProverUIUtils.debug("Attached dropdown " + dropdownID
 								+ " to toolbar " + id);
@@ -59,16 +56,15 @@ public class ToolbarInfo {
 	}
 
 	// FIXME this method is not thread safe
-	public Collection<String> getTactics() {
+	public List<TacticUIInfo> getTactics() {
 		assert globalRegistry != null;
 
 		if (tactics == null) {
-			tactics = new ArrayList<String>();
-			for (String key : globalRegistry.keySet()) {
-				final TacticUIInfo info = globalRegistry.get(key);
+			tactics = new ArrayList<TacticUIInfo>();
+			for (final TacticUIInfo info : globalRegistry.values()) {
 				if (id.equals(info.getToolbar())) {
-					String tacticID = info.getID();
-					tactics.add(tacticID);
+					final String tacticID = info.getID();
+					tactics.add(info);
 					if (ProverUIUtils.DEBUG)
 						ProverUIUtils.debug("Attached tactic " + tacticID
 								+ " to toolbar " + id);

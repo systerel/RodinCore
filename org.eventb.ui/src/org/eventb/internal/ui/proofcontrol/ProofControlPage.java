@@ -30,6 +30,7 @@ import static org.eventb.internal.ui.utils.Messages.title_unexpectedError;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuListener;
@@ -104,6 +105,9 @@ import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
+import org.eventb.internal.ui.prover.registry.DropdownInfo;
+import org.eventb.internal.ui.prover.registry.TacticUIInfo;
+import org.eventb.internal.ui.prover.registry.ToolbarInfo;
 import org.eventb.ui.prover.ITacticApplication;
 
 /**
@@ -205,24 +209,20 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		super.dispose();
 	}
 
-	CoolItem createItem(CoolBar coolBar, String toolbarID) {
+	CoolItem createItem(CoolBar coolBar, ToolbarInfo info) {
 		final ToolBar toolBar = new ToolBar(coolBar, SWT.FLAT);
 
-		final TacticUIRegistry registry = TacticUIRegistry.getDefault();
-		Collection<String> dropdownIDs = registry
-				.getToolbarDropdowns(toolbarID);
+		final List<DropdownInfo> dropdowns = info.getDropdowns();
+		for (final DropdownInfo dropdown : dropdowns) {
+			final List<TacticUIInfo> tactics = dropdown.getTactics();
 
-		for (String dropdownID : dropdownIDs) {
-			Collection<String> tacticIDs = registry
-					.getDropdownTactics(dropdownID);
-
-			if (tacticIDs.size() != 0) {
+			if (tactics.size() != 0) {
 				ToolItem item = new ToolItem(toolBar, SWT.DROP_DOWN);
 
 				GlobalTacticDropdownToolItem dropdownItem = new GlobalTacticDropdownToolItem(
-						item, dropdownID) {
+						item, dropdown) {
 					@Override
-					public void apply(final String tacticID) {
+					public void apply(final TacticUIInfo tactic) {
 						if (ProofControlUtils.DEBUG)
 							ProofControlUtils.debug("File "
 									+ ProofControlPage.this.editor
@@ -230,12 +230,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 											.getElementName());
 						final IUserSupport userSupport = editor
 								.getUserSupport();
-						boolean interruptable = registry.isInterruptable(
-								tacticID);
-						final boolean skipPostTactic = registry
-								.isSkipPostTactic(tacticID);
-						Object application = registry.getGlobalApplication(
-								tacticID, userSupport, currentInput);
+						final boolean interruptable = tactic.isInterruptable();
+						final boolean skipPostTactic = tactic
+								.isSkipPostTactic();
+						final Object application = tactic.getGlobalApplication(
+								userSupport, currentInput);
 
 						if (application instanceof ITacticApplication) {
 							applyTacticProvider(
@@ -259,7 +258,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 				dropdownItems.add(dropdownItem);
 
-				for (String tactic : tacticIDs) {
+				for (TacticUIInfo tactic : tactics) {
 					if (ProofControlUtils.DEBUG)
 						ProofControlUtils.debug("Tactic: " + tactic);
 					dropdownItem.addTactic(tactic);
@@ -271,15 +270,13 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		}
 
-		Collection<String> tacticIDs = registry.getToolbarTactics(toolbarID);
-
-		for (final String tacticID : tacticIDs) {
+		for (final TacticUIInfo tactic : info.getTactics()) {
 			ToolItem item = new ToolItem(toolBar, SWT.PUSH);
-			item.setImage(registry.getIcon(tacticID));
-			item.setToolTipText(registry.getTip(tacticID));
+			item.setImage(tactic.getIcon());
+			item.setToolTipText(tactic.getTooltip());
 
 			final GlobalTacticToolItem globalTacticToolItem = new GlobalTacticToolItem(
-					item, tacticID, registry.isInterruptable(tacticID));
+					item, tactic, tactic.isInterruptable());
 
 			item.addSelectionListener(new SelectionAdapter() {
 
@@ -297,12 +294,10 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 					final IUserSupport userSupport = editor
 					.getUserSupport();
-					final boolean interruptable = registry.isInterruptable(
-							tacticID);
-					final boolean skipPostTactic = registry
-							.isSkipPostTactic(tacticID);
-					Object application = TacticUIRegistry
-					.getDefault().getGlobalApplication(tacticID, userSupport, currentInput);
+					final boolean interruptable = tactic.isInterruptable();
+					final boolean skipPostTactic = tactic.isSkipPostTactic();
+					final Object application = tactic.getGlobalApplication(
+							userSupport, currentInput);
 					if (application instanceof ITacticApplication) {
 						applyTacticProvider((ITacticApplication) application, userSupport,
 								interruptable, skipPostTactic);
@@ -583,10 +578,9 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		dropdownItems = new ArrayList<GlobalTacticDropdownToolItem>();
 		toolItems = new ArrayList<GlobalTacticToolItem>();
 
-		Collection<String> toolbars = TacticUIRegistry.getDefault()
-				.getToolbars();
-
-		for (String toolbar : toolbars) {
+		final TacticUIRegistry registry = TacticUIRegistry.getDefault();
+		final List<ToolbarInfo> toolbars = registry.getToolbars();
+		for (ToolbarInfo toolbar : toolbars) {
 			createItem(coolBar, toolbar);
 		}
 
