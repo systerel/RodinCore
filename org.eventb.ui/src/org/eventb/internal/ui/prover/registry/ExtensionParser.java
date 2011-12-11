@@ -211,8 +211,23 @@ public class ExtensionParser {
 		}
 
 		tactics.parse();
+		mergeListsOfTacticsAndCommands();
 		dropdowns.parse();
 		toolbars.parse();
+	}
+
+	/**
+	 * Merge lists of tactics and commands.
+	 * 
+	 * This could be done in a simpler way, by not creating the any lists to
+	 * start with. However the simpler solution would change the order of
+	 * tactics and commands and thus break backward compatibility.
+	 */
+	private void mergeListsOfTacticsAndCommands() {
+		goalTactics.addAll(anyTactics);
+		goalCommands.addAll(anyCommands);
+		hypothesisTactics.addAll(anyTactics);
+		hypothesisCommands.addAll(anyCommands);
 	}
 
 	public IStatus getStatus() {
@@ -283,14 +298,6 @@ public class ExtensionParser {
 
 	public List<ProofCommandInfo> getHypothesisCommands() {
 		return hypothesisCommands;
-	}
-
-	public List<TacticProviderInfo> getAnyTactics() {
-		return anyTactics;
-	}
-
-	public List<ProofCommandInfo> getAnyCommands() {
-		return anyCommands;
 	}
 
 	public Map<String, TacticUIInfo> getGlobalRegistry() {

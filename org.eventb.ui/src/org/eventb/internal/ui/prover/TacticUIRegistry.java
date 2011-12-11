@@ -63,9 +63,6 @@ public class TacticUIRegistry {
 	private final List<TacticProviderInfo> hypothesisTactics;
 	private final List<ProofCommandInfo> hypothesisCommands;
 
-	private final List<TacticProviderInfo> anyTactics;
-	private final List<ProofCommandInfo> anyCommands;
-
 	private final Map<String, TacticUIInfo> globalRegistry;
 
 	// Temporary registry of all tactics created during refactoring.
@@ -97,8 +94,6 @@ public class TacticUIRegistry {
 		goalCommands = parser.getGoalCommands();
 		hypothesisTactics= parser.getHypothesisTactics();
 		hypothesisCommands = parser.getHypothesisCommands();
-		anyTactics = parser.getAnyTactics();
-		anyCommands = parser.getAnyCommands();
 		globalRegistry = parser.getGlobalRegistry();
 		allTacticRegistry = parser.getAllTacticRegistry();
 		toolbarRegistry = parser.getToolbarRegistry();
@@ -109,8 +104,6 @@ public class TacticUIRegistry {
 			show(goalCommands, "goalCommands");
 			show(hypothesisTactics, "hypothesisTactics");
 			show(hypothesisCommands, "hypothesisCommands");
-			show(anyTactics, "anyTactics");
-			show(anyCommands, "anyCommands");
 			show(globalRegistry, "globalRegistry");
 			show(allTacticRegistry, "allTacticRegistry");
 			show(toolbarRegistry, "toolbarRegistry");
@@ -144,13 +137,7 @@ public class TacticUIRegistry {
 
 	public List<ITacticApplication> getTacticApplicationsToGoal(IUserSupport us) {
 		final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
-
 		for (TacticProviderInfo info : goalTactics) {
-			final List<ITacticApplication> applications = info
-					.getApplicationsToGoal(us);
-			result.addAll(applications);
-		}
-		for (TacticProviderInfo info : anyTactics) {
 			final List<ITacticApplication> applications = info
 					.getApplicationsToGoal(us);
 			result.addAll(applications);
@@ -161,13 +148,7 @@ public class TacticUIRegistry {
 	public List<ICommandApplication> getCommandApplicationsToGoal(
 			IUserSupport us) {
 		final List<ICommandApplication> result = new ArrayList<ICommandApplication>();
-
 		for (ProofCommandInfo info : goalCommands) {
-			if (info.isApplicable(us, null, null)) {
-				result.add(info.getCommandApplication());
-			}
-		}
-		for (ProofCommandInfo info : anyCommands) {
 			if (info.isApplicable(us, null, null)) {
 				result.add(info.getCommandApplication());
 			}
@@ -178,32 +159,18 @@ public class TacticUIRegistry {
 	public List<ITacticApplication> getTacticApplicationsToHypothesis(
 			IUserSupport us, Predicate hyp) {
 		final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
-
 		for (TacticProviderInfo info : hypothesisTactics) {
 			final List<ITacticApplication> applications = info
 					.getApplicationsToHypothesis(us, hyp);
 			result.addAll(applications);
 		}
-		for (TacticProviderInfo info : anyTactics) {
-			final List<ITacticApplication> applications = info
-					.getApplicationsToHypothesis(us, hyp);
-			result.addAll(applications);
-		}
 		return result;
-
 	}
 
 	public List<ICommandApplication> getCommandApplicationsToHypothesis(
 			IUserSupport us, Predicate hyp) {
 		final List<ICommandApplication> result = new ArrayList<ICommandApplication>();
-
 		for (ProofCommandInfo info : hypothesisCommands) {
-			if (info.isApplicable(us, null, null)) {
-				result.add(info.getCommandApplication());
-
-			}
-		}
-		for (ProofCommandInfo info : anyCommands) {
 			if (info.isApplicable(us, null, null)) {
 				result.add(info.getCommandApplication());
 
