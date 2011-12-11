@@ -174,12 +174,12 @@ public class ExtensionParser {
 	private static final String TOOLBAR_TAG = "toolbar";
 	private static final String DROPDOWN_TAG = "dropdown";
 
-	private final Map<String, TacticProviderInfo> goalTacticRegistry = new LinkedHashMap<String, TacticProviderInfo>();
-	private final Map<String, ProofCommandInfo> goalCommandRegistry = new LinkedHashMap<String, ProofCommandInfo>();
-	private final Map<String, TacticProviderInfo> hypothesisTacticRegistry = new LinkedHashMap<String, TacticProviderInfo>();
-	private final Map<String, ProofCommandInfo> hypothesisCommandRegistry = new LinkedHashMap<String, ProofCommandInfo>();
-	private final Map<String, TacticProviderInfo> anyTacticRegistry = new LinkedHashMap<String, TacticProviderInfo>();
-	private final Map<String, ProofCommandInfo> anyCommandRegistry = new LinkedHashMap<String, ProofCommandInfo>();
+	private final List<TacticProviderInfo> goalTactics = new ArrayList<TacticProviderInfo>();
+	private final List<ProofCommandInfo> goalCommands = new ArrayList<ProofCommandInfo>();
+	private final List<TacticProviderInfo> hypothesisTactics = new ArrayList<TacticProviderInfo>();
+	private final List<ProofCommandInfo> hypothesisCommands = new ArrayList<ProofCommandInfo>();
+	private final List<TacticProviderInfo> anyTactics = new ArrayList<TacticProviderInfo>();
+	private final List<ProofCommandInfo> anyCommands = new ArrayList<ProofCommandInfo>();
 	private final Map<String, TacticUIInfo> globalRegistry = new LinkedHashMap<String, TacticUIInfo>();
 	private final Map<String, TacticUIInfo> allTacticRegistry = new HashMap<String, TacticUIInfo>();
 	private final Map<String, ToolbarInfo> toolbarRegistry = new LinkedHashMap<String, ToolbarInfo>();
@@ -233,23 +233,23 @@ public class ExtensionParser {
 		boolean error = false;
 		if (target == Target.goal) {
 			if (info instanceof TacticProviderInfo) {
-				goalTacticRegistry.put(id, (TacticProviderInfo) info);
+				goalTactics.add((TacticProviderInfo) info);
 			} else if (info instanceof ProofCommandInfo) {
-				goalCommandRegistry.put(id, (ProofCommandInfo) info);
+				goalCommands.add((ProofCommandInfo) info);
 			} else
 				error = true;
 		} else if (target == Target.hypothesis) {
 			if (info instanceof TacticProviderInfo) {
-				hypothesisTacticRegistry.put(id, (TacticProviderInfo) info);
+				hypothesisTactics.add((TacticProviderInfo) info);
 			} else if (info instanceof ProofCommandInfo) {
-				hypothesisCommandRegistry.put(id, (ProofCommandInfo) info);
+				hypothesisCommands.add((ProofCommandInfo) info);
 			} else
 				error = true;
 		} else if (target == Target.any) {
 			if (info instanceof TacticProviderInfo) {
-				anyTacticRegistry.put(id, (TacticProviderInfo) info);
+				anyTactics.add((TacticProviderInfo) info);
 			} else if (info instanceof ProofCommandInfo) {
-				anyCommandRegistry.put(id, (ProofCommandInfo) info);
+				anyCommands.add((ProofCommandInfo) info);
 			} else
 				error = true;
 		} else {
@@ -269,28 +269,28 @@ public class ExtensionParser {
 			ProverUIUtils.debug("Registered " + kind + " with id " + id);
 	}
 
-	public Map<String, TacticProviderInfo> getGoalTacticRegistry() {
-		return goalTacticRegistry;
+	public List<TacticProviderInfo> getGoalTactics() {
+		return goalTactics;
 	}
 
-	public Map<String, ProofCommandInfo> getGoalCommandRegistry() {
-		return goalCommandRegistry;
+	public List<ProofCommandInfo> getGoalCommands() {
+		return goalCommands;
 	}
 
-	public Map<String, TacticProviderInfo> getHypothesisTacticRegistry() {
-		return hypothesisTacticRegistry;
+	public List<TacticProviderInfo> getHypothesisTactics() {
+		return hypothesisTactics;
 	}
 
-	public Map<String, ProofCommandInfo> getHypothesisCommandRegistry() {
-		return hypothesisCommandRegistry;
+	public List<ProofCommandInfo> getHypothesisCommands() {
+		return hypothesisCommands;
 	}
 
-	public Map<String, TacticProviderInfo> getAnyTacticRegistry() {
-		return anyTacticRegistry;
+	public List<TacticProviderInfo> getAnyTactics() {
+		return anyTactics;
 	}
 
-	public Map<String, ProofCommandInfo> getAnyCommandRegistry() {
-		return anyCommandRegistry;
+	public List<ProofCommandInfo> getAnyCommands() {
+		return anyCommands;
 	}
 
 	public Map<String, TacticUIInfo> getGlobalRegistry() {

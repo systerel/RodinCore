@@ -57,14 +57,14 @@ public class TacticUIRegistry {
 	private static final TacticUIRegistry instance = new TacticUIRegistry();
 
 	// The registry stored Element UI information
-	private final Map<String, TacticProviderInfo> goalTacticRegistry;
-	private final Map<String, ProofCommandInfo> goalCommandRegistry;
+	private final List<TacticProviderInfo> goalTactics;
+	private final List<ProofCommandInfo> goalCommands;
 
-	private final Map<String, TacticProviderInfo> hypothesisTacticRegistry;
-	private final Map<String, ProofCommandInfo> hypothesisCommandRegistry;
+	private final List<TacticProviderInfo> hypothesisTactics;
+	private final List<ProofCommandInfo> hypothesisCommands;
 
-	private final Map<String, TacticProviderInfo> anyTacticRegistry;
-	private final Map<String, ProofCommandInfo> anyCommandRegistry;
+	private final List<TacticProviderInfo> anyTactics;
+	private final List<ProofCommandInfo> anyCommands;
 
 	private final Map<String, TacticUIInfo> globalRegistry;
 
@@ -93,24 +93,24 @@ public class TacticUIRegistry {
 			UIUtils.log(status);
 		}
 
-		goalTacticRegistry = parser.getGoalTacticRegistry();
-		goalCommandRegistry = parser.getGoalCommandRegistry();
-		hypothesisTacticRegistry = parser.getHypothesisTacticRegistry();
-		hypothesisCommandRegistry = parser.getHypothesisCommandRegistry();
-		anyTacticRegistry = parser.getAnyTacticRegistry();
-		anyCommandRegistry = parser.getAnyCommandRegistry();
+		goalTactics = parser.getGoalTactics();
+		goalCommands = parser.getGoalCommands();
+		hypothesisTactics= parser.getHypothesisTactics();
+		hypothesisCommands = parser.getHypothesisCommands();
+		anyTactics = parser.getAnyTactics();
+		anyCommands = parser.getAnyCommands();
 		globalRegistry = parser.getGlobalRegistry();
 		allTacticRegistry = parser.getAllTacticRegistry();
 		toolbarRegistry = parser.getToolbarRegistry();
 		dropdownRegistry = parser.getDropdownRegistry();
 
 		if (ProverUIUtils.DEBUG) {
-			show(goalTacticRegistry, "goalTacticRegistry");
-			show(goalCommandRegistry, "goalCommandRegistry");
-			show(hypothesisTacticRegistry, "hypothesisTacticRegistry");
-			show(hypothesisCommandRegistry, "hypothesisCommandRegistry");
-			show(anyTacticRegistry, "anyTacticRegistry");
-			show(anyCommandRegistry, "anyCommandRegistry");
+			show(goalTactics, "goalTactics");
+			show(goalCommands, "goalCommands");
+			show(hypothesisTactics, "hypothesisTactics");
+			show(hypothesisCommands, "hypothesisCommands");
+			show(anyTactics, "anyTactics");
+			show(anyCommands, "anyCommands");
 			show(globalRegistry, "globalRegistry");
 			show(allTacticRegistry, "allTacticRegistry");
 			show(toolbarRegistry, "toolbarRegistry");
@@ -122,6 +122,13 @@ public class TacticUIRegistry {
 		System.out.println("Contents of registry : " + name + ":");
 		for (final String id : registry.keySet()) {
 			System.out.println("\t" + id);
+		}
+	}
+
+	private void show(Collection<? extends TacticUIInfo> list, String name) {
+		System.out.println("Contents of registry : " + name + ":");
+		for (final TacticUIInfo info : list) {
+			System.out.println("\t" + info.getID());
 		}
 	}
 
@@ -138,12 +145,12 @@ public class TacticUIRegistry {
 	public List<ITacticApplication> getTacticApplicationsToGoal(IUserSupport us) {
 		final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
 
-		for (TacticProviderInfo info : goalTacticRegistry.values()) {
+		for (TacticProviderInfo info : goalTactics) {
 			final List<ITacticApplication> applications = info
 					.getApplicationsToGoal(us);
 			result.addAll(applications);
 		}
-		for (TacticProviderInfo info : anyTacticRegistry.values()) {
+		for (TacticProviderInfo info : anyTactics) {
 			final List<ITacticApplication> applications = info
 					.getApplicationsToGoal(us);
 			result.addAll(applications);
@@ -155,12 +162,12 @@ public class TacticUIRegistry {
 			IUserSupport us) {
 		final List<ICommandApplication> result = new ArrayList<ICommandApplication>();
 
-		for (ProofCommandInfo info : goalCommandRegistry.values()) {
+		for (ProofCommandInfo info : goalCommands) {
 			if (info.isApplicable(us, null, null)) {
 				result.add(info.getCommandApplication());
 			}
 		}
-		for (ProofCommandInfo info : anyCommandRegistry.values()) {
+		for (ProofCommandInfo info : anyCommands) {
 			if (info.isApplicable(us, null, null)) {
 				result.add(info.getCommandApplication());
 			}
@@ -172,12 +179,12 @@ public class TacticUIRegistry {
 			IUserSupport us, Predicate hyp) {
 		final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
 
-		for (TacticProviderInfo info : hypothesisTacticRegistry.values()) {
+		for (TacticProviderInfo info : hypothesisTactics) {
 			final List<ITacticApplication> applications = info
 					.getApplicationsToHypothesis(us, hyp);
 			result.addAll(applications);
 		}
-		for (TacticProviderInfo info : anyTacticRegistry.values()) {
+		for (TacticProviderInfo info : anyTactics) {
 			final List<ITacticApplication> applications = info
 					.getApplicationsToHypothesis(us, hyp);
 			result.addAll(applications);
@@ -190,13 +197,13 @@ public class TacticUIRegistry {
 			IUserSupport us, Predicate hyp) {
 		final List<ICommandApplication> result = new ArrayList<ICommandApplication>();
 
-		for (ProofCommandInfo info : hypothesisCommandRegistry.values()) {
+		for (ProofCommandInfo info : hypothesisCommands) {
 			if (info.isApplicable(us, null, null)) {
 				result.add(info.getCommandApplication());
 
 			}
 		}
-		for (ProofCommandInfo info : anyCommandRegistry.values()) {
+		for (ProofCommandInfo info : anyCommands) {
 			if (info.isApplicable(us, null, null)) {
 				result.add(info.getCommandApplication());
 
