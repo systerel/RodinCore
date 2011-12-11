@@ -26,11 +26,11 @@ public class TacticProviderInfo extends TacticUIInfo {
 
 	private final ITacticProvider tacticProvider;
 
-	public TacticProviderInfo(String id, ImageDescriptor iconDesc,
+	public TacticProviderInfo(String id, Target target, ImageDescriptor iconDesc,
 			boolean interrupt, String tooltip, int priority, String name,
 			String dropdown, String toolbar, boolean skipPostTactic,
 			ITacticProvider tacticProvider) {
-		super(id, iconDesc, interrupt, tooltip, priority, name, dropdown,
+		super(id, target, iconDesc, interrupt, tooltip, priority, name, dropdown,
 				toolbar, skipPostTactic);
 		this.tacticProvider = tacticProvider;
 	}

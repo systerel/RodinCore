@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
+import org.eventb.internal.ui.prover.registry.TacticUIInfo.Target;
 
 /**
  * Utility class for parsing the extensions contributed to extension point
@@ -128,8 +129,7 @@ public class ExtensionParser {
 			final TacticUILoader loader = new TacticUILoader(id, element);
 			final TacticUIInfo info = loader.load();
 			if (info != null) {
-				final String target = element.getAttribute("target");
-				putInRegistry(info, target);
+				putInRegistry(info);
 				printDebugRegistration(id, TACTIC_TAG);
 			}
 		}
@@ -163,7 +163,6 @@ public class ExtensionParser {
 				throws ErroneousElement {
 			toolbarRegistry.put(id, new ToolbarInfo(globalRegistry,
 					dropdownRegistry, id));
-
 			printDebugRegistration(id, TOOLBAR_TAG);
 		}
 
@@ -173,12 +172,6 @@ public class ExtensionParser {
 	private static final String TACTIC_TAG = "tactic";
 	private static final String TOOLBAR_TAG = "toolbar";
 	private static final String DROPDOWN_TAG = "dropdown";
-
-	private static final String TARGET_ANY = "any"; //$NON-NLS-0$
-
-	private static final String TARGET_GOAL = "goal"; //$NON-NLS-0$
-
-	private static final String TARGET_HYPOTHESIS = "hypothesis"; //$NON-NLS-0$
 
 	private final Map<String, TacticProviderInfo> goalTacticRegistry = new LinkedHashMap<String, TacticProviderInfo>();
 	private final Map<String, ProofCommandInfo> goalCommandRegistry = new LinkedHashMap<String, ProofCommandInfo>();
@@ -230,24 +223,25 @@ public class ExtensionParser {
 		}
 	}
 
-	private void putInRegistry(TacticUIInfo info, String target) {
+	private void putInRegistry(TacticUIInfo info) {
 		final String id = info.getID();
+		final Target target = info.getTarget();
 		boolean error = false;
-		if (target.equals(TARGET_GOAL)) {
+		if (target == Target.goal) {
 			if (info instanceof TacticProviderInfo) {
 				goalTacticRegistry.put(id, (TacticProviderInfo) info);
 			} else if (info instanceof ProofCommandInfo) {
 				goalCommandRegistry.put(id, (ProofCommandInfo) info);
 			} else
 				error = true;
-		} else if (target.equals(TARGET_HYPOTHESIS)) {
+		} else if (target == Target.hypothesis) {
 			if (info instanceof TacticProviderInfo) {
 				hypothesisTacticRegistry.put(id, (TacticProviderInfo) info);
 			} else if (info instanceof ProofCommandInfo) {
 				hypothesisCommandRegistry.put(id, (ProofCommandInfo) info);
 			} else
 				error = true;
-		} else if (target.equals(TARGET_ANY)) {
+		} else if (target == Target.any) {
 			if (info instanceof TacticProviderInfo) {
 				anyTacticRegistry.put(id, (TacticProviderInfo) info);
 			} else if (info instanceof ProofCommandInfo) {

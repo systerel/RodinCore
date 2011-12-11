@@ -20,11 +20,11 @@ import org.eventb.ui.prover.IProofCommand;
 public class ProofCommandInfo extends TacticUIInfo {
 	private final CommandApplication commandApplication;
 
-	public ProofCommandInfo(String id, ImageDescriptor iconDesc,
+	public ProofCommandInfo(String id, Target target, ImageDescriptor iconDesc,
 			boolean interrupt, String tooltip, int priority, String name,
 			String dropdown, String toolbar, boolean skipPostTactic,
 			IProofCommand command) {
-		super(id, iconDesc, interrupt, tooltip, priority, name, dropdown,
+		super(id, target, iconDesc, interrupt, tooltip, priority, name, dropdown,
 				toolbar, skipPostTactic);
 		this.commandApplication = new CommandApplication(command, iconDesc,
 				tooltip);

@@ -17,7 +17,15 @@ import org.eventb.internal.ui.prover.ProverUIUtils;
 
 public abstract class TacticUIInfo {
 
+	/**
+	 * Enumeration internalizing the target attribute of UI tactics.
+	 */
+	enum Target {
+		hypothesis, goal, global, any;
+	}
+
 	protected final String id;
+	protected final Target target;
 	protected final ImageDescriptor iconDesc;
 	protected final boolean interrupt;
 	protected final String tooltip;
@@ -29,10 +37,11 @@ public abstract class TacticUIInfo {
 
 	private Image icon = null;
 
-	public TacticUIInfo(String id, ImageDescriptor iconDesc, boolean interrupt,
-			String tooltip, int priority, String name, String dropdown,
-			String toolbar, boolean skipPostTactic) {
+	public TacticUIInfo(String id, Target target, ImageDescriptor iconDesc,
+			boolean interrupt, String tooltip, int priority, String name,
+			String dropdown, String toolbar, boolean skipPostTactic) {
 		this.id = id;
+		this.target = target;
 		this.iconDesc = iconDesc;
 		this.interrupt = interrupt;
 		this.tooltip = tooltip;
@@ -41,6 +50,10 @@ public abstract class TacticUIInfo {
 		this.dropdown = dropdown;
 		this.toolbar = toolbar;
 		this.skipPostTactic = skipPostTactic;
+	}
+
+	public Target getTarget() {
+		return target;
 	}
 
 	public Image getIcon() {

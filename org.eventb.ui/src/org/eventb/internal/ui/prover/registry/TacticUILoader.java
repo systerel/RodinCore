@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.ProverUIUtils;
+import org.eventb.internal.ui.prover.registry.TacticUIInfo.Target;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticProvider;
 
@@ -34,6 +35,7 @@ public class TacticUILoader {
 	}
 
 	public TacticUIInfo load() {
+		final Target target = getTarget();
 		final ImageDescriptor iconDesc = getImageDesc();
 		final boolean interrupt = configuration.getAttribute("interrupt")
 				.equalsIgnoreCase("true");
@@ -72,7 +74,7 @@ public class TacticUILoader {
 				if (appliProvider == null) {
 					result = null;
 				} else {
-					result = new TacticProviderInfo(id, iconDesc, interrupt,
+					result = new TacticProviderInfo(id, target, iconDesc, interrupt,
 							tooltip, priority, name, dropdown, toolbar,
 							skipPostTactic, appliProvider);
 				}
@@ -81,7 +83,7 @@ public class TacticUILoader {
 				if (!(candidate instanceof IProofCommand)) {
 					result = null;
 				} else {
-					result = new ProofCommandInfo(id, iconDesc, interrupt,
+					result = new ProofCommandInfo(id, target, iconDesc, interrupt,
 							tooltip, priority, name, dropdown, toolbar,
 							skipPostTactic, (IProofCommand) candidate);
 				}
@@ -97,6 +99,15 @@ public class TacticUILoader {
 			return null;
 		}
 
+	}
+
+	private Target getTarget() {
+		final String target = configuration.getAttribute("target");
+		try {
+			return Target.valueOf(target);
+		} catch (IllegalArgumentException e) {
+			return Target.global;  // TODO maintain backward compatibility or fix it ?
+		}
 	}
 
 	private String getOptionalAttribute(String attribute) {
