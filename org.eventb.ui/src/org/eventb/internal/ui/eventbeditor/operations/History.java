@@ -26,7 +26,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.eventbeditor.IAtomicOperation;
 import org.eventb.ui.eventbeditor.IRodinHistory;
 
 public class History implements IRodinHistory {
@@ -70,8 +69,7 @@ public class History implements IRodinHistory {
 		}
 	}
 
-	@Override
-	public void addOperation(IAtomicOperation operation) {
+	public void addOperation(AtomicOperation operation) {
 		if (operation == null) {
 			return;
 		}
@@ -105,7 +103,6 @@ public class History implements IRodinHistory {
 		}
 	}
 
-	@Override
 	public void dispose(IUndoContext context) {
 		contexts.remove(context);
 		history.dispose(context, true, true, true);
@@ -121,7 +118,6 @@ public class History implements IRodinHistory {
 		}
 	}
 
-	@Override
 	public void setLimit(int limit) {
 		this.limit = limit;
 		setLimit(contexts.toArray(new IUndoContext[contexts.size()]));

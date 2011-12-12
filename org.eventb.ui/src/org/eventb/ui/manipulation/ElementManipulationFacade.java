@@ -28,7 +28,6 @@ import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
-import org.eventb.ui.eventbeditor.IAtomicOperation;
 import org.eventb.ui.eventbeditor.IRodinHistory;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
@@ -88,7 +87,7 @@ public class ElementManipulationFacade {
 		final String prefix = PreferenceUtils.getAutoNamePrefix(root, type);
 		final IAttributeDesc desc = ElementDescRegistry.getInstance()
 				.getElementDesc(type).getAutoNameAttribute();
-		getHistory().addOperation(
+		History.getInstance().addOperation(
 				OperationFactory.renameElements(root, type,
 						desc.getManipulation(), prefix));
 	}
@@ -98,7 +97,7 @@ public class ElementManipulationFacade {
 	 */
 	public static void copyElements(IRodinElement[] handleData,
 			IRodinElement target, IRodinElement nextSibling) {
-		getHistory().addOperation(
+		History.getInstance().addOperation(
 				OperationFactory.copyElements((IInternalElement) target,
 						handleData, (IInternalElement) nextSibling));
 	}
@@ -119,7 +118,7 @@ public class ElementManipulationFacade {
 			IInternalElementType<?> type, IInternalElement sibling) {
 		final AtomicOperation op = OperationFactory.createElementGeneric(
 				parent, type, sibling);
-		getHistory().addOperation(op);
+		History.getInstance().addOperation(op);
 	}
 
 	/**
@@ -135,9 +134,9 @@ public class ElementManipulationFacade {
 	 */
 	public static void changeAttribute(IInternalElement element,
 			IAttributeManipulation manip, String value) {
-		final IAtomicOperation op = OperationFactory.changeAttribute(manip,
+		final AtomicOperation op = OperationFactory.changeAttribute(manip,
 				element, value);
-		getHistory().addOperation(op);
+		History.getInstance().addOperation(op);
 	}
 
 	/**
@@ -151,9 +150,9 @@ public class ElementManipulationFacade {
 	 */
 	public static void changeAttribute(IInternalElement element,
 			IAttributeValue value) {
-		final IAtomicOperation op = OperationFactory.changeAttribute(element,
+		final AtomicOperation op = OperationFactory.changeAttribute(element,
 				value);
-		getHistory().addOperation(op);
+		History.getInstance().addOperation(op);
 	}
 
 	/**
@@ -172,7 +171,7 @@ public class ElementManipulationFacade {
 			boolean force) {
 		final AtomicOperation op = OperationFactory.deleteElement(elements,
 				force);
-		getHistory().addOperation(op);
+		History.getInstance().addOperation(op);
 		return op != null;
 	}
 
@@ -215,7 +214,7 @@ public class ElementManipulationFacade {
 			IInternalElement element, IInternalElement nextSibling) {
 		final AtomicOperation op = OperationFactory.move(targetParent, element,
 				targetParent, nextSibling);
-		getHistory().addOperation(op);
+		History.getInstance().addOperation(op);
 	}
 
 	/**

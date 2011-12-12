@@ -23,6 +23,13 @@ import org.rodinp.core.location.IAttributeLocation;
 public interface IEventBContentProposalProvider extends
 		IContentProposalProvider {
 
+	/**
+	 * Sets the location of the proposals to the given location. This is
+	 * typically the location of the edited attribute in the internal element.
+	 * 
+	 * @param location
+	 *            the location of the attibute of the internal element to set
+	 */
 	void setLocation(IAttributeLocation location);
 
 }

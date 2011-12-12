@@ -16,12 +16,11 @@ import java.util.Collection;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.ui.eventbeditor.IAtomicOperation;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-public class AtomicOperation extends AbstractEventBOperation implements IAtomicOperation {
+public class AtomicOperation extends AbstractEventBOperation {
 
 	abstract class AbstractNavigation {
 
@@ -92,12 +91,10 @@ public class AtomicOperation extends AbstractEventBOperation implements IAtomicO
 		undo.run(monitor, info);
 	}
 
-	@Override
 	public IInternalElement getCreatedElement() {
 		return operation.getCreatedElement();
 	}
 
-	@Override
 	public Collection<IInternalElement> getCreatedElements() {
 		return operation.getCreatedElements();
 	}
