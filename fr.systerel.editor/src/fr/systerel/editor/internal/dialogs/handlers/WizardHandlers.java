@@ -12,9 +12,7 @@ package fr.systerel.editor.internal.dialogs.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eventb.ui.eventbeditor.IRodinHistory;
 import org.eventb.ui.manipulation.ElementCreationWizardFacade;
-import org.eventb.ui.manipulation.ElementManipulationFacade;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.AbstractEditorHandler;
@@ -25,9 +23,6 @@ import fr.systerel.editor.internal.handlers.AbstractEditorHandler;
  * @author "Thomas Muller"
  */
 public class WizardHandlers {
-
-	public static final IRodinHistory history = ElementManipulationFacade
-			.getHistory();
 
 	public static class NewVariableWizardHandler extends AbstractEditorHandler {
 
