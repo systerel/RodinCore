@@ -17,10 +17,12 @@ import org.rodinp.core.location.IAttributeLocation;
  * The interface of Event-B content proposal providers.
  * 
  * @author Thomas Muller
+ * @see IContentProposalProvider
  * @since 2.4
  */
-public interface IEventBContentProposalProvider extends IContentProposalProvider {
+public interface IEventBContentProposalProvider extends
+		IContentProposalProvider {
 
 	void setLocation(IAttributeLocation location);
-	
+
 }
