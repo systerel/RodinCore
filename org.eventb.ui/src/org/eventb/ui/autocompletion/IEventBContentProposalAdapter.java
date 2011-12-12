@@ -16,7 +16,7 @@ import org.eclipse.jface.fieldassist.IContentProposalListener2;
  * Event-B interface for content proposal adapters.
  * 
  * @author Thomas Muller
- * 
+ * @see IContentProposalListener2
  * @since 2.4
  */
 public interface IEventBContentProposalAdapter extends
