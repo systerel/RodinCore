@@ -75,9 +75,6 @@ public class History implements IRodinHistory {
 		if (operation == null) {
 			return;
 		}
-//		if (!isRodinUndoContext(operation)) {
-//			return;
-//		}
 		contexts.addAll(Arrays.asList(operation.getContexts()));
 		try {
 			history.execute(operation, null, null);
@@ -86,16 +83,7 @@ public class History implements IRodinHistory {
 					"when executing operation:" + operation.getLabel());
 		}
 		setLimit(operation.getContexts());
-	}	
-	
-//	private boolean isRodinUndoContext(IAtomicOperation operation) {
-//		for (IUndoContext ct : operation.getContexts()) {
-//			if (!(ct instanceof RodinFileUndoContext)) {
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
+	}
 
 	@Override
 	public void redo(IUndoContext context) {
