@@ -19,10 +19,10 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eventb.core.IEventBRoot;
+import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.eventbeditor.wizards.AbstractEventBCreationWizard;
-import org.eventb.ui.eventbeditor.IAtomicOperation;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.eventb.ui.tests.integration.EventBUIIntegrationUtils;
 
@@ -79,7 +79,7 @@ public abstract class AbstractCreationWizardTest extends AbstractUIIntegrationTe
 			@Override
 			public void run() {
 				// Launch the dialog for interactive test.
-				final IAtomicOperation op = wizard.openDialog(editor);
+				final AtomicOperation op = wizard.openDialog(editor);
 				// We check that the element is added in the editor
 				if (op != null) {
 					assertTrue(
