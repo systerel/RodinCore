@@ -45,6 +45,7 @@
    <features>
       <feature id="org.rodinp.platform"/>
       <feature id="org.eventb.ide"/>
+      <feature id="fr.systerel.editor"/>
    </features>
 
 

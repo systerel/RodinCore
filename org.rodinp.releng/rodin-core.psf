@@ -3,6 +3,8 @@
 <provider id="org.tigris.subversion.subclipse.core.svnnature">
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/ch.ethz.eventb.keyboard.latex,ch.ethz.eventb.keyboard.latex"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/fr.systerel.explorer,fr.systerel.explorer"/>
+<project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/fr.systerel.editor,fr.systerel.editor"/>
+<project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/fr.systerel.editor-feature,fr.systerel.editor-feature"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.core,org.eventb.core"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.core.ast,org.eventb.core.ast"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.core.seqprover,org.eventb.core.seqprover"/>
@@ -17,6 +19,7 @@
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.eventb.ui,org.eventb.ui"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.rodinp,org.rodinp"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.rodinp-feature,org.rodinp-feature"/>
+<project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.rodinp.core.emf,org.rodinp.core.emf"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.rodinp.core,org.rodinp.core"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.rodinp.keyboard,org.rodinp.keyboard"/>
 <project reference="0.9.3,https://rodin-b-sharp.svn.sourceforge.net/svnroot/rodin-b-sharp/trunk/RodinCore/org.rodinp.platform,org.rodinp.platform"/>

@@ -15,6 +15,7 @@
 			exportType="directory"
 			plugins="ch.ethz.eventb.keyboard.latex,
 			         fr.systerel.explorer,
+					 fr.systerel.editor,
 			         org.eventb.core,
 			         org.eventb.core.ast,
 			         org.eventb.core.seqprover,
@@ -28,6 +29,7 @@
 			         org.eventb.ui.symboltable,
 			         org.rodinp,
 			         org.rodinp.core,
+	         		 org.rodinp.core.emf,
 			         org.rodinp.keyboard,
 			         org.rodinp.platform"
 			qualifier="r${SVNrev}"
