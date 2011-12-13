@@ -24,14 +24,16 @@ import org.eventb.core.ast.Predicate;
 public class DependSequent {
 
 	private final Collection<DependPredicate> predicates = new ArrayList<DependPredicate>();
+	private final Collection<DependPredicate> unsatisfied;
 
-	public DependSequent(Collection<Predicate> hyps, Predicate goal) {
+	public DependSequent(Iterable<Predicate> hyps, Predicate goal) {
 		for (Predicate hyp : hyps) {
 			predicates.add(new DependPredicate(hyp, false));
 		}
 		if (goal != null) {
 			predicates.add(new DependPredicate(goal, true));
 		}
+		unsatisfied = new ArrayList<DependPredicate>(predicates);
 	}
 	
 	public Collection<DependPredicate> neededPredicates(DependSequent other) {
@@ -41,11 +43,42 @@ public class DependSequent {
 		return result;
 	}
 	
-	public boolean remove(Collection<DependPredicate> preds) {
-		return predicates.removeAll(preds);
+	public boolean satisfy(DependSequent other) {
+		//TODO remember dependencies
+		return unsatisfied.removeAll(other.predicates);
 	}
 	
 	public boolean isSatisfied() {
-		return predicates.isEmpty();
+		return unsatisfied.isEmpty();
+	}
+	
+	private static void seqToString(Collection<DependPredicate> preds, StringBuilder sb) {
+		String sep = "";
+		for (DependPredicate pred : preds) {
+			if (pred.isGoal()) {
+				if (sep.length() != 0) {
+					sb.append(' ');
+				}
+				sb.append("|- ");
+			} else {
+				sb.append(sep);
+				sep = " ;; ";
+			}
+			sb.append(pred.getPredicate());
+		}
+
+	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		seqToString(predicates, sb);
+		if (isSatisfied()) {
+			sb.append("  >>SAT");
+		} else {
+			sb.append("  >>UNSAT: ");
+			seqToString(unsatisfied, sb);
+		}
+		return sb.toString();
 	}
 }

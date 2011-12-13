@@ -25,35 +25,42 @@ public class DependNode {
 
 	private final IProofRule rule;
 
-	private final RequiredSequent requiredSeqs;
-	
-	private final ProducedSequent[] producedSeqs;
-	
+	private final RequiredSequent requiredSequent;
+
+	private final ProducedSequent[] producedSequents;
+
 	// the boolean is set to true when the node is deleted
 	private boolean deleted = false;
 
-
 	public DependNode(IProofRule rule) {
 		this.rule = rule;
-		this.requiredSeqs = new RequiredSequent(rule, this);
+		this.requiredSequent = new RequiredSequent(rule, this);
 
 		final IAntecedent[] antecedents = rule.getAntecedents();
-		this.producedSeqs = new ProducedSequent[antecedents.length];
+		this.producedSequents = new ProducedSequent[antecedents.length];
 		for (int i = 0; i < antecedents.length; i++) {
-			producedSeqs[i] = new ProducedSequent(antecedents[i], this);
+			producedSequents[i] = new ProducedSequent(antecedents[i], this);
 		}
+	}
+
+	public RequiredSequent getRequiredSequent() {
+		return requiredSequent;
+	}
+
+	public ProducedSequent[] getProducedSequents() {
+		return producedSequents;
 	}
 	
 	// delete this node if one of the produced sequents has no dependents
 	public void deleteIfUnneeded() {
-		for (ProducedSequent produced : producedSeqs) {
+		for (ProducedSequent produced : producedSequents) {
 			produced.deleteNodeIfNoDependents();
 			if (deleted) {
 				return;
 			}
 		}
 	}
-	
+
 	public void delete() {
 		if (deleted) {
 			return;
@@ -62,10 +69,10 @@ public class DependNode {
 		deleted = true;
 
 		// propagate upwards
-		requiredSeqs.delete();
+		requiredSequent.delete();
 
 		// propagate downwards
-		for (ProducedSequent produced : producedSeqs) {
+		for (ProducedSequent produced : producedSequents) {
 			produced.delete();
 		}
 	}
