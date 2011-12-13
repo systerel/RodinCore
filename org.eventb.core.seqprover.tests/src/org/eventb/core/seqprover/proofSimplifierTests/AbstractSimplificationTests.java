@@ -18,7 +18,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.tactics.tests.TreeShape;
-import org.eventb.internal.core.seqprover.proofSimplifier.ProofTreeSimplifier;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -33,7 +33,7 @@ import org.junit.runners.Parameterized;
 public abstract class AbstractSimplificationTests {
 
 	private static IProofTree simplify(IProofTree pt) throws Exception {
-		return new ProofTreeSimplifier().simplify(pt, null);
+		return new ProofSawyer(pt).simplify();
 	}
 
 	protected static Predicate p(String predicate) {
