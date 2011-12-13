@@ -46,7 +46,7 @@ public class RequiredSequent extends NodeSequent {
 		final Iterator<DependPredicate> iter = unsatisfied.iterator();
 		while(iter.hasNext()) {
 			final DependPredicate unsat = iter.next();
-			if (sequent.containsHypothesis(unsat.getPredicate())) {
+			if (unsat.isSatisfiedBy(sequent)) {
 				iter.remove();
 			}
 		}

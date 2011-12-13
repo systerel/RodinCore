@@ -11,6 +11,7 @@
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProverSequent;
 
 /**
  * A predicate type to use for dependence computation and manipulation.
@@ -36,6 +37,13 @@ public class DependPredicate {
 		return isGoal;
 	}
 
+	public boolean isSatisfiedBy(IProverSequent sequent) {
+		if (isGoal()) {
+			return predicate.equals(sequent.goal());
+		}
+		return sequent.containsHypothesis(predicate);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
