@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
 
 /**
@@ -25,10 +26,10 @@ public class ProofSawyer {
 	}
 	
 	// TODO monitors
-	public IProofTree simplify() {
+	public IProofTree simplify(IProofMonitor monitor) {
 		final SawyerTree sawyerTree = new SawyerTree(proofTree.getRoot());
 		sawyerTree.init();
 		sawyerTree.simplify();
-		return null;// FIXME
+		return sawyerTree.toProofTree(monitor);
 	}
 }

@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
+import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
+import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
+import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 
@@ -41,12 +46,13 @@ public class SawyerTree {
 	private void checkRootSatisfies(Collection<RequiredSequent> required) {
 		for (RequiredSequent req : required) {
 			req.satisfyWith(rootSequent);
-			Assert.isTrue(req.isSatisfied(), "Simplification: unsatisfied sequent (there may be others): " + req);
+			Assert.isTrue(req.isSatisfied(),
+					"Simplification: unsatisfied sequent (there may be others): "
+							+ req);
 		}
 	}
 
-	private static Collection<RequiredSequent> computeDeps(
-			SawyerNode node) {
+	private static Collection<RequiredSequent> computeDeps(SawyerNode node) {
 		final Collection<RequiredSequent> required = new ArrayList<RequiredSequent>();
 		final SawyerNode[] children = node.getChildren();
 		final ProducedSequent[] producedSequents = node.getProducedSequents();
@@ -85,4 +91,12 @@ public class SawyerTree {
 		}
 	}
 
+	public IProofTree toProofTree(IProofMonitor monitor) {
+		final IProofTree proofTree = makeProofTree(rootSequent, this);
+		final boolean success = rebuild(proofTree.getRoot(), root, monitor);
+		if (!success || !proofTree.isClosed()) {
+			return null;
+		}
+		return proofTree;
+	}
 }
