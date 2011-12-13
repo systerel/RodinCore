@@ -11,8 +11,13 @@
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
 /**
@@ -21,10 +26,23 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
  */
 public class ProducedSequent extends NodeSequent {
 
+	private static Set<Predicate> getNewHyps(IAntecedent antecedent) {
+		final Set<Predicate> newPreds = new LinkedHashSet<Predicate>();
+		newPreds.addAll(antecedent.getAddedHyps());
+		final List<IHypAction> hypActions = antecedent.getHypActions();
+		for (IHypAction hypAction : hypActions) {
+			if (hypAction instanceof IForwardInfHypAction) {
+				final IForwardInfHypAction fwd = (IForwardInfHypAction) hypAction;
+				newPreds.addAll(fwd.getInferredHyps());
+			}
+		}
+		return newPreds;
+	}
+	
 	private final List<RequiredSequent> dependents = new ArrayList<RequiredSequent>();
 	
 	public ProducedSequent(IAntecedent antecedent, DependNode node) {
-		super(antecedent.getAddedHyps(), antecedent.getGoal(), node);
+		super(getNewHyps(antecedent), antecedent.getGoal(), node);
 	}
 
 	public void addDependentSequent(RequiredSequent dependent) {
