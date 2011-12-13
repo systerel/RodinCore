@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eventb.core.ast.Predicate;
@@ -20,13 +21,20 @@ import org.eventb.core.ast.Predicate;
  * 
  * @author Nicolas Beauger
  */
-public abstract class NodeSequent extends DependSequent {
+public abstract class NodeSequent {
+
+	protected final Collection<DependPredicate> predicates = new ArrayList<DependPredicate>();
 
 	private final DependNode node;
 	protected boolean deleted = false;
 
 	public NodeSequent(Collection<Predicate> hyps, Predicate goal, DependNode node) {
-		super(hyps, goal);
+		for (Predicate hyp : hyps) {
+			predicates.add(new DependPredicate(hyp, false));
+		}
+		if (goal != null) {
+			predicates.add(new DependPredicate(goal, true));
+		}
 		this.node = node;
 	}
 
@@ -42,4 +50,29 @@ public abstract class NodeSequent extends DependSequent {
 	}
 	
 	protected abstract void propagateDelete();
+	
+	protected static void seqToString(Collection<DependPredicate> preds, StringBuilder sb) {
+		String sep = "";
+		for (DependPredicate pred : preds) {
+			if (pred.isGoal()) {
+				if (sep.length() != 0) {
+					sb.append(' ');
+				}
+				sb.append("|- ");
+			} else {
+				sb.append(sep);
+				sep = " ;; ";
+			}
+			sb.append(pred.getPredicate());
+		}
+
+	}
+	
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		seqToString(predicates, sb);
+		return sb.toString();
+	}
+
 }
