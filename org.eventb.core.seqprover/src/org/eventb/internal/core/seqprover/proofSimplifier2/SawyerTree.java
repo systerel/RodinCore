@@ -34,18 +34,18 @@ public class SawyerTree {
 	}
 
 	public void init() {
-		final Collection<RequiredSequent> required = computeRequired(root);
+		final Collection<RequiredSequent> required = computeDeps(root);
 		checkRootSatisfies(required);
 	}
 
 	private void checkRootSatisfies(Collection<RequiredSequent> required) {
 		for (RequiredSequent req : required) {
 			req.satisfyWith(rootSequent);
-			Assert.isTrue(req.isSatisfied(), "unsatisfied sequent: " + req);
+			Assert.isTrue(req.isSatisfied(), "Simplification: unsatisfied sequent (there may be others): " + req);
 		}
 	}
 
-	private static Collection<RequiredSequent> computeRequired(
+	private static Collection<RequiredSequent> computeDeps(
 			SawyerNode node) {
 		final Collection<RequiredSequent> required = new ArrayList<RequiredSequent>();
 		final SawyerNode[] children = node.getChildren();
@@ -54,7 +54,7 @@ public class SawyerTree {
 
 		for (int i = 0; i < children.length; i++) {
 			final ProducedSequent prod = producedSequents[i];
-			final Collection<RequiredSequent> deps = computeRequired(children[i]);
+			final Collection<RequiredSequent> deps = computeDeps(children[i]);
 			satisfy(deps, prod);
 			required.addAll(deps);
 		}
