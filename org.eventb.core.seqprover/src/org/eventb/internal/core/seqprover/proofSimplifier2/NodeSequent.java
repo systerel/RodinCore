@@ -52,9 +52,11 @@ public abstract class NodeSequent {
 	protected abstract void propagateDelete();
 	
 	protected static void seqToString(Collection<DependPredicate> preds, StringBuilder sb) {
+		boolean hasGoal = false;
 		String sep = "";
 		for (DependPredicate pred : preds) {
 			if (pred.isGoal()) {
+				hasGoal = true;
 				if (sep.length() != 0) {
 					sb.append(' ');
 				}
@@ -65,7 +67,9 @@ public abstract class NodeSequent {
 			}
 			sb.append(pred.getPredicate());
 		}
-
+		if (!hasGoal) {
+			sb.append(" |-");
+		}
 	}
 	
 	@Override
