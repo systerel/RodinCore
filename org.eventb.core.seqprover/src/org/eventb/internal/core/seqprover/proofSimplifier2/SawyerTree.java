@@ -25,23 +25,24 @@ import org.eventb.core.seqprover.IProverSequent;
  */
 public class SawyerTree {
 
-	private static DependSequent makeRootSequent(IProverSequent sequent) {
-		return new DependSequent(sequent.hypIterable(), sequent.goal());
-	}
-	
 	private final SawyerNode root;
-	private final DependSequent rootSequent;
+	private final IProverSequent rootSequent;
 
 	public SawyerTree(IProofTreeNode root) {
 		this.root = SawyerNode.fromTreeNode(root);
-		this.rootSequent = makeRootSequent(root.getSequent());
+		this.rootSequent = root.getSequent();
 	}
 
 	public void init() {
 		final Collection<RequiredSequent> required = computeRequired(root);
-		satisfy(required, rootSequent);
-		Assert.isTrue(required.isEmpty(), "required sequents remain: "
-				+ required);
+		checkRootSatisfies(required);
+	}
+
+	private void checkRootSatisfies(Collection<RequiredSequent> required) {
+		for (RequiredSequent req : required) {
+			req.satisfyWith(rootSequent);
+			Assert.isTrue(req.isSatisfied(), "unsatisfied sequent: " + req);
+		}
 	}
 
 	private static Collection<RequiredSequent> computeRequired(
@@ -62,11 +63,11 @@ public class SawyerTree {
 	}
 
 	private static void satisfy(Collection<RequiredSequent> required,
-			DependSequent produced) {
+			ProducedSequent produced) {
 		final Iterator<RequiredSequent> iterator = required.iterator();
 		while (iterator.hasNext()) {
 			final RequiredSequent req = iterator.next();
-			req.satisfy(produced);
+			req.satisfyWith(produced);
 			if (req.isSatisfied()) {
 				iterator.remove();
 			}

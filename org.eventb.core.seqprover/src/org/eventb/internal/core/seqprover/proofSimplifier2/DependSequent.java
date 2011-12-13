@@ -23,8 +23,7 @@ import org.eventb.core.ast.Predicate;
  */
 public class DependSequent {
 
-	private final Collection<DependPredicate> predicates = new ArrayList<DependPredicate>();
-	private final Collection<DependPredicate> unsatisfied;
+	protected final Collection<DependPredicate> predicates = new ArrayList<DependPredicate>();
 
 	public DependSequent(Iterable<Predicate> hyps, Predicate goal) {
 		for (Predicate hyp : hyps) {
@@ -33,26 +32,9 @@ public class DependSequent {
 		if (goal != null) {
 			predicates.add(new DependPredicate(goal, true));
 		}
-		unsatisfied = new ArrayList<DependPredicate>(predicates);
 	}
 	
-	public Collection<DependPredicate> neededPredicates(DependSequent other) {
-		final Collection<DependPredicate> result = new ArrayList<DependPredicate>(
-				this.predicates);
-		result.retainAll(other.predicates);
-		return result;
-	}
-	
-	public boolean satisfy(DependSequent other) {
-		//TODO remember dependencies
-		return unsatisfied.removeAll(other.predicates);
-	}
-	
-	public boolean isSatisfied() {
-		return unsatisfied.isEmpty();
-	}
-	
-	private static void seqToString(Collection<DependPredicate> preds, StringBuilder sb) {
+	protected static void seqToString(Collection<DependPredicate> preds, StringBuilder sb) {
 		String sep = "";
 		for (DependPredicate pred : preds) {
 			if (pred.isGoal()) {
@@ -73,12 +55,6 @@ public class DependSequent {
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		seqToString(predicates, sb);
-		if (isSatisfied()) {
-			sb.append("  >>SAT");
-		} else {
-			sb.append("  >>UNSAT: ");
-			seqToString(unsatisfied, sb);
-		}
 		return sb.toString();
 	}
 }
