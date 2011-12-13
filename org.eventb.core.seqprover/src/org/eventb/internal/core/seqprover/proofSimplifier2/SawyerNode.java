@@ -16,9 +16,9 @@ import org.eventb.core.seqprover.IProofTreeNode;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
-public class SawyerNode extends DependNode<DependRule> implements IProofSkeleton {
+public class SawyerNode extends DependNode implements IProofSkeleton {
 
 	public static SawyerNode fromTreeNode(IProofTreeNode proofNode) {
 		final IProofTreeNode[] childNodes = proofNode.getChildNodes();
@@ -27,14 +27,11 @@ public class SawyerNode extends DependNode<DependRule> implements IProofSkeleton
 		for (int i = 0; i < childNodes.length; i++) {
 			children[i] = fromTreeNode(childNodes[i]);
 		}
-		
+
 		return new SawyerNode(proofNode.getRule(), children,
 				proofNode.getComment());
 	}
 
-	// the rule of this node
-	private final IProofRule rule;
-	
 	// children in the original proof tree
 	// no dependence is assumed between parents and children
 	private final SawyerNode[] children;
@@ -45,17 +42,11 @@ public class SawyerNode extends DependNode<DependRule> implements IProofSkeleton
 
 	private final String comment;
 
-	
-	public SawyerNode(IProofRule rule, SawyerNode[] children, String comment) {
-		this.rule = rule;
+	private SawyerNode(IProofRule rule, SawyerNode[] children, String comment) {
+		super(rule);
 		this.children = children;
 		this.comment = comment;
-		setChildrenParent();
-	}
-	
-	// not intended to be called outside constructor
-	private void setChildrenParent() {
-		for (SawyerNode child : children) {
+		for (SawyerNode child : this.children) {
 			child.parent = this;
 		}
 	}
@@ -67,19 +58,14 @@ public class SawyerNode extends DependNode<DependRule> implements IProofSkeleton
 	public SawyerNode getParent() {
 		return parent;
 	}
-	
+
 	public SawyerNode[] getChildren() {
-		return children;
-	}
-	
-	@Override
-	public IProofSkeleton[] getChildNodes() {
 		return children;
 	}
 
 	@Override
-	public IProofRule getRule() {
-		return rule;
+	public IProofSkeleton[] getChildNodes() {
+		return children;
 	}
 
 	@Override

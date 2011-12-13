@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IProofRule;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
 /**
  * A sequent type to use for dependence computation and manipulation.
@@ -25,21 +23,15 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
  */
 public class DependSequent {
 
-	public static DependSequent fromRule(IProofRule rule) {
-		return new DependSequent(rule.getNeededHyps(), rule.getGoal());
-	}
-	
-	public static DependSequent fromAntecedent(IAntecedent antecedent) {
-		return new DependSequent(antecedent.getAddedHyps(), antecedent.getGoal());
-	}
-	
 	private final Collection<DependPredicate> predicates = new ArrayList<DependPredicate>();
 
-	private DependSequent(Collection<Predicate> hyps, Predicate goal) {
+	public DependSequent(Collection<Predicate> hyps, Predicate goal) {
 		for (Predicate hyp : hyps) {
 			predicates.add(new DependPredicate(hyp, false));
 		}
-		predicates.add(new DependPredicate(goal, true));
+		if (goal != null) {
+			predicates.add(new DependPredicate(goal, true));
+		}
 	}
 	
 	public Collection<DependPredicate> neededPredicates(DependSequent other) {

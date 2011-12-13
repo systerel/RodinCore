@@ -10,39 +10,36 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
-import org.eventb.core.seqprover.IProofTreeNode;
+import java.util.Collection;
+
+import org.eventb.core.ast.Predicate;
 
 /**
- * A tree type to use for dependence computation and manipulation.
+ * 
+ * Note: equals() and hashcode() must not be overridden.
  * 
  * @author Nicolas Beauger
  */
-public class SawyerTree {
+public abstract class NodeSequent extends DependSequent {
 
-	private final SawyerNode root;
+	private final DependNode node;
+	protected boolean deleted = false;
 
-	public SawyerTree(IProofTreeNode root) {
-		this.root = SawyerNode.fromTreeNode(root);
+	public NodeSequent(Collection<Predicate> hyps, Predicate goal, DependNode node) {
+		super(hyps, goal);
+		this.node = node;
 	}
 
-	public void init() {
-		computeDependencies(root);
+	public DependNode getNode() {
+		return node;
 	}
 	
-	private static void computeDependencies(SawyerNode node) {
-		// TODO
-	}
-
-	public void simplify() {
-		deleteUnneededRec(root);
-	}
-
-	private static void deleteUnneededRec(SawyerNode node) {
-		node.deleteIfUnneeded();
-		for (SawyerNode child : node.getChildren()) {
-			deleteUnneededRec(child);
+	public final void delete() {
+		if (deleted) {
+			return;
 		}
+		deleted = true;
 	}
-
-
+	
+	protected abstract void propagateDelete();
 }
