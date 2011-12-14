@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
+import org.eclipse.core.runtime.Assert;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -85,12 +86,16 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 		int shortestLength = Integer.MAX_VALUE;
 		SawyerNode shortest = null;
 		for (SawyerNode child: children) {
+			if (child == null) {
+				continue;
+			}
 			int childLength = child.getLength();
 			if (childLength < shortestLength) {
 				shortestLength = childLength;
 				shortest = child;
 			}
 		}
+		Assert.isNotNull(shortest, "one child at least should be not null");
 		return shortest;
 	}
 	
