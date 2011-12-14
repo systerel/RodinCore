@@ -54,8 +54,8 @@ public class DependNode {
 	// delete this node if one of the produced sequents has no dependents
 	public void deleteIfUnneeded() {
 		for (ProducedSequent produced : producedSequents) {
-			produced.deleteNodeIfNoDependents();
-			if (deleted) {
+			if (!produced.hasDependents()) {
+				delete();
 				return;
 			}
 		}

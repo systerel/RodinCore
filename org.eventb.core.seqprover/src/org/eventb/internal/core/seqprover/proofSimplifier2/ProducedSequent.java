@@ -69,12 +69,13 @@ public class ProducedSequent extends NodeSequent {
 			return;
 		}
 		dependents.remove(dependent);
-		deleteNodeIfNoDependents();
-	}
-
-	public void deleteNodeIfNoDependents() {
-		if (dependents.isEmpty()) {
+		if (!hasDependents()) {
 			getNode().delete();
 		}
 	}
+
+	public boolean hasDependents() {
+		return !dependents.isEmpty();
+	}
+
 }
