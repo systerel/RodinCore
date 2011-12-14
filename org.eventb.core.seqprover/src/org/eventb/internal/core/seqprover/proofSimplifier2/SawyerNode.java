@@ -89,7 +89,7 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 			if (child == null) {
 				continue;
 			}
-			int childLength = child.getLength();
+			int childLength = child.getSize();
 			if (childLength < shortestLength) {
 				shortestLength = childLength;
 				shortest = child;
@@ -99,10 +99,10 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 		return shortest;
 	}
 
-	private int getLength() {
-		int length = 1; // this node
+	public int getSize() {
+		int length = isDeleted() ? 0 : 1; // this node
 		for (SawyerNode child : children) {
-			length += child.getLength();
+			length += child.getSize();
 		}
 		return length;
 	}
