@@ -100,7 +100,7 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 	}
 
 	public int getSize() {
-		int length = isDeleted() ? 0 : 1; // this node
+		int length = 1; // this node
 		for (SawyerNode child : children) {
 			length += child.getSize();
 		}

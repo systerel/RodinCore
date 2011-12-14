@@ -100,4 +100,8 @@ public class SawyerTree {
 		}
 		return proofTree;
 	}
+	
+	public int getSize() {
+		return root.getSize();
+	}
 }

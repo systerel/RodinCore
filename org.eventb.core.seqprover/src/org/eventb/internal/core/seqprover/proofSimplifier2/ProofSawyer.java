@@ -29,7 +29,13 @@ public class ProofSawyer {
 	public IProofTree simplify(IProofMonitor monitor) {
 		final SawyerTree sawyerTree = new SawyerTree(proofTree.getRoot());
 		sawyerTree.init();
+		final int initialSize = sawyerTree.getSize();
 		sawyerTree.saw();
-		return sawyerTree.toProofTree(monitor);
+		final int sawedSize = sawyerTree.getSize();
+		if (sawedSize < initialSize) {
+			return sawyerTree.toProofTree(monitor);
+		} else {
+			return proofTree;
+		}
 	}
 }
