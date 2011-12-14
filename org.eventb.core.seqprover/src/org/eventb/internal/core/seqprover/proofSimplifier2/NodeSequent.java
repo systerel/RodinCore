@@ -26,7 +26,9 @@ public abstract class NodeSequent {
 	protected final Collection<DependPredicate> predicates = new ArrayList<DependPredicate>();
 
 	private final DependNode node;
-	public NodeSequent(Collection<Predicate> hyps, Predicate goal, DependNode node) {
+
+	public NodeSequent(Collection<Predicate> hyps, Predicate goal,
+			DependNode node) {
 		for (Predicate hyp : hyps) {
 			predicates.add(new DependPredicate(hyp, false));
 		}
@@ -39,10 +41,11 @@ public abstract class NodeSequent {
 	public DependNode getNode() {
 		return node;
 	}
-	
+
 	public abstract void propagateDelete();
-	
-	protected static void seqToString(Collection<DependPredicate> preds, StringBuilder sb) {
+
+	protected static void seqToString(Collection<DependPredicate> preds,
+			StringBuilder sb) {
 		boolean hasGoal = false;
 		String sep = "";
 		for (DependPredicate pred : preds) {
@@ -62,7 +65,7 @@ public abstract class NodeSequent {
 			sb.append(" |-");
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();

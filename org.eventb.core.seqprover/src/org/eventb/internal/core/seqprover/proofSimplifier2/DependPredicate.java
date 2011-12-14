@@ -43,7 +43,7 @@ public class DependPredicate {
 		}
 		return sequent.containsHypothesis(predicate);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

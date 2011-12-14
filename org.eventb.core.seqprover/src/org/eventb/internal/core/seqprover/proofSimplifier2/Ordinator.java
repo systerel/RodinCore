@@ -27,7 +27,7 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class Ordinator {
 
@@ -44,7 +44,7 @@ public class Ordinator {
 		final IProverSequent sequent = node.getSequent();
 		final IAntecedent[] antecedents = rule.getAntecedents();
 		final IAntecedent[] newAntecedents = new IAntecedent[antecedents.length];
-			
+
 		boolean changed = false;
 		for (int i = 0; i < antecedents.length; i++) {
 			final IAntecedent antecedent = antecedents[i];
@@ -87,6 +87,5 @@ public class Ordinator {
 		}
 		return rule;
 	}
-
 
 }

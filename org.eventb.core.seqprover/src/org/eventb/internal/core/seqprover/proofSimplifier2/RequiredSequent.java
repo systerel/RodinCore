@@ -26,12 +26,12 @@ public class RequiredSequent extends NodeSequent {
 
 	private final List<ProducedSequent> neededSequents = new ArrayList<ProducedSequent>();
 	private final Collection<DependPredicate> unsatisfied;
-	
+
 	public RequiredSequent(IProofRule rule, DependNode node) {
 		super(rule.getNeededHyps(), rule.getGoal(), node);
 		this.unsatisfied = new ArrayList<DependPredicate>(predicates);
 	}
-	
+
 	public void satisfyWith(ProducedSequent produced) {
 		final boolean depends = unsatisfied.removeAll(produced.predicates);
 		if (depends) {
@@ -39,20 +39,20 @@ public class RequiredSequent extends NodeSequent {
 			produced.addDependentSequent(this);
 		}
 	}
-	
+
 	// used for checking satisfaction by the root sequent
 	// that is not a produced sequent and for which
 	// no dependencies shall be created
 	public void satisfyWith(IProverSequent sequent) {
 		final Iterator<DependPredicate> iter = unsatisfied.iterator();
-		while(iter.hasNext()) {
+		while (iter.hasNext()) {
 			final DependPredicate unsat = iter.next();
 			if (unsat.isSatisfiedBy(sequent)) {
 				iter.remove();
 			}
 		}
 	}
-	
+
 	public boolean isSatisfied() {
 		return unsatisfied.isEmpty();
 	}
@@ -62,18 +62,18 @@ public class RequiredSequent extends NodeSequent {
 			neededSequents.add(sequent);
 		}
 	}
-	
+
 	public List<ProducedSequent> getNeededSequents() {
 		return neededSequents;
 	}
 
 	@Override
 	public void propagateDelete() {
-		for(ProducedSequent needed: neededSequents) {
+		for (ProducedSequent needed : neededSequents) {
 			needed.deleteDependent(this);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		final String predsStr = super.toString();

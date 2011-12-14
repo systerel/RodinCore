@@ -15,16 +15,16 @@ import org.eventb.core.seqprover.IProofTree;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class ProofSawyer {
-	
+
 	private final IProofTree proofTree;
 
 	public ProofSawyer(IProofTree proofTree) {
 		this.proofTree = proofTree;
 	}
-	
+
 	// TODO monitors
 	public IProofTree simplify(IProofMonitor monitor) {
 		final SawyerTree sawyerTree = new SawyerTree(proofTree.getRoot());

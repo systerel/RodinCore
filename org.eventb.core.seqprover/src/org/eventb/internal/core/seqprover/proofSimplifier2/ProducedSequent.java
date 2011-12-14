@@ -38,9 +38,9 @@ public class ProducedSequent extends NodeSequent {
 		}
 		return newPreds;
 	}
-	
+
 	private final List<RequiredSequent> dependents = new ArrayList<RequiredSequent>();
-	
+
 	public ProducedSequent(IAntecedent antecedent, DependNode node) {
 		super(getNewHyps(antecedent), antecedent.getGoal(), node);
 	}
@@ -50,7 +50,7 @@ public class ProducedSequent extends NodeSequent {
 			dependents.add(dependent);
 		}
 	}
-	
+
 	@Override
 	public void propagateDelete() {
 		for (RequiredSequent dependent : dependents) {
@@ -58,7 +58,7 @@ public class ProducedSequent extends NodeSequent {
 		}
 		dependents.clear();
 	}
-	
+
 	public void deleteDependent(RequiredSequent dependent) {
 		if (this.getNode().isDeleted()) {
 			// this.getNode() is being deleted:
@@ -68,7 +68,7 @@ public class ProducedSequent extends NodeSequent {
 		dependents.remove(dependent);
 		deleteNodeIfNoDependents();
 	}
-	
+
 	public void deleteNodeIfNoDependents() {
 		if (dependents.isEmpty()) {
 			getNode().delete();

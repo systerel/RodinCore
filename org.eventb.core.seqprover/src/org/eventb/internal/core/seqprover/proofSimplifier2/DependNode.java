@@ -50,7 +50,7 @@ public class DependNode {
 	public ProducedSequent[] getProducedSequents() {
 		return producedSequents;
 	}
-	
+
 	// delete this node if one of the produced sequents has no dependents
 	public void deleteIfUnneeded() {
 		for (ProducedSequent produced : producedSequents) {
@@ -64,7 +64,7 @@ public class DependNode {
 	public boolean isDeleted() {
 		return deleted;
 	}
-	
+
 	public void delete() {
 		if (deleted) {
 			return;
