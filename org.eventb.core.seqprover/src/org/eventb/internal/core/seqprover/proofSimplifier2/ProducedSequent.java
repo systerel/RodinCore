@@ -56,9 +56,13 @@ public class ProducedSequent extends NodeSequent {
 		for (RequiredSequent dependent : dependents) {
 			dependent.delete();
 		}
+		dependents.clear();
 	}
 	
 	public void deleteDependent(RequiredSequent dependent) {
+		if (deleted) {
+			return;
+		}
 		dependents.remove(dependent);
 		deleteNodeIfNoDependents();
 	}
