@@ -40,11 +40,7 @@ public abstract class NodeSequent {
 		return node;
 	}
 	
-	public final void nodeDeleted() {
-		propagateDelete();
-	}
-	
-	protected abstract void propagateDelete();
+	public abstract void propagateDelete();
 	
 	protected static void seqToString(Collection<DependPredicate> preds, StringBuilder sb) {
 		boolean hasGoal = false;

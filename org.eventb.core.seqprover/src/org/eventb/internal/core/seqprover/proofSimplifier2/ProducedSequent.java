@@ -52,7 +52,7 @@ public class ProducedSequent extends NodeSequent {
 	}
 	
 	@Override
-	protected void propagateDelete() {
+	public void propagateDelete() {
 		for (RequiredSequent dependent : dependents) {
 			dependent.getNode().delete();
 		}

@@ -68,7 +68,7 @@ public class RequiredSequent extends NodeSequent {
 	}
 
 	@Override
-	protected void propagateDelete() {
+	public void propagateDelete() {
 		for(ProducedSequent needed: neededSequents) {
 			needed.deleteDependent(this);
 		}
