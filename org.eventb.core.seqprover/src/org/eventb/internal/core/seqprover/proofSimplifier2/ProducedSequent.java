@@ -26,11 +26,14 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
  */
 public class ProducedSequent extends NodeSequent {
 
+	// new hypotheses are:
+	// - added hypotheses
+	// - forward inferred hypotheses
 	private static Set<Predicate> getNewHyps(IAntecedent antecedent) {
 		final Set<Predicate> newPreds = new LinkedHashSet<Predicate>();
 		newPreds.addAll(antecedent.getAddedHyps());
-		final List<IHypAction> hypActions = antecedent.getHypActions();
-		for (IHypAction hypAction : hypActions) {
+
+		for (IHypAction hypAction : antecedent.getHypActions()) {
 			if (hypAction instanceof IForwardInfHypAction) {
 				final IForwardInfHypAction fwd = (IForwardInfHypAction) hypAction;
 				newPreds.addAll(fwd.getInferredHyps());
