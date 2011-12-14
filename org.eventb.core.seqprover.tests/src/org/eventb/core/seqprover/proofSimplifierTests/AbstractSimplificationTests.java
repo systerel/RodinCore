@@ -13,6 +13,7 @@ package org.eventb.core.seqprover.proofSimplifierTests;
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
+import static org.junit.Assert.assertNotNull;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTree;
@@ -74,6 +75,7 @@ public abstract class AbstractSimplificationTests {
 	public void simplificationTest() throws Exception {
 		final IProofTree pt = genProofTree();
 		final IProofTree simplified = simplify(pt);
+		assertNotNull(simplified);
 		expected.check(simplified.getRoot());
 	}
 
