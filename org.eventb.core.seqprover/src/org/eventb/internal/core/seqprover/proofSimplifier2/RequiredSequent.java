@@ -72,6 +72,7 @@ public class RequiredSequent extends NodeSequent {
 		for(ProducedSequent needed: neededSequents) {
 			needed.deleteDependent(this);
 		}
+		getNode().delete();
 	}
 	
 	@Override
