@@ -230,16 +230,16 @@ public class NodeRemovalTests extends AbstractSimplificationTests {
 				 *  0
 				 * 1 3
 				 */
-				test(" ¬¬⊤  |- ⊤ ∧ ⊤",
+				test(" ¬¬⊤ ;; x=0 |- ⊤ ∧ x=0",
 						// initial
 						conjI(
 								trueGoal(),
-								rn(p("¬¬⊤"), ""),
-										trueGoal()),
+								rn(p("¬¬⊤"), "",
+										hyp())),
 						// expected
 						conjI(
 								trueGoal(),
-								trueGoal())),
+								hyp())),
 						
 				/**
 				 * Proof tree:
