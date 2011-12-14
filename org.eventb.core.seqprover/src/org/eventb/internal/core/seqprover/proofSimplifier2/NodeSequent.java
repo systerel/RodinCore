@@ -47,6 +47,7 @@ public abstract class NodeSequent {
 			return;
 		}
 		deleted = true;
+		propagateDelete();
 	}
 	
 	protected abstract void propagateDelete();
