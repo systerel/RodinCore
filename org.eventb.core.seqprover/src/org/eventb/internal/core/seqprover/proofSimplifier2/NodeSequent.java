@@ -26,8 +26,6 @@ public abstract class NodeSequent {
 	protected final Collection<DependPredicate> predicates = new ArrayList<DependPredicate>();
 
 	private final DependNode node;
-	protected boolean deleted = false;
-
 	public NodeSequent(Collection<Predicate> hyps, Predicate goal, DependNode node) {
 		for (Predicate hyp : hyps) {
 			predicates.add(new DependPredicate(hyp, false));
@@ -43,10 +41,6 @@ public abstract class NodeSequent {
 	}
 	
 	public final void nodeDeleted() {
-		if (deleted) {
-			return;
-		}
-		deleted = true;
 		propagateDelete();
 	}
 	

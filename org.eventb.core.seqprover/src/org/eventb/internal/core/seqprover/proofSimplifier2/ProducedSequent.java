@@ -60,7 +60,9 @@ public class ProducedSequent extends NodeSequent {
 	}
 	
 	public void deleteDependent(RequiredSequent dependent) {
-		if (deleted) {
+		if (this.getNode().isDeleted()) {
+			// this.getNode() is being deleted:
+			// avoid concurrent modification
 			return;
 		}
 		dependents.remove(dependent);
