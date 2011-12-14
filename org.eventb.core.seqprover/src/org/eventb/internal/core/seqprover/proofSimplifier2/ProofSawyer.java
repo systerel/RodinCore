@@ -29,7 +29,7 @@ public class ProofSawyer {
 	public IProofTree simplify(IProofMonitor monitor) {
 		final SawyerTree sawyerTree = new SawyerTree(proofTree.getRoot());
 		sawyerTree.init();
-		sawyerTree.simplify();
+		sawyerTree.saw();
 		return sawyerTree.toProofTree(monitor);
 	}
 }

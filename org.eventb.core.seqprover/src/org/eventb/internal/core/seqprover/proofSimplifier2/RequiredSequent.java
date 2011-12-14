@@ -36,6 +36,7 @@ public class RequiredSequent extends NodeSequent {
 		final boolean depends = unsatisfied.removeAll(produced.predicates);
 		if (depends) {
 			neededSequents.add(produced);
+			produced.addDependentSequent(this);
 		}
 	}
 	

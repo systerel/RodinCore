@@ -59,12 +59,53 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 		return parent;
 	}
 
+	// original children
 	public SawyerNode[] getChildren() {
 		return children;
 	}
 
+	public SawyerNode saw() {
+		for (int i = 0; i < children.length; i++) {
+			children[i] = children[i].saw();
+		}
+		if (isDeleted()) {
+			return getShortestChild();
+		} else {
+			return this;
+		}
+	}
+
+	private SawyerNode getShortestChild() {
+		switch (children.length) {
+		case 0:
+			return null;
+		case 1:
+			return children[0];
+		}
+		int shortestLength = Integer.MAX_VALUE;
+		SawyerNode shortest = null;
+		for (SawyerNode child: children) {
+			int childLength = child.getLength();
+			if (childLength < shortestLength) {
+				shortestLength = childLength;
+				shortest = child;
+			}
+		}
+		return shortest;
+	}
+	
+	private int getLength() {
+		int length = 1; // this node
+		for (SawyerNode child: children) {
+			length += child.getLength();
+		}
+		return length;
+	}
+
+	// simplified children
 	@Override
 	public IProofSkeleton[] getChildNodes() {
+		// FIXME non deleted children
 		return children;
 	}
 

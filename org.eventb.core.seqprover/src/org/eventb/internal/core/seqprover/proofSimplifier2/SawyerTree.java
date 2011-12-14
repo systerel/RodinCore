@@ -30,7 +30,7 @@ import org.eventb.core.seqprover.IProverSequent;
  */
 public class SawyerTree {
 
-	private final SawyerNode root;
+	private SawyerNode root;
 	private final IProverSequent rootSequent;
 
 	public SawyerTree(IProofTreeNode root) {
@@ -80,8 +80,9 @@ public class SawyerTree {
 		}
 	}
 
-	public void simplify() {
+	public void saw() {
 		deleteUnneededRec(root);
+		root = root.saw();
 	}
 
 	private static void deleteUnneededRec(SawyerNode node) {

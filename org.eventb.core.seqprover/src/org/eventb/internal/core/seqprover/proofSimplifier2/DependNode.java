@@ -61,6 +61,10 @@ public class DependNode {
 		}
 	}
 
+	public boolean isDeleted() {
+		return deleted;
+	}
+	
 	public void delete() {
 		if (deleted) {
 			return;
