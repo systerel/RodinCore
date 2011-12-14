@@ -42,7 +42,7 @@ public abstract class NodeSequent {
 		return node;
 	}
 	
-	public final void delete() {
+	public final void nodeDeleted() {
 		if (deleted) {
 			return;
 		}

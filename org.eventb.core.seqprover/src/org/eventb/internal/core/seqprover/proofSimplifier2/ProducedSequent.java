@@ -54,7 +54,7 @@ public class ProducedSequent extends NodeSequent {
 	@Override
 	protected void propagateDelete() {
 		for (RequiredSequent dependent : dependents) {
-			dependent.delete();
+			dependent.getNode().delete();
 		}
 		dependents.clear();
 	}

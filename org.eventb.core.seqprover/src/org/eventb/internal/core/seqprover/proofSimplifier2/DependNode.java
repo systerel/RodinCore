@@ -73,11 +73,11 @@ public class DependNode {
 		deleted = true;
 
 		// propagate upwards
-		requiredSequent.delete();
+		requiredSequent.nodeDeleted();
 
 		// propagate downwards
 		for (ProducedSequent produced : producedSequents) {
-			produced.delete();
+			produced.nodeDeleted();
 		}
 	}
 
