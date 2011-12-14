@@ -18,12 +18,11 @@ import java.util.List;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
-import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
+import org.eventb.internal.core.seqprover.IInternalHypAction;
 
 /**
  * @author Nicolas Beauger
@@ -53,17 +52,9 @@ public class Ordinator {
 			final Iterator<IHypAction> iter = hypActions.iterator();
 			boolean actionsChanged = false;
 			while (iter.hasNext()) {
-				final IHypAction hypAction = iter.next();
+				final IInternalHypAction hypAction = (IInternalHypAction) iter.next();
 
-				final Collection<Predicate> hyps;
-				if (hypAction instanceof ISelectionHypAction) {
-					hyps = ((ISelectionHypAction) hypAction).getHyps();
-				} else if (hypAction instanceof IForwardInfHypAction) {
-					hyps = ((IForwardInfHypAction) hypAction).getHyps();
-				} else {
-					assert false;
-					hyps = null;
-				}
+				final Collection<Predicate> hyps = hypAction.getHyps();
 				if (!sequent.containsHypotheses(hyps)) {
 					iter.remove();
 					actionsChanged = true;
