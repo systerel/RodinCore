@@ -83,20 +83,20 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 		case 1:
 			return children[0];
 		}
-		int shortestLength = Integer.MAX_VALUE;
-		SawyerNode shortest = null;
+		int smallestSize = Integer.MAX_VALUE;
+		SawyerNode smallest = null;
 		for (SawyerNode child : children) {
 			if (child == null) {
 				continue;
 			}
-			int childLength = child.getSize();
-			if (childLength < shortestLength) {
-				shortestLength = childLength;
-				shortest = child;
+			final int childSize = child.getSize();
+			if (childSize < smallestSize) {
+				smallestSize = childSize;
+				smallest = child;
 			}
 		}
-		Assert.isNotNull(shortest, "one child at least should be not null");
-		return shortest;
+		Assert.isNotNull(smallest, "one child at least should be not null");
+		return smallest;
 	}
 
 	public int getSize() {
