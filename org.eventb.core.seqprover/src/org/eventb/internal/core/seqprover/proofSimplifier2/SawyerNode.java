@@ -37,27 +37,16 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 	// no dependence is assumed between parents and children
 	private final SawyerNode[] children;
 
-	// parent in the original proof tree
-	// only one of children or parent can be final
-	private SawyerNode parent = null;
-
 	private final String comment;
 
 	private SawyerNode(IProofRule rule, SawyerNode[] children, String comment) {
 		super(rule);
 		this.children = children;
 		this.comment = comment;
-		for (SawyerNode child : this.children) {
-			child.parent = this;
-		}
 	}
 
 	public boolean isClosingNode() {
 		return children.length == 0;
-	}
-
-	public SawyerNode getParent() {
-		return parent;
 	}
 
 	// original children
