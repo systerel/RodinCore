@@ -27,15 +27,22 @@ public class ProofSawyer {
 
 	// TODO monitors
 	public IProofTree simplify(IProofMonitor monitor) {
+		return __simplify(false, monitor);
+	}
+
+	/**
+	 * For TESTING purposes only.
+	 */
+	public IProofTree __simplify(boolean makeProofTree, IProofMonitor monitor) {
 		final SawyerTree sawyerTree = new SawyerTree(proofTree.getRoot());
 		sawyerTree.init();
 		final int initialSize = sawyerTree.getSize();
 		sawyerTree.saw();
 		final int sawedSize = sawyerTree.getSize();
-		if (sawedSize < initialSize) {
+		if (sawedSize < initialSize || makeProofTree) {
 			return sawyerTree.toProofTree(monitor);
 		} else {
-			return proofTree;
+			return null;
 		}
 	}
 }
