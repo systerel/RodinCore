@@ -45,10 +45,6 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 		this.comment = comment;
 	}
 
-	public boolean isClosingNode() {
-		return children.length == 0;
-	}
-
 	// original children
 	public SawyerNode[] getChildren() {
 		return children;
