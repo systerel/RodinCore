@@ -28,9 +28,9 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 		for (int i = 0; i < childNodes.length; i++) {
 			children[i] = fromTreeNode(childNodes[i]);
 		}
-
-		return new SawyerNode(proofNode.getRule(), children,
-				proofNode.getComment());
+		final IProofRule cleanRule = HypActionCleaner
+				.cleanHypActions(proofNode);
+		return new SawyerNode(cleanRule, children, proofNode.getComment());
 	}
 
 	// children in the original proof tree
