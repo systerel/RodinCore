@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
-import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -104,32 +103,58 @@ public class HypActionCleaner {
 		
 	}
 	
-	
-	private static class HypActCleaner implements ICleaner<IHypAction> {
+	/**
+	 * Abstract type for cleaners that clean an object of type T, composed of a
+	 * list of E.
+	 * 
+	 * @param <T>
+	 *            type of the cleaned object
+	 * @param <E>
+	 *            type of the elements of the list
+	 */
+	private static abstract class AbstractComposedCleaner<T, E> implements ICleaner<T> {
+		private final ListCleaner<E> listCleaner;
+		private final boolean disappearWhenEmpty;
 
-		private final ListCleaner<Predicate> hypsCleaner;
+		public AbstractComposedCleaner(ICleaner<E> elemCleaner, boolean disappearWhenEmpty) {
+			this.listCleaner = new ListCleaner<E>(elemCleaner);
+			this.disappearWhenEmpty = disappearWhenEmpty;
+		}
+
+		protected abstract List<E> getList(T object);
+		
+		protected abstract T makeNewInstance(T original, List<E> cleanList);
+		
+		public final T clean(T original) {
+			final List<E> origList = getList(original);
+			final List<E> cleanList = listCleaner.clean(origList);
+			
+			if (disappearWhenEmpty && cleanList.isEmpty()) {
+				return null;
+			}
+			if (cleanList != origList) {
+				return makeNewInstance(original, cleanList);
+			}
+			return original;
+
+		};
+	}
+	
+	private static class HypActCleaner extends AbstractComposedCleaner<IHypAction, Predicate> {
 
 		public HypActCleaner(IProverSequent sequent) {
-			final HypCleaner hypCleaner = new HypCleaner(sequent);
-			this.hypsCleaner = new ListCleaner<Predicate>(hypCleaner);
+			super(new HypCleaner(sequent), true);
 		}
 
 		@Override
-		public IHypAction clean(IHypAction original) {
-			final List<Predicate> origHyps = new ArrayList<Predicate>(
-					((IInternalHypAction) original).getHyps());
-			final List<Predicate> cleanHyps = hypsCleaner.clean(origHyps);
-			
-			if (cleanHyps.isEmpty()) {
-				return null;
-			}
-			if (cleanHyps != origHyps) {
-				return makeHypAction(original, cleanHyps);
-			}
-			return original;
+		protected List<Predicate> getList(IHypAction hypAction) {
+			return new ArrayList<Predicate>(
+					((IInternalHypAction) hypAction).getHyps());
 		}
-		
-		private static IHypAction makeHypAction(IHypAction original, Collection<Predicate> newHyps) {
+
+		@Override
+		protected IHypAction makeNewInstance(IHypAction original,
+				List<Predicate> newHyps) {
 			if (original instanceof IForwardInfHypAction) {
 				final IForwardInfHypAction fwd = (IForwardInfHypAction) original;
 				return makeForwardInfHypAction(newHyps, fwd.getAddedFreeIdents(),
@@ -144,62 +169,42 @@ public class HypActionCleaner {
 
 	}
 	
-	private static class AntecedentCleaner implements ICleaner<IAntecedent> {
+	private static class AntecedentCleaner extends AbstractComposedCleaner<IAntecedent, IHypAction> {
 
-		private final ListCleaner<IHypAction> hypActsCleaner;
-		
 		public AntecedentCleaner(IProverSequent sequent) {
-			final HypActCleaner hypActCleaner = new HypActCleaner(sequent);
-			this.hypActsCleaner = new ListCleaner<IHypAction>(hypActCleaner);
-		}
-		
-		@Override
-		public IAntecedent clean(IAntecedent original) {
-			final List<IHypAction> origHypActs = original.getHypActions();
-			
-			final List<IHypAction> cleanHypActs = hypActsCleaner.clean(origHypActs);
-			
-			if (cleanHypActs != origHypActs) {
-				return makeAnte(original, cleanHypActs);
-			}
-			return original;
+			super(new HypActCleaner(sequent), false);
 		}
 
-		private static IAntecedent makeAnte(IAntecedent original,
-				List<IHypAction> cleanHypActs) {
+		@Override
+		protected List<IHypAction> getList(IAntecedent antecedent) {
+			return antecedent.getHypActions();
+		}
+
+		@Override
+		protected IAntecedent makeNewInstance(IAntecedent original,
+				List<IHypAction> cleanList) {
 			return makeAntecedent(original.getGoal(),
 					original.getAddedHyps(),
 					original.getUnselectedAddedHyps(),
-					original.getAddedFreeIdents(), cleanHypActs);
+					original.getAddedFreeIdents(), cleanList);
 		}
 		
 	}
 	
-	private static class RuleCleaner implements ICleaner<IProofRule> {
-		
-		private final ListCleaner<IAntecedent> antesCleaner;
+	private static class RuleCleaner extends AbstractComposedCleaner<IProofRule, IAntecedent> {
 		
 		public RuleCleaner(IProverSequent sequent) {
-			final AntecedentCleaner anteCleaner = new AntecedentCleaner(sequent);
-			this.antesCleaner = new ListCleaner<IAntecedent>(anteCleaner);
+			super(new AntecedentCleaner(sequent), false);
 		}
 		
 		@Override
-		public IProofRule clean(IProofRule original) {
-			
-			final List<IAntecedent> origAntes = Arrays.asList(original
-					.getAntecedents());
-			final List<IAntecedent> cleanAntes = antesCleaner.clean(origAntes);
-			
-			if (cleanAntes != origAntes) {
-				return makeRule(original, cleanAntes);
-
-			}
-			return original;
+		protected List<IAntecedent> getList(IProofRule rule) {
+			return Arrays.asList(rule.getAntecedents());
 		}
 
-		private static IProofRule makeRule(IProofRule original,
-				final List<IAntecedent> cleanAntes) {
+		@Override
+		protected IProofRule makeNewInstance(IProofRule original,
+				List<IAntecedent> cleanAntes) {
 			final IAntecedent[] newAntes = cleanAntes
 					.toArray(new IAntecedent[cleanAntes.size()]);
 			return makeProofRule(original.getReasonerDesc(),
