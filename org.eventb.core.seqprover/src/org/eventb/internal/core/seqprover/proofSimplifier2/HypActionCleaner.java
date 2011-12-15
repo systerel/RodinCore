@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
-import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,6 +129,19 @@ public class HypActionCleaner {
 			return original;
 		}
 		
+		private static IHypAction makeHypAction(IHypAction original, Collection<Predicate> newHyps) {
+			if (original instanceof IForwardInfHypAction) {
+				final IForwardInfHypAction fwd = (IForwardInfHypAction) original;
+				return makeForwardInfHypAction(newHyps, fwd.getAddedFreeIdents(),
+						fwd.getInferredHyps());
+			} else if (original instanceof ISelectionHypAction) {
+				return new SelectionHypAction(original.getActionType(), newHyps);
+			} else { // unknown hyp action type
+				assert false;
+				return null;
+			}
+		}
+
 	}
 	
 	private static class AntecedentCleaner implements ICleaner<IAntecedent> {
@@ -147,12 +160,17 @@ public class HypActionCleaner {
 			final List<IHypAction> cleanHypActs = hypActsCleaner.clean(origHypActs);
 			
 			if (cleanHypActs != origHypActs) {
-				return makeAntecedent(original.getGoal(),
-						original.getAddedHyps(),
-						original.getUnselectedAddedHyps(),
-						original.getAddedFreeIdents(), cleanHypActs);
+				return makeAnte(original, cleanHypActs);
 			}
 			return original;
+		}
+
+		private static IAntecedent makeAnte(IAntecedent original,
+				List<IHypAction> cleanHypActs) {
+			return makeAntecedent(original.getGoal(),
+					original.getAddedHyps(),
+					original.getUnselectedAddedHyps(),
+					original.getAddedFreeIdents(), cleanHypActs);
 		}
 		
 	}
@@ -174,31 +192,22 @@ public class HypActionCleaner {
 			final List<IAntecedent> cleanAntes = antesCleaner.clean(origAntes);
 			
 			if (cleanAntes != origAntes) {
-				final IAntecedent[] newAntes = cleanAntes
-						.toArray(new IAntecedent[cleanAntes.size()]);
-				return makeProofRule(original.getReasonerDesc(),
-						original.generatedUsing(), original.getGoal(),
-						original.getNeededHyps(), original.getConfidence(),
-						original.getDisplayName(), newAntes);
+				return makeRule(original, cleanAntes);
 
 			}
 			return original;
 		}
-		
-	}
-	
-	
-	private static IHypAction makeHypAction(IHypAction original, Collection<Predicate> newHyps) {
-		if (original instanceof IForwardInfHypAction) {
-			final IForwardInfHypAction fwd = (IForwardInfHypAction) original;
-			return makeForwardInfHypAction(newHyps, fwd.getAddedFreeIdents(),
-					fwd.getInferredHyps());
-		} else if (original instanceof ISelectionHypAction) {
-			return new SelectionHypAction(original.getActionType(), newHyps);
-		} else { // unknown hyp action type
-			assert false;
-			return null;
+
+		private static IProofRule makeRule(IProofRule original,
+				final List<IAntecedent> cleanAntes) {
+			final IAntecedent[] newAntes = cleanAntes
+					.toArray(new IAntecedent[cleanAntes.size()]);
+			return makeProofRule(original.getReasonerDesc(),
+					original.generatedUsing(), original.getGoal(),
+					original.getNeededHyps(), original.getConfidence(),
+					original.getDisplayName(), newAntes);
 		}
+		
 	}
 	
 	/**
