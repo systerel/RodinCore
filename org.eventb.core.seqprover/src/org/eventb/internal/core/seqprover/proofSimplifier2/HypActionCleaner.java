@@ -11,6 +11,7 @@
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 
 import java.util.ArrayList;
@@ -21,18 +22,34 @@ import java.util.ListIterator;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
+import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.core.seqprover.IInternalHypAction;
+import org.eventb.internal.core.seqprover.SelectionHypAction;
 
 /**
  * @author Nicolas Beauger
  * 
  */
 public class HypActionCleaner {
-
+	
+	private static IHypAction makeHypAction(IHypAction original, Collection<Predicate> newHyps) {
+		if (original instanceof IForwardInfHypAction) {
+			final IForwardInfHypAction fwd = (IForwardInfHypAction) original;
+			return makeForwardInfHypAction(newHyps, fwd.getAddedFreeIdents(),
+					fwd.getInferredHyps());
+		} else if (original instanceof ISelectionHypAction) {
+			return new SelectionHypAction(original.getActionType(), newHyps);
+		} else { // unknown hyp action type
+			assert false;
+			return null;
+		}
+	}
+	
 	private static IHypAction cleanHypAction(IHypAction hypAction,
 			IProverSequent sequent) {
 		final IInternalHypAction hypAct = (IInternalHypAction) hypAction;
@@ -52,7 +69,7 @@ public class HypActionCleaner {
 			return null;
 		}
 		if (clean.size() < original.size()) {
-			
+			return makeHypAction(hypAction, clean);
 		}
 		return hypAction;
 	}
