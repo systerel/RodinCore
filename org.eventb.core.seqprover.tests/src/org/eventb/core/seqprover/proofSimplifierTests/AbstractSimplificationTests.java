@@ -64,19 +64,24 @@ public abstract class AbstractSimplificationTests {
 		this.expected = expected;
 	}
 
-	private IProofTree genProofTree() {
+	protected IProofTree genProofTree() {
 		final IProverSequent seq = genSeq(sequent);
 		final IProofTree pt = makeProofTree(seq, null);
 		initial.apply(pt.getRoot());
 		return pt;
 	}
 
+	protected void additionalChecks(IProofTree simplified) {
+		// override to make more verifications
+	}
+	
 	@Test
 	public void simplificationTest() throws Exception {
 		final IProofTree pt = genProofTree();
 		final IProofTree simplified = simplify(pt);
 		assertNotNull(simplified);
 		expected.check(simplified.getRoot());
+		additionalChecks(simplified);
 	}
 
 }
