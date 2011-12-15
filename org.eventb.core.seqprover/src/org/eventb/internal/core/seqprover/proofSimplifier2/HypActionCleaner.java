@@ -36,6 +36,157 @@ import org.eventb.internal.core.seqprover.SelectionHypAction;
  * 
  */
 public class HypActionCleaner {
+
+	private static interface ICleaner<T> {
+		
+		/**
+		 * Cleans the given object.
+		 * <p>
+		 * Returns:
+		 * <ul>
+		 * <li><code>null</code> if the original object must disappear
+		 * <li>a new clean instance iff the original object must change
+		 * <li>the original object iff it is already clean
+		 * </ul>
+		 * 
+		 * @param original
+		 *            an object to clean
+		 * @return a clean object or <code>null</code>
+		 */
+		T clean(T original);
+	}
+	
+	private static class ListCleaner<T> implements ICleaner<List<T>> {
+
+		private final ICleaner<T> elementCleaner;
+		
+		public ListCleaner(ICleaner<T> elementCleaner) {
+			this.elementCleaner = elementCleaner;
+		}
+
+		@Override
+		public List<T> clean(List<T> original) {
+			final List<T> clean = new ArrayList<T>(original);
+			final ListIterator<T> iter = clean.listIterator();
+			// must test hypotheses individually, using containsHypotheses(original)
+			// would remove useful predicates
+			while (iter.hasNext()) {
+				final T element = iter.next();
+				final T cleanElement = elementCleaner.clean(element);
+				if (cleanElement == null) {
+					iter.remove();
+				} else if (cleanElement != element) {
+					iter.set(cleanElement);
+				}
+			}
+			if (!clean.equals(original)) {
+				return clean;
+			}
+			return original;
+		}
+	}
+	
+	private static class HypCleaner implements ICleaner<Predicate> {
+
+		private final IProverSequent sequent;
+		
+		public HypCleaner(IProverSequent sequent) {
+			this.sequent = sequent;
+		}
+
+		@Override
+		public Predicate clean(Predicate original) {
+			if (!sequent.containsHypothesis(original)) {
+				return null;
+			}
+			return original;
+		}
+		
+	}
+	
+	
+	private static class HypActCleaner implements ICleaner<IHypAction> {
+
+		private final ListCleaner<Predicate> hypsCleaner;
+
+		public HypActCleaner(IProverSequent sequent) {
+			final HypCleaner hypCleaner = new HypCleaner(sequent);
+			this.hypsCleaner = new ListCleaner<Predicate>(hypCleaner);
+		}
+
+		@Override
+		public IHypAction clean(IHypAction original) {
+			final List<Predicate> origHyps = new ArrayList<Predicate>(
+					((IInternalHypAction) original).getHyps());
+			final List<Predicate> cleanHyps = hypsCleaner.clean(origHyps);
+			
+			if (cleanHyps.isEmpty()) {
+				return null;
+			}
+			if (cleanHyps != origHyps) {
+				return makeHypAction(original, cleanHyps);
+			}
+			return original;
+		}
+		
+	}
+	
+	private static class AntecedentCleaner implements ICleaner<IAntecedent> {
+
+		private final ListCleaner<IHypAction> hypActsCleaner;
+		
+		public AntecedentCleaner(IProverSequent sequent) {
+			final HypActCleaner hypActCleaner = new HypActCleaner(sequent);
+			this.hypActsCleaner = new ListCleaner<IHypAction>(hypActCleaner);
+		}
+		
+		@Override
+		public IAntecedent clean(IAntecedent original) {
+			final List<IHypAction> origHypActs = original.getHypActions();
+			
+			final List<IHypAction> cleanHypActs = hypActsCleaner.clean(origHypActs);
+			
+			if (cleanHypActs != origHypActs) {
+				return makeAntecedent(original.getGoal(),
+						original.getAddedHyps(),
+						original.getUnselectedAddedHyps(),
+						original.getAddedFreeIdents(), cleanHypActs);
+			}
+			return original;
+		}
+		
+	}
+	
+	private static class RuleCleaner implements ICleaner<IProofRule> {
+		
+		private final ListCleaner<IAntecedent> antesCleaner;
+		
+		public RuleCleaner(IProverSequent sequent) {
+			final AntecedentCleaner anteCleaner = new AntecedentCleaner(sequent);
+			this.antesCleaner = new ListCleaner<IAntecedent>(anteCleaner);
+		}
+		
+		@Override
+		public IProofRule clean(IProofRule original) {
+			
+			final List<IAntecedent> origAntes = Arrays.asList(original
+					.getAntecedents());
+			final List<IAntecedent> cleanAntes = antesCleaner.clean(origAntes);
+			
+			if (cleanAntes != origAntes) {
+				final IAntecedent[] newAntes = cleanAntes
+						.toArray(new IAntecedent[cleanAntes.size()]);
+				return makeProofRule(original.getReasonerDesc(),
+						original.generatedUsing(), original.getGoal(),
+						original.getNeededHyps(), original.getConfidence(),
+						original.getDisplayName(), newAntes);
+
+			}
+			return original;
+		}
+		
+	}
+	
 	
 	private static IHypAction makeHypAction(IHypAction original, Collection<Predicate> newHyps) {
 		if (original instanceof IForwardInfHypAction) {
@@ -50,59 +201,6 @@ public class HypActionCleaner {
 		}
 	}
 	
-	private static IHypAction cleanHypAction(IHypAction hypAction,
-			IProverSequent sequent) {
-		final IInternalHypAction hypAct = (IInternalHypAction) hypAction;
-
-		final Collection<Predicate> original = hypAct.getHyps();
-		final List<Predicate> clean = new ArrayList<Predicate>(hypAct.getHyps());
-		final ListIterator<Predicate> iter = clean.listIterator();
-		// must test hypotheses individually, using containsHypotheses(original)
-		// would remove useful predicates
-		while (iter.hasNext()) {
-			final Predicate hyp = iter.next();
-			if (!sequent.containsHypothesis(hyp)) {
-				iter.remove();
-			}
-		}
-		if (clean.isEmpty()) {
-			return null;
-		}
-		if (clean.size() < original.size()) {
-			return makeHypAction(hypAction, clean);
-		}
-		return hypAction;
-	}
-	
-	private static IAntecedent cleanHypActions(IAntecedent antecedent,
-			IProverSequent sequent) {
-		final List<IHypAction> original = antecedent.getHypActions();
-		final List<IHypAction> clean = new ArrayList<IHypAction>(original);
-
-		final ListIterator<IHypAction> iter = clean.listIterator();
-		while (iter.hasNext()) {
-			final IHypAction hypAct = iter.next();
-			final IHypAction cleanHypAct = cleanHypAction(hypAct, sequent);
-			
-			if (cleanHypAct == null) {
-				iter.remove();
-			} else {
-				if (cleanHypAct != hypAct) {
-					iter.set(cleanHypAct);
-				}
-			}
-		}
-		if (!clean.equals(original)) {
-			return makeAntecedent(antecedent.getGoal(),
-					antecedent.getAddedHyps(),
-					antecedent.getUnselectedAddedHyps(),
-					antecedent.getAddedFreeIdents(), clean);
-		} else {
-			return antecedent;
-		}
-
-	}
-	
 	/**
 	 * Returns a rule with unused hypothesis actions removed, or the given
 	 * rule if no change occurred.
@@ -112,20 +210,7 @@ public class HypActionCleaner {
 	 * @return a new DependRule
 	 */
 	public static IProofRule cleanHypActions(IProofTreeNode node) {
-		final IProofRule rule = node.getRule();
-		final IProverSequent sequent = node.getSequent();
-		final IAntecedent[] antecedents = rule.getAntecedents();
-		final IAntecedent[] newAntecedents = new IAntecedent[antecedents.length];
-
-		for (int i = 0; i < antecedents.length; i++) {
-			newAntecedents[i] = cleanHypActions(antecedents[i], sequent);
-		}
-		if (!Arrays.equals(newAntecedents, antecedents)) {
-			return makeProofRule(rule.getReasonerDesc(), rule.generatedUsing(),
-					rule.getGoal(), rule.getNeededHyps(), rule.getConfidence(),
-					rule.getDisplayName(), newAntecedents);
-		}
-		return rule;
+		return new RuleCleaner(node.getSequent()).clean(node.getRule());
 	}
 
 }
