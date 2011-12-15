@@ -31,7 +31,7 @@ import org.eventb.internal.core.seqprover.IInternalHypAction;
  * @author Nicolas Beauger
  * 
  */
-public class Ordinator {
+public class HypActionCleaner {
 
 	private static IHypAction cleanHypAction(IHypAction hypAction,
 			IProverSequent sequent) {
