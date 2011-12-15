@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
@@ -21,7 +25,6 @@ import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.seqprover.IInternalHypAction;
 
 /**
@@ -30,50 +33,79 @@ import org.eventb.internal.core.seqprover.IInternalHypAction;
  */
 public class Ordinator {
 
+	private static IHypAction cleanHypAction(IHypAction hypAction,
+			IProverSequent sequent) {
+		final IInternalHypAction hypAct = (IInternalHypAction) hypAction;
+
+		final Collection<Predicate> original = hypAct.getHyps();
+		final List<Predicate> clean = new ArrayList<Predicate>(hypAct.getHyps());
+		final ListIterator<Predicate> iter = clean.listIterator();
+		// must test hypotheses individually, using containsHypotheses(original)
+		// would remove useful predicates
+		while (iter.hasNext()) {
+			final Predicate hyp = iter.next();
+			if (!sequent.containsHypothesis(hyp)) {
+				iter.remove();
+			}
+		}
+		if (clean.isEmpty()) {
+			return null;
+		}
+		if (clean.size() < original.size()) {
+			
+		}
+		return hypAction;
+	}
+	
+	private static IAntecedent cleanHypActions(IAntecedent antecedent,
+			IProverSequent sequent) {
+		final List<IHypAction> original = antecedent.getHypActions();
+		final List<IHypAction> clean = new ArrayList<IHypAction>(original);
+
+		final ListIterator<IHypAction> iter = clean.listIterator();
+		while (iter.hasNext()) {
+			final IHypAction hypAct = iter.next();
+			final IHypAction cleanHypAct = cleanHypAction(hypAct, sequent);
+			
+			if (cleanHypAct == null) {
+				iter.remove();
+			} else {
+				if (cleanHypAct != hypAct) {
+					iter.set(cleanHypAct);
+				}
+			}
+		}
+		if (!clean.equals(original)) {
+			return makeAntecedent(antecedent.getGoal(),
+					antecedent.getAddedHyps(),
+					antecedent.getUnselectedAddedHyps(),
+					antecedent.getAddedFreeIdents(), clean);
+		} else {
+			return antecedent;
+		}
+
+	}
+	
 	/**
-	 * Returns a rule with with unused hypothesis actions removed, or the given
+	 * Returns a rule with unused hypothesis actions removed, or the given
 	 * rule if no change occurred.
 	 * 
 	 * @param node
 	 *            a proof tree node with a rule
 	 * @return a new DependRule
 	 */
-	private static IProofRule cleanHypActions(IProofTreeNode node) {
+	public static IProofRule cleanHypActions(IProofTreeNode node) {
 		final IProofRule rule = node.getRule();
 		final IProverSequent sequent = node.getSequent();
 		final IAntecedent[] antecedents = rule.getAntecedents();
 		final IAntecedent[] newAntecedents = new IAntecedent[antecedents.length];
 
-		boolean changed = false;
 		for (int i = 0; i < antecedents.length; i++) {
-			final IAntecedent antecedent = antecedents[i];
-			final List<IHypAction> hypActions = new ArrayList<IHypAction>(
-					antecedent.getHypActions());
-			final Iterator<IHypAction> iter = hypActions.iterator();
-			boolean actionsChanged = false;
-			while (iter.hasNext()) {
-				final IInternalHypAction hypAction = (IInternalHypAction) iter.next();
-
-				final Collection<Predicate> hyps = hypAction.getHyps();
-				if (!sequent.containsHypotheses(hyps)) {
-					iter.remove();
-					actionsChanged = true;
-				}
-			}
-			if (actionsChanged) {
-				newAntecedents[i] = ProverFactory.makeAntecedent(
-						antecedent.getGoal(), antecedent.getAddedHyps(),
-						antecedent.getUnselectedAddedHyps(),
-						antecedent.getAddedFreeIdents(), hypActions);
-				changed = true;
-			} else {
-				newAntecedents[i] = antecedent;
-			}
+			newAntecedents[i] = cleanHypActions(antecedents[i], sequent);
 		}
-		if (changed) {
-			return ProverFactory.makeProofRule(rule.getReasonerDesc(),
-					rule.generatedUsing(), rule.getGoal(),
-					rule.getNeededHyps(), rule.getConfidence(),
+		if (!Arrays.equals(newAntecedents, antecedents)) {
+			return makeProofRule(rule.getReasonerDesc(), rule.generatedUsing(),
+					rule.getGoal(), rule.getNeededHyps(), rule.getConfidence(),
 					rule.getDisplayName(), newAntecedents);
 		}
 		return rule;
