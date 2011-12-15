@@ -20,23 +20,19 @@ import static org.eventb.core.seqprover.tactics.tests.TreeShape.hyp;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.trueGoal;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.typeRewrites;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.seqprover.IHypAction;
-import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.tactics.tests.TreeShape;
-import org.eventb.internal.core.seqprover.IInternalHypAction;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
@@ -53,28 +49,6 @@ public class HypActionSimplificationTests extends AbstractSimplificationTests {
 		return makeHideHypAction(asList(p(hyp)));
 	}
 
-	// avoid failing because collections don't have the same type
-	// like ArrayList and LinkedHashSet
-	private static <T> void assertSortedContents(Collection<T> expected,
-			Collection<T> actual) {
-		assertEquals(new ArrayList<T>(expected), new ArrayList<T>(actual));
-	}
-
-	private static void assertHypAction(IHypAction exp, IHypAction act) {
-		assertEquals(exp.getActionType(), act.getActionType());
-		assertSortedContents(((IInternalHypAction) exp).getHyps(),
-				((IInternalHypAction) act).getHyps());
-
-		if (exp instanceof IForwardInfHypAction) {
-			assertTrue(act instanceof IForwardInfHypAction);
-			final IForwardInfHypAction expFwd = (IForwardInfHypAction) exp;
-			final IForwardInfHypAction actFwd = (IForwardInfHypAction) act;
-			assertArrayEquals(expFwd.getAddedFreeIdents(),
-					actFwd.getAddedFreeIdents());
-			assertSortedContents(expFwd.getInferredHyps(), actFwd.getInferredHyps());
-		}
-	}
-	
 	private static void assertHypActions(IProofTree simplified, List<IHypAction> expectedHypActions) {
 		final IAntecedent[] antecedents = simplified.getRoot().getRule().getAntecedents();
 		if (antecedents.length == 0) {
@@ -84,7 +58,7 @@ public class HypActionSimplificationTests extends AbstractSimplificationTests {
 		final List<IHypAction> actual = antecedents[0].getHypActions();
 		assertEquals(expectedHypActions.size(), actual.size());
 		for (int i = 0; i < actual.size(); i++) {
-			assertHypAction(expectedHypActions.get(i), actual.get(i));
+			assertTrue(ProverLib.deepEquals(expectedHypActions.get(i), actual.get(i)));
 		}
 	}
 
