@@ -12,6 +12,7 @@ package org.eventb.internal.core.seqprover.proofSimplifier2;
 
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.ProverLib;
 
 /**
  * @author Nicolas Beauger
@@ -25,24 +26,26 @@ public class ProofSawyer {
 		this.proofTree = proofTree;
 	}
 
-	// TODO monitors
-	public IProofTree simplify(IProofMonitor monitor) {
-		return __simplify(false, monitor);
-	}
-
 	/**
-	 * For TESTING purposes only.
+	 * Simplify the proof tree by removing:
+	 * <ul>
+	 * <li>useless hyp actions
+	 * <li>useless proof steps
+	 * </ul>
+	 * 
+	 * @param monitor
+	 *            a monitor to report progress and support cancellation
+	 * @return the simplified proof tree, or <code>null</code> if no
+	 *         simplification occurred
 	 */
-	public IProofTree __simplify(boolean makeProofTree, IProofMonitor monitor) {
+	public IProofTree simplify(IProofMonitor monitor) {
 		final SawyerTree sawyerTree = new SawyerTree(proofTree.getRoot());
 		sawyerTree.init();
-		final int initialSize = sawyerTree.getSize();
 		sawyerTree.saw();
-		final int sawedSize = sawyerTree.getSize();
-		if (sawedSize < initialSize || makeProofTree) {
-			return sawyerTree.toProofTree(monitor);
-		} else {
+		final IProofTree sawed = sawyerTree.toProofTree(monitor);
+		if (sawed != null && ProverLib.deepEquals(proofTree, sawed)) {
 			return null;
 		}
+		return sawed;
 	}
 }
