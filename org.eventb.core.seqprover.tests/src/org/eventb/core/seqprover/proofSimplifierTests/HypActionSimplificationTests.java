@@ -103,7 +103,7 @@ public class HypActionSimplificationTests extends AbstractSimplificationTests {
 	}
 
 	@Override
-	protected void additionalChecks(IProofTree simplified) {
+	protected void additionalChecks(IProofTree original, IProofTree simplified) {
 		assertHypActions(simplified, simpHypActions);
 	}
 	

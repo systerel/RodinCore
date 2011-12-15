@@ -25,7 +25,10 @@ import static org.eventb.core.seqprover.tactics.tests.TreeShape.trueGoal;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eventb.core.seqprover.IProofTree;
+import org.eventb.core.seqprover.ProverLib;
 import org.eventb.core.seqprover.tactics.tests.TreeShape;
+import org.junit.Assert;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
@@ -43,6 +46,11 @@ public class NoSimplificationTests extends AbstractSimplificationTests {
 
 	public NoSimplificationTests(String sequent, TreeShape shape) {
 		super(sequent, shape, shape);
+	}
+	
+	@Override
+	protected void additionalChecks(IProofTree original, IProofTree simplified) {
+		Assert.assertTrue(ProverLib.deepEquals(original, simplified));
 	}
 	
 	@Parameters
