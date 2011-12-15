@@ -48,6 +48,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.ImpI;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractManualRewrites;
+import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DisjunctionToImplicationRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.EqvRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunImgSimplifies;
@@ -231,6 +232,19 @@ public abstract class TreeShape {
 		@Override
 		protected String getReasonerID() {
 			return TypeRewrites.REASONER_ID;
+		}
+
+	}
+	
+	private static class AutoRewritesShape extends VoidShape {
+
+		public AutoRewritesShape(TreeShape[] expChildren) {
+			super(expChildren);
+		}
+
+		@Override
+		protected String getReasonerID() {
+			return AutoRewrites.REASONER_ID;
 		}
 
 	}
@@ -625,6 +639,10 @@ public abstract class TreeShape {
 
 	public static TreeShape typeRewrites(TreeShape... children) {
 		return new TypeRewritesShape(children);
+	}
+
+	public static TreeShape autoRewrites(TreeShape... children) {
+		return new AutoRewritesShape(children);
 	}
 
 	public static TreeShape hyp(TreeShape... children) {
