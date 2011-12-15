@@ -142,7 +142,10 @@ public class ProverLib {
 		return p1.equals(p2);
 	}
 
-	private static boolean deepEquals(IHypAction ha1, IHypAction ha2) {
+	/**
+	 * @since 2.4
+	 */
+	public static boolean deepEquals(IHypAction ha1, IHypAction ha2) {
 		if (ha1 == ha2) return true;
 		if (! ha1.getActionType().equals(ha2.getActionType())) return false;
 		if (ha1 instanceof IForwardInfHypAction) {
