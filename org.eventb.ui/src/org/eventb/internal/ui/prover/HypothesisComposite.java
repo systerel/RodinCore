@@ -370,10 +370,6 @@ public abstract class HypothesisComposite implements
 	 */
 	private void reinitialise(Iterable<Predicate> hyps, IProverSequent sequent,
 			boolean enabled) {
-
-		if (styledText != null) {
-			styledText.dispose();
-		}
 		totalClearance();
 		initStyledTextAndManager();
 		assert styledText != null;
@@ -430,20 +426,22 @@ public abstract class HypothesisComposite implements
 		if (styledText == null) {
 			return;
 		}
-		for (PredicateRow row : rows) {
-			row.dispose();
-		}
-		if (ch != null) {
-			ch.remove();
-		}
-		if (cl != null && !styledText.isDisposed()) {
-			styledText.removeCaretListener(cl);
-		}
-		proverUI.getHighlighter().removeHighlight(styledText);
-		if (controlPainter != null) {
-			if (styledText != null && !styledText.isDisposed())
-				styledText.removePaintObjectListener(controlPainter);
-			controlPainter.clear();
+		if (!styledText.isDisposed()) {
+			for (PredicateRow row : rows) {
+				row.dispose();
+			}
+			if (ch != null) {
+				ch.remove();
+			}
+			if (cl != null) {
+				styledText.removeCaretListener(cl);
+			}
+			proverUI.getHighlighter().removeHighlight(styledText);
+			if (controlPainter != null) {
+				if (styledText != null && !styledText.isDisposed())
+					styledText.removePaintObjectListener(controlPainter);
+				controlPainter.clear();
+			}
 		}
 		rows.clear();
 		if (manager != null)

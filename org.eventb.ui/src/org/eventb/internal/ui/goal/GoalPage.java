@@ -131,11 +131,11 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	}
 
 	private void totalClearance() {
-		if (row != null) {
-			row.dispose();
-			row = null;
-		}
 		if (styledText != null && !styledText.isDisposed()) {
+			if (row != null) {
+				row.dispose();
+				row = null;
+			}
 			proverUI.getHighlighter().removeHighlight(styledText);
 			if (cl != null)
 				styledText.removeCaretListener(cl);
