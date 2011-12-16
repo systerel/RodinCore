@@ -322,8 +322,37 @@ public class NodeRemovalTests extends AbstractSimplificationTests {
 										falseHyp(),
 										trueGoal())),
 						// expected		
-						falseHyp())
+						falseHyp()),
 				
+						
+				// TODO ah produces 3 antecedents, one of them remains
+				
+				///////////////////
+				// 5 nodes tests //
+				///////////////////
+
+				/**
+				 * Double branching: 0 gets deleted, then 2, 3, 4 as a
+				 * consequence. 2 has no remaining child to stick.
+				 * 
+				 * Proof tree:
+				 *   0
+				 * 1   2
+				 *    3 4
+				 * Dependencies:
+				 * {0->2, 2->3, 2->4}
+				 * Expected:
+				 * 1
+				 */
+				test("⊥ ;; x=0 |- ⊥ ∧ (⊤ ∧ x=0)",
+						// initial
+						conjI(
+								falseHyp(),
+								conjI(
+										trueGoal(),
+										hyp())),
+						// expected		
+						falseHyp())
 
 				);
 	}
