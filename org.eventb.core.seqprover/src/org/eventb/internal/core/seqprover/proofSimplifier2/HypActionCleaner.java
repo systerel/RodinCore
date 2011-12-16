@@ -16,8 +16,11 @@ import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
@@ -67,8 +70,6 @@ public class HypActionCleaner {
 		public List<T> clean(List<T> original) {
 			final List<T> clean = new ArrayList<T>(original);
 			final ListIterator<T> iter = clean.listIterator();
-			// must test hypotheses individually, using containsHypotheses(original)
-			// would remove useful predicates
 			while (iter.hasNext()) {
 				final T element = iter.next();
 				final T cleanElement = elementCleaner.clean(element);
@@ -89,18 +90,24 @@ public class HypActionCleaner {
 
 		private final IProverSequent sequent;
 		
+		private final Set<Predicate> inferred = new HashSet<Predicate>();
+		
 		public HypCleaner(IProverSequent sequent) {
 			this.sequent = sequent;
 		}
 
 		@Override
 		public Predicate clean(Predicate original) {
-			if (!sequent.containsHypothesis(original)) {
+			if (!sequent.containsHypothesis(original)
+					&& !inferred.contains(original)) {
 				return null;
 			}
 			return original;
 		}
-		
+
+		public void addInferred(Collection<Predicate> hyps) {
+			inferred.addAll(hyps);
+		}
 	}
 	
 	/**
@@ -113,10 +120,12 @@ public class HypActionCleaner {
 	 *            type of the elements of the list
 	 */
 	private static abstract class AbstractComposedCleaner<T, E> implements ICleaner<T> {
+		protected final ICleaner<E> elemCleaner;
 		private final ListCleaner<E> listCleaner;
 		private final boolean disappearWhenEmpty;
 
 		public AbstractComposedCleaner(ICleaner<E> elemCleaner, boolean disappearWhenEmpty) {
+			this.elemCleaner = elemCleaner;
 			this.listCleaner = new ListCleaner<E>(elemCleaner);
 			this.disappearWhenEmpty = disappearWhenEmpty;
 		}
@@ -125,7 +134,7 @@ public class HypActionCleaner {
 		
 		protected abstract T makeNewInstance(T original, List<E> cleanList);
 		
-		public final T clean(T original) {
+		public T clean(T original) {
 			final List<E> origList = getList(original);
 			final List<E> cleanList = listCleaner.clean(origList);
 			
@@ -146,6 +155,17 @@ public class HypActionCleaner {
 			super(new HypCleaner(sequent), true);
 		}
 
+		@Override
+		public IHypAction clean(IHypAction original) {
+			final IHypAction clean = super.clean(original);
+			
+			if (clean instanceof IForwardInfHypAction) {
+				final IForwardInfHypAction fwd = (IForwardInfHypAction) clean;
+				((HypCleaner) elemCleaner).addInferred(fwd.getInferredHyps());
+			}
+			return clean;
+		}
+		
 		@Override
 		protected List<Predicate> getList(IHypAction hypAction) {
 			return new ArrayList<Predicate>(
