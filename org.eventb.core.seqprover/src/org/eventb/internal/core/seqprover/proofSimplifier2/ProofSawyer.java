@@ -12,7 +12,6 @@ package org.eventb.internal.core.seqprover.proofSimplifier2;
 
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
-import org.eventb.core.seqprover.ProverLib;
 
 /**
  * @author Nicolas Beauger
@@ -42,10 +41,6 @@ public class ProofSawyer {
 		final SawyerTree sawyerTree = new SawyerTree(proofTree.getRoot());
 		sawyerTree.init();
 		sawyerTree.saw();
-		final IProofTree sawed = sawyerTree.toProofTree(monitor);
-		if (sawed != null && ProverLib.deepEquals(proofTree, sawed)) {
-			return null;
-		}
-		return sawed;
+		return sawyerTree.toProofTree(monitor);
 	}
 }

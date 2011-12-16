@@ -19,7 +19,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.tactics.tests.TreeShape;
-import org.eventb.internal.core.seqprover.proofSimplifier2.SawyerTree;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -34,10 +34,7 @@ import org.junit.runners.Parameterized;
 public abstract class AbstractSimplificationTests {
 
 	private static IProofTree simplify(IProofTree pt) throws Exception {
-		final SawyerTree sawyerTree = new SawyerTree(pt.getRoot());
-		sawyerTree.init();
-		sawyerTree.saw();
-		return sawyerTree.toProofTree(null);
+		return new ProofSawyer(pt).simplify(null);
 	}
 
 	protected static Predicate p(String predicate) {
