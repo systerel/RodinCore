@@ -34,7 +34,7 @@ import org.junit.runners.Parameterized;
 public abstract class AbstractSimplificationTests {
 
 	private static IProofTree simplify(IProofTree pt) throws Exception {
-		return new ProofSawyer(pt).simplify(null);
+		return new ProofSawyer().simplify(pt, null);
 	}
 
 	protected static Predicate p(String predicate) {

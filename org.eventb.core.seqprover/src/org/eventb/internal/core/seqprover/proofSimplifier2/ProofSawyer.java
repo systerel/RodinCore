@@ -19,12 +19,6 @@ import org.eventb.core.seqprover.IProofTree;
  */
 public class ProofSawyer {
 
-	private final IProofTree proofTree;
-
-	public ProofSawyer(IProofTree proofTree) {
-		this.proofTree = proofTree;
-	}
-
 	/**
 	 * Simplify the proof tree by removing:
 	 * <ul>
@@ -37,7 +31,11 @@ public class ProofSawyer {
 	 * @return the simplified proof tree, or <code>null</code> if no
 	 *         simplification occurred
 	 */
-	public IProofTree simplify(IProofMonitor monitor) {
+	public IProofTree simplify(IProofTree proofTree, IProofMonitor monitor) {
+		if (!proofTree.isClosed()) {
+			throw new IllegalArgumentException(
+					"Cannot simplify a non closed proof tree");
+		}
 		final SawyerTree sawyerTree = new SawyerTree(proofTree.getRoot());
 		sawyerTree.init();
 		sawyerTree.saw();
