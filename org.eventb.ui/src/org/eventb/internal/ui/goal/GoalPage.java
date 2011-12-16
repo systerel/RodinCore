@@ -196,10 +196,6 @@ public class GoalPage extends Page implements IGoalPage, IPropertyChangeListener
 	 */
 	public void setGoal(IProofTreeNode node) {
 		tracker.start();
-		if (styledText != null) {
-			styledText.dispose();
-			styledText = null;
-		}
 		totalClearance();
 		tracker.endSubtask("Clearing");
 		styledText = new StyledText(sc, SWT.NONE);
