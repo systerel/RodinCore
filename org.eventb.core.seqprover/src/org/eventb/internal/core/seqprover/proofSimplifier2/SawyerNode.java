@@ -50,9 +50,20 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 		return children;
 	}
 
-	public SawyerNode saw() {
+	/**
+	 * Recursively stick parents to children together for the subtree rooted at
+	 * this node, avoiding deleted nodes.
+	 * 
+	 * @return <ul>
+	 *         <li><code>null</code> if the subtree rooted at this node is
+	 *         entirely deleted,
+	 *         <li>a sticked child if this node is deleted
+	 *         <li>or this node with sticked children
+	 *         </ul>
+	 */
+	public SawyerNode stickTogether() {
 		for (int i = 0; i < children.length; i++) {
-			children[i] = children[i].saw();
+			children[i] = children[i].stickTogether();
 		}
 		if (isDeleted()) {
 			return getShortestChild();

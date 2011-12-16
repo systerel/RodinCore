@@ -82,7 +82,7 @@ public class SawyerTree {
 
 	public void saw() {
 		deleteUnneededRec(root);
-		root = root.saw();
+		root = root.stickTogether();
 	}
 
 	private static void deleteUnneededRec(SawyerNode node) {
