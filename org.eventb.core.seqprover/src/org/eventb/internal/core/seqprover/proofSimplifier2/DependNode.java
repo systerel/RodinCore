@@ -52,6 +52,8 @@ public class DependNode {
 	}
 
 	// delete this node if one of the produced sequents has no dependents
+	// leaf nodes are considered useful and are not deleted
+	// a leaf node gets deleted only when a required ancestor is deleted
 	public void deleteIfUnneeded() {
 		for (ProducedSequent produced : producedSequents) {
 			if (!produced.hasDependents()) {
