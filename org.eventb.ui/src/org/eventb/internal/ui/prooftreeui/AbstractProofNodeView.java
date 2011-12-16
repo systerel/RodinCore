@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.ViewPart;
 import org.eventb.core.seqprover.IProofTreeNode;
 
@@ -48,11 +47,8 @@ public abstract class AbstractProofNodeView extends ViewPart implements
 	@Override
 	public void createPartControl(final Composite parent) {
 		this.parentComp = parent;
-		final IWorkbenchWindow workbench = getSite().getWorkbenchWindow();
-		final ISelectionService selectionService = workbench
-				.getSelectionService();
 		// add myself as a global selection listener
-		selectionService.addSelectionListener(this);
+		getSelectionService().addSelectionListener(this);
 		currentFont = JFaceResources.getFont(RODIN_MATH_FONT);
 
 		initializeControl(parent, currentFont);
@@ -96,10 +92,7 @@ public abstract class AbstractProofNodeView extends ViewPart implements
 	 */
 	@Override
 	public void dispose() {
-		final IWorkbenchWindow workbench = getSite().getWorkbenchWindow();
-		final ISelectionService selectionService = workbench
-				.getSelectionService();
-		selectionService.removeSelectionListener(this);
+		getSelectionService().removeSelectionListener(this);
 		JFaceResources.getFontRegistry().removeListener(this);
 		super.dispose();
 	}
@@ -115,6 +108,10 @@ public abstract class AbstractProofNodeView extends ViewPart implements
 				fontChanged(currentFont);
 			}
 		}
+	}
+
+	private ISelectionService getSelectionService() {
+		return getSite().getWorkbenchWindow().getSelectionService();
 	}
 
 }
