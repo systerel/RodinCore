@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.transformer;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+import static org.eventb.core.seqprover.transformer.PredicateTransformers.makeSimplifier;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.IFormulaRewriter2;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.transformer.ISequentTransformer;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier;
+import org.eventb.core.seqprover.transformer.SimpleSequents.SimplificationOption;
 
 /**
  * Transformer that simplifies a sequent by applying logical simplification
@@ -27,12 +27,11 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSi
  */
 public class SequentSimplifier implements ISequentTransformer {
 
-	private final PredicateSimplifier simplifier;
+	private final IFormulaRewriter2 simplifier;
 
-	public SequentSimplifier(FormulaFactory factory, int flags) {
-		final DLib dLib = mDLib(factory);
-		simplifier = new PredicateSimplifier(dLib, flags, false,
-				"SequentSimplifier");
+	public SequentSimplifier(FormulaFactory factory,
+			SimplificationOption... options) {
+		simplifier = makeSimplifier(factory, options);
 	}
 
 	@Override

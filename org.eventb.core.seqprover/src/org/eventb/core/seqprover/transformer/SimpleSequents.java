@@ -69,7 +69,7 @@ public class SimpleSequents {
 		}
 		return new SimpleSequent(factory, preds, origin);
 	}
-	
+
 	/**
 	 * Returns a new simple sequent created with the given predicates. All
 	 * non-null predicates must be type-checked. Null predicates will be
@@ -114,7 +114,7 @@ public class SimpleSequents {
 		}
 		return make(list, goal, factory, origin);
 	}
-	
+
 	/**
 	 * Returns a new simple sequent created with the given predicates. All
 	 * non-null predicates must be type-checked. Null predicates will be
@@ -132,7 +132,7 @@ public class SimpleSequents {
 			FormulaFactory factory) {
 		return make(hypotheses, goal, factory, null);
 	}
-	
+
 	private static List<TrackedPredicate> makeTrackedPredicates(
 			Iterable<Predicate> hypotheses, Predicate goal) {
 		final List<TrackedPredicate> preds = new ArrayList<TrackedPredicate>();
@@ -201,32 +201,10 @@ public class SimpleSequents {
 	 * Simplifies logically the given sequent. The returned sequent is
 	 * equivalent to the input sequent, albeit possibly simpler.
 	 * <p>
-	 * The simplification is performed by applying repeatedly the following
-	 * rules to every predicate of the sequent until reaching a fix-point:
-	 * <ul>
-	 * <li>SIMP_SPECIAL_AND_BTRUE</li>
-	 * <li>SIMP_SPECIAL_AND_BFALSE</li>
-	 * <li>SIMP_SPECIAL_OR_BTRUE</li>
-	 * <li>SIMP_SPECIAL_OR_BFALSE</li>
-	 * <li>SIMP_SPECIAL_IMP_BTRUE_R</li>
-	 * <li>SIMP_SPECIAL_IMP_BTRUE_L</li>
-	 * <li>SIMP_SPECIAL_IMP_BFALSE_R</li>
-	 * <li>SIMP_SPECIAL_IMP_BFALSE_L</li>
-	 * <li>SIMP_SPECIAL_NOT_BTRUE</li>
-	 * <li>SIMP_SPECIAL_NOT_BFALSE</li>
-	 * <li>SIMP_NOT_NOT</li>
-	 * <li>SIMP_MULTI_EQV</li>
-	 * <li>SIMP_SPECIAL_EQV_BTRUE</li>
-	 * <li>SIMP_SPECIAL_EQV_BFALSE</li>
-	 * <li>SIMP_FORALL</li>
-	 * <li>SIMP_EXISTS</li>
-	 * <li>SIMP_LIT_MINUS</li>
-	 * </ul>
-	 * Note: The last rule is present only for technical reason.
-	 * </p>
-	 * <p>
-	 * Options can be passed to also apply some additional simplification rules.
-	 * </p>
+	 * The simplification is performed by applying to each predicate of the
+	 * sequent the simplifier obtained from
+	 * {@link PredicateTransformers#makeSimplifier(FormulaFactory, SimplificationOption...)}
+	 * .
 	 * 
 	 * @param sequent
 	 *            sequent to simplify
@@ -237,11 +215,7 @@ public class SimpleSequents {
 	public static final ISimpleSequent simplify(ISimpleSequent sequent,
 			SimplificationOption... options) {
 		final FormulaFactory factory = sequent.getFormulaFactory();
-		int flags = 0;
-		for (SimplificationOption option : options) {
-			flags |= option.flags;
-		}
-		return sequent.apply(new SequentSimplifier(factory, flags));
+		return sequent.apply(new SequentSimplifier(factory, options));
 	}
 
 	/**
