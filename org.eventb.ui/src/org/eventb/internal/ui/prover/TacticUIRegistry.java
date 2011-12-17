@@ -14,8 +14,6 @@ package org.eventb.internal.ui.prover;
 import static java.util.Collections.unmodifiableList;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +28,7 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.registry.AbstractInfo;
 import org.eventb.internal.ui.prover.registry.ExtensionParser;
-import org.eventb.internal.ui.prover.registry.TacticProviderInfo;
+import org.eventb.internal.ui.prover.registry.TacticProviderInfoList;
 import org.eventb.internal.ui.prover.registry.TacticUIInfo;
 import org.eventb.internal.ui.prover.registry.ToolbarInfo;
 import org.eventb.ui.prover.ITacticApplication;
@@ -55,9 +53,9 @@ public class TacticUIRegistry {
 	private static final TacticUIRegistry instance = new TacticUIRegistry();
 
 	// The registry stored Element UI information
-	private final List<TacticProviderInfo> goalTactics;
+	private final TacticProviderInfoList goalTactics;
 
-	private final List<TacticProviderInfo> hypothesisTactics;
+	private final TacticProviderInfoList hypothesisTactics;
 
 	// Temporary registry of all tactics created during refactoring.
 	// This maps contains the union of all other tactic maps.
@@ -82,8 +80,9 @@ public class TacticUIRegistry {
 			UIUtils.log(status);
 		}
 
-		goalTactics = parser.getGoalTactics();
-		hypothesisTactics= parser.getHypothesisTactics();
+		goalTactics = new TacticProviderInfoList(parser.getGoalTactics());
+		hypothesisTactics = new TacticProviderInfoList(
+				parser.getHypothesisTactics());
 		allTacticRegistry = parser.getAllTacticRegistry();
 		toolbars = parser.getToolbars();
 
@@ -102,7 +101,7 @@ public class TacticUIRegistry {
 		}
 	}
 
-	private void show(Collection<? extends AbstractInfo> list, String name) {
+	private void show(Iterable<? extends AbstractInfo> list, String name) {
 		System.out.println("Contents of registry : " + name + ":");
 		for (final AbstractInfo info : list) {
 			System.out.println("\t" + info.getID());
@@ -120,24 +119,12 @@ public class TacticUIRegistry {
 	}
 
 	public List<ITacticApplication> getTacticApplicationsToGoal(IUserSupport us) {
-		final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
-		for (TacticProviderInfo info : goalTactics) {
-			final List<ITacticApplication> applications = info
-					.getApplicationsToGoal(us);
-			result.addAll(applications);
-		}
-		return result;
+		return goalTactics.getTacticApplications(us, null);
 	}
 
 	public List<ITacticApplication> getTacticApplicationsToHypothesis(
 			IUserSupport us, Predicate hyp) {
-		final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
-		for (TacticProviderInfo info : hypothesisTactics) {
-			final List<ITacticApplication> applications = info
-					.getApplicationsToHypothesis(us, hyp);
-			result.addAll(applications);
-		}
-		return result;
+		return hypothesisTactics.getTacticApplications(us, hyp);
 	}
 
 	public Image getIcon(String tacticID) {

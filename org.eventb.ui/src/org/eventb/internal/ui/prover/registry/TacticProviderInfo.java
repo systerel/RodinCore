@@ -37,12 +37,8 @@ public class TacticProviderInfo extends TacticUIInfo {
 		this.tacticProvider = tacticProvider;
 	}
 
-	public List<ITacticApplication> getApplicationsToGoal(IUserSupport us) {
-		return getApplications(us, null, null);
-	}
-
-	public List<ITacticApplication> getApplicationsToHypothesis(
-			IUserSupport us, Predicate hyp) {
+	public List<ITacticApplication> getLocalApplications(IUserSupport us,
+			Predicate hyp) {
 		return getApplications(us, hyp, null);
 	}
 
