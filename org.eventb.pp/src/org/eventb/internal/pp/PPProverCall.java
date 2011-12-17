@@ -21,7 +21,6 @@ import java.util.concurrent.CancellationException;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
-import org.eventb.core.seqprover.xprover.XProverCall;
 import org.eventb.core.seqprover.xprover.XProverCall2;
 import org.eventb.core.seqprover.xprover.XProverInput;
 import org.eventb.pp.IPPMonitor;
@@ -30,7 +29,7 @@ import org.eventb.pp.PPResult;
 import org.eventb.pp.PPResult.Result;
 
 /**
- * Implementation of {@link XProverCall} for PP.
+ * Implementation of {@link XProverCall2} for PP.
  * 
  * @author François Terrier
  * 

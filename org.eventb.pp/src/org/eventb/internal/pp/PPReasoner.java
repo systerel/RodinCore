@@ -24,11 +24,10 @@ import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
 import org.eventb.core.seqprover.xprover.XProverCall2;
 import org.eventb.core.seqprover.xprover.XProverInput;
-import org.eventb.core.seqprover.xprover.XProverReasoner;
 import org.eventb.core.seqprover.xprover.XProverReasoner2;
 
 /**
- * Implementation of {@link XProverReasoner} for PP.
+ * Implementation of {@link XProverReasoner2} for PP.
  *
  * @author François Terrier
  *
