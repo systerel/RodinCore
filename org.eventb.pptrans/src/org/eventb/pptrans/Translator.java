@@ -12,15 +12,18 @@
  *******************************************************************************/
 package org.eventb.pptrans;
 
+import static org.eventb.core.seqprover.transformer.PredicateTransformers.makeSimplifier;
+
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
+import org.eventb.core.seqprover.transformer.PredicateTransformers;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
+import org.eventb.core.seqprover.transformer.SimpleSequents.SimplificationOption;
 import org.eventb.internal.pptrans.translator.BoundIdentifierDecomposition;
 import org.eventb.internal.pptrans.translator.GoalChecker;
 import org.eventb.internal.pptrans.translator.IdentifierDecomposer;
-import org.eventb.internal.pptrans.translator.PredicateSimplification;
 import org.eventb.internal.pptrans.translator.SequentTranslator;
 
 /**
@@ -28,9 +31,9 @@ import org.eventb.internal.pptrans.translator.SequentTranslator;
  * of this class is to call the first three provided methods in sequence, as
  * follows
  * <ol>
- * <li>{@link #decomposeIdentifiers(Predicate, FormulaFactory)}</li>
- * <li>{@link #reduceToPredicateCalulus(Predicate, FormulaFactory)}</li>
- * <li>{@link #simplifyPredicate(Predicate, FormulaFactory)}</li>
+ * <li>{@link #decomposeIdentifiers(ISimpleSequent)}</li>
+ * <li>{@link #reduceToPredicateCalulus(ISimpleSequent, Option...)}</li>
+ * <li>{@link SimpleSequents#simplify(ISimpleSequent, SimplificationOption...)}</li>
  * </ol>
  * <p>
  * The translation scheme to use when reducing to predicate calculus can be
@@ -38,7 +41,7 @@ import org.eventb.internal.pptrans.translator.SequentTranslator;
  * parameter.
  * </p>
  * <p>
- * The additional method {@link #isInGoal(Predicate)} is provided for test
+ * The additional method {@link #isInGoal(ISimpleSequent)} is provided for test
  * purposes. It allows to check that the result of a translation is indeed in
  * the target sub-language.
  * </p>
@@ -123,7 +126,11 @@ public class Translator {
 	 * @param ff
 	 *            the formula factory to use
 	 * @return a reduced predicate equivalent to the input predicate
+	 * @deprecated Use
+	 *             {@link #reduceToPredicateCalulus(ISimpleSequent, Option...)}
+	 *             instead.
 	 */
+	@Deprecated
 	public static Predicate reduceToPredicateCalulus(Predicate predicate,
 			FormulaFactory ff) {
 		return org.eventb.internal.pptrans.translator.Translator
@@ -163,12 +170,19 @@ public class Translator {
 	 * @param ff
 	 *            the formula factory to use
 	 * @return a simplified predicate equivalent to the input predicate
-	 * @see SimpleSequents#simplify(ISimpleSequent,
-	 *      org.eventb.core.seqprover.transformer.SimpleSequents.SimplificationOption...)
+	 * @see SimpleSequents#simplify(ISimpleSequent, SimplificationOption...)
+	 * @see PredicateTransformers#makeSimplifier(FormulaFactory,
+	 *      SimplificationOption...)
+	 * @deprecated Use
+	 *             {@link SimpleSequents#simplify(ISimpleSequent, SimplificationOption...)}
+	 *             or
+	 *             <code>predicate.rewrite(PredicateTransformers.makeSimplifier(ff))</code>
+	 *             instead.
 	 */
+	@Deprecated
 	public static Predicate simplifyPredicate(Predicate predicate,
 			FormulaFactory ff) {
-		return PredicateSimplification.simplifyPredicate(predicate, ff);
+		return predicate.rewrite(makeSimplifier(ff));
 	}
 
 	/**
@@ -181,7 +195,9 @@ public class Translator {
 	 *            a predicate to test
 	 * @return <code>true</code> iff the given predicate is in the target
 	 *         sub-language of the PP translator
+	 * @deprecated Use {@link #isInGoal(ISimpleSequent)} instead.
 	 */
+	@Deprecated
 	public static boolean isInGoal(Predicate predicate) {
 		return GoalChecker.isInGoal(predicate);
 	}

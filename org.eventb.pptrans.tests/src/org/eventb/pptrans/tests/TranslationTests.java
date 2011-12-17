@@ -84,6 +84,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest(pinput, pexpected, options);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private static void doTest(Predicate input, Predicate expected,
 			Option... options) {
 		assertTypeChecked(input);

@@ -51,6 +51,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 		doTest(input, expected, transformExpected, te);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private static void doTest(String input, String expected,
 			boolean transformExpected, ITypeEnvironment te) {
 
@@ -62,6 +63,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 		doTest(pinput, pexpected);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private static void doTest(Predicate input, Predicate expected) {
 		assertTypeChecked(input);
 		assertTypeChecked(expected);

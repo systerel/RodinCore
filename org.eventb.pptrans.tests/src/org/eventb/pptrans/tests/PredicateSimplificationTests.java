@@ -27,6 +27,7 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 		doTest(pinput, pexpected);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private static void doTest(Predicate input, Predicate expected) {
 		assertTypeChecked(input);
 		assertTypeChecked(expected);

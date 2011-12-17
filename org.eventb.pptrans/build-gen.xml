@@ -35,7 +35,6 @@
 		<delete file="${translator.src}/BoundIdentifierDecomposition.java" />
 		<delete file="${translator.src}/DecomposedQuant.java" />
 		<delete file="${translator.src}/GoalChecker.java" />
-		<delete file="${translator.src}/PredicateSimplification.java" />
 	</target>
 	
 </project>

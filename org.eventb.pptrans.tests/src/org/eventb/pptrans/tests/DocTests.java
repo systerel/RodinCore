@@ -22,16 +22,18 @@ import org.eventb.pptrans.Translator;
 
 public class DocTests extends AbstractTranslationTests {
 	
+	@SuppressWarnings("deprecation")
 	private static void doTransTest(String input, String expected, boolean transformExpected, ITypeEnvironment te) {
 		Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
 		if(transformExpected) {
-			pexpected = Translator.simplifyPredicate(pexpected, ff);
 			pexpected = Translator.reduceToPredicateCalulus(pexpected, ff);
+			pexpected = Translator.simplifyPredicate(pexpected, ff);
 		}
 		doTransTest(pinput, pexpected);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private static void doTransTest(Predicate input, Predicate expected) {
 		assertTypeChecked(input);
 		assertTypeChecked(expected);
@@ -229,7 +231,7 @@ public class DocTests extends AbstractTranslationTests {
 		doTransTest("G ⊆ A ∧ H ⊆ A ∧ f ∈ ℙ(A) → ℙ(B) ⇒ G ∪ H ∈ dom(f)",//
 				"  (∀x,y,z· x↦y∈f ∧ x↦z∈f ⇒ y=z)" +
 				"∧ (∀x·∃y·x↦y∈f)" +
-				"⇒ (∃x·∃S·(∀x·x∈S ⇔ x∈G ∨ x∈H) ∧ S↦x∈f)",//
+				"⇒ (∃x,S·(∀x·x∈S ⇔ x∈G ∨ x∈H) ∧ S↦x∈f)",//
 				false, te);
 	}
 
