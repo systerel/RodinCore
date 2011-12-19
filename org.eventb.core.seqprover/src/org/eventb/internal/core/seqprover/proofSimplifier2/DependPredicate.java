@@ -71,4 +71,8 @@ public class DependPredicate {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return predicate.toString();
+	}
 }
