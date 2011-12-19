@@ -42,6 +42,10 @@ public abstract class NodeSequent {
 		return node;
 	}
 
+	public Collection<DependPredicate> getPredicates() {
+		return new ArrayList<DependPredicate>(predicates);
+	}
+	
 	public abstract void propagateDelete();
 
 	protected static void seqToString(Collection<DependPredicate> preds,

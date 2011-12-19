@@ -11,14 +11,12 @@
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IHypAction;
-import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 
 /**
  * @author Nicolas Beauger
@@ -29,23 +27,10 @@ public class ProducedSequent extends NodeSequent {
 	// new hypotheses are:
 	// - added hypotheses
 	// - forward inferred hypotheses
-	private static Set<Predicate> getNewHyps(IAntecedent antecedent) {
-		final Set<Predicate> newPreds = new LinkedHashSet<Predicate>();
-		newPreds.addAll(antecedent.getAddedHyps());
-
-		for (IHypAction hypAction : antecedent.getHypActions()) {
-			if (hypAction instanceof IForwardInfHypAction) {
-				final IForwardInfHypAction fwd = (IForwardInfHypAction) hypAction;
-				newPreds.addAll(fwd.getInferredHyps());
-			}
-		}
-		return newPreds;
-	}
-
 	private final List<RequiredSequent> dependents = new ArrayList<RequiredSequent>();
 
-	public ProducedSequent(IAntecedent antecedent, DependNode node) {
-		super(getNewHyps(antecedent), antecedent.getGoal(), node);
+	public ProducedSequent(Collection<Predicate> hyps, Predicate goal, DependNode node) {
+		super(hyps, goal, node);
 	}
 
 	public void addDependentSequent(RequiredSequent dependent) {
@@ -78,4 +63,18 @@ public class ProducedSequent extends NodeSequent {
 		return !dependents.isEmpty();
 	}
 
+	public Set<Predicate> getUsedPredicates() {
+		final List<DependPredicate> used = new ArrayList<DependPredicate>();
+
+		for(RequiredSequent req: dependents) {
+			final Collection<DependPredicate> preds = req.getPredicates();
+			preds.retainAll(predicates);
+			used.addAll(preds);
+		}
+		final Set<Predicate> result = new HashSet<Predicate>();
+		for (DependPredicate usedPred : used) {
+			result.add(usedPred.getPredicate());
+		}
+		return result;
+	}
 }

@@ -83,8 +83,16 @@ public class SawyerTree {
 	public void saw() {
 		deleteUnneededRec(root);
 		root = root.stickTogether();
+		compressRuleRec(root);
 	}
 
+	private static void compressRuleRec(SawyerNode node) {
+		node.compressRule();
+		for (SawyerNode child : node.getChildren()) {
+			compressRuleRec(child);
+		}
+	}
+	
 	private static void deleteUnneededRec(SawyerNode node) {
 		node.deleteIfUnneeded();
 		for (SawyerNode child : node.getChildren()) {

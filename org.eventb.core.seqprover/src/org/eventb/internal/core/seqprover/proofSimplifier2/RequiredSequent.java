@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 
 /**
@@ -24,11 +24,12 @@ import org.eventb.core.seqprover.IProverSequent;
  */
 public class RequiredSequent extends NodeSequent {
 
+	
 	private final List<ProducedSequent> neededSequents = new ArrayList<ProducedSequent>();
 	private final Collection<DependPredicate> unsatisfied;
 
-	public RequiredSequent(IProofRule rule, DependNode node) {
-		super(rule.getNeededHyps(), rule.getGoal(), node);
+	public RequiredSequent(Collection<Predicate> hyps, Predicate goal, DependNode node) {
+		super(hyps, goal, node);
 		this.unsatisfied = new ArrayList<DependPredicate>(predicates);
 	}
 
