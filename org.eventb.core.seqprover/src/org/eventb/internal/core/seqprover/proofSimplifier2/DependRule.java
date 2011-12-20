@@ -70,7 +70,7 @@ public class DependRule {
 		public abstract void addProduced(Set<Predicate> producedHyps);
 
 		public abstract void compress(ProducedSequent sequent,
-				Set<Predicate> producedHyps);
+				Set<Predicate> producedHyps, Set<Predicate> removedHyps);
 	}
 
 	private static class Fwd extends AHypAction {
@@ -96,7 +96,7 @@ public class DependRule {
 
 		@Override
 		public void compress(ProducedSequent sequent,
-				Set<Predicate> producedHyps) {
+				Set<Predicate> producedHyps, Set<Predicate> removedHyps) {
 			// if at least one inferred hyp is used, all are kept
 			final Set<Predicate> usedPreds = sequent.getUsedPredicates();
 			for (Predicate hyp : inferredHyps) {
@@ -105,6 +105,9 @@ public class DependRule {
 					return;
 				}
 			}
+			// no need to hide source hyps or select inferred hyps
+			removedHyps.addAll(hyps);
+			removedHyps.addAll(inferredHyps);
 			// none is used, make empty
 			hyps.clear();
 			inferredHyps.clear();
@@ -133,7 +136,7 @@ public class DependRule {
 
 		@Override
 		public void compress(ProducedSequent sequent,
-				Set<Predicate> producedHyps) {
+				Set<Predicate> producedHyps, Set<Predicate> removedHyps) {
 			if (actionType.equals(ISelectionHypAction.SELECT_ACTION_TYPE)
 					|| actionType.equals(ISelectionHypAction.SHOW_ACTION_TYPE)) {
 				final Set<Predicate> usedPredicates = sequent
@@ -146,6 +149,18 @@ public class DependRule {
 						iter.remove();
 					}
 				}
+			} else {
+				// HIDE or DESELECT
+				final Iterator<Predicate> iter = hyps.iterator();
+				while (iter.hasNext()) {
+					final Predicate hyp = iter.next();
+					// FIXME removes a single hide, i.e all non produced
+					// hypActions
+					if (removedHyps.contains(hyp)) {
+						iter.remove();
+					}
+				}
+
 			}
 		}
 
@@ -197,11 +212,13 @@ public class DependRule {
 
 		public void compressHypActions(ProducedSequent producedSequent) {
 			final Set<Predicate> prodHyps = new HashSet<Predicate>();
+			// keep track of removed hyps, to remove associated actions
+			final Set<Predicate> removedHyps = new HashSet<Predicate>();
 			prodHyps.addAll(original.getAddedHyps());
 			final Iterator<AHypAction> iter = hypActions.iterator();
 			while (iter.hasNext()) {
 				final AHypAction hypAction = iter.next();
-				hypAction.compress(producedSequent, prodHyps);
+				hypAction.compress(producedSequent, prodHyps, removedHyps);
 				if (hypAction.isEmpty()) {
 					iter.remove();
 				}
