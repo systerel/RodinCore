@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
+import static org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException.checkCancel;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException;
 
 /**
  * @author Nicolas Beauger
@@ -41,14 +45,16 @@ public class ProducedSequent extends NodeSequent {
 	}
 
 	@Override
-	public void propagateDelete() {
+	public void propagateDelete(IProofMonitor monitor) throws CancelException {
 		for (RequiredSequent dependent : dependents) {
-			dependent.getNode().delete();
+			checkCancel(monitor);
+			dependent.getNode().delete(monitor);
 		}
 		dependents.clear();
 	}
 
-	public void deleteDependent(RequiredSequent dependent) {
+	public void deleteDependent(RequiredSequent dependent, IProofMonitor monitor)
+			throws CancelException {
 		if (this.getNode().isDeleted()) {
 			// this.getNode() is being deleted:
 			// avoid concurrent modification
@@ -56,7 +62,7 @@ public class ProducedSequent extends NodeSequent {
 		}
 		dependents.remove(dependent);
 		if (!hasDependents()) {
-			getNode().delete();
+			getNode().delete(monitor);
 		}
 	}
 

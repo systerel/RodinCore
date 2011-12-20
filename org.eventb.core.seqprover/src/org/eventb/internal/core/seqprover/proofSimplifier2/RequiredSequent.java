@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
+import static org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException.checkCancel;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException;
 
 /**
  * @author Nicolas Beauger
@@ -69,9 +73,10 @@ public class RequiredSequent extends NodeSequent {
 	}
 
 	@Override
-	public void propagateDelete() {
+	public void propagateDelete(IProofMonitor monitor) throws CancelException {
 		for (ProducedSequent needed : neededSequents) {
-			needed.deleteDependent(this);
+			checkCancel(monitor);
+			needed.deleteDependent(this, monitor);
 		}
 		neededSequents.clear();
 	}

@@ -13,6 +13,7 @@ package org.eventb.internal.core.seqprover.proofSimplifier2;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
+import static org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException.checkCancel;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,11 +27,13 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.internal.core.seqprover.IInternalHypAction;
 import org.eventb.internal.core.seqprover.SelectionHypAction;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException;
 
 /**
  * @author Nicolas Beauger
@@ -210,13 +213,15 @@ public class DependRule {
 			return new ProducedSequent(producedHyps, prodGoal, node);
 		}
 
-		public void compressHypActions(ProducedSequent producedSequent) {
+		public void compressHypActions(ProducedSequent producedSequent,
+				IProofMonitor monitor) throws CancelException {
 			final Set<Predicate> prodHyps = new HashSet<Predicate>();
 			// keep track of removed hyps, to remove associated actions
 			final Set<Predicate> removedHyps = new HashSet<Predicate>();
 			prodHyps.addAll(original.getAddedHyps());
 			final Iterator<AHypAction> iter = hypActions.iterator();
 			while (iter.hasNext()) {
+				checkCancel(monitor);
 				final AHypAction hypAction = iter.next();
 				hypAction.compress(producedSequent, prodHyps, removedHyps);
 				if (hypAction.isEmpty()) {
@@ -274,11 +279,13 @@ public class DependRule {
 		return prodSeqs;
 	}
 
-	public void compressHypActions(ProducedSequent[] producedSequents) {
+	public void compressHypActions(ProducedSequent[] producedSequents,
+			IProofMonitor monitor) throws CancelException {
 		assert producedSequents.length == antecedents.size();
 
 		for (int i = 0; i < producedSequents.length; i++) {
-			antecedents.get(i).compressHypActions(producedSequents[i]);
+			checkCancel(monitor);
+			antecedents.get(i).compressHypActions(producedSequents[i], monitor);
 		}
 	}
 

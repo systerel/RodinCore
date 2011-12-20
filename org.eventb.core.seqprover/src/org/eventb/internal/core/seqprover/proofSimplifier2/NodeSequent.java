@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException;
 
 /**
  * 
@@ -46,7 +48,8 @@ public abstract class NodeSequent {
 		return new ArrayList<DependPredicate>(predicates);
 	}
 
-	public abstract void propagateDelete();
+	public abstract void propagateDelete(IProofMonitor monitor)
+			throws CancelException;
 
 	protected static void seqToString(Collection<DependPredicate> preds,
 			StringBuilder sb) {

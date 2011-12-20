@@ -12,6 +12,7 @@ package org.eventb.internal.core.seqprover.proofSimplifier2;
 
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
+import static org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException.checkCancel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +23,7 @@ import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException;
 
 /**
  * A tree type to use for dependence computation and manipulation.
@@ -38,8 +40,8 @@ public class SawyerTree {
 		this.rootSequent = root.getSequent();
 	}
 
-	public void init() {
-		final Collection<RequiredSequent> required = computeDeps(root);
+	public void init(IProofMonitor monitor) throws CancelException {
+		final Collection<RequiredSequent> required = computeDeps(root, monitor);
 		checkRootSatisfies(required);
 	}
 
@@ -52,15 +54,17 @@ public class SawyerTree {
 		}
 	}
 
-	private static Collection<RequiredSequent> computeDeps(SawyerNode node) {
+	private static Collection<RequiredSequent> computeDeps(SawyerNode node,
+			IProofMonitor monitor) throws CancelException {
 		final Collection<RequiredSequent> required = new ArrayList<RequiredSequent>();
 		final SawyerNode[] children = node.getChildren();
 		final ProducedSequent[] producedSequents = node.getProducedSequents();
 		assert children.length == producedSequents.length;
 
 		for (int i = 0; i < children.length; i++) {
+			checkCancel(monitor);
 			final ProducedSequent prod = producedSequents[i];
-			final Collection<RequiredSequent> deps = computeDeps(children[i]);
+			final Collection<RequiredSequent> deps = computeDeps(children[i], monitor);
 			satisfy(deps, prod);
 			required.addAll(deps);
 		}
@@ -80,23 +84,25 @@ public class SawyerTree {
 		}
 	}
 
-	public void saw() {
-		deleteUnneededRec(root);
-		root = root.stickTogether();
-		compressRuleRec(root);
+	public void saw(IProofMonitor monitor) throws CancelException {
+		deleteUnneededRec(root, monitor);
+		root = root.stickTogether(monitor);
+		compressRuleRec(root, monitor);
 	}
 
-	private static void compressRuleRec(SawyerNode node) {
-		node.compressRule();
+	private static void compressRuleRec(SawyerNode node, IProofMonitor monitor) throws CancelException {
+		node.compressRule(monitor);
 		for (SawyerNode child : node.getChildren()) {
-			compressRuleRec(child);
+			compressRuleRec(child, monitor);
 		}
 	}
 
-	private static void deleteUnneededRec(SawyerNode node) {
-		node.deleteIfUnneeded();
+	private static void deleteUnneededRec(SawyerNode node, IProofMonitor monitor)
+			throws CancelException {
+		checkCancel(monitor);
+		node.deleteIfUnneeded(monitor);
 		for (SawyerNode child : node.getChildren()) {
-			deleteUnneededRec(child);
+			deleteUnneededRec(child, monitor);
 		}
 	}
 

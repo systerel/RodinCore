@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
+import static org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException.checkCancel;
+
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofSkeleton;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException;
 
 /**
  * @author Nicolas Beauger
@@ -51,25 +55,32 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 	 * Recursively stick parents to children together for the subtree rooted at
 	 * this node, avoiding deleted nodes.
 	 * 
+	 * @param monitor
+	 * 
 	 * @return <ul>
 	 *         <li><code>null</code> if the subtree rooted at this node is
 	 *         entirely deleted,
 	 *         <li>a sticked child if this node is deleted
 	 *         <li>or this node with sticked children
 	 *         </ul>
+	 * @throws CancelException
+	 *             when the given monitor is cancelled
 	 */
-	public SawyerNode stickTogether() {
+	public SawyerNode stickTogether(IProofMonitor monitor)
+			throws CancelException {
+		checkCancel(monitor);
 		for (int i = 0; i < children.length; i++) {
-			children[i] = children[i].stickTogether();
+			children[i] = children[i].stickTogether(monitor);
 		}
 		if (isDeleted()) {
-			return getShortestChild();
+			return getShortestChild(monitor);
 		} else {
 			return this;
 		}
 	}
 
-	private SawyerNode getShortestChild() {
+	private SawyerNode getShortestChild(IProofMonitor monitor)
+			throws CancelException {
 		switch (children.length) {
 		case 0:
 			return null;
@@ -79,6 +90,7 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 		int smallestSize = Integer.MAX_VALUE;
 		SawyerNode smallest = null;
 		for (SawyerNode child : children) {
+			checkCancel(monitor);
 			if (child == null) {
 				continue;
 			}

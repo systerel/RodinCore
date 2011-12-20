@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
+import static org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException.checkCancel;
+
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException;
 
 /**
  * A proof tree node type to use for dependence computation and manipulation.
@@ -50,10 +54,11 @@ public class DependNode {
 	// delete this node if one of the produced sequents has no dependents
 	// leaf nodes are considered useful and are not deleted
 	// a leaf node gets deleted only when a required ancestor is deleted
-	public void deleteIfUnneeded() {
+	public void deleteIfUnneeded(IProofMonitor monitor) throws CancelException {
 		for (ProducedSequent produced : producedSequents) {
+			checkCancel(monitor);
 			if (!produced.hasDependents()) {
-				delete();
+				delete(monitor);
 				return;
 			}
 		}
@@ -63,7 +68,7 @@ public class DependNode {
 		return deleted;
 	}
 
-	public void delete() {
+	public void delete(IProofMonitor monitor) throws CancelException {
 		if (deleted) {
 			return;
 		}
@@ -71,11 +76,12 @@ public class DependNode {
 		deleted = true;
 
 		// propagate upwards
-		requiredSequent.propagateDelete();
+		requiredSequent.propagateDelete(monitor);
 
 		// propagate downwards
 		for (ProducedSequent produced : producedSequents) {
-			produced.propagateDelete();
+			checkCancel(monitor);
+			produced.propagateDelete(monitor);
 		}
 	}
 
@@ -83,7 +89,7 @@ public class DependNode {
 		return rule.toProofRule();
 	}
 
-	public void compressRule() {
-		rule.compressHypActions(producedSequents);
+	public void compressRule(IProofMonitor monitor) throws CancelException {
+		rule.compressHypActions(producedSequents, monitor);
 	}
 }

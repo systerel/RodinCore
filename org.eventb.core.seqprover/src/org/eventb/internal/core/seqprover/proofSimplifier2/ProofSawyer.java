@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.proofSimplifier2;
 
+import static org.eventb.internal.core.seqprover.Util.getNullProofMonitor;
+import static org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException.checkCancel;
+
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
 
@@ -19,6 +22,25 @@ import org.eventb.core.seqprover.IProofTree;
  */
 public class ProofSawyer {
 
+	public static class CancelException extends Exception {
+
+		private static final long serialVersionUID = -7008468725701730153L;
+
+		private static final CancelException SINGLETON = new CancelException();
+		
+		private CancelException() {
+			// singleton
+		}
+		
+		public static void checkCancel(IProofMonitor monitor)
+				throws CancelException {
+			if (monitor.isCanceled()) {
+				throw SINGLETON;
+			}
+		}
+		
+	}
+	
 	/**
 	 * Simplify the proof tree by removing:
 	 * <ul>
@@ -30,15 +52,23 @@ public class ProofSawyer {
 	 *            a monitor to report progress and support cancellation
 	 * @return the simplified proof tree, or <code>null</code> if no
 	 *         simplification occurred
+	 * @throws CancelException
+	 *             when the monitor is cancelled
 	 */
-	public IProofTree simplify(IProofTree proofTree, IProofMonitor monitor) {
+	public IProofTree simplify(IProofTree proofTree, IProofMonitor monitor)
+			throws CancelException {
 		if (!proofTree.isClosed()) {
 			throw new IllegalArgumentException(
 					"Cannot simplify a non closed proof tree");
 		}
+		if (monitor == null) {
+			monitor = getNullProofMonitor();
+		}
+
 		final SawyerTree sawyerTree = new SawyerTree(proofTree.getRoot());
-		sawyerTree.init();
-		sawyerTree.saw();
+		checkCancel(monitor);
+		sawyerTree.init(monitor);
+		sawyerTree.saw(monitor);
 		return sawyerTree.toProofTree(monitor);
 	}
 }
