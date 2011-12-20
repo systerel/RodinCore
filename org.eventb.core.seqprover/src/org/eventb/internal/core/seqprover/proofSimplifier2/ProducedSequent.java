@@ -29,7 +29,8 @@ public class ProducedSequent extends NodeSequent {
 	// - forward inferred hypotheses
 	private final List<RequiredSequent> dependents = new ArrayList<RequiredSequent>();
 
-	public ProducedSequent(Collection<Predicate> hyps, Predicate goal, DependNode node) {
+	public ProducedSequent(Collection<Predicate> hyps, Predicate goal,
+			DependNode node) {
 		super(hyps, goal, node);
 	}
 
@@ -66,7 +67,7 @@ public class ProducedSequent extends NodeSequent {
 	public Set<Predicate> getUsedPredicates() {
 		final List<DependPredicate> used = new ArrayList<DependPredicate>();
 
-		for(RequiredSequent req: dependents) {
+		for (RequiredSequent req : dependents) {
 			final Collection<DependPredicate> preds = req.getPredicates();
 			preds.retainAll(predicates);
 			used.addAll(preds);

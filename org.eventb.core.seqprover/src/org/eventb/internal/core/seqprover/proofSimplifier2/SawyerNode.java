@@ -35,7 +35,8 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 
 	private final String comment;
 
-	private SawyerNode(IProofTreeNode node, SawyerNode[] children, String comment) {
+	private SawyerNode(IProofTreeNode node, SawyerNode[] children,
+			String comment) {
 		super(node);
 		this.children = children;
 		this.comment = comment;
@@ -102,7 +103,6 @@ public class SawyerNode extends DependNode implements IProofSkeleton {
 	// simplified children
 	@Override
 	public IProofSkeleton[] getChildNodes() {
-		// FIXME non deleted children
 		return children;
 	}
 

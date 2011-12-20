@@ -23,7 +23,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
  */
 public class DependNode {
 
-
 	private final DependRule rule;
 
 	private final RequiredSequent requiredSequent;
@@ -83,7 +82,7 @@ public class DependNode {
 	public IProofRule getRule() {
 		return rule.toProofRule();
 	}
-	
+
 	public void compressRule() {
 		rule.compressHypActions(producedSequents);
 	}

@@ -68,8 +68,9 @@ public class DependRule {
 		}
 
 		public abstract void addProduced(Set<Predicate> producedHyps);
-		
-		public abstract void compress(ProducedSequent sequent, Set<Predicate> producedHyps);
+
+		public abstract void compress(ProducedSequent sequent,
+				Set<Predicate> producedHyps);
 	}
 
 	private static class Fwd extends AHypAction {
@@ -94,7 +95,8 @@ public class DependRule {
 		}
 
 		@Override
-		public void compress(ProducedSequent sequent, Set<Predicate> producedHyps) {
+		public void compress(ProducedSequent sequent,
+				Set<Predicate> producedHyps) {
 			// if at least one inferred hyp is used, all are kept
 			final Set<Predicate> usedPreds = sequent.getUsedPredicates();
 			for (Predicate hyp : inferredHyps) {
@@ -130,18 +132,21 @@ public class DependRule {
 		}
 
 		@Override
-		public void compress(ProducedSequent sequent, Set<Predicate> producedHyps) {
+		public void compress(ProducedSequent sequent,
+				Set<Predicate> producedHyps) {
 			if (actionType.equals(ISelectionHypAction.SELECT_ACTION_TYPE)
 					|| actionType.equals(ISelectionHypAction.SHOW_ACTION_TYPE)) {
-				final Set<Predicate> usedPredicates = sequent.getUsedPredicates();
+				final Set<Predicate> usedPredicates = sequent
+						.getUsedPredicates();
 				final Iterator<Predicate> iter = hyps.iterator();
-				while(iter.hasNext()) {
+				while (iter.hasNext()) {
 					final Predicate hyp = iter.next();
-					if (!usedPredicates.contains(hyp) && !producedHyps.contains(hyp)) {
+					if (!usedPredicates.contains(hyp)
+							&& !producedHyps.contains(hyp)) {
 						iter.remove();
 					}
 				}
-			}	
+			}
 		}
 
 	}
@@ -189,7 +194,7 @@ public class DependRule {
 			final Predicate prodGoal = original.getGoal();
 			return new ProducedSequent(producedHyps, prodGoal, node);
 		}
-		
+
 		public void compressHypActions(ProducedSequent producedSequent) {
 			final Set<Predicate> prodHyps = new HashSet<Predicate>();
 			prodHyps.addAll(original.getAddedHyps());
@@ -200,7 +205,7 @@ public class DependRule {
 				if (hypAction.isEmpty()) {
 					iter.remove();
 				}
-			}		
+			}
 		}
 
 		public IAntecedent toAntecedent() {

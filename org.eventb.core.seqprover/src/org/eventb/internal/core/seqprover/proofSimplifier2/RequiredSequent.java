@@ -24,11 +24,11 @@ import org.eventb.core.seqprover.IProverSequent;
  */
 public class RequiredSequent extends NodeSequent {
 
-	
 	private final List<ProducedSequent> neededSequents = new ArrayList<ProducedSequent>();
 	private final Collection<DependPredicate> unsatisfied;
 
-	public RequiredSequent(Collection<Predicate> hyps, Predicate goal, DependNode node) {
+	public RequiredSequent(Collection<Predicate> hyps, Predicate goal,
+			DependNode node) {
 		super(hyps, goal, node);
 		this.unsatisfied = new ArrayList<DependPredicate>(predicates);
 	}

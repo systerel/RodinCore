@@ -92,7 +92,7 @@ public class SawyerTree {
 			compressRuleRec(child);
 		}
 	}
-	
+
 	private static void deleteUnneededRec(SawyerNode node) {
 		node.deleteIfUnneeded();
 		for (SawyerNode child : node.getChildren()) {
@@ -108,7 +108,7 @@ public class SawyerTree {
 		}
 		return proofTree;
 	}
-	
+
 	public int getSize() {
 		return root.getSize();
 	}
