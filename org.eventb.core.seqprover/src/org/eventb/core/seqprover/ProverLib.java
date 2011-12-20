@@ -28,8 +28,7 @@ import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
-import org.eventb.internal.core.seqprover.proofSimplifier.ProofTreeSimplifier;
-import org.eventb.internal.core.seqprover.proofSimplifier.Simplifier.CancelException;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer;
 
 /**
  * This is a collection of static constants and methods that are used often in relation
@@ -419,15 +418,16 @@ public class ProverLib {
 	 *         simplify
 	 */
 	public static IProofTree simplify(IProofTree prTree, IProofMonitor monitor) {
-		try {
-			final IProofTree result = new ProofTreeSimplifier().simplify(prTree, monitor);
+//		try {
+			final IProofTree result = new ProofSawyer().simplify(prTree, monitor);
 			if (result != null && deepEquals(prTree, result)) {
 				return null;
 			}
 			return result;
-		} catch (CancelException e) {
-			return null;
-		}
+			// TODO monitors
+//		} catch (CancelException e) {
+//			return null;
+//		}
 	}
 
 }
