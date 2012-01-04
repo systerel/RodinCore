@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,21 +24,46 @@ import org.eventb.core.ast.Type;
 public interface IExpressionExtension extends IFormulaExtension {
 
 	/**
-	 * Returns the type of the given expression.
+	 * Computes the type of the extended expression from its given children.
 	 * 
 	 * @param childExprs
 	 *            the child expressions
 	 * @param childPreds
 	 *            the child predicates
-	 * @return the type of the given expression or <code>null</code> if it is
+	 * @return the type of the extended expression or <code>null</code> if it is
 	 *         ill-typed or if its type cannot be determined
 	 */
 	Type synthesizeType(Expression[] childExprs, Predicate[] childPreds,
 			ITypeMediator mediator);
 
+	/**
+	 * Verifies that the given proposed type is coherent with the given
+	 * children.
+	 * 
+	 * @param proposedType
+	 *            a type proposed for the extended expression
+	 * @param childExprs
+	 *            the child expressions
+	 * @param childPreds
+	 *            the child predicates
+	 * @return <code>true</code> iff the proposed type is coherent with the
+	 *         children, <code>false</code> otherwise
+	 */
 	boolean verifyType(Type proposedType, Expression[] childExprs,
 			Predicate[] childPreds);
 
+	/**
+	 * Define type check constraints for the given extended expression. The
+	 * given type check mediator is intended to be used for creating type
+	 * variables when needed, and for adding type constraints.
+	 * 
+	 * @param expression
+	 *            the extended expression to type check
+	 * @param tcMediator
+	 *            a type check mediator
+	 * @return the type of the given extended expression (in terms of type
+	 *         variables if needed)
+	 */
 	Type typeCheck(ExtendedExpression expression, ITypeCheckMediator tcMediator);
 
 	/**
