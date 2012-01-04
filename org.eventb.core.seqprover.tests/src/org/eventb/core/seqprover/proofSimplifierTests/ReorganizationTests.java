@@ -13,8 +13,6 @@ package org.eventb.core.seqprover.proofSimplifierTests;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.eventb.core.seqprover.tactics.tests.TreeShape.*;
-
 import org.eventb.core.seqprover.tactics.tests.TreeShape;
 import org.junit.runners.Parameterized.Parameters;
 
@@ -34,15 +32,15 @@ public class ReorganizationTests extends AbstractSimplificationTests {
 	@Parameters
 	public static List<Object[]> getTestCases() throws Exception {
 		return Arrays.<Object[]> asList(
-				/*
-				 * Special case where a needed hypothesis is created redundantly.
-				 */
-				test("⊥ ;; ¬¬⊥ |- ⊥",
-						// initial
-						rn(p("¬¬⊥"), "",
-								falseHyp()),
-						// expected
-						falseHyp())
+//				/*
+//				 * Special case where a needed hypothesis is created redundantly.
+//				 */
+//				test("⊥ ;; ¬¬⊥ |- ⊥",
+//						// initial
+//						rn(p("¬¬⊥"), "",
+//								falseHyp()),
+//						// expected
+//						falseHyp())
 		);
 	}
 
