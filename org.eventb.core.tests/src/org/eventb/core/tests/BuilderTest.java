@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added cleanup of attempted proofs
+ *     Systerel - improve workspace cleanup
  *******************************************************************************/
 package org.eventb.core.tests;
 
@@ -25,9 +26,12 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
@@ -45,7 +49,6 @@ import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -240,17 +243,41 @@ public abstract class BuilderTest extends TestCase {
 		importProjectFiles(rodinProject.getProject(), prjName);
 	}
 
+	public static void setReadOnly(IResource resource, boolean readOnly)
+			throws CoreException {
+		final ResourceAttributes attrs = resource.getResourceAttributes();
+		if (attrs != null && attrs.isReadOnly() != readOnly) {
+			attrs.setReadOnly(readOnly);
+			resource.setResourceAttributes(attrs);
+		}
+	}
+
 	@Override
 	protected void tearDown() throws Exception {
-		// Delete all Rodin projects
-		final IRodinDB rodinDB = RodinCore.getRodinDB();
-		for (IRodinProject rp: rodinDB.getRodinProjects()) {
-			rp.getProject().delete(true, true, null);
-		}
-		
+		cleanupWorkspace();
 		deleteAllProofAttempts();
-		
 		super.tearDown();
 	}
+
+	/**
+	 * Deletes all resources, markers, etc from the workspace. We need to first
+	 * remove all read-only attributes on resources to ensure that they get
+	 * properly deleted.
+	 */
+	private void cleanupWorkspace() throws CoreException {
+		final IWorkspaceRoot root = workspace.getRoot();
+		root.accept(CLEANUP);
+		root.delete(true, null);
+	}
+
+	private static final IResourceVisitor CLEANUP = new IResourceVisitor() {
+
+		@Override
+		public boolean visit(final IResource resource) throws CoreException {
+			setReadOnly(resource, false);
+			return true;
+		}
+
+	};
 
 }
