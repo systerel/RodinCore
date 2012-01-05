@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - create a marker when no configuration for file (no exception)
  *     Systerel - added config in message for problem LoadingRootModuleError
+ *     Systerel - added removal of temporary file
  *******************************************************************************/
 package org.eventb.core.pog;
 
@@ -363,6 +364,10 @@ public abstract class ProofObligationGenerator implements IAutomaticTool, IExtra
 					
 					return compareAndSave(poFile, poTmpFile, monitor);
 				} finally {
+					// Ensure that the temporary file gets deleted
+					if (poTmpFile.exists()) {
+						poTmpFile.delete(true, new SubProgressMonitor(monitor, 1));
+					}
 					monitor.done();
 					poFile.makeConsistent(null);
 				}

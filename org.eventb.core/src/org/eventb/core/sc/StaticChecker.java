@@ -10,7 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added config in message for problem LoadingRootModuleError
  *     Systerel - added warnings for unknown configuration ids
- *     Systerel - force delete temporary files
+ *     Systerel - added removal of temporary file
  *******************************************************************************/
 package org.eventb.core.sc;
 
@@ -233,6 +233,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 					return compareAndSave(scFile, scTmpFile, monitor);
 			
 				} finally {
+					// Ensure that the temporary file gets deleted
 					if (scTmpFile.exists()) {
 						scTmpFile.delete(true, new SubProgressMonitor(monitor, 1));
 					}
