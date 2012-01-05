@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added config in message for problem LoadingRootModuleError
  *     Systerel - added warnings for unknown configuration ids
+ *     Systerel - force delete temporary files
  *******************************************************************************/
 package org.eventb.core.sc;
 
@@ -195,7 +196,7 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 				final IRodinFile sourceFile = RodinCore.valueOf(source).getSnapshot();
 				final IRodinFile scTmpFile = getTmpSCFile(scFile);
 				
-				final int totalWork = sourceFile.getRoot().getChildren().length + 5;
+				final int totalWork = sourceFile.getRoot().getChildren().length + 5 + 1;
 			
 				try {
 			
@@ -232,6 +233,9 @@ public abstract class StaticChecker implements IAutomaticTool, IExtractor {
 					return compareAndSave(scFile, scTmpFile, monitor);
 			
 				} finally {
+					if (scTmpFile.exists()) {
+						scTmpFile.delete(true, new SubProgressMonitor(monitor, 1));
+					}
 					monitor.done();
 					scFile.makeConsistent(null);
 				}
