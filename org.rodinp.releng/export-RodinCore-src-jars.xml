@@ -16,6 +16,7 @@
 			plugins="ch.ethz.eventb.keyboard.latex,
 			         fr.systerel.explorer,
 					 fr.systerel.editor,
+		 			 fr.systerel.editor.help,
 			         org.eventb.core,
 			         org.eventb.core.ast,
 			         org.eventb.core.seqprover,
