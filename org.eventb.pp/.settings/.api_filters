@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eventb.pp" version="2">
+    <resource path="src/org/eventb/pp/PPProof.java" type="org.eventb.pp.PPProof">
+        <filter comment="unused deprecated constructor" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eventb.pp.PPProof"/>
+                <message_argument value="PPProof(Iterable&lt;Predicate&gt;, Predicate, IPPMonitor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="unused deprecated constructor" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eventb.pp.PPProof"/>
+                <message_argument value="PPProof(Predicate[], Predicate, IPPMonitor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="unused deprecated constructor" id="338722907">
+            <message_arguments>
+                <message_argument value="org.eventb.pp.PPProof"/>
+                <message_argument value="PPProof(Set&lt;Predicate&gt;, Predicate, IPPMonitor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

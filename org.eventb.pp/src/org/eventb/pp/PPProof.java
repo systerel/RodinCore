@@ -86,6 +86,9 @@ public class PPProof {
 	
 	private ClauseDispatcher proofStrategy;
 	
+	/**
+	 * @since 0.7
+	 */
 	public PPProof(ISimpleSequent sequent, IPPMonitor monitor) {
 		this.cancellation = CancellationChecker.newChecker(monitor);
 		this.sequent = sequent;
