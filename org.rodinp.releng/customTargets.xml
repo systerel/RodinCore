@@ -88,6 +88,9 @@
 	        <copy todir="${buildDirectory}/features/org.eventb.ide">
 	            <fileset dir="${builder}/../org.eventb.ide-feature" />
 	        </copy>
+	        <copy todir="${buildDirectory}/features/fr.systerel.editor-feature">
+	            <fileset dir="${builder}/../fr.systerel.editor-feature" />
+	        </copy>
 
 	        <mkdir dir="${buildDirectory}/plugins" />
 	        <copy todir="${buildDirectory}/plugins/org.rodinp">
@@ -98,6 +101,9 @@
 	        </copy>
 	        <copy todir="${buildDirectory}/plugins/org.rodinp.keyboard">
 	            <fileset dir="${builder}/../org.rodinp.keyboard" />
+	        </copy>
+			<copy todir="${buildDirectory}/plugins/org.rodinp.core.emf">
+	            <fileset dir="${builder}/../org.rodinp.core.emf" />
 	        </copy>
 
 	        <copy todir="${buildDirectory}/plugins/org.rodinp.platform">
@@ -142,6 +148,12 @@
 	        </copy>
 	        <copy todir="${buildDirectory}/plugins/fr.systerel.explorer">
 	            <fileset dir="${builder}/../fr.systerel.explorer" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/fr.systerel.editor">
+	            <fileset dir="${builder}/../fr.systerel.editor" />
+	        </copy>
+	        <copy todir="${buildDirectory}/plugins/fr.systerel.editor.help">
+	            <fileset dir="${builder}/../fr.systerel.editor.help" />
 	        </copy>
 
 	</target>
