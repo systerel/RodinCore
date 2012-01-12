@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,8 +174,7 @@ public class RodinOperationUtils {
 			if (value.equals(oldValue)) {
 				return;
 			}
-			ElementManipulationFacade
-					.changeAttribute(ielement, manip, oldValue);
+			ElementManipulationFacade.changeAttribute(ielement, manip, value);
 		} catch (RodinDBException e) {
 			System.err.println("Problems occured when updating the dat" + ""
 					+ "" + "" + "abase after attribute edition"
