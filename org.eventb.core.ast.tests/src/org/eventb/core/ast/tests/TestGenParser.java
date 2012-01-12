@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2941,7 +2941,10 @@ public class TestGenParser extends AbstractTests {
 		final Expression expectedInt = makeCond(LIT_BTRUE, ZERO, ONE, null);
 		doExpressionTest("COND(⊤, 0, 1)", expectedInt, INT_TYPE, FAC_COND, false);
 		
-		final Expression expected = makeCond(LIT_BFALSE, FRID_a, ATOM_TRUE, null);
+		// fresh ident because typecheck will set type and subsequent tests
+		// using FRID_a would fail
+		final FreeIdentifier frid_a = ff.makeFreeIdentifier("a", null);
+		final Expression expected = makeCond(LIT_BFALSE, frid_a, ATOM_TRUE, null);
 		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE, FAC_COND, true);
 	}
 	
@@ -2950,7 +2953,12 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testCondWD() throws Exception {
-		final Expression max_a_b = makeMaxCond(FRID_a, FRID_b);
+		// fresh idents because typecheck will set type and subsequent tests
+		// using FRID_a or FRID_b would fail
+		final FreeIdentifier frid_a = ff.makeFreeIdentifier("a", null);
+		final FreeIdentifier frid_b = ff.makeFreeIdentifier("b", null);
+
+		final Expression max_a_b = makeMaxCond(frid_a, frid_b);
 		// WD is 'true & a<b=>true & not(a<b)=>true', but after WD simplifier:
 		final Predicate expectedWD = LIT_BTRUE;
 		
