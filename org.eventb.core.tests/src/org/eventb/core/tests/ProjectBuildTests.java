@@ -130,30 +130,29 @@ public class ProjectBuildTests extends EventBTest {
 		return root;
 	}
 
-	// Creates a read-only file for the given root and ensures that it contains
-	// garbage.
-	private void makeReadOnlyFile(IEventBRoot root) throws CoreException {
+	// Creates a file for the given root and ensures that it contains garbage.
+	private void makeGarbageFile(IEventBRoot root) throws CoreException {
 		final IRodinFile rodinFile = root.getRodinFile();
 		rodinFile.create(true, null);
 		root.setAttributeValue(ASSIGNMENT_ATTRIBUTE, "garbage", null);
-		setReadOnly(rodinFile.getResource(), true);
 	}
 
 	/**
-	 * Verifies that the build fails with a tool problem but that the given
-	 * temporary file is not present afterwards.
+	 * Verifies that, the project being read-only, the build fails with a tool
+	 * problem but that the given temporary file is not present afterwards.
 	 */
 	private void assertBuildFailsNoTempFile(IEventBRoot root, String tmpFileName)
 			throws CoreException {
 		final IProject project = root.getRodinProject().getProject();
+		setReadOnly(project, true);
 
 		// Run builder
 		project.build(INCREMENTAL_BUILD, null);
 
-		// Verify that some tool encountered a problem
+		// Verify that some tools encountered a problem
 		final IMarker[] markers = project.findMarkers(BUILDPATH_PROBLEM_MARKER,
 				false, DEPTH_INFINITE);
-		assertEquals(1, markers.length);
+		assertTrue(markers.length > 0);
 
 		final IFile scTmpFile = project.getFile(tmpFileName);
 		assertFalse("Temporary file should not exist", scTmpFile.exists());
@@ -212,7 +211,7 @@ public class ProjectBuildTests extends EventBTest {
 		final IContextRoot con = createContext("C");
 		addConstants(con, "c");
 		saveRodinFileOf(con);
-		makeReadOnlyFile(con.getSCContextRoot());
+		makeGarbageFile(con.getSCContextRoot());
 		assertBuildFailsNoTempFile(con, "C.bcc_tmp");
 	}
 
@@ -224,7 +223,7 @@ public class ProjectBuildTests extends EventBTest {
 	public void testMachineSCTmpFile() throws Exception {
 		final IMachineRoot mch = createMachine("M");
 		saveRodinFileOf(mch);
-		makeReadOnlyFile(mch.getSCMachineRoot());
+		makeGarbageFile(mch.getSCMachineRoot());
 		assertBuildFailsNoTempFile(mch, "M.bcm_tmp");
 	}
 
@@ -236,7 +235,7 @@ public class ProjectBuildTests extends EventBTest {
 	public void testMachinePOTmpFile() throws Exception {
 		final IMachineRoot mch = createMachine("M");
 		saveRodinFileOf(mch);
-		makeReadOnlyFile(mch.getPORoot());
+		makeGarbageFile(mch.getPORoot());
 		assertBuildFailsNoTempFile(mch, "M.bpo_tmp");
 	}
 
