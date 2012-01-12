@@ -44,7 +44,7 @@ public class TestEventGuardsAndTheorems extends
 	}
 
 	/**
-	 * Ensures that a theorem guard cannot refer to a disappearing variable.
+	 * Ensures that a theorem guard can refer to a disappearing variable.
 	 */
 	public void test_14() throws Exception {
 		final IMachineRoot abs = createAbstractMachine();
@@ -52,8 +52,7 @@ public class TestEventGuardsAndTheorems extends
 		runBuilder();
 
 		containsMarkers(abs, false);
-		final IGuard grd = evt.getGuards()[0];
-		hasMarker(grd, PREDICATE_ATTRIBUTE, VariableHasDisappearedError, "V1");
+		containsMarkers(evt.getRoot(), false);
 	}
 
 	private IMachineRoot createAbstractMachine() throws RodinDBException {
