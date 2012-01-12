@@ -53,6 +53,7 @@ public class AllTests {
 		suite.addTestSuite(TestPredicateVariables.class);
 		suite.addTestSuite(TestFormulaInspector.class);
 		suite.addTestSuite(TestWDStrict.class);
+		suite.addTestSuite(TestGenParser.class);
 		//$JUnit-END$
 		return suite;
 	}
