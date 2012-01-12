@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
+import static java.util.Arrays.asList;
+import static org.eventb.core.EventBPlugin.getAutoPostTacticManager;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.LAND;
@@ -20,8 +22,6 @@ import static org.eventb.core.seqprover.IConfidence.REVIEWED_MAX;
 import static org.eventb.core.seqprover.IConfidence.UNATTEMPTED;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.EventBPlugin;
@@ -35,12 +35,15 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
+import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.LoopOnAllPending;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
 import org.rodinp.core.IRodinFile;
@@ -72,6 +75,21 @@ public class AutoProverDeltaTests extends BuilderTest {
 	
 	private IPORoot poRoot;
 	private IPSRoot psRoot;
+
+	private static final ITacticDescriptor tacticDesc;
+
+	static {
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		final ITacticDescriptor tracing = reg
+				.getTacticDescriptor(TracingReasoner.TACTIC_ID);
+		final ITacticDescriptor clarifyGoal = reg
+				.getTacticDescriptor("org.eventb.core.seqprover.clarifyGoalTac");
+		final ICombinatorDescriptor loopOnAllPending = reg
+				.getCombinatorDescriptor(LoopOnAllPending.COMBINATOR_ID);
+
+		tacticDesc = loopOnAllPending.combine(asList(tracing, clarifyGoal),
+				PLUGIN_ID + ".trace_clarify");
+	}
 
 	private void createPOFile() throws RodinDBException {
 		poRoot = createPOFile("x");
@@ -152,14 +170,9 @@ public class AutoProverDeltaTests extends BuilderTest {
 		super.setUp();
 
 		// Change the auto-tactic and enable it.
-		final IAutoTacticPreference autoPref = EventBPlugin
-				.getAutoPostTacticManager().getAutoTacticPreference();
-		final List<ITacticDescriptor> descrs = new ArrayList<ITacticDescriptor>();
-		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-		descrs.add(reg.getTacticDescriptor(TracingReasoner.TACTIC_ID));
-		descrs.add(reg
-				.getTacticDescriptor("org.eventb.core.seqprover.clarifyGoalTac"));
-		autoPref.setSelectedDescriptors(descrs);
+		final IAutoPostTacticManager manager = getAutoPostTacticManager();
+		final IAutoTacticPreference autoPref = manager.getAutoTacticPreference();
+		autoPref.setSelectedDescriptor(tacticDesc);
 		autoPref.setEnabled(true);
 	}
 

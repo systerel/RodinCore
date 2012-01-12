@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Systerel and others.
+ * Copyright (c) 2009, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
@@ -52,6 +53,25 @@ public class FunOvrGoalTacTests extends BasicTest {
 			}
 		}
 		fail("Tactic " + TAC_ID + " not found.");
+	}
+
+	private static void assertIn(ITacticDescriptor desc) {
+		assertTrue("Tactic " + TAC_ID + " not found.", contains(desc));
+	}
+
+	private static boolean contains(ITacticDescriptor desc) {
+		if (TAC_ID.equals(desc.getTacticID())) {
+			return true;
+		}
+		if (desc instanceof ICombinedTacticDescriptor) {
+			final ICombinedTacticDescriptor comb = (ICombinedTacticDescriptor) desc;
+			for (ITacticDescriptor child : comb.getCombinedTactics()) {
+				if (contains(child)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	private static void assertDischarged(IPSStatus status)
@@ -106,7 +126,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 		final IAutoTacticPreference pref = EventBPlugin
 				.getAutoPostTacticManager().getAutoTacticPreference();
 		assertIn(pref.getDeclaredDescriptors());
-		assertIn(pref.getDefaultDescriptors());
+		assertIn(pref.getDefaultDescriptor());
 	}
 
 	/**
@@ -117,7 +137,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 		final IAutoTacticPreference pref = EventBPlugin
 				.getAutoPostTacticManager().getPostTacticPreference();
 		assertIn(pref.getDeclaredDescriptors());
-		assertIn(pref.getDefaultDescriptors());
+		assertIn(pref.getDefaultDescriptor());
 	}
 
 	/**
