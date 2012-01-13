@@ -58,14 +58,14 @@ public class MachineEventGuardFreeIdentsModule extends
 		return symbolInfo;
 	}
 
-	private boolean isDisappearingVariable(IIdentifierSymbolInfo symbolInfo) {
+	private static boolean isDisappearingVariable(IIdentifierSymbolInfo symbolInfo) {
 		return symbolInfo != null
 				&& symbolInfo.getSymbolType() == ISCVariable.ELEMENT_TYPE
 				&& symbolInfo.getAttributeValue(ABSTRACT_ATTRIBUTE)
 				&& !symbolInfo.getAttributeValue(CONCRETE_ATTRIBUTE);
 	}
 
-	private boolean isTheorem(IInternalElement element) throws RodinDBException {
+	private static boolean isTheorem(IInternalElement element) throws RodinDBException {
 		return ((IGuard) element).isTheorem();
 	}
 

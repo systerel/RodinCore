@@ -131,7 +131,7 @@ public class ProjectBuildTests extends EventBTest {
 	}
 
 	// Creates a file for the given root and ensures that it contains garbage.
-	private void makeGarbageFile(IEventBRoot root) throws CoreException {
+	private static void makeGarbageFile(IEventBRoot root) throws CoreException {
 		final IRodinFile rodinFile = root.getRodinFile();
 		rodinFile.create(true, null);
 		root.setAttributeValue(ASSIGNMENT_ATTRIBUTE, "garbage", null);
@@ -141,7 +141,7 @@ public class ProjectBuildTests extends EventBTest {
 	 * Verifies that, the project being read-only, the build fails with a tool
 	 * problem but that the given temporary file is not present afterwards.
 	 */
-	private void assertBuildFailsNoTempFile(IEventBRoot root, String tmpFileName)
+	private static void assertBuildFailsNoTempFile(IEventBRoot root, String tmpFileName)
 			throws CoreException {
 		final IProject project = root.getRodinProject().getProject();
 		setReadOnly(project, true);
