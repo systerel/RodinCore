@@ -620,8 +620,8 @@ public abstract class TreeShape {
 
 		@Override
 		protected void checkInput(IReasonerInput input) {
-			// TODO Auto-generated method stub
-			
+			assertTrue(input instanceof Review.Input);
+			// TODO check input.sequent (requires accessor)
 		}
 
 		@Override
