@@ -7,9 +7,16 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added command wrapping utility method
  *******************************************************************************/
 package org.eventb.core.seqprover.xprover.tests;
 
+import static java.lang.Runtime.getRuntime;
+import static java.util.Arrays.asList;
+import static org.eclipse.core.runtime.Platform.OS_LINUX;
+import static org.eclipse.core.runtime.Platform.OS_MACOSX;
+import static org.eventb.core.seqprover.xprover.ProcessMonitor.wrapCommand;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -18,6 +25,8 @@ import java.io.ByteArrayInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -45,6 +54,9 @@ public class ProcessMonitorTests {
 	private static final IPath dataLocalPath = new Path("lib/data.txt");
 	private static final String dataFilename = BundledFileExtractor
 			.extractFile(bundle, dataLocalPath, false).toOSString();
+
+	private static final String friendCmd = BundledFileExtractor.extractFile(
+			bundle, new Path("$os$/friend"), true).toOSString();
 
 	private static Cancellable notCancelled = new Cancellable() {
 		public boolean isCancelled() {
@@ -100,8 +112,57 @@ public class ProcessMonitorTests {
 		} else {
 			assertEquals("Unexpected exit value", expCode, exitCode);
 		}
-		assertEquals(output, new String(mon.output()));
-		assertEquals(error, new String(mon.error()));
+		assertStreamContents(output, mon.output());
+		assertStreamContents(error, mon.error());
+	}
+
+	private static void assertStreamContents(String expected, byte[] bytes) {
+		if (expected != null) {
+			assertEquals(expected, new String(bytes));
+		}
+	}
+
+	private static final boolean WITH_WRAPPING;
+	static {
+		final String os = Platform.getOS();
+		WITH_WRAPPING = OS_LINUX.equals(os) || OS_MACOSX.equals(os);
+	}
+
+	/**
+	 * Exit code of a process killed with SIGTERM on Unix (or simply killed on
+	 * Windows).
+	 */
+	private static final int RECEIVED_SIGTERM = WITH_WRAPPING ? 143 : 1;
+
+	/**
+	 * Exit code of a process killed with SIGKILL on Unix (or simply killed on
+	 * Windows).
+	 */
+	private static final int RECEIVED_SIGKILL = WITH_WRAPPING ? 137 : 1;
+
+	private static class Timeout implements Cancellable {
+
+		private volatile boolean cancelled;
+
+		public Timeout(long timeout) {
+			new Timer(true).schedule(new TimerTask() {
+				@Override
+				public void run() {
+					cancelled = true;
+				}
+			}, timeout);
+		}
+
+		public boolean isCancelled() {
+			return cancelled;
+		}
+	}
+
+	/*
+	 * Cancels after 500 ms, leaving time for the OS to launch a program.
+	 */
+	private static Cancellable timeout() {
+		return new Timeout(500); // ms
 	}
 
 	/**
@@ -166,6 +227,46 @@ public class ProcessMonitorTests {
 		Process process = launch("-s");
 		ProcessMonitor mon = new ProcessMonitor(null, process, cancelled);
 		assertProcessResult(mon, -1, "", "");
+	}
+
+	/**
+	 * Ensures that commands are properly wrapped on appropriate platforms.
+	 */
+	@Test
+	public void wrapping() throws Exception {
+		final String[] cmd = { "foo", "bar" };
+		final String[] actual = wrapCommand(cmd);
+		if (WITH_WRAPPING) {
+			assertEquals(cmd.length + 1, actual.length);
+			assertEquals(asList(cmd), asList(actual).subList(1, actual.length));
+		} else {
+			assertArrayEquals(cmd, actual);
+		}
+	}
+
+	/**
+	 * Ensures that a long running process which is cooperative is terminated
+	 * with signal SIGTERM on Unix (and simply terminated on Windows).
+	 */
+	@Test(timeout = 2000)
+	public void friendly() throws Exception {
+		final String[] cmdArray = { friendCmd };
+		final Process process = getRuntime().exec(wrapCommand(cmdArray));
+		final ProcessMonitor mon = new ProcessMonitor(null, process, timeout());
+		assertProcessResult(mon, RECEIVED_SIGTERM, null, null);
+	}
+
+	/**
+	 * Ensures that a long running process which is not cooperative is
+	 * terminated with signal SIGKILL on Unix (and simply terminated on
+	 * Windows).
+	 */
+	@Test(timeout = 2000)
+	public void unfriendly() throws Exception {
+		final String[] cmdArray = { friendCmd, "some arg" };
+		final Process process = getRuntime().exec(wrapCommand(cmdArray));
+		final ProcessMonitor mon = new ProcessMonitor(null, process, timeout());
+		assertProcessResult(mon, RECEIVED_SIGKILL, null, null);
 	}
 
 }
