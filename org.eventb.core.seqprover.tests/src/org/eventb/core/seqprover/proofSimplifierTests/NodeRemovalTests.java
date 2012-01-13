@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eventb.core.seqprover.proofSimplifierTests;
 
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.*;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,6 +53,26 @@ public class NodeRemovalTests extends AbstractSimplificationTests {
 								trueGoal()),
 						// expected		
 						trueGoal()),
+						
+				/**
+				 * Same as above, except for the review.
+				 * The hyp is not needed in review input
+				 * (as if deselected)
+				 * 
+				 * Proof tree:
+				 * 0
+				 * 1
+				 * Dependencies:
+				 * {}
+				 * Expected:
+				 * 1
+				 */
+				test("¬¬x=0|- ⊤",
+						// initial
+						rn(p("¬¬x=0"), "",
+								review(genSeq("|- ⊤"))),
+						// expected		
+						review(genSeq("|- ⊤"))),
 				
 				///////////////////
 				// 3 nodes tests //

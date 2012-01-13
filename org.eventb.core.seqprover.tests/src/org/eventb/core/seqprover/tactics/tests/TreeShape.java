@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,10 @@ import java.util.Arrays;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerRegistry;
@@ -34,6 +36,7 @@ import org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner;
 import org.eventb.core.seqprover.reasonerInputs.HypothesesReasoner;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 import org.eventb.core.seqprover.reasonerInputs.MultipleExprInput;
+import org.eventb.core.seqprover.reasoners.Review;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractManualInference;
 import org.eventb.internal.core.seqprover.eventbExtensions.Conj;
 import org.eventb.internal.core.seqprover.eventbExtensions.ConjF;
@@ -601,6 +604,33 @@ public abstract class TreeShape {
 
 	}
 
+	private static class ReviewShape extends TreeShape {
+
+		private final IProverSequent sequent;
+
+		public ReviewShape(TreeShape[] expChildren, IProverSequent sequent) {
+			super(expChildren);
+			this.sequent = sequent;
+		}
+		
+		@Override
+		protected String getReasonerID() {
+			return "org.eventb.core.seqprover.review";
+		}
+
+		@Override
+		protected void checkInput(IReasonerInput input) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected IReasonerInput getInput() {
+			return new Review.Input(sequent, IConfidence.REVIEWED_MAX);
+		}
+		
+	}
+	
 	public static final TreeShape empty = new EmptyShape();
 
 	/**
@@ -737,6 +767,10 @@ public abstract class TreeShape {
 
 	public static TreeShape mapOvrG(Predicate predicate, TreeShape... chidlren) {
 		return new MapOvrGShape(predicate, chidlren);
+	}
+	
+	public static TreeShape review(IProverSequent sequent, TreeShape... children) {
+		return new ReviewShape(children, sequent);
 	}
 
 	protected final TreeShape[] expChildren;
