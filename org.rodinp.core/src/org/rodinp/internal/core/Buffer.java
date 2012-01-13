@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Systerel - generic attribute manipulation
  *     Systerel - made NAME_ATTRIBUTE and VERSION_ATTRIBUTE public
  *     Systerel - refactored automatic file conversion
+ *     Systerel - fix file not closed on erroneous XML
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -28,6 +29,7 @@ import static org.rodinp.internal.core.version.VersionManager.UNKNOWN_VERSION;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -178,14 +180,10 @@ public class Buffer {
 		final DocumentBuilder builder = manager.getDocumentBuilder();
 		builder.setErrorHandler(errorHandler);
 
+		final IFile file = owner.getResource();
+		stamp = file.getModificationStamp();
 		try {
-			final IFile file = owner.getResource();
-			stamp = file.getModificationStamp();
-			domDocument = builder.parse(file.getContents());
-		} catch (SAXException e) {
-			throw new RodinDBException(e, XML_PARSE_ERROR);
-		} catch (IOException e) {
-			throw new RodinDBException(e, IO_EXCEPTION);
+			domDocument = parseXML(builder, file.getContents());
 		} catch (RodinDBException e) {
 			throw e;
 		} catch (CoreException e) {
@@ -195,6 +193,23 @@ public class Buffer {
 		// the version is always fetched from the file;
 		// if it cannot be verified, then the document is not fetched (although it was parsed successfully)
 		version = fetchVersion(domDocument);
+	}
+
+	private Document parseXML(DocumentBuilder builder, InputStream contents)
+			throws RodinDBException {
+		try {
+			return builder.parse(contents);
+		} catch (SAXException e) {
+			throw new RodinDBException(e, XML_PARSE_ERROR);
+		} catch (IOException e) {
+			throw new RodinDBException(e, IO_EXCEPTION);
+		} finally {
+			try {
+				contents.close();
+			} catch (IOException e) {
+				throw new RodinDBException(e, IO_EXCEPTION);
+			}
+		}
 	}
 
 	private int checkVersion() throws RodinDBException {
