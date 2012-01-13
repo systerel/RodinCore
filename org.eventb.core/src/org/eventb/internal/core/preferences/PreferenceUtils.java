@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.runtime.Platform;
 import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.preferences.autotactics.TacticPreferenceConstants;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
@@ -51,6 +53,13 @@ public class PreferenceUtils {
 	 * Client should not try to reset this flag.
 	 */
 	public static boolean DEBUG = false;
+
+	/**
+	 * This string identifies the qualifier used to store tactic preferences by
+	 * the UI. It shows a dependency to the UI which is the price to pay if one
+	 * wants to use the PreferenceStore API owned by Jface.
+	 */
+	public static final String PREF_QUALIFIER = "org.eventb.ui";
 
 	public static class PreferenceException extends RuntimeException {
 
@@ -313,4 +322,9 @@ public class PreferenceUtils {
 		throw PreferenceException.getInstance();
 	}
 
+	public static boolean getSimplifyProofPref() {
+		return Platform.getPreferencesService().getBoolean(PREF_QUALIFIER,
+				TacticPreferenceConstants.P_SIMPLIFY_PROOFS, false, null);
+	}
+	
 }

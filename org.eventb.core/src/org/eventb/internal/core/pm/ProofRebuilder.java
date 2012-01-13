@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.pm;
+
+import static org.eventb.internal.core.preferences.PreferenceUtils.getSimplifyProofPref;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -35,7 +37,7 @@ public class ProofRebuilder extends ProofModifier {
 	private final boolean applyPostTactics;
 
 	public ProofRebuilder(IPRProof proof, boolean applyPostTactics) {
-		super(proof, REBUILDER);
+		super(proof, REBUILDER, getSimplifyProofPref());
 		this.applyPostTactics = applyPostTactics;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,11 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - used proof components
+ *     Systerel - added simplify proof preference
  *******************************************************************************/
 package org.eventb.internal.core.pom;
+
+import static org.eventb.internal.core.preferences.PreferenceUtils.getSimplifyProofPref;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -112,7 +115,7 @@ public final class RecalculateAutoStatus {
 			pm.subTask(Messages.progress_RecalculateAutoStatus_saving);
 			// Update the tree if it was discharged
 			if (autoProofTree.isClosed()) {
-				pa.commit(false, true, pm.newChild(2));
+				pa.commit(false, getSimplifyProofPref(), pm.newChild(2));
 				
 				if (DEBUG) {
 					if (status.getHasManualProof()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.recoverOldPreference;
+import static org.eventb.internal.core.preferences.PreferenceUtils.PREF_QUALIFIER;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -39,13 +40,6 @@ import org.eventb.internal.core.pom.POMTacticPreference;
  * @author "Thomas Muller"
  */
 public class AutoPostTacticManager implements IAutoPostTacticManager {
-
-	/**
-	 * This string identifies the qualifier used to store tactic preferences by
-	 * the UI. It shows a dependency to the UI which is the price to pay if one
-	 * wants to use the PreferenceStore API owned by Jface.
-	 */
-	private static final String PREF_QUALIFIER = "org.eventb.ui";
 
 	private static final IAutoTacticPreference postTacPref = PostTacticPreference
 			.getDefault();

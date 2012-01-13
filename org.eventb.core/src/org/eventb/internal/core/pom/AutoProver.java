@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich.
+ * Copyright (c) 2005, 2012 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,14 @@
  *     Systerel - refactored code to improve maintainability
  *     Systerel - added proof simplification on commit
  *     Systerel - fixed bar progression
+ *     Systerel - added simplify proof preference
  *******************************************************************************/
 package org.eventb.internal.core.pom;
 
 import static org.eclipse.core.runtime.SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK;
 import static org.eclipse.core.runtime.SubProgressMonitor.SUPPRESS_SUBTASK_LABEL;
 import static org.eventb.core.seqprover.IConfidence.PENDING;
+import static org.eventb.internal.core.preferences.PreferenceUtils.getSimplifyProofPref;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -137,7 +139,7 @@ public final class AutoProver {
 			throws RodinDBException {
 		pm.subTask("committing");
 		if (shouldCommit(pa)) {
-			pa.commit(false, true, new SubProgressMonitor(pm, 1));
+			pa.commit(false, getSimplifyProofPref(), new SubProgressMonitor(pm, 1));
 			return true;
 		}
 		pm.worked(1);

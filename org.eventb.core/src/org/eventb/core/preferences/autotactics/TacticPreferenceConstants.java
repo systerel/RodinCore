@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,5 +40,11 @@ public class TacticPreferenceConstants {
 	 * The preference containing all the tactic profiles.
 	 */
 	public static final String P_TACTICSPROFILES = "Tactics Map";
+	
+	/**
+	 * Preference key enabling/disabling proof simplification
+	 * @since 2.4
+	 */
+	public static final String P_SIMPLIFY_PROOFS = "Simplify Proofs";
 	
 }

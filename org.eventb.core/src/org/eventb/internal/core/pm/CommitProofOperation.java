@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,25 +10,29 @@
  *******************************************************************************/
 package org.eventb.internal.core.pm;
 
+import static org.eventb.core.seqprover.ProverLib.simplify;
+
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPSStatus;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
+import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.RodinDBException;
 
 class CommitProofOperation implements IWorkspaceRunnable {
 
 	private final ProofAttempt pa;
 	private final boolean manual;
-	//private final boolean simplify;
+	private final boolean simplify;
 
 	CommitProofOperation(ProofAttempt pa, boolean manual, boolean simplify) {
 		this.pa = pa;
 		this.manual = manual;
-		//this.simplify = simplify;
+		this.simplify = simplify;
 	}
 
 	@Override
@@ -49,30 +53,30 @@ class CommitProofOperation implements IWorkspaceRunnable {
 	private IProofTree getProofTree(IProgressMonitor pm)
 			throws RodinDBException {
 		final IProofTree proofTree = pa.getProofTree();
-//		if (simplify) {
-//			final IProgressMonitor spm = new SubProgressMonitor(pm, 1);
-//			return simplifyIfClosed(proofTree, spm);
-//		} else {
+		if (simplify) {
+			final IProgressMonitor spm = new SubProgressMonitor(pm, 1);
+			return simplifyIfClosed(proofTree, spm);
+		} else {
 			pm.worked(1);
 			return proofTree;
-//		}
+		}
 	}
 	
-//	private static IProofTree simplifyIfClosed(IProofTree proofTree,
-//			IProgressMonitor pm) {
-//		try {
-//			if (proofTree.isClosed()) {
-//				final IProofMonitor monitor = new ProofMonitor(pm);
-//				final IProofTree simplified = simplify(proofTree, monitor);
-//				if (simplified != null) {
-//					return simplified;
-//				}
-//			}
-//			return proofTree;
-//		} finally {
-//			pm.done();
-//		}
-//	}
+	private static IProofTree simplifyIfClosed(IProofTree proofTree,
+			IProgressMonitor pm) {
+		try {
+			if (proofTree.isClosed()) {
+				final IProofMonitor monitor = new ProofMonitor(pm);
+				final IProofTree simplified = simplify(proofTree, monitor);
+				if (simplified != null) {
+					return simplified;
+				}
+			}
+			return proofTree;
+		} finally {
+			pm.done();
+		}
+	}
 
 	// Consumes three ticks of the given progress monitor
 	private void commitProof(IProofTree proofTree, IProgressMonitor pm)

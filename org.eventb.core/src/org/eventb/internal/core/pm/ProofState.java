@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,13 @@
  *     Systerel - removed post-tactics call when saving
  *     Systerel - got formula factory from proof attempt
  *     Systerel - added more getters
+ *     Systerel - added simplify proof preference
  ******************************************************************************/
 package org.eventb.internal.core.pm;
 
 import static java.util.Collections.emptyList;
 import static org.eventb.core.seqprover.proofBuilder.ProofBuilder.rebuild;
+import static org.eventb.internal.core.preferences.PreferenceUtils.getSimplifyProofPref;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -481,7 +483,7 @@ public class ProofState implements IProofState {
 		if (UserSupportUtils.DEBUG)
 			UserSupportUtils.debug("Saving: " + pa.getName());
 		if (pa != null && !pa.isDisposed()) {
-			pa.commit(true, true, monitor);
+			pa.commit(true, getSimplifyProofPref(), monitor);
 		}
 		setDirty(false);
 	}

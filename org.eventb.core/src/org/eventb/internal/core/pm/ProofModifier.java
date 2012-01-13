@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,11 +35,13 @@ import org.rodinp.core.RodinDBException;
 	protected final IPRProof proof;
 	protected final FormulaFactory factory;
 	protected final String owner;
+	private final boolean simplify;
 
-	public ProofModifier(IPRProof proof, String owner) {
+	public ProofModifier(IPRProof proof, String owner, boolean simplify) {
 		this.factory = ((IEventBRoot) proof.getRoot()).getFormulaFactory();
 		this.proof = proof;
 		this.owner = owner;
+		this.simplify = simplify;
 	}
 
 	/**
@@ -78,7 +80,7 @@ import org.rodinp.core.RodinDBException;
 			if (!success || subMonitor.isCanceled()) {
 				return false;
 			}
-			commitSimplified(pa, subMonitor.newChild(2));
+			commit(pa, subMonitor.newChild(2));
 			pc.save(subMonitor.newChild(1), false);
 		} finally {
 			pa.dispose();
@@ -129,9 +131,9 @@ import org.rodinp.core.RodinDBException;
 		return pc.createProofAttempt(proof.getElementName(), owner, monitor);
 	}
 
-	private void commitSimplified(IProofAttempt pa, IProgressMonitor monitor)
+	private void commit(IProofAttempt pa, IProgressMonitor monitor)
 			throws RodinDBException {
-		pa.commit(proof.getHasManualProof(), true, monitor);
+		pa.commit(proof.getHasManualProof(), simplify, monitor);
 	}
 
 }
