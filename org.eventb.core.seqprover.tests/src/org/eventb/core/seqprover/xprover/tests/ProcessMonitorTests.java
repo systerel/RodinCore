@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
+ * Copyright (c) 2007, 2012 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.seqprover.xprover.tests;
 
@@ -26,12 +29,12 @@ import org.junit.Test;
 import org.osgi.framework.Bundle;
 
 /**
- * Unit tests for class BundledFileExtractor.
+ * Unit tests for class ProcessMonitor.
  * 
  * @author Laurent Voisin
  */
 public class ProcessMonitorTests {
-	
+
 	private static final String BUNDLE_NAME = "org.eventb.core.seqprover.tests";
 	private static final Bundle bundle = Platform.getBundle(BUNDLE_NAME);
 
@@ -40,15 +43,15 @@ public class ProcessMonitorTests {
 			progLocalPath, true).toOSString();
 
 	private static final IPath dataLocalPath = new Path("lib/data.txt");
-	private static final String dataFilename = BundledFileExtractor.extractFile(bundle,
-			dataLocalPath, false).toOSString();
+	private static final String dataFilename = BundledFileExtractor
+			.extractFile(bundle, dataLocalPath, false).toOSString();
 
 	private static Cancellable notCancelled = new Cancellable() {
 		public boolean isCancelled() {
 			return false;
 		}
 	};
-	
+
 	private static Cancellable cancelled = new Cancellable() {
 		public boolean isCancelled() {
 			return true;
@@ -56,7 +59,7 @@ public class ProcessMonitorTests {
 	};
 
 	private static final String data = readData();
-	
+
 	private static String readData() {
 		final String lineSep = Platform.getOS().equals(Platform.OS_WIN32) ? "\r\n"
 				: "\n";
@@ -76,21 +79,18 @@ public class ProcessMonitorTests {
 			return "";
 		}
 	}
-	
+
 	private static Process launch(String... args) throws IOException {
 		final int length = args.length;
 		final String[] cmdArray = new String[length + 1];
 		cmdArray[0] = cmd;
-		for (int i = 0; i < length; ++ i) {
-			cmdArray[i+1] = args[i];
-		}
+		System.arraycopy(args, 0, cmdArray, 1, length);
 		return Runtime.getRuntime().exec(cmdArray);
 	}
 
 	private static void assertProcessResult(ProcessMonitor mon, int expCode,
 			String output, String error) {
-		
-		
+
 		final int exitCode = mon.exitCode();
 		if (expCode < 0) {
 			// Special case for don't care exit code
@@ -103,7 +103,7 @@ public class ProcessMonitorTests {
 		assertEquals(output, new String(mon.output()));
 		assertEquals(error, new String(mon.error()));
 	}
-	
+
 	/**
 	 * Ensures that a successful process can be monitored and the exit value
 	 * retrieved.
@@ -125,7 +125,7 @@ public class ProcessMonitorTests {
 		ProcessMonitor mon = new ProcessMonitor(null, process, notCancelled);
 		assertProcessResult(mon, 1, "", "");
 	}
-	
+
 	/**
 	 * Ensures that the output of a monitored process can be read.
 	 */
@@ -137,7 +137,8 @@ public class ProcessMonitorTests {
 	}
 
 	/**
-	 * Ensures that the input of a monitored process is actually readable by the process.
+	 * Ensures that the input of a monitored process is actually readable by the
+	 * process.
 	 */
 	@Test
 	public void input() throws Exception {
