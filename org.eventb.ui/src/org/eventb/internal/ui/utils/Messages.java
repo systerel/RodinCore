@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@
  *     Systerel - added "expand section" preference
  *     Systerel - added messages for dialogs
  *     Systerel - added messages for the new prefix preference mechanism
+ *     Systerel - added message for the simplify proof preference
  *******************************************************************************/
 package org.eventb.internal.ui.utils;
 
@@ -118,6 +119,7 @@ public final class Messages {
 	public static String preferencepage_provingui_description;
 	public static String preferencepage_provingui_considerHiddenHypotheses;
 	public static String preferencepage_seqprover_description;
+	public static String preferencepage_seqprover_simplify_proofs;
 	public static String preferencepage_twolistselectioneditor_availablelabel;
 	public static String preferencepage_twolistselectioneditor_selectedlabel;
 	public static String preferencepage_appearance_description;
