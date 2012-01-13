@@ -28,8 +28,8 @@ import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.internal.core.seqprover.ReasonerRegistry;
-import org.eventb.internal.core.seqprover.proofSimplifier.ProofTreeSimplifier;
-import org.eventb.internal.core.seqprover.proofSimplifier.Simplifier.CancelException;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer;
+import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelException;
 
 /**
  * This is a collection of static constants and methods that are used often in relation
@@ -142,7 +142,10 @@ public class ProverLib {
 		return p1.equals(p2);
 	}
 
-	private static boolean deepEquals(IHypAction ha1, IHypAction ha2) {
+	/**
+	 * @since 2.4
+	 */
+	public static boolean deepEquals(IHypAction ha1, IHypAction ha2) {
 		if (ha1 == ha2) return true;
 		if (! ha1.getActionType().equals(ha2.getActionType())) return false;
 		if (ha1 instanceof IForwardInfHypAction) {
@@ -417,7 +420,12 @@ public class ProverLib {
 	 */
 	public static IProofTree simplify(IProofTree prTree, IProofMonitor monitor) {
 		try {
-			return new ProofTreeSimplifier().simplify(prTree, monitor);
+			final IProofTree result = new ProofSawyer().simplify(prTree,
+					monitor);
+			if (result != null && deepEquals(prTree, result)) {
+				return null;
+			}
+			return result;
 		} catch (CancelException e) {
 			return null;
 		}
