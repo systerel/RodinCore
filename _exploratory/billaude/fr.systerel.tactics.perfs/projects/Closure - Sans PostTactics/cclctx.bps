@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<org.eventb.core.psFile>
-<org.eventb.core.psStatus name="thm1/THM" org.eventb.core.confidence="1000" org.eventb.core.poStamp="2" org.eventb.core.psManual="true"/>
-<org.eventb.core.psStatus name="thm2/THM" org.eventb.core.confidence="1000" org.eventb.core.poStamp="2" org.eventb.core.psManual="true"/>
-<org.eventb.core.psStatus name="thm3/THM" org.eventb.core.confidence="1000" org.eventb.core.poStamp="2" org.eventb.core.psManual="true"/>
-<org.eventb.core.psStatus name="thm4/THM" org.eventb.core.confidence="1000" org.eventb.core.poStamp="2" org.eventb.core.psManual="true"/>
-</org.eventb.core.psFile>
