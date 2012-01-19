@@ -23,7 +23,8 @@ signaled() {
 $TRACE start "$@"
 "$@" &
 pid=$!
-trap signaled 15
+trap signaled PIPE
+trap signaled TERM
 wait $pid
 ret=$?
 $TRACE returned $ret
