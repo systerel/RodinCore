@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added PO nature
+ *     Systerel - fix bug #3478644: Missing WWD PO
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -77,9 +78,6 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 			ISCWitness witness = witnesses.get(i);
 			Predicate predicate = predicates.get(i);
 			
-			if (isTrivial(predicate)) // only trivial POs can be derived from this witness
-				continue;
-			
 			Predicate wdPredicate = predicate.getWDPredicate(factory);
 			String witnessLabel = witness.getLabel();
 			FreeIdentifier witnessIdentifier = factory.makeFreeIdentifier(witnessLabel, null);
@@ -97,8 +95,9 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 					IPOGNature.WITNESS_WELL_DEFINEDNESS,
 					monitor);
 			
+			final boolean trivial = isTrivial(predicate);
 			boolean deterministic = isDeterministic(predicate, witnessIdentifier);
-			if (!deterministic) {
+			if (!trivial && !deterministic) {
 				Predicate fisPredicate = predicate;
 				FreeIdentifier[] freeIdentifiers = predicate.getFreeIdentifiers();
 				if (containsIdent(witnessIdentifier, freeIdentifiers)) {

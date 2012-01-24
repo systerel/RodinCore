@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - fix bug #3478644: Missing WWD PO
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
@@ -327,5 +328,45 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 		sequentHasIdentifiers(sequent, "ax'", "ay'", "az'", "cz'");
 	}
 
+	/**
+	 * A trivial witness can produce a well-definedness PO, but no witness
+	 * feasibility PO.
+	 * 
+	 * Cf. bug #3478644: Missing WWD PO.
+	 */
+	public void test_05() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addVariables(abs, "ax");
+		addInvariants(abs, makeSList("I1"), makeSList("ax>0"), false);
+		addEvent(abs, "evt", //
+				makeSList(), //
+				makeSList(), makeSList(), //
+				makeSList("A1"), makeSList("ax:∈ℕ"));
+		saveRodinFileOf(abs);
+		runBuilder();
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "cx");
+		addInvariants(mac, makeSList("I3"), makeSList("ax = 1÷cx"), false);
+		IEvent event = addEvent(mac, "evt", //
+				makeSList(), //
+				makeSList(), makeSList(), //
+				makeSList("A1"), makeSList("cx≔2"));
+		addEventRefines(event, "evt");
+		addEventWitnesses(event, makeSList("ax'"), makeSList("1÷(ax'+cx') ∈ ℤ"));
+		saveRodinFileOf(mac);
+		runBuilder();
+
+		final ITypeEnvironment environment = makeTypeEnvironment();
+		final IPORoot po = mac.getPORoot();
+
+		final IPOSequent sequent = getSequent(po, "evt/ax'/WWD");
+		sequentHasIdentifiers(sequent, "ax'", "cx'");
+		sequentHasHypotheses(sequent, environment, "ax>0", "ax = 1÷cx");
+		sequentHasGoal(sequent, environment, "(ax'+2)≠0");
+
+		noSequent(po, "evt/ax'/WFIS");
+	}
 
 }
