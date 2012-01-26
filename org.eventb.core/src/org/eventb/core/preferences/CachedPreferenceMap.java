@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.preferences.autotactics.TacticPreferenceFactory;
-import org.eventb.internal.core.Util;
 import org.eventb.internal.core.preferences.PrefEntryGraph;
 import org.eventb.internal.core.preferences.PreferenceCheckResult;
 import org.eventb.internal.core.preferences.PreferenceMapper;
@@ -100,9 +99,7 @@ public class CachedPreferenceMap<T> {
 			cache = prefMap.inject(pref);
 		} catch (PreferenceException e) {
 			// failed
-			final String message = "could not load preference from: " + pref;
-			Util.log(e, message);
-			throw new IllegalArgumentException(message);
+			throw new IllegalArgumentException(e);
 		}
 		prefMap.resolveReferences(this);
 		notifyListeners();
