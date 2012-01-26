@@ -137,6 +137,16 @@ public class ProfileImportExport {
 		}
 		try {
 			newCache.inject(prefStr);
+			final int unitErrorCount = newCache.getUnitErrorCount();
+			if (unitErrorCount > 0) {
+				final String message = "Problems occurred for "
+						+ unitErrorCount
+						+ " tactic profiles.\n" +
+						"These profiles cannot be imported and will not be displayed.\n" +
+						"See error log for details.";
+				MessageDialog.openWarning(parentShell, "Import warning",
+						message);
+			}
 			return newCache;
 		} catch (IllegalArgumentException e) {
 			// error already logged
