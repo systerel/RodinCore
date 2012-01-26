@@ -94,7 +94,7 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 					}
 				}
 			} catch (Exception e) {
-				Util.log(e, "while loading tactic preference");
+				Util.log(e, "error while loading tactic preference");
 				throw PreferenceException.getInstance();
 			}
 		} else {
@@ -128,8 +128,7 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 			return xmlTranslator.get(unitElem);
 		} catch (PreferenceException e) {
 			// failed
-			final String message = "error while loading preference unit "
-					+ i + " from: " + pref;
+			final String message = "error while loading tactic profile";
 			Util.log(e, message);
 			return null;
 		}
