@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,8 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 
 	private final IXMLPrefSerializer<T> xmlTranslator;
 	
+	private int unitErrorCount = 0;
+	
 	public PreferenceMapper(IPrefElementTranslator<T> translator) {
 		this(translator, null);
 	}
@@ -66,6 +68,18 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 		this.xmlTranslator = xmlTranslator;
 	}
 
+	/**
+	 * Returns the number of units that could not be loaded through a call to
+	 * {@link #inject(String)} because an error occurred.
+	 * 
+	 * @return 0 iff all units have been successfully loaded, else the number of
+	 *         units for which errors occurred (positive integer).
+	 * @since 2.4
+	 */
+	public int getUnitErrorCount() {
+		return unitErrorCount;
+	}
+	
 	/**
 	 * Returns a map of objects corresponding to the preference.
 	 * 
@@ -89,7 +103,9 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 						PREF_UNIT);
 				for (int i = 0; i < units.getLength(); i++) {
 					final IPrefMapEntry<T> unit = loadUnit(units, i, pref);
-					if (unit != null) {
+					if (unit == null) {
+						unitErrorCount++;
+					} else {
 						map.put(unit.getKey(), unit.getValue());
 					}
 				}
