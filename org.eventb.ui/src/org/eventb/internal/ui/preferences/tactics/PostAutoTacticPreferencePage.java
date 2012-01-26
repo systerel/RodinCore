@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticRefMaker;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticXMLSerializer;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_pomtactic_enablementdescription;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_pomtactic_selectedtacticprofiledescription;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_description;
@@ -55,6 +57,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.ICacheListener;
 import org.eventb.core.preferences.IPrefMapEntry;
@@ -243,6 +246,28 @@ public class PostAutoTacticPreferencePage extends
 					}
 
 				});
+		
+		tacticList.addButton(
+				"Export...", new Listener() {
+
+					@Override
+					public void handleEvent(Event event) {
+						exportTactics();
+					}
+
+				});
+		
+		tacticList.addButton(
+				"Import...", new Listener() {
+
+					@Override
+					public void handleEvent(Event event) {
+						importTactics();
+					}
+
+				});
+		
+				
 		edit.setEnabled(false);
 		remove.setEnabled(false);
 		duplicate.setEnabled(false);
@@ -367,6 +392,74 @@ public class PostAutoTacticPreferencePage extends
 				cache.add(copy, profile.getValue());
 			}
 		}
+	}
+
+	private List<IPrefMapEntry<ITacticDescriptor>> getSelectedProfiles() {
+		final String[] selection = tacticList.getSelection();
+		final List<IPrefMapEntry<ITacticDescriptor>> profiles = new ArrayList<IPrefMapEntry<ITacticDescriptor>>(
+				selection.length);
+		for (String profile : selection) {
+			profiles.add(cache.getEntry(profile));
+		}
+		return profiles;
+	}
+
+	protected void exportTactics() {
+		final ListSelectionDialog select = ProfileImportExport
+				.makeProfileSelectionDialog(getShell(), cache,
+						"Export profiles", getSelectedProfiles());
+		select.open();
+		final Object[] result = select.getResult();
+		if (result == null) {
+			return;
+		}
+		final List<IPrefMapEntry<ITacticDescriptor>> exported = toMapEntries(result);
+		final CachedPreferenceMap<ITacticDescriptor> exportCache = new CachedPreferenceMap<ITacticDescriptor>(
+				makeTacticXMLSerializer(), makeTacticRefMaker());
+		exportCache.addAll(exported);
+
+		ProfileImportExport.saveExported(getShell(), exportCache);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static List<IPrefMapEntry<ITacticDescriptor>> toMapEntries(
+			Object[] result) {
+		final List<IPrefMapEntry<ITacticDescriptor>> entries = new ArrayList<IPrefMapEntry<ITacticDescriptor>>();
+		for (Object object : result) {
+			if (object instanceof IPrefMapEntry<?>) {
+				entries.add((IPrefMapEntry<ITacticDescriptor>) object);
+			}
+		}
+		return entries;
+	}
+
+	protected void importTactics() {
+		final CachedPreferenceMap<ITacticDescriptor> loaded = ProfileImportExport.loadImported(getShell());
+		if (loaded == null) {
+			return;
+		}
+		final ListSelectionDialog select = ProfileImportExport
+				.makeProfileSelectionDialog(getShell(), loaded,
+						"Import profiles", Collections
+								.<IPrefMapEntry<ITacticDescriptor>> emptyList());
+		select.open();
+		final Object[] result = select.getResult();
+		if (result == null) {
+			return;
+		}
+		final List<IPrefMapEntry<ITacticDescriptor>> imported = toMapEntries(result);
+		final String[] importedKeys = getKeys(imported);
+		 // override existing profiles with same names
+		cache.remove(importedKeys);
+		cache.addAll(imported);
+	}
+	
+	private static String[] getKeys(List<IPrefMapEntry<ITacticDescriptor>> entries) {
+		final String[] keys = new String[entries.size()];
+		for (int i=0;i<keys.length;i++) {
+			keys[i] = entries.get(i).getKey();
+		}
+		return keys;
 	}
 
 	private String getFreeCopyName(String name) {
