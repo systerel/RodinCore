@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import org.eventb.core.seqprover.IParameterSetting;
 import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.internal.core.Util;
 import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
 import org.eventb.internal.core.preferences.PreferenceUtils.ReadPrefMapEntry;
 import org.eventb.internal.core.preferences.PreferenceUtils.UnresolvedPrefMapEntry;
@@ -61,6 +62,11 @@ import org.w3c.dom.NodeList;
 public class PrefUnitTranslator implements
 		IXMLPrefSerializer<ITacticDescriptor> {
 
+	static PreferenceException handlePrefError(String message) {
+		Util.log(null, message);
+		return PreferenceException.getInstance();
+	}
+	
 	private static interface IInternalXMLSerializer<T> {
 		
 		/**
@@ -156,8 +162,7 @@ public class PrefUnitTranslator implements
 			if (hasName(e, COMBINED)) {
 				return CombinedTacticTranslator.getDefault().get(e);
 			}
-			printDebug("unreadable node: " + e);
-			throw PreferenceException.getInstance();
+			throw handlePrefError("unreadable node: " + e);
 		}
 
 	}
@@ -194,8 +199,8 @@ public class PrefUnitTranslator implements
 					.getAutoTacticRegistry();
 			final String tacticId = getAttribute(e, TACTIC_ID);
 			if (!reg.isRegistered(tacticId)) {
-				printDebug("Tactic is not registered " + tacticId);
-				return null;
+				throw handlePrefError("Unknown tactic: "
+						+ tacticId);
 			}
 			final ITacticDescriptor tacticDescriptor = reg
 					.getTacticDescriptor(tacticId);
@@ -270,8 +275,10 @@ public class PrefUnitTranslator implements
 					.getAutoTacticRegistry();
 			final IParameterizerDescriptor parameterizer = reg
 					.getParameterizerDescriptor(parameterizerId);
-			if (parameterizer == null)
-				return null;
+			if (parameterizer == null) {
+				throw handlePrefError("Unknown tactic parameterizer: "
+						+ parameterizerId);
+			}
 			final IParameterSetting paramSetting = parameterizer
 					.makeParameterSetting();
 
@@ -379,8 +386,10 @@ public class PrefUnitTranslator implements
 					.getAutoTacticRegistry();
 			final ICombinatorDescriptor combinator = reg
 					.getCombinatorDescriptor(combinatorId);
-			if (combinator == null)
-				return null;
+			if (combinator == null) {
+				throw handlePrefError("Unknown tactic combinator: "
+						+ combinatorId);
+			}
 			final NodeList childNodes = combined.getChildNodes();
 			final int length = childNodes.getLength();
 			final List<ITacticDescriptor> combs = new ArrayList<ITacticDescriptor>(
