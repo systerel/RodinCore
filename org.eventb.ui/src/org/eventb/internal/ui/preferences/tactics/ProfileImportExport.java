@@ -167,7 +167,7 @@ public class ProfileImportExport {
 			writer.write(contents);
 			writer.close();
 		} catch (IOException e) {
-			UIUtils.log(e, "while exporting profiles: " + contents);
+			UIUtils.log(e, "while exporting profiles to: " + file.getPath());
 		}
 	}
 
