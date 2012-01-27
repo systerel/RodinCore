@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
-import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.packAll;
 import static org.eventb.internal.ui.utils.Messages.tacticviewer_combined_action_delete;
 import static org.eventb.internal.ui.utils.Messages.tacticviewer_combined_unboundarity;
 
@@ -849,7 +848,8 @@ public class CombinedTacticViewer extends AbstractTacticViewer<ITacticDescriptor
 	}
 
 	private static void internalPack(Composite c) {
-		packAll(c);
+		// TODO make container expandable rather than authoritically repack 
+//		packAll(c);
 	}
 	
 	public void addEditSupport() {
