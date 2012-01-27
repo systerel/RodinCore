@@ -36,6 +36,7 @@ import static org.eventb.internal.ui.utils.Messages.preferencepage_posttactic_se
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -44,6 +45,7 @@ import java.util.regex.Pattern;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -62,6 +64,7 @@ import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.ICacheListener;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.AbstractFieldPreferenceAndPropertyPage;
 import org.eventb.internal.ui.preferences.EnabledComboEditor;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
@@ -434,30 +437,63 @@ public class PostAutoTacticPreferencePage extends
 	}
 
 	protected void importTactics() {
-		final CachedPreferenceMap<ITacticDescriptor> loaded = ProfileImportExport.loadImported(getShell());
+		final CachedPreferenceMap<ITacticDescriptor> loaded = ProfileImportExport
+				.loadImported(getShell());
 		if (loaded == null) {
 			return;
 		}
+		final List<IPrefMapEntry<ITacticDescriptor>> imported = selectImport(
+				loaded,
+				Collections.<IPrefMapEntry<ITacticDescriptor>> emptyList());
+		if (imported == null) {
+			return;
+		}
+		try {
+			cache.addAll(imported);
+		} catch (IllegalArgumentException e) {
+			UIUtils.log(e, "error while importing profiles");
+			MessageDialog.openError(getShell(), "Import error",
+					"An error occurred while importing selected profiles.\n"
+							+ "See error log for details.");
+		}
+	}
+
+	private List<IPrefMapEntry<ITacticDescriptor>> selectImport(
+			CachedPreferenceMap<ITacticDescriptor> available,
+			List<IPrefMapEntry<ITacticDescriptor>> initSelected) {
+
 		final ListSelectionDialog select = ProfileImportExport
-				.makeProfileSelectionDialog(getShell(), loaded,
-						"Import profiles", Collections
-								.<IPrefMapEntry<ITacticDescriptor>> emptyList());
+				.makeProfileSelectionDialog(getShell(), available,
+						"Import profiles", initSelected);
+
 		select.open();
 		final Object[] result = select.getResult();
 		if (result == null) {
-			return;
+			return null;
 		}
-		final List<IPrefMapEntry<ITacticDescriptor>> imported = toMapEntries(result);
-		final String[] importedKeys = getKeys(imported);
-		 // override existing profiles with same names
-		cache.remove(importedKeys);
-		cache.addAll(imported);
+		final List<IPrefMapEntry<ITacticDescriptor>> selected = toMapEntries(result);
+		final Set<String> existingKeys = getKeys(selected);
+		existingKeys.retainAll(cache.getEntryNames());
+		
+		if (!existingKeys.isEmpty()) {
+			final String message = "The following profiles already exist:\n"
+					+ existingKeys + "\nThey will be overwritten.";
+			final boolean confirm = MessageDialog.openConfirm(getShell(),
+					"Overwrite profiles", message);
+			if (confirm) {
+				cache.remove(existingKeys.toArray(new String[existingKeys
+						.size()]));
+			} else {
+				return selectImport(available, selected);
+			}
+		}
+		return selected;
 	}
 	
-	private static String[] getKeys(List<IPrefMapEntry<ITacticDescriptor>> entries) {
-		final String[] keys = new String[entries.size()];
-		for (int i=0;i<keys.length;i++) {
-			keys[i] = entries.get(i).getKey();
+	private static Set<String> getKeys(List<IPrefMapEntry<ITacticDescriptor>> entries) {
+		final Set<String> keys = new LinkedHashSet<String>(entries.size());
+		for (IPrefMapEntry<ITacticDescriptor> entry : entries) {
+			keys.add(entry.getKey());
 		}
 		return keys;
 	}
