@@ -11,6 +11,7 @@
 package org.eventb.core.preferences;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -296,7 +297,11 @@ public class CachedPreferenceMap<T> {
 	 */
 	public List<IPrefMapEntry<T>> getEntries() {
 		final List<IPrefMapEntry<T>> entries = new ArrayList<IPrefMapEntry<T>>();
-		for (String key : cache.keySet()) {
+		
+		final ArrayList<String> sortedKeys = new ArrayList<String>(
+				cache.keySet());
+		Collections.sort(sortedKeys);
+		for (String key : sortedKeys) {
 			entries.add(getEntry(key));
 		}
 		return entries;
