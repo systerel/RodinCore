@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -305,9 +305,9 @@ public class TestMachineRefines extends EventBPOTest {
 	}
 
 	/*
-	 * PO filter: the POG should not generate guard strengthening POs if
-	 * all abstract guards are syntactically (but normalised) contained
-	 * in the concrete guards
+	 * PO filter: the POG should not generate guard strengthening PO
+	 * for an abstract guard which is syntactically (but normalized) contained
+	 * in the concrete guards.
 	 */
 	public void testRefines_06() throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -427,15 +427,15 @@ public class TestMachineRefines extends EventBPOTest {
 		noSequent(po, "evt/SC2/WD");
 		
 		sequent= getSequent(po, "evt/GA/GRD");
-		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
+		sequentHasExactlyHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
 		sequentHasGoal(sequent, environment, "x−1∈ℕ");
 		
 		sequent= getSequent(po, "evt/SC3/WD");
-		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
+		sequentHasExactlyHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0", "A'>x");
 		sequentHasGoal(sequent, environment, "x≠0");
 		
 		sequent= getSequent(po, "evt/SC3/FIS");
-		sequentHasHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
+		sequentHasExactlyHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0", "A'>x");
 		sequentHasGoal(sequent, environment, "{1÷x}≠∅");
 	}	
 	
