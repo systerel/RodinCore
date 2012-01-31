@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -225,7 +225,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final Group group = makeGroup(parent, text);
 		final ListViewer viewer = new ListViewer(group);
 		viewer.getList().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
+				new GridData(SWT.FILL, SWT.FILL, false, true));
 		
 		viewer.setLabelProvider(labelProvider);
 		
@@ -241,7 +241,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		final Group group = new Group(parent, SWT.NO_FOCUS);
 		group.setText(text);
 		group.setLayout(new GridLayout());
-		final GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		final GridData layoutData = new GridData(SWT.FILL, SWT.FILL, false, true);
 		layoutData.minimumWidth = 200;
 		layoutData.minimumHeight = 200;
 		group.setLayoutData(layoutData);
