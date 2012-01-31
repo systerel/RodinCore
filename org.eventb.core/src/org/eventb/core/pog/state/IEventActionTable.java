@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.pog.state;
 
@@ -69,13 +72,13 @@ public interface IEventActionTable extends IPOGState {
 	boolean containsAssignedVariable(FreeIdentifier variable);
 	
 	/**
-	 * Returns the array of non-determistic actions of this event.
+	 * Returns the array of non-deterministic actions of this event.
 	 * <p>
-	 * The parsed and type-checked non-determistic assignments corresponding to 
+	 * The parsed and type-checked non-deterministic assignments corresponding to
 	 * the non-deterministic actions can be retrieved via <code>getNondetAssignments()</code>.
 	 * </p>
 	 * 
-	 * @return the array of non-determistic actions of this event
+	 * @return the array of non-deterministic actions of this event
 	 */
 	List<ISCAction> getNondetActions();
 	
@@ -132,7 +135,7 @@ public interface IEventActionTable extends IPOGState {
 	/**
 	 * Returns the array of deterministic primed assignments corresponding to the 
 	 * deterministic actions of the event, i.e. if "x := E" is in the array of
-	 * deterministic assignement it appears in this array as "x' := E". Note, that
+	 * deterministic assignment it appears in this array as "x' := E". Note, that
 	 * the resulting primed assignments are not valid Event-B formulas, but can only
 	 * be used as substitutions.
 	 * <p>
