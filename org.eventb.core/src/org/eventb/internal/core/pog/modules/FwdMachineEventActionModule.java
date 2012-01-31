@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added PO nature
+ *     Systerel - fix bug #3469348: Bug in INITIALISATION FIS PO
  *******************************************************************************/
 package org.eventb.internal.core.pog.modules;
 
@@ -91,10 +92,10 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 					makeSource(IPOSource.DEFAULT_ROLE, action.getSource())
 			};
 			
-			if (abstractHasNotSameAction(k)) {
-				
-				Predicate baPredicate = assignment.getBAPredicate(factory);
-				List<IPOGPredicate> hyp = makeAbstractActionHypothesis(baPredicate);
+			Predicate baPredicate = assignment.getBAPredicate(factory);
+			List<IPOGPredicate> hyp = makeAbstractActionHypothesis(baPredicate);
+
+			if (hyp.isEmpty() || abstractHasNotSameAction(k)) {
 				
 				Predicate wdPredicate = assignment.getWDPredicate(factory);
 				createProofObligation(target, hyp,
@@ -126,7 +127,6 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			List<Predicate> predicates = abstractEventActionTable.getNondetPredicates();
 			List<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 			substitution.addAll(witnessTable.getEventDetAssignments());
-			substitution.addAll(witnessTable.getMachinePrimedDetAssignments());
 			
 			for (int i=0; i<actions.size(); i++) {
 				Predicate predicate = predicates.get(i);
@@ -153,9 +153,9 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 					if (freeIdent.isPrimed())
 						return false;
 				}
+				if (!witnessTable.isDeterministic(i))
+					hyp.add(makePredicate(predicate, witnesses.get(i).getSource()));
 			}
-			if ( !witnessTable.isDeterministic(i))
-				hyp.add(makePredicate(predicate, witnesses.get(i).getSource()));
 		}
 		return true;
 	}

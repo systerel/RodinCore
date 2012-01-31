@@ -10,9 +10,11 @@
  *     Systerel - separation of file and root element
  *     Systerel - mathematical language V2
  *     University of Dusseldorf - added theorem attribute
+ *     Systerel - fix bug #3469348: Bug in INITIALISATION FIS PO
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import static org.eventb.core.IEvent.INITIALISATION;
 import static org.eventb.core.ast.LanguageVersion.V2;
 
 import org.eventb.core.IAxiom;
@@ -423,8 +425,10 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		noSequent(po, "evt/SA1/SIM");
 		noSequent(po, "evt/SA2/SIM");
+		noSequent(po, "evt/SC1/WD");
 		noSequent(po, "evt/SC1/FIS");
 		noSequent(po, "evt/SC2/WD");
+		noSequent(po, "evt/SC2/FIS");
 		
 		sequent= getSequent(po, "evt/GA/GRD");
 		sequentHasExactlyHypotheses(sequent, environment, "A∈ℕ", "B∈ℕ", "C=B", "x>0");
@@ -807,8 +811,7 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		sequent = getSequent(po, "evt/B/FIS");
 		sequentHasIdentifiers(sequent, "p'", "x");
-		sequentHasHypotheses(sequent, environment, "p∈BOOL");
-		sequentHasNotHypotheses(sequent, environment, "x≠p", "p'≠x");
+		sequentHasExactlyHypotheses(sequent, environment, "p∈BOOL");
 		sequentHasGoal(sequent, environment, "∃p'·p'≠p");
 		
 		sequent = getSequent(po, "fvt/G/GRD");
@@ -819,7 +822,7 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		sequent = getSequent(po, "fvt/B/FIS");
 		sequentHasIdentifiers(sequent, "p'", "x", "y");
-		sequentHasHypotheses(sequent, environment, "p∈BOOL", "y≠p", "y=x", "p'≠x");
+		sequentHasExactlyHypotheses(sequent, environment, "p∈BOOL", "y≠p", "y=x", "p'≠x");
 		sequentHasGoal(sequent, environment, "∃p'·p'≠y");
 	}
 	
@@ -941,7 +944,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		sequent = getSequent(po, "evt/B/FIS");
 		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
-		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "y≠x", "y=x", "y∈{q}");
+		sequentHasExactlyHypotheses(sequent, environment, //
+				"p∈BOOL", "p∈{q}", "y∈{q}", "y=x", "p'≠x");
 		sequentHasNotHypotheses(sequent, environment, "p'=y");
 		sequentHasGoal(sequent, environment, "∃q'·q'≠q");
 		
@@ -952,7 +956,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		sequent = getSequent(po, "fvt/B/FIS");
 		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
-		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "p∈{q}", "y≠q", "y≠y");
+		sequentHasExactlyHypotheses(sequent, environment, //
+				"p∈BOOL", "p∈{q}", "y≠q", "p'≠y");
 		sequentHasGoal(sequent, environment, "∃q'·q'≠y");
 		
 		sequent = getSequent(po, "gvt/G/GRD");
@@ -963,7 +968,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		sequent = getSequent(po, "gvt/B/FIS");
 		sequentHasIdentifiers(sequent, "p'", "q'", "x", "y");
-		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "p∈{q}", "y=x", "y=p'", "p'≠x");
+		sequentHasExactlyHypotheses(sequent, environment, //
+				"p∈BOOL", "p∈{q}", "p∈{q}", "y≠q", "y=x", "p'≠x");
 		sequentHasGoal(sequent, environment, "∃q'·q'≠y");
 		
 		sequent = getSequent(po, "hvt/G/GRD");
@@ -973,7 +979,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		sequent = getSequent(po, "hvt/B/FIS");
 		sequentHasIdentifiers(sequent, "p'", "q'", "x");
-		sequentHasHypotheses(sequent, environment, "p∈BOOL", "p∈{q}", "q∈{q}");
+		sequentHasExactlyHypotheses(sequent, environment, //
+				"p∈BOOL", "p∈{q}", "q∈{q}");
 		sequentHasNotHypotheses(sequent, environment, "q'=x", "q'=p'", "p'≠x");
 		sequentHasGoal(sequent, environment, "∃q'·q'≠q");
 	}
@@ -1560,6 +1567,38 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		IPORoot po = ref.getPORoot();
 		getExactSequents(po, "evt/H/THM");
+	}
+
+	/*
+	 * Regression test for bug #3469348: Bug in INITIALISATION FIS PO. The after
+	 * value witness must not be in hypothesis.
+	 */
+	public void testBug3469348() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addVariables(abs, "v");
+		addInvariant(abs, "I", "v = 1", false);
+		addInitialisation(abs, makeSList("A1"), makeSList("v  :∣ v' = 1"));
+		saveRodinFileOf(abs);
+
+		final IMachineRoot ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "w");
+		addInvariant(ref, "J", "v = −(w∗w)", false);
+		final IEvent init = addInitialisation(ref, makeSList("A2"),
+				makeSList("w  :∣ w'∗w' = −1"));
+		addEventRefines(init, INITIALISATION);
+		addEventWitnesses(init, makeSList("v'"), makeSList("v' = −(w'∗w')"));
+		saveRodinFileOf(ref);
+		runBuilder();
+
+		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		typenv.addName("v'", intType);
+
+		final IPORoot po = ref.getPORoot();
+		final IPOSequent sequent = getSequent(po, INITIALISATION + "/A2/FIS");
+		// sequentHasIdentifiers(sequent, "v'");
+		sequentHasExactlyHypotheses(sequent, typenv, "v' = 1");
+		sequentHasGoal(sequent, typenv, "∃w'·w'∗w' = −1");
 	}
 
 }
