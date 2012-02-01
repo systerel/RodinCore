@@ -119,9 +119,6 @@
 	        <copy todir="${buildDirectory}/plugins/org.eventb.core.seqprover">
 	            <fileset dir="${builder}/../org.eventb.core.seqprover" />
 	        </copy>
-	        <copy todir="${buildDirectory}/plugins/org.eventb.doc.user">
-	            <fileset dir="${builder}/../org.eventb.doc.user" />
-	        </copy>
 	        <copy todir="${buildDirectory}/plugins/org.eventb.keyboard">
 	            <fileset dir="${builder}/../org.eventb.keyboard" />
 	        </copy>
