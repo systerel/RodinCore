@@ -134,7 +134,10 @@ public final class Messages {
 	
 	// Wizard
 	public static String wizard_editprofil_title;
-	public static String wizard_editprofil_description;
+	public static String wizard_editprofil_comb_description;
+	public static String wizard_editprofil_comb_help;
+	public static String wizard_editprofil_param_description;
+	public static String wizard_editprofil_param_help;
 	public static String wizard_editprofil_nameheader;
 	public static String wizard_editprofil_profileexists;
 	public static String wizard_editprofil_profilemustbespecified;

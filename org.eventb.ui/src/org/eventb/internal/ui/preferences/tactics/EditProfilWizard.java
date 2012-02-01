@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
-import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_description;
+import static org.eclipse.jface.dialogs.MessageDialog.openInformation;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_comb_description;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_comb_help;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_nameheader;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_param_description;
+import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_param_help;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profileexists;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_profilemustbespecified;
 import static org.eventb.internal.ui.utils.Messages.wizard_editprofil_title;
@@ -333,15 +337,22 @@ public class EditProfilWizard extends Wizard {
 		private Text profileText;
 		protected final T edited;
 		private Composite composite = null;
+		private final String help;
 		
-		public EditProfilWizardPage(T edited) {
+		public EditProfilWizardPage(T edited, String description, String help) {
 			super(wizard_editprofil_title);
 			this.edited = edited;
-			setDescription(wizard_editprofil_description);
+			this.help = help;
+			setDescription(description);
 			setWizard(EditProfilWizard.this);
 			setPageComplete(false);
 		}
-
+		
+		@Override
+		public void performHelp() {
+			openInformation(getShell(), getTitle(), help);
+		}
+		
 		protected abstract void createViewer(Composite parent);
 		
 		@Override
@@ -439,7 +450,8 @@ public class EditProfilWizard extends Wizard {
 		private ParamTacticViewer paramViewer = null;
 
 		public ParamEditPage(IParamTacticDescriptor edited) {
-			super(edited);
+			super(edited, wizard_editprofil_param_description,
+					wizard_editprofil_param_help);
 		}
 
 		@Override
@@ -466,7 +478,8 @@ public class EditProfilWizard extends Wizard {
 		private CombinedTacticEditor combEditor = null;
 
 		public CombEditPage(ITacticDescriptor edited) {
-			super(edited);
+			super(edited, wizard_editprofil_comb_description,
+					wizard_editprofil_comb_help);
 		}
 
 		@Override
