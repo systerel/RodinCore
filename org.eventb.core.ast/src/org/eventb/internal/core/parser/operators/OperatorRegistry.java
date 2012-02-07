@@ -11,7 +11,7 @@
 package org.eventb.internal.core.parser.operators;
 
 import org.eventb.core.ast.extension.CycleError;
-import org.eventb.internal.core.parser.BMath.StandardGroup;
+import org.eventb.core.ast.extension.StandardGroup;
 
 /**
  * @author Nicolas Beauger

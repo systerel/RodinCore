@@ -15,8 +15,8 @@ import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IFormulaExtension.ATOMIC_EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_EXPR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.CLOSED;
+import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_EXPR;
+import static org.eventb.core.ast.extension.StandardGroup.CLOSED;
 
 import java.util.List;
 

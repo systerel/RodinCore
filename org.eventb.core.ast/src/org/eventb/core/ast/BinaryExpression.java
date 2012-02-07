@@ -16,22 +16,23 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.extension.StandardGroup.ARITHMETIC;
+import static org.eventb.core.ast.extension.StandardGroup.BINOP;
+import static org.eventb.core.ast.extension.StandardGroup.FUNCTIONAL;
+import static org.eventb.core.ast.extension.StandardGroup.INTERVAL;
+import static org.eventb.core.ast.extension.StandardGroup.PAIR;
+import static org.eventb.core.ast.extension.StandardGroup.RELATION;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACKET;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MAPS_TO;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACKET;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.BINOP;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.FUNCTIONAL;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.INTERVAL;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.PAIR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.RELATION;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
@@ -41,7 +42,6 @@ import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.BMath;
-import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.IOperatorInfo;
 import org.eventb.internal.core.parser.IParserPrinter;

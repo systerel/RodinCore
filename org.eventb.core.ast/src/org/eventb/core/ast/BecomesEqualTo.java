@@ -13,7 +13,7 @@
  *******************************************************************************/ 
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.parser.BMath.StandardGroup.INFIX_SUBST;
+import static org.eventb.core.ast.extension.StandardGroup.INFIX_SUBST;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;

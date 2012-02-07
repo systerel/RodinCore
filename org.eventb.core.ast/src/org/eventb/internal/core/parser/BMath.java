@@ -37,27 +37,27 @@ import static org.eventb.core.ast.QuantifiedPredicate.EXISTS_ID;
 import static org.eventb.core.ast.QuantifiedPredicate.FORALL_ID;
 import static org.eventb.core.ast.UnaryExpression.CONVERSE_ID;
 import static org.eventb.core.ast.UnaryPredicate.NOT_ID;
+import static org.eventb.core.ast.extension.StandardGroup.ARITHMETIC;
+import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_EXPR;
+import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
+import static org.eventb.core.ast.extension.StandardGroup.BINOP;
+import static org.eventb.core.ast.extension.StandardGroup.BOOL_EXPR;
+import static org.eventb.core.ast.extension.StandardGroup.BRACE_SETS;
+import static org.eventb.core.ast.extension.StandardGroup.CLOSED;
+import static org.eventb.core.ast.extension.StandardGroup.FUNCTIONAL;
+import static org.eventb.core.ast.extension.StandardGroup.GROUP_0;
+import static org.eventb.core.ast.extension.StandardGroup.INFIX_PRED;
+import static org.eventb.core.ast.extension.StandardGroup.INTERVAL;
+import static org.eventb.core.ast.extension.StandardGroup.LOGIC_PRED;
+import static org.eventb.core.ast.extension.StandardGroup.NOT_PRED;
+import static org.eventb.core.ast.extension.StandardGroup.PAIR;
+import static org.eventb.core.ast.extension.StandardGroup.QUANTIFICATION;
+import static org.eventb.core.ast.extension.StandardGroup.QUANTIFIED_PRED;
+import static org.eventb.core.ast.extension.StandardGroup.RELATION;
+import static org.eventb.core.ast.extension.StandardGroup.RELOP_PRED;
+import static org.eventb.core.ast.extension.StandardGroup.TYPED;
+import static org.eventb.core.ast.extension.StandardGroup.UNARY_RELATION;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.NEG_LIT;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_EXPR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.BINOP;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.BOOL_EXPR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.BRACE_SETS;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.CLOSED;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.FUNCTIONAL;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.INFIX_PRED;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.INTERVAL;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.LOGIC_PRED;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.NOT_PRED;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.PAIR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.QUANTIFICATION;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.QUANTIFIED_PRED;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.RELATION;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.RELOP_PRED;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.TYPED;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.UNARY_RELATION;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -77,7 +77,6 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.CycleError;
-import org.eventb.internal.core.ast.ASTPlugin;
 
 /**
  * @author Nicolas Beauger
@@ -94,45 +93,6 @@ public abstract class BMath extends AbstractGrammar {
 		return version;
 	}
 
-	public static enum StandardGroup {// TODO externalize
-		GROUP_0("group0", "Least Priority Group"),
-		RELOP_PRED("relOp", "Relational Operator Predicate"),
-		QUANTIFICATION("quantification", "Quantification"),
-		PAIR("pair", "Pair"),
-		RELATION("relation", "Set of Relations"),
-		BINOP("binOp", "Binary Operator"),
-		INTERVAL("interval", "Interval"),
-		ARITHMETIC("arithmetic", "Arithmetic"),
-		UNARY_RELATION("unaryRelation", "Unary Relation"),
-		TYPED("typed", "Typed"),
-		FUNCTIONAL("functional", "Functional"),
-		BRACE_SETS("braceSets", "Brace Sets"),
-		QUANTIFIED_PRED("quantifiedPred", "Quantified"),
-		LOGIC_PRED("logicPred", "Logic Predicate"),
-		INFIX_PRED("infixPred", "Infix Predicate"),
-		NOT_PRED("notPred", "Not Predicate"),
-		ATOMIC_PRED("atomicPred", "Atomic Predicate"),
-		ATOMIC_EXPR("atomicExpr", "Atomic Expression"),
-		CLOSED("closed", "Closed"),
-		BOOL_EXPR("boolExpr", "Bool"),
-		INFIX_SUBST("infixSubst", "Infix Substitution"),
-		;
-		private final String id;
-		private final String name;
-		private StandardGroup(String bareId, String name) {
-			this.id = ASTPlugin.PLUGIN_ID + "." + bareId;
-			this.name = name;
-		}
-		
-		public String getId() {
-			return id;
-		}
-		
-		public String getName() {
-			return name;
-		}
-	}
-	
 	@Override
 	protected void addOperators() {
 		

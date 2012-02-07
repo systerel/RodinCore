@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.internal.core.parser;
 
+import static org.eventb.core.ast.extension.StandardGroup.ARITHMETIC;
+import static org.eventb.core.ast.extension.StandardGroup.GROUP_0;
+import static org.eventb.core.ast.extension.StandardGroup.TYPED;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACKET;
@@ -21,9 +24,6 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OPEN;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACE;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRACKET;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.TYPED;
 import static org.eventb.internal.core.parser.SubParsers.OFTYPE_PARSER;
 import static org.eventb.internal.core.parser.operators.OperatorRelationship.COMPATIBLE;
 import static org.eventb.internal.core.parser.operators.OperatorRelationship.LEFT_PRIORITY;
@@ -42,19 +42,19 @@ import org.eventb.core.ast.extension.CycleError;
 import org.eventb.core.ast.extension.IGrammar;
 import org.eventb.core.ast.extension.IOperator;
 import org.eventb.core.ast.extension.IOperatorProperties;
+import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.internal.core.lexer.Token;
-import org.eventb.internal.core.parser.BMath.StandardGroup;
 import org.eventb.internal.core.parser.GenParser.OverrideException;
 import org.eventb.internal.core.parser.operators.BracketCompactor;
 import org.eventb.internal.core.parser.operators.Brackets;
 import org.eventb.internal.core.parser.operators.ExternalViewUtils;
+import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 import org.eventb.internal.core.parser.operators.LexKindParserDB;
 import org.eventb.internal.core.parser.operators.OpRegistryCompactor;
 import org.eventb.internal.core.parser.operators.OperatorRegistry;
 import org.eventb.internal.core.parser.operators.OperatorRegistryCompact;
 import org.eventb.internal.core.parser.operators.OperatorRelationship;
 import org.eventb.internal.core.parser.operators.PropertyParserDB;
-import org.eventb.internal.core.parser.operators.ExternalViewUtils.Instantiator;
 
 /**
  * @author Nicolas Beauger

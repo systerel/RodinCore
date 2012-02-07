@@ -67,11 +67,11 @@ import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
+import static org.eventb.core.ast.extension.StandardGroup.ARITHMETIC;
+import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
 import static org.eventb.core.ast.tests.FastFactory.mList;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.ARITHMETIC;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
 
 import java.math.BigInteger;
 import java.util.Arrays;

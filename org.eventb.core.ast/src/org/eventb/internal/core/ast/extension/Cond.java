@@ -34,7 +34,7 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.internal.core.parser.BMath.StandardGroup;
+import org.eventb.core.ast.extension.StandardGroup;
 
 /**
  * @author Nicolas Beauger

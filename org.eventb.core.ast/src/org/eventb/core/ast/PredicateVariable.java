@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.extension.StandardGroup.GROUP_0;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
-import static org.eventb.internal.core.parser.BMath.StandardGroup.GROUP_0;
 import static org.eventb.internal.core.parser.SubParsers.PRED_VAR_SUBPARSER;
 
 import java.util.LinkedHashSet;
