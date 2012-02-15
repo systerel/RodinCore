@@ -861,7 +861,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	}
 
 	void updateActions(IUserSupport userSupport) {
-		final IRodinProject project = userSupport.getInput().getRodinProject();
+		final IRodinFile input = userSupport.getInput();
+		if (input == null) {
+			return;
+		}
+		final IRodinProject project = input.getRodinProject();
 		final String scope;
 		if (hasProjectSpecificTactics(project)) {
 			scope = project.getElementName();
