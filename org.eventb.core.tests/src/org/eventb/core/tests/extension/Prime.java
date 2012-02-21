@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.extension;
 
-import static org.eventb.internal.core.parser.BMath.StandardGroup.ATOMIC_PRED;
+import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedPredicate;
@@ -25,7 +25,6 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 
-@SuppressWarnings("restriction")
 /**
  * An extension for tests.
  */
