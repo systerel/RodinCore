@@ -12,6 +12,11 @@ package org.eventb.core.ast.extension;
 
 import org.eventb.internal.core.ast.ASTPlugin;
 
+/**
+ * An enumeration of the standard operator groups in the mathematical language.
+ * 
+ * @since 2.4
+ */
 public enum StandardGroup {
 	GROUP_0("group0", "Least Priority Group"),
 	RELOP_PRED("relOp", "Relational Operator Predicate"),
