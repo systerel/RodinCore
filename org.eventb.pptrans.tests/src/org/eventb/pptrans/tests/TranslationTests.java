@@ -1734,5 +1734,13 @@ public class TranslationTests extends AbstractTranslationTests {
 		final ISimpleSequent expected = make("2 = 1 + 1", "3 = 1 + 1");
 		assertEquals(expected, reduceToPredicateCalulus(sequent));
 	}
+	
+	/**
+	 * Test bug prj2. Throws NPE when the bug occurs.
+	 */
+	public void testBugPrjFunImage() {
+		final ISimpleSequent sequent = make("prj2(r(a ↦ b))∈T", "r∈ℤ × ℤ → ℤ × ℤ");
+		reduceToPredicateCalulus(sequent);
+	}
 
 }
