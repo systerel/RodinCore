@@ -419,9 +419,16 @@ public class PostAutoTacticPreferencePage extends
 		final List<IPrefMapEntry<ITacticDescriptor>> exported = toMapEntries(result);
 		final CachedPreferenceMap<ITacticDescriptor> exportCache = new CachedPreferenceMap<ITacticDescriptor>(
 				makeTacticXMLSerializer(), makeTacticRefMaker());
-		exportCache.addAll(exported);
-
-		ProfileImportExport.saveExported(getShell(), exportCache);
+		try {
+			exportCache.addAll(exported);
+			ProfileImportExport.saveExported(getShell(), exportCache);
+		} catch (IllegalArgumentException e) {
+			UIUtils.log(e, "error while exporting profiles");
+			MessageDialog.openError(getShell(), "Export error",
+					"An error occurred while exporting selected profiles.\n"
+							+ "Check that they do not reference unselected profiles.\n"
+							+ "See error log for details.");
+		}
 	}
 
 	@SuppressWarnings("unchecked")
