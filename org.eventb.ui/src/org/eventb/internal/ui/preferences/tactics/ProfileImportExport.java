@@ -117,7 +117,7 @@ public class ProfileImportExport {
 
 	public static CachedPreferenceMap<ITacticDescriptor> loadImported(
 			Shell parentShell) {
-		final FileDialog fileDialog = new FileDialog(parentShell, SWT.SAVE);
+		final FileDialog fileDialog = new FileDialog(parentShell, SWT.OPEN);
 		final String path = fileDialog.open();
 		if (path == null) {
 			return null;
