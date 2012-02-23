@@ -12,7 +12,7 @@ import org.eventb.core.ast.FormulaFactory;
 
 /**
  * Specializes the decomposed quantification. Adding quantifiers and pushing 
- * expressions may now be intermixed. This confort is paid by doing the whole work twice,
+ * expressions may now be intermixed. This comfort is paid by doing the whole work twice,
  * once in phase one and again in phase two.
  */
 public abstract class Decomp2PhaseQuant extends DecomposedQuant {
