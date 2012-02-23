@@ -8,7 +8,8 @@ Bundle-Localization: plugin
 Require-Bundle: org.eventb.core.ast,
  org.eclipse.core.runtime,
  org.eventb.core.seqprover;bundle-version="2.3.0"
-Export-Package: org.eventb.pptrans
+Export-Package: org.eventb.pptrans,
+ org.eventb.internal.pptrans.translator;x-friends:="org.eventb.pptrans.tests"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.eventb.internal.pptrans.TranslatorPlugin
