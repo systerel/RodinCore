@@ -10,6 +10,7 @@
  *     Systerel - mathematical language V2 (BR8, IR39, IR43, IR44)
  *     Systerel - added pred and succ (IR47, IR48)
  *     Systerel - added sequent translation
+ *     Systerel - added test for IR3' and bug #3489973
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
@@ -632,6 +633,16 @@ public class TranslationTests extends AbstractTranslationTests {
 				"∃x1,x2·x1↦x2=f(a) ∧ x1↦x2∈S ", 
 				true,
 				 mTypeEnvironment(mList("f"), mList(REL(T, CPROD(U, V)))));
+	}
+
+	/**
+	 * Tests for IR3'
+	 */
+	public void testIR3p_simple() {
+		doTest("r(c) ∈ A×B", //
+				"∀a,b· c ↦ (a ↦ b) ∈ r ⇒ a ∈ A ∧ b ∈ B", //
+				false, //
+				mTypeEnvironment("r", "S ↔ T×U"));
 	}
 	
 	/**
@@ -1718,6 +1729,39 @@ public class TranslationTests extends AbstractTranslationTests {
 	}
 	
 	/**
+	 * Ensures that bug #3489973: "NPE in pp trans" is fixed (original predicate
+	 * from the bug report).
+	 */
+	public void testBug3489973() {
+		doTest("prj2(r(a ↦ b)) ∈ T", //
+				"∃aa·(∀a1,b1·a ↦ b ↦ (a1 ↦ b1) ∈ r  ⇒  b1 = aa) ∧ aa ∈ T", //
+				true, //
+				mTypeEnvironment("r", "ℤ×ℤ ↔ ℤ×ℤ"));
+	}
+
+	/**
+	 * Ensures that bug #3489973: "NPE in pp trans" is fixed (reduced predicate
+	 * found while investigating).
+	 */
+	public void testBug3489973Reduced() {
+		doTest("r(a)↦b ∈ prj2", //
+				"∀r1,r2· a ↦ (r1 ↦ r2) ∈ r ⇒ r2 = b", //
+				true, //
+				mTypeEnvironment("r", "S ↔ T×U"));
+	}
+
+	/**
+	 * Ensures that a functional image that hides a maplet is properly
+	 * translated when occurring in an equality predicate.
+	 */
+	public void testBug3489973Equal() {
+		doTest("a ↦ b = r(c)", //
+				"c ↦ (a ↦ b) ∈ r", //
+				false, //
+				mTypeEnvironment("r", "S ↔ T×U"));
+	}
+
+	/**
 	 * Ensure that mathematical extensions get discarded by the translation.
 	 */
 	public void testMathExtension() {
@@ -1735,12 +1779,4 @@ public class TranslationTests extends AbstractTranslationTests {
 		assertEquals(expected, reduceToPredicateCalulus(sequent));
 	}
 	
-	/**
-	 * Test bug prj2. Throws NPE when the bug occurs.
-	 */
-	public void testBugPrjFunImage() {
-		final ISimpleSequent sequent = make("prj2(r(a ↦ b))∈T", "r∈ℤ × ℤ → ℤ × ℤ");
-		reduceToPredicateCalulus(sequent);
-	}
-
 }

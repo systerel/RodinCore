@@ -479,6 +479,22 @@ public class Translator extends IdentityTranslator {
 				}
 			}
 			/**
+	         * RULE IR3': 	e ∈ f
+	         *	  			c∀ (e*) ∈ f
+	         */
+			_ -> {
+				final MapletDecomposer decomposer = new MapletDecomposer(ff);
+				decomposer.decompose(e);
+				if (decomposer.needsDecomposition()) {
+					decomposer.startPhase2();
+					final Expression lhs = decomposer.decompose(e);
+					final Expression rhs = decomposer.push(right);
+					final Predicate pred =
+							ff.makeRelationalPredicate(Formula.IN, lhs, rhs, loc);
+					return translate(decomposer.bind(pred));
+				}
+			}
+			/**
 	         * RULE IR4: 	e ∈ ℕ 
 	         *	  			0 ≤ e
 	         */
