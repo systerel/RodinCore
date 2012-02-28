@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Systerel - checked reasoner versions before reusing proofs
  *     Systerel - added unselected hypotheses
  *     Systerel - checked reasoner conflicts in proof dependencies
+ *     Systerel - avoided comparison of rule display names in deepEquals()
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
@@ -102,7 +103,6 @@ public class ProverLib {
 		final IReasonerDesc desc1 = r1.getReasonerDesc();
 		final IReasonerDesc desc2 = r2.getReasonerDesc();
 		if (!deepEquals(desc1, desc2)) return false;
-		if (! r1.getDisplayName().equals(r2.getDisplayName())) return false;
 		if (r1.getConfidence() != r2.getConfidence()) return false;
 		if (r1.getGoal() == null && r2.getGoal() != null) return false;
 		if (r1.getGoal() != null && r2.getGoal() == null) return false;
