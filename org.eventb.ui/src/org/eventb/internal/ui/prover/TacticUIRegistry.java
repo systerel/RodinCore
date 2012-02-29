@@ -70,30 +70,6 @@ public class TacticUIRegistry {
 
 	Map<String, DropdownInfo> dropdownRegistry = null;
 
-	// wraps ITacticProvider and ITacticProvider2 
-	public static interface IApplicationProvider {
-
-		List<ITacticApplication> getPossibleApplications(
-				IProofTreeNode node, Predicate hyp, String globalInput);
-
-		
-	}
-
-	private static class TP2Provider implements IApplicationProvider {
-
-		private final ITacticProvider provider;
-
-		public TP2Provider(ITacticProvider provider) {
-			this.provider = provider;
-		}
-
-		@Override
-		public List<ITacticApplication> getPossibleApplications(
-				IProofTreeNode node, Predicate hyp, String globalInput) {
-			return provider.getPossibleApplications(node, hyp, globalInput);
-		}
-	}
-	
 	private static class TacticUILoader {
 
 		// Configuration information related to the element
@@ -139,7 +115,7 @@ public class TacticUIRegistry {
 				.createExecutableExtension(instanceAttribute);
 
 				if (tacticProvider != null) {
-					final IApplicationProvider appliProvider = getAppliProvider(candidate, id, tooltip, iconDesc);
+					final ITacticProvider appliProvider = getAppliProvider(candidate, id, tooltip, iconDesc);
 					if (appliProvider == null) {
 						result = null;
 					} else {
@@ -197,10 +173,10 @@ public class TacticUIRegistry {
 					contributor.getName(), iconName);
 		}
 
-		private static IApplicationProvider getAppliProvider(Object candidate,
+		private static ITacticProvider getAppliProvider(Object candidate,
 				String id, String tip, ImageDescriptor iconDesc) {
 			if (candidate instanceof ITacticProvider) {
-				return new TP2Provider(((ITacticProvider) candidate));
+				return (ITacticProvider) candidate;
 			}
 			return null;
 		}
@@ -297,12 +273,12 @@ public class TacticUIRegistry {
 	}
 
 	private static class TacticProviderInfo extends TacticUIInfo {
-		private final IApplicationProvider appliProvider;
+		private final ITacticProvider appliProvider;
 
 		public TacticProviderInfo(String id, ImageDescriptor iconDesc,
 				boolean interrupt, String tooltip, int priority, String name,
 				String dropdown, String toolbar, boolean skipPostTactic,
-				IApplicationProvider appliProvider) {
+				ITacticProvider appliProvider) {
 			super(id, iconDesc, interrupt, tooltip, priority, name, dropdown,
 					toolbar, skipPostTactic);
 			this.appliProvider = appliProvider;
