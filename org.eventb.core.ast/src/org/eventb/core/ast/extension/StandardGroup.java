@@ -15,7 +15,7 @@ import org.eventb.internal.core.ast.ASTPlugin;
 /**
  * An enumeration of the standard operator groups in the mathematical language.
  * 
- * @since 2.4
+ * @since 2.5
  */
 public enum StandardGroup {
 	GROUP_0("group0", "Least Priority Group"),
