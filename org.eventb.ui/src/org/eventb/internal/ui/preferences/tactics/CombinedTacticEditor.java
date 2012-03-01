@@ -281,13 +281,18 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 		simpleList.getList().removeAll();
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final String[] autoTacs = reg.getRegisteredIDs();
-		final SimpleNode[] combNodes = new SimpleNode[autoTacs.length];
+		final ITacticDescriptor[] dynTactics = reg.getDynTactics();
+		final SimpleNode[] simpleNodes = new SimpleNode[autoTacs.length
+				+ dynTactics.length];
 		for (int i = 0; i < autoTacs.length; i++) {
 			final String tacticId = autoTacs[i];
 			final ITacticDescriptor desc = reg.getTacticDescriptor(tacticId);
-			combNodes[i] = new SimpleNode(desc);
+			simpleNodes[i] = new SimpleNode(desc);
 		}
-		simpleList.add(combNodes);
+		for (int i = 0; i < dynTactics.length; i++) {
+			simpleNodes[autoTacs.length + i] = new SimpleNode(dynTactics[i]);
+		}
+		simpleList.add(simpleNodes);
 	}
 
 	private void initCombinators() {
