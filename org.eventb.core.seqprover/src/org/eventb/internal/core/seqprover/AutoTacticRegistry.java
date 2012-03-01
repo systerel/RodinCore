@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,14 +9,18 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - implemented parameterized auto tactics
  *     Systerel - implemented tactic combinators
+ *     Systerel - added dynamically provided auto tactics
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
+
+import static java.util.Collections.singleton;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -25,8 +29,9 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
-import org.eventb.core.seqprover.IParameterizerDescriptor;
+import org.eventb.core.seqprover.IDynTacticProvider;
 import org.eventb.core.seqprover.IParameterDesc;
+import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.seqprover.TacticDescriptors.CombinatorDescriptor;
@@ -55,6 +60,8 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	private static String COMBINATORS_ID =
 			SequentProver.PLUGIN_ID + ".tacticCombinators";
 
+	private static String DYN_TACTIC_PROVIDERS_NAME = "dynTacticProvider";
+	
 	private static IAutoTacticRegistry SINGLETON_INSTANCE = new AutoTacticRegistry();
 
 	private static final String[] NO_STRING = new String[0];
@@ -67,6 +74,7 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	private Map<String, ITacticDescriptor> registry;
 	private final Map<String, IParameterizerDescriptor> parameterizers = new HashMap<String, IParameterizerDescriptor>();
 	private final Map<String, ICombinatorDescriptor> combinators = new HashMap<String, ICombinatorDescriptor>();
+	private final Map<String, IDynTacticProvider> dynTacticProviders = new HashMap<String, IDynTacticProvider>();
 	
 	/**
 	 * Private default constructor enforces that only one instance of this class
@@ -140,12 +148,26 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		final IExtensionPoint xPoint = xRegistry.getExtensionPoint(extPointId);
 		for (IConfigurationElement element : xPoint.getConfigurationElements()) {
 			try {
-				loadTacticExtension(element);
+				if (isDynTacticProvider(element)) {
+					 loadDynTacticProvider(element);
+				} else {
+					loadTacticExtension(element);
+				}
 			} catch (Exception e) {
 				// logged before
 				continue;
 			}
 		}
+	}
+
+	private void loadDynTacticProvider(IConfigurationElement element) {
+		final String id = checkAndMakeId(element);
+		if (id == null) {
+			return;
+		}
+		final IDynTacticProvider dynTacProv = TacticDescriptors.loadInstance(
+				element, IDynTacticProvider.class, id);
+		dynTacticProviders.put(id, dynTacProv);		
 	}
 
 	private static <T> void putCheckDuplicate(Map<String, T> map, String id,
@@ -204,6 +226,10 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 
 	}
 
+	private static boolean isDynTacticProvider(IConfigurationElement element) {
+		return element.getName().equals(DYN_TACTIC_PROVIDERS_NAME);
+	}
+	
 	private static boolean isCombinator(IConfigurationElement element) {
 		return element.getDeclaringExtension()
 				.getExtensionPointUniqueIdentifier().equals(COMBINATORS_ID);
@@ -336,5 +362,26 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			loadRegistry();
 		}
 		return combinators.get(id);
+	}
+	
+	@Override
+	public ITacticDescriptor[] getDynTactics() {
+		final Collection<ITacticDescriptor> result = new ArrayList<ITacticDescriptor>();
+		for (Entry<String, IDynTacticProvider> entry : dynTacticProviders.entrySet()) {
+			final String id = entry.getKey();
+			final IDynTacticProvider dynTacticProv = entry.getValue();
+			try {
+				final Collection<ITacticDescriptor> dynTactics = dynTacticProv
+						.getDynTactics();
+				if (dynTactics.contains(null)) {
+					Util.log(null, "null tactics provided by dynamic tactic provider " + id);
+					dynTactics.removeAll(singleton(null));
+				}
+				result.addAll(dynTactics);
+			} catch (Throwable t) {
+				Util.log(t, "while getting dynamic tactics from " + id);
+			}
+		}
+		return result.toArray(new ITacticDescriptor[result.size()]) ;
 	}
 }

@@ -213,6 +213,14 @@ public interface IAutoTacticRegistry {
 			throws IllegalArgumentException;
 
 	/**
+	 * Returns all available dynamically provided tactics.
+	 * 
+	 * @return an array of tactic descriptors
+	 * @since 2.5
+	 */
+	ITacticDescriptor[] getDynTactics();
+
+	/**
 	 * An {@link ITacticDescriptor} provides a wrapper around the information
 	 * contained in a tactic extension.
 	 * 

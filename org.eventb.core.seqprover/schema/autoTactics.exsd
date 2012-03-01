@@ -18,7 +18,10 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="autoTactic" minOccurs="0" maxOccurs="unbounded"/>
+            <choice minOccurs="0" maxOccurs="unbounded">
+               <element ref="autoTactic"/>
+               <element ref="dynTacticProvider"/>
+            </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -83,6 +86,28 @@
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="dynTacticProvider">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the unique identifier for this dynamical tactic provider (simple id token, unique for tactic providers within the extension namespace). The token cannot contain a dot (.) or whitespace. The unique identifier is internally prepended with the id of the plugin that contributes it.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified name of an implementation of &lt;code&gt;org.eventb.core.seqprover.IDynTacticProvider&lt;/code&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eventb.core.seqprover.IDynTacticProvider"/>
                </appInfo>
             </annotation>
          </attribute>

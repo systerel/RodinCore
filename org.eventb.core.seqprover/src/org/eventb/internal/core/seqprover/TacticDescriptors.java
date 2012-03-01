@@ -36,10 +36,10 @@ import org.eventb.internal.core.seqprover.paramTactics.ParameterSetting;
 public class TacticDescriptors {
 
 	@SuppressWarnings("unchecked")
-	private static <T> T loadInstance(
+	public static <T> T loadInstance(
 			IConfigurationElement configurationElement, Class<T> expectedClass,
-			String tacticId) {
-		if (configurationElement == null) {
+			String id) {
+	if (configurationElement == null) {
 			throw new IllegalArgumentException("Null configuration element");
 		}
 
@@ -51,13 +51,13 @@ public class TacticDescriptors {
 				throw new IllegalArgumentException("unexpected instance");
 			}
 			if (AutoTacticRegistry.DEBUG)
-				System.out.println("Successfully loaded tactic " + tacticId);
+				System.out.println("Successfully loaded " + id);
 
 			return (T) loadedInstance;
 		} catch (Exception e) {
 			final String className = configurationElement.getAttribute("class");
 			final String errorMsg = "Error instantiating class " + className
-					+ " for tactic " + tacticId;
+					+ " for " + id;
 			Util.log(e, errorMsg);
 			if (AutoTacticRegistry.DEBUG)
 				System.out.println(errorMsg);
