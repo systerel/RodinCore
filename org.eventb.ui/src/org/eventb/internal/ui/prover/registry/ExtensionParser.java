@@ -11,10 +11,16 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.registry;
 
+import static org.eclipse.core.runtime.Status.OK_STATUS;
+import static org.eventb.internal.ui.prover.registry.ErrorStatuses.*;
+
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 
@@ -29,6 +35,140 @@ import org.eventb.internal.ui.prover.TacticUIRegistry;
  */
 public class ExtensionParser {
 
+	private static class ErroneousElement extends Exception {
+
+		private static final long serialVersionUID = 7360620082299355450L;
+
+		private final IStatus status;
+
+		public ErroneousElement(IStatus status) {
+			super(status.getMessage(), status.getException());
+			this.status = status;
+		}
+
+		public IStatus getStatus() {
+			return status;
+		}
+
+	}
+
+	/**
+	 * Implements a set of configuration elements to parse.
+	 */
+	private abstract class ElementSet {
+
+		// Set of elements: the use of the LinkedHashMap ensures that the
+		// order of insertion is retained. Keys are element ids.
+		private final Map<String, IConfigurationElement> set = new LinkedHashMap<String, IConfigurationElement>();
+
+		ElementSet() {
+			// Do nothing
+		}
+
+		/*
+		 * Adds a new element, checking that its id is well-formed and unique
+		 * among the set. Erroneous elements are ignored (and an exception is
+		 * thrown). Returns the id in case of success.
+		 */
+		public void add(IConfigurationElement element) {
+			String id = element.getAttribute("id"); //$NON-NLS-1$
+
+			// Check that the id is present and well-formed
+			if (id == null) {
+				errors.add(missingId(element));
+				return;
+			}
+			if (id.length() == 0) {
+				errors.add(invalidId(element));
+				return;
+			}
+
+			// Raw id becomes qualified with the name space of the element
+			if (id.indexOf('.') == -1) { //$NON-NLS-1$
+				id = element.getNamespaceIdentifier() + "." + id; //$NON-NLS-1$
+			}
+
+			// Register the element, checking for uniqueness of id
+			final IConfigurationElement oldElement = set.put(id, element);
+			if (oldElement != null) {
+				// Repair and ignore duplicate id
+				set.put(id, oldElement);
+				errors.add(duplicateId(element));
+			}
+		}
+
+		/*
+		 * Parse the elements of this set and register them appropriately
+		 */
+		public void parse() {
+			for (final Map.Entry<String, IConfigurationElement> entry : set
+					.entrySet()) {
+				try {
+					parse(entry.getKey(), entry.getValue());
+				} catch (ErroneousElement e) {
+					errors.add(e.getStatus());
+				}
+			}
+		}
+
+		protected abstract void parse(String id, IConfigurationElement element)
+				throws ErroneousElement;
+
+	}
+
+	private class TacticParser extends ElementSet {
+
+		TacticParser() {
+			// Do nothing
+		}
+
+		@Override
+		protected void parse(String id, IConfigurationElement element)
+				throws ErroneousElement {
+			final TacticUILoader loader = new TacticUILoader(id, element);
+			final TacticUIInfo info = loader.load();
+			if (info != null) {
+				final String target = element.getAttribute("target");
+				putInRegistry(info, target);
+				printDebugRegistration(id, TACTIC_TAG);
+			}
+		}
+
+	}
+
+	private class DropdownParser extends ElementSet {
+
+		DropdownParser() {
+			// Do nothing
+		}
+
+		@Override
+		protected void parse(String id, IConfigurationElement element)
+				throws ErroneousElement {
+			dropdownRegistry.put(id, new DropdownInfo(globalRegistry, id,
+					element));
+			printDebugRegistration(id, DROPDOWN_TAG);
+		}
+
+	}
+
+	private class ToolbarParser extends ElementSet {
+
+		ToolbarParser() {
+			// Do nothing
+		}
+
+		@Override
+		protected void parse(String id, IConfigurationElement element)
+				throws ErroneousElement {
+			toolbarRegistry.put(id, new ToolbarInfo(globalRegistry,
+					dropdownRegistry, id));
+
+			printDebugRegistration(id, TOOLBAR_TAG);
+		}
+
+	}
+
 	// Possible tags of extensions
 	private static final String TACTIC_TAG = "tactic";
 	private static final String TOOLBAR_TAG = "toolbar";
@@ -40,8 +180,6 @@ public class ExtensionParser {
 
 	private static final String TARGET_HYPOTHESIS = "hypothesis"; //$NON-NLS-0$
 
-	private static final String TARGET_GLOBAL = "global"; //$NON-NLS-0$
-
 	private final Map<String, TacticProviderInfo> goalTacticRegistry = new LinkedHashMap<String, TacticProviderInfo>();
 	private final Map<String, ProofCommandInfo> goalCommandRegistry = new LinkedHashMap<String, ProofCommandInfo>();
 	private final Map<String, TacticProviderInfo> hypothesisTacticRegistry = new LinkedHashMap<String, TacticProviderInfo>();
@@ -52,53 +190,43 @@ public class ExtensionParser {
 	private final Map<String, ToolbarInfo> toolbarRegistry = new LinkedHashMap<String, ToolbarInfo>();
 	private final Map<String, DropdownInfo> dropdownRegistry = new LinkedHashMap<String, DropdownInfo>();
 
+	private final List<IStatus> errors = new ArrayList<IStatus>();
+
 	/*
-	 * FIXME Make a too phase analysis. In the first phase, sort the
-	 * configuration elements by type. In the second phase, build the final
-	 * objects and register them in the appropriate data structures.
+	 * Configuration elements are processed in two phases. In the first phase,
+	 * they are sorted by type. In the second phase, the final objects are built
+	 * and registered in the appropriate data structures.
 	 */
-	public void parse(IConfigurationElement[] configurations) {
-		for (IConfigurationElement configuration : configurations) {
-			String id = configuration.getAttribute("id"); //$NON-NLS-1$
-			if (id == null)
-				// FIXME log error
-				continue;
-			final String tag = configuration.getName();
+	public void parse(IConfigurationElement[] elements) {
+		final ElementSet tactics = new TacticParser();
+		final ElementSet dropdowns = new DropdownParser();
+		final ElementSet toolbars = new ToolbarParser();
+
+		for (final IConfigurationElement element : elements) {
+			final String tag = element.getName();
 			if (tag.equals(TACTIC_TAG)) {
-				// Check for duplication first
-				String target = configuration.getAttribute("target");
-				if (findInAnyTacticRegistry(id) != null) {
-					printDebugConfExists(id, target + " " + TACTIC_TAG);
-					continue;
-				}
-
-				TacticUILoader loader = new TacticUILoader(configuration);
-				final TacticUIInfo info = loader.load();
-				if (info != null) {
-					putInRegistry(info, target);
-					printDebugRegistration(id, TACTIC_TAG);
-				}
-			} else if (tag.equals(TOOLBAR_TAG)) {
-				ToolbarInfo oldInfo = toolbarRegistry.put(id, new ToolbarInfo(
-						globalRegistry, dropdownRegistry, id));
-
-				if (oldInfo != null) {
-					toolbarRegistry.put(id, oldInfo);
-					printDebugConfExists(id, TOOLBAR_TAG);
-				} else {
-					printDebugRegistration(id, TOOLBAR_TAG);
-				}
+				tactics.add(element);
 			} else if (tag.equals(DROPDOWN_TAG)) {
-				DropdownInfo oldInfo = dropdownRegistry.put(id,
-						new DropdownInfo(globalRegistry, id, configuration));
-
-				if (oldInfo != null) {
-					dropdownRegistry.put(id, oldInfo);
-					printDebugConfExists(id, DROPDOWN_TAG);
-				} else {
-					printDebugRegistration(id, DROPDOWN_TAG);
-				}
+				dropdowns.add(element);
+			} else if (tag.equals(TOOLBAR_TAG)) {
+				toolbars.add(element);
+			} else {
+				errors.add(unknownElement(element));
 			}
+		}
+
+		tactics.parse();
+		dropdowns.parse();
+		toolbars.parse();
+	}
+
+	public IStatus getStatus() {
+		final int length = errors.size();
+		if (length == 0) {
+			return OK_STATUS;
+		} else {
+			final IStatus[] array = errors.toArray(new IStatus[length]);
+			return loadingErrors(array);
 		}
 	}
 
@@ -136,52 +264,6 @@ public class ExtensionParser {
 		} else {
 			printDebugRegistration(id, TACTIC_TAG);
 		}
-	}
-
-	private TacticUIInfo findInAnyTacticRegistry(String id) {
-		TacticUIInfo info = findInTacticRegistry(id, TARGET_GOAL);
-		if (info != null)
-			return info;
-		info = findInTacticRegistry(id, TARGET_HYPOTHESIS);
-		if (info != null)
-			return info;
-		info = findInTacticRegistry(id, TARGET_ANY);
-		if (info != null)
-			return info;
-		return findInTacticRegistry(id, TARGET_GLOBAL);
-	}
-
-	private TacticUIInfo findInTacticRegistry(String id, String target) {
-		TacticUIInfo info;
-		if (target.equals(TARGET_GOAL)) {
-			info = goalTacticRegistry.get(id);
-			if (info != null)
-				return info;
-			return goalCommandRegistry.get(id);
-		}
-
-		if (target.equals(TARGET_HYPOTHESIS)) {
-			info = hypothesisTacticRegistry.get(id);
-			if (info != null)
-				return info;
-			return hypothesisCommandRegistry.get(id);
-		}
-
-		if (target.equals(TARGET_ANY)) {
-			info = anyTacticRegistry.get(id);
-			if (info != null)
-				return info;
-			return anyCommandRegistry.get(id);
-		}
-
-		return globalRegistry.get(id);
-	}
-
-	// FIXME log error rather than trace
-	private static void printDebugConfExists(String id, String kind) {
-		if (ProverUIUtils.DEBUG)
-			ProverUIUtils.debug("Configuration already exists for " + kind
-					+ " " + id + ", configuration ignored.");
 	}
 
 	private static void printDebugRegistration(String id, String kind) {

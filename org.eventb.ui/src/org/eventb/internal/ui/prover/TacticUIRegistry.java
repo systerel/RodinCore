@@ -23,6 +23,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.graphics.Image;
 import org.eventb.core.ast.Predicate;
@@ -50,7 +51,7 @@ public class TacticUIRegistry {
 
 	// The identifier of the extension point (value
 	// <code>"org.eventb.ui.proofTactics"</code>).
-	private static final String PROOFTACTICS_ID = PLUGIN_ID + ".proofTactics"; //$NON-NLS-1$
+	public static final String PROOFTACTICS_ID = PLUGIN_ID + ".proofTactics"; //$NON-NLS-1$
 
 	private static final String TARGET_ANY = "any";
 
@@ -91,6 +92,11 @@ public class TacticUIRegistry {
 
 		final ExtensionParser parser = new ExtensionParser();
 		parser.parse(configurations);
+		final IStatus status = parser.getStatus();
+		if (!status.isOK()) {
+			UIUtils.log(status);
+		}
+
 		goalTacticRegistry = parser.getGoalTacticRegistry();
 		goalCommandRegistry = parser.getGoalCommandRegistry();
 		hypothesisTacticRegistry = parser.getHypothesisTacticRegistry();

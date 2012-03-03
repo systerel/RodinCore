@@ -22,20 +22,23 @@ import org.eventb.ui.prover.ITacticProvider;
 
 public class TacticUILoader {
 
+	// Element id
+	private final String id;
+
 	// Configuration information related to the element
 	private final IConfigurationElement configuration;
 
-	public TacticUILoader(IConfigurationElement configuration) {
+	public TacticUILoader(String id, IConfigurationElement configuration) {
+		this.id = id;
 		this.configuration = configuration;
 	}
 
 	public TacticUIInfo load() {
-		final String id = configuration.getAttribute("id"); //$NON-NLS-1$
 		final ImageDescriptor iconDesc = getImageDesc();
 		final boolean interrupt = configuration.getAttribute("interrupt")
 				.equalsIgnoreCase("true");
 		final String tooltip = configuration.getAttribute("tooltip"); //$NON-NLS-1$
-		final int priority = getPriority(id);
+		final int priority = getPriority();
 		final String name = configuration.getAttribute("name");
 		final String dropdown = getOptionalAttribute("dropdown");
 		final String toolbar = getOptionalAttribute("toolbar");
@@ -104,7 +107,7 @@ public class TacticUILoader {
 		return value;
 	}
 
-	private int getPriority(String id) {
+	private int getPriority() {
 		final String priorityStr = configuration.getAttribute("priority");
 		try {
 			return Integer.parseInt(priorityStr);
