@@ -536,7 +536,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 		@Override
 		public void dragLeave(DropTargetEvent event) {
-			updateToolItems(editor.getUserSupport());
+			updateToolItems();
 		}
 
 		@Override
@@ -648,7 +648,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 			@Override
 			public void modifyText(ModifyEvent e) {
 				currentInput = textWidget.getText();
-				updateToolItems(editor.getUserSupport());
+				updateToolItems();
 			}
 		});
 
@@ -681,7 +681,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		hookContextMenu();
 		contributeToActionBars();
 
-		updateToolItems(editor.getUserSupport());
+		updateToolItems();
 		updateActions(editor.getUserSupport());
 		updateSmiley();
 		coolBar.pack();
@@ -850,13 +850,15 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	/**
 	 * Update the status of the toolbar items.
 	 */
-	void updateToolItems(IUserSupport userSupport) {
-		for (GlobalTacticDropdownToolItem item : dropdownItems) {
-			item.updateStatus(userSupport, textWidget.getText());
-		}
+	void updateToolItems() {
+		final IUserSupport userSupport = editor.getUserSupport();
+		final String input = textWidget.getText();
 
+		for (GlobalTacticDropdownToolItem item : dropdownItems) {
+			item.updateStatus(userSupport, input);
+		}
 		for (GlobalTacticToolItem item : toolItems) {
-			item.updateStatus(userSupport, textWidget.getText());
+			item.updateStatus(userSupport, input);
 		}
 	}
 
@@ -936,7 +938,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					if ((flags & IUserSupportDelta.F_CURRENT) != 0) {
 						// The current proof state is changed, update the tool
 						// items.
-						updateToolItems(editor.getUserSupport());
+						updateToolItems();
 						updateSmiley();
 						updateActions(userSupport);
 						scrolledForm.reflow(true);
@@ -972,7 +974,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 								if ((psFlags & IProofStateDelta.F_NODE) != 0) {
 									// Update the items if the current node has
 									// been changed.
-									updateToolItems(editor.getUserSupport());
+									updateToolItems();
 									if ((psFlags & IProofStateDelta.F_PROOFTREE) != 0) {
 										updateSmiley();									
 									}
@@ -980,7 +982,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 								else if ((psFlags & IProofStateDelta.F_PROOFTREE) != 0) {
 									// Update the items if the current node has
 									// been changed.
-									updateToolItems(editor.getUserSupport());
+									updateToolItems();
 									updateSmiley();
 								}
 								scrolledForm.reflow(true);
