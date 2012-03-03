@@ -603,30 +603,26 @@ public class TacticUIRegistry {
 			} else {
 				final String toolbarStr = "toolbar";
 				if (configuration.getName().equals(toolbarStr)) {
-					if (id != null) {
-						ToolbarInfo oldInfo = toolbarRegistry.put(id,
-								new ToolbarInfo(configuration));
+					ToolbarInfo oldInfo = toolbarRegistry.put(id,
+							new ToolbarInfo(configuration));
 
-						if (oldInfo != null) {
-							toolbarRegistry.put(id, oldInfo);
-							printDebugConfExists(id, toolbarStr);
-						} else {
-							printDebugRegistration(id, toolbarStr);
-						}
+					if (oldInfo != null) {
+						toolbarRegistry.put(id, oldInfo);
+						printDebugConfExists(id, toolbarStr);
+					} else {
+						printDebugRegistration(id, toolbarStr);
 					}
 				} else {
 					final String dropdownStr = "dropdown";
 					if (configuration.getName().equals(dropdownStr)) {
-						if (id != null) {
-							DropdownInfo oldInfo = dropdownRegistry.put(id,
-									new DropdownInfo(configuration));
+						DropdownInfo oldInfo = dropdownRegistry.put(id,
+								new DropdownInfo(configuration));
 
-							if (oldInfo != null) {
-								dropdownRegistry.put(id, oldInfo);
-								printDebugConfExists(id, dropdownStr);
-							} else {
-								printDebugRegistration(id, dropdownStr);
-							}
+						if (oldInfo != null) {
+							dropdownRegistry.put(id, oldInfo);
+							printDebugConfExists(id, dropdownStr);
+						} else {
+							printDebugRegistration(id, dropdownStr);
 						}
 					}
 				}
