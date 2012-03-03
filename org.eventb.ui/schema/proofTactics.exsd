@@ -205,7 +205,7 @@ Most contributors need not use this option. You should have a strong reason to s
          <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
-                  an integer number indicating the priority for this toolbar which is used to sort the toolbars in the Proof Control View in ascending order. The highest priority is 0.
+                  an integer number indicating the priority for this toolbar. In the Proof Control view, toolbars are sorted from left to right by increasing priority.
                </documentation>
             </annotation>
          </attribute>
