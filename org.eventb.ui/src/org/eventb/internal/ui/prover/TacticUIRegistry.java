@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,27 +34,26 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.prover.IProofCommand;
 import org.eventb.ui.prover.ITacticApplication;
 import org.eventb.ui.prover.ITacticProvider;
 
 public class TacticUIRegistry {
+
 	// The identifier of the extension point (value
 	// <code>"org.eventb.ui.proofTactics"</code>).
-	private final static String PROOFTACTICS_ID = EventBUIPlugin.PLUGIN_ID
-			+ ".proofTactics";
+	private static final String PROOFTACTICS_ID = PLUGIN_ID + ".proofTactics";
 	
-	public static final String TARGET_ANY = "any";
+	private static final String TARGET_ANY = "any";
 
-	public static final String TARGET_GOAL = "goal";
+	private static final String TARGET_GOAL = "goal";
 
-	public static final String TARGET_HYPOTHESIS = "hypothesis";
+	private static final String TARGET_HYPOTHESIS = "hypothesis";
 
-	public static final String TARGET_GLOBAL = "global";
+	public static final String TARGET_GLOBAL = "global";  // FIXME why public
 
 	// The static instance of this singleton class
-	private static TacticUIRegistry instance;
+	private static final TacticUIRegistry instance = new TacticUIRegistry();
 
 	// The registry stored Element UI information
 	private Map<String, TacticProviderInfo> goalTacticRegistry = null;
@@ -474,30 +475,24 @@ public class TacticUIRegistry {
 	}
 
 	/**
-	 * A private constructor to prevent creating an instance of this class
-	 * directly
+	 * The unique instance of this class is created when initializing the static
+	 * final field "instance", thus in a thread-safe manner.
 	 */
 	private TacticUIRegistry() {
-		// Singleton to hide the constructor
+		loadRegistry();
 	}
 
 	/**
-	 * Getting the default instance of this class (create a new instance of it
-	 * does not exist before)
-	 * <p>
+	 * Returns the unique instance of this registry. The instance of this class
+	 * is lazily constructed at class loading time.
 	 * 
-	 * @return An instance of this class
+	 * @return the unique instance of this registry
 	 */
 	public static TacticUIRegistry getDefault() {
-		if (instance == null)
-			instance = new TacticUIRegistry();
 		return instance;
 	}
 
 	private TacticUIInfo findInAnyTacticRegistry(String id) {
-		if (goalTacticRegistry == null) {
-			loadRegistry();
-		}
 		TacticUIInfo info = findInTacticRegistry(id, TARGET_GOAL);
 		if (info != null) return info;
 		info = findInTacticRegistry(id, TARGET_HYPOTHESIS);
@@ -508,9 +503,6 @@ public class TacticUIRegistry {
 	}
 	
 	private TacticUIInfo findInTacticRegistry(String id, String target) {
-		if (goalTacticRegistry == null) {
-			loadRegistry();
-		}
 		TacticUIInfo info;
 		if (target.equals(TARGET_GOAL)) {
 			info = goalTacticRegistry.get(id);
@@ -575,11 +567,6 @@ public class TacticUIRegistry {
 	 * point
 	 */
 	private synchronized void loadRegistry() {
-		if (goalTacticRegistry != null) {
-			// avoid to read the registry at the same time in different threads
-			return;
-		}
-
 		goalTacticRegistry = new LinkedHashMap<String, TacticProviderInfo>();
 		goalCommandRegistry = new LinkedHashMap<String, ProofCommandInfo>();
 		hypothesisTacticRegistry = new LinkedHashMap<String, TacticProviderInfo>();
@@ -659,10 +646,6 @@ public class TacticUIRegistry {
 	}
 
 	public synchronized List<ITacticApplication> getTacticApplicationsToGoal(IUserSupport us) {
-		if ((goalTacticRegistry == null) || (anyTacticRegistry == null)) {
-			loadRegistry();
-		}
-
 		final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
 
 		for (TacticProviderInfo info : goalTacticRegistry.values()) {
@@ -679,10 +662,6 @@ public class TacticUIRegistry {
 	}
 
 	public synchronized List<ICommandApplication> getCommandApplicationsToGoal(IUserSupport us) {
-		if ((goalTacticRegistry == null) || (anyTacticRegistry == null)) {
-			loadRegistry();
-		}
-
 		final List<ICommandApplication> result = new ArrayList<ICommandApplication>();
 		
 		for (ProofCommandInfo info : goalCommandRegistry.values()) {
@@ -699,10 +678,6 @@ public class TacticUIRegistry {
 	}
 
 	public synchronized List<ITacticApplication> getTacticApplicationsToHypothesis(IUserSupport us, Predicate hyp) {
-		if ((hypothesisTacticRegistry == null) || (anyTacticRegistry == null)) {
-			loadRegistry();
-		}
-		
 		final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
 		
 		for (TacticProviderInfo info : hypothesisTacticRegistry.values()) {
@@ -721,10 +696,6 @@ public class TacticUIRegistry {
 	
 	public synchronized List<ICommandApplication> getCommandApplicationsToHypothesis(
 			IUserSupport us, Predicate hyp) {
-		if ((hypothesisTacticRegistry == null) || (anyTacticRegistry == null)) {
-			loadRegistry();
-		}
-
 		final List<ICommandApplication> result = new ArrayList<ICommandApplication>();
 
 		for (ProofCommandInfo info : hypothesisCommandRegistry.values()) {
@@ -777,16 +748,10 @@ public class TacticUIRegistry {
 	}
 	
 	public synchronized Collection<String> getToolbars() {
-		if (toolbarRegistry == null)
-			loadRegistry();
-	
 		return toolbarRegistry.keySet();
 	}
 
 	public synchronized Collection<String> getToolbarDropdowns(String toolbar) {
-		if (toolbarRegistry == null)
-			loadRegistry();
-
 		ToolbarInfo info = toolbarRegistry.get(toolbar);
 		if (info != null) {
 			return info.getDropdowns();
@@ -796,9 +761,6 @@ public class TacticUIRegistry {
 	}
 	
 	public synchronized Collection<String> getDropdownTactics(String dropdownID) {
-		if (dropdownRegistry == null)
-			loadRegistry();
-
 		DropdownInfo info = dropdownRegistry.get(dropdownID);
 		if (info == null) {
 			return Collections.emptyList();
@@ -809,9 +771,6 @@ public class TacticUIRegistry {
 
 
 	public synchronized Collection<String> getToolbarTactics(String toolbarID) {
-		if (toolbarRegistry == null)
-			loadRegistry();
-
 		ToolbarInfo info = toolbarRegistry.get(toolbarID);
 		if (info == null) {
 			return Collections.emptyList();
@@ -824,10 +783,6 @@ public class TacticUIRegistry {
 	// returns null if not applicable
 	public synchronized Object getGlobalApplication(String tacticID,
 			IUserSupport us, String globalInput) {
-		if (globalRegistry == null) {
-			loadRegistry();
-		}
-
 		final TacticUIInfo info = globalRegistry.get(tacticID);
 		if (info instanceof TacticProviderInfo) {
 			final List<ITacticApplication> applications = ((TacticProviderInfo) info)
