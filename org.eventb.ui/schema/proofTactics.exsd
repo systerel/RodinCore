@@ -6,11 +6,7 @@
          <meta.schema plugin="org.eventb.ui" id="proofTactics" name="%point.proofTacticsName"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-The Event-B Proving User Interface is used for interactively discharging proof obligations. The interface is extensible. In particular, new proof commands can be added to the user interface.
-&lt;/p&gt;
-
-&lt;p&gt;This extension point allows plug-in writers to register new proof commands to the Event-B Proving User Interface.&lt;/p&gt;
+         The proof tactics extension point allows plug-ins to contribute new tactics and proof commands to the Event-B Proving User Interface. There are three forms of contributions: &lt;cite&gt;tactics&lt;/cite&gt;, &lt;cite&gt;toolbars&lt;/cite&gt;, and &lt;cite&gt;dropdowns&lt;/cite&gt;.
       </documentation>
    </annotation>
 
@@ -20,7 +16,7 @@ The Event-B Proving User Interface is used for interactively discharging proof o
             <meta.element />
          </appInfo>
          <documentation>
-            Plug-in writers register new proof commands to the Event-B Proving User Interface by extending this extension point. This is the root element.  This contains a sequence of &lt;samp&gt;tactic&lt;/samp&gt;, &lt;samp&gt;toolbar&lt;/samp&gt; and &lt;samp&gt;dropdown&lt;/samp&gt; elements.
+            Plug-in writers register new proof commands to the Event-B Proving User Interface by extending this extension point. This is the root element.  This contains a sequence of &lt;code&gt;tactic&lt;/code&gt;, &lt;code&gt;toolbar&lt;/code&gt; and &lt;code&gt;dropdown&lt;/code&gt; elements.
          </documentation>
       </annotation>
       <complexType>
@@ -64,7 +60,7 @@ The Event-B Proving User Interface is used for interactively discharging proof o
             <meta.element labelAttribute="id" icon="icon"/>
          </appInfo>
          <documentation>
-            This element is used for declaring a new proof tactic with the Proving User Interface, including the location and the implementation of this proof tactic. One of the attributes &lt;samp&gt;tacticProvider&lt;/samp&gt; or &lt;samp&gt;proofCommand&lt;/samp&gt; must be specified. If both of them are present, &lt;samp&gt;tacticProvider&lt;/samp&gt; is preferred over &lt;samp&gt;proofCommand&lt;/samp&gt;.
+            This element is declares a new proof tactic with the Proving User Interface, including the location and the implementation of this proof tactic. One of the attributes &lt;code&gt;tacticProvider&lt;/code&gt; or &lt;code&gt;proofCommand&lt;/code&gt; must be specified. If both of them are present, &lt;code&gt;tacticProvider&lt;/code&gt; is preferred over &lt;code&gt;proofCommand&lt;/code&gt;.
          </documentation>
       </annotation>
       <complexType>
@@ -78,7 +74,13 @@ The Event-B Proving User Interface is used for interactively discharging proof o
          <attribute name="target" use="required">
             <annotation>
                <documentation>
-                  A required attribute to specify whether the tactic is &lt;samp&gt;global&lt;/samp&gt; (e.g. applicable on the whole proof tree node) or applicable to &lt;samp&gt;hypothesis&lt;/samp&gt; or &lt;samp&gt;goal&lt;/samp&gt;, or to &lt;samp&gt;any&lt;/samp&gt;predicate among hypotheses or the goal.
+                  A required attribute to specify the scope of the tactic:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;global&lt;/code&gt; if the tactic is applicable to a proof tree node as a whole,&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;hypothesis&lt;/code&gt; if the tactic is applicable to an hypothesis predicate only,&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;goal&lt;/code&gt; if the tactic is applicable to a goal predicate only,&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;any&lt;/code&gt; if the tactic is applicable to any predicate (i.e., both hypothesis and goal).&lt;/li&gt;
+&lt;/ul&gt;
                </documentation>
             </annotation>
             <simpleType>
@@ -97,7 +99,7 @@ The Event-B Proving User Interface is used for interactively discharging proof o
          <attribute name="icon" type="string" use="required">
             <annotation>
                <documentation>
-                  an unique icon for this tactic (recommended size is 16 x 16).
+                  an icon for this tactic (recommended size is 16 x 16).
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -107,7 +109,7 @@ The Event-B Proving User Interface is used for interactively discharging proof o
          <attribute name="interrupt" type="boolean" use="required">
             <annotation>
                <documentation>
-                  boolean attribute to state if the tactic is interruptable or not.
+                  whether this tactic is interruptable or not.
                </documentation>
             </annotation>
          </attribute>
@@ -124,17 +126,17 @@ The Event-B Proving User Interface is used for interactively discharging proof o
          <attribute name="tacticProvider" type="string">
             <annotation>
                <documentation>
-                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;samp&gt;org.eventb.ui.prover.ITacticProvider&lt;/samp&gt;. There is a default implementation &lt;samp&gt;org.eventb.ui.prover.DefaultTacticProvider&lt;/samp&gt;. Alternatively, the class may implement &lt;samp&gt;org.eventb.ui.prover.ITacticProvider2&lt;/samp&gt;.
+                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;code&gt;org.eventb.ui.prover.ITacticProvider&lt;/code&gt;. There is a default implementation &lt;code&gt;org.eventb.ui.prover.DefaultTacticProvider&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eventb.ui.prover.DefaultTacticProvider:org.eventb.ui.prover.ITacticProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.eventb.ui.prover.ITacticProvider"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="proofCommand" type="string">
             <annotation>
                <documentation>
-                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;samp&gt;org.eventb.ui.prover.IProofCommand&lt;/samp&gt;.
+                  the name of a class which will be used to invoke the proof tactic. The class must implement &lt;code&gt;org.eventb.ui.prover.IProofCommand&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eventb.ui.prover.IProofCommand"/>
@@ -144,21 +146,21 @@ The Event-B Proving User Interface is used for interactively discharging proof o
          <attribute name="dropdown" type="string">
             <annotation>
                <documentation>
-                  indicate if this tactic belong to a dropdown list (see dropdown element), this must be an existing dropdown.
+                  id of the dropdown through which this tactic is available.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="toolbar" type="string">
             <annotation>
                <documentation>
-                  indicate if this tactic belong to a toolbar list (see toolbar element), this must be an existing dropdown.
+                  id of the toolbar through which this tactic is available.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
-                  an interger number indicating the priority for this tactic which is used to sort the tactics in a dropdown list or a toolbar in ascending order. The highest priority is 0.
+                  an integer number indicating the priority for this tactic. The priority is used to sort tactics in dropdown lists and toolbars in ascending order. The highest priority is 0. FIXME how can it be 0?
                </documentation>
             </annotation>
          </attribute>
@@ -203,7 +205,7 @@ Most contributors need not use this option. You should have a strong reason to s
          <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
-                  an interger number indicating the priority for this toolbar which is used to sort the toolbars in the Proof Control View in ascending order. The highest priority is 0.
+                  an integer number indicating the priority for this toolbar which is used to sort the toolbars in the Proof Control View in ascending order. The highest priority is 0.
                </documentation>
             </annotation>
          </attribute>
@@ -240,14 +242,14 @@ Most contributors need not use this option. You should have a strong reason to s
          <attribute name="toolbar" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of the parent toolbar (see toolbar element), this should be an existing toolbar.
+                  the id of the parent toolbar (see toolbar element), this must be an existing toolbar.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="priority" type="string" use="required">
             <annotation>
                <documentation>
-                  an interger number indicating the priority for this toolbar which is used to sort the dropdown lists in the parent toolbar in ascending order. The highest priority is 0.
+                  an integer number indicating the priority for this toolbar which is used to sort the dropdown lists in the parent toolbar in ascending order. The highest priority is 0.
                </documentation>
             </annotation>
          </attribute>
@@ -278,9 +280,7 @@ Most contributors need not use this option. You should have a strong reason to s
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-The following is an example of adding proof commands to the Event-B Proving User Interface. Note, that there are 3 different targets: &lt;samp&gt;goal&lt;/samp&gt;, &lt;samp&gt;global&lt;/samp&gt; and &lt;samp&gt;hypothesis&lt;/samp&gt;. Also, the location of the global proof commands is also related to &lt;samp&gt;toolbar&lt;/samp&gt; and &lt;samp&gt;dropdown&lt;/samp&gt;.
-&lt;/p&gt;
+         The following is an example of adding proof commands to the Event-B Proving User Interface. Note, that there are 3 different targets: &lt;code&gt;goal&lt;/code&gt;, &lt;code&gt;global&lt;/code&gt; and &lt;code&gt;hypothesis&lt;/code&gt;. Also, the location of the global proof commands is also related to &lt;code&gt;toolbar&lt;/code&gt; and &lt;code&gt;dropdown&lt;/code&gt;.
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension point=&quot;org.eventb.ui.proofTactics&quot;&gt;
@@ -376,6 +376,15 @@ The following is an example of adding proof commands to the Event-B Proving User
             tacticProvider=&quot;org.eventb.internal.ui.prover.tactics.ExistsInstantiationHyp&quot;
             target=&quot;hypothesis&quot;
             tooltip=&quot;%hypothesisProofTactics.ExE.tooltip&quot;/&gt;
+      &lt;tactic
+            icon=&quot;icons/pending.gif&quot;
+            id=&quot;org.eventb.ui.funOvr&quot;
+            interrupt=&quot;false&quot;
+            name=&quot;%proofTactics.funOvr.name&quot;
+            priority=&quot;9&quot;
+            tacticProvider=&quot;org.eventb.internal.ui.prover.tactics.FunOvr&quot;
+            target=&quot;any&quot;
+            tooltip=&quot;%proofTactics.funOvr.tooltip&quot;/&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -387,13 +396,10 @@ The following is an example of adding proof commands to the Event-B Proving User
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-The value of &lt;samp&gt;tacticProvider&lt;/samp&gt; attribute of &lt;samp&gt;tactic&lt;/samp&gt; element must be a fully qualified name of the class that implements &lt;samp&gt;org.eventb.ui.prover.ITacticProvider&lt;/samp&gt;.  Plug-in developers can do so by extending the default implementation &lt;samp&gt;org.eventb.ui.prover.DefaultTacticProvider&lt;/samp&gt;.
-&lt;/p&gt;
-&lt;p&gt;
-The value of &lt;samp&gt;proofCommand&lt;/samp&gt; attribute of &lt;samp&gt;tactic&lt;/samp&gt; element must be
-a fully qualified name of the class that implements &lt;samp&gt;org.eventb.ui.prover.IProofCommand&lt;/samp&gt;.
-&lt;/p&gt;
+         &lt;p&gt;The value of the &lt;code&gt;tacticProvider&lt;/code&gt; attribute of a &lt;code&gt;tactic&lt;/code&gt; element must be a fully qualified name of the class that implements &lt;code&gt;org.eventb.ui.prover.ITacticProvider&lt;/code&gt;.  Plug-in developers can do so by extending the default implementation &lt;code&gt;org.eventb.ui.prover.DefaultTacticProvider&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The value of the &lt;code&gt;proofCommand&lt;/code&gt; attribute of a &lt;code&gt;tactic&lt;/code&gt; element must be
+a fully qualified name of a class that implements &lt;code&gt;org.eventb.ui.prover.IProofCommand&lt;/code&gt;.&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -402,24 +408,18 @@ a fully qualified name of the class that implements &lt;samp&gt;org.eventb.ui.pr
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-This &lt;samp&gt;org.eventb.ui&lt;/samp&gt; plug-in contains implementation for both &lt;samp&gt;tacticProvider&lt;/samp&gt; and &lt;samp&gt;proofCommand&lt;/samp&gt;.
-&lt;/p&gt;
-&lt;p&gt;
-For &lt;samp&gt;tacticProvider&lt;/samp&gt;, plug-in developers are suggested to have a look at the following implementations:
+         &lt;p&gt;This &lt;code&gt;org.eventb.ui&lt;/code&gt; plug-in contains implementations of both &lt;code&gt;tacticProvider&lt;/code&gt; and &lt;code&gt;proofCommand&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For &lt;code&gt;tacticProvider&lt;/code&gt;, plug-in developers are suggested to have a look at the following implementations:
 &lt;ol&gt;
-&lt;li&gt;&lt;samp&gt;org.event.internal.ui.prover.tactics.ContradictHyp&lt;/samp&gt; as a proof tactic indirectly for hypothesis (appear on the left hand side of the predicate).&lt;/li&gt;
-&lt;li&gt;&lt;samp&gt;org.event.internal.ui.prover.tactics.RemoveInclusionHyp&lt;/samp&gt; as a proof tactic directly in the hypothesis, with the non-standard operator position.&lt;/li&gt;
-&lt;li&gt;&lt;samp&gt;org.event.internal.ui.prover.tactics.FunOvrHyp&lt;/samp&gt; as a proof tactic directly in the hypothesis, with the non-standard operator position.&lt;/li&gt;
-&lt;li&gt;&lt;samp&gt;org.event.internal.ui.prover.tactics.ContradictGoal&lt;/samp&gt; as a proof tactic indirectly for goal (appear on the left hand side of the predicate).&lt;/li&gt;
-&lt;li&gt;&lt;samp&gt;org.event.internal.ui.prover.tactics.RemoveInclusionGoal&lt;/samp&gt; as a proof tactic directly in the goal, with the standard operator position.&lt;/li&gt;
-&lt;li&gt;&lt;samp&gt;org.event.internal.ui.prover.tactics.FunOvrGoal&lt;/samp&gt; as a proof tactic directly in the goal, with the non-standard operator position.&lt;/li&gt;
-&lt;li&gt;&lt;samp&gt;org.event.internal.ui.prover.tactics.AddHypothesis&lt;/samp&gt; as a global proof tactic.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/p&gt;
-&lt;p&gt;
-For &lt;samp&gt;proofCommand&lt;/samp&gt;, plug-in developers are suggested to have a look at the following implementation &lt;samp&gt;org.event.internal.ui.prover.tactics.Prune&lt;/samp&gt; as a global proof tactic.
-&lt;/p&gt;
+&lt;li&gt;&lt;code&gt;org.event.internal.ui.prover.tactics.ContradictHyp&lt;/code&gt; as a proof tactic indirectly for hypothesis (appears on the left hand side of the predicate).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.event.internal.ui.prover.tactics.RemoveInclusionHyp&lt;/code&gt; as a proof tactic directly in the hypothesis, with a non-standard operator position.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.event.internal.ui.prover.tactics.FunOvrHyp&lt;/code&gt; as a proof tactic directly in the hypothesis, with a non-standard operator position.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.event.internal.ui.prover.tactics.ContradictGoal&lt;/code&gt; as a proof tactic indirectly for goal (appears on the left hand side of the predicate).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.event.internal.ui.prover.tactics.RemoveInclusionGoal&lt;/code&gt; as a proof tactic directly in the goal, with a standard operator position.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.event.internal.ui.prover.tactics.FunOvrGoal&lt;/code&gt; as a proof tactic directly in the goal, with a non-standard operator position.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;org.event.internal.ui.prover.tactics.AddHypothesis&lt;/code&gt; as a global proof tactic.&lt;/li&gt;
+&lt;/ol&gt;&lt;/p&gt;
+&lt;p&gt;For &lt;code&gt;proofCommand&lt;/code&gt;, plug-in developers are suggested to have a look at the implementation of &lt;code&gt;org.event.internal.ui.prover.tactics.Prune&lt;/code&gt; which is a global proof tactic.&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -428,13 +428,11 @@ For &lt;samp&gt;proofCommand&lt;/samp&gt;, plug-in developers are suggested to h
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005-2006 ETH Zurich.&lt;br&gt;
+         Copyright (c) 2005, 2011 ETH Zurich and others.&lt;br/&gt;
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at
 &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
-&lt;br&gt;
-Contributors: ETH Zurich
       </documentation>
    </annotation>
 
