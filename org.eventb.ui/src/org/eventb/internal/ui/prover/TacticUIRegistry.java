@@ -341,7 +341,7 @@ public class TacticUIRegistry {
 		private final ImageDescriptor iconDesc;
 		private final String tooltip;
 		private final IProofCommand command;
-		private Image lazyIcon;
+		private volatile Image lazyIcon;
 		
 		public CommandApplication(IProofCommand command, ImageDescriptor iconDesc,
 				String tooltip) {
@@ -352,6 +352,10 @@ public class TacticUIRegistry {
 
 		@Override
 		public Image getIcon() {
+			/*
+			 * This is thread-safe because lazyIcon is volatile and
+			 * EventBImage.getImage() always returns the same value.
+			 */
 			if (lazyIcon == null) {
 				lazyIcon = EventBImage.getImage(iconDesc);
 			}
