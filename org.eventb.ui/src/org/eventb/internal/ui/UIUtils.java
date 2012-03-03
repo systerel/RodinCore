@@ -269,6 +269,13 @@ public class UIUtils {
 		}
 		IStatus status = new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
 				IStatus.ERROR, message, exc);
+		log(status);
+	}
+
+	/**
+	 * Logs the given status to the Event-B UI plug-in log.
+	 */
+	public static void log(IStatus status) {
 		EventBUIPlugin.getDefault().getLog().log(status);
 	}
 
@@ -420,9 +427,7 @@ public class UIUtils {
 		} catch (PartInitException e) {
 			String errorMsg = "Error opening Editor";
 			MessageDialog.openError(null, null, errorMsg);
-			EventBUIPlugin.getDefault().getLog().log(
-					new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
-							errorMsg, e));
+			log(e, "while trying to open editor for " + component);
 		}
 	}
 
@@ -692,7 +697,7 @@ public class UIUtils {
 								element, value));
 			}
 		} catch (RodinDBException e) {
-			UIUtils.log(e, "Error changing attribute for element "
+			log(e, "Error changing attribute for element "
 					+ element.getElementName());
 			if (UIUtils.DEBUG)
 				e.printStackTrace();
@@ -946,7 +951,7 @@ public class UIUtils {
 	 */
 	public static void showUnexpectedError(final Throwable exc,
 			final String errorMessage) {
-		UIUtils.log(exc, errorMessage);
+		log(exc, errorMessage);
 		final IStatus status;
 		if (exc instanceof CoreException) {
 			IStatus s = ((CoreException) exc).getStatus();
