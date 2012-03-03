@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-package org.evenb.ui.prover.tests;
+package org.eventb.ui.prover.tests;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 import junit.framework.TestCase;

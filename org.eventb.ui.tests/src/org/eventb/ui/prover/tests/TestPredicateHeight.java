@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.evenb.ui.prover.tests;
+package org.eventb.ui.prover.tests;
 
 import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.BTRUE;

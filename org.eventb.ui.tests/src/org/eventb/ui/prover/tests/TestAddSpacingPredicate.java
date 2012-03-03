@@ -10,7 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - refactored to use StringBuilder instead of String concat
  *******************************************************************************/
-package org.evenb.ui.prover.tests;
+package org.eventb.ui.prover.tests;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.internal.ui.prover.PredicateUtil.appendPredicate;
