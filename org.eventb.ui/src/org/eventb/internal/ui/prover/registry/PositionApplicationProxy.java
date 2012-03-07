@@ -27,8 +27,7 @@ import org.eventb.ui.prover.ITacticApplication;
  * @author Laurent Voisin
  */
 public class PositionApplicationProxy extends
-		TacticApplicationProxy<IPositionApplication> implements
-		IPositionApplication {
+		TacticApplicationProxy<IPositionApplication> {
 
 	/**
 	 * Factory for creating position application proxys.
@@ -55,7 +54,6 @@ public class PositionApplicationProxy extends
 
 	// FIXME also check bound validity here
 
-	@Override
 	public Point getHyperlinkBounds(String parsedString,
 			Predicate parsedPredicate) {
 		try {
@@ -67,7 +65,6 @@ public class PositionApplicationProxy extends
 		}
 	}
 
-	@Override
 	public String getHyperlinkLabel() {
 		final String clientResult = getHyperlinkLabelFromClient();
 		if (clientResult != null) {

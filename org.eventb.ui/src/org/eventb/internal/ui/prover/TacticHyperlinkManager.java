@@ -15,7 +15,6 @@ package org.eventb.internal.ui.prover;
 
 import static org.eventb.internal.ui.prover.CursorModifier.HAND_CURSOR;
 import static org.eventb.internal.ui.prover.ProverUIUtils.SOFT_BG_COLOR;
-import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinkLabel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,8 +45,6 @@ import org.eventb.internal.ui.prover.MouseHyperlinkListener.MouseExitListener;
 import org.eventb.internal.ui.prover.MouseHyperlinkListener.MouseHoverListener;
 import org.eventb.internal.ui.prover.MouseHyperlinkListener.MouseMoveListener;
 import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
-import org.eventb.ui.prover.IPositionApplication;
-import org.eventb.ui.prover.ITacticApplication;
 
 public class TacticHyperlinkManager {
 
@@ -141,20 +138,18 @@ public class TacticHyperlinkManager {
 		final List<PositionApplicationProxy> tacticPositions = links.get(link);
 		if (tacticPositions.size() == 1) {
 			// Apply the only rule.
-			final ITacticApplication tacticUIInfo = tacticPositions.get(0);
-			applyTactic(link, tacticUIInfo);
+			final PositionApplicationProxy appli = tacticPositions.get(0);
+			applyTactic(link, appli);
 		} else {
 			showToolTip(tacticPositions, widgetPosition, link);
 		}
 	}
 
-	protected void applyTactic(Point link, ITacticApplication tacticPosition) {
-		final boolean skipPostTactic = TacticUIRegistry.getDefault()
-				.isSkipPostTactic(tacticPosition.getTacticID());
-
+	protected void applyTactic(Point link, PositionApplicationProxy tacticPosition) {
 		final PredicateRow hypothesisRow = hypAppli.get(link);
-		if (hypothesisRow != null)
-			hypothesisRow.apply(tacticPosition, skipPostTactic);
+		if (hypothesisRow != null) {
+			hypothesisRow.apply(tacticPosition);
+		}
 	}
 
 	public Point getLink(Point location) {
@@ -176,28 +171,26 @@ public class TacticHyperlinkManager {
 
 		tipMenu = new Menu(text.getShell(), SWT.POP_UP);
 
-		for (final ITacticApplication tacticPosition : tacticPositions) {
-			if (tacticPosition instanceof IPositionApplication) {
-				final MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
+		for (final PositionApplicationProxy tacticPosition : tacticPositions) {
+			final MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
 
-				final String linkLabel = getHyperlinkLabel((IPositionApplication) tacticPosition);
-				
-				item.setText(linkLabel);
-				item.addSelectionListener(new SelectionListener() {
+			final String linkLabel = tacticPosition.getHyperlinkLabel();
 
-					@Override
-					public void widgetDefaultSelected(SelectionEvent se) {
-						widgetSelected(se);
-					}
+			item.setText(linkLabel);
+			item.addSelectionListener(new SelectionListener() {
 
-					@Override
-					public void widgetSelected(SelectionEvent se) {
-						applyTactic(link, tacticPosition);
-						enableListeners(true);
-					}
+				@Override
+				public void widgetDefaultSelected(SelectionEvent se) {
+					widgetSelected(se);
+				}
 
-				});
-			}
+				@Override
+				public void widgetSelected(SelectionEvent se) {
+					applyTactic(link, tacticPosition);
+					enableListeners(true);
+				}
+
+			});
 		}
 
 		final Point tipPosition = text.toDisplay(widgetPosition);

@@ -32,7 +32,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.ui.prover.ITacticApplication;
+import org.eventb.internal.ui.prover.registry.TacticApplicationProxy;
 
 /**
  * @author htson
@@ -188,10 +188,8 @@ public class PredicateRow {
 	 * 
 	 * @param tacticAppli
 	 *            the tactic application
-	 * @param skipPostTactic
-	 *            the boolean telling if the post tactics should be skiped
 	 */
-	protected void apply(ITacticApplication tacticAppli, boolean skipPostTactic) {
+	protected void apply(TacticApplicationProxy<?> tacticAppli) {
 		final String[] inputs = getPredicateText().getResults();
 		if (ProverUIUtils.DEBUG)
 			for (String input : inputs)
@@ -199,6 +197,7 @@ public class PredicateRow {
 
 		final String globalInput = getProverUI().getProofControl().getInput();
 		final IUserSupport us = getUserSupport();
+		final boolean skipPostTactic = tacticAppli.isSkipPostTactic();
 		if (isGoal()) {
 			ProverUIUtils.applyTactic(
 					tacticAppli.getTactic(inputs, globalInput), us, null,

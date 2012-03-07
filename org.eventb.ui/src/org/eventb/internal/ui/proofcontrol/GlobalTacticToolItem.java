@@ -13,7 +13,6 @@ package org.eventb.internal.ui.proofcontrol;
 
 import org.eclipse.swt.widgets.ToolItem;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.internal.ui.prover.registry.TacticUIInfo;
 
 /**
@@ -23,8 +22,6 @@ import org.eventb.internal.ui.prover.registry.TacticUIInfo;
  *         Tactics).
  */
 public class GlobalTacticToolItem {
-
-	static final TacticUIRegistry registry = TacticUIRegistry.getDefault();
 
 	ToolItem item;
 

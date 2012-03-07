@@ -22,8 +22,7 @@ import org.eventb.ui.prover.ITacticApplication;
  * 
  * @author Laurent Voisin
  */
-public abstract class TacticApplicationProxy<T extends ITacticApplication>
-		implements ITacticApplication {
+public abstract class TacticApplicationProxy<T extends ITacticApplication> {
 
 	/**
 	 * Protocol of an abstract factory for creating proxys.
@@ -58,7 +57,6 @@ public abstract class TacticApplicationProxy<T extends ITacticApplication>
 	}
 
 	// FIXME what if the client returns null ?
-	@Override
 	public ITactic getTactic(String[] inputs, String globalInput) {
 		try {
 			return client.getTactic(inputs, globalInput);
@@ -73,9 +71,12 @@ public abstract class TacticApplicationProxy<T extends ITacticApplication>
 	 * directly the id of the tactic provider, thus enforcing the contract for
 	 * getTacticID().
 	 */
-	@Override
 	public String getTacticID() {
 		return provider.getID();
+	}
+
+	public boolean isSkipPostTactic() {
+		return provider.isSkipPostTactic();
 	}
 
 }

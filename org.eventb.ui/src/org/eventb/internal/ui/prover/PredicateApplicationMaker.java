@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
-import static org.eventb.internal.ui.prover.ProverUIUtils.getTooltip;
-
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -29,8 +26,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.prover.registry.PredicateApplicationProxy;
-import org.eventb.ui.prover.IPredicateApplication;
-import org.eventb.ui.prover.ITacticApplication;
 
 /**
  * Class able to create controls to place in a predicate row which will allow
@@ -54,22 +49,20 @@ public class PredicateApplicationMaker extends ControlMaker {
 		}
 		final Button button = new Button(text, SWT.ARROW | SWT.DOWN);
 		button.setEnabled(false);
-		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 		final List<PredicateApplicationProxy> tactics;
-		tactics = getPredicateApplications(tacticUIRegistry, row);
+		tactics = getPredicateApplications(row);
 		final int tacSize = tactics.size();
 		if (tacSize == 0){
 			return new Link(text, SWT.NONE);
 		}
 		if (tacSize == 1) {
-			final ITacticApplication appli = tactics.get(0);
+			final PredicateApplicationProxy appli = tactics.get(0);
 			final Link tacLink = new Link(text, SWT.NONE);
-			final IPredicateApplication predAppli = (IPredicateApplication) appli;
-			final String tooltip = getTooltip(predAppli);
+			final String tooltip = appli.getTooltip();
 			tacLink.setText(getText(tooltip));
 			tacLink.setToolTipText(tooltip);
 			tacLink.addSelectionListener(getTacticSelectionListener(row,
-					tacticUIRegistry, appli));
+					appli));
 			return tacLink;
 		}
 		button.setEnabled(true);
@@ -86,19 +79,15 @@ public class PredicateApplicationMaker extends ControlMaker {
 			}
 		};
 		button.addSelectionListener(predAppliListener);
-		createImageHyperlinks(row, menu, tacticUIRegistry, tactics);
+		createImageHyperlinks(row, menu, tactics);
 		return button;
 	}
 
 	private List<PredicateApplicationProxy> getPredicateApplications(
-			TacticUIRegistry tacticUIRegistry, PredicateRow row) {
+			PredicateRow row) {
+		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
 		final IUserSupport us = row.getUserSupport();
-		final Predicate hyp;
-		if (row.isGoal()) {
-			hyp = null;
-		} else {
-			hyp = row.getPredicate();
-		}
+		final Predicate hyp = row.isGoal() ? null : row.getPredicate();
 		return tacticUIRegistry.getPredicateApplications(us, hyp);
 	}
 
@@ -121,12 +110,12 @@ public class PredicateApplicationMaker extends ControlMaker {
 	 * Utility methods to create menu items for applicable tactics
 	 */
 	private static void createImageHyperlinks(PredicateRow row, Menu menu,
-			TacticUIRegistry registry, List<PredicateApplicationProxy> tactics) {
-		for (final PredicateApplicationProxy tacticAppli : tactics) {
-			final Image icon = getIcon(tacticAppli);
-			final String tooltip = getTooltip(tacticAppli);
+			List<PredicateApplicationProxy> applis) {
+		for (final PredicateApplicationProxy appli : applis) {
+			final Image icon = appli.getIcon();
+			final String tooltip = appli.getTooltip();
 			final SelectionListener tacListener = getTacticSelectionListener(
-					row, registry, tacticAppli);
+					row, appli);
 			addMenuItem(menu, icon, tooltip, row.isEnabled(), tacListener);
 		}
 	}
@@ -141,13 +130,11 @@ public class PredicateApplicationMaker extends ControlMaker {
 	}
 
 	private static SelectionListener getTacticSelectionListener(
-			final PredicateRow row, final TacticUIRegistry tacticUIRegistry,
-			final ITacticApplication appli) {
+			final PredicateRow row, final PredicateApplicationProxy appli) {
 		return new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				row.apply(appli,
-						tacticUIRegistry.isSkipPostTactic(appli.getTacticID()));
+				row.apply(appli);
 			}
 
 			@Override

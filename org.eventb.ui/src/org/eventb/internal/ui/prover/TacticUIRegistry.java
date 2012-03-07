@@ -15,14 +15,12 @@ import static java.util.Collections.unmodifiableList;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.graphics.Image;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.UIUtils;
@@ -33,7 +31,6 @@ import org.eventb.internal.ui.prover.registry.PositionApplicationProxy.PositionA
 import org.eventb.internal.ui.prover.registry.PredicateApplicationProxy;
 import org.eventb.internal.ui.prover.registry.PredicateApplicationProxy.PredicateApplicationFactory;
 import org.eventb.internal.ui.prover.registry.TacticProviderInfoList;
-import org.eventb.internal.ui.prover.registry.TacticUIInfo;
 import org.eventb.internal.ui.prover.registry.ToolbarInfo;
 
 /**
@@ -64,10 +61,6 @@ public class TacticUIRegistry {
 
 	private final TacticProviderInfoList hypothesisTactics;
 
-	// Temporary registry of all tactics created during refactoring.
-	// This maps contains the union of all other tactic maps.
-	private final Map<String, TacticUIInfo> allTacticRegistry;
-
 	private final List<ToolbarInfo> toolbars;
 
 	/**
@@ -90,21 +83,12 @@ public class TacticUIRegistry {
 		goalTactics = new TacticProviderInfoList(parser.getGoalTactics());
 		hypothesisTactics = new TacticProviderInfoList(
 				parser.getHypothesisTactics());
-		allTacticRegistry = parser.getAllTacticRegistry();
 		toolbars = parser.getToolbars();
 
 		if (ProverUIUtils.DEBUG) {
 			show(goalTactics, "goalTactics");
 			show(hypothesisTactics, "hypothesisTactics");
-			show(allTacticRegistry, "allTacticRegistry");
 			show(toolbars, "toolbars");
-		}
-	}
-
-	private void show(Map<String, ?> registry, String name) {
-		System.out.println("Contents of registry : " + name + ":");
-		for (final String id : registry.keySet()) {
-			System.out.println("\t" + id);
 		}
 	}
 
@@ -143,31 +127,6 @@ public class TacticUIRegistry {
 		} else {
 			return hypothesisTactics;
 		}
-	}
-
-	public Image getIcon(String tacticID) {
-		final TacticUIInfo info = allTacticRegistry.get(tacticID);
-		if (info != null)
-			return info.getIcon();
-
-		return null;
-	}
-
-	public String getTip(String tacticID) {
-		final TacticUIInfo info = allTacticRegistry.get(tacticID);
-
-		if (info != null)
-			return info.getTooltip();
-
-		return null;
-	}
-
-	public boolean isSkipPostTactic(String tacticID) {
-		final TacticUIInfo info = allTacticRegistry.get(tacticID);
-		if (info != null)
-			return info.isSkipPostTactic();
-
-		return false;
 	}
 
 	public List<ToolbarInfo> getToolbars() {

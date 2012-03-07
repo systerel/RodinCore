@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.internal.ui.prover.registry.DropdownInfo;
 import org.eventb.internal.ui.prover.registry.TacticUIInfo;
 
@@ -39,8 +38,6 @@ public abstract class GlobalTacticDropdownToolItem {
 	private GlobalDropdownSelectionListener listener;
 
 	private TacticUIInfo active = null;
-
-	static final TacticUIRegistry registry = TacticUIRegistry.getDefault();
 
 	/**
 	 * @author htson

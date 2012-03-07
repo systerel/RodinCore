@@ -26,8 +26,7 @@ import org.eventb.ui.prover.ITacticApplication;
  * @author Laurent Voisin
  */
 public class PredicateApplicationProxy extends
-		TacticApplicationProxy<IPredicateApplication> implements
-		IPredicateApplication {
+		TacticApplicationProxy<IPredicateApplication> {
 
 	/**
 	 * Factory for creating predicate application proxys.
@@ -54,7 +53,6 @@ public class PredicateApplicationProxy extends
 
 	// FIXME cleanup duplicated code.
 
-	@Override
 	public Image getIcon() {
 		final Image clientResult = getIconFromClient();
 		if (clientResult != null) {
@@ -72,7 +70,6 @@ public class PredicateApplicationProxy extends
 		}
 	}
 
-	@Override
 	public String getTooltip() {
 		final String clientResult = getTooltipFromClient();
 		if (clientResult != null) {

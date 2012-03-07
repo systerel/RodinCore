@@ -26,9 +26,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CaretEvent;
 import org.eclipse.swt.custom.CaretListener;
@@ -63,10 +61,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
 import org.eventb.internal.ui.prover.tactics.ExistsInstantiationGoal.ExistsInstantiationGoalApplication;
 import org.eventb.internal.ui.prover.tactics.ForallInstantiationHyp.ForallInstantiationHypApplication;
-import org.eventb.ui.prover.IPositionApplication;
-import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.IProofCommand;
-import org.eventb.ui.prover.ITacticApplication;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -273,7 +268,7 @@ public class ProverUIUtils {
 		}
 		// FIXME hard coded list ?
 		final Set<String> iTacticIDs = getInstantiationTacticIDs();
-		for (ITacticApplication app : applis) {
+		for (PositionApplicationProxy app : applis) {
 			if (iTacticIDs.contains(app.getTacticID())) {
 				applyTactic(app.getTactic(inputs, globalInput), us, hypset,
 						false, new NullProgressMonitor());
@@ -353,56 +348,6 @@ public class ProverUIUtils {
 		hyperlink.addHyperlinkListener(listener);
 		hyperlink.setToolTipText(tooltip);
 		hyperlink.setEnabled(enable);
-	}
-
-	/**
-	 * Returns the hyperlink label contained in the given application; defaults
-	 * to extension tooltip if the given application does not override it.
-	 * 
-	 * @param posAppli
-	 *            a position application
-	 * @return a non <code>null</code> hyperlink label String
-	 */
-	public static String getHyperlinkLabel(IPositionApplication posAppli) {
-		final String linkLabel = posAppli.getHyperlinkLabel();
-		if (linkLabel != null) {
-			return linkLabel;
-		}
-		return TacticUIRegistry.getDefault().getTip(posAppli.getTacticID());
-	}
-	
-	/**
-	 * Returns the icon image contained in the given application; defaults to
-	 * extension icon if the given application does not override it.
-	 * 
-	 * @param predAppli
-	 *            a predicate application
-	 * @return a non <code>null</code> icon image
-	 */
-	public static Image getIcon(IPredicateApplication predAppli) {
-		final Image icon = predAppli.getIcon();
-		if (icon != null) {
-			return icon;
-		}
-		return TacticUIRegistry.getDefault().getIcon(predAppli.getTacticID());
-	}
-	
-	/**
-	 * Returns the tooltip contained in the given application; defaults to
-	 * extension tooltip if the given application does not override it.
-	 * 
-	 * @param predAppli
-	 *            a predicate application
-	 * 
-	 * @return a non <code>null</code> tooltip String
-	 * 
-	 */
-	public static String getTooltip(IPredicateApplication predAppli) {
-		final String tooltip = predAppli.getTooltip();
-		if (tooltip != null) {
-			return tooltip;
-		}
-		return TacticUIRegistry.getDefault().getTip(predAppli.getTacticID());
 	}
 
 	/**
@@ -505,8 +450,7 @@ public class ProverUIUtils {
 		final Predicate parsedPred = getParsed(str, us.getFormulaFactory());
 
 		for (PositionApplicationProxy application : applications) {
-			final Point pt = safeGetHyperlinkBounds(application, str,
-					parsedPred);
+			final Point pt = application.getHyperlinkBounds(str, parsedPred);
 			if (pt == null) {
 				// client error has already been reported
 				continue;
@@ -544,43 +488,6 @@ public class ProverUIUtils {
 		hyperlinkPosition.x += offset;
 		hyperlinkPosition.y += offset;
 		return hyperlinkPosition;
-	}
-	
-	/**
-	 * Safely encapsulates calls to
-	 * <code>IPositionApplication.getHyperlinkBounds(String, Predicate)</code>
-	 * which is client provided code.
-	 */
-	public static final class ApplicationBoundGetter extends SafeRunnable {
-		private final IPositionApplication application;
-		private final String string;
-		private final Predicate predicate;
-		private Point result;
-
-		public ApplicationBoundGetter(IPositionApplication application,
-				String string, Predicate predicate) {
-			this.application = application;
-			this.string = string;
-			this.predicate = predicate;
-		}
-
-		@Override
-		public void run() throws Exception {
-			result = application.getHyperlinkBounds(string, predicate);
-		}
-
-		public Point getResult() {
-			return result;
-		}
-		
-	}
-
-	public static Point safeGetHyperlinkBounds(
-			IPositionApplication application, String string, Predicate predicate) {
-		final ApplicationBoundGetter getter = new ApplicationBoundGetter(
-				application, string, predicate);
-		SafeRunner.run(getter);
-		return getter.getResult();
 	}
 	
 	public static String getControlSpacing(int nbControls, int nbTabs) {

@@ -106,9 +106,9 @@ import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.internal.ui.prover.registry.DropdownInfo;
+import org.eventb.internal.ui.prover.registry.TacticApplicationProxy;
 import org.eventb.internal.ui.prover.registry.TacticUIInfo;
 import org.eventb.internal.ui.prover.registry.ToolbarInfo;
-import org.eventb.ui.prover.ITacticApplication;
 
 /**
  * @author htson
@@ -231,15 +231,13 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						final IUserSupport userSupport = editor
 								.getUserSupport();
 						final boolean interruptable = tactic.isInterruptable();
-						final boolean skipPostTactic = tactic
-								.isSkipPostTactic();
 						final Object application = tactic.getGlobalApplication(
 								userSupport, currentInput);
 
-						if (application instanceof ITacticApplication) {
+						if (application instanceof TacticApplicationProxy<?>) {
 							applyTacticProvider(
-									(ITacticApplication) application,
-									userSupport, interruptable, skipPostTactic);
+									(TacticApplicationProxy<?>) application,
+									userSupport, interruptable);
 						} else if (application instanceof ICommandApplication) {
 							applyGlobalExpertTactic((ICommandApplication) application,
 									userSupport, interruptable);
@@ -295,12 +293,12 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					final IUserSupport userSupport = editor
 					.getUserSupport();
 					final boolean interruptable = tactic.isInterruptable();
-					final boolean skipPostTactic = tactic.isSkipPostTactic();
 					final Object application = tactic.getGlobalApplication(
 							userSupport, currentInput);
-					if (application instanceof ITacticApplication) {
-						applyTacticProvider((ITacticApplication) application, userSupport,
-								interruptable, skipPostTactic);
+					if (application instanceof TacticApplicationProxy<?>) {
+						applyTacticProvider(
+								(TacticApplicationProxy<?>) application,
+								userSupport, interruptable);
 					} else if (application instanceof ICommandApplication) {
 						applyGlobalExpertTactic((ICommandApplication) application, userSupport,
 								interruptable);
@@ -364,11 +362,11 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	
 	// Applies a global tactic to the current proof tree node.
-	void applyTacticProvider(ITacticApplication provider,
-			final IUserSupport userSupport, boolean interruptable,
-			final boolean skipPostTactic) {
+	void applyTacticProvider(TacticApplicationProxy<?> appli,
+			final IUserSupport userSupport, boolean interruptable) {
 
-		final ITactic tactic = provider.getTactic(null, currentInput);
+		final ITactic tactic = appli.getTactic(null, currentInput);
+		final boolean skipPostTactic = appli.isSkipPostTactic();
 		if (interruptable) {
 			applyTacticWithProgress(new IRunnableWithProgress() {
 				@Override
