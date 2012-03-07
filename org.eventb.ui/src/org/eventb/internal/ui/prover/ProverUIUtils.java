@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
+import static java.util.Collections.singleton;
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -60,6 +60,7 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
 import org.eventb.internal.ui.prover.tactics.ExistsInstantiationGoal.ExistsInstantiationGoalApplication;
 import org.eventb.internal.ui.prover.tactics.ForallInstantiationHyp.ForallInstantiationHypApplication;
 import org.eventb.ui.prover.IPositionApplication;
@@ -262,15 +263,15 @@ public class ProverUIUtils {
 	public static void applyInstantiation(Predicate hypothesis,
 			IUserSupport us, String[] inputs, String globalInput) {
 		final TacticUIRegistry registry = TacticUIRegistry.getDefault();
-		final List<ITacticApplication> applis;
+		final List<PositionApplicationProxy> applis = registry
+				.getPositionApplications(us, hypothesis);
 		final Set<Predicate> hypset;
 		if (hypothesis == null) {
-			applis = registry.getTacticApplicationsToGoal(us);
 			hypset = null;
 		} else {
-			applis = registry.getTacticApplicationsToHypothesis(us, hypothesis);
-			hypset = Collections.singleton(hypothesis);
+			hypset = singleton(hypothesis);
 		}
+		// FIXME hard coded list ?
 		final Set<String> iTacticIDs = getInstantiationTacticIDs();
 		for (ITacticApplication app : applis) {
 			if (iTacticIDs.contains(app.getTacticID())) {
@@ -487,51 +488,43 @@ public class ProverUIUtils {
 	 *         predicate <code>pred</code> and its string representation
 	 *         <code>str</code>
 	 */
-	public static Map<Point, List<ITacticApplication>> getHyperlinks(TacticHyperlinkManager manager, IUserSupport us, boolean isHypothesis, String str, Predicate pred) {
+	public static Map<Point, List<PositionApplicationProxy>> getHyperlinks(
+			TacticHyperlinkManager manager, IUserSupport us,
+			boolean isHypothesis, String str, Predicate pred) {
 
-		final Map<Point, List<ITacticApplication>> links;
-		links = new HashMap<Point, List<ITacticApplication>>();
+		final Map<Point, List<PositionApplicationProxy>> links;
+		links = new HashMap<Point, List<PositionApplicationProxy>>();
 
 		final TacticUIRegistry registry = TacticUIRegistry.getDefault();
-		final List<ITacticApplication> applications;
-
-		if (isHypothesis) {
-			applications = registry.getTacticApplicationsToHypothesis(us, pred);		
-		} else {
-			applications = registry.getTacticApplicationsToGoal(us);
-		}
+		final Predicate hyp = isHypothesis ? pred : null;
+		final List<PositionApplicationProxy> applications = registry
+				.getPositionApplications(us, hyp);
 
 		// Non type-checked predicate containing source location used here to
 		// get hyperlinks (in which oftype expression has been removed etc.)
 		final Predicate parsedPred = getParsed(str, us.getFormulaFactory());
 
-		for (ITacticApplication application : applications) {
-			if (application instanceof IPositionApplication) {
-				final Point pt = safeGetHyperlinkBounds(
-						(IPositionApplication) application, str, parsedPred);
-				if (pt == null) {
-					// client error has already been reported
-					continue;
-				}
-				if (!checkRange(pt, str)) {
-					UIUtils.log(
-							null,
-							"invalid hyperlink bounds (" + pt.toString()
-									+ ") for tactic "
-									+ application.getTacticID()
-									+ ". Application abandoned.");
-					continue;
-				}
-				final Point positionInText = getGlobalLocationAtOffset(manager,
-						pt);
-				List<ITacticApplication> applicationList = links
-						.get(positionInText);
-				if (applicationList == null) {
-					applicationList = new ArrayList<ITacticApplication>();
-					links.put(positionInText, applicationList);
-				}
-				applicationList.add(application);
+		for (PositionApplicationProxy application : applications) {
+			final Point pt = safeGetHyperlinkBounds(application, str,
+					parsedPred);
+			if (pt == null) {
+				// client error has already been reported
+				continue;
 			}
+			if (!checkRange(pt, str)) {
+				UIUtils.log(null, "invalid hyperlink bounds (" + pt.toString()
+						+ ") for tactic " + application.getTacticID()
+						+ ". Application discarded.");
+				continue;
+			}
+			final Point positionInText = getGlobalLocationAtOffset(manager, pt);
+			List<PositionApplicationProxy> applicationList = links
+					.get(positionInText);
+			if (applicationList == null) {
+				applicationList = new ArrayList<PositionApplicationProxy>();
+				links.put(positionInText, applicationList);
+			}
+			applicationList.add(application);
 		}
 		return links;
 	}
@@ -607,29 +600,6 @@ public class ProverUIUtils {
 		}
 	}
 
-	/**
-	 * Utility method to keep only the predicate applications calculated for the
-	 * predicate of the given row
-	 */
-	public static List<IPredicateApplication> retainPredicateApplications(
-			TacticUIRegistry tacticUIRegistry, PredicateRow row) {
-		final List<IPredicateApplication> predApplis = new ArrayList<IPredicateApplication>();
-		final List<ITacticApplication> tactics;
-		final IUserSupport us = row.getUserSupport();
-		if (row.isGoal()) {
-			tactics = tacticUIRegistry.getTacticApplicationsToGoal(us);
-		} else {
-			tactics = tacticUIRegistry.getTacticApplicationsToHypothesis(us,
-					row.getPredicate());
-		}
-		for (ITacticApplication tactic : tactics) {
-			if (tactic instanceof IPredicateApplication) {
-				predApplis.add((IPredicateApplication) tactic);
-			}
-		}
-		return predApplis;
-	}
-	
 	public static CaretListener getCaretListener(
 			final ScrolledComposite scrolledComp, final int padding) {
 		return new CaretListener() {

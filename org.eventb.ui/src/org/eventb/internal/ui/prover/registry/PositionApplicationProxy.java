@@ -15,6 +15,7 @@ import static org.eventb.internal.ui.UIUtils.log;
 import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.Predicate;
 import org.eventb.ui.prover.IPositionApplication;
+import org.eventb.ui.prover.ITacticApplication;
 
 /**
  * Internal implementation of {@link IPositionApplication} that encapsulates the
@@ -26,7 +27,26 @@ import org.eventb.ui.prover.IPositionApplication;
  * @author Laurent Voisin
  */
 public class PositionApplicationProxy extends
-		TacticApplicationProxy<IPositionApplication> implements IPositionApplication {
+		TacticApplicationProxy<IPositionApplication> implements
+		IPositionApplication {
+
+	/**
+	 * Factory for creating position application proxys.
+	 */
+	public static class PositionApplicationFactory extends
+			TacticApplicationFactory<PositionApplicationProxy> {
+
+		@Override
+		public PositionApplicationProxy create(TacticProviderInfo provider,
+				ITacticApplication application) {
+			if (application instanceof IPositionApplication) {
+				return new PositionApplicationProxy(provider,
+						(IPositionApplication) application);
+			}
+			return null;
+		}
+
+	}
 
 	protected PositionApplicationProxy(TacticProviderInfo provider,
 			IPositionApplication client) {

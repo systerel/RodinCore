@@ -14,6 +14,7 @@ import static org.eventb.internal.ui.UIUtils.log;
 
 import org.eclipse.swt.graphics.Image;
 import org.eventb.ui.prover.IPredicateApplication;
+import org.eventb.ui.prover.ITacticApplication;
 
 /**
  * Internal implementation of {@link IPredicateApplication} that encapsulates
@@ -28,7 +29,25 @@ public class PredicateApplicationProxy extends
 		TacticApplicationProxy<IPredicateApplication> implements
 		IPredicateApplication {
 
-	public PredicateApplicationProxy(TacticProviderInfo provider,
+	/**
+	 * Factory for creating predicate application proxys.
+	 */
+	public static class PredicateApplicationFactory extends
+			TacticApplicationFactory<PredicateApplicationProxy> {
+
+		@Override
+		public PredicateApplicationProxy create(TacticProviderInfo provider,
+				ITacticApplication application) {
+			if (application instanceof IPredicateApplication) {
+				return new PredicateApplicationProxy(provider,
+						(IPredicateApplication) application);
+			}
+			return null;
+		}
+
+	}
+
+	protected PredicateApplicationProxy(TacticProviderInfo provider,
 			IPredicateApplication client) {
 		super(provider, client);
 	}

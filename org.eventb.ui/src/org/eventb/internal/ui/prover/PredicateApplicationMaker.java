@@ -12,7 +12,6 @@ package org.eventb.internal.ui.prover;
 
 import static org.eventb.internal.ui.prover.ProverUIUtils.getIcon;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getTooltip;
-import static org.eventb.internal.ui.prover.ProverUIUtils.retainPredicateApplications;
 
 import java.util.List;
 
@@ -27,6 +26,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.pm.IUserSupport;
+import org.eventb.internal.ui.prover.registry.PredicateApplicationProxy;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -53,13 +55,8 @@ public class PredicateApplicationMaker extends ControlMaker {
 		final Button button = new Button(text, SWT.ARROW | SWT.DOWN);
 		button.setEnabled(false);
 		final TacticUIRegistry tacticUIRegistry = TacticUIRegistry.getDefault();
-		final List<IPredicateApplication> tactics;
-
-		if (row.isGoal()) {
-			tactics = retainPredicateApplications(tacticUIRegistry, row);
-		} else {
-			tactics = retainPredicateApplications(tacticUIRegistry, row);
-		}
+		final List<PredicateApplicationProxy> tactics;
+		tactics = getPredicateApplications(tacticUIRegistry, row);
 		final int tacSize = tactics.size();
 		if (tacSize == 0){
 			return new Link(text, SWT.NONE);
@@ -93,6 +90,18 @@ public class PredicateApplicationMaker extends ControlMaker {
 		return button;
 	}
 
+	private List<PredicateApplicationProxy> getPredicateApplications(
+			TacticUIRegistry tacticUIRegistry, PredicateRow row) {
+		final IUserSupport us = row.getUserSupport();
+		final Predicate hyp;
+		if (row.isGoal()) {
+			hyp = null;
+		} else {
+			hyp = row.getPredicate();
+		}
+		return tacticUIRegistry.getPredicateApplications(us, hyp);
+	}
+
 	private static String getText(String tooltip) {
 		final StringBuilder sb = new StringBuilder("<a>");
 		if (tooltip.length() >= 4) {
@@ -112,15 +121,12 @@ public class PredicateApplicationMaker extends ControlMaker {
 	 * Utility methods to create menu items for applicable tactics
 	 */
 	private static void createImageHyperlinks(PredicateRow row, Menu menu,
-			TacticUIRegistry registry, List<IPredicateApplication> tactics) {
-		for (final ITacticApplication tacticAppli : tactics) {
-			if (!(tacticAppli instanceof IPredicateApplication))
-				continue;
-			final IPredicateApplication predAppli = (IPredicateApplication) tacticAppli;
-			final Image icon = getIcon(predAppli);
-			final String tooltip = getTooltip(predAppli);
+			TacticUIRegistry registry, List<PredicateApplicationProxy> tactics) {
+		for (final PredicateApplicationProxy tacticAppli : tactics) {
+			final Image icon = getIcon(tacticAppli);
+			final String tooltip = getTooltip(tacticAppli);
 			final SelectionListener tacListener = getTacticSelectionListener(
-					row, registry, predAppli);
+					row, registry, tacticAppli);
 			addMenuItem(menu, icon, tooltip, row.isEnabled(), tacListener);
 		}
 	}

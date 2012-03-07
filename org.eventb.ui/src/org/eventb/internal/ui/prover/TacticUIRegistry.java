@@ -28,10 +28,13 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.registry.AbstractInfo;
 import org.eventb.internal.ui.prover.registry.ExtensionParser;
+import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
+import org.eventb.internal.ui.prover.registry.PositionApplicationProxy.PositionApplicationFactory;
+import org.eventb.internal.ui.prover.registry.PredicateApplicationProxy;
+import org.eventb.internal.ui.prover.registry.PredicateApplicationProxy.PredicateApplicationFactory;
 import org.eventb.internal.ui.prover.registry.TacticProviderInfoList;
 import org.eventb.internal.ui.prover.registry.TacticUIInfo;
 import org.eventb.internal.ui.prover.registry.ToolbarInfo;
-import org.eventb.ui.prover.ITacticApplication;
 
 /**
  * Registry of all tactic and proof command contributions to the prover UI.
@@ -51,6 +54,10 @@ public class TacticUIRegistry {
 
 	// The static instance of this singleton class
 	private static final TacticUIRegistry instance = new TacticUIRegistry();
+
+	// Factories for creating tactic application proxys
+	private static final PredicateApplicationFactory predAppFactory = new PredicateApplicationFactory();
+	private static final PositionApplicationFactory posAppFactory = new PositionApplicationFactory();
 
 	// The registry stored Element UI information
 	private final TacticProviderInfoList goalTactics;
@@ -118,13 +125,24 @@ public class TacticUIRegistry {
 		return instance;
 	}
 
-	public List<ITacticApplication> getTacticApplicationsToGoal(IUserSupport us) {
-		return goalTactics.getTacticApplications(us, null);
+	public List<PredicateApplicationProxy> getPredicateApplications(
+			IUserSupport us, Predicate hyp) {
+		final TacticProviderInfoList tactics = getLocalTactics(hyp);
+		return tactics.getTacticApplications(us, hyp, predAppFactory);
 	}
 
-	public List<ITacticApplication> getTacticApplicationsToHypothesis(
+	public List<PositionApplicationProxy> getPositionApplications(
 			IUserSupport us, Predicate hyp) {
-		return hypothesisTactics.getTacticApplications(us, hyp);
+		final TacticProviderInfoList tactics = getLocalTactics(hyp);
+		return tactics.getTacticApplications(us, hyp, posAppFactory);
+	}
+
+	private TacticProviderInfoList getLocalTactics(Predicate hyp) {
+		if (hyp == null) {
+			return goalTactics;
+		} else {
+			return hypothesisTactics;
+		}
 	}
 
 	public Image getIcon(String tacticID) {

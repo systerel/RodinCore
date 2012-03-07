@@ -45,6 +45,7 @@ import org.eventb.internal.ui.prover.MouseHyperlinkListener.MouseEnterListener;
 import org.eventb.internal.ui.prover.MouseHyperlinkListener.MouseExitListener;
 import org.eventb.internal.ui.prover.MouseHyperlinkListener.MouseHoverListener;
 import org.eventb.internal.ui.prover.MouseHyperlinkListener.MouseMoveListener;
+import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
 import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -56,7 +57,7 @@ public class TacticHyperlinkManager {
 	private final StringBuilder toAppend;
 	private int stringBuilderOffset;
 
-	private final Map<Point, List<ITacticApplication>> links = new HashMap<Point, List<ITacticApplication>>();
+	private final Map<Point, List<PositionApplicationProxy>> links = new HashMap<Point, List<PositionApplicationProxy>>();
 	private final Map<Point, PredicateRow> hypAppli = new HashMap<Point, PredicateRow>();
 	private final Set<PaintObjectListener> paintListeners = new HashSet<PaintObjectListener>();
 	private final Set<BackgroundPainter> backgroundPainters = new HashSet<BackgroundPainter>();
@@ -90,7 +91,7 @@ public class TacticHyperlinkManager {
 		}
 	}
 	
-	public void setHyperlinks(Map<Point, List<ITacticApplication>> toAdd,
+	public void setHyperlinks(Map<Point, List<PositionApplicationProxy>> toAdd,
 			PredicateRow hypRow) {
 		links.putAll(toAdd);
 	}
@@ -137,7 +138,7 @@ public class TacticHyperlinkManager {
 	}
 
 	public void activateHyperlink(Point link, Point widgetPosition) {
-		final List<ITacticApplication> tacticPositions = links.get(link);
+		final List<PositionApplicationProxy> tacticPositions = links.get(link);
 		if (tacticPositions.size() == 1) {
 			// Apply the only rule.
 			final ITacticApplication tacticUIInfo = tacticPositions.get(0);
@@ -167,7 +168,7 @@ public class TacticHyperlinkManager {
 		return null;
 	}
 
-	void showToolTip(List<ITacticApplication> tacticPositions, Point widgetPosition, final Point link) {
+	void showToolTip(List<PositionApplicationProxy> tacticPositions, Point widgetPosition, final Point link) {
 
 		if (tipMenu != null && !tipMenu.isDisposed()) {
 			tipMenu.dispose();
@@ -221,7 +222,7 @@ public class TacticHyperlinkManager {
 	public void showToolTip(Point widgetPosition) {
 		if (currentLink == null)
 			return;
-		final List<ITacticApplication> tacticApplis = links.get(currentLink);
+		final List<PositionApplicationProxy> tacticApplis = links.get(currentLink);
 		if (tacticApplis == null)
 			return;
 		showToolTip(tacticApplis, widgetPosition, currentLink);

@@ -25,6 +25,29 @@ import org.eventb.ui.prover.ITacticApplication;
 public abstract class TacticApplicationProxy<T extends ITacticApplication>
 		implements ITacticApplication {
 
+	/**
+	 * Protocol of an abstract factory for creating proxys.
+	 */
+	public abstract static class TacticApplicationFactory<T extends TacticApplicationProxy<?>> {
+
+		/**
+		 * Returns a new proxy object for the given application or
+		 * <code>null</code> if the given application is incompatible (e.g., an
+		 * <code>IPositionApplication</code> when an
+		 * <code>IPredicateApplication</code> is expected).
+		 * 
+		 * @param provider
+		 *            descriptor of the tactic provider that created the
+		 *            application
+		 * @param application
+		 *            some tactic application to wrap around
+		 * @return a new proxy object or <code>null</code>
+		 */
+		public abstract T create(TacticProviderInfo provider,
+				ITacticApplication application);
+
+	}
+
 	protected final TacticProviderInfo provider;
 
 	protected final T client;

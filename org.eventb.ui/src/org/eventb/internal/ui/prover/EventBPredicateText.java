@@ -31,7 +31,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.ui.prover.ITacticApplication;
+import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
 
 public class EventBPredicateText {
 
@@ -55,7 +55,7 @@ public class EventBPredicateText {
 	
 	protected boolean boxesDrawn;
 
-	private Map<Point, List<ITacticApplication>> links;
+	private Map<Point, List<PositionApplicationProxy>> links;
 
 	private Predicate pred;
 
@@ -146,7 +146,7 @@ public class EventBPredicateText {
 		return stb.toString();
 	}
 
-	private Map<Point, List<ITacticApplication>> getLinks(String predicateStr,
+	private Map<Point, List<PositionApplicationProxy>> getLinks(String predicateStr,
 			Predicate predicate, TacticHyperlinkManager manager) {
 		if (enable) {
 			return getHyperlinks(manager, us, !isGoal, predicateStr, predicate);

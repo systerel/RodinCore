@@ -25,6 +25,7 @@ import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.prover.ProverUIUtils;
+import org.eventb.internal.ui.prover.registry.TacticApplicationProxy.TacticApplicationFactory;
 import org.eventb.ui.prover.IPositionApplication;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
@@ -34,18 +35,18 @@ public class TacticProviderInfo extends TacticUIInfo {
 
 	private final ITacticProvider tacticProvider;
 
-	public TacticProviderInfo(String id, Target target, ImageDescriptor iconDesc,
-			boolean interrupt, String tooltip, int priority, String name,
-			String dropdown, String toolbar, boolean skipPostTactic,
-			ITacticProvider tacticProvider) {
-		super(id, target, iconDesc, interrupt, tooltip, priority, name, dropdown,
-				toolbar, skipPostTactic);
+	public TacticProviderInfo(String id, Target target,
+			ImageDescriptor iconDesc, boolean interrupt, String tooltip,
+			int priority, String name, String dropdown, String toolbar,
+			boolean skipPostTactic, ITacticProvider tacticProvider) {
+		super(id, target, iconDesc, interrupt, tooltip, priority, name,
+				dropdown, toolbar, skipPostTactic);
 		this.tacticProvider = tacticProvider;
 	}
 
-	public List<TacticApplicationProxy<?>> getLocalApplications(IUserSupport us,
-			Predicate hyp) {
-		return getApplications(us, hyp, null);
+	public <T extends TacticApplicationProxy<?>> List<T> getLocalApplications(
+			IUserSupport us, Predicate hyp, TacticApplicationFactory<T> factory) {
+		return wrap(factory, getApplicationsFromClient(us, hyp, null));
 	}
 
 	@Override
@@ -74,13 +75,8 @@ public class TacticProviderInfo extends TacticUIInfo {
 		}
 	}
 
-	private List<TacticApplicationProxy<?>> getApplications(IUserSupport us,
+	private List<ITacticApplication> getApplicationsFromClient(IUserSupport us,
 			Predicate hyp, String globalInput) {
-		return wrap(getApplicationsFromClient(us, hyp, globalInput));
-	}
-
-	private List<ITacticApplication> getApplicationsFromClient(
-			IUserSupport us, Predicate hyp, String globalInput) {
 		final IProofState currentPO = us.getCurrentPO();
 		if (currentPO == null) {
 			return emptyList();
@@ -105,11 +101,11 @@ public class TacticProviderInfo extends TacticUIInfo {
 		return applis;
 	}
 
-	private List<TacticApplicationProxy<?>> wrap(List<ITacticApplication> applis) {
-		final List<TacticApplicationProxy<?>> result;
-		result = new ArrayList<TacticApplicationProxy<?>>(applis.size());
+	private <T extends TacticApplicationProxy<?>> List<T> wrap(
+			TacticApplicationFactory<T> factory, List<ITacticApplication> applis) {
+		final List<T> result = new ArrayList<T>(applis.size());
 		for (final ITacticApplication appli : applis) {
-			final TacticApplicationProxy<?> proxy = wrap(appli);
+			final T proxy = factory.create(this, appli);
 			if (proxy != null) {
 				result.add(proxy);
 			}

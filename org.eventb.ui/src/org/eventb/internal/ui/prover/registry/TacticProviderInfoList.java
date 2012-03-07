@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.ui.prover.ITacticApplication;
+import org.eventb.internal.ui.prover.registry.TacticApplicationProxy.TacticApplicationFactory;
 
 /**
  * Implementation of a list of UI tactic descriptions which is used for local
@@ -33,11 +33,11 @@ public class TacticProviderInfoList implements Iterable<TacticProviderInfo> {
 		this.infos = infos;
 	}
 
-	public List<ITacticApplication> getTacticApplications(IUserSupport us,
-			Predicate hyp) {
-		final List<ITacticApplication> result = new ArrayList<ITacticApplication>();
+	public <T extends TacticApplicationProxy<?>> List<T> getTacticApplications(
+			IUserSupport us, Predicate hyp, TacticApplicationFactory<T> factory) {
+		final List<T> result = new ArrayList<T>();
 		for (final TacticProviderInfo info : infos) {
-			result.addAll(info.getLocalApplications(us, hyp));
+			result.addAll(info.getLocalApplications(us, hyp, factory));
 		}
 		return result;
 	}
