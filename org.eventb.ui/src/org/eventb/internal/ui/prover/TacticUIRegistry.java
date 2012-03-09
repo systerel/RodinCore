@@ -14,6 +14,7 @@ package org.eventb.internal.ui.prover;
 import static java.util.Collections.unmodifiableList;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -30,7 +31,9 @@ import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
 import org.eventb.internal.ui.prover.registry.PositionApplicationProxy.PositionApplicationFactory;
 import org.eventb.internal.ui.prover.registry.PredicateApplicationProxy;
 import org.eventb.internal.ui.prover.registry.PredicateApplicationProxy.PredicateApplicationFactory;
-import org.eventb.internal.ui.prover.registry.TacticProviderInfoList;
+import org.eventb.internal.ui.prover.registry.TacticApplicationProxy;
+import org.eventb.internal.ui.prover.registry.TacticApplicationProxy.TacticApplicationFactory;
+import org.eventb.internal.ui.prover.registry.TacticProviderInfo;
 import org.eventb.internal.ui.prover.registry.ToolbarInfo;
 
 /**
@@ -57,9 +60,9 @@ public class TacticUIRegistry {
 	private static final PositionApplicationFactory posAppFactory = new PositionApplicationFactory();
 
 	// The registry stored Element UI information
-	private final TacticProviderInfoList goalTactics;
+	private final List<TacticProviderInfo> goalTactics;
 
-	private final TacticProviderInfoList hypothesisTactics;
+	private final List<TacticProviderInfo> hypothesisTactics;
 
 	private final List<ToolbarInfo> toolbars;
 
@@ -80,9 +83,8 @@ public class TacticUIRegistry {
 			UIUtils.log(status);
 		}
 
-		goalTactics = new TacticProviderInfoList(parser.getGoalTactics());
-		hypothesisTactics = new TacticProviderInfoList(
-				parser.getHypothesisTactics());
+		goalTactics = parser.getGoalTactics();
+		hypothesisTactics = parser.getHypothesisTactics();
 		toolbars = parser.getToolbars();
 
 		if (ProverUIUtils.DEBUG) {
@@ -111,22 +113,32 @@ public class TacticUIRegistry {
 
 	public List<PredicateApplicationProxy> getPredicateApplications(
 			IUserSupport us, Predicate hyp) {
-		final TacticProviderInfoList tactics = getLocalTactics(hyp);
-		return tactics.getTacticApplications(us, hyp, predAppFactory);
+		final List<TacticProviderInfo> tactics = getLocalTactics(hyp);
+		return getTacticApplications(tactics, us, hyp, predAppFactory);
 	}
 
 	public List<PositionApplicationProxy> getPositionApplications(
 			IUserSupport us, Predicate hyp) {
-		final TacticProviderInfoList tactics = getLocalTactics(hyp);
-		return tactics.getTacticApplications(us, hyp, posAppFactory);
+		final List<TacticProviderInfo> tactics = getLocalTactics(hyp);
+		return getTacticApplications(tactics, us, hyp, posAppFactory);
 	}
 
-	private TacticProviderInfoList getLocalTactics(Predicate hyp) {
+	private List<TacticProviderInfo> getLocalTactics(Predicate hyp) {
 		if (hyp == null) {
 			return goalTactics;
 		} else {
 			return hypothesisTactics;
 		}
+	}
+
+	private <T extends TacticApplicationProxy<?>> List<T> getTacticApplications(
+			List<TacticProviderInfo> infos, IUserSupport us, Predicate hyp,
+			TacticApplicationFactory<T> factory) {
+		final List<T> result = new ArrayList<T>();
+		for (final TacticProviderInfo info : infos) {
+			result.addAll(info.getLocalApplications(us, hyp, factory));
+		}
+		return result;
 	}
 
 	public List<ToolbarInfo> getToolbars() {
