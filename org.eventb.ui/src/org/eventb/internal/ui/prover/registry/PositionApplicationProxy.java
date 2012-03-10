@@ -52,17 +52,29 @@ public class PositionApplicationProxy extends
 		super(provider, client);
 	}
 
-	// FIXME also check bound validity here
-
-	public Point getHyperlinkBounds(String parsedString,
-			Predicate parsedPredicate) {
+	public Point getHyperlinkBounds(String image, Predicate parsedPred) {
+		final Point result;
 		try {
-			return client.getHyperlinkBounds(parsedString, parsedPredicate);
+			result = client.getHyperlinkBounds(image, parsedPred);
 		} catch (Throwable exc) {
-			log(exc,
-					"when calling getHyperlinkBounds() for " + provider.getID());
+			log(exc, "when calling getHyperlinkBounds() for " + getTacticID());
 			return null;
 		}
+		if (result == null) {
+			log(null, "Null returned by getHyperlinkBounds() for tactic "
+					+ getTacticID());
+			return null;
+		}
+		if (!checkRange(result, image)) {
+			log(null, "Invalid hyperlink bounds (" + result + ") for tactic "
+					+ getTacticID());
+			return null;
+		}
+		return result;
+	}
+
+	private static boolean checkRange(Point pt, String string) {
+		return 0 <= pt.x && pt.x < pt.y && pt.y <= string.length();
 	}
 
 	public String getHyperlinkLabel() {
@@ -77,7 +89,7 @@ public class PositionApplicationProxy extends
 		try {
 			return client.getHyperlinkLabel();
 		} catch (Throwable exc) {
-			log(exc, "when calling getHyperlinkLabel() for " + provider.getID());
+			log(exc, "when calling getHyperlinkLabel() for " + getTacticID());
 			return null;
 		}
 	}

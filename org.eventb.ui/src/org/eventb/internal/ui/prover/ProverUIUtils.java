@@ -399,21 +399,6 @@ public class ProverUIUtils {
 	}
 
 	/**
-	 * Checks that the given point gives a valid range inside the given string.
-	 * 
-	 * @param pt
-	 *            a range to check; the range is considered from pt.x
-	 *            (inclusive) to pt.y (exclusive)
-	 * @param string
-	 *            a string
-	 * @return <code>true</code> iff the point gives a valid range inside the
-	 *         string
-	 */
-	public static boolean checkRange(Point pt, String string) {
-		return pt.x >= 0 && pt.y <= string.length() && pt.x < pt.y;
-	}
-
-	/**
 	 * Returns a map associating tactic applications with their corresponding
 	 * application points (i.e. hyperlink bounds) for a predicate and its
 	 * corresponding string representation.
@@ -453,12 +438,6 @@ public class ProverUIUtils {
 			final Point pt = application.getHyperlinkBounds(str, parsedPred);
 			if (pt == null) {
 				// client error has already been reported
-				continue;
-			}
-			if (!checkRange(pt, str)) {
-				UIUtils.log(null, "invalid hyperlink bounds (" + pt.toString()
-						+ ") for tactic " + application.getTacticID()
-						+ ". Application discarded.");
 				continue;
 			}
 			final Point positionInText = getGlobalLocationAtOffset(manager, pt);
