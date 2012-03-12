@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 
@@ -63,6 +64,8 @@ public class YellowBoxMaker extends ControlMaker {
 				final PredicateRow row = holder.getRow();
 				row.instantiate();
 			}
+			FormToolkit.ensureVisible(owner);
+			owner.showSelection();
 		}
 	}
 
