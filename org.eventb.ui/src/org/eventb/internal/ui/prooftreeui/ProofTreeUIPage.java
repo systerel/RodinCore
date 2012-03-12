@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
 package org.eventb.internal.ui.prooftreeui;
 
 import static org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils.setupCommentTooltip;
+import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -66,7 +67,6 @@ import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.keyboard.preferences.PreferenceConstants;
 
 /**
  * @author htson
@@ -120,15 +120,17 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 
 		@Override
 		public Font getFont(Object element) {
-			return JFaceResources.getFont(PreferenceConstants.RODIN_MATH_FONT);
+			return JFaceResources.getFont(RODIN_MATH_FONT);
 		}
 
 		@Override
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty()
-					.equals(PreferenceConstants.RODIN_MATH_FONT)) {
+					.equals(RODIN_MATH_FONT)) {
 				if (event.getProperty().equals(
-						PreferenceConstants.RODIN_MATH_FONT)) {
+						RODIN_MATH_FONT)) {
+					final Font font = JFaceResources.getFont(RODIN_MATH_FONT);
+					viewer.getControl().setFont(font);
 					viewer.refresh();
 				}
 			}
