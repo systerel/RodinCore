@@ -138,28 +138,28 @@ public class ExplorerUtilsTest extends ExplorerTest {
 		c0IPS = createIPSRoot("c0");
 		assertNotNull("c0IPS should be created successfully ", c0IPS);
 
-		sequent1 = createSequent(c0IPO, "sequent1");
-		status1 = createPSStatus(c0IPS, "sequent1");
+		sequent1 = createSequent(c0IPO);
+		status1 = createPSStatus(c0IPS);
 		status1.setConfidence(IConfidence.DISCHARGED_MAX, null);
-		source1 = createPOSource(sequent1, "source1");
+		source1 = createPOSource(sequent1);
 		source1.setSource(axiom1, null);
 
-		sequent2 = createSequent(c0IPO, "sequent2");
-		status2 = createPSStatus(c0IPS, "sequent2");
+		sequent2 = createSequent(c0IPO);
+		status2 = createPSStatus(c0IPS);
 		status2.setConfidence(IConfidence.REVIEWED_MAX, null);
-		source2 = createPOSource(sequent2, "source2");
+		source2 = createPOSource(sequent2);
 		source2.setSource(axiom1, null);
 
-		sequent3 = createSequent(c0IPO, "sequent3");
-		status3 = createPSStatus(c0IPS, "sequent3");
+		sequent3 = createSequent(c0IPO);
+		status3 = createPSStatus(c0IPS);
 		status3.setConfidence(IConfidence.PENDING, null);
-		source3 = createPOSource(sequent3, "source3");
+		source3 = createPOSource(sequent3);
 		source3.setSource(thm1, null);
 
-		sequent4 = createSequent(c0IPO, "sequent4");
-		status4 = createPSStatus(c0IPS, "sequent4");
+		sequent4 = createSequent(c0IPO);
+		status4 = createPSStatus(c0IPS);
 		status4.setConfidence(IConfidence.UNATTEMPTED, null);
-		source4 = createPOSource(sequent4, "source4");
+		source4 = createPOSource(sequent4);
 		source4.setSource(thm2, null);
 
 		c0IPO.getRodinFile().save(null, true);

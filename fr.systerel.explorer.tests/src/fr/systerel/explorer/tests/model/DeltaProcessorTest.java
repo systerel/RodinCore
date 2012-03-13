@@ -273,7 +273,7 @@ public class DeltaProcessorTest extends ExplorerTest {
 		deltas.clear();
 		 
 		//add a sequent
-		createSequent(ipo, "sequent");
+		createSequent(ipo);
 		
 		//there should be some deltas.
 		assertTrue(deltas.size() >0);
@@ -300,7 +300,7 @@ public class DeltaProcessorTest extends ExplorerTest {
 		deltas.clear();
 		 
 		//add a status
-		createPSStatus(ips, "status");
+		createPSStatus(ips);
 		
 		//there should be some deltas.
 		assertTrue(deltas.size() >0);
@@ -324,7 +324,7 @@ public class DeltaProcessorTest extends ExplorerTest {
 		 IPSRoot ips = createIPSRoot("mo");
 		
 		//add a status
-		IPSStatus status = createPSStatus(ips, "status");
+		IPSStatus status = createPSStatus(ips);
 
 		//set the confidence
 		status.setConfidence(IConfidence.UNATTEMPTED, null);

@@ -155,7 +155,7 @@ public class ModelControllerTest extends ExplorerTest {
 		ModelController.getMachine(m0).processPORoot();
 			 
 		//add a sequent
-		createSequent(ipo, "sequent");
+		createSequent(ipo);
 		
 		//make sure that a ModelProofObligation has been created for the added sequent.
 		assertEquals(1, ModelController.getMachine(m0).getProofObligations().length);
@@ -165,7 +165,7 @@ public class ModelControllerTest extends ExplorerTest {
 	public void refreshModelAddPSStatus() throws CoreException {
 		// create a PORoot and a sequent
 		IPORoot ipo = createIPORoot("m0");
-		createSequent(ipo, "sequent");
+		createSequent(ipo);
 		
 		//create a PSRoot
 		IPSRoot ips = createIPSRoot("m0");
@@ -176,7 +176,7 @@ public class ModelControllerTest extends ExplorerTest {
 		ModelController.getMachine(m0).processPSRoot();
 			 
 		//add a status
-		IPSStatus status = createPSStatus(ips, "sequent");
+		IPSStatus status = createPSStatus(ips);
 		//make sure that a ModelProofObligation has been created for the added status.
 		assertNotNull(ModelController.getModelPO(status).getIPSStatus());
 	}
@@ -185,12 +185,12 @@ public class ModelControllerTest extends ExplorerTest {
 	public void refreshModelChangePSStatus() throws CoreException {
 		// create a PORoot and a sequent
 		IPORoot ipo = createIPORoot("m0");
-		createSequent(ipo, "sequent");
+		createSequent(ipo);
 		
 		//create a PSRoot
 		IPSRoot ips = createIPSRoot("m0");
 		//add a status
-		IPSStatus status = createPSStatus(ips, "sequent");
+		IPSStatus status = createPSStatus(ips);
 		status.setConfidence(IConfidence.PENDING, null);
 		
 		setUpSubscription();

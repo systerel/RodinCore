@@ -179,9 +179,9 @@ public class ModelMachineTest extends ExplorerTest {
 		
 		//create an event with guards, witness and action
 		evt2 = createEvent(machineRoot, "evt2");
-		guard1 = createGuard(evt2, "guard1");
-		action1 = createAction(evt2, "action1");
-		witness1 = createWitness(evt2, "witness1");
+		guard1 = createGuard(evt2);
+		action1 = createAction(evt2);
+		witness1 = createWitness(evt2);
 	}
 
 	
@@ -193,33 +193,33 @@ public class ModelMachineTest extends ExplorerTest {
 		ips = createIPSRoot("m0");
 		assertNotNull("m0IPS should be created successfully ", ips);
 
-		sequent1 = createSequent(ipo, "sequent1");
-		status1 = createPSStatus(ips, "sequent1");
+		sequent1 = createSequent(ipo);
+		status1 = createPSStatus(ips);
 
-		source1 =  createPOSource(sequent1, "source1");
+		source1 =  createPOSource(sequent1);
 		source1.setSource(inv1, null);
-		source2 =  createPOSource(sequent1, "source2");
+		source2 =  createPOSource(sequent1);
 		source2.setSource(evt1, null);
 
 		
-		sequent2 = createSequent(ipo, "sequent2");
-		status2 = createPSStatus(ips, "sequent2");
-		source3 =  createPOSource(sequent2, "source3");
+		sequent2 = createSequent(ipo);
+		status2 = createPSStatus(ips);
+		source3 =  createPOSource(sequent2);
 		source3.setSource(guard1, null);
 		
-		sequent3 = createSequent(ipo, "sequent3");
-		status3 = createPSStatus(ips, "sequent3");
-		source4 =  createPOSource(sequent3, "source4");
+		sequent3 = createSequent(ipo);
+		status3 = createPSStatus(ips);
+		source4 =  createPOSource(sequent3);
 		source4.setSource(action1, null);
 
-		sequent4 = createSequent(ipo, "sequent4");
-		status4 = createPSStatus(ips, "sequent4");
-		source5 =  createPOSource(sequent4, "source5");
+		sequent4 = createSequent(ipo);
+		status4 = createPSStatus(ips);
+		source5 =  createPOSource(sequent4);
 		source5.setSource(witness1, null);
 
-		sequent5 = createSequent(ipo, "sequent5");
-		status5 = createPSStatus(ips, "sequent5");
-		source6 =  createPOSource(sequent5, "source6");
+		sequent5 = createSequent(ipo);
+		status5 = createPSStatus(ips);
+		source6 =  createPOSource(sequent5);
 		source6.setSource(thm1, null);
 	}
 	

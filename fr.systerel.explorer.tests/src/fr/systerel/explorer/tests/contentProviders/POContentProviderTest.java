@@ -135,26 +135,26 @@ public class POContentProviderTest extends ExplorerTest {
 		m0IPS = createIPSRoot("m0");
 		assertNotNull("m0IPS should be created successfully ", m0IPS);
 		
-		sequent3 = createSequent(m0IPO, "sequent3");
-		status3 = createPSStatus(m0IPS, "sequent3");
+		sequent3 = createSequent(m0IPO);
+		status3 = createPSStatus(m0IPS);
 
-		source4 =  createPOSource(sequent3, "source4");
+		source4 =  createPOSource(sequent3);
 		source4.setSource(inv1, null);
 	
-		sequent4 = createSequent(m0IPO, "sequent4");
-		status4 = createPSStatus(m0IPS, "sequent4");
+		sequent4 = createSequent(m0IPO);
+		status4 = createPSStatus(m0IPS);
 
-		source5 =  createPOSource(sequent4, "source5");
+		source5 =  createPOSource(sequent4);
 		source5.setSource(event1, null);
 
-		sequent5 = createSequent(m0IPO, "sequent5");
-		status5 = createPSStatus(m0IPS, "sequent5");
+		sequent5 = createSequent(m0IPO);
+		status5 = createPSStatus(m0IPS);
 
-		source6 =  createPOSource(sequent5, "source6");
+		source6 =  createPOSource(sequent5);
 		source6.setSource(event1, null);
-		source7 =  createPOSource(sequent5, "source7");
+		source7 =  createPOSource(sequent5);
 		source7.setSource(inv1, null);
-		source8 =  createPOSource(sequent5, "source8");
+		source8 =  createPOSource(sequent5);
 		source8.setSource(thm2, null);
 	}
 
@@ -165,19 +165,19 @@ public class POContentProviderTest extends ExplorerTest {
 		c0IPS = createIPSRoot("c0");
 		assertNotNull("c0IPS should be created successfully ", c0IPS);
 		
-		sequent1 = createSequent(c0IPO, "sequent1");
-		status1 = createPSStatus(c0IPS, "sequent1");
+		sequent1 = createSequent(c0IPO);
+		status1 = createPSStatus(c0IPS);
 
-		source1 =  createPOSource(sequent1, "source1");
+		source1 =  createPOSource(sequent1);
 		source1.setSource(axiom1, null);
 
-		sequent2 = createSequent(c0IPO, "sequent2");
-		status2 = createPSStatus(c0IPS, "sequent2");
+		sequent2 = createSequent(c0IPO);
+		status2 = createPSStatus(c0IPS);
 
-		source2 =  createPOSource(sequent2, "source2");
+		source2 =  createPOSource(sequent2);
 		source2.setSource(axiom1, null);
 
-		source3 =  createPOSource(sequent2, "source3");
+		source3 =  createPOSource(sequent2);
 		source3.setSource(thm1, null);
 	}
 	

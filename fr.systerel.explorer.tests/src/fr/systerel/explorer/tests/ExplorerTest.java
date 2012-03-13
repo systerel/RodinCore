@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
-  *******************************************************************************/
+ *******************************************************************************/
 
 package fr.systerel.explorer.tests;
 
@@ -66,23 +66,22 @@ import fr.systerel.internal.explorer.model.ModelProofObligation;
  */
 public class ExplorerTest {
 
-
 	/**
 	 * The pointer to the test Rodin project.
 	 */
 	protected IRodinProject rodinProject;
 
 	/**
-	 * The testing workspace. 
+	 * The testing workspace.
 	 */
 	protected static IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	
-	protected static Comparator<Object> comparator = new Comparator<Object> () {
+
+	protected static Comparator<Object> comparator = new Comparator<Object>() {
 
 		public int compare(Object arg0, Object arg1) {
 			return arg0.toString().compareTo(arg1.toString());
 		}
-		
+
 	};
 
 	/**
@@ -95,20 +94,22 @@ public class ExplorerTest {
 	 * @throws RodinDBException
 	 *             if some problems occur.
 	 */
-	protected IContextRoot createContext(String bareName) throws RodinDBException {
+	protected IContextRoot createContext(String bareName)
+			throws RodinDBException {
 		final String fileName = EventBPlugin.getContextFileName(bareName);
 		IRodinFile result = rodinProject.getRodinFile(fileName);
 		result.create(true, null);
 		return (IContextRoot) result.getRoot();
 	}
 
-	protected IContextRoot createContext(String bareName, IRodinProject parent) throws RodinDBException {
+	protected IContextRoot createContext(String bareName, IRodinProject parent)
+			throws RodinDBException {
 		final String fileName = EventBPlugin.getContextFileName(bareName);
 		IRodinFile result = parent.getRodinFile(fileName);
 		result.create(true, null);
 		return (IContextRoot) result.getRoot();
 	}
-	
+
 	/**
 	 * Utility method to create a machine with the given bare name. The machine
 	 * is created as a child of the test Rodin project ({@link #rodinProject}).
@@ -119,20 +120,22 @@ public class ExplorerTest {
 	 * @throws RodinDBException
 	 *             if some problems occur.
 	 */
-	protected IMachineRoot createMachine(String bareName) throws RodinDBException {
+	protected IMachineRoot createMachine(String bareName)
+			throws RodinDBException {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
 		IRodinFile result = rodinProject.getRodinFile(fileName);
 		result.create(true, null);
 		return (IMachineRoot) result.getRoot();
 	}
 
-	protected IMachineRoot createMachine(String bareName, IRodinProject parent) throws RodinDBException {
+	protected IMachineRoot createMachine(String bareName, IRodinProject parent)
+			throws RodinDBException {
 		final String fileName = EventBPlugin.getMachineFileName(bareName);
 		IRodinFile result = parent.getRodinFile(fileName);
 		result.create(true, null);
 		return (IMachineRoot) result.getRoot();
 	}
-	
+
 	protected IPORoot createIPORoot(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getPOFileName(bareName);
 		IRodinFile result = rodinProject.getRodinFile(fileName);
@@ -140,186 +143,171 @@ public class ExplorerTest {
 		return (IPORoot) result.getRoot();
 	}
 
-	protected IPORoot createIPORoot(String bareName, IRodinProject parent) throws RodinDBException {
+	protected IPORoot createIPORoot(String bareName, IRodinProject parent)
+			throws RodinDBException {
 		final String fileName = EventBPlugin.getPOFileName(bareName);
 		IRodinFile result = parent.getRodinFile(fileName);
 		result.create(true, null);
 		return (IPORoot) result.getRoot();
 	}
-	
+
 	protected IPSRoot createIPSRoot(String bareName) throws RodinDBException {
 		final String fileName = EventBPlugin.getPSFileName(bareName);
 		IRodinFile result = rodinProject.getRodinFile(fileName);
 		result.create(true, null);
 		return (IPSRoot) result.getRoot();
 	}
-	
-	protected IPSRoot createIPSRoot(String bareName, IRodinProject parent) throws RodinDBException {
+
+	protected IPSRoot createIPSRoot(String bareName, IRodinProject parent)
+			throws RodinDBException {
 		final String fileName = EventBPlugin.getPSFileName(bareName);
 		IRodinFile result = parent.getRodinFile(fileName);
 		result.create(true, null);
 		return (IPSRoot) result.getRoot();
 	}
-	
+
 	/**
 	 * Method to create an internal element
 	 * 
-	 * @param <T>		the type of internal element to create
-	 * @param parent	the parent of the element to create
-	 * @param childType	the type of the child to create
-	 * @param childName	the name of the element to create
-	 * @return			the created element
+	 * @param <T>
+	 *            the type of internal element to create
+	 * @param parent
+	 *            the parent of the element to create
+	 * @param childType
+	 *            the type of the child to create
+	 * @return the created element
 	 * @throws RodinDBException
 	 */
-	protected <T extends IInternalElement> T createInternalElement(
-			IInternalElement parent, IInternalElementType<T> childType,
-			String childName) throws RodinDBException {
-
-		T element = parent.getInternalElement(childType, childName);
-		element.create(null, null);
-		return element;
+	protected <T extends IInternalElement> T createChild(
+			IInternalElement parent, IInternalElementType<T> childType)
+			throws RodinDBException {
+		return parent.createChild(childType, null, null);
 	}
 
-	protected IAxiom createAxiom(IInternalElement parent, String name)
+	protected IAxiom createAxiom(IInternalElement parent, String label)
 			throws RodinDBException {
-		final IAxiom axiom = createInternalElement(parent, IAxiom.ELEMENT_TYPE,
-				name);
-		axiom.setLabel(name, null);
+		final IAxiom axiom = createChild(parent, IAxiom.ELEMENT_TYPE);
+		axiom.setLabel(label, null);
 		axiom.setTheorem(false, null);
 		return axiom;
 	}
 
-	protected IAxiom createAxiomTheorem(IInternalElement parent, String name)
+	protected IAxiom createAxiomTheorem(IInternalElement parent, String label)
 			throws RodinDBException {
-		final IAxiom theorem = createInternalElement(parent,
-				IAxiom.ELEMENT_TYPE, name);
-		theorem.setLabel(name, null);
+		final IAxiom theorem = createChild(parent, IAxiom.ELEMENT_TYPE);
+		theorem.setLabel(label, null);
 		theorem.setTheorem(true, null);
 		return theorem;
 	}
 
 	protected IInvariant createInvariantTheorem(IInternalElement parent,
-			String name) throws RodinDBException {
-		final IInvariant theorem = createInternalElement(parent,
-				IInvariant.ELEMENT_TYPE, name);
-		theorem.setLabel(name, null);
+			String label) throws RodinDBException {
+		final IInvariant theorem = createChild(parent, IInvariant.ELEMENT_TYPE);
+		theorem.setLabel(label, null);
 		theorem.setTheorem(true, null);
 		return theorem;
 	}
 
 	protected IVariable createVariable(IInternalElement parent,
-		String name) throws RodinDBException {
-		IVariable variable =  createInternalElement(parent,
-				IVariable.ELEMENT_TYPE, name);
+			String identifier) throws RodinDBException {
+		IVariable variable = createChild(parent, IVariable.ELEMENT_TYPE);
+		variable.setIdentifierString(identifier, null);
 		return variable;
 	}
-	
-	
-	protected IEvent createEvent(IInternalElement parent,
-			String name) throws RodinDBException {
-			IEvent event =  createInternalElement(parent,
-					IEvent.ELEMENT_TYPE, name);
-			event.setLabel(name, null);
-			return event;
-	}
-	
-	protected IInvariant createInvariant(IInternalElement parent, String name)
+
+	protected IEvent createEvent(IInternalElement parent, String label)
 			throws RodinDBException {
-		final IInvariant invariant = createInternalElement(parent,
-				IInvariant.ELEMENT_TYPE, name);
-		invariant.setLabel(name, null);
+		IEvent event = createChild(parent, IEvent.ELEMENT_TYPE);
+		event.setLabel(label, null);
+		return event;
+	}
+
+	protected IInvariant createInvariant(IInternalElement parent, String label)
+			throws RodinDBException {
+		final IInvariant invariant = createChild(parent,
+				IInvariant.ELEMENT_TYPE);
+		invariant.setLabel(label, null);
 		invariant.setTheorem(false, null);
 		return invariant;
 	}
-	
 
 	protected IConstant createConstant(IInternalElement parent,
-			String name) throws RodinDBException {
-		IConstant constant =  createInternalElement(parent,
-				IConstant.ELEMENT_TYPE, name);
-			return constant;
+			String identifier) throws RodinDBException {
+		IConstant constant = createChild(parent, IConstant.ELEMENT_TYPE);
+		constant.setIdentifierString(identifier, null);
+		return constant;
 	}
-	
+
 	protected ICarrierSet createCarrierSet(IInternalElement parent,
-			String name) throws RodinDBException {
-		ICarrierSet carrier =  createInternalElement(parent,
-				ICarrierSet.ELEMENT_TYPE, name);
-			return carrier;
+			String identifier) throws RodinDBException {
+		ICarrierSet carrier = createChild(parent, ICarrierSet.ELEMENT_TYPE);
+		carrier.setIdentifierString(identifier, null);
+		return carrier;
 	}
 
-	protected IPOSequent createSequent(IInternalElement parent,
-			String name) throws RodinDBException {
-		IPOSequent sequent =  createInternalElement(parent,
-				IPOSequent.ELEMENT_TYPE, name);
-		return sequent;
+	protected IPOSequent createSequent(IInternalElement parent)
+			throws RodinDBException {
+		return createChild(parent, IPOSequent.ELEMENT_TYPE);
 	}
 
-	protected IPSStatus createPSStatus(IInternalElement parent,
-			String name) throws RodinDBException {
-		IPSStatus status =  createInternalElement(parent,
-				IPSStatus.ELEMENT_TYPE, name);
-		return status;
-	}
-	
-	protected IPOSource createPOSource(IInternalElement parent,
-			String name) throws RodinDBException {
-		IPOSource source =  createInternalElement(parent,
-				IPOSource.ELEMENT_TYPE, name);
-		return source;
+	protected IPSStatus createPSStatus(IInternalElement parent)
+			throws RodinDBException {
+		return createChild(parent, IPSStatus.ELEMENT_TYPE);
 	}
 
-	protected IWitness createWitness(IInternalElement parent,
-			String name) throws RodinDBException {
-		IWitness witness =  createInternalElement(parent,
-				IWitness.ELEMENT_TYPE, name);
-		return witness;
+	protected IPOSource createPOSource(IInternalElement parent)
+			throws RodinDBException {
+		return createChild(parent, IPOSource.ELEMENT_TYPE);
 	}
 
-	protected IAction createAction(IInternalElement parent,
-			String name) throws RodinDBException {
-		IAction action =  createInternalElement(parent,
-				IAction.ELEMENT_TYPE, name);
-		return action;
+	protected IWitness createWitness(IInternalElement parent)
+			throws RodinDBException {
+		return createChild(parent, IWitness.ELEMENT_TYPE);
 	}
 
-	protected IGuard createGuard(IInternalElement parent,
-			String name) throws RodinDBException {
-		IGuard guard =  createInternalElement(parent,
-				IGuard.ELEMENT_TYPE, name);
-		return guard;
+	protected IAction createAction(IInternalElement parent)
+			throws RodinDBException {
+		return createChild(parent, IAction.ELEMENT_TYPE);
 	}
-	
+
+	protected IGuard createGuard(IInternalElement parent)
+			throws RodinDBException {
+		return createChild(parent, IGuard.ELEMENT_TYPE);
+	}
+
 	@Before
 	public void setUp() throws Exception {
 		DebugHelpers.disableIndexing();
 		rodinProject = createRodinProject("P");
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
 		deleteProject("P");
 		ModelController.removeProject(rodinProject);
-		
+
 	}
-	
-	protected static IRodinProject createRodinProject(final String projectName) throws CoreException {
+
+	protected static IRodinProject createRodinProject(final String projectName)
+			throws CoreException {
 		IWorkspaceRunnable create = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				// create project
 				createProject(projectName);
-				
+
 				// set Rodin nature
 				addRodinNature(projectName);
 			}
 		};
-		workspace.run(create, null);	
+		workspace.run(create, null);
 		return RodinCore.getRodinDB().getRodinProject(projectName);
 	}
 
 	/*
 	 * Create simple project.
 	 */
-	protected static IProject createProject(final String projectName) throws CoreException {
+	protected static IProject createProject(final String projectName)
+			throws CoreException {
 		final IProject project = workspace.getRoot().getProject(projectName);
 		IWorkspaceRunnable create = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -327,25 +315,28 @@ public class ExplorerTest {
 				project.open(null);
 			}
 		};
-		workspace.run(create, null);	
+		workspace.run(create, null);
 		return project;
 	}
 
-	protected static void addRodinNature(String projectName) throws CoreException {
+	protected static void addRodinNature(String projectName)
+			throws CoreException {
 		IProject project = workspace.getRoot().getProject(projectName);
 		IProjectDescription description = project.getDescription();
-		description.setNatureIds(new String[] {RodinCore.NATURE_ID});
+		description.setNatureIds(new String[] { RodinCore.NATURE_ID });
 		project.setDescription(description, null);
 	}
-	
-	protected static void deleteProject(String projectName) throws CoreException {
+
+	protected static void deleteProject(String projectName)
+			throws CoreException {
 		IProject project = workspace.getRoot().getProject(projectName);
-//		if (project.exists() && !project.isOpen()) { // force opening so that project can be deleted without logging (see bug 23629)
-//			project.open(null);
-//		}
+		// if (project.exists() && !project.isOpen()) { // force opening so that
+		// project can be deleted without logging (see bug 23629)
+		// project.open(null);
+		// }
 		project.delete(true, null);
 	}
-	
+
 	/**
 	 * Utility method to create a new refines machine clause for a machine.
 	 * 
@@ -358,46 +349,51 @@ public class ExplorerTest {
 	 *             if some problems occur.
 	 */
 	protected IRefinesMachine createRefinesMachineClause(IMachineRoot machine,
-			IMachineRoot abstractMachine, String clauseName) throws RodinDBException {
+			IMachineRoot abstractMachine, String clauseName)
+			throws RodinDBException {
 		IRefinesMachine refinesClause = machine.getRefinesClause(clauseName);
 		refinesClause.create(null, null);
 		refinesClause.setAbstractMachineName(abstractMachine.getElementName(),
 				null);
 		return refinesClause;
 	}
-	
 
 	protected ISeesContext createSeesContextClause(IMachineRoot machine,
-			IContextRoot seenContext, String clauseName) throws RodinDBException {
+			IContextRoot seenContext, String clauseName)
+			throws RodinDBException {
 		ISeesContext seesContext = machine.getSeesClause(clauseName);
 		seesContext.create(null, null);
 		seesContext.setSeenContextName(seenContext.getElementName(), null);
 		return seesContext;
 	}
-	
 
-	protected IExtendsContext createExtendsContextClause(IContextRoot context, IContextRoot abstractContext, String clauseName) throws RodinDBException {
+	protected IExtendsContext createExtendsContextClause(IContextRoot context,
+			IContextRoot abstractContext, String clauseName)
+			throws RodinDBException {
 		IExtendsContext extendsContext = context.getExtendsClause(clauseName);
 		extendsContext.create(null, null);
-		extendsContext.setAbstractContextName(abstractContext.getElementName(), null);
+		extendsContext.setAbstractContextName(abstractContext.getElementName(),
+				null);
 		return extendsContext;
 	}
-	
+
 	public static <T> void assertArray(T[] actual, T... expected) {
-		//sort the array, the order doesn't matter
-		Arrays.sort(actual, comparator );
-		Arrays.sort(expected, comparator );
+		// sort the array, the order doesn't matter
+		Arrays.sort(actual, comparator);
+		Arrays.sort(expected, comparator);
 		assertEquals(Arrays.asList(expected), Arrays.asList(actual));
-		
+
 	}
 
-	
 	/**
-	 * Asserts that the given rodin project was processed by the model controller.
+	 * Asserts that the given rodin project was processed by the model
+	 * controller.
+	 * 
 	 * @param project
 	 */
 	public static void assertProcessed(IRodinProject project) {
-		assertNotNull("The project should exist in the model", ModelController.getProject(project));
+		assertNotNull("The project should exist in the model",
+				ModelController.getProject(project));
 		assertFalse(ModelController.getProject(project).needsProcessing);
 	}
 
@@ -411,28 +407,30 @@ public class ExplorerTest {
 	/**
 	 * Asserts that a given ModelProofObligation is based on a given sequent
 	 */
-	public static void assertModelPOSequent(ModelProofObligation[] actual, IPOSequent... expected ) {
-		IPOSequent[] actualSeq =  new IPOSequent[actual.length];
+	public static void assertModelPOSequent(ModelProofObligation[] actual,
+			IPOSequent... expected) {
+		IPOSequent[] actualSeq = new IPOSequent[actual.length];
 		int i = 0;
 		for (ModelProofObligation po : actual) {
 			actualSeq[i] = po.getIPOSequent();
 			i++;
 		}
-		assertArray(actualSeq,  expected);
+		assertArray(actualSeq, expected);
 	}
 
 	/**
-	 * Asserts that a given set of ModelProofObligations is based on a given set of statuses
+	 * Asserts that a given set of ModelProofObligations is based on a given set
+	 * of statuses
 	 */
-	public static void assertModelPSStatus(ModelProofObligation[] actual, IPSStatus... expected ) {
-		IPSStatus[] actualStat =  new IPSStatus[actual.length];
+	public static void assertModelPSStatus(ModelProofObligation[] actual,
+			IPSStatus... expected) {
+		IPSStatus[] actualStat = new IPSStatus[actual.length];
 		int i = 0;
 		for (ModelProofObligation po : actual) {
 			actualStat[i] = po.getIPSStatus();
 			i++;
 		}
-		assertArray(actualStat,  expected);
+		assertArray(actualStat, expected);
 	}
-	
-	
+
 }

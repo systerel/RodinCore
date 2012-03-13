@@ -198,20 +198,20 @@ public class StatisticsCopyActionTest extends ExplorerTest {
 		assertNotNull("c0IPS should be created successfully ", c0IPS);
 
 		//create an undischarged po
-		sequent6 = createSequent(c0IPO, "sequent6");
-		status6 = createPSStatus(c0IPS, "sequent6");
+		sequent6 = createSequent(c0IPO);
+		status6 = createPSStatus(c0IPS);
 		status6.setConfidence(IConfidence.PENDING, null);
 
-		source2 =  createPOSource(sequent6, "source2");
+		source2 =  createPOSource(sequent6);
 		source2.setSource(axiom1, null);
 		
 		//create a manually discharged po
-		sequent7 = createSequent(c0IPO, "sequent7");
-		status7 = createPSStatus(c0IPS, "sequent7");
+		sequent7 = createSequent(c0IPO);
+		status7 = createPSStatus(c0IPS);
 		status7.setConfidence(IConfidence.DISCHARGED_MAX, null);
 		status7.setHasManualProof(true, null);
 
-		source1 =  createPOSource(sequent7, "source1");
+		source1 =  createPOSource(sequent7);
 		source1.setSource(thm1, null);
 	}
 
@@ -236,48 +236,48 @@ public class StatisticsCopyActionTest extends ExplorerTest {
 		assertNotNull("m0IPS should be created successfully ", m0IPS);
 		
 		//create an undischarged po
-		sequent2 = createSequent(m0IPO, "sequent2");
-		status2 = createPSStatus(m0IPS, "sequent2");
+		sequent2 = createSequent(m0IPO);
+		status2 = createPSStatus(m0IPS);
 		status2.setConfidence(IConfidence.PENDING, null);
 
-		source3 =  createPOSource(sequent2, "source3");
+		source3 =  createPOSource(sequent2);
 		source3.setSource(inv1, null);
-		source9 =  createPOSource(sequent2, "source9");
+		source9 =  createPOSource(sequent2);
 		source9.setSource(event2, null);
 
 		//create a reviewed po
-		sequent3 = createSequent(m0IPO, "sequent3");
-		status3 = createPSStatus(m0IPS, "sequent3");
+		sequent3 = createSequent(m0IPO);
+		status3 = createPSStatus(m0IPS);
 		status3.setConfidence(IConfidence.REVIEWED_MAX, null);
 
-		source4 =  createPOSource(sequent3, "source4");
+		source4 =  createPOSource(sequent3);
 		source4.setSource(inv1, null);
 		
 		//create a manually discharged po
-		sequent4 = createSequent(m0IPO, "sequent4");
-		status4 = createPSStatus(m0IPS, "sequent4");
+		sequent4 = createSequent(m0IPO);
+		status4 = createPSStatus(m0IPS);
 		status4.setConfidence(IConfidence.DISCHARGED_MAX, null);
 		status4.setHasManualProof(true, null);
 
-		source5 =  createPOSource(sequent4, "source5");
+		source5 =  createPOSource(sequent4);
 		source5.setSource(event1, null);
 
 		// create a auto. discharged po
-		sequent5 = createSequent(m0IPO, "sequent5");
-		status5 = createPSStatus(m0IPS, "sequent5");
+		sequent5 = createSequent(m0IPO);
+		status5 = createPSStatus(m0IPS);
 		status5.setConfidence(IConfidence.DISCHARGED_MAX, null);
 
-		source7 =  createPOSource(sequent5, "source7");
+		source7 =  createPOSource(sequent5);
 		source7.setSource(inv1, null);
-		source8 =  createPOSource(sequent5, "source8");
+		source8 =  createPOSource(sequent5);
 		source8.setSource(thm2, null);
 
 		//create a reviewed po
-		sequent8 = createSequent(m0IPO, "sequent8");
-		status8 = createPSStatus(m0IPS, "sequent8");
+		sequent8 = createSequent(m0IPO);
+		status8 = createPSStatus(m0IPS);
 		status8.setConfidence(IConfidence.REVIEWED_MAX, null);
 
-		source10 =  createPOSource(sequent8, "source10");
+		source10 =  createPOSource(sequent8);
 		source10.setSource(inv2, null);
 	}
 
