@@ -30,8 +30,7 @@ implements IGenericElementTest<IMachineRoot> {
 	
 	public void addIdents(IMachineRoot element, String... names) throws RodinDBException {
 		test.addVariables(element, names);
-		IAction action = init.getAction(test.getUniqueName());
-		action.create(null, null);
+		IAction action = init.createChild(IAction.ELEMENT_TYPE, null, null);
 		for (String name : names) {
 			action.setLabel(name + k++, null);
 			action.setAssignmentString(name + ":∣ ⊤", null);

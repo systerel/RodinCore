@@ -31,8 +31,7 @@ extends GenericTest<T>  {
 
 	public void addIdents(IEvent element, String... names) throws RodinDBException {
 		for (String name : names) {
-			IParameter parameter = element.getParameter(test.getUniqueName());
-			parameter.create(null, null);
+			IParameter parameter = element.createChild(IParameter.ELEMENT_TYPE, null, null);
 			parameter.setIdentifierString(name, null);
 		}
 			
@@ -40,8 +39,7 @@ extends GenericTest<T>  {
 
 	public void addPredicates(IEvent element, String[] names, String[] nonTheorems, boolean...derived) throws RodinDBException {
 		for (int i=0; i<names.length; i++) {
-			IGuard guard = element.getGuard(test.getUniqueName());
-			guard.create(null, null);
+			IGuard guard = element.createChild(IGuard.ELEMENT_TYPE, null, null);
 			guard.setLabel(names[i], null);
 			guard.setPredicateString(nonTheorems[i], null);
 			guard.setTheorem(derived[i], null);

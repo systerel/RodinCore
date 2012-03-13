@@ -887,8 +887,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_31_createWitnessWithEmptyLabel() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 		IEvent evt = addEvent(mac, "evt");
-		IWitness witness = evt.getWitness(getUniqueName());
-		witness.create(null, null);
+		IWitness witness = evt.createChild(IWitness.ELEMENT_TYPE, null, null);
 		witness.setLabel("", null);
 
 		saveRodinFileOf(mac);

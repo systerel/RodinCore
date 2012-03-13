@@ -75,14 +75,6 @@ public abstract class EventBTest extends BuilderTest {
 		super(name);
 	}
 
-	private static int alloc;
-	
-	public String getUniqueName() {
-		if (alloc == Integer.MAX_VALUE)
-			throw new IndexOutOfBoundsException();
-		return "x" + alloc++;
-	}
-	
 	public void addAxioms(IContextRoot root, String[] names, String[] axioms,
 			boolean... derived) throws RodinDBException {
 		for (int i = 0; i < names.length; i++) {
@@ -104,8 +96,7 @@ public abstract class EventBTest extends BuilderTest {
 		final int length = strings.length;
 		assert length % 2 == 0;
 		for (int i = 0; i < length; i += 2) {
-			final IAxiom axiom = root.getAxiom(getUniqueName());
-			axiom.create(null, null);
+			final IAxiom axiom = root.createChild(IAxiom.ELEMENT_TYPE, null, null);
 			axiom.setLabel(strings[i], null);
 			axiom.setPredicateString(strings[i + 1], null);
 			axiom.setTheorem(false, null);
@@ -132,8 +123,7 @@ public abstract class EventBTest extends BuilderTest {
 	
 	public void addCarrierSets(IContextRoot root, String... names) throws RodinDBException {
 		for(String name : names) {
-			ICarrierSet set = root.getCarrierSet(getUniqueName());
-			set.create(null, null);
+			ICarrierSet set = root.createChild(ICarrierSet.ELEMENT_TYPE, null, null);
 			set.setIdentifierString(name, null);
 		}
 			
@@ -146,8 +136,7 @@ public abstract class EventBTest extends BuilderTest {
 
 	public void addConstants(IContextRoot root, String... names) throws RodinDBException {
 		for(String name : names) {
-			IConstant constant = root.getConstant(getUniqueName());
-			constant.create(null, null);
+			IConstant constant = root.createChild(IConstant.ELEMENT_TYPE, null, null);
 			constant.setIdentifierString(name, null);
 		}
 	}
@@ -155,16 +144,14 @@ public abstract class EventBTest extends BuilderTest {
 	
 	public void addEventRefines(IEvent event, String... names) throws RodinDBException {
 		for (String name : names) {
-			IRefinesEvent refines = event.getRefinesClause(getUniqueName());
-			refines.create(null, null);
+			IRefinesEvent refines = event.createChild(IRefinesEvent.ELEMENT_TYPE, null, null);
 			refines.setAbstractEventLabel(name, null);
 		}
 	}
 
 	public void addEventWitness(IEvent event, String label, String pred)
 			throws RodinDBException {
-		final IWitness witness = event.getWitness(getUniqueName());
-		witness.create(null, null);
+		final IWitness witness = event.createChild(IWitness.ELEMENT_TYPE, null, null);
 		witness.setLabel(label, null);
 		witness.setPredicateString(pred, null);
 	}
@@ -201,27 +188,23 @@ public abstract class EventBTest extends BuilderTest {
 				String[] actionNames,
 				String[] actions
 	) throws RodinDBException {
-		IEvent event = root.getEvent(getUniqueName());
-		event.create(null, null);
+		IEvent event = root.createChild(IEvent.ELEMENT_TYPE, null, null);
 		event.setLabel(name, null);
 		event.setExtended(false, null);
 		event.setConvergence(IConvergenceElement.Convergence.ORDINARY, null);
 		for(int i=0; i<params.length; i++) {
-			IParameter parameter = event.getParameter(getUniqueName());
-			parameter.create(null, null);
+			IParameter parameter = event.createChild(IParameter.ELEMENT_TYPE, null, null);
 			parameter.setIdentifierString(params[i], null);
 			
 		}
 		for(int i=0; i<guards.length; i++) {
-			IGuard guard = event.getGuard(getUniqueName());
-			guard.create(null, null);
+			IGuard guard = event.createChild(IGuard.ELEMENT_TYPE, null, null);
 			guard.setPredicateString(guards[i], null);
 			guard.setLabel(guardNames[i], null);
 			guard.setTheorem(theorems[i], null);
 		}
 		for(int j=0; j<actions.length; j++) {
-			IAction action = event.getAction(getUniqueName());
-			action.create(null, null);
+			IAction action = event.createChild(IAction.ELEMENT_TYPE, null, null);
 			action.setAssignmentString(actions[j], null);
 			action.setLabel(actionNames[j], null);
 		}
@@ -255,8 +238,7 @@ public abstract class EventBTest extends BuilderTest {
 	
 	public IEvent addExtendedEvent(IMachineRoot root, 
 			String name) throws RodinDBException {
-		IEvent event = root.getEvent(getUniqueName());
-		event.create(null, null);
+		IEvent event = root.createChild(IEvent.ELEMENT_TYPE, null, null);
 		event.setLabel(name, null);
 		event.setExtended(true, null);
 		event.setConvergence(IConvergenceElement.Convergence.ORDINARY, null);
@@ -295,8 +277,7 @@ public abstract class EventBTest extends BuilderTest {
 	
 	public void addInvariant(IMachineRoot root, String label,
 			String pred, boolean derived) throws RodinDBException {
-		final IInvariant invariant = root.getInvariant(getUniqueName());
-		invariant.create(null, null);
+		final IInvariant invariant = root.createChild(IInvariant.ELEMENT_TYPE, null, null);
 		invariant.setLabel(label, null);
 		invariant.setTheorem(derived, null);
 		invariant.setPredicateString(pred, null);
@@ -326,8 +307,7 @@ public abstract class EventBTest extends BuilderTest {
 
 	
 	public void addVariant(IMachineRoot root, String expression) throws RodinDBException {
-		IVariant variant = root.getVariant(getUniqueName());
-		variant.create(null, null);
+		IVariant variant = root.createChild(IVariant.ELEMENT_TYPE, null, null);
 		variant.setExpressionString(expression, null);
 	}
 	
@@ -337,9 +317,7 @@ public abstract class EventBTest extends BuilderTest {
 	}
 
 	public void addMachineSees(IMachineRoot root, String name) throws RodinDBException {
-//		IMachineRoot root = rodinFile.getRootElement();
-		ISeesContext sees = root.getSeesClause(getUniqueName());
-		sees.create(null, null);
+		ISeesContext sees = root.createChild(ISeesContext.ELEMENT_TYPE, null, null);
 		sees.setSeenContextName(name, null);
 	}
 
@@ -350,8 +328,7 @@ public abstract class EventBTest extends BuilderTest {
 	
 
 	public void addMachineRefines(IMachineRoot root, String name) throws RodinDBException {
-		IRefinesMachine refines = root.getRefinesClause(getUniqueName());
-		refines.create(null, null);
+		IRefinesMachine refines = root.createChild(IRefinesMachine.ELEMENT_TYPE, null, null);
 		refines.setAbstractMachineName(name, null);
 	}
 
@@ -363,8 +340,7 @@ public abstract class EventBTest extends BuilderTest {
 
 
 	public void addContextExtends(IContextRoot root, String name) throws RodinDBException {
-		IExtendsContext extendsContext = root.getExtendsClause(getUniqueName());
-		extendsContext.create(null, null);
+		IExtendsContext extendsContext = root.createChild(IExtendsContext.ELEMENT_TYPE, null, null);
 		extendsContext.setAbstractContextName(name, null);
 	}
 
@@ -375,8 +351,7 @@ public abstract class EventBTest extends BuilderTest {
 
 	public void addVariables(IMachineRoot root, String... names) throws RodinDBException {
 		for(String name : names) {
-			IVariable variable = root.getVariable(getUniqueName());
-			variable.create(null, null);
+			IVariable variable = root.createChild(IVariable.ELEMENT_TYPE, null, null);
 			variable.setIdentifierString(name, null);
 		}
 	}
