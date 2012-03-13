@@ -52,46 +52,49 @@ public class PositionApplicationProxy extends
 		super(provider, client);
 	}
 
-	public Point getHyperlinkBounds(String image, Predicate parsedPred) {
-		final Point result;
-		try {
-			result = client.getHyperlinkBounds(image, parsedPred);
-		} catch (Throwable exc) {
-			log(exc, "when calling getHyperlinkBounds() for " + getTacticID());
-			return null;
-		}
-		if (result == null) {
-			log(null, "Null returned by getHyperlinkBounds() for tactic "
-					+ getTacticID());
-			return null;
-		}
-		if (!checkRange(result, image)) {
-			log(null, "Invalid hyperlink bounds (" + result + ") for tactic "
-					+ getTacticID());
-			return null;
-		}
-		return result;
-	}
+	public Point getHyperlinkBounds(final String image,
+			final Predicate parsedPred) {
+		return new SafeCall<Point>() {
+			@Override
+			public void run() throws Exception {
+				result = client.getHyperlinkBounds(image, parsedPred);
+			}
 
-	private static boolean checkRange(Point pt, String string) {
-		return 0 <= pt.x && pt.x < pt.y && pt.y <= string.length();
+			@Override
+			protected boolean isValid() {
+				if (result == null) {
+					log(null,
+							"Null returned by getHyperlinkBounds() for tactic "
+									+ getTacticID());
+					return false;
+				}
+				if (!checkRange(result, image)) {
+					log(null, "Invalid hyperlink bounds (" + result
+							+ ") for tactic " + getTacticID() + " and string '"
+							+ image + "'.");
+					return false;
+				}
+				return true;
+			}
+
+			private boolean checkRange(Point pt, String string) {
+				return 0 <= pt.x && pt.x < pt.y && pt.y <= string.length();
+			}
+		}.call();
 	}
 
 	public String getHyperlinkLabel() {
-		final String clientResult = getHyperlinkLabelFromClient();
-		if (clientResult != null) {
-			return clientResult;
-		}
-		return provider.getTooltip();
-	}
+		return new SafeCall<String>() {
+			@Override
+			public void run() throws Exception {
+				result = client.getHyperlinkLabel();
+			}
 
-	private String getHyperlinkLabelFromClient() {
-		try {
-			return client.getHyperlinkLabel();
-		} catch (Throwable exc) {
-			log(exc, "when calling getHyperlinkLabel() for " + getTacticID());
-			return null;
-		}
+			@Override
+			protected String defaultValue() {
+				return provider.getTooltip();
+			}
+		}.call();
 	}
 
 }

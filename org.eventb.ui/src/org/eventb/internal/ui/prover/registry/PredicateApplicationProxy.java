@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover.registry;
 
-import static org.eventb.internal.ui.UIUtils.log;
-
 import org.eclipse.swt.graphics.Image;
 import org.eventb.ui.prover.IPredicateApplication;
 import org.eventb.ui.prover.ITacticApplication;
@@ -51,40 +49,32 @@ public class PredicateApplicationProxy extends
 		super(provider, client);
 	}
 
-	// FIXME cleanup duplicated code.
-
 	public Image getIcon() {
-		final Image clientResult = getIconFromClient();
-		if (clientResult != null) {
-			return clientResult;
-		}
-		return provider.getIcon();
-	}
+		return new SafeCall<Image>() {
+			@Override
+			public void run() throws Exception {
+				result = client.getIcon();
+			}
 
-	private Image getIconFromClient() {
-		try {
-			return client.getIcon();
-		} catch (Throwable exc) {
-			log(exc, "when calling getIcon() for " + provider.getID());
-			return null;
-		}
+			@Override
+			protected Image defaultValue() {
+				return provider.getIcon();
+			}
+		}.call();
 	}
 
 	public String getTooltip() {
-		final String clientResult = getTooltipFromClient();
-		if (clientResult != null) {
-			return clientResult;
-		}
-		return provider.getTooltip();
-	}
+		return new SafeCall<String>() {
+			@Override
+			public void run() throws Exception {
+				result = client.getTooltip();
+			}
 
-	private String getTooltipFromClient() {
-		try {
-			return client.getTooltip();
-		} catch (Throwable exc) {
-			log(exc, "when calling getTooltip() for " + provider.getID());
-			return null;
-		}
+			@Override
+			protected String defaultValue() {
+				return provider.getTooltip();
+			}
+		}.call();
 	}
 
 }

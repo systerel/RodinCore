@@ -12,6 +12,8 @@ package org.eventb.internal.ui.prover.registry;
 
 import static org.eventb.internal.ui.UIUtils.log;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.ui.prover.ITacticApplication;
 
@@ -47,6 +49,43 @@ public abstract class TacticApplicationProxy<T extends ITacticApplication> {
 
 	}
 
+	/**
+	 * Encapsulates safely a call to client code, optionally performing validity
+	 * checks on the value returned by client code.
+	 * 
+	 * @param <V>
+	 *            type of the value returned by client code
+	 */
+	protected abstract class SafeCall<V> implements ISafeRunnable {
+
+		V result;
+
+		public V call() {
+			SafeRunner.run(this);
+			if (!isValid()) {
+				return defaultValue();
+			}
+			return result;
+		}
+
+		@Override
+		public final void handleException(Throwable exception) {
+			// Exception has already been logged by SafeRunner.
+		}
+
+		/**
+		 * @return a replacement value if the client code returned null
+		 */
+		protected V defaultValue() {
+			return null;
+		}
+
+		protected boolean isValid() {
+			return result != null;
+		}
+
+	}
+
 	protected final TacticProviderInfo provider;
 
 	protected final T client;
@@ -56,14 +95,23 @@ public abstract class TacticApplicationProxy<T extends ITacticApplication> {
 		this.client = client;
 	}
 
-	// FIXME what if the client returns null ?
-	public ITactic getTactic(String[] inputs, String globalInput) {
-		try {
-			return client.getTactic(inputs, globalInput);
-		} catch (Throwable exc) {
-			log(exc, "when calling getTactic() for " + provider.getID());
-			return null;
-		}
+	public ITactic getTactic(final String[] inputs, final String globalInput) {
+		return new SafeCall<ITactic>() {
+			@Override
+			public void run() throws Exception {
+				result = client.getTactic(inputs, globalInput);
+			}
+
+			@Override
+			protected boolean isValid() {
+				if (result == null) {
+					log(null, "Null returned by getTactic() for tactic "
+							+ getTacticID());
+					return false;
+				}
+				return true;
+			}
+		}.call();
 	}
 
 	/*
