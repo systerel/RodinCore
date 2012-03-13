@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -45,7 +45,6 @@ import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.eventbeditor.EventBContextEditor;
 import org.eventb.internal.ui.eventbeditor.EventBMachineEditor;
 import org.eventb.ui.EventBUIPlugin;
@@ -148,10 +147,8 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected IRefinesMachine createRefinesMachineClause(IMachineRoot machine,
 			String abstractMachineName) throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(machine,
-				IRefinesMachine.ELEMENT_TYPE, "refines_machine"); //$NON-NLS-1$
-		IRefinesMachine refinesClause = machine.getRefinesClause(childName);
-		refinesClause.create(null, null);
+		IRefinesMachine refinesClause = machine.createChild(
+				IRefinesMachine.ELEMENT_TYPE, null, null);
 		refinesClause.setAbstractMachineName(abstractMachineName,
 				null);
 		return refinesClause;
@@ -172,10 +169,8 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected ISeesContext createSeesContextClause(IMachineRoot machine,
 			String contextName) throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(machine,
-				ISeesContext.ELEMENT_TYPE, "sees_context"); //$NON-NLS-1$
-		ISeesContext seesClause = machine.getSeesClause(childName);
-		seesClause.create(null, null);
+		ISeesContext seesClause = machine.createChild(
+				ISeesContext.ELEMENT_TYPE, null, null);
 		seesClause.setSeenContextName(contextName, null);
 		return seesClause;
 	}
@@ -195,10 +190,8 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected IExtendsContext createExtendsContextClause(IContextRoot context,
 			String contextName) throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(context,
-				IExtendsContext.ELEMENT_TYPE, "extends_context"); //$NON-NLS-1$
-		IExtendsContext extendsClause = context.getExtendsClause(childName);
-		extendsClause.create(null, null);
+		IExtendsContext extendsClause = context.createChild(
+				IExtendsContext.ELEMENT_TYPE, null, null);
 		extendsClause.setAbstractContextName(contextName, null);
 		return extendsClause;
 	}
@@ -214,33 +207,10 @@ public abstract class EventBUITest extends TestCase {
 	 * @return the newly created event.
 	 * @throws RodinDBException
 	 *             if some problems occur.
-	 * @see #createEvent(IMachineRoot, String, String)
 	 */
 	protected IEvent createEvent(IMachineRoot machine, String eventLabel)
 			throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(machine,
-				IEvent.ELEMENT_TYPE, "event"); //$NON-NLS-1$
-		return createEvent(machine, childName, eventLabel);
-	}
-	
-	/**
-	 * Utility method to create a new event which belong to a machine with the
-	 * given label. The new event is non-extended. The internal name of the
-	 * event is also specified.
-	 * 
-	 * @param machine
-	 *            a machine root.
-	 * @param eventLabel
-	 *            the label of the new event.
-	 * @return the newly created event.
-	 * @throws RodinDBException
-	 *             if some problems occur.
-	 * @see #createEvent(IMachineRoot, String)
-	 */
-	protected IEvent createEvent(IMachineRoot machine, String internalName,
-			String eventLabel) throws RodinDBException {
-		IEvent event = machine.getEvent(internalName);
-		event.create(null, null);
+		IEvent event = machine.createChild(IEvent.ELEMENT_TYPE, null, null);
 		event.setLabel(eventLabel, null);
 		event.setExtended(false, null);
 		event.setConvergence(ORDINARY, null);
@@ -261,10 +231,7 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected IRefinesEvent createRefinesEventClause(IEvent event,
 			String abstractEventLabel) throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(event,
-				IRefinesEvent.ELEMENT_TYPE, "refines_event"); //$NON-NLS-1$
-		IRefinesEvent refinesClause = event.getRefinesClause(childName);
-		refinesClause.create(null, null);
+		IRefinesEvent refinesClause = event.createChild(IRefinesEvent.ELEMENT_TYPE, null, null);
 		refinesClause.setAbstractEventLabel(abstractEventLabel, null);
 		return refinesClause;
 	}
@@ -282,10 +249,7 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected IParameter createParameter(IEvent event, String ident)
 			throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(event,
-				IParameter.ELEMENT_TYPE, "i_prm"); //$NON-NLS-1$
-		IParameter parameter = event.getParameter(childName);
-		parameter.create(null, null);
+		IParameter parameter = event.createChild(IParameter.ELEMENT_TYPE, null, null);
 		parameter.setIdentifierString(ident, null);
 		return parameter;
 	}
@@ -305,10 +269,7 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected IGuard createGuard(IEvent event, String label, String pred)
 			throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(event,
-				IGuard.ELEMENT_TYPE, "i_grd"); //$NON-NLS-1$
-		IGuard guard = event.getGuard(childName);
-		guard.create(null, null);
+		IGuard guard = event.createChild(IGuard.ELEMENT_TYPE, null, null);
 		guard.setLabel(label, null);
 		guard.setPredicateString(pred, null);
 		guard.setTheorem(false, null);
@@ -330,10 +291,7 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected IWitness createWitness(IEvent event, String label, String pred)
 			throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(event,
-				IWitness.ELEMENT_TYPE, "i_wit"); //$NON-NLS-1$
-		IWitness witness = event.getWitness(childName);
-		witness.create(null, null);
+		IWitness witness = event.createChild(IWitness.ELEMENT_TYPE, null, null);
 		witness.setLabel(label, null);
 		witness.setPredicateString(pred, null);
 		return witness;
@@ -354,10 +312,7 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected IAction createAction(IEvent event, String label, String assign)
 			throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(event,
-				IAction.ELEMENT_TYPE, "i_act"); //$NON-NLS-1$
-		IAction action = event.getAction(childName);
-		action.create(null, null);
+		IAction action = event.createChild(IAction.ELEMENT_TYPE, null, null);
 		action.setLabel(label, null);
 		action.setAssignmentString(assign, null);
 		return action;
@@ -376,10 +331,7 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected IVariant createVariant(IMachineRoot mch, String expression)
 			throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(mch,
-				IVariant.ELEMENT_TYPE, "i_variant"); //$NON-NLS-1$
-		IVariant variant = mch.getVariant(childName);
-		variant.create(null, null);
+		IVariant variant = mch.createChild(IVariant.ELEMENT_TYPE, null, null);
 		variant.setExpressionString(expression, null);
 		return variant;
 	}
@@ -401,10 +353,7 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected IInvariant createInvariant(IMachineRoot mch, String label,
 			String predicate, boolean theorem) throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(mch,
-				IInvariant.ELEMENT_TYPE, "i_variant"); //$NON-NLS-1$
-		IInvariant invariant = mch.getInvariant(childName);
-		invariant.create(null, null);
+		IInvariant invariant = mch.createChild(IInvariant.ELEMENT_TYPE, null, null);
 		invariant.setLabel(label, null);
 		invariant.setPredicateString(predicate, null);
 		invariant.setTheorem(theorem, null);
@@ -428,10 +377,7 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected IAxiom createAxiom(IContextRoot ctx, String label,
 			String predicate, boolean theorem) throws RodinDBException {
-		String childName = EventBUtils.getFreeChildName(ctx,
-				IAxiom.ELEMENT_TYPE, "i_axiom");
-		IAxiom axiom = ctx.getAxiom(childName);
-		axiom.create(null, null);
+		IAxiom axiom = ctx.createChild(IAxiom.ELEMENT_TYPE, null, null);
 		axiom.setLabel(label, null);
 		axiom.setPredicateString(predicate, null);
 		axiom.setTheorem(theorem, null);
@@ -509,36 +455,30 @@ public abstract class EventBUITest extends TestCase {
 	 * @param <T>		the type of internal element to create
 	 * @param parent	the parent of the element to create
 	 * @param childType	the type of the child to create
-	 * @param childName	the name of the element to create
 	 * @return			the created element
 	 * @throws RodinDBException
 	 */
 	protected <T extends IInternalElement> T createInternalElement(
-			IInternalElement parent, IInternalElementType<T> childType,
-			String childName) throws RodinDBException {
+			IInternalElement parent, IInternalElementType<T> childType) throws RodinDBException {
 
-		T element = parent.getInternalElement(childType, childName);
-		element.create(null, null);
-		return element;
+		return parent.createChild(childType, null, null);
 	}
 
 	protected void createNAxioms(IInternalElement parent,
-			String childNamePrefix, String elementAttributePrefix, long n,
-			long beginIndex) throws RodinDBException {
+			String elementAttributePrefix, long n, long beginIndex) throws RodinDBException {
 
 		for (long i = beginIndex; i < beginIndex + n; i++) {
 			final IAxiom newAxiom = createInternalElement(parent,
-					IAxiom.ELEMENT_TYPE, childNamePrefix + i);
+					IAxiom.ELEMENT_TYPE);
 			newAxiom.setLabel(elementAttributePrefix + i, null);
 		}
 	}
 
 	protected void createNEvents(IMachineRoot machine,
-			String internalNamePrefix, String eventLabelPrefix, long n,
-			long beginIndex) throws RodinDBException {
+			String eventLabelPrefix, long n, long beginIndex) throws RodinDBException {
 
 		for (long i = beginIndex; i < beginIndex + n; i++) {
-			createEvent(machine, internalNamePrefix + i, eventLabelPrefix + i);
+			createEvent(machine, eventLabelPrefix + i);
 		}
 	}
 

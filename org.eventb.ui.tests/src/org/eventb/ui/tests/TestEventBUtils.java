@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 ETH Zurich and others.
+ * Copyright (c) 2009, 2012 ETH Zurich and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -250,11 +250,11 @@ public class TestEventBUtils extends EventBUITest {
 	@Test
 	public void testAbstractEventINITIALISATION() throws Exception {
 		final IMachineRoot m0 = createMachine("m0"); //$NON-NLS-1$
-		final IEvent m0Event = createEvent(m0, "foo", IEvent.INITIALISATION);
+		final IEvent m0Event = createEvent(m0, IEvent.INITIALISATION);
 		m0.getRodinFile().save(null, true);
 		final IMachineRoot m1 = createMachine("m1"); //$NON-NLS-1$
 		createRefinesMachineClause(m1, "m0"); //$NON-NLS-1$
-		final IEvent m1Event = createEvent(m1, "bar", IEvent.INITIALISATION);
+		final IEvent m1Event = createEvent(m1, IEvent.INITIALISATION);
 		m1.getRodinFile().save(null, true);
 		assertAbstractEvent(m1Event, m0Event);
 	}
@@ -296,9 +296,10 @@ public class TestEventBUtils extends EventBUITest {
 	@Test
 	public void testGetFreeChildNameOne() throws Exception {
 		final IMachineRoot m0 = createMachine("m0");
-		createEvent(m0, "event1", "label1");
+		final IEvent event = m0.getEvent("int_evt1");
+		event.create(null, null);
 		m0.getRodinFile().save(null, true);
-		assertFreeChildName(2, m0, IEvent.ELEMENT_TYPE, "event");
+		assertFreeChildName(2, m0, IEvent.ELEMENT_TYPE, "int_evt");
 	}
 
 	/**
@@ -313,10 +314,12 @@ public class TestEventBUtils extends EventBUITest {
 	@Test
 	public void testGetFreeChildNameNth() throws Exception {
 		final IMachineRoot m0 = createMachine("m0");
-		createEvent(m0, "event1", "label1");
-		createEvent(m0, "event3", "label2");
+		final IEvent evt1 = m0.getEvent("int_evt1");
+		evt1.create(null, null);
+		final IEvent evt3 = m0.getEvent("int_evt3");
+		evt3.create(null, null);
 		m0.getRodinFile().save(null, true);
-		assertFreeChildName(4, m0, IEvent.ELEMENT_TYPE, "event");
+		assertFreeChildName(4, m0, IEvent.ELEMENT_TYPE, "int_evt");
 	}
 
 	private <T> void assertEquals(T[] expected, T[] actual) {

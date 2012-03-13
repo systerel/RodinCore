@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,11 +42,8 @@ import org.rodinp.core.RodinDBException;
 
 public class TestUIUtils extends EventBUITest {
 
-	private static final String eventNamePrefix = "event";
 	private static final String eventLabelPrefix = "evt";
-	private static final String axiomNamePrefix = "axiom";
 	private static final String axiomLabelPrefix = "axm";
-	private static final String constantNamePrefix = "constant";
 	private static final String constantIdentifierPrefix = "cst";
 	private static final String guardLabelPrefix = "grd";
 
@@ -93,29 +90,29 @@ public class TestUIUtils extends EventBUITest {
 	public void testGetFreeIndexNameFirst() throws RodinDBException {
 		// Currently, there are no elements, so the free index for a name
 		// should be 1
-		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, null, eventNamePrefix, "1");
+		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, eventLabelPrefix, "1");
 	}
 
 	public void testGetFreeIndexNameSecond() throws RodinDBException {
-		// Create 1 event with internal name "event1" and label "evt1".
-		createNEvents(m0, eventNamePrefix, eventLabelPrefix, 1, 1);
-		// There is "event1" so the free index starting from 1 is 2.
-		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, null, eventNamePrefix, "2");
+		// Create 1 event with label "evt1".
+		createNEvents(m0, eventLabelPrefix, 1, 1);
+		// There is "evt1" so the free index starting from 1 is 2.
+		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, eventLabelPrefix, "2");
 	}
 
 	public void testGetFreeIndexNameThird() throws RodinDBException {
-		createNEvents(m0, eventNamePrefix, eventLabelPrefix, 2, 1);
+		createNEvents(m0, eventLabelPrefix, 2, 1);
 		// There are "event1" and "event2" so the free index
 		// starting from 1 is 3.
-		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, null, eventNamePrefix, "3");
+		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, eventLabelPrefix, "3");
 	}
 
 	public void testGetFreeIndexNameWithHoles() throws RodinDBException {
-		// create event with internal name "event314" and label "evt314"
-		createNEvents(m0, eventNamePrefix, eventLabelPrefix, 1, 314);
+		// create event with label "evt314"
+		createNEvents(m0, eventLabelPrefix, 1, 314);
 
-		// highest name index is 314 so the free index should now be 315.
-		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, null, eventNamePrefix, "315");
+		// highest label index is 314 so the free index should now be 315.
+		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, eventLabelPrefix, "315");
 
 	}
 
@@ -128,7 +125,7 @@ public class TestUIUtils extends EventBUITest {
 	public void testGetFreeIndexAttributeDifferentType()
 			throws RodinDBException {
 		// create events with a label attribute
-		createNEvents(m0, eventNamePrefix, eventLabelPrefix, 10, 314);
+		createNEvents(m0, eventLabelPrefix, 10, 314);
 
 		// as axioms are of a different type, the research for axioms
 		// with the same label prefix should return index 1
@@ -138,7 +135,7 @@ public class TestUIUtils extends EventBUITest {
 	}
 
 	public void testGetFreeIndexAttributeSecond() throws RodinDBException {
-		createNAxioms(m0, axiomNamePrefix, axiomLabelPrefix, 1, 1);
+		createNAxioms(m0, axiomLabelPrefix, 1, 1);
 
 		// an axiom has been created with label index 1
 		// so next available index should be 2
@@ -147,7 +144,7 @@ public class TestUIUtils extends EventBUITest {
 	}
 
 	public void testGetFreeIndexAttributeManyExisting() throws RodinDBException {
-		createNAxioms(m0, axiomNamePrefix, axiomLabelPrefix, 100, 31);
+		createNAxioms(m0, axiomLabelPrefix, 100, 31);
 
 		// many axioms have been created up to label index 130
 		// so next available index should be 131
@@ -208,7 +205,7 @@ public class TestUIUtils extends EventBUITest {
 
 	public void testGetFreeIndexAttributeDifferentAttribute()
 			throws RodinDBException {
-		createNAxioms(m0, axiomNamePrefix, axiomLabelPrefix, 100, 31);
+		createNAxioms(m0, axiomLabelPrefix, 100, 31);
 
 		// many axioms have been created up to label index 130
 		// but no predicate attribute has been set
@@ -218,19 +215,17 @@ public class TestUIUtils extends EventBUITest {
 	}
 
 	public void testConstantIdentifier() throws Exception {
-		final IConstant cst = createInternalElement(m0, IConstant.ELEMENT_TYPE,
-				constantNamePrefix);
+		final IConstant cst = createInternalElement(m0, IConstant.ELEMENT_TYPE);
 		cst.setIdentifierString(constantIdentifierPrefix + "1", null);
 		assertFreeIndex(m0, IConstant.ELEMENT_TYPE, IDENTIFIER_ATTRIBUTE,
 				constantIdentifierPrefix, "2");
 	}
 
 	private void doBigIndex(String idx) throws Exception {
-		createInternalElement(m0, IConstant.ELEMENT_TYPE, constantNamePrefix
-				+ idx);
+		createEvent(m0, eventLabelPrefix + idx);
 		final BigInteger expected = new BigInteger(idx).add(BigInteger.ONE);
-		assertFreeIndex(m0, IConstant.ELEMENT_TYPE, null, constantNamePrefix,
-				expected.toString());
+		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE,
+				eventLabelPrefix, expected.toString());
 	}
 
 	public void testMaxInt() throws Exception {
@@ -239,10 +234,6 @@ public class TestUIUtils extends EventBUITest {
 
 	public void testMaxLong() throws Exception {
 		doBigIndex(Long.toString(Long.MAX_VALUE));
-	}
-
-	public void testBig() throws Exception {
-		doBigIndex("3141592653");
 	}
 
 	public void testVeryBig() throws Exception {
@@ -275,8 +266,8 @@ public class TestUIUtils extends EventBUITest {
 	 * which case meta-characters are ignored.
 	 */
 	public void testRegexPrefix() throws Exception {
-		createInternalElement(m0, IConstant.ELEMENT_TYPE, "cst+1");
-		assertFreeIndex(m0, IConstant.ELEMENT_TYPE, null, "cst+", "2");
+		createEvent(m0, "cst+1");
+		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, "cst+", "2");
 	}
 
 	/**
@@ -284,8 +275,8 @@ public class TestUIUtils extends EventBUITest {
 	 * (no partial match).
 	 */
 	public void testLongerPrefix() throws Exception {
-		createInternalElement(m0, IConstant.ELEMENT_TYPE, "foo_cst1");
-		assertFreeIndex(m0, IConstant.ELEMENT_TYPE, null, "cst", "1");
+		createEvent(m0, "foo_cst1");
+		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, "cst", "1");
 	}
 
 	/**
@@ -293,8 +284,8 @@ public class TestUIUtils extends EventBUITest {
 	 * (no partial match).
 	 */
 	public void testLongerSuffix() throws Exception {
-		createInternalElement(m0, IConstant.ELEMENT_TYPE, "cst1a");
-		assertFreeIndex(m0, IConstant.ELEMENT_TYPE, null, "cst", "1");
+		createEvent(m0, "cst1a");
+		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, "cst", "1");
 	}
 
 	/**
@@ -302,7 +293,7 @@ public class TestUIUtils extends EventBUITest {
 	 * correctly handled (the element is ignored and no exception is thrown).
 	 */
 	public void testInexistentLabel() throws Exception {
-		createInternalElement(m0, IConstant.ELEMENT_TYPE, "cst1");
+		createInternalElement(m0, IConstant.ELEMENT_TYPE);
 		assertFreeIndex(m0, IConstant.ELEMENT_TYPE, LABEL_ATTRIBUTE,
 				"constant", "1");
 	}
