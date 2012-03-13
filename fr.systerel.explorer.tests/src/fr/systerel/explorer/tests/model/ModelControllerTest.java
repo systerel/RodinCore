@@ -223,12 +223,9 @@ public class ModelControllerTest extends ExplorerTest {
 		assertNotNull("c4 should be created successfully ", c4);
 		
 		//create dependencies between the contexts.
-		createExtendsContextClause(c1, c0, "extend1");
-		assertTrue(c1.getExtendsClause("extend1").exists());
-		createExtendsContextClause(c2, c1, "extend2");
-		assertTrue(c2.getExtendsClause("extend2").exists());
-		createExtendsContextClause(c3, c0, "extend3");
-		assertTrue(c3.getExtendsClause("extend3").exists());
+		createExtendsContextClause(c1, c0);
+		createExtendsContextClause(c2, c1);
+		createExtendsContextClause(c3, c0);
 		
 	}
 
@@ -259,8 +256,7 @@ public class ModelControllerTest extends ExplorerTest {
 		assertTrue(m3.getRefinesClause("refines3").exists());
 		
 		//create a sees clause
-		createSeesContextClause(m0, c0, "sees1");
-		assertTrue(m0.getSeesClause("sees1").exists());
+		createSeesContextClause(m0, c0);
 		
 	}
 	

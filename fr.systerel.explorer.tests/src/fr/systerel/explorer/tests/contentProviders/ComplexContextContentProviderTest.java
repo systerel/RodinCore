@@ -135,17 +135,13 @@ public class ComplexContextContentProviderTest extends ExplorerTest {
 	private void setUpMachine() throws RodinDBException {
 		m0 = createMachine("m0");
 		assertNotNull("m0 should be created successfully ", m0);
-		createSeesContextClause(m0, c0, "sees1");
-		assertTrue(m0.getSeesClause("sees1").exists());
+		createSeesContextClause(m0, c0);
 	}
 
 	private void createContextDependencies() throws RodinDBException {
-		createExtendsContextClause(c1, c0, "extend1");
-		assertTrue(c1.getExtendsClause("extend1").exists());
-		createExtendsContextClause(c2, c1, "extend2");
-		assertTrue(c2.getExtendsClause("extend2").exists());
-		createExtendsContextClause(c3, c0, "extend3");
-		assertTrue(c3.getExtendsClause("extend3").exists());
+		createExtendsContextClause(c1, c0);
+		createExtendsContextClause(c2, c1);
+		createExtendsContextClause(c3, c0);
 	}
 
 	private void createContexts() throws RodinDBException {

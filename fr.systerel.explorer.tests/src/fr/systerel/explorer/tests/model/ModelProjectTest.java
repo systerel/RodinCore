@@ -84,7 +84,7 @@ public class ModelProjectTest extends ExplorerTest {
 	public void processContextCycle() throws RodinDBException {
 		//introduce a cycle in context extends
 		//now c0 extends c1 and c1 extends c0
-		createExtendsContextClause(c0, c1, "extend4");
+		createExtendsContextClause(c0, c1);
 		
 		//process the contexts
 		project.processContext(c0);
@@ -104,7 +104,7 @@ public class ModelProjectTest extends ExplorerTest {
 	public void processContextLongCycle() throws RodinDBException {
 		//introduce a cycle in context extends
 		//now c2 extends c1, c1 extends c0 and c0 extends c2.
-		createExtendsContextClause(c0, c2, "extend4");
+		createExtendsContextClause(c0, c2);
 		
 		//process the contexts
 		project.processContext(c0);
@@ -377,12 +377,9 @@ public class ModelProjectTest extends ExplorerTest {
 		assertNotNull("c4 should be created successfully ", c4);
 		
 		//create dependencies between the contexts.
-		createExtendsContextClause(c1, c0, "extend1");
-		assertTrue(c1.getExtendsClause("extend1").exists());
-		createExtendsContextClause(c2, c1, "extend2");
-		assertTrue(c2.getExtendsClause("extend2").exists());
-		createExtendsContextClause(c3, c0, "extend3");
-		assertTrue(c3.getExtendsClause("extend3").exists());
+		createExtendsContextClause(c1, c0);
+		createExtendsContextClause(c2, c1);
+		createExtendsContextClause(c3, c0);
 		
 	}
 
@@ -413,8 +410,7 @@ public class ModelProjectTest extends ExplorerTest {
 		assertTrue(m3.getRefinesClause("refines3").exists());
 		
 		//create a sees clause
-		createSeesContextClause(m0, c0, "sees1");
-		assertTrue(m0.getSeesClause("sees1").exists());
+		createSeesContextClause(m0, c0);
 		
 	}
 }

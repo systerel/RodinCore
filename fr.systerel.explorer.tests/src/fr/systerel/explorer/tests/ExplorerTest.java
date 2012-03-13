@@ -359,19 +359,18 @@ public class ExplorerTest {
 	}
 
 	protected ISeesContext createSeesContextClause(IMachineRoot machine,
-			IContextRoot seenContext, String clauseName)
-			throws RodinDBException {
-		ISeesContext seesContext = machine.getSeesClause(clauseName);
-		seesContext.create(null, null);
+			IContextRoot seenContext) throws RodinDBException {
+		ISeesContext seesContext = machine.createChild(
+				ISeesContext.ELEMENT_TYPE, null, null);
 		seesContext.setSeenContextName(seenContext.getElementName(), null);
 		return seesContext;
 	}
 
 	protected IExtendsContext createExtendsContextClause(IContextRoot context,
-			IContextRoot abstractContext, String clauseName)
+			IContextRoot abstractContext)
 			throws RodinDBException {
-		IExtendsContext extendsContext = context.getExtendsClause(clauseName);
-		extendsContext.create(null, null);
+		IExtendsContext extendsContext = context.createChild(
+				IExtendsContext.ELEMENT_TYPE, null, null);
 		extendsContext.setAbstractContextName(abstractContext.getElementName(),
 				null);
 		return extendsContext;
