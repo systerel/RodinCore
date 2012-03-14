@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public class RefineMachine implements IRefinementParticipant {
 		removeGenerated(con, monitor);
 	}
 
-	private void createRefinesMachineClause(IMachineRoot con, IMachineRoot abs,
+	private static void createRefinesMachineClause(IMachineRoot con, IMachineRoot abs,
 			IProgressMonitor monitor) throws RodinDBException {
 		final IRefinesMachine refines = con.createChild(
 				IRefinesMachine.ELEMENT_TYPE, null, monitor);
@@ -90,7 +90,7 @@ public class RefineMachine implements IRefinementParticipant {
 		}
 	}
 
-	private void createEvents(IMachineRoot con, IMachineRoot abs,
+	private static void createEvents(IMachineRoot con, IMachineRoot abs,
 			IProgressMonitor monitor) throws RodinDBException {
 		final IEvent[] absEvts = abs.getChildrenOfType(IEvent.ELEMENT_TYPE);
 		for (IEvent absEvt : absEvts) {
@@ -98,19 +98,17 @@ public class RefineMachine implements IRefinementParticipant {
 		}
 	}
 
-	private void createEvent(IMachineRoot con, IEvent absEvt,
+	private static void createEvent(IMachineRoot con, IEvent absEvt,
 			IProgressMonitor monitor) throws RodinDBException {
-		final String name = absEvt.getElementName();
-		final String label = absEvt.getLabel();
-		final IEvent conEvt = con.getEvent(name);
-		conEvt.create(null, monitor);
+		final IEvent conEvt = con.createChild(IEvent.ELEMENT_TYPE, null,
+				monitor);
 		copyAttributes(conEvt, absEvt, monitor);
 		conEvt.setExtended(true, monitor);
-		createRefinesEventClause(conEvt, label, monitor);
+		createRefinesEventClause(conEvt, absEvt.getLabel(), monitor);
 		setConvergence(conEvt, absEvt, monitor);
 	}
 
-	private void createRefinesEventClause(IEvent conEvt, String label,
+	private static void createRefinesEventClause(IEvent conEvt, String label,
 			IProgressMonitor monitor) throws RodinDBException {
 		if (!label.equals(IEvent.INITIALISATION)) {
 			final IRefinesEvent refines = conEvt.createChild(
@@ -119,14 +117,14 @@ public class RefineMachine implements IRefinementParticipant {
 		}
 	}
 
-	private void setConvergence(IEvent conEvt, IEvent absEvt,
+	private static void setConvergence(IEvent conEvt, IEvent absEvt,
 			IProgressMonitor monitor) throws RodinDBException {
 		final Convergence absCvg = absEvt.getConvergence();
 		final Convergence conCvg = computeRefinementConvergence(absCvg);
 		conEvt.setConvergence(conCvg, monitor);
 	}
 
-	private Convergence computeRefinementConvergence(Convergence absCvg) {
+	private static Convergence computeRefinementConvergence(Convergence absCvg) {
 		switch (absCvg) {
 		case ANTICIPATED:
 			return ANTICIPATED;
