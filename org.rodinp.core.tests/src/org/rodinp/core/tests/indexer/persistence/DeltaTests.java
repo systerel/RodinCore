@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,8 +104,7 @@ public class DeltaTests extends IndexTests {
 	public void testModifOutsideWhenProjectClosed() throws Exception {
 
 		final IRodinFile file = createRodinFile(project, "delta2.test");
-		NamedElement elt = getNamedElement(file.getRoot(), "elt");
-		elt.create(null, null);
+		file.getRoot().createChild(NamedElement.ELEMENT_TYPE, null, null);
 		file.save(null, true);
 
 		final IPath location = file.getResource().getLocation();
@@ -154,8 +153,8 @@ public class DeltaTests extends IndexTests {
 	 */
 	public void testDeepDeltaEnqueued() throws Exception {
 		final IRodinFile file = createRodinFile(project, "deltaDeep.test");
-		NamedElement elt = getNamedElement(file.getRoot(), "elt");
-		elt.create(null, null);
+		NamedElement elt = file.getRoot().createChild(
+				NamedElement.ELEMENT_TYPE, null, null);
 		file.save(null, true);
 
 		final List<IRodinElement> expected = Arrays.asList((IRodinElement) file);

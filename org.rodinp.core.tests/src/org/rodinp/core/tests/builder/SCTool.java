@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,8 +34,6 @@ public abstract class SCTool implements IExtractor, IAutomaticTool {
 
 	public static boolean RUN_SC = false;
 
-	private int index = 0;
-
 	protected void copyDataElements(IInternalElement ctx,
 			IInternalElement target) throws RodinDBException {
 		if (DEBUG)
@@ -44,9 +42,7 @@ public abstract class SCTool implements IExtractor, IAutomaticTool {
 		IRodinElement[] datas = ctx.getChildrenOfType(IData.ELEMENT_TYPE);
 		for (IRodinElement element : datas) {
 			IData data = (IData) element;
-			IData copy = (IData) target.getInternalElement(IData.ELEMENT_TYPE,
-					"foo" + index++);
-			copy.create(null, null);
+			IData copy = target.createChild(IData.ELEMENT_TYPE, null, null);
 			final String contents = data.getAttributeValue(fString);
 			copy.setAttributeValue(fString, contents, null);
 		}

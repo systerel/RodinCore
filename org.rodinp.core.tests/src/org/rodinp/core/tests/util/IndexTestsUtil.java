@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,21 +101,19 @@ public class IndexTestsUtil {
 	
 	public static NamedElement createNamedElement(IInternalElement parent,
 			String elementName) throws CoreException {
-		NamedElement el = new NamedElement(elementName, parent);
+		NamedElement el = parent.getInternalElement(NamedElement.ELEMENT_TYPE, elementName);
 		el.create(null, null);
 		return el;
 	}
 	
 	public static NamedElement createNamedElement(IRodinFile file,
 			String elementName) throws CoreException {
-		NamedElement el = new NamedElement(elementName, file.getRoot());
-		el.create(null, null);
-		return el;
+		return createNamedElement(file.getRoot(), elementName);
 	}
 
 	public static NamedElement2 createNamedElement2(IRodinFile file,
 			String elementName) throws CoreException {
-		NamedElement2 el = new NamedElement2(elementName, file.getRoot());
+		NamedElement2 el = file.getRoot().getInternalElement(NamedElement2.ELEMENT_TYPE, elementName);
 		el.create(null, null);
 		return el;
 	}
