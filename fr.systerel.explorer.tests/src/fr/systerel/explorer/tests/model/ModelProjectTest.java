@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package fr.systerel.explorer.tests.model;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
@@ -162,7 +161,7 @@ public class ModelProjectTest extends ExplorerTest {
 	public void processMachineCycle() throws RodinDBException {
 		//introduce a cycle in machine refinement
 		//now m0 refines m1 and m1 refines m0
-		createRefinesMachineClause(m0, m1, "refines4");
+		createRefinesMachineClause(m0, m1);
 		
 		//process the machines
 		project.processMachine(m0);
@@ -182,7 +181,7 @@ public class ModelProjectTest extends ExplorerTest {
 	public void processMachineLongCycle() throws RodinDBException {
 		//introduce a cycle in machine refinement
 		//now m2 refines m1, m1 refines m0 and m0 refines m2
-		createRefinesMachineClause(m0, m2, "refines4");
+		createRefinesMachineClause(m0, m2);
 		
 		//process the machines
 		project.processMachine(m0);
@@ -402,12 +401,9 @@ public class ModelProjectTest extends ExplorerTest {
 		assertNotNull("m4 should be created successfully ", m4);
 		
 		//create dependencies between machines
-		createRefinesMachineClause(m1, m0, "refines1");
-		assertTrue(m1.getRefinesClause("refines1").exists());
-		createRefinesMachineClause(m2, m1, "refines2");
-		assertTrue(m2.getRefinesClause("refines2").exists());
-		createRefinesMachineClause(m3, m0, "refines3");
-		assertTrue(m3.getRefinesClause("refines3").exists());
+		createRefinesMachineClause(m1, m0);
+		createRefinesMachineClause(m2, m1);
+		createRefinesMachineClause(m3, m0);
 		
 		//create a sees clause
 		createSeesContextClause(m0, c0);

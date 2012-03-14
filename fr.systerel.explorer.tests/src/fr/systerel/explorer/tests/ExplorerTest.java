@@ -349,10 +349,9 @@ public class ExplorerTest {
 	 *             if some problems occur.
 	 */
 	protected IRefinesMachine createRefinesMachineClause(IMachineRoot machine,
-			IMachineRoot abstractMachine, String clauseName)
+			IMachineRoot abstractMachine)
 			throws RodinDBException {
-		IRefinesMachine refinesClause = machine.getRefinesClause(clauseName);
-		refinesClause.create(null, null);
+		IRefinesMachine refinesClause = machine.createChild(IRefinesMachine.ELEMENT_TYPE, null, null);
 		refinesClause.setAbstractMachineName(abstractMachine.getElementName(),
 				null);
 		return refinesClause;

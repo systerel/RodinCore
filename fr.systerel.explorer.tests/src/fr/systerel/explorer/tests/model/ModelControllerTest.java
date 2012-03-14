@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -248,12 +248,9 @@ public class ModelControllerTest extends ExplorerTest {
 		assertNotNull("m4 should be created successfully ", m4);
 		
 		//create dependencies between machines
-		createRefinesMachineClause(m1, m0, "refines1");
-		assertTrue(m1.getRefinesClause("refines1").exists());
-		createRefinesMachineClause(m2, m1, "refines2");
-		assertTrue(m2.getRefinesClause("refines2").exists());
-		createRefinesMachineClause(m3, m0, "refines3");
-		assertTrue(m3.getRefinesClause("refines3").exists());
+		createRefinesMachineClause(m1, m0);
+		createRefinesMachineClause(m2, m1);
+		createRefinesMachineClause(m3, m0);
 		
 		//create a sees clause
 		createSeesContextClause(m0, c0);
