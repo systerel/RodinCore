@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -214,8 +214,8 @@ public class ProofSerializationTests extends TestCase {
 	 * serialized and deserialized.
 	 */
 	public final void testPartialInstantiation() throws RodinDBException {
-		final IPRProof proof = prRoot.getProof("P2");
-		proof.create(null, null);
+		final IPRProof proof = prRoot.createChild(IPRProof.ELEMENT_TYPE, null,
+				null);
 
 		final IProverSequent seq = TestLib.genSeq(
 				"   x ∈ ℕ" +
@@ -246,8 +246,7 @@ public class ProofSerializationTests extends TestCase {
 	}
 
 	public void testReasonerVersionCurrent() throws Exception {
-		IPRProof proof1 = prRoot.getProof("proof1");
-		proof1.create(null, null);
+		IPRProof proof1 = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
 		IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
 		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
@@ -262,8 +261,7 @@ public class ProofSerializationTests extends TestCase {
 	}
 
 	public void testReasonerVersionOld() throws Exception {
-		IPRProof proof1 = prRoot.getProof("proof1");
-		proof1.create(null, null);
+		IPRProof proof1 = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
 		IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
 		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
@@ -283,8 +281,7 @@ public class ProofSerializationTests extends TestCase {
 	}
 
 	public void testErroneousProof() throws Exception {
-		final IPRProof proof = prRoot.getProof("proof1");
-		proof.create(null, null);
+		final IPRProof proof = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
 		final IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
 		final IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
