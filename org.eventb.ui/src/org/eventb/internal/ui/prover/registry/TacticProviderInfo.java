@@ -16,7 +16,6 @@ import static java.util.Collections.emptyList;
 import static org.eventb.internal.ui.UIUtils.log;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;

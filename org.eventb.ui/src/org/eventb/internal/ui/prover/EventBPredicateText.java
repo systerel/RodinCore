@@ -124,9 +124,8 @@ public class EventBPredicateText {
 				stb.append(space);
 				stb.append(image);
 				stb.append(space);
-				int x = stb.length();
+				offsets[i] = stb.length();
 				stb.append(space);
-				offsets[i] = x;
 				stb.append(space);
 				if (++i == idents.length) {
 					stb.append("\u00b7\n");
