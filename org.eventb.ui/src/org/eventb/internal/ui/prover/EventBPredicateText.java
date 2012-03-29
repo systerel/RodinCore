@@ -16,13 +16,11 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
-import static java.util.Collections.emptyMap;
 import static org.eventb.internal.ui.prover.PredicateUtil.prettyPrint;
 import static org.eventb.internal.ui.prover.ProverUIUtils.getHyperlinks;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.swt.graphics.Point;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -32,6 +30,7 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
+import org.eventb.internal.ui.utils.ListMultimap;
 
 public class EventBPredicateText {
 
@@ -54,8 +53,6 @@ public class EventBPredicateText {
 	private final boolean enable;
 	
 	protected boolean boxesDrawn;
-
-	private Map<Point, List<PositionApplicationProxy>> links;
 
 	private Predicate pred;
 
@@ -83,7 +80,8 @@ public class EventBPredicateText {
 	public void append(TacticHyperlinkManager manager, boolean odd) {
 		final int startOffset = manager.getCurrentOffset();
 		if (enable) {
-			links = getLinks(predicateText, pred, manager);
+			final ListMultimap<Point, PositionApplicationProxy> links //
+			= getHyperlinks(manager, us, !isGoal, predicateText, pred);
 			manager.setHyperlinks(links, predicateRow);
 			manager.putAssociation(links.keySet(), predicateRow);
 			createTextBoxes(manager, startOffset);
@@ -143,14 +141,6 @@ public class EventBPredicateText {
 		}
 		stb.append("\n");
 		return stb.toString();
-	}
-
-	private Map<Point, List<PositionApplicationProxy>> getLinks(String predicateStr,
-			Predicate predicate, TacticHyperlinkManager manager) {
-		if (enable) {
-			return getHyperlinks(manager, us, !isGoal, predicateStr, predicate);
-		}
-		return emptyMap();
 	}
 
 	protected void createTextBoxes(TacticHyperlinkManager manager,

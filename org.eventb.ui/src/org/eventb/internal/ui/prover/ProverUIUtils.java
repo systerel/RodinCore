@@ -18,10 +18,8 @@ import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -61,6 +59,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
 import org.eventb.internal.ui.prover.tactics.ExistsInstantiationGoal.ExistsInstantiationGoalApplication;
 import org.eventb.internal.ui.prover.tactics.ForallInstantiationHyp.ForallInstantiationHypApplication;
+import org.eventb.internal.ui.utils.ListMultimap;
 import org.eventb.ui.prover.IProofCommand;
 import org.rodinp.core.RodinDBException;
 
@@ -418,12 +417,12 @@ public class ProverUIUtils {
 	 *         predicate <code>pred</code> and its string representation
 	 *         <code>str</code>
 	 */
-	public static Map<Point, List<PositionApplicationProxy>> getHyperlinks(
+	public static ListMultimap<Point, PositionApplicationProxy> getHyperlinks(
 			TacticHyperlinkManager manager, IUserSupport us,
 			boolean isHypothesis, String str, Predicate pred) {
 
-		final Map<Point, List<PositionApplicationProxy>> links;
-		links = new HashMap<Point, List<PositionApplicationProxy>>();
+		final ListMultimap<Point, PositionApplicationProxy> links //
+		= new ListMultimap<Point, PositionApplicationProxy>();
 
 		final TacticUIRegistry registry = TacticUIRegistry.getDefault();
 		final Predicate hyp = isHypothesis ? pred : null;
@@ -441,13 +440,7 @@ public class ProverUIUtils {
 				continue;
 			}
 			final Point positionInText = getGlobalLocationAtOffset(manager, pt);
-			List<PositionApplicationProxy> applicationList = links
-					.get(positionInText);
-			if (applicationList == null) {
-				applicationList = new ArrayList<PositionApplicationProxy>();
-				links.put(positionInText, applicationList);
-			}
-			applicationList.add(application);
+			links.put(positionInText, application);
 		}
 		return links;
 	}

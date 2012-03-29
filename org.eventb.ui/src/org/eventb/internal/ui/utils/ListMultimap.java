@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Partial implementation of a multimap, freely inspired from Guava's API. This
@@ -26,6 +27,7 @@ import java.util.Map;
  */
 public class ListMultimap<K, V> {
 
+	// As a class invariant, the map never contains empty lists of values
 	private final Map<K, List<V>> map;
 
 	public ListMultimap() {
@@ -33,16 +35,33 @@ public class ListMultimap<K, V> {
 	}
 
 	/**
+	 * Removes all entries from this multimap.
+	 */
+	public void clear() {
+		map.clear();
+	}
+
+	/**
 	 * Returns the list of values associated with the given key. Returns
-	 * <code>null</code> if the given key is not in this multimap.
+	 * <code>null</code> if the given key is not in this multimap. Never returns
+	 * an empty list.
 	 * 
 	 * @param key
 	 *            some key
-	 * @return the list of values associated with the given key or
+	 * @return the non-empty list of values associated with the given key or
 	 *         <code>null</code>
 	 */
 	public List<V> get(K key) {
 		return map.get(key);
+	}
+
+	/**
+	 * Returns the list of keys associated with a non-empty list of values.
+	 * 
+	 * @return the list of keys associated with some value
+	 */
+	public Set<K> keySet() {
+		return map.keySet();
 	}
 
 	/**
@@ -70,8 +89,25 @@ public class ListMultimap<K, V> {
 	 *            some values
 	 */
 	public void putAll(K key, Collection<V> values) {
+		if (values.size() == 0) {
+			return;
+		}
 		final List<V> list = getValueList(key);
 		list.addAll(values);
+	}
+
+	/**
+	 * Copy all pairs from the given multimap into this map. The new values are
+	 * added at the end of the list of values for the same key. No attempt is
+	 * made to ensure that values in the lists are unique.
+	 * 
+	 * @param other
+	 *            some other map
+	 */
+	public void putAll(ListMultimap<K, V> other) {
+		for (K key : other.keySet()) {
+			putAll(key, other.get(key));
+		}
 	}
 
 	private List<V> getValueList(K key) {

@@ -45,6 +45,7 @@ import org.eventb.internal.ui.prover.MouseHyperlinkListener.MouseExitListener;
 import org.eventb.internal.ui.prover.MouseHyperlinkListener.MouseHoverListener;
 import org.eventb.internal.ui.prover.MouseHyperlinkListener.MouseMoveListener;
 import org.eventb.internal.ui.prover.registry.PositionApplicationProxy;
+import org.eventb.internal.ui.utils.ListMultimap;
 
 public class TacticHyperlinkManager {
 
@@ -54,7 +55,7 @@ public class TacticHyperlinkManager {
 	private final StringBuilder toAppend;
 	private int stringBuilderOffset;
 
-	private final Map<Point, List<PositionApplicationProxy>> links = new HashMap<Point, List<PositionApplicationProxy>>();
+	private final ListMultimap<Point, PositionApplicationProxy> links = new ListMultimap<Point, PositionApplicationProxy>();
 	private final Map<Point, PredicateRow> hypAppli = new HashMap<Point, PredicateRow>();
 	private final Set<PaintObjectListener> paintListeners = new HashSet<PaintObjectListener>();
 	private final Set<BackgroundPainter> backgroundPainters = new HashSet<BackgroundPainter>();
@@ -88,7 +89,8 @@ public class TacticHyperlinkManager {
 		}
 	}
 	
-	public void setHyperlinks(Map<Point, List<PositionApplicationProxy>> toAdd,
+	public void setHyperlinks(
+			ListMultimap<Point, PositionApplicationProxy> toAdd,
 			PredicateRow hypRow) {
 		links.putAll(toAdd);
 	}
