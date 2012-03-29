@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - added pred and succ (IR47, IR48)
  *     Systerel - added sequent translation
  *     Systerel - added test for IR3' and bug #3489973
+ *     Systerel - adapted tests after ER10 rule fixing (see bug #3495675)
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
@@ -378,18 +379,18 @@ public class TranslationTests extends AbstractTranslationTests {
 	public void testER10_simple() {
 		
 		doTest( "n = card(s)", 
-				"∃f·f ∈ s⤖1‥n", true, er_te);
+				"0≤n∧(∃f·f ∈ s⤖1‥n)", true, er_te);
 	}
 	
 	public void testER10_recursive() {
 
 		doTest( "n = card(s∪t)", 
-				"∃f·f ∈ s∪t⤖1‥n", true, er_te);
+				"0≤n∧(∃f·f ∈ s∪t⤖1‥n)", true, er_te);
 	}
 	
 	public void testER10_complex() {
 		doTest( "∀m,d·m = card(s∪d)", 
-				"∀m,d·∃f·f ∈ s∪d⤖1‥m", true, er_te);
+				"∀m,d· 0≤m∧(∃f·f ∈ s∪d⤖1‥m)", true, er_te);
 	}
 
 	/**

@@ -1,9 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - adapted tests after ER10 rule fixing (see bug #3495675)
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
@@ -240,10 +244,10 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a cardinal is not extracted when equalled to an identifier.
 	 */
 	public void testCardNoExtractEqualIdent() {
-		doTest("a = card(B)", "∃f·f∈B⤖1‥a", true);
-		doTest("card(B) = a", "∃f·f∈B⤖1‥a", true);
-		doTest("a ≠ card(B)", "¬(∃f·f∈B⤖1‥a)", true);
-		doTest("card(B) ≠ a", "¬(∃f·f∈B⤖1‥a)", true);
+		doTest("a = card(B)", "0≤a∧(∃f·f∈B⤖1‥a)", true);
+		doTest("card(B) = a", "0≤a∧(∃f·f∈B⤖1‥a)", true);
+		doTest("a ≠ card(B)", "¬(0≤a∧∃f·f∈B⤖1‥a)", true);
+		doTest("card(B) ≠ a", "¬(0≤a∧∃f·f∈B⤖1‥a)", true);
 	}
 
 	/**
@@ -258,16 +262,16 @@ public class ReorganisationTests extends AbstractTranslationTests {
 		
 		for (String expr : arithExprs) {
 			doTest( expr + " = card(B)",
-					"∀x·(∃f·f∈B⤖1‥x) ⇒ " + expr + "=x",
+					"∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + expr + "=x",
 					true);
 			doTest( "card(B) = " + expr,
-					"∀x·(∃f·f∈B⤖1‥x) ⇒ x=" + expr,
+					"∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ x=" + expr,
 					true);
 			doTest( expr + " ≠ card(B)", 
-					"¬(∀x·(∃f·f∈B⤖1‥x) ⇒ " + expr + "=x)",
+					"¬(∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + expr + "=x)",
 					true);
 			doTest( "card(B) ≠ " + expr, 
-					"¬(∀x·(∃f·f∈B⤖1‥x) ⇒ x=" + expr + ")",
+					"¬(∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ x=" + expr + ")",
 					true);
 		}
 	}
@@ -285,20 +289,20 @@ public class ReorganisationTests extends AbstractTranslationTests {
 		
 		for (String expr: exprs) {
 			// less than
-			doTest(expr + " < card(B)", "∀x·(∃f·f∈B⤖1‥x) ⇒ " + expr + " < x", true);
-			doTest("card(B) < " + expr, "∀x·(∃f·f∈B⤖1‥x) ⇒ x < " + expr, true);
+			doTest(expr + " < card(B)", "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + expr + " < x", true);
+			doTest("card(B) < " + expr, "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ x < " + expr, true);
 			
 			// less than or equal to
-			doTest(expr + " ≤ card(B)", "∀x·(∃f·f∈B⤖1‥x) ⇒ " + expr + " ≤ x", true);
-			doTest("card(B) ≤ " + expr, "∀x·(∃f·f∈B⤖1‥x) ⇒ x ≤ " + expr, true);
+			doTest(expr + " ≤ card(B)", "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + expr + " ≤ x", true);
+			doTest("card(B) ≤ " + expr, "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ x ≤ " + expr, true);
 
 			// greater than
-			doTest(expr + " > card(B)", "∀x·(∃f·f∈B⤖1‥x) ⇒ x < " + expr, true);
-			doTest("card(B) > " + expr, "∀x·(∃f·f∈B⤖1‥x) ⇒ " + expr + " < x", true);
+			doTest(expr + " > card(B)", "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ x < " + expr, true);
+			doTest("card(B) > " + expr, "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + expr + " < x", true);
 
 			// greater than or equal to
-			doTest(expr + " ≥ card(B)", "∀x·(∃f·f∈B⤖1‥x) ⇒ x ≤ " + expr, true);
-			doTest("card(B) ≥ " + expr, "∀x·(∃f·f∈B⤖1‥x) ⇒ " + expr + " ≤ x", true);
+			doTest(expr + " ≥ card(B)", "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ x ≤ " + expr, true);
+			doTest("card(B) ≥ " + expr, "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + expr + " ≤ x", true);
 		}
 	}
 
@@ -315,28 +319,28 @@ public class ReorganisationTests extends AbstractTranslationTests {
 			String outExpr = outExprs[i];
 			
 			// equal to
-			doTest(inExpr + " = a", "∀x·(∃f·f∈B⤖1‥x) ⇒ " + outExpr + " = a", true);
-			doTest("a = " + inExpr, "∀x·(∃f·f∈B⤖1‥x) ⇒ a = " + outExpr, true);
+			doTest(inExpr + " = a", "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + outExpr + " = a", true);
+			doTest("a = " + inExpr, "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ a = " + outExpr, true);
 			
 			// not equal to
-			doTest(inExpr + " ≠ a", "¬(∀x·(∃f·f∈B⤖1‥x) ⇒ " + outExpr + " = a)", true);
-			doTest("a ≠ " + inExpr, "¬(∀x·(∃f·f∈B⤖1‥x) ⇒ a = " + outExpr + ")", true);
+			doTest(inExpr + " ≠ a", "¬(∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + outExpr + " = a)", true);
+			doTest("a ≠ " + inExpr, "¬(∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ a = " + outExpr + ")", true);
 			
 			// less than
-			doTest(inExpr + " < a", "∀x·(∃f·f∈B⤖1‥x) ⇒ " + outExpr + " < a", true);
-			doTest("a < " + inExpr, "∀x·(∃f·f∈B⤖1‥x) ⇒ a < " + outExpr, true);
+			doTest(inExpr + " < a", "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + outExpr + " < a", true);
+			doTest("a < " + inExpr, "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ a < " + outExpr, true);
 			
 			// less than or equal to
-			doTest(inExpr + " ≤ a", "∀x·(∃f·f∈B⤖1‥x) ⇒ " + outExpr + " ≤ a", true);
-			doTest("a ≤ " + inExpr, "∀x·(∃f·f∈B⤖1‥x) ⇒ a ≤ " + outExpr, true);
+			doTest(inExpr + " ≤ a", "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + outExpr + " ≤ a", true);
+			doTest("a ≤ " + inExpr, "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ a ≤ " + outExpr, true);
 			
 			// greater than
-			doTest(inExpr + " > a", "∀x·(∃f·f∈B⤖1‥x) ⇒ a < " + outExpr, true);
-			doTest("a > " + inExpr, "∀x·(∃f·f∈B⤖1‥x) ⇒ " + outExpr + " < a", true);
+			doTest(inExpr + " > a", "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ a < " + outExpr, true);
+			doTest("a > " + inExpr, "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + outExpr + " < a", true);
 
 			// greater than or equal to
-			doTest(inExpr + " ≥ a", "∀x·(∃f·f∈B⤖1‥x) ⇒ a ≤ " + outExpr, true);
-			doTest("a ≥ " + inExpr, "∀x·(∃f·f∈B⤖1‥x) ⇒ " + outExpr + " ≤ a", true);
+			doTest(inExpr + " ≥ a", "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ a ≤ " + outExpr, true);
+			doTest("a ≥ " + inExpr, "∀x·(0≤x∧(∃f·f∈B⤖1‥x)) ⇒ " + outExpr + " ≤ a", true);
 		}
 	}
 		
@@ -351,7 +355,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 */
 	public void testCardExtractRecursive() {
 		doTest( "card({card(B)}) ≤ 3",
-				"∀x·(∃f·f∈{card(B)}⤖1‥x) ⇒  x≤3",
+				"∀x·(0≤x∧(∃f·f∈{card(B)}⤖1‥x)) ⇒  x≤3",
 				true);
 	}
 	
@@ -361,7 +365,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 */
 	public void testCardExtractBound() {
 		doTest( "∃a,b·b⊆S ∧ a = card(b∪{c∣c∈b}) + 1",
-				"∃a,b·b⊆S ∧ (∀x·(∃f·f∈(b∪{c∣c∈b})⤖1‥x) ⇒ a = x + 1)",
+				"∃a,b·b⊆S ∧ (∀x·(0≤x∧(∃f·f∈(b∪{c∣c∈b})⤖1‥x)) ⇒ a = x + 1)",
 				true);
 	}
 	

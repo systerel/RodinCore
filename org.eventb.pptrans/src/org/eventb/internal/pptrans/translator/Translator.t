@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - added pred and succ (IR47, IR48)
  *     Systerel - move to tom-2.8
  *     Systerel - added option expandSetEquality
+ *     Systerel - fixed ER10 in translateEqualsCard (see bug #3495675)
  *******************************************************************************/
 package org.eventb.internal.pptrans.translator;
 
@@ -179,21 +180,26 @@ public class Translator extends IdentityTranslator {
 	private Predicate translateEqualsCard(Expression n, Expression s,
 			SourceLocation loc) {
 		final DecomposedQuant exists = new DecomposedQuant(ff);
+		final Expression zero = ff.makeIntegerLiteral(BigInteger.ZERO, loc);
+		final Predicate wdCondition = ff.makeRelationalPredicate(Formula.LE,
+				zero, n, loc);
 		final Expression bij = ff.makeBinaryExpression(
 				Formula.TBIJ,
 				s,
 				ff.makeBinaryExpression(
-						Formula.UPTO,
+				        Formula.UPTO,
 						ff.makeIntegerLiteral(BigInteger.ONE, null),
 						n,
 						loc),
 				loc);
-		final Expression f = 
-			exists.addQuantifier(bij.getType().getBaseType(), "f", loc);
-		return exists.makeQuantifiedPredicate(
-			Formula.EXISTS,
-			translateIn(f, exists.push(bij), loc),
-			loc);
+		final Expression f = exists.addQuantifier(bij.getType().getBaseType(),
+				"f", loc);
+		final Predicate quantifiedPred = exists.makeQuantifiedPredicate(
+				Formula.EXISTS, translateIn(f, exists.push(bij), loc), loc);
+		final Predicate[] predicates = { wdCondition, //
+				                         quantifiedPred //
+		};
+		return ff.makeAssociativePredicate(Formula.LAND, predicates, loc);
 	}
 
 	private Predicate translateEqualsMinMax(Expression n, Expression minMax,
