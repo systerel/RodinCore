@@ -181,7 +181,7 @@ public class Translator extends IdentityTranslator {
 			SourceLocation loc) {
 		final DecomposedQuant exists = new DecomposedQuant(ff);
 		final Expression zero = ff.makeIntegerLiteral(BigInteger.ZERO, loc);
-		final Predicate wdCondition = ff.makeRelationalPredicate(Formula.LE,
+		final Predicate positiveness = ff.makeRelationalPredicate(Formula.LE,
 				zero, n, loc);
 		final Expression bij = ff.makeBinaryExpression(
 				Formula.TBIJ,
@@ -196,9 +196,9 @@ public class Translator extends IdentityTranslator {
 				"f", loc);
 		final Predicate quantifiedPred = exists.makeQuantifiedPredicate(
 				Formula.EXISTS, translateIn(f, exists.push(bij), loc), loc);
-		final Predicate[] predicates = { wdCondition, //
-				                         quantifiedPred //
-		};
+		final Predicate[] predicates = { positiveness,  //
+				                          quantifiedPred //
+										};
 		return ff.makeAssociativePredicate(Formula.LAND, predicates, loc);
 	}
 
