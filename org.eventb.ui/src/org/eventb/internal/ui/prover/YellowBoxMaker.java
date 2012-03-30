@@ -63,9 +63,10 @@ public class YellowBoxMaker extends ControlMaker {
 			if (e.character == SWT.CR && owner.isFocusControl()) {
 				final PredicateRow row = holder.getRow();
 				row.instantiate();
+			} else {
+				FormToolkit.ensureVisible(owner);
+				owner.showSelection();
 			}
-			FormToolkit.ensureVisible(owner);
-			owner.showSelection();
 		}
 	}
 
