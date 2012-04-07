@@ -652,14 +652,13 @@ public class ProofState implements IProofState {
 	@Override
 	@Deprecated
 	public void applyTactic(ITactic t, IProofTreeNode node,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		applyTactic(t, node, true, monitor);
 	}
 
 
 	public void applyTactic(final ITactic t, final IProofTreeNode node,
-			final boolean applyPostTactic, final IProgressMonitor monitor)
-			throws RodinDBException {
+			final boolean applyPostTactic, final IProgressMonitor monitor) {
 		usm.run(new Runnable() {
 
 			@Override
@@ -677,15 +676,13 @@ public class ProofState implements IProofState {
 	@Override
 	@Deprecated
 	public void applyTacticToHypotheses(ITactic t, IProofTreeNode node,
-			Set<Predicate> hyps, IProgressMonitor monitor)
-			throws RodinDBException {
+			Set<Predicate> hyps, IProgressMonitor monitor) {
 		applyTacticToHypotheses(t, node, hyps, true, monitor);
 	}
 
 	public void applyTacticToHypotheses(final ITactic t,
 			final IProofTreeNode node, final Set<Predicate> hyps,
-			final boolean applyPostTactic, final IProgressMonitor monitor)
-			throws RodinDBException {
+			final boolean applyPostTactic, final IProgressMonitor monitor) {
 		usm.run(new Runnable() {
 
 			@Override
@@ -776,8 +773,7 @@ public class ProofState implements IProofState {
 	}
 
 	@Override
-	public void back(IProofTreeNode node, final IProgressMonitor monitor)
-			throws RodinDBException {
+	public void back(IProofTreeNode node, final IProgressMonitor monitor) {
 		if (node == null)
 			return;
 
@@ -787,13 +783,7 @@ public class ProofState implements IProofState {
 
 				@Override
 				public void run() {
-					try {
-						applyTactic(Tactics.prune(), parent, false, monitor);
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
+					applyTactic(Tactics.prune(), parent, false, monitor);
 				}
 
 			});
@@ -809,7 +799,7 @@ public class ProofState implements IProofState {
 	}
 
 	public boolean selectNextSubGoal(IProofTreeNode node, boolean rootIncluded,
-			IProofTreeNodeFilter filter) throws RodinDBException {
+			IProofTreeNodeFilter filter) {
 		final IProofTreeNode newNode = this.getNextSubgoal(node, rootIncluded,
 				filter);
 		if (newNode != null) {

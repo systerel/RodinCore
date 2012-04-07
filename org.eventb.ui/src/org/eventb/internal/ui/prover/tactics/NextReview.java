@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,24 +36,19 @@ public class NextReview implements IProofCommand {
 
 			@Override
 			public void run() {
-				try {
-					boolean b = us.selectNextSubgoal(false, new IProofTreeNodeFilter() {
+				boolean b = us.selectNextSubgoal(false, new IProofTreeNodeFilter() {
 
-						@Override
-						public boolean select(IProofTreeNode node) {
-							int confidence = node.getConfidence();
-							return !node.isOpen() && !node.hasChildren()
-									&& confidence <= IConfidence.REVIEWED_MAX
-									&& IConfidence.PENDING <= confidence;
-						}
-						
-					});
-					if (b) 
-						us.applyTactic(Tactics.prune(), false, monitor);
-				} catch (RodinDBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+					@Override
+					public boolean select(IProofTreeNode node) {
+						int confidence = node.getConfidence();
+						return !node.isOpen() && !node.hasChildren()
+								&& confidence <= IConfidence.REVIEWED_MAX
+								&& IConfidence.PENDING <= confidence;
+					}
+					
+				});
+				if (b) 
+					us.applyTactic(Tactics.prune(), false, monitor);
 			}
 			
 		});

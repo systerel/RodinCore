@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ import org.eventb.internal.ui.prover.HypothesisComposite;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.utils.Messages;
 import org.eventb.ui.IEventBSharedImages;
-import org.rodinp.core.RodinDBException;
 
 public class SearchHypothesisComposite extends HypothesisComposite {
 
@@ -89,12 +88,8 @@ public class SearchHypothesisComposite extends HypothesisComposite {
 						.getSelectedHyps();
 				final ITactic t = Tactics.mngHyp(ProverFactory
 						.makeSelectHypAction(selected));
-				try {
-					us.applyTacticToHypotheses(t, selected, true,
-							new NullProgressMonitor());
-				} catch (RodinDBException e1) {
-					e1.printStackTrace();
-				}
+				us.applyTacticToHypotheses(t, selected, true,
+						new NullProgressMonitor());
 			}
 
 			@Override

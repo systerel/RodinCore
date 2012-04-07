@@ -1,13 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
  *	   Systerel - redirected dialog opening	
  ******************************************************************************/
 
@@ -257,19 +256,6 @@ public class EventBUIExceptionHandler {
 				awareness);
 	}
 
-	/**
-	 * Handle exception throws when apply a tactic with default level of
-	 * awareness as UserAwareness.#INFORM.
-	 * 
-	 * @param e
-	 *            the exepction in consideration.
-	 */
-	public static void handleApplyTacticException(Exception e) {
-		handleException(e,
-				"Exception throws when applying proof tactic",
-				EventBUIExceptionHandler.UserAwareness.INFORM);
-	}
-	
 	/**
 	 * Handle exception throws when accessing Rodin DB (in general).
 	 * 

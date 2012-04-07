@@ -66,7 +66,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUIUtils;
-import org.rodinp.core.RodinDBException;
 
 /**
  * @author htson
@@ -353,16 +352,11 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 						if (ProofTreeUIUtils.DEBUG)
 							ProofTreeUIUtils.debug("Selection Changed 6: " + obj);
 						if (obj instanceof IProofTreeNode) {
-							try {
-								if (ProofTreeUIUtils.DEBUG)
-									ProofTreeUIUtils.debug("Selection Changed 7");
-								userSupport.selectNode((IProofTreeNode) obj);
-								if (ProofTreeUIUtils.DEBUG)
-									ProofTreeUIUtils.debug("Selection Changed 8");
-							} catch (RodinDBException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+							if (ProofTreeUIUtils.DEBUG)
+								ProofTreeUIUtils.debug("Selection Changed 7");
+							userSupport.selectNode((IProofTreeNode) obj);
+							if (ProofTreeUIUtils.DEBUG)
+								ProofTreeUIUtils.debug("Selection Changed 8");
 						}
 					} else { // Do nothing when there is no selection
 						if (ProofTreeUIUtils.DEBUG)
@@ -521,16 +515,11 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 				if (ProofTreeUIUtils.DEBUG)
 					ProofTreeUIUtils.debug("Selection Changed 6: " + obj);
 				if (obj instanceof IProofTreeNode) {
-					try {
-						if (ProofTreeUIUtils.DEBUG)
-							ProofTreeUIUtils.debug("Selection Changed 7");
-						userSupport.selectNode((IProofTreeNode) obj);
-						if (ProofTreeUIUtils.DEBUG)
-							ProofTreeUIUtils.debug("Selection Changed 8");
-					} catch (RodinDBException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					if (ProofTreeUIUtils.DEBUG)
+						ProofTreeUIUtils.debug("Selection Changed 7");
+					userSupport.selectNode((IProofTreeNode) obj);
+					if (ProofTreeUIUtils.DEBUG)
+						ProofTreeUIUtils.debug("Selection Changed 8");
 				}
 			} else { // Do nothing when there is no selection
 				if (ProofTreeUIUtils.DEBUG)

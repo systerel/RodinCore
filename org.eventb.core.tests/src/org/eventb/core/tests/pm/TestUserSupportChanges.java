@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -324,14 +324,8 @@ public class TestUserSupportChanges extends TestPM {
 		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
-		// Modified current PO
-		try {
-			userSupport.applyTactic(Tactics.review(1), false,
-					new NullProgressMonitor());
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		userSupport.applyTactic(Tactics.review(1), false,
+				new NullProgressMonitor());
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, dischargedPO, originalPO);
 		assertString(
 				"Change: PO is modified and discharged automatically in DB ",
@@ -384,14 +378,8 @@ public class TestUserSupportChanges extends TestPM {
 		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
-		// Modified current PO
-		try {
-			userSupport.applyTactic(Tactics.review(1), false,
-					new NullProgressMonitor());
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		userSupport.applyTactic(Tactics.review(1), false,
+				new NullProgressMonitor());
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, reusablePO, originalPO);
 		assertString(
 				"Change: PO is modified and reusable ",
@@ -455,14 +443,8 @@ public class TestUserSupportChanges extends TestPM {
 		userSupport = newUserSupport(psRoot);
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
-		// Modified current PO
-		try {
-			userSupport.applyTactic(Tactics.review(1), false,
-					new NullProgressMonitor());
-		} catch (RodinDBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		userSupport.applyTactic(Tactics.review(1), false,
+				new NullProgressMonitor());
 		PSWrapperUtil.copyPO(poRoot, psRoot, prRoot, rebuiltPO, originalPO);
 		assertString(
 				"Change: PO is modified and NOT reusable ",

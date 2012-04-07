@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,6 @@ public interface IUserSupport extends IElementChangedListener {
 	 * @param psFile
 	 *            a proof state file (IPSFile)
 	 */
-	// TODO check for RodinDBException !
 	void setInput(IRodinFile psFile);
 
 	/**
@@ -231,9 +230,8 @@ public interface IUserSupport extends IElementChangedListener {
 	 * 
 	 * @param pt
 	 *            a proof tree node
-	 * @throws RodinDBException
 	 */
-	void selectNode(IProofTreeNode pt) throws RodinDBException;
+	void selectNode(IProofTreeNode pt);
 
 	/**
 	 * Apply a tactic to the current proof obligation to a set of hypothesis
@@ -245,15 +243,13 @@ public interface IUserSupport extends IElementChangedListener {
 	 *            a set of hypothesis
 	 * @param monitor
 	 *            a progress monitor
-	 * @throws RodinDBException
-	 *             in case where there are some error in applying tactic
 	 * @deprecated use
 	 *             {@link #applyTacticToHypotheses(ITactic, Set, boolean, IProgressMonitor)}
 	 *             instead
 	 */
 	@Deprecated
 	void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
-			IProgressMonitor monitor) throws RodinDBException;
+			IProgressMonitor monitor);
 
 	/**
 	 * Apply a tactic to the current proof obligation to a set of hypothesis
@@ -267,12 +263,9 @@ public interface IUserSupport extends IElementChangedListener {
 	 *            indicating if post tactic should be applied or not
 	 * @param monitor
 	 *            a progress monitor
-	 * @throws RodinDBException
-	 *             in case where there are some error in applying tactic
 	 */
 	void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
-			boolean applyPostTactic, IProgressMonitor monitor)
-			throws RodinDBException;
+			boolean applyPostTactic, IProgressMonitor monitor);
 
 	/**
 	 * Apply a tactic to the current proof obligation at the current proof tree
@@ -283,14 +276,11 @@ public interface IUserSupport extends IElementChangedListener {
 	 *            a proof tactic
 	 * @param monitor
 	 *            a progress monitor
-	 * @throws RodinDBException
-	 *             in case where there are some error in applying tactic
 	 * @deprecated use {@link #applyTactic(ITactic, boolean, IProgressMonitor)}
 	 *             instead
 	 */
 	@Deprecated
-	void applyTactic(ITactic t, IProgressMonitor monitor)
-			throws RodinDBException;
+	void applyTactic(ITactic t, IProgressMonitor monitor);
 
 	/**
 	 * Apply a tactic to the current proof obligation at the current proof tree
@@ -303,11 +293,9 @@ public interface IUserSupport extends IElementChangedListener {
 	 *            indicating if post tactic should be applied or not
 	 * @param monitor
 	 *            a progress monitor
-	 * @throws RodinDBException
-	 *             in case where there are some error in applying tactic
 	 */
 	void applyTactic(ITactic t, boolean applyPostTactic,
-			IProgressMonitor monitor) throws RodinDBException;
+			IProgressMonitor monitor);
 
 	/**
 	 * Backtracking from the current proof tree node in the current proof
@@ -316,10 +304,8 @@ public interface IUserSupport extends IElementChangedListener {
 	 * 
 	 * @param monitor
 	 *            a progress monitor
-	 * @throws RodinDBException
-	 *             a Rodin Exception
 	 */
-	public abstract void back(IProgressMonitor monitor) throws RodinDBException;
+	public abstract void back(IProgressMonitor monitor);
 
 	/**
 	 * Set a comment for at a proof tree node.
@@ -329,9 +315,8 @@ public interface IUserSupport extends IElementChangedListener {
 	 *            a String (comment)
 	 * @param node
 	 *            a proof tree node
-	 * @throws RodinDBException
 	 */
-	void setComment(String text, IProofTreeNode node) throws RodinDBException;
+	void setComment(String text, IProofTreeNode node);
 
 	/**
 	 * Save the set of input proof obligations to disk.
@@ -360,10 +345,7 @@ public interface IUserSupport extends IElementChangedListener {
 	 *            a proof tree node filter
 	 * @return <code>true</code> if there is such a node satisfies the filter.
 	 *         Return <code>false</code> otherwise.
-	 * @throws RodinDBException
-	 *             if some error occurred
 	 */
-	boolean selectNextSubgoal(boolean rootIncluded, IProofTreeNodeFilter filter)
-			throws RodinDBException;
+	boolean selectNextSubgoal(boolean rootIncluded, IProofTreeNodeFilter filter);
 
 }

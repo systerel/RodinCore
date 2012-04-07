@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -447,7 +447,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 
 	@Override
-	public void selectNode(IProofTreeNode node) throws RodinDBException {
+	public void selectNode(IProofTreeNode node) {
 		checkCurrentPS();
 		currentPS.setCurrentNode(node);
 	}
@@ -458,14 +458,13 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	@Override
 	@Deprecated
-	public void applyTactic(final ITactic t, final IProgressMonitor monitor)
-			throws RodinDBException {
+	public void applyTactic(final ITactic t, final IProgressMonitor monitor) {
 		applyTactic(t, true, monitor);
 	}
 
 	@Override
 	public void applyTactic(ITactic t, boolean applyPostTactic,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		checkCurrentPS();
 		IProofTreeNode node = currentPS.getCurrentNode();
 		currentPS.applyTactic(t, node, applyPostTactic, monitor);
@@ -474,14 +473,13 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	@Override
 	@Deprecated
 	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
-			IProgressMonitor monitor) throws RodinDBException {
+			IProgressMonitor monitor) {
 		applyTacticToHypotheses(t, hyps, true, monitor);
 	}
 
 	@Override
 	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
-			boolean applyPostTactic, IProgressMonitor monitor)
-			throws RodinDBException {
+			boolean applyPostTactic, IProgressMonitor monitor) {
 		checkCurrentPS();
 		currentPS.applyTacticToHypotheses(t, currentPS.getCurrentNode(), hyps,
 				applyPostTactic, monitor);
@@ -532,14 +530,13 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 
 	@Override
-	public void back(IProgressMonitor monitor) throws RodinDBException {
+	public void back(IProgressMonitor monitor) {
 		checkCurrentPS();
 		currentPS.back(currentPS.getCurrentNode(), monitor);
 	}
 
 	@Override
-	public void setComment(String text, IProofTreeNode node)
-			throws RodinDBException {
+	public void setComment(String text, IProofTreeNode node) {
 		checkCurrentPS();
 		currentPS.setComment(text, node);
 	}
@@ -666,7 +663,7 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	@Override
 	public boolean selectNextSubgoal(boolean rootIncluded,
-			IProofTreeNodeFilter filter) throws RodinDBException {
+			IProofTreeNodeFilter filter) {
 		if (currentPS == null)
 			return false;
 		return currentPS.selectNextSubGoal(currentPS.getCurrentNode(),
