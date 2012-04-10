@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - fixed bug 3392038: no need to filter "other" empty attributes 
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
@@ -188,22 +189,20 @@ public class RodinTextGenerator {
 				} else {
 					value = manipulation.getValue(rElement, null);
 				}
-				if (!value.isEmpty()) {
-					final String prefix = d.getPrefix();
-					if (!prefix.isEmpty()) {
-						stream.addPresentationRegion(prefix, element);
-						sizer.append(prefix);
-					}
-					stream.addAttributeRegion(value, element, manipulation,
-							d.getAttributeType());
-					sizer.append(value);
-					final String suffix = d.getSuffix();
-					if (!suffix.isEmpty()) {
-						stream.addPresentationRegion(suffix, element);
-						sizer.append(suffix);
-					}
-					i++;
+				final String prefix = d.getPrefix();
+				if (!prefix.isEmpty()) {
+					stream.addPresentationRegion(prefix, element);
+					sizer.append(prefix);
 				}
+				stream.addAttributeRegion(value, element, manipulation,
+						d.getAttributeType());
+				sizer.append(value);
+				final String suffix = d.getSuffix();
+				if (!suffix.isEmpty()) {
+					stream.addPresentationRegion(suffix, element);
+					sizer.append(suffix);
+				}
+				i++;
 			} catch (RodinDBException e) {
 				value = "failure while loading";
 				e.printStackTrace();
