@@ -450,8 +450,7 @@ public class PostAutoTacticPreferencePage extends
 			return;
 		}
 		final List<IPrefMapEntry<ITacticDescriptor>> imported = selectImport(
-				loaded,
-				Collections.<IPrefMapEntry<ITacticDescriptor>> emptyList());
+				loaded, loaded.getEntries());
 		if (imported == null) {
 			return;
 		}
