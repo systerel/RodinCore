@@ -25,12 +25,6 @@
       <import plugin="org.eventb.ui"/>
    </requires>
 
-   <plugin
-         id="org.rodinp.core.emf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="fr.systerel.editor"

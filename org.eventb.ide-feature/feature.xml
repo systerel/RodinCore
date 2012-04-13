@@ -18,6 +18,10 @@
       %license
    </license>
 
+   <includes
+         id="fr.systerel.editor"
+         version="0.0.0"/>
+
    <requires>
       <import feature="org.rodinp.platform" version="0.0.0" match="compatible"/>
    </requires>
@@ -107,6 +111,13 @@
 
    <plugin
          id="org.eventb.ui.symboltable"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eventb.emf.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
