@@ -9,6 +9,8 @@ instructions.configure=\
   addRepository(type:1,location:http${#58}//bmethod.com/update_site/brama,name:Brama);\
   addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin);\
   addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin);\
+  addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
+  addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
   addRepository(type:0,location:http${#58}//www.stups.uni-duesseldorf.de/prob_updates,name:ProB);\
   addRepository(type:1,location:http${#58}//www.stups.uni-duesseldorf.de/prob_updates,name:ProB);\
   addRepository(type:0,location:http${#58}//www.stups.uni-duesseldorf.de/camille_updates,name:Camille);\
