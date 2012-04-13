@@ -21,8 +21,8 @@ instructions.configure=\
   addRepository(type:1,location:http${#58}//iliasov.org/modplugin,name:Modularisation);\
   addRepository(type:0,location:http${#58}//subclipse.tigris.org/update_1.6.x,name:Subclipse);\
   addRepository(type:1,location:http${#58}//subclipse.tigris.org/update_1.6.x,name:Subclipse);\
-  addRepository(type:0,location:http${#58}//download.scala-ide.org/releases/2.0.0-beta,name:Scala);\
-  addRepository(type:1,location:http${#58}//download.scala-ide.org/releases/2.0.0-beta,name:Scala);\
+  addRepository(type:0,location:http${#58}//download.scala-ide.org/releases-29/stable/site,name:Scala);\
+  addRepository(type:1,location:http${#58}//download.scala-ide.org/releases-29/stable/site,name:Scala);\
   addRepository(type:0,location:http${#58}//handbook.event-b.org/updatesite,name:Rodin Handbook);\
   addRepository(type:1,location:http${#58}//handbook.event-b.org/updatesite,name:Rodin Handbook);
 # BEWARE ! THE PREVIOUS LINE MUST NOT END WITH A BACKSLASH
