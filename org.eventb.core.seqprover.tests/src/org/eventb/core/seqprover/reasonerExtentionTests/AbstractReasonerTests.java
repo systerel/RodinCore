@@ -324,10 +324,9 @@ public abstract class AbstractReasonerTests {
 		final Predicate goal = getGoal(rule, typenv.getFormulaFactory());
 		final Set<Predicate> hyps = new LinkedHashSet<Predicate>();
 		hyps.addAll(rule.getNeededHyps());
-		if (minimal) {
-			return ProverFactory.makeSequent(typenv, hyps, goal);
+		if (!minimal) {
+			hyps.addAll(actedHyps(rule));
 		}
-		hyps.addAll(actedHyps(rule));
 		return ProverFactory.makeSequent(typenv, hyps, null, hyps, goal);
 	}
 
