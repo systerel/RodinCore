@@ -152,9 +152,6 @@
 	        <copy todir="${buildDirectory}/plugins/fr.systerel.editor.help">
 	            <fileset dir="${builder}/../fr.systerel.editor.help" />
 	        </copy>
-	        <copy todir="${buildDirectory}/plugins/org.eventb.emf.core">
-	            <fileset dir="${builder}/../org.eventb.emf.core" />
-	        </copy>
 
 	</target>
 
