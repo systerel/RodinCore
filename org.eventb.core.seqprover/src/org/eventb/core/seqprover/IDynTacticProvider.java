@@ -27,7 +27,6 @@ public interface IDynTacticProvider {
 	 * Returns all available tactics that can be used in tactic profiles.
 	 * 
 	 * @return a collection of tactics
-	 * FIXME scope specific tactics ?
 	 */
 	Collection<ITacticDescriptor> getDynTactics();
 
