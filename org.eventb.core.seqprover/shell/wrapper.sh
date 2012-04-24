@@ -2,7 +2,7 @@
 
 TRACE=:
 #TRACE=trace
-if [ $TRACE == trace ]; then
+if [ $TRACE = trace ]; then
     exec >> /tmp/out
     trace() {
        echo "[`date +%H:%M:%S`] $@"
