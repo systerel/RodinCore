@@ -128,21 +128,21 @@ public class MachineEventRefinesModule extends SCFilterModule {
 				43)
 				: null;
 
-		for (int i = 0; i < refinesEvents.length; i++) {
+		for (final IRefinesEvent refinesEvent: refinesEvents) {
 
-			if (!refinesEvents[i].hasAbstractEventLabel()) {
-				createProblemMarker(refinesEvents[i],
+			if (!refinesEvent.hasAbstractEventLabel()) {
+				createProblemMarker(refinesEvent,
 						EventBAttributes.TARGET_ATTRIBUTE,
 						GraphProblem.AbstractEventLabelUndefError);
 				continue;
 			}
 
-			String abstractLabel = refinesEvents[i].getAbstractEventLabel();
+			String abstractLabel = refinesEvent.getAbstractEventLabel();
 
 			// filter duplicates
 			if (abstractLabels != null)
 				if (abstractLabels.contains(abstractLabel)) {
-					createProblemMarker(refinesEvents[i],
+					createProblemMarker(refinesEvent,
 							EventBAttributes.TARGET_ATTRIBUTE,
 							GraphProblem.AbstractEventLabelConflictWarning,
 							abstractLabel);
@@ -151,7 +151,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 					abstractLabels.add(abstractLabel);
 
 			if (abstractLabel.equals(IEvent.INITIALISATION)) {
-				createProblemMarker(refinesEvents[i],
+				createProblemMarker(refinesEvent,
 						EventBAttributes.TARGET_ATTRIBUTE,
 						GraphProblem.InitialisationRefinedError);
 				issueRefinementErrorMarker(symbolInfo);
@@ -159,7 +159,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 			}
 
 			IAbstractEventInfo abstractInfo = getAbstractEventInfoForLabel(
-					symbolInfo, abstractLabel, refinesEvents[i],
+					symbolInfo, abstractLabel, refinesEvent,
 					EventBAttributes.TARGET_ATTRIBUTE);
 
 			if (abstractInfo == null)
@@ -187,7 +187,7 @@ public class MachineEventRefinesModule extends SCFilterModule {
 				}
 
 			concreteInfo.getAbstractEventInfos().add(abstractInfo);
-			concreteInfo.getRefinesClauses().add(refinesEvents[i]);
+			concreteInfo.getRefinesClauses().add(refinesEvent);
 
 			// this is a pretty rough distinction. But it should be sufficient
 			// in practice.
