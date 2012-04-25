@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eclipse.core.resources.IMarker.MESSAGE;
+import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
+import static org.rodinp.core.RodinMarkerUtil.RODIN_PROBLEM_MARKER;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -402,15 +406,23 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("should contain " + string, nameSet.contains(string));
 	}
 	
-	public void containsMarkers(IInternalElement element, boolean yes) throws CoreException {
-		IFile file = element.getResource();
-		IMarker[] markers = 
-			file.findMarkers(RodinMarkerUtil.RODIN_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
-		
-		if (yes)
-			assertTrue("should contain markers", markers.length != 0);
-		else
-			assertEquals("should not contain markers", 0, markers.length);
+	public void containsMarkers(IInternalElement element, boolean yes)
+			throws CoreException {
+		final IFile file = element.getResource();
+		final IMarker[] markers = file.findMarkers(RODIN_PROBLEM_MARKER, true,
+				DEPTH_INFINITE);
+
+		if (yes) {
+			assertTrue("Should contain markers", markers.length != 0);
+		} else if (markers.length != 0) {
+			final StringBuilder sb = new StringBuilder();
+			sb.append("Unexpected markers found on element " + element + ":");
+			for (final IMarker marker : markers) {
+				sb.append("\n\t");
+				sb.append(marker.getAttribute(MESSAGE));
+			}
+			fail(sb.toString());
+		}
 	}
 	
 	public void hasMarker(IRodinElement element, IAttributeType attrType) throws Exception {
