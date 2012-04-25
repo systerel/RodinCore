@@ -1990,4 +1990,40 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		hasNotMarker(mac.getRefinesClauses()[0], AbstractEventNotRefinedWarning);
 	}
 
+	/*
+	 * Ensure that two events with different parameters can be merged, as far as
+	 * their parameters do not occur in the actions.
+	 */
+	public void testEvents_51_mergeDifferentParameters() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addVariables(abs, "v");
+		addInvariant(abs, "I1", "v∈ℕ", false);
+		addInitialisation(abs, makeSList("A1"), makeSList("v≔0"));
+		addEvent(abs, "evt",//
+				makeSList("x"), makeSList("G1"), makeSList("x∈ℕ"),//
+				makeSList("A1"), makeSList("v≔v+1"));
+		addEvent(abs, "gvt",//
+				makeSList("y"), makeSList("G1"), makeSList("y∈BOOL"),//
+				makeSList("A1"), makeSList("v≔v+1"));
+		saveRodinFileOf(abs);
+
+		runBuilder();
+		containsMarkers(abs, false);
+
+		final IMachineRoot mac = createMachine("mac");
+		addMachineRefines(mac, "abs");
+		addVariables(mac, "v");
+		addInitialisation(mac, makeSList("A1"), makeSList("v≔0"));
+		final IEvent fvt = addEvent(mac, "fvt",//
+				makeSList(), makeSList(), makeSList(),//
+				makeSList("A1"), makeSList("v≔v+1"));
+		addEventRefines(fvt, "evt");
+		addEventRefines(fvt, "gvt");
+		addEventWitnesses(fvt, "x", "x = 1", "y", "y = TRUE");
+		saveRodinFileOf(mac);
+
+		runBuilder();
+		containsMarkers(mac, false);
+	}
+
 }

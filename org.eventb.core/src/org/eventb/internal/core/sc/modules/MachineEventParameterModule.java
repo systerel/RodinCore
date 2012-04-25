@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
@@ -18,7 +20,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.IParameter;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IAbstractEventInfo;
@@ -60,24 +61,28 @@ public class MachineEventParameterModule extends IdentifierModule {
 		if (parameters.length != 0)
 			fetchSymbols(parameters, target, repository, monitor);
 
-		patchTypeEnvironment();
+		if (!concreteEventInfo.getSymbolInfo().hasError()) {
+			// The error might be caused by incompatible parameter types
+			patchTypeEnvironment();
+		}
 	}
 
 	/**
-	 * add abstract local variables to type environment that are not also local
-	 * variables of the refined event
+	 * Adds abstract parameters to type environment when they are not also present
+	 * in the concrete event.
 	 */
 	private void patchTypeEnvironment() throws CoreException {
 		if (concreteEventInfo.eventIsNew())
 			return;
-		IAbstractEventInfo abstractEventInfo = concreteEventInfo
-				.getAbstractEventInfos().get(0);
-		for (FreeIdentifier freeIdentifier : abstractEventInfo.getParameters()) {
-			String name = freeIdentifier.getName();
-			if (identifierSymbolTable.getSymbolInfoFromTop(name) != null)
-				continue;
-			Type type = freeIdentifier.getType();
-			typeEnvironment.addName(name, type);
+		final List<IAbstractEventInfo> infos = concreteEventInfo
+				.getAbstractEventInfos();
+		for (final IAbstractEventInfo info : infos) {
+			for (final FreeIdentifier freeIdentifier : info.getParameters()) {
+				final String name = freeIdentifier.getName();
+				if (identifierSymbolTable.getSymbolInfoFromTop(name) == null) {
+					typeEnvironment.add(freeIdentifier);
+				}
+			}
 		}
 	}
 
