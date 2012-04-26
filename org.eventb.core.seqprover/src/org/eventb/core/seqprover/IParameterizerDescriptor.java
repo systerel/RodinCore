@@ -85,7 +85,7 @@ public interface IParameterizerDescriptor {
 	 *            which case the name of this parameterizer will be used
 	 * @param description
 	 *            the id description of the resulting tactic. May be
-	 *            <code>null</code>, in which case the name of this
+	 *            <code>null</code>, in which case the description of this
 	 *            parameterizer will be used
 	 * @param valuation
 	 *            a parameter valuation
