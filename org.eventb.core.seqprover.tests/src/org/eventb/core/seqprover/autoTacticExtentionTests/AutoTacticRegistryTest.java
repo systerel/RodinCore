@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -282,21 +282,56 @@ public class AutoTacticRegistryTest {
 		fail("to be implemented");
 	}
 
+	/*
+	 * Ensures that an instantiated tactic carries the appropriate fields when
+	 * using the simple instantiation function.
+	 */
 	@Test
-	public void testSetParameterValues() throws Exception {
-		final IParameterizerDescriptor parameterizer = registry.getParameterizerDescriptor(TacParameterizer.PARAMETERIZER_ID);
+	public void testInstantiationSimple() {
+		final String id = "id1";
+		final IParameterizerDescriptor parameterizer = registry
+				.getParameterizerDescriptor(TacParameterizer.PARAMETERIZER_ID);
+		final ITacticDescriptor desc = parameterizer.getTacticDescriptor();
+		final IParameterSetting parameters = makeParameters(parameterizer);
+		final IParamTacticDescriptor instanceDesc = parameterizer.instantiate(
+				parameters, id);
+		assertEquals(id, instanceDesc.getTacticID());
+		assertEquals(desc.getTacticName(), instanceDesc.getTacticName());
+		assertEquals(desc.getTacticDescription(), instanceDesc.getTacticDescription());
+		final FakeTactic customTactic = (FakeTactic) instanceDesc.getTacticInstance();
+		customTactic.assertParameterValues(parameters);
+	}
+
+	/*
+	 * Ensures that an instantiated tactic carries the appropriate fields when
+	 * using the complex instantiation function.
+	 */
+	@Test
+	public void testInstantiationComplex() {
+		final String id = "id2";
+		final String name = "Some name";
+		final String description = "Some description";
+		final IParameterizerDescriptor parameterizer = registry
+				.getParameterizerDescriptor(TacParameterizer.PARAMETERIZER_ID);
+		final IParameterSetting parameters = makeParameters(parameterizer);
+		final IParamTacticDescriptor instanceDesc = parameterizer.instantiate(
+				id, name, description, parameters);
+		assertEquals(id, instanceDesc.getTacticID());
+		assertEquals(name, instanceDesc.getTacticName());
+		assertEquals(description, instanceDesc.getTacticDescription());
+		final FakeTactic customTactic = (FakeTactic) instanceDesc.getTacticInstance();
+		customTactic.assertParameterValues(parameters);
+	}
+
+	private IParameterSetting makeParameters(
+			final IParameterizerDescriptor parameterizer) {
 		final IParameterSetting parameters = parameterizer.makeParameterSetting();
-		
 		parameters.setBoolean("bool1", false);
 		parameters.setBoolean("bool2", true);
 		parameters.setInt("int1", 51);
 		parameters.setLong("long1", Long.MIN_VALUE);
 		parameters.setString("string1", "blue");
-
-		final FakeTactic customTactic = (FakeTactic) parameterizer
-				.instantiate(parameters, "id").getTacticInstance();
-		customTactic.assertParameterValues(false, true, 51,
-				Long.MIN_VALUE, "blue");
+		return parameters;
 	}
 	
 	// label, type, default value

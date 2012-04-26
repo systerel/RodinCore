@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -170,15 +170,25 @@ public class TacticDescriptors {
 
 		@Override
 		public IParamTacticDescriptor instantiate(
-				IParameterValuation valuation, String id)
-				throws IllegalArgumentException {
+				IParameterValuation valuation, String id) {
+			return instantiate(id, null, null, valuation);
+		}
+
+		@Override
+		public IParamTacticDescriptor instantiate(String id, String name,
+				String description, IParameterValuation valuation) {
 			if (parameterizer == null) {
 				parameterizer = loadInstance(element,
 						ITacticParameterizer.class, descriptor.getTacticID());
 			}
-			return new ParamTacticDescriptor(id, descriptor.getTacticName(),
-					descriptor.getTacticDescription(), parameterizer,
-					descriptor.getTacticID(), valuation);
+			if (name == null) {
+				name = descriptor.getTacticName();
+			}
+			if (description == null) {
+				description = descriptor.getTacticDescription();
+			}
+			return new ParamTacticDescriptor(id, name, description,
+					parameterizer, descriptor.getTacticID(), valuation);
 		}
 
 	}

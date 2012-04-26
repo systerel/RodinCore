@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ConcurrentModificationException;
 
+import org.eventb.core.seqprover.IParameterSetting;
 import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -51,13 +52,12 @@ public class ParameterizedTactics {
 			return null;
 		}
 		
-		public void assertParameterValues(boolean expBool1, boolean expBool2,
-				int expInt1, long expLong1, String expString) {
-			assertEquals(expBool1, bool1);
-			assertEquals(expBool2, bool2);
-			assertEquals(expInt1, int1);
-			assertEquals(expLong1, long1);
-			assertEquals(expString, string);
+		public void assertParameterValues(IParameterSetting parameters) {
+			assertEquals(parameters.getBoolean("bool1"), bool1);
+			assertEquals(parameters.getBoolean("bool2"), bool2);
+			assertEquals(parameters.getInt("int1"), int1);
+			assertEquals(parameters.getLong("long1"), long1);
+			assertEquals(parameters.getString("string1"), string);
 		}
 	
 	}
