@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ package org.eventb.internal.ui.proofcontrol;
 
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
-import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.hasProjectSpecificTactics;
 import static org.eventb.internal.ui.prover.CharacterPairHighlighter.highlight;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyTactic;
@@ -41,7 +40,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -83,7 +81,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
@@ -97,7 +94,6 @@ import org.eventb.core.pm.IUserSupportInformation;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
-import org.eventb.core.preferences.autotactics.TacticPreferenceConstants;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -109,7 +105,6 @@ import org.eventb.internal.ui.IEventBControl;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
-import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.prover.CharacterPairHighlighter;
 import org.eventb.internal.ui.prover.ICommandApplication;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
@@ -118,8 +113,6 @@ import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.ITacticApplication;
-import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
 
 /**
  * @author htson
@@ -137,7 +130,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 
 	Action expertMode;
 	
-	Action openPreferences;
+	OpenPreferencesAction openPreferences;
 
 	IEventBControl textInput;
 	StyledText textWidget;
@@ -215,6 +208,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		IPreferenceStore store = EventBPreferenceStore
 				.getPreferenceStore();
 		store.removePropertyChangeListener(this);
+		openPreferences.dispose();
 		textInput.dispose();
 		history.dispose();
 		scrolledForm.dispose();
@@ -682,7 +676,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		contributeToActionBars();
 
 		updateToolItems();
-		updateActions(editor.getUserSupport());
 		updateSmiley();
 		coolBar.pack();
 		pgComp.setVisible(false);
@@ -804,27 +797,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				.setImageDescriptor(EventBImage
 						.getImageDescriptor(IEventBSharedImages.IMG_DISABLE_POST_TACTIC_PATH));
 		
-		openPreferences = new Action("Preferences...", IAction.AS_PUSH_BUTTON) {
-			
-			@Override
-			public void run() {
-				final IRodinFile file = editor.getUserSupport().getInput();
-
-				final String pageId = PreferenceConstants.AUTO_POST_TACTIC_PREFERENCE_PAGE_ID;
-				final String[] displayedIds = new String[] { pageId };
-				
-				final Object data;
-				if (hasProjectSpecificTactics(file)) {
-					data = file;
-				} else {
-					data = null;
-				}
-				final Dialog dialog = PreferencesUtil.createPreferenceDialogOn(
-						null, pageId, displayedIds, data);
-				dialog.open();
-			}
-			
-		};
+		openPreferences = new OpenPreferencesAction(editor.getUserSupport());
 	}
 
 	/**
@@ -860,21 +833,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 		for (GlobalTacticToolItem item : toolItems) {
 			item.updateStatus(userSupport, input);
 		}
-	}
-
-	void updateActions(IUserSupport userSupport) {
-		final IRodinFile input = userSupport.getInput();
-		if (input == null) {
-			return;
-		}
-		final IRodinProject project = input.getRodinProject();
-		final String scope;
-		if (hasProjectSpecificTactics(project)) {
-			scope = project.getElementName();
-		} else {
-			scope = "Workspace";
-		}
-		openPreferences.setText("Preferences (" + scope + ")...");
 	}
 
 	/*
@@ -940,7 +898,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 						// items.
 						updateToolItems();
 						updateSmiley();
-						updateActions(userSupport);
+						openPreferences.updateText();
 						scrolledForm.reflow(true);
 					} else if ((flags & IUserSupportDelta.F_STATE) != 0) {
 						// If the changes occurs in some proof states.	
@@ -1023,8 +981,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 				throw new IllegalArgumentException();
 			}
 			expertMode.setChecked(b);
-		} else if (property.equals(TacticPreferenceConstants.P_TACTICSPROFILES)) {
-			updateActions(editor.getUserSupport());
 		}
 	}
 
