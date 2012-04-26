@@ -21,7 +21,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.proofcontrol;
 
-import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 import static org.eventb.internal.ui.prover.CharacterPairHighlighter.highlight;
 import static org.eventb.internal.ui.prover.ProverUIUtils.applyCommand;
@@ -33,8 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -42,9 +39,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
@@ -104,14 +98,12 @@ import org.eventb.internal.ui.EventBStyledText;
 import org.eventb.internal.ui.IEventBControl;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
-import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.prover.CharacterPairHighlighter;
 import org.eventb.internal.ui.prover.ICommandApplication;
 import org.eventb.internal.ui.prover.ProofStatusLineManager;
 import org.eventb.internal.ui.prover.ProverUI;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticUIRegistry;
-import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.prover.ITacticApplication;
 
 /**
@@ -121,14 +113,14 @@ import org.eventb.ui.prover.ITacticApplication;
  *         </p>
  */
 public class ProofControlPage extends Page implements IProofControlPage,
-		IUserSupportManagerChangedListener, IPropertyChangeListener {
+		IUserSupportManagerChangedListener {
 
 	private static final IUserSupportManager USM = EventBPlugin
 			.getUserSupportManager();
 
 	boolean share;
 
-	Action expertMode;
+	EnablePostTacticAction enablePostTactic;
 	
 	OpenPreferencesAction openPreferences;
 
@@ -169,9 +161,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	public ProofControlPage(ProverUI editor) {
 		this.editor = editor;
 		USM.addChangeListener(this);
-		IPreferenceStore store = EventBPreferenceStore
-				.getPreferenceStore();
-		store.addPropertyChangeListener(this);
 	}
 
 	/**
@@ -205,9 +194,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	public void dispose() {
 		// Deregister with the UserSupport
 		USM.removeChangeListener(this);
-		IPreferenceStore store = EventBPreferenceStore
-				.getPreferenceStore();
-		store.removePropertyChangeListener(this);
+		enablePostTactic.dispose();
 		openPreferences.dispose();
 		textInput.dispose();
 		history.dispose();
@@ -756,7 +743,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the menu manager
 	 */
 	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(expertMode);
+		manager.add(enablePostTactic);
 		manager.add(openPreferences);
 		manager.add(new Separator());
 	}
@@ -769,7 +756,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 *            the menu manager
 	 */
 	void fillContextMenu(IMenuManager manager) {
-		manager.add(expertMode);
+		manager.add(enablePostTactic);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -778,25 +765,7 @@ public class ProofControlPage extends Page implements IProofControlPage,
 	 * Create the actions used in this page.
 	 */
 	private void makeActions() {
-		final IPreferenceStore store = EventBPreferenceStore
-				.getPreferenceStore();
-
-		expertMode = new Action("Enable post-tactic", IAction.AS_CHECK_BOX) {
-			@Override
-			public void run() {
-				boolean checked = expertMode.isChecked();
-				store.setValue(P_POSTTACTIC_ENABLE, checked);
-			}
-		};
-		boolean b = EventBPreferenceStore.getBooleanPreference(P_POSTTACTIC_ENABLE);
-		expertMode.setChecked(b);
-
-		expertMode.setToolTipText("Enable post-tactic");
-
-		expertMode
-				.setImageDescriptor(EventBImage
-						.getImageDescriptor(IEventBSharedImages.IMG_DISABLE_POST_TACTIC_PATH));
-		
+		enablePostTactic = new EnablePostTacticAction();
 		openPreferences = new OpenPreferencesAction(editor.getUserSupport());
 	}
 
@@ -964,24 +933,6 @@ public class ProofControlPage extends Page implements IProofControlPage,
 					.getActionBars());
 		}
 		statusManager.setProofInformation(information);
-	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		final String property = event.getProperty();
-		if (property.equals(P_POSTTACTIC_ENABLE)) {
-			final Object newValue = event.getNewValue();
-			boolean b;
-			if (newValue instanceof String) {
-				b = ((String) newValue).compareToIgnoreCase("true") == 0;
-			} else if (newValue instanceof Boolean) {
-				b = (Boolean) newValue;
-			} else {
-				// FIXME error
-				throw new IllegalArgumentException();
-			}
-			expertMode.setChecked(b);
-		}
 	}
 
 	@Override
