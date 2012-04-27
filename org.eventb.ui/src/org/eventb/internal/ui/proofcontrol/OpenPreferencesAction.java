@@ -11,7 +11,7 @@
 package org.eventb.internal.ui.proofcontrol;
 
 import static org.eclipse.ui.dialogs.PreferencesUtil.createPreferenceDialogOn;
-import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.internal.ui.preferences.PreferenceConstants.AUTO_POST_TACTIC_PREFERENCE_PAGE_ID;
 
 import org.eclipse.core.resources.IProject;
@@ -45,7 +45,7 @@ public class OpenPreferencesAction extends Action implements
 	private static final String PREF_NODE_NAME = EventBUIPlugin.PLUGIN_ID;
 
 	// Name of the witness preference
-	private static final String PREF_NAME = P_POSTTACTIC_ENABLE;
+	private static final String PREF_NAME = P_POSTTACTIC_CHOICE;
 
 	private final IUserSupport userSupport;
 	
