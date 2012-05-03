@@ -1443,7 +1443,7 @@ public class Translator extends IdentityTranslator {
 			}		 
 	        /**
 	        * RULE ER10: 	n = card(s)  
-	        *	  			∃f·f ∈ s'⤖1‥n'
+	        *	  			0≤n ∧ ∃f·f ∈ s'⤖1‥n'
 	        */
 			Equal(n@Identifier(), Card(s)) -> {
 				return translateEqualsCard(`n, `s, loc);
