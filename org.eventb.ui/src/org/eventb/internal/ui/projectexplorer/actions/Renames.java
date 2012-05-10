@@ -204,14 +204,14 @@ public class Renames implements IObjectActionDelegate {
 					final IIndexQuery query = RodinCore.makeIndexQuery();
 					query.waitUpToDate();
 					final IDeclaration i = query.getDeclaration(root);
-					return query.getOccurrences(i);
+					if (i != null)
+						return query.getOccurrences(i);
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 					return Collections.emptySet();
 				}
-			} else {
-				return Collections.emptySet();
 			}
+			return Collections.emptySet();
 		}
 
 		private void renameComponentFile(IProgressMonitor monitor)
