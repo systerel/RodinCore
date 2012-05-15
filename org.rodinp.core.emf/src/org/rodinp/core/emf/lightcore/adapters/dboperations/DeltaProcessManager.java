@@ -93,7 +93,8 @@ public class DeltaProcessManager {
 				}
 			} catch (InterruptedException e) {
 				stop = true;
-				log(e);
+				if (DEBUG)
+					log(e);
 				Thread.currentThread().interrupt();
 			}
 		} while (!stop);
