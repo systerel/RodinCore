@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -262,7 +262,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		// save the content and show at the new location.
 		if (editorText.isVisible() && interval != null
 				&& !interval.contains(offset)) {
-			saveAndExit();
+			saveAndExit(false);
 		}
 		final Interval inter = mapper.findEditableInterval(viewer
 				.widgetOffset2ModelOffset(offset));
@@ -284,8 +284,16 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		final int startLine = parent.getLineAtOffset(startOffset);
 		final int targetLine = parent.getLineAtOffset(offset);
 		final int overlayLine = targetLine - startLine;
-		final int indentation = interval.getIndentation();
-		return offset - startOffset - overlayLine * indentation;
+		final int alignement = interval.getAlignement().length();
+		return offset - startOffset - overlayLine * alignement;
+	}
+	
+	private int overlayToEditorOffset() {
+		final int startOffset = interval.getOffset();
+		final int overlayOffset = editorText.getCaretOffset();
+		final int line = editorText.getLineAtOffset(overlayOffset);
+		final int alignement = interval.getAlignement().length();
+		return startOffset + overlayOffset + line * alignement;
 	}
 
 	private void changeBooleanValue(Interval inter) {
@@ -370,26 +378,20 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		tipMenu.setVisible(true);
 	}
 	
-	public void abortEdition() {
+	public void abortEdition(boolean maintainCaretPosition) {
 		if (!originalText.isEmpty() && editor.isDirty())
 			editorText.setText(originalText);
-		quitEdition();
+		quitEdition(maintainCaretPosition);
 	}
 	
-	public void quitEdition() {
+	public void quitEdition(boolean maintainCaretPosition) {
 		editorText.removeModifyListener(eventBTranslator);
 		setVisible(false);
-		final int newEditorOffset = overlayToEditorOffset();
-		parent.setCaretOffset(newEditorOffset);
+		if (maintainCaretPosition) {
+			final int newEditorOffset = overlayToEditorOffset();
+			parent.setCaretOffset(newEditorOffset);			
+		}
 		interval = null;
-	}
-	
-	private int overlayToEditorOffset() {
-		final int startOffset = interval.getOffset();
-		final int overlayOffset = editorText.getCaretOffset();
-		final int line = editorText.getLineAtOffset(overlayOffset);
-		final int indentation = interval.getIndentation();
-		return startOffset + overlayOffset + line * indentation;
 	}
 	
 	public boolean isActive() {
@@ -463,7 +465,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			} else {
 				// if the interval that is currently being edited is hidden from
 				// view abort the editing
-				quitEdition();
+				quitEdition(true);
 			}
 		}
 	}
@@ -528,7 +530,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		if ((event.stateMask == SWT.NONE) && event.character == SWT.CR) {
 			// do not add the return to the text
 			event.doit = false;
-			saveAndExit();
+			saveAndExit(true);
 		}
 	}
 
@@ -594,9 +596,9 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		return editActions.get(actionConstant);
 	}
 
-	public void saveAndExit() {
+	public void saveAndExit(boolean maintainCaretPosition) {
 		updateModelAfterChanges();
-		quitEdition();
+		quitEdition(maintainCaretPosition);
 	}
 
 	private void setEventBTranslation(Interval interval) {

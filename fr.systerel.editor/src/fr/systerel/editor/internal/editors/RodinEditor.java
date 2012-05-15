@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -406,7 +406,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	 */
 	public void abordEdition() {
 		if (overlayEditor.isActive()) {
-			overlayEditor.abortEdition();
+			overlayEditor.abortEdition(true);
 		}
 	}
 
