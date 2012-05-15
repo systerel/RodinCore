@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -36,7 +37,6 @@ import org.eventb.core.IEventBProject;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.UIUtils;
-import org.eventb.internal.ui.utils.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeType.Handle;
 import org.rodinp.core.IInternalElement;
@@ -56,8 +56,6 @@ public class Renames implements IObjectActionDelegate {
 	private ISelection selection;
 
 	private IWorkbenchPart part;
-
-	private String defaultName = "";
 
 	/**
 	 * Constructor.
@@ -106,51 +104,70 @@ public class Renames implements IObjectActionDelegate {
 		if (root == null)
 			return;
 
-		final IRodinFile file = root.getRodinFile();
-		final IRodinProject prj = file.getRodinProject();
-		final String fileName = getDefaultName(root);
+		final IRodinProject prj = root.getRodinProject();
+		final String fileName = root.getElementName();
+		final Shell shell = part.getSite().getShell();
 
-		final RenamesComponentDialog dialog = new RenamesComponentDialog(part
-				.getSite().getShell(), fileName, true,
-				new RodinFileInputValidator(prj));
-
+		final RenamesComponentDialog dialog = new RenamesComponentDialog(shell,
+				fileName, true, new RodinFileInputValidator(prj));
 		dialog.open();
-
-		final String bareName = dialog.getValue();
-
 		if (dialog.getReturnCode() == InputDialog.CANCEL)
 			return; // Cancel
 
-		assert bareName != null;
+		final String newBareName = dialog.getValue();
+		assert newBareName != null;
 
-		launchRename(new RenameRunnable(dialog, prj, file, root, fileName,
-					bareName));
-	}
-	
-	private void launchRename(final RenameRunnable rename) {
-		UIUtils.runWithProgressDialog(part.getSite().getShell(),
-				new IRunnableWithProgress() {
-					@Override
-					public void run(IProgressMonitor monitor)
-							throws InvocationTargetException,
-							InterruptedException {
-						try {
-							RodinCore.run(rename, monitor);
-						} catch (RodinDBException e) {
-							rename.issueError(e);
-						}
-					}
-
-				});
-
+		UIUtils.runWithProgressDialog(shell, new RenameTask(root, newBareName,
+				dialog.updateReferences()));
 	}
 
-	private String getDefaultName(IInternalElement root) {
-		if (root instanceof IMachineRoot || root instanceof IContextRoot) {
-			return root.getElementName();
-		} else {
-			return defaultName;
+	private static class RenameTask implements IRunnableWithProgress {
+
+		private static final Set<IOccurrence> NO_OCCURRENCES = Collections
+				.emptySet();
+
+		private final IEventBRoot root;
+		private final String newBareName;
+		private final boolean updateReferences;
+
+		public RenameTask(IEventBRoot root, String newBareName,
+				boolean updateReferences) {
+			this.root = root;
+			this.newBareName = newBareName;
+			this.updateReferences = updateReferences;
 		}
+
+		@Override
+		public void run(IProgressMonitor monitor)
+				throws InvocationTargetException, InterruptedException {
+			final Set<IOccurrence> occurrences = getOccurrences(monitor);
+			if (monitor.isCanceled())
+				return;
+			final IWorkspaceRunnable op = new RenameOperation(
+					root, newBareName, occurrences);
+			try {
+				RodinCore.run(op, monitor);
+			} catch (RodinDBException e) {
+				throw new InvocationTargetException(e);
+			}
+		}
+
+		private Set<IOccurrence> getOccurrences(IProgressMonitor monitor)
+				throws InterruptedException {
+			if (!updateReferences) {
+				return NO_OCCURRENCES;
+			}
+			final IIndexQuery query = RodinCore.makeIndexQuery();
+			query.waitUpToDate(monitor);
+			if (monitor.isCanceled())
+				return NO_OCCURRENCES;
+			final IDeclaration decl = query.getDeclaration(root);
+			if (decl == null) {
+				return NO_OCCURRENCES;
+			}
+			return query.getOccurrences(decl);
+		}
+
 	}
 
 	/**
@@ -161,67 +178,45 @@ public class Renames implements IObjectActionDelegate {
 		this.selection = sel;
 	}
 
-	private static class RenameRunnable implements IWorkspaceRunnable {
+	private static class RenameOperation implements IWorkspaceRunnable {
 
-		private final RenamesComponentDialog dialog;
+		private final Set<IOccurrence> occurences;
 		private final IRodinProject prj;
 		private final IRodinFile file;
-		private final IInternalElement root;
+		private final IEventBRoot root;
 		private final String fileName;
-		private final String bareName;
+		private final String newBareName;
 
-		public RenameRunnable(RenamesComponentDialog dialog, IRodinProject prj,
-				IRodinFile file, IInternalElement root, String fileName,
-				String bareName) {
-			this.dialog = dialog;
-			this.prj = prj;
-			this.file = file;
+		public RenameOperation(IEventBRoot root, String newBareName,
+				Set<IOccurrence> occurences) {
+			this.occurences = occurences;
+			this.prj = root.getRodinProject();
+			this.file = root.getRodinFile();
 			this.root = root;
-			this.fileName = fileName;
-			this.bareName = bareName;
+			this.fileName = root.getElementName();
+			this.newBareName = newBareName;
 		}
 
 		@Override
 		public void run(IProgressMonitor monitor) throws RodinDBException {
-			final Set<IOccurrence> occurences = getOccurences();
 			renameComponentFile(monitor);
 			renamePRFile(monitor);
-			renameInOccurences(occurences, monitor);
-		}
-
-		public void issueError(Throwable t) {
-			UIUtils.showUnexpectedError(t, Messages.uiUtils_unexpectedError);
-			UIUtils.log(t, "while renaming " + fileName);
+			if (!occurences.isEmpty())
+				renameInOccurences(monitor);
 		}
 
 		public boolean cancelRenaming(String newName) {
 			return UIUtils.showQuestion(dialogs_cancelRenaming(newName));
 		}
 
-		private Set<IOccurrence> getOccurences() {
-			if (dialog.updateReferences()) {
-				try {
-					final IIndexQuery query = RodinCore.makeIndexQuery();
-					query.waitUpToDate();
-					final IDeclaration i = query.getDeclaration(root);
-					if (i != null)
-						return query.getOccurrences(i);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-					return Collections.emptySet();
-				}
-			}
-			return Collections.emptySet();
-		}
-
 		private void renameComponentFile(IProgressMonitor monitor)
 				throws RodinDBException {
 			final String newName;
 			if (root instanceof IContextRoot) {
-				newName = EventBPlugin.getContextFileName(bareName);
+				newName = EventBPlugin.getContextFileName(newBareName);
 			} else {
 				// root is an instance of IMachineRoot
-				newName = EventBPlugin.getMachineFileName(bareName);
+				newName = EventBPlugin.getMachineFileName(newBareName);
 			}
 			file.rename(newName, false, monitor);
 		}
@@ -232,10 +227,10 @@ public class Renames implements IObjectActionDelegate {
 					.getAdapter(IEventBProject.class);
 			final IRodinFile proofFile = evbProject.getPRFile(root
 					.getElementName());
-			final String newName = EventBPlugin.getPRFileName(bareName);
-			final IRodinFile pRFile = evbProject.getPRFile(bareName);
+			final String newName = EventBPlugin.getPRFileName(newBareName);
+			final IRodinFile pRFile = evbProject.getPRFile(newBareName);
 			if (pRFile.exists()) {
-				if (cancelRenaming(bareName)) {
+				if (cancelRenaming(newBareName)) {
 					return;
 				}
 				proofFile.rename(newName, true, monitor);
@@ -297,15 +292,15 @@ public class Renames implements IObjectActionDelegate {
 			}
 		}
 
-		private void renameInOccurences(Set<IOccurrence> occurences,
-				IProgressMonitor monitor) throws RodinDBException {
+		private void renameInOccurences(IProgressMonitor monitor)
+				throws RodinDBException {
 			for (IOccurrence occ : occurences) {
 				if (occ.getLocation() instanceof IAttributeLocation) {
 					final IAttributeLocation loc = (IAttributeLocation) occ
 							.getLocation();
 					final IAttributeType type = loc.getAttributeType();
 					if (type instanceof IAttributeType.String) {
-						replaceStringOccurence(fileName, bareName, loc,
+						replaceStringOccurence(fileName, newBareName, loc,
 								(IAttributeType.String) type, monitor);
 					} else if (type instanceof IAttributeType.Handle) {
 						replaceHandleOccurence(loc,
@@ -315,5 +310,5 @@ public class Renames implements IObjectActionDelegate {
 			}
 		}
 	}
-	
+
 }
