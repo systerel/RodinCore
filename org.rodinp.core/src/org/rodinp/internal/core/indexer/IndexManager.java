@@ -383,14 +383,13 @@ public final class IndexManager {
 					printVerbose("Child waiting thread has just started");
 				try {
 					waitUpToDate();
-				} catch (InterruptedException e) {
+					if (VERBOSE)
+						printVerbose("Child waiting thread has finished normally");
+				} catch (InterruptedException consumed) {
 					// We have been canceled, just finish the thread
 					if (VERBOSE)
 						printVerbose("Child waiting thread has been interrupted");
-					return;
 				}
-				if (VERBOSE)
-					printVerbose("Child waiting thread has finished normally");
 			}
 
 		};
@@ -402,7 +401,7 @@ public final class IndexManager {
 			} catch (InterruptedException exc) {
 				if (VERBOSE)
 					printVerbose("Parent thread has been interrupted while"
-							+ " waiting for the child thread.");
+							+ " waiting for the child thread");
 				interruption = exc;
 			}
 			if (interruption != null || monitor.isCanceled()) {
