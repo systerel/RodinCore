@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.rodinp.core.indexer;
 import java.util.Collection;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
@@ -82,23 +83,51 @@ import org.rodinp.core.location.IInternalLocation;
  * </p>
  * 
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  * @author Nicolas Beauger
  */
 public interface IIndexQuery {
 
 	/**
-	 * Returns when the indexing system is up to date, else blocks until it
-	 * becomes up to date or this thread gets interrupted.
+	 * Blocks until the indexing system is up to date or this thread gets
+	 * interrupted.
 	 * <p>
 	 * To ensure accurate results, clients should call this method before
-	 * querying the index, while locking the appropriate part of the Rodin
-	 * database.
+	 * querying the index.
+	 * </p>
+	 * <p>
+	 * WARNING: The calling thread must <strong>not hold any lock on an Eclipse
+	 * resource or part of the Rodin database</strong> when calling this method,
+	 * otherwise <strong>deadlock</strong> can happen.
 	 * </p>
 	 * 
 	 * @throws InterruptedException
-	 *             if the current thread was interrupted while waiting
+	 *             if the current thread is interrupted before or while it is
+	 *             waiting
 	 */
 	void waitUpToDate() throws InterruptedException;
+
+	/**
+	 * Blocks until the indexing system is up to date, the given monitor is
+	 * cancelled or this thread gets interrupted.
+	 * <p>
+	 * To ensure accurate results, clients should call this method before
+	 * querying the index.
+	 * </p>
+	 * <p>
+	 * WARNING: The calling thread must <strong>not hold any lock on an Eclipse
+	 * resource or part of the Rodin database</strong> when calling this method,
+	 * otherwise <strong>deadlock</strong> can happen.
+	 * </p>
+	 * 
+	 * @param monitor
+	 *            a progress monitor that can cancel the wait
+	 * @throws InterruptedException
+	 *             if the current thread is interrupted before or while it is
+	 *             waiting
+	 * @since 1.6
+	 */
+	void waitUpToDate(IProgressMonitor monitor) throws InterruptedException;
 
 	/**
 	 * Returns the declaration for the given element. If the element is not

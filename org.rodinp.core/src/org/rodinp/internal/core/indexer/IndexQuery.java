@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
@@ -35,6 +36,12 @@ public class IndexQuery implements IIndexQuery {
 	@Override
 	public void waitUpToDate() throws InterruptedException {
 		IndexManager.getDefault().waitUpToDate();
+	}
+
+	@Override
+	public void waitUpToDate(IProgressMonitor monitor)
+			throws InterruptedException {
+		IndexManager.getDefault().waitUpToDate(monitor);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,8 @@ import org.rodinp.internal.core.indexer.persistence.PersistentIndexManager;
 import org.rodinp.internal.core.indexer.persistence.PersistentPIM;
 
 public final class IndexManager {
+
+	private static final int BLOCKING_DELAY = 200; // milliseconds
 
 	// For debugging and tracing purposes
 	public static boolean DEBUG;
@@ -356,12 +358,63 @@ public final class IndexManager {
 	}
 
 	/*
-	 * Blocks until the indexing system becomes up to date. If the call is
-	 * interrupted while waiting, the interrupted state of the calling Thread is
-	 * restored.
+	 * Blocks until the indexing system becomes up to date, propagating
+	 * interruption.
 	 */
 	public void waitUpToDate() throws InterruptedException {
 		queue.awaitEmptyQueue();
+	}
+
+	/*
+	 * To allow for cancellation, we need to start a new thread that will do the
+	 * blocking wait, while the current thread wakes up regularly to check the
+	 * cancellation status of the given monitor and interrupts the child thread
+	 * in case of cancellation. Alternatively, if the current thread is itself
+	 * interrupted, it propagates the interruption to the child thread, and
+	 * rethrows the exception once the child has terminated.
+	 */
+	public void waitUpToDate(IProgressMonitor monitor)
+			throws InterruptedException {
+		final Thread childThread = new Thread() {
+
+			@Override
+			public void run() {
+				if (VERBOSE)
+					printVerbose("Child waiting thread has just started");
+				try {
+					waitUpToDate();
+				} catch (InterruptedException e) {
+					// We have been canceled, just finish the thread
+					if (VERBOSE)
+						printVerbose("Child waiting thread has been interrupted");
+					return;
+				}
+				if (VERBOSE)
+					printVerbose("Child waiting thread has finished normally");
+			}
+
+		};
+		childThread.start();
+		InterruptedException interruption = null;
+		while (childThread.isAlive()) {
+			try {
+				childThread.join(BLOCKING_DELAY);
+			} catch (InterruptedException exc) {
+				if (VERBOSE)
+					printVerbose("Parent thread has been interrupted while"
+							+ " waiting for the child thread.");
+				interruption = exc;
+			}
+			if (interruption != null || monitor.isCanceled()) {
+				if (VERBOSE)
+					printVerbose("Parent thread cancels the child waiting thread");
+				// Ask the child thread to stop
+				childThread.interrupt();
+			}
+		}
+		if (interruption != null) {
+			throw interruption; // Propagate the parent thread interruption
+		}
 	}
 
 	/**
