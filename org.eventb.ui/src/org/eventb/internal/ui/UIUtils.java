@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -732,6 +732,8 @@ public class UIUtils {
 		} catch (InterruptedException exception) {
 			if (UIUtils.DEBUG)
 				System.out.println("Interrupt"); //$NON-NLS-1$
+			// Restore the interruption status
+			Thread.currentThread().interrupt();
 			return;
 		} catch (InvocationTargetException exception) {
 			final Throwable realException = exception.getTargetException();
