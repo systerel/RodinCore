@@ -78,13 +78,12 @@ import org.rodinp.core.location.IInternalLocation;
  * <p>
  * A query can be obtained through <code>RodinCore.makeIndexQuery()</code>.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
- * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
+ * 
  * @author Nicolas Beauger
+ * @since 1.0
  */
 public interface IIndexQuery {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,11 +61,11 @@ import org.rodinp.core.IRodinFile;
  * Finally, when file indexing completes, declarations with no occurrence are
  * simply ignored (not entered into the index tables).
  * </p>
- * <p>
- * This interface is intended to be implemented by clients.
- * </p>
  * 
  * @see IIndexingBridge
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * 
  * @author Nicolas Beauger
  * @since 1.0
