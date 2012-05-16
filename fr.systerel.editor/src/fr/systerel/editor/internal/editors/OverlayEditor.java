@@ -38,6 +38,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.ST;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ModifyListener;
@@ -213,8 +214,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		this.mapper = mapper;
 		this.parent = parent;
 		this.editor = editor;
-		textViewer = new TextViewer(parent, SWT.NONE);
-		textViewer.getTextWidget().setBackground(IRodinColorConstant.BG_COLOR);
+		textViewer = new TextViewer(parent, SWT.BORDER);
 		setupEditorText();
 		contentProposal = new ContentProposalManager(editorText, mapper
 				.getRoot().getElement());
@@ -223,15 +223,8 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	private void setupEditorText() {
 		editorText = textViewer.getTextWidget();
 		editorText.addVerifyKeyListener(this);
-		editorText.setFont(parent.getFont());
-
-		parent.pack();	
-		final Point oldsize = parent.getSize();
-		parent.setSize(oldsize);
-		
 		editorText.setVisible(false);
 		editorText.addExtendedModifyListener(this);			
-
 		createMenu();
 		createEditActions();
 		// the focus tracker is used to activate the handlers, when the widget
@@ -323,9 +316,10 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		if (!inter.getContentType().getName().contains("comment"))
 			setEventBTranslation(inter);
 		final int start = viewer.modelOffset2WidgetOffset(inter.getOffset());
-		final int end = computeEnd(start, inter.getLength());
+		final int length = inter.getLength();
+		final int end = computeEnd(start, length);
 		final String text;
-		if (inter.getLength() > 0) {
+		if (length > 0) {
 			final String extracted = parent.getText(start, end);
 			final boolean multiLine = inter.isMultiLine();
 			final boolean addWhiteSpace = inter.isAddWhiteSpace();
@@ -336,13 +330,9 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			text = "";
 		}
 		originalText = text;
-		final Point beginPt = (parent.getLocationAtOffset(start));
 		textViewer.setDocument(createDocument(text));
-		
 		editorText.setCaretOffset(pos);
-		editorText.setSize(editorText.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		editorText.setLocation(beginPt.x - 2, beginPt.y); // -2 to place on text
-		editorText.setFont(parent.getFont());
+		resizeAndPositionOverlay(editorText, parent, inter);
 		editorText.setVisible(true);
 		editorText.setFocus();
 	}
@@ -486,24 +476,50 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 
 
-	private static void modifyText(ExtendedModifyEvent event, String text,
+	private void modifyText(ExtendedModifyEvent event, String text,
 			StyledText target, StyledText parent, DocumentMapper mapper,
 			Interval inter) {
 		mapper.synchronizeInterval(inter, text);
-		target.setRedraw(false);
+		resizeAndPositionOverlay(target, parent, inter);
+	}
+
+	private void resizeAndPositionOverlay(StyledText overlay,
+			StyledText parent, Interval inter) {
+		overlay.setRedraw(false);
 		try {
-			if (!target.getText().isEmpty()) {
-				final Point size = target.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				if (!size.equals(target.getSize())) {
-					target.setSize(size);
-				}
-			}
-			final int offset = inter.getOffset();
-			final Point editionPosition = parent.getLocationAtOffset(offset);
-			target.setLocation(editionPosition);
+			updateOverlayStyle(inter);
+			resizeOverlay(overlay);
+			repositionOverlay(overlay, parent, inter);
 		} finally {
-			target.setRedraw(true);
+			overlay.setRedraw(true);
 		}
+	}
+
+	private void repositionOverlay(StyledText target, StyledText parent,
+			Interval inter) {
+		final int start = inter.getOffset();
+		final Point beginPt = (parent.getLocationAtOffset(start));
+		// dimensions are retailed to manage borders 
+		editorText.setLocation(beginPt.x - 3, beginPt.y - 1);
+	}
+
+	private void resizeOverlay(StyledText target) {
+		if (!target.getText().isEmpty()) {
+			final Point size = target.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			if (!size.equals(target.getSize())) {
+				target.setSize(size);
+			}
+		}
+	}
+
+	private void updateOverlayStyle(Interval inter) {
+		editorText.setFont(parent.getFont());
+		final int start = inter.getOffset();
+		final StyleRange parentRange = parent.getStyleRangeAtOffset(start);
+		if (parentRange != null)
+			editorText.setStyleRange(new StyleRange(0, inter.getLength(),
+					parentRange.foreground, IRodinColorConstant.BG_COLOR,
+					parentRange.fontStyle));
 	}
 
 	public void refreshOverlayContents(DocumentEvent event) {
