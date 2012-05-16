@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 
+import static org.eclipse.core.runtime.SubMonitor.convert;
 import static org.eventb.internal.ui.utils.Messages.dialogs_cancelRenaming;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +23,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -37,6 +39,7 @@ import org.eventb.core.IEventBProject;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.utils.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeType.Handle;
 import org.rodinp.core.IInternalElement;
@@ -140,20 +143,28 @@ public class Renames implements IObjectActionDelegate {
 		@Override
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
-			final Set<IOccurrence> occurrences = getOccurrences(monitor);
+			final String msg = Messages.renameElement(root.getElementName(),
+					newBareName);
+			final SubMonitor subMonitor = convert(monitor, msg, 2 + 8);
+			final Set<IOccurrence> occurrences = getOccurrences(subMonitor
+					.newChild(2));
 			if (monitor.isCanceled())
 				return;
-			final IWorkspaceRunnable op = new RenameOperation(
-					root, newBareName, occurrences);
+			final IWorkspaceRunnable op = new RenameOperation(root,
+					newBareName, occurrences);
 			try {
-				RodinCore.run(op, monitor);
+				RodinCore.run(op, subMonitor.newChild(8));
 			} catch (RodinDBException e) {
 				throw new InvocationTargetException(e);
+			} finally {
+				monitor.done();
 			}
 		}
 
-		private Set<IOccurrence> getOccurrences(IProgressMonitor monitor)
+		private Set<IOccurrence> getOccurrences(SubMonitor monitor)
 				throws InterruptedException {
+			monitor.subTask(Messages.rename_task_wait_for_indexer);
+			monitor.worked(1);
 			if (!updateReferences) {
 				return NO_OCCURRENCES;
 			}
@@ -199,17 +210,20 @@ public class Renames implements IObjectActionDelegate {
 
 		@Override
 		public void run(IProgressMonitor monitor) throws RodinDBException {
-			renameComponentFile(monitor);
-			renamePRFile(monitor);
-			if (!occurences.isEmpty())
-				renameInOccurences(monitor);
+			monitor.subTask(Messages.rename_task_perform_renaming);
+			 // Two default renamings +  one per occurence to rename
+			final int nbOccurrences = occurences.size();
+			final SubMonitor subMonitor = convert(monitor, 2 + nbOccurrences);
+			renameComponentFile(subMonitor.newChild(1));
+			renamePRFile(subMonitor.newChild(1));
+			renameInOccurences(subMonitor.newChild(nbOccurrences));
 		}
 
 		public boolean cancelRenaming(String newName) {
 			return UIUtils.showQuestion(dialogs_cancelRenaming(newName));
 		}
 
-		private void renameComponentFile(IProgressMonitor monitor)
+		private void renameComponentFile(SubMonitor monitor)
 				throws RodinDBException {
 			final String newName;
 			if (root instanceof IContextRoot) {
@@ -292,7 +306,7 @@ public class Renames implements IObjectActionDelegate {
 			}
 		}
 
-		private void renameInOccurences(IProgressMonitor monitor)
+		private void renameInOccurences(SubMonitor monitor)
 				throws RodinDBException {
 			for (IOccurrence occ : occurences) {
 				if (occ.getLocation() instanceof IAttributeLocation) {
@@ -307,6 +321,7 @@ public class Renames implements IObjectActionDelegate {
 								(IAttributeType.Handle) type, monitor);
 					}
 				}
+				monitor.worked(1);
 			}
 		}
 	}

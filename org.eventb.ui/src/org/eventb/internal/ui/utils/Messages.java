@@ -233,6 +233,11 @@ public final class Messages {
 	// Tactics
 	public static String tactics_replaceWith;
 	
+	// Rename action
+	public static String rename_renaming_root;
+	public static String rename_task_wait_for_indexer;
+	public static String rename_task_perform_renaming;
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
@@ -288,6 +293,10 @@ public final class Messages {
 		return bind(preferencepage_prefixSettings_propIDTitle, projectName);
 	}
 	
+	public static String renameElement(String rootName, String newBareName) {
+		return bind(rename_renaming_root, rootName, newBareName);
+	}
+
 	private Messages() {
 		// Do not instantiate
 	}
