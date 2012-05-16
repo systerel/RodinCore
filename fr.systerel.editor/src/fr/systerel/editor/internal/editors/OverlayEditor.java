@@ -222,9 +222,10 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 
 	private void setupEditorText() {
 		editorText = textViewer.getTextWidget();
-		editorText.addVerifyKeyListener(this);
 		editorText.setVisible(false);
-		editorText.addExtendedModifyListener(this);			
+		editorText.setBackground(IRodinColorConstant.BG_COLOR);
+		editorText.addExtendedModifyListener(this);
+		editorText.addVerifyKeyListener(this);
 		createMenu();
 		createEditActions();
 		// the focus tracker is used to activate the handlers, when the widget
@@ -235,7 +236,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	}
 
 	protected IDocument createDocument(String text) {
-		IDocument doc = new Document();
+		final IDocument doc = new Document();
 		doc.set(text);
 		return doc;
 	}
@@ -516,9 +517,10 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		editorText.setFont(parent.getFont());
 		final int start = inter.getOffset();
 		final StyleRange parentRange = parent.getStyleRangeAtOffset(start);
+		// the background is null to reuse overlay's default background
 		if (parentRange != null)
-			editorText.setStyleRange(new StyleRange(0, inter.getLength(),
-					parentRange.foreground, IRodinColorConstant.BG_COLOR,
+			editorText.setStyleRange(new StyleRange(0, editorText.getText()
+					.length(), parentRange.foreground, null,
 					parentRange.fontStyle));
 	}
 
