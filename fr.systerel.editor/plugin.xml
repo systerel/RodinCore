@@ -794,5 +794,32 @@
          </with>
       </definition>
    </extension>
+   <extension
+         point="org.eclipse.ui.activities">
+      <activity
+            id="activity.runas"
+            name="HideRunAs">
+      </activity>
+      <activityPatternBinding
+            activityId="activity.runas"
+            pattern="org\.eclipse\.debug\.ui/.*">
+      </activityPatternBinding>
+      <activity
+            id="activity.team"
+            name="HideTeam">
+      </activity>
+      <activityPatternBinding
+            activityId="activity.team"
+            pattern="org\.eclipse\.team\.ui/.*">
+      </activityPatternBinding>
+      <activity
+            id="activity.replace"
+            name="HideReplace">
+      </activity>
+      <activityPatternBinding
+            activityId="activity.replace"
+            pattern="org\.eclipse\.compare/.*">
+      </activityPatternBinding>
+   </extension>
 
 </plugin>
