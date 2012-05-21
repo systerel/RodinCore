@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2009 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,11 +30,12 @@ package org.rodinp.core.indexer;
  * The way declarations are linked to each other through occurrences depends on
  * indexers implementation. Such a link may or may not exist.
  * </p>
- * 
- * @noimplement This interface is not intended to be implemented by clients.
- * @noextend This interface is not intended to be extended by clients.
+ * <p>
+ * This interface is intended to be implemented by clients.
+ * </p>
  * 
  * @author Nicolas Beauger
+ * 
  * @since 1.0
  */
 public interface IPropagator {
