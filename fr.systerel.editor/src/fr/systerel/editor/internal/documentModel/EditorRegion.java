@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class EditorRegion {
 	private final ILElement element;
 	private final ContentType type;
 	private final IAttributeManipulation manipulation;
-	private final Boolean multiline;
+	private final boolean multiline;
 	private final String alignmentStr;
 
 	public EditorRegion(int startOffset, int level, String text,
