@@ -540,15 +540,26 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	
 	@Override
 	public void verifyKey(VerifyEvent event) {
-		if (contentProposal.isProposalPopupOpen() && event.character == SWT.CR) {
+		// if the character is not the return key, return
+		if (!(event.character == SWT.CR)) {
+			return;
+		}
+		if (contentProposal.isProposalPopupOpen()) {
 			// do not add the return to the text
 			event.doit = false;
 			return;
 		}
-		if ((event.stateMask == SWT.NONE) && event.character == SWT.CR) {
+		if ((event.stateMask == SWT.NONE)) {
+			// this is the escape to quit overlay edition and save
 			// do not add the return to the text
 			event.doit = false;
 			saveAndExit(true);
+			return;
+		}
+		if ((interval != null && !interval.isMultiLine())) {
+			// swallow the carriage return as the content is single lined
+			event.doit = false;
+			return;
 		}
 	}
 
