@@ -12,6 +12,7 @@ package fr.systerel.editor.internal.editors;
 
 import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.changeAttribute;
 import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
+import static org.eclipse.jface.bindings.keys.KeyStroke.NO_KEY;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
@@ -26,6 +27,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -87,6 +91,8 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 public class OverlayEditor implements IAnnotationModelListenerExtension,
 		ExtendedModifyListener, VerifyKeyListener, IMenuListener {
 
+	private static final int CR = KeyLookupFactory.getDefault().formalKeyLookup(IKeyLookup.CR_NAME);
+	
 	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID
 			+ ".editorText";
 
@@ -540,8 +546,10 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	
 	@Override
 	public void verifyKey(VerifyEvent event) {
+		final KeyStroke keystroke = RodinEditorUtils
+				.convertEventToKeystroke(event);
 		// if the character is not the return key, return
-		if (!(event.character == SWT.CR)) {
+		if (!(keystroke.getNaturalKey() == CR)) {
 			return;
 		}
 		if (contentProposal.isProposalPopupOpen()) {
@@ -549,7 +557,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			event.doit = false;
 			return;
 		}
-		if ((event.stateMask == SWT.NONE)) {
+		if (keystroke.getModifierKeys() == NO_KEY) {
 			// this is the escape to quit overlay edition and save
 			// do not add the return to the text
 			event.doit = false;

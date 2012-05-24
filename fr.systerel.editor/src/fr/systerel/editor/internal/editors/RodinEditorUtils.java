@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,17 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import static org.eclipse.jface.bindings.keys.SWTKeySupport.convertAcceleratorToKeyStroke;
+import static org.eclipse.jface.bindings.keys.SWTKeySupport.convertEventToUnmodifiedAccelerator;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -29,6 +33,19 @@ import fr.systerel.editor.EditorPlugin;
  */
 public class RodinEditorUtils {
 	
+	
+	/**
+	 * Converts the given SWT event into a JFace keystroke. This method allows
+	 * to further use the JFace cross-platform layer to handle keyboard events.
+	 * 
+	 * @param event
+	 *            the {@link VerifyEvent} to be converted as {@link KeyStroke}
+	 * @return the keystroke corresponding to the given event
+	 */
+	public static KeyStroke convertEventToKeystroke(VerifyEvent event) {
+		return convertAcceleratorToKeyStroke(convertEventToUnmodifiedAccelerator(event));
+	}
+
 	public static void debug(String message) {
 		System.out.println(EditorPlugin.DEBUG_PREFIX + message);
 	}

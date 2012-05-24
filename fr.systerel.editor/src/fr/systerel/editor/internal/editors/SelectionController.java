@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,17 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import static fr.systerel.editor.internal.editors.RodinEditorUtils.convertEventToKeystroke;
+import static org.eclipse.jface.bindings.keys.KeyStroke.NO_KEY;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
@@ -50,6 +56,10 @@ import fr.systerel.editor.internal.editors.Selections.SelectionEffect;
  */
 public class SelectionController implements MouseListener, VerifyListener,
 		VerifyKeyListener, ISelectionProvider {
+
+	private static final Integer CR = KeyLookupFactory.getDefault()
+			.formalKeyLookupInteger(IKeyLookup.CR_NAME);
+
 
 	// TODO tracing
 	public static boolean DEBUG;
@@ -247,7 +257,9 @@ public class SelectionController implements MouseListener, VerifyListener,
 	
 	@Override
 	public void verifyKey(VerifyEvent event) {
-		if (event.character == SWT.CR) {
+		final KeyStroke keystroke = convertEventToKeystroke(event);
+		if (keystroke.getNaturalKey() == CR
+				&& keystroke.getModifierKeys() == NO_KEY) {
 			overlayEditor.showAtOffset(styledText.getCaretOffset());
 		}
 	}
