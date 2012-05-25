@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *     Systerel - Added a constant for the user support manager
  ******************************************************************************/
 package org.eventb.internal.ui.prover;
+
+import static org.eventb.internal.ui.prover.ProverUI.PROVERUI_SCOPE;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IMenuManager;
@@ -31,6 +33,7 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.utils.ContextHelper;
 
 /**
  * @author htson
@@ -62,6 +65,8 @@ public abstract class HypothesisPage extends Page implements
 	HypothesisComposite hypComp;
 	
 	private ProofStatusLineManager statusManager;
+
+	private ContextHelper proverUIScopeHelper;
 	
 	/**
 	 * Constructor.
@@ -104,6 +109,7 @@ public abstract class HypothesisPage extends Page implements
 		USM.removeChangeListener(this);
 		// Disposing the main hypothesis composite
 		hypComp.dispose();
+		proverUIScopeHelper.disableContext();
 		super.dispose();
 	}
 	
@@ -116,9 +122,11 @@ public abstract class HypothesisPage extends Page implements
 	 */
 	@Override
 	public void createControl(Composite parent) {
+		proverUIScopeHelper = ContextHelper.activateContext(getSite(),
+				PROVERUI_SCOPE);
 		// Create the content of the hypothesis composite.
 		hypComp.createControl(parent);
-		// Contribute to different action bars.  
+		// Contribute to different action bars.
 		contributeToActionBars();
 	}
 

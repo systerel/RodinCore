@@ -1792,6 +1792,11 @@
             id="org.eventb.ui.refine"
             name="%commands.refine.name">
       </command>
+      <category
+            description="%categories.ProvingDescription"
+            id="org.eventb.ui.categories.prove"
+            name="%categories.ProvingName">
+      </category>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -1804,6 +1809,11 @@
             description="%contexts.textEditCompositeScopeDescription"
             id="org.eventb.ui.contexts.textEditCompositeScope"
             name="%contexts.textEditCompositeScopeName">
+      </context>
+      <context
+            description="%contexts.proverUIScopeDescription"
+            id="org.eventb.ui.contexts.proverUIScope"
+            name="%contexts.proverUIScopeName">
       </context>
    </extension>
    <extension
@@ -1820,13 +1830,15 @@
             sequence="M3+ARROW_DOWN"/>
       <key
             commandId="org.eventb.ui.prove.highlight"
+            contextId="org.eventb.ui.contexts.proverUIScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M2+M3+S">
       </key>
       <key
             commandId="org.eventb.ui.prove.restoreStyles"
+            contextId="org.eventb.ui.contexts.proverUIScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M3+ESC">
+            sequence="ESC">
       </key>
    </extension>
    <extension
@@ -1977,14 +1989,14 @@
             class="org.eventb.internal.ui.prover.handlers.RestoreStyles"
             commandId="org.eventb.ui.prove.restoreStyles">
          <activeWhen>
-             <reference
-                   definitionId="org.eventb.ui.inProverUI">
-             </reference>
+            <reference
+                  definitionId="org.eventb.ui.inProverUI">
+            </reference>
          </activeWhen>
          <enabledWhen>
-             <reference
-                   definitionId="org.eventb.ui.inProverUI">
-             </reference>
+            <reference
+                  definitionId="org.eventb.ui.inProverUI">
+            </reference>
          </enabledWhen>
       </handler>
       <handler

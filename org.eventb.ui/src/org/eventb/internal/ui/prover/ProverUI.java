@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ import org.eventb.internal.ui.prooftreeui.IProofTreeUIPage;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUIPage;
 import org.eventb.internal.ui.searchhypothesis.ISearchHypothesisPage;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisPage;
+import org.eventb.internal.ui.utils.ContextHelper;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -79,10 +80,15 @@ public class ProverUI extends EventBFormEditor implements
 
 	/**
 	 * The identifier of the Prover UI editor (value
-	 * <code>"org.eventb.internal.ui"</code>).
+	 * <code>"org.eventb.ui.editors.ProverUI"</code>).
 	 */
 	public static final String EDITOR_ID = EventBUIPlugin.PLUGIN_ID
 			+ ".editors.ProverUI";
+	/**
+	 * The identifier of the Prover UI editor scope.
+	 */
+	static final String PROVERUI_SCOPE = EventBUIPlugin.PLUGIN_ID
+			+ ".contexts.proverUIScope";
 
 	// The outline page
 	private ProofTreeUIPage fProofTreeUI;
@@ -114,6 +120,8 @@ public class ProverUI extends EventBFormEditor implements
 	
 	private boolean saving;
 
+	private ContextHelper editorScopeHelper;
+
 	/**
 	 * Constructor: Create a new UserSupport.
 	 */
@@ -128,7 +136,7 @@ public class ProverUI extends EventBFormEditor implements
 	public void init(IEditorSite site, IEditorInput input)
 			throws PartInitException {
 		super.init(site, input);
-		
+		editorScopeHelper = ContextHelper.activateContext(site, PROVERUI_SCOPE);
 	}
 
 	/*
@@ -207,7 +215,7 @@ public class ProverUI extends EventBFormEditor implements
 		userSupport.dispose();
 		if (fProofTreeUI != null)
 			fProofTreeUI.setInput(null);
-		
+		editorScopeHelper.disableContext();
 		super.dispose();
 	}
 

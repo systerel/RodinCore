@@ -745,7 +745,7 @@
             commandId="fr.systerel.editor.abortEditionFreeSelection"
             contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M3+ESC">
+            sequence="ESC">
       </key>
       <key
             commandId="fr.systerel.editor.traverseNext"
