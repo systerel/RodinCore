@@ -22,6 +22,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
@@ -199,8 +200,12 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	protected void replaceTextInDocument(final int offset, final int length,
 			final String text) {
 		if (document != null) {
-			editor.getStyledText().getDisplay().syncExec(new Runnable() {
-
+			final StyledText styledText = editor.getStyledText();
+			if (styledText.isDisposed()) {
+				return;
+			}
+			styledText.getDisplay().syncExec(new Runnable() {
+				
 				@Override
 				public void run() {
 					if (document != null) {

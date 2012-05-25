@@ -47,6 +47,8 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
+import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc;
+import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc.Style;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -65,7 +67,8 @@ public class RodinTextGenerator {
 
 	private final DocumentMapper mapper;
 	private static final int ONE_TABS_INDENT = 1;
-
+	private static final String WHITESPACE = " ";
+	
 	private RodinTextStream stream;
 
 	public RodinTextGenerator(DocumentMapper mapper) {
@@ -169,19 +172,12 @@ public class RodinTextGenerator {
 	 * Processes the attributes other than comments.
 	 */
 	private void processOtherAttributes(ILElement element, TextAlignator sizer) {
-		int i = 0;
 		final IInternalElement rElement = element.getElement();
-		boolean addTab = false;
 		for (IAttributeDesc d : getAttributeDescs(element.getElementType())) {
-			addTab = true;
-			final String space = " ";
-			stream.addPresentationRegion(space, element);
-			sizer.append(space);
+			stream.addPresentationRegion(WHITESPACE, element);
+			sizer.append(WHITESPACE);
 			String value = "";
 			try {
-				if (i == 0)
-					stream.addPresentationRegion(space, element);
-				sizer.append(space);
 				final IAttributeManipulation manipulation = d.getManipulation();
 				if (!manipulation.hasValue(rElement, null)
 						&& manipulation.getPossibleValues(rElement, null) != null) {
@@ -191,26 +187,25 @@ public class RodinTextGenerator {
 				}
 				final String prefix = d.getPrefix();
 				if (!prefix.isEmpty()) {
-					stream.addPresentationRegion(prefix, element);
-					sizer.append(prefix);
+					stream.addPresentationRegion(prefix + WHITESPACE, element);
+					sizer.append(prefix + WHITESPACE);
 				}
+				final boolean multiline = (d instanceof TextDesc && ((TextDesc) d)
+						.getStyle().equals(Style.MULTI));
+				final String fas = sizer.getAllAlignementString();
 				stream.addAttributeRegion(value, element, manipulation,
-						d.getAttributeType());
-				sizer.append(value);
+						d.getAttributeType(), multiline,
+						getTabs(stream.getLevel()) + fas);
+				sizer.appendCheckForMultiline(value);
 				final String suffix = d.getSuffix();
 				if (!suffix.isEmpty()) {
-					stream.addPresentationRegion(suffix, element);
-					sizer.append(suffix);
+					stream.addPresentationRegion(WHITESPACE + suffix, element);
+					sizer.append(WHITESPACE + suffix);
 				}
-				i++;
 			} catch (RodinDBException e) {
 				value = "failure while loading";
 				e.printStackTrace();
 			}
-		}
-		if (addTab) {
-			sizer.append(RodinTextStream.TAB);
-			stream.appendAlignementTab(element);
 		}
 	}
 
@@ -250,8 +245,6 @@ public class RodinTextGenerator {
 				getContentType(element, IMPLICIT_CONTENT_TYPE, CONTENT_TYPE),
 				true,
 				getTabs(stream.getLevel()) + sizer.getFirstAlignementString());
-		stream.appendAlignementTab(element);
-		sizer.append(RodinTextStream.TAB);
 	}
 
 	private void processIdentifierElement(ILElement element, TextAlignator sizer) {

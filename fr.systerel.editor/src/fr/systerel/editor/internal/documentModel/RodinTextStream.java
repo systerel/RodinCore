@@ -108,9 +108,10 @@ public class RodinTextStream {
 	}
 
 	protected void addAttributeRegion(String text, ILElement element,
-			IAttributeManipulation manipulation, IAttributeType attributeType) {
+			IAttributeManipulation manipulation, IAttributeType attributeType,
+			boolean multiline, String alignStr) {
 		addElementRegion(text, element, getAttributeContentType(attributeType),
-				manipulation, false, "");
+				manipulation, multiline, alignStr);
 	}
 
 	protected void addLabelRegion(String text, ILElement element) {
