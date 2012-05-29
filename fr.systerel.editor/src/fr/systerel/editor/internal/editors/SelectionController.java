@@ -186,6 +186,12 @@ public class SelectionController implements MouseListener, VerifyListener,
 				resetSelection(offset);
 			}
 		} else {
+			if (overlayEditor.isActive()) {
+				// the user clicked outside the overlay editor
+				// as this listener is on the main text therefore
+				// we quit overlay edition
+				overlayEditor.saveAndExit(false);
+			}
 			resetSelection(offset);
 		}
 	}
