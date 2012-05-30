@@ -285,7 +285,11 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		final int targetLine = parent.getLineAtOffset(offset);
 		final int overlayLine = targetLine - startLine;
 		final int alignement = interval.getAlignement().length();
-		return offset - startOffset - overlayLine * alignement;
+		if (interval.isAddWhiteSpace()) {
+			return offset - startOffset - overlayLine * (alignement + 1);
+		} else {
+			return offset - startOffset - overlayLine * alignement;
+		}
 	}
 	
 	private int overlayToEditorOffset() {
@@ -293,7 +297,11 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		final int overlayOffset = editorText.getCaretOffset();
 		final int line = editorText.getLineAtOffset(overlayOffset);
 		final int alignement = interval.getAlignement().length();
-		return startOffset + overlayOffset + line * alignement;
+		if (interval.isAddWhiteSpace()) {
+			return startOffset + overlayOffset + line * (alignement + 1);
+		} else {
+			return startOffset + overlayOffset + line * alignement;
+		}
 	}
 
 	private void changeBooleanValue(Interval inter) {
