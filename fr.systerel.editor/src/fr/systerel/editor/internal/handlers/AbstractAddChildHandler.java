@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public abstract class AbstractAddChildHandler extends AbstractEditionHandler {
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Subclasses MUST override this method, or its parent
 	 * <code>execute()</code>.
