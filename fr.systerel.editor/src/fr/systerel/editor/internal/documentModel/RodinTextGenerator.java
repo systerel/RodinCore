@@ -207,6 +207,8 @@ public class RodinTextGenerator {
 				e.printStackTrace();
 			}
 		}
+		stream.addPresentationRegion(WHITESPACE, element);
+		sizer.append(WHITESPACE);
 	}
 
 	private void processStringEventBAttribute(ILElement element,
