@@ -118,6 +118,8 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 
 	private IContextActivation defaultContext;
 
+	private ContextMenuSimplifier contextMenuSimplifier;
+
 	public RodinEditor() {
 		setEditorContextMenuId(EDITOR_ID);
 		documentProvider = new RodinDocumentProvider(mapper, this);
@@ -168,6 +170,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		markerAnnotationsUpdater.initializeMarkersAnnotations();
 	
 		setTitleImageAndPartName();
+		contextMenuSimplifier = ContextMenuSimplifier.startSimplifying(styledText.getMenu());
 	}
 
 	private void setTitleImageAndPartName() {
@@ -190,6 +193,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	@Override
 	public void dispose() {
 		close(false);
+		contextMenuSimplifier.finishSimplifying();
 		if (markerAnnotationsUpdater != null){
 			markerAnnotationsUpdater.dispose();			
 		}
