@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,24 +25,28 @@ import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
 
 /**
- * This is the short version of the AddChild menu that is displayed via the
- * keyboard shortcut.
+ * This abstract class provides the short version of the Add"xxx" menus
+ * displayed via the keyboard shortcut.
  * 
  * @author "Thomas Muller"
  */
-public class QuickAddChildHandler extends AbstractAddChildHandler {
+public abstract class QuickAddElementHandler extends AbstractAddElementHandler {
 
 	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
-		final ChildCreationInfo possibility = editor.getDocumentMapper()
-				.getChildCreationPossibility(offset);
-		if (possibility != null) {
+		final ChildCreationInfo possibility = getCreationPossibility(editor,
+				offset);
+		if (possibility != null
+				&& !possibility.getPossibleChildTypes().isEmpty()) {
 			showTipMenu(editor, offset, possibility, editor.getStyledText());
 			return null;
 		}
-		return "No possible Child Creation";
+		return "No possible element creation";
 	}
 
+	protected abstract ChildCreationInfo getCreationPossibility(RodinEditor editor, int offset);
+	
+	
 	/**
 	 * The quick version of the menu which is displayed after the user pressed
 	 * the keyboard shortcut.
@@ -55,12 +59,12 @@ public class QuickAddChildHandler extends AbstractAddChildHandler {
 		if (pChildTypes.size() == 1) {
 			final IInternalElementType<?>[] a = pChildTypes
 					.toArray(new IInternalElementType<?>[1]);
-			createChildAndRefresh(editor, childInfo, a[0]);
+			createElementAndRefresh(editor, childInfo, a[0]);
 			return;
 		}
 		for (final IInternalElementType<?> type : pChildTypes) {
 			final MenuItem item = new MenuItem(tipMenu, SWT.PUSH);
-			item.setText(type.getName());
+			item.setText(getLabel(type));
 			item.addSelectionListener(new SelectionListener() {
 
 				@Override
@@ -70,7 +74,7 @@ public class QuickAddChildHandler extends AbstractAddChildHandler {
 
 				@Override
 				public void widgetSelected(SelectionEvent se) {
-					createChildAndRefresh(editor, childInfo, type);
+					createElementAndRefresh(editor, childInfo, type);
 				}
 
 			});
@@ -79,6 +83,33 @@ public class QuickAddChildHandler extends AbstractAddChildHandler {
 		final Point mapped = parent.getDisplay().map(parent, null, loc);
 		tipMenu.setLocation(mapped);
 		tipMenu.setVisible(true);
+	}
+	
+	private String getLabel(IInternalElementType<?> t) {
+		final StringBuilder b = new StringBuilder();
+		b.append("Add ");
+		b.append(t.getName().replaceFirst("Event-B", ""));
+		return b.toString();
+	}
+	
+	public static class QuickAddChildHandler extends QuickAddElementHandler {
+
+		@Override
+		protected ChildCreationInfo getCreationPossibility(RodinEditor editor,
+				int offset) {
+			return editor.getDocumentMapper().getChildCreationPossibility(offset);
+		}
+		
+	}
+	
+	public static class QuickAddSiblingHandler extends QuickAddElementHandler {
+
+		@Override
+		protected ChildCreationInfo getCreationPossibility(RodinEditor editor,
+				int offset) {
+			return editor.getDocumentMapper().getSiblingCreationPossibility(offset);
+		}
+		
 	}
 
 }

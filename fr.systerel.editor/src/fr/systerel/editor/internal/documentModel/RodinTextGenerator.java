@@ -66,7 +66,6 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 public class RodinTextGenerator {
 
 	private final DocumentMapper mapper;
-	private static final int ONE_TABS_INDENT = 1;
 	private static final String WHITESPACE = " ";
 	
 	private RodinTextStream stream;
@@ -94,9 +93,9 @@ public class RodinTextGenerator {
 		final IInternalElement element = e.getElement();
 		final IElementDesc desc = ElementDescRegistry.getInstance()
 				.getElementDesc(element);
-		stream.addSectionRegion(desc.getPrefix());
-		stream.incrementIndentation(ONE_TABS_INDENT);
-		stream.appendPresentationTabs(e, ONE_TABS_INDENT);
+		stream.addSectionRegion(desc.getPrefix(), e);
+		stream.incrementIndentation();
+		stream.appendPresentationTabs(e, 1);
 		final TextAlignator sizer = new TextAlignator();
 		stream.appendAlignementTab(e);
 		stream.addLabelRegion(element.getElementName(), e);
@@ -104,15 +103,15 @@ public class RodinTextGenerator {
 		processOtherAttributes(e, sizer);
 		stream.appendAlignementTab(e);
 		processCommentedElement(e, sizer);
-		stream.appendLineSeparator();
-		stream.decrementIndentation(ONE_TABS_INDENT);
+		stream.appendLineSeparator(e);
+		stream.decrementIndentation();
 		traverse(monitor, e);
 	}
 
 	private void traverse(IProgressMonitor mon, ILElement e) {
 		final IElementDesc desc = getElementDesc(e);
 		if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
-			stream.incrementIndentation(ONE_TABS_INDENT);
+			stream.incrementIndentation();
 		}
 		for (IElementRelationship rel : desc.getChildRelationships()) {
 			final List<ILElement> c = retrieveChildrenToProcess(rel, e);
@@ -126,31 +125,31 @@ public class RodinTextGenerator {
 			}
 			start = stream.getLength();
 			if (stream.getLevel() < MIN_LEVEL) {
-				stream.addSectionRegion(childDesc.getPrefix());
+				stream.addSectionRegion(childDesc.getPrefix(), e);
 			} else {
-				stream.addKeywordRegion(childDesc.getPrefix());
+				stream.addKeywordRegion(childDesc.getPrefix(), e);
 			}
-			stream.incrementIndentation(ONE_TABS_INDENT);
+			stream.incrementIndentation();
 			for (ILElement in : c) {
 				stream.appendLeftPresentationTabs(in);
 				processElement(in);
 				traverse(mon, in);
 				if (in.getElementType() == IEvent.ELEMENT_TYPE) {
-					stream.appendLineSeparator();
+					stream.appendLineSeparator(e);
 				}
 			}
-			stream.decrementIndentation(ONE_TABS_INDENT);
-			final int length = stream.getLength() - start;
-			if (start != -1 && !noChildren && stream.getLevel() <= MIN_LEVEL) {
+			stream.decrementIndentation();
+			final int length = stream.getLength() - start -1;
+			if (start != -1 && stream.getLevel() <= MIN_LEVEL) {
 				mapper.addEditorSection(rel.getChildType(), start, length);
 				start = -1;
 			}
 		}
 		final String childrenSuffix = desc.getChildrenSuffix();
 		if (!childrenSuffix.isEmpty())
-			stream.addKeywordRegion(childrenSuffix);
+			stream.addKeywordRegion(childrenSuffix, e);
 		if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
-			stream.decrementIndentation(ONE_TABS_INDENT);
+			stream.decrementIndentation();
 		}
 	}
 
@@ -277,7 +276,7 @@ public class RodinTextGenerator {
 		}
 		if (!element.getChildren().isEmpty()
 				&& element.getAttributes().isEmpty()) {
-			stream.appendLineSeparator();
+			stream.appendLineSeparator(element);
 		}
 	}
 
@@ -315,7 +314,8 @@ public class RodinTextGenerator {
 		if (rodinElement instanceof ICommentedElement) {
 			processCommentedElement(element, sizer);
 		}
-		stream.appendLineSeparator();
+		// the separator belongs to the parent element
+		stream.appendLineSeparator(element.getParent());
 	}
 
 	private static ContentType getContentType(ILElement element,

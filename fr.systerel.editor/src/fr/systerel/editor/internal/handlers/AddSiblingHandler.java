@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,124 +10,47 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
-import static org.rodinp.core.emf.api.itf.ILUtils.getNextSibling;
-
-import org.eventb.ui.manipulation.ElementManipulationFacade;
-import org.rodinp.core.IInternalElement;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinDBException;
-import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.RodinCore;
 
-import fr.systerel.editor.internal.documentModel.DocumentMapper;
-import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.RodinEditor;
+import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
 
 /**
  * Handler to add siblings.
  */
-public class AddSiblingHandler extends AbstractEditionHandler {
+public class AddSiblingHandler extends AbstractAddElementHandler {
+
+	private static final String ERROR = "An error occured. No sibling was created.";
 
 	@Override
-	protected String handleSelection(RodinEditor editor, int offset) {
-		final SiblingCreationInfo info = getSiblingCreationInfo(editor, offset);
-		if (info == null) {
-			return "No possible Sibling creation";
-		}
-		ElementManipulationFacade.createElementGeneric(info.getParent(),
-				info.getElementType(), info.getSibling());
-		return "Added Sibling";
-	}
-	
-	private static SiblingCreationInfo getSiblingCreationInfo(
-			RodinEditor editor, int offset) {
-		final SiblingCreationInfo info = new SiblingCreationInfo();
-		final DocumentMapper mapper = editor.getDocumentMapper();
-		final Interval interAfter = mapper
-				.findEditableKindOfIntervalAfter(offset);
-		if (interAfter == null) {
-			return null;
-		}
-		final ILElement element = interAfter.getElement();
-		if (element == null) {
-			return null;
-		}
-		final ILElement parent = element.getParent();
-		if (parent == null) { // we are next to an implicit element;
-			return getInfoForImplicitKindOfSibling(offset, info, mapper,
-					element);
-		}
-		info.setParent(parent.getElement());
-		info.setElementType(element.getElementType());
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {
-			final IInternalElement nextSibling;
-			nextSibling = getNextSibling(parent, element.getElement());
-			info.setSibling(nextSibling);
-			return info;
-		} catch (RodinDBException e) {
-			e.printStackTrace();
+			final String parameter = event.getParameter(TYPE_ID);
+			if (parameter == null || parameter.isEmpty()) {
+				return "No possible sibling Creation";
+			}
+			final IInternalElementType<?> elementType = (IInternalElementType<?>) RodinCore
+					.getElementType(parameter);
+			final RodinEditor editor = getActiveRodinEditor(event);
+			if (editor == null)
+				return ERROR;
+			createElementAndRefresh(editor,
+					getCreationPossibility(editor, editor.getCurrentOffset()),
+					elementType);
+			return "Sibling created.";
+		} catch (IllegalArgumentException e) {
+			return ERROR;
 		}
-		return null;
 	}
 
-	private static SiblingCreationInfo getInfoForImplicitKindOfSibling(
-			int offset, final SiblingCreationInfo info,
-			final DocumentMapper mapper, final ILElement element) {
-		if (!element.isImplicit()) {
-			return null;
-		}
-		final Interval iBF = mapper.findEditableIntervalBefore(offset);
-		if (iBF == null) {
-			return null;
-		}
-		final ILElement aSiblingBefore = iBF.getElement();
-		if (aSiblingBefore == null) {
-			return null;
-		}
-		final ILElement pBF = aSiblingBefore.getParent();
-		if (pBF == null) {
-			return null;
-		}
-		info.setParent(pBF.getElement());
-		info.setElementType(element.getElementType());
-		return info;
-	}
-	
-	
 	@Override
-	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
-		return getSiblingCreationInfo(editor, caretOffset) != null;
-	}
-	
-	protected static class SiblingCreationInfo {
-		
-		private IInternalElement parent;
-		private IInternalElementType<?> elementType;
-		private IInternalElement sibling;
-		
-		public void setParent(IInternalElement parent) {
-			this.parent = parent;
-		}
-
-		public IInternalElement getParent() {
-			return parent;
-		}
-
-		public void setSibling(IInternalElement sibling) {
-			this.sibling = sibling;
-		}
-
-		public IInternalElement getSibling() {
-			return sibling;
-		}
-		
-		public void setElementType(IInternalElementType<?> elementType) {
-			this.elementType = elementType;
-		}
-		
-		public IInternalElementType<?> getElementType() {
-			return elementType;
-		}
-		
-	}
+	protected ChildCreationInfo getCreationPossibility(RodinEditor editor,
+			int caretOffset) {
+		return editor.getDocumentMapper().getSiblingCreationPossibility(
+				caretOffset);
+	};
 
 }

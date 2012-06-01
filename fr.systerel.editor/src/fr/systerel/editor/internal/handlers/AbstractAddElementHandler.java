@@ -25,9 +25,12 @@ import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
  * 
  * @author "Thomas Muller"
  */
-public abstract class AbstractAddChildHandler extends AbstractEditionHandler {
+public abstract class AbstractAddElementHandler extends AbstractEditionHandler {
 
-	protected void createChildAndRefresh(final RodinEditor editor,
+	protected static final String TYPE_ID = "typeID";
+
+	
+	protected void createElementAndRefresh(final RodinEditor editor,
 			final ChildCreationInfo childInfo,
 			final IInternalElementType<?> type) {
 		final ILElement nextSibling = childInfo.getNextSibling();
@@ -49,17 +52,15 @@ public abstract class AbstractAddChildHandler extends AbstractEditionHandler {
 
 	@Override
 	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
-		final ChildCreationInfo possibility = editor.getDocumentMapper()
-				.getChildCreationPossibility(caretOffset);
-		if (possibility == null) {
-			return false;
-		}
-		if (possibility.getPossibleChildTypes().isEmpty()) {
-			return false;
-		}
-		return true;
+		final ChildCreationInfo possibility = getCreationPossibility(editor,
+				caretOffset);
+		return possibility != null
+				&& !possibility.getPossibleChildTypes().isEmpty();
 	}
 	
+	protected abstract ChildCreationInfo getCreationPossibility(RodinEditor editor,
+			int caretOffset);
+
 	/**
 	 * Subclasses MUST override this method, or its parent
 	 * <code>execute()</code>.

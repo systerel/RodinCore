@@ -18,9 +18,8 @@ import org.rodinp.core.RodinCore;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.handlers.context.ChildCreationInfo;
 
-public class AddChildHandler extends AbstractAddChildHandler {
+public class AddChildHandler extends AbstractAddElementHandler {
 
-	private static final String TYPE_ID = "typeID";
 	private static final String ERROR = "An error occured. No child was created.";
 
 	@Override
@@ -35,13 +34,20 @@ public class AddChildHandler extends AbstractAddChildHandler {
 			final RodinEditor editor = getActiveRodinEditor(event);
 			if (editor == null)
 				return ERROR;
-			final ChildCreationInfo possibility = editor.getDocumentMapper()
-					.getChildCreationPossibility(editor.getCurrentOffset());
-			createChildAndRefresh(editor, possibility, elementType);
+			createElementAndRefresh(editor,
+					getCreationPossibility(editor, editor.getCurrentOffset()),
+					elementType);
 			return "Child created.";
 		} catch (IllegalArgumentException e) {
 			return ERROR;
 		}
+	}
+
+	@Override
+	protected ChildCreationInfo getCreationPossibility(RodinEditor editor,
+			int caretOffset) {
+		return editor.getDocumentMapper().getChildCreationPossibility(
+				caretOffset);
 	};
 
 }

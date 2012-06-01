@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,17 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
-import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getChildPossibleTypes;
+import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getChildrenTypes;
 import static fr.systerel.editor.internal.editors.EditPos.isValidStartEnd;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -317,8 +317,8 @@ public class DocumentMapper {
 			if (inter != null) {
 				inter.setPos(pos);
 			} else {
-				inter = new Interval(pos, element, type,
-						contentType, manipulation, multiLine, addWhitespace);
+				inter = new Interval(pos, element, type, contentType,
+						manipulation, multiLine, addWhitespace);
 				inter.setAlignement(align);
 				try {
 					addIntervalAfter(inter, previous);
@@ -331,8 +331,8 @@ public class DocumentMapper {
 				inter = intervals.get(intervals.indexOf(previous) + 1);
 				inter.setPos(pos);
 			} else {
-				inter = new Interval(pos, element, type,
-						contentType, manipulation, multiLine, addWhitespace);
+				inter = new Interval(pos, element, type, contentType,
+						manipulation, multiLine, addWhitespace);
 				inter.setAlignement(align);
 				try {
 					addInterval(inter);
@@ -404,7 +404,13 @@ public class DocumentMapper {
 	public EditorElement findItemContaining(int offset) {
 		for (EditorElement element : editorElements.getItems()) {
 			if (element.contains(offset)) {
-				return element;
+				final Interval interAfter = findEditableIntervalAfter(offset);
+				final ILElement elem = element.getLightElement(); 
+				final ILElement elementAfter = interAfter.getElement();
+				if (elem != null && elem.equals(elementAfter)){
+					return element;
+				}
+				return findEditorElement(elementAfter);
 			}
 		}
 		return null;
@@ -422,13 +428,13 @@ public class DocumentMapper {
 		int start = pos.getStart();
 		int end = pos.getEnd();
 		if(!isValidStartEnd(start, end, false)) return null;
-		final ILElement el = editorItem.getLightElement();
-		for (ILElement child : el.getChildren()) {
-			final EditPos childPos = getEnclosingPosition(child);
-			if (childPos == null) continue;
-			start = Math.min(start, childPos.getStart());
-			end = Math.max(end, childPos.getEnd());
-		}
+//		final ILElement el = editorItem.getLightElement();
+//		for (ILElement child : el.getChildren()) {
+//			final EditPos childPos = getEnclosingPosition(child);
+//			if (childPos == null) continue;
+//			start = Math.min(start, childPos.getStart());
+//			end = Math.max(end, childPos.getEnd());
+//		}
 		return newPosStartEnd(start, end);
 	}
 	
@@ -473,13 +479,36 @@ public class DocumentMapper {
 
 	public Position[] getFoldingPositions() {
 		final List<Position> result = new ArrayList<Position>();
-		addFoldingPositions(editorElements.getItems(), result);
-		addFoldingPositions(sections.values(), result);
-		
+		addFoldingPositions(getElementsInOrder(), result);		
 		if (DEBUG)
 			System.out.println("folding " + root.getElement() + ": " + result);
 		return result.toArray(new Position[result.size()]);
 	}
+	
+	public List<EditorItem> getElementsInOrder() {
+		final List<EditorItem> elems = new ArrayList<EditorItem>();
+		elems.addAll(editorElements.getItems());
+		elems.addAll(sections.values());
+		Collections.sort(elems, new Comparator<EditorItem>() {
+
+			@Override
+			public int compare(EditorItem o1, EditorItem o2) {
+				if (o1.getFoldingPosition() == null) {
+					if (o2.getFoldingPosition() == null)
+						return 0;
+					return 1;
+				} else if (o2.getFoldingPosition() == null) {
+					return -1;
+				}
+				if (o1.getFoldingPosition().offset < o2.getFoldingPosition().offset)
+					return -1;
+				return 1;
+			}
+			
+		});
+		return elems;
+	}
+	
 
 	private static void addFoldingPositions(
 			Collection<? extends EditorItem> items, List<Position> positions) {
@@ -496,8 +525,7 @@ public class DocumentMapper {
 	
 	public ProjectionAnnotation[] getFoldingAnnotations() {
 		final List<ProjectionAnnotation> result = new ArrayList<ProjectionAnnotation>();
-		addFoldingAnnotations(editorElements.getItems(), result);
-		addFoldingAnnotations(sections.values(), result);
+		addFoldingAnnotations(getElementsInOrder(), result);
 		return result.toArray(new ProjectionAnnotation[result.size()]);
 	}
 	
@@ -816,54 +844,57 @@ public class DocumentMapper {
 		return findAncestorOftype(descParent, type);
 	}
 
+	public void reinitialize() {
+		resetPrevious();
+		intervals.clear();
+		sections.clear();
+		editorElements.clear();
+	}
+
 	public ChildCreationInfo getChildCreationPossibility(final int selOffset) {
 		final int findIntervalIndex = findIntervalIndex(selOffset);
 		if (findIntervalIndex != -1) {
 			final Interval interval = intervals.get(findIntervalIndex);
 			final ILElement element = interval.getElement();
 			if (element != null) {
-				final EditorElement editElem = findEditorElement(element);
-				final Interval interAfter = findPotentiallyEditableIntervalAfter(editElem
-						.getPos().getEnd());
-				if (interAfter == null) {
-					return new ChildCreationInfo(
-							getChildPossibleTypes(element),
-							element, null);
-				}
-				final ILElement nextElement = interAfter.getElement();
-				if (nextElement != null) {
-					return new ChildCreationInfo(
-							getChildPossibleTypes(element), element,
-							nextElement);
-				}
-			} else {
-				final Interval interAfter = findPotentiallyEditableIntervalAfter(selOffset);
-				if (interAfter == null) {
-					return null;
-				}
-				final ILElement next = interAfter.getElement();
-				final IInternalElementType<? extends IInternalElement> elementType = next
-						.getElementType();
-				final EditorSection editSection = sections.get(elementType);
-				final Interval parentInterval = findEditableIntervalBefore(selOffset);
-				if (editSection != null && parentInterval != null) {
-					final ILElement sibling = (next.isImplicit()) ? null : next;
-					final ILElement parent = (next.getParent() == null) ? parentInterval
-							.getElement().getParent() : next.getParent();
-					final Set<IInternalElementType<? extends IInternalElement>> singleton = Collections
-							.<IInternalElementType<? extends IInternalElement>> singleton(elementType);
-					return new ChildCreationInfo(singleton, parent, sibling);
-				}
+				return getChildTypesFor(element, null);
+			}
+		}
+		return null;
+	}
+	
+	public ChildCreationInfo getSiblingCreationPossibility(final int selOffset) {
+		final int findIntervalIndex = findIntervalIndex(selOffset);
+		if (findIntervalIndex != -1) {
+			final Interval interval = intervals.get(findIntervalIndex);
+			final ILElement element = interval.getElement();
+			if (element == null)
+				return null;
+			ILElement parent = element.getParent();
+			if (parent != null) {
+				return getChildTypesFor(parent, element);
+			}
+			final Interval beforeElem = findEditableIntervalBefore(selOffset);
+			if (beforeElem != null) {
+				parent = beforeElem.getElement().getParent();
+				return getChildTypesFor(parent, null);
 			}
 		}
 		return null;
 	}
 
-	public void reinitialize() {
-		resetPrevious();
-		intervals.clear();
-		sections.clear();
-		editorElements.clear();
+	public ChildCreationInfo getChildTypesFor(final ILElement element,
+			ILElement sibling) {
+		final ILElement creationSibling;
+		if (sibling != null) {
+			final EditorElement siblingElem = findEditorElement(sibling);
+			creationSibling = findElementAfter(siblingElem.getPos().getEnd(),
+					sibling.getElementType());
+		} else {
+			creationSibling = null;
+		}
+		return new ChildCreationInfo(getChildrenTypes(element), element,
+				creationSibling);
 	}
 
 }

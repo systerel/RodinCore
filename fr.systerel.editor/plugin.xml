@@ -195,8 +195,22 @@
          </enabledWhen>
       </handler>
       <handler
-            class="fr.systerel.editor.internal.handlers.QuickAddChildHandler"
+            class="fr.systerel.editor.internal.handlers.QuickAddElementHandler$QuickAddChildHandler"
             commandId="fr.systerel.editor.showAddChild">
+         <activeWhen>
+            <reference
+                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+            </reference>
+         </activeWhen>
+         <enabledWhen>
+            <reference
+                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+            </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.QuickAddElementHandler$QuickAddSiblingHandler"
+            commandId="fr.systerel.editor.showAddSibling">
          <activeWhen>
             <reference
                   definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
@@ -277,6 +291,11 @@
             categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.addSibling"
             name="Add Sibling">
+         <commandParameter
+               id="typeID"
+               name="Element type ID"
+               optional="false">
+         </commandParameter>
       </command>
       <command
             categoryId="fr.systerel.editor.editionCategory"
@@ -331,6 +350,10 @@
       <command
             id="fr.systerel.editor.showAddChild"
             name="Show Add Child Menu">
+      </command>
+      <command
+            id="fr.systerel.editor.showAddSibling"
+            name="Show Add Sibling Menu">
       </command>
    </extension>
    <extension
@@ -424,20 +447,18 @@
       <menuContribution
             allPopups="false"
             locationURI="popup:fr.systerel.editor.editors.RodinEditor?before=additions">
-         <menu
-               commandId="fr.systerel.editor.showAddChild"
-               label="Add Child"
-               mnemonic="&amp;d">
-            <dynamic
-                  class="fr.systerel.editor.internal.handlers.DynamicAddChildContributionItem"
-                  id="fr.systerel.editor.addChildPossibilities">
-            </dynamic>
-         </menu>
-         <command
-               commandId="fr.systerel.editor.addSibling"
-               label="Add Sibling"
-               style="push">
-         </command>
+         <dynamic
+               class="fr.systerel.editor.internal.handlers.DynamicAddChildContributionItem"
+               id="fr.systerel.editor.addChildPossibilities">
+         </dynamic>
+         <dynamic
+               class="fr.systerel.editor.internal.handlers.DynamicAddSiblingContributionItem"
+               id="fr.systerel.editor.addSiblingPossibilities">
+         </dynamic>
+         <separator
+               name="fr.systerel.editor.CreationSeparator"
+               visible="true">
+         </separator>
          <command
                commandId="org.eclipse.ui.edit.copy"
                label="Copy"
@@ -718,16 +739,16 @@
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="fr.systerel.editor.addSibling"
+            commandId="fr.systerel.editor.showAddSibling"
             contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+T">
+            sequence="M1+M2+T">
       </key>
       <key
             commandId="fr.systerel.editor.showAddChild"
             contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M3+N">
+            sequence="M1+M2+N">
       </key>
       <key
             commandId="org.eclipse.ui.edit.text.select.lineUp"

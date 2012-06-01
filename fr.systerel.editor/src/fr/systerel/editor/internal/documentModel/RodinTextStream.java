@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,16 +131,16 @@ public class RodinTextStream {
 				COMMENT_HEADER_TYPE, false);
 	}
 
-	protected void addKeywordRegion(String title) {
-		appendPresentationTabs(null);
-		addElementRegion(title, null, KEYWORD_TYPE, false);
-		appendLineSeparator();
+	protected void addKeywordRegion(String title, ILElement element) {
+		appendPresentationTabs(element);
+		addElementRegion(title, element, KEYWORD_TYPE, false);
+		appendLineSeparator(element);
 	}
 
-	protected void addSectionRegion(String title) {
-		appendPresentationTabs(null);
-		addElementRegion(title, null, KEYWORD_TYPE, false);
-		appendLineSeparator();
+	protected void addSectionRegion(String title, ILElement element) {
+		appendPresentationTabs(element);
+		addElementRegion(title, element, KEYWORD_TYPE, false);
+		appendLineSeparator(element);
 	}
 
 	public static String getTabs(int number) {
@@ -163,8 +163,8 @@ public class RodinTextStream {
 		level--;
 	}
 	
-	public void appendLineSeparator() {
-		addPresentationRegion((String) LINESEPARATOR, null);
+	public void appendLineSeparator(ILElement element) {
+		addPresentationRegion((String) LINESEPARATOR, element);
 	}
 	
 	public int getLevel() {

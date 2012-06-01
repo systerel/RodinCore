@@ -193,7 +193,9 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	@Override
 	public void dispose() {
 		close(false);
-		contextMenuSimplifier.finishSimplifying();
+		if (contextMenuSimplifier != null) {
+			contextMenuSimplifier.finishSimplifying();
+		}
 		if (markerAnnotationsUpdater != null){
 			markerAnnotationsUpdater.dispose();			
 		}
