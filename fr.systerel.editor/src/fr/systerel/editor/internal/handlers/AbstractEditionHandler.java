@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,13 +15,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eventb.ui.EventBUIPlugin;
 
-import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.editors.RodinEditor;
 
 /**
@@ -31,16 +28,11 @@ public abstract class AbstractEditionHandler extends AbstractEditorHandler {
 
 	@Override
 	public boolean isEnabled() {
-		final IWorkbenchPage activePage = EditorPlugin.getActivePage();
-		if (activePage == null)
+		final RodinEditor editor = getActiveRodinEditor();
+		if (editor == null)
 			return false;
-		final IEditorPart activeEditor = activePage
-				.getActiveEditor();
-		if (!(activeEditor instanceof RodinEditor)) {
-			return false;
-		}
-		final RodinEditor editor = (RodinEditor) activeEditor;
-		return super.isEnabled() && !editor.isOverlayActive();
+		return editor.getSelectionController().getSelectedElements().length > 0
+				&& super.isEnabled() && !editor.isOverlayActive();
 	}
 	
 	@Override
