@@ -891,6 +891,7 @@ public class DocumentMapper {
 			final Interval beforeElem = findEditableIntervalBefore(selOffset);
 			if (beforeElem != null) {
 				parent = beforeElem.getElement().getParent();
+				if (parent != null)
 				return getChildTypesFor(parent, null);
 			}
 		}
