@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
@@ -103,6 +104,27 @@ public class DocumentElementUtils {
 			return ofType.get(sibling);
 		}
 		return null;
+	}
+	
+	public static ILElement getSiblingBefore(ILElement element) {
+		if (element == null)
+			return null;
+		final ILElement parent = element.getParent();
+		if (parent == null)
+			return null;
+		final List<ILElement> sameType = parent.getChildrenOfType(element
+				.getElementType());
+		final ListIterator<ILElement> itr = sameType.listIterator();
+		ILElement siblingBefore = null;
+		ILElement e = null;
+		while (itr.hasNext()) {
+			siblingBefore = e;
+			e = (ILElement) itr.next();
+			if (e.equals(element)) {
+				break;
+			}
+		}
+		return siblingBefore;
 	}
 	
 }

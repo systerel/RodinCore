@@ -11,6 +11,7 @@
 package fr.systerel.editor.internal.documentModel;
 
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getChildrenTypes;
+import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getSiblingBefore;
 import static fr.systerel.editor.internal.editors.EditPos.isValidStartEnd;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
 
@@ -403,10 +404,17 @@ public class DocumentMapper {
 	
 	public EditorElement findItemContaining(int offset) {
 		final int index = findIntervalIndex(offset);
-		final Interval interval = intervals.get(index);
+		Interval interval = intervals.get(index);
+		final int lastIndex = interval.getLastIndex();
+		if (!isValidStartEnd(interval.getOffset(), lastIndex, false)
+				|| lastIndex == offset && intervals.size() > index + 1)
+			interval = intervals.get(index + 1);
+		if (interval == null)
+			return null;
 		final ILElement element = interval.getElement();
 		if (element != null) {
 			if (element.isImplicit()) {
+				// if the element is implicit we return the container
 				final ILElement parent = element.getParent();
 				return findEditorElement(parent);
 			}
@@ -428,13 +436,6 @@ public class DocumentMapper {
 		int start = pos.getStart();
 		int end = pos.getEnd();
 		if(!isValidStartEnd(start, end, false)) return null;
-//		final ILElement el = editorItem.getLightElement();
-//		for (ILElement child : el.getChildren()) {
-//			final EditPos childPos = getEnclosingPosition(child);
-//			if (childPos == null) continue;
-//			start = Math.min(start, childPos.getStart());
-//			end = Math.max(end, childPos.getEnd());
-//		}
 		return newPosStartEnd(start, end);
 	}
 	
@@ -791,7 +792,11 @@ public class DocumentMapper {
 	
 	public ModelPosition findModelPositionSiblingBefore(int offset,
 			ILElement parent, IElementType<?> siblingType) {
-		final ILElement sibBefore = findElementBefore(offset, siblingType);
+		if (!(siblingType instanceof IInternalElementType<?>))
+			return null;
+		final ILElement currentElement = findElementFromTypeAt(offset,
+				siblingType);
+		final ILElement sibBefore = getSiblingBefore(currentElement);
 		if (sibBefore != null && sibBefore.isImplicit())
 			return null;
 		return new ModelPosition(parent, sibBefore);
@@ -810,10 +815,19 @@ public class DocumentMapper {
 
 	// TODO with a given parent rather than a type
 	private ILElement findElementBefore(int offset, IElementType<?> type) {
-		final Interval intervalBefore = findEditableIntervalBefore(offset);
-		if (intervalBefore == null)
-			return null;
-		return findElementAt(intervalBefore.getOffset(), type);
+		final ILElement currentElement = findILElementTypeAt(offset, type);
+		return DocumentElementUtils.getSiblingBefore(currentElement);
+	}
+
+	private ILElement findILElementTypeAt(int offset, IElementType<?> type) {
+		for (EditorElement e : editorElements.getItems()) {
+			final ILElement ilElement = e.getLightElement();
+			final boolean includes = e.getPos().includes(offset);
+			if (includes && type.equals(ilElement.getElementType())) {
+				return ilElement;
+			}
+		}
+		return null;
 	}
 
 	// TODO with a given parent rather than a type
@@ -821,10 +835,10 @@ public class DocumentMapper {
 		final Interval intervalAfter = findEditableIntervalAfter(offset);
 		if (intervalAfter == null)
 			return null;
-		return findElementAt(intervalAfter.getLastIndex(), type);
+		return findElementFromTypeAt(intervalAfter.getLastIndex(), type);
 	}
 
-	private ILElement findElementAt(int offset, IElementType<?> type) {
+	private ILElement findElementFromTypeAt(int offset, IElementType<?> type) {
 		final EditorElement item = findItemContaining(offset);
 		if (item == null)
 			return null;
