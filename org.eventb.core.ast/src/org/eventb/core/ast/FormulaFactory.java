@@ -37,6 +37,7 @@ import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.internal.core.ast.extension.ExtnUnicityChecker;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer;
@@ -1517,6 +1518,16 @@ public class FormulaFactory {
 		return makePowerSetType(makeProductType(left, right));
 	}
 	
+	/**
+	 * Creates a new empty specialization.
+	 * 
+	 * @return a fresh empty specialization
+	 * @since 2.6
+	 */
+	public ISpecialization makeSpecialization() {
+		return new Specialization();
+	}
+
 	/**
 	 * Returns whether the given name is a valid identifier name (that is an
 	 * identifier name which is not used as a keyword in event-B concrete

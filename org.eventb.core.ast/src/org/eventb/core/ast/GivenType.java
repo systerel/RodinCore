@@ -12,6 +12,8 @@ package org.eventb.core.ast;
 
 import java.util.Set;
 
+import org.eventb.internal.core.ast.Specialization;
+
 /**
  * Denotes a type defined by the user. For instance, this type can correspond to
  * a carrier-set declared in a context.
@@ -73,4 +75,9 @@ public class GivenType extends Type {
 		return name.hashCode();
 	}
 	
+	@Override
+	public Type specialize(ISpecialization specialization) {
+		return ((Specialization) specialization).get(this);
+	}
+
 }

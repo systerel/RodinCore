@@ -25,7 +25,7 @@ import java.util.Set;
  * their own set of classes.
  * </p>
  * <p>
- * This class is not intended to be subclassed or instanciated directly by
+ * This class is not intended to be subclassed or instantiated directly by
  * clients. To create a new type, clients should use the methods provided by the
  * {@link FormulaFactory} class.
  * </p>
@@ -174,5 +174,14 @@ public abstract class Type {
 	}
 
 	protected abstract void addGivenTypes(Set<GivenType> set);
+
+	/**
+	 * FIXME not yet implemented.
+	 * 
+	 * @since 2.6
+	 */
+	public Type specialize(ISpecialization specialization) {
+		return this;
+	}
 
 }
