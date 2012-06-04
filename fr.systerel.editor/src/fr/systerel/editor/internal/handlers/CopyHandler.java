@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,15 @@ import fr.systerel.editor.internal.editors.RodinEditor;
  * @author "Thomas Muller"
  */
 public class CopyHandler extends AbstractEditorHandler {
+	
+	@Override
+	public boolean isEnabled() {
+		final RodinEditor re = getActiveRodinEditor();
+		if (re == null)
+			return false;
+		return re.getSelectionController().getSelectedElements().length > 0
+				&& super.isEnabled();
+	}
 	
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
