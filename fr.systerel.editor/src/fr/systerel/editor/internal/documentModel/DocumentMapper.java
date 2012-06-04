@@ -402,17 +402,17 @@ public class DocumentMapper {
 	}
 	
 	public EditorElement findItemContaining(int offset) {
-		for (EditorElement element : editorElements.getItems()) {
-			if (element.contains(offset)) {
-				final Interval interAfter = findEditableIntervalAfter(offset);
-				final ILElement elem = element.getLightElement(); 
-				final ILElement elementAfter = interAfter.getElement();
-				if (elem != null && elem.equals(elementAfter)){
-					return element;
-				}
-				return findEditorElement(elementAfter);
+		final int index = findIntervalIndex(offset);
+		final Interval interval = intervals.get(index);
+		final ILElement element = interval.getElement();
+		if (element != null) {
+			if (element.isImplicit()) {
+				final ILElement parent = element.getParent();
+				return findEditorElement(parent);
 			}
+			return findEditorElement(element);
 		}
+		// should never be true
 		return null;
 	}
 
