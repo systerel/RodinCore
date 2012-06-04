@@ -31,8 +31,7 @@ public abstract class AbstractEditionHandler extends AbstractEditorHandler {
 		final RodinEditor editor = getActiveRodinEditor();
 		if (editor == null)
 			return false;
-		return editor.getSelectionController().getSelectedElements().length > 0
-				&& super.isEnabled() && !editor.isOverlayActive();
+		return super.isEnabled() && !editor.isOverlayActive();
 	}
 	
 	@Override

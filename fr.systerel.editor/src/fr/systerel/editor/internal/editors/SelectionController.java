@@ -106,6 +106,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		// clear the native and cumbersome selection
 		// that occurs after double click
 		styledText.setSelection(offset);
+		overlayEditor.quitEdition(false);
 	}
 	
 	public EditPos toggleSelection(int offset) {
@@ -174,26 +175,33 @@ public class SelectionController implements MouseListener, VerifyListener,
 
 	@Override
 	public void mouseDown(MouseEvent e) {
-		if (DEBUG) System.out.println("mouse down " + e);
-		
+		if (DEBUG)
+			System.out.println("mouse down " + e);
+
 		final int offset = getOffset(e);
-		if (offset < 0 ) return;
+		if (offset < 0)
+			return;
 		if ((e.stateMask & SWT.MOD1) != 0) {
 			toggleSelection(offset);
-		} else if (selection.contains(offset)) {
-			final boolean dragging = styledText.dragDetect(e);
-			if (!dragging && ((e.button & SWT.BUTTON2) != 0)) {
-				resetSelection(offset);
-			}
-		} else {
-			if (overlayEditor.isActive()) {
-				// the user clicked outside the overlay editor
-				// as this listener is on the main text therefore
-				// we quit overlay edition
-				overlayEditor.saveAndExit(false);
-			}
-			resetSelection(offset);
+			return;
 		}
+		// Button 3 is the right button
+		if (e.button == 3) {
+			return;
+		}
+		if (selection.contains(offset)) {
+			if (styledText.dragDetect(e))
+				return;
+		}
+		if (overlayEditor.isActive()) {
+			// the user clicked outside the overlay editor
+			// as this listener is on the main text therefore
+			// we quit overlay edition
+			overlayEditor.saveAndExit(false);
+		} else {
+			overlayEditor.showAtOffset(getOffset(e));
+		}
+		resetSelection(offset);
 	}
 
 	private void resetSelection(int offset) {
@@ -231,11 +239,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 	public void mouseUp(MouseEvent e) {
 		if (DEBUG)
 			System.out.println("mouse up " + e);
-
-		// no selection
-		if (viewer.getSelectedRange().y == 0 && e.x != 0 && e.y != 0) {
-			overlayEditor.showAtOffset(styledText.getCaretOffset());
-		}
+		// nothing to do
 	}
 
 	@Override

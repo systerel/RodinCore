@@ -84,7 +84,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	private RodinConfiguration rodinViewerConfiguration;
 	
 	private IElementStateListener stateListener;
-	private CursorManager cursorManager;
 	private DNDManager dndManager;
 	private IUndoContext  undoContext;
 	
@@ -158,9 +157,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		dndManager = new DNDManager(selController, styledText, mapper,
 				documentProvider);
 		dndManager.install();
-	
-		cursorManager = new CursorManager(this, viewer);
-		styledText.addMouseMoveListener(cursorManager);
 	
 		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
