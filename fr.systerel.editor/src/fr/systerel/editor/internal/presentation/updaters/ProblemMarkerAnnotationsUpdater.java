@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,8 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinMarkerUtil;
+import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.api.itf.ILUtils;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.EditorElement;
@@ -157,10 +159,10 @@ public class ProblemMarkerAnnotationsUpdater {
 				updateMarkerInfo(marker, lineNumber, p);
 				return p;
 			} else {
-				final IInternalElement inputRoot = editor.getInputRoot();
 				final DocumentMapper mapper = editor.getDocumentMapper();
+				final ILElement root = mapper.getRoot();
 				final EditorElement rootEditorElement = mapper
-						.findEditorElement(inputRoot);
+						.findEditorElement(root);
 				if (rootEditorElement == null)
 					return p;
 				final Interval interval = rootEditorElement
@@ -241,7 +243,10 @@ public class ProblemMarkerAnnotationsUpdater {
 	private EditPos findPoint(IMarker marker) {
 		final IRodinElement element = RodinMarkerUtil.getElement(marker);
 		final DocumentMapper documentMapper = editor.getDocumentMapper();
-		final EditorElement eElement = documentMapper.findEditorElement(element);
+		final ILElement internalElement = ILUtils.findElement(element, documentMapper.getRoot());
+		if (internalElement == null)
+			return null;
+		final EditorElement eElement = documentMapper.findEditorElement(internalElement);
 		if (eElement == null) {
 			// not an internal location
 			return null;

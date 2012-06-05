@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,20 +28,27 @@ public class MoveDownHandler extends AbstractMoveHandler {
 	protected ModelPosition getMovementPosition(DocumentMapper mapper,
 			ILElement[] selected, IElementType<?> siblingType) {
 		final ILElement parent = getParent(selected);
-		final int offset = findBiggestOffset(selected, mapper);
-		final ModelPosition pos = mapper.findModelPositionSiblingAfter(offset,
-				parent, siblingType);
-		return pos;
+		final ILElement lastElement = findElemWithBiggestOffset(selected,
+				mapper);
+		final List<ILElement> sameType = parent.getChildrenOfType(lastElement
+				.getElementType());
+		final ILElement nextSibling = getNextSibling(lastElement, sameType);
+		ILElement nextNextSibling = null;
+		if (nextSibling != null) {
+			nextNextSibling = getNextSibling(nextSibling, sameType);
+		}
+		return new ModelPosition(parent, nextNextSibling);
 	}
 
 	/**
 	 * @return returns the biggest offset value of the given elements, or
-	 *         <code>-1</code> if no elements is given, or no offset has been
+	 *         <code>null</code> if no elements is given, or no offset has been
 	 *         found
 	 */
-	private static int findBiggestOffset(ILElement[] elems,
+	private static ILElement findElemWithBiggestOffset(ILElement[] elems,
 			DocumentMapper mapper) {
 		int oo = -1;
+		ILElement elem = null;
 		for (ILElement e : elems) {
 			final EditPos enclosingPos = mapper.getEnclosingPosition(e);
 			if (enclosingPos == null)
@@ -49,14 +56,15 @@ public class MoveDownHandler extends AbstractMoveHandler {
 			final int o = enclosingPos.getEnd() + 1;
 			if (o > oo || oo == -1) {
 				oo = o;
+				elem = e;
 			}
 		}
-		return oo;
+		return elem;
 	}
 
 	@Override
 	protected ILElement getSibling(ILElement element, List<ILElement> sameType) {
 		return getNextSibling(element, sameType);
 	}
-	
+
 }

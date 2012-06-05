@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,8 +49,8 @@ public abstract class AbstractMoveHandler extends AbstractEditionHandler {
 		if (pos == null) {
 			return "";
 		}
-		new Move(pos).perform(asList(selected));
-		return "";
+		final boolean success = new Move(pos).perform(asList(selected));
+		return (success)?"Move successful":"Move operation failed";
 	}
 
 	protected abstract ModelPosition getMovementPosition(DocumentMapper mapper,

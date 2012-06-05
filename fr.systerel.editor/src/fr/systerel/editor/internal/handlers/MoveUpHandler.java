@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,20 +28,23 @@ public class MoveUpHandler extends AbstractMoveHandler {
 	protected ModelPosition getMovementPosition(DocumentMapper mapper,
 			ILElement[] selected, IElementType<?> siblingType) {
 		final ILElement parent = getParent(selected);
-		final int offset = findSmallestOffset(selected, mapper);
-		final ModelPosition pos = mapper.findModelPositionSiblingBefore(offset,
-				parent, siblingType);
-		return pos;
+		final ILElement smallest = findElementWithSmallestOffset(selected,
+				mapper);
+		final List<ILElement> sameType = parent.getChildrenOfType(smallest
+				.getElementType());
+		final ILElement previousSibling = getPreviousSibling(smallest, sameType);
+		return new ModelPosition(parent, previousSibling);
 	}
 
 	/**
-	 * @return returns the smallest offset value of the given elements, or
-	 *         <code>-1</code> if no elements is given, or no offset has been
-	 *         found
+	 * @return returns the element with the smallest offset value from the given
+	 *         elements, or <code>null</code> if no elements is given, or no
+	 *         offset has been found
 	 */
-	private static int findSmallestOffset(ILElement[] elems,
+	private static ILElement findElementWithSmallestOffset(ILElement[] elems,
 			DocumentMapper mapper) {
 		int oo = -1;
+		ILElement elem = null;
 		for (ILElement e : elems) {
 			final EditorElement eElement = mapper.findEditorElement(e);
 			if (eElement == null)
@@ -49,9 +52,10 @@ public class MoveUpHandler extends AbstractMoveHandler {
 			final int o = eElement.getOffset();
 			if (o < oo || oo == -1) {
 				oo = o;
+				elem = e;
 			}
 		}
-		return oo;
+		return elem;
 	}
 
 	@Override

@@ -11,7 +11,6 @@
 package fr.systerel.editor.internal.documentModel;
 
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getChildrenTypes;
-import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getSiblingBefore;
 import static fr.systerel.editor.internal.editors.EditPos.isValidStartEnd;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
 
@@ -40,6 +39,7 @@ import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
+import org.rodinp.core.emf.api.itf.ILUtils;
 
 import fr.systerel.editor.internal.documentModel.ModelOperations.ModelPosition;
 import fr.systerel.editor.internal.editors.EditPos;
@@ -392,7 +392,8 @@ public class DocumentMapper {
 	public Interval findInterval(IRodinElement element) {
 		if (element == null)
 			return null;
-		final EditorElement editorItem = findEditorElement(element);
+		final EditorElement editorItem = findEditorElement(ILUtils.findElement(
+				element, getRoot()));
 		if (editorItem != null) {
 			final List<Interval> itemIntervals = editorItem.getIntervals();
 			if (itemIntervals.size() > 0) {
@@ -449,6 +450,8 @@ public class DocumentMapper {
 	 */
 	private Interval findInterval(ILElement element, ContentType contentType) {
 		final EditorElement item = findEditorElement(element);
+		if (item == null)
+			return null;
 		return item.getInterval(contentType);
 	}
 
@@ -539,15 +542,15 @@ public class DocumentMapper {
 	}
 
 	public void elementChanged(ILElement element) {
+		final EditorElement el = findEditorElement(element);
 		final IInternalElement ie = element.getElement();
-		final EditorElement el = findEditorElement(ie);
 		if (el != null && !ie.exists()) {
 			final List<Interval> intervals = el.getIntervals();
 			if (intervals.size() > 0) {
 				final Interval interval = getLastInterval();
 				adaptAfter(interval, -el.getLength());
 			}
-			editorElements.remove(ie);
+			editorElements.remove(element);
 			return;
 		}
 		if (el != null) {
@@ -746,12 +749,8 @@ public class DocumentMapper {
 		}
 		return null;
 	}
-	
-	public EditorElement findEditorElement(ILElement element) {
-		return findEditorElement(element.getElement());
-	}
 
-	public EditorElement findEditorElement(IRodinElement el) {
+	public EditorElement findEditorElement(ILElement el) {
 		return editorElements.get(el);
 	}
 
@@ -774,55 +773,21 @@ public class DocumentMapper {
 	 */
 	public ModelPosition findModelPosition(int offset,
 			IElementType<?> siblingType, IElementType<?> parentType) {
-		// try sibling after
-		final ILElement after = findElementAfter(offset, siblingType);
-		if (after != null) {
-			final ILElement parent = after.getParent();
-			if (parent.getElementType() == parentType) {
-				return new ModelPosition(parent, after);
-			}
-		}
-		// try parent before, insert at the end
-		final ILElement parent = findElementBefore(offset, parentType);
+		final ILElement parent = findILElementTypeAt(offset, parentType);
+		final ILElement sibling = findILElementTypeAt(offset, siblingType);
 		if (parent != null) {
-			return new ModelPosition(parent, null);
+			final ILElement nextSibling = (sibling != null && !sibling
+					.isImplicit()) ? sibling : null;
+			return new ModelPosition(parent, nextSibling);
 		}
 		return null;
-	}
-	
-	public ModelPosition findModelPositionSiblingBefore(int offset,
-			ILElement parent, IElementType<?> siblingType) {
-		if (!(siblingType instanceof IInternalElementType<?>))
-			return null;
-		final ILElement currentElement = findElementFromTypeAt(offset,
-				siblingType);
-		final ILElement sibBefore = getSiblingBefore(currentElement);
-		if (sibBefore != null && sibBefore.isImplicit())
-			return null;
-		return new ModelPosition(parent, sibBefore);
-	}
-
-	public ModelPosition findModelPositionSiblingAfter(int offset,
-			ILElement parent, IElementType<?> siblingType) {
-		final ILElement elemAfter = findElementAfter(offset, siblingType);
-		if (elemAfter != null) {
-			final EditPos er = getEnclosingPosition(elemAfter);
-			final ILElement nextS = findElementAfter(er.getEnd(), siblingType);
-			return new ModelPosition(parent, nextS);
-		}
-		return new ModelPosition(parent, null);
-	}
-
-	// TODO with a given parent rather than a type
-	private ILElement findElementBefore(int offset, IElementType<?> type) {
-		final ILElement currentElement = findILElementTypeAt(offset, type);
-		return DocumentElementUtils.getSiblingBefore(currentElement);
 	}
 
 	private ILElement findILElementTypeAt(int offset, IElementType<?> type) {
 		for (EditorElement e : editorElements.getItems()) {
 			final ILElement ilElement = e.getLightElement();
-			final boolean includes = e.getPos().includes(offset);
+			final EditPos pos = e.getPos();
+			final boolean includes = pos.includes(offset);
 			if (includes && type.equals(ilElement.getElementType())) {
 				return ilElement;
 			}

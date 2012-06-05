@@ -127,4 +127,24 @@ public class DocumentElementUtils {
 		return siblingBefore;
 	}
 	
+	public static ILElement getNextSibling(ILElement element,
+			List<ILElement> sameType) {
+		for (int i = 0; i < sameType.size() - 1; i++) {
+			if (sameType.get(i).equals(element)) {
+				return sameType.get(i + 1);
+			}
+		}
+		return null;
+	}
+
+	public static ILElement getPreviousSibling(ILElement element,
+			List<ILElement> sameType) {
+		for (int i = sameType.size() - 1; i > 0; i--) {
+			if (sameType.get(i).equals(element)) {
+				return sameType.get(i - 1);
+			}
+		}
+		return null;
+	}
+	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     Systerel - Initial API and implementation
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
-
-import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getSibling;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,35 +25,67 @@ import org.rodinp.core.emf.api.itf.ILElement;
  */
 public class OrderedEditorItemMap {
 
-	private final Map<IInternalElement, EditorElement> items = new HashMap<IInternalElement, EditorElement>();
-	private final ArrayList<IInternalElement> order = new ArrayList<IInternalElement>();
+	private final Map<FSPAIR<ILElement, IRodinElement>, EditorElement> items = new HashMap<FSPAIR<ILElement, IRodinElement>, EditorElement>();
+	private final ArrayList<FSPAIR<ILElement, IRodinElement>> order = new ArrayList<FSPAIR<ILElement, IRodinElement>>();
 	
-	public EditorElement addItem(ILElement element) {
-		final ILElement sibling = getSibling(element);
-		// there is no sibling or no sibling found
-		if (sibling == null || items.get(sibling) == null) {
-			return getOrCreate(element);
+	
+	private static class FSPAIR<S extends ILElement, T extends IRodinElement> {
+
+		public S getFirst() {
+			return firstElement;
 		}
-		int pos = -1;
-		for (int i = 0; i < order.size(); i++) {
-			if (order.get(i) == sibling.getElement()) {
-				pos = i;
-				break;
-			}
+
+		public T getSecond() {
+			return secondElement;
 		}
-		if (pos == -1) {
-			throw new IllegalStateException("Sibling should have a position");
+
+		@Override
+		public String toString() {
+			return firstElement.getElement().getElementName() + "/" + secondElement.getElementName();
 		}
-		final EditorElement el = new EditorElement(element);
-		final IInternalElement internalElement = element.getElement();
-		items.put(internalElement, el);
-		order.add(pos, internalElement);
-		return el;
+
+		private S firstElement;
+		private T secondElement;
+
+		private FSPAIR(S firstElement, T secondElement) {
+			this.firstElement = firstElement;
+			this.secondElement = secondElement;
+		}
+		
+		public static FSPAIR<ILElement, IRodinElement> getKey(ILElement element) {
+			return new FSPAIR<ILElement, IRodinElement>(element, element.getElement());
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (this == other)
+				return true;
+			if (!(other instanceof FSPAIR))
+				return false;
+			final FSPAIR<?,?> otherPair = ((FSPAIR<?,?>) other);
+			if (secondElement == null && firstElement != null)
+				return firstElement == otherPair.getFirst();
+			if (firstElement == null && secondElement != null)
+				return secondElement.equals(otherPair.getSecond());
+			if (firstElement != null && secondElement != null)
+				return firstElement == otherPair.getFirst()
+						&& secondElement.equals(otherPair.getSecond());
+			return super.equals(otherPair);
+		}
+
+		@Override
+		public int hashCode() {
+			if (firstElement == null)
+				return super.hashCode();
+            return firstElement.hashCode() * 31 + secondElement.hashCode();
+		}
+
 	}
 	
-	public void remove(IInternalElement element) {
-		items.remove(element);
-		order.remove(element);
+	public void remove(ILElement element) {
+		final FSPAIR<ILElement, IRodinElement> key = FSPAIR.getKey(element);
+		items.remove(key);
+		order.remove(key);
 	}
 
 	/**
@@ -68,23 +98,28 @@ public class OrderedEditorItemMap {
 	 *         added one
 	 */
 	public EditorElement getOrCreate(ILElement element) {
-		final IInternalElement internalElement = (IInternalElement) element.getElement();
-		EditorElement el = items.get(internalElement);
+		final IInternalElement internalElement = (IInternalElement) element
+				.getElement();
+		final FSPAIR<ILElement, IRodinElement> key = new FSPAIR<ILElement, IRodinElement>(element,
+				internalElement);
+		EditorElement el = items.get(key);
+		if (element.isImplicit() && element.getParent() == null)
+			System.out.println("STOP!");
 		if (el == null) {
 			el = new EditorElement(element);
-			items.put(internalElement, el);
-			order.add(internalElement);
+			items.put(key, el);
+			order.add(key);
 		}
 		return el;
 	}
-	
-	public EditorElement get(IRodinElement element) {
-		return items.get(element);
+
+	public EditorElement get(ILElement element) {
+		return items.get(FSPAIR.getKey(element));
 	}
 	
 	public Collection<EditorElement> getItems() {
 		final List<EditorElement> l = new ArrayList<EditorElement>();
-		for (IInternalElement e : order) {
+		for (FSPAIR<ILElement, IRodinElement> e : order) {
 			l.add(items.get(e));
 		}
 		return l;
@@ -93,6 +128,11 @@ public class OrderedEditorItemMap {
 	public void clear() {
 		items.clear();
 		order.clear();
+	}
+
+	public void remove(EditorElement el) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
