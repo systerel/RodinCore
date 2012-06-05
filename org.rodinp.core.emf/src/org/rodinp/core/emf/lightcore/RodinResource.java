@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Southampton and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
+import org.rodinp.core.emf.lightcore.adapters.ImplicitDeltaRootAdapter;
 import org.rodinp.core.emf.lightcore.sync.SynchroManager;
 
 /**
@@ -200,6 +201,10 @@ public class RodinResource extends ResourceImpl implements ILFile {
 	}
 
 	public void unloadResource() {
+		for (Adapter adapter : ((LightElement) getRoot()).eAdapters()){
+			if (adapter instanceof ImplicitDeltaRootAdapter)
+				((ImplicitDeltaRootAdapter)adapter).finishListening();
+		}
 		unloadRoot();
 		try {
 			// Make the associated RodinFile consistent if it is has some

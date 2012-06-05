@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,6 @@ import static org.rodinp.core.emf.lightcore.sync.SynchroUtils.getPositionAmongSi
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.NotificationImpl;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -26,7 +23,6 @@ import org.rodinp.core.emf.lightcore.ImplicitElement;
 import org.rodinp.core.emf.lightcore.InternalElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcoreFactory;
-import org.rodinp.core.emf.lightcore.LightcorePackage;
 import org.rodinp.core.emf.lightcore.sync.SynchroManager;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
@@ -171,18 +167,6 @@ public abstract class ElementOperation {
 		}
 
 		public void perform() {
-			final EList<EObject> implicitChildren = root.getAllContained(
-					LightcorePackage.Literals.IMPLICIT_ELEMENT, false);
-			for (EObject child : implicitChildren) {
-				if (child == null) {
-					continue;
-				}
-				final EObject eContainer = child.eContainer();
-				eContainer.eSetDeliver(false);
-				if (child instanceof ImplicitElement)
-					EcoreUtil.remove(child);
-				eContainer.eSetDeliver(true);
-			}
 			recursiveImplicitLoadFromRoot();
 			// send a notification to update the root
 			final ImplicitElement implicitStub = LightcoreFactory.eINSTANCE

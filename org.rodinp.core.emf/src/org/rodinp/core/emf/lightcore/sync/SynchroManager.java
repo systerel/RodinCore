@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,7 +116,13 @@ public class SynchroManager {
 					final LightElement eRoot = parent.getERoot();
 					final ImplicitElement implicit = loadImplicitElementFor(e,
 							eRoot);
-					parent.getEChildren().add(insertionPosition, implicit);
+					final LightElement original = SynchroUtils.findElement(e,
+							eRoot);
+					if (original != null) {
+						reloadImplicitElement(original, implicit);
+					} else {
+						parent.getEChildren().add(insertionPosition, implicit);
+					}
 					insertionPosition++;
 				}
 			}
@@ -124,7 +130,7 @@ public class SynchroManager {
 			parent.eSetDeliver(true);
 		}
 	}
-
+	
 	private static class ImplicitChildrenComputer {
 
 		private List<? extends IInternalElement> implicitChildren;
@@ -192,7 +198,8 @@ public class SynchroManager {
 		return eElement;
 	}
 
-	private static ImplicitElement loadImplicitElementFor(IRodinElement iElement, LightElement root) {
+	private static ImplicitElement loadImplicitElementFor(
+			IRodinElement iElement, LightElement root) {
 		final ImplicitElement eImplicit = LightcoreFactory.eINSTANCE
 				.createImplicitElement();
 		eImplicit.eSetDeliver(false);
@@ -207,6 +214,15 @@ public class SynchroManager {
 		eImplicit.load();
 		eImplicit.eSetDeliver(true);
 		return eImplicit;
+	}
+	
+	private static void reloadImplicitElement(
+			LightElement original, LightElement newElement) {
+		original.eSetDeliver(false);
+		original.setERodinElement(newElement.getERodinElement());
+		original.setEIsRoot(newElement.isEIsRoot());
+		original.setERoot(newElement.getERoot());
+		SynchroUtils.reloadAttributes(newElement.getElement(), original);
 	}
 
 	public void saveModelFromRoot(IInternalElement content) {
