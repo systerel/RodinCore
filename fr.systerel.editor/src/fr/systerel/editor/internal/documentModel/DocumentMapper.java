@@ -760,7 +760,7 @@ public class DocumentMapper {
 	public ModelPosition findModelPosition(int offset,
 			IElementType<?> siblingType, IElementType<?> parentType) {
 		final ILElement parent = findILElementTypeAt(offset, parentType);
-		final ILElement sibling = findILElementTypeAt(offset, siblingType);
+		final ILElement sibling = findElementAfter(offset, siblingType);
 		if (parent != null) {
 			final ILElement nextSibling = (sibling != null && !sibling
 					.isImplicit()) ? sibling : null;
@@ -773,8 +773,8 @@ public class DocumentMapper {
 		for (EditorElement e : editorElements.getItems()) {
 			final ILElement ilElement = e.getLightElement();
 			final EditPos pos = e.getPos();
-			final boolean includes = pos.includes(offset);
-			if (includes && type.equals(ilElement.getElementType())) {
+			final boolean includes = pos.isIncludedOrTouches(offset);
+			if (includes && type.equals(ilElement.getElementType()) && pos.getEnd()!= offset) {
 				return ilElement;
 			}
 		}
