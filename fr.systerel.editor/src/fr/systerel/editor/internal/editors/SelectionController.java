@@ -110,8 +110,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 	}
 	
 	public EditPos toggleSelection(int offset) {
-		// select the enclosing element
-		final EditorElement editElem = mapper.findItemContaining(offset);
+		final EditorElement editElem = mapper.findEditorElementAt(offset);
 		if (editElem == null) return null;
 		return toggleSelection(editElem);
 	}
@@ -125,16 +124,16 @@ public class SelectionController implements MouseListener, VerifyListener,
 	private EditPos toggleSelection(EditorElement editElem) {
 		final ILElement element = editElem.getLightElement();
 		if (element.isImplicit()) return null;
-		final EditPos enclosingRange = mapper.getEnclosingPosition(editElem);
-		if (enclosingRange == null) return null;
+		final EditPos editElemPos = editElem.getPos();
+		if (editElemPos == null) return null;
 		
 		// TODO position is only useful if element is not selected
-		selection.toggle(element, enclosingRange);
+		selection.toggle(element, editElemPos);
 		firePostSelectionChanged(new SelectionChangedEvent(this, getSelection()));
 		if (DEBUG)
 			System.out.println("selected " + element.getElement() + " in "
-					+ enclosingRange);
-		return enclosingRange;
+					+ editElemPos);
+		return editElemPos;
 	}
 
 	private ISelection adaptCurrentSelection() {
@@ -218,7 +217,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 			final ILElement element = editorElem.getLightElement();
 			if (element.isImplicit())
 				return;
-			final EditPos enclosingPos = mapper.getEnclosingPosition(editorElem);
+			final EditPos enclosingPos = mapper.getItemPosition(editorElem);
 			if (enclosingPos == null)
 				return;
 			selection.add(element, enclosingPos);

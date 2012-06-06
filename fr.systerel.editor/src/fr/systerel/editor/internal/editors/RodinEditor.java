@@ -15,20 +15,15 @@ import static org.eclipse.ui.actions.ActionFactory.UNDO;
 import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
-import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -97,17 +92,18 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	/** The graphical text component carried by the viewer */
 	private StyledText styledText;
 	
-	/** The support for folding on the viewer */
-	private ProjectionSupport projectionSupport;
-	/** The annotation model containing folding annotations */
-	private ProjectionAnnotationModel projectionAnnotationModel;
-	/** The basic annotations currently carried by the source viewer */
-	private Annotation[] oldPojectionAnnotations = new Annotation[0];
+	///** The support for folding on the viewer */
+	//private ProjectionSupport projectionSupport;
+	///** The annotation model containing folding annotations */
+	//private ProjectionAnnotationModel projectionAnnotationModel;
+	///** The basic annotations currently carried by the source viewer */
+	//private Annotation[] oldPojectionAnnotations = new Annotation[0];
+	
+	/** The viewer's model of basic annotations (e.g. problem annotations) */
+	 private IAnnotationModel annotationModel;
 
 	/** A controller for selection on the styled text */
 	private SelectionController selController;
-	/** The viewer's model of basic annotations (e.g. problem annotations) */
-	private IAnnotationModel annotationModel;
 	/** An updater for problem annotations which listens to the resource changes */
 	private ProblemMarkerAnnotationsUpdater markerAnnotationsUpdater;
 	/** A listener to update overlay editor's contents in case of indirect typing modification (e.g. undo-redo) */
@@ -133,11 +129,11 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		super.createPartControl(parent);
 		activateRodinEditorContext();
 		viewer = (ProjectionViewer) getSourceViewer();
-		projectionSupport = new ProjectionSupport(viewer,
-				getAnnotationAccess(), getSharedColors());
-		projectionSupport.install();
-		viewer.doOperation(ProjectionViewer.TOGGLE);
-		projectionAnnotationModel = viewer.getProjectionAnnotationModel();
+//		projectionSupport = new ProjectionSupport(viewer,
+//				getAnnotationAccess(), getSharedColors());
+//		projectionSupport.install();
+//		viewer.doOperation(ProjectionViewer.TOGGLE);
+//		projectionAnnotationModel = viewer.getProjectionAnnotationModel();
 		annotationModel = viewer.getAnnotationModel();
 		if (markerAnnotationsUpdater == null)
 			markerAnnotationsUpdater = new ProblemMarkerAnnotationsUpdater(
@@ -161,8 +157,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
 		styledText.setFont(font);
-	
-		updateFoldingStructure();
 		markerAnnotationsUpdater.initializeMarkersAnnotations();
 	
 		setTitleImageAndPartName();
@@ -500,8 +494,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 					if (DEBUG)
 						System.out.println("\\ Start refreshing Rodin Editor.");
 					documentProvider.synchronizeRoot(monitor, silent);
-					updateFoldingStructure();
-					updateMarkerStructure();
 					styledText.setTopIndex(topIndex);
 					styledText.setCaretOffset(currentOffset);
 					selController.selectItems(selection);
@@ -520,29 +512,29 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		selectAndReveal(pos.getOffset(), 0, pos.getOffset(), pos.getLength());
 	}
 
-	/**
-	 * Replaces the old folding structure with the current one.
-	 */
-	public void updateFoldingStructure() {
-		for (Annotation a : oldPojectionAnnotations) {
-			projectionAnnotationModel.removeAnnotation(a);
-		}
-		final Position[] positions = mapper.getFoldingPositions();
-		final Annotation[] annotations = mapper.getFoldingAnnotations();
-		Assert.isLegal(annotations.length == positions.length);
-		// TODO use AnnotationModel.replaceAnnotations(Annotation[], Map)
-		for (int i = 0; i < positions.length; i++) {
-			projectionAnnotationModel.addAnnotation(annotations[i],
-					positions[i]);
-		}
-		oldPojectionAnnotations = annotations;
-	}
+//	/**
+//	 * Replaces the old folding structure with the current one.
+//	 */
+//	public void updateFoldingStructure() {
+//		for (Annotation a : oldPojectionAnnotations) {
+//			projectionAnnotationModel.removeAnnotation(a);
+//		}
+//		final Position[] positions = mapper.getFoldingPositions();
+//		final Annotation[] annotations = mapper.getFoldingAnnotations();
+//		Assert.isLegal(annotations.length == positions.length);
+//		// TODO use AnnotationModel.replaceAnnotations(Annotation[], Map)
+//		for (int i = 0; i < positions.length; i++) {
+//			projectionAnnotationModel.addAnnotation(annotations[i],
+//					positions[i]);
+//		}
+//		oldPojectionAnnotations = annotations;
+//	}
 
-	/**
-	 * Recalculates the old marker structure.
-	 */
-	public void updateMarkerStructure() {
-		markerAnnotationsUpdater.recalculateAnnotations();
-	}
+//	/**
+//	 * Recalculates the old marker structure.
+//	 */
+//	public void updateMarkerStructure() {
+//		markerAnnotationsUpdater.recalculateAnnotations();
+//	}
 
 }

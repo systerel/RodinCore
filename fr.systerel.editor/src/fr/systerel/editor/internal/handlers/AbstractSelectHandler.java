@@ -49,7 +49,7 @@ public abstract class AbstractSelectHandler extends AbstractEditionHandler {
 			if (selController.isSelected(sibling)) {
 				// deselect current
 				selController.toggleSelection(element);
-				reveal = editor.getDocumentMapper().getEnclosingPosition(
+				reveal = editor.getDocumentMapper().getItemPosition(
 						sibling);
 			} else {
 				// select sibling

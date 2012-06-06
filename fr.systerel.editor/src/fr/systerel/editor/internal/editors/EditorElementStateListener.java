@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,12 @@ import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
 public class EditorElementStateListener implements IElementStateListener {
 
 	private final RodinDocumentProvider provider;
-	private final RodinEditor editor;
+	//private final RodinEditor editor;
 
 	public EditorElementStateListener(RodinEditor editor,
 			RodinDocumentProvider provider) {
 		this.provider = provider;
-		this.editor = editor;
+		//this.editor = editor;
 	}
 
 	public static IElementStateListener getNewListener(RodinEditor editor,
@@ -41,7 +41,7 @@ public class EditorElementStateListener implements IElementStateListener {
 	@Override
 	public void elementContentReplaced(Object element) {
 		provider.setCanSaveDocument(provider.getEditorInput());
-		editor.updateFoldingStructure();
+		//editor.updateFoldingStructure();
 	}
 
 	@Override

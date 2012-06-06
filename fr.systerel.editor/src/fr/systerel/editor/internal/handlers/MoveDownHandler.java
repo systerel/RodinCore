@@ -50,10 +50,10 @@ public class MoveDownHandler extends AbstractMoveHandler {
 		int oo = -1;
 		ILElement elem = null;
 		for (ILElement e : elems) {
-			final EditPos enclosingPos = mapper.getEnclosingPosition(e);
-			if (enclosingPos == null)
+			final EditPos pos = mapper.getItemPosition(e);
+			if (pos == null)
 				continue;
-			final int o = enclosingPos.getEnd() + 1;
+			final int o = pos.getEnd() + 1;
 			if (o > oo || oo == -1) {
 				oo = o;
 				elem = e;

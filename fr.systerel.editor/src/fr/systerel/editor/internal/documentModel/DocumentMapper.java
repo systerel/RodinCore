@@ -374,7 +374,7 @@ public class DocumentMapper {
 
 	private void updateElementFolding() {
 		for (EditorElement el : editorElements.getItems()) {
-			final EditPos pos = getEnclosingPosition(el);
+			final EditPos pos = getItemPosition(el);
 			if (el.isFoldable() && pos != null) {
 				el.setFoldingPosition(pos.getOffset(), pos.getLength() + 1);
 			} else {
@@ -403,36 +403,22 @@ public class DocumentMapper {
 		return null;
 	}
 	
-	public EditorElement findItemContaining(int offset) {
-		final int index = findIntervalIndex(offset);
-		Interval interval = intervals.get(index);
-		final int lastIndex = interval.getLastIndex();
-		if (!isValidStartEnd(interval.getOffset(), lastIndex, false)
-				|| lastIndex == offset && intervals.size() > index + 1)
-			interval = intervals.get(index + 1);
-		if (interval == null)
-			return null;
-		final ILElement element = interval.getElement();
-		if (element != null) {
-			if (element.isImplicit()) {
-				// if the element is implicit we return the container
-				final ILElement parent = element.getParent();
-				return findEditorElement(parent);
+	public EditorElement findEditorElementAt(int offset) {
+		for (EditorElement item : editorElements.getItems()) {
+			if (item.explicitlyContains(offset)) {
+				return (EditorElement) item;
 			}
-			return findEditorElement(element);
 		}
-		// should never be true
 		return null;
 	}
 
-	public EditPos getEnclosingPosition(ILElement element) {
+	public EditPos getItemPosition(ILElement element) {
 		final EditorElement editorItem = findEditorElement(element);
-		
 		if (editorItem == null) return null;
-		return getEnclosingPosition(editorItem);
+		return getItemPosition(editorItem);
 	}
 
-	public EditPos getEnclosingPosition(EditorElement editorItem) {
+	public EditPos getItemPosition(EditorElement editorItem) {
 		final EditPos pos = editorItem.getPos();
 		int start = pos.getStart();
 		int end = pos.getEnd();
@@ -804,7 +790,7 @@ public class DocumentMapper {
 	}
 
 	private ILElement findElementFromTypeAt(int offset, IElementType<?> type) {
-		final EditorElement item = findItemContaining(offset);
+		final EditorElement item = findEditorElementAt(offset);
 		if (item == null)
 			return null;
 		final ILElement element = findAncestorOftype(item.getLightElement(),
