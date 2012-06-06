@@ -198,7 +198,8 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		if (stateListener != null) {
 			documentProvider.removeElementStateListener(stateListener);
 		}
-		getDocument().removeDocumentListener(overlayUpdater);
+		if (overlayUpdater != null)
+			getDocument().removeDocumentListener(overlayUpdater);
 		JFaceResources.getFontRegistry().removeListener(this);
 		documentProvider.unloadResource();
 		deactivateRodinEditorContext();
