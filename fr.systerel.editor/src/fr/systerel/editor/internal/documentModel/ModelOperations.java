@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -63,35 +64,24 @@ public class ModelOperations {
 		}
 
 		public boolean perform(List<ILElement> elems) {
-			final ModelPosition correctedPos = correctPos(elems);
-			for (ILElement element : elems) {
-				if (element.isImplicit()) {
-					return false;
-				}
-				final boolean success = applyTo(element, correctedPos);
-				if (!success) {
-					return false;
+			final List<ILElement> toHandle = new ArrayList<ILElement>(elems);
+			if (toHandle.isEmpty())
+				return true;
+			final int lastElemIndex = toHandle.size() - 1;
+			final ILElement il = toHandle.get(lastElemIndex);
+			boolean success = applyTo(il, pos);
+			toHandle.remove(il);
+			ModelPosition newPos = new ModelPosition(pos.targetParent, il);
+			if (success) {
+				for (int i = toHandle.size() - 1; i >= 0; i--) {
+					final ILElement lastMoved = toHandle.get(i);
+					success = applyTo(lastMoved, newPos);
+					if (!success)
+						break;
+					newPos = new ModelPosition(pos.targetParent, lastMoved);
 				}
 			}
-			return true;
-		}
-
-		// skip selected siblings
-		private ModelPosition correctPos(List<ILElement> elems) {
-			if (pos.nextSibling == null) return pos;
-			final List<? extends ILElement> siblings = pos.targetParent.getChildren();
-			
-			int siblingPos = pos.targetParent.getChildPosition(pos.nextSibling);
-			ILElement nextSibling = pos.nextSibling; // = siblings.get(siblingPos)
-			while(elems.contains(nextSibling)) {
-				siblingPos++;
-				if (siblingPos >= siblings.size()) {
-					nextSibling = null;
-					break;
-				}
-				nextSibling = siblings.get(siblingPos);
-			}
-			return new ModelPosition(pos.targetParent, nextSibling);
+			return success;
 		}
 
 		protected abstract boolean applyTo(ILElement element, ModelPosition pos);
