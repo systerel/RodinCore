@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.emf.common.util.EList;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -108,20 +109,32 @@ public class SynchroManager {
 		try {
 			final List<ICoreImplicitChildProvider> providers = ImplicitChildProviderManager
 					.getProvidersFor(iParent.getElementType());
-			int insertionPosition = 0;
 			parent.eSetDeliver(false);
 			for (final ICoreImplicitChildProvider p : providers) {
-				for (IInternalElement e : ImplicitChildrenComputer
-						.safeGetImplicitChildren(iParent, p)) {
+				final List<? extends IInternalElement> implicitChildren = ImplicitChildrenComputer
+						.safeGetImplicitChildren(iParent, p);
+				int insertionPosition = 0;
+				for (IInternalElement e : implicitChildren) {
 					final LightElement eRoot = parent.getERoot();
 					final ImplicitElement implicit = loadImplicitElementFor(e,
 							eRoot);
-					final LightElement original = SynchroUtils.findElement(e,
-							eRoot);
+					final LightElement original = SynchroUtils
+							.findChildElement(e, parent);
+					final EList<LightElement> eChildren = parent.getEChildren();
 					if (original != null) {
 						reloadImplicitElement(original, implicit);
+						final int childPosition = parent
+								.getChildPosition(original);
+						if (childPosition >= 0
+								&& insertionPosition < eChildren.size()
+								&& childPosition != insertionPosition) {
+							parent.moveChild(insertionPosition, childPosition);
+						}
 					} else {
-						parent.getEChildren().add(insertionPosition, implicit);
+						if (insertionPosition > eChildren.size())
+							eChildren.add(implicit);
+						else
+							eChildren.add(insertionPosition, implicit);
 					}
 					insertionPosition++;
 				}
@@ -130,7 +143,7 @@ public class SynchroManager {
 			parent.eSetDeliver(true);
 		}
 	}
-	
+
 	private static class ImplicitChildrenComputer {
 
 		private List<? extends IInternalElement> implicitChildren;

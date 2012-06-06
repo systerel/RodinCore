@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,6 +120,16 @@ public class SynchroUtils {
 
 	public static ILElement findElement(IRodinElement toFind, ILElement root) {
 		return findElement(toFind, (LightElement)root);
+	}
+	
+	public static LightElement findChildElement(IRodinElement toFind,
+			LightElement parent) {
+		if (toFind != null)
+			for (LightElement elem : parent.getEChildren()) {
+				if (toFind.equals(elem.getERodinElement()))
+					return elem;
+			}
+		return null;
 	}
 	
 	/**
