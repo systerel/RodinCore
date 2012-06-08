@@ -30,7 +30,10 @@ package org.eventb.core.ast;
  * <li>If an identifier denotes a given type, its substituting expression must
  * denote the type which is substituted to that given type.</li>
  * </ul>
- * These conditions must hold after every method call.
+ * These conditions must hold after every method call.This also implies that a
+ * type substitution required for a free identifier specialization should be put
+ * in the specialization strictly before the considered free identifier
+ * substitution.
  * </p>
  * 
  * @author Laurent Voisin
@@ -48,24 +51,32 @@ public interface ISpecialization {
 
 	/**
 	 * Adds a new type substitution to this specialization. All substitutions
-	 * will be applied in parallel when specializing a formula.
+	 * will be applied in parallel when specializing a formula. The given key
+	 * must not have already been registered within this specialization.
 	 * 
 	 * @param key
 	 *            given type to specialize
 	 * @param value
 	 *            replacement for the given type
+	 * @throws IllegalArgumentException
+	 *             if the type substitution has already been registered
 	 */
 	void put(GivenType key, Type value);
 
 	/**
 	 * Adds a new free identifier substitution to this specialization. All
 	 * substitutions will be applied in parallel when specializing a formula.
-	 * Both parameters must be type-checked.
+	 * Both parameters must be type-checked. The given identifier must not have
+	 * already been registered within this specialization.
 	 * 
 	 * @param ident
 	 *            a typed identifier to substitute
 	 * @param value
 	 *            a typed expression to substitute for the given identifier
+	 * @throws IllegalArgumentException
+	 *             if the identifier substitution has already been registered or
+	 *             if the expression has an uncompatible type with according to
+	 *             the type substitution
 	 */
 	void put(FreeIdentifier ident, Expression value);
 

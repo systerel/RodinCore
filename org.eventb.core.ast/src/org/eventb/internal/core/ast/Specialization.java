@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,10 @@ public class Specialization implements ISpecialization {
 
 	private final Map<GivenType, Type> typeSubst;
 	private final Map<FreeIdentifier, Expression> identSubst;
-	private boolean verified;
 
 	public Specialization() {
 		typeSubst = new HashMap<GivenType, Type>();
 		identSubst = new HashMap<FreeIdentifier, Expression>();
-		verified = true;
 	}
 
 	@Override
@@ -43,8 +41,11 @@ public class Specialization implements ISpecialization {
 			throw new NullPointerException("Null given type");
 		if (value == null)
 			throw new NullPointerException("Null type");
+		if (typeSubst.containsKey(key) && !typeSubst.get(key).equals(value))
+			throw new IllegalArgumentException("Key " + key
+					+ " is already registered");
 		typeSubst.put(key, value);
-		verified = false;
+		verify();
 	}
 
 	public Type get(GivenType key) {
@@ -65,7 +66,7 @@ public class Specialization implements ISpecialization {
 		if (!value.isTypeChecked())
 			throw new IllegalArgumentException("Untyped value");
 		identSubst.put(ident, value);
-		verified = false;
+		verify();
 	}
 
 	public Expression get(FreeIdentifier ident) {
@@ -76,12 +77,9 @@ public class Specialization implements ISpecialization {
 	}
 
 	/**
-	 * Verifies that both substitutions are compatible. Verification is
-	 * attempted only if this object changed state since the last verification.
+	 * Verifies that both substitutions are compatible.
 	 */
-	public void verify() {
-		if (verified)
-			return;
+	private void verify() {
 		for (Entry<FreeIdentifier, Expression> entry : identSubst.entrySet()) {
 			final FreeIdentifier ident = entry.getKey();
 			final Type newType = ident.getType().specialize(this);
@@ -91,10 +89,6 @@ public class Specialization implements ISpecialization {
 						+ ident);
 			}
 		}
-
-		// FIXME Ajouter vérification de compatibilité entre types et
-		// identificateurs dénotant un type !
-
-		verified = true;
 	}
+
 }

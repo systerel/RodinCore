@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.Formula.combineHashCodes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
@@ -116,6 +118,16 @@ public class ParametricType extends Type {
 	public int hashCode() {
 		return combineHashCodes(typeConstructor.hashCode(),
 				combineHashCodes(typeParameters));
+	}
+
+	@Override
+	public Type specialize(ISpecialization specialization) {
+		final List<Type> specializedTypes = new ArrayList<Type>();
+		for (Type type : typeParameters) {
+			specializedTypes.add(type.specialize(specialization));
+		}
+		return new ParametricType(this.typeConstructor,
+				specializedTypes.toArray(new Type[specializedTypes.size()]));
 	}
 
 }
