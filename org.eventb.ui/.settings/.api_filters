@@ -4,7 +4,7 @@
         <filter comment="Work-around incompatibility in cocoa plug-in re-exported by org.eventb.ui." id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.AbstractWindowHandler"/>
-                <message_argument value="org.eventb.ui_2.4.0"/>
+                <message_argument value="org.eventb.ui_2.5.0"/>
             </message_arguments>
         </filter>
     </resource>
@@ -12,7 +12,7 @@
         <filter comment="Work-around incompatibility in cocoa plug-in re-exported by org.eventb.ui." id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.ArrangeWindowsHandler"/>
-                <message_argument value="org.eventb.ui_2.4.0"/>
+                <message_argument value="org.eventb.ui_2.5.0"/>
             </message_arguments>
         </filter>
     </resource>
@@ -20,7 +20,7 @@
         <filter comment="Work-around incompatibility in cocoa plug-in re-exported by org.eventb.ui." id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.CloseDialogHandler"/>
-                <message_argument value="org.eventb.ui_2.4.0"/>
+                <message_argument value="org.eventb.ui_2.5.0"/>
             </message_arguments>
         </filter>
     </resource>
@@ -28,7 +28,7 @@
         <filter comment="Work-around incompatibility in cocoa plug-in re-exported by org.eventb.ui." id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.CocoaTitlePathUpdater"/>
-                <message_argument value="org.eventb.ui_2.4.0"/>
+                <message_argument value="org.eventb.ui_2.5.0"/>
             </message_arguments>
         </filter>
     </resource>
@@ -36,7 +36,7 @@
         <filter comment="Work-around incompatibility in cocoa plug-in re-exported by org.eventb.ui." id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.CocoaUIEnhancer"/>
-                <message_argument value="org.eventb.ui_2.4.0"/>
+                <message_argument value="org.eventb.ui_2.5.0"/>
             </message_arguments>
         </filter>
     </resource>
@@ -44,7 +44,7 @@
         <filter comment="Work-around incompatibility in cocoa plug-in re-exported by org.eventb.ui." id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.CocoaUtil"/>
-                <message_argument value="org.eventb.ui_2.4.0"/>
+                <message_argument value="org.eventb.ui_2.5.0"/>
             </message_arguments>
         </filter>
     </resource>
@@ -52,7 +52,7 @@
         <filter comment="Work-around incompatibility in cocoa plug-in re-exported by org.eventb.ui." id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.MinimizeWindowHandler"/>
-                <message_argument value="org.eventb.ui_2.4.0"/>
+                <message_argument value="org.eventb.ui_2.5.0"/>
             </message_arguments>
         </filter>
     </resource>
@@ -60,7 +60,7 @@
         <filter comment="Work-around incompatibility in cocoa plug-in re-exported by org.eventb.ui." id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.SWTCocoaEnhancerDelegate"/>
-                <message_argument value="org.eventb.ui_2.4.0"/>
+                <message_argument value="org.eventb.ui_2.5.0"/>
             </message_arguments>
         </filter>
     </resource>
@@ -68,7 +68,7 @@
         <filter comment="Work-around incompatibility in cocoa plug-in re-exported by org.eventb.ui." id="305422471">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.internal.cocoa.ZoomWindowHandler"/>
-                <message_argument value="org.eventb.ui_2.4.0"/>
+                <message_argument value="org.eventb.ui_2.5.0"/>
             </message_arguments>
         </filter>
     </resource>
