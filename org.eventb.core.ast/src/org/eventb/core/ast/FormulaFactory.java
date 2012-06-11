@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
  *     Systerel - added support for mathematical extensions
+ *     Systerel - added support for specialization
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -1525,7 +1526,7 @@ public class FormulaFactory {
 	 * @since 2.6
 	 */
 	public ISpecialization makeSpecialization() {
-		return new Specialization();
+		return new Specialization(this);
 	}
 
 	/**

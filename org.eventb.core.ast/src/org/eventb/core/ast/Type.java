@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -176,6 +177,24 @@ public abstract class Type {
 
 	protected abstract void addGivenTypes(Set<GivenType> set);
 
+	
+	/**
+	 * Returns a set of all given types which are used in this type.
+	 * <p>
+	 * This type must be solved when calling this method.
+	 * </p>
+	 * 
+	 * @return a set containing all given types which are used in this formula
+	 *         types
+	 * @since 2.6
+	 */
+	public final Set<GivenType> getGivenTypes() {
+		assert isSolved();
+		final HashSet<GivenType> result = new HashSet<GivenType>();
+		this.addGivenTypes(result);
+		return result;
+	}
+	
 	/**
 	 * Uses the given specialization to get a new specialization of this type.
 	 * 

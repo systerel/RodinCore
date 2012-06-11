@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.ProductType;
@@ -257,7 +259,7 @@ public class TestTypeAndTypeEnvSpecialization extends AbstractTests {
 			final Type specialType = pType.specialize(spec);
 			assertEquals(ff.makeProductType(U, V), specialType);
 		} catch (IllegalArgumentException e) {
-			fail("should not have raised an exception");
+			fail("Should not have raised an exception");
 		}
 	}
 	
@@ -285,7 +287,79 @@ public class TestTypeAndTypeEnvSpecialization extends AbstractTests {
 			assertEquals(U, typeParameters[1]);
 			assertEquals(V, typeParameters[2]);
 		} catch (IllegalArgumentException e) {
-			fail("should not have raised an exception");
+			fail("Should not have raised an exception");
+		}
+	}
+	
+	/**
+	 * Ensures that a specialized given type S disappears when not used. 
+	 */
+	public void testTEWithASpecifiedUnusedGivenType() {
+		try {
+			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
+			typeEnv.addGivenSet("S");
+			spec.put(S, T);
+			final ITypeEnvironment sdTypeEnv = typeEnv
+					.specialize(spec);
+			assertNull(sdTypeEnv.getType("S"));
+		} catch (IllegalArgumentException e) {
+			fail("Should not have raised an exception");
+		}
+	}
+	
+	/**
+	 * Ensures that given type S is specialized when used indirectly by a free
+	 * identifier of the type environment.
+	 */
+	public void testTEWithASpecifiedUsedGivenType() {
+		try {
+			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
+			typeEnv.addGivenSet("S");
+			final FreeIdentifier a = ff.makeFreeIdentifier("a", null, S);
+			typeEnv.add(a);
+			spec.put(S, T);
+			final ITypeEnvironment sdTypeEnv = typeEnv.specialize(spec);
+			assertNull(sdTypeEnv.getType("S"));
+			assertEquals(sdTypeEnv.getType("T"), ff.makePowerSetType(T));
+			assertEquals(T, sdTypeEnv.getType("a"));
+		} catch (IllegalArgumentException e) {
+			fail("Should not have raised an exception");
+		}
+	}
+	
+	/**
+	 * Ensures that given sets get created when needed for the typing of an
+	 * identifier and that the original types involved in an identifier get
+	 * specialized.
+	 * 
+	 * Original typeEnv : S |-> POW(S)
+	 * 					  T |-> POW(T)
+	 * 
+	 * 					  a |-> S x T
+	 * 
+	 * Specialization :   S --> T 
+	 * 				      T --> S x T
+	 * 
+	 * Specialized typeEnv : S disappeard
+	 * 						 T |-> POW(T)
+	 * 						 a |-> T x (S x T)
+	 */
+	public void testTEWithAComplexSpecifiedGivenType() {
+		try {
+			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
+			typeEnv.addGivenSet("S");
+			typeEnv.addGivenSet("T");
+			final ProductType sxt = ff.makeProductType(S, T);
+			final FreeIdentifier a = ff.makeFreeIdentifier("a", null, sxt);
+			typeEnv.add(a);
+			spec.put(S, T);
+			spec.put(T, sxt);
+			final ITypeEnvironment sdTypeEnv = typeEnv.specialize(spec);
+			assertNull(sdTypeEnv.getType("S"));
+			assertEquals(sdTypeEnv.getType("T"), ff.makePowerSetType(T));
+			assertEquals(ff.makeProductType(T, sxt), sdTypeEnv.getType("a"));
+		} catch (IllegalArgumentException e) {
+			fail("Should not have raised an exception");
 		}
 	}
 	

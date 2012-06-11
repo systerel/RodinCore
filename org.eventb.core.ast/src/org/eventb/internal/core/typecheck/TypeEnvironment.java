@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,21 +7,24 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added support for specialization
  *******************************************************************************/
 package org.eventb.internal.core.typecheck;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.core.ast.Specialization;
 
 /**
  * This class represents a type environment used to type check an event-B
@@ -33,18 +36,18 @@ import org.eventb.core.ast.Type;
  * @author François Terrier
  */
 public class TypeEnvironment implements Cloneable, ITypeEnvironment {
-	
+
 	static final class InternalIterator implements IIterator {
-		
+
 		Iterator<Map.Entry<String, Type>> iterator;
-		
+
 		Map.Entry<String, Type> current;
 
 		public InternalIterator(Iterator<Map.Entry<String, Type>> iterator) {
 			this.iterator = iterator;
 			this.current = null;
 		}
-		
+
 		@Override
 		public boolean hasNext() {
 			return iterator.hasNext();
@@ -83,7 +86,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	}
 
 	public final FormulaFactory ff;
-	
+
 	// implementation
 	private Map<String, Type> map;
 
@@ -111,30 +114,37 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		addName(freeIdent.getName(), freeIdent.getType());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.ITypeEnvironment#addAll(org.eventb.core.ast.ITypeEnvironment)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.ast.ITypeEnvironment#addAll(org.eventb.core.ast.
+	 * ITypeEnvironment)
 	 */
 	@Override
 	public void addAll(ITypeEnvironment other) {
 		Map<String, Type> otherMap = ((TypeEnvironment) other).map;
 		// Use addName() to check for duplicates.
-		for (Entry<String, Type> entry: otherMap.entrySet()) {
+		for (Entry<String, Type> entry : otherMap.entrySet()) {
 			addName(entry.getKey(), entry.getValue());
 		}
 	}
-	
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.ITypeEnvironment#addAll(org.eventb.core.ast.FreeIdentifier[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.ast.ITypeEnvironment#addAll(org.eventb.core.ast.
+	 * FreeIdentifier[])
 	 */
 	@Override
 	public void addAll(FreeIdentifier[] freeIdents) {
-		for (FreeIdentifier freeIdent: freeIdents) {
+		for (FreeIdentifier freeIdent : freeIdents) {
 			add(freeIdent);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.ast.ITypeEnvironment#addGivenSet(java.lang.String)
 	 */
 	@Override
@@ -142,8 +152,15 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		addName(name, ff.makePowerSetType(ff.makeGivenType(name)));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.ITypeEnvironment#addName(java.lang.String, org.eventb.core.ast.Type)
+	public void addGivenSet(GivenType type) {
+		addName(type.getName(), ff.makePowerSetType(type));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eventb.core.ast.ITypeEnvironment#addName(java.lang.String,
+	 * org.eventb.core.ast.Type)
 	 */
 	@Override
 	public void addName(String name, Type type) {
@@ -153,16 +170,19 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		map.put(name, type);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
 	public ITypeEnvironment clone() {
 		return new TypeEnvironment(this);
 	}
-	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.ast.ITypeEnvironment#contains(java.lang.String)
 	 */
 	@Override
@@ -170,23 +190,29 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		return map.containsKey(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.ITypeEnvironment#containsAll(org.eventb.internal.core.typecheck.TypeEnvironment)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eventb.core.ast.ITypeEnvironment#containsAll(org.eventb.internal.
+	 * core.typecheck.TypeEnvironment)
 	 */
 	@Override
-	public boolean containsAll(ITypeEnvironment typenv){
+	public boolean containsAll(ITypeEnvironment typenv) {
 		if (this == typenv)
 			return true;
 		final TypeEnvironment other = (TypeEnvironment) typenv;
-		for (Entry<String, Type> entry: other.map.entrySet()){
+		for (Entry<String, Type> entry : other.map.entrySet()) {
 			String name = entry.getKey();
-			if (! entry.getValue().equals(this.getType(name)))
+			if (!entry.getValue().equals(this.getType(name)))
 				return false;
 		}
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -201,7 +227,9 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.ast.ITypeEnvironment#getIterator()
 	 */
 	@Override
@@ -209,15 +237,19 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		return new InternalIterator(map.entrySet().iterator());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.ast.ITypeEnvironment#getNames()
 	 */
 	@Override
-	public Set<String> getNames(){
+	public Set<String> getNames() {
 		return map.keySet();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.ast.ITypeEnvironment#getType(java.lang.String)
 	 */
 	@Override
@@ -227,6 +259,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -234,7 +267,9 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		return map.hashCode();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eventb.core.ast.ITypeEnvironment#isEmpty()
 	 */
 	@Override
@@ -245,12 +280,14 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	// solves the unknown types (names who have type variable as their
 	// corresponding type).
 	public void solveVariables(TypeUnifier unifier) {
-		for (Entry<String, Type> element: map.entrySet()) {
+		for (Entry<String, Type> element : map.entrySet()) {
 			element.setValue(unifier.solve(element.getValue()));
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -262,5 +299,61 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	public FormulaFactory getFormulaFactory() {
 		return ff;
 	}
-	
+
+	@Override
+	public ITypeEnvironment specialize(ISpecialization specialization) {
+		final Specialization spec = (Specialization) specialization;
+		final TypeEnvironment typeEnv = getTypeEnvWithMandatoryGivenTypes(spec);
+		final ITypeEnvironment.IIterator iter = this.getIterator();
+		while (iter.hasNext()) {
+			iter.advance();
+			if (iter.isGivenSet()) {
+				final Type type = iter.getType();
+				final GivenType given = (GivenType) type.getBaseType();
+				if (spec.get(given) == given) {
+					typeEnv.addName(iter.getName(), type);
+				} // else the type is specialized thus disappears
+			} else {
+				final FreeIdentifier ident = ff.makeFreeIdentifier(
+						iter.getName(), null, iter.getType());
+				final FreeIdentifier freeIdent = (FreeIdentifier) spec
+						.get(ident);
+				if (typeEnv.contains(freeIdent.getName())) {
+					throw new IllegalArgumentException(freeIdent
+							+ " can not be a type and not a type.");
+				}
+				typeEnv.add(freeIdent);
+			}
+		}
+		return typeEnv;
+	}
+
+	/**
+	 * Returns a new type environment carrying the given types introduced by the
+	 * specialization of the free identifiers from the current type environment.
+	 * 
+	 * @param specialization
+	 *            the specialization potentially introducing new given types
+	 * @return the augmented type environment with the given types required by
+	 *         specialized free identifiers
+	 */
+	private TypeEnvironment getTypeEnvWithMandatoryGivenTypes(
+			ISpecialization specialization) {
+		final Specialization spec = (Specialization) specialization;
+		final TypeEnvironment typeEnv = new TypeEnvironment(ff);
+		final ITypeEnvironment.IIterator iter = this.getIterator();
+		while (iter.hasNext()) {
+			iter.advance();
+			if (!iter.isGivenSet()) {
+				for (GivenType gt : iter.getType().getGivenTypes()) {
+					final Type type = spec.get(gt);
+					if (type instanceof GivenType && !gt.equals(type)) {
+						typeEnv.addGivenSet(((GivenType) type).getName());
+					}
+				}
+			}
+		}
+		return typeEnv;
+	}
+
 }

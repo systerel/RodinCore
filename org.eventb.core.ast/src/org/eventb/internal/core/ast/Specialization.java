@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
@@ -27,10 +28,13 @@ import org.eventb.core.ast.Type;
  */
 public class Specialization implements ISpecialization {
 
+	private FormulaFactory ff;
+
 	private final Map<GivenType, Type> typeSubst;
 	private final Map<FreeIdentifier, Expression> identSubst;
 
-	public Specialization() {
+	public Specialization(FormulaFactory ff) {
+		this.ff = ff;
 		typeSubst = new HashMap<GivenType, Type>();
 		identSubst = new HashMap<FreeIdentifier, Expression>();
 	}
@@ -71,8 +75,11 @@ public class Specialization implements ISpecialization {
 
 	public Expression get(FreeIdentifier ident) {
 		final Expression value = identSubst.get(ident);
-		if (value == null)
-			return ident;
+		if (value == null) {
+			final Type specializedType = ident.getType().specialize(this);
+			return ff.makeFreeIdentifier(ident.getName(),
+					ident.getSourceLocation(), specializedType);
+		}
 		return value;
 	}
 
