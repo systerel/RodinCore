@@ -328,19 +328,73 @@ public class TestTypeAndTypeEnvSpecialization extends AbstractTests {
 	}
 	
 	/**
-	 * Ensures that given sets get created when needed for the typing of an
-	 * identifier and that the original types involved in an identifier get
-	 * specialized.
+	 * Ensures that given type T is maintained when used indirectly by a free
+	 * identifier that has been specialized.
+	 */
+	public void testTEWithASpecifiedIdentifier() {
+		try {
+			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
+			typeEnv.addGivenSet("T");
+			final FreeIdentifier a = ff.makeFreeIdentifier("a", null, T);
+			typeEnv.add(a);
+			spec.put(a, ff.makeFreeIdentifier("b", null, T));
+			final ITypeEnvironment sdTypeEnv = typeEnv.specialize(spec);
+			assertEquals(ff.makePowerSetType(T), sdTypeEnv.getType("T"));
+			assertEquals(T, sdTypeEnv.getType("b"));
+			assertNull(sdTypeEnv.getType("a"));
+		} catch (IllegalArgumentException e) {
+			fail("Should not have raised an exception");
+		}
+	}
+	
+	/**
+	 * Ensures that given type S is specialized when used indirectly by a free
+	 * identifier of the type environment, that an identifier involving S is
+	 * Specialized in parallel and that S disappear as well as the occurrence of
+	 * the free identifiers that have been renamed (and specialized).
+	 * 
+	 * Original typeEnv : S |-> POW(S); a |-> S ; c |-> S x INT
+	 * 
+	 * Specialization : S --> T ; a (oftype S) --> b (oftype T)
+	 * 
+	 * Specialized typeEnv : S disappeared ; a was renamed into b ; 
+	 * 						 T |-> POW(T) ; b |-> T ; c |-> T x INT
+	 */
+	public void testTEWithSpecifiedGivenTypeAndIdent() {
+		try {
+			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
+			typeEnv.addGivenSet("S");
+			final FreeIdentifier a = ff.makeFreeIdentifier("a", null, S);
+			typeEnv.add(a);
+			final FreeIdentifier c = ff.makeFreeIdentifier("c", null,
+					ff.makeProductType(S, Z));
+			typeEnv.add(c);
+			spec.put(S, T);
+			spec.put(a, ff.makeFreeIdentifier("b", null, T));
+			final ITypeEnvironment sdTypeEnv = typeEnv.specialize(spec);
+			assertNull(sdTypeEnv.getType("S"));
+			assertEquals(ff.makePowerSetType(T), sdTypeEnv.getType("T"));
+			assertNull(sdTypeEnv.getType("a"));
+			assertEquals(T, sdTypeEnv.getType("b"));
+			assertEquals(ff.makeProductType(T, Z), sdTypeEnv.getType("c"));
+		} catch (IllegalArgumentException e) {
+			fail("Should not have raised an exception");
+		}
+	}
+	
+	/**
+	 * Ensures that an identifier of given set can not be considered as a type
+	 * and not a type at the same time.
 	 * 
 	 * Original typeEnv : S |-> POW(S)
-	 * 					  T |-> POW(T)
 	 * 
+	 * 					  T |-> S x U
 	 * 					  a |-> S x T
 	 * 
 	 * Specialization :   S --> T 
 	 * 				      T --> S x T
 	 * 
-	 * Specialized typeEnv : S disappeard
+	 * Specialized typeEnv : S disappeared
 	 * 						 T |-> POW(T)
 	 * 						 a |-> T x (S x T)
 	 */
@@ -363,6 +417,28 @@ public class TestTypeAndTypeEnvSpecialization extends AbstractTests {
 		}
 	}
 	
-	// FIXME TO BE COMPLETED BY TYPE ENV TESTS...
+	/**
+	 * Robustness non-regression test ensuring that an invalid type environment
+	 * in which given types both as given types and free identifiers can not be
+	 * specialized.
+	 */
+	public void testInvalidTESpecialization() {
+		try {
+			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
+			typeEnv.addGivenSet("S");
+			final FreeIdentifier t = ff.makeFreeIdentifier("T", null, U);
+			typeEnv.add(t);
+			final ProductType sxt = ff.makeProductType(S, T);
+			final FreeIdentifier a = ff.makeFreeIdentifier("a", null, sxt);
+			typeEnv.add(a);
+			spec.put(S, T); // consider T as a given type
+			final ProductType sxu = ff.makeProductType(S, U);
+			spec.put(T, sxu); // consider T as a free identifier
+			typeEnv.specialize(spec);
+			fail("Should have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
 
 }
