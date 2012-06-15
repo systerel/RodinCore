@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -322,7 +322,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	@Override
-	public Predicate rewrite(IFormulaRewriter rewriter) {
+	protected Predicate rewrite(ITypedFormulaRewriter rewriter) {
 		final boolean flatten = rewriter.autoFlatteningMode();
 		final ArrayList<Expression> newChildExpressions = new ArrayList<Expression>(
 				childExpressions.length);
@@ -354,7 +354,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 					newChildExpressions, newChildPredicates,
 					getSourceLocation());
 		}
-		return checkReplacement(rewriter.rewrite(before));
+		return rewriter.checkReplacement(this, rewriter.rewrite(before));
 	}
 
 	@Override

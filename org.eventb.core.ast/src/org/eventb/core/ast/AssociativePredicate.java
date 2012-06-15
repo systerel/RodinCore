@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -319,16 +319,15 @@ public class AssociativePredicate extends Predicate {
 	}
 
 	@Override
-	public Predicate rewrite(IFormulaRewriter rewriter) {
+	protected Predicate rewrite(ITypedFormulaRewriter rewriter) {
 		final boolean flatten = rewriter.autoFlatteningMode();
-		final ArrayList<Predicate> newChildren =
-			new ArrayList<Predicate>(children.length + 11); 
+		final ArrayList<Predicate> newChildren = new ArrayList<Predicate>(
+				children.length + 11);
 		boolean changed = false;
-		for (Predicate child: children) {
+		for (Predicate child : children) {
 			Predicate newChild = child.rewrite(rewriter);
 			if (flatten && getTag() == newChild.getTag()) {
-				final Predicate[] grandChildren =
-					((AssociativePredicate) newChild).children;
+				final Predicate[] grandChildren = ((AssociativePredicate) newChild).children;
 				newChildren.addAll(Arrays.asList(grandChildren));
 				changed = true;
 			} else {
@@ -337,13 +336,13 @@ public class AssociativePredicate extends Predicate {
 			}
 		}
 		final AssociativePredicate before;
-		if (! changed) {
+		if (!changed) {
 			before = this;
 		} else {
 			before = rewriter.getFactory().makeAssociativePredicate(getTag(),
 					newChildren, getSourceLocation());
 		}
-		return checkReplacement(rewriter.rewrite(before));
+		return rewriter.checkReplacement(this, rewriter.rewrite(before));
 	}
 
 	@Override

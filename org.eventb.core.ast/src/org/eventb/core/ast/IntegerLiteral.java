@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,8 +158,8 @@ public class IntegerLiteral extends Expression {
 	}
 
 	@Override
-	public Expression rewrite(IFormulaRewriter rewriter) {
-		return checkReplacement(rewriter.rewrite(this));
+	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
+		return rewriter.checkReplacement(this, rewriter.rewrite(this));
 	}
 
 	@Override

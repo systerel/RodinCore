@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich.
+ * Copyright (c) 2005, 2012 ETH Zurich.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,6 +161,11 @@ public abstract class Assignment extends Formula<Assignment> {
 		throw new UnsupportedOperationException("Assignments cannot be rewritten");
 	}
 	
+	@Override
+	protected final Assignment rewrite(ITypedFormulaRewriter rewriter) {
+		throw new UnsupportedOperationException("Assignments cannot be rewritten");
+	}
+	
 	/**
 	 * Returns the (flattened) feasibility predicate of this assignment. An
 	 * exception is thrown if this assignment was not type checked.
@@ -242,10 +247,13 @@ public abstract class Assignment extends Formula<Assignment> {
 				"Assignments cannot be rewritten");
 	}
 
+	/**
+	 * @since 2.6
+	 */
 	@Override
-	protected final Assignment checkReplacement(Assignment replacement) {
+	public Assignment specialize(ISpecialization specialisation) {
 		throw new UnsupportedOperationException(
-				"Assignments cannot be rewritten");
+				"Assignments cannot be specialized");
 	}
 
 }

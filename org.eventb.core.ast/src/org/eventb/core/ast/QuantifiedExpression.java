@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -704,16 +704,16 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	@Override
-	public Expression rewrite(IFormulaRewriter rewriter) {
+	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
-		
+
 		rewriter.enteringQuantifier(nbOfBoundIdentDecls);
 		final Predicate newPred = pred.rewrite(rewriter);
 		final Expression newExpr = expr.rewrite(rewriter);
 		rewriter.leavingQuantifier(nbOfBoundIdentDecls);
 
 		// TODO: implement cleanup of unused bound ident decls.
-		
+
 		final QuantifiedExpression before;
 		if (newPred == pred && newExpr == expr) {
 			before = this;
@@ -722,7 +722,7 @@ public class QuantifiedExpression extends Expression {
 					quantifiedIdentifiers, newPred, newExpr,
 					getSourceLocation(), form);
 		}
-		return checkReplacement(rewriter.rewrite(before));
+		return rewriter.checkReplacement(this, rewriter.rewrite(before));
 	}
 
 	@Override

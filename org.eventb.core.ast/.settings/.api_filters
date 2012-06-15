@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eventb.core.ast" version="2">
+    <resource path="src/org/eventb/core/ast/Assignment.java" type="org.eventb.core.ast.Assignment">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/AssociativeExpression.java" type="org.eventb.core.ast.AssociativeExpression">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.AssociativeExpression"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/AssociativePredicate.java" type="org.eventb.core.ast.AssociativePredicate">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.AssociativePredicate"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/AtomicExpression.java" type="org.eventb.core.ast.AtomicExpression">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.AtomicExpression"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/BinaryExpression.java" type="org.eventb.core.ast.BinaryExpression">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.BinaryExpression"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/BinaryPredicate.java" type="org.eventb.core.ast.BinaryPredicate">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.BinaryPredicate"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/BoolExpression.java" type="org.eventb.core.ast.BoolExpression">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.BoolExpression"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/BoundIdentDecl.java" type="org.eventb.core.ast.BoundIdentDecl">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/BoundIdentifier.java" type="org.eventb.core.ast.BoundIdentifier">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.BoundIdentifier"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/ExtendedExpression.java" type="org.eventb.core.ast.ExtendedExpression">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/ExtendedPredicate.java" type="org.eventb.core.ast.ExtendedPredicate">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.ExtendedPredicate"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/Formula.java" type="org.eventb.core.ast.Formula">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/FreeIdentifier.java" type="org.eventb.core.ast.FreeIdentifier">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.FreeIdentifier"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/IntegerLiteral.java" type="org.eventb.core.ast.IntegerLiteral">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.IntegerLiteral"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/LiteralPredicate.java" type="org.eventb.core.ast.LiteralPredicate">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.LiteralPredicate"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/MultiplePredicate.java" type="org.eventb.core.ast.MultiplePredicate">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.MultiplePredicate"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/PredicateVariable.java" type="org.eventb.core.ast.PredicateVariable">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.PredicateVariable"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/QuantifiedExpression.java" type="org.eventb.core.ast.QuantifiedExpression">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.QuantifiedExpression"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/QuantifiedPredicate.java" type="org.eventb.core.ast.QuantifiedPredicate">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.QuantifiedPredicate"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/RelationalPredicate.java" type="org.eventb.core.ast.RelationalPredicate">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.RelationalPredicate"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/SetExtension.java" type="org.eventb.core.ast.SetExtension">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.SetExtension"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/SimplePredicate.java" type="org.eventb.core.ast.SimplePredicate">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.SimplePredicate"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/UnaryExpression.java" type="org.eventb.core.ast.UnaryExpression">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.UnaryExpression"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/ast/UnaryPredicate.java" type="org.eventb.core.ast.UnaryPredicate">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.UnaryPredicate"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
+            <message_arguments>
+                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

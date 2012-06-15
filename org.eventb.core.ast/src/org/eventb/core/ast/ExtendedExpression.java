@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -392,9 +392,15 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitExtendedExpression(this);
 	}
-
+	
 	@Override
 	public Expression rewrite(IFormulaRewriter rewriter) {
+		return null;
+	
+	}
+	
+	@Override
+	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
 		final boolean flatten = rewriter.autoFlatteningMode();
 		final ArrayList<Expression> newChildExpressions = new ArrayList<Expression>(
 				childExpressions.length + 11);
@@ -423,7 +429,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			before = this;
 		} else {
 			// FIXME should check preconditions about new children
-			// (flattening could break preconditions) 
+			// (flattening could break preconditions)
 			final Expression[] newChildExprs = newChildExpressions
 					.toArray(new Expression[newChildExpressions.size()]);
 			final Predicate[] newChildPreds = newChildPredicates
@@ -432,7 +438,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 					newChildExprs, newChildPreds, getSourceLocation(),
 					getType());
 		}
-		return checkReplacement(rewriter.rewrite(before));
+		return rewriter.checkReplacement(this, rewriter.rewrite(before));
 	}
 
 	@Override

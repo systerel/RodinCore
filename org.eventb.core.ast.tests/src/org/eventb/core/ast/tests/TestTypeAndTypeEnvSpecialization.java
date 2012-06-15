@@ -409,7 +409,6 @@ public class TestTypeAndTypeEnvSpecialization extends AbstractTests {
 			spec.put(S, T);
 			spec.put(T, sxt);
 			final ITypeEnvironment sdTypeEnv = typeEnv.specialize(spec);
-			assertNull(sdTypeEnv.getType("S"));
 			assertEquals(sdTypeEnv.getType("T"), ff.makePowerSetType(T));
 			assertEquals(ff.makeProductType(T, sxt), sdTypeEnv.getType("a"));
 		} catch (IllegalArgumentException e) {

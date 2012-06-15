@@ -11,13 +11,16 @@
  *******************************************************************************/
 package org.eventb.internal.core.typecheck;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
@@ -303,7 +306,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	@Override
 	public ITypeEnvironment specialize(ISpecialization specialization) {
 		final Specialization spec = (Specialization) specialization;
-		final TypeEnvironment typeEnv = getTypeEnvWithMandatoryGivenTypes(spec);
+		final TypeEnvironment typeEnv = getGivenTypesOfSpecialisation(spec);
 		final ITypeEnvironment.IIterator iter = this.getIterator();
 		while (iter.hasNext()) {
 			iter.advance();
@@ -316,13 +319,15 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 			} else {
 				final FreeIdentifier ident = ff.makeFreeIdentifier(
 						iter.getName(), null, iter.getType());
-				final FreeIdentifier freeIdent = (FreeIdentifier) spec
-						.get(ident);
-				if (typeEnv.contains(freeIdent.getName())) {
-					throw new IllegalArgumentException(freeIdent
+				final Expression expr = spec.get(ident);
+				if (expr instanceof FreeIdentifier) {
+					final FreeIdentifier freeIdent = (FreeIdentifier) expr;
+					if (typeEnv.contains(freeIdent.getName())) {
+					throw new IllegalArgumentException(expr
 							+ " can not be a type and not a type.");
+					}
+					typeEnv.add(freeIdent);					
 				}
-				typeEnv.add(freeIdent);
 			}
 		}
 		return typeEnv;
@@ -330,28 +335,23 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 
 	/**
 	 * Returns a new type environment carrying the given types introduced by the
-	 * specialization of the free identifiers from the current type environment.
+	 * specialization.
 	 * 
 	 * @param specialization
 	 *            the specialization potentially introducing new given types
-	 * @return the augmented type environment with the given types required by
-	 *         specialized free identifiers
+	 * @return the augmented type environment with the given types
 	 */
-	private TypeEnvironment getTypeEnvWithMandatoryGivenTypes(
+	private TypeEnvironment getGivenTypesOfSpecialisation(
 			ISpecialization specialization) {
 		final Specialization spec = (Specialization) specialization;
 		final TypeEnvironment typeEnv = new TypeEnvironment(ff);
-		final ITypeEnvironment.IIterator iter = this.getIterator();
-		while (iter.hasNext()) {
-			iter.advance();
-			if (!iter.isGivenSet()) {
-				for (GivenType gt : iter.getType().getGivenTypes()) {
-					final Type type = spec.get(gt);
-					if (type instanceof GivenType && !gt.equals(type)) {
-						typeEnv.addGivenSet(((GivenType) type).getName());
-					}
-				}
-			}
+		final Set<GivenType> newTypes = new HashSet<GivenType>();
+		final Collection<Type> sTypes = spec.getSubstitutionTypes();
+		for (Type type : sTypes) {
+			newTypes.addAll(type.getGivenTypes());
+		}
+		for (GivenType g : newTypes) {
+			typeEnv.addGivenSet(g);
 		}
 		return typeEnv;
 	}

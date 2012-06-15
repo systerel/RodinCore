@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Systerel and others.
+ * Copyright (c) 2009, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,12 +206,8 @@ public class PredicateVariable extends Predicate {
 	}
 
 	@Override
-	public Predicate rewrite(IFormulaRewriter rewriter) {
-		if (!(rewriter instanceof IFormulaRewriter2)) {
-			throw new IllegalArgumentException(
-					"The given rewriter shall support predicate variables");
-		}
-		return ((IFormulaRewriter2) rewriter).rewrite(this);
+	protected Predicate rewrite(ITypedFormulaRewriter rewriter) {
+		return rewriter.rewrite(this);
 	}
 
 	@Override

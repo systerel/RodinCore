@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -321,16 +321,15 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	public Expression rewrite(IFormulaRewriter rewriter) {
+	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
 		final int length = members.length;
 		final FormulaFactory ff = rewriter.getFactory();
 		final SourceLocation sloc = getSourceLocation();
 
 		if (length == 0 && rewriter.autoFlatteningMode()) {
-			AtomicExpression before = ff.makeEmptySet(getType(), sloc);
-			return checkReplacement(rewriter.rewrite(before));
+			final AtomicExpression before = ff.makeEmptySet(getType(), sloc);
+			return rewriter.checkReplacement(this, rewriter.rewrite(before));
 		}
-
 		boolean changed = false;
 		final Expression[] newMembers = new Expression[length];
 		for (int i = 0; i < length; i++) {
@@ -345,7 +344,7 @@ public class SetExtension extends Expression {
 		} else {
 			before = ff.makeSetExtension(newMembers, sloc);
 		}
-		return checkReplacement(rewriter.rewrite(before));
+		return rewriter.checkReplacement(this, rewriter.rewrite(before));
 	}
 
 	@Override

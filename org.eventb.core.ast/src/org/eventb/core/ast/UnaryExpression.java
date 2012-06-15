@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -561,25 +561,24 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	public Expression rewrite(IFormulaRewriter rewriter) {
+	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
 		final Expression newChild = child.rewrite(rewriter);
-
 		final FormulaFactory ff = rewriter.getFactory();
 		final SourceLocation sloc = getSourceLocation();
 		if (getTag() == Formula.UNMINUS && newChild.getTag() == Formula.INTLIT
 				&& rewriter.autoFlatteningMode()) {
-			BigInteger value = ((IntegerLiteral) newChild).getValue();
-			IntegerLiteral before = ff.makeIntegerLiteral(value.negate(), sloc);
-			return checkReplacement(rewriter.rewrite(before));
+			final BigInteger value = ((IntegerLiteral) newChild).getValue();
+			final IntegerLiteral before = ff.makeIntegerLiteral(value.negate(),
+					sloc);
+			return rewriter.checkReplacement(this, rewriter.rewrite(before));
 		}
-
 		final UnaryExpression before;
 		if (newChild == child) {
 			before = this;
 		} else {
 			before = ff.makeUnaryExpression(getTag(), newChild, sloc);
 		}
-		return checkReplacement(rewriter.rewrite(before));
+		return rewriter.checkReplacement(this, rewriter.rewrite(before));
 	}
 
 	@Override

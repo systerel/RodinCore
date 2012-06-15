@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added support for specialization
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -182,16 +183,8 @@ public abstract class Expression extends Formula<Expression> {
 
 	@Override
 	protected final Expression getCheckedReplacement(SingleRewriter rewriter) {
-		return checkReplacement(rewriter.getExpression());
-	}
-	
-	@Override
-	protected final Expression checkReplacement(Expression replacement)  {
-		if (this == replacement)
-			return this;
-		if (type != null && ! type.equals(replacement.getType()))
-			throw new IllegalArgumentException("Incompatible types in rewrite");
-		return replacement;
+		return TypedFormulaRewriter.getDefault().checkReplacement(this,
+				rewriter.getExpression());
 	}
 
 }

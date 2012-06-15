@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - added support for predicate variables
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
+ *     Systerel - added support for specialization
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -254,10 +255,10 @@ public class FreeIdentifier extends Identifier {
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitFreeIdentifier(this);
 	}
-
+	
 	@Override
-	public Expression rewrite(IFormulaRewriter rewriter) {
-		return checkReplacement(rewriter.rewrite(this));
+	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
+		return rewriter.checkReplacement(this, rewriter.rewrite(this));
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - added support for specialization
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -59,17 +60,8 @@ public abstract class Predicate extends Formula<Predicate> {
 	
 	@Override
 	protected final Predicate getCheckedReplacement(SingleRewriter rewriter) {
-		return checkReplacement(rewriter.getPredicate());
+		return TypedFormulaRewriter.getDefault().checkReplacement(this,
+				rewriter.getPredicate());
 	}
 	
-	@Override
-	protected final Predicate checkReplacement(Predicate replacement)  {
-		if (this == replacement)
-			return this;
-		if (isTypeChecked() && ! replacement.isTypeChecked())
-			throw new IllegalStateException(
-					"Rewritten formula should be type-checked");
-		return replacement;
-	}
-
 }

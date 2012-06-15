@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -211,6 +212,20 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
+	protected BoundIdentDecl rewrite(ITypedFormulaRewriter rewriter) {
+		throw new UnsupportedOperationException(
+				"Bound identifier declarations cannot be rewritten");
+	}
+
+	/**
+	 * @since 2.6
+	 */
+	@Override
+	public BoundIdentDecl specialize(ISpecialization specialization) {
+		return ((Specialization)specialization).rewrite(this);
+	}
+
+	@Override
 	protected void addGivenTypes(Set<GivenType> set) {
 		type.addGivenTypes(set);
 	}
@@ -245,16 +260,8 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 
 	@Override
 	protected BoundIdentDecl getCheckedReplacement(SingleRewriter rewriter) {
-		return checkReplacement(rewriter.getBoundIdentDecl());
-	}
-	
-	@Override
-	protected BoundIdentDecl checkReplacement(BoundIdentDecl replacement)  {
-		if (this == replacement)
-			return this;
-		if (type != null && ! type.equals(replacement.getType()))
-			throw new IllegalArgumentException("Incompatible types in rewrite");
-		return replacement;
+		return TypedFormulaRewriter.getDefault().checkReplacement(this,
+				rewriter.getBoundIdentDecl());
 	}
 
 	@Override

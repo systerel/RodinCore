@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -426,11 +426,11 @@ public class QuantifiedPredicate extends Predicate {
 			return newPred;
 		return formulaFactory.makeQuantifiedPredicate(getTag(), newBoundIdentDecls, newPred, getSourceLocation());
 	}
-	
+
 	@Override
-	public Predicate rewrite(IFormulaRewriter rewriter) {
+	protected Predicate rewrite(ITypedFormulaRewriter rewriter) {
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
-		
+
 		rewriter.enteringQuantifier(nbOfBoundIdentDecls);
 		Predicate newPred = pred.rewrite(rewriter);
 		rewriter.leavingQuantifier(nbOfBoundIdentDecls);
@@ -440,14 +440,15 @@ public class QuantifiedPredicate extends Predicate {
 		if (rewriter.autoFlatteningMode()) {
 			final boolean[] used = new boolean[nbOfBoundIdentDecls];
 			addUsedBoundIdentifiers(used, newPred);
-			if (! areAllUsed(used)) {
-				final BoundIdentDeclRemover subst = 
-					new BoundIdentDeclRemover(quantifiedIdentifiers, used, ff);
+			if (!areAllUsed(used)) {
+				final BoundIdentDeclRemover subst = new BoundIdentDeclRemover(
+						quantifiedIdentifiers, used, ff);
 				newPred = newPred.rewrite(subst);
-				final List<BoundIdentDecl> newDeclL = subst.getNewDeclarations();
+				final List<BoundIdentDecl> newDeclL = subst
+						.getNewDeclarations();
 				final int size = newDeclL.size();
 				if (size == 0) {
-					// Child predicate as already been rewritten
+					// Child predicate has already been rewritten
 					return newPred;
 				} else {
 					newDecls = newDeclL.toArray(new BoundIdentDecl[size]);
@@ -456,21 +457,21 @@ public class QuantifiedPredicate extends Predicate {
 
 			if (newPred.getTag() == getTag()) {
 				QuantifiedPredicate quantChild = (QuantifiedPredicate) newPred;
-				newDecls = catenateBoundIdentLists(
-						newDecls, quantChild.quantifiedIdentifiers);
+				newDecls = catenateBoundIdentLists(newDecls,
+						quantChild.quantifiedIdentifiers);
 				newPred = quantChild.pred;
 			}
 		}
-
+		
 		final QuantifiedPredicate before;
 		if (newDecls == quantifiedIdentifiers && newPred == pred) {
 			before = this;
 		} else {
 			final SourceLocation sloc = getSourceLocation();
-			before = ff.makeQuantifiedPredicate(getTag(),
-					newDecls, newPred, sloc);
+			before = ff.makeQuantifiedPredicate(getTag(), newDecls, newPred,
+					sloc);
 		}
-		return checkReplacement(rewriter.rewrite(before));
+		return rewriter.checkReplacement(this, rewriter.rewrite(before));
 	}
 
 	@Override

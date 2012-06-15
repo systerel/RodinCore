@@ -1,11 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.internal.core.ast;
 
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ITypedFormulaRewriter;
+import org.eventb.core.ast.Predicate;
 
 /**
  * A substitution that removes some bound identifier declarations, renumbering
@@ -25,7 +29,8 @@ import org.eventb.core.ast.FreeIdentifier;
  * @author Laurent Voisin
  * 
  */
-public class BoundIdentDeclRemover extends Substitution {
+public class BoundIdentDeclRemover extends Substitution implements
+		ITypedFormulaRewriter {
 
 	// New declarations to use after substitution
 	protected final List<BoundIdentDecl> newDecls;
@@ -106,6 +111,23 @@ public class BoundIdentDeclRemover extends Substitution {
 
 	public List<BoundIdentDecl> getNewDeclarations() {
 		return newDecls;
+	}
+
+	@Override
+	public Predicate checkReplacement(Predicate current, Predicate replacement) {
+		return replacement;
+	}
+
+	@Override
+	public Expression checkReplacement(Expression current,
+			Expression replacement) {
+		return replacement;
+	}
+
+	@Override
+	public BoundIdentDecl checkReplacement(BoundIdentDecl current,
+			BoundIdentDecl replacement) {
+		return replacement;
 	}
 	
 }

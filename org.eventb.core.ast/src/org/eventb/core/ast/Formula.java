@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Systerel - added support for mathematical extensions
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
+ *     Systerel - added support for specialization
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -37,6 +38,7 @@ import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.SimpleSubstitution;
+import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
@@ -1783,7 +1785,12 @@ public abstract class Formula<T extends Formula<T>> {
 	 *             </ul>
 	 * @see IFormulaRewriter
 	 */
-	public abstract T rewrite(IFormulaRewriter rewriter);
+	public T rewrite(IFormulaRewriter rewriter) {
+		return rewrite(new TypedFormulaRewriter(rewriter));
+	}
+	
+	// Internal method shared by rewrite() and specialize()
+	protected abstract T rewrite(ITypedFormulaRewriter rewriter);
 	
 	/**
 	 * Substitutes all occurrences of some free identifiers by their
@@ -2263,11 +2270,41 @@ public abstract class Formula<T extends Formula<T>> {
 
 	protected abstract T getCheckedReplacement(SingleRewriter rewriter);
 
-	protected abstract T checkReplacement(T replacement);
+	//protected abstract T checkReplacement(T replacement);
 
 	protected final void ensureTypeChecked() {
 		if (!this.isTypeChecked())
 			throw new IllegalStateException("Formula should be type-checked");
+	}
+	
+	/**
+	 * Uses the given specialization to get a new specialization of this
+	 * formula.
+	 * <p>
+	 * This operation is not supported for assignments,nor BoundIdentDecl, nor
+	 * untyped formulas.
+	 * </p>
+	 * <p>
+	 * <b>The returned formula is not type-checked.</b><br>
+	 * The type environment of the current formula must also be specialized
+	 * (with the same specialization) to further type check the specialized
+	 * formula that is returned by this method.
+	 * </p>
+	 * 
+	 * @param specialization
+	 *            the specialization to be used
+	 * @return a specialized version of this formula
+	 * @throws UnsupportedOperationException
+	 *             if this formula is an assignment.
+	 * @throws IllegalStateException
+	 *             if this formula is not type-checked.
+	 * 
+	 * @since 2.6
+	 */
+	public T specialize(ISpecialization specialization) {
+		assert (isTypeChecked());
+		final Specialization spec = (Specialization) specialization;
+		return rewrite(spec);
 	}
 
 }

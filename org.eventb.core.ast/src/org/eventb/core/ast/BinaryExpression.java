@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -775,10 +775,9 @@ public class BinaryExpression extends Expression {
 	public void accept(ISimpleVisitor visitor) {
 		visitor.visitBinaryExpression(this);		
 	}
-	
 
 	@Override
-	public Expression rewrite(IFormulaRewriter rewriter) {
+	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
 		final Expression newLeft = left.rewrite(rewriter);
 		final Expression newRight = right.rewrite(rewriter);
 		final BinaryExpression before;
@@ -788,7 +787,7 @@ public class BinaryExpression extends Expression {
 			before = rewriter.getFactory().makeBinaryExpression(getTag(),
 					newLeft, newRight, getSourceLocation());
 		}
-		return checkReplacement(rewriter.rewrite(before));
+		return rewriter.checkReplacement(this, rewriter.rewrite(before));
 	}
 
 	@Override
