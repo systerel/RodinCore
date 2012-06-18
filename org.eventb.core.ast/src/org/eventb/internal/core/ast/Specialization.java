@@ -75,6 +75,14 @@ public class Specialization extends DefaultRewriter implements ISpecialization, 
 	public Collection<Type> getSubstitutionTypes() {
 		return typeSubst.values();
 	}
+	
+	public Map<GivenType, Type> getTypeSubstitutions() {
+		return typeSubst;
+	}
+	
+	public Map<FreeIdentifier, Expression> getIndentifierSubstitutions() {
+		return identSubst;
+	}
 
 	@Override
 	public void put(FreeIdentifier ident, Expression value) {

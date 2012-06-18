@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
  *     Systerel - added mathematical extensions
+ *     Systerel - added specialization
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -34,6 +35,7 @@ import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.tests.AbstractTests.LIST_DT;
+import static org.eventb.core.ast.tests.AbstractTests.parseExpression;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
 import static org.eventb.core.ast.tests.TestGenParser.EXT_PRIME;
 import static org.eventb.core.ast.tests.TestGenParser.MONEY;
@@ -60,6 +62,8 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
@@ -316,6 +320,36 @@ public class FastFactory {
 			result.addName((String) objs[i], (Type) objs[i+1]);
 		}
 		return result;
+	}
+	
+	public static ISpecialization mSpec(ITypeEnvironment typeEnv, String[] typeSpecialisation,
+			String[] identSpecialisation) {
+		assert (identSpecialisation.length % 4) == 0;
+		final ISpecialization spec = mSpec(typeSpecialisation);
+		for (int i = 0; i < identSpecialisation.length; i += 4) {
+			final String srcIdentName = identSpecialisation[i];
+			final Type idType = parseType(identSpecialisation[i + 1]);
+			final FreeIdentifier src = ff.makeFreeIdentifier(srcIdentName,
+					null, idType);
+			final String repoExpr = identSpecialisation[i + 2];
+			final Type repoType = parseType(identSpecialisation[i + 3]);
+			final Expression expr = parseExpression(repoExpr);
+			expr.typeCheck(typeEnv.specialize(spec), repoType);
+			spec.put(src, expr);
+		}
+		return spec;
+	}
+
+	public static ISpecialization mSpec(String[] typeSpecialisation) {
+		assert (typeSpecialisation.length & 1) == 0;
+		final ISpecialization spec = ff.makeSpecialization();
+		for (int i = 0; i < typeSpecialisation.length; i += 2) {
+			final String name = typeSpecialisation[i];
+			final GivenType gType = ff.makeGivenType(name);
+			final Type type = parseType(typeSpecialisation[i + 1]);
+			spec.put(gType, type);
+		}
+		return spec;
 	}
 
 	public static UnaryExpression mUnaryExpression(Expression child) {
