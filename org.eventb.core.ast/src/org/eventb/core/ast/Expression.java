@@ -176,6 +176,13 @@ public abstract class Expression extends Formula<Expression> {
 		}
 		return isTypeChecked();
 	}
+	
+	@Override
+	public Expression specialize(ISpecialization specialization) {
+		assert (isTypeChecked());
+		this.type = type.specialize(specialization);
+		return super.specialize(specialization);
+	}
 
 	// Calls recursively solveType on each child of this node and
 	// returns true if all calls where successful.

@@ -105,6 +105,13 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eventb/core/ast/Expression.java" type="org.eventb.core.ast.Expression">
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="specialize(ISpecialization)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eventb/core/ast/ExtendedExpression.java" type="org.eventb.core.ast.ExtendedExpression">
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
