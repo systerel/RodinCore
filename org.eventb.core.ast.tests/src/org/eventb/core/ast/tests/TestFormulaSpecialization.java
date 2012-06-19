@@ -10,25 +10,25 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.LanguageVersion.LATEST;
+import static org.eventb.core.ast.tests.FastFactory.addToTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mSpec;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.TestGenParser.DIRECT_PRODUCT;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -37,6 +37,7 @@ import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.Specialization;
 
 /**
@@ -97,7 +98,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		assertExpressionSpecialization(
 				mTypeEnvironment("a", "ℙ(S)", "b", "ℙ(S)"), //
 				"a ∪ b", //
-				mSpec(mList("S", "ℤ")));
+				mSpec(te, mList("S", "ℤ")));
 	}
 
 	/**
@@ -188,37 +189,37 @@ public class TestFormulaSpecialization extends AbstractTests {
 	public void testAtomicExpressionEmptySet() {
 		assertExpressionSpecialization(ff.makeTypeEnvironment(), //
 				"∅⦂ℙ(S)", //
-				mSpec(mList("S", "T")));
+				mSpec(te, mList("S", "T")));
 	}
 
 	/**
 	 * Ensures that an id atomic expression gets specialized.
 	 */
 	public void testAtomicExpressionId() {
-		te = FastFactory.mTypeEnvironment("S", "ℙ(S)");
+		te = mTypeEnvironment("S", "ℙ(S)");
 		assertExpressionSpecialization(te, //
 				"id(ℙ(S×S))", //
-				mSpec(mList("S", "T")));
+				mSpec(te, mList("S", "T")));
 	}
 
 	/**
 	 * Ensures that an prj1 atomic expression gets specialized.
 	 */
 	public void testAtomicExpressionPrj1() {
-		te = FastFactory.mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)");
+		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)");
 		assertExpressionSpecialization(te, //
 				"(S×T×S)◁ prj1", //
-				mSpec(mList("S", "ℤ")));
+				mSpec(te, mList("S", "ℤ")));
 	}
 
 	/**
 	 * Ensures that an prj2 atomic expression gets specialized.
 	 */
 	public void testAtomicExpressionPrj2() {
-		te = FastFactory.mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)");
+		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)");
 		assertExpressionSpecialization(te, //
 				"(S×T×S)◁ prj2", //
-				mSpec(mList("S", "ℤ")));
+				mSpec(te, mList("S", "ℤ")));
 	}
 
 	/**
@@ -228,7 +229,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("a", "S", "b", "T");
 		assertExpressionSpecialization(te, //
 				"a ↦ b", //
-				mSpec(mList("S", "U")));
+				mSpec(te, mList("S", "U")));
 	}
 
 	/**
@@ -325,7 +326,18 @@ public class TestFormulaSpecialization extends AbstractTests {
 		assertEquals(T, specialized.getType());
 	}
 
-	// TODO test extended predicate
+	/**
+	 * Tests that an extended predicate gets specialized.
+	 */
+	public void testExtendedPredicateSpecialisation() {
+		final IPredicateExtension alphaExt = ExtensionHelper
+				.getAlphaExtension();
+		final FormulaFactory extFac = FormulaFactory.getInstance(alphaExt);
+		te = extFac.makeTypeEnvironment();
+		FastFactory.addToTypeEnvironment(te, "S", "ℙ(S)", "s", "S");
+		assertPredicateSpecialization(extFac, te, "α(s∈S, s)",
+				mSpec(te, mList("S", "T"), mList("s", "S", "t", "T")));
+	}
 
 	/**
 	 * Tests that an extended expression gets specialized.
@@ -334,31 +346,11 @@ public class TestFormulaSpecialization extends AbstractTests {
 		final FormulaFactory extFac = FormulaFactory
 				.getInstance(DIRECT_PRODUCT);
 		te = extFac.makeTypeEnvironment();
-		te.addGivenSet("S");
-		te.addGivenSet("T");
-		te.addGivenSet("V");
-		final Type t1 = parseType("ℙ(S×T)");
-		final Type t2 = parseType("ℙ(S×V)");
-		final FreeIdentifier A = mFreeIdentifier("A", t1);
-		final FreeIdentifier B = mFreeIdentifier("B", t2);
-		te.add(A);
-		te.add(B);
-		final Expression dp = extFac.makeExtendedExpression(DIRECT_PRODUCT,
-				Arrays.<Expression> asList(A, B),
-				Collections.<Predicate> emptySet(), null);
-		final ITypeCheckResult tcResult = dp.typeCheck(te);
-		assertTrue(tcResult.isSuccess());
-		assertFalse(tcResult.hasProblem());
-		final ISpecialization special = extFac.makeSpecialization();
-		special.put(S, extFac.makeGivenType("X"));
-		final Expression specialized = dp.specialize(special);
-		assertTrue(specialized.isTypeChecked());
-		final Expression[] childExpressions = ((ExtendedExpression) specialized)
-				.getChildExpressions();
-		assertEquals(parseType("ℙ(X×T)"), childExpressions[0].getType());
-		assertEquals(parseType("ℙ(X×V)"), childExpressions[1].getType());
+		addToTypeEnvironment(te, "S", "ℙ(S)", "T", "ℙ(T)", "V", "ℙ(V)", "A",
+				"ℙ(S×T)", "B", "ℙ(S×V)");
+		assertExpressionSpecialization(extFac, te, "A§B",
+				mSpec(te, mList("S", "X"), new String[0]));
 	}
-	
 
 	/**
 	 * Ensures that a free identifier get specialized.
@@ -367,7 +359,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("S", "ℙ(S)", "s", "S");
 		assertExpressionSpecialization(te, //
 				"s", //
-				mSpec(mList("S", "T")));
+				mSpec(te, mList("S", "T")));
 	}
 
 	/**
@@ -520,20 +512,37 @@ public class TestFormulaSpecialization extends AbstractTests {
 						mList("S", "T"), //
 						new String[0]));
 	}
-
+	
+	public static void assertPredicateSpecialization(FormulaFactory fac,
+			ITypeEnvironment typeEnv, String predStr,
+			ISpecialization specialization) {
+		final IParseResult parsed = fac.parsePredicate(predStr,
+				LATEST, null);
+		assertFalse(parsed.hasProblem());
+		assertTrue(parsed.getParsedPredicate() != null);
+		final Predicate pred = parsed.getParsedPredicate();
+		assertFormulaSpecialization(fac, typeEnv, predStr, pred, specialization);
+	}
+	
 	public static void assertPredicateSpecialization(ITypeEnvironment typeEnv,
 			String predStr, ISpecialization specialization) {
-		final Predicate pred = parsePredicate(predStr);
-		assertFormulaSpecialization(typeEnv, predStr, pred, specialization);
+		assertPredicateSpecialization(ff, typeEnv, predStr, specialization);
+	}
+	
+	public static void assertExpressionSpecialization(FormulaFactory fac,
+			ITypeEnvironment typeEnv, String exprStr,
+			ISpecialization specialization) {
+		final IParseResult parsed = fac.parseExpression(exprStr, LATEST, null);
+		final Expression expr = parsed.getParsedExpression();
+		assertFormulaSpecialization(fac, typeEnv, exprStr, expr, specialization);
 	}
 
 	public static void assertExpressionSpecialization(ITypeEnvironment typeEnv,
 			String exprStr, ISpecialization specialization) {
-		final Expression expr = parseExpression(exprStr);
-		assertFormulaSpecialization(typeEnv, exprStr, expr, specialization);
+		assertExpressionSpecialization(ff, typeEnv, exprStr, specialization);
 	}
-
-	private static void assertFormulaSpecialization(ITypeEnvironment typeEnv,
+	
+	private static void assertFormulaSpecialization(FormulaFactory fac, ITypeEnvironment typeEnv,
 			String formulaStr, Formula<?> formula,
 			ISpecialization specialization) {
 		final ITypeCheckResult typeCheckResult = formula.typeCheck(typeEnv);
@@ -545,24 +554,24 @@ public class TestFormulaSpecialization extends AbstractTests {
 		final ITypeCheckResult result = specialized.typeCheck(newTypeEnv);
 		assertFalse(result.hasProblem());
 		assertTrue(result.getInferredEnvironment().isEmpty());
-		assertValid(formulaStr, specialized, specialization, newTypeEnv);
+		assertValid(fac, formulaStr, specialized, specialization, newTypeEnv);
 	}
 
-	private static void assertValid(String formulaStr, Formula<?> specialized,
+	private static void assertValid(FormulaFactory fac, String formulaStr, Formula<?> specialized,
 			ISpecialization specialization, ITypeEnvironment specTypeEnv) {
-		final String expectedImage = getSpecializedImage(formulaStr,
+		final String expectedImage = getSpecializedImage(fac,formulaStr,
 				specialization);
-		assertSpecializedImage(expectedImage, specialized, specTypeEnv);
+		assertSpecializedImage(fac, expectedImage, specialized, specTypeEnv);
 	}
 
-	private static String getSpecializedImage(String formulaStr,
+	private static String getSpecializedImage(FormulaFactory fac, String formulaStr,
 			ISpecialization specialization) {
 		String expectedImage = formulaStr;
 		final Map<GivenType, Type> typeSubst = ((Specialization) specialization)
 				.getTypeSubstitutions();
 		for (GivenType type : typeSubst.keySet()) {
 			expectedImage = expectedImage.replaceAll(type.getName(), typeSubst
-					.get(type).toExpression(ff).toString());
+					.get(type).toExpression(fac).toString());
 		}
 		final Map<FreeIdentifier, Expression> idSubst = ((Specialization) specialization)
 				.getIndentifierSubstitutions();
@@ -573,13 +582,16 @@ public class TestFormulaSpecialization extends AbstractTests {
 		return expectedImage;
 	}
 
-	private static void assertSpecializedImage(String expectedImg,
-			Formula<?> specialized, ITypeEnvironment specTypeEnv) {
+	private static void assertSpecializedImage(FormulaFactory fac,
+			String expectedImg, Formula<?> specialized,
+			ITypeEnvironment specTypeEnv) {
 		Formula<?> expected = null;
 		if (specialized instanceof Expression)
-			expected = parseExpression(expectedImg);
+			expected = fac.parseExpression(expectedImg, LATEST, null)
+					.getParsedExpression();
 		if (specialized instanceof Predicate)
-			expected = parsePredicate(expectedImg);
+			expected = fac.parsePredicate(expectedImg, LATEST, null)
+					.getParsedPredicate();
 		assertTrue(expected != null);
 		final ITypeCheckResult typeCheck = expected.typeCheck(specTypeEnv);
 		assertTrue(typeCheck.isSuccess());

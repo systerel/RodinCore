@@ -33,9 +33,9 @@ import static org.eventb.core.ast.Formula.PLUS;
 import static org.eventb.core.ast.Formula.POW;
 import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.Formula.TRUE;
+import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.tests.AbstractTests.LIST_DT;
-import static org.eventb.core.ast.tests.AbstractTests.parseExpression;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
 import static org.eventb.core.ast.tests.TestGenParser.EXT_PRIME;
 import static org.eventb.core.ast.tests.TestGenParser.MONEY;
@@ -322,31 +322,49 @@ public class FastFactory {
 		return result;
 	}
 	
-	public static ISpecialization mSpec(ITypeEnvironment typeEnv, String[] typeSpecialisation,
-			String[] identSpecialisation) {
+	public static ITypeEnvironment addToTypeEnvironment(
+			ITypeEnvironment typeEnv, String... strs) {
+		assert (strs.length & 1) == 0;
+		for (int i = 0; i < strs.length; i += 2) {
+			typeEnv.addName(strs[i],
+					typeEnv.getFormulaFactory().parseType(strs[i + 1], LATEST)
+							.getParsedType());
+		}
+		return typeEnv;
+	}
+	
+	public static ISpecialization mSpec(ITypeEnvironment typeEnv,
+			String[] typeSpecialisation, String[] identSpecialisation) {
 		assert (identSpecialisation.length % 4) == 0;
-		final ISpecialization spec = mSpec(typeSpecialisation);
+		final FormulaFactory factory = typeEnv.getFormulaFactory();
+		final ISpecialization spec = mSpec(typeEnv, typeSpecialisation);
 		for (int i = 0; i < identSpecialisation.length; i += 4) {
 			final String srcIdentName = identSpecialisation[i];
-			final Type idType = parseType(identSpecialisation[i + 1]);
-			final FreeIdentifier src = ff.makeFreeIdentifier(srcIdentName,
+			final Type idType = factory.parseType(identSpecialisation[i + 1],
+					LATEST).getParsedType();
+			final FreeIdentifier src = factory.makeFreeIdentifier(srcIdentName,
 					null, idType);
 			final String repoExpr = identSpecialisation[i + 2];
-			final Type repoType = parseType(identSpecialisation[i + 3]);
-			final Expression expr = parseExpression(repoExpr);
+			final Type repoType = factory.parseType(identSpecialisation[i + 3],
+					LATEST).getParsedType();
+			final Expression expr = factory.parseExpression(repoExpr, LATEST,
+					null).getParsedExpression();
 			expr.typeCheck(typeEnv.specialize(spec), repoType);
 			spec.put(src, expr);
 		}
 		return spec;
 	}
 
-	public static ISpecialization mSpec(String[] typeSpecialisation) {
+	public static ISpecialization mSpec(ITypeEnvironment te,
+			String[] typeSpecialisation) {
 		assert (typeSpecialisation.length & 1) == 0;
-		final ISpecialization spec = ff.makeSpecialization();
+		final FormulaFactory fac = te.getFormulaFactory();
+		final ISpecialization spec = fac.makeSpecialization();
 		for (int i = 0; i < typeSpecialisation.length; i += 2) {
 			final String name = typeSpecialisation[i];
-			final GivenType gType = ff.makeGivenType(name);
-			final Type type = parseType(typeSpecialisation[i + 1]);
+			final GivenType gType = fac.makeGivenType(name);
+			final Type type = fac.parseType(typeSpecialisation[i + 1], LATEST)
+					.getParsedType();
 			spec.put(gType, type);
 		}
 		return spec;
