@@ -113,6 +113,12 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/ast/ExtendedExpression.java" type="org.eventb.core.ast.ExtendedExpression">
+        <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.ast.ExtendedExpression"/>
+                <message_argument value="rewrite(IFormulaRewriter)"/>
+            </message_arguments>
+        </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
                 <message_argument value="rewrite(ITypedFormulaRewriter)"/>

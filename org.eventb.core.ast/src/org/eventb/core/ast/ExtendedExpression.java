@@ -394,12 +394,6 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 	
 	@Override
-	public Expression rewrite(IFormulaRewriter rewriter) {
-		return null;
-	
-	}
-	
-	@Override
 	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
 		final boolean flatten = rewriter.autoFlatteningMode();
 		final ArrayList<Expression> newChildExpressions = new ArrayList<Expression>(
