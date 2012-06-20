@@ -521,7 +521,13 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		overlay.setRedraw(false);
 		try {
 			updateOverlayStyle(inter);
-			overlay.setSize(overlay.computeSize(20, SWT.DEFAULT));
+			final Point s;
+			if (!(overlay.getText().isEmpty())){
+				s = overlay.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			} else {
+				s = overlay.computeSize(20, SWT.DEFAULT);
+			}
+			overlay.setSize(s);
 			repositionOverlay(overlay, parent, inter);
 		} finally {
 			overlay.setRedraw(true);
