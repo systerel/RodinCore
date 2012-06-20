@@ -54,7 +54,7 @@ public abstract class AbstractAddElementHandler extends AbstractEditionHandler {
 	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
 		final ChildCreationInfo possibility = getCreationPossibility(editor,
 				caretOffset);
-		return possibility != null
+		return !editor.isOverlayActive() && possibility != null
 				&& !possibility.getPossibleChildTypes().isEmpty();
 	}
 	
