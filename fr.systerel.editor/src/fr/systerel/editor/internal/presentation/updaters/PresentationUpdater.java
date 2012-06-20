@@ -55,7 +55,7 @@ public class PresentationUpdater extends EContentAdapter {
 		}
 		if (notification.getEventType() == Notification.ADD
 				&& notification.getNewValue() instanceof ILElement) {
-			editor.resync(null, false);
+			editor.resync(null, false, (ILElement) notification.getNewValue());
 			return;
 		}
 		/*

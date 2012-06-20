@@ -479,6 +479,15 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	 * change, even if there is no change in the rodin database.
 	 */
 	public void resync(final IProgressMonitor monitor, final boolean silent) {
+		resync(monitor, silent, null);
+	}
+	
+	/**
+	 * See comment of resync(monitor, silent) method. Sets the caret at the 
+	 * position of the first editable interval of the given element.
+	 */
+	public void resync(final IProgressMonitor monitor, final boolean silent,
+			final ILElement newElement) {
 		if (styledText != null && !styledText.isDisposed()) {
 			final Display display = styledText.getDisplay();
 			display.asyncExec(new Runnable() {
@@ -489,13 +498,22 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 					}
 					final int currentOffset = getCurrentOffset();
 					final int topIndex = styledText.getTopIndex();
-					final ILElement[] selection = selController.getSelectedElements();
+					final ILElement[] selection = selController
+							.getSelectedElements();
 					final long start = System.currentTimeMillis();
 					if (DEBUG)
 						System.out.println("\\ Start refreshing Rodin Editor.");
 					documentProvider.synchronizeRoot(monitor, silent);
 					styledText.setTopIndex(topIndex);
-					styledText.setCaretOffset(currentOffset);
+					if (newElement != null) {
+						final int elemFirstOffset = mapper.findEditorElement(
+								newElement).getOffset();
+						final Interval elemEditInter = mapper
+								.findEditableIntervalAfter(elemFirstOffset);
+						styledText.setCaretOffset(elemEditInter.getOffset());
+					} else {
+						styledText.setCaretOffset(currentOffset);
+					}
 					selController.selectItems(selection);
 					if (DEBUG) {
 						System.out
