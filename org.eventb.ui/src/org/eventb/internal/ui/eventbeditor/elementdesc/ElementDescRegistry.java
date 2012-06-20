@@ -400,7 +400,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			final String value = element.getAttribute("style");
 			if (value == null)
 				return null;
-			return value.equals("simple") ? TextDesc.Style.SINGLE
+			return value.equals("single") ? TextDesc.Style.SINGLE
 					: TextDesc.Style.MULTI;
 		}
 

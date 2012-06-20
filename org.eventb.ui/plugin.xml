@@ -2196,7 +2196,7 @@
             expandsHorizontally="false"
             id="org.eventb.ui.label"
             isMath="false"
-            style="simple"
+            style="single"
             suffix=":"
             typeId="org.eventb.core.label">
       </textAttribute>
@@ -2240,7 +2240,7 @@
             expandsHorizontally="false"
             id="org.eventb.ui.identifier"
             isMath="false"
-            style="simple"
+            style="single"
             typeId="org.eventb.core.identifier">
       </textAttribute>
       <textAttribute
