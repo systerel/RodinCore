@@ -742,13 +742,13 @@
             commandId="fr.systerel.editor.showAddSibling"
             contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+T">
+            sequence="M3+T">
       </key>
       <key
             commandId="fr.systerel.editor.showAddChild"
             contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+N">
+            sequence="M3+G">
       </key>
       <key
             commandId="org.eclipse.ui.edit.text.select.lineUp"
