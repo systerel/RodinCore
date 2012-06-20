@@ -503,7 +503,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		overlay.setRedraw(false);
 		try {
 			updateOverlayStyle(inter);
-			resizeOverlay(overlay);
+			overlay.setSize(overlay.computeSize(20, SWT.DEFAULT));
 			repositionOverlay(overlay, parent, inter);
 		} finally {
 			overlay.setRedraw(true);
@@ -516,15 +516,6 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		final Point beginPt = (parent.getLocationAtOffset(start));
 		// dimensions are retailed to manage borders 
 		editorText.setLocation(beginPt.x - 3, beginPt.y - 1);
-	}
-
-	private void resizeOverlay(StyledText target) {
-		if (!target.getText().isEmpty()) {
-			final Point size = target.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			if (!size.equals(target.getSize())) {
-				target.setSize(size);
-			}
-		}
 	}
 
 	private void updateOverlayStyle(Interval inter) {
