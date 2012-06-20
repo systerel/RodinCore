@@ -45,11 +45,14 @@ import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -377,6 +380,21 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 				}
 			});
 		}
+		tipMenu.addMenuListener(new MenuListener() {
+
+			@Override
+			public void menuHidden(MenuEvent e) {
+				// Removes the cumbersome selection on the text
+				// with a mouseUp event as the tipMenu ate it
+				parent.notifyListeners(SWT.MouseUp, new Event());
+			}
+
+			@Override
+			public void menuShown(MenuEvent e) {
+				// Nothing to do
+			}
+			
+		});
 		final Point loc = parent.getLocationAtOffset(inter.getOffset());
 		final Point mapped = parent.getDisplay().map(parent, null, loc);
 		tipMenu.setLocation(mapped);
