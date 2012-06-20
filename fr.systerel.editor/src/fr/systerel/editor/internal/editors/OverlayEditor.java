@@ -95,7 +95,9 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		ExtendedModifyListener, VerifyKeyListener, IMenuListener {
 
 	private static final int CR = KeyLookupFactory.getDefault().formalKeyLookup(IKeyLookup.CR_NAME);
-	
+	private static final int ENTER = KeyLookupFactory.getDefault().formalKeyLookup(IKeyLookup.ENTER_NAME);
+	private static final int PAD_ENTER = KeyLookupFactory.getDefault().formalKeyLookup(IKeyLookup.NUMPAD_ENTER_NAME);
+		
 	public static final String EDITOR_TEXT_ID = RodinEditor.EDITOR_ID
 			+ ".editorText";
 
@@ -474,6 +476,12 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 				&& contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
 			changeAttribute(ielement, COMMENT_ATTRIBUTE, text);
 		}
+		if (contentType instanceof AttributeContentType) {
+			final IAttributeType attributeType = ((AttributeContentType)contentType).getAttributeType();
+			if (attributeType instanceof IAttributeType.String) {
+				changeAttribute(ielement, (IAttributeType.String)attributeType, text);				
+			}
+		}
 	}
 
 	@Override
@@ -572,7 +580,8 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		final KeyStroke keystroke = RodinEditorUtils
 				.convertEventToKeystroke(event);
 		// if the character is not the return key, return
-		if (!(keystroke.getNaturalKey() == CR)) {
+		final int naturalKey = keystroke.getNaturalKey();
+		if (!(naturalKey == CR || naturalKey == ENTER || naturalKey == PAD_ENTER)) {
 			return;
 		}
 		if (contentProposal.isProposalPopupOpen()) {
