@@ -747,20 +747,20 @@ public class TestWD extends AbstractTests {
 	 */
 	public void testDatatypeOneConstructorOnly() throws Exception {
 
-		final IDatatype SHELL_DT = ff.makeDatatype(ExtensionHelper.FOOBARTYPE);
-		final FormulaFactory SHELL_FAC = FormulaFactory.getInstance(SHELL_DT
+		final IDatatype FOOBAR_DT = ff.makeDatatype(ExtensionHelper.FOOBARTYPE);
+		final FormulaFactory FOOBAR_FAC = FormulaFactory.getInstance(FOOBAR_DT
 				.getExtensions());
-		final ITypeEnvironment env2 = SHELL_FAC.makeTypeEnvironment();
-		final ParametricType SHELL_INT_TYPE = SHELL_FAC.makeParametricType(
+		final ITypeEnvironment env2 = FOOBAR_FAC.makeTypeEnvironment();
+		final ParametricType SHELL_INT_TYPE = FOOBAR_FAC.makeParametricType(
 				Collections.<Type> singletonList(INT_TYPE),
-				SHELL_DT.getTypeConstructor());
+				FOOBAR_DT.getTypeConstructor());
 
 		env2.addName("l", SHELL_INT_TYPE);
 
 		// Value constructor
-		assertWDLemma(env2, "x = shell(l)", "⊤");
+		assertWDLemma(env2, "x = foo(l)", "⊤");
 		// Destructor
-		assertWDLemma(env2, "l = shoe(shell(l))", "⊤");
+		assertWDLemma(env2, "l = bar(foo(l))", "⊤");
 	}
 
 }
