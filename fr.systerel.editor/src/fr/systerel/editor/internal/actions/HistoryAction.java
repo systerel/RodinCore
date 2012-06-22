@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,7 +132,7 @@ public abstract class HistoryAction extends Action implements
 		if (!(editor instanceof RodinEditor))
 			return null;
 		final RodinEditor rodinEditor = (RodinEditor) editor;
-		if (rodinEditor.isOverlayActive()) {
+		if (rodinEditor.threadSafeIsOverlayActive()) {
 			return new ObjectUndoContext(rodinEditor.getDocument());
 		}
 		return ElementManipulationFacade.getRodinFileUndoContext(rodinEditor

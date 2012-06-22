@@ -451,6 +451,31 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		return overlayEditor.isActive();
 	}
 	
+	public boolean threadSafeIsOverlayActive() {
+		final ActivationChecker checker = new ActivationChecker(this);
+		getSite().getShell().getDisplay().syncExec(checker);
+		return checker.getResult();
+	}
+	
+	private static class ActivationChecker implements Runnable {
+
+		boolean result = false;
+		private RodinEditor editor;
+
+		public ActivationChecker(RodinEditor editor) {
+			this.editor = editor;
+		}
+
+		public void run() {
+			this.result = editor.isOverlayActive();
+		}
+
+		public boolean getResult() {
+			return result;
+		}
+
+	}
+	
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(RODIN_MATH_FONT)) {
