@@ -19,6 +19,7 @@ import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPR
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
 
 import java.math.BigInteger;
+import java.util.Collections;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedPredicate;
@@ -27,6 +28,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ExtensionFactory;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -36,11 +38,51 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.extension.datatype.IArgument;
+import org.eventb.core.ast.extension.datatype.IArgumentType;
+import org.eventb.core.ast.extension.datatype.IConstructorMediator;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * A class to help building extended formulae.
  */
 public class ExtensionHelper {
+
+	public static final IDatatypeExtension FOOBARTYPE = new IDatatypeExtension() {
+
+		private static final String TYPE_NAME = "FooBar";
+		private static final String TYPE_IDENTIFIER = "org.eventb.core.ast.tests.FooBar";
+
+		@Override
+		public String getTypeName() {
+			return TYPE_NAME;
+		}
+
+		@Override
+		public String getId() {
+			return TYPE_IDENTIFIER;
+		}
+
+		@Override
+		public void addTypeParameters(ITypeConstructorMediator mediator) {
+			mediator.addTypeParam("S");
+		}
+
+		@Override
+		public void addConstructors(IConstructorMediator mediator) {
+			final ITypeParameter typeS = mediator.getTypeParameter("S");
+			final IArgumentType refS = mediator.newArgumentType(typeS);
+			final IExpressionExtension typeCons = mediator.getTypeConstructor();
+			final IArgumentType listS = mediator.makeParametricType(typeCons,
+					Collections.singletonList(refS));
+			final IArgument bar = mediator.newArgument("bar", listS);
+			mediator.addConstructor("foo", "SHELL",
+					Collections.singletonList(bar));
+		}
+
+	};
 
 	private static abstract class BasicFormulaExtension implements
 			IFormulaExtension {

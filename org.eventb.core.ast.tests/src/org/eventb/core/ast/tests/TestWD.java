@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ package org.eventb.core.ast.tests;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
+import java.util.Collections;
+
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
@@ -23,7 +25,10 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.datatype.IDatatype;
 
 /**
  * Unit and acceptance tests for the computation of WD lemmas.
@@ -734,6 +739,28 @@ public class TestWD extends AbstractTests {
 				"(∃h,t· cons(1÷x, l) = cons(h, t)) ∧ x≠0");
 		assertWDLemma(env, "l = tail(cons(1÷x, l))",
 				"(∃h,t· cons(1÷x, l) = cons(h, t)) ∧ x≠0");
+	}
+	
+	/**
+	 * Unit test to check the simplification of the WD of a destructor when
+	 * there is only one datatype constructor.
+	 */
+	public void testDatatypeOneConstructorOnly() throws Exception {
+
+		final IDatatype SHELL_DT = ff.makeDatatype(ExtensionHelper.FOOBARTYPE);
+		final FormulaFactory SHELL_FAC = FormulaFactory.getInstance(SHELL_DT
+				.getExtensions());
+		final ITypeEnvironment env2 = SHELL_FAC.makeTypeEnvironment();
+		final ParametricType SHELL_INT_TYPE = SHELL_FAC.makeParametricType(
+				Collections.<Type> singletonList(INT_TYPE),
+				SHELL_DT.getTypeConstructor());
+
+		env2.addName("l", SHELL_INT_TYPE);
+
+		// Value constructor
+		assertWDLemma(env2, "x = shell(l)", "⊤");
+		// Destructor
+		assertWDLemma(env2, "l = shoe(shell(l))", "⊤");
 	}
 
 }
