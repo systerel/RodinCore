@@ -741,12 +741,10 @@ public class TestWD extends AbstractTests {
 	 * Unit test to check the simplification of the WD of a destructor when
 	 * there is only one datatype constructor.
 	 */
-	public void testDatatypeOneConstructorOnly() throws Exception {
-
+	public void testDatatypeOneConstructorOnly() {
 		final IDatatype dt = ff.makeDatatype(ExtensionHelper.FOOBARTYPE);
 		final FormulaFactory fac = FormulaFactory.getInstance(dt
 				.getExtensions());
-
 		final ITypeEnvironment env = fac.makeTypeEnvironment();
 		env.addName("l", INT_TYPE);
 
@@ -756,6 +754,8 @@ public class TestWD extends AbstractTests {
 		assertWDLemma(env, "l = bar(f)", "⊤");
 		// Destructor (explicit constructor)
 		assertWDLemma(env, "l = bar(foo(l))", "⊤");
+		// Destructor (with child WD)
+		assertWDLemma(env, "l = bar(foo(1÷x))", "x≠0");
 	}
 
 }
