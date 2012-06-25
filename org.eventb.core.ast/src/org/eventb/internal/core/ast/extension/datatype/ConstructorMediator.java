@@ -309,14 +309,14 @@ public class ConstructorMediator extends ArgumentMediator implements
 		public Predicate getWDPredicate(IExtendedFormula formula,
 				IWDMediator wdMediator) {
 			
-			final FormulaFactory ff = wdMediator.getFormulaFactory();
-			
-			final List<IArgument> constrArgs = origin.getArguments(constructor);
-			final int argSize = constrArgs.size();
-			if (argSize == 1) {
+			if (origin.getConstructors().size() == 1) {
 				// if there is only one constructor the WD is true
 				return wdMediator.makeTrueWD();
 			}
+			
+			final FormulaFactory ff = wdMediator.getFormulaFactory();
+			final List<IArgument> constrArgs = origin.getArguments(constructor);
+			final int argSize = constrArgs.size();
 			final Expression child = formula.getChildExpressions()[0];
 			
 			final ParametricType dtType = (ParametricType) child.getType();

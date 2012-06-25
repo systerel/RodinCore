@@ -16,8 +16,6 @@ package org.eventb.core.ast.tests;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
-import java.util.Collections;
-
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
@@ -25,9 +23,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 
 /**
@@ -747,20 +743,19 @@ public class TestWD extends AbstractTests {
 	 */
 	public void testDatatypeOneConstructorOnly() throws Exception {
 
-		final IDatatype FOOBAR_DT = ff.makeDatatype(ExtensionHelper.FOOBARTYPE);
-		final FormulaFactory FOOBAR_FAC = FormulaFactory.getInstance(FOOBAR_DT
+		final IDatatype dt = ff.makeDatatype(ExtensionHelper.FOOBARTYPE);
+		final FormulaFactory fac = FormulaFactory.getInstance(dt
 				.getExtensions());
-		final ITypeEnvironment env2 = FOOBAR_FAC.makeTypeEnvironment();
-		final ParametricType SHELL_INT_TYPE = FOOBAR_FAC.makeParametricType(
-				Collections.<Type> singletonList(INT_TYPE),
-				FOOBAR_DT.getTypeConstructor());
 
-		env2.addName("l", SHELL_INT_TYPE);
+		final ITypeEnvironment env = fac.makeTypeEnvironment();
+		env.addName("l", INT_TYPE);
 
 		// Value constructor
-		assertWDLemma(env2, "x = foo(l)", "⊤");
-		// Destructor
-		assertWDLemma(env2, "l = bar(foo(l))", "⊤");
+		assertWDLemma(env, "x = foo(l)", "⊤");
+		// Destructor (common case)
+		assertWDLemma(env, "l = bar(f)", "⊤");
+		// Destructor (explicit constructor)
+		assertWDLemma(env, "l = bar(foo(l))", "⊤");
 	}
 
 }

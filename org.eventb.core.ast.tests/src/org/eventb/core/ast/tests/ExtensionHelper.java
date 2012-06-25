@@ -28,7 +28,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ExtensionFactory;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
-import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -74,11 +73,8 @@ public class ExtensionHelper {
 		public void addConstructors(IConstructorMediator mediator) {
 			final ITypeParameter typeS = mediator.getTypeParameter("S");
 			final IArgumentType refS = mediator.newArgumentType(typeS);
-			final IExpressionExtension typeCons = mediator.getTypeConstructor();
-			final IArgumentType listS = mediator.makeParametricType(typeCons,
-					Collections.singletonList(refS));
-			final IArgument bar = mediator.newArgument("bar", listS);
-			mediator.addConstructor("foo", "SHELL",
+			final IArgument bar = mediator.newArgument("bar", refS);
+			mediator.addConstructor("foo", "FOO",
 					Collections.singletonList(bar));
 		}
 
