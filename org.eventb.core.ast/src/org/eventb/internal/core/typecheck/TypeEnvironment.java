@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.typecheck;
 
+import static org.eventb.internal.core.ast.FreshNameSolver.solve;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +28,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.Specialization;
 
@@ -280,6 +283,23 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		return map.isEmpty();
 	}
 
+	public GivenType makeFreshGivenType(String name) {
+		final String solvedName = solve(this, name);
+		final GivenType result = ff.makeGivenType(solvedName);
+		addGivenSet(result);
+		return result;
+	}
+
+	public FreeIdentifier makeFreshFreeIdentifier(String name,
+			SourceLocation sourceLocation, Type type) {
+		assert type != null;
+		final String solvedName = solve(this, name);
+		final FreeIdentifier result = ff.makeFreeIdentifier(solvedName,
+				sourceLocation, type);
+		addName(solvedName, result.getType());
+		return result;
+	}
+	
 	// solves the unknown types (names who have type variable as their
 	// corresponding type).
 	public void solveVariables(TypeUnifier unifier) {
