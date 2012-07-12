@@ -680,8 +680,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		final IInternalElement element = interval.getElement().getElement();
 		final boolean enable = (element instanceof IPredicateElement
 				|| element instanceof IAssignmentElement || element instanceof IExpressionElement)
-				&& interval.getContentType().equals(
-						RodinConfiguration.CONTENT_TYPE);
+				&& (interval.getContentType() instanceof AttributeContentType);
 		if (enable) {
 			editorText.addModifyListener(eventBTranslator);
 		}
