@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -39,8 +40,11 @@ public class CopyHandler extends AbstractEditorHandler {
 		final RodinEditor re = getActiveRodinEditor();
 		if (re == null)
 			return false;
-		return re.getSelectionController().getSelectedElements().length > 0
-				&& super.isEnabled();
+		if (re.getSelectionController().getSelectedElements().length > 0)
+			return true;
+		if (re.isOverlayActive())
+			return (re.getSelectionProvider().getSelection() instanceof ITextSelection);
+		return super.isEnabled();
 	}
 	
 	@Override
