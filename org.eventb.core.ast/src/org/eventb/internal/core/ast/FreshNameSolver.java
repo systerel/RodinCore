@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.internal.core.typecheck.TypeEnvironment;
 
 /**
@@ -61,17 +62,42 @@ public class FreshNameSolver {
 		// singleton
 	}
 	
-	private static abstract class NameSolver {
+	private static class NameSolver {
 
+		private FormulaFactory factory;
+		private ITypeEnvironment typeEnvironment;
+		private Set<String> usedNames;
+				
 		public NameSolver() {
-			// Removing synthetic access
+			// Nothing to do
 		}
 
-		protected abstract boolean contains(String name);
+		private boolean contains(String name) {
+			if (typeEnvironment != null) {
+				return typeEnvironment.contains(name);
+			}
+			return usedNames.contains(name);
+		}
 
-		protected abstract FormulaFactory getFormulaFactory();
-
-		protected String solve(String name) {
+		private FormulaFactory getFormulaFactory() {
+			if (typeEnvironment != null) {
+				return typeEnvironment.getFormulaFactory();
+			}
+			return factory;
+		}
+		
+		protected String solve(ITypeEnvironment environment, String name) {
+			this.typeEnvironment = environment;
+			return solve(name);
+		}
+		
+		protected String solve(FormulaFactory forumlaFactory, Set<String> reservedNames, String name){
+			this.factory = forumlaFactory;
+			this.usedNames = reservedNames;
+			return solve(name);
+		}
+		
+		private String solve(String name) {
 			if (!contains(name)) {
 				// Not used, this name is OK.
 				return name;
@@ -79,71 +105,36 @@ public class FreshNameSolver {
 			// We have a name conflict, so we try with another name
 			final StructuredName sname = new StructuredName(name);
 			String newName;
-			final FormulaFactory factory = getFormulaFactory();
 			do {
 				sname.increment();
 				newName = sname.toString();
 			} while (contains(newName)
-					|| !factory.isValidIdentifierName(newName));
+					|| !getFormulaFactory().isValidIdentifierName(newName));
+			cleanUpSolver();
 			return newName;
 		}
 
+		private void cleanUpSolver() {
+			this.factory = null;
+			this.usedNames = null;
+			this.typeEnvironment = null;
+		}
+
 	}
 	
-	private static class TypeEnvironmentNameSolver extends NameSolver {
-		
-		private TypeEnvironment environment;
+	private static final NameSolver SOLVER = new NameSolver();
 
-		public TypeEnvironmentNameSolver(TypeEnvironment environment) {
-			this.environment = environment;
-		}
-		
-		@Override
-		public boolean contains(String name) {
-			return environment.contains(name);
-		}
-		
-		@Override
-		public FormulaFactory getFormulaFactory() {
-			return environment.getFormulaFactory();
-		}
-		
-		
-	}
-	
-	private static class BasicNameSolver extends NameSolver {
-
-		final Set<String> usedNames;
-		final FormulaFactory factory;
-		
-		public BasicNameSolver(Set<String> usedNames, FormulaFactory factory) {
-			this.usedNames = usedNames;
-			this.factory = factory;
-		}
-
-		@Override
-		public boolean contains(String name) {
-			return usedNames.contains(name);
-		}
-
-		@Override
-		public FormulaFactory getFormulaFactory() {
-			return factory;
-		}
-		
-	}
-	
-	
 	/**
 	 * Method which returns from the given name a solved free name that does not
 	 * appear in the given type environment.
+	 * 
 	 * @param name
 	 *            the name to solve
 	 * 
 	 * @return a solved name that does not appear in the type environment
 	 */
 	public static String solve(TypeEnvironment environment, String name) {
-		return new TypeEnvironmentNameSolver(environment).solve(name);
+		return SOLVER.solve(environment, name);
 	}
 
 	/**
@@ -159,8 +150,9 @@ public class FreshNameSolver {
 	 *            the name to solve
 	 * @return a solved name that does not appear in the used names
 	 */
-	public static String solve(String name, Set<String> usedNames, FormulaFactory factory) {
-		return new BasicNameSolver(usedNames, factory).solve(name);
+	public static String solve(String name, Set<String> usedNames,
+			FormulaFactory factory) {
+		return SOLVER.solve(factory, usedNames, name);
 	}
 
 }
