@@ -38,9 +38,13 @@ public class DeleteHandler extends AbstractEditionHandler {
 		}
 		final SelectionController selection = editor.getSelectionController();
 		final ILElement[] selected = selection.getSelectedElements();
+		for (ILElement e : selected) {
+			if (e.getRoot() == e)
+				return "A root element can not be deleted from the editor";
+		}
 		if (selected.length != 0) {
 			deleteElements(selected);
-			return "Element deleted.";
+			return "Element deleted";
 		}
 		return "No element to delete";
 	}
