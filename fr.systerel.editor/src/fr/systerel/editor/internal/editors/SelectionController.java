@@ -276,20 +276,25 @@ public class SelectionController implements MouseListener, VerifyListener,
 	public void goToNextEditRegion() {
 		final int offset = getModelCaretOffset();
 		final Interval next = mapper.findEditableIntervalAfter(offset);
-		final int newOffset = viewer.modelOffset2WidgetOffset(next.getOffset());
-		styledText.setSelection(newOffset);
-		if (next.getAttributeManipulation() == null)
-			overlayEditor.showAtOffset(newOffset);
+		if (next != null) {
+			final int nextOffset = next.getOffset();
+			final int newOffset = viewer.modelOffset2WidgetOffset(nextOffset);
+			styledText.setSelection(newOffset);
+			if (next.getAttributeManipulation() == null)
+				overlayEditor.showAtOffset(newOffset);
+		}
 	}
 
 	public void goToPreviousEditRegion() {
 		final int offset = getModelCaretOffset();
 		final Interval previous = mapper.findEditableIntervalBefore(offset);
-		final int newOffset = viewer.modelOffset2WidgetOffset(previous
-				.getOffset());
-		styledText.setSelection(newOffset);
-		if (previous.getAttributeManipulation() == null)
-			overlayEditor.showAtOffset(newOffset);
+		if (previous != null) {
+			final int prevOffset = previous.getOffset();
+			final int newOffset = viewer.modelOffset2WidgetOffset(prevOffset);
+			styledText.setSelection(newOffset);
+			if (previous.getAttributeManipulation() == null)
+				overlayEditor.showAtOffset(newOffset);
+		}
 	}
 
 	/**
