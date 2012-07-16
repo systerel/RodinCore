@@ -489,9 +489,11 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	}
 
 	/** Saves the current changes and quit edition. */
-	public void quitAndSaveEdition() {
-		if (overlayEditor.isActive())
+	public void quitAndKeepModifs() {
+		if (overlayEditor.isActive()) {
 			overlayEditor.updateModelAfterChanges();
+			overlayEditor.quitEdition(true);
+		}
 	}
 
 	/**

@@ -276,23 +276,20 @@ public class SelectionController implements MouseListener, VerifyListener,
 	public void goToNextEditRegion() {
 		final int offset = getModelCaretOffset();
 		final Interval next = mapper.findEditableIntervalAfter(offset);
-		if (next != null) {
-			final int new_offset = viewer.modelOffset2WidgetOffset(next
-					.getOffset());
-			// TODO: check if folding regions need to be expanded.
-			styledText.setSelection(new_offset);
-		}
+		final int newOffset = viewer.modelOffset2WidgetOffset(next.getOffset());
+		styledText.setSelection(newOffset);
+		if (next.getAttributeManipulation() == null)
+			overlayEditor.showAtOffset(newOffset);
 	}
 
 	public void goToPreviousEditRegion() {
 		final int offset = getModelCaretOffset();
 		final Interval previous = mapper.findEditableIntervalBefore(offset);
-		if (previous != null) {
-			final int new_offset = viewer.modelOffset2WidgetOffset(previous
-					.getOffset());
-			// TODO: check if folding regions need to be expanded.
-			styledText.setSelection(new_offset);
-		}
+		final int newOffset = viewer.modelOffset2WidgetOffset(previous
+				.getOffset());
+		styledText.setSelection(newOffset);
+		if (previous.getAttributeManipulation() == null)
+			overlayEditor.showAtOffset(newOffset);
 	}
 
 	/**
