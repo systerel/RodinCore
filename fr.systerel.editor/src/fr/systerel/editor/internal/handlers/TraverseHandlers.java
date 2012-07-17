@@ -30,8 +30,7 @@ public class TraverseHandlers {
 		
 		@Override
 		protected String handleSelection(RodinEditor editor, int offset) {
-			if (editor.isOverlayActive())
-				editor.quitAndKeepModifs();
+			editor.quitOverlayAndKeepModifs();
 			editor.getSelectionController().goToNextEditRegion();
 			return null;
 		}
@@ -49,8 +48,7 @@ public class TraverseHandlers {
 		
 		@Override
 		protected String handleSelection(RodinEditor editor, int offset) {
-			if (editor.isOverlayActive())
-				editor.quitAndKeepModifs();
+			editor.quitOverlayAndKeepModifs();
 			editor.getSelectionController().goToPreviousEditRegion();
 			return null;
 		}

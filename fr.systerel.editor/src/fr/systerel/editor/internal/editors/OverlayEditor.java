@@ -414,7 +414,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		setVisible(false);
 		if (maintainCaretPosition) {
 			final int newEditorOffset = overlayToEditorOffset();
-			parent.setCaretOffset(newEditorOffset);			
+			parent.setCaretOffset(newEditorOffset);
 		}
 		interval = null;
 	}
@@ -509,19 +509,16 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	public void modifyText(ExtendedModifyEvent event) {
 		try {
 			modifyingText = true;
-		final String text = editorText.getText();
-		modifyText(event, text, editorText, parent, mapper, interval);
+			final String text = editorText.getText();
+			modifyText(text);
 		} finally {
 			modifyingText = false;
 		}
 	}
 
-
-	private void modifyText(ExtendedModifyEvent event, String text,
-			StyledText target, StyledText parent, DocumentMapper mapper,
-			Interval inter) {
-		mapper.synchronizeInterval(inter, text);
-		resizeAndPositionOverlay(target, parent, inter);
+	private void modifyText(String text) {
+		mapper.synchronizeInterval(interval, text);
+		resizeAndPositionOverlay(editorText, parent, interval);
 	}
 
 	private void resizeAndPositionOverlay(StyledText overlay,

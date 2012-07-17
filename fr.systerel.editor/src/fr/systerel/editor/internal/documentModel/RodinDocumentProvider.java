@@ -135,10 +135,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element,
 			IDocument document, boolean overwrite) throws CoreException {
-		if (editor.isOverlayActive()) {
-			editor.quitAndKeepModifs();
-		}
-		((ILFile) inputResource).save();
+		((ILFile) inputResource).save();			
 	}
 
 	@Override
