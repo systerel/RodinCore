@@ -384,7 +384,7 @@ public class AtomicExpression extends Expression {
 
 	@Override
 	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
-		return rewriter.checkReplacement(this, rewriter.rewrite(this));
+		return rewriter.rewrite(this);
 	}
 
 	@Override

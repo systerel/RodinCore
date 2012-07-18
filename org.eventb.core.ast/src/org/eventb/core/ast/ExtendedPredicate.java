@@ -346,15 +346,20 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 				changed |= newChild != child;
 			}
 		}
-		final ExtendedPredicate before;
+		final Expression[] newChildExprs;
+		final Predicate[] newChildPreds;
 		if (!changed) {
-			before = this;
+			newChildExprs = childExpressions;
+			newChildPreds = childPredicates;
 		} else {
-			before = rewriter.getFactory().makeExtendedPredicate(extension,
-					newChildExpressions, newChildPredicates,
-					getSourceLocation());
+			// FIXME should check preconditions about new children
+			// (flattening could break preconditions)
+			newChildExprs = newChildExpressions
+					.toArray(new Expression[newChildExpressions.size()]);
+			newChildPreds = newChildPredicates
+					.toArray(new Predicate[newChildPredicates.size()]);
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, changed, newChildExprs, newChildPreds);
 	}
 
 	@Override

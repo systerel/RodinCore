@@ -787,7 +787,7 @@ public class BinaryExpression extends Expression {
 			before = rewriter.getFactory().makeBinaryExpression(getTag(),
 					newLeft, newRight, getSourceLocation());
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override

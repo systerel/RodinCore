@@ -1,6 +1,5 @@
 package org.eventb.internal.core.ast;
 
-import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.FormulaFactory;
 
 /**
@@ -8,10 +7,10 @@ import org.eventb.core.ast.FormulaFactory;
  * 
  * @author Stefan Hallerstede
  */
-public abstract class Substitution extends DefaultRewriter {
+public abstract class Substitution extends DefaultTypedFormulaRewriter {
 
 	public Substitution(FormulaFactory ff) {
-		super(false, ff);
+		super(ff);
 	}
 
 }

@@ -570,7 +570,7 @@ public class UnaryExpression extends Expression {
 			final BigInteger value = ((IntegerLiteral) newChild).getValue();
 			final IntegerLiteral before = ff.makeIntegerLiteral(value.negate(),
 					sloc);
-			return rewriter.checkReplacement(this, rewriter.rewrite(before));
+			return rewriter.rewrite(this, before);
 		}
 		final UnaryExpression before;
 		if (newChild == child) {
@@ -578,7 +578,7 @@ public class UnaryExpression extends Expression {
 		} else {
 			before = ff.makeUnaryExpression(getTag(), newChild, sloc);
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override

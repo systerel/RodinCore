@@ -25,7 +25,6 @@ import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
-import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -213,16 +212,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 
 	@Override
 	protected BoundIdentDecl rewrite(ITypedFormulaRewriter rewriter) {
-		throw new UnsupportedOperationException(
-				"Bound identifier declarations cannot be rewritten");
-	}
-
-	/**
-	 * @since 2.6
-	 */
-	@Override
-	public BoundIdentDecl specialize(ISpecialization specialization) {
-		return ((Specialization)specialization).rewrite(this);
+		return rewriter.rewrite(this);
 	}
 
 	@Override
@@ -260,10 +250,9 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 
 	@Override
 	protected BoundIdentDecl getCheckedReplacement(SingleRewriter rewriter) {
-		return TypedFormulaRewriter.getDefault().checkReplacement(this,
-				rewriter.getBoundIdentDecl());
+		return rewriter.getBoundIdentDecl(this);
 	}
-
+	
 	@Override
 	public boolean isWDStrict() {
 		return true;

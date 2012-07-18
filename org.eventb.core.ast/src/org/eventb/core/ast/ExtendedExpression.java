@@ -39,7 +39,6 @@ import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
-import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.extension.ArityCoverage;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
@@ -362,7 +361,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			return this;
 		}
 		return factory.makeExtendedExpression(extension, newChildExpressions,
-				newChildPredicates, getSourceLocation());
+				newChildPredicates, getSourceLocation(), getType());
 	}
 
 	// TODO everywhere, we consider expressions first, then predicates
@@ -419,59 +418,20 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			newChildPredicates.add(newChild);
 			changed |= newChild != child;
 		}
-		final ExtendedExpression before;
+		final Expression[] newChildExprs;
+		final Predicate[] newChildPreds;
 		if (!changed) {
-			before = this;
+			newChildExprs = childExpressions;
+			newChildPreds = childPredicates;
 		} else {
 			// FIXME should check preconditions about new children
 			// (flattening could break preconditions)
-			final Expression[] newChildExprs = newChildExpressions
+			newChildExprs = newChildExpressions
 					.toArray(new Expression[newChildExpressions.size()]);
-			final Predicate[] newChildPreds = newChildPredicates
+			newChildPreds = newChildPredicates
 					.toArray(new Predicate[newChildPredicates.size()]);
-			before = rewriter.getFactory().makeExtendedExpression(extension,
-					newChildExprs, newChildPreds, getSourceLocation(),
-					getType());
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
-	}
-
-	/**
-	 * @since 2.6
-	 */
-	@Override
-	@SuppressWarnings("unused")
-	// FIXME Temporary duplicate code for specialization
-	public Expression specialize(ISpecialization rewriter) {
-		final boolean flatten = false;
-		final ArrayList<Expression> newChildExpressions = new ArrayList<Expression>(
-				childExpressions.length + 11);
-		boolean changed = false;
-		for (Expression child : childExpressions) {
-			Expression newChild = child.rewrite((Specialization) rewriter);
-			if (flatten && extension.getKind().getProperties().isAssociative()
-					&& getTag() == newChild.getTag()) {
-				final Expression[] grandChildren = ((ExtendedExpression) newChild).childExpressions;
-				newChildExpressions.addAll(Arrays.asList(grandChildren));
-				changed = true;
-			} else {
-				newChildExpressions.add(newChild);
-				changed |= newChild != child;
-			}
-		}
-		final ArrayList<Predicate> newChildPredicates = new ArrayList<Predicate>(
-				childPredicates.length);
-		for (Predicate child : childPredicates) {
-			Predicate newChild = child.rewrite((Specialization) rewriter);
-			newChildPredicates.add(newChild);
-			changed |= newChild != child;
-		}
-		final Expression[] newChildExprs = newChildExpressions
-				.toArray(new Expression[newChildExpressions.size()]);
-		final Predicate[] newChildPreds = newChildPredicates
-				.toArray(new Predicate[newChildPredicates.size()]);
-		return ((Specialization) rewriter).rewrite(this, changed,
-				newChildExprs, newChildPreds);
+		return rewriter.rewrite(this, changed, newChildExprs, newChildPreds);
 	}
 
 	@Override
@@ -514,7 +474,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 					"Position is outside the formula");
 		// result type remains unchanged because rewritten child and replacement
 		// bear the same type;
-		// it must be given though, because type synthesizing could fail   
+		// it must be given though, because type synthesis could fail otherwise
 		if (index < childExpressions.length) {
 			Expression[] newChildExpressions = childExpressions.clone();
 			newChildExpressions[index] = rewriter

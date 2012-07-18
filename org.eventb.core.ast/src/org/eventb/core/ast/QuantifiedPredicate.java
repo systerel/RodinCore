@@ -471,7 +471,7 @@ public class QuantifiedPredicate extends Predicate {
 			before = ff.makeQuantifiedPredicate(getTag(), newDecls, newPred,
 					sloc);
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override

@@ -212,7 +212,7 @@ public class LiteralPredicate extends Predicate {
 
 	@Override
 	protected Predicate rewrite(ITypedFormulaRewriter rewriter) {
-		return rewriter.checkReplacement(this, rewriter.rewrite(this));
+		return rewriter.rewrite(this);
 	}
 
 	@Override

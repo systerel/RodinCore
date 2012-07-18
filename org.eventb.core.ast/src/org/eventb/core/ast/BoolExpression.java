@@ -245,7 +245,7 @@ public class BoolExpression extends Expression {
 			before = rewriter.getFactory().makeBoolExpression(newChild,
 					getSourceLocation());
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override

@@ -311,7 +311,7 @@ public class MultiplePredicate extends Predicate {
 		} else {
 			before = ff.makeMultiplePredicate(getTag(), newChildren, sloc);
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override

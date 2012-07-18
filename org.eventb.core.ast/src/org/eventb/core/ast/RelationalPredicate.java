@@ -422,7 +422,7 @@ public class RelationalPredicate extends Predicate {
 			before = rewriter.getFactory().makeRelationalPredicate(getTag(),
 					newLeft, newRight, getSourceLocation());
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override

@@ -301,7 +301,7 @@ public class BinaryPredicate extends Predicate {
 			before = rewriter.getFactory().makeBinaryPredicate(getTag(),
 					newLeft, newRight, getSourceLocation());
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override

@@ -40,6 +40,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.Substitution;
+import org.eventb.internal.core.ast.TypedFormulaRewriter;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.wd.WDComputer;
@@ -1789,7 +1790,16 @@ public abstract class Formula<T extends Formula<T>> {
 		return rewrite(new TypedFormulaRewriter(rewriter));
 	}
 	
-	// Internal method shared by rewrite() and specialize()
+	/**
+	 * This method is not part part of the published API of the AST library and
+	 * shall not be called by clients. It has been made public due to the
+	 * technical structure of the AST library. However, interface
+	 * <code>ITypedFormulaRewriter</code> is not part of the API on purpose.
+	 * 
+	 * @param rewriter
+	 *            some type-checking rewriter
+	 * @return the rewritten formula
+	 */
 	protected abstract T rewrite(ITypedFormulaRewriter rewriter);
 	
 	/**
@@ -2269,8 +2279,6 @@ public abstract class Formula<T extends Formula<T>> {
 	protected abstract T rewriteChild(int index, SingleRewriter rewriter);
 
 	protected abstract T getCheckedReplacement(SingleRewriter rewriter);
-
-	//protected abstract T checkReplacement(T replacement);
 
 	protected final void ensureTypeChecked() {
 		if (!this.isTypeChecked())

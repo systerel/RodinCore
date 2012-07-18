@@ -18,7 +18,6 @@ import java.util.Map.Entry;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
-import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
@@ -26,12 +25,11 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
-import org.eventb.core.ast.ITypedFormulaRewriter;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
@@ -46,8 +44,8 @@ import org.eventb.internal.core.typecheck.TypeEnvironment;
  * 
  * @author Laurent Voisin
  */
-public class Specialization extends DefaultRewriter implements ISpecialization,
-		ITypedFormulaRewriter {
+public class Specialization extends DefaultTypedFormulaRewriter implements
+		ISpecialization {
 
 	// Type substitutions
 	private final Map<GivenType, Type> typeSubst;
@@ -56,13 +54,13 @@ public class Specialization extends DefaultRewriter implements ISpecialization,
 	private final Map<FreeIdentifier, Expression> identSubst;
 
 	public Specialization(FormulaFactory ff) {
-		super(false, ff);
+		super(ff);
 		typeSubst = new HashMap<GivenType, Type>();
 		identSubst = new HashMap<FreeIdentifier, Expression>();
 	}
 
 	public Specialization(Specialization other) {
-		super(false, other.ff);
+		super(other.ff);
 		typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
 		identSubst = new HashMap<FreeIdentifier, Expression>(other.identSubst);
 	}
@@ -204,6 +202,7 @@ public class Specialization extends DefaultRewriter implements ISpecialization,
 		return newIdent;
 	}
 
+	@Override
 	public BoundIdentDecl rewrite(BoundIdentDecl decl) {
 		final Type type = decl.getType();
 		final Type newType = type.specialize(this);
@@ -227,8 +226,8 @@ public class Specialization extends DefaultRewriter implements ISpecialization,
 	}
 
 	@Override
-	public Expression rewrite(QuantifiedExpression expression) {
-		final BoundIdentDecl[] decls = expression.getBoundIdentDecls();
+	public Expression rewrite(QuantifiedExpression src, QuantifiedExpression expression) {
+		final BoundIdentDecl[] decls = src.getBoundIdentDecls();
 		final BoundIdentDecl[] newDecls = specialize(decls);
 		if (newDecls == decls) {
 			return expression;
@@ -239,8 +238,8 @@ public class Specialization extends DefaultRewriter implements ISpecialization,
 	}
 
 	@Override
-	public Predicate rewrite(QuantifiedPredicate predicate) {
-		final BoundIdentDecl[] decls = predicate.getBoundIdentDecls();
+	public Predicate rewrite(QuantifiedPredicate src, QuantifiedPredicate predicate) {
+		final BoundIdentDecl[] decls = src.getBoundIdentDecls();
 		final BoundIdentDecl[] newDecls = specialize(decls);
 		if (newDecls == decls) {
 			return predicate;
@@ -273,6 +272,7 @@ public class Specialization extends DefaultRewriter implements ISpecialization,
 		return ff.makeAtomicExpression(expression.getTag(), loc, newType);
 	}
 
+	@Override
 	public Expression rewrite(ExtendedExpression expr, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
 		final Type type = expr.getType();
@@ -291,34 +291,16 @@ public class Specialization extends DefaultRewriter implements ISpecialization,
 	 * where we have to specialize the type.
 	 */
 	@Override
-	public Expression rewrite(SetExtension expression) {
-		if (expression.getChildCount() != 0) {
-			return expression;
+	public Expression rewrite(SetExtension src, SetExtension expr) {
+		if (expr.getChildCount() != 0) {
+			return expr;
 		}
-		final Type type = expression.getType();
+		final Type type = expr.getType();
 		final Type newType = type.specialize(this);
 		if (newType == type) {
-			return expression;
+			return expr;
 		}
-		final SourceLocation sloc = expression.getSourceLocation();
-		return ff.makeEmptySetExtension(newType, sloc);
-	}
-
-	@Override
-	public Predicate checkReplacement(Predicate current, Predicate replacement) {
-		return replacement;
-	}
-
-	@Override
-	public Expression checkReplacement(Expression current,
-			Expression replacement) {
-		return replacement;
-	}
-
-	@Override
-	public BoundIdentDecl checkReplacement(BoundIdentDecl current,
-			BoundIdentDecl replacement) {
-		return replacement;
+		return ff.makeEmptySetExtension(newType, expr.getSourceLocation());
 	}
 
 	// For debugging purposes

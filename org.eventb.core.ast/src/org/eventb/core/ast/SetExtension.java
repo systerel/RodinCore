@@ -342,7 +342,7 @@ public class SetExtension extends Expression {
 
 		if (length == 0 && rewriter.autoFlatteningMode()) {
 			final AtomicExpression before = ff.makeEmptySet(getType(), sloc);
-			return rewriter.checkReplacement(this, rewriter.rewrite(before));
+			return rewriter.rewrite(this, before);
 		}
 		boolean changed = false;
 		final Expression[] newMembers = new Expression[length];
@@ -358,7 +358,7 @@ public class SetExtension extends Expression {
 		} else {
 			before = ff.makeSetExtension(newMembers, sloc);
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override

@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.ast.DefaultTypedFormulaRewriter.checkReplacement;
 import org.eventb.internal.core.ast.Position;
 
 /*package*/class SingleRewriter {
@@ -27,25 +28,25 @@ import org.eventb.internal.core.ast.Position;
 		this.factory = factory;
 	}
 
-	BoundIdentDecl getBoundIdentDecl() {
+	BoundIdentDecl getBoundIdentDecl(BoundIdentDecl src) {
 		if (subFormula instanceof BoundIdentDecl) {
-			return (BoundIdentDecl) subFormula;
+			return checkReplacement(src, (BoundIdentDecl) subFormula);
 		}
 		throw new IllegalArgumentException(
 				"New sub-formula should be a bound identifier declaration");
 	}
 
-	Expression getExpression() {
+	Expression getExpression(Expression src) {
 		if (subFormula instanceof Expression) {
-			return (Expression) subFormula;
+			return checkReplacement(src, (Expression) subFormula);
 		}
 		throw new IllegalArgumentException(
 				"New sub-formula should be an expression");
 	}
 
-	Predicate getPredicate() {
+	Predicate getPredicate(Predicate src) {
 		if (subFormula instanceof Predicate) {
-			return (Predicate) subFormula;
+			return checkReplacement(src, (Predicate) subFormula);
 		}
 		throw new IllegalArgumentException(
 				"New sub-formula should be a predicate");

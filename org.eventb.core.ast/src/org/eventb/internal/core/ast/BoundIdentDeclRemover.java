@@ -20,7 +20,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypedFormulaRewriter;
-import org.eventb.core.ast.Predicate;
 
 /**
  * A substitution that removes some bound identifier declarations, renumbering
@@ -85,6 +84,12 @@ public class BoundIdentDeclRemover extends Substitution implements
 	}
 
 	@Override
+	public BoundIdentDecl rewrite(BoundIdentDecl decl) {
+		assert false; // Shall not be called
+		return decl;
+	}
+
+	@Override
 	public Expression rewrite(BoundIdentifier ident) {
 		final int nbOfInternallyBound = getBindingDepth();
 		final int index = ident.getBoundIndex();
@@ -113,21 +118,4 @@ public class BoundIdentDeclRemover extends Substitution implements
 		return newDecls;
 	}
 
-	@Override
-	public Predicate checkReplacement(Predicate current, Predicate replacement) {
-		return replacement;
-	}
-
-	@Override
-	public Expression checkReplacement(Expression current,
-			Expression replacement) {
-		return replacement;
-	}
-
-	@Override
-	public BoundIdentDecl checkReplacement(BoundIdentDecl current,
-			BoundIdentDecl replacement) {
-		return replacement;
-	}
-	
 }

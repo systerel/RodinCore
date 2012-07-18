@@ -253,7 +253,7 @@ public class UnaryPredicate extends Predicate {
 			before = rewriter.getFactory().makeUnaryPredicate(getTag(),
 					newChild, getSourceLocation());
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override

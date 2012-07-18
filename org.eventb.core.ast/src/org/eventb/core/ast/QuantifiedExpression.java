@@ -722,7 +722,7 @@ public class QuantifiedExpression extends Expression {
 					quantifiedIdentifiers, newPred, newExpr,
 					getSourceLocation(), form);
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override

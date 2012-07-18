@@ -258,7 +258,7 @@ public class FreeIdentifier extends Identifier {
 	
 	@Override
 	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
-		return rewriter.checkReplacement(this, rewriter.rewrite(this));
+		return rewriter.rewrite(this);
 	}
 
 	@Override

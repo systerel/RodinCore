@@ -342,7 +342,7 @@ public class AssociativePredicate extends Predicate {
 			before = rewriter.getFactory().makeAssociativePredicate(getTag(),
 					newChildren, getSourceLocation());
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override

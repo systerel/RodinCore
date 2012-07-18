@@ -160,7 +160,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	public final Assignment rewrite(IFormulaRewriter rewriter) {
 		throw new UnsupportedOperationException("Assignments cannot be rewritten");
 	}
-	
+
 	@Override
 	protected final Assignment rewrite(ITypedFormulaRewriter rewriter) {
 		throw new UnsupportedOperationException("Assignments cannot be rewritten");
@@ -245,15 +245,6 @@ public abstract class Assignment extends Formula<Assignment> {
 	protected final Assignment getCheckedReplacement(SingleRewriter rewriter) {
 		throw new UnsupportedOperationException(
 				"Assignments cannot be rewritten");
-	}
-
-	/**
-	 * @since 2.6
-	 */
-	@Override
-	public Assignment specialize(ISpecialization specialisation) {
-		throw new UnsupportedOperationException(
-				"Assignments cannot be specialized");
 	}
 
 }

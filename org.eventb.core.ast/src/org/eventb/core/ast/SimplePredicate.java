@@ -258,7 +258,7 @@ public class SimplePredicate extends Predicate {
 			before = rewriter.getFactory().makeSimplePredicate(getTag(),
 					newChild, getSourceLocation());
 		}
-		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+		return rewriter.rewrite(this, before);
 	}
 
 	@Override
