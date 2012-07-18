@@ -13,8 +13,7 @@ package org.eventb.core.ast.tests;
 import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.tests.FastFactory.addToTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
-import static org.eventb.core.ast.tests.FastFactory.mList;
-import static org.eventb.core.ast.tests.FastFactory.mSpec;
+import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.TestGenParser.DIRECT_PRODUCT;
 
@@ -98,7 +97,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		assertExpressionSpecialization(
 				mTypeEnvironment("a", "ℙ(S)", "b", "ℙ(S)"), //
 				"a ∪ b", //
-				mSpec(te, mList("S", "ℤ")));
+				mSpecialization(te, "S := ℤ"));
 	}
 
 	/**
@@ -106,12 +105,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 * gets specialized.
 	 */
 	public void testAssociativeExpression2() {
-		te = mTypeEnvironment("a", "ℙ(S)", "b", "ℙ(S)");
+		te = mTypeEnvironment("S", "ℙ(S)", "a", "ℙ(S)", "b", "ℙ(S)");
 		assertExpressionSpecialization(te, //
 				"a ∪ b", //
-				mSpec(te,//
-						mList("S", "ℤ"), //
-						mList("a", "ℙ(S)", "c", "ℙ(ℤ)")));
+				mSpecialization(te, "S := ℤ", "a := c"));
 	}
 
 	/**
@@ -119,28 +116,24 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 * specialized.
 	 */
 	public void testAssociativeExpression3() {
-		te = mTypeEnvironment("a", "S", "b", "S", "c", "S");
+		te = mTypeEnvironment("S", "ℙ(S)", "a", "S", "b", "S", "c", "S");
 		assertExpressionSpecialization(te, //
 				"{a} ∪ {b} ∪ {c}", //
-				mSpec(te,//
-						mList("S", "ℤ"), //
-						mList("a", "S", "e", "ℤ", //
-								"b", "S", "f", "ℤ",//
-								"c", "S", "g", "ℤ")));
+				mSpecialization(te,//
+						"S := ℤ",//
+						"a := e || b := f || c := g"));
 	}
 	
 	/**
 	 * Ensures that an unary expression with one child gets specialized.
 	 */
 	public void testUnaryExpression() {
-		te = mTypeEnvironment("j", "S", "h", "S", "i", "S");
+		te = mTypeEnvironment("S", "ℙ(S)", "j", "S", "h", "S", "i", "S");
 		assertExpressionSpecialization(te, //
 				"card({j, h, i})", //
-				mSpec(te,//
-						mList("S", "ℤ"), //
-						mList("j", "S", "e", "ℤ", //
-							  "h", "S", "f", "ℤ",//
-							  "i", "S", "g", "ℤ")));
+				mSpecialization(te,//
+						"S := ℤ", //
+						"j := e || h := f || i := g"));
 	}
 	
 
@@ -148,26 +141,22 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 * Ensures that an unary predicate with two children gets specialized.
 	 */
 	public void testUnaryPredicate() {
-		te = mTypeEnvironment("s", "S");
+		te = mTypeEnvironment("S", "ℙ(S)", "s", "S");
 		assertPredicateSpecialization(te, //
 				"¬(s ∈ S)", //
-				mSpec(te,//
-						mList("S", "Y"), //
-						mList("s", "S", "y", "Y")));
+				mSpecialization(te, "S := Y", "s := y"));
 	}
 	
 	/**
 	 * Ensures that an associative predicate with two children gets specialized.
 	 */
 	public void testAssociativePredicate() {
-		te = mTypeEnvironment("s", "S", "t", "T");
+		te = mTypeEnvironment("S", "ℙ(S)", "s", "S", "T", "ℙ(T)", "t", "T");
 		assertPredicateSpecialization(te, //
 				"s ∈ S ∧ t ∈ T", //
-				mSpec(te,//
-						mList("S", "Y", //
-								"T", "Z"), //
-						mList("s", "S", "y", "Y", //
-								"t", "T", "z", "Z")));
+				mSpecialization(te,//
+						"S := Y || T := Z", //
+						"s := y || t := z"));
 	}
 
 	/**
@@ -175,12 +164,12 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 * specialized.
 	 */
 	public void testAssociativePredicate2() {
-		te = mTypeEnvironment("T", "ℙ(T)");
+		te = mTypeEnvironment("T", "ℙ(T)", "t", "ℙ(T)");
 		assertPredicateSpecialization(te, //
 				"card(t)>0 ∧ t ⊆ T ∧ t ≠ ∅", //
-				mSpec(te,//
-						mList("T", "ℤ"), //
-						mList("t", "ℙ(T)", "{1}", "ℙ(ℤ)")));
+				mSpecialization(te,//
+						"T := ℤ", //
+						"t := {1}"));
 	}
 
 	/**
@@ -189,7 +178,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	public void testAtomicExpressionEmptySet() {
 		assertExpressionSpecialization(ff.makeTypeEnvironment(), //
 				"∅⦂ℙ(S)", //
-				mSpec(te, mList("S", "T")));
+				mSpecialization(te, "S := T"));
 	}
 
 	/**
@@ -199,7 +188,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("S", "ℙ(S)");
 		assertExpressionSpecialization(te, //
 				"id(ℙ(S×S))", //
-				mSpec(te, mList("S", "T")));
+				mSpecialization(te, "S := T"));
 	}
 
 	/**
@@ -209,7 +198,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)");
 		assertExpressionSpecialization(te, //
 				"(S×T×S)◁ prj1", //
-				mSpec(te, mList("S", "ℤ")));
+				mSpecialization(te, "S := ℤ"));
 	}
 
 	/**
@@ -219,27 +208,27 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)");
 		assertExpressionSpecialization(te, //
 				"(S×T×S)◁ prj2", //
-				mSpec(te, mList("S", "ℤ")));
+				mSpecialization(te, "S := ℤ"));
 	}
 
 	/**
 	 * Ensures a binary expression can be specialized on the left, and only.
 	 */
 	public void testBinaryExpressionLeft() {
-		te = mTypeEnvironment("a", "S", "b", "T");
+		te = mTypeEnvironment("S", "ℙ(S)", "a", "S", "b", "T");
 		assertExpressionSpecialization(te, //
 				"a ↦ b", //
-				mSpec(te, mList("S", "U")));
+				mSpecialization(te, "S := U"));
 	}
 
 	/**
 	 * Ensures a binary expression can be specialized on the right, and only.
 	 */
 	public void testBinaryExpressionRight() {
-		te = mTypeEnvironment("a", "S", "b", "T");
+		te = mTypeEnvironment("S", "ℙ(S)", "a", "S", "T", "ℙ(T)", "b", "T");
 		assertExpressionSpecialization(te, //
 				"a ↦ b", //
-				mSpec(te, mList("T", "U"), mList("b", "T", "c", "U")));
+				mSpecialization(te, "T := U", "b := c"));
 	}
 
 	/**
@@ -247,12 +236,11 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 * specialized.
 	 */
 	public void testBinaryExpressionBoth() {
-		te = mTypeEnvironment("a", "S", "b", "T");
+		te = mTypeEnvironment("S", "ℙ(S)", "a", "S", "T", "ℙ(T)", "b", "T");
 		assertExpressionSpecialization(te, //
 				"a ↦ b", //
-				mSpec(te, mList("S", "U", "T", "V"),//
-						mList("a", "S", "c", "U",//
-								"b", "T", "d", "V")));
+				mSpecialization(te, "S := U || T := V",//
+						"a := c || b := d"));
 	}
 
 	/**
@@ -262,7 +250,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "x", "S", "y", "T");
 		assertPredicateSpecialization(te, //
 				"x ∈ S ⇒ y ∈ T", //
-				mSpec(te, mList("S", "U"), mList("x", "S", "c", "U")));
+				mSpecialization(te, "S := U", "x := c"));
 	}
 
 	/**
@@ -272,7 +260,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "x", "S", "y", "T");
 		assertPredicateSpecialization(te, //
 				"x ∈ S ⇒ y ∈ T", //
-				mSpec(te, mList("T", "U"), mList("y", "T", "c", "U")));
+				mSpecialization(te, "T := U", "y := c"));
 	}
 
 	/**
@@ -283,9 +271,8 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "x", "S", "y", "T");
 		assertPredicateSpecialization(te, //
 				"x ∈ S  ⇔ y ∈ T", //
-				mSpec(te, mList("S", "U", "T", "V"), //
-						mList("x", "S", "c", "U", //
-								"y", "T", "d", "V")));
+				mSpecialization(te, "S := U || T := V", //
+						"x := c || y := d"));
 	}
 
 	/**
@@ -295,8 +282,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("S", "ℙ(S)", "x", "ℙ(S)", "y", "ℙ(S)");
 		assertExpressionSpecialization(te, //
 				"bool(x ⊆ y)", //
-				mSpec(te, mList("S", "T"), //
-						mList("x", "ℙ(S)", "z", "ℙ(T)")));
+				mSpecialization(te, "S := T", "x := z"));
 	}
 
 	/**
@@ -336,7 +322,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = extFac.makeTypeEnvironment();
 		FastFactory.addToTypeEnvironment(te, "S", "ℙ(S)", "s", "S");
 		assertPredicateSpecialization(extFac, te, "α(s∈S, s)",
-				mSpec(te, mList("S", "T"), mList("s", "S", "t", "T")));
+				mSpecialization(te, "S := T", "s := t"));
 	}
 
 	/**
@@ -349,7 +335,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		addToTypeEnvironment(te, "S", "ℙ(S)", "T", "ℙ(T)", "V", "ℙ(V)", "A",
 				"ℙ(S×T)", "B", "ℙ(S×V)");
 		assertExpressionSpecialization(extFac, te, "A§B",
-				mSpec(te, mList("S", "X"), new String[0]));
+				mSpecialization(te, "S := X"));
 	}
 
 	/**
@@ -359,7 +345,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("S", "ℙ(S)", "s", "S");
 		assertExpressionSpecialization(te, //
 				"s", //
-				mSpec(te, mList("S", "T")));
+				mSpecialization(te, "S := T"));
 	}
 
 	/**
@@ -391,9 +377,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"ℙ(S)", "u", "ℙ(S)");
 		assertPredicateSpecialization(te, //
 				"partition(h, s, t, u)", //
-				mSpec(te, //
-						new String[0], //
-						mList("s", "ℙ(S)", "x", "ℙ(S)")));
+				mSpecialization(te, "", "s := x"));
 	}
 
 	/**
@@ -401,16 +385,13 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 * that the other are preserved.
 	 */
 	public void testMultiplePredicateSpecializationAll() {
-		te = mTypeEnvironment("S", "ℙ(S)", "h", "ℙ(S)", //
-				"s", "ℙ(S)", "t", "ℙ(S)", "u", "ℙ(S)");
+		te = mTypeEnvironment("S", "ℙ(S)", "A", "ℙ(S)", //
+				"B", "ℙ(S)", "C", "ℙ(S)", "D", "ℙ(S)");
 		assertPredicateSpecialization(te, //
-				"partition(h, s, t, u)", //
-				mSpec(te, //
-						mList("S", "T"), //
-						mList("s", "ℙ(S)", "x", "ℙ(T)", //
-								"s", "ℙ(S)", "y", "ℙ(T)", //
-								"s", "ℙ(S)", "z", "ℙ(T)" //
-						)));
+				"partition(A, B, C, D)", //
+				mSpecialization(te, //
+						"S := T", //
+						"B := x || C := y || D := z"));
 	}
 
 	/**
@@ -448,9 +429,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("S", "ℙ(S)");
 		assertExpressionSpecialization(te, //
 				"{x ∣ x ∈ S}", //
-				mSpec(te, //
-						mList("S", "T"), //
-						new String[0]));
+				mSpecialization(te, "S := T"));
 	}
 
 	/**
@@ -459,11 +438,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 * identifiers.
 	 */
 	public void testQuantifiedPredicateSpecialization() {
+		te = mTypeEnvironment("x", "ℤ");
 		assertPredicateSpecialization(te, //
 				"∀x,y·x ∈ ℕ ∧ y ∈ ℕ ⇒ x + y ∈ ℕ", //
-				mSpec(te, //
-						new String[0], //
-						mList("x", "ℤ", "t", "ℤ")));
+				mSpecialization(te, "", "x := t"));
 	}
 
 	/**
@@ -472,12 +450,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 * identifiers.
 	 */
 	public void testQuantifiedPredicateTypeSpecialization() {
-		te = mTypeEnvironment("T", " ℙ(T)");
+		te = mTypeEnvironment("T", " ℙ(T)", "x", "ℙ(T)");
 		assertPredicateSpecialization(te, //
 				"∀x,y·x ∈ ℙ(T) ∧ y ∈ ℙ(T) ⇒ x ∪ y ∈ ℙ(T)", //
-				mSpec(te, //
-						mList("T", "ℤ"), //
-						mList("x", "ℙ(T)", "t", "ℙ(ℤ)")));
+				mSpecialization(te, "T := ℤ", "x := t"));
 	}
 
 	/**
@@ -487,9 +463,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 		te = mTypeEnvironment("S", " ℙ(S)", "s", "S");
 		assertPredicateSpecialization(te, //
 				"s ∈ S", //
-				mSpec(te, //
-						mList("S", "T"), //
-						new String[0]));
+				mSpecialization(te, "S := T"));
 	}
 
 	/**
@@ -498,19 +472,15 @@ public class TestFormulaSpecialization extends AbstractTests {
 	public void testSetExtensionSpecialization() {
 		te = mTypeEnvironment("S", "ℙ(S)", "s", "S", "t", "S", "u", "S");
 		assertExpressionSpecialization(te, "{ s, t, u }", //
-				mSpec(te, //
-						mList("S", "T"), //
-						mList("s", "S", "x", "T", //
-								"t", "S", "y", "T")));
+				mSpecialization(te, //
+						"S := T", "s := x || t := y"));
 	}
 
 	public void testSimplePredicate() {
 		te = mTypeEnvironment("S", "ℙ(S)", "s", "ℙ(S)");
 		assertPredicateSpecialization(te, //
 				"finite(s)", //
-				mSpec(te, //
-						mList("S", "T"), //
-						new String[0]));
+				mSpecialization(te, "S := T"));
 	}
 	
 	public static void assertPredicateSpecialization(FormulaFactory fac,
@@ -587,11 +557,9 @@ public class TestFormulaSpecialization extends AbstractTests {
 			ITypeEnvironment specTypeEnv) {
 		Formula<?> expected = null;
 		if (specialized instanceof Expression)
-			expected = fac.parseExpression(expectedImg, LATEST, null)
-					.getParsedExpression();
+			expected = parseExpression(expectedImg, fac);
 		if (specialized instanceof Predicate)
-			expected = fac.parsePredicate(expectedImg, LATEST, null)
-					.getParsedPredicate();
+			expected = parsePredicate(expectedImg, fac);
 		assertTrue(expected != null);
 		final ITypeCheckResult typeCheck = expected.typeCheck(specTypeEnv);
 		assertTrue(typeCheck.isSuccess());

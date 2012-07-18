@@ -196,7 +196,11 @@ public abstract class AbstractTests extends TestCase {
 	}
 
 	public static Type parseType(String image) {
-		final IParseResult result = ff.parseType(image, LATEST);
+		return parseType(image, ff);
+	}
+
+	public static Type parseType(String image, FormulaFactory factory) {
+		final IParseResult result = factory.parseType(image, LATEST);
 		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedType();
 	}

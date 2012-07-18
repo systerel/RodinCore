@@ -62,7 +62,6 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
@@ -333,41 +332,17 @@ public class FastFactory {
 		return typeEnv;
 	}
 	
-	public static ISpecialization mSpec(ITypeEnvironment typeEnv,
-			String[] typeSpecialisation, String[] identSpecialisation) {
-		assert (identSpecialisation.length % 4) == 0;
-		final FormulaFactory factory = typeEnv.getFormulaFactory();
-		final ISpecialization spec = mSpec(typeEnv, typeSpecialisation);
-		for (int i = 0; i < identSpecialisation.length; i += 4) {
-			final String srcIdentName = identSpecialisation[i];
-			final Type idType = factory.parseType(identSpecialisation[i + 1],
-					LATEST).getParsedType();
-			final FreeIdentifier src = factory.makeFreeIdentifier(srcIdentName,
-					null, idType);
-			final String repoExpr = identSpecialisation[i + 2];
-			final Type repoType = factory.parseType(identSpecialisation[i + 3],
-					LATEST).getParsedType();
-			final Expression expr = factory.parseExpression(repoExpr, LATEST,
-					null).getParsedExpression();
-			expr.typeCheck(typeEnv.specialize(spec), repoType);
-			spec.put(src, expr);
-		}
-		return spec;
+	public static ISpecialization mSpecialization(ITypeEnvironment te,
+			String typeSpecialization, String identSpecialization) {
+		final SpecializationBuilder builder = new SpecializationBuilder(te);
+		builder.addTypeSpecialization(typeSpecialization);
+		builder.addIdentSpecialization(identSpecialization);
+		return builder.getResult();
 	}
 
-	public static ISpecialization mSpec(ITypeEnvironment te,
-			String[] typeSpecialisation) {
-		assert (typeSpecialisation.length & 1) == 0;
-		final FormulaFactory fac = te.getFormulaFactory();
-		final ISpecialization spec = fac.makeSpecialization();
-		for (int i = 0; i < typeSpecialisation.length; i += 2) {
-			final String name = typeSpecialisation[i];
-			final GivenType gType = fac.makeGivenType(name);
-			final Type type = fac.parseType(typeSpecialisation[i + 1], LATEST)
-					.getParsedType();
-			spec.put(gType, type);
-		}
-		return spec;
+	public static ISpecialization mSpecialization(ITypeEnvironment te,
+			String typeSpecialization) {
+		return mSpecialization(te, typeSpecialization, "");
 	}
 
 	public static UnaryExpression mUnaryExpression(Expression child) {
