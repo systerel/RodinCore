@@ -78,8 +78,24 @@ public class GivenType extends Type {
 	
 	@Override
 	public Type specialize(ISpecialization specialization) {
-		final Type type = ((Specialization) specialization).get(this);
-		return (type != null) ? type : this;
+		final Type result = ((Specialization) specialization).get(this);
+		if (this.equals(result))
+			return this;
+		return result;
+	}
+
+	/**
+	 * Returns the free identifier that denotes the set corresponding to this
+	 * given type.
+	 * 
+	 * @param factory
+	 *            factory to use for building the result identifier
+	 * @return the set corresponding to this type
+	 * @since 2.6
+	 */
+	@Override
+	public FreeIdentifier toExpression(FormulaFactory factory) {
+		return (FreeIdentifier) super.toExpression(factory);
 	}
 
 }

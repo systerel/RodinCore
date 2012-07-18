@@ -55,7 +55,8 @@ public class AllTests {
 		suite.addTestSuite(TestWDStrict.class);
 		suite.addTestSuite(TestGenParser.class);
 		suite.addTestSuite(TestSpecialization.class);
-		suite.addTestSuite(TestTypeAndTypeEnvSpecialization.class);
+		suite.addTestSuite(TestTypeSpecialization.class);
+		suite.addTestSuite(TestTypenvSpecialization.class);
 		suite.addTestSuite(TestFormulaSpecialization.class);
 		//$JUnit-END$
 		return suite;

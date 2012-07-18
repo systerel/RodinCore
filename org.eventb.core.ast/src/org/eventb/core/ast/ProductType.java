@@ -95,8 +95,11 @@ public class ProductType extends Type {
 
 	@Override
 	public Type specialize(ISpecialization specialization) {
-		return new ProductType(left.specialize(specialization),
-				right.specialize(specialization));
+		final Type newLeft = left.specialize(specialization);
+		final Type newRight = right.specialize(specialization);
+		if (newLeft == left && newRight == right)
+			return this;
+		return new ProductType(newLeft, newRight);
 	}
 	
 }

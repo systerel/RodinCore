@@ -12,9 +12,7 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.Formula.combineHashCodes;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
@@ -122,12 +120,15 @@ public class ParametricType extends Type {
 
 	@Override
 	public Type specialize(ISpecialization specialization) {
-		final List<Type> specializedTypes = new ArrayList<Type>();
-		for (Type type : typeParameters) {
-			specializedTypes.add(type.specialize(specialization));
+		boolean changed = false;
+		final Type[] newTypeParameters = new Type[typeParameters.length];
+		for (int i = 0; i < typeParameters.length; i++) {
+			newTypeParameters[i] = typeParameters[i].specialize(specialization);
+			changed |= newTypeParameters[i] != typeParameters[i];
 		}
-		return new ParametricType(this.typeConstructor,
-				specializedTypes.toArray(new Type[specializedTypes.size()]));
+		if (!changed)
+			return this;
+		return new ParametricType(this.typeConstructor, newTypeParameters);
 	}
 
 }

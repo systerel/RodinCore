@@ -2710,7 +2710,7 @@ public class TestGenParser extends AbstractTests {
 	};
 	
 	private static final IDatatype MOULT_DT = ff.makeDatatype(MOULT_TYPE);
-	private static final FormulaFactory MOULT_FAC = FormulaFactory
+	public static final FormulaFactory MOULT_FAC = FormulaFactory
 			.getInstance(MOULT_DT.getExtensions());
 	private static final IExpressionExtension EXT_MOULT = MOULT_DT
 			.getTypeConstructor();

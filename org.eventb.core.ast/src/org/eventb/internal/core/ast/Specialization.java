@@ -39,13 +39,18 @@ import org.eventb.core.ast.Type;
  * Common implementation for specializations. To ensure compatibility of the
  * type and identifier substitution, we check that no substitution is entered
  * twice and we also remember, for each identifier substitution the list of
- * given types that must not change afterwards.
+ * given types that must not change afterwards. A type substitution is also
+ * doubled as an identifier substitution.
  * 
  * @author Laurent Voisin
  */
-public class Specialization extends DefaultRewriter implements ISpecialization, ITypedFormulaRewriter {
+public class Specialization extends DefaultRewriter implements ISpecialization,
+		ITypedFormulaRewriter {
 
+	// Type substitutions.
 	private final Map<GivenType, Type> typeSubst;
+
+	 // Identifier substitutions.
 	private final Map<FreeIdentifier, Expression> identSubst;
 
 	public Specialization(FormulaFactory ff) {
@@ -55,17 +60,18 @@ public class Specialization extends DefaultRewriter implements ISpecialization, 
 	}
 
 	@Override
-	public void put(GivenType key, Type value) {
-		if (key == null)
+	public void put(GivenType type, Type value) {
+		if (type == null)
 			throw new NullPointerException("Null given type");
 		if (value == null)
 			throw new NullPointerException("Null type");
-		final Type oldValue = typeSubst.put(key, value);
+		final Type oldValue = typeSubst.put(type, value);
 		if (oldValue != null && !oldValue.equals(value)) {
-			typeSubst.put(key, oldValue);
-			throw new IllegalArgumentException("Type substitution for " + key
+			typeSubst.put(type, oldValue); // repair
+			throw new IllegalArgumentException("Type substitution for " + type
 					+ " already registered");
 		}
+		identSubst.put(type.toExpression(ff), value.toExpression(ff));
 	}
 
 	public Type get(GivenType key) {
@@ -74,15 +80,15 @@ public class Specialization extends DefaultRewriter implements ISpecialization, 
 			return key;
 		return value;
 	}
-	
+
 	public Collection<Type> getSubstitutionTypes() {
 		return typeSubst.values();
 	}
-	
+
 	public Map<GivenType, Type> getTypeSubstitutions() {
 		return typeSubst;
 	}
-	
+
 	public Map<FreeIdentifier, Expression> getIndentifierSubstitutions() {
 		return identSubst;
 	}
@@ -148,13 +154,13 @@ public class Specialization extends DefaultRewriter implements ISpecialization, 
 			return get(ff.makeGivenType(identifier.getName())).toExpression(ff);
 		return get(identifier);
 	}
-	
+
 	@Override
 	public Expression rewrite(BoundIdentifier identifier) {
 		return ff.makeBoundIdentifier(identifier.getBoundIndex(), identifier
 				.getSourceLocation(), identifier.getType().specialize(this));
 	}
-	
+
 	@Override
 	public Expression rewrite(QuantifiedExpression expression) {
 		return ff.makeQuantifiedExpression(expression.getTag(),
@@ -162,14 +168,14 @@ public class Specialization extends DefaultRewriter implements ISpecialization, 
 				expression.getPredicate(), expression.getExpression(),
 				expression.getSourceLocation(), expression.getForm());
 	}
-	
+
 	@Override
 	public Predicate rewrite(QuantifiedPredicate predicate) {
 		return ff.makeQuantifiedPredicate(predicate.getTag(),
 				getSpecializedDecls(predicate.getBoundIdentDecls()),
 				predicate.getPredicate(), predicate.getSourceLocation());
 	}
-	
+
 	private BoundIdentDecl[] getSpecializedDecls(BoundIdentDecl[] decls) {
 		final BoundIdentDecl[] result = new BoundIdentDecl[decls.length];
 		for (int i = 0; i < decls.length; i++) {
@@ -177,7 +183,7 @@ public class Specialization extends DefaultRewriter implements ISpecialization, 
 		}
 		return result;
 	}
-	
+
 	@Override
 	public Expression rewrite(AtomicExpression expression) {
 		final SourceLocation sl = expression.getSourceLocation();
@@ -204,7 +210,6 @@ public class Specialization extends DefaultRewriter implements ISpecialization, 
 				decl.getType().specialize(this));
 	}
 
-
 	@Override
 	public Predicate checkReplacement(Predicate current, Predicate replacement) {
 		return replacement;
@@ -221,5 +226,5 @@ public class Specialization extends DefaultRewriter implements ISpecialization, 
 			BoundIdentDecl replacement) {
 		return replacement;
 	}
-	
+
 }

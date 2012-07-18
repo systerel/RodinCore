@@ -117,15 +117,25 @@ public class TestSpecialization extends AbstractTests {
 	}
 
 	/**
-	 * Ensures that an identifier that denotes a given type is rejected.
+	 * Ensures that an identifier that denotes a given type is rejected, if not
+	 * already registered as a type substitution.
 	 */
 	public void testGivenTypeIdentifier() {
 		try {
-			spec.put((FreeIdentifier) S.toExpression(ff), Z.toExpression(ff));
+			spec.put(S.toExpression(ff), Z.toExpression(ff));
 			fail("Shall have raised an exception");
 		} catch (IllegalArgumentException e) {
 			// pass
 		}
+	}
+
+	/**
+	 * Ensures that an identifier that denotes a given type is accepted, if it
+	 * has already been registered as a type substitution.
+	 */
+	public void testGivenTypeIdentifierAlready() {
+		spec.put(S, Z);
+		spec.put(S.toExpression(ff), Z.toExpression(ff));
 	}
 
 	/**

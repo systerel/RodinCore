@@ -50,7 +50,7 @@ public interface ISpecialization {
 	 * substitution must be compatible with already registered substitutions
 	 * (for both given types and free identifiers).
 	 * 
-	 * @param key
+	 * @param type
 	 *            given type to specialize
 	 * @param value
 	 *            replacement for the given type
@@ -58,7 +58,7 @@ public interface ISpecialization {
 	 *             if this substitution is not compatible with already
 	 *             registered substitutions
 	 */
-	void put(GivenType key, Type value);
+	void put(GivenType type, Type value);
 
 	/**
 	 * Adds a new free identifier substitution to this specialization. All

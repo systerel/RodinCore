@@ -76,7 +76,10 @@ public class PowerSetType extends Type {
 
 	@Override
 	public Type specialize(ISpecialization specialization) {
-		return new PowerSetType(base.specialize(specialization));
+		final Type newBase = base.specialize(specialization);
+		if (newBase == base)
+			return this;
+		return new PowerSetType(newBase);
 	}
 	
 }
