@@ -80,19 +80,19 @@ public class FreshNameSolver {
 		}
 
 		private FormulaFactory getFormulaFactory() {
-			if (typeEnvironment != null) {
-				return typeEnvironment.getFormulaFactory();
-			}
 			return factory;
 		}
 		
 		protected String solve(ITypeEnvironment environment, String name) {
+			this.factory = environment.getFormulaFactory();
 			this.typeEnvironment = environment;
+			this.usedNames = null;
 			return solve(name);
 		}
 		
 		protected String solve(FormulaFactory forumlaFactory, Set<String> reservedNames, String name){
 			this.factory = forumlaFactory;
+			this.typeEnvironment = null;
 			this.usedNames = reservedNames;
 			return solve(name);
 		}
@@ -110,14 +110,7 @@ public class FreshNameSolver {
 				newName = sname.toString();
 			} while (contains(newName)
 					|| !getFormulaFactory().isValidIdentifierName(newName));
-			cleanUpSolver();
 			return newName;
-		}
-
-		private void cleanUpSolver() {
-			this.factory = null;
-			this.usedNames = null;
-			this.typeEnvironment = null;
 		}
 
 	}
