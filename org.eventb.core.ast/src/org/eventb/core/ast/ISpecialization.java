@@ -11,29 +11,24 @@
 package org.eventb.core.ast;
 
 /**
- * Common protocol for describing a specialization. A specialization groups
- * together a given type substitution and a free identifier substitution in one
- * object. It allows to specialize a parametric formula by applying both
- * substitutions at once.
+ * Common protocol for describing a specialization, which groups together a type
+ * substitution and a free identifier substitution in one object. It allows to
+ * specialize a formula by applying both substitutions at once.
  * <p>
  * Instances of this class can be created only through a formula factory. Type
  * and free identifier substitutions are then added one by one using
  * <code>put()</code> methods. Finally, the instance is passed as argument to a
- * <code>specialize()</code> method on a type or formula.
+ * <code>specialize()</code> method on a type, type environment or formula.
  * </p>
  * <p>
- * Both substitutions must be compatible, that is:
- * <ul>
- * <li>The expression to be substituted for an identifier must bear a type which
- * is the result of applying the type substitution to the type of the
- * identifier.</li>
- * <li>If an identifier denotes a given type, its substituting expression must
- * denote the type which is substituted to that given type.</li>
- * </ul>
- * These conditions must hold after every method call.This also implies that a
- * type substitution required for a free identifier specialization should be put
- * in the specialization strictly before the considered free identifier
- * substitution.
+ * Both substitutions must be compatible, that is the expression to be
+ * substituted for an identifier must bear a type which is the result of
+ * applying the type substitution to the type of the identifier.
+ * </p>
+ * <p>
+ * This condition must hold after every method call. This implies that a type
+ * substitution required for a free identifier substitution should be put in the
+ * specialization strictly before the considered free identifier substitution.
  * </p>
  * 
  * @author Laurent Voisin
@@ -51,32 +46,35 @@ public interface ISpecialization {
 
 	/**
 	 * Adds a new type substitution to this specialization. All substitutions
-	 * will be applied in parallel when specializing a formula. The given key
-	 * must not have already been registered within this specialization.
+	 * will be applied in parallel when specializing a formula. The added
+	 * substitution must be compatible with already registered substitutions
+	 * (for both given types and free identifiers).
 	 * 
 	 * @param key
 	 *            given type to specialize
 	 * @param value
 	 *            replacement for the given type
 	 * @throws IllegalArgumentException
-	 *             if the type substitution has already been registered
+	 *             if this substitution is not compatible with already
+	 *             registered substitutions
 	 */
 	void put(GivenType key, Type value);
 
 	/**
 	 * Adds a new free identifier substitution to this specialization. All
 	 * substitutions will be applied in parallel when specializing a formula.
-	 * Both parameters must be type-checked. The given identifier must not have
-	 * already been registered within this specialization.
+	 * Both parameters must be type-checked. The given identifier must not
+	 * denote a type. The added substitution must be compatible with already
+	 * registered substitutions (for both given types and free identifiers).
 	 * 
 	 * @param ident
 	 *            a typed identifier to substitute
 	 * @param value
 	 *            a typed expression to substitute for the given identifier
 	 * @throws IllegalArgumentException
-	 *             if the identifier substitution has already been registered or
-	 *             if the expression has an uncompatible type with according to
-	 *             the type substitution
+	 *             if either parameter is not typed, or if the identifier
+	 *             denotes a type, or if this substitution is not compatible
+	 *             with already registered substitutions
 	 */
 	void put(FreeIdentifier ident, Expression value);
 

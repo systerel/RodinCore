@@ -17,7 +17,6 @@ import static org.eventb.core.ast.Formula.KPRJ2_GEN;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -37,7 +36,10 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 
 /**
- * Common implementation for specializations.
+ * Common implementation for specializations. To ensure compatibility of the
+ * type and identifier substitution, we check that no substitution is entered
+ * twice and we also remember, for each identifier substitution the list of
+ * given types that must not change afterwards.
  * 
  * @author Laurent Voisin
  */
@@ -58,11 +60,12 @@ public class Specialization extends DefaultRewriter implements ISpecialization, 
 			throw new NullPointerException("Null given type");
 		if (value == null)
 			throw new NullPointerException("Null type");
-		if (typeSubst.containsKey(key) && !typeSubst.get(key).equals(value))
-			throw new IllegalArgumentException("Key " + key
-					+ " is already registered");
-		typeSubst.put(key, value);
-		verify();
+		final Type oldValue = typeSubst.put(key, value);
+		if (oldValue != null && !oldValue.equals(value)) {
+			typeSubst.put(key, oldValue);
+			throw new IllegalArgumentException("Type substitution for " + key
+					+ " already registered");
+		}
 	}
 
 	public Type get(GivenType key) {
@@ -94,8 +97,39 @@ public class Specialization extends DefaultRewriter implements ISpecialization, 
 			throw new NullPointerException("Null value");
 		if (!value.isTypeChecked())
 			throw new IllegalArgumentException("Untyped value");
-		identSubst.put(ident, value);
-		verify();
+		verify(ident, value);
+		final Expression oldValue = identSubst.put(ident, value);
+		if (oldValue != null && !oldValue.equals(value)) {
+			identSubst.put(ident, oldValue); // repair
+			throw new IllegalArgumentException("Identifier substitution for "
+					+ ident + " already registered");
+		}
+	}
+
+	/*
+	 * Checks that a new substitution is compatible. We also save the given sets
+	 * that are now frozen and must not change afterwards.
+	 */
+	private void verify(FreeIdentifier ident, Expression value) {
+		final Type identType = ident.getType();
+		final Type newType = identType.specialize(this);
+		if (!value.getType().equals(newType)) {
+			throw new IllegalArgumentException("Incompatible types for "
+					+ ident);
+		}
+		freezeSetsFor(identType);
+	}
+
+	/*
+	 * To freeze a set, we just add a substitution to itself, so that it cannot
+	 * be substituted to something else afterwards.
+	 */
+	private void freezeSetsFor(Type identType) {
+		for (final GivenType gt : identType.getGivenTypes()) {
+			if (!typeSubst.containsKey(gt)) {
+				typeSubst.put(gt, gt);
+			}
+		}
 	}
 
 	public Expression get(FreeIdentifier ident) {
@@ -106,21 +140,6 @@ public class Specialization extends DefaultRewriter implements ISpecialization, 
 					ident.getSourceLocation(), specializedType);
 		}
 		return value;
-	}
-
-	/**
-	 * Verifies that both substitutions are compatible.
-	 */
-	private void verify() {
-		for (Entry<FreeIdentifier, Expression> entry : identSubst.entrySet()) {
-			final FreeIdentifier ident = entry.getKey();
-			final Type newType = ident.getType().specialize(this);
-			final Expression value = entry.getValue();
-			if (!value.getType().equals(newType)) {
-				throw new IllegalArgumentException("Incompatible types for "
-						+ ident);
-			}
-		}
 	}
 
 	@Override
