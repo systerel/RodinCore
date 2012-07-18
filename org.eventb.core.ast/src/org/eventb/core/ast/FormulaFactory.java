@@ -1018,6 +1018,26 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns a new set extension containing no child, but having the given
+	 * type. This method is hardly useful to end-users, except when writing
+	 * tests. One should prefer using
+	 * {@link #makeEmptySet(Type, SourceLocation)}.
+	 * <p>
+	 * {SETEXT}
+	 * </p>
+	 * 
+	 * @param type
+	 *            the type of the set extension
+	 * @param location
+	 *            the location of the set extension
+	 * @return a new empty set extension of the given type
+	 * @since 2.6
+	 */
+	public SetExtension makeEmptySetExtension(Type type, SourceLocation location) {
+		return new SetExtension(type, location, this);
+	}
+
+	/**
 	 * Returns a new set extension
 	 * <p>
 	 * {SETEXT}

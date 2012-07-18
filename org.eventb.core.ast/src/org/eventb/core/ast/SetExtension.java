@@ -53,6 +53,7 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  */
 public class SetExtension extends Expression {
 
+	private static final Expression[] NO_EXPRESSIONS = new Expression[0];
 	private static final String SETEXT_ID = "Set Extension";
 	private static enum Operators implements IOperatorInfo<SetExtension> {
 		OP_SETEXT(LBRACE.getImage(), SETEXT_ID, BRACE_SETS),
@@ -110,6 +111,19 @@ public class SetExtension extends Expression {
 	// children
 	private final Expression[] members;
 	
+	/**
+	 * @since 2.6
+	 */
+	protected SetExtension(Type type, SourceLocation location,
+			FormulaFactory factory) {
+		super(SETEXT, location, 0);
+		this.members = NO_EXPRESSIONS;
+
+		checkPreconditions();
+		setPredicateVariableCache(this.members);
+		synthesizeType(factory, type);
+	}
+
 	protected SetExtension(Expression expression, SourceLocation location,
 			FormulaFactory factory) {
 		super(SETEXT, location, expression.hashCode());
