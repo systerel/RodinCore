@@ -71,7 +71,8 @@ public class SpecializationBuilder {
 			typeCheck(src, srcTypenv);
 			final Expression dst = parseExpression(images[1], fac);
 			final Type dstType = src.getType().specialize(result);
-			dst.typeCheck(srcTypenv.specialize(result), dstType);
+			final ITypeEnvironment dstTypenv = srcTypenv.specialize(result);
+			dst.typeCheck(dstTypenv, dstType);
 			result.put(src, dst);
 		}
 	}

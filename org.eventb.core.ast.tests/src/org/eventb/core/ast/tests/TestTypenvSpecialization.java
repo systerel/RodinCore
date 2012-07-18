@@ -10,175 +10,187 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
+import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.ProductType;
-import org.eventb.core.ast.Type;
 
 /**
- * Unit tests for specialization of type environments.
+ * Unit tests for specialization of type environments. For each test, we specify
+ * a source type environment, then a specialization (type substitution and
+ * identifier substitution), followed by the expected type environment after
+ * specialization.
  * 
  * @author Thomas Muller
+ * @author Laurent Voisin
  */
 public class TestTypenvSpecialization extends AbstractTests {
 
 	private static final GivenType S = ff.makeGivenType("S");
 	private static final GivenType T = ff.makeGivenType("T");
-	private static final GivenType U = ff.makeGivenType("U");
-	
-	private static final Type Z = ff.makeIntegerType();
-
-	final ISpecialization spec = ff.makeSpecialization();
 
 	/**
-	 * Ensures that a specialized given type S disappears when not used. 
+	 * Ensures that an empty specialization does not change a type environment.
 	 */
-	public void testTEWithASpecifiedUnusedGivenType() {
-		try {
-			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
-			typeEnv.addGivenSet("S");
-			spec.put(S, T);
-			final ITypeEnvironment sdTypeEnv = typeEnv
-					.specialize(spec);
-			assertNull(sdTypeEnv.getType("S"));
-		} catch (IllegalArgumentException e) {
-			fail("Should not have raised an exception");
-		}
+	public void testEmptySpecialization() {
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)"),//
+				"", "",//
+				mTypeEnvironment("S", "ℙ(S)"));
 	}
-	
+
 	/**
-	 * Ensures that given type S is specialized when used indirectly by a free
-	 * identifier of the type environment.
+	 * Ensures that a given type which is specialized disappears from the type
+	 * environment.
 	 */
-	public void testTEWithASpecifiedUsedGivenType() {
-		try {
-			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
-			typeEnv.addGivenSet("S");
-			final FreeIdentifier a = ff.makeFreeIdentifier("a", null, S);
-			typeEnv.add(a);
-			spec.put(S, T);
-			final ITypeEnvironment sdTypeEnv = typeEnv.specialize(spec);
-			assertNull(sdTypeEnv.getType("S"));
-			assertEquals(sdTypeEnv.getType("T"), ff.makePowerSetType(T));
-			assertEquals(T, sdTypeEnv.getType("a"));
-		} catch (IllegalArgumentException e) {
-			fail("Should not have raised an exception");
-		}
+	public void testGivenDisappears() {
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)"),//
+				"S := ℤ", "",//
+				mTypeEnvironment());
 	}
-	
+
 	/**
-	 * Ensures that given type T is maintained when used indirectly by a free
-	 * identifier that has been specialized.
+	 * Ensures that a given type which is specialized reappears if it occurs in
+	 * the right-hand side of some type substitutions.
 	 */
-	public void testTEWithASpecifiedIdentifier() {
-		try {
-			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
-			typeEnv.addGivenSet("T");
-			final FreeIdentifier a = ff.makeFreeIdentifier("a", null, T);
-			typeEnv.add(a);
-			spec.put(a, ff.makeFreeIdentifier("b", null, T));
-			final ITypeEnvironment sdTypeEnv = typeEnv.specialize(spec);
-			assertEquals(ff.makePowerSetType(T), sdTypeEnv.getType("T"));
-			assertEquals(T, sdTypeEnv.getType("b"));
-			assertNull(sdTypeEnv.getType("a"));
-		} catch (IllegalArgumentException e) {
-			fail("Should not have raised an exception");
-		}
+	public void testGivenReappears() {
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)"),//
+				"S := ℤ || T := S", "",//
+				mTypeEnvironment("S", "ℙ(S)"));
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)"),//
+				"S := S", "",//
+				mTypeEnvironment("S", "ℙ(S)"));
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)"),//
+				"S := ℙ(S×T)", "",//
+				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)"));
 	}
-	
+
 	/**
-	 * Ensures that given type S is specialized when used indirectly by a free
-	 * identifier of the type environment, that an identifier involving S is
-	 * Specialized in parallel and that S disappear as well as the occurrence of
-	 * the free identifiers that have been renamed (and specialized).
-	 * 
-	 * Original typeEnv : S |-> POW(S); a |-> S ; c |-> S x INT
-	 * 
-	 * Specialization : S --> T ; a (oftype S) --> b (oftype T)
-	 * 
-	 * Specialized typeEnv : S disappeared ; a was renamed into b ; 
-	 * 						 T |-> POW(T) ; b |-> T ; c |-> T x INT
+	 * Ensures that a given type which is specialized does not reappear if it
+	 * occurs in the right-hand side of some type substitutions which is never
+	 * applied.
 	 */
-	public void testTEWithSpecifiedGivenTypeAndIdent() {
-		try {
-			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
-			typeEnv.addGivenSet("S");
-			final FreeIdentifier a = ff.makeFreeIdentifier("a", null, S);
-			typeEnv.add(a);
-			final FreeIdentifier c = ff.makeFreeIdentifier("c", null,
-					ff.makeProductType(S, Z));
-			typeEnv.add(c);
-			spec.put(S, T);
-			spec.put(a, ff.makeFreeIdentifier("b", null, T));
-			final ITypeEnvironment sdTypeEnv = typeEnv.specialize(spec);
-			assertNull(sdTypeEnv.getType("S"));
-			assertEquals(ff.makePowerSetType(T), sdTypeEnv.getType("T"));
-			assertNull(sdTypeEnv.getType("a"));
-			assertEquals(T, sdTypeEnv.getType("b"));
-			assertEquals(ff.makeProductType(T, Z), sdTypeEnv.getType("c"));
-		} catch (IllegalArgumentException e) {
-			fail("Should not have raised an exception");
-		}
+	public void testGivenReappearsNot() {
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)"),//
+				"S := ℤ || T := S", "",//
+				mTypeEnvironment());
 	}
-	
+
 	/**
-	 * Ensures that an identifier of given set can not be considered as a type
-	 * and not a type at the same time.
-	 * 
-	 * Original typeEnv : S |-> POW(S)
-	 * 
-	 * 					  T |-> S x U
-	 * 					  a |-> S x T
-	 * 
-	 * Specialization :   S --> T 
-	 * 				      T --> S x T
-	 * 
-	 * Specialized typeEnv : S disappeared
-	 * 						 T |-> POW(T)
-	 * 						 a |-> T x (S x T)
+	 * Ensures that a given type which is not specialized is retained in the
+	 * type environment.
 	 */
-	public void testTEWithAComplexSpecifiedGivenType() {
-		try {
-			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
-			typeEnv.addGivenSet("S");
-			typeEnv.addGivenSet("T");
-			final ProductType sxt = ff.makeProductType(S, T);
-			final FreeIdentifier a = ff.makeFreeIdentifier("a", null, sxt);
-			typeEnv.add(a);
-			spec.put(S, T);
-			spec.put(T, sxt);
-			final ITypeEnvironment sdTypeEnv = typeEnv.specialize(spec);
-			assertEquals(sdTypeEnv.getType("T"), ff.makePowerSetType(T));
-			assertEquals(ff.makeProductType(T, sxt), sdTypeEnv.getType("a"));
-		} catch (IllegalArgumentException e) {
-			fail("Should not have raised an exception");
-		}
+	public void testGivenUnchanged() {
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)"),//
+				"S := ℤ", "",//
+				mTypeEnvironment("T", "ℙ(T)"));
 	}
-	
+
 	/**
-	 * Robustness non-regression test ensuring that an invalid type environment
-	 * in which given types both as given types and free identifiers can not be
-	 * specialized.
+	 * Ensures that an identifier which is not substituted has its type changed,
+	 * if needed.
 	 */
-	public void testInvalidTESpecialization() {
-		try {
-			final ITypeEnvironment typeEnv = ff.makeTypeEnvironment();
-			typeEnv.addGivenSet("S");
-			final FreeIdentifier t = ff.makeFreeIdentifier("T", null, U);
-			typeEnv.add(t);
-			final ProductType sxt = ff.makeProductType(S, T);
-			final FreeIdentifier a = ff.makeFreeIdentifier("a", null, sxt);
-			typeEnv.add(a);
-			spec.put(S, T); // consider T as a given type
-			final ProductType sxu = ff.makeProductType(S, U);
-			spec.put(T, sxu); // consider T as a free identifier
-			typeEnv.specialize(spec);
-			fail("Should have raised an exception");
-		} catch (IllegalArgumentException e) {
-			// pass
-		}
+	public void testIdentNotSubstituted() {
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)", "a", "S"),//
+				"S := T", "",//
+				mTypeEnvironment("T", "ℙ(T)", "a", "T"));
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "b", "S×T"),//
+				"S := T", "",//
+				mTypeEnvironment("T", "ℙ(T)", "b", "T×T"));
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)", "U", "ℙ(U)", "c", "U"),//
+				"S := T", "",//
+				mTypeEnvironment("T", "ℙ(T)", "U", "ℙ(U)", "c", "U"));
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "S×T"),//
+				"S := T || T := S×T", "",//
+				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "T×(S×T)"));
+	}
+
+	/**
+	 * Ensures that an identifier can be substituted even when its type does not
+	 * change.
+	 */
+	public void testIdentSubstitutedNoTypeChange() {
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)", "a", "S"),//
+				"", "a := b",//
+				mTypeEnvironment("S", "ℙ(S)", "b", "S"));
+	}
+
+	/**
+	 * Ensures that an identifier can be substituted.
+	 */
+	public void testIdentSubstituted() {
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)", "a", "S×T"),//
+				"S := T", "a := b",//
+				mTypeEnvironment("T", "ℙ(T)", "b", "T×T"));
+	}
+
+	/**
+	 * Ensures that types can be swapped.
+	 */
+	public void testSwapTypes() {
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "S×T"),//
+				"S := T || T := S", "",//
+				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "T×S"));
+	}
+
+	/**
+	 * Ensures that identifiers can be swapped.
+	 */
+	public void testSwapIdents() {
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)", "a", "S", "b", "S"),//
+				"", "a := b || b := a",//
+				mTypeEnvironment("S", "ℙ(S)", "a", "S", "b", "S"));
+	}
+
+	/**
+	 * Ensures that types and identifiers can be swapped at the same time.
+	 */
+	public void testSwapBoth() {
+		/*
+		 * We need to build the specialization by hand, because it is too
+		 * difficult to build it correctly from strings.
+		 */
+		final ISpecialization spe = ff.makeSpecialization();
+		final FreeIdentifier aS = mFreeIdentifier("a", S);
+		final FreeIdentifier bT = mFreeIdentifier("b", T);
+		spe.put(S, T);
+		spe.put(T, S);
+		spe.put(aS, bT);
+		spe.put(bT, aS);
+		assertSpecialization(//
+				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "S", "b", "T"),//
+				spe,//
+				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "S", "b", "T"));
+	}
+
+	private static void assertSpecialization(ITypeEnvironment typenv,
+			String typeSpec, String identSpec, ITypeEnvironment expected) {
+		final ISpecialization spe = mSpecialization(typenv, typeSpec, identSpec);
+		assertSpecialization(typenv, spe, expected);
+	}
+
+	private static void assertSpecialization(ITypeEnvironment typenv,
+			ISpecialization spe, ITypeEnvironment expected) {
+		final ITypeEnvironment actual = typenv.specialize(spe);
+		assertEquals(expected, actual);
 	}
 
 }

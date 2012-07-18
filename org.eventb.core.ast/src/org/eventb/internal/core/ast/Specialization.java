@@ -28,12 +28,15 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
+import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.ITypedFormulaRewriter;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.core.typecheck.TypeEnvironment;
 
 /**
  * Common implementation for specializations. To ensure compatibility of the
@@ -47,10 +50,10 @@ import org.eventb.core.ast.Type;
 public class Specialization extends DefaultRewriter implements ISpecialization,
 		ITypedFormulaRewriter {
 
-	// Type substitutions.
+	// Type substitutions
 	private final Map<GivenType, Type> typeSubst;
 
-	 // Identifier substitutions.
+	// Identifier substitutions
 	private final Map<FreeIdentifier, Expression> identSubst;
 
 	public Specialization(FormulaFactory ff) {
@@ -136,6 +139,30 @@ public class Specialization extends DefaultRewriter implements ISpecialization,
 				typeSubst.put(gt, gt);
 			}
 		}
+	}
+
+	/*
+	 * Specializing a type environment consists in, starting from an empty type
+	 * environment, adding all given sets and free identifiers that occur in the
+	 * result of substitutions for identifiers from the original type
+	 * environment.
+	 */
+	public ITypeEnvironment specialize(TypeEnvironment typenv) {
+		final ITypeEnvironment result = ff.makeTypeEnvironment();
+		final IIterator iter = typenv.getIterator();
+		while (iter.hasNext()) {
+			iter.advance();
+			final FreeIdentifier ident = ff.makeFreeIdentifier(iter.getName(),
+					null, iter.getType());
+			final Expression expr = this.get(ident);
+			for (final GivenType gt : expr.getGivenTypes()) {
+				result.addGivenSet(gt.getName());
+			}
+			for (final FreeIdentifier free : expr.getFreeIdentifiers()) {
+				result.add(free);
+			}
+		}
+		return result;
 	}
 
 	public Expression get(FreeIdentifier ident) {
