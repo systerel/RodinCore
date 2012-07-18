@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,13 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
+ *     Systerel - mathematical extensions
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.LanguageVersion.LATEST;
+import static org.eventb.core.ast.tests.FastFactory.NO_PREDICATE;
+import static org.eventb.core.ast.tests.FastFactory.mList;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -31,18 +34,24 @@ import org.eventb.core.ast.Type;
  */
 public class TestTypes extends AbstractTests {
 	
-	private FormulaFactory tf = FormulaFactory.getDefault();
-	
-	private GivenType ty_S = tf.makeGivenType("S");
-	private GivenType ty_T = tf.makeGivenType("T");
-	private GivenType ty_U = tf.makeGivenType("U");
+	private final FormulaFactory tf = LIST_FAC;
 
-	private FreeIdentifier id_S = ff.makeFreeIdentifier("S", null, 
+	private final GivenType ty_S = tf.makeGivenType("S");
+	private final GivenType ty_T = tf.makeGivenType("T");
+	private final GivenType ty_U = tf.makeGivenType("U");
+
+	private final FreeIdentifier id_S = tf.makeFreeIdentifier("S", null,
 			tf.makePowerSetType(ty_S));
-	private FreeIdentifier id_T = ff.makeFreeIdentifier("T", null, 
+	private final FreeIdentifier id_T = tf.makeFreeIdentifier("T", null,
 			tf.makePowerSetType(ty_T));
-	private FreeIdentifier id_U = ff.makeFreeIdentifier("U", null, 
+	private final FreeIdentifier id_U = tf.makeFreeIdentifier("U", null,
 			tf.makePowerSetType(ty_U));
+
+	private final Type LIST_S = tf.makeParametricType(mList(ty_S), EXT_LIST);
+	private final Expression LIST_S_EXP = tf.makeExtendedExpression(EXT_LIST,
+			mList(id_S), NO_PREDICATE, null, tf.makePowerSetType(LIST_S));
+	private final Type LIST_LIST_S = tf.makeParametricType(mList(LIST_S),
+			EXT_LIST);
 
 	private static class TestItem {
 		Type type;
@@ -59,12 +68,12 @@ public class TestTypes extends AbstractTests {
 	TestItem[] items = new TestItem[] {
 			new TestItem(
 					tf.makeBooleanType(),
-					ff.makeAtomicExpression(Formula.BOOL, null),
+					tf.makeAtomicExpression(Formula.BOOL, null),
 					"BOOL"
 			),
 			new TestItem(
 					tf.makeIntegerType(),
-					ff.makeAtomicExpression(Formula.INTEGER, null),
+					tf.makeAtomicExpression(Formula.INTEGER, null),
 					"ℤ"
 			),
 			new TestItem(
@@ -74,18 +83,18 @@ public class TestTypes extends AbstractTests {
 			),
 			new TestItem(
 					tf.makePowerSetType(ty_S),
-					ff.makeUnaryExpression(Formula.POW, id_S, null),
+					tf.makeUnaryExpression(Formula.POW, id_S, null),
 					"ℙ(S)"
 			),
 			new TestItem(
 					tf.makeProductType(ty_S, ty_T),
-					ff.makeBinaryExpression(Formula.CPROD, id_S, id_T, null),
+					tf.makeBinaryExpression(Formula.CPROD, id_S, id_T, null),
 					"S×T"
 			),
 			new TestItem(
 					tf.makeRelationalType(ty_S, ty_T),
-					ff.makeUnaryExpression(Formula.POW,
-							ff.makeBinaryExpression(Formula.CPROD, id_S, id_T, null),
+					tf.makeUnaryExpression(Formula.POW,
+							tf.makeBinaryExpression(Formula.CPROD, id_S, id_T, null),
 							null),
 					"ℙ(S×T)"
 			),
@@ -93,8 +102,8 @@ public class TestTypes extends AbstractTests {
 					tf.makeProductType(
 							tf.makeProductType(ty_S, ty_T), 
 							ty_U),
-					ff.makeBinaryExpression(Formula.CPROD,
-							ff.makeBinaryExpression(Formula.CPROD, id_S, id_T, null),
+					tf.makeBinaryExpression(Formula.CPROD,
+							tf.makeBinaryExpression(Formula.CPROD, id_S, id_T, null),
 							id_U, null),
 					"S×T×U"
 			),
@@ -102,11 +111,23 @@ public class TestTypes extends AbstractTests {
 					tf.makeProductType(
 							ty_S,
 							tf.makeProductType(ty_T, ty_U)),
-					ff.makeBinaryExpression(Formula.CPROD,
+					tf.makeBinaryExpression(Formula.CPROD,
 							id_S,
-							ff.makeBinaryExpression(Formula.CPROD, id_T, id_U, null),
+							tf.makeBinaryExpression(Formula.CPROD, id_T, id_U, null),
 							null),
 					"S×(T×U)"
+			),
+			new TestItem(
+					LIST_S,
+					LIST_S_EXP,
+					"List(S)"
+			),
+			new TestItem(
+					LIST_LIST_S,
+					tf.makeExtendedExpression(EXT_LIST,
+							mList(LIST_S_EXP), NO_PREDICATE,
+							null, tf.makePowerSetType(LIST_LIST_S)),
+					"List(List(S))"
 			),
 	};
 	
@@ -116,10 +137,10 @@ public class TestTypes extends AbstractTests {
 	 */
 	public void testTypeFactory() {
 		for (TestItem item : items) {
-			final Expression expr = item.type.toExpression(ff);
+			final Expression expr = item.type.toExpression(tf);
 			assertEquals(item.expr, expr);
 			assertEquals(item.image, item.type.toString());
-			final Type expectedExprType = ff.makePowerSetType(item.type);
+			final Type expectedExprType = tf.makePowerSetType(item.type);
 			assertEquals(expectedExprType, expr.getType());
 		}
 	}
@@ -140,7 +161,7 @@ public class TestTypes extends AbstractTests {
 	
 	public void testTypeParser() {
 		for (TestItem item : items) {
-			IParseResult result = ff.parseType(item.image, LATEST);
+			IParseResult result = tf.parseType(item.image, LATEST);
 			assertSuccess(item.image, result);
 			assertNull(result.getParsedExpression());
 			assertEquals(item.type, result.getParsedType());
@@ -151,7 +172,7 @@ public class TestTypes extends AbstractTests {
 				"ℕ", "ℙ(ℕ)", "ℙ1(ℤ)", "S ⇸ T"
 		};
 		for (String input: illFormed) {
-			IParseResult result = ff.parseType(input, LATEST);
+			IParseResult result = tf.parseType(input, LATEST);
 			assertFailure("parse should have failed", result);
 			assertNull(result.getParsedExpression());
 			assertNull(result.getParsedType());
@@ -159,7 +180,7 @@ public class TestTypes extends AbstractTests {
 	}
 	
 	public void testIsATypeExpression() {
-		ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		ITypeEnvironment typenv = tf.makeTypeEnvironment();
 		typenv.addGivenSet("S");
 		typenv.addGivenSet("T");
 		typenv.addName("x", tf.makePowerSetType(ty_S));

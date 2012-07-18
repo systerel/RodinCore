@@ -385,11 +385,21 @@ public class FastFactory {
 	}
 
 	public static ExtendedExpression mListCons(Expression... expressions) {
-		final Type listType;
+		final Type eType;
 		if (expressions.length == 0) {
+			eType = null;
+		} else {
+			eType = expressions[0].getType();
+		}
+		return mListCons(eType, expressions);
+	}
+
+	public static ExtendedExpression mListCons(Type eType,
+			Expression... expressions) {
+		final Type listType;
+		if (eType == null) {
 			listType = null;
 		} else {
-			final Type eType = expressions[0].getType();
 			listType = ff.makeParametricType(singletonList(eType),
 					LIST_DT.getTypeConstructor());
 		}

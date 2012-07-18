@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -281,6 +281,16 @@ public class TestSubFormulas extends TestCase {
 		@Override
 		public Expression rewrite(BoundIdentifier identifier) {
 			return this.<Expression>doRewrite(identifier);
+		}
+
+		@Override
+		public Expression rewrite(ExtendedExpression expression) {
+			return this.<Expression>doRewrite(expression);
+		}
+
+		@Override
+		public Predicate rewrite(ExtendedPredicate predicate) {
+			return this.<Predicate>doRewrite(predicate);
 		}
 
 		@Override
@@ -1129,6 +1139,15 @@ public class TestSubFormulas extends TestCase {
 
 		checkRewriting(i1, i2, b0, b0);
 
+		// Extended expression
+		final Expression nil = mListCons(INT);
+		checkRewriting(i1, i2, mListCons(i1), mListCons(i2));
+		checkRewriting(nil, mListCons(i2), mListCons(i1), mListCons(i1, i2));
+		checkRewriting(nil, mListCons(i1, i2), nil, mListCons(i1, i2));
+
+		// Extended predicate
+		checkRewriting(i1, i2, mExtendedPredicate(i1), mExtendedPredicate(i2));
+
 		checkRewriting(i1, i2, id_x, id_x);
 
 		checkRewriting(i1, i2, zero, zero);
@@ -1205,8 +1224,8 @@ public class TestSubFormulas extends TestCase {
 	 * Ensures that a predicate can be rewritten in all contexts.
 	 */
 	public void testPredicateRewriting() throws Exception {
-		Predicate p1 = equals;
-		Predicate p2 = btrue;
+		final Predicate p1 = equals;
+		final Predicate p2 = btrue;
 		
 		checkRewriting(p1, p2,
 				mAssociativePredicate(LAND, p1, btrue),
