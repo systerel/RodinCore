@@ -113,8 +113,7 @@ public abstract class Substitute {
 			Expression result = cache.get(nbOfInternallyBound);
 			if (result == null) {
 				Expression expr = cache.get(0);
-				result = expr.rewrite(new BoundIdentifierShifter(
-						nbOfInternallyBound, ff));
+				result = expr.shiftBoundIdentifiers(nbOfInternallyBound, ff);
 				cache.set(nbOfInternallyBound, result);
 			}
 			return result;
