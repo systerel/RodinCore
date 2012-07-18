@@ -44,7 +44,7 @@ import org.eventb.internal.core.typecheck.TypeEnvironment;
  * 
  * @author Laurent Voisin
  */
-public class Specialization extends DefaultTypedFormulaRewriter implements
+public class Specialization extends DefaultTypeCheckingRewriter implements
 		ISpecialization {
 
 	// Type substitutions

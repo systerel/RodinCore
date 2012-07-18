@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
@@ -244,7 +245,7 @@ public class UnaryPredicate extends Predicate {
 	}
 
 	@Override
-	protected Predicate rewrite(ITypedFormulaRewriter rewriter) {
+	protected Predicate rewrite(ITypeCheckingRewriter rewriter) {
 		final Predicate newChild = child.rewrite(rewriter);
 		final UnaryPredicate before;
 		if (newChild == child) {

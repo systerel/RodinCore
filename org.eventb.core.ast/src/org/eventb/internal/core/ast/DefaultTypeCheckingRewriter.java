@@ -23,7 +23,6 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypedFormulaRewriter;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -47,7 +46,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * 
  * @author Laurent Voisin
  */
-public class DefaultTypedFormulaRewriter implements ITypedFormulaRewriter {
+public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	public static BoundIdentDecl checkReplacement(BoundIdentDecl src,
 			BoundIdentDecl dst) {
@@ -82,7 +81,7 @@ public class DefaultTypedFormulaRewriter implements ITypedFormulaRewriter {
 	protected final FormulaFactory ff;
 	private int bindingDepth;
 
-	public DefaultTypedFormulaRewriter(FormulaFactory ff) {
+	public DefaultTypeCheckingRewriter(FormulaFactory ff) {
 		this.ff = ff;
 	}
 

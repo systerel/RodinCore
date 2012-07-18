@@ -7,7 +7,7 @@ import org.eventb.core.ast.FormulaFactory;
  * 
  * @author Stefan Hallerstede
  */
-public abstract class Substitution extends DefaultTypedFormulaRewriter {
+public abstract class Substitution extends DefaultTypeCheckingRewriter {
 
 	public Substitution(FormulaFactory ff) {
 		super(ff);

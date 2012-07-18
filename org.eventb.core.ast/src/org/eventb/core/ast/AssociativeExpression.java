@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -493,7 +494,7 @@ public class AssociativeExpression extends Expression {
 	}
 
 	@Override
-	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
+	protected Expression rewrite(ITypeCheckingRewriter rewriter) {
 		final boolean flatten = rewriter.autoFlatteningMode();
 		final ArrayList<Expression> newChildren = new ArrayList<Expression>(
 				children.length + 11);

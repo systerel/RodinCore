@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
-import static org.eventb.internal.core.ast.DefaultTypedFormulaRewriter.checkReplacement;
+import static org.eventb.internal.core.ast.DefaultTypeCheckingRewriter.checkReplacement;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -27,7 +27,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IFormulaRewriter2;
-import org.eventb.core.ast.ITypedFormulaRewriter;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -49,11 +48,11 @@ import org.eventb.core.ast.UnaryPredicate;
  * 
  * @author Thomas Muller
  */
-public class TypedFormulaRewriter implements ITypedFormulaRewriter {
+public class SameTypeRewriter implements ITypeCheckingRewriter {
 
 	private final IFormulaRewriter rewriter;
 
-	public TypedFormulaRewriter(IFormulaRewriter rewriter) {
+	public SameTypeRewriter(IFormulaRewriter rewriter) {
 		this.rewriter = rewriter;
 	}
 

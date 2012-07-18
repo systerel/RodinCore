@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -162,7 +163,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	}
 
 	@Override
-	protected final Assignment rewrite(ITypedFormulaRewriter rewriter) {
+	protected final Assignment rewrite(ITypeCheckingRewriter rewriter) {
 		throw new UnsupportedOperationException("Assignments cannot be rewritten");
 	}
 	

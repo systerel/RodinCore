@@ -33,6 +33,7 @@ import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
 import org.eventb.internal.core.ast.FilteringInspector;
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -40,7 +41,7 @@ import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.Substitution;
-import org.eventb.internal.core.ast.TypedFormulaRewriter;
+import org.eventb.internal.core.ast.SameTypeRewriter;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.wd.WDComputer;
@@ -1787,20 +1788,20 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @see IFormulaRewriter
 	 */
 	public T rewrite(IFormulaRewriter rewriter) {
-		return rewrite(new TypedFormulaRewriter(rewriter));
+		return rewrite(new SameTypeRewriter(rewriter));
 	}
 	
 	/**
 	 * This method is not part part of the published API of the AST library and
 	 * shall not be called by clients. It has been made public due to the
 	 * technical structure of the AST library. However, interface
-	 * <code>ITypedFormulaRewriter</code> is not part of the API on purpose.
+	 * <code>ITypeCheckingRewriter</code> is not part of the API on purpose.
 	 * 
 	 * @param rewriter
 	 *            some type-checking rewriter
 	 * @return the rewritten formula
 	 */
-	protected abstract T rewrite(ITypedFormulaRewriter rewriter);
+	protected abstract T rewrite(ITypeCheckingRewriter rewriter);
 	
 	/**
 	 * Substitutes all occurrences of some free identifiers by their

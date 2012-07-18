@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -335,7 +336,7 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
+	protected Expression rewrite(ITypeCheckingRewriter rewriter) {
 		final int length = members.length;
 		final FormulaFactory ff = rewriter.getFactory();
 		final SourceLocation sloc = getSourceLocation();

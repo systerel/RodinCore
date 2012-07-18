@@ -36,6 +36,7 @@ import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -394,7 +395,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 	
 	@Override
-	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
+	protected Expression rewrite(ITypeCheckingRewriter rewriter) {
 		final boolean flatten = rewriter.autoFlatteningMode();
 		final ArrayList<Expression> newChildExpressions = new ArrayList<Expression>(
 				childExpressions.length + 11);

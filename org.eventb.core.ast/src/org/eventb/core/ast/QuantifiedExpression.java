@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -704,7 +705,7 @@ public class QuantifiedExpression extends Expression {
 	}
 
 	@Override
-	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
+	protected Expression rewrite(ITypeCheckingRewriter rewriter) {
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
 
 		rewriter.enteringQuantifier(nbOfBoundIdentDecls);

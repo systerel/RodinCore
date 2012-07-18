@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
@@ -561,7 +562,7 @@ public class UnaryExpression extends Expression {
 	}
 
 	@Override
-	protected Expression rewrite(ITypedFormulaRewriter rewriter) {
+	protected Expression rewrite(ITypeCheckingRewriter rewriter) {
 		final Expression newChild = child.rewrite(rewriter);
 		final FormulaFactory ff = rewriter.getFactory();
 		final SourceLocation sloc = getSourceLocation();

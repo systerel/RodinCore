@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
@@ -211,7 +212,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
-	protected BoundIdentDecl rewrite(ITypedFormulaRewriter rewriter) {
+	protected BoundIdentDecl rewrite(ITypeCheckingRewriter rewriter) {
 		return rewriter.rewrite(this);
 	}
 

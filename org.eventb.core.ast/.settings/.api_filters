@@ -3,7 +3,7 @@
     <resource path="src/org/eventb/core/ast/Assignment.java" type="org.eventb.core.ast.Assignment">
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -16,7 +16,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -29,7 +29,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -42,7 +42,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -55,7 +55,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -68,7 +68,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -81,14 +81,14 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
     <resource path="src/org/eventb/core/ast/BoundIdentDecl.java" type="org.eventb.core.ast.BoundIdentDecl">
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -101,7 +101,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -114,7 +114,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -127,14 +127,14 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
     <resource path="src/org/eventb/core/ast/Formula.java" type="org.eventb.core.ast.Formula">
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -147,7 +147,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -160,7 +160,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -173,7 +173,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -186,7 +186,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -199,7 +199,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -212,7 +212,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -225,7 +225,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -238,7 +238,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -251,7 +251,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -264,7 +264,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -277,7 +277,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>
@@ -290,7 +290,7 @@
         </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
-                <message_argument value="rewrite(ITypedFormulaRewriter)"/>
+                <message_argument value="rewrite(ITypeCheckingRewriter)"/>
             </message_arguments>
         </filter>
     </resource>

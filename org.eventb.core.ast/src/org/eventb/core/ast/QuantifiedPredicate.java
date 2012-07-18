@@ -35,6 +35,7 @@ import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.internal.core.ast.BoundIdentDeclRemover;
 import org.eventb.internal.core.ast.BoundIdentSubstitution;
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
@@ -428,7 +429,7 @@ public class QuantifiedPredicate extends Predicate {
 	}
 
 	@Override
-	protected Predicate rewrite(ITypedFormulaRewriter rewriter) {
+	protected Predicate rewrite(ITypeCheckingRewriter rewriter) {
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
 
 		rewriter.enteringQuantifier(nbOfBoundIdentDecls);

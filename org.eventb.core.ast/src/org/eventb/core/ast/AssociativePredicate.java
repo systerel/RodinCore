@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
@@ -319,7 +320,7 @@ public class AssociativePredicate extends Predicate {
 	}
 
 	@Override
-	protected Predicate rewrite(ITypedFormulaRewriter rewriter) {
+	protected Predicate rewrite(ITypeCheckingRewriter rewriter) {
 		final boolean flatten = rewriter.autoFlatteningMode();
 		final ArrayList<Predicate> newChildren = new ArrayList<Predicate>(
 				children.length + 11);

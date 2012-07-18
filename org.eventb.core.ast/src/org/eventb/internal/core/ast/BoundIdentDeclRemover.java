@@ -19,7 +19,6 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypedFormulaRewriter;
 
 /**
  * A substitution that removes some bound identifier declarations, renumbering
@@ -29,7 +28,7 @@ import org.eventb.core.ast.ITypedFormulaRewriter;
  * 
  */
 public class BoundIdentDeclRemover extends Substitution implements
-		ITypedFormulaRewriter {
+		ITypeCheckingRewriter {
 
 	// New declarations to use after substitution
 	protected final List<BoundIdentDecl> newDecls;

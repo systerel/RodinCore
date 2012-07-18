@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.ast.DefaultTypedFormulaRewriter.checkReplacement;
+import static org.eventb.internal.core.ast.DefaultTypeCheckingRewriter.checkReplacement;
 import org.eventb.internal.core.ast.Position;
 
 /*package*/class SingleRewriter {
