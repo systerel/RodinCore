@@ -30,6 +30,34 @@ package org.eventb.core.ast;
  * substitution required for a free identifier substitution should be put in the
  * specialization strictly before the considered free identifier substitution.
  * </p>
+ * <p>
+ * When specializing a type-environment or a formula, an instance of this class
+ * can change by side-effect in the following manner: For each free identifier,
+ * not already part of the free identifier substitution and which occurs in the
+ * specialized type environment or formula, a new identifier substitution is
+ * added to this specialization. It maps that identifier to an identifier with
+ * the same name, but bearing the type obtained by specializing the type of the
+ * original identifier.
+ * </p>
+ * <p>
+ * For instance, if a specialization substitutes type <code>T</code> for type
+ * <code>S</code> and is applied to a type environment containing free
+ * identifier <code>x</code> of type <code>S</code>, then the specialization
+ * will be complemented with the substitution of <code>x</code> of type
+ * <code>T</code> for <code>x</code> of type <code>S</code>.
+ * </p>
+ * <p>
+ * This side-effect is made on purpose to ensure that successive applications of
+ * a specialization to several type environments or formulas are all compatible.
+ * In particular, if a formula type-checks with respect to some type
+ * environment, then the specialized formula also type-checks with the
+ * specialized type environment, under the condition that both specialization
+ * are performed with the same instance of this class.
+ * </p>
+ * <p>
+ * In the rare cases where this side-effect is not wanted, one can always clone
+ * a specialization object and use the clone to apply a specialization.
+ * </p>
  * 
  * @author Laurent Voisin
  * 
@@ -43,6 +71,15 @@ package org.eventb.core.ast;
  * @since 2.6
  */
 public interface ISpecialization {
+
+	/**
+	 * Returns a deep copy of this specialization. This method is useful to
+	 * protect a specialization from side-effects when applying it to a type
+	 * environment or a mathematical formula.
+	 * 
+	 * @return a deep copy of this specialization
+	 */
+	ISpecialization clone();
 
 	/**
 	 * Adds a new type substitution to this specialization. All substitutions
@@ -66,6 +103,7 @@ public interface ISpecialization {
 	 * Both parameters must be type-checked. The given identifier must not
 	 * denote a type. The added substitution must be compatible with already
 	 * registered substitutions (for both given types and free identifiers).
+	 * The given expression must be well-formed.
 	 * 
 	 * @param ident
 	 *            a typed identifier to substitute
@@ -74,7 +112,10 @@ public interface ISpecialization {
 	 * @throws IllegalArgumentException
 	 *             if either parameter is not typed, or if the identifier
 	 *             denotes a type, or if this substitution is not compatible
-	 *             with already registered substitutions
+	 *             with already registered substitutions, or if the expression
+	 *             is not well-formed
+	 * @see Formula#isTypeChecked()
+	 * @see Formula#isWellFormed()
 	 */
 	void put(FreeIdentifier ident, Expression value);
 

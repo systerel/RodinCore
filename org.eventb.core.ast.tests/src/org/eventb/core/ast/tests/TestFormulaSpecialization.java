@@ -10,77 +10,68 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.LanguageVersion.LATEST;
+import static org.eventb.core.ast.tests.ExtensionHelper.getAlphaExtension;
 import static org.eventb.core.ast.tests.FastFactory.addToTypeEnvironment;
-import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.TestGenParser.DIRECT_PRODUCT;
 
-import java.util.Map;
-
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ISpecialization;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IPredicateExtension;
-import org.eventb.internal.core.ast.Specialization;
 
 /**
- * Unit tests to check that the specialization for formulas.
+ * Acceptance tests for specialization of formulas.
+ * <p>
+ * As most of the code is shared with rewriting, we do not check all cases, but
+ * rather check that specialization is actually implemented for all sub-classes
+ * of Formula, except assignments.
+ * </p>
+ * <p>
+ * For each test, we specify a type environment, an input formula, a
+ * specialization and the expected result of applying this specialization to the
+ * input formula
+ * </p>
  * 
  * @author Thomas Muller
+ * @author Laurent Voisin
  */
 public class TestFormulaSpecialization extends AbstractTests {
 
 	private static final GivenType S = ff.makeGivenType("S");
 	private static final GivenType T = ff.makeGivenType("T");
 
-	private ITypeEnvironment te;
-	private ISpecialization spec;
+	/*
+	 * Type environment already initialized for most tests.
+	 */
+	private ITypeEnvironment te = mTypeEnvironment(//
+			"S", "ℙ(S)",//
+			"T", "ℙ(T)",//
+			"A", "ℙ(S)",//
+			"a", "S",//
+			"b", "T",//
+			"c", "S",//
+			"d", "T");
 
-	@Override
-	protected void setUp() throws Exception {
-		this.spec = ff.makeSpecialization();
-		this.te = ff.makeTypeEnvironment();
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		this.te = null;
-		this.spec = null;
-		super.tearDown();
-	}
+	private ISpecialization spec = ff.makeSpecialization();
 
 	/**
-	 * Ensures that an exception is thrown on assignment specialization, as it
-	 * is currently unsupported.
-	 * 
-	 * TODO : modify this test when the specialization on assignment will be
-	 * implemented
+	 * Ensures that assignment specialization is not supported.
 	 */
-	public void testAssignmentSpecialization() {
+	public void testAssignment() {
+		te = mTypeEnvironment("a", "ℤ");
+		final Assignment assign = parseAssignment("a ≔ a + 1");
+		typeCheck(assign, te);
+		spec = mSpecialization(te, "a := b");
 		try {
-			final Assignment assign = parseAssignment("a ≔ a + 1");
-			final FreeIdentifier a = mFreeIdentifier("a", ff.makeIntegerType());
-			te.add(a);
-			assign.typeCheck(te);
-			assertTrue(assign.isTypeChecked());
-			spec.put(a, mFreeIdentifier("b", a.getType()));
 			assign.specialize(spec);
 			fail("Should have thrown an unsupported operation error");
 		} catch (UnsupportedOperationException e) {
@@ -89,482 +80,260 @@ public class TestFormulaSpecialization extends AbstractTests {
 	}
 
 	/**
-	 * Ensures that an associative expression with two children gets
-	 * specialized.
+	 * Ensures that an associative expression gets specialized.
 	 */
-
 	public void testAssociativeExpression() {
-		assertExpressionSpecialization(
-				mTypeEnvironment("a", "ℙ(S)", "b", "ℙ(S)"), //
-				"a ∪ b", //
-				mSpecialization(te, "S := ℤ"));
+		assertExpressionSpecialization(te, //
+				"A ∪ B ∪ C", //
+				"S := ℤ || B := D",//
+				"A ∪ D ∪ C");
 	}
 
 	/**
-	 * Ensures that an associative expression can have two children and only one
-	 * gets specialized.
-	 */
-	public void testAssociativeExpression2() {
-		te = mTypeEnvironment("S", "ℙ(S)", "a", "ℙ(S)", "b", "ℙ(S)");
-		assertExpressionSpecialization(te, //
-				"a ∪ b", //
-				mSpecialization(te, "S := ℤ", "a := c"));
-	}
-
-	/**
-	 * Ensures that an associative expression with three children gets
-	 * specialized.
-	 */
-	public void testAssociativeExpression3() {
-		te = mTypeEnvironment("S", "ℙ(S)", "a", "S", "b", "S", "c", "S");
-		assertExpressionSpecialization(te, //
-				"{a} ∪ {b} ∪ {c}", //
-				mSpecialization(te,//
-						"S := ℤ",//
-						"a := e || b := f || c := g"));
-	}
-	
-	/**
-	 * Ensures that an unary expression with one child gets specialized.
-	 */
-	public void testUnaryExpression() {
-		te = mTypeEnvironment("S", "ℙ(S)", "j", "S", "h", "S", "i", "S");
-		assertExpressionSpecialization(te, //
-				"card({j, h, i})", //
-				mSpecialization(te,//
-						"S := ℤ", //
-						"j := e || h := f || i := g"));
-	}
-	
-
-	/**
-	 * Ensures that an unary predicate with two children gets specialized.
-	 */
-	public void testUnaryPredicate() {
-		te = mTypeEnvironment("S", "ℙ(S)", "s", "S");
-		assertPredicateSpecialization(te, //
-				"¬(s ∈ S)", //
-				mSpecialization(te, "S := Y", "s := y"));
-	}
-	
-	/**
-	 * Ensures that an associative predicate with two children gets specialized.
+	 * Ensures that an associative predicate gets specialized.
 	 */
 	public void testAssociativePredicate() {
-		te = mTypeEnvironment("S", "ℙ(S)", "s", "S", "T", "ℙ(T)", "t", "T");
 		assertPredicateSpecialization(te, //
-				"s ∈ S ∧ t ∈ T", //
-				mSpecialization(te,//
-						"S := Y || T := Z", //
-						"s := y || t := z"));
+				"a ∈ A ∧ b ∈ B ∧ c ∈ C", //
+				"S := T || a := x",//
+				"x ∈ A ∧ b ∈ B ∧ c ∈ C");
 	}
 
 	/**
-	 * Ensures that an associative predicate with three children gets
-	 * specialized.
+	 * Ensures that an atomic expression gets specialized (including generic
+	 * operators).
 	 */
-	public void testAssociativePredicate2() {
-		te = mTypeEnvironment("T", "ℙ(T)", "t", "ℙ(T)");
-		assertPredicateSpecialization(te, //
-				"card(t)>0 ∧ t ⊆ T ∧ t ≠ ∅", //
-				mSpecialization(te,//
-						"T := ℤ", //
-						"t := {1}"));
+	public void testAtomicExpression() {
+		assertExpressionSpecialization(te, "ℤ", "S := T", "ℤ");
+		assertExpressionSpecialization(te, "∅⦂ℙ(S)", "S := T", "∅⦂ℙ(T)");
+		assertExpressionSpecialization(te, "id⦂S↔S", "S := T", "id⦂T↔T");
+		assertExpressionSpecialization(te, "prj1⦂S×T↔S", "S := U", "prj1⦂U×T↔U");
+		assertExpressionSpecialization(te, "prj2⦂S×T↔T", "S := U", "prj2⦂U×T↔T");
 	}
 
 	/**
-	 * Ensures that an atomic empty set expression gets specialized.
+	 * Ensures that a binary expression gets specialized.
 	 */
-	public void testAtomicExpressionEmptySet() {
-		assertExpressionSpecialization(ff.makeTypeEnvironment(), //
-				"∅⦂ℙ(S)", //
-				mSpecialization(te, "S := T"));
+	public void testBinaryExpression() {
+		assertExpressionSpecialization(te, "a ↦ b", "S := U || a := c", "c ↦ b");
 	}
 
 	/**
-	 * Ensures that an id atomic expression gets specialized.
+	 * Ensures that a binary predicate gets specialized.
 	 */
-	public void testAtomicExpressionId() {
-		te = mTypeEnvironment("S", "ℙ(S)");
-		assertExpressionSpecialization(te, //
-				"id(ℙ(S×S))", //
-				mSpecialization(te, "S := T"));
+	public void testBinaryPredicate() {
+		assertPredicateSpecialization(te,//
+				"a ∈ A ⇒ b ∈ B",//
+				"S := T || a := c",//
+				"c ∈ A ⇒ b ∈ B");
 	}
 
 	/**
-	 * Ensures that an prj1 atomic expression gets specialized.
+	 * Ensures that a bool expression gets specialized.
 	 */
-	public void testAtomicExpressionPrj1() {
-		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)");
-		assertExpressionSpecialization(te, //
-				"(S×T×S)◁ prj1", //
-				mSpecialization(te, "S := ℤ"));
+	public void testBoolExpression() {
+		assertExpressionSpecialization(te,//
+				"bool(a ∈ A)",//
+				"S := T || a := c",//
+				"bool(c ∈ A)");
 	}
 
 	/**
-	 * Ensures that an prj2 atomic expression gets specialized.
+	 * Ensures that a bound identifier declaration gets specialized (type only).
 	 */
-	public void testAtomicExpressionPrj2() {
-		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)");
-		assertExpressionSpecialization(te, //
-				"(S×T×S)◁ prj2", //
-				mSpecialization(te, "S := ℤ"));
+	public void testBoundIdentDecl() {
+		final BoundIdentDecl aS = mBoundIdentDecl("a", S);
+		final BoundIdentDecl aT = mBoundIdentDecl("a", T);
+		assertSpecialization(te, aS, "S := T", aT);
+		assertSpecialization(te, aS, "S := T || a := b", aT);
 	}
 
 	/**
-	 * Ensures a binary expression can be specialized on the left, and only.
+	 * Ensures that a bound identifier gets specialized (type only).
 	 */
-	public void testBinaryExpressionLeft() {
-		te = mTypeEnvironment("S", "ℙ(S)", "a", "S", "b", "T");
-		assertExpressionSpecialization(te, //
-				"a ↦ b", //
-				mSpecialization(te, "S := U"));
-	}
-
-	/**
-	 * Ensures a binary expression can be specialized on the right, and only.
-	 */
-	public void testBinaryExpressionRight() {
-		te = mTypeEnvironment("S", "ℙ(S)", "a", "S", "T", "ℙ(T)", "b", "T");
-		assertExpressionSpecialization(te, //
-				"a ↦ b", //
-				mSpecialization(te, "T := U", "b := c"));
-	}
-
-	/**
-	 * Ensures that both left and right sides of a binary expression can be
-	 * specialized.
-	 */
-	public void testBinaryExpressionBoth() {
-		te = mTypeEnvironment("S", "ℙ(S)", "a", "S", "T", "ℙ(T)", "b", "T");
-		assertExpressionSpecialization(te, //
-				"a ↦ b", //
-				mSpecialization(te, "S := U || T := V",//
-						"a := c || b := d"));
-	}
-
-	/**
-	 * Ensures that the left side of a binary predicate can be specialized.
-	 */
-	public void testBinaryPredicateSpecializationLeft() {
-		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "x", "S", "y", "T");
-		assertPredicateSpecialization(te, //
-				"x ∈ S ⇒ y ∈ T", //
-				mSpecialization(te, "S := U", "x := c"));
-	}
-
-	/**
-	 * Ensures that the right side of a binary predicate can be specialized.
-	 */
-	public void testBinaryPredicateSpecializationRight() {
-		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "x", "S", "y", "T");
-		assertPredicateSpecialization(te, //
-				"x ∈ S ⇒ y ∈ T", //
-				mSpecialization(te, "T := U", "y := c"));
-	}
-
-	/**
-	 * Ensures that both left and right side of a binary predicate can be
-	 * specialized.
-	 */
-	public void testBinaryPredicateSpecializationBoth() {
-		te = mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "x", "S", "y", "T");
-		assertPredicateSpecialization(te, //
-				"x ∈ S  ⇔ y ∈ T", //
-				mSpecialization(te, "S := U || T := V", //
-						"x := c || y := d"));
-	}
-
-	/**
-	 * Ensures that a boolean expression gets specialized.
-	 */
-	public void testBooleanExpressionSpecialization() {
-		te = mTypeEnvironment("S", "ℙ(S)", "x", "ℙ(S)", "y", "ℙ(S)");
-		assertExpressionSpecialization(te, //
-				"bool(x ⊆ y)", //
-				mSpecialization(te, "S := T", "x := z"));
-	}
-
-	/**
-	 * Ensures that the types of bound identifier declarations get specialized.
-	 */
-	public void testBoundIdentDeclSpecialization() {
-		final BoundIdentDecl decl = FastFactory.mBoundIdentDecl("a", S);
-		te.addGivenSet("S");
-		decl.typeCheck(te);
-		assertTrue(decl.isTypeChecked());
-		spec.put(S, T);
-		final BoundIdentDecl specialized = decl.specialize(spec);
-		final ITypeEnvironment specializedTe = te.specialize(spec);
-		final ITypeCheckResult tcResult = specialized.typeCheck(specializedTe);
-		assertTrue(tcResult.isSuccess());
-		assertTrue(tcResult.getInferredEnvironment().isEmpty());
-		assertEquals(T, specialized.getType());
-	}
-
-	/**
-	 * Ensures that the type of a bound identifier gets specialized.
-	 */
-	public void testBoundIdentSpecialization() {
-		final BoundIdentifier ident = FastFactory.mBoundIdentifier(0, S);
-		spec.put(S, T);
-		final Expression specialized = ident.specialize(spec);
-		assertEquals(T, specialized.getType());
-	}
-
-	/**
-	 * Tests that an extended predicate gets specialized.
-	 */
-	public void testExtendedPredicateSpecialisation() {
-		final IPredicateExtension alphaExt = ExtensionHelper
-				.getAlphaExtension();
-		final FormulaFactory extFac = FormulaFactory.getInstance(alphaExt);
-		te = extFac.makeTypeEnvironment();
-		FastFactory.addToTypeEnvironment(te, "S", "ℙ(S)", "s", "S");
-		assertPredicateSpecialization(extFac, te, "α(s∈S, s)",
-				mSpecialization(te, "S := T", "s := t"));
+	public void testBoundIdentifier() {
+		final Expression bS = FastFactory.mBoundIdentifier(0, S);
+		final Expression bT = FastFactory.mBoundIdentifier(0, T);
+		assertSpecialization(te, bS, "S := T", bT);
 	}
 
 	/**
 	 * Tests that an extended expression gets specialized.
 	 */
-	public void testExtendedExpressionSpecialisation() {
+	public void testExtendedExpression() {
 		final FormulaFactory extFac = FormulaFactory
 				.getInstance(DIRECT_PRODUCT);
 		te = extFac.makeTypeEnvironment();
-		addToTypeEnvironment(te, "S", "ℙ(S)", "T", "ℙ(T)", "V", "ℙ(V)", "A",
-				"ℙ(S×T)", "B", "ℙ(S×V)");
-		assertExpressionSpecialization(extFac, te, "A§B",
-				mSpecialization(te, "S := X"));
+		addToTypeEnvironment(te, "S", "ℙ(S)", "T", "ℙ(T)", "V", "ℙ(V)",//
+				"A", "ℙ(S×T)", "B", "ℙ(S×V)");
+		assertExpressionSpecialization(te, "A§B", "S := X", "A§B");
+	}
+
+	/**
+	 * Tests that an extended predicate gets specialized.
+	 */
+	public void testExtendedPredicate() {
+		final IPredicateExtension alphaExt = getAlphaExtension();
+		final FormulaFactory extFac = FormulaFactory.getInstance(alphaExt);
+		te = extFac.makeTypeEnvironment();
+		addToTypeEnvironment(te, "S", "ℙ(S)", "a", "S");
+		assertPredicateSpecialization(te,//
+				"α(a∈A, a)",//
+				"S := T || a := b",//
+				"α(b∈A, b)");
 	}
 
 	/**
 	 * Ensures that a free identifier get specialized.
 	 */
-	public void testFreeIdentifierSpecialization() {
-		te = mTypeEnvironment("S", "ℙ(S)", "s", "S");
-		assertExpressionSpecialization(te, //
-				"s", //
-				mSpecialization(te, "S := T"));
+	public void testFreeIdentifier() {
+		assertExpressionSpecialization(te, "a", "S := T", "a");
+		assertExpressionSpecialization(te, "a", "S := T || b := d", "a");
+		assertExpressionSpecialization(te, "a", "S := T || a := c", "c");
 	}
 
 	/**
 	 * Ensures that an integer literal is not modified by specialization.
 	 */
-	public void testIntegerLiteralSpecialization() {
-		final IntegerLiteral t = FastFactory.mIntegerLiteral(100);
-		spec.put(S, T);
-		final Expression specialized = t.specialize(spec);
-		assertSame(t, specialized);
+	public void testIntegerLiteral() {
+		assertExpressionSpecialization(te, "2", "S := T", "2");
 	}
 
 	/**
-	 * Ensures that an literal predicate is not modified by specialization.
+	 * Ensures that a literal predicate is not modified by specialization.
 	 */
-	public void testLiteralPredicateSpecialization() {
-		final LiteralPredicate t = FastFactory.mLiteralPredicate(Formula.BTRUE);
-		spec.put(T, ff.makeBooleanType());
-		final Predicate specialized = t.specialize(spec);
-		assertSame(t, specialized);
+	public void testLiteralPredicate() {
+		assertPredicateSpecialization(te, "⊤", "S := T", "⊤");
 	}
 
 	/**
-	 * Ensures that one expression of a multiple predicate could get
-	 * specialized, and that the other are preserved.
+	 * Ensures that a multiple predicate gets specialized.
 	 */
-	public void testMultiplePredicateSpecializationOne() {
-		te = mTypeEnvironment("S", "ℙ(S)", "h", "ℙ(S)", "s", "ℙ(S)", "t",
-				"ℙ(S)", "u", "ℙ(S)");
-		assertPredicateSpecialization(te, //
-				"partition(h, s, t, u)", //
-				mSpecialization(te, "", "s := x"));
+	public void testMultiplePredicate() {
+		assertPredicateSpecialization(te,//
+				"partition(A, s, t, u)",//
+				"s := x", "partition(A, x, t, u)");
 	}
 
 	/**
-	 * Ensures that on expression of a multiple predicate gets specialized, and
-	 * that the other are preserved.
-	 */
-	public void testMultiplePredicateSpecializationAll() {
-		te = mTypeEnvironment("S", "ℙ(S)", "A", "ℙ(S)", //
-				"B", "ℙ(S)", "C", "ℙ(S)", "D", "ℙ(S)");
-		assertPredicateSpecialization(te, //
-				"partition(A, B, C, D)", //
-				mSpecialization(te, //
-						"S := T", //
-						"B := x || C := y || D := z"));
-	}
-
-	/**
-	 * Ensures that given type S is specialized when used implicitly in a
-	 * quantified expression and that its replacement type is successfully
-	 * recursively appearing. The formula bares its typing environment.
-	 */
-	public void testQuantifiedExpressionImplicitGivenType() {
-		final BoundIdentDecl xdecl = ff.makeBoundIdentDecl("x", null, S);
-		final BoundIdentifier xbound = ff.makeBoundIdentifier(0, null, S);
-		final QuantifiedExpression qexpr = ff.makeQuantifiedExpression(
-				Formula.CSET,
-				new BoundIdentDecl[] { xdecl },
-				ff.makeRelationalPredicate(Formula.IN, xbound,
-						S.toExpression(ff), null), xbound, null,
-				QuantifiedExpression.Form.Implicit);
-		spec.put(S, T);
-		final QuantifiedExpression specialized = (QuantifiedExpression) qexpr
-				.specialize(spec);
-		assertTrue(specialized.isTypeChecked());
-		// Type check with an empty type environment
-		specialized.typeCheck(ff.makeTypeEnvironment());
-		assertTrue(specialized.isTypeChecked());
-		assertEquals(T,
-				specialized.getExpression().getBoundIdentifiers()[0].getType());
-		assertEquals(T, specialized.getBoundIdentDecls()[0].getType());
-		assertEquals(T, specialized.getExpression().getType());
-		assertEquals(POW(T), specialized.getType());
-	}
-
-	/**
-	 * Ensures that one quantified expression gets specilized
+	 * Ensures that quantified expressions get specialized.
 	 */
 	public void testQuantifiedExpression() {
-		te = mTypeEnvironment("S", "ℙ(S)");
-		assertExpressionSpecialization(te, //
-				"{x ∣ x ∈ S}", //
-				mSpecialization(te, "S := T"));
+		assertExpressionSpecialization(te, "{x∣x∈A}", "S := T", "{x∣x∈A}");
+		assertExpressionSpecialization(te, "{x⦂S·⊤∣x}", "S := T", "{x⦂T·⊤∣x}");
+		assertExpressionSpecialization(te,//
+				"{x∣x∈A}", "S := T || A := B", "{x∣x∈B}");
+		assertExpressionSpecialization(te,//
+				"{a∣a∈A}", "S := ℤ || a := 5 || A := {2}", "{a∣a∈{2}}");
 	}
 
 	/**
-	 * Ensures that a quantified predicated remains unchanged if bound
-	 * identifier declaration have the same name as the specialized free
-	 * identifiers.
+	 * Ensures that quantified predicates get specialized.
 	 */
-	public void testQuantifiedPredicateSpecialization() {
-		te = mTypeEnvironment("x", "ℤ");
-		assertPredicateSpecialization(te, //
-				"∀x,y·x ∈ ℕ ∧ y ∈ ℕ ⇒ x + y ∈ ℕ", //
-				mSpecialization(te, "", "x := t"));
+	public void testQuantifiedPredicate() {
+		assertPredicateSpecialization(te, "∀x⦂S·x∈A", "S := T", "∀x⦂T·x∈A");
+		assertPredicateSpecialization(te, "∀x⦂S·⊤", "S := T", "∀x⦂T·⊤");
+		assertPredicateSpecialization(te,//
+				"∀x⦂S·x∈A", "S := T || A := B", "∀x⦂T·x∈B");
+		assertPredicateSpecialization(te,//
+				"∀a⦂S·a∈A", "S := ℤ || a := 5 || A := {2}", "∀a⦂ℤ·a∈{2}");
 	}
 
 	/**
-	 * Ensures that a quantified predicated remains unchanged if bound
-	 * identifier declaration have the same name as the specialized free
-	 * identifiers.
+	 * Ensures that a relational predicate gets specialized.
 	 */
-	public void testQuantifiedPredicateTypeSpecialization() {
-		te = mTypeEnvironment("T", " ℙ(T)", "x", "ℙ(T)");
-		assertPredicateSpecialization(te, //
-				"∀x,y·x ∈ ℙ(T) ∧ y ∈ ℙ(T) ⇒ x ∪ y ∈ ℙ(T)", //
-				mSpecialization(te, "T := ℤ", "x := t"));
+	public void testRelationalPredicate() {
+		assertPredicateSpecialization(te, "a ∈ S", "S := T || a := b", "b ∈ T");
 	}
 
 	/**
-	 * Ensures that the left part of a relational predicate gets specialized.
+	 * Ensures that a set in extension gets specialized.
 	 */
-	public void testRelationalPredicateSpecialization() {
-		te = mTypeEnvironment("S", " ℙ(S)", "s", "S");
-		assertPredicateSpecialization(te, //
-				"s ∈ S", //
-				mSpecialization(te, "S := T"));
+	public void testSetExtension() {
+		assertExpressionSpecialization(te,//
+				"{a, c, e}", "S := T || a := b", "{b, c, e}");
 	}
 
 	/**
-	 * Ensures that a set in extension expression gets recursively specialized.
+	 * Ensures that an empty set in extension gets specialized.
 	 */
-	public void testSetExtensionSpecialization() {
-		te = mTypeEnvironment("S", "ℙ(S)", "s", "S", "t", "S", "u", "S");
-		assertExpressionSpecialization(te, "{ s, t, u }", //
-				mSpecialization(te, //
-						"S := T", "s := x || t := y"));
+	public void testEmptySetExtension() {
+		assertPredicateSpecialization(te, "{} ⊆ A", "S := T", "{} ⊆ A");
 	}
 
+	/**
+	 * Ensures that a simple predicate gets specialized.
+	 */
 	public void testSimplePredicate() {
-		te = mTypeEnvironment("S", "ℙ(S)", "s", "ℙ(S)");
-		assertPredicateSpecialization(te, //
-				"finite(s)", //
-				mSpecialization(te, "S := T"));
-	}
-	
-	public static void assertPredicateSpecialization(FormulaFactory fac,
-			ITypeEnvironment typeEnv, String predStr,
-			ISpecialization specialization) {
-		final IParseResult parsed = fac.parsePredicate(predStr,
-				LATEST, null);
-		assertFalse(parsed.hasProblem());
-		assertTrue(parsed.getParsedPredicate() != null);
-		final Predicate pred = parsed.getParsedPredicate();
-		assertFormulaSpecialization(fac, typeEnv, predStr, pred, specialization);
-	}
-	
-	public static void assertPredicateSpecialization(ITypeEnvironment typeEnv,
-			String predStr, ISpecialization specialization) {
-		assertPredicateSpecialization(ff, typeEnv, predStr, specialization);
-	}
-	
-	public static void assertExpressionSpecialization(FormulaFactory fac,
-			ITypeEnvironment typeEnv, String exprStr,
-			ISpecialization specialization) {
-		final IParseResult parsed = fac.parseExpression(exprStr, LATEST, null);
-		final Expression expr = parsed.getParsedExpression();
-		assertFormulaSpecialization(fac, typeEnv, exprStr, expr, specialization);
+		assertPredicateSpecialization(te,//
+				"finite(A)", "S := T || A := B", "finite(B)");
 	}
 
-	public static void assertExpressionSpecialization(ITypeEnvironment typeEnv,
-			String exprStr, ISpecialization specialization) {
-		assertExpressionSpecialization(ff, typeEnv, exprStr, specialization);
-	}
-	
-	private static void assertFormulaSpecialization(FormulaFactory fac, ITypeEnvironment typeEnv,
-			String formulaStr, Formula<?> formula,
-			ISpecialization specialization) {
-		final ITypeCheckResult typeCheckResult = formula.typeCheck(typeEnv);
-		assertTrue(formula.isTypeChecked());
-		assertFalse(typeCheckResult.hasProblem());
-		final Formula<?> specialized = formula.specialize(specialization);
-		assertTrue(specialized.isTypeChecked());
-		final ITypeEnvironment newTypeEnv = typeEnv.specialize(specialization);
-		final ITypeCheckResult result = specialized.typeCheck(newTypeEnv);
-		assertFalse(result.hasProblem());
-		assertTrue(result.getInferredEnvironment().isEmpty());
-		assertValid(fac, formulaStr, specialized, specialization, newTypeEnv);
+	/**
+	 * Ensures that an unary expression gets specialized.
+	 */
+	public void testUnaryExpression() {
+		assertExpressionSpecialization(te, //
+				"card(A)", "S := T || A := B", "card(B)");
 	}
 
-	private static void assertValid(FormulaFactory fac, String formulaStr, Formula<?> specialized,
-			ISpecialization specialization, ITypeEnvironment specTypeEnv) {
-		final String expectedImage = getSpecializedImage(fac,formulaStr,
-				specialization);
-		assertSpecializedImage(fac, expectedImage, specialized, specTypeEnv);
+	/**
+	 * Ensures that an unary predicate gets specialized.
+	 */
+	public void testUnaryPredicate() {
+		assertPredicateSpecialization(te,//
+				"¬(a ∈ A)", "S := T || a := b", "¬(b ∈ A)");
 	}
 
-	private static String getSpecializedImage(FormulaFactory fac, String formulaStr,
-			ISpecialization specialization) {
-		String expectedImage = formulaStr;
-		final Map<GivenType, Type> typeSubst = ((Specialization) specialization)
-				.getTypeSubstitutions();
-		for (GivenType type : typeSubst.keySet()) {
-			expectedImage = expectedImage.replaceAll(type.getName(), typeSubst
-					.get(type).toExpression(fac).toString());
-		}
-		final Map<FreeIdentifier, Expression> idSubst = ((Specialization) specialization)
-				.getIndentifierSubstitutions();
-		for (FreeIdentifier id : idSubst.keySet()) {
-			expectedImage = expectedImage.replaceAll(id.getName(),
-					idSubst.get(id).toString());
-		}
-		return expectedImage;
+	/**
+	 * Ensures that bound identifiers are correctly managed when specializing
+	 * under a quantifier with a quantified formula.
+	 */
+	public void testBindings() {
+		assertPredicateSpecialization(te,//
+				"∀x⦂S·x↦1 ∈ y",//
+				"S := T || y := {x↦z∣x∈A ∧ z∈B}",//
+				"∀x⦂T·x↦1 ∈ {x↦z∣x∈A ∧ z∈B}");
 	}
 
-	private static void assertSpecializedImage(FormulaFactory fac,
-			String expectedImg, Formula<?> specialized,
-			ITypeEnvironment specTypeEnv) {
-		Formula<?> expected = null;
-		if (specialized instanceof Expression)
-			expected = parseExpression(expectedImg, fac);
-		if (specialized instanceof Predicate)
-			expected = parsePredicate(expectedImg, fac);
-		assertTrue(expected != null);
-		final ITypeCheckResult typeCheck = expected.typeCheck(specTypeEnv);
-		assertTrue(typeCheck.isSuccess());
-		assertFalse(typeCheck.hasProblem());
-		assertEquals(expected, specialized);
+	private static void assertExpressionSpecialization(ITypeEnvironment typenv,
+			String srcImage, String specImage, String expectedImage) {
+		final FormulaFactory fac = typenv.getFormulaFactory();
+		final Expression src = parseExpression(srcImage, fac);
+		typenv = typeCheck(src, typenv);
+		final ISpecialization spec = mSpecialization(typenv, specImage);
+		final Expression expected = parseExpression(expectedImage, fac);
+		typeCheck(expected, typenv.specialize(spec));
+		assertSpecialization(typenv, src, spec, expected);
+	}
+
+	private static void assertPredicateSpecialization(
+			ITypeEnvironment baseTypenv, String srcImage, String specImage,
+			String expectedImage) {
+		ITypeEnvironment typenv = baseTypenv.clone();
+		final FormulaFactory fac = typenv.getFormulaFactory();
+		final Predicate src = parsePredicate(srcImage, fac);
+		typenv = typeCheck(src, typenv);
+		final ISpecialization spec = mSpecialization(typenv, specImage);
+		final Predicate expected = parsePredicate(expectedImage, fac);
+		typeCheck(expected, typenv.specialize(spec));
+		assertSpecialization(typenv, src, spec, expected);
+	}
+
+	private static <T extends Formula<T>> void assertSpecialization(
+			ITypeEnvironment typenv, T src, String speImage, T expected) {
+		final ISpecialization spe = mSpecialization(typenv, speImage);
+		assertSpecialization(typenv, src, spe, expected);
+	}
+
+	private static <T extends Formula<T>> void assertSpecialization(
+			ITypeEnvironment typenv, T src, ISpecialization spe, T expected) {
+		final T actual = src.specialize(spe);
+		assertEquals(expected, actual);
+
+		final ISpecialization empty = mSpecialization(typenv, "");
+		final T unchanged = src.specialize(empty);
+		assertSame(src, unchanged);
 	}
 
 }

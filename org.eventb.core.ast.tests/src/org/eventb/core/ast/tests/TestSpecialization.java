@@ -251,6 +251,19 @@ public class TestSpecialization extends AbstractTests {
 	}
 
 	/**
+	 * Ensures that an identifier substitution which contains an ill-formed expression 
+	 * is rejected.
+	 */
+	public void testIllFormedExpression() {
+		try {
+			spec.put(aS, ff.makeBoundIdentifier(0, null, S));
+			fail("Shall have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+
+	/**
 	 * Ensures that types can be swapped in a specialization.
 	 */
 	public void testTypeSwap() {

@@ -196,8 +196,19 @@ public abstract class Type {
 	}
 	
 	/**
-	 * Uses the given specialization to get a new specialization of this type.
+	 * Returns the type obtained by applying the given specialization to this
+	 * type. Applying a specialization to a type has the effect of replacing all
+	 * given types occurring in this type by their substitute as defined by the
+	 * given specialization.
+	 * <p>
+	 * If the specialization does not have any effect on this type (i.e., no
+	 * given type gets substituted), this method returns this type rather than a
+	 * copy of it.
+	 * </p>
 	 * 
+	 * @param specialization
+	 *            the specialization to apply
+	 * @return a specialization of this type or <code>this</code> if unchanged
 	 * @since 2.6
 	 */
 	public abstract Type specialize(ISpecialization specialization);

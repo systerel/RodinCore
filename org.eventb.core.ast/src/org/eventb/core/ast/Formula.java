@@ -1756,7 +1756,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * (resp. after) processing the children of the quantified formula.
 	 * </p>
 	 * <p>
-	 * If no rewrite where performed on this formula (that is all rewrite calls
+	 * If no rewrite was performed on this formula (that is all rewrite calls
 	 * on sub-formulas returned an identical sub-formula), then a reference to
 	 * this formula is returned (rather than a copy of this formula). This
 	 * allows to test efficiently (using <code>==</code>) whether rewriting
@@ -2220,7 +2220,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * The given position must designate a sub-formula. The replaced and new
 	 * sub-formula must be of the same kind (bound identifier declaration,
 	 * expression or predicate), and be both type-checked. Moreover, they must
-	 * bear the same time (except for predicates which do not bear a type).
+	 * bear the same type (except for predicates which do not bear a type).
 	 * <p>
 	 * </p>
 	 * This operation is not supported for assignments, nor untyped formulas.
@@ -2278,31 +2278,30 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 	
 	/**
-	 * Uses the given specialization to get a new specialization of this
-	 * formula.
+	 * Returns the type-checked formula obtained by applying the given
+	 * specialization to this formula.
 	 * <p>
-	 * This operation is not supported for assignments,nor BoundIdentDecl, nor
-	 * untyped formulas.
+	 * If the specialization does not change the formula, then a reference to
+	 * this formula is returned (rather than a copy of it). This allows to test
+	 * efficiently (using <code>==</code>) whether specialization made any
+	 * change.
 	 * </p>
-	 * <p>
-	 * <b>The returned formula is not type-checked.</b><br>
-	 * The type environment of the current formula must also be specialized
-	 * (with the same specialization) to further type check the specialized
-	 * formula that is returned by this method.
-	 * </p>
+	 * </p>This operation is not supported for assignments. This formula must be
+	 * type-checked.</p>
 	 * 
 	 * @param specialization
-	 *            the specialization to be used
-	 * @return a specialized version of this formula
+	 *            the specialization to apply
+	 * @return the formula obtained by applying the given specialization to this
+	 *         formula
 	 * @throws UnsupportedOperationException
-	 *             if this formula is an assignment.
+	 *             if this formula is an assignment
 	 * @throws IllegalStateException
 	 *             if this formula is not type-checked.
 	 * 
 	 * @since 2.6
 	 */
 	public T specialize(ISpecialization specialization) {
-		assert (isTypeChecked());
+		ensureTypeChecked();
 		final Specialization spec = (Specialization) specialization;
 		return rewrite(spec);
 	}

@@ -14,6 +14,7 @@ import static java.util.regex.Pattern.compile;
 import static org.eventb.core.ast.tests.AbstractTests.parseExpression;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
 import static org.eventb.core.ast.tests.AbstractTests.typeCheck;
+import static org.junit.Assert.*;
 
 import java.util.regex.Pattern;
 
@@ -22,6 +23,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
+import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 
@@ -53,28 +55,62 @@ public class SpecializationBuilder {
 		return result;
 	}
 
-	public void addTypeSpecialization(String list) {
+	public void addSpecialization(String list) {
 		final String[] pairImages = splitList(list);
 		for (final String pairImage : pairImages) {
 			final String[] images = splitPair(pairImage);
-			final GivenType src = fac.makeGivenType(images[0]);
-			final Type dst = parseType(images[1], fac);
-			result.put(src, dst);
+			final String srcImage = images[0];
+			final String dstImage = images[1];
+			if (isGivenType(srcImage)) {
+				addTypeSpecialization(srcImage, dstImage);
+			} else {
+				addIdentSpecialization(srcImage, dstImage);
+			}
 		}
 	}
 
-	public void addIdentSpecialization(String list) {
+	private boolean isGivenType(String srcImage) {
+		final Type type = srcTypenv.getType(srcImage);
+		if (type == null) {
+			return false;
+		}
+		final Type baseType = type.getBaseType();
+		if (baseType instanceof GivenType) {
+			final GivenType givenType = (GivenType) baseType;
+			return givenType.getName().equals(srcImage);
+		}
+		return false;
+	}
+
+	public void addTypeSpecializations(String list) {
 		final String[] pairImages = splitList(list);
 		for (final String pairImage : pairImages) {
 			final String[] images = splitPair(pairImage);
-			final FreeIdentifier src = fac.makeFreeIdentifier(images[0], null);
-			typeCheck(src, srcTypenv);
-			final Expression dst = parseExpression(images[1], fac);
-			final Type dstType = src.getType().specialize(result);
-			final ITypeEnvironment dstTypenv = srcTypenv.specialize(result);
-			dst.typeCheck(dstTypenv, dstType);
-			result.put(src, dst);
+			addTypeSpecialization(images[0], images[1]);
 		}
+	}
+
+	private void addTypeSpecialization(String srcImage, String dstImage) {
+		final GivenType src = fac.makeGivenType(srcImage);
+		final Type dst = parseType(dstImage, fac);
+		result.put(src, dst);
+	}
+
+	private void addIdentSpecialization(String srcImage, String dstImage) {
+		final FreeIdentifier src = fac.makeFreeIdentifier(srcImage, null);
+		typeCheck(src, srcTypenv);
+		final Expression dst = parseExpression(dstImage, fac);
+		final Type dstType = src.getType().specialize(result);
+		final ISpecialization temp = result.clone();
+		final ITypeEnvironment dstTypenv = srcTypenv.specialize(temp);
+		final ITypeCheckResult tcResult = dst.typeCheck(dstTypenv, dstType);
+		if (tcResult.hasProblem()) {
+			fail("Typecheck failed for expression " + dstImage
+					+ "\nExpected type is " + dstType
+					+ "\nType environment is " + dstTypenv + "\n"
+					+ tcResult.getProblems());
+		}
+		result.put(src, dst);
 	}
 
 	private String[] splitList(String list) {

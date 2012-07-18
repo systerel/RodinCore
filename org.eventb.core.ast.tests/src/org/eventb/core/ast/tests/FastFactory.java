@@ -332,17 +332,18 @@ public class FastFactory {
 		return typeEnv;
 	}
 	
-	public static ISpecialization mSpecialization(ITypeEnvironment te,
-			String typeSpecialization, String identSpecialization) {
+	public static ISpecialization mTypeSpecialization(ITypeEnvironment te,
+			String typeSpecialization) {
 		final SpecializationBuilder builder = new SpecializationBuilder(te);
-		builder.addTypeSpecialization(typeSpecialization);
-		builder.addIdentSpecialization(identSpecialization);
+		builder.addTypeSpecializations(typeSpecialization);
 		return builder.getResult();
 	}
 
 	public static ISpecialization mSpecialization(ITypeEnvironment te,
-			String typeSpecialization) {
-		return mSpecialization(te, typeSpecialization, "");
+			String specialization) {
+		final SpecializationBuilder builder = new SpecializationBuilder(te);
+		builder.addSpecialization(specialization);
+		return builder.getResult();
 	}
 
 	public static UnaryExpression mUnaryExpression(Expression child) {

@@ -39,6 +39,7 @@ import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
+import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.extension.ArityCoverage;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
@@ -433,6 +434,44 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 					getType());
 		}
 		return rewriter.checkReplacement(this, rewriter.rewrite(before));
+	}
+
+	/**
+	 * @since 2.6
+	 */
+	@Override
+	@SuppressWarnings("unused")
+	// FIXME Temporary duplicate code for specialization
+	public Expression specialize(ISpecialization rewriter) {
+		final boolean flatten = false;
+		final ArrayList<Expression> newChildExpressions = new ArrayList<Expression>(
+				childExpressions.length + 11);
+		boolean changed = false;
+		for (Expression child : childExpressions) {
+			Expression newChild = child.rewrite((Specialization) rewriter);
+			if (flatten && extension.getKind().getProperties().isAssociative()
+					&& getTag() == newChild.getTag()) {
+				final Expression[] grandChildren = ((ExtendedExpression) newChild).childExpressions;
+				newChildExpressions.addAll(Arrays.asList(grandChildren));
+				changed = true;
+			} else {
+				newChildExpressions.add(newChild);
+				changed |= newChild != child;
+			}
+		}
+		final ArrayList<Predicate> newChildPredicates = new ArrayList<Predicate>(
+				childPredicates.length);
+		for (Predicate child : childPredicates) {
+			Predicate newChild = child.rewrite((Specialization) rewriter);
+			newChildPredicates.add(newChild);
+			changed |= newChild != child;
+		}
+		final Expression[] newChildExprs = newChildExpressions
+				.toArray(new Expression[newChildExpressions.size()]);
+		final Predicate[] newChildPreds = newChildPredicates
+				.toArray(new Predicate[newChildPredicates.size()]);
+		return ((Specialization) rewriter).rewrite(this, changed,
+				newChildExprs, newChildPreds);
 	}
 
 	@Override

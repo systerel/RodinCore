@@ -10,25 +10,23 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
-import static org.eventb.core.ast.Formula.KID_GEN;
-import static org.eventb.core.ast.Formula.KPRJ1_GEN;
-import static org.eventb.core.ast.Formula.KPRJ2_GEN;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.ITypedFormulaRewriter;
 import org.eventb.core.ast.Predicate;
@@ -36,6 +34,7 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.typecheck.TypeEnvironment;
 
 /**
@@ -60,6 +59,17 @@ public class Specialization extends DefaultRewriter implements ISpecialization,
 		super(false, ff);
 		typeSubst = new HashMap<GivenType, Type>();
 		identSubst = new HashMap<FreeIdentifier, Expression>();
+	}
+
+	public Specialization(Specialization other) {
+		super(false, other.ff);
+		typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
+		identSubst = new HashMap<FreeIdentifier, Expression>(other.identSubst);
+	}
+
+	@Override
+	public ISpecialization clone() {
+		return new Specialization(this);
 	}
 
 	@Override
@@ -104,6 +114,8 @@ public class Specialization extends DefaultRewriter implements ISpecialization,
 			throw new IllegalArgumentException("Untyped identifier");
 		if (value == null)
 			throw new NullPointerException("Null value");
+		if (!value.isWellFormed())
+			throw new IllegalArgumentException("Ill-formed value");
 		if (!value.isTypeChecked())
 			throw new IllegalArgumentException("Untyped value");
 		verify(ident, value);
@@ -167,74 +179,129 @@ public class Specialization extends DefaultRewriter implements ISpecialization,
 
 	public Expression get(FreeIdentifier ident) {
 		final Expression value = identSubst.get(ident);
-		if (value == null) {
-			final Type specializedType = ident.getType().specialize(this);
-			return ff.makeFreeIdentifier(ident.getName(),
-					ident.getSourceLocation(), specializedType);
+		if (value != null) {
+			return value;
 		}
-		return value;
+		final Type type = ident.getType();
+		final Type newType = type.specialize(this);
+		final Expression result;
+		if (newType == type) {
+			result = ident;
+		} else {
+			result = ff.makeFreeIdentifier(ident.getName(),
+					ident.getSourceLocation(), newType);
+		}
+		identSubst.put(ident, result);
+		return result;
 	}
 
 	@Override
 	public Expression rewrite(FreeIdentifier identifier) {
-		if (identifier.isATypeExpression())
-			return get(ff.makeGivenType(identifier.getName())).toExpression(ff);
-		return get(identifier);
+		final Expression newIdent = get(identifier);
+		if (newIdent.equals(identifier)) {
+			return identifier;
+		}
+		return newIdent;
+	}
+
+	public BoundIdentDecl rewrite(BoundIdentDecl decl) {
+		final Type type = decl.getType();
+		final Type newType = type.specialize(this);
+		if (newType == type) {
+			return decl;
+		}
+		final String name = decl.getName();
+		final SourceLocation sloc = decl.getSourceLocation();
+		return ff.makeBoundIdentDecl(name, sloc, newType);
 	}
 
 	@Override
 	public Expression rewrite(BoundIdentifier identifier) {
-		return ff.makeBoundIdentifier(identifier.getBoundIndex(), identifier
-				.getSourceLocation(), identifier.getType().specialize(this));
+		final Type type = identifier.getType();
+		final Type newType = type.specialize(this);
+		if (newType == type) {
+			return identifier;
+		}
+		return ff.makeBoundIdentifier(identifier.getBoundIndex(),
+				identifier.getSourceLocation(), newType);
 	}
 
 	@Override
 	public Expression rewrite(QuantifiedExpression expression) {
-		return ff.makeQuantifiedExpression(expression.getTag(),
-				getSpecializedDecls(expression.getBoundIdentDecls()),
+		final BoundIdentDecl[] decls = expression.getBoundIdentDecls();
+		final BoundIdentDecl[] newDecls = specialize(decls);
+		if (newDecls == decls) {
+			return expression;
+		}
+		return ff.makeQuantifiedExpression(expression.getTag(), newDecls,
 				expression.getPredicate(), expression.getExpression(),
 				expression.getSourceLocation(), expression.getForm());
 	}
 
 	@Override
 	public Predicate rewrite(QuantifiedPredicate predicate) {
-		return ff.makeQuantifiedPredicate(predicate.getTag(),
-				getSpecializedDecls(predicate.getBoundIdentDecls()),
+		final BoundIdentDecl[] decls = predicate.getBoundIdentDecls();
+		final BoundIdentDecl[] newDecls = specialize(decls);
+		if (newDecls == decls) {
+			return predicate;
+		}
+		return ff.makeQuantifiedPredicate(predicate.getTag(), newDecls,
 				predicate.getPredicate(), predicate.getSourceLocation());
 	}
 
-	private BoundIdentDecl[] getSpecializedDecls(BoundIdentDecl[] decls) {
+	private BoundIdentDecl[] specialize(BoundIdentDecl[] decls) {
 		final BoundIdentDecl[] result = new BoundIdentDecl[decls.length];
+		boolean changed = false;
 		for (int i = 0; i < decls.length; i++) {
-			result[i] = decls[i].specialize(this);
+			result[i] = rewrite(decls[i]);
+			changed |= result[i] != decls[i];
+		}
+		if (!changed) {
+			return decls;
 		}
 		return result;
 	}
 
 	@Override
 	public Expression rewrite(AtomicExpression expression) {
-		final SourceLocation sl = expression.getSourceLocation();
 		final Type type = expression.getType();
-		if (type == null)
-			return expression;
-		final Type specializedType = type.specialize(this);
-		switch (expression.getTag()) {
-		case Formula.EMPTYSET:
-			return ff.makeEmptySet(specializedType, sl);
-		case Formula.KID_GEN:
-			return ff.makeAtomicExpression(KID_GEN, sl, specializedType);
-		case Formula.KPRJ1_GEN:
-			return ff.makeAtomicExpression(KPRJ1_GEN, sl, specializedType);
-		case Formula.KPRJ2_GEN:
-			return ff.makeAtomicExpression(KPRJ2_GEN, sl, specializedType);
-		default:
+		final Type newType = type.specialize(this);
+		if (newType == type) {
 			return expression;
 		}
+		final SourceLocation loc = expression.getSourceLocation();
+		return ff.makeAtomicExpression(expression.getTag(), loc, newType);
 	}
 
-	public BoundIdentDecl rewrite(BoundIdentDecl decl) {
-		return ff.makeBoundIdentDecl(decl.getName(), decl.getSourceLocation(),
-				decl.getType().specialize(this));
+	public Expression rewrite(ExtendedExpression expr, boolean changed,
+			Expression[] newChildExprs, Predicate[] newChildPreds) {
+		final Type type = expr.getType();
+		final Type newType = type.specialize(this);
+		if (!changed && newType == type) {
+			return expr;
+		}
+		final IExpressionExtension extension = expr.getExtension();
+		final SourceLocation loc = expr.getSourceLocation();
+		return ff.makeExtendedExpression(extension, newChildExprs,
+				newChildPreds, loc, newType);
+	}
+
+	/*
+	 * For a set extension, the only special case is that of an empty extension,
+	 * where we have to specialize the type.
+	 */
+	@Override
+	public Expression rewrite(SetExtension expression) {
+		if (expression.getChildCount() != 0) {
+			return expression;
+		}
+		final Type type = expression.getType();
+		final Type newType = type.specialize(this);
+		if (newType == type) {
+			return expression;
+		}
+		final SourceLocation sloc = expression.getSourceLocation();
+		return ff.makeEmptySetExtension(newType, sloc);
 	}
 
 	@Override
@@ -252,6 +319,28 @@ public class Specialization extends DefaultRewriter implements ISpecialization,
 	public BoundIdentDecl checkReplacement(BoundIdentDecl current,
 			BoundIdentDecl replacement) {
 		return replacement;
+	}
+
+	// For debugging purposes
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		String sep = "";
+		for (Entry<GivenType, Type> entry : typeSubst.entrySet()) {
+			sb.append(sep);
+			sep = " || ";
+			sb.append(entry.getKey());
+			sb.append("=");
+			sb.append(entry.getValue());
+		}
+		for (Entry<FreeIdentifier, Expression> entry : identSubst.entrySet()) {
+			sb.append(sep);
+			sep = " || ";
+			sb.append(entry.getKey());
+			sb.append("=");
+			sb.append(entry.getValue());
+		}
+		return sb.toString();
 	}
 
 }

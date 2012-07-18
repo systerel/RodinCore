@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
+import static org.eventb.core.ast.tests.FastFactory.mTypeSpecialization;
 import static org.eventb.core.ast.tests.TestGenParser.MOULT_FAC;
 
 import org.eventb.core.ast.FormulaFactory;
@@ -102,12 +102,12 @@ public class TestTypeSpecialization extends AbstractTests {
 	}
 
 	private static void assertSpecialization(String typeImage,
-			String typeSpecializationImage, String expectedImage,
+			String typeSpecImage, String expectedImage,
 			FormulaFactory fac) {
 		final Type type = parseType(typeImage, fac);
 		final ITypeEnvironment te = fac.makeTypeEnvironment();
 		addGivenSets(te, type);
-		final ISpecialization spe = mSpecialization(te, typeSpecializationImage);
+		final ISpecialization spe = mTypeSpecialization(te, typeSpecImage);
 		final Type expected = parseType(expectedImage, fac);
 		final Type actual = type.specialize(spe);
 		assertEquals(expected, actual);

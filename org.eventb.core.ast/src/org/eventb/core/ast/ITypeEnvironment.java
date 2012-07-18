@@ -249,13 +249,31 @@ public interface ITypeEnvironment {
 	 * @since 2.0
 	 */
 	FormulaFactory getFormulaFactory();
-	
+
 	/**
-	 * Uses the given specialization to get a new specialization of this type
-	 * environment.
+	 * Returns the type environment obtained by applying the given
+	 * specialization to this type environment. The effect of this application
+	 * is to specialize all types of the type environment, to remove all free
+	 * identifiers that are substituted by the given specialization and to
+	 * introduce all free identifiers that occur in substituting expressions for
+	 * the free identifiers that have been removed.
+	 * <p>
+	 * The given specialization may change as a side-effect of calling this
+	 * method. Please see the documentation of {@link ISpecialization} for
+	 * details.
+	 * </p>
+	 * <p>
+	 * The returned type environment is always a new object, even if the
+	 * specialization has no effect on this type environment (e.g., no
+	 * substitution of type or free identifier has been performed),
+	 * </p>
 	 * 
+	 * @param specialization
+	 *            the specialization to apply
+	 * @return the type environment obtained by applying the given
+	 *         specialization to this type environment
 	 * @since 2.6
 	 */
 	ITypeEnvironment specialize(ISpecialization specialization);
-	
+
 }
