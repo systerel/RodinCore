@@ -72,7 +72,8 @@ public class ParametricType extends Type {
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
 		return factory.makeExtendedExpression(typeConstructor,
-				buildExprs(typeParameters, factory), NO_PRED, null);
+				buildExprs(typeParameters, factory), NO_PRED, null,
+				factory.makePowerSetType(this));
 	}
 
 	@Override
