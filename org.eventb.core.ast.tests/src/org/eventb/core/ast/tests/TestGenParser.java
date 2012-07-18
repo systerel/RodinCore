@@ -620,33 +620,45 @@ public class TestGenParser extends AbstractTests {
 		@Override
 		public Type synthesizeType(Expression[] childExprs,
 				Predicate[] childPreds, ITypeMediator mediator) {
-
-			Type leftType = childExprs[0].getType();
-			Type rightType = childExprs[1].getType();
-
-			final Type alpha = leftType.getSource();
+			final Type leftType = childExprs[0].getType();
+			final Type rightType = childExprs[1].getType();
+			final Type alphaLeft = leftType.getSource();
+			final Type alphaRight = rightType.getSource();
+			if (alphaLeft == null || !alphaLeft.equals(alphaRight)) {
+				return null; // incompatible types
+			}
 			final Type beta = leftType.getTarget();
 			final Type gamma = rightType.getTarget();
-			if (alpha != null && beta != null && gamma != null) {
-				return ff.makeRelationalType(alpha, ff.makeProductType(beta,
-						gamma));
-			} else {
+			if (beta == null || gamma == null) {
 				return null;
 			}
+			return ff.makeRelationalType(alphaLeft,
+					ff.makeProductType(beta, gamma));
 		}
 
 		@Override
-		public boolean verifyType(Type proposedType,
-				Expression[] childExprs, Predicate[] childPreds) {
-			final Type alphaP = proposedType.getSource();
-			if (alphaP == null) {
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
+			final Type alpha = proposedType.getSource();
+			if (alpha == null) {
 				return false;
 			}
 			final Type target = proposedType.getTarget();
 			if (!(target instanceof ProductType)) {
 				return false;
 			}
-			return true;
+			final ProductType ptarget = (ProductType) target;
+			final Type beta = ptarget.getLeft();
+			final Type gamma = ptarget.getRight();
+			final Expression left = childExprs[0];
+			final Expression right = childExprs[1];
+			return verifyType(left, ff.makeRelationalType(alpha, beta))
+					&& verifyType(right, ff.makeRelationalType(alpha, gamma));
+		}
+
+		private boolean verifyType(Expression expr, Type proposedType) {
+			final Type type = expr.getType();
+			return type == null || type.equals(proposedType);
 		}
 
 		@Override
