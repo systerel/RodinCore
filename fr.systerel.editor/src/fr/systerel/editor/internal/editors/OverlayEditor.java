@@ -434,9 +434,10 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 
 	/**
 	 * Updates the current interval displayed text.
-	 * @throws RodinDBException 
+	 * 
+	 * @throws RodinDBException
 	 */
-	public void updateModelAfterChanges() {
+	private void doUpdateModelAfterChanges() {
 		if (interval == null) {
 			return;
 		}
@@ -482,6 +483,11 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 				changeAttribute(ielement, (IAttributeType.String)attributeType, text);				
 			}
 		}
+	}
+
+	public void saveAndExit(boolean maintainCaretPosition) {
+		doUpdateModelAfterChanges();
+		quitEdition(maintainCaretPosition);
 	}
 
 	@Override
@@ -660,11 +666,6 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		if (action != null)
 			return action;
 		return editActions.get(actionConstant);
-	}
-
-	public void saveAndExit(boolean maintainCaretPosition) {
-		updateModelAfterChanges();
-		quitEdition(maintainCaretPosition);
 	}
 
 	private void setEventBTranslation(Interval interval) {

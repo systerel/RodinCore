@@ -22,15 +22,8 @@ public class TraverseHandlers {
 	public static class TraverseNextHandler extends AbstractEditionHandler {
 
 		@Override
-		public boolean isEnabled() {
-			final RodinEditor editor = getActiveRodinEditor();
-			return editor != null
-					&& checkEnablement(editor, editor.getCurrentOffset());
-		}
-		
-		@Override
 		protected String handleSelection(RodinEditor editor, int offset) {
-			editor.quitOverlayAndKeepModifs();
+			editor.getOverlayEditor().saveAndExit(false);
 			editor.getSelectionController().goToNextEditRegion();
 			return null;
 		}
@@ -40,15 +33,8 @@ public class TraverseHandlers {
 	public static class TraversePreviousHandler extends AbstractEditionHandler {
 
 		@Override
-		public boolean isEnabled() {
-			final RodinEditor editor = getActiveRodinEditor();
-			return editor != null
-					&& checkEnablement(editor, editor.getCurrentOffset());
-		}
-		
-		@Override
 		protected String handleSelection(RodinEditor editor, int offset) {
-			editor.quitOverlayAndKeepModifs();
+			editor.getOverlayEditor().saveAndExit(false);
 			editor.getSelectionController().goToPreviousEditRegion();
 			return null;
 		}

@@ -23,6 +23,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
@@ -135,7 +136,19 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	@Override
 	protected void doSaveDocument(IProgressMonitor monitor, Object element,
 			IDocument document, boolean overwrite) throws CoreException {
-		((ILFile) inputResource).save();			
+		final ILFile inputFile = (ILFile) inputResource;
+		if (editor.isOverlayActive()) {
+			editor.getOverlayEditor().saveAndExit(true);
+			waitForUpdate(); // waiting for the overlay closing updates
+		}
+		inputFile.save();
+	}
+
+	private static void waitForUpdate() {
+		Display display = Display.findDisplay(Thread.currentThread());
+		while (display.readAndDispatch()) {
+			// waiting
+		}
 	}
 
 	@Override

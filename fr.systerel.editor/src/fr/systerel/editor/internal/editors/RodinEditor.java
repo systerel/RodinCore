@@ -421,6 +421,10 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		return documentProvider;
 	}
 
+	public OverlayEditor getOverlayEditor() {
+		return overlayEditor;
+	}
+
 	public IDocument getDocument() {
 		return documentProvider.getDocument();
 	}
@@ -485,13 +489,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 			}
 			styledText.setFont(font);
 			resync(null, true);
-		}
-	}
-
-	/** Saves the current changes and quit edition. */
-	public void quitOverlayAndKeepModifs() {
-		if (overlayEditor.isActive()) {
-			overlayEditor.saveAndExit(true);
 		}
 	}
 
