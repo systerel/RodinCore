@@ -11,11 +11,13 @@
 
 package fr.systerel.internal.explorer.navigator.filters;
 
+import static fr.systerel.internal.explorer.model.ModelController.getModelPO;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eventb.core.IPSStatus;
 
-import fr.systerel.internal.explorer.model.ModelController;
+import fr.systerel.internal.explorer.model.ModelProofObligation;
 
 /**
  * Implements filtering of discharged proof obligations.
@@ -37,8 +39,12 @@ public class DischargedFilter extends ViewerFilter {
 				return true;
 			}
 
-			return !ModelController.getModelPO((IPSStatus) element)
-					.isDischarged();
+			final ModelProofObligation modelPO = getModelPO((IPSStatus) element);
+			if (modelPO == null) {
+				// PO not in model, no filtering
+				return true;
+			}
+			return !modelPO.isDischarged();
 		}
 		return true;
 	}
