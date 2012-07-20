@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.IContextRoot;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
@@ -298,6 +299,23 @@ public abstract class EventBPOTest extends EventBTest {
 	public void hasNewStamp(IInternalElement stampedElem) throws Exception {
 		long value = ((IPORoot) stampedElem.getRoot()).getPOStamp();
 		hasStamp((IPOStampedElement) stampedElem, value);
+	}
+
+	/**
+	 * Prints the names of all the sequents of an Event-B component. Useful for
+	 * debugging purposes.
+	 * 
+	 * @param root
+	 *            the root of some Event-B component
+	 * @throws RodinDBException
+	 *             in case of error accessing the Rodin database
+	 */
+	public static void printSequents(IEventBRoot root) throws RodinDBException {
+		System.out.println(root.getComponentName() + ":\n");
+		final IPOSequent[] sequents = root.getPORoot().getSequents();
+		for (IPOSequent seq : sequents) {
+			System.out.println("\t" + seq.getElementName());
+		}
 	}
 
 }

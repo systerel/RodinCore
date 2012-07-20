@@ -95,18 +95,18 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			Predicate baPredicate = assignment.getBAPredicate(factory);
 			List<IPOGPredicate> hyp = makeAbstractActionHypothesis(baPredicate);
 
-			if (hyp.isEmpty() || abstractHasNotSameAction(k)) {
-				
+			if (abstractHasNotSameAction(k)) {
 				Predicate wdPredicate = assignment.getWDPredicate(factory);
 				createProofObligation(target, hyp,
 						wdPredicate, action, sources, hints, 
 						"WD", IPOGNature.ACTION_WELL_DEFINEDNESS, monitor);
-				
+			}
+
+			if (hyp.isEmpty() || abstractHasNotSameAction(k)) {
 				Predicate fisPredicate = assignment.getFISPredicate(factory);
 				createProofObligation(target, hyp,
 						fisPredicate, action, sources, hints, 
 						"FIS", IPOGNature.ACTION_FEASIBILITY, monitor);
-				
 			}
 		}
 	}

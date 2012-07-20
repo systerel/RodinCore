@@ -1601,4 +1601,34 @@ public class TestMachineRefines extends EventBPOTest {
 		sequentHasGoal(sequent, typenv, "∃w'·w'∗w' = −1");
 	}
 
+	/*
+	 * Regression test for bug #3488583: Duplicate PO for action WD. An event
+	 * that extends its abstraction without contributing any addition shall not
+	 * produce any WD PO.
+	 */
+	public void testBug3488583() throws Exception {
+		final IMachineRoot abs = createMachine("abs");
+		addVariables(abs, "x");
+		addInvariant(abs, "I", "x ∈ ℤ", true);
+		addInitialisation(abs, makeSList("A1"), makeSList("x ≔ 1÷3"));
+		addEvent(abs, "evt",//
+				makeSList(),//
+				makeSList(),//
+				makeSList(),//
+				makeSList("A1"), makeSList("x ≔ 1÷2"));
+		saveRodinFileOf(abs);
+
+		final IMachineRoot ref = createMachine("ref");
+		addMachineRefines(ref, "abs");
+		addVariables(ref, "x");
+		addExtendedEvent(ref, INITIALISATION);
+		final IEvent refEvt = addExtendedEvent(ref, "fvt");
+		addEventRefines(refEvt, "evt");
+		saveRodinFileOf(ref);
+		runBuilder();
+
+		getExactSequents(abs.getPORoot(), "INITIALISATION/A1/WD", "evt/A1/WD");
+		getExactSequents(ref.getPORoot());
+	}
+
 }
