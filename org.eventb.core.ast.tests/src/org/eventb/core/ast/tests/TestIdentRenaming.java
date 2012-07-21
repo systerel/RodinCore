@@ -72,8 +72,12 @@ public class TestIdentRenaming extends TestCase {
 		doTest(L("x1x"),//
 				L("x1x"),//
 				L("x1x0"));
-
-		// TODO add tests with several variables to rename.
+		doTest(L("x", "y"),//
+				L("x", "y"),//
+				L("x0", "y0"));
+		doTest(L("x", "x"),//
+				L("x", "x1"),//
+				L("x0", "x2"));
 	}
 
 	private static String[] L(String... names) {
