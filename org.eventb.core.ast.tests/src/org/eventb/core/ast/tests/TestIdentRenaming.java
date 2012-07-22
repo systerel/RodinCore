@@ -11,26 +11,22 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.QuantifiedUtil.resolveIdents;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.QuantifiedUtil;
 
 /**
  * Unit tests for identifier renaming.
  * 
  * @author Laurent Voisin
  */
-public class TestIdentRenaming extends TestCase {
-
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
+public class TestIdentRenaming extends AbstractTests {
 
 	/**
 	 * Ensures that identifier renaming is done properly.
@@ -80,15 +76,31 @@ public class TestIdentRenaming extends TestCase {
 				L("x0", "x2"));
 	}
 
+	/**
+	 * Ensures that identifier renaming is done properly with mathematical
+	 * extensions.
+	 */
+	public void testRenamingLanguage() {
+		doTest(LIST_FAC,//
+				L("x", "List", "nil"),//
+				L("x", "nil0"),//
+				L("x0", "List0", "nil1"));
+	}
+
 	private static String[] L(String... names) {
 		return names;
 	}
 
 	private static void doTest(String[] originals, String[] used,
 			String[] expected) {
+		doTest(ff, originals, used, expected);
+	}
+
+	private static void doTest(FormulaFactory fac, String[] originals,
+			String[] used, String[] expected) {
 		final BoundIdentDecl[] decls = makeBoundIdentDecls(originals);
 		final Set<String> usedSet = makeUsedSet(used);
-		final String[] actual = QuantifiedUtil.resolveIdents(decls, usedSet);
+		final String[] actual = resolveIdents(decls, usedSet, fac);
 		assertArrayEquals(expected, actual);
 	}
 

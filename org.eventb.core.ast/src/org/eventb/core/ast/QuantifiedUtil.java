@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.ast.FreshNameSolver.solve;
-
 import java.util.Set;
+
+import org.eventb.internal.core.ast.FreshNameSolver;
 
 /**
  * This class provides some static method which are useful when manipulating
@@ -89,23 +89,41 @@ public abstract class QuantifiedUtil {
 	 */
 	public static String[] resolveIdents(BoundIdentDecl[] boundHere,
 			Set<String> usedNames) {
-		final int nbBoundIdentDecl = boundHere.length;
-		final String[] result = new String[nbBoundIdentDecl];
-
 		// Currently, there is no way to pass a type environment to this method,
 		// as it might be called from the classical toString() method. So, we
 		// use
 		// the default factory provided with the AST library. But, that prevents
 		// clients from adding new reserved identifier names!
 		// TODO how to add new reserved identifier names
+		return resolveIdents(boundHere, usedNames, FormulaFactory.getDefault());
+	}
 
-		// Create the new identifiers.
+	/**
+	 * Find new names for the given quantified identifiers so that they don't
+	 * conflict with the given names. The returned names are valid identifier
+	 * names in the mathematical language defined by the given formula factory.
+	 * 
+	 * @param boundHere
+	 *            array of bound identifier declarations to make free.
+	 * @param usedNames
+	 *            set of names that are reserved (usually occurring already free
+	 *            in the formula)
+	 * @param factory
+	 *            formula factory defining the mathematical language
+	 * @return a list of new names that are distinct from each other and do not
+	 *         occur in the list of used names
+	 * @since 2.6
+	 */
+	public static String[] resolveIdents(BoundIdentDecl[] boundHere,
+			Set<String> usedNames, FormulaFactory factory) {
+		final int nbBoundIdentDecl = boundHere.length;
+		final String[] result = new String[nbBoundIdentDecl];
+		final FreshNameSolver solver = new FreshNameSolver(usedNames, factory);
 		for (int i = 0; i < nbBoundIdentDecl; i++) {
-			result[i] = solve(boundHere[i].getName(), usedNames,
-					FormulaFactory.getDefault());
-			usedNames.add(result[i]);
+			final String newName = solver.solve(boundHere[i].getName());
+			usedNames.add(newName);
+			result[i] = newName;
 		}
-
 		return result;
 	}
 

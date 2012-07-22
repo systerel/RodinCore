@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.internal.core.typecheck.TypeEnvironment;
 
 /**
  * Helper class to compute fresh names. This class provides two static methods
@@ -35,31 +34,9 @@ public class FreshNameSolver {
 
 	/**
 	 * Returns an identifier name resembling the given name and that does not
-	 * occur in the given type environment. The returned name is guaranteed to
-	 * be a valid identifier name in the mathematical language of the given type
-	 * environment.
-	 * 
-	 * @param name
-	 *            some identifier name
-	 * @param environment
-	 *            the type environment in which the returned name must be fresh
-	 * 
-	 * @return a name fresh in the given type environment
-	 */
-	public static String solve(TypeEnvironment environment, String name) {
-		return new FreshNameSolver(environment).solve(name);
-	}
-
-	/**
-	 * Returns an identifier name resembling the given name and that does not
 	 * occur in the given set of used names. The returned name is guaranteed to
 	 * be a valid identifier name in the mathematical language specified by the
 	 * given formula factory.
-	 * <p>
-	 * This method is an alternative to {{@link #solve(TypeEnvironment, String)}
-	 * as in certain cases, the type environment can not be built (e.g. when
-	 * formulas are untyped).
-	 * </p>
 	 * 
 	 * @param name
 	 *            some identifier name
@@ -80,21 +57,48 @@ public class FreshNameSolver {
 	private final ITypeEnvironment typeEnvironment;
 	private final Set<String> usedNames;
 
+	/**
+	 * Creates a fresh name solver in the context of the given type environment,
+	 * which defines both the mathematical language (through its formula
+	 * factory) and a set of already used names.
+	 * 
+	 * @param typeEnvironment
+	 *            some type environment
+	 */
 	public FreshNameSolver(ITypeEnvironment typeEnvironment) {
 		this.factory = typeEnvironment.getFormulaFactory();
 		this.typeEnvironment = typeEnvironment;
 		this.usedNames = null;
 	}
 
+	/**
+	 * Creates a fresh name solver in the context of the given set of already
+	 * used names and the mathematical language of the given formula factory.
+	 * 
+	 * @param usedNames
+	 *            identifier names already used
+	 * @param factory
+	 *            the formula factory of the mathematical language to consider
+	 */
 	public FreshNameSolver(Set<String> usedNames, FormulaFactory factory) {
 		this.factory = factory;
 		this.usedNames = usedNames;
 		this.typeEnvironment = null;
 	}
 
+	/**
+	 * Returns an identifier name resembling the given name and that does not
+	 * occur in the context of this solver (type environment or set of used
+	 * names). The returned name is guaranteed to be a valid identifier name in
+	 * the mathematical language of this solver.
+	 * 
+	 * @param name
+	 *            some identifier name
+	 * 
+	 * @return a name fresh in the context of this solver
+	 */
 	public String solve(String name) {
-		if (!contains(name)) {
-			// Not used, this name is OK.
+		if (isValid(name)) {
 			return name;
 		}
 		// We have a name conflict, so we try with other names
@@ -103,15 +107,19 @@ public class FreshNameSolver {
 		do {
 			sname.increment();
 			newName = sname.toString();
-		} while (contains(newName) || !factory.isValidIdentifierName(newName));
+		} while (!isValid(newName));
 		return newName;
 	}
 
-	private boolean contains(String name) {
-		if (typeEnvironment != null) {
-			return typeEnvironment.contains(name);
+	private boolean isValid(String name) {
+		if (!factory.isValidIdentifierName(name)) {
+			return false;
 		}
-		return usedNames.contains(name);
+		if (typeEnvironment != null) {
+			return !typeEnvironment.contains(name);
+		} else {
+			return !usedNames.contains(name);
+		}
 	}
 
 	/**
