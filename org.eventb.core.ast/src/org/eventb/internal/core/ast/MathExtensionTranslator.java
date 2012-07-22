@@ -31,6 +31,9 @@ import org.eventb.core.ast.extension.IExpressionExtension;
  */
 public abstract class MathExtensionTranslator {
 
+	// FIXME should come through the constructor
+	private static final FormulaFactory targetFactory = FormulaFactory.getDefault();
+
 	protected final FormulaFactory factory;
 	protected final Set<String> usedNames;
 	protected final Set<String> addedUsedNames = new HashSet<String>();
@@ -49,17 +52,17 @@ public abstract class MathExtensionTranslator {
 	// Gets a fresh name from the given type symbol, adds it to the used names,
 	// and constructs a given type with that fresh name
 	protected final GivenType solveGivenType(String typeSymbol) {
-		final String solvedTypeName = solve(typeSymbol, usedNames, factory);
+		final String solvedTypeName = solve(typeSymbol, usedNames, targetFactory);
 		addedUsedNames.add(solvedTypeName);
-		return factory.makeGivenType(solvedTypeName);
+		return targetFactory.makeGivenType(solvedTypeName);
 	}
 	
 	// Gets a fresh name from the given symbol, adds it to the used names,
 	// and constructs a free identifier with that fresh name and the given type
 	protected final FreeIdentifier solveIdentifier(String symbol, Type type) {
-		final String name = solve(symbol, usedNames, factory);
+		final String name = solve(symbol, usedNames, targetFactory);
 		addedUsedNames.add(name);
-		return factory.makeFreeIdentifier(name, null, type);
+		return targetFactory.makeFreeIdentifier(name, null, type);
 	}
 
 }
