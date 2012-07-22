@@ -14,8 +14,6 @@ import static org.eventb.internal.core.ast.FreshNameSolver.solve;
 
 import java.util.Set;
 
-import org.eventb.internal.core.typecheck.TypeEnvironment;
-
 /**
  * This class provides some static method which are useful when manipulating
  * quantified formulas.
@@ -108,30 +106,6 @@ public abstract class QuantifiedUtil {
 			usedNames.add(result[i]);
 		}
 
-		return result;
-	}
-
-	// resolve (locally) quantified names so that they do not conflict with the
-	// given type environment.
-	//
-	// @see FormulaFactory#makeFreshIdentifiers(BoundIdentDecl[], ITypeEnvironment)
-	//
-	// TODO : remove the formula factory parameter
-	protected static FreeIdentifier[] resolveIdents(
-			BoundIdentDecl[] bIdents, ITypeEnvironment environment,
-			FormulaFactory factory) {
-		final int nbBoundIdentDecl = bIdents.length;
-		final FreeIdentifier[] result = new FreeIdentifier[nbBoundIdentDecl];
-		
-		// Create the new identifiers.
-		for (int i = 0; i < nbBoundIdentDecl; i++) {
-			final Type bType = bIdents[i].getType();
-			final SourceLocation bSourceLoc = bIdents[i].getSourceLocation();
-			final String bName = bIdents[i].getName();
-			result[i] = ((TypeEnvironment) environment)
-					.makeFreshFreeIdentifier(bName, bSourceLoc, bType);
-		}
-		
 		return result;
 	}
 

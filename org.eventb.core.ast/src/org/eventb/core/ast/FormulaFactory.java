@@ -1415,21 +1415,30 @@ public class FormulaFactory {
 	 * <p>
 	 * The given bound identifier declarations must be typed. The types are then
 	 * stored in the typing environment for the corresponding fresh free
-	 * identifier created.
+	 * identifiers.
 	 * </p>
 	 * 
 	 * @param boundIdents
 	 *            array of bound identifier declarations for which corresponding
 	 *            fresh free identifiers should be created. Each declaration
-	 *            must be typed.
+	 *            must be typed
 	 * @param environment
 	 *            type environment relative to which fresh free identifiers are
-	 *            created and into which they are inserted
+	 *            created and into which they are inserted. Must use this
+	 *            formula factory
 	 * @return an array of fresh free identifiers
+	 * @throws IllegalArgumentException
+	 *             if the given type environment is not based on this formula
+	 *             factory
 	 */
+	// TODO 3.0 move to ITypeEnvironment
 	public FreeIdentifier[] makeFreshIdentifiers(BoundIdentDecl[] boundIdents,
 			ITypeEnvironment environment) {
-		return QuantifiedUtil.resolveIdents(boundIdents, environment, this);
+		if (this != environment.getFormulaFactory()) {
+			throw new IllegalArgumentException("incompatible type environment");
+		}
+		final TypeEnvironment typenv = (TypeEnvironment) environment;
+		return typenv.makeFreshIdentifiers(boundIdents);
 	}
 
 	/**
