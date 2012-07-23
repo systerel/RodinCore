@@ -15,6 +15,7 @@ import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgGoal;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.hyp;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.isFunGoal;
+import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -64,7 +65,28 @@ public class FunImgInGoalTacTests {
 		return ProverFactory.makeProofTree(seq, null);
 	}
 
+	private static IProofTree genProofTree(ITypeEnvironment typeEnv,
+			String... preds) {
+		final IProverSequent seq = genSeq(typeEnv, preds);
+		return ProverFactory.makeProofTree(seq, null);
+	}
+
 	private static IProverSequent genSeq(String... preds) {
+		final int nbHyps = preds.length - 1;
+		final StringBuilder b = new StringBuilder();
+		b.append(concatenateHyps(preds));
+		b.append("|-");
+		b.append(preds[nbHyps]);
+		return TestLib.genSeq(b.toString());
+	}
+	
+	private static IProverSequent genSeq(ITypeEnvironment typeEnv, String... preds) {
+		final String hypsImage = concatenateHyps(preds);
+		final String goalImage = preds[preds.length - 1];
+		return TestLib.genFullSeq(typeEnv, "", "", hypsImage, goalImage);
+	}
+
+	private static String concatenateHyps(String... preds) {
 		final int nbHyps = preds.length - 1;
 		final StringBuilder b = new StringBuilder();
 		String sep = "";
@@ -73,9 +95,7 @@ public class FunImgInGoalTacTests {
 			sep = ";;";
 			b.append(preds[i]);
 		}
-		b.append("|-");
-		b.append(preds[nbHyps]);
-		return TestLib.genSeq(b.toString());
+		return b.toString();
 	}
 
 	/**
@@ -150,6 +170,36 @@ public class FunImgInGoalTacTests {
 		assertSuccess(pt.getRoot(), funImgGoal(hyp, "0", hyp()));
 	}
 
+	/**
+	 * Ensures that the tactic succeeds using the suitable hyp.
+	 */
+	@Test
+	public void successWithSuitableHyp() {
+		final IProofTree pt = genProofTree(
+				genTypeEnv("f=ℙ(S×T), T=ℙ(T), A=ℙ(T), B=ℙ(T), S=ℙ(S), x=S"),//
+				"f∈S ⇸ A", "f∈S ⇸ B", //
+				"f(x)∈B" // Goal
+		);
+		final Predicate hypA = parsePredicate("f∈S ⇸ A", pt);
+		final Predicate hypB = parsePredicate("f∈S ⇸ B", pt);
+		assertSuccess(pt.getRoot(),
+				funImgGoal(hypA, "0", funImgGoal(hypB, "0", hyp())));
+	}
+
+	/**
+	 * Ensures that the tactic fails when functions in hypotheses does not match
+	 * the set of the goal.
+	 */
+	@Test
+	public void failureWithFunctionalHyps() {
+		final IProofTree pt = genProofTree(
+				genTypeEnv("f=ℙ(S×T), T=ℙ(T), A=ℙ(T), B=ℙ(T), C=ℙ(T), S=ℙ(S), x=S"),//
+				"f∈S ⇸ A", "f∈S ⇸ B", //
+				"f(x)∈C" // Goal
+		);
+		assertFailure(pt.getRoot());
+	}
+	
 	/**
 	 * Ensures that the tactic fails.
 	 */

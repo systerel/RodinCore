@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 
 package org.eventb.internal.core.seqprover.eventbExtensions.tactics;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +26,6 @@ import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 /**
  * This is a collection of static constants and methods that are used in
@@ -37,84 +37,65 @@ public class TacticsLib {
 	/**
 	 * Adds additional hypotheses about function application in the sequent.
 	 * 
-	 * @param ptNode
-	 *            The open proof tree node where the tactic must be applied.
+	 * @param node
+	 *            the open proof tree node where the tactic could apply
 	 * @param pm
-	 *            The proof monitor that monitors the progress of the tactic
-	 *            application.
-	 * @return open proof tree node with additional hypotheses.
+	 *            the proof monitor of the tactic application
+	 * @return an open proof tree node with additional hypotheses relevant for
+	 *         function application in the sequent
 	 */
-	public static IProofTreeNode addFunctionalHypotheses(IProofTreeNode ptNode,
+	public static IProofTreeNode addFunctionalHypotheses(IProofTreeNode node,
 			IProofMonitor pm) {
-		final IProverSequent seq = ptNode.getSequent();
-		final Predicate goal = seq.goal();
-		List<Predicate> inclusionHypotheses = getInclusionHypotheses(seq);
-		final List<IPosition> funAppPositions = findFunAppPositions(goal);
-		for (IPosition funAppPosition : funAppPositions) {
-			final BinaryExpression funApp = (BinaryExpression) goal
-					.getSubFormula(funAppPosition);
-			Predicate neededHyp = searchFunctionalHypotheses(
-					inclusionHypotheses, funApp);
-			if (neededHyp != null) {
-				neededHyp = search(inclusionHypotheses, funApp, neededHyp);
-				if (Tactics.funImgGoal(neededHyp, funAppPosition).apply(ptNode,
-						pm) == null) {
-					ptNode = ptNode.getFirstOpenDescendant();
-					inclusionHypotheses = getInclusionHypotheses(ptNode
-							.getSequent());
-				}
+		final IProverSequent seq = node.getSequent();
+		final List<Predicate> funHyps = searchFunctionalHyps(seq);
+		final List<IPosition> funAppPositions = findFunAppPositions(seq.goal());
+		final FunImgGoalApplier applier = new FunImgGoalApplier(node, pm, funAppPositions);
+		for (Predicate hyp : funHyps) {
+			final IProofTreeNode backtrackNode = applier.getProofTreeNode();
+			if (!applier.apply(hyp)) {
+				backtrackNode.pruneChildren();
 			}
 		}
-		return ptNode;
-	}	
+		return applier.getProofTreeNode();
+	}
 	
 	/**
-	 * Searches hypotheses of the form f(E)∈ S2 in membership hypotheses.
-	 * @param inclusionHypotheses
-	 * 			list of hypotheses with membership.
-	 * @param funApp
-	 * 			a function application
-	 * @param neededHyp
-	 * 			an hypothesis of the form f ∈ S1 op S2
-	 * @return
-	 * 			true iff no hypotheses of the form f(E)∈ S2 have been found.
+	 * Finds function application expressions in a predicate
+	 * 
+	 * @param pred
+	 *            a predicate
+	 * @return list of function application positions
 	 */
-	private static Predicate search(List<Predicate> inclusionHypotheses,
-			BinaryExpression funApp, Predicate neededHyp) {
-		for (Predicate hyp : inclusionHypotheses) {
-			final Expression set = Lib.getSet(hyp);
-			final Expression otherSet = ((BinaryExpression) Lib
-					.getSet(neededHyp)).getRight();
-			if (Lib.getElement(hyp).equals(funApp)
-					&& set.equals(otherSet)) {
-				return null;
+	private static List<IPosition> findFunAppPositions(Predicate pred) {
+		final List<IPosition> funAppPositions = new ArrayList<IPosition>();
+		funAppPositions.addAll(pred.getPositions(new DefaultFilter() {
+			@Override
+			public boolean select(BinaryExpression expression) {
+				return (Lib.isFunApp(expression));
 			}
-		}
-		return neededHyp;
+		}));
+		Lib.removeWDUnstrictPositions(funAppPositions, pred);
+		Collections.reverse(funAppPositions);
+		return funAppPositions;
 	}
 
 	/**
-	 * Finds an hypothesis of the form f ∈ S1 op S2
+	 * Find all hypotheses from the visible hypotheses of the given sequent
+	 * which are of the form f ∈ S1 op S2 where f denotes a function.
 	 * 
-	 * @param inclusionHypotheses
-	 * 			List of hypotheses with membership.
-	 * @param funApp
-	 * 			a function application
-	 * @return
-	 * 		 true iff an hypothesis of the form f ∈ S1 op S2 has been found.
+	 * @return a list of hypotheses the form f ∈ S1 op S2 where f is a function
 	 */
-	private static Predicate searchFunctionalHypotheses(
-			List<Predicate> inclusionHypotheses, BinaryExpression funApp) {
-		for (Predicate hyp : inclusionHypotheses) {
-			final Expression set = Lib.getSet(hyp);
-			final Expression function = Lib.getLeft(funApp);
-			if (Lib.isRel(set) || Lib.isFun(set)) {
-				if (Lib.getElement(hyp).equals(function)) {
-					return hyp;
+	private static List<Predicate> searchFunctionalHyps(IProverSequent seq) {
+		final List<Predicate> functionalHyps = new ArrayList<Predicate>();
+		for (Predicate hyp : seq.visibleHypIterable()) {
+			if (Lib.isInclusion(hyp)) {
+				final Expression set = Lib.getSet(hyp);
+				if (Lib.isRel(set) || Lib.isFun(set)) {
+					functionalHyps.add(hyp);
 				}
 			}
 		}
-		return null;
+		return functionalHyps;
 	}
 
 	/**
@@ -157,40 +138,4 @@ public class TacticsLib {
 		return domPositions;
 	}
 
-	/**
-	 * Finds function application expressions in a predicate
-	 * 
-	 * @param pred
-	 *            a predicate
-	 * @return list of function application positions
-	 */
-	private static List<IPosition> findFunAppPositions(Predicate pred) {
-		final List<IPosition> funAppPositions = new ArrayList<IPosition>();
-		funAppPositions.addAll(pred.getPositions(new DefaultFilter() {
-			@Override
-			public boolean select(BinaryExpression expression) {
-				return (Lib.isFunApp(expression));
-			}
-		}));
-		Lib.removeWDUnstrictPositions(funAppPositions, pred);
-		Collections.reverse(funAppPositions);
-		return funAppPositions;
-	}
-
-	/**
-	 * Creates a list of hypotheses with of the form "element ∈ set"
-	 * 
-	 * @param seq
-	 *            a given sequent
-	 * @return list of hypotheses
-	 */
-	private static List<Predicate> getInclusionHypotheses(IProverSequent seq) {
-		final List<Predicate> inclusionHypothesis = new ArrayList<Predicate>();
-		for (Predicate hyp : seq.visibleHypIterable()) {
-			if (Lib.isInclusion(hyp)) {
-				inclusionHypothesis.add(hyp);
-			}
-		}
-		return inclusionHypothesis;
-	}
 }
