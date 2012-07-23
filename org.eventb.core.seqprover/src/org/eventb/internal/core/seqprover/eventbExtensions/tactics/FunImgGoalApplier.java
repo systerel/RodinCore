@@ -25,9 +25,9 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 /**
- * This class is responsible of saturating the given proof tree node, 
- * with all hypotheses of the form "f(x) ∈ S2" that are computed from the 
- * a given functional hypothesis of the form f ∈ S1 op S2.
+ * This class is responsible of saturating the given proof tree node, with all
+ * hypotheses of the form "f(x) ∈ S2" that are computed from given functional
+ * hypotheses of the form f ∈ S1 op S2.
  */
 public class FunImgGoalApplier {
 
