@@ -24,6 +24,11 @@ import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
+/**
+ * This class is responsible of saturating the given proof tree node, 
+ * with all hypotheses of the form "f(x) ∈ S2" that are computed from the 
+ * a given functional hypothesis of the form f ∈ S1 op S2.
+ */
 public class FunImgGoalApplier {
 
 	private final List<IPosition> positions;
@@ -40,6 +45,15 @@ public class FunImgGoalApplier {
 		this.goal = node.getSequent().goal();
 	}
 
+	/**
+	 * Saturates the hypotheses of the proof tree node by applying successively
+	 * the funImgGoal tactic with the given functional hypothesis.
+	 * 
+	 * @param hyp
+	 *            the functional hypothesis of the form f ∈ S1 op S2 to be used
+	 * @return <code>true</code> if the tactic applied on the current node, or
+	 *         <code>false</code> otherwise.
+	 */
 	public boolean apply(Predicate hyp) {
 		this.currentHyp = hyp;
 		for (IPosition position : positions) {
