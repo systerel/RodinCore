@@ -138,6 +138,19 @@ public class FunImgInGoalTacTests {
 	}
 
 	/**
+	 * Ensures that the tactic succeeds using a relational property.
+	 */
+	@Test
+	public void successWithRelation() {
+		final IProofTree pt = genProofTree(//
+				"f ∈ ℤ↔ℤ", //
+				"f(x) ∈ ℤ" //
+		);
+		final Predicate hyp = parsePredicate("f ∈ ℤ↔ℤ", pt);
+		assertSuccess(pt.getRoot(), funImgGoal(hyp, "0", hyp()));
+	}
+
+	/**
 	 * Ensures that the tactic fails.
 	 */
 	@Test
