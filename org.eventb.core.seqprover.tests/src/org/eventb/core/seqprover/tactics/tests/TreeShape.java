@@ -15,7 +15,6 @@ import static org.eventb.core.seqprover.SequentProver.getReasonerRegistry;
 import static org.eventb.core.seqprover.tactics.BasicTactics.reasonerTac;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -649,7 +648,10 @@ public abstract class TreeShape {
 	
 	public static void assertSuccess(IProofTreeNode node, TreeShape expected,
 			ITactic tactic) {
-		assertNull(tactic.apply(node, null));
+		final Object result = tactic.apply(node, null);
+		if (result != null) {
+			fail(result.toString());
+		}
 		assertRulesApplied(node, expected);
 	}
 
