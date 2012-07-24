@@ -14,21 +14,15 @@ import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgGoal;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.hyp;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.isFunGoal;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.junit.Test;
 
 public class FunImgInGoalTacTests extends AbstractTacticTests {
 
-	private static final String TAC_ID = "org.eventb.core.seqprover.FunImgInGoalTac";
-	private static final ITactic tac = new AutoTactics.FunImgInGoalTac();
-
-	private static final FormulaFactory ff = FormulaFactory.getDefault();
-
 	public FunImgInGoalTacTests() {
-		super(tac, TAC_ID);
+		super(new AutoTactics.FunImgInGoalTac(),
+				"org.eventb.core.seqprover.FunImgInGoalTac");
 	}
 
 	/**
@@ -47,11 +41,11 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void successWithDoubleFunApp() {
-		setTypeEnvironment(ff, "y=ℤ");
+		addToTypeEnvironment("y=ℤ");
 		final Predicate hyp1 = parsePredicate("f ∈ ℤ→(ℤ→(ℤ → ℤ))");
 		final Predicate hyp2 = parsePredicate("f(y) ∈ ℤ→(ℤ → ℤ)");
 		assertSuccess("f ∈ ℤ→(ℤ→(ℤ → ℤ)) |- f(y)(x)∈ℤ ⇸ ℤ",
-				funImgGoal(hyp1, "0.0", funImgGoal(hyp2, "0", (isFunGoal()))));
+				funImgGoal(hyp1, "0.0", funImgGoal(hyp2, "0", isFunGoal())));
 	}
 
 	/**
@@ -78,7 +72,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void successWithSuitableHyp() {
-		setTypeEnvironment(ff, "S=ℙ(S), T=ℙ(T), f=S↔T");
+		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
 		final Predicate hypA = parsePredicate("f∈S ⇸ A");
 		final Predicate hypB = parsePredicate("f∈S ⇸ B");
 		assertSuccess("f∈S ⇸ A ;; f∈S ⇸ B |- f(x)∈B",
@@ -91,7 +85,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void failureWithFunctionalHyps() {
-		setTypeEnvironment(ff, "S=ℙ(S), T=ℙ(T), f=S↔T");
+		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
 		assertFailure("f∈S ⇸ A ;; f∈S ⇸ B |- f(x)∈C");
 	}
 

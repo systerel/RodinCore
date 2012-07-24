@@ -41,13 +41,14 @@ public abstract class AbstractTacticTests {
 
 	private final ITactic tactic;
 	private final String tacticId;
-	protected ITypeEnvironment typenv;
+	protected FormulaFactory ff;
 	protected DLib dl;
+	protected ITypeEnvironment typenv;
 
 	public AbstractTacticTests(ITactic tactic, String tacticId) {
 		this.tactic = tactic;
 		this.tacticId = tacticId;
-		setTypeEnvironment(FormulaFactory.getDefault(), "");
+		setFormulaFactory(FormulaFactory.getDefault());
 	}
 
 	/**
@@ -62,23 +63,34 @@ public abstract class AbstractTacticTests {
 	}
 
 	/**
-	 * Defines the type environment for this test.
+	 * Defines the mathematical language for this test.
 	 * 
 	 * @param ff
-	 *            mathematical language
-	 * @param typeEnvImage
-	 *            string representation of the type environment
+	 *            formula factory of the mathematical language to use
 	 */
-	protected void setTypeEnvironment(FormulaFactory ff, String typeEnvImage) {
-		typenv = TestLib.genTypeEnv(typeEnvImage, ff);
-		this.dl = mDLib(typenv.getFormulaFactory());
+	protected void setFormulaFactory(FormulaFactory ff) {
+		this.ff = ff;
+		this.dl = mDLib(ff);
+		this.typenv = ff.makeTypeEnvironment();
+	}
+
+	/**
+	 * Completes the type environment for this test. The type environment
+	 * defined by the parameter is added to this test type environment
+	 * 
+	 * @param typeEnvImage
+	 *            string representation of some type environment
+	 */
+	protected void addToTypeEnvironment(String typeEnvImage) {
+		final ITypeEnvironment newTypenv = TestLib.genTypeEnv(typeEnvImage, ff);
+		typenv.addAll(newTypenv);
 	}
 
 	/**
 	 * Parses the predicate using the current factory and checks its type using
 	 * the current type environment.
 	 */
-	public Predicate parsePredicate(String predStr) {
+	protected Predicate parsePredicate(String predStr) {
 		final Predicate pred = dl.parsePredicate(predStr);
 		final ITypeCheckResult tcResult = pred.typeCheck(typenv);
 		assertFalse(tcResult.toString(), tcResult.hasProblem());
@@ -91,7 +103,7 @@ public abstract class AbstractTacticTests {
 	 * that the tactic is successfully applied, and verifies that the output
 	 * proof tree shape.
 	 */
-	public void assertSuccess(String sequentImage, TreeShape expected) {
+	protected void assertSuccess(String sequentImage, TreeShape expected) {
 		TacticTestUtils.assertSuccess(genSeq(sequentImage), expected, tactic);
 	}
 
@@ -100,7 +112,7 @@ public abstract class AbstractTacticTests {
 	 * that the tactic is not applied, and verifies that the proof tree is not
 	 * modified.
 	 */
-	public void assertFailure(String sequentImage) {
+	protected void assertFailure(String sequentImage) {
 		TacticTestUtils.assertFailure(genSeq(sequentImage), tactic);
 	}
 
