@@ -65,6 +65,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunAppInDomGoalTac;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunImgGoalApplier;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.InDomGoalManager;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MapOvrGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MembershipGoalTac;
@@ -238,8 +239,9 @@ public class AutoTactics {
 			if (!checkPrecondition(goal)) {
 				return "Tactic unapplicable";
 			}
-			final IProofTreeNode ptNode = TacticsLib.addFunctionalHypotheses(
-					initialNode, pm);
+			final FunImgGoalApplier applier = new FunImgGoalApplier(initialNode, pm);
+			applier.saturate();
+			final IProofTreeNode ptNode = applier.getProofTreeNode();
 			if (pm != null && pm.isCanceled()) {
 				return "Canceled";
 			}
@@ -279,8 +281,10 @@ public class AutoTactics {
 			if (pm != null && pm.isCanceled()) {
 				return "Canceled";
 			}
-			final IProofTreeNode ptNode = TacticsLib.addFunctionalHypotheses(
+			final FunImgGoalApplier applier = new FunImgGoalApplier(
 					initialNode, pm);
+			applier.saturate();
+			final IProofTreeNode ptNode = applier.getProofTreeNode();
 			final ITactic tac = composeUntilSuccess(hypTac, funGoalTac);
 			if (tac.apply(ptNode, pm) == null) {
 				return null;

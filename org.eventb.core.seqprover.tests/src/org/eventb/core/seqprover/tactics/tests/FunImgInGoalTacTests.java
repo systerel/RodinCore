@@ -88,6 +88,59 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
 		assertFailure("f∈S ⇸ A ;; f∈S ⇸ B |- f(x)∈C");
 	}
+	
+	/**
+	 * Ensures that the tactic succeeds when the goal contains nested
+	 * applications of the same function.
+	 */
+	@Test
+	public void successWithNestedFunAppsInGoal() {
+		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔S");
+		final Predicate hypA = parsePredicate("f∈S ⇸ A");
+		assertSuccess(
+				"f∈S ⇸ A |- f(f(x))∈A",
+				funImgGoal(hypA, "0.1",
+						funImgGoal(hypA, "0", hyp())));
+	}
+
+	/**
+	 * Ensures that the tactic succeeds when the goal contains two successive
+	 * applications of the same function but to different arguments.
+	 */
+	@Test
+	public void successWithSuccessiveFunAppsInGoal() {
+		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
+		final Predicate hypA = parsePredicate("f∈S ⇸ {f(a)}");
+		assertSuccess("f∈S ⇸ {f(a)} |- f(x)∈{f(a)}",
+				funImgGoal(hypA, "1.0", funImgGoal(hypA, "0", hyp())));
+	}
+
+	/**
+	 * Ensures that the tactic succeeds when the goal contains two successive
+	 * applications of the same function but to different arguments, and the
+	 * first is deeper than the second.
+	 */
+	@Test
+	public void successWithSuccessiveFunAppsFirstDeeper() {
+		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), U=ℙ(U), f=S↔(T↔U)");
+		final Predicate hypA = parsePredicate("f∈S ⇸ (T↔ran(f(a)))");
+		final Predicate hypB = parsePredicate("f(a)∈T↔ran(f(a))");
+		assertSuccess("f∈S ⇸ (T↔ran(f(a))) |- f(a)(b)∈ran(f(a))",
+				funImgGoal(hypA, "1.0", funImgGoal(hypA, "0.0", funImgGoal(hypB, "0", hyp()))));
+	}
+
+	/**
+	 * Ensures that the tactic succeeds when the goal contains two successive
+	 * applications of the same function but to different arguments, and the
+	 * second is deeper than the first.
+	 */
+	@Test
+	public void successWithSuccessiveFunAppsSecondDeeper() {
+		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), U=ℙ(U), f=S↔(T↔U)");
+		final Predicate hypA = parsePredicate("f∈S ⇸ {{a↦f(b)(c)}}");
+		assertSuccess("f∈S ⇸ {{a↦f(b)(c)}} |- f(b)∈{{a↦f(b)(c)}}",
+				funImgGoal(hypA, "1.0.0.1.0", funImgGoal(hypA, "0", hyp())));
+	}
 
 	/**
 	 * Ensures that the tactic fails.
