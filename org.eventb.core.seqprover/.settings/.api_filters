@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eventb.core.seqprover" version="2">
+    <resource path="src/org/eventb/core/seqprover/eventbExtensions/AutoTactics.java" type="org.eventb.core.seqprover.eventbExtensions.AutoTactics$FunImgInGoalTac">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.seqprover.eventbExtensions.AutoTactics.FunImgInGoalTac"/>
+                <message_argument value="apply(IProofTreeNode, IProofMonitor)"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="attemptProof(IProofTreeNode, IProofMonitor)"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="isApplicable(Predicate)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eventb/core/seqprover/eventbExtensions/AutoTactics.java" type="org.eventb.core.seqprover.eventbExtensions.AutoTactics$InDomGoalTac">
+        <filter id="338792546">
+            <message_arguments>
+                <message_argument value="org.eventb.core.seqprover.eventbExtensions.AutoTactics.InDomGoalTac"/>
+                <message_argument value="apply(IProofTreeNode, IProofMonitor)"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="attemptProof(IProofTreeNode, IProofMonitor)"/>
+            </message_arguments>
+        </filter>
+        <filter id="1143996420">
+            <message_arguments>
+                <message_argument value="isApplicable(Predicate)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

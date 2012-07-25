@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.BinaryPredicate;
+import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
@@ -42,6 +43,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
@@ -65,12 +67,11 @@ import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunAppInDomGoalTac;
-import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunImgGoalApplier;
+import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunImageGoalAttempt;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.InDomGoalManager;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MapOvrGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.MembershipGoalTac;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.NNFRewritesOnceTac;
-import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TacticsLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TDomToCprod.TotalDomToCProdTac;
 
 
@@ -229,37 +230,66 @@ public class AutoTactics {
 	 * value of which is known.
 	 * 
 	 * @since 2.0
+	 * @noextend This class is not intended to be subclassed by clients.
 	 */
-	public static class InDomGoalTac implements ITactic {
+	public static class InDomGoalTac extends FunImageGoalAttempt {
 
-		public Object apply(IProofTreeNode initialNode, IProofMonitor pm) {
+		// Returns true if goal has syntactic form "E: dom(F)"
+		@Override
+		protected boolean isApplicable(Predicate goal) {
+			final Expression element = Lib.getSet(goal);
+			return element != null && Lib.isDom(element);
+		}
 
-			final IProverSequent sequent = initialNode.getSequent();
-			final Predicate goal = sequent.goal();
-			if (!checkPrecondition(goal)) {
-				return "Tactic unapplicable";
-			}
-			final FunImgGoalApplier applier = new FunImgGoalApplier(initialNode, pm);
-			applier.saturate();
-			final IProofTreeNode ptNode = applier.getProofTreeNode();
-			if (pm != null && pm.isCanceled()) {
-				return "Canceled";
-			}
-			final InDomGoalManager manager = TacticsLib
-					.createInDomManager(goal);
-			if (manager.isApplicable(ptNode)) {
-				if (manager.applyTactics(ptNode, pm) == null) {
+		public Object attemptProof(IProofTreeNode node, IProofMonitor pm) {
+			final Predicate goal = node.getSequent().goal();
+			final InDomGoalManager manager = createInDomManager(goal);
+			if (manager.isApplicable(node)) {
+				if (manager.applyTactics(node, pm) == null) {
 					return null;
 				}
 			}
-			initialNode.pruneChildren();
-			return "Tactic fails";
+			return "Tactic failed";
 		}
 
-		// Returns true if goal has syntactic form "E: dom(F)"
-		private static boolean checkPrecondition(Predicate goal) {
-			final Expression element = Lib.getSet(goal);
-			return element != null && Lib.isDom(element);
+		/**
+		 * Creates an instance of InDomManager for the first domain occurrence in
+		 * the given goal.
+		 * <p>
+		 * The given goal MUST have at least one occurrence of a domain. In case
+		 * several occurrences are found, the first one is considered.
+		 * </p>
+		 * 
+		 * @param goal
+		 *            Goal of the sequent
+		 * @return a set of InDomManager
+		 */
+		private InDomGoalManager createInDomManager(final Predicate goal) {
+			final List<IPosition> domPositions = findDomExpression(goal);
+			assert !domPositions.isEmpty();
+			final UnaryExpression domExpr = ((UnaryExpression) goal
+						.getSubFormula(domPositions.get(0)));
+			final InDomGoalManager inDomMng = new InDomGoalManager(domExpr,
+					domPositions.get(0));
+			return inDomMng;
+		}
+
+		/**
+		 * Finds total domain expressions in a predicate
+		 * 
+		 * @param pred
+		 *            a predicate
+		 * @return list of total domain expression positions
+		 */
+		private List<IPosition> findDomExpression(Predicate pred) {
+			final List<IPosition> domPositions = pred.getPositions(new DefaultFilter() {
+				@Override
+				public boolean select(UnaryExpression expression) {
+					return (Lib.isDom(expression) && expression.isWellFormed());
+				}
+			});
+			Lib.removeWDUnstrictPositions(domPositions, pred);
+			return domPositions;
 		}
 
 	}
@@ -267,35 +297,27 @@ public class AutoTactics {
 	/**
 	 * Discharges any sequent whose goal denotes that a functional image belongs
 	 * to a set when this can be derived from the function properties.
+	 * 
 	 * @since 2.0
+	 * @noextend This class is not intended to be subclassed by clients.
 	 */
-	public static class FunImgInGoalTac implements ITactic {
+	public static class FunImgInGoalTac extends FunImageGoalAttempt {
 
 		private static final ITactic hypTac = new GoalInHypTac();
 		private static final ITactic funGoalTac = new FunGoalTac();
 
-		public Object apply(final IProofTreeNode initialNode, IProofMonitor pm) {
-			if (!checkPrecondition(initialNode)) {
-				return "Tactic unapplicable";
-			}
-			if (pm != null && pm.isCanceled()) {
-				return "Canceled";
-			}
-			final FunImgGoalApplier applier = new FunImgGoalApplier(
-					initialNode, pm);
-			applier.saturate();
-			final IProofTreeNode ptNode = applier.getProofTreeNode();
+		@Override
+		public Object attemptProof(IProofTreeNode node, IProofMonitor pm) {
 			final ITactic tac = composeUntilSuccess(hypTac, funGoalTac);
-			if (tac.apply(ptNode, pm) == null) {
+			if (tac.apply(node, pm) == null) {
 				return null;
 			}
-			initialNode.pruneChildren();
-			return "Tactic fails";
+			return "Tactic failed";
 		}
 
 		// Returns true if goal has syntactic form "E(F) : S"
-		private static boolean checkPrecondition(IProofTreeNode node) {
-			final Predicate goal = node.getSequent().goal();
+		@Override
+		protected boolean isApplicable(Predicate goal) {
 			final Expression element = Lib.getElement(goal);
 			return element != null && Lib.isFunApp(element);
 		}
