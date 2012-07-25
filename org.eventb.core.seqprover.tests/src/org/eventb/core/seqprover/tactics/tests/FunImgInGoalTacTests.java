@@ -80,16 +80,6 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	}
 
 	/**
-	 * Ensures that the tactic fails when functions in hypotheses does not match
-	 * the set of the goal.
-	 */
-	@Test
-	public void failureWithFunctionalHyps() {
-		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
-		assertFailure("f∈S ⇸ A ;; f∈S ⇸ B |- f(x)∈C");
-	}
-	
-	/**
 	 * Ensures that the tactic succeeds when the goal contains nested
 	 * applications of the same function.
 	 */
@@ -97,10 +87,8 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	public void successWithNestedFunAppsInGoal() {
 		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔S");
 		final Predicate hypA = parsePredicate("f∈S ⇸ A");
-		assertSuccess(
-				"f∈S ⇸ A |- f(f(x))∈A",
-				funImgGoal(hypA, "0.1",
-						funImgGoal(hypA, "0", hyp())));
+		assertSuccess("f∈S ⇸ A |- f(f(x))∈A",
+				funImgGoal(hypA, "0.1", funImgGoal(hypA, "0", hyp())));
 	}
 
 	/**
@@ -125,8 +113,10 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), U=ℙ(U), f=S↔(T↔U)");
 		final Predicate hypA = parsePredicate("f∈S ⇸ (T↔ran(f(a)))");
 		final Predicate hypB = parsePredicate("f(a)∈T↔ran(f(a))");
-		assertSuccess("f∈S ⇸ (T↔ran(f(a))) |- f(a)(b)∈ran(f(a))",
-				funImgGoal(hypA, "1.0", funImgGoal(hypA, "0.0", funImgGoal(hypB, "0", hyp()))));
+		assertSuccess(
+				"f∈S ⇸ (T↔ran(f(a))) |- f(a)(b)∈ran(f(a))",
+				funImgGoal(hypA, "1.0",
+						funImgGoal(hypA, "0.0", funImgGoal(hypB, "0", hyp()))));
 	}
 
 	/**
@@ -149,6 +139,16 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	public void failure() {
 		assertFailure("f ∈ ℤ→(ℤ→(ℤ → ℤ)) ;;"
 				+ "f(y)(x) ∈ ℤ → ℤ |- g(y)(x) ∈ ℤ → ℤ");
+	}
+
+	/**
+	 * Ensures that the tactic fails when functions in hypotheses does not match
+	 * the set of the goal.
+	 */
+	@Test
+	public void failureWithFunctionalHyps() {
+		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
+		assertFailure("f∈S ⇸ A ;; f∈S ⇸ B |- f(x)∈C");
 	}
 
 }
