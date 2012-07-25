@@ -950,6 +950,19 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 
 	/**
+	 * Returns the combination of some objects' hash codes.
+	 * 
+	 * @param xs
+	 *            some objects
+	 * @param ys
+	 *            some objects
+	 * @return a combination of the objects' hash codes
+	 */
+	protected static int combineHashCodes(Object[] xs, Object[] ys) {
+		return combineHashCodes(combineHashCodes(xs), combineHashCodes(ys));
+	}
+
+	/**
 	 * Returns the combination of some formulas' hash codes.
 	 * 
 	 * @param formulas

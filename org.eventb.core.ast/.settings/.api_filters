@@ -132,6 +132,11 @@
         </filter>
     </resource>
     <resource path="src/org/eventb/core/ast/Formula.java" type="org.eventb.core.ast.Formula">
+        <filter comment="Workaround bug in API tooling" id="1143996420">
+            <message_arguments>
+                <message_argument value="combineHashCodes(Object[], Object[])"/>
+            </message_arguments>
+        </filter>
         <filter comment="The @since tag is not missing as the rewrite method replaces an unpublished rewrite method." id="1143996420">
             <message_arguments>
                 <message_argument value="rewrite(ITypeCheckingRewriter)"/>
