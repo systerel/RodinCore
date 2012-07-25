@@ -18,7 +18,6 @@ package org.eventb.core.ast;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
@@ -185,11 +184,6 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		names.add(name);
 	}
 	
-	@Override
-	protected BoundIdentDecl bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		return this;
-	}
-
 	@Override
 	protected BoundIdentDecl getTypedThis() {
 		return this;

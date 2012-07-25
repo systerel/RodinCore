@@ -18,7 +18,6 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.extension.StandardGroup.RELOP_PRED;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -338,16 +337,6 @@ public class RelationalPredicate extends Predicate {
 		right.collectNamesAbove(names, boundNames, offset);
 	}
 	
-	@Override
-	protected Predicate bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		Expression newLeft = left.bindTheseIdents(binding, offset, factory);
-		Expression newRight = right.bindTheseIdents(binding, offset, factory);
-		if (newLeft == left && newRight == right) {
-			return this;
-		}
-		return factory.makeRelationalPredicate(getTag(), newLeft, newRight, getSourceLocation());
-	}
-
 	@Override
 	public boolean accept(IVisitor visitor) {
 		boolean goOn = true;

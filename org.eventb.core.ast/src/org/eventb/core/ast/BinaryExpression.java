@@ -29,7 +29,6 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RBRAC
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.RPAR;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -658,16 +657,6 @@ public class BinaryExpression extends Expression {
 		right.collectNamesAbove(names, boundNames, offset);
 	}
 	
-	@Override
-	protected Expression bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		Expression newLeft = left.bindTheseIdents(binding, offset, factory);
-		Expression newRight = right.bindTheseIdents(binding, offset, factory);
-		if (newLeft == left && newRight == right) {
-			return this;
-		}
-		return factory.makeBinaryExpression(getTag(), newLeft, newRight, getSourceLocation());
-	}
-
 	@Override
 	public boolean accept(IVisitor visitor) {
 		boolean goOn = true;

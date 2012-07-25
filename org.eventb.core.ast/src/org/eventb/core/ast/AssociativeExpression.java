@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -427,20 +426,6 @@ public class AssociativeExpression extends Expression {
 		for (Expression child: children) {
 			child.collectNamesAbove(names, boundNames, offset);
 		}
-	}
-
-	@Override
-	protected Expression bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		boolean changed = false;
-		Expression[] newChildren = new Expression[children.length];
-		for (int i = 0; i < children.length; i++) {
-			newChildren[i] = children[i].bindTheseIdents(binding, offset, factory);
-			changed |= newChildren[i] != children[i];
-		}
-		if (! changed) {
-			return this;
-		}
-		return factory.makeAssociativeExpression(getTag(), newChildren, getSourceLocation());
 	}
 
 	@Override

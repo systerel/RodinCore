@@ -14,8 +14,6 @@ package org.eventb.core.ast;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
-
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IntStack;
@@ -103,14 +101,6 @@ public abstract class Assignment extends Formula<Assignment> {
 		}
 	}
 	
-	@Override
-	protected final Assignment bindTheseIdents(Map<String, Integer> binding, int offset,
-			FormulaFactory factory) {
-		// Should never happen
-		assert false;
-		return this;
-	}
-
 	@Override
 	protected final boolean solveType(TypeUnifier unifier) {
 		if (isTypeChecked()) {

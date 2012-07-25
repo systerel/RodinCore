@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -332,16 +331,6 @@ public class QuantifiedPredicate extends Predicate {
 	protected void collectNamesAbove(Set<String> names, String[] boundNames, int offset) {
 		final int newOffset = offset + quantifiedIdentifiers.length;
 		pred.collectNamesAbove(names, boundNames, newOffset);
-	}
-
-	@Override
-	protected Predicate bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		final int newOffset = offset + quantifiedIdentifiers.length; 
-		Predicate newPred = pred.bindTheseIdents(binding, newOffset, factory);
-		if (newPred == pred) {
-			return this;
-		}
-		return factory.makeQuantifiedPredicate(getTag(), quantifiedIdentifiers, newPred, getSourceLocation());
 	}
 
 	@Override

@@ -23,7 +23,6 @@ import static org.eventb.core.ast.extension.StandardGroup.UNARY_RELATION;
 
 import java.math.BigInteger;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -503,15 +502,6 @@ public class UnaryExpression extends Expression {
 		child.collectNamesAbove(names, boundNames, offset);
 	}
 	
-	@Override
-	protected Expression bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		Expression newChild = child.bindTheseIdents(binding, offset, factory);
-		if (newChild == child) {
-			return this;
-		}
-		return factory.makeUnaryExpression(getTag(), newChild, getSourceLocation());
-	}
-
 	@Override
 	@SuppressWarnings("deprecation")
 	public boolean accept(IVisitor visitor) {

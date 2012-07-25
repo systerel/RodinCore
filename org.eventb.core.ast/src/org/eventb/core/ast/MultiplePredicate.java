@@ -19,7 +19,6 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PARTI
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -255,20 +254,6 @@ public class MultiplePredicate extends Predicate {
 		for (Expression child: children) {
 			child.collectNamesAbove(names, boundNames, offset);
 		}
-	}
-
-	@Override
-	protected Predicate bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		boolean changed = false;
-		Expression[] newChildren = new Expression[children.length];
-		for (int i = 0; i < children.length; i++) {
-			newChildren[i] = children[i].bindTheseIdents(binding, offset, factory);
-			changed |= newChildren[i] != children[i];
-		}
-		if (!changed) {
-			return this;
-		}
-		return factory.makeMultiplePredicate(getTag(), newChildren,	getSourceLocation());
 	}
 
 	@Override

@@ -17,7 +17,6 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_
 import static org.eventb.internal.core.parser.SubParsers.PRED_VAR_SUBPARSER;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
@@ -142,12 +141,6 @@ public class PredicateVariable extends Predicate {
 	protected void collectNamesAbove(Set<String> names, String[] boundNames,
 			int offset) {
 		// Nothing to collect
-	}
-
-	@Override
-	protected Predicate bindTheseIdents(Map<String, Integer> binding,
-			int offset, FormulaFactory factory) {
-		return this;
 	}
 
 	@Override

@@ -20,7 +20,6 @@ import static org.eventb.internal.core.parser.SubParsers.INTLIT_SUBPARSER;
 
 import java.math.BigInteger;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
@@ -141,11 +140,6 @@ public class IntegerLiteral extends Expression {
 	@Override
 	protected void collectNamesAbove(Set<String> names, String[] boundNames, int offset) {
 		// Nothing to do
-	}
-	
-	@Override
-	protected Expression bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		return this;
 	}
 	
 	@Override

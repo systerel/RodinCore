@@ -19,7 +19,6 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -216,15 +215,6 @@ public class SimplePredicate extends Predicate {
 	@Override
 	protected void collectNamesAbove(Set<String> names, String[] boundNames, int offset) {
 		child.collectNamesAbove(names, boundNames, offset);
-	}
-	
-	@Override
-	protected Predicate bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		Expression newChild = child.bindTheseIdents(binding, offset, factory);
-		if (newChild == child) {
-			return this;
-		}
-		return factory.makeSimplePredicate(getTag(), newChild, getSourceLocation());
 	}
 	
 	@Override

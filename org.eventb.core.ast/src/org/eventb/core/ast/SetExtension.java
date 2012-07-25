@@ -21,7 +21,6 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRAC
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -298,20 +297,6 @@ public class SetExtension extends Expression {
 		for (Expression member: members) {
 			member.collectNamesAbove(names, boundNames, offset);
 		}
-	}
-
-	@Override
-	protected Expression bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		boolean changed = false;
-		Expression[] newMembers = new Expression[members.length];
-		for (int i = 0; i < members.length; i++) {
-			newMembers[i] = members[i].bindTheseIdents(binding, offset, factory);
-			changed |= newMembers[i] != members[i];
-		}
-		if (! changed) {
-			return this;
-		}
-		return factory.makeSetExtension(newMembers, getSourceLocation());
 	}
 
 	@Override

@@ -18,7 +18,6 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -192,11 +191,6 @@ public class LiteralPredicate extends Predicate {
 		// Nothing to do
 	}
 	
-	@Override
-	protected Predicate bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		return this;
-	}
-
 	@Override
 	public boolean accept(IVisitor visitor) {
 		switch (getTag()) {

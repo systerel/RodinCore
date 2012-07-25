@@ -15,7 +15,6 @@
 package org.eventb.core.ast;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
@@ -174,18 +173,6 @@ public class BoundIdentifier extends Identifier {
 		}
 	}
 	
-	@Override
-	protected Expression bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		if (boundIndex < offset) {
-			//  Tightly bound so not changed
-			return this;
-		}
-		return factory.makeBoundIdentifier(
-				boundIndex + binding.size(), 
-				getSourceLocation(),
-				getType());
-	}
-
 	@Override
 	public boolean accept(IVisitor visitor) {
 		return visitor.visitBOUND_IDENT(this);

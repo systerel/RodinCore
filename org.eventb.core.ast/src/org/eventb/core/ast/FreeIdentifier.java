@@ -16,7 +16,6 @@
 package org.eventb.core.ast;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
@@ -232,19 +231,6 @@ public class FreeIdentifier extends Identifier {
 	@Override
 	protected void collectNamesAbove(Set<String> names, String[] boundNames, int offset) {
 		names.add(name);
-	}
-	
-	@Override
-	protected Expression bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		Integer index = binding.get(name);
-		if (index == null) {
-			// Not in the binding, so should remain free, so no change.
-			return this;
-		}
-		return factory.makeBoundIdentifier(
-				index + offset, 
-				getSourceLocation(),
-				getType());
 	}
 	
 	@Override

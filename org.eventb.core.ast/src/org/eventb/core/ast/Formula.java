@@ -1658,28 +1658,6 @@ public abstract class Formula<T extends Formula<T>> {
 	protected abstract T getTypedThis();
 
 	/**
-	 * Returns a copy of this formula where the specified binding has been
-	 * applied.
-	 * <p>
-	 * The <code>offset</code> parameter contains the number of quantifiers
-	 * that lie between the root of the formula and this node.
-	 * </p>
-	 * <p>
-	 * This operation is not supported by assignments.
-	 * </p>
-	 *
-	 * @param binding
-	 *            binding to use
-	 * @param offset
-	 *            offset introduced by intermediate quantifiers
-	 * @param factory
-	 *            formula factory to use for building the result
-	 * @return a copy of this formula with the specified binding applied
-	 */
-	protected abstract T bindTheseIdents(Map<String, Integer> binding,
-			int offset, FormulaFactory factory);
-
-	/**
 	 * Applies the given assignment to this formula.
 	 * <p>
 	 * This method builds a new formula where each occurrence of a free

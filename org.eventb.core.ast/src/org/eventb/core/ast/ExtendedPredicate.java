@@ -22,7 +22,6 @@ import static org.eventb.internal.core.ast.extension.ArityCoverage.ONE_OR_MORE;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExtendedFormula;
@@ -266,30 +265,6 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 			int offset) {
 		ExtensionHelper.collectNamesAbove(names, boundNames, offset,
 				childExpressions, childPredicates);
-	}
-
-	// FIXME copy/paste from ExtendedExpression
-	@Override
-	protected Predicate bindTheseIdents(Map<String, Integer> binding,
-			int offset, FormulaFactory factory) {
-		boolean changed = false;
-		Expression[] newChildExpressions = new Expression[childExpressions.length];
-		for (int i = 0; i < childExpressions.length; i++) {
-			newChildExpressions[i] = childExpressions[i].bindTheseIdents(
-					binding, offset, factory);
-			changed |= newChildExpressions[i] != childExpressions[i];
-		}
-		Predicate[] newChildPredicates = new Predicate[childPredicates.length];
-		for (int i = 0; i < childPredicates.length; i++) {
-			newChildPredicates[i] = childPredicates[i].bindTheseIdents(binding,
-					offset, factory);
-			changed |= newChildPredicates[i] != childPredicates[i];
-		}
-		if (!changed) {
-			return this;
-		}
-		return factory.makeExtendedPredicate(extension, newChildExpressions,
-				newChildPredicates, getSourceLocation());
 	}
 
 	// TODO everywhere, we consider expressions first, then predicates

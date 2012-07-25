@@ -18,7 +18,6 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.extension.StandardGroup.INFIX_PRED;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -247,16 +246,6 @@ public class BinaryPredicate extends Predicate {
 		right.collectNamesAbove(names, boundNames, offset);
 	}
 	
-	@Override
-	protected Predicate bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		Predicate newLeft = left.bindTheseIdents(binding, offset, factory);
-		Predicate newRight = right.bindTheseIdents(binding, offset, factory);
-		if (newLeft == left && newRight == right) {
-			return this;
-		}
-		return factory.makeBinaryPredicate(getTag(), newLeft, newRight, getSourceLocation());
-	}
-
 	@Override
 	public boolean accept(IVisitor visitor) {
 		boolean goOn = true;

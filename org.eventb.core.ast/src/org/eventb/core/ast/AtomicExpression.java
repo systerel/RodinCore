@@ -19,7 +19,6 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_EXPR;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -354,11 +353,6 @@ public class AtomicExpression extends Expression {
 		// Nothing to do
 	}
 	
-	@Override
-	protected Expression bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		return this;
-	}
-
 	@Override
 	public boolean accept(IVisitor visitor) {
 		switch (getTag()) {

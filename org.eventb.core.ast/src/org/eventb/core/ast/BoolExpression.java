@@ -18,7 +18,6 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.extension.StandardGroup.BOOL_EXPR;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -205,15 +204,6 @@ public class BoolExpression extends Expression {
 		child.collectNamesAbove(names, boundNames, offset);
 	}
 	
-	@Override
-	protected Expression bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		Predicate newChild = child.bindTheseIdents(binding, offset, factory);
-		if (newChild == child) {
-			return this;
-		}
-		return factory.makeBoolExpression(newChild, getSourceLocation());
-	}
-
 	@Override
 	public boolean accept(IVisitor visitor) {
 		boolean goOn = true;

@@ -18,7 +18,6 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.extension.StandardGroup.NOT_PRED;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.StandardGroup;
@@ -213,15 +212,6 @@ public class UnaryPredicate extends Predicate {
 		child.collectNamesAbove(names, boundNames, offset);
 	}
 	
-	@Override
-	protected Predicate bindTheseIdents(Map<String, Integer> binding, int offset, FormulaFactory factory) {
-		Predicate newChild = child.bindTheseIdents(binding, offset, factory);
-		if (newChild == child) {
-			return this;
-		}
-		return factory.makeUnaryPredicate(getTag(), newChild, getSourceLocation());
-	}
-
 	@Override
 	public boolean accept(IVisitor visitor) {
 		boolean goOn = true;
