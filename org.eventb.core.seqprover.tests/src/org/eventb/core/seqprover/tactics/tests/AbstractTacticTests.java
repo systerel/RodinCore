@@ -12,17 +12,21 @@ package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.eventb.core.seqprover.tests.TestLib.genFullSeq;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.junit.Test;
@@ -97,6 +101,18 @@ public abstract class AbstractTacticTests {
 		assertTrue(pred.isTypeChecked());
 		return pred;
 	}
+	
+    /**
+     * Parses the expression using the current factory and checks its type using
+     * the current type environment.
+     */
+    protected Expression parseExpression(String exprStr) {
+        final Expression expr = dl.parseExpression(exprStr);
+        final ITypeCheckResult tcResult = expr.typeCheck(typenv);
+        assertFalse(tcResult.toString(), tcResult.hasProblem());
+        assertTrue(expr.isTypeChecked());
+        return expr;
+    }  
 
 	/**
 	 * Generates the sequent corresponding to the given sequent image, checks
