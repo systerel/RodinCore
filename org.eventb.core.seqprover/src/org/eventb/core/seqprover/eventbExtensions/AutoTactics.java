@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
@@ -243,53 +242,16 @@ public class AutoTactics {
 
 		public Object attemptProof(IProofTreeNode node, IProofMonitor pm) {
 			final Predicate goal = node.getSequent().goal();
-			final InDomGoalManager manager = createInDomManager(goal);
+			final UnaryExpression domExpr = (UnaryExpression) Lib.getSet(goal);
+			final IPosition domPos = IPosition.ROOT.getChildAtIndex(1);
+			final InDomGoalManager manager = new InDomGoalManager(domExpr,
+					domPos);
 			if (manager.isApplicable(node)) {
 				if (manager.applyTactics(node, pm) == null) {
 					return null;
 				}
 			}
 			return "Tactic failed";
-		}
-
-		/**
-		 * Creates an instance of InDomManager for the first domain occurrence in
-		 * the given goal.
-		 * <p>
-		 * The given goal MUST have at least one occurrence of a domain. In case
-		 * several occurrences are found, the first one is considered.
-		 * </p>
-		 * 
-		 * @param goal
-		 *            Goal of the sequent
-		 * @return a set of InDomManager
-		 */
-		private InDomGoalManager createInDomManager(final Predicate goal) {
-			final List<IPosition> domPositions = findDomExpression(goal);
-			assert !domPositions.isEmpty();
-			final UnaryExpression domExpr = ((UnaryExpression) goal
-						.getSubFormula(domPositions.get(0)));
-			final InDomGoalManager inDomMng = new InDomGoalManager(domExpr,
-					domPositions.get(0));
-			return inDomMng;
-		}
-
-		/**
-		 * Finds total domain expressions in a predicate
-		 * 
-		 * @param pred
-		 *            a predicate
-		 * @return list of total domain expression positions
-		 */
-		private List<IPosition> findDomExpression(Predicate pred) {
-			final List<IPosition> domPositions = pred.getPositions(new DefaultFilter() {
-				@Override
-				public boolean select(UnaryExpression expression) {
-					return (Lib.isDom(expression) && expression.isWellFormed());
-				}
-			});
-			Lib.removeWDUnstrictPositions(domPositions, pred);
-			return domPositions;
 		}
 
 	}

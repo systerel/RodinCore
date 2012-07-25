@@ -178,4 +178,20 @@ public class InDomGoalTacTests {
 		tac.apply(pt.getRoot(), null);
 	}
 
+	/**
+	 * Ensures that the tactic succeeds when dom appears on both sides of the
+	 * membership predicate in the goal.
+	 */
+	@Test
+	public void successWithDomOnBothSides() {
+		final IProofTree pt = genProofTree(//
+				"f ∈ ℙ(ℤ) → ℤ", //
+				"dom({1↦1})∈dom(f)"
+		);
+		String substituteString = "ℙ(ℤ)";
+		Expression substitute = parseExpression(substituteString, pt);
+		assertSuccess(pt.getRoot(),
+				totalDom(null, "1", substitute, typeRewrites(trueGoal())));
+	}
+
 }
