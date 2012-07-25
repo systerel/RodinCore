@@ -324,7 +324,8 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 
 	@Override
 	protected Predicate rewrite(ITypeCheckingRewriter rewriter) {
-		final boolean flatten = rewriter.autoFlatteningMode();
+		final boolean flatten = rewriter.autoFlatteningMode()
+				&& extension.getKind().getProperties().isAssociative();
 		final ArrayList<Expression> newChildExpressions = new ArrayList<Expression>(
 				childExpressions.length);
 		boolean changed = false;
@@ -337,8 +338,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 				childPredicates.length + 11);
 		for (Predicate child : childPredicates) {
 			Predicate newChild = child.rewrite(rewriter);
-			if (flatten && extension.getKind().getProperties().isAssociative()
-					&& getTag() == newChild.getTag()) {
+			if (flatten && this.getTag() == newChild.getTag()) {
 				final Predicate[] grandChildren = ((ExtendedPredicate) newChild).childPredicates;
 				newChildPredicates.addAll(Arrays.asList(grandChildren));
 				changed = true;

@@ -396,14 +396,14 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	
 	@Override
 	protected Expression rewrite(ITypeCheckingRewriter rewriter) {
-		final boolean flatten = rewriter.autoFlatteningMode();
+		final boolean flatten = rewriter.autoFlatteningMode()
+				&& extension.getKind().getProperties().isAssociative();
 		final ArrayList<Expression> newChildExpressions = new ArrayList<Expression>(
 				childExpressions.length + 11);
 		boolean changed = false;
 		for (Expression child : childExpressions) {
 			Expression newChild = child.rewrite(rewriter);
-			if (flatten && extension.getKind().getProperties().isAssociative()
-					&& getTag() == newChild.getTag()) {
+			if (flatten && this.getTag() == newChild.getTag()) {
 				final Expression[] grandChildren = ((ExtendedExpression) newChild).childExpressions;
 				newChildExpressions.addAll(Arrays.asList(grandChildren));
 				changed = true;
