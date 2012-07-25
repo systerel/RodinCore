@@ -424,8 +424,6 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			newChildExprs = childExpressions;
 			newChildPreds = childPredicates;
 		} else {
-			// FIXME should check preconditions about new children
-			// (flattening could break preconditions)
 			newChildExprs = newChildExpressions
 					.toArray(new Expression[newChildExpressions.size()]);
 			newChildPreds = newChildPredicates
