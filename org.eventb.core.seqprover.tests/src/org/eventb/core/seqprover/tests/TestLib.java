@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,33 +104,35 @@ public class TestLib {
 	 * This method is used to easily construct sequents for test cases.
 	 * 
 	 * @param sequentAsString
-	 *            The sequent as a string
-	 * @return The resulting sequent
+	 *            the sequent as a string
+	 * @return the resulting sequent
 	 * @throws IllegalArgumentException
 	 *             in case the sequent could not be constructed due to a parsing
 	 *             or type-checking error.
 	 * @author htson
 	 */
-	public static IProverSequent genFullSeq(String sequentAsString, FormulaFactory factory) {
-		final ITypeEnvironment typenv = mDLib(factory).makeTypeEnvironment();
+	public static IProverSequent genFullSeq(String sequentStr,
+			FormulaFactory factory) {
+		return genFullSeq(sequentStr, mDLib(factory).makeTypeEnvironment());
+	}
+
+	public static IProverSequent genFullSeq(String sequentAsString,
+			ITypeEnvironment typenv) {
 		final Matcher m = fullSequentPattern.matcher(sequentAsString);
 		if (!m.matches()) {
 			throw new IllegalArgumentException("Invalid sequent: "
 					+ sequentAsString);
 		}
-		final Set<Predicate> globalHyps = genPredSet(typenv, m.group(1));
+		final Set<Predicate> globalHyps = new LinkedHashSet<Predicate>();
+		globalHyps.addAll(genPredSet(typenv, m.group(1)));
 		final Set<Predicate> hiddenHyps = genPredSet(typenv, m.group(2));
 		final Set<Predicate> selectHyps = genPredSet(typenv, m.group(3));
 		final Predicate goal = genPred(typenv, m.group(4));
-
-		if (!globalHyps.containsAll(hiddenHyps)) {
-			throw new IllegalArgumentException(
-					"Global hypotheses do not contain hidden hypotheses");
-		}
-		if (!globalHyps.containsAll(selectHyps)) {
-			throw new IllegalArgumentException(
-					"Global hypotheses do not contain selected hypotheses");
-		}
+		
+		if (!hiddenHyps.isEmpty())
+			globalHyps.addAll(hiddenHyps);
+		if (!selectHyps.isEmpty())
+			globalHyps.addAll(selectHyps);
 
 		return ProverFactory.makeSequent(typenv, globalHyps, hiddenHyps,
 				selectHyps, goal);
