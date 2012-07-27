@@ -31,7 +31,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	@Test
 	public void successWithIsFunGoal() {
 		final Predicate hyp = parsePredicate("f ∈ ℤ→(ℤ → ℤ)");
-		assertSuccess("f ∈ ℤ→(ℤ → ℤ) |- f(y)∈ℤ ⇸ ℤ",
+		assertSuccess(";H; ;S; f ∈ ℤ→(ℤ → ℤ)|- f(y)∈ℤ ⇸ ℤ",
 				funImgGoal(hyp, "0", isFunGoal()));
 	}
 
@@ -44,7 +44,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 		addToTypeEnvironment("y=ℤ");
 		final Predicate hyp1 = parsePredicate("f ∈ ℤ→(ℤ→(ℤ → ℤ))");
 		final Predicate hyp2 = parsePredicate("f(y) ∈ ℤ→(ℤ → ℤ)");
-		assertSuccess("f ∈ ℤ→(ℤ→(ℤ → ℤ)) |- f(y)(x)∈ℤ ⇸ ℤ",
+		assertSuccess(" ;H; ;S; f ∈ ℤ→(ℤ→(ℤ → ℤ)) |- f(y)(x)∈ℤ ⇸ ℤ",
 				funImgGoal(hyp1, "0.0", funImgGoal(hyp2, "0", isFunGoal())));
 	}
 
@@ -54,8 +54,8 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	@Test
 	public void successWithHyp() {
 		final Predicate hyp = parsePredicate("f ∈ ℤ→(ℤ→(ℤ → ℤ))");
-		assertSuccess("f ∈ ℤ→(ℤ→(ℤ → ℤ)) ;; f(y)(x) ∈ ℤ → ℤ |- f(y)∈ℤ→(ℤ → ℤ)",
-				funImgGoal(hyp, "0", hyp()));
+		assertSuccess(" ;H; ;S; f ∈ ℤ→(ℤ→(ℤ → ℤ)) ;; f(y)(x) ∈ ℤ → ℤ "
+				+ "|- f(y)∈ℤ→(ℤ → ℤ)", funImgGoal(hyp, "0", hyp()));
 	}
 
 	/**
@@ -64,7 +64,8 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	@Test
 	public void successWithRelation() {
 		final Predicate hyp = parsePredicate("f ∈ ℤ↔ℤ");
-		assertSuccess("f ∈ ℤ↔ℤ |- f(x) ∈ ℤ", funImgGoal(hyp, "0", hyp()));
+		assertSuccess(" ;H; ;S; f ∈ ℤ↔ℤ |- f(x) ∈ ℤ",
+				funImgGoal(hyp, "0", hyp()));
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
 		final Predicate hypA = parsePredicate("f∈S ⇸ A");
 		final Predicate hypB = parsePredicate("f∈S ⇸ B");
-		assertSuccess("f∈S ⇸ A ;; f∈S ⇸ B |- f(x)∈B",
+		assertSuccess(" ;H; ;S; f∈S ⇸ A ;; f∈S ⇸ B |- f(x)∈B",
 				funImgGoal(hypA, "0", funImgGoal(hypB, "0", hyp())));
 	}
 
@@ -87,7 +88,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	public void successWithNestedFunAppsInGoal() {
 		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔S");
 		final Predicate hypA = parsePredicate("f∈S ⇸ A");
-		assertSuccess("f∈S ⇸ A |- f(f(x))∈A",
+		assertSuccess(" ;H; ;S; f∈S ⇸ A |- f(f(x))∈A",
 				funImgGoal(hypA, "0.1", funImgGoal(hypA, "0", hyp())));
 	}
 
@@ -99,7 +100,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	public void successWithSuccessiveFunAppsInGoal() {
 		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
 		final Predicate hypA = parsePredicate("f∈S ⇸ {f(a)}");
-		assertSuccess("f∈S ⇸ {f(a)} |- f(x)∈{f(a)}",
+		assertSuccess(" ;H; ;S;f∈S ⇸ {f(a)}|- f(x)∈{f(a)}",
 				funImgGoal(hypA, "1.0", funImgGoal(hypA, "0", hyp())));
 	}
 
@@ -114,7 +115,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 		final Predicate hypA = parsePredicate("f∈S ⇸ (T↔ran(f(a)))");
 		final Predicate hypB = parsePredicate("f(a)∈T↔ran(f(a))");
 		assertSuccess(
-				"f∈S ⇸ (T↔ran(f(a))) |- f(a)(b)∈ran(f(a))",
+				" ;H; ;S; f∈S ⇸ (T↔ran(f(a)))|- f(a)(b)∈ran(f(a))",
 				funImgGoal(hypA, "1.0",
 						funImgGoal(hypA, "0.0", funImgGoal(hypB, "0", hyp()))));
 	}
@@ -128,7 +129,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	public void successWithSuccessiveFunAppsSecondDeeper() {
 		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), U=ℙ(U), f=S↔(T↔U)");
 		final Predicate hypA = parsePredicate("f∈S ⇸ {{a↦f(b)(c)}}");
-		assertSuccess("f∈S ⇸ {{a↦f(b)(c)}} |- f(b)∈{{a↦f(b)(c)}}",
+		assertSuccess(" ;H;" + ";S; f∈S ⇸ {{a↦f(b)(c)}} |- f(b)∈{{a↦f(b)(c)}}",
 				funImgGoal(hypA, "1.0.0.1.0", funImgGoal(hypA, "0", hyp())));
 	}
 
@@ -137,8 +138,8 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void failure() {
-		assertFailure("f ∈ ℤ→(ℤ→(ℤ → ℤ)) ;;"
-				+ "f(y)(x) ∈ ℤ → ℤ |- g(y)(x) ∈ ℤ → ℤ");
+		assertFailure(" ;H; ;S; f ∈ ℤ→(ℤ→(ℤ → ℤ)) ;; f(y)(x) ∈ ℤ → ℤ"
+				+ " |- g(y)(x) ∈ ℤ → ℤ");
 	}
 
 	/**
@@ -148,7 +149,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	@Test
 	public void failureWithFunctionalHyps() {
 		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
-		assertFailure("f∈S ⇸ A ;; f∈S ⇸ B |- f(x)∈C");
+		assertFailure(" ;H; ;S; f∈S ⇸ A ;; f∈S ⇸ B |- f(x)∈C");
 	}
 
 }

@@ -11,7 +11,6 @@
 package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-import static org.eventb.core.seqprover.tests.TestLib.genFullSeq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -24,8 +23,10 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.tests.TestLib;
@@ -43,8 +44,8 @@ import org.junit.Test;
  */
 public abstract class AbstractTacticTests {
 
-	private final ITactic tactic;
-	private final String tacticId;
+	protected final ITactic tactic;
+	protected final String tacticId;
 	protected FormulaFactory ff;
 	protected DLib dl;
 	protected ITypeEnvironment typenv;
@@ -133,8 +134,15 @@ public abstract class AbstractTacticTests {
 	}
 
 	private IProverSequent genSeq(String sequentImage) {
-		final String[] split = sequentImage.split("\\|-");
-		return genFullSeq(typenv, "", "", split[0], split[1]);
+		return TestLib.genFullSeq(sequentImage, typenv);
+	}
+	
+	/**
+	 * Returns the root node of a proof tree built for the given sequent image
+	 */
+	protected IProofTreeNode genProofTreeNode(String sequentStr) {
+		final IProverSequent sequent = TestLib.genFullSeq(sequentStr, ff);
+		return ProverFactory.makeProofTree(sequent, null).getRoot();
 	}
 
 }

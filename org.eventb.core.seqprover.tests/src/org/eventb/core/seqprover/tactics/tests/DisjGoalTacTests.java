@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
-import static org.eventb.core.seqprover.tactics.tests.TacticTestUtils.assertTacticRegistered;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.dti;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.impI;
-import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.junit.Test;
 
@@ -25,17 +22,11 @@ import org.junit.Test;
  * 
  *         Units tests for the auto-tactic DisjGoalTac
  */
-public class DisjGoalTacTests {
+public class DisjGoalTacTests extends AbstractTacticTests {
 
-	private static final String TAC_ID = "org.eventb.core.seqprover.DisjGoalTac";
-	private static final ITactic TAC = new AutoTactics.DisjGoalTac();
-
-	/**
-	 * Assert that auto tactic is registered.
-	 */
-	@Test
-	public void assertRegistered() {
-		assertTacticRegistered(TAC_ID, TAC);
+	public DisjGoalTacTests() {
+		super(new AutoTactics.DisjGoalTac(),
+				"org.eventb.core.seqprover.DisjGoalTac");
 	}
 
 	/**
@@ -43,7 +34,7 @@ public class DisjGoalTacTests {
 	 */
 	@Test
 	public void applyOnce() {
-		assertSuccess("1=1 ∨ 2=2", disjGoal(empty));
+		assertSuccess(" ;H; ;S; |- 1=1 ∨ 2=2", disjGoal(empty));
 	}
 
 	/**
@@ -51,7 +42,7 @@ public class DisjGoalTacTests {
 	 */
 	@Test
 	public void applyMany() {
-		assertSuccess("1=1 ∨ 2=2 ∨ 3=3 ∨ 4=4",
+		assertSuccess(" ;H; ;S; |- 1=1 ∨ 2=2 ∨ 3=3 ∨ 4=4",
 				disjGoal(disjGoal(disjGoal(empty))));
 	}
 
@@ -60,33 +51,9 @@ public class DisjGoalTacTests {
 	 */
 	@Test
 	public void failure() {
-		assertFailure("1=1⇒2=2");
-		assertFailure("(1=1∨2=2)∧(3=3∨4=4)");
-		assertFailure("¬(1=1∨2=2)");
-	}
-
-	/**
-	 * Assert that the application of the DisjGoalTac on a node made up of the
-	 * given goal succeeds and produces the given tree shape.
-	 * 
-	 * @param goalStr
-	 *            the considered goal
-	 * @param shape
-	 *            the expected tree shape
-	 */
-	private static void assertSuccess(final String goalStr, final TreeShape shape) {
-		TacticTestUtils.assertSuccess(genSeq("|-" + goalStr), shape, TAC);
-	}
-
-	/**
-	 * Assert that the application of the DisjGoalTac on a node made up of the
-	 * given goal fails and does not modify the proof tree.
-	 * 
-	 * @param goalStr
-	 *            the considered goal in String
-	 */
-	private static void assertFailure(final String goalStr) {
-		TacticTestUtils.assertFailure(genSeq("|- " + goalStr), TAC);
+		assertFailure(" ;H; ;S; |-1=1⇒2=2");
+		assertFailure(" ;H; ;S; |-(1=1∨2=2)∧(3=3∨4=4)");
+		assertFailure(" ;H; ;S; |-¬(1=1∨2=2)");
 	}
 
 	/**

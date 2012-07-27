@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,32 +11,16 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-import static org.eventb.core.seqprover.tactics.tests.TreeShape.assertRulesApplied;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.disjE;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.empty;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funImgSimp;
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.funOvr;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.eventb.core.seqprover.tests.TestLib;
 import org.junit.Test;
 
 /**
@@ -44,89 +28,19 @@ import org.junit.Test;
  * 
  * @author Laurent Voisin
  */
-public class FunOvrHypTacTests {
+public class FunOvrHypTacTests extends AbstractTacticTests {
 
-	private static final ITactic tac = new AutoTactics.FunOvrHypTac();
-
-	private static final String TAC_ID = "org.eventb.core.seqprover.funOvrHypTac";
-
-	private static void assertFailure(IProofTreeNode node) {
-		TreeShape.assertFailure(node, tac);
+	public FunOvrHypTacTests() {
+		super(new AutoTactics.FunOvrHypTac(),
+				"org.eventb.core.seqprover.funOvrHypTac");
 	}
-
-	private static void assertSuccess(IProofTreeNode node, TreeShape expected) {
-		TreeShape.assertSuccess(node, expected, tac);
-	}
-
-	private static IProofTree genProofTree(String[] bgHyps, String[] selHyps,
-			String goal) {
-		final IProverSequent seq = genSeq(bgHyps, selHyps, goal);
-		return ProverFactory.makeProofTree(seq, null);
-	}
-
-	private static String[] l(String... preds) {
-		return preds;
-	}
-
-	private static IProverSequent genSeq(String[] bgHyps, String[] selHyps,
-			String goal) {
-		final StringBuilder b = new StringBuilder();
-		genHypList(b, bgHyps);
-		if (bgHyps.length != 0 && selHyps.length != 0) {
-			b.append(";;");
-		}
-		genHypList(b, selHyps);
-		b.append(" ;H;   ;S; ");
-		genHypList(b, selHyps);
-		b.append("|-");
-		b.append(goal);
-		return TestLib.genFullSeq(b.toString());
-	}
-
-	private static void genHypList(final StringBuilder b, String[] hyps) {
-		String sep = "";
-		for (String s : hyps) {
-			b.append(sep);
-			sep = ";;";
-			b.append(s);
-		}
-	}
-
-	private static Predicate parsePredicate(String predStr, IProofTree pt) {
-		final DLib lib = mDLib(pt.getRoot().getFormulaFactory());
-		final Predicate pred = lib.parsePredicate(predStr);
-		final IProverSequent sequent = pt.getSequent();
-		final ITypeEnvironment typeEnvironment = sequent.typeEnvironment();
-		final ITypeCheckResult tcResult = pred.typeCheck(typeEnvironment);
-		assertTrue(tcResult.isSuccess());
-		return pred;
-	}
-
-	/**
-	 * Ensures that the tactic is correctly registered with the sequent prover.
-	 */
-	@Test
-	public void tacticRegistered() {
-		final IAutoTacticRegistry registry = SequentProver
-				.getAutoTacticRegistry();
-		final ITacticDescriptor desc = registry.getTacticDescriptor(TAC_ID);
-		assertNotNull(desc);
-		assertEquals(tac.getClass(), desc.getTacticInstance().getClass());
-	}
-
+	
 	/**
 	 * Ensures that the tactic fails when it is not applicable.
 	 */
 	@Test
 	public void notApplicable() {
-		final IProofTree pt = genProofTree( //
-				l("f ∈ ℤ → ℤ", //
-						"g ∈ ℤ → ℤ", //
-						"x ∈ ℤ", //
-						"f(x) ∈ ℕ"), //
-				l(), //
-				"⊥");
-		assertFailure(pt.getRoot());
+		assertFailure("f ∈ ℤ → ℤ ;; g ∈ ℤ → ℤ ;; x ∈ ℤ ;H; ;S; f(x) ∈ ℕ |- ⊥");
 	}
 
 	/**
@@ -136,14 +50,8 @@ public class FunOvrHypTacTests {
 	 */
 	@Test
 	public void notApplicableSelected() {
-		final IProofTree pt = genProofTree( //
-				l("f ∈ ℤ → ℤ", //
-						"g ∈ ℤ → ℤ", //
-						"x ∈ ℤ", //
-						"(fg)(x) ∈ ℕ"), //
-				l(), //
-				"⊥");
-		assertFailure(pt.getRoot());
+		assertFailure("f ∈ ℤ → ℤ ;; g ∈ ℤ → ℤ ;; x ∈ ℤ ;; (fg)(x) ∈ ℕ "
+				+ ";H; ;S; |- ⊥");
 	}
 
 	/**
@@ -151,16 +59,12 @@ public class FunOvrHypTacTests {
 	 */
 	@Test
 	public void simpleApplication() {
-		final String hypStr = "(fg)(x) ∈ ℕ";
-		final IProofTree pt = genProofTree(//
-				l("f ∈ ℤ → ℤ", //
-						"g ∈ ℤ → ℤ", //
-						"x ∈ ℤ"), //
-				l(hypStr), //
-				"⊥");
-		final Predicate hyp = parsePredicate(hypStr, pt);
-		assertSuccess(pt.getRoot(), funOvr(hyp, "0", empty, funImgSimp("0",
-				empty)));
+		addToTypeEnvironment("x=ℤ");
+		final Predicate hyp = parsePredicate("(fg)(x) ∈ ℕ");
+		assertSuccess(
+				"f ∈ ℤ → ℤ ;; g ∈ ℤ → ℤ ;; x ∈ ℤ ;H; ;S; (fg)(x) ∈ ℕ |- ⊥", //
+				funOvr(hyp, "0", empty, funImgSimp("0", empty)));
+
 	}
 
 	/**
@@ -168,18 +72,11 @@ public class FunOvrHypTacTests {
 	 */
 	@Test
 	public void onceApplication() {
-		final String hyp1Str = "(fgh)(x) ∈ ℕ";
-		final IProofTree pt = genProofTree(//
-				l("f ∈ ℤ → ℤ", //
-						"g ∈ ℤ → ℤ", //
-						"h ∈ ℤ → ℤ", //
-						"x ∈ ℤ"), //
-				l(hyp1Str), //
-				"⊥");
-		final Predicate hyp1 = parsePredicate(hyp1Str, pt);
-		assertSuccess(pt.getRoot(), //
-				funOvr(hyp1, "0", //
-						empty, empty));
+		addToTypeEnvironment("x=ℤ");
+		final Predicate hyp1 = parsePredicate("(fgh)(x) ∈ ℕ");
+		assertSuccess("f ∈ ℤ → ℤ ;; g ∈ ℤ → ℤ ;; h ∈ ℤ → ℤ ;; x ∈ ℤ ;H; "
+				+ ";S; (fgh)(x) ∈ ℕ |- ⊥", //
+				funOvr(hyp1, "0", empty, empty));
 	}
 
 	/**
@@ -187,24 +84,18 @@ public class FunOvrHypTacTests {
 	 */
 	@Test
 	public void recursiveApplication() {
-		final String hyp1Str = "(fg)(x) ∈ (hi)(x)";
-		final String hyp2Str = "g(x) ∈ (hi)(x)";
-		final String hyp3Str = "(dom(g) ⩤ f)(x)∈(hi)(x)";
-		final IProofTree pt = genProofTree(//
-				l("f ∈ ℤ → ℤ", //
-						"g ∈ ℤ → ℤ", //
-						"h ∈ ℤ → ℙ(ℤ)", //
-						"i ∈ ℤ → ℙ(ℤ)", //
-						"x ∈ ℤ"), //
-				l(hyp1Str), //
-				"⊥");
-		final Predicate hyp1 = parsePredicate(hyp1Str, pt);
-		final Predicate hyp2 = parsePredicate(hyp2Str, pt);
-		final Predicate hyp3 = parsePredicate(hyp3Str, pt);
-		assertSuccess(pt.getRoot(), funOvr(hyp1, "0", //
-				funOvr(hyp2, "1", empty, funImgSimp("1", empty)), //
-				funOvr(hyp3, "1", funImgSimp("0", empty), funImgSimp("0",
-						funImgSimp("1", empty)))));
+		addToTypeEnvironment("x=ℤ, f=ℤ↔ℤ, g=ℤ↔ℤ, h=ℤ↔ℙ(ℤ), i=ℤ↔ℙ(ℤ)");
+		final Predicate hyp1 = parsePredicate("(fg)(x) ∈ (hi)(x)");
+		final Predicate hyp2 = parsePredicate("g(x) ∈ (hi)(x)");
+		final Predicate hyp3 = parsePredicate("(dom(g) ⩤ f)(x)∈(hi)(x)");
+		assertSuccess(
+				"f ∈ ℤ → ℤ ;; g ∈ ℤ → ℤ ;; h ∈ ℤ → ℙ(ℤ) ;; i ∈ ℤ → ℙ(ℤ) ;; x ∈ ℤ ;H; ;S;"
+						+ "(fg)(x) ∈ (hi)(x) |- ⊥",
+				funOvr(hyp1,
+						"0", //
+						funOvr(hyp2, "1", empty, funImgSimp("1", empty)), //
+						funOvr(hyp3, "1", funImgSimp("0", empty),
+								funImgSimp("0", funImgSimp("1", empty)))));
 	}
 
 	/**
@@ -213,24 +104,19 @@ public class FunOvrHypTacTests {
 	 */
 	@Test
 	public void subtree() {
-		final String hypStr = "(fg)(x) ∈ ℕ ∨ (hi)(x) ∈ ℕ";
-		final IProofTree pt = genProofTree(//
-				l("f ∈ ℤ → ℤ", //
-						"g ∈ ℤ → ℤ", //
-						"h ∈ ℤ → ℤ", //
-						"i ∈ ℤ → ℤ", //
-						"x ∈ ℤ"), //
-				l(hypStr), //
-				"⊥");
-		final IProofTreeNode root = pt.getRoot();
-		final Predicate hyp = parsePredicate(hypStr, pt);
+		addToTypeEnvironment("x=ℤ");
+		final String sequentStr = "f ∈ ℤ → ℤ ;; g ∈ ℤ → ℤ ;; h ∈ ℤ → ℤ ;;"
+				+ " i ∈ ℤ → ℤ ;; x ∈ ℤ ;H; ;S; (fg)(x) ∈ ℕ ∨ (hi)(x) ∈ ℕ |- ⊥";
+		final Predicate hyp = parsePredicate("(fg)(x) ∈ ℕ ∨ (hi)(x) ∈ ℕ");
+		final IProofTreeNode root = genProofTreeNode(sequentStr);
 		Tactics.disjE(hyp).apply(root, null);
-		final IProofTreeNode left = root.getChildNodes()[0];
+		final IProofTreeNode leftNode = root.getChildNodes()[0];
 		final Predicate leftHyp = ((AssociativePredicate) hyp).getChildren()[0];
-		final TreeShape sub = funOvr(leftHyp, "0", empty,
-				funImgSimp("0", empty));
-		assertSuccess(left, sub);
-		assertRulesApplied(root, disjE(hyp, sub, empty));
+		tactic.apply(leftNode, null);
+		TreeShape.assertRulesApplied(root, //
+				disjE(hyp, //
+						funOvr(leftHyp, "0", empty, funImgSimp("0", empty)), //
+						empty));
 	}
 
 }
