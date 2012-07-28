@@ -10,17 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
-import java.util.HashSet;
-import java.util.Set;
+import static org.eventb.core.seqprover.tactics.tests.TreeShape.dtDestrWD;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.reasonerExtentionTests.RecordDatatype;
 import org.eventb.core.seqprover.reasonerExtentionTests.SimpleDatatype;
-import org.eventb.core.seqprover.tests.ProverSequentTests;
 import org.junit.Test;
 
 /**
@@ -30,35 +25,20 @@ public class DTDestrWDTacTests extends AbstractTacticTests {
 
 	public DTDestrWDTacTests() {
 		super(new AutoTactics.DTDestrWDTac(),
-				"org.eventb.core.seqprover.dtDestrWDTac");
+				"org.eventb.core.seqprover.dtDestrWDTac",//
+				RecordDatatype.getInstance(), //
+				SimpleDatatype.getInstance());
 	}
-
-	private static final FormulaFactory DEFAULT_FACTORY = ProverSequentTests.factory;
-	private static final IDatatype RECORD_DT = DEFAULT_FACTORY
-			.makeDatatype(RecordDatatype.getInstance());
-	private static final IDatatype SIMPLE_DT = DEFAULT_FACTORY
-	.makeDatatype(SimpleDatatype.getInstance());
-	private static final Set<IFormulaExtension> EXTENSIONS = new HashSet<IFormulaExtension>();
-	static {
-		EXTENSIONS.addAll(RECORD_DT.getExtensions());
-		EXTENSIONS.addAll(SIMPLE_DT.getExtensions());
-	}
-
-	private static final FormulaFactory DT_FAC = FormulaFactory
-			.getInstance(EXTENSIONS);
 
 	/**
 	 * Ensures that the tactic succeeds
 	 */
 	@Test
 	public void success() {
-		setFormulaFactory(DT_FAC);
-		final FreeIdentifier prm0 = DT_FAC.makeFreeIdentifier("p_intDestr",
-				null, DT_FAC.makeIntegerType());
-		final FreeIdentifier prm1 = DT_FAC.makeFreeIdentifier("p_boolDestr",
-				null, DT_FAC.makeBooleanType());
+		final FreeIdentifier prm0 = parseIdent("p_intDestr", "ℤ");
+		final FreeIdentifier prm1 = parseIdent("p_boolDestr", "BOOL");
 		assertSuccess(" ;H; ;S; |- ∃m,n·x=rd(m,n)",
-				TreeShape.dtDestrWD("2.0", prm0, prm1));
+				dtDestrWD("2.0", prm0, prm1));
 	}
 
 	/**
@@ -66,7 +46,6 @@ public class DTDestrWDTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void notRecord() {
-		setFormulaFactory(DT_FAC);
 		assertFailure(" ;H; ;S; |- ∃m,n·x=cons2(m,n)");
 	}
 
@@ -75,7 +54,6 @@ public class DTDestrWDTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void notClosed() {
-		setFormulaFactory(DT_FAC);
 		assertFailure(" ;H; ;S; |- ∃m,n·x=rd(m+m,n)");
 	}
 

@@ -16,12 +16,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -45,6 +52,16 @@ import org.junit.Test;
  */
 public abstract class AbstractTacticTests {
 
+	private static FormulaFactory makeFormulaFactory(
+			IDatatypeExtension... dtExts) {
+		final FormulaFactory factory = FormulaFactory.getDefault();
+		final Set<IFormulaExtension> exts = new HashSet<IFormulaExtension>();
+		for (final IDatatypeExtension dtExt : dtExts) {
+			exts.addAll(factory.makeDatatype(dtExt).getExtensions());
+		}
+		return FormulaFactory.getInstance(exts);
+	}
+
 	protected final ITactic tactic;
 	protected final String tacticId;
 	protected FormulaFactory ff;
@@ -52,9 +69,19 @@ public abstract class AbstractTacticTests {
 	protected ITypeEnvironment typenv;
 
 	public AbstractTacticTests(ITactic tactic, String tacticId) {
+		this(tactic, tacticId, FormulaFactory.getDefault());
+	}
+
+	public AbstractTacticTests(ITactic tactic, String tacticId,
+			IDatatypeExtension... dtExtensions) {
+		this(tactic, tacticId, makeFormulaFactory(dtExtensions));
+	}
+
+	public AbstractTacticTests(ITactic tactic, String tacticId,
+			FormulaFactory ff) {
 		this.tactic = tactic;
 		this.tacticId = tacticId;
-		setFormulaFactory(FormulaFactory.getDefault());
+		setFormulaFactory(ff);
 	}
 
 	/**
@@ -101,21 +128,39 @@ public abstract class AbstractTacticTests {
 		typecheck(pred);
 		return pred;
 	}
-	
-    /**
-     * Parses the expression using the current factory and checks its type using
-     * the current type environment.
-     */
-    protected Expression parseExpression(String exprImage) {
-        final Expression expr = dl.parseExpression(exprImage);
-        typecheck(expr);
-        return expr;
-    }
+
+	/**
+	 * Parses the expression using the current factory and checks its type using
+	 * the current type environment.
+	 */
+	protected Expression parseExpression(String exprImage) {
+		final Expression expr = dl.parseExpression(exprImage);
+		typecheck(expr);
+		return expr;
+	}
+
+	/**
+	 * Parses the given identifier using the current factory and checks that it
+	 * can bear the given type within the current type environment.
+	 */
+	protected FreeIdentifier parseIdent(String identImage, String typeImage) {
+		final Expression expr = dl.parseExpression(identImage);
+		final Type type = dl.parseType(typeImage);
+		assertTypechecked(expr, expr.typeCheck(typenv, type));
+		assertTrue(identImage + "is not an identifier",
+				expr instanceof FreeIdentifier);
+		return (FreeIdentifier) expr;
+	}
 
 	private <T extends Formula<T>> void typecheck(T formula) {
 		final ITypeCheckResult tcResult = formula.typeCheck(typenv);
-        assertFalse(tcResult.toString(), tcResult.hasProblem());
-        assertTrue(formula.isTypeChecked());
+		assertTypechecked(formula, tcResult);
+	}
+
+	private <T extends Formula<T>> void assertTypechecked(T formula,
+			ITypeCheckResult tcResult) {
+		assertFalse(tcResult.toString(), tcResult.hasProblem());
+		assertTrue(formula.isTypeChecked());
 	}
 
 	/**
@@ -139,7 +184,7 @@ public abstract class AbstractTacticTests {
 	private IProverSequent genSeq(String sequentImage) {
 		return TestLib.genFullSeq(sequentImage, typenv);
 	}
-	
+
 	/**
 	 * Returns the root node of a proof tree built for the given sequent image
 	 */
