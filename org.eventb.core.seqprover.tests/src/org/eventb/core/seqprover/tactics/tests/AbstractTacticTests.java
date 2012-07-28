@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -83,11 +84,11 @@ public abstract class AbstractTacticTests {
 	 * Completes the type environment for this test. The type environment
 	 * defined by the parameter is added to this test type environment
 	 * 
-	 * @param typeEnvImage
+	 * @param typenvImage
 	 *            string representation of some type environment
 	 */
-	protected void addToTypeEnvironment(String typeEnvImage) {
-		final ITypeEnvironment newTypenv = TestLib.genTypeEnv(typeEnvImage, ff);
+	protected void addToTypeEnvironment(String typenvImage) {
+		final ITypeEnvironment newTypenv = TestLib.genTypeEnv(typenvImage, ff);
 		typenv.addAll(newTypenv);
 	}
 
@@ -95,11 +96,9 @@ public abstract class AbstractTacticTests {
 	 * Parses the predicate using the current factory and checks its type using
 	 * the current type environment.
 	 */
-	protected Predicate parsePredicate(String predStr) {
-		final Predicate pred = dl.parsePredicate(predStr);
-		final ITypeCheckResult tcResult = pred.typeCheck(typenv);
-		assertFalse(tcResult.toString(), tcResult.hasProblem());
-		assertTrue(pred.isTypeChecked());
+	protected Predicate parsePredicate(String predImage) {
+		final Predicate pred = dl.parsePredicate(predImage);
+		typecheck(pred);
 		return pred;
 	}
 	
@@ -107,13 +106,17 @@ public abstract class AbstractTacticTests {
      * Parses the expression using the current factory and checks its type using
      * the current type environment.
      */
-    protected Expression parseExpression(String exprStr) {
-        final Expression expr = dl.parseExpression(exprStr);
-        final ITypeCheckResult tcResult = expr.typeCheck(typenv);
-        assertFalse(tcResult.toString(), tcResult.hasProblem());
-        assertTrue(expr.isTypeChecked());
+    protected Expression parseExpression(String exprImage) {
+        final Expression expr = dl.parseExpression(exprImage);
+        typecheck(expr);
         return expr;
-    }  
+    }
+
+	private <T extends Formula<T>> void typecheck(T formula) {
+		final ITypeCheckResult tcResult = formula.typeCheck(typenv);
+        assertFalse(tcResult.toString(), tcResult.hasProblem());
+        assertTrue(formula.isTypeChecked());
+	}
 
 	/**
 	 * Generates the sequent corresponding to the given sequent image, checks
@@ -140,8 +143,8 @@ public abstract class AbstractTacticTests {
 	/**
 	 * Returns the root node of a proof tree built for the given sequent image
 	 */
-	protected IProofTreeNode genProofTreeNode(String sequentStr) {
-		final IProverSequent sequent = TestLib.genFullSeq(sequentStr, ff);
+	protected IProofTreeNode genProofTreeNode(String sequentImage) {
+		final IProverSequent sequent = genSeq(sequentImage);
 		return ProverFactory.makeProofTree(sequent, null).getRoot();
 	}
 
