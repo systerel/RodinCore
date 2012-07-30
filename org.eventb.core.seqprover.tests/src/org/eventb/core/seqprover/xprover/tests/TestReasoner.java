@@ -22,6 +22,7 @@ import org.eventb.core.seqprover.xprover.XProverReasoner;
  * 
  * @author Laurent Voisin
  */
+@SuppressWarnings("deprecation")
 public class TestReasoner extends XProverReasoner {
 
 	static final String SUCCESS_MSG = "Success";

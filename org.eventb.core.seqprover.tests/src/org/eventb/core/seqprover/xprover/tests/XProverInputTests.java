@@ -32,6 +32,7 @@ import org.junit.Test;
  * 
  * @author Laurent Voisin
  */
+@SuppressWarnings("deprecation")
 public class XProverInputTests extends XProverTests {
 	
 	static class Serializer implements IReasonerInputReader, IReasonerInputWriter {
