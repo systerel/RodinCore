@@ -57,6 +57,8 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 		rodinFile.getResource().delete(true, null);
 		assertFalse("The rodin file should not exist.", rodinFile.exists());
 
+		Thread.sleep(500); // wait for the resource to be deleted
+		
 		// Ensures that the resource contents is empty (i.e. resource is
 		// unloaded)
 		assertTrue("The resource data should be empty", rodinResource.isEmpty());
@@ -105,7 +107,8 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 	 * the database, and that the elements are well loaded.
 	 */
 	@Test
-	public void afterLoadingTest() throws RodinDBException {
+	public void afterLoadingTest() throws RodinDBException,
+			InterruptedException {
 		// first we retreive the resource that has a root (see the first test)
 		final ILFile rodinResource = getRodinResource();
 		final ILElement root = rodinResource.getRoot();
@@ -120,6 +123,8 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 		final IAttributeValue v2 = AbstractRodinDBTests.fBool.makeValue(true);
 		ne2.setAttributeValue(v2, null);
 
+		rodinResource.save(); // Force delta handling
+		Thread.sleep(500);
 		// We verify that the elements are created
 		final List<? extends ILElement> children = root.getChildren();
 		assertTrue(children.size() == 1);

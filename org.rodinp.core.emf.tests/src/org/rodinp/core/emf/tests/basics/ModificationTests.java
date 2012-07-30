@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
@@ -40,7 +41,8 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	 * Database is suppressed in the light model
 	 */
 	@Test
-	public void deleteAnAttribute() throws RodinDBException {
+	public void deleteAnAttribute() throws RodinDBException,
+			InterruptedException {
 		// we create elements, and add one attribute to the first element
 		// beneath the root
 		final NamedElement ne = getNamedElement(rodinFile.getRoot(), "NE");
@@ -58,41 +60,12 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		final Boolean a = neLight.getAttribute(fBool);
 		assertTrue(a.equals(true));
 		ne.removeAttribute(fBool, null);
+
+		((IRodinFile) ne.getRodinFile()).save(null, true);
+		Thread.sleep(500);
+
 		assertTrue(ne.getAttributeTypes().length == 0);
 		assertTrue(neLight.getAttribute(fBool) == null);
-	}
-
-	/**
-	 * Checks that a simple modification of an attribute in the EMF model is
-	 * updated in the rodin database.
-	 */
-	@Test
-	public void modifyLightAttribute() throws RodinDBException {
-		// we get the resource (empty)
-		final ILFile rodinResource = getRodinResource();
-		// we get the root element of the light model
-		final ILElement root = rodinResource.getRoot();
-		
-		// we create elements, and add one attribute to the first element
-		// beneath the root
-		final NamedElement ne = getNamedElement(rodinFile.getRoot(), "NE");
-		final IAttributeValue v1 = fBool.makeValue(true);
-		ne.setAttributeValue(v1, null);
-
-		// we search for NE child in the Light model
-		// it has been created by the database delta listener
-		final ILElement neLightElement = root.getChildren().get(0);
-
-		final List<IAttributeValue> a = neLightElement.getAttributes();
-		// we check that there is just one attribute set for this element
-		assertTrue(a.size() == 1);
-
-		// we modify the value of the boolean attribute in the light model
-		neLightElement.setAttribute(fBool.makeValue(false));
-
-		// we check that the value was updated to false in the database
-		final boolean attributeValue = ne.getAttributeValue(fBool);
-		assertTrue(attributeValue == false);
 	}
 
 	/**
@@ -100,7 +73,8 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	 * updated in the light model
 	 */
 	@Test
-	public void modifyRodinAttribute() throws RodinDBException {
+	public void modifyRodinAttribute() throws RodinDBException,
+			InterruptedException {
 		// we get the resource (empty)
 		final ILFile rodinResource = getRodinResource();
 		// we get the root element of the light model
@@ -112,6 +86,9 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		final IAttributeValue v1 = fBool.makeValue(true);
 		ne.setAttributeValue(v1, null);
 
+		((IRodinFile) ne.getRodinFile()).save(null, true);
+		Thread.sleep(500);
+		
 		// we search for NE child in the Light model
 		// it has been created by the database delta listener
 		final ILElement neLightElement = root.getChildren().get(0);
@@ -122,6 +99,9 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		final IAttributeValue v2 = fBool.makeValue(false);
 		ne.setAttributeValue(v2, null);
 
+		((IRodinFile) ne.getRodinFile()).save(null, true);
+		Thread.sleep(500);
+		
 		final Boolean a2 = neLightElement.getAttribute(fBool);
 		assertTrue(a2.equals(false));
 	}
@@ -131,7 +111,8 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 	 * transparent for light model elements.
 	 */
 	@Test
-	public void modifyElementOrder() throws RodinDBException {
+	public void modifyElementOrder() throws RodinDBException,
+			InterruptedException {
 		final ILFile rodinResource = getRodinResource();
 		final IInternalElement rodinRoot = rodinFile.getRoot();
 		// we create elements, and add one attribute to the first element
@@ -141,6 +122,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		final NamedElement ne3 = getNamedElement(rodinRoot, "NE3");
 		final NamedElement[] ordered = { ne, ne2, ne3 };
 		assertArrayEquals(ordered, rodinRoot.getChildren());
+		Thread.sleep(500);
 
 		// we get the root element of the light model
 		final ILElement root = rodinResource.getRoot();
@@ -150,13 +132,17 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		// modify the ordering in the database
 		ne2.move(rodinRoot, ne, null, false, null);
 
+		((IRodinFile) ne.getRodinFile()).save(null, true);
+		Thread.sleep(500);
+
 		final NamedElement[] ordered2 = { ne2, ne, ne3 };
 		assertArrayEquals(ordered2, rodinRoot.getChildren());
 		assertArrayEquals(ordered2, getIRodinElementChildren(root));
 	}
 
 	@Test
-	public void testGetChildPosition() throws RodinDBException {
+	public void testGetChildPosition() throws RodinDBException,
+			InterruptedException {
 		final ILFile rodinResource = getRodinResource();
 		final IInternalElement rodinRoot = rodinFile.getRoot();
 		// we create elements, and add one attribute to the first element
@@ -166,7 +152,9 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		final NamedElement ne3 = getNamedElement(rodinRoot, "NE3");
 		final NamedElement[] ordered = { ne, ne2, ne3 };
 		assertArrayEquals(ordered, rodinRoot.getChildren());
-		
+
+		Thread.sleep(1000);
+
 		// we get the root element of the light model
 		final ILElement root = rodinResource.getRoot();
 		final ILElement lne = SynchroUtils.findElement(ne, root);

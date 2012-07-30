@@ -150,7 +150,7 @@ public class ImplicitElementHandlingTests {
 	 */
 	@Test
 	public void createDependencyAndCheckImplicitChildren()
-			throws RodinDBException {
+			throws RodinDBException, InterruptedException {
 		final ImplicitHolder holder1 = getImplicitHolder(rf1.getRoot(),
 				"Holder1");
 		final NamedElement s1 = getNamedElement(holder1, "s1");
@@ -179,6 +179,7 @@ public class ImplicitElementHandlingTests {
 				"dependencyToRf1");
 		d.setDependency(rf1.getRoot());
 		rf2.save(null, true);
+		Thread.sleep(500);
 		// we check that implicit elements have been recomputed and that holder2
 		// carries s1 and s2
 		final List<? extends ILElement> children2 = eHolder2.getChildren();
@@ -188,6 +189,8 @@ public class ImplicitElementHandlingTests {
 		// now we delete the dependency, so it might not be any implicit element
 		// left.
 		d.delete(true, null);
+		rf2.save(null, true);
+		Thread.sleep(1500);
 		// we check that implicit elements have been recomputed and that holder2
 		// does not contain implicit children
 		assertTrue(eHolder2.getChildren().isEmpty());
@@ -306,8 +309,7 @@ public class ImplicitElementHandlingTests {
 			IInternalElementType<? extends IInternalElement> parentType,
 			IInternalElementType<? extends IInternalElement> childType) {
 		final ICoreImplicitChildProvider p = new TestImplicitChildProvider();
-		ImplicitChildProviderManager.addProviderFor(
-				new TestImplicitChildProvider(), parentType, childType);
+		ImplicitChildProviderManager.addProviderFor(p, parentType, childType);
 		return p;
 	}
 
