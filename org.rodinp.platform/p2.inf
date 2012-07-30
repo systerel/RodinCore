@@ -15,8 +15,8 @@ instructions.configure=\
   addRepository(type:1,location:http${#58}//www.stups.uni-duesseldorf.de/prob_updates,name:ProB);\
   addRepository(type:0,location:http${#58}//www.stups.uni-duesseldorf.de/camille_updates,name:Camille);\
   addRepository(type:1,location:http${#58}//www.stups.uni-duesseldorf.de/camille_updates,name:Camille);\
-  addRepository(type:0,location:http${#58}//www.stups.uni-duesseldorf.de/pror_updates,name:ProR (Requirements));\
-  addRepository(type:1,location:http${#58}//www.stups.uni-duesseldorf.de/pror_updates,name:ProR (Requirements));\
+  addRepository(type:0,location:http${#58}//update.formalmind.com/rodin,name:ProR (Requirements));\
+  addRepository(type:1,location:http${#58}//update.formalmind.com/rodin,name:ProR (Requirements));\
   addRepository(type:0,location:http${#58}//www.animb.org/updatesite,name:AnimB);\
   addRepository(type:1,location:http${#58}//www.animb.org/updatesite,name:AnimB);\
   addRepository(type:0,location:http${#58}//iliasov.org/modplugin,name:Modularisation);\
