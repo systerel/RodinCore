@@ -14,7 +14,6 @@ package org.eventb.core.seqprover.tests;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -123,16 +122,13 @@ public class TestLib {
 			throw new IllegalArgumentException("Invalid sequent: "
 					+ sequentAsString);
 		}
-		final Set<Predicate> globalHyps = new LinkedHashSet<Predicate>();
-		globalHyps.addAll(genPredSet(typenv, m.group(1)));
+		final Set<Predicate> globalHyps = genPredSet(typenv, m.group(1));
 		final Set<Predicate> hiddenHyps = genPredSet(typenv, m.group(2));
 		final Set<Predicate> selectHyps = genPredSet(typenv, m.group(3));
 		final Predicate goal = genPred(typenv, m.group(4));
 		
-		if (!hiddenHyps.isEmpty())
-			globalHyps.addAll(hiddenHyps);
-		if (!selectHyps.isEmpty())
-			globalHyps.addAll(selectHyps);
+		globalHyps.addAll(hiddenHyps);
+		globalHyps.addAll(selectHyps);
 
 		return ProverFactory.makeSequent(typenv, globalHyps, hiddenHyps,
 				selectHyps, goal);
@@ -319,10 +315,10 @@ public class TestLib {
 		return result;
 	}
 
-	private static Set<Predicate> genPredSet(ITypeEnvironment typenv,
+	private static LinkedHashSet<Predicate> genPredSet(ITypeEnvironment typenv,
 			String predList) {
 		if (predList.trim().length() == 0) {
-			return Collections.emptySet();
+			return new LinkedHashSet<Predicate>();
 		}
 		return genPreds(typenv, predList.split(";;"));
 	}
@@ -377,7 +373,7 @@ public class TestLib {
 	 * @param strs
 	 * @return
 	 */
-	public static Set<Predicate> genPreds(String... strs){
+	public static LinkedHashSet<Predicate> genPreds(String... strs) {
 		return genPreds(mDLib(ff).makeTypeEnvironment(), strs);
 	}
 
@@ -388,8 +384,9 @@ public class TestLib {
 	 * @param strs
 	 * @return
 	 */
-	public static Set<Predicate> genPreds(ITypeEnvironment typeEnv, String... strs){
-		final Set<Predicate> hyps = new LinkedHashSet<Predicate>(
+	public static LinkedHashSet<Predicate> genPreds(ITypeEnvironment typeEnv,
+			String... strs) {
+		final LinkedHashSet<Predicate> hyps = new LinkedHashSet<Predicate>(
 				strs.length * 4 / 3);
 		for (String s : strs)
 			hyps.add(genPred(typeEnv, s));
