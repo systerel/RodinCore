@@ -49,6 +49,20 @@
          </enabledWhen>
       </handler>
       <handler
+            class="fr.systerel.editor.internal.handlers.AddSameSiblingHandler"
+            commandId="fr.systerel.editor.addSameSibling">
+         <activeWhen>
+            <reference
+                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+            </reference>
+         </activeWhen>
+         <enabledWhen>
+            <reference
+                  definitionId="fr.systere.editor.definition.RodinEditorDefaultScope">
+            </reference>
+         </enabledWhen>
+      </handler>
+      <handler
             class="fr.systerel.editor.internal.handlers.MoveUpHandler"
             commandId="org.eclipse.ui.edit.text.moveLineUp">
          <activeWhen>
@@ -296,6 +310,11 @@
                name="Element type ID"
                optional="false">
          </commandParameter>
+      </command>
+      <command
+            categoryId="fr.systerel.editor.editionCategory"
+            id="fr.systerel.editor.addSameSibling"
+            name="Add Same Sibling">
       </command>
       <command
             categoryId="fr.systerel.editor.editionCategory"
@@ -779,6 +798,12 @@
             contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M2+TAB">
+      </key>
+      <key
+            commandId="fr.systerel.editor.addSameSibling"
+            contextId="fr.systerel.editor.contexts.rodinEditorContextScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+I">
       </key>
    </extension>
    <extension
