@@ -10,6 +10,9 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+
 import fr.systerel.editor.internal.editors.RodinEditor;
 
 /**
@@ -19,23 +22,29 @@ import fr.systerel.editor.internal.editors.RodinEditor;
  */
 public class TraverseHandlers {
 
-	public static class TraverseNextHandler extends AbstractEditionHandler {
+	public static class TraverseNextHandler extends AbstractEditorHandler {
 
 		@Override
-		protected String handleSelection(RodinEditor editor, int offset) {
-			editor.getOverlayEditor().saveAndExit(false);
-			editor.getSelectionController().goToNextEditRegion();
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			final RodinEditor editor = getActiveRodinEditor(event);
+			if (editor != null) {
+				editor.getOverlayEditor().saveAndExit(false);
+				editor.getSelectionController().goToNextEditRegion();
+			}
 			return null;
 		}
 
 	}
 
-	public static class TraversePreviousHandler extends AbstractEditionHandler {
+	public static class TraversePreviousHandler extends AbstractEditorHandler {
 
 		@Override
-		protected String handleSelection(RodinEditor editor, int offset) {
-			editor.getOverlayEditor().saveAndExit(false);
-			editor.getSelectionController().goToPreviousEditRegion();
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			final RodinEditor editor = getActiveRodinEditor(event);
+			if (editor != null) {
+				editor.getOverlayEditor().saveAndExit(false);
+				editor.getSelectionController().goToPreviousEditRegion();
+			}
 			return null;
 		}
 
