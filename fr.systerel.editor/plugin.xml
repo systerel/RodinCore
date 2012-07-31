@@ -801,7 +801,7 @@
       </key>
       <key
             commandId="fr.systerel.editor.addSameSibling"
-            contextId="fr.systerel.editor.contexts.rodinEditorContextScope"
+            contextId="fr.systerel.editor.contexts.rodinEditorDefaultScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+I">
       </key>
