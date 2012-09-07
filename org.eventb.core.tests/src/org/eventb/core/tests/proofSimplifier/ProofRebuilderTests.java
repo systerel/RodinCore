@@ -138,7 +138,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 	public void testRebuildWithPostTacticsDisabled() throws Exception {
 		disablePostTactics();
 		// given tactics do NOT close the proof tree
-		// do apply post tactics
+		// do not apply post tactics
 		// eventually, the proof tree is NOT closed
 		doTest(GOAL, false, false, false, Tactics.allI(), Tactics.exI("x"));
 	}
