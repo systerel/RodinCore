@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
- * Strongly inspired by org.eclipse.jdt.core.IOpenable.java which is
- * 
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation as
+ *     		org.eclipse.jdt.core.IOpenable
+ *     ETH Zurich - adaptation from JDT to Rodin
+ *     Systerel - documentation update for isOpen()
  *******************************************************************************/
-
 package org.rodinp.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -99,6 +101,15 @@ public interface IOpenable {
 	 * Returns whether this openable is open. If this openable doesn't exist,
 	 * this method will always return <code>false</code> (as it can't be
 	 * opened).
+	 * <p>
+	 * <strong>Important Note:</strong> In the case of a Rodin project, this
+	 * method returns whether the project contents have been loaded in the Rodin
+	 * database cache. This is very different from telling whether the project
+	 * is open or closed (as seen by the end-user). The latter information is
+	 * rather reported by the {@link IRodinElement#exists()} method: an open
+	 * project does exists, while a closed project is considered not to exist
+	 * anymore.
+	 * </p>
 	 * 
 	 * @return <code>true</code> iff this openable is open
 	 */
