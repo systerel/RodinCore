@@ -1,16 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- *     inspired by <code>org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup</code>
- *     
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *     IBM Corporation - initial API and implementation
+ *     Igor Fedorenko <igorfie@yahoo.com> -
+ *     		Fix for Bug 136921 [IDE] New File dialog locks for 20 seconds
+ *   ETH Zurich - adaptation to Event-B
+ *   Systerel - remove unused code
+*******************************************************************************/
 package org.eventb.internal.ui;
 
 import java.util.ArrayList;
@@ -54,9 +55,6 @@ public class RodinProjectSelectionGroup extends Composite {
 
 	// Enable user to type in new project name
 	private boolean allowNewProjectName = true;
-
-	// show all projects by default
-	private boolean showClosedProjects = true;
 
 	// Last selection made by user
 	private IRodinProject selectedProject;
@@ -109,30 +107,8 @@ public class RodinProjectSelectionGroup extends Composite {
 	 */
 	public RodinProjectSelectionGroup(Composite parent, Listener listener,
 			boolean allowNewProjectName, String message) {
-		this(parent, listener, allowNewProjectName, message, true);
-	}
-
-	/**
-	 * Creates a new instance of the widget.
-	 * 
-	 * @param parent
-	 *            The parent widget of the group.
-	 * @param listener
-	 *            A listener to forward events to. Can be null if no listener is
-	 *            required.
-	 * @param allowNewProjectName
-	 *            Enable the user to type in a new project name instead of
-	 *            just selecting from the existing ones.
-	 * @param message
-	 *            The text to present to the user.
-	 * @param showClosedProjects
-	 *            Whether or not to show closed projects.
-	 */
-	public RodinProjectSelectionGroup(Composite parent, Listener listener,
-			boolean allowNewProjectName, String message,
-			boolean showClosedProjects) {
 		this(parent, listener, allowNewProjectName, message,
-				showClosedProjects, SIZING_SELECTION_PANE_HEIGHT,
+				SIZING_SELECTION_PANE_HEIGHT,
 				SIZING_SELECTION_PANE_WIDTH);
 	}
 
@@ -149,8 +125,6 @@ public class RodinProjectSelectionGroup extends Composite {
 	 *            just selecting from the existing ones.
 	 * @param message
 	 *            The text to present to the user.
-	 * @param showClosedProjects
-	 *            Whether or not to show closed projects.
 	 * @param heightHint
 	 *            height hint for the drill down composite
 	 * @param widthHint
@@ -158,11 +132,10 @@ public class RodinProjectSelectionGroup extends Composite {
 	 */
 	public RodinProjectSelectionGroup(Composite parent, Listener listener,
 			boolean allowNewProjectName, String message,
-			boolean showClosedProjects, int heightHint, int widthHint) {
+			int heightHint, int widthHint) {
 		super(parent, SWT.NONE);
 		this.listener = listener;
 		this.allowNewProjectName = allowNewProjectName;
-		this.showClosedProjects = showClosedProjects;
 		if (message != null) {
 			createContents(message, heightHint, widthHint);
 		} else if (allowNewProjectName) {
@@ -267,7 +240,6 @@ public class RodinProjectSelectionGroup extends Composite {
 		treeViewer = new TreeViewer(drillDown, SWT.NONE);
 		drillDown.setChildTree(treeViewer);
 		RodinProjectContentProvider contentProvider = new RodinProjectContentProvider();
-		contentProvider.showClosedProjects(showClosedProjects);
 		treeViewer.setContentProvider(contentProvider);
 		treeViewer.setLabelProvider(new LabelProvider() {
 

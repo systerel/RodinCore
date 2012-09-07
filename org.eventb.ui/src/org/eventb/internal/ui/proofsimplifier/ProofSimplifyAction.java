@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,7 +109,7 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 						addAllProofs((IEventBRoot) o, proofs, sm.newChild(1));
 					} else if (o instanceof IRodinProject) {
 						final IRodinProject rodinProject = (IRodinProject) o;
-						if (rodinProject.isOpen()) {
+						if (rodinProject.exists()) {
 							addAllProofs(rodinProject, proofs, sm.newChild(1));
 						} else {
 							sm.worked(1);

@@ -1,16 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2007 ETH Zurich.
- *     inspired by <code>org.eclipse.ui.internal.ide.misc.ContainerSelectionDialog</code>
- *     
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
- ******************************************************************************/
-
+ *   IBM Corporation - initial API and implementation 
+ *   Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ *     font should be activated and used by other components.
+ *   ETH Zurich - adaptation to Event-B
+ *   Systerel - remove unused code
+ *******************************************************************************/
 package org.eventb.internal.ui;
 
 import java.util.ArrayList;
@@ -45,9 +46,6 @@ public class RodinProjectSelectionDialog extends SelectionDialog {
 
     //for validating the selection
     ISelectionValidator validator;
-
-    // show closed projects by default
-    private boolean showClosedProjects = true;
 
     /**
      * Creates a rodin project selection dialog rooted at the given rodin database.
@@ -104,7 +102,7 @@ public class RodinProjectSelectionDialog extends SelectionDialog {
 
         // project selection group
         group = new RodinProjectSelectionGroup(area, listener,
-                allowNewProjectName, getMessage(), showClosedProjects);
+                allowNewProjectName, getMessage());
         if (initialSelection != null) {
             group.setSelectedProject(initialSelection);
         }
@@ -142,13 +140,4 @@ public class RodinProjectSelectionDialog extends SelectionDialog {
         this.validator = validator;
     }
 
-    /**
-     * Set whether or not closed projects should be shown
-     * in the selection dialog.
-     * 
-     * @param show Whether or not to show closed projects.
-     */
-    public void showClosedProjects(boolean show) {
-        this.showClosedProjects = show;
-    }
 }

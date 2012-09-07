@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - remove unused code
+ *******************************************************************************/
 package org.eventb.internal.ui;
 
 import java.util.ArrayList;
@@ -13,8 +24,6 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 
 public class RodinProjectContentProvider implements ITreeContentProvider {
-
-    private boolean showClosedProjects = true;
 
     /**
      * Creates a new ContainerContentProvider.
@@ -38,26 +47,13 @@ public class RodinProjectContentProvider implements ITreeContentProvider {
     @Override
 	public Object[] getChildren(Object element) {
         if (element instanceof IRodinDB) {
-            // check if closed projects should be shown
-            IRodinProject[] allProjects;
 			try {
-				allProjects = ((IRodinDB) element).getRodinProjects();
+				return ((IRodinDB) element).getRodinProjects();
 			} catch (RodinDBException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return new Object[0];
 			}
-            if (showClosedProjects) {
-				return allProjects;
-			}
-
-            ArrayList<IRodinProject> accessibleProjects = new ArrayList<IRodinProject>();
-            for (int i = 0; i < allProjects.length; i++) {
-                if (allProjects[i].isOpen()) {
-                    accessibleProjects.add(allProjects[i]);
-                }
-            }
-            return accessibleProjects.toArray();
         } else if (element instanceof IContainer) {
             IContainer container = (IContainer) element;
             if (container.isAccessible()) {
@@ -115,16 +111,6 @@ public class RodinProjectContentProvider implements ITreeContentProvider {
     @Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     	// Do nothing
-    }
-
-    /**
-     * Specify whether or not to show closed projects in the tree 
-     * viewer.  Default is to show closed projects.
-     * 
-     * @param show boolean if false, do not show closed projects in the tree
-     */
-    public void showClosedProjects(boolean show) {
-        showClosedProjects = show;
     }
 
 }
