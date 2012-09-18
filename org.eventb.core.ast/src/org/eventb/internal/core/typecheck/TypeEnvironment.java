@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.typecheck;
 
+import static java.util.Collections.unmodifiableSet;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -247,7 +249,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	 */
 	@Override
 	public Set<String> getNames() {
-		return map.keySet();
+		return unmodifiableSet(map.keySet());
 	}
 
 	/*
