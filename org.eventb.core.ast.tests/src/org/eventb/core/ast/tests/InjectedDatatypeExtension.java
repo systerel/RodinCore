@@ -17,7 +17,7 @@ import static org.eventb.core.ast.LanguageVersion.LATEST;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -128,7 +128,7 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 
 	private static Map<String, Map<String, String>> getConstructors(
 			String typeSpec) {
-		final Map<String, Map<String, String>> result = new HashMap<String, Map<String, String>>();
+		final Map<String, Map<String, String>> result = new LinkedHashMap<String, Map<String, String>>();
 		final String condDestStr = getGroup(extensionDefPattern, 3, typeSpec);
 		final String[] split = splitOn(condDestStr, "\\|\\|");
 		for (String constDest : split) {
@@ -148,7 +148,7 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 	}
 
 	private static Map<String, String> getDestuctors(String[] destructorStrs) {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new LinkedHashMap<String, String>();
 		for (String dest : destructorStrs) {
 			final String destName = getGroup(cdPattern, 2, dest);
 			final String destType = getGroup(cdPattern, 4, dest);
