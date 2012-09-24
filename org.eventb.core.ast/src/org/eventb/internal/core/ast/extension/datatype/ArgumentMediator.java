@@ -59,7 +59,7 @@ public abstract class ArgumentMediator extends TypeMediator implements
 	@Override
 	public IArgumentType makeRelationalType(IArgumentType left,
 			IArgumentType right) {
-		return new ArgRelational(left, right);
+		return new ArgPowerSet(new ArgProduct(left, right));
 	}
 
 	@Override
