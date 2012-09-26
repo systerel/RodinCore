@@ -12,17 +12,16 @@ package org.eventb.internal.core.ast.extension.datatype;
 
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
 
 /**
  * @author Nicolas Beauger
  *
  */
-public class ArgPowerSet implements IArgumentType {
+public class ArgPowerSet extends ArgumentType {
 
-	private final IArgumentType arg;
+	private final ArgumentType arg;
 
-	public ArgPowerSet(IArgumentType arg) {
+	public ArgPowerSet(ArgumentType arg) {
 		this.arg = arg;
 	}
 	

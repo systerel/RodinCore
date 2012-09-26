@@ -12,13 +12,12 @@ package org.eventb.internal.core.ast.extension.datatype;
 
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
 
 /**
  * @author Nicolas Beauger
  *
  */
-public class ArgSimpleType implements IArgumentType {
+public class ArgSimpleType extends ArgumentType {
 
 	private final Type type;
 	

@@ -12,14 +12,13 @@ package org.eventb.internal.core.ast.extension.datatype;
 
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * @author Nicolas Beauger
  *
  */
-public class ArgTypeParamRef implements IArgumentType {
+public class ArgTypeParamRef extends ArgumentType {
 
 	private final ITypeParameter typeParam;
 

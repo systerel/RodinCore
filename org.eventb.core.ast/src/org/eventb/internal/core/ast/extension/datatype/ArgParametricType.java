@@ -17,18 +17,17 @@ import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
 
 /**
  * @author Nicolas Beauger
  *
  */
-public class ArgParametricType implements IArgumentType {
+public class ArgParametricType extends ArgumentType {
 
 	private final IExpressionExtension typeConstr;
-	private final List<IArgumentType> argTypes;
+	private final List<ArgumentType> argTypes;
 
-	public ArgParametricType(IExpressionExtension typeConstr, List<IArgumentType> argTypes) {
+	public ArgParametricType(IExpressionExtension typeConstr, List<ArgumentType> argTypes) {
 		this.typeConstr = typeConstr;
 		this.argTypes = argTypes;
 	}
@@ -36,7 +35,7 @@ public class ArgParametricType implements IArgumentType {
 	@Override
 	public Type toType(ITypeMediator mediator, TypeInstantiation instantiation) {
 		final List<Type> argTypesInst = new ArrayList<Type>();
-		for (IArgumentType arg : argTypes) {
+		for (ArgumentType arg : argTypes) {
 			final Type argType = arg.toType(mediator, instantiation);
 			argTypesInst.add(argType);
 		}

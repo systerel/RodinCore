@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
@@ -32,39 +32,55 @@ public abstract class ArgumentMediator extends TypeMediator implements
 	}
 
 	@Override
-	public IArgumentType newArgumentType(ITypeParameter type) {
+	public ArgumentType newArgumentType(ITypeParameter type) {
 		return new ArgTypeParamRef(type);
 	}
 
 	@Override
-	public IArgument newArgument(IArgumentType type) {
-		return new Argument(type);
+	public Argument newArgument(IArgumentType type) {
+		return new Argument((ArgumentType) type);
 	}
 
 	@Override
-	public IArgument newArgument(String destructorName, IArgumentType type) {
-		return new Argument(destructorName, type);
+	public Argument newArgument(String destructorName, IArgumentType type) {
+		return new Argument(destructorName, (ArgumentType) type);
 	}
 
 	@Override
-	public IArgumentType makePowerSetType(IArgumentType arg) {
-		return new ArgPowerSet(arg);
+	public ArgumentType makePowerSetType(IArgumentType arg) {
+		return new ArgPowerSet((ArgumentType) arg);
 	}
 
 	@Override
-	public IArgumentType makeProductType(IArgumentType left, IArgumentType right) {
-		return new ArgProduct(left, right);
+	public ArgumentType makeProductType(IArgumentType left, IArgumentType right) {
+		return new ArgProduct((ArgumentType) left, (ArgumentType) right);
 	}
 
 	@Override
-	public IArgumentType makeRelationalType(IArgumentType left,
+	public ArgumentType makeRelationalType(IArgumentType left,
 			IArgumentType right) {
-		return new ArgPowerSet(new ArgProduct(left, right));
+		return new ArgPowerSet(new ArgProduct((ArgumentType) left,
+				(ArgumentType) right));
 	}
 
 	@Override
-	public IArgumentType makeParametricType(IExpressionExtension typeConstr,
+	public ArgumentType makeParametricType(IExpressionExtension typeConstr,
 			List<IArgumentType> types) {
-		return new ArgParametricType(typeConstr, types);
+		return iMakeParametricType(typeConstr, internalize(types));
 	}
+
+	private List<ArgumentType> internalize(List<? extends IArgumentType> types) {
+		final int size = types.size();
+		final List<ArgumentType> result = new ArrayList<ArgumentType>(size);
+		for (final IArgumentType type : types) {
+			result.add((ArgumentType) type);
+		}
+		return result;
+	}
+
+	public ArgumentType iMakeParametricType(IExpressionExtension typeConstr,
+			List<ArgumentType> types) {
+		return new ArgParametricType(typeConstr, internalize(types));
+	}
+
 }

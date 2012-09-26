@@ -13,18 +13,17 @@ package org.eventb.internal.core.ast.extension.datatype;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeMediator;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
 
 /**
  * @author Nicolas Beauger
  *
  */
-public class ArgProduct implements IArgumentType {
+public class ArgProduct extends ArgumentType {
 
-	private final IArgumentType left;
-	private final IArgumentType right;
+	private final ArgumentType left;
+	private final ArgumentType right;
 
-	public ArgProduct(IArgumentType left, IArgumentType right) {
+	public ArgProduct(ArgumentType left, ArgumentType right) {
 		this.left = left;
 		this.right = right;
 		

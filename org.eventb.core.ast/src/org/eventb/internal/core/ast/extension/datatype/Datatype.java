@@ -26,7 +26,6 @@ import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 import org.eventb.internal.core.ast.extension.TypeMediator;
@@ -42,11 +41,11 @@ public class Datatype implements IDatatype {
 	private static class Constructor {
 		private final IExpressionExtension constructor;
 		private final List<IExpressionExtension> destructors;
-		private final List<IArgument> arguments;
+		private final List<Argument> arguments;
 
 		public Constructor(IExpressionExtension constructor,
 				List<IExpressionExtension> destructors,
-				List<IArgument> arguments) {
+				List<Argument> arguments) {
 			final IExtensionKind kind = constructor.getKind();
 			final ITypeDistribution childTypes = kind.getProperties()
 					.getChildTypes();
@@ -76,8 +75,8 @@ public class Datatype implements IDatatype {
 			return INDEX_NOT_FOUND;
 		}
 
-		public List<IArgument> getArguments() {
-			return new ArrayList<IArgument>(arguments);
+		public List<Argument> getArguments() {
+			return arguments;
 		}
 
 		// non null destructors
@@ -148,6 +147,14 @@ public class Datatype implements IDatatype {
 
 	@Override
 	public List<IArgument> getArguments(IExpressionExtension constructor) {
+		final List<Argument> args = iGetArguments(constructor);
+		if (args == null) {
+			return null;
+		}
+		return new ArrayList<IArgument>(args);
+	}
+
+	private List<Argument> iGetArguments(IExpressionExtension constructor) {
 		final Constructor constr = constructors.get(constructor.getId());
 		if (constr == null) {
 			return null;
@@ -180,7 +187,7 @@ public class Datatype implements IDatatype {
 	// don't forget to insert null destructors for arguments with no
 	// destructor, in order to have correct argument numbers
 	public void addConstructor(IExpressionExtension constructor,
-			List<IExpressionExtension> destructors, List<IArgument> arguments) {
+			List<IExpressionExtension> destructors, List<Argument> arguments) {
 		assert destructors.size() == arguments.size();
 		final Constructor old = constructors.get(constructor);
 		if (old != null) {
@@ -196,21 +203,21 @@ public class Datatype implements IDatatype {
 	public List<Type> getArgumentTypes(IExpressionExtension constructor,
 			ParametricType type, FormulaFactory factory) {
 		final TypeInstantiation typeInst = makeTypeInstantiation(type);
-		final List<IArgument> arguments = getArguments(constructor);
+		final List<Argument> arguments = iGetArguments(constructor);
 		if (typeInst == null || arguments == null) {
 			return null;
 		}
 		final List<Type> argTypes = new ArrayList<Type>(arguments.size());
-		for (IArgument arg : arguments) {
+		for (Argument arg : arguments) {
 			final Type argType = getType(arg, typeInst, factory);
 			argTypes.add(argType);
 		}
 		return argTypes;
 	}
 	
-	private static Type getType(IArgument arg, TypeInstantiation typeInst,
+	private static Type getType(Argument arg, TypeInstantiation typeInst,
 			FormulaFactory ff) {
-		final IArgumentType argAType = arg.getType();
+		final ArgumentType argAType = arg.getType();
 		final Type argType = argAType.toType(new TypeMediator(ff), typeInst);
 		return argType;
 	}

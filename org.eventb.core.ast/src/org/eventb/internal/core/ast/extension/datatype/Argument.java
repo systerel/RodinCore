@@ -11,7 +11,6 @@
 package org.eventb.internal.core.ast.extension.datatype;
 
 import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
 
 /**
  * @author Nicolas Beauger
@@ -21,19 +20,19 @@ public class Argument implements IArgument {
 
 	
 	private final String destructorName;
-	private final IArgumentType type;
+	private final ArgumentType type;
 	
-	public Argument(String destructorName, IArgumentType type) {
+	public Argument(String destructorName, ArgumentType type) {
 		this.destructorName = destructorName;
 		this.type = type;
 	}
 
-	public Argument(IArgumentType type) {
+	public Argument(ArgumentType type) {
 		this(null, type);
 	}
 
 	@Override
-	public IArgumentType getType() {
+	public ArgumentType getType() {
 		return type;
 	}
 

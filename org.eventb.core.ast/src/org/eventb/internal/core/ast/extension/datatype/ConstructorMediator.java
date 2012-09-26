@@ -39,7 +39,6 @@ import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
@@ -59,12 +58,12 @@ public class ConstructorMediator extends ArgumentMediator implements
 		private final IExtensionKind kind;
 		private final IExpressionExtension typeCons;
 		private final List<ITypeParameter> typeParams;
-		private final List<IArgument> arguments;
+		private final List<Argument> arguments;
 		private final IDatatype origin;
 
 		public ConstructorExtension(String name, String id, String groupId,
 				IExtensionKind kind, IExpressionExtension typeCons,
-				List<ITypeParameter> typeParams, List<IArgument> arguments,
+				List<ITypeParameter> typeParams, List<Argument> arguments,
 				IDatatype origin) {
 			this.name = name;
 			this.id = id;
@@ -135,7 +134,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 			assert childExprs.length == arguments.size();
 			for (int i = 0; i < childExprs.length; i++) {
 				final Type childType = childExprs[i].getType();
-				final IArgumentType argType = arguments.get(i).getType();
+				final ArgumentType argType = arguments.get(i).getType();
 				if (!argType.verifyType(childType, instantiation)) {
 					return false;
 				}
@@ -171,7 +170,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 			assert children.length == arguments.size();
 			for (int i = 0; i < children.length; i++) {
 				final Type childType = children[i].getType();
-				final IArgumentType argType = arguments.get(i).getType();
+				final ArgumentType argType = arguments.get(i).getType();
 				final Type type = argType.toType(tcMediator, instantiation);
 				tcMediator.sameType(childType, type);
 			}
@@ -284,13 +283,13 @@ public class ConstructorMediator extends ArgumentMediator implements
 		private final IExtensionKind kind;
 		private final IExpressionExtension typeCons;
 		private final List<ITypeParameter> typeParams;
-		private final IArgumentType returnType;
+		private final ArgumentType returnType;
 		private final IDatatype origin;
 		private final IExpressionExtension constructor;
 	
 		public DestructorExtension(String name, String id, String groupId,
 				IExtensionKind kind, IExpressionExtension typeCons,
-				List<ITypeParameter> typeParams, IArgumentType returnType,
+				List<ITypeParameter> typeParams, ArgumentType returnType,
 				IDatatype origin, IExpressionExtension constructor) {
 			this.name = name;
 			this.id = id;
@@ -577,21 +576,21 @@ public class ConstructorMediator extends ArgumentMediator implements
 	@Override
 	public void addConstructor(String name, String id,
 			List<IArgument> arguments) {
+		final List<Argument> iArgs = internalize(arguments);
 		final IExpressionExtension typeConstructor = datatype.getTypeConstructor();
 		final List<ITypeParameter> typeParams = datatype.getTypeParameters();
-		final int nbArgs = arguments.size();
+		final int nbArgs = iArgs.size();
 		final String groupId = computeGroup(nbArgs);
 		final IExtensionKind kind = computeKind(nbArgs);
 	
 		final IExpressionExtension constructor = new ConstructorExtension(name,
-				id, groupId, kind, typeConstructor, typeParams, arguments,
-				datatype);
+				id, groupId, kind, typeConstructor, typeParams, iArgs, datatype);
 
 		// FIXME problem with duplicate arguments with destructors:
 		// the destructor is built several times
 		final List<IExpressionExtension> destructors = new ArrayList<IExpressionExtension>();
-		for (int i = 0; i < arguments.size(); i++) {
-			final IArgument arg = arguments.get(i);
+		for (int i = 0; i < iArgs.size(); i++) {
+			final Argument arg = iArgs.get(i);
 			final IExpressionExtension destructor;
 			if (arg.hasDestructor()) {
 				final String destructorName = arg.getDestructor();
@@ -608,8 +607,16 @@ public class ConstructorMediator extends ArgumentMediator implements
 			}
 			destructors.add(destructor);
 		}
-		final List<IArgument> argCopy = new ArrayList<IArgument>(arguments);
-		datatype.addConstructor(constructor, destructors, argCopy);
+		datatype.addConstructor(constructor, destructors, iArgs);
+	}
+
+	private List<Argument> internalize(List<IArgument> arguments) {
+		final int size = arguments.size();
+		final List<Argument> result = new ArrayList<Argument>(size);
+		for (final IArgument arg : arguments) {
+			result.add((Argument) arg);
+		}
+		return result;
 	}
 
 	@Override
@@ -628,7 +635,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 	}
 
 	@Override
-	public IArgumentType newArgumentType(Type type) {
+	public ArgumentType newArgumentType(Type type) {
 		if (type instanceof GivenType) {
 			final String name = ((GivenType) type).getName();
 			final ITypeParameter typeParam = getTypeParameter(name);
@@ -647,16 +654,16 @@ public class ConstructorMediator extends ArgumentMediator implements
 			} else {
 				typeConstr = exprExtension;
 			}
-			final List<IArgumentType> argTypes = new ArrayList<IArgumentType>();
+			final List<ArgumentType> argTypes = new ArrayList<ArgumentType>();
 			for (Type typePrm : paramType.getTypeParameters()) {
-				final IArgumentType prmArgType = newArgumentType(typePrm);
+				final ArgumentType prmArgType = newArgumentType(typePrm);
 				argTypes.add(prmArgType);
 			}
-			return makeParametricType(typeConstr, argTypes);
+			return iMakeParametricType(typeConstr, argTypes);
 		} else if (type instanceof ProductType) {
 			final ProductType prodType = (ProductType) type;
-			final IArgumentType left = newArgumentType(prodType.getLeft());
-			final IArgumentType right = newArgumentType(prodType.getRight());
+			final ArgumentType left = newArgumentType(prodType.getLeft());
+			final ArgumentType right = newArgumentType(prodType.getRight());
 			return makeProductType(left, right);
 		} else if (type instanceof PowerSetType) {
 			final Type baseType = ((PowerSetType) type).getBaseType();
