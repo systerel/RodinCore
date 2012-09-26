@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,15 @@ package org.eventb.internal.core.ast.extension.datatype;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
@@ -222,6 +225,39 @@ public class Datatype implements IDatatype {
 		return argType;
 	}
 	
+	@Override
+	public List<Expression> getArgumentSets(IExpressionExtension constructor,
+			ExtendedExpression set, FormulaFactory factory) {
+		if (!isConstructor(constructor)) {
+			throw new IllegalArgumentException("Unknown constructor "
+					+ constructor.getId());
+		}
+		final List<IArgument> arguments = getArguments(constructor);
+		final Map<ITypeParameter, Expression> subst = extractSubst(set);
+		final List<Expression> result = new ArrayList<Expression>();
+		for (final IArgument arg : arguments) {
+			final ArgumentType argType = (ArgumentType) arg.getType();
+			final Expression argSet = argType.toSet(factory, subst);
+			result.add(argSet);
+		}
+		return result;
+	}
+
+	private Map<ITypeParameter, Expression> extractSubst(ExtendedExpression set) {
+		if (set.getExtension() != typeConstructor) {
+			throw new IllegalArgumentException(
+					"Set not built from the type constructor: " + set);
+		}
+		final Expression[] setParams = set.getChildExpressions();
+		final int nbParams = setParams.length;
+		final Map<ITypeParameter, Expression> result = new HashMap<ITypeParameter, Expression>();
+		assert nbParams == typeParams.size();
+		for (int i = 0; i < nbParams; i++) {
+			result.put(typeParams.get(i), setParams[i]);
+		}
+		return result;
+	}
+
 	private TypeInstantiation makeTypeInstantiation(ParametricType type) {
 		if (type.getExprExtension() != typeConstructor) {
 			return null;
@@ -239,5 +275,5 @@ public class Datatype implements IDatatype {
 		}
 		return instantiation;
 	}
-	
+
 }

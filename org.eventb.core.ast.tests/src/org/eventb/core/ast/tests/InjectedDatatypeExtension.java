@@ -11,8 +11,10 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.copyOfRange;
+import static java.util.Collections.emptyList;
 import static java.util.regex.Pattern.compile;
 import static org.eventb.core.ast.LanguageVersion.LATEST;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,8 +40,6 @@ import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
  */
 public class InjectedDatatypeExtension implements IDatatypeExtension {
 
-	protected static final FormulaFactory ff = FormulaFactory.getDefault();
-
 	/**
 	 * The constructor destructor pattern. Group #2 is the constructor or
 	 * destructor identifier, group #4 identifies the type
@@ -53,6 +53,7 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 	 */
 	private static final Pattern extensionDefPattern = compile("(.*)(::=)(.+)");
 
+	private final FormulaFactory ff;
 	private final String extensionExpression;
 	private final String typeConsSymbol;
 
@@ -60,7 +61,18 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 		return new InjectedDatatypeExtension(extensionExpr);
 	}
 
+	public static IDatatypeExtension injectExtension(String extensionExpr,
+			FormulaFactory ff) {
+		return new InjectedDatatypeExtension(extensionExpr, ff);
+	}
+
 	private InjectedDatatypeExtension(String extensionExpression) {
+		this(extensionExpression, FormulaFactory.getDefault());
+	}
+
+	private InjectedDatatypeExtension(String extensionExpression,
+			FormulaFactory ff) {
+		this.ff = ff;
 		this.extensionExpression = extensionExpression;
 		this.typeConsSymbol = getTypeConstructor(extensionExpression);
 	}
@@ -103,6 +115,9 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 	private static List<String> getTypeArguments(String definition) {
 		final String typeDefStr = getGroup(extensionDefPattern, 1, definition);
 		final String typesStr = getGroup(cdPattern, 4, typeDefStr);
+		if (typesStr.isEmpty()) {
+			return emptyList();
+		}
 		final String[] typeArgs = splitOn(typesStr, ",");
 		return Arrays.asList(typeArgs);
 	}
@@ -178,6 +193,7 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 					getListOfTypeArgs(mediator, types));
 		}
 		final Type type = ff.parseType(dest, LATEST).getParsedType();
+		assertNotNull(type);
 		return mediator.newArgumentType(type);
 	}
 
@@ -187,6 +203,7 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 		final String[] typeStrsArray = splitOn(typeStrs, ",");
 		for (String typeStr : typeStrsArray) {
 			final Type type = ff.parseType(typeStr, LATEST).getParsedType();
+			assertNotNull(type);
 			result.add(mediator.newArgumentType(type));
 		}
 		return result;

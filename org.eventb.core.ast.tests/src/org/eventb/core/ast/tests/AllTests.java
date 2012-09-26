@@ -58,6 +58,7 @@ public class AllTests {
 		suite.addTestSuite(TestTypeSpecialization.class);
 		suite.addTestSuite(TestTypenvSpecialization.class);
 		suite.addTestSuite(TestFormulaSpecialization.class);
+		suite.addTestSuite(TestDatatypeArgumentSets.class);
 		//$JUnit-END$
 		return suite;
 	}

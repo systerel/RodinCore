@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,20 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
+import static org.eventb.core.ast.Formula.CPROD;
+
+import java.util.Map;
+
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeMediator;
+import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * @author Nicolas Beauger
- *
+ * 
  */
 public class ArgProduct extends ArgumentType {
 
@@ -26,8 +33,9 @@ public class ArgProduct extends ArgumentType {
 	public ArgProduct(ArgumentType left, ArgumentType right) {
 		this.left = left;
 		this.right = right;
-		
+
 	}
+
 	@Override
 	public Type toType(ITypeMediator mediator, TypeInstantiation instantiation) {
 		final Type leftType = left.toType(mediator, instantiation);
@@ -37,7 +45,7 @@ public class ArgProduct extends ArgumentType {
 
 	@Override
 	public boolean verifyType(Type proposedType, TypeInstantiation instantiation) {
-		if (!(proposedType instanceof ProductType) ) {
+		if (!(proposedType instanceof ProductType)) {
 			return false;
 		}
 		final ProductType prod = (ProductType) proposedType;
@@ -46,6 +54,15 @@ public class ArgProduct extends ArgumentType {
 		return left.verifyType(leftType, instantiation)
 				&& right.verifyType(rightType, instantiation);
 	}
+
+	@Override
+	public Expression toSet(FormulaFactory factory,
+			Map<ITypeParameter, Expression> substitution) {
+		final Expression leftSet = left.toSet(factory, substitution);
+		final Expression rightSet = right.toSet(factory, substitution);
+		return factory.makeBinaryExpression(CPROD, leftSet, rightSet, null);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -54,6 +71,7 @@ public class ArgProduct extends ArgumentType {
 		result = prime * result + ((right == null) ? 0 : right.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -83,5 +101,4 @@ public class ArgProduct extends ArgumentType {
 		return true;
 	}
 
-	
 }

@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
+import java.util.Map;
+
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
+import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * Common implementation of argument types used for constructors of parametric
@@ -20,6 +25,19 @@ import org.eventb.core.ast.extension.datatype.IArgumentType;
  */
 public abstract class ArgumentType implements IArgumentType {
 
-	// Nothing yet
+	/**
+	 * Returns the set expression corresponding to this argument type where type
+	 * parameters have been substituted by the given set expressions.
+	 * 
+	 * @param factory
+	 *            factory for building the result
+	 * @param substitution
+	 *            substitution of set expressions for type parameters
+	 * 
+	 * @return this argument type as a set expression where type parameters have
+	 *         been substituted
+	 */
+	public abstract Expression toSet(FormulaFactory factory,
+			Map<ITypeParameter, Expression> substitution);
 
 }

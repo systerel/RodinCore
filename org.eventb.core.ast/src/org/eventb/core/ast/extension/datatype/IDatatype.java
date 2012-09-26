@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eventb.core.ast.extension.datatype;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
@@ -166,6 +168,37 @@ public interface IDatatype {
 	 */
 	List<Type> getArgumentTypes(IExpressionExtension constructor,
 			ParametricType returnType, FormulaFactory factory);
+
+	/**
+	 * Returns the list of argument sets for the given constructor, according to
+	 * the given datatype set. In other words, returns the sets to which the
+	 * arguments of the given constructor must belong for the constructed value
+	 * to belong to the given set. This is done by instantiating the type
+	 * parameters of this datatype with the arguments of the type constructor in
+	 * the given set.
+	 * <p>
+	 * For instance, suppose that the List datatype is defined by
+	 * <code>List(T) ::= nil | cons(hd: T, tl: List(T))</code>, then the call
+	 * <code>getArgumentSets(cons, List(1..2), factory)</code> returns the list
+	 * <code>{ 1..2, List(1..2) }</code>.
+	 * </p>
+	 * 
+	 * @param constructor
+	 *            a constructor of this datatype
+	 * @param set
+	 *            a set built with the type constructor of this datatype
+	 * @param factory
+	 *            formula factory to use for building the result (must include
+	 *            all extensions of this datatype)
+	 * @return a list of sets
+	 * @throws IllegalArgumentException
+	 *             if the given constructor does not belong to this datatype or
+	 *             if the given set is not an instance of the type constructor
+	 *             of this datatype
+	 * @since 2.7
+	 */
+	List<Expression> getArgumentSets(IExpressionExtension constructor,
+			ExtendedExpression set, FormulaFactory factory);
 
 	/**
 	 * Returns the argument number of the given destructor for the given

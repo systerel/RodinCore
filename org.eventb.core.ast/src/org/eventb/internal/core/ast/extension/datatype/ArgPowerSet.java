@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,15 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
+import static org.eventb.core.ast.Formula.POW;
+
+import java.util.Map;
+
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeMediator;
+import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * @author Nicolas Beauger
@@ -38,6 +45,13 @@ public class ArgPowerSet extends ArgumentType {
 			return false;
 		}
 		return arg.verifyType(baseType, instantiation);
+	}
+
+	@Override
+	public Expression toSet(FormulaFactory factory,
+			Map<ITypeParameter, Expression> substitution) {
+		final Expression argSet = arg.toSet(factory, substitution);
+		return factory.makeUnaryExpression(POW, argSet, null);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,28 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ParametricType;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.ITypeMediator;
+import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * @author Nicolas Beauger
  *
  */
 public class ArgParametricType extends ArgumentType {
+
+	private static final List<Predicate> NO_PREDS = emptyList();
 
 	private final IExpressionExtension typeConstr;
 	private final List<ArgumentType> argTypes;
@@ -59,6 +68,17 @@ public class ArgParametricType extends ArgumentType {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public Expression toSet(FormulaFactory fac,
+			Map<ITypeParameter, Expression> substitution) {
+		final List<Expression> argSets = new ArrayList<Expression>();
+		for (final ArgumentType argType : argTypes) {
+			final Expression argSet = argType.toSet(fac, substitution);
+			argSets.add(argSet);
+		}
+		return fac.makeExtendedExpression(typeConstr, argSets, NO_PREDS, null);
 	}
 
 	@Override
