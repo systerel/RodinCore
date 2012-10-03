@@ -710,7 +710,7 @@ public class FormulaFactory {
 	@Deprecated
 	public BoundIdentDecl makeBoundIdentDecl(FreeIdentifier ident) {
 		return new BoundIdentDecl(ident.getName(), Formula.BOUND_IDENT_DECL,
-				ident.getSourceLocation(), ident.getType());
+				ident.getSourceLocation(), ident.getType(), this);
 	}
 
 	/**
@@ -727,7 +727,8 @@ public class FormulaFactory {
 	 */
 	public BoundIdentDecl makeBoundIdentDecl(String name,
 			SourceLocation location) {
-		return new BoundIdentDecl(name, Formula.BOUND_IDENT_DECL, location, null);
+		return new BoundIdentDecl(name, Formula.BOUND_IDENT_DECL, location,
+				null, this);
 	}
 
 	/**
@@ -746,7 +747,8 @@ public class FormulaFactory {
 	 */
 	public BoundIdentDecl makeBoundIdentDecl(String name,
 			SourceLocation location, Type type) {
-		return new BoundIdentDecl(name, Formula.BOUND_IDENT_DECL, location, type);
+		return new BoundIdentDecl(name, Formula.BOUND_IDENT_DECL, location,
+				type, this);
 	}
 
 	/**
@@ -1487,7 +1489,7 @@ public class FormulaFactory {
 	 * @return a given type with the given name
 	 */
 	public GivenType makeGivenType(String name) {
-		return new GivenType(name);
+		return new GivenType(name, this);
 	}
 
 	/**

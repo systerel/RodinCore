@@ -54,14 +54,14 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	private final String name;
 	private Type type;
 	
-	protected BoundIdentDecl(String name, int tag, SourceLocation location, Type givenType) {
+	protected BoundIdentDecl(String name, int tag, SourceLocation location,
+			Type givenType, FormulaFactory ff) {
 		super(tag, location, name.hashCode());
 		assert tag == Formula.BOUND_IDENT_DECL;
 		assert name != null;
 		assert name.length() != 0;
-		assert !name.contains(PredicateVariable.LEADING_SYMBOL);
+		assert ff.isValidIdentifierName(name);
 		this.name = name;
-
 		setPredicateVariableCache();
 		synthesizeType(givenType);
 	}

@@ -77,6 +77,8 @@ public class PredicateVariable extends Predicate {
 		super(tag, location, name.hashCode());
 		assert name != null;
 		assert name.startsWith(LEADING_SYMBOL);
+		final String suffix = name.substring(LEADING_SYMBOL.length());
+		assert ff.isValidIdentifierName(suffix);
 		this.name = name;
 		setPredicateVariableCache(this);
 		synthesizeType(ff);

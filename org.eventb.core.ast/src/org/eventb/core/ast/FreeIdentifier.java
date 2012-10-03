@@ -49,7 +49,7 @@ public class FreeIdentifier extends Identifier {
 		assert tag == Formula.FREE_IDENT;
 		assert name != null;
 		assert name.length() != 0;
-		assert !name.contains(PredicateVariable.LEADING_SYMBOL);
+		assert ff.isValidIdentifierName(name);
 
 		this.name = name;
 		setPredicateVariableCache();

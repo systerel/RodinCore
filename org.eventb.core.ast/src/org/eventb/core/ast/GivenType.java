@@ -31,8 +31,9 @@ public class GivenType extends Type {
 	/**
 	 * Creates a new instance of this type.
 	 */
-	protected GivenType(String name) {
+	protected GivenType(String name, FormulaFactory ff) {
 		super(true);
+		assert ff.isValidIdentifierName(name);
 		this.name = name;
 	}
 
