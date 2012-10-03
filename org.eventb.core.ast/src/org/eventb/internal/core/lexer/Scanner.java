@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.internal.core.lexer.GenLexer.LexState;
 import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.ParseResult;
 
 /**
@@ -96,16 +96,14 @@ public class Scanner {
 	public static boolean isValidIdentifierName(
 			FormulaFactory factory,
 			String name) {
-		// just to get problems
+		final BMath grammar = (BMath) factory.getGrammar();
 		final ParseResult result = new ParseResult(
 				factory,
-				LanguageVersion.LATEST,
+				grammar.getVersion(),
 				name);
-
-		final Scanner scanner = new Scanner(name, result, factory.getGrammar());
-
+		final Scanner scanner = new Scanner(name, result, grammar);
 		final Token token = scanner.Peek();
-		final int identKind = factory.getGrammar().getKind(IDENT);
+		final int identKind = grammar.getKind(IDENT);
 		return (!result.hasProblem() && token != null
 				&& token.kind == identKind && token.val.equals(name));
 	}

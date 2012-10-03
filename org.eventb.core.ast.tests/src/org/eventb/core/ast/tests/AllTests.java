@@ -23,6 +23,7 @@ public class AllTests {
 		suite.addTestSuite(TestOrigin.class);
 		suite.addTestSuite(TestAST.class);
 		suite.addTestSuite(TestFreeIdents.class);
+		suite.addTestSuite(TestFormulaFactory.class);
 		suite.addTestSuite(TestUnparse.class);
 		suite.addTestSuite(TestSourceLocation.class);
 		suite.addTestSuite(TestTypeChecker.class);
