@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,8 @@ public class TestParser extends AbstractTests {
 	private static FreeIdentifier id_T = mFreeIdentifier("T");
 	private static FreeIdentifier id_f = mFreeIdentifier("f");
 	private static FreeIdentifier id_filter = mFreeIdentifier("filter");
-	private static FreeIdentifier id_partition = mFreeIdentifier("partition");
+	private static FreeIdentifier id_partition = ffV1.makeFreeIdentifier(
+			"partition", null);
 	
 	private static BoundIdentDecl bd_x = mBoundIdentDecl("x");
 	private static BoundIdentDecl bd_y = mBoundIdentDecl("y");
@@ -89,7 +90,8 @@ public class TestParser extends AbstractTests {
 	private static BoundIdentDecl bd_xp = mBoundIdentDecl("x'");
 	private static BoundIdentDecl bd_yp = mBoundIdentDecl("y'");
 	private static BoundIdentDecl bd_zp = mBoundIdentDecl("z'");
-	private static BoundIdentDecl bd_partition = mBoundIdentDecl("partition");
+	private static BoundIdentDecl bd_partition = ffV1.makeBoundIdentDecl(
+			"partition", null);
 
 	private static BoundIdentifier b0 = mBoundIdentifier(0);
 	private static BoundIdentifier b1 = mBoundIdentifier(1);

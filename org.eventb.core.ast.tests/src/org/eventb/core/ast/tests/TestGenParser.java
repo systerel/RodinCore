@@ -1690,8 +1690,8 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	public void testPartitionV1V2() throws Exception {
-		final Expression expectedV1 = ff.makeBinaryExpression(FUNIMAGE,
-				ff.makeFreeIdentifier("partition", null),
+		final Expression expectedV1 = ffV1.makeBinaryExpression(FUNIMAGE,
+				ffV1.makeFreeIdentifier("partition", null),
 				FRID_S, null);
 		final Predicate expectedV2 = ff.makeMultiplePredicate(KPARTITION,
 				Arrays.<Expression>asList(FRID_S), null);

@@ -91,12 +91,24 @@ public class FormulaFactory {
 	private final BMath grammar;
 	
 	/**
-	 * Returns the default instance of the type factory.
+	 * Returns the default instance of the formula factory which corresponds to
+	 * the current version of the mathematical language.
 	 * 
-	 * @return the single instance of this class.
+	 * @return the default instance of this class for language V2
 	 */
 	public static FormulaFactory getDefault() {
 		return DEFAULT_INSTANCE;
+	}
+
+	/**
+	 * Returns the default instance of the formula factory for the obsolete
+	 * version V1 of the mathematical language.
+	 * 
+	 * @return the single instance of this class for language V1
+	 * @since 2.7
+	 */
+	public static FormulaFactory getV1Default() {
+		return V1_INSTANCE;
 	}
 
 	/**

@@ -49,7 +49,12 @@ import org.eventb.core.ast.extension.datatype.ITypeParameter;
  */
 public abstract class AbstractTests extends TestCase {
 
+	// Default formula factory for the last language version, without extension
 	public static final FormulaFactory ff = FormulaFactory.getDefault();
+
+	// Formula factory for the old V1 language
+	public static final FormulaFactory ffV1 = FormulaFactory.getV1Default();
+
 	protected static final IntegerType INT_TYPE = ff.makeIntegerType();
 	private static final IDatatypeExtension LIST_TYPE = new IDatatypeExtension() {
 
