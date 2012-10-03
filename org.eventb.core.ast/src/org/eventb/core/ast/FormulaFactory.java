@@ -55,9 +55,9 @@ import org.eventb.internal.core.upgrade.UpgraderFactory;
 import org.eventb.internal.core.upgrade.VersionUpgrader;
 
 /**
- * This class is the factory class for all the ast nodes of an event-B formula.
+ * This class is the factory class for all the AST nodes of an event-B formula.
  * <p>
- * Use this class to instantiate all types of ast nodes used in an event-B
+ * Use this class to instantiate all types of AST nodes used in an event-B
  * formula. Tags used in this method are the constants defined in class {@link Formula}.
  * </p>
  *  
@@ -719,7 +719,7 @@ public class FormulaFactory {
 	 * @param name
 	 *            the name of the identifier. Must not be null or an empty string.
 	 * @param location
-	 *            the source location of this identifer declaration
+	 *            the source location of this identifier declaration
 	 * @return a bound identifier declaration
 	 * 
 	 * @see #makeFreeIdentifier(String, SourceLocation)
@@ -737,7 +737,7 @@ public class FormulaFactory {
 	 * @param name
 	 *            the name of the identifier. Must not be null or an empty string.
 	 * @param location
-	 *            the source location of this identifer declaration
+	 *            the source location of this identifier declaration
 	 * @param type
 	 *            the type of this identifier. Can be <code>null</code>.
 	 * @return a bound identifier declaration
@@ -757,7 +757,7 @@ public class FormulaFactory {
 	 * @param index
 	 *            the index in the De Bruijn notation. Must be non-negative.
 	 * @param location
-	 *            the source location of this identifier occurence
+	 *            the source location of this identifier occurrence
 	 * @return a bound identifier occurrence
 	 * 
 	 * @see #makeBoundIdentDecl(String, SourceLocation)
@@ -774,7 +774,7 @@ public class FormulaFactory {
 	 * @param index
 	 *            the index in the De Bruijn notation. Must be non-negative.
 	 * @param location
-	 *            the source location of this identifier occurence
+	 *            the source location of this identifier occurrence
 	 * @param type
 	 *            the type of this identifier. Can be <code>null</code>.
 	 * @return a bound identifier occurrence
@@ -788,12 +788,12 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Creates a new node representing a free occurence of an identifier.
+	 * Creates a new node representing a free occurrence of an identifier.
 	 * 
 	 * @param name
 	 *            the name of the identifier. Must not be null or an empty string.
 	 * @param location
-	 *            the source location of this identifer occurence
+	 *            the source location of this identifier occurrence
 	 * @return a free identifier
 	 * 
 	 * @see #makeBoundIdentDecl(String, SourceLocation)
@@ -805,12 +805,12 @@ public class FormulaFactory {
 	}
 	
 	/**
-	 * Creates a new node representing a free occurence of an identifier.
+	 * Creates a new node representing a free occurrence of an identifier.
 	 * 
 	 * @param name
 	 *            the name of the identifier. Must not be null or an empty string.
 	 * @param location
-	 *            the source location of this identifer occurence
+	 *            the source location of this identifier occurrence
 	 * @param type
 	 *            the type of this identifier. Can be <code>null</code>.
 	 * @return a free identifier
@@ -1527,13 +1527,13 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns the type corresponding to the cartesian product of the two given
+	 * Returns the type corresponding to the Cartesian product of the two given
 	 * types.
 	 * 
 	 * @param left
-	 *            the first component of the cartesian product
+	 *            the first component of the Cartesian product
 	 * @param right
-	 *            the second component of the cartesian product
+	 *            the second component of the Cartesian product
 	 * @return the product type of the two given types
 	 */
 	public ProductType makeProductType(Type left, Type right) {
@@ -1617,7 +1617,7 @@ public class FormulaFactory {
 	 * Upgrades the given assignment string to the given language version.
 	 * 
 	 * @param input
-	 *            an assignment string assumed to be parseable in the language
+	 *            an assignment string assumed to be parsable in the language
 	 *            version immediately preceding the target version
 	 * @param targetVersion
 	 *            the desired version after upgrade
@@ -1637,7 +1637,7 @@ public class FormulaFactory {
 	 * Upgrades the given expression string to the given language version.
 	 * 
 	 * @param input
-	 *            an expression string assumed to be parseable in the language
+	 *            an expression string assumed to be parsable in the language
 	 *            version immediately preceding the target version
 	 * @param targetVersion
 	 *            the desired version after upgrade
@@ -1657,7 +1657,7 @@ public class FormulaFactory {
 	 * Upgrades the given predicate string to the given language version.
 	 * 
 	 * @param input
-	 *            a predicate string assumed to be parseable in the language
+	 *            a predicate string assumed to be parsable in the language
 	 *            version immediately preceding the target version
 	 * @param targetVersion
 	 *            the desired version after upgrade
