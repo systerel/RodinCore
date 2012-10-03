@@ -1,7 +1,15 @@
-/*
- * Created on 11-may-2005
+/*******************************************************************************
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- */
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - externalized wd lemmas generation
+ *     Systerel - bug #3574162: AST does not compare bound ident decl types
+ *******************************************************************************/
 package org.eventb.core.ast;
 
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
@@ -38,7 +46,14 @@ abstract class QuantifiedHelper {
 		if (leftBound.length != rightBound.length) {
 			return false;
 		}
-		if (! withAlphaConversion) {
+		if (withAlphaConversion) {
+			// With alpha conversion, check only types
+			for (int i = 0; i < leftBound.length; i++) {
+				if (!haveSameType(leftBound[i], rightBound[i])) {
+					return false;
+				}
+			}
+		} else {
 			// No alpha conversion, check each identifier.
 			for (int i = 0; i < leftBound.length; i++) {
 				if (! leftBound[i].equals(rightBound[i])) {
@@ -49,6 +64,14 @@ abstract class QuantifiedHelper {
 		return true;
 	}
 
+	private static boolean haveSameType(BoundIdentDecl left,
+			BoundIdentDecl right) {
+		final Type leftType = left.getType();
+		final Type rightType = right.getType();
+		return leftType == null ? rightType == null : //
+				leftType.equals(rightType);
+	}
+	
 	/*
 	 * Appends the list of names to the given string builder.
 	 */

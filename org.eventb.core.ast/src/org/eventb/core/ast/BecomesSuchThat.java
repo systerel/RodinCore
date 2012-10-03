@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,11 @@
  *     Systerel - added accept for ISimpleVisitor
  *     Systerel - added support for predicate variables
  *     Systerel - externalized wd lemmas generation
+ *     Systerel - bug #3574162: AST does not compare bound ident decl types
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
@@ -253,8 +255,10 @@ public class BecomesSuchThat extends Assignment {
 		if (this.getTag() != otherFormula.getTag()) {
 			return false;
 		}
-		BecomesSuchThat other = (BecomesSuchThat) otherFormula;
+		final BecomesSuchThat other = (BecomesSuchThat) otherFormula;
 		return hasSameAssignedIdentifiers(other)
+				&& areEqualQuantifiers(primedIdents, other.primedIdents,
+						withAlphaConversion)
 				&& condition.equals(other.condition, withAlphaConversion);
 	}
 

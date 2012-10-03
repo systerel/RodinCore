@@ -159,6 +159,7 @@ public class TestGenParser extends AbstractTests {
 	protected static final BoundIdentifier BI_3 = ff.makeBoundIdentifier(3, null);
 	protected static final BoundIdentDecl BID_u = ff.makeBoundIdentDecl("u", null);
 	protected static final BoundIdentDecl BID_x = ff.makeBoundIdentDecl("x", null);
+	protected static final BoundIdentDecl BID_xZ = ff.makeBoundIdentDecl("x", null, INT_TYPE);
 	protected static final BoundIdentDecl BID_y = ff.makeBoundIdentDecl("y", null);
 	protected static final BoundIdentDecl BID_z = ff.makeBoundIdentDecl("z", null);
 	protected static final LiteralPredicate LIT_BFALSE = ff.makeLiteralPredicate(
@@ -1190,7 +1191,7 @@ public class TestGenParser extends AbstractTests {
 
 	public void testBoundIdentDeclExprOfType() throws Exception {
 		final QuantifiedExpression expected = ff.makeQuantifiedExpression(QUNION,
-				asList(BID_x),
+				asList(BID_xZ),
 				ff.makeRelationalPredicate(GT,
 						BI_0,
 						ZERO, null),

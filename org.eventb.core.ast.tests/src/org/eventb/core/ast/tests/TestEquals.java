@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 20012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,13 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
  *     Systerel - added support for predicate variables
+ *     Systerel - bug #3574162: AST does not compare bound ident decl types
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.mBecomesSuchThat;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mMaplet;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
@@ -20,6 +23,7 @@ import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 
+import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -28,6 +32,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
+import org.eventb.core.ast.Type;
 
 
 /**
@@ -36,6 +41,9 @@ import org.eventb.core.ast.QuantifiedExpression;
  * @author Laurent Voisin
  */
 public class TestEquals extends AbstractTests {
+
+	private static final Type B = ff.makeBooleanType();
+	private static final Type Z = ff.makeIntegerType();
 
 	private class TestItem<T extends Formula<T>> {
 		T[] formulas;
@@ -252,6 +260,101 @@ public class TestEquals extends AbstractTests {
 				f1.equals(f2));
 		assertFalse("Disequality of " + f2 + " and " + f1,
 				f2.equals(f1));
+	}
+
+	/**
+	 * Ensures that bound identifier declarations that bear different names or
+	 * different types are considered different.
+	 * 
+	 * Cf. bug #3574162: AST does not compare bound ident decl types
+	 */
+	public void testBoundIdentDeclEquality() {
+		final BoundIdentDecl b_xZ = mBoundIdentDecl("x", Z);
+		final BoundIdentDecl b_xB = mBoundIdentDecl("x", B);
+		final BoundIdentDecl b_yZ = mBoundIdentDecl("y", Z);
+		final BoundIdentDecl b_yB = mBoundIdentDecl("y", B);
+
+		// Test differing names
+		assertFormulaNotEqual(b_x, b_y);
+		assertFormulaNotEqual(b_xZ, b_yZ);
+		assertFormulaNotEqual(b_xZ, b_yB);
+
+		// Test differing types
+		assertFormulaEquality(b_x, mBoundIdentDecl("x"), b_xZ,
+				mBoundIdentDecl("x", Z), b_xB);
+	}
+
+	/**
+	 * Ensures that bound identifier declarations that bear different types make
+	 * "becomes such that" assignments different.
+	 * 
+	 * Cf. bug #3574162: AST does not compare bound ident decl types
+	 */
+	public void testBecomesSuchThat() {
+		final FreeIdentifier id_xZ = FastFactory.mFreeIdentifier("x", Z);
+		final BoundIdentDecl b_xp = mBoundIdentDecl("x'");
+		final BoundIdentDecl b_xpZ = mBoundIdentDecl("x'", Z);
+		final BoundIdentDecl b_xpB = mBoundIdentDecl("x'", B);
+		final Predicate cond = FastFactory.mLiteralPredicate();
+		assertFormulaEquality(
+				(Assignment) //
+				mBecomesSuchThat(mList(id_xZ), mList(b_xp), cond),
+				mBecomesSuchThat(mList(id_xZ), mList(b_xp), cond),
+				mBecomesSuchThat(mList(id_xZ), mList(b_xpZ), cond),
+				mBecomesSuchThat(mList(id_xZ), mList(b_xpZ), cond),
+				mBecomesSuchThat(mList(id_xZ), mList(b_xpB), cond));
+	}
+
+	/**
+	 * Ensures that bound identifier declarations that bear different types make
+	 * quantified predicates different.
+	 * 
+	 * Cf. bug #3574162: AST does not compare bound ident decl types
+	 */
+	public void testQuantifiedExpression() {
+		assertPredicateEquality("finite({x·⊤∣1})", "finite({x⦂ℤ·⊤∣1})",
+				"finite({x⦂BOOL·⊤∣1})");
+	}
+
+	/**
+	 * Ensures that bound identifier declarations that bear different types make
+	 * quantified expressions different.
+	 * 
+	 * Cf. bug #3574162: AST does not compare bound ident decl types
+	 */
+	public void testQuantifiedPredicate() {
+		assertPredicateEquality("∀x·⊤", "∀x⦂ℤ·⊤", "∀x⦂BOOL·⊤");
+	}
+
+	private void assertPredicateEquality(String untypedImage,
+			String typeZImage, String typeBImage) {
+		assertFormulaEquality(parsePredicate(untypedImage),
+				parsePredicate(untypedImage), parsePredicate(typeZImage),
+				parsePredicate(typeZImage), parsePredicate(typeBImage));
+	}
+
+	private <T extends Formula<T>> void assertFormulaEquality(T untyped,
+			T untyped2, T typeZ, T typeZ2, T typeB) {
+		assertFormulaEqual(untyped, untyped2);
+		assertFormulaNotEqual(untyped, typeZ);
+		assertFormulaEqual(typeZ, typeZ2);
+		assertFormulaNotEqual(typeZ, typeB);
+	}
+
+	private <T extends Formula<T>> void assertFormulaNotEqual(T f1, T f2) {
+		assertFormulaEqual(f1, f2, false);
+	}
+
+	private <T extends Formula<T>> void assertFormulaEqual(T f1, T f2) {
+		assertFormulaEqual(f1, f2, true);
+	}
+
+	private <T extends Formula<T>> void assertFormulaEqual(T f1, T f2,
+			boolean equal) {
+		final String msg = f1.toStringWithTypes() + " and "
+				+ f2.toStringWithTypes();
+		assertEquals(msg, equal, f1.equals(f2));
+		assertEquals(msg, equal, f2.equals(f1));
 	}
 
 }
