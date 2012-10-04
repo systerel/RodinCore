@@ -82,6 +82,13 @@ import org.rodinp.internal.core.util.Util;
 public class RodinDBManager implements ISaveParticipant { 	
  
 	/**
+	 * Tells whether item relations should be active. This is an experimental
+	 * feature targeted for Rodin 3.0.
+	 */
+	public static final boolean WITH_RELATIONS = System
+			.getProperty("org.rodinp.core.relations") != null;
+
+	/**
 	 * Unique handle onto the RodinDB
 	 */
 	final RodinDB rodinDB = new RodinDB();
