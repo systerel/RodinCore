@@ -1395,18 +1395,18 @@ public class TestTypeChecker extends AbstractTests {
 			ITypeEnvironment inferredEnv) {
 		final FormulaFactory factory = initialEnv.getFormulaFactory();
 		final Predicate formula = parsePredicate(image, factory);
-		doTest(formula, initialEnv, inferredEnv);
+		doTest(formula, initialEnv, inferredEnv, image);
 	}
 
 	private void testAssignment(String image, ITypeEnvironment initialEnv,
 			ITypeEnvironment inferredEnv) {
 		final FormulaFactory factory = initialEnv.getFormulaFactory();
 		final Assignment formula = parseAssignment(image, factory);
-		doTest(formula, initialEnv, inferredEnv);
+		doTest(formula, initialEnv, inferredEnv, image);
 	}
 
 	private void doTest(Formula<?> formula, ITypeEnvironment initialEnv,
-			ITypeEnvironment inferredEnv) {
+			ITypeEnvironment inferredEnv, String image) {
 		final boolean expectSuccess = inferredEnv != null;
 		final ITypeCheckResult result = formula.typeCheck(initialEnv);
 		if (expectSuccess && !result.isSuccess()) {
@@ -1420,7 +1420,7 @@ public class TestTypeChecker extends AbstractTests {
 				final SourceLocation loc = problem.getSourceLocation();
 				if (loc != null) {
 					builder.append(", where location is: ");
-					builder.append(formula.toString().substring(loc.getStart(),
+					builder.append(image.substring(loc.getStart(),
 							loc.getEnd() + 1));
 				}
 				builder.append("\n");
