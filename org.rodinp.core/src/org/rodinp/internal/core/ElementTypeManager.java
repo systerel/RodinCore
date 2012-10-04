@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,39 +112,8 @@ public class ElementTypeManager {
 		}
 	}
 
-	// Local id of the internalElementTypes extension point of this plugin
-	private static final String INTERNAL_ELEMENT_TYPES_ID = "internalElementTypes";
-	
-	// Access to internal element types using their unique id
-	private HashMap<String, InternalElementType<? extends IInternalElement>>
-		internalElementTypeIds;
-
-	private void computeInternalElementTypes() {
-		internalElementTypeIds =
-			new HashMap<String, InternalElementType<? extends IInternalElement>>();
-		
-		// Read the extension point extensions.
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IConfigurationElement[] elements = 
-			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, INTERNAL_ELEMENT_TYPES_ID);
-		for (IConfigurationElement element: elements) {
-			InternalElementType<?> type =
-				new InternalElementType<IInternalElement>(element);
-			internalElementTypeIds.put(type.getId(), type);
-		}
-
-		if (VERBOSE) {
-			System.out.println("---------------------------------------------------");
-			System.out.println("Internal element types known to the Rodin database:");
-			for (String id: getSortedIds(internalElementTypeIds)) {
-				InternalElementType<?> type = internalElementTypeIds.get(id);
-				System.out.println("  " + type.getId());
-				System.out.println("    name: " + type.getName());
-				System.out.println("    class: " + type.getClassName());
-			}
-			System.out.println("---------------------------------------------------");
-		}
-	}
+	// Associative map of internal element types
+	private final InternalElementTypes internalElementTypes = new InternalElementTypes();
 
 	/**
 	 * Returns the internal element type with the given id.
@@ -156,11 +125,7 @@ public class ElementTypeManager {
 	 */
 	public InternalElementType<? extends IInternalElement> getInternalElementType(
 			String id) {
-
-		if (internalElementTypeIds == null) {
-			computeInternalElementTypes();
-		}
-		return internalElementTypeIds.get(id);
+		return internalElementTypes.get(id);
 	}
 	
 	/**
@@ -207,9 +172,6 @@ public class ElementTypeManager {
 	}
 	
 	public IElementType<? extends IRodinElement> getElementType(String id) {
-		if (internalElementTypeIds == null) {
-			computeInternalElementTypes();
-		}
 		return ElementType.getElementType(id);
 	}
 
