@@ -130,12 +130,7 @@ public class TypeUnifier {
 					return left;
 				}
 				else {
-					result.addProblem(new ASTProblem(
-							origin.getSourceLocation(),
-							ProblemKind.TypesDoNotMatch,
-							ProblemSeverities.Error,
-							left,
-							right));
+					result.addUnificationProblem(left, right, origin);
 					return null;
 				}
 			}
