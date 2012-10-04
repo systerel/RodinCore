@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.rodinp.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.rodinp.core" id="itemRelations" name="%itemRelations"/>
+      </appInfo>
+      <documentation>
+         DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+
+This extension point is used to define the relationships between elements, and between attributes and elements.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+         <documentation>
+            DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="relationship" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+
+A fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+
+An optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+
+An optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="relationship">
+      <annotation>
+         <documentation>
+            DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="childType" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="attributeType" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="parentTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+
+Element type of the parent, must be the unique ID of a Rodin internal element type (see extension point &lt;code&gt;org.rodinp.core.internalElementTypes&lt;/code&gt;).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="childType">
+      <annotation>
+         <documentation>
+            DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="typeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+
+Element type of the child, must be the unique ID of a Rodin internal element type (see extension point &lt;code&gt;org.rodinp.core.internalElementTypes&lt;/code&gt;).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="attributeType">
+      <annotation>
+         <documentation>
+            DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="typeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+
+Id of the Rodin attribute type to which this description applies (see extension point &lt;code&gt;org.rodinp.core.attributeTypes&lt;/code&gt;).
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+
+3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+
+[Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+
+[Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
+
+[Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2012 Systerel and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+&lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+
+Contributors:
+    Systerel - initial API and implementation
+      </documentation>
+   </annotation>
+
+</schema>
