@@ -19,6 +19,7 @@ import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.FREE_IDENT;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.Formula.KID_GEN;
 import static org.eventb.core.ast.Formula.KPARTITION;
@@ -36,6 +37,7 @@ import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.tests.AbstractTests.LIST_DT;
+import static org.eventb.core.ast.tests.AbstractTests.parseExpression;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
 import static org.eventb.core.ast.tests.TestGenParser.EXT_PRIME;
 import static org.eventb.core.ast.tests.TestGenParser.MONEY;
@@ -45,6 +47,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -290,6 +294,52 @@ public class FastFactory {
 
 	public static ITypeEnvironment mTypeEnvironment() {
 		return ff.makeTypeEnvironment();
+	}
+
+	private static final Pattern typenvPairSeparator = Pattern.compile(",");
+	private static final Pattern typenvPairPattern = Pattern
+			.compile("^([^=]*)=([^=]*)$");
+
+	/**
+	 * Generates the type environment specified by the given string. The string
+	 * contains pairs of form <code>ident=type</code> separated by commas.
+	 * <p>
+	 * Example of valid parameters are:
+	 * <ul>
+	 * <li><code>""</code></li>
+	 * <li><code>"x=S"</code></li>
+	 * <li><code>"x=S,y=T"</code></li>
+	 * <li><code>"x=S,r=ℙ(S×S)"</code></li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param typeEnvImage
+	 *            image of the type environment to generate
+	 * @param factory
+	 *            the formula factory to use for building the result
+	 * @return the type environment described by the given string
+	 */
+	public static ITypeEnvironment mTypeEnvironment(String typeEnvImage,
+			FormulaFactory factory) {
+		final ITypeEnvironment result = factory.makeTypeEnvironment();
+		if (typeEnvImage.length() == 0) {
+			return result;
+		}
+		for (final String pairImage : typenvPairSeparator.split(typeEnvImage)) {
+			final Matcher m = typenvPairPattern.matcher(pairImage);
+			if (!m.matches()) {
+				throw new IllegalArgumentException(
+						"Invalid type environment pair: " + pairImage);
+			}
+			final Expression expr = parseExpression(m.group(1), factory);
+			if (expr.getTag() != FREE_IDENT) {
+				throw new IllegalArgumentException(
+						"Invalid type environment pair: " + pairImage);
+			}
+			final Type type = parseType(m.group(2), factory);
+			result.addName(expr.toString(), type);
+		}
+		return result;
 	}
 
 	public static ITypeEnvironment mTypeEnvironment(String[] names, Type[] types) {

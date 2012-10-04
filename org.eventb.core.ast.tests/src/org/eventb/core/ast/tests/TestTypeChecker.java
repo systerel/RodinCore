@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.LanguageVersion.LATEST;
-import static org.eventb.core.ast.LanguageVersion.V1;
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import java.util.List;
@@ -23,11 +20,11 @@ import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 
@@ -174,7 +171,7 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment("x", POW(ty_S)),
 				mTypeEnvironment("S", POW(ty_S))
 		);
-		testPredicate("partition(S, {x},{y})", V2,
+		testPredicate("partition(S, {x},{y})",
 				mTypeEnvironment("x", ty_S),
 				mTypeEnvironment("S", POW(ty_S), "y", ty_S)
 		);
@@ -300,25 +297,25 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment(),
 				null
 		);
-		testPredicate("prj1(x)=y", V1,
-				mTypeEnvironment("x", POW(CPROD(INTEGER,BOOL))),
-				mTypeEnvironment("y", POW(CPROD(CPROD(INTEGER,BOOL),INTEGER)))
+		testPredicate("prj1(x)=y",
+				mTypeEnvironment("x=ℤ↔BOOL", ffV1),
+				mTypeEnvironment("y=ℤ×BOOL↔ℤ", ffV1)
 		);
 		testPredicate("x◁prj1=y",
 				mTypeEnvironment("x", REL(ty_S, ty_T)),
 				mTypeEnvironment("y", REL(CPROD(ty_S, ty_T), ty_S))
 		);
-		testPredicate("prj2(x)=y", V1,
-				mTypeEnvironment("x", POW(CPROD(INTEGER,BOOL))),
-				mTypeEnvironment("y", POW(CPROD(CPROD(INTEGER,BOOL),BOOL)))
+		testPredicate("prj2(x)=y",
+				mTypeEnvironment("x=ℤ↔BOOL", ffV1),
+				mTypeEnvironment("y=ℤ×BOOL↔BOOL", ffV1)
 		);
 		testPredicate("x◁prj2=y",
 				mTypeEnvironment("x", REL(ty_S, ty_T)),
 				mTypeEnvironment("y", REL(CPROD(ty_S, ty_T), ty_T))
 		);
-		testPredicate("id(x)=y", V1,
-				mTypeEnvironment("x", POW(ty_S)),
-				mTypeEnvironment("y", POW(CPROD(ty_S,ty_S)))
+		testPredicate("id(x)=y",
+				mTypeEnvironment("x=ℙ(S)", ffV1),
+				mTypeEnvironment("y=S↔S", ffV1)
 		);
 		testPredicate("x◁id=y",
 				mTypeEnvironment("x", POW(ty_S)),
@@ -1369,23 +1366,15 @@ public class TestTypeChecker extends AbstractTests {
 
 	private void testPredicate(String image, ITypeEnvironment initialEnv,
 			ITypeEnvironment inferredEnv) {
-		testPredicate(image, V2, initialEnv, inferredEnv);
-	}
-
-	private void testPredicate(String image, LanguageVersion version,
-			ITypeEnvironment initialEnv, ITypeEnvironment inferredEnv) {
-		final Predicate formula = parsePredicate(image, version);
+		final FormulaFactory factory = initialEnv.getFormulaFactory();
+		final Predicate formula = parsePredicate(image, factory);
 		doTest(formula, initialEnv, inferredEnv);
 	}
 
 	private void testAssignment(String image, ITypeEnvironment initialEnv,
 			ITypeEnvironment inferredEnv) {
-		testAssignment(image, LATEST, initialEnv, inferredEnv);
-	}
-
-	private void testAssignment(String image, LanguageVersion version,
-			ITypeEnvironment initialEnv, ITypeEnvironment inferredEnv) {
-		final Assignment formula = parseAssignment(image, version);
+		final FormulaFactory factory = initialEnv.getFormulaFactory();
+		final Assignment formula = parseAssignment(image, factory);
 		doTest(formula, initialEnv, inferredEnv);
 	}
 

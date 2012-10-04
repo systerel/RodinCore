@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,8 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
-import static org.eventb.core.ast.LanguageVersion.LATEST;
+import static org.eventb.core.ast.LanguageVersion.V1;
+import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -128,17 +129,17 @@ public abstract class AbstractTests extends TestCase {
 	}
 
 	public static Expression parseExpression(String image) {
-		return parseExpression(image, LATEST);
+		return parseExpression(image, ff);
 	}
 	
 	public static Expression parseExpression(String image,
 			FormulaFactory factory) {
-		return parseExpression(image, LATEST, factory);
+		return parseExpression(image, getLanguageVersion(factory), factory);
 	}
 	
 	public static Expression parseExpression(String image,
 			LanguageVersion version) {
-		return parseExpression(image, version, ff);
+		return parseExpression(image, version, getFormulaFactory(version));
 	}
 	
 	public static Expression parseExpression(String image,
@@ -154,16 +155,16 @@ public abstract class AbstractTests extends TestCase {
 	}
 
 	public static Predicate parsePredicate(String image) {
-		return parsePredicate(image, LATEST);
+		return parsePredicate(image, FormulaFactory.getDefault());
 	}
 
 	public static Predicate parsePredicate(String image, FormulaFactory factory) {
-		return parsePredicate(image, LATEST, factory);
+		return parsePredicate(image, getLanguageVersion(factory), factory);
 	}
 	
 	public static Predicate parsePredicate(String image,
 			LanguageVersion version) {
-		return parsePredicate(image, version, ff);
+		return parsePredicate(image, version, getFormulaFactory(version));
 	}
 	
 	public static Predicate parsePredicate(String image,
@@ -179,17 +180,17 @@ public abstract class AbstractTests extends TestCase {
 	}
 	
 	public static Assignment parseAssignment(String image) {
-		return parseAssignment(image, LATEST);
+		return parseAssignment(image, ff);
 	}
 		
 	public static Assignment parseAssignment(String image,
 			FormulaFactory factory) {
-		return parseAssignment(image, LATEST, factory);
+		return parseAssignment(image, getLanguageVersion(factory), factory);
 	}
 	
 	public static Assignment parseAssignment(String image,
 			LanguageVersion version) {
-		return parseAssignment(image, version, ff);
+		return parseAssignment(image, version, getFormulaFactory(version));
 	}
 	
 	public static Assignment parseAssignment(String image,
@@ -205,11 +206,29 @@ public abstract class AbstractTests extends TestCase {
 	}
 
 	public static Type parseType(String image, FormulaFactory factory) {
-		final IParseResult result = factory.parseType(image, LATEST);
+		final LanguageVersion version = getLanguageVersion(factory);
+		final IParseResult result = factory.parseType(image, version);
 		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedType();
 	}
 
+	private static LanguageVersion getLanguageVersion(FormulaFactory factory) {
+		final LanguageVersion version = factory == ffV1 ? V1 : V2;
+		return version;
+	}
+	
+	private static FormulaFactory getFormulaFactory(LanguageVersion version) {
+		switch (version) {
+		case V1:
+			return ffV1;
+		case V2:
+			return ff;
+		default:
+			assert false;
+			return null;
+		}
+	}
+	
 	/**
 	 * Type-checks the given formula and returns the type environment made of the
 	 * given type environment and the type environment inferred during
