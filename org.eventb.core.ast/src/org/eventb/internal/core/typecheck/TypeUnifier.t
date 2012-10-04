@@ -93,6 +93,7 @@ public class TypeUnifier {
 				final ParametricType paramType2 = (ParametricType) `right;
 				final IExpressionExtension ext = paramType1.getExprExtension();
 				if (ext != paramType2.getExprExtension()) {
+					result.addUnificationProblem(left, right, origin);
 					return null;
 				}
 				final int length = `params1.length;

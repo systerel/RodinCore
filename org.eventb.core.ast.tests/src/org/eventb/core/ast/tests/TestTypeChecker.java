@@ -1375,11 +1375,9 @@ public class TestTypeChecker extends AbstractTests {
 	 * type-checking
 	 */
 	public void testBug3574565() {
-		final FormulaFactory fA = makeDatatypeFactory(ff, "A[T] ::= a; d[T]");
-		final FormulaFactory fB = makeDatatypeFactory(fA, "B[U] ::= b; e[A(U)]");
-		testPredicate("b(a(1)) ∈ A(ℤ)",//
-				mTypeEnvironment("", fB),//
-				mTypeEnvironment("", fB));
+		final FormulaFactory fac = makeDatatypeFactory(ff,
+				"A[T] ::= a; d[T] || B[U] ::= b; e[U]");
+		testPredicate("b(1) ∈ A(ℤ)", mTypeEnvironment("", fac), null);
 	}
 
 	private FormulaFactory makeDatatypeFactory(FormulaFactory initial,
