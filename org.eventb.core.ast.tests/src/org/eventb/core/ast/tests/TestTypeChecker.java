@@ -9,12 +9,15 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
+ *     Systerel - test for bug #3574565
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
@@ -27,6 +30,9 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 
 /**
  * Unit test of the mathematical formula Type-Checker.
@@ -1362,6 +1368,27 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment(),
 				mTypeEnvironment("x", INTEGER, "y", BOOL)
 		);
+	}
+
+	/**
+	 * Regression test for bug #3574565: Inconsistent result of formula
+	 * type-checking
+	 */
+	public void testBug3574565() {
+		final FormulaFactory fA = makeDatatypeFactory(ff, "A[T] ::= a; d[T]");
+		final FormulaFactory fB = makeDatatypeFactory(fA, "B[U] ::= b; e[A(U)]");
+		testPredicate("b(a(1)) ∈ A(ℤ)",//
+				mTypeEnvironment("", fB),//
+				mTypeEnvironment("", fB));
+	}
+
+	private FormulaFactory makeDatatypeFactory(FormulaFactory initial,
+			String datatypeImage) {
+		final IDatatypeExtension dtExt = injectExtension(datatypeImage, initial);
+		final IDatatype datatype = initial.makeDatatype(dtExt);
+		final Set<IFormulaExtension> exts = initial.getExtensions();
+		exts.addAll(datatype.getExtensions());
+		return FormulaFactory.getInstance(exts);
 	}
 
 	private void testPredicate(String image, ITypeEnvironment initialEnv,
