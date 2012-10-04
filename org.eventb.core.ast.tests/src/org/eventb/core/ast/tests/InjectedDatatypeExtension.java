@@ -13,8 +13,7 @@ package org.eventb.core.ast.tests;
 import static java.util.Arrays.copyOfRange;
 import static java.util.Collections.emptyList;
 import static java.util.regex.Pattern.compile;
-import static org.eventb.core.ast.LanguageVersion.LATEST;
-import static org.junit.Assert.assertNotNull;
+import static org.eventb.core.ast.tests.AbstractTests.parseType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -192,8 +191,7 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 			return mediator.makeParametricType(mediator.getTypeConstructor(),
 					getListOfTypeArgs(mediator, types));
 		}
-		final Type type = ff.parseType(dest, LATEST).getParsedType();
-		assertNotNull(type);
+		final Type type = parseType(dest, ff);
 		return mediator.newArgumentType(type);
 	}
 
@@ -202,8 +200,7 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 		final List<IArgumentType> result = new ArrayList<IArgumentType>();
 		final String[] typeStrsArray = splitOn(typeStrs, ",");
 		for (String typeStr : typeStrsArray) {
-			final Type type = ff.parseType(typeStr, LATEST).getParsedType();
-			assertNotNull(type);
+			final Type type = parseType(typeStr, ff);
 			result.add(mediator.newArgumentType(type));
 		}
 		return result;
