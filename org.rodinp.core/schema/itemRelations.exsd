@@ -3,7 +3,7 @@
 <schema targetNamespace="org.rodinp.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.rodinp.core" id="itemRelations" name="%itemRelations"/>
+         <meta.schema plugin="org.rodinp.core" id="itemRelations" name="%itemRelationsName"/>
       </appInfo>
       <documentation>
          DO NO USE THIS IS UNPUBLISHED AND UNSUPPORTED
