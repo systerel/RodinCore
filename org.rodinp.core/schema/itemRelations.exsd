@@ -66,8 +66,10 @@ An optional name of the extension instance
       </annotation>
       <complexType>
          <sequence>
-            <element ref="childType" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="attributeType" minOccurs="0" maxOccurs="unbounded"/>
+            <choice minOccurs="1" maxOccurs="unbounded">
+               <element ref="childType"/>
+               <element ref="attributeType"/>
+            </choice>
          </sequence>
          <attribute name="parentTypeId" type="string" use="required">
             <annotation>
