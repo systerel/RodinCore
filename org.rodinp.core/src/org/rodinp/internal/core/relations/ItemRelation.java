@@ -46,11 +46,50 @@ public class ItemRelation {
 	public void addAttributeTypeId(String attributeTypeId) {
 		attributeTypeIds.add(attributeTypeId);
 	}
+	
+	public boolean isValid() {
+		return parentTypeId != null
+				&& (!(childTypeIds.isEmpty()) || !(attributeTypeIds.isEmpty()));
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 17;
+		result = prime * result + parentTypeId.hashCode();
+		result = prime * result + childTypeIds.hashCode();
+		result = prime * result + attributeTypeIds.hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof ItemRelation))
+			return false;
+		final ItemRelation item = ((ItemRelation)obj);
+		return childTypeIds.equals(item.getChildTypeIds()) 
+				&& attributeTypeIds.equals(item.getAttributeTypeIds());
+	}
 
 	@Override
 	public String toString() {
-		// FIXME implement for debugging purposes
-		return super.toString();
+		final StringBuilder sb = new StringBuilder();
+		sb.append("Relation : ");
+		sb.append(parentTypeId);
+		sb.append("\n");
+		for (String childId : childTypeIds) {
+			sb.append("|-- childType : ");
+			sb.append(childId);
+			sb.append("\n");
+		}
+		for (String attrId : attributeTypeIds) {
+			sb.append("|-- attributeType : ");
+			sb.append(attrId);
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 
 }
