@@ -29,18 +29,19 @@ import org.rodinp.internal.core.relations.ItemRelationParser;
  * 
  * It covers the following successful cases:
  * <ul>
- * <li>a relation with a valid child item</li>
- * <li>a relation with a valid child attribute</li>
- * <li>a relation with both a valid child item and a valid child attribute</li>
- * <li>a relation with both a valid child item and an invalid child that has
- * been filtered</li>
+ * <li>a relation with a valid child item,</li>
+ * <li>a relation with a valid child attribute,</li>
+ * <li>a relation with both a valid child item and a valid child attribute.</li>
  * </ul>
  * 
- * It covers the following erroneous cases:
+ * It covers inner and outer relation failure cases due to ill-formed
+ * configuration elements and asserts that do not have side-effects respectively
+ * on the parent relation, and on valid relations aside. The cases of failure
+ * are the following :
  * <ul>
- * <li>ill-formed configuration elements (wrong tag, missing attribute, unknown
- * tag or attribute)</li>
- * <li>documented exception thrown on used methods</li>
+ * <li>unknown child tag,</li>
+ * <li>missing attribute,</li>
+ * <li>invalid attribute value.</li>
  * </ul>
  * 
  * @author Thomas Muller
@@ -71,15 +72,14 @@ public class ItemRelationParserTests {
 
 	@Test
 	public void validChildAttribute() {
-		assertSuccess( //
+		assertSuccess(//
 				t(VALID_ATTRIBUTE), VALID_ATTRIBUTE_REL);
 	}
 
 	@Test
 	public void validBothChildren() {
-		assertSuccess(
-		//
-				t(node("relationship : parentTypeId='p'", //
+		assertSuccess(t(//
+				node("relationship : parentTypeId='p'", //
 						node("childType : typeId='myChildType'"), //
 						node("attributeType : typeId='myAttrType'"))//
 				), //
@@ -87,42 +87,40 @@ public class ItemRelationParserTests {
 	}
 
 	@Test
-	public void invalidRelationAttributeId() {
+	public void unknownChildElementRelationFailure() {
 		assertFailure(t( //
-				VALID_CHILD, //
-				node("relationship : badParentTypeId='p'", NONE), //
-				VALID_ATTRIBUTE //
+				node("relationship : parentTypeId='p'",
+						node("childType : typeId='myChildType'"), //
+						node("unknowChild : typeId='myChildType2'"), //
+						node("attributeType : typeId='myAttrType'"))// ), //
 				), //
-				VALID_CHILD_REL, //
-				VALID_ATTRIBUTE_REL);
+				relation(" p : myChildType : myAttrType"));
+	}
+	
+	@Test
+	public void missingAttributeChildElementRelationFailure() {
+		assertFailure(t( //
+				node("relationship : parentTypeId='p'",
+						node("childType : typeId='myChildType'"), //
+						node("childType : notATypeIdAttr='myChildType2'"), //
+						node("attributeType : typeId='myAttrType'"))// ), //
+				), //
+				relation(" p : myChildType : myAttrType"));
+	}
+	
+	@Test
+	public void invalidValueChildAttributeRelationFailure() {
+		assertFailure(t( //
+				node("relationship : parentTypeId='p'",
+						node("childType : typeId='myChildType'"), //
+						node("attributeType : typeId='invalid AttrType'"), //
+						node("attributeType : typeId='myAttrType'"))// ), //
+				), //
+				relation(" p : myChildType : myAttrType"));
 	}
 
 	@Test
-	public void invalidChildItemAttributeIdFailure() {
-		assertFailure(t( //
-				VALID_CHILD, //
-				node("relationship : parentTypeId='p'", //
-						node("childType: badAttr='attr'")), //
-				VALID_ATTRIBUTE //
-				), //
-				VALID_CHILD_REL, //
-				VALID_ATTRIBUTE_REL);
-	}
-
-	@Test
-	public void invalidItemAttributeIdFailure() {
-		assertFailure(t( //
-				VALID_CHILD, //
-				node("relationship : parentTypeId='p'", //
-						node("attributeType: badAttr='attr'")), //
-				VALID_ATTRIBUTE //
-				), //
-				VALID_CHILD_REL, //
-				VALID_ATTRIBUTE_REL);
-	}
-
-	@Test
-	public void invalidRelationTagFailure() {
+	public void unknownTagFailure() {
 		assertFailure(t( //
 				VALID_CHILD, //
 				node("badRelationship : parentTypeId='p'", NONE), //
@@ -133,7 +131,7 @@ public class ItemRelationParserTests {
 	}
 
 	@Test
-	public void invalidRelationChildFailure() {
+	public void unknownChildFailure() {
 		assertFailure(t( //
 				VALID_CHILD, //
 				node("relationship : parentTypeId='validParentType'", //
@@ -146,7 +144,18 @@ public class ItemRelationParserTests {
 	}
 
 	@Test
-	public void invalidRelationAttributeValue() {
+	public void missingRelationId() {
+		assertFailure(t(//
+				VALID_CHILD, //
+				node("relationship : badParentTypeId='p'", NONE), //
+				VALID_ATTRIBUTE //
+				), //
+				VALID_CHILD_REL, //
+				VALID_ATTRIBUTE_REL);
+	}
+
+	@Test
+	public void invalidRelationValueFailure() {
 		assertFailure(t( //
 				VALID_CHILD, //
 				node("relationship : parentTypeId='   parentType'", NONE), //
@@ -157,7 +166,19 @@ public class ItemRelationParserTests {
 	}
 
 	@Test
-	public void invalidChildItemAttributeValueFailure() {
+	public void missingChildAttributeFailure() {
+		assertFailure(t( //
+				VALID_CHILD, //
+				node("relationship : parentTypeId='p'", //
+						node("childType: badAttr='attr'")), //
+				VALID_ATTRIBUTE //
+				), //
+				VALID_CHILD_REL, //
+				VALID_ATTRIBUTE_REL);
+	}
+
+	@Test
+	public void invalidChildValueFailure() {
 		assertFailure(t( //
 				VALID_CHILD, //
 				node("relationship : parentTypeId='p'", //
@@ -169,7 +190,19 @@ public class ItemRelationParserTests {
 	}
 
 	@Test
-	public void invalidChildAttributeAttributeValueFailure() {
+	public void missingAttributeFailure() {
+		assertFailure(t( //
+				VALID_CHILD, //
+				node("relationship : parentTypeId='p'", //
+						node("attributeType: badAttr='attr'")), //
+				VALID_ATTRIBUTE //
+				), //
+				VALID_CHILD_REL, //
+				VALID_ATTRIBUTE_REL);
+	}
+
+	@Test
+	public void invalidAttributeValueFailure() {
 		assertFailure(t( //
 				VALID_CHILD, //
 				node("relationship : parentTypeId='p'", //
@@ -182,26 +215,26 @@ public class ItemRelationParserTests {
 
 	private void assertSuccess(IConfigurationElement[] nodes,
 			ItemRelation... expected) {
-		final List<ItemRelation> relations = parser.parse(nodes);
-		assertTrue(parser.getErrors().isEmpty());
+		assertTrue(parser.parse(nodes));
+		final List<ItemRelation> actual = parser.getRelations();
+		assertEquals(expected.length, actual.size());
 		int i = 0;
-		assertTrue(relations.size() == expected.length);
 		for (ItemRelation rel : expected) {
-			assertEquals(rel, relations.get(i));
+			assertEquals(rel, actual.get(i));
 			i++;
 		}
 	}
 
-	private void assertFailure(IConfigurationElement[] t,
+	private void assertFailure(IConfigurationElement[] nodes,
 			ItemRelation... expected) {
-		final List<ItemRelation> relations = parser.parse(t);
+		assertFalse(parser.parse(nodes));
+		final List<ItemRelation> relations = parser.getRelations();
 		assertEquals(expected.length, relations.size());
 		int i = 0;
 		for (ItemRelation rel : expected) {
 			assertEquals(rel, relations.get(i));
 			i++;
 		}
-		assertFalse(parser.getErrors().isEmpty());
 	}
 
 	private static IConfigurationElement node(String nodeSpec,

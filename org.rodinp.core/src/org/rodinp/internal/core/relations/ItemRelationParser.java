@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.rodinp.internal.core.relations;
 
+import static org.rodinp.internal.core.util.Util.log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.rodinp.internal.core.relations.ElementParser.RelationshipParser;
-import org.rodinp.internal.core.util.Util;
 
 /**
  * Parser for the <code>itemRelations</code> extension point. Errors encountered
@@ -33,18 +34,26 @@ public class ItemRelationParser {
 	final List<ItemRelation> relations = new ArrayList<ItemRelation>();
 	final List<String> errors = new ArrayList<String>();
 
-	// FIXME return Boolean instead
-	public List<ItemRelation> parse(IConfigurationElement[] elems) {
+	/**
+	 * Parses the given configuration elements, stores the relations and returns
+	 * <code>true</code> if no error occurred, <code>false</code> otherwise.
+	 * 
+	 * @param elems
+	 *            the configuration elements to parse
+	 * @return <code>true</code> if no error occurred during parsing,
+	 *         <code>false</code> otherwise
+	 */
+	public boolean parse(IConfigurationElement[] elems) {
 		final RelationshipParser parser = new RelationshipParser(this);
 		final ElementListParser listParser = new ElementListParser(this,
 				new ElementParser[] { parser });
 		try {
 			listParser.parse(elems);
 		} catch (InvalidRegistryObjectException e) {
-			Util.log(e, "The plug-in has not been configured properly,"
+			log(e, "The plug-in has not been configured properly,"
 					+ " this exception should not happen.");
 		}
-		return relations;
+		return errors.isEmpty();
 	}
 
 	public List<ItemRelation> getRelations() {
