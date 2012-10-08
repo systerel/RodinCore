@@ -29,7 +29,6 @@ import org.rodinp.core.RodinCore;
  */
 public class FakeConfigurationElement implements IConfigurationElement {
 
-	private static final String EXCEPTION_TRIGGER = "EXCEPTION";
 	private static final String FAKE_CONTRIBUTOR_NAME //
 	= RodinCore.PLUGIN_ID + ".tests";
 	private static final IContributor FAKE_CONTRIBUTOR //
@@ -98,11 +97,7 @@ public class FakeConfigurationElement implements IConfigurationElement {
 	@Override
 	public String getAttribute(String name)
 			throws InvalidRegistryObjectException {
-		final String result = attributes.get(name);
-		if (result != null && result.equals(EXCEPTION_TRIGGER)) {
-			throw new InvalidRegistryObjectException();
-		}
-		return result;
+		return attributes.get(name);
 	}
 
 	@Override
@@ -142,8 +137,6 @@ public class FakeConfigurationElement implements IConfigurationElement {
 
 	@Override
 	public String getName() throws InvalidRegistryObjectException {
-		if (name.equals(EXCEPTION_TRIGGER))
-			throw new InvalidRegistryObjectException();
 		return name;
 	}
 

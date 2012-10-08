@@ -12,6 +12,7 @@ package org.rodinp.core.tests.relations;
 
 import static java.util.regex.Pattern.compile;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -80,18 +81,6 @@ public class ItemRelationParserTests {
 		//
 				t(node("relationship : parentTypeId='p'", //
 						node("childType : typeId='myChildType'"), //
-						node("attributeType : typeId='myAttrType'"))//
-				), //
-				relation("p : myChildType : myAttrType"));
-	}
-
-	@Test
-	public void validRelationFilteringExceptions() {
-		assertFailure(
-		//
-				t(node("relationship : parentTypeId='p'", //
-						node("childType : typeId='myChildType'"), //
-						node("childType : typeId='EXCEPTION'"), //
 						node("attributeType : typeId='myAttrType'"))//
 				), //
 				relation("p : myChildType : myAttrType"));
@@ -191,41 +180,6 @@ public class ItemRelationParserTests {
 				VALID_ATTRIBUTE_REL);
 	}
 
-	@Test
-	public void relationAttributeExceptionFailure() {
-		assertFailure(t( //
-				VALID_CHILD, //
-				node("relationship : parentTypeId='EXCEPTION'", NONE), //
-				VALID_ATTRIBUTE //
-				), //
-				VALID_CHILD_REL, //
-				VALID_ATTRIBUTE_REL);
-	}
-
-	@Test
-	public void childItemValueExceptionFailure() {
-		assertFailure(t( //
-				VALID_CHILD, //
-				node("relationship : parentTypeId='validType'", //
-						node("childType : typeId='EXCEPTION'", NONE)), //
-				VALID_ATTRIBUTE //
-				), //
-				VALID_CHILD_REL, //
-				VALID_ATTRIBUTE_REL);
-	}
-
-	@Test
-	public void childAttributeTagExceptionFailure() {
-		assertFailure(t( //
-				VALID_CHILD, //
-				node("relationship : parentTypeId='validType'", //
-						node("EXCEPTION : typeId='aTypeId'", NONE)), //
-				VALID_ATTRIBUTE //
-				), //
-				VALID_CHILD_REL, //
-				VALID_ATTRIBUTE_REL);
-	}
-
 	private void assertSuccess(IConfigurationElement[] nodes,
 			ItemRelation... expected) {
 		final List<ItemRelation> relations = parser.parse(nodes);
@@ -241,13 +195,13 @@ public class ItemRelationParserTests {
 	private void assertFailure(IConfigurationElement[] t,
 			ItemRelation... expected) {
 		final List<ItemRelation> relations = parser.parse(t);
-		assertTrue(relations.size() == expected.length);
+		assertEquals(expected.length, relations.size());
 		int i = 0;
 		for (ItemRelation rel : expected) {
 			assertEquals(rel, relations.get(i));
 			i++;
 		}
-		assertTrue(!parser.getErrors().isEmpty());
+		assertFalse(parser.getErrors().isEmpty());
 	}
 
 	private static IConfigurationElement node(String nodeSpec,
