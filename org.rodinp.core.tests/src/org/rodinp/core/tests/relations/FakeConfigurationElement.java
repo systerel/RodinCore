@@ -29,8 +29,10 @@ import org.rodinp.core.RodinCore;
  */
 public class FakeConfigurationElement implements IConfigurationElement {
 
-	private static final String FAKE_CONTRIBUTOR_NAME //
+	private static final String FAKE_NAMESPACE //
 	= RodinCore.PLUGIN_ID + ".tests";
+	private static final String FAKE_CONTRIBUTOR_NAME //
+	= FAKE_NAMESPACE + ".contributor";
 	private static final IContributor FAKE_CONTRIBUTOR //
 	= new FakeContributor(FAKE_CONTRIBUTOR_NAME);
 
@@ -168,7 +170,7 @@ public class FakeConfigurationElement implements IConfigurationElement {
 	@Override
 	public String getNamespaceIdentifier()
 			throws InvalidRegistryObjectException {
-		throw getError();
+		return FAKE_NAMESPACE;
 	}
 
 	@Override
