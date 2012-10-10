@@ -53,7 +53,7 @@ public class RelationsComputer {
 		final IInternalElementType<?>[] childTypes = //
 		elemRels.getChildTypes(element);
 		final IAttributeType[] attributeTypes = attrRels.getAttributes(element);
-		final InternalElementTypeExt<?> e2 = (InternalElementTypeExt<?>) element;
+		final InternalElementType2<?> e2 = (InternalElementType2<?>) element;
 		e2.setRelation(parentTypes, childTypes, attributeTypes);
 	}
 	

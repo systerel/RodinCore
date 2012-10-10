@@ -40,7 +40,7 @@ import org.rodinp.internal.core.util.Util;
  * 
  * @author Laurent Voisin
  */
-public class InternalElementTypeExt<T extends IInternalElement> extends
+public class InternalElementType2<T extends IInternalElement> extends
 		ContributedElementType<T> implements IInternalElementType2<T> {
 
 	// Name of the class implementing elements of this element type
@@ -54,7 +54,7 @@ public class InternalElementTypeExt<T extends IInternalElement> extends
 	private IInternalElementType<?>[] childTypes = null;
 	private IAttributeType[] attributeTypes = null;
 
-	public InternalElementTypeExt(IConfigurationElement configurationElement) {
+	public InternalElementType2(IConfigurationElement configurationElement) {
 		super(configurationElement);
 		this.className = configurationElement.getAttribute("class");
 	}

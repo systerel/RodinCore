@@ -17,7 +17,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.internal.core.InternalElementTypes;
-import org.rodinp.internal.core.relations.InternalElementTypeExt;
+import org.rodinp.internal.core.relations.InternalElementType2;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.RelationsComputer;
 import org.rodinp.internal.core.relations.api.IInternalElementType2;
@@ -33,7 +33,7 @@ public class InternalTestTypes extends InternalElementTypes {
 
 	private static final IConfigurationElement[] NONE = new IConfigurationElement[0];
 
-	private static final Map<String, InternalElementTypeExt<?>> map = new HashMap<String, InternalElementTypeExt<?>>();
+	private static final Map<String, InternalElementType2<?>> map = new HashMap<String, InternalElementType2<?>>();
 
 	private static final String[] TYPE_IDS = new String[] { //
 	"leaf", //
@@ -63,14 +63,14 @@ public class InternalTestTypes extends InternalElementTypes {
 	protected void computeInternalElementTypes() {
 		final IConfigurationElement[] elements = readExtensions();
 		for (final IConfigurationElement element : elements) {
-			final InternalElementTypeExt<?> type = new InternalElementTypeExt<IInternalElement>(
+			final InternalElementType2<?> type = new InternalElementType2<IInternalElement>(
 					element);
 			map.put(type.getId(), type);
 		}
 
 	}
 
-	public InternalElementTypeExt<?> getElement(String id) {
+	public InternalElementType2<?> getElement(String id) {
 		return map.get(id);
 	}
 
