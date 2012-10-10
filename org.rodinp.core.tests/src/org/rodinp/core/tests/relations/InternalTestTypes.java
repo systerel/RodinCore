@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.rodinp.core.tests.relations;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,9 @@ import org.rodinp.internal.core.relations.RelationsComputer;
 import org.rodinp.internal.core.relations.api.IInternalElementType2;
 
 /**
- * A class registering dynamic IInternalElementTypes for testing.
+ * A class registering dynamic IInternalElementTypes for testing. This is done
+ * by sub-classing the registry {@link InternalElementTypes} and feeding it with
+ * a hard-coded list of element types.
  * 
  * @author Thomas Muller
  */
@@ -46,16 +47,16 @@ public class InternalTestTypes extends InternalElementTypes {
 
 	@Override
 	protected IConfigurationElement[] readExtensions() {
-		final List<IConfigurationElement> elements = new ArrayList<IConfigurationElement>();
-		for (final String id : TYPE_IDS) {
-			final String[] attributes = new String[2];
-			attributes[0] = "id='" + id + "'";
-			attributes[1] = "name='" + id + "_Element'";
-			final FakeConfigurationElement e = new FakeConfigurationElement(
-					INTERNAL_ELEMENT_TYPES_ID, attributes, NONE);
-			elements.add(e);
+		final int length = TYPE_IDS.length;
+		final IConfigurationElement[] result = new IConfigurationElement[length];
+		for (int i = 0; i < length; i++) {
+			final String id = TYPE_IDS[i];
+			final String[] attributes = new String[] { "id='" + id + "'",
+					"name='" + id + " Element'", };
+			result[i] = new FakeConfigurationElement(INTERNAL_ELEMENT_TYPES_ID,
+					attributes, NONE);
 		}
-		return elements.toArray(new IConfigurationElement[elements.size()]);
+		return result;
 	}
 
 	@Override

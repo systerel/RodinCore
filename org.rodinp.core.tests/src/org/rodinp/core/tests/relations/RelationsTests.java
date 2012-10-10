@@ -35,16 +35,13 @@ import org.rodinp.internal.core.relations.api.IInternalElementType2;
  */
 public class RelationsTests {
 
-	private static final String IDENT_SEP = "\\||>>|,";
-	private static final String ITEM_SEP = ",";
-	private static final String REL_SEP = "\\|";
 	private static final String PREFIX = PLUGIN_ID + ".";
 
 	/**
 	 * The substitute to
 	 * <code>org.rodinp.internal.core.InternalElementTypes</code>
 	 */
-	private static InternalTestTypes T = new InternalTestTypes();
+	private static final InternalTestTypes T = new InternalTestTypes();
 
 	/** Leaf or root */
 	@Test
@@ -101,8 +98,10 @@ public class RelationsTests {
 		}
 	}
 
+	private static final Pattern IDENT_SEP_PAT = compile("\\||>>|,");
+
 	private IInternalElementType2<?>[] getTestedTypes(String relationsSpecs) {
-		final String[] idents = relationsSpecs.split(IDENT_SEP);
+		final String[] idents = IDENT_SEP_PAT.split(relationsSpecs);
 		final Set<IInternalElementType<?>> set = new LinkedHashSet<IInternalElementType<?>>();
 		for (String id : idents) {
 			set.add(T.getElement(PREFIX + id));
@@ -121,19 +120,22 @@ public class RelationsTests {
 		return relations;
 	}
 
-	private List<ItemRelation> getItemRelations(final String relationsStrs,
-			final InternalTestTypes types) {
+	private static final Pattern REL_SEP_PAT = compile("\\|");
+	private static final Pattern RELATION_PATTERN = compile("(\\S*)>>(\\S*)");
+	private static final Pattern ITEM_SEP_PAT = compile(",");
+
+	private List<ItemRelation> getItemRelations(String relationsStrs,
+			InternalTestTypes types) {
 		final List<ItemRelation> relations = new ArrayList<ItemRelation>();
-		final String[] relationStrs = relationsStrs.split(REL_SEP);
-		final Pattern p = compile("(\\S*)>>(\\S*)");
+		final String[] relationStrs = REL_SEP_PAT.split(relationsStrs);
 		for (String relation : relationStrs) {
-			final Matcher matcher = p.matcher(relation);
+			final Matcher matcher = RELATION_PATTERN.matcher(relation);
 			if (matcher.matches()) {
 				final String parents = matcher.group(1);
 				final String children = matcher.group(2);
-				for (String parentId : parents.split(ITEM_SEP)) {
+				for (String parentId : ITEM_SEP_PAT.split(parents)) {
 					final ItemRelation rel = new ItemRelation(PREFIX + parentId);
-					for (String childId : children.split(ITEM_SEP)) {
+					for (String childId : ITEM_SEP_PAT.split(children)) {
 						if (childId.isEmpty())
 							continue;
 						rel.addChildTypeId(PREFIX + childId);
