@@ -11,10 +11,17 @@
 package org.rodinp.core.tests.relations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.internal.core.InternalElementTypes;
+import org.rodinp.internal.core.relations.InternalElementTypeExt;
+import org.rodinp.internal.core.relations.ItemRelation;
+import org.rodinp.internal.core.relations.RelationsComputer;
+import org.rodinp.internal.core.relations.api.IInternalElementType2;
 
 /**
  * A class registering dynamic IInternalElementTypes for testing.
@@ -25,7 +32,9 @@ public class InternalTestTypes extends InternalElementTypes {
 
 	private static final IConfigurationElement[] NONE = new IConfigurationElement[0];
 
-	static final String[] TYPE_IDS = new String[] { //
+	private static final Map<String, InternalElementTypeExt<?>> map = new HashMap<String, InternalElementTypeExt<?>>();
+
+	private static final String[] TYPE_IDS = new String[] { //
 	"leaf", //
 			"p1", "c1", //
 			"p2", "c21", "c22", //
@@ -41,12 +50,36 @@ public class InternalTestTypes extends InternalElementTypes {
 		for (final String id : TYPE_IDS) {
 			final String[] attributes = new String[2];
 			attributes[0] = "id='" + id + "'";
-			attributes[1] = "name='" + id + "Element'";
+			attributes[1] = "name='" + id + "_Element'";
 			final FakeConfigurationElement e = new FakeConfigurationElement(
 					INTERNAL_ELEMENT_TYPES_ID, attributes, NONE);
 			elements.add(e);
 		}
 		return elements.toArray(new IConfigurationElement[elements.size()]);
+	}
+
+	@Override
+	protected void computeInternalElementTypes() {
+		final IConfigurationElement[] elements = readExtensions();
+		for (final IConfigurationElement element : elements) {
+			final InternalElementTypeExt<?> type = new InternalElementTypeExt<IInternalElement>(
+					element);
+			map.put(type.getId(), type);
+		}
+
+	}
+
+	public InternalElementTypeExt<?> getElement(String id) {
+		return map.get(id);
+	}
+
+	protected void computeRelations(List<ItemRelation> itemRelations,
+			IInternalElementType2<?>[] types) {
+		final RelationsComputer c = new RelationsComputer(this);
+		c.computeRelations(itemRelations);
+		for (IInternalElementType2<?> type : types) {
+			c.setRelations(type);
+		}
 	}
 
 }

@@ -25,6 +25,7 @@ Export-Package: org.rodinp.core,
  org.rodinp.internal.core.indexer.tables;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.location;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.relations;x-friends:="org.rodinp.core.tests",
+ org.rodinp.internal.core.relations.api;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.util;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.util.sort;x-friends:="org.rodinp.core.tests",
  org.rodinp.internal.core.version;x-friends:="org.rodinp.core.tests"

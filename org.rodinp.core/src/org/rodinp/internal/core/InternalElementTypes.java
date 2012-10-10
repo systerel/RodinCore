@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 /**
@@ -46,7 +47,11 @@ public class InternalElementTypes {
 		return map.get(id);
 	}
 
-	private void computeInternalElementTypes() {
+	public IInternalElementType<?> getElement(String elementId) {
+		return map.get(elementId);
+	}
+
+	protected void computeInternalElementTypes() {
 		final IConfigurationElement[] elements = readExtensions();
 		for (final IConfigurationElement element : elements) {
 			final InternalElementType<?> type = new InternalElementType<IInternalElement>(

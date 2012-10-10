@@ -69,13 +69,13 @@ public abstract class Relations<S, T> {
 	protected abstract T getChildInstanceFromId(String itemId);
 
 	/** Returns all the parents of the given child element. */
-	public Set<S> getParentsOf(T child) {
+	protected Set<S> getParentsOf(T child) {
 		final Set<S> parents = parentsMap.get(child);
 		return parents == null ? Collections.<S> emptySet() : parents;
 	}
 
 	/** Returns all the children of the given parent element. */
-	public Set<T> getChildrenOf(S parentType) {
+	protected Set<T> getChildrenOf(S parentType) {
 		final Set<T> children = childrenMap.get(parentType);
 		return children == null ? Collections.<T> emptySet() : children;
 	}
@@ -127,13 +127,20 @@ public abstract class Relations<S, T> {
 		@Override
 		protected IInternalElementType<?> getParentInstanceFromId(
 				String parentId) {
-			return types.get(parentId);
+			return types.getElement(parentId);
 		}
 
 		@Override
 		protected IAttributeType getChildInstanceFromId(String attributeId) {
 			final ElementTypeManager mng = ElementTypeManager.getInstance();
 			return mng.getAttributeType(attributeId);
+		}
+
+		/** Returns all the parents types of the given attribute. */
+		public IAttributeType[] getAttributes(IInternalElementType<?> element) {
+			final Set<IAttributeType> attributeTypes = getChildrenOf(element);
+			return attributeTypes.toArray( //
+					new IAttributeType[attributeTypes.size()]);
 		}
 
 	}
@@ -151,12 +158,28 @@ public abstract class Relations<S, T> {
 		@Override
 		protected IInternalElementType<?> getParentInstanceFromId(
 				String parentId) {
-			return types.get(parentId);
+			return types.getElement(parentId);
 		}
 
 		@Override
 		protected IInternalElementType<?> getChildInstanceFromId(String childId) {
-			return types.get(childId);
+			return types.getElement(childId);
+		}
+
+		/** Returns all the parents types of the given child type. */
+		public IInternalElementType<?>[] getParentTypes(
+				IInternalElementType<?> child) {
+			final Set<IInternalElementType<?>> parentsTypes = getParentsOf(child);
+			return parentsTypes.toArray( //
+					new IInternalElementType<?>[parentsTypes.size()]);
+		}
+
+		/** Returns all the child types of the given parent type. */
+		public IInternalElementType<?>[] getChildTypes(
+				IInternalElementType<?> parent) {
+			final Set<IInternalElementType<?>> childTypes = getChildrenOf(parent);
+			return childTypes.toArray( //
+					new IInternalElementType<?>[childTypes.size()]);
 		}
 
 	}
