@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests.relations;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -20,7 +22,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
-import org.rodinp.core.RodinCore;
 
 /**
  * Fake implementation of a configuration element for testing purposes.
@@ -29,8 +30,7 @@ import org.rodinp.core.RodinCore;
  */
 public class FakeConfigurationElement implements IConfigurationElement {
 
-	private static final String FAKE_NAMESPACE //
-	= RodinCore.PLUGIN_ID + ".tests";
+	private static final String FAKE_NAMESPACE = PLUGIN_ID;
 	private static final String FAKE_CONTRIBUTOR_NAME //
 	= FAKE_NAMESPACE + ".contributor";
 	private static final IContributor FAKE_CONTRIBUTOR //

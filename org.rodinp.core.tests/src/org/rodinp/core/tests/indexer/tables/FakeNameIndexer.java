@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer.tables;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
 import static org.rodinp.core.tests.util.IndexTestsUtil.*;
 
 import java.util.Collections;
@@ -35,8 +36,7 @@ public class FakeNameIndexer implements IIndexer {
 
 	private static final boolean DEBUG = false;
 
-	private static final String ID =
-			"org.rodinp.core.tests.indexer.fakeNameIndexer";
+	private static final String ID = PLUGIN_ID + ".indexer.fakeNameIndexer";
 
 	private final String[] names;
 	private final int numberEach;

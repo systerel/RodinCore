@@ -11,6 +11,8 @@
 
 package org.rodinp.core.tests.indexer.persistence;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class FakeOrderRecordIndexer implements IIndexer {
 	}
 
 	public String getId() {
-		return "org.rodinp.core.tests.indexer.persistence.orderrecord";
+		return PLUGIN_ID + ".indexer.persistence.orderrecord";
 	}
 
 	public boolean index(IIndexingBridge bridge) {

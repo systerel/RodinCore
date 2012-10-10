@@ -30,7 +30,7 @@ import org.xml.sax.SAXParseException;
 public class TestFileCreation extends ModifyingResourceTests {
 
 	public TestFileCreation() {
-		super("org.rodinp.core.tests.TestFileCreation");
+		super(PLUGIN_ID + ".TestFileCreation");
 	}
 
 	private IRodinProject rodinProject;

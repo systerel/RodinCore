@@ -11,13 +11,15 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 
 public interface ISCContextRoot extends ISCProvableRoot {
 
 	public static final IInternalElementType<ISCContextRoot> ELEMENT_TYPE = RodinCore
-			.getInternalElementType("org.rodinp.core.tests.scContext");
+			.getInternalElementType(PLUGIN_ID + ".scContext");
 
 	IContextRoot getUncheckedVersion();
 

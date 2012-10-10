@@ -24,7 +24,7 @@ import org.rodinp.core.tests.basis.NamedElement;
 public class RodinLocationTests extends AbstractRodinDBTests {
 
 	public static final IAttributeType.String TEST_ATTR_TYPE = RodinCore
-			.getStringAttrType("org.rodinp.core.tests.testAttributeType");
+			.getStringAttrType(PLUGIN_ID + ".testAttributeType");
 
 
 	public RodinLocationTests(String name) {

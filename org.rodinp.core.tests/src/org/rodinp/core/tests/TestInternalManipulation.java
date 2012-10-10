@@ -47,7 +47,7 @@ import org.rodinp.core.tests.basis.RodinTestRoot;
 public class TestInternalManipulation extends ModifyingResourceTests {
 
 	public TestInternalManipulation() {
-		super("org.rodinp.core.tests.TestInternalManipulation");
+		super(PLUGIN_ID + ".TestInternalManipulation");
 	}
 
 	private IRodinProject rodinProject;

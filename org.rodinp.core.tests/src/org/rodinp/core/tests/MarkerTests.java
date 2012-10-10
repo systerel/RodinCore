@@ -720,7 +720,7 @@ public class MarkerTests extends ModifyingResourceTests {
 	 * Ensure that mapping from IRodinProblem to error code works in both ways.
 	 */
 	public void testProblem() {
-		assertEquals("Unexpected error code", "org.rodinp.core.tests.err0",
+		assertEquals("Unexpected error code", PLUGIN_ID + ".err0",
 				TestProblem.err0.getErrorCode());
 		assertEquals("Unexpected problem object", TestProblem.warn1,
 				TestProblem.valueOfErrorCode(TestProblem.warn1.getErrorCode()));

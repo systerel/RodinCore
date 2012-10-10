@@ -115,7 +115,7 @@ public class MementoTests extends ModifyingResourceTests {
 	 * NullPointerException.  Regression test for bug 1529854.
 	 */
 	public void testRestoreWrongInternalType() {
-		String bogusType = "org.rodinp.core.tests.bogus";
+		String bogusType = PLUGIN_ID + ".bogus";
 		IRodinElement restored = RodinCore.valueOf(
 				"/P/X.test|"
 				+ bogusType

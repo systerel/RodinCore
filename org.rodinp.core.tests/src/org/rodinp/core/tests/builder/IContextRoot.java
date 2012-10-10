@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -19,7 +21,7 @@ import org.rodinp.core.RodinDBException;
 public interface IContextRoot extends IInternalElement {
 
 	public static final IInternalElementType<IContextRoot> ELEMENT_TYPE = RodinCore
-			.getInternalElementType("org.rodinp.core.tests.context");
+			.getInternalElementType(PLUGIN_ID + ".context");
 
 	ISCContextRoot getCheckedVersion();
 

@@ -60,7 +60,6 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 	
 	static final String emptyContents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 		+ "<org.rodinp.core.tests.test/>\n";
-	public static final String PLUGIN_ID = "org.rodinp.core.tests";
 	static byte[] emptyBytes = emptyContents.getBytes();
 
 	public ModifyingResourceTests(String name) {

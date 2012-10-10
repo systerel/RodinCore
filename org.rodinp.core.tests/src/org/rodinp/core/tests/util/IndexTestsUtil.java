@@ -15,6 +15,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,22 +45,22 @@ import org.rodinp.internal.core.indexer.tables.RodinIndex;
 public class IndexTestsUtil {
 
 	public static final IAttributeType.String TEST_ATTR_TYPE = RodinCore
-			.getStringAttrType("org.rodinp.core.tests.testAttributeType");
+			.getStringAttrType(PLUGIN_ID + ".testAttributeType");
 
 	public static final IInternalElementType<?> TEST_FILE_TYPE = RodinCore
-			.getInternalElementType("org.rodinp.core.tests.test");
+			.getInternalElementType(PLUGIN_ID + ".test");
 
 	public static final IInternalElementType<?> TEST_FILE_TYPE_2 = RodinCore
-			.getInternalElementType("org.rodinp.core.tests.test2");
+			.getInternalElementType(PLUGIN_ID + ".test2");
 
 	public static final IOccurrenceKind TEST_KIND = RodinCore
-			.getOccurrenceKind("org.rodinp.core.tests.testKind");
+			.getOccurrenceKind(PLUGIN_ID + ".testKind");
 
 	public static final IOccurrenceKind TEST_KIND_1 = RodinCore
-			.getOccurrenceKind("org.rodinp.core.tests.testKind1");
+			.getOccurrenceKind(PLUGIN_ID + ".testKind1");
 
 	public static final IOccurrenceKind TEST_KIND_2 = RodinCore
-			.getOccurrenceKind("org.rodinp.core.tests.testKind2");
+			.getOccurrenceKind(PLUGIN_ID + ".testKind2");
 
 	public static IRodinFile createRodinFile(IRodinProject project,
 			String fileName) throws RodinDBException {

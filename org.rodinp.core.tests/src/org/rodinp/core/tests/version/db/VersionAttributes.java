@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests.version.db;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.RodinCore;
 
@@ -16,8 +18,6 @@ import org.rodinp.core.RodinCore;
  */
 public final class VersionAttributes {
 	
-	public final static String PLUGIN_ID = "org.rodinp.core.tests";
-
 	public final static IAttributeType.String StringAttr = 
 		RodinCore.getStringAttrType(PLUGIN_ID + ".versionStrAttr");
 

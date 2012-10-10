@@ -8,6 +8,8 @@
 
 package org.rodinp.core.tests;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IMarker;
@@ -26,7 +28,7 @@ public enum TestProblem implements IRodinProblem {
 	
 	warn1(IMarker.SEVERITY_WARNING, "warn1 ({0})");
 	
-	private final static String PREFIX = "org.rodinp.core.tests.";
+	private final static String PREFIX = PLUGIN_ID + ".";
 	
 	public static TestProblem valueOfErrorCode(String errorCode) {
 		if (! errorCode.startsWith(PREFIX)) {

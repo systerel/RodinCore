@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests.version.db;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -18,6 +20,6 @@ import org.rodinp.core.RodinCore;
 public interface IVersionEA extends IInternalElement {
 
 	public static final IInternalElementType<IVersionEA> ELEMENT_TYPE = 
-		RodinCore.getInternalElementType("org.rodinp.core.tests.versionEA");
+		RodinCore.getInternalElementType(PLUGIN_ID + ".versionEA");
 
 }

@@ -67,16 +67,18 @@ import org.rodinp.internal.core.debug.DebugHelpers;
 
 public abstract class AbstractRodinDBTests extends TestCase {
 
+	public static final String PLUGIN_ID = "org.rodinp.core.tests";
+
 	public static final IAttributeType.Boolean fBool = RodinCore
-			.getBooleanAttrType("org.rodinp.core.tests.fBool");
+			.getBooleanAttrType(PLUGIN_ID + ".fBool");
 	public static final IAttributeType.Handle fHandle = RodinCore
-			.getHandleAttrType("org.rodinp.core.tests.fHandle");
+			.getHandleAttrType(PLUGIN_ID + ".fHandle");
 	public static final IAttributeType.Integer fInt = RodinCore
-			.getIntegerAttrType("org.rodinp.core.tests.fInt");
+			.getIntegerAttrType(PLUGIN_ID + ".fInt");
 	public static final IAttributeType.Long fLong = RodinCore
-			.getLongAttrType("org.rodinp.core.tests.fLong");
+			.getLongAttrType(PLUGIN_ID + ".fLong");
 	public static final IAttributeType.String fString = RodinCore
-			.getStringAttrType("org.rodinp.core.tests.fString");
+			.getStringAttrType(PLUGIN_ID + ".fString");
 
 	// infos for invalid results
 	protected static final int tabs = 2;

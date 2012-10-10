@@ -11,7 +11,7 @@ import org.rodinp.core.indexer.IOccurrenceKind;
 public class OccurrenceKindTests extends IndexTests {
 
 	// Namespace for plugin.xml
-	public static final String NAMESPACE = "org.rodinp.core.tests";
+	public static final String NAMESPACE = PLUGIN_ID;
 
 	// Ids declared in plugin.xml
 	public static final String TEST_KIND = "testKind";

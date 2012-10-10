@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests.basis;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
@@ -19,7 +21,7 @@ import org.rodinp.core.basis.InternalElement;
 public class RodinTestRoot2 extends InternalElement {
 
 	public static final IInternalElementType<RodinTestRoot2> ELEMENT_TYPE =
-		RodinCore.getInternalElementType("org.rodinp.core.tests.test2");
+		RodinCore.getInternalElementType(PLUGIN_ID + ".test2");
 
 	public RodinTestRoot2(String name, IRodinElement parent) {
 		super(name, parent);

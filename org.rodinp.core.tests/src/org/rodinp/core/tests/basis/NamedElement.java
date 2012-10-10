@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests.basis;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
@@ -15,7 +17,7 @@ import org.rodinp.core.basis.InternalElement;
 public class NamedElement extends InternalElement {
 	
 	public static final IInternalElementType<NamedElement> ELEMENT_TYPE = 
-		RodinCore.getInternalElementType("org.rodinp.core.tests.namedElement");
+		RodinCore.getInternalElementType(PLUGIN_ID + ".namedElement");
 
 	public NamedElement(String name, IRodinElement parent) {
 		super(name, parent);

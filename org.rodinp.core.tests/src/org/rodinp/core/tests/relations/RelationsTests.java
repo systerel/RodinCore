@@ -12,6 +12,7 @@ package org.rodinp.core.tests.relations;
 
 import static java.util.regex.Pattern.compile;
 import static org.junit.Assert.assertArrayEquals;
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -22,7 +23,6 @@ import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinCore;
 import org.rodinp.internal.core.InternalElementTypes;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.Relations.ElementRelations;
@@ -35,11 +35,10 @@ import org.rodinp.internal.core.relations.api.IInternalElementType2;
  */
 public class RelationsTests {
 
-	private static final String PREFIX = RodinCore.PLUGIN_ID + ".tests.";
-
 	private static final String IDENT_SEP = "\\||>>|,";
 	private static final String ITEM_SEP = ",";
 	private static final String REL_SEP = "\\|";
+	private static final String PREFIX = PLUGIN_ID + ".";
 
 	/**
 	 * The substitute to

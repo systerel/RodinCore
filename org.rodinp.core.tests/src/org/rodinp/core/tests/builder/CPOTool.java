@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests.builder;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,7 +22,7 @@ public class CPOTool extends POTool {
 
 	private static final String CPO = "CPO";
 	// Id of this tool
-	private static String SC_ID = "org.rodinp.core.tests.testCPO";
+	private static String SC_ID = PLUGIN_ID + ".testCPO";
 	
 	public void clean(IFile source, IFile file, IProgressMonitor monitor) throws CoreException {
 		clean(file, monitor, CPO);

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.rodinp.core.tests.indexer;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.indexer.IDeclaration;
@@ -22,7 +24,7 @@ import org.rodinp.core.indexer.IIndexingBridge;
  */
 public class FakeGetDeclIndexer implements IIndexer {
 
-	private static final String ID = "org.rodinp.core.tests.indexer.fakeGetDeclIndexer";
+	private static final String ID = PLUGIN_ID + ".indexer.fakeGetDeclIndexer";
 
 	private static final IRodinFile[] NO_FILES = new IRodinFile[0];
 	
