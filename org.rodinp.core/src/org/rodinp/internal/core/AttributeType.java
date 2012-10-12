@@ -25,7 +25,8 @@ import org.rodinp.internal.core.util.Util;
  * 
  * @author Laurent Voisin
  */
-public abstract class AttributeType<V> implements IAttributeType {
+public abstract class AttributeType<V> implements IAttributeType,
+		IContributedItemType {
 
 	public static enum Kind {
 		BOOLEAN("boolean") { //$NON-NLS-N$

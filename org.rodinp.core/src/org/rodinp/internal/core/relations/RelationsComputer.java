@@ -15,7 +15,7 @@ import java.util.List;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.relations.Relations.AttributeTypesRelations;
 import org.rodinp.internal.core.relations.Relations.ElementTypesRelations;
-import org.rodinp.internal.core.relations.api.IInternalElementType2;
+import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * Provides a protocol to retrieve element relations.
@@ -40,12 +40,7 @@ public class RelationsComputer {
 		}
 	}
 
-	// public for testing purpose only
-	public ElementTypesRelations getElementRelations() {
-		return elemRels;
-	}
-
-	public void setRelations(IInternalElementType2<?> element) {
+	public void setRelations(IInternalElementType<?> element) {
 		final InternalElementType2<?> e2 = (InternalElementType2<?>) element;
 		e2.setRelation(//
 				elemRels.getParentTypes(element), //

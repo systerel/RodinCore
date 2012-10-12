@@ -69,11 +69,12 @@ public class ItemRelation {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof ItemRelation))
+		if (obj.getClass() != ItemRelation.class)
 			return false;
-		final ItemRelation item = ((ItemRelation)obj);
-		return childTypes.equals(item.getChildTypes()) 
-				&& attributeTypes.equals(item.getAttributeTypes());
+		final ItemRelation other = ((ItemRelation) obj);
+		return this.parentType.equals(other.parentType)
+				&& this.childTypes.equals(other.childTypes)
+				&& this.attributeTypes.equals(other.attributeTypes);
 	}
 
 	@Override

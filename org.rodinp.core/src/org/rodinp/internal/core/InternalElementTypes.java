@@ -11,17 +11,11 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import static org.rodinp.internal.core.ItemTypeUtils.debug;
-import static org.rodinp.internal.core.ItemTypeUtils.getSortedIds;
-
-import java.util.HashMap;
+import static org.rodinp.internal.core.ElementTypeManager.debug;
+import static org.rodinp.internal.core.ElementTypeManager.getSortedIds;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.RodinCore;
 
 /**
  * Stores a map between ids and internal element types, as defined by the
@@ -32,51 +26,32 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Laurent Voisin
  */
-public class InternalElementTypes {
+public class InternalElementTypes extends
+		ContributedItemTypes<InternalElementType<?>> {
 
 	// Local id of the internalElementTypes extension point of this plug-in
 	protected static final String INTERNAL_ELEMENT_TYPES_ID = "internalElementTypes";
 
-	private final HashMap<String, InternalElementType<?>> map//
-	= new HashMap<String, InternalElementType<?>>();
-
 	public InternalElementTypes() {
-		computeInternalElementTypes();
+		super(INTERNAL_ELEMENT_TYPES_ID);
 	}
 
-	public InternalElementType<?> get(String id) {
-		return map.get(id);
+	@Override
+	protected InternalElementType<?> makeType(IConfigurationElement element) {
+		return new InternalElementType<IInternalElement>(element);
 	}
 
-	public IInternalElementType<?> getElement(String elementId) {
-		return map.get(elementId);
-	}
-
-	protected void computeInternalElementTypes() {
-		final IConfigurationElement[] elements = readExtensions();
-		for (final IConfigurationElement element : elements) {
-			final InternalElementType<?> type = new InternalElementType<IInternalElement>(
-					element);
-			map.put(type.getId(), type);
+	@Override
+	protected void showMap() {
+		debug("---------------------------------------------------");
+		debug("Internal element types known to the Rodin database:");
+		for (final String id : getSortedIds(map)) {
+			final InternalElementType<?> type = get(id);
+			debug("  " + type.getId());
+			debug("    name: " + type.getName());
+			debug("    class: " + type.getClassName());
 		}
-
-		if (ElementTypeManager.VERBOSE) {
-			debug("---------------------------------------------------");
-			debug("Internal element types known to the Rodin database:");
-			for (final String id : getSortedIds(map)) {
-				final InternalElementType<?> type = get(id);
-				debug("  " + type.getId());
-				debug("    name: " + type.getName());
-				debug("    class: " + type.getClassName());
-			}
-			debug("---------------------------------------------------");
-		}
-	}
-
-	protected IConfigurationElement[] readExtensions() {
-		final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		return registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID,
-				INTERNAL_ELEMENT_TYPES_ID);
+		debug("---------------------------------------------------");
 	}
 
 }

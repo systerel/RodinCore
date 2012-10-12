@@ -27,12 +27,12 @@ import org.junit.Test;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.AttributeTypes;
+import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.InternalElementTypes;
-import org.rodinp.internal.core.relations.InternalElementType2;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.Relations.AttributeTypesRelations;
 import org.rodinp.internal.core.relations.Relations.ElementTypesRelations;
-import org.rodinp.internal.core.relations.api.IInternalElementType2;
+import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * Acceptance tests for the relation protocol on {@code IInternalElementType2}.
@@ -85,7 +85,7 @@ public class RelationsTests {
 
 	private void assertElementRelations(String relationStrs) {
 		final List<ItemRelation> itemRels = getItemRelations(relationStrs);
-		final IInternalElementType2<?>[] testedTypes = getTestedElementTypes(relationStrs);
+		final IInternalElementType<?>[] testedTypes = getTestedElementTypes(relationStrs);
 		eTypes.computeRelations(itemRels, testedTypes);
 		// attribute relations are computed at the same time as element
 		// relations
@@ -93,34 +93,35 @@ public class RelationsTests {
 				itemRels, eTypes);
 		final AttributeTypesRelations expectedAttrRels = getExpectedAttributeRelations(
 				itemRels, aTypes);
-		for (IInternalElementType2<?> item : testedTypes) {
-			assertArrayEquals(expectedElemRels.getParentTypes(item),
-					item.getParentTypes());
-			assertArrayEquals(expectedElemRels.getChildTypes(item),
-					item.getChildTypes());
-			assertArrayEquals(expectedAttrRels.getAttributes(item),
-					item.getAttributeTypes());
+		for (IInternalElementType<?> type : testedTypes) {
+			final InternalElementType2<?> testedType = (InternalElementType2<?>) type;
+			assertArrayEquals(expectedElemRels.getParentTypes(testedType),
+					testedType.getParentTypes());
+			assertArrayEquals(expectedElemRels.getChildTypes(testedType),
+					testedType.getChildTypes());
+			assertArrayEquals(expectedAttrRels.getAttributes(testedType),
+					testedType.getAttributeTypes());
 		}
 	}
 
 	private static final Pattern IDENT_SEP_PAT = compile("\\||>>|,");
 
-	private IInternalElementType2<?>[] getTestedElementTypes(
+	private IInternalElementType<?>[] getTestedElementTypes(
 			String relationsSpecs) {
 		final String[] idents = IDENT_SEP_PAT.split(relationsSpecs);
 		final Set<IInternalElementType<?>> set = new LinkedHashSet<IInternalElementType<?>>();
 		for (String id : idents) {
 			if (isElementId(id)) {
-				set.add(eTypes.getElement(PREFIX + id));
+				set.add(eTypes.get(PREFIX + id));
 			}
 		}
-		return set.toArray(new IInternalElementType2<?>[set.size()]);
+		return set.toArray(new IInternalElementType<?>[set.size()]);
 	}
 
 	private boolean isElementId(String id) {
 		return id.startsWith("c");
 	}
-	
+
 	private boolean isAttributeId(String string) {
 		return string.startsWith("a");
 	}
@@ -163,15 +164,15 @@ public class RelationsTests {
 			final String parents = matcher.group(1);
 			final String children = matcher.group(2);
 			for (String parentId : ITEM_SEP_PAT.split(parents)) {
-				final InternalElementType2<?> parent = //
-				eTypes.getElement(PREFIX + parentId);
+				final InternalElementType<?> parent = //
+				eTypes.get(PREFIX + parentId);
 				final ItemRelation rel = new ItemRelation(parent);
 				for (String childId : ITEM_SEP_PAT.split(children)) {
 					if (childId.isEmpty())
 						continue;
 					if (isElementId(childId)) {
-						final InternalElementType2<?> child = eTypes
-								.getElement(PREFIX + childId);
+						final InternalElementType<?> child = eTypes.get(PREFIX
+								+ childId);
 						rel.addChildType(child);
 					}
 					if (isAttributeId(childId)) {

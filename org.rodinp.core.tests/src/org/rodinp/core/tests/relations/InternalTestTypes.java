@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.rodinp.core.tests.relations;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.InternalElementTypes;
-import org.rodinp.internal.core.relations.InternalElementType2;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.RelationsComputer;
-import org.rodinp.internal.core.relations.api.IInternalElementType2;
+import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * A class registering dynamic IInternalElementTypes for testing. This is done
@@ -33,8 +32,6 @@ public class InternalTestTypes extends InternalElementTypes {
 
 	private static final IConfigurationElement[] NONE = new IConfigurationElement[0];
 
-	private static final Map<String, InternalElementType2<?>> map = new HashMap<String, InternalElementType2<?>>();
-
 	private static final String[] TYPE_IDS = new String[] { //
 	"leaf", //
 			"p1", "c1", //
@@ -43,7 +40,7 @@ public class InternalTestTypes extends InternalElementTypes {
 			"cy1", //
 			"cy21", "cy22", //
 			"cy31", "cy32", "cy33", //
-			"p", "child", "attr" //
+			"p", "child", //
 	};
 
 	@Override
@@ -60,28 +57,18 @@ public class InternalTestTypes extends InternalElementTypes {
 		return result;
 	}
 
-	@Override
-	protected void computeInternalElementTypes() {
-		final IConfigurationElement[] elements = readExtensions();
-		for (final IConfigurationElement element : elements) {
-			final InternalElementType2<?> type = new InternalElementType2<IInternalElement>(
-					element);
-			map.put(type.getId(), type);
-		}
-
-	}
-
-	public InternalElementType2<?> getElement(String id) {
-		return map.get(id);
-	}
-
 	protected void computeRelations(List<ItemRelation> itemRelations,
-			IInternalElementType2<?>[] types) {
+			IInternalElementType<?>[] types) {
 		final RelationsComputer c = new RelationsComputer();
 		c.computeRelations(itemRelations);
-		for (IInternalElementType2<?> type : types) {
+		for (IInternalElementType<?> type : types) {
 			c.setRelations(type);
 		}
+	}
+
+	@Override
+	protected InternalElementType<?> makeType(IConfigurationElement element) {
+		return new InternalElementType2<IInternalElement>(element);
 	}
 
 }

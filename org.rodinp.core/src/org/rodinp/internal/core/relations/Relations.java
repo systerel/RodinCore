@@ -27,7 +27,7 @@ import org.rodinp.core.IInternalElementType;
  * @author Thomas Muller
  */
 public abstract class Relations<S, T> {
-	
+
 	final Map<S, Set<T>> childrenMap = new HashMap<S, Set<T>>();
 	final Map<T, Set<S>> parentsMap = new HashMap<T, Set<S>>();
 
@@ -40,20 +40,20 @@ public abstract class Relations<S, T> {
 	 *            the children elements
 	 */
 	public void putAll(S parentElement, List<T> childElements) {
-		Set<T> children = childrenMap.get(parentElement);
-		if (children == null) {
-			children = new LinkedHashSet<T>();
-			childrenMap.put(parentElement, children);
-		}
+		final Set<T> children = getSetValue(childrenMap, parentElement);
 		for (T child : childElements) {
 			children.add(child);
-			Set<S> parents = parentsMap.get(child);
-			if (parents == null) {
-				parents = new LinkedHashSet<S>();
-				parentsMap.put(child, parents);
-			}
-			parents.add(parentElement);
+			getSetValue(parentsMap, child).add(parentElement);
 		}
+	}
+
+	private static <U, V> Set<V> getSetValue(Map<U, Set<V>> map, U key) {
+		Set<V> result = map.get(key);
+		if (result == null) {
+			result = new LinkedHashSet<V>();
+			map.put(key, result);
+		}
+		return result;
 	}
 
 	/** Returns all the parents of the given child element. */
@@ -67,7 +67,7 @@ public abstract class Relations<S, T> {
 		final Set<T> children = childrenMap.get(parentElement);
 		return children == null ? Collections.<T> emptySet() : children;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

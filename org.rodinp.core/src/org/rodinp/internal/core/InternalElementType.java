@@ -28,7 +28,8 @@ import org.rodinp.internal.core.util.Util;
  *
  */
 public class InternalElementType<T extends IInternalElement> extends
-		ContributedElementType<T> implements IInternalElementType<T> {
+		ContributedElementType<T> implements IInternalElementType<T>,
+		IContributedItemType {
 
 	// Name of the class implementing elements of this element type
 	private final String className;

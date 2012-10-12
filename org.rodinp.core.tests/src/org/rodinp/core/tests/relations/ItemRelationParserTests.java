@@ -273,14 +273,14 @@ public class ItemRelationParserTests {
 		final Matcher m = p.matcher(relationImage);
 		if (m.matches()) {
 			final String parentId = m.group(1);
-			final IInternalElementType<?> elem = eTypes.getElement(p(parentId));
+			final IInternalElementType<?> elem = eTypes.get(p(parentId));
 			final ItemRelation itemRelation = new ItemRelation(elem);
 			final Pattern p2 = compile("\\s*(\\S+),*\\s*");
 			final String children = m.group(2);
 			final Matcher m2 = p2.matcher(children);
 			while (m2.find()) {
 				final String id = m2.group(1);
-				itemRelation.addChildType(eTypes.getElement(p(id)));
+				itemRelation.addChildType(eTypes.get(p(id)));
 			}
 			final String attributes = m.group(3);
 			final Matcher m3 = p2.matcher(attributes);

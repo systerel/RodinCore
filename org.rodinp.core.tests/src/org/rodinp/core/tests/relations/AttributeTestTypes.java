@@ -12,12 +12,11 @@ package org.rodinp.core.tests.relations;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.internal.core.AttributeTypes;
-import org.rodinp.internal.core.InternalElementTypes;
 
 /**
- * A class registering dynamic IInternalElementTypes for testing. This is done
- * by sub-classing the registry {@link InternalElementTypes} and feeding it with
- * a hard-coded list of element types.
+ * A class registering dynamic IAttributeTypes for testing. This is done
+ * by sub-classing the registry {@link AttributeTypes} and feeding it with
+ * a hard-coded list of attribute types.
  * 
  * @author Thomas Muller
  */
@@ -36,8 +35,8 @@ public class AttributeTestTypes extends AttributeTypes {
 		for (int i = 0; i < length; i++) {
 			final String id = TYPE_IDS[i];
 			final String[] attributes = new String[] { "id='" + id + "'",
-					"name='" + id + " Element'", "kind='handle'" };
-			result[i] = new FakeConfigurationElement(ATTRIBUTE_TYPES_ID,
+					"name='" + id + " Attribute'", "kind='handle'" };
+			result[i] = new FakeConfigurationElement("attributeType",
 					attributes, NONE);
 		}
 		return result;

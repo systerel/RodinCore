@@ -23,7 +23,9 @@ import org.rodinp.core.RodinCore;
  * elements. These types are contributed to the Rodin database through extension
  * point <code>org.rodinp.core.internalElementTypes</code>.
  * <p>
- * Element and attribute relationships are defined using
+ * This interface also allows to retrieve the possible relationships between
+ * internal elements (child-parent) and between elements and attributes. These
+ * relationships are defined through the
  * <code>org.rodinp.core.itemRelations</code> extension point.
  * </p>
  * <p>
@@ -43,42 +45,42 @@ public interface IInternalElementType2<T extends IInternalElement> extends
 		IInternalElementType<T> {
 
 	/**
-	 * Returns the parent types that this element type is in child relationship
-	 * with.
+	 * Returns the types of the elements that can parent an element of this
+	 * type.
 	 */
 	IInternalElementType<?>[] getParentTypes();
 
 	/**
-	 * Returns the child types to which this element type is in parent
-	 * relationship with.
+	 * Returns the types of the elements that can occur as child of an element
+	 * of this type.
 	 */
 	IInternalElementType<?>[] getChildTypes();
 
 	/**
-	 * Returns all attribute types that this element type can carry.
+	 * Returns all attribute types that elements of this type can carry.
 	 */
 	IAttributeType[] getAttributeTypes();
 
 	/**
-	 * Tells if this type can be a parent type of the given child element type.
+	 * Tells whether an element of this type can parent an element of the given
+	 * type.
 	 * 
 	 * @param childType
-	 *            the child type
-	 * @return <code>true</code> if there exists a parent-child relationship
-	 *         between the current type and the given element type,
-	 *         <code>false</code> otherwise
+	 *            an element type
+	 * @return <code>true</code> iff an element of this type can parent an
+	 *         element of the given type
 	 */
 	boolean canParent(IInternalElementType<?> childType);
 
 	/**
-	 * Tells if the current element can carry the given attribute type.
+	 * Tells whether an element of this type can carry an attribute of the given
+	 * type.
 	 * 
 	 * @param attributeType
-	 *            the attribute type
-	 * @return <code>true</code> if there exists a parent-child relationship
-	 *         between the current type and the given attribute type,
-	 *         <code>false</code> otherwise
+	 *            an attribute type
+	 * @return <code>true</code> iff an element of this type can carry an
+	 *         attribute of the given type
 	 */
-	boolean isElementOf(IAttributeType attributeType);
+	boolean canCarry(IAttributeType attributeType);
 
 }

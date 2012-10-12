@@ -15,8 +15,6 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.internal.core.AttributeTypes;
-import org.rodinp.internal.core.InternalElementTypes;
 
 /**
  * Parsers for single configuration elements contributed to the
@@ -49,14 +47,14 @@ public abstract class ElementParser {
 		@Override
 		protected void process(IConfigurationElement element,
 				String parentTypeId) {
-			final InternalElementTypes types = parent.getElementTypes();
-			final IInternalElementType<?> type = types.getElement(parentTypeId);
-			if (type == null) {
-				parent.addError("Unknown type " + parentTypeId
-						+ " from element " + elementName, element);
+			final IInternalElementType<?> parentType = parent
+					.getInternalElementType(parentTypeId);
+			if (parentType == null) {
+				parent.addError("Unknown parent type '" + parentTypeId + "'",
+						element);
 				return;
 			}
-			final ItemRelation relation = new ItemRelation(type);
+			final ItemRelation relation = new ItemRelation(parentType);
 			final ElementParser[] childParsers = new ElementParser[] {
 					new ChildTypeParser(parent, relation),
 					new AttributeTypeParser(parent, relation), };
@@ -81,11 +79,11 @@ public abstract class ElementParser {
 
 		@Override
 		protected void process(IConfigurationElement element, String elementId) {
-			final InternalElementTypes ts = parent.getElementTypes();
-			final IInternalElementType<?> childType = ts.getElement(elementId);
+			final IInternalElementType<?> childType = parent
+					.getInternalElementType(elementId);
 			if (childType == null) {
-				parent.addError("Unknown element type " + elementId
-						+ " from element " + elementName, element);
+				parent.addError("Unknown child element type '" + elementId
+						+ "'", element);
 				return;
 			}
 			relation.addChildType(childType);
@@ -105,11 +103,10 @@ public abstract class ElementParser {
 
 		@Override
 		protected void process(IConfigurationElement element, String attrName) {
-			final AttributeTypes attributeTypes = parent.getAttributeTypes();
-			final IAttributeType attrType = attributeTypes.get(attrName);
+			final IAttributeType attrType = parent.getAttributeType(attrName);
 			if (attrType == null) {
-				parent.addError("Unknown attribute type " + attrName
-						+ " from element " + elementName, element);
+				parent.addError("Unknown attribute type '" + attrName + "'",
+						element);
 				return;
 			}
 			relation.addAttributeType(attrType);

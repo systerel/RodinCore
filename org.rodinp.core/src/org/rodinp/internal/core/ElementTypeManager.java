@@ -12,10 +12,9 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import static org.rodinp.internal.core.ItemTypeUtils.debug;
-import static org.rodinp.internal.core.ItemTypeUtils.getSortedIds;
-
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -189,7 +188,18 @@ public class ElementTypeManager {
 	 *         <code>null</code> if it is not a valid attribute name
 	 */
 	public AttributeType<?> getAttributeType(String name) {
-		return (AttributeType<?>) attributeTypes.get(name);
+		return attributeTypes.get(name);
+	}
+
+	/* package */static void debug(String str) {
+		System.out.println(str);
+	}
+
+	/* package */static <V> String[] getSortedIds(HashMap<String, V> map) {
+		Set<String> idSet = map.keySet();
+		String[] ids = idSet.toArray(new String[idSet.size()]);
+		Arrays.sort(ids);
+		return ids;
 	}
 	
 }

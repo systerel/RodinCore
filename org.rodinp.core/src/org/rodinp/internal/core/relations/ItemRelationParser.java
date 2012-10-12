@@ -17,7 +17,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.AttributeTypes;
+import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.InternalElementTypes;
 import org.rodinp.internal.core.relations.ElementParser.RelationshipParser;
 
@@ -82,12 +84,12 @@ public class ItemRelationParser {
 		errors.add(message + " from " + elem.getContributor().getName());
 	}
 
-	public InternalElementTypes getElementTypes() {
-		return elementTypes;
+	public InternalElementType<?> getInternalElementType(String id) {
+		return elementTypes.get(id);
 	}
 	
-	public AttributeTypes getAttributeTypes() {
-		return attributeTypes;
+	public AttributeType<?> getAttributeType(String id) {
+		return attributeTypes.get(id);
 	}
 
 }
