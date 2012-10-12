@@ -15,50 +15,53 @@ import static java.util.Collections.unmodifiableList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElementType;
+
 public class ItemRelation {
 
-	private final String parentTypeId;
-	private final List<String> childTypeIds;
-	private final List<String> attributeTypeIds;
+	private final IInternalElementType<?> parentType;
+	private final List<IInternalElementType<?>> childTypes;
+	private final List<IAttributeType> attributeTypes;
 
-	public ItemRelation(String parentTypeId) {
-		this.parentTypeId = parentTypeId;
-		this.childTypeIds = new ArrayList<String>();
-		this.attributeTypeIds = new ArrayList<String>();
+	public ItemRelation(IInternalElementType<?> parentType) {
+		this.parentType = parentType;
+		this.childTypes = new ArrayList<IInternalElementType<?>>();
+		this.attributeTypes = new ArrayList<IAttributeType>();
 	}
 
-	public String getParentTypeId() {
-		return parentTypeId;
+	public IInternalElementType<?> getParentType() {
+		return parentType;
 	}
 
-	public List<String> getChildTypeIds() {
-		return unmodifiableList(childTypeIds);
+	public List<IInternalElementType<?>> getChildTypes() {
+		return unmodifiableList(childTypes);
 	}
 
-	public List<String> getAttributeTypeIds() {
-		return unmodifiableList(attributeTypeIds);
+	public List<IAttributeType> getAttributeTypes() {
+		return unmodifiableList(attributeTypes);
 	}
 
-	public void addChildTypeId(String childTypeId) {
-		childTypeIds.add(childTypeId);
+	public void addChildType(IInternalElementType<?> childType) {
+		childTypes.add(childType);
 	}
 
-	public void addAttributeTypeId(String attributeTypeId) {
-		attributeTypeIds.add(attributeTypeId);
+	public void addAttributeType(IAttributeType attributeTypeId) {
+		attributeTypes.add(attributeTypeId);
 	}
 	
 	public boolean isValid() {
-		return parentTypeId != null
-				&& (!(childTypeIds.isEmpty()) || !(attributeTypeIds.isEmpty()));
+		return parentType != null
+				&& (!(childTypes.isEmpty()) || !(attributeTypes.isEmpty()));
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 17;
-		result = prime * result + parentTypeId.hashCode();
-		result = prime * result + childTypeIds.hashCode();
-		result = prime * result + attributeTypeIds.hashCode();
+		result = prime * result + parentType.hashCode();
+		result = prime * result + childTypes.hashCode();
+		result = prime * result + attributeTypes.hashCode();
 		return result;
 	}
 
@@ -69,22 +72,24 @@ public class ItemRelation {
 		if (!(obj instanceof ItemRelation))
 			return false;
 		final ItemRelation item = ((ItemRelation)obj);
-		return childTypeIds.equals(item.getChildTypeIds()) 
-				&& attributeTypeIds.equals(item.getAttributeTypeIds());
+		return childTypes.equals(item.getChildTypes()) 
+				&& attributeTypes.equals(item.getAttributeTypes());
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("Relation : ");
-		sb.append(parentTypeId);
+		sb.append(parentType);
 		sb.append("\n");
-		for (String childId : childTypeIds) {
+		for (IInternalElementType<?> child : childTypes) {
+			final String childId = child.getId();
 			sb.append("|-- childType : ");
 			sb.append(childId);
 			sb.append("\n");
 		}
-		for (String attrId : attributeTypeIds) {
+		for (IAttributeType attr : attributeTypes) {
+			final String attrId = attr.getId();
 			sb.append("|-- attributeType : ");
 			sb.append(attrId);
 			sb.append("\n");

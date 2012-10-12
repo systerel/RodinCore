@@ -19,8 +19,6 @@ import java.util.Set;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.internal.core.ElementTypeManager;
-import org.rodinp.internal.core.InternalElementTypes;
 
 /**
  * Generic class storing parent-children and child-parents relations where all
@@ -34,49 +32,39 @@ public abstract class Relations<S, T> {
 	final Map<T, Set<S>> parentsMap = new HashMap<T, Set<S>>();
 
 	/**
-	 * Stores the mapping of parent and child items from the given ids.
+	 * Stores the mapping of parent and child items
 	 * 
-	 * @param parentId
-	 *            the parent element id
-	 * @param childIds
-	 *            the children ids
+	 * @param parentElement
+	 *            the parent element
+	 * @param childElements
+	 *            the children elements
 	 */
-	public void putAll(String parentId, List<String> childIds) {
-		final S parentType = getParentInstanceFromId(parentId);
-		Set<T> children = childrenMap.get(parentType);
+	public void putAll(S parentElement, List<T> childElements) {
+		Set<T> children = childrenMap.get(parentElement);
 		if (children == null) {
 			children = new LinkedHashSet<T>();
-			childrenMap.put(parentType, children);
+			childrenMap.put(parentElement, children);
 		}
-		for (String childId : childIds) {
-			final T childType = getChildInstanceFromId(childId);
-			// adding a reference to the child type
-			children.add(childType);
-			Set<S> parentTypes = parentsMap.get(childType);
-			if (parentTypes == null) {
-				parentTypes = new LinkedHashSet<S>();
-				parentsMap.put(childType, parentTypes);
+		for (T child : childElements) {
+			children.add(child);
+			Set<S> parents = parentsMap.get(child);
+			if (parents == null) {
+				parents = new LinkedHashSet<S>();
+				parentsMap.put(child, parents);
 			}
-			// adding a reference to the parent type
-			parentTypes.add(parentType);
+			parents.add(parentElement);
 		}
 	}
 
-	/** Returns the parent item corresponding to the given id */
-	protected abstract S getParentInstanceFromId(String itemId);
-
-	/** Returns the child item corresponding to the given id */
-	protected abstract T getChildInstanceFromId(String itemId);
-
 	/** Returns all the parents of the given child element. */
-	protected Set<S> getParentsOf(T child) {
-		final Set<S> parents = parentsMap.get(child);
+	protected Set<S> getParentsOf(T childElement) {
+		final Set<S> parents = parentsMap.get(childElement);
 		return parents == null ? Collections.<S> emptySet() : parents;
 	}
 
 	/** Returns all the children of the given parent element. */
-	protected Set<T> getChildrenOf(S parentType) {
-		final Set<T> children = childrenMap.get(parentType);
+	protected Set<T> getChildrenOf(S parentElement) {
+		final Set<T> children = childrenMap.get(parentElement);
 		return children == null ? Collections.<T> emptySet() : children;
 	}
 	
@@ -115,71 +103,42 @@ public abstract class Relations<S, T> {
 	}
 
 	// public for testing purpose only
-	public static class AttributeRelations extends
+	public static class AttributeTypesRelations extends
 			Relations<IInternalElementType<?>, IAttributeType> {
 
-		private final InternalElementTypes types;
-
-		public AttributeRelations(InternalElementTypes types) {
-			this.types = types;
+		/** Returns all attribute types of the given element type. */
+		public IAttributeType[] getAttributes(IInternalElementType<?> type) {
+			return getAttributeArray(getChildrenOf(type));
 		}
 
-		@Override
-		protected IInternalElementType<?> getParentInstanceFromId(
-				String parentId) {
-			return types.getElement(parentId);
-		}
-
-		@Override
-		protected IAttributeType getChildInstanceFromId(String attributeId) {
-			final ElementTypeManager mng = ElementTypeManager.getInstance();
-			return mng.getAttributeType(attributeId);
-		}
-
-		/** Returns all the parents types of the given attribute. */
-		public IAttributeType[] getAttributes(IInternalElementType<?> element) {
-			final Set<IAttributeType> attributeTypes = getChildrenOf(element);
-			return attributeTypes.toArray( //
-					new IAttributeType[attributeTypes.size()]);
+		private IAttributeType[] getAttributeArray(Set<IAttributeType> set) {
+			return set.toArray(new IAttributeType[set.size()]);
 		}
 
 	}
 
 	// public for testing purpose only
-	public static class ElementRelations extends
+	public static class ElementTypesRelations extends
 			Relations<IInternalElementType<?>, IInternalElementType<?>> {
 
-		private final InternalElementTypes types;
-
-		public ElementRelations(InternalElementTypes types) {
-			this.types = types;
-		}
-
-		@Override
-		protected IInternalElementType<?> getParentInstanceFromId(
-				String parentId) {
-			return types.getElement(parentId);
-		}
-
-		@Override
-		protected IInternalElementType<?> getChildInstanceFromId(String childId) {
-			return types.getElement(childId);
-		}
-
-		/** Returns all the parents types of the given child type. */
+		/** Returns all parent element types of the given element type. */
 		public IInternalElementType<?>[] getParentTypes(
-				IInternalElementType<?> child) {
-			final Set<IInternalElementType<?>> parentsTypes = getParentsOf(child);
-			return parentsTypes.toArray( //
-					new IInternalElementType<?>[parentsTypes.size()]);
+				IInternalElementType<?> type) {
+			return getElementArray(parentsMap.get(type));
 		}
 
-		/** Returns all the child types of the given parent type. */
+		/** Returns all child element types of the given element type. */
 		public IInternalElementType<?>[] getChildTypes(
-				IInternalElementType<?> parent) {
-			final Set<IInternalElementType<?>> childTypes = getChildrenOf(parent);
-			return childTypes.toArray( //
-					new IInternalElementType<?>[childTypes.size()]);
+				IInternalElementType<?> type) {
+			return getElementArray(childrenMap.get(type));
+		}
+
+		private IInternalElementType<?>[] getElementArray(
+				Set<IInternalElementType<?>> set) {
+			if (set == null) {
+				return new IInternalElementType<?>[0];
+			}
+			return set.toArray(new IInternalElementType<?>[set.size()]);
 		}
 
 	}

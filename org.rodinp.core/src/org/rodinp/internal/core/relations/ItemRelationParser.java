@@ -17,6 +17,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import org.rodinp.internal.core.AttributeTypes;
+import org.rodinp.internal.core.InternalElementTypes;
 import org.rodinp.internal.core.relations.ElementParser.RelationshipParser;
 
 /**
@@ -34,6 +36,14 @@ public class ItemRelationParser {
 	final List<ItemRelation> relations = new ArrayList<ItemRelation>();
 	final List<String> errors = new ArrayList<String>();
 
+	private final InternalElementTypes elementTypes;
+	private final AttributeTypes attributeTypes;
+	
+	public ItemRelationParser(InternalElementTypes elementTypes, AttributeTypes attributeTypes) {
+		this.elementTypes = elementTypes;
+		this.attributeTypes = attributeTypes;
+	}
+	
 	/**
 	 * Parses the given configuration elements, stores the relations and returns
 	 * <code>true</code> if no error occurred, <code>false</code> otherwise.
@@ -70,6 +80,14 @@ public class ItemRelationParser {
 
 	/* package */void addError(String message, IConfigurationElement elem) {
 		errors.add(message + " from " + elem.getContributor().getName());
+	}
+
+	public InternalElementTypes getElementTypes() {
+		return elementTypes;
+	}
+	
+	public AttributeTypes getAttributeTypes() {
+		return attributeTypes;
 	}
 
 }

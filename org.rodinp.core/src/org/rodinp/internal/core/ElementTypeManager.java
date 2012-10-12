@@ -12,9 +12,10 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
-import java.util.Arrays;
+import static org.rodinp.internal.core.ItemTypeUtils.debug;
+import static org.rodinp.internal.core.ItemTypeUtils.getSortedIds;
+
 import java.util.HashMap;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -101,19 +102,22 @@ public class ElementTypeManager {
 		}
 
 		if (VERBOSE) {
-			System.out.println("-----------------------------------------------");
-			System.out.println("File association known to the Rodin database:");
+			debug("-----------------------------------------------");
+			debug("File association known to the Rodin database:");
 			for (String id: getSortedIds(fileRootElementTypeIds)) {
 				FileAssociation type = fileRootElementTypeIds.get(id);
-				System.out.println("    root-element-type: " + id);
-				System.out.println("    content-type: " + type.getContentTypeId());
+				debug("    root-element-type: " + id);
+				debug("    content-type: " + type.getContentTypeId());
 			}
-			System.out.println("-----------------------------------------------");
+			debug("-----------------------------------------------");
 		}
 	}
 
 	// Associative map of internal element types
 	private final InternalElementTypes internalElementTypes = new InternalElementTypes();
+	
+	// Associative map of internal attribute types
+	private final AttributeTypes attributeTypes = new AttributeTypes();
 
 	/**
 	 * Returns the internal element type with the given id.
@@ -175,40 +179,6 @@ public class ElementTypeManager {
 		return ElementType.getElementType(id);
 	}
 
-	// Local id of the attributeTypes extension point of this plugin
-	private static final String ATTRIBUTE_TYPES_ID = "attributeTypes";
-	
-	// Access to attribute type descriptions using their unique id
-	private HashMap<String, AttributeType<?>> attributeTypeIds;
-
-	private void computeAttributeTypes() {
-		attributeTypeIds = new HashMap<String, AttributeType<?>>();
-		
-		// Read the extension point extensions.
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IConfigurationElement[] elements = 
-			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, ATTRIBUTE_TYPES_ID);
-		for (IConfigurationElement element: elements) {
-			final AttributeType<?> description = AttributeType.valueOf(element);
-			if (description != null) {
-				attributeTypeIds.put(description.getId(), description);
-			}
-		}
-
-		if (VERBOSE) {
-			System.out.println("--------------------------------------------");
-			System.out.println("Attribute types known to the Rodin database:");
-			for (String id: getSortedIds(attributeTypeIds)) {
-				AttributeType<?> type = attributeTypeIds.get(id);
-				System.out.println("  " + type.getId());
-				System.out.println("    name:  " + type.getName());
-				System.out.println("    kind:  " + type.getKind());
-				System.out.println("    class: " + type.getClass());
-			}
-			System.out.println("--------------------------------------------");
-		}
-	}
-
 	/**
 	 * Returns the attribute type description corresponding to the given name or
 	 * <code>null</code> if it is not a valid attribute name.
@@ -219,17 +189,7 @@ public class ElementTypeManager {
 	 *         <code>null</code> if it is not a valid attribute name
 	 */
 	public AttributeType<?> getAttributeType(String name) {
-		if (attributeTypeIds == null) {
-			computeAttributeTypes();
-		}
-		return attributeTypeIds.get(name);
-	}
-
-	private <V> String[] getSortedIds(HashMap<String, V> map) {
-		Set<String> idSet = map.keySet();
-		String[] ids = idSet.toArray(new String[idSet.size()]);
-		Arrays.sort(ids);
-		return ids;
+		return (AttributeType<?>) attributeTypes.get(name);
 	}
 	
 }

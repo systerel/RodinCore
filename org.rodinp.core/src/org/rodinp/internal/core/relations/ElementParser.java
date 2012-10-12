@@ -13,6 +13,10 @@ package org.rodinp.internal.core.relations;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.internal.core.AttributeTypes;
+import org.rodinp.internal.core.InternalElementTypes;
 
 /**
  * Parsers for single configuration elements contributed to the
@@ -44,8 +48,15 @@ public abstract class ElementParser {
 
 		@Override
 		protected void process(IConfigurationElement element,
-				String attributeValue) {
-			final ItemRelation relation = new ItemRelation(attributeValue);
+				String parentTypeId) {
+			final InternalElementTypes types = parent.getElementTypes();
+			final IInternalElementType<?> type = types.getElement(parentTypeId);
+			if (type == null) {
+				parent.addError("Unknown type " + parentTypeId
+						+ " from element " + elementName, element);
+				return;
+			}
+			final ItemRelation relation = new ItemRelation(type);
 			final ElementParser[] childParsers = new ElementParser[] {
 					new ChildTypeParser(parent, relation),
 					new AttributeTypeParser(parent, relation), };
@@ -69,9 +80,15 @@ public abstract class ElementParser {
 		}
 
 		@Override
-		protected void process(IConfigurationElement element,
-				String attributeValue) {
-			relation.addChildTypeId(attributeValue);
+		protected void process(IConfigurationElement element, String elementId) {
+			final InternalElementTypes ts = parent.getElementTypes();
+			final IInternalElementType<?> childType = ts.getElement(elementId);
+			if (childType == null) {
+				parent.addError("Unknown element type " + elementId
+						+ " from element " + elementName, element);
+				return;
+			}
+			relation.addChildType(childType);
 		}
 
 	}
@@ -87,9 +104,15 @@ public abstract class ElementParser {
 		}
 
 		@Override
-		protected void process(IConfigurationElement element,
-				String attributeValue) {
-			relation.addAttributeTypeId(attributeValue);
+		protected void process(IConfigurationElement element, String attrName) {
+			final AttributeTypes attributeTypes = parent.getAttributeTypes();
+			final IAttributeType attrType = attributeTypes.get(attrName);
+			if (attrType == null) {
+				parent.addError("Unknown attribute type " + attrName
+						+ " from element " + elementName, element);
+				return;
+			}
+			relation.addAttributeType(attrType);
 		}
 
 	}

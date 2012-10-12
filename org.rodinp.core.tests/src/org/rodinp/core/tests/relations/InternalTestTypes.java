@@ -42,7 +42,8 @@ public class InternalTestTypes extends InternalElementTypes {
 			"p21", "p22", "c2", //
 			"cy1", //
 			"cy21", "cy22", //
-			"cy31", "cy32", "cy33" //
+			"cy31", "cy32", "cy33", //
+			"p", "child", "attr" //
 	};
 
 	@Override
@@ -76,7 +77,7 @@ public class InternalTestTypes extends InternalElementTypes {
 
 	protected void computeRelations(List<ItemRelation> itemRelations,
 			IInternalElementType2<?>[] types) {
-		final RelationsComputer c = new RelationsComputer(this);
+		final RelationsComputer c = new RelationsComputer();
 		c.computeRelations(itemRelations);
 		for (IInternalElementType2<?> type : types) {
 			c.setRelations(type);

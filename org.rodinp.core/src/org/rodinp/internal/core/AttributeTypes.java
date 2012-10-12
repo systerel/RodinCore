@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - code extracted from class ElementTypeManager
+ *     Systerel - code extracted from method ElementTypeManager
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -19,64 +19,63 @@ import java.util.HashMap;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.RodinCore;
 
 /**
- * Stores a map between ids and internal element types, as defined by the
- * extension point <code>internalElementTypes</code>.
+ * 
+ * /** Stores a map between ids and attribute types, as defined by the extension
+ * point <code>attributeTypes</code>.
  * <p>
  * Instances of this class are immutable and therefore thread-safe.
  * </p>
  * 
  * @author Laurent Voisin
  */
-public class InternalElementTypes {
-
+public class AttributeTypes {
 	// Local id of the internalElementTypes extension point of this plug-in
-	protected static final String INTERNAL_ELEMENT_TYPES_ID = "internalElementTypes";
+	protected static final String ATTRIBUTE_TYPES_ID = "attributeTypes";
 
-	private final HashMap<String, InternalElementType<?>> map//
-	= new HashMap<String, InternalElementType<?>>();
+	private final HashMap<String, IAttributeType> map//
+	= new HashMap<String, IAttributeType>();
 
-	public InternalElementTypes() {
-		computeInternalElementTypes();
+	public AttributeTypes() {
+			computeAttributeTypes();
 	}
-
-	public InternalElementType<?> get(String id) {
+	
+	public IAttributeType get(String id) {
 		return map.get(id);
 	}
-
-	public IInternalElementType<?> getElement(String elementId) {
-		return map.get(elementId);
-	}
-
-	protected void computeInternalElementTypes() {
+	
+	protected void computeAttributeTypes() {
 		final IConfigurationElement[] elements = readExtensions();
-		for (final IConfigurationElement element : elements) {
-			final InternalElementType<?> type = new InternalElementType<IInternalElement>(
-					element);
-			map.put(type.getId(), type);
+		for (IConfigurationElement element: elements) {
+			final AttributeType<?> attrType = AttributeType.valueOf(element);
+			if (attrType != null) {
+				map.put(attrType.getId(), attrType);
+			}
 		}
 
 		if (ElementTypeManager.VERBOSE) {
-			debug("---------------------------------------------------");
-			debug("Internal element types known to the Rodin database:");
-			for (final String id : getSortedIds(map)) {
-				final InternalElementType<?> type = get(id);
+			debug("--------------------------------------------");
+			debug("Attribute types known to the Rodin database:");
+			for (String id : getSortedIds(map)) {
+				final IAttributeType type = map.get(id);
 				debug("  " + type.getId());
-				debug("    name: " + type.getName());
-				debug("    class: " + type.getClassName());
+				debug("    name:  " + type.getName());
+				if (type instanceof AttributeType<?>) {
+					debug("    kind:  " + ((AttributeType<?>) type).getKind());
+				}
+				debug("    class: " + type.getClass());
 			}
-			debug("---------------------------------------------------");
+			debug("--------------------------------------------");
 		}
 	}
-
+	
 	protected IConfigurationElement[] readExtensions() {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		return registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID,
-				INTERNAL_ELEMENT_TYPES_ID);
+				ATTRIBUTE_TYPES_ID);
 	}
-
+	
 }
