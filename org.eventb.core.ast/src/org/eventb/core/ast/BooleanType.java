@@ -13,6 +13,8 @@ package org.eventb.core.ast;
 
 import java.util.Set;
 
+import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
+
 /**
  * Denotes the predefined boolean type which corresponds to the set of boolean values.
  * 
@@ -62,6 +64,11 @@ public class BooleanType extends Type {
 	public Type specialize(ISpecialization specialization)
 			throws IllegalArgumentException {
 		return this; // Nothing to specialize
+	}
+
+	@Override
+	public Type translateDatatype(DatatypeTranslation translation) {
+		return this; // nothing to translate
 	}
 
 }

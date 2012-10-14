@@ -38,12 +38,14 @@ import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
+import org.eventb.internal.core.ast.SameTypeRewriter;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.Substitution;
-import org.eventb.internal.core.ast.SameTypeRewriter;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
+import org.eventb.internal.core.ast.extension.datatype.DatatypeRewriter;
+import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 import org.eventb.internal.core.ast.wd.WDComputer;
 import org.eventb.internal.core.ast.wd.WDImprover;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -2304,6 +2306,26 @@ public abstract class Formula<T extends Formula<T>> {
 		ensureTypeChecked();
 		final Specialization spec = (Specialization) specialization;
 		return rewrite(spec);
+	}
+
+	/**
+	 * Returns the type-checked formula obtained after translating out all the
+	 * datatypes occurring within this formula using the given datatype
+	 * translation.
+	 * 
+	 * @param translation
+	 *            some datatype translation instance
+	 * @return a type-checked formula where datatypes have been translated out
+	 * @throws UnsupportedOperationException
+	 *             if this formula is an assignment
+	 * @throws IllegalStateException
+	 *             if this formula is not type-checked
+	 * @see ITypeEnvironment#makeDatatypeTranslation()
+	 * @since 2.7
+	 */
+	public T translateDatatype(IDatatypeTranslation translation) {
+		ensureTypeChecked();
+		return rewrite(new DatatypeRewriter((DatatypeTranslation) translation));
 	}
 
 }

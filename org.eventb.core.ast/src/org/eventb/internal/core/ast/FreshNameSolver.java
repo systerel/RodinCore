@@ -32,27 +32,6 @@ import org.eventb.core.ast.ITypeEnvironment;
  */
 public class FreshNameSolver {
 
-	/**
-	 * Returns an identifier name resembling the given name and that does not
-	 * occur in the given set of used names. The returned name is guaranteed to
-	 * be a valid identifier name in the mathematical language specified by the
-	 * given formula factory.
-	 * 
-	 * @param name
-	 *            some identifier name
-	 * @param usedNames
-	 *            identifier names already used
-	 * @param factory
-	 *            the formula factory that defines the mathematical language,
-	 *            and in particular the reserved names of the language
-	 * 
-	 * @return an identifier name that does not occur in the given used names
-	 */
-	public static String solve(String name, Set<String> usedNames,
-			FormulaFactory factory) {
-		return new FreshNameSolver(usedNames, factory).solve(name);
-	}
-
 	private final FormulaFactory factory;
 	private final ITypeEnvironment typeEnvironment;
 	private final Set<String> usedNames;
@@ -109,6 +88,33 @@ public class FreshNameSolver {
 			newName = sname.toString();
 		} while (!isValid(newName));
 		return newName;
+	}
+
+	/**
+	 * Returns an identifier name resembling the given name and that does not
+	 * occur in the context of this solver, in this specific case, the set of
+	 * used names. The returned name is guaranteed to be a valid identifier name
+	 * in the mathematical language of this solver.
+	 * <p>
+	 * However, this method can only be called if the context manipulated is a
+	 * set of used names (i.e. the constuctor that has been used is
+	 * {@link FreshNameSolver#FreshNameSolver(Set, FormulaFactory)}) to avoid
+	 * defining an ambiguous context for name solving.
+	 * </p>
+	 * 
+	 * @param name
+	 *            some identifier name
+	 * 
+	 * @return a name fresh that has been added to the context of this solver
+	 */
+	public String solveAndAdd(String name) {
+		if (typeEnvironment != null) {
+			throw new UnsupportedOperationException(
+					"The context of name solving is ambiguous.");
+		}
+		final String solvedName = solve(name);
+		usedNames.add(solvedName);
+		return solvedName;
 	}
 
 	private boolean isValid(String name) {

@@ -211,6 +211,17 @@ public interface ITypeEnvironment {
 	boolean containsAll(ITypeEnvironment typenv);
 
 	/**
+	 * Returns a fresh new datatype translation for this type environment. The
+	 * resulting translation will be applicable to any formula which is
+	 * type-checked within this type environment.
+	 * 
+	 * @return a fresh datatype translation context
+	 * @see Formula#translateDatatype(IDatatypeTranslation)
+	 * @since 2.7
+	 */
+	IDatatypeTranslation makeDatatypeTranslation();
+
+	/**
 	 * Returns an iterator for traversing this type environment.
 	 * 
 	 * @return an iterator on this type environment.

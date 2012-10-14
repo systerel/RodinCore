@@ -10,279 +10,507 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
-import static java.util.Collections.singletonList;
-import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CONVERSE;
+import static org.eventb.core.ast.Formula.CPROD;
 import static org.eventb.core.ast.Formula.DPROD;
 import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.FUNIMAGE;
 import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.Formula.KRAN;
+import static org.eventb.core.ast.Formula.MAPSTO;
+import static org.eventb.core.ast.Formula.RELIMAGE;
+import static org.eventb.core.ast.Formula.STREL;
 import static org.eventb.core.ast.Formula.TBIJ;
 import static org.eventb.core.ast.Formula.TINJ;
 import static org.eventb.core.ast.Formula.TSUR;
-import static org.eventb.internal.core.ast.extension.datatype.Datatype.makeTypeInst;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import org.eventb.core.ast.AssociativeExpression;
-import org.eventb.core.ast.BinaryExpression;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IDatatypeTranslation;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
-import org.eventb.internal.core.ast.MathExtensionTranslator;
-import org.eventb.internal.core.ast.extension.TypeMediator;
 
 /**
- * This class creates a translation of general cases of datatypes which is
- * mathematically defined as follows: <br>
- * let the parameterized datatype DT for a given set of datatype parameters
- * <tt>	T1, ... Tn </tt> defined as follows:
+ * Common implementation of a translator for one datatype instance.
+ * <p>
+ * The translation scheme is described in {@link IDatatypeTranslation}.
+ * </p>
+ * <p>
+ * <em>IMPORTANT NOTE:</em> As this class manipulates formulas in two different
+ * versions of the mathematical language, it is very important not to mix them
+ * inadvertently. To ease this, this file uses the convention that all
+ * identifiers prefixed with <code>src</code> are in the source language (the
+ * one containing the datatype to translate) and those prefixed with
+ * <code>trg</code> are in the target language.
+ * </p>
  * 
- * <pre>
- *  DT(T1,...,Tn) ::=
- *  		c1(d11: α11,..., d1k1 : α1k1)
- *          c2(d21: α21,..., d2k2 : α2k2)
- *          .
- *          .
- *          .
- *          cm(dm1: αm1,..., dmkm : αmkm)
- * </pre>
- * 
- * which for each instance of it, we create a fresh identifier τ corresponding
- * to the parametric type constructor, and the following predicates:
- * 
- * <pre>
- * (A) each ci is translated to a fresh ɣi with ɣi ∈ αi1 × ... × αiki ↣ τ
- * (B) ran(ɣi) ∪ ... ∪ ran(ɣm) = τ
- * (C) each dij is translated to a fresh δij with δij  ∈ ran(ɣi) ↠ αij
- * (D) δi1 ⊗ ... ⊗ δiki = ɣi∼
- * 
- * </pre>
- * 
- * Moreover, there are two special cases where these predicates are slightly
- * modified:
- * <ul>
- * <li>when a constructor ɣi as no destructor, the singleton "{ɣi}" replaces
- * "ran(ɣi)" in (B)</li>
- * <li>when there is only one constructor, (A) becomes ɣi ∈ αi1 × ... × αiki ⤖ τ
- * and the predicate C becomes superfluous</li>
- * </ul>
- * 
- * @author "Thomas Muller"
+ * @author Thomas Muller
  */
-public class DatatypeTranslator extends MathExtensionTranslator {
+public class DatatypeTranslator {
 
-	private static final String DT_PREFIX = "DT_";
+	private static final Predicate[] NO_PREDICATES = new Predicate[0];
 
-	private final ParametricType parametricType;
-	private final IExpressionExtension extension;
+	private static final String TYPE_SUFFIX = "_Type";
+
+	private final DatatypeTranslation translation;
+	private final FormulaFactory srcFactory;
+	private final FormulaFactory trgFactory;
+
+	// Types and extension of the source language
+	private final ParametricType srcTypeInstance;
+	private final Type[] srcTypeParameters;
+	private final IExpressionExtension srcTypeConstructor;
 	private final IDatatype datatype;
-	private final List<ITypeParameter> dtParams;
-	private TypeMediation mediation;
+	private final IExpressionExtension[] srcConstructors;
+	private final boolean hasDestructors;
+	private final boolean hasNoSetConstructor;
+	private final boolean hasSingleConstructor;
 
-	private GivenType tau;
-	private List<Predicate> aS = new ArrayList<Predicate>();
-	private Predicate b;
-	private List<Predicate> cS = new ArrayList<Predicate>();
-	private List<Predicate> dS = new ArrayList<Predicate>();
+	// Types and formulas of the target language
+	private final Type[] trgTypeParameters;
+	private final FreeIdentifier trgSetCons;
+	private final GivenType trgDatatype;
+	private final Expression trgDatatypeExpr;
 
-	public DatatypeTranslator(FormulaFactory factory, Set<String> usedNames,
-			ParametricType parametricType) {
-		super(factory, usedNames);
-		this.parametricType = parametricType;
-		extension = parametricType.getExprExtension();
-		final Object origin = extension.getOrigin();
-		assert (origin instanceof IDatatype);
-		datatype = (IDatatype) origin;
-		dtParams = datatype.getTypeParameters();
-		computeTranslation();
+	private final Map<IExpressionExtension, FreeIdentifier> replacements //
+	= new HashMap<IExpressionExtension, FreeIdentifier>();
+
+	public DatatypeTranslator(ParametricType typeInstance,
+			DatatypeTranslation translation) {
+		this.translation = translation;
+		this.srcFactory = translation.getSourceFormulaFactory();
+		this.trgFactory = translation.getTargetFormulaFactory();
+		this.srcTypeInstance = typeInstance;
+		this.srcTypeConstructor = typeInstance.getExprExtension();
+		this.srcTypeParameters = typeInstance.getTypeParameters();
+		this.datatype = (IDatatype) srcTypeConstructor.getOrigin();
+		this.srcConstructors = toArray(datatype.getConstructors());
+
+		// A non-empty datatype must have at least one constructor
+		assert srcConstructors.length != 0;
+
+		this.hasDestructors = hasDestructors();
+		this.hasNoSetConstructor = !hasDestructors
+				|| srcTypeParameters.length == 0;
+		this.hasSingleConstructor = srcConstructors.length == 1;
+
+		// The first translation must be for the type parameters to ensure
+		// consistent naming for tests
+		this.trgTypeParameters = translateTypeParameters();
+
+		final String srcSymbol = srcTypeConstructor.getSyntaxSymbol();
+		this.trgDatatype = getTrgDatatype(srcSymbol);
+		this.trgDatatypeExpr = toTrgExpr(trgDatatype);
+		this.trgSetCons = getTrgSetConstructor(srcSymbol);
+		computeReplacements();
 	}
 
-	private void computeTranslation() {
-		final IExpressionExtension dtCons = datatype.getTypeConstructor();
-		tau = solveGivenType(DT_PREFIX + dtCons.getSyntaxSymbol());
-		mediation = new TypeMediation(factory, parametricType, dtParams, tau);
-		final Set<IExpressionExtension> constructors = datatype
-				.getConstructors();
-		boolean onlyOneConstructor = constructors.size() == 1;
-		for (IExpressionExtension cons : constructors) {
-			final List<IArgument> destructors = datatype.getArguments(cons);
-			aS.add(makeAPredicate(cons, destructors, onlyOneConstructor));
-			cS.addAll(makeBPredicates(cons, destructors));
-			if (destructors.size() > 0) {
-				dS.add(makeDPredicates(cons, destructors));
-			}
+	private IExpressionExtension[] toArray(Set<IExpressionExtension> set) {
+		return set.toArray(new IExpressionExtension[set.size()]);
+	}
+
+	private boolean hasDestructors() {
+		for (final IExpressionExtension cons : datatype.getConstructors()) {
+			if (datatype.getArguments(cons).size() > 0)
+				return true;
 		}
-		b = makeBPredicate(constructors);
+		return false;
 	}
 
-	private Predicate makeAPredicate(IExpressionExtension ct,
-			List<IArgument> destructors, boolean oneConstructor) {
-		final String consSymbol = ct.getSyntaxSymbol();
-		final Expression tauExpr = tau.toExpression(factory);
-		Type type = tau;
-		Expression expr = tauExpr;
-		if (!destructors.isEmpty()) {
-			final Type prodType = makeDestructorTypesProduct(destructors);
-			final Expression prodTypeExpr = prodType.toExpression(factory);
-			final int function;
-			if (oneConstructor)
-				function = TBIJ; // special case: only one datatype constructor
-			else
-				function = TINJ; // general case
-			expr = mBinExpr(function, prodTypeExpr, tauExpr);
-			type = expr.getType().getBaseType();
+	private Expression toTrgExpr(Type trgType) {
+		return trgType.toExpression(trgFactory);
+	}
+
+	private Type[] translateTypeParameters() {
+		final int length = srcTypeParameters.length;
+		final Type[] trgResult = new Type[length];
+		for (int i = 0; i < length; i++) {
+			trgResult[i] = translateType(srcTypeParameters[i]);
 		}
-		final FreeIdentifier gammaI = solveIdentifier(consSymbol, type);
-		consReplacements.put(ct, gammaI);
-		return mRelPred(IN, gammaI, expr);
+		return trgResult;
 	}
 
-	private Type makeDestructorTypesProduct(List<IArgument> destructors) {
-		final TypeInstantiation inst = makeTypeInst(parametricType, dtParams);
-		final TypeMediator mediator = new TypeMediator(factory);
-		if (destructors.size() == 1) {
-			return destructors.get(0).getType().toType(mediator, inst);
+	private GivenType getTrgDatatype(String srcSymbol) {
+		final String symbol;
+		if (hasNoSetConstructor) {
+			symbol = srcSymbol;
+		} else {
+			symbol = srcSymbol + TYPE_SUFFIX;
 		}
-		IArgumentType destType = destructors.get(0).getType();
-		Type productType = mediation.handleDatatype(destType);
-		for (int i = 1; i < destructors.size(); i++) {
-			final Type dType;
-			destType = destructors.get(i).getType();
-			dType = mediation.handleDatatype(destType);
-			productType = factory.makeProductType(productType, dType);
+		return this.translation.solveGivenType(symbol);
+	}
+
+	private FreeIdentifier getTrgSetConstructor(String srcSymbol) {
+		if (hasNoSetConstructor) {
+			return null;
 		}
-		return productType;
-	}
-
-	private List<Predicate> makeBPredicates(IExpressionExtension constructor,
-			List<IArgument> destructors) {
-		final List<Predicate> result = new ArrayList<Predicate>();
-		for (IArgument destructor : destructors) {
-			final String destSymbol = destructor.getDestructor();
-			final UnaryExpression ranExpr = mUnaryExpr(KRAN,
-					consReplacements.get(constructor));
-			final Type dType = mediation.handleDatatype(destructor.getType());
-			final Expression dTypeExpr = dType.toExpression(factory);
-			final Expression surj = mBinExpr(TSUR, ranExpr, dTypeExpr);
-			final Type deltaType = surj.getType().getBaseType();
-			final FreeIdentifier deltaI = solveIdentifier(destSymbol, deltaType);
-			destReplacements.put(destSymbol, deltaI);
-			result.add(mRelPred(IN, deltaI, surj));
-		}
-		return result;
-	}
-
-	private Predicate makeBPredicate(Set<IExpressionExtension> constructors) {
-		final List<Expression> ranGammas = new ArrayList<Expression>();
-		for (IExpressionExtension cons : constructors) {
-			if (datatype.getArguments(cons).size() == 0) {
-				ranGammas.add(mSingleton(consReplacements.get(cons)));
-				continue;
-			}
-			ranGammas.add(mUnaryExpr(KRAN, consReplacements.get(cons)));
-		}
-		final Expression tauExpr = tau.toExpression(factory);
-		final Expression expr = (ranGammas.size() == 1) ? ranGammas.get(0)
-				: mAssocExpr(BUNION, ranGammas);
-		return mRelPred(EQUAL, expr, tauExpr);
-	}
-
-	private Predicate makeDPredicates(IExpressionExtension constructor,
-			List<IArgument> destructors) {
-		final int nbDestructors = destructors.size();
-		IArgument destructor = destructors.get(0);
-		Expression deltaI = destReplacements.get(destructor.getDestructor());
-		Expression dProd = deltaI;
-		if (nbDestructors > 1) {
-			for (int i = 1; i < nbDestructors; i++) {
-				destructor = destructors.get(i);
-				deltaI = destReplacements.get(destructor.getDestructor());
-				dProd = mBinExpr(DPROD, dProd, deltaI);
-			}
-		}
-		final Expression gammaI = consReplacements.get(constructor);
-		final UnaryExpression conv = mUnaryExpr(CONVERSE, gammaI);
-		return mRelPred(EQUAL, dProd, conv);
-	}
-
-	public List<Predicate> getAPredicates() {
-		return aS;
-	}
-
-	public Predicate getBPredicate() {
-		return b;
-	}
-
-	public List<Predicate> getCPredicates() {
-		return cS;
-	}
-
-	public List<Predicate> getDPredicates() {
-		return dS;
-	}
-
-	private Expression mSingleton(Expression expression) {
-		return factory.makeSetExtension(singletonList(expression), null);
-	}
-
-	private BinaryExpression mBinExpr(final int tag, final Expression e1,
-			final Expression e2) {
-		return factory.makeBinaryExpression(tag, e1, e2, null);
-	}
-
-	private RelationalPredicate mRelPred(int tag, Expression e1,
-			final Expression e2) {
-		return factory.makeRelationalPredicate(tag, e1, e2, null);
-	}
-
-	private UnaryExpression mUnaryExpr(int tag, Expression constructor) {
-		return factory.makeUnaryExpression(tag, constructor, null);
-	}
-
-	private AssociativeExpression mAssocExpr(int tag,
-			final List<Expression> children) {
-		return factory.makeAssociativeExpression(tag, children, null);
+		final Type trgType = makeTrgConsType(trgTypeParameters);
+		return translation.solveIdentifier(srcSymbol, trgType);
 	}
 
 	/**
-	 * A mediation class that returns an instantiation of the type parameters if
-	 * the parametric type is different of the current type being translated,
-	 * else the "tau" replacement type.
+	 * Compute all fresh identifiers that may appear in the translation of this
+	 * datatype instance.
 	 */
-	private static class TypeMediation {
-
-		final TypeInstantiation instantiation;
-		final TypeMediator mediator;
-		final ParametricType type;
-		private Type tau;
-
-		public TypeMediation(FormulaFactory factory, ParametricType type,
-				List<ITypeParameter> typeParams, Type tau) {
-			this.type = type;
-			this.instantiation = makeTypeInst(type, typeParams);
-			this.mediator = new TypeMediator(factory);
-			this.tau = tau;
+	private void computeReplacements() {
+		for (final IExpressionExtension srcCons : srcConstructors) {
+			final Type[] trgArgTypes = computeDestructorReplacements(srcCons);
+			addReplacement(srcCons, makeTrgConsType(trgArgTypes));
 		}
+	}
 
-		public Type handleDatatype(IArgumentType destType) {
-			final Type dType = destType.toType(mediator, instantiation);
-			return (dType.equals(type)) ? tau : dType;
+	/*
+	 * Compute replacements for the destructors of the given constructor.
+	 * Returns an array of the result types in the target environment of every
+	 * destructor added.
+	 */
+	private Type[] computeDestructorReplacements(IExpressionExtension cons) {
+		final String consId = cons.getId();
+		final List<Type> srcArgTypes = getSrcArgumentTypes(cons);
+		final int nbDestructors = srcArgTypes.size();
+		final Type[] trgResult = new Type[nbDestructors];
+		for (int i = 0; i < nbDestructors; i++) {
+			final IExpressionExtension destructor = datatype.getDestructor(
+					consId, i);
+			final Type trgAlpha = translateType(srcArgTypes.get(i));
+			addReplacement(destructor, mTrgRelType(trgDatatype, trgAlpha));
+			trgResult[i] = trgAlpha;
 		}
+		return trgResult;
+	}
 
+	private List<Type> getSrcArgumentTypes(IExpressionExtension cons) {
+		return datatype.getArgumentTypes(cons, srcTypeInstance, srcFactory);
+	}
+
+	private void addReplacement(IExpressionExtension ext, Type trgType) {
+		final String symbol = ext.getSyntaxSymbol();
+		final FreeIdentifier ident = translation.solveIdentifier(symbol,
+				trgType);
+		replacements.put(ext, ident);
+	}
+
+	private Type makeTrgConsType(Type[] trgArgTypes) {
+		if (trgArgTypes.length == 0) {
+			return trgDatatype;
+		}
+		final Type trgProdType = makeTrgProdType(trgArgTypes);
+		return mTrgRelType(trgProdType, trgDatatype);
+	}
+
+	private Type makeTrgProdType(Type[] trgTypes) {
+		Type trgProdType = trgTypes[0];
+		for (int i = 1; i < trgTypes.length; i++) {
+			trgProdType = mTrgProdType(trgProdType, trgTypes[i]);
+		}
+		return trgProdType;
+	}
+
+	private Expression combineTrgExpr(int tag, Expression[] trgExprs) {
+		final int length = trgExprs.length;
+		assert length != 0;
+		Expression trgResult = trgExprs[0];
+		for (int i = 1; i < length; i++) {
+			trgResult = mTrgBinExpr(tag, trgResult, trgExprs[i]);
+		}
+		return trgResult;
+	}
+
+	private Type translateType(Type srcType) {
+		// This test prevents infinite loop during instance initialization
+		if (srcTypeInstance.equals(srcType)) {
+			return trgDatatype;
+		}
+		return srcType.translateDatatype(translation);
+	}
+
+	/**
+	 * Returns the translation of the datatype instance handled by this
+	 * translator.
+	 */
+	public Type getTranslatedType() {
+		return trgDatatype;
+	}
+
+	/**
+	 * Rewrites the given extended expression.
+	 * 
+	 * @param src
+	 *            the extended expression to be translated
+	 * @param trgChildExprs
+	 *            the new children expressions
+	 * @return a translation of the given extended expression
+	 */
+	public Expression rewrite(ExtendedExpression src, Expression[] trgChildExprs) {
+		final IExpressionExtension ext = src.getExtension();
+		if (ext.isATypeConstructor()) {
+			if (hasNoSetConstructor || src.isATypeExpression()) {
+				return trgDatatypeExpr;
+			} else {
+				return mTrgRelImage(trgSetCons, trgChildExprs);
+			}
+		}
+		final Expression trgExpr = replacements.get(ext);
+		if (trgChildExprs.length == 0) {
+			return trgExpr;
+		}
+		final Expression trgMaplets = combineTrgExpr(MAPSTO, trgChildExprs);
+		return mTrgBinExpr(FUNIMAGE, trgExpr, trgMaplets);
+	}
+
+	private Expression mTrgRelImage(Expression trgRel, Expression[] trgSets) {
+		final Expression trgExpr = combineTrgExpr(CPROD, trgSets);
+		return mTrgBinExpr(RELIMAGE, trgRel, trgExpr);
+	}
+
+	/**
+	 * Returns the axioms that specify the properties of the fresh identifiers
+	 * introduced by this translator.
+	 */
+	public List<Predicate> getAxioms() {
+		final List<Predicate> axioms = new ArrayList<Predicate>();
+		addSetConstructorDefinitionAxiom(axioms);
+		for (final IExpressionExtension cons : srcConstructors) {
+			addAxioms(axioms, cons);
+		}
+		addPartitionAxiom(axioms);
+		addSetConstructorAxiom(axioms);
+		return axioms;
+	}
+
+	/**
+	 * Computes and adds the axiom (E)
+	 */
+	private void addSetConstructorDefinitionAxiom(List<Predicate> axioms) {
+		if (hasNoSetConstructor)
+			return;
+		final Type trgSetConsType = trgSetCons.getType();
+		final Expression trgProd = toTrgExpr(trgSetConsType.getSource());
+		final Expression trgRange = toTrgExpr(trgSetConsType.getTarget());
+		axioms.add(mTrgInRelationalSet(trgSetCons, STREL, trgProd, trgRange));
+	}
+
+	/**
+	 * Computes and adds the axiom (F)
+	 */
+	private void addSetConstructorAxiom(List<Predicate> axioms) {
+		if (hasNoSetConstructor)
+			return;
+		final List<Expression> trgParts = new ArrayList<Expression>();
+		final Expression[] srcBoundIdents = makeSrcBoundIdentifiers();
+		trgParts.add(mTrgRelImage(trgSetCons, translate(srcBoundIdents)));
+		for (final IExpressionExtension cons : srcConstructors) {
+			trgParts.add(makeTrgSetPartitionPart(cons, srcBoundIdents));
+		}
+		final Predicate trgPartition = mTrgPartition(trgParts);
+		final BoundIdentDecl[] trgDecls = makeTrgBoundIdentDecls();
+		axioms.add(mTrgForall(trgDecls, trgPartition));
+	}
+
+	private Expression[] makeSrcBoundIdentifiers() {
+		final int nbIdents = srcTypeParameters.length;
+		final Expression[] idents = new Expression[nbIdents];
+		// De Bruijn indexes are counted backwards
+		int boundIndex = nbIdents - 1;
+		for (int i = 0; i < nbIdents; i++) {
+			final Type srcType = srcTypeParameters[i];
+			final Type srcBoundType = mSrcPowerSetType(srcType);
+			idents[i] = mSrcBoundIdent(boundIndex, srcBoundType);
+			boundIndex--;
+		}
+		return idents;
+	}
+
+	private Expression[] translate(Expression[] srcExprs) {
+		final int length = srcExprs.length;
+		final Expression[] trgResult = new Expression[length];
+		for (int i = 0; i < length; i++) {
+			trgResult[i] = srcExprs[i].translateDatatype(translation);
+		}
+		return trgResult;
+	}
+
+	/*
+	 * To create the constructor arguments as sets, we need to work in the
+	 * source language. We then translate the result into the target language.
+	 */
+	private Expression makeTrgSetPartitionPart(IExpressionExtension cons,
+			Expression[] srcIdents) {
+		final Expression trgCons = replacements.get(cons);
+		if (hasArguments(cons)) {
+			final ExtendedExpression srcSet = makeSrcSet(srcIdents);
+			final List<Expression> srcSets = datatype.getArgumentSets(cons,
+					srcSet, srcFactory);
+			final Expression[] array = srcSets.toArray(new Expression[srcSets
+					.size()]);
+			return mTrgRelImage(trgCons, translate(array));
+		} else {
+			return mTrgSingleton(trgCons);
+		}
+	}
+
+	private ExtendedExpression makeSrcSet(Expression[] srcExprs) {
+		return srcFactory.makeExtendedExpression(srcTypeConstructor, srcExprs,
+				NO_PREDICATES, null, srcTypeInstance);
+	}
+
+	private BoundIdentDecl[] makeTrgBoundIdentDecls() {
+		final int nbTypeParams = trgTypeParameters.length;
+		final BoundIdentDecl[] trgResult = new BoundIdentDecl[nbTypeParams];
+		final List<ITypeParameter> formalTypeParams = datatype
+				.getTypeParameters();
+		for (int i = 0; i < nbTypeParams; i++) {
+			final Type trgType = mTrgPowerSetType(trgTypeParameters[i]);
+			final String declName = formalTypeParams.get(i).getName();
+			trgResult[i] = mTrgBoundIdentDecl(declName, trgType);
+		}
+		return trgResult;
+	}
+
+	private void addAxioms(List<Predicate> axioms, IExpressionExtension cons) {
+		if (!hasArguments(cons)) {
+			return;
+		}
+		final Expression trgCons = replacements.get(cons);
+		final Expression trgDomain = toTrgExpr(trgCons.getType().getSource());
+		final Expression trgRange = trgDatatypeExpr;
+		final int tag = hasSingleConstructor ? TBIJ : TINJ;
+		axioms.add(mTrgInRelationalSet(trgCons, tag, trgDomain, trgRange));
+		final Expression[] trgDest = getTrgDestructors(cons);
+		addDestructorAxioms(axioms, cons, trgDest);
+		addConstructorInverseAxiom(axioms, cons, trgDest);
+	}
+
+	// Returns the replacements of the destructors of the given constructor
+	private Expression[] getTrgDestructors(IExpressionExtension cons) {
+		final int nbDestructors = datatype.getArguments(cons).size();
+		final Expression[] trgResult = new Expression[nbDestructors];
+		final String consId = cons.getId();
+		for (int i = 0; i < nbDestructors; i++) {
+			trgResult[i] = replacements.get(datatype.getDestructor(consId, i));
+		}
+		return trgResult;
+	}
+
+	private void addDestructorAxioms(List<Predicate> axioms,
+			IExpressionExtension constructor, Expression[] trgDests) {
+		final Expression trgPart = makeTrgPartitionPart(constructor);
+		for (final Expression trgDest : trgDests) {
+			final Type trgType = trgDest.getType().getTarget();
+			axioms.add(mTrgInRelationalSet(trgDest, TSUR, trgPart,
+					toTrgExpr(trgType)));
+		}
+	}
+
+	private Expression makeTrgPartitionPart(IExpressionExtension cons) {
+		final Expression trgGamma = replacements.get(cons);
+		if (hasArguments(cons)) {
+			return mTrgUnaryExpr(KRAN, trgGamma);
+		} else {
+			return mTrgSingleton(trgGamma);
+		}
+	}
+
+	private void addConstructorInverseAxiom(List<Predicate> axioms,
+			IExpressionExtension constructor, Expression[] trgDests) {
+		final Expression trgDProd = combineTrgExpr(DPROD, trgDests);
+		final Expression trgCons = replacements.get(constructor);
+		final Expression trgConv = mTrgUnaryExpr(CONVERSE, trgCons);
+		axioms.add(mTrgEquals(trgDProd, trgConv));
+	}
+
+	private void addPartitionAxiom(List<Predicate> axioms) {
+		if (hasSingleConstructorWithArguments()) {
+			// Partition predicate is useless
+			return;
+		}
+		final List<Expression> trgParts = new ArrayList<Expression>();
+		trgParts.add(trgDatatypeExpr);
+		for (final IExpressionExtension cons : srcConstructors) {
+			trgParts.add(makeTrgPartitionPart(cons));
+		}
+		axioms.add(mTrgPartition(trgParts));
+	}
+
+	private boolean hasSingleConstructorWithArguments() {
+		return hasSingleConstructor && hasArguments(srcConstructors[0]);
+	}
+
+	private boolean hasArguments(IExpressionExtension constructor) {
+		return !datatype.getArguments(constructor).isEmpty();
+	}
+
+	private Expression mSrcBoundIdent(int i, Type srcType) {
+		return srcFactory.makeBoundIdentifier(i, null, srcType);
+	}
+
+	private Type mSrcPowerSetType(Type srcType) {
+		return srcFactory.makePowerSetType(srcType);
+	}
+
+	private Type mTrgPowerSetType(Type trgType) {
+		return trgFactory.makePowerSetType(trgType);
+	}
+
+	private BoundIdentDecl mTrgBoundIdentDecl(String name, Type trgType) {
+		return trgFactory.makeBoundIdentDecl(name, null, trgType);
+	}
+
+	private Expression mTrgBinExpr(final int tag, final Expression e1,
+			final Expression e2) {
+		return trgFactory.makeBinaryExpression(tag, e1, e2, null);
+	}
+
+	private Predicate mTrgPartition(final List<Expression> parts) {
+		return trgFactory.makeMultiplePredicate(KPARTITION, parts, null);
+	}
+
+	private Type mTrgProdType(Type t1, Type t2) {
+		return srcFactory.makeProductType(t1, t2);
+	}
+
+	private Type mTrgRelType(Type t1, Type t2) {
+		return trgFactory.makeRelationalType(t1, t2);
+	}
+
+	private Predicate mTrgForall(BoundIdentDecl[] trgDecls, Predicate trgPred) {
+		return trgFactory.makeQuantifiedPredicate(FORALL, trgDecls, trgPred,
+				null);
+	}
+
+	private Predicate mTrgEquals(Expression trgLeft, Expression trgRight) {
+		return trgFactory.makeRelationalPredicate(EQUAL, trgLeft, trgRight,
+				null);
+	}
+
+	private Predicate mTrgInRelationalSet(Expression trgRel, int tag,
+			Expression trgDomain, Expression trgRange) {
+		final Expression trgSet = mTrgBinExpr(tag, trgDomain, trgRange);
+		return trgFactory.makeRelationalPredicate(IN, trgRel, trgSet, null);
+	}
+
+	private Expression mTrgSingleton(Expression expression) {
+		return trgFactory.makeSetExtension(expression, null);
+	}
+
+	private Expression mTrgUnaryExpr(int tag, Expression constructor) {
+		return trgFactory.makeUnaryExpression(tag, constructor, null);
 	}
 
 }

@@ -13,6 +13,8 @@ package org.eventb.core.ast;
 
 import java.util.Set;
 
+import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
+
 /**
  * Denotes the predefined integer type which corresponds to the set of all integers.
  * 
@@ -62,4 +64,10 @@ public class IntegerType extends Type {
 	public Type specialize(ISpecialization specialization) {
 		return this; // Nothing to specialize
 	}
+
+	@Override
+	public Type translateDatatype(DatatypeTranslation translation) {
+		return this; // Nothing to translate
+	}
+
 }

@@ -13,6 +13,8 @@ package org.eventb.core.ast;
 
 import java.util.Set;
 
+import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
+
 /**
  * Denotes a product type.
  * 
@@ -97,6 +99,15 @@ public class ProductType extends Type {
 	public Type specialize(ISpecialization specialization) {
 		final Type newLeft = left.specialize(specialization);
 		final Type newRight = right.specialize(specialization);
+		if (newLeft == left && newRight == right)
+			return this;
+		return new ProductType(newLeft, newRight);
+	}
+
+	@Override
+	public Type translateDatatype(DatatypeTranslation translation) {
+		final Type newLeft = left.translateDatatype(translation);
+		final Type newRight = right.translateDatatype(translation);
 		if (newLeft == left && newRight == right)
 			return this;
 		return new ProductType(newLeft, newRight);

@@ -120,8 +120,7 @@ public abstract class QuantifiedUtil {
 		final String[] result = new String[nbBoundIdentDecl];
 		final FreshNameSolver solver = new FreshNameSolver(usedNames, factory);
 		for (int i = 0; i < nbBoundIdentDecl; i++) {
-			final String newName = solver.solve(boundHere[i].getName());
-			usedNames.add(newName);
+			final String newName = solver.solveAndAdd(boundHere[i].getName());
 			result[i] = newName;
 		}
 		return result;

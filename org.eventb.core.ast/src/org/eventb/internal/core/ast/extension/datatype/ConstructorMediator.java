@@ -50,7 +50,7 @@ import org.eventb.core.ast.extension.datatype.ITypeParameter;
 public class ConstructorMediator extends ArgumentMediator implements
 		IConstructorMediator {
 
-	private static class ConstructorExtension implements IExpressionExtension {
+	public static class ConstructorExtension implements IExpressionExtension {
 
 		private final String name;
 		private final String id;
@@ -271,7 +271,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 		
 	}
 
-	private static class DestructorExtension implements IExpressionExtension {
+	public static class DestructorExtension implements IExpressionExtension {
 	
 		private static final String PARAM_PREFIX = "p";
 

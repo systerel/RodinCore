@@ -14,6 +14,8 @@ package org.eventb.core.ast;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
+
 /**
  * Common protocol for event-B types.
  * <p>
@@ -212,5 +214,17 @@ public abstract class Type {
 	 * @since 2.6
 	 */
 	public abstract Type specialize(ISpecialization specialization);
+
+	/**
+	 * Returns the type obtained after translating out the datatypes occurring in this
+	 * type, using the given datatype translation instance
+	 * 
+	 * @param translation
+	 *            some datatype translation instance
+	 * @return the translated type or <code>this</code> if unchanged
+	 * 
+	 * @since 2.7
+	 */
+	public abstract Type translateDatatype(DatatypeTranslation translation);
 
 }

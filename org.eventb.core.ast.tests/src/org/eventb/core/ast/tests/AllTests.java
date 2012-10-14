@@ -60,6 +60,10 @@ public class AllTests {
 		suite.addTestSuite(TestTypenvSpecialization.class);
 		suite.addTestSuite(TestFormulaSpecialization.class);
 		suite.addTestSuite(TestDatatypeArgumentSets.class);
+		suite.addTestSuite(TestDatatypeRewriter.class);
+		suite.addTestSuite(TestDatatypeTranslation.class);
+		suite.addTestSuite(TestDatatypeTranslator.class);
+		suite.addTestSuite(TestEnumDatatypeTranslator.class);
 		//$JUnit-END$
 		return suite;
 	}

@@ -138,6 +138,14 @@ public abstract class AbstractTests extends TestCase {
 	}
 	
 	public static Expression parseExpression(String image,
+			ITypeEnvironment typenv) {
+		final FormulaFactory fac = typenv.getFormulaFactory();
+		final Expression result = parseExpression(image, fac);
+		typeCheck(result, typenv);
+		return result;
+	}
+
+	public static Expression parseExpression(String image,
 			LanguageVersion version) {
 		return parseExpression(image, version, getFormulaFactory(version));
 	}
@@ -162,6 +170,14 @@ public abstract class AbstractTests extends TestCase {
 		return parsePredicate(image, getLanguageVersion(factory), factory);
 	}
 	
+	public static Predicate parsePredicate(String image,
+			ITypeEnvironment typenv) {
+		final FormulaFactory fac = typenv.getFormulaFactory();
+		final Predicate result = parsePredicate(image, fac);
+		typeCheck(result, typenv);
+		return result;
+	}
+
 	public static Predicate parsePredicate(String image,
 			LanguageVersion version) {
 		return parsePredicate(image, version, getFormulaFactory(version));

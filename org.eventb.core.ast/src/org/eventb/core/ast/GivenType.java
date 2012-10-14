@@ -14,6 +14,7 @@ package org.eventb.core.ast;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.Specialization;
+import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 
 /**
  * Denotes a type defined by the user. For instance, this type can correspond to
@@ -97,6 +98,11 @@ public class GivenType extends Type {
 	@Override
 	public FreeIdentifier toExpression(FormulaFactory factory) {
 		return (FreeIdentifier) super.toExpression(factory);
+	}
+
+	@Override
+	public Type translateDatatype(DatatypeTranslation translation) {
+		return this; // nothing to translate
 	}
 
 }

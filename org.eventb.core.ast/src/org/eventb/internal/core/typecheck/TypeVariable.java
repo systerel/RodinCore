@@ -20,6 +20,7 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 
 /**
  * Denotes a type variable used internally by the type-checker.
@@ -101,6 +102,11 @@ public class TypeVariable extends Type {
 	@Override
 	public Type specialize(ISpecialization specialization) {
 		return this; // Nothing to specialize
+	}
+
+	@Override
+	public Type translateDatatype(DatatypeTranslation translation) {
+		return this; // Nothing to translate
 	}
 
 }

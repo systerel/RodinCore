@@ -40,17 +40,22 @@ import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 public class InjectedDatatypeExtension implements IDatatypeExtension {
 
 	/**
-	 * The constructor destructor pattern. Group #2 is the constructor or
-	 * destructor identifier, group #4 identifies the type
+	 * The constructor destructor pattern. Group #1 is the constructor or
+	 * destructor identifier, group #2 identifies the type
 	 */
-	private static final Pattern cdPattern = compile("(\\s*)([^\\[\\s]+)(\\[?\\s*)(([^\\]]+)*)(\\]?\\s*)");
+	private static final Pattern cdPattern = compile("" //
+			+ "\\s*" // initial spaces
+			+ "([^\\[\\s]+)" // operator name
+			+ "\\[?\\s*" // type start
+			+ "([^\\[\\]]*)" // type
+			+ "\\]?\\s*");
 
 	/**
 	 * Global pattern matching the extension definition. Group #1 concerns the
-	 * type constructor, group #3 concerns the definition of constructor and
+	 * type constructor, group #2 concerns the definition of constructor and
 	 * destructors.
 	 */
-	private static final Pattern extensionDefPattern = compile("(.*)(::=)(.+)");
+	private static final Pattern extensionDefPattern = compile("(.+)::=(.+)");
 
 	private final FormulaFactory ff;
 	private final String extensionExpression;
@@ -78,7 +83,7 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 
 	private static String getTypeConstructor(String definition) {
 		final String typeDefStr = getGroup(extensionDefPattern, 1, definition);
-		return getGroup(cdPattern, 2, typeDefStr);
+		return getGroup(cdPattern, 1, typeDefStr);
 	}
 
 	private static String getGroup(Pattern pattern, int group,
@@ -103,7 +108,8 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 	@Override
 	public void addTypeParameters(ITypeConstructorMediator mediator) {
 		for (String arg : getTypeArguments(extensionExpression)) {
-			mediator.addTypeParam(arg);
+			if (!arg.isEmpty())
+				mediator.addTypeParam(arg);
 		}
 	}
 
@@ -113,7 +119,7 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 
 	private static List<String> getTypeArguments(String definition) {
 		final String typeDefStr = getGroup(extensionDefPattern, 1, definition);
-		final String typesStr = getGroup(cdPattern, 4, typeDefStr);
+		final String typesStr = getGroup(cdPattern, 2, typeDefStr);
 		if (typesStr.isEmpty()) {
 			return emptyList();
 		}
@@ -142,8 +148,10 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 
 	private static Map<String, Map<String, String>> getConstructors(
 			String typeSpec) {
+		final String condDestStr = getGroup(extensionDefPattern, 2, typeSpec);
+		if (condDestStr.matches("\\s*")) // no constructor nor destructor
+			return Collections.emptyMap();
 		final Map<String, Map<String, String>> result = new LinkedHashMap<String, Map<String, String>>();
-		final String condDestStr = getGroup(extensionDefPattern, 3, typeSpec);
 		final String[] split = splitOn(condDestStr, "\\|\\|");
 		for (String constDest : split) {
 			final String[] cdStrs = splitOn(constDest, ";");
@@ -164,8 +172,8 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 	private static Map<String, String> getDestuctors(String[] destructorStrs) {
 		final Map<String, String> result = new LinkedHashMap<String, String>();
 		for (String dest : destructorStrs) {
-			final String destName = getGroup(cdPattern, 2, dest);
-			final String destType = getGroup(cdPattern, 4, dest);
+			final String destName = getGroup(cdPattern, 1, dest);
+			final String destType = getGroup(cdPattern, 2, dest);
 			result.put(destName, destType);
 		}
 		return result;

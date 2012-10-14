@@ -24,12 +24,14 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IDatatypeTranslation;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.FreshNameSolver;
 import org.eventb.internal.core.ast.Specialization;
+import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 
 /**
  * This class represents a type environment used to type check an event-B
@@ -230,6 +232,11 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 			return map.equals(temp.map);
 		}
 		return false;
+	}
+
+	@Override
+	public IDatatypeTranslation makeDatatypeTranslation() {
+		return new DatatypeTranslation(this);
 	}
 
 	/*

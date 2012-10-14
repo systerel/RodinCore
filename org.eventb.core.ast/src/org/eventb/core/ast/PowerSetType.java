@@ -13,6 +13,8 @@ package org.eventb.core.ast;
 
 import java.util.Set;
 
+import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
+
 /**
  * Denotes a power-set type.
  * 
@@ -77,6 +79,14 @@ public class PowerSetType extends Type {
 	@Override
 	public Type specialize(ISpecialization specialization) {
 		final Type newBase = base.specialize(specialization);
+		if (newBase == base)
+			return this;
+		return new PowerSetType(newBase);
+	}
+
+	@Override
+	public Type translateDatatype(DatatypeTranslation translation) {
+		final Type newBase = base.translateDatatype(translation);
 		if (newBase == base)
 			return this;
 		return new PowerSetType(newBase);
