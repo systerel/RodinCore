@@ -1785,8 +1785,7 @@ public abstract class Formula<T extends Formula<T>> {
 	
 	/**
 	 * This method is not part part of the published API of the AST library and
-	 * shall not be called by clients. It has been made public due to the
-	 * technical structure of the AST library. However, interface
+	 * shall not be called by clients. However, interface
 	 * <code>ITypeCheckingRewriter</code> is not part of the API on purpose.
 	 * 
 	 * @param rewriter
