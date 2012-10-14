@@ -22,6 +22,7 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISequentTransformer;
+import org.eventb.core.seqprover.transformer.ISequentTranslator;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 
 /**
@@ -111,8 +112,8 @@ public class SimpleSequent implements ISimpleSequent {
 	public ISimpleSequent apply(ISequentTransformer transformer) {
 		final List<TrackedPredicate> newPreds = new ArrayList<TrackedPredicate>(
 				predicates.length);
-		final FormulaFactory ff = getFormulaFactory();
-		boolean changed = false;
+		final FormulaFactory targetFac = getTargetFormulaFactory(transformer);
+		boolean changed = targetFac != getFormulaFactory();
 		for (TrackedPredicate pred : predicates) {
 			final TrackedPredicate newPred = pred.transform(transformer);
 			changed |= newPred != pred;
@@ -120,14 +121,21 @@ public class SimpleSequent implements ISimpleSequent {
 				continue;
 			}
 			if (newPred.holdsTrivially()) {
-				return new SimpleSequent(ff, newPred, origin);
+				return new SimpleSequent(targetFac, newPred, origin);
 			}
 			newPreds.add(newPred);
 		}
 		if (!changed) {
 			return this;
 		}
-		return new SimpleSequent(ff, newPreds, origin);
+		return new SimpleSequent(targetFac, newPreds, origin);
+	}
+
+	private FormulaFactory getTargetFormulaFactory(ISequentTransformer transformer) {
+		if (transformer instanceof ISequentTranslator) {
+			return ((ISequentTranslator) transformer).getTargetFormulaFactory();
+		}
+		return getFormulaFactory();
 	}
 
 	@Override

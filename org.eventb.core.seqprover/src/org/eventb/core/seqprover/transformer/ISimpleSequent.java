@@ -90,7 +90,7 @@ public interface ISimpleSequent {
 	 * @since 2.4
 	 */
 	Object getOrigin();
-	
+
 	/**
 	 * Tells whether the given object is equal to this sequent, that is whether
 	 * the given object is another sequent made of equal hypotheses and goal, in
@@ -116,13 +116,17 @@ public interface ISimpleSequent {
 	 * <p>
 	 * In case the transformer did no transformation at all and returned the
 	 * exact same predicate each time, this method returns this simple sequent,
-	 * rather than an identical copy of it.
+	 * rather than an identical copy of it. However, if the formula factory of
+	 * the sequent changes, a new sequent built with the new formula factory is
+	 * returned.
 	 * </p>
 	 * 
 	 * @param transformer
 	 *            operation to apply to each predicate of this sequent
-	 * @return a possibly new simple sequent obtained by applying the given
-	 *         transformer
+	 * @return a new simple sequent obtained by applying the given transformer
+	 *         or the same sequent if it was not changed by the transformer
+	 * @see ISequentTransformer
+	 * @see ISequentTranslator
 	 */
 	ISimpleSequent apply(ISequentTransformer transformer);
 

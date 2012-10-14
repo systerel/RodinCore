@@ -24,6 +24,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IFormulaInspector;
@@ -43,7 +44,7 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.core.seqprover.transformer.ISequentTransformer;
+import org.eventb.core.seqprover.transformer.ISequentTranslator;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
 
 /**
@@ -60,8 +61,10 @@ import org.eventb.core.seqprover.transformer.ITrackedPredicate;
  * 
  * @author Laurent Voisin
  */
-public class LanguageFilter implements ISequentTransformer,
+public class LanguageFilter implements ISequentTranslator,
 		IFormulaInspector<Object> {
+
+	private static final Predicate[] NO_AXIOMS = new Predicate[0];
 
 	private final BitSet toFilterOut;
 
@@ -73,6 +76,16 @@ public class LanguageFilter implements ISequentTransformer,
 		for (int tag : tags) {
 			toFilterOut.set(tag);
 		}
+	}
+
+	@Override
+	public FormulaFactory getTargetFormulaFactory() {
+		return FormulaFactory.getDefault();
+	}
+
+	@Override
+	public Predicate[] getAxioms() {
+		return NO_AXIOMS;
 	}
 
 	@Override

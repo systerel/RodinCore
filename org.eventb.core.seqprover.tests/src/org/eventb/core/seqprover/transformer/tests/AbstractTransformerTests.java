@@ -77,7 +77,7 @@ public class AbstractTransformerTests {
 			hyps[i] = genPred(typenv, hypImages[i]);
 		}
 		final Predicate goal = genPred(typenv, goalImage);
-		return makeSequent(goal, hyps);
+		return SimpleSequents.make(hyps, goal, typenv.getFormulaFactory());
 	}
 
 	protected static ISimpleSequent makeSequent(String goalImage,

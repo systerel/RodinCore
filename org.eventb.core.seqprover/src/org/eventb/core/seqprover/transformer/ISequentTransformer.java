@@ -22,6 +22,10 @@ import org.eventb.core.ast.Predicate;
  * transformer through other means (e.g., obtained from the simple sequent to
  * which this transformer is applied).
  * </p>
+ * <p>
+ * An alternative richer version of this interface is available:
+ * {@link ISequentTranslator}.
+ * </p>
  * 
  * @author Laurent Voisin
  * @since 2.3

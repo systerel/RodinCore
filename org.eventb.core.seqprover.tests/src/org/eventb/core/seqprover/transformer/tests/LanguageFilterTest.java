@@ -113,8 +113,12 @@ public class LanguageFilterTest extends AbstractTransformerTests {
 		if (expected) {
 			assertEmpty(actual);
 		} else {
-			assertSame(sequent, actual);
-			assertEquals(ff, sequent.getFormulaFactory());
+			assertSame(ff, actual.getFormulaFactory());
+			if (ff == sequent.getFormulaFactory()) {
+				assertSame(sequent, actual);
+			} else {
+				assertEquals(sequent, actual);
+			}
 		}
 	}
 
