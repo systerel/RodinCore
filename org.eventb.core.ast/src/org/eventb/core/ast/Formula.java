@@ -44,7 +44,6 @@ import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.Substitution;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
-import org.eventb.internal.core.ast.extension.datatype.DatatypeRewriter;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 import org.eventb.internal.core.ast.wd.WDComputer;
 import org.eventb.internal.core.ast.wd.WDImprover;
@@ -2325,7 +2324,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public T translateDatatype(IDatatypeTranslation translation) {
 		ensureTypeChecked();
-		return rewrite(new DatatypeRewriter((DatatypeTranslation) translation));
+		final DatatypeTranslation real = (DatatypeTranslation) translation;
+		return rewrite(real.getFormulaRewriter());
 	}
 
 }

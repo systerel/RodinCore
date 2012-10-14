@@ -32,6 +32,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.internal.core.ast.FreshNameSolver;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.TypeRewriter;
 import org.eventb.internal.core.ast.extension.datatype.ConstructorMediator.ConstructorExtension;
 import org.eventb.internal.core.ast.extension.datatype.ConstructorMediator.DestructorExtension;
@@ -56,6 +57,7 @@ public class DatatypeTranslation implements IDatatypeTranslation {
 	= new LinkedHashMap<ParametricType, DatatypeTranslator>();
 	
 	private final TypeRewriter typeRewriter;
+	private final ITypeCheckingRewriter formulaRewriter;
 
 	public DatatypeTranslation(ITypeEnvironment typenv) {
 		this.sourceFactory = typenv.getFormulaFactory();
@@ -68,6 +70,7 @@ public class DatatypeTranslation implements IDatatypeTranslation {
 				result = translateParametricType(type);
 			}
 		};
+		this.formulaRewriter = new DatatypeRewriter(this);
 	}
 
 	private FormulaFactory computeTargetFactory() {
@@ -97,7 +100,6 @@ public class DatatypeTranslation implements IDatatypeTranslation {
 		return null;
 	}
 
-	// public for unit tests
 	public FormulaFactory getSourceFormulaFactory() {
 		return sourceFactory;
 	}
@@ -105,6 +107,10 @@ public class DatatypeTranslation implements IDatatypeTranslation {
 	@Override
 	public FormulaFactory getTargetFormulaFactory() {
 		return targetFactory;
+	}
+	
+	public ITypeCheckingRewriter getFormulaRewriter() {
+		return formulaRewriter;
 	}
 
 	public final GivenType solveGivenType(String typeSymbol) {
