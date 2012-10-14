@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.seqprover.transformer.LanguageFilter;
+import org.eventb.internal.core.seqprover.transformer.SequentDatatypeTranslator;
 import org.eventb.internal.core.seqprover.transformer.SequentSimplifier;
 import org.eventb.internal.core.seqprover.transformer.SimpleSequent;
 import org.eventb.internal.core.seqprover.transformer.TrackedPredicate;
@@ -212,7 +214,7 @@ public class SimpleSequents {
 	 *            simplification options
 	 * @return a simplified sequent equivalent to the given one
 	 */
-	public static final ISimpleSequent simplify(ISimpleSequent sequent,
+	public static ISimpleSequent simplify(ISimpleSequent sequent,
 			SimplificationOption... options) {
 		final FormulaFactory factory = sequent.getFormulaFactory();
 		return sequent.apply(new SequentSimplifier(factory, options));
@@ -240,9 +242,30 @@ public class SimpleSequents {
 	 *         mathematical language and that do not contain the given operators
 	 * @see FormulaFactory#getDefault()
 	 */
-	public static final ISimpleSequent filterLanguage(ISimpleSequent sequent,
+	public static ISimpleSequent filterLanguage(ISimpleSequent sequent,
 			int... tags) {
 		return sequent.apply(new LanguageFilter(tags));
+	}
+
+	/**
+	 * Translates the datatypes that occur in the given sequent to pure set
+	 * theory.
+	 * <p>
+	 * The result sequent is associated to the formula factory obtained from the
+	 * original sequent after all datatype extensions have been removed. Any
+	 * other mathematical extension is retained.
+	 * </p>
+	 * 
+	 * @param sequent
+	 *            sequent to translate
+	 * @return a sequent equivalent to the given one, where all datatypes have
+	 *         been translated to pure set theory
+	 * @see FormulaFactory#
+	 * @since 2.6
+	 */
+	public static ISimpleSequent translateDatatypes(ISimpleSequent sequent) {
+		final ITypeEnvironment typenv = sequent.getTypeEnvironment(); 
+		return sequent.apply(new SequentDatatypeTranslator(typenv));
 	}
 
 	private SimpleSequents() {

@@ -11,6 +11,7 @@
 package org.eventb.internal.core.seqprover.transformer;
 
 import static java.util.Collections.singletonList;
+import static org.eventb.internal.core.seqprover.transformer.TrackedPredicate.makeHyp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,7 +108,7 @@ public class SimpleSequent implements ISimpleSequent {
 	public Object getOrigin() {
 		return origin;
 	}
-	
+
 	@Override
 	public ISimpleSequent apply(ISequentTransformer transformer) {
 		final List<TrackedPredicate> newPreds = new ArrayList<TrackedPredicate>(
@@ -128,14 +129,33 @@ public class SimpleSequent implements ISimpleSequent {
 		if (!changed) {
 			return this;
 		}
+		prependAxioms(newPreds, transformer);
 		return new SimpleSequent(targetFac, newPreds, origin);
 	}
 
-	private FormulaFactory getTargetFormulaFactory(ISequentTransformer transformer) {
+	private FormulaFactory getTargetFormulaFactory(
+			ISequentTransformer transformer) {
 		if (transformer instanceof ISequentTranslator) {
 			return ((ISequentTranslator) transformer).getTargetFormulaFactory();
 		}
 		return getFormulaFactory();
+	}
+
+	private void prependAxioms(List<TrackedPredicate> newPreds,
+			ISequentTransformer transformer) {
+		if (transformer instanceof ISequentTranslator) {
+			final ISequentTranslator translator = (ISequentTranslator) transformer;
+			newPreds.addAll(0, makeTrackedPredicates(translator.getAxioms()));
+		}
+	}
+
+	private static List<TrackedPredicate> makeTrackedPredicates(
+			Predicate[] hypotheses) {
+		final List<TrackedPredicate> preds = new ArrayList<TrackedPredicate>();
+		for (final Predicate hyp : hypotheses) {
+			preds.add(makeHyp(hyp));
+		}
+		return preds;
 	}
 
 	@Override

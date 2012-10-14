@@ -6,6 +6,7 @@ Bundle-Version: 2.5.0.qualifier
 Bundle-Vendor: ETH Zurich
 Require-Bundle: org.junit4;visibility:=reexport,
  org.eclipse.jdt.junit4.runtime;visibility:=reexport,
+ org.eventb.core.ast.tests,
  org.eventb.core.seqprover;visibility:=reexport,
  org.eclipse.core.runtime;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
