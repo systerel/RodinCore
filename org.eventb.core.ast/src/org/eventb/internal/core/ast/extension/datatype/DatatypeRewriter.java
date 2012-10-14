@@ -17,8 +17,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
@@ -91,45 +89,6 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 		final SourceLocation sLoc = ident.getSourceLocation();
 		final String name = ident.getName();
 		return ff.makeFreeIdentifier(name, sLoc, newType);
-	}
-
-	@Override
-	public Expression rewrite(QuantifiedExpression src,
-			QuantifiedExpression expr) {
-		final BoundIdentDecl[] decls = src.getBoundIdentDecls();
-		final BoundIdentDecl[] newDecls = rewrite(decls);
-		if (newDecls == decls) {
-			return expr;
-		}
-		final SourceLocation sLoc = expr.getSourceLocation();
-		return ff.makeQuantifiedExpression(expr.getTag(), newDecls,
-				expr.getPredicate(), expr.getExpression(), sLoc,
-				expr.getForm());
-	}
-
-	@Override
-	public Predicate rewrite(QuantifiedPredicate src, QuantifiedPredicate pred) {
-		final BoundIdentDecl[] decls = src.getBoundIdentDecls();
-		final BoundIdentDecl[] newDecls = rewrite(decls);
-		if (newDecls == decls) {
-			return pred;
-		}
-		final SourceLocation sLoc = pred.getSourceLocation();
-		return ff.makeQuantifiedPredicate(pred.getTag(), newDecls,
-				pred.getPredicate(), sLoc);
-	}
-
-	private BoundIdentDecl[] rewrite(BoundIdentDecl[] decls) {
-		final BoundIdentDecl[] result = new BoundIdentDecl[decls.length];
-		boolean changed = false;
-		for (int i = 0; i < decls.length; i++) {
-			result[i] = rewrite(decls[i]);
-			changed |= result[i] != decls[i];
-		}
-		if (!changed) {
-			return decls;
-		}
-		return result;
 	}
 
 	@Override

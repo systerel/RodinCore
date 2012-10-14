@@ -109,8 +109,8 @@ public class SameTypeRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public BoundIdentDecl rewrite(BoundIdentDecl decl) {
-		throw new UnsupportedOperationException(
-				"Bound identifier declarations cannot be rewritten");
+		// Bound identifier declarations are not rewritten
+		return decl;
 	}
 
 	@Override

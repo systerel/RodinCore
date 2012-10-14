@@ -21,6 +21,7 @@ import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
+import static org.eventb.core.ast.QuantifiedHelper.rewriteDecls;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.extension.StandardGroup.QUANTIFIED_PRED;
 
@@ -419,14 +420,14 @@ public class QuantifiedPredicate extends Predicate {
 
 	@Override
 	protected Predicate rewrite(ITypeCheckingRewriter rewriter) {
+		BoundIdentDecl[] newDecls = rewriteDecls(quantifiedIdentifiers,
+				rewriter);
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
-
 		rewriter.enteringQuantifier(nbOfBoundIdentDecls);
 		Predicate newPred = pred.rewrite(rewriter);
 		rewriter.leavingQuantifier(nbOfBoundIdentDecls);
 
 		final FormulaFactory ff = rewriter.getFactory();
-		BoundIdentDecl[] newDecls = quantifiedIdentifiers;
 		if (rewriter.autoFlatteningMode()) {
 			final boolean[] used = new boolean[nbOfBoundIdentDecls];
 			addUsedBoundIdentifiers(used, newPred);

@@ -84,7 +84,6 @@ public class BoundIdentDeclRemover extends Substitution implements
 
 	@Override
 	public BoundIdentDecl rewrite(BoundIdentDecl decl) {
-		assert false; // Shall not be called
 		return decl;
 	}
 

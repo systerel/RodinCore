@@ -22,6 +22,7 @@ import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
+import static org.eventb.core.ast.QuantifiedHelper.rewriteDecls;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.extension.StandardGroup.BRACE_SETS;
 import static org.eventb.core.ast.extension.StandardGroup.QUANTIFICATION;
@@ -694,8 +695,8 @@ public class QuantifiedExpression extends Expression {
 
 	@Override
 	protected Expression rewrite(ITypeCheckingRewriter rewriter) {
+		BoundIdentDecl[] newDecls = rewriteDecls(quantifiedIdentifiers, rewriter);
 		final int nbOfBoundIdentDecls = quantifiedIdentifiers.length;
-
 		rewriter.enteringQuantifier(nbOfBoundIdentDecls);
 		final Predicate newPred = pred.rewrite(rewriter);
 		final Expression newExpr = expr.rewrite(rewriter);
@@ -704,12 +705,12 @@ public class QuantifiedExpression extends Expression {
 		// TODO: implement cleanup of unused bound ident decls.
 
 		final QuantifiedExpression before;
-		if (newPred == pred && newExpr == expr) {
+		if (newDecls == quantifiedIdentifiers && newPred == pred
+				&& newExpr == expr) {
 			before = this;
 		} else {
 			before = rewriter.getFactory().makeQuantifiedExpression(getTag(),
-					quantifiedIdentifiers, newPred, newExpr,
-					getSourceLocation(), form);
+					newDecls, newPred, newExpr, getSourceLocation(), form);
 		}
 		return rewriter.rewrite(this, before);
 	}

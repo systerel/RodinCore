@@ -27,8 +27,6 @@ import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
@@ -239,42 +237,6 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 		}
 		return ff.makeBoundIdentifier(identifier.getBoundIndex(),
 				identifier.getSourceLocation(), newType);
-	}
-
-	@Override
-	public Expression rewrite(QuantifiedExpression src, QuantifiedExpression expression) {
-		final BoundIdentDecl[] decls = src.getBoundIdentDecls();
-		final BoundIdentDecl[] newDecls = specialize(decls);
-		if (newDecls == decls) {
-			return expression;
-		}
-		return ff.makeQuantifiedExpression(expression.getTag(), newDecls,
-				expression.getPredicate(), expression.getExpression(),
-				expression.getSourceLocation(), expression.getForm());
-	}
-
-	@Override
-	public Predicate rewrite(QuantifiedPredicate src, QuantifiedPredicate predicate) {
-		final BoundIdentDecl[] decls = src.getBoundIdentDecls();
-		final BoundIdentDecl[] newDecls = specialize(decls);
-		if (newDecls == decls) {
-			return predicate;
-		}
-		return ff.makeQuantifiedPredicate(predicate.getTag(), newDecls,
-				predicate.getPredicate(), predicate.getSourceLocation());
-	}
-
-	private BoundIdentDecl[] specialize(BoundIdentDecl[] decls) {
-		final BoundIdentDecl[] result = new BoundIdentDecl[decls.length];
-		boolean changed = false;
-		for (int i = 0; i < decls.length; i++) {
-			result[i] = rewrite(decls[i]);
-			changed |= result[i] != decls[i];
-		}
-		if (!changed) {
-			return decls;
-		}
-		return result;
 	}
 
 	@Override

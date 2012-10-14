@@ -17,6 +17,7 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYP
 import java.util.List;
 
 import org.eventb.internal.core.ast.BoundIdentDeclRemover;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 
 /**
  * Helper class for implementing quantified formulae of event-B.
@@ -214,6 +215,20 @@ abstract class QuantifiedHelper {
 		}
 		return formulaFactory.makeQuantifiedPredicate(quant, decls, pred, loc);
 	}
-	
+
+	protected static BoundIdentDecl[] rewriteDecls(BoundIdentDecl[] decls,
+			ITypeCheckingRewriter rewriter) {
+		final int length = decls.length;
+		final BoundIdentDecl[] result = new BoundIdentDecl[length];
+		boolean changed = false;
+		for (int i = 0; i < length; i++) {
+			result[i] = decls[i].rewrite(rewriter);
+			changed |= result[i] != decls[i];
+		}
+		if (!changed) {
+			return decls;
+		}
+		return result;
+	}
 
 }
