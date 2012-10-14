@@ -130,8 +130,8 @@ public interface IDatatype {
 	 * datatype.
 	 * <p>
 	 * When not <code>null</code>, the returned list has the size of the number
-	 * of parameters of the constructor, and is ordered after the order of these
-	 * parameters.
+	 * of arguments of the constructor, and is ordered after the order of these
+	 * arguments.
 	 * </p>
 	 * 
 	 * @param constructor
@@ -141,7 +141,7 @@ public interface IDatatype {
 	List<IArgument> getArguments(IExpressionExtension constructor);
 
 	/**
-	 * Returns the list of parameter types for the given constructor, according
+	 * Returns the list of argument types for the given constructor, according
 	 * to the given return type.
 	 * <p>
 	 * <code>null</code> is returned if the given extension is not a constructor
@@ -150,12 +150,12 @@ public interface IDatatype {
 	 * </p>
 	 * <p>
 	 * When not <code>null</code>, the returned list has the size of the number
-	 * of parameters of the constructor, and is ordered after the order of these
-	 * parameters.
+	 * of arguments of the constructor, and is ordered after the order of these
+	 * arguments.
 	 * </p>
 	 * <p>
-	 * Given return type is used to instantiate type parameters, which may be
-	 * involved in argument types.
+	 * Given return type is used to instantiate type parameters, which may occur
+	 * in argument types.
 	 * </p>
 	 * 
 	 * @param constructor
@@ -174,8 +174,8 @@ public interface IDatatype {
 	 * the given datatype set. In other words, returns the sets to which the
 	 * arguments of the given constructor must belong for the constructed value
 	 * to belong to the given set. This is done by instantiating the type
-	 * parameters of this datatype with the arguments of the type constructor in
-	 * the given set.
+	 * parameters of this datatype with the actual parameters of the type
+	 * constructor in the given set.
 	 * <p>
 	 * For instance, suppose that the List datatype is defined by
 	 * <code>List(T) ::= nil | cons(hd: T, tl: List(T))</code>, then the call
