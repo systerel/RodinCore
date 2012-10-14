@@ -52,17 +52,29 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 
 	// Identifier substitutions
 	private final Map<FreeIdentifier, Expression> identSubst;
+	
+	private final TypeRewriter typeRewriter;
 
 	public Specialization(FormulaFactory ff) {
 		super(ff);
 		typeSubst = new HashMap<GivenType, Type>();
 		identSubst = new HashMap<FreeIdentifier, Expression>();
+		typeRewriter = new TypeRewriter(ff) {
+			@Override
+			public void visit(GivenType type) {
+				final Type rewritten = get(type);
+				// If the given type translates to itself, return the same
+				// object
+				result = type.equals(rewritten) ? type : rewritten;
+			}
+		};
 	}
 
 	public Specialization(Specialization other) {
 		super(other.ff);
 		typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
 		identSubst = new HashMap<FreeIdentifier, Expression>(other.identSubst);
+		typeRewriter = other.typeRewriter;
 	}
 
 	@Override
@@ -149,6 +161,10 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 				typeSubst.put(gt, gt);
 			}
 		}
+	}
+	
+	public Type specialize(Type type) {
+		return typeRewriter.rewrite(type);
 	}
 
 	/*

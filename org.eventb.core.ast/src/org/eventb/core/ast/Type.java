@@ -7,14 +7,14 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - implemented specialization
+ *     Systerel - add type visitor
  *******************************************************************************/
 package org.eventb.core.ast;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
+import org.eventb.internal.core.ast.Specialization;
 
 /**
  * Common protocol for event-B types.
@@ -213,18 +213,17 @@ public abstract class Type {
 	 * @return a specialization of this type or <code>this</code> if unchanged
 	 * @since 2.6
 	 */
-	public abstract Type specialize(ISpecialization specialization);
+	public final Type specialize(ISpecialization specialization) {
+		return ((Specialization) specialization).specialize(this);
+	}
 
 	/**
-	 * Returns the type obtained after translating out the datatypes occurring in this
-	 * type, using the given datatype translation instance
+	 * Accepts the visit of this type with the given simple visitor.
 	 * 
-	 * @param translation
-	 *            some datatype translation instance
-	 * @return the translated type or <code>this</code> if unchanged
-	 * 
+	 * @param visitor
+	 *            the visitor to call back during traversal
 	 * @since 2.7
 	 */
-	public abstract Type translateDatatype(DatatypeTranslation translation);
+	public abstract void accept(ITypeVisitor visitor);
 
 }

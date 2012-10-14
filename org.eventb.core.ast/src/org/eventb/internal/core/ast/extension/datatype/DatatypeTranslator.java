@@ -237,7 +237,7 @@ public class DatatypeTranslator {
 		if (srcTypeInstance.equals(srcType)) {
 			return trgDatatype;
 		}
-		return srcType.translateDatatype(translation);
+		return translation.translate(srcType);
 	}
 
 	/**

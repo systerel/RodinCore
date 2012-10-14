@@ -7,13 +7,11 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - implemented specialization
+ *     Systerel - add type visitor
  *******************************************************************************/
 package org.eventb.core.ast;
 
 import java.util.Set;
-
-import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 
 /**
  * Denotes the predefined integer type which corresponds to the set of all integers.
@@ -61,13 +59,8 @@ public class IntegerType extends Type {
 	}
 
 	@Override
-	public Type specialize(ISpecialization specialization) {
-		return this; // Nothing to specialize
-	}
-
-	@Override
-	public Type translateDatatype(DatatypeTranslation translation) {
-		return this; // Nothing to translate
+	public void accept(ITypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }

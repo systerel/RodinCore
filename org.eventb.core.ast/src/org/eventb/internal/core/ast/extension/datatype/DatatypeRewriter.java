@@ -49,7 +49,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 	@Override
 	public BoundIdentDecl rewrite(BoundIdentDecl decl) {
 		final Type type = decl.getType();
-		final Type newType = type.translateDatatype(translation);
+		final Type newType = translation.translate(type);
 		if (newType == type) {
 			return decl;
 		}
@@ -61,7 +61,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 	@Override
 	public Expression rewrite(AtomicExpression expression) {
 		final Type type = expression.getType();
-		final Type newType = type.translateDatatype(translation);
+		final Type newType = translation.translate(type);
 		if (newType == type) {
 			return expression;
 		}
@@ -72,7 +72,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 	@Override
 	public Expression rewrite(BoundIdentifier identifier) {
 		final Type type = identifier.getType();
-		final Type newType = type.translateDatatype(translation);
+		final Type newType = translation.translate(type);
 		if (newType == type) {
 			return identifier;
 		}
@@ -84,7 +84,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 	@Override
 	public Expression rewrite(FreeIdentifier ident) {
 		final Type type = ident.getType();
-		final Type newType = type.translateDatatype(translation);
+		final Type newType = translation.translate(type);
 		if (newType == type) {
 			return ident;
 		}
@@ -138,7 +138,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 			return expr;
 		}
 		final Type type = expr.getType();
-		final Type newType = type.translateDatatype(translation);
+		final Type newType = translation.translate(type);
 		if (newType == type) {
 			return expr;
 		}
@@ -158,7 +158,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 		} else {
 			// Not a datatype operator, just translate the type
 			final SourceLocation sLoc = src.getSourceLocation();
-			final Type type = src.getType().translateDatatype(translation);
+			final Type type = translation.translate(src.getType());
 			return ff.makeExtendedExpression(extension, newChildExprs,
 					newChildPreds, sLoc, type);
 		}

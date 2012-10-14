@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 
 /**
  * Implementation of an instance of a parametric type contributed by a math
@@ -121,21 +120,8 @@ public class ParametricType extends Type {
 	}
 
 	@Override
-	public Type specialize(ISpecialization specialization) {
-		boolean changed = false;
-		final Type[] newTypeParameters = new Type[typeParameters.length];
-		for (int i = 0; i < typeParameters.length; i++) {
-			newTypeParameters[i] = typeParameters[i].specialize(specialization);
-			changed |= newTypeParameters[i] != typeParameters[i];
-		}
-		if (!changed)
-			return this;
-		return new ParametricType(this.typeConstructor, newTypeParameters);
-	}
-
-	@Override
-	public Type translateDatatype(DatatypeTranslation translation) {
-		return translation.translate(this);
+	public void accept(ITypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }

@@ -7,13 +7,11 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - implemented specialization
+ *     Systerel - add type visitor
  *******************************************************************************/
 package org.eventb.core.ast;
 
 import java.util.Set;
-
-import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 
 /**
  * Denotes the predefined boolean type which corresponds to the set of boolean values.
@@ -61,14 +59,8 @@ public class BooleanType extends Type {
 	}
 
 	@Override
-	public Type specialize(ISpecialization specialization)
-			throws IllegalArgumentException {
-		return this; // Nothing to specialize
-	}
-
-	@Override
-	public Type translateDatatype(DatatypeTranslation translation) {
-		return this; // nothing to translate
+	public void accept(ITypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }

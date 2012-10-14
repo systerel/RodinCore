@@ -7,14 +7,11 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - implemented specialization
+ *     Systerel - add type visitor
  *******************************************************************************/
 package org.eventb.core.ast;
 
 import java.util.Set;
-
-import org.eventb.internal.core.ast.Specialization;
-import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 
 /**
  * Denotes a type defined by the user. For instance, this type can correspond to
@@ -78,14 +75,6 @@ public class GivenType extends Type {
 		return name.hashCode();
 	}
 	
-	@Override
-	public Type specialize(ISpecialization specialization) {
-		final Type result = ((Specialization) specialization).get(this);
-		if (this.equals(result))
-			return this;
-		return result;
-	}
-
 	/**
 	 * Returns the free identifier that denotes the set corresponding to this
 	 * given type.
@@ -101,8 +90,8 @@ public class GivenType extends Type {
 	}
 
 	@Override
-	public Type translateDatatype(DatatypeTranslation translation) {
-		return this; // nothing to translate
+	public void accept(ITypeVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }

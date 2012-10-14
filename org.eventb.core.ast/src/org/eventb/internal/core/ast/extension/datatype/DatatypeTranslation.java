@@ -32,6 +32,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.internal.core.ast.FreshNameSolver;
+import org.eventb.internal.core.ast.TypeRewriter;
 import org.eventb.internal.core.ast.extension.datatype.ConstructorMediator.ConstructorExtension;
 import org.eventb.internal.core.ast.extension.datatype.ConstructorMediator.DestructorExtension;
 
@@ -53,12 +54,20 @@ public class DatatypeTranslation implements IDatatypeTranslation {
 
 	private final Map<ParametricType, DatatypeTranslator> translators//
 	= new LinkedHashMap<ParametricType, DatatypeTranslator>();
+	
+	private final TypeRewriter typeRewriter;
 
 	public DatatypeTranslation(ITypeEnvironment typenv) {
 		this.sourceFactory = typenv.getFormulaFactory();
 		this.targetFactory = computeTargetFactory();
 		final Set<String> usedNames = new HashSet<String>(typenv.getNames());
 		this.nameSolver = new FreshNameSolver(usedNames, targetFactory);
+		this.typeRewriter = new TypeRewriter(targetFactory) {
+			@Override
+			public void visit(ParametricType type) {
+				result = translateParametricType(type);
+			}
+		};
 	}
 
 	private FormulaFactory computeTargetFactory() {
@@ -108,7 +117,11 @@ public class DatatypeTranslation implements IDatatypeTranslation {
 		return targetFactory.makeFreeIdentifier(solvedIdentName, null, type);
 	}
 
-	public Type translate(ParametricType type) {
+	public Type translate(Type type) {
+		return typeRewriter.rewrite(type);
+	}
+
+	public Type translateParametricType(ParametricType type) {
 		assert type.getExprExtension().getOrigin() instanceof Datatype;
 		return getTranslatorFor(type).getTranslatedType();
 	}
