@@ -11,7 +11,9 @@
 package org.rodinp.core.tests.relations;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.rodinp.core.IAttributeType;
 import org.rodinp.internal.core.AttributeTypes;
+import org.rodinp.internal.core.relations.RelationsComputer;
 
 /**
  * A class registering dynamic IAttributeTypes for testing. This is done
@@ -40,6 +42,13 @@ public class AttributeTestTypes extends AttributeTypes {
 					attributes, NONE);
 		}
 		return result;
+	}
+	
+	public void setRelations(RelationsComputer c,
+			IAttributeType[] attrTypes) {
+		for (IAttributeType type : attrTypes) {
+			c.setAttributeRelations(type);
+		}
 	}
 	
 }

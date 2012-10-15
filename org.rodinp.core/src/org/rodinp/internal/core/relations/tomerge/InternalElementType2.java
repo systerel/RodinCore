@@ -23,7 +23,7 @@ import org.rodinp.internal.core.relations.api.IInternalElementType2;
  * Adds support for item relations to {@link InternalElementType}.
  * <p>
  * <em> RODIN 3.0 - for testing purpose only </em> <br>
- * TODO retrofit into {@code InternalElementType}
+ * TODO retrofit into {@link InternalElementType}
  * </p>
  * 
  * @author Laurent Voisin

@@ -12,15 +12,23 @@ package org.rodinp.internal.core.relations;
 
 import java.util.List;
 
+import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.relations.Relations.AttributeTypesRelations;
 import org.rodinp.internal.core.relations.Relations.ElementTypesRelations;
+import org.rodinp.internal.core.relations.api.IAttributeType2;
+import org.rodinp.internal.core.relations.api.IInternalElementType2;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
- * Provides a protocol to retrieve element relations.
+ * Computes the item relations that have been parsed in order to provide
+ * internal element types and attribute types with relationship information.
  * 
  * @author Thomas Muller
+ * @see IInternalElementType2
+ * @see IAttributeType2
+ * @see ItemRelation
  */
 public class RelationsComputer {
 
@@ -32,6 +40,14 @@ public class RelationsComputer {
 		attrRels = new AttributeTypesRelations();
 	}
 
+	/**
+	 * Builds a convenient representation of the item relations to further
+	 * provide internal element types and attribute types with relationship
+	 * information.
+	 * 
+	 * @param relations
+	 *            the item relation that have been parsed
+	 */
 	public void computeRelations(List<ItemRelation> relations) {
 		for (ItemRelation rel : relations) {
 			final IInternalElementType<?> parentType = rel.getParentType();
@@ -40,7 +56,16 @@ public class RelationsComputer {
 		}
 	}
 
-	public void setRelations(IInternalElementType<?> element) {
+	/**
+	 * Sets the relationship information of the given internal element type.
+	 * 
+	 * @param element
+	 *            a given element type
+	 * @throws IllegalAccessError
+	 *             if the relationship information of the given element type has
+	 *             already been set
+	 */
+	public void setElementRelations(IInternalElementType<?> element) {
 		final InternalElementType2<?> e2 = (InternalElementType2<?>) element;
 		e2.setRelation(//
 				elemRels.getParentTypes(element), //
@@ -48,5 +73,19 @@ public class RelationsComputer {
 				attrRels.getAttributes(element) //
 		);
 	}
-	
+
+	/**
+	 * Sets the relationship information of the given attibute type.
+	 * 
+	 * @param attribute
+	 *            a given attribute type
+	 * @throws IllegalAccessError
+	 *             if the relationship information of the given attribute type
+	 *             has already been set
+	 */
+	public void setAttributeRelations(IAttributeType attribute) {
+		final AttributeType<?> a2 = (AttributeType<?>) attribute;
+		a2.setRelation(attrRels.getElementsTypes(attribute));
+	}
+
 }

@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.rodinp.core.tests.relations;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.InternalElementTypes;
-import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.RelationsComputer;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
@@ -33,13 +30,13 @@ public class InternalTestTypes extends InternalElementTypes {
 	private static final IConfigurationElement[] NONE = new IConfigurationElement[0];
 
 	private static final String[] TYPE_IDS = new String[] { //
-	"leaf", //
-			"p1", "c1", //
+	"p1", "c1", //
 			"p2", "c21", "c22", //
 			"p21", "p22", "c2", //
 			"cy1", //
 			"cy21", "cy22", //
 			"cy31", "cy32", "cy33", //
+			"p3", "p4", "c4", //
 			"p", "child", //
 	};
 
@@ -57,12 +54,10 @@ public class InternalTestTypes extends InternalElementTypes {
 		return result;
 	}
 
-	protected void computeRelations(List<ItemRelation> itemRelations,
-			IInternalElementType<?>[] types) {
-		final RelationsComputer c = new RelationsComputer();
-		c.computeRelations(itemRelations);
-		for (IInternalElementType<?> type : types) {
-			c.setRelations(type);
+	protected void setRelations(RelationsComputer c,
+			IInternalElementType<?>[] elemTypes) {
+		for (IInternalElementType<?> type : elemTypes) {
+			c.setElementRelations(type);
 		}
 	}
 

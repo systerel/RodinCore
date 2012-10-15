@@ -26,12 +26,12 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.internal.core.AttributeTypes;
 import org.rodinp.internal.core.InternalElementType;
-import org.rodinp.internal.core.InternalElementTypes;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.Relations.AttributeTypesRelations;
 import org.rodinp.internal.core.relations.Relations.ElementTypesRelations;
+import org.rodinp.internal.core.relations.RelationsComputer;
+import org.rodinp.internal.core.relations.api.IAttributeType2;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
@@ -41,93 +41,122 @@ import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
  */
 public class RelationsTests {
 
-	/** Leaf or root */
-	@Test
-	public void testLeafRelation() {
-		assertElementRelations("leaf>>");
-	}
-
-	/** One child */
+	/**
+	 * Ensures that relationships can be reduced to a single pair. This also
+	 * covers the case of a root element (<code>root</code>) and of a leaf
+	 * element (<code>leaf</code>).
+	 */
 	@Test
 	public void testOneChildRelation() {
-		assertElementRelations("p1>>a1,c1,a2");
+		assertRelations("p1>>c1");
 	}
 
-	/** Two children */
+	/**
+	 * Ensures that a parent element type can be in a direct relationship two
+	 * child element types.
+	 */
 	@Test
 	public void testTwoChildrenRelation() {
-		assertElementRelations("p2>>c21,c22,a2");
+		assertRelations("p2>>c21,c22");
 	}
 
-	/** Two parents */
+	/**
+	 * Ensures that two different parent element types can be in a direct
+	 * relationship the same child element type.
+	 */
 	@Test
 	public void testTwoParentsRelation() {
-		assertElementRelations("p21,p22>>c2,a2");
+		assertRelations("p21,p22>>c2");
 	}
 
-	/** Cycle of length 1 */
+	/**
+	 * Ensures that a direct cycle relationship can be defined for a given
+	 * element type instance.
+	 */
 	@Test
 	public void testCycle1Relation() {
-		assertElementRelations("cy1>>cy1");
+		assertRelations("cy1>>cy1");
 	}
 
-	/** Cycle of length 2 */
+	/**
+	 * Ensures that an indirect cycle can exist within relationships between two
+	 * element type instances.
+	 */
 	@Test
 	public void testCycle2Relation() {
-		assertElementRelations("cy21>>cy22|cy22>>cy21");
+		assertRelations("cy21>>cy22|cy22>>cy21");
 	}
 
-	/** Cycle of length 3 */
+	/**
+	 * Ensures that an indirect cycle of length 3 can exist within relationships
+	 * between three element type instances.
+	 */
 	@Test
 	public void testCycle3Relation() {
-		assertElementRelations("cy31>>cy32|cy32>>cy33|cy33>>cy31");
+		assertRelations("cy31>>cy32|cy32>>cy33|cy33>>cy31");
 	}
 
-	private void assertElementRelations(String relationStrs) {
+	@Test
+	public void testAttributeRelation() {
+		assertRelations("p3>>a1");
+	}
+	
+	@Test
+	public void testMixedChildAndAttributes() {
+		assertRelations("p4>>c4,a2");
+	}
+
+	private void assertRelations(String relationStrs) {
 		final List<ItemRelation> itemRels = getItemRelations(relationStrs);
-		final IInternalElementType<?>[] testedTypes = getTestedElementTypes(relationStrs);
-		eTypes.computeRelations(itemRels, testedTypes);
-		// attribute relations are computed at the same time as element
-		// relations
-		final ElementTypesRelations expectedElemRels = getExpectedElementRelations(
-				itemRels, eTypes);
-		final AttributeTypesRelations expectedAttrRels = getExpectedAttributeRelations(
-				itemRels, aTypes);
-		for (IInternalElementType<?> type : testedTypes) {
+		final IInternalElementType<?>[] testedElemTypes = getTestedElemTypes(relationStrs);
+		final IAttributeType[] testedAttrTypes = getTestedAttrTypes(relationStrs);
+		final RelationsComputer c = new RelationsComputer();
+		c.computeRelations(itemRels);
+		eTypes.setRelations(c, testedElemTypes);
+		aTypes.setRelations(c, testedAttrTypes);
+		final ElementTypesRelations expectedElemRels = getExpectedElemRelations(itemRels);
+		final AttributeTypesRelations expectedAttrRels = getExpectedAttrRelations(
+				itemRels, testedAttrTypes);
+		for (IInternalElementType<?> type : testedElemTypes) {
 			final InternalElementType2<?> testedType = (InternalElementType2<?>) type;
 			assertArrayEquals(expectedElemRels.getParentTypes(testedType),
 					testedType.getParentTypes());
 			assertArrayEquals(expectedElemRels.getChildTypes(testedType),
 					testedType.getChildTypes());
-			assertArrayEquals(expectedAttrRels.getAttributes(testedType),
-					testedType.getAttributeTypes());
+		}
+		for (IAttributeType type : testedAttrTypes) {
+			final IAttributeType2 testedType = (IAttributeType2) type;
+			assertArrayEquals(expectedAttrRels.getElementsTypes(testedType),
+					testedType.getElementTypes());
 		}
 	}
 
 	private static final Pattern IDENT_SEP_PAT = compile("\\||>>|,");
 
-	private IInternalElementType<?>[] getTestedElementTypes(
-			String relationsSpecs) {
-		final String[] idents = IDENT_SEP_PAT.split(relationsSpecs);
+	private IInternalElementType<?>[] getTestedElemTypes(String relationsStr) {
+		final String[] idents = IDENT_SEP_PAT.split(relationsStr);
 		final Set<IInternalElementType<?>> set = new LinkedHashSet<IInternalElementType<?>>();
 		for (String id : idents) {
-			if (isElementId(id)) {
+			if (isAnElement(id)) {
 				set.add(eTypes.get(PREFIX + id));
 			}
 		}
 		return set.toArray(new IInternalElementType<?>[set.size()]);
 	}
 
-	private boolean isElementId(String id) {
-		return id.startsWith("c");
+	private IAttributeType[] getTestedAttrTypes(String relationStr) {
+		final String[] idents = IDENT_SEP_PAT.split(relationStr);
+		final Set<IAttributeType> set = new LinkedHashSet<IAttributeType>();
+		for (String id : idents) {
+			if (isAnAttribute(id)) {
+				set.add(aTypes.get(PREFIX + id));
+			}
+		}
+		return set.toArray(new IAttributeType[set.size()]);
 	}
 
-	private boolean isAttributeId(String string) {
-		return string.startsWith("a");
-	}
-
-	private ElementTypesRelations getExpectedElementRelations(
-			List<ItemRelation> itemRelations, InternalElementTypes types) {
+	private ElementTypesRelations getExpectedElemRelations(
+			List<ItemRelation> itemRelations) {
 		final ElementTypesRelations eRels = new ElementTypesRelations();
 		for (ItemRelation rel : itemRelations) {
 			final IInternalElementType<?> parentType = rel.getParentType();
@@ -138,13 +167,14 @@ public class RelationsTests {
 		return eRels;
 	}
 
-	private AttributeTypesRelations getExpectedAttributeRelations(
-			List<ItemRelation> itemRelations, AttributeTypes types) {
+	private AttributeTypesRelations getExpectedAttrRelations(
+			List<ItemRelation> itemRelations, IAttributeType[] types) {
 		final AttributeTypesRelations aRels = new AttributeTypesRelations();
 		for (ItemRelation rel : itemRelations) {
 			final IInternalElementType<?> parentType = rel.getParentType();
-			final List<IAttributeType> childTypes = rel.getAttributeTypes();
-			aRels.putAll(parentType, childTypes);
+			final List<IAttributeType> childAttributes = rel
+					.getAttributeTypes();
+			aRels.putAll(parentType, childAttributes);
 		}
 		return aRels;
 	}
@@ -170,21 +200,25 @@ public class RelationsTests {
 				for (String childId : ITEM_SEP_PAT.split(children)) {
 					if (childId.isEmpty())
 						continue;
-					if (isElementId(childId)) {
-						final InternalElementType<?> child = eTypes.get(PREFIX
-								+ childId);
-						rel.addChildType(child);
+					if (isAnElement(childId)) {
+						rel.addChildType(eTypes.get(PREFIX + childId));
 					}
-					if (isAttributeId(childId)) {
-						final IAttributeType attr = aTypes
-								.get(PREFIX + childId);
-						rel.addAttributeType(attr);
+					if (isAnAttribute(childId)) {
+						rel.addAttributeType(aTypes.get(PREFIX + childId));
 					}
 				}
 				relations.add(rel);
 			}
 		}
 		return relations;
+	}
+
+	private boolean isAnElement(String itemId) {
+		return itemId.startsWith("c");
+	}
+
+	private boolean isAnAttribute(String itemId) {
+		return itemId.startsWith("a");
 	}
 
 }

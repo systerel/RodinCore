@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,21 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - generic attribute manipulation
+ *     Systerel - implementation of IAttributeType2
  *******************************************************************************/
 
 package org.rodinp.internal.core;
 
+import static java.util.Arrays.asList;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
+import org.rodinp.internal.core.relations.api.IAttributeType2;
 import org.rodinp.internal.core.util.Util;
 
 /**
@@ -25,7 +30,7 @@ import org.rodinp.internal.core.util.Util;
  * 
  * @author Laurent Voisin
  */
-public abstract class AttributeType<V> implements IAttributeType,
+public abstract class AttributeType<V> implements IAttributeType, IAttributeType2,
 		IContributedItemType {
 
 	public static enum Kind {
@@ -351,6 +356,8 @@ public abstract class AttributeType<V> implements IAttributeType,
 	protected final java.lang.String id;
 
 	private final java.lang.String name;
+	
+	private IInternalElementType<?>[] elementTypes = null;
 
 	protected AttributeType(Kind kind, java.lang.String id,
 			java.lang.String name) {
@@ -401,6 +408,16 @@ public abstract class AttributeType<V> implements IAttributeType,
 		throw newInvalidKindException();
 	}
 
+	@Override
+	public IInternalElementType<?>[] getElementTypes() {
+		return elementTypes;
+	}
+
+	@Override
+	public boolean isAttributeOf(IInternalElementType<?> elementType) {
+		return asList(elementTypes).contains(elementType);
+	}
+
 	protected RodinDBException newInvalidValueException() {
 		return new RodinDBException(new RodinDBStatus(
 				IRodinDBStatusConstants.INVALID_ATTRIBUTE_VALUE, id));
@@ -414,6 +431,15 @@ public abstract class AttributeType<V> implements IAttributeType,
 	
 	public abstract AttributeValue<?, ?> makeValueFromRaw(
 			java.lang.String rawValue) throws RodinDBException;
+
+	public void setRelation(IInternalElementType<?>[] eTypes) {
+		if (elementTypes != null) {
+			throw new IllegalAccessError(
+					"Illegal attempt to set relations for attribute type "
+							+ getName());
+		}
+		this.elementTypes = eTypes;
+	}
 
 	public abstract java.lang.String toString(V value);
 

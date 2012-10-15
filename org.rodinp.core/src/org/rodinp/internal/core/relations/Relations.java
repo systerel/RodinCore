@@ -106,13 +106,14 @@ public abstract class Relations<S, T> {
 	public static class AttributeTypesRelations extends
 			Relations<IInternalElementType<?>, IAttributeType> {
 
+		/** Returns all element types that can carry the given element type. */
+		public IInternalElementType<?>[] getElementsTypes(IAttributeType type) {
+			return getElementArray(getParentsOf(type));
+		}
+
 		/** Returns all attribute types of the given element type. */
 		public IAttributeType[] getAttributes(IInternalElementType<?> type) {
 			return getAttributeArray(getChildrenOf(type));
-		}
-
-		private IAttributeType[] getAttributeArray(Set<IAttributeType> set) {
-			return set.toArray(new IAttributeType[set.size()]);
 		}
 
 	}
@@ -132,15 +133,19 @@ public abstract class Relations<S, T> {
 				IInternalElementType<?> type) {
 			return getElementArray(childrenMap.get(type));
 		}
+	
+	}
 
-		private IInternalElementType<?>[] getElementArray(
-				Set<IInternalElementType<?>> set) {
-			if (set == null) {
-				return new IInternalElementType<?>[0];
-			}
-			return set.toArray(new IInternalElementType<?>[set.size()]);
+	protected static IAttributeType[] getAttributeArray(Set<IAttributeType> set) {
+		return set.toArray(new IAttributeType[set.size()]);
+	}
+	
+	protected static IInternalElementType<?>[] getElementArray(
+			Set<IInternalElementType<?>> set) {
+		if (set == null) {
+			return new IInternalElementType<?>[0];
 		}
-
+		return set.toArray(new IInternalElementType<?>[set.size()]);
 	}
 
 }
