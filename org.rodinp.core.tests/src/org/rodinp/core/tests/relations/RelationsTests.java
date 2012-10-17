@@ -125,9 +125,7 @@ public class RelationsTests {
 	private void assertEqualsMutableGetterResults(String relationStrs) {
 		final List<ItemRelation> itemRels = getItemRelations(relationStrs);
 		final RelationsComputer c = new RelationsComputer();
-		c.computeRelations(itemRels);
-		c.setElementRelations();
-		c.setAttributeRelations();
+		c.setRelations(itemRels);
 		for (InternalElementType2<?> t : c.getElemTypes()) {
 			final IInternalElementType<?>[] c1 = t.getChildTypes();
 			final IInternalElementType<?>[] c2 = t.getChildTypes();
@@ -153,9 +151,7 @@ public class RelationsTests {
 	private void assertRelations(String relationStrs) {
 		final List<ItemRelation> itemRels = getItemRelations(relationStrs);
 		final RelationsComputer c = new RelationsComputer();
-		c.computeRelations(itemRels);
-		c.setElementRelations();
-		c.setAttributeRelations();
+		c.setRelations(itemRels);
 		final ElementTypeRelations expectedElemRels = getExpectedElemRelations(itemRels);
 		final AttributeTypeRelations expectedAttrRels = getExpectedAttrRelations(itemRels);
 		for (InternalElementType2<?> type : c.getElemTypes()) {

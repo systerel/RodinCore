@@ -48,14 +48,14 @@ public class RelationsComputer {
 	}
 
 	/**
-	 * Builds a convenient representation of the item relations to further
-	 * provide internal element types and attribute types with relationship
+	 * Fills item types involved in the given item relations in with relation
 	 * information.
 	 * 
 	 * @param relations
-	 *            the item relation that have been parsed
+	 *            the item relation that have been parsed and will be filled in
+	 *            the manipulated element types
 	 */
-	public void computeRelations(List<ItemRelation> relations) {
+	public void setRelations(List<ItemRelation> relations) {
 		for (ItemRelation rel : relations) {
 			final InternalElementType2<?> parentType = rel.getParentType();
 			final List<InternalElementType2<?>> childTypes = rel
@@ -68,17 +68,11 @@ public class RelationsComputer {
 			attrRels.putAll(parentType, attributeTypes);
 			attrTypes.addAll(attributeTypes);
 		}
+		setElementRelations();
+		setAttributeRelations();
 	}
 
-	/**
-	 * Sets the relationship information of all element types concerned by the
-	 * computed relations.
-	 * 
-	 * @throws IllegalStateException
-	 *             if the relationship information of the given element type has
-	 *             already been set
-	 */
-	public void setElementRelations() {
+	private void setElementRelations() {
 		for (InternalElementType2<?> type : elemTypes) {
 			type.setRelation(//
 					elemRels.getParentTypes(type), //
@@ -88,14 +82,6 @@ public class RelationsComputer {
 		}
 	}
 
-	/**
-	 * Sets the relationship information of all element types concerned byg the
-	 * computed relations.
-	 * 
-	 * @throws IllegalStateException
-	 *             if the relationship information of the given attribute type
-	 *             has already been set
-	 */
 	public void setAttributeRelations() {
 		for (AttributeType<?> attribute : attrTypes) {
 			attribute.setRelation(attrRels.getElementsTypes(attribute));
