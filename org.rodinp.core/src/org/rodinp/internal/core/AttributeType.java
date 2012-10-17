@@ -434,7 +434,7 @@ public abstract class AttributeType<V> implements IAttributeType, IAttributeType
 
 	public void setRelation(IInternalElementType<?>[] eTypes) {
 		if (elementTypes != null) {
-			throw new IllegalAccessError(
+			throw new IllegalStateException(
 					"Illegal attempt to set relations for attribute type "
 							+ getName());
 		}

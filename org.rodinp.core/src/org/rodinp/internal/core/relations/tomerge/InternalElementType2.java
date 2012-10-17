@@ -67,7 +67,7 @@ public class InternalElementType2<T extends IInternalElement> extends
 	public void setRelation(IInternalElementType<?>[] pTypes,
 			IInternalElementType<?>[] cTypes, IAttributeType[] aTypes) {
 		if (parentTypes != null || childTypes != null || attributeTypes != null) {
-			throw new IllegalAccessError(
+			throw new IllegalStateException(
 					"Illegal attempt to set relations for internal element type "
 							+ getName());
 		}
