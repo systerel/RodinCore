@@ -47,17 +47,25 @@ public interface IInternalElementType2<T extends IInternalElement> extends
 	/**
 	 * Returns the types of the elements that can parent an element of this
 	 * type.
+	 * 
+	 * @return the internal element types that can parent an element of this
+	 *         type
 	 */
 	IInternalElementType<?>[] getParentTypes();
 
 	/**
 	 * Returns the types of the elements that can occur as child of an element
 	 * of this type.
+	 * 
+	 * @return the internal element types that can occur as child of an element
+	 *         of this type
 	 */
 	IInternalElementType<?>[] getChildTypes();
 
 	/**
 	 * Returns all attribute types that elements of this type can carry.
+	 * 
+	 * @return all attribute types that elements of this type can carry
 	 */
 	IAttributeType[] getAttributeTypes();
 

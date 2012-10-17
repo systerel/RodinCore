@@ -74,6 +74,8 @@ public interface IAttributeType2 extends IAttributeType {
 
 	/**
 	 * Returns the types of elements that can carry this attribute type.
+	 * 
+	 * @return the internal element types that can carry this attribute type
 	 */
 	IInternalElementType<?>[] getElementTypes();
 
