@@ -96,11 +96,19 @@ public class RelationsTests {
 		assertRelations("cy31>>cy32|cy32>>cy33|cy33>>cy31");
 	}
 
+	/**
+	 * Ensures that a relationship can be reduced as a to a single pair
+	 * consisting of a parent element type and an attribute type.
+	 */
 	@Test
 	public void testAttributeRelation() {
 		assertRelations("p3>>a1");
 	}
 	
+	/**
+	 * Ensures that a parent-child relationship can be composed of both child
+	 * attribute types and child element types.
+	 */
 	@Test
 	public void testMixedChildAndAttributes() {
 		assertRelations("p4>>c4,a2");
