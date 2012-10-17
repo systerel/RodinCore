@@ -24,10 +24,13 @@ import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.Relations.AttributeTypeRelations;
 import org.rodinp.internal.core.relations.Relations.ElementTypeRelations;
 import org.rodinp.internal.core.relations.RelationsComputer;
+import org.rodinp.internal.core.relations.api.IAttributeType2;
+import org.rodinp.internal.core.relations.api.IInternalElementType2;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
- * Acceptance tests for the relation protocol on {@code IInternalElementType2}.
+ * Acceptance tests of the relations API introduced by
+ * {@link IInternalElementType2} and {@link IAttributeType2}.
  * 
  * @author Thomas Muller
  */
@@ -96,7 +99,7 @@ public class RelationsTests {
 	public void testAttributeRelation() {
 		assertRelations("p3::a1");
 	}
-	
+
 	/**
 	 * Ensures that a parent-child relationship can be composed of both child
 	 * attribute types and child element types.
@@ -113,8 +116,7 @@ public class RelationsTests {
 		c.setElementRelations();
 		c.setAttributeRelations();
 		final ElementTypeRelations expectedElemRels = getExpectedElemRelations(itemRels);
-		final AttributeTypeRelations expectedAttrRels = getExpectedAttrRelations(
-				itemRels);
+		final AttributeTypeRelations expectedAttrRels = getExpectedAttrRelations(itemRels);
 		for (InternalElementType2<?> type : c.getElemTypes()) {
 			assertArrayEquals(expectedElemRels.getParentTypes(type),
 					type.getParentTypes());
