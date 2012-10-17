@@ -103,7 +103,7 @@ public abstract class Relations<S, T> {
 	}
 
 	// public for testing purpose only
-	public static class AttributeTypesRelations extends
+	public static class AttributeTypeRelations extends
 			Relations<IInternalElementType<?>, IAttributeType> {
 
 		/** Returns all element types that can carry the given element type. */
@@ -119,7 +119,7 @@ public abstract class Relations<S, T> {
 	}
 
 	// public for testing purpose only
-	public static class ElementTypesRelations extends
+	public static class ElementTypeRelations extends
 			Relations<IInternalElementType<?>, IInternalElementType<?>> {
 
 		/** Returns all parent element types of the given element type. */

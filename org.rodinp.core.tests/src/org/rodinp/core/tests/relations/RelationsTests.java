@@ -28,8 +28,8 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.relations.ItemRelation;
-import org.rodinp.internal.core.relations.Relations.AttributeTypesRelations;
-import org.rodinp.internal.core.relations.Relations.ElementTypesRelations;
+import org.rodinp.internal.core.relations.Relations.AttributeTypeRelations;
+import org.rodinp.internal.core.relations.Relations.ElementTypeRelations;
 import org.rodinp.internal.core.relations.RelationsComputer;
 import org.rodinp.internal.core.relations.api.IAttributeType2;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
@@ -122,8 +122,8 @@ public class RelationsTests {
 		c.computeRelations(itemRels);
 		eTypes.setRelations(c, testedElemTypes);
 		aTypes.setRelations(c, testedAttrTypes);
-		final ElementTypesRelations expectedElemRels = getExpectedElemRelations(itemRels);
-		final AttributeTypesRelations expectedAttrRels = getExpectedAttrRelations(
+		final ElementTypeRelations expectedElemRels = getExpectedElemRelations(itemRels);
+		final AttributeTypeRelations expectedAttrRels = getExpectedAttrRelations(
 				itemRels, testedAttrTypes);
 		for (IInternalElementType<?> type : testedElemTypes) {
 			final InternalElementType2<?> testedType = (InternalElementType2<?>) type;
@@ -163,9 +163,9 @@ public class RelationsTests {
 		return set.toArray(new IAttributeType[set.size()]);
 	}
 
-	private ElementTypesRelations getExpectedElemRelations(
+	private ElementTypeRelations getExpectedElemRelations(
 			List<ItemRelation> itemRelations) {
-		final ElementTypesRelations eRels = new ElementTypesRelations();
+		final ElementTypeRelations eRels = new ElementTypeRelations();
 		for (ItemRelation rel : itemRelations) {
 			final IInternalElementType<?> parentType = rel.getParentType();
 			final List<IInternalElementType<?>> childTypes = rel
@@ -175,9 +175,9 @@ public class RelationsTests {
 		return eRels;
 	}
 
-	private AttributeTypesRelations getExpectedAttrRelations(
+	private AttributeTypeRelations getExpectedAttrRelations(
 			List<ItemRelation> itemRelations, IAttributeType[] types) {
-		final AttributeTypesRelations aRels = new AttributeTypesRelations();
+		final AttributeTypeRelations aRels = new AttributeTypeRelations();
 		for (ItemRelation rel : itemRelations) {
 			final IInternalElementType<?> parentType = rel.getParentType();
 			final List<IAttributeType> childAttributes = rel

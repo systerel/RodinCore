@@ -15,8 +15,8 @@ import java.util.List;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.AttributeType;
-import org.rodinp.internal.core.relations.Relations.AttributeTypesRelations;
-import org.rodinp.internal.core.relations.Relations.ElementTypesRelations;
+import org.rodinp.internal.core.relations.Relations.AttributeTypeRelations;
+import org.rodinp.internal.core.relations.Relations.ElementTypeRelations;
 import org.rodinp.internal.core.relations.api.IAttributeType2;
 import org.rodinp.internal.core.relations.api.IInternalElementType2;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
@@ -32,12 +32,12 @@ import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
  */
 public class RelationsComputer {
 
-	private final ElementTypesRelations elemRels;
-	private final AttributeTypesRelations attrRels;
+	private final ElementTypeRelations elemRels;
+	private final AttributeTypeRelations attrRels;
 
 	public RelationsComputer() {
-		elemRels = new ElementTypesRelations();
-		attrRels = new AttributeTypesRelations();
+		elemRels = new ElementTypeRelations();
+		attrRels = new AttributeTypeRelations();
 	}
 
 	/**
