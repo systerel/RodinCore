@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.rodinp.internal.core.relations;
 
-import java.util.List;
+import static java.util.Collections.unmodifiableSet;
 
-import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElementType;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.relations.Relations.AttributeTypeRelations;
 import org.rodinp.internal.core.relations.Relations.ElementTypeRelations;
@@ -35,9 +37,14 @@ public class RelationsComputer {
 	private final ElementTypeRelations elemRels;
 	private final AttributeTypeRelations attrRels;
 
+	private final Set<InternalElementType2<?>> elemTypes;
+	private final Set<AttributeType<?>> attrTypes;
+
 	public RelationsComputer() {
 		elemRels = new ElementTypeRelations();
 		attrRels = new AttributeTypeRelations();
+		elemTypes = new LinkedHashSet<InternalElementType2<?>>();
+		attrTypes = new LinkedHashSet<AttributeType<?>>();
 	}
 
 	/**
@@ -50,42 +57,57 @@ public class RelationsComputer {
 	 */
 	public void computeRelations(List<ItemRelation> relations) {
 		for (ItemRelation rel : relations) {
-			final IInternalElementType<?> parentType = rel.getParentType();
-			elemRels.putAll(parentType, rel.getChildTypes());
-			attrRels.putAll(parentType, rel.getAttributeTypes());
+			final InternalElementType2<?> parentType = rel.getParentType();
+			final List<InternalElementType2<?>> childTypes = rel
+					.getChildTypes();
+			elemRels.putAll(parentType, childTypes);
+			elemTypes.add(parentType);
+			elemTypes.addAll(childTypes);
+			final List<AttributeType<?>> attributeTypes = rel
+					.getAttributeTypes();
+			attrRels.putAll(parentType, attributeTypes);
+			attrTypes.addAll(attributeTypes);
 		}
 	}
 
 	/**
-	 * Sets the relationship information of the given internal element type.
+	 * Sets the relationship information of all element types concerned by the
+	 * computed relations.
 	 * 
-	 * @param element
-	 *            a given element type
-	 * @throws IllegalAccessError
+	 * @throws IllegalStateException
 	 *             if the relationship information of the given element type has
 	 *             already been set
 	 */
-	public void setElementRelations(IInternalElementType<?> element) {
-		final InternalElementType2<?> e2 = (InternalElementType2<?>) element;
-		e2.setRelation(//
-				elemRels.getParentTypes(element), //
-				elemRels.getChildTypes(element), //
-				attrRels.getAttributes(element) //
-		);
+	public void setElementRelations() {
+		for (InternalElementType2<?> type : elemTypes) {
+			type.setRelation(//
+					elemRels.getParentTypes(type), //
+					elemRels.getChildTypes(type), //
+					attrRels.getAttributes(type) //
+			);
+		}
 	}
 
 	/**
-	 * Sets the relationship information of the given attibute type.
+	 * Sets the relationship information of all element types concerned byg the
+	 * computed relations.
 	 * 
-	 * @param attribute
-	 *            a given attribute type
-	 * @throws IllegalAccessError
+	 * @throws IllegalStateException
 	 *             if the relationship information of the given attribute type
 	 *             has already been set
 	 */
-	public void setAttributeRelations(IAttributeType attribute) {
-		final AttributeType<?> a2 = (AttributeType<?>) attribute;
-		a2.setRelation(attrRels.getElementsTypes(attribute));
+	public void setAttributeRelations() {
+		for (AttributeType<?> attribute : attrTypes) {
+			attribute.setRelation(attrRels.getElementsTypes(attribute));
+		}
+	}
+
+	public Set<InternalElementType2<?>> getElemTypes() {
+		return unmodifiableSet(elemTypes);
+	}
+
+	public Set<AttributeType<?>> getAttributeTypes() {
+		return unmodifiableSet(attrTypes);
 	}
 
 }

@@ -13,8 +13,8 @@ package org.rodinp.internal.core.relations;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElementType;
+import org.rodinp.internal.core.AttributeType;
+import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * Parsers for single configuration elements contributed to the
@@ -47,7 +47,7 @@ public abstract class ElementParser {
 		@Override
 		protected void process(IConfigurationElement element,
 				String parentTypeId) {
-			final IInternalElementType<?> parentType = parent
+			final InternalElementType2<?> parentType = parent
 					.getInternalElementType(parentTypeId);
 			if (parentType == null) {
 				parent.addError("Unknown parent type '" + parentTypeId + "'",
@@ -79,7 +79,7 @@ public abstract class ElementParser {
 
 		@Override
 		protected void process(IConfigurationElement element, String elementId) {
-			final IInternalElementType<?> childType = parent
+			final InternalElementType2<?> childType = parent
 					.getInternalElementType(elementId);
 			if (childType == null) {
 				parent.addError("Unknown child element type '" + elementId
@@ -103,7 +103,7 @@ public abstract class ElementParser {
 
 		@Override
 		protected void process(IConfigurationElement element, String attrName) {
-			final IAttributeType attrType = parent.getAttributeType(attrName);
+			final AttributeType<?> attrType = parent.getAttributeType(attrName);
 			if (attrType == null) {
 				parent.addError("Unknown attribute type '" + attrName + "'",
 						element);

@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.AttributeTypes;
-import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.InternalElementTypes;
 import org.rodinp.internal.core.relations.ElementParser.RelationshipParser;
+import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * Parser for the <code>itemRelations</code> extension point. Errors encountered
@@ -84,8 +84,8 @@ public class ItemRelationParser {
 		errors.add(message + " from " + elem.getContributor().getName());
 	}
 
-	public InternalElementType<?> getInternalElementType(String id) {
-		return elementTypes.get(id);
+	public InternalElementType2<?> getInternalElementType(String id) {
+		return (InternalElementType2<?>) elementTypes.get(id);
 	}
 	
 	public AttributeType<?> getAttributeType(String id) {

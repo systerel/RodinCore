@@ -22,9 +22,9 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.junit.Test;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.ItemRelationParser;
+import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * Unit tests for class {@link ItemRelationParser}.
@@ -330,25 +330,26 @@ public class ItemRelationParserTests {
 		return result;
 	}
 
-	private static ItemRelation relation(String relationImage) {
+	/*package*/ static ItemRelation relation(String relationImage) {
 		final Pattern p = compile("(\\S+):(\\S*):(\\S*)");
 		final Matcher m = p.matcher(relationImage);
 		if (m.matches()) {
 			final String parentId = m.group(1);
-			final IInternalElementType<?> elem = eTypes.get(p(parentId));
-			final ItemRelation itemRelation = new ItemRelation(elem);
-			final Pattern p2 = compile("\\s*(\\S+),*\\s*");
+			final ItemRelation itemRelation = new ItemRelation(
+					(InternalElementType2<?>) eTypes.get(p(parentId)));
+			final Pattern p2 = compile(",");
 			final String children = m.group(2);
-			final Matcher m2 = p2.matcher(children);
-			while (m2.find()) {
-				final String id = m2.group(1);
-				itemRelation.addChildType(eTypes.get(p(id)));
+			for (String child : p2.split(children)) {
+				if (child.isEmpty())
+					continue;
+				itemRelation.addChildType((InternalElementType2<?>) eTypes
+						.get(p(child)));				
 			}
 			final String attributes = m.group(3);
-			final Matcher m3 = p2.matcher(attributes);
-			while (m3.find()) {
-				final String id = m3.group(1);
-				itemRelation.addAttributeType(aTypes.get(p(id)));
+			for (String attr : p2.split(attributes)) {
+				if (attr.isEmpty())
+					continue;
+				itemRelation.addAttributeType(aTypes.get(p(attr)));				
 			}
 			return itemRelation;
 		}

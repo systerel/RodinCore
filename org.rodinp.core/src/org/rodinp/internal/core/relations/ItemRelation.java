@@ -17,36 +17,38 @@ import java.util.List;
 
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.internal.core.AttributeType;
+import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 public class ItemRelation {
 
-	private final IInternalElementType<?> parentType;
-	private final List<IInternalElementType<?>> childTypes;
-	private final List<IAttributeType> attributeTypes;
+	private final InternalElementType2<?> parentType;
+	private final List<InternalElementType2<?>> childTypes;
+	private final List<AttributeType<?>> attributeTypes;
 
-	public ItemRelation(IInternalElementType<?> parentType) {
+	public ItemRelation(InternalElementType2<?> parentType) {
 		this.parentType = parentType;
-		this.childTypes = new ArrayList<IInternalElementType<?>>();
-		this.attributeTypes = new ArrayList<IAttributeType>();
+		this.childTypes = new ArrayList<InternalElementType2<?>>();
+		this.attributeTypes = new ArrayList<AttributeType<?>>();
 	}
 
-	public IInternalElementType<?> getParentType() {
+	public InternalElementType2<?> getParentType() {
 		return parentType;
 	}
 
-	public List<IInternalElementType<?>> getChildTypes() {
+	public List<InternalElementType2<?>> getChildTypes() {
 		return unmodifiableList(childTypes);
 	}
 
-	public List<IAttributeType> getAttributeTypes() {
+	public List<AttributeType<?>> getAttributeTypes() {
 		return unmodifiableList(attributeTypes);
 	}
 
-	public void addChildType(IInternalElementType<?> childType) {
+	public void addChildType(InternalElementType2<?> childType) {
 		childTypes.add(childType);
 	}
 
-	public void addAttributeType(IAttributeType attributeTypeId) {
+	public void addAttributeType(AttributeType<?> attributeTypeId) {
 		attributeTypes.add(attributeTypeId);
 	}
 	

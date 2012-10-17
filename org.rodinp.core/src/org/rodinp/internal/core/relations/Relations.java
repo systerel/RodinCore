@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElementType;
+import org.rodinp.internal.core.AttributeType;
+import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * Generic class storing parent-children and child-parents relations where all
@@ -104,15 +104,15 @@ public abstract class Relations<S, T> {
 
 	// public for testing purpose only
 	public static class AttributeTypeRelations extends
-			Relations<IInternalElementType<?>, IAttributeType> {
+			Relations<InternalElementType2<?>, AttributeType<?>> {
 
 		/** Returns all element types that can carry the given element type. */
-		public IInternalElementType<?>[] getElementsTypes(IAttributeType type) {
+		public InternalElementType2<?>[] getElementsTypes(AttributeType<?> type) {
 			return getElementArray(getParentsOf(type));
 		}
 
 		/** Returns all attribute types of the given element type. */
-		public IAttributeType[] getAttributes(IInternalElementType<?> type) {
+		public AttributeType<?>[] getAttributes(InternalElementType2<?> type) {
 			return getAttributeArray(getChildrenOf(type));
 		}
 
@@ -120,32 +120,32 @@ public abstract class Relations<S, T> {
 
 	// public for testing purpose only
 	public static class ElementTypeRelations extends
-			Relations<IInternalElementType<?>, IInternalElementType<?>> {
+			Relations<InternalElementType2<?>, InternalElementType2<?>> {
 
 		/** Returns all parent element types of the given element type. */
-		public IInternalElementType<?>[] getParentTypes(
-				IInternalElementType<?> type) {
+		public InternalElementType2<?>[] getParentTypes(
+				InternalElementType2<?> type) {
 			return getElementArray(parentsMap.get(type));
 		}
 
 		/** Returns all child element types of the given element type. */
-		public IInternalElementType<?>[] getChildTypes(
-				IInternalElementType<?> type) {
+		public InternalElementType2<?>[] getChildTypes(
+				InternalElementType2<?> type) {
 			return getElementArray(childrenMap.get(type));
 		}
 	
 	}
 
-	protected static IAttributeType[] getAttributeArray(Set<IAttributeType> set) {
-		return set.toArray(new IAttributeType[set.size()]);
+	protected static AttributeType<?>[] getAttributeArray(Set<AttributeType<?>> set) {
+		return set.toArray(new AttributeType<?>[set.size()]);
 	}
 	
-	protected static IInternalElementType<?>[] getElementArray(
-			Set<IInternalElementType<?>> set) {
+	protected static InternalElementType2<?>[] getElementArray(
+			Set<InternalElementType2<?>> set) {
 		if (set == null) {
-			return new IInternalElementType<?>[0];
+			return new InternalElementType2<?>[0];
 		}
-		return set.toArray(new IInternalElementType<?>[set.size()]);
+		return set.toArray(new InternalElementType2<?>[set.size()]);
 	}
 
 }

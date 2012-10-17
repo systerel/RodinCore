@@ -12,10 +12,8 @@ package org.rodinp.core.tests.relations;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IInternalElement;
-import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.InternalElementTypes;
-import org.rodinp.internal.core.relations.RelationsComputer;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
@@ -52,13 +50,6 @@ public class InternalTestTypes extends InternalElementTypes {
 					attributes, NONE);
 		}
 		return result;
-	}
-
-	protected void setRelations(RelationsComputer c,
-			IInternalElementType<?>[] elemTypes) {
-		for (IInternalElementType<?> type : elemTypes) {
-			c.setElementRelations(type);
-		}
 	}
 
 	@Override
