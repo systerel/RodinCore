@@ -174,6 +174,7 @@ public abstract class HypothesisComposite implements
 		JFaceResources.getFontRegistry().removeListener(this);
 		
 		totalClearance();
+		control.dispose();
 	}
 	
 	/**
@@ -442,6 +443,7 @@ public abstract class HypothesisComposite implements
 					styledText.removePaintObjectListener(controlPainter);
 				controlPainter.clear();
 			}
+			styledText.dispose();
 		}
 		rows.clear();
 		if (manager != null)
