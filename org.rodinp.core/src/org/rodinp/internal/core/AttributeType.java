@@ -15,6 +15,8 @@ package org.rodinp.internal.core;
 
 import static java.util.Arrays.asList;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
@@ -357,7 +359,7 @@ public abstract class AttributeType<V> implements IAttributeType, IAttributeType
 
 	private final java.lang.String name;
 	
-	private IInternalElementType<?>[] elementTypes = null;
+	private List<IInternalElementType<?>> elementTypes = null;
 
 	protected AttributeType(Kind kind, java.lang.String id,
 			java.lang.String name) {
@@ -410,12 +412,13 @@ public abstract class AttributeType<V> implements IAttributeType, IAttributeType
 
 	@Override
 	public IInternalElementType<?>[] getElementTypes() {
-		return elementTypes;
+		return elementTypes.toArray(new IInternalElementType<?>[elementTypes
+				.size()]);
 	}
 
 	@Override
 	public boolean isAttributeOf(IInternalElementType<?> elementType) {
-		return asList(elementTypes).contains(elementType);
+		return elementTypes.contains(elementType);
 	}
 
 	protected RodinDBException newInvalidValueException() {
@@ -438,7 +441,7 @@ public abstract class AttributeType<V> implements IAttributeType, IAttributeType
 					"Illegal attempt to set relations for attribute type "
 							+ getName());
 		}
-		this.elementTypes = eTypes;
+		this.elementTypes = asList(eTypes);
 	}
 
 	public abstract java.lang.String toString(V value);

@@ -12,6 +12,7 @@ package org.rodinp.core.tests.relations;
 
 import static java.util.regex.Pattern.compile;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.rodinp.core.tests.relations.ItemRelationParserTests.relation;
 
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.Relations.AttributeTypeRelations;
@@ -107,6 +110,44 @@ public class RelationsTests {
 	@Test
 	public void testMixedChildAndAttributes() {
 		assertRelations("p4:c4:a2");
+	}
+	
+	/**
+	 * Ensures that API methods to retrieve parent and children involved in
+	 * relationships return copies of the internal data structures being used
+	 * and that they are equals along method calls.
+	 */
+	@Test
+	public void testAPIGetters() {
+		assertEqualsMutableGetterResults("p5:c5,c6:a3,a4|p6:c5,c6:a3,a4");
+	}
+	
+	private void assertEqualsMutableGetterResults(String relationStrs) {
+		final List<ItemRelation> itemRels = getItemRelations(relationStrs);
+		final RelationsComputer c = new RelationsComputer();
+		c.computeRelations(itemRels);
+		c.setElementRelations();
+		c.setAttributeRelations();
+		for (InternalElementType2<?> t : c.getElemTypes()) {
+			final IInternalElementType<?>[] c1 = t.getChildTypes();
+			final IInternalElementType<?>[] c2 = t.getChildTypes();
+			assertArrayEquals(c1, c2);
+			assertNotSame(c1, c2);
+			final IInternalElementType<?>[] p1 = t.getParentTypes();
+			final IInternalElementType<?>[] p2 = t.getParentTypes();
+			assertArrayEquals(p1, p2);
+			assertNotSame(p1, p2);
+			final IAttributeType[] a1 = t.getAttributeTypes();
+			final IAttributeType[] a2 = t.getAttributeTypes();
+			assertArrayEquals(a1, a2);
+			assertNotSame(a1, a2);
+		}
+		for (AttributeType<?> type : c.getAttributeTypes()) {
+			final IInternalElementType<?>[] a1 = type.getElementTypes();
+			final IInternalElementType<?>[] a2 = type.getElementTypes();
+			assertArrayEquals(a1, a2);
+			assertNotSame(a1, a2);
+		}
 	}
 
 	private void assertRelations(String relationStrs) {

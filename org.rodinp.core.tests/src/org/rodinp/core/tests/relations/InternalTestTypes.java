@@ -28,6 +28,7 @@ public class InternalTestTypes extends InternalElementTypes {
 	private static final IConfigurationElement[] NONE = new IConfigurationElement[0];
 
 	private static final String[] TYPE_IDS = new String[] { //
+	"p", "child", //
 	"p1", "c1", //
 			"p2", "c21", "c22", //
 			"p21", "p22", "c2", //
@@ -35,7 +36,7 @@ public class InternalTestTypes extends InternalElementTypes {
 			"cy21", "cy22", //
 			"cy31", "cy32", "cy33", //
 			"p3", "p4", "c4", //
-			"p", "child", //
+			"p5", "p6", "c5", "c6", //
 	};
 
 	@Override

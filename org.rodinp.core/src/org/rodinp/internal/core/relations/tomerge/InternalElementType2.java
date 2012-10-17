@@ -12,6 +12,8 @@ package org.rodinp.internal.core.relations.tomerge;
 
 import static java.util.Arrays.asList;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -31,9 +33,9 @@ import org.rodinp.internal.core.relations.api.IInternalElementType2;
 public class InternalElementType2<T extends IInternalElement> extends
 		InternalElementType<T> implements IInternalElementType2<T> {
 
-	private IInternalElementType<?>[] parentTypes = null;
-	private IInternalElementType<?>[] childTypes = null;
-	private IAttributeType[] attributeTypes = null;
+	private List<IInternalElementType<?>> parentTypes = null;
+	private List<IInternalElementType<?>> childTypes = null;
+	private List<IAttributeType> attributeTypes = null;
 
 	public InternalElementType2(IConfigurationElement configurationElement) {
 		super(configurationElement);
@@ -41,27 +43,30 @@ public class InternalElementType2<T extends IInternalElement> extends
 
 	@Override
 	public boolean canParent(IInternalElementType<?> childType) {
-		return asList(childTypes).contains(childType);
+		return childTypes.contains(childType);
 	}
 
 	@Override
 	public IInternalElementType<?>[] getChildTypes() {
-		return childTypes;
+		return childTypes
+				.toArray(new IInternalElementType<?>[childTypes.size()]);
 	}
 
 	@Override
 	public IInternalElementType<?>[] getParentTypes() {
-		return parentTypes;
+		return parentTypes.toArray(new IInternalElementType<?>[parentTypes
+				.size()]);
 	}
 
 	@Override
 	public IAttributeType[] getAttributeTypes() {
-		return attributeTypes;
+		return attributeTypes
+				.toArray(new IAttributeType[attributeTypes.size()]);
 	}
 
 	@Override
 	public boolean canCarry(IAttributeType attributeType) {
-		return asList(attributeTypes).contains(attributeType);
+		return attributeTypes.contains(attributeType);
 	}
 
 	public void setRelation(IInternalElementType<?>[] pTypes,
@@ -71,9 +76,9 @@ public class InternalElementType2<T extends IInternalElement> extends
 					"Illegal attempt to set relations for internal element type "
 							+ getName());
 		}
-		this.parentTypes = pTypes;
-		this.childTypes = cTypes;
-		this.attributeTypes = aTypes;
+		this.parentTypes = asList(pTypes);
+		this.childTypes = asList(cTypes);
+		this.attributeTypes = asList(aTypes);
 	}
 
 }
