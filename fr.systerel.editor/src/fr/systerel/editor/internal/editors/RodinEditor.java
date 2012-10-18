@@ -544,6 +544,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 						final long time = System.currentTimeMillis() - start;
 						System.out.println("\\ Elapsed time : " + time + "ms.");
 					}
+					markerAnnotationsUpdater.recalculateAnnotations();
 				}
 			});
 		}
