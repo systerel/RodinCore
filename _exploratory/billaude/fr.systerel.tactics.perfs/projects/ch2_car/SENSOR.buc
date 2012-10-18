@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<org.eventb.core.contextFile version="3" org.eventb.core.configuration="org.eventb.core.fwd">
-<org.eventb.core.axiom name="internal_axm1A" org.eventb.core.label="axm1" org.eventb.core.predicate="Sensor = {on,off}"/>
-<org.eventb.core.axiom name="internal_axm2A" org.eventb.core.label="axm2" org.eventb.core.predicate="¬ on=off"/>
-<org.eventb.core.carrierSet name="internal_set1" org.eventb.core.identifier="Sensor"/>
-<org.eventb.core.constant name="internal_cst1" org.eventb.core.identifier="on"/>
-<org.eventb.core.constant name="internal_cst2" org.eventb.core.identifier="off"/>
-</org.eventb.core.contextFile>

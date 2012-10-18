@@ -1,3 +1,0 @@
-org.rodinp.core.emf/debug = true
-org.rodinp.core.emf/debug/deltaprocessor = false
-org.rodinp.core.emf/debug/deltaprocessormanager = false
