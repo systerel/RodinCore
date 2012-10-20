@@ -25,6 +25,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.internal.core.ast.wd.WDComputer;
 
 /**
  * Unit and acceptance tests for the computation of WD lemmas.
@@ -49,26 +50,38 @@ public class TestWD extends AbstractTests {
 
 	private static abstract class TestFormula<T extends Formula<T>> {
 
+		final ITypeEnvironment typenv;
+		final FormulaFactory factory;
 		final T input;
 		final Predicate originalPredicate;
 		final Predicate simplifiedPredicate;
-		protected final FormulaFactory factory;
 
 		TestFormula(ITypeEnvironment env, String in, String exp, String imp) {
+			this.typenv = env;
 			this.factory = env.getFormulaFactory();
 			this.input = parse(in);
-			this.originalPredicate = parsePredicate(exp, factory).flatten(factory);
-			this.simplifiedPredicate = parsePredicate(imp, factory).flatten(factory);
-			typeCheck(input, env);
-			typeCheck(originalPredicate, env);
-			typeCheck(simplifiedPredicate, env);
+			this.originalPredicate = parsePredicate(exp, env);
+			this.simplifiedPredicate = parsePredicate(imp, env);
 		}
 
 		public void test() {
-			final Predicate actual = input.getWDPredicate(factory);
+			assertCorrect(originalPredicate, getNonSimplifiedWD());
+			assertCorrect(simplifiedPredicate, getSimplifiedWD());
+		}
+
+		private Predicate getNonSimplifiedWD() {
+			final WDComputer wdComputer = new WDComputer(factory);
+			return wdComputer.getWDLemma(input);
+		}
+
+		private Predicate getSimplifiedWD() {
+			return input.getWDPredicate(factory);
+		}
+
+		private void assertCorrect(Predicate expected, Predicate actual) {
 			assertTrue("Ill-formed WD predicate", actual.isWellFormed());
 			assertTrue("Untyped WD predicate", actual.isTypeChecked());
-			assertEquals(simplifiedPredicate, actual);
+			assertEquals(expected, actual);
 		}
 
 		public abstract T parse(String image);
@@ -82,7 +95,7 @@ public class TestWD extends AbstractTests {
 
 		@Override
 		public Predicate parse(String image) {
-			return parsePredicate(image, factory);
+			return parsePredicate(image, typenv);
 		}
 
 	}
@@ -95,7 +108,7 @@ public class TestWD extends AbstractTests {
 
 		@Override
 		public Assignment parse(String image) {
-			return parseAssignment(image, factory);
+			return parseAssignment(image, typenv);
 		}
 
 	}
@@ -140,7 +153,7 @@ public class TestWD extends AbstractTests {
 		assertWDLemma("(B×Y)(x) ∈ Y", "x∈dom(B × Y) ∧ B × Y ∈ ℤ ⇸ BOOL");
 		assertWDLemma(
 				"x=f(f(y))", //
-				"((y∈dom(f) ∧ f ∈ ℤ ⇸ ℤ) ∧ f(y)∈dom(f)) ∧ f ∈ ℤ ⇸ ℤ",
+				"y∈dom(f) ∧ f ∈ ℤ ⇸ ℤ ∧ f(y)∈dom(f) ∧ f ∈ ℤ ⇸ ℤ",
 				"y∈dom(f) ∧ f ∈ ℤ ⇸ ℤ ∧ f(y)∈dom(f)");
 		assertWDLemma("(x÷y=y) ⇔ (y mod x=0)", "y≠0 ∧ 0 ≤ y ∧ 0 < x");
 		assertWDLemma("∀z \u00b7 x^z>y", "∀z \u00b7 0≤x ∧ 0≤z");
@@ -222,11 +235,50 @@ public class TestWD extends AbstractTests {
 	}
 
 	public void testRedundant() {
-		assertWDLemma("3÷P = 4÷P", "P≠0 ∧ P≠0", "P≠0");
-		assertWDLemma("∃x·x=a÷b", "∀x·b≠0");
 		assertWDLemma("3÷P=0 ∧ 2=5 ∧ 6÷P=0", "P≠0 ∧ (3÷P=0 ∧ 2=5 ⇒ P≠0)", "P≠0");
 		assertWDLemma("f(x)=f(y)", "x∈dom(f) ∧ f∈ℤ⇸ℤ ∧ y∈dom(f) ∧ f∈ℤ⇸ℤ",
 				"x∈dom(f) ∧ f∈ℤ⇸ℤ ∧ y∈dom(f)");
+		assertWDLemma("x≠0 ∨ 3 = 4÷x", "x≠0 ∨ x≠0", "x≠0 ∨ x≠0");
+	}
+
+	/**
+	 * Ensures that documented simplification rules are indeed implemented.
+	 */
+	public void testSimplified() {
+		// (⊤ ∧ A) ⇔ A
+		assertWDLemma("1 = 2÷x", "x≠0");
+		// (A ∧ ⊤) ⇔ A
+		assertWDLemma("1÷x = 2", "x≠0");
+		// (A ∧ A) ⇔ A
+		assertWDLemma("3÷x = 4÷x", "x≠0 ∧ x≠0", "x≠0");
+		// (A ∨ ⊤) ⇔ ⊤
+		assertWDLemma("1 = 2÷x ∨ 3 = 4", "x≠0");
+		// (⊤ ∨ A) ⇔ ⊤
+		assertWDLemma("⊤ ∨ 3 = 4÷x", "⊤");
+		// (A ⇒ (B ⇒ C)) ⇔ (A ∧ B ⇒ C)
+		assertWDLemma("1 = 2 ⇒ (3 = 4 ⇒ 5 = 6÷x)", "1 = 2 ∧ 3 = 4 ⇒ x≠0");
+		// (A ⇒ ⊤) ⇔ ⊤
+		assertWDLemma("1 = 2 ⇒ 3 = 4", "⊤");
+		// (⊤ ⇒ A) ⇔ A
+		assertWDLemma("⊤ ⇒ 3 = 4÷x", "x≠0");
+		// (A ⇒ A) ⇔ ⊤
+		assertWDLemma("x≠0 ⇒ 3 = 4÷x", "⊤");
+		// (∀x·⊤) ⇔ ⊤
+		assertWDLemma("∀x·x=1", "⊤");
+		// (∃x·⊤) ⇔ ⊤
+		assertWDLemma("a=(⋂x⦂ℙ(ℙ(ℤ))·⊤∣x)", "⊤");
+		// (∀x·A) ⇔ A provided x nfin A
+		assertWDLemma("∀x·x=a÷b", "b≠0");
+		// (∃x·A) ⇔ A provided x nfin A
+		assertWDLemma("a=(⋂x⦂ℙ(ℙ(ℤ))·1=2∣x)", "1=2");
+	}
+
+	/**
+	 * Shows that some WD predicates are not simplified, although they could be.
+	 */
+	public void testNotSimplified() {
+		// (A ∨ A) ⇔ A
+		assertWDLemma("x≠0 ∨ 3 = 4÷x", "x≠0 ∨ x≠0", "x≠0 ∨ x≠0");
 	}
 
 	/**
@@ -476,7 +528,8 @@ public class TestWD extends AbstractTests {
 						+ "   closure1∈ℙ(CO × CO) ⇸ ℙ(CO × CO) ∧"
 						+ "   R∈dom(closure1) ∧"
 						+ "   closure1∈ℙ(CO × CO) ⇸ ℙ(CO × CO))",//
-				"∀R,x,y·R∈CO ⇸ CO" + "⇒ R∈dom(closure1) ∧"
+				"∀R·R∈CO ⇸ CO ⇒" //
+						+ "  R∈dom(closure1) ∧"
 						+ "  closure1∈ℙ(CO × CO) ⇸ ℙ(CO × CO)");
 	}
 
@@ -510,7 +563,6 @@ public class TestWD extends AbstractTests {
 
 		assertWDLemma(env,//
 				"(∃x·x⊆S) ⇒ (⋂x∣x⊆S) = S",//
-				"(∃x·x⊆S) ⇒ (∃x·x⊆S)",//
 				"⊤");
 		assertWDLemma(env,//
 				"(∃x·x⊆S) ⇒ (∀y·y=0 ⇒ (⋂x∣x⊆S) = S)",//
@@ -736,7 +788,7 @@ public class TestWD extends AbstractTests {
 		assertWDLemma(env, "l = tail(cons(1÷x, l))",
 				"(∃h,t· cons(1÷x, l) = cons(h, t)) ∧ x≠0");
 	}
-	
+
 	/**
 	 * Unit test to check the simplification of the WD of a destructor when
 	 * there is only one datatype constructor.

@@ -1867,34 +1867,42 @@ public abstract class Formula<T extends Formula<T>> {
 	/**
 	 * Computes the Well-Definedness predicate for this formula.
 	 * <p>
-	 * The following optimisations are implemented:
+	 * The following optimizations are implemented:
 	 * <ul>
 	 * <li>"⊤" is eliminated from formulas where possible</li>
-	 * <li>implications are replaced by conjunctions according to the
-	 *     equivalences
+	 * <li>duplicate occurrences of the same predicate are eliminated</li>
+	 * <li>implications are replaced by conjunctions</li>
+	 * </ul>
+	 * according to the equivalences
+	 * 
 	 * <pre>
-	 * 		(⊤ ∧ A) ⇔ A							
-	 * 		(A ∧ ⊤) ⇔ A							
-	 * 		(A ∨ ⊤) ⇔ ⊤							
-	 * 		(⊤ ∨ A) ⇔ ⊤							
-	 * 		(A ⇒ (B ⇒ C)) ⇔ (A ∧ B ⇒ C)			
-	 * 		(A ⇒ ⊤) ⇔ ⊤							
-	 * 		(⊤ ⇒ A) ⇔ A							
-	 * 		(∀x·⊤) ⇔ ⊤								
-	 * 		(∃x·⊤) ⇔ ⊤								
-	 *      (∀x·A) ⇔ A provided x nfin A           
-	 *      (∃x·A) ⇔ A provided x nfin A           
-	 * </pre></li></ul></p>
+	 * 		(⊤ ∧ A) ⇔ A
+	 * 		(A ∧ ⊤) ⇔ A
+	 * 		(A ∧ A) ⇔ A
+	 * 		(A ∨ ⊤) ⇔ ⊤
+	 * 		(⊤ ∨ A) ⇔ ⊤
+	 * 		(A ⇒ (B ⇒ C)) ⇔ (A ∧ B ⇒ C)
+	 * 		(A ⇒ ⊤) ⇔ ⊤
+	 * 		(⊤ ⇒ A) ⇔ A
+	 * 		(A ⇒ A) ⇔ ⊤
+	 * 		(∀x·⊤) ⇔ ⊤
+	 * 		(∃x·⊤) ⇔ ⊤
+	 * 		(∀x·A) ⇔ A provided x nfin A
+	 * 		(∃x·A) ⇔ A provided x nfin A
+	 * </pre>
+	 * 
+	 * </p>
 	 * <p>
 	 * This formula must be type-checked before <code>getWDPredicate()</code>
 	 * can be invoked.
 	 * </p>
+	 * 
 	 * @param formulaFactory
-	 *    factory to use for creating the WD predicate
+	 *            factory to use for creating the WD predicate
 	 * @return the well-definedness predicate for this formula.
 	 */
 	public final Predicate getWDPredicate(FormulaFactory formulaFactory) {
-		assert isTypeChecked();
+		ensureTypeChecked();
 		final WDComputer wdComputer = new WDComputer(formulaFactory);
 		final Predicate wdLemma = wdComputer.getWDLemma(this);
 		final WDImprover wdImprover = new WDImprover(formulaFactory);

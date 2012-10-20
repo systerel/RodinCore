@@ -205,6 +205,14 @@ public abstract class AbstractTests extends TestCase {
 	}
 	
 	public static Assignment parseAssignment(String image,
+			ITypeEnvironment typenv) {
+		final FormulaFactory fac = typenv.getFormulaFactory();
+		final Assignment result = parseAssignment(image, fac);
+		typeCheck(result, typenv);
+		return result;
+	}
+
+	public static Assignment parseAssignment(String image,
 			LanguageVersion version) {
 		return parseAssignment(image, version, getFormulaFactory(version));
 	}
