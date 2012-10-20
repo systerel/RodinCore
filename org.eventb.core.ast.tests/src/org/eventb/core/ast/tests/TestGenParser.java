@@ -2961,43 +2961,6 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE, FAC_COND, true);
 	}
 	
-	private static Expression makeMaxCond(Expression a, Expression b) {
-		return makeCond(ff.makeRelationalPredicate(Formula.LE, a, b, null), b, a, null);
-	}
-	
-	public void testCondWD() throws Exception {
-		// fresh idents because typecheck will set type and subsequent tests
-		// using FRID_a or FRID_b would fail
-		final FreeIdentifier frid_a = ff.makeFreeIdentifier("a", null);
-		final FreeIdentifier frid_b = ff.makeFreeIdentifier("b", null);
-
-		final Expression max_a_b = makeMaxCond(frid_a, frid_b);
-		// WD is 'true & a<b=>true & not(a<b)=>true', but after WD simplifier:
-		final Predicate expectedWD = LIT_BTRUE;
-		
-		max_a_b.typeCheck(FAC_COND.makeTypeEnvironment());
-		final Predicate actualWD = max_a_b.getWDPredicate(FAC_COND);
-		
-		assertEquals(expectedWD, actualWD);
-	}
-	
-	
-	public void testCondWDnotTrivial() throws Exception {
-		final Expression expr = parseExpr(
-				"COND(a÷b=1,card({a,b}),card({0,1,2}))", FAC_COND,
-				LanguageVersion.LATEST);
-		expr.typeCheck(FAC_COND.makeTypeEnvironment());
-
-		final Predicate expectedWD = parsePredicate(
-				"b≠0 ∧ (a÷b=1⇒finite({a,b})) ∧ (¬ a÷b=1⇒finite({0,1,2}))",
-				FAC_COND);
-		expectedWD.typeCheck(FAC_COND.makeTypeEnvironment());
-	
-		final Predicate actualWD = expr.getWDPredicate(FAC_COND);
-		
-		assertEquals(expectedWD, actualWD);
-	}
-	
 	public void testExtraParentheses() throws Exception {
 		assertFailure(ff.parseExpression(")", LATEST, null),
 				makeError(0, 0, UnmatchedTokens), makeError(0, 0, PrematureEOF));

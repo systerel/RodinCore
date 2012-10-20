@@ -24,6 +24,7 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.internal.core.ast.wd.WDComputer;
 
@@ -760,6 +761,19 @@ public class TestWD extends AbstractTests {
 				"finite({1}) ∧ y≠0 ∧ t≠0 ∧ x≠0 ∧ z≠0");
 		// non WD strict expression
 		assertWDLemma(env, "1=barL(1=1÷x, 1÷y, 1=1÷z, 1÷t)", "finite({0})");
+	}
+
+	/**
+	 * Unit test for COND operator
+	 */
+	public void testCond() {
+		final IExpressionExtension cond = FormulaFactory.getCond();
+		final FormulaFactory factory = FormulaFactory.getInstance(cond);
+		final ITypeEnvironment env = factory.makeTypeEnvironment();
+		assertWDLemma(env, "COND(a<b, b, a) = a", "⊤ ∧ (a<b ⇒ ⊤) ∧ (¬a<b ⇒ ⊤)",
+				"⊤");
+		assertWDLemma(env, "COND(a÷b=1, card({a,b}), card({0,1,2})) = a",
+				"b≠0 ∧ (a÷b=1⇒finite({a,b})) ∧ (¬ a÷b=1⇒finite({0,1,2}))");
 	}
 
 	/**
