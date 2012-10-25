@@ -974,7 +974,7 @@ public abstract class Formula<T extends Formula<T>> {
 			Collection<? extends T> formulas) {
 		int result = 0;
 		for (T formula: formulas) {
-			result = combineHashCodes(result, formula.hashCode);
+			result = combineHashCodes(result, formula.hashCode());
 		}
 		return result;
 	}
