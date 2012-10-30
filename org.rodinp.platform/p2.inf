@@ -1,12 +1,12 @@
 instructions.configure=\
   addRepository(type:0,location:http${#58}//download.eclipse.org/releases/indigo,name:Indigo Update Site);\
   addRepository(type:1,location:http${#58}//download.eclipse.org/releases/indigo,name:Indigo Update Site);\
-  addRepository(type:0,location:http${#58}//bmethod.com/update_site/atelierb_provers,name:Atelier B Provers);\
-  addRepository(type:1,location:http${#58}//bmethod.com/update_site/atelierb_provers,name:Atelier B Provers);\
-  addRepository(type:0,location:http${#58}//bmethod.com/update_site/b2rodin,name:B2Rodin);\
-  addRepository(type:1,location:http${#58}//bmethod.com/update_site/b2rodin,name:B2Rodin);\
-  addRepository(type:0,location:http${#58}//bmethod.com/update_site/brama,name:Brama);\
-  addRepository(type:1,location:http${#58}//bmethod.com/update_site/brama,name:Brama);\
+  addRepository(type:0,location:http${#58}//methode-b.com/update_site/atelierb_provers,name:Atelier B Provers);\
+  addRepository(type:1,location:http${#58}//methode-b.com/update_site/atelierb_provers,name:Atelier B Provers);\
+  addRepository(type:0,location:http${#58}//methode-b.com/update_site/b2rodin,name:B2Rodin);\
+  addRepository(type:1,location:http${#58}//methode-b.com/update_site/b2rodin,name:B2Rodin);\
+  addRepository(type:0,location:http${#58}//methode-b.com/update_site/brama,name:Brama);\
+  addRepository(type:1,location:http${#58}//methode-b.com/update_site/brama,name:Brama);\
   addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin);\
   addRepository(type:1,location:http${#58}//rodin-b-sharp.sourceforge.net/updates,name:Rodin);\
   addRepository(type:0,location:http${#58}//rodin-b-sharp.sourceforge.net/core-updates,name:Core Rodin Updates);\
