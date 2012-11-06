@@ -12,7 +12,10 @@ package org.rodinp.core.tests.relations;
 
 import static java.util.regex.Pattern.compile;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNotNull;
+import static org.rodinp.core.tests.relations.ItemRelationParserTests.PREFIX;
+import static org.rodinp.core.tests.relations.ItemRelationParserTests.aTypes;
+import static org.rodinp.core.tests.relations.ItemRelationParserTests.eTypes;
 import static org.rodinp.core.tests.relations.ItemRelationParserTests.relation;
 
 import java.util.ArrayList;
@@ -111,56 +114,107 @@ public class RelationsTests {
 	public void testMixedChildAndAttributes() {
 		assertRelations("p4:c4:a2");
 	}
-	
+
 	/**
-	 * Ensures that API methods to retrieve parent and children involved in
-	 * relationships return copies of the internal data structures being used
-	 * and that they are equals along method calls.
+	 * Ensures that API methods that return an array are not disrupted by
+	 * clients modifying the returned array.
 	 */
 	@Test
 	public void testAPIGetters() {
-		assertEqualsMutableGetterResults("p5:c5,c6:a3,a4|p6:c5,c6:a3,a4");
+		computeItemRelations("p5:c5:a5");
+		final IInternalElementType2<?> p5 = getInternalElementType("p5");
+		final IInternalElementType2<?> c5 = getInternalElementType("c5");
+		final IAttributeType2 a5 = getAttributeType("a5");
+		new ChildTypeMutator().test(p5);
+		new ParentTypeMutator().test(c5);
+		new AttrTypeMutator().test(p5);
+		new ElemTypeMutator().test(a5);
 	}
-	
-	private void assertEqualsMutableGetterResults(String relationStrs) {
-		final List<ItemRelation> itemRels = getItemRelations(relationStrs);
-		final RelationsComputer c = new RelationsComputer();
-		c.setRelations(itemRels);
-		for (InternalElementType2<?> t : c.getElemTypes()) {
-			final IInternalElementType<?>[] c1 = t.getChildTypes();
-			final IInternalElementType<?>[] c2 = t.getChildTypes();
-			assertArrayEquals(c1, c2);
-			assertNotSame(c1, c2);
-			final IInternalElementType<?>[] p1 = t.getParentTypes();
-			final IInternalElementType<?>[] p2 = t.getParentTypes();
-			assertArrayEquals(p1, p2);
-			assertNotSame(p1, p2);
-			final IAttributeType[] a1 = t.getAttributeTypes();
-			final IAttributeType[] a2 = t.getAttributeTypes();
-			assertArrayEquals(a1, a2);
-			assertNotSame(a1, a2);
+
+	private IInternalElementType2<?> getInternalElementType(String shortId) {
+		return (IInternalElementType2<?>) eTypes.get(PREFIX + shortId);
+	}
+
+	private IAttributeType2 getAttributeType(String shortId) {
+		return aTypes.get(PREFIX + shortId);
+	}
+
+	/**
+	 * Common implementation for checking that an array returned by a method
+	 * call can be changed by the client without impacting later calls to the
+	 * same method.
+	 * 
+	 * @param <T>
+	 *            class containing the method returning an array
+	 * @param <U>
+	 *            type of the elements of the array
+	 */
+	private static abstract class Mutator<T, U> {
+		public void test(T itemType) {
+			final U[] firstArray = getArray(itemType);
+			final U[] expected = firstArray.clone();
+			assertNotNull(firstArray[0]);
+			firstArray[0] = null;
+			final U[] actual = getArray(itemType);
+			assertArrayEquals(expected, actual);
 		}
-		for (AttributeType<?> type : c.getAttributeTypes()) {
-			final IInternalElementType<?>[] a1 = type.getElementTypes();
-			final IInternalElementType<?>[] a2 = type.getElementTypes();
-			assertArrayEquals(a1, a2);
-			assertNotSame(a1, a2);
+
+		protected abstract U[] getArray(T itemType);
+	}
+
+	private static class ChildTypeMutator extends
+			Mutator<IInternalElementType2<?>, IInternalElementType<?>> {
+		@Override
+		protected IInternalElementType<?>[] getArray(
+				IInternalElementType2<?> itemType) {
+			return itemType.getChildTypes();
 		}
 	}
 
+	private static class ParentTypeMutator extends
+			Mutator<IInternalElementType2<?>, IInternalElementType<?>> {
+		@Override
+		protected IInternalElementType<?>[] getArray(
+				IInternalElementType2<?> itemType) {
+			return itemType.getParentTypes();
+		}
+	}
+
+	private static class AttrTypeMutator extends
+			Mutator<IInternalElementType2<?>, IAttributeType> {
+		@Override
+		protected IAttributeType[] getArray(IInternalElementType2<?> itemType) {
+			return itemType.getAttributeTypes();
+		}
+	}
+
+	private static class ElemTypeMutator extends
+			Mutator<IAttributeType2, IInternalElementType<?>> {
+		@Override
+		protected IInternalElementType<?>[] getArray(IAttributeType2 itemType) {
+			return itemType.getElementTypes();
+		}
+	}
+
+	private List<ItemRelation> itemRels;
+	private RelationsComputer computer = new RelationsComputer();
+
+	private void computeItemRelations(String relationStrs) {
+		itemRels = getItemRelations(relationStrs);
+		computer.setRelations(itemRels);
+	}
+
 	private void assertRelations(String relationStrs) {
-		final List<ItemRelation> itemRels = getItemRelations(relationStrs);
-		final RelationsComputer c = new RelationsComputer();
-		c.setRelations(itemRels);
+		computeItemRelations(relationStrs);
 		final ElementTypeRelations expectedElemRels = getExpectedElemRelations(itemRels);
 		final AttributeTypeRelations expectedAttrRels = getExpectedAttrRelations(itemRels);
-		for (InternalElementType2<?> type : c.getElemTypes()) {
+		for (InternalElementType2<?> type : computer.getElemTypes()) {
 			assertArrayEquals(expectedElemRels.getParentTypes(type),
 					type.getParentTypes());
 			assertArrayEquals(expectedElemRels.getChildTypes(type),
 					type.getChildTypes());
 		}
-		for (AttributeType<?> type : c.getAttributeTypes()) {
+		for (AttributeType<?> type : computer.getAttributeTypes()) {
 			assertArrayEquals(expectedAttrRels.getElementsTypes(type),
 					type.getElementTypes());
 		}

@@ -52,8 +52,8 @@ public class ItemRelationParserTests {
 
 	public static final String PREFIX = PLUGIN_ID + ".";
 
-	public final static InternalTestTypes eTypes = new InternalTestTypes();
-	public final static AttributeTestTypes aTypes = new AttributeTestTypes();
+	public static final InternalTestTypes eTypes = new InternalTestTypes();
+	public static final AttributeTestTypes aTypes = new AttributeTestTypes();
 
 	private static final IConfigurationElement VALID_CHILD = node(
 			"relationship : parentTypeId='p'",
