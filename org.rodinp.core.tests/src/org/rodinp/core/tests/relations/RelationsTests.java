@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.rodinp.core.tests.relations;
 
+import static java.util.Arrays.asList;
 import static java.util.regex.Pattern.compile;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.rodinp.core.tests.relations.ItemRelationParserTests.PREFIX;
 import static org.rodinp.core.tests.relations.ItemRelationParserTests.aTypes;
@@ -206,14 +208,14 @@ public class RelationsTests {
 		final ElementTypeRelations expectedElemRels = getExpectedElemRelations(itemRels);
 		final AttributeTypeRelations expectedAttrRels = getExpectedAttrRelations(itemRels);
 		for (InternalElementType2<?> type : computer.getElemTypes()) {
-			assertArrayEquals(expectedElemRels.getParentTypes(type),
-					type.getParentTypes());
-			assertArrayEquals(expectedElemRels.getChildTypes(type),
-					type.getChildTypes());
+			assertEquals(expectedElemRels.getParentTypes(type),
+					asList(type.getParentTypes()));
+			assertEquals(expectedElemRels.getChildTypes(type),
+					asList(type.getChildTypes()));
 		}
 		for (AttributeType<?> type : computer.getAttributeTypes()) {
-			assertArrayEquals(expectedAttrRels.getElementsTypes(type),
-					type.getElementTypes());
+			assertEquals(expectedAttrRels.getElementsTypes(type),
+					asList(type.getElementTypes()));
 		}
 	}
 

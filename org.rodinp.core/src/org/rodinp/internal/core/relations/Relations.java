@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.rodinp.internal.core.relations;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -107,13 +108,13 @@ public abstract class Relations<S, T> {
 			Relations<InternalElementType2<?>, AttributeType<?>> {
 
 		/** Returns all element types that can carry the given element type. */
-		public InternalElementType2<?>[] getElementsTypes(AttributeType<?> type) {
-			return getElementArray(getParentsOf(type));
+		public List<InternalElementType2<?>> getElementsTypes(AttributeType<?> type) {
+			return asSortedList(getParentsOf(type));
 		}
 
 		/** Returns all attribute types of the given element type. */
-		public AttributeType<?>[] getAttributes(InternalElementType2<?> type) {
-			return getAttributeArray(getChildrenOf(type));
+		public List<AttributeType<?>> getAttributes(InternalElementType2<?> type) {
+			return asSortedList(getChildrenOf(type));
 		}
 
 	}
@@ -123,17 +124,23 @@ public abstract class Relations<S, T> {
 			Relations<InternalElementType2<?>, InternalElementType2<?>> {
 
 		/** Returns all parent element types of the given element type. */
-		public InternalElementType2<?>[] getParentTypes(
+		public List<InternalElementType2<?>> getParentTypes(
 				InternalElementType2<?> type) {
-			return getElementArray(parentsMap.get(type));
+			return asSortedList(getParentsOf(type));
 		}
 
 		/** Returns all child element types of the given element type. */
-		public InternalElementType2<?>[] getChildTypes(
+		public List<InternalElementType2<?>> getChildTypes(
 				InternalElementType2<?> type) {
-			return getElementArray(childrenMap.get(type));
+			return asSortedList(getChildrenOf(type));
 		}
 	
+	}
+
+	protected static <U extends Comparable<U>> List<U> asSortedList(Set<U> set) {
+		final List<U> result = new ArrayList<U>(set);
+		Collections.sort(result);
+		return result;
 	}
 
 	protected static AttributeType<?>[] getAttributeArray(Set<AttributeType<?>> set) {

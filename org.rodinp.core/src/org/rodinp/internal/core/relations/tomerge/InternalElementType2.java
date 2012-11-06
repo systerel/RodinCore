@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.rodinp.internal.core.relations.tomerge;
 
-import static java.util.Arrays.asList;
-
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
+import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.relations.api.IInternalElementType2;
 
@@ -31,11 +30,12 @@ import org.rodinp.internal.core.relations.api.IInternalElementType2;
  * @author Laurent Voisin
  */
 public class InternalElementType2<T extends IInternalElement> extends
-		InternalElementType<T> implements IInternalElementType2<T> {
+		InternalElementType<T> implements IInternalElementType2<T>,
+		Comparable<InternalElementType2<?>> {
 
-	private List<IInternalElementType<?>> parentTypes = null;
-	private List<IInternalElementType<?>> childTypes = null;
-	private List<IAttributeType> attributeTypes = null;
+	private List<InternalElementType2<?>> parentTypes = null;
+	private List<InternalElementType2<?>> childTypes = null;
+	private List<AttributeType<?>> attributeTypes = null;
 
 	public InternalElementType2(IConfigurationElement configurationElement) {
 		super(configurationElement);
@@ -47,21 +47,21 @@ public class InternalElementType2<T extends IInternalElement> extends
 	}
 
 	@Override
-	public IInternalElementType<?>[] getChildTypes() {
+	public InternalElementType<?>[] getChildTypes() {
 		return childTypes
-				.toArray(new IInternalElementType<?>[childTypes.size()]);
+				.toArray(new InternalElementType<?>[childTypes.size()]);
 	}
 
 	@Override
-	public IInternalElementType<?>[] getParentTypes() {
-		return parentTypes.toArray(new IInternalElementType<?>[parentTypes
+	public InternalElementType<?>[] getParentTypes() {
+		return parentTypes.toArray(new InternalElementType<?>[parentTypes
 				.size()]);
 	}
 
 	@Override
-	public IAttributeType[] getAttributeTypes() {
+	public AttributeType<?>[] getAttributeTypes() {
 		return attributeTypes
-				.toArray(new IAttributeType[attributeTypes.size()]);
+				.toArray(new AttributeType[attributeTypes.size()]);
 	}
 
 	@Override
@@ -69,16 +69,21 @@ public class InternalElementType2<T extends IInternalElement> extends
 		return attributeTypes.contains(attributeType);
 	}
 
-	public void setRelation(IInternalElementType<?>[] pTypes,
-			IInternalElementType<?>[] cTypes, IAttributeType[] aTypes) {
+	public void setRelation(List<InternalElementType2<?>> pTypes,
+			List<InternalElementType2<?>> cTypes, List<AttributeType<?>> aTypes) {
 		if (parentTypes != null || childTypes != null || attributeTypes != null) {
 			throw new IllegalStateException(
 					"Illegal attempt to set relations for internal element type "
 							+ getName());
 		}
-		this.parentTypes = asList(pTypes);
-		this.childTypes = asList(cTypes);
-		this.attributeTypes = asList(aTypes);
+		this.parentTypes = pTypes;
+		this.childTypes = cTypes;
+		this.attributeTypes = aTypes;
+	}
+
+	@Override
+	public int compareTo(InternalElementType2<?> other) {
+		return this.id.compareTo(other.id);
 	}
 
 }

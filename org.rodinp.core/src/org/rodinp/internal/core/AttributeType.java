@@ -13,8 +13,6 @@
 
 package org.rodinp.internal.core;
 
-import static java.util.Arrays.asList;
-
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -25,6 +23,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.internal.core.relations.api.IAttributeType2;
+import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 import org.rodinp.internal.core.util.Util;
 
 /**
@@ -33,7 +32,7 @@ import org.rodinp.internal.core.util.Util;
  * @author Laurent Voisin
  */
 public abstract class AttributeType<V> implements IAttributeType, IAttributeType2,
-		IContributedItemType {
+		IContributedItemType, Comparable<AttributeType<V>> {
 
 	public static enum Kind {
 		BOOLEAN("boolean") { //$NON-NLS-N$
@@ -359,7 +358,7 @@ public abstract class AttributeType<V> implements IAttributeType, IAttributeType
 
 	private final java.lang.String name;
 	
-	private List<IInternalElementType<?>> elementTypes = null;
+	private List<InternalElementType2<?>> elementTypes = null;
 
 	protected AttributeType(Kind kind, java.lang.String id,
 			java.lang.String name) {
@@ -411,8 +410,8 @@ public abstract class AttributeType<V> implements IAttributeType, IAttributeType
 	}
 
 	@Override
-	public IInternalElementType<?>[] getElementTypes() {
-		return elementTypes.toArray(new IInternalElementType<?>[elementTypes
+	public InternalElementType2<?>[] getElementTypes() {
+		return elementTypes.toArray(new InternalElementType2<?>[elementTypes
 				.size()]);
 	}
 
@@ -435,15 +434,20 @@ public abstract class AttributeType<V> implements IAttributeType, IAttributeType
 	public abstract AttributeValue<?, ?> makeValueFromRaw(
 			java.lang.String rawValue) throws RodinDBException;
 
-	public void setRelation(IInternalElementType<?>[] eTypes) {
+	public void setRelation(List<InternalElementType2<?>> eTypes) {
 		if (elementTypes != null) {
 			throw new IllegalStateException(
 					"Illegal attempt to set relations for attribute type "
 							+ getName());
 		}
-		this.elementTypes = asList(eTypes);
+		this.elementTypes = eTypes;
 	}
 
 	public abstract java.lang.String toString(V value);
+
+	@Override
+	public int compareTo(AttributeType<V> other) {
+		return this.id.compareTo(other.id);
+	}
 
 }
