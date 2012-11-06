@@ -19,8 +19,6 @@ import java.util.Set;
 import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.relations.Relations.AttributeTypeRelations;
 import org.rodinp.internal.core.relations.Relations.ElementTypeRelations;
-import org.rodinp.internal.core.relations.api.IAttributeType2;
-import org.rodinp.internal.core.relations.api.IInternalElementType2;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
@@ -28,8 +26,8 @@ import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
  * internal element types and attribute types with relationship information.
  * 
  * @author Thomas Muller
- * @see IInternalElementType2
- * @see IAttributeType2
+ * @see InternalElementType2
+ * @see AttributeType
  * @see ItemRelation
  */
 public class RelationsComputer {
