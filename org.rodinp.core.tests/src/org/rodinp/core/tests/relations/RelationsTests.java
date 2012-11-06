@@ -53,8 +53,8 @@ public class RelationsTests {
 	}
 
 	/**
-	 * Ensures that a parent element type can be in a direct relationship two
-	 * child element types.
+	 * Ensures that a parent element type can be in a direct relationship with
+	 * two child element types.
 	 */
 	@Test
 	public void testTwoChildrenRelation() {
@@ -63,7 +63,7 @@ public class RelationsTests {
 
 	/**
 	 * Ensures that two different parent element types can be in a direct
-	 * relationship the same child element type.
+	 * relationship with the same child element type.
 	 */
 	@Test
 	public void testTwoParentsRelation() {
@@ -71,8 +71,8 @@ public class RelationsTests {
 	}
 
 	/**
-	 * Ensures that a direct cycle relationship can be defined for a given
-	 * element type instance.
+	 * Ensures that an element can parent an element of the same type (cycle of
+	 * length 1).
 	 */
 	@Test
 	public void testCycle1Relation() {
@@ -80,8 +80,7 @@ public class RelationsTests {
 	}
 
 	/**
-	 * Ensures that an indirect cycle can exist within relationships between two
-	 * element type instances.
+	 * Ensures that a cycle of length 2 is supported.
 	 */
 	@Test
 	public void testCycle2Relation() {
@@ -89,8 +88,7 @@ public class RelationsTests {
 	}
 
 	/**
-	 * Ensures that an indirect cycle of length 3 can exist within relationships
-	 * between three element type instances.
+	 * Ensures that a cycle of length 3 is supported.
 	 */
 	@Test
 	public void testCycle3Relation() {
@@ -98,8 +96,7 @@ public class RelationsTests {
 	}
 
 	/**
-	 * Ensures that a relationship can be reduced as a to a single pair
-	 * consisting of a parent element type and an attribute type.
+	 * Ensures that attribute relationships are supported.
 	 */
 	@Test
 	public void testAttributeRelation() {
@@ -107,8 +104,8 @@ public class RelationsTests {
 	}
 
 	/**
-	 * Ensures that a parent-child relationship can be composed of both child
-	 * attribute types and child element types.
+	 * Ensures that a relationship with both child and attribute types is
+	 * supported.
 	 */
 	@Test
 	public void testMixedChildAndAttributes() {
