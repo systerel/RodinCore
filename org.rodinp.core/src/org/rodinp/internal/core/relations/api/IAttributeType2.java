@@ -73,20 +73,21 @@ import org.rodinp.core.RodinCore;
 public interface IAttributeType2 extends IAttributeType {
 
 	/**
-	 * Returns the types of elements that can carry this attribute type.
+	 * Returns the types of internal elements that can carry an attribute of
+	 * this type.
 	 * 
-	 * @return the internal element types that can carry this attribute type
+	 * @return the types of element that can carry an attribute of this type
 	 */
 	IInternalElementType<?>[] getElementTypes();
 
 	/**
-	 * Tells whether this attribute type can be carried by an element of the
-	 * given type.
+	 * Tells whether an attribute of this type can be carried by an element of
+	 * the given type.
 	 * 
 	 * @param elementType
-	 *            an element type
-	 * @return <code>true</code> iff this attribute type can be carried by an
-	 *         element of the given type
+	 *            an internal element type
+	 * @return <code>true</code> iff an element of the given type can carry an
+	 *         attribute of this type
 	 */
 	boolean isAttributeOf(IInternalElementType<?> elementType);
 

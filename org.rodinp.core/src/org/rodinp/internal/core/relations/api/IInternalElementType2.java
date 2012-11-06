@@ -45,49 +45,51 @@ public interface IInternalElementType2<T extends IInternalElement> extends
 		IInternalElementType<T> {
 
 	/**
-	 * Returns the types of the elements that can parent an element of this
-	 * type.
+	 * Returns the types of the internal elements that can parent an element of
+	 * this type.
 	 * 
-	 * @return the internal element types that can parent an element of this
-	 *         type
+	 * @return the types of the internal elements that can parent an element of
+	 *         this type
 	 */
 	IInternalElementType<?>[] getParentTypes();
 
 	/**
-	 * Returns the types of the elements that can occur as child of an element
-	 * of this type.
+	 * Returns the types of the internal elements that can occur as children of
+	 * an internal element of this type.
 	 * 
-	 * @return the internal element types that can occur as child of an element
-	 *         of this type
+	 * @return the types of the internal elements that can occur as children of
+	 *         an internal element of this type
 	 */
 	IInternalElementType<?>[] getChildTypes();
 
 	/**
-	 * Returns all attribute types that elements of this type can carry.
+	 * Returns the types of the attributes that internal elements of this type
+	 * can carry.
 	 * 
-	 * @return all attribute types that elements of this type can carry
+	 * @return the types of the attributes that internal elements of this type
+	 *         can carry
 	 */
 	IAttributeType[] getAttributeTypes();
 
 	/**
-	 * Tells whether an element of this type can parent an element of the given
-	 * type.
+	 * Tells whether an internal element of this type can parent an internal
+	 * element of the given type.
 	 * 
 	 * @param childType
-	 *            an element type
-	 * @return <code>true</code> iff an element of this type can parent an
-	 *         element of the given type
+	 *            an internal element type
+	 * @return <code>true</code> iff an internal element of this type can parent
+	 *         an internal element of the given type
 	 */
 	boolean canParent(IInternalElementType<?> childType);
 
 	/**
-	 * Tells whether an element of this type can carry an attribute of the given
-	 * type.
+	 * Tells whether an internal element of this type can carry an attribute of
+	 * the given type.
 	 * 
 	 * @param attributeType
 	 *            an attribute type
-	 * @return <code>true</code> iff an element of this type can carry an
-	 *         attribute of the given type
+	 * @return <code>true</code> iff an internal element of this type can carry
+	 *         an attribute of the given type
 	 */
 	boolean canCarry(IAttributeType attributeType);
 
