@@ -86,10 +86,12 @@ public class RelationsComputer {
 		}
 	}
 
+	// For testing purposes
 	public Set<InternalElementType2<?>> getElemTypes() {
 		return unmodifiableSet(elemTypes);
 	}
 
+	// For testing purposes
 	public Set<AttributeType<?>> getAttributeTypes() {
 		return unmodifiableSet(attrTypes);
 	}

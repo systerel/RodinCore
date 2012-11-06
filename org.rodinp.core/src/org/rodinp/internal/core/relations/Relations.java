@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.rodinp.internal.core.relations;
 
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +29,7 @@ import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
  * 
  * @author Thomas Muller
  */
-public abstract class Relations<S, T> {
+public abstract class Relations<S extends Comparable<S>, T extends Comparable<T>> {
 
 	final Map<S, Set<T>> childrenMap = new HashMap<S, Set<T>>();
 	final Map<T, Set<S>> parentsMap = new HashMap<T, Set<S>>();
@@ -51,56 +53,29 @@ public abstract class Relations<S, T> {
 	private static <U, V> Set<V> getSetValue(Map<U, Set<V>> map, U key) {
 		Set<V> result = map.get(key);
 		if (result == null) {
-			result = new LinkedHashSet<V>();
+			result = new HashSet<V>();
 			map.put(key, result);
 		}
 		return result;
 	}
 
 	/** Returns all the parents of the given child element. */
-	protected Set<S> getParentsOf(T childElement) {
-		final Set<S> parents = parentsMap.get(childElement);
-		return parents == null ? Collections.<S> emptySet() : parents;
+	protected List<S> getParentsOf(T childElement) {
+		return asSortedList(parentsMap.get(childElement));
 	}
 
 	/** Returns all the children of the given parent element. */
-	protected Set<T> getChildrenOf(S parentElement) {
-		final Set<T> children = childrenMap.get(parentElement);
-		return children == null ? Collections.<T> emptySet() : children;
+	protected List<T> getChildrenOf(S parentElement) {
+		return asSortedList(childrenMap.get(parentElement));
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((childrenMap == null) ? 0 : childrenMap.hashCode());
-		result = prime * result
-				+ ((parentsMap == null) ? 0 : parentsMap.hashCode());
+	protected static <U extends Comparable<U>> List<U> asSortedList(Set<U> set) {
+		if (set == null) {
+			return emptyList();
+		}
+		final List<U> result = new ArrayList<U>(set);
+		Collections.sort(result);
 		return result;
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Relations other = (Relations) obj;
-		if (childrenMap == null) {
-			if (other.childrenMap != null)
-				return false;
-		} else if (!childrenMap.equals(other.childrenMap))
-			return false;
-		if (parentsMap == null) {
-			if (other.parentsMap != null)
-				return false;
-		} else if (!parentsMap.equals(other.parentsMap))
-			return false;
-		return true;
 	}
 
 	// public for testing purpose only
@@ -110,13 +85,13 @@ public abstract class Relations<S, T> {
 		/** Returns all element types that can carry the given element type. */
 		public List<InternalElementType2<?>> getElementTypes(
 				AttributeType<?> type) {
-			return asSortedList(getParentsOf(type));
+			return getParentsOf(type);
 		}
 
 		/** Returns all attribute types of the given element type. */
 		public List<AttributeType<?>> getAttributeTypes(
 				InternalElementType2<?> type) {
-			return asSortedList(getChildrenOf(type));
+			return getChildrenOf(type);
 		}
 
 	}
@@ -128,34 +103,15 @@ public abstract class Relations<S, T> {
 		/** Returns all parent element types of the given element type. */
 		public List<InternalElementType2<?>> getParentTypes(
 				InternalElementType2<?> type) {
-			return asSortedList(getParentsOf(type));
+			return getParentsOf(type);
 		}
 
 		/** Returns all child element types of the given element type. */
 		public List<InternalElementType2<?>> getChildTypes(
 				InternalElementType2<?> type) {
-			return asSortedList(getChildrenOf(type));
+			return getChildrenOf(type);
 		}
 
-	}
-
-	protected static <U extends Comparable<U>> List<U> asSortedList(Set<U> set) {
-		final List<U> result = new ArrayList<U>(set);
-		Collections.sort(result);
-		return result;
-	}
-
-	protected static AttributeType<?>[] getAttributeArray(
-			Set<AttributeType<?>> set) {
-		return set.toArray(new AttributeType<?>[set.size()]);
-	}
-
-	protected static InternalElementType2<?>[] getElementArray(
-			Set<InternalElementType2<?>> set) {
-		if (set == null) {
-			return new InternalElementType2<?>[0];
-		}
-		return set.toArray(new InternalElementType2<?>[set.size()]);
 	}
 
 }
