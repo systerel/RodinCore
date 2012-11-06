@@ -75,14 +75,14 @@ public class RelationsComputer {
 			type.setRelation(//
 					elemRels.getParentTypes(type), //
 					elemRels.getChildTypes(type), //
-					attrRels.getAttributes(type) //
+					attrRels.getAttributeTypes(type) //
 			);
 		}
 	}
 
 	public void setAttributeRelations() {
 		for (AttributeType<?> attribute : attrTypes) {
-			attribute.setRelation(attrRels.getElementsTypes(attribute));
+			attribute.setRelation(attrRels.getElementTypes(attribute));
 		}
 	}
 

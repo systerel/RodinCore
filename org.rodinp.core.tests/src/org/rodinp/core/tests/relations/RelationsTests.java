@@ -214,7 +214,7 @@ public class RelationsTests {
 					asList(type.getChildTypes()));
 		}
 		for (AttributeType<?> type : computer.getAttributeTypes()) {
-			assertEquals(expectedAttrRels.getElementsTypes(type),
+			assertEquals(expectedAttrRels.getElementTypes(type),
 					asList(type.getElementTypes()));
 		}
 	}

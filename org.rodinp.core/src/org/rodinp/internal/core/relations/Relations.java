@@ -108,12 +108,14 @@ public abstract class Relations<S, T> {
 			Relations<InternalElementType2<?>, AttributeType<?>> {
 
 		/** Returns all element types that can carry the given element type. */
-		public List<InternalElementType2<?>> getElementsTypes(AttributeType<?> type) {
+		public List<InternalElementType2<?>> getElementTypes(
+				AttributeType<?> type) {
 			return asSortedList(getParentsOf(type));
 		}
 
 		/** Returns all attribute types of the given element type. */
-		public List<AttributeType<?>> getAttributes(InternalElementType2<?> type) {
+		public List<AttributeType<?>> getAttributeTypes(
+				InternalElementType2<?> type) {
 			return asSortedList(getChildrenOf(type));
 		}
 
@@ -134,7 +136,7 @@ public abstract class Relations<S, T> {
 				InternalElementType2<?> type) {
 			return asSortedList(getChildrenOf(type));
 		}
-	
+
 	}
 
 	protected static <U extends Comparable<U>> List<U> asSortedList(Set<U> set) {
@@ -143,10 +145,11 @@ public abstract class Relations<S, T> {
 		return result;
 	}
 
-	protected static AttributeType<?>[] getAttributeArray(Set<AttributeType<?>> set) {
+	protected static AttributeType<?>[] getAttributeArray(
+			Set<AttributeType<?>> set) {
 		return set.toArray(new AttributeType<?>[set.size()]);
 	}
-	
+
 	protected static InternalElementType2<?>[] getElementArray(
 			Set<InternalElementType2<?>> set) {
 		if (set == null) {
