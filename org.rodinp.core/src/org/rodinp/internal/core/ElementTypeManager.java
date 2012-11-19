@@ -18,8 +18,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
@@ -27,7 +25,6 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinCore;
 
 /**
  * Manager for Rodin element types.
@@ -62,10 +59,7 @@ public class ElementTypeManager {
 	}
 
 	private FileAssociation getFileAssociation(IContentType contentType) {
-		if (fileContentTypes == null) {
-			computeFileAssociations();
-		}
-		return fileContentTypes.get(contentType.getId());
+		return fileAssociations.getFromContentId(contentType.getId());
 	}
 	
 	public FileAssociation getFileAssociationFor(String fileName) {
@@ -76,41 +70,9 @@ public class ElementTypeManager {
 		}
 		return getFileAssociation(contentType);
 	}
-
-	// Local id of the fileAssociations extension point of this plugin
-	private static final String FILE_ASSOCIATIONS_ID = "fileAssociations";
 	
-	// Access to file association using their content type name
-	private HashMap<String, FileAssociation> fileContentTypes;
-
-	// Access to file association using their root element id
-	private HashMap<String, FileAssociation> fileRootElementTypeIds;
-
-	private void computeFileAssociations() {
-		fileRootElementTypeIds = new HashMap<String, FileAssociation>();
-		fileContentTypes = new HashMap<String, FileAssociation>();
-		
-		// Read the extension point extensions.
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IConfigurationElement[] elements = 
-			registry.getConfigurationElementsFor(RodinCore.PLUGIN_ID, FILE_ASSOCIATIONS_ID);
-		for (IConfigurationElement element: elements) {
-			FileAssociation type = new FileAssociation(element);
-			fileRootElementTypeIds.put(type.getRootElementTypeId(), type);
-			fileContentTypes.put(type.getContentTypeId(), type);
-		}
-
-		if (VERBOSE) {
-			debug("-----------------------------------------------");
-			debug("File association known to the Rodin database:");
-			for (String id: getSortedIds(fileRootElementTypeIds)) {
-				FileAssociation type = fileRootElementTypeIds.get(id);
-				debug("    root-element-type: " + id);
-				debug("    content-type: " + type.getContentTypeId());
-			}
-			debug("-----------------------------------------------");
-		}
-	}
+	//Associative map of file associations
+	private final FileAssociations fileAssociations = new FileAssociations();
 
 	// Associative map of internal element types
 	private final InternalElementTypes internalElementTypes = new InternalElementTypes();
@@ -152,14 +114,6 @@ public class ElementTypeManager {
 		}
 		// Maybe the file doesn't exist, try with its filename
 		return getFileAssociationFor(file.getName());
-	}
-
-	public FileAssociation getFileAssociation(
-			String id) {
-		if (fileRootElementTypeIds == null) {
-			computeFileAssociations();
-		}
-		return fileRootElementTypeIds.get(id);
 	}
 	
 	/**
