@@ -64,6 +64,7 @@ public class AllTests {
 		suite.addTestSuite(TestDatatypeTranslation.class);
 		suite.addTestSuite(TestDatatypeTranslator.class);
 		suite.addTestSuite(TestEnumDatatypeTranslator.class);
+		suite.addTestSuite(TestFreshNameSolver.class);
 		//$JUnit-END$
 		return suite;
 	}

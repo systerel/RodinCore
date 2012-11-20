@@ -97,7 +97,7 @@ public class FreshNameSolver {
 	 * in the mathematical language of this solver.
 	 * <p>
 	 * However, this method can only be called if the context manipulated is a
-	 * set of used names (i.e. the constuctor that has been used is
+	 * set of used names (i.e. the constructor that has been used is
 	 * {@link FreshNameSolver#FreshNameSolver(Set, FormulaFactory)}) to avoid
 	 * defining an ambiguous context for name solving.
 	 * </p>
