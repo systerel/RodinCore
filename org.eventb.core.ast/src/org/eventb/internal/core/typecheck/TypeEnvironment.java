@@ -171,9 +171,23 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	 */
 	@Override
 	public void addName(String name, Type type) {
-		assert name != null && type != null;
+		if(name == null){
+			throw new NullPointerException("Null name");
+		} else {
+			if (!this.getFormulaFactory().isValidIdentifierName(name)) {
+				throw new IllegalArgumentException(name
+						+ " is an invalid identifier name in current language");
+			}
+		}
+		if(type == null){
+			throw new NullPointerException("Null type");
+		}
 		Type oldType = map.get(name);
-		assert oldType == null || oldType.equals(type);
+		if(oldType != null && !oldType.equals(type)){
+			throw new IllegalArgumentException(
+					"Trying to register an existing name with a different type");
+		}
+
 		map.put(name, type);
 	}
 

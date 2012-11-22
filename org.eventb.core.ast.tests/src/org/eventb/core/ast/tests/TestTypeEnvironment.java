@@ -122,7 +122,48 @@ public class TestTypeEnvironment {
 		te.addName("x", INT);
 		assertEquals("{x=ℤ}", te.toString());
 	}
-
+	
+	/*
+	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addName(String, Type)'
+	 * with a null pointer name parameter
+	 */
+	@Test(expected = NullPointerException.class)
+	public void testAddNameNullPointerName() {
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		te.addName(null,  INT);
+	}
+	
+	/*
+	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addName(String, Type)'
+	 * with a null pointer name parameter
+	 */
+	@Test(expected = NullPointerException.class)
+	public void testAddNameNullPointerType() {
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		te.addName("x", null);
+	}
+	
+	/*
+	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addName(String, Type)'
+	 * using same name for different types
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddNameWithTwoTypes() {
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		te.addName("x", INT);
+		te.addName("x", BOOL);
+	}
+	
+	/*
+	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addName(String,
+	 * Type)' using an invalid identifier
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddNameWithInvalidIdentifier() {
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		te.addName("id", BOOL);
+	}
+	
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.clone()'
 	 */
