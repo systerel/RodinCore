@@ -340,7 +340,7 @@ public class TestLib {
 	}
 
 	public static Predicate genPred(String str, FormulaFactory factory){
-		return genPred(mDLib(factory).makeTypeEnvironment(), str);
+		return genPred(factory.makeTypeEnvironment(), str);
 	}
 
 	/**

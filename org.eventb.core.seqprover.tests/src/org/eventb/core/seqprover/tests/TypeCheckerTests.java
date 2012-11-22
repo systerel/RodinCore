@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void simpleOK() throws Exception {
-		final ITypeEnvironment typenv = genTypeEnv("x=S");
+		final ITypeEnvironment typenv = genTypeEnv("S=ℙ(S), x=S");
 		final TypeChecker checker = new TypeChecker(typenv);
 		checker.checkFormula(ff.makeFreeIdentifier("x", null, type_S));
 		assertTypenv(checker, typenv, false);
@@ -81,7 +81,7 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void badTypeInFormula() throws Exception {
-		final ITypeEnvironment typenv = genTypeEnv("x=S");
+		final ITypeEnvironment typenv = genTypeEnv("S=ℙ(S), T=ℙ(T), x=S");
 		final TypeChecker checker = new TypeChecker(typenv);
 		checker.checkFormula(ff.makeFreeIdentifier("x", null, type_T));
 		assertTypenv(checker, typenv, false);
@@ -95,7 +95,7 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void addFreshIdent() throws Exception {
-		final ITypeEnvironment typenv = genTypeEnv("x=S");
+		final ITypeEnvironment typenv = genTypeEnv("S=ℙ(S), T=ℙ(T), x=S");
 		final TypeChecker checker = new TypeChecker(typenv);
 		final FreeIdentifier[] idents = new FreeIdentifier[] { ff
 				.makeFreeIdentifier("y", null, type_T),//
@@ -117,7 +117,7 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void addNonFreshIdentCompatible() throws Exception {
-		final ITypeEnvironment typenv = genTypeEnv("x=S");
+		final ITypeEnvironment typenv = genTypeEnv("S=ℙ(S), x=S");
 		final TypeChecker checker = new TypeChecker(typenv);
 		final FreeIdentifier[] idents = new FreeIdentifier[] { ff
 				.makeFreeIdentifier("x", null, type_S),//
@@ -134,7 +134,7 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void addNonFreshIdentIncompatible() throws Exception {
-		final ITypeEnvironment typenv = genTypeEnv("x=S");
+		final ITypeEnvironment typenv = genTypeEnv("S=ℙ(S), T=ℙ(T), x=S");
 		final TypeChecker checker = new TypeChecker(typenv);
 		final FreeIdentifier[] idents = new FreeIdentifier[] { ff
 				.makeFreeIdentifier("x", null, type_T),//

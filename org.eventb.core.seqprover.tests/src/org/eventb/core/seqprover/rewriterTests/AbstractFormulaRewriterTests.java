@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,12 +23,14 @@ import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 
 /**
  * Abstract base class for testing formula rewriters.
@@ -94,7 +96,11 @@ public abstract class AbstractFormulaRewriterTests {
 				final String typeString = env[i + 1];
 				final IParseResult res = factory.parseType(typeString, V2);
 				assertNoProblem(res, typeString, "is not a type");
-				typenv.addName(name, res.getParsedType());
+				final Type type = res.getParsedType();
+				for (final GivenType givenType: type.getGivenTypes()) {
+					typenv.addGivenSet(givenType.getName());
+				}
+				typenv.addName(name, type);
 			}
 			return typenv;
 		}
