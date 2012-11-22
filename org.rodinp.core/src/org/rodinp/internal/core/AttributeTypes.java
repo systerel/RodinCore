@@ -31,8 +31,9 @@ public class AttributeTypes extends ContributedItemTypes<AttributeType<?>> {
 	// Local id of the attributeTypes extension point of this plug-in
 	private static final String ATTRIBUTE_TYPES_ID = "attributeTypes";
 
-	public AttributeTypes() {
-		super(ATTRIBUTE_TYPES_ID);
+
+	public AttributeTypes(ElementTypeManager elementTypeManager) {
+		super(ATTRIBUTE_TYPES_ID, elementTypeManager);
 	}
 
 	@Override

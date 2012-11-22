@@ -31,9 +31,12 @@ public abstract class ContributedItemTypes<T extends IContributedItemType> {
 
 	private final String extensionPointName;
 	protected final HashMap<String, T> map = new HashMap<String, T>();
+	protected final ElementTypeManager elementTypeManager;
 
-	public ContributedItemTypes(String extensionPointName) {
+	public ContributedItemTypes(String extensionPointName,
+			ElementTypeManager elementTypeManager) {
 		this.extensionPointName = extensionPointName;
+		this.elementTypeManager = elementTypeManager;
 		computeTypes();
 	}
 

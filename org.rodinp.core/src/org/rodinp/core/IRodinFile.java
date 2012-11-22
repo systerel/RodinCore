@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ package org.rodinp.core;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rodinp.internal.core.ElementType;
+import org.rodinp.internal.core.ElementTypeManager;
 
 /**
  * Represents an entire Rodin file. File elements need to be opened before they
@@ -44,7 +44,8 @@ public interface IRodinFile extends IRodinElement, IOpenable, IParent,
 	/**
 	 * The element type of all Rodin Files.
 	 */
-	IElementType<IRodinFile> ELEMENT_TYPE = ElementType.FILE_ELEMENT_TYPE;
+	IElementType<IRodinFile> ELEMENT_TYPE = ElementTypeManager.getInstance()
+			.getFileElementType();
 
 	/**
 	 * Creates this file in the database. As a side effect, all ancestors of

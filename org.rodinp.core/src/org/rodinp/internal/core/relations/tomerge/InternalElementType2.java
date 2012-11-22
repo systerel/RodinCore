@@ -17,6 +17,7 @@ import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.AttributeType;
+import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.relations.api.IInternalElementType2;
 
@@ -37,8 +38,9 @@ public class InternalElementType2<T extends IInternalElement> extends
 	private List<InternalElementType2<?>> childTypes = null;
 	private List<AttributeType<?>> attributeTypes = null;
 
-	public InternalElementType2(IConfigurationElement configurationElement) {
-		super(configurationElement);
+	public InternalElementType2(IConfigurationElement configurationElement,
+			ElementTypeManager elementTypeManager) {
+		super(configurationElement, elementTypeManager);
 	}
 
 	@Override

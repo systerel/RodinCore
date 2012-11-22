@@ -12,6 +12,7 @@ package org.rodinp.core.tests.relations;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.InternalElementTypes;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
@@ -24,6 +25,10 @@ import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
  * @author Thomas Muller
  */
 public class InternalTestTypes extends InternalElementTypes {
+
+	public InternalTestTypes(ElementTypeManager elementTypeManager) {
+		super(elementTypeManager);
+	}
 
 	private static final IConfigurationElement[] NONE = new IConfigurationElement[0];
 
@@ -55,7 +60,8 @@ public class InternalTestTypes extends InternalElementTypes {
 
 	@Override
 	protected InternalElementType<?> makeType(IConfigurationElement element) {
-		return new InternalElementType2<IInternalElement>(element);
+		return new InternalElementType2<IInternalElement>(element,
+				elementTypeManager);
 	}
 
 }

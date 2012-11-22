@@ -38,10 +38,10 @@ public class InternalElementType<T extends IInternalElement> extends
 	// (cached value)
 	protected Class<? extends T> classObject;
 
-
-	public InternalElementType(IConfigurationElement configurationElement) {
-		super(configurationElement);
-		this.className = configurationElement.getAttribute("class");		
+	public InternalElementType(IConfigurationElement configurationElement,
+			ElementTypeManager elementTypeManager) {
+		super(configurationElement, elementTypeManager);
+		this.className = configurationElement.getAttribute("class");
 	}
 
 	@SuppressWarnings("unchecked")

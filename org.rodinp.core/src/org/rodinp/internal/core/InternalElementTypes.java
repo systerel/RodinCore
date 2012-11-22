@@ -32,13 +32,14 @@ public class InternalElementTypes extends
 	// Local id of the internalElementTypes extension point of this plug-in
 	protected static final String INTERNAL_ELEMENT_TYPES_ID = "internalElementTypes";
 
-	public InternalElementTypes() {
-		super(INTERNAL_ELEMENT_TYPES_ID);
+	public InternalElementTypes(ElementTypeManager elementTypeManager) {
+		super(INTERNAL_ELEMENT_TYPES_ID, elementTypeManager);
 	}
 
 	@Override
 	protected InternalElementType<?> makeType(IConfigurationElement element) {
-		return new InternalElementType<IInternalElement>(element);
+		return new InternalElementType<IInternalElement>(element,
+				elementTypeManager);
 	}
 
 	@Override

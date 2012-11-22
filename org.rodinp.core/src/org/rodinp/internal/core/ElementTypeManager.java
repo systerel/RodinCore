@@ -24,7 +24,10 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinFile;
+import org.rodinp.core.IRodinProject;
 
 /**
  * Manager for Rodin element types.
@@ -45,17 +48,53 @@ public class ElementTypeManager {
 	/**
 	 * The singleton manager
 	 */
-	private static final ElementTypeManager MANAGER = new ElementTypeManager();
+	private static ElementTypeManager INSTANCE;
 	
+	//The registry of element types
+	private final ElementTypeRegistry typeRegistry;
+
+	//Associative map of file associations
+	private FileAssociations fileAssociations;
+	
+	//Associative map of internal element types
+	private InternalElementTypes internalElementTypes;
+	
+	//Associative map of internal attribute types
+	private AttributeTypes attributeTypes;
+
 	/**
 	 * Returns the singleton ElementTypeManager
 	 */
 	public final static ElementTypeManager getInstance() {
-		return MANAGER;
+		if (INSTANCE == null) {
+			INSTANCE = new ElementTypeManager();
+			INSTANCE.initialize();		
+		}
+		return INSTANCE;
+	}
+
+	/**
+	 * Returns the singleton ElementTypeManager
+	 */
+	public final static ElementTypeManager getInstanceForTests() {
+		if (INSTANCE == null) {
+			INSTANCE = new ElementTypeManager();
+		}
+		return INSTANCE;
 	}
 
 	private ElementTypeManager() {
-		// singleton: prevent others from creating a new instance
+		this.typeRegistry = new ElementTypeRegistry(this);
+		typeRegistry.registerCoreTypes();
+	}
+	
+	private void initialize() {
+		if (fileAssociations == null && internalElementTypes == null
+				&& attributeTypes == null) {
+			this.fileAssociations = new FileAssociations();
+			this.internalElementTypes = new InternalElementTypes(this);
+			this.attributeTypes = new AttributeTypes(this);
+		}
 	}
 
 	private FileAssociation getFileAssociation(IContentType contentType) {
@@ -71,14 +110,6 @@ public class ElementTypeManager {
 		return getFileAssociation(contentType);
 	}
 	
-	//Associative map of file associations
-	private final FileAssociations fileAssociations = new FileAssociations();
-
-	// Associative map of internal element types
-	private final InternalElementTypes internalElementTypes = new InternalElementTypes();
-	
-	// Associative map of internal attribute types
-	private final AttributeTypes attributeTypes = new AttributeTypes();
 
 	/**
 	 * Returns the internal element type with the given id.
@@ -129,7 +160,7 @@ public class ElementTypeManager {
 	}
 	
 	public IElementType<? extends IRodinElement> getElementType(String id) {
-		return ElementType.getElementType(id);
+		return typeRegistry.getElementType(id);
 	}
 
 	/**
@@ -154,6 +185,22 @@ public class ElementTypeManager {
 		String[] ids = idSet.toArray(new String[idSet.size()]);
 		Arrays.sort(ids);
 		return ids;
+	}
+
+	public void register(String id, ElementType<?> type) {
+		typeRegistry.register(id, type);
+	}
+
+	public IElementType<IRodinDB> getDatabaseElementType() {
+		return typeRegistry.getRodinDBType();
+	}
+
+	public IElementType<IRodinProject> getProjectElementType() {
+		return typeRegistry.getRodinProjectType();
+	}
+		
+	public IElementType<IRodinFile> getFileElementType() {
+		return typeRegistry.getRodinFileType();
 	}
 	
 }

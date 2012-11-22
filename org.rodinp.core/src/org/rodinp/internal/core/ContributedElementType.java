@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,8 +41,10 @@ public abstract class ContributedElementType<T extends IRodinElement> extends
 		return configElement.getAttribute("name");
 	}
 
-	public ContributedElementType(IConfigurationElement configurationElement) {
-		super(readId(configurationElement), readName(configurationElement));
+	public ContributedElementType(IConfigurationElement configurationElement,
+			ElementTypeManager typeManager) {
+		super(readId(configurationElement), readName(configurationElement),
+				typeManager);
 		this.bundleName = configurationElement.getContributor().getName();
 	}
 

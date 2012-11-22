@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.junit.Test;
+import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.ItemRelationParser;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
@@ -52,8 +53,11 @@ public class ItemRelationParserTests {
 
 	public static final String PREFIX = PLUGIN_ID + ".";
 
-	public static final InternalTestTypes eTypes = new InternalTestTypes();
-	public static final AttributeTestTypes aTypes = new AttributeTestTypes();
+	public static final ElementTypeManager typeManager = ElementTypeManager
+			.getInstanceForTests();
+	public static final InternalTestTypes eTypes = new InternalTestTypes(
+			typeManager);
+	public static final AttributeTestTypes aTypes = new AttributeTestTypes(typeManager);
 
 	private static final IConfigurationElement VALID_CHILD = node(
 			"relationship : parentTypeId='p'",

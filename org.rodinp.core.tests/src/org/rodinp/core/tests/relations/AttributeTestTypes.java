@@ -12,6 +12,7 @@ package org.rodinp.core.tests.relations;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.internal.core.AttributeTypes;
+import org.rodinp.internal.core.ElementTypeManager;
 
 /**
  * A class registering dynamic IAttributeTypes for testing. This is done
@@ -21,6 +22,10 @@ import org.rodinp.internal.core.AttributeTypes;
  * @author Thomas Muller
  */
 public class AttributeTestTypes extends AttributeTypes {
+
+	public AttributeTestTypes(ElementTypeManager elementTypeManager) {
+		super(elementTypeManager);
+	}
 
 	private static final IConfigurationElement[] NONE = new IConfigurationElement[0];
 

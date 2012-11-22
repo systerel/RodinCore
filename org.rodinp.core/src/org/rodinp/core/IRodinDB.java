@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.rodinp.internal.core.ElementType;
+import org.rodinp.internal.core.ElementTypeManager;
 
 /**
  * Represents the root Rodin element corresponding to the workspace. Since there
@@ -44,7 +44,8 @@ public interface IRodinDB extends IRodinElement, IOpenable, IParent {
 	/**
 	 * The element type of the Rodin database.
 	 */
-	IElementType<IRodinDB> ELEMENT_TYPE = ElementType.DATABASE_ELEMENT_TYPE;
+	IElementType<IRodinDB> ELEMENT_TYPE = ElementTypeManager.getInstance()
+			.getDatabaseElementType();
 
 	/**
 	 * Returns whether this Rodin database contains an
