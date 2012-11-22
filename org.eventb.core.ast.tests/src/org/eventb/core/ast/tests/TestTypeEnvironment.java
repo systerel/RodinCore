@@ -1,17 +1,32 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *     Systerel - port to JUnit 4
+ *******************************************************************************/ 
 package org.eventb.core.ast.tests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
+import org.junit.Test;
 
-public class TestTypeEnvironment extends TestCase {
+public class TestTypeEnvironment {
 
 	static FormulaFactory ff = FormulaFactory.getDefault();
 	
@@ -27,6 +42,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addAll(ITypeEnvironment)'
 	 */
+	@Test
 	public void testAddAllTypeEnv() {
 		ITypeEnvironment te1 = ff.makeTypeEnvironment();
 		ITypeEnvironment te2 = ff.makeTypeEnvironment();
@@ -56,6 +72,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addAll(FreeIdentifier[])'
 	 */
+	@Test
 	public void testAddAllFreeIdent() {
 		ITypeEnvironment te1 = ff.makeTypeEnvironment();
 		ITypeEnvironment te2 = ff.makeTypeEnvironment();
@@ -83,6 +100,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addGivenSet(String)'
 	 */
+	@Test
 	public void testAddGivenSet() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");
@@ -95,6 +113,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addName(String, Type)'
 	 */
+	@Test
 	public void testAddName() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		te.addName("x", INT);
@@ -107,6 +126,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.clone()'
 	 */
+	@Test
 	public void testClone() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		assertEquals(te, te.clone());
@@ -121,6 +141,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.contains(String)'
 	 */
+	@Test
 	public void testContains() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		assertFalse(te.contains("x"));
@@ -141,6 +162,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.containsAll(ITypeEnvironment)'
 	 */
+	@Test
 	public void testContainsAll() {
 		ITypeEnvironment te1 = ff.makeTypeEnvironment();
 		ITypeEnvironment empty = ff.makeTypeEnvironment();
@@ -174,6 +196,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.equals(Object)'
 	 */
+	@Test
 	public void testEquals() {
 		ITypeEnvironment te1 = ff.makeTypeEnvironment();
 		assertFalse(te1.equals(null));
@@ -198,6 +221,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.getIterator()'
 	 */
+	@Test
 	public void testGetIterator() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 
@@ -252,6 +276,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.getNames()'
 	 */
+	@Test
 	public void testGetNames() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		Set<String> expected = new HashSet<String>();
@@ -269,6 +294,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.getType(String)'
 	 */
+	@Test
 	public void testGetType() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		assertNull(te.getType("x"));
@@ -289,6 +315,7 @@ public class TestTypeEnvironment extends TestCase {
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.isEmpty()'
 	 */
+	@Test
 	public void testIsEmpty() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		assertTrue("Initial type environment should be empty", te.isEmpty());
@@ -302,6 +329,7 @@ public class TestTypeEnvironment extends TestCase {
 	}
 
 	
+	@Test
 	public void testIsGivenSet() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");

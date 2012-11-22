@@ -1,72 +1,82 @@
+/*******************************************************************************
+ * Copyright (c) 2009, 2012 University of Dusseldorf and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     University of Dusseldorf - initial API and implementation
+ *     Systerel - port to JUnit 4
+ *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
 import org.eventb.core.ast.expander.tests.PartitionExpanderTests;
 import org.eventb.core.ast.expander.tests.SmartFactoryTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	// $JUnit-BEGIN$
+	TestTypeCheckError.class,
+	TestTypes.class,
+	TestLegibility.class,
+	TestExprTypeChecker.class,
+	DocTests.class,
+	TestTypeEnvironment.class,
+	TestIdentRenaming.class,
+	TestBA.class,
+	TestTypedConstructor.class,
+	TestOrigin.class,
+	TestAST.class,
+	TestFreeIdents.class,
+	TestFormulaFactory.class,
+	TestUnparse.class,
+	TestSourceLocation.class,
+	TestTypeChecker.class,
+	TestSubstituteFormula.class,
+	TestLexer.class,
+	TestWD.class,
+	TestTypedIdentDecl.class,
+	TestDeBruijn.class,
+	TestParser.class,
+	TestTypedGeneric.class,
+	TestCollectNamesAbove.class,
+	TestFlattener.class,
+	TestSimpleVisitor.class,
+	TestPosition.class,
+	TestVisitor.class,
+	TestBoundIdentRenaming.class,
+	TestEquals.class,
+	TestFIS.class,
+	TestErrors.class,
+	TestLocation.class,
+	TestIntStack.class,
+	TestConflictResolver.class,
+	TestGivenTypes.class,
+	TestSubFormulas.class,
+	TestVersionUpgrader.class,
+	PartitionExpanderTests.class,
+	SmartFactoryTests.class,
+	TestPredicateVariables.class,
+	TestFormulaInspector.class,
+	TestWDStrict.class,
+	TestGenParser.class,
+	TestSpecialization.class,
+	TestTypeSpecialization.class,
+	TestTypenvSpecialization.class,
+	TestFormulaSpecialization.class,
+	TestDatatypeArgumentSets.class,
+	TestDatatypeRewriter.class,
+	TestDatatypeTranslation.class,
+	TestDatatypeTranslator.class,
+	TestEnumDatatypeTranslator.class,
+	TestFreshNameSolver.class,
+	// $JUnit-END$
+})
 public class AllTests {
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test for org.eventb.core.ast.tests");
-		//$JUnit-BEGIN$
-		suite.addTestSuite(TestTypeCheckError.class);
-		suite.addTestSuite(TestTypes.class);
-		suite.addTestSuite(TestLegibility.class);
-		suite.addTestSuite(TestExprTypeChecker.class);
-		suite.addTestSuite(DocTests.class);
-		suite.addTestSuite(TestTypeEnvironment.class);
-		suite.addTestSuite(TestIdentRenaming.class);
-		suite.addTestSuite(TestBA.class);
-		suite.addTestSuite(TestTypedConstructor.class);
-		suite.addTestSuite(TestOrigin.class);
-		suite.addTestSuite(TestAST.class);
-		suite.addTestSuite(TestFreeIdents.class);
-		suite.addTestSuite(TestFormulaFactory.class);
-		suite.addTestSuite(TestUnparse.class);
-		suite.addTestSuite(TestSourceLocation.class);
-		suite.addTestSuite(TestTypeChecker.class);
-		suite.addTestSuite(TestSubstituteFormula.class);
-		suite.addTestSuite(TestLexer.class);
-		suite.addTestSuite(TestWD.class);
-		suite.addTestSuite(TestTypedIdentDecl.class);
-		suite.addTestSuite(TestDeBruijn.class);
-		suite.addTestSuite(TestParser.class);
-		suite.addTestSuite(TestTypedGeneric.class);
-		suite.addTestSuite(TestCollectNamesAbove.class);
-		suite.addTestSuite(TestFlattener.class);
-		suite.addTestSuite(TestSimpleVisitor.class);
-		suite.addTestSuite(TestPosition.class);
-		suite.addTestSuite(TestVisitor.class);
-		suite.addTestSuite(TestBoundIdentRenaming.class);
-		suite.addTestSuite(TestEquals.class);
-		suite.addTestSuite(TestFIS.class);
-		suite.addTestSuite(TestErrors.class);
-		suite.addTestSuite(TestLocation.class);
-		suite.addTestSuite(TestIntStack.class);
-		suite.addTestSuite(TestConflictResolver.class);
-		suite.addTestSuite(TestGivenTypes.class);
-		suite.addTestSuite(TestSubFormulas.class);
-		suite.addTestSuite(TestVersionUpgrader.class);
-		suite.addTestSuite(PartitionExpanderTests.class);
-		suite.addTestSuite(SmartFactoryTests.class);
-		suite.addTestSuite(TestPredicateVariables.class);
-		suite.addTestSuite(TestFormulaInspector.class);
-		suite.addTestSuite(TestWDStrict.class);
-		suite.addTestSuite(TestGenParser.class);
-		suite.addTestSuite(TestSpecialization.class);
-		suite.addTestSuite(TestTypeSpecialization.class);
-		suite.addTestSuite(TestTypenvSpecialization.class);
-		suite.addTestSuite(TestFormulaSpecialization.class);
-		suite.addTestSuite(TestDatatypeArgumentSets.class);
-		suite.addTestSuite(TestDatatypeRewriter.class);
-		suite.addTestSuite(TestDatatypeTranslation.class);
-		suite.addTestSuite(TestDatatypeTranslator.class);
-		suite.addTestSuite(TestEnumDatatypeTranslator.class);
-		suite.addTestSuite(TestFreshNameSolver.class);
-		//$JUnit-END$
-		return suite;
-	}
+	// Now empty, all is in the annotations above
 
 }
