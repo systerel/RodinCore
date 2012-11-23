@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -69,11 +71,21 @@ public abstract class XProverTests {
 		// Compute the type environment of the sequent
 		ITypeEnvironment typenv = ff.makeTypeEnvironment();
 		for (Predicate hyp : hyps) {
-			typenv.addAll(hyp.getFreeIdentifiers());
+			addToTypeEnvironment(typenv, hyp);
 		}
-		typenv.addAll(goal.getFreeIdentifiers());
+		addToTypeEnvironment(typenv, goal);
 
 		return ProverFactory.makeSequent(typenv, hyps, sels, goal);
+	}
+
+	// FIXME should be in AST library (see also class SimpleSequent)
+	private static void addToTypeEnvironment(ITypeEnvironment typenv,
+			Formula<?> formula) {
+		final Set<GivenType> types = formula.getGivenTypes();
+		for (GivenType type : types) {
+			typenv.addGivenSet(type.getName());
+		}
+		typenv.addAll(formula.getFreeIdentifiers());
 	}
 
 	static void assertSameSet(String msg, List<Predicate> exp,

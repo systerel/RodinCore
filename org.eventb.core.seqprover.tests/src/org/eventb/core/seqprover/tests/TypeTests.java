@@ -15,8 +15,10 @@ import static org.eventb.core.ast.Formula.IN;
 import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IPosition;
@@ -67,9 +69,21 @@ public class TypeTests extends AbstractProofTreeTests {
 		return pt;
 	}
 
+	// FIXME should be in AST library (see also class SimpleSequent and
+	// XProverTests and TestLib)
+	private static void addToTypeEnvironment(ITypeEnvironment typenv,
+			Formula<?> formula) {
+		final Set<GivenType> types = formula.getGivenTypes();
+		for (GivenType type : types) {
+			typenv.addGivenSet(type.getName());
+		}
+		typenv.addAll(formula.getFreeIdentifiers());
+	}
+
 	private IProverSequent makeSequent(Type type) {
 		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
 		final Predicate hyp = makeMembershipPredicate(type);
+		addToTypeEnvironment(typenv, hyp);
 		typenv.addAll(hyp.getFreeIdentifiers());
 		return ProverFactory.makeSequent(typenv, Arrays.asList(hyp), falsum);
 	}

@@ -70,11 +70,11 @@ public class SimpleSequent implements ISimpleSequent {
 			final Predicate pred = tpred.getPredicate();
 			assert pred.isTypeChecked();
 			// TODO move all this into AST library: pred.typeEnvironment()
-			typenv.addAll(pred.getFreeIdentifiers());
 			final Set<GivenType> types = pred.getGivenTypes();
 			for (GivenType type : types) {
 				typenv.addGivenSet(type.getName());
 			}
+			typenv.addAll(pred.getFreeIdentifiers());
 		}
 	}
 

@@ -20,8 +20,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
@@ -343,6 +345,17 @@ public class TestLib {
 		return genPred(factory.makeTypeEnvironment(), str);
 	}
 
+	// FIXME should be in AST library (see also class SimpleSequent and
+	// XProverTests)
+	private static void addToTypeEnvironment(ITypeEnvironment typenv,
+			Formula<?> formula) {
+		final Set<GivenType> types = formula.getGivenTypes();
+		for (GivenType type : types) {
+			typenv.addGivenSet(type.getName());
+		}
+		typenv.addAll(formula.getFreeIdentifiers());
+	}
+
 	/**
 	 * Generates a type checked predicate from a string and a type environment.
 	 * As a side-effect the given type environment gets completed with the types
@@ -363,6 +376,7 @@ public class TestLib {
 		if (!tcResult.isSuccess())
 			throw new IllegalArgumentException("Predicate: " + result
 					+ " does not typecheck in environment " + typeEnv);
+		addToTypeEnvironment(typeEnv, result);
 		typeEnv.addAll(tcResult.getInferredEnvironment());
 		return result;
 	}
