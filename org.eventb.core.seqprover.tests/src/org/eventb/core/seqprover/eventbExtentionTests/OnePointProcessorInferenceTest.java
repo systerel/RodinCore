@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorInference;
 import org.junit.Test;
 
@@ -33,12 +32,10 @@ import org.junit.Test;
  * @author Laurent Voisin
  */
 public class OnePointProcessorInferenceTest {
-	
-	private static final ITypeEnvironment TYPENV = TestLib.genTypeEnv("S=ℙ(S)");
 
 	private static void assertSuccess(String input, String result,
 			String replacementStr) {
-		final ITypeEnvironment typenv = TYPENV.clone();
+		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
 		final Predicate pred = genPred(typenv, input);
 		final Expression replacement = genExpr(typenv, replacementStr);
 		final Predicate expected = genPred(typenv, result);
@@ -48,7 +45,7 @@ public class OnePointProcessorInferenceTest {
 
 	private static void assertSuccess(String input, String result,
 			Expression replacement) {
-		final ITypeEnvironment typenv = TYPENV.clone();
+		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
 		final Predicate pred = genPred(typenv, input);
 		final Predicate expected = genPred(typenv, result);
 
@@ -66,7 +63,7 @@ public class OnePointProcessorInferenceTest {
 	}
 
 	private static void assertFailure(String input) {
-		final Predicate pred = genPred(TYPENV.clone(), input);
+		final Predicate pred = genPred(input);
 		assertFailure((QuantifiedPredicate) pred);
 	}
 

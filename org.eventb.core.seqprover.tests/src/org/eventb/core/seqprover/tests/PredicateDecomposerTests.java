@@ -101,7 +101,6 @@ public class PredicateDecomposerTests {
 	@Test
 	public void testWithEnv() {
 		final ITypeEnvironment env = makeTypeEnvironment(//
-				"L", "ℙ(L)", //
 				"N", "ℙ(N)", //
 				"age", "L ↔ ℤ", //
 				"l_net", "ℤ ↔ L",//

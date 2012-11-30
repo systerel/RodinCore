@@ -15,7 +15,6 @@ import static java.util.Collections.unmodifiableSet;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -28,7 +27,6 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IDatatypeTranslation;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.FreshNameSolver;
@@ -132,22 +130,9 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	@Override
 	public void addAll(ITypeEnvironment other) {
 		Map<String, Type> otherMap = ((TypeEnvironment) other).map;
-		LinkedList<String> rest = new LinkedList<String>();
 		// Use addName() to check for duplicates.
-		// Add given sets first and construct rest list
 		for (Entry<String, Type> entry : otherMap.entrySet()) {
-			Type type = entry.getValue();
-			String name = entry.getKey();
-			if (type instanceof PowerSetType
-					&& type.getBaseType() instanceof GivenType) {
-				addName(name, type);
-			} else {
-				rest.addLast(name);
-			}
-		}
-		// Add the rest
-		for (String name : rest) {
-			addName(name, otherMap.get(name));
+			addName(entry.getKey(), entry.getValue());
 		}
 	}
 

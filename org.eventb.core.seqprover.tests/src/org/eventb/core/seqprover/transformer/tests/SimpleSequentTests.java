@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -164,7 +164,7 @@ public class SimpleSequentTests extends AbstractTransformerTests {
 		assertTypeEnvironment("S=ℙ(S)", "⊥", "(∅⦂ℙ(S))=∅");
 
 		// All of the above
-		assertTypeEnvironment("S=ℙ(S), A=ℤ, B=BOOL, C=ℙ(S)", //
+		assertTypeEnvironment("A=ℤ, B=BOOL, C=ℙ(S), S=ℙ(S)", //
 				"A=1", "B=TRUE", "(∅⦂ℙ(S))=C");
 	}
 

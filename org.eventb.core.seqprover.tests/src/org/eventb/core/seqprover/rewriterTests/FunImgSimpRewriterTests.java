@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 	private static final IPosition FIRST_CHILD = IPosition.ROOT.getFirstChild();
 	private static final IReasoner rewriter = new FunImgSimplifies();
 	private static final IReasonerInput input = new Input(null, FIRST_CHILD);
-	private static final String typeEnvString = "S=ℙ(S), T=ℙ(T), F=ℙ(S×T)";
+	private static final String typeEnvString = "S=ℙ(S), F=ℙ(S×T), T=ℙ(T)";
 	private static final ITypeEnvironment typeEnv = TestLib
 			.genTypeEnv(typeEnvString);
 	
@@ -87,7 +87,7 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 				result.add(new SuccessfullReasonerApplication(seq, input, resultDom));
 			}
 			for (String symbol : ranSymbols) {
-				final String resultRan = "{"+typeEnvString+"}[][][E⊆T ;; F∈S"+ arrow + "T ;; G∈dom(F" + symbol + "E)] |- F(G)=F(G)";
+				final String resultRan = "{S=ℙ(S), F=ℙ(S×T), T=ℙ(T)}[][][E⊆T ;; F∈S"+ arrow + "T ;; G∈dom(F" + symbol + "E)] |- F(G)=F(G)";
 				final String funImage = "(F" + symbol + "E)(G)";
 				final String goalImage = funImage + "=F(G)";
 				final IProverSequent seq = TestLib.genFullSeq(typeEnv, "", "", "E⊆T;; G∈dom(F" + symbol + "E) ;; F∈S" + arrow + "T", goalImage);

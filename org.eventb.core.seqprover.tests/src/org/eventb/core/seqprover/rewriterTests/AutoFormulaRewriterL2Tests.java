@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,7 +126,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_SUBSET_R() {
-		rewritePred("S ⊂ (∅⦂ℙ(T))", "⊥", "T", "ℙ(T)");
+		rewritePred("S ⊂ (∅⦂ℙ(T))", "⊥");
 	}
 
 	/**
@@ -252,7 +252,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_DOMSUB_R() {
-		rewriteExpr("S ⩤ (∅⦂U↔V)", "∅⦂U↔V", "U", "ℙ(U)", "V", "ℙ(V)");
+		rewriteExpr("S ⩤ (∅⦂U↔V)", "∅⦂U↔V");
 	}
 
 	/**
@@ -285,7 +285,7 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 	 */
 	@Test
 	public void testSIMP_SPECIAL_RANSUB_L() {
-		rewriteExpr("(∅⦂U↔V) ⩥ S", "∅⦂U↔V", "U", "ℙ(U)", "V", "ℙ(V)");
+		rewriteExpr("(∅⦂U↔V) ⩥ S", "∅⦂U↔V");
 	}
 
 	/**

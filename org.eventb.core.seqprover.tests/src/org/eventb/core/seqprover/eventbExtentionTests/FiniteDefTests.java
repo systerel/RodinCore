@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,21 +70,21 @@ public class FiniteDefTests extends AbstractManualRewriterTests {
 
 	@Test
 	public void testDEF_FINITE() {
-		rewritePred("finite(A)", "", "∃n,f · f∈1‥n⤖A", "S=ℙ(S), A=ℙ(S)");
-		rewritePred("finite(∅⦂ℙ(S))", "", "∃n,f · f∈1‥n⤖(∅⦂ℙ(S))", "S=ℙ(S)");
-		rewritePred("finite(A×B)", "", "∃n,f · f∈1‥n⤖A×B", "S=ℙ(S),T=ℙ(T),A=ℙ(S),B=ℙ(T)");
+		rewritePred("finite(A)", "", "∃n,f · f∈1‥n⤖A", "A=ℙ(S)");
+		rewritePred("finite(∅⦂ℙ(S))", "", "∃n,f · f∈1‥n⤖(∅⦂ℙ(S))");
+		rewritePred("finite(A×B)", "", "∃n,f · f∈1‥n⤖A×B", "A=ℙ(S),B=ℙ(T)");
 		rewritePred("¬A=∅ ∧ finite(A)", "1", "¬A=∅ ∧ (∃n,f · f∈1‥n⤖A)",
-				"S=ℙ(S),A=ℙ(S)");
+				"A=ℙ(S)");
 		rewritePred("finite({x · x=1÷0 ∣ x})", "",
 				"∃n,f · f∈1‥n⤖{x · x=1÷0 ∣ x}");
 		rewritePred("a = {x⦂ℙ(S) · finite(x) ∣ x}", "1.1",
-				"a = {x⦂ℙ(S) · ∃n,f · f∈1‥n⤖x ∣ x}", "S=ℙ(S)");
+				"a = {x⦂ℙ(S) · ∃n,f · f∈1‥n⤖x ∣ x}");
 		rewritePred("finite({x⦂ℙ(S) · finite(x) ∣ x})", "",
-				"∃n,f · f∈1‥n⤖{x⦂ℙ(S) · finite(x) ∣ x}", "S=ℙ(S)");
+				"∃n,f · f∈1‥n⤖{x⦂ℙ(S) · finite(x) ∣ x}");
 		rewritePred("finite({x⦂ℙ(S) · finite(x) ∣ x})", "0.1",
-				"finite({x⦂ℙ(S) · ∃n,f · f∈1‥n⤖x ∣ x})", "S=ℙ(S)");
+				"finite({x⦂ℙ(S) · ∃n,f · f∈1‥n⤖x ∣ x})");
 		noRewritePred("a=0", "");
-		noRewritePred("¬A=∅ ∧ finite(A)", "", "S=ℙ(S),A=ℙ(S)");
+		noRewritePred("¬A=∅ ∧ finite(A)", "", "A=ℙ(S)");
 	}
 
 }
