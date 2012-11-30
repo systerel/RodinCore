@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
-import static org.eventb.core.ast.tests.FastFactory.*;
-import static org.eventb.core.ast.Formula.*;
+import static org.eventb.core.ast.Formula.IN;
+import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -126,7 +127,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 */
 	public void testRecordingPushNoChange() {
 		final ITypeEnvironment typenv = mTypeEnvironment("b", "S", "c", "T×U");
-		final Expression toPush = parseExpr("∃a⦂S · a↦b ∈ S", typenv);
+		final Expression toPush = parseExpr("∃a⦂S · a↦b ∈ AB", typenv);
 		final Expression toDecompose = parseExpr("c ∈ A", typenv);
 		assertEquals(toPush, decomposer.push(toPush));
 		assertEquals(0, decomposer.offset());

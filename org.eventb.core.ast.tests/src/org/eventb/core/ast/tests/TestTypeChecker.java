@@ -149,13 +149,12 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment("x", INTEGER),
 				mTypeEnvironment("S", POW(INTEGER))
 		);
-		testPredicate("x∈S",
-				mTypeEnvironment("x", ty_S),
-				mTypeEnvironment("S", POW(ty_S))
+		testPredicate("x∈S", mTypeEnvironment("x", ty_S),
+				mTypeEnvironment()
 		);
 		testPredicate("x∉S",
 				mTypeEnvironment("x", ty_S),
-				mTypeEnvironment("S", POW(ty_S))
+				mTypeEnvironment()
 		);
 		testPredicate("x⊂S",
 				mTypeEnvironment(),
@@ -163,19 +162,19 @@ public class TestTypeChecker extends AbstractTests {
 		);
 		testPredicate("x⊂S",
 				mTypeEnvironment("x", POW(ty_S)),
-				mTypeEnvironment("S", POW(ty_S))
+				mTypeEnvironment()
 		);
 		testPredicate("x⊄S",
 				mTypeEnvironment("x", POW(ty_S)),
-				mTypeEnvironment("S", POW(ty_S))
+				mTypeEnvironment()
 		);
 		testPredicate("x⊆S",
 				mTypeEnvironment("x", POW(ty_S)),
-				mTypeEnvironment("S", POW(ty_S))
+				mTypeEnvironment()
 		);
 		testPredicate("x⊈S",
 				mTypeEnvironment("x", POW(ty_S)),
-				mTypeEnvironment("S", POW(ty_S))
+				mTypeEnvironment()
 		);
 		testPredicate("partition(S, {x},{y})",
 				mTypeEnvironment("x", ty_S),
@@ -1269,9 +1268,14 @@ public class TestTypeChecker extends AbstractTests {
 	}
 
 	public void testAssignmentTypeChecker() {
-		testAssignment(
-				"x ≔ E",
-				mTypeEnvironment("x", ty_S),
+		testAssignment("A ≔ (∅⦂ℙ(S))", //
+				mTypeEnvironment(), //
+				mTypeEnvironment("S", POW(ty_S), "A", POW(ty_S))
+		);
+		testAssignment("x ≔ E", mTypeEnvironment("x", ty_S),
+				mTypeEnvironment("E", ty_S)
+		);
+		testAssignment("x ≔ E", mTypeEnvironment("x", ty_S),
 				mTypeEnvironment("E", ty_S)
 		);
 		testAssignment(

@@ -121,7 +121,7 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 
 		Predicate predicate = null;
 		if (predicateImage != null) {
-			predicate = TestLib.genPred(predicateImage);
+			predicate = TestLib.genPred(predicateImage, ff);
 			predicate.typeCheck(ff.makeTypeEnvironment());
 		}
 		IPosition position = makePosition(positionImage);

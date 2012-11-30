@@ -15,6 +15,7 @@ import static java.util.Collections.unmodifiableSet;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -27,6 +28,7 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IDatatypeTranslation;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.FreshNameSolver;
@@ -163,6 +165,55 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		addName(type.getName(), ff.makePowerSetType(type));
 	}
 
+	/**
+	 * Sets a name and its specified type in the type environment without
+	 * considering precedent value. The type is analyzed to check that GivenType
+	 * types used are defined (if not add them) or are coherent
+	 * with current environment.
+	 * 
+	 * @param name the name to add
+	 * @param type the type to associate to the given name
+	 *            
+	 */
+	private void setName(String name, Type type) {
+		if (type.isSolved()) {
+			// Check if it is a new given set
+			boolean is_new_given_set = false;
+			if (type instanceof PowerSetType) {
+				PowerSetType powerSetType = (PowerSetType) type;
+				Type baseType = powerSetType.getBaseType();
+				if (baseType instanceof GivenType) {
+					GivenType givenType = (GivenType) baseType;
+					is_new_given_set = givenType.getName().equals(name);
+				}
+			}
+			// Allowing to declare a new GivenSet type
+			if(!is_new_given_set){
+				for (GivenType givenType : type.getGivenTypes()) {
+					String mustBeGivenType = givenType.getName();
+					Type knownType = this.getType(mustBeGivenType);
+					if (knownType == null) {
+						// If given set does not exist add it
+						addGivenSet(mustBeGivenType);
+					} else {
+						// The already known type must be a given set
+						Type baseType = knownType.getBaseType();
+						if (baseType == null || !baseType.equals(givenType)) {
+							throw new IllegalArgumentException(
+									"Trying to register " + name
+									+ " with the type " + type
+									+ " whereas " + mustBeGivenType
+									+ "is already defined as "
+									+ knownType);
+						}
+					}
+				}
+			}
+		}
+
+		map.put(name, type);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -171,7 +222,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	 */
 	@Override
 	public void addName(String name, Type type) {
-		if(name == null){
+		if (name == null) {
 			throw new NullPointerException("Null name");
 		} else {
 			if (!this.getFormulaFactory().isValidIdentifierName(name)) {
@@ -179,16 +230,16 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 						+ " is an invalid identifier name in current language");
 			}
 		}
-		if(type == null){
+		if (type == null) {
 			throw new NullPointerException("Null type");
 		}
 		Type oldType = map.get(name);
-		if(oldType != null && !oldType.equals(type)){
+		if (oldType != null && !oldType.equals(type)) {
 			throw new IllegalArgumentException(
 					"Trying to register an existing name with a different type");
 		}
 
-		map.put(name, type);
+		setName(name, type);
 	}
 
 	/*
@@ -326,8 +377,14 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	// solves the unknown types (names who have type variable as their
 	// corresponding type).
 	public void solveVariables(TypeUnifier unifier) {
-		for (Entry<String, Type> element : map.entrySet()) {
-			element.setValue(unifier.solve(element.getValue()));
+		// In order to add unknown given sets we need to set solved types (modify the map) 
+		// outside of the keySet iteration
+		LinkedList<String> keys = new LinkedList<String>();
+		for (String key : map.keySet()) {
+			keys.add(key);
+		}
+		for (String key : keys) {
+			setName(key, unifier.solve(map.get(key)));
 		}
 	}
 

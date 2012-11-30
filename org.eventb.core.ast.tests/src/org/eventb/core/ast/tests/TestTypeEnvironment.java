@@ -156,6 +156,18 @@ public class TestTypeEnvironment {
 	
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addName(String,
+	 * Type)' using same name for different types (using an undefined given set
+	 * name)
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddNameWithIncoherentTypes() {
+		ITypeEnvironment te = ff.makeTypeEnvironment();
+		te.addName("S", BOOL);
+		te.addName("x", POW(t_S));
+	}
+
+	/*
+	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addName(String,
 	 * Type)' using an invalid identifier
 	 */
 	@Test(expected = IllegalArgumentException.class)

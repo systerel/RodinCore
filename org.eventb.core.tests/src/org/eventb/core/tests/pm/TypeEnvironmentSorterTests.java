@@ -89,16 +89,11 @@ public class TypeEnvironmentSorterTests extends TestCase {
 		te.addName("x", INT);
 		te.addName("a", POW(INT));
 		te.addName("y", BOOL);
-		te.addName("b", t_S);
-		te.addName("z", POW(t_S));
 		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(te);
-		assertSets(sorter);
-		assertVars(sorter,
-				"a", POW(INT),
-				"b", t_S,
-				"x", INT,
-				"y", BOOL,
-				"z", POW(t_S)
+		assertVars(sorter, //
+				"a", POW(INT),//
+				"x", INT,//
+				"y", BOOL //
 		);
 	}
 	
@@ -108,12 +103,16 @@ public class TypeEnvironmentSorterTests extends TestCase {
 		te.addName("x", INT);
 		te.addGivenSet("T");
 		te.addName("a", POW(INT));
+		te.addName("b", t_S);
+		te.addName("z", POW(t_S));
 		te.addGivenSet("U");
 		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(te);
 		assertSets(sorter, "S", "T", "U");
-		assertVars(sorter,
-				"a", POW(INT),
-				"x", INT
+		assertVars(sorter,//
+				"a", POW(INT),//
+				"b", t_S,//
+				"x", INT,//
+				"z", POW(t_S) //
 		);
 	}
 	

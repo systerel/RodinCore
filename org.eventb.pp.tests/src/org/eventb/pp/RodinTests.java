@@ -31,8 +31,8 @@ public class RodinTests extends AbstractRodinTest {
 	static ITypeEnvironment env = ff.makeTypeEnvironment();
 	static {
 		env.addName("f", REL(ty_S, ty_T));
-		env.addName("g", REL(ty_T, ty_U));
-		env.addName("a", ty_U);
+		env.addName("g", REL(ty_T, ty_V));
+		env.addName("a", ty_V);
 		env.addName("A", POW(ty_S));
 		env.addName("B", POW(ty_S));
 		env.addName("k", POW(ty_S));

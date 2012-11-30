@@ -166,7 +166,9 @@ public interface ITypeEnvironment {
 	 * Adds a name and its specified type in the type environment.
 	 * <p>
 	 * If the given name already occurs in this environment, it must be
-	 * associated with the given type.
+	 * associated with the given type. The given type is also analyzed to check
+	 * that GivenType types used are defined (if not add them) or are coherent
+	 * with current environment.
 	 * </p>
 	 * 
 	 * @param name

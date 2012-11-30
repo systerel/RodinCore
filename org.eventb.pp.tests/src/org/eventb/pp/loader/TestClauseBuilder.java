@@ -419,6 +419,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 						cClause(cPred(d1S,xS), cNotPred(d0SPS,xS,C)),
 						cEqClause(cPred(d2S,xS), cNotPred(d0SPS,xS,A), cPred(d1S,xS))
 				),
+				mTypeEnvironment("A", POW(ty_S), "B", POW(ty_S), "C", POW(ty_S)),
 				"A", A,
 				"B", B,
 				"C", C,
@@ -775,7 +776,7 @@ public class TestClauseBuilder extends AbstractPPTest {
     @Test
 	public void testQuantifier() {
 		doTestP(
-				mList("¬(A=TRUE⇒(∀x·∃y·x∈P∧y∈Q))"),
+				mList("¬(e=TRUE⇒(∀x·∃y·x∈P∧y∈Q))"),
 				mList(	cClause(cProp(6)),
 						cClause(cNotPred(d3B,cELocVar(0,Bsort))),
 						cClause(cNotPred(d2BA,xB,yA),cNotPred(d0B,xB),cNotPred(d1A,yA)),
@@ -783,7 +784,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 				)
 		);
 		doTestP(
-				mList("(A=TRUE∧¬(∃x·∀y·x∈P∧y∈Q))"),
+				mList("(e=TRUE∧¬(∃x·∀y·x∈P∧y∈Q))"),
 				mList(	cClause(cProp(6)),
 						cClause(cPred(d2BA,xB,cELocVar(0,Asort))),
 						cClause(cNotPred(d2BA,xB,yA),cNotPred(d0B,xB),cNotPred(d1A,yA))
@@ -1666,18 +1667,16 @@ public class TestClauseBuilder extends AbstractPPTest {
 //				"B",Bbool
 //		);
 		doTestP(
-				mList("(∀x,y·x ∈ S ∨ y ∈ S)⇔A=TRUE"),
+				mList("(∀x,y·x ∈ S ∨ y ∈ S)⇔e=TRUE"),
 				mList(
 					cEqClause(cProp(4),cPred(d1SS,cFLocVar(0,Ssort),cFLocVar(1,Ssort))),
 					cClause(cNotPred(d1SS,xS,yS),cPred(d0S,xS),cPred(d0S,yS)),
 					cClause(cPred(d1SS,xS,yS),cNotPred(d0S,xS)),
 					cClause(cPred(d1SS,xS,yS),cNotPred(d0S,yS))
-				),
-				"A",Abool,
-				"B",Bbool
+				)
 		);
 		doTestP(
-				mList("(∃x·∀y·x ↦ y ∈ AA)⇔A=TRUE"),
+				mList("(∃x·∀y·x ↦ y ∈ AA)⇔e=TRUE"),
 				mList(
 					cEqClause(cProp(4),cPred(d1S,cELocVar(0,Ssort))),
 					cClause(cNotPred(d1S,xS),cPred(d0SS,xS,yS)),
@@ -1727,6 +1726,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 			doTestG(
 					mList("b ∈ S", "a ∈ C"),
 					mList(cClause(cNotPred(d0SPS,b,S)),cClause(cNotPred(d0SPS,a,C))),
+					mTypeEnvironment("a", ty_S, "b", ty_S),
 					"a",a,
 					"b",b,
 					"C",C,
@@ -1752,6 +1752,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 			mList(	cClause(cNotPred(d4S,cELocVar(0,Ssort))),
 					cClause(cPred(d4S,xS),cPred(d0SPS,xS,A)),
 					cClause(cPred(d4S,xS),cNotPred(d0SPS,yS,B),cNotPred(d1SS,xS,yS))),
+			mTypeEnvironment("A", POW(ty_S), "AA", REL(ty_S, ty_S)),
 			"A",A,
 			"B",B
 		);
@@ -1761,6 +1762,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d2SS,xS,yS),cPred(d0SPS,xS,B)),
 					cClause(cPred(d2SS,xS,yS),cPred(d1SS,yS,xS))
 			),
+			mTypeEnvironment("A", POW(ty_S), "B", POW(ty_S)),
 			"A",A,
 			"B",B
 		);
@@ -1770,6 +1772,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d2SS,xS,yS),cPred(d0SPS,xS,B)),
 					cClause(cPred(d2SS,xS,yS),cPred(d1SS,yS,xS))
 			),
+			mTypeEnvironment("A", POW(ty_S), "B", POW(ty_S)),
 			"A",A,
 			"B",B
 		);
@@ -1778,6 +1781,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 			mList(	cClause(cNotPred(d4S,cELocVar(0,Ssort))),
 					cClause(cPred(d4S,xS),cPred(d0SPS,xS,A)),
 					cClause(cPred(d4S,xS),cNotPred(d0SPS,yS,B),cNotPred(d1SS,xS,yS))),
+			mTypeEnvironment("A", POW(ty_S), "B", POW(ty_S)),
 			"A",A,
 			"B",B
 		);
@@ -1787,6 +1791,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d5S,xS),cPred(d0S,xS)),
 					cClause(cPred(d5S,xS),cNotPred(d1SS,xS,yS),cNotPred(d1SS,xS,zS))
 			),
+			mTypeEnvironment("A", POW(ty_S), "AA", REL(ty_S, ty_S)),
 			"A",A,
 			"B",B
 		);
@@ -1796,6 +1801,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d3SS,xS,yS),cPred(d1SS,xS,yS)),
 					cClause(cPred(d3SS,xS,yS),cPred(d1SS,xS,cELocVar(1,Ssort)))
 			),
+			mTypeEnvironment("A", POW(ty_S), "AA", REL(ty_S, ty_S)),
 			"A",A,
 			"B",B
 		);
@@ -1883,6 +1889,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d0S, a)),
 					cClause(cPred(d0S, b))
 			),
+			mTypeEnvironment("a", ty_S, "b", ty_S),
 			"a", a,
 			"b", b
 		);
@@ -1930,6 +1937,11 @@ public class TestClauseBuilder extends AbstractPPTest {
 	public void doTestP(List<String> strPredicate, Collection<Clause> clauses,
 			ITypeEnvironment typenv, Object... constants) {
 		doTest(strPredicate, clauses, constants, false, false, typenv);
+	}
+	
+	public void doTestG(List<String> strPredicate, Collection<Clause> clauses,
+			ITypeEnvironment typenv, Object... constants) {
+		doTest(strPredicate, clauses, constants, true, false, typenv);
 	}
 	
 	public void doTestG(List<String> strPredicate, Collection<Clause> clauses, Object... constants) {
