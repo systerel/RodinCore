@@ -9,11 +9,12 @@ import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IInferredTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
@@ -38,7 +39,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	private final TypeEnvironment initialTypeEnvironment;
 
 	// Inferred type environment filled during type-check
-	private final TypeEnvironment inferredTypeEnvironment;
+	private final InferredTypeEnvironment inferredTypeEnvironment;
 
 	// Type variables created during this type-check
 	private final List<TypeVariable> typeVariables;
@@ -55,7 +56,8 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		this.initialTypeEnvironment = (TypeEnvironment) typeEnvironment;
 		this.factory = this.initialTypeEnvironment.ff;
 		this.unifier = new TypeUnifier(this);
-		this.inferredTypeEnvironment = (TypeEnvironment) factory.makeTypeEnvironment();
+		this.inferredTypeEnvironment = new InferredTypeEnvironment(
+				this.initialTypeEnvironment);
 		this.typeVariables = new ArrayList<TypeVariable>();
 	}
 
@@ -89,7 +91,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	 * @see org.eventb.core.ast.ITypeCheckResult#getInferredEnvironment()
 	 */
 	@Override
-	public final ITypeEnvironment getInferredEnvironment() {
+	public final IInferredTypeEnvironment getInferredEnvironment() {
 		if (! isSuccess()) return null;
 		return inferredTypeEnvironment;
 	}

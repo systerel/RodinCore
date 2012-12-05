@@ -66,6 +66,7 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IInferredTypeEnvironment;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
@@ -82,6 +83,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.internal.core.typecheck.InferredTypeEnvironment;
 
 /**
  * Provides simplistic methods for creating new formulae without too much
@@ -97,8 +99,9 @@ public class FastFactory {
 
 	public static final Predicate[] NO_PREDICATE = new Predicate[0];
 	public static final Expression[] NO_EXPRESSION = new Expression[0];
-	
-	private static final Set<IFormulaExtension> EXTNS = new HashSet<IFormulaExtension>(Arrays.asList(EXT_PRIME, MONEY));
+
+	private static final Set<IFormulaExtension> EXTNS = new HashSet<IFormulaExtension>(
+			Arrays.asList(EXT_PRIME, MONEY));
 	static {
 		EXTNS.addAll(LIST_DT.getExtensions());
 	}
@@ -109,8 +112,8 @@ public class FastFactory {
 		return mAssociativeExpression(PLUS, children);
 	}
 
-	public static AssociativeExpression mAssociativeExpression(
-			int tag, Expression... children) {
+	public static AssociativeExpression mAssociativeExpression(int tag,
+			Expression... children) {
 		return ff.makeAssociativeExpression(tag, children, null);
 	}
 
@@ -148,31 +151,35 @@ public class FastFactory {
 		return ff.makeAtomicExpression(KID_GEN, null, type);
 	}
 
-	public static BecomesEqualTo mBecomesEqualTo(FreeIdentifier ident, Expression value) {
+	public static BecomesEqualTo mBecomesEqualTo(FreeIdentifier ident,
+			Expression value) {
 		return ff.makeBecomesEqualTo(ident, value, null);
 	}
-	
-	public static BecomesEqualTo mBecomesEqualTo(FreeIdentifier[] lhs, Expression[] rhs) {
+
+	public static BecomesEqualTo mBecomesEqualTo(FreeIdentifier[] lhs,
+			Expression[] rhs) {
 		return ff.makeBecomesEqualTo(lhs, rhs, null);
 	}
 
-	public static BecomesMemberOf mBecomesMemberOf(FreeIdentifier lhs, Expression rhs) {
+	public static BecomesMemberOf mBecomesMemberOf(FreeIdentifier lhs,
+			Expression rhs) {
 		return ff.makeBecomesMemberOf(lhs, rhs, null);
 	}
-	
+
 	public static BecomesSuchThat mBecomesSuchThat(FreeIdentifier[] lhs,
 			BoundIdentDecl[] primed, Predicate rhs) {
 		return ff.makeBecomesSuchThat(lhs, primed, rhs, null);
 	}
-	
-	public static BecomesSuchThat mBecomesSuchThat(FreeIdentifier[] lhs, Predicate rhs) {
+
+	public static BecomesSuchThat mBecomesSuchThat(FreeIdentifier[] lhs,
+			Predicate rhs) {
 		BoundIdentDecl[] primed = new BoundIdentDecl[lhs.length];
 		for (int i = 0; i < lhs.length; i++) {
 			primed[i] = lhs[i].asDecl(ff);
 		}
 		return mBecomesSuchThat(lhs, primed, rhs);
 	}
-	
+
 	public static BinaryExpression mBinaryExpression(Expression left,
 			Expression right) {
 		return mBinaryExpression(MINUS, left, right);
@@ -232,7 +239,7 @@ public class FastFactory {
 	public static <T> T[] mList(T... objs) {
 		return objs;
 	}
-	
+
 	public static LiteralPredicate mLiteralPredicate(int tag) {
 		return ff.makeLiteralPredicate(tag, null);
 	}
@@ -246,7 +253,7 @@ public class FastFactory {
 			Expression... others) {
 		BinaryExpression maplet;
 		maplet = mBinaryExpression(MAPSTO, left, right);
-		for (final Expression other: others) {
+		for (final Expression other : others) {
 			maplet = mBinaryExpression(MAPSTO, maplet, other);
 		}
 		return maplet;
@@ -294,6 +301,13 @@ public class FastFactory {
 
 	public static ITypeEnvironment mTypeEnvironment() {
 		return ff.makeTypeEnvironment();
+	}
+
+	public static IInferredTypeEnvironment mInferredTypeEnvironment(
+			ITypeEnvironment initialTypEnv) {
+		InferredTypeEnvironment inferredTypeEnv = new org.eventb.internal.core.typecheck.InferredTypeEnvironment(
+				initialTypEnv);
+		return inferredTypeEnv;
 	}
 
 	private static final Pattern typenvPairSeparator = Pattern.compile(",");
@@ -366,11 +380,11 @@ public class FastFactory {
 		assert (objs.length & 1) == 0;
 		ITypeEnvironment result = ff.makeTypeEnvironment();
 		for (int i = 0; i < objs.length; i += 2) {
-			result.addName((String) objs[i], (Type) objs[i+1]);
+			result.addName((String) objs[i], (Type) objs[i + 1]);
 		}
 		return result;
 	}
-	
+
 	public static ITypeEnvironment addToTypeEnvironment(
 			ITypeEnvironment typeEnv, String... strs) {
 		assert (strs.length & 1) == 0;
@@ -381,7 +395,17 @@ public class FastFactory {
 		}
 		return typeEnv;
 	}
-	
+
+	public static IInferredTypeEnvironment mInferredTypeEnvironment(
+			ITypeEnvironment initialTypEnv, Object... objs) {
+		assert (objs.length & 1) == 0;
+		IInferredTypeEnvironment result = mInferredTypeEnvironment(initialTypEnv);
+		for (int i = 0; i < objs.length; i += 2) {
+			result.addName((String) objs[i], (Type) objs[i + 1]);
+		}
+		return result;
+	}
+
 	public static ISpecialization mTypeSpecialization(ITypeEnvironment te,
 			String typeSpecialization) {
 		final SpecializationBuilder builder = new SpecializationBuilder(te);
@@ -407,28 +431,30 @@ public class FastFactory {
 	public static UnaryPredicate mUnaryPredicate(int tag, Predicate child) {
 		return ff.makeUnaryPredicate(tag, child, null);
 	}
-	
+
 	public static UnaryPredicate mUnaryPredicate(Predicate child) {
 		return mUnaryPredicate(NOT, child);
 	}
 
-	public static MultiplePredicate mMultiplePredicate(int tag, Expression... expressions) {
+	public static MultiplePredicate mMultiplePredicate(int tag,
+			Expression... expressions) {
 		return ff.makeMultiplePredicate(tag, expressions, null);
 	}
 
-	public static MultiplePredicate mMultiplePredicate(Expression... expressions) {
+	public static MultiplePredicate mMultiplePredicate(
+			Expression... expressions) {
 		return mMultiplePredicate(KPARTITION, expressions);
 	}
 
 	public static PredicateVariable mPredicateVariable(String name) {
 		return ff.makePredicateVariable(name, null);
 	}
-	
+
 	public static ExtendedPredicate mExtendedPredicate(Expression e) {
 		return ff.makeExtendedPredicate(EXT_PRIME, Collections.singleton(e),
 				Collections.<Predicate> emptySet(), null);
 	}
-	
+
 	public static ExtendedExpression mExtendedExpression(
 			Expression... expressions) {
 		return ff

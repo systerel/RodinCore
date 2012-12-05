@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
 
@@ -25,6 +26,7 @@ import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IInferredTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
@@ -1372,6 +1374,12 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment(),
 				mTypeEnvironment("x", INTEGER, "y", BOOL)
 		);
+		// FIXME: synthesizeType: fix code to reject incompatible types in this
+		// assignement
+		// testAssignment("f(S) ≔ (∅⦂ℙ(S)↔T)(∅⦂ℙ(S))", //
+		// mTypeEnvironment("S", BOOL), //
+		// null //
+		//	);
 	}
 
 	/**
@@ -1436,7 +1444,16 @@ public class TestTypeChecker extends AbstractTests {
 					+ "\nInitial type environment:\n"
 					+ result.getInitialTypeEnvironment() + "\n");
 		}
-		assertEquals("Inferred typenv differ", inferredEnv,
+		IInferredTypeEnvironment inferredTypEnv = null;
+		if (inferredEnv != null) {
+			inferredTypEnv = mInferredTypeEnvironment(initialEnv);
+			ITypeEnvironment.IIterator iter = inferredEnv.getIterator();
+			while (iter.hasNext()) {
+				iter.advance();
+				inferredTypEnv.addName(iter.getName(), iter.getType());
+			}
+		}
+		assertEquals("Inferred typenv differ", inferredTypEnv,
 				result.getInferredEnvironment());
 		assertEquals("Incompatible result for isTypeChecked()", expectSuccess,
 				formula.isTypeChecked());

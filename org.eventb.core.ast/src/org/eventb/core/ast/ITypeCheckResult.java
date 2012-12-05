@@ -43,8 +43,9 @@ public interface ITypeCheckResult extends IResult {
 	 * 
 	 * @return the inferred type environment or <code>null</code> if
 	 *         type-check failed
+	 * @since 3.0: the return type changed from ITypeEnvironment to IInferredTypeEnvironment
 	 */
-	ITypeEnvironment getInferredEnvironment();
+	IInferredTypeEnvironment getInferredEnvironment();
 
 	/**
 	 * Returns the initial type environment that was provided to the

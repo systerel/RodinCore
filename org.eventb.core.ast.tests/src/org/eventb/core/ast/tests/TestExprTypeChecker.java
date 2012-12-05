@@ -11,10 +11,12 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IInferredTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
@@ -69,16 +71,25 @@ public class TestExprTypeChecker extends AbstractTests {
 		final Type expectedType = parseType(typeImage);
 		final ITypeCheckResult actualResult = expr.typeCheck(initialEnv,
 				expectedType);
+		IInferredTypeEnvironment inferredTypEnv = null;
+		if (inferredEnv != null) {
+			inferredTypEnv = mInferredTypeEnvironment(initialEnv);
+			ITypeEnvironment.IIterator iter = inferredEnv.getIterator();
+			while (iter.hasNext()) {
+				iter.advance();
+				inferredTypEnv.addName(iter.getName(), iter.getType());
+			}
+		}
 		assertEquals(
 				"\nTest failed on: " + image + "\nExpected type: "
 						+ expectedType + "\nParser result: " + expr
 						+ "\nType check results:\n" + actualResult
 						+ "\nInitial type environment:\n"
 						+ actualResult.getInitialTypeEnvironment() + "\n",
-				inferredEnv != null, actualResult.isSuccess());
+				inferredTypEnv != null, actualResult.isSuccess());
 		assertEquals("\nResult typenv differ for: " + image + "\n",
-				inferredEnv, actualResult.getInferredEnvironment());
-		if (inferredEnv != null) {
+				inferredTypEnv, actualResult.getInferredEnvironment());
+		if (inferredTypEnv != null) {
 			assertTrue(expr.isTypeChecked());
 			assertEquals(expectedType, expr.getType());
 		}

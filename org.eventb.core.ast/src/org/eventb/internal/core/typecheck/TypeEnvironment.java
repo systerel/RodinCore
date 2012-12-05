@@ -15,7 +15,6 @@ import static java.util.Collections.unmodifiableSet;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -97,7 +96,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	public final FormulaFactory ff;
 
 	// implementation
-	private Map<String, Type> map;
+	protected Map<String, Type> map;
 
 	/**
 	 * Constructs an initially empty type environment.
@@ -237,9 +236,9 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		if (oldType != null && !oldType.equals(type)) {
 			throw new IllegalArgumentException(
 					"Trying to register an existing name with a different type");
+		} else if (oldType == null) {
+			setName(name, type);
 		}
-
-		setName(name, type);
 	}
 
 	/*
@@ -292,7 +291,7 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		if (this == obj) {
 			return true;
 		}
-		if (obj instanceof TypeEnvironment) {
+		if (obj != null && obj.getClass() == this.getClass()) {
 			TypeEnvironment temp = (TypeEnvironment) obj;
 			return map.equals(temp.map);
 		}
@@ -372,20 +371,6 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		addName(fName, type);
 		final SourceLocation sloc = bIdent.getSourceLocation();
 		return ff.makeFreeIdentifier(fName, sloc, type);
-	}
-
-	// solves the unknown types (names who have type variable as their
-	// corresponding type).
-	public void solveVariables(TypeUnifier unifier) {
-		// In order to add unknown given sets we need to set solved types (modify the map) 
-		// outside of the keySet iteration
-		LinkedList<String> keys = new LinkedList<String>();
-		for (String key : map.keySet()) {
-			keys.add(key);
-		}
-		for (String key : keys) {
-			setName(key, unifier.solve(map.get(key)));
-		}
 	}
 
 	/*
