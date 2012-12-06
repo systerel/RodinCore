@@ -10,6 +10,7 @@
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
  *     Systerel - test for bug #3574565
+ *     Systerel - new implementation of inferred environment
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
@@ -44,8 +45,7 @@ public class TestTypeChecker extends AbstractTests {
 	 * Main test routine for predicates.
 	 */
 	public void testTypeChecker() {
-		testPredicate(
-				"x∈ℤ∧1≤x",
+		testPredicate("x∈ℤ∧1≤x",
 				mTypeEnvironment(),
 				mTypeEnvironment("x=ℤ", ff)
 		);
@@ -276,11 +276,11 @@ public class TestTypeChecker extends AbstractTests {
 				null
 		);
 		testPredicate("dom(x)=y",
-				mTypeEnvironment("x=ℙ(ℤ×S)", ff),
+				mTypeEnvironment("x=ℤ↔S", ff),
 				mTypeEnvironment("y=ℙ(ℤ)", ff)
 		);
 		testPredicate("ran(x)=y",
-				mTypeEnvironment("x=ℙ(ℤ×S)", ff),
+				mTypeEnvironment("x=ℤ↔S", ff),
 				mTypeEnvironment("y=ℙ(S)", ff)
 		);
 		testPredicate("prj1(x)=y",
@@ -293,15 +293,15 @@ public class TestTypeChecker extends AbstractTests {
 		);
 		testPredicate("x◁prj1=y",
 				mTypeEnvironment("x=S↔T", ff),
-				mTypeEnvironment("y=ℙ((S×T)×S)", ff)
+				mTypeEnvironment("y=S×T↔S", ff)
 		);
 		testPredicate("prj2(x)=y",
 				mTypeEnvironment("x=ℤ↔BOOL", ffV1),
 				mTypeEnvironment("y=ℤ×BOOL↔BOOL", ffV1)
 		);
 		testPredicate("x◁prj2=y",
-				mTypeEnvironment("x=ℙ(S×T)",ff),
-				mTypeEnvironment("y=ℙ((S×T)×T)", ff)
+				mTypeEnvironment("x=S↔T",ff),
+				mTypeEnvironment("y=S×T↔T", ff)
 		);
 		testPredicate("id(x)=y",
 				mTypeEnvironment("x=ℙ(S)", ffV1),
@@ -309,7 +309,7 @@ public class TestTypeChecker extends AbstractTests {
 		);
 		testPredicate("x◁id=y",
 				mTypeEnvironment("x=ℙ(S)", ff),
-				mTypeEnvironment("y=ℙ(S×S)", ff)
+				mTypeEnvironment("y=S↔S", ff)
 		);
 		testPredicate("id(x)=y",
 				mTypeEnvironment("x=S", ff),
@@ -344,7 +344,7 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment()
 		);
 		testPredicate("a=∅",
-				mTypeEnvironment("a=ℙ(N×N)", ff),
+				mTypeEnvironment("a=N↔N", ff),
 				mTypeEnvironment()
 		);
 		testPredicate("∅=a",
@@ -385,11 +385,11 @@ public class TestTypeChecker extends AbstractTests {
 		);
 		testPredicate("x=pred",
 				mTypeEnvironment(),
-				mTypeEnvironment("x=ℙ(ℤ×ℤ)", ff)
+				mTypeEnvironment("x=ℤ↔ℤ", ff)
 		);
 		testPredicate("x=succ",
 				mTypeEnvironment(),
-				mTypeEnvironment("x=ℙ(ℤ×ℤ)", ff)
+				mTypeEnvironment("x=ℤ↔ℤ", ff)
 		);
 		testPredicate("x=2",
 				mTypeEnvironment(),
@@ -397,32 +397,32 @@ public class TestTypeChecker extends AbstractTests {
 		);
 		// Primary
 		testPredicate("x∼=y",
-				mTypeEnvironment("x=ℙ(ℤ×BOOL)", ff),
-				mTypeEnvironment("y=ℙ(BOOL×ℤ)", ff)
+				mTypeEnvironment("x=ℤ↔BOOL", ff),
+				mTypeEnvironment("y=BOOL↔ℤ", ff)
 		);
 		// Image
 		testPredicate("f(x)=a",
-				mTypeEnvironment("f=ℙ(ℤ×BOOL)", ff),				
+				mTypeEnvironment("f=ℤ↔BOOL", ff),				
 				mTypeEnvironment("x=ℤ, a=BOOL", ff)
 		);
 		testPredicate("f[x]=a",
-				mTypeEnvironment("f=ℙ(ℤ×BOOL)", ff),				
+				mTypeEnvironment("f=ℤ↔BOOL", ff),				
 				mTypeEnvironment("x=ℙ(ℤ), a=ℙ(BOOL)", ff)
 		);
 		testPredicate("f[x](y)=a",
-				mTypeEnvironment("f=ℙ(S×(T×U))", ff),				
+				mTypeEnvironment("f=S↔T×U", ff),				
 				mTypeEnvironment("x=ℙ(S), y=T, a=U", ff)
 		);
 		testPredicate("f(x)[y]=a",
-				mTypeEnvironment("f=ℙ(S×ℙ(T×U))", ff),				
+				mTypeEnvironment("f=S↔(T↔U)", ff),				
 				mTypeEnvironment("x=S, y=ℙ(T), a=ℙ(U)", ff)
 		);
 		testPredicate("f(x)(y)=a",
-				mTypeEnvironment("f=ℙ(S×ℙ(T×U))", ff),				
+				mTypeEnvironment("f=S↔(T↔U)", ff),				
 				mTypeEnvironment("x=S, y=T, a=U", ff)
 		);
 		testPredicate("f[x][y]=a",
-				mTypeEnvironment("f=ℙ(S×(T×U))", ff),
+				mTypeEnvironment("f=S↔T×U", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), a=ℙ(U)", ff)
 		);
 
@@ -497,24 +497,24 @@ public class TestTypeChecker extends AbstractTests {
 		);
 		// RelationExpr
 		testPredicate("x⊗y=a",
-				mTypeEnvironment("x=ℙ(S×T), y=ℙ(S×U)", ff),
-				mTypeEnvironment("a=ℙ(S×(T×U)), y=ℙ(S×U)", ff)
+				mTypeEnvironment("x=S↔T, y=S↔U", ff),
+				mTypeEnvironment("a=S↔T×U, y=S↔U", ff)
 		);
 		testPredicate("x;y=a",
-				mTypeEnvironment("a=ℙ(S×T), x=ℙ(S×U)", ff),
-				mTypeEnvironment("y=ℙ(U×T)", ff)
+				mTypeEnvironment("a=S↔T, x=S↔U", ff),
+				mTypeEnvironment("y=U↔T", ff)
 		);
 		testPredicate("x;y;z=a",
-				mTypeEnvironment("a=ℙ(S×T), x=ℙ(S×U), z=ℙ(V×T)", ff),
-				mTypeEnvironment("y=ℙ(U×V)", ff)
+				mTypeEnvironment("a=S↔T, x=S↔U, z=V↔T", ff),
+				mTypeEnvironment("y=U↔V", ff)
 		);
 		testPredicate("x▷y=a",
-				mTypeEnvironment("x=ℙ(S×T)", ff),
-				mTypeEnvironment("y=ℙ(T), a=ℙ(S×T)", ff)
+				mTypeEnvironment("x=S↔T", ff),
+				mTypeEnvironment("y=ℙ(T), a=S↔T", ff)
 		);
 		testPredicate("x⩥y=a",
-				mTypeEnvironment("x=ℙ(S×T)", ff),
-				mTypeEnvironment("y=ℙ(T), a=ℙ(S×T)", ff)
+				mTypeEnvironment("x=S↔T", ff),
+				mTypeEnvironment("y=ℙ(T), a=S↔T", ff)
 		);
 		testPredicate("x∩y=a",
 				mTypeEnvironment("x=ℙ(T)", ff),
@@ -529,16 +529,16 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment("y=ℙ(T), a=ℙ(T)", ff)
 		);
 		testPredicate("x;y⩥z=a",
-				mTypeEnvironment("x=ℙ(S×T), z=ℙ(U)", ff),
-				mTypeEnvironment("y=ℙ(T×U), a=ℙ(S×U)", ff)
+				mTypeEnvironment("x=S↔T, z=ℙ(U)", ff),
+				mTypeEnvironment("y=T↔U, a=S↔U", ff)
 		);
 		testPredicate("x∩y⩥z=a",
-				mTypeEnvironment("x=ℙ(S×T)", ff),
-				mTypeEnvironment("y=ℙ(S×T), z=ℙ(T), a=ℙ(S×T)", ff)
+				mTypeEnvironment("x=S↔T", ff),
+				mTypeEnvironment("y=S↔T, z=ℙ(T), a=S↔T", ff)
 		);
 		testPredicate("x∩y∖z=a",
-				mTypeEnvironment("x=ℙ(S×T)", ff),
-				mTypeEnvironment("y=ℙ(S×T), z=ℙ(S×T), a=ℙ(S×T)", ff)
+				mTypeEnvironment("x=S↔T", ff),
+				mTypeEnvironment("y=S↔T, z=S↔T, a=S↔T", ff)
 		);
 
 		// SetExpr
@@ -547,137 +547,136 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment("y=ℙ(T), a=ℙ(T)", ff)
 		);
 		testPredicate("x∪y∪z=a",
-				
 				mTypeEnvironment("x=ℙ(T)", ff),
 				mTypeEnvironment("y=ℙ(T), z=ℙ(T), a=ℙ(T)", ff)
 		);
 		testPredicate("x×y=a",
-				mTypeEnvironment("a=ℙ(S×T)", ff),
+				mTypeEnvironment("a=S↔T", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("x×y×z=a",
-				mTypeEnvironment("a=ℙ((S×T)×U)", ff),
+				mTypeEnvironment("a=S×T↔U", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		testPredicate("xy=a",
-				mTypeEnvironment("a=ℙ(S×T)", ff),
-				mTypeEnvironment("x=ℙ(S×T), y=ℙ(S×T)", ff)
+				mTypeEnvironment("a=S↔T", ff),
+				mTypeEnvironment("x=S↔T, y=S↔T", ff)
 		);
 		testPredicate("xyz=a",
-				mTypeEnvironment("a=ℙ(S×T)", ff),
-				mTypeEnvironment("x=ℙ(S×T), y=ℙ(S×T), z=ℙ(S×T)", ff)
+				mTypeEnvironment("a=S↔T", ff),
+				mTypeEnvironment("x=S↔T, y=S↔T, z=S↔T", ff)
 		);
 		testPredicate("f ∘ g = a",
-				mTypeEnvironment("f=ℙ(T×U), a=ℙ(S×U)", ff),
-				mTypeEnvironment("g=ℙ(S×T)", ff)
+				mTypeEnvironment("f=T↔U, a=S↔U", ff),
+				mTypeEnvironment("g=S↔T", ff)
 		);
 		testPredicate("f ∘ g ∘ h = a",
-				mTypeEnvironment("f=ℙ(U×V), h=ℙ(S×T)", ff),
-				mTypeEnvironment("a=ℙ(S×V), g=ℙ(T×U)", ff)
+				mTypeEnvironment("f=U↔V, h=S↔T", ff),
+				mTypeEnvironment("a=S↔V, g=T↔U", ff)
 		);
 		testPredicate("x∥y=a",
 				mTypeEnvironment(),
 				null
 		);
 		testPredicate("x∥y=a",
-				mTypeEnvironment("x=ℙ(S×U), y=ℙ(T×V)", ff),
-				mTypeEnvironment("a=ℙ((S×T)×(U×V))", ff)
+				mTypeEnvironment("x=S↔U, y=T↔V", ff),
+				mTypeEnvironment("a=S×T↔U×V", ff)
 		);
 		testPredicate("x◁y=a",
-				mTypeEnvironment("y=ℙ(S×T)", ff),
-				mTypeEnvironment("x=ℙ(S), a=ℙ(S×T)", ff)
+				mTypeEnvironment("y=S↔T", ff),
+				mTypeEnvironment("x=ℙ(S), a=S↔T", ff)
 		);
 		testPredicate("x⩤y=a",
-				mTypeEnvironment("y=ℙ(S×T)", ff),
-				mTypeEnvironment("x=ℙ(S), a=ℙ(S×T)", ff)
+				mTypeEnvironment("y=S↔T", ff),
+				mTypeEnvironment("x=ℙ(S), a=S↔T", ff)
 		);
 		// RelationalSetExpr
 		testPredicate("xy=a",
-				mTypeEnvironment("a=ℙ(ℙ(S×T))", ff),
+				mTypeEnvironment("a=ℙ(S↔T)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("(xy)z=a",
-				mTypeEnvironment("a=ℙ(ℙ(ℙ(S×T)×U))", ff),
+				mTypeEnvironment("a=ℙ((S↔T)↔U)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		testPredicate("xy=a",
-				mTypeEnvironment("a=ℙ(ℙ(S×T))", ff),
+				mTypeEnvironment("a=ℙ(S↔T)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("(xy)z=a",
-				mTypeEnvironment("a=ℙ(ℙ(ℙ(S×T)×U))", ff),
+				mTypeEnvironment("a=ℙ((S↔T)↔U)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		testPredicate("xy=a",
-				mTypeEnvironment("a=ℙ(ℙ(S×T))", ff),
+				mTypeEnvironment("a=ℙ(S↔T)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("(xy)z=a",
-				mTypeEnvironment("a=ℙ(ℙ(ℙ(S×T)×U))", ff),
+				mTypeEnvironment("a=ℙ((S↔T)↔U)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		testPredicate("x⤀y=a",
-				mTypeEnvironment("a=ℙ(ℙ(S×T))", ff),
+				mTypeEnvironment("a=ℙ(S↔T)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("(x⤀y)⤀z=a",
-				mTypeEnvironment("a=ℙ(ℙ(ℙ(S×T)×U))", ff),
+				mTypeEnvironment("a=ℙ((S↔T)↔U)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		testPredicate("x⤔y=a",
-				mTypeEnvironment("a=ℙ(ℙ(S×T))", ff),
+				mTypeEnvironment("a=ℙ(S↔T)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("(x⤔y)⤔z=a",
-				mTypeEnvironment("a=ℙ(ℙ(ℙ(S×T)×U))", ff),
+				mTypeEnvironment("a=ℙ((S↔T)↔U)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		testPredicate("x⤖y=a",
-				mTypeEnvironment("a=ℙ(ℙ(S×T))", ff),
+				mTypeEnvironment("a=ℙ(S↔T)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("(x⤖y)⤖z=a",
-				mTypeEnvironment("a=ℙ(ℙ(ℙ(S×T)×U))", ff),
+				mTypeEnvironment("a=ℙ((S↔T)↔U)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		testPredicate("x→y=a",
-				mTypeEnvironment("a=ℙ(ℙ(S×T))", ff),
+				mTypeEnvironment("a=ℙ(S↔T)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("(x→y)→z=a",
-				mTypeEnvironment("a=ℙ(ℙ(ℙ(S×T)×U))", ff),
+				mTypeEnvironment("a=ℙ((S↔T)↔U)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		testPredicate("x↔y=a",
-				mTypeEnvironment("a=ℙ(ℙ(S×T))", ff),
+				mTypeEnvironment("a=ℙ(S↔T)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("(x↔y)↔z=a",
-				mTypeEnvironment("a=ℙ(ℙ(ℙ(S×T)×U))", ff),
+				mTypeEnvironment("a=ℙ((S↔T)↔U)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		testPredicate("x↠y=a",
-				mTypeEnvironment("a=ℙ(ℙ(S×T))", ff),
+				mTypeEnvironment("a=ℙ(S↔T)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("(x↠y)↠z=a",
-				mTypeEnvironment("a=ℙ(ℙ(ℙ(S×T)×U))", ff),
+				mTypeEnvironment("a=ℙ((S↔T)↔U)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		testPredicate("x↣y=a",
-				mTypeEnvironment("a=ℙ(ℙ(S×T))", ff),
+				mTypeEnvironment("a=ℙ(S↔T)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("(x↣y)↣z=a",
-				mTypeEnvironment("a=ℙ(ℙ(ℙ(S×T)×U))", ff),
+				mTypeEnvironment("a=ℙ((S↔T)↔U)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		testPredicate("x⇸y=a",
-				mTypeEnvironment("a=ℙ(ℙ(S×T))", ff),
+				mTypeEnvironment("a=ℙ(S↔T)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T)", ff)
 		);
 		testPredicate("(x⇸y)⇸z=a",
-				mTypeEnvironment("a=ℙ(ℙ(ℙ(S×T)×U))", ff),
+				mTypeEnvironment("a=ℙ((S↔T)↔U)", ff),
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff)
 		);
 		// PairExpr
@@ -703,8 +702,7 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment("z=ℙ(S)", ff),
 				null
 		);
-		testPredicate("finite(λ x↦y· " +
-				"x↦y∈ℤ×ℤ ∣z)",
+		testPredicate("finite(λ x↦y·x↦y∈ℤ×ℤ ∣z)",
 				mTypeEnvironment("z=ℙ(S)", ff),
 				mTypeEnvironment()
 		);
@@ -712,9 +710,7 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment("z=ℙ(S)", ff),
 				null
 		);
-		testPredicate("finite(λ x↦y↦s·" +
-				"x↦y↦s∈ℤ×ℤ×ℤ" +
-				"∣z)",
+		testPredicate("finite(λ x↦y↦s · x↦y↦s∈ℤ×ℤ×ℤ ∣ z)",
 				mTypeEnvironment("z=ℙ(S)", ff),
 				mTypeEnvironment()
 		);
@@ -722,28 +718,26 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment("z=ℙ(S)", ff),
 				null
 		);
-		testPredicate("finite(λ x↦(y↦s)·" +
-				"x↦y↦s∈ℤ×ℤ×ℤ" +
-				"∣z)",
+		testPredicate("finite(λ x↦(y↦s) · x↦y↦s∈ℤ×ℤ×ℤ ∣ z)",
 				mTypeEnvironment("z=ℙ(S)", ff),
 				mTypeEnvironment()
 		);
 
 		// Bound
 		testPredicate("a = (λ x·⊥∣x)",
-				mTypeEnvironment("a=ℙ(S×S)", ff),
+				mTypeEnvironment("a=S↔S", ff),
 				mTypeEnvironment()
 		);
 		testPredicate("a = (λ x↦y·⊥∣y)",
-				mTypeEnvironment("a=ℙ((S×T)×T)", ff),
+				mTypeEnvironment("a=S×T↔T", ff),
 				mTypeEnvironment()
 		);
 		testPredicate("a = (λ x↦y↦s·⊥∣s)",
-				mTypeEnvironment("a=ℙ(((S×T)×U)×U)", ff),
+				mTypeEnvironment("a=S×T×U↔U", ff),
 				mTypeEnvironment()
 		);
 		testPredicate("a = (λ x↦(y↦s)·⊥∣s)",
-				mTypeEnvironment("a=ℙ((S×(T×U))×U)", ff),
+				mTypeEnvironment("a=S×(T×U)↔U", ff),
 				mTypeEnvironment()
 		);
 
@@ -760,8 +754,7 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment("z=ℙ(S)", ff),
 				null
 		);
-		testPredicate("finite(⋃y,x·" +
-				"x↦y∈ℤ×ℤ ∣z)",
+		testPredicate("finite(⋃y,x · x↦y∈ℤ×ℤ ∣ z)",
 				mTypeEnvironment("z=ℙ(S)", ff),
 				mTypeEnvironment()
 		);
@@ -769,9 +762,7 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment("z=ℙ(S)", ff),
 				null
 		);
-		testPredicate("finite(⋃s,y,x·" +
-				"x↦y↦s∈ℤ×ℤ×ℤ" +
-				"∣z)",
+		testPredicate("finite(⋃s,y,x · x↦y↦s∈ℤ×ℤ×ℤ ∣ z)",
 				mTypeEnvironment("z=ℙ(S)", ff),
 				mTypeEnvironment()
 		);
@@ -782,11 +773,11 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment()
 		);
 		testPredicate("(⋃y,x·⊥∣y ▷ x) = a",
-				mTypeEnvironment("a=ℙ(S×T)", ff),
+				mTypeEnvironment("a=S↔T", ff),
 				mTypeEnvironment()
 		);
 		testPredicate("(⋃s,y,x·⊥∣ (s▷y)▷x) = a",
-				mTypeEnvironment("a=ℙ(S×T)", ff),
+				mTypeEnvironment("a=S↔T", ff),
 				mTypeEnvironment()
 		);
 
@@ -803,11 +794,11 @@ public class TestTypeChecker extends AbstractTests {
 		// Special formulas
 		testPredicate("∀ s · N◁id ⊆ s ∧ s ; r ⊆ s ⇒ c ⊆ s",
 				mTypeEnvironment("N=ℙ(N)", ff),
-				mTypeEnvironment("r=ℙ(N×N), c=ℙ(N×N)", ff)
+				mTypeEnvironment("r=N↔N, c=N↔N", ff)
 		);
 		testPredicate("(λ x ↦ y ↦ z · x < y ∧ z ∈ ℤ∣ H ) ( f ( 1 ) ) ∈ ℙ ( ℤ )",
 				mTypeEnvironment(),
-				mTypeEnvironment("H=ℙ(ℤ), f=ℙ(ℤ×((ℤ×ℤ)×ℤ))", ff)
+				mTypeEnvironment("H=ℙ(ℤ), f=ℤ↔ℤ×ℤ×ℤ", ff)
 		);
 		testPredicate(
 				" ultraf = { " +
@@ -841,7 +832,7 @@ public class TestTypeChecker extends AbstractTests {
 		);
 		testPredicate("N◁id ∩ g = ∅",
 				mTypeEnvironment("N=ℙ(N)", ff),
-				mTypeEnvironment("g=ℙ(N×N)", ff)
+				mTypeEnvironment("g=N↔N", ff)
 		);
 		testPredicate(
                 " g = g∼ ∧ " +
@@ -861,7 +852,7 @@ public class TestTypeChecker extends AbstractTests {
                 "    )" +
                 " )",
 				mTypeEnvironment("N=ℙ(N)", ff),
-				mTypeEnvironment("g=ℙ(N×N), h=ℙ(N×ℙ(N×N))", ff)
+				mTypeEnvironment("g=N↔N, h=N↔(N↔N)", ff)
 		);
 		testPredicate(
                 " com ∩ id = ∅ ∧ " +
@@ -871,7 +862,7 @@ public class TestTypeChecker extends AbstractTests {
                 " aut ⩥ {outside} ⊆ (aut ; exit∼) ∧ " +
                 " ( ∃ l · l ∈ L ∖ {outside} ∧ outside ↦ l ∈ com ∧ L×{l} ⊆ aut )",
                 mTypeEnvironment("L=ℙ(L)", ff),
-                mTypeEnvironment("aut=ℙ(L×L), com=ℙ(L×L), outside=L, exit=ℙ(L×L)", ff)
+                mTypeEnvironment("aut=L↔L, com=L↔L, outside=L, exit=L↔L", ff)
 		);
 		testPredicate(
                 " f ∈ ℙ(S) ↠ ℙ(S) ∧ " +
@@ -881,7 +872,7 @@ public class TestTypeChecker extends AbstractTests {
                 " (∀ v · (∀ w · f(w) ⊆ w ⇒ v ⊆ w) ⇒ v ⊆ fix) ∧ " +
                 " f(fix) = fix ",
 				mTypeEnvironment("S=ℙ(S)", ff),
-				mTypeEnvironment("fix=ℙ(S), f=ℙ(ℙ(S)×ℙ(S))", ff)				
+				mTypeEnvironment("fix=ℙ(S), f=ℙ(S)↔ℙ(S)", ff)				
 		);
 		testPredicate(
                 "  x ∈ S " +
@@ -898,15 +889,13 @@ public class TestTypeChecker extends AbstractTests {
 		);
 
 		// Test with typed empty set
-		testPredicate(
-                "(∅⦂ℙ(S×ℤ)) ∈ (∅⦂ℙ(S)) → ℤ",
+		testPredicate("(∅⦂S↔ℤ) ∈ (∅⦂ℙ(S)) → ℤ",
 				mTypeEnvironment(),
 				mTypeEnvironment()
 		);
 
 		// Nested quantified expressions
-		testPredicate(
-                "ℤ = {x∣x∈{y∣y∈ℤ ∧ y≤x}}",
+		testPredicate("ℤ = {x∣x∈{y∣y∈ℤ ∧ y≤x}}",
 				mTypeEnvironment(),
 				mTypeEnvironment()
 		);
@@ -917,84 +906,71 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment(), //
 				mTypeEnvironment("S=ℙ(S), A=ℙ(S)", ff)
 		);
-		testAssignment("x ≔ E", mTypeEnvironment("x=S", ff),
+		testAssignment("x ≔ E",
+				mTypeEnvironment("x=S", ff),
 				mTypeEnvironment("E=S", ff)
 		);
-		testAssignment("x ≔ E", mTypeEnvironment("x=S", ff),
+		testAssignment("x ≔ E",
+				mTypeEnvironment("x=S", ff),
 				mTypeEnvironment("E=S", ff)
 		);
-		testAssignment(
-				"x ≔ 2",
+		testAssignment("x ≔ 2",
 				mTypeEnvironment(),
 				mTypeEnvironment("x=ℤ", ff)
 		);
-		testAssignment(
-				"x ≔ 2",
+		testAssignment("x ≔ 2",
 				mTypeEnvironment("x=S", ff),
 				null
 		);
-		testAssignment(
-				"x,y ≔ E,F",
+		testAssignment("x,y ≔ E,F",
 				mTypeEnvironment("x=S, F=T", ff),
 				mTypeEnvironment("E=S, y=T", ff)
 		);
-		testAssignment(
-				"x,y ≔ E,F",
+		testAssignment("x,y ≔ E,F",
 				mTypeEnvironment("x=S, y=T, E=T", ff),
 				null
 		);
-		testAssignment(
-				"x,y ≔ E,F",
+		testAssignment("x,y ≔ E,F",
 				mTypeEnvironment("x=S, y=T, F=S", ff),
 				null
 		);
-		testAssignment(
-				"x,y,z ≔ ∅,∅,∅",
+		testAssignment("x,y,z ≔ ∅,∅,∅",
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U)", ff),
 				mTypeEnvironment()
 		);
-		testAssignment(
-				"x,y,z ≔ E,F,G",
+		testAssignment("x,y,z ≔ E,F,G",
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U), E=ℙ(U)", ff),
 				null
 		);
-		testAssignment(
-				"x,y,z ≔ E,F,G",
+		testAssignment("x,y,z ≔ E,F,G",
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U), F=ℙ(U)", ff),
 				null
 		);
-		testAssignment(
-				"x,y,z ≔ E,F,G",
+		testAssignment("x,y,z ≔ E,F,G",
 				mTypeEnvironment("x=ℙ(S), y=ℙ(T), z=ℙ(U), G=ℙ(S)", ff),
 				null
 		);
-		testAssignment(
-				"x :∈ S",
+		testAssignment("x :∈ S",
 				mTypeEnvironment("S=ℙ(S)", ff),
 				mTypeEnvironment("x=S", ff)
 		);
-		testAssignment(
-				"x :∈ ∅",
+		testAssignment("x :∈ ∅",
 				mTypeEnvironment("x=ℙ(S)", ff),
 				mTypeEnvironment()
 		);
-		testAssignment(
-				"x :∈ 1",
+		testAssignment("x :∈ 1",
 				mTypeEnvironment("x=S", ff),
 				null
 		);
-		testAssignment(
-				"x :∈ 1",
+		testAssignment("x :∈ 1",
 				mTypeEnvironment("x=ℤ", ff),
 				null
 		);
-		testAssignment(
-				"x :∣ x' < 0",
+		testAssignment("x :∣ x' < 0",
 				mTypeEnvironment(),
 				mTypeEnvironment("x=ℤ", ff)
 		);
-		testAssignment(
-				"x,y :∣ x' < 0 ∧ y' = bool(x' = 5)",
+		testAssignment("x,y :∣ x' < 0 ∧ y' = bool(x' = 5)",
 				mTypeEnvironment(),
 				mTypeEnvironment("x=ℤ, y=BOOL", ff)
 		);
@@ -1026,22 +1002,22 @@ public class TestTypeChecker extends AbstractTests {
 	}
 
 	private void testPredicate(String image, ITypeEnvironment initialEnv,
-			ITypeEnvironment inferredEnv) {
+			ITypeEnvironment finalEnv) {
 		final FormulaFactory factory = initialEnv.getFormulaFactory();
 		final Predicate formula = parsePredicate(image, factory);
-		doTest(formula, initialEnv, inferredEnv, image);
+		doTest(formula, initialEnv, finalEnv, image);
 	}
 
 	private void testAssignment(String image, ITypeEnvironment initialEnv,
-			ITypeEnvironment inferredEnv) {
+			ITypeEnvironment finalEnv) {
 		final FormulaFactory factory = initialEnv.getFormulaFactory();
 		final Assignment formula = parseAssignment(image, factory);
-		doTest(formula, initialEnv, inferredEnv, image);
+		doTest(formula, initialEnv, finalEnv, image);
 	}
 
 	private void doTest(Formula<?> formula, ITypeEnvironment initialEnv,
-			ITypeEnvironment inferredEnv, String image) {
-		final boolean expectSuccess = inferredEnv != null;
+			ITypeEnvironment finalEnv, String image) {
+		final boolean expectSuccess = finalEnv != null;
 		final ITypeCheckResult result = formula.typeCheck(initialEnv);
 		if (expectSuccess && !result.isSuccess()) {
 			StringBuilder builder = new StringBuilder(
@@ -1069,13 +1045,10 @@ public class TestTypeChecker extends AbstractTests {
 					+ result.getInitialTypeEnvironment() + "\n");
 		}
 		IInferredTypeEnvironment inferredTypEnv = null;
-		if (inferredEnv != null) {
+		if (finalEnv != null) {
+			// Create an inferred environment from the final environment
 			inferredTypEnv = mInferredTypeEnvironment(initialEnv);
-			ITypeEnvironment.IIterator iter = inferredEnv.getIterator();
-			while (iter.hasNext()) {
-				iter.advance();
-				inferredTypEnv.addName(iter.getName(), iter.getType());
-			}
+			inferredTypEnv.addAll(finalEnv);
 		}
 		assertEquals("Inferred typenv differ", inferredTypEnv,
 				result.getInferredEnvironment());
