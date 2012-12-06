@@ -27,7 +27,6 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IDatatypeTranslation;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.FreshNameSolver;
@@ -93,10 +92,11 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		}
 	}
 
-	public final FormulaFactory ff;
+	// the mathematical language we're using
+	private final FormulaFactory ff;
 
 	// implementation
-	protected Map<String, Type> map;
+	private final Map<String, Type> map;
 
 	/**
 	 * Constructs an initially empty type environment.
@@ -160,57 +160,38 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		addName(name, ff.makePowerSetType(ff.makeGivenType(name)));
 	}
 
-	public void addGivenSet(GivenType type) {
+	private void addGivenSet(GivenType type) {
 		addName(type.getName(), ff.makePowerSetType(type));
 	}
 
 	/**
 	 * Sets a name and its specified type in the type environment without
-	 * considering precedent value. The type is analyzed to check that GivenType
-	 * types used are defined (if not add them) or are coherent
-	 * with current environment.
+	 * considering previous value. All given sets occurring in the given type
+	 * are automatically added (which can produce errors if incompatible).
 	 * 
 	 * @param name the name to add
 	 * @param type the type to associate to the given name
-	 *            
 	 */
-	private void setName(String name, Type type) {
+	protected void setName(String name, Type type) {
 		if (type.isSolved()) {
-			// Check if it is a new given set
-			boolean is_new_given_set = false;
-			if (type instanceof PowerSetType) {
-				PowerSetType powerSetType = (PowerSetType) type;
-				Type baseType = powerSetType.getBaseType();
-				if (baseType instanceof GivenType) {
-					GivenType givenType = (GivenType) baseType;
-					is_new_given_set = givenType.getName().equals(name);
-				}
-			}
-			// Allowing to declare a new GivenSet type
-			if(!is_new_given_set){
-				for (GivenType givenType : type.getGivenTypes()) {
-					String mustBeGivenType = givenType.getName();
-					Type knownType = this.getType(mustBeGivenType);
-					if (knownType == null) {
-						// If given set does not exist add it
-						addGivenSet(mustBeGivenType);
-					} else {
-						// The already known type must be a given set
-						Type baseType = knownType.getBaseType();
-						if (baseType == null || !baseType.equals(givenType)) {
-							throw new IllegalArgumentException(
-									"Trying to register " + name
-									+ " with the type " + type
-									+ " whereas " + mustBeGivenType
-									+ "is already defined as "
-									+ knownType);
-						}
-					}
+			// Avoid infinite recursion when adding a given set
+			if (!isGivenSet(name, type)) {
+				for (final GivenType givenType : type.getGivenTypes()) {
+					addGivenSet(givenType);
 				}
 			}
 		}
-
 		map.put(name, type);
+	}
+
+	// Tells whether (name, type) corresponds to a given set declaration
+	private boolean isGivenSet(String name, Type type) {
+		final Type baseType = type.getBaseType();
+		if (baseType instanceof GivenType) {
+			final GivenType givenType = (GivenType) baseType;
+			return givenType.getName().equals(name);
+		}
+		return false;
 	}
 
 	/*
@@ -223,22 +204,30 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	public void addName(String name, Type type) {
 		if (name == null) {
 			throw new NullPointerException("Null name");
-		} else {
-			if (!this.getFormulaFactory().isValidIdentifierName(name)) {
-				throw new IllegalArgumentException(name
-						+ " is an invalid identifier name in current language");
-			}
+		}
+		if (!this.getFormulaFactory().isValidIdentifierName(name)) {
+			throw new IllegalArgumentException(name
+					+ " is an invalid identifier name in current language");
 		}
 		if (type == null) {
 			throw new NullPointerException("Null type");
 		}
-		Type oldType = map.get(name);
+		final Type oldType = internalGetType(name);
 		if (oldType != null && !oldType.equals(type)) {
 			throw new IllegalArgumentException(
 					"Trying to register an existing name with a different type");
-		} else if (oldType == null) {
+		}
+		if (oldType == null) {
 			setName(name, type);
 		}
+	}
+
+	/*
+	 * Internal method for enquiring about the type already associated to a
+	 * name. Subclasses should override.
+	 */
+	protected Type internalGetType(String name) {
+		return map.get(name);
 	}
 
 	/*
@@ -291,11 +280,11 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 		if (this == obj) {
 			return true;
 		}
-		if (obj != null && obj.getClass() == this.getClass()) {
-			TypeEnvironment temp = (TypeEnvironment) obj;
-			return map.equals(temp.map);
+		if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
 		}
-		return false;
+		final TypeEnvironment other = (TypeEnvironment) obj;
+		return map.equals(other.map);
 	}
 
 	@Override
@@ -392,5 +381,6 @@ public class TypeEnvironment implements Cloneable, ITypeEnvironment {
 	public ITypeEnvironment specialize(ISpecialization specialization) {
 		return ((Specialization) specialization).specialize(this);
 	}
+
 
 }

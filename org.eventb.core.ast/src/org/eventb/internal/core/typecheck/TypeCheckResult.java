@@ -54,7 +54,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	public TypeCheckResult(ITypeEnvironment typeEnvironment) {
 		super();
 		this.initialTypeEnvironment = (TypeEnvironment) typeEnvironment;
-		this.factory = this.initialTypeEnvironment.ff;
+		this.factory = this.initialTypeEnvironment.getFormulaFactory();
 		this.unifier = new TypeUnifier(this);
 		this.inferredTypeEnvironment = new InferredTypeEnvironment(
 				this.initialTypeEnvironment);
