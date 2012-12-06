@@ -17,6 +17,7 @@ import java.util.Collection;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -81,10 +82,12 @@ public abstract class AbstractManualInferenceTests extends AbstractManualReasone
 	private SuccessfullReasonerApplication makeSuccessfullReasonerApplication(
 			String sequenceImage, String hypothesisImage, String positionImage,
 			String [] results) {
-		Predicate predicate = null;
+		final Predicate predicate;
 		if (hypothesisImage != null) {
-			predicate = TestLib.genPred(hypothesisImage);
-			predicate.typeCheck(ff.makeTypeEnvironment());
+			ITypeEnvironment typenv = ff.makeTypeEnvironment();
+			predicate = TestLib.genPred(typenv, hypothesisImage);
+		} else {
+			predicate = null;
 		}
 
 		IReasonerInput input = new AbstractManualInference.Input(predicate,
