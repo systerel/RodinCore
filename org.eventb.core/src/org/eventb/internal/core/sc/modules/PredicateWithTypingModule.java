@@ -34,14 +34,6 @@ public abstract class PredicateWithTypingModule<I extends IPredicateElement>
 			String name = iterator.getName();
 			Type type = iterator.getType();
 
-			// FIXME do a cleaner treatment: some symbols already exist since we
-			// add unknown given sets when they appear in an element's type
-			// added to the
-			// inferred type environment
-			if (type.equals(typeEnvironment.getType(name))) {
-				continue;
-			}
-
 			IIdentifierSymbolInfo symbolInfo = identifierSymbolTable
 					.getSymbolInfo(name);
 
