@@ -27,6 +27,13 @@ import java.util.Set;
  * that records the types inferred from the formula.
  * </p>
  * <p>
+ * Type environment enforce name consistency. This means that all names must be
+ * valid identifier names in the associated language (as defined by the formula
+ * factory used to create this type environment) and that any name that occurs
+ * in a registered type (i.e., any carrier set name) is automatically added to
+ * the type environment as a given set.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients. Use
  * {@link FormulaFactory#makeTypeEnvironment()} to create new type environments.
  * </p>
@@ -35,6 +42,7 @@ import java.util.Set;
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
+ * @see FormulaFactory#isValidIdentifierName(String)
  */
 public interface ITypeEnvironment {
 
@@ -119,6 +127,9 @@ public interface ITypeEnvironment {
 	 * 
 	 * @param other
 	 *            another type environment
+	 * @throws IllegalArgumentException
+	 *             if the mappings of the given type environment are
+	 *             incompatible with this type environment
 	 */
 	void addAll(ITypeEnvironment other);
 
@@ -131,19 +142,24 @@ public interface ITypeEnvironment {
 	 * 
 	 * @param freeIdent
 	 *            a free identifier
+	 * @throws IllegalArgumentException
+	 *             if the given free identifier is either not a valid identifier
+	 *             or not typed, or incompatible with this type environment
 	 */
 	void add(FreeIdentifier freeIdent);
 	
 	/**
 	 * Adds all given free identifiers to this environment.
 	 * <p>
-	 * All given free identifiers must already be type-checked.
-	 * All names that are common to this type environment and the given free identifiers
-	 * must be associated with the same type.
+	 * All given free identifiers must already be type-checked. All names that
+	 * are common to this type environment and the given free identifiers must
+	 * be associated with the same type.
 	 * </p>
 	 * 
 	 * @param freeIdents
 	 *            array of free identifiers
+	 * @throws IllegalArgumentException
+	 *             if any given free identifier is ill-formed
 	 */
 	void addAll(FreeIdentifier[] freeIdents);
 	
@@ -159,6 +175,10 @@ public interface ITypeEnvironment {
 	 * 
 	 * @param name
 	 *            the name to add
+	 * @throws IllegalArgumentException
+	 *             if the given name is not a valid identifier name or has
+	 *             already been registered with a type which does not correspond
+	 *             to a carrier set.
 	 */
 	void addGivenSet(String name);
 
@@ -166,15 +186,22 @@ public interface ITypeEnvironment {
 	 * Adds a name and its specified type in the type environment.
 	 * <p>
 	 * If the given name already occurs in this environment, it must be
-	 * associated with the given type. The given type is also analyzed to check
-	 * that GivenType types used are defined (if not add them) or are coherent
-	 * with current environment.
+	 * associated with the given type. Moreover, all carrier sets that occur in
+	 * the given type are automatically added to this type environment, as a
+	 * side-effect. If any of these carrier sets was already registered in this
+	 * type environment, but with a different type, this will produce an error.
 	 * </p>
 	 * 
 	 * @param name
 	 *            the name to add
 	 * @param type
 	 *            the type to associate to the given name
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the given name is not a valid identifier name or if the
+	 *             given type is not compatible with this type environment:
+	 *             different from a type already registered with the same name
+	 *             or containing incompatible carrier sets
 	 */
 	void addName(String name, Type type);
 
@@ -201,7 +228,7 @@ public interface ITypeEnvironment {
 	 * environment.
 	 * <p>
 	 * In other words, this method returns <code>true</code> iff all mappings
-	 * in <code>typenv</code> also occur in this typing enviroment.
+	 * in <code>typenv</code> also occur in this typing environment.
 	 * </p>
 	 * 
 	 * @param typenv
@@ -248,7 +275,7 @@ public interface ITypeEnvironment {
 	Type getType(String name);
 
 	/**
-	 * Returs whether this type environment is empty.
+	 * Returns whether this type environment is empty.
 	 * 
 	 * @return <code>true</code> iff this environment doesn't contain any
 	 *         mapping.
