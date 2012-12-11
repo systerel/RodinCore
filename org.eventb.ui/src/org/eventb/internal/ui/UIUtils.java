@@ -22,6 +22,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui;
 
+import static org.eclipse.ui.PlatformUI.getWorkbench;
 import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
 import java.lang.reflect.InvocationTargetException;
@@ -973,7 +974,7 @@ public class UIUtils {
 	}
 
 	static Shell getShell() {
-		return EventBUIPlugin.getActiveWorkbenchWindow().getShell();
+		return getWorkbench().getModalDialogShellProvider().getShell();
 	}
 	
 	private static void syncExec(Runnable runnable) {
