@@ -586,7 +586,7 @@
             id="fr.systerel.explorer.navigator.viewActions.toolbar"
             targetID="fr.systerel.explorer.navigator.view">
          <action
-               class="fr.systerel.internal.explorer.navigator.actionProviders.NewComponentActionDelegate"
+               class="fr.systerel.internal.explorer.navigator.actionProviders.AbstractNewActionDelegate$NewComponent"
                icon="icons/full/clcl16/newcomp_wiz.gif"
                id="fr.systerel.explorer.navigator.actions.newComponent"
                label="%viewActions.newComponent.label"
@@ -594,7 +594,7 @@
                tooltip="%viewActions.newComponent.tooltip">
          </action>
          <action
-               class="fr.systerel.internal.explorer.navigator.actionProviders.NewProjectActionDelegate"
+               class="fr.systerel.internal.explorer.navigator.actionProviders.AbstractNewActionDelegate$NewProject"
                icon="icons/full/clcl16/newprj_wiz.gif"
                id="fr.systerel.explorer.navigator.actions.newProject"
                label="%viewActions.newProject.label"
