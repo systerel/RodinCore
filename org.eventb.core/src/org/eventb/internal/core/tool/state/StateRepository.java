@@ -16,7 +16,7 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.tool.IStateRepository;
 import org.eventb.core.tool.IStateType;
 import org.eventb.internal.core.Util;
@@ -38,7 +38,7 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 
 	public static final int REPOSITORY_SIZE = 117;
 	
-	private ITypeEnvironment environment;
+	private ITypeEnvironmentBuilder environment;
 	
 	private FormulaFactory factory;
 	
@@ -77,14 +77,14 @@ public abstract class StateRepository<I extends IState> implements IStateReposit
 	}
 
 	@Override
-	public final ITypeEnvironment getTypeEnvironment() throws CoreException {
+	public final ITypeEnvironmentBuilder getTypeEnvironment() throws CoreException {
 		if (exception != null)
 			throw exception;
 		return environment;
 	}
 
 	@Override
-	public final void setTypeEnvironment(ITypeEnvironment environment) throws CoreException {
+	public final void setTypeEnvironment(ITypeEnvironmentBuilder environment) throws CoreException {
 		if (exception != null)
 			throw exception;
 		if (environment == null)

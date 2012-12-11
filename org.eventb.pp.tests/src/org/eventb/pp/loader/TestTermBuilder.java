@@ -17,7 +17,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mVariable;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.elements.Sort;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class TestTermBuilder extends AbstractPPTest {
 
-	private static final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+	private static final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 	static {
 		typenv.addName("a", ff.makeIntegerType());
 	}

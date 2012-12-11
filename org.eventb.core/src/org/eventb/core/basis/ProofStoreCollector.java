@@ -27,6 +27,7 @@ import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IPRStringInput;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerDesc;
@@ -42,7 +43,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class ProofStoreCollector implements IProofStoreCollector {
 
-	private final ITypeEnvironment baseTypEnv;
+	private final ISealedTypeEnvironment baseTypEnv;
 	private final Map<Predicate,String> predicates = new HashMap<Predicate,String>();
 	private int predCount = 0;
 	private final Map<Expression,String> expressions = new HashMap<Expression,String>();
@@ -51,7 +52,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 	private int reasonerCount = 0;
 	
 	public ProofStoreCollector(ITypeEnvironment baseTypEnv){
-		this.baseTypEnv = baseTypEnv;
+		this.baseTypEnv = baseTypEnv.makeSnapshot();
 	}
 	
 	@Override

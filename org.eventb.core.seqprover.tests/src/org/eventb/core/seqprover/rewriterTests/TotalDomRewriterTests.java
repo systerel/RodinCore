@@ -30,19 +30,19 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TotalDomSubstitutions;
@@ -145,7 +145,8 @@ public class TotalDomRewriterTests {
 	@Test
 	public void testInHypothesis() throws Exception {
 		final IProverSequent seq = TestLib.genSeq("f∈ℕ→ℕ ;; dom(f)=ℕ |- ⊥");
-		final ITypeEnvironment typeEnv = seq.typeEnvironment();
+		final ITypeEnvironmentBuilder typeEnv = seq.typeEnvironment()
+				.makeBuilder();
 		final Predicate neededHyp = TestLib.genPred(typeEnv, "f∈ℕ→ℕ");
 		final Predicate toRewrite = TestLib.genPred(typeEnv, "dom(f)=ℕ");
 

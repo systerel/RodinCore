@@ -27,7 +27,7 @@ import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.state.IContextTable;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.IIdentifierSymbolTable;
@@ -47,7 +47,7 @@ public abstract class ContextPointerModule extends IdentifierCreatorModule {
 
 	protected IContextTable contextTable;
 	protected IIdentifierSymbolTable identifierSymbolTable;
-	protected ITypeEnvironment typeEnvironment;
+	protected ITypeEnvironmentBuilder typeEnvironment;
 	protected FormulaFactory factory;
 
 	/*

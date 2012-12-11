@@ -42,6 +42,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IFormulaInspector;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -92,7 +93,7 @@ public final class POLoader {
 	 */
 	public static IProverSequent readPO(IPOSequent poSeq, FormulaFactory factory)
 			throws RodinDBException {
-		final ITypeEnvironment typeEnv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
 		final Set<Predicate> hypotheses = new LinkedHashSet<Predicate>();
 		final Set<Predicate> selHyps = new LinkedHashSet<Predicate>();
 		final SelectionHints selHints = new SelectionHints(poSeq);
@@ -143,7 +144,7 @@ public final class POLoader {
 	 */
 	private static void loadHypotheses(IPOSequent poSeq,
 			SelectionHints selHints, Set<Predicate> hypotheses,
-			Set<Predicate> selHyps, ITypeEnvironment typeEnv,
+			Set<Predicate> selHyps, ITypeEnvironmentBuilder typeEnv,
 			FormulaFactory factory) throws RodinDBException {
 
 		IPOPredicateSet[] dbHyps = poSeq.getHypotheses();
@@ -160,7 +161,7 @@ public final class POLoader {
 	
 	private static void loadPredicateSet(IPOPredicateSet poPredSet,
 			SelectionHints selHints, Set<Predicate> hypotheses,
-			Set<Predicate> selHyps, ITypeEnvironment typeEnv,
+			Set<Predicate> selHyps, ITypeEnvironmentBuilder typeEnv,
 			FormulaFactory factory) throws RodinDBException {
 
 		final IPOPredicateSet parentSet = poPredSet.getParentPredicateSet();

@@ -10,7 +10,7 @@ package org.eventb.pp.loader;
 import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.AbstractFormula;
@@ -33,7 +33,7 @@ public class TestExpectedLiterals {
 
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	
-	private static ITypeEnvironment env = ff.makeTypeEnvironment();
+	private static ITypeEnvironmentBuilder env = ff.makeTypeEnvironment();
 	static {
 		env.addName("a", ff.makeGivenType("A"));
 		env.addName("c", ff.makeBooleanType());

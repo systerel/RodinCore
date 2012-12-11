@@ -40,7 +40,7 @@ import static org.junit.Assert.fail;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
@@ -57,7 +57,7 @@ import org.junit.Test;
  */
 public class LanguageFilterTest extends AbstractTransformerTests {
 
-	private final ITypeEnvironment typenv = DT_FAC.makeTypeEnvironment();
+	private final ITypeEnvironmentBuilder typenv = DT_FAC.makeTypeEnvironment();
 
 	private static void assertTagFiltered(String predImage, int tag) {
 		assertNotFiltered(predImage);
@@ -69,7 +69,7 @@ public class LanguageFilterTest extends AbstractTransformerTests {
 		assertFiltered(pred, tag);
 	}
 
-	private static void assertFiltered(ITypeEnvironment typenv,
+	private static void assertFiltered(ITypeEnvironmentBuilder typenv,
 			String predImage, int... tags) {
 		assertFiltered(true, typenv, predImage, tags);
 	}
@@ -82,7 +82,7 @@ public class LanguageFilterTest extends AbstractTransformerTests {
 		assertFiltered(true, makeSequent(pred), tags);
 	}
 
-	private static void assertNotFiltered(ITypeEnvironment typenv,
+	private static void assertNotFiltered(ITypeEnvironmentBuilder typenv,
 			String predImage, int... tags) {
 		assertFiltered(false, typenv, predImage, tags);
 	}
@@ -97,12 +97,12 @@ public class LanguageFilterTest extends AbstractTransformerTests {
 
 	private static void assertFiltered(boolean expected, String predImage,
 			int[] tags) {
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 		assertFiltered(expected, typenv, predImage, tags);
 	}
 
 	private static void assertFiltered(boolean expected,
-			ITypeEnvironment typenv, String predImage, int[] tags) {
+			ITypeEnvironmentBuilder typenv, String predImage, int[] tags) {
 		final ISimpleSequent sequent = makeSequent(typenv, predImage);
 		assertFiltered(expected, sequent, tags);
 	}
@@ -137,7 +137,7 @@ public class LanguageFilterTest extends AbstractTransformerTests {
 	}
 
 	// Twisted way to build an empty set extension with a given type
-	public static Expression setext(ITypeEnvironment typenv, String type) {
+	public static Expression setext(ITypeEnvironmentBuilder typenv, String type) {
 		final Predicate pred = genPred(typenv, "{ } = (∅⦂" + type + ")");
 		final Expression setext = ((RelationalPredicate) pred).getLeft();
 		assertEquals(Formula.SETEXT, setext.getTag());

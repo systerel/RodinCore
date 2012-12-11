@@ -14,7 +14,7 @@ import static java.util.regex.Pattern.compile;
 import static org.eventb.core.ast.tests.AbstractTests.parseExpression;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
 import static org.eventb.core.ast.tests.AbstractTests.typeCheck;
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.regex.Pattern;
 
@@ -22,6 +22,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -42,12 +43,12 @@ public class SpecializationBuilder {
 	private static final String[] NO_IMAGES = new String[0];
 
 	private final FormulaFactory fac;
-	private final ITypeEnvironment srcTypenv;
+	private final ISealedTypeEnvironment srcTypenv;
 	private final ISpecialization result;
 
 	public SpecializationBuilder(ITypeEnvironment typenv) {
 		this.fac = typenv.getFormulaFactory();
-		this.srcTypenv = typenv;
+		this.srcTypenv = typenv.makeSnapshot();
 		this.result = fac.makeSpecialization();
 	}
 
@@ -102,7 +103,7 @@ public class SpecializationBuilder {
 		final Expression dst = parseExpression(dstImage, fac);
 		final Type dstType = src.getType().specialize(result);
 		final ISpecialization temp = result.clone();
-		final ITypeEnvironment dstTypenv = srcTypenv.specialize(temp);
+		final ISealedTypeEnvironment dstTypenv = srcTypenv.specialize(temp).makeSnapshot();
 		final ITypeCheckResult tcResult = dst.typeCheck(dstTypenv, dstType);
 		if (tcResult.hasProblem()) {
 			fail("Typecheck failed for expression " + dstImage

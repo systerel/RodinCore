@@ -23,6 +23,7 @@ import java.util.Set;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
@@ -83,7 +84,7 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 		private Set<IDatatypeExtension> extensions = new LinkedHashSet<IDatatypeExtension>();
 		private Set<IDatatype> datatypes = new LinkedHashSet<IDatatype>();
 
-		private ITypeEnvironment sourceTypeEnv;
+		private ITypeEnvironmentBuilder sourceTypeEnv;
 		private ITypeEnvironment targetTypeEnv;
 
 		private DatatypeTranslation translation;
@@ -141,7 +142,7 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 			final String[] strings = getTypeEnvComponents(resultingTypeEnv);
 			final FormulaFactory targetFac = translation
 					.getTargetFormulaFactory();
-			final ITypeEnvironment tempEnv = targetFac.makeTypeEnvironment();
+			final ITypeEnvironmentBuilder tempEnv = targetFac.makeTypeEnvironment();
 			targetTypeEnv = addToTypeEnvironment(tempEnv, strings);
 		}
 

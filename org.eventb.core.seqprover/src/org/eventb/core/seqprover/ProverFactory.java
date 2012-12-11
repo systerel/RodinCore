@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
@@ -28,11 +29,11 @@ import org.eventb.core.seqprover.IHypAction.ISelectionHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.internal.core.seqprover.ForwardInfHypAction;
 import org.eventb.internal.core.seqprover.ProofRule;
+import org.eventb.internal.core.seqprover.ProofRule.Antecedent;
 import org.eventb.internal.core.seqprover.ProofTree;
 import org.eventb.internal.core.seqprover.ProverSequent;
 import org.eventb.internal.core.seqprover.ReasonerFailure;
 import org.eventb.internal.core.seqprover.SelectionHypAction;
-import org.eventb.internal.core.seqprover.ProofRule.Antecedent;
 
 /**
  * Static class with factory methods required to construct various data structures
@@ -47,14 +48,14 @@ import org.eventb.internal.core.seqprover.ProofRule.Antecedent;
 public final class ProverFactory {
 
 	private static class ProofDeps implements IProofDependencies {
-		private final ITypeEnvironment usedFreeIdents;
+		private final ISealedTypeEnvironment usedFreeIdents;
 		private final boolean hasDeps;
 		private final Set<Predicate> usedHypotheses;
 		private final Set<String> introducedFreeIdents;
 		private final Predicate goal;
 		private final Set<IReasonerDesc> usedReasoners;
 
-		private ProofDeps(ITypeEnvironment usedFreeIdents, boolean hasDeps,
+		private ProofDeps(ISealedTypeEnvironment usedFreeIdents, boolean hasDeps,
 				Set<Predicate> usedHypotheses,
 				Set<String> introducedFreeIdents, Predicate goal,
 				Set<IReasonerDesc> usedReasoners) {
@@ -74,7 +75,7 @@ public final class ProverFactory {
 			return introducedFreeIdents;
 		}
 
-		public ITypeEnvironment getUsedFreeIdents() {
+		public ISealedTypeEnvironment getUsedFreeIdents() {
 			return usedFreeIdents;
 		}
 
@@ -741,13 +742,14 @@ public final class ProverFactory {
 	 * 	input parameters
 	 * @deprecated use instead
 	 *             {@link #makeProofDependencies(boolean, Predicate, Set, ITypeEnvironment, Set, Set)
+	 * @since 3.0 : the type environment became immutable            
 	 */
 	@Deprecated
 	public static IProofDependencies makeProofDependencies(
 			final boolean hasDeps,
 			final Predicate goal,
 			final Set<Predicate> usedHypotheses,
-			final ITypeEnvironment usedFreeIdents,
+			final ISealedTypeEnvironment usedFreeIdents,
 			final Set<String> introducedFreeIdents){
 	
 		return makeProofDependencies(hasDeps, goal, usedHypotheses,
@@ -770,13 +772,13 @@ public final class ProverFactory {
 	 * @param usedReasoners
 	 * @return An instance of {@link IProofDependencies} with the values given as 
 	 * 	input parameters
-	 * @since 2.2
+	 * @since 3.0 : the type environment became immutable
 	 */
 	public static IProofDependencies makeProofDependencies(
 			final boolean hasDeps,
 			final Predicate goal,
 			final Set<Predicate> usedHypotheses,
-			final ITypeEnvironment usedFreeIdents,
+			final ISealedTypeEnvironment usedFreeIdents,
 			final Set<String> introducedFreeIdents,
 			final Set<IReasonerDesc> usedReasoners) {
 

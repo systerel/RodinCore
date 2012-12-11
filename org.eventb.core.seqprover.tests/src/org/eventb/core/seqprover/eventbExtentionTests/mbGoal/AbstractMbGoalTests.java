@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.tests.TestLib;
@@ -37,7 +37,7 @@ public class AbstractMbGoalTests {
 
 	protected static class TestItem {
 
-		protected final ITypeEnvironment typenv;
+		protected final ITypeEnvironmentBuilder typenv;
 		protected final Set<Predicate> hyps;
 
 		TestItem(String typenvImage, String... hypImages) {

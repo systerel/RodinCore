@@ -10,6 +10,7 @@ package org.eventb.internal.core.sc.modules;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPredicateElement;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.rodinp.core.IInternalElement;
@@ -25,7 +26,7 @@ public abstract class PredicateWithTypingModule<I extends IPredicateElement>
 	protected boolean updateIdentifierSymbolTable(
 			IInternalElement formulaElement,
 			ITypeEnvironment inferredEnvironment,
-			ITypeEnvironment typeEnvironment) throws CoreException {
+			ITypeEnvironmentBuilder typeEnvironment) throws CoreException {
 
 		ITypeEnvironment.IIterator iterator = inferredEnvironment.getIterator();
 

@@ -19,7 +19,7 @@ import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -28,7 +28,7 @@ public class RodinTests extends AbstractRodinTest {
 	private static final List<String> NO_ENV = emptyList();
 	private static final Set<String> NO_HYP = emptySet();
 
-	static ITypeEnvironment env = ff.makeTypeEnvironment();
+	static ITypeEnvironmentBuilder env = ff.makeTypeEnvironment();
 	static {
 		env.addName("f", REL(ty_S, ty_T));
 		env.addName("g", REL(ty_T, ty_V));

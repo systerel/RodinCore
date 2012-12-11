@@ -21,7 +21,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
@@ -38,7 +38,7 @@ import org.eventb.pptrans.Translator;
 @SuppressWarnings({ "deprecation", "javadoc" })
 public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	
-	protected final ITypeEnvironment te;
+	protected final ITypeEnvironmentBuilder te;
 	{
 		te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");

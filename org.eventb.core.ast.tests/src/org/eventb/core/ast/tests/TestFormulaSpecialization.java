@@ -23,8 +23,10 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IPredicateExtension;
 
@@ -52,14 +54,14 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/*
 	 * Type environment already initialized for most tests.
 	 */
-	private ITypeEnvironment te = mTypeEnvironment(//
+	private ISealedTypeEnvironment te = mTypeEnvironment(//
 			"S", "ℙ(S)",//
 			"T", "ℙ(T)",//
 			"A", "ℙ(S)",//
 			"a", "S",//
 			"b", "T",//
 			"c", "S",//
-			"d", "T");
+			"d", "T").makeSnapshot();
 
 	private ISpecialization spec = ff.makeSpecialization();
 
@@ -67,10 +69,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 * Ensures that assignment specialization is not supported.
 	 */
 	public void testAssignment() {
-		te = mTypeEnvironment("a", "ℤ");
+		ITypeEnvironmentBuilder teb = mTypeEnvironment("a", "ℤ");
 		final Assignment assign = parseAssignment("a ≔ a + 1");
-		typeCheck(assign, te);
-		spec = mSpecialization(te, "a := b");
+		typeCheck(assign, teb);
+		spec = mSpecialization(teb, "a := b");
 		try {
 			assign.specialize(spec);
 			fail("Should have thrown an unsupported operation error");
@@ -163,9 +165,10 @@ public class TestFormulaSpecialization extends AbstractTests {
 	public void testExtendedExpression() {
 		final FormulaFactory extFac = FormulaFactory
 				.getInstance(DIRECT_PRODUCT);
-		te = extFac.makeTypeEnvironment();
-		addToTypeEnvironment(te, "S", "ℙ(S)", "T", "ℙ(T)", "V", "ℙ(V)",//
+		final ITypeEnvironmentBuilder teb = extFac.makeTypeEnvironment();
+		addToTypeEnvironment(teb, "S", "ℙ(S)", "T", "ℙ(T)", "V", "ℙ(V)",//
 				"A", "ℙ(S×T)", "B", "ℙ(S×V)");
+		te = teb.makeSnapshot();
 		assertExpressionSpecialization(te, "A§B", "S := X", "A§B");
 	}
 
@@ -175,8 +178,9 @@ public class TestFormulaSpecialization extends AbstractTests {
 	public void testExtendedPredicate() {
 		final IPredicateExtension alphaExt = getAlphaExtension();
 		final FormulaFactory extFac = FormulaFactory.getInstance(alphaExt);
-		te = extFac.makeTypeEnvironment();
-		addToTypeEnvironment(te, "S", "ℙ(S)", "a", "S");
+		ITypeEnvironmentBuilder teb = extFac.makeTypeEnvironment();
+		addToTypeEnvironment(teb, "S", "ℙ(S)", "a", "S");
+		te = teb.makeSnapshot();
 		assertPredicateSpecialization(te,//
 				"α(a∈A, a)",//
 				"S := T || a := b",//
@@ -296,21 +300,21 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"∀x⦂T·x↦1 ∈ {x↦z∣x∈A ∧ z∈B}");
 	}
 
-	private static void assertExpressionSpecialization(ITypeEnvironment typenv,
+	private static void assertExpressionSpecialization(ISealedTypeEnvironment typenv,
 			String srcImage, String specImage, String expectedImage) {
 		final FormulaFactory fac = typenv.getFormulaFactory();
 		final Expression src = parseExpression(srcImage, fac);
-		typenv = typeCheck(src, typenv);
-		final ISpecialization spec = mSpecialization(typenv, specImage);
+		ITypeEnvironmentBuilder typenvb = typeCheck(src, typenv);
+		final ISpecialization spec = mSpecialization(typenvb, specImage);
 		final Expression expected = parseExpression(expectedImage, fac);
-		typeCheck(expected, typenv.specialize(spec));
-		assertSpecialization(typenv, src, spec, expected);
+		typeCheck(expected, typenvb.specialize(spec));
+		assertSpecialization(typenvb, src, spec, expected);
 	}
 
 	private static void assertPredicateSpecialization(
-			ITypeEnvironment baseTypenv, String srcImage, String specImage,
+			ISealedTypeEnvironment baseTypenv, String srcImage, String specImage,
 			String expectedImage) {
-		ITypeEnvironment typenv = baseTypenv.clone();
+		ITypeEnvironment typenv = baseTypenv.makeBuilder();
 		final FormulaFactory fac = typenv.getFormulaFactory();
 		final Predicate src = parsePredicate(srcImage, fac);
 		typenv = typeCheck(src, typenv);

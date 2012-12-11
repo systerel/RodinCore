@@ -12,7 +12,8 @@ package org.eventb.internal.core.seqprover;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 
 /**
@@ -23,7 +24,7 @@ import org.eventb.core.ast.Type;
  */
 public class TypeChecker {
 
-	private ITypeEnvironment typenv;
+	private ISealedTypeEnvironment typenv;
 	private boolean typenvChanged;
 
 	// True if added identifiers were indeed fresh
@@ -32,7 +33,7 @@ public class TypeChecker {
 	// True if a type-check error was detected
 	private boolean typeCheckError = false;
 
-	public TypeChecker(ITypeEnvironment typenv) {
+	public TypeChecker(ISealedTypeEnvironment typenv) {
 		this.typenv = typenv;
 	}
 
@@ -41,37 +42,38 @@ public class TypeChecker {
 			return;
 		if (!typenvChanged) {
 			typenvChanged = true;
-			typenv = typenv.clone();
 		}
+		ITypeEnvironmentBuilder tEnv = this.typenv.makeBuilder();
 		for (FreeIdentifier ident : idents) {
-			addIdent(ident);
+			addIdent(ident,tEnv);
 		}
+		typenv = tEnv.makeSnapshot();
 	}
 
-	private void addIdent(FreeIdentifier ident) {
+	private void addIdent(FreeIdentifier ident, ITypeEnvironmentBuilder tEnv) {
 		final String name = ident.getName();
 		final Type type = ident.getType();
 		if (type == null) {
 			ProverChecks.checkFailure(" Identifier " + name
 					+ " is not type checked.");
 		}
-		final Type knownType = typenv.getType(name);
+		final Type knownType = tEnv.getType(name);
 		if (knownType == null) {
-			typenv.add(ident);
+			tEnv.add(ident);
 			return;
 		}
 		ProverChecks.checkFailure(" Identifier " + name
-				+ " is not fresh in type environment " + typenv);
+				+ " is not fresh in type environment " + tEnv);
 		addedIdentsAreFresh = false;
 		if (!knownType.equals(ident.getType())) {
 			ProverChecks.checkFailure(" Free Identifier " + name + " of type "
 					+ type + " is incompatible with the type environment "
-					+ typenv);
+					+ tEnv);
 			typeCheckError = true;
 		}
 	}
 
-	public final ITypeEnvironment getTypeEnvironment() {
+	public final ISealedTypeEnvironment getTypeEnvironment() {
 		return typenv;
 	}
 

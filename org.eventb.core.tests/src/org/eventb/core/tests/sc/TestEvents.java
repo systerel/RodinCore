@@ -20,7 +20,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.IWitness;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.GraphProblem;
 
 /**
@@ -167,7 +167,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_06_parameter() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addInitialisation(mac);
@@ -193,7 +193,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_07_variableAndParameter() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "V1");
@@ -223,7 +223,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_08_variableAndParameterWithNameConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
@@ -256,7 +256,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_09_parametersOfDifferentEvents() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
@@ -290,7 +290,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_10_globalVariableInAction() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
@@ -320,7 +320,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_11_actionSameLHSConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
@@ -350,7 +350,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_12_actionGuardLabelConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
@@ -382,7 +382,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_13_actionAssignFromLocalVariableOK() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", factory.makeIntegerType());
 
 		addVariables(mac, "V1");
@@ -417,7 +417,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_14_assignmentToParameterProblem() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", factory.makeIntegerType());
 
 		addVariables(mac, "V1");
@@ -451,7 +451,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_15_actionNondetAssignment() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", factory.makeIntegerType());
 		typeEnvironment.addName("V1'", factory.makeIntegerType());
 
@@ -487,7 +487,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_16_actionMultipleLHSConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("u", factory.makeIntegerType());
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
@@ -546,7 +546,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_18_initialisationGuardProblem() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
 		addVariables(mac, "x");
@@ -576,7 +576,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_19_actionFaultyNondetAssignment() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
 		addVariables(mac, "x");
@@ -604,7 +604,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_20_initialisationNondetAssignmentOK() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
 		addVariables(mac, "x");
@@ -632,7 +632,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_21_initialisationNondetAssignmentReplacedByDefault() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
 		addVariables(mac, "x");
@@ -660,7 +660,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_22_initialisationDefaultAssignment() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", factory.makeIntegerType());
 
 		addVariables(mac, "x");
@@ -701,7 +701,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", factory.makeIntegerType());
 		typeEnvironment.addName("x'", factory.makeIntegerType());
 		typeEnvironment.addName("y", factory.makeIntegerType());
@@ -745,7 +745,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", factory.makeIntegerType());
 		typeEnvironment.addName("x'", factory.makeIntegerType());
 		typeEnvironment.addName("y", factory.makeIntegerType());
@@ -789,7 +789,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_26_bug2689872() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
@@ -905,7 +905,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	 */
 	public void testEvents_32_initialisationDefaultAssignments()
 			throws Exception {
-		final ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", factory.makeIntegerType());
 		typeEnvironment.addName("y", factory.makeIntegerType());
 

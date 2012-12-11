@@ -13,17 +13,17 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
@@ -58,7 +58,8 @@ public class AllI extends EmptyInputReasoner{
 		// The type environment is cloned since makeFresh.. adds directly to the
 		// given type environment
 		// TODO : Change implementation
-		ITypeEnvironment newITypeEnvironment = seq.typeEnvironment().clone();
+		ITypeEnvironmentBuilder newITypeEnvironment = seq.typeEnvironment()
+				.makeBuilder();
 		final FormulaFactory ff = seq.getFormulaFactory();
 		FreeIdentifier[] freeIdents = ff.makeFreshIdentifiers(boundIdentDecls,newITypeEnvironment);		
 		assert boundIdentDecls.length == freeIdents.length;

@@ -33,6 +33,7 @@ import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
@@ -359,7 +360,10 @@ public class DLib {
 		return ff.makeIntegerLiteral(BigInteger.valueOf(n), null);
 	}
 
-	public ITypeEnvironment makeTypeEnvironment() {
+	/**
+	 * @since 3.0: the returned type environment became explicitly mutable
+	 */
+	public ITypeEnvironmentBuilder makeTypeEnvironment() {
 		return ff.makeTypeEnvironment();
 	}
 

@@ -18,7 +18,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCMachineRoot;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.ParseProblem;
 
@@ -88,7 +88,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", factory.makeIntegerType());
 
 		containsVariant(file, typeEnvironment, "V1");
@@ -141,7 +141,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("C1", factory.makeIntegerType());
 		typeEnvironment.addName("V1", factory.makeIntegerType());
 
@@ -218,7 +218,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		containsVariables(file, "V0", "V1");
-		ITypeEnvironment typeEnv = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
 		typeEnv.addName("V1", intType);
 		containsVariant(file, typeEnv, "V1");
 
@@ -286,7 +286,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		containsVariables(file, "V0", "V1");
-		ITypeEnvironment typeEnv = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
 		typeEnv.addName("V1", intType);
 		containsVariant(file, typeEnv, "V1");
 

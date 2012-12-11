@@ -21,7 +21,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.GraphProblem;
 
 /**
@@ -191,7 +191,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", intType);
 		typeEnvironment.addName("L2", powIntType);
 
@@ -237,7 +237,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		typeEnvironment.addName("V1'", intType);
 		typeEnvironment.addName("L2", intType);
@@ -285,7 +285,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		typeEnvironment.addName("V1'", intType);
 		typeEnvironment.addName("V2", powIntType);
@@ -326,7 +326,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("L1", intType);
 		typeEnvironment.addName("L2", powIntType);
 		typeEnvironment.addName("L3", intType);
@@ -990,7 +990,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 
@@ -1035,7 +1035,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 
@@ -1075,7 +1075,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1'", intType);
 		typeEnvironment.addName("V2'", intType);
 
@@ -1110,7 +1110,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		saveRodinFileOf(ref);
 		runBuilder();
 
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
@@ -1173,7 +1173,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		saveRodinFileOf(ref);
 		runBuilder();
 
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("A", intType);
 		environment.addName("B", intType);
 		environment.addName("x", intType);
@@ -1250,7 +1250,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("p", boolType);
 		environment.addName("q", intType);
 		environment.addName("x", intType);
@@ -1292,7 +1292,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("p", boolType);
 
 		IMachineRoot mac = createMachine("mac");
@@ -1345,7 +1345,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("p'", intType);
 		environment.addName("q'", intType);
 
@@ -1421,7 +1421,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1'", intType);
 		typeEnvironment.addName("V2'", intType);
 
@@ -1463,7 +1463,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1'", intType);
 		typeEnvironment.addName("V2'", intType);
 
@@ -1600,7 +1600,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = ref.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		environment.addName("y", intType);
 
@@ -1650,7 +1650,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = ref.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		environment.addName("y", intType);
 
@@ -1723,7 +1723,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("a", intType);
 		environment.addName("b", intType);
 
@@ -1766,7 +1766,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		environment.addName("y", intType);
 
@@ -1822,7 +1822,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		environment.addName("y", intType);
 		environment.addName("z", intType);
@@ -1898,7 +1898,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 		
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("x", intType);
 		environment.addName("y", intType);
 		environment.addName("z", intType);

@@ -13,7 +13,7 @@ package org.eventb.core.seqprover;
 
 import java.util.Set;
 
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
 
 /**
@@ -78,8 +78,9 @@ public interface IProofDependencies {
 	 * 
 	 * @return the type environment corresponding to the used free identifiers
 	 *         in a proof.
+	 * @since 3.0 : the returned type environment became immutable
 	 */
-	ITypeEnvironment getUsedFreeIdents();
+	ISealedTypeEnvironment getUsedFreeIdents();
 	
 	/**
 	 * Returns the names of the free identifiers introduced in a proof. These

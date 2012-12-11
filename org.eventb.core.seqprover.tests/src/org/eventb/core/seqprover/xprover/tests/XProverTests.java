@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofRule;
@@ -67,7 +67,7 @@ public abstract class XProverTests {
 			Predicate goal) {
 
 		// Compute the type environment of the sequent
-		ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 		for (Predicate hyp : hyps) {
 			typenv.addAll(hyp.getFreeIdentifiers());
 		}

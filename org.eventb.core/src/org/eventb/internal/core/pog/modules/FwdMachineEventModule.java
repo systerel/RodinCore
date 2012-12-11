@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IMachineHypothesisManager;
 import org.eventb.core.pog.state.IPOGStateRepository;
@@ -58,7 +58,7 @@ public class FwdMachineEventModule extends UtilityModule {
 		
 		for (ISCEvent event : events) {
 			
-			ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+			ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 			typeEnvironment.addAll(machineTypeEnvironment);
 			
 			repository.setTypeEnvironment(typeEnvironment);
@@ -72,7 +72,7 @@ public class FwdMachineEventModule extends UtilityModule {
 
 	}
 	
-	ITypeEnvironment machineTypeEnvironment;
+	ITypeEnvironmentBuilder machineTypeEnvironment;
 	IMachineHypothesisManager machineHypothesisManager;
 	/* (non-Javadoc)
 	 * @see org.eventb.core.pog.ProcessorModule#initModule(org.rodinp.core.IRodinElement, org.eventb.core.IPOFile, org.eventb.core.sc.IStateRepository, org.eclipse.core.runtime.IProgressMonitor)

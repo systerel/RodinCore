@@ -26,6 +26,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
@@ -54,8 +55,8 @@ public class TestSequent {
 		return result.getParsedPredicate();
 	}
 
-	public static ITypeEnvironment parseTypeEnvironment(List<String> typenvList, FormulaFactory ff) {
-		final ITypeEnvironment result = ff.makeTypeEnvironment();
+	public static ITypeEnvironmentBuilder parseTypeEnvironment(List<String> typenvList, FormulaFactory ff) {
+		final ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
 		for (int i = 0; i < typenvList.size(); i = i + 2) {
 			String name = typenvList.get(i);
 			String type = typenvList.get(i + 1);
@@ -74,8 +75,7 @@ public class TestSequent {
 			Iterable<String> hypotheses, String goal, FormulaFactory ff) {
 		final List<Predicate> pHyps = parseHypotheses(hypotheses, ff);
 		final Predicate pGoal = parsePredicate(goal, ff);
-		
-		final ITypeEnvironment typeEnv = initTypeEnv.clone();
+		final ITypeEnvironmentBuilder typeEnv = initTypeEnv.makeBuilder();
 		for (Predicate hyp : pHyps) {
 			typeCheck(hyp, typeEnv);
 		}
@@ -84,7 +84,7 @@ public class TestSequent {
 		return SimpleSequents.make(pHyps, pGoal, ff);
 	}
 	
-	private static void typeCheck(Predicate predicate, ITypeEnvironment typEnv) {
+	private static void typeCheck(Predicate predicate, ITypeEnvironmentBuilder typEnv) {
 		final ITypeCheckResult result = predicate.typeCheck(typEnv);
 		assertTrue(predicate + " " + result.toString(), result.isSuccess());
 		typEnv.addAll(result.getInferredEnvironment());

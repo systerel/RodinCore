@@ -3,7 +3,7 @@ package org.eventb.pp.loader;
 import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.elements.terms.Util;
@@ -25,7 +25,7 @@ import org.junit.Test;
 public class TestSamePredicate {
 	static FormulaFactory ff = FormulaFactory.getDefault();
 	
-	static ITypeEnvironment env = ff.makeTypeEnvironment();
+	static ITypeEnvironmentBuilder env = ff.makeTypeEnvironment();
 	static {
 		Type S = ff.makeGivenType("S");
 		Type T = ff.makeGivenType("T");

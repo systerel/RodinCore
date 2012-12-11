@@ -26,6 +26,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.sc.GraphProblem;
@@ -274,7 +275,7 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 
 	protected boolean updateIdentifierSymbolTable(
 			IInternalElement formulaElement,
-			ITypeEnvironment inferredEnvironment, ITypeEnvironment environment)
+			ITypeEnvironment inferredEnvironment, ITypeEnvironmentBuilder environment)
 			throws CoreException {
 
 		if (inferredEnvironment.isEmpty())
@@ -304,9 +305,9 @@ public abstract class LabeledFormulaModule<F extends Formula<F>, I extends IInte
 
 		final FormulaFactory factory = repository.getFormulaFactory();
 
-		final ITypeEnvironment typeEnvironment = repository
+		final ITypeEnvironmentBuilder typeEnvironment = repository
 				.getTypeEnvironment();
-
+				
 		final Collection<FreeIdentifier> freeIdentifiers = identifierSymbolTable
 				.getFreeIdentifiers();
 

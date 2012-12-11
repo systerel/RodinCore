@@ -21,6 +21,7 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.tests.BuilderTest;
@@ -57,7 +58,7 @@ public class POLoaderTest extends BuilderTest {
 	public ITypeEnvironment mTypeEnvironment(String... strings) {
 		// even number of strings
 		assert (strings.length & 1) == 0;
-		final ITypeEnvironment result = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder result = factory.makeTypeEnvironment();
 		for (int i = 0; i < strings.length; i += 2) {
 			final String name = strings[i];
 			final String typeString = strings[i+1];

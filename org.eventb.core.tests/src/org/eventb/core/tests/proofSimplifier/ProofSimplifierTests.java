@@ -20,7 +20,7 @@ import org.eventb.core.IPRProof;
 import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
@@ -54,7 +54,7 @@ public class ProofSimplifierTests extends BuilderTest {
 	private void createPOFile1() throws RodinDBException {
 		final IPORoot poRoot = createPOFile(CTX_BARE_NAME);
 		
-		final ITypeEnvironment typeEnv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
 		typeEnv.addName("c", factory.makeIntegerType());
 		final IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
 				typeEnv,
@@ -109,7 +109,7 @@ public class ProofSimplifierTests extends BuilderTest {
 	private void createPOFile2() throws RodinDBException {
 		final IPORoot poRoot = createPOFile(CTX_BARE_NAME);
 		
-		final ITypeEnvironment typeEnv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
 		typeEnv.addName("c", factory.makeIntegerType());
 		
 		final IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,

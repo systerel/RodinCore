@@ -27,7 +27,7 @@ import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 
 /**
@@ -58,7 +58,7 @@ public abstract class AbstractFormulaRewriterTests {
 
 		private final IFormulaRewriter rewriter;
 		protected final FormulaFactory factory;
-		private final ITypeEnvironment typenv;
+		private final ITypeEnvironmentBuilder typenv;
 
 		public FormulaTest(IFormulaRewriter rewriter, String... env) {
 			this.rewriter = rewriter;
@@ -86,9 +86,9 @@ public abstract class AbstractFormulaRewriterTests {
 
 		protected abstract void checkCompatibility(T input, T expected);
 
-		private ITypeEnvironment makeTypeEnvironment(String... env) {
+		private ITypeEnvironmentBuilder makeTypeEnvironment(String... env) {
 			assertTrue("invalid environment specification", env.length % 2 == 0);
-			final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+			final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 			for (int i = 0; i < env.length; i += 2) {
 				final String name = env[i];
 				final String typeString = env[i + 1];

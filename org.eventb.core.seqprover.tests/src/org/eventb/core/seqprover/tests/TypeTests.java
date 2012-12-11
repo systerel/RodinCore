@@ -20,7 +20,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofSkeleton;
@@ -68,7 +68,7 @@ public class TypeTests extends AbstractProofTreeTests {
 	}
 
 	private IProverSequent makeSequent(Type type) {
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 		final Predicate hyp = makeMembershipPredicate(type);
 		typenv.addAll(hyp.getFreeIdentifiers());
 		return ProverFactory.makeSequent(typenv, Arrays.asList(hyp), falsum);

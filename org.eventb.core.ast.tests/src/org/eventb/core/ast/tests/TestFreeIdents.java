@@ -48,6 +48,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
@@ -552,7 +553,7 @@ public class TestFreeIdents extends AbstractTests {
 	 * Test method for 'org.eventb.core.ast.FormulaFactory.makeFreshIdentifiers()'
 	 */
 	public void testMakeFreshIdentifiers() {
-		final ITypeEnvironment tenv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder tenv = ff.makeTypeEnvironment();
 		tenv.addGivenSet("S");
 		
 		BoundIdentDecl bd_x1 = mBoundIdentDecl("x");

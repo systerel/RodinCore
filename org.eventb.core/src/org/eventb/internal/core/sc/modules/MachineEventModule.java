@@ -25,7 +25,7 @@ import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IConcreteEventInfo;
@@ -68,7 +68,7 @@ public class MachineEventModule extends LabeledElementModule {
 
 	private FormulaFactory factory;
 
-	private ITypeEnvironment machineTypeEnvironment;
+	private ITypeEnvironmentBuilder machineTypeEnvironment;
 
 	private IEvent[] events;
 
@@ -133,7 +133,7 @@ public class MachineEventModule extends LabeledElementModule {
 				repository.setState(new EventLabelSymbolTable(
 						EVENT_LABEL_SYMTAB_SIZE));
 
-				ITypeEnvironment eventTypeEnvironment = factory
+				ITypeEnvironmentBuilder eventTypeEnvironment = factory
 						.makeTypeEnvironment();
 				eventTypeEnvironment.addAll(machineTypeEnvironment);
 				addPostValues(eventTypeEnvironment);
@@ -211,7 +211,7 @@ public class MachineEventModule extends LabeledElementModule {
 		return symbolInfos;
 	}
 
-	private void addPostValues(ITypeEnvironment typeEnvironment) {
+	private void addPostValues(ITypeEnvironmentBuilder typeEnvironment) {
 		for (IIdentifierSymbolInfo symbolInfo : identifierSymbolTable
 				.getSymbolInfosFromTop())
 			if (symbolInfo.getSymbolType() == ISCVariable.ELEMENT_TYPE) {

@@ -17,7 +17,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 
 /**
@@ -46,7 +46,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCContextRoot scCtxFile = ctx.getSCContextRoot();
 
-		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		typenv.addGivenSet("S");
 		typenv.addName("s", ty_S);
 		assertEquals("Type environments differ",
@@ -74,7 +74,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCContextRoot scCtxFile = cctx.getSCContextRoot();
 
-		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		typenv.addGivenSet("S");
 		typenv.addName("s", ty_S);
 		typenv.addGivenSet("T");
@@ -97,7 +97,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
 
-		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		typenv.addName("v", BOOL);
 		assertEquals("Type environments differ",
 				typenv, scMchFile.getTypeEnvironment(factory));
@@ -124,7 +124,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
 
-		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		typenv.addGivenSet("S");
 		typenv.addName("s", ty_S);
 		typenv.addName("v", ty_S);
@@ -160,7 +160,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
 
-		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		typenv.addGivenSet("S");
 		typenv.addName("s", ty_S);
 		typenv.addGivenSet("T");
@@ -191,7 +191,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCMachineRoot scMchFile = cmch.getSCMachineRoot();
 
-		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		typenv.addName("v", BOOL);
 		typenv.addName("w", BOOL);
 		assertEquals("Type environments differ",
@@ -234,7 +234,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCMachineRoot scMchFile = cmch.getSCMachineRoot();
 
-		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		typenv.addGivenSet("S");
 		typenv.addName("s", ty_S);
 		typenv.addName("v", ty_S);
@@ -260,13 +260,13 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
-		final ITypeEnvironment mchTypenv = scMchFile.getTypeEnvironment(factory);
+		final ITypeEnvironmentBuilder mchTypenv = scMchFile.getTypeEnvironment(factory);
 
 		final ISCEvent scEvent = getSCEvent(scMchFile, "evt");
-		final ITypeEnvironment evtTypenv =
+		final ITypeEnvironmentBuilder evtTypenv =
 			scEvent.getTypeEnvironment(mchTypenv, factory);
 
-		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		typenv.addName("v", BOOL);
 		assertEquals("Type environments differ", typenv, evtTypenv);
 
@@ -289,13 +289,13 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
-		final ITypeEnvironment mchTypenv = scMchFile.getTypeEnvironment(factory);
+		final ITypeEnvironmentBuilder mchTypenv = scMchFile.getTypeEnvironment(factory);
 
 		final ISCEvent scEvent = getSCEvent(scMchFile, "evt");
-		final ITypeEnvironment evtTypenv =
+		final ITypeEnvironmentBuilder evtTypenv =
 			scEvent.getTypeEnvironment(mchTypenv, factory);
 
-		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		typenv.addName("v", BOOL);
 		assertEquals("Type environments differ", typenv, mchTypenv);
 

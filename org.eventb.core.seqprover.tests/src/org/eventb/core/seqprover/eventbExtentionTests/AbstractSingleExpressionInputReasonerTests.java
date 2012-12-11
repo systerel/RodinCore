@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -44,7 +44,7 @@ public abstract class AbstractSingleExpressionInputReasonerTests extends Abstrac
 
 		SuccessfullReasonerApplication makeSuccessfullReasonerApplication() {
 			final IProverSequent sequent = TestLib.genSeq(sequentImage);
-			final ITypeEnvironment te = sequent.typeEnvironment().clone();
+			final ITypeEnvironmentBuilder te = sequent.typeEnvironment().makeBuilder();
 			final IReasonerInput input = makeInput(TestLib.genExpr(te, expressionImage));
 			return new SuccessfullReasonerApplication(sequent, input, results);
 		}

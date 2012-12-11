@@ -13,7 +13,7 @@ package org.eventb.core.tool;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.internal.core.tool.types.IState;
 
 /**
@@ -26,7 +26,7 @@ import org.eventb.internal.core.tool.types.IState;
  * a repository, the repository keeps throwing that exception.
  * It does not recover.
  * <p>
- * A {@link ITypeEnvironment} is contained in any state repository.
+ * A {@link ITypeEnvironmentBuilder} is contained in any state repository.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p> 
@@ -79,8 +79,9 @@ public interface IStateRepository <I extends IState> {
 	 * @return the type environment stored in the repository
 	 * @throws CoreException
 	 *             if an exception has occurred earlier with this repository
+	 * @since 3.0 : the returned type environment became explicitly mutable
 	 */
-	ITypeEnvironment getTypeEnvironment() throws CoreException;
+	ITypeEnvironmentBuilder getTypeEnvironment() throws CoreException;
 	
 	/**
 	 * Sets the type environment of this state repository.
@@ -90,8 +91,9 @@ public interface IStateRepository <I extends IState> {
 	 * @throws CoreException
 	 *             if the passed type environment is <code>null</code> or if
 	 *             an exception has occurred earlier with this repository
+	 * @since 3.0 : the provided type environment became explicitly mutable
 	 */
-	void setTypeEnvironment(ITypeEnvironment environment) throws CoreException;
+	void setTypeEnvironment(ITypeEnvironmentBuilder environment) throws CoreException;
 	
 	/**
 	 * Returns the formula factory stored in the repository.

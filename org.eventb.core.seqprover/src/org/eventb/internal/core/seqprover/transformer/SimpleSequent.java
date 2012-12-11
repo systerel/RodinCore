@@ -20,7 +20,8 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISequentTransformer;
 import org.eventb.core.seqprover.transformer.ISequentTranslator;
@@ -35,7 +36,7 @@ import org.eventb.core.seqprover.transformer.ISimpleSequent;
  */
 public class SimpleSequent implements ISimpleSequent {
 
-	private final ITypeEnvironment typenv;
+	private final ISealedTypeEnvironment typenv;
 	private final TrackedPredicate[] predicates;
 	private final Object origin;
 
@@ -52,10 +53,9 @@ public class SimpleSequent implements ISimpleSequent {
 
 	public SimpleSequent(FormulaFactory factory, List<TrackedPredicate> preds,
 			Object origin) {
-		this.typenv = factory.makeTypeEnvironment();
 		this.predicates = filter(preds);
 		this.origin = origin;
-		fillTypeEnvironment();
+		this.typenv = fillTypeEnvironment(factory);
 	}
 
 	public SimpleSequent(FormulaFactory factory, TrackedPredicate trivial,
@@ -65,17 +65,19 @@ public class SimpleSequent implements ISimpleSequent {
 	}
 
 	// Must be called by constructor only
-	private void fillTypeEnvironment() {
+	private ISealedTypeEnvironment fillTypeEnvironment(FormulaFactory factory) {
+		ITypeEnvironmentBuilder typenvBuilder = factory.makeTypeEnvironment();
 		for (TrackedPredicate tpred : predicates) {
 			final Predicate pred = tpred.getPredicate();
 			assert pred.isTypeChecked();
 			// TODO move all this into AST library: pred.typeEnvironment()
-			typenv.addAll(pred.getFreeIdentifiers());
+			typenvBuilder.addAll(pred.getFreeIdentifiers());
 			final Set<GivenType> types = pred.getGivenTypes();
 			for (GivenType type : types) {
-				typenv.addGivenSet(type.getName());
+				typenvBuilder.addGivenSet(type.getName());
 			}
 		}
+		return typenvBuilder.makeSnapshot();
 	}
 
 	@Override
@@ -84,8 +86,8 @@ public class SimpleSequent implements ISimpleSequent {
 	}
 
 	@Override
-	public ITypeEnvironment getTypeEnvironment() {
-		return typenv.clone();
+	public ISealedTypeEnvironment getTypeEnvironment() {
+		return typenv;
 	}
 
 	@Override

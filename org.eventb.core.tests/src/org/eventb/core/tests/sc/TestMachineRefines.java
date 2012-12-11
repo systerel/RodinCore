@@ -18,7 +18,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineRoot;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 
 /**
  * @author Stefan Hallerstede
@@ -65,7 +65,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		containsVariables(file, "V1", "V2");
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", factory.makeIntegerType());
 		typeEnvironment.addName("V2", factory.makeIntegerType());
 	
@@ -231,7 +231,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		runBuilder();
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", factory.makeIntegerType());
 		typeEnvironment.addName("V2", factory.makeIntegerType());
 		
@@ -267,7 +267,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 				
 		containsVariables(file, "V2");
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V2", factory.makeIntegerType());
 		
 		containsMarkers(abs, true);

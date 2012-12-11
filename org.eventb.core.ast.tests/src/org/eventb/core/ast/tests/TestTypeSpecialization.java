@@ -16,7 +16,7 @@ import static org.eventb.core.ast.tests.TestGenParser.MOULT_FAC;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 
 /**
@@ -105,7 +105,7 @@ public class TestTypeSpecialization extends AbstractTests {
 			String typeSpecImage, String expectedImage,
 			FormulaFactory fac) {
 		final Type type = parseType(typeImage, fac);
-		final ITypeEnvironment te = fac.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder te = fac.makeTypeEnvironment();
 		addGivenSets(te, type);
 		final ISpecialization spe = mTypeSpecialization(te, typeSpecImage);
 		final Type expected = parseType(expectedImage, fac);
@@ -118,7 +118,7 @@ public class TestTypeSpecialization extends AbstractTests {
 		}
 	}
 
-	private static void addGivenSets(ITypeEnvironment te, Type type) {
+	private static void addGivenSets(ITypeEnvironmentBuilder te, Type type) {
 		for (final GivenType gt : type.getGivenTypes()) {
 			te.addGivenSet(gt.getName());
 		}

@@ -20,7 +20,7 @@ import org.eventb.core.ISCSeesContext;
 import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.internal.core.Messages;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -170,11 +170,14 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 		return getInternalElement(ISCInternalContext.ELEMENT_TYPE, elementName);
 	}
 
+	/**
+	 * @since 3.0 : The returned type environment became mutable
+	 */
 	@Override
-	public ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
+	public ITypeEnvironmentBuilder getTypeEnvironment(FormulaFactory factory)
 			throws RodinDBException {
 
-		ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		for (ISCInternalContext ictx : getSCSeenContexts()) {
 			SCContextUtil.augmentTypeEnvironment(ictx, typenv, factory);
 		}

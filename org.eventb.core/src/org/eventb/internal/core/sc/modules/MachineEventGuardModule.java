@@ -25,6 +25,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCParameter;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
@@ -217,7 +218,7 @@ public class MachineEventGuardModule extends PredicateWithTypingModule<IGuard> {
 	protected boolean updateIdentifierSymbolTable(
 			IInternalElement formulaElement,
 			ITypeEnvironment inferredEnvironment,
-			ITypeEnvironment typeEnvironment) throws CoreException {
+			ITypeEnvironmentBuilder typeEnvironment) throws CoreException {
 
 		if (allParameters(inferredEnvironment, formulaElement))
 			return super.updateIdentifierSymbolTable(formulaElement,

@@ -16,12 +16,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eventb.core.IConvergenceElement;
+import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.IConvergenceElement.Convergence;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -165,7 +165,7 @@ public class TestMachineVariant extends EventBPOTest {
 	String[] invPredicates = makeSList("A ⊆ ℤ", "x ∈ ℤ", "y ∈ ℤ");
 	boolean[] isTheorem = new boolean[] { false, false, false};
 	
-	ITypeEnvironment environment;
+	ITypeEnvironmentBuilder environment;
 	{
 		environment = factory.makeTypeEnvironment();
 		environment.addName("A", factory.makePowerSetType(factory.makeIntegerType()));
@@ -366,7 +366,7 @@ public class TestMachineVariant extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		
 		IPORoot po = ref.getPORoot();
@@ -413,7 +413,7 @@ public class TestMachineVariant extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		
 		IPORoot po = ref.getPORoot();
@@ -456,7 +456,7 @@ public class TestMachineVariant extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		
 		IPORoot po = ref.getPORoot();

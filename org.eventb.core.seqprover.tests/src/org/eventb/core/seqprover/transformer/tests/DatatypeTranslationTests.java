@@ -21,7 +21,7 @@ import static org.junit.Assert.assertFalse;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
@@ -102,13 +102,13 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 		final IDatatypeExtension dt = injectExtension(msgDatatypeSpec);
 		final IDatatype datatype = ff.makeDatatype(dt);
 		final FormulaFactory srcFac = getInstance(datatype.getExtensions());
-		final ITypeEnvironment srcTypenv = genTypeEnv(typeEnvStr, srcFac);
+		final ITypeEnvironmentBuilder srcTypenv = genTypeEnv(typeEnvStr, srcFac);
 		final ISimpleSequent srcSequent = getSimpleSequent(srcTypenv,
 				sequentImage);
 		final ISimpleSequent actual = translateDatatypes(srcSequent);
 		final FormulaFactory trgFac = actual.getFormulaFactory();
 		assertNoDatatypeExtension(trgFac);
-		final ITypeEnvironment trgTypenv = actual.getTypeEnvironment();
+		final ITypeEnvironmentBuilder trgTypenv = actual.getTypeEnvironment().makeBuilder();
 		final ISimpleSequent expected = getSimpleSequent(trgTypenv,
 				expectedImage);
 		assertEquals(expected, actual);
@@ -121,7 +121,7 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 		}
 	}
 
-	private ISimpleSequent getSimpleSequent(ITypeEnvironment typenv,
+	private ISimpleSequent getSimpleSequent(ITypeEnvironmentBuilder typenv,
 			String sequentImage) {
 		final String[] split = sequentImage.split("\\s*;;\\s*|\\s*\\|-\\s*");
 		final String goalStr = split[split.length - 1];

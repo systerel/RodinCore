@@ -31,8 +31,8 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ISimpleVisitor2;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -57,9 +57,9 @@ import org.eventb.core.ast.UnaryPredicate;
 public class PredicateDecomposer implements ISimpleVisitor2 {
 
 	private final Set<Predicate> subGoals;
-	private ITypeEnvironment env;
+	private ISealedTypeEnvironment env;
 
-	public PredicateDecomposer(ITypeEnvironment env) {
+	public PredicateDecomposer(ISealedTypeEnvironment env) {
 		this.subGoals = new HashSet<Predicate>();
 		this.env = env;
 	}
@@ -171,13 +171,10 @@ public class PredicateDecomposer implements ISimpleVisitor2 {
 
 	@Override
 	public void visitQuantifiedPredicate(QuantifiedPredicate predicate) {
-		final ITypeEnvironment oldEnv = env;
-		env = oldEnv.clone();
 		final FormulaFactory ff = env.getFormulaFactory();
 		final FreeIdentifier[] freeIdents = ff.makeFreshIdentifiers(
-				predicate.getBoundIdentDecls(), env);
+				predicate.getBoundIdentDecls(), env.makeBuilder());
 		final Predicate newpred = predicate.instantiate(freeIdents, ff);
-		env = oldEnv;
 		newpred.accept(this);
 	}
 

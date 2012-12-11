@@ -69,6 +69,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IInferredTypeEnvironment;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -299,7 +300,7 @@ public class FastFactory {
 		return ff.makeSimplePredicate(KFINITE, expr, null);
 	}
 
-	public static ITypeEnvironment mTypeEnvironment() {
+	public static ITypeEnvironmentBuilder mTypeEnvironment() {
 		return ff.makeTypeEnvironment();
 	}
 
@@ -333,9 +334,9 @@ public class FastFactory {
 	 *            the formula factory to use for building the result
 	 * @return the type environment described by the given string
 	 */
-	public static ITypeEnvironment mTypeEnvironment(String typeEnvImage,
+	public static ITypeEnvironmentBuilder mTypeEnvironment(String typeEnvImage,
 			FormulaFactory factory) {
-		final ITypeEnvironment result = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder result = factory.makeTypeEnvironment();
 		if (typeEnvImage.length() == 0) {
 			return result;
 		}
@@ -356,18 +357,18 @@ public class FastFactory {
 		return result;
 	}
 
-	public static ITypeEnvironment mTypeEnvironment(String[] names, Type[] types) {
+	public static ITypeEnvironmentBuilder mTypeEnvironment(String[] names, Type[] types) {
 		assert names.length == types.length;
-		ITypeEnvironment result = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
 		for (int i = 0; i < names.length; i++) {
 			result.addName(names[i], types[i]);
 		}
 		return result;
 	}
 
-	public static ITypeEnvironment mTypeEnvironment(String... strs) {
+	public static ITypeEnvironmentBuilder mTypeEnvironment(String... strs) {
 		assert (strs.length & 1) == 0;
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		for (int i = 0; i < strs.length; i += 2) {
 			final String name = strs[i];
 			final Type type = parseType(strs[i + 1]);
@@ -376,17 +377,17 @@ public class FastFactory {
 		return te;
 	}
 
-	public static ITypeEnvironment mTypeEnvironment(Object... objs) {
+	public static ITypeEnvironmentBuilder mTypeEnvironment(Object... objs) {
 		assert (objs.length & 1) == 0;
-		ITypeEnvironment result = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
 		for (int i = 0; i < objs.length; i += 2) {
 			result.addName((String) objs[i], (Type) objs[i + 1]);
 		}
 		return result;
 	}
 
-	public static ITypeEnvironment addToTypeEnvironment(
-			ITypeEnvironment typeEnv, String... strs) {
+	public static ITypeEnvironmentBuilder addToTypeEnvironment(
+			ITypeEnvironmentBuilder typeEnv, String... strs) {
 		assert (strs.length & 1) == 0;
 		for (int i = 0; i < strs.length; i += 2) {
 			typeEnv.addName(strs[i],

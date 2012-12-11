@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerFailure;
@@ -38,7 +38,7 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 	private static final IReasoner rewriter = new FunImgSimplifies();
 	private static final IReasonerInput input = new Input(null, FIRST_CHILD);
 	private static final String typeEnvString = "S=ℙ(S), F=ℙ(S×T), T=ℙ(T)";
-	private static final ITypeEnvironment typeEnv = TestLib
+	private static final ITypeEnvironmentBuilder typeEnv = TestLib
 			.genTypeEnv(typeEnvString);
 	
 	private static final String valids[] = { 
@@ -108,11 +108,11 @@ public class FunImgSimpRewriterTests extends AbstractReasonerTests {
 	private static void assertApplicability(IProverSequent seq, Input input,
 			String funImage, String goalImage) {
 		assertTrue(Tactics.isFunImgSimpApplicable(
-				TestLib.genExpr(seq.typeEnvironment(), funImage), seq));
+				TestLib.genExpr(seq.typeEnvironment().makeBuilder(), funImage), seq));
 		assertEquals(
 				Collections.singletonList(input.getPosition()),
 				Tactics.funImgSimpGetPositions(
-						TestLib.genPred(seq.typeEnvironment(), goalImage), seq));
+						TestLib.genPred(seq.typeEnvironment().makeBuilder(), goalImage), seq));
 	}
 
 	/**

@@ -30,7 +30,7 @@ import org.eventb.core.IPRStoredPred;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
@@ -98,7 +98,7 @@ public class PRProof extends EventBProofElement implements IPRProof {
 		
 		final Predicate goal;
 		final Set<Predicate> usedHypotheses;
-		final ITypeEnvironment usedFreeIdents;
+		final ISealedTypeEnvironment usedFreeIdents;
 		final Set<String> introducedFreeIdents;
 		final Set<IReasonerDesc> usedReasoners;
 		

@@ -18,6 +18,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 
 /**
  * @author Stefan Hallerstede
@@ -134,7 +135,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	}
 
 	private ITypeEnvironment makeTypeEnvironment() {
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("ax", intType);
 		environment.addName("ay", intType);
 		environment.addName("az", intType);

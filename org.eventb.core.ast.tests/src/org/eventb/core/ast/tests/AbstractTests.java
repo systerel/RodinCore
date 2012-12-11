@@ -27,6 +27,7 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ParametricType;
@@ -264,7 +265,7 @@ public abstract class AbstractTests extends TestCase {
 	 *            initial type environment
 	 * @return augmented type environment
 	 */
-	public static ITypeEnvironment typeCheck(Formula<?> formula,
+	public static ITypeEnvironmentBuilder typeCheck(Formula<?> formula,
 			ITypeEnvironment tenv) {
 		if (tenv == null) {
 			tenv = ff.makeTypeEnvironment();
@@ -273,7 +274,7 @@ public abstract class AbstractTests extends TestCase {
 		assertSuccess(formula.toString(), result);
 		assertTrue(formula.isTypeChecked());
 
-		final ITypeEnvironment newEnv = tenv.clone();
+		final ITypeEnvironmentBuilder newEnv = tenv.makeBuilder();
 		newEnv.addAll(result.getInferredEnvironment());
 		return newEnv;
 	}

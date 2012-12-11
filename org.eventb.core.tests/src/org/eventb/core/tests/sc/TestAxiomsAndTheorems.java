@@ -15,7 +15,7 @@ package org.eventb.core.tests.sc;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ISCContextRoot;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 
 /**
  * @author Stefan Hallerstede
@@ -30,7 +30,7 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 	public void testAxiomsAndTheorems_05_axiomPartialTyping() throws Exception {
 		IContextRoot con = createContext("ctx");
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addGivenSet("S1");
 
 		addCarrierSets(con, "S1");
@@ -54,7 +54,7 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 	public void testAxiomsAndTheorems_06_axiomPartialTyping() throws Exception {
 		IContextRoot con = createContext("ctx");
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addGivenSet("S1");
 		typeEnvironment.addName("C1", factory.makeGivenType("S1"));
 		

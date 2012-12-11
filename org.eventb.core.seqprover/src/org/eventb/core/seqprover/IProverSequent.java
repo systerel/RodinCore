@@ -15,7 +15,7 @@ package org.eventb.core.seqprover;
 import java.util.Collection;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.core.seqprover.IInternalProverSequent;
 
@@ -78,17 +78,19 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
 public interface IProverSequent{
 	
 	/**
-	 * Returns the type environment for the sequent.
+	 * Returns the immutable type environment for the sequent.
 	 * 
 	 * <p>
-	 * This type environment contains all free identifiers and carrier
-	 * sets appearing in the sequent and can be used to successfully
-	 * type check all predicates appearing in the sequent.
+	 * This type environment contains all free identifiers and carrier sets
+	 * appearing in the sequent and can be used to successfully type check all
+	 * predicates appearing in the sequent.
 	 * </p>
 	 * 
 	 * @return the type environment of the sequent
+	 * @since 3.0 : the returned type environment became an immutable
+	 *        environment
 	 */
-	ITypeEnvironment typeEnvironment();
+	ISealedTypeEnvironment typeEnvironment();
 
 	
 	/**

@@ -11,6 +11,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IInferredTypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
@@ -36,7 +37,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	private final FormulaFactory factory;
 	
 	// Initial type environment provided as input to type-check
-	private final TypeEnvironment initialTypeEnvironment;
+	private final SealedTypeEnvironment initialTypeEnvironment;
 
 	// Inferred type environment filled during type-check
 	private final InferredTypeEnvironment inferredTypeEnvironment;
@@ -51,9 +52,9 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	 * 
 	 * @param typeEnvironment a type environment
 	 */
-	public TypeCheckResult(ITypeEnvironment typeEnvironment) {
+	public TypeCheckResult(ISealedTypeEnvironment typeEnvironment) {
 		super();
-		this.initialTypeEnvironment = (TypeEnvironment) typeEnvironment;
+		this.initialTypeEnvironment = (SealedTypeEnvironment) typeEnvironment;
 		this.factory = this.initialTypeEnvironment.getFormulaFactory();
 		this.unifier = new TypeUnifier(this);
 		this.inferredTypeEnvironment = new InferredTypeEnvironment(

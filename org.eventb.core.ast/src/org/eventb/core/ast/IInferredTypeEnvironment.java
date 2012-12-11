@@ -34,7 +34,7 @@ package org.eventb.core.ast;
  * @noextend This interface is not intended to be extended by clients.
  * @see Formula#typeCheck(ITypeEnvironment)
  */
-public interface IInferredTypeEnvironment extends ITypeEnvironment {
+public interface IInferredTypeEnvironment extends ITypeEnvironmentBuilder {
 
 	/**
 	 * Returns the initial type environment that was passed to the formula
@@ -42,6 +42,6 @@ public interface IInferredTypeEnvironment extends ITypeEnvironment {
 	 * 
 	 * @return the initial type environment
 	 */
-	public ITypeEnvironment getInitialTypeEnvironment();
+	public ISealedTypeEnvironment getInitialTypeEnvironment();
 
 }

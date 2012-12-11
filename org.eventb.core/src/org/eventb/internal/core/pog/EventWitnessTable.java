@@ -21,6 +21,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -69,14 +70,17 @@ public class EventWitnessTable extends State implements IEventWitnessTable {
 		witnessedVars = new ArrayList<FreeIdentifier>(witnesses.length);
 		witnessPredicates = new ArrayList<Predicate>(witnesses.length);
 	
+		// making snapshot now to share it in all typechecks
+		ISealedTypeEnvironment sTypEnv = typeEnvironment.makeSnapshot();
+		
 		final LinkedList<FreeIdentifier> left = new LinkedList<FreeIdentifier>();
 		final LinkedList<Expression> right = new LinkedList<Expression>();
 	
 		for (int i=0; i<witnesses.length; i++) {
-			final Predicate predicate = witnesses[i].getPredicate(factory, typeEnvironment);
+			final Predicate predicate = witnesses[i].getPredicate(factory, sTypEnv);
 			final String name = witnesses[i].getLabel();
 			final FreeIdentifier identifier = factory.makeFreeIdentifier(name, null);
-			identifier.typeCheck(typeEnvironment);
+			identifier.typeCheck(sTypEnv);
 			final FreeIdentifier unprimed = 
 				identifier.isPrimed() ? 
 						identifier.withoutPrime(factory) : 
@@ -94,7 +98,7 @@ public class EventWitnessTable extends State implements IEventWitnessTable {
 			primeSubstitution = null;
 		} else {
 			primeSubstitution = factory.makeBecomesEqualTo(left, right, null);
-			primeSubstitution.typeCheck(typeEnvironment);
+			primeSubstitution.typeCheck(sTypEnv);
 		}
 	}
 	

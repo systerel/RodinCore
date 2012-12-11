@@ -26,7 +26,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCParameter;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pog.POGCore;
 import org.eventb.core.pog.state.IAbstractEventActionTable;
@@ -64,7 +64,7 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 	}
 
 	EventHypothesisManager eventHypothesisManager;
-	ITypeEnvironment eventTypeEnvironment;
+	ITypeEnvironmentBuilder eventTypeEnvironment;
 	IAbstractEventGuardList abstractEventGuardList;
 	IEventWitnessTable witnessTable;
 	IMachineVariableTable variableTable;
@@ -263,7 +263,7 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 			throws CoreException, RodinDBException {
 		variableTable = (IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
 
-		ITypeEnvironment largeEnv = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder largeEnv = factory.makeTypeEnvironment();
 		largeEnv.addAll(eventTypeEnvironment);
 		List<FreeIdentifier> variables = variableTable.getVariables();
 		for (FreeIdentifier identifier : variables) {

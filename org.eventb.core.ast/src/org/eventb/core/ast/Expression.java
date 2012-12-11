@@ -146,7 +146,7 @@ public abstract class Expression extends Formula<Expression> {
 			ITypeEnvironment environment,
 			Type expectedType) {
 		
-		TypeCheckResult result = new TypeCheckResult(environment);
+		TypeCheckResult result = new TypeCheckResult(environment.makeSnapshot());
 		boolean wasTypeChecked = isTypeChecked();
 		typeCheck(result, NO_BOUND_IDENT_DECL);
 		result.unify(getType(), expectedType, this);

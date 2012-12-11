@@ -9,6 +9,8 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - published method getFormulaFactory()
  *     Systerel - added support for specialization 
+ *     Systerel - added support for an immutable type environment 
+ *     			  and move mutable methods to ITypeEnvironmentBuilder
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -16,15 +18,15 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
- * Common protocol for type environments.
+ * Common protocol for accessing type environments.
  * <p>
  * A type environment is a map from names to their respective type. It is used
  * by the formula type-checker as both an input and output.
  * </p>
  * <p>
  * More precisely, the type-checker takes as input a type environment which
- * gives the type of some names and produce as output a new type environment
- * that records the types inferred from the formula.
+ * gives the type of some names and produce as output a new inferred type
+ * environment that records the types inferred from the formula.
  * </p>
  * <p>
  * Type environment enforce name consistency. This means that all names must be
@@ -37,9 +39,17 @@ import java.util.Set;
  * This interface is not intended to be implemented by clients. Use
  * {@link FormulaFactory#makeTypeEnvironment()} to create new type environments.
  * </p>
+ * <p>
+ * This type must be used when both immutable and mutable type environments
+ * could be provided. It must never be casted to one of his children interfaces
+ * but methods {@link ITypeEnvironment#makeSnapshot()} and
+ * {@link ITypeEnvironment#makeBuilder()} preserving from mutability can be
+ * used. In other cases use {@link ISealedTypeEnvironment} for immutable
+ * environments or {@link ITypeEnvironmentBuilder} for mutable environments.
+ * </p>
  * 
  * @author Laurent Voisin
- * @since 1.0
+ * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @see FormulaFactory#isValidIdentifierName(String)
@@ -117,100 +127,6 @@ public interface ITypeEnvironment {
 		 */
 		boolean isGivenSet() throws NoSuchElementException;
 	}
-
-	/**
-	 * Adds all mappings of the given type environment to this environment.
-	 * <p>
-	 * All names that are common to this type environment and the given one must
-	 * be associated with the same type in both type environments.
-	 * </p>
-	 * 
-	 * @param other
-	 *            another type environment
-	 * @throws IllegalArgumentException
-	 *             if the mappings of the given type environment are
-	 *             incompatible with this type environment
-	 */
-	void addAll(ITypeEnvironment other);
-
-	/**
-	 * Adds the given free identifier to this environment.
-	 * <p>
-	 * This is a convenience method, fully equivalent to
-	 * <code>addName(freeIdent.getName(), freeIdent.getType())</code>.
-	 * </p>
-	 * 
-	 * @param freeIdent
-	 *            a free identifier
-	 * @throws IllegalArgumentException
-	 *             if the given free identifier is either not a valid identifier
-	 *             or not typed, or incompatible with this type environment
-	 */
-	void add(FreeIdentifier freeIdent);
-	
-	/**
-	 * Adds all given free identifiers to this environment.
-	 * <p>
-	 * All given free identifiers must already be type-checked. All names that
-	 * are common to this type environment and the given free identifiers must
-	 * be associated with the same type.
-	 * </p>
-	 * 
-	 * @param freeIdents
-	 *            array of free identifiers
-	 * @throws IllegalArgumentException
-	 *             if any given free identifier is ill-formed
-	 */
-	void addAll(FreeIdentifier[] freeIdents);
-	
-	/**
-	 * Adds a given set to this environment.
-	 * <p>
-	 * The given name will be assigned its power set as type.
-	 * </p>
-	 * <p>
-	 * If the given name already occurs in this environment, it must be
-	 * associated with its power set.
-	 * </p>
-	 * 
-	 * @param name
-	 *            the name to add
-	 * @throws IllegalArgumentException
-	 *             if the given name is not a valid identifier name or has
-	 *             already been registered with a type which does not correspond
-	 *             to a carrier set.
-	 */
-	void addGivenSet(String name);
-
-	/**
-	 * Adds a name and its specified type in the type environment.
-	 * <p>
-	 * If the given name already occurs in this environment, it must be
-	 * associated with the given type. Moreover, all carrier sets that occur in
-	 * the given type are automatically added to this type environment, as a
-	 * side-effect. If any of these carrier sets was already registered in this
-	 * type environment, but with a different type, this will produce an error.
-	 * </p>
-	 * 
-	 * @param name
-	 *            the name to add
-	 * @param type
-	 *            the type to associate to the given name
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the given name is not a valid identifier name or if the
-	 *             given type is not compatible with this type environment:
-	 *             different from a type already registered with the same name
-	 *             or containing incompatible carrier sets
-	 */
-	void addName(String name, Type type);
-
-	/**
-	 * Returns a deep copy of this type environment.
-	 * 
-	 * @return a deep copy of this type environment.
-	 */
-	ITypeEnvironment clone();
 
 	/**
 	 * Returns <code>true</code> if the type environment contains the given
@@ -312,8 +228,24 @@ public interface ITypeEnvironment {
 	 *            the specialization to apply
 	 * @return the type environment obtained by applying the given
 	 *         specialization to this type environment
-	 * @since 2.6
+	 * @since 3.0 : the returned type environment became explicitly mutable
 	 */
-	ITypeEnvironment specialize(ISpecialization specialization);
+	ITypeEnvironmentBuilder specialize(ISpecialization specialization);
+
+	/**
+	 * Get an immutable snapshot of this type environment.
+	 * 
+	 * @return a snapshot of this type environment built
+	 * @since 3.0
+	 */
+	ISealedTypeEnvironment makeSnapshot();
+
+	/**
+	 * Get a copy of this type environment in order to build a new one.
+	 * 
+	 * @return a copy of this type environment as a builder
+	 * @since 3.0
+	 */
+	ITypeEnvironmentBuilder makeBuilder();
 
 }

@@ -11,7 +11,7 @@
 package org.eventb.core.seqprover.transformer;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 
 /**
  * Common protocol for representing a simple sequent, without hypotheses
@@ -55,11 +55,12 @@ public interface ISimpleSequent {
 	FormulaFactory getFormulaFactory();
 
 	/**
-	 * Returns the type environment of this sequent.
+	 * Returns the immutable type environment of this sequent.
 	 * 
 	 * @return the type environment of this sequent
+	 * @since 3.0 : the returned type environment became immutable
 	 */
-	ITypeEnvironment getTypeEnvironment();
+	ISealedTypeEnvironment getTypeEnvironment();
 
 	/**
 	 * Returns the predicate causing this sequent to hold trivially, if any.

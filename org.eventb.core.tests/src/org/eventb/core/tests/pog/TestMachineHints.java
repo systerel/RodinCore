@@ -16,7 +16,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 
 /**
  * @author Stefan Hallerstede
@@ -37,7 +37,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList("G", "H"), makeSList("y>x÷x", "x÷x=0"), 
 				makeSList(), makeSList());
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		
@@ -74,7 +74,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
 				makeSList("S", "T"), makeSList("x≔x÷y", "z:∣z'≠z"));
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		typeEnvironment.addName("z", boolType);
@@ -113,7 +113,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
 				makeSList("S", "T"), makeSList("x≔y", "z:∣z'≠z"));
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		typeEnvironment.addName("z", boolType);
@@ -165,7 +165,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("y"), makeSList("yc=y"));
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		typeEnvironment.addName("z", boolType);
@@ -218,7 +218,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("y", "z'"), makeSList("yc=y", "z'≠zc'"));
 	
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		typeEnvironment.addName("yc", intType);
@@ -279,7 +279,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("y", "z'"), makeSList("yc=y", "z'≠zc'"));
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		typeEnvironment.addName("yc", intType);
@@ -326,7 +326,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList(), makeSList(), 
 				makeSList("S", "T"), makeSList("x≔x+1", "z(x)≔z(x)"));
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("z", relIntType);
 		
@@ -372,7 +372,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		setConvergent(evt);
 		addVariant(mac, "x+1");
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		
@@ -410,7 +410,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList("G", "H"), makeSList("y>x÷x", "x÷x=0"), makeBList(false, true), 
 				makeSList(), makeSList());
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("x", intType);
 		typeEnvironment.addName("y", intType);
 		

@@ -14,7 +14,7 @@ import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
 
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tests.TestLib;
@@ -34,7 +34,7 @@ public class LocalEqRewriteTests extends AbstractReasonerTests {
 
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ), C=ℙ(ℤ), D=ℙ(ℤ), x=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ), C=ℙ(ℤ), D=ℙ(ℤ), x=ℙ(ℤ)");
 		return new SuccessfullReasonerApplication[] {
 				// Apply in the hypothesis 1/5
 				new SuccessfullReasonerApplication(
@@ -94,7 +94,7 @@ public class LocalEqRewriteTests extends AbstractReasonerTests {
 
 	@Override
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		final ITypeEnvironment typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ), C=ℙ(ℤ), D=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ), C=ℙ(ℤ), D=ℙ(ℤ)");
 		return new UnsuccessfullReasonerApplication[] {
 				// Bad input
 				new UnsuccessfullReasonerApplication(

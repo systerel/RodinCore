@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IReasonerDesc;
@@ -98,14 +98,14 @@ public class ProofDependenciesBuilder {
 				! usedFreeIdents.isEmpty() ||
 				! introducedFreeIdents.isEmpty() ||
 				! usedReasoners.isEmpty()); 
-		final ITypeEnvironment usedTypEnv = mDLib(ff).makeTypeEnvironment();
+		final ITypeEnvironmentBuilder usedTypEnv = mDLib(ff).makeTypeEnvironment();
 		for (FreeIdentifier freeIdent : usedFreeIdents) {
 			usedTypEnv.add(freeIdent);
 		}
 		
 		final IProofDependencies finishedProofDeps = ProverFactory
 				.makeProofDependencies(hasDeps, goal, usedHypotheses,
-						usedTypEnv, introducedFreeIdents, usedReasoners);
+						usedTypEnv.makeSnapshot(), introducedFreeIdents, usedReasoners);
 		return finishedProofDeps;
 	}
 }

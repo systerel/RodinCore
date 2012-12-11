@@ -12,7 +12,7 @@ package org.eventb.core.seqprover.eventbExtentionTests.mbGoal;
 
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
@@ -36,7 +36,7 @@ public class MembershipGoalTests extends AbstractReasonerTests {
 
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		final ITypeEnvironment typeEnv = TestLib
+		final ITypeEnvironmentBuilder typeEnv = TestLib
 				.genTypeEnv("B=ℙ(ℤ), f=ℙ(ℤ×ℤ), m=ℙ(ℤ×ℤ×ℤ)");
 		return new SuccessfullReasonerApplication[] {
 				// Basic test
@@ -118,7 +118,7 @@ public class MembershipGoalTests extends AbstractReasonerTests {
 
 	@Override
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
-		final ITypeEnvironment typeEnv = TestLib
+		final ITypeEnvironmentBuilder typeEnv = TestLib
 				.genTypeEnv("B=ℙ(ℤ), f=ℙ(ℤ×ℤ), x=ℤ");
 		return new UnsuccessfullReasonerApplication[] {
 				//

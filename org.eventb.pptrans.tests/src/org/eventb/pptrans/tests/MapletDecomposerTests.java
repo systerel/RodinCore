@@ -15,7 +15,7 @@ import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -45,12 +45,12 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 *         the relational predicate
 	 */
 	private static Expression parseExpr(String predImage,
-			ITypeEnvironment typenv) {
+			ITypeEnvironmentBuilder typenv) {
 		final Predicate pred = parsePred(predImage, typenv);
 		return ((RelationalPredicate) pred).getLeft();
 	}
 
-	private static Predicate parsePred(String predImage, ITypeEnvironment typenv) {
+	private static Predicate parsePred(String predImage, ITypeEnvironmentBuilder typenv) {
 		Predicate pred = parse(predImage, typenv);
 		if (pred instanceof QuantifiedPredicate) {
 			pred = ((QuantifiedPredicate) pred).getPredicate();
@@ -60,7 +60,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 
 	private final MapletDecomposer decomposer = new MapletDecomposer(ff);
 
-	private void doTest(ITypeEnvironment typenv, String inputImage,
+	private void doTest(ITypeEnvironmentBuilder typenv, String inputImage,
 			String expectedImage) {
 		final RelationalPredicate pred = (RelationalPredicate) parsePred(
 				inputImage, typenv);
@@ -90,7 +90,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * anything.
 	 */
 	public void testRecordingDecomposeNoChange() {
-		final ITypeEnvironment typenv = mTypeEnvironment("a", "S", "b", "T");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T");
 		final Expression expr = parseExpr("a↦b ∈ S×T", typenv);
 		decomposer.decompose(expr);
 		assertEquals(0, decomposer.offset());
@@ -102,7 +102,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * bound variables.
 	 */
 	public void testRecordingDecomposeCreateSimple() {
-		final ITypeEnvironment typenv = mTypeEnvironment("a", "S", "b", "T×U");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T×U");
 		final Expression expr = parseExpr("a↦b ∈ S×(T×U)", typenv);
 		decomposer.decompose(expr);
 		assertEquals(2, decomposer.offset());
@@ -114,7 +114,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * bound variables, even in a complicated case.
 	 */
 	public void testRecordingDecomposeCreateComplex() {
-		final ITypeEnvironment typenv = mTypeEnvironment(//
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(//
 				"a", "S", "b", "T×U", "c", "T×U×V", "d", "S×(T×U)×V");
 		final Expression expr = parseExpr("a↦(b↦c)↦d ∈ A", typenv);
 		decomposer.decompose(expr);
@@ -126,7 +126,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * Ensure that pushing an expression does not change anything.
 	 */
 	public void testRecordingPushNoChange() {
-		final ITypeEnvironment typenv = mTypeEnvironment("b", "S", "c", "T×U");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("b", "S", "c", "T×U");
 		final Expression toPush = parseExpr("∃a⦂S · a↦b ∈ AB", typenv);
 		final Expression toDecompose = parseExpr("c ∈ A", typenv);
 		assertEquals(toPush, decomposer.push(toPush));
@@ -142,7 +142,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * doesn't make any change.
 	 */
 	public void testDecomposeNoChange() {
-		final ITypeEnvironment typenv = mTypeEnvironment("a", "S", "b", "T");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T");
 		doTest(typenv, "a↦b ∈ A", null);
 	}
 
@@ -151,7 +151,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * the expected predicate in a simple case.
 	 */
 	public void testDecomposeSimpleLeft() {
-		final ITypeEnvironment typenv = mTypeEnvironment("a", "S×T", "b", "U");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S×T", "b", "U");
 		doTest(typenv, "a↦b ∈ A", //
 				"∃x⦂ℤ·∀a1⦂S, a2⦂T· a1↦a2 = a ⇒ a1↦a2↦b ∈ A");
 	}
@@ -161,7 +161,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * the expected predicate in a simple case.
 	 */
 	public void testDecomposeSimpleRight() {
-		final ITypeEnvironment typenv = mTypeEnvironment("a", "S", "b", "T×U");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T×U");
 		doTest(typenv, "a↦b ∈ A", //
 				"∃x⦂ℤ·∀b1⦂T, b2⦂U· b1↦b2 = b ⇒ a↦(b1↦b2) ∈ A");
 	}
@@ -171,7 +171,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * the expected predicate in a complex case.
 	 */
 	public void testDecomposeComplex() {
-		final ITypeEnvironment typenv = mTypeEnvironment(//
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(//
 				"a", "S", "b", "T×U", "c", "T×U×V", "d", "S×(T×U)×V");
 		doTest(typenv, "a↦(b↦c)↦d ∈ A",
 				"∃x⦂ℤ·∀d1⦂S, d2⦂T, d3⦂U, d4⦂V, c1⦂T, c2⦂U, c3⦂V, b1⦂T, b2⦂U·"
@@ -184,7 +184,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * the expected predicate even when variables are already bound.
 	 */
 	public void testDecomposeAlreadyBound() {
-		final ITypeEnvironment typenv = mTypeEnvironment("a", "S×T", "b", "U");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S×T", "b", "U");
 		doTest(typenv, "∀a⦂S×T, b⦂U, A⦂ℙ(S×T×U)· a↦b ∈ A", //
 				"∀a⦂S×T, b⦂U, A⦂ℙ(S×T×U)· "
 						+ "∀a1⦂S, a2⦂T· a1↦a2 = a ⇒ a1↦a2↦b ∈ A");

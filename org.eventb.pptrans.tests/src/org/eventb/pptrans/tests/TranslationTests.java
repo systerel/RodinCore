@@ -24,6 +24,7 @@ import static org.eventb.pptrans.Translator.Option.expandSetEquality;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
@@ -48,7 +49,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	protected static final Type V = ff.makeGivenType("V");
 	protected static final Type X = ff.makeGivenType("X");
 	protected static final Type Y = ff.makeGivenType("Y");
-	protected static final ITypeEnvironment defaultTe;
+	protected static final ITypeEnvironmentBuilder defaultTe;
 	static {
 		defaultTe = ff.makeTypeEnvironment();
 		defaultTe.addGivenSet("S");
@@ -76,8 +77,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	private static void doTest(String input, String expected,
 			boolean transformExpected, ITypeEnvironment inputTypenv,
 			Option... options) {
-		// Clone the input type environment to avoid side effects
-		final ITypeEnvironment te = inputTypenv.clone();
+		final ITypeEnvironmentBuilder te = inputTypenv.makeBuilder();
 		final Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
 		if (transformExpected) {

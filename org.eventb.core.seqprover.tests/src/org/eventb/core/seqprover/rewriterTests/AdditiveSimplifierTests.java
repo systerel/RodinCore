@@ -17,7 +17,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -37,7 +37,7 @@ public class AdditiveSimplifierTests {
 		return FormulaFactory.makePosition(image);
 	}
 
-	private Expression parseExpr(String input, ITypeEnvironment typenv) {
+	private Expression parseExpr(String input, ITypeEnvironmentBuilder typenv) {
 		final Expression expr = ff.parseExpression(input, LanguageVersion.V2,
 				this).getParsedExpression();
 		final ITypeCheckResult res = expr.typeCheck(typenv);
@@ -46,7 +46,7 @@ public class AdditiveSimplifierTests {
 		return expr;
 	}
 
-	private Predicate parsePred(String input, ITypeEnvironment typenv) {
+	private Predicate parsePred(String input, ITypeEnvironmentBuilder typenv) {
 		final Predicate pred = ff.parsePredicate(input, LanguageVersion.V2,
 				this).getParsedPredicate();
 		final ITypeCheckResult res = pred.typeCheck(typenv);
@@ -58,7 +58,7 @@ public class AdditiveSimplifierTests {
 	private void assertSimplifiedE(String input, String expString,
 			String... positions) {
 
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 		final Expression expr = parseExpr(input, typenv);
 		final Expression expected = parseExpr(expString, typenv);
 		final int len = positions.length;
@@ -73,7 +73,7 @@ public class AdditiveSimplifierTests {
 	private void assertSimplifiedP(String input, String expString,
 			String... positions) {
 
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 		final RelationalPredicate pred = (RelationalPredicate) parsePred(input,
 				typenv);
 		final Predicate expected = parsePred(expString, typenv);

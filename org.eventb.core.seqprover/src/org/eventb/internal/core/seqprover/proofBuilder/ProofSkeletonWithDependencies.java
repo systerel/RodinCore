@@ -13,7 +13,7 @@ package org.eventb.internal.core.seqprover.proofBuilder;
 
 import java.util.List;
 
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -241,7 +241,7 @@ public class ProofSkeletonWithDependencies implements IProofSkeleton {
 		if (childSkelGoal != null) {
 			final IProverSequent sequent = node.getSequent();
 			final Predicate nodeGoal = sequent.goal();
-			final ITypeEnvironment env = sequent.typeEnvironment();
+			final ISealedTypeEnvironment env = sequent.typeEnvironment();
 
 			final PredicateDecomposer decomposer = new PredicateDecomposer(env);
 			final List<Predicate> subgoalsSequent = decomposer

@@ -28,7 +28,8 @@ import org.eventb.core.IPRStringInput;
 import org.eventb.core.IProofStoreReader;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerDesc;
@@ -44,33 +45,36 @@ public class ProofStoreReader implements IProofStoreReader {
 
 	private final IPRProof prProof;
 	private final FormulaFactory factory;
-	
-	private ITypeEnvironment baseTypEnv = null;
+
+	private ISealedTypeEnvironment baseTypEnv = null;
 	private final Map<String, Predicate> predicates = new HashMap<String, Predicate>();
 	private final Map<String, Expression> expressions = new HashMap<String, Expression>();
 	private final Map<String, IReasonerDesc> reasoners = new HashMap<String, IReasonerDesc>();
-	
-	
+
 	@Override
 	public FormulaFactory getFormulaFactory() {
 		return factory;
 	}
-	
+
 	public ProofStoreReader(IPRProof prProof, FormulaFactory factory) {
 		this.prProof = prProof;
 		this.factory = factory;
 	}
-	
+
+	/**
+	 * @since 3.0 : the returned type environment became immutable
+	 */
 	@Override
-	public ITypeEnvironment getBaseTypeEnv() throws RodinDBException {
+	public ISealedTypeEnvironment getBaseTypeEnv() throws RodinDBException {
 		if (baseTypEnv == null) {
-			baseTypEnv = factory.makeTypeEnvironment();
-			for (String set: prProof.getSets()) {
-				baseTypEnv.addGivenSet(set);
+			ITypeEnvironmentBuilder buildTypEnv = factory.makeTypeEnvironment();
+			for (String set : prProof.getSets()) {
+				buildTypEnv.addGivenSet(set);
 			}
-			for (IPRIdentifier ident: prProof.getIdentifiers()) {
-				baseTypEnv.add(ident.getIdentifier(factory));
+			for (IPRIdentifier ident : prProof.getIdentifiers()) {
+				buildTypEnv.add(ident.getIdentifier(factory));
 			}
+			baseTypEnv = buildTypEnv.makeSnapshot();
 		}
 		return baseTypEnv;
 	}
@@ -113,13 +117,14 @@ public class ProofStoreReader implements IProofStoreReader {
 				reasoner = SequentProver.getReasonerRegistry().getReasonerDesc(
 						ref);
 			}
-			
+
 			reasoners.put(ref, reasoner);
 		}
 		return reasoner;
 	}
 
-	// TODO : return null in case key is not present instead of throwing an exception
+	// TODO : return null in case key is not present instead of throwing an
+	// exception
 	public static class Bridge implements IReasonerInputReader {
 
 		private final IPRProofRule prProofRule;
@@ -129,7 +134,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		private final Predicate goal;
 		private final Set<Predicate> neededHyps;
 		private final IAntecedent[] antecedents;
-		
+
 		public Bridge(IPRProofRule prProofRule, IProofStoreReader store,
 				int confidence, String displayName, Predicate goal,
 				Set<Predicate> neededHyps, IAntecedent[] antecedents) {
@@ -144,7 +149,8 @@ public class ProofStoreReader implements IProofStoreReader {
 		}
 
 		@Override
-		public Expression[] getExpressions(String key) throws SerializeException {
+		public Expression[] getExpressions(String key)
+				throws SerializeException {
 			try {
 				final IPRExprRef prExprRef = prProofRule.getPRExprRef(key);
 				return prExprRef.getExpressions(store);
@@ -166,8 +172,8 @@ public class ProofStoreReader implements IProofStoreReader {
 		@Override
 		public String getString(String key) throws SerializeException {
 			try {
-				final IPRStringInput prStringInput =
-					prProofRule.getPRStringInput(key);
+				final IPRStringInput prStringInput = prProofRule
+						.getPRStringInput(key);
 				return prStringInput.getString();
 			} catch (RodinDBException e) {
 				throw new SerializeException(e);
@@ -198,7 +204,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		public Set<Predicate> getNeededHyps() {
 			return neededHyps;
 		}
-		
+
 		/**
 		 * @since 2.0
 		 */

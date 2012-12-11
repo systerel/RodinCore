@@ -14,7 +14,7 @@ package org.eventb.core;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.rodinp.core.RodinDBException;
@@ -29,7 +29,10 @@ import org.rodinp.core.RodinDBException;
 public interface IProofStoreReader {
 	
 	FormulaFactory getFormulaFactory();
-	ITypeEnvironment getBaseTypeEnv() throws RodinDBException;
+	/**
+	 * @since 3.0 : the type environment became immutable
+	 */
+	ISealedTypeEnvironment getBaseTypeEnv() throws RodinDBException;
 	Predicate getPredicate(String name) throws RodinDBException;
 	Expression getExpression(String ref)  throws RodinDBException;
 

@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -73,7 +73,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 	protected Collection<SuccessfullReasonerApplication> makeSuccessfullReasonerApplication(
 			String predicateImage, String positionImage, String [] results) {
 		final List<SuccessfullReasonerApplication> apps = new ArrayList<SuccessfullReasonerApplication>();		
-		final ITypeEnvironment typenv = lib.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = lib.makeTypeEnvironment();
 		final Predicate predicate = TestLib.genPred(typenv, predicateImage);
 
 		// Successful in goal
@@ -214,7 +214,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 	 */
 	protected void rewritePred(String inputImage, String posImage,
 			String expectedImage, String typenvImage) {
-		final ITypeEnvironment typenv = genTypeEnv(typenvImage);
+		final ITypeEnvironmentBuilder typenv = genTypeEnv(typenvImage);
 		final Predicate input = genPred(typenv, inputImage);
 		final Predicate expected = genPred(typenv, expectedImage);
 		final IPosition pos = makePosition(posImage);
@@ -248,7 +248,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 	 */
 	protected void noRewritePred(String inputImage, String posImage,
 			String typenvImage) {
-		final ITypeEnvironment typenv = genTypeEnv(typenvImage);
+		final ITypeEnvironmentBuilder typenv = genTypeEnv(typenvImage);
 		final Predicate input = genPred(typenv, inputImage);
 		final IPosition pos = makePosition(posImage);
 		final Predicate actual = rewriter.rewrite(input, pos, ff);

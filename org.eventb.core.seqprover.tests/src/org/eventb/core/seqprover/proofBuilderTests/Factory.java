@@ -15,8 +15,8 @@ import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.LAND;
-import static org.eventb.core.ast.Formula.NOT;
 import static org.eventb.core.ast.Formula.LIMP;
+import static org.eventb.core.ast.Formula.NOT;
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.ProverFactory.makeSequent;
 
@@ -26,7 +26,7 @@ import java.util.List;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofTree;
@@ -77,7 +77,7 @@ public class Factory {
 		final int nbHyps = preds.length - 1;
 		final List<Predicate> hyps = Arrays.asList(preds).subList(0, nbHyps);
 		final Predicate goal = preds[nbHyps];
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 		for (final Predicate pred : preds) {
 			typenv.addAll(pred.getFreeIdentifiers());
 		}

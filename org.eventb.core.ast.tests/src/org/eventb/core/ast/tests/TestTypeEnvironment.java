@@ -23,6 +23,7 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.junit.Test;
 
@@ -44,9 +45,9 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testAddAllTypeEnv() {
-		ITypeEnvironment te1 = ff.makeTypeEnvironment();
-		ITypeEnvironment te2 = ff.makeTypeEnvironment();
-		ITypeEnvironment empty = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te1 = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te2 = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder empty = ff.makeTypeEnvironment();
 		
 		te2.addAll(empty);
 		assertEquals(te1, te2);
@@ -55,7 +56,7 @@ public class TestTypeEnvironment {
 		te2.addAll(te1);
 		assertEquals(te1, te2);
 		
-		ITypeEnvironment te3 = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te3 = ff.makeTypeEnvironment();
 		te3.addName("x", INT);
 		te2.addAll(te3);
 		te1.addName("x", INT);
@@ -74,9 +75,9 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testAddAllFreeIdent() {
-		ITypeEnvironment te1 = ff.makeTypeEnvironment();
-		ITypeEnvironment te2 = ff.makeTypeEnvironment();
-		ITypeEnvironment empty_te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te1 = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te2 = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder empty_te = ff.makeTypeEnvironment();
 		
 		FreeIdentifier x_INT = ff.makeFreeIdentifier("x",null,INT);
 		FreeIdentifier y_S = ff.makeFreeIdentifier("y",null,t_S);
@@ -102,7 +103,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testAddGivenSet() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");
 		assertEquals("{S=ℙ(S)}", te.toString());
 
@@ -115,7 +116,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testAddName() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addName("x", INT);
 		assertEquals("{x=ℤ}", te.toString());
 
@@ -129,7 +130,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testAddNameNullPointerName() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addName(null,  INT);
 	}
 	
@@ -139,7 +140,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testAddNameNullPointerType() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addName("x", null);
 	}
 	
@@ -149,7 +150,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddNameWithTwoTypes() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addName("x", INT);
 		te.addName("x", BOOL);
 	}
@@ -161,7 +162,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddNameWithIncoherentTypes() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addName("S", BOOL);
 		te.addName("x", POW(t_S));
 	}
@@ -172,7 +173,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddNameWithInvalidIdentifier() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addName("id", BOOL);
 	}
 	
@@ -181,14 +182,17 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testClone() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
-		assertEquals(te, te.clone());
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		assertEquals(te, te.makeBuilder());
+		assertEquals(te, te.makeSnapshot().makeBuilder());
 		
 		te.addGivenSet("S");
-		assertEquals(te, te.clone());
+		assertEquals(te, te.makeBuilder());
+		assertEquals(te, te.makeSnapshot().makeBuilder());
 		
 		te.addName("x", INT);
-		assertEquals(te, te.clone());
+		assertEquals(te, te.makeBuilder());
+		assertEquals(te, te.makeSnapshot().makeBuilder());
 	}
 
 	/*
@@ -196,7 +200,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testContains() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		assertFalse(te.contains("x"));
 		assertFalse(te.contains("x'"));
 		assertFalse(te.contains("S"));
@@ -217,13 +221,13 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testContainsAll() {
-		ITypeEnvironment te1 = ff.makeTypeEnvironment();
-		ITypeEnvironment empty = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te1 = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder empty = ff.makeTypeEnvironment();
 		
 		assertTrue(empty.containsAll(te1));
 		assertTrue(te1.containsAll(empty));
 		
-		ITypeEnvironment te2 = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te2 = ff.makeTypeEnvironment();
 		te1.addGivenSet("S");
 		te2.addGivenSet("S");
 		assertFalse(empty.containsAll(te1));
@@ -251,11 +255,11 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testEquals() {
-		ITypeEnvironment te1 = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te1 = ff.makeTypeEnvironment();
 		assertFalse(te1.equals(null));
 		assertFalse(te1.equals("dummy string"));
 		
-		ITypeEnvironment te2 = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te2 = ff.makeTypeEnvironment();
 		assertTrue(te1.equals(te2));
 		
 		te1.addGivenSet("S");
@@ -276,7 +280,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testGetIterator() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 
 		ITypeEnvironment.IIterator iter = te.getIterator();
 		assertNoCurrentElement(iter);
@@ -331,7 +335,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testGetNames() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		Set<String> expected = new HashSet<String>();
 		assertEquals(expected, te.getNames());
 		
@@ -349,7 +353,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testGetType() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		assertNull(te.getType("x"));
 		assertNull(te.getType("x'"));
 		assertNull(te.getType("S"));
@@ -370,7 +374,7 @@ public class TestTypeEnvironment {
 	 */
 	@Test
 	public void testIsEmpty() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		assertTrue("Initial type environment should be empty", te.isEmpty());
 		
 		te.addGivenSet("S");
@@ -384,7 +388,7 @@ public class TestTypeEnvironment {
 	
 	@Test
 	public void testIsGivenSet() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");
 		te.addName("T", POW(t_T));
 		te.addName("x", INT);

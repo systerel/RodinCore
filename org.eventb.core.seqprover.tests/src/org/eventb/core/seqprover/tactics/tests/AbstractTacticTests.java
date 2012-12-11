@@ -25,6 +25,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -66,7 +67,7 @@ public abstract class AbstractTacticTests {
 	protected final String tacticId;
 	protected FormulaFactory ff;
 	protected DLib dl;
-	protected ITypeEnvironment typenv;
+	protected ITypeEnvironmentBuilder typenv;
 
 	public AbstractTacticTests(ITactic tactic, String tacticId) {
 		this(tactic, tacticId, FormulaFactory.getDefault());

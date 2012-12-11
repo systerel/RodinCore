@@ -18,6 +18,7 @@ import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -145,11 +146,15 @@ public class SCEvent extends EventBElement implements ISCEvent {
 		return getInternalElement(ISCWitness.ELEMENT_TYPE, elementName);
 	}
 
+
+	/**
+	 * @since 3.0 : The returned type environment became immutable
+	 */
 	@Override
-	public ITypeEnvironment getTypeEnvironment(ITypeEnvironment mchTypenv,
+	public ITypeEnvironmentBuilder getTypeEnvironment(ITypeEnvironment mchTypenv,
 			FormulaFactory factory) throws RodinDBException {
 
-		ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		typenv.addAll(mchTypenv);
 		for (ISCParameter par : getSCParameters()) {
 			typenv.add(par.getIdentifier(factory));

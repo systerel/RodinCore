@@ -10,7 +10,7 @@ package org.eventb.pptrans.tests;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.tests.FastFactory;
 import org.eventb.pptrans.Translator;
@@ -21,7 +21,7 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 		doTest(input, expected, transformExpected, FastFactory.mTypeEnvironment());
 	}
 
-	public static void doTest(String input, String expected, boolean transformExpected, ITypeEnvironment te) {
+	public static void doTest(String input, String expected, boolean transformExpected, ITypeEnvironmentBuilder te) {
 		Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);
 		doTest(pinput, pexpected);

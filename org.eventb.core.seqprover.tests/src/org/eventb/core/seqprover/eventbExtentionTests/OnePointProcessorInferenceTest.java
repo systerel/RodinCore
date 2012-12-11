@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.OnePointProcessorInference;
@@ -35,7 +35,7 @@ public class OnePointProcessorInferenceTest {
 
 	private static void assertSuccess(String input, String result,
 			String replacementStr) {
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 		final Predicate pred = genPred(typenv, input);
 		final Expression replacement = genExpr(typenv, replacementStr);
 		final Predicate expected = genPred(typenv, result);
@@ -45,7 +45,7 @@ public class OnePointProcessorInferenceTest {
 
 	private static void assertSuccess(String input, String result,
 			Expression replacement) {
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 		final Predicate pred = genPred(typenv, input);
 		final Predicate expected = genPred(typenv, result);
 

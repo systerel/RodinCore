@@ -24,6 +24,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 
 
@@ -180,7 +181,7 @@ public class TestTypes extends AbstractTests {
 	}
 	
 	public void testIsATypeExpression() {
-		ITypeEnvironment typenv = tf.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typenv = tf.makeTypeEnvironment();
 		typenv.addGivenSet("S");
 		typenv.addGivenSet("T");
 		typenv.addName("x", tf.makePowerSetType(ty_S));

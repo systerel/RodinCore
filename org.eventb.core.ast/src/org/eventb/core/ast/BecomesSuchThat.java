@@ -333,7 +333,7 @@ public class BecomesSuchThat extends Assignment {
 
 	@Override
 	protected Predicate getBAPredicateRaw(FormulaFactory ff) {
-		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = ff.makeTypeEnvironment();
 		FreeIdentifier[] freshIdents = 
 			ff.makeFreshIdentifiers(primedIdents, typeEnvironment);
 		Substitution subst = 

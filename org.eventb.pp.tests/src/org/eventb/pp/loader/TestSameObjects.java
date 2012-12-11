@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.internal.pp.core.elements.Clause;
 import org.eventb.internal.pp.core.elements.PredicateLiteralDescriptor;
 import org.eventb.internal.pp.core.elements.Sort;
@@ -43,7 +43,7 @@ public class TestSameObjects extends AbstractPPTest {
 	private static final PredicateLiteralDescriptor d0S = descriptor(0, S);
 	private static final PredicateLiteralDescriptor d1T = descriptor(1, T);
 
-	private static ITypeEnvironment env = ff.makeTypeEnvironment();
+	private static ITypeEnvironmentBuilder env = ff.makeTypeEnvironment();
 	static {
 		env.addGivenSet("S");
 		env.addGivenSet("T");

@@ -23,14 +23,14 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 /**
@@ -171,7 +171,7 @@ public class ProverChecks {
 
 		List<IProverSequent> justifications = new ArrayList<IProverSequent>();
 		final DLib lib = mDLib(ff);
-		final ITypeEnvironment typeEnv = lib.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typeEnv = lib.makeTypeEnvironment();
 
 		// Get G_r and H_r
 		Predicate g_r = rule.getGoal();
@@ -218,7 +218,7 @@ public class ProverChecks {
 					hyps.addAll(h_a);
 					hyps.addAll(fwdInf.getHyps());
 					Predicate goal = lib.makeExQuant(fwdInf.getAddedFreeIdents(), lib.makeConj(fwdInf.getInferredHyps()));
-					ITypeEnvironment localTypeEnv = lib.makeTypeEnvironment();
+					ITypeEnvironmentBuilder localTypeEnv = lib.makeTypeEnvironment();
 					for (Predicate hyp : h_r) {
 						localTypeEnv.addAll(hyp.getFreeIdentifiers());
 					}

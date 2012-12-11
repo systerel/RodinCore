@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
@@ -92,11 +92,11 @@ public class SimpleSequentTests extends AbstractTransformerTests {
 
 	private static void assertTypeEnvironment(String typenvImage,
 			String goalImage, String... hypImages) {
-		final ITypeEnvironment expected = genTypeEnv(typenvImage);
-		final ITypeEnvironment typenv = expected.clone(); // Preserve expected
+		final ITypeEnvironmentBuilder expected = genTypeEnv(typenvImage);
+		final ITypeEnvironmentBuilder typenv = expected.makeBuilder(); // Preserve expected
 		final ISimpleSequent sequent = makeSequent(typenv, goalImage, hypImages);
 		assertEquals(expected, typenv); // Ensure no change to environment
-		assertEquals(expected, sequent.getTypeEnvironment());
+		assertEquals(expected, sequent.getTypeEnvironment().makeBuilder());
 	}
 
 	/**

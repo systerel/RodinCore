@@ -49,7 +49,7 @@ import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.ExtendedGrammar;
 import org.eventb.internal.core.parser.GenParser;
 import org.eventb.internal.core.parser.ParseResult;
-import org.eventb.internal.core.typecheck.TypeEnvironment;
+import org.eventb.internal.core.typecheck.TypeEnvironmentBuilder;
 import org.eventb.internal.core.upgrade.UpgradeResult;
 import org.eventb.internal.core.upgrade.UpgraderFactory;
 import org.eventb.internal.core.upgrade.VersionUpgrader;
@@ -1089,9 +1089,10 @@ public class FormulaFactory {
 	 * Returns a new empty type environment.
 	 * 
 	 * @return a new empty type environment
+	 * @since 3.0 : the return type environment became explicitly mutable
 	 */
-	public ITypeEnvironment makeTypeEnvironment() {
-		return new TypeEnvironment(this);
+	public ITypeEnvironmentBuilder makeTypeEnvironment() {
+		return new TypeEnvironmentBuilder(this);
 	}
 
 	/**
@@ -1444,14 +1445,15 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the given type environment is not based on this formula
 	 *             factory
+	 * @since 3.0 : the type environment parameter became explicitly mutable
 	 */
 	// TODO 3.0 move to ITypeEnvironment
 	public FreeIdentifier[] makeFreshIdentifiers(BoundIdentDecl[] boundIdents,
-			ITypeEnvironment environment) {
+			ITypeEnvironmentBuilder environment) {
 		if (this != environment.getFormulaFactory()) {
 			throw new IllegalArgumentException("incompatible type environment");
 		}
-		final TypeEnvironment typenv = (TypeEnvironment) environment;
+		final TypeEnvironmentBuilder typenv = (TypeEnvironmentBuilder) environment;
 		return typenv.makeFreshIdentifiers(boundIdents);
 	}
 

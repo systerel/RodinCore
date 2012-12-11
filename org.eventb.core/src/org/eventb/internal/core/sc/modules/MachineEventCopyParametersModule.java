@@ -20,7 +20,7 @@ import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEvent;
 import org.eventb.core.ISCParameter;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.SCProcessorModule;
 import org.eventb.core.sc.state.IAbstractEventInfo;
@@ -48,7 +48,7 @@ public class MachineEventCopyParametersModule extends SCProcessorModule {
 	private IAbstractMachineInfo abstractMachineInfo;
 	private IConcreteEventInfo concreteEventInfo;
 	private IIdentifierSymbolTable identifierSymbolTable;
-	private ITypeEnvironment typeEnvironment;
+	private ITypeEnvironmentBuilder typeEnvironment;
 
 	@Override
 	public void process(IRodinElement element, IInternalElement target,

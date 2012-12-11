@@ -15,7 +15,7 @@ import java.util.Set;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.Level;
@@ -56,9 +56,9 @@ public abstract class AbstractPPTest {
 		return ff.makeRelationalType(left, right);
 	}
 	
-	public static ITypeEnvironment mTypeEnvironment(Object...objs) {
+	public static ITypeEnvironmentBuilder mTypeEnvironment(Object...objs) {
 		assert (objs.length & 1) == 0;
-		ITypeEnvironment result = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
 		for (int i = 0; i < objs.length; i += 2) {
 			result.addName((String) objs[i], (Type) objs[i+1]);
 		}

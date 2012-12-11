@@ -21,8 +21,8 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
@@ -46,14 +46,14 @@ public class IdentifierDecomposer implements ISequentTransformer {
 	private final FormulaFactory ff;
 
 	// Type environment of the sequent to transform
-	private final ITypeEnvironment typenv;
+	private final ITypeEnvironmentBuilder typenv;
 
 	// Substitution of variables hiding a pair into scalar variables.
 	private final Map<FreeIdentifier, Expression> substitution;
 
 	public IdentifierDecomposer(ISimpleSequent sequent) {
 		this.ff = sequent.getFormulaFactory();
-		this.typenv = sequent.getTypeEnvironment();
+		this.typenv = sequent.getTypeEnvironment().makeBuilder();
 		this.substitution = new HashMap<FreeIdentifier, Expression>();
 		computeSubstitution();
 	}

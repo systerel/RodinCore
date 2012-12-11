@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -148,7 +148,7 @@ public class ProofSimplifierTests {
 	}
 
 	private IProofTree makeMoreComplex() {
-		final ITypeEnvironment typeEnv = genTypeEnv("c=S,c2=ℤ,r=ℙ(S×S)");
+		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("c=S,c2=ℤ,r=ℙ(S×S)");
 		typeEnv.addGivenSet("S");
 		final Set<Predicate> hyps = genPreds(typeEnv, "c∈dom(r)", "c2=0" , "c2≠c1" , "r∈S ⇸ S" , "∀x·r(x)∈S ∖ {x}");
 		final Predicate goal = TestLib.genPred(typeEnv, "r(r(c)) ≠ r(c)");

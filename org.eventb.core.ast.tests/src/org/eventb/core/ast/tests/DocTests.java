@@ -34,7 +34,7 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 
@@ -95,7 +95,7 @@ public class DocTests extends AbstractTests {
 		final List<String> strings = serialized;
 		
 		// De-serialize type environment
-		final ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 		int size = strings.size();
 		for (int i = 1; i < size; i += 2) {
 			final String name = strings.get(i);

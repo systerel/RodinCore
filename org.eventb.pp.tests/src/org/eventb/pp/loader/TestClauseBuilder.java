@@ -47,6 +47,7 @@ import java.util.List;
 
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.CancellationChecker;
 import org.eventb.internal.pp.core.elements.Clause;
@@ -193,7 +194,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 	private static Variable zS = cVar(23,Ssort);
 	private static Variable xPS = cVar(24,PS);
 	
-	private static final ITypeEnvironment env = mTypeEnvironment(
+	private static final ITypeEnvironmentBuilder env = mTypeEnvironment(
 		"x0", ty_A,
 		"x1", ty_B,
 		"a", ty_S,
@@ -1972,7 +1973,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 		final AbstractContext context = new AbstractContext();
 		final CancellationChecker cancellation = CancellationChecker.newChecker(null);
 		final ClauseBuilder cBuilder = new ClauseBuilder(cancellation);
-		ITypeEnvironment tmp = typenv.clone();
+		ITypeEnvironmentBuilder tmp = typenv.makeBuilder();
 		
 		for (String str : strPredicate) {
 			final ITypeCheckResult res = getResult(str, context, tmp, goal);

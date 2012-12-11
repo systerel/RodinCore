@@ -20,6 +20,7 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -76,7 +77,7 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 		if (goal == null) return null;
 		
 		// Type check
-		ITypeEnvironment typeEnvironment = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = ff.makeTypeEnvironment();
 		ITypeCheckResult tcResult;
 		
 		for (int i=0;i<hyps.length;i++){
@@ -101,7 +102,7 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 		
 	public static ITypeEnvironment genTypeEnv(String... strs){
 		final DLib lib = mDLib(ff);
-		ITypeEnvironment typeEnv = lib.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnv = lib.makeTypeEnvironment();
 		assert strs.length % 2 == 0;
 		for (int i = 0; i+1 < strs.length; i=i+2) {
 			Type type = lib.parseType(strs[i+1]);

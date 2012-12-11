@@ -11,6 +11,7 @@ package org.eventb.core;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -253,8 +254,9 @@ extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElemen
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 * @see ISCMachineRoot#getTypeEnvironment(FormulaFactory)
+	 * @since 3.0 The type environment became explicitly mutable
 	 */
-	ITypeEnvironment getTypeEnvironment(ITypeEnvironment machineTEnv,
+	ITypeEnvironmentBuilder getTypeEnvironment(ITypeEnvironment machineTEnv,
 			FormulaFactory factory) throws RodinDBException;
 
 }

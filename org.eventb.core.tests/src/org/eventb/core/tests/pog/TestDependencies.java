@@ -15,7 +15,7 @@ package org.eventb.core.tests.pog;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 
 /**
  * @author Stefan Hallerstede
@@ -29,7 +29,7 @@ public class TestDependencies extends EventBPOTest {
 		addVariables(abs, "V1");
 		addInvariants(abs, makeSList("I1"), makeSList("V1∈{1}"), false);
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
 		saveRodinFileOf(abs);

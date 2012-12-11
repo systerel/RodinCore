@@ -12,7 +12,7 @@
 package org.eventb.core;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -114,8 +114,9 @@ public interface ISCContextRoot extends ISCContext, IEventBRoot, IAccuracyElemen
 	 * @return the type environment of this context
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
+	 * @since 3.0 : The type environment became explicitly mutable
 	 */
-	ITypeEnvironment getTypeEnvironment(FormulaFactory factory)
+	ITypeEnvironmentBuilder getTypeEnvironment(FormulaFactory factory)
 			throws RodinDBException;
 
 }

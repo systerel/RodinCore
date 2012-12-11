@@ -37,6 +37,7 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.sc.GraphProblem;
@@ -77,7 +78,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	private ISCMachineRoot scAbstractMachineFile;
 	private IRefinesMachine refinesMachine;
 	private AbstractEventTable abstractEventTable;
-	private ITypeEnvironment typeEnvironment;
+	private ITypeEnvironmentBuilder typeEnvironment;
 	private IMachineAccuracyInfo accuracyInfo;
 
 	@Override
@@ -285,7 +286,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 		AbstractEventInfo abstractEventInfo;
 
-		ITypeEnvironment eventTypeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder eventTypeEnvironment = factory.makeTypeEnvironment();
 		eventTypeEnvironment.addAll(typeEnvironment);
 		abstractEventInfo = new AbstractEventInfo(event, label, event
 				.getConvergence(), fetchEventParameters(event,
@@ -297,7 +298,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 	}
 
 	private FreeIdentifier[] fetchEventParameters(ISCEvent event,
-			ITypeEnvironment eventTypeEnvironment, FormulaFactory factory)
+			ITypeEnvironmentBuilder eventTypeEnvironment, FormulaFactory factory)
 			throws CoreException {
 		ISCParameter[] parameters = event.getSCParameters();
 		FreeIdentifier[] identifiers = new FreeIdentifier[parameters.length];

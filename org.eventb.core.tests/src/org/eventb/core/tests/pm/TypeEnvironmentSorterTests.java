@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter.Entry;
@@ -57,7 +58,7 @@ public class TypeEnvironmentSorterTests extends TestCase {
 	}
 	
 	public void testOneSet() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");
 		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(te);
 		assertSets(sorter, "S");
@@ -65,7 +66,7 @@ public class TypeEnvironmentSorterTests extends TestCase {
 	}
 	
 	public void testSeveralSets() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");
 		te.addGivenSet("A");
 		te.addGivenSet("T");
@@ -77,7 +78,7 @@ public class TypeEnvironmentSorterTests extends TestCase {
 	}
 	
 	public void testOneVar() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addName("x", INT);
 		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(te);
 		assertSets(sorter);
@@ -85,7 +86,7 @@ public class TypeEnvironmentSorterTests extends TestCase {
 	}
 	
 	public void testSeveralVars() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addName("x", INT);
 		te.addName("a", POW(INT));
 		te.addName("y", BOOL);
@@ -98,7 +99,7 @@ public class TypeEnvironmentSorterTests extends TestCase {
 	}
 	
 	public void testMixed() {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");
 		te.addName("x", INT);
 		te.addGivenSet("T");

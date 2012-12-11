@@ -24,8 +24,8 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SourceLocation;
@@ -171,8 +171,8 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 	 * result of substitutions for identifiers from the original type
 	 * environment.
 	 */
-	public ITypeEnvironment specialize(TypeEnvironment typenv) {
-		final ITypeEnvironment result = ff.makeTypeEnvironment();
+	public ITypeEnvironmentBuilder specialize(TypeEnvironment typenv) {
+		final ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
 		final IIterator iter = typenv.getIterator();
 		while (iter.hasNext()) {
 			iter.advance();

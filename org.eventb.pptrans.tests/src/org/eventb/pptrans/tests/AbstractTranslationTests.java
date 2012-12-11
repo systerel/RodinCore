@@ -23,7 +23,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.datatype.IConstructorMediator;
@@ -90,7 +90,7 @@ public abstract class AbstractTranslationTests extends TestCase {
 		return ff.makeGivenType(name);
 	}
 
-	public static Predicate parse(String string, ITypeEnvironment te) {
+	public static Predicate parse(String string, ITypeEnvironmentBuilder te) {
 		final FormulaFactory factory = te.getFormulaFactory();
 		IParseResult parseResult = factory.parsePredicate(string, V2, null);
 		assertFalse("Parse error for: " + string +
@@ -114,7 +114,7 @@ public abstract class AbstractTranslationTests extends TestCase {
 
 	protected ISimpleSequent make(FormulaFactory factory, String goalImage,
 			String... hypImages) {
-		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		final Predicate[] hyps = new Predicate[hypImages.length];
 		for (int i = 0; i < hyps.length; i++) {
 			hyps[i] = parse(hypImages[i], typenv);

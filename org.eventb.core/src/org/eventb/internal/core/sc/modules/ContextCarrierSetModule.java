@@ -18,7 +18,7 @@ import org.eventb.core.ICarrierSet;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.SCCore;
 import org.eventb.core.sc.state.IIdentifierSymbolInfo;
 import org.eventb.core.sc.state.ISCStateRepository;
@@ -72,7 +72,7 @@ public class ContextCarrierSetModule extends IdentifierModule {
 
 	@Override
 	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo,
-			ITypeEnvironment environment) throws CoreException {
+			ITypeEnvironmentBuilder environment) throws CoreException {
 		environment.addGivenSet(newSymbolInfo.getSymbol());
 
 		newSymbolInfo.setType(environment.getType(newSymbolInfo.getSymbol()));

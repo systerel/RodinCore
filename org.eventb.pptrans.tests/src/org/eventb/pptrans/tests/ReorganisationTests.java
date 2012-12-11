@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.pptrans.Translator;
 
@@ -29,7 +29,7 @@ import org.eventb.pptrans.Translator;
  */
 public class ReorganisationTests extends AbstractTranslationTests {
 	
-	private static final ITypeEnvironment defaultTe;
+	private static final ITypeEnvironmentBuilder defaultTe;
 	static {
 		defaultTe = ff.makeTypeEnvironment();
 		defaultTe.addGivenSet("S");
@@ -43,21 +43,21 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	}
 
 	private static void doTest(String input, String expected) {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addAll(defaultTe);
 		doTest(input, expected, false, te);
 	}
 	
 	private static void doTest(String input, String expected,
 			boolean transformExpected) {
-		ITypeEnvironment te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addAll(defaultTe);
 		doTest(input, expected, transformExpected, te);
 	}
 	
 	@SuppressWarnings("deprecation")
 	private static void doTest(String input, String expected,
-			boolean transformExpected, ITypeEnvironment te) {
+			boolean transformExpected, ITypeEnvironmentBuilder te) {
 
 		Predicate pinput = parse(input, te);
 		Predicate pexpected = parse(expected, te);

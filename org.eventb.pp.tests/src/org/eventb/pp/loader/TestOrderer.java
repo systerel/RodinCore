@@ -2,7 +2,7 @@ package org.eventb.pp.loader;
 
 import static org.junit.Assert.assertEquals;
 
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.pp.core.elements.terms.AbstractPPTest;
 import org.eventb.internal.pp.core.elements.terms.Util;
@@ -12,7 +12,7 @@ import org.junit.Test;
 
 public class TestOrderer extends AbstractPPTest {
 
-	private static ITypeEnvironment typenv = ff.makeTypeEnvironment();
+	private static ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 	static {
 		typenv.addName("x0", ty_A);
 		typenv.addName("x1", ty_B);

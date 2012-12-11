@@ -11,7 +11,7 @@ import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
 import org.eventb.core.ISCContext;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -19,7 +19,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  */
-/* package */ class SCContextUtil {
+/* package */class SCContextUtil {
 
 	private SCContextUtil() {
 		// Disabled constructor
@@ -38,8 +38,9 @@ import org.rodinp.core.RodinDBException;
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	static void augmentTypeEnvironment(ISCContext ctx, ITypeEnvironment typenv,
-			FormulaFactory factory) throws RodinDBException {
+	static void augmentTypeEnvironment(ISCContext ctx,
+			ITypeEnvironmentBuilder typenv, FormulaFactory factory)
+			throws RodinDBException {
 
 		for (ISCCarrierSet set : ctx.getSCCarrierSets()) {
 			typenv.add(set.getIdentifier(factory));

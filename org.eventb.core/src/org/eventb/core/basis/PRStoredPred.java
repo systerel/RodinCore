@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRStoredPred;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -43,7 +44,8 @@ public class PRStoredPred extends SCPredicateElement implements IPRStoredPred {
 	@Override
 	public Predicate getPredicate(FormulaFactory factory,
 			ITypeEnvironment baseTypenv) throws RodinDBException {
-		final ITypeEnvironment typenv = buildTypenv(this, factory, baseTypenv);
+		final ITypeEnvironmentBuilder typenv = 
+				buildTypenv(this, factory, baseTypenv);
 		return super.getPredicate(factory, typenv);
 	}
 

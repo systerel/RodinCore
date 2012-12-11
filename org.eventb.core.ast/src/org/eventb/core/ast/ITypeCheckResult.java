@@ -38,7 +38,7 @@ public interface ITypeCheckResult extends IResult {
 	 * </p>
 	 * <p>
 	 * In case of success, this inferred type environment can be safely merged within the initial
-	 * type environment using {@link ITypeEnvironment#addAll(ITypeEnvironment)}.
+	 * type environment using {@link ITypeEnvironmentBuilder#addAll(ITypeEnvironment)}.
 	 * </p>
 	 * 
 	 * @return the inferred type environment or <code>null</code> if

@@ -15,14 +15,14 @@ import java.util.Collections;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.ForwardInfReasoner;
 
@@ -62,7 +62,7 @@ public class ExF extends ForwardInfReasoner {
 		// The type environment is cloned since makeFresh.. adds directly to the
 		// given type environment
 		// TODO : Change implementation
-		final ITypeEnvironment newTypenv = sequent.typeEnvironment().clone();
+		final ITypeEnvironmentBuilder newTypenv = sequent.typeEnvironment().makeBuilder();
 		final FormulaFactory ff = sequent.getFormulaFactory();
 		final FreeIdentifier[] freeIdents = 
 			ff.makeFreshIdentifiers(boundIdentDecls, newTypenv);

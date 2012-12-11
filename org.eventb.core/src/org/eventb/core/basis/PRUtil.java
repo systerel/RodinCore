@@ -16,8 +16,9 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.Type;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
@@ -44,25 +45,26 @@ public class PRUtil {
 	 *         given Rodin element
 	 * @throws RodinDBException
 	 *             in case of problem accessing the Rodin database
+	 * @since 3.0 : the returned type environment became explicitly mutable
 	 */
-	public static ITypeEnvironment buildTypenv(IInternalElement ie,
+	public static ITypeEnvironmentBuilder buildTypenv(IInternalElement ie,
 			FormulaFactory ff, ITypeEnvironment baseTypenv)
 			throws RodinDBException {
-		final ITypeEnvironment result = getLocalTypenv(ie, ff);
+		final ITypeEnvironmentBuilder result = getLocalTypenv(ie, ff);
 		mergeTypenv(result, baseTypenv);
 		return result;
 	}
 
-	private static ITypeEnvironment getLocalTypenv(IInternalElement ie,
+	private static ITypeEnvironmentBuilder getLocalTypenv(IInternalElement ie,
 			FormulaFactory ff) throws RodinDBException {
-		final ITypeEnvironment result = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
 		for (final IPRIdentifier child : getPRIdentifiers(ie)) {
 			result.add(child.getIdentifier(ff));
 		}
 		return result;
 	}
 
-	private static void mergeTypenv(ITypeEnvironment localTypenv,
+	private static void mergeTypenv(ITypeEnvironmentBuilder localTypenv,
 			ITypeEnvironment baseTypenv) {
 		final IIterator it = baseTypenv.getIterator();
 		while (it.hasNext()) {

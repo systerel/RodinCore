@@ -18,7 +18,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineRoot;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 
 /**
  * @author Stefan Hallerstede
@@ -52,7 +52,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		runBuilder();
 		
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addGivenSet("S1");
 		environment.addName("V1", factory.makeGivenType("S1"));
 		
@@ -93,7 +93,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		runBuilder();
 		
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("C1", factory.makeBooleanType());
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
@@ -135,7 +135,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		runBuilder();
 		
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addName("V1", factory.makeIntegerType());
 
 		ISCMachineRoot file = mac.getSCMachineRoot();

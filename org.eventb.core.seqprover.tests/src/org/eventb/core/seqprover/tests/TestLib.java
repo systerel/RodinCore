@@ -24,6 +24,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -116,7 +117,7 @@ public class TestLib {
 	}
 
 	public static IProverSequent genFullSeq(String sequentAsString,
-			ITypeEnvironment typenv) {
+			ITypeEnvironmentBuilder typenv) {
 		final Matcher m = fullSequentPattern.matcher(sequentAsString);
 		if (!m.matches()) {
 			throw new IllegalArgumentException("Invalid sequent: "
@@ -162,7 +163,7 @@ public class TestLib {
 	public static IProverSequent genFullSeq(ITypeEnvironment typenv,
 			String hiddenHypsImage, String defaultHypsImage,
 			String selHypsImage, String goalImage) {
-		final ITypeEnvironment te = typenv.clone();
+		final ITypeEnvironmentBuilder te = typenv.makeBuilder();
 		final Set<Predicate> hiddenHyps = genPredSet(te, hiddenHypsImage);
 		final Set<Predicate> defaultHyps = genPredSet(te, defaultHypsImage);
 		final Set<Predicate> selectedHyps = genPredSet(te, selHypsImage);
@@ -202,7 +203,7 @@ public class TestLib {
 			String hiddenHypsImage, String defaultHypsImage,
 			String selHypsImage, String goalImage, FormulaFactory factory) {
 
-		final ITypeEnvironment typenv = genTypeEnv(typeEnvImage, factory);
+		final ITypeEnvironmentBuilder typenv = genTypeEnv(typeEnvImage, factory);
 		return genFullSeq(typenv, hiddenHypsImage, defaultHypsImage, selHypsImage, goalImage);
 	}
 
@@ -244,7 +245,7 @@ public class TestLib {
 	 */
 	public static IProverSequent genSeq(final FormulaFactory factory,
 			final Predicate... predicates) {
-		final ITypeEnvironment typenv = factory.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		for (final Predicate pred : predicates) {
 			typenv.addAll(pred.getFreeIdentifiers());
 		}
@@ -271,7 +272,7 @@ public class TestLib {
 	private static final Pattern typEnvPairPattern = Pattern
 			.compile("^([^=]*)=([^=]*)$");
 
-	public static ITypeEnvironment genTypeEnv(String typeEnvImage) {
+	public static ITypeEnvironmentBuilder genTypeEnv(String typeEnvImage) {
 		return genTypeEnv(typeEnvImage, ff);		
 	}
 	
@@ -292,9 +293,9 @@ public class TestLib {
 	 *            image of the type environment to generate
 	 * @return the type environment described by the given string
 	 */
-	public static ITypeEnvironment genTypeEnv(String typeEnvImage, FormulaFactory factory) {
+	public static ITypeEnvironmentBuilder genTypeEnv(String typeEnvImage, FormulaFactory factory) {
 		final DLib lib = mDLib(factory);
-		final ITypeEnvironment result = lib.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder result = lib.makeTypeEnvironment();
 		if (typeEnvImage.length() == 0) {
 			return result;
 		}
@@ -315,7 +316,7 @@ public class TestLib {
 		return result;
 	}
 
-	private static LinkedHashSet<Predicate> genPredSet(ITypeEnvironment typenv,
+	private static LinkedHashSet<Predicate> genPredSet(ITypeEnvironmentBuilder typenv,
 			String predList) {
 		if (predList.trim().length() == 0) {
 			return new LinkedHashSet<Predicate>();
@@ -354,7 +355,7 @@ public class TestLib {
 	 *            The type environment to check the predicate with
 	 * @return The type checked predicate
 	 */
-	public static Predicate genPred(ITypeEnvironment typeEnv, String str) {
+	public static Predicate genPred(ITypeEnvironmentBuilder typeEnv, String str) {
 		final DLib lib = mDLib(typeEnv.getFormulaFactory());
 		final Predicate result = lib.parsePredicate(str);
 		if (result == null)
@@ -384,7 +385,7 @@ public class TestLib {
 	 * @param strs
 	 * @return
 	 */
-	public static LinkedHashSet<Predicate> genPreds(ITypeEnvironment typeEnv,
+	public static LinkedHashSet<Predicate> genPreds(ITypeEnvironmentBuilder typeEnv,
 			String... strs) {
 		final LinkedHashSet<Predicate> hyps = new LinkedHashSet<Predicate>(
 				strs.length * 4 / 3);
@@ -404,7 +405,7 @@ public class TestLib {
 	 *            The type environment to check the expression with
 	 * @return The type checked expression
 	 */
-	public static Expression genExpr(ITypeEnvironment typeEnv, String str) {
+	public static Expression genExpr(ITypeEnvironmentBuilder typeEnv, String str) {
 		final Expression result = mDLib(ff).parseExpression(str);
 		if (result == null)
 			throw new IllegalArgumentException("Invalid expression: " + str);

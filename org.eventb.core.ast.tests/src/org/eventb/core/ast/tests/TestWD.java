@@ -22,6 +22,7 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
@@ -780,7 +781,7 @@ public class TestWD extends AbstractTests {
 	 * Unit test for data type extensions
 	 */
 	public void testDatatype() throws Exception {
-		final ITypeEnvironment env = LIST_FAC.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder env = LIST_FAC.makeTypeEnvironment();
 		env.addName("l", LIST_INT_TYPE);
 
 		// Type constructor
@@ -811,7 +812,7 @@ public class TestWD extends AbstractTests {
 		final IDatatype dt = ff.makeDatatype(ExtensionHelper.FOOBARTYPE);
 		final FormulaFactory fac = FormulaFactory.getInstance(dt
 				.getExtensions());
-		final ITypeEnvironment env = fac.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder env = fac.makeTypeEnvironment();
 		env.addName("l", INT_TYPE);
 
 		// Value constructor

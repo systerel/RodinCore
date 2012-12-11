@@ -22,6 +22,7 @@ import java.util.NoSuchElementException;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
@@ -68,7 +69,7 @@ public final class ProverSequent implements IInternalProverSequent{
 
 	// TODO : Profiling : It may be that caching visible hyps may improve performance.
 	
-	private final ITypeEnvironment typeEnvironment;
+	private final ISealedTypeEnvironment typeEnvironment;
 	
 	
 	/**
@@ -96,9 +97,8 @@ public final class ProverSequent implements IInternalProverSequent{
 	/* (non-Javadoc)
 	 * @see org.eventb.core.seqprover.IProverSequent#typeEnvironment()
 	 */
-	public ITypeEnvironment typeEnvironment() {
-		// TODO : Maybe avoid cloning by returning an immutable version of the type environemnt
-		return this.typeEnvironment.clone();
+	public ISealedTypeEnvironment typeEnvironment() {
+		return this.typeEnvironment;
 	}
 		
 	/* (non-Javadoc)
@@ -134,7 +134,7 @@ public final class ProverSequent implements IInternalProverSequent{
 				hiddenHypotheses != null & selectedHypotheses != null & goal != null);
 		
 		if (typeEnvironment == null) this.typeEnvironment = seq.typeEnvironment;
-		else this.typeEnvironment = typeEnvironment;
+		else this.typeEnvironment = typeEnvironment.makeSnapshot();
 		
 		if (globalHypotheses == null) this.globalHypotheses = seq.globalHypotheses;
 		else this.globalHypotheses = globalHypotheses;
@@ -196,7 +196,7 @@ public final class ProverSequent implements IInternalProverSequent{
 	public ProverSequent(ITypeEnvironment typeEnv, Collection<Predicate> globalHypSet,
 			Collection<Predicate> hiddenHypSet, Collection<Predicate> selectedHypSet,
 			Predicate goal, Object origin) {
-		this.typeEnvironment = typeEnv.clone();
+		this.typeEnvironment = typeEnv.makeSnapshot();
 		this.globalHypotheses = globalHypSet == null ? NO_HYPS : new LinkedHashSet<Predicate>(globalHypSet);
 		this.localHypotheses = NO_HYPS;
 		this.hiddenHypotheses = hiddenHypSet== null ? NO_HYPS : new LinkedHashSet<Predicate>(hiddenHypSet);;
@@ -212,12 +212,12 @@ public final class ProverSequent implements IInternalProverSequent{
 	public IInternalProverSequent modify(FreeIdentifier[] freshFreeIdents,
 			Collection<Predicate> addhyps,
 			Collection<Predicate> unselAddedHyps, Predicate newGoal) {
-	boolean modified = false;
+		boolean modified = false;
 		final ITypeEnvironment newTypeEnv;
 		LinkedHashSet<Predicate> newLocalHypotheses = null;
 		LinkedHashSet<Predicate> newSelectedHypotheses = null;
 		LinkedHashSet<Predicate> newHiddenHypotheses = null;
-		
+
 		final TypeChecker checker = new TypeChecker(
 				typeEnvironment);
 		checker.addIdents(freshFreeIdents);

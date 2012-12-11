@@ -19,7 +19,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.seqprover.TypeChecker;
 import org.junit.Test;
@@ -36,8 +37,11 @@ public class TypeCheckerTests {
 	private static final Type type_S = ff.makeGivenType("S");
 	private static final Type type_T = ff.makeGivenType("T");
 
+	private static final ISealedTypeEnvironment typenv_x_S = genTypeEnv("x=S")
+			.makeSnapshot();
+
 	private static void assertTypenv(TypeChecker checker,
-			ITypeEnvironment expected, boolean shouldHaveChanged) {
+			ISealedTypeEnvironment expected, boolean shouldHaveChanged) {
 		if (shouldHaveChanged) {
 			assertTrue(checker.hasNewTypeEnvironment());
 			assertEquals(expected, checker.getTypeEnvironment());
@@ -52,10 +56,9 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void simpleOK() throws Exception {
-		final ITypeEnvironment typenv = genTypeEnv("x=S");
-		final TypeChecker checker = new TypeChecker(typenv);
+		final TypeChecker checker = new TypeChecker(typenv_x_S);
 		checker.checkFormula(ff.makeFreeIdentifier("x", null, type_S));
-		assertTypenv(checker, typenv, false);
+		assertTypenv(checker, typenv_x_S, false);
 		assertTrue(checker.areAddedIdentsFresh());
 		assertFalse(checker.hasTypeCheckError());
 	}
@@ -66,7 +69,7 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void unknownIdentInFormula() throws Exception {
-		final ITypeEnvironment typenv = genTypeEnv("");
+		final ISealedTypeEnvironment typenv = genTypeEnv("").makeSnapshot();
 		final TypeChecker checker = new TypeChecker(typenv);
 		checker.checkFormula(ff.makeFreeIdentifier("x", null, type_T));
 		assertTypenv(checker, typenv, false);
@@ -81,10 +84,9 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void badTypeInFormula() throws Exception {
-		final ITypeEnvironment typenv = genTypeEnv("x=S");
-		final TypeChecker checker = new TypeChecker(typenv);
+		final TypeChecker checker = new TypeChecker(typenv_x_S);
 		checker.checkFormula(ff.makeFreeIdentifier("x", null, type_T));
-		assertTypenv(checker, typenv, false);
+		assertTypenv(checker, typenv_x_S, false);
 		assertTrue(checker.areAddedIdentsFresh());
 		assertTrue(checker.hasTypeCheckError());
 	}
@@ -95,17 +97,17 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void addFreshIdent() throws Exception {
-		final ITypeEnvironment typenv = genTypeEnv("x=S");
-		final TypeChecker checker = new TypeChecker(typenv);
+		final TypeChecker checker = new TypeChecker(typenv_x_S);
 		final FreeIdentifier[] idents = new FreeIdentifier[] { ff
 				.makeFreeIdentifier("y", null, type_T),//
 		};
 		checker.addIdents(idents);
-		final ITypeEnvironment newTypenv = typenv.clone();
+		final ITypeEnvironmentBuilder newTypenv = typenv_x_S
+				.makeBuilder();
 		newTypenv.addAll(idents);
-		assertTypenv(checker, newTypenv, true);
+		assertTypenv(checker, newTypenv.makeSnapshot(), true);
 		assertTrue(checker.areAddedIdentsFresh());
-		assertNull(typenv.getType("y"));
+		assertNull(typenv_x_S.getType("y"));
 
 		checker.checkFormula(ff.makeFreeIdentifier("y", null, type_T));
 		assertFalse(checker.hasTypeCheckError());
@@ -117,13 +119,12 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void addNonFreshIdentCompatible() throws Exception {
-		final ITypeEnvironment typenv = genTypeEnv("x=S");
-		final TypeChecker checker = new TypeChecker(typenv);
+		final TypeChecker checker = new TypeChecker(typenv_x_S);
 		final FreeIdentifier[] idents = new FreeIdentifier[] { ff
 				.makeFreeIdentifier("x", null, type_S),//
 		};
 		checker.addIdents(idents);
-		assertTypenv(checker, typenv, true);
+		assertTypenv(checker, typenv_x_S, true);
 		assertFalse(checker.areAddedIdentsFresh());
 		assertFalse(checker.hasTypeCheckError());
 	}
@@ -134,13 +135,12 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void addNonFreshIdentIncompatible() throws Exception {
-		final ITypeEnvironment typenv = genTypeEnv("x=S");
-		final TypeChecker checker = new TypeChecker(typenv);
+		final TypeChecker checker = new TypeChecker(typenv_x_S);
 		final FreeIdentifier[] idents = new FreeIdentifier[] { ff
 				.makeFreeIdentifier("x", null, type_T),//
 		};
 		checker.addIdents(idents);
-		assertTypenv(checker, typenv, true);
+		assertTypenv(checker, typenv_x_S, true);
 		assertFalse(checker.areAddedIdentsFresh());
 		assertTrue(checker.hasTypeCheckError());
 	}

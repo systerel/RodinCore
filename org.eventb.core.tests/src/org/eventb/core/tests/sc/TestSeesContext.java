@@ -17,7 +17,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineRoot;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 
 /**
  * @author Stefan Hallerstede
@@ -31,7 +31,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	public void testSeesContext_00() throws Exception {
 		IContextRoot con = createContext("ctx");
 
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addGivenSet("S1");
 
 		addCarrierSets(con, makeSList("S1"));
@@ -285,7 +285,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 		
 		containsVariables(file, "V1");
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("V1", intType);
 		
 		containsInvariants(file, typeEnvironment, makeSList("I1"), makeSList("V1∈ℕ"), false);

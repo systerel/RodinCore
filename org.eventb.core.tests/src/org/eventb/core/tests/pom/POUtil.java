@@ -25,6 +25,7 @@ import org.eventb.core.IPOStampedElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.rodinp.core.RodinDBException;
 
@@ -49,7 +50,7 @@ public class POUtil {
 	public static final ITypeEnvironment mTypeEnvironment(String... strings) {
 		// even number of strings
 		assert (strings.length & 1) == 0;
-		final ITypeEnvironment result = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
 		for (int i = 0; i < strings.length; i += 2) {
 			final String name = strings[i];
 			final String typeString = strings[i + 1];

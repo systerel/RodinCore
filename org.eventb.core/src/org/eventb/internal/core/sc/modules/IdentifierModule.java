@@ -25,7 +25,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.IMarkerDisplay;
 import org.eventb.core.sc.SCProcessorModule;
@@ -45,7 +45,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 
 	protected FormulaFactory factory;
 
-	protected ITypeEnvironment typeEnvironment;
+	protected ITypeEnvironmentBuilder typeEnvironment;
 
 	protected IIdentifierSymbolTable identifierSymbolTable;
 
@@ -204,7 +204,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 	 *             if there was a problem accessing the symbol table
 	 */
 	protected void typeIdentifierSymbol(IIdentifierSymbolInfo newSymbolInfo,
-			final ITypeEnvironment environment) throws CoreException {
+			final ITypeEnvironmentBuilder environment) throws CoreException {
 		// by default no type information for the identifier is generated
 	}
 

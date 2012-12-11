@@ -14,7 +14,7 @@ import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.junit.Assert.assertFalse;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.tests.TestLib;
 import org.eventb.core.seqprover.transformer.ISequentTransformer;
@@ -69,7 +69,7 @@ public class AbstractTransformerTests {
 		return makeSequent(factory.makeTypeEnvironment(), goalImage, hypImages);
 	}
 
-	protected static ISimpleSequent makeSequent(ITypeEnvironment typenv,
+	protected static ISimpleSequent makeSequent(ITypeEnvironmentBuilder typenv,
 			String goalImage, String... hypImages) {
 		final int length = hypImages.length;
 		final Predicate[] hyps = new Predicate[length];

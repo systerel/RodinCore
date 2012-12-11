@@ -16,7 +16,7 @@ package org.eventb.core.tests.sc;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCInternalContext;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 
 /**
  * @author Stefan Hallerstede
@@ -38,7 +38,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		
 		runBuilder();
 		
-		ITypeEnvironment environment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
 		environment.addGivenSet("S1");
 		environment.addName("C1", factory.makeGivenType("S1"));
 
@@ -130,7 +130,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 		addConstants(con, makeSList("d"));
 		addAxioms(con, makeSList("A1", "A2"), makeSList("d∈ℕ", "d>0"), false, false);
 		
-		ITypeEnvironment typeEnvironment = factory.makeTypeEnvironment();
+		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
 		typeEnvironment.addName("d", factory.makeIntegerType());
 		
 		saveRodinFileOf(con);

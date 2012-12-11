@@ -20,6 +20,7 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
@@ -73,14 +74,16 @@ public class ProofSkeletonBuilder {
 				goal = deps.getGoal();
 			}
 		}
+		// making snapshot now to share it in all typechecks
+		final ISealedTypeEnvironment tenv = env.makeSnapshot();
 		
-		if (!check(env, hyps, goal)) {
+		if (!check(tenv, hyps, goal)) {
 			return null;
 		}
-		return ProverFactory.makeSequent(env, hyps, null, goal, pr);
+		return ProverFactory.makeSequent(tenv, hyps, null, goal, pr);
 	}
 
-	private static boolean check(ITypeEnvironment env,
+	private static boolean check(ISealedTypeEnvironment env,
 			Collection<Predicate> hyps, Predicate goal) {
 		boolean hasProblem = goal.typeCheck(env).hasProblem();
 		for (Predicate hyp : hyps) {

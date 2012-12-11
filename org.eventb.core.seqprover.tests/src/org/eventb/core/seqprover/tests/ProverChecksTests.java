@@ -24,17 +24,17 @@ import junit.framework.TestCase;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.internal.core.seqprover.ProverChecks;
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class ProverChecksTests extends TestCase{
 	@Test
 	public void testCheckSequentFailure(){
 		IProverSequent seq;
-		ITypeEnvironment typeEnv;
+		ITypeEnvironmentBuilder typeEnv;
 		
 		// Goal with undeclared free ident  
 		typeEnv = factory.makeTypeEnvironment();
@@ -103,7 +103,7 @@ public class ProverChecksTests extends TestCase{
 	@Test
 	public void testCheckSequentSuccess(){
 		IProverSequent seq;
-		ITypeEnvironment typeEnv;
+		ITypeEnvironmentBuilder typeEnv;
 		
 		// Goal and hypothesis with declared free ident  
 		typeEnv = factory.makeTypeEnvironment();

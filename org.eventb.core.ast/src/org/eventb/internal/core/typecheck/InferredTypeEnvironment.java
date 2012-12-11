@@ -13,33 +13,28 @@ package org.eventb.internal.core.typecheck;
 import java.util.ArrayList;
 
 import org.eventb.core.ast.IInferredTypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
 
-/*
+/**
  * Here we reuse the implementation of type environments, just adding the
  * necessary machinery to take into account an initial type environment.
  * 
  * @author Vincent Monfort
  */
-public class InferredTypeEnvironment extends TypeEnvironment implements
+public class InferredTypeEnvironment extends TypeEnvironmentBuilder implements
 		IInferredTypeEnvironment {
 
-	private final ITypeEnvironment initialTypeEnvironment;
+	private final ISealedTypeEnvironment initialTypeEnvironment;
 
 	public InferredTypeEnvironment(ITypeEnvironment initialTypeEnvironment) {
 		super(initialTypeEnvironment.getFormulaFactory());
-		this.initialTypeEnvironment = initialTypeEnvironment;
-	}
-
-	// FIXME remove this method when TypeEnvironment builders are in place
-	public InferredTypeEnvironment(InferredTypeEnvironment inferredTypEnv) {
-		super(inferredTypEnv);
-		this.initialTypeEnvironment = inferredTypEnv.initialTypeEnvironment;
+		this.initialTypeEnvironment = initialTypeEnvironment.makeSnapshot();
 	}
 
 	@Override
-	public ITypeEnvironment getInitialTypeEnvironment() {
+	public ISealedTypeEnvironment getInitialTypeEnvironment() {
 		return this.initialTypeEnvironment;
 	}
 
@@ -77,11 +72,6 @@ public class InferredTypeEnvironment extends TypeEnvironment implements
 		final InferredTypeEnvironment other = (InferredTypeEnvironment) obj;
 		return this.initialTypeEnvironment.equals(other.initialTypeEnvironment)
 				&& super.equals(obj);
-	}
-
-	@Override
-	public ITypeEnvironment clone() {
-		return new InferredTypeEnvironment(this);
 	}
 
 	@Override

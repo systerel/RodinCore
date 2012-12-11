@@ -1558,7 +1558,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return the result of the type checker
 	 */
 	public final ITypeCheckResult typeCheck(ITypeEnvironment environment) {
-		TypeCheckResult result = new TypeCheckResult(environment);
+		TypeCheckResult result = new TypeCheckResult(environment.makeSnapshot());
 		typeCheck(result, NO_BOUND_IDENT_DECL);
 		result.solveTypeVariables();
 		solveType(result.getUnifier());

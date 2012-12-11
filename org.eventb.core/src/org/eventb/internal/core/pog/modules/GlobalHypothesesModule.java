@@ -24,7 +24,7 @@ import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCPredicateElement;
 import org.eventb.core.ITraceableElement;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.core.pog.state.IPOGStateRepository;
 import org.rodinp.core.IRodinElement;
@@ -57,7 +57,7 @@ public abstract class GlobalHypothesesModule extends UtilityModule {
 		super.endModule(element, repository, monitor);
 	}
 
-	protected ITypeEnvironment typeEnvironment;
+	protected ITypeEnvironmentBuilder typeEnvironment;
 	protected int index;
 
 	protected void copyContexts(
