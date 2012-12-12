@@ -99,5 +99,29 @@ public interface ITypeEnvironmentBuilder extends ITypeEnvironment {
 	 *            the type to associate to the given name
 	 */
 	void addName(String name, Type type);
+	
+	/**
+	 * Creates fresh identifiers corresponding to some bound identifier
+	 * declarations and inserts them into the type environment.
+	 * <p>
+	 * For each bound identifier declaration, a free identifier is created. This
+	 * new identifier has a name that does not occur in the given type
+	 * environment and is based on the given declaration. It is guaranteed that
+	 * not two free identifiers in the result bear the same name.
+	 * </p>
+	 * <p>
+	 * The given bound identifier declarations must be typed. The types are then
+	 * stored in the type environment for the corresponding fresh free
+	 * identifiers.
+	 * </p>
+	 * 
+	 * @param boundIdents
+	 *            array of bound identifier declarations for which corresponding
+	 *            fresh free identifiers should be created. Each declaration
+	 *            must be typed
+	 * @return an array of fresh free identifiers
+	 * @since 3.0
+	 */
+	FreeIdentifier[] makeFreshIdentifiers(BoundIdentDecl[] boundIdents);
 
 }

@@ -97,7 +97,7 @@ public class IdentifierDecomposer implements ISequentTransformer {
 		}
 		final BoundIdentDecl[] bids = new BoundIdentDecl[] { ff
 				.makeBoundIdentDecl(prefix, null, type) };
-		return ff.makeFreshIdentifiers(bids, typenv)[0];
+		return typenv.makeFreshIdentifiers(bids)[0];
 	}
 
 	@Override

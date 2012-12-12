@@ -174,6 +174,7 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 		return ff.makeFreeIdentifier(fName, sloc, type);
 	}
 	
+	@Override
 	public FreeIdentifier[] makeFreshIdentifiers(BoundIdentDecl[] bIdents) {
 		final int nbBoundIdentDecl = bIdents.length;
 		final FreeIdentifier[] result = new FreeIdentifier[nbBoundIdentDecl];

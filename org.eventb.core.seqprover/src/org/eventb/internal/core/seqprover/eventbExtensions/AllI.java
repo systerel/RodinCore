@@ -61,7 +61,7 @@ public class AllI extends EmptyInputReasoner{
 		ITypeEnvironmentBuilder newITypeEnvironment = seq.typeEnvironment()
 				.makeBuilder();
 		final FormulaFactory ff = seq.getFormulaFactory();
-		FreeIdentifier[] freeIdents = ff.makeFreshIdentifiers(boundIdentDecls,newITypeEnvironment);		
+		FreeIdentifier[] freeIdents = newITypeEnvironment.makeFreshIdentifiers(boundIdentDecls);		
 		assert boundIdentDecls.length == freeIdents.length;
 		
 		IAntecedent[] anticidents = new IAntecedent[1];

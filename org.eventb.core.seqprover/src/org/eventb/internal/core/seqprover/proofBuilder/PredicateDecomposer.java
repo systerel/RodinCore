@@ -172,8 +172,8 @@ public class PredicateDecomposer implements ISimpleVisitor2 {
 	@Override
 	public void visitQuantifiedPredicate(QuantifiedPredicate predicate) {
 		final FormulaFactory ff = env.getFormulaFactory();
-		final FreeIdentifier[] freeIdents = ff.makeFreshIdentifiers(
-				predicate.getBoundIdentDecls(), env.makeBuilder());
+		final FreeIdentifier[] freeIdents = env.makeBuilder()
+				.makeFreshIdentifiers(predicate.getBoundIdentDecls());
 		final Predicate newpred = predicate.instantiate(freeIdents, ff);
 		newpred.accept(this);
 	}

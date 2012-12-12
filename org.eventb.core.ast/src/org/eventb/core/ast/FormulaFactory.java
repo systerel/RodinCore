@@ -1419,45 +1419,6 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Creates fresh identifiers corresponding to some bound identifier
-	 * declarations and inserts them into the type environment.
-	 * <p>
-	 * For each bound identifier declaration, a free identifier is created. This
-	 * new identifier has a name that does not occur in the given type
-	 * environment and is based on the given declaration. It is guaranteed that
-	 * not two free identifiers in the result bear the same name.
-	 * </p>
-	 * <p>
-	 * The given bound identifier declarations must be typed. The types are then
-	 * stored in the typing environment for the corresponding fresh free
-	 * identifiers.
-	 * </p>
-	 * 
-	 * @param boundIdents
-	 *            array of bound identifier declarations for which corresponding
-	 *            fresh free identifiers should be created. Each declaration
-	 *            must be typed
-	 * @param environment
-	 *            type environment relative to which fresh free identifiers are
-	 *            created and into which they are inserted. Must use this
-	 *            formula factory
-	 * @return an array of fresh free identifiers
-	 * @throws IllegalArgumentException
-	 *             if the given type environment is not based on this formula
-	 *             factory
-	 * @since 3.0 : the type environment parameter became explicitly mutable
-	 */
-	// TODO 3.0 move to ITypeEnvironment
-	public FreeIdentifier[] makeFreshIdentifiers(BoundIdentDecl[] boundIdents,
-			ITypeEnvironmentBuilder environment) {
-		if (this != environment.getFormulaFactory()) {
-			throw new IllegalArgumentException("incompatible type environment");
-		}
-		final TypeEnvironmentBuilder typenv = (TypeEnvironmentBuilder) environment;
-		return typenv.makeFreshIdentifiers(boundIdents);
-	}
-
-	/**
 	 * Returns the instance of the parametric type of the given constructor with
 	 * the given type parameters.
 	 * 

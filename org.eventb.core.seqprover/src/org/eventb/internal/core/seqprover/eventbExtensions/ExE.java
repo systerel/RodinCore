@@ -64,8 +64,8 @@ public class ExE extends HypothesisReasoner{
 		final FormulaFactory ff = sequent.getFormulaFactory();
 		final ITypeEnvironmentBuilder newTypenv = ff.makeTypeEnvironment();
 		newTypenv.addAll(sequent.typeEnvironment());
-		final FreeIdentifier[] freeIdents = ff.makeFreshIdentifiers(
-				boundIdentDecls, newTypenv);
+		final FreeIdentifier[] freeIdents = newTypenv
+				.makeFreshIdentifiers(boundIdentDecls);
 		
 		Predicate instantiatedEx = ExQ.instantiate(freeIdents, ff);
 		assert instantiatedEx.isTypeChecked();

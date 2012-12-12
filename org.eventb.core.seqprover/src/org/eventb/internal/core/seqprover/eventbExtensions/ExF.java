@@ -65,7 +65,7 @@ public class ExF extends ForwardInfReasoner {
 		final ITypeEnvironmentBuilder newTypenv = sequent.typeEnvironment().makeBuilder();
 		final FormulaFactory ff = sequent.getFormulaFactory();
 		final FreeIdentifier[] freeIdents = 
-			ff.makeFreshIdentifiers(boundIdentDecls, newTypenv);
+				newTypenv.makeFreshIdentifiers(boundIdentDecls);
 		
 		Predicate instantiatedEx = exQ.instantiate(freeIdents, ff);
 		

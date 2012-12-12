@@ -581,25 +581,25 @@ public class TestFreeIdents extends AbstractTests {
 		typeCheck(pred, tenv);
 		
 		// Create one fresh identifier 
-		FreeIdentifier[] idents = ff.makeFreshIdentifiers(mList(bd_x1), tenv);
+		FreeIdentifier[] idents = tenv.makeFreshIdentifiers(mList(bd_x1));
 		assertEquals(idents.length, 1);
 		checkFreeIdent(idents[0], "x", bd_x1.getType());
 		
 		// Create two fresh identifiers 
-		idents = ff.makeFreshIdentifiers(mList(bd_x1, bd_y), tenv);
+		idents = tenv.makeFreshIdentifiers(mList(bd_x1, bd_y));
 		assertEquals(idents.length, 2);
 		checkFreeIdent(idents[0], "x0", bd_x1.getType());
 		checkFreeIdent(idents[1], "y", bd_y.getType());
 		
 		// Create three fresh identifiers 
-		idents = ff.makeFreshIdentifiers(mList(bd_x1, bd_y, bd_z), tenv);
+		idents = tenv.makeFreshIdentifiers(mList(bd_x1, bd_y, bd_z));
 		assertEquals(idents.length, 3);
 		checkFreeIdent(idents[0], "x1", bd_x1.getType());
 		checkFreeIdent(idents[1], "y0", bd_y.getType());
 		checkFreeIdent(idents[2], "z", bd_z.getType());
 		
 		// Create two fresh identifiers with similar bound decl 
-		idents = ff.makeFreshIdentifiers(mList(bd_x1, bd_x2), tenv);
+		idents = tenv.makeFreshIdentifiers(mList(bd_x1, bd_x2));
 		assertEquals(idents.length, 2);
 		checkFreeIdent(idents[0], "x2", bd_x1.getType());
 		checkFreeIdent(idents[1], "x3", bd_x2.getType());
