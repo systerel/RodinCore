@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;
@@ -55,8 +56,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
@@ -64,13 +63,15 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test of the legibility checker.
  * 
  * @author franz
  */
-public class TestLegibility extends TestCase {
+public class TestLegibility{
 	
 	private static final class TestItem<T extends Formula<T>> {
 		T formula;
@@ -122,10 +123,8 @@ public class TestLegibility extends TestCase {
 			mList(bd_s), mRelationalPredicate(IN, b0, sint), b0
 	);
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
+	@Before
+	public void setUp() throws Exception {
 		testItems = new ArrayList<TestItem<?>>(Arrays.asList(simpleTests));
 		
 		// Implicit comprehension set with enclosed comprehension set on the right
@@ -867,6 +866,7 @@ public class TestLegibility extends TestCase {
 	 * Main test routine.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Test 
 	public void testLegibility() {
 		for (TestItem item : testItems) {
 			final List<FreeIdentifier> freeIdentifiers = Arrays.asList(item.formula.getFreeIdentifiers());

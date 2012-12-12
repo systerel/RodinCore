@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.tests.ExtensionHelper.getAlphaExtension;
 import static org.eventb.core.ast.tests.FastFactory.addToTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
@@ -29,6 +32,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IPredicateExtension;
+import org.junit.Test;
 
 /**
  * Acceptance tests for specialization of formulas.
@@ -68,6 +72,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that assignment specialization is not supported.
 	 */
+	@Test 
 	public void testAssignment() {
 		ITypeEnvironmentBuilder teb = mTypeEnvironment("a", "ℤ");
 		final Assignment assign = parseAssignment("a ≔ a + 1");
@@ -84,6 +89,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that an associative expression gets specialized.
 	 */
+	@Test 
 	public void testAssociativeExpression() {
 		assertExpressionSpecialization(te, //
 				"A ∪ B ∪ C", //
@@ -94,6 +100,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that an associative predicate gets specialized.
 	 */
+	@Test 
 	public void testAssociativePredicate() {
 		assertPredicateSpecialization(te, //
 				"a ∈ A ∧ b ∈ B ∧ c ∈ C", //
@@ -105,6 +112,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 * Ensures that an atomic expression gets specialized (including generic
 	 * operators).
 	 */
+	@Test 
 	public void testAtomicExpression() {
 		assertExpressionSpecialization(te, "ℤ", "S := T", "ℤ");
 		assertExpressionSpecialization(te, "∅⦂ℙ(S)", "S := T", "∅⦂ℙ(T)");
@@ -116,6 +124,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a binary expression gets specialized.
 	 */
+	@Test 
 	public void testBinaryExpression() {
 		assertExpressionSpecialization(te, "a ↦ b", "S := U || a := c", "c ↦ b");
 	}
@@ -123,6 +132,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a binary predicate gets specialized.
 	 */
+	@Test 
 	public void testBinaryPredicate() {
 		assertPredicateSpecialization(te,//
 				"a ∈ A ⇒ b ∈ B",//
@@ -133,6 +143,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a bool expression gets specialized.
 	 */
+	@Test 
 	public void testBoolExpression() {
 		assertExpressionSpecialization(te,//
 				"bool(a ∈ A)",//
@@ -143,6 +154,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a bound identifier declaration gets specialized (type only).
 	 */
+	@Test 
 	public void testBoundIdentDecl() {
 		final BoundIdentDecl aS = mBoundIdentDecl("a", S);
 		final BoundIdentDecl aT = mBoundIdentDecl("a", T);
@@ -153,6 +165,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a bound identifier gets specialized (type only).
 	 */
+	@Test 
 	public void testBoundIdentifier() {
 		final Expression bS = FastFactory.mBoundIdentifier(0, S);
 		final Expression bT = FastFactory.mBoundIdentifier(0, T);
@@ -162,6 +175,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Tests that an extended expression gets specialized.
 	 */
+	@Test 
 	public void testExtendedExpression() {
 		final FormulaFactory extFac = FormulaFactory
 				.getInstance(DIRECT_PRODUCT);
@@ -175,6 +189,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Tests that an extended predicate gets specialized.
 	 */
+	@Test 
 	public void testExtendedPredicate() {
 		final IPredicateExtension alphaExt = getAlphaExtension();
 		final FormulaFactory extFac = FormulaFactory.getInstance(alphaExt);
@@ -190,6 +205,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a free identifier get specialized.
 	 */
+	@Test 
 	public void testFreeIdentifier() {
 		assertExpressionSpecialization(te, "a", "S := T", "a");
 		assertExpressionSpecialization(te, "a", "S := T || b := d", "a");
@@ -199,6 +215,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that an integer literal is not modified by specialization.
 	 */
+	@Test 
 	public void testIntegerLiteral() {
 		assertExpressionSpecialization(te, "2", "S := T", "2");
 	}
@@ -206,6 +223,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a literal predicate is not modified by specialization.
 	 */
+	@Test 
 	public void testLiteralPredicate() {
 		assertPredicateSpecialization(te, "⊤", "S := T", "⊤");
 	}
@@ -213,6 +231,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a multiple predicate gets specialized.
 	 */
+	@Test 
 	public void testMultiplePredicate() {
 		assertPredicateSpecialization(te,//
 				"partition(A, s, t, u)",//
@@ -222,6 +241,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that quantified expressions get specialized.
 	 */
+	@Test 
 	public void testQuantifiedExpression() {
 		assertExpressionSpecialization(te, "{x∣x∈A}", "S := T", "{x∣x∈A}");
 		assertExpressionSpecialization(te, "{x⦂S·⊤∣x}", "S := T", "{x⦂T·⊤∣x}");
@@ -234,6 +254,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that quantified predicates get specialized.
 	 */
+	@Test 
 	public void testQuantifiedPredicate() {
 		assertPredicateSpecialization(te, "∀x⦂S·x∈A", "S := T", "∀x⦂T·x∈A");
 		assertPredicateSpecialization(te, "∀x⦂S·⊤", "S := T", "∀x⦂T·⊤");
@@ -246,6 +267,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a relational predicate gets specialized.
 	 */
+	@Test 
 	public void testRelationalPredicate() {
 		assertPredicateSpecialization(te, "a ∈ S", "S := T || a := b", "b ∈ T");
 	}
@@ -253,6 +275,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a set in extension gets specialized.
 	 */
+	@Test 
 	public void testSetExtension() {
 		assertExpressionSpecialization(te,//
 				"{a, c, e}", "S := T || a := b", "{b, c, e}");
@@ -261,6 +284,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that an empty set in extension gets specialized.
 	 */
+	@Test 
 	public void testEmptySetExtension() {
 		assertPredicateSpecialization(te, "{} ⊆ A", "S := T", "{} ⊆ A");
 	}
@@ -268,6 +292,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a simple predicate gets specialized.
 	 */
+	@Test 
 	public void testSimplePredicate() {
 		assertPredicateSpecialization(te,//
 				"finite(A)", "S := T || A := B", "finite(B)");
@@ -276,6 +301,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that an unary expression gets specialized.
 	 */
+	@Test 
 	public void testUnaryExpression() {
 		assertExpressionSpecialization(te, //
 				"card(A)", "S := T || A := B", "card(B)");
@@ -284,6 +310,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/**
 	 * Ensures that an unary predicate gets specialized.
 	 */
+	@Test 
 	public void testUnaryPredicate() {
 		assertPredicateSpecialization(te,//
 				"¬(a ∈ A)", "S := T || a := b", "¬(b ∈ A)");
@@ -293,6 +320,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 * Ensures that bound identifiers are correctly managed when specializing
 	 * under a quantifier with a quantified formula.
 	 */
+	@Test 
 	public void testBindings() {
 		assertPredicateSpecialization(te,//
 				"∀x⦂S·x↦1 ∈ y",//

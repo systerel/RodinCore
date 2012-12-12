@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.DIV;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
@@ -43,6 +45,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.junit.Test;
 
 /**
  * @author halstefa
@@ -444,12 +447,14 @@ public class TestSubstituteFormula extends AbstractTests {
 			new UTestItem(spa[0], tra[4], mList(id_a, id_b), spr[7]),
 	};
 	
+	@Test 
 	public void testSubstitutionStandard() {
 		for (TestItem testItem: testItems) {
 			testItem.doTest();
 		}
 	}
 	
+	@Test 
 	public void testSubst() {
 		QuantifiedPredicate pred =
 			mQuantifiedPredicate(EXISTS, BD("x", "y"),
@@ -477,6 +482,7 @@ public class TestSubstituteFormula extends AbstractTests {
 	 * Examples given in the Javadoc of
 	 * {@link Formula#applyAssignment(BecomesEqualTo, FormulaFactory)}.
 	 */
+	@Test 
 	public void testApplyAssignment() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		Expression expr = plus(id_x, id_y);
@@ -529,6 +535,7 @@ public class TestSubstituteFormula extends AbstractTests {
 	 * Simple examples of a parallel assignment that gives a result that can not
 	 * be achieved by a sequence of assignments.
 	 */
+	@Test 
 	public void testApplyAssignments() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		Expression expr = plus(id_x, id_y);
@@ -607,6 +614,7 @@ public class TestSubstituteFormula extends AbstractTests {
 	/**
 	 * Test for {@link Formula#shiftBoundIdentifiers(int, FormulaFactory)}.
 	 */
+	@Test 
 	public void testShiftBoundIdentifiers() {
 		for (TestItem item : shiftTestItems) {
 			item.doTest();

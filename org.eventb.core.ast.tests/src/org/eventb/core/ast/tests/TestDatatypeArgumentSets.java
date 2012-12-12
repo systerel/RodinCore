@@ -11,6 +11,8 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
 
 import java.util.LinkedHashSet;
@@ -24,6 +26,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.junit.Test;
 
 /**
  * Acceptance tests for method
@@ -58,6 +61,7 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	 * Ensures that a constructor argument of parametric type is instantiated
 	 * correctly.
 	 */
+	@Test 
 	public void testParametricTypeArgument() {
 		assertArgumentSets("Param(1‥3)", "param", "List(1‥3)");
 	}
@@ -66,6 +70,7 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	 * Ensures that a constructor argument of power set type is instantiated
 	 * correctly.
 	 */
+	@Test 
 	public void testPowerSetArgument() {
 		assertArgumentSets("Pow(1‥3)", "pow", "ℙ(1‥3)");
 	}
@@ -74,6 +79,7 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	 * Ensures that a constructor argument of product type is instantiated
 	 * correctly.
 	 */
+	@Test 
 	public void testProductTypeArgument() {
 		assertArgumentSets("Product(1‥3, {TRUE})", "prod", "1‥3 × {TRUE}");
 	}
@@ -82,6 +88,7 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	 * Ensures that a constructor argument of simple type is instantiated
 	 * correctly.
 	 */
+	@Test 
 	public void testSimpleTypeArgument() {
 		assertArgumentSets("Simple", "simple", "BOOL");
 	}
@@ -89,6 +96,7 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	/**
 	 * Ensures that several constructor arguments are instantiated correctly.
 	 */
+	@Test 
 	public void testSeveralArgument() {
 		assertArgumentSets("List(1‥3)", "cons", "1‥3", "List(1‥3)");
 	}
@@ -97,6 +105,7 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	 * Ensures that passing an extension which is not a constructor raises an
 	 * error.
 	 */
+	@Test 
 	public void testNotConstructor() {
 		try {
 			assertArgumentSets("List(1‥2)", "head");
@@ -110,6 +119,7 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	 * Ensures that passing a type constructor instead of a value constructor
 	 * raises an error.
 	 */
+	@Test 
 	public void testNotValueConstructor() {
 		try {
 			assertArgumentSets("List(1‥2)", "List");
@@ -122,6 +132,7 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	/**
 	 * Ensures that passing a constructor from another datatype raises an error.
 	 */
+	@Test 
 	public void testConstructorWrongDatatype() {
 		try {
 			assertArgumentSets("List(1 ‥ 2)", "param");
@@ -135,6 +146,7 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	 * Ensures that passing a set built with a type constructor from another
 	 * datatype raises an error.
 	 */
+	@Test 
 	public void testWrongTypeConstructor() {
 		final IExpressionExtension cons = extensionFromSymbol("cons");
 		final IDatatype dt = (IDatatype) cons.getOrigin();
@@ -151,6 +163,7 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	 * Ensures that passing a set not built with a type constructor raises an
 	 * error.
 	 */
+	@Test 
 	public void testNotTypeConstructor() {
 		final IExpressionExtension cons = extensionFromSymbol("cons");
 		final IDatatype dt = (IDatatype) cons.getOrigin();

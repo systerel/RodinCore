@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
@@ -33,6 +36,7 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.junit.Test;
 
 /**
  * Unit test of the mathematical formula Type-Checker.
@@ -44,6 +48,7 @@ public class TestTypeChecker extends AbstractTests {
 	/**
 	 * Main test routine for predicates.
 	 */
+	@Test 
 	public void testTypeChecker() {
 		testPredicate("x∈ℤ∧1≤x",
 				mTypeEnvironment(),
@@ -901,6 +906,7 @@ public class TestTypeChecker extends AbstractTests {
 		);
 	}
 
+	@Test 
 	public void testAssignmentTypeChecker() {
 		testAssignment("A ≔ (∅⦂ℙ(S))", //
 				mTypeEnvironment(), //
@@ -986,6 +992,7 @@ public class TestTypeChecker extends AbstractTests {
 	 * Regression test for bug #3574565: Inconsistent result of formula
 	 * type-checking
 	 */
+	@Test 
 	public void testBug3574565() {
 		final FormulaFactory fac = makeDatatypeFactory(ff,
 				"A[T] ::= a; d[T] || B[U] ::= b; e[U]");

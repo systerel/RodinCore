@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
@@ -41,6 +44,7 @@ import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.ParseResult;
+import org.junit.Test;
 
 /**
  * This tests the lexical analyzer.
@@ -64,6 +68,7 @@ public class TestLexer extends AbstractTests {
 	/**
 	 * Tests all the tokens that are needed to construct an event-B formula.
 	 */
+	@Test 
 	public void testToken() {
 
 		for (LanguageVersion version : LanguageVersion.values()) {
@@ -104,6 +109,7 @@ public class TestLexer extends AbstractTests {
 	/**
 	 * Ensure that invalid tokens get rejected.
 	 */
+	@Test 
 	public void testInvalidStrings() {
 		for (LanguageVersion version : LanguageVersion.values()) {
 			testInvalidStrings(version);
@@ -130,6 +136,7 @@ public class TestLexer extends AbstractTests {
 		}
 	}
 	
+	@Test 
 	public void testCodePoint() throws Exception {
 		final int codePoint = 0x27C54;
 		
@@ -159,6 +166,7 @@ public class TestLexer extends AbstractTests {
 		assertEquals(ident, t.val);
 	}
 
+	@Test 
 	public void testIsValidIdentifierName() throws Exception {
 		assertTrue(ff.isValidIdentifierName("foo"));
 		assertTrue(ff.isValidIdentifierName("foo'"));
@@ -182,6 +190,7 @@ public class TestLexer extends AbstractTests {
 		assertFalse(ff.isValidIdentifierName("partition'"));
 	}
 
+	@Test 
 	public void testCheckSymbol() throws Exception {
 		assertTrue(FormulaFactory.checkSymbol("ident_like€SYMBOL"));
 		assertTrue(FormulaFactory.checkSymbol("\u2b50"));
@@ -224,6 +233,7 @@ public class TestLexer extends AbstractTests {
 
 	}
 
+	@Test 
 	public void testExtensions() throws Exception {
 //		final String prefix = "oo"; // no bug
 		final String prefix = "o"; // bug

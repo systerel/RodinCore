@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
@@ -42,6 +43,8 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
+import org.junit.Before;
+import org.junit.Test;
 
 
 /**
@@ -146,9 +149,8 @@ public class TestBoundIdentRenaming extends AbstractTests {
 		return ff.makeBinaryExpression(Formula.MAPSTO, left, right, null);
 	}
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 
 		final FreeIdentifier id_x = mFreeIdentifier("x");
 		final FreeIdentifier id_y = mFreeIdentifier("y");
@@ -311,6 +313,7 @@ public class TestBoundIdentRenaming extends AbstractTests {
 	/**
 	 * Test method for 'org.eventb.core.ast.Formula.toString()'
 	 */
+	@Test 
 	public final void testToString() {
 		for (TestItem<?> testItem : testItems) {
 			// Unparse the formula
@@ -322,6 +325,7 @@ public class TestBoundIdentRenaming extends AbstractTests {
 	/**
 	 * Test method for 'org.eventb.core.ast.Formula.toStringFullyParenthesized()'
 	 */
+	@Test 
 	public final void testToStringFullyParenthesized() {
 		for (TestItem<?> testItem : testItems) {
 			// Unparse the formula

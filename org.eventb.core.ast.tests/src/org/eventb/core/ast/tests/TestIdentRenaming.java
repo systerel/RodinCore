@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.FormulaFactory;
+import org.junit.Test;
 
 /**
  * Unit tests for identifier renaming.
@@ -31,6 +32,7 @@ public class TestIdentRenaming extends AbstractTests {
 	/**
 	 * Ensures that identifier renaming is done properly.
 	 */
+	@Test 
 	public void testRenaming() {
 		doTest(L("x'"),//
 				L("x"),//
@@ -80,6 +82,7 @@ public class TestIdentRenaming extends AbstractTests {
 	 * Ensures that identifier renaming is done properly with mathematical
 	 * extensions.
 	 */
+	@Test 
 	public void testRenamingLanguage() {
 		doTest(LIST_FAC,//
 				L("x", "List", "nil"),//

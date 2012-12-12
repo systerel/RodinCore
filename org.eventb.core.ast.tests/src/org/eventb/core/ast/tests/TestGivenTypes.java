@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CPROD;
 import static org.eventb.core.ast.Formula.CSET;
@@ -64,6 +66,7 @@ import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
+import org.junit.Test;
 
 /**
  * Tests for method {@link Formula#getGivenTypes()}.
@@ -157,6 +160,7 @@ public class TestGivenTypes extends AbstractTests {
 	 * Ensures that given types are propagated through an associative
 	 * expression.
 	 */
+	@Test 
 	public void testAssociativeExpression() {
 		doTest(mAssociativeExpression(BUNION, heS, heT), tS, tT);
 		doTest(mAssociativeExpression(BUNION, hiS, hiT), tS, tT);
@@ -167,6 +171,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types are propagated through an associative predicate.
 	 */
+	@Test 
 	public void testAssociativePredicate() {
 		doTest(mAssociativePredicate(LAND, peS, peT), tS, tT);
 		doTest(mAssociativePredicate(LAND, piS, piT), tS, tT);
@@ -177,6 +182,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types are propagated from an atomic expression.
 	 */
+	@Test 
 	public void testAtomicExpression() {
 		doTest(eS, tS);
 		doTest(idSS, tS);
@@ -189,6 +195,7 @@ public class TestGivenTypes extends AbstractTests {
 	 * Ensures that given types in the right-hand side of a becomes equal
 	 * to are propagated.
 	 */
+	@Test 
 	public void testBecomesEqualTo() {
 		final FreeIdentifier v = mFreeIdentifier("v", REL(INT, INT));
 		final FreeIdentifier w = mFreeIdentifier("w", REL(INT, INT));
@@ -206,6 +213,7 @@ public class TestGivenTypes extends AbstractTests {
 	 * Ensures that given types in the right-hand side of a becomes
 	 * member of are propagated.
 	 */
+	@Test 
 	public void testBecomesMemberOf() {
 		final FreeIdentifier v = mFreeIdentifier("v", CPROD(INT, INT));
 
@@ -217,6 +225,7 @@ public class TestGivenTypes extends AbstractTests {
 	 * Ensures that given types in the right-hand side of a becomes
 	 * such that are propagated.
 	 */
+	@Test 
 	public void testBecomesSuchThat() {
 		final FreeIdentifier v = mFreeIdentifier("v", INT);
 
@@ -228,6 +237,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a binary expression are propagated.
 	 */
+	@Test 
 	public void testBinaryExpression() {
 		doTest(mBinaryExpression(CPROD, eS, eT), tS, tT);
 		doTest(mBinaryExpression(CPROD, iS, iT), tS, tT);
@@ -236,6 +246,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a binary predicate are propagated.
 	 */
+	@Test 
 	public void testBinaryPredicate() {
 		doTest(mBinaryPredicate(LIMP, peS, peT), tS, tT);
 		doTest(mBinaryPredicate(LIMP, piS, piT), tS, tT);
@@ -244,6 +255,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a bool expression are propagated.
 	 */
+	@Test 
 	public void testBoolExpression() {
 		doTest(mBoolExpression(peS), tS);
 		doTest(mBoolExpression(piS), tS);
@@ -253,6 +265,7 @@ public class TestGivenTypes extends AbstractTests {
 	 * Ensures that given types in a bound identifier declaration are
 	 * propagated.
 	 */
+	@Test 
 	public void testBoundIdentDecl() {
 		doTest(mBoundIdentDecl("x", tS), tS);
 	}
@@ -260,6 +273,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a bound identifier are propagated.
 	 */
+	@Test 
 	public void testBoundIdentifier() {
 		doTest(mBoundIdentifier(0, tS), tS);
 	}
@@ -267,6 +281,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a free identifier are propagated.
 	 */
+	@Test 
 	public void testFreeIdentifier() {
 		doTest(iS, tS);
 	}
@@ -274,6 +289,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a quantified expression are propagated.
 	 */
+	@Test 
 	public void testQuantifiedExpression() {
 		final BoundIdentDecl[] decls = mList(mBoundIdentDecl("x", tS));
 		final BoundIdentifier use = mBoundIdentifier(0, tS);
@@ -284,6 +300,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a quantified predicate are propagated.
 	 */
+	@Test 
 	public void testQuantifiedPredicate() {
 		final BoundIdentDecl[] decls = mList(mBoundIdentDecl("x", tS));
 		final BoundIdentifier use = mBoundIdentifier(0, tS);
@@ -298,6 +315,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a relational predicate are propagated.
 	 */
+	@Test 
 	public void testRelationalPredicate() {
 		doTest(peS, tS);
 		doTest(piS, tS);
@@ -306,6 +324,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a set extension are propagated.
 	 */
+	@Test 
 	public void testSetExtension() {
 		// First test is with an empty set extension: needs type-checking
 		final Expression empty = mSetExtension();
@@ -324,6 +343,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a simple predicate are propagated.
 	 */
+	@Test 
 	public void testSimplePredicate() {
 		doTest(mSimplePredicate(eS), tS);
 		doTest(mSimplePredicate(iS), tS);
@@ -332,6 +352,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a unary expression are propagated.
 	 */
+	@Test 
 	public void testUnaryExpression() {
 		doTest(mUnaryExpression(POW, eS), tS);
 		doTest(mUnaryExpression(POW, iS), tS);
@@ -340,6 +361,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a unary predicate are propagated.
 	 */
+	@Test 
 	public void testUnaryPredicate() {
 		doTest(mUnaryPredicate(peS), tS);
 		doTest(mUnaryPredicate(piS), tS);
@@ -348,6 +370,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types in a multiple predicate are propagated.
 	 */
+	@Test 
 	public void testMultiplePredicate() {
 		doTest(FastFactory.mMultiplePredicate(eS), tS);
 		doTest(FastFactory.mMultiplePredicate(eS, eS), tS);
@@ -357,6 +380,7 @@ public class TestGivenTypes extends AbstractTests {
 	/**
 	 * Ensures that given types are extracted from types.
 	 */
+	@Test 
 	public void testTypes() {
 		doTest(mFreeIdentifier("x", BOOL));
 		doTest(mFreeIdentifier("x", tS), tS);

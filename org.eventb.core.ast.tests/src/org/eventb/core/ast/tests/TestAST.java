@@ -11,6 +11,7 @@
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.INTLIT;
 import static org.eventb.core.ast.Formula.KBOOL;
@@ -40,6 +41,7 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.tests.Common.TagSupply;
+import org.junit.Test;
 
 /**
  * Test the abstract syntax tree.
@@ -68,6 +70,7 @@ public class TestAST extends AbstractTests {
 	 * Tests if the constructed node's children returned by the accessors are
 	 * the same that the one specified when constructing the node.
 	 */
+	@Test 
 	public void testAST() {
 		final TagSupply allTags = TagSupply.getAllTagSupply();
 
@@ -189,6 +192,7 @@ public class TestAST extends AbstractTests {
 	 * Test that the tags returned by the accessor is the same as the one specified
 	 * when constructing the node.
 	 */
+	@Test 
 	public void testTags() {
 		final TagSupply tagSupply = TagSupply.getAllTagSupply();
 		final Expression[] eL = new Expression[] { id_y, id_x };

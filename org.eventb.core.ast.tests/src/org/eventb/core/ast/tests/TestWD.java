@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
@@ -28,6 +30,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.internal.core.ast.wd.WDComputer;
+import org.junit.Test;
 
 /**
  * Unit and acceptance tests for the computation of WD lemmas.
@@ -66,6 +69,7 @@ public class TestWD extends AbstractTests {
 			this.simplifiedPredicate = parsePredicate(imp, env);
 		}
 
+		@Test 
 		public void test() {
 			assertCorrect(originalPredicate, getNonSimplifiedWD());
 			assertCorrect(simplifiedPredicate, getSimplifiedWD());
@@ -147,6 +151,7 @@ public class TestWD extends AbstractTests {
 		test.test();
 	}
 
+	@Test 
 	public void testWD() {
 		assertWDLemma("x≠y ∧ y=1", "⊤");
 		assertWDLemma("x+y+x+1=0 ⇒ y<x", "⊤");
@@ -236,6 +241,7 @@ public class TestWD extends AbstractTests {
 				"1≠0 ∧ (a÷1=b ∨ a=b ∨ 3≠0)");
 	}
 
+	@Test 
 	public void testRedundant() {
 		assertWDLemma("3÷P=0 ∧ 2=5 ∧ 6÷P=0", "P≠0 ∧ (3÷P=0 ∧ 2=5 ⇒ P≠0)", "P≠0");
 		assertWDLemma("f(x)=f(y)", "x∈dom(f) ∧ f∈ℤ⇸ℤ ∧ y∈dom(f) ∧ f∈ℤ⇸ℤ",
@@ -246,6 +252,7 @@ public class TestWD extends AbstractTests {
 	/**
 	 * Ensures that documented simplification rules are indeed implemented.
 	 */
+	@Test 
 	public void testSimplified() {
 		// (⊤ ∧ A) ⇔ A
 		assertWDLemma("1 = 2÷x", "x≠0");
@@ -278,6 +285,7 @@ public class TestWD extends AbstractTests {
 	/**
 	 * Shows that some WD predicates are not simplified, although they could be.
 	 */
+	@Test 
 	public void testNotSimplified() {
 		// (A ∨ A) ⇔ A
 		assertWDLemma("x≠0 ∨ 3 = 4÷x", "x≠0 ∨ x≠0", "x≠0 ∨ x≠0");
@@ -286,6 +294,7 @@ public class TestWD extends AbstractTests {
 	/**
 	 * Tests coming from model "routing_new" from Jean-Raymond Abrial.
 	 */
+	@Test 
 	public void testRouting() {
 		final ITypeEnvironment env = mTypeEnvironment(//
 				"N", "ℙ(N)", //
@@ -372,6 +381,7 @@ public class TestWD extends AbstractTests {
 	/**
 	 * Tests coming from model "DIR41.4 "
 	 */
+	@Test 
 	public void testDIR() {
 		final ITypeEnvironment env = mTypeEnvironment(//
 				"T", "ℙ(T)", //
@@ -538,6 +548,7 @@ public class TestWD extends AbstractTests {
 	/**
 	 * Ensures that WD simplification does not mess up bound identifiers
 	 */
+	@Test 
 	public void testQuantifiers() {
 		final ITypeEnvironment env = mTypeEnvironment("f", REL(S, S));
 		assertWDLemma(env,//
@@ -551,6 +562,7 @@ public class TestWD extends AbstractTests {
 	 * Ensures that WD simplification does not mess up bound identifiers, even
 	 * in the presence of multiple quantifiers.
 	 */
+	@Test 
 	public void testQuantifiedMany() {
 		final ITypeEnvironment env = mTypeEnvironment(//
 				"S", POW(S),//
@@ -580,6 +592,7 @@ public class TestWD extends AbstractTests {
 	 * Ensures that WD simplification does not mess up bound identifiers, even
 	 * after a quantifier.
 	 */
+	@Test 
 	public void testQuantifiedAfter() {
 		final ITypeEnvironment env = mTypeEnvironment("f", REL(S, S));
 		assertWDLemma(env,//
@@ -596,6 +609,7 @@ public class TestWD extends AbstractTests {
 	 * Ensures that WD simplification does not mess up bound identifiers, even
 	 * in the presence of deep nesting.
 	 */
+	@Test 
 	public void testQuantifiedDeep() {
 		assertWDLemma(
 				mTypeEnvironment("S", POW(S)),//
@@ -614,6 +628,7 @@ public class TestWD extends AbstractTests {
 	 * are properly simplified. Also checks, that if the duplication is not
 	 * exact, only sound simplifications are carried.
 	 */
+	@Test 
 	public void testQuantifierDeepDuplicate() {
 		final ITypeEnvironment env = mTypeEnvironment("f", REL(S, S));
 		assertWDLemma(
@@ -651,6 +666,7 @@ public class TestWD extends AbstractTests {
 	/**
 	 * Acceptance test for CDIS model
 	 */
+	@Test 
 	public void testCDIS() {
 		final ITypeEnvironment env = mTypeEnvironment(//
 				"Attr_Id", "ℙ(Attr_id)",//
@@ -707,6 +723,7 @@ public class TestWD extends AbstractTests {
 	 * simplified by predicates which belong to an implication. Also checks,
 	 * that all the isolated predicates are used to simplify implications.
 	 */
+	@Test 
 	public void testTraversal() {
 		final ITypeEnvironment env = mTypeEnvironment(//
 				"f", REL(S, POW(S)),//
@@ -750,6 +767,7 @@ public class TestWD extends AbstractTests {
 	/**
 	 * Unit test for mathematical extensions
 	 */
+	@Test 
 	public void testExtensions() {
 		final ITypeEnvironment env = EFF.makeTypeEnvironment();
 		// WD strict predicate
@@ -767,6 +785,7 @@ public class TestWD extends AbstractTests {
 	/**
 	 * Unit test for COND operator
 	 */
+	@Test 
 	public void testCond() {
 		final IExpressionExtension cond = FormulaFactory.getCond();
 		final FormulaFactory factory = FormulaFactory.getInstance(cond);
@@ -780,6 +799,7 @@ public class TestWD extends AbstractTests {
 	/**
 	 * Unit test for data type extensions
 	 */
+	@Test 
 	public void testDatatype() throws Exception {
 		final ITypeEnvironmentBuilder env = LIST_FAC.makeTypeEnvironment();
 		env.addName("l", LIST_INT_TYPE);
@@ -808,6 +828,7 @@ public class TestWD extends AbstractTests {
 	 * Unit test to check the simplification of the WD of a destructor when
 	 * there is only one datatype constructor.
 	 */
+	@Test 
 	public void testDatatypeOneConstructorOnly() {
 		final IDatatype dt = ff.makeDatatype(ExtensionHelper.FOOBARTYPE);
 		final FormulaFactory fac = FormulaFactory.getInstance(dt

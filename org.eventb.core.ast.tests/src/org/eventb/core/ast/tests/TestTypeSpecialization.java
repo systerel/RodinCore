@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertSame;
 import static org.eventb.core.ast.tests.FastFactory.mTypeSpecialization;
 import static org.eventb.core.ast.tests.TestGenParser.MOULT_FAC;
 
@@ -18,6 +20,7 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
+import org.junit.Test;
 
 /**
  * Unit tests for specialization of types. We check various combinations of
@@ -34,6 +37,7 @@ public class TestTypeSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a given type can be specialized in various ways.
 	 */
+	@Test 
 	public void testGivenType() {
 		assertSpecialization("S", "", "S");
 		assertSpecialization("S", "S := S", "S");
@@ -47,6 +51,7 @@ public class TestTypeSpecialization extends AbstractTests {
 	/**
 	 * Ensures that the boolean type is never specialized.
 	 */
+	@Test 
 	public void testBooleanType() {
 		assertSpecialization("BOOL", "S := T", "BOOL");
 	}
@@ -54,6 +59,7 @@ public class TestTypeSpecialization extends AbstractTests {
 	/**
 	 * Ensures that the integer type is never specialized.
 	 */
+	@Test 
 	public void testIntegerType() {
 		assertSpecialization("ℤ", "S := T", "ℤ");
 	}
@@ -61,6 +67,7 @@ public class TestTypeSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a power set type can be specialized in various ways.
 	 */
+	@Test 
 	public void testPowerSetType() {
 		assertSpecialization("ℙ(S)", "", "ℙ(S)");
 		assertSpecialization("ℙ(S)", "S := T", "ℙ(T)");
@@ -69,6 +76,7 @@ public class TestTypeSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a product type can be specialized in various ways.
 	 */
+	@Test 
 	public void testProductType() {
 		assertSpecialization("S×T", "", "S×T");
 		assertSpecialization("S×T", "S := U", "U×T");
@@ -81,6 +89,7 @@ public class TestTypeSpecialization extends AbstractTests {
 	/**
 	 * Ensures that parametric types can be specialized in various ways.
 	 */
+	@Test 
 	public void testParametricType() {
 		assertSpecialization("List(S)", "", "List(S)", LIST_FAC);
 		assertSpecialization("List(S)", "S := T", "List(T)", LIST_FAC);

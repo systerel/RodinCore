@@ -10,15 +10,17 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
-import static org.eventb.core.ast.tests.FastFactory.mTypeSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+import static org.eventb.core.ast.tests.FastFactory.mTypeSpecialization;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.junit.Test;
 
 /**
  * Unit tests for specialization of type environments. For each test, we specify
@@ -37,6 +39,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	/**
 	 * Ensures that an empty specialization does not change a type environment.
 	 */
+	@Test 
 	public void testEmptySpecialization() {
 		assertSpecialization(//
 				mTypeEnvironment("S", "ℙ(S)"),//
@@ -48,6 +51,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 * Ensures that a given type which is specialized disappears from the type
 	 * environment.
 	 */
+	@Test 
 	public void testGivenDisappears() {
 		assertSpecialization(//
 				mTypeEnvironment("S", "ℙ(S)"),//
@@ -59,6 +63,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 * Ensures that a given type which is specialized reappears if it occurs in
 	 * the right-hand side of some type substitutions.
 	 */
+	@Test 
 	public void testGivenReappears() {
 		assertSpecialization(//
 				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)"),//
@@ -79,6 +84,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 * occurs in the right-hand side of some type substitutions which is never
 	 * applied.
 	 */
+	@Test 
 	public void testGivenReappearsNot() {
 		assertTypeSpecialization(//
 				mTypeEnvironment("S", "ℙ(S)"),//
@@ -90,6 +96,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 * Ensures that a given type which is not specialized is retained in the
 	 * type environment.
 	 */
+	@Test 
 	public void testGivenUnchanged() {
 		assertSpecialization(//
 				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)"),//
@@ -101,6 +108,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 * Ensures that an identifier which is not substituted has its type changed,
 	 * if needed.
 	 */
+	@Test 
 	public void testIdentNotSubstituted() {
 		assertSpecialization(//
 				mTypeEnvironment("S", "ℙ(S)", "a", "S"),//
@@ -124,6 +132,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	 * Ensures that an identifier can be substituted even when its type does not
 	 * change.
 	 */
+	@Test 
 	public void testIdentSubstitutedNoTypeChange() {
 		assertSpecialization(//
 				mTypeEnvironment("S", "ℙ(S)", "a", "S"),//
@@ -134,6 +143,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	/**
 	 * Ensures that an identifier can be substituted.
 	 */
+	@Test 
 	public void testIdentSubstituted() {
 		assertSpecialization(//
 				mTypeEnvironment("S", "ℙ(S)", "a", "S×T"),//
@@ -144,6 +154,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	/**
 	 * Ensures that types can be swapped.
 	 */
+	@Test 
 	public void testSwapTypes() {
 		assertSpecialization(//
 				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "S×T"),//
@@ -154,6 +165,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	/**
 	 * Ensures that identifiers can be swapped.
 	 */
+	@Test 
 	public void testSwapIdents() {
 		assertSpecialization(//
 				mTypeEnvironment("S", "ℙ(S)", "a", "S", "b", "S"),//
@@ -164,6 +176,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	/**
 	 * Ensures that types and identifiers can be swapped at the same time.
 	 */
+	@Test 
 	public void testSwapBoth() {
 		/*
 		 * We need to build the specialization by hand, because it is too

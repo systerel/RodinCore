@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
@@ -43,6 +44,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.PredicateVariable;
+import org.junit.Test;
 
 /**
  * Ensures that the set of predicate variables occurring in a formula is
@@ -87,6 +89,7 @@ public class TestPredicateVariables extends AbstractTests {
 
 	// Assignment
 
+	@Test 
 	public void testBecomesEqualTo() throws Exception {
 		assertPredicateVariables(mBecomesEqualTo(ID_X, BOOL_P), PV_P);
 		assertPredicateVariables(mBecomesEqualTo(mArray(ID_X, ID_Y), //
@@ -94,11 +97,13 @@ public class TestPredicateVariables extends AbstractTests {
 				PV_P, PV_Q);
 	}
 
+	@Test 
 	public void testBecomesMemberOf() throws Exception {
 		assertPredicateVariables(mBecomesMemberOf(ID_X, mSetExtension(BOOL_P)), //
 				PV_P);
 	}
 
+	@Test 
 	public void testBecomesSuchThat() throws Exception {
 		assertPredicateVariables(mBecomesSuchThat(mArray(ID_X), PV_P), //
 				PV_P);
@@ -106,52 +111,63 @@ public class TestPredicateVariables extends AbstractTests {
 
 	// BoundIdentDecl
 
+	@Test 
 	public void testBoundIdentDecl() throws Exception {
 		assertPredicateVariables(BID_X);
 	}
 
 	// Expression
 
+	@Test 
 	public void testAssociativeExpression() throws Exception {
 		assertPredicateVariables(mAssociativeExpression(BOOL_P, BOOL_Q), //
 				PV_P, PV_Q);
 	}
 
+	@Test 
 	public void testAtomicExpression() throws Exception {
 		assertPredicateVariables(mAtomicExpression());
 	}
 
+	@Test 
 	public void testBinaryExpression() throws Exception {
 		assertPredicateVariables(mBinaryExpression(BOOL_P, BOOL_Q), //
 				PV_P, PV_Q);
 	}
 
+	@Test 
 	public void testBoolExpression() throws Exception {
 		assertPredicateVariables(BOOL_P, PV_P);
 	}
 
+	@Test 
 	public void testBoundIdentifier() throws Exception {
 		assertPredicateVariables(mBoundIdentifier(0));
 	}
 
+	@Test 
 	public void testFreeIdentifier() throws Exception {
 		assertPredicateVariables(mFreeIdentifier("x"));
 	}
 
+	@Test 
 	public void testIntegerLiteral() throws Exception {
 		assertPredicateVariables(mIntegerLiteral());
 	}
 
+	@Test 
 	public void testQuantifiedExpression() throws Exception {
 		assertPredicateVariables(mQuantifiedExpression(ARR_X, PV_P, BOOL_Q), //
 				PV_P, PV_Q);
 	}
 
+	@Test 
 	public void testSetExtension() throws Exception {
 		assertPredicateVariables(mSetExtension(BOOL_P, BOOL_Q), //
 				PV_P, PV_Q);
 	}
 
+	@Test 
 	public void testUnaryExpression() throws Exception {
 		assertPredicateVariables(mUnaryExpression(BOOL_P), //
 				PV_P);
@@ -159,46 +175,56 @@ public class TestPredicateVariables extends AbstractTests {
 
 	// Predicate
 
+	@Test 
 	public void testAssociativePredicate() throws Exception {
 		assertPredicateVariables(mAssociativePredicate(PV_P, PV_Q), //
 				PV_P, PV_Q);
 	}
 
+	@Test 
 	public void testBinaryPredicate() throws Exception {
 		assertPredicateVariables(mBinaryPredicate(PV_P, PV_Q), //
 				PV_P, PV_Q);
 	}
 
+	@Test 
 	public void testLiteralPredicate() throws Exception {
 		assertPredicateVariables(mLiteralPredicate());
 	}
 
+	@Test 
 	public void testMultiplePredicate() throws Exception {
 		assertPredicateVariables(mMultiplePredicate(BOOL_P, BOOL_Q), //
 				PV_P, PV_Q);
 	}
 
+	@Test 
 	public void testPredicateVariable() throws Exception {
 		assertPredicateVariables(PV_P, PV_P);
 	}
 
+	@Test 
 	public void testQuantifiedPredicate() throws Exception {
 		assertPredicateVariables(mQuantifiedPredicate(ARR_X, PV_P), PV_P);
 	}
 
+	@Test 
 	public void testRelationalPredicate() throws Exception {
 		assertPredicateVariables(mRelationalPredicate(BOOL_P, BOOL_Q), //
 				PV_P, PV_Q);
 	}
 
+	@Test 
 	public void testSimplePredicate() throws Exception {
 		assertPredicateVariables(mSimplePredicate(BOOL_P), PV_P);
 	}
 
+	@Test 
 	public void testUnaryPredicate() throws Exception {
 		assertPredicateVariables(mUnaryPredicate(PV_P), PV_P);
 	}
 
+	@Test 
 	public void testComplexCases() throws Exception {
 		assertPredicateVariables(mAssociativePredicate(PV_P, PV_Q, PV_R), //
 				PV_P, PV_Q, PV_R);

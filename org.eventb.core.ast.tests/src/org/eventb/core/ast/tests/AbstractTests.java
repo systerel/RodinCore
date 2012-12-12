@@ -13,11 +13,12 @@ package org.eventb.core.ast.tests;
 import static java.util.Arrays.asList;
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Expression;
@@ -49,7 +50,7 @@ import org.eventb.core.ast.extension.datatype.ITypeParameter;
  *
  * @author Laurent Voisin
  */
-public abstract class AbstractTests extends TestCase {
+public abstract class AbstractTests {
 
 	// Default formula factory for the last language version, without extension
 	public static final FormulaFactory ff = FormulaFactory.getDefault();
@@ -295,4 +296,5 @@ public abstract class AbstractTests extends TestCase {
 		return ff.makeRelationalType(left, right);
 	}
 
+	
 }

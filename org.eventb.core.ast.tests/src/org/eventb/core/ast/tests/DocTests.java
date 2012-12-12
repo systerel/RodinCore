@@ -11,6 +11,7 @@
  ******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
 import static org.eventb.core.ast.Formula.IN;
@@ -37,6 +38,8 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DocTests extends AbstractTests {
 
@@ -47,9 +50,8 @@ public class DocTests extends AbstractTests {
 			"x", //
 			"S×T");
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		final Type ty_S = ff.makeGivenType("S");
 		final Type ty_T = ff.makeGivenType("T");
 		final Expression empty_S = mEmptySet(POW(ty_S));
@@ -71,6 +73,7 @@ public class DocTests extends AbstractTests {
 	/**
 	 * Code shown in the Rodin Wiki about Mathematical Formula Serialization.
 	 */
+	@Test 
 	public void testSerialization() {
 		final Formula<?> foo = pred;
 		final List<String> strings = new ArrayList<String>();
@@ -91,6 +94,7 @@ public class DocTests extends AbstractTests {
 	/**
 	 * Code shown in the Rodin Wiki about Mathematical Formula Serialization.
 	 */
+	@Test 
 	public void testDeserialization() throws Exception {
 		final List<String> strings = serialized;
 		

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BCOMP;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
@@ -133,6 +135,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
+import org.junit.Test;
 
 /**
  * Unit tests for WD strictness.
@@ -171,6 +174,7 @@ public class TestWDStrict extends AbstractTests {
 	 * operators.
 	 */
 	@SuppressWarnings("deprecation")
+	@Test 
 	public void testWDStrict() {
 
 		// FREE_IDENT
@@ -466,6 +470,7 @@ public class TestWDStrict extends AbstractTests {
 	 * Ensures that WD strictness is correctly implemented for extension
 	 * operators.
 	 */
+	@Test 
 	public void testWDStrictExtensions() {
 		assertWDStrict(EFF.makeExtendedPredicate(fooS, TWO_EXPRS, TWO_PREDS,
 				null));
@@ -480,6 +485,7 @@ public class TestWDStrict extends AbstractTests {
 	/**
 	 * Ensures that WD strictness of positions is correctly implemented.
 	 */
+	@Test 
 	public void testWDStrictPosition() {
 		final Predicate P = mUnaryPredicate(NOT, mBinaryPredicate(LIMP, T, T));
 		assertWDStrict(P, "");

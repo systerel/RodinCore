@@ -15,6 +15,11 @@
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.CSET;
@@ -61,8 +66,6 @@ import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
@@ -97,8 +100,9 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.junit.Test;
 
-public class TestSubFormulas extends TestCase {
+public class TestSubFormulas{
 
 	private static class FixedFilter<T extends Formula<T>> implements IFormulaFilter {
 		
@@ -602,6 +606,7 @@ public class TestSubFormulas extends TestCase {
 	 * Ensures that the position of a bound identifier declaration can be
 	 * retrieved or not retrieved from all places where a declaration can occur.
 	 */
+	@Test 
 	public void testBdFilter() throws Exception {
 		checkPositions(bdFilter, bd_y);
 		checkPositions(bdFilter, bd_x, "", bd_X);
@@ -659,6 +664,7 @@ public class TestSubFormulas extends TestCase {
 	 * Ensures that the position of an expression can be retrieved or not
 	 * retrieved from all places where an expression can occur.
 	 */
+	@Test 
 	public void testIdFilter() throws Exception {
 		checkPositions(idFilter,
 				mAssociativeExpression(PLUS, id_y, id_y));
@@ -794,6 +800,7 @@ public class TestSubFormulas extends TestCase {
 	 * Ensures that the position of a predicate can be retrieved from all
 	 * contexts.
 	 */
+	@Test 
 	public void testEqualsFilter() throws Exception {
 		checkPositions(equalsFilter,
 				mAssociativePredicate(LAND, equals, btrue),
@@ -890,6 +897,7 @@ public class TestSubFormulas extends TestCase {
 				mUnaryPredicate(NOT, equalsX));
 	}
 	
+	@Test 
 	public void testOldFilterOnPredicateVariable() throws Exception {
 		try {
 			mPredicateVariable("$P").getPositions(idFilter);
@@ -944,6 +952,7 @@ public class TestSubFormulas extends TestCase {
 	 * Ensures that filtering is implemented for all kinds of formulas.  Also
 	 * ensures that one can rewrite the root of any formula.
 	 */
+	@Test 
 	public void testPositionAllClasses() throws Exception {
 		checkRootPosition(
 				mAssociativeExpression(PLUS, id_x, id_x),
@@ -1036,6 +1045,7 @@ public class TestSubFormulas extends TestCase {
 	 * Ensures that a sub-expression that occurs deeply in a formula can be
 	 * retrieved.
 	 */
+	@Test 
 	public void testDeepPositions() {
 		checkPositions(idFilter,
 				mAssociativePredicate(
@@ -1100,6 +1110,7 @@ public class TestSubFormulas extends TestCase {
 	 * Ensures that multiple expression rewriting can be performed in all places
 	 * where a rewritable sub-expression can occur.
 	 */
+	@Test 
 	public void testExpressionRewriting() {
 		final Expression zero = mIntegerLiteral(0);
 		final Expression i1 = mBinaryExpression(MINUS, id_x, zero);
@@ -1223,6 +1234,7 @@ public class TestSubFormulas extends TestCase {
 	/**
 	 * Ensures that a predicate can be rewritten in all contexts.
 	 */
+	@Test 
 	public void testPredicateRewriting() throws Exception {
 		final Predicate p1 = equals;
 		final Predicate p2 = btrue;
@@ -1292,6 +1304,7 @@ public class TestSubFormulas extends TestCase {
 	/**
 	 * Ensures that rewriting is implemented for all kinds of formulas.
 	 */
+	@Test 
 	public void testRewritingAllClasses() throws Exception {
 		this.<Expression>checkRootRewriting(
 				mAssociativeExpression(PLUS, id_x, id_x),
@@ -1367,6 +1380,7 @@ public class TestSubFormulas extends TestCase {
 		);
 	}
 
+	@Test 
 	public void testOldRewriterOnPredicateVariable() throws Exception {
 		try {
 			mPredicateVariable("$P").rewrite(new OldRewriter());

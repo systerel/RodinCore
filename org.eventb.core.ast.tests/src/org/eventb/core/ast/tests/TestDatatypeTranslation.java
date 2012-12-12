@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import org.junit.Test;
+
 /**
  * Class checking special cases of datatypes translation.
  * 
@@ -20,6 +22,7 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 	/**
 	 * Datatype in powerset translation
 	 */
+	@Test 
 	public void testDatatypeInPowersetTranslation() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.addGivenTypes("Elements", "Things");
@@ -31,6 +34,7 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 	/**
 	 * Datatype in a product type translation
 	 */
+	@Test 
 	public void testDatatypeInProductSetTranslation() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.addGivenTypes("Elements", "Things");
@@ -44,6 +48,7 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 	/**
 	 * Datatype in a product type translation
 	 */
+	@Test 
 	public void testDatatypeIntegerTranslation() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.addToSourceEnvironment("l=List(ℤ)");
@@ -56,6 +61,7 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 	/**
 	 * Datatype of Boolean type translation
 	 */
+	@Test 
 	public void testDatatypeBoolTranslation() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.addToSourceEnvironment("l=List(BOOL)");
@@ -69,6 +75,7 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 	/**
 	 * Recursive datatype translation
 	 */
+	@Test 
 	public void testRecursiveDatatypeTranslation() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.setExpectedTypeEnvironment("List_Type=ℙ(List_Type); "
@@ -82,6 +89,7 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 	/**
 	 * Mixed datatypes translation
 	 */
+	@Test 
 	public void testMixedDatatypesTranslation() {
 		final String setsTypenv = "A=ℙ(Agent); I=ℙ(Identifier)";
 		final TestTranslationSupport s = mSupport(LIST__DT, MESSAGE__DT);
@@ -98,6 +106,7 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 	/**
 	 * Mixed datatypes translation
 	 */
+	@Test 
 	public void testMixedDatatypesValuesTranslation() {
 		final TestTranslationSupport s = mSupport(LIST__DT, MESSAGE__DT);
 		s.addGivenTypes("Agent", "Identifier");
@@ -136,6 +145,7 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 	/**
 	 * Composed enum and datatypes translation
 	 */
+	@Test 
 	public void testEnumAndDatatypeTranslation() {
 		final TestTranslationSupport s = mSupport(LIST__DT,
 				"Directions ::= North || East || South || West");

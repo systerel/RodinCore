@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import org.junit.Test;
+
 /**
  * Tests for the enumeration datatype translation.<br>
  * These tests check that the enumeration datatype constructors are translated
@@ -24,6 +26,7 @@ public class TestEnumDatatypeTranslator extends AbstractTranslatorTests {
 	/**
 	 * Case where there is one enumerated element.
 	 */
+	@Test 
 	public void testOneEnumTypeConstructorTranlator() {
 		final TestTranslationSupport s = mSupport("basicEnum ::= one");
 		s.setExpectedTypeEnvironment("basicEnum=ℙ(basicEnum); one=basicEnum");
@@ -34,6 +37,7 @@ public class TestEnumDatatypeTranslator extends AbstractTranslatorTests {
 	/**
 	 * Case where there are three enumerated elements.
 	 */
+	@Test 
 	public void testEnumConstructorTranslator() {
 		final TestTranslationSupport s = mSupport("basicEnum ::= one ||"
 				+ " two || three");
@@ -47,6 +51,7 @@ public class TestEnumDatatypeTranslator extends AbstractTranslatorTests {
 	 * Robustness test case : the enumerated datatype has a useless type
 	 * parameter which is instantiated twice.
 	 */
+	@Test 
 	public void testEnumWithTypeParamsTranlator() {
 		final TestTranslationSupport s = mSupport("basicEnum[T] ::= one || two");
 		s.setExpectedTypeEnvironment("basicEnum=ℙ(basicEnum);"

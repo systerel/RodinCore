@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.tests.FastFactory.NO_PREDICATE;
 import static org.eventb.core.ast.tests.FastFactory.mList;
@@ -26,6 +30,7 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
+import org.junit.Test;
 
 
 /**
@@ -136,6 +141,7 @@ public class TestTypes extends AbstractTests {
 	 * Checks that the type factory works correctly, as well as conversion to
 	 * Expression and String.
 	 */
+	@Test 
 	public void testTypeFactory() {
 		for (TestItem item : items) {
 			final Expression expr = item.type.toExpression(tf);
@@ -150,6 +156,7 @@ public class TestTypes extends AbstractTests {
 	 * Checks that the equality between types is not trivially wrong, by
 	 * comparing types of the test items (they should all differ).
 	 */
+	@Test 
 	public void testTypeInequality() {
 		for (TestItem item1 : items) {
 			for (TestItem item2 : items) {
@@ -160,6 +167,7 @@ public class TestTypes extends AbstractTests {
 		}
 	}
 	
+	@Test 
 	public void testTypeParser() {
 		for (TestItem item : items) {
 			IParseResult result = tf.parseType(item.image, LATEST);
@@ -180,6 +188,7 @@ public class TestTypes extends AbstractTests {
 		}
 	}
 	
+	@Test 
 	public void testIsATypeExpression() {
 		ITypeEnvironmentBuilder typenv = tf.makeTypeEnvironment();
 		typenv.addGivenSet("S");

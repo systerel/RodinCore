@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+
 import org.eventb.core.ast.PredicateVariable;
+import org.junit.Test;
 
 /**
  * Unit tests for factory methods which are not fully tested elsewhere.
@@ -29,6 +34,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * version of the mathematical language supported by the formula factory
 	 * instance.
 	 */
+	@Test 
 	public void testValidIdentifierName() throws Exception {
 		final String validName = "foo";
 		assertTrue(ffV1.isValidIdentifierName(validName));
@@ -94,6 +100,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * Ensures that the name of a free identifier is checked for validity when
 	 * the identifier is built without a type.
 	 */
+	@Test 
 	public void testFreeIdentifierUntyped() {
 		new FailedAssertionChecker() {
 			@Override
@@ -107,6 +114,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * Ensures that the name of a free identifier cannot look like a predicate
 	 * variable.
 	 */
+	@Test 
 	public void testFreeIdentifierPredicateVariable() {
 		new FailedAssertionChecker() {
 			@Override
@@ -120,6 +128,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * Ensures that the name of a free identifier is checked for validity when
 	 * the identifier is built with a type.
 	 */
+	@Test 
 	public void testFreeIdentifierTyped() {
 		new FailedAssertionChecker() {
 			@Override
@@ -133,6 +142,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * Ensures that the name of a bound identifier declaration is checked for
 	 * validity when the declaration is built without a type.
 	 */
+	@Test 
 	public void testBoundIdentDeclUntyped() {
 		new FailedAssertionChecker() {
 			@Override
@@ -146,6 +156,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * Ensures that the name of a bound identifier declaration cannot look like
 	 * a predicate variable.
 	 */
+	@Test 
 	public void testBoundIdentDeclPredicateVariable() {
 		new FailedAssertionChecker() {
 			@Override
@@ -159,6 +170,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * Ensures that the name of a bound identifier declaration is checked for
 	 * validity when the declaration is built with a type.
 	 */
+	@Test 
 	public void testBoundIdentDeclTyped() {
 		new FailedAssertionChecker() {
 			@Override
@@ -172,6 +184,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * Ensures that the name of a predicate variable is checked for validity
 	 * when the variable is built.
 	 */
+	@Test 
 	public void testPredicateVariable() {
 		new FailedAssertionChecker() {
 			@Override
@@ -186,6 +199,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * Ensures that the name of a predicate variable is checked for the leading
 	 * character when the variable is built.
 	 */
+	@Test 
 	public void testPredicateVariableLeader() {
 		new FailedAssertionChecker() {
 			@Override
@@ -199,6 +213,7 @@ public class TestFormulaFactory extends AbstractTests {
 	 * Ensures that the name of a given type is checked for validity when the
 	 * type is built.
 	 */
+	@Test 
 	public void testGivenType() {
 		new FailedAssertionChecker() {
 			@Override

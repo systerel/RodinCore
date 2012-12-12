@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 
 import java.math.BigInteger;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -48,8 +48,9 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.junit.Test;
 
-public class TestSimpleVisitor extends TestCase {
+public class TestSimpleVisitor {
 
 	static class TestVisitor implements ISimpleVisitor {
 		
@@ -216,64 +217,79 @@ public class TestSimpleVisitor extends TestCase {
 		assertEquals(assertMessage, expected, visitor.getTrace());
 	}
 
+	@Test 
 	public void testAssociativeExpression() {
 		assertVisit(ff.makeAssociativeExpression(
 				Formula.PLUS, mList(id_x, id_y), null));
 	}
 
+	@Test 
 	public void testAssociativePredicate() {
 		assertVisit(ff.makeAssociativePredicate(Formula.LOR, mList(p1,
 				p2, p3), null));
 	}
 
+	@Test 
 	public void testAtomicExpression() {
 		assertVisit(ff.makeAtomicExpression(Formula.INTEGER, null));
 	}
 
+	@Test 
 	public void testBecomesEqual() {
 		assertVisit(ff.makeBecomesEqualTo(id_x, e1, null));
 	}
 
+	@Test 
 	public void testToBecomesMemberOf() {
 		assertVisit(ff.makeBecomesMemberOf(id_x, e1, null));
 	}
 
+	@Test 
 	public void testBecomesSuchThat() {
 		assertVisit(ff.makeBecomesSuchThat(id_x, bid, p1, null));
 	}
 
+	@Test 
 	public void testBinaryExpression() {
 		assertVisit(ff.makeBinaryExpression(Formula.MAPSTO, e1, e2, null));
 	}
 
+	@Test 
 	public void testBinaryPredicate() {
 		assertVisit(ff.makeBinaryPredicate(Formula.LIMP, p1, p2, null));
 	}
 
+	@Test 
 	public void testBoolExpression() {
 		assertVisit(ff.makeBoolExpression(p1, null));
 	}
 
+	@Test 
 	public void testBoundIdentDecl() {
 		assertVisit(ff.makeBoundIdentDecl("x", null));
 	}
 
+	@Test 
 	public void testBoundIdentifier() {
 		assertVisit(ff.makeBoundIdentifier(0, null));
 	}
 
+	@Test 
 	public void testFreeIdentifier() {
 		assertVisit(ff.makeFreeIdentifier("t", null));
 	}
 
+	@Test 
 	public void testIntegerLiteral() {
 		assertVisit(ff.makeIntegerLiteral(BigInteger.ZERO, null));
 	}
 
+	@Test 
 	public void testLiteralPredicate() {
 		assertVisit(ff.makeLiteralPredicate(Formula.BTRUE, null));
 	}
 
+	@Test 
 	public void testPredicateVariable() {
 		final PredicateVariable pvP = ff.makePredicateVariable("$P", null);
 		try {
@@ -285,37 +301,45 @@ public class TestSimpleVisitor extends TestCase {
 		assertVisit(pvP, new TestVisitor2());
 	}
 
+	@Test 
 	public void testQuantifiedExpression() {
 		assertVisit(ff.makeQuantifiedExpression(Formula.CSET, mList(bid),
 				p1, e1, null, Explicit));
 	}
 
+	@Test 
 	public void testQuantifiedPredicate() {
 		assertVisit(ff.makeQuantifiedPredicate(Formula.FORALL,
 				mList(bid), p2, null));
 	}
 
+	@Test 
 	public void testRelationalPredicate() {
 		assertVisit(ff.makeRelationalPredicate(Formula.NOTSUBSETEQ, e1,
 				e2, null));
 	}
 
+	@Test 
 	public void testSetExtension() {
 		assertVisit(ff.makeSetExtension(mList(e1, e2, e3), null));
 	}
 
+	@Test 
 	public void testSimplePredicate() {
 		assertVisit(ff.makeSimplePredicate(Formula.KFINITE, e1, null));
 	}
 
+	@Test 
 	public void testUnaryExpression() {
 		assertVisit(ff.makeUnaryExpression(Formula.POW, e1, null));
 	}
 
+	@Test 
 	public void testUnaryPredicate() {
 		assertVisit(ff.makeUnaryPredicate(Formula.NOT, p1, null));
 	}
 
+	@Test 
 	public void testMultiplePredicate() throws Exception {
 		assertVisit(ff.makeMultiplePredicate(Formula.KPARTITION, mList(e1, e2),
 				null));

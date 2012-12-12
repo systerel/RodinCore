@@ -1,5 +1,7 @@
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertSame;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EMPTYSET;
 import static org.eventb.core.ast.Formula.FORALL;
@@ -24,8 +26,6 @@ import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 
 import java.math.BigInteger;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
@@ -38,20 +38,16 @@ import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.UnaryExpression;
+import org.junit.Test;
 
 /**
  * Unit test for formula normalization.
  * 
  * @author franz
  */
-public class TestFlattener extends TestCase {
+public class TestFlattener {
 
 	private static FormulaFactory ff = FormulaFactory.getDefault();
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
 	
 	private static FreeIdentifier id_x = ff.makeFreeIdentifier("x",null);
 	
@@ -281,6 +277,7 @@ public class TestFlattener extends TestCase {
 	/**
 	 * Main test routine. 
 	 */
+	@Test 
 	public void testNormalizer() {
 		routineTest(unnormalizedExpressions,normalizedExpressions);
 		routineTest(unnormalizedPredicates,normalizedPredicates);
@@ -292,6 +289,7 @@ public class TestFlattener extends TestCase {
 	 * Ensures that flattening an already flattened formula doesn't create a new
 	 * formula.
 	 */
+	@Test 
 	public void testNormalizerNop() {
 		assertNop(normalizedExpressions);
 		assertNop(normalizedPredicates);

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
@@ -54,6 +56,8 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Main test class for formulas containing generic atomic operators.
@@ -75,9 +79,8 @@ public class TestTypedGeneric extends AbstractTests {
 
 	ITypeEnvironment env;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		env = mTypeEnvironment();
 	}
 	
@@ -88,6 +91,7 @@ public class TestTypedGeneric extends AbstractTests {
 	 * specification in the Rodin Deliverable D7 "Event-B Language".
 	 */
 	@SuppressWarnings("deprecation")
+	@Test 
 	public void testExpressions () {
 
 		final AtomicExpression eS = mEmptySet(POW(ty_S));
@@ -228,6 +232,7 @@ public class TestTypedGeneric extends AbstractTests {
 	 * Tests have been entered in the same order as the type-checker
 	 * specification in the Rodin Deliverable D7 "Event-B Language".
 	 */
+	@Test 
 	public void testPredicates () {
 		
 		AtomicExpression eS = mEmptySet(POW(ty_S));
@@ -316,6 +321,7 @@ public class TestTypedGeneric extends AbstractTests {
 	 * Tests have been entered in the same order as the type-checker
 	 * specification in the Rodin Deliverable D7 "Event-B Language".
 	 */
+	@Test 
 	public void testAssignments () {
 		
 		AtomicExpression eS = mEmptySet(POW(ty_S));
@@ -375,6 +381,7 @@ public class TestTypedGeneric extends AbstractTests {
 	 * are parsed with the same code as empty set. We just ensure that they work
 	 * in the simplest case.
 	 */
+	@Test 
 	public void testOtherGenericAtomicExpressions() throws Exception {
 		final Type rSTS = REL(CPROD(ty_S, ty_T), ty_S);
 		doTest(mPrj1(rSTS), rSTS, V2);

@@ -11,6 +11,8 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 
 import java.util.HashSet;
 import java.util.Set;

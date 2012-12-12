@@ -11,6 +11,7 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
@@ -43,7 +44,6 @@ import java.util.List;
 import java.util.Set;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -75,6 +75,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.junit.Test;
 
 /**
  * Ensures that finding accumulators work as expected for addition of new
@@ -82,7 +83,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * implemented. The other aspects of formula inspection are actually tested in
  * class {@link TestSubFormulas}.
  */
-public class TestFormulaInspector extends TestCase {
+public class TestFormulaInspector {
 
 	private static final IFormulaInspector<String> inspector = new DefaultInspector<String>() {
 
@@ -114,6 +115,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that the add method for one finding works.
 	 */
+	@Test 
 	public void testSimpleAdd() throws Exception {
 		assertFindings(mLiteralPredicate(), "simple");
 	}
@@ -121,6 +123,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that the add method for an array of findings works.
 	 */
+	@Test 
 	public void testArrayAdd() throws Exception {
 		assertFindings(mIntegerLiteral(), "1", "2");
 	}
@@ -128,6 +131,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that the add method for a list of findings works.
 	 */
+	@Test 
 	public void testListAdd() throws Exception {
 		assertFindings(mBoundIdentifier(0), "a", "b", "c");
 	}
@@ -371,6 +375,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on associative expressions
 	 */
+	@Test 
 	public void testAssociativeExpression() throws Exception {
 		final Expression child = mAssociativeExpression(eB, eC);
 		final Expression expression = mAssociativeExpression(eA, child, eD);
@@ -380,6 +385,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on associative predicates.
 	 */
+	@Test 
 	public void testAssociativePredicate() throws Exception {
 		final Predicate child = mAssociativePredicate(pB, pC);
 		final Predicate predicate = mAssociativePredicate(pA, child, pD);
@@ -389,6 +395,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on binary expressions
 	 */
+	@Test 
 	public void testBinaryExpression() throws Exception {
 		final Expression grandChild = mBinaryExpression(eB, eC);
 		final Expression child = mBinaryExpression(eA, grandChild);
@@ -399,6 +406,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on binary predicates
 	 */
+	@Test 
 	public void testBinaryPredicate() throws Exception {
 		final Predicate grandChild = mBinaryPredicate(pB, pC);
 		final Predicate child = mBinaryPredicate(pA, grandChild);
@@ -409,6 +417,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on relational predicates
 	 */
+	@Test 
 	public void testRelationalPredicate() throws Exception {
 		final Predicate predicate = mRelationalPredicate(eA, eB);
 		assertTrace(predicate, "");
@@ -419,6 +428,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on extended predicates
 	 */
+	@Test 
 	public void testExtendedPredicate() throws Exception {
 		final Predicate predicate = EFF.makeExtendedPredicate(fooS,
 				Arrays.<Expression> asList(eA, eB),
@@ -434,6 +444,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on extended expression
 	 */
+	@Test 
 	public void testExtendedExpression() throws Exception {
 		final Expression expression = EFF.makeExtendedExpression(barS,
 				Arrays.<Expression> asList(eA, eB),
@@ -449,6 +460,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on unary predicates
 	 */
+	@Test 
 	public void testUnaryPredicate() throws Exception {
 		final UnaryPredicate predicate = mUnaryPredicate(pA);
 		assertTrace(predicate, "");
@@ -458,6 +470,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on unary expressions
 	 */
+	@Test 
 	public void testUnaryExpression() throws Exception {
 		final Expression expression = mUnaryExpression(eA);
 		assertTrace(expression, "");
@@ -468,6 +481,7 @@ public class TestFormulaInspector extends TestCase {
 	 * Ensures that skip methods work as expected on quantified predicates.
 	 * BoundIdentDecl are tested it testBoundIdentDecl.
 	 */
+	@Test 
 	public void testQuantifiedPredicate() throws Exception {
 		final QuantifiedPredicate predicate = mQuantifiedPredicate(
 				mList(b_x, b_y), pA);
@@ -479,6 +493,7 @@ public class TestFormulaInspector extends TestCase {
 	 * Ensures that skip methods work as expected on quantified expressions.
 	 * BoundIdentDecl are tested it testBoundIdentDecl.
 	 */
+	@Test 
 	public void testQuantifiedExpression() throws Exception {
 		final Expression expression = mQuantifiedExpression(mList(b_x, b_y),
 				pA, eA);
@@ -489,6 +504,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on simple predicates
 	 */
+	@Test 
 	public void testSimplePredicate() throws Exception {
 		final SimplePredicate predicate = mSimplePredicate(eA);
 		assertTrace(predicate, "");
@@ -498,6 +514,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on multiple predicates
 	 */
+	@Test 
 	public void testMultiplePredicate() throws Exception {
 		final MultiplePredicate predicate = mMultiplePredicate(eA, eB, eC);
 		assertTrace(predicate, "");
@@ -508,6 +525,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on literal predicates
 	 */
+	@Test 
 	public void testLiteralPredicate() throws Exception {
 		final Predicate predicate = pA;
 		assertTrace(predicate, "");
@@ -517,6 +535,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods work as expected on bool expressions
 	 */
+	@Test 
 	public void testBoolExpression() throws Exception {
 		final Expression expression = mBoolExpression(pA);
 		assertTrace(expression, "");
@@ -526,6 +545,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods works as expected on predicate variable
 	 */
+	@Test 
 	public void testPredicateVariable() throws Exception {
 		final Predicate predicate = ff.makePredicateVariable("$P", null);
 		assertTrace(predicate, "");
@@ -535,6 +555,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods works as expected on atomic expression
 	 */
+	@Test 
 	public void testAtomicExpression() throws Exception {
 		final Expression expression = mAtomicExpression();
 		assertTrace(expression, "");
@@ -544,6 +565,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods works as expected on integerLiteral
 	 */
+	@Test 
 	public void testIntegerLiteral() throws Exception {
 		final Expression expression = mIntegerLiteral();
 		assertTrace(expression, "");
@@ -553,6 +575,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods works as expected on SetExtension
 	 */
+	@Test 
 	public void testSetExtension() throws Exception {
 		final Set<Expression> collec = new HashSet<Expression>();
 		collec.add(eA);
@@ -567,6 +590,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods works as expected on BoundIndentifier
 	 */
+	@Test 
 	public void testBoundIdentifier() throws Exception {
 		final Expression expression = mBoundIdentifier(0);
 		assertTrace(expression, "");
@@ -576,6 +600,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods works as expected on FreeIdentifier
 	 */
+	@Test 
 	public void testFreeIdentifier() throws Exception {
 		final Expression expression = ff.makeFreeIdentifier("x", null);
 		assertTrace(expression, "");
@@ -585,6 +610,7 @@ public class TestFormulaInspector extends TestCase {
 	/**
 	 * Ensures that skip methods works as expected on BoundIdentDecl.
 	 */
+	@Test 
 	public void testBoundIdentDecl() throws Exception {
 		final QuantifiedPredicate predicate = mQuantifiedPredicate(
 				mList(b_x, b_y, b_z), pA);

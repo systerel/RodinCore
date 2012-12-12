@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.EXISTS;
@@ -40,6 +42,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.junit.Test;
 
 public class TestTypedIdentDecl extends AbstractTests {
 
@@ -68,6 +71,7 @@ public class TestTypedIdentDecl extends AbstractTests {
 	/**
 	 * Main test routine for expressions containing bound identifier declarations.
 	 */
+	@Test 
 	public void testExpressions () {
 
 		// Comprehension set and lambda abstraction
@@ -188,6 +192,7 @@ public class TestTypedIdentDecl extends AbstractTests {
 	/**
 	 * Main test routine for predicates.
 	 */
+	@Test 
 	public void testPredicates () {
 		doTest(mQuantifiedPredicate(FORALL,
 				mList(bxS),

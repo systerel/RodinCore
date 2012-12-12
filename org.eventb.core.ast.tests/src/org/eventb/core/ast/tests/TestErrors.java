@@ -13,14 +13,23 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.LanguageVersion.LATEST;
-import static org.eventb.core.ast.ProblemKind.*;
+import static org.eventb.core.ast.ProblemKind.InvalidGenericType;
+import static org.eventb.core.ast.ProblemKind.LexerError;
+import static org.eventb.core.ast.ProblemKind.PredicateVariableNotAllowed;
+import static org.eventb.core.ast.ProblemKind.UnexpectedSubFormulaKind;
+import static org.eventb.core.ast.ProblemKind.UnexpectedSymbol;
 import static org.eventb.core.ast.ProblemSeverities.Error;
 import static org.eventb.core.ast.ProblemSeverities.Warning;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.SourceLocation;
+import org.junit.Test;
 
 /**
  * Unit test of error messages.
@@ -28,11 +37,6 @@ import org.eventb.core.ast.SourceLocation;
  * @author franz
  */
 public class TestErrors extends AbstractTests {
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
 	
 	private static abstract class TestItem {
 		protected final String input;
@@ -73,6 +77,7 @@ public class TestErrors extends AbstractTests {
 	/**
 	 * Test of lexical errors
 	 */
+	@Test 
 	public void testLexErrors() {
 				doLexTest(new PredTestItem(
 						"\ueeee\u22a5",
@@ -115,6 +120,7 @@ public class TestErrors extends AbstractTests {
 	/**
 	 * Test of syntactic errors
 	 */
+	@Test 
 	public void testParseErrors() {
 				doParseTest(new PredTestItem(
 						"finite(\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z",

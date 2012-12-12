@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.expander.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
@@ -26,6 +28,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.expanders.Expanders;
 import org.eventb.core.ast.tests.AbstractTests;
+import org.junit.Test;
 
 public class PartitionExpanderTests extends AbstractTests {
 
@@ -44,6 +47,7 @@ public class PartitionExpanderTests extends AbstractTests {
 		return mMultiplePredicate(KPARTITION, children);
 	}
 
+	@Test 
 	public void testPartition() {
 		assertExpansion(partition(s0), "s0 = ∅");
 		assertExpansion(partition(s0, s1), "s0 = s1");
@@ -65,6 +69,7 @@ public class PartitionExpanderTests extends AbstractTests {
 		);
 	}
 
+	@Test 
 	public void testPartitionForEnumerated() {
 		assertExpansion(partition(s0), "s0 = ∅");
 		assertExpansion(partition(s0, mSetExtension(x1)), "s0 = {x1}");

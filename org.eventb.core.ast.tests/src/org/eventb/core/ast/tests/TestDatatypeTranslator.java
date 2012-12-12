@@ -18,6 +18,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.junit.Test;
 
 /**
  * Unit tests to check both datatype translated expressions and axioms created
@@ -42,6 +43,7 @@ import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
  */
 public class TestDatatypeTranslator extends AbstractTranslatorTests {
 
+	@Test 
 	public void testRecordTypeConstructorTranslation() {
 		final String setsTypenv = "A=ℙ(Agent); I=ℙ(Identifier); "
 				+ "P=ℙ(Person); S=ℙ(Stamp)";
@@ -70,6 +72,7 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 				"∀U,V·partition(Message0[U × V],message0[U × U × V])");
 	}
 
+	@Test 
 	public void testRecursiveTypeConstructorTranslation() {
 		final String setsTypenv = "O=ℙ(Object); T=ℙ(Thing)";
 		final TestTranslationSupport s = mSupport(LIST__DT);
@@ -97,6 +100,7 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 				"∀t0·partition(List0[t0], {nil0}, cons0[t0 × List0[t0]])");
 	}
 
+	@Test 
 	public void testRecordConstructorTranslation() {
 		final TestTranslationSupport s = mSupport(MESSAGE__DT);
 		s.addGivenTypes(MESSAGE_TPARAMS);
@@ -107,6 +111,7 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 		s.assertExprTranslation("message(e,f,g)", "message0(e ↦ f ↦ g)");
 	}
 
+	@Test 
 	public void testRecursiveConstructorTranslation() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.addGivenTypes(LIST_TPARAMS);
@@ -118,6 +123,7 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 		s.assertExprTranslation("cons(thg, lt)", "cons0(thg ↦ lt)");
 	}
 
+	@Test 
 	public void testRecordDestructorTranslation() {
 		final TestTranslationSupport s = mSupport(MESSAGE__DT);
 		s.addGivenTypes(MESSAGE_TPARAMS);
@@ -129,6 +135,7 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 		s.assertExprTranslation("sender(h)", "sender0(h)");
 	}
 
+	@Test 
 	public void testRecursiveDestructorTranslation() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.addGivenTypes(LIST_TPARAMS);
@@ -149,6 +156,7 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 	 *    B(ℤ)    --> B_Type
 	 * </pre>
 	 */
+	@Test 
 	public void testDatatypeInDatatype() {
 		final IDatatypeExtension dtExt = injectExtension("A[T] ::= a; d[T]");
 		final IDatatype datatype = ff.makeDatatype(dtExt);

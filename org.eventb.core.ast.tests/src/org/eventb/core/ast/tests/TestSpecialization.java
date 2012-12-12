@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
@@ -21,6 +22,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.Type;
+import org.junit.Test;
 
 /**
  * Unit tests about specialization creation. These tests ensure that all
@@ -49,6 +51,7 @@ public class TestSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a null given type is rejected.
 	 */
+	@Test 
 	public void testNullGivenType() {
 		try {
 			spec.put(null, Z);
@@ -61,6 +64,7 @@ public class TestSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a null type value is rejected.
 	 */
+	@Test 
 	public void testNullTypeValue() {
 		try {
 			spec.put(S, null);
@@ -73,6 +77,7 @@ public class TestSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a type substitution which is overridden is rejected.
 	 */
+	@Test 
 	public void testOverriddenType() {
 		spec.put(S, Z);
 		try {
@@ -87,6 +92,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that a inserting a type substitution identical to one already
 	 * registered is accepted.
 	 */
+	@Test 
 	public void testOverridenSameType() {
 		spec.put(S, Z);
 		spec.put(S, Z);
@@ -95,6 +101,7 @@ public class TestSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a null identifier is rejected.
 	 */
+	@Test 
 	public void testNullIdentifier() {
 		try {
 			spec.put(null, one);
@@ -107,6 +114,7 @@ public class TestSpecialization extends AbstractTests {
 	/**
 	 * Ensures that an untyped identifier is rejected.
 	 */
+	@Test 
 	public void testUntypedIdentifier() {
 		try {
 			spec.put(untyped, one);
@@ -120,6 +128,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that an identifier that denotes a given type is rejected, if not
 	 * already registered as a type substitution.
 	 */
+	@Test 
 	public void testGivenTypeIdentifier() {
 		try {
 			spec.put(S.toExpression(ff), Z.toExpression(ff));
@@ -133,6 +142,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that an identifier that denotes a given type is accepted, if it
 	 * has already been registered as a type substitution.
 	 */
+	@Test 
 	public void testGivenTypeIdentifierAlready() {
 		spec.put(S, Z);
 		spec.put(S.toExpression(ff), Z.toExpression(ff));
@@ -141,6 +151,7 @@ public class TestSpecialization extends AbstractTests {
 	/**
 	 * Ensures that a null expression is rejected.
 	 */
+	@Test 
 	public void testNullExpression() {
 		try {
 			spec.put(aS, null);
@@ -153,6 +164,7 @@ public class TestSpecialization extends AbstractTests {
 	/**
 	 * Ensures that an untyped expression is rejected.
 	 */
+	@Test 
 	public void testUntypedExpression() {
 		try {
 			spec.put(aS, untyped);
@@ -166,6 +178,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that an identifier substitution which changes type when no type
 	 * substitution has been registered is rejected.
 	 */
+	@Test 
 	public void testIncompatibleTypeNoTypeSubstitution() {
 		try {
 			spec.put(aS, one);
@@ -179,6 +192,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that an identifier substitution which is not compatible with the
 	 * type substitution is rejected.
 	 */
+	@Test 
 	public void testIncompatibleTypeWithTypeSubstitution() {
 		spec.put(S, Z);
 		try {
@@ -193,6 +207,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that the type of the expression is checked within complex
 	 * replacement types.
 	 */
+	@Test 
 	public void testIncompatibleComplexType() {
 		spec.put(S, ff.makePowerSetType(Z));
 		try {
@@ -207,6 +222,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that an identifier substitution for which the replacement
 	 * expression is of same type as the given identifier is accepted.
 	 */
+	@Test 
 	public void testSameTypeIdentSubstitution() {
 		spec.put(aS, bS);
 	}
@@ -215,6 +231,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that registering two substitution for the same identifier but
 	 * with different expressions is rejected.
 	 */
+	@Test 
 	public void testOverridenExpression() {
 		spec.put(S, Z);
 		spec.put(aS, one);
@@ -230,6 +247,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that registering twice the same identifier substitution is
 	 * accepted.
 	 */
+	@Test 
 	public void testOverridenSameExpression() {
 		spec.put(S, Z);
 		spec.put(aS, one);
@@ -240,6 +258,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that a type substitution which is not compatible with the
 	 * identifier substitutions is rejected.
 	 */
+	@Test 
 	public void testIncompatibleTypeSubstitution() {
 		spec.put(aS, bS);
 		try {
@@ -254,6 +273,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that an identifier substitution which contains an ill-formed expression 
 	 * is rejected.
 	 */
+	@Test 
 	public void testIllFormedExpression() {
 		try {
 			spec.put(aS, ff.makeBoundIdentifier(0, null, S));
@@ -266,6 +286,7 @@ public class TestSpecialization extends AbstractTests {
 	/**
 	 * Ensures that types can be swapped in a specialization.
 	 */
+	@Test 
 	public void testTypeSwap() {
 		spec.put(S, T);
 		spec.put(T, S);
@@ -274,6 +295,7 @@ public class TestSpecialization extends AbstractTests {
 	/**
 	 * Ensures that identifiers can be swapped in a specialization.
 	 */
+	@Test 
 	public void testIdentSwap() {
 		spec.put(S, T);
 		spec.put(aS, bT);
@@ -284,6 +306,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that both types and identifiers can be swapped in a
 	 * specialization.
 	 */
+	@Test 
 	public void testBothSwap() {
 		spec.put(S, T);
 		spec.put(T, S);
@@ -295,6 +318,7 @@ public class TestSpecialization extends AbstractTests {
 	 * Ensures that both types and identifiers can be swapped in a
 	 * specialization, entering substitutions alternatively.
 	 */
+	@Test 
 	public void testBothSwapMixed() {
 		spec.put(S, T);
 		spec.put(aS, bT);

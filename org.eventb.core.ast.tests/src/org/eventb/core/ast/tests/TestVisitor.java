@@ -13,6 +13,8 @@
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
@@ -21,8 +23,6 @@ import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 
 import java.math.BigInteger;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -55,8 +55,9 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.junit.Test;
 
-public class TestVisitor extends TestCase {
+public class TestVisitor {
 	
 	FormulaFactory ff = FormulaFactory.getDefault();
 	
@@ -1953,6 +1954,7 @@ public class TestVisitor extends TestCase {
 	 * Simple test of the visitor implementation where we always do a full
 	 * traversal of the AST.
 	 */
+	@Test 
 	public void testAcceptFull() {
 		for (TestItem item: items) {
 			item.runTest();
@@ -1963,6 +1965,7 @@ public class TestVisitor extends TestCase {
 	 * Test based on the examples given in {@link org.eventb.core.ast.IVisitor}
 	 * documentation.
 	 */
+	@Test 
 	public void testIVisitorDoc() {
 		final Expression id_x = mFreeIdentifier("x");
 		final Expression id_y = mFreeIdentifier("y");
@@ -2020,6 +2023,7 @@ public class TestVisitor extends TestCase {
 	 * Ensures that an old visitor run on a predicate variable raises an
 	 * exception.
 	 */
+	@Test 
 	public void testOldVisitorOnPredicateVariable() throws Exception {
 		final Predicate pv = ff.makePredicateVariable("$P", null);
 		assertException(pv, new CounterVisitor());

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
@@ -20,6 +22,7 @@ import org.eventb.core.ast.IInferredTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Type;
+import org.junit.Test;
 
 /**
  * Unit test of the mathematical formula Type-Checker for expressions with an
@@ -35,6 +38,7 @@ public class TestExprTypeChecker extends AbstractTests {
 	/**
 	 * Main test routine.
 	 */
+	@Test 
 	public void testExpTypeChecker() {
 		testExpression("x", "S",//
 				mTypeEnvironment(),//
@@ -74,11 +78,7 @@ public class TestExprTypeChecker extends AbstractTests {
 		IInferredTypeEnvironment inferredTypEnv = null;
 		if (inferredEnv != null) {
 			inferredTypEnv = mInferredTypeEnvironment(initialEnv);
-			ITypeEnvironment.IIterator iter = inferredEnv.getIterator();
-			while (iter.hasNext()) {
-				iter.advance();
-				inferredTypEnv.addName(iter.getName(), iter.getType());
-			}
+			inferredTypEnv.addAll(inferredEnv);
 		}
 		assertEquals(
 				"\nTest failed on: " + image + "\nExpected type: "

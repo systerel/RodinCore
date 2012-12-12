@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertSame;
 import static org.eventb.core.ast.LanguageVersion.LATEST;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.SourceLocation;
+import org.junit.Test;
 
 public class TestOrigin extends AbstractTests {
 
@@ -128,6 +130,7 @@ public class TestOrigin extends AbstractTests {
 	/**
 	 * Main test routine.
 	 */
+	@Test 
 	public void testParserOrigin() {
 		verifyPredicate("\u22a5");
 		verifyPredicate("\u00ac\u00ac\u22a5");

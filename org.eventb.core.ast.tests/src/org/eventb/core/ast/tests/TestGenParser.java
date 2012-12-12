@@ -11,6 +11,14 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNotSame;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.AssociativeExpression.BCOMP_ID;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;
@@ -140,6 +148,7 @@ import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
 import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.operators.OperatorRelationship;
+import org.junit.Test;
 
 /**
  * This test class aims at supporting generic parser development. It is not part
@@ -444,11 +453,13 @@ public class TestGenParser extends AbstractTests {
 		doTest(formula, expectedV2, LanguageVersion.V2);
 	}
 
+	@Test 
 	public void testIntegerLiteral() throws Exception {
 		final Expression expected = ff.makeIntegerLiteral(BigInteger.ONE, null);
 		doExpressionTest("1", expected);
 	}
 
+	@Test 
 	public void testPlus() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(PLUS,
 				Arrays.<Expression> asList(ff.makeIntegerLiteral(BigInteger
@@ -457,6 +468,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("2+3", expected);
 	}
 
+	@Test 
 	public void testPlusAsso() throws Exception {
 		final Expression expected = ff
 				.makeAssociativeExpression(PLUS, Arrays.<Expression> asList(
@@ -466,6 +478,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("1+2+3", expected);
 	}
 
+	@Test 
 	public void testPlusAssoWithParenLeft() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(PLUS, Arrays.<Expression> asList(
 								ff.makeAssociativeExpression(PLUS, Arrays.<Expression> asList(
@@ -475,6 +488,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("(1+2)+3", expected);
 	}
 
+	@Test 
 	public void testPlusAssoWithParenRight() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(PLUS, Arrays.<Expression> asList(
 								ff.makeIntegerLiteral(BigInteger.valueOf(1), null),
@@ -484,6 +498,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("1+(2+3)", expected);
 	}
 
+	@Test 
 	public void testPlusMult() throws Exception {
 		final Expression expected = ff
 				.makeAssociativeExpression(PLUS, Arrays
@@ -500,6 +515,7 @@ public class TestGenParser extends AbstractTests {
 	
 	// verifies that parentheses do correctly restore priorities when closed
 	// when it fails, the result is 1∗(2+3)
+	@Test 
 	public void testPlusMultParen() throws Exception {
 		final Expression expected = ff
 				.makeAssociativeExpression(PLUS, Arrays
@@ -514,23 +530,27 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("1∗(2)+3", expected);
 	}
 	
+	@Test 
 	public void testIdentDoubleParen() throws Exception {
 		final Expression expected = FRID_A;
 		doExpressionTest("((A))", expected);
 	}
 
+	@Test 
 	public void testUnion() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(BUNION,
 				Arrays.<Expression> asList(FRID_A, FRID_B), null);
 		doExpressionTest("A∪B", expected);
 	}
 
+	@Test 
 	public void testInter() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(BINTER,
 				Arrays.<Expression> asList(FRID_A, FRID_B), null);
 		doExpressionTest("A∩B", expected);
 	}
 
+	@Test 
 	public void testUnionInter() throws Exception {
 		final Expression expected = ff
 				.makeAssociativeExpression(BINTER, Arrays.<Expression> asList(
@@ -542,6 +562,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("A∩(B∪C)", expected);
 	}
 	
+	@Test 
 	public void testUnionInterNoParen() throws Exception {
 		final IParseResult result = parseExprRes("A∩B∪C");
 		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
@@ -549,18 +570,21 @@ public class TestGenParser extends AbstractTests {
 				"∪"));
 	}
 
+	@Test 
 	public void testAnd() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
 				Arrays.<Predicate> asList(LIT_BTRUE, LIT_BFALSE), null);
 		doPredicateTest("⊤∧⊥", expected);
 	}
 	
+	@Test 
 	public void testAndAsso() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
 				Arrays.<Predicate> asList(LIT_BTRUE, LIT_BTRUE, LIT_BTRUE), null);
 		doPredicateTest("⊤∧⊤∧⊤", expected);
 	}
 	
+	@Test 
 	public void testAndAssoWithParenLeft() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND, 
 				Arrays.<Predicate> asList(
@@ -570,6 +594,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("(⊤∧⊤)∧⊤", expected);
 	}
 	
+	@Test 
 	public void testAndAssoWithParenRight() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND, 
 				Arrays.<Predicate> asList(
@@ -580,6 +605,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("⊤∧(⊤∧⊤)", expected);
 	}
 	
+	@Test 
 	public void testOrAnd() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(LOR,
 				Arrays.<Predicate> asList(ff.makeAssociativePredicate(
@@ -589,6 +615,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("(⊤∧⊥)∨⊥", expected);
 	}	
 	
+	@Test 
 	public void testSourceLocation() throws Exception {
 		final Predicate pred = parsePred("(⊤∧⊥)∨⊥");
 		assertNotNull(pred.getSourceLocation());
@@ -597,6 +624,7 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(new SourceLocation(6, 6), childFalse.getSourceLocation());
 	}
 	
+	@Test 
 	public void testSourceLocation2() throws Exception {
 		final Predicate pred = parsePred("⊤∧(⊥∨⊥        )");
 		assertNotNull(pred.getSourceLocation());
@@ -722,6 +750,7 @@ public class TestGenParser extends AbstractTests {
 
 	};
 
+	@Test 
 	public void testExtensionDirectProduct() throws Exception {
 		final FormulaFactory extFac = FormulaFactory
 				.getInstance(DIRECT_PRODUCT);
@@ -733,6 +762,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("A§B", expected, extFac);
 	}
 
+	@Test 
 	public void testBinaryWithClosedOperands() throws Exception {
 		final FormulaFactory extFac = FormulaFactory
 				.getInstance(DIRECT_PRODUCT);
@@ -746,6 +776,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("dom(A)§dom(B)", expected, extFac);
 	}
 
+	@Test 
 	public void testExtensionInFormula() throws Exception {
 		final FormulaFactory extFac = FormulaFactory
 				.getInstance(DIRECT_PRODUCT);
@@ -863,6 +894,7 @@ public class TestGenParser extends AbstractTests {
 	public static final IExpressionExtension MONEY = new Money(true);
 
 	// verify that the newly introduced symbol cannot be an identifier
+	@Test 
 	public void testExtensionSymbol() throws Exception {
 		final String strAEuroB = "A€B";
 		
@@ -893,6 +925,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("A € B", expectedExtendedSpaced, extFac);
 	}
 	
+	@Test 
 	public void testAssociativeExtension() throws Exception {
 		final FormulaFactory extFac = FormulaFactory.getInstance(MONEY);
 		final Expression expected = extFac.makeExtendedExpression(MONEY,
@@ -904,6 +937,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("A € B € C", expected, extFac);
 	}
 	
+	@Test 
 	public void testAssociativeExtensionUnparseL() throws Exception {
 		final FormulaFactory extFac = FormulaFactory.getInstance(MONEY);
 		final Expression expected = extFac.makeExtendedExpression(MONEY,
@@ -917,6 +951,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("(A € B) € C", expected, extFac);
 	}
 	
+	@Test 
 	public void testAssociativeExtensionUnparseR() throws Exception {
 		final FormulaFactory extFac = FormulaFactory.getInstance(MONEY);
 		final Expression expected = extFac.makeExtendedExpression(MONEY,
@@ -930,6 +965,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("A € (B € C)", expected, extFac);
 	}
 	
+	@Test 
 	public void testAssociativeWithClosedOperands() throws Exception {
 		final Money money = new Money(false);
 		final FormulaFactory extFac = FormulaFactory.getInstance(money);
@@ -945,6 +981,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("dom(A) € dom(B) € dom(C)", expected, extFac);
 	}
 
+	@Test 
 	public void testEqual() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(EQUAL,
 				FRID_A,
@@ -952,12 +989,14 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("A=B", expected);
 	}
 	
+	@Test 
 	public void testForall() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
 				new BoundIdentDecl[] { BID_x }, LIT_BFALSE, null);
 		doPredicateTest("∀x·⊥", expected);
 	}
 
+	@Test 
 	public void testForallList() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
 				new BoundIdentDecl[] { BID_x,
@@ -967,6 +1006,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("∀x,y,z·⊥", expected);
 	}
 	
+	@Test 
 	public void testForallRefs() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
 				new BoundIdentDecl[] { BID_x,
@@ -977,12 +1017,14 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("∀x,y·x>y", expected);
 	}
 	
+	@Test 
 	public void testExists() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(EXISTS,
 				new BoundIdentDecl[] { BID_x }, LIT_BFALSE, null);
 		doPredicateTest("∃x·⊥", expected);
 	}
 
+	@Test 
 	public void testExistsList() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(EXISTS,
 				new BoundIdentDecl[] { BID_x,
@@ -991,6 +1033,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("∃x,y,z·⊥", expected);
 	}
 	
+	@Test 
 	public void testGT() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(GT,
 				FRID_a,
@@ -998,6 +1041,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("a>0", expected);
 	}
 
+	@Test 
 	public void testLE() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(LE,
 				FRID_a,
@@ -1005,6 +1049,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("a≤0", expected);
 	}
 
+	@Test 
 	public void testFunImage() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
 				FRID_f,
@@ -1012,6 +1057,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("f(0)", expected);
 	}
 
+	@Test 
 	public void testFunImageLeftAssociativity() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
 				ff.makeBinaryExpression(FUNIMAGE,
@@ -1021,6 +1067,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("f(0)(1)", expected);
 	}
 
+	@Test 
 	public void testFunImageInner() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
 				FRID_f,
@@ -1030,12 +1077,14 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("f(f(0))", expected);
 	}
 
+	@Test 
 	public void testCard() throws Exception {
 		final Expression expected = ff.makeUnaryExpression(KCARD,
 				FRID_S, null);
 		doExpressionTest("card(S)", expected);
 	}
 	
+	@Test 
 	public void testNudNoLed() throws Exception {
 		assertFailure(
 				parseExprRes("0 card(x)"),
@@ -1044,6 +1093,7 @@ public class TestGenParser extends AbstractTests {
 						ProblemSeverities.Error, "card"));
 	}
 	
+	@Test 
 	public void testLedNoNud() throws Exception {
 		assertFailure(
 				parseExprRes("x += 2"),
@@ -1052,37 +1102,44 @@ public class TestGenParser extends AbstractTests {
 						ProblemSeverities.Error, "="));
 	}
 	
+	@Test 
 	public void testIn() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(IN, ZERO, FRID_S, null);
 		doPredicateTest("0 ∈ S", expected);		
 	}
 	
+	@Test 
 	public void testInt() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(IN, ZERO, INT, null);
 		doPredicateTest("0 ∈ ℤ", expected);
 	}
 	
+	@Test 
 	public void testPowerSet() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(IN, FRID_S, POW_INT, null);
 		doPredicateTest("S ∈ ℙ(ℤ)", expected);
 	}
 	
+	@Test 
 	public void testCartProd() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(CPROD, FRID_S, FRID_S, null);
 		doExpressionTest("S × S", expected);
 	}
 	
+	@Test 
 	public void testSingleton() throws Exception {
 		final Expression expected = ff.makeSetExtension(ZERO, null);
 		doExpressionTest("{0}", expected);		
 	}
 	
+	@Test 
 	public void testSetExtension() throws Exception {
 		final Expression expected = ff.makeSetExtension(Arrays
 				.<Expression> asList(ZERO, ONE), null);
 		doExpressionTest("{0,1}", expected);		
 	}
 	
+	@Test 
 	public void testSetExtensionEmpty() throws Exception {
 		final Expression expected = ff.makeSetExtension(Arrays
 				.<Expression> asList(), null);
@@ -1091,6 +1148,7 @@ public class TestGenParser extends AbstractTests {
 	
 	// verifies that priority between Maplet and Ovr is not taken into account
 	// inside braces
+	@Test 
 	public void testSetExtensionPriority() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(OVR, Arrays.<Expression>asList(
 			FRID_f,
@@ -1099,6 +1157,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("f{0↦1}", expected);		
 	}
 
+	@Test 
 	public void testSetExtensionEqual() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(EQUAL,
 				ff.makeSetExtension(Arrays.<Expression> asList(ZERO, ONE), null),
@@ -1106,6 +1165,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("{0,1}=f", expected);
 	}
 
+	@Test 
 	public void testEmptySet() throws Exception {
 		final Predicate expected = ff.makeRelationalPredicate(IN,
 				ZERO,
@@ -1113,44 +1173,52 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("0 ∈ ∅", expected);		
 	}
 	
+	@Test 
 	public void testParseTypeInt() throws Exception {
 		final Type expected = INT_TYPE;
 		doTypeTest("ℤ", expected);
 	}
 	
+	@Test 
 	public void testParseTypeRelational() throws Exception {
 		final Type expected = REL_INT_INT;
 		doTypeTest("ℙ(ℤ×ℤ)", expected);
 	}
 
+	@Test 
 	public void testParseTypeGivenType() throws Exception {
 		final Type expected = S_TYPE;
 		doTypeTest("S", expected);
 	}
 	
+	@Test 
 	public void testParseRelationalType() throws Exception {
 		final Type expected = REL_INT_INT;
 		doTypeTest("ℤ↔ℤ", expected);
 	}
 
 	
+	@Test 
 	public void testEmptySetOfType() throws Exception {
 		final Expression expected = ff.makeEmptySet(POW_INT_TYPE, null);
 		doExpressionTest("(∅ ⦂ ℙ(ℤ))", expected, POW_INT_TYPE, false);
 	}
 	
+	@Test 
 	public void testIdOfType() throws Exception {
 		final Expression expected = ff.makeAtomicExpression(KID_GEN, null, ff
 				.makeRelationalType(INT_TYPE, INT_TYPE));
 		doExpressionTest("(id ⦂ ℙ(ℤ×ℤ))", expected, REL_INT_INT, false);
 	}
 	
+	@Test 
 	public void testIdOfTypeRel() throws Exception {
 		final Expression expected = ff.makeAtomicExpression(KID_GEN, null, ff
 				.makeRelationalType(INT_TYPE, INT_TYPE));
 		doExpressionTest("(id ⦂ ℤ↔ℤ)", expected, REL_INT_INT, false);
 	}
 	
+	@Test 
 	public void testPrj1OfType() throws Exception {
 		final PowerSetType expectedType = ff
 				.makeRelationalType(ff.makeProductType(S_TYPE, INT_TYPE),
@@ -1159,6 +1227,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("(prj1 ⦂ ℙ(S×ℤ×S))", expected, expectedType, false);		
 	}
 	
+	@Test 
 	public void testPrj2OfType() throws Exception {
 		final PowerSetType expectedType = ff
 				.makeRelationalType(ff.makeProductType(INT_TYPE, S_TYPE),
@@ -1167,12 +1236,14 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("(prj2 ⦂ ℙ(ℤ×S×S))", expected, expectedType, false);		
 	}
 	
+	@Test 
 	public void testIdentOfType() throws Exception {
 		final IParseResult result = parseExprRes("(x ⦂ ℙ(ℤ))");
 		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
 				ProblemKind.UnexpectedOftype, ProblemSeverities.Error));
 	}
 	
+	@Test 
 	public void testBoundIdentDeclOfType() throws Exception {
 		final QuantifiedPredicate expected = ff.makeQuantifiedPredicate(FORALL,
 				asList( ff.makeBoundIdentDecl("x", null, INT_TYPE) ),
@@ -1180,6 +1251,7 @@ public class TestGenParser extends AbstractTests {
 		doQuantPredicateTest("∀x⦂ℤ·⊥", expected, INT_TYPE);
 	}
 	
+	@Test 
 	public void testBoundIdentDeclSeveralOfType() throws Exception {
 		final QuantifiedPredicate expected = ff.makeQuantifiedPredicate(FORALL,
 				asList(ff.makeBoundIdentDecl("x", null, INT_TYPE),
@@ -1189,6 +1261,7 @@ public class TestGenParser extends AbstractTests {
 		doQuantPredicateTest("∀x⦂ℤ,y,z⦂ℙ(S)·⊥", expected, INT_TYPE, null, POW_S_TYPE);
 	}
 
+	@Test 
 	public void testBoundIdentDeclExprOfType() throws Exception {
 		final QuantifiedExpression expected = ff.makeQuantifiedExpression(QUNION,
 				asList(BID_xZ),
@@ -1201,6 +1274,7 @@ public class TestGenParser extends AbstractTests {
 		doQuantExpressionTest("⋃x⦂ℤ·x>0∣1∗x", expected, INT_TYPE);
 	}
 	
+	@Test 
 	public void testBoundIdentDeclLambdaOfType() throws Exception {
 		final BoundIdentDecl bid_x_INT = ff.makeBoundIdentDecl("x", null, INT_TYPE);
 		final BoundIdentDecl bid_y_S = ff.makeBoundIdentDecl("y", null, S_TYPE);
@@ -1225,18 +1299,21 @@ public class TestGenParser extends AbstractTests {
 		doQuantExpressionTest("λx⦂ℤ↦y⦂S·x>y∣ x+y", expected, INT_TYPE, S_TYPE);
 	}
 	
+	@Test 
 	public void testCSetExplicit() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x), LIT_BTRUE, BI_0, null, Form.Explicit);
 		doExpressionTest("{x · ⊤ ∣ x}", expected);		
 	}
 	
+	@Test 
 	public void testCSetImplicit() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x), LIT_BTRUE, BI_0, null, Form.Implicit);
 		doExpressionTest("{x∣ ⊤}", expected);
 	}
 	
+	@Test 
 	public void testCSetImplicitOftype() throws Exception {
 		final ASTProblem identExpected = new ASTProblem(new SourceLocation(1, 1),
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "an identifier", "(");
@@ -1264,6 +1341,7 @@ public class TestGenParser extends AbstractTests {
 	
 	// verifies that priority between Maplet and Ovr is not taken into account
 	// inside braces
+	@Test 
 	public void testCSetPriority() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(OVR, Arrays.<Expression>asList(
 				FRID_f,
@@ -1275,6 +1353,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("f{x↦x ∣ ⊤}", expected);		
 	}
 	
+	@Test 
 	public void testForallCSetPriority() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
 				new BoundIdentDecl[] { BID_x },
@@ -1291,6 +1370,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("∀x·{y·x>y∣x−y}≠∅", expected);
 	}
 	
+	@Test 
 	public void testCSetForallPriority() throws Exception {
 						
 		final Expression expected =			
@@ -1306,6 +1386,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("{y∣∀x·x>y}", expected);		
 	}
 	
+	@Test 
 	public void testForallCSetExplicitBoundTwice() throws Exception {
 		final Predicate expected = 
 			ff.makeQuantifiedPredicate(FORALL,
@@ -1320,6 +1401,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("∀x·finite(x ∪ {x · ⊤ ∣ x})", expected);		
 	}
 	
+	@Test 
 	public void testForallCSetImplicitBoundTwice() throws Exception {
 		final Predicate expected =
 			ff.makeQuantifiedPredicate(FORALL,
@@ -1334,12 +1416,14 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("∀x·finite(x ∪ {x∣ ⊤})", expected);
 	}
 
+	@Test 
 	public void testMapsto() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(MAPSTO, ZERO,
 				FRID_S, null);
 		doExpressionTest("0 ↦ S", expected);		
 	}
 	
+	@Test 
 	public void testLambda() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x), LIT_BTRUE,
@@ -1348,6 +1432,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("λx·⊤∣ x", expected);
 	}
 	
+	@Test 
 	public void testLambdaMaplet() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x, BID_y),
@@ -1361,6 +1446,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("λx↦y·x>y∣ x+y", expected);
 	}
 
+	@Test 
 	public void testLambdaMaplet2() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x, BID_y, BID_z),
@@ -1381,6 +1467,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("λx↦y↦z·x>y+z∣ x+y+z", expected);
 	}
 
+	@Test 
 	public void testLambdaMapletParentheses() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x, BID_y, BID_z),
@@ -1400,6 +1487,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("λx↦(y↦z)·x>y+z∣ x+y+z", expected);
 	}
 	
+	@Test 
 	public void testLambdaMapletParentheses2() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_u, BID_x, BID_y, BID_z),
@@ -1419,6 +1507,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("λ(u↦x)↦(y↦z)·u>x+y+z∣ u+x+y+z", expected);
 	}
 	
+	@Test 
 	public void testLambdaMapletParentheses3() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_u, BID_x, BID_y, BID_z),
@@ -1440,12 +1529,14 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("λu↦(x↦(y↦z))·u>x+y+z∣ u+x+y+z", expected);
 	}
 	
+	@Test 
 	public void testLambdaDuplicateIdents() throws Exception {
 		final IParseResult result = parseExprRes("λx↦(y↦x)·x>y∣ x+y");
 		assertFailure(result, new ASTProblem(new SourceLocation(6, 6),
 				ProblemKind.DuplicateIdentifierInPattern, ProblemSeverities.Error, "x"));
 	}
 
+	@Test 
 	public void testForallLambdaBoundTwice() throws Exception {
 		final Predicate expected =
 			ff.makeQuantifiedPredicate(FORALL,
@@ -1465,6 +1556,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("∀x·finite(x ∪ (λx↦y·x>y∣ x+y))",expected);
 	}
 
+	@Test 
 	public void testInnerBoundIdentsForall() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
 				new BoundIdentDecl[] { BID_x },
@@ -1476,6 +1568,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("∀x·∃y·x>y", expected);
 	}
 	
+	@Test 
 	public void testInnerBoundIdentsCSet() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x),
@@ -1489,6 +1582,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("{x∣ ∃y·x>y}", expected);		
 	}
 	
+	@Test 
 	public void testLIMP() throws Exception {
 		final Predicate expected = 
 				ff.makeBinaryPredicate(LIMP,
@@ -1498,6 +1592,7 @@ public class TestGenParser extends AbstractTests {
 	
 	// verify that a bound identifier reference after an inner bound predicate
 	// is parsed properly (involves boundStack.pop())
+	@Test 
 	public void testBoundAfterInnerBound() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
 				new BoundIdentDecl[] { BID_x },
@@ -1514,16 +1609,19 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("∀x·(∃y·x>y)⇒x>0", expected);
 	}
 
+	@Test 
 	public void testTrue() throws Exception {
 		final Expression expected = ff.makeAtomicExpression(TRUE, null);
 		doExpressionTest("TRUE", expected);
 	}
 	
+	@Test 
 	public void testBecomesEqualTo() throws Exception {
 		final Assignment expected = ff.makeBecomesEqualTo(FRID_a, ZERO, null);
 		doAssignmentTest("a ≔ 0", expected);
 	}
 
+	@Test 
 	public void testBecomesEqualToList() throws Exception {
 		final Assignment expected = ff.makeBecomesEqualTo(
 				asList(FRID_a, FRID_b, FRID_c),
@@ -1531,6 +1629,7 @@ public class TestGenParser extends AbstractTests {
 		doAssignmentTest("a,b,c ≔ 0,∅,TRUE", expected);
 	}
 	
+	@Test 
 	public void testFunImageBecomesEqualTo() throws Exception {
 		final Expression overriding = makeFunctionOverriding(FRID_f, FRID_a, ZERO);
 		final Assignment expected = ff.makeBecomesEqualTo(FRID_f, overriding, null);
@@ -1546,11 +1645,13 @@ public class TestGenParser extends AbstractTests {
 				ident, singletonSet }, null);
 	}
 
+	@Test 
 	public void testBecomesMemberOf() throws Exception {
 		final Assignment expected = ff.makeBecomesMemberOf(FRID_a, FRID_S, null);
 		doAssignmentTest("a :∈ S", expected);
 	}
 
+	@Test 
 	public void testBecomesMemberOfList() throws Exception {
 		final ASTProblem becmoError = new ASTProblem(new SourceLocation(1, 1),
 				ProblemKind.BECMOAppliesToOneIdent, ProblemSeverities.Error);
@@ -1560,12 +1661,14 @@ public class TestGenParser extends AbstractTests {
 				becmoError);
 	}
 
+	@Test 
 	public void testBecomesSuchThat() throws Exception {
 		final Assignment expected = ff.makeBecomesSuchThat(FRID_a,
 				FRID_a.asPrimedDecl(ff), LIT_BTRUE, null);
 		doAssignmentTest("a :∣  ⊤", expected);
 	}
 
+	@Test 
 	public void testBecomesSuchThatList() throws Exception {
 		final List<FreeIdentifier> idents = asList(FRID_a, FRID_b);
 		final List<BoundIdentDecl> primed = asList(FRID_a.asPrimedDecl(ff),
@@ -1575,6 +1678,7 @@ public class TestGenParser extends AbstractTests {
 		doAssignmentTest("a,b :∣  ⊤", expected);
 	}
 
+	@Test 
 	public void testBecomesSuchThatPrimed() throws Exception {
 		final List<FreeIdentifier> idents = asList(FRID_a, FRID_b);
 		final List<BoundIdentDecl> primed = asList(FRID_a.asPrimedDecl(ff),
@@ -1587,41 +1691,48 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("a,b :∣  a'=b ∧ b'=a  ", expected);
 	}
 
+	@Test 
 	public void testNot() throws Exception {
 		final Predicate expected = ff.makeUnaryPredicate(NOT,
 				LIT_BTRUE, null);
 		doPredicateTest("¬⊤", expected);
 	}
 	
+	@Test 
 	public void testTotalFunction() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(TFUN, FRID_S,
 				FRID_S, null);
 		doExpressionTest("S → S", expected);
 	}
 	
+	@Test 
 	public void testUpTo() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(UPTO, ZERO,
 				ONE, null);
 		doExpressionTest("0‥1", expected);
 	}
 	
+	@Test 
 	public void testConverse() throws Exception {
 		final Expression expected = ff.makeUnaryExpression(CONVERSE, 
 				FRID_a, null);
 		doExpressionTest("a∼", expected);
 	}
 	
+	@Test 
 	public void testKBool() throws Exception {
 		final Expression expected = ff.makeBoolExpression(LIT_BTRUE, null);
 		doExpressionTest("bool(⊤)", expected);
 	}
 	
+	@Test 
 	public void testPartitionEmpty() throws Exception {
 		final Predicate expected = ff.makeMultiplePredicate(KPARTITION,
 				Arrays.<Expression>asList(FRID_S), null);
 		doPredicateTest("partition(S)", expected);
 	}
 	
+	@Test 
 	public void testPartitionSingleton() throws Exception {
 		final Predicate expected = ff.makeMultiplePredicate(KPARTITION,
 				Arrays.<Expression>asList(
@@ -1630,6 +1741,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("partition(S, {a})", expected);
 	}
 	
+	@Test 
 	public void testPartitionSeveral() throws Exception {
 		final Predicate expected = ff.makeMultiplePredicate(KPARTITION,
 				Arrays.<Expression>asList(
@@ -1637,18 +1749,21 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("partition(S, A, B)", expected);
 	}
 	
+	@Test 
 	public void testFinite() throws Exception {
 		final Predicate expected = ff
 				.makeSimplePredicate(KFINITE, FRID_S, null);
 		doPredicateTest("finite(S)", expected);
 	}
 	
+	@Test 
 	public void testPredicateVariable() throws Exception {
 		final Predicate expected = PV_P;
 		doPredicatePatternTest("$P", expected);
 		
 	}
 	
+	@Test 
 	public void testPredVarInner() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(LAND, Arrays.<Predicate>asList(
 				LIT_BTRUE,
@@ -1657,6 +1772,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicatePatternTest("⊤∧($P)", expected);
 	}
 	
+	@Test 
 	public void testPredVarRefused() throws Exception {
 		assertFailure(parsePredRes("$P"),
 				new ASTProblem(new SourceLocation(0, 1),
@@ -1664,6 +1780,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	@SuppressWarnings("deprecation")
+	@Test 
 	public void testIdV1V2() throws Exception {
 		final Expression expectedV1 = ff.makeUnaryExpression(KID, FRID_S, null);
 		final Expression expectedV2 = ff.makeBinaryExpression(FUNIMAGE,
@@ -1673,6 +1790,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	@SuppressWarnings("deprecation")
+	@Test 
 	public void testPrj1V1V2() throws Exception {
 		final Expression expectedV1 = ff.makeUnaryExpression(KPRJ1, FRID_f, null);
 		final Expression expectedV2 = ff.makeBinaryExpression(FUNIMAGE,
@@ -1682,6 +1800,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	@SuppressWarnings("deprecation")
+	@Test 
 	public void testPrj2V1V2() throws Exception {
 		final Expression expectedV1 = ff.makeUnaryExpression(KPRJ2, FRID_f, null);
 		final Expression expectedV2 = ff.makeBinaryExpression(FUNIMAGE,
@@ -1690,6 +1809,7 @@ public class TestGenParser extends AbstractTests {
 		doVersionTest("prj2(f)", expectedV1, expectedV2);
 	}
 	
+	@Test 
 	public void testPartitionV1V2() throws Exception {
 		final Expression expectedV1 = ffV1.makeBinaryExpression(FUNIMAGE,
 				ffV1.makeFreeIdentifier("partition", null),
@@ -1699,6 +1819,7 @@ public class TestGenParser extends AbstractTests {
 		doVersionTest("partition(S)", expectedV1, expectedV2);
 	}
 	
+	@Test 
 	public void testUnMinus() throws Exception {
 		final Expression detached = ff.makeUnaryExpression(UNMINUS, ONE, null);
 		doExpressionTest("− 1", detached);
@@ -1707,12 +1828,14 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("−1", attached);
 	}
 	
+	@Test 
 	public void testBinMinus() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(MINUS, ZERO,
 				ONE, null);
 		doExpressionTest("0−1", expected);
 	}
 	
+	@Test 
 	public void testQUnion() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(QUNION,
 				asList(BID_x),
@@ -1725,6 +1848,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("⋃x·x>0∣1∗x", expected);
 	}
 	
+	@Test 
 	public void testQUnionSeveral() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(QUNION,
 				asList(BID_x, BID_y),
@@ -1737,6 +1861,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("⋃x,y·x>y∣y∗x", expected);
 	}
 	
+	@Test 
 	public void testQUnionImplicit() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(QUNION,
 				asList(BID_x),
@@ -1749,6 +1874,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("⋃ 1∗x∣x>0", expected);
 	}
 	
+	@Test 
 	public void testRelImage() throws Exception {
 		final Expression expected = 
 				ff.makeBinaryExpression(RELIMAGE,
@@ -1760,6 +1886,7 @@ public class TestGenParser extends AbstractTests {
 
 	// verifies that priority between Maplet and Ovr is not taken into account
 	// inside square brackets
+	@Test 
 	public void testRelImagePriority() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(OVR, Arrays.<Expression>asList(
 				FRID_f,
@@ -1770,6 +1897,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("fa[b↦c]", expected);		
 	}
 	
+	@Test 
 	public void testLedBacktrack() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
 				Arrays.<Predicate> asList(
@@ -1779,6 +1907,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("S={0}∧⊤", expected );
 	}
 	
+	@Test 
 	public void testCProdCProdCompatibility() throws Exception {
 		final Type expected = ff.makeProductType(
 				ff.makeProductType(S_TYPE, S_TYPE),
@@ -1786,6 +1915,7 @@ public class TestGenParser extends AbstractTests {
 		doTypeTest("S×S×S", expected);
 	}
 	
+	@Test 
 	public void testDoubleBoundIdentifiers() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL, asList(BID_x), ff.makeAssociativePredicate(Formula.LAND,
 				Arrays.<Predicate> asList(
@@ -1799,6 +1929,7 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	// Some sub-parsers are triggered manually, ensure that it does not allow unacceptable formulae
+	@Test 
 	public void testManualSubParsers() throws Exception {
 		// bound identifier name is an operator !
 		final IParseResult result = parsePredRes("∀+·⊤");
@@ -1806,6 +1937,7 @@ public class TestGenParser extends AbstractTests {
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "an identifier", "+"));
 	}
 	
+	@Test 
 	public void testMinusPriority() throws Exception {
 		final Expression plusMinus =
 			ff.makeBinaryExpression(MINUS,
@@ -1916,6 +2048,7 @@ public class TestGenParser extends AbstractTests {
 	};
 
 	// verify that the newly introduced symbol cannot be part of an identifier
+	@Test 
 	public void testExtensionSymbolEMax() throws Exception {
 		final String emax = "emax";
 		
@@ -1937,6 +2070,7 @@ public class TestGenParser extends AbstractTests {
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "(", "End of Formula"));
 	}
 	
+	@Test 
 	public void testEMax() throws Exception {
 		final FormulaFactory extFac = FormulaFactory.getInstance(EMAX);
 		final Expression expected = extFac.makeExtendedExpression(EMAX,
@@ -1948,6 +2082,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("emax(A, B, C)", expected, extFac);
 	}
 	
+	@Test 
 	public void testEMaxInvalidNumberOfChildren() throws Exception {
 		final FormulaFactory extFac = FormulaFactory.getInstance(EMAX);
 		final IParseResult result = parseExprRes("emax(a)", extFac,
@@ -1956,12 +2091,14 @@ public class TestGenParser extends AbstractTests {
 				ProblemKind.ExtensionPreconditionError, ProblemSeverities.Error));
 	}
 	
+	@Test 
 	public void testFunImageConverse() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
 				ff.makeUnaryExpression(CONVERSE, FRID_f, null), FRID_a, null);
 		doExpressionTest("f∼(a)", expected);
 	}
 
+	@Test 
 	public void testConverseFunImage() throws Exception {
 		final Expression expected = ff.makeUnaryExpression(CONVERSE,
 				ff.makeBinaryExpression(FUNIMAGE, FRID_f, FRID_a, null), null);
@@ -1969,6 +2106,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("f(a)∼", expected); // parentheses are not required for generic parser
 	}
 
+	@Test 
 	public void testConverseRelImage() throws Exception {
 		final Expression expected = ff.makeUnaryExpression(CONVERSE,
 				ff.makeBinaryExpression(RELIMAGE, FRID_f, FRID_a, null), null);
@@ -1976,6 +2114,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("f[a]∼", expected); // parentheses are not required for generic parser
 	}
 	
+	@Test 
 	public void testMapstoConverseRelImage() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(MAPSTO,
 				ONE,
@@ -1985,6 +2124,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("1↦(f[a])∼", expected);
 	}
 	
+	@Test 
 	public void testMapstoConverseFunImage() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(MAPSTO,
 				ONE,
@@ -1994,6 +2134,7 @@ public class TestGenParser extends AbstractTests {
 		
 	}
 	
+	@Test 
 	public void testConverseMapsto() throws Exception {
 		final Expression expected = 
 			ff.makeUnaryExpression(CONVERSE,
@@ -2003,6 +2144,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("(1↦f(a))∼", expected);
 	}
 	
+	@Test 
 	public void testFunImageConverseMapsto() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(FUNIMAGE,
 				ff.makeUnaryExpression(CONVERSE,
@@ -2012,12 +2154,14 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("(1↦0)∼(0)", expected);
 	}
 	
+	@Test 
 	public void testGroupCompatibility() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(SETMINUS, FRID_A,
 				ff.makeBinaryExpression(DIV, FRID_B, FRID_c, null), null);
 		doExpressionTest("A ∖ B ÷ c", expected);
 	}
 	
+	@Test 
 	public void testIncompatibleEXPN() throws Exception {
 		final ASTProblem expected = new ASTProblem(new SourceLocation(3, 3),
 				ProblemKind.IncompatibleOperators, ProblemSeverities.Error,
@@ -2027,6 +2171,7 @@ public class TestGenParser extends AbstractTests {
 		
 	}
 
+	@Test 
 	public void testUnexpectedSubFormula() throws Exception {
 		final IParseResult result = parseExprRes("a − b ⇒ c");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(0, 4),
@@ -2035,6 +2180,7 @@ public class TestGenParser extends AbstractTests {
 		assertFailure(result, expected);
 	}
 	
+	@Test 
 	public void testEmptyFormula() throws Exception {
 		final IParseResult result = parseExprRes("");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(0, 0),
@@ -2042,6 +2188,7 @@ public class TestGenParser extends AbstractTests {
 		assertFailure(result, expected);
 	}
 	
+	@Test 
 	public void testPrematureEOF() throws Exception {
 		final IParseResult result = parseExprRes("1+");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(1, 1),
@@ -2049,6 +2196,7 @@ public class TestGenParser extends AbstractTests {
 		assertFailure(result, expected);
 	}
 	
+	@Test 
 	public void testUnmatchedTokens() throws Exception {
 		final IParseResult result = parseExprRes("1+2 abc");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(4, 6),
@@ -2056,6 +2204,7 @@ public class TestGenParser extends AbstractTests {
 		assertFailure(result, expected);
 	}
 	
+	@Test 
 	public void testPrimedIdent() throws Exception {
 		doExpressionTest("x'", ff.makeFreeIdentifier("x'", null));
 		
@@ -2074,6 +2223,7 @@ public class TestGenParser extends AbstractTests {
 		
 	}
 	
+	@Test 
 	public void testCloseParenMatch() throws Exception {
 		final IParseResult result = parseExprRes("(a}");
 		final ASTProblem expected = new ASTProblem(new SourceLocation(2, 2),
@@ -2081,6 +2231,7 @@ public class TestGenParser extends AbstractTests {
 		assertFailure(result, expected);
 	}
 
+	@Test 
 	public void testDatatypeType() throws Exception {
 
 		final ExtendedExpression list = LIST_FAC.makeExtendedExpression(
@@ -2100,6 +2251,7 @@ public class TestGenParser extends AbstractTests {
 		assertFalse(listBoolType.equals(LIST_INT_TYPE));
 	}
 
+	@Test 
 	public void testDatatypeExpr() throws Exception {
 		final Expression upTo = LIST_FAC.makeBinaryExpression(UPTO, ZERO, ONE,
 				null);
@@ -2116,6 +2268,7 @@ public class TestGenParser extends AbstractTests {
 				InvalidTypeExpression, ProblemSeverities.Error));
 	}
 	
+	@Test 
 	public void testDatatypeNil() throws Exception {
 
 		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
@@ -2144,6 +2297,7 @@ public class TestGenParser extends AbstractTests {
 		assertFalse(nilBoolBool.equals(nilInt));
 	}
 	
+	@Test 
 	public void testDatatypeNilInvalidType() throws Exception {
 		final IParseResult result = parseExprRes("(nil ⦂ ℤ)", LIST_FAC,
 				LanguageVersion.LATEST);
@@ -2151,6 +2305,7 @@ public class TestGenParser extends AbstractTests {
 				InvalidGenericType, Error, "[see operator definition]"));
 	}
 	
+	@Test 
 	public void testDatatypeConstructor() throws Exception {
 
 		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
@@ -2175,6 +2330,7 @@ public class TestGenParser extends AbstractTests {
 		assertFalse(list1.equals(list01));
 	}
 	
+	@Test 
 	public void testDatatypeDestructors() throws Exception {
 		assertNotNull("head destructor not found", EXT_HEAD);
 
@@ -2193,6 +2349,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("tail(x)", tail, LIST_FAC);
 	}
 	
+	@Test 
 	public void testTypeConstrTypeCheck() throws Exception {
 		final Expression listIntExpr = LIST_FAC.makeExtendedExpression(
 				EXT_LIST, Collections.<Expression> singleton(INT),
@@ -2211,6 +2368,7 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(LIST_INT_TYPE, x.getType());
 	}
 	
+	@Test 
 	public void testTypeCheckError() throws Exception {
 		// problem raised by Issam, produced a StackOverflowError
 		final Expression A_Id = LIST_FAC.makeFreeIdentifier("A", null);
@@ -2258,6 +2416,7 @@ public class TestGenParser extends AbstractTests {
 		}
 	}
 	
+	@Test 
 	public void testDatatypeDestructorsTyping() throws Exception {
 		
 		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
@@ -2281,6 +2440,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("tail(cons(1, nil))", tail, LIST_INT_TYPE, LIST_FAC, true);
 	}
 	
+	@Test 
 	public void testListOfLists() throws Exception {
 		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
 				Collections.<Expression> emptyList(),
@@ -2320,6 +2480,7 @@ public class TestGenParser extends AbstractTests {
 				LIST_LIST_INT_TYPE, LIST_FAC, true);
 	}
 	
+	@Test 
 	public void testDatatypeOrigins() throws Exception {
 		for (IFormulaExtension extension : LIST_DT.getExtensions()) {
 			final Object origin = extension.getOrigin();
@@ -2327,11 +2488,13 @@ public class TestGenParser extends AbstractTests {
 		}
 	}
 
+	@Test 
 	public void testMinusPU() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(MINUS, ONE, ZERO, null);
 		doParseUnparseTest("1−0", expected);
 	}
 		
+	@Test 
 	public void testToStringAndExistsL() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
 				Arrays.<Predicate> asList(
@@ -2341,6 +2504,7 @@ public class TestGenParser extends AbstractTests {
 
 	}
 	
+	@Test 
 	public void testToStringAndExistsR() throws Exception {
 		final Predicate expected = ff.makeAssociativePredicate(Formula.LAND,
 				Arrays.<Predicate> asList(
@@ -2350,6 +2514,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("⊤∧(∃x·⊥)", expected);
 	}
 	
+	@Test 
 	public void testToStringAndExistsNoPar() throws Exception {
 		final IParseResult result = parsePredRes("⊤∧∃x·⊥");
 		assertFailure(result, new ASTProblem(new SourceLocation(0, 5),
@@ -2357,6 +2522,7 @@ public class TestGenParser extends AbstractTests {
 				"∧", "∃"));
 	}
 	
+	@Test 
 	public void testToStringMaplet() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(MAPSTO, ff
 				.makeBinaryExpression(MAPSTO, FRID_A, FRID_B, null), FRID_C,
@@ -2364,6 +2530,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("A↦B↦C", expected);
 	}
 	
+	@Test 
 	public void testToStringCProd() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(CPROD, ff
 				.makeBinaryExpression(CPROD, FRID_A, FRID_B, null), FRID_C,
@@ -2371,6 +2538,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("A×B×C", expected);
 	}
 	
+	@Test 
 	public void testToStringInterSetMinusNoPar() throws Exception {
 		final Expression expected =
 			ff.makeBinaryExpression(SETMINUS,
@@ -2382,6 +2550,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("A∩B∖C", expected);
 	}
 	
+	@Test 
 	public void testToStringInterSetMinusWithParL() throws Exception {
 		final Expression expected =
 			ff.makeBinaryExpression(SETMINUS,
@@ -2393,6 +2562,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("(A∩B)∖C", expected);
 	}
 	
+	@Test 
 	public void testToStringInterSetMinusWithParR() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(BINTER,
 				asList(FRID_A, ff.makeBinaryExpression(SETMINUS, FRID_B,
@@ -2400,6 +2570,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("A∩(B∖C)", expected);
 	}
 	
+	@Test 
 	public void testToStringSetMinusInterNoPar() throws Exception {
 		final IParseResult result = parseExprRes("A∖B∩C");
 		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
@@ -2407,6 +2578,7 @@ public class TestGenParser extends AbstractTests {
 				"∖", "∩"));
 	}
 	
+	@Test 
 	public void testToStringSetMinusInterWithParL() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(BINTER,
 				asList(ff.makeBinaryExpression(SETMINUS, FRID_A, FRID_B, null),
@@ -2414,6 +2586,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("(A∖B)∩C", expected);
 	}
 	
+	@Test 
 	public void testToStringSetMinusInterWithParR() throws Exception {
 		final Expression expected = 
 			ff.makeBinaryExpression(SETMINUS,
@@ -2426,6 +2599,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("A∖(B∩C)", expected);
 	}
 	
+	@Test 
 	public void testToStringPlusPlusL() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(PLUS,
 				asList(
@@ -2436,6 +2610,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("(A+B)+C", expected);
 	}
 	
+	@Test 
 	public void testToStringPlusPlusR() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(PLUS,
 				asList(FRID_A,
@@ -2445,6 +2620,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("A+(B+C)", expected);
 	}
 	
+	@Test 
 	public void testToStringDivMinusL() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(MINUS,
 				ff.makeBinaryExpression(DIV, 
@@ -2455,6 +2631,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("(A÷B)−C", expected);
 	}
 	
+	@Test 
 	public void testToStringDivMinusR() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(DIV,
 				FRID_A, 
@@ -2464,6 +2641,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("A÷(B−C)", expected);
 	}
 	
+	@Test 
 	public void testToStringMinusDivL() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(DIV,
 				ff.makeBinaryExpression(MINUS, 
@@ -2473,6 +2651,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("(A−B)÷C", expected);
 	}
 	
+	@Test 
 	public void testToStringMinusDivR() throws Exception {
 		final Expression expected = ff.makeBinaryExpression(MINUS,
 				FRID_A, 
@@ -2483,6 +2662,7 @@ public class TestGenParser extends AbstractTests {
 		doParseUnparseTest("A−(B÷C)", expected);
 	}
 
+	@Test 
 	public void testInterSetMinusCompatibility() throws Exception {
 		
 		final AbstractGrammar grammar = ff.getGrammar();
@@ -2494,18 +2674,21 @@ public class TestGenParser extends AbstractTests {
 		assertEquals(OperatorRelationship.INCOMPATIBLE, relMinusInter);
 	}
 	
+	@Test 
 	public void testNotNot() throws Exception {
 		final Predicate expected = ff.makeUnaryPredicate(NOT,
 				ff.makeUnaryPredicate(NOT, LIT_BFALSE, null), null);
 		doPredicateTest("\u00ac\u00ac\u22a5", expected);
 	}
 	
+	@Test 
 	public void testMinusConverse() throws Exception {
 		final Expression expected = ff.makeUnaryExpression(CONVERSE,
 				ff.makeIntegerLiteral(BigInteger.ONE.negate(), null), null);
 		doParseUnparseTest("(−1)∼", expected);
 	}
 	
+	@Test 
 	public void testUnionSetExt() throws Exception {
 		final Expression expected = ff.makeAssociativeExpression(BUNION,
 				Arrays.<Expression> asList(
@@ -2516,16 +2699,19 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("{a} ∪ {b,c}", expected);
 	}
 	
+	@Test 
 	public void testBecMoSetExt() throws Exception {
 		final BecomesMemberOf expected = ff.makeBecomesMemberOf(FRID_a, ff.makeSetExtension(Arrays.<Expression>asList(FRID_b, FRID_c), null), null);
 		doAssignmentTest("a :∈ {b,c}", expected);
 	}
 	
+	@Test 
 	public void testBecEqSetExt() throws Exception {
 		final BecomesEqualTo expected = ff.makeBecomesEqualTo(FRID_a, ff.makeSetExtension(Arrays.<Expression>asList(FRID_b, FRID_c), null), null);
 		doAssignmentTest("a ≔ {b,c}", expected);
 	}
 	
+	@Test 
 	public void testBoundIdentRenamingPred() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
 				asList(BID_x),
@@ -2536,6 +2722,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest(predStr, expected);
 	}
 	
+	@Test 
 	public void testBoundIdentRenamingExprExplicit() throws Exception {
 		final QuantifiedExpression expected = ff.makeQuantifiedExpression(QUNION,
 				asList(BID_x, BID_y),
@@ -2550,6 +2737,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest(predStr, expected);
 	}
 	
+	@Test 
 	public void testBoundIdentRenamingExprImplicit() throws Exception {
 		final QuantifiedExpression expected = ff.makeQuantifiedExpression(QUNION,
 				asList(BID_x, BID_y),
@@ -2585,6 +2773,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest(exprStr, exprFreeIdents);
 	}
 	
+	@Test 
 	public void testBoundIdentRenamingExprLambda() throws Exception {
 		final Expression expected = ff.makeQuantifiedExpression(CSET,
 				asList(BID_x, BID_y),
@@ -2600,6 +2789,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest(implStr, expected);
 	}
 	
+	@Test 
 	public void testTypedBoundDecl() throws Exception {
 		final Predicate expected = ff.makeQuantifiedPredicate(FORALL,
 				asList(ff.makeBoundIdentDecl("x", null, INT_TYPE)),
@@ -2670,6 +2860,7 @@ public class TestGenParser extends AbstractTests {
 	private static final FormulaFactory PRIME_FAC = FormulaFactory
 			.getInstance(EXT_PRIME);
 
+	@Test 
 	public void testPredicateExtension() throws Exception {
 		final ExtendedPredicate expected = PRIME_FAC.makeExtendedPredicate(
 				EXT_PRIME, Arrays.<Expression> asList(ONE),
@@ -2677,6 +2868,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("prime(1)", expected, PRIME_FAC);
 	}
 	
+	@Test 
 	public void testPredicateExtensionInFormula() throws Exception {
 		final Predicate primeOne = PRIME_FAC.makeExtendedPredicate(EXT_PRIME,
 				Arrays.<Expression> asList(ONE),
@@ -2733,6 +2925,7 @@ public class TestGenParser extends AbstractTests {
 	private static final IExpressionExtension EXT_MAKE_MOULT = MOULT_DT
 			.getConstructor("MAKE MOULT");
 
+	@Test 
 	public void testMoult() throws Exception {
 
 		doTypeTest("Moult(ℤ, BOOL)", MOULT_INT_BOOL_TYPE, MOULT_FAC);
@@ -2817,10 +3010,12 @@ public class TestGenParser extends AbstractTests {
 			.makeParametricType(Arrays.<Type> asList(INT_TYPE, BOOL_TYPE),
 					EXT_NO_INDUC);
 
+	@Test 
 	public void testNoInducType() throws Exception {
 		doTypeTest("NoInduc(ℤ, BOOL)", NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC);
 	}
 
+	@Test 
 	public void testArgSimpleType() throws Exception {
 		final IExpressionExtension extCons1 = NO_INDUC_EXTNS
 				.getConstructor(NoInducType.CONS1);
@@ -2834,6 +3029,7 @@ public class TestGenParser extends AbstractTests {
 				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
 	}
 
+	@Test 
 	public void testArgPowerSetType() throws Exception {
 		final IExpressionExtension extCons2 = NO_INDUC_EXTNS
 				.getConstructor(NoInducType.CONS2);
@@ -2850,6 +3046,7 @@ public class TestGenParser extends AbstractTests {
 				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
 	}
 
+	@Test 
 	public void testArgRelationalType() throws Exception {
 		final IExpressionExtension extCons3 = NO_INDUC_EXTNS
 				.getConstructor(NoInducType.CONS3);
@@ -2865,6 +3062,7 @@ public class TestGenParser extends AbstractTests {
 				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
 	}
 
+	@Test 
 	public void testDatatypeSameExtensions() throws Exception {
 		final IDatatype extns1 = ff.makeDatatype(NO_INDUC_TYPE);
 		final IDatatype extns2 = ff.makeDatatype(NO_INDUC_TYPE);
@@ -2879,6 +3077,7 @@ public class TestGenParser extends AbstractTests {
 		assertSame("expected same extensions", cons1Ext1, cons1Ext2);
 	}
 	
+	@Test 
 	public void testAddingExtensions() throws Exception {
 		final Predicate primeOne = PRIME_FAC.makeExtendedPredicate(EXT_PRIME,
 				Arrays.<Expression> asList(ONE),
@@ -2913,6 +3112,7 @@ public class TestGenParser extends AbstractTests {
 		doPredicateTest("prime(nil)", primeNil, facListPrime);
 	}
 	
+	@Test 
 	public void testMixedTypesToType() throws Exception {
 		final Expression moultIntBool = MOULT_FAC.makeExtendedExpression(
 				EXT_MOULT, Arrays.<Expression> asList(INT, BOOL),
@@ -2950,6 +3150,7 @@ public class TestGenParser extends AbstractTests {
 				asList(condition), location);
 	}
 
+	@Test 
 	public void testCond() throws Exception {
 		final Expression expectedInt = makeCond(LIT_BTRUE, ZERO, ONE, null);
 		doExpressionTest("COND(⊤, 0, 1)", expectedInt, INT_TYPE, FAC_COND, false);
@@ -2961,6 +3162,7 @@ public class TestGenParser extends AbstractTests {
 		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE, FAC_COND, true);
 	}
 	
+	@Test 
 	public void testExtraParentheses() throws Exception {
 		assertFailure(ff.parseExpression(")", LATEST, null),
 				makeError(0, 0, UnmatchedTokens), makeError(0, 0, PrematureEOF));
@@ -2986,6 +3188,7 @@ public class TestGenParser extends AbstractTests {
 				problem, Error, args);
 	}
 
+	@Test 
 	public void testEqualInAssign() throws Exception {
 		final IParseResult res = ff.parseAssignment("x = 0", LATEST, null);
 		assertFailure(
@@ -2994,6 +3197,7 @@ public class TestGenParser extends AbstractTests {
 						" (expected to find an assignment operator)"));
 	}
 	
+	@Test 
 	public void testFactoryCache() throws Exception {
 		final Set<IFormulaExtension> extPrimeList1 = new HashSet<IFormulaExtension>();
 		final Set<IFormulaExtension> extPrimeList2 = new LinkedHashSet<IFormulaExtension>();
@@ -3080,6 +3284,7 @@ public class TestGenParser extends AbstractTests {
 		
 	}
 	
+	@Test 
 	public void testIdUnicityGiven() throws Exception {
 		final String id = "unic_id0";
 		final DummyExtn ext_s1_id0 = new DummyExtn("unic_s1", id);
@@ -3094,6 +3299,7 @@ public class TestGenParser extends AbstractTests {
 		
 	}
 	
+	@Test 
 	public void testSymbolUnicityGiven() throws Exception {
 		final String symbol = "unic_s5";
 		final DummyExtn ext_s5_id2 = new DummyExtn(symbol, "unic_id2");
@@ -3108,6 +3314,7 @@ public class TestGenParser extends AbstractTests {
 		
 	}
 	
+	@Test 
 	public void testSymbolNonGlobalUnicity() throws Exception {
 		final String symbol = "unic_s6";
 		final DummyExtn ext_s6_id4 = new DummyExtn(symbol, "unic_id4");
@@ -3119,6 +3326,7 @@ public class TestGenParser extends AbstractTests {
 		FormulaFactory.getInstance(ext_s6_id5);
 	}
 	
+	@Test 
 	public void testOverridingStandardId() throws Exception {
 		final DummyExtn ext_s7_idLand = new DummyExtn("unic_s7", BCOMP_ID);
 		
@@ -3131,6 +3339,7 @@ public class TestGenParser extends AbstractTests {
 
 	}
 	
+	@Test 
 	public void testOverridingStandardSymbol() throws Exception {
 		final DummyExtn ext_partition_id6 = new DummyExtn("partition", "unic_id6");
 		
@@ -3143,6 +3352,7 @@ public class TestGenParser extends AbstractTests {
 
 	}
 
+	@Test 
 	public void testGrammarViewBug() throws Exception {
 		// the following throws IndexOutOfBoundsException when bug is present
 		ff.getGrammarView();
@@ -3152,6 +3362,7 @@ public class TestGenParser extends AbstractTests {
 	 * Ensures that a prefix operator contributed by an extension is compatible
 	 * with equality.
 	 */
+	@Test 
 	public void testExprExtWithEquals() {
 		final Expression extended = EFF.makeExtendedExpression(barS,
 				mList(ZERO, ONE), mList(LIT_BTRUE, LIT_BTRUE), null);

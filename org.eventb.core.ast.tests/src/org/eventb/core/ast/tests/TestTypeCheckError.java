@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+
 import java.util.List;
 
 import org.eventb.core.ast.ASTProblem;
@@ -22,6 +25,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.SourceLocation;
+import org.junit.Test;
 
 /**
  * Unit test of errors produced by the mathematical formula Type-Checker.
@@ -56,6 +60,7 @@ public class TestTypeCheckError extends AbstractTests {
 	/**
 	 * Ensures that assignments are translated correctly
 	 */
+	@Test 
 	public void testAssignment() {
 		doTestAssignment("x≔x{a ↦ b}",
 				FastFactory.mTypeEnvironment(),
@@ -74,6 +79,7 @@ public class TestTypeCheckError extends AbstractTests {
 	/**
 	 * Ensures that a TypesDoNotMatch is produced when there is a type conflict.
 	 */
+	@Test 
 	public void testTypesDoNotMatch() {
 		doTestPredicate("1 = TRUE", 
 				FastFactory.mTypeEnvironment(), 
@@ -84,6 +90,7 @@ public class TestTypeCheckError extends AbstractTests {
 	 * Ensures that a Circularity is produced when there is a mutual
 	 * incompatible dependency between types.
 	 */
+	@Test 
 	public void testCircularity() {
 		doTestPredicate("x∈y ∧ y∈x", 
 				FastFactory.mTypeEnvironment(), 
@@ -93,6 +100,7 @@ public class TestTypeCheckError extends AbstractTests {
 	/**
 	 * Ensures that a TypeUnknown is produced when a type can't be inferred
 	 */
+	@Test 
 	public void testTypeUnknown() {
 		doTestPredicate("finite(∅)", 
 				FastFactory.mTypeEnvironment(), 
@@ -103,6 +111,7 @@ public class TestTypeCheckError extends AbstractTests {
 	 * Ensures that a MinusAppliedToSet is produced for both children of an
 	 * arithmetic subtraction.
 	 */
+	@Test 
 	public void testMinusAppliedToSet() {
 		doTestPredicate("x = a − ∅", 
 				FastFactory.mTypeEnvironment(), 
@@ -112,6 +121,7 @@ public class TestTypeCheckError extends AbstractTests {
 				ProblemKind.MinusAppliedToSet);
 	}
 	
+	@Test 
 	public void testMulAppliedToSet() {
 		doTestPredicate("x = a ∗ ∅", 
 				FastFactory.mTypeEnvironment(), 
@@ -134,6 +144,7 @@ public class TestTypeCheckError extends AbstractTests {
 	 * Ensures that no assertion is raised when type-checking a formula with a
 	 * shared bound identifier declaration which doesn't typecheck.
 	 */
+	@Test 
 	public void testSharedBID() {
 		BoundIdentDecl decl = ff.makeBoundIdentDecl("x", new SourceLocation(0, 1));
 		BoundIdentDecl[] decls = new BoundIdentDecl[] {decl};
@@ -143,6 +154,7 @@ public class TestTypeCheckError extends AbstractTests {
 		doTest(q, ff.makeTypeEnvironment(), ProblemKind.TypeUnknown);
 	}
 	
+	@Test 
 	public void testParamTypes() throws Exception {
 		doTestPredicate("x ∈ A ∧ x ∈ List(A)", 
 				LIST_FAC.makeTypeEnvironment(), 

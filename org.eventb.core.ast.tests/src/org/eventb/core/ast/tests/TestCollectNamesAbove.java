@@ -1,5 +1,6 @@
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
@@ -13,16 +14,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
+import org.junit.Test;
 
-public class TestCollectNamesAbove extends TestCase {
+public class TestCollectNamesAbove {
 
 	static FormulaFactory ff = FormulaFactory.getDefault();
 	
@@ -117,6 +117,7 @@ public class TestCollectNamesAbove extends TestCase {
 		),
 	};
 	
+	@Test 
 	public void testCollectNamesAbove() {
 		for (TestItem item: testItems) {
 			assertEquals(item.toString(), item.getExpected(), item.collectNamesAbove());

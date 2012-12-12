@@ -11,7 +11,10 @@
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+
 import org.eventb.core.ast.Predicate;
+import org.junit.Test;
 
 
 /**
@@ -65,6 +68,7 @@ public class TestDeBruijn extends AbstractTests {
 	/**
 	 * Main test routine. 
 	 */
+	@Test 
 	public void testDeBruijn() {
 		for (TestItem item : testItems) {
 			for (int i = 0; i < item.size() - 1; i++) {

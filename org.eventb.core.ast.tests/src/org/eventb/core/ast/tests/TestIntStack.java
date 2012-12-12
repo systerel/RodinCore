@@ -7,16 +7,20 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import org.eventb.internal.core.ast.IntStack;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
-import junit.framework.TestCase;
+import org.eventb.internal.core.ast.IntStack;
+import org.junit.Test;
 
 /**
  * Ensures that the IntStack class works properly.
  *
  * @author Laurent Voisin
  */
-public class TestIntStack extends TestCase {
+public class TestIntStack {
 
 	private void assertStack(IntStack stack, int... expected) {
 		final int length = expected.length;
@@ -34,6 +38,7 @@ public class TestIntStack extends TestCase {
 		}
 	}
 	
+	@Test 
 	public final void testIsEmpty() {
 		final IntStack stack = new IntStack();
 		assertTrue(stack.isEmpty());
@@ -43,6 +48,7 @@ public class TestIntStack extends TestCase {
 		assertTrue(stack.isEmpty());
 	}
 
+	@Test 
 	public final void testPush() {
 		final IntStack stack = new IntStack();
 		assertStack(stack);
@@ -52,6 +58,7 @@ public class TestIntStack extends TestCase {
 		assertStack(stack, 1, 2);
 	}
 
+	@Test 
 	public final void testPop() {
 		final IntStack stack = new IntStack();
 		assertStack(stack);
@@ -64,6 +71,7 @@ public class TestIntStack extends TestCase {
 		assertStack(stack);
 	}
 
+	@Test 
 	public final void testRealloc() {
 		final int size = 1000; 
 		IntStack stack = new IntStack();
@@ -75,6 +83,7 @@ public class TestIntStack extends TestCase {
 		assertStack(stack, expected);
 	}
 
+	@Test 
 	public final void testIncrementTop() {
 		IntStack stack = new IntStack();
 		stack.push(1);
@@ -83,6 +92,7 @@ public class TestIntStack extends TestCase {
 		assertStack(stack, 2);
 	}
 
+	@Test 
 	public final void testToString() {
 		IntStack stack = new IntStack();
 		stack.push(1);
@@ -93,6 +103,7 @@ public class TestIntStack extends TestCase {
 		assertEquals("[1]", stack.toString());
 	}
 
+	@Test 
 	public final void testInvalidIndex() {
 		IntStack stack = new IntStack();
 		try {

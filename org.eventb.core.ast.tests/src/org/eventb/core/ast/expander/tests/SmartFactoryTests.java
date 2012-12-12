@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.expander.tests;
 
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
@@ -36,6 +37,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.expanders.Expanders;
 import org.eventb.core.ast.expanders.ISmartFactory;
 import org.eventb.core.ast.tests.AbstractTests;
+import org.junit.Test;
 
 public class SmartFactoryTests extends AbstractTests {
 
@@ -63,6 +65,7 @@ public class SmartFactoryTests extends AbstractTests {
 		return mAssociativeExpression(BUNION, children);
 	}
 
+	@Test 
 	public void testUnion() {
 		final Type type = s0.getType();
 		assertEquals(x.emptySet(type), x.union(type));
@@ -71,6 +74,7 @@ public class SmartFactoryTests extends AbstractTests {
 				x.union(type, s0, s1));
 	}
 
+	@Test 
 	public void testUnionExtensionSets() {
 		final Type type = s0.getType();
 		assertEquals(ext(x0), x.union(type, ext(x0)));
@@ -101,6 +105,7 @@ public class SmartFactoryTests extends AbstractTests {
 				x.union(type, ext(x0), ext(x1), s2));
 	}
 
+	@Test 
 	public void testInter() {
 		final Type type = s0.getType();
 		assertEquals(S, x.inter(type));
@@ -109,6 +114,7 @@ public class SmartFactoryTests extends AbstractTests {
 				x.inter(type, s0, s1));
 	}
 
+	@Test 
 	public void testLand() {
 		List<Predicate> list = new ArrayList<Predicate>();
 		assertEquals(mLiteralPredicate(BTRUE), x.land(list));
@@ -119,6 +125,7 @@ public class SmartFactoryTests extends AbstractTests {
 				x.land(list));
 	}
 
+	@Test 
 	public void testLor() {
 		List<Predicate> list = new ArrayList<Predicate>();
 		assertEquals(mLiteralPredicate(BFALSE), x.lor(list));
@@ -129,11 +136,13 @@ public class SmartFactoryTests extends AbstractTests {
 				x.lor(list));
 	}
 
+	@Test 
 	public void testNot() {
 		assertEquals(mUnaryPredicate(NOT, P0), x.not(P0));
 		assertEquals(P0, x.not(mUnaryPredicate(NOT, P0)));
 	}
 
+	@Test 
 	public void testDisjoint() {
 		final Type type = s1.getType();
 		assertEquals(x.equals(x.inter(type, s1, s2), x.emptySet(type)), //
@@ -146,6 +155,7 @@ public class SmartFactoryTests extends AbstractTests {
 				x.disjoint(ext(x1), ext(x2)));
 	}
 	
+	@Test 
 	public void testIn() {
 		// Nominal case
 		assertEquals(mRelationalPredicate(IN, x0, s0), x.in(x0, s0));

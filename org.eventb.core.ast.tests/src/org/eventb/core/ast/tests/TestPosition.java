@@ -11,17 +11,21 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.FormulaFactory.makePosition;
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.IPosition;
+import org.junit.Test;
 
 /**
  * Tests for interface {@link IPosition} and its standard implementation.
  * 
  * @author Laurent Voisin
  */
-public class TestPosition extends TestCase {
+public class TestPosition{
 
 	private void assertSameSign(int expected, int actual) {
 		if (expected == 0 && actual != 0)
@@ -51,6 +55,7 @@ public class TestPosition extends TestCase {
 		return pos;
 	}
 	
+	@Test 
 	public final void testCompareTo() {
 		assertComparison(0, mPos(""),      mPos(""));
 		assertComparison(0, mPos("1"),     mPos("1"));
@@ -82,6 +87,7 @@ public class TestPosition extends TestCase {
 		assertEquals(expect, pos.getChildAtIndex(0));
 	}
 	
+	@Test 
 	public final void testGetFirstChild() {
 		assertFirstChild("");
 		assertFirstChild("0");
@@ -110,6 +116,7 @@ public class TestPosition extends TestCase {
 		assertChildIndex(actual);
 	}
 	
+	@Test 
 	public final void testGetNextSibling() {
 		assertNextSibling("0", "1");
 		assertNextSibling("1", "2");
@@ -124,6 +131,7 @@ public class TestPosition extends TestCase {
 		}
 	}
 
+	@Test 
 	public final void testGetParent() {
 		assertEquals(mPos(""), mPos("0").getParent());
 		assertEquals(mPos(""), mPos("1").getParent());
@@ -151,6 +159,7 @@ public class TestPosition extends TestCase {
 		}
 	}
 
+	@Test 
 	public final void testGetPreviousSibling() {
 		// Tests for regular values already done with testGetNextSibling.
 
@@ -159,6 +168,7 @@ public class TestPosition extends TestCase {
 		failPreviousSibling("1.2.0");
 	}
 
+	@Test 
 	public final void testIsFirstChild() {
 		assertFalse(mPos("").isFirstChild());
 		assertTrue(mPos("0").isFirstChild());
@@ -171,6 +181,7 @@ public class TestPosition extends TestCase {
 		assertFalse(mPos("1.2.3.4").isFirstChild());
 	}
 
+	@Test 
 	public final void testIsRoot() {
 		assertTrue(mPos("").isRoot());
 		assertFalse(mPos("0").isRoot());
@@ -190,6 +201,7 @@ public class TestPosition extends TestCase {
 		}
 	}
 	
+	@Test 
 	public final void testMemento() {
 		mPos("");
 		mPos("1");
@@ -203,6 +215,7 @@ public class TestPosition extends TestCase {
 		assertMementoFailure("1.-2");
 	}
 
+	@Test 
 	public final void testRoot() {
 		final IPosition root = IPosition.ROOT;
 		assertTrue(root.isRoot());
@@ -220,6 +233,7 @@ public class TestPosition extends TestCase {
 		}
 	}
 
+	@Test 
 	public final void testNthChild() {
 		// Tests for regular values already done with other queries.
 
@@ -228,6 +242,7 @@ public class TestPosition extends TestCase {
 		failNthChild("1.2", -5);
 	}
 
+	@Test 
 	public final void testChildIndex() {
 		// Tests for regular values already done with other queries.
 

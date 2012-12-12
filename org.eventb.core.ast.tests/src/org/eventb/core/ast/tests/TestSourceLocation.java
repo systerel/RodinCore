@@ -13,6 +13,11 @@
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.BUNION;
@@ -37,9 +42,11 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
+import org.junit.Test;
 
 public class TestSourceLocation extends AbstractTests {
 
+	@Test 
 	public final void testContains() {
 		SourceLocation s11 = new SourceLocation(1, 1);
 		SourceLocation s12 = new SourceLocation(1, 2);
@@ -70,6 +77,7 @@ public class TestSourceLocation extends AbstractTests {
 		assertFalse(s22.contains(s13));
 	}
 
+	@Test 
 	public final void testEqualsObject() {
 		SourceLocation s11 = new SourceLocation(1, 1);
 		SourceLocation s11b = new SourceLocation(1, 1);
@@ -162,6 +170,7 @@ public class TestSourceLocation extends AbstractTests {
 	/**
 	 * Tests for {@link Formula#getPosition(SourceLocation)}.
 	 */
+	@Test 
 	public void testGetPosition() {
 		// AssociativeExpression
 		assertPositionsE("x+y", 0, 0, id_x, 2, 2, id_y);

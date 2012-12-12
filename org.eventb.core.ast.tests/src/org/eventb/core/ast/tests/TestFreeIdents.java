@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
@@ -55,6 +58,7 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.junit.Test;
 
 
 /**
@@ -433,24 +437,27 @@ public class TestFreeIdents extends AbstractTests {
 	}
 
 	// Check equality of arrays of identifiers, including source locations.
-	private void assertEquals(String msg, FreeIdentifier[] expected, FreeIdentifier[] actual) {
+	private void assertEqualsFI(String msg, FreeIdentifier[] expected, FreeIdentifier[] actual) {
 		assertEquals(msg, expected.length, actual.length);
 		for (int i = 0; i < actual.length; i++) {
 			// Same identifier
 			assertEquals(msg, expected[i], actual[i]);
 			// Same location
-			assertEquals(msg, expected[i].getSourceLocation(), actual[i].getSourceLocation());
+			assertEquals(msg,
+					expected[i].getSourceLocation(),
+					actual[i].getSourceLocation());
 		}
 	}
 	
 	// Check equality of arrays of identifiers, including source locations.
-	private void assertEquals(String msg, FreeIdentifier[] expected, List<BoundIdentDecl> actual) {
-		assertEquals(msg, expected.length, actual.size());
+	private void assertEqualsFI(String msg, FreeIdentifier[] expected, List<BoundIdentDecl> actual) {
+		junit.framework.Assert.assertEquals(msg, expected.length, actual.size());
 		for (int i = 0; i < expected.length; i++) {
 			// Same name
 			assertEquals(msg, expected[i].getName(), actual.get(i).getName());
 			// Same location
-			assertEquals(msg, expected[i].getSourceLocation(), actual.get(i).getSourceLocation());
+			assertEquals(msg, expected[i]
+					.getSourceLocation(), actual.get(i).getSourceLocation());
 			// Same type
 			assertEquals(msg, expected[i].getType(), actual.get(i).getType());
 		}
@@ -460,23 +467,25 @@ public class TestFreeIdents extends AbstractTests {
 	/**
 	 * Test method for 'org.eventb.core.ast.Formula.getSyntacticallyFreeIdentifiers()'
 	 */
+	@Test 
 	public final void testGetSyntacticallyFreeIdentifiers() {
 		for (TestItem testItem : testItemsBindAll) {
 			String msg = testItem.formula.toString();
 			FreeIdentifier[] result = testItem.formula.getSyntacticallyFreeIdentifiers();
-			assertEquals(msg, testItem.freeIdents, result);
+			assertEqualsFI(msg, testItem.freeIdents, result);
 		}
 	}
 	
 	/**
 	 * Test method for 'org.eventb.core.ast.Formula.bindAllFreeIdents()'
 	 */
+	@Test 
 	public final void testBindAllFreeIdents() {
 		for (TestItem testItem : testItemsBindAll) {
 			String msg = testItem.formula.toString();
 			List<BoundIdentDecl> actualIdents = new ArrayList<BoundIdentDecl>();
 			Formula<?> result = testItem.formula.bindAllFreeIdents(actualIdents, ff);
-			assertEquals(msg, testItem.freeIdents, actualIdents);
+			assertEqualsFI(msg, testItem.freeIdents, actualIdents);
 			assertEquals(msg, testItem.boundFormula, result);
 		}
 	}
@@ -484,6 +493,7 @@ public class TestFreeIdents extends AbstractTests {
 	/**
 	 * Test method for 'org.eventb.core.ast.Formula.bindTheseIdents()'
 	 */
+	@Test 
 	public final void testBindTheseIdents() {
 		for (TestItem testItem : testItemsBindPartial) {
 			List<FreeIdentifier> identsToBind = Arrays.asList(testItem.freeIdents);
@@ -523,6 +533,7 @@ public class TestFreeIdents extends AbstractTests {
 	/**
 	 * Test method for 'org.eventb.core.ast.Formula.isWellFormed()'
 	 */
+	@Test 
 	public void testIsWellFormed() {
 		for (TestItem testItem : testItemsBindPartial) {
 			final Formula<?> formula = testItem.formula;
@@ -552,6 +563,7 @@ public class TestFreeIdents extends AbstractTests {
 	/**
 	 * Test method for 'org.eventb.core.ast.FormulaFactory.makeFreshIdentifiers()'
 	 */
+	@Test 
 	public void testMakeFreshIdentifiers() {
 		final ITypeEnvironmentBuilder tenv = ff.makeTypeEnvironment();
 		tenv.addGivenSet("S");
@@ -614,6 +626,7 @@ public class TestFreeIdents extends AbstractTests {
 	/**
 	 * Test method for 'org.eventb.core.ast.Assignment.getUsedIdentifiers()'
 	 */
+	@Test 
 	public void testGetUsedIdentifiers() {
 		final Type INT = ff.makeIntegerType();
 		final ITypeEnvironment te = 
@@ -625,7 +638,7 @@ public class TestFreeIdents extends AbstractTests {
 		FreeIdentifier[] expected = mList(ids[y][2], ids[z][3]);
 		typeCheck(expected, te);
 		FreeIdentifier[] actual = assignment.getUsedIdentifiers();
-		assertEquals(assignment.toString(), expected, actual);
+		assertEqualsFI(assignment.toString(), expected, actual);
 		
 		/* Becomes member of with lhs identifier unused. */
 		assignment = mBecomesMemberOf(ids[x][0], mSetExtension(ids[y][1]));
@@ -633,7 +646,7 @@ public class TestFreeIdents extends AbstractTests {
 		expected = mList(ids[y][1]);
 		typeCheck(expected, te);
 		actual = assignment.getUsedIdentifiers();
-		assertEquals(assignment.toString(), expected, actual);
+		assertEqualsFI(assignment.toString(), expected, actual);
 		
 		/* Becomes member of with lhs identifier used. */
 		assignment = mBecomesMemberOf(ids[x][0], mSetExtension(ids[x][1]));
@@ -641,7 +654,7 @@ public class TestFreeIdents extends AbstractTests {
 		expected = mList(ids[x][1]);
 		typeCheck(expected, te);
 		actual = assignment.getUsedIdentifiers();
-		assertEquals(assignment.toString(), expected, actual);
+		assertEqualsFI(assignment.toString(), expected, actual);
 		
 		/* Becomes such that with two identifiers, one being used. */
 		assignment = mBecomesSuchThat(mList(ids[x][0], ids[y][1]),
@@ -654,12 +667,13 @@ public class TestFreeIdents extends AbstractTests {
 		expected = mList(ids[y][3], ids[z][5]);
 		typeCheck(expected, te);
 		actual = assignment.getUsedIdentifiers();
-		assertEquals(assignment.toString(), expected, actual);
+		assertEqualsFI(assignment.toString(), expected, actual);
 	}
 	
 	/**
 	 * Test method for 'org.eventb.core.ast.FreeIdentifier.withPrime()|withoutPrime()'
 	 */
+	@Test 
 	public void testPrimedUnprimedIdentifiers() {
 		
 		FreeIdentifier a = ff.makeFreeIdentifier("a", null);
@@ -678,6 +692,7 @@ public class TestFreeIdents extends AbstractTests {
 	/**
 	 * Test method for 'org.eventb.core.ast.FreeIdentifier.asDecl()|asPrimedDecl()'
 	 */
+	@Test 
 	public void testIdentifiersAsDecl() {
 		
 		FreeIdentifier a = ff.makeFreeIdentifier("a", null);

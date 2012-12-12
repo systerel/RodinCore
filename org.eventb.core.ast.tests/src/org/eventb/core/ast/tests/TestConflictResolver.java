@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 
 import org.eventb.core.ast.BoundIdentDecl;
@@ -21,6 +22,8 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Some unit tests for formulas difficult to parse due to LL(1) conflicts.
@@ -49,10 +52,9 @@ public class TestConflictResolver extends AbstractTests {
 		}
 	}
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
+	@Before
+	public void setUp() throws Exception {
+
 		final FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
 		final FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);
 		final FreeIdentifier id_z = ff.makeFreeIdentifier("z", null);
@@ -158,6 +160,7 @@ public class TestConflictResolver extends AbstractTests {
 	/**
 	 * Main test routine.
 	 */
+	@Test 
 	public void testConflict() {
 		for (TestItem item : testItems) {
 			for (LanguageVersion version: item.versions) {

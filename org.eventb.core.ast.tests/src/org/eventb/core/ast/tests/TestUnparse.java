@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BCOMP;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
@@ -86,6 +88,7 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.tests.Common.TagSupply;
+import org.junit.Test;
 
 
 
@@ -1345,6 +1348,7 @@ public class TestUnparse extends AbstractTests {
 	/**
 	 * Test of hand-written formulae
 	 */
+	@Test 
 	public void testStringFormula() {
 		routineTestStringFormula(associativeExpressionTestPairs);
 		routineTestStringFormula(associativePredicateTestPairs);
@@ -1357,6 +1361,7 @@ public class TestUnparse extends AbstractTests {
 	/**
 	 * Test of automatically generated formulae
 	 */
+	@Test 
 	public void testUnparse() {
 		for (TagSupply tagSupply: TagSupply.getAllTagSupplies()) {
 			routineUnparse(tagSupply);
@@ -1415,6 +1420,7 @@ public class TestUnparse extends AbstractTests {
 		}
 	}
 	
+	@Test 
 	public void testNegativeIntegerLiteral() throws Exception {
 		final ExprTestPair pairs[] = new ExprTestPair[] {
 				// Alone
@@ -1504,6 +1510,7 @@ public class TestUnparse extends AbstractTests {
 	 * form automatically changed so that they can be unparsed and parsed back
 	 * without error.
 	 */
+	@Test 
 	public void testQuantifiedExpressionForm() throws Exception {
 		// Lambda with duplicate pattern identifier (simple)
 		routineTestStringExpression(

@@ -12,10 +12,14 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SourceLocation;
+import org.junit.Test;
 
 /**
  * Tests about source locations stored by the parser in AST nodes. Most of the
@@ -30,6 +34,7 @@ public class TestLocation extends AbstractTests {
 	 * First regression test for [ 1544477 ] AST source location does not take
 	 * into account brackets.
 	 */
+	@Test 
 	public void testPredicate1() {
 		//                   01234     56789     012
 		String predString = "(X=Y\u2228Z=T)\u2227U=V"; 
@@ -79,6 +84,7 @@ public class TestLocation extends AbstractTests {
 	 * Second regression test for [ 1544477 ] AST source location does not take
 	 * into account brackets.
 	 */
+	@Test 
 	public void testPredicate2() {
 		//                   01     23     4     5     6
 		String predString = "X\u21a6Y\u2208\u2115\u21f8\u2115";
@@ -98,6 +104,7 @@ public class TestLocation extends AbstractTests {
 	 * Third regression test for [ 1544477 ] AST source location does not take
 	 * into account brackets.
 	 */
+	@Test 
 	public void testPredicate3() {
 		//                   0123     4
 		String predString = "{1}\u2282\u2115";
@@ -113,6 +120,7 @@ public class TestLocation extends AbstractTests {
 		assertEquals("Source Loc End 2 ", 4, loc.getEnd());
 	}
 
+	@Test 
 	public void testPredicate4() {
 		//                   0123 4
 		String predString = "∅∈∅↔S";
@@ -128,6 +136,7 @@ public class TestLocation extends AbstractTests {
 		assertEquals("Source Loc End 2 ", 4, loc.getEnd());
 	}
 	
+	@Test 
 	public void testPredicate5() {
 		//                   0123456789012345678901
 		String predString = "a∈dom(f)∧f∼;({a}◁f)⊆id";
@@ -145,6 +154,7 @@ public class TestLocation extends AbstractTests {
 		assertEquals("Source Loc End 2 ", 21, loc.getEnd());
 	}
 	
+	@Test 
 	public void testPredicate6() {
 		//                   0123456789012
 		String predString = "f∼;({a}◁f)⊆id";
@@ -160,6 +170,7 @@ public class TestLocation extends AbstractTests {
 		assertEquals("Source Loc End 2 ", 12, loc.getEnd());
 	}
 	
+	@Test 
 	public void testPredicate7() {
 		String predString = "f(a)⊆S";
 		Predicate parsedPred = parsePredicate(predString);

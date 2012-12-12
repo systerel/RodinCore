@@ -15,6 +15,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
@@ -58,6 +61,7 @@ import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
+import org.junit.Test;
 
 /**
  * @author franz
@@ -1234,12 +1238,14 @@ public class TestParser extends AbstractTests {
 	/**
 	 * Main test routine.
 	 */
+	@Test 
 	public void testParser() {
 		testList(preds);
 		testList(exprs);
 		testList(assigns);
 	}
 	
+	@Test 
 	public void testInvalidExprs() throws Exception {
 		doTestInvalidExpr("x/x/x");
 		doTestInvalidExpr("x mod x mod x");

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
@@ -20,13 +22,10 @@ import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
+import org.junit.Test;
 
 public class TestFIS extends AbstractTests {
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
 	
 	private static IntegerType INTEGER = ff.makeIntegerType();
 	private static BooleanType BOOL = ff.makeBooleanType();
@@ -60,6 +59,7 @@ public class TestFIS extends AbstractTests {
 			this.tenv = tenv;
 		}
 		
+		@Test 
 		public void test() throws Exception {
 			Assignment inA = parseAssignment(input);
 			ITypeEnvironment newEnv = typeCheck(inA, tenv);
@@ -87,6 +87,7 @@ public class TestFIS extends AbstractTests {
 			new TestItem("x,y:\u2223 x'∈A", "∃x'·x'∈A", defaultTEnv),
 	};
 	
+	@Test 
 	public void testFIS() throws Exception {
 		for(TestItem item : testItems)
 			item.test();

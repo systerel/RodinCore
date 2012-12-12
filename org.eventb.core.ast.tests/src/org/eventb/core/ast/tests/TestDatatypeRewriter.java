@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.ExtensionHelper.getGenericOperatorExtension;
 
@@ -20,6 +22,7 @@ import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
+import org.junit.Test;
 
 /**
  * Unit tests for the common datatype rewriter class. Verifies that the rewriter
@@ -33,6 +36,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	/**
 	 * Checks that a parametric type is well retrieved from a type constructor.
 	 */
+	@Test 
 	public void testTypeConstructorRewriting() {
 		assertCorrectParametricType("List(1‥3)");
 	}
@@ -40,6 +44,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	/**
 	 * Checks that a parametric type is well retrieved from a value constructor.
 	 */
+	@Test 
 	public void testConstructorRewriting() {
 		assertCorrectParametricType("cons(1, nil)");
 	}
@@ -47,6 +52,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	/**
 	 * Checks that a parametric type is well retrieved from a destructor.
 	 */
+	@Test 
 	public void testDestructorRewriting() {
 		assertCorrectParametricType("tail(cons(1, nil))");
 	}
@@ -71,6 +77,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	 * Checks that the rewrite method correctly applies for a BoudIdentDecl
 	 * (i.e. it rewrites the type of the BoundIdentDecl).
 	 */
+	@Test 
 	public void testBoundIdentDeclRewrite() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.setExpectedTypeEnvironment("List_Type=ℙ(List_Type); List_Type0=ℙ(List_Type0)");
@@ -82,6 +89,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	 * Checks that the rewrite method correctly applies for an AtomicExpression
 	 * (i.e. it rewrites the type of the AtomicExpression).
 	 */
+	@Test 
 	public void testAtomicExpressionRewrite() {
 		final TestTranslationSupport s = mSupport(MESSAGE__DT);
 		s.addGivenTypes("Agent", "Identifier");
@@ -94,6 +102,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	 * Checks that the rewrite method correctly applies for a BoundIdendifier
 	 * (i.e. it rewrites the type of the BoundIdendifier).
 	 */
+	@Test 
 	public void testBoundIdentifierRewrite() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.setExpectedTypeEnvironment("List_Type=ℙ(List_Type); List_Type0=ℙ(List_Type0)");
@@ -107,6 +116,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	 * Checks that the rewrite method correctly applies for a FreeIdentifier
 	 * (i.e. it rewrites the type of the FreeIdentifier).
 	 */
+	@Test 
 	public void testFreeIdentifierRewrite() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.addToSourceEnvironment("x=List(ℤ)");
@@ -120,6 +130,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	 * identifiers [bound identifier declarations] that occur in the
 	 * QuantifiedExpression).
 	 */
+	@Test 
 	public void testQuantifiedExpressionRewrite() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.setExpectedTypeEnvironment("List_Type=ℙ(List_Type)");
@@ -133,6 +144,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	 * identifiers [bound identifier declarations] that occur in the
 	 * QuantifiedPredicate).
 	 */
+	@Test 
 	public void testQuantifiedPredicateRewrite() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.setExpectedTypeEnvironment("List_Type=ℙ(List_Type)");
@@ -143,6 +155,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	 * Checks that the rewrite method correctly applies for a SetExtension which
 	 * denotes a typed empty set.
 	 */
+	@Test 
 	public void testSetExtensionRewrite() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.setExpectedTypeEnvironment("List=ℙ(List_Type)");
@@ -153,6 +166,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	 * Checks that the rewrite method correctly applies for a SetExtension which
 	 * denotes a typed empty set.
 	 */
+	@Test 
 	public void testSetExtensionChildrenRewrite() {
 		final TestTranslationSupport s = mSupport(LIST__DT);
 		s.addToSourceEnvironment("x=List(ℤ)");
@@ -165,6 +179,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	 * Checks that the rewrite method correctly translates datatypes in the
 	 * expressions of an ExpressionExtension.
 	 */
+	@Test 
 	public void testExtendedExpressionWithChildPredRewrite() {
 		final TestTranslationSupport s = mSupport(EFF, LIST__DT);
 		s.addToSourceEnvironment("x=List(ℤ);y=List(ℤ)");
@@ -176,6 +191,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	 * Checks that the rewrite method correctly translates datatypes in the
 	 * expressions of an ExtendedPredicate.
 	 */
+	@Test 
 	public void testExtendedPredicateWithChildPredRewrite() {
 		final TestTranslationSupport s = mSupport(EFF, LIST__DT);
 		s.addToSourceEnvironment("x=List(ℤ);y=List(ℤ)");
@@ -187,6 +203,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	 * Checks that the rewrite method correctly translates the type of a generic
 	 * operator.
 	 */
+	@Test 
 	public void testGenericOperatorRewrite() {
 		final FormulaFactory genericOpFac = FormulaFactory
 				.getInstance(getGenericOperatorExtension());

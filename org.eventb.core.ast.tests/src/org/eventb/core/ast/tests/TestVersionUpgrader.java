@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.DOMRES;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
@@ -62,6 +64,7 @@ import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
+import org.junit.Test;
 
 /**
  * Acceptance tests for upgrading from mathematical language V1 to V2.
@@ -263,6 +266,7 @@ public class TestVersionUpgrader extends AbstractTests {
 	}
 
 	// verify correct upgrade of KPRJ1, KPRJ2, KID,
+	@Test 
 	public void testGenericExpressionsV1V2() throws Exception {
 		final FreeIdentifier id_S = mFreeIdentifier("S");
 		final Expression id_gen = mAtomicExpression(KID_GEN);
@@ -279,10 +283,12 @@ public class TestVersionUpgrader extends AbstractTests {
 	}
 
 	// REL TREL SREL STREL PFUN TFUN PINJ TINJ PSUR TSUR TBIJ
+	@Test 
 	public void testMissingParenthesesV1V2() throws Exception {
 		verifyUpgrade(makeParenSetOp());
 	}
 
+	@Test 
 	public void testNotTypedGenericFromNotTypedChild() throws Exception {
 		final TestItem<?> ti = new TestItemPred("v ∈ id(S)", V2, makeResult(
 				mRelationalPredicate(IN, mFreeIdentifier("v"),
@@ -291,6 +297,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		ti.verifyUpgrade();
 	}
 
+	@Test 
 	public void testTypedGenericFromTypeExpr() throws Exception {
 		final IntegerType integerType = ff.makeIntegerType();
 		final TestItem<?> ti = new TestItemPred("v ∈ id(ℤ)", V2, makeResult(
@@ -300,6 +307,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		ti.verifyUpgrade();
 	}
 
+	@Test 
 	public void testTypedGenericFromTypedChild() throws Exception {
 		final IntegerType integerType = ff.makeIntegerType();
 		final TestItem<?> ti = new TestItemPred("v ∈ id(ℕ)", V2, makeResult(
@@ -310,6 +318,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		ti.verifyUpgrade();
 	}
 
+	@Test 
 	public void testBecomesEqualTo() throws Exception {
 		final TestItem<?> ti = new TestItemAssign("v ≔ id(S)", V2, makeResult(
 				mBecomesEqualTo(mFreeIdentifier("v"), mBinaryExpression(DOMRES,
@@ -318,6 +327,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		ti.verifyUpgrade();
 	}
 
+	@Test 
 	public void testBecomesEqualToSeveral() throws Exception {
 		final TestItem<?> ti = new TestItemAssign("v,w ≔ 0,id(S)", V2,
 				makeResult(mBecomesEqualTo(new FreeIdentifier[] {
@@ -329,6 +339,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		ti.verifyUpgrade();
 	}
 
+	@Test 
 	public void testBecomesMemberOf() throws Exception {
 		final TestItem<?> ti = new TestItemAssign("v :∈ prj1(S)", V2,
 				makeResult(mBecomesMemberOf(mFreeIdentifier("v"),
@@ -337,6 +348,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		ti.verifyUpgrade();
 	}
 
+	@Test 
 	public void testBecomesSuchThat() throws Exception {
 		final TestItem<?> ti = new TestItemAssign("v :∣ v' ∈ prj2(S)", V2,
 				makeResult(mBecomesSuchThat(
@@ -348,6 +360,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		ti.verifyUpgrade();
 	}
 
+	@Test 
 	public void testAssignmentNoChange() throws Exception {
 		final TestItem<?>[] testItems = new TestItem<?>[] {
 				new TestItemAssign("v :∣ 0 =    0", V2, makeResult(
@@ -358,6 +371,7 @@ public class TestVersionUpgrader extends AbstractTests {
 	}
 
 	/* verify that special space characters do not interfere with the upgrade */
+	@Test 
 	public void testSpecialCharacters() throws Exception {
 		final char spec = new Character('\u2029');
 
@@ -370,6 +384,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		ti.verifyUpgrade();
 	}
 
+	@Test 
 	public void testNoNeedToUpgrade() throws Exception {
 		final String pred1 = "∀X· ⊤";
 		final String pred2 = "∀X· ((((S ↔ S)  T)  (S  (S ⇸ T))) → S) ⤔ (((S ↣ T) ⤀(S ↠ T))⤖ S)⊆ X";
@@ -379,6 +394,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		verifyUpgrade(items);
 	}
 
+	@Test 
 	public void testFormulaWithError() throws Exception {
 		final String pred = "∀(x)·⊤";
 		final UpgradeResultChecker<Predicate> checker = new UpgradeResultChecker<Predicate>(
@@ -390,6 +406,7 @@ public class TestVersionUpgrader extends AbstractTests {
 
 	// Verify that a formula with an identifier 'partition' in V1
 	// is not upgradable to V2
+	@Test 
 	public void testPartitionAsIdentifier() throws Exception {
 		final String pred1 = " partition(x) = y";
 		final UpgradeResultChecker<Predicate> checker = new UpgradeResultChecker<Predicate>(
@@ -400,6 +417,7 @@ public class TestVersionUpgrader extends AbstractTests {
 	}
 
 	// Verify that a bound identifier "partition" gets upgraded
+	@Test 
 	public void testPartitionRenamed1() throws Exception {
 		final String pred = "∀partition· partition ∈ S";
 		final UpgradeResultChecker<Predicate> checker = makeResult(
@@ -411,6 +429,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		item.verifyUpgrade();
 	}
 
+	@Test 
 	public void testPartitionRenamed2() throws Exception {
 		final String pred = "∀partition1·∃ partition · partition = partition1";
 		final UpgradeResultChecker<Predicate> checker = makeResult(
@@ -427,6 +446,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		item.verifyUpgrade();
 	}
 
+	@Test 
 	public void testPartitionQuantifiedAndId() throws Exception {
 		final String assign = "∀partition·x∈id(S)";
 
@@ -442,6 +462,7 @@ public class TestVersionUpgrader extends AbstractTests {
 
 	}
 
+	@Test 
 	public void testPartitionLeftHandSide() throws Exception {
 		final String assign = "partition :∈ T";
 		final UpgradeResultChecker<Assignment> checker = new UpgradeResultChecker<Assignment>(
@@ -451,6 +472,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		ti.verifyUpgrade();
 	}
 
+	@Test 
 	public void testParenUpgradeNeeded() throws Exception {
 		final String pred = "x ∈ A → B → C";
 
@@ -463,6 +485,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		ti.verifyUpgrade();
 	}
 
+	@Test 
 	public void testParenNoUpgrade() throws Exception {
 		final String assign = "x   :∈ (A → B) → C";
 

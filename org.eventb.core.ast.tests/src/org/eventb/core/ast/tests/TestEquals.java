@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.tests.FastFactory.mBecomesSuchThat;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
@@ -33,6 +36,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.Type;
+import org.junit.Test;
 
 
 /**
@@ -205,6 +209,7 @@ public class TestEquals extends AbstractTests {
 	 * Test method for 'org.eventb.core.ast.Formula.equals()'
 	 * and 'org.eventb.core.ast.Formula.hashCode()'
 	 */
+	@Test 
 	public final void testEquals() {
 		for (TestItem<?> testItem : equals) {
 			Formula<?>[] formulas = testItem.formulas;
@@ -226,6 +231,7 @@ public class TestEquals extends AbstractTests {
 		}
 	}		
 	
+	@Test 
 	public final void testNotEquals() {
 		for (TestItem<?> testItem : notEquals) {
 			Formula<?>[] formulas = testItem.formulas;
@@ -251,6 +257,7 @@ public class TestEquals extends AbstractTests {
 	 * 
 	 * Cf. bug #1711912: ClassCastException in AST Formula.equals()
 	 */
+	@Test 
 	public final void testNotEqualsSameHashCode() {
 		final Predicate f1 = parsePredicate("CLTR ∩ cel_inv[ran(env)]=∅");
 		final Predicate f2 = parsePredicate("ran(env) ∩ cel_inv[CLTR]=∅");
@@ -268,6 +275,7 @@ public class TestEquals extends AbstractTests {
 	 * 
 	 * Cf. bug #3574162: AST does not compare bound ident decl types
 	 */
+	@Test 
 	public void testBoundIdentDeclEquality() {
 		final BoundIdentDecl b_xZ = mBoundIdentDecl("x", Z);
 		final BoundIdentDecl b_xB = mBoundIdentDecl("x", B);
@@ -290,6 +298,7 @@ public class TestEquals extends AbstractTests {
 	 * 
 	 * Cf. bug #3574162: AST does not compare bound ident decl types
 	 */
+	@Test 
 	public void testBecomesSuchThat() {
 		final FreeIdentifier id_xZ = FastFactory.mFreeIdentifier("x", Z);
 		final BoundIdentDecl b_xp = mBoundIdentDecl("x'");
@@ -311,6 +320,7 @@ public class TestEquals extends AbstractTests {
 	 * 
 	 * Cf. bug #3574162: AST does not compare bound ident decl types
 	 */
+	@Test 
 	public void testQuantifiedExpression() {
 		assertPredicateEquality("finite({x·⊤∣1})", "finite({x⦂ℤ·⊤∣1})",
 				"finite({x⦂BOOL·⊤∣1})");
@@ -322,6 +332,7 @@ public class TestEquals extends AbstractTests {
 	 * 
 	 * Cf. bug #3574162: AST does not compare bound ident decl types
 	 */
+	@Test 
 	public void testQuantifiedPredicate() {
 		assertPredicateEquality("∀x·⊤", "∀x⦂ℤ·⊤", "∀x⦂BOOL·⊤");
 	}

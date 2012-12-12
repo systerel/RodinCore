@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BCOMP;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
@@ -135,8 +137,9 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.QuantifiedExpression.Form;
+import org.eventb.core.ast.Type;
+import org.junit.Test;
 
 /**
  * Unit tests for type synthesis happening at node construction.
@@ -437,6 +440,7 @@ public class TestTypedConstructor extends AbstractTests {
 		}
 	}
 
+	@Test 
 	public void testAssociativeExpression() {
 		for (int tag : Arrays.asList(BUNION, BINTER)) {
 			assertAssociativeExpressionType(tag, pS, pS, pS);
@@ -502,6 +506,7 @@ public class TestTypedConstructor extends AbstractTests {
 		}
 	}
 
+	@Test 
 	public void testAssociativePredicate() throws Exception {
 		for (int tag : Arrays.asList(LAND, LOR)) {
 			assertAssociativePredicate(tag, true, true, true);
@@ -515,6 +520,7 @@ public class TestTypedConstructor extends AbstractTests {
 		}
 	}
 
+	@Test 
 	public void testAtomicExpression() throws Exception {
 		assertAtomicExpressionType(INTEGER, pZ);
 		assertAtomicExpressionType(NATURAL, pZ);
@@ -528,6 +534,7 @@ public class TestTypedConstructor extends AbstractTests {
 		assertAtomicExpressionType(KSUCC, rZZ);
 	}
 
+	@Test 
 	public void testBecomesEqualTo() throws Exception {
 		assertBecomesEqualsTo(true, l(S), l(S));
 		assertBecomesEqualsTo(false, l(S), l(T));
@@ -558,6 +565,7 @@ public class TestTypedConstructor extends AbstractTests {
 		assertBecomesEqualsTo(false, l(S, T, U), l(S, T, null));
 	}
 
+	@Test 
 	public void testBecomesMemberOf() throws Exception {
 		assertBecomesMemberOf(true, S, pS);
 		assertBecomesMemberOf(false, S, S);
@@ -566,6 +574,7 @@ public class TestTypedConstructor extends AbstractTests {
 		assertBecomesMemberOf(false, S, null);
 	}
 
+	@Test 
 	public void testBecomesSuchThat() throws Exception {
 		assertBecomesSuchThat(true, l(S), l(S), true);
 		assertBecomesSuchThat(false, l(S), l(T), true);
@@ -599,6 +608,7 @@ public class TestTypedConstructor extends AbstractTests {
 		assertBecomesSuchThat(false, l(S, T, U), l(S, T, U), false);
 	}
 
+	@Test 
 	public void testBinaryExpression() throws Exception {
 		assertBinaryExpressionType(FUNIMAGE, T, rST, S);
 		assertBinaryExpressionType(FUNIMAGE, null, rTU, S);
@@ -687,6 +697,7 @@ public class TestTypedConstructor extends AbstractTests {
 		}
 	}
 
+	@Test 
 	public void testBinaryPredicate() throws Exception {
 		for (int tag : Arrays.asList(LIMP, LEQV)) {
 			assertBinaryPredicate(tag, true, true, true);
@@ -695,21 +706,25 @@ public class TestTypedConstructor extends AbstractTests {
 		}
 	}
 
+	@Test 
 	public void testBoolExpression() throws Exception {
 		assertBoolExpressionType(true, B);
 		assertBoolExpressionType(false, null);
 	}
 
+	@Test 
 	public void testBoundIdentDecl() throws Exception {
 		assertBoundIdentDeclType(S);
 		assertBoundIdentDeclType(null);
 	}
 
+	@Test 
 	public void testBoundIdentifier() throws Exception {
 		assertBoundIdentifierType(S);
 		assertBoundIdentifierType(null);
 	}
 
+	@Test 
 	public void testGenericTypes() throws Exception {
 		assertExpressionType(mEmptySet(pS), pS);
 		assertExpressionType(mEmptySet(null), null);
@@ -724,20 +739,24 @@ public class TestTypedConstructor extends AbstractTests {
 		assertExpressionType(mPrj2(null), null);
 	}
 
+	@Test 
 	public void testFreeIdentifier() throws Exception {
 		assertFreeIdentifierType(S);
 		assertFreeIdentifierType(null);
 	}
 
+	@Test 
 	public void testIntegerLiteral() throws Exception {
 		assertExpressionType(mIntegerLiteral(), Z);
 	}
 
+	@Test 
 	public void testLiteralPredicate() throws Exception {
 		assertLiteralPredicate(BTRUE, true);
 		assertLiteralPredicate(BFALSE, true);
 	}
 
+	@Test 
 	public void testMultiplePredicate() throws Exception {
 		assertMultiplePredicate(KPARTITION, true, pS);
 		assertMultiplePredicate(KPARTITION, false, S);
@@ -750,6 +769,7 @@ public class TestTypedConstructor extends AbstractTests {
 		assertMultiplePredicate(KPARTITION, false, null, null);
 	}
 
+	@Test 
 	public void testQuantifiedExpression() throws Exception {
 		// Union
 		assertQuantifiedExpressionType(QUNION, Explicit, pS, l(S), true, pS);
@@ -784,6 +804,7 @@ public class TestTypedConstructor extends AbstractTests {
 		assertQuantifiedExpressionType(CSET, Explicit, null, l(S), true, null);
 	}
 
+	@Test 
 	public void testQuantifiedPredicate() throws Exception {
 		for (int tag : Arrays.asList(FORALL, EXISTS)) {
 			assertQuantifiedPredicate(tag, true, l(S), true);
@@ -803,6 +824,7 @@ public class TestTypedConstructor extends AbstractTests {
 		}
 	}
 
+	@Test 
 	public void testRelationalPredicated() throws Exception {
 		for (int tag : Arrays.asList(EQUAL, NOTEQUAL)) {
 			assertRelationalPredicate(tag, true, B, B);
@@ -846,6 +868,7 @@ public class TestTypedConstructor extends AbstractTests {
 		}
 	}
 
+	@Test 
 	public void testSetExtension() throws Exception {
 		assertSetExtensionType(null);
 
@@ -862,6 +885,7 @@ public class TestTypedConstructor extends AbstractTests {
 		assertSetExtensionType(null, null, S, S);
 	}
 
+	@Test 
 	public void testSimplePredicate() throws Exception {
 		assertSimplePredicate(true, pS);
 		assertSimplePredicate(false, B);
@@ -871,6 +895,7 @@ public class TestTypedConstructor extends AbstractTests {
 	}
 
 	@SuppressWarnings("deprecation")
+	@Test 
 	public void testUnaryExpression() throws Exception {
 		assertUnaryExpressionType(UNMINUS, null, null);
 		assertUnaryExpressionType(UNMINUS, null, B);
@@ -971,6 +996,7 @@ public class TestTypedConstructor extends AbstractTests {
 		}
 	}
 
+	@Test 
 	public void testUnaryPredicate() throws Exception {
 		assertUnaryPredicate(NOT, true, true);
 		assertUnaryPredicate(NOT, false, false);
