@@ -19,13 +19,10 @@ import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
@@ -39,19 +36,9 @@ import org.junit.Test;
  */
 public class TestWD extends AbstractTests {
 
-	private static IntegerType INTEGER = ff.makeIntegerType();
-	private static BooleanType BOOL = ff.makeBooleanType();
-	private static GivenType S = ff.makeGivenType("S");
 
-	static ITypeEnvironment defaultTEnv = mTypeEnvironment(//
-			"x", INTEGER,//
-			"y", INTEGER,//
-			"A", POW(INTEGER),//
-			"B", POW(INTEGER),//
-			"f", POW(CPROD(INTEGER, INTEGER)),//
-			"Y", POW(BOOL),//
-			"S", POW(S)//
-	);
+	static ITypeEnvironment defaultTEnv = mTypeEnvironment(
+			"x=ℤ; y=ℤ; A=ℙ(ℤ); B=ℙ(ℤ); f=ℤ↔ℤ; Y=ℙ(BOOL); S=ℙ(S)", ff);
 
 	private static abstract class TestFormula<T extends Formula<T>> {
 
@@ -297,10 +284,7 @@ public class TestWD extends AbstractTests {
 	@Test 
 	public void testRouting() {
 		final ITypeEnvironment env = mTypeEnvironment(//
-				"N", "ℙ(N)", //
-				"age", "L ↔ ℤ", //
-				"l_net", "ℤ ↔ L",//
-				"parity", "ℤ ↔ ℤ");
+				"N=ℙ(N); age=L ↔ ℤ; l_net=ℤ ↔ L; parity=ℤ ↔ ℤ", ff);
 
 		// inv11/WD in rm_3
 		assertWDLemma(env, //
@@ -384,20 +368,20 @@ public class TestWD extends AbstractTests {
 	@Test 
 	public void testDIR() {
 		final ITypeEnvironment env = mTypeEnvironment(//
-				"T", "ℙ(T)", //
-				"C", "ℙ(C)",//
-				"SI", "ℙ(SI)",//
-				"CH", "ℙ(CH)",//
-				"CO", "ℙ(CO)",//
-				"pcoc", "CO ↔ C",//
-				"p_at", "CO ↔ CO",//
-				"p_c_a", "CO ↔ CO",//
-				"p_c_inv", "CO ↔ CO",//
-				"c_chemin_signal", "CH ↔ SI",//
-				"c_chemin_cellule_accès", "CH ↔ CO",//
-				"c_signal_cellule_arrêt", "SI ↔ CO",//
-				"closure1", "(CO ↔ CO) ↔ (CO ↔ CO)"//
-		);
+				"T=ℙ(T); " //
+				+"C=ℙ(C); " //
+				+"SI=ℙ(SI); " //
+				+"CH=ℙ(CH); " //
+				+"CO=ℙ(CO); " //
+				+"pcoc=CO ↔ C; " //
+				+"p_at=CO ↔ CO; " //
+				+"p_c_a=CO ↔ CO; " //
+				+"p_c_inv=CO ↔ CO; " //
+				+"c_chemin_signal=CH ↔ SI; " //
+				+"c_chemin_cellule_accès=CH ↔ CO; " //
+				+"c_signal_cellule_arrêt=SI ↔ CO; " //
+				+"closure1=(CO ↔ CO) ↔ (CO ↔ CO)"//
+				, ff);
 
 		// thm1/WD in Atteignable
 		assertWDLemma(env, "∀x,y · x↦y ∈ p_at ⇒ p_c_inv(y)↦p_c_inv(x) ∈ p_at",
@@ -550,7 +534,7 @@ public class TestWD extends AbstractTests {
 	 */
 	@Test 
 	public void testQuantifiers() {
-		final ITypeEnvironment env = mTypeEnvironment("f", REL(S, S));
+		final ITypeEnvironment env = mTypeEnvironment("f=S↔S", ff);
 		assertWDLemma(env,//
 				"∀x·x ∈ dom(f) ⇒ (∃y · f(x) = f(y)) ",//
 				"∀x·x∈dom(f) ⇒" //
@@ -564,10 +548,7 @@ public class TestWD extends AbstractTests {
 	 */
 	@Test 
 	public void testQuantifiedMany() {
-		final ITypeEnvironment env = mTypeEnvironment(//
-				"S", POW(S),//
-				"f", REL(S, S)//
-		);
+		final ITypeEnvironment env = mTypeEnvironment("f=S↔S; S=ℙ(S)", ff);
 		assertWDLemma(env,//
 				"∀x·x∈dom(f) ⇒ (∃y,z·f(y) = f(z)) ",//
 				"∀x·x∈dom(f) ⇒"//
@@ -594,7 +575,7 @@ public class TestWD extends AbstractTests {
 	 */
 	@Test 
 	public void testQuantifiedAfter() {
-		final ITypeEnvironment env = mTypeEnvironment("f", REL(S, S));
+		final ITypeEnvironment env = mTypeEnvironment("f=S↔S", ff);
 		assertWDLemma(env,//
 				"∀x·x∈dom(f) ⇒ (∃y·f(x)=f(y)) ∧ f(x)=f(x)",//
 				"∀x·x∈dom(f) ⇒"//
@@ -612,7 +593,7 @@ public class TestWD extends AbstractTests {
 	@Test 
 	public void testQuantifiedDeep() {
 		assertWDLemma(
-				mTypeEnvironment("S", POW(S)),//
+				mTypeEnvironment("S=ℙ(S)", ff),//
 				"∀f·f∈S ⇸ S ⇒ (∀x·f(x) = f(x) ⇒ (∃y·f(x) = f(y)))", //
 				"∀f·f∈S ⇸ S ⇒ "//
 						+ "  (∀x·x∈dom(f) ∧ f∈S⇸S ∧ x∈dom(f) ∧ f∈S⇸S ∧"//
@@ -630,7 +611,7 @@ public class TestWD extends AbstractTests {
 	 */
 	@Test 
 	public void testQuantifierDeepDuplicate() {
-		final ITypeEnvironment env = mTypeEnvironment("f", REL(S, S));
+		final ITypeEnvironment env = mTypeEnvironment("f=S↔S", ff);
 		assertWDLemma(
 				env,//
 				"f∈S ⇸ S ⇒ (∀x·f(x) = f(x) ⇒"//
@@ -669,20 +650,20 @@ public class TestWD extends AbstractTests {
 	@Test 
 	public void testCDIS() {
 		final ITypeEnvironment env = mTypeEnvironment(//
-				"Attr_Id", "ℙ(Attr_id)",//
-				"Attrs", "ℙ(Attrs)",//
-				"Attr_value", "ℙ(Attr_value)", //
-				"value", "Attrs ↔ Attr_value", //
-				"db0", "Attr_id ↔ Attrs",//
-				"contents", "Page ↔ Page_contents",//
-				"private_pages", "Page_number ↔ Page",//
-				"previous_pages", "Page_number ↔ Page",//
-				"last_update", "Attrs ↔ Date_time",//
-				"creation_date", "Page ↔ Date_time",//
-				"release_date", "Page ↔ Date_time",//
-				"leq", "Date_time ↔ Date_time",//
-				"dp_time", "Disp_params ↔ Date_time",//
-				"conform", "Attr_id ↔ Attr_value");
+				"Attr_Id=ℙ(Attr_id); "//
+						+ "Attrs=ℙ(Attrs); "//
+						+ "Attr_value=ℙ(Attr_value); "//
+						+ "value=Attrs ↔ Attr_value; "//
+						+ "db0=Attr_id ↔ Attrs; "//
+						+ "contents=Page ↔ Page_contents; "//
+						+ "private_pages=Page_number ↔ Page; "//
+						+ "previous_pages=Page_number ↔ Page; "//
+						+ "last_update=Attrs ↔ Date_time; "//
+						+ "creation_date=Page ↔ Date_time; "//
+						+ "release_date=Page ↔ Date_time; "//
+						+ "leq=Date_time ↔ Date_time; "//
+						+ "dp_time=Disp_params ↔ Date_time; "//
+						+ "conform=Attr_id ↔ Attr_value", ff);
 
 		assertWDLemma(env,//
 				"∀ai·ai∈Attr_id ⇒ ai ↦ value(db0(ai)) ∈ conform", //
@@ -725,9 +706,9 @@ public class TestWD extends AbstractTests {
 	 */
 	@Test 
 	public void testTraversal() {
-		final ITypeEnvironment env = mTypeEnvironment(//
-				"f", REL(S, POW(S)),//
-				"g", REL(S, POW(S)));
+		
+		final ITypeEnvironment env = mTypeEnvironment(
+				"f=S↔ℙ(S); g=S↔ℙ(S)", ff);
 		assertWDLemma(
 				env,//
 				"g(x)∪{y ∣ (b<a⇒a=0) ∧ f(x)=∅ ∧ g(x)=∅}=f(x)",

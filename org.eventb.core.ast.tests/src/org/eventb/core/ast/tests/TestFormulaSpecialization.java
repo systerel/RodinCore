@@ -14,7 +14,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.tests.ExtensionHelper.getAlphaExtension;
-import static org.eventb.core.ast.tests.FastFactory.addToTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mSpecialization;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
@@ -26,7 +25,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
@@ -58,14 +56,8 @@ public class TestFormulaSpecialization extends AbstractTests {
 	/*
 	 * Type environment already initialized for most tests.
 	 */
-	private ISealedTypeEnvironment te = mTypeEnvironment(//
-			"S", "ℙ(S)",//
-			"T", "ℙ(T)",//
-			"A", "ℙ(S)",//
-			"a", "S",//
-			"b", "T",//
-			"c", "S",//
-			"d", "T").makeSnapshot();
+	private ITypeEnvironment te = mTypeEnvironment(
+			"S=ℙ(S); T=ℙ(T); A=ℙ(S); a=S; b=T; c=S; d=T", ff);
 
 	private ISpecialization spec = ff.makeSpecialization();
 
@@ -74,7 +66,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	 */
 	@Test 
 	public void testAssignment() {
-		ITypeEnvironmentBuilder teb = mTypeEnvironment("a", "ℤ");
+		ITypeEnvironmentBuilder teb = mTypeEnvironment("a=ℤ",ff);
 		final Assignment assign = parseAssignment("a ≔ a + 1");
 		typeCheck(assign, teb);
 		spec = mSpecialization(teb, "a := b");
@@ -179,9 +171,8 @@ public class TestFormulaSpecialization extends AbstractTests {
 	public void testExtendedExpression() {
 		final FormulaFactory extFac = FormulaFactory
 				.getInstance(DIRECT_PRODUCT);
-		final ITypeEnvironmentBuilder teb = extFac.makeTypeEnvironment();
-		addToTypeEnvironment(teb, "S", "ℙ(S)", "T", "ℙ(T)", "V", "ℙ(V)",//
-				"A", "ℙ(S×T)", "B", "ℙ(S×V)");
+		final ITypeEnvironmentBuilder teb = mTypeEnvironment(
+				"S=ℙ(S); T=ℙ(T); V=ℙ(V); A=ℙ(S×T); B=ℙ(S×V)", extFac);
 		te = teb.makeSnapshot();
 		assertExpressionSpecialization(te, "A§B", "S := X", "A§B");
 	}
@@ -193,8 +184,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 	public void testExtendedPredicate() {
 		final IPredicateExtension alphaExt = getAlphaExtension();
 		final FormulaFactory extFac = FormulaFactory.getInstance(alphaExt);
-		ITypeEnvironmentBuilder teb = extFac.makeTypeEnvironment();
-		addToTypeEnvironment(teb, "S", "ℙ(S)", "a", "S");
+		ITypeEnvironmentBuilder teb = mTypeEnvironment("S=ℙ(S); a=S", extFac);
 		te = teb.makeSnapshot();
 		assertPredicateSpecialization(te,//
 				"α(a∈A, a)",//
@@ -328,7 +318,7 @@ public class TestFormulaSpecialization extends AbstractTests {
 				"∀x⦂T·x↦1 ∈ {x↦z∣x∈A ∧ z∈B}");
 	}
 
-	private static void assertExpressionSpecialization(ISealedTypeEnvironment typenv,
+	private static void assertExpressionSpecialization(ITypeEnvironment typenv,
 			String srcImage, String specImage, String expectedImage) {
 		final FormulaFactory fac = typenv.getFormulaFactory();
 		final Expression src = parseExpression(srcImage, fac);
@@ -340,12 +330,11 @@ public class TestFormulaSpecialization extends AbstractTests {
 	}
 
 	private static void assertPredicateSpecialization(
-			ISealedTypeEnvironment baseTypenv, String srcImage, String specImage,
+			ITypeEnvironment baseTypenv, String srcImage, String specImage,
 			String expectedImage) {
-		ITypeEnvironment typenv = baseTypenv.makeBuilder();
-		final FormulaFactory fac = typenv.getFormulaFactory();
+		final FormulaFactory fac = baseTypenv.getFormulaFactory();
 		final Predicate src = parsePredicate(srcImage, fac);
-		typenv = typeCheck(src, typenv);
+		ITypeEnvironment typenv = typeCheck(src, baseTypenv);
 		final ISpecialization spec = mSpecialization(typenv, specImage);
 		final Predicate expected = parsePredicate(expectedImage, fac);
 		typeCheck(expected, typenv.specialize(spec));

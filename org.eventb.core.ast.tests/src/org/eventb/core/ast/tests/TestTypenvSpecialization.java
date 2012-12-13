@@ -42,9 +42,9 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testEmptySpecialization() {
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)"),//
+				mTypeEnvironment("S=ℙ(S)", ff),//
 				"",//
-				mTypeEnvironment("S", "ℙ(S)"));
+				mTypeEnvironment("S=ℙ(S)", ff));
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testGivenDisappears() {
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)"),//
+				mTypeEnvironment("S=ℙ(S)", ff),//
 				"S := ℤ",//
 				mTypeEnvironment());
 	}
@@ -66,17 +66,17 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testGivenReappears() {
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)"),//
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T)", ff),//
 				"S := ℤ || T := S",//
-				mTypeEnvironment("S", "ℙ(S)"));
+				mTypeEnvironment("S=ℙ(S)", ff));
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)"),//
+				mTypeEnvironment("S=ℙ(S)", ff),//
 				"S := S",//
-				mTypeEnvironment("S", "ℙ(S)"));
+				mTypeEnvironment("S=ℙ(S)", ff));
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)"),//
+				mTypeEnvironment("S=ℙ(S)", ff),//
 				"S := ℙ(S×T)",//
-				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)"));
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T)", ff));
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testGivenReappearsNot() {
 		assertTypeSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)"),//
+				mTypeEnvironment("S=ℙ(S)", ff),//
 				"S := ℤ || T := S",//
 				mTypeEnvironment());
 	}
@@ -99,9 +99,9 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testGivenUnchanged() {
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)"),//
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T)", ff),//
 				"S := ℤ",//
-				mTypeEnvironment("T", "ℙ(T)"));
+				mTypeEnvironment("T=ℙ(T)", ff));
 	}
 
 	/**
@@ -111,21 +111,21 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testIdentNotSubstituted() {
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)", "a", "S"),//
+				mTypeEnvironment("S=ℙ(S); a=S", ff),//
 				"S := T",//
-				mTypeEnvironment("T", "ℙ(T)", "a", "T"));
+				mTypeEnvironment("T=ℙ(T); a=T", ff));
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "b", "S×T"),//
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T); b=S×T", ff),//
 				"S := T",//
-				mTypeEnvironment("T", "ℙ(T)", "b", "T×T"));
+				mTypeEnvironment("T=ℙ(T); b=T×T", ff));
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)", "U", "ℙ(U)", "c", "U"),//
+				mTypeEnvironment("S=ℙ(S); U=ℙ(U); c=U", ff),//
 				"S := T",//
-				mTypeEnvironment("T", "ℙ(T)", "U", "ℙ(U)", "c", "U"));
+				mTypeEnvironment("T=ℙ(T); U=ℙ(U); c=U", ff));
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "S×T"),//
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=S×T", ff),//
 				"S := T || T := S×T",//
-				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "T×(S×T)"));
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=T×(S×T)", ff));
 	}
 
 	/**
@@ -135,9 +135,9 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testIdentSubstitutedNoTypeChange() {
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)", "a", "S"),//
+				mTypeEnvironment("S=ℙ(S); a=S", ff),//
 				"a := b",//
-				mTypeEnvironment("S", "ℙ(S)", "b", "S"));
+				mTypeEnvironment("S=ℙ(S); b=S", ff));
 	}
 
 	/**
@@ -146,9 +146,9 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testIdentSubstituted() {
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)", "a", "S×T"),//
+				mTypeEnvironment("S=ℙ(S); a=S×T", ff),//
 				"S := T || a := b",//
-				mTypeEnvironment("T", "ℙ(T)", "b", "T×T"));
+				mTypeEnvironment("T=ℙ(T); b=T×T", ff));
 	}
 
 	/**
@@ -157,9 +157,9 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testSwapTypes() {
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "S×T"),//
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=S×T", ff),//
 				"S := T || T := S",//
-				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "T×S"));
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=T×S", ff));
 	}
 
 	/**
@@ -168,9 +168,9 @@ public class TestTypenvSpecialization extends AbstractTests {
 	@Test 
 	public void testSwapIdents() {
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)", "a", "S", "b", "S"),//
+				mTypeEnvironment("S=ℙ(S); a=S; b=S", ff),//
 				"a := b || b := a",//
-				mTypeEnvironment("S", "ℙ(S)", "a", "S", "b", "S"));
+				mTypeEnvironment("S=ℙ(S); a=S; b=S", ff));
 	}
 
 	/**
@@ -190,9 +190,9 @@ public class TestTypenvSpecialization extends AbstractTests {
 		spe.put(aS, bT);
 		spe.put(bT, aS);
 		assertSpecialization(//
-				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "S", "b", "T"),//
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=S; b=T", ff),//
 				spe,//
-				mTypeEnvironment("S", "ℙ(S)", "T", "ℙ(T)", "a", "S", "b", "T"));
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T); a=S; b=T", ff));
 	}
 
 	private static void assertSpecialization(ITypeEnvironment typenv,

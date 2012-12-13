@@ -71,12 +71,12 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 			+ "nil=List_Type; " //
 			+ "head=ℙ(List_Type × Object); " //
 			+ "tail=ℙ(List_Type × List_Type); " //
-			+ "List=ℙ(Object×List_Type);" //
+			+ "List=ℙ(Object×List_Type); " //
 			+ "List_Type0=ℙ(List_Type0); " //
 			+ "cons0=ℙ(Thing × List_Type0 × List_Type0); " //
 			+ "nil0=List_Type0; " //
 			+ "head0=ℙ(List_Type0 × Thing); " //
-			+ "tail0=ℙ(List_Type0 × List_Type0);" //
+			+ "tail0=ℙ(List_Type0 × List_Type0); " //
 			+ "List0=ℙ(Thing×List_Type0)";
 
 	/*------------------------------------------------------------------------*/
@@ -141,15 +141,10 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 		}
 
 		public void setExpectedTypeEnvironment(String resultingTypeEnv) {
-			final String[] strings = getTypeEnvComponents(resultingTypeEnv);
 			final FormulaFactory targetFac = translation
 					.getTargetFormulaFactory();
 			final ITypeEnvironmentBuilder tempEnv = targetFac.makeTypeEnvironment();
-			targetTypeEnv = addToTypeEnvironment(tempEnv, strings);
-		}
-
-		private String[] getTypeEnvComponents(String resultingTypeEnv) {
-			return resultingTypeEnv.split("=|;\\s*");
+			targetTypeEnv = addToTypeEnvironment(tempEnv, resultingTypeEnv);
 		}
 
 		public void assertExprTranslation(String exprStr, String expectedStr) {
@@ -186,8 +181,7 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 		}
 
 		public void addToSourceEnvironment(String typenvImage) {
-			final String[] comps = getTypeEnvComponents(typenvImage);
-			addToTypeEnvironment(sourceTypeEnv, comps);
+			addToTypeEnvironment(sourceTypeEnv, typenvImage);
 		}
 
 		public Expression parseSourceExpression(String expression) {

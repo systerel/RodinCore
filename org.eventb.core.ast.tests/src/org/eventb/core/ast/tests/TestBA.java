@@ -14,39 +14,17 @@ package org.eventb.core.ast.tests;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.junit.Test;
 
 public class TestBA extends AbstractTests {
 
-	private static IntegerType INTEGER = ff.makeIntegerType();
-	private static BooleanType BOOL = ff.makeBooleanType();
-	
 	private ITypeEnvironment defaultTEnv = mTypeEnvironment(
-			mList(
-					"x",
-					"y",
-					"A",
-					"B",
-					"f",
-					"Y"
-			),
-			mList(
-					INTEGER,
-					INTEGER,
-					POW(INTEGER),
-					POW(INTEGER),
-					POW(CPROD(INTEGER,INTEGER)),
-					POW(BOOL)
-			)
-	);
+			"x=ℤ; y=ℤ; A=ℙ(ℤ); B=ℙ(ℤ); f=ℤ↔ℤ; Y=ℙ(BOOL)", ff);
 	
 	private class TestItem {
 		String input;

@@ -32,7 +32,6 @@ import java.util.Map;
 import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
@@ -168,7 +167,6 @@ public class TestSubstituteFormula extends AbstractTests {
 	}
 	
 	private static IntegerType tINTEGER = ff.makeIntegerType();
-	private static BooleanType tBOOL = ff.makeBooleanType();
 
 	static AtomicExpression INTEGER = ff.makeAtomicExpression(Formula.INTEGER, null);
 	
@@ -180,23 +178,7 @@ public class TestSubstituteFormula extends AbstractTests {
 	private static FreeIdentifier id_b = mFreeIdentifier("b", tINTEGER);
 
 	public static final ITypeEnvironment tenv = mTypeEnvironment(
-			mList(
-					"x",
-					"y",
-					"A",
-					"B",
-					"f",
-					"Y"
-			),
-			mList(
-					tINTEGER,
-					tINTEGER,
-					POW(tINTEGER),
-					POW(tINTEGER),
-					REL(tINTEGER,tINTEGER),
-					POW(tBOOL)
-			)
-	);
+			"x=ℤ; y=ℤ; A=ℙ(ℤ); B=ℙ(ℤ); f=ℤ↔ℤ; Y=ℙ(BOOL)", ff);
 	
 	private static FreeIdentifier[] mi(FreeIdentifier...freeIdentifiers) {
 		return freeIdentifiers;

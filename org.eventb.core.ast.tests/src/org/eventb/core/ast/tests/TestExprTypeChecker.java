@@ -17,7 +17,6 @@ import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IInferredTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -32,9 +31,6 @@ import org.junit.Test;
  */
 public class TestExprTypeChecker extends AbstractTests {
 
-	private static GivenType ty_S = ff.makeGivenType("S");
-	private static GivenType ty_T = ff.makeGivenType("T");
-
 	/**
 	 * Main test routine.
 	 */
@@ -42,9 +38,9 @@ public class TestExprTypeChecker extends AbstractTests {
 	public void testExpTypeChecker() {
 		testExpression("x", "S",//
 				mTypeEnvironment(),//
-				mTypeEnvironment("x", ty_S));
+				mTypeEnvironment("x=S", ff));
 		testExpression("x", "S",//
-				mTypeEnvironment("x", ty_S),//
+				mTypeEnvironment("x=S", ff),//
 				mTypeEnvironment());
 		testExpression("{}", "S",//
 				mTypeEnvironment(),//
@@ -62,10 +58,10 @@ public class TestExprTypeChecker extends AbstractTests {
 				mTypeEnvironment(),//
 				null);
 		testExpression("x ↦ y", "S × T",//
-				mTypeEnvironment("x", ty_S, "y", ty_T),//
+				mTypeEnvironment("x=S; y=T", ff),//
 				mTypeEnvironment());
 		testExpression("x ↦ {}", "S × ℙ(T)",//
-				mTypeEnvironment("x", ty_S),//
+				mTypeEnvironment("x=S", ff),//
 				mTypeEnvironment());
 	}
 

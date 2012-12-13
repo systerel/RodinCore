@@ -311,10 +311,34 @@ public class FastFactory {
 		return inferredTypeEnv;
 	}
 
-	private static final Pattern typenvPairSeparator = Pattern.compile(",");
+	private static final Pattern typenvPairSeparator = Pattern.compile(";");
 	private static final Pattern typenvPairPattern = Pattern
 			.compile("^([^=]*)=([^=]*)$");
-
+	
+	
+	public static ITypeEnvironmentBuilder addToTypeEnvironment(
+			ITypeEnvironmentBuilder typeEnv, String typeEnvImage){
+		if (typeEnvImage.length() == 0) {
+			return typeEnv;
+		}
+		FormulaFactory factory = typeEnv.getFormulaFactory();
+		for (final String pairImage : typenvPairSeparator.split(typeEnvImage)) {
+			final Matcher m = typenvPairPattern.matcher(pairImage);
+			if (!m.matches()) {
+				throw new IllegalArgumentException(
+						"Invalid type environment pair: " + pairImage);
+			}
+			final Expression expr = parseExpression(m.group(1), factory);
+			if (expr.getTag() != FREE_IDENT) {
+				throw new IllegalArgumentException(
+						"Invalid type environment pair: " + pairImage);
+			}
+			final Type type = parseType(m.group(2), factory);
+			typeEnv.addName(expr.toString(), type);
+		}
+		return typeEnv;
+	}
+	
 	/**
 	 * Generates the type environment specified by the given string. The string
 	 * contains pairs of form <code>ident=type</code> separated by commas.
@@ -337,23 +361,7 @@ public class FastFactory {
 	public static ITypeEnvironmentBuilder mTypeEnvironment(String typeEnvImage,
 			FormulaFactory factory) {
 		final ITypeEnvironmentBuilder result = factory.makeTypeEnvironment();
-		if (typeEnvImage.length() == 0) {
-			return result;
-		}
-		for (final String pairImage : typenvPairSeparator.split(typeEnvImage)) {
-			final Matcher m = typenvPairPattern.matcher(pairImage);
-			if (!m.matches()) {
-				throw new IllegalArgumentException(
-						"Invalid type environment pair: " + pairImage);
-			}
-			final Expression expr = parseExpression(m.group(1), factory);
-			if (expr.getTag() != FREE_IDENT) {
-				throw new IllegalArgumentException(
-						"Invalid type environment pair: " + pairImage);
-			}
-			final Type type = parseType(m.group(2), factory);
-			result.addName(expr.toString(), type);
-		}
+		addToTypeEnvironment(result, typeEnvImage);
 		return result;
 	}
 
@@ -366,15 +374,20 @@ public class FastFactory {
 		return result;
 	}
 
-	public static ITypeEnvironmentBuilder mTypeEnvironment(String... strs) {
+	public static ITypeEnvironmentBuilder addToTypeEnvironment(
+			ITypeEnvironmentBuilder typeEnv, String[] strs) {
 		assert (strs.length & 1) == 0;
-		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		for (int i = 0; i < strs.length; i += 2) {
-			final String name = strs[i];
-			final Type type = parseType(strs[i + 1]);
-			te.addName(name, type);
+			typeEnv.addName(strs[i],
+					typeEnv.getFormulaFactory().parseType(strs[i + 1], LATEST)
+							.getParsedType());
 		}
-		return te;
+		return typeEnv;
+	}
+	
+	public static ITypeEnvironmentBuilder mTypeEnvironment(String... strs) {
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		return addToTypeEnvironment(te, strs);
 	}
 
 	public static ITypeEnvironmentBuilder mTypeEnvironment(Object... objs) {
@@ -384,17 +397,6 @@ public class FastFactory {
 			result.addName((String) objs[i], (Type) objs[i + 1]);
 		}
 		return result;
-	}
-
-	public static ITypeEnvironmentBuilder addToTypeEnvironment(
-			ITypeEnvironmentBuilder typeEnv, String... strs) {
-		assert (strs.length & 1) == 0;
-		for (int i = 0; i < strs.length; i += 2) {
-			typeEnv.addName(strs[i],
-					typeEnv.getFormulaFactory().parseType(strs[i + 1], LATEST)
-							.getParsedType());
-		}
-		return typeEnv;
 	}
 
 	public static IInferredTypeEnvironment mInferredTypeEnvironment(

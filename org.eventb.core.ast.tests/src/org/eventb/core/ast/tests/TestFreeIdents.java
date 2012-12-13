@@ -628,9 +628,8 @@ public class TestFreeIdents extends AbstractTests {
 	 */
 	@Test 
 	public void testGetUsedIdentifiers() {
-		final Type INT = ff.makeIntegerType();
-		final ITypeEnvironment te = 
-			mTypeEnvironment(mList("x", "y", "z"), mList(INT, INT, INT));
+
+		final ITypeEnvironment te = mTypeEnvironment("x=ℤ; y=ℤ; z=ℤ", ff);
 
 		/* Becomes equal to with two identifiers, one being used. */
 		Assignment assignment = mBecomesEqualTo(mList(ids[x][0], ids[y][1]), mList(ids[y][2], ids[z][3]));
