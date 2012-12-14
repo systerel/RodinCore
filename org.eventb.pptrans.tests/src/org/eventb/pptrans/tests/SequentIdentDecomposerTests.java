@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.fail;
+
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.pptrans.Translator;
+import org.junit.Test;
 
 /**
  * Acceptance tests for identifier decomposition at the sequent level.
@@ -24,6 +29,7 @@ public class SequentIdentDecomposerTests extends AbstractTranslationTests {
 	/**
 	 * Ensures that the same sequent is returned if no decomposition occurs.
 	 */
+	@Test
 	public void testNoDecomposition() throws Exception {
 		final ISimpleSequent sequent = make("a = 1", "∃x⦂ℤ·x∈A ∧ x↦3∈R");
 		assertSame(sequent, Translator.decomposeIdentifiers(sequent));
@@ -33,6 +39,7 @@ public class SequentIdentDecomposerTests extends AbstractTranslationTests {
 	 * Ensures that bound identifiers are decomposed in both hypothesis and
 	 * goal.
 	 */
+	@Test
 	public void testBoundDecomposition() throws Exception {
 		final ISimpleSequent sequent = make("∃x⦂ℤ×ℤ·x∈A", "∃x⦂ℤ×ℤ·x∈B");
 		final ISimpleSequent expected = make("∃x⦂ℤ,y⦂ℤ·x↦y∈A", "∃x⦂ℤ,y⦂ℤ·x↦y∈B");
@@ -43,6 +50,7 @@ public class SequentIdentDecomposerTests extends AbstractTranslationTests {
 	 * Ensures that free identifiers are decomposed consistently in both
 	 * hypothesis and goal.
 	 */
+	@Test
 	public void testFreeDecomposition() throws Exception {
 		final ISimpleSequent sequent = make("x=1↦2", "x=2↦3");
 		final ISimpleSequent expected = make("x_1↦x_2=1↦2", "x_1↦x_2=2↦3");
@@ -53,6 +61,7 @@ public class SequentIdentDecomposerTests extends AbstractTranslationTests {
 	 * Another free identifier decomposition test that raised a
 	 * ConcurrentModificationException in Java 6.
 	 */
+	@Test
 	public void testConcurrentModification() throws Exception {
 		final ISimpleSequent sequent = make("a ∈ A × C", "A ⊆ {1,2}",
 				"B ⊆ {1,2}", "a ∈ A × B", "B ⊆ C");
@@ -64,6 +73,7 @@ public class SequentIdentDecomposerTests extends AbstractTranslationTests {
 	/**
 	 * Ensures that math extensions are not supported.
 	 */
+	@Test
 	public void testMathExtensions() throws Exception {
 		final ISimpleSequent sequent = make(DT_FF, "p = dt");
 		try {

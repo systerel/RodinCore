@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
@@ -28,6 +32,7 @@ import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.pptrans.Translator;
+import org.junit.Test;
 
 /**
  * Ensures that identifier decomposition behaves properly.
@@ -192,6 +197,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * Ensures that a free identifier which hides a maplet is decomposed, when
 	 * occurring outside of any quantified construct.
 	 */
+	@Test
 	public final void testDecomposeFreeOutside1() {
 		dotest("x ∈ S×T", "∀x1,x2 · x = x1↦x2 ⇒ x1↦x2 ∈ S×T");
 	}
@@ -200,6 +206,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * Ensures that a free identifier which hides several maplet is fully
 	 * decomposed, when occurring outside of any quantified construct.
 	 */
+	@Test
 	public final void testDecomposeFreeOutside2() {
 		dotest("x ∈ S×(T×U)",
 				"∀x1,x2,x3 · x = x1↦(x2↦x3) ⇒ x1↦(x2↦x3) ∈ S×(T×U)");
@@ -209,6 +216,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * Ensures that two free identifiers which hide a maplet are decomposed,
 	 * when occurring outside of any quantified construct.
 	 */
+	@Test
 	public final void testDecomposeFreeOutside3() {
 		dotest("x ∈ S×T ∧ y ∈ U×V",
 				"∀x1,x2,y1,y2 · x=x1↦x2 ∧ y=y1↦y2 ⇒ "
@@ -219,6 +227,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * Ensures that a free identifier which hides a maplet is decomposed, when
 	 * occurring inside a quantified predicate.
 	 */
+	@Test
 	public final void testDecomposeFreeInQPred() {
 		dotest("∀z · z ∈ BOOL ⇒ x ∈ S×T",
 				"∀x1,x2 · x = x1↦x2 ⇒ (∀z · z ∈ BOOL ⇒ x1↦x2 ∈ S×T)");
@@ -228,6 +237,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * Ensures that a free identifier which hides a maplet is decomposed, when
 	 * occurring inside a quantified expression.
 	 */
+	@Test
 	public final void testDecomposeFreeInQExpr() {
 		dotest("finite({z ∣ z ∈ BOOL ∧ x ∈ S×T})",
 				"∀x1,x2 · x = x1↦x2 ⇒ finite({z ∣ z ∈ BOOL ∧ x1↦x2 ∈ S×T})");
@@ -237,6 +247,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * Ensures that a bound identifier which hides a maplet is decomposed, when
 	 * occurring outside of any other quantified construct.
 	 */
+	@Test
 	public final void testDecomposeBoundOutside1() {
 		dotest("∃x · x ∈ S×T", "∃x1,x2 · x1↦x2 ∈ S×T");
 	}
@@ -245,6 +256,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * Ensures that two bound identifiers which hide a maplet are decomposed, when
 	 * occurring outside of any other quantified construct.
 	 */
+	@Test
 	public final void testDecomposeBoundOutside2() {
 		dotest("∃x,y · x ∈ S×T ∧ y ∈ U×V", 
 				"∃x1,x2,y1,y2 · x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V");
@@ -255,6 +267,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * occurring outside of any other quantified construct and as first
 	 * declaration in its own quantifier.
 	 */
+	@Test
 	public final void testDecomposeBoundOutsideFirst() {
 		dotest("∃x,y,z · x ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL",
 				"∃x1,x2,y,z · x1↦x2 ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL");
@@ -265,6 +278,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * occurring outside of any other quantified construct and as last
 	 * declaration in its own quantifier.
 	 */
+	@Test
 	public final void testDecomposeBoundOutsideLast() {
 		dotest("∃y,z,x · x ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL",
 				"∃y,z,x1,x2 · x1↦x2 ∈ S×T ∧ y ∈ BOOL ∧ z ∈ BOOL");
@@ -274,6 +288,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * Ensures that a bound identifier which hides a maplet is decomposed, when
 	 * occurring inside another quantified construct.
 	 */
+	@Test
 	public final void testDecomposeBoundInside1() {
 		dotest("∃a·a ∈ ℤ ∧ (∃x·x ∈ S×T ∧ 0 ≤ a) ∧ 1 ≤ a",
 				"∃a·a ∈ ℤ ∧ (∃x1,x2·x1↦x2 ∈ S×T ∧ 0 ≤ a) ∧ 1 ≤ a");
@@ -283,6 +298,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * Ensures that a bound identifier which hides a maplet is decomposed, when
 	 * occurring inside two other nested quantified constructs.
 	 */
+	@Test
 	public final void testDecomposeBoundInside2() {
 		dotest("∃a·a ∈ ℤ ∧ (∃b·b ∈ ℤ ∧ (∃x·x ∈ S×T ∧ a ≤ b) ∧ b ≤ a) ∧ 1 ≤ a",
 				"∃a·a ∈ ℤ ∧ (∃b·b ∈ ℤ ∧ (∃x1,x2·x1↦x2 ∈ S×T ∧ a ≤ b) ∧ b ≤ a) ∧ 1 ≤ a");
@@ -293,6 +309,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * occurring inside another nested quantified construct and with mixing
 	 * of bound variables from both quantifiers.
 	 */
+	@Test
 	public final void testDecomposeBoundInside3() {
 		dotest("∃a,x,b·a∈S ∧ b∈T ∧ x=a↦b"
 				+ " ∧ (∃c,y,d·a↦x↦b↦c↦y↦d∈S×(S×T)×T×U×(U×V)×V)",
@@ -304,6 +321,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * Ensures that a free and a bound identifier which hide a maplet are both
 	 * decomposed.
 	 */
+	@Test
 	public final void testDecomposeFreeBound() {
 		dotest("∃x·x ∈ S×T ∧ y ∈ U×V",
 				"∀y1,y2·y = y1↦y2 ⇒ (∃x1,x2·x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V)");
@@ -313,6 +331,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 * Ensures that a free and bound identifiers which hide a maplet are both
 	 * decomposed, in a quite complex predicate.
 	 */
+	@Test
 	public final void testDecomposeComplex() {
 		dotest("∃a,x·a∈ℤ ∧ x∈S×T ∧ X∈S×T ∧ Y∈T×U" +
 				" ∧ (∀y,b·y∈T×U ∧ Y∈T×U ∧ b∈BOOL ∧ X=x" +
@@ -323,6 +342,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 				" ⇒ (∃z1,z2·z1↦z2=x1↦x2 ∧ Y1↦Y2=y1↦y2 ∧ X1↦X2∈S×T)))");
 	}
 	
+	@Test
 	public void testDecomposePartition() throws Exception {
 		dotest("partition({x∣x ∈ S×T})", "partition({x1↦x2∣x1↦x2 ∈ S×T})");
 	}

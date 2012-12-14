@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
@@ -20,6 +24,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.internal.pptrans.translator.MapletDecomposer;
+import org.junit.Test;
 
 /**
  * Unit tests for class {@link MapletDecomposer}.
@@ -89,6 +94,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * Ensure that recording an already decomposed expression does not change
 	 * anything.
 	 */
+	@Test
 	public void testRecordingDecomposeNoChange() {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T");
 		final Expression expr = parseExpr("a↦b ∈ S×T", typenv);
@@ -101,6 +107,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * Ensure that recording an expression that needs decomposition creates
 	 * bound variables.
 	 */
+	@Test
 	public void testRecordingDecomposeCreateSimple() {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T×U");
 		final Expression expr = parseExpr("a↦b ∈ S×(T×U)", typenv);
@@ -113,6 +120,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * Ensure that recording an expression that needs decomposition creates
 	 * bound variables, even in a complicated case.
 	 */
+	@Test
 	public void testRecordingDecomposeCreateComplex() {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(//
 				"a", "S", "b", "T×U", "c", "T×U×V", "d", "S×(T×U)×V");
@@ -125,6 +133,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	/**
 	 * Ensure that pushing an expression does not change anything.
 	 */
+	@Test
 	public void testRecordingPushNoChange() {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("b", "S", "c", "T×U");
 		final Expression toPush = parseExpr("∃a⦂S · a↦b ∈ AB", typenv);
@@ -141,6 +150,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * Ensure that processing an expression that do not need to be decomposed
 	 * doesn't make any change.
 	 */
+	@Test
 	public void testDecomposeNoChange() {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T");
 		doTest(typenv, "a↦b ∈ A", null);
@@ -150,6 +160,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * Ensure that processing an expression that needs to be decomposed produces
 	 * the expected predicate in a simple case.
 	 */
+	@Test
 	public void testDecomposeSimpleLeft() {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S×T", "b", "U");
 		doTest(typenv, "a↦b ∈ A", //
@@ -160,6 +171,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * Ensure that processing an expression that needs to be decomposed produces
 	 * the expected predicate in a simple case.
 	 */
+	@Test
 	public void testDecomposeSimpleRight() {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T×U");
 		doTest(typenv, "a↦b ∈ A", //
@@ -170,6 +182,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * Ensure that processing an expression that needs to be decomposed produces
 	 * the expected predicate in a complex case.
 	 */
+	@Test
 	public void testDecomposeComplex() {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(//
 				"a", "S", "b", "T×U", "c", "T×U×V", "d", "S×(T×U)×V");
@@ -183,6 +196,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 * Ensure that processing an expression that needs to be decomposed produces
 	 * the expected predicate even when variables are already bound.
 	 */
+	@Test
 	public void testDecomposeAlreadyBound() {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S×T", "b", "U");
 		doTest(typenv, "∀a⦂S×T, b⦂U, A⦂ℙ(S×T×U)· a↦b ∈ A", //

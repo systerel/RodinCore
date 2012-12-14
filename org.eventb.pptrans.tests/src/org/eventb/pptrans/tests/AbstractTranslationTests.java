@@ -12,12 +12,12 @@
 package org.eventb.pptrans.tests;
 
 import static java.util.Collections.emptyList;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -33,7 +33,7 @@ import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
 
-public abstract class AbstractTranslationTests extends TestCase {
+public abstract class AbstractTranslationTests {
 	
 	protected static final FormulaFactory ff = FormulaFactory.getDefault();
 	

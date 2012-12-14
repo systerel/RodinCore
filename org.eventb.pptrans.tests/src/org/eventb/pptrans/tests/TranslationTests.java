@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
@@ -31,6 +33,7 @@ import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.pptrans.Translator.Option;
+import org.junit.Test;
 
 
 /**
@@ -107,12 +110,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 *  Tests for BR1
 	 */
+	@Test
 	public void testBR1_simple() {
 		
 		doTest( "s⊆t",
 				"s ∈ ℙ(t)", true, br_te);
 	}
 	
+	@Test
 	public void testBR1_recursion() {
 
 		doTest( "s∪v ⊆ t∪w",
@@ -122,12 +127,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 *  Tests for BR2
 	 */
+	@Test
 	public void testBR2_simple() {
 
 		doTest( "s ⊈ t",
 				"¬(s ∈ ℙ(t))", true, br_te);
 	}
 	
+	@Test
 	public void testBR2_recursion() {
 		
 		doTest( "s∪v ⊈ t∪w",
@@ -137,12 +144,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 *  Tests for BR3
 	 */
+	@Test
 	public void testBR3_simple() {
 
 		doTest( "s⊂t",
 				"s ∈ ℙ(t) ∧ ¬(t ∈ ℙ(s))", true, br_te);
 	}
 
+	@Test
 	public void testBR3_recursion() {
 
 		doTest( "s∪v ⊂ t∪w",
@@ -152,12 +161,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 *  Tests for BR4
 	 */
+	@Test
 	public void testBR4_simple() {
 
 		doTest( "s ⊄ t",
 				"¬(s ∈ ℙ(t)) ∨ t ∈ ℙ(s)", true, br_te);
 	}
 
+	@Test
 	public void testBR4_recursion() {
 
 		doTest( "s∪v ⊄ t∪w",
@@ -167,6 +178,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 *  Tests for BR5
 	 */
+	@Test
 	public void testBR5_simple() {
 
 		doTest( "s ≠ t",
@@ -177,6 +189,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				"¬(x = TRUE)", false, br_te);
 	}
 
+	@Test
 	public void testBR5_recursion() {
 
 		doTest( "s∪v ≠ t∪w",
@@ -186,12 +199,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 *  Tests for BR6
 	 */
+	@Test
 	public void testBR6_simple() {
 
 		doTest( "x ∉ s",
 				"¬(x ∈ s)", false, br_te);
 	}
 
+	@Test
 	public void testBR6_recursion() {
 
 		doTest( "s∪v ∉ ℙ(t∪w)",
@@ -201,24 +216,28 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for BR7
 	 */
+	@Test
 	public void testBR7_simple() {
 
 		doTest( "finite(s)",
 				"∀a·∃b,f·f∈(s↣a‥b)", true, br_te);
 	}
 	
+	@Test
 	public void testBR7_recursive() {
 
 		doTest( "finite(ℙ(s∪t))",
 				"∀a·∃b,f·f∈(ℙ(s∪t)↣a‥b)", true, br_te);
 	}
 	
+	@Test
 	public void testBR7_complex() {
 		
 		doTest( "∀x·∃y·y=t∨finite({s∪x∪y})",
 				"∀x·∃y·y=t∨(∀a·∃b,f·f∈({s∪x∪y}↣a‥b))", true, br_te);
 	}
 	
+	@Test
 	public void testBR8_simple() throws Exception {
 		doTest( "partition(s, t, v)",
 				"(s=t∪v)∧(t∩v=∅)", true, br_te);
@@ -226,6 +245,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				"(s={e1,e2,e3})∧e1≠e2∧e1≠e3∧e2≠e3", true, br_te);
 	}
 
+	@Test
 	public void testBR8_recursive() throws Exception {
 		doTest( "partition(ℙ(s∪t))",
 				"ℙ(s∪t) = ∅", true, br_te);
@@ -238,6 +258,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER1
 	 */
+	@Test
 	public void testER1_simple() {
 		
 		doTest( "f(a) = f(a)", 
@@ -247,12 +268,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER2
 	 */
+	@Test
 	public void testER2_simple() {
 		
 		doTest( "x↦y = a↦b", 
 				"x=a ∧ y=b", false, er_te);
 	}
 	
+	@Test
 	public void testER2_recursive() {
 		doTest( "s∪v↦v∪t = t∪s↦v∪w", 
 				"s∪v=t∪s ∧ v∪t=v∪w", true, er_te);
@@ -261,12 +284,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER3
 	 */
+	@Test
 	public void testER3_simple() {
 		
 		doTest( "bool(n>0) = bool(n>2)", 
 				"n>0 ⇔ n>2", true, er_te);
 	}
 	
+	@Test
 	public void testER3_recursive() {
 
 		doTest( "bool(1∈{1}) = bool(1∈{1,2})", 
@@ -276,12 +301,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER4
 	 */
+	@Test
 	public void testER4_simple() {
 		
 		doTest( "bool(n>0) = TRUE", 
 				"n>0", true, er_te);
 	}
 	
+	@Test
 	public void testER4_recursive() {
 
 		doTest( "bool(1∈{1}) = TRUE", 
@@ -291,12 +318,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER5
 	 */
+	@Test
 	public void testER5_simple() {
 		
 		doTest( "bool(n>0) = FALSE", 
 				"¬(n>0)", true, er_te);
 	}
 	
+	@Test
 	public void testER5_recursive() {
 
 		doTest( "bool(1∈{1}) = FALSE", 
@@ -306,12 +335,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER6
 	 */
+	@Test
 	public void testER6_simple() {
 		
 		doTest( "x = FALSE", 
 				"¬(x=TRUE)", true);
 	}
 	
+	@Test
 	public void testER6_recursive() {
 
 		doTest( "x = bool(1∈{1})", 
@@ -321,12 +352,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER7
 	 */
+	@Test
 	public void testER7_simple() {
 		
 		doTest( "x = bool(n>0)", 
 				"x = TRUE ⇔ n>0", true);
 	}
 	
+	@Test
 	public void testER7_recursive() {
 
 		doTest( "x = bool(1∈{1})", 
@@ -336,12 +369,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER8
 	 */
+	@Test
 	public void testER8_simple() {
 		
 		doTest( "y = f(x)", 
 				"x↦y ∈ f", true, er_te);
 	}
 	
+	@Test
 	public void testER8_recursive() {
 		ITypeEnvironment te = mTypeEnvironment(
 				mList( "f", "s", "t", "v", "w"),
@@ -354,6 +389,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER9
 	 */
+	@Test
 	public void testER9_simple_inGoal() {
 		
 		doTest( "s = t", 
@@ -362,12 +398,14 @@ public class TranslationTests extends AbstractTranslationTests {
 				"∀x·x∈s ⇔ x∈t", false, er_te, expandSetEquality);
 	}
 	
+	@Test
 	public void testER9_simple() {
 		
 		doTest( "is = ℕ", 
 				"∀x·x∈is ⇔ x∈ℕ", true, er_te);
 	}
 	
+	@Test
 	public void testER9_recursive() {
 		doTest( "s∪v = t∪w", 
 				"∀x·x∈s∪v ⇔ x∈t∪w", true, er_te);
@@ -376,18 +414,21 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER10
 	 */
+	@Test
 	public void testER10_simple() {
 		
 		doTest( "n = card(s)", 
 				"0≤n∧(∃f·f ∈ s⤖1‥n)", true, er_te);
 	}
 	
+	@Test
 	public void testER10_recursive() {
 
 		doTest( "n = card(s∪t)", 
 				"0≤n∧(∃f·f ∈ s∪t⤖1‥n)", true, er_te);
 	}
 	
+	@Test
 	public void testER10_complex() {
 		doTest( "∀m,d·m = card(s∪d)", 
 				"∀m,d· 0≤m∧(∃f·f ∈ s∪d⤖1‥m)", true, er_te);
@@ -396,12 +437,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER11
 	 */
+	@Test
 	public void testER11_simple() {
 		
 		doTest( "n = min(is)", 
 				"n∈is ∧ n≤min(is)", true, er_te);
 	}
 	
+	@Test
 	public void testER11_recursive() {
 
 		doTest( "n = min(is∪it)", 
@@ -411,12 +454,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for ER12
 	 */
+	@Test
 	public void testER12_simple() {
 		
 		doTest( "n = max(is)", 
 				"n∈is ∧ max(is)≤n", true, er_te);
 	}
 	
+	@Test
 	public void testER12_recursive() {
 
 		doTest( "n = max(is∪it)", 
@@ -432,18 +477,21 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for CR1
 	 */
+	@Test
 	public void testCR1_simple() {
 		
 		doTest( "a < min(s)", 
 				"∀x·x∈s ⇒ a < x", true, cr_te);
 	}
 	
+	@Test
 	public void testCR1_recursive() {
 
 		doTest( "min(t) < min(s∪t)", 
 				"∀x·x∈s∪t ⇒ min(t) < x", true, cr_te);
 	}	
 	
+	@Test
 	public void testCR1_complex() {
 		
 		doTest( "∀s·∃t·min(t) < min(s∪t)",
@@ -453,18 +501,21 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for CR2
 	 */
+	@Test
 	public void testCR2_simple() {
 		
 		doTest( "max(s) < a", 
 				"∀x·x∈s ⇒ x < a", true, cr_te);
 	}
 	
+	@Test
 	public void testCR2_recursive() {
 
 		doTest( "max(s∪t) < max(t)", 
 				"∀x·x∈s∪t ⇒ x < max(t)", true, cr_te);
 	}	
 	
+	@Test
 	public void testCR2_complex() {
 		
 		doTest( "∀s·∃t·max(s∪t) < max(t)",
@@ -474,18 +525,21 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for CR3
 	 */
+	@Test
 	public void testCR3_simple() {
 		
 		doTest( "min(s) < a", 
 				"∃x·x∈s ∧ x < a", true, cr_te);
 	}
 	
+	@Test
 	public void testCR3_recursive() {
 
 		doTest( "min(s∪t) < min(t)", 
 				"∀x·x∈t ⇒ (∃y·y∈s∪t ∧ y < x)", true, cr_te);
 	}	
 	
+	@Test
 	public void testCR3_complex() {
 		
 		doTest( "∀s·∃t·min(s∪t) < min(t)",
@@ -495,18 +549,21 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for CR4
 	 */
+	@Test
 	public void testCR4_simple() {
 		
 		doTest( "a < max(s)", 
 				"∃x·x∈s ∧ a < x", true, cr_te);
 	}
 	
+	@Test
 	public void testCR4_recursive() {
 
 		doTest( "max(t) < max(s∪t)", 
 				"∀x·x∈t ⇒ (∃y·y∈s∪t ∧ x<y)", true, cr_te);
 	}	
 	
+	@Test
 	public void testCR4_complex() {
 		
 		doTest( "∀s·∃t·max(t) < max(s∪t)",
@@ -516,12 +573,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for CR5
 	 */
+	@Test
 	public void testCR5_simple() {
 		
 		doTest( "a > b", 
 				"b < a", true, cr_te);
 	}
 	
+	@Test
 	public void testCR5_recursive() {
 
 		doTest( "min(t) > max(s)", 
@@ -531,6 +590,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR1
 	 */
+	@Test
 	public void testIR1_simple1() {
 		ITypeEnvironment te = mTypeEnvironment(
 				mList("e"), mList(S));
@@ -542,12 +602,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR2
 	 */
+	@Test
 	public void testIR2_simple() {
 		
 		doTest( "e∈ℙ(t)", 
 				"∀x·x∈e⇒x∈t", true, cr_te);
 	}
 	
+	@Test
 	public void testIR2_complex() {
 
 		doTest( "∀f,t·e∪f∈ℙ(s∪t)", 
@@ -557,12 +619,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR2'
 	 */
+	@Test
 	public void testIR2prime_simple() {
 		
 		doTest( "e∈s↔t", 
 				"∀xs,xt·xs↦xt∈e ⇒ xs∈s ∧ xt∈t", true, cr_ste);
 	}
 	
+	@Test
 	public void testIR2prime_complex() {
 
 		doTest( "∀f⦂ℤ↔ℤ,t·e;f ∈ s↔t", 
@@ -572,12 +636,14 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR3
 	 */
+	@Test
 	public void testIR3_simple() {
 		
 		doTest( "1 ∈ s",
 				"∃x·x=1 ∧ x∈s", false);
 	}
 	
+	@Test
 	public void testIR3_recursive() {
 
 		doTest( "s∪t ∈ v",
@@ -587,6 +653,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		
 	}
 
+	@Test
 	public void testIR3_complex() {
 
 		doTest( "∀t,w·s∪t ∈ w",
@@ -596,6 +663,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		
 	}
 
+	@Test
 	public void testIR3_additional_1() {
 		
 		doTest( "a↦1 ∈ S",
@@ -604,6 +672,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(mList("S"), mList(REL(BOOL,INT))));
 	}
 	
+	@Test
 	public void testIR3_additional_2() {
 		
 		doTest( "a↦1↦2 ∈ S",
@@ -612,6 +681,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(mList("S"), mList(REL(CPROD(BOOL, INT),INT))));
 	}
 	
+	@Test
 	public void testIR3_additional_3() {
 		
 		doTest( "a↦b↦f(10)∈S",
@@ -620,6 +690,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(mList("S"), mList(POW(CPROD(CPROD(BOOL, INT),INT)))));
 	}
 
+	@Test
 	public void testIR3_additional_4() {
 		
 		doTest( "f(a)  ∈ S",
@@ -628,6 +699,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(mList("f"), mList(REL(T, U))));
 	}
 	
+	@Test
 	public void testIR3_additional_5() {
 		
 		doTest( "f(a)  ∈ S",
@@ -639,6 +711,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR3'
 	 */
+	@Test
 	public void testIR3p_simple() {
 		doTest("r(c) ∈ A×B", //
 				"∀a,b· c ↦ (a ↦ b) ∈ r ⇒ a ∈ A ∧ b ∈ B", //
@@ -649,6 +722,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR4
 	 */
+	@Test
 	public void testIR4_simple() {
 		
 		doTest( "e∈ℕ", 
@@ -660,6 +734,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR5
 	 */
+	@Test
 	public void testIR5_simple() {
 		
 		doTest( "e∈ℕ1", 
@@ -671,6 +746,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR6
 	 */
+	@Test
 	public void testIR6_simple() {
 
 		doTest( "e ∈ {x·a<x∣f}",
@@ -679,6 +755,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(mList("e"), mList(INT)));
 	}
 	
+	@Test
 	public void testIR6_recursive() {
 
 		doTest( "e∈{x·x∈{1}∣f∪g}",
@@ -687,6 +764,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(mList("e"), mList(POW(S))));
 	}
 
+	@Test
 	public void testIR6_complex() {
 
 		doTest( "∀f,b·e∈{x·x∈{1, b}∣f∪g}",
@@ -698,6 +776,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR7
 	 */
+	@Test
 	public void testIR7_simple() {
 
 		doTest( "e ∈ (⋂x·a<x∣f)",
@@ -706,6 +785,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(mList("e"), mList(INT)));
 	}
 	
+	@Test
 	public void testIR7_recursive() {
 
 		doTest( "e ∈ (⋂x·x∈{1}∣f∪g)",
@@ -714,6 +794,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(mList("e"), mList(S)));
 	}
 
+	@Test
 	public void testIR7_complex() {
 
 		doTest( "∀f,b·e ∈ (⋂x·x∈{1, b}∣f∪g)",
@@ -725,6 +806,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR8
 	 */
+	@Test
 	public void testIR8_simple() {
 
 		doTest( "e ∈ (⋃x·a<x∣f)",
@@ -733,6 +815,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(new String[]{"e"}, new Type[]{INT}));
 	}
 	
+	@Test
 	public void testIR8_recursive() {
 
 		doTest( "e ∈ (⋃x·x∈{1}∣f∪g)",
@@ -741,6 +824,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 
+	@Test
 	public void testIR8_complex() {
 
 		doTest( "∀f,b·e ∈ (⋃x·x∈{1, b}∣f∪g)",
@@ -752,6 +836,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR9
 	 */
+	@Test
 	public void testIR9_simple() {
 
 		doTest( "e ∈ union(s)",
@@ -760,6 +845,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 	
+	@Test
 	public void testIR9_recursive() {
 
 		doTest( "e ∈ union(s∪t)",
@@ -768,6 +854,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 
+	@Test
 	public void testIR9_complex() {
 
 		doTest( "∀t·e ∈ union(s∪t)",
@@ -779,6 +866,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR10
 	 */
+	@Test
 	public void testIR10_simple() {
 
 		doTest( "e ∈ inter(s)",
@@ -787,6 +875,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 	
+	@Test
 	public void testIR10_recursive() {
 
 		doTest( "e ∈ inter(s∪t)",
@@ -795,6 +884,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 
+	@Test
 	public void testIR10_complex() {
 
 		doTest( "∀t·e ∈ inter(s∪t)",
@@ -806,6 +896,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR11
 	 */
+	@Test
 	public void testIR11_simple1() {
 
 		doTest( "e∈∅",
@@ -814,6 +905,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				 mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
 	}
 	
+	@Test
 	public void testIR11_simple2() {
 
 		doTest( "e∈{}",
@@ -829,6 +921,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir12 = mTypeEnvironment(
 			new String[]{"e", "r", "w"}, new Type[]{T, REL(S, T), POW(S)});
 	
+	@Test
 	public void testIR12_simple() {
 
 		doTest( "e ∈ r[w]", 
@@ -837,6 +930,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir12);
 	}
 	
+	@Test
 	public void testIR12_recursive() {
 
 		doTest( "e ∈ r[w∪t]", 
@@ -845,6 +939,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir12);
 	}
 
+	@Test
 	public void testIR12_complex() {
 
 		doTest( "∀t·e ∈ r[w∪t]", 
@@ -860,6 +955,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir13 = mTypeEnvironment(
 			new String[]{"e", "f", "w"}, new Type[]{T, REL(POW(S), POW(T)), POW(S)});
 
+	@Test
 	public void testIR13_simple() {
 
 		doTest( "e ∈ f(w)", 
@@ -868,6 +964,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir13);
 	}
 	
+	@Test
 	public void testIR13_recursive() {
 
 		doTest( "e ∈ f(w∪t)", 
@@ -876,6 +973,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir13);
 	}
 
+	@Test
 	public void testIR13_complex() {
 
 		doTest( "∀t·e ∈ f(w∪t)", 
@@ -890,6 +988,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir14 = mTypeEnvironment(
 			new String[]{"r", "e"}, new Type[]{REL(S, T), T});
 
+	@Test
 	public void testIR14_simple() {
 
 		doTest( "e ∈ ran(r)", 
@@ -898,6 +997,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir14);
 	}
 	
+	@Test
 	public void testIR14_recursive() {
 
 		doTest( "e ∈ ran(r∪t)", 
@@ -906,6 +1006,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir14);
 	}
 
+	@Test
 	public void testIR14_complex() {
 
 		doTest( "∀t·e ∈ ran(r∪t)", 
@@ -920,6 +1021,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir15 = mTypeEnvironment(
 			new String[]{"r", "e"}, new Type[]{REL(S, T), S});
 
+	@Test
 	public void testIR15_simple() {
 
 		doTest( "e ∈ dom(r)", 
@@ -928,6 +1030,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir15);
 	}
 	
+	@Test
 	public void testIR15_recursive() {
 
 		doTest( "e ∈ dom(r∪t)", 
@@ -936,6 +1039,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir15);
 	}
 
+	@Test
 	public void testIR15_complex() {
 
 		doTest( "∀t·e ∈ dom(r∪t)", 
@@ -950,6 +1054,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir16 = mTypeEnvironment(
 			new String[]{"a", "s"}, new Type[]{S, POW(S)});
 
+	@Test
 	public void testIR16_simple() {
 
 		doTest( "e ∈ {a}", 
@@ -958,6 +1063,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir16);
 	}
 	
+	@Test
 	public void testIR16_recursive() {
 
 		doTest( "e∈{s,s∪t,t}", 
@@ -972,6 +1078,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir17 = mTypeEnvironment(
 			new String[]{"s", "e"}, new Type[]{POW(S), POW(S)});
 
+	@Test
 	public void testIR17_simple() {
 
 		doTest( "e ∈ ℙ1(s)", 
@@ -980,6 +1087,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir17);
 	}
 	
+	@Test
 	public void testIR17_recursive() {
 
 		doTest( "e ∈ ℙ1(r∪t)", 
@@ -988,6 +1096,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir17);
 	}
 
+	@Test
 	public void testIR17_complex() {
 
 		doTest( "∀t·e ∈ ℙ1(r∪t)", 
@@ -999,6 +1108,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR18
 	 */
+	@Test
 	public void testIR18_simple() {
 
 		doTest( "e ∈ a‥b", 
@@ -1013,6 +1123,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir19 = mTypeEnvironment(
 			new String[]{"s", "t"}, new Type[]{POW(S), POW(S)});
 
+	@Test
 	public void testIR19_simple() {
 
 		doTest( "e ∈ s ∖ t", 
@@ -1021,6 +1132,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir19);
 	}
 	
+	@Test
 	public void testIR19_recursive() {
 
 		doTest( "e ∈ (s∪v) ∖ (t∪w)", 
@@ -1035,6 +1147,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir20 = mTypeEnvironment(
 			new String[]{"s1", "s2", "s3"}, new Type[]{POW(S), POW(S), POW(S)});
 
+	@Test
 	public void testIR20_simple() {
 
 		doTest( "e ∈ s1 ∩ s2 ∩ s3", 
@@ -1043,6 +1156,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir20);
 	}
 	
+	@Test
 	public void testIR20_recursive() {
 
 		doTest( "e ∈ (s1∪t1) ∩ (s2∪t2) ∩ (s3∪t3)", 
@@ -1057,6 +1171,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir21 = mTypeEnvironment(
 			new String[]{"s1", "s2", "s3"}, new Type[]{POW(S), POW(S), POW(S)});
 
+	@Test
 	public void testIR21_simple() {
 
 		doTest( "e ∈ s1 ∪ s2 ∪ s3", 
@@ -1065,6 +1180,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir21);
 	}
 	
+	@Test
 	public void testIR21_recursive() {
 
 		doTest( "e ∈ s1∪t1 ∪ s2∪t2 ∪ s3∪t3", 
@@ -1079,6 +1195,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR23
 	 */
+	@Test
 	public void testIR23_simple() {
 
 		doTest( "e ∈ st", 
@@ -1087,6 +1204,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR23_recursive() {
 
 		doTest( "e ∈ s∪vt∪w", 
@@ -1098,6 +1216,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR24
 	 */
+	@Test
 	public void testIR24_simple() {
 
 		doTest( "e ∈ st", 
@@ -1106,6 +1225,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR24_recursive() {
 
 		doTest( "e ∈ s∪vt∪w", 
@@ -1117,6 +1237,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR25
 	 */
+	@Test
 	public void testIR25_simple() {
 
 		doTest( "e ∈ st", 
@@ -1125,6 +1246,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR25_recursive() {
 
 		doTest( "e ∈ s∪vt∪w", 
@@ -1136,6 +1258,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR26
 	 */
+	@Test
 	public void testIR26_simple() {
 
 		doTest( "e ∈ s⤖t", 
@@ -1144,6 +1267,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR26_recursive() {
 
 		doTest( "e ∈ s∪v⤖t∪w", 
@@ -1152,6 +1276,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 
+	@Test
 	public void testIR26_complex() {
 
 		doTest( "∀v,w·e ∈ s∪v⤖t∪w", 
@@ -1163,6 +1288,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR27
 	 */
+	@Test
 	public void testIR27_simple() {
 
 		doTest( "e ∈ s↠t", 
@@ -1171,6 +1297,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR27_recursive() {
 
 		doTest( "e ∈ s∪v↠t∪w", 
@@ -1182,6 +1309,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR28
 	 */
+	@Test
 	public void testIR28_simple() {
 
 		doTest( "e ∈ s⤀t", 
@@ -1190,6 +1318,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR28_recursive() {
 
 		doTest( "e ∈ s∪v⤀t∪w", 
@@ -1201,6 +1330,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR29
 	 */
+	@Test
 	public void testIR29_simple() {
 
 		doTest( "e ∈ s↣t", 
@@ -1209,6 +1339,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR29_recursive() {
 
 		doTest( "e ∈ s∪v↣t∪w", 
@@ -1217,6 +1348,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 
+	@Test
 	public void testIR29_complex() {
 
 		doTest( "∀v,w·e ∈ s∪v↣t∪w", 
@@ -1228,6 +1360,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR30
 	 */
+	@Test
 	public void testIR30_simple() {
 
 		doTest( "e ∈ s⤔t", 
@@ -1236,6 +1369,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR30_recursive() {
 
 		doTest( "e ∈ s∪v⤔t∪w", 
@@ -1244,6 +1378,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR30_complex() {
 
 		doTest( "∀v,w·e ∈ s∪v⤔t∪w", 
@@ -1255,6 +1390,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR31
 	 */
+	@Test
 	public void testIR31_simple() {
 
 		doTest( "e ∈ s→t", 
@@ -1263,6 +1399,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR31_recursive() {
 
 		doTest( "e ∈ s∪v→t∪w", 
@@ -1274,6 +1411,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR32
 	 */
+	@Test
 	public void testIR32_simple() {
 
 		doTest( "e ∈ s⇸t", 
@@ -1282,6 +1420,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR32_recursive() {
 
 		doTest( "e ∈ s∪v⇸t∪w", 
@@ -1290,6 +1429,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irRels);
 	}
 	
+	@Test
 	public void testIR32_complex() {
 
 		doTest( "∀v,w·e ∈ s∪v⇸t∪w", 
@@ -1305,6 +1445,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR33
 	 */
+	@Test
 	public void testIR33_simple() {
 
 		doTest( "e↦f ∈ s×t", 
@@ -1313,6 +1454,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irEF);
 	}
 	
+	@Test
 	public void testIR33_complex() {
 
 		doTest( "e↦f ∈ (s∪v)×(t∪w)", 
@@ -1324,6 +1466,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR34
 	 */
+	@Test
 	public void testIR34_simple() {
 		doTest( "e↦f ∈ qr", 
 				"e↦f∈dom(r)⩤q ∨ e↦f∈r", 
@@ -1331,6 +1474,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irEF);
 	}
 
+	@Test
 	public void testIR34_recursive() {
 		doTest( "e↦f ∈ (q∪v)(r∪w)", 
 				"e↦f∈dom(r∪w)⩤(q∪v) ∨ e↦f∈r∪w", 
@@ -1338,6 +1482,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irEF);
 	}
 
+	@Test
 	public void testIR34_additional() {
 		Type rt = REL(S, T);
 		
@@ -1351,6 +1496,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR35
 	 */
+	@Test
 	public void testIR35_simple() {
 		doTest ("e↦f ∈ r⩥t", 
 				"e↦f∈r ∧ ¬(f∈t)", 
@@ -1358,6 +1504,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irEF);
 	}
 
+	@Test
 	public void testIR35_recursive() {
 		doTest ("e↦f ∈ (r∪r2)⩥(t∪t2)", 
 				"e↦f∈r∪r2 ∧ ¬(f∈t∪t2)", 
@@ -1368,6 +1515,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR36
 	 */
+	@Test
 	public void testIR36_simple() {
 
 		doTest( "e↦f ∈ s⩤r", 
@@ -1376,6 +1524,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irEF);
 	}
 	
+	@Test
 	public void testIR36_recursive() {
 
 		doTest( "e↦f ∈ (s∪s2)⩤(r∪r2)", 
@@ -1387,6 +1536,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR37
 	 */
+	@Test
 	public void testIR37_simple() {
 
 		doTest( "e↦f∈r▷t", 
@@ -1395,6 +1545,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irEF);
 	}
 	
+	@Test
 	public void testIR37_recursive() {
 
 		doTest( "e↦f∈(r∪r2)▷(t∪t2)", 
@@ -1406,6 +1557,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR38
 	 */
+	@Test
 	public void testIR38_simple() {
 
 		doTest( "e↦f∈s◁r", 
@@ -1413,6 +1565,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irEF);
 	}
 	
+	@Test
 	public void testIR38_recursive() {
 
 		doTest( "e↦f∈(s∪s2)◁(r∪r2)", 
@@ -1426,6 +1579,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir39 = mTypeEnvironment( 
 			new String[]{"e", "f", "s"}, new Type[]{S, S, POW(S)});
 			
+	@Test
 	public void testIR39_simple() {
 
 		doTest( "e↦f∈id",
@@ -1434,6 +1588,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir39);
 	}
 
+	@Test
 	public void testIR39_recursive() {
 		doTest( "e↦f∈(sus2)◁id",
 				"e=f∧e∈(sus2)", 
@@ -1448,6 +1603,7 @@ public class TranslationTests extends AbstractTranslationTests {
 			new String[]{"e", "f", "p", "q", "r1", "r2", "r3"}, 
 			new Type[]{S, T, REL(S, U), REL(U, T), REL(S, U), REL(U, V), REL(V, T)});
 
+	@Test
 	public void testIR40_simple() {
 
 		doTest( "e↦f ∈ p;q",
@@ -1456,6 +1612,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir40);
 	}
 
+	@Test
 	public void testIR40_recursive() {
 
 		doTest( "e↦f ∈ (p∪p1);(q∪q1)",
@@ -1464,6 +1621,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir40);
 	}
 	
+	@Test
 	public void testIR40_complex() {
 
 		doTest( "∀p1,q1·e↦f ∈ (p∪p1);(q∪q1)",
@@ -1472,6 +1630,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir40);
 	}
 
+	@Test
 	public void testIR40_additional() {
 
 		doTest( "e↦f∈r1;r2;r3",
@@ -1487,6 +1646,7 @@ public class TranslationTests extends AbstractTranslationTests {
 			new String[]{"e", "f", "p", "q"}, 
 			new Type[]{S, T, REL(U, T), REL(S, U)});
 	
+	@Test
 	public void testIR41_simple() {
 		
 		doTest( "e↦f∈p∘q", 
@@ -1495,6 +1655,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir41);
 	}
 	
+	@Test
 	public void testIR41_recursive() {
 		
 		doTest( "e↦f∈(p∪p1)∘(q∪q1)", 
@@ -1506,6 +1667,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR42
 	 */
+	@Test
 	public void testIR42_simple() {
 
 		doTest( "f↦e∈(r∼)", 
@@ -1514,6 +1676,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_irEF);
 	}
 	
+	@Test
 	public void testIR42_recursive() {
 
 		doTest( "f↦e∈((r∪r1)∼)", 
@@ -1528,6 +1691,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir43 = mTypeEnvironment(
 			mList("e", "f", "g", "r"), mList(S, T, S, REL(S, T)));
 	
+	@Test
 	public void testIR43_simple() {
 
 		doTest( "(e↦f)↦g ∈ prj1", 
@@ -1536,6 +1700,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir43);
 	}
 	
+	@Test
 	public void testIR43_recursive() {
 		doTest( "(e↦f)↦g ∈ (r∪r1)◁prj1", 
 				"e=g∧(e ↦ f∈r∨e ↦ f∈r1)", 
@@ -1549,6 +1714,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir44 = mTypeEnvironment(
 			mList("e", "f", "g", "r"), mList(S, T, T, REL(S, T)));
 	
+	@Test
 	public void testIR44_simple() {
 
 		doTest( "(e↦f)↦g ∈ prj2", 
@@ -1557,6 +1723,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir44);
 	}
 	
+	@Test
 	public void testIR44_recursive() {
 		doTest( "(e↦f)↦g ∈ (r∪r1)◁prj2", 
 				"f=g∧(e ↦ f∈r∨e ↦ f∈r1)", 
@@ -1570,6 +1737,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	ITypeEnvironment te_ir45 = mTypeEnvironment(
 			mList("e", "f", "g", "r"), mList(S, T, POW(T), REL(S, T)));
 	
+	@Test
 	public void testIR45_simple() {
 
 		doTest( "e↦(f↦g) ∈ p⊗q", 
@@ -1578,6 +1746,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir45);
 	}
 	
+	@Test
 	public void testIR45_recursive() {
 
 		doTest( "e↦(f↦g) ∈ (p∪p1)⊗(q∪q1)", 
@@ -1593,6 +1762,7 @@ public class TranslationTests extends AbstractTranslationTests {
 			mList("e", "f", "g", "h", "p", "q"), 
 			mList(S, T, POW(S), POW(T), REL(S, POW(S)), REL(T, POW(T))));
 	
+	@Test
 	public void testIR46_simple() {
 
 		doTest( "(e↦f)↦(g↦h) ∈ p∥q", 
@@ -1601,6 +1771,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir46);
 	}
 	
+	@Test
 	public void testIR46_recursive() {
 
 		doTest( "(e↦f)↦(g↦h) ∈ (p∪p1)∥(q∪q1)", 
@@ -1616,6 +1787,7 @@ public class TranslationTests extends AbstractTranslationTests {
 			mList("e", "f", "foo"), 
 			mList(INT, INT, REL(INT, INT)));
 
+	@Test
 	public void testIR47_simple() {
 		doTest( "e↦f ∈ pred", 
 				"e = f + 1", 
@@ -1623,6 +1795,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir47_48);
 	}
 
+	@Test
 	public void testIR47_recursive() {
 		doTest( "e↦f ∈ ℕ ◁ pred", 
 				"e = f + 1 ∧ 0 ≤ e", 
@@ -1630,6 +1803,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir47_48);
 	}
 
+	@Test
 	public void testIR47_complex() {
 		doTest( "e+1↦f+2 ∈ pred", 
 				"e + 1 = (f + 2) + 1", 
@@ -1641,6 +1815,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir47_48);
 	}
 
+	@Test
 	public void testIR48_simple() {
 		doTest( "e↦f ∈ succ", 
 				"f = e + 1", 
@@ -1648,6 +1823,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir47_48);
 	}
 	
+	@Test
 	public void testIR48_recursive() {
 		doTest( "e↦f ∈ ℕ ◁ succ", 
 				"f = e + 1 ∧ 0 ≤ e", 
@@ -1655,6 +1831,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir47_48);
 	}
 
+	@Test
 	public void testIR48_complex() {
 		doTest( "e+1↦f−2 ∈ succ", 
 				"f − 2 = (e + 1) + 1", 
@@ -1666,6 +1843,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir47_48);
 	}
 
+	@Test
 	public void testFALSE_1() {
 		doTest( "b = FALSE", 
 				"¬(b = TRUE)", 
@@ -1673,6 +1851,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment());
 	}
 	
+	@Test
 	public void testFALSE_2() {
 		doTest( "FALSE = b", 
 				"¬(b = TRUE)", 
@@ -1680,6 +1859,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment());
 	}
 	
+	@Test
 	public void testFALSE_3() {
 		doTest( "TRUE = FALSE", 
 				"¬⊤", 
@@ -1687,6 +1867,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment());
 	}
 	
+	@Test
 	public void testFALSE_4() {
 		doTest( "FALSE = TRUE", 
 				"¬⊤", 
@@ -1694,6 +1875,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment());
 	}
 	
+	@Test
 	public void testFALSE_5() {
 		doTest( "FALSE = FALSE", 
 				"⊤", 
@@ -1701,6 +1883,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment());
 	}
 	
+	@Test
 	public void testFALSE_6() {
 		doTest( "FALSE ∈ S", 
 				"∃x· ¬ x = TRUE ∧ x ∈ S", 
@@ -1708,6 +1891,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment());
 	}
 	
+	@Test
 	public void testFALSE_7() {
 		doTest( "FALSE ↦ a ∈ S", 
 				"∃x· ¬ x = TRUE ∧ x ↦ a ∈ S", 
@@ -1715,6 +1899,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment("a", "T"));
 	}
 	
+	@Test
 	public void testFALSE_8() {
 		doTest( "a ↦ FALSE ∈ S", 
 				"∃x· ¬ x = TRUE ∧ a ↦ x ∈ S", 
@@ -1722,6 +1907,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				mTypeEnvironment("a", "T"));
 	}
 	
+	@Test
 	public void testFALSE_9() {
 		doTest( "a ↦ (FALSE ↦ b) ∈ S", 
 				"∃x· ¬ x = TRUE ∧ a ↦ (x ↦ b) ∈ S", 
@@ -1733,6 +1919,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	 * Ensures that bug #3489973: "NPE in pp trans" is fixed (original predicate
 	 * from the bug report).
 	 */
+	@Test
 	public void testBug3489973() {
 		doTest("prj2(r(a ↦ b)) ∈ T", //
 				"∃aa·(∀a1,b1·a ↦ b ↦ (a1 ↦ b1) ∈ r  ⇒  b1 = aa) ∧ aa ∈ T", //
@@ -1744,6 +1931,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	 * Ensures that bug #3489973: "NPE in pp trans" is fixed (reduced predicate
 	 * found while investigating).
 	 */
+	@Test
 	public void testBug3489973Reduced() {
 		doTest("r(a)↦b ∈ prj2", //
 				"∀r1,r2· a ↦ (r1 ↦ r2) ∈ r ⇒ r2 = b", //
@@ -1755,6 +1943,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	 * Ensures that a functional image that hides a maplet is properly
 	 * translated when occurring in an equality predicate.
 	 */
+	@Test
 	public void testBug3489973Equal() {
 		doTest("a ↦ b = r(c)", //
 				"c ↦ (a ↦ b) ∈ r", //
@@ -1765,6 +1954,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Ensure that mathematical extensions get discarded by the translation.
 	 */
+	@Test
 	public void testMathExtension() {
 		final ISimpleSequent sequent = make(DT_FF, "p = dt");
 		final ISimpleSequent expected = make(DT_FF, null);
@@ -1774,6 +1964,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Ensures that all predicates of a sequent get translated.
 	 */
+	@Test
 	public void testSequent() {
 		final ISimpleSequent sequent = make("1↦2 ∈ succ", "1↦3 ∈ succ");
 		final ISimpleSequent expected = make("2 = 1 + 1", "3 = 1 + 1");

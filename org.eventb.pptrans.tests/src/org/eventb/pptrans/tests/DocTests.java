@@ -13,12 +13,15 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.pptrans.Translator;
+import org.junit.Test;
 
 public class DocTests extends AbstractTranslationTests {
 	
@@ -56,6 +59,7 @@ public class DocTests extends AbstractTranslationTests {
 	}
 
 	
+	@Test
 	public void testDoc1() {
 		
 		doDecompTest( 	"∀x·10↦(20↦30)=x",
@@ -63,6 +67,7 @@ public class DocTests extends AbstractTranslationTests {
 						mTypeEnvironment());
 	}
 
+	@Test
 	public void testDoc2() {
 		
 		doDecompTest(	"a=b ∧ a ∈ S",
@@ -72,6 +77,7 @@ public class DocTests extends AbstractTranslationTests {
 								mList(CPROD(INT, INT), CPROD(INT, INT), REL(INT, INT))));
 	}
 	
+	@Test
 	public void testDoc3() {
 		
 		doTransTest(	"p⊆S ∧ q⊆S ⇒ (p⊆q ⇔ S∖q ⊆ S∖p)",
@@ -82,6 +88,7 @@ public class DocTests extends AbstractTranslationTests {
 								mList(INT_SET, INT_SET, INT_SET)));
 	}
 	
+	@Test
 	public void testDoc4() {
 		
 		doTransTest(	"u ≠ ∅ ⇒ (∀t·t∈u ⇒ inter(u) ⊆ t)",
@@ -92,6 +99,7 @@ public class DocTests extends AbstractTranslationTests {
 								mList(POW(INT_SET), INT_SET)));
 	}
 
+	@Test
 	public void testDoc5() {
 		
 		doTransTest(	"(S ◁ r)∼  =r∼  ▷ S",
@@ -102,6 +110,7 @@ public class DocTests extends AbstractTranslationTests {
 								mList(INT_SET, REL(INT, BOOL))));
 	}
 	
+	@Test
 	public void testDoc6() {
 		
 		doTransTest(	"a ⊆ b ⇒ r[a] ⊆ r[b]",
@@ -112,6 +121,7 @@ public class DocTests extends AbstractTranslationTests {
 								mList(INT_SET, INT_SET, REL(INT, BOOL))));
 	}
 
+	@Test
 	public void testUseCase1() {
 
 		final ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
@@ -123,6 +133,7 @@ public class DocTests extends AbstractTranslationTests {
 		doTransTest("r ∈ S↔T", "∀x,y·x↦y∈r ⇒ x∈S ∧ y∈T", false, te);
 	}
 
+	@Test
 	public void testUseCase2() {
 
 		final ITypeEnvironmentBuilder te = mTypeEnvironment(
@@ -134,6 +145,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void testIR34_full() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment("r", "S↔T");
 		doTransTest("e↦f ∈ rs",
@@ -142,6 +154,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void testIR34_full2() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment("r", "S↔T");
 		doTransTest("rs ∈ A↔B",
@@ -150,6 +163,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void testIR34_full3() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment("r", "S↔T");
 		doTransTest("r{a ↦ b} ∈ A↔B",
@@ -159,6 +173,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void testBool_01() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment();
 		doTransTest("bool(bool(x = 5) = TRUE) = TRUE",
@@ -167,6 +182,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void testBool_02() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment();
 		doTransTest("bool(bool(x = 5) = FALSE) = TRUE",
@@ -175,6 +191,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void testBool_03() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment();
 		doTransTest("bool(x = 5) = f(x)",
@@ -183,6 +200,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void testBool_04() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment();
 		doTransTest("bool(x = 5) ∈ S",
@@ -191,6 +209,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void testBool_05() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment("f", "ℙ(BOOL×S)");
 		doTransTest("f(bool(x = 5)) = a",
@@ -199,6 +218,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void testBool_06() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment("f", "ℙ(S×BOOL)");
 		doTransTest("f(a) = bool(x = 5)",
@@ -207,6 +227,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void testBool_07() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment("f", "ℙ(BOOL×BOOL×BOOL×S)");
 		doTransTest("f(bool(x = 5) ↦ bool(x = 6) ↦ bool(x = 7)) = a",
@@ -218,6 +239,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void testBool_08() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment("f", "ℙ(BOOL×S×ℤ)");
 		doTransTest("f(bool(x = 5) ↦ a)∈ℕ",
@@ -226,6 +248,7 @@ public class DocTests extends AbstractTranslationTests {
 				te);
 	}
 
+	@Test
 	public void test2648946() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment("A", "ℙ(A)", "B", "ℙ(B)");
 		doTransTest("G ⊆ A ∧ H ⊆ A ∧ f ∈ ℙ(A) → ℙ(B) ⇒ G ∪ H ∈ dom(f)",//
@@ -235,6 +258,7 @@ public class DocTests extends AbstractTranslationTests {
 				false, te);
 	}
 
+	@Test
 	public void test2962503() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment("i", "ℤ", "j", "ℤ");
 		doTransTest("i≥0 ∧ j≥0 ⇒" +
@@ -251,6 +275,7 @@ public class DocTests extends AbstractTranslationTests {
 	 * predefined set types <code>BOOL</code> and <code>ℤ</code> are retained in
 	 * the left-hand side of a membership predicate.
 	 */
+	@Test
 	public void testSMT1() {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment("a", "S");
 		doTransTest("a↦BOOL↦ℤ ∈ A", "a↦BOOL↦ℤ ∈ A", false, te);
@@ -260,6 +285,7 @@ public class DocTests extends AbstractTranslationTests {
 	 * Other unit tests used for verifying assumptions about the translation
 	 * of booleans.
 	 */
+	@Test
 	public void testSMT2() throws Exception {
 		final ITypeEnvironmentBuilder te = mTypeEnvironment("f", "BOOL ↔ S");
 		doTransTest("f(TRUE) = a", "∃x·x=TRUE ∧ x↦a ∈ f", false, te);

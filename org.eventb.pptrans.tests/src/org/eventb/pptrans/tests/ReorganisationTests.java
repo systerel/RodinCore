@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
@@ -21,6 +23,7 @@ import java.util.List;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.pptrans.Translator;
+import org.junit.Test;
 
 
 /**
@@ -125,6 +128,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a function application is not extracted when equalled to an
 	 * identifier.
 	 */
+	@Test
 	public void testFuncNoExtractEqualIdent() {
 		doTest("a = f(b)", "b↦a∈f");
 		doTest("f(b) = a", "b↦a∈f");
@@ -136,6 +140,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a function application is not extracted when equalled to an
 	 * arithmetic expression which is not an identifier.
 	 */
+	@Test
 	public void testFuncNoExtractEqualExpr() {
 		
 		List<String> arithExprs = new ArrayList<String>();
@@ -154,6 +159,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a function application is extracted when occurring on the
 	 * side of an inequality.
 	 */
+	@Test
 	public void testFuncExtractInequality() {
 
 		List<String> exprs = new ArrayList<String>();
@@ -184,6 +190,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a function application is extracted when occurring inside
 	 * an arithmetic expression.
 	 */
+	@Test
 	public void testFuncExtractArithmeticExpression() {
 
 		String[] inExprs = makeArithExprs("f(b)");
@@ -223,6 +230,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * only one context (from the right-hand side of an inequality), as other
 	 * context should behave the same (this is checked with the simple tests).
 	 */
+	@Test
 	public void testFuncExtractRecursive() {
 		doTest("f(1+g(b)) ≤ 3", "∀x·(∃y·(∀z·b↦z∈g ⇒ y=1+z) ∧ y↦x∈f) ⇒ x≤3");
 	}
@@ -231,6 +239,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that extraction of a function application doesn't break the de
 	 * Bruijn coding of bound identifiers.
 	 */
+	@Test
 	public void testFuncExtractBound() {
 		doTest( "∃a,b·a = f(b∪{c∣c∈b}) + 1",
 				"∃a,b·∀x·(b∪{c∣c∈b})↦x∈f ⇒ a = x + 1",
@@ -243,6 +252,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	/**
 	 * Ensures that a cardinal is not extracted when equalled to an identifier.
 	 */
+	@Test
 	public void testCardNoExtractEqualIdent() {
 		doTest("a = card(B)", "0≤a∧(∃f·f∈B⤖1‥a)", true);
 		doTest("card(B) = a", "0≤a∧(∃f·f∈B⤖1‥a)", true);
@@ -254,6 +264,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a cardinal is extracted when equalled to an arithmetic
 	 * expression which is not an identifier.
 	 */
+	@Test
 	public void testCardExtractEqualExpr() {
 		
 		List<String> arithExprs = new ArrayList<String>();
@@ -280,6 +291,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a cardinal is extracted when occurring on the
 	 * side of an inequality.
 	 */
+	@Test
 	public void testCardExtractInequality() {
 
 		List<String> exprs = new ArrayList<String>();
@@ -310,6 +322,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a cardinal is extracted when occurring inside
 	 * an arithmetic expression.
 	 */
+	@Test
 	public void testCardExtractArithmeticExpression() {
 
 		String[] inExprs = makeArithExprs("card(B)");
@@ -353,6 +366,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * fact that all cardinals have been translated is verified by checking that
 	 * the result is in the goal.
 	 */
+	@Test
 	public void testCardExtractRecursive() {
 		doTest( "card({card(B)}) ≤ 3",
 				"∀x·(0≤x∧(∃f·f∈{card(B)}⤖1‥x)) ⇒  x≤3",
@@ -363,6 +377,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that extraction of a cardinal doesn't break the de Bruijn coding
 	 * of bound identifiers.
 	 */
+	@Test
 	public void testCardExtractBound() {
 		doTest( "∃a,b·b⊆S ∧ a = card(b∪{c∣c∈b}) + 1",
 				"∃a,b·b⊆S ∧ (∀x·(0≤x∧(∃f·f∈(b∪{c∣c∈b})⤖1‥x)) ⇒ a = x + 1)",
@@ -374,6 +389,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a minimum or maximum is not extracted when equalled to an
 	 * identifier.
 	 */
+	@Test
 	public void testMinMaxNoExtractEqualIdent() {
 		doTest("a = min(A)", "a∈A ∧ (∀x·x∈A ⇒ a ≤ x)");
 		doTest("min(A) = a", "a∈A ∧ (∀x·x∈A ⇒ a ≤ x)");
@@ -390,6 +406,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a minimum or maximum is extracted when equalled to an
 	 * arithmetic expression which is not an identifier.
 	 */
+	@Test
 	public void testMinMaxExtractEqualExpr() {
 		
 		List<String> arithExprs = new ArrayList<String>();
@@ -408,6 +425,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a minimum or maximum is not extracted when occurring on the
 	 * side of an inequality.
 	 */
+	@Test
 	public void testMinMaxNoExtractInequality() {
 
 		List<String> exprs = new ArrayList<String>();
@@ -446,6 +464,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that a x=min(A)imum or maximum is extracted when occurring inside
 	 * an arithmetic expression.
 	 */
+	@Test
 	public void testMinMaxExtractArithmeticExpression() {
 
 		String[] inExprs = makeArithExprs("min(A)");
@@ -489,6 +508,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * fact that all minimums and maximums have been translated is verified by
 	 * checking that the result is in the goal.
 	 */
+	@Test
 	public void testMinMaxExtractRecursive() {
 		doTest("1 + min({max(A), 2}) ≤ 3",
 				"∀x·x=min({max(A), 2}) ⇒ 1+x≤3",
@@ -499,6 +519,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 * Ensures that extraction of a minimum or maximum doesn't break the de
 	 * Bruijn coding of bound identifiers.
 	 */
+	@Test
 	public void testMinMaxExtractBound() {
 		doTest( "∃a,b·a = min(b∪{c∣c∈b}) + 1",
 				"∃a,b·∀x·x=min(b∪{c∣c∈b}) ⇒ a = x + 1",
@@ -507,6 +528,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	}
 
 	
+	@Test
 	public void testComplex() {
 		doTest( "card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)}) < 20",
 				"∀x·x=card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)})⇒x<20", 
@@ -514,6 +536,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 				mTypeEnvironment(mList("r", "f"), mList(REL(INT_SET, INT), REL(INT, INT))));
 	}
 	
+	@Test
 	public void testComplex2() {
 		doTest( "card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)}) < 20",
 				"∀x·x=card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)})⇒x<20", 
@@ -522,6 +545,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 
 	}
 	
+	@Test
 	public void testComplex3() {
 		doTest( "card({1,2}) + f(20) + min({1,2,3}) + max({2,1}) > 2",
 				"∀x4,x3,x2,x1·x1=card({1,2}) ∧ x2=f(20) ∧ x3=min({1,2,3}) ∧ x4=max({2,1}) ⇒ x1+x2+x3+x4 > 2", 
