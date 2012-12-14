@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
-import static org.eventb.core.tests.ResourceUtils.*;
-import static org.eventb.core.tests.indexers.CancelBridgeStub.*;
+import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT1;
+import static org.eventb.core.tests.ResourceUtils.MCH_BARE_NAME;
+import static org.eventb.core.tests.indexers.CancelBridgeStub.NO_LIMIT;
 
 import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.MachineIndexer;
+import org.junit.Test;
 import org.rodinp.core.indexer.IDeclaration;
 
 /**
@@ -26,13 +28,7 @@ import org.rodinp.core.indexer.IDeclaration;
  */
 public class MachineCancelTests extends EventBIndexerTests {
 
-	/**
-	 * @param name
-	 */
-	public MachineCancelTests(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testCancelImmediately() throws Exception {
 		final IMachineRoot context = ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME,
 				VAR_1DECL);
@@ -48,6 +44,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 		tk.assertNumExp(0);
 	}
 
+	@Test
 	public void testCancelAfterImports() throws Exception {
 		final IContextRoot exporter = ResourceUtils.createContext(rodinProject, EXPORTER,
 				CST_1DECL);
@@ -68,6 +65,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 		tk.assertNumOcc(1); // root occurrence
 	}
 
+	@Test
 	public void testCancelAfterDecl() throws Exception {
 		final IMachineRoot machine = ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME,
 				VAR_1DECL_1REF_INV);
@@ -83,6 +81,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 		tk.assertNumOcc(1);
 	}
 
+	@Test
 	public void testCancelInPredicates() throws Exception {
 		final String VAR_1DECL_2REF_2INV = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
@@ -115,6 +114,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 		tk.assertNumOcc(2);
 	}
 
+	@Test
 	public void testCancelInExpressions() throws Exception {
 		final String VAR_1DECL_2REF_2VRT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"
@@ -143,6 +143,7 @@ public class MachineCancelTests extends EventBIndexerTests {
 		tk.assertNumOcc(2);
 	}
 
+	@Test
 	public void testCancelEventsInActions() throws Exception {
 		final String VAR_4OCC = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"

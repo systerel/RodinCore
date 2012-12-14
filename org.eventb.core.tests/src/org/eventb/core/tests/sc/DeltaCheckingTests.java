@@ -17,6 +17,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCMachineRoot;
+import org.junit.Test;
 
 /**
  * Tests of the delta-checking facility of the Static Checker.
@@ -29,6 +30,7 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 	 * Ensures that the statically-checked file of a context is modified only
 	 * when needed.
 	 */
+	@Test
 	public void testDeltaContext() throws Exception {
 		final IContextRoot root = createContext("ctx");
 		final ISCContextRoot sc = root.getSCContextRoot();
@@ -49,6 +51,7 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 	 * Ensures that the statically-checked file of a context is modified only
 	 * when needed, when another context (for instance an ancestor) has changed.
 	 */
+	@Test
 	public void testDeltaContextIndirect() throws Exception {
 		final IContextRoot rootAbs = createContext("abs");
 		final ISCContextRoot scAbs = rootAbs
@@ -76,6 +79,7 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 	 * Ensures that the statically-checked file of a machine is modified only
 	 * when needed.
 	 */
+	@Test
 	public void testDeltaMachine() throws Exception {
 		final IMachineRoot mac = createMachine("cnc");
 		final ISCMachineRoot sc = mac.getSCMachineRoot();
@@ -97,6 +101,7 @@ public class DeltaCheckingTests extends BasicSCTestWithFwdConfig {
 	 * Ensures that the statically-checked file of a machine is modified only
 	 * when needed, when another machine (for instance an ancestor) has changed.
 	 */
+	@Test
 	public void testDeltaMachineIndirect() throws Exception {
 		final IMachineRoot abs = createMachine("abs");
 		final ISCMachineRoot scAbs = abs.getSCMachineRoot();

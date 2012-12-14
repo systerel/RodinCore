@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
+
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -38,6 +39,8 @@ import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.junit.After;
+import org.junit.Before;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -50,7 +53,7 @@ import org.rodinp.core.RodinMarkerUtil;
  * 
  * @author Laurent Voisin
  */
-public abstract class BasicTest extends TestCase {
+public abstract class BasicTest {
 	
 	protected static FormulaFactory factory = FormulaFactory.getDefault();
 
@@ -58,10 +61,6 @@ public abstract class BasicTest extends TestCase {
 	
 	public BasicTest() {
 		super();
-	}
-
-	public BasicTest(String name) {
-		super(name);
 	}
 
 	protected IRodinProject rodinProject;
@@ -184,10 +183,8 @@ public abstract class BasicTest extends TestCase {
 		elem.getRodinFile().save(null, false);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
+	@Before
+	public void setUpBT() throws Exception {
 		// ensure autobuilding is turned off
 		IWorkspaceDescription wsDescription = workspace.getDescription();
 		if (wsDescription.isAutoBuilding()) {
@@ -207,10 +204,9 @@ public abstract class BasicTest extends TestCase {
 		disableAutoProver();
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownBT() throws Exception {
 		rodinProject.getProject().delete(true, true, null);
-		super.tearDown();
 	}
 
 

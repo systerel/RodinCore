@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import org.junit.After;
+import org.junit.Before;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -19,18 +21,18 @@ import org.rodinp.core.IInternalElement;
  */
 public abstract class GenericEventBPOTest<E extends IInternalElement> extends EventBPOTest {
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUpGEBPOT() throws Exception {
 		generic = newGeneric();
-		super.setUp();
+		;
 	}
 
 	protected abstract IGenericPOTest<E> newGeneric();
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownGEBPOT() throws Exception {
 		generic = null;
-		super.tearDown();
+		
 	}
 
 	private IGenericPOTest<E> generic;

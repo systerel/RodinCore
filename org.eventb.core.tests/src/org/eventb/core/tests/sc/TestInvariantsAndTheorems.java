@@ -16,6 +16,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -26,6 +27,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 	/**
 	 * propagation of carrier set types, partial typing
 	 */
+	@Test
 	public void testInvariantsAndTheorems_05_carrierSetType() throws Exception {
 		IContextRoot con =  createContext("ctx");
 		addCarrierSets(con, "S1");
@@ -58,6 +60,7 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 	/**
 	 * more on partial typing (more complex set up)
 	 */
+	@Test
 	public void testInvariantsAndTheorems_06_partialTyping() throws Exception {
 		IContextRoot con =  createContext("ctx");
 		addCarrierSets(con, "S1");

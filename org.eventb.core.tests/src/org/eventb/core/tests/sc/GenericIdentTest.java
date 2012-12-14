@@ -14,6 +14,7 @@
 package org.eventb.core.tests.sc;
 
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 import org.rodinp.core.IRodinElement;
 
 
@@ -27,6 +28,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * Creating a constant or variable without a type must fail
 	 */
+	@Test
 	public void testIdents_00() throws Exception {
 		E cmp = getGeneric().createElement("cmp");
 
@@ -46,6 +48,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * Creating a constant or variable without a type must succeed
 	 */
+	@Test
 	public void testIdents_01() throws Exception {
 		E cmp = getGeneric().createElement("cmp");
 
@@ -71,6 +74,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * refering to a nondeclared identifier should fail
 	 */
+	@Test
 	public void testIdents_02() throws Exception {
 		E cmp = getGeneric().createElement("cmp");
 
@@ -94,6 +98,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * refering to identifiers with faulty declaration should fail
 	 */
+	@Test
 	public void testIdents_03() throws Exception {
 		E cmp = getGeneric().createElement("cmp");
 
@@ -118,6 +123,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * An identifier declaration containing an invalid character is reported
 	 */
+	@Test
 	public void testIdents_04_bug2689872() throws Exception {
 		E cmp = getGeneric().createElement("cmp");
 
@@ -142,6 +148,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * An identifier declaration cannot be primed.
 	 */
+	@Test
 	public void testIdents_05_bug2815882() throws Exception {
 		final E cmp = getGeneric().createElement("cmp");
 

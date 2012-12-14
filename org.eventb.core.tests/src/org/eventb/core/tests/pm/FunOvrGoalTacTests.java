@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import java.util.Collection;
@@ -21,11 +24,13 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IConfidence;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.tests.pom.POUtil;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -89,9 +94,8 @@ public class FunOvrGoalTacTests extends BasicTest {
 	private IPORoot poRoot;
 	private IPSRoot psRoot;
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpFOGTT() throws Exception {
 		disableAutoProver();
 		disablePostTactic();
 		createPOFile();
@@ -122,6 +126,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 	 * Ensures that the tactic is registered as an auto tactic and part of the
 	 * default.
 	 */
+	@Test
 	public void testRegisteredAsAuto() throws Exception {
 		final IAutoTacticPreference pref = EventBPlugin
 				.getAutoPostTacticManager().getAutoTacticPreference();
@@ -133,6 +138,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 	 * Ensures that the tactic is registered as a post tactic and part of the
 	 * default.
 	 */
+	@Test
 	public void testRegisteredAsPost() throws Exception {
 		final IAutoTacticPreference pref = EventBPlugin
 				.getAutoPostTacticManager().getPostTacticPreference();
@@ -144,6 +150,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 	 * Ensures that the tactic can discharge an appropriate PO within the
 	 * auto-prover.
 	 */
+	@Test
 	public void testAutoDischarge() throws Exception {
 		enableAutoProver(tactics);
 		runBuilder();
@@ -154,6 +161,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 	 * Ensures that the tactic can discharge an appropriate PO within the
 	 * post tactic.
 	 */
+	@Test
 	public void testPostDischarge() throws Exception {
 		final IPSStatus status = psRoot.getStatus(PO1);
 

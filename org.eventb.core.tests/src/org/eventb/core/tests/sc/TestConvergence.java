@@ -13,13 +13,14 @@ package org.eventb.core.tests.sc;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IConvergenceElement;
+import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
-import org.eventb.core.IConvergenceElement.Convergence;
 import org.eventb.core.sc.GraphProblem;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -30,6 +31,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	/**
 	 * All kinds of convergence can be refined by the same kind.
 	 */
+	@Test
 	public void testCvg_00_AllThreeKindsOK() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -60,6 +62,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * If there is no variant convergent events are set to ordinary. Unless: see
 	 * testCvg_09
 	 */
+	@Test
 	public void testCvg_01_NoVariantConvergentSetToOrdinary() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -87,6 +90,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * anticipated events and convergent events can be refined by ordinary
 	 * events.
 	 */
+	@Test
 	public void testCvg_02_AllRefinedByOrdinary() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariant(abs, "1");
@@ -134,6 +138,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * ordinary events cannot be refined by anticipated events: the concrete is
 	 * set to ordinary.
 	 */
+	@Test
 	public void testCvg_03_AllRefinedByAnticipated() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariant(abs, "1");
@@ -179,6 +184,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * ordinary events cannot be refined by convergent events. In that case the
 	 * concrete event is set to ordinary.
 	 */
+	@Test
 	public void testCvg_04_AllRefinedByConvergent() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariant(abs, "1");
@@ -224,6 +230,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * If in a merge the abstract event have different convergences, a warning
 	 * is issued and the refining event set to ordinary.
 	 */
+	@Test
 	public void testCvg_05_mergeFaultySetToOrdinary() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariant(abs, "1");
@@ -262,6 +269,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	/**
 	 * The initialisation should be marked ordinary.
 	 */
+	@Test
 	public void testCvg_06_InitialisationIsOrdinary() throws Exception {
 
 		IMachineRoot mac = createMachine("mac");
@@ -283,6 +291,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	/**
 	 * The initialisation must not be marked anticipated.
 	 */
+	@Test
 	public void testCvg_07_InitialisationIsNotAnticipated() throws Exception {
 
 		IMachineRoot mac = createMachine("mac");
@@ -305,6 +314,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	/**
 	 * The initialisation must not be marked convergent.
 	 */
+	@Test
 	public void testCvg_08_InitialisationIsNotConvergent() throws Exception {
 
 		IMachineRoot mac = createMachine("mac");
@@ -328,6 +338,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * If a convergent event is refined by a convergent there is no need for a
 	 * variant in the refined machine what concerns the convergent event.
 	 */
+	@Test
 	public void testCvg_09_refinedByConvergentNoVariantNeeded()
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -363,6 +374,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * If a convergent event is refined by a convergent there is no need for a
 	 * variant in the refined machine what concerns the convergent event.
 	 */
+	@Test
 	public void testCvg_10_convergentEventNoVariant() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addInitialisation(abs);
@@ -407,6 +419,7 @@ public class TestConvergence extends BasicSCTestWithFwdConfig {
 	 * If a convergent event is refined by a convergent there is no need for a
 	 * variant in the refined machine what concerns the convergent event.
 	 */
+	@Test
 	public void testCvg_11_convergentMerge() throws Exception {
 
 		IConvergenceElement.Convergence[][] cvgMatrix = new IConvergenceElement.Convergence[][] {

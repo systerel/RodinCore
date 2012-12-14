@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.basis.EventBElement;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -34,6 +38,7 @@ public class GeneratedElementsTests extends EventBTest {
 	// verifies that:
 	// - hasGenerated() always returns true
 	// - set() and is() methods work properly
+	@Test
 	public void testHasSetIsGenerated() throws Exception {
 		final IContextRoot ctx = createContext("generated");
 		assertTrue("hasGenerated() should always be true", ctx.hasGenerated());
@@ -43,6 +48,7 @@ public class GeneratedElementsTests extends EventBTest {
 	}
 
 	// verifies that an element is generated if it has a generated ancestor
+	@Test
 	public void testIsGeneratedRecursive() throws Exception {
 		final IMachineRoot mch = createMachine("generated");
 		mch.setGenerated(true, null);

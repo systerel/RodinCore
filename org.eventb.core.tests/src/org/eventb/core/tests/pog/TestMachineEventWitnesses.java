@@ -19,6 +19,7 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -29,6 +30,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	/**
 	 * deterministic witnesses for invariants and simulation
 	 */
+	@Test
 	public void test_00() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		
@@ -79,6 +81,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	/**
 	 * well-definedness and feasibility of nondeterministic witnesses
 	 */
+	@Test
 	public void test_01() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -156,6 +159,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	/**
 	 * categorisation of witnesses: deterministic or nondeterministic
 	 */
+	@Test
 	public void test_02() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -229,6 +233,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	/**
 	 * renaming of witness in hypothesis
 	 */
+	@Test
 	public void test_03() throws Exception {
 		
 		IMachineRoot abs = createMachine("abs");
@@ -281,6 +286,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	 * even if they do not appear in an assignment of the abstract or
 	 * concrete event
 	 */
+	@Test
 	public void test_04() throws Exception {
 		
 		IMachineRoot abs = createMachine("abs");
@@ -335,6 +341,7 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	 * 
 	 * Cf. bug #3478644: Missing WWD PO.
 	 */
+	@Test
 	public void test_05() throws Exception {
 		final IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "ax");

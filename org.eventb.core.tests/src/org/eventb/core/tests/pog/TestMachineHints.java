@@ -17,6 +17,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -27,6 +28,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 	/**
 	 * guard well-definedness hints
 	 */
+	@Test
 	public void testMachineHints_00() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -64,6 +66,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 	/**
 	 * action well-definedness and feasilibility hints
 	 */
+	@Test
 	public void testMachineHints_01() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -103,6 +106,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 	/**
 	 * invariant preservation hints
 	 */
+	@Test
 	public void testMachineHints_02() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -142,6 +146,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 	/**
 	 * guard strengthening hints in refinement
 	 */
+	@Test
 	public void testMachineHints_03() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		
@@ -194,6 +199,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 	/**
 	 * simulation hints in refinement
 	 */
+	@Test
 	public void testMachineHints_04() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		
@@ -255,6 +261,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 	/**
 	 * invariant preservation hints in refinement
 	 */
+	@Test
 	public void testMachineHints_05() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		
@@ -316,6 +323,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 	/**
 	 * invariant preservation hints
 	 */
+	@Test
 	public void testMachineHints_06() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -360,6 +368,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 	/**
 	 * variant hints for progress proof obligation
 	 */
+	@Test
 	public void testMachineHints_07() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -400,6 +409,7 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 	/**
 	 * guard theorem hints
 	 */
+	@Test
 	public void testMachineHints_08() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 

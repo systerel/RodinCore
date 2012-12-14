@@ -11,6 +11,8 @@
 package org.eventb.core.tests.pom;
 
 import static java.util.Arrays.asList;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.EventBPlugin.getAutoPostTacticManager;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.IN;
@@ -46,6 +48,8 @@ import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.LoopOnAllPending;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -165,10 +169,8 @@ public class AutoProverDeltaTests extends BuilderTest {
 		checkPSFile(confidence, manualProof, broken);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUpAPDT() throws Exception {
 		// Change the auto-tactic and enable it.
 		final IAutoPostTacticManager manager = getAutoPostTacticManager();
 		final IAutoTacticPreference autoPref = manager.getAutoTacticPreference();
@@ -179,6 +181,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	/**
 	 * Ensures that the auto-prover is attempted and can succeed on a new PO.
 	 */
+	@Test
 	public final void testNewProvable() throws CoreException {
 		createPOFile();
 		setPO(PROVABLE, 1);
@@ -188,6 +191,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	/**
 	 * Ensures that the auto-prover is attempted and can fail on a new PO.
 	 */
+	@Test
 	public final void testNewUnprovable() throws CoreException {
 		createPOFile();
 		setPO(UNPROVABLE, 1);
@@ -198,6 +202,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Ensures that the auto-prover is not attempted on a discharged PO that
 	 * didn't change (same stamp).
 	 */
+	@Test
 	public final void testSameStampDischarged() throws CoreException {
 		createPOFile();
 		setPO(PROVABLE, 1);
@@ -209,6 +214,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Ensures that the auto-prover is not attempted on a reviewed PO that
 	 * didn't change (same stamp).
 	 */
+	@Test
 	public final void testSameStampReviewed() throws CoreException {
 		createPOFile();
 		setPO(UNPROVABLE, 1);
@@ -221,6 +227,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Ensures that the auto-prover is not attempted on a pending PO that didn't
 	 * change (same stamp).
 	 */
+	@Test
 	public final void testSameStampPending() throws CoreException {
 		createPOFile();
 		setPO(ATTEMPTABLE, 1);
@@ -232,6 +239,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Ensures that the auto-prover is not attempted on a yet unattempted PO
 	 * that didn't change (same stamp).
 	 */
+	@Test
 	public final void testSameStampUnattempted() throws CoreException {
 		createPOFile();
 		setPO(UNPROVABLE, 1);
@@ -243,6 +251,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Ensures that the auto-prover is attempted on a discharged PO that has
 	 * changed (different stamp).
 	 */
+	@Test
 	public final void testChangedStampDischarged() throws CoreException {
 		createPOFile();
 		setPO(PROVABLE, 1);
@@ -255,6 +264,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Ensures that the auto-prover is attempted on a reviewed PO that has
 	 * changed (different stamp).
 	 */
+	@Test
 	public final void testChangedStampReviewed() throws CoreException {
 		createPOFile();
 		setPO(UNPROVABLE, 1);
@@ -269,6 +279,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Ensures that the auto-prover is not attempted on a pending PO that has
 	 * changed (different stamp).
 	 */
+	@Test
 	public final void testChangedStampPending() throws CoreException {
 		createPOFile();
 		setPO(ATTEMPTABLE, 1);
@@ -282,6 +293,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Ensures that the auto-prover is not attempted on a yet unattempted PO
 	 * that has changed (different stamp).
 	 */
+	@Test
 	public final void testChangedStampUnattempted() throws CoreException {
 		createPOFile();
 		setPO(UNPROVABLE, 1);
@@ -294,6 +306,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Ensures that the auto-prover is not attempted on a discharged PO
 	 * that has changed (different stamp), but where the proof is reusable.
 	 */
+	@Test
 	public final void testChangedStampDischargedReusable() throws CoreException {
 		createPOFile();
 		setPO(PROVABLE, 1);
@@ -306,6 +319,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	 * Ensures that the auto-prover is not attempted on a reviewed PO
 	 * that has changed (different stamp), but where the proof is reusable.
 	 */
+	@Test
 	public final void testChangedStampReviewedReusable() throws CoreException {
 		createPOFile();
 		setPO(UNPROVABLE, 1);

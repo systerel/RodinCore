@@ -11,6 +11,8 @@
 package org.eventb.core.tests.indexers;
 
 import static java.util.Arrays.asList;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT1;
 import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT2;
 import static org.eventb.core.tests.indexers.ListAssert.assertSameElements;
@@ -41,6 +43,9 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.EventPropagator;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.indexer.IDeclaration;
@@ -162,23 +167,19 @@ public class IntegrationTests extends EventBIndexerTests {
 					+ "		</org.eventb.core.event>"
 					+ "</org.eventb.core.machineFile>";
 
-	/**
-	 * @param name
-	 */
-	public IntegrationTests(String name) {
-		super(name);
-	}
-
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpIT() throws Exception {
+		;
 		DebugHelpers.enableIndexing();
 	}
 
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownIT() throws Exception {
 		DebugHelpers.disableIndexing();
-		super.tearDown();
+		
 	}
 
+	@Test
 	public void testIntegration() throws Exception {
 
 		final IMachineRoot m2 = ResourceUtils.createMachine(rodinProject, "M2", M2);
@@ -280,6 +281,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		assertSameElements(expEvtM2, occEvtM2, "occ evtM2");
 	}
 
+	@Test
 	public void testIndexQueryJavadocExample() throws Exception {
 		final IContextRoot c1 = ResourceUtils.createContext(rodinProject, "C1",
 				C1);
@@ -299,6 +301,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		}
 	}
 
+	@Test
 	public void testIndexQueryWikiExampleHandle() throws Exception {
 		final IMachineRoot m2 = ResourceUtils.createMachine(rodinProject, "M2",
 				M2);
@@ -324,6 +327,7 @@ public class IntegrationTests extends EventBIndexerTests {
 	}
 	
 	
+	@Test
 	public void testIndexQueryPropagate() throws Exception {
 		final IMachineRoot m2 = ResourceUtils.createMachine(rodinProject, "M2",
 				M2);
@@ -348,6 +352,7 @@ public class IntegrationTests extends EventBIndexerTests {
 				"propagated occurrences of evt1");
 	}
 
+	@Test
 	public void testOnlyExtendsChange() throws Exception {
 		final IContextRoot c1 = ResourceUtils.createContext(rodinProject, "C1",
 				C1);
@@ -376,6 +381,7 @@ public class IntegrationTests extends EventBIndexerTests {
 
 	}
 
+	@Test
 	public void testEventPropagation() throws Exception {
 		final IMachineRoot exporter = ResourceUtils.createMachine(rodinProject,
 				EXPORTER, EVT_1DECL);
@@ -437,6 +443,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		+ "				org.eventb.core.identifier=\"prm2\"/>"
 		+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
 	
+	@Test
 	public void testIndexQueryWikiPrmFilterLocation() throws Exception {
 		final IMachineRoot importer = ResourceUtils.createMachine(rodinProject, "M",
 				PRM_2DECL);
@@ -466,6 +473,7 @@ public class IntegrationTests extends EventBIndexerTests {
 		assertSameElements(expected, paramsOfEvt1, "params of evt1");
 	}
 
+	@Test
 	public void testIdentifierPropagation() throws Exception {
 		final IMachineRoot exporter = ResourceUtils.createMachine(rodinProject,
 				EXPORTER, VAR_1DECL_1REF_INV);

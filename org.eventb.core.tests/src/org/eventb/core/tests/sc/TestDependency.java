@@ -14,6 +14,7 @@ package org.eventb.core.tests.sc;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -24,6 +25,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 	/**
 	 * markers in dependent files should be deleted
 	 */
+	@Test
 	public void testDep_01_checkMarkersDeleted() throws Exception {
 		IContextRoot con = createContext("ctx");
 
@@ -55,6 +57,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 
 	}
 	
+	@Test
 	public void testDep_02_nonexistentAbstractContext() throws Exception {
 		IContextRoot con = createContext("ctx");
 		
@@ -75,6 +78,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 		hasNotMarker(con.getExtendsClauses()[0]);
 	}
 	
+	@Test
 	public void testDep_03_nonexistentAbstractMachine() throws Exception {
 		IMachineRoot con = createMachine("ctx");
 		addMachineRefines(con, "abs");
@@ -94,6 +98,7 @@ public class TestDependency extends BasicSCTestWithFwdConfig {
 		hasNotMarker(con.getRefinesClauses()[0]);		
 	}
 	
+	@Test
 	public void testDep_03_nonexistentSeenContext() throws Exception {
 		IMachineRoot con = createMachine("ctx");
 		addMachineSees(con, "abs");

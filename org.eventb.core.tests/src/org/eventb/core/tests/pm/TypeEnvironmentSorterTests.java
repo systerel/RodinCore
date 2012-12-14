@@ -3,7 +3,8 @@
  */
 package org.eventb.core.tests.pm;
 
-import junit.framework.TestCase;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -11,13 +12,14 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter;
 import org.eventb.internal.core.pm.TypeEnvironmentSorter.Entry;
+import org.junit.Test;
 
 /**
  * Unit tests for class {@link TypeEnvironmentSorter}
  * 
  * @author Laurent Voisin
  */
-public class TypeEnvironmentSorterTests extends TestCase {
+public class TypeEnvironmentSorterTests {
 
 	private static final FormulaFactory ff = FormulaFactory.getDefault();
 	
@@ -50,6 +52,7 @@ public class TypeEnvironmentSorterTests extends TestCase {
 		}
 	}
 	
+	@Test
 	public void testEmpty() {
 		ITypeEnvironment te = ff.makeTypeEnvironment();
 		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(te);
@@ -57,6 +60,7 @@ public class TypeEnvironmentSorterTests extends TestCase {
 		assertVars(sorter);
 	}
 	
+	@Test
 	public void testOneSet() {
 		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");
@@ -65,6 +69,7 @@ public class TypeEnvironmentSorterTests extends TestCase {
 		assertVars(sorter);
 	}
 	
+	@Test
 	public void testSeveralSets() {
 		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");
@@ -77,6 +82,7 @@ public class TypeEnvironmentSorterTests extends TestCase {
 		assertVars(sorter);
 	}
 	
+	@Test
 	public void testOneVar() {
 		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addName("x", INT);
@@ -85,6 +91,7 @@ public class TypeEnvironmentSorterTests extends TestCase {
 		assertVars(sorter, "x", INT);
 	}
 	
+	@Test
 	public void testSeveralVars() {
 		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addName("x", INT);
@@ -98,6 +105,7 @@ public class TypeEnvironmentSorterTests extends TestCase {
 		);
 	}
 	
+	@Test
 	public void testMixed() {
 		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addGivenSet("S");

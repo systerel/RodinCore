@@ -17,6 +17,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -26,6 +27,7 @@ public class TestMachineInit extends EventBPOTest {
 	
 	private static String init = IEvent.INITIALISATION;
 
+	@Test
 	public void testInit_00() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -55,6 +57,7 @@ public class TestMachineInit extends EventBPOTest {
 		
 	}
 	
+	@Test
 	public void testInit_01() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -101,6 +104,7 @@ public class TestMachineInit extends EventBPOTest {
 	 * Ensures that both abstract and concrete actions of the initialisation are
 	 * applied to the glueing invariant.
 	 */
+	@Test
 	public void testInit_02() throws Exception {
 		
 		IMachineRoot abs = createMachine("abs");
@@ -132,6 +136,7 @@ public class TestMachineInit extends EventBPOTest {
 		sequentHasGoal(sequent, typeEnvironment, "1=0+1");
 	}
 	
+	@Test
 	public void testInit_Bug2813537() throws Exception {
 		
 		IMachineRoot abs = createMachine("abs");

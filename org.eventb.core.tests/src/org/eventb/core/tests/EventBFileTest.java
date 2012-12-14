@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
-import junit.framework.TestCase;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertSame;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -27,6 +28,7 @@ import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCMachineRoot;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -37,7 +39,7 @@ import org.rodinp.core.RodinCore;
  * @author Laurent Voisin
  * @see IEventBProject
  */
-public class EventBFileTest extends TestCase {
+public class EventBFileTest {
 	
 	private static final String BARE_NAME = "foo";
 
@@ -80,6 +82,7 @@ public class EventBFileTest extends TestCase {
 	 * Ensures that one can adapt a Rodin project to an event-B project,
 	 * and vice-versa.
 	 */
+	@Test
 	public void testProjectAdapters() throws Exception {
 		assertEquals(rodinProject, evbProject.getRodinProject());
 		assertEquals(rodinProject, evbProject.getAdapter(IRodinProject.class));
@@ -88,6 +91,7 @@ public class EventBFileTest extends TestCase {
 	/**
 	 * Ensures that an unchecked context can be created from an event-B project.
 	 */
+	@Test
 	public void testContextFile() throws Exception {
 		IRodinFile file = evbProject.getContextFile(BARE_NAME);
 		assertFileName(BARE_NAME + ".buc", file);
@@ -98,6 +102,7 @@ public class EventBFileTest extends TestCase {
 	/**
 	 * Ensures that an unchecked machine can be created from an event-B project.
 	 */
+	@Test
 	public void testMachineFile() throws Exception {
 		IRodinFile file = evbProject.getMachineFile(BARE_NAME);
 		assertFileName(BARE_NAME + ".bum", file);
@@ -108,6 +113,7 @@ public class EventBFileTest extends TestCase {
 	/**
 	 * Ensures that a checked context can be created from an event-B project.
 	 */
+	@Test
 	public void testSCContextFile() throws Exception {
 		IRodinFile file = evbProject.getSCContextFile(BARE_NAME);
 		assertFileName(BARE_NAME + ".bcc", file);
@@ -118,6 +124,7 @@ public class EventBFileTest extends TestCase {
 	/**
 	 * Ensures that a checked machine can be created from an event-B project.
 	 */
+	@Test
 	public void testSCMachineFile() throws Exception {
 		IRodinFile file = evbProject.getSCMachineFile(BARE_NAME);
 		assertFileName(BARE_NAME + ".bcm", file);
@@ -128,6 +135,7 @@ public class EventBFileTest extends TestCase {
 	/**
 	 * Ensures that a PO file can be created from an event-B project.
 	 */
+	@Test
 	public void testPOFile() throws Exception {
 		IRodinFile file = evbProject.getPOFile(BARE_NAME);
 		assertFileName(BARE_NAME + ".bpo", file);
@@ -138,6 +146,7 @@ public class EventBFileTest extends TestCase {
 	/**
 	 * Ensures that a proof file can be created from an event-B project.
 	 */
+	@Test
 	public void testPRFile() throws Exception {
 		IRodinFile file = evbProject.getPRFile(BARE_NAME);
 		assertFileName(BARE_NAME + ".bpr", file);
@@ -148,6 +157,7 @@ public class EventBFileTest extends TestCase {
 	/**
 	 * Ensures that a proof status file can be created from an event-B project.
 	 */
+	@Test
 	public void testPSFile() throws Exception {
 		IRodinFile file = evbProject.getPSFile(BARE_NAME);
 		assertFileName(BARE_NAME + ".bps", file);
@@ -167,6 +177,7 @@ public class EventBFileTest extends TestCase {
 	 * Ensures that adaptation to event-B files works appropriately on all
 	 * event-B files.
 	 */
+	@Test
 	public void testFileAdaptation() throws Exception {
 		final IRodinFile buc = evbProject.getContextFile(BARE_NAME);
 		final IRodinFile bum = evbProject.getMachineFile(BARE_NAME);
@@ -196,6 +207,7 @@ public class EventBFileTest extends TestCase {
 	 * Ensures that adaptation to event-B roots works appropriately on all
 	 * event-B roots.
 	 */
+	@Test
 	public void testRootAdaptation() throws Exception {
 		final IContextRoot buc = evbProject.getContextRoot(BARE_NAME);
 		final IMachineRoot bum = evbProject.getMachineRoot(BARE_NAME);

@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

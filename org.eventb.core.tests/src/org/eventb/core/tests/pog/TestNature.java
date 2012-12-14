@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotSame;
+import static junit.framework.Assert.assertSame;
+
 import org.eventb.core.pog.IPOGNature;
 import org.eventb.internal.core.pog.POGNatureFactory;
+import org.junit.Test;
 
 /**
  * @author A. Gilles
@@ -23,6 +28,7 @@ public class TestNature extends EventBPOTest {
 			.getInstance();
 
 	// verify that the description is correctly retrieved
+	@Test
 	public void testGetDescription() throws Exception {
 		final String testGetDescription = "Test get description";
 		final IPOGNature nature = NATURE_FACTORY.getNature(testGetDescription);
@@ -31,6 +37,7 @@ public class TestNature extends EventBPOTest {
 	}
 
 	// verify the uniqueness of natures for a given description
+	@Test
 	public void testSameNature() throws Exception {
 		final String testSameNature1 = new String("Test same nature");
 		final String testSameNature2 = new String("Test same nature");
@@ -40,6 +47,7 @@ public class TestNature extends EventBPOTest {
 	}
 
 	// verify the distinction of natures with different descriptions 
+	@Test
 	public void testNotSameNature() throws Exception {
 		final String testNotSameNature1 = new String("Test not same nature 1");
 		final String testNotSameNature2 = new String("Test not same nature 2");

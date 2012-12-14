@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eclipse.core.resources.IMarker.MESSAGE;
 import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
 import static org.rodinp.core.RodinMarkerUtil.RODIN_PROBLEM_MARKER;
@@ -56,6 +60,8 @@ import org.eventb.core.ISCVariant;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.EventBTest;
+import org.junit.After;
+import org.junit.Before;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -79,16 +85,14 @@ public abstract class BasicSCTest extends EventBTest {
 			assertTrue("ill-formed markers", GraphProblemTest.check(root));
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpBSCT() throws Exception {
 		sourceRoots.clear();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownBSCT() throws Exception {
 		sourceRoots.clear();
-		super.tearDown();
 	}
 
 	private final List<IEventBRoot> sourceRoots = new ArrayList<IEventBRoot>();
@@ -111,10 +115,6 @@ public abstract class BasicSCTest extends EventBTest {
 
 	public BasicSCTest() {
 		super();
-	}
-
-	public BasicSCTest(String name) {
-		super(name);
 	}
 
 	private static IConvergenceElement.Convergence getConvergence(ISCEvent event) throws RodinDBException {

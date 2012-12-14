@@ -19,6 +19,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -31,6 +32,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 	/**
 	 * check type propagation of carrier sets in seeing machine
 	 */
+	@Test
 	public void testVariables_01() throws Exception {
 		IContextRoot con = createContext("ctx");
 
@@ -72,6 +74,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 	/**
 	 * name conflict of variable and seen constant: variable removed!
 	 */
+	@Test
 	public void testVariables_02() throws Exception {
 		IContextRoot con = createContext("ctx");
 
@@ -113,6 +116,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 	/**
 	 * variables and invariants are preserved in refinements
 	 */
+	@Test
 	public void testVariables_03() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		
@@ -150,6 +154,7 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 	/**
 	 * A variable that has disappeared and reappears in a later refinement.
 	 */
+	@Test
 	public void testVariables_04() throws Exception {
 		final IMachineRoot m0 = createMachine("m0");
 		addVariables(m0, "v1");

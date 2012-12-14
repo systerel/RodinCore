@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.EventBPlugin.rebuildProof;
 
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.tests.BuilderTest;
+import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
 public class ReplayTests extends BuilderTest {
@@ -29,6 +31,7 @@ public class ReplayTests extends BuilderTest {
 	/**
 	 * Ensures that old WD POs can be replayed for a small example component.
 	 */
+	@Test
 	public void testSmall() throws Exception {
 		importProject("Small");
 		runBuilder();

@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+
 import java.util.Iterator;
 
 import org.eventb.core.EventBPlugin;
@@ -23,6 +28,8 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author A. Gilles
@@ -32,10 +39,8 @@ public class OriginTest extends EventBPOTest {
 
 	private IContextRoot ctx;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUpOT() throws Exception {
 		ctx = createContext("ctx_origin");
 		disablePostTactic();
 		disableAutoProver();
@@ -48,6 +53,7 @@ public class OriginTest extends EventBPOTest {
 		p.setEnabled(false);
 	}
 
+	@Test
 	public void testOrigin() throws Exception {
 		final IAxiom hypExpected = createTheorem("thm1", "1=1", false);
 		final IAxiom goalExpected = createTheorem("axm1", "1=1 ∨ 2=2", true);

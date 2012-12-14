@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
-import static org.eventb.core.tests.indexers.OccUtils.*;
+import static org.eventb.core.tests.indexers.OccUtils.newDecl;
 import junit.framework.TestCase;
 
 import org.eventb.core.IEventBRoot;

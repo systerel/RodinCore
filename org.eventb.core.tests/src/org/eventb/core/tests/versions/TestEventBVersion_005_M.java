@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -28,6 +33,7 @@ public class TestEventBVersion_005_M extends EventBVersionTest {
 	 * machines of version 4 are updated to machines of version 5
 	 * order is preserved
 	 */
+	@Test
 	public void testVersion_01_machine() throws Exception {
 		String contents = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -46,6 +52,7 @@ public class TestEventBVersion_005_M extends EventBVersionTest {
 	 * machines of version 4 are updated to machines of version 5
 	 * order is corrected
 	 */
+	@Test
 	public void testVersion_02_machine() throws Exception {
 		String contents = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -64,6 +71,7 @@ public class TestEventBVersion_005_M extends EventBVersionTest {
 	 * machines of version 4 are updated to machines of version 5
 	 * guards take a theorem attribute with false value
 	 */
+	@Test
 	public void testVersion_03_machine() throws Exception {
 		String contents = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +

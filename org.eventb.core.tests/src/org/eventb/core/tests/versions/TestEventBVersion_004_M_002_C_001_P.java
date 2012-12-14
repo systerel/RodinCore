@@ -12,6 +12,10 @@
 
 package org.eventb.core.tests.versions;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
@@ -19,6 +23,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRRoot;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -87,6 +92,7 @@ public class TestEventBVersion_004_M_002_C_001_P extends EventBVersionTest {
 
 	// Verify that a formula with an identifier 'partition' in V1
 	// is left unchanged in V2 (even though it does not parse anymore)
+	@Test
 	public void testPartitionAsIdentifier() throws Exception {
 		final String partitionIdent = "partition(x) = y";
 		
@@ -94,6 +100,7 @@ public class TestEventBVersion_004_M_002_C_001_P extends EventBVersionTest {
 		assertNoChange(partitionIdent, actual);
 	}
 
+	@Test
 	public void testChangeExpected() throws Exception {
 		final String pred = "∀X· \n (T  \n \t S \t ⤔ S) ⊆ X";
 		
@@ -102,6 +109,7 @@ public class TestEventBVersion_004_M_002_C_001_P extends EventBVersionTest {
 		assertChanged(pred, actual);
 	}
 	
+	@Test
 	public void testContext() throws Exception {
 		final String axiom = "c ∈ id(S)";
 		final String theorem = axiom;
@@ -139,6 +147,7 @@ public class TestEventBVersion_004_M_002_C_001_P extends EventBVersionTest {
 		assertChanged(theorem, theoremUpg);
 	}
 
+	@Test
 	public void testMachine() throws Exception {
 		final String invariant = "v ∈ id(ℤ)";
 		final String variant = "id(v)";
@@ -202,6 +211,7 @@ public class TestEventBVersion_004_M_002_C_001_P extends EventBVersionTest {
 		
 	}
 	
+	@Test
 	public void testProof() throws Exception {
 		final String pred = "∃s⦂ℙ(ℤ)·s⊆ℕ∧id(s)=(∅ ⦂ ℙ(ℤ×ℤ))";
 		final String expr = "(∅ ⦂ ℙ(ℤ))∩id(ℕ)[ℕ]";

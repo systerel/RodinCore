@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotSame;
+
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCContextRoot;
@@ -19,6 +22,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
+import org.junit.Test;
 
 /**
  * Tests for the <code>getTypeEnvironment()</code> methods of the Event-B
@@ -36,6 +40,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	 * Ensures that the type environment of a single context is correctly
 	 * retrieved.
 	 */
+	@Test
 	public void testContext() throws Exception {
 		final IContextRoot ctx = createContext("ctx");
 		addCarrierSets(ctx, makeSList("S"));
@@ -57,6 +62,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	 * Ensures that the type environment of a context with an abstraction is
 	 * correctly retrieved.
 	 */
+	@Test
 	public void testContextWithAbstraction() throws Exception {
 		final IContextRoot actx = createContext("actx");
 		addCarrierSets(actx, makeSList("S"));
@@ -87,6 +93,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	 * Ensures that the type environment of a single machine is correctly
 	 * retrieved.
 	 */
+	@Test
 	public void testMachine() throws Exception {
 		final IMachineRoot mch = createMachine("mch");
 		addVariables(mch, "v");
@@ -107,6 +114,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	 * Ensures that the type environment of a machine with a sees clause is
 	 * correctly retrieved.
 	 */
+	@Test
 	public void testMachineWithSees() throws Exception {
 		final IContextRoot ctx = createContext("ctx");
 		addCarrierSets(ctx, makeSList("S"));
@@ -136,6 +144,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	 * Ensures that the type environment of a machine with a sees clause to an
 	 * extending context is correctly retrieved.
 	 */
+	@Test
 	public void testMachineWithSeesExtends() throws Exception {
 		final IContextRoot actx = createContext("actx");
 		addCarrierSets(actx, makeSList("S"));
@@ -174,6 +183,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	 * Ensures that the type environment of a machine with an abstraction is
 	 * correctly retrieved.
 	 */
+	@Test
 	public void testMachineWithAbstraction() throws Exception {
 		final IMachineRoot amch = createMachine("amch");
 		addVariables(amch, "v");
@@ -202,6 +212,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	 * Ensures that the type environment of a machine with an abstraction and a
 	 * sees clause is correctly retrieved.
 	 */
+	@Test
 	public void testMachineWithSeesAbstraction() throws Exception {
 		final IContextRoot actx = createContext("actx");
 		addCarrierSets(actx, makeSList("S"));
@@ -248,6 +259,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	/**
 	 * Ensures that the type environment of an event is correctly retrieved.
 	 */
+	@Test
 	public void testEvent() throws Exception {
 		final IMachineRoot mch = createMachine("mch");
 		addVariables(mch, "v");
@@ -277,6 +289,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 	 * Ensures that the type environment of an event with a local variable is
 	 * correctly retrieved.
 	 */
+	@Test
 	public void testEventWithLocal() throws Exception {
 		final IMachineRoot mch = createMachine("mch");
 		addVariables(mch, "v");

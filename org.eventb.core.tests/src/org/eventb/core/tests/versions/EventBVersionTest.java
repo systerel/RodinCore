@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotSame;
+import static junit.framework.Assert.assertSame;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -22,9 +26,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.tests.BuilderTest;
 import org.rodinp.core.IConversionResult;
+import org.rodinp.core.IConversionResult.IEntry;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinMarkerUtil;
-import org.rodinp.core.IConversionResult.IEntry;
 
 /**
  * @author Stefan Hallerstede

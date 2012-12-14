@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.EventBAttributes.POSTAMP_ATTRIBUTE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EQUAL;
@@ -35,6 +38,9 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.tests.DeltaListener;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -60,20 +66,18 @@ public class ProofAttemptTests extends AbstractProofTests {
 
 	private IProofComponent pc;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpPAT() throws Exception {
 		createPOFile();
 		runBuilder();
 		pc = pm.getProofComponent(poRoot);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownPAT() throws Exception {
 		for (final IProofAttempt pa : pm.getProofAttempts()) {
 			pa.dispose();
 		}
-		super.tearDown();
 	}
 
 	/**
@@ -81,6 +85,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	 * object with the appropriate properties and that the proof obligation has
 	 * been properly loaded.
 	 */
+	@Test
 	public void testAccessors() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 		assertEquals(pc, pa.getComponent());
@@ -97,6 +102,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	/**
 	 * Ensures that the isDisposed() method works properly.
 	 */
+	@Test
 	public void testIsDisposed() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 		assertFalse(pa.isDisposed());
@@ -107,6 +113,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	/**
 	 * Ensures that a proof attempt is not broken if the PO didn't change.
 	 */
+	@Test
 	public void testNotBroken() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 		assertFalse(pa.isBroken());
@@ -116,6 +123,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	 * Ensures that a proof attempt is not broken if the PO didn't change when
 	 * the PO didn't have a stamp initially.
 	 */
+	@Test
 	public void testNotBrokenNoStamp() throws Exception {
 		removePOStamps();
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
@@ -125,6 +133,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	/**
 	 * Ensures that a proof attempt is not broken if another PO changes.
 	 */
+	@Test
 	public void testNotBrokenOtherPOChanges() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 		increasePOStamp(PO2);
@@ -134,6 +143,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	/**
 	 * Ensures that a proof attempt is broken if the PO changed.
 	 */
+	@Test
 	public void testBroken() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 		increasePOStamp(PO1);
@@ -145,6 +155,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	 * Ensures that a proof attempt is broken if the PO changed when the PO
 	 * didn't have a stamp initially.
 	 */
+	@Test
 	public void testBrokenNoStamp() throws Exception {
 		removePOStamps();
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
@@ -156,6 +167,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	/**
 	 * Ensures that a proof attempt is broken if the PO disappeared.
 	 */
+	@Test
 	public void testBrokenNoPO() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 		poRoot.getSequent(PO1).delete(false, null);
@@ -167,6 +179,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	/**
 	 * Ensures that a proof attempt is broken if the project has been cleaned.
 	 */
+	@Test
 	public void testBrokenClean() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 		poRoot.getRodinFile().delete(false, null);
@@ -178,6 +191,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	/**
 	 * Ensures that one can commit an empty proof attempt successfully.
 	 */
+	@Test
 	public void testCommitEmpty() throws Exception {
 		final DeltaListener dl = new DeltaListener();
 		try {
@@ -203,6 +217,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	/**
 	 * Ensures that one can commit a discharging proof attempt successfully.
 	 */
+	@Test
 	public void testCommitDischarge() throws Exception {
 		final DeltaListener dl = new DeltaListener();
 		try {
@@ -233,6 +248,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	 * Ensures that one can commit a discharging proof attempt successfully,
 	 * even if the proof attempt is broken.
 	 */
+	@Test
 	public void testCommitBroken() throws Exception {
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);
 		dischargeTrueGoal(pa);
@@ -246,6 +262,7 @@ public class ProofAttemptTests extends AbstractProofTests {
 	 * Ensures that one can commit a discharging proof attempt successfully,
 	 * even if the proof obligation has no stamp.
 	 */
+	@Test
 	public void testCommitNoStamp() throws Exception {
 		removePOStamps();
 		final IProofAttempt pa = pc.createProofAttempt(PO1, TEST, null);

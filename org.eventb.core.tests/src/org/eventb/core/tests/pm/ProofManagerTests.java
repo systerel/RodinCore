@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
+import org.junit.Test;
 
 /**
  * Unit tests for the Proof Manager.
@@ -26,6 +30,7 @@ public class ProofManagerTests extends AbstractProofTests {
 	/**
 	 * Ensures that one can get an instance of the Proof Manager.
 	 */
+	@Test
 	public void testPMExists() throws Exception {
 		assertNotNull(pm);
 	}
@@ -33,6 +38,7 @@ public class ProofManagerTests extends AbstractProofTests {
 	/**
 	 * Ensures that the Proof Manager is unique.
 	 */
+	@Test
 	public void testPMUnique() throws Exception {
 		final IProofManager otherPM = EventBPlugin.getProofManager();
 		assertEquals(pm, otherPM);
@@ -42,6 +48,7 @@ public class ProofManagerTests extends AbstractProofTests {
 	 * Ensures that one can get a Proof Component from any file related to a
 	 * context.
 	 */
+	@Test
 	public void testContextProofComponent() throws Exception {
 		final IContextRoot root = eventBProject.getContextRoot("c");
 		final IProofComponent pc = pm.getProofComponent(root);
@@ -56,6 +63,7 @@ public class ProofManagerTests extends AbstractProofTests {
 	 * Ensures that one can get a Proof Component from any file related to a
 	 * machine.
 	 */
+	@Test
 	public void testMachineProofComponent() throws Exception {
 		final IMachineRoot root = eventBProject.getMachineRoot("m");
 		final IProofComponent pc = pm.getProofComponent(root);

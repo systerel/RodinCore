@@ -21,6 +21,7 @@ import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOStampedElement;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -32,6 +33,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that the intial PO file stamp is generated
 	 * for PO files of contexts and machines. 
 	 */
+	@Test
 	public void testDelta_00_initalStamp() throws Exception {
 		IContextRoot root = createContext("ctx");
 		saveRodinFileOf(root);
@@ -48,6 +50,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that predicate sets created initially receive
 	 * the intial PO stamp, where the source is a context.
 	 */
+	@Test
 	public void testDelta_01_initCtxPredSet() throws Exception {
 		IContextRoot root = createContext("ctx");
 		addAxioms(root, makeSList("A"), makeSList("ℕ≠∅"), false);
@@ -64,6 +67,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that sequents created initially receive
 	 * the intial PO stamp, where the source is a context.
 	 */
+	@Test
 	public void testDelta_02_initCtxSequent() throws Exception {
 		IContextRoot root = createContext("ctx");
 		addAxioms(root, makeSList("T"), makeSList("ℕ≠∅"), true);
@@ -79,6 +83,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that predicate sets created initially receive
 	 * the intial PO stamp, where the source is a machine.
 	 */
+	@Test
 	public void testDelta_03_initMchPredSet() throws Exception {
 		IMachineRoot root = createMachine("mch");
 		addInvariants(root, makeSList("A"), makeSList("ℕ≠∅"), false);
@@ -96,6 +101,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that sequents created initially receive
 	 * the intial PO stamp, where the source is a machine.
 	 */
+	@Test
 	public void testDelta_04_initMchSequent() throws Exception {
 		IMachineRoot root = createMachine("mch");
 		addInvariants(root, makeSList("A"), makeSList("ℕ≠∅"), true);
@@ -111,6 +117,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that predicate sets that are changed by adding a predicate
 	 * receive an incremented PO stamp, where the source is a context.
 	 */
+	@Test
 	public void testDelta_05_addCtxPredSetAndSeq() throws Exception {
 		IContextRoot con = createContext("ctx");
 		addAxioms(con, makeSList("A"), makeSList("ℕ≠∅"), false);
@@ -134,6 +141,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that predicate sets that are changed by adding a predicate
 	 * receive an incremented PO stamp, where the source is a machine.
 	 */
+	@Test
 	public void testDelta_06_addMchPredSetAndSeq() throws Exception {
 		IMachineRoot root = createMachine("mch");
 		addInvariants(root, makeSList("A"), makeSList("ℕ≠∅"), false);
@@ -159,6 +167,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that predicate sets that are changed by replacing a predicate
 	 * receive an incremented PO stamp, where the source is a context.
 	 */
+	@Test
 	public void testDelta_07_chgCtxPredSetAndSeq() throws Exception {
 		IContextRoot con = createContext("ctx");
 		addAxioms(con, makeSList("A"), makeSList("∀f·f(0)=0"), false);
@@ -185,6 +194,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that predicate sets that are changed by replacing a predicate
 	 * receive an incremented PO stamp, where the source is a machine.
 	 */
+	@Test
 	public void testDelta_08_chgMchPredSetAndSeq() throws Exception {
 		IMachineRoot mac = createMachine("mch");
 		addInvariants(mac, makeSList("A"), makeSList("∀f·f(0)=0"), false);
@@ -212,6 +222,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that the PO file stamp is incremented when a predicate set 
 	 * is deleted, where the source is a context.
 	 */
+	@Test
 	public void testDelta_09_delCtxPredSet() throws Exception {
 		IContextRoot con = createContext("ctx");
 		addAxioms(con, makeSList("A"), makeSList("ℕ≠∅"), false);
@@ -235,6 +246,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that the PO file stamp is incremented when a predicate set 
 	 * is deleted, where the source is a machine.
 	 */
+	@Test
 	public void testDelta_10_delMchPredSet() throws Exception {
 		IMachineRoot mch = createMachine("mch");
 		addInvariants(mch, makeSList("A"), makeSList("ℕ≠∅"), false);
@@ -257,6 +269,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that the PO file stamp is incremented when a predicate set 
 	 * in the abstraction is deleted, where the source is a context.
 	 */
+	@Test
 	public void testDelta_11_chgAbsCtxPredSet() throws Exception {
 		IContextRoot abs = createContext("abs");
 		addAxioms(abs, makeSList("Z"), makeSList("ℕ≠∅"), false);
@@ -286,6 +299,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that the PO file stamp is incremented when a predicate set 
 	 * in the abstraction is deleted, where the source is a machine.
 	 */
+	@Test
 	public void testDelta_12_chgAbsMchPredSet() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addInvariants(abs, makeSList("Z"), makeSList("ℕ≠∅"), false);
@@ -314,6 +328,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that the PO file stamp is incremented when a predicate set 
 	 * changes several times, where the source is a context.
 	 */
+	@Test
 	public void testDelta_13_chgManyCtxPredSet() throws Exception {
 		for (int i=0; i<10; i++) {
 			IContextRoot con = createContext("ctx");
@@ -332,6 +347,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that stamps are not changed when the source is unchanged 
 	 * for PO files of contexts and machines. 
 	 */
+	@Test
 	public void testDelta_14_noChange() throws Exception {
 		IContextRoot con = createContext("ctx");
 		addAxioms(con, makeSList("T"), makeSList("∀x·x=1"), true);
@@ -363,6 +379,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * Ensures that the proof obligation file of a machine is modified only
 	 * when needed.
 	 */
+	@Test
 	public void testDelta_15_Machine() throws Exception {
 		final IMachineRoot mac = createMachine("mac");
 		final IPORoot po = mac.getPORoot();
@@ -382,6 +399,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * Ensures that modifying the guard of an event changes the stamp for the
 	 * invariant preservation POs associated to the event.
 	 */
+	@Test
 	public void testDelta_16_chgIndirectGuard() throws Exception {
 		final IMachineRoot mac = createMachine("mac");
 		addVariables(mac, "x");
@@ -415,6 +433,7 @@ public class DeltaCheckingTest extends EventBPOTest {
 	 * verifies that stamps of predicate sets and sequents are 
 	 * transitively changed, where the source is a machine.
 	 */
+	@Test
 	public void testDelta_17_chgIndirectInvariant() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "u");

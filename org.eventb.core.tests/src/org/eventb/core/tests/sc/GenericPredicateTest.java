@@ -15,6 +15,7 @@ package org.eventb.core.tests.sc;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.ParseProblem;
+import org.junit.Test;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -27,6 +28,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * creation of axiom or invariant
 	 */
+	@Test
 	public void test_00() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -46,6 +48,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * name conflict
 	 */
+	@Test
 	public void test_01() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -66,6 +69,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * type conflict in one axiom or invariant
 	 */
+	@Test
 	public void test_02() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -85,6 +89,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * use of declared constant or variable
 	 */
+	@Test
 	public void test_03() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -105,6 +110,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * use of undeclared constants or variables
 	 */
+	@Test
 	public void test_04() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -124,6 +130,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * create theorem
 	 */
+	@Test
 	public void test_05() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -143,6 +150,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * create two theorems
 	 */
+	@Test
 	public void test_06() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -162,6 +170,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * create two theorems with name conflict
 	 */
+	@Test
 	public void test_07() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -182,6 +191,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * name conflict of axiom (resp. invariant) and theorem
 	 */
+	@Test
 	public void test_08() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -204,6 +214,7 @@ extends GenericEventBSCTest<E, SCE> {
 	 * use of undeclared and faulty constants or variables
 	 * (do not create too many error messages)
 	 */
+	@Test
 	public void test_09() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -229,6 +240,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * An invalid character in a predicate is ignored, but reported as a warning
 	 */
+	@Test
 	public void test_10_bug2689872() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -252,6 +264,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * A piece of data can now be typed by a theorem.
 	 */
+	@Test
 	public void test_11() throws Exception {
 		E con = getGeneric().createElement("elt");
 
@@ -268,6 +281,7 @@ extends GenericEventBSCTest<E, SCE> {
 	/**
 	 * Creation of an axiom or an invariant with an empty label.
 	 */
+	@Test
 	public void test_12() throws Exception {
 		E con = getGeneric().createElement("elt");
         

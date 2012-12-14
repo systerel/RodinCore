@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static junit.framework.Assert.fail;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.EventBPlugin;
@@ -19,15 +20,16 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.tests.pom.POUtil;
+import org.junit.After;
+import org.junit.Before;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 public abstract class TestPM extends BasicTest {
 	IUserSupportManager manager;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpTPM() throws Exception {
 		manager = EventBPlugin.getUserSupportManager();
 		// Disable the Post tactic
 		final IAutoPostTacticManager tacManager = EventBPlugin
@@ -40,10 +42,6 @@ public abstract class TestPM extends BasicTest {
 		manager.setConsiderHiddenHypotheses(false);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
 	
 	IPORoot createPOFile(String fileName) throws RodinDBException {
 		IRodinFile poFile = rodinProject.getRodinFile(fileName + ".bpo");

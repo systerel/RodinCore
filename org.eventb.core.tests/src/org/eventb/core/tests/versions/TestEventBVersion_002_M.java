@@ -11,9 +11,12 @@
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
+import static junit.framework.Assert.assertEquals;
+
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IParameter;
 import org.eventb.core.IVariable;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -28,6 +31,7 @@ public class TestEventBVersion_002_M extends EventBVersionTest {
 	 * machines of version 1 are updated to machines of version 2;
 	 * machine variables are untouched
 	 */
+	@Test
 	public void testVersion_00_machineVariables() throws Exception {
 		String contents = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -50,6 +54,7 @@ public class TestEventBVersion_002_M extends EventBVersionTest {
 	 * machines of version 1 are updated to machines of version 2;
 	 * event variables are converted into event parameters
 	 */
+	@Test
 	public void testVersion_01_eventParameters() throws Exception {
 		String contents = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -76,6 +81,7 @@ public class TestEventBVersion_002_M extends EventBVersionTest {
 	 * machines of version 1 are updated to machines of version 2;
 	 * machine variables are untouched and event variables are converted into event parameters
 	 */
+	@Test
 	public void testVersion_02_variablesAndParameters() throws Exception {
 		String contents = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" +

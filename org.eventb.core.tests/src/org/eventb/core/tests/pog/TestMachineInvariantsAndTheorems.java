@@ -16,6 +16,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -26,6 +27,7 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 	/*
 	 * proper creation of hypothesis from seen
 	 */
+	@Test
 	public void testMachine_01_seen() throws Exception {
 		IContextRoot ctx = createContext("ctx");
 		
@@ -55,6 +57,7 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 	/*
 	 * proper creation of hypothesis from seen and refined
 	 */
+	@Test
 	public void testMachine_02_seenAndRefined() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		
@@ -93,6 +96,7 @@ public class TestMachineInvariantsAndTheorems extends GenericPredicateTest<IMach
 	/*
 	 * proof obligations for mixed list of invariants and theorems
 	 */
+	@Test
 	public void testMachine_03_mixedTheoremsAndInvariants() throws Exception {
 
 		IMachineRoot mac = createMachine("mac");

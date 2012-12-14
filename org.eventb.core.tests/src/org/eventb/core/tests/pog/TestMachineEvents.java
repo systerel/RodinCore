@@ -19,6 +19,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -29,6 +30,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * simple case of invariant preservation
 	 */
+	@Test
 	public void testEvents_00_invariantPreservation() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -61,6 +63,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * invariant preservation with local variable
 	 */
+	@Test
 	public void testEvents_01_invPresWParameter() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -94,6 +97,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * invariant preservation with non-deterministic assignment
 	 */
+	@Test
 	public void testEvents_03_invPresNonDet() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -127,6 +131,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * no PO for invariants outside frame
 	 */
+	@Test
 	public void testEvents_04_invPresNonFrame() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -162,6 +167,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * invariant preservation for simultaneous non-deterministic assignment
 	 */
+	@Test
 	public void testEvents_05_invPresSimNondetAssgn() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -207,6 +213,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * invariant preservation for simultaneous assignment containing local variables
 	 */
+	@Test
 	public void testEvents_06_invPresSimAssgnWParam() throws Exception {
 
 		IMachineRoot mac = createMachine("mac");
@@ -255,6 +262,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * two invariant preservation POs
 	 */
+	@Test
 	public void testEvents_07_twoInvPresPOs() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -297,6 +305,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * two invariant preservation POs with differently typed local variables
 	 */
+	@Test
 	public void testEvents_08_invPresParamTyping() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -344,6 +353,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * invariant preservation: context in hypothesis
 	 */
+	@Test
 	public void testEvents_09_invPresContextInHyp() throws Exception {
 		IContextRoot con = createContext("ctx");
 
@@ -390,6 +400,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * no PO for NOT generated trivial invariants
 	 */
+	@Test
 	public void testEvents_10_invPresTriv() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -450,6 +461,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * well-definedness PO.  That PO should declare the local variable, although
 	 * no predicate involving that variable occurs in hypothesis. 
 	 */
+	@Test
 	public void testEvents_11_paramTypingInWDefPO() throws Exception {
 
 		final String i1 = "x ∈ {0}";
@@ -489,6 +501,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * An event with two guards that produce a well-definedness PO.
 	 */
+	@Test
 	public void testEvents_12_twoWDefPOs() throws Exception {
 		
 		final String i1 = "x ∈ {0,1}";
@@ -536,6 +549,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * An event with three guards, the last two producing a well-definedness PO.
 	 */
+	@Test
 	public void testEvents_13_moreWDefPOs() throws Exception {
 		
 		final String i1 = "x ∈ {0,1}";
@@ -584,6 +598,7 @@ public class TestMachineEvents extends EventBPOTest {
 	/**
 	 * feasibility of nondeterministic event
 	 */
+	@Test
 	public void testEvents_14_eventFeasibility() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -617,6 +632,7 @@ public class TestMachineEvents extends EventBPOTest {
 	 * Ensures that no PO is generated for derived invariant establishment or
 	 * preservation.
 	 */
+	@Test
 	public void test_15_theoremPO() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 

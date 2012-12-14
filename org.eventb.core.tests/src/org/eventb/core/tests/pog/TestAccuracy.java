@@ -16,6 +16,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -26,6 +27,7 @@ public class TestAccuracy extends EventBPOTest {
 	/**
 	 * If a machine is inaccurate, then all invariant and theorem POs are inaccurate.
 	 */
+	@Test
 	public void testAcc_00() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 		addInvariants(mac, makeSList("H", "I", "J"), makeSList("0÷9>0", "p>0", "∀x·x÷9>0"), false, false, false);
@@ -44,6 +46,7 @@ public class TestAccuracy extends EventBPOTest {
 	/**
 	 * If an event is inaccurate, then all POs generated from that event are inaccurate.
 	 */
+	@Test
 	public void testAcc_01() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 		addVariables(mac, "m");
@@ -67,6 +70,7 @@ public class TestAccuracy extends EventBPOTest {
 	 * If an abstract event is inaccurate, 
 	 * then all POs generated from the concrete event are inaccurate.
 	 */
+	@Test
 	public void testAcc_02() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", makeSList(), 
@@ -99,6 +103,7 @@ public class TestAccuracy extends EventBPOTest {
 	 * If an abstract event in a merge is inaccurate, 
 	 * then all POs generated from the concrete event are inaccurate.
 	 */
+	@Test
 	public void testAcc_03() throws Exception {
 		IMachineRoot abs =  createMachine("abs");
 		addEvent(abs, "evt", makeSList(), 
@@ -133,6 +138,7 @@ public class TestAccuracy extends EventBPOTest {
 	/**
 	 * If a context is inaccurate, then all axiom and theorem POs are inaccurate.
 	 */
+	@Test
 	public void testAcc_04() throws Exception {
 		IContextRoot ctx = createContext("ctx");
 		addAxioms(ctx, makeSList("H", "I", "J"), makeSList("0÷9>0", "p>0", "∀x·x÷9>0"), false, false, false);
@@ -152,6 +158,7 @@ public class TestAccuracy extends EventBPOTest {
 	 * If an abstract event in a merge is inaccurate, 
 	 * then all POs generated from the concrete event are inaccurate.
 	 */
+	@Test
 	public void testAcc_05() throws Exception {
 		IMachineRoot aab = createMachine("aab");
 		addEvent(aab, "evt", makeSList(), 

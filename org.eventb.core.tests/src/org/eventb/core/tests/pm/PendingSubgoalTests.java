@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.seqprover.IConfidence.REVIEWED_MAX;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
@@ -36,6 +40,9 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -125,9 +132,8 @@ public class PendingSubgoalTests extends TestPM {
 		return poRoot;
 	}
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpPST() throws Exception {
 		
 		// Turn on beginner mode
 		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
@@ -148,10 +154,9 @@ public class PendingSubgoalTests extends TestPM {
 		userSupport = newUserSupport(psRoot);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		userSupport.dispose();
-		super.tearDown();
+	@After
+	public void tearDownPST() throws Exception {
+		userSupport.dispose();		
 	}
 
 	private void setCurrentPO(String poName) throws RodinDBException {
@@ -187,6 +192,7 @@ public class PendingSubgoalTests extends TestPM {
 	/**
 	 * Ensures that the current node when loading an unproved PO is open.
 	 */
+	@Test
 	public void testFirstSubgoal() throws CoreException {
 		setCurrentPO("PO1");
 		assertOpen(mList(), G);
@@ -196,6 +202,7 @@ public class PendingSubgoalTests extends TestPM {
 	 * Ensures that the current node after applying a tactic is the first
 	 * created child.
 	 */
+	@Test
 	public void testFirstChild() throws CoreException {
 		setCurrentPO("PO1");
 		assertOpen(mList(), G);
@@ -209,6 +216,7 @@ public class PendingSubgoalTests extends TestPM {
 	 * Ensures that the current node after closing the first child is the second
 	 * child.
 	 */
+	@Test
 	public void testSecondChild() throws CoreException {
 		setCurrentPO("PO1");
 		assertOpen(mList(), G);
@@ -226,6 +234,7 @@ public class PendingSubgoalTests extends TestPM {
 	 * Ensures that the current node after closing the second child is the third
 	 * child.
 	 */
+	@Test
 	public void testSecondThenThirdChild() throws CoreException {
 		setCurrentPO("PO1");
 		assertOpen(mList(), G);
@@ -246,6 +255,7 @@ public class PendingSubgoalTests extends TestPM {
 	 * Ensures that the current node after closing the third child is the first
 	 * child.
 	 */
+	@Test
 	public void testThirdThenFirstChild() throws CoreException {
 		setCurrentPO("PO1");
 		assertOpen(mList(), G);
@@ -269,6 +279,7 @@ public class PendingSubgoalTests extends TestPM {
 	 * Ensures that the current node after closing a branch is after the root
 	 * of that branch, when present.
 	 */
+	@Test
 	public void testBranchCloseNext() throws CoreException {
 		setCurrentPO("PO1");
 		assertOpen(mList(), G);
@@ -296,6 +307,7 @@ public class PendingSubgoalTests extends TestPM {
 	 * Ensures that the current node after closing the last node of a tree is
 	 * the first pending subgoal of the tree.
 	 */
+	@Test
 	public void testBranchCloseFirst() throws CoreException {
 		setCurrentPO("PO1");
 		assertOpen(mList(), G);

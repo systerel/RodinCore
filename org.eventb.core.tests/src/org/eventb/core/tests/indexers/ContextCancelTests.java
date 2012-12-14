@@ -19,6 +19,7 @@ import org.eventb.core.IConstant;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.ContextIndexer;
+import org.junit.Test;
 import org.rodinp.core.indexer.IDeclaration;
 
 /**
@@ -27,13 +28,7 @@ import org.rodinp.core.indexer.IDeclaration;
  */
 public class ContextCancelTests extends EventBIndexerTests {
 
-	/**
-	 * @param name
-	 */
-	public ContextCancelTests(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testCancelImmediately() throws Exception {
 		final IContextRoot context =
 			ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL);
@@ -50,6 +45,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 		tk.assertNumExp(0);
 	}
 
+	@Test
 	public void testCancelAfterImports() throws Exception {
 		final IContextRoot exporter =
 				ResourceUtils.createContext(rodinProject, EXPORTER, CST_1DECL);
@@ -71,6 +67,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 		tk.assertNumOcc(1); // root occurrence
 	}
 
+	@Test
 	public void testCancelAfterDecl() throws Exception {
 		final IContextRoot context =
 				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL_1REF_AXM);
@@ -86,6 +83,7 @@ public class ContextCancelTests extends EventBIndexerTests {
 		tk.assertNumOcc(1);
 	}
 
+	@Test
 	public void testCancelInPredicates() throws Exception {
 		final String CST_1DECL_2REF_2AXM =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

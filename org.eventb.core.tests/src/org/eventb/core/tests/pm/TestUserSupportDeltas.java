@@ -12,6 +12,7 @@
 package org.eventb.core.tests.pm;
 
 import static java.util.Collections.singleton;
+import static junit.framework.Assert.assertEquals;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,6 +32,9 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for class {@link IUserSupportManager}
@@ -45,9 +49,8 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	private IPSRoot psRoot;
 	private IUserSupport userSupport;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpTUSD() throws Exception {
 		// Turn on beginner mode
 		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
 				.setEnabled(false);
@@ -58,13 +61,13 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		runBuilder();
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownTUSD() throws Exception {
 		stopDeltas();
 		userSupport.dispose();
-		super.tearDown();
 	}
 
+	@Test
 	public void testSetInput() throws CoreException {
 		userSupport = EventBPlugin.getUserSupportManager().newUserSupport();
 		
@@ -85,6 +88,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 				"  [+] PO7[org.eventb.core.psStatus] []");
 	}
 
+	@Test
 	public void testNextUndischargedPOUnforce() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 
@@ -115,6 +119,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "New current obligation (priority 2)");
 	}
 
+	@Test
 	public void testNextUndischargedPOForce() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 
@@ -160,6 +165,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "New current obligation (priority 2)");
 	}
 
+	@Test
 	public void testUserSupportPrevUndischargedPOUnforce() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 
@@ -190,6 +196,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "New current obligation (priority 2)");
 	}
 
+	@Test
 	public void testUserSupportPrevUndischargedPOForce() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 
@@ -234,6 +241,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "New current obligation (priority 2)");
 	}
 
+	@Test
 	public void testSetAndGetCurrentPO() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 
@@ -268,6 +276,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "New current obligation (priority 2)");
 	}
 
+	@Test
 	public void testRemoveCachedHypotheses() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 
@@ -316,6 +325,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "  [*] PO7[org.eventb.core.psStatus] [CACHE]");
 	}
 
+	@Test
 	public void testSearchHypotheses() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 
@@ -337,6 +347,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "  [*] PO7[org.eventb.core.psStatus] [SEARCH]");
 	}
 
+	@Test
 	public void testRemoveSearchedHypotheses() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 
@@ -368,6 +379,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "  [*] PO7[org.eventb.core.psStatus] [SEARCH]");
 	}
 
+	@Test
 	public void testSelectNode() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 
@@ -420,6 +432,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "  [*] PO7[org.eventb.core.psStatus] [NODE]");
 	}
 
+	@Test
 	public void testApplyTactic() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 
@@ -436,6 +449,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "  [*] PO7[org.eventb.core.psStatus] [NODE|PROOFTREE]");
 	}
 
+	@Test
 	public void testApplyTacticHypothesis() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 
@@ -465,6 +479,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 						+ "  [*] PO7[org.eventb.core.psStatus] [CACHE|NODE|PROOFTREE]");
 	}
 
+	@Test
 	public void testBacktrack() throws CoreException {
 		userSupport = newUserSupport(psRoot);
 

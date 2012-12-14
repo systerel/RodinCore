@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.impI;
 import static org.eventb.core.seqprover.tactics.BasicTactics.replayTac;
@@ -21,8 +25,6 @@ import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 
 import java.util.Collections;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -53,6 +55,9 @@ import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -65,7 +70,7 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public class ProofSerializationTests extends TestCase {
+public class ProofSerializationTests {
 	
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 
@@ -112,9 +117,8 @@ public class ProofSerializationTests extends TestCase {
 		return null;
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpPST() throws Exception {
 		
 		// ensure auto-building is turned off
 		IWorkspaceDescription wsDescription = workspace.getDescription();
@@ -140,12 +144,13 @@ public class ProofSerializationTests extends TestCase {
 		assertEquals(0, prRoot.getProofs().length);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownPST() throws Exception {
 		rodinProject.getProject().delete(true, true, null);
-		super.tearDown();
+		
 	}
 
+	@Test
 	public final void test() throws RodinDBException{
 		IPRProof proof1 = prRoot.getProof("proof1");
 		proof1.create(null, null);
@@ -213,6 +218,7 @@ public class ProofSerializationTests extends TestCase {
 	 * Ensures that a proof tree containing a partial instantiation can be
 	 * serialized and deserialized.
 	 */
+	@Test
 	public final void testPartialInstantiation() throws RodinDBException {
 		final IPRProof proof = prRoot.createChild(IPRProof.ELEMENT_TYPE, null,
 				null);
@@ -245,6 +251,7 @@ public class ProofSerializationTests extends TestCase {
 		proofTree.getRoot().pruneChildren();
 	}
 
+	@Test
 	public void testReasonerVersionCurrent() throws Exception {
 		IPRProof proof1 = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
@@ -260,6 +267,7 @@ public class ProofSerializationTests extends TestCase {
 
 	}
 
+	@Test
 	public void testReasonerVersionOld() throws Exception {
 		IPRProof proof1 = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
@@ -280,6 +288,7 @@ public class ProofSerializationTests extends TestCase {
 		checkProofTreeSerialization(proof1, proofTree, true);
 	}
 
+	@Test
 	public void testErroneousProof() throws Exception {
 		final IPRProof proof = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
@@ -321,6 +330,7 @@ public class ProofSerializationTests extends TestCase {
 	// from 2.2 on, rule element name bears a reference to a IPRReasoner
 	// located in proof root
 	// ensure that old storage is still readable
+	@Test
 	public void testReasonerStorageCompatibility() throws Exception {
 		importProofSerializationProofs();
 		
@@ -352,6 +362,7 @@ public class ProofSerializationTests extends TestCase {
 	// reasoner doubleImplGoalRewrites used not to be registered
 	// as a consequence its input was not serialized
 	// verify ability to repair and replay with broken inputs
+	@Test
 	public void testContrapInHyp_Bug3370087() throws Exception {
 		importProofSerializationProofs();
 
@@ -376,6 +387,7 @@ public class ProofSerializationTests extends TestCase {
 	}
 
 	// same as above in a more complex predicate
+	@Test
 	public void testContrapInHyp2_Bug3370087() throws Exception {
 		importProofSerializationProofs();
 
@@ -392,6 +404,7 @@ public class ProofSerializationTests extends TestCase {
 		checkReplay(sequent, proof);
 	}
 
+	@Test
 	public void testAbstrExpr_Bug3370087() throws Exception {
 		importProofSerializationProofs();
 
@@ -416,6 +429,7 @@ public class ProofSerializationTests extends TestCase {
 		checkReplay(expected.getSequent(), proof);
 	}
 	
+	@Test
 	public void testAbstrExpr_WD_Bug3370087() throws Exception {
 		importProofSerializationProofs();
 

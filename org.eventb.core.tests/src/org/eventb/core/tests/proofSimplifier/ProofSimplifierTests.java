@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.proofSimplifier;
 
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.hyp;
 import static org.eventb.core.tests.ResourceUtils.CTX_BARE_NAME;
 
@@ -31,6 +32,7 @@ import org.eventb.core.tests.BuilderTest;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.core.tests.pom.POUtil;
 import org.eventb.core.tests.pom.TestLib;
+import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -70,6 +72,7 @@ public class ProofSimplifierTests extends BuilderTest {
 
 	// FIXME This test fails as the proof simplifier has been disconnected (in r9882)
 	// FIXME uses autoRewrites which is subject to version changes
+	@Test
 	public void testSimplifyPRProof() throws Exception {
 		final String contents =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -124,6 +127,7 @@ public class ProofSimplifierTests extends BuilderTest {
 		saveRodinFileOf(poRoot);
 	}
 	
+	@Test
 	public void testBug2800402() throws Exception {
 		final String contents = 
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +

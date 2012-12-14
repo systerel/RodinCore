@@ -11,12 +11,18 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
+
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPORoot;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -27,6 +33,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class TestUserSupportManagers extends TestPM {
 
+	@Test
 	public void testUserSupportManager() throws RodinDBException, CoreException {
 		final IPORoot poRoot1 = createPOFile("x");
 		final IRodinFile psFile1 = poRoot1.getPSRoot().getRodinFile();

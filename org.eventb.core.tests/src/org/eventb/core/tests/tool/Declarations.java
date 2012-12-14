@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eventb.core.tests.tool;
 
-import junit.framework.TestCase;
-
 import org.eventb.internal.core.tool.FilterModuleDesc;
 import org.eventb.internal.core.tool.ProcessorModuleDesc;
 import org.eventb.internal.core.tool.RootModuleDesc;
@@ -24,7 +22,7 @@ import org.rodinp.core.IInternalElementType;
  * @author Stefan Hallerstede
  *
  */
-public abstract class Declarations extends TestCase {
+public abstract class Declarations {
 	
 	protected static class ProcDesc extends ProcessorModuleDesc<IProcessorModule> {
 

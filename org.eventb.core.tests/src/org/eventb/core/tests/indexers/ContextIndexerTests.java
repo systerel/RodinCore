@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.tests.ResourceUtils.CTX_BARE_NAME;
 import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT1;
 import static org.eventb.core.tests.ResourceUtils.MCH_BARE_NAME;
@@ -27,6 +30,7 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.ContextIndexer;
+import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IOccurrence;
@@ -52,16 +56,9 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	}
 
 	/**
-	 * @param name
 	 * @throws Exception
 	 */
-	public ContextIndexerTests(String name) throws Exception {
-		super(name);
-	}
-
-	/**
-	 * @throws Exception
-	 */
+	@Test
 	public void testDeclaration() throws Exception {
 		final IContextRoot context =
 				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL);
@@ -78,6 +75,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		tk.assertDeclarationsOtherThanRoot(declCst1);
 	}
 
+	@Test
 	public void testNoDeclarationEmptyName() throws Exception {
 		final String CST_1DECL_EMPTY_NAME =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -102,6 +100,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testRefDeclaration() throws Exception {
 		final IContextRoot context =
 				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL);
@@ -125,6 +124,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testOccurrenceOtherThanDecl() throws Exception {
 		final IContextRoot context =
 				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL_1REF_AXM);
@@ -148,6 +148,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testDoubleOccurrenceSameElement() throws Exception {
 		final String CST_1DECL_2OCC_SAME_AXM =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -187,6 +188,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testExportLocal() throws Exception {
 		final IContextRoot context =
 				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL);
@@ -206,6 +208,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testExportImported() throws Exception {
 
 		final IContextRoot exporter =
@@ -240,6 +243,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testImportedOccurrence() throws Exception {
 		final IContextRoot exporter =
 				ResourceUtils.createContext(rodinProject, "exporter", CST_1DECL);
@@ -265,6 +269,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testUnknownElement() throws Exception {
 		final IContextRoot independent =
 				ResourceUtils.createContext(rodinProject, "independent", CST_1DECL);
@@ -286,6 +291,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testTwoImportsSameName() throws Exception {
 		final IContextRoot exporter1 =
 				ResourceUtils.createContext(rodinProject, "exporter1", CST_1DECL);
@@ -319,6 +325,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * 
 	 * @throws Exception
 	 */
+	@Test
 	public void testDeclSet() throws Exception {
 		final String SET_1DECL =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -354,6 +361,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	 * 
 	 * @throws Exception
 	 */
+	@Test
 	public void testOccThm() throws Exception {
 
 		final IContextRoot context =
@@ -375,6 +383,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrencesOtherThanDecl(cst1, occRef);
 	}
 
+	@Test
 	public void testBadFileType() throws Exception {
 		final IMachineRoot machine =
 			ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME, VAR_1DECL_1REF_INV);
@@ -394,6 +403,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testMalformedXML() throws Exception {
 		// constant node is not closed with a /
 		final String MALFORMED_CONTEXT =
@@ -418,6 +428,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testMissingAttribute() throws Exception {
 		final String CST_1DECL_1AXM_NO_PRED_ATT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -448,6 +459,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testDoesNotParse() throws Exception {
 		final String CST_1DECL_1AXM_DOES_NOT_PARSE =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -475,6 +487,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		// true because the axiom that did not parse was ignored
 	}
 
+	@Test
 	public void testRootDeclaration() throws Exception {
 		final IContextRoot context = ResourceUtils.createContext(rodinProject,
 				CTX_BARE_NAME, EMPTY_CONTEXT);
@@ -492,6 +505,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 		bridge.assertOccurrences(context, occRoot);
 	}
 	
+	@Test
 	public void testRefExtends() throws Exception {
 		final String c1Name = "c1";
 		final IContextRoot extRoot = createContext(c1Name);
@@ -521,6 +535,7 @@ public class ContextIndexerTests extends EventBIndexerTests {
 	}
 
 	// Verify that root name does not introduce conflicts in symbol table
+	@Test
 	public void testRootCstSameName() throws Exception {
 		final IContextRoot context = ResourceUtils.createContext(rodinProject,
 				CST1, CST_1DECL_1REF_THM);

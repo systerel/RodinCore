@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
+import static junit.framework.Assert.fail;
 import static org.eventb.core.tests.indexers.ListAssert.assertSameAsArray;
 
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.ContextIndexer;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -32,10 +34,6 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 	private static final String C1_NAME = "c1";
 	private static final String C2_NAME = "c2";
 	private static final String C3_NAME = "c3";
-
-	public ContextDependenciesTests(String name) {
-		super(name);
-	}
 
 	private static void assertDependencies(List<IRodinFile> expected,
 			IRodinFile[] actual) {
@@ -50,6 +48,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 					+ "		org.eventb.core.target=\"c1\"/>"
 					+ "</org.eventb.core.contextFile>";
 
+	@Test
 	public void testNoDependencies() throws Exception {
 
 		final IContextRoot file =
@@ -62,6 +61,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 		assertDependencies(NO_FILES, actual);
 	}
 
+	@Test
 	public void testOneDependence() throws Exception {
 
 		final IContextRoot parent =
@@ -78,6 +78,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 		assertDependencies(expected, actual);
 	}
 
+	@Test
 	public void testTwoDependencies() throws Exception {
 
 		final IContextRoot parentC1 =
@@ -109,6 +110,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 		assertDependencies(expected, actual);
 	}
 
+	@Test
 	public void testBadFileType() throws Exception {
 		final IMachineRoot machine =
 			ResourceUtils.createMachine(rodinProject, "file.bum", VAR_1DECL_1REF_INV);
@@ -126,6 +128,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testMalformedXML() throws Exception {
 		// missing closing " after internal_element1 in extendsContext node
 		final String MALFORMED_CONTEXT =
@@ -149,6 +152,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testMissingAttribute() throws Exception {
 		final String CTX_1EXT_NO_TARGET_ATT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -170,6 +174,7 @@ public class ContextDependenciesTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testFileDoesNotExist() throws Exception {
 
 		final IContextRoot child = ResourceUtils.createContext(rodinProject, C2_NAME, CTX_1EXT);

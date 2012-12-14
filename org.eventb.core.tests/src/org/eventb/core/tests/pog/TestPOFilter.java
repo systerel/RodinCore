@@ -15,6 +15,7 @@ package org.eventb.core.tests.pog;
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -27,6 +28,7 @@ public class TestPOFilter extends EventBPOTest {
 	/**
 	 * stop machine theorem POs from being generated
 	 */
+	@Test
 	public void test_01_filterTheorems() throws Exception {
 		IPORoot po = createMachineWithTheorem(false);
 		
@@ -58,6 +60,7 @@ public class TestPOFilter extends EventBPOTest {
 	/**
 	 * stop action feasibility POs from being generated
 	 */
+	@Test
 	public void test_02_filterActionFIS() throws Exception {
 		IPORoot po = createMachineWithEventAction(false);
 		

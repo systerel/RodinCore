@@ -155,8 +155,4 @@ public abstract class EventBIndexerTests extends BuilderTest {
 			+ "				org.eventb.core.theorem=\"false\"/>"
 			+ "</org.eventb.core.event>" + "</org.eventb.core.machineFile>";
 	
-	public EventBIndexerTests(String name) {
-		super(name);
-	}
-
 }

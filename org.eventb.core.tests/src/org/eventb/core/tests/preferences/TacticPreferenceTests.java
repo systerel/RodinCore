@@ -11,6 +11,11 @@
 package org.eventb.core.tests.preferences;
 
 import static java.util.Arrays.asList;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
 
 import java.util.Arrays;
@@ -18,8 +23,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
@@ -39,12 +42,13 @@ import org.eventb.core.tests.preferences.TestingAutoTactics.CombinedTestAutoTac;
 import org.eventb.core.tests.preferences.TestingAutoTactics.ParamerizerTestAutoTac;
 import org.eventb.core.tests.preferences.TestingAutoTactics.SimpleTestAutoTac;
 import org.eventb.internal.core.preferences.ITacticDescriptorRef;
+import org.junit.Test;
 
 /**
  * @author Nicolas Beauger
  * 
  */
-public class TacticPreferenceTests extends TestCase {
+public class TacticPreferenceTests {
 
 	private static void assertExtractInject(ITacticDescriptor desc) {
 		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
@@ -182,17 +186,20 @@ public class TacticPreferenceTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testSimpleTactic() throws Exception {
 		final ITacticDescriptor desc = makeSimple();
 		assertExtractInject(desc);
 	}
 
+	@Test
 	public void testParamTactic() throws Exception {
 		final IParamTacticDescriptor desc = makeParam();
 		
 		assertExtractInject(desc);
 	}
 
+	@Test
 	public void testCombinedTactic() throws Exception {
 		
 		final ITacticDescriptor simple = makeSimple();
@@ -201,12 +208,14 @@ public class TacticPreferenceTests extends TestCase {
 		assertExtractInject(desc);
 	}
 	
+	@Test
 	public void testCombinedParam() throws Exception {
 		final IParamTacticDescriptor param = makeParam();
 		final ICombinedTacticDescriptor desc = makeCombined(param);
 		assertExtractInject(desc);
 	}
 	
+	@Test
 	public void testCombinedSeveralMixed() throws Exception {
 		final ITacticDescriptor simple = makeSimple();
 		final IParamTacticDescriptor param = makeParam();
@@ -214,6 +223,7 @@ public class TacticPreferenceTests extends TestCase {
 		assertExtractInject(desc);
 	}
 	
+	@Test
 	public void testCombinedOfCombined() throws Exception {
 		final ITacticDescriptor simple = makeSimple();
 		final ICombinedTacticDescriptor comb = makeCombined(simple);
@@ -221,6 +231,7 @@ public class TacticPreferenceTests extends TestCase {
 		assertExtractInject(desc);
 	}
 
+	@Test
 	public void testCombinedRef() throws Exception {
 		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String paramName = "param";
@@ -237,6 +248,7 @@ public class TacticPreferenceTests extends TestCase {
 
 	// verify that the reference always points to the good descriptor
 	// even if it changes (key and/or value)
+	@Test
 	public void testRef() throws Exception {
 		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String paramName = "param";
@@ -263,6 +275,7 @@ public class TacticPreferenceTests extends TestCase {
 		assertCombined(combinedEntry.getValue(), true, makeRef(map, modifiedParamName));
 	}
 
+	@Test
 	public void testSelfRef() throws Exception {
 		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String selfName = "self";
@@ -283,6 +296,7 @@ public class TacticPreferenceTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testSelfRefRemoveAdd() throws Exception {
 		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String selfName = "self";
@@ -305,6 +319,7 @@ public class TacticPreferenceTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testCombinedSelfRef() throws Exception {
 		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String selfName = "self";
@@ -323,6 +338,7 @@ public class TacticPreferenceTests extends TestCase {
 		}
 	}
 	
+	@Test
 	public void testCrossRef() throws Exception {
 		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String cross1Name = "cross1";
@@ -343,6 +359,7 @@ public class TacticPreferenceTests extends TestCase {
 		}
 
 	}
+	@Test
 	public void testCrossRefPreAddCheck() throws Exception {
 		final CachedPreferenceMap<ITacticDescriptor> map = makeTacticPreferenceMap();
 		final String cross1Name = "cross1";

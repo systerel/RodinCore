@@ -15,6 +15,7 @@ package org.eventb.core.tests.pog;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
@@ -32,6 +33,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * proper creation of theorem PO
 	 */
+	@Test
 	public void testTheorems_00_theorem() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
@@ -54,6 +56,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * proper creation of theorem well-definedness PO
 	 */
+	@Test
 	public void testTheorems_01_wDef() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
@@ -78,6 +81,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * theorem in hypothesis
 	 */
+	@Test
 	public void testTheorems_02_ThmInHyp() throws Exception {
 		F cmp = getGeneric().createElement("mac");
 
@@ -104,6 +108,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * non-creation of theorem with trivial goal
 	 */
+	@Test
 	public void testTheorems_03_trivialTheorem() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
@@ -129,6 +134,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * non-creation of trivial well-definedness non-theorem PO
 	 */
+	@Test
 	public void testNonTheorems_04_nonTheorem() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
@@ -147,6 +153,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * proper creation of non-theorem well-definedness PO
 	 */
+	@Test
 	public void testNonTheorems_05_wDef() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
@@ -167,6 +174,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * proper creation of hypothesis of non-theorem well-definedness PO
 	 */
+	@Test
 	public void testNonTheorems_06_wDefHypOK() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
@@ -188,6 +196,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * proper creation of hypothesis of non-theorem well-definedness PO
 	 */
+	@Test
 	public void testTheorems_07_NonTheoremInHyp() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
@@ -210,6 +219,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * proper creation of hypothesis from abstraction
 	 */
+	@Test
 	public void testTheorems_08_abstraction() throws Exception {
 		F abs = getGeneric().createElement("abs");
 		
@@ -244,6 +254,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * proper creation of transitive hypothesis
 	 */
+	@Test
 	public void testTheorems_09_transitive() throws Exception {
 		F f0 = getGeneric().createElement("f0");
 		
@@ -284,6 +295,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * proper creation of identifiers and hypotheses of non-theorem well-definedness PO
 	 */
+	@Test
 	public void testNonTheorems_10_identAndHyp() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
@@ -310,6 +322,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * proper creation of identifiers and hypotheses of theorem well-definedness PO
 	 */
+	@Test
 	public void testTheorems_11_identAndHyp() throws Exception {
 		if (!isCumulative()) {
 			// This test is meaningless
@@ -345,6 +358,7 @@ extends GenericEventBPOTest<F> {
 	/*
 	 * proof obligations for mixed list of predicates and theorems
 	 */
+	@Test
 	public void testTheorems_12_mixedTheorems() throws Exception {
 		F cmp = getGeneric().createElement("abs");
 		getGeneric().addPredicates(

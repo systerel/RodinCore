@@ -22,6 +22,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -142,6 +143,7 @@ public class TestMachineVariant extends EventBPOTest {
 	/*
 	 * anticipated event variants
 	 */
+	@Test
 	public void test_01_anticipated() throws Exception {
 		
 		Convergence convergence = IConvergenceElement.Convergence.ANTICIPATED;
@@ -153,6 +155,7 @@ public class TestMachineVariant extends EventBPOTest {
 	/*
 	 * anticipated event variants
 	 */
+	@Test
 	public void test_02_convergent() throws Exception {
 		
 		Convergence convergence = IConvergenceElement.Convergence.CONVERGENT;
@@ -244,6 +247,7 @@ public class TestMachineVariant extends EventBPOTest {
 	/*
 	 * ordinary event variants
 	 */
+	@Test
 	public void test_03_ordinary() throws Exception {
 		
 		Convergence convergence = IConvergenceElement.Convergence.ORDINARY;
@@ -255,6 +259,7 @@ public class TestMachineVariant extends EventBPOTest {
 	/*
 	 * well-definedness of variants
 	 */
+	@Test
 	public void test_04_wDef() throws Exception {
 		IMachineRoot mac = createMachineFragment("mac");
 
@@ -275,6 +280,7 @@ public class TestMachineVariant extends EventBPOTest {
 	/**
 	 * No PO is generated for convergent events refining convergent events
 	 */
+	@Test
 	public void test_05_cvgRefinesCvg() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -314,6 +320,7 @@ public class TestMachineVariant extends EventBPOTest {
 	 * if a machine does not have a variant, antipated events should generate
 	 * variant proof obligations
 	 */
+	@Test
 	public void test_06_anticipatedNoVariantNoPO() throws Exception {
 		IMachineRoot mac = createMachineFragment("mac");
 		IEvent evt = addEvent(mac, "evt");
@@ -332,6 +339,7 @@ public class TestMachineVariant extends EventBPOTest {
 	 * if an anticipated and a convergent event are merged the abstraction is treated like an
 	 * anticipated event: PO for convergence is created for convergent concrete events.
 	 */
+	@Test
 	public void test_07_mergeAntCvg() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
@@ -379,6 +387,7 @@ public class TestMachineVariant extends EventBPOTest {
 	 * if an anticipated and a convergent event are merged the abstraction is treated like an
 	 * anticipated event: PO for anticipation is created for anticipated concrete events.
 	 */
+	@Test
 	public void test_08_mergeAntCvg() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
@@ -427,6 +436,7 @@ public class TestMachineVariant extends EventBPOTest {
 	 * The abstract event is regarded as "only" being anticipated; the stronger
 	 * property is "forgotten".
 	 */
+	@Test
 	public void test_09_antRefinesCvg() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");

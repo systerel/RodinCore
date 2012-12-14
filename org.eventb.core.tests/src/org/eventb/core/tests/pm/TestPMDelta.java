@@ -1,5 +1,8 @@
 package org.eventb.core.tests.pm;
 
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 

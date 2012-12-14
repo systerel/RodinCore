@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.IEvent.INITIALISATION;
 import static org.eventb.core.ast.LanguageVersion.V2;
 
@@ -26,6 +27,7 @@ import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -36,6 +38,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/**
 	 * rewriting of deterministic action simulation POs
 	 */
+	@Test
 	public void testRefines_00() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -82,6 +85,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/**
 	 * rewriting of action frame simulation POs
 	 */
+	@Test
 	public void testRefines_01() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -128,6 +132,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/**
 	 * simulation and invariant preservation using global witnesses
 	 */
+	@Test
 	public void testRefines_02() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -188,6 +193,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/**
 	 * simulation and invariant preservation using local witnesses
 	 */
+	@Test
 	public void testRefines_03() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -242,6 +248,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * well-definedness PO of the guard, and then once at the end of the
 	 * machine.
 	 */
+	@Test
 	public void testRefines_04() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
@@ -269,6 +276,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * PO filter: the POG should not generate WD POs for guards when these
 	 * conditions have already been proved for the abstract event
 	 */
+	@Test
 	public void testRefines_05() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
@@ -311,6 +319,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * for an abstract guard which is syntactically (but normalized) contained
 	 * in the concrete guards.
 	 */
+	@Test
 	public void testRefines_06() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
@@ -348,6 +357,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * PO filter: inherited events should only produce invariant preservation POs
 	 */
+	@Test
 	public void testRefines_07() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A");
@@ -390,6 +400,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * PO filter: do not produce WD and FIS POs for repeated actions
 	 */
+	@Test
 	public void testRefines_08() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
@@ -446,6 +457,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * create event merge POs (simple)
 	 */
+	@Test
 	public void testRefines_09() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
@@ -485,6 +497,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * create event merge POs (complicated)
 	 */
+	@Test
 	public void testRefines_10() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
@@ -536,6 +549,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * filter repeated guards from event merge POs
 	 */
+	@Test
 	public void testRefines_11() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
@@ -591,6 +605,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * filter event merge POs entirely if one of the disjuncts is true
 	 */
+	@Test
 	public void testRefines_12() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
@@ -637,6 +652,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * PO filter: do not produce any POs in identical refinements
 	 */
+	@Test
 	public void testRefines_13() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
@@ -678,6 +694,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * 	(2) the abstract event is empty
 	 * (POs should be identical!)
 	 */
+	@Test
 	public void testRefines_14() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
@@ -714,6 +731,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * Proper naming in goals with nondeterministic witnesses
 	 */
+	@Test
 	public void testRefines_15() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
@@ -762,6 +780,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * (2) and, as a consequence, the abstract non-determistic actions can be put in the
 	 * hypothesis of the concrete /FIS.
 	 */
+	@Test
 	public void testRefines_16() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
@@ -831,6 +850,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * certain variables, then corresponding before-after predicates do not need to be
 	 * added to the hypothesis of /GRD
 	 */
+	@Test
 	public void testRefines_17() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p", "q");
@@ -877,6 +897,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * Additional abstract before-after predicates in a /FIS proof obligation must
 	 * be correctly rewritten using the witnesses (all witnesses!)
 	 */
+	@Test
 	public void testRefines_18() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "p");
@@ -990,6 +1011,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * but the preserved variables must be simulated. This also holds for
 	 * multiple assignments!
 	 */
+	@Test
 	public void testRefines_19() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x", "y");
@@ -1039,6 +1061,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * Check if types of local variables of abstract event are added to type environment
 	 */
+	@Test
 	public void testRefines_20() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x", "y");
@@ -1084,6 +1107,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * Check if invariant preservation PO is generated for event with
 	 * empty list of actions (i.e. the concrete action is skip)
 	 */
+	@Test
 	public void testRefines_21() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
@@ -1129,6 +1153,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * Check that there are no witness-related POs (WFIS, WWD) for an inherited event.
 	 */
+	@Test
 	public void testRefines_22() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
@@ -1186,6 +1211,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * Check that there are no witness-related POs (WFIS, WWD) for an inherited event.
 	 */
+	@Test
 	public void testBug_1920752() throws Exception {
 		final IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "v1", "v2");
@@ -1228,6 +1254,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/**
 	 * Test with all possible data refinements together.
 	 */
+	@Test
 	public void testRefines_23() throws Exception {
 		
 		// Context
@@ -1383,6 +1410,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * PO filter: the POG should not generate guard strengthening POs if
 	 * abstract guard is a theorem
 	 */
+	@Test
 	public void testRefines_24() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
@@ -1419,6 +1447,7 @@ public class TestMachineRefines extends EventBPOTest {
 	/*
 	 * Guard strengthening in event merge PO with abstract theorems
 	 */
+	@Test
 	public void testRefines_25() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
@@ -1458,6 +1487,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * Guard strengthening in event merge PO with all abstract guards being
 	 * theorems
 	 */
+	@Test
 	public void testRefines_26() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
@@ -1489,6 +1519,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * PO filter: the POG should not generate THM POs for guards when these
 	 * conditions have already been proved for the abstract event
 	 */
+	@Test
 	public void testRefines_27() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
@@ -1517,6 +1548,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * PO filter: the POG should generate THM POs for guards when these
 	 * conditions have not been proved for the abstract event
 	 */
+	@Test
 	public void testRefines_28() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
@@ -1545,6 +1577,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * PO filter: the POG should generate THM POs for guards when these
 	 * conditions have not been proved for the abstract event
 	 */
+	@Test
 	public void testRefines_29() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addEvent(abs, "evt", 
@@ -1573,6 +1606,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * Regression test for bug #3469348: Bug in INITIALISATION FIS PO. The after
 	 * value witness must not be in hypothesis.
 	 */
+	@Test
 	public void testBug3469348() throws Exception {
 		final IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "v");
@@ -1606,6 +1640,7 @@ public class TestMachineRefines extends EventBPOTest {
 	 * that extends its abstraction without contributing any addition shall not
 	 * produce any WD PO.
 	 */
+	@Test
 	public void testBug3488583() throws Exception {
 		final IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");

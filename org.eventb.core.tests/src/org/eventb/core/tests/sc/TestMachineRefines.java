@@ -19,6 +19,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -30,6 +31,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	 * abstract machine identifiers have precedence over 
 	 * seen context identifiers
 	 */
+	@Test
 	public void testMachineRefines_0() throws Exception {
 		IContextRoot con =  createContext("ctx");
 		addCarrierSets(con, "V1");
@@ -81,6 +83,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	 * refined machine should see at least all contexts seen by
 	 * their abstract machine; carrier sets are propagated
 	 */
+	@Test
 	public void testMachineRefines_1() throws Exception {
 		IContextRoot con =  createContext("ctx");
 		addCarrierSets(con, "S1");
@@ -121,6 +124,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	 * refined machine should see at least all contexts seen by
 	 * their abstract machine; constants are propagated
 	 */
+	@Test
 	public void testMachineRefines_2() throws Exception {
 		IContextRoot con =  createContext("ctx");
 		addConstants(con, "C1");
@@ -164,6 +168,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	 * their abstract machine; constants are propagated
 	 * when also variables are declared
 	 */
+	@Test
 	public void testMachineRefines_3() throws Exception {
 		IContextRoot con =  createContext("ctx");
 		addConstants(con, "C1");
@@ -208,6 +213,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * variables are propagated
 	 */
+	@Test
 	public void testMachineRefines_4() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		
@@ -246,6 +252,7 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * abstract machine not saved!
 	 */
+	@Test
 	public void testMachineRefines_5() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		

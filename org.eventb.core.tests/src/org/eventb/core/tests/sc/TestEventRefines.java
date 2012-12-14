@@ -23,6 +23,7 @@ import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.GraphProblem;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -33,6 +34,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * simple refines clause
 	 */
+	@Test
 	public void testEvents_00_refines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -64,6 +66,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * split refines clause
 	 */
+	@Test
 	public void testEvents_01_split2() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -100,6 +103,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * identically named parameters of abstract and concrete events do
 	 * correspond
 	 */
+	@Test
 	public void testEvents_02_parameterTypesCorrespond() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -135,6 +139,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * error if identically named parameters of abstract and concrete events do
 	 * NOT correspond
 	 */
+	@Test
 	public void testEvents_03_parameterTypeConflict() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -171,6 +176,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * create default witness if parameter disappears
 	 */
+	@Test
 	public void testEvents_04_parameterDefaultWitness() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -211,6 +217,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * global witness referring to parameter of concrete event
 	 */
+	@Test
 	public void testEvents_05_globalWitnessUseConcreteParameter()
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -258,6 +265,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * global witness referring to post value of global variable of concrete
 	 * machine
 	 */
+	@Test
 	public void testEvents_06_globalWitness() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -306,6 +314,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * creation of parameter default witness
 	 */
+	@Test
 	public void testEvents_07_parameterTypesAndWitnesses() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -347,6 +356,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * split event into three events
 	 */
+	@Test
 	public void testEvents_08_split3() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -385,6 +395,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * merge two events into one
 	 */
+	@Test
 	public void testEvents_09_merge2() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -417,6 +428,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * correctly extended event with refines clause
 	 */
+	@Test
 	public void testEvents_10_extended() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -447,6 +459,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * faulty extended event without refines clause
 	 */
+	@Test
 	public void testEvents_11_extendedWithoutRefine() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -478,6 +491,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * conflict: an extended event must not merge events
 	 */
+	@Test
 	public void testEvents_12_extendedMergeConflict() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -512,6 +526,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * events may be merged more than once
 	 */
+	@Test
 	public void testEvents_13_mergeMergeConflict() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -548,6 +563,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * inherit / refines / merge used together correctly
 	 */
+	@Test
 	public void testEvents_14_extendedRefinesMergeOK() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -592,6 +608,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * events may be split and merged at the same time
 	 */
+	@Test
 	public void testEvents_15_splitAndMerge() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -635,6 +652,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * initialization implicitly refined
 	 */
+	@Test
 	public void testEvents_16_initialisationDefaultRefines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -664,6 +682,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * initialization cannot be explicitly refined
 	 */
+	@Test
 	public void testEvents_17_initialisationRefines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -693,6 +712,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * initialization can be extended
 	 */
+	@Test
 	public void testEvents_18_initialisationExtended() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -721,6 +741,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * no other event can refine the initialization
 	 */
+	@Test
 	public void testEvents_19_initialisationNotRefined() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -751,6 +772,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * several refinement problems occurring together
 	 */
+	@Test
 	public void testEvents_20_multipleRefineProblems() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -797,6 +819,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * identically named parameters of merged abstract events must have
 	 * compatible types
 	 */
+	@Test
 	public void testEvents_21_mergeParameterAbstractTypesCorrespond()
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -838,6 +861,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * error: identically named parameter of merged abstract events do not have
 	 * compatible types
 	 */
+	@Test
 	public void testEvents_22_mergeParameterAbstractTypesConflict()
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -877,6 +901,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * actions of abstract events must be identical (labels AND assignments)
 	 * module reordering
 	 */
+	@Test
 	public void testEvents_23_mergeAbstractActionsIdentical() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -921,6 +946,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * error: actions of abstract events differ
 	 */
+	@Test
 	public void testEvents_24_mergeAbstractActionsDiffer() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -962,6 +988,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * parameter witness ok
 	 */
+	@Test
 	public void testEvents_25_parameterWitnessRefines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -1004,6 +1031,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * parameter witnesses in split ok
 	 */
+	@Test
 	public void testEvents_26_parameterWitnessSplit() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -1051,6 +1079,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * post-values of abstract disappearing variables must be be referenced in
 	 * witnesses
 	 */
+	@Test
 	public void testEvents_27_globalWitnessAbstractVariables() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -1095,6 +1124,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * Extended events should not have witnesses for parameters
 	 */
+	@Test
 	public void testEvents_28_extendedNoParameterWitnesses() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addInitialisation(abs);
@@ -1125,6 +1155,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * Extended events should not refer to variables that exist no longer
 	 */
+	@Test
 	public void testEvents_29_extendedAndDisappearingVariables()
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -1154,6 +1185,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * Extended events should not refer to variables that exist no longer
 	 */
+	@Test
 	public void testEvents_30_extendedCopyEvent() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "A", "B");
@@ -1196,6 +1228,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * POG would depend on the order of the events in the file, or create
 	 * unreadable PO names)
 	 */
+	@Test
 	public void testEvents_31_mergeAbstractActionLabelsDiffer()
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -1234,6 +1267,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * create default witnesses for abstract variables and parameters in merge
 	 */
+	@Test
 	public void testEvents_32_mergeAbstractActionCreateDefaultWitnesses()
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -1280,6 +1314,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * events in refined machine can assign to variables that were declared in
 	 * the abstract machine and repeated in the concrete machine.
 	 */
+	@Test
 	public void testEvents_33_newEventPreservedVariableAssigned()
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -1319,6 +1354,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * Witnesses must not reference post values of abstract disappearing global
 	 * variables
 	 */
+	@Test
 	public void testEvents_34_parameterWitnessWithPostValues() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -1362,6 +1398,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * A concrete machine must not declare a variable that has the same name as
 	 * a parameter in the abstract machine.
 	 */
+	@Test
 	public void testEvents_35_parameterRefByVariableConflict() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -1397,6 +1434,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * variables that are not in the concrete machine cannot be assigned to or
 	 * from
 	 */
+	@Test
 	public void testEvents_36_disappearedVariableAssigned() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -1440,6 +1478,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * variables that are not in the concrete machine cannot be in guards
 	 */
+	@Test
 	public void testEvents_37_disappearedVariableInGuard() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -1482,6 +1521,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * Check that there are no witnesses for an extended event.
 	 */
+	@Test
 	public void testEvents_38_removeWitnessesFromExtended() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
@@ -1533,6 +1573,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * An extended event must (re-)declare a parameter that was already declared
 	 * in an abstract event.
 	 */
+	@Test
 	public void testEvents_39_extendedParameterCollision() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addInitialisation(abs);
@@ -1569,6 +1610,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * An extended event must reuse a guard label
 	 */
+	@Test
 	public void testEvents_40_extendedGuardLabelCollision() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addInitialisation(abs);
@@ -1618,6 +1660,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * An extended event must reuse an action label
 	 */
+	@Test
 	public void testEvents_41_extendedActionLabelCollision() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
@@ -1668,6 +1711,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * An extended event copies the abstract parameters and adds the concrete
 	 * ones
 	 */
+	@Test
 	public void testEvents_42_extendedAddAndCopyParameters() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addInitialisation(abs);
@@ -1702,6 +1746,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * An extended event copies the abstract guards and adds the concrete ones
 	 */
+	@Test
 	public void testEvents_43_extendedAddAndCopyGuards() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addInitialisation(abs);
@@ -1741,6 +1786,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * An extended event copies the abstract actions and adds the concrete ones
 	 */
+	@Test
 	public void testEvents_44_extendedAddAndCopyActions() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
@@ -1784,6 +1830,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * An extended event copies elements transitively from its abstractions
 	 */
+	@Test
 	public void testEvents_45_extendedCopyTransitive() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x");
@@ -1848,6 +1895,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * extended initialization implicitly refined
 	 */
+	@Test
 	public void testEvents_46_initialisationExtendedRefines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -1877,6 +1925,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	/*
 	 * extended initialization action label conflict and checked actions copied
 	 */
+	@Test
 	public void testEvents_47_initialisationExtendedActions() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "x", "y");
@@ -1919,6 +1968,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * There exists an abstract event with the same name but no refines clause
 	 * pointing to it.
 	 */
+	@Test
 	public void testEvents_48_sameNameNoRefines() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -1946,6 +1996,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * with the literal predicate "false". Thus it appears unexplicitely
 	 * disabled.
 	 */
+	@Test
 	public void testEvents_49_AbstractEventNotExplicitelyDisabled()
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -1970,6 +2021,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * There exist an abstract event which is not refined and has a guard with
 	 * the literal predicate "false". Thus it appears explicitely disabled.
 	 */
+	@Test
 	public void testEvents_50_AbstractEventExplicitelyDisabled()
 			throws Exception {
 		IMachineRoot abs = createMachine("abs");
@@ -1994,6 +2046,7 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 	 * Ensure that two events with different parameters can be merged, as far as
 	 * their parameters do not occur in the actions.
 	 */
+	@Test
 	public void testEvents_51_mergeDifferentParameters() throws Exception {
 		final IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "v");

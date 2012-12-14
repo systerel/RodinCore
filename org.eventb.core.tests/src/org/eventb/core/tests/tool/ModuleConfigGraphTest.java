@@ -7,15 +7,18 @@
  *******************************************************************************/
 package org.eventb.core.tests.tool;
 
+import static junit.framework.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.ModuleConfig;
 import org.eventb.internal.core.tool.ModuleDesc;
-import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.types.IModule;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -175,6 +178,7 @@ public class ModuleConfigGraphTest extends Declarations {
 	/**
 	 * Test sorting of empty graph
 	 */
+	@Test
 	public void test() throws Exception {
 		final ConfigTest[] testItems = makeTestItems();
 

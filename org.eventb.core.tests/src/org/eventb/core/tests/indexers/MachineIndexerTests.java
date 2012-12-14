@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.tests.ResourceUtils.CTX_BARE_NAME;
 import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT1;
 import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT2;
@@ -44,6 +47,7 @@ import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.MachineIndexer;
+import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IOccurrence;
@@ -61,13 +65,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		return newDecl(var, varName);
 	}
 
-	/**
-	 * @param name
-	 */
-	public MachineIndexerTests(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testDeclaration() throws Exception {
 
 		final IMachineRoot machine =
@@ -85,6 +83,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertDeclarationsOtherThanRoot(declVar1);
 	}
 
+	@Test
 	public void testNoDeclarationEmptyName() throws Exception {
 		final String VAR_EVT_PRM_WIT_EMPTY_NAMES =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -122,6 +121,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testRefDeclaration() throws Exception {
 		final IMachineRoot machine =
 				ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME, VAR_1DECL);
@@ -143,6 +143,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testOccurrenceOtherThanDecl() throws Exception {
 		final IMachineRoot machine =
 				ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME, VAR_1DECL_1REF_INV);
@@ -165,6 +166,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testDoubleOccurrenceSameElement() throws Exception {
 		final String VAR_1DECL_2OCC_SAME_INV =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -202,6 +204,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testExportLocal() throws Exception {
 		final IMachineRoot machine =
 				ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME, VAR_1DECL);
@@ -221,6 +224,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testDoNotExportDisappearingVar() throws Exception {
 
 		final IMachineRoot exporter =
@@ -254,6 +258,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 					+ "		org.eventb.core.identifier=\"cst1\"/>"
 					+ "</org.eventb.core.contextFile>";
 
+	@Test
 	public void testExportConstantsAndCarrierSets() throws Exception {
 		final IContextRoot context =
 			ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL_SET_1DECL);
@@ -291,6 +296,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testImportedOccurrence() throws Exception {
 		final IMachineRoot exporter =
 				ResourceUtils.createMachine(rodinProject, EXPORTER, VAR_1DECL);
@@ -313,6 +319,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(declVar1.getElement(), occVar1);
 	}
 
+	@Test
 	public void testImportedRedeclaration() throws Exception {
 		final IMachineRoot exporter =
 				ResourceUtils.createMachine(rodinProject, EXPORTER, VAR_1DECL);
@@ -337,6 +344,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testUnknownElement() throws Exception {
 		final IMachineRoot independent =
 				ResourceUtils.createMachine(rodinProject, "independent", VAR_1DECL);
@@ -358,6 +366,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testTwoImportsSameName() throws Exception {
 		final IMachineRoot exporter1 =
 				ResourceUtils.createMachine(rodinProject, "exporter1", VAR_1DECL);
@@ -383,6 +392,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertEmptyOccurrences(declVarExp2.getElement());
 	}
 
+	@Test
 	public void testRefConstantAndCarrierSet() throws Exception {
 		final IContextRoot context =
 			ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL_SET_1DECL);
@@ -425,6 +435,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(cst1, refCst1);
 	}
 
+	@Test
 	public void testRefTheorem() throws Exception {
 		final String VAR_1DECL_1REF_THM =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -460,6 +471,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrencesOtherThanDecl(var1, occRef);
 	}
 
+	@Test
 	public void testRefVariant() throws Exception {
 		final String VAR_1DECL_1REF_VRT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -493,6 +505,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrencesOtherThanDecl(var1, occRef);
 	}
 
+	@Test
 	public void testEventDeclAndExport() throws Exception {
 
 		final IMachineRoot machine =
@@ -514,6 +527,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertExportsOtherThanRoot(declEvt1);
 	}
 
+	@Test
 	public void testEventRedeclaration() throws Exception {
 		final IMachineRoot exporter =
 				ResourceUtils.createMachine(rodinProject, EXPORTER, EVT_1DECL);
@@ -545,6 +559,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(eventExp, redeclInImp);
 	}
 
+	@Test
 	public void testInitialisationRedeclared() throws Exception {
 		final String ABSTRACT_EVT_INIT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		+ "<org.eventb.core.machineFile"
@@ -595,6 +610,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 	}
 
+	@Test
 	public void testEventParamDeclAndExport() throws Exception {
 		final IMachineRoot machine =
 				ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME, PRM_1DECL);
@@ -615,6 +631,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertExports(IParameter.ELEMENT_TYPE, declPrm1);
 	}
 
+	@Test
 	public void testEventParamRef() throws Exception {
 		final IMachineRoot machine =
 				ResourceUtils.createMachine(rodinProject, MCH_BARE_NAME, PRM_1DECL_1REF_GRD);
@@ -635,6 +652,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrencesOtherThanDecl(prm1, refPrm1);
 	}
 
+	@Test
 	public void testEventParamAbstractRefInExtendedDecl() throws Exception {
 		final IMachineRoot exporter =
 				ResourceUtils.createMachine(rodinProject, EXPORTER, PRM_1DECL);
@@ -664,6 +682,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(prmExp, refParamImp);
 	}
 
+	@Test
 	public void testEventParamAbstractRefInExtendedWit() throws Exception {
 		final IMachineRoot exporter =
 				ResourceUtils.createMachine(rodinProject, EXPORTER, PRM_1DECL);
@@ -715,6 +734,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(prmExp, refLblWitImp, refPredWitImp);
 	}
 
+	@Test
 	public void testEventVarRedeclared() throws Exception {
 		final IMachineRoot exporter =
 				ResourceUtils.createMachine(rodinProject, EXPORTER, VAR_1DECL);
@@ -766,6 +786,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(varExp, refVarExp);
 	}
 
+	@Test
 	public void testEventVarNotRedeclaredModifInAction() throws Exception {
 		// var1 disappears
 		final IMachineRoot exporter =
@@ -814,6 +835,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(varExp, occRef);
 	}
 
+	@Test
 	public void testEventVarRefInWitness() throws Exception {
 		// var1 disappears
 		final IMachineRoot exporter =
@@ -862,6 +884,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(varExp, occRefLblWit, occRefPredWit);
 	}
 
+	@Test
 	public void testPrimeWitnessLabelBug2804046() throws Exception {
 		final String PRIME_WIT_LABEL =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -894,6 +917,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		assertTrue(indexer.index(tk));
 	}
 
+	@Test
 	public void testEventVarRedeclaredRefInGuard() throws Exception {
 		final IMachineRoot exporter =
 				ResourceUtils.createMachine(rodinProject, EXPORTER, VAR_1DECL);
@@ -948,6 +972,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrencesOtherThanDecl(varImp, occRef);
 	}
 
+	@Test
 	public void testPrioritiesParamVsAbsParam() throws Exception {
 		final IMachineRoot exporter =
 				ResourceUtils.createMachine(rodinProject, EXPORTER, PRM_1DECL);
@@ -979,6 +1004,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(prmImp, prmImpDecl, grdRef);
 	}
 
+	@Test
 	public void testPrioritiesAbsParamVsLocalVar() throws Exception {
 		final IMachineRoot exporter =
 				ResourceUtils.createMachine(rodinProject, EXPORTER, PRM_1DECL);
@@ -1039,6 +1065,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(prmExp, refLblWitImp, refPredWitImp);
 	}
 
+	@Test
 	public void testPrioritiesLocalVarVsImport() throws Exception {
 		final IContextRoot exporter =
 			ResourceUtils.createContext(rodinProject, EXPORTER, CST_1DECL);
@@ -1081,6 +1108,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrencesOtherThanDecl(varImp, refInvImp);
 	}
 
+	@Test
 	public void testBadFileType() throws Exception {
 		final String CST_1DECL_1REF_THM =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -1113,6 +1141,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testMalformedXML() throws Exception {
 		// missing closing " after internal_element1 in variable node
 		final String MALFORMED_MACHINE =
@@ -1137,6 +1166,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testMissingAttribute() throws Exception {
 		final String VAR_1DECL_NO_IDENT_ATT =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -1159,6 +1189,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testDoesNotParse() throws Exception {
 		final String VAR_1DECL_INV_DOES_NOT_PARSE =
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -1185,6 +1216,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		assertTrue(indexer.index(tk));
 	}
 	
+	@Test
 	public void testBecomesEqualTo() throws Exception {
 		final String VAR_2DECL_2ASSIGN_ACT =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -1236,6 +1268,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 	}
 
+	@Test
 	public void testBecomesSuchThat() throws Exception {
 		final String becomesSuchThat = "var1, var2 :∣ ∀x· x=var2' ⇒ {var2', var1'}={var2, x}";
 		//                              0    |    1     |    2    |    3    |    4    |    5
@@ -1292,6 +1325,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 	}
 
+	@Test
 	public void testBecomesMemberOf() throws Exception {
 		final String VAR_2DECL_2ASSIGN_ACT =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -1342,6 +1376,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 	}
 	
+	@Test
 	public void testIndexRoot() throws Exception {
 		final IMachineRoot machine = ResourceUtils.createMachine(rodinProject,
 				MCH_BARE_NAME, EMPTY_MACHINE);
@@ -1359,6 +1394,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		bridge.assertOccurrences(machine, occRoot);
 	}
 	
+	@Test
 	public void testRefSees() throws Exception {
 		final String c1Name = "c1";
 		final IContextRoot seenRoot = createContext(c1Name);
@@ -1387,6 +1423,7 @@ public class MachineIndexerTests extends EventBIndexerTests {
 		tk.assertOccurrences(declSeenRoot.getElement(), occSeenRoot);
 	}
 
+	@Test
 	public void testRefRefines() throws Exception {
 		final String m1Name = "m1";
 		final IMachineRoot refinedRoot = createMachine(m1Name);

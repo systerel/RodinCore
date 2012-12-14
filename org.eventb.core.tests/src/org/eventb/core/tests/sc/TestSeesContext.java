@@ -18,6 +18,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -28,6 +29,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	/*
 	 * Seen contexts are copied into internal contexts
 	 */
+	@Test
 	public void testSeesContext_00() throws Exception {
 		IContextRoot con = createContext("ctx");
 
@@ -78,6 +80,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 * Ensures that a context seen only indirectly occurs as an internal
 	 * context, but doesn't occur in a sees clause.
 	 */
+	@Test
 	public void testSeesContext_01() throws Exception {
 		IContextRoot con1 = createContext("con1");
 		saveRodinFileOf(con1);
@@ -104,6 +107,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 * Ensures that a context seen through the abstraction is repaired and
 	 * occurs both as an internal context and in a sees clause.
 	 */
+	@Test
 	public void testSeesContext_02() throws Exception {
 		IContextRoot con = createContext("ctx");
 		saveRodinFileOf(con);
@@ -130,6 +134,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 * indirectly seen by the abstraction) is repaired and occurs 
 	 * as an internal context and but not in a sees clause.
 	 */
+	@Test
 	public void testSeesContext_03() throws Exception {
 		IContextRoot con1 = createContext("con1");
 		saveRodinFileOf(con1);
@@ -157,6 +162,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 * Ensures that a context seen both directly and through the abstraction is
 	 * not duplicated and occurs as an internal context.
 	 */
+	@Test
 	public void testSeesContext_04() throws Exception {
 		IContextRoot acon = createContext("acon");
 		saveRodinFileOf(acon);
@@ -187,6 +193,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 * should not be seen directly by the machine.
 	 * (This should be a warning not an error)
 	 */
+	@Test
 	public void testSeesContext_05() throws Exception {
 		IContextRoot cab = createContext("cab");
 		
@@ -210,6 +217,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 * A context should not be seen directly more than once by the same machine.
 	 * (This should be a warning not an error)
 	 */
+	@Test
 	public void testSeesContext_06() throws Exception {
 		IContextRoot cco = createContext("cco");
 		IMachineRoot con = createMachine("cnc");
@@ -231,6 +239,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	 * contexts of that name should have a marker.
 	 * (This should be a warning not an error)
 	 */
+	@Test
 	public void testSeesContext_07() throws Exception {
 		IContextRoot cab = createContext("cab");
 		
@@ -258,6 +267,7 @@ public class TestSeesContext extends BasicSCTestWithFwdConfig {
 	/*
 	 * Seen context not saved!
 	 */
+	@Test
 	public void testSeesContext_08() throws Exception {
 		IContextRoot con = createContext("ctx");
 

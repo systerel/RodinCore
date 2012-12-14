@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.tool;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,13 +24,14 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.tool.IModuleType;
 import org.eventb.internal.core.sc.modules.ContextModule;
 import org.eventb.internal.core.sc.modules.MachineModule;
+import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.ModuleDesc;
 import org.eventb.internal.core.tool.ModuleFactory;
 import org.eventb.internal.core.tool.ModuleManager;
-import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.graph.ModuleGraph;
 import org.eventb.internal.core.tool.types.IModule;
 import org.eventb.internal.core.tool.types.IProcessorModule;
+import org.junit.Test;
 import org.rodinp.core.IInternalElementType;
 
 /**
@@ -55,7 +59,9 @@ public class ModuleGraphTest extends Declarations {
 			super(items);
 			this.sorted = sorted;
 		}
+
 		@Override
+		@Test
 		public void test() {
 			ModuleGraph graph = getAnalysedGraph();
 			assertEquals("sorting failed", "[" + sorted + "]", graph.getSorted().toString());
@@ -93,7 +99,9 @@ public class ModuleGraphTest extends Declarations {
 				map.put(desc.getId(), desc);
 			}
 		}
+
 		@Override
+		@Test
 		public void test() {
 			ModuleGraph graph = getAnalysedGraph();
 			ModuleFactory factory = new ModuleFactory(graph, map);
@@ -342,6 +350,7 @@ public class ModuleGraphTest extends Declarations {
 	/**
 	 * Test sorting of empty graph
 	 */
+	@Test
 	public void test() throws Exception {
 		final ModuleTest[] testItems = makeTestItems();
 		

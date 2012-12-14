@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
-import static org.eventb.core.tests.ResourceUtils.*;
-import static org.eventb.core.tests.indexers.ListAssert.*;
+import static junit.framework.Assert.fail;
+import static org.eventb.core.tests.ResourceUtils.CTX_BARE_NAME;
+import static org.eventb.core.tests.ResourceUtils.MCH_BARE_NAME;
+import static org.eventb.core.tests.indexers.ListAssert.assertSameAsArray;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +23,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.MachineIndexer;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -53,13 +56,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 			+ "		org.eventb.core.target=\"c1\"/>"
 			+ "</org.eventb.core.machineFile>";
 
-	/**
-	 * @param name
-	 */
-	public MachineDependenciesTests(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testNoDependencies() throws Exception {
 
 		final IMachineRoot file = ResourceUtils.createMachine(rodinProject, M1_NAME, EMPTY_MACHINE);
@@ -71,6 +68,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 		assertDependencies(NO_FILES, actual);
 	}
 
+	@Test
 	public void testOneRefines() throws Exception {
 
 		final IMachineRoot parent = ResourceUtils.createMachine(rodinProject, M1_NAME, EMPTY_MACHINE);
@@ -86,6 +84,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 		assertDependencies(expected, actual);
 	}
 
+	@Test
 	public void testOneSees() throws Exception {
 
 		final IContextRoot parent = ResourceUtils.createContext(rodinProject, C1_NAME, EMPTY_CONTEXT);
@@ -104,6 +103,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testFileDoesNotExist() throws Exception {
 
 		final IMachineRoot child = ResourceUtils.createMachine(rodinProject, M2_NAME, MCH_1REFINES);
@@ -114,6 +114,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 		indexer.getDependencies(child);
 	}
 
+	@Test
 	public void testBadFileType() throws Exception {
 
 		final IContextRoot context = ResourceUtils.createContext(rodinProject, CTX_BARE_NAME,
@@ -132,6 +133,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testMalformedXML() throws Exception {
 		// missing = at internal_element1 in variable node
 		final String MALFORMED_MACHINE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -153,6 +155,7 @@ public class MachineDependenciesTests extends EventBIndexerTests {
 	/**
 	 * @throws Exception
 	 */
+	@Test
 	public void testMissingAttribute() throws Exception {
 		final String MCH_1REFINES_NO_TARGET_ATT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<org.eventb.core.machineFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"5\">"

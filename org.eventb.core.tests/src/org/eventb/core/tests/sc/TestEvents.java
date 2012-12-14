@@ -22,6 +22,7 @@ import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.IWitness;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.GraphProblem;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -32,6 +33,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create an event
 	 */
+	@Test
 	public void testEvents_00_createEvent() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 		
@@ -53,6 +55,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create two events
 	 */
+	@Test
 	public void testEvents_01_createTwoEvents() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -74,6 +77,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create two events with name conflict
 	 */
+	@Test
 	public void testEvents_02_createTwoEventsWithNameConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -95,6 +99,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create guard
 	 */
+	@Test
 	public void testEvents_03_createGuard() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -117,6 +122,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create two guards
 	 */
+	@Test
 	public void testEvents_04_createTwoGuards() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -139,6 +145,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create two guards with label conflict (last one is filtered)
 	 */
+	@Test
 	public void testEvents_05_createTwoGuardsWithLabelConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -164,6 +171,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create local variable
 	 */
+	@Test
 	public void testEvents_06_parameter() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -190,6 +198,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create global and local variable
 	 */
+	@Test
 	public void testEvents_07_variableAndParameter() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -220,6 +229,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create global and local variable with name conflict (local variable is filtered)
 	 */
+	@Test
 	public void testEvents_08_variableAndParameterWithNameConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -253,6 +263,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * create parameters with same name but different types in different events
 	 */
+	@Test
 	public void testEvents_09_parametersOfDifferentEvents() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -287,6 +298,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * actions can assign to global variables
 	 */
+	@Test
 	public void testEvents_10_globalVariableInAction() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -317,6 +329,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * error: two actions cannot assign to same variable
 	 */
+	@Test
 	public void testEvents_11_actionSameLHSConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -347,6 +360,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * action and gaurd labels in the same event must be different (actions filtered)
 	 */
+	@Test
 	public void testEvents_12_actionGuardLabelConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -379,6 +393,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * local variables may appear on the RHS of an assignment
 	 */
+	@Test
 	public void testEvents_13_actionAssignFromLocalVariableOK() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -414,6 +429,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * error: cannot assign to local variable
 	 */
+	@Test
 	public void testEvents_14_assignmentToParameterProblem() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -448,6 +464,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * action with nondetermistic assignment
 	 */
+	@Test
 	public void testEvents_15_actionNondetAssignment() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -484,6 +501,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * multiple assignment to same variables problem
 	 */
+	@Test
 	public void testEvents_16_actionMultipleLHSConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -518,6 +536,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * initialisation must not have local variables
 	 */
+	@Test
 	public void testEvents_17_initialisationParameterProblem() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -543,6 +562,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * initialisation must not have guards
 	 */
+	@Test
 	public void testEvents_18_initialisationGuardProblem() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -573,6 +593,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	 * nondeterministic assignments can only refer to post-state of variables
 	 * occurring on their left hand sides
 	 */
+	@Test
 	public void testEvents_19_actionFaultyNondetAssignment() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -601,6 +622,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * nondetermistic initialisation ok
 	 */
+	@Test
 	public void testEvents_20_initialisationNondetAssignmentOK() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -629,6 +651,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * faulty initialisation replaced by default initialisation
 	 */
+	@Test
 	public void testEvents_21_initialisationNondetAssignmentReplacedByDefault() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -657,6 +680,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * creation of default initialisation
 	 */
+	@Test
 	public void testEvents_22_initialisationDefaultAssignment() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -685,6 +709,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * creation of default witness for initialisation
 	 */
+	@Test
 	public void testEvents_23_initialisationDefaultWitness() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -729,6 +754,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/*
 	 * faulty witness in initialisation replaced by default witness
 	 */
+	@Test
 	public void testEvents_24_initialisationFaultyWitnessReplacedByDefault() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -773,6 +799,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/**
 	 * an empty machine must have an initialisation
 	 */
+	@Test
 	public void testEvents_25_emptyMachineWithoutInit() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -786,6 +813,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/**
 	 * A lexical error in an action is reported
 	 */
+	@Test
 	public void testEvents_26_bug2689872() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -815,6 +843,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/**
 	 * Guards can also be theorems
 	 */
+	@Test
 	public void testEvents_27_theoremGuard() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -840,6 +869,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/**
 	 * Create an event with an empty label.
 	 */
+	@Test
 	public void testEvents_28_createEventWithEmptyLabel() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 		IEvent evt = addEvent(mac, "");
@@ -854,6 +884,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/**
 	 * Create a guard with an empty label.
 	 */
+	@Test
 	public void testEvents_29_createGuardWithEmptyLabel() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(""),
@@ -869,6 +900,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/**
 	 * Create an action an empty label.
 	 */
+	@Test
 	public void testEvents_30_createActionWithEmptyLabel() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 		IEvent evt = addEvent(mac, "evt", makeSList(), makeSList(),
@@ -884,6 +916,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	/**
 	 * Create a witness with an empty label.
 	 */
+	@Test
 	public void testEvents_31_createWitnessWithEmptyLabel() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 		IEvent evt = addEvent(mac, "evt");
@@ -903,6 +936,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	 * 
 	 * @throws Exception
 	 */
+	@Test
 	public void testEvents_32_initialisationDefaultAssignments()
 			throws Exception {
 		final ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
@@ -938,6 +972,7 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		hasMarker(e2);
 	}
 	
+	@Test
 	public void testEvents_32_initialisationMisspelled() throws Exception {
 		final IMachineRoot mac = createMachine("mac");
 

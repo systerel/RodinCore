@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.extension;
 
+import static junit.framework.Assert.assertEquals;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -35,8 +37,7 @@ public class FormulaExtensionProviderRegistryTest extends EventBTest {
 	private IContextRoot contextRoot;
 
 	@Before
-	public void setUp() throws Exception {
-		super.setUp();
+	public void setUpFEPRT() throws Exception {
 		contextRoot = createContext("ctx");
 	}
 

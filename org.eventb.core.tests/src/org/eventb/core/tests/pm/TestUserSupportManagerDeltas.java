@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPORoot;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -25,6 +26,7 @@ import org.rodinp.core.RodinDBException;
  */
 public class TestUserSupportManagerDeltas extends TestPMDelta {
 
+	@Test
 	public void testUserSupportManagerDeltas() throws RodinDBException,
 			CoreException {
 		IPORoot poRoot1 = createPOFile("x");

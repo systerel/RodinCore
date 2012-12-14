@@ -1,15 +1,14 @@
 package org.eventb.core.tests.pom;
 
-import junit.framework.TestCase;
-
 import org.eventb.internal.core.pom.LongestIncrSubseq;
+import org.junit.Test;
 
 /**
  * Ensures that the {@link LongestIncrSubseq} class works properly.
  * 
  * @author Laurent Voisin
  */
-public class LongestIncrSubseqTests extends TestCase {
+public class LongestIncrSubseqTests {
 
 	private static int[] L(int... args) {
 		return args;
@@ -28,7 +27,7 @@ public class LongestIncrSubseqTests extends TestCase {
 	}
 
 	private static void fail(int[] exp, int[] act) {
-		fail("expected: " + toString(exp) + " but was: " + toString(act));
+		junit.framework.Assert.fail("expected: " + toString(exp) + " but was: " + toString(act));
 	}
 
 	private static String toString(int[] seq) {
@@ -48,19 +47,23 @@ public class LongestIncrSubseqTests extends TestCase {
 		assertEquals(exp, obj.result());
 	}
 
+	@Test
 	public void testEmpty() {
 		doTest(L(), L());
 	}
 
+	@Test
 	public void test1() {
 		doTest(L(5), L(5));
 	}
 
+	@Test
 	public void test2() {
 		doTest(L(5,6), L(5,6));
 		doTest(L(6,5), L(5));
 	}
 
+	@Test
 	public void test3() {
 		doTest(L(4,5,6), L(4,5,6));
 		doTest(L(4,6,5), L(4,5));
@@ -70,6 +73,7 @@ public class LongestIncrSubseqTests extends TestCase {
 		doTest(L(6,5,4), L(4));
 	}
 
+	@Test
 	public void test4() {
 		doTest(L(3,4,5,6), L(3,4,5,6));
 		doTest(L(3,4,6,5), L(3,4,5));

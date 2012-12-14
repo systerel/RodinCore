@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.LanguageVersion.V2;
 
 import org.eclipse.core.runtime.CoreException;
@@ -26,6 +31,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.internal.core.pom.POLoader;
+import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -122,7 +128,7 @@ public class POLoaderTest extends BuilderTest {
 	}
 
 	
-	
+	@Test
 	public final void testReadPO() throws CoreException {
 		
 		createPOFile();

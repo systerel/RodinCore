@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import org.junit.After;
+import org.junit.Before;
 import org.rodinp.core.IRodinElement;
 
 /**
@@ -16,18 +18,16 @@ import org.rodinp.core.IRodinElement;
 public abstract class GenericEventBSCTest<E extends IRodinElement, SCE extends IRodinElement> 
 extends BasicSCTestWithFwdConfig {
 	
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUpGEBSCT() throws Exception {
 		generic = newGeneric();
-		super.setUp();
 	}
 
 	protected abstract IGenericSCTest<E, SCE> newGeneric();
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownGEBSCT() throws Exception {
 		generic = null;
-		super.tearDown();
 	}
 
 	private IGenericSCTest<E, SCE> generic;

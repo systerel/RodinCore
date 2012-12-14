@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
+import static junit.framework.Assert.fail;
 import static org.eventb.core.EventBPlugin.getProofManager;
 import static org.eventb.core.EventBPlugin.getUserSupportManager;
 import static org.eventb.core.tests.ResourceUtils.importProjectFiles;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -48,6 +47,8 @@ import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.junit.After;
+import org.junit.Before;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
@@ -60,7 +61,7 @@ import org.rodinp.internal.core.debug.DebugHelpers;
  * 
  * @author Laurent Voisin
  */
-public abstract class BuilderTest extends TestCase {
+public abstract class BuilderTest {
 
 	public static final String PLUGIN_ID = "org.eventb.core.tests";
 
@@ -73,10 +74,6 @@ public abstract class BuilderTest extends TestCase {
 
 	public BuilderTest() {
 		super();
-	}
-
-	public BuilderTest(String name) {
-		super(name);
 	}
 	
 	protected IContextRoot createContext(String bareName) throws RodinDBException {
@@ -207,9 +204,8 @@ public abstract class BuilderTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpBT() throws Exception {
 		
 		// ensure autobuilding is turned off
 		IWorkspaceDescription wsDescription = workspace.getDescription();
@@ -252,11 +248,10 @@ public abstract class BuilderTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownBT() throws Exception {
 		cleanupWorkspace();
 		deleteAllProofAttempts();
-		super.tearDown();
 	}
 
 	/**

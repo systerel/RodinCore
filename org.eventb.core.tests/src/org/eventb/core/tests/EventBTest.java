@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.ArrayList;
@@ -45,6 +47,8 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.junit.After;
+import org.junit.Before;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -69,10 +73,6 @@ public abstract class EventBTest extends BuilderTest {
 
 	public EventBTest() {
 		super();
-	}
-
-	public EventBTest(String name) {
-		super(name);
 	}
 
 	public void addAxioms(IContextRoot root, String[] names, String[] axioms,
@@ -532,16 +532,14 @@ public abstract class EventBTest extends BuilderTest {
 			roots.add(root);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpEBT() throws Exception {
 		roots = new HashSet<IEventBRoot>();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownEBT() throws Exception {
 		roots = null;
-		super.tearDown();
 	}
 
 }

@@ -11,9 +11,12 @@
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
+import static junit.framework.Assert.assertEquals;
+
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesEvent;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -26,6 +29,7 @@ public class TestEventBVersion_003_M extends EventBVersionTest {
 	 * machines of version 2 are updated to machines of version 3;
 	 * inherited events become extended events
 	 */
+	@Test
 	public void testVersion_00_inheritedEvents() throws Exception {
 		String contents =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -79,6 +83,7 @@ public class TestEventBVersion_003_M extends EventBVersionTest {
 	 * machines of version 2 are updated to machines of version 3;
 	 * inherited initialisations become extended initialisations with out refines clauses
 	 */
+	@Test
 	public void testVersion_01_inheritedInitialisation() throws Exception {
 		String contents =
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +

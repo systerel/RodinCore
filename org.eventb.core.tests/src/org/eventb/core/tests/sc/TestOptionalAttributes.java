@@ -12,10 +12,13 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static junit.framework.Assert.assertTrue;
+
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -108,6 +111,7 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	 * precondition of proper test:
 	 * check if machine is ok
 	 */
+	@Test
 	public void testMachine() throws Exception {
 		IMachineRoot m = createMachine();
 
@@ -120,6 +124,7 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 	 * precondition of proper test:
 	 * check if context is ok
 	 */
+	@Test
 	public void testContext() throws Exception {
 		IContextRoot c = createContext();
 		
@@ -453,6 +458,7 @@ public class TestOptionalAttributes extends BasicSCTestWithFwdConfig {
 			},
 	};
 	
+	@Test
 	public void test() throws Exception {
 		
 		for (OptAttrTest<?> test : tests) {

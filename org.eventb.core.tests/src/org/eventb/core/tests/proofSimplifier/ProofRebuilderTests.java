@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eventb.core.tests.proofSimplifier;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
@@ -26,6 +31,7 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pog.EventBPOTest;
+import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -126,6 +132,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 
 	}
 	
+	@Test
 	public void testRebuild() throws Exception {
 		// given tactics close the proof tree
 		// do NOT apply post tactics
@@ -135,6 +142,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 				new AutoTactics.AutoRewriteTac(), new AutoTactics.TrueGoalTac());
 	}
 	
+	@Test
 	public void testRebuildWithPostTacticsDisabled() throws Exception {
 		disablePostTactics();
 		// given tactics do NOT close the proof tree
@@ -143,6 +151,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 		doTest(GOAL, false, false, false, Tactics.allI(), Tactics.exI("x"));
 	}
 	
+	@Test
 	public void testRebuildWithPostTacticsEnabled() throws Exception {
 		enablePostTactics();
 		// given tactics do NOT close the proof tree

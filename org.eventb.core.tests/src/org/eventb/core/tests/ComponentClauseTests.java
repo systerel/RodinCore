@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -20,6 +24,7 @@ import org.eventb.core.IExtendsContext;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
+import org.junit.Test;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -60,6 +65,7 @@ public class ComponentClauseTests extends BuilderTest {
 		}
 	}
 
+	@Test
 	public void testExtendsContextAbsent() throws Exception {
 		final IContextRoot ctx = createContext("foo");
 		final IExtendsContext clause = ctx.createChild(
@@ -72,6 +78,7 @@ public class ComponentClauseTests extends BuilderTest {
 		});
 	}
 
+	@Test
 	public void testExtendsContext() throws Exception {
 		final IContextRoot ctx = createContext("foo");
 		final IExtendsContext clause = ctx.createChild(
@@ -83,6 +90,7 @@ public class ComponentClauseTests extends BuilderTest {
 		assertEquals(target.getSCContextRoot(), clause.getAbstractSCContext());
 	}
 
+	@Test
 	public void testSeesContextAbsent() throws Exception {
 		final IMachineRoot mch = createMachine("foo");
 		final ISeesContext clause = mch.createChild(ISeesContext.ELEMENT_TYPE,
@@ -95,6 +103,7 @@ public class ComponentClauseTests extends BuilderTest {
 		});
 	}
 
+	@Test
 	public void testSeesContext() throws Exception {
 		final IMachineRoot mch = createMachine("foo");
 		final ISeesContext clause = mch.createChild(ISeesContext.ELEMENT_TYPE,
@@ -107,6 +116,7 @@ public class ComponentClauseTests extends BuilderTest {
 				.getRoot());
 	}
 
+	@Test
 	public void testRefinesMachineAbsent() throws Exception {
 		final IMachineRoot mch = createMachine("foo");
 		final IRefinesMachine clause = mch.createChild(
@@ -119,6 +129,7 @@ public class ComponentClauseTests extends BuilderTest {
 		});
 	}
 
+	@Test
 	public void testRefinesMachine() throws Exception {
 		final IMachineRoot mch = createMachine("foo");
 		final IRefinesMachine clause = mch.createChild(

@@ -14,6 +14,7 @@ package org.eventb.core.tests.pog;
 
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 
 
@@ -27,6 +28,7 @@ extends GenericEventBPOTest<F> {
 	/**
 	 * proper local hypothesis selection hints for theorems 
 	 */
+	@Test
 	public void testHints_00() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 
@@ -58,6 +60,7 @@ extends GenericEventBPOTest<F> {
 	/**
 	 * proper local hypothesis selection hints for non-theorems 
 	 */
+	@Test
 	public void testHints_01() throws Exception {
 		F cmp = getGeneric().createElement("cmp");
 

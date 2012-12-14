@@ -16,6 +16,7 @@ import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -23,6 +24,7 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
  */
 public class TestDependencies extends EventBPOTest {
 
+	@Test
 	public void testDependencies_00_MachineRefinement() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 

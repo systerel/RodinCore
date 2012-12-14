@@ -17,6 +17,7 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCEvent;
+import org.junit.Test;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -33,6 +34,7 @@ public class TestEventGuardsAndTheorems extends
 	/**
 	 * Ensures that a regular guard cannot refer to a disappearing variable.
 	 */
+	@Test
 	public void test_13() throws Exception {
 		final IMachineRoot abs = createAbstractMachine();
 		final IEvent evt = createConcreteEvent(false);
@@ -46,6 +48,7 @@ public class TestEventGuardsAndTheorems extends
 	/**
 	 * Ensures that a theorem guard can refer to a disappearing variable.
 	 */
+	@Test
 	public void test_14() throws Exception {
 		final IMachineRoot abs = createAbstractMachine();
 		final IEvent evt = createConcreteEvent(true);

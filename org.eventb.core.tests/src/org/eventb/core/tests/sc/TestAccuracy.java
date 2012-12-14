@@ -15,6 +15,7 @@ package org.eventb.core.tests.sc;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -25,6 +26,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	/**
 	 * erroneous axioms should make an sc context inaccurate
 	 */
+	@Test
 	public void testAcc_01() throws Exception {
 		IContextRoot root = createContext("ctx");
 
@@ -40,6 +42,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	/**
 	 * erroneous theorems should make an sc context inaccurate
 	 */
+	@Test
 	public void testAcc_02() throws Exception {
 		IContextRoot root = createContext("ctx");
 
@@ -55,6 +58,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	/**
 	 * inaccurate abstract contexts should make an sc context inaccurate
 	 */
+	@Test
 	public void testAcc_03() throws Exception {
 		IContextRoot abs = createContext("abs");
 
@@ -78,6 +82,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	/**
 	 * erroneous invariants should make an sc machine inaccurate
 	 */
+	@Test
 	public void testAcc_04() throws Exception {
 		IMachineRoot con = createMachine("cnc");
 
@@ -93,6 +98,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	/**
 	 * erroneous theorems should make an sc machine inaccurate
 	 */
+	@Test
 	public void testAcc_05() throws Exception {
 		IMachineRoot con = createMachine("cnc");
 
@@ -108,6 +114,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	/**
 	 * inaccurate seen contexts should make an sc machine inaccurate
 	 */
+	@Test
 	public void testAcc_06() throws Exception {
 		IContextRoot abs = createContext("abs");
 		
@@ -132,6 +139,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	/**
 	 * inaccurate abstract machines should make an sc machine inaccurate
 	 */
+	@Test
 	public void testAcc_07() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addInitialisation(abs);
@@ -158,6 +166,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * erroneous guards should make an sc event inaccurate,
 	 * but not the sc machine
 	 */
+	@Test
 	public void testAcc_08() throws Exception {
 		IMachineRoot con = createMachine("cnc");
 
@@ -178,6 +187,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * erroneous event theorems should make an sc event inaccurate,
 	 * but not the sc machine
 	 */
+	@Test
 	public void testAcc_09() throws Exception {
 		// TODO implement test: erroneous theorems should make an sc event inaccurate
 	}
@@ -186,6 +196,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * erroneous needed witnesses should make an sc event inaccurate,
 	 * but not the sc machine
 	 */
+	@Test
 	public void testAcc_10() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -218,6 +229,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * missing needed witnesses should make an sc event inaccurate,
 	 * but not the sc machine
 	 */
+	@Test
 	public void testAcc_11() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -249,6 +261,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * erroneous actions should make an sc event inaccurate,
 	 * but not the sc machine
 	 */
+	@Test
 	public void testAcc_12() throws Exception {
 		IMachineRoot con = createMachine("cnc");
 
@@ -269,6 +282,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * missing action in initialisation should make the initialisation inaccurate,
 	 * but not the sc machine
 	 */
+	@Test
 	public void testAcc_13() throws Exception {
 		IMachineRoot con = createMachine("cnc");
 
@@ -287,6 +301,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	/**
 	 * inherited events inherit accuracy
 	 */
+	@Test
 	public void testAcc_14() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -323,6 +338,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * (it is suffiecient that some abstract context is inaccurate for the
 	 * sc context to be inaccurate)
 	 */
+	@Test
 	public void testAcc_15() throws Exception {
 		IContextRoot abs = createContext("abs");
 		
@@ -355,6 +371,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * (it is suffiecient that some abstract context is inaccurate for the
 	 * sc context to be inaccurate, also if automatically added by the static checker)
 	 */
+	@Test
 	public void testAcc_16() throws Exception {
 		IContextRoot abs = createContext("abs");
 		
@@ -386,6 +403,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * faulty variant should make an anticipated or convergent sc event inaccurate,
 	 * but not the sc machine
 	 */
+	@Test
 	public void testAcc_17() throws Exception {
 		IMachineRoot con = createMachine("cnc");
 
@@ -415,6 +433,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * missing variant should make an anticipated or convergent sc event inaccurate,
 	 * but not the sc machine
 	 */
+	@Test
 	public void testAcc_18() throws Exception {
 		IMachineRoot con = createMachine("cnc");
 
@@ -443,6 +462,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * faulty refined convergence should make an sc event inaccurate,
 	 * but not the sc machine
 	 */
+	@Test
 	public void testAcc_19() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -478,6 +498,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	 * faulty abstract sc event but well-formed concrete sc event 
 	 * should make the concrete sc event and the sc machine accurate
 	 */
+	@Test
 	public void testAcc_20() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 
@@ -508,6 +529,7 @@ public class TestAccuracy extends BasicSCTestWithFwdConfig {
 	/**
 	 * an inaccurate sc machine does not automatically make contained sc events inaccurate
 	 */
+	@Test
 	public void testAcc_21() throws Exception {
 		IMachineRoot con = createMachine("cnc");
 

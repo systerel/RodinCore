@@ -12,11 +12,11 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
-
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCInternalContext;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -27,6 +27,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 	/**
 	 * create constant with carrier set type
 	 */
+	@Test
 	public void testConstants_03_constantWithCarrierSetType() throws Exception {
 		IContextRoot con = createContext("ctx");
 
@@ -56,6 +57,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 	/**
 	 * copy constant from abstraction
 	 */
+	@Test
 	public void testConstants_04_constantFromAbstraction() throws Exception {
 		IContextRoot abs1 = createContext("abs1");
 		addConstants(abs1, makeSList("C1"));
@@ -89,6 +91,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 	/**
 	 * name conflict with constant from abstraction
 	 */
+	@Test
 	public void testConstants_05_constantFromAbstractionNameConflict() throws Exception {
 		IContextRoot abs1 = createContext("abs1");
 		addConstants(abs1, makeSList("C1"));
@@ -124,6 +127,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 	/**
 	 * constant type across axioms
 	 */
+	@Test
 	public void testConstants_06_constantTypingOK() throws Exception {
 		IContextRoot con = createContext("ctx");
 
@@ -148,6 +152,7 @@ public class TestConstants extends GenericIdentTest<IContextRoot, ISCContextRoot
 	/**
 	 * name conflict with constant from abstraction of abstraction
 	 */
+	@Test
 	public void testConstants_07_constantFromAbstractionAbstractionNameConflict() throws Exception {
 		final IContextRoot root1 = createContext("c1");
 		addConstants(root1, makeSList("C1"));

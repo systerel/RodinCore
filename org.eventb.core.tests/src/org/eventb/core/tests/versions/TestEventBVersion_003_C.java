@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
+import static junit.framework.Assert.assertEquals;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -28,6 +31,7 @@ public class TestEventBVersion_003_C extends EventBVersionTest {
 	 * contexts of version 2 are updated to contexts of version 3
 	 * order is preserved
 	 */
+	@Test
 	public void testVersion_01_context() throws Exception {
 		String contents = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -46,6 +50,7 @@ public class TestEventBVersion_003_C extends EventBVersionTest {
 	 * contexts of version 2 are updated to contexts of version 3
 	 * order is corrected
 	 */
+	@Test
 	public void testVersion_02_context() throws Exception {
 		String contents = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +

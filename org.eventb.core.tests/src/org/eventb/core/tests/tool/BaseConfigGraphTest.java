@@ -1,17 +1,19 @@
 package org.eventb.core.tests.tool;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.eventb.internal.core.tool.BaseConfig;
 import org.eventb.internal.core.tool.BasicDesc.ModuleLoadingException;
 import org.eventb.internal.core.tool.graph.ConfigGraph;
+import org.junit.Test;
 
-public class BaseConfigGraphTest extends TestCase {
+public class BaseConfigGraphTest {
 
 	private static class ConfigItem extends BaseConfig {
 		@Override
@@ -69,7 +71,9 @@ public class BaseConfigGraphTest extends TestCase {
 			super(items);
 			this.sorted = sorted;
 		}
+		
 		@Override
+		@Test
 		public void test() {
 			ConfigGraph graph = getAnalysedGraph();
 			assertEquals("sorting failed", "[" + sorted + "]", graph.getSorted().toString());
@@ -161,6 +165,7 @@ public class BaseConfigGraphTest extends TestCase {
 	/**
 	 * Test sorting of empty graph
 	 */
+	@Test
 	public void test() throws Exception {
 		final ConfigTest[] testItems = makeTestItems();
 		

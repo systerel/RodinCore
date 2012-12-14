@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
 import static org.eclipse.core.resources.IncrementalProjectBuilder.INCREMENTAL_BUILD;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
@@ -29,6 +33,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.sc.GraphProblem;
+import org.junit.Test;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
@@ -119,10 +124,6 @@ public class ProjectBuildTests extends EventBTest {
 		super();
 	}
 
-	public ProjectBuildTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IMachineRoot createMachine(String bareName) throws RodinDBException {
 		IMachineRoot root = super.createMachine(bareName);
@@ -162,6 +163,7 @@ public class ProjectBuildTests extends EventBTest {
 	 * Regression test for builder bug: Two components depend on a third one,
 	 * but PO are generated only for one of them.
 	 */
+	@Test
 	public void testTwoConcrete() throws Exception {
 		final IMachineRoot abs = createMachine("M1");
 		addInitialisation(abs);
@@ -187,6 +189,7 @@ public class ProjectBuildTests extends EventBTest {
 	 * that the SC and POG work appropriately as soon as one configuration is
 	 * present.
 	 */
+	@Test
 	public void testMultipleConfigurations() throws Exception {
 		final IMachineRoot abs = createMachine("M1");
 		final String oldConfig = abs.getConfiguration();
@@ -207,6 +210,7 @@ public class ProjectBuildTests extends EventBTest {
 	 * static checker ends in error on a context. The error is caused by the
 	 * output file being read-only.
 	 */
+	@Test
 	public void testContextSCTmpFile() throws Exception {
 		final IContextRoot con = createContext("C");
 		addConstants(con, "c");
@@ -220,6 +224,7 @@ public class ProjectBuildTests extends EventBTest {
 	 * static checker ends in error on a machine. The error is caused by the
 	 * output file being read-only.
 	 */
+	@Test
 	public void testMachineSCTmpFile() throws Exception {
 		final IMachineRoot mch = createMachine("M");
 		saveRodinFileOf(mch);
@@ -232,6 +237,7 @@ public class ProjectBuildTests extends EventBTest {
 	 * when the static checker ends in error. The error is caused by the output
 	 * file being read-only.
 	 */
+	@Test
 	public void testMachinePOTmpFile() throws Exception {
 		final IMachineRoot mch = createMachine("M");
 		saveRodinFileOf(mch);

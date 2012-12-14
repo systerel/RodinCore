@@ -7,7 +7,10 @@
  *******************************************************************************/
 package org.eventb.core.utils.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.tests.BuilderTest.PLUGIN_ID;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -25,12 +28,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eventb.core.EventBPlugin;
+import org.junit.Test;
 import org.w3c.dom.Document;
 
 /**
@@ -39,7 +41,7 @@ import org.w3c.dom.Document;
  * @author François Terrier
  *
  */
-public class TestPrettyPrint extends TestCase {
+public class TestPrettyPrint {
 
 	private static final File XSLT_FILE = getLocalFile("utils/prettyprint.xslt",
 			EventBPlugin.PLUGIN_ID);
@@ -62,10 +64,12 @@ public class TestPrettyPrint extends TestCase {
 		return new File(path.toOSString());
 	}
 	
+	@Test
 	public void testContext() throws Exception {
 		doTest("c",".buc");
 	}
 	
+	@Test
 	public void testMachine() throws Exception {
 		doTest("m",".bum");
 	}

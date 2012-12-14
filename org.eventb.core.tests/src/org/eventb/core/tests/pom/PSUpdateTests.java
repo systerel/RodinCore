@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.lemma;
 
@@ -40,6 +43,7 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.core.tests.ResourceUtils;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -184,6 +188,7 @@ public class PSUpdateTests extends BuilderTest {
 	/**
 	 * Ensures that an empty PO file is properly processed.
 	 */
+	@Test
 	public final void testEmpty() throws CoreException {
 		createPOFile();
 		runBuilder("");
@@ -192,6 +197,7 @@ public class PSUpdateTests extends BuilderTest {
 	/**
 	 * Ensures that adding one PO to an empty PO file is properly processed.
 	 */
+	@Test
 	public final void testEmptyAddOne() throws CoreException {
 		createPOFile();
 		runBuilder("");
@@ -203,6 +209,7 @@ public class PSUpdateTests extends BuilderTest {
 	/**
 	 * Ensures that adding two POs to an empty PO file is properly processed.
 	 */
+	@Test
 	public final void testEmptyAddTwo() throws CoreException {
 		createPOFile();
 		runBuilder("");
@@ -215,6 +222,7 @@ public class PSUpdateTests extends BuilderTest {
 	/**
 	 * Ensures that a PO file containing one PO is properly processed.
 	 */
+	@Test
 	public final void testOne() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -225,6 +233,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that adding one PO before the only PO of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testOneAddBefore() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -238,6 +247,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that adding one PO after the only PO of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testOneAddAfter() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -250,6 +260,7 @@ public class PSUpdateTests extends BuilderTest {
 	/**
 	 * Ensures that a PO file containing two POs is properly processed.
 	 */
+	@Test
 	public final void testTwo() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -261,6 +272,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that adding one PO before the two POs of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testTwoAddBefore() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -275,6 +287,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that adding one PO between the two POs of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testTwoAddBetween() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -289,6 +302,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that adding one PO after the two POs of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testTwoAddAfter() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -303,6 +317,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that adding three POs at every position in a PO file containing
 	 * two POs is properly processed.
 	 */
+	@Test
 	public final void testTwoAddThree() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -318,6 +333,7 @@ public class PSUpdateTests extends BuilderTest {
 	/**
 	 * Ensures that deleting the only PO of a PO file is properly processed.
 	 */
+	@Test
 	public final void testOneDelete() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -331,6 +347,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that deleting the first PO of a PO file containing two POs is
 	 * properly processed.
 	 */
+	@Test
 	public final void testTwoDeleteFirst() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -345,6 +362,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that deleting the last PO of a PO file containing two POs is
 	 * properly processed.
 	 */
+	@Test
 	public final void testTwoDeleteLast() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -359,6 +377,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that deleting both POs of a PO file containing two POs is
 	 * properly processed.
 	 */
+	@Test
 	public final void testTwoDeleteAll() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -374,6 +393,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that deleting the first PO of a PO file containing three POs is
 	 * properly processed.
 	 */
+	@Test
 	public final void testThreeDeleteFirst() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -389,6 +409,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that deleting the second PO of a PO file containing three POs is
 	 * properly processed.
 	 */
+	@Test
 	public final void testThreeDeleteSecond() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -404,6 +425,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that deleting the last PO of a PO file containing three POs is
 	 * properly processed.
 	 */
+	@Test
 	public final void testThreeDeleteLast() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -419,6 +441,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that deleting all POs of a PO file containing three POs is
 	 * properly processed.
 	 */
+	@Test
 	public final void testThreeDeleteAll() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -436,6 +459,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that permuting the only two POs of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testTwoPermute() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -450,6 +474,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that permuting the only three POs of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testThreePermute_1() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -465,6 +490,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that permuting the only three POs of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testThreePermute_2() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -480,6 +506,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that permuting the only three POs of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testThreePermute_3() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -495,6 +522,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that permuting the only three POs of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testThreePermute_4() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -510,6 +538,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that permuting the only three POs of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testThreePermute_5() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -526,6 +555,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that inverse permuting the only six POs of a PO file is properly
 	 * processed.
 	 */
+	@Test
 	public final void testSixPermute_1() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -548,6 +578,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that permuting the only six POs of a PO file is properly
 	 * processed (case with a random permutation with random deletions).
 	 */
+	@Test
 	public final void testSixPermute_2() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -570,6 +601,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that permuting the only six POs of a PO file is properly
 	 * processed (case with a random permutation with random deletions).
 	 */
+	@Test
 	public final void testSixPermute_3() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -592,6 +624,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that permuting the only six POs of a PO file is properly
 	 * processed (case with a random permutation with random deletions).
 	 */
+	@Test
 	public final void testSixPermute_4() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -614,6 +647,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that a damaged proof does not prevent POM from succeeding. The PO
 	 * with the damaged proof is then marked as broken.
 	 */
+	@Test
 	public final void testErroneousProof() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -634,6 +668,7 @@ public class PSUpdateTests extends BuilderTest {
 	 * Ensures that a proof with a damaged input does not prevent POM from
 	 * succeeding. The PO with the damaged proof is then marked as broken.
 	 */
+	@Test
 	public final void testErroneousProofInput() throws CoreException {
 		createPOFile();
 		addPO("1", null);
@@ -714,18 +749,22 @@ public class PSUpdateTests extends BuilderTest {
 		assertEquals(brokenExpected, broken);
 	}
 
+	@Test
 	public void testSameSignature() throws Exception {
 		doSignatureTest(Signature.SIGNATURE, false);
 	}
 	
+	@Test
 	public void testDifferentSignature() throws Exception {
 		doSignatureTest("other signature", true);
 	}
 	
+	@Test
 	public void testNoSignatureInProof() throws Exception {
 		doSignatureTest(null, true);
 	}
 	
+	@Test
 	public void testNoSignatureInReasoner() throws Exception {
 		doSignTest("unexpected for this reasoner", "org.eventb.core.seqprover.trueGoal", true);
 	}

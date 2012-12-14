@@ -21,6 +21,7 @@ import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.sc.GraphProblem;
 import org.eventb.core.sc.ParseProblem;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -31,6 +32,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	/**
 	 * create an integer variant
 	 */
+	@Test
 	public void testVariant_00() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -52,6 +54,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	/**
 	 * create a set variant
 	 */
+	@Test
 	public void testVariant_01() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -73,6 +76,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	/**
 	 * create an integer variant containing a variable
 	 */
+	@Test
 	public void testVariant_02() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -99,6 +103,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	/**
 	 * variants must be of type integer or POW(...)
 	 */
+	@Test
 	public void testVariant_03() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -118,6 +123,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	/**
 	 * create an integer variant containing a variable and a constant
 	 */
+	@Test
 	public void testVariant_04() throws Exception {
 		IContextRoot con = createContext("ctx");
 		addConstants(con, "C1");
@@ -153,6 +159,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	/**
 	 * variants must not refer to disappearing variables
 	 */
+	@Test
 	public void testVariant_05() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "V0");
@@ -187,6 +194,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	 * convergent events that refine convergent events do not require variants
 	 * (bug# 1946656)
 	 */
+	@Test
 	public void testVariant_06() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "V0");
@@ -230,6 +238,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	 * if there is no convergent event, then there need not be a variant
 	 * (bug# 1946656)
 	 */
+	@Test
 	public void testVariant_07() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -252,6 +261,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	/**
 	 * if there is no convergent event, then there need not be a variant
 	 */
+	@Test
 	public void testVariant_08() throws Exception {
 		IMachineRoot abs = createMachine("abs");
 		addVariables(abs, "V0");
@@ -297,6 +307,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	/**
 	 * create a variant containing an illegal character
 	 */
+	@Test
 	public void testVariant_09_bug2689872() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
@@ -319,6 +330,7 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 	/**
 	 * Create an variant with an empty label.
 	 */
+	@Test
 	public void testVariant_10() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 		addVariant(mac, "");

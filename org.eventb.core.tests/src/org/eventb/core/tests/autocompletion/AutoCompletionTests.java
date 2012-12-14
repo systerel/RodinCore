@@ -12,6 +12,7 @@
 package org.eventb.core.tests.autocompletion;
 
 import static java.util.Arrays.asList;
+import static junit.framework.Assert.assertEquals;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
@@ -30,6 +31,9 @@ import org.eventb.core.IWitness;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.autocompletion.AutoCompletion;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.location.IAttributeLocation;
 import org.rodinp.internal.core.debug.DebugHelpers;
@@ -215,16 +219,15 @@ public class AutoCompletionTests extends BuilderTest {
 		+ "		org.eventb.core.theorem=\"false\"/>"
 		+ "</org.eventb.core.machineFile>";
 	
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpACT() throws Exception {
 		DebugHelpers.enableIndexing();
 	}
 
-	@Override
-	public void tearDown() throws Exception {
+	@After
+	public void tearDownACT() throws Exception {
 		DebugHelpers.disableIndexing();
-		super.tearDown();
+		
 	}
 
 	private void doTest(IAttributeLocation location, String... expected) {
@@ -234,6 +237,7 @@ public class AutoCompletionTests extends BuilderTest {
 		assertEquals("bad completions", expSet, completions);
 	}
 
+	@Test
 	public void testCtxLocalCstInAxm() throws Exception {
 		final IContextRoot c1 = ResourceUtils.createContext(rodinProject,
 				"Ctx", C1);
@@ -243,6 +247,7 @@ public class AutoCompletionTests extends BuilderTest {
 		doTest(axiomPred, "cst1");
 	}
 
+	@Test
 	public void testCtxAbstractSetInThm() throws Exception {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		final IContextRoot c2 = ResourceUtils.createContext(rodinProject, "C2",
@@ -253,6 +258,7 @@ public class AutoCompletionTests extends BuilderTest {
 		doTest(axiomPred, "cst1", "set1");
 	}
 
+	@Test
 	public void testMchAbstractSetCstLocalVarInInvariant() throws Exception {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		ResourceUtils.createContext(rodinProject, "C2", C2);
@@ -264,6 +270,7 @@ public class AutoCompletionTests extends BuilderTest {
 		doTest(invPred, "cst1", "set1", "varM1");
 	}
 
+	@Test
 	public void testMchAbstractSetCstLocalVarInVariant() throws Exception {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		ResourceUtils.createContext(rodinProject, "C2", C2);
@@ -275,6 +282,7 @@ public class AutoCompletionTests extends BuilderTest {
 		doTest(vrtPred, "cst1", "set1", "varM1");
 	}
 
+	@Test
 	public void testMchAbstractVarInInvariant() throws Exception {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		ResourceUtils.createContext(rodinProject, "C2", C2);
@@ -288,6 +296,7 @@ public class AutoCompletionTests extends BuilderTest {
 		doTest(invPred, "cst1", "set1", "varM1", "varM2");
 	}
 
+	@Test
 	public void testMchAbstractVarInInvariant2() throws Exception {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		ResourceUtils.createContext(rodinProject, "C2", C2);
@@ -302,6 +311,7 @@ public class AutoCompletionTests extends BuilderTest {
 		doTest(invPred, "cst1", "set1", "varM2", "varM3");
 	}
 
+	@Test
 	public void testEvtParamInGuard() throws Exception {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		ResourceUtils.createContext(rodinProject, "C2", C2);
@@ -318,6 +328,7 @@ public class AutoCompletionTests extends BuilderTest {
 
 	}
 
+	@Test
 	public void testEvtAbstractPrmPrimedVarInWitLabel() throws Exception {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		ResourceUtils.createContext(rodinProject, "C2", C2);
@@ -334,6 +345,7 @@ public class AutoCompletionTests extends BuilderTest {
 		doTest(witLabel, "varM1'");
 	}
 
+	@Test
 	public void testEvtInWitPredicate() throws Exception {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		ResourceUtils.createContext(rodinProject, "C2", C2);
@@ -349,6 +361,7 @@ public class AutoCompletionTests extends BuilderTest {
 		doTest(witPred, "cst1", "prmM1", "prmM2", "set1", "varM1", "varM1'", "varM2");
 	}
 	
+	@Test
 	public void testRemoveNonDeterministicallyAssignedVars() throws Exception {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		ResourceUtils.createContext(rodinProject, "C2", C2);
@@ -368,6 +381,7 @@ public class AutoCompletionTests extends BuilderTest {
 		doTest(witLabel, "prmM1");
 	}
 	
+	@Test
 	public void testEventLabel() throws Exception {
 		ResourceUtils.createContext(rodinProject, "C1", C1);
 		ResourceUtils.createContext(rodinProject, "C2", C2);

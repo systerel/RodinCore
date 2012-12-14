@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.LanguageVersion.V2;
 
 import org.eclipse.core.runtime.CoreException;
@@ -34,6 +37,7 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -122,6 +126,7 @@ public class AutoPOMTest extends BuilderTest {
 	/*
 	 * Test method for 'org.eventb.internal.core.pom.AutoPOM.AutoPOM(IPOFile, IInterrupt, IProgressMonitor)'
 	 */
+	@Test
 	public final void testAutoPOM() throws CoreException {
 		
 		createPOFile();

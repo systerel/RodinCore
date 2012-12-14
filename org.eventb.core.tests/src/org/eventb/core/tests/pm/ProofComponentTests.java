@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNotSame;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.eventb.core.tests.pom.POUtil.addSequent;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
@@ -26,6 +32,9 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
@@ -54,17 +63,17 @@ public class ProofComponentTests extends AbstractProofTests {
 
 	private IProofComponent pc;
 
-	private void assertEquals(Set<IProofAttempt> expSet, IProofAttempt[] actual) {
+	private static void assertEqualsPA(Set<IProofAttempt> expSet, IProofAttempt[] actual) {
 		assertEquals(expSet, mSet(actual));
 	}
 
 	private void assertLivePAs(IProofAttempt... expected) {
 		final Set<IProofAttempt> expSet = mSet(expected);
-		assertEquals(expSet, pm.getProofAttempts());
-		assertEquals(expSet, pc.getProofAttempts());
+		assertEqualsPA(expSet, pm.getProofAttempts());
+		assertEqualsPA(expSet, pc.getProofAttempts());
 		for (final IProofAttempt pa : expected) {
 			final String name = pa.getName();
-			assertEquals(filter(expSet, name), pc.getProofAttempts(name));
+			assertEqualsPA(filter(expSet, name), pc.getProofAttempts(name));
 		}
 		for (final String poName : PO_NAMES) {
 			for (final String owner : OWNERS) {
@@ -101,9 +110,9 @@ public class ProofComponentTests extends AbstractProofTests {
 		return null;
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpPCT() throws Exception {
+		;
 		mchroot = eventBProject.getMachineRoot("m");
 		scRoot = mchroot.getSCMachineRoot();
 		poRoot = mchroot.getPORoot();
@@ -112,18 +121,19 @@ public class ProofComponentTests extends AbstractProofTests {
 		pc = pm.getProofComponent(mchroot);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownPCT() throws Exception {
 		for (final IProofAttempt pa : pm.getProofAttempts()) {
 			pa.dispose();
 		}
-		super.tearDown();
+		
 	}
 
 	/**
 	 * Ensures that one can create twice the same proof attempt, when the first
 	 * is disposed in the meantime.
 	 */
+	@Test
 	public void testCreateDisposeCreate() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -136,6 +146,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	/**
 	 * Ensures that one can create a proof attempt for an existing PO.
 	 */
+	@Test
 	public void testCreateProofAttempt() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -147,6 +158,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	/**
 	 * Ensures that one can not create a proof attempt when there is no PO file.
 	 */
+	@Test
 	public void testCreateProofAttemptNoPOFile() throws Exception {
 		try {
 			pc.createProofAttempt(PO1, TEST, null);
@@ -162,6 +174,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * Ensures that one can not create a proof attempt when there is no PO
 	 * sequent.
 	 */
+	@Test
 	public void testCreateProofAttemptNoPOSequent() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -179,6 +192,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * Ensures that one can create a proof attempt for an existing PO, then the
 	 * proof attempt is still there even if the PO disappears.
 	 */
+	@Test
 	public void testCreateProofAttemptThenRemovePO() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -194,6 +208,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	/**
 	 * Ensures that one can not create twice the same proof attempt.
 	 */
+	@Test
 	public void testCreateSameTwice() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -211,6 +226,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * Ensures that one can create two proof attempts for two existing POs with
 	 * the same owners.
 	 */
+	@Test
 	public void testCreateTwoSameOwner() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -225,6 +241,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * Ensures that one can create two proof attempts for an existing PO with
 	 * different owners.
 	 */
+	@Test
 	public void testCreateTwoSamePO() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -239,6 +256,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * Ensures that the three files associated to a proof component can be
 	 * retrieved.
 	 */
+	@Test
 	public void testProofFiles() throws Exception {
 		assertEquals(psRoot, pc.getPSRoot());
 		assertEquals(poRoot, pc.getPORoot());
@@ -248,6 +266,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	/**
 	 * Ensures that one can access to a saved proof (here an empty one).
 	 */
+	@Test
 	public void testProofSkeleton() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -257,6 +276,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	/**
 	 * Ensures that one can access to a proof status.
 	 */
+	@Test
 	public void testStatus() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -269,6 +289,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * Ensures that the scheduling rule for a Proof Component is correctly
 	 * constructed.
 	 */
+	@Test
 	public void testSchedulingRule() throws Exception {
 		final ISchedulingRule rule = pc.getSchedulingRule();
 		assertFalse(rule.contains(mchroot.getSchedulingRule()));
@@ -281,6 +302,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	/**
 	 * Ensures that a PR file can be saved through its proof component.
 	 */
+	@Test
 	public void testSavePR() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -295,6 +317,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	/**
 	 * Ensures that a PS file can be saved through its proof component.
 	 */
+	@Test
 	public void testSavePS() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -310,6 +333,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * Ensures that both the PR and PS file can be saved through a proof
 	 * component.
 	 */
+	@Test
 	public void testSavePRPS() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -327,6 +351,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * Ensures that a PR file can be reverted (made consistent) through its
 	 * proof component.
 	 */
+	@Test
 	public void testRevertPR() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -342,6 +367,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * Ensures that a PS file can be reverted (made consistent) through its
 	 * proof component.
 	 */
+	@Test
 	public void testRevertPS() throws Exception {
 		createPOFile();
 		runBuilder();
@@ -357,6 +383,7 @@ public class ProofComponentTests extends AbstractProofTests {
 	 * Ensures that both the PR and PS file can be reverted (made consistent)
 	 * through their proof component.
 	 */
+	@Test
 	public void testRevertPRPS() throws Exception {
 		createPOFile();
 		runBuilder();

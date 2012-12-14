@@ -14,6 +14,7 @@ package org.eventb.core.tests.sc;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCInternalContext;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -24,6 +25,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 	/**
 	 * creation of carrier sets
 	 */
+	@Test
 	public void testCarrierSets_00_createCarrierSet() throws Exception {
 		IContextRoot con = createContext("ctx");
 
@@ -43,6 +45,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 	/**
 	 * creation of two carrier sets
 	 */
+	@Test
 	public void testCarrierSets_01_twoCarrierSets() throws Exception {
 		IContextRoot con = createContext("ctx");
 
@@ -62,6 +65,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 	/**
 	 * name conflict between two carrier sets
 	 */
+	@Test
 	public void testCarrierSets_02_twoCarrierSetsNameConflict() throws Exception {
 		IContextRoot con = createContext("ctx");
 
@@ -82,6 +86,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 	/**
 	 * faulty names for carrier sets
 	 */
+	@Test
 	public void testCarrierSets_03_carrierSetFaultyName() throws Exception {
 		IContextRoot con = createContext("ctx");
 
@@ -104,6 +109,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 	/**
 	 * copying of carrier sets from abstraction
 	 */
+	@Test
 	public void testCarrierSets_04_carrierSetOfAbstraction() throws Exception {
 		IContextRoot abs = createContext("abs");
 
@@ -136,6 +142,7 @@ public class TestCarrierSets extends BasicSCTestWithFwdConfig {
 	/**
 	 * name conflict with carrier set from abstraction
 	 */
+	@Test
 	public void testCarrierSets_05_carrierSetOfAbstractionNameConflict() throws Exception {
 		IContextRoot abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S1"));

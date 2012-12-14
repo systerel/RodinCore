@@ -11,11 +11,13 @@
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
+import static junit.framework.Assert.assertEquals;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCMachineRoot;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 
 /**
@@ -29,6 +31,7 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 	/**
 	 * contexts of version 0 are updated to contexts of version 1
 	 */
+	@Test
 	public void testVersion_01_context() throws Exception {
 		String contents = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -53,6 +56,7 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 	/**
 	 * machines of version 0 are updated to machines of version 1
 	 */
+	@Test
 	public void testVersion_02_machine() throws Exception {
 		String contents = 
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -78,6 +82,7 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 	 * SC contexts are updated to contexts of version 1;
 	 * the new attribute is added
 	 */
+	@Test
 	public void testVersion_03_contextSC() throws Exception {
 		IContextRoot root = createContext("ctx");
 		root.setConfiguration(ORG_EVENTB_CORE_FWD, null);
@@ -95,6 +100,7 @@ public class TestEventBVersion_001_CM extends EventBVersionTest {
 	 * SC machines are updated to machines of version 1;
 	 * the new attribute is added
 	 */
+	@Test
 	public void testVersion_04_machineSC() throws Exception {
 		IMachineRoot root = createMachine("mch");
 		root.setConfiguration(ORG_EVENTB_CORE_FWD, null);

@@ -16,6 +16,7 @@ import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author halstefa
@@ -23,6 +24,7 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
  */
 public class TestMachineSeesContext extends EventBPOTest {
 	
+	@Test
 	public void testSees_00() throws Exception {
 		IContextRoot con = createContext("ctx");
 

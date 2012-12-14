@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
-import static org.eventb.core.tests.BuilderTest.*;
+import static org.eventb.core.tests.BuilderTest.saveRodinFileOf;
+
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

@@ -24,6 +24,9 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -56,9 +59,8 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 
 	private static IPOPredicateSet hyp1;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpTUSCD() throws Exception {
 		poRoot = createPOFile("x");
 		psRoot = poRoot.getPSRoot();
 		prRoot = poRoot.getPRRoot();
@@ -82,14 +84,14 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		return (IPORoot) poFile.getRoot();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownTUSCD() throws Exception {
 		if (userSupport != null) {
 			userSupport.dispose();
 		}
-		super.tearDown();
 	}
 
+	@Test
 	public void testRemoveCurrentPO() throws Exception {
 		POUtil
 				.addSequent(poRoot, originalPO, "1 = 2", hyp0,
@@ -116,6 +118,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		stopDeltas();
 	}
 
+	@Test
 	public void testRemoveOtherPO() throws Exception {
 		POUtil
 				.addSequent(poRoot, originalPO, "1 = 2", hyp0,
@@ -141,6 +144,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		stopDeltas();
 	}
 
+	@Test
 	public void testAddPO() throws Exception {
 		POUtil
 				.addSequent(poRoot, originalPO, "1 = 2", hyp0,
@@ -166,6 +170,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 	 * <p>
 	 * TODO associated with document REQUIREMENTS
 	 */
+	@Test
 	public void testChangePONotLoaded() throws Exception {
 		POUtil
 				.addSequent(poRoot, originalPO, "1 = 2", hyp0,
@@ -189,6 +194,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 	 * <p>
 	 * TODO associated with document REQUIREMENTS
 	 */
+	@Test
 	public void testChangePONotModified() throws Exception {
 		POUtil
 				.addSequent(poRoot, originalPO, "1 = 2", hyp0,
@@ -221,6 +227,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 	 * <p>
 	 * TODO associated with document REQUIREMENTS
 	 */
+	@Test
 	public void testChangePOModifiedAndDischargedAutoInDB() throws Exception {
 		POUtil
 				.addSequent(poRoot, originalPO, "1 = 2", hyp0,
@@ -254,6 +261,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 	 * <p>
 	 * TODO associated with document REQUIREMENTS
 	 */
+	@Test
 	public void testChangePOModifiedAndReusable() throws Exception {
 		POUtil
 				.addSequent(poRoot, originalPO, "1 = 2", hyp0,
@@ -288,6 +296,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 	 * <p>
 	 * TODO associated with document REQUIREMENTS
 	 */
+	@Test
 	public void testChangePOModifiedAndNotReusable() throws Exception {
 		POUtil
 				.addSequent(poRoot, originalPO, "x∈dom(f)∧f∼;({x} ◁ f)⊆id", hyp0,

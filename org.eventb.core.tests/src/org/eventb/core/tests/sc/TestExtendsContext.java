@@ -15,6 +15,7 @@ import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCInternalContext;
+import org.junit.Test;
 
 
 /**
@@ -26,6 +27,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	/**
 	 * a carrier set should be copied into internal contexts
 	 */
+	@Test
 	public void testExtendsContext_01_createCarrierSet() throws Exception {
 		IContextRoot abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S"));
@@ -54,6 +56,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	/**
 	 * two carrier sets should be copied into internal contexts
 	 */
+	@Test
 	public void testExtendsContext_02_twoCarrierSets() throws Exception {
 		IContextRoot abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S1", "S2"));
@@ -81,6 +84,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	/**
 	 * internal contexts that would introduce name conflicts must be removed
 	 */
+	@Test
 	public void testExtendsContext_03_extendsConflict() throws Exception {
 		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
@@ -117,6 +121,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	/**
 	 * carrier sets from different contexts should be copied into corresponding internal contexts
 	 */
+	@Test
 	public void testExtendsContext_04_extendsNoConflict() throws Exception {
 		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
@@ -159,6 +164,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 * internal contexts that would introduce name conflicts must be removed
 	 * but contexts untouched should be kept.
 	 */
+	@Test
 	public void testExtendsContext_05_extendsPartialConflict() throws Exception {
 		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S11", "S12"));
@@ -205,6 +211,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	/**
 	 * Contexts should be included transitively.
 	 */
+	@Test
 	public void testExtendsContext_06_transitive() throws Exception {
 		IContextRoot abs1 = createContext("abs1");
 		addCarrierSets(abs1, makeSList("S1"));
@@ -234,6 +241,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 * should not be extended directly by the context.
 	 * (This should be a warning not an error)
 	 */
+	@Test
 	public void testExtendsContext_07_redundant() throws Exception {
 		IContextRoot cab = createContext("cab");
 		
@@ -257,6 +265,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	 * A context should not be extended directly more than once by the same context.
 	 * (This should be a warning not an error)
 	 */
+	@Test
 	public void testExtendsContext_08_redundant() throws Exception {
 		IContextRoot cco = createContext("cco");
 		IContextRoot con = createContext("ctx");
@@ -274,6 +283,7 @@ public class TestExtendsContext extends BasicSCTestWithFwdConfig {
 	/**
 	 * abstract context not saved!
 	 */
+	@Test
 	public void testExtendsContext_09_abstractContextNotSaved() throws Exception {
 		IContextRoot abs = createContext("abs");
 		addCarrierSets(abs, makeSList("S"));

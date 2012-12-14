@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
-
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.junit.Test;
 
 /**
  * @author Stefan Hallerstede
@@ -27,6 +27,7 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 	/**
 	 * check partial typing
 	 */
+	@Test
 	public void testAxiomsAndTheorems_05_axiomPartialTyping() throws Exception {
 		IContextRoot con = createContext("ctx");
 		
@@ -51,6 +52,7 @@ public class TestAxiomsAndTheorems extends GenericPredicateTest<IContextRoot, IS
 	/**
 	 * more on partial typing (more complex)
 	 */
+	@Test
 	public void testAxiomsAndTheorems_06_axiomPartialTyping() throws Exception {
 		IContextRoot con = createContext("ctx");
 		

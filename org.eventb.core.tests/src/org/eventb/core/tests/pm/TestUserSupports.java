@@ -14,6 +14,10 @@ package org.eventb.core.tests.pm;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -33,6 +37,9 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.pm.UserSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
@@ -61,9 +68,8 @@ public class TestUserSupports extends TestPM {
 				+ " should not be closed", state.isClosed());
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUpTUS() throws Exception {
 		// Turn on beginner mode
 		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
 				.setEnabled(false);
@@ -75,12 +81,12 @@ public class TestUserSupports extends TestPM {
 		userSupport = newUserSupport(psRoot);
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDownTUS() throws Exception {
 		userSupport.dispose();
-		super.tearDown();
 	}
 
+	@Test
 	public void testSetInput() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -97,6 +103,7 @@ public class TestUserSupports extends TestPM {
 				userSupport.getCurrentPO());
 	}
 
+	@Test
 	public void testGetInput() throws CoreException {
 		final IUserSupport fresh = new UserSupport();
 		assertNull("Input for user support has not been set ", fresh.getInput());
@@ -106,6 +113,7 @@ public class TestUserSupports extends TestPM {
 		assertEquals("Input for user support has been set ", psRoot, input.getRoot());
 	}
 
+	@Test
 	public void testNextUndischargedPOUnforce() throws CoreException {
 		userSupport.loadProofStates();
 
@@ -133,6 +141,7 @@ public class TestUserSupports extends TestPM {
 				userSupport.getCurrentPO());
 	}
 
+	@Test
 	public void testNextUndischargedPOForce() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -172,6 +181,7 @@ public class TestUserSupports extends TestPM {
 				.getCurrentPO(), states[0]);
 	}
 
+	@Test
 	public void testPrevUndischargedPOUnforce() throws CoreException {
 		userSupport.loadProofStates();
 
@@ -197,6 +207,7 @@ public class TestUserSupports extends TestPM {
 				userSupport.getCurrentPO());
 	}
 
+	@Test
 	public void testPrevUndischargedPOForce() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -241,6 +252,7 @@ public class TestUserSupports extends TestPM {
 				.getCurrentPO(), states[0]);
 	}
 
+	@Test
 	public void testSetAndGetCurrentPO() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -264,6 +276,7 @@ public class TestUserSupports extends TestPM {
 				states[states.length - 1], userSupport.getCurrentPO());
 	}
 
+	@Test
 	public void testGetPOs() throws CoreException {
 		// Check that the POs are not yet loaded
 		assertEquals("There should be no PO loaded ", 0,
@@ -276,6 +289,7 @@ public class TestUserSupports extends TestPM {
 		// TODO add test on PO statuses?
 	}
 
+	@Test
 	public void testHasUnsavedChanges() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -306,6 +320,7 @@ public class TestUserSupports extends TestPM {
 				userSupport.hasUnsavedChanges());
 	}
 
+	@Test
 	public void testGetUnsavedPOs() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -359,6 +374,7 @@ public class TestUserSupports extends TestPM {
 		assertTrue(msg, found);
 	}
 
+	@Test
 	public void testRemoveCachedHypotheses() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -405,6 +421,7 @@ public class TestUserSupports extends TestPM {
 		assertTrue("Cache is now empty ", cached.size() == 0);
 	}
 
+	@Test
 	public void testSearchHypotheses() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -422,6 +439,7 @@ public class TestUserSupports extends TestPM {
 		assertTrue("Search should be empty ", searched.isEmpty());
 	}
 
+	@Test
 	public void testRemoveSearchedHypotheses() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -448,6 +466,7 @@ public class TestUserSupports extends TestPM {
 		assertTrue("Search should be empty", searched.isEmpty());
 	}
 
+	@Test
 	public void testSelectNode() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -485,6 +504,7 @@ public class TestUserSupports extends TestPM {
 				.getCurrentNode());
 	}
 
+	@Test
 	public void testApplyTactic() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -500,6 +520,7 @@ public class TestUserSupports extends TestPM {
 		assertTrue("Node 2 is a child of node 1 ", node2.getParent() == node1);
 	}
 
+	@Test
 	public void testApplyTacticToHypothesis() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -524,6 +545,7 @@ public class TestUserSupports extends TestPM {
 		assertTrue("Hypothesis is added to the cache ", cached.contains(hyp1));
 	}
 
+	@Test
 	public void testBack() throws CoreException {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -538,6 +560,7 @@ public class TestUserSupports extends TestPM {
 		assertTrue("Node 1 is open again ", node1.isOpen());
 	}
 
+	@Test
 	public void testSearchConsiderHiddenHypotheses() throws Exception {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -558,6 +581,7 @@ public class TestUserSupports extends TestPM {
 		assertEquals("Unexpected search size", 3, searchedWithHidden.size());
 	}
 
+	@Test
 	public void testSelected() throws Exception {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
@@ -587,6 +611,7 @@ public class TestUserSupports extends TestPM {
 		assertFalse(iter.hasNext());
 	}
 
+	@Test
 	public void testFilterHypotheses() throws Exception {
 		// Select the first undischarged PO.
 		userSupport.nextUndischargedPO(false, monitor);
