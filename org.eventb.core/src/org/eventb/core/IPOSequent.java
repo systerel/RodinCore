@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added PO nature
  *******************************************************************************/
-
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,12 +43,6 @@ public interface IPOSequent extends IInternalElement, IPOStampedElement, IAccura
 	IInternalElementType<IPOSequent> ELEMENT_TYPE =
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poSequent"); //$NON-NLS-1$
 	
-	@Deprecated
-	String getName();
-	
-	@Deprecated
-	IPOIdentifier[] getIdentifiers() throws RodinDBException;
-
 	/**
 	 * Returns a handle to a child hypothesis (predicate set) with the given element name.
 	 * <p>
@@ -62,15 +55,6 @@ public interface IPOSequent extends IInternalElement, IPOStampedElement, IAccura
 	 * @return a handle to a child hypthesis with the given element name
 	 */
 	IPOPredicateSet getHypothesis(String elementName);
-	
-	/**
-	 * Returns the predicate set containing the hypothesis of this proof obligation
-	 * @return the predicate set containing the hypothesis of this proof obligation
-	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated use <code>getHypotheses()</code> instead
-	 */
-	@Deprecated
-	IPOPredicateSet getHypothesis() throws RodinDBException;
 	
 	/**
 	 * Returns the predicate sets containing the hypotheses of this proof
@@ -99,17 +83,6 @@ public interface IPOSequent extends IInternalElement, IPOStampedElement, IAccura
 	IPOPredicate getGoal(String elementName);
 
 	/**
-	 * Returns the goal predicate of this proof obligation
-	 * 
-	 * @return the goal predicate of this proof obligation
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getGoals()</code> instead
-	 */
-	@Deprecated
-	IPOPredicate getGoal() throws RodinDBException;
-	
-	/**
 	 * Returns the goal predicates of this proof obligation. In the current
 	 * version, only one goal predicate is stored by the POG. Tools can then
 	 * consider it as an error if the returned array has a length different from
@@ -131,22 +104,6 @@ public interface IPOSequent extends IInternalElement, IPOStampedElement, IAccura
 	 * @return a descriptive proof obligation name
 	 */
 	String getDescription() throws RodinDBException;
-
-	/**
-	 * Sets the descriptive name of this proof obligation.
-	 * 
-	 * @param description
-	 *            the descriptive name
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress reporting
-	 *            is not desired
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated set a nature instead (
-	 *             {@link #setPOGNature(IPOGNature, IProgressMonitor)})
-	 */
-	@Deprecated
-	void setDescription(String description, IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child source with the given element name.

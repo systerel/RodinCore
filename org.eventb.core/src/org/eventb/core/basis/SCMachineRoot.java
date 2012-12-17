@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCVariant;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.internal.core.Messages;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
@@ -64,16 +63,6 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 	}
 
 	@Override
-	@Deprecated
-	public IRodinFile getAbstractSCMachine() throws RodinDBException {
-		ISCRefinesMachine machine = getRefinesClause();
-		if (machine == null)
-			return null;
-		else
-			return machine.getAbstractSCMachine();
-	}
-
-	@Override
 	public ISCInternalContext[] getSCSeenContexts() throws RodinDBException {
 		return getChildrenOfType(ISCInternalContext.ELEMENT_TYPE);
 	}
@@ -81,26 +70,6 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 	@Override
 	public ISCInvariant[] getSCInvariants() throws RodinDBException {
 		return getChildrenOfType(ISCInvariant.ELEMENT_TYPE);
-	}
-
-	@Override
-	@Deprecated
-	public org.eventb.core.ISCTheorem[] getSCTheorems() throws RodinDBException {
-		return getChildrenOfType(org.eventb.core.ISCTheorem.ELEMENT_TYPE);
-	}
-
-	@Override
-	@Deprecated
-	public ISCRefinesMachine getRefinesClause() throws RodinDBException {
-		return getSingletonChild(ISCRefinesMachine.ELEMENT_TYPE,
-				Messages.database_SCMachineMultipleRefinesFailure);
-	}
-
-	@Override
-	@Deprecated
-	public ISCVariant getSCVariant() throws RodinDBException {
-		return getSingletonChild(ISCVariant.ELEMENT_TYPE,
-				Messages.database_SCMachineMultipleVariantFailure);
 	}
 
 	@Override
@@ -147,12 +116,6 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 	@Override
 	public ISCSeesContext getSCSeesClause(String elementName) {
 		return getInternalElement(ISCSeesContext.ELEMENT_TYPE, elementName);
-	}
-
-	@Override
-	@Deprecated
-	public org.eventb.core.ISCTheorem getSCTheorem(String elementName) {
-		return getInternalElement(org.eventb.core.ISCTheorem.ELEMENT_TYPE, elementName);
 	}
 
 	@Override

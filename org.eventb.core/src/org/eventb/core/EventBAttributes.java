@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,18 +35,6 @@ public final class EventBAttributes {
 
 	public static IAttributeType.String COMMENT_ATTRIBUTE =
 		RodinCore.getStringAttrType(EventBPlugin.PLUGIN_ID + ".comment");
-	
-	@Deprecated
-	public static IAttributeType.Boolean INHERITED_ATTRIBUTE =
-		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".inherited");
-	
-	@Deprecated
-	public static IAttributeType.Boolean FORBIDDEN_ATTRIBUTE =
-		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".forbidden");
-	
-	@Deprecated
-	public static IAttributeType.Boolean PRESERVED_ATTRIBUTE =
-		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".preserved");
 	
 	public static IAttributeType.Boolean EXTENDED_ATTRIBUTE =
 		RodinCore.getBooleanAttrType(EventBPlugin.PLUGIN_ID + ".extended");

@@ -1,16 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.basis;
 
 import org.eventb.core.IPOPredicate;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 
 /**
  * Implementation of Event-B PO predicate as an extension of the Rodin database.
@@ -35,20 +37,8 @@ public class POPredicate extends SCPredicateElement implements IPOPredicate {
 	}
 	
 	@Override
-	@Deprecated
-	public String getName() {
-		return getElementName();
-	}
-
-	@Override
 	public IInternalElementType<IPOPredicate> getElementType() {
 		return ELEMENT_TYPE;
-	}
-
-	@Override
-	@Deprecated
-	public String getPredicate() throws RodinDBException {
-		return getPredicateString();
 	}
 
 }

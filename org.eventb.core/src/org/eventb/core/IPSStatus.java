@@ -1,11 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -132,7 +134,7 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 	 * @throws RodinDBException
 	 * @see #getProof()
 	 * @see #isBroken()
-	 * @see #setProofConfidence(IProgressMonitor)
+	 * @see #copyProofInfo(IProgressMonitor)
 	 */
 	@Override
 	int getConfidence() throws RodinDBException;
@@ -176,98 +178,5 @@ public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 	 * @see IPRProofInfoElement
 	 */
 	void copyProofInfo(IProgressMonitor monitor) throws RodinDBException;
-
-	/**
-	 * Returns whether this proof obligation has been discharged manually. A
-	 * proof obligation is considered as manually discharged if the end user
-	 * entered manually its associated proof (even partially).
-	 * <p>
-	 * The returned value is <code>true</code> iff the corresponding attribute
-	 * contains <code>true</code>. Hence, if the attribute is absent,
-	 * <code>false</code> is returned.
-	 * </p>
-	 * <p>
-	 * This is a cached attribute in case there is an associated proof.
-	 * </p>
-	 * 
-	 * @return <code>true</code> if the user contributed to the proof of this
-	 *         proof obligation
-	 * 
-	 * @throws RodinDBException
-	 * 
-	 * @Deprecated use {@link #getHasManualProof()} instead
-	 * 
-	 */
-	@Deprecated
-	boolean hasManualProof() throws RodinDBException;
-
-	/**
-	 * Sets the confidence associated to this proof obligation.
-	 * <p>
-	 * The confidence is copied from the associated proof. If the latter doesn't
-	 * exist, then the confidence attribute is removed from this element.
-	 * </p>
-	 * <p>
-	 * This is a cached attribute in case there is an associated proof.
-	 * </p>
-	 * 
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress reporting
-	 *            is not desired
-	 * 
-	 * @throws RodinDBException
-	 * @see #getProof()
-	 * @see #getConfidence()
-	 * 
-	 * @deprecated use {@link #copyProofInfo(IProgressMonitor)} instead
-	 */
-	@Deprecated
-	void setProofConfidence(IProgressMonitor monitor) throws RodinDBException;
-
-	/**
-	 * Sets whether this proof obligation has been discharged manually.
-	 * 
-	 * @param value
-	 *            The value to set to
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress reporting
-	 *            is not desired
-	 * 
-	 *            <p>
-	 *            This is a cached attribute in case there is an associated
-	 *            proof.
-	 *            </p>
-	 * 
-	 * @throws RodinDBException
-	 * @see #hasManualProof()
-	 * 
-	 * @deprecated set the manual proof in {@link IPRProof} and then use
-	 *             {@link #copyProofInfo(IProgressMonitor)}
-	 */
-	@Deprecated
-	void setManualProof(boolean value, IProgressMonitor monitor)
-			throws RodinDBException;
-
-	/**
-	 * Returns the confidence associated to this proof obligation. The
-	 * confidence is stored in an attribute which contains a local copy of the
-	 * confidence attribute of the associated proof. If there is no associated
-	 * proof yet, then the confidence attribute is not set and this method
-	 * returns {@link IConfidence#UNATTEMPTED}.
-	 * 
-	 * <p>
-	 * This is a cached attribute in case there is an associated proof.
-	 * </p>
-	 * 
-	 * @return the confidence associated to this proof obligation
-	 * 
-	 * @throws RodinDBException
-	 * @see #getProof()
-	 * @see #setProofConfidence(IProgressMonitor)
-	 * 
-	 * @deprecated use {@link #getConfidence()} instead
-	 */
-	@Deprecated
-	int getProofConfidence() throws RodinDBException;
 
 }

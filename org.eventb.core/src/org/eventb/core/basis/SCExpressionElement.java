@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -48,26 +51,19 @@ public abstract class SCExpressionElement extends EventBElement
 	}
 
 	@Override
-	@Deprecated
-	public Expression getExpression(FormulaFactory factory) throws RodinDBException {
-		
-		String contents = getExpressionString();
-		IParseResult parserResult = factory.parseExpression(contents, V2, null);
-		if (parserResult.getProblems().size() != 0) {
-			throw Util.newRodinDBException(
-					Messages.database_SCExpressionParseFailure,
-					this
-			);
-		}
-		Expression result = parserResult.getParsedExpression();
-		return result;
-	}
-
-	@Override
 	public Expression getExpression(FormulaFactory factory,
 			ITypeEnvironment typenv) throws RodinDBException {
 		
-		Expression result = getExpression(factory);
+		String contents = getExpressionString();
+				IParseResult parserResult = factory.parseExpression(contents, V2, null);
+				if (parserResult.getProblems().size() != 0) {
+					throw Util.newRodinDBException(
+							Messages.database_SCExpressionParseFailure,
+							this
+					);
+				}
+				Expression result1 = parserResult.getParsedExpression();
+		Expression result = result1;
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(
@@ -83,13 +79,6 @@ public abstract class SCExpressionElement extends EventBElement
 	public void setExpression(Expression expression, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setExpressionString(expression.toStringWithTypes(), monitor);	
-	}
-	
-	@Override
-	@Deprecated
-	public void setExpression(Expression expression) 
-	throws RodinDBException {
-		setExpression(expression, null);	
 	}
 
 }

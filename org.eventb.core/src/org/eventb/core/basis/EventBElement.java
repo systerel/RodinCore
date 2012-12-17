@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eventb.internal.core.EventBProject;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
@@ -43,14 +42,6 @@ public abstract class EventBElement extends InternalElement {
 		super(name, parent);
 	}
 
-	@Deprecated
-	protected < T extends IRodinElement> T getSingletonChild(
-			IElementType<T> elementType,
-			String message) throws RodinDBException {
-
-		return EventBUtil.getSingletonChild(this, elementType, message);
-	}
-	
 	public boolean hasAssignmentString() throws RodinDBException {
 		return hasAttribute(EventBAttributes.ASSIGNMENT_ATTRIBUTE);
 	}
@@ -74,12 +65,6 @@ public abstract class EventBElement extends InternalElement {
 		setAttributeValue(EventBAttributes.ASSIGNMENT_ATTRIBUTE, assignment, monitor);
 	}
 
-	@Deprecated
-	public void setAssignmentString(String assignment) 
-	throws RodinDBException {
-		setAttributeValue(EventBAttributes.ASSIGNMENT_ATTRIBUTE, assignment, null);
-	}
-	
 	public boolean hasLabel() throws RodinDBException {
 		return hasAttribute(EventBAttributes.LABEL_ATTRIBUTE);
 	}
@@ -174,11 +159,6 @@ public abstract class EventBElement extends InternalElement {
 		setAttributeValue(EventBAttributes.PREDICATE_ATTRIBUTE, predicate, monitor);
 	}
 
-	@Deprecated
-	public void setPredicateString(String predicate) throws RodinDBException {
-		setAttributeValue(EventBAttributes.PREDICATE_ATTRIBUTE, predicate, null);
-	}
-	
 	public boolean hasExpressionString() throws RodinDBException {
 		return hasAttribute(EventBAttributes.EXPRESSION_ATTRIBUTE);
 	}
@@ -202,12 +182,6 @@ public abstract class EventBElement extends InternalElement {
 		setAttributeValue(EventBAttributes.EXPRESSION_ATTRIBUTE, expression, monitor);
 	}
 
-	@Deprecated
-	public void setExpressionString(String expression) 
-	throws RodinDBException {
-		setExpressionString(expression, null);
-	}
-
 	public boolean hasIdentifierString() throws RodinDBException {
 		return hasAttribute(EventBAttributes.IDENTIFIER_ATTRIBUTE);
 	}
@@ -229,12 +203,6 @@ public abstract class EventBElement extends InternalElement {
 	public void setIdentifierString(String identifier, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.IDENTIFIER_ATTRIBUTE, identifier, monitor);
-	}
-	
-	@Deprecated
-	public void setIdentifierString(String identifier) 
-	throws RodinDBException {
-		setAttributeValue(EventBAttributes.IDENTIFIER_ATTRIBUTE, identifier, null);
 	}
 	
 	public boolean hasConvergence() throws RodinDBException {

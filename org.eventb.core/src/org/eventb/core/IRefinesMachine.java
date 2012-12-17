@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,19 +67,6 @@ public interface IRefinesMachine extends IInternalElement {
 	 *             if there was a problem accessing the database
 	 */
 	String getAbstractMachineName() throws RodinDBException;
-
-	/**
-	 * Sets the name of the machine that is refined by the machine that contains
-	 * this element.
-	 * 
-	 * @param name
-	 *            the name of the abstract machine
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>setAbstractMachineName(String,IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	void setAbstractMachineName(String name) throws RodinDBException;
 
 	/**
 	 * Sets the name of the machine that is refined by the machine that contains

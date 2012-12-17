@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,8 +54,9 @@ implements ISCPredicateElement {
 	}
 
 	@Override
-	@Deprecated
-	public Predicate getPredicate(FormulaFactory factory) throws RodinDBException {
+	public Predicate getPredicate(
+			FormulaFactory factory, ITypeEnvironment typenv) throws RodinDBException {
+		
 		String contents = getPredicateString();
 		final IRodinElement source;
 		if (hasAttribute(EventBAttributes.SOURCE_ATTRIBUTE)) {
@@ -63,22 +64,13 @@ implements ISCPredicateElement {
 		} else {
 			source = null;
 		}
-		IParseResult parserResult = factory.parsePredicate(contents, V2, source);
-		if (parserResult.getProblems().size() != 0) {
+		IParseResult parserResult = factory
+				.parsePredicate(contents, V2, source);
+		if (parserResult.hasProblem()) {
 			throw Util.newRodinDBException(
-					Messages.database_SCPredicateParseFailure,
-					this
-			);
+					Messages.database_SCPredicateParseFailure, this);
 		}
 		Predicate result = parserResult.getParsedPredicate();
-		return result;
-	}
-
-	@Override
-	public Predicate getPredicate(
-			FormulaFactory factory, ITypeEnvironment typenv) throws RodinDBException {
-		
-		Predicate result = getPredicate(factory);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(
@@ -93,12 +85,6 @@ implements ISCPredicateElement {
 	@Override
 	public void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException {
 		setPredicateString(predicate.toStringWithTypes(), monitor);
-	}
-	
-	@Override
-	@Deprecated
-	public void setPredicate(Predicate predicate) throws RodinDBException {
-		setPredicate(predicate, null);
 	}
 
 }

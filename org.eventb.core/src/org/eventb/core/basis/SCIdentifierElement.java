@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,11 +51,6 @@ public abstract class SCIdentifierElement extends EventBElement
 		return getElementName();
 	}
 
-	@Override
-	@Deprecated
-	public String getIdentifierName() throws RodinDBException {
-		return getElementName();
-	}
 	public SCIdentifierElement(String name, IRodinElement parent) {
 		super(name, parent);
 	}
@@ -77,12 +72,6 @@ public abstract class SCIdentifierElement extends EventBElement
 	@Override
 	public void setType(Type type, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.TYPE_ATTRIBUTE, type.toString(), monitor);
-	}
-
-	@Override
-	@Deprecated
-	public void setType(Type type) throws RodinDBException {
-		setType(type, null);
 	}
 
 	@Override

@@ -1,20 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007 ETH Zurich.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.core.basis;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCAction;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCGuard;
 import org.eventb.core.ISCParameter;
 import org.eventb.core.ISCRefinesEvent;
-import org.eventb.core.ISCVariable;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -77,15 +77,6 @@ public class SCEvent extends EventBElement implements ISCEvent {
 		return result;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ISCEvent#getSCVariables()
-	 */
-	@Override
-	@Deprecated
-	public ISCVariable[] getSCVariables() throws RodinDBException {
-		return getChildrenOfType(ISCVariable.ELEMENT_TYPE); 
-	}
-
 	@Override
 	public ISCParameter[] getSCParameters() throws RodinDBException {
 		return getChildrenOfType(ISCParameter.ELEMENT_TYPE); 
@@ -131,12 +122,6 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	}
 
 	@Override
-	@Deprecated
-	public ISCVariable getSCVariable(String elementName) {
-		return getInternalElement(ISCVariable.ELEMENT_TYPE, elementName);
-	}
-
-	@Override
 	public ISCParameter getSCParameter(String elementName) {
 		return getInternalElement(ISCParameter.ELEMENT_TYPE, elementName);
 	}
@@ -160,25 +145,6 @@ public class SCEvent extends EventBElement implements ISCEvent {
 			typenv.add(par.getIdentifier(factory));
 		}
 		return typenv;
-	}
-
-	@Override
-	@Deprecated
-	public boolean isForbidden() throws RodinDBException {
-		return false;
-	}
-
-	@Override
-	@Deprecated
-	public void setForbidden(boolean value) throws RodinDBException {
-		// do nothing
-	}
-
-	@Override
-	@Deprecated
-	public void setForbidden(boolean value, IProgressMonitor monitor)
-			throws RodinDBException {
-		// do nothing
 	}
 
 }

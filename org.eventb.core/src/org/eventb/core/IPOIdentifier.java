@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - removed deprecated method getType()
  *******************************************************************************/
 package org.eventb.core;
 
@@ -27,9 +26,6 @@ import org.rodinp.core.RodinCore;
 public interface IPOIdentifier extends ISCIdentifierElement {
 	
 	IInternalElementType<IPOIdentifier> ELEMENT_TYPE =
-		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poIdentifier"); //$NON-NLS-1$
-
-	@Deprecated
-	String getName();	
+		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".poIdentifier"); //$NON-NLS-1$	
 	
 }

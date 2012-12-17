@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,18 +51,6 @@ public interface ISCRefinesMachine extends ITraceableElement {
 	 *             if there was a problem accessing the database
 	 */
 	IRodinFile getAbstractSCMachine() throws RodinDBException;
-
-	/**
-	 * Sets the abstract SC machine file introduced by this refines clause.
-	 * 
-	 * @param abstractSCMachine
-	 *            the abstract machine file
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>setAbstractSCMachine(ISCMachineFile,IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	void setAbstractSCMachine(IRodinFile abstractSCMachine) throws RodinDBException;
 
 	/**
 	 * Sets the abstract SC machine file introduced by this refines clause.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,23 +78,6 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 	
 	
 	@Override
-	@Deprecated
-	public int getProofConfidence() throws RodinDBException {
-		return getConfidence();
-	}
-	
-	@Override
-	@Deprecated
-	public void setProofConfidence(IProgressMonitor monitor) throws RodinDBException {
-		IPRProof proof = getProof();
-		if (proof.exists()) {
-			setAttributeValue(CONFIDENCE_ATTRIBUTE, proof.getConfidence(), monitor);
-		} else {
-			removeAttribute(CONFIDENCE_ATTRIBUTE, monitor);
-		}
-	}
-	
-	@Override
 	public void copyProofInfo(IProgressMonitor monitor) throws RodinDBException {
 		IPRProof proof = getProof();
 		if (proof.exists()) {
@@ -110,19 +93,6 @@ public class PSStatus extends EventBProofElement implements IPSStatus {
 	public IPOSequent getPOSequent() {
 		final IPSRoot psRoot = (IPSRoot) getRoot();
 		return psRoot.getPORoot().getSequent(getElementName());
-	}
-
-	@Override
-	@Deprecated
-	public boolean hasManualProof() throws RodinDBException {
-		return getHasManualProof();
-	}
-
-	@Override
-	@Deprecated
-	public void setManualProof(boolean value, IProgressMonitor monitor)
-			throws RodinDBException {
-		setHasManualProof(value, monitor);
 	}
 
 //	public boolean getHasManualProof() throws RodinDBException {

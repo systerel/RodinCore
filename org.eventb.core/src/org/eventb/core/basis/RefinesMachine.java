@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,12 +85,6 @@ public class RefinesMachine extends EventBElement implements IRefinesMachine {
 	@Override
 	public void setAbstractMachineName(String name, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, name, monitor);
-	}
-
-	@Override
-	@Deprecated
-	public void setAbstractMachineName(String name) throws RodinDBException {
-		setAbstractMachineName(name, null);
 	}
 
 }

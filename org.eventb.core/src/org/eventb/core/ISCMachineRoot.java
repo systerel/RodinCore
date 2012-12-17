@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,20 +57,6 @@ public interface ISCMachineRoot extends IEventBRoot, IAccuracyElement, IConfigur
 
 	IInternalElementType<ISCMachineRoot> ELEMENT_TYPE = 
 		RodinCore.getInternalElementType(EventBPlugin.PLUGIN_ID + ".scMachineFile"); //$NON-NLS-1$
-
-	/**
-	 * Returns a handle to the statically checked version of the abstraction of
-	 * this machine or <code>null</code> if there is no abstraction (case of a
-	 * top level machine).
-	 * 
-	 * @return a handle to the statically checked version of the abstraction, or
-	 *         <code>null</code>
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getAbstractSCMachines(IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	IRodinFile getAbstractSCMachine() throws RodinDBException;
 
 	/**
 	 * Returns a handle to the statically checked versions of the abstractions of
@@ -193,30 +179,6 @@ public interface ISCMachineRoot extends IEventBRoot, IAccuracyElement, IConfigur
 	ISCInvariant[] getSCInvariants() throws RodinDBException;
 
 	/**
-	 * Returns a handle to a child SC theorem with the given element name.
-	 * <p>
-	 * This is a handle-only method. The child element may or may not be
-	 * present.
-	 * </p>
-	 * 
-	 * @param elementName
-	 *            element name of the SC theorem
-	 * @return a handle to a child SC theorem with the given element name
-	 */
-	@Deprecated
-	ISCTheorem getSCTheorem(String elementName);
-
-	/**
-	 * Returns an array containing all SC theorems of this SC machine.
-	 * 
-	 * @return an array of all SC theorems
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	@Deprecated
-	ISCTheorem[] getSCTheorems() throws RodinDBException;
-
-	/**
 	 * Returns a handle to a child SC event with the given element name.
 	 * <p>
 	 * This is a handle-only method. The child element may or may not be
@@ -252,17 +214,6 @@ public interface ISCMachineRoot extends IEventBRoot, IAccuracyElement, IConfigur
 	ISCVariant getSCVariant(String elementName);
 	
 	/**
-	 * Returns the handle of the SC variant of this SC machine.
-	 * 
-	 * @return the handle of the SC variant
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getSCVariants(IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	ISCVariant getSCVariant() throws RodinDBException;
-	
-	/**
 	 * Returns the array containing all SC variants of this SC machine.
 	 * 
 	 * @return the array of all SC variants
@@ -271,16 +222,6 @@ public interface ISCMachineRoot extends IEventBRoot, IAccuracyElement, IConfigur
 	 */
 	ISCVariant[] getSCVariants() throws RodinDBException;
 	
-	/**
-	 * Returns the handle of the refines clause of this SC machine.
-	 * 
-	 * @return the handle of the refines clause
-	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated use <code>getSCRefinesClause(IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	ISCRefinesMachine getRefinesClause() throws RodinDBException;
-
 	/**
 	 * Returns the type environment defined by this machine file. The returned
 	 * type environment is made of all carrier sets and constants defined in the

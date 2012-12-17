@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.core;
 
@@ -113,29 +116,5 @@ public interface ISCContext extends IRodinElement {
 	 *             if there was a problem accessing the database
 	 */
 	ISCAxiom[] getSCAxioms() throws RodinDBException;
-
-	/**
-	 * Returns a handle to a child SC theorem with the given element name.
-	 * <p>
-	 * This is a handle-only method. The child element may or may not be
-	 * present.
-	 * </p>
-	 * 
-	 * @param elementName
-	 *            element name of the SC theorem
-	 * @return a handle to a child SC theorem with the given element name
-	 */
-	@Deprecated
-	ISCTheorem getSCTheorem(String elementName);
-
-	/**
-	 * Returns an array containing all SC theorems of this SC context.
-	 * 
-	 * @return an array of all SC theorems
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	@Deprecated
-	ISCTheorem[] getSCTheorems() throws RodinDBException;
 	
 }

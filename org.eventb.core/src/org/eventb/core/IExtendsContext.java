@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,19 +63,6 @@ public interface IExtendsContext extends IInternalElement {
 	 */
 	boolean hasAbstractContextName() throws RodinDBException;
 	
-	/**
-	 * Sets the name of a context which is extended by the context which
-	 * contains this element.
-	 * 
-	 * @param name
-	 *            the name of the abstract context
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>setAbstractContextName(String, IProgressMonitor)</code> instead.
-	 */
-	@Deprecated
-	void setAbstractContextName(String name) throws RodinDBException;
-
 	/**
 	 * Returns the name of the context which is extended by the context which
 	 * contains this element.

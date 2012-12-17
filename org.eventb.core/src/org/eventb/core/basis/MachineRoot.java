@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  ******************************************************************************/
 package org.eventb.core.basis;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
@@ -19,7 +18,6 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.core.ISeesContext;
 import org.eventb.core.IVariable;
 import org.eventb.core.IVariant;
-import org.eventb.internal.core.Messages;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -55,12 +53,6 @@ public class MachineRoot extends EventBRoot implements IMachineRoot{
 	}
 	
 	@Override
-	@Deprecated
-	public org.eventb.core.ITheorem[] getTheorems() throws RodinDBException {
-		return getChildrenOfType(org.eventb.core.ITheorem.ELEMENT_TYPE);
-	}
-	
-	@Override
 	public IInvariant[] getInvariants() throws RodinDBException {
 		return getChildrenOfType(IInvariant.ELEMENT_TYPE);
 	}
@@ -75,25 +67,6 @@ public class MachineRoot extends EventBRoot implements IMachineRoot{
 		return getChildrenOfType(ISeesContext.ELEMENT_TYPE); 
 	}
 	
-	@Deprecated
-	public IRefinesMachine getRefinesClause(IProgressMonitor monitor) throws RodinDBException {
-		return getSingletonChild(IRefinesMachine.ELEMENT_TYPE,
-				Messages.database_MachineMultipleRefinesFailure);
-	}
-
-	@Override
-	@Deprecated
-	public IRefinesMachine getRefinesClause() throws RodinDBException {
-		return getRefinesClause( (IProgressMonitor) null);
-	}
-
-	@Override
-	@Deprecated
-	public IVariant getVariant() throws RodinDBException {
-		return getSingletonChild(IVariant.ELEMENT_TYPE,
-				Messages.database_MachineMultipleVariantFailure);
-	}
-
 	@Override
 	public IRefinesMachine[] getRefinesClauses() throws RodinDBException {
 		return getChildrenOfType(IRefinesMachine.ELEMENT_TYPE);
@@ -122,12 +95,6 @@ public class MachineRoot extends EventBRoot implements IMachineRoot{
 	@Override
 	public ISeesContext getSeesClause(String elementName) {
 		return getInternalElement(ISeesContext.ELEMENT_TYPE, elementName);
-	}
-
-	@Override
-	@Deprecated
-	public org.eventb.core.ITheorem getTheorem(String elementName) {
-		return getInternalElement(org.eventb.core.ITheorem.ELEMENT_TYPE, elementName);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,14 +13,12 @@ package org.eventb.core.basis;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
-import org.eventb.core.IPOIdentifier;
 import org.eventb.core.IPOPredicate;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPOSelectionHint;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOSource;
 import org.eventb.core.pog.IPOGNature;
-import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.pog.POGNatureFactory;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -56,32 +54,6 @@ public class POSequent extends EventBElement implements IPOSequent {
 		return ELEMENT_TYPE;
 	}
 	
-	@Override
-	@Deprecated
-	public String getName() {
-		return getElementName();
-	}
-	
-	@Override
-	@Deprecated
-	public IPOIdentifier[] getIdentifiers() throws RodinDBException {
-		return getChildrenOfType(IPOIdentifier.ELEMENT_TYPE);
-	}
-	
-	@Override
-	@Deprecated
-	public IPOPredicateSet getHypothesis() throws RodinDBException {
-		return getSingletonChild(IPOPredicateSet.ELEMENT_TYPE,
-				Messages.database_SequentMultipleHypothesisFailure);
-	}
-
-	@Override
-	@Deprecated
-	public IPOPredicate getGoal() throws RodinDBException {
-		return getSingletonChild(IPOPredicate.ELEMENT_TYPE,
-				Messages.database_SequentMultipleGoalFailure);
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -106,15 +78,6 @@ public class POSequent extends EventBElement implements IPOSequent {
 	@Override
 	public IPOSelectionHint[] getSelectionHints() throws RodinDBException {
 		return getChildrenOfType(IPOSelectionHint.ELEMENT_TYPE); 
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.IPOSequent#setDescriptionName(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@Override
-	@Deprecated
-	public void setDescription(String description, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.PODESC_ATTRIBUTE, description, monitor);
 	}
 
 	@Override

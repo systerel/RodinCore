@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,45 +56,6 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 * The label of an initialisation event.
 	 */
 	String INITIALISATION = "INITIALISATION";
-
-	/**
-	 * Tests whether the inherited value is defined or not.
-	 * 
-	 * @return whether the inherited value is defined or not
-	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated superseded by <code>hasExtended()</code>
-	 */
-	@Deprecated
-	boolean hasInherited() throws RodinDBException;
-	
-	/**
-	 * Returns whether the event is inherited, that is whether it is
-	 * automatically generated and maintained.
-	 * 
-	 * @return <code>true</code> if the event is inherited.
-	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated superseded by <code>isExtended()</code>
-	 */
-	@Deprecated
-	boolean isInherited() throws RodinDBException;
-	
-	/**
-	 * Sets the the event to inherited.
-	 * <p>
-	 * The event must not have any children (guards, actions, ...) if 
-	 * inherited is set to <code>true</code>.
-	 * </p>
-	 * @param inherited the new value specifying whether this event id
-	 * interited or not.
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @throws RodinDBException if there was a problem accessing the database, or
-	 * if the event has already children and it is attempted to specify it as inherited.
-	 * @deprecated superseded by <code>setExtended()</code>
-	 */
-	@Deprecated
-	void setInherited(boolean inherited, IProgressMonitor monitor) throws RodinDBException;
 
 	/**
 	 * Tests whether the extended attribute value is defined or not.
@@ -181,31 +142,6 @@ public interface IEvent extends ICommentedElement, ILabeledElement, IConvergence
 	 *             if there was a problem accessing the database
 	 */
 	IParameter[] getParameters() throws RodinDBException;
-
-	/**
-	 * Returns a handle to a child variable with the given element name.
-	 * <p>
-	 * This is a handle-only method. The child element may or may not be
-	 * present.
-	 * </p>
-	 * 
-	 * @param elementName
-	 *            element name of the variable
-	 * @return a handle to a child variable with the given element name
-	 * @deprecated use <code>getParameter()</code> instead
-	 */
-	@Deprecated
-	IVariable getVariable(String elementName);
-
-	/**
-	 * Returns an array containing all (local) variables of this event.
-	 * @return an array of all variables
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getParameters()</code> instead
-	 */
-	@Deprecated
-	IVariable[] getVariables() throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child witness with the given element name.

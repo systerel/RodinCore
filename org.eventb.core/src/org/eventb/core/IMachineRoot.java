@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,18 +65,6 @@ public interface IMachineRoot extends IEventBRoot, ICommentedElement, IConfigura
 	 * @return a handle to a child refines clause with the given element name
 	 */
 	IRefinesMachine getRefinesClause(String elementName);
-
-	/**
-	 * Returns the refines clause of this machine or <code>null</code> if this
-	 * machine does not have an abstraction.
-	 * 
-	 * @return the refines clause of this machine or <code>null</code>
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getRefinesClauses(IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	IRefinesMachine getRefinesClause() throws RodinDBException;
 
 	/**
 	 * Returns an array of all refines clauses of this machine.
@@ -150,30 +138,6 @@ public interface IMachineRoot extends IEventBRoot, ICommentedElement, IConfigura
 	IInvariant[] getInvariants() throws RodinDBException;
 
 	/**
-	 * Returns a handle to a child theorem with the given element name.
-	 * <p>
-	 * This is a handle-only method. The child element may or may not be
-	 * present.
-	 * </p>
-	 * 
-	 * @param elementName
-	 *            element name of the theorem
-	 * @return a handle to a child theorem with the given element name
-	 */
-	@Deprecated
-	ITheorem getTheorem(String elementName);
-
-	/**
-	 * Returns an array containing all theorems of this machine.
-	 * 
-	 * @return an array of theorems
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	@Deprecated
-	ITheorem[] getTheorems() throws RodinDBException;
-
-	/**
 	 * Returns a handle to a child event with the given element name.
 	 * <p>
 	 * This is a handle-only method. The child element may or may not be
@@ -207,17 +171,6 @@ public interface IMachineRoot extends IEventBRoot, ICommentedElement, IConfigura
 	 * @return a handle to a child variant with the given element name
 	 */
 	IVariant getVariant(String elementName);
-
-	/**
-	 * Returns a handle to the variant of this machine.
-	 * 
-	 * @return a handle to the variant
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getVariants(IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	IVariant getVariant() throws RodinDBException;
 
 	/**
 	 * Returns an array containing all variants of this machine.

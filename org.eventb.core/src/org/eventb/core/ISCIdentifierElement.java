@@ -1,11 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -49,18 +51,6 @@ public interface ISCIdentifierElement extends IInternalElement {
 	 * 
 	 * @param type
 	 *            the type to give to this identifier
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>setType(Type,IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	void setType(Type type) throws RodinDBException;
-
-	/**
-	 * Sets the type of this element to a new value.
-	 * 
-	 * @param type
-	 *            the type to give to this identifier
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress
 	 *            reporting is not desired
@@ -79,16 +69,6 @@ public interface ISCIdentifierElement extends IInternalElement {
 	 *             if there was a problem accessing the database
 	 */
 	FreeIdentifier getIdentifier(FormulaFactory factory) throws RodinDBException;
-	
-	/**
-	 * Returns the name of the identifier as a character string.
-	 * 
-	 * @return name of the identifier as a character string
-	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated use <code>getIdentifierString(IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	String getIdentifierName() throws RodinDBException;
 	
 	/**
 	 * Returns the name of the identifier as a character string.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,12 +66,6 @@ public class SCContextRoot extends EventBRoot implements ISCContextRoot{
 	}
 
 	@Override
-	@Deprecated
-	public org.eventb.core.ISCTheorem[] getSCTheorems() throws RodinDBException {
-		return getChildrenOfType(org.eventb.core.ISCTheorem.ELEMENT_TYPE); 
-	}
-
-	@Override
 	public ISCInternalContext[] getAbstractSCContexts() throws RodinDBException {
 		return getChildrenOfType(ISCInternalContext.ELEMENT_TYPE); 
 	}
@@ -104,12 +98,6 @@ public class SCContextRoot extends EventBRoot implements ISCContextRoot{
 	@Override
 	public ISCConstant getSCConstant(String elementName) {
 		return getInternalElement(ISCConstant.ELEMENT_TYPE, elementName);
-	}
-
-	@Override
-	@Deprecated
-	public org.eventb.core.ISCTheorem getSCTheorem(String elementName) {
-		return getInternalElement(org.eventb.core.ISCTheorem.ELEMENT_TYPE, elementName);
 	}
 
 	/**

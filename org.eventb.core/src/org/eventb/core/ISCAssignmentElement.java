@@ -1,11 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,20 +42,6 @@ public interface ISCAssignmentElement extends IInternalElement {
 	String getAssignmentString() throws RodinDBException;
 
 	/**
-	 * Returns the untyped assignment contained in this element.
-	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
-	 * @return the assignment of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated Use the version with a type environment
-	 */
-	@Deprecated
-	Assignment getAssignment(FormulaFactory factory)
-			throws RodinDBException;
-
-	/**
 	 * Returns the typed assignment contained in this element.
 	 * 
 	 * @param factory
@@ -68,18 +56,6 @@ public interface ISCAssignmentElement extends IInternalElement {
 	 */
 	Assignment getAssignment(FormulaFactory factory, ITypeEnvironment typenv)
 			throws RodinDBException;
-
-	/**
-	 * Sets the assignment contained in this element.
-	 * 
-	 * @param assignment
-	 *            the assignment to set (must be type-checked)
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>setAssignment(Assignment,IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	void setAssignment(Assignment assignment) throws RodinDBException;
 
 	/**
 	 * Sets the assignment contained in this element.

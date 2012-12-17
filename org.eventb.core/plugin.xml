@@ -121,10 +121,6 @@
             id="axiom"
             name="%eventBAxiom"/>
       <internalElementType
-            class="org.eventb.core.basis.Theorem"
-            id="theorem"
-            name="%eventBTheorem"/>
-      <internalElementType
             class="org.eventb.core.basis.SeesContext"
             id="seesContext"
             name="%eventBSeesContext"/>
@@ -156,10 +152,6 @@
             class="org.eventb.core.basis.SCAxiom"
             id="scAxiom"
             name="%eventBscAxiom"/>
-      <internalElementType
-            class="org.eventb.core.basis.SCTheorem"
-            id="scTheorem"
-            name="%eventBscTheorem"/>
       <internalElementType
             class="org.eventb.core.basis.POIdentifier"
             id="poIdentifier"

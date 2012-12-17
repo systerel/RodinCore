@@ -1,11 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005 ETH Zurich.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -102,27 +104,4 @@ public interface IPOPredicateSet extends IInternalElement, IPOStampedElement {
 	 * @throws RodinDBException if there was a problem accessing the database
 	 */
 	IPOPredicateSet getParentPredicateSet() throws RodinDBException;
-	
-	/**
-	 * Returns the name of the parent predicate set of this predicate set, 
-	 * or <code>null</code> if this is the root set.
-	 * 
-	 * @return the name of the parent predicate set, or <code>null</code>
-	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated use <code>getParentPredicateSet(IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	String getParentPredicateSetName() throws RodinDBException;
-	
-	/**
-	 * Sets the parent predicate set of this predicate set. The name must be a non-empty string.
-	 * @param name the name of the predicate set
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @throws RodinDBException if there was a problem accessing the database
-	 * @deprecated use <code>setParentPredicateSet(IPOPredicateSet,IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	void setParentPredicateSetName(String name, IProgressMonitor monitor) throws RodinDBException;
 }

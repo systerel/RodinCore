@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,18 +76,6 @@ public class ContextRoot extends EventBRoot implements IContextRoot{
 		return getChildrenOfType(IAxiom.ELEMENT_TYPE); 
 	}
 	
-	@Override
-	@Deprecated
-	public org.eventb.core.ITheorem getTheorem(String elementName) {
-		return getInternalElement(org.eventb.core.ITheorem.ELEMENT_TYPE, elementName);
-	}
-
-	@Override
-	@Deprecated
-	public org.eventb.core.ITheorem[] getTheorems() throws RodinDBException {
-		return getChildrenOfType(org.eventb.core.ITheorem.ELEMENT_TYPE); 
-	}
-
 	@Override
 	public IExtendsContext getExtendsClause(String elementName) {
 		return getInternalElement(IExtendsContext.ELEMENT_TYPE, elementName);

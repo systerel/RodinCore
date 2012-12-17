@@ -1,21 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
- * 
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
  ******************************************************************************/
-
 package org.eventb.core.pm;
 
 import java.util.Collection;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eventb.core.EventBPlugin;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -77,16 +74,6 @@ public interface IUserSupportManager {
 	 *            an existing USManager listener
 	 */
 	public abstract void removeChangeListener(IUserSupportManagerChangedListener listener);
-
-	/**
-	 * Return the proving mode
-	 * <p>
-	 * 
-	 * @return the current proving mode
-	 * @deprecated use {@link EventBPlugin#getPostTacticPreference()} instead.
-	 */
-	@Deprecated
-	public abstract IProvingMode getProvingMode();
 
 	/**
 	 * Run the give action as an atomic User Support Manager operation.

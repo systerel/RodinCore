@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,28 +134,5 @@ public interface IContextRoot extends IEventBRoot, ICommentedElement, IConfigura
 	 *             if there was a problem accessing the database
 	 */
 	IAxiom[] getAxioms() throws RodinDBException;
-
-	/**
-	 * Returns a handle to a child theorem with the given element name.
-	 * <p>
-	 * This is a handle-only method. The child element may or may not be
-	 * present.
-	 * </p>
-	 * 
-	 * @param elementName
-	 *            element name of the theorem
-	 * @return a handle to a child theorem with the given element name
-	 */
-	@Deprecated
-	ITheorem getTheorem(String elementName);
-
-	/**
-	 * Returns an array containing all theorems of this context.
-	 * @return an array of theorems
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 */
-	@Deprecated
-	ITheorem[] getTheorems() throws RodinDBException;
 
 }

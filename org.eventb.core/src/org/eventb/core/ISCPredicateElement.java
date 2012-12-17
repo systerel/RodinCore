@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,24 +44,6 @@ public interface ISCPredicateElement extends IPredicateElement {
 			throws RodinDBException;
 
 	/**
-	 * Returns the untyped predicate contained in this element.
-	 * <p>
-	 * If a {@link EventBAttributes#SOURCE_ATTRIBUTE} is present, it is
-	 * considered the predicate's origin.
-	 * </p>
-	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
-	 * @return the predicate of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated Use the version with a type environment
-	 */
-	@Deprecated
-	Predicate getPredicate(FormulaFactory factory)
-			throws RodinDBException;
-
-	/**
 	 * Returns the typed predicate contained in this element.
 	 * <p>
 	 * If a {@link EventBAttributes#SOURCE_ATTRIBUTE} is present, it is
@@ -82,18 +64,6 @@ public interface ISCPredicateElement extends IPredicateElement {
 	 */
 	Predicate getPredicate(FormulaFactory factory, ITypeEnvironment typenv)
 			throws RodinDBException;
-
-	/**
-	 * Sets the predicate contained in this element.
-	 * 
-	 * @param predicate
-	 *            the predicate to set (must be type-checked)
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>setPredicate(Predicate,IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	void setPredicate(Predicate predicate) throws RodinDBException;
 
 	/**
 	 * Sets the predicate contained in this element.

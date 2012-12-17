@@ -1,11 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,20 +43,6 @@ public interface ISCExpressionElement extends IInternalElement {
 			throws RodinDBException;
 
 	/**
-	 * Returns the untyped expression contained in this element.
-	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
-	 * @return the expression of this element
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated Use the version with a type environment
-	 */
-	@Deprecated
-	Expression getExpression(FormulaFactory factory)
-			throws RodinDBException;
-
-	/**
 	 * Returns the typed expression contained in this element.
 	 * 
 	 * @param factory
@@ -69,18 +57,6 @@ public interface ISCExpressionElement extends IInternalElement {
 	 */
 	Expression getExpression(FormulaFactory factory, ITypeEnvironment typenv)
 			throws RodinDBException;
-
-	/**
-	 * Sets the expression contained in this element.
-	 * 
-	 * @param expression
-	 *            the expression to set (must be type-checked)
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>setExpression(Expression,IProgressMonitor)</code> instead
-	 */
-	@Deprecated
-	void setExpression(Expression expression) throws RodinDBException;
 
 	/**
 	 * Sets the expression contained in this element.

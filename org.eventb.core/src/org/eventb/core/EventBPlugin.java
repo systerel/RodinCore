@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.sc.SCModule;
-import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.core.FormulaExtensionProviderRegistry;
 import org.eventb.internal.core.autocompletion.AutoCompletion;
 import org.eventb.internal.core.indexers.EventPropagator;
@@ -272,82 +271,11 @@ public class EventBPlugin extends Plugin {
 	}
 
 	/**
-	 * Return the post-tactic registry.
-	 * <p>
-	 * 
-	 * @return the default post-tactic registry
-	 * @deprecated use {@link #getPostTacticPreference()} 
-	 * @author htson
-	 */
-	@Deprecated
-	public org.eventb.core.pm.IPostTacticRegistry getPostTacticRegistry() {
-		return org.eventb.internal.core.pm.PostTacticRegistry.getDefault();
-	}
-	
-
-	/**
-	 * Return the POM-tactic preference
-	 * <p>
-	 * 
-	 * @return the default POM-tactic preference
-	 * @deprecated Use {@link #getAutoTacticPreference()} instead
-	 */
-	@Deprecated
-	public static IAutoTacticPreference getPOMTacticPreference() {
-		return getAutoTacticPreference();
-	}
-	
-	/**
 	 * Return the Auto/Post tactic manager.
 	 * @since 2.1
 	 */
 	public static IAutoPostTacticManager getAutoPostTacticManager() {
 		return AutoPostTacticManager.getDefault();
-	}
-
-	/**
-	 * Returns the preference describing the tactic to be used by the automated
-	 * prover.
-	 * 
-	 * @return the auto-prover tactic preference
-	 * @deprecated replaced by the facade {@link IAutoPostTacticManager} and
-	 *             {@link IAutoPostTacticManager#getAutoTacticPreference()}
-	 */
-	@Deprecated
-	public static IAutoTacticPreference getAutoTacticPreference() {
-		return getAutoPostTacticManager().getAutoTacticPreference();
-	}
-
-	/**
-	 * Returns the post-tactic preference.
-	 * 
-	 * @return the default post-tactic preference
-	 * @author htson
-	 * @deprecated replaced by the facade {@link IAutoPostTacticManager} and
-	 *             {@link IAutoPostTacticManager#getPostTacticPreference()}
-	 */
-	@Deprecated
-	public static IAutoTacticPreference getPostTacticPreference() {
-		return getAutoPostTacticManager().getPostTacticPreference();
-	}
-
-	/**
-	 * Returns an object encapsulating the proofs and proof statuses associated
-	 * to the given event-B file.
-	 * 
-	 * @param file
-	 *            an event-B file (machine, context, PO file, ...)
-	 * @return an object encapsulating the PR and PS files associated to the
-	 *         given file.
-	 * 
-	 * @deprecated Please use the Proof Manager API rather than this.
-	 * @see #getProofManager()
-	 */
-	@Deprecated
-	public static org.eventb.core.IPSWrapper getPSWrapper(IRodinFile file) {
-		IEventBRoot root = (IEventBRoot) file.getRoot();
-		return new org.eventb.internal.core.PSWrapper(root.getPSRoot()
-				.getRodinFile());
 	}
 
 	/**

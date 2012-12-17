@@ -1,11 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007 ETH Zurich.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -83,32 +85,6 @@ extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElemen
 	 *             if there was a problem accessing the database
 	 */
 	ISCEvent[] getAbstractSCEvents() throws RodinDBException;
-
-	/**
-	 * Returns a handle to a child SC variable with the given element name.
-	 * <p>
-	 * This is a handle-only method. The child element may or may not be
-	 * present.
-	 * </p>
-	 * 
-	 * @param elementName
-	 *            element name of the SC variable
-	 * @return a handle to a child SC variable with the given element name
-	 * @deprecated use <code>getSCParameter()</code> instead
-	 */
-	@Deprecated
-	ISCVariable getSCVariable(String elementName);
-
-	/**
-	 * Returns an array containing all SC (local) variables of this SC event.
-	 * 
-	 * @return an array of all SC variables
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated use <code>getSCParameters()</code> instead
-	 */
-	@Deprecated
-	ISCVariable[] getSCVariables() throws RodinDBException;
 
 	/**
 	 * Returns a handle to a child SC parameter with the given element name.
@@ -198,42 +174,6 @@ extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElemen
 	 */
 	ISCAction[] getSCActions() throws RodinDBException;
 	
-	/**
-	 * An event label that has been used in an abstraction but not in some refinement
-	 * cannot be used again. It is "forbidden".
-	 * 
-	 * @param value the "forbidden" status of the event label
-	 * @deprecated no longer supported
-	 */
-	@Deprecated
-	void setForbidden(boolean value) throws RodinDBException;
-	
-	/**
-	 * An event label that has been used in an abstraction but not in some refinement
-	 * cannot be used again. It is "forbidden".
-	 * 
-	 * @param value the "forbidden" status of the event label
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated no longer supported
-	 */
-	@Deprecated
-	void setForbidden(boolean value, IProgressMonitor monitor) throws RodinDBException;
-	
-	/**
-	 * Returns whether the event label is forbidden or not.
-	 * 
-	 * @return whether the event label is forbidden or not
-	 * @throws RodinDBException
-	 *             if there was a problem accessing the database
-	 * @deprecated no longer supported
-	 */
-	@Deprecated
-	boolean isForbidden() throws RodinDBException;
-
 	/**
 	 * Returns the type environment of this event, given the type environment of
 	 * its parent machine. The returned type environment is made of a copy of

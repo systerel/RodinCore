@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IParameter;
 import org.eventb.core.IRefinesEvent;
-import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -60,12 +59,6 @@ public class Event extends EventBElement implements IEvent {
 	}
 
 	@Override
-	@Deprecated
-	public IVariable[] getVariables() throws RodinDBException {
-		return getChildrenOfType(IVariable.ELEMENT_TYPE); 
-	}
-
-	@Override
 	public IParameter[] getParameters() throws RodinDBException {
 		return getChildrenOfType(IParameter.ELEMENT_TYPE); 
 	}
@@ -86,24 +79,6 @@ public class Event extends EventBElement implements IEvent {
 	}
 	
 	@Override
-	@Deprecated
-	public boolean hasInherited() throws RodinDBException {
-		return hasAttribute(EventBAttributes.INHERITED_ATTRIBUTE);
-	}
-
-	@Override
-	@Deprecated
-	public boolean isInherited() throws RodinDBException {
-		return getAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE);
-	}
-
-	@Override
-	@Deprecated
-	public void setInherited(boolean inherited, IProgressMonitor monitor) throws RodinDBException {
-		setAttributeValue(EventBAttributes.INHERITED_ATTRIBUTE, inherited, monitor);
-	}
-
-	@Override
 	public IAction getAction(String elementName) {
 		return getInternalElement(IAction.ELEMENT_TYPE, elementName);
 	}
@@ -116,12 +91,6 @@ public class Event extends EventBElement implements IEvent {
 	@Override
 	public IRefinesEvent getRefinesClause(String elementName) {
 		return getInternalElement(IRefinesEvent.ELEMENT_TYPE, elementName);
-	}
-
-	@Override
-	@Deprecated
-	public IVariable getVariable(String elementName) {
-		return getInternalElement(IVariable.ELEMENT_TYPE, elementName);
 	}
 
 	@Override

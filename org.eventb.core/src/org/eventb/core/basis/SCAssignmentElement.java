@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -48,28 +51,17 @@ public abstract class SCAssignmentElement extends EventBElement
 	}
 
 	@Override
-	@Deprecated
-	public Assignment getAssignment(FormulaFactory factory) 
-	throws RodinDBException {
+	public Assignment getAssignment(
+			FormulaFactory factory,
+			ITypeEnvironment typenv) throws RodinDBException {
 		
 		String contents = getAssignmentString();
 		IParseResult parserResult = factory.parseAssignment(contents, V2, null);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
-					Messages.database_SCAssignmentParseFailure,
-					this
-			);
+					Messages.database_SCAssignmentParseFailure, this);
 		}
 		Assignment result = parserResult.getParsedAssignment();
-		return result;
-	}
-
-	@Override
-	public Assignment getAssignment(
-			FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
-		
-		Assignment result = getAssignment(factory);
 		ITypeCheckResult tcResult = result.typeCheck(typenv);
 		if (! tcResult.isSuccess())  {
 			throw Util.newRodinDBException(
@@ -85,13 +77,6 @@ public abstract class SCAssignmentElement extends EventBElement
 	public void setAssignment(Assignment assignment, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAssignmentString(assignment.toStringWithTypes(), monitor);
-	}
-
-	@Override
-	@Deprecated
-	public void setAssignment(Assignment assignment) 
-	throws RodinDBException {
-		setAssignment(assignment, null);
 	}
 
 }

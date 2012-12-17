@@ -1,15 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 ETH Zurich.
- * 
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich
+ *     ETH Zurich - initial API and implementation
  ******************************************************************************/
-
 package org.eventb.internal.core.pm;
 
 import java.util.ArrayList;
@@ -22,9 +20,6 @@ import org.eventb.core.pm.IUserSupportManagerChangedListener;
 public class UserSupportManager implements IUserSupportManager {
 
 	private Collection<IUserSupport> userSupports = new ArrayList<IUserSupport>();
-
-	@Deprecated
-	private static org.eventb.core.pm.IProvingMode provingMode;
 
 	private static UserSupportManager instance;
 	
@@ -70,17 +65,6 @@ public class UserSupportManager implements IUserSupportManager {
 	@Override
 	public void removeChangeListener(IUserSupportManagerChangedListener listener) {
 		deltaProcessor.removeChangeListener(listener);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupportManager#getProvingMode()
-	 */
-	@Override
-	@Deprecated
-	public org.eventb.core.pm.IProvingMode getProvingMode() {
-		if (provingMode == null)
-			provingMode = new org.eventb.internal.core.pm.ProvingMode();
-		return provingMode;
 	}
 
 	public DeltaProcessor getDeltaProcessor() {

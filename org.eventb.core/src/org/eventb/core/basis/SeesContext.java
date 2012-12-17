@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,12 +76,6 @@ public class SeesContext extends EventBElement implements ISeesContext {
 	public void setSeenContextName(String name, IProgressMonitor monitor) 
 	throws RodinDBException {
 		setAttributeValue(EventBAttributes.TARGET_ATTRIBUTE, name, monitor);
-	}
-
-	@Override
-	@Deprecated
-	public void setSeenContextName(String name) throws RodinDBException {
-		setSeenContextName(name, null);
 	}
 
 }
