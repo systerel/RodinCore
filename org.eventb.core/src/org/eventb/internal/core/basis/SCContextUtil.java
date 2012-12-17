@@ -1,11 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007 ETH Zurich.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-package org.eventb.core.basis;
+package org.eventb.internal.core.basis;
 
 import org.eventb.core.ISCCarrierSet;
 import org.eventb.core.ISCConstant;
@@ -19,7 +22,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  */
-/* package */class SCContextUtil {
+public class SCContextUtil {
 
 	private SCContextUtil() {
 		// Disabled constructor
@@ -38,7 +41,7 @@ import org.rodinp.core.RodinDBException;
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	static void augmentTypeEnvironment(ISCContext ctx,
+	public static void augmentTypeEnvironment(ISCContext ctx,
 			ITypeEnvironmentBuilder typenv, FormulaFactory factory)
 			throws RodinDBException {
 
