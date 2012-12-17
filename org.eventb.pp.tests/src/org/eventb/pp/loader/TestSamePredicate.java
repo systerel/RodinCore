@@ -1,11 +1,11 @@
 package org.eventb.pp.loader;
 
+import static org.eventb.internal.pp.core.elements.terms.AbstractPPTest.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.elements.terms.Util;
 import org.eventb.internal.pp.loader.formula.AbstractFormula;
 import org.eventb.internal.pp.loader.formula.SignedFormula;
@@ -25,39 +25,11 @@ import org.junit.Test;
 public class TestSamePredicate {
 	static FormulaFactory ff = FormulaFactory.getDefault();
 	
-	static ITypeEnvironmentBuilder env = ff.makeTypeEnvironment();
-	static {
-		Type S = ff.makeGivenType("S");
-		Type T = ff.makeGivenType("T");
-		
-		env.addName("a", S);
-		env.addName("b", S);
-		env.addName("S1", ff.makePowerSetType(S));
-		env.addName("S2", ff.makePowerSetType(S));
-		
-		env.addName("c", T);
-		env.addName("d", T);
-		env.addName("T1", ff.makePowerSetType(T));
-		env.addName("T2", ff.makePowerSetType(T));
-		
-		env.addName("e", ff.makeBooleanType());
-		env.addName("f", ff.makeBooleanType());
-		
-		env.addName("SS1", ff.makePowerSetType(ff.makeProductType(S,S)));
-		env.addName("SS2", ff.makePowerSetType(ff.makeProductType(S,S)));
-		
-		env.addName("TT1", ff.makePowerSetType(ff.makeProductType(T,T)));
-		env.addName("TT2", ff.makePowerSetType(ff.makeProductType(T,T)));
-		
-		env.addName("k", ff.makeIntegerType());
-		env.addName("l", ff.makeIntegerType());
-		
-		env.addName("NS", ff.makePowerSetType(ff.makeProductType(ff.makeIntegerType(), S)));
-		env.addName("NN", ff.makePowerSetType(ff.makeProductType(ff.makeIntegerType(), ff.makeIntegerType())));
-		env.addName("SN", ff.makePowerSetType(ff.makeProductType(S, ff.makeIntegerType())));
-		env.addName("STN", ff.makePowerSetType(ff.makeProductType(ff.makeProductType(S, T), ff.makeIntegerType())));
-		
-	}
+	static ITypeEnvironmentBuilder env = mTypeEnvironment( //
+			"S=ℙ(S); T=ℙ(T); a=S; b=S; S1=ℙ(S); S2=ℙ(S); c=T; d=T; T1=ℙ(T);" //
+			+" T2=ℙ(T); e=BOOL; f=BOOL; SS1=S↔S; SS2=S↔S; TT1=T↔T;" //
+			+" TT2=T↔T; k=ℤ; l=ℤ; NS=ℤ↔S; NN=ℤ↔ℤ; SN=S↔ℤ; STN=S×T↔ℤ;"
+			, ff);
 	
 	String[][] test1 = new String[][]{
 			new String[]{

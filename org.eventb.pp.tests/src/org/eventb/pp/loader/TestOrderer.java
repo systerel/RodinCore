@@ -12,25 +12,9 @@ import org.junit.Test;
 
 public class TestOrderer extends AbstractPPTest {
 
-	private static ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
-	static {
-		typenv.addName("x0", ty_A);
-		typenv.addName("x1", ty_B);
-		typenv.addName("a", ty_S);
-		typenv.addName("e", ty_BOOL);
-		typenv.addName("f", REL(ty_A, ty_B));
-		typenv.addName("n", INT);
-		typenv.addName("N", POW(INT));
-		typenv.addName("S", POW(ty_S));
-		typenv.addName("P", POW(ty_B));
-		typenv.addName("Q", POW(ty_A));
-		typenv.addName("R", POW(ty_A));
-		typenv.addName("U", POW(ty_U));
-		typenv.addName("M", REL(CPROD(ty_B, ty_A), ty_A));
-		typenv.addName("SS", POW(ty_S));
-		typenv.addName("T", REL(INT, INT));
-		typenv.addName("TT", REL(CPROD(INT, INT), INT));
-	}
+	private static ITypeEnvironmentBuilder typenv = mTypeEnvironment(
+			"x0=A; x1=B; a=S; e=BOOL; f=A↔B; n=ℤ; N=ℙ(ℤ); S=ℙ(S); P=ℙ(B); Q=ℙ(A);" //
+			+" R=ℙ(A); U=ℙ(U); M=B×A↔A; SS=ℙ(S); T=ℤ↔ℤ; TT=ℤ×ℤ↔ℤ", ff);
 
 	public static void doTest(String... images) {
 		final AbstractContext context = new AbstractContext();

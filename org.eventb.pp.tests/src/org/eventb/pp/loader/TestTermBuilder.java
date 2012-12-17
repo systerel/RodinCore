@@ -30,10 +30,8 @@ import org.junit.Test;
 
 public class TestTermBuilder extends AbstractPPTest {
 
-	private static final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
-	static {
-		typenv.addName("a", ff.makeIntegerType());
-	}
+	private static final ITypeEnvironmentBuilder typenv = mTypeEnvironment(
+			"a=ℤ", ff);
 
 	private static BoundIdentDecl dS = mBoundIdentDecl("s", ty_S);
 	private static BoundIdentDecl dT = mBoundIdentDecl("t", ty_T);

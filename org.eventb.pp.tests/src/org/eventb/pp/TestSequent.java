@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
@@ -55,22 +56,6 @@ public class TestSequent {
 		return result.getParsedPredicate();
 	}
 
-	public static ITypeEnvironmentBuilder parseTypeEnvironment(List<String> typenvList, FormulaFactory ff) {
-		final ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
-		for (int i = 0; i < typenvList.size(); i = i + 2) {
-			String name = typenvList.get(i);
-			String type = typenvList.get(i + 1);
-			result.addName(name, ff.parseType(type, V2).getParsedType());
-		}
-		return result;
-	}
-
-	public static ISimpleSequent makeSequent(List<String> typenvList, Iterable<String> hypotheses,
-				String goal, FormulaFactory ff) {
-		final ITypeEnvironment tenv = parseTypeEnvironment(typenvList, ff);
-		return makeSequent(tenv, hypotheses, goal, ff);
-	}
-
 	public static ISimpleSequent makeSequent(ITypeEnvironment initTypeEnv,
 			Iterable<String> hypotheses, String goal, FormulaFactory ff) {
 		final List<Predicate> pHyps = parseHypotheses(hypotheses, ff);
@@ -97,12 +82,12 @@ public class TestSequent {
 		this.sequent = sequent;
 	}
 	
-	public TestSequent(List<String> typenvList, Iterable<String> hypotheses,
+	public TestSequent(ITypeEnvironment typenv, Iterable<String> hypotheses,
 				String goal, FormulaFactory ff) {
-		this(makeSequent(typenvList, hypotheses, goal, ff));
+		this(makeSequent(typenv, hypotheses, goal, ff));
 	}
 	
-	public ITypeEnvironment typeEnvironment() {
+	public ISealedTypeEnvironment typeEnvironment() {
 		return sequent.getTypeEnvironment();
 	}
 

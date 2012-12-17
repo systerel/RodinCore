@@ -43,11 +43,8 @@ public class TestSameObjects extends AbstractPPTest {
 	private static final PredicateLiteralDescriptor d0S = descriptor(0, S);
 	private static final PredicateLiteralDescriptor d1T = descriptor(1, T);
 
-	private static ITypeEnvironmentBuilder env = ff.makeTypeEnvironment();
-	static {
-		env.addGivenSet("S");
-		env.addGivenSet("T");
-	}
+	private static ITypeEnvironmentBuilder env = mTypeEnvironment(
+			"S=ℙ(S); T=ℙ(T)", ff);
 	
     @Test
 	public void testSimpleConstant() {

@@ -195,31 +195,9 @@ public class TestClauseBuilder extends AbstractPPTest {
 	private static Variable xPS = cVar(24,PS);
 	
 	private static final ITypeEnvironmentBuilder env = mTypeEnvironment(
-		"x0", ty_A,
-		"x1", ty_B,
-		"a", ty_S,
-		
-		"VV", REL(CPROD(ty_A, ty_B),ty_C),
-		"V", REL(ty_A, ty_B),
-		"W", REL(ty_A, ty_B),
-		"X", REL(ty_A, ty_C),
-		"Y", REL(ty_A, ty_C),
-		"AA", REL(ty_S, ty_S),
-		
-		"e", ty_BOOL,
-		"f", REL(ty_A, ty_B),
-		"n", INT,
-		"N", POW(INT),
-		"S", POW(ty_S),
-		"P", POW(ty_B),
-		"Q", POW(ty_A),
-		"R", POW(ty_A),
-		"U", POW(ty_U),
-		"M", REL(CPROD(ty_B,ty_A),ty_A),
-		"SS", POW(ty_S),
-		"T", REL(INT, INT),
-		"TT", REL(CPROD(INT,INT), INT)
-	);
+			"x0=A; x1=B; a=S; VV=A×B↔C; V=A↔B; W=A↔B; X=A↔C; Y=A↔C; AA=S↔S;" //
+			+" e=BOOL; f=A↔B; n=ℤ; N=ℙ(ℤ); S=ℙ(S); P=ℙ(B); Q=ℙ(A); R=ℙ(A);" //
+			+" U=ℙ(U); M=B×A↔A; SS=ℙ(S); T=ℤ↔ℤ; TT=ℤ×ℤ↔ℤ", ff);
 	
     @Test
 	public void testSimple() {
@@ -420,7 +398,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 						cClause(cPred(d1S,xS), cNotPred(d0SPS,xS,C)),
 						cEqClause(cPred(d2S,xS), cNotPred(d0SPS,xS,A), cPred(d1S,xS))
 				),
-				mTypeEnvironment("A", POW(ty_S), "B", POW(ty_S), "C", POW(ty_S)),
+				mTypeEnvironment("A=ℙ(S); B=ℙ(S); C=ℙ(S)", ff),
 				"A", A,
 				"B", B,
 				"C", C,
@@ -1542,7 +1520,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 						cClause(cProp(0)),
 						cClause(cEqual(cS, eS))
 				),
-				mTypeEnvironment("c", ty_S),
+				mTypeEnvironment("c=S", ff),
 				"b", bbool,
 				"c", cS,
 				"e", eS
@@ -1727,7 +1705,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 			doTestG(
 					mList("b ∈ S", "a ∈ C"),
 					mList(cClause(cNotPred(d0SPS,b,S)),cClause(cNotPred(d0SPS,a,C))),
-					mTypeEnvironment("a", ty_S, "b", ty_S),
+					mTypeEnvironment("a=S; b=S", ff),
 					"a",a,
 					"b",b,
 					"C",C,
@@ -1753,7 +1731,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 			mList(	cClause(cNotPred(d4S,cELocVar(0,Ssort))),
 					cClause(cPred(d4S,xS),cPred(d0SPS,xS,A)),
 					cClause(cPred(d4S,xS),cNotPred(d0SPS,yS,B),cNotPred(d1SS,xS,yS))),
-			mTypeEnvironment("A", POW(ty_S), "AA", REL(ty_S, ty_S)),
+			mTypeEnvironment("A=ℙ(S); AA=S↔S", ff),
 			"A",A,
 			"B",B
 		);
@@ -1763,7 +1741,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d2SS,xS,yS),cPred(d0SPS,xS,B)),
 					cClause(cPred(d2SS,xS,yS),cPred(d1SS,yS,xS))
 			),
-			mTypeEnvironment("A", POW(ty_S), "B", POW(ty_S)),
+			mTypeEnvironment("A=ℙ(S); B=ℙ(S)", ff),
 			"A",A,
 			"B",B
 		);
@@ -1773,7 +1751,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d2SS,xS,yS),cPred(d0SPS,xS,B)),
 					cClause(cPred(d2SS,xS,yS),cPred(d1SS,yS,xS))
 			),
-			mTypeEnvironment("A", POW(ty_S), "B", POW(ty_S)),
+			mTypeEnvironment("A=ℙ(S); B=ℙ(S)", ff),
 			"A",A,
 			"B",B
 		);
@@ -1782,7 +1760,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 			mList(	cClause(cNotPred(d4S,cELocVar(0,Ssort))),
 					cClause(cPred(d4S,xS),cPred(d0SPS,xS,A)),
 					cClause(cPred(d4S,xS),cNotPred(d0SPS,yS,B),cNotPred(d1SS,xS,yS))),
-			mTypeEnvironment("A", POW(ty_S), "B", POW(ty_S)),
+			mTypeEnvironment("A=ℙ(S); B=ℙ(S)", ff),
 			"A",A,
 			"B",B
 		);
@@ -1792,7 +1770,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d5S,xS),cPred(d0S,xS)),
 					cClause(cPred(d5S,xS),cNotPred(d1SS,xS,yS),cNotPred(d1SS,xS,zS))
 			),
-			mTypeEnvironment("A", POW(ty_S), "AA", REL(ty_S, ty_S)),
+			mTypeEnvironment("A=ℙ(S); AA=S↔S", ff),
 			"A",A,
 			"B",B
 		);
@@ -1802,7 +1780,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d3SS,xS,yS),cPred(d1SS,xS,yS)),
 					cClause(cPred(d3SS,xS,yS),cPred(d1SS,xS,cELocVar(1,Ssort)))
 			),
-			mTypeEnvironment("A", POW(ty_S), "AA", REL(ty_S, ty_S)),
+			mTypeEnvironment("A=ℙ(S); AA=S↔S", ff),
 			"A",A,
 			"B",B
 		);
@@ -1863,7 +1841,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d0SPS, b, xPS)),
 					cClause(cPred(d0SPS, xS, S))
 			),
-			mTypeEnvironment("a", ty_S, "b", ty_S),
+			mTypeEnvironment("a=S; b=S", ff),
 			"a", a,
 			"b", b,
 			"S", S
@@ -1876,7 +1854,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d0SPS, b, B)),
 					cClause(cPred(d0SPS, xS, S))
 			),
-			mTypeEnvironment("a", ty_S, "b", ty_S),
+			mTypeEnvironment("a=S; b=S", ff),
 			"a", a,
 			"b", b,
 			"A", A,
@@ -1890,7 +1868,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d0S, a)),
 					cClause(cPred(d0S, b))
 			),
-			mTypeEnvironment("a", ty_S, "b", ty_S),
+			mTypeEnvironment("a=S; b=S", ff),
 			"a", a,
 			"b", b
 		);
@@ -1908,7 +1886,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cNotPred(L1SS,xS,yS),cPred(d0SPS,xS,B),cNotPred(d0SPS,yS,A)),
 					cClause(cPred(d0SPS, xS, S))
 			),
-			mTypeEnvironment("A", POW(ty_S), "B", POW(ty_S)),
+			mTypeEnvironment("A=ℙ(S); B=ℙ(S)", ff),
 			"A", A,
 			"B", B,
 			"S", S
@@ -1923,7 +1901,7 @@ public class TestClauseBuilder extends AbstractPPTest {
 					cClause(cPred(d0SPSS, a, AA)),
 					cClause(cPred(d0SPSS, b, BB))
 			),
-			mTypeEnvironment("a", ty_S, "b", ty_S),
+			mTypeEnvironment("a=S; b=S", ff),
 			"a", a,
 			"b", b,
 			"AA", AA,

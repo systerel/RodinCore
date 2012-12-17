@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eventb.pp.loader;
 
+import static org.eventb.internal.pp.core.elements.terms.AbstractPPTest.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.ast.FormulaFactory;
@@ -33,16 +34,8 @@ public class TestExpectedLiterals {
 
 	private static FormulaFactory ff = FormulaFactory.getDefault();
 	
-	private static ITypeEnvironmentBuilder env = ff.makeTypeEnvironment();
-	static {
-		env.addName("a", ff.makeGivenType("A"));
-		env.addName("c", ff.makeBooleanType());
-		
-		env.addName("N", ff.makePowerSetType(ff.makeIntegerType()));
-		env.addName("S", ff.makePowerSetType(ff.makeGivenType("S")));
-		env.addName("T", ff.makePowerSetType(ff.makeProductType(ff.makeIntegerType(), ff.makeIntegerType())));
-		
-	}
+	private static ITypeEnvironmentBuilder env = mTypeEnvironment(
+			"a=A; c=BOOL; N=ℙ(ℤ); S=ℙ(S); T=ℤ↔ℤ", ff);
 	
 	String[] testPredicates = new String[]{
 			"x ∈ N",

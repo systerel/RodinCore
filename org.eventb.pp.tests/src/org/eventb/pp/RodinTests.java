@@ -11,46 +11,27 @@
  *******************************************************************************/
 package org.eventb.pp;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
-import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
-import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class RodinTests extends AbstractRodinTest {
 
-	private static final List<String> NO_ENV = emptyList();
+	private static final ITypeEnvironment NO_ENV = ff.makeTypeEnvironment();
 	private static final Set<String> NO_HYP = emptySet();
 
-	static ITypeEnvironmentBuilder env = ff.makeTypeEnvironment();
-	static {
-		env.addName("f", REL(ty_S, ty_T));
-		env.addName("g", REL(ty_T, ty_V));
-		env.addName("a", ty_V);
-		env.addName("A", POW(ty_S));
-		env.addName("B", POW(ty_S));
-		env.addName("k", POW(ty_S));
-		env.addName("R", POW(ty_T));
-		env.addName("rtbl", REL(ty_S, ty_T));
-		env.addName("U", POW(POW(ty_S)));
-		env.addName("S", POW(ty_S));
-		env.addName("q", POW(ty_T));
-		env.addName("r", REL(ty_T, ty_T));
-		env.addName("s", REL(ty_T, ty_T));
-		env.addName("org", REL(ty_T, ty_S));
-		env.addName("sit", REL(ty_T, ty_S));
-		env.addName("M", POW(ty_M));
-		env.addName("N", POW(POW(ty_M)));
-	}
+	static ITypeEnvironmentBuilder env = mTypeEnvironment(//
+			"f=S↔T; g=T↔V; a=V; A=ℙ(S); B=ℙ(S); k=ℙ(S); R=ℙ(T); rtbl=S↔T;" //
+			+ " U=ℙ(ℙ(S)); S=ℙ(S); q=ℙ(T); r=T↔T; s=T↔T; org=T↔S; sit=T↔S;" //
+			+ " M=ℙ(M); N=ℙ(ℙ(M));", ff);
 
-	protected static void doTest(Set<String> hypotheses, String goal,
-			boolean result, int timeout) {
+	protected static void doTest(Set<String> hypotheses, String goal,	boolean result, int timeout) {
 		doTest(env, hypotheses, goal, result, timeout);
 	}
 
@@ -62,60 +43,31 @@ public class RodinTests extends AbstractRodinTest {
 	@Test
     @Ignore("Takes too much time")
 	public void testList() {
-		doTest(
-			mList(
-			"m","ℙ(M×M)",
-			"l","M",
-			"p","N",
-			"n","ℙ(N×N)",
-			"N","ℙ(N)",
-			"f","M",
-			"M","ℙ(M)",
-			"s","ℙ(M×N)",
-			"d","N"
-			),
-			 mSet(
-			"m∈M ∖ {l} ⤖ M ∖ {f}",
-			"n∈N ∖ {d} ⤖ N ∖ {p}",
-			"s∈M ↔ N",
-			"s;n=m;s",
-			"s[{f}]={p}",
-			"n;s∼=s∼;m",
-			"s∈M ⤖ N",
-			"s[{l}] ∖ {d}=∅"
-			),"s(l)=d",true);
-	}
-	
+		doTest(mTypeEnvironment(
+				"m=M↔M; l=M; p=N; n=N↔N; N=ℙ(N); f=M; M=ℙ(M); s=M↔N; d=N",
+				ff),
+				mSet("m∈M ∖ {l} ⤖ M ∖ {f}", "n∈N ∖ {d} ⤖ N ∖ {p}", "s∈M ↔ N",
+						"s;n=m;s", "s[{f}]={p}", "n;s∼=s∼;m", "s∈M ⤖ N",
+						"s[{l}] ∖ {d}=∅"), "s(l)=d", true);
+	}	
 	
     @Test
 	public void testFailingLevels() {
-		doTest(mList("B","ℙ(S×S×S)","R","ℙ(S×S)"),
-				mSet(
-						"∀x,y·x ↦ y∈R⇒¬y ↦ x∈R",
-						"∀x,y·x ↦ y∈R⇒¬x=y",
+		doTest(mTypeEnvironment("B=ℙ(S×S×S); R=S↔S", ff),
+				mSet("∀x,y·x ↦ y∈R⇒¬y ↦ x∈R", "∀x,y·x ↦ y∈R⇒¬x=y",
 						"∀x,y,z·x ↦ y∈R∧y ↦ z∈R⇒x ↦ z∈R",
 						"∀x,z·¬x=z⇒(∃y·x ↦ y ↦ z∈B)",
-						"∀x,y,z·x ↦ y ↦ z∈B⇒(x ↦ y∈R∧y ↦ z∈R)∨(z ↦ y∈R∧y ↦ x∈R)"
-						),"∀x,z·x ↦ z∈R⇒(∃y·x ↦ y∈R∧y ↦ z∈R)",true
-		);
+						"∀x,y,z·x ↦ y ↦ z∈B⇒(x ↦ y∈R∧y ↦ z∈R)∨(z ↦ y∈R∧y ↦ x∈R)"),
+				"∀x,z·x ↦ z∈R⇒(∃y·x ↦ y∈R∧y ↦ z∈R)", true);
 		
-		doTest(
-			mList("P","ℙ(S)","Q","ℙ(S)"),
-			NO_HYP,
-			"(∀x·∃y·x∈P∧y∈Q)⇒(∃y·∀x·x∈P∧y∈Q)",true
-		);
+		doTest(mTypeEnvironment("P=ℙ(S); Q=ℙ(S)", ff), NO_HYP,
+				"(∀x·∃y·x∈P∧y∈Q)⇒(∃y·∀x·x∈P∧y∈Q)", true);
 	}
 	
     @Test
 	public void testSoundness() {
-		doTest(
-				mList(
-				"m","ℙ(M×M)",
-				"l","M",
-				"f","M",
-				"M","ℙ(M)"
-				),
-				 mSet(
+		doTest(mTypeEnvironment("m=M↔M; l=M; f=M; M=ℙ(M)", ff),
+				mSet(
 				"(∀x,x0·x ↦ x0∈m⇒¬x=l∧¬x0=f)",
 				"(∀x,x0,x1·x ↦ x0∈m∧x ↦ x1∈m⇒x0=x1)",
 				"(∀x·¬x=l⇒(∃x0·x ↦ x0∈m))",
@@ -124,14 +76,8 @@ public class RodinTests extends AbstractRodinTest {
 				"∀x·(∀x0·x0∈x⇒(∃x1·x1∈x∧x1 ↦ x0∈m))⇒(∀x0·¬x0∈x)"
 				),"l=f",false,2000);
 		
-		doTest(
-				mList(
-				"m","ℙ(M×M)",
-				"l","M",
-				"f","M",
-				"M","ℙ(M)"
-				),
-				 mSet(
+		doTest(mTypeEnvironment("m=M↔M; l=M; f=M; M=ℙ(M)", ff),
+				mSet(
 				"m∈M ∖ {l} ⤖ M ∖ {f}",
 				"∀x·x⊆m[x]⇒x=∅"
 				),"l=f",false,2000);
@@ -153,16 +99,10 @@ public class RodinTests extends AbstractRodinTest {
 	
     @Test
 	public void testBirthday() {
-		doTest(
-				mList(
-				"brithday","ℙ(PERSON×DATE)",
-				"PERSON","ℙ(PERSON)",
-				"DATE","ℙ(DATE)",
-				"p","PERSON",
-				"d","DATE"
-				),
-				 mSet(
-				"brithday∈PERSON ⇸ DATE",
+		doTest(mTypeEnvironment(
+				"brithday=PERSON↔DATE; PERSON=ℙ(PERSON); DATE=ℙ(DATE); p=PERSON; d=DATE",
+				ff),
+				mSet(				"brithday∈PERSON ⇸ DATE",
 				"p∈PERSON",
 				"d∈DATE",
 				"p∉dom(brithday)"
@@ -182,28 +122,12 @@ public class RodinTests extends AbstractRodinTest {
 //		|--
 //		 f[a] : POW(t) & f[a]/={}
 
-		doTest(
-				mList(
-					"s","ℙ(s)",
-					"t","ℙ(t)"
-				),
-				mSet(
-				"f ∈ s ↣ t",
-				"a ∈ ℙ(s)",
-				"a ≠ ∅"
-				),"f[a] ∈ ℙ(t) ∧ f[a] ≠ ∅"
-		,true);
-		
-		doTest(
-				mList(
-					"s","ℙ(s)",
-					"t","ℙ(t)"
-				),
-				mSet(
-				"f ∈ s ↣ t",
-				"a ∈ ℙ1(s)"
-				),"f[a] ∈ ℙ1(t)"
-		,true);
+		doTest(mTypeEnvironment("s=ℙ(s); t=ℙ(t)", ff),
+				mSet("f ∈ s ↣ t", "a ∈ ℙ(s)", "a ≠ ∅"),
+				"f[a] ∈ ℙ(t) ∧ f[a] ≠ ∅", true);
+
+		doTest(mTypeEnvironment("s=ℙ(s); t=ℙ(t)", ff),
+				mSet("f ∈ s ↣ t", "a ∈ ℙ1(s)"), "f[a] ∈ ℙ1(t)", true);
 		
 	}
 	
@@ -214,16 +138,8 @@ public class RodinTests extends AbstractRodinTest {
 //		|---
 //		a <: f~[b]
 		
-		doTest(
-				mList(
-				"A","ℙ(A)",
-				"E","ℙ(A)"
-				),
-				mSet(
-				"f ∈ A→E",
-				"f[a] ⊆ b"
-				),"a ⊆ f∼[b]"
-		,true);
+		doTest(mTypeEnvironment("A=ℙ(A); E=ℙ(A)", ff),
+				mSet("f ∈ A→E", "f[a] ⊆ b"), "a ⊆ f∼[b]", true);
 		
 //		f : E-->E
 //		f~[b] : dom(K)
@@ -232,10 +148,7 @@ public class RodinTests extends AbstractRodinTest {
 //		|---
 //		K(f~[b]) <: f~[b]
 		
-		doTest(
-				mList(
-					"E","ℙ(E)"
-				),
+		doTest(mTypeEnvironment("E=ℙ(E)", ff),
 				mSet(
 				"f ∈ E → E",
 				"K ∈ ℙ(E) ⇸ ℙ(E)",
@@ -253,8 +166,8 @@ public class RodinTests extends AbstractRodinTest {
 //		|--
 //		x:t & x=x0
 		
-//		doTest(	mList(
-//				"t","ℙ(ℙ(S))"
+//		doTest(	mTypeEnvironment(
+//				"t=ℙ(ℙ(S)), ff"
 //				),
 //				mSet(
 //				"q∈t↔t",
@@ -263,51 +176,32 @@ public class RodinTests extends AbstractRodinTest {
 //				),"x∈t ∧ (∀y·y∈x⇔y∈x0) ∧ x=x0",true
 //		);
 		
-		doTest(	mList(
-				"x","ℙ(s)",
-				"x0","ℙ(s)",
-				"q","ℙ(ℙ(s)×ℙ(s))",
-				"t","ℙ(ℙ(s))"
-				),
+		doTest(mTypeEnvironment("x=ℙ(s); x0=ℙ(s); q=ℙ(ℙ(s)×ℙ(s)); t=ℙ(ℙ(s))",
+				ff),
 				 mSet(
 				"q∈t ↔ t",
 				"∀a,b·a∈t∧b∈t⇒(a ↦ b∈q⇔a⊆b)",
 				"x ↦ x0∈q∩q∼"
 				),"(∀y·y∈x⇔y∈x0)",true);
 		
-		doTest(
-				mList(
-				"x","ℙ(s)",
-				"x0","ℙ(s)",
-				"q","ℙ(ℙ(s)×ℙ(s))",
-				"t","ℙ(ℙ(s))"
-				),
+		doTest(mTypeEnvironment("x=ℙ(s); x0=ℙ(s); q=ℙ(ℙ(s)×ℙ(s)); t=ℙ(ℙ(s))",
+				ff),
 				 mSet(
 				"q∈t ↔ t",
 				"∀a,b·a∈t∧b∈t⇒(a ↦ b∈q⇔a⊆b)",
 				"x ↦ x0∈q∩q∼"
 				),"x∈t",true);
 		
-		doTest(
-				mList(
-				"x","ℙ(s)",
-				"x0","ℙ(s)",
-				"q","ℙ(ℙ(s)×ℙ(s))",
-				"t","ℙ(ℙ(s))"
-				),
+		doTest(mTypeEnvironment("x=ℙ(s); x0=ℙ(s); q=ℙ(ℙ(s)×ℙ(s)); t=ℙ(ℙ(s))",
+				ff),
 				 mSet(
 				"q∈t ↔ t",
 				"∀a,b·a∈t∧b∈t⇒(a ↦ b∈q⇔a⊆b)",
 				"x ↦ x0∈q∩q∼"
 				),"x=x0",true);
 		
-		doTest(
-				mList(
-				"x","ℙ(s)",
-				"x0","ℙ(s)",
-				"q","ℙ(ℙ(s)×ℙ(s))",
-				"t","ℙ(ℙ(s))"
-				),
+		doTest(mTypeEnvironment("x=ℙ(s); x0=ℙ(s); q=ℙ(ℙ(s)×ℙ(s)); t=ℙ(ℙ(s))",
+				ff),
 				 mSet(
 				"q∈t ↔ t",
 				"∀a,b·a∈t∧b∈t⇒(a ↦ b∈q⇔a⊆b)",
@@ -325,56 +219,32 @@ public class RodinTests extends AbstractRodinTest {
 //		 ∧
 //		 (∀x0,x1,x2·((x1 ↦ x0∈f∧x1∈x)∨(x0 ↦ x1∈g∧¬(∃x1·x1∈x∧x1 ↦ x0∈f)))∧((x2 ↦ x0∈f∧x2∈x)∨(x0 ↦ x2∈g∧¬(∃x1·x1∈x∧x1 ↦ x0∈f)))⇒x1=x2)
 		
-		doTest(
-				mList(
-				"T","ℙ(T)",
-				"x","ℙ(S)",
-				"S","ℙ(S)",
-				"f","ℙ(S×T)",
-				"g","ℙ(T×S)"
-				),
+		doTest(mTypeEnvironment("T=ℙ(T); x=ℙ(S); S=ℙ(S); f=S↔T; g=T↔S",
+				ff),
 				 mSet(
 				"f∈S ↣ T",
 				"g∈T ↣ S",
 				"x=S ∖ g[T ∖ f[x]]"
 				),"(∀x0,x1,x2·((x0 ↦ x1∈f∧x0∈x)∨(x1 ↦ x0∈g∧¬(∃x0·x0∈x∧x0 ↦ x1∈f)))∧((x0 ↦ x2∈f∧x0∈x)∨(x2 ↦ x0∈g∧¬(∃x0·x0∈x∧x0 ↦ x2∈f)))⇒x1=x2)",true);
 		
-		doTest(
-				mList(
-				"T","ℙ(T)",
-				"x","ℙ(S)",
-				"S","ℙ(S)",
-				"f","ℙ(S×T)",
-				"g","ℙ(T×S)"
-				),
+		doTest(mTypeEnvironment("T=ℙ(T); x=ℙ(S); S=ℙ(S); f=S↔T; g=T↔S",
+				ff),
 				 mSet(
 				"f∈S ↣ T",
 				"g∈T ↣ S",
 				"x=S ∖ g[T ∖ f[x]]"
 				),"(∀x0·∃x1·(x0 ↦ x1∈f∧x0∈x)∨(x1 ↦ x0∈g∧¬(∃x0·x0∈x∧x0 ↦ x1∈f)))",true);
 		
-		doTest(
-				mList(
-				"T","ℙ(T)",
-				"x","ℙ(S)",
-				"S","ℙ(S)",
-				"f","ℙ(S×T)",
-				"g","ℙ(T×S)"
-				),
+		doTest(mTypeEnvironment("T=ℙ(T); x=ℙ(S); S=ℙ(S); f=S↔T; g=T↔S",
+				ff),
 				 mSet(
 				"f∈S ↣ T",
 				"g∈T ↣ S",
 				"x=S ∖ g[T ∖ f[x]]"
 				),"(∀x0·∃x1·(x1 ↦ x0∈f∧x1∈x)∨(x0 ↦ x1∈g∧¬(∃x1·x1∈x∧x1 ↦ x0∈f)))",true);
 		
-		doTest(
-				mList(
-				"T","ℙ(T)",
-				"x","ℙ(S)",
-				"S","ℙ(S)",
-				"f","ℙ(S×T)",
-				"g","ℙ(T×S)"
-				),
+		doTest(mTypeEnvironment("T=ℙ(T); x=ℙ(S); S=ℙ(S); f=S↔T; g=T↔S",
+				ff),
 				 mSet(
 				"f∈S ↣ T",
 				"g∈T ↣ S",
@@ -382,14 +252,8 @@ public class RodinTests extends AbstractRodinTest {
 				),"(∀x0,x1,x2·((x1 ↦ x0∈f∧x1∈x)∨(x0 ↦ x1∈g∧¬(∃x1·x1∈x∧x1 ↦ x0∈f)))∧((x2 ↦ x0∈f∧x2∈x)∨(x0 ↦ x2∈g∧¬(∃x1·x1∈x∧x1 ↦ x0∈f)))⇒x1=x2)",true);
 		
 		
-		doTest(
-				mList(
-				"T","ℙ(T)",
-				"x","ℙ(S)",
-				"S","ℙ(S)",
-				"f","ℙ(S×T)",
-				"g","ℙ(T×S)"
-				),
+		doTest(mTypeEnvironment("T=ℙ(T); x=ℙ(S); S=ℙ(S); f=S↔T; g=T↔S",
+				ff),
 				 mSet(
 				"f∈S ↣ T",
 				"g∈T ↣ S",
@@ -399,15 +263,9 @@ public class RodinTests extends AbstractRodinTest {
 						"(∀x0·∃x1·(x0 ↦ x1∈f∧x0∈x)∨(x1 ↦ x0∈g∧¬(∃x0·x0∈x∧x0 ↦ x1∈f)))",true);
 		
 		
-		doTest(
-				mList(
-				"T","ℙ(T)",
-				"x","ℙ(S)",
-				"S","ℙ(S)",
-				"f","ℙ(S×T)",
-				"g","ℙ(T×S)"
-				),
-				 mSet(
+		doTest(mTypeEnvironment("T=ℙ(T); x=ℙ(S); S=ℙ(S); f=S↔T; g=T↔S",
+				ff),
+				mSet(
 				"f∈S ↣ T",
 				"g∈T ↣ S",
 				"x=S ∖ g[T ∖ f[x]]"
@@ -416,15 +274,7 @@ public class RodinTests extends AbstractRodinTest {
 	
     @Test
 	public void testCelebrity() {
-		doTest(
-				mList(
-				"Q","ℙ(ℤ)",
-				"P","ℙ(ℤ)",
-				"x","ℤ",
-				"y","ℤ",
-				"c","ℤ",
-				"k","ℙ(ℤ×ℤ)"
-				),
+		doTest(mTypeEnvironment("Q=ℙ(ℤ); P=ℙ(ℤ); x=ℤ; y=ℤ; c=ℤ; k=ℤ↔ℤ", ff),
 				 mSet(
 				"c∈Q",
 				"x∈Q",
@@ -435,11 +285,7 @@ public class RodinTests extends AbstractRodinTest {
 	}
     @Test
 	public void testFailingExample2() {
-		doTest(
-				mList(
-				"S","ℙ(S)",
-				"r","ℙ(S×S)"
-				),
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S", ff),
 				 mSet(
 				"r∈S ↔ S",
 				"ran(r)=S",
@@ -452,28 +298,14 @@ public class RodinTests extends AbstractRodinTest {
 //	public void testFailingExample3() {
 //		initDebug();
 //		doTest(
-//				mList(
-//				"guest","ℙ(CARD×GUEST)",
-//				"r0","ROOM",
-//				"c","CARD",
-//				"KEY","ℙ(KEY)",
-//				"owns","ℙ(ROOM×GUEST)",
-//				"key","ℙ(KEY)",
-//				"k","KEY",
-//				"CARD","ℙ(CARD)",
-//				"isin","ℙ(ROOM×GUEST)",
-//				"crd","ℙ(CARD)",
-//				"g","GUEST",
-//				"c0","CARD",
-//				"safe","ℙ(ROOM)",
-//				"snd","ℙ(CARD×KEY)",
-//				"currk","ℙ(ROOM×KEY)",
-//				"ROOM","ℙ(ROOM)",
-//				"fst","ℙ(CARD×KEY)",
-//				"GUEST","ℙ(GUEST)",
-//				"roomk","ℙ(ROOM×KEY)",
-//				"r","ROOM"
-//				),
+//				mTypeEnvironment(
+//              "guest=CARD↔GUEST; r0=ROOM; c=CARD; KEY=ℙ(KEY);"
+// 				+" owns=ROOM↔GUEST; key=ℙ(KEY); k=KEY; CARD=ℙ(CARD);"
+//              +" isin=ROOM↔GUEST; crd=ℙ(CARD); g=GUEST; c0=CARD;"
+// 				+" safe=ℙ(ROOM); snd=CARD↔KEY; currk=ROOM↔KEY;"
+// 				+ " ROOM=ℙ(ROOM); fst=CARD↔KEY; GUEST=ℙ(GUEST);"
+// 				+" roomk=ROOM↔KEY; r=ROOM"
+//				ff ),
 //				 mSet(
 //				"g∈GUEST",
 //				"∀r,c·¬r∈safe∧c∈crd∧r ↦ guest(c)∈owns∧currk(r)=snd(c)⇒¬roomk(r)=snd(c)",
@@ -508,16 +340,8 @@ public class RodinTests extends AbstractRodinTest {
 	
     @Test
 	public void testfifth() {
-		doTest(
-				mList(
-				"T","ℙ(T)",
-				"A","ℙ(S)",
-				"B","ℙ(T)",
-				"S","ℙ(S)",
-				"b","T",
-				"a","S",
-				"f","ℙ(S×T)"
-				),
+		doTest(mTypeEnvironment(
+				"T=ℙ(T); A=ℙ(S); B=ℙ(T); S=ℙ(S); b=T; a=S; f=S↔T", ff),
 				 mSet(
 				"A⊆S",
 				"B⊆T",
@@ -526,16 +350,8 @@ public class RodinTests extends AbstractRodinTest {
 				"¬b∈B"
 				),"(∀x,x0·x ↦ x0∈f∨(x=a∧x0=b)⇒(x∈A∨x=a)∧(x0∈B∨x0=b))",true);
 		
-		doTest(
-				mList(
-				"T","ℙ(T)",
-				"A","ℙ(S)",
-				"B","ℙ(T)",
-				"S","ℙ(S)",
-				"b","T",
-				"a","S",
-				"f","ℙ(S×T)"
-				),
+		doTest(mTypeEnvironment(
+				"T=ℙ(T); A=ℙ(S); B=ℙ(T); S=ℙ(S); b=T; a=S; f=S↔T", ff),
 				 mSet(
 				"A⊆S",
 				"B⊆T",
@@ -544,16 +360,8 @@ public class RodinTests extends AbstractRodinTest {
 				"¬b∈B"
 				),"(∀x,x0,x1·(x ↦ x0∈f∨(x=a∧x0=b))∧(x ↦ x1∈f∨(x=a∧x1=b))⇒x0=x1)",true);
 		
-		doTest(
-				mList(
-				"T","ℙ(T)",
-				"A","ℙ(S)",
-				"B","ℙ(T)",
-				"S","ℙ(S)",
-				"b","T",
-				"a","S",
-				"f","ℙ(S×T)"
-				),
+		doTest(mTypeEnvironment(
+				"T=ℙ(T); A=ℙ(S); B=ℙ(T); S=ℙ(S); b=T; a=S; f=S↔T", ff),
 				 mSet(
 				"A⊆S",
 				"B⊆T",
@@ -566,9 +374,8 @@ public class RodinTests extends AbstractRodinTest {
 	
 //	public void testLoop() {
 //		doTest(
-//				mList(
-//				"q","ℙ(S)",
-//				"r","ℙ(S×S)"
+//				mTypeEnvironment(
+//				"q=ℙ(S); r=S↔S", ff
 //				),
 //				 mSet(
 //				"∀q·q⊆ran(r)∧ran(r) ∖ r∼[ran(r) ∖ q]⊆q⇒ran(r)⊆q",
@@ -581,11 +388,8 @@ public class RodinTests extends AbstractRodinTest {
 
     @Test
 	public void testRelation() {
-		doTest(
-				mList(
-					"A","ℙ(A)",
-					"B","ℙ(B)"
-				),mSet(
+		doTest(mTypeEnvironment("A=ℙ(A); B=ℙ(B)", ff),
+				mSet(
 					"f∈A→B",
 					"p⊆A",
 					"x∈p"
@@ -614,21 +418,22 @@ public class RodinTests extends AbstractRodinTest {
     @Test
 	public void testRubin() {
 		doTest(
-				mList("A","ℙ(E)"),
+				mTypeEnvironment("A=ℙ(E)", ff),
 				mSet(	"∀x·x∈A⇒x∈B",
 						"∀y·y∈B⇒(∀x·x∈A)"
 				),"(∀x·x∈B)⇔a∈B",true
 		);
 		
-		doTest(mList("S","ℙ(E)","R","ℙ(E×E)"),mSet(
+		doTest(mTypeEnvironment("S=ℙ(E); R=E↔E", ff),
+				mSet(
 				"∃x·x∈P∧x ↦ a∈R",
 				"a∈S",
 				"∀x·x∈P∧¬(∃y·y∈Q∧x ↦ y∈R)⇒¬(∃z·z∈S∧x ↦ z∈R)"),
 				"∃x,y·x∈P∧y∈Q∧x ↦ y∈R",true
 		);
 		
-		doTest(mList("P", "ℙ(E)"), NO_HYP, "(∀x·x∈P⇔x∈Q)⇒((∀x·x∈P)⇔(∀x·x∈Q))",
-				true);
+		doTest(mTypeEnvironment("P=ℙ(E)", ff), NO_HYP,
+				"(∀x·x∈P⇔x∈Q)⇒((∀x·x∈P)⇔(∀x·x∈Q))", true);
 	}
 	
     @Test
@@ -643,69 +448,39 @@ public class RodinTests extends AbstractRodinTest {
 //		∧
 //		(∀x,x0,x1·(∃x1·x0 ↦ x1∈r∧x1 ↦ x∈s)∧(∃x0·x1 ↦ x0∈r∧x0 ↦ x∈s)⇒x0=x1)
 		
-		doTest(
-				mList(
-				"S","ℙ(S)",
-				"r","ℙ(S×S)",
-				"s","ℙ(S×S)"
-				),
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
 				 mSet(
 				"r∈S ↣ S",
 				"s∈S ↣ S"
 				),"(∀x,x0,x1·(∃x1·x ↦ x1∈r∧x1 ↦ x0∈s)∧(∃x0·x ↦ x0∈r∧x0 ↦ x1∈s)⇒x0=x1)",true);
 		
-		doTest(
-				mList(
-				"S","ℙ(S)",
-				"r","ℙ(S×S)",
-				"s","ℙ(S×S)"
-				),
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
 				 mSet(
 				"r∈S ↣ S",
 				"s∈S ↣ S"
 				),"(∀x·∃x0,x1·x ↦ x1∈r∧x1 ↦ x0∈s)",true);
 		
-		doTest(
-				mList(
-				"S","ℙ(S)",
-				"r","ℙ(S×S)",
-				"s","ℙ(S×S)"
-				),
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
 				 mSet(
 				"r∈S ↣ S",
 				"s∈S ↣ S"
 				),"(∀x,x0,x1·(∃x1·x0 ↦ x1∈r∧x1 ↦ x∈s)∧(∃x0·x1 ↦ x0∈r∧x0 ↦ x∈s)⇒x0=x1)",true);
 
-		doTest(
-				mList(
-				"S","ℙ(S)",
-				"r","ℙ(S×S)",
-				"s","ℙ(S×S)"
-				),
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
 				 mSet(
 				"r∈S ↣ S",
 				"s∈S ↣ S"
 				),"(∀x·∃x0,x1·x ↦ x1∈r∧x1 ↦ x0∈s)"+
 					"∧(∀x,x0,x1·(∃x1·x0 ↦ x1∈r∧x1 ↦ x∈s)∧(∃x0·x1 ↦ x0∈r∧x0 ↦ x∈s)⇒x0=x1)",true);
 
-		doTest(
-				mList(
-				"S","ℙ(S)",
-				"r","ℙ(S×S)",
-				"s","ℙ(S×S)"
-				),
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
 				 mSet(
 				"r∈S ↣ S",
 				"s∈S ↣ S"
 				),"(∀x,x0,x1·(∃x1·x ↦ x1∈r∧x1 ↦ x0∈s)∧(∃x0·x ↦ x0∈r∧x0 ↦ x1∈s)⇒x0=x1)"+
 					"∧(∀x,x0,x1·(∃x1·x0 ↦ x1∈r∧x1 ↦ x∈s)∧(∃x0·x1 ↦ x0∈r∧x0 ↦ x∈s)⇒x0=x1)",true);
 		
-		doTest(
-				mList(
-				"S","ℙ(S)",
-				"r","ℙ(S×S)",
-				"s","ℙ(S×S)"
-				),
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
 				 mSet(
 				"r∈S ↣ S",
 				"s∈S ↣ S"
@@ -713,9 +488,8 @@ public class RodinTests extends AbstractRodinTest {
 					"∧(∀x·∃x0,x1·x ↦ x1∈r∧x1 ↦ x0∈s)",true);
 		
 		
-		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
-				"r∈S ↣ S", "s∈S ↣ S"),
-				"r;s∈S ↣ S",true);
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
+				mSet("r∈S ↣ S", "s∈S ↣ S"), "r;s∈S ↣ S", true);
 	}
 	
     @Test
@@ -725,14 +499,8 @@ public class RodinTests extends AbstractRodinTest {
 	
     @Test
 	public void testFunctionWithExtraHypotheses() {
-		doTest(
-				mList(
-				"h","ℙ(S×S)",
-				"S","ℙ(S)",
-				"k","ℙ(S×S)",
-				"f","ℙ(S×S)",
-				"g","ℙ(S×S)"
-				),
+		doTest(mTypeEnvironment(
+				"h=S↔S; S=ℙ(S); k=S↔S; f=S↔S; g=S↔S", ff),
 				 mSet(
 				"f∈S ↣ S",
 				"g∈S ↣ S",
@@ -742,32 +510,26 @@ public class RodinTests extends AbstractRodinTest {
 				),"h;k∈S → S",true);
 	}
 	
-    @Test
+	@Test
 	public void testAllFunctionSameType() {
-		
-		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
-				"r∈S ↣ S", "s∈S ↣ S"),
-				"r;s∈S ↣ S",true);
-		
-		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
-				"r∈S ⤖ S", "s∈S ⤖ S"),
-				"r;s∈S ⤖ S",true);
-		
-		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
-				"r∈S ↠ S", "s∈S ↠ S"),
-				"r;s∈S ↠ S",true);
-		
-		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
-				"r∈S ⤔ S", "s∈S ⤔ S"),
-				"r;s∈S ⤔ S",true);
 
-		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
-				"r∈S ⤀ S", "s∈S ⤀ S"),
-				"r;s∈S ⤀ S",true);
-		
-		doTest(mList("S", "ℙ(S)", "r", "ℙ(S×S)", "s", "ℙ(S×S)"), mSet(
-				"r∈S → S", "s∈S → S"),
-				"r;s∈S → S",true);
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
+				mSet("r∈S ↣ S", "s∈S ↣ S"), "r;s∈S ↣ S", true);
+
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
+				mSet("r∈S ⤖ S", "s∈S ⤖ S"), "r;s∈S ⤖ S", true);
+
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
+				mSet("r∈S ↠ S", "s∈S ↠ S"), "r;s∈S ↠ S", true);
+
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
+				mSet("r∈S ⤔ S", "s∈S ⤔ S"), "r;s∈S ⤔ S", true);
+
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
+				mSet("r∈S ⤀ S", "s∈S ⤀ S"), "r;s∈S ⤀ S", true);
+
+		doTest(mTypeEnvironment("S=ℙ(S); r=S↔S; s=S↔S", ff),
+				mSet("r∈S → S", "s∈S → S"), "r;s∈S → S", true);
 	}
 	
     @Test
@@ -870,22 +632,24 @@ public class RodinTests extends AbstractRodinTest {
     @Test
 	public void testOverride() {
 		
-		doTest(mList("C","ℙ(C)","D","ℙ(D)"),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
-				"(∀x,x0,x1·((x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b))∧((x ↦ x1∈f∧¬x=c)∨(x=c∧x1=b))⇒x0=x1)", true);
+		doTest(mTypeEnvironment("C=ℙ(C); D=ℙ(D)", ff),
+				mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
+				"(∀x,x0,x1·((x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b))∧((x ↦ x1∈f∧¬x=c)∨(x=c∧x1=b))⇒x0=x1)",
+				true);
 		
-//		doTest(mList("C","ℙ(E)","D","ℙ(E)"),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
+//		doTest(mTypeEnvironment("C=ℙ(E); D=ℙ(E)", ff),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
 //				"(∀x,x0·(x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b)⇒x∈C∧x0∈D)", true);
-//		doTest(mList("C","ℙ(E)","D","ℙ(E)"),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
+//		doTest(mTypeEnvironment("C=ℙ(E); D=ℙ(E)", ff),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
 //				"(∀x·x∈C⇒(∃x0·(x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b)))", true);
 //
 //		
-//		doTest(mList("C","ℙ(E)","D","ℙ(E)"),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
+//		doTest(mTypeEnvironment("C=ℙ(E); D=ℙ(E)", ff),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
 //				"(∀x,x0·(x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b)⇒x∈C∧x0∈D)" +
 //				"∧(∀x,x0,x1·((x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b))∧((x ↦ x1∈f∧¬x=c)∨(x=c∧x1=b))⇒x0=x1)", true);
-//		doTest(mList("C","ℙ(E)","D","ℙ(E)"),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
+//		doTest(mTypeEnvironment("C=ℙ(E); D=ℙ(E)", ff),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
 //				"(∀x,x0·(x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b)⇒x∈C∧x0∈D)" +
 //				"∧(∀x·x∈C⇒(∃x0·(x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b)))", true);
-//		doTest(mList("C","ℙ(E)","D","ℙ(E)"),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
+//		doTest(mTypeEnvironment("C=ℙ(E); D=ℙ(E)", ff),mSet("f ∈ C → D", "c ∈ C", "b ∈ D"),
 //				"(∀x,x0,x1·((x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b))∧((x ↦ x1∈f∧¬x=c)∨(x=c∧x1=b))⇒x0=x1)" +
 //				"∧(∀x·x∈C⇒(∃x0·(x ↦ x0∈f∧¬x=c)∨(x=c∧x0=b)))", true);
 		
@@ -991,7 +755,7 @@ public class RodinTests extends AbstractRodinTest {
 			doTest(mSet("r ∈ E ↔ E", "s ∈ E ↔ E"), "r;s ⊆ E × E", true);
 			doTest(mSet("r ∈ E ↔ E", "s ∈ E ↔ E"), "r;s ∈ E ↔ E", true);
 			doTest(mSet("r ∈ E ⇸ E", "s ∈ E ⇸ E"), "r;s ∈ E ⇸ E", true);
-			doTest(mSet("r ∈ E ↔ E", "s ∈ E ↔ E"), "r;s ∈ ℙ(E × E)", true);
+			doTest(mSet("r ∈ E ↔ E", "s ∈ E ↔ E"), "r;s ∈ E ↔ E", true);
 			doTest(mSet("∀x,y·x ↦ y ∈ s ⇒ (x∈E ∧ y∈E)",
 					"∀x,y·x ↦ y ∈ r ⇒ (x∈E ∧ y∈E)"),
 					"∀x,y·(∃z·x ↦ z ∈ r ∧ z ↦ y ∈ r) ⇒ (x∈E ∧ y∈E)", true);
@@ -1078,7 +842,7 @@ public class RodinTests extends AbstractRodinTest {
 	
     @Test
 	public void testBug1833264() {
-		doTest(mList("DO", "S"),
+		doTest(mTypeEnvironment("DO=S", ff),
 				NO_HYP,
 				"f(bool((DO=DC ∧ oD=TRUE) ∨ (DO=DO ∧ cD=TRUE)) ↦ DO)" +
 				"< f(bool((dEC=DC ∧ oD=TRUE) ∨ (dEC=DO∧cD=TRUE)) ↦ dEC)",
@@ -1088,8 +852,7 @@ public class RodinTests extends AbstractRodinTest {
 	
     @Test
 	public void test1833264_1() throws Exception {
-		
-		doTest(mList("DO", "S"),
+		doTest(mTypeEnvironment("DO=S", ff),
 				NO_HYP,
 				"(DO=DC ∧ oD=TRUE) ⇔ " +
 				"((dEC=DC ∧ oD=TRUE) ∨ (dEC=DO∧cD=TRUE))",
@@ -1098,21 +861,17 @@ public class RodinTests extends AbstractRodinTest {
 	}
 	
     @Test
-	public void testBug1840292(){
-		doTest(mList("r3", "ℙ(S×S)", "r2", "ℙ(S×S)", "r", "ℙ(S×S)", "S",
-				"ℙ(S)", "R", "ℙ(ℙ(S×S))"), mSet("R∈ℙ(S ↔ S)", "r∈R", "r∼∈R",
-				"r∩id=∅", "∅∈R", "r3∈S ↔ S", "r2∈S ↔ S"), "(r ∖ r2);r3⊆r3",
-				false,
-				2000);
+	public void testBug1840292() {
+		doTest(mTypeEnvironment(
+				"r3=S↔S; r2=S↔S; r=S↔S; S=ℙ(S); R=ℙ(S↔S)", ff),
+				mSet("R∈ℙ(S ↔ S)", "r∈R", "r∼∈R", "r∩id=∅", "∅∈R", "r3∈S ↔ S",
+						"r2∈S ↔ S"), "(r ∖ r2);r3⊆r3", false, 2000);
 	}
 	
     @Test
-	public void testBug1840292_1(){
-		doTest(mList("r", "ℙ(S×S)", "S", "ℙ(S)", "R", "ℙ(ℙ(S×S))"),
-				mSet("r∼∈ U", "∅∈R", "r∩id=∅"),
-				"r = ∅",
-				false,
-				2000);
+	public void testBug1840292_1() {
+		doTest(mTypeEnvironment("r=S↔S; S=ℙ(S); R=ℙ(S↔S)", ff),
+				mSet("r∼∈ U", "∅∈R", "r∩id=∅"), "r = ∅", false, 2000);
 	}
 
 	/**
@@ -1120,15 +879,9 @@ public class RodinTests extends AbstractRodinTest {
 	 */
     @Test
 	public void testBug_1920747() {
-		doTest(
-				mList(
-					"set1","ℙ(set1)"
-				), mSet(
-					"cst1 ⊆ set1",
-					"cst2 ⊆ set1",
-					"cst3 ∈ cst1"
-				), "cst3 ∈ cst2"
-				, false);
+		doTest(mTypeEnvironment("set1=ℙ(set1)", ff),
+				mSet("cst1 ⊆ set1", "cst2 ⊆ set1", "cst3 ∈ cst1"),
+				"cst3 ∈ cst2", false);
 	}
 
 	/**
@@ -1136,14 +889,8 @@ public class RodinTests extends AbstractRodinTest {
 	 */
     @Test
 	public void testBug_1920747_1() {
-		doTest(
-				mList(
-					"A","ℙ(S)",
-					"B","ℙ(S)"
-				), mSet(
-					"x ∈ A"
-				), "x ∈ B"
-				, false);
+		doTest(mTypeEnvironment("A=ℙ(S); B=ℙ(S)", ff),				
+				mSet("x ∈ A"), "x ∈ B", false);
 	}
 
 	/**
@@ -1152,9 +899,10 @@ public class RodinTests extends AbstractRodinTest {
 	 * Here, we need that a quantified variable gets instantiated by a simple type.
 	 * </p>
 	 */
-    @Test
+	@Test
 	public void testTypeInstantiation() {
-		doTest(mList("S", "ℙ(S)"), NO_HYP, "∃y·∀x·x ∈ S ⇒ x ∈ y", true);
+		doTest(mTypeEnvironment("S=ℙ(S)", ff), NO_HYP, "∃y·∀x·x ∈ S ⇒ x ∈ y",
+				true);
 	}
 
 	// public static void main(String[] args) {
@@ -1167,16 +915,12 @@ public class RodinTests extends AbstractRodinTest {
     @Test
 	public void testLSR() throws Exception {
 		doTest( //
-				mList( //
-						"NODES", "ℙ(NODES)", //
-						"DLinks", "ℙ(NODES×NODES)", //
-						"RLinks", "ℙ(NODES×NODES)", //
-						"link", "NODES×NODES", //
-						"rlinks", "ℙ(NODES×ℙ(NODES×NODES))", //
-						"n", "NODES", //
-						"x", "NODES", //
-						"x0", "NODES" //
-				), mSet( //
+				mTypeEnvironment(
+						"NODES=ℙ(NODES); DLinks=NODES↔NODES; "
+						+"RLinks=NODES↔NODES; link=NODES×NODES;"
+						+" rlinks=NODES↔(NODES↔NODES); n=NODES;"
+						+" x=NODES; x0=NODES", ff), 
+				mSet( //
 						"∀n·rlinks(n) ⊆ RLinks ∪ DLinks", //
 						"¬link∈RLinks", //
 						"x ↦ x0∈rlinks(n)" //
@@ -1187,31 +931,18 @@ public class RodinTests extends AbstractRodinTest {
     @Test
 	public void testBUG() throws Exception {
 		doTest( //
-				mList( //
-						"S", "ℙ(S)", //
-						"a", "S" //
-				), NO_HYP, //
+				mTypeEnvironment( //
+						"S=ℙ(S); a=S", ff), //
+				NO_HYP, //
 				"a=b ∨ c=b ⇔ a=b ∨ d=b", //
 				false);
 	}
 
 	@Test
 	public void testMapletVariable() throws Exception {
-		doTest( //
-				mList( //
-						"S", "ℙ(S)", //
-						"T", "ℙ(T)", //
-						"A", "ℙ(S)", //
-						"a", "ℙ(S)", //
-						"B", "ℙ(T)", //
-						"b", "ℙ(T)", //
-						"x", "S×T" //
-				), mSet(//
-						"a ⊆ A",//
-						"b ⊆ B",//
-						"x ∈ a×b"), //
-				"x ∈ A×B", //
-				true);
+		doTest(mTypeEnvironment(
+				"S=ℙ(S); T=ℙ(T); A=ℙ(S); a=ℙ(S); B=ℙ(T); b=ℙ(T); x=S×T", ff),//
+				mSet("a ⊆ A", "b ⊆ B", "x ∈ a×b"), "x ∈ A×B", true);
 	}
 
 	@Test
@@ -1221,37 +952,30 @@ public class RodinTests extends AbstractRodinTest {
 
 	@Test
 	public void bug2961857() throws Exception {
-		doTest( //
-				mList( //
-						"S", "ℙ(S)", //
-						"T", "ℙ(T)", //
-						"p", "S×T" //
-				), NO_HYP, //
-				"p ∈ dom(prj1)", //
-				true);
+		doTest(mTypeEnvironment("S=ℙ(S); T=ℙ(T); p=S×T", ff), NO_HYP,
+				"p ∈ dom(prj1)", true);
 	}
 
 	@Test
 	public void bug3029910() {
-		doTest(mList("a", "S", "b", "S"), mSet("{a,b} = ∅"), "⊥", true);
+		doTest(mTypeEnvironment("a=S; b=S", ff), mSet("{a,b} = ∅"), "⊥", true);
 	}
 
 	@Test
 	public void bug3085103() {
-		doTest(mList("y", "BOOL"), mSet("t=FALSE", "y=z"), "t=TRUE ⇔ y=z",
-				false);
+		doTest(mTypeEnvironment("y=BOOL", ff), mSet("t=FALSE", "y=z"),
+				"t=TRUE ⇔ y=z", false);
 	}
 
 	@Test
 	public void bug3102775() {
-		doTest(mTypeEnvironment(), mSet("f(TRUE) = 1", "f(FALSE) = 0"), "⊥",
-				false);
+		doTest(NO_ENV, mSet("f(TRUE) = 1", "f(FALSE) = 0"), "⊥", false);
 	}
 
 	@Test
 	@Ignore("known bug")
 	public void bug3122147() {
-		doTest(mList("S", "ℙ(T)", "f", "ℙ(T×U)"), mSet(//
+		doTest(mTypeEnvironment("S=ℙ(T); f=T↔U", ff), mSet(//
 				"S⊆s ⇒ finite(union({x·x∈S ∣ f[{x}]}))", //
 				"S⊆s"),//
 				"finite(union({x·x∈S ∣ f[{x}]}))", true, 20);

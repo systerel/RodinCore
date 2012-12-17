@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.pp;
 
-import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
 import org.junit.Ignore;
@@ -30,42 +29,24 @@ public class SeedSearchProblem extends AbstractRodinTest {
 
 	@Test
 	public void lemma1() throws Exception {
-		doTest(
-				mList("lineRequested", "ℙ(ADDRESS×PROCESS)", //
-						"E", "FLAGS", //
-						"exclusive", "ℙ(ADDRESS×PROCESS)", //
-						"M", "FLAGS", //
-						"O", "FLAGS", //
-						"FLAGS", "ℙ(FLAGS)", //
-						"I", "FLAGS", //
-						"caches", "ℙ(PROCESS×ℙ(ADDRESS×DATA))", //
-						"invalid", "ℙ(ADDRESS×PROCESS)", //
-						"RUNNING", "TIMER_STATE", //
-						"S", "FLAGS", //
-						"mem", "ℙ(ADDRESS×DATA)", //
-						"v_mem", "ℙ(ADDRESS×DATA)", //
-						"LINE", "ℙ(DATA)", //
-						"FLAG", "ℙ(FLAGS)", //
-						"CPUReadRequests", "ℙ(PROCESS×ADDRESS)", //
-						"shared", "ℙ(ADDRESS×PROCESS)", //
-						"ownershipRequested", "ℙ(ADDRESS×PROCESS)", //
-						"CPUWriteRequests", "ℙ(PROCESS×(ADDRESS×DATA))", //
-						"c", "PROCESS", //
-						"a", "ADDRESS", //
-						"ADDRESS", "ℙ(ADDRESS)", //
-						"cacheTimer", "ℙ(PROCESS×TIMER_STATE)", //
-						"l", "DATA", //
-						"OFF", "TIMER_STATE", //
-						"TIMER_STATE", "ℙ(TIMER_STATE)", //
-						"owned", "ℙ(ADDRESS×PROCESS)", //
-						"CONTROLLER", "ℙ(PROCESS)", //
-						"modified", "ℙ(ADDRESS×PROCESS)", //
-						"memoryTimer", "TIMER_STATE", //
-						"flag", "ℙ(PROCESS×ADDRESS×FLAGS)", //
-						"PROCESS", "ℙ(PROCESS)", //
-						"DATA", "ℙ(DATA)", //
-						"TIMEOUT", "TIMER_STATE" //
-				),
+		doTest(mTypeEnvironment(
+				"lineRequested=ADDRESS↔PROCESS; E=FLAGS;" //
+				+" exclusive=ADDRESS↔PROCESS; M=FLAGS; O=FLAGS;" //
+				+" FLAGS=ℙ(FLAGS); I=FLAGS; caches=PROCESS↔ADDRESS↔DATA;" //
+				+" invalid=ADDRESS↔PROCESS; RUNNING=TIMER_STATE; S=FLAGS;" //
+				+" mem=ADDRESS↔DATA; v_mem=ADDRESS↔DATA; LINE=ℙ(DATA);" //
+				+" FLAG=ℙ(FLAGS); CPUReadRequests=PROCESS↔ADDRESS;" //
+				+" shared=ADDRESS↔PROCESS;" //
+				+" ownershipRequested=ADDRESS↔PROCESS;" //
+				+" CPUWriteRequests=PROCESS↔(ADDRESS×DATA); c=PROCESS;" //
+				+" a=ADDRESS; ADDRESS=ℙ(ADDRESS);" //
+				+" cacheTimer=PROCESS↔TIMER_STATE;" //
+				+" l=DATA; OFF=TIMER_STATE; TIMER_STATE=ℙ(TIMER_STATE);" //
+				+" owned=ADDRESS↔PROCESS; CONTROLLER=ℙ(PROCESS);" //
+				+" modified=ADDRESS↔PROCESS; memoryTimer=TIMER_STATE;" //
+				+" flag=PROCESS↔ADDRESS×FLAGS; PROCESS=ℙ(PROCESS);" //
+				+" DATA=ℙ(DATA); TIMEOUT=TIMER_STATE",
+				ff),
 				mSet(
 						"l∈LINE", //
 						"c∈CONTROLLER", //
@@ -160,42 +141,24 @@ public class SeedSearchProblem extends AbstractRodinTest {
 
 	@Test
 	public void lemma2() throws Exception {
-		doTest(
-				mList("E", "FLAGS", //
-						"lineRequested", "ℙ(ADDRESS×PROCESS)", //
-						"exclusive", "ℙ(ADDRESS×PROCESS)", //
-						"M", "FLAGS", //
-						"O", "FLAGS", //
-						"FLAGS", "ℙ(FLAGS)", //
-						"I", "FLAGS", //
-						"caches", "ℙ(PROCESS×ℙ(ADDRESS×DATA))", //
-						"invalid", "ℙ(ADDRESS×PROCESS)", //
-						"RUNNING", "TIMER_STATE", //
-						"S", "FLAGS", //
-						"mem", "ℙ(ADDRESS×DATA)", //
-						"v_mem", "ℙ(ADDRESS×DATA)", //
-						"LINE", "ℙ(DATA)", //
-						"FLAG", "ℙ(FLAGS)", //
-						"CPUReadRequests", "ℙ(PROCESS×ADDRESS)", //
-						"shared", "ℙ(ADDRESS×PROCESS)", //
-						"ownershipRequested", "ℙ(ADDRESS×PROCESS)", //
-						"CPUWriteRequests", "ℙ(PROCESS×(ADDRESS×DATA))", //
-						"c", "PROCESS", //
-						"a", "ADDRESS", //
-						"ADDRESS", "ℙ(ADDRESS)", //
-						"cacheTimer", "ℙ(PROCESS×TIMER_STATE)", //
-						"l", "DATA", //
-						"OFF", "TIMER_STATE", //
-						"TIMER_STATE", "ℙ(TIMER_STATE)", //
-						"owned", "ℙ(ADDRESS×PROCESS)", //
-						"CONTROLLER", "ℙ(PROCESS)", //
-						"modified", "ℙ(ADDRESS×PROCESS)", //
-						"memoryTimer", "TIMER_STATE", //
-						"flag", "ℙ(PROCESS×ADDRESS×FLAGS)", //
-						"PROCESS", "ℙ(PROCESS)", //
-						"DATA", "ℙ(DATA)", //
-						"TIMEOUT", "TIMER_STATE" //
-				),
+		doTest(mTypeEnvironment(
+				"E=FLAGS; lineRequested=ADDRESS↔PROCESS;" //
+				+" exclusive=ADDRESS↔PROCESS; M=FLAGS; O=FLAGS;" //
+				+" FLAGS=ℙ(FLAGS); I=FLAGS; caches=PROCESS↔ℙ(ADDRESS×DATA);" //
+				+" invalid=ADDRESS↔PROCESS; RUNNING=TIMER_STATE; S=FLAGS;" //
+				+" mem=ADDRESS↔DATA; v_mem=ADDRESS↔DATA; LINE=ℙ(DATA);" //
+				+" FLAG=ℙ(FLAGS); CPUReadRequests=PROCESS↔ADDRESS;" //
+				+" shared=ADDRESS↔PROCESS;" //
+				+" ownershipRequested=ADDRESS↔PROCESS;" //
+				+" CPUWriteRequests=PROCESS↔(ADDRESS×DATA); c=PROCESS;" //
+				+" a=ADDRESS; ADDRESS=ℙ(ADDRESS);" //
+				+" cacheTimer=PROCESS↔TIMER_STATE; l=DATA;" //
+				+" OFF=TIMER_STATE; TIMER_STATE=ℙ(TIMER_STATE);" //
+				+" owned=ADDRESS↔PROCESS; CONTROLLER=ℙ(PROCESS);" //
+				+" modified=ADDRESS↔PROCESS; memoryTimer=TIMER_STATE;" //
+				+" flag=PROCESS↔ADDRESS×FLAGS; PROCESS=ℙ(PROCESS);" //
+				+" DATA=ℙ(DATA); TIMEOUT=TIMER_STATE" //
+				, ff),
 				mSet(
 						"CPUReadRequests∈CONTROLLER ⇸ ADDRESS", //
 						"c∈CONTROLLER", //
@@ -304,41 +267,23 @@ public class SeedSearchProblem extends AbstractRodinTest {
 
 	@Test
 	public void lemma3() throws Exception {
-		doTest(
-				mList("lineRequested", "ℙ(ADDRESS×PROCESS)", //
-						"E", "FLAGS", //
-						"exclusive", "ℙ(ADDRESS×PROCESS)", //
-						"M", "FLAGS", //
-						"O", "FLAGS", //
-						"FLAGS", "ℙ(FLAGS)", //
-						"I", "FLAGS", //
-						"caches", "ℙ(PROCESS×ℙ(ADDRESS×DATA))", //
-						"invalid", "ℙ(ADDRESS×PROCESS)", //
-						"RUNNING", "TIMER_STATE", //
-						"S", "FLAGS", //
-						"mem", "ℙ(ADDRESS×DATA)", //
-						"v_mem", "ℙ(ADDRESS×DATA)", //
-						"LINE", "ℙ(DATA)", //
-						"FLAG", "ℙ(FLAGS)", //
-						"CPUReadRequests", "ℙ(PROCESS×ADDRESS)", //
-						"shared", "ℙ(ADDRESS×PROCESS)", //
-						"ownershipRequested", "ℙ(ADDRESS×PROCESS)", //
-						"CPUWriteRequests", "ℙ(PROCESS×(ADDRESS×DATA))", //
-						"ADDRESS", "ℙ(ADDRESS)", //
-						"a", "ADDRESS", //
-						"cacheTimer", "ℙ(PROCESS×TIMER_STATE)", //
-						"OFF", "TIMER_STATE", //
-						"TIMER_STATE", "ℙ(TIMER_STATE)", //
-						"owned", "ℙ(ADDRESS×PROCESS)", //
-						"modified", "ℙ(ADDRESS×PROCESS)", //
-						"CONTROLLER", "ℙ(PROCESS)", //
-						"memoryTimer", "TIMER_STATE", //
-						"flag", "ℙ(PROCESS×ADDRESS×FLAGS)", //
-						"p", "PROCESS", //
-						"PROCESS", "ℙ(PROCESS)", //
-						"DATA", "ℙ(DATA)", //
-						"TIMEOUT", "TIMER_STATE" //
-				),
+		doTest(mTypeEnvironment(
+				"lineRequested=ADDRESS↔PROCESS; E=FLAGS;" //
+				+" exclusive=ADDRESS↔PROCESS; M=FLAGS; O=FLAGS;" //
+				+" FLAGS=ℙ(FLAGS); I=FLAGS; caches=PROCESS↔ℙ(ADDRESS×DATA);" //
+				+" invalid=ADDRESS↔PROCESS; RUNNING=TIMER_STATE; S=FLAGS;" //
+				+" mem=ADDRESS↔DATA; v_mem=ADDRESS↔DATA; LINE=ℙ(DATA);" //
+				+" FLAG=ℙ(FLAGS); CPUReadRequests=PROCESS↔ADDRESS;" //
+				+" shared=ADDRESS↔PROCESS;" //
+				+" ownershipRequested=ADDRESS↔PROCESS;" //
+				+" CPUWriteRequests=PROCESS↔(ADDRESS×DATA);" //
+				+" ADDRESS=ℙ(ADDRESS); a=ADDRESS;" //
+				+" cacheTimer=PROCESS↔TIMER_STATE; OFF=TIMER_STATE;" //
+				+" TIMER_STATE=ℙ(TIMER_STATE); owned=ADDRESS↔PROCESS;" //
+				+" modified=ADDRESS↔PROCESS; CONTROLLER=ℙ(PROCESS);" //
+				+" memoryTimer=TIMER_STATE; flag=PROCESS↔ADDRESS×FLAGS;" //
+				+" p=PROCESS; PROCESS=ℙ(PROCESS); DATA=ℙ(DATA); TIMEOUT=TIMER_STATE" //
+				, ff),
 				mSet(
 						"memoryTimer=TIMEOUT", //
 						"a ↦ p∈lineRequested", //
@@ -443,19 +388,15 @@ public class SeedSearchProblem extends AbstractRodinTest {
 	 */
 	@Test
 	public void reduced3() throws Exception {
-		doTest(mList("lineRequested", "ℙ(ADD×PRC)", //
-				"M", "FLAGS", //
-				"O", "FLAGS", //
-				"I", "FLAGS", //
-				"caches", "ℙ(PRC×ℙ(ADD×DATA))", //
-				"S", "FLAGS", //
-				"CPUReadRequests", "ℙ(PRC×ADD)", //
-				"CPUWriteRequests", "ℙ(PRC×(ADD×DATA))", //
-				"a", "ADD", //
-				"flag", "ℙ(PRC×ADD×FLAGS)", //
-				"p", "PRC" //
-		), mSet("∃a,p·lineRequested={a ↦ p}", //
-				"∀l,c,p,a·" //
+		doTest(mTypeEnvironment(
+				"lineRequested=ADD↔PRC; M=FLAGS; O=FLAGS; I=FLAGS;" //
+				+" caches=PRC↔ℙ(ADD×DATA); S=FLAGS;" //
+				+" CPUReadRequests=PRC↔ADD;" //
+				+" CPUWriteRequests=PRC↔(ADD×DATA); a=ADD;" //
+				+" flag=PRC↔ADD×FLAGS; p=PRC" //
+				, ff),		
+				mSet("∃a,p·lineRequested={a ↦ p}", //
+						"∀l,c,p,a·" //
 						+ "  ( CPUWriteRequests(c) = a ↦ l" //
 						+ "  ⇒ flag(c ↦ a) = M" //
 						+ "  ∧ lineRequested = ∅" //

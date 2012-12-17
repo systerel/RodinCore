@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eventb.pp;
 
-import static org.eventb.internal.pp.core.elements.terms.Util.mList;
 import static org.eventb.internal.pp.core.elements.terms.Util.mSet;
 
-import java.util.List;
-
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -29,18 +27,18 @@ import org.junit.Test;
  */
 public class HypothesisSensitivity extends AbstractRodinTest {
 
-	static final List<String> typenv = mList("MESG", "ℙ(MESG)", "value",
-			"ℙ(Attrs×Attr_value)", "last_update", "ℙ(Attrs×Date_time)",
-			"Update_successful", "MESG", "time_now", "Date_time",
-			"update_mesg", "MESG", "pages", "ℙ(Page_number×Page)", "database",
-			"ℙ(Attr_id×Attrs)", "selected_ais", "ℙ(EDD_id×Attr_id)", "Attr_id",
-			"ℙ(Attr_id)", "contents", "ℙ(Page×Page_contents)", "fields",
-			"ℙ(Page_contents×Gr_fld)", "Attrs", "ℙ(Attrs)", "ups",
-			"ℙ(Attr_id×Attrs)", "manually_updated", "ℙ(Attrs×BOOL)", "EDD_id",
-			"ℙ(EDD_id)", "conform", "ℙ(Attr_id×Attr_value)", "attr",
-			"ℙ(Gr_fld×Attr_id)", "page_selections", "ℙ(EDD_id×Page_number)",
-			"ai", "Attr_id", "changed_ais", "ℙ(Attr_id)");
-
+	static final ITypeEnvironmentBuilder typenv = mTypeEnvironment(
+			"MESG=ℙ(MESG); value=Attrs↔Attr_value;" //
+			+" last_update=Attrs↔Date_time; Update_successful=MESG;" //
+			+" time_now=Date_time; update_mesg=MESG; pages=Page_number↔Page;" //
+			+" database=Attr_id↔Attrs; selected_ais=EDD_id↔Attr_id;" //
+			+" Attr_id=ℙ(Attr_id); contents=Page↔Page_contents;" //
+			+" fields=Page_contents↔Gr_fld; Attrs=ℙ(Attrs);" //
+			+" ups=Attr_id↔Attrs; manually_updated=Attrs↔BOOL;" //
+			+" EDD_id=ℙ(EDD_id); conform=Attr_id↔Attr_value;" //
+			+" attr=Gr_fld↔Attr_id; page_selections=EDD_id↔Page_number;" //
+			+" ai=Attr_id; changed_ais=ℙ(Attr_id)",
+			ff);
 	static final String H1 = "∀ai·ai∈dom(ups)⇒ai ↦ value(ups(ai))∈conform";
 	static final String H2 = "∀ai·ai ↦ value(database(ai))∈conform";
 	static final String H3 = "ups;last_update=dom(ups) × {time_now}";

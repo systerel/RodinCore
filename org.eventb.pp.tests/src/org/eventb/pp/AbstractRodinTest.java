@@ -16,7 +16,6 @@ package org.eventb.pp;
 import static org.eventb.pp.TestSequent.makeSequent;
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.ITypeEnvironment;
@@ -66,27 +65,17 @@ public abstract class AbstractRodinTest extends AbstractPPTest {
 
 	}
 
-	protected static void doTest(List<String> typenv, Set<String> hypotheses,
-			String goal, boolean result) {
-		final ISimpleSequent sequent = makeSequent(typenv, hypotheses, goal, ff);
-		new TestItem(sequent, result).run();
-	}
-
-	protected static void doTest(List<String> typenv, Set<String> hypotheses,
-			String goal, boolean result, int timeout) {
-		final ISimpleSequent sequent = makeSequent(typenv, hypotheses, goal, ff);
-		new TestItem(sequent, result, timeout).run();
-	}
-
 	protected static void doTest(ITypeEnvironment typenv,
 			Set<String> hypotheses, String goal, boolean result) {
-		final ISimpleSequent sequent = makeSequent(typenv, hypotheses, goal, ff);
+		final ISimpleSequent sequent = makeSequent(typenv, hypotheses, goal,
+				typenv.getFormulaFactory());
 		new TestItem(sequent, result).run();
 	}
 
 	protected static void doTest(ITypeEnvironment typenv,
 			Set<String> hypotheses, String goal, boolean result, int timeout) {
-		final ISimpleSequent sequent = makeSequent(typenv, hypotheses, goal, ff);
+		final ISimpleSequent sequent = makeSequent(typenv, hypotheses, goal,
+				typenv.getFormulaFactory());
 		new TestItem(sequent, result, timeout).run();
 	}
 }

@@ -1,22 +1,37 @@
 package org.eventb.internal.pp.core.elements.terms;
 
+import static org.eventb.core.ast.Formula.FREE_IDENT;
+import static org.eventb.core.ast.LanguageVersion.V1;
+import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.internal.pp.core.elements.terms.Util.cCons;
 import static org.eventb.internal.pp.core.elements.terms.Util.cELocVar;
 import static org.eventb.internal.pp.core.elements.terms.Util.cFLocVar;
 import static org.eventb.internal.pp.core.elements.terms.Util.cIntCons;
 import static org.eventb.internal.pp.core.elements.terms.Util.cVar;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.IResult;
+import org.eventb.core.ast.ITypeCheckResult;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.LanguageVersion;
+import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.Level;
 import org.eventb.internal.pp.core.ProverResult;
@@ -29,7 +44,7 @@ public abstract class AbstractPPTest {
 	public List<EqualityLiteral> EMPTY = new ArrayList<EqualityLiteral>(); 
 
 	public static FormulaFactory ff = FormulaFactory.getDefault();
-
+	
 	// Types used in these tests
 	public static IntegerType INT = ff.makeIntegerType();
 	public static BooleanType ty_BOOL = ff.makeBooleanType();
@@ -56,14 +71,154 @@ public abstract class AbstractPPTest {
 		return ff.makeRelationalType(left, right);
 	}
 	
-	public static ITypeEnvironmentBuilder mTypeEnvironment(Object...objs) {
-		assert (objs.length & 1) == 0;
-		ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
-		for (int i = 0; i < objs.length; i += 2) {
-			result.addName((String) objs[i], (Type) objs[i+1]);
+	// TODO: code between START COPY and END COPY was copied from
+	// org.eventb.core.ast.tests: FastFactory and AbstractTests. We must isolate
+	// part usefull for all core tests projects and create a dedicated class.
+	
+	// START COPY
+	
+	// Formula factory for the old V1 language
+	public static final FormulaFactory ffV1 = FormulaFactory.getV1Default();
+
+	
+	public static void assertSuccess(String message, IResult result) {
+		if (!result.isSuccess() || result.hasProblem()) {
+			fail(message + result.getProblems());
 		}
+	}
+
+	public static void assertFailure(String message, IResult result) {
+		assertFalse(message, result.isSuccess());
+		assertTrue(message, result.hasProblem());
+	}
+
+	private static String makeFailMessage(String image, IParseResult result) {
+		return "Parse failed for " + image + " (parser "
+				+ result.getLanguageVersion() + "): " + result.getProblems();
+	}
+	
+	/**
+	 * Type-checks the given formula and returns the type environment made of the
+	 * given type environment and the type environment inferred during
+	 * type-check.
+	 * 
+	 * @param formula
+	 *            a formula to type-check
+	 * @param tenv
+	 *            initial type environment
+	 * @return augmented type environment
+	 */
+	public static ITypeEnvironmentBuilder typeCheck(Formula<?> formula,
+			ITypeEnvironment tenv) {
+		if (tenv == null) {
+			tenv = ff.makeTypeEnvironment();
+		}
+		final ITypeCheckResult result = formula.typeCheck(tenv);
+		assertSuccess(formula.toString(), result);
+		assertTrue(formula.isTypeChecked());
+
+		final ITypeEnvironmentBuilder newEnv = tenv.makeBuilder();
+		newEnv.addAll(result.getInferredEnvironment());
+		return newEnv;
+	}
+
+	public static Expression parseExpression(String image,
+			FormulaFactory factory) {
+		return parseExpression(image, getLanguageVersion(factory), factory);
+	}
+	
+	public static Expression parseExpression(String image,
+			ITypeEnvironment typenv) {
+		final FormulaFactory fac = typenv.getFormulaFactory();
+		final Expression result = parseExpression(image, fac);
+		typeCheck(result, typenv);
 		return result;
 	}
+
+	public static Expression parseExpression(String image,
+			LanguageVersion version, FormulaFactory factory) {
+		final IParseResult result;
+		if (image.contains(PredicateVariable.LEADING_SYMBOL)) {
+			result = factory.parseExpressionPattern(image, version, null);
+		} else {
+			result = factory.parseExpression(image, version, null);
+		}
+		assertSuccess(makeFailMessage(image, result), result);
+		return result.getParsedExpression();
+	}
+	
+	public static Type parseType(String image) {
+		return parseType(image, ff);
+	}
+
+	public static Type parseType(String image, FormulaFactory factory) {
+		final LanguageVersion version = getLanguageVersion(factory);
+		final IParseResult result = factory.parseType(image, version);
+		assertSuccess(makeFailMessage(image, result), result);
+		return result.getParsedType();
+	}
+
+	private static LanguageVersion getLanguageVersion(FormulaFactory factory) {
+		final LanguageVersion version = factory == ffV1 ? V1 : V2;
+		return version;
+	}
+
+	
+	private static final Pattern typenvPairSeparator = Pattern.compile(";");
+	private static final Pattern typenvPairPattern = Pattern
+			.compile("^([^=]*)=([^=]*)$");
+	
+	
+	public static ITypeEnvironmentBuilder addToTypeEnvironment(
+			ITypeEnvironmentBuilder typeEnv, String typeEnvImage){
+		if (typeEnvImage.length() == 0) {
+			return typeEnv;
+		}
+		FormulaFactory factory = typeEnv.getFormulaFactory();
+		for (final String pairImage : typenvPairSeparator.split(typeEnvImage)) {
+			final Matcher m = typenvPairPattern.matcher(pairImage);
+			if (!m.matches()) {
+				throw new IllegalArgumentException(
+						"Invalid type environment pair: " + pairImage);
+			}
+			final Expression expr = parseExpression(m.group(1), factory);
+			if (expr.getTag() != FREE_IDENT) {
+				throw new IllegalArgumentException(
+						"Invalid type environment pair: " + pairImage);
+			}
+			final Type type = parseType(m.group(2), factory);
+			typeEnv.addName(expr.toString(), type);
+		}
+		return typeEnv;
+	}
+	
+	/**
+	 * Generates the type environment specified by the given string. The string
+	 * contains pairs of form <code>ident=type</code> separated by commas.
+	 * <p>
+	 * Example of valid parameters are:
+	 * <ul>
+	 * <li><code>""</code></li>
+	 * <li><code>"x=S"</code></li>
+	 * <li><code>"x=S,y=T"</code></li>
+	 * <li><code>"x=S,r=ℙ(S×S)"</code></li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param typeEnvImage
+	 *            image of the type environment to generate
+	 * @param factory
+	 *            the formula factory to use for building the result
+	 * @return the type environment described by the given string
+	 */
+	public static ITypeEnvironmentBuilder mTypeEnvironment(String typeEnvImage,
+			FormulaFactory factory) {
+		final ITypeEnvironmentBuilder result = factory.makeTypeEnvironment();
+		addToTypeEnvironment(result, typeEnvImage);
+		return result;
+	}
+	
+	// END COPY
 	
 	public static Level BASE = Level.BASE;
 	public static Level ONE = BASE.getLeftBranch();
