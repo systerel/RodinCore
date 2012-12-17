@@ -16,9 +16,7 @@ import static org.eventb.internal.core.basis.PRUtil.setPRIdentifiers;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRStoredPred;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -29,7 +27,6 @@ import org.rodinp.core.RodinDBException;
  * @since 1.0
  * 
  */
-
 public class PRStoredPred extends SCPredicateElement implements IPRStoredPred {
 
 	public PRStoredPred(String name, IRodinElement parent) {
@@ -41,17 +38,23 @@ public class PRStoredPred extends SCPredicateElement implements IPRStoredPred {
 		return ELEMENT_TYPE;
 	}
 
+	/**
+	 * @since 3.0: use immutable type environment
+	 */
 	@Override
-	public Predicate getPredicate(FormulaFactory factory,
-			ITypeEnvironment baseTypenv) throws RodinDBException {
-		final ITypeEnvironmentBuilder typenv = 
-				buildTypenv(this, factory, baseTypenv);
-		return super.getPredicate(factory, typenv);
+	public Predicate getPredicate(ISealedTypeEnvironment baseTypenv)
+			throws RodinDBException {
+		final ISealedTypeEnvironment typenv = buildTypenv(this, baseTypenv);
+		return super.getPredicate(typenv.getFormulaFactory(), typenv);
 	}
 
+	/**
+	 * @since 3.0: use immutable type environment
+	 */
 	@Override
-	public void setPredicate(Predicate predicate, ITypeEnvironment baseTypenv,
-			IProgressMonitor monitor) throws RodinDBException {
+	public void setPredicate(Predicate predicate,
+			ISealedTypeEnvironment baseTypenv, IProgressMonitor monitor)
+			throws RodinDBException {
 		setPRIdentifiers(this, predicate, baseTypenv, monitor);
 		super.setPredicate(predicate, monitor);
 	}

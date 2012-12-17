@@ -15,7 +15,7 @@ import org.eventb.core.IPRIdentifier;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment.IIterator;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
@@ -39,8 +39,6 @@ public class PRUtil {
 	 * 
 	 * @param ie
 	 *            internal element containing the stored formula
-	 * @param ff
-	 *            formula factory to use for building the result
 	 * @param baseTypenv
 	 *            common type environment for all stored formulas
 	 * @return the type environment to use for parsing the formula stored in the
@@ -49,12 +47,13 @@ public class PRUtil {
 	 *             in case of problem accessing the Rodin database
 	 * @since 3.0 : the returned type environment became explicitly mutable
 	 */
-	public static ITypeEnvironmentBuilder buildTypenv(IInternalElement ie,
-			FormulaFactory ff, ITypeEnvironment baseTypenv)
+	public static ISealedTypeEnvironment buildTypenv(IInternalElement ie,
+			ISealedTypeEnvironment baseTypenv)
 			throws RodinDBException {
+		final FormulaFactory ff = baseTypenv.getFormulaFactory();
 		final ITypeEnvironmentBuilder result = getLocalTypenv(ie, ff);
 		mergeTypenv(result, baseTypenv);
-		return result;
+		return result.makeSnapshot();
 	}
 
 	private static ITypeEnvironmentBuilder getLocalTypenv(IInternalElement ie,
@@ -67,7 +66,7 @@ public class PRUtil {
 	}
 
 	private static void mergeTypenv(ITypeEnvironmentBuilder localTypenv,
-			ITypeEnvironment baseTypenv) {
+			ISealedTypeEnvironment baseTypenv) {
 		final IIterator it = baseTypenv.getIterator();
 		while (it.hasNext()) {
 			it.advance();
@@ -95,7 +94,7 @@ public class PRUtil {
 	 *             in case of problem accessing the Rodin database
 	 */
 	public static void setPRIdentifiers(IInternalElement ie, Formula<?> formula,
-			ITypeEnvironment baseTypenv, IProgressMonitor monitor)
+			ISealedTypeEnvironment baseTypenv, IProgressMonitor monitor)
 			throws RodinDBException {
 		removePRIdentifiers(ie, monitor);
 		addPRIdentifiers(ie, formula.getFreeIdentifiers(), baseTypenv, monitor);
@@ -110,7 +109,7 @@ public class PRUtil {
 	}
 
 	private static void addPRIdentifiers(IInternalElement ie,
-			FreeIdentifier[] idents, ITypeEnvironment baseTypenv,
+			FreeIdentifier[] idents, ISealedTypeEnvironment baseTypenv,
 			IProgressMonitor monitor) throws RodinDBException {
 		for (final FreeIdentifier ident : idents) {
 			final String name = ident.getName();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,7 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofManager;
 import org.rodinp.core.IInternalElement;
@@ -46,15 +45,14 @@ public interface IPRStoredPred extends IInternalElement {
 	 * Returns the predicate stored in this element. The result is always
 	 * type-checked.
 	 * 
-	 * @param factory
-	 *            factory to use to build the result
 	 * @param baseTypenv
 	 *            common type environment of the proof tree
 	 * @return the predicate stored in this element
 	 * @throws RodinDBException
 	 *             in case of an error accessing the Rodin database
+	 * @since 3.0: use immutable type environment
 	 */
-	Predicate getPredicate(FormulaFactory factory, ITypeEnvironment baseTypenv)
+	Predicate getPredicate(ISealedTypeEnvironment baseTypenv)
 			throws RodinDBException;
 
 	/**
@@ -70,8 +68,9 @@ public interface IPRStoredPred extends IInternalElement {
 	 *            is not desired
 	 * @throws RodinDBException
 	 *             in case of an error accessing the Rodin database
+	 * @since 3.0: use immutable type environment
 	 */
-	void setPredicate(Predicate predicate, ITypeEnvironment baseTypenv,
+	void setPredicate(Predicate predicate, ISealedTypeEnvironment baseTypenv,
 			IProgressMonitor monitor) throws RodinDBException;
 
 }

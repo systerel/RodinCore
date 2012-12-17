@@ -12,6 +12,8 @@
  ******************************************************************************/
 package org.eventb.internal.core.basis;
 
+import static org.eventb.core.seqprover.SequentProver.getReasonerRegistry;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +36,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInputReader;
-import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
 import org.rodinp.core.RodinDBException;
 
@@ -62,7 +63,7 @@ public class ProofStoreReader implements IProofStoreReader {
 	}
 
 	/**
-	 * @since 3.0 : the returned type environment became immutable
+	 * @since 3.0: returns an immutable type environment
 	 */
 	@Override
 	public ISealedTypeEnvironment getBaseTypeEnv() throws RodinDBException {
@@ -85,7 +86,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		if (pred == null) {
 			getBaseTypeEnv();
 			final IPRStoredPred prPred = prProof.getPredicate(ref);
-			pred = prPred.getPredicate(factory, baseTypEnv);
+			pred = prPred.getPredicate(baseTypEnv);
 			predicates.put(ref, pred);
 		}
 		return pred;
@@ -97,7 +98,7 @@ public class ProofStoreReader implements IProofStoreReader {
 		if (expr == null) {
 			getBaseTypeEnv();
 			final IPRStoredExpr prExpr = prProof.getExpression(ref);
-			expr = prExpr.getExpression(factory, baseTypEnv);
+			expr = prExpr.getExpression(baseTypEnv);
 			expressions.put(ref, expr);
 		}
 		return expr;
@@ -114,10 +115,8 @@ public class ProofStoreReader implements IProofStoreReader {
 			if (prReas.exists()) {
 				reasoner = prReas.getReasoner();
 			} else { // old storage: ref is reasoner id
-				reasoner = SequentProver.getReasonerRegistry().getReasonerDesc(
-						ref);
+				reasoner = getReasonerRegistry().getReasonerDesc(ref);
 			}
-
 			reasoners.put(ref, reasoner);
 		}
 		return reasoner;

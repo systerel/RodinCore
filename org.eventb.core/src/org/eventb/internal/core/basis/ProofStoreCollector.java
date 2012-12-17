@@ -28,7 +28,6 @@ import org.eventb.core.IPRStringInput;
 import org.eventb.core.IProofStoreCollector;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ISealedTypeEnvironment;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IReasonerDesc;
 import org.eventb.core.seqprover.IReasonerInputWriter;
@@ -51,8 +50,8 @@ public class ProofStoreCollector implements IProofStoreCollector {
 	private final Map<IReasonerDesc, String> reasoners = new HashMap<IReasonerDesc, String>();
 	private int reasonerCount = 0;
 	
-	public ProofStoreCollector(ITypeEnvironment baseTypEnv){
-		this.baseTypEnv = baseTypEnv.makeSnapshot();
+	public ProofStoreCollector(ISealedTypeEnvironment baseTypEnv) {
+		this.baseTypEnv = baseTypEnv;
 	}
 	
 	@Override
@@ -60,9 +59,8 @@ public class ProofStoreCollector implements IProofStoreCollector {
 		if (pred == null) 
 			Util.log(new IllegalArgumentException(), "Trying to serialise a null Predicate");
 		String ref = predicates.get(pred);
-		if (ref == null)
-		{
-			ref = "p"+Integer.toString(predCount);
+		if (ref == null) {
+			ref = "p" + predCount;
 			predicates.put(pred,ref);
 			predCount++;
 		}
@@ -72,9 +70,8 @@ public class ProofStoreCollector implements IProofStoreCollector {
 	@Override
 	public String putExpression(Expression expr) throws RodinDBException {
 		String ref = expressions.get(expr);
-		if (ref == null)
-		{
-			ref = "e"+Integer.toString(exprCount);
+		if (ref == null) {
+			ref = "e" + exprCount;
 			expressions.put(expr,ref);
 			exprCount++;
 		}
@@ -88,7 +85,7 @@ public class ProofStoreCollector implements IProofStoreCollector {
 	public String putReasoner(IReasonerDesc reasoner) {
 		String ref = reasoners.get(reasoner);
 		if (ref == null) {
-			ref = "r" + Integer.toString(reasonerCount);
+			ref = "r" + reasonerCount;
 			reasoners.put(reasoner, ref);
 			reasonerCount++;
 		}

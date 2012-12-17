@@ -17,8 +17,7 @@ import static org.eventb.internal.core.basis.PRUtil.setPRIdentifiers;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPRStoredExpr;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -28,7 +27,6 @@ import org.rodinp.core.RodinDBException;
  * @since 1.0
  * 
  */
-
 public class PRStoredExpr extends SCExpressionElement implements IPRStoredExpr {
 
 	public PRStoredExpr(String name, IRodinElement parent) {
@@ -40,19 +38,25 @@ public class PRStoredExpr extends SCExpressionElement implements IPRStoredExpr {
 		return ELEMENT_TYPE;
 	}
 
+	/**
+	 * @since 3.0: use immutable type environment
+	 */
 	@Override
-	public Expression getExpression(FormulaFactory factory,
-			ITypeEnvironment baseTypenv) throws RodinDBException {
-		final ITypeEnvironment typenv = buildTypenv(this, factory, baseTypenv);
-		return super.getExpression(factory, typenv);
+	public Expression getExpression(ISealedTypeEnvironment baseTypenv)
+			throws RodinDBException {
+		final ISealedTypeEnvironment typenv = buildTypenv(this, baseTypenv);
+		return super.getExpression(typenv.getFormulaFactory(), typenv);
 	}
 
+	/**
+	 * @since 3.0: use immutable type environment
+	 */
 	@Override
-	public void setExpression(Expression predicate,
-			ITypeEnvironment baseTypenv, IProgressMonitor monitor)
+	public void setExpression(Expression expression,
+			ISealedTypeEnvironment baseTypenv, IProgressMonitor monitor)
 			throws RodinDBException {
-		setPRIdentifiers(this, predicate, baseTypenv, monitor);
-		super.setExpression(predicate, monitor);
+		setPRIdentifiers(this, expression, baseTypenv, monitor);
+		super.setExpression(expression, monitor);
 	}
 
 }
