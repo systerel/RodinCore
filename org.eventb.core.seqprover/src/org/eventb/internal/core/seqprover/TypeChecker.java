@@ -20,6 +20,8 @@ import org.eventb.core.ast.Type;
  * Encapsulates all the verifications to be made to ensure that a rule can
  * safely be applied to a sequent in terms of well-formedness and type-checking.
  * 
+ * TODO Rodin 3.0: Take advantage of improved AST library
+ * 
  * @author Laurent Voisin
  */
 public class TypeChecker {
