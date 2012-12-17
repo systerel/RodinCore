@@ -136,9 +136,10 @@ public class SCEvent extends EventBElement implements ISCEvent {
 	 * @since 3.0 : The returned type environment became immutable
 	 */
 	@Override
-	public ITypeEnvironmentBuilder getTypeEnvironment(ITypeEnvironment mchTypenv,
-			FormulaFactory factory) throws RodinDBException {
+	public ITypeEnvironmentBuilder getTypeEnvironment(ITypeEnvironment mchTypenv)
+			throws RodinDBException {
 
+		final FormulaFactory factory = mchTypenv.getFormulaFactory();
 		ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		typenv.addAll(mchTypenv);
 		for (ISCParameter par : getSCParameters()) {

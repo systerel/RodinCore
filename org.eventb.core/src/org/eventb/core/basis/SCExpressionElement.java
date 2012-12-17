@@ -50,10 +50,14 @@ public abstract class SCExpressionElement extends EventBElement
 		super(name, parent);
 	}
 
+	/**
+	 * @since 3.0: Remove formula factory parameter
+	 */
 	@Override
-	public Expression getExpression(FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
+	public Expression getExpression(ITypeEnvironment typenv)
+			throws RodinDBException {
 		
+		final FormulaFactory factory = typenv.getFormulaFactory();
 		String contents = getExpressionString();
 				IParseResult parserResult = factory.parseExpression(contents, V2, null);
 				if (parserResult.getProblems().size() != 0) {

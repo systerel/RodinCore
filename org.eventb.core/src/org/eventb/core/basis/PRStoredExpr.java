@@ -45,7 +45,7 @@ public class PRStoredExpr extends SCExpressionElement implements IPRStoredExpr {
 	public Expression getExpression(ISealedTypeEnvironment baseTypenv)
 			throws RodinDBException {
 		final ISealedTypeEnvironment typenv = buildTypenv(this, baseTypenv);
-		return super.getExpression(typenv.getFormulaFactory(), typenv);
+		return super.getExpression(typenv);
 	}
 
 	/**

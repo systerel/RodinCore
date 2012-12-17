@@ -53,9 +53,12 @@ implements ISCPredicateElement {
 		super(name, parent);
 	}
 
+	/**
+	 * @since 3.0: Remove formula factory parameter
+	 */
 	@Override
-	public Predicate getPredicate(
-			FormulaFactory factory, ITypeEnvironment typenv) throws RodinDBException {
+	public Predicate getPredicate(ITypeEnvironment typenv)
+			throws RodinDBException {
 		
 		String contents = getPredicateString();
 		final IRodinElement source;
@@ -64,6 +67,7 @@ implements ISCPredicateElement {
 		} else {
 			source = null;
 		}
+		final FormulaFactory factory = typenv.getFormulaFactory();
 		IParseResult parserResult = factory
 				.parsePredicate(contents, V2, source);
 		if (parserResult.hasProblem()) {

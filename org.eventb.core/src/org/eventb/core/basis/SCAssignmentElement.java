@@ -50,12 +50,15 @@ public abstract class SCAssignmentElement extends EventBElement
 		super(name, parent);
 	}
 
+	/**
+	 * @since 3.0: Remove formula factory parameter
+	 */
 	@Override
-	public Assignment getAssignment(
-			FormulaFactory factory,
-			ITypeEnvironment typenv) throws RodinDBException {
+	public Assignment getAssignment(ITypeEnvironment typenv)
+			throws RodinDBException {
 		
 		String contents = getAssignmentString();
+		final FormulaFactory factory = typenv.getFormulaFactory();
 		IParseResult parserResult = factory.parseAssignment(contents, V2, null);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(

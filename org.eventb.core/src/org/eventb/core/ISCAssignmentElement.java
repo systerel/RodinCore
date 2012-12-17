@@ -12,7 +12,6 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Assignment;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -44,18 +43,16 @@ public interface ISCAssignmentElement extends IInternalElement {
 	/**
 	 * Returns the typed assignment contained in this element.
 	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
 	 * @param typenv
 	 *            the type environment to use for building the result
 	 * @return the assignment of this element
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 * 
-	 * @see ISCEvent#getTypeEnvironment(ITypeEnvironment, FormulaFactory)
+	 * @see ISCEvent#getTypeEnvironment(ITypeEnvironment)
+	 * @since 3.0: Remove formula factory parameter
 	 */
-	Assignment getAssignment(FormulaFactory factory, ITypeEnvironment typenv)
-			throws RodinDBException;
+	Assignment getAssignment(ITypeEnvironment typenv) throws RodinDBException;
 
 	/**
 	 * Sets the assignment contained in this element.

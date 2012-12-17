@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -318,8 +318,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		Predicate[] predicates = new Predicate[guards.length];
 
 		for (int i = 0; i < guards.length; i++) {
-			predicates[i] = guards[i].getPredicate(factory,
-					eventTypeEnvironment);
+			predicates[i] = guards[i].getPredicate(eventTypeEnvironment);
 		}
 		return predicates;
 	}
@@ -331,8 +330,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 		Assignment[] assignments = new Assignment[actions.length];
 
 		for (int i = 0; i < actions.length; i++) {
-			assignments[i] = actions[i].getAssignment(factory,
-					eventTypeEnvironment);
+			assignments[i] = actions[i].getAssignment(eventTypeEnvironment);
 		}
 		return assignments;
 	}

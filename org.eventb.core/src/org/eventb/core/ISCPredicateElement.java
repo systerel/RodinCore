@@ -50,8 +50,6 @@ public interface ISCPredicateElement extends IPredicateElement {
 	 * considered the predicate's origin.
 	 * </p>
 	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
 	 * @param typenv
 	 *            the type environment to use for building the result
 	 * @return the predicate of this element
@@ -60,10 +58,10 @@ public interface ISCPredicateElement extends IPredicateElement {
 	 * 
 	 * @see ISCContextRoot#getTypeEnvironment(FormulaFactory)
 	 * @see ISCMachineRoot#getTypeEnvironment(FormulaFactory)
-	 * @see ISCEvent#getTypeEnvironment(ITypeEnvironment, FormulaFactory)
+	 * @see ISCEvent#getTypeEnvironment(ITypeEnvironment)
+	 * @since 3.0: Remove formula factory parameter
 	 */
-	Predicate getPredicate(FormulaFactory factory, ITypeEnvironment typenv)
-			throws RodinDBException;
+	Predicate getPredicate(ITypeEnvironment typenv) throws RodinDBException;
 
 	/**
 	 * Sets the predicate contained in this element.

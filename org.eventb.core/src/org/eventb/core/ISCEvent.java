@@ -186,17 +186,15 @@ extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElemen
 	 * type-checking the witnesses of this event.
 	 * </p>
 	 * 
-	 * @param machineTEnv
+	 * @param mchTypenv
 	 *            type environment of the parent machine
-	 * @param factory
-	 *            formula factory to use for building the result
 	 * @return the type environment of this event
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 * @see ISCMachineRoot#getTypeEnvironment(FormulaFactory)
 	 * @since 3.0 The type environment became explicitly mutable
 	 */
-	ITypeEnvironmentBuilder getTypeEnvironment(ITypeEnvironment machineTEnv,
-			FormulaFactory factory) throws RodinDBException;
+	ITypeEnvironmentBuilder getTypeEnvironment(ITypeEnvironment mchTypenv)
+			throws RodinDBException;
 
 }

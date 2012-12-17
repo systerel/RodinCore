@@ -45,7 +45,7 @@ public class PRStoredPred extends SCPredicateElement implements IPRStoredPred {
 	public Predicate getPredicate(ISealedTypeEnvironment baseTypenv)
 			throws RodinDBException {
 		final ISealedTypeEnvironment typenv = buildTypenv(this, baseTypenv);
-		return super.getPredicate(typenv.getFormulaFactory(), typenv);
+		return super.getPredicate(typenv);
 	}
 
 	/**

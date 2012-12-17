@@ -45,8 +45,6 @@ public interface ISCExpressionElement extends IInternalElement {
 	/**
 	 * Returns the typed expression contained in this element.
 	 * 
-	 * @param factory
-	 *            the formula factory to use for building the result
 	 * @param typenv
 	 *            the type environment to use for building the result
 	 * @return the expression of this element
@@ -54,9 +52,9 @@ public interface ISCExpressionElement extends IInternalElement {
 	 *             if there was a problem accessing the database
 	 * 
 	 * @see ISCMachineRoot#getTypeEnvironment(FormulaFactory)
+	 * @since 3.0: Remove formula factory parameter
 	 */
-	Expression getExpression(FormulaFactory factory, ITypeEnvironment typenv)
-			throws RodinDBException;
+	Expression getExpression(ITypeEnvironment typenv) throws RodinDBException;
 
 	/**
 	 * Sets the expression contained in this element.

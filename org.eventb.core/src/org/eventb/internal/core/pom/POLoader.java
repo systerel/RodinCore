@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,7 +175,7 @@ public final class POLoader {
 		
 		boolean selected = selHints.contains(poPredSet);
 		for (final IPOPredicate poPred : poPredSet.getPredicates()) {
-			final Predicate predicate = poPred.getPredicate(factory, typeEnv);
+			final Predicate predicate = poPred.getPredicate(typeEnv);
 			final Predicate hypothesis = predicate;
 			if ( selected || selHints.contains(poPred)) selHyps.add(hypothesis);
 			hypotheses.add(hypothesis);
@@ -207,7 +207,7 @@ public final class POLoader {
 		if (dbGoals.length != 1) {
 			Util.log(null, "More than one goal for PO " + poSeq);
 		}
-		return dbGoals[0].getPredicate(factory, typeEnv);
+		return dbGoals[0].getPredicate(typeEnv);
 	}
 	
 
