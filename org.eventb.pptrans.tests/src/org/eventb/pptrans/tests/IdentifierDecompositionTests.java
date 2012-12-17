@@ -31,6 +31,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.ast.tests.FastFactory;
 import org.eventb.pptrans.Translator;
 import org.junit.Test;
 
@@ -43,14 +44,8 @@ import org.junit.Test;
 @SuppressWarnings({ "deprecation", "javadoc" })
 public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	
-	protected final ITypeEnvironmentBuilder te;
-	{
-		te = ff.makeTypeEnvironment();
-		te.addGivenSet("S");
-		te.addGivenSet("T");
-		te.addGivenSet("U");
-		te.addGivenSet("V");
-	}
+	protected final ITypeEnvironmentBuilder te = FastFactory.mTypeEnvironment(
+			"S=ℙ(S); T=ℙ(T); U=ℙ(U); V=ℙ(V)", ff);
 
 	private static void assertDecomposed(Predicate pred) {
 		if (needsFreeIdentDecomposition(pred)) {

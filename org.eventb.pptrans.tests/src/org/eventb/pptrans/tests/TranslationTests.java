@@ -18,7 +18,6 @@ package org.eventb.pptrans.tests;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BFALSE;
-import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.pptrans.Translator.isInGoal;
 import static org.eventb.pptrans.Translator.reduceToPredicateCalulus;
@@ -104,8 +103,8 @@ public class TranslationTests extends AbstractTranslationTests {
 	
 
 	static ITypeEnvironment br_te = mTypeEnvironment(
-			mList("s", "t", "v", "w", "p", "q", "e1", "e2", "e3"), 
-			mList(POW(S), POW(S), POW(S), POW(S), REL(S, T), REL(S, T), S, S, S));
+			"s=ℙ(S); t=ℙ(S); v=ℙ(S); w=ℙ(S); p=S↔T; q=S↔T; e1=S; e2=S; e3=S",
+			ff);
 
 	/**
 	 *  Tests for BR1
@@ -252,8 +251,8 @@ public class TranslationTests extends AbstractTranslationTests {
 	}
 
 	static ITypeEnvironment er_te = mTypeEnvironment(
-			mList("f", "s", "t", "v", "w", "x", "y", "a", "b", "is", "it"), 
-			mList(REL(S, T), POW(S), POW(S), POW(S), POW(S), S, T, S, T, INT_SET, INT_SET));
+			"f=S↔T; s=ℙ(S); t=ℙ(S); v=ℙ(S); w=ℙ(S); x=S; y=T; a=S; b=T; is=ℙ(ℤ); it=ℙ(ℤ);",
+			ff);
 
 	/**
 	 * Tests for ER1
@@ -379,8 +378,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	@Test
 	public void testER8_recursive() {
 		ITypeEnvironment te = mTypeEnvironment(
-				mList( "f", "s", "t", "v", "w"),
-				mList(REL(POW(S), POW(T)), POW(S), POW(T), POW(S), POW(T)));
+				"f=ℙ(S)↔ℙ(T); s=ℙ(S); t=ℙ(T); v=ℙ(S); w=ℙ(T)", ff);
 
 		doTest( "t∪w = f(s∪v)", 
 				"s∪v↦t∪w ∈ f", true, te);
@@ -468,11 +466,10 @@ public class TranslationTests extends AbstractTranslationTests {
 				"n∈is∪it ∧ max(is∪it)≤n", true, er_te);
 	}
 	
-	private static ITypeEnvironment cr_te = mTypeEnvironment(
-			mList( "s", "t"), mList(INT_SET, INT_SET));
+	private static ITypeEnvironment cr_te = mTypeEnvironment("s=ℙ(ℤ); t=ℙ(ℤ)",
+			ff);
 
-	private static ITypeEnvironment cr_ste = mTypeEnvironment(
-			mList( "s", "t"), mList(POW(BOOL), INT_SET));
+	private static ITypeEnvironment cr_ste = mTypeEnvironment("s=ℙ(BOOL); t=ℙ(ℤ)",ff);
 
 	/**
 	 * Tests for CR1
@@ -592,8 +589,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testIR1_simple1() {
-		ITypeEnvironment te = mTypeEnvironment(
-				mList("e"), mList(S));
+		ITypeEnvironment te = mTypeEnvironment("e=S", ff);
 
 		doTest( "e ∈ S", 
 				"⊤", false, te);
@@ -649,7 +645,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "s∪t ∈ v",
 				"∃x·x=s∪t ∧ x∈v", 
 				true, 
-				mTypeEnvironment(mList("s"), mList(POW(S))));
+				mTypeEnvironment("s=ℙ(S)", ff));
 		
 	}
 
@@ -659,7 +655,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "∀t,w·s∪t ∈ w",
 				"∀t,w·∃x·x=s∪t ∧ x∈w", 
 				true, 
-				mTypeEnvironment(mList("s"), mList(POW(S))));
+				mTypeEnvironment("s=ℙ(S)", ff));
 		
 	}
 
@@ -669,7 +665,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "a↦1 ∈ S",
 				"∃x·x=1 ∧ a↦x∈S", 
 				false, 
-				mTypeEnvironment(mList("S"), mList(REL(BOOL,INT))));
+				mTypeEnvironment("S=BOOL↔ℤ", ff));
 	}
 	
 	@Test
@@ -678,7 +674,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "a↦1↦2 ∈ S",
 				"∃x1,x2·x1=1∧x2=2 ∧ a↦x1↦x2∈S", 
 				false, 
-				mTypeEnvironment(mList("S"), mList(REL(CPROD(BOOL, INT),INT))));
+				mTypeEnvironment("S=BOOL×ℤ↔ℤ", ff));
 	}
 	
 	@Test
@@ -687,7 +683,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "a↦b↦f(10)∈S",
 				"∃x·x=f(10) ∧ a↦b↦x∈S", 
 				true, 
-				mTypeEnvironment(mList("S"), mList(POW(CPROD(CPROD(BOOL, INT),INT)))));
+				mTypeEnvironment("S=BOOL×ℤ↔ℤ", ff));
 	}
 
 	@Test
@@ -696,7 +692,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "f(a)  ∈ S",
 				"∃x·x=f(a) ∧ x∈S", 
 				true, 
-				mTypeEnvironment(mList("f"), mList(REL(T, U))));
+				mTypeEnvironment("f=T↔U", ff));
 	}
 	
 	@Test
@@ -705,7 +701,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "f(a)  ∈ S",
 				"∃x1,x2·x1↦x2=f(a) ∧ x1↦x2∈S ", 
 				true,
-				 mTypeEnvironment(mList("f"), mList(REL(T, CPROD(U, V)))));
+				 mTypeEnvironment("f=T↔U×V", ff));
 	}
 
 	/**
@@ -716,7 +712,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest("r(c) ∈ A×B", //
 				"∀a,b· c ↦ (a ↦ b) ∈ r ⇒ a ∈ A ∧ b ∈ B", //
 				false, //
-				mTypeEnvironment("r", "S ↔ T×U"));
+				mTypeEnvironment("r=S↔T×U",ff));
 	}
 	
 	/**
@@ -728,7 +724,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e∈ℕ", 
 				"0≤e", 
 				false, 
-				mTypeEnvironment(mList("e"), mList(INT)));
+				mTypeEnvironment("e=ℤ", ff));
 	}
 	
 	/**
@@ -740,7 +736,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e∈ℕ1", 
 				"0<e", 
 				false, 
-				mTypeEnvironment(mList("e"), mList(INT)));
+				mTypeEnvironment("e=ℤ", ff));
 	}
 	
 	/**
@@ -752,7 +748,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ {x·a<x∣f}",
 				"∃x·a<x ∧ e=f", 
 				false, 
-				mTypeEnvironment(mList("e"), mList(INT)));
+				mTypeEnvironment("e=ℤ", ff));
 	}
 	
 	@Test
@@ -761,7 +757,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e∈{x·x∈{1}∣f∪g}",
 				"∃x·x∈{1}∧e=f∪g", 
 				true, 
-				mTypeEnvironment(mList("e"), mList(POW(S))));
+				mTypeEnvironment("e=ℙ(S)", ff));
 	}
 
 	@Test
@@ -770,7 +766,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "∀f,b·e∈{x·x∈{1, b}∣f∪g}",
 				"∀f,b·∃x·x∈{1, b}∧e=f∪g", 
 				true, 
-				mTypeEnvironment(mList("e"), mList(POW(S))));
+				mTypeEnvironment("e=ℙ(S)", ff));
 	}
 
 	/**
@@ -782,7 +778,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ (⋂x·a<x∣f)",
 				"∀x·a<x ⇒ e∈f ", 
 				false, 
-				mTypeEnvironment(mList("e"), mList(INT)));
+				mTypeEnvironment("e=ℤ", ff));
 	}
 	
 	@Test
@@ -791,7 +787,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ (⋂x·x∈{1}∣f∪g)",
 				"∀x·x∈{1} ⇒ e∈f∪g", 
 				true, 
-				mTypeEnvironment(mList("e"), mList(S)));
+				mTypeEnvironment("e=S", ff));
 	}
 
 	@Test
@@ -800,7 +796,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "∀f,b·e ∈ (⋂x·x∈{1, b}∣f∪g)",
 				"∀f,b·∀x·x∈{1, b} ⇒ e∈f∪g", 
 				true, 
-				mTypeEnvironment(mList("e"), mList(S)));
+				mTypeEnvironment("e=S", ff));
 	}
 	
 	/**
@@ -812,7 +808,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ (⋃x·a<x∣f)",
 				"∃x·a<x ∧ e∈f ", 
 				false, 
-				mTypeEnvironment(new String[]{"e"}, new Type[]{INT}));
+				mTypeEnvironment("e=ℤ", ff));
 	}
 	
 	@Test
@@ -821,7 +817,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ (⋃x·x∈{1}∣f∪g)",
 				"∃x·x∈{1} ∧ e∈f∪g", 
 				true, 
-				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment("e=S", ff));
 	}
 
 	@Test
@@ -830,7 +826,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "∀f,b·e ∈ (⋃x·x∈{1, b}∣f∪g)",
 				"∀f,b·∃x·x∈{1, b} ∧ e∈f∪g", 
 				true, 
-				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment("e=S", ff));
 	}
 	
 	/**
@@ -842,7 +838,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ union(s)",
 				"∃x·x∈s ∧ e∈x", 
 				false, 
-				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment("e=S", ff));
 	}
 	
 	@Test
@@ -851,7 +847,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ union(s∪t)",
 				"∃x·x∈s∪t ∧ e∈x", 
 				true, 
-				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment("e=S", ff));
 	}
 
 	@Test
@@ -860,7 +856,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "∀t·e ∈ union(s∪t)",
 				"∀t·∃x·x∈s∪t ∧ e∈x", 
 				true, 
-				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment("e=S", ff));
 	}
 	
 	/**
@@ -872,7 +868,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ inter(s)",
 				"∀x·x∈s ⇒ e∈x", 
 				false, 
-				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment("e=S", ff));
 	}
 	
 	@Test
@@ -881,7 +877,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e ∈ inter(s∪t)",
 				"∀x·x∈s∪t ⇒ e∈x", 
 				true, 
-				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment("e=S", ff));
 	}
 
 	@Test
@@ -890,7 +886,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "∀t·e ∈ inter(s∪t)",
 				"∀t·∀x·x∈s∪t ⇒ e∈x", 
 				true, 
-				mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				mTypeEnvironment("e=S", ff));
 	}
 	
 	/**
@@ -902,7 +898,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e∈∅",
 				"⊥", 
 				false,
-				 mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				 mTypeEnvironment("e=S", ff));
 	}
 	
 	@Test
@@ -911,15 +907,14 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest( "e∈{}",
 				"⊥", 
 				false,
-				 mTypeEnvironment(new String[]{"e"}, new Type[]{S}));
+				 mTypeEnvironment("e=S", ff));
 	}
 	
 	/**
 	 * Tests for IR12
 	 */
 	
-	ITypeEnvironment te_ir12 = mTypeEnvironment(
-			new String[]{"e", "r", "w"}, new Type[]{T, REL(S, T), POW(S)});
+	ITypeEnvironment te_ir12 = mTypeEnvironment("e=T; r=S↔T ; w=ℙ(S)", ff);
 	
 	@Test
 	public void testIR12_simple() {
@@ -952,8 +947,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	 * Tests for IR13
 	 */
 	
-	ITypeEnvironment te_ir13 = mTypeEnvironment(
-			new String[]{"e", "f", "w"}, new Type[]{T, REL(POW(S), POW(T)), POW(S)});
+	ITypeEnvironment te_ir13 = mTypeEnvironment("e=T; f=ℙ(S)↔ℙ(T); w=ℙ(S)", ff);
 
 	@Test
 	public void testIR13_simple() {
@@ -985,8 +979,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR14
 	 */
-	ITypeEnvironment te_ir14 = mTypeEnvironment(
-			new String[]{"r", "e"}, new Type[]{REL(S, T), T});
+	ITypeEnvironment te_ir14 = mTypeEnvironment("r=S↔T; e=T", ff);
 
 	@Test
 	public void testIR14_simple() {
@@ -1018,8 +1011,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR15
 	 */
-	ITypeEnvironment te_ir15 = mTypeEnvironment(
-			new String[]{"r", "e"}, new Type[]{REL(S, T), S});
+	ITypeEnvironment te_ir15 = mTypeEnvironment("r=S↔T; e=S", ff);
 
 	@Test
 	public void testIR15_simple() {
@@ -1051,8 +1043,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR16
 	 */
-	ITypeEnvironment te_ir16 = mTypeEnvironment(
-			new String[]{"a", "s"}, new Type[]{S, POW(S)});
+	ITypeEnvironment te_ir16 = mTypeEnvironment("a=S; s=ℙ(S);", ff);
 
 	@Test
 	public void testIR16_simple() {
@@ -1075,8 +1066,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR17
 	 */
-	ITypeEnvironment te_ir17 = mTypeEnvironment(
-			new String[]{"s", "e"}, new Type[]{POW(S), POW(S)});
+	ITypeEnvironment te_ir17 = mTypeEnvironment("s=ℙ(S); e=ℙ(S)", ff);
 
 	@Test
 	public void testIR17_simple() {
@@ -1120,8 +1110,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR19
 	 */
-	ITypeEnvironment te_ir19 = mTypeEnvironment(
-			new String[]{"s", "t"}, new Type[]{POW(S), POW(S)});
+	ITypeEnvironment te_ir19 = mTypeEnvironment("s=ℙ(S); t=ℙ(S)", ff);
 
 	@Test
 	public void testIR19_simple() {
@@ -1144,8 +1133,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR20
 	 */
-	ITypeEnvironment te_ir20 = mTypeEnvironment(
-			new String[]{"s1", "s2", "s3"}, new Type[]{POW(S), POW(S), POW(S)});
+	ITypeEnvironment te_ir20 = mTypeEnvironment("s1=ℙ(S); s2=ℙ(S); s3=ℙ(S)", ff);
 
 	@Test
 	public void testIR20_simple() {
@@ -1168,8 +1156,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR21
 	 */
-	ITypeEnvironment te_ir21 = mTypeEnvironment(
-			new String[]{"s1", "s2", "s3"}, new Type[]{POW(S), POW(S), POW(S)});
+	ITypeEnvironment te_ir21 = mTypeEnvironment("s1=ℙ(S); s2=ℙ(S); s3=ℙ(S)", ff);
 
 	@Test
 	public void testIR21_simple() {
@@ -1189,8 +1176,7 @@ public class TranslationTests extends AbstractTranslationTests {
 				te_ir21);
 	}
 
-	ITypeEnvironment te_irRels = mTypeEnvironment(
-			new String[]{"s", "t"}, new Type[]{POW(S), POW(T)});
+	ITypeEnvironment te_irRels = mTypeEnvironment("s=ℙ(S); t=ℙ(S)", ff);
 
 	/**
 	 * Tests for IR23
@@ -1439,8 +1425,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	}
 
 	ITypeEnvironment te_irEF = mTypeEnvironment(
-			new String[]{"e", "f", "s", "t", "r", "q"}, 
-			new Type[]{S, T, POW(S), POW(T), REL(S, T), REL(S, T)});
+			"e=S; f=T; s=ℙ(S); t=ℙ(T); r=S↔T; q=S↔T", ff);
 
 	/**
 	 * Tests for IR33
@@ -1484,13 +1469,9 @@ public class TranslationTests extends AbstractTranslationTests {
 
 	@Test
 	public void testIR34_additional() {
-		Type rt = REL(S, T);
-		
-		doTest( "e↦f∈r1r2r3", 
-				"e↦f∈(dom(r2)∪dom(r3))⩤r1 ∨ e↦f∈dom(r3)⩤r2 ∨ e↦f∈r3", 
-				true, 
-				mTypeEnvironment(
-						new String[]{"E", "F", "r1", "r2", "r3"}, new Type[]{S, T, rt, rt, rt}));
+		doTest("e↦f∈r1r2r3",
+				"e↦f∈(dom(r2)∪dom(r3))⩤r1 ∨ e↦f∈dom(r3)⩤r2 ∨ e↦f∈r3", true,
+				mTypeEnvironment("E=S; F=T; r1=S↔T; r2=S↔T; r3=S↔T", ff));
  	}
 	
 	/**
@@ -1576,8 +1557,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR39
 	 */
-	ITypeEnvironment te_ir39 = mTypeEnvironment( 
-			new String[]{"e", "f", "s"}, new Type[]{S, S, POW(S)});
+	ITypeEnvironment te_ir39 = mTypeEnvironment("e=S; f=S; s=ℙ(S)", ff);
 			
 	@Test
 	public void testIR39_simple() {
@@ -1600,8 +1580,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	 * Tests for IR40
 	 */
 	ITypeEnvironment te_ir40 = mTypeEnvironment(
-			new String[]{"e", "f", "p", "q", "r1", "r2", "r3"}, 
-			new Type[]{S, T, REL(S, U), REL(U, T), REL(S, U), REL(U, V), REL(V, T)});
+			"e=S; f=T; p=S↔U; q=U↔T; r1=S↔U; r2=U↔V; r3=V↔T", ff);
 
 	@Test
 	public void testIR40_simple() {
@@ -1642,9 +1621,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR41
 	 */
-	ITypeEnvironment te_ir41 = mTypeEnvironment(
-			new String[]{"e", "f", "p", "q"}, 
-			new Type[]{S, T, REL(U, T), REL(S, U)});
+	ITypeEnvironment te_ir41 = mTypeEnvironment("e=S; f=T; p=U↔T; q=S↔U", ff);
 	
 	@Test
 	public void testIR41_simple() {
@@ -1688,8 +1665,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR43
 	 */
-	ITypeEnvironment te_ir43 = mTypeEnvironment(
-			mList("e", "f", "g", "r"), mList(S, T, S, REL(S, T)));
+	ITypeEnvironment te_ir43 = mTypeEnvironment("e=S; f=T; g=S; r=S↔T", ff);
 	
 	@Test
 	public void testIR43_simple() {
@@ -1711,8 +1687,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR44
 	 */
-	ITypeEnvironment te_ir44 = mTypeEnvironment(
-			mList("e", "f", "g", "r"), mList(S, T, T, REL(S, T)));
+	ITypeEnvironment te_ir44 = mTypeEnvironment("e=S; f=T; g=T; r=S↔T", ff);
 	
 	@Test
 	public void testIR44_simple() {
@@ -1734,8 +1709,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR45
 	 */
-	ITypeEnvironment te_ir45 = mTypeEnvironment(
-			mList("e", "f", "g", "r"), mList(S, T, POW(T), REL(S, T)));
+	ITypeEnvironment te_ir45 = mTypeEnvironment("e=S; f=T; g=ℙ(T); r=S↔T", ff);
 	
 	@Test
 	public void testIR45_simple() {
@@ -1759,8 +1733,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	 * Tests for IR46
 	 */
 	ITypeEnvironment te_ir46 = mTypeEnvironment(
-			mList("e", "f", "g", "h", "p", "q"), 
-			mList(S, T, POW(S), POW(T), REL(S, POW(S)), REL(T, POW(T))));
+			"e=S; f=T; g=ℙ(S); h=ℙ(T); p=S↔ℙ(S); q=T↔ℙ(T)", ff);
 	
 	@Test
 	public void testIR46_simple() {
@@ -1783,9 +1756,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	/**
 	 * Tests for IR47 and IR48
 	 */
-	ITypeEnvironment te_ir47_48 = mTypeEnvironment(
-			mList("e", "f", "foo"), 
-			mList(INT, INT, REL(INT, INT)));
+	ITypeEnvironment te_ir47_48 = mTypeEnvironment("e=ℤ; f=ℤ; foo=ℤ↔ℤ", ff);
 
 	@Test
 	public void testIR47_simple() {
@@ -1893,26 +1864,20 @@ public class TranslationTests extends AbstractTranslationTests {
 	
 	@Test
 	public void testFALSE_7() {
-		doTest( "FALSE ↦ a ∈ S", 
-				"∃x· ¬ x = TRUE ∧ x ↦ a ∈ S", 
-				false, 
-				mTypeEnvironment("a", "T"));
+		doTest("FALSE ↦ a ∈ S", "∃x· ¬ x = TRUE ∧ x ↦ a ∈ S", false,
+				mTypeEnvironment("a=T", ff));
 	}
 	
 	@Test
 	public void testFALSE_8() {
-		doTest( "a ↦ FALSE ∈ S", 
-				"∃x· ¬ x = TRUE ∧ a ↦ x ∈ S", 
-				false, 
-				mTypeEnvironment("a", "T"));
+		doTest("a ↦ FALSE ∈ S", "∃x· ¬ x = TRUE ∧ a ↦ x ∈ S", false,
+				mTypeEnvironment("a=T", ff));
 	}
 	
 	@Test
 	public void testFALSE_9() {
-		doTest( "a ↦ (FALSE ↦ b) ∈ S", 
-				"∃x· ¬ x = TRUE ∧ a ↦ (x ↦ b) ∈ S", 
-				false, 
-				mTypeEnvironment("a", "T", "b", "U"));
+		doTest("a ↦ (FALSE ↦ b) ∈ S", "∃x· ¬ x = TRUE ∧ a ↦ (x ↦ b) ∈ S",
+				false, mTypeEnvironment("a=T; b=U", ff));
 	}
 	
 	/**
@@ -1924,7 +1889,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest("prj2(r(a ↦ b)) ∈ T", //
 				"∃aa·(∀a1,b1·a ↦ b ↦ (a1 ↦ b1) ∈ r  ⇒  b1 = aa) ∧ aa ∈ T", //
 				true, //
-				mTypeEnvironment("r", "ℤ×ℤ ↔ ℤ×ℤ"));
+				mTypeEnvironment("r=ℤ×ℤ ↔ ℤ×ℤ", ff));
 	}
 
 	/**
@@ -1936,7 +1901,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest("r(a)↦b ∈ prj2", //
 				"∀r1,r2· a ↦ (r1 ↦ r2) ∈ r ⇒ r2 = b", //
 				true, //
-				mTypeEnvironment("r", "S ↔ T×U"));
+				mTypeEnvironment("r=S ↔ T×U", ff));
 	}
 
 	/**
@@ -1948,7 +1913,7 @@ public class TranslationTests extends AbstractTranslationTests {
 		doTest("a ↦ b = r(c)", //
 				"c ↦ (a ↦ b) ∈ r", //
 				false, //
-				mTypeEnvironment("r", "S ↔ T×U"));
+				mTypeEnvironment("r=S ↔ T×U", ff));
 	}
 
 	/**

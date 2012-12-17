@@ -13,7 +13,6 @@ package org.eventb.pptrans.tests;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import java.util.ArrayList;
@@ -32,18 +31,8 @@ import org.junit.Test;
  */
 public class ReorganisationTests extends AbstractTranslationTests {
 	
-	private static final ITypeEnvironmentBuilder defaultTe;
-	static {
-		defaultTe = ff.makeTypeEnvironment();
-		defaultTe.addGivenSet("S");
-		defaultTe.addGivenSet("T");
-		defaultTe.addGivenSet("U");
-		defaultTe.addGivenSet("V");
-		defaultTe.addName("a", INT);
-		defaultTe.addName("b", ty_S);
-		defaultTe.addName("A", POW(INT));
-		defaultTe.addName("B", POW(ty_S));
-	}
+	private static final ITypeEnvironmentBuilder defaultTe = mTypeEnvironment(
+			"S=ℙ(S); T=ℙ(T); U=ℙ(U); V=ℙ(V); a=ℤ; b=S; A=ℙ(ℤ); B=ℙ(S)", ff);
 
 	private static void doTest(String input, String expected) {
 		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
@@ -241,11 +230,9 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testFuncExtractBound() {
-		doTest( "∃a,b·a = f(b∪{c∣c∈b}) + 1",
-				"∃a,b·∀x·(b∪{c∣c∈b})↦x∈f ⇒ a = x + 1",
-				true,
-				mTypeEnvironment("f", REL(POW(ty_S), INT))
-		);
+		doTest("∃a,b·a = f(b∪{c∣c∈b}) + 1",
+				"∃a,b·∀x·(b∪{c∣c∈b})↦x∈f ⇒ a = x + 1", true,
+				mTypeEnvironment("f=ℙ(S)↔ℤ", ff));
 	}
 	
 
@@ -530,28 +517,23 @@ public class ReorganisationTests extends AbstractTranslationTests {
 	
 	@Test
 	public void testComplex() {
-		doTest( "card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)}) < 20",
-				"∀x·x=card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)})⇒x<20", 
-				true, 
-				mTypeEnvironment(mList("r", "f"), mList(REL(INT_SET, INT), REL(INT, INT))));
+		doTest("card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)}) < 20",
+				"∀x·x=card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)})⇒x<20",
+				true, mTypeEnvironment("r=ℙ(ℤ)↔ℤ; f=ℤ↔ℤ", ff));
 	}
 	
 	@Test
 	public void testComplex2() {
-		doTest( "card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)}) < 20",
-				"∀x·x=card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)})⇒x<20", 
-				true, 
-				mTypeEnvironment(mList("r", "f"), mList(REL(INT_SET, INT), REL(INT, INT))));
-
+		doTest("card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)}) < 20",
+				"∀x·x=card({a·a>min({f·f(10)>card({1,2})∣max(r[t])})∣f(29)})⇒x<20",
+				true, mTypeEnvironment("r=ℙ(ℤ)↔ℤ; f=ℤ↔ℤ", ff));
 	}
-	
+
 	@Test
 	public void testComplex3() {
-		doTest( "card({1,2}) + f(20) + min({1,2,3}) + max({2,1}) > 2",
-				"∀x4,x3,x2,x1·x1=card({1,2}) ∧ x2=f(20) ∧ x3=min({1,2,3}) ∧ x4=max({2,1}) ⇒ x1+x2+x3+x4 > 2", 
-				true, 
-				mTypeEnvironment(mList("r", "f"), mList(REL(INT_SET, INT), REL(INT, INT))));
-
+		doTest("card({1,2}) + f(20) + min({1,2,3}) + max({2,1}) > 2",
+				"∀x4,x3,x2,x1·x1=card({1,2}) ∧ x2=f(20) ∧ x3=min({1,2,3}) ∧ x4=max({2,1}) ⇒ x1+x2+x3+x4 > 2",
+				true, mTypeEnvironment("r=ℙ(ℤ)↔ℤ; f=ℤ↔ℤ", ff));
 	}
 
 }

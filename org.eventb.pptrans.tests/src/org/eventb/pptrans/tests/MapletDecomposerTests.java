@@ -96,7 +96,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testRecordingDecomposeNoChange() {
-		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a=S; b=T", ff);
 		final Expression expr = parseExpr("a↦b ∈ S×T", typenv);
 		decomposer.decompose(expr);
 		assertEquals(0, decomposer.offset());
@@ -109,7 +109,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testRecordingDecomposeCreateSimple() {
-		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T×U");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a=S; b=T×U", ff);
 		final Expression expr = parseExpr("a↦b ∈ S×(T×U)", typenv);
 		decomposer.decompose(expr);
 		assertEquals(2, decomposer.offset());
@@ -123,7 +123,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	@Test
 	public void testRecordingDecomposeCreateComplex() {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(//
-				"a", "S", "b", "T×U", "c", "T×U×V", "d", "S×(T×U)×V");
+				"a=S; b=T×U; c=T×U×V; d=S×(T×U)×V", ff);
 		final Expression expr = parseExpr("a↦(b↦c)↦d ∈ A", typenv);
 		decomposer.decompose(expr);
 		assertEquals(2 + 3 + 4, decomposer.offset());
@@ -135,7 +135,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testRecordingPushNoChange() {
-		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("b", "S", "c", "T×U");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("b=S; c=T×U", ff);
 		final Expression toPush = parseExpr("∃a⦂S · a↦b ∈ AB", typenv);
 		final Expression toDecompose = parseExpr("c ∈ A", typenv);
 		assertEquals(toPush, decomposer.push(toPush));
@@ -152,7 +152,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testDecomposeNoChange() {
-		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a=S; b=T", ff);
 		doTest(typenv, "a↦b ∈ A", null);
 	}
 
@@ -162,7 +162,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testDecomposeSimpleLeft() {
-		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S×T", "b", "U");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a=S×T; b=U", ff);
 		doTest(typenv, "a↦b ∈ A", //
 				"∃x⦂ℤ·∀a1⦂S, a2⦂T· a1↦a2 = a ⇒ a1↦a2↦b ∈ A");
 	}
@@ -173,7 +173,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testDecomposeSimpleRight() {
-		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S", "b", "T×U");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a=S; b=T×U", ff);
 		doTest(typenv, "a↦b ∈ A", //
 				"∃x⦂ℤ·∀b1⦂T, b2⦂U· b1↦b2 = b ⇒ a↦(b1↦b2) ∈ A");
 	}
@@ -185,7 +185,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	@Test
 	public void testDecomposeComplex() {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(//
-				"a", "S", "b", "T×U", "c", "T×U×V", "d", "S×(T×U)×V");
+				"a=S; b=T×U; c=T×U×V; d=S×(T×U)×V", ff);
 		doTest(typenv, "a↦(b↦c)↦d ∈ A",
 				"∃x⦂ℤ·∀d1⦂S, d2⦂T, d3⦂U, d4⦂V, c1⦂T, c2⦂U, c3⦂V, b1⦂T, b2⦂U·"
 						+ "b1↦b2 = b ∧ c1↦c2↦c3 = c ∧ d1↦(d2↦d3)↦d4 = d"
@@ -198,7 +198,7 @@ public class MapletDecomposerTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testDecomposeAlreadyBound() {
-		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a", "S×T", "b", "U");
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("a=S×T; b=U", ff);
 		doTest(typenv, "∀a⦂S×T, b⦂U, A⦂ℙ(S×T×U)· a↦b ∈ A", //
 				"∀a⦂S×T, b⦂U, A⦂ℙ(S×T×U)· "
 						+ "∀a1⦂S, a2⦂T· a1↦a2 = a ⇒ a1↦a2↦b ∈ A");

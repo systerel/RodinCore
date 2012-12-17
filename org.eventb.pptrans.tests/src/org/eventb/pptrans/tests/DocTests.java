@@ -15,7 +15,6 @@ package org.eventb.pptrans.tests;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
@@ -70,44 +69,35 @@ public class DocTests extends AbstractTranslationTests {
 	@Test
 	public void testDoc2() {
 		
-		doDecompTest(	"a=b ∧ a ∈ S",
-						"∀x0,x1,x2,x3·(a=x0↦x1 ∧ b = x2 ↦x3)⇒(x0↦x1=x2↦x3 ∧ x0↦x1 ∈ S)",
-						mTypeEnvironment(
-								mList("a", "b", "S"),
-								mList(CPROD(INT, INT), CPROD(INT, INT), REL(INT, INT))));
+		doDecompTest(
+				"a=b ∧ a ∈ S",
+				"∀x0,x1,x2,x3·(a=x0↦x1 ∧ b = x2 ↦x3)⇒(x0↦x1=x2↦x3 ∧ x0↦x1 ∈ S)",
+				mTypeEnvironment("a=ℤ×ℤ; b=ℤ×ℤ; S=ℤ↔ℤ", ff));
 	}
 	
 	@Test
 	public void testDoc3() {
 		
-		doTransTest(	"p⊆S ∧ q⊆S ⇒ (p⊆q ⇔ S∖q ⊆ S∖p)",
-						"(∀x·x∈p⇒x∈S)∧(∀y·y∈q⇒y∈S)⇒((∀z·z∈p⇒z∈q)⇔(∀t·t∈S∧¬t∈q⇒t∈S∧¬t∈p))",
-						false,
-						mTypeEnvironment(
-								mList("p", "S", "q"),
-								mList(INT_SET, INT_SET, INT_SET)));
+		doTransTest(
+				"p⊆S ∧ q⊆S ⇒ (p⊆q ⇔ S∖q ⊆ S∖p)",
+				"(∀x·x∈p⇒x∈S)∧(∀y·y∈q⇒y∈S)⇒((∀z·z∈p⇒z∈q)⇔(∀t·t∈S∧¬t∈q⇒t∈S∧¬t∈p))",
+				false, mTypeEnvironment("p=ℙ(ℤ); S=ℙ(ℤ); q=ℙ(ℤ)", ff));
 	}
 	
 	@Test
 	public void testDoc4() {
-		
-		doTransTest(	"u ≠ ∅ ⇒ (∀t·t∈u ⇒ inter(u) ⊆ t)",
-						"¬(∀x·¬x∈u) ⇒ (∀t·t∈u ⇒ (∀x·(∀s·s∈u ⇒ x∈s)⇒x∈t))",
-						false,
-						mTypeEnvironment(
-								mList("u", "t"),
-								mList(POW(INT_SET), INT_SET)));
+
+		doTransTest("u ≠ ∅ ⇒ (∀t·t∈u ⇒ inter(u) ⊆ t)",
+				"¬(∀x·¬x∈u) ⇒ (∀t·t∈u ⇒ (∀x·(∀s·s∈u ⇒ x∈s)⇒x∈t))", false,
+				mTypeEnvironment("u=ℙ(ℙ(ℤ)); t=ℙ(ℤ)", ff));
 	}
 
 	@Test
 	public void testDoc5() {
-		
-		doTransTest(	"(S ◁ r)∼  =r∼  ▷ S",
-						"(∀x,y·y↦x ∈ r ∧ y∈S  ⇔ y↦x ∈ r ∧ y∈S)",
-						true,
-						mTypeEnvironment(
-								mList("S", "r"),
-								mList(INT_SET, REL(INT, BOOL))));
+
+		doTransTest("(S ◁ r)∼  =r∼  ▷ S",
+				"(∀x,y·y↦x ∈ r ∧ y∈S  ⇔ y↦x ∈ r ∧ y∈S)", true,
+				mTypeEnvironment("S=ℙ(ℤ); r=ℤ↔BOOL", ff));
 	}
 	
 	@Test
@@ -116,9 +106,7 @@ public class DocTests extends AbstractTranslationTests {
 		doTransTest(	"a ⊆ b ⇒ r[a] ⊆ r[b]",
 						"(∀x·x∈a ⇒ x∈b) ⇒ (∀y·(∃z·z∈a ∧ z↦y∈r) ⇒ (∃t·t∈b∧t↦y∈r))",
 						false,
-						mTypeEnvironment(
-								mList("a", "b", "r"),
-								mList(INT_SET, INT_SET, REL(INT, BOOL))));
+						mTypeEnvironment("a=ℙ(ℤ); b=ℙ(ℤ); r=ℤ↔BOOL", ff));
 	}
 
 	@Test
@@ -137,7 +125,7 @@ public class DocTests extends AbstractTranslationTests {
 	public void testUseCase2() {
 
 		final ITypeEnvironmentBuilder te = mTypeEnvironment(
-		"r", "GS ↔ GU", "s", "GU ↔ GT");
+				"r=GS ↔ GU; s=GU ↔ GT", ff);
 
 		doTransTest("r;s ∈ S↔T",
 				"∀x,y·(∃z·x↦z∈r ∧ z↦y∈s) ⇒ x∈S ∧ y∈T",
@@ -147,7 +135,7 @@ public class DocTests extends AbstractTranslationTests {
 
 	@Test
 	public void testIR34_full() {
-		final ITypeEnvironmentBuilder te = mTypeEnvironment("r", "S↔T");
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("r=S↔T", ff);
 		doTransTest("e↦f ∈ rs",
 				"(e↦f ∈ r ∧ ¬(∃x·e↦x ∈ s)) ∨ e↦f ∈ s",
 				false, 
@@ -156,7 +144,7 @@ public class DocTests extends AbstractTranslationTests {
 
 	@Test
 	public void testIR34_full2() {
-		final ITypeEnvironmentBuilder te = mTypeEnvironment("r", "S↔T");
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("r=S↔T", ff);
 		doTransTest("rs ∈ A↔B",
 				"∀x,y·(x↦y ∈ r ∧ ¬(∃z·x↦z ∈ s)) ∨ x↦y ∈ s ⇒ x ∈ A ∧ y ∈ B",
 				false, 
@@ -165,7 +153,7 @@ public class DocTests extends AbstractTranslationTests {
 
 	@Test
 	public void testIR34_full3() {
-		final ITypeEnvironmentBuilder te = mTypeEnvironment("r", "S↔T");
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("r=S↔T", ff);
 		doTransTest("r{a ↦ b} ∈ A↔B",
 				"∀x,y·(x↦y ∈ r ∧ ¬(∃z·x = a ∧ z = b)) ∨ (x = a ∧ y = b)" +
 				"     ⇒ x ∈ A ∧ y ∈ B",
@@ -211,7 +199,7 @@ public class DocTests extends AbstractTranslationTests {
 
 	@Test
 	public void testBool_05() {
-		final ITypeEnvironmentBuilder te = mTypeEnvironment("f", "ℙ(BOOL×S)");
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("f=ℙ(BOOL×S)", ff);
 		doTransTest("f(bool(x = 5)) = a",
 				"∃y·(y = TRUE ⇔ x = 5) ∧ y ↦ a ∈ f",
 				false, 
@@ -220,7 +208,7 @@ public class DocTests extends AbstractTranslationTests {
 
 	@Test
 	public void testBool_06() {
-		final ITypeEnvironmentBuilder te = mTypeEnvironment("f", "ℙ(S×BOOL)");
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("f=ℙ(S×BOOL)", ff);
 		doTransTest("f(a) = bool(x = 5)",
 				"∃y·(y = TRUE ⇔ x = 5) ∧ a ↦ y ∈ f",
 				false, 
@@ -229,7 +217,7 @@ public class DocTests extends AbstractTranslationTests {
 
 	@Test
 	public void testBool_07() {
-		final ITypeEnvironmentBuilder te = mTypeEnvironment("f", "ℙ(BOOL×BOOL×BOOL×S)");
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("f=ℙ(BOOL×BOOL×BOOL×S)", ff);
 		doTransTest("f(bool(x = 5) ↦ bool(x = 6) ↦ bool(x = 7)) = a",
 				"∃y,z,t·(y = TRUE ⇔ x = 5)" +
 				"     ∧ (z = TRUE ⇔ x = 6)" +
@@ -241,7 +229,7 @@ public class DocTests extends AbstractTranslationTests {
 
 	@Test
 	public void testBool_08() {
-		final ITypeEnvironmentBuilder te = mTypeEnvironment("f", "ℙ(BOOL×S×ℤ)");
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("f=ℙ(BOOL×S×ℤ)", ff);
 		doTransTest("f(bool(x = 5) ↦ a)∈ℕ",
 				"∀y·(∃z·(z = TRUE ⇔ x = 5) ∧ z ↦ a ↦ y ∈ f) ⇒ 0 ≤ y",
 				false, 
@@ -250,7 +238,7 @@ public class DocTests extends AbstractTranslationTests {
 
 	@Test
 	public void test2648946() {
-		final ITypeEnvironmentBuilder te = mTypeEnvironment("A", "ℙ(A)", "B", "ℙ(B)");
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("A=ℙ(A); B=ℙ(B)", ff);
 		doTransTest("G ⊆ A ∧ H ⊆ A ∧ f ∈ ℙ(A) → ℙ(B) ⇒ G ∪ H ∈ dom(f)",//
 				"  (∀x,y,z· x↦y∈f ∧ x↦z∈f ⇒ y=z)" +
 				"∧ (∀x·∃y·x↦y∈f)" +
@@ -260,7 +248,7 @@ public class DocTests extends AbstractTranslationTests {
 
 	@Test
 	public void test2962503() {
-		final ITypeEnvironmentBuilder te = mTypeEnvironment("i", "ℤ", "j", "ℤ");
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("i=ℤ; j=ℤ", ff);
 		doTransTest("i≥0 ∧ j≥0 ⇒" +
 				" j∈dom(succ) ∧ succ∈ℤ ⇸ ℤ ∧" +
 				" 0≤i ∧ 0≤succ(j) ∧ 0≤i ∧ 0≤j",//
@@ -277,7 +265,7 @@ public class DocTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testSMT1() {
-		final ITypeEnvironmentBuilder te = mTypeEnvironment("a", "S");
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("a=S", ff);
 		doTransTest("a↦BOOL↦ℤ ∈ A", "a↦BOOL↦ℤ ∈ A", false, te);
 	}
 
@@ -287,7 +275,7 @@ public class DocTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testSMT2() throws Exception {
-		final ITypeEnvironmentBuilder te = mTypeEnvironment("f", "BOOL ↔ S");
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("f=BOOL ↔ S", ff);
 		doTransTest("f(TRUE) = a", "∃x·x=TRUE ∧ x↦a ∈ f", false, te);
 		doTransTest("f(FALSE) = a", "∃x·¬x=TRUE ∧ x↦a ∈ f", false, te);
 		doTransTest("b = bool(c=TRUE ∧ FALSE=d)",
