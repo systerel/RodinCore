@@ -9,8 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - published method getFormulaFactory()
  *     Systerel - added support for specialization 
- *     Systerel - added support for an immutable type environment 
- *     			  and move mutable methods to ITypeEnvironmentBuilder
+ *     Systerel - added support for immutable type environments
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -25,11 +24,11 @@ import java.util.Set;
  * </p>
  * <p>
  * More precisely, the type-checker takes as input a type environment which
- * gives the type of some names and produce as output a new inferred type
+ * gives the type of some names and produces as output a new inferred type
  * environment that records the types inferred from the formula.
  * </p>
  * <p>
- * Type environment enforce name consistency. This means that all names must be
+ * Type environments enforce name consistency. This means that all names must be
  * valid identifier names in the associated language (as defined by the formula
  * factory used to create this type environment) and that any name that occurs
  * in a registered type (i.e., any carrier set name) is automatically added to
@@ -40,15 +39,17 @@ import java.util.Set;
  * {@link FormulaFactory#makeTypeEnvironment()} to create new type environments.
  * </p>
  * <p>
- * This type must be used when both immutable and mutable type environments
- * could be provided. It must never be casted to one of his children interfaces
- * but methods {@link ITypeEnvironment#makeSnapshot()} and
- * {@link ITypeEnvironment#makeBuilder()} preserving from mutability can be
- * used. In other cases use {@link ISealedTypeEnvironment} for immutable
- * environments or {@link ITypeEnvironmentBuilder} for mutable environments.
+ * There are two implementations of this interface. One is mutable and allows to
+ * gradually build a type environment (see {@link ITypeEnvironmentBuilder}). The
+ * other is immutable and stores a stable type environment (see
+ * {@link ISealedTypeEnvironment}). Methods
+ * {@link ITypeEnvironment#makeSnapshot()} and
+ * {@link ITypeEnvironment#makeBuilder()} allow to navigate between these two
+ * variants.
  * </p>
  * 
  * @author Laurent Voisin
+ * @since 1.0
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -129,8 +130,7 @@ public interface ITypeEnvironment {
 	}
 
 	/**
-	 * Returns <code>true</code> if the type environment contains the given
-	 * name.
+	 * Returns whether this type environment contains the given name.
 	 * 
 	 * @param name
 	 *            the name to lookup
@@ -228,20 +228,22 @@ public interface ITypeEnvironment {
 	 *            the specialization to apply
 	 * @return the type environment obtained by applying the given
 	 *         specialization to this type environment
-	 * @since 3.0 : the returned type environment became explicitly mutable
+	 * @since 3.0: the returned type environment became explicitly mutable
 	 */
 	ITypeEnvironmentBuilder specialize(ISpecialization specialization);
 
 	/**
 	 * Get an immutable snapshot of this type environment.
 	 * 
-	 * @return a snapshot of this type environment built
+	 * @return a snapshot of this type environment
 	 * @since 3.0
 	 */
 	ISealedTypeEnvironment makeSnapshot();
 
 	/**
-	 * Get a copy of this type environment in order to build a new one.
+	 * Get a mutable copy of this type environment in order to build a new one.
+	 * The copy is guaranteed to be a different instance and will evolve
+	 * independently of this type environment.
 	 * 
 	 * @return a copy of this type environment as a builder
 	 * @since 3.0
