@@ -116,7 +116,7 @@ public abstract class AbstractTacticTests {
 	 *            string representation of some type environment
 	 */
 	protected void addToTypeEnvironment(String typenvImage) {
-		final ITypeEnvironment newTypenv = TestLib.genTypeEnv(typenvImage, ff);
+		final ITypeEnvironment newTypenv = TestLib.mTypeEnvironment(typenvImage, ff);
 		typenv.addAll(newTypenv);
 	}
 

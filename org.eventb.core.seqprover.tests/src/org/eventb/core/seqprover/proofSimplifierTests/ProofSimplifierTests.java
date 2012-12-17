@@ -17,7 +17,7 @@ import static org.eventb.core.seqprover.eventbExtensions.Tactics.eqE;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.hyp;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genPreds;
-import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
+import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -148,7 +148,7 @@ public class ProofSimplifierTests {
 	}
 
 	private IProofTree makeMoreComplex() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("c=S,c2=ℤ,r=ℙ(S×S)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("c=S; c2=ℤ; r=S↔S");
 		typeEnv.addGivenSet("S");
 		final Set<Predicate> hyps = genPreds(typeEnv, "c∈dom(r)", "c2=0" , "c2≠c1" , "r∈S ⇸ S" , "∀x·r(x)∈S ∖ {x}");
 		final Predicate goal = TestLib.genPred(typeEnv, "r(r(c)) ≠ r(c)");

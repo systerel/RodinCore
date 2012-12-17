@@ -203,7 +203,7 @@ public class TestLib {
 			String hiddenHypsImage, String defaultHypsImage,
 			String selHypsImage, String goalImage, FormulaFactory factory) {
 
-		final ITypeEnvironmentBuilder typenv = genTypeEnv(typeEnvImage, factory);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(typeEnvImage, factory);
 		return genFullSeq(typenv, hiddenHypsImage, defaultHypsImage, selHypsImage, goalImage);
 	}
 
@@ -269,11 +269,16 @@ public class TestLib {
 		return genSeq(ff, predicates);
 	}
 
+	private static final Pattern typenvPairSeparator = Pattern.compile(";");
 	private static final Pattern typEnvPairPattern = Pattern
 			.compile("^([^=]*)=([^=]*)$");
 
-	public static ITypeEnvironmentBuilder genTypeEnv(String typeEnvImage) {
-		return genTypeEnv(typeEnvImage, ff);		
+	public static ITypeEnvironmentBuilder mTypeEnvironment() {
+		return ff.makeTypeEnvironment();
+	}
+	
+	public static ITypeEnvironmentBuilder mTypeEnvironment(String typeEnvImage) {
+		return mTypeEnvironment(typeEnvImage, ff);		
 	}
 	
 	/**
@@ -293,13 +298,13 @@ public class TestLib {
 	 *            image of the type environment to generate
 	 * @return the type environment described by the given string
 	 */
-	public static ITypeEnvironmentBuilder genTypeEnv(String typeEnvImage, FormulaFactory factory) {
+	public static ITypeEnvironmentBuilder mTypeEnvironment(String typeEnvImage, FormulaFactory factory) {
 		final DLib lib = mDLib(factory);
 		final ITypeEnvironmentBuilder result = lib.makeTypeEnvironment();
 		if (typeEnvImage.length() == 0) {
 			return result;
 		}
-		for (final String pairImage : typeEnvImage.split(",")) {
+		for (final String pairImage : typenvPairSeparator.split(typeEnvImage)) {
 			final Matcher m = typEnvPairPattern.matcher(pairImage);
 			if (!m.matches()) {
 				throw new IllegalArgumentException(

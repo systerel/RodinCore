@@ -5,6 +5,7 @@ import java.util.List;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
+import org.eventb.internal.core.seqprover.eventbExtensions.FiniteInter;
 
 /**
  * Unit tests for the Finite of intersection reasoner {@link FiniteInter}
@@ -19,7 +20,7 @@ public class FiniteInterTests extends AbstractEmptyInputReasonerTests {
 
 	String P3 = "finite(S ∩ {0 ↦ 3} ∩ T)";
 
-	String resultP3GoalA = "{S=ℙ(ℤ×ℤ), T=ℙ(ℤ×ℤ)}[][][⊤] |- finite(S)∨finite({0 ↦ 3})∨finite(T)";
+	String resultP3GoalA = "{S=ℤ↔ℤ; T=ℤ↔ℤ}[][][⊤] |- finite(S)∨finite({0 ↦ 3})∨finite(T)";
 	
 	protected List<IPosition> getPositions(Predicate predicate) {
 		return Tactics.finiteInterGetPositions(predicate);

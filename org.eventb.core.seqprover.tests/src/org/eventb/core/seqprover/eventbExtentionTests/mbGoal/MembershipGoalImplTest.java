@@ -82,21 +82,21 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 
 	@Test
 	public void backtrack() {
-		final TestItem it = new TestItem("x ∈ B", "x=ℤ, C=ℙ(ℤ)", "x ∈ A",
+		final TestItem it = new TestItem("x ∈ B", "x=ℤ; C=ℙ(ℤ)", "x ∈ A",
 				"C ⊆ B", "A ⊆ B");
 		it.assertFound(rf.compose(it.hyp("x ∈ A"), it.hyp("A ⊆ B")));
 	}
 
 	@Test
 	public void mightLoop() {
-		final TestItem it = new TestItem("x ∈ B", "x=ℤ, B=ℙ(ℤ)", "x ∈ A",
+		final TestItem it = new TestItem("x ∈ B", "x=ℤ; B=ℙ(ℤ)", "x ∈ A",
 				"B ⊆ B", "A ⊆ B");
 		it.assertFound(rf.compose(it.hyp("x ∈ A"), it.hyp("A ⊆ B")));
 	}
 
 	@Test
 	public void mightLoopLong() {
-		final TestItem it = new TestItem("x ∈ B", "x=ℤ, B=ℙ(ℤ)", "x ∈ A",
+		final TestItem it = new TestItem("x ∈ B", "x=ℤ; B=ℙ(ℤ)", "x ∈ A",
 				"C ⊆ B", "B ⊆ C", "A ⊆ B");
 		it.assertFound(rf.compose(it.hyp("x ∈ A"), it.hyp("A ⊆ B")));
 	}
@@ -109,27 +109,27 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 
 	@Test
 	public void notFoundBacktrack() {
-		final TestItem it = new TestItem("x ∈ A", "x=ℤ, A=ℙ(ℤ)", "B ⊆ A",
+		final TestItem it = new TestItem("x ∈ A", "x=ℤ; A=ℙ(ℤ)", "B ⊆ A",
 				"C ⊆ B", "D ⊆ A");
 		it.assertNotFound();
 	}
 
 	@Test
 	public void useless() {
-		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ", "y ∈ A");
+		final TestItem it = new TestItem("x ∈ A", "x=ℤ; y=ℤ", "y ∈ A");
 		it.assertNotFound();
 	}
 
 	@Test
 	public void splitHyp() {
-		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ", "x↦y ∈ A×B");
+		final TestItem it = new TestItem("x ∈ A", "x=ℤ; y=ℤ", "x↦y ∈ A×B");
 		it.assertFound(rf.domPrjS(it.hyp("x↦y ∈ A×B")));
 	}
 
 	@Test
 	public void mapletAsRelation() {
 		final String hyp = "{x↦y} ∈ A ⇸ B";
-		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ", hyp);
+		final TestItem it = new TestItem("x ∈ A", "x=ℤ; y=ℤ", hyp);
 		it.assertFound(rf.domPrjS(it.setExtMember("x↦y",
 				rf.relToCprod(it.hyp(hyp)))));
 	}
@@ -140,7 +140,7 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 	 */
 	@Test
 	public void mapletOverride() {
-		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ",
+		final TestItem it = new TestItem("x ∈ A", "x=ℤ; y=ℤ",
 				"f  {x↦y} ∈ A ⤔ B");
 		it.assertFound(rf.domPrjS(it.setExtMember("x↦y",
 				rf.lastOvr(rf.relToCprod(it.hyp("f  {x↦y} ∈ A ⤔ B"))))));
@@ -153,7 +153,7 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 	@Test
 	public void inRelationSet() {
 		final String hyp = "{x↦y} ∈ A ⇸ B";
-		final TestItem it = new TestItem("{x↦y} ∈ S", "x=ℤ, y=ℤ", hyp,
+		final TestItem it = new TestItem("{x↦y} ∈ S", "x=ℤ; y=ℤ", hyp,
 				"A⇸B ⊆ S");
 		it.assertFound(rf.compose(it.hyp(hyp), it.hyp("A⇸B ⊆ S")));
 	}
@@ -176,7 +176,7 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 	 */
 	@Test
 	public void cprodOnPath() {
-		final TestItem it = new TestItem("x ∈ dom(f)", "x=ℤ, y=ℤ",//
+		final TestItem it = new TestItem("x ∈ dom(f)", "x=ℤ; y=ℤ",//
 				"x↦y ∈ A×B", "A×B ⊆ f");
 		it.assertFound(rf.compose(rf.domPrj(it.hyp("x↦y ∈ A×B")),
 				rf.domPrj(it.hyp("A×B ⊆ f"))));
@@ -188,7 +188,7 @@ public class MembershipGoalImplTest extends AbstractMbGoalTests {
 	@Test
 	@Ignore("Not yet implemented")
 	public void funDomain() {
-		final TestItem it = new TestItem("x ∈ A", "x=ℤ, y=ℤ",//
+		final TestItem it = new TestItem("x ∈ A", "x=ℤ; y=ℤ",//
 				"x↦y ∈ f", "f ∈ A ⤖ B");
 		it.assertFound(rf.compose(rf.domPrj(it.hyp("x↦y ∈ f")),
 				rf.domPrj(rf.relToCprod(it.hyp("f ∈ A ⤖ B")))));

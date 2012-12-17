@@ -72,7 +72,7 @@ public class FiniteDefTests extends AbstractManualRewriterTests {
 	public void testDEF_FINITE() {
 		rewritePred("finite(A)", "", "∃n,f · f∈1‥n⤖A", "A=ℙ(S)");
 		rewritePred("finite(∅⦂ℙ(S))", "", "∃n,f · f∈1‥n⤖(∅⦂ℙ(S))");
-		rewritePred("finite(A×B)", "", "∃n,f · f∈1‥n⤖A×B", "A=ℙ(S),B=ℙ(T)");
+		rewritePred("finite(A×B)", "", "∃n,f · f∈1‥n⤖A×B", "A=ℙ(S); B=ℙ(T)");
 		rewritePred("¬A=∅ ∧ finite(A)", "1", "¬A=∅ ∧ (∃n,f · f∈1‥n⤖A)",
 				"A=ℙ(S)");
 		rewritePred("finite({x · x=1÷0 ∣ x})", "",

@@ -13,7 +13,7 @@ package org.eventb.core.seqprover.transformer.tests;
 import static java.util.Arrays.copyOf;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
-import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
+import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.eventb.core.seqprover.transformer.SimpleSequents.translateDatatypes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -41,7 +41,7 @@ import org.junit.Test;
 public class DatatypeTranslationTests extends AbstractTransformerTests {
 
 	private static final String msgTypeEnvironment //
-	= "Agent=ℙ(Agent), Identifier=ℙ(Identifier), a=Agent, b=Agent, c=Identifier";
+	= "Agent=ℙ(Agent); Identifier=ℙ(Identifier); a=Agent; b=Agent; c=Identifier";
 
 	private static final String msgDatatypeSpec //
 	= "MESSAGES[U,V] ::=  message ; sender[U] ; receiver[U]; identifier[V]";
@@ -78,7 +78,7 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 
 	@Test
 	public void testTypeConstructorInGoal() {
-		testSequentTranslation("Agent=ℙ(Agent), Identifier=ℙ(Identifier)",
+		testSequentTranslation("Agent=ℙ(Agent); Identifier=ℙ(Identifier)",
 				" |- ∃ x ·x ∈ MESSAGES(Agent, Identifier)",//
 				msgAxioms + "|- ∃ x · x ∈ MESSAGES_Type");
 	}
@@ -102,7 +102,7 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 		final IDatatypeExtension dt = injectExtension(msgDatatypeSpec);
 		final IDatatype datatype = ff.makeDatatype(dt);
 		final FormulaFactory srcFac = getInstance(datatype.getExtensions());
-		final ITypeEnvironmentBuilder srcTypenv = genTypeEnv(typeEnvStr, srcFac);
+		final ITypeEnvironmentBuilder srcTypenv = mTypeEnvironment(typeEnvStr, srcFac);
 		final ISimpleSequent srcSequent = getSimpleSequent(srcTypenv,
 				sequentImage);
 		final ISimpleSequent actual = translateDatatypes(srcSequent);

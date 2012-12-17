@@ -12,7 +12,7 @@ package org.eventb.core.seqprover.eventbExtentionTests.mbGoal;
 
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
-import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
+import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import junit.framework.Assert;
 
 import org.eventb.core.ast.Expression;
@@ -45,14 +45,14 @@ public class RuleTest {
 
 	@Test
 	public void expr() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("a=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("a=ℙ(ℤ)");
 		final Rule.Expr expr = new Rule.Expr(genExpr(typeEnv, "a"), ff);
 		Assert.assertEquals(genPred(typeEnv, "a⊆a"), expr.getConsequent());
 	}
 
 	@Test
 	public void domain() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ), L1=ℙ(ℤ×ℤ×ℤ×(ℤ×ℤ)), L2=ℙ(ℤ×(ℤ×ℤ)×(ℤ×ℤ))");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ; L1=ℙ(ℤ×ℤ×ℤ×(ℤ×ℤ)); L2=ℙ(ℤ×(ℤ×ℤ)×(ℤ×ℤ))");
 		applyDomain(typeEnv, "f⊆g", "dom(f)⊆dom(g)");
 		applyDomain(typeEnv, "f⊂g", "dom(f)⊂dom(g)");
 		applyDomain(typeEnv, "f∼⊆g", "ran(f)⊆dom(g)");
@@ -75,7 +75,7 @@ public class RuleTest {
 
 	@Test
 	public void range() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ), L1=ℙ(ℤ×ℤ×ℤ×(ℤ×ℤ)), L2=ℙ(ℤ×(ℤ×ℤ)×(ℤ×ℤ))");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ; L1=ℙ(ℤ×ℤ×ℤ×(ℤ×ℤ)); L2=ℙ(ℤ×(ℤ×ℤ)×(ℤ×ℤ))");
 		applyRange(typeEnv, "f⊆g", "ran(f)⊆ran(g)");
 		applyRange(typeEnv, "f⊂g", "ran(f)⊂ran(g)");
 		applyRange(typeEnv, "f∼⊆g", "dom(f)⊆ran(g)");
@@ -98,7 +98,7 @@ public class RuleTest {
 
 	@Test
 	public void converse() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		applyConverse(typeEnv, "f⊆g", "f∼⊆g∼");
 		applyConverse(typeEnv, "f⊂g", "f∼⊂g∼");
 		applyConverse(typeEnv, "f∼⊆g", "f⊆g∼");
@@ -126,7 +126,7 @@ public class RuleTest {
 
 	@Test
 	public void equalLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		final Predicate pred = genPred(typeEnv, "f=g");
 		final Predicate modifiedpred = genPred(typeEnv, "f⊆g");
 		final RelationalPredicate rPred = (RelationalPredicate) pred;
@@ -138,7 +138,7 @@ public class RuleTest {
 
 	@Test
 	public void equalRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		final Predicate pred = genPred(typeEnv, "f=g");
 		final Predicate modifiedpred = genPred(typeEnv, "g⊆f");
 		final RelationalPredicate rPred = (RelationalPredicate) pred;
@@ -150,7 +150,7 @@ public class RuleTest {
 
 	@Test
 	public void contBInter() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ)");
 		final String subseteq = "A⊆B∩C∩D";
 		applyContBInter(typeEnv, subseteq, "A⊆B", "B");
 		applyContBInter(typeEnv, subseteq, "A⊆B∩C", "B", "C");
@@ -186,7 +186,7 @@ public class RuleTest {
 
 	@Test
 	public void contSetminus() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ)");
 		applyContSetminus(typeEnv, "A⊆B∖C", "A⊆B");
 		applyContSetminus(typeEnv, "A⊂B∖C", "A⊂B");
 	}
@@ -204,7 +204,7 @@ public class RuleTest {
 
 	@Test
 	public void contRanres() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		applyContRanres(typeEnv, "f⊆g▷A", "f⊆g");
 		applyContRanres(typeEnv, "f⊂g▷A", "f⊂g");
 	}
@@ -222,7 +222,7 @@ public class RuleTest {
 
 	@Test
 	public void contRansub() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		applyContRansub(typeEnv, "f⊆g⩥A", "f⊆g");
 		applyContRansub(typeEnv, "f⊂g⩥A", "f⊂g");
 	}
@@ -244,7 +244,7 @@ public class RuleTest {
 
 	@Test
 	public void contDomRes() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		applyContDomres(typeEnv, "f⊆A◁g", "f⊆g");
 		applyContDomres(typeEnv, "f⊂A◁g", "f⊂g");
 	}
@@ -262,7 +262,7 @@ public class RuleTest {
 
 	@Test
 	public void contDomsub() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		applyContDomsub(typeEnv, "f⊆A⩤g", "f⊆g");
 		applyContDomsub(typeEnv, "f⊂A⩤g", "f⊂g");
 	}
@@ -280,7 +280,7 @@ public class RuleTest {
 
 	@Test
 	public void inclSetext() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ)");
 		final String subseteq = "{x,y,z}⊆A";
 		applyInclSetext(typeEnv, subseteq, "x∈A", "x");
 		applyInclSetext(typeEnv, subseteq, "{x,y}⊆A", "x", "y");
@@ -316,7 +316,7 @@ public class RuleTest {
 
 	@Test
 	public void includBunion() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("Z=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("Z=ℙ(ℤ)");
 		final String subseteq = "A∪B∪C⊆Z";
 		applyIncludBunion(typeEnv, subseteq, "A⊆Z", "A");
 		applyIncludBunion(typeEnv, subseteq, "A∪B⊆Z", "A", "B");
@@ -353,7 +353,7 @@ public class RuleTest {
 
 	@Test
 	public void includOvr() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		final String subseteq = "ghk⊆f";
 		applyIncludOvr(typeEnv, subseteq, "k⊆f", "k");
 		applyIncludOvr(typeEnv, subseteq, "hk⊆f", "hk");
@@ -378,7 +378,7 @@ public class RuleTest {
 
 	@Test
 	public void simpDomCprodLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); B=ℙ(ℤ)");
 		final String subseteq = "dom(A×B)⊆Z";
 		applySimpDomCprodLeft(typeEnv, subseteq, "A⊆Z");
 		final String subset = "dom(A×B)⊂Z";
@@ -398,7 +398,7 @@ public class RuleTest {
 
 	@Test
 	public void simpDomCprodRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); B=ℙ(ℤ)");
 		final String subseteq = "Z⊆dom(A×B)";
 		applySimpDomCprodRight(typeEnv, subseteq, "Z⊆A");
 		final String subset = "Z⊂dom(A×B)";
@@ -418,7 +418,7 @@ public class RuleTest {
 
 	@Test
 	public void simpRanCprodLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); B=ℙ(ℤ)");
 		final String subseteq = "ran(A×B)⊆Z";
 		applySimpRanCprodLeft(typeEnv, subseteq, "B⊆Z");
 		final String subset = "ran(A×B)⊂Z";
@@ -438,7 +438,7 @@ public class RuleTest {
 
 	@Test
 	public void simpRanCprodRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); B=ℙ(ℤ)");
 		final String subseteq = "Z⊆ran(A×B)";
 		applySimpRanCprodRight(typeEnv, subseteq, "Z⊆B");
 		final String subset = "Z⊂ran(A×B)";
@@ -458,7 +458,7 @@ public class RuleTest {
 
 	@Test
 	public void simpConvCprodLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); B=ℙ(ℤ)");
 		final String subseteq = "(A×B)∼⊆Z";
 		applySimpConvCprodLeft(typeEnv, subseteq, "B×A⊆Z");
 		final String subset = "(A×B)∼⊂Z";
@@ -478,7 +478,7 @@ public class RuleTest {
 
 	@Test
 	public void simpConvCprodRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), B=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); B=ℙ(ℤ)");
 		final String subseteq = "Z⊆(A×B)∼";
 		applySimpConvCprodRight(typeEnv, subseteq, "Z⊆B×A");
 		final String subset = "Z⊂(A×B)∼";
@@ -499,7 +499,7 @@ public class RuleTest {
 
 	@Test
 	public void simpConvDomresLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "(A◁f)∼⊆g";
 		applySimpConvDomresLeft(typeEnv, subseteq, "f∼▷A⊆g");
 		final String subset = "(A◁f)∼⊂g";
@@ -520,7 +520,7 @@ public class RuleTest {
 
 	@Test
 	public void simpConvDomresRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "g⊆(A◁f)∼";
 		applySimpConvDomresRight(typeEnv, subseteq, "g⊆f∼▷A");
 		final String subset = "g⊂(A◁f)∼";
@@ -541,7 +541,7 @@ public class RuleTest {
 
 	@Test
 	public void simpConvDomsubLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "(A⩤f)∼⊆g";
 		applySimpConvDomsubLeft(typeEnv, subseteq, "f∼⩥A⊆g");
 		final String subset = "(A⩤f)∼⊂g";
@@ -562,7 +562,7 @@ public class RuleTest {
 
 	@Test
 	public void simpConvDomsubRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "g⊆(A⩤f)∼";
 		applySimpConvDomsubRight(typeEnv, subseteq, "g⊆f∼⩥A");
 		final String subset = "g⊂(A⩤f)∼";
@@ -583,7 +583,7 @@ public class RuleTest {
 
 	@Test
 	public void simpConvRanresLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "(f▷A)∼⊆g";
 		applySimpConvRanresLeft(typeEnv, subseteq, "A◁f∼⊆g");
 		final String subset = "(f▷A)∼⊂g";
@@ -604,7 +604,7 @@ public class RuleTest {
 
 	@Test
 	public void simpConvRanresRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "g⊆(f▷A)∼";
 		applySimpConvRanresRight(typeEnv, subseteq, "g⊆A◁f∼");
 		final String subset = "g⊂(f▷A)∼";
@@ -625,7 +625,7 @@ public class RuleTest {
 
 	@Test
 	public void simpConvRansubLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "(f⩥A)∼⊆g";
 		applySimpConvRansubLeft(typeEnv, subseteq, "A⩤f∼⊆g");
 		final String subset = "(f⩥A)∼⊂g";
@@ -646,7 +646,7 @@ public class RuleTest {
 
 	@Test
 	public void simpConvRansubRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "g⊆(f⩥A)∼";
 		applySimpConvRansubRight(typeEnv, subseteq, "g⊆A⩤f∼");
 		final String subset = "g⊂(f⩥A)∼";
@@ -667,7 +667,7 @@ public class RuleTest {
 
 	@Test
 	public void simpDomDomRanresPrj1Left() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("g=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("g=ℙ(ℤ)");
 		final String subseteq = "dom(dom((prj1⦂ℤ×ℤ↔ℤ)▷f))⊆g";
 		applySimpDomDomRanresPrj1Left(typeEnv, subseteq, "f⊆g");
 		final String subset = "dom(dom((prj1⦂ℤ×ℤ↔ℤ)▷f))⊂g";
@@ -688,7 +688,7 @@ public class RuleTest {
 
 	@Test
 	public void simpDomDomRanresPrj1LefRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("g=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("g=ℙ(ℤ)");
 		final String subseteq = "g⊆dom(dom((prj1⦂ℤ×ℤ↔ℤ)▷f))";
 		applySimpDomDomRanresPrj1Right(typeEnv, subseteq, "g⊆f");
 		final String subset = "g⊂dom(dom((prj1⦂ℤ×ℤ↔ℤ)▷f))";
@@ -709,7 +709,7 @@ public class RuleTest {
 
 	@Test
 	public void simpDomDomresLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "dom(A◁f)⊆B";
 		applySimpDomDomresLeft(typeEnv, subseteq, "dom(f)∩A⊆B");
 		final String subseteqId = "dom(A◁id)⊆B";
@@ -736,7 +736,7 @@ public class RuleTest {
 
 	@Test
 	public void simpDomDomresRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "B⊆dom(A◁f)";
 		applySimpDomDomresRight(typeEnv, subseteq, "B⊆dom(f)∩A");
 		final String subseteqId = "B⊆dom(A◁id)";
@@ -763,7 +763,7 @@ public class RuleTest {
 
 	@Test
 	public void simpDomDomsubLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "dom(A⩤f)⊆B";
 		applySimpDomDomsubLeft(typeEnv, subseteq, "dom(f)∖A⊆B");
 		final String subset = "dom(A⩤f)⊂B";
@@ -784,7 +784,7 @@ public class RuleTest {
 
 	@Test
 	public void simpDomDomsubRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "B⊆dom(A⩤f)";
 		applySimpDomDomsubRight(typeEnv, subseteq, "B⊆dom(f)∖A");
 		final String subset = "B⊂dom(A⩤f)";
@@ -805,7 +805,7 @@ public class RuleTest {
 
 	@Test
 	public void simpDomRanresIdLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "dom(id▷f)⊆g";
 		applySimpDomRanresIdLeft(typeEnv, subseteq, "f⊆g");
 		final String subset = "dom(id▷f)⊂g";
@@ -826,7 +826,7 @@ public class RuleTest {
 
 	@Test
 	public void simpDomRanresIdRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "g⊆dom(id▷f)";
 		applySimpDomRanresIdRight(typeEnv, subseteq, "g⊆f");
 		final String subset = "g⊂dom(id▷f)";
@@ -847,7 +847,7 @@ public class RuleTest {
 
 	@Test
 	public void simpRanDomRanresPrj2Left() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℙ(ℤ)");
 		final String subseteq = "ran(dom((prj2⦂ℤ×ℤ↔ℤ)▷f))⊆g";
 		applySimpRanDomRanresPrj2Left(typeEnv, subseteq, "f⊆g");
 		final String subset = "ran(dom((prj2⦂ℤ×ℤ↔ℤ)▷f))⊂g";
@@ -868,7 +868,7 @@ public class RuleTest {
 
 	@Test
 	public void simpRanDomRanresPrj2Right() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℙ(ℤ)");
 		final String subseteq = "g⊆ran(dom((prj2⦂ℤ×ℤ↔ℤ)▷f))";
 		applySimpRanDomRanresPrj2Right(typeEnv, subseteq, "g⊆f");
 		final String subset = "g⊂ran(dom((prj2⦂ℤ×ℤ↔ℤ)▷f))";
@@ -889,7 +889,7 @@ public class RuleTest {
 
 	@Test
 	public void simpRanDomresKxxLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteqPrj1 = "ran(f◁prj1)⊆A";
 		applySimpRanDomresKxxLeft(typeEnv, subseteqPrj1, "dom(f)⊆A");
 		final String subset = "ran(f◁prj1)⊂A";
@@ -914,7 +914,7 @@ public class RuleTest {
 
 	@Test
 	public void simpRanDomresKxxRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteqPrj1 = "A⊆ran(f◁prj1)";
 		applySimpRanDomresKxxRight(typeEnv, subseteqPrj1, "A⊆dom(f)");
 		final String subset = "A⊂ran(f◁prj1)";
@@ -939,7 +939,7 @@ public class RuleTest {
 
 	@Test
 	public void simpRanRanresLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "ran(f▷A)⊆B";
 		applySimpRanRanresLeft(typeEnv, subseteq, "ran(f)∩A⊆B");
 		final String subset = "ran(f▷A)⊂B";
@@ -966,7 +966,7 @@ public class RuleTest {
 
 	@Test
 	public void simpRanRanresRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "B⊆ran(f▷A)";
 		applySimpRanRanresRight(typeEnv, subseteq, "B⊆ran(f)∩A");
 		final String subset = "B⊂ran(f▷A)";
@@ -993,7 +993,7 @@ public class RuleTest {
 
 	@Test
 	public void simpRanRansubLeft() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "ran(f⩥A)⊆B";
 		applySimpRanRansubLeft(typeEnv, subseteq, "ran(f)∖A⊆B");
 		final String subset = "ran(f⩥A)⊂B";
@@ -1014,7 +1014,7 @@ public class RuleTest {
 
 	@Test
 	public void simpRanRansubRight() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ), f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ); f=ℤ↔ℤ");
 		final String subseteq = "B⊆ran(f⩥A)";
 		applySimpRanRansubRight(typeEnv, subseteq, "B⊆ran(f)∖A");
 		final String subset = "B⊂ran(f⩥A)";
@@ -1035,7 +1035,7 @@ public class RuleTest {
 
 	@Test
 	public void composition() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("A=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("A=ℙ(ℤ)");
 		final String member = "x∈A";
 		final String incl1EQ = "A⊆B";
 		final String incl1 = "A⊂B";
@@ -1067,7 +1067,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionOvrIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("a=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("a=ℤ↔ℤ");
 		final String subseteq = "z⊆a";
 		final String subset = "z⊂a";
 		final String ovreq = "abc⊆h";
@@ -1096,7 +1096,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionOvrCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("a=ℙ(ℤ×ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("a=ℤ↔ℤ; x=ℤ×ℤ");
 		final String memb = "x∈abc";
 		final String ovreq = "h⊆abc";
 		final String ovr = "h⊂abc";
@@ -1128,7 +1128,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionBunionIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("Z=ℙ(ℤ×ℤ), A=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("Z=ℤ↔ℤ; A=ℤ↔ℤ");
 		final String unioneq = "A∪B∪C⊆D";
 		final String union = "A∪B∪C⊂D";
 		final String subseteqA = "Z⊆A";
@@ -1169,7 +1169,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionBunionCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("Z=ℙ(ℤ×ℤ), A=ℙ(ℤ×ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("Z=ℤ↔ℤ; A=ℤ↔ℤ; x=ℤ×ℤ");
 		final String memb = "x∈B∪C∪D";
 		final String unioneq = "A⊆B∪C∪D";
 		final String union = "A⊂B∪C∪D";
@@ -1217,7 +1217,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionBinterIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("Z=ℙ(ℤ×ℤ), A=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("Z=ℤ↔ℤ; A=ℤ↔ℤ");
 		final String intereq = "A∩B∩C⊆D";
 		final String inter = "A∩B∩C⊂D";
 		final String subseteqA = "Z⊆A";
@@ -1258,7 +1258,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionBinterCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("Z=ℙ(ℤ×ℤ), A=ℙ(ℤ×ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("Z=ℤ↔ℤ; A=ℤ↔ℤ; x=ℤ×ℤ");
 		final String memb = "x∈B∩C∩D";
 		final String intereq = "A⊆B∩C∩D";
 		final String inter = "A⊂B∩C∩D";
@@ -1306,7 +1306,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionCProdLeftIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("B=ℙ(ℤ), C=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("B=ℙ(ℤ); C=ℙ(ℤ)");
 		final String subseteqCprod = "B×C⊆Z";
 		final String subsetCprod = "B×C⊂Z";
 		final String subseteq = "A⊆B";
@@ -1335,7 +1335,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionCProdRightIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("B=ℙ(ℤ), C=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("B=ℙ(ℤ); C=ℙ(ℤ)");
 		final String subseteqCprod = "B×C⊆Z";
 		final String subsetCprod = "B×C⊂Z";
 		final String subseteq = "A⊆C";
@@ -1365,7 +1365,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionCProdLeftCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("B=ℙ(ℤ), C=ℙ(ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("B=ℙ(ℤ); C=ℙ(ℤ); x=ℤ×ℤ");
 		final String membCprod = "x∈B×C";
 		final String subseteqCprod = "Z⊆B×C";
 		final String subsetCprod = "Z⊂B×C";
@@ -1399,7 +1399,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionCProdRightCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("B=ℙ(ℤ), C=ℙ(ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("B=ℙ(ℤ); C=ℙ(ℤ); x=ℤ×ℤ");
 		final String membCprod = "x∈B×C";
 		final String subseteqCprod = "Z⊆B×C";
 		final String subsetCprod = "Z⊂B×C";
@@ -1432,7 +1432,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionSetminusLeftIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℙ(ℤ)");
 		final String setminusEQ = "f∖g⊆A";
 		final String setminus = "f∖g⊂A";
 		final String subseteq = "e⊆f";
@@ -1462,7 +1462,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionSetminusRightIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("g=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("g=ℙ(ℤ)");
 		final String setminusEQ = "f∖g⊆A";
 		final String setminus = "f∖g⊂A";
 		final String subseteq = "g⊆h";
@@ -1493,7 +1493,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionSetminusLeftCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ), x=ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℙ(ℤ); x=ℤ");
 		final String memb = "x∈f∖h";
 		final String setminusEQ = "A⊆f∖h";
 		final String setminus = "A⊂f∖h";
@@ -1526,7 +1526,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionSetminusRightCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("h=ℙ(ℤ), x=ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("h=ℙ(ℤ); x=ℤ");
 		final String memb = "x∈f∖h";
 		final String setminusEQ = "A⊆f∖h";
 		final String setminus = "A⊂f∖h";
@@ -1560,7 +1560,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionRanresLeftIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		final String ranresEQ = "f▷B⊆g";
 		final String ranres = "f▷B⊂g";
 		final String subseteq = "e⊆f";
@@ -1589,7 +1589,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionRanresRightIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ), B=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ; B=ℙ(ℤ)");
 		final String ranresEQ = "f▷B⊆g";
 		final String ranres = "f▷B⊂g";
 		final String subseteq = "A⊆B";
@@ -1619,7 +1619,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionRanresLeftCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("g=ℙ(ℤ×ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("g=ℤ↔ℤ; x=ℤ×ℤ");
 		final String memb = "x∈g▷A";
 		final String ranresEQ = "f⊆g▷A";
 		final String ranres = "f⊂g▷A";
@@ -1651,7 +1651,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionRanresRightCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("g=ℙ(ℤ×ℤ), B=ℙ(ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("g=ℤ↔ℤ; B=ℙ(ℤ); x=ℤ×ℤ");
 		final String memb = "x∈g▷A";
 		final String ranresEQ = "f⊆g▷A";
 		final String ranres = "f⊂g▷A";
@@ -1684,7 +1684,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionDomresLeftIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ), B=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ; B=ℙ(ℤ)");
 		final String domresEQ = "B◁f⊆g";
 		final String domres = "B◁f⊂g";
 		final String subseteq = "A⊆B";
@@ -1713,7 +1713,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionDomresRightIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		final String domresEQ = "B◁f⊆g";
 		final String domres = "B◁f⊂g";
 		final String subseteq = "e⊆f";
@@ -1743,7 +1743,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionDomresLeftCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ), B=ℙ(ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ; B=ℙ(ℤ); x=ℤ×ℤ");
 		final String memb = "x∈A◁g";
 		final String domresEQ = "f⊆A◁g";
 		final String domres = "f⊂A◁g";
@@ -1775,7 +1775,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionDomresRightCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("g=ℙ(ℤ×ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("g=ℤ↔ℤ; x=ℤ×ℤ");
 		final String memb = "x∈A◁g";
 		final String domresEQ = "f⊆A◁g";
 		final String domres = "f⊂A◁g";
@@ -1808,7 +1808,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionRansubLeftIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		final String ransubEQ = "f⩥A⊆g";
 		final String ransub = "f⩥A⊂g";
 		final String subseteq = "e⊆f";
@@ -1837,7 +1837,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionRansubRightIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ), B=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ; B=ℙ(ℤ)");
 		final String ransubEQ = "f⩥A⊆g";
 		final String ransub = "f⩥A⊂g";
 		final String subseteq = "A⊆B";
@@ -1867,7 +1867,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionRansubLeftCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("g=ℙ(ℤ×ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("g=ℤ↔ℤ; x=ℤ×ℤ");
 		final String memb = "x∈g⩥A";
 		final String ransubEQ = "f⊆g⩥A";
 		final String ransub = "f⊂g⩥A";
@@ -1899,7 +1899,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionRansubRightCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("g=ℙ(ℤ×ℤ), B=ℙ(ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("g=ℤ↔ℤ; B=ℙ(ℤ); x=ℤ×ℤ");
 		final String memb = "x∈g⩥B";
 		final String ransubEQ = "f⊆g⩥B";
 		final String ransub = "f⊂g⩥B";
@@ -1932,7 +1932,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionDomsubLeftIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ), A=ℙ(ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ; A=ℙ(ℤ)");
 		final String domsubEQ = "A⩤f⊆g";
 		final String domsub = "A⩤f⊂g";
 		final String subseteq = "A⊆B";
@@ -1961,7 +1961,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionDomsubRightIncl() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ)");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ");
 		final String domsubEQ = "A⩤f⊆g";
 		final String domsub = "A⩤f⊂g";
 		final String subseteq = "e⊆f";
@@ -1991,7 +1991,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionDomsubLeftCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("f=ℙ(ℤ×ℤ), A=ℙ(ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("f=ℤ↔ℤ; A=ℙ(ℤ); x=ℤ×ℤ");
 		final String memb = "x∈B⩤g";
 		final String domsubEQ = "f⊆B⩤g";
 		final String domsub = "f⊂B⩤g";
@@ -2023,7 +2023,7 @@ public class RuleTest {
 
 	@Test
 	public void compositionDomsubRightCont() {
-		final ITypeEnvironmentBuilder typeEnv = genTypeEnv("g=ℙ(ℤ×ℤ), x=ℤ×ℤ");
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("g=ℤ↔ℤ; x=ℤ×ℤ");
 		final String memb = "x∈A⩤g";
 		final String domsubEQ = "f⊆A⩤g";
 		final String domsub = "f⊂A⩤g";

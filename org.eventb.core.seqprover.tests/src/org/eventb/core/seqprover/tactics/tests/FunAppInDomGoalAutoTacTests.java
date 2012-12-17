@@ -47,7 +47,7 @@ public class FunAppInDomGoalAutoTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void apply() {
-		addToTypeEnvironment("f=ℙ(ℤ×ℤ), g=ℙ(ℤ×ℤ), A=ℙ(ℤ), C=ℙ(ℤ), B=ℙ(ℤ), D=ℙ(ℤ), x=ℤ");
+		addToTypeEnvironment("f=ℤ↔ℤ; g=ℤ↔ℤ; A=ℙ(ℤ); C=ℙ(ℤ); B=ℙ(ℤ); D=ℙ(ℤ); x=ℤ");
 		final Predicate inclu = parsePredicate("B⊆C");
 		final Predicate member = parsePredicate("f(x)∈B");
 		final Predicate[] input = new Predicate[] { inclu, member };
@@ -83,7 +83,7 @@ public class FunAppInDomGoalAutoTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void failsTypeRelation() {
-		addToTypeEnvironment("f=ℙ(ℤ×ℤ), g=ℙ(ℤ×ℤ), A=ℙ(ℤ), C=ℙ(ℤ), B=ℙ(ℤ), D=ℙ(ℤ), x=ℤ");
+		addToTypeEnvironment("f=ℤ↔ℤ; g=ℤ↔ℤ; A=ℙ(ℤ); C=ℙ(ℤ); B=ℙ(ℤ); D=ℙ(ℤ); x=ℤ");
 		for (FunAndRel far : FunAndRel.values()) {
 			final String fPredStr = "f∈A" + far.getImage() + "B";
 			for (PFunAndPRel tfatr : PFunAndPRel.values()) {
@@ -105,7 +105,7 @@ public class FunAppInDomGoalAutoTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void failsOnGoals() {
-		addToTypeEnvironment("f=ℙ(ℤ×ℤ), g=ℙ(ℤ×ℤ), A=ℙ(ℤ), C=ℙ(ℤ), B=ℙ(ℤ), D=ℙ(ℤ), x=ℤ");
+		addToTypeEnvironment("f=ℤ↔ℤ; g=ℤ↔ℤ; A=ℙ(ℤ); C=ℙ(ℤ); B=ℙ(ℤ); D=ℙ(ℤ); x=ℤ");
 		final String[] errorGoals = new String[] { //
 		"f(x)∉dom(g)", "f(x)∈B", "x∈dom(g)" };
 		for (String erGoal : errorGoals) {
@@ -126,7 +126,7 @@ public class FunAppInDomGoalAutoTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void failsOnHypothesis() {
-		addToTypeEnvironment("f=ℙ(ℤ×ℤ), g=ℙ(ℤ×ℤ), A=ℙ(ℤ), C=ℙ(ℤ), B=ℙ(ℤ), D=ℙ(ℤ), x=ℤ");
+		addToTypeEnvironment("f=ℤ↔ℤ; g=ℤ↔ℤ; A=ℙ(ℤ); C=ℙ(ℤ); B=ℙ(ℤ); D=ℙ(ℤ); x=ℤ");
 
 		final String[] errorInclus = new String[] { "B⊆A", "A⊆C" };
 		for (String erInclu : errorInclus) {

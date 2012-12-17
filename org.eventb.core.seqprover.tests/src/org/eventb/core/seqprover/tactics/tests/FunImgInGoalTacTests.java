@@ -73,7 +73,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void successWithSuitableHyp() {
-		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
+		addToTypeEnvironment("S=ℙ(S); T=ℙ(T); f=S↔T");
 		final Predicate hypA = parsePredicate("f∈S ⇸ A");
 		final Predicate hypB = parsePredicate("f∈S ⇸ B");
 		assertSuccess(" ;H; ;S; f∈S ⇸ A ;; f∈S ⇸ B |- f(x)∈B",
@@ -86,7 +86,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void successWithNestedFunAppsInGoal() {
-		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔S");
+		addToTypeEnvironment("S=ℙ(S); T=ℙ(T); f=S↔S");
 		final Predicate hypA = parsePredicate("f∈S ⇸ A");
 		assertSuccess(" ;H; ;S; f∈S ⇸ A |- f(f(x))∈A",
 				funImgGoal(hypA, "0.1", funImgGoal(hypA, "0", hyp())));
@@ -98,7 +98,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void successWithSuccessiveFunAppsInGoal() {
-		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
+		addToTypeEnvironment("S=ℙ(S); T=ℙ(T); f=S↔T");
 		final Predicate hypA = parsePredicate("f∈S ⇸ {f(a)}");
 		assertSuccess(" ;H; ;S;f∈S ⇸ {f(a)}|- f(x)∈{f(a)}",
 				funImgGoal(hypA, "1.0", funImgGoal(hypA, "0", hyp())));
@@ -111,7 +111,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void successWithSuccessiveFunAppsFirstDeeper() {
-		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), U=ℙ(U), f=S↔(T↔U)");
+		addToTypeEnvironment("S=ℙ(S); T=ℙ(T); U=ℙ(U); f=S↔(T↔U)");
 		final Predicate hypA = parsePredicate("f∈S ⇸ (T↔ran(f(a)))");
 		final Predicate hypB = parsePredicate("f(a)∈T↔ran(f(a))");
 		assertSuccess(
@@ -127,7 +127,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void successWithSuccessiveFunAppsSecondDeeper() {
-		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), U=ℙ(U), f=S↔(T↔U)");
+		addToTypeEnvironment("S=ℙ(S); T=ℙ(T); U=ℙ(U); f=S↔(T↔U)");
 		final Predicate hypA = parsePredicate("f∈S ⇸ {{a↦f(b)(c)}}");
 		assertSuccess(" ;H;" + ";S; f∈S ⇸ {{a↦f(b)(c)}} |- f(b)∈{{a↦f(b)(c)}}",
 				funImgGoal(hypA, "1.0.0.1.0", funImgGoal(hypA, "0", hyp())));
@@ -148,7 +148,7 @@ public class FunImgInGoalTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void failureWithFunctionalHyps() {
-		addToTypeEnvironment("S=ℙ(S), T=ℙ(T), f=S↔T");
+		addToTypeEnvironment("S=ℙ(S); T=ℙ(T); f=S↔T");
 		assertFailure(" ;H; ;S; f∈S ⇸ A ;; f∈S ⇸ B |- f(x)∈C");
 	}
 

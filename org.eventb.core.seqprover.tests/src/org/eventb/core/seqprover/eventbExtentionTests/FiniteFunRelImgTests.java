@@ -13,7 +13,7 @@ package org.eventb.core.seqprover.eventbExtentionTests;
 
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.eventb.core.seqprover.tests.TestLib.genProofTreeNode;
-import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
+import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -48,9 +48,9 @@ public class FiniteFunRelImgTests extends AbstractPFunSetInputReasonerTests {
 	private static final String P3Input = "ℤ ⇸ ℤ × ℤ";
 	
 	private static final String[] P3Result = {
-		"{A=ℙ(ℤ), x=ℤ}[][][⊤] |- ⊤", //
-		"{A=ℙ(ℤ), x=ℤ}[][][⊤] |- {0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)} ∈ ℤ ⇸ ℤ × ℤ", //
-		"{A=ℙ(ℤ), x=ℤ}[][][⊤] |- finite(A)", //
+		"{A=ℙ(ℤ); x=ℤ}[][][⊤] |- ⊤", //
+		"{A=ℙ(ℤ); x=ℤ}[][][⊤] |- {0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)} ∈ ℤ ⇸ ℤ × ℤ", //
+		"{A=ℙ(ℤ); x=ℤ}[][][⊤] |- finite(A)", //
 	};
 	
 	private static final String P4 = "finite({0 ↦ 1}[A])";
@@ -154,7 +154,7 @@ public class FiniteFunRelImgTests extends AbstractPFunSetInputReasonerTests {
 
 	private static void assertPFunSetInput(final String exprImage,
 			final IReasonerInput input) {
-		final Expression expr = genExpr(genTypeEnv(""), exprImage);
+		final Expression expr = genExpr(mTypeEnvironment(), exprImage);
 		assertTrue(input instanceof PFunSetInput);
 		assertFalse(input.hasError());
 		assertEquals(expr, ((PFunSetInput) input).getExpression());

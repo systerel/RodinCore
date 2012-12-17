@@ -77,7 +77,7 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 	 */
 	@Test
 	public void reject() {
-		final TestItem it = new TestItem("x=ℤ, y=ℤ", "x", "y ∈ A");
+		final TestItem it = new TestItem("x=ℤ; y=ℤ", "x", "y ∈ A");
 		it.assertExtraction();
 	}
 
@@ -118,7 +118,7 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 	@Test
 	public void mapletDeepSeveral() {
 		final String hyp = "a↦(b↦a)↦a ∈ A×(B×C)×D";
-		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
+		final TestItem it = new TestItem("a=ℤ; b=ℤ", "a", hyp);
 		it.assertExtraction(
 				rf.domPrjS(rf.domPrjS(it.hyp(hyp))),
 				rf.ranPrjS(rf.ranPrjS(rf.domPrjS(it.hyp(hyp)))),
@@ -138,7 +138,7 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 	@Test
 	public void mapletNoCprod() {
 		final String hyp = "a↦b↦a ∈ f";
-		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
+		final TestItem it = new TestItem("a=ℤ; b=ℤ", "a", hyp);
 		it.assertExtraction(rf.domPrj(rf.domPrj(it.hyp(hyp))),
 				rf.ranPrj(it.hyp(hyp)));
 	}
@@ -149,7 +149,7 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 	@Test
 	public void setExtEq() {
 		final String hyp = "{a, b} ⊆ f";
-		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
+		final TestItem it = new TestItem("a=ℤ; b=ℤ", "a", hyp);
 		it.assertExtraction(it.setExtMember("a", it.hyp(hyp)));
 	}
 
@@ -160,7 +160,7 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 	@Test
 	public void setExt() {
 		final String hyp = "{a, b} ⊂ f";
-		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
+		final TestItem it = new TestItem("a=ℤ; b=ℤ", "a", hyp);
 		it.assertExtraction(it.setExtMember("a", it.hyp(hyp)));
 	}
 
@@ -171,7 +171,7 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 	@Test
 	public void setExtAsRelation() {
 		final String hyp = "{a↦b, b↦a} ∈ A ⇸ B";
-		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
+		final TestItem it = new TestItem("a=ℤ; b=ℤ", "a", hyp);
 		it.assertExtraction(
 				rf.domPrjS(it.setExtMember("a↦b", rf.relToCprod(it.hyp(hyp)))),
 				rf.domPrj(it.setExtMember("a↦b", rf.relToCprod(it.hyp(hyp)))),
@@ -186,7 +186,7 @@ public class MembershipExtractorTest extends AbstractMbGoalTests {
 	@Test
 	public void equalityAsSubsetLeft() {
 		final String hyp = "{a↦b} = f";
-		final TestItem it = new TestItem("a=ℤ, b=ℤ", "a", hyp);
+		final TestItem it = new TestItem("a=ℤ; b=ℤ", "a", hyp);
 		it.assertExtraction(rf.domPrj(it.setExtMember("a↦b",
 				rf.eqToSubset(true, it.hyp(hyp)))));
 	}

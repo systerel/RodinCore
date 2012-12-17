@@ -37,7 +37,7 @@ public class MembershipGoalTests extends AbstractReasonerTests {
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		final ITypeEnvironmentBuilder typeEnv = TestLib
-				.genTypeEnv("B=ℙ(ℤ), f=ℙ(ℤ×ℤ), m=ℙ(ℤ×ℤ×ℤ)");
+				.mTypeEnvironment("B=ℙ(ℤ); f=ℤ↔ℤ; m=ℙ(ℤ×ℤ×ℤ)");
 		return new SuccessfullReasonerApplication[] {
 				// Basic test
 				new SuccessfullReasonerApplication(
@@ -119,7 +119,7 @@ public class MembershipGoalTests extends AbstractReasonerTests {
 	@Override
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
 		final ITypeEnvironmentBuilder typeEnv = TestLib
-				.genTypeEnv("B=ℙ(ℤ), f=ℙ(ℤ×ℤ), x=ℤ");
+				.mTypeEnvironment("B=ℙ(ℤ); f=ℤ↔ℤ; x=ℤ");
 		return new UnsuccessfullReasonerApplication[] {
 				//
 				new UnsuccessfullReasonerApplication(TestLib.genSeq(" ⊤ |- ⊤"),
@@ -150,7 +150,7 @@ public class MembershipGoalTests extends AbstractReasonerTests {
 						new HypothesesReasoner.Input(genPred(typeEnv, "x∈B"),
 								genPred(typeEnv, "B⊂C"),
 								genPred(typeEnv, "C⊆D"), TestLib.genPred(
-										TestLib.genTypeEnv("E=ℙ(ℤ)"), "E⊆F")),
+										TestLib.mTypeEnvironment("E=ℙ(ℤ)"), "E⊆F")),
 						"Cannot discharge the goal."),
 
 		};

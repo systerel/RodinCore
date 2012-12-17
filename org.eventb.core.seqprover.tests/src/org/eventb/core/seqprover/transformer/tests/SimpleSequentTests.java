@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.transformer.tests;
 
-import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
+import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.eventb.internal.core.seqprover.transformer.TrackedPredicate.makeGoal;
 import static org.eventb.internal.core.seqprover.transformer.TrackedPredicate.makeHyp;
 import static org.junit.Assert.assertArrayEquals;
@@ -92,7 +92,7 @@ public class SimpleSequentTests extends AbstractTransformerTests {
 
 	private static void assertTypeEnvironment(String typenvImage,
 			String goalImage, String... hypImages) {
-		final ITypeEnvironmentBuilder expected = genTypeEnv(typenvImage);
+		final ITypeEnvironmentBuilder expected = mTypeEnvironment(typenvImage);
 		final ITypeEnvironmentBuilder typenv = expected.makeBuilder(); // Preserve expected
 		final ISimpleSequent sequent = makeSequent(typenv, goalImage, hypImages);
 		assertEquals(expected, typenv); // Ensure no change to environment
@@ -157,14 +157,14 @@ public class SimpleSequentTests extends AbstractTransformerTests {
 		assertTypeEnvironment("A=ℤ", "⊥", "A=1");
 
 		// Merging
-		assertTypeEnvironment("A=ℤ, B=BOOL", "A=1", "B=TRUE");
+		assertTypeEnvironment("A=ℤ; B=BOOL", "A=1", "B=TRUE");
 
 		// Hidden carrier set
 		assertTypeEnvironment("S=ℙ(S)", "(∅⦂ℙ(S))=∅");
 		assertTypeEnvironment("S=ℙ(S)", "⊥", "(∅⦂ℙ(S))=∅");
 
 		// All of the above
-		assertTypeEnvironment("A=ℤ, B=BOOL, C=ℙ(S), S=ℙ(S)", //
+		assertTypeEnvironment("A=ℤ; B=BOOL; C=ℙ(S); S=ℙ(S)", //
 				"A=1", "B=TRUE", "(∅⦂ℙ(S))=C");
 	}
 

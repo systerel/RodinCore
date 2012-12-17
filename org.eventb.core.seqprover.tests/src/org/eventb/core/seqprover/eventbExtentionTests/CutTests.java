@@ -45,9 +45,9 @@ public class CutTests extends AbstractReasonerTests {
 				new SuccessfullReasonerApplication(
 						TestLib.genSeq(" 1∈P |- x∈P "),
 						new SinglePredInput(TestLib.genPred("x÷x∈P")),
-						"{P=ℙ(ℤ), x=ℤ}[][][1∈P] |- x≠0",
-						"{P=ℙ(ℤ), x=ℤ}[][][1∈P;; x≠0] |- x ÷ x∈P",
-						"{P=ℙ(ℤ), x=ℤ}[][][1∈P;; x≠0;; x ÷ x∈P] |- x∈P")
+						"{P=ℙ(ℤ); x=ℤ}[][][1∈P] |- x≠0",
+						"{P=ℙ(ℤ); x=ℤ}[][][1∈P;; x≠0] |- x ÷ x∈P",
+						"{P=ℙ(ℤ); x=ℤ}[][][1∈P;; x≠0;; x ÷ x∈P] |- x∈P")
 		};
 	}
 
@@ -57,12 +57,12 @@ public class CutTests extends AbstractReasonerTests {
 				// Input cannot be parsed
 				new UnsuccessfullReasonerApplication(TestLib
 						.genSeq(" 1∈P |- 2∈P "), 
-						new SinglePredInput("#unparsable#",TestLib.genTypeEnv("")),
+						new SinglePredInput("#unparsable#",TestLib.mTypeEnvironment()),
 						"Parse error for predicate: #unparsable#"),
 				// Input cannot be type-checked
 				new UnsuccessfullReasonerApplication(TestLib
 						.genSeq(" 1∈P |- 2∈P "), 
-						new SinglePredInput("y∈P",TestLib.genTypeEnv("")),
+						new SinglePredInput("y∈P",TestLib.mTypeEnvironment()),
 						"Type check failed for Predicate: y∈P")
 //				The test framework cannot test the following type of failure
 //				// Rule can be generated, but cannot be applied (extra free variable in input predicate)

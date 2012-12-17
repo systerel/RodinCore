@@ -119,7 +119,7 @@ public class OnePointRuleTests extends AbstractReasonerTests {
 
 				// Matching substitution bound identifier is declared outside
 				new UnsuccessfullReasonerApplication(ProverFactory.makeSequent(
-						TestLib.genTypeEnv(""), null, boundOutside), goalInput),
+						TestLib.mTypeEnvironment(), null, boundOutside), goalInput),
 
 				// Self-referring expressions (x=x+x, x=x*x) are not applicable
 				newFailureGoal("∀x· x=x+x ∧ x=x∗x ⇒ x=0"),

@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
-import static org.eventb.core.seqprover.tests.TestLib.*;
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
+import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
-
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -337,7 +337,7 @@ public class ProverSequentTests extends TestCase{
 	 */
 	@Test
 	public void testHypsTextSearch() {
-		final ITypeEnvironment env = genTypeEnv("");
+		final ITypeEnvironment env = mTypeEnvironment();
 
 		// Global hyps contain 9
 		final Predicate gx = genPred("10=9+1");

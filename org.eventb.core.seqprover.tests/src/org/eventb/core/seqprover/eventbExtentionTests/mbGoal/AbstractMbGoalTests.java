@@ -41,7 +41,7 @@ public class AbstractMbGoalTests {
 		protected final Set<Predicate> hyps;
 
 		TestItem(String typenvImage, String... hypImages) {
-			this.typenv = TestLib.genTypeEnv(typenvImage);
+			this.typenv = TestLib.mTypeEnvironment(typenvImage);
 			this.hyps = new LinkedHashSet<Predicate>();
 			for (String hypImage : hypImages) {
 				hyps.add(TestLib.genPred(typenv, hypImage));

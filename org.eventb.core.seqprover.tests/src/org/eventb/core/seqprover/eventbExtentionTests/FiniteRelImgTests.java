@@ -20,7 +20,7 @@ public class FiniteRelImgTests extends AbstractEmptyInputReasonerTests {
 
 	String P3 = "finite({0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)}[S])";
 
-	String resultP3Goal = "{S=ℙ(ℤ), x=ℤ}[][][⊤] |- finite({0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)})";
+	String resultP3Goal = "{S=ℙ(ℤ); x=ℤ}[][][⊤] |- finite({0 ↦ (3 ↦ 2),1 ↦ (3 ↦ x),1 ↦ (2 ↦ 3)})";
 	
 	protected List<IPosition> getPositions(Predicate predicate) {
 		return Tactics.finiteRelImgGetPositions(predicate);

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
-import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
+import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -37,7 +37,7 @@ public class TypeCheckerTests {
 	private static final Type type_S = ff.makeGivenType("S");
 	private static final Type type_T = ff.makeGivenType("T");
 
-	private static final ISealedTypeEnvironment typenv_x_S = genTypeEnv("x=S")
+	private static final ISealedTypeEnvironment typenv_x_S = mTypeEnvironment("x=S")
 			.makeSnapshot();
 
 	private static void assertTypenv(TypeChecker checker,
@@ -69,7 +69,7 @@ public class TypeCheckerTests {
 	 */
 	@Test
 	public void unknownIdentInFormula() throws Exception {
-		final ISealedTypeEnvironment typenv = genTypeEnv("").makeSnapshot();
+		final ISealedTypeEnvironment typenv = mTypeEnvironment().makeSnapshot();
 		final TypeChecker checker = new TypeChecker(typenv);
 		checker.checkFormula(ff.makeFreeIdentifier("x", null, type_T));
 		assertTypenv(checker, typenv, false);

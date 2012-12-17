@@ -55,7 +55,7 @@ public class AbstrExprTests extends AbstractReasonerTests {
 				new SuccessfullReasonerApplication(seq, 
 						new SingleExprInput("x+1",seq.typeEnvironment()),
 						"{x=ℤ}[][][x=1;; x+1=2] |- ⊤",
-						"{ae=ℤ, x=ℤ}[][][x=1;; x+1=2;; ae=x+1] |- (x+1)+1=3"
+						"{ae=ℤ; x=ℤ}[][][x=1;; x+1=2;; ae=x+1] |- (x+1)+1=3"
 				),
 		};
 	}

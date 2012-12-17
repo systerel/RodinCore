@@ -38,25 +38,25 @@ public class AllmtDTests extends AbstractReasonerTests {
 				new SuccessfullReasonerApplication(
 						seq,
 						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"0","1"}),
-						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][] |- ⊤",
-						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][] |- ¬(0∈P∧1∈Q)",
-						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][¬(0∈ℕ∧1∈ℕ)] |- z∈P"
+						"{z=ℤ; P=ℙ(ℤ); Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][] |- ⊤",
+						"{z=ℤ; P=ℙ(ℤ); Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][] |- ¬(0∈P∧1∈Q)",
+						"{z=ℤ; P=ℙ(ℤ); Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][¬(0∈ℕ∧1∈ℕ)] |- z∈P"
 				),
 				// with WD condition
 				new SuccessfullReasonerApplication(
 						seq,
 						new AllD.Input(hyp,seq.typeEnvironment(),new String[]{"z","1÷z"}),
-						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][] |- z≠0",
-						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q;; z≠0][] |- ¬(z∈P∧1 ÷ z∈Q)",
-						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q;; z≠0][¬(z∈ℕ∧1 ÷ z∈ℕ)] |- z∈P"
+						"{z=ℤ; P=ℙ(ℤ); Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][] |- z≠0",
+						"{z=ℤ; P=ℙ(ℤ); Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q;; z≠0][] |- ¬(z∈P∧1 ÷ z∈Q)",
+						"{z=ℤ; P=ℙ(ℤ); Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q;; z≠0][¬(z∈ℕ∧1 ÷ z∈ℕ)] |- z∈P"
 				),
 				// with WD condition already selected
 				new SuccessfullReasonerApplication(
 						seq2,
 						new AllD.Input(hyp,seq2.typeEnvironment(),new String[]{"z","1÷z"}),
-						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][z≠0] |- z≠0",
-						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][z≠0] |- ¬(z∈P∧1 ÷ z∈Q)",
-						"{z=ℤ, P=ℙ(ℤ), Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][z≠0;; ¬(z∈ℕ∧1 ÷ z∈ℕ)] |- z∈P"
+						"{z=ℤ; P=ℙ(ℤ); Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][z≠0] |- z≠0",
+						"{z=ℤ; P=ℙ(ℤ); Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][z≠0] |- ¬(z∈P∧1 ÷ z∈Q)",
+						"{z=ℤ; P=ℙ(ℤ); Q=ℙ(ℤ)}[][∀x,y·x∈ℕ∧y∈ℕ⇒x∈P∧y∈Q][z≠0;; ¬(z∈ℕ∧1 ÷ z∈ℕ)] |- z∈P"
 				)
 		};
 	}

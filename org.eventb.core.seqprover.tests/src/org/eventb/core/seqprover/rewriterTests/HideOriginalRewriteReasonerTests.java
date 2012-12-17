@@ -42,11 +42,11 @@ public class HideOriginalRewriteReasonerTests extends AbstractAutomaticReasonerT
 				new SuccessfulTest(" 0 = x ;H;   ;S; 0 = x |- ⊤", "{x=ℤ}[0=x][][2=x] |- ⊤"),
 
 				// Multilple simple rewrite in selected hypotheses (HIDE the original hypothesis)
-				new SuccessfulTest(" 1 = x ;; y = 1 ;H;   ;S; 1 = x ;; y = 1 |- ⊤", "{y=ℤ, x=ℤ}[1=x;; y=1][][2=x;; y=2] |- ⊤"),
+				new SuccessfulTest(" 1 = x ;; y = 1 ;H;   ;S; 1 = x ;; y = 1 |- ⊤", "{y=ℤ; x=ℤ}[1=x;; y=1][][2=x;; y=2] |- ⊤"),
 				// Multilple recursive rewrite in selected hypothesis (HIDE the original hypothesis)
-				new SuccessfulTest(" 0 = x ;; y = 0 ;H;   ;S; 0 = x ;; y = 0 |- ⊤", "{y=ℤ, x=ℤ}[0=x;; y=0][][2=x;; y=2] |- ⊤"),
+				new SuccessfulTest(" 0 = x ;; y = 0 ;H;   ;S; 0 = x ;; y = 0 |- ⊤", "{y=ℤ; x=ℤ}[0=x;; y=0][][2=x;; y=2] |- ⊤"),
 				// Multilple single/recursive rewrite in selected hypothesis
-				new SuccessfulTest(" 1 = x ;; y = 0 ;H;   ;S; 1 = x ;; y = 0 |- ⊤", "{y=ℤ, x=ℤ}[1=x;; y=0][][2=x;; y=2] |- ⊤"),
+				new SuccessfulTest(" 1 = x ;; y = 0 ;H;   ;S; 1 = x ;; y = 0 |- ⊤", "{y=ℤ; x=ℤ}[1=x;; y=0][][2=x;; y=2] |- ⊤"),
 
 				// Single simple rewrite in visible non-selected hypothesis (HIDE the original hypothesis)
 				new SuccessfulTest(" 1 = x ;H;   ;S; |- ⊤", "{x=ℤ}[1=x][2=x][] |- ⊤"),
@@ -54,11 +54,11 @@ public class HideOriginalRewriteReasonerTests extends AbstractAutomaticReasonerT
 				new SuccessfulTest(" 0 = x ;H;   ;S; |- ⊤", "{x=ℤ}[0=x][2=x][] |- ⊤"),
 
 				// Multilple simple rewrite in visible non-selected  hypotheses (HIDE the original hypothesis)
-				new SuccessfulTest(" 1 = x ;; y = 1 ;H;   ;S; |- ⊤", "{y=ℤ, x=ℤ}[1=x;; y=1][2=x;; y=2][] |- ⊤"),
+				new SuccessfulTest(" 1 = x ;; y = 1 ;H;   ;S; |- ⊤", "{y=ℤ; x=ℤ}[1=x;; y=1][2=x;; y=2][] |- ⊤"),
 				// Multilple recursive rewrite in visible non-selected  hypothesis (HIDE the original hypothesis)
-				new SuccessfulTest(" 0 = x ;; y = 0 ;H;   ;S; |- ⊤", "{y=ℤ, x=ℤ}[0=x;; y=0][2=x;; y=2][] |- ⊤"),
+				new SuccessfulTest(" 0 = x ;; y = 0 ;H;   ;S; |- ⊤", "{y=ℤ; x=ℤ}[0=x;; y=0][2=x;; y=2][] |- ⊤"),
 				// Multilple single/recursive rewrite in visible non-selected  hypothesis
-				new SuccessfulTest(" 1 = x ;; y = 0 ;H;   ;S; |- ⊤", "{y=ℤ, x=ℤ}[1=x;; y=0][2=x;; y=2][] |- ⊤"),
+				new SuccessfulTest(" 1 = x ;; y = 0 ;H;   ;S; |- ⊤", "{y=ℤ; x=ℤ}[1=x;; y=0][2=x;; y=2][] |- ⊤"),
 
 				// Rewriting hypothesis to true is equivalent to hiding the selected hypothesis
 				new SuccessfulTest(" finite(ℕ) ;H;   ;S; finite(ℕ) |- ⊤", "{}[finite(ℕ)][][] |- ⊤"), 
@@ -67,7 +67,7 @@ public class HideOriginalRewriteReasonerTests extends AbstractAutomaticReasonerT
 				// The most general case
 				new SuccessfulTest(
 						" 1 = x ;; y = 0 ;; finite(ℕ) ;H;  ;S; 1 = x ;; finite(ℕ) |- 2 = z",
-						"{z=ℤ, y=ℤ, x=ℤ}[1=x;; y=0;; finite(ℕ)][y=2][2=x] |- 2=z"), };
+						"{z=ℤ; y=ℤ; x=ℤ}[1=x;; y=0;; finite(ℕ)][y=2][2=x] |- 2=z"), };
 	}
 
 	@Override

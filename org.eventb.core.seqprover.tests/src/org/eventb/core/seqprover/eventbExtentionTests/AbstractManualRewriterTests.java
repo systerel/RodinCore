@@ -13,7 +13,7 @@ package org.eventb.core.seqprover.eventbExtentionTests;
 
 import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
-import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
+import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -214,7 +214,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 	 */
 	protected void rewritePred(String inputImage, String posImage,
 			String expectedImage, String typenvImage) {
-		final ITypeEnvironmentBuilder typenv = genTypeEnv(typenvImage);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(typenvImage);
 		final Predicate input = genPred(typenv, inputImage);
 		final Predicate expected = genPred(typenv, expectedImage);
 		final IPosition pos = makePosition(posImage);
@@ -248,7 +248,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 	 */
 	protected void noRewritePred(String inputImage, String posImage,
 			String typenvImage) {
-		final ITypeEnvironmentBuilder typenv = genTypeEnv(typenvImage);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(typenvImage);
 		final Predicate input = genPred(typenv, inputImage);
 		final IPosition pos = makePosition(posImage);
 		final Predicate actual = rewriter.rewrite(input, pos, ff);

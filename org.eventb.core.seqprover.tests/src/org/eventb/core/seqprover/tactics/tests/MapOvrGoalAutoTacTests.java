@@ -42,7 +42,7 @@ public class MapOvrGoalAutoTacTests extends AbstractTacticTests {
 
 	@Test
 	public void assertSuccessfulApplication() {
-		addToTypeEnvironment("f=ℙ(ℤ×ℤ), A=ℙ(ℤ), B=ℙ(ℤ), x=ℤ, y=ℤ");
+		addToTypeEnvironment("f=ℤ↔ℤ; A=ℙ(ℤ); B=ℙ(ℤ); x=ℤ; y=ℤ");
 		assertSucceeded(rel, rel);
 		assertSucceeded(srel, rel);
 		assertSucceeded(trel, rel);
@@ -83,7 +83,7 @@ public class MapOvrGoalAutoTacTests extends AbstractTacticTests {
 
 	@Test
 	public void assertFailure() {
-		addToTypeEnvironment("f=ℙ(ℤ×ℤ), A=ℙ(ℤ), B=ℙ(ℤ), x=ℤ, y=ℤ");
+		addToTypeEnvironment("f=ℤ↔ℤ; A=ℙ(ℤ); B=ℙ(ℤ); x=ℤ; y=ℤ");
 		// Goal is not an Inclusion
 		assertFailure(" ;H; ;S; |- f{x ↦ y}∉A → B");
 		// Left member is not an Overriding

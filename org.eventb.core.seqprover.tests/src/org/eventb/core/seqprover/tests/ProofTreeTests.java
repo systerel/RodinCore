@@ -397,7 +397,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPred("x=1")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds("x=1")));
-		assertTrue(proofDependencies.getUsedFreeIdents().makeBuilder().equals(TestLib.genTypeEnv("x=ℤ")));
+		assertTrue(proofDependencies.getUsedFreeIdents().makeBuilder().equals(TestLib.mTypeEnvironment("x=ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		assertEquals(Collections.singleton(hypDesc),
 				proofDependencies.getUsedReasoners());
@@ -412,7 +412,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPred("x=1 ⇒ x=1")));
 		assertFalse(proofDependencies.getUsedHypotheses().containsAll(TestLib.genPreds("x=1")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds()));
-		assertTrue(proofDependencies.getUsedFreeIdents().makeBuilder().equals(TestLib.genTypeEnv("x=ℤ")));
+		assertTrue(proofDependencies.getUsedFreeIdents().makeBuilder().equals(TestLib.mTypeEnvironment("x=ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		assertEquals(new HashSet<IReasonerDesc>(asList(impIDesc, hypDesc)),
 				proofDependencies.getUsedReasoners());
@@ -426,7 +426,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
 		assertNull(proofDependencies.getGoal());
 		assertTrue(proofDependencies.getUsedHypotheses().isEmpty());
-		assertTrue(proofDependencies.getUsedFreeIdents().makeBuilder().equals(TestLib.genTypeEnv("y=ℤ")));
+		assertTrue(proofDependencies.getUsedFreeIdents().makeBuilder().equals(TestLib.mTypeEnvironment("y=ℤ")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().size() == 0);
 		assertEquals(Collections.singleton(lemmaDesc),
 				proofDependencies.getUsedReasoners());
@@ -439,7 +439,7 @@ public class ProofTreeTests extends AbstractProofTreeTests {
 		assertTrue(ProverLib.proofReusable(proofDependencies,sequent));
 		assertTrue(proofDependencies.getGoal().equals(TestLib.genPred("∀ x· x∈ℤ")));
 		assertTrue(proofDependencies.getUsedHypotheses().equals(TestLib.genPreds()));
-		assertTrue(proofDependencies.getUsedFreeIdents().makeBuilder().equals(TestLib.genTypeEnv("")));
+		assertTrue(proofDependencies.getUsedFreeIdents().makeBuilder().equals(TestLib.mTypeEnvironment("")));
 		assertTrue(proofDependencies.getIntroducedFreeIdents().contains("x"));
 		assertEquals(Collections.singleton(allIDesc),
 				proofDependencies.getUsedReasoners());

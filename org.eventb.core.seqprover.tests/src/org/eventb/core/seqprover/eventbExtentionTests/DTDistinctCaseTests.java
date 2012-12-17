@@ -24,17 +24,17 @@ public class DTDistinctCaseTests extends AbstractManualInferenceTests {
 
 	private static final String P1 = "∀ l⦂SD · l=l1";
 	private static final String resultP1_0 = "{l1=SD}[][][l1=cons0] |- ∀ l⦂SD · l=l1";
-	private static final String resultP1_1 = "{l1=SD, p_destr1=ℤ}[][][l1=cons1(p_destr1)] |- ∀ l⦂SD · l=l1";
-	private static final String resultP1_2 = "{l1=SD, p_destr2_0=ℤ, p_destr2_1=ℤ}" +
+	private static final String resultP1_1 = "{l1=SD; p_destr1=ℤ}[][][l1=cons1(p_destr1)] |- ∀ l⦂SD · l=l1";
+	private static final String resultP1_2 = "{l1=SD; p_destr2_0=ℤ; p_destr2_1=ℤ}" +
 			"[][][l1=cons2(p_destr2_0, p_destr2_1)] |- ∀ l⦂SD · l=l1";
 	
 	private static final String P2 = "∀ l ⦂ SD · destr1(l) = 0";
 		
 	private static final String P3 = "∀ l⦂Induc(ℤ) · l=l1";
 	private static final String resultP3_0 = "{l1=Induc(ℤ)}[][][l1=ind0] |- ∀ l⦂Induc(ℤ) · l=l1";
-	private static final String resultP3_1 = "{l1=Induc(ℤ), p_ind1_0=Induc(ℤ)}" +
+	private static final String resultP3_1 = "{l1=Induc(ℤ); p_ind1_0=Induc(ℤ)}" +
 			"[][][l1=ind1(p_ind1_0)] |- ∀ l⦂Induc(ℤ) · l=l1";
-	private static final String resultP3_2 = "{l1=Induc(ℤ), p_ind2_0=Induc(ℤ), p_ind2_1=Induc(ℤ)}" +
+	private static final String resultP3_2 = "{l1=Induc(ℤ); p_ind2_0=Induc(ℤ); p_ind2_1=Induc(ℤ)}" +
 			"[][][l1=ind2(p_ind2_0, p_ind2_1)] |- ∀ l⦂Induc(ℤ) · l=l1";
 
 	public DTDistinctCaseTests() {

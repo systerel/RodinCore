@@ -17,33 +17,33 @@ public class FunCompImgTests extends AbstractManualInferenceTests {
 
 	String P1 = "({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x) = 3";
 	
-	String resultP1GoalA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- (f;{x ↦ 3};{x ↦ 4})({x ↦ 1}(x))=3";
+	String resultP1GoalA = "{f=ℤ↔ℤ; x=ℤ}[][][⊤] |- (f;{x ↦ 3};{x ↦ 4})({x ↦ 1}(x))=3";
 	
-	String resultP1GoalB = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- x∈dom({x ↦ 1})∧{x ↦ 1}∈ℤ ⇸ ℤ∧{x ↦ 1}(x)∈dom(f;{x ↦ 3};{x ↦ 4})∧f;{x ↦ 3};{x ↦ 4}∈ℤ ⇸ ℤ";
+	String resultP1GoalB = "{f=ℤ↔ℤ; x=ℤ}[][][⊤] |- x∈dom({x ↦ 1})∧{x ↦ 1}∈ℤ ⇸ ℤ∧{x ↦ 1}(x)∈dom(f;{x ↦ 3};{x ↦ 4})∧f;{x ↦ 3};{x ↦ 4}∈ℤ ⇸ ℤ";
 
-	String resultP1HypA = "{f=ℙ(ℤ×ℤ), x=ℤ}[({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3][][(f;{x ↦ 3};{x ↦ 4})({x ↦ 1}(x))=3] |- ⊤";
+	String resultP1HypA = "{f=ℤ↔ℤ; x=ℤ}[({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3][][(f;{x ↦ 3};{x ↦ 4})({x ↦ 1}(x))=3] |- ⊤";
 	
-	String resultP1HypB = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3] |- x∈dom({x ↦ 1})∧{x ↦ 1}∈ℤ ⇸ ℤ∧{x ↦ 1}(x)∈dom(f;{x ↦ 3};{x ↦ 4})∧f;{x ↦ 3};{x ↦ 4}∈ℤ ⇸ ℤ";
+	String resultP1HypB = "{f=ℤ↔ℤ; x=ℤ}[][][({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3] |- x∈dom({x ↦ 1})∧{x ↦ 1}∈ℤ ⇸ ℤ∧{x ↦ 1}(x)∈dom(f;{x ↦ 3};{x ↦ 4})∧f;{x ↦ 3};{x ↦ 4}∈ℤ ⇸ ℤ";
 
 	String P2 = "({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x) = 3";
 	
-	String resultP2GoalA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- ({x ↦ 3};{x ↦ 4})(({x ↦ 1};f)(x))=3";
+	String resultP2GoalA = "{f=ℤ↔ℤ; x=ℤ}[][][⊤] |- ({x ↦ 3};{x ↦ 4})(({x ↦ 1};f)(x))=3";
 	
-	String resultP2GoalB = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- x∈dom({x ↦ 1};f)∧{x ↦ 1};f∈ℤ ⇸ ℤ∧({x ↦ 1};f)(x)∈dom({x ↦ 3};{x ↦ 4})∧{x ↦ 3};{x ↦ 4}∈ℤ ⇸ ℤ";
+	String resultP2GoalB = "{f=ℤ↔ℤ; x=ℤ}[][][⊤] |- x∈dom({x ↦ 1};f)∧{x ↦ 1};f∈ℤ ⇸ ℤ∧({x ↦ 1};f)(x)∈dom({x ↦ 3};{x ↦ 4})∧{x ↦ 3};{x ↦ 4}∈ℤ ⇸ ℤ";
 
-	String resultP2HypA = "{f=ℙ(ℤ×ℤ), x=ℤ}[({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3][][({x ↦ 3};{x ↦ 4})(({x ↦ 1};f)(x))=3] |- ⊤";
+	String resultP2HypA = "{f=ℤ↔ℤ; x=ℤ}[({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3][][({x ↦ 3};{x ↦ 4})(({x ↦ 1};f)(x))=3] |- ⊤";
 	
-	String resultP2HypB = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3] |- x∈dom({x ↦ 1};f)∧{x ↦ 1};f∈ℤ ⇸ ℤ∧({x ↦ 1};f)(x)∈dom({x ↦ 3};{x ↦ 4})∧{x ↦ 3};{x ↦ 4}∈ℤ ⇸ ℤ";
+	String resultP2HypB = "{f=ℤ↔ℤ; x=ℤ}[][][({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3] |- x∈dom({x ↦ 1};f)∧{x ↦ 1};f∈ℤ ⇸ ℤ∧({x ↦ 1};f)(x)∈dom({x ↦ 3};{x ↦ 4})∧{x ↦ 3};{x ↦ 4}∈ℤ ⇸ ℤ";
 
 	String P3 = "({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x) = 3";
 	
-	String resultP3GoalA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- {x ↦ 4}(({x ↦ 1};f;{x ↦ 3})(x))=3";
+	String resultP3GoalA = "{f=ℤ↔ℤ; x=ℤ}[][][⊤] |- {x ↦ 4}(({x ↦ 1};f;{x ↦ 3})(x))=3";
 	
-	String resultP3GoalB = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- x∈dom({x ↦ 1};f;{x ↦ 3})∧{x ↦ 1};f;{x ↦ 3}∈ℤ ⇸ ℤ∧({x ↦ 1};f;{x ↦ 3})(x)∈dom({x ↦ 4})∧{x ↦ 4}∈ℤ ⇸ ℤ";
+	String resultP3GoalB = "{f=ℤ↔ℤ; x=ℤ}[][][⊤] |- x∈dom({x ↦ 1};f;{x ↦ 3})∧{x ↦ 1};f;{x ↦ 3}∈ℤ ⇸ ℤ∧({x ↦ 1};f;{x ↦ 3})(x)∈dom({x ↦ 4})∧{x ↦ 4}∈ℤ ⇸ ℤ";
 
-	String resultP3HypA = "{f=ℙ(ℤ×ℤ), x=ℤ}[({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3][][{x ↦ 4}(({x ↦ 1};f;{x ↦ 3})(x))=3] |- ⊤";
+	String resultP3HypA = "{f=ℤ↔ℤ; x=ℤ}[({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3][][{x ↦ 4}(({x ↦ 1};f;{x ↦ 3})(x))=3] |- ⊤";
 	
-	String resultP3HypB = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3] |- x∈dom({x ↦ 1};f;{x ↦ 3})∧{x ↦ 1};f;{x ↦ 3}∈ℤ ⇸ ℤ∧({x ↦ 1};f;{x ↦ 3})(x)∈dom({x ↦ 4})∧{x ↦ 4}∈ℤ ⇸ ℤ";
+	String resultP3HypB = "{f=ℤ↔ℤ; x=ℤ}[][][({x ↦ 1};f;{x ↦ 3};{x ↦ 4})(x)=3] |- x∈dom({x ↦ 1};f;{x ↦ 3})∧{x ↦ 1};f;{x ↦ 3}∈ℤ ⇸ ℤ∧({x ↦ 1};f;{x ↦ 3})(x)∈dom({x ↦ 4})∧{x ↦ 4}∈ℤ ⇸ ℤ";
 
 	protected String [] getTestGetPositions() {
 		return new String [] {

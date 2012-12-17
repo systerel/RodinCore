@@ -84,7 +84,7 @@ public class FunOvrHypTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void recursiveApplication() {
-		addToTypeEnvironment("x=ℤ, f=ℤ↔ℤ, g=ℤ↔ℤ, h=ℤ↔ℙ(ℤ), i=ℤ↔ℙ(ℤ)");
+		addToTypeEnvironment("x=ℤ; f=ℤ↔ℤ; g=ℤ↔ℤ; h=ℤ↔ℙ(ℤ); i=ℤ↔ℙ(ℤ)");
 		final Predicate hyp1 = parsePredicate("(fg)(x) ∈ (hi)(x)");
 		final Predicate hyp2 = parsePredicate("g(x) ∈ (hi)(x)");
 		final Predicate hyp3 = parsePredicate("(dom(g) ⩤ f)(x)∈(hi)(x)");

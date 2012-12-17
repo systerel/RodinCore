@@ -17,43 +17,43 @@ public class FunSingletonTests extends AbstractManualInferenceTests {
 
 	String P1 = "(x = 2) ⇒ f[{x}] = {3}";
 
-	String resultP1GoalA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- x=2⇒x∈dom(f)∧f∈ℤ ⇸ ℤ";
+	String resultP1GoalA = "{f=ℤ↔ℤ; x=ℤ}[][][⊤] |- x=2⇒x∈dom(f)∧f∈ℤ ⇸ ℤ";
 
-	String resultP1GoalB = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][⊤] |- x=2⇒{f(x)}={3}";
+	String resultP1GoalB = "{f=ℤ↔ℤ; x=ℤ}[][][⊤] |- x=2⇒{f(x)}={3}";
 	
-	String resultP1HypA = "{f=ℙ(ℤ×ℤ), x=ℤ}[][][x=2⇒f[{x}]={3}] |- x=2⇒x∈dom(f)∧f∈ℤ ⇸ ℤ";
+	String resultP1HypA = "{f=ℤ↔ℤ; x=ℤ}[][][x=2⇒f[{x}]={3}] |- x=2⇒x∈dom(f)∧f∈ℤ ⇸ ℤ";
 
-	String resultP1HypB = "{f=ℙ(ℤ×ℤ), x=ℤ}[x=2⇒f[{x}]={3}][][x=2⇒{f(x)}={3}] |- ⊤";
+	String resultP1HypB = "{f=ℤ↔ℤ; x=ℤ}[x=2⇒f[{x}]={3}][][x=2⇒{f(x)}={3}] |- ⊤";
 	
 	String P2 = "∀x· x = 2 ⇒ {3} = f[{x}]";
 
-	String resultP2GoalA = "{f=ℙ(ℤ×ℤ)}[][][⊤] |- ∀x·x=2⇒x∈dom(f)∧f∈ℤ ⇸ ℤ";
+	String resultP2GoalA = "{f=ℤ↔ℤ}[][][⊤] |- ∀x·x=2⇒x∈dom(f)∧f∈ℤ ⇸ ℤ";
 
-	String resultP2GoalB = "{f=ℙ(ℤ×ℤ)}[][][⊤] |- ∀x·x=2⇒{3}={f(x)}";
+	String resultP2GoalB = "{f=ℤ↔ℤ}[][][⊤] |- ∀x·x=2⇒{3}={f(x)}";
 	
-	String resultP2HypA = "{f=ℙ(ℤ×ℤ)}[][][∀x·x=2⇒{3}=f[{x}]] |- ∀x·x=2⇒x∈dom(f)∧f∈ℤ ⇸ ℤ";
+	String resultP2HypA = "{f=ℤ↔ℤ}[][][∀x·x=2⇒{3}=f[{x}]] |- ∀x·x=2⇒x∈dom(f)∧f∈ℤ ⇸ ℤ";
 
-	String resultP2HypB = "{f=ℙ(ℤ×ℤ)}[∀x·x=2⇒{3}=f[{x}]][][∀x·x=2⇒{3}={f(x)}] |- ⊤";
+	String resultP2HypB = "{f=ℤ↔ℤ}[∀x·x=2⇒{3}=f[{x}]][][∀x·x=2⇒{3}={f(x)}] |- ⊤";
 	
 	String P3 = "f[{3}] = {3}";
 
-	String resultP3GoalA = "{f=ℙ(ℤ×ℤ)}[][][⊤] |- 3∈dom(f)∧f∈ℤ ⇸ ℤ";
+	String resultP3GoalA = "{f=ℤ↔ℤ}[][][⊤] |- 3∈dom(f)∧f∈ℤ ⇸ ℤ";
 
-	String resultP3GoalB = "{f=ℙ(ℤ×ℤ)}[][][⊤] |- {f(3)}={3}";
+	String resultP3GoalB = "{f=ℤ↔ℤ}[][][⊤] |- {f(3)}={3}";
 	
-	String resultP3HypA = "{f=ℙ(ℤ×ℤ)}[][][f[{3}]={3}] |- 3∈dom(f)∧f∈ℤ ⇸ ℤ";
+	String resultP3HypA = "{f=ℤ↔ℤ}[][][f[{3}]={3}] |- 3∈dom(f)∧f∈ℤ ⇸ ℤ";
 
-	String resultP3HypB = "{f=ℙ(ℤ×ℤ)}[f[{3}]={3}][][{f(3)}={3}] |- ⊤";
+	String resultP3HypB = "{f=ℤ↔ℤ}[f[{3}]={3}][][{f(3)}={3}] |- ⊤";
 
 	String P4 = "{3} = f[{3}]";
 
-	String resultP4GoalA = "{f=ℙ(ℤ×ℤ)}[][][⊤] |- 3∈dom(f)∧f∈ℤ ⇸ ℤ";
+	String resultP4GoalA = "{f=ℤ↔ℤ}[][][⊤] |- 3∈dom(f)∧f∈ℤ ⇸ ℤ";
 
-	String resultP4GoalB = "{f=ℙ(ℤ×ℤ)}[][][⊤] |- {3}={f(3)}";
+	String resultP4GoalB = "{f=ℤ↔ℤ}[][][⊤] |- {3}={f(3)}";
 	
-	String resultP4HypA = "{f=ℙ(ℤ×ℤ)}[][][{3}=f[{3}]] |- 3∈dom(f)∧f∈ℤ ⇸ ℤ";
+	String resultP4HypA = "{f=ℤ↔ℤ}[][][{3}=f[{3}]] |- 3∈dom(f)∧f∈ℤ ⇸ ℤ";
 
-	String resultP4HypB = "{f=ℙ(ℤ×ℤ)}[{3}=f[{3}]][][{3}={f(3)}] |- ⊤";
+	String resultP4HypB = "{f=ℤ↔ℤ}[{3}=f[{3}]][][{3}={f(3)}] |- ⊤";
 
 	protected String [] getTestGetPositions() {
 		return new String [] {

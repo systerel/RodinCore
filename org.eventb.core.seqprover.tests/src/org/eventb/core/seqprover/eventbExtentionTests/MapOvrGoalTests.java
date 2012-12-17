@@ -10,10 +10,20 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.*;
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.pfun;
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.pinj;
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.psur;
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.rel;
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.srel;
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.strel;
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.tbij;
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.tfun;
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.tinj;
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.trel;
+import static org.eventb.core.seqprover.eventbExtentionTests.OperatorString.tsur;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
-import static org.eventb.core.seqprover.tests.TestLib.genTypeEnv;
+import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
@@ -29,7 +39,7 @@ public class MapOvrGoalTests extends AbstractReasonerTests {
 	private static final String goalShape = "Goal does not possessed the correct form.";
 
 	private final String hypsStr = " A⊆ℤ ;; B⊆ℤ ;; f∈A ";
-	private final String typenvStr = "{f=ℙ(ℤ×ℤ), A=ℙ(ℤ), B=ℙ(ℤ), y=ℤ, x=ℤ}[][][";
+	private final String typenvStr = "{f=ℤ↔ℤ; A=ℙ(ℤ); B=ℙ(ℤ); y=ℤ; x=ℤ}[][][";
 
 	@Override
 	public String getReasonerID() {
@@ -73,7 +83,7 @@ public class MapOvrGoalTests extends AbstractReasonerTests {
 			String opGoal, String opHyp) {
 		return new SuccessfullReasonerApplication(genSeq(hypsStr + opHyp
 				+ " B |- f{x ↦ y}∈A " + opGoal + " B "),
-				new HypothesisReasoner.Input(genPred(genTypeEnv("f=ℙ(ℤ×ℤ)"),
+				new HypothesisReasoner.Input(genPred(mTypeEnvironment("f=ℤ↔ℤ"),
 						"f∈A " + opHyp + " B")), typenvStr + hypsStr + opHyp
 						+ " B] |- x∈A", typenvStr + hypsStr + opHyp
 						+ " B] |- y∈B");
@@ -102,20 +112,20 @@ public class MapOvrGoalTests extends AbstractReasonerTests {
 				new UnsuccessfullReasonerApplication(
 						genSeq(" A=ℤ ;; B=ℤ ;; f∈A  B|- f{x ↦ y}∈A → B "),
 						new HypothesisReasoner.Input(genPred(
-								genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∈A → B")),
+								mTypeEnvironment("f=ℤ↔ℤ"), "f∈A → B")),
 						"Nonexistent hypothesis: "
-								+ genPred(genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∈A → B")),
+								+ genPred(mTypeEnvironment("f=ℤ↔ℤ"), "f∈A → B")),
 				// Input is incorrect
 				new UnsuccessfullReasonerApplication(
 						genSeq(" A=ℤ ;; B=ℤ ;; f∈A → B ;; f∉A → B |- f{x ↦ y}∈A → B "),
 						new HypothesisReasoner.Input(genPred(
-								genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∉A → B")),
+								mTypeEnvironment("f=ℤ↔ℤ"), "f∉A → B")),
 						notInfering),
 				// Input is incorrect
 				new UnsuccessfullReasonerApplication(
 						genSeq(" A=ℤ ;; B=ℤ ;; f∈A → B ;; f∈C |- f{x ↦ y}∈A → B "),
 						new HypothesisReasoner.Input(genPred(
-								genTypeEnv("f=ℙ(ℤ×ℤ)"), "f∈C")), notInfering),
+								mTypeEnvironment("f=ℤ↔ℤ"), "f∈C")), notInfering),
 				// Fails on type relation
 				createUnsuccessfullApplication(srel, srel, goalShape),
 				createUnsuccessfullApplication(strel, strel, goalShape),
@@ -146,7 +156,7 @@ public class MapOvrGoalTests extends AbstractReasonerTests {
 			String opGoal, String opHyp, String reason) {
 		return new UnsuccessfullReasonerApplication(genSeq(hypsStr + opHyp
 				+ " B|- f{x ↦ y}∈A " + opGoal + " B "),
-				new HypothesisReasoner.Input(genPred(genTypeEnv("f=ℙ(ℤ×ℤ)"),
+				new HypothesisReasoner.Input(genPred(mTypeEnvironment("f=ℤ↔ℤ"),
 						"f∈A " + opHyp + " B")), reason);
 	}
 
