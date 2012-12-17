@@ -83,12 +83,7 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 
 		@Override
 		public boolean isGivenSet() throws NoSuchElementException {
-			final Type baseType = getType().getBaseType();
-			if (baseType instanceof GivenType) {
-				GivenType givenType = (GivenType) baseType;
-				return givenType.getName().equals(getName());
-			}
-			return false;
+			return TypeEnvironment.isGivenSet(getName(), getType());
 		}
 	}
 
@@ -244,4 +239,14 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 		return new TypeEnvironmentBuilder(this);
 	}
 
+	// Tells whether (name, type) corresponds to a given set declaration
+	static boolean isGivenSet(String name, Type type) {
+		final Type baseType = type.getBaseType();
+		if (baseType instanceof GivenType) {
+			final GivenType givenType = (GivenType) baseType;
+			return givenType.getName().equals(name);
+		}
+		return false;
+	}
+ 
 }

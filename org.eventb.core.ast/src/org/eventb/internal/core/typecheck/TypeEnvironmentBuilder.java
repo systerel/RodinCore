@@ -118,16 +118,6 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 		map.put(name, type);
 	}
 
-	// Tells whether (name, type) corresponds to a given set declaration
-	private boolean isGivenSet(String name, Type type) {
-		final Type baseType = type.getBaseType();
-		if (baseType instanceof GivenType) {
-			final GivenType givenType = (GivenType) baseType;
-			return givenType.getName().equals(name);
-		}
-		return false;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
