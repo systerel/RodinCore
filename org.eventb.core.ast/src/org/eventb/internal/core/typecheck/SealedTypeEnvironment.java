@@ -14,12 +14,11 @@ import org.eventb.core.ast.ISealedTypeEnvironment;
 
 /**
  * Here we reuse the implementation of type environment, only creating a
- * separate type for immutable type environment to guarantee its immutable
- * property.
+ * separate type to guarantee immutability.
  * 
  * @author Vincent Monfort
  */
-public class SealedTypeEnvironment extends TypeEnvironment implements
+public final class SealedTypeEnvironment extends TypeEnvironment implements
 		ISealedTypeEnvironment {
 
 	protected SealedTypeEnvironment(TypeEnvironment typenv) {
@@ -28,17 +27,8 @@ public class SealedTypeEnvironment extends TypeEnvironment implements
 
 	@Override
 	public ISealedTypeEnvironment makeSnapshot() {
+		// No need to make a copy, as we already are immutable.
 		return this;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		return super.hashCode() << 1;
-	}
-
 }

@@ -33,10 +33,15 @@ import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 
 /**
- * This class represents a type environment used to type check an event-B
- * formula.
+ * Common implementation of type environments used to type check event-B
+ * formulas.
  * <p>
  * A type environment is a map from names to their respective type.
+ * </p>
+ * <p>
+ * The methods of this class <strong>must</strong> never change anything in the
+ * map, nor leak the map outside, otherwise sealed implementation might become
+ * mutable.
  * </p>
  * 
  * @author François Terrier
@@ -102,7 +107,7 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 	}
 	
 	/**
-	 * Constructs a new type environment with the same map as the given one.
+	 * Constructs a new type environment with a copy of the map of the given one.
 	 * 
 	 * @param typenv
 	 *            type environment to copy
@@ -112,23 +117,11 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 		this.map = new HashMap<String, Type>(typenv.map);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ast.ITypeEnvironment#contains(java.lang.String)
-	 */
 	@Override
 	public boolean contains(String name) {
 		return map.containsKey(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eventb.core.ast.ITypeEnvironment#containsAll(org.eventb.internal.
-	 * core.typecheck.TypeEnvironment)
-	 */
 	@Override
 	public boolean containsAll(ITypeEnvironment typenv) {
 		if (this == typenv)
@@ -142,11 +135,11 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 		return true;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	@Override
+	public int hashCode() {
+		return map.hashCode();
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -164,61 +157,26 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 		return new DatatypeTranslation(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ast.ITypeEnvironment#getIterator()
-	 */
 	@Override
 	public IIterator getIterator(){
 		return new InternalIterator(map.entrySet().iterator());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ast.ITypeEnvironment#getNames()
-	 */
 	@Override
 	public Set<String> getNames() {
 		return unmodifiableSet(map.keySet());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ast.ITypeEnvironment#getType(java.lang.String)
-	 */
 	@Override
 	public Type getType(String name) {
 		return map.get(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		return map.hashCode();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ast.ITypeEnvironment#isEmpty()
-	 */
 	@Override
 	public boolean isEmpty() {
 		return map.isEmpty();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return map.toString();

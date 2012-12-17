@@ -25,8 +25,11 @@ import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.FreshNameSolver;
 
 /**
- * Here we add set methods to the {@link TypeEnvironment} class in order to
- * could build a type environment.
+ * Mutable sub-class of {@link TypeEnvironment} providing methods for changing
+ * the underlying map.
+ * 
+ * All changes to the underlying map must go through
+ * {@link #setName(String, Type)} to ensure consistency.
  * 
  * @author Vincent Monfort
  */
@@ -40,7 +43,7 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 	}
 
 	/**
-	 * Constructs a new type environment with the same map as the given one.
+	 * Constructs a new type environment with a copy of the map of the given one.
 	 * 
 	 * @param typenv
 	 *            type environment to copy
@@ -48,47 +51,28 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 	public TypeEnvironmentBuilder(TypeEnvironment typenv) {
 		super(typenv);
 	}
-
-	
 	
 	@Override
 	public void add(FreeIdentifier freeIdent) {
 		addName(freeIdent.getName(), freeIdent.getType());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ast.ITypeEnvironment#addAll(org.eventb.core.ast.
-	 * ITypeEnvironment)
-	 */
 	@Override
 	public void addAll(ITypeEnvironment other) {
-		Map<String, Type> otherMap = ((TypeEnvironment) other).map;
+		final Map<String, Type> otherMap = ((TypeEnvironment) other).map;
 		// Use addName() to check for duplicates.
-		for (Entry<String, Type> entry : otherMap.entrySet()) {
+		for (final Entry<String, Type> entry : otherMap.entrySet()) {
 			addName(entry.getKey(), entry.getValue());
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ast.ITypeEnvironment#addAll(org.eventb.core.ast.
-	 * FreeIdentifier[])
-	 */
 	@Override
 	public void addAll(FreeIdentifier[] freeIdents) {
-		for (FreeIdentifier freeIdent : freeIdents) {
+		for (final FreeIdentifier freeIdent : freeIdents) {
 			add(freeIdent);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ast.ITypeEnvironment#addGivenSet(java.lang.String)
-	 */
 	@Override
 	public void addGivenSet(String name) {
 		addName(name, ff.makePowerSetType(ff.makeGivenType(name)));
@@ -118,12 +102,6 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 		map.put(name, type);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.ast.ITypeEnvironment#addName(java.lang.String,
-	 * org.eventb.core.ast.Type)
-	 */
 	@Override
 	public void addName(String name, Type type) {
 		if (name == null) {
@@ -179,16 +157,5 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 	public ISealedTypeEnvironment makeSnapshot() {
 		return new SealedTypeEnvironment(this);
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
 
-	
 }
