@@ -13,6 +13,7 @@ package org.eventb.core.tests.proofSimplifier;
 import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.hyp;
 import static org.eventb.core.tests.ResourceUtils.CTX_BARE_NAME;
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
@@ -56,8 +57,7 @@ public class ProofSimplifierTests extends BuilderTest {
 	private void createPOFile1() throws RodinDBException {
 		final IPORoot poRoot = createPOFile(CTX_BARE_NAME);
 		
-		final ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
-		typeEnv.addName("c", factory.makeIntegerType());
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("c=ℤ", factory);
 		final IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
 				typeEnv,
 				"c≠1", "c≠2", "c=0"
@@ -112,8 +112,7 @@ public class ProofSimplifierTests extends BuilderTest {
 	private void createPOFile2() throws RodinDBException {
 		final IPORoot poRoot = createPOFile(CTX_BARE_NAME);
 		
-		final ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
-		typeEnv.addName("c", factory.makeIntegerType());
+		final ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("c=ℤ", factory);
 		
 		final IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
 				typeEnv,

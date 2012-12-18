@@ -15,6 +15,7 @@ package org.eventb.core.tests.sc;
 
 import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
 import static org.eventb.core.sc.GraphProblem.AbstractEventNotRefinedWarning;
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
@@ -197,9 +198,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", intType);
-		typeEnvironment.addName("L2", powIntType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"L1=ℤ; L2=ℙ(ℤ)", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -244,10 +244,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
-		typeEnvironment.addName("V1'", intType);
-		typeEnvironment.addName("L2", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ; V1'=ℤ; L2=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -293,11 +291,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
-		typeEnvironment.addName("V1'", intType);
-		typeEnvironment.addName("V2", powIntType);
-		typeEnvironment.addName("V2'", powIntType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ; V1'=ℤ; V2=ℙ(ℤ); V2'=ℙ(ℤ)", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -335,10 +330,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", intType);
-		typeEnvironment.addName("L2", powIntType);
-		typeEnvironment.addName("L3", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"L1=ℤ; L2=ℙ(ℤ); L3=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -1017,9 +1010,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("y", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"x=ℤ; y=ℤ", factory);
 
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "fvt");
 		containsWitnesses(events[1], typeEnvironment, makeSList("x"),
@@ -1063,9 +1055,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("y", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"x=ℤ; y=ℤ", factory);
 
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt",
 				"fvt");
@@ -1104,9 +1095,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1'", intType);
-		typeEnvironment.addName("V2'", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ; V2=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -1139,9 +1129,6 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		addEventRefines(evt, "evt");
 		saveRodinFileOf(ref);
 		runBuilder();
-
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
 
@@ -1205,11 +1192,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		saveRodinFileOf(ref);
 		runBuilder();
 
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("A", intType);
-		environment.addName("B", intType);
-		environment.addName("x", intType);
-		environment.addName("y", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"A=ℤ; B=ℤ; x=ℤ; y=ℤ", factory);
 
 		ISCMachineRoot file = ref.getSCMachineRoot();
 
@@ -1284,11 +1268,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("p", boolType);
-		environment.addName("q", intType);
-		environment.addName("x", intType);
-		environment.addName("y", boolType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"p=BOOL; q=ℤ; x=ℤ; y=BOOL", factory);
 
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -1327,8 +1308,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("p", boolType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"p=BOOL", factory);
 
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
@@ -1381,9 +1362,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("p'", intType);
-		environment.addName("q'", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"p'=ℤ; q'=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -1459,9 +1439,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1'", intType);
-		typeEnvironment.addName("V2'", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ; V2=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -1502,9 +1481,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1'", intType);
-		typeEnvironment.addName("V2'", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ; V2=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
@@ -1642,9 +1620,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = ref.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
-		environment.addName("y", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ; y=ℤ", factory);
 
 		hasMarker(evt, EventBAttributes.EXTENDED_ATTRIBUTE);
 		containsGuards(events[1], environment, makeSList("G", "H"), makeSList(
@@ -1693,9 +1670,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = ref.getSCMachineRoot();
 		ISCEvent[] events = getSCEvents(file, IEvent.INITIALISATION, "evt");
 
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
-		environment.addName("y", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ; y=ℤ", factory);
 
 		hasMarker(evt, EventBAttributes.EXTENDED_ATTRIBUTE);
 		containsGuards(events[1], environment, makeSList("H"), makeSList("5=1"));
@@ -1768,9 +1744,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("a", intType);
-		environment.addName("b", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"a=ℤ; b=ℤ", factory);
 
 		containsMarkers(abs, false);
 		containsMarkers(ref, false);
@@ -1812,9 +1787,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
-		environment.addName("y", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ; y=ℤ", factory);
 
 		containsMarkers(abs, false);
 		containsMarkers(ref, false);
@@ -1869,13 +1843,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
-		environment.addName("y", intType);
-		environment.addName("z", intType);
-		environment.addName("a", intType);
-		environment.addName("b", intType);
-		environment.addName("c", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ; y=ℤ; z=ℤ; a=ℤ; b=ℤ; c=ℤ", factory);
 
 		containsMarkers(abs, false);
 		containsMarkers(ref, false);
@@ -1947,10 +1916,8 @@ public class TestEventRefines extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
-		environment.addName("y", intType);
-		environment.addName("z", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ; y=ℤ; z=ℤ", factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.ISCMachineRoot;
@@ -38,8 +40,8 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 
 		IMachineRoot mac = createMachine("mac");
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addGivenSet("S1");
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("S1=ℙ(S1)",
+				factory);
 
 		addMachineSees(mac, "ctx");
 		addVariables(mac, "V1");
@@ -69,9 +71,8 @@ public class TestInvariantsAndTheorems extends GenericPredicateTest<IMachineRoot
 		
 		runBuilder();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addGivenSet("S1");
-		typeEnvironment.addName("V1", factory.makeGivenType("S1"));
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("S1=ℙ(S1); V1=S1",
+				factory);
 		
 		IMachineRoot mac = createMachine("mac");
 		addMachineSees(mac, "ctx");

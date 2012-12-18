@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
@@ -92,8 +94,8 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ",
+				factory);
 
 		containsVariant(file, typeEnvironment, "V1");
 
@@ -147,9 +149,8 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("C1", factory.makeIntegerType());
-		typeEnvironment.addName("V1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ; C1=ℤ",
+				factory);
 
 		containsVariant(file, typeEnvironment, "V1+C1");
 
@@ -226,8 +227,8 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		containsVariables(file, "V0", "V1");
-		ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
-		typeEnv.addName("V1", intType);
+		ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("V1=ℤ",
+				factory);
 		containsVariant(file, typeEnv, "V1");
 
 		hasMarker(mac.getVariants()[0], EventBAttributes.EXPRESSION_ATTRIBUTE);
@@ -296,8 +297,8 @@ public class TestVariant extends BasicSCTestWithFwdConfig {
 		ISCMachineRoot file = mac.getSCMachineRoot();
 
 		containsVariables(file, "V0", "V1");
-		ITypeEnvironmentBuilder typeEnv = factory.makeTypeEnvironment();
-		typeEnv.addName("V1", intType);
+		ITypeEnvironmentBuilder typeEnv = mTypeEnvironment("V1=ℤ",
+				factory);
 		containsVariant(file, typeEnv, "V1");
 
 		containsMarkers(mac, false);

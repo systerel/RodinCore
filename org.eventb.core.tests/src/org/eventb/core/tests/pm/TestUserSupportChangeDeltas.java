@@ -65,11 +65,12 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 		psRoot = poRoot.getPSRoot();
 		prRoot = poRoot.getPRRoot();
 
-		hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null, mTypeEnvironment(
-				"x", "ℤ", "f", "ℙ(ℤ×ℤ)"), "1=1", "2=2", "x∈ℕ", "f∈ℕ ⇸ ℕ");
-		hyp1 = POUtil.addPredicateSet(poRoot, "hyp1", null, mTypeEnvironment(
-				"x", "ℤ", "f", "ℙ(ℤ×ℤ)"), "1=1", "2=2", "x∈ℕ", "f∈ℕ ⇸ ℕ",
-				"f(x)∈ℕ", "x∈dom(f)");
+		hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
+				mTypeEnvironment("x=ℤ; f=ℤ↔ℤ"), "1=1", "2=2", "x∈ℕ",
+				"f∈ℕ ⇸ ℕ");
+		hyp1 = POUtil.addPredicateSet(poRoot, "hyp1", null,
+				mTypeEnvironment("x=ℤ; f=ℤ↔ℤ"), "1=1", "2=2", "x∈ℕ",
+				"f∈ℕ ⇸ ℕ", "f(x)∈ℕ", "x∈dom(f)");
 
 		// Turn on beginner mode
 		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()

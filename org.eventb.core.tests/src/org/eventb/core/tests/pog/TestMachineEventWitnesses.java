@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
@@ -138,21 +140,10 @@ public class TestMachineEventWitnesses extends EventBPOTest {
 	}
 
 	private ITypeEnvironment makeTypeEnvironment() {
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("ax", intType);
-		environment.addName("ay", intType);
-		environment.addName("az", intType);
-		environment.addName("cx", intType);
-		environment.addName("cy", intType);
-		environment.addName("cz", intType);
-		environment.addName("ax'", intType);
-		environment.addName("ay'", intType);
-		environment.addName("az'", intType);
-		environment.addName("cx'", intType);
-		environment.addName("cy'", intType);
-		environment.addName("cz'", intType);
-		environment.addName("pp", powIntType);
-		environment.addName("qq", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"ax=ℤ; ay=ℤ; az=ℤ; cx=ℤ; cy=ℤ; cz=ℤ; ax'=ℤ; ay'=ℤ;" //
+				+" az'=ℤ; cx'=ℤ; cy'=ℤ; cz'=ℤ; pp=ℙ(ℤ); qq=ℤ",
+				factory);
 		return environment;
 	}
 	

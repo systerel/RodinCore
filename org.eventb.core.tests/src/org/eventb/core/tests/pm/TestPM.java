@@ -20,7 +20,6 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.tests.pom.POUtil;
-import org.junit.After;
 import org.junit.Before;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -48,21 +47,21 @@ public abstract class TestPM extends BasicTest {
 		poFile.create(true, null);
 		IPORoot poRoot = (IPORoot) poFile.getRoot();
 		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
-				mTypeEnvironment("x", "ℤ"), "¬x=1", "¬x=2", "x∈ℕ");
+				mTypeEnvironment("x=ℤ"), "¬x=1", "¬x=2", "x∈ℕ");
 		POUtil.addSequent(poRoot, "PO1", "¬x=1 ∧¬x=2 ∧x ∈ℕ", hyp0,
 				mTypeEnvironment());
 		POUtil.addSequent(poRoot, "PO2", "¬x=1 ∧¬x=2 ∧x ∈ℕ∧y ∈ℕ", hyp0,
-				mTypeEnvironment("y", "ℤ"), "y∈ℕ");
+				mTypeEnvironment("y=ℤ"), "y∈ℕ");
 		POUtil.addSequent(poRoot, "PO3", "3=3", hyp0, mTypeEnvironment(),
 				"3=3");
 		POUtil.addSequent(poRoot, "PO4", "¬x=1 ∧ ¬x=2 ∧ x∈ℕ ∧ 3=3", hyp0,
 				mTypeEnvironment(), "3=3");
 		POUtil.addSequent(poRoot, "PO5", "¬x=1 ∧¬x=2 ∧y ∈ℕ∧y ∈ℕ", hyp0,
-				mTypeEnvironment("y", "ℤ"), "y∈ℕ");
+				mTypeEnvironment("y=ℤ"), "y∈ℕ");
 		POUtil.addSequent(poRoot, "PO6", "¬x=1 ∧¬x=2 ∧x ∈ℕ∧y ∈ℕ", hyp0,
-				mTypeEnvironment("y", "ℤ", "x'", "ℤ"), "y∈ℕ");
+				mTypeEnvironment("y=ℤ; x'=ℤ"), "y∈ℕ");
 		POUtil.addSequent(poRoot, "PO7", "y∈ℕ", hyp0,
-				mTypeEnvironment("y", "ℤ"), "x=x");
+				mTypeEnvironment("y=ℤ"), "x=x");
 		poFile.save(null, true);
 		return poRoot;
 	}

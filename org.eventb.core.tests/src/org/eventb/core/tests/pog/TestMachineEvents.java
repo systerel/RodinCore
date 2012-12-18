@@ -13,6 +13,7 @@
 package org.eventb.core.tests.pog;
 
 import static org.eventb.core.IEvent.INITIALISATION;
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
@@ -41,8 +42,8 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔V1+1"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ",
+				factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -74,9 +75,8 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList("G1"), makeSList("L1∈ℕ"), 
 				makeSList("A1"), makeSList("V1≔L1"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
-		typeEnvironment.addName("L1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ; L1=ℤ", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -108,9 +108,8 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList("G1"), makeSList("L1⊆ℕ"), 
 				makeSList("A1"), makeSList("V1:∈L1"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
-		typeEnvironment.addName("L1", powIntType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ; L1=ℙ(ℤ)", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -142,9 +141,8 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList("G1"), makeSList("L1⊆ℕ"), 
 				makeSList("A1"), makeSList("V1:∈L1"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
-		typeEnvironment.addName("L1", powIntType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ; L1=ℙ(ℤ)", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -181,10 +179,8 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList("G1"), makeSList("L1⊆ℕ"), 
 				makeSList("A1", "A2"), makeSList("V1:∈L1", "V2 :∈ {TRUE}"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
-		typeEnvironment.addName("V2", boolType);
-		typeEnvironment.addName("L1", powIntType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ; V2=BOOL; L1=ℙ(ℤ)", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -229,11 +225,8 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList("A0", "A1", "A2"), 
 				makeSList("V0≔bool(V1≠L1)", "V1≔L1", "V2≔bool(V1=L1)"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V0", boolType);
-		typeEnvironment.addName("V1", intType);
-		typeEnvironment.addName("V2", boolType);
-		typeEnvironment.addName("L1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V0=BOOL; V1=ℤ; V2=BOOL; L1=ℤ", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -277,8 +270,7 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔V1+2"));
 	
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -328,19 +320,15 @@ public class TestMachineEvents extends EventBPOTest {
 		
 		containsIdentifiers(po, "V1");
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
-		typeEnvironment.addName("L1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ; L1=ℤ", factory);
 		
 		IPOSequent sequent = getSequent(po, "evt1/I1/INV");
 		
 		sequentHasIdentifiers(sequent, "V1'", "L1");
 		sequentHasHypotheses(sequent, typeEnvironment, "V1∈0‥4");
 		sequentHasGoal(sequent, typeEnvironment, "L1∈0‥4");
-		
-		typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
-		typeEnvironment.addName("L1", powIntType);
+
+		typeEnvironment = mTypeEnvironment("V1=ℤ; L1=ℙ(ℤ)", factory);
 		
 		sequent = getSequent(po, "evt2/I1/INV");
 		
@@ -376,10 +364,7 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔V1+1"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addGivenSet("S1");
-		typeEnvironment.addName("C1", given("S1"));
-		typeEnvironment.addName("V1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("S1=ℙ(S1); C1=S1; V1=ℤ", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -418,10 +403,7 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V3≔ℤ"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
-		typeEnvironment.addName("V2", boolType);
-		typeEnvironment.addName("V3", powIntType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ; V2=BOOL; V3=ℙ(ℤ)", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -478,8 +460,7 @@ public class TestMachineEvents extends EventBPOTest {
 	
 		runBuilder();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ", factory);
 		
 		IPORoot po = mac.getPORoot();
 		containsIdentifiers(po, "x");
@@ -519,8 +500,7 @@ public class TestMachineEvents extends EventBPOTest {
 	
 		runBuilder();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ", factory);
 		
 		IPORoot po = mac.getPORoot();
 		containsIdentifiers(po, "x");
@@ -568,8 +548,7 @@ public class TestMachineEvents extends EventBPOTest {
 	
 		runBuilder();
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ", factory);
 		
 		IPORoot po = mac.getPORoot();
 		containsIdentifiers(po, "x");
@@ -609,8 +588,7 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1 :∣ V1' > 0"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -646,9 +624,6 @@ public class TestMachineEvents extends EventBPOTest {
 				makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔V1+1"));
-		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
 		
 		saveRodinFileOf(mac);
 		

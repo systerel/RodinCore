@@ -125,7 +125,7 @@ public class PendingSubgoalTests extends TestPM {
 		file.create(true, null);
 		poRoot = (IPORoot) file.getRoot();
 		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
-				mTypeEnvironment("x", "ℤ"));
+				mTypeEnvironment("x=ℤ"));
 		POUtil.addSequent(poRoot, "PO1", G.toString(), hyp0,
 				mTypeEnvironment());
 		file.save(null, true);

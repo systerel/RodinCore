@@ -31,7 +31,6 @@ import org.eventb.core.IPOSelectionHint;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPOStampedElement;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.Type;
 import org.eventb.core.tests.EventBTest;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -279,10 +278,6 @@ public abstract class EventBPOTest extends EventBTest {
 
 	public IPORoot getPOFile(IMachineRoot root) throws RodinDBException {
 		return root.getPORoot();
-	}
-
-	public Type given(String s) {
-		return factory.makeGivenType(s);
 	}
 
 	public void sequentIsAccurate(IPORoot po, String name) throws Exception {

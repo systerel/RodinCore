@@ -19,10 +19,8 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
@@ -100,18 +98,6 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 		return ProverFactory.makeProofTree(genSeq(str), null).getRoot();
 	}
 		
-	public static ITypeEnvironment genTypeEnv(String... strs){
-		final DLib lib = mDLib(ff);
-		ITypeEnvironmentBuilder typeEnv = lib.makeTypeEnvironment();
-		assert strs.length % 2 == 0;
-		for (int i = 0; i+1 < strs.length; i=i+2) {
-			Type type = lib.parseType(strs[i+1]);
-			assert type != null;
-			typeEnv.addName(strs[i],type);
-		}
-		return typeEnv;
-	}
-	
 	/**
 	 * Generates a type checked predicate from a string.
 	 * 

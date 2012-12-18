@@ -106,10 +106,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 		IRodinFile poFile = rodinProject.getRodinFile("po.bpo");
 		poFile.create(true, null);
 		poRoot = (IPORoot) poFile.getRoot();
-		final ITypeEnvironment typenv = mTypeEnvironment(//
-				"f", "ℙ(ℤ×ℤ)", //
-				"g", "ℙ(ℤ×ℤ)", //
-				"x", "ℤ");
+		final ITypeEnvironment typenv = mTypeEnvironment("f=ℤ↔ℤ; g=ℤ↔ℤ; x=ℤ");
 		final IPOPredicateSet h0 = POUtil.addPredicateSet(poRoot, "h0", null,
 				typenv, //
 				"f ∈ ℤ → ℤ", //

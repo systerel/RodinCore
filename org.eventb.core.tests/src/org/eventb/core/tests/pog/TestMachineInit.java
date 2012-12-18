@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
@@ -38,8 +40,8 @@ public class TestMachineInit extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔1"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -68,8 +70,8 @@ public class TestMachineInit extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔1"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ", factory);
 		
 		saveRodinFileOf(abs);
 		
@@ -114,8 +116,8 @@ public class TestMachineInit extends EventBPOTest {
 				makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x≔0"));
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"x=ℤ", factory);
 		saveRodinFileOf(abs);
 		runBuilder();
 		
@@ -146,10 +148,6 @@ public class TestMachineInit extends EventBPOTest {
 				makeSList(), 
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("x,y,z ≔ 0,0,0"));
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("y", intType);
-		typeEnvironment.addName("z", intType);
 		saveRodinFileOf(abs);
 		runBuilder();
 		

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
@@ -39,9 +41,8 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList("G", "H"), makeSList("y>x÷x", "x÷x=0"), 
 				makeSList(), makeSList());
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("y", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ; y=ℤ",
+				factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -77,10 +78,8 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
 				makeSList("S", "T"), makeSList("x≔x÷y", "z:∣z'≠z"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("y", intType);
-		typeEnvironment.addName("z", boolType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ; y=ℤ; z=BOOL",
+				factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -117,10 +116,8 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList("G", "H"), makeSList("y>x", "x=0"), 
 				makeSList("S", "T"), makeSList("x≔y", "z:∣z'≠z"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("y", intType);
-		typeEnvironment.addName("z", boolType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ; y=ℤ; z=BOOL",
+				factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -170,10 +167,8 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("y"), makeSList("yc=y"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("y", intType);
-		typeEnvironment.addName("z", boolType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ; y=ℤ; z=BOOL",
+				factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -224,14 +219,8 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("y", "z'"), makeSList("yc=y", "z'≠zc'"));
 	
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("y", intType);
-		typeEnvironment.addName("yc", intType);
-		typeEnvironment.addName("z", boolType);
-		typeEnvironment.addName("zc", boolType);
-		typeEnvironment.addName("z'", boolType);
-		typeEnvironment.addName("zc'", boolType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"x=ℤ; y=ℤ; yc=ℤ; z=BOOL; zc=BOOL; z'=BOOL; zc'=BOOL", factory);
 	
 		saveRodinFileOf(mac);
 		
@@ -286,14 +275,8 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		addEventRefines(event, "evt");
 		addEventWitnesses(event, makeSList("y", "z'"), makeSList("yc=y", "z'≠zc'"));
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("y", intType);
-		typeEnvironment.addName("yc", intType);
-		typeEnvironment.addName("z", boolType);
-		typeEnvironment.addName("zc", boolType);
-		typeEnvironment.addName("z'", boolType);
-		typeEnvironment.addName("zc'", boolType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"x=ℤ; y=ℤ; yc=ℤ; z=BOOL; zc=BOOL; z'=BOOL; zc'=BOOL", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -334,9 +317,8 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList(), makeSList(), 
 				makeSList("S", "T"), makeSList("x≔x+1", "z(x)≔z(x)"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("z", relIntType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"x=ℤ; z=ℤ↔ℤ", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -381,9 +363,8 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 		setConvergent(evt);
 		addVariant(mac, "x+1");
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("y", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"x=ℤ; y=ℤ", factory);
 		
 		saveRodinFileOf(mac);
 		
@@ -420,9 +401,8 @@ public class TestMachineHints extends GenericHintTest<IMachineRoot> {
 				makeSList("G", "H"), makeSList("y>x÷x", "x÷x=0"), makeBList(false, true), 
 				makeSList(), makeSList());
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
-		typeEnvironment.addName("y", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"x=ℤ; y=ℤ", factory);
 		
 		saveRodinFileOf(mac);
 		

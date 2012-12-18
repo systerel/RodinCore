@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -168,13 +170,8 @@ public class TestMachineVariant extends EventBPOTest {
 	String[] invPredicates = makeSList("A ⊆ ℤ", "x ∈ ℤ", "y ∈ ℤ");
 	boolean[] isTheorem = new boolean[] { false, false, false};
 	
-	ITypeEnvironmentBuilder environment;
-	{
-		environment = factory.makeTypeEnvironment();
-		environment.addName("A", factory.makePowerSetType(factory.makeIntegerType()));
-		environment.addName("x", factory.makeIntegerType());
-		environment.addName("y", factory.makeIntegerType());
-	}
+	ITypeEnvironmentBuilder environment = mTypeEnvironment(
+			"A=ℙ(ℤ); x=ℤ; y=ℤ", factory);
 	
 	private void testItemList(Convergence convergence) throws Exception {
 		
@@ -374,8 +371,8 @@ public class TestMachineVariant extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"x=ℤ", factory);
 		
 		IPORoot po = ref.getPORoot();
 		
@@ -422,8 +419,8 @@ public class TestMachineVariant extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"x=ℤ", factory);
 		
 		IPORoot po = ref.getPORoot();
 		
@@ -466,8 +463,8 @@ public class TestMachineVariant extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"x=ℤ", factory);
 		
 		IPORoot po = ref.getPORoot();
 		

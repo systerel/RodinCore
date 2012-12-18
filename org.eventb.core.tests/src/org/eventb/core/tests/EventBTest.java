@@ -16,6 +16,7 @@ package org.eventb.core.tests;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,7 +47,6 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.junit.After;
 import org.junit.Before;
 import org.rodinp.core.ElementChangedEvent;
@@ -65,11 +65,7 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class EventBTest extends BuilderTest {
 	
-	public ITypeEnvironment emptyEnv = factory.makeTypeEnvironment();
-	public final Type intType = factory.makeIntegerType();
-	public final Type boolType = factory.makeBooleanType();
-	public final Type powIntType = factory.makePowerSetType(intType);
-	public final Type relIntType = factory.makePowerSetType(factory.makeProductType(intType, intType));
+	public ITypeEnvironment emptyEnv = mTypeEnvironment();
 
 	public EventBTest() {
 		super();

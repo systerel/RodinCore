@@ -14,7 +14,6 @@ package org.eventb.core.tests.pog;
 
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -306,9 +305,6 @@ extends GenericEventBPOTest<F> {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
-		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		
 		IPOSequent sequent = getSequent(po, getWDPOName(cmp, "N1"));
@@ -342,9 +338,6 @@ extends GenericEventBPOTest<F> {
 		
 		saveRodinFileOf(cmp);
 		runBuilder();
-		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
 		
 		IPORoot po = getGeneric().getPOFile(cmp);
 		

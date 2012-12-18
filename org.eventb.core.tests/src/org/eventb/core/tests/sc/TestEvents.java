@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
@@ -175,8 +177,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_06_parameter() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("L1=ℤ;",
+				factory);
 
 		addInitialisation(mac);
 		addEvent(mac, "evt1", makeSList("L1"), makeSList("G1"), makeSList("L1∈ℕ"), makeSList(), makeSList());
@@ -202,8 +204,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_07_variableAndParameter() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("L1=ℤ;",
+				factory);
 
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1⊆ℕ"), true);
@@ -233,8 +235,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_08_variableAndParameterWithNameConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("L1=ℤ;",
+				factory);
 
 		addVariables(mac, "L1");
 		addInvariants(mac, makeSList("I1"), makeSList("L1⊆ℕ"), true);
@@ -267,8 +269,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_09_parametersOfDifferentEvents() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("L1=ℤ;",
+				factory);
 
 		addVariables(mac, "L1");
 		addInvariants(mac, makeSList("I1"), makeSList("L1⊆ℕ"), true);
@@ -302,8 +304,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_10_globalVariableInAction() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("L1=ℤ;",
+				factory);
 
 		addVariables(mac, "L1");
 		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"), true);
@@ -333,8 +335,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_11_actionSameLHSConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("L1=ℤ;",
+				factory);
 
 		addVariables(mac, "L1");
 		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"), true);
@@ -364,8 +366,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_12_actionGuardLabelConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("L1=ℤ;",
+				factory);
 
 		addVariables(mac, "L1");
 		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"), true);
@@ -397,8 +399,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_13_actionAssignFromLocalVariableOK() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ;",
+				factory);
 
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), true);
@@ -433,8 +435,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_14_assignmentToParameterProblem() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ;",
+				factory);
 
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), true);
@@ -468,9 +470,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_15_actionNondetAssignment() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", factory.makeIntegerType());
-		typeEnvironment.addName("V1'", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ; V1'=ℤ",
+				factory);
 
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), true);
@@ -505,9 +506,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_16_actionMultipleLHSConflict() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("u", factory.makeIntegerType());
-		typeEnvironment.addName("x", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("u=ℤ; x=ℤ",
+				factory);
 
 		addVariables(mac, "u", "v", "w", "x", "y", "z");
 		addInvariants(mac, makeSList("I1"), makeSList("u∈ℕ ∧ v∈ℕ ∧ w∈ℕ ∧ x∈ℕ ∧ y∈ℕ ∧ z∈ℕ"), true);
@@ -566,9 +566,6 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_18_initialisationGuardProblem() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", factory.makeIntegerType());
-
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
 		IEvent e = addEvent(mac, IEvent.INITIALISATION, makeSList(), 
@@ -597,9 +594,6 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_19_actionFaultyNondetAssignment() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", factory.makeIntegerType());
-
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
 		IEvent e = addEvent(mac, "evt", makeSList(), 
@@ -626,8 +620,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_20_initialisationNondetAssignmentOK() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ",
+				factory);
 
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
@@ -655,8 +649,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_21_initialisationNondetAssignmentReplacedByDefault() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ",
+				factory);
 
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
@@ -684,8 +678,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	public void testEvents_22_initialisationDefaultAssignment() throws Exception {
 		IMachineRoot mac = createMachine("mac");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ",
+				factory);
 
 		addVariables(mac, "x");
 		addInvariants(mac, makeSList("I1"), makeSList("x∈ℕ"), true);
@@ -726,10 +720,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", factory.makeIntegerType());
-		typeEnvironment.addName("x'", factory.makeIntegerType());
-		typeEnvironment.addName("y", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ; x'=ℤ; y=ℤ",
+				factory);
 
 		addVariables(mac, "y");
 		addInvariants(mac, makeSList("I1"), makeSList("y∈ℕ"), true);
@@ -771,10 +763,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 		IMachineRoot mac = createMachine("mac");
 		addMachineRefines(mac, "abs");
 
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", factory.makeIntegerType());
-		typeEnvironment.addName("x'", factory.makeIntegerType());
-		typeEnvironment.addName("y", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ; x'=ℤ; y=ℤ",
+				factory);
 
 		addVariables(mac, "y");
 		addInvariants(mac, makeSList("I1"), makeSList("y∈ℕ"), true);
@@ -816,9 +806,6 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testEvents_26_bug2689872() throws Exception {
 		IMachineRoot mac = createMachine("mac");
-
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("L1", factory.makeIntegerType());
 
 		addVariables(mac, "L1");
 		addInvariants(mac, makeSList("I1"), makeSList("L1∈ℕ"), true);
@@ -939,9 +926,8 @@ public class TestEvents extends BasicSCTestWithFwdConfig {
 	@Test
 	public void testEvents_32_initialisationDefaultAssignments()
 			throws Exception {
-		final ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("x", factory.makeIntegerType());
-		typeEnvironment.addName("y", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("x=ℤ; y=ℤ",
+				factory);
 
 		final IMachineRoot mac = createMachine("mac");
 		addVariables(mac, "x");

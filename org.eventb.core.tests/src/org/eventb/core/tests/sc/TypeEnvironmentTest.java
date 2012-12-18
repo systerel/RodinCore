@@ -14,6 +14,8 @@ package org.eventb.core.tests.sc;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotSame;
+import static org.eventb.core.tests.pom.POUtil.addToTypeEnvironment;
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
@@ -21,7 +23,6 @@ import org.eventb.core.ISCContextRoot;
 import org.eventb.core.ISCEvent;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.Type;
 import org.junit.Test;
 
 /**
@@ -31,10 +32,6 @@ import org.junit.Test;
  * @author Laurent Voisin
  */
 public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
-
-	private static Type BOOL = factory.makeBooleanType();
-	private static Type ty_S = factory.makeGivenType("S"); 
-	private static Type ty_T = factory.makeGivenType("T"); 
 
 	/**
 	 * Ensures that the type environment of a single context is correctly
@@ -51,9 +48,8 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCContextRoot scCtxFile = ctx.getSCContextRoot();
 
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addGivenSet("S");
-		typenv.addName("s", ty_S);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S",
+				factory);
 		assertEquals("Type environments differ",
 				typenv, scCtxFile.getTypeEnvironment(factory));
 	}
@@ -79,12 +75,8 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 
 		runBuilder();
 		final ISCContextRoot scCtxFile = cctx.getSCContextRoot();
-
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addGivenSet("S");
-		typenv.addName("s", ty_S);
-		typenv.addGivenSet("T");
-		typenv.addName("t", ty_T);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; T=ℙ(T); t=T",
+				factory);
 		assertEquals("Type environments differ",
 				typenv, scCtxFile.getTypeEnvironment(factory));
 	}
@@ -104,8 +96,8 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
 
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addName("v", BOOL);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("v=BOOL",
+				factory);
 		assertEquals("Type environments differ",
 				typenv, scMchFile.getTypeEnvironment(factory));
 	}
@@ -132,10 +124,8 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
 
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addGivenSet("S");
-		typenv.addName("s", ty_S);
-		typenv.addName("v", ty_S);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; v=S",
+				factory);
 		assertEquals("Type environments differ",
 				typenv, scMchFile.getTypeEnvironment(factory));
 	}
@@ -169,12 +159,8 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
 
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addGivenSet("S");
-		typenv.addName("s", ty_S);
-		typenv.addGivenSet("T");
-		typenv.addName("t", ty_T);
-		typenv.addName("v", ty_T);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; T=ℙ(T); t=T; v=T",
+				factory);
 		assertEquals("Type environments differ",
 				typenv, scMchFile.getTypeEnvironment(factory));
 	}
@@ -201,9 +187,8 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCMachineRoot scMchFile = cmch.getSCMachineRoot();
 
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addName("v", BOOL);
-		typenv.addName("w", BOOL);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(
+				"v=BOOL; w=BOOL", factory);
 		assertEquals("Type environments differ",
 				typenv, scMchFile.getTypeEnvironment(factory));
 	}
@@ -245,13 +230,8 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 		final ISCMachineRoot scMchFile = cmch.getSCMachineRoot();
 
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addGivenSet("S");
-		typenv.addName("s", ty_S);
-		typenv.addName("v", ty_S);
-		typenv.addGivenSet("T");
-		typenv.addName("t", ty_T);
-		typenv.addName("w", ty_T);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; v=S; T=ℙ(T); t=T; w=T",
+				factory);
 		assertEquals("Type environments differ",
 				typenv, scMchFile.getTypeEnvironment(factory));
 	}
@@ -278,8 +258,8 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final ITypeEnvironmentBuilder evtTypenv =
 			scEvent.getTypeEnvironment(mchTypenv);
 
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addName("v", BOOL);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("v=BOOL",
+				factory);
 		assertEquals("Type environments differ", typenv, evtTypenv);
 
 		assertNotSame("The event typenv should be a copy", mchTypenv, evtTypenv);
@@ -308,11 +288,10 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final ITypeEnvironmentBuilder evtTypenv =
 			scEvent.getTypeEnvironment(mchTypenv);
 
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addName("v", BOOL);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("v=BOOL",
+				factory);
 		assertEquals("Type environments differ", typenv, mchTypenv);
-
-		typenv.addName("l", BOOL);
+		addToTypeEnvironment(typenv,"l=BOOL");
 		assertEquals("Type environments differ", typenv, evtTypenv);
 	}
 

@@ -5,6 +5,7 @@ package org.eventb.core.tests.pm;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -62,8 +63,7 @@ public class TypeEnvironmentSorterTests {
 	
 	@Test
 	public void testOneSet() {
-		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
-		te.addGivenSet("S");
+		ITypeEnvironmentBuilder te = mTypeEnvironment("S=ℙ(S)", ff);
 		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(te);
 		assertSets(sorter, "S");
 		assertVars(sorter);
@@ -71,12 +71,8 @@ public class TypeEnvironmentSorterTests {
 	
 	@Test
 	public void testSeveralSets() {
-		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
-		te.addGivenSet("S");
-		te.addGivenSet("A");
-		te.addGivenSet("T");
-		te.addGivenSet("B");
-		te.addGivenSet("U");
+		ITypeEnvironmentBuilder te = mTypeEnvironment(
+				"S=ℙ(S); A=ℙ(A); T=ℙ(T); B=ℙ(B); U=ℙ(U)", ff);
 		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(te);
 		assertSets(sorter, "A", "B", "S", "T", "U");
 		assertVars(sorter);
@@ -84,8 +80,7 @@ public class TypeEnvironmentSorterTests {
 	
 	@Test
 	public void testOneVar() {
-		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
-		te.addName("x", INT);
+		ITypeEnvironmentBuilder te = mTypeEnvironment("x=ℤ", ff);
 		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(te);
 		assertSets(sorter);
 		assertVars(sorter, "x", INT);
@@ -93,10 +88,7 @@ public class TypeEnvironmentSorterTests {
 	
 	@Test
 	public void testSeveralVars() {
-		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
-		te.addName("x", INT);
-		te.addName("a", POW(INT));
-		te.addName("y", BOOL);
+		ITypeEnvironmentBuilder te = mTypeEnvironment("x=ℤ; a=ℙ(ℤ); y=BOOL", ff);
 		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(te);
 		assertVars(sorter, //
 				"a", POW(INT),//
@@ -107,14 +99,8 @@ public class TypeEnvironmentSorterTests {
 	
 	@Test
 	public void testMixed() {
-		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
-		te.addGivenSet("S");
-		te.addName("x", INT);
-		te.addGivenSet("T");
-		te.addName("a", POW(INT));
-		te.addName("b", t_S);
-		te.addName("z", POW(t_S));
-		te.addGivenSet("U");
+		ITypeEnvironmentBuilder te = mTypeEnvironment(
+				"S=ℙ(S); x=ℤ; T=ℙ(T); a=ℙ(ℤ); b=S; z=ℙ(S); U=ℙ(U)", ff);
 		TypeEnvironmentSorter sorter = new TypeEnvironmentSorter(te);
 		assertSets(sorter, "S", "T", "U");
 		assertVars(sorter,//

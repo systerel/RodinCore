@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.junit.Test;
 import org.rodinp.core.IRodinElement;
@@ -59,8 +61,7 @@ extends GenericEventBSCTest<E, SCE> {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("V1", factory.makeIntegerType());
+		final ITypeEnvironmentBuilder environment = mTypeEnvironment("V1=ℤ", factory);
 		
 		SCE file = getGeneric().getSCElement(cmp);
 		
@@ -158,9 +159,6 @@ extends GenericEventBSCTest<E, SCE> {
 		getGeneric().save(cmp);
 		
 		runBuilder();
-		
-		final ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("v'", factory.makeIntegerType());
 		
 		final SCE file = getGeneric().getSCElement(cmp);
 		

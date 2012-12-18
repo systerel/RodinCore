@@ -15,7 +15,6 @@ package org.eventb.core.tests.pog;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPORoot;
-import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.junit.Test;
 
 /**
@@ -41,10 +40,6 @@ public class TestMachineSeesContext extends EventBPOTest {
 		addMachineSees(mac, "ctx");
 		addVariables(mac, "V1");
 		addInvariants(mac, makeSList("I1"), makeSList("V1∈ℕ"), false);
-		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addGivenSet("S1");
-		typeEnvironment.addName("V1", intType);
 		
 		saveRodinFileOf(mac);
 		

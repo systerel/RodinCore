@@ -67,10 +67,10 @@ public class TestUserSupportChanges extends TestPM {
 		psRoot = poRoot.getPSRoot();
 		prRoot = poRoot.getPRRoot();
 
-		hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null, mTypeEnvironment(
-				"x", "ℤ", "f", "ℙ(ℤ×ℤ)"), "x=1", "x∈ℕ", "f∈ℕ ⇸ ℕ");
-		hyp1 = POUtil.addPredicateSet(poRoot, "hyp1", null, mTypeEnvironment(
-				"x", "ℤ", "f", "ℙ(ℤ×ℤ)"), "x=1", "x∈ℕ", "f∈ℕ ⇸ ℕ",
+		hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
+				mTypeEnvironment("x=ℤ; f=ℤ↔ℤ"), "x=1", "x∈ℕ", "f∈ℕ ⇸ ℕ");
+		hyp1 = POUtil.addPredicateSet(poRoot, "hyp1", null,
+				mTypeEnvironment("x=ℤ; f=ℤ↔ℤ"), "x=1", "x∈ℕ", "f∈ℕ ⇸ ℕ",
 				"f(x)∈ℕ", "x∈dom(f)");
 
 		// Turn on beginner mode

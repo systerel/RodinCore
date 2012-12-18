@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;
@@ -54,9 +56,8 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addGivenSet("S1");
-		environment.addName("V1", factory.makeGivenType("S1"));
+		ITypeEnvironmentBuilder environment = mTypeEnvironment("S1=ℙ(S1); V1=S1",
+				factory);
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		
@@ -96,8 +97,8 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("C1", factory.makeBooleanType());
+		ITypeEnvironmentBuilder environment = mTypeEnvironment("C1=BOOL",
+				factory);
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 		
@@ -139,8 +140,8 @@ public class TestVariables extends GenericIdentTest<IMachineRoot, ISCMachineRoot
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("V1", factory.makeIntegerType());
+		ITypeEnvironmentBuilder environment = mTypeEnvironment("V1=ℤ",
+				factory);
 
 		ISCMachineRoot file = mac.getSCMachineRoot();
 				

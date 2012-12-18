@@ -14,20 +14,15 @@
 package org.eventb.core.tests.pom;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
-import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.internal.core.pom.POLoader;
@@ -53,40 +48,16 @@ import org.rodinp.core.RodinDBException;
  */
 public class POLoaderTest extends BuilderTest {
 
-	/**
-	 * Creates a new type environment from the given strings. The given strings
-	 * are alternatively an identifier name and its type.
-	 * 
-	 * @param strings
-	 *            an even number of strings
-	 * @return a new type environment
-	 */
-	public ITypeEnvironment mTypeEnvironment(String... strings) {
-		// even number of strings
-		assert (strings.length & 1) == 0;
-		final ITypeEnvironmentBuilder result = factory.makeTypeEnvironment();
-		for (int i = 0; i < strings.length; i += 2) {
-			final String name = strings[i];
-			final String typeString = strings[i+1];
-			final IParseResult pResult = factory.parseType(typeString, V2);
-			assertFalse("Parsing type failed for " + typeString,
-					pResult.hasProblem());
-			final Type type = pResult.getParsedType(); 
-			result.addName(name, type);
-		}
-		return result;
-	}
-	
 	private IPORoot poRoot;
 
 	private void createPOFile() throws RodinDBException {
 		poRoot = createPOFile("x");
 		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
-				mTypeEnvironment("x", "ℤ"),
+				mTypeEnvironment("x=ℤ"),
 				"1=1", "2=2", "x∈ℕ"
 		);
 		IPOPredicateSet hyp1 = POUtil.addPredicateSet(poRoot, "hyp1", hyp0,
-				mTypeEnvironment("y", "ℤ"),
+				mTypeEnvironment("y=ℤ"),
 				"1=1", "2=2", "y∈ℕ", "x÷x = 1"
 		);
 		// Empty local type environment and local hyps
@@ -99,7 +70,7 @@ public class POLoaderTest extends BuilderTest {
 		POUtil.addSequent(poRoot, "PO2", 
 				"x ≠ 0",
 				hyp0, 
-				mTypeEnvironment("z", "ℤ"),
+				mTypeEnvironment("z=ℤ"),
 				"z=3"
 		);
 		// With goal with implicit WD asumption
@@ -120,7 +91,7 @@ public class POLoaderTest extends BuilderTest {
 		POUtil.addSequent(poRoot, "WDFiltering",
 				"∀x·2÷x = 1",
 				hyp0,
-				mTypeEnvironment("c", "BOOL"),
+				mTypeEnvironment("c=BOOL"),
 				"∀y·3÷y = 1",
 				"c = TRUE ⇒ (∀z·5÷z = 1)"
 		);

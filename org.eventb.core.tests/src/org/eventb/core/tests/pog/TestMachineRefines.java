@@ -17,6 +17,7 @@ package org.eventb.core.tests.pog;
 import static junit.framework.Assert.assertTrue;
 import static org.eventb.core.IEvent.INITIALISATION;
 import static org.eventb.core.ast.LanguageVersion.V2;
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
@@ -49,8 +50,8 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1≔V1+1"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ", factory);
 		
 		saveRodinFileOf(abs);
 		
@@ -96,8 +97,8 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList(), makeSList());
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ", factory);
 		
 		saveRodinFileOf(abs);
 		
@@ -143,8 +144,8 @@ public class TestMachineRefines extends EventBPOTest {
 				makeSList(), makeSList(), 
 				makeSList("A1"), makeSList("V1:∈ℕ"));
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ", factory);
 		
 		saveRodinFileOf(abs);
 		
@@ -226,12 +227,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		IPORoot po = mac.getPORoot();
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", intType);
-		typeEnvironment.addName("V2", intType);
-		typeEnvironment.addName("V1X", intType);
-		typeEnvironment.addName("L1", intType);
-		typeEnvironment.addName("L2", intType);
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment(
+				"V1=ℤ; V2=ℤ; V1X=ℤ; L1=ℤ; L2=ℤ", factory);
 		
 		containsIdentifiers(po, "V1", "V1X", "V2");
 		
@@ -295,8 +292,8 @@ public class TestMachineRefines extends EventBPOTest {
 		saveRodinFileOf(ref);
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ", factory);
 		
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po);
@@ -338,8 +335,8 @@ public class TestMachineRefines extends EventBPOTest {
 		saveRodinFileOf(ref);
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ", factory);
 		
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po);
@@ -377,10 +374,8 @@ public class TestMachineRefines extends EventBPOTest {
 		saveRodinFileOf(ref);
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("A", intType);
-		environment.addName("B", intType);
-		environment.addName("x", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"A=ℤ; B=ℤ; x=ℤ", factory);
 		
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "A", "B");
@@ -423,11 +418,8 @@ public class TestMachineRefines extends EventBPOTest {
 		saveRodinFileOf(ref);
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("A", intType);
-		environment.addName("B", intType);
-		environment.addName("C", intType);
-		environment.addName("x", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"A=ℤ; B=ℤ; C=ℤ; x=ℤ", factory);
 		
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "A", "B", "C");
@@ -481,8 +473,8 @@ public class TestMachineRefines extends EventBPOTest {
 		saveRodinFileOf(ref);
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ", factory);
 		
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po);
@@ -525,12 +517,8 @@ public class TestMachineRefines extends EventBPOTest {
 		saveRodinFileOf(ref);
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("A", intType);
-		environment.addName("B", intType);
-		environment.addName("C", intType);
-		environment.addName("x", intType);
-		environment.addName("y", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"A=ℤ; B=ℤ; C=ℤ; x=ℤ; y=ℤ", factory);
 		
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "A", "B", "C");
@@ -581,12 +569,8 @@ public class TestMachineRefines extends EventBPOTest {
 		saveRodinFileOf(ref);
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("A", intType);
-		environment.addName("B", intType);
-		environment.addName("C", intType);
-		environment.addName("x", intType);
-		environment.addName("y", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"A=ℤ; B=ℤ; C=ℤ; x=ℤ; y=ℤ", factory);
 		
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "A", "B");
@@ -632,14 +616,7 @@ public class TestMachineRefines extends EventBPOTest {
 		addEventRefines(event, "gvt");
 		saveRodinFileOf(ref);
 		runBuilder();
-		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("A", intType);
-		environment.addName("B", intType);
-		environment.addName("C", intType);
-		environment.addName("x", intType);
-		environment.addName("y", intType);
-		
+			
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "A", "B");
 		
@@ -758,11 +735,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("p", boolType);
-		environment.addName("q", boolType);
-		environment.addName("p'", boolType);
-		environment.addName("q'", boolType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"p=BOOL; q=BOOL; p'=BOOL; q'=BOOL", factory);
 
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "p", "q");
@@ -814,11 +788,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("p", boolType);
-		environment.addName("p'", boolType);
-		environment.addName("x", boolType);
-		environment.addName("y", boolType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"p=BOOL; p'=BOOL; x=BOOL; y=BOOL", factory);
 
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "p");
@@ -877,11 +848,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("p", boolType);
-		environment.addName("p'", boolType);
-		environment.addName("x", boolType);
-		environment.addName("y'", boolType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"p=BOOL; p'=BOOL; x=BOOL; y=BOOL", factory);
 
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "p", "q");
@@ -946,13 +914,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("p", boolType);
-		environment.addName("p'", boolType);
-		environment.addName("q", boolType);
-		environment.addName("q'", boolType);
-		environment.addName("x", boolType);
-		environment.addName("y", boolType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"p=BOOL; p'=BOOL; q=BOOL; q'=BOOL; x=BOOL; y=BOOL", factory);
 
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "p", "q");
@@ -1038,10 +1001,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
-		environment.addName("y", intType);
-		environment.addName("z", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ; y=ℤ; z=ℤ", factory);
 
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "x", "y", "z");
@@ -1087,12 +1048,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
-		environment.addName("y", intType);
-		environment.addName("a", intType);
-		environment.addName("b", intType);
-		environment.addName("c", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ; y=ℤ; a=ℤ; b=ℤ; c=ℤ", factory);
 
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "x", "y");
@@ -1135,10 +1092,8 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
-		environment.addName("y", intType);
-		environment.addName("a", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ; y=ℤ; a=ℤ", factory);
 
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po, "x", "y");
@@ -1245,9 +1200,9 @@ public class TestMachineRefines extends EventBPOTest {
 		
 		final IPORoot po = ref.getPORoot();
 		final IPOSequent sequent = getSequent(po, "evt/J/INV");
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addName("v1", intType);
-		typenv.addName("v1'", intType);
+		
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(
+				"v1=ℤ; v1'=ℤ", factory);
 		sequentHasGoal(sequent, typenv, "v3' = v1' ↦ v1");
 	}
 
@@ -1430,8 +1385,8 @@ public class TestMachineRefines extends EventBPOTest {
 		saveRodinFileOf(ref);
 		runBuilder();
 		
-		ITypeEnvironmentBuilder environment = factory.makeTypeEnvironment();
-		environment.addName("x", intType);
+		ITypeEnvironmentBuilder environment = mTypeEnvironment(
+				"x=ℤ", factory);
 		
 		IPORoot po = ref.getPORoot();
 		containsIdentifiers(po);
@@ -1625,8 +1580,8 @@ public class TestMachineRefines extends EventBPOTest {
 		saveRodinFileOf(ref);
 		runBuilder();
 
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addName("v'", intType);
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(
+				"v'=ℤ", factory);
 
 		final IPORoot po = ref.getPORoot();
 		final IPOSequent sequent = getSequent(po, INITIALISATION + "/A2/FIS");

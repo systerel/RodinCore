@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
@@ -67,9 +69,8 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		containsVariables(file, "V1", "V2");
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", factory.makeIntegerType());
-		typeEnvironment.addName("V2", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ; V2=ℤ",
+				factory);
 	
 		containsInvariants(file, typeEnvironment, makeSList("I1", "I2"), makeSList("V1∈ℕ", "V2∈ℕ"), false, false);
 		
@@ -237,9 +238,8 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 		
 		runBuilder();
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V1", factory.makeIntegerType());
-		typeEnvironment.addName("V2", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V1=ℤ; V2=ℤ",
+				factory);
 		
 		ISCMachineRoot file = mac.getSCMachineRoot();
 				
@@ -274,8 +274,8 @@ public class TestMachineRefines extends BasicSCTestWithFwdConfig {
 				
 		containsVariables(file, "V2");
 		
-		ITypeEnvironmentBuilder typeEnvironment = factory.makeTypeEnvironment();
-		typeEnvironment.addName("V2", factory.makeIntegerType());
+		ITypeEnvironmentBuilder typeEnvironment = mTypeEnvironment("V2=ℤ",
+				factory);
 		
 		containsMarkers(abs, true);
 		containsMarkers(mac, true);
