@@ -73,7 +73,7 @@ public abstract class AbstractPPTest {
 	
 	// TODO: code between START COPY and END COPY was copied from
 	// org.eventb.core.ast.tests: FastFactory and AbstractTests. We must isolate
-	// part usefull for all core tests projects and create a dedicated class.
+	// part useful for all core tests projects and create a dedicated class.
 	
 	// START COPY
 	
@@ -128,14 +128,6 @@ public abstract class AbstractPPTest {
 	}
 	
 	public static Expression parseExpression(String image,
-			ITypeEnvironment typenv) {
-		final FormulaFactory fac = typenv.getFormulaFactory();
-		final Expression result = parseExpression(image, fac);
-		typeCheck(result, typenv);
-		return result;
-	}
-
-	public static Expression parseExpression(String image,
 			LanguageVersion version, FormulaFactory factory) {
 		final IParseResult result;
 		if (image.contains(PredicateVariable.LEADING_SYMBOL)) {
@@ -147,10 +139,6 @@ public abstract class AbstractPPTest {
 		return result.getParsedExpression();
 	}
 	
-	public static Type parseType(String image) {
-		return parseType(image, ff);
-	}
-
 	public static Type parseType(String image, FormulaFactory factory) {
 		final LanguageVersion version = getLanguageVersion(factory);
 		final IParseResult result = factory.parseType(image, version);
@@ -194,14 +182,14 @@ public abstract class AbstractPPTest {
 	
 	/**
 	 * Generates the type environment specified by the given string. The string
-	 * contains pairs of form <code>ident=type</code> separated by commas.
+	 * contains pairs of form <code>ident=type</code> separated by semicolons.
 	 * <p>
 	 * Example of valid parameters are:
 	 * <ul>
 	 * <li><code>""</code></li>
 	 * <li><code>"x=S"</code></li>
-	 * <li><code>"x=S,y=T"</code></li>
-	 * <li><code>"x=S,r=ℙ(S×S)"</code></li>
+	 * <li><code>"x=S; y=T"</code></li>
+	 * <li><code>"x=S; r=S↔S"</code></li>
 	 * </ul>
 	 * </p>
 	 * 

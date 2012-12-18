@@ -34,7 +34,6 @@ import static org.eventb.core.ast.Formula.PLUS;
 import static org.eventb.core.ast.Formula.POW;
 import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.Formula.TRUE;
-import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.tests.AbstractTests.LIST_DT;
 import static org.eventb.core.ast.tests.AbstractTests.parseExpression;
@@ -341,14 +340,14 @@ public class FastFactory {
 	
 	/**
 	 * Generates the type environment specified by the given string. The string
-	 * contains pairs of form <code>ident=type</code> separated by commas.
+	 * contains pairs of form <code>ident=type</code> separated by semicolons.
 	 * <p>
 	 * Example of valid parameters are:
 	 * <ul>
 	 * <li><code>""</code></li>
 	 * <li><code>"x=S"</code></li>
-	 * <li><code>"x=S,y=T"</code></li>
-	 * <li><code>"x=S,r=ℙ(S×S)"</code></li>
+	 * <li><code>"x=S; y=T"</code></li>
+	 * <li><code>"x=S; r=S↔S"</code></li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -370,31 +369,6 @@ public class FastFactory {
 		ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
 		for (int i = 0; i < names.length; i++) {
 			result.addName(names[i], types[i]);
-		}
-		return result;
-	}
-
-	public static ITypeEnvironmentBuilder addToTypeEnvironment(
-			ITypeEnvironmentBuilder typeEnv, String[] strs) {
-		assert (strs.length & 1) == 0;
-		for (int i = 0; i < strs.length; i += 2) {
-			typeEnv.addName(strs[i],
-					typeEnv.getFormulaFactory().parseType(strs[i + 1], LATEST)
-							.getParsedType());
-		}
-		return typeEnv;
-	}
-	
-	public static ITypeEnvironmentBuilder mTypeEnvironment(String... strs) {
-		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
-		return addToTypeEnvironment(te, strs);
-	}
-
-	public static ITypeEnvironmentBuilder mTypeEnvironment(Object... objs) {
-		assert (objs.length & 1) == 0;
-		ITypeEnvironmentBuilder result = ff.makeTypeEnvironment();
-		for (int i = 0; i < objs.length; i += 2) {
-			result.addName((String) objs[i], (Type) objs[i + 1]);
 		}
 		return result;
 	}

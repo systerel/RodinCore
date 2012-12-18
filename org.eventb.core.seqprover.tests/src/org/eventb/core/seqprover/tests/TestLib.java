@@ -283,19 +283,21 @@ public class TestLib {
 	
 	/**
 	 * Generates the type environment specified by the given string. The string
-	 * contains pairs of form <code>ident=type</code> separated by commas.
+	 * contains pairs of form <code>ident=type</code> separated by semicolons.
 	 * <p>
 	 * Example of valid parameters are:
 	 * <ul>
 	 * <li><code>""</code></li>
 	 * <li><code>"x=S"</code></li>
-	 * <li><code>"x=S,y=T"</code></li>
-	 * <li><code>"x=S,r=ℙ(S×S)"</code></li>
+	 * <li><code>"x=S; y=T"</code></li>
+	 * <li><code>"x=S; r=S↔S"</code></li>
 	 * </ul>
 	 * </p>
 	 * 
 	 * @param typeEnvImage
 	 *            image of the type environment to generate
+	 * @param factory
+	 *            the formula factory to use for building the result
 	 * @return the type environment described by the given string
 	 */
 	public static ITypeEnvironmentBuilder mTypeEnvironment(String typeEnvImage, FormulaFactory factory) {
