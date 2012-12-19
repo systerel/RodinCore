@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
@@ -37,8 +36,6 @@ import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IFormulaRewriter;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -57,9 +54,6 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
-import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewriterImpl;
 
 /**
  * This is a collection of static constants and methods that are used often in
@@ -278,32 +272,6 @@ public final class Lib {
 			return null;
 		final QuantifiedPredicate qP = (QuantifiedPredicate) P;
 		return qP.getPredicate();
-	}
-
-	@Deprecated
-	public static Expression parseExpression(String str) {
-		final IParseResult plr = ff
-				.parseExpression(str, LANGUAGE_VERSION, null);
-		if (plr.hasProblem())
-			return null;
-		return plr.getParsedExpression();
-	}
-
-	@Deprecated
-	public static Assignment parseAssignment(String str) {
-		final IParseResult plr = ff
-				.parseAssignment(str, LANGUAGE_VERSION, null);
-		if (plr.hasProblem())
-			return null;
-		return plr.getParsedAssignment();
-	}
-
-	@Deprecated
-	public static Predicate parsePredicate(String str) {
-		final IParseResult plr = ff.parsePredicate(str, LANGUAGE_VERSION, null);
-		if (plr.hasProblem())
-			return null;
-		return plr.getParsedPredicate();
 	}
 
 	static class EquivalenceRewriter extends FixedRewriter<Predicate> {
@@ -934,52 +902,6 @@ public final class Lib {
 		return p.getTag() == Formula.KPARTITION;
 	}
 
-	/**
-	 * Applies type rewrite then auto simplification to the given predicate.
-	 * 
-	 * @param predicate
-	 *            a predicate to rewrite
-	 * @return the rewritten predicate
-	 * @since 2.0
-	 * @deprecated This method is not part of the core anymore. It shall not be
-	 *             used.
-	 */
-	@Deprecated
-	public static Predicate applyTypeSimplification(Predicate predicate,
-			FormulaFactory ff) {
-		final IFormulaRewriter typeRewriter = new TypeRewriterImpl(ff);
-		final Predicate typeRewritten = predicate.rewrite(typeRewriter);
-
-		final IFormulaRewriter autoRewriter = new AutoRewriterImpl(ff,
-				Level.LATEST);
-		return recursiveRewrite(typeRewritten, autoRewriter);
-	}
-
-	/**
-	 * Recursively apply the given rewriter to the given predicate.
-	 * 
-	 * @param predicate
-	 *            a predicate to rewrite
-	 * @param rewriter
-	 *            the rewriter to apply
-	 * @return the rewritten predicate
-	 */
-	// TODO Rodin 2.0 make this method public but non API and call it from
-	// AbstractAutoRewrites
-	// In Rodin 2.0, this class will need instantiation for passing
-	// the formula factory to use (not hard-coded anymore) and we will have the
-	// possibility to hide some method using an interface.
-	private static Predicate recursiveRewrite(Predicate predicate,
-			IFormulaRewriter rewriter) {
-		Predicate resultPred;
-		resultPred = predicate.rewrite(rewriter);
-		while (resultPred != predicate) {
-			predicate = resultPred;
-			resultPred = predicate.rewrite(rewriter);
-		}
-		return resultPred;
-	}
-	
 	/**
 	 * Applies the equality rewriter to the given predicate.
 	 * 

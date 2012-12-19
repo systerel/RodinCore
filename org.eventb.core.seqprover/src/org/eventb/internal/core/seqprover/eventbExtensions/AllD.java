@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,20 +61,6 @@ public class AllD implements IReasoner {
 		MultipleExprInput exprsInput;
 		Predicate pred;
 		String error;
-
-		/**
-		 * @deprecated use other constructor without boundIdentDecls param instead
-		 */
-		@Deprecated
-		public Input(String[] instantiations, BoundIdentDecl[] decls,
-				ITypeEnvironment typeEnv, Predicate pred) {
-
-			this.exprsInput = new MultipleExprInput(instantiations, decls,
-					typeEnv);
-			this.pred = pred;
-			this.error = null;
-		}
-
 
 		public Input(Predicate pred, ITypeEnvironment typeEnv, String[] instantiations) {
 			if (pred instanceof QuantifiedPredicate) {

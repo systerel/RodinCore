@@ -29,9 +29,16 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
 /**
+ * Deprecated implementation of the existential elimination reasoner.
+ * <p>
+ * This class must not be used in new code but is kept to ensure backward
+ * compatibility of proof trees.
+ * </p>
+ * 
  * @author fmehta
- *
- * @deprecated use the reasoner ExF instead since it generates a forward inference instead
+ * 
+ * @deprecated use the reasoner ExF instead since it generates a forward
+ *             inference instead
  */
 @Deprecated
 public class ExE extends HypothesisReasoner{

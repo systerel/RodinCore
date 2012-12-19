@@ -294,39 +294,6 @@ public class ProverLib {
 	}
 
 	/**
-	 * Returns whether a proof can be reused on the given sequent.
-	 * <p>
-	 * The result is computed from proof dependencies and a proof skeleton. The
-	 * given proof dependencies and proof skeleton must come from the same
-	 * proof, the one whose reusability is checked.
-	 * </p>
-	 * <p>
-	 * This method does take reasoner versions into account. It can be safely
-	 * assumed that <code>false</code> will be returned when either proof
-	 * dependencies are not satisfied or the reasoners mentioned in the proof
-	 * skeleton are not registered or outdated.
-	 * </p>
-	 * 
-	 * @param proofDependencies
-	 *            proof dependencies of the proof to reuse
-	 * @param proofSkeleton
-	 *            proof skeleton of the proof to reuse
-	 * @param sequent
-	 *            a sequent on which to check for reusability
-	 * @return <code>true</code> iff the proof tree can be reused on the sequent
-	 * @since 1.3
-	 * @deprecated since 2.2,
-	 *             {@link #proofReusable(IProofDependencies, IProverSequent)} is
-	 *             equivalent, without having to compute a proof skeleton, which
-	 *             makes it faster
-	 */
-	@Deprecated
-	public static boolean isProofReusable(IProofDependencies proofDependencies,
-			IProofSkeleton proofSkeleton, IProverSequent sequent) {
-		return proofReusable(proofDependencies, sequent);
-	}
-	
-	/**
 	 * Returns a set of all hypotheses whose string image contains the given
 	 * pattern. Hidden hypotheses are considered during this search.
 	 * 

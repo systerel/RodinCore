@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -492,65 +492,6 @@ public class BasicTactics {
 				return "Rebuild unsuccessful";
 			}
 		};
-	}
-	
-	
-	/**
-	 * Tactic that takes a reference to a (source) proof tree node and tries to 
-	 * reuse the proof from that node for the (target) node the tactic is applied to.
-	 * 
-	 * @param toPaste
-	 * 		A reference to the (source) node to use.
-	 * @return
-	 * 		The resulting tactic
-	 * 
-	 * @deprecated
-	 * A problem with using references to (source) proof nodes for reuse is that the
-	 * proof trees rooted at them may change over time. This is not something one expects
-	 * with the copy/paste procedure. Instead use {@link #reuseTac(IProofSkeleton)} after 
-	 * first extracting a copy of the (source) proof tree node using the <code>copyProofSkeleton()</code>
-	 * method in {@link IProofTreeNode}.
-	 * 
-	 */
-	@Deprecated
-	public static ITactic pasteTac(IProofTreeNode toPaste){
-		return new PasteTac(toPaste);
-	}	
-	
-
-	private static class PasteTac implements ITactic {
-		
-		private final IProofTreeNode toPaste;
-		
-		public PasteTac(IProofTreeNode proofTreeNode)
-		{
-			this.toPaste = proofTreeNode;
-		}
-
-		// TODO improve implementation of apply that creates new tactics recursively!
-		
-		public Object apply(IProofTreeNode pt, IProofMonitor pm){
-			if (!pt.isOpen()) return "Root already has children";
-			IProofRule rule = toPaste.getRule();
-			if (rule == null) return null;
-			Boolean successfull = pt.applyRule(rule);
-			if (successfull)
-			{
-				IProofTreeNode[] ptChildren = pt.getChildNodes();
-				IProofTreeNode[] toPasteChildren = toPaste.getChildNodes();
-				if (ptChildren.length != toPasteChildren.length) 
-					return "Paste unsuccessful";
-				Object error = null;
-				for (int i = 0; i < toPasteChildren.length; i++) {
-					final Object pasteResult = 
-						pasteTac(toPasteChildren[i]).apply(ptChildren[i], pm);
-					if (pasteResult != null)
-						error = "Paste unsuccessful";
-				}
-				return error;
-			}
-			else return "Paste unsuccessful";
-		}
 	}
 	
 }

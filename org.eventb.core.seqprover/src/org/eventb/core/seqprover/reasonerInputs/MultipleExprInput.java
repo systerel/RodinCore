@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,34 +108,6 @@ public class MultipleExprInput implements IReasonerInput{
 		return instantiations;
 	}
 	
-	// It is unsure if it is desired that reasoners modify their own input.
-	@Deprecated
-	public final void modifyToInstantiate(BoundIdentDecl[] boundIdentDecls){
-		Expression[] instantiations = new Expression[boundIdentDecls.length];
-		for (int i = 0; i < instantiations.length; i++) {
-			if (i < expressions.length && expressions[i] != null)
-			{
-				if (! expressions[i].getType().
-						equals(boundIdentDecls[i].getType()))
-				{
-					error = "Type check failed: " 
-						+ expressions[i]
-						+ " expected type "
-						+ boundIdentDecls[i].getType();
-					expressions = null;
-					return;
-				}
-				instantiations[i] = expressions[i];
-			}
-			else
-			{
-				instantiations[i]=null;
-			}
-		}
-		expressions = instantiations;
-		error = null;
-	}
-
 	public void serialize(IReasonerInputWriter writer, String key)
 			throws SerializeException {
 		assert ! hasError();

@@ -32,7 +32,6 @@ import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IDynTacticProvider;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.seqprover.TacticDescriptors.CombinatorDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.ParameterizerDescriptor;
@@ -102,21 +101,6 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		return registry.keySet().toArray(NO_STRING);
 	}
 	
-	@Deprecated
-	public ITactic getTacticInstance(String id) throws IllegalArgumentException{
-		return getTacticDescriptor(id).getTacticInstance();
-	}
-	
-	@Deprecated
-	public String getTacticName(String id) throws IllegalArgumentException{
-		return getTacticDescriptor(id).getTacticName();
-	}
-	
-	@Deprecated
-	public String getTacticDescription(String id) throws IllegalArgumentException {
-		return getTacticDescriptor(id).getTacticDescription();
-	}
-
 	public  synchronized ITacticDescriptor getTacticDescriptor(String id) throws IllegalArgumentException{
 		if (registry == null) {
 			loadRegistry();

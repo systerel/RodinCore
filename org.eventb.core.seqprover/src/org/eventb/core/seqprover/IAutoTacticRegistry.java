@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,80 +137,6 @@ public interface IAutoTacticRegistry {
 	 * @since 2.3
 	 */
 	ICombinatorDescriptor getCombinatorDescriptor(String id);
-
-	/**
-	 * Returns an instance of the tactic extension with the given id.
-	 * <p>
-	 * Clients should first use {@link #isRegistered(String)} to check if a
-	 * tactic extension with the given id is registered. In case no tactic
-	 * extension with the given id has been registered yet, or if there is a
-	 * problem instantiating the tactic class, an
-	 * {@link IllegalArgumentException} is thrown.
-	 * </p>
-	 * 
-	 * @param tacticID
-	 *            the id of the tactic
-	 * @return an instance of the tactic
-	 * 
-	 * @throws IllegalArgumentException
-	 *             in case no tactic extension with the given id has been
-	 *             registered
-	 * 
-	 * @deprecated use {@link #getTacticDescriptor(String))} and the methods in
-	 *             {@link ITacticDescriptor} instead.
-	 */
-	@Deprecated
-	ITactic getTacticInstance(String tacticID) throws IllegalArgumentException;
-
-	/**
-	 * Returns the name of the tactic extension with the given id.
-	 * <p>
-	 * Clients should first use {@link #isRegistered(String)} to check if a
-	 * tactic extension with the given id is registered. In case no tactic
-	 * extension with the given id has been registered an
-	 * {@link IllegalArgumentException} is thrown.
-	 * </p>
-	 * 
-	 * 
-	 * @param tacticID
-	 *            the id of the tactic
-	 * @return the name of the tactic with the given id
-	 * 
-	 * @throws IllegalArgumentException
-	 *             in case no tactic extension with the given id has been
-	 *             registered
-	 * 
-	 * @deprecated use {@link #getTacticDescriptor(String))} and the methods in
-	 *             {@link ITacticDescriptor} instead.
-	 */
-	@Deprecated
-	String getTacticName(String tacticID) throws IllegalArgumentException;
-
-	/**
-	 * Returns the description of the tactic extension with the given id.
-	 * <p>
-	 * Clients should first use {@link #isRegistered(String)} to check if a
-	 * tactic extension with the given id is registered. In case no tactic
-	 * extension with the given id has been registered an
-	 * {@link IllegalArgumentException} is thrown. In case no description is
-	 * provided for a registered tactic, the empty string is returned.
-	 * </p>
-	 * 
-	 * 
-	 * @param tacticID
-	 *            the id of the tactic
-	 * @return the description of the tactic with the given id, or the empty
-	 *         string if no description is provided.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             in case no tactic extension with the given id has been
-	 *             registered
-	 * @deprecated use {@link #getTacticDescriptor(String))} and the methods in
-	 *             {@link ITacticDescriptor} instead.
-	 */
-	@Deprecated
-	String getTacticDescription(String tacticID)
-			throws IllegalArgumentException;
 
 	/**
 	 * Returns all available dynamically provided tactics.

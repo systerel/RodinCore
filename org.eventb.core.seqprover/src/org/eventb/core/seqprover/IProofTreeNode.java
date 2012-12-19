@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eventb.core.seqprover;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.seqprover.tactics.BasicTactics;
 
 /**
  * Common protocol for a proof tree node.
@@ -256,30 +255,6 @@ public interface IProofTreeNode extends IProofSkeleton {
 	 * @see #getComment()
 	 */
 	void setComment(String comment);
-
-	/**
-	 * Grafts a proof tree to this proof node if it is open, and its sequent is
-	 * identical to the root sequent of the given proof tree.
-	 * 
-	 * A successful graft has the effect of pruning the input proof tree.
-	 * 
-	 * <p>
-	 * Note that outside the sequent prover, tactics provide a more uniform way
-	 * to modify proof tree nodes and should be used instead of directly calling
-	 * this method.
-	 * </p>
-	 * 
-	 * @see ITactic
-	 * 
-	 * @return <code>true</code> iff the operation succeeded.
-	 * 
-	 * @deprecated Instead first extract the proof skeleton using
-	 *             {@link #copyProofSkeleton()} and then use one of the proof
-	 *             reconstruction tactics in {@link BasicTactics}.
-	 * 
-	 */
-	@Deprecated
-	boolean graft(IProofTree tree);
 
 	/**
 	 * Returns the next node with satisfies the filter encountered when

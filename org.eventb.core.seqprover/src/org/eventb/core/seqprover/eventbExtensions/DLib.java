@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,8 @@ package org.eventb.core.seqprover.eventbExtensions;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.Assignment;
@@ -31,8 +29,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
@@ -303,16 +299,6 @@ public class DLib {
 		return P.rewrite(rewriter);
 	}
 
-	@Deprecated
-	public Predicate rewrite(Predicate P, FreeIdentifier from,
-			Expression to) {
-		if (!Arrays.asList(P.getFreeIdentifiers()).contains(from))
-			return P;
-		Map<FreeIdentifier, Expression> subst = new HashMap<FreeIdentifier, Expression>();
-		subst.put(from, to);
-		return P.substituteFreeIdents(subst, ff);
-	}
-
 	public Predicate parsePredicate(String str) {
 		IParseResult plr = ff.parsePredicate(str, Lib.LANGUAGE_VERSION, null);
 		if (plr.hasProblem())
@@ -365,25 +351,6 @@ public class DLib {
 	 */
 	public ITypeEnvironmentBuilder makeTypeEnvironment() {
 		return ff.makeTypeEnvironment();
-	}
-
-	/**
-	 * Type checks a formula assuming all typing information can be infered from
-	 * the formula itself.
-	 * 
-	 * @param formula
-	 *            The formula to type check
-	 * @return
-	 * 
-	 * @deprecated use {@link Lib#typeCheckClosed(Formula, ITypeEnvironment)} with an
-	 * empty type environment, or the AST methods directly instead.
-	 */
-	@Deprecated
-	public ITypeEnvironment typeCheck(Formula<?> formula) {
-		ITypeCheckResult tcr = formula.typeCheck(ff.makeTypeEnvironment());
-		if (!tcr.isSuccess())
-			return null;
-		return tcr.getInferredEnvironment();
 	}
 
 	public Predicate instantiateBoundIdents(Predicate P,

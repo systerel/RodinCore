@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,42 +59,6 @@ public interface IReasonerRegistry {
 	 * @return an array of all registered reasoner ids
 	 */
 	String[] getRegisteredIDs();
-
-	/**
-	 * Returns an instance of the reasoner extension with the given id.
-	 * <p>
-	 * In case no reasoner extension with the given id has been registered yet,
-	 * or if there is a problem instantiating the reasoner class, a dummy
-	 * reasoner instance is returned. Subsequently, the reasoner is considered
-	 * as registered (with that dummy instance).
-	 * </p>
-	 * 
-	 * @see #isDummyReasoner(IReasoner)
-	 * 
-	 * @param reasonerID
-	 *            the id of the reasoner
-	 * @return an instance of the reasoner (might be a dummy one in case of
-	 *         error)
-	 * @deprecated use {@link #getReasonerDesc(String)}.getInstance()
-	 */
-	@Deprecated
-	IReasoner getReasonerInstance(String reasonerID);
-
-	/**
-	 * Returns the name of the reasoner extension with the given id.
-	 * <p>
-	 * In case no reasoner extension with the given id has been registered, a
-	 * placeholder string is returned, stating the problem. Subsequently, the
-	 * reasoner is considered as registered (with a dummy instance).
-	 * </p>
-	 * 
-	 * @param reasonerID
-	 *            the id of the reasoner
-	 * @return the name of the reasoner with the given id
-	 * @deprecated use {@link #getReasonerDesc(String)}.getName()
-	 */
-	@Deprecated
-	String getReasonerName(String reasonerID);
 
 	/**
 	 * Checks whether a given reasoner is a dummy reasoner.

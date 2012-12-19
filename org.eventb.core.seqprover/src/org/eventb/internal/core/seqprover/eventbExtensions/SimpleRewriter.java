@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,16 +36,19 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TrivialRewr
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypePredRewriter;
 
 /**
- * Common implementation for rewriting reasoners that rewrite a simple predicate
- * to another simple predicate.
+ * Deprecated implementation for rewriting reasoners that rewrite a simple
+ * predicate to another simple predicate.
+ * <p>
+ * This class must not be used in new code but is kept to ensure backward
+ * compatibility of proof trees.
+ * </p>
  * 
- * @deprecated
- * 			All SimpleRewrites in this class are deprecated since their functionality is redundant.
- * 			Use {@link AutoRewrites} instead
- * 			
+ * @deprecated All SimpleRewrites in this class are deprecated since their
+ *             functionality is redundant. Use {@link AutoRewrites} instead
  * 
  * @author Laurent Voisin
  */
+@Deprecated
 public abstract class SimpleRewriter extends HypothesisReasoner {
 	
 	@Deprecated

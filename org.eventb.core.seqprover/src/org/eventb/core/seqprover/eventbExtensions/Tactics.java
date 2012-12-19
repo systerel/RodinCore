@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,6 +174,7 @@ import org.eventb.internal.core.seqprover.reasonerInputs.PFunSetInput;
  * @author Farhad Mehta, htson
  * 
  * TODO : complete comments.
+ * FIXME Split this huge class in several classes
  * @since 1.0
  */
 public class Tactics {
@@ -370,25 +371,6 @@ public class Tactics {
 		return last;
 	}
 
-//	/**
-//	 * The normalize tactic.
-//	 * 
-//	 * This is a combination of applying some simple tactics (conjI,allI,impI,hyp...)
-//	 * repeatedly in order to simplify the structure of a subgoal.
-//	 * 
-//	 * @return
-//	 * 		The normalize tactic.
-//	 * 
-//	 * @deprecated maybe split the tactics here into individual post tactics 
-//	 * 
-//	 */
-//	public static ITactic norm() {
-//		ITactic Ti = repeat(compose(conjI(), allI(), impI()));
-//		ITactic T = repeat(compose(hyp(), tautology(),
-//				contradiction(), Ti));
-//		return repeat(onAllPending(T));
-//	}
-
 	/**
 	 * The do case tactic.
 	 * 
@@ -539,53 +521,6 @@ public class Tactics {
 		return Lib.isExQuant(goal);
 	}
 
-//	/**
-//	 * Returns a tactic to remove a top-level negation operator in the current
-//	 * goal.
-//	 * 
-//	 * @return a tactic to remove a top-level negation operator in the current
-//	 *         goal.
-//	 * @deprecated use <code>removeNegGoal(IPosition.ROOT)</code> instead.
-//	 * @see #removeNegGoal(IPosition)
-//	 */
-//	@Deprecated
-//	public static ITactic removeNegGoal() {
-//		return BasicTactics.reasonerTac(new SimpleRewriter.RemoveNegation(),
-//				new SimpleRewriter.RemoveNegation.Input(null));
-//	}
-//
-//	/**
-//	 * Tells whether the <code>removeNegGoal()</code> tactic is applicable to
-//	 * the given goal.
-//	 * 
-//	 * @param goal
-//	 *            the goal to test for applicability
-//	 * @return <code>true</code> iff the <code>removeNegGoal()</code> tactic
-//	 *         is applicable
-//	 * @deprecated use
-//	 *             <code>rnGetPositions(goal).contains(IPosition.ROOT)</code>
-//	 * @see #rnGetPositions(Predicate)
-//	 */
-//	@Deprecated
-//	public static boolean removeNegGoal_applicable(Predicate goal) {
-//		return (new SimpleRewriter.RemoveNegation()).isApplicable(goal);
-//	}
-	
-//	/**
-//	 * @deprecated use {@link DisjunctionToImplicationRewriter} instead
-//	 */
-//	public static ITactic disjToImpGoal() {
-//		return BasicTactics.reasonerTac(new DisjToImpl(), new DisjToImpl.Input(
-//				null));
-//	}
-//
-//	/**
-//	 * @deprecated use {@link DisjunctionToImplicationRewriter} instead
-//	 */
-//	public static boolean disjToImpGoal_applicable(Predicate goal) {
-//		return (new DisjToImpl()).isApplicable(goal);
-//	}
-
 	// Tactics applicable on a hypothesis
 
 	public static ITactic allD(final Predicate univHyp,
@@ -601,7 +536,6 @@ public class Tactics {
 			}
 		};
 	}
-
 	
 	/**
 	 * Tactic for instantiating a univaersally quantified implicative hypothesis and performing a modus ponens
@@ -684,25 +618,6 @@ public class Tactics {
 	}
 	
 	
-//	/**
-//	 * This tactic tries to split a conjunction in the selected hyps.
-//	 * 
-//	 * @return the tactic
-//	 */
-//	public static ITactic conjD_auto(){
-//		return new ITactic(){
-//
-//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-//					if (conjF_applicable(shyp)){
-//						return conjF(shyp).apply(ptNode, pm);
-//					}
-//				}
-//				return "Selected hyps contain no conjunctions";
-//			}
-//		};
-//	}
-
 	public static ITactic impE(Predicate impHyp) {
 		return BasicTactics.reasonerTac(new ImpE(), new ImpE.Input(impHyp));
 	}
@@ -725,27 +640,6 @@ public class Tactics {
 	public static boolean impCase_applicable(Predicate hyp) {
 		return Lib.isImp(hyp);
 	}
-
-//	/**
-//	 * This tactic tries to automatically apply an impE or he for an implicative selected hyp 
-//	 * where the right hand side of the implication is contained in the hyps.
-//	 *  
-//	 * @return the tactic
-//	 */
-//	public static ITactic impE_auto(){
-//		return new ITactic(){
-//			
-//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-//					if (Lib.isImp(shyp) &&
-//							ptNode.getSequent().containsHypotheses(Lib.breakPossibleConjunct(Lib.impLeft(shyp)))){
-//						return impE(shyp).apply(ptNode, pm);
-//					}
-//				}
-//				return "Selected hyps contain no appropriate implications";
-//			}
-//		};
-//	}
 
 	public static ITactic disjE(Predicate disjHyp) {
 		return BasicTactics.reasonerTac(new DisjE(), new DisjE.Input(disjHyp));
@@ -773,47 +667,6 @@ public class Tactics {
 				new LocalEqRewrite.Input(predicate, position, equality));
 	}
 
-//	/**
-//	 * This tactic tries to automatically apply an eqE or he for an equality selected hyp 
-//	 * where one side of the equality is a free variable and the other side is an expression
-//	 * that doesn't contain the free variable.
-//	 *  
-//	 * @return the tactic
-//	 */
-//	public static ITactic eqE_auto(){
-//		return new ITactic(){
-//
-//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-//					if (Lib.isEq(shyp)){
-//						if (Lib.isFreeIdent(Lib.eqLeft(shyp)) &&
-//								! Arrays.asList(Lib.eqRight(shyp).getFreeIdentifiers()).contains(Lib.eqLeft(shyp))){
-//							// Try eq and return only if the tactic actually did something.
-//							if (eqE(shyp).apply(ptNode, pm) == null) return null;
-//						} else if (Lib.isFreeIdent(Lib.eqRight(shyp)) &&
-//								! Arrays.asList(Lib.eqLeft(shyp).getFreeIdentifiers()).contains(Lib.eqRight(shyp))){
-//							// Try he and return only if the tactic actually did something.
-//							if (he(shyp).apply(ptNode, pm) == null) return null;
-//						}
-//					}
-//					
-//				}
-//				return "Selected hyps contain no appropriate equalities";
-//			}
-//		};
-//	}
-	
-//	/**
-//	 * @param exHyp
-//	 * @return
-//	 * 
-//	 * @deprecated use {@link #exF(Predicate)} instead.
-//	 */
-//	@Deprecated
-//	public static ITactic exE(Predicate exHyp) {
-//		return BasicTactics.reasonerTac(new ExE(), new ExE.Input(exHyp));
-//	}
-
 	public static boolean exF_applicable(Predicate hyp) {
 		return Lib.isExQuant(hyp);
 	}
@@ -821,37 +674,6 @@ public class Tactics {
 	public static ITactic exF(Predicate exHyp) {
 		return BasicTactics.reasonerTac(new ExF(), new ExF.Input(exHyp));
 	}
-
-//	/**
-//	 * Returns a tactic to remove a top-level negation operator in the given
-//	 * hypothesis.
-//	 * 
-//	 * @return a tactic to remove a top-level negation operator in the given
-//	 *         hypothesis
-//	 * @deprecated use <code>removeNegHyp(IPosition.ROOT)</code> instead.
-//	 * @see #removeNegHyp(IPosition)
-//	 */
-//	@Deprecated
-//	public static ITactic removeNegHyp(Predicate hyp) {
-//		return BasicTactics.reasonerTac(new SimpleRewriter.RemoveNegation(),
-//				new SimpleRewriter.RemoveNegation.Input(hyp));
-//	}
-//
-//	/**
-//	 * Tells whether the <code>removeNegHyp()</code> tactic is applicable to
-//	 * the given hypothesis.
-//	 * 
-//	 * @param hyp
-//	 *            the hypothesis to test for applicability
-//	 * @return <code>true</code> iff the <code>removeNegHyp()</code> tactic
-//	 *         is applicable
-//	 * @deprecated use <code>rnGetPositions(hyp).contains(IPosition.ROOT)</code>
-//	 * @see #rnGetPositions(Predicate)
-//	 */
-//	@Deprecated
-//	public static boolean removeNegHyp_applicable(Predicate hyp) {
-//		return (new SimpleRewriter.RemoveNegation()).isApplicable(hyp);
-//	}
 
 	/**
 	 * @since 2.0
@@ -877,66 +699,12 @@ public class Tactics {
 		return BasicTactics.reasonerTac(new ContrHyps(), new HypothesisReasoner.Input(hyp));
 	}
 
-//	/**
-//	 * This tactic tries to find a contradiction for a negated hyp in the selected hyps.
-//	 * 
-//	 * @return the tactic
-//	 * @deprecated
-//	 */
-//	public static ITactic falsifyHyp_auto(){
-//		return new ITactic(){
-//
-//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-//					if (Lib.isNeg(shyp) &&
-//							ptNode.getSequent().containsHypotheses(Lib.breakPossibleConjunct(Lib.negPred(shyp)))){
-//						return falsifyHyp(shyp).apply(ptNode, pm);
-//					}
-//				}
-//				return "Selected hyps contain no contradicting negations";
-//			}
-//		};
-//	}
-
 
 	// Misc tactics
 
 	public static ITactic hyp() {
 		return BasicTactics.reasonerTac(new Hyp(), EMPTY_INPUT);
 	}
-
-//	public static ITactic tautology() {
-//		return BasicTactics.reasonerTac(new TrueGoal(), EMPTY_INPUT);
-//	}
-
-//	public static ITactic contradiction() {
-//		return BasicTactics.reasonerTac(new FalseHyp(), EMPTY_INPUT);
-//	}
-
-//	/**
-//	 * @deprecated should be done with user defined postTac
-//	 */
-//	public static ITactic trivial() {
-//		return compose(hyp(), trivialGoalRewrite(), tautology(), hyp());
-//	}
-//
-//	
-//	/**
-//	 * @deprecated should be done with user defined postTac
-//	 */
-//	public static ITactic trivialGoalRewrite() {
-//		return compose(BasicTactics.reasonerTac(new Trivial(),
-//				new Trivial.Input(null)), BasicTactics.reasonerTac(
-//				new TypePred(), new TypePred.Input(null)));
-//	}
-
-//	public static ITactic autoRewriteRules() {
-//		return BasicTactics.reasonerTac(new AutoRewrites(),EMPTY_INPUT);
-//	}
-
-//	public static ITactic typeRewriteRules() {
-//		return BasicTactics.reasonerTac(new TypeRewrites(),new EmptyInput());
-//	}
 
 	public static ITactic prune() {
 		return BasicTactics.prune();
@@ -945,30 +713,6 @@ public class Tactics {
 	public static ITactic mngHyp(ISelectionHypAction hypAction) {
 		return BasicTactics.reasonerTac(new MngHyp(), new MngHyp.Input(hypAction));
 	}
-
-//	/**
-//	 * 	It is important that conjD_auto() is called sometime before falsifyHyp_auto()
-//	 *  and impE_auto()
-//	 * 
-//	 * @return
-//	 * 
-//	 * @deprecated Use the post tactic constructed from user preferences instead.
-//	 * 		{@link EventBPlugin#getPostTacticPreference()}
-//	 */
-//	@Deprecated
-//	public static ITactic postProcessExpert() {
-//		return loopOnAllPending(
-//				new AutoTactics.ClarifyGoalTac(),
-//				new AutoTactics.AutoRewriteTac(),
-//				// autoRewriteRules() already incorporates what conjD_auto() does
-//				// conjD_auto(),
-//				falsifyHyp_auto(),
-//				new AutoTactics.EqHypTac(),
-//				// impE_auto(),
-//				new AutoTactics.ShrinkImpHypTac(),
-//				new AutoTactics.ExistsHypTac()
-//				);
-//	}
 
 	public static ITactic afterLasoo(final ITactic tactic) {
 		return new ITactic() {
@@ -1079,16 +823,6 @@ public class Tactics {
 	}
 
 	/**
-	 * @deprecated Use {@link Lib#isWDStrictPosition(Predicate,IPosition)}
-	 *             instead
-	 */
-	@Deprecated
-	public static boolean isParentTopLevelPredicate(Predicate pred,
-			IPosition pos) {
-		return Lib.isWDStrictPosition(pred, pos);
-	}
-	
-	/**
 	 * Tells if the tactic RemoveNegation can apply.
 	 * 
 	 * @param expr
@@ -1178,20 +912,6 @@ public class Tactics {
 	}
 	
 	/**
-	 * @param pred
-	 *            the predicate from which we retrieve the positions where the
-	 *            tactic "Remove Membership" can apply
-	 * @return the positions where the tactic "Remove Membership" can apply on
-	 *         the given predicate
-	 * @Deprecated use {@link Tactics#rmGetPositions(Predicate, FormulaFactory)}
-	 *             instead
-	 */
-	@Deprecated
-	public static List<IPosition> rmGetPositions(Predicate pred) {
-		return rmGetPositions(pred, FormulaFactory.getDefault());
-	}
-	
-	/**
 	 * Tells if the tactic RemoveMembership can apply.
 	 * 
 	 * @param expr
@@ -1269,58 +989,6 @@ public class Tactics {
 				new DisjunctionToImplicationRewrites.Input(hyp, position));
 	}
 
-//	/**
-//	 * @author fmehta
-//	 * 
-//	 * @deprecated split into smaller tactics for the post tactic
-//	 *
-//	 */
-//	public static class NormTac implements ITactic{
-//
-//		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-//			return norm().apply(ptNode, pm);
-//		}
-//		
-//	}
-	
-//	public static ITactic negEnum_auto() {
-//		return new ITactic() {
-//
-//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-//					// Search for E : {a, ... ,c}
-//					if (Lib.isInclusion(shyp)) {
-//						Expression right = ((RelationalPredicate) shyp)
-//								.getRight();
-//						if (Lib.isSetExtension(right)) {
-//							// Looking for not(E = b)
-//							for (Predicate hyp : ptNode.getSequent()
-//									.selectedHypIterable()) {
-//								if (Lib.isNeg(hyp)) {
-//									Predicate child = ((UnaryPredicate) hyp)
-//											.getChild();
-//									if (Lib.isEq(child)) {
-//										if (negEnum(shyp, hyp)
-//												.apply(ptNode, pm) == null)
-//											return null;
-//									}
-//
-//								}
-//							}
-//						}
-//					}
-//				}
-//
-//				return "Selected hyps contain no appropriate hypotheses";
-//			}
-//		};
-//	}
-
-//	protected static ITactic negEnum(Predicate shyp, Predicate hyp) {
-//		return BasicTactics.reasonerTac(new NegEnum(), new MultiplePredInput(
-//				new Predicate[] { shyp, hyp }));
-//	}
-	
 	/**
 	 * Return the tactic "implication with conjunction rewrites"
 	 * {@link ImpAndRewrites} which is applicable to a hypothesis at a
@@ -2629,69 +2297,6 @@ public class Tactics {
 				new FunCompImg.Input(hyp, position));
 	}
 
-
-//	/**
-//	 * Return the tactic "Automatic implication hypothesis with conjunction
-//	 * right" {@link ImpAndRewrites}.
-//	 * <p>
-//	 * 
-//	 * @return The tactic "Automatic implication hypothesis with conjunction
-//	 *         right"
-//	 * @author htson
-//	 */
-//	public static ITactic autoImpAndRight() {
-//		return new ITactic() {
-//
-//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-//					// Search for (P => Q /\ ... /\ R)
-//					if (Lib.isImp(shyp)) {
-//						Predicate right = ((BinaryPredicate) shyp)
-//								.getRight();
-//						if (Lib.isConj(right)) {
-//							if (impAndRewrites(shyp, IPosition.ROOT).apply(
-//									ptNode, pm) == null)
-//								return null;
-//						}
-//					}
-//				}
-//				return "Selected hyps contain no appropriate hypotheses";
-//			}
-//		};
-//	}
-//
-//
-//	/**
-//	 * Return the tactic "Automatic implication hypothesis with disjunctive
-//	 * left" {@link ImpOrRewrites}.
-//	 * <p>
-//	 * 
-//	 * @return The tactic "Automatic implication hypothesis with disjunctive
-//	 *         left"
-//	 * @author htson
-//	 */
-//	public static ITactic autoImpOrRight() {
-//		return new ITactic() {
-//
-//			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-//				for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-//					// Search for (P \/ ... \/ Q => R)
-//					if (Lib.isImp(shyp)) {
-//						Predicate left = ((BinaryPredicate) shyp)
-//								.getLeft();
-//						if (Lib.isDisj(left)) {
-//							if (impOrRewrites(shyp, IPosition.ROOT).apply(
-//									ptNode, pm) == null)
-//								return null;
-//						}
-//					}
-//				}
-//				return "Selected hyps contain no appropriate hypotheses";
-//			}
-//		};
-//	}
-
-
 	/**
 	 * The class for "Failure tactic" that always fails.
 	 * <p>
@@ -3034,41 +2639,6 @@ public class Tactics {
 		return new ArrayList<IPosition>();
 	}
 
-	@Deprecated
-	public static ITactic finiteFunRelImg() {
-		return new ITactic() {
-
-			public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-				final PFunSetInput input = computeInput(ptNode);
-				if (input == null) {
-					return "Tactic inapplicable";
-				}
-				return BasicTactics.reasonerTac(new FiniteFunRelImg(), input)
-						.apply(ptNode, pm);
-			}
-
-			private PFunSetInput computeInput(final IProofTreeNode ptNode) {
-				final Predicate goal = ptNode.getSequent().goal();
-				if (!Lib.isFinite(goal)) {
-					return null;
-				}
-				final Expression img = ((SimplePredicate) goal).getExpression();
-				if (!Lib.isRelImg(img)) {
-					return null;
-				}
-				final Expression f = ((BinaryExpression) img).getLeft();
-				final Type type = f.getType();
-				final FormulaFactory ff = ptNode.getFormulaFactory();
-				final Expression S = type.getSource().toExpression(ff);
-				final Expression T = type.getTarget().toExpression(ff);
-				final BinaryExpression set = ff.makeBinaryExpression(
-						Expression.PFUN, S, T, null);
-				final PFunSetInput input = new PFunSetInput(set);
-				return input;
-			}
-		};
-	}
-	
 	/**
 	 * Return the tactic "Finite of relational image of a function "
 	 * {@link FiniteFunRelImg}.
@@ -3672,23 +3242,6 @@ public class Tactics {
 
 	/**
 	 * Returns the tactic "Functional Image Simplification" for a given position
-	 * where this tactic can apply on a goal.
-	 * 
-	 * @param position
-	 *            a valid position of an expression in the goal
-	 * @return the tactic "Functional Image Simplification"
-	 * 
-	 * @since 1.3
-	 * @deprecated Use other method with same name
-	 */
-	@Deprecated
-	public static ITactic funImgSimplifies(IPosition position) {
-		return BasicTactics.reasonerTac(new FunImgSimplifies(),
-				new Input(null, position));
-	}
-	
-	/**
-	 * Returns the tactic "Functional Image Simplification" for a given position
 	 * where this tactic can apply.
 	 * 
 	 * @param hyp
@@ -3704,22 +3257,6 @@ public class Tactics {
 				new Input(hyp, position));
 	}
 
-	/**
-	 * Returns a set of positions where the rewriter funImgSimpRewrites can
-	 * apply on a sequent goal.
-	 * 
-	 * @param sequent
-	 *            the current sequent
-	 * @return a set of positions (empty if the tactic is not applicable)
-	 *
- 	 * @since 1.3
-	 * @deprecated Use other method with same name
-	 */
-	@Deprecated
-	public static List<IPosition> funImgSimpGetPositions(IProverSequent sequent) {
-		return FunImgSimpImpl.getApplicablePositions(null, sequent);
-	}
-	
 	/**
 	 * Returns a set of positions where the rewriter funImgSimpRewrites can
 	 * apply.

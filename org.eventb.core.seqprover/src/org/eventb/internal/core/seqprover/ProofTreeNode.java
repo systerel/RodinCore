@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofSkeleton;
-import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProofTreeNodeFilter;
 import org.eventb.core.seqprover.IProverSequent;
@@ -251,39 +250,6 @@ public final class ProofTreeNode implements IProofTreeNode {
 		return true;
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTreeNode#graft(org.eventb.core.prover.IProofTree)
-	 */
-	public boolean graft(IProofTree tree) {
-		//	force pruning to avoid losing child proofs
-		if (this.children != null) return false;
-		if (this.rule != null) return false;
-		if (! ProverLib.deepEquals(this.sequent,tree.getSequent())) return false;
-		ProofTreeNode treeRoot = (ProofTreeNode)tree.getRoot();
-		ProofTreeNode[] treeChildren = treeRoot.getChildNodes();
-		ProofRule treeRule = (ProofRule) treeRoot.getRule();
-		boolean treeClosed = treeRoot.isClosed();
-		
-		// Disconnect treeChildren from treeRoot
-		treeRoot.setRule(null);
-		treeRoot.setChildren(null);
-		treeRoot.reopen();
-		// treeRoot.assertClassInvariant();
-		assert classInvariant();
-		treeRoot.fireDeltas();
-		// Connect treeChildren to this node
-		for (ProofTreeNode treeChild : treeChildren)
-			treeChild.parent = this;
-		this.setRule(treeRule);
-		this.setChildren(treeChildren);
-		if (treeClosed)
-			this.setClosed();
-		assert classInvariant();
-		fireDeltas();
-		return true;
-	}
-	
 	/**
 	 * Calculates the minimum confidence value of all of this node's children
 	 * 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,14 +80,6 @@ public class ReasonerRegistry implements IReasonerRegistry {
 		return registry.keySet().toArray(NO_STRING);
 	}
 	
-	public IReasoner getReasonerInstance(String id){
-		return getLiveReasonerDesc(id).getInstance();
-	}
-	
-	public String getReasonerName(String id){
-		return getLiveReasonerDesc(id).getName();
-	}
-
 	// version is considered serialized in the id
 	// desired version may be NO_VERSION
 	public synchronized ReasonerDesc getReasonerDesc(String id) {

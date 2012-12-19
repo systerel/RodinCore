@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -724,37 +724,6 @@ public final class ProverFactory {
 	 */
 	public static IForwardInfHypAction makeForwardInfHypAction(Collection<Predicate> hyps, Collection<Predicate> inferredHyps){
 		return new ForwardInfHypAction(hyps,NO_FREE_IDENTS,inferredHyps);
-	}
-
-	/**
-	 * Constructs an instance of {@link IProofDependencies} from the values
-	 * given as parameters.
-	 * 
-	 * This is a convenience method. Clients must independently check that the
-	 * data provided conforms to the constraints in {@link IProofDependencies}.
-	 * 
-	 * @param hasDeps
-	 * @param goal
-	 * @param usedHypotheses
-	 * @param usedFreeIdents
-	 * @param introducedFreeIdents
-	 * @return An instance of {@link IProofDependencies} with the values given as 
-	 * 	input parameters
-	 * @deprecated use instead
-	 *             {@link #makeProofDependencies(boolean, Predicate, Set, ITypeEnvironment, Set, Set)
-	 * @since 3.0 : the type environment became immutable            
-	 */
-	@Deprecated
-	public static IProofDependencies makeProofDependencies(
-			final boolean hasDeps,
-			final Predicate goal,
-			final Set<Predicate> usedHypotheses,
-			final ISealedTypeEnvironment usedFreeIdents,
-			final Set<String> introducedFreeIdents){
-	
-		return makeProofDependencies(hasDeps, goal, usedHypotheses,
-				usedFreeIdents, introducedFreeIdents,
-				Collections.<IReasonerDesc> emptySet());
 	}
 
 	/**

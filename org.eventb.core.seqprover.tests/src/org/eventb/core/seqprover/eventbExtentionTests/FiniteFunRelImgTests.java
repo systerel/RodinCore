@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,26 +11,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import static org.eventb.core.seqprover.tests.TestLib.genExpr;
-import static org.eventb.core.seqprover.tests.TestLib.genProofTreeNode;
-import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.seqprover.IProofRule;
-import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteFunRelImg;
-import org.eventb.internal.core.seqprover.reasonerInputs.PFunSetInput;
-import org.junit.Test;
 
 /**
  * Unit tests for the Finite of relational image of a function reasoner
@@ -64,6 +50,7 @@ public class FiniteFunRelImgTests extends AbstractPFunSetInputReasonerTests {
 
 	private static final String P5 = "finite({0})";
 
+	@Override
 	protected List<IPosition> getPositions(Predicate predicate) {
 		return Tactics.finiteFunRelImgGetPositions(predicate);
 	}
@@ -73,6 +60,7 @@ public class FiniteFunRelImgTests extends AbstractPFunSetInputReasonerTests {
 		return "org.eventb.core.seqprover.finiteFunRelImg";
 	}
 
+	@Override
 	protected SuccessfulTest[] getSuccessfulTests() {
 		return new SuccessfulTest[] {
 				// P3 in goal
@@ -82,6 +70,7 @@ public class FiniteFunRelImgTests extends AbstractPFunSetInputReasonerTests {
 		};
 	}
 
+	@Override
 	protected String[] getUnsuccessfulTests() {
 		return new String[] {
 				// incorrect goal
@@ -121,53 +110,6 @@ public class FiniteFunRelImgTests extends AbstractPFunSetInputReasonerTests {
 		};
 	}
 
-	/**
-	 * Ensures that the deprecated tactic implemented for backward compatibility
-	 * can apply the reasoner.
-	 */
-	@Test
-	public void oldTacticSucceeds() {
-		final ITactic tactic = getOldTactic();
-		final IProofTreeNode root = genProofTreeNode("⊤ |- finite({0 ↦ TRUE}[{1}])");
-		tactic.apply(root, null);
-		assertFalse(root.isOpen());
-		final IProofRule rule = root.getRule();
-		assertEquals(FiniteFunRelImg.REASONER_ID, rule.generatedBy().getReasonerID());
-		assertPFunSetInput("ℤ ⇸ BOOL", rule.generatedUsing());
-	}
-
-	/**
-	 * Ensures that the deprecated tactic implemented for backward compatibility
-	 * can apply the reasoner.
-	 */
-	@Test
-	public void oldTacticFails() {
-		assertFailure("⊤ |- ⊤");
-		assertFailure("⊤ |- finite({0 ↦ TRUE})");
-		assertFailure("⊤ |- finite({0 ↦ {TRUE}}(0))");
-	}
-	
-	@SuppressWarnings("deprecation")
-	private static ITactic getOldTactic() {
-		return Tactics.finiteFunRelImg();
-	}
-
-	private static void assertPFunSetInput(final String exprImage,
-			final IReasonerInput input) {
-		final Expression expr = genExpr(mTypeEnvironment(), exprImage);
-		assertTrue(input instanceof PFunSetInput);
-		assertFalse(input.hasError());
-		assertEquals(expr, ((PFunSetInput) input).getExpression());
-	}
-
-	private static void assertFailure(String sequentImage) {
-		final ITactic tactic = getOldTactic();
-		final IProofTreeNode root = genProofTreeNode(sequentImage);
-		final Object actual = tactic.apply(root, null);
-		assertEquals("Tactic inapplicable", actual);
-		assertTrue(root.isOpen());
-	}
-	
 // Commented out, but makes the tests succeed
 //	@Override
 //	public ITactic getJustDischTactic() {
