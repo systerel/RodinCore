@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,8 +62,8 @@ public class ExE extends HypothesisReasoner{
 		// given type environment
 		// TODO : Change implementation
 		final FormulaFactory ff = sequent.getFormulaFactory();
-		final ITypeEnvironmentBuilder newTypenv = ff.makeTypeEnvironment();
-		newTypenv.addAll(sequent.typeEnvironment());
+		final ITypeEnvironmentBuilder newTypenv = sequent.typeEnvironment()
+				.makeBuilder();
 		final FreeIdentifier[] freeIdents = newTypenv
 				.makeFreshIdentifiers(boundIdentDecls);
 		

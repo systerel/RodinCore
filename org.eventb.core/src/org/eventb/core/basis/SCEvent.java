@@ -140,8 +140,7 @@ public class SCEvent extends EventBElement implements ISCEvent {
 			throws RodinDBException {
 
 		final FormulaFactory factory = mchTypenv.getFormulaFactory();
-		ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
-		typenv.addAll(mchTypenv);
+		ITypeEnvironmentBuilder typenv = mchTypenv.makeBuilder();
 		for (ISCParameter par : getSCParameters()) {
 			typenv.add(par.getIdentifier(factory));
 		}

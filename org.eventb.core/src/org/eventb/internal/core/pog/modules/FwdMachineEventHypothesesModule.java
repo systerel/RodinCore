@@ -263,8 +263,7 @@ public class FwdMachineEventHypothesesModule extends UtilityModule {
 			throws CoreException, RodinDBException {
 		variableTable = (IMachineVariableTable) repository.getState(IMachineVariableTable.STATE_TYPE);
 
-		ITypeEnvironmentBuilder largeEnv = factory.makeTypeEnvironment();
-		largeEnv.addAll(eventTypeEnvironment);
+		ITypeEnvironmentBuilder largeEnv = eventTypeEnvironment.makeBuilder();
 		List<FreeIdentifier> variables = variableTable.getVariables();
 		for (FreeIdentifier identifier : variables) {
 			largeEnv.add(identifier.withPrime(factory));

@@ -286,8 +286,7 @@ public class MachineRefinesModule extends IdentifierCreatorModule {
 
 		AbstractEventInfo abstractEventInfo;
 
-		ITypeEnvironmentBuilder eventTypeEnvironment = factory.makeTypeEnvironment();
-		eventTypeEnvironment.addAll(typeEnvironment);
+		ITypeEnvironmentBuilder eventTypeEnvironment = typeEnvironment.makeBuilder();
 		abstractEventInfo = new AbstractEventInfo(event, label, event
 				.getConvergence(), fetchEventParameters(event,
 				eventTypeEnvironment, factory), fetchEventGuards(event,
