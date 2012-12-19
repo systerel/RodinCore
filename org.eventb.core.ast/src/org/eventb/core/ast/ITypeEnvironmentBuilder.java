@@ -41,6 +41,9 @@ public interface ITypeEnvironmentBuilder extends ITypeEnvironment {
 	 * 
 	 * @param other
 	 *            another type environment
+	 * @throws IllegalArgumentException
+	 *             if the mappings of the given type environment are
+	 *             incompatible with this type environment
 	 */
 	void addAll(ITypeEnvironment other);
 
@@ -53,6 +56,9 @@ public interface ITypeEnvironmentBuilder extends ITypeEnvironment {
 	 * 
 	 * @param freeIdent
 	 *            a free identifier
+	 * @throws IllegalArgumentException
+	 *             if the given free identifier is either not a valid identifier
+	 *             or not typed, or incompatible with this type environment
 	 */
 	void add(FreeIdentifier freeIdent);
 
@@ -66,6 +72,8 @@ public interface ITypeEnvironmentBuilder extends ITypeEnvironment {
 	 * 
 	 * @param freeIdents
 	 *            array of free identifiers
+	 * @throws IllegalArgumentException
+	 *             if any given free identifier is ill-formed
 	 */
 	void addAll(FreeIdentifier[] freeIdents);
 	
@@ -97,6 +105,11 @@ public interface ITypeEnvironmentBuilder extends ITypeEnvironment {
 	 *            the name to add
 	 * @param type
 	 *            the type to associate to the given name
+	 * @throws IllegalArgumentException
+	 *             if the given name is not a valid identifier name or if the
+	 *             given type is not compatible with this type environment:
+	 *             different from a type already registered with the same name
+	 *             or containing incompatible carrier sets
 	 */
 	void addName(String name, Type type);
 	
