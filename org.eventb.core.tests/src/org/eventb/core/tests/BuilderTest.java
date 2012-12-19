@@ -14,8 +14,10 @@
 package org.eventb.core.tests;
 
 import static junit.framework.Assert.fail;
+import static org.eventb.core.EventBPlugin.getAutoPostTacticManager;
 import static org.eventb.core.EventBPlugin.getProofManager;
 import static org.eventb.core.EventBPlugin.getUserSupportManager;
+import static org.eventb.core.seqprover.SequentProver.getAutoTacticRegistry;
 import static org.eventb.core.tests.ResourceUtils.importProjectFiles;
 
 import java.util.ArrayList;
@@ -33,7 +35,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.IMachineRoot;
@@ -45,8 +46,9 @@ import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
+import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.LoopOnAllPending;
 import org.junit.After;
 import org.junit.Before;
 import org.rodinp.core.IInternalElement;
@@ -138,13 +140,22 @@ public abstract class BuilderTest {
 
 	private static void enableAutoTactics(IAutoTacticPreference pref,
 			String[] tacticIds) {
+		final IAutoTacticRegistry reg = getAutoTacticRegistry();
+		final ICombinatorDescriptor comb = reg
+				.getCombinatorDescriptor(LoopOnAllPending.COMBINATOR_ID);
 		final List<ITacticDescriptor> descrs = new ArrayList<ITacticDescriptor>(
 				tacticIds.length);
-		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		for (String id : tacticIds) {
 			descrs.add(reg.getTacticDescriptor(id));
 		}
-		pref.setSelectedDescriptors(descrs);
+		final ITacticDescriptor tactic = comb.combine(descrs, PLUGIN_ID
+				+ ".autoTactic");
+		enableAutoTactic(pref, tactic);
+	}
+
+	private static void enableAutoTactic(IAutoTacticPreference pref,
+			ITacticDescriptor tactic) {
+		pref.setSelectedDescriptor(tactic);
 		pref.setEnabled(true);
 	}
 
@@ -162,14 +173,19 @@ public abstract class BuilderTest {
 	};
 	
 	protected static void enableAutoProver() {
-		final IAutoTacticPreference autoPref = EventBPlugin
-				.getAutoPostTacticManager().getAutoTacticPreference();
-		enableAutoTactics(autoPref, autoTacticIds);
+		enableAutoTactics(getAutoTacticPreference(), autoTacticIds);
 	}
 
+	protected static void enableAutoProver(ITacticDescriptor descriptor) {
+		enableAutoTactic(getAutoTacticPreference(), descriptor);
+	}
+	
 	protected static void disableAutoProver() {
-		EventBPlugin.getAutoPostTacticManager().getAutoTacticPreference()
-				.setEnabled(false);
+		getAutoTacticPreference().setEnabled(false);
+	}
+
+	private static IAutoTacticPreference getAutoTacticPreference() {
+		return getAutoPostTacticManager().getAutoTacticPreference();
 	}
 
 	private static final String[] postTacticIds = new String[] {
@@ -181,14 +197,15 @@ public abstract class BuilderTest {
 	};
 	
 	protected static void enablePostTactics() {
-		final IAutoTacticPreference postPref = EventBPlugin
-				.getAutoPostTacticManager().getPostTacticPreference();
-		enableAutoTactics(postPref, postTacticIds);
+		enableAutoTactics(getPostTacticPreference(), postTacticIds);
 	}
 
 	protected static void disablePostTactics() {
-		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
-				.setEnabled(false);
+		getPostTacticPreference().setEnabled(false);
+	}
+
+	protected static IAutoTacticPreference getPostTacticPreference() {
+		return getAutoPostTacticManager().getPostTacticPreference();
 	}
 
 	/**

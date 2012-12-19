@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eventb.core.seqprover.autoTacticPreference;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -22,7 +21,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
-import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators;
@@ -195,35 +193,12 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 		return defaultComposedTactic;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#getDefaultDescriptors()
-	 */
-	@Deprecated
-	public List<ITacticDescriptor> getDefaultDescriptors() {
-		if (defaultDescriptor instanceof ICombinedTacticDescriptor) {
-			return ((ICombinedTacticDescriptor) defaultDescriptor).getCombinedTactics();
-		}
-		return Collections.singletonList(defaultDescriptor);
-	}
-	
-	@Deprecated
-	protected ITactic composeTactics(List<ITacticDescriptor> tacticDescs) {
-		return loopOnAllPending(tacticDescs, registryID + ".deprecatedComposition")
-				.getTacticInstance();
-	}
-
 	// for compatibility
 	private static ITacticDescriptor loopOnAllPending(List<ITacticDescriptor> descs, String id) {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final ICombinatorDescriptor comb = reg
 				.getCombinatorDescriptor(TacticCombinators.LoopOnAllPending.COMBINATOR_ID);
 		return comb.combine(descs, id);
-	}
-
-	@Deprecated
-	protected String [] getDefaultIDs() {
-		throw new IllegalStateException(
-				"this method must not be called anymore");
 	}
 
 }

@@ -13,7 +13,6 @@ package org.eventb.core.tests.pom;
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
-import static org.eventb.core.EventBPlugin.getAutoPostTacticManager;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.LAND;
@@ -37,14 +36,12 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
-import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.LoopOnAllPending;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.BuilderTest;
@@ -172,10 +169,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	@Before
 	public void setUpAPDT() throws Exception {
 		// Change the auto-tactic and enable it.
-		final IAutoPostTacticManager manager = getAutoPostTacticManager();
-		final IAutoTacticPreference autoPref = manager.getAutoTacticPreference();
-		autoPref.setSelectedDescriptor(tacticDesc);
-		autoPref.setEnabled(true);
+		enableAutoProver(tacticDesc);
 	}
 
 	/**

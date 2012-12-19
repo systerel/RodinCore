@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,9 @@
 package org.eventb.core.seqprover.autoTacticPreference;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ITactic;
 
 /**
  * @author htson
@@ -55,17 +54,6 @@ public interface IAutoTacticPreference {
 	 * @return array of tactic descriptors {@link ITacticDescriptor}.
 	 */
 	public abstract Collection<ITacticDescriptor> getDeclaredDescriptors();
-
-	/**
-	 * Return the set of tactic that are declared for using as default with the
-	 * tactic container.
-	 * <p>
-	 * 
-	 * @return array of tactic descriptors {@link ITacticDescriptor}.
-	 * @deprecated use {@link #getDefaultDescriptor()}
-	 */
-	@Deprecated
-	public abstract List<ITacticDescriptor> getDefaultDescriptors();
 
 	/**
 	 * Returns the descriptor of the default tactic.
@@ -114,15 +102,5 @@ public interface IAutoTacticPreference {
 	 * @since 2.3
 	 */
 	void setSelectedDescriptor(ITacticDescriptor tacticDesc);
-	
-	/**
-	 * Set the contained tactics to be an array of tactic descriptors.
-	 * 
-	 * @param tacticDescs
-	 *            a list of tactic descriptors {@link ITacticDescriptor}.
-	 * @deprecated use {@link #setSelectedDescriptor(ITacticDescriptor)}
-	 */
-	@Deprecated
-	public void setSelectedDescriptors(List<ITacticDescriptor> tacticDescs);
 
 }

@@ -125,8 +125,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 	 */
 	@Test
 	public void testRegisteredAsAuto() throws Exception {
-		final IAutoTacticPreference pref = EventBPlugin
-				.getAutoPostTacticManager().getAutoTacticPreference();
+		final IAutoTacticPreference pref = getAutoTacticPreference();
 		assertIn(pref.getDeclaredDescriptors());
 		assertIn(pref.getDefaultDescriptor());
 	}

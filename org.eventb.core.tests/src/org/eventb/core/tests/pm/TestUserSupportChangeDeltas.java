@@ -15,7 +15,6 @@ package org.eventb.core.tests.pm;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPRRoot;
@@ -72,10 +71,8 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 				mTypeEnvironment("x=ℤ; f=ℤ↔ℤ"), "1=1", "2=2", "x∈ℕ",
 				"f∈ℕ ⇸ ℕ", "f(x)∈ℕ", "x∈dom(f)");
 
-		// Turn on beginner mode
-		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
-				.setEnabled(false);
-		enableAutoProver(true);
+		disablePostTactic();
+		enableTestAutoProver();
 	}
 
 	@Override

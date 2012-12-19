@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,10 +70,8 @@ public class TestUserSupports extends TestPM {
 
 	@Before
 	public void setUpTUS() throws Exception {
-		// Turn on beginner mode
-		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
-				.setEnabled(false);
-		enableAutoProver(true);
+		disablePostTactic();
+		enableTestAutoProver();
 		
 		poRoot = createPOFile("x");
 		psRoot = poRoot.getPSRoot();

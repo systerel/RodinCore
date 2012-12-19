@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
 import org.eventb.core.IPORoot;
 import org.eventb.core.IPRRoot;
@@ -134,21 +133,13 @@ public class PendingSubgoalTests extends TestPM {
 	
 	@Before
 	public void setUpPST() throws Exception {
-		
-		// Turn on beginner mode
-		EventBPlugin.getAutoPostTacticManager().getPostTacticPreference()
-				.setEnabled(false);
-
-		// Set norm as postactic
-//		EventBPlugin.getDefault().getUserSupportManager().getProvingMode()
-//				.setPostTactics(
-//						new String[] { "org.eventb.core.seqprover.normTac" });
+		disablePostTactic();
 
 		poRoot = createPOFile();
 		prRoot = poRoot.getPRRoot();
 		psRoot = poRoot.getPSRoot();
 
-		enableAutoProver(true);
+		enableTestAutoProver();
 		runBuilder();
 
 		userSupport = newUserSupport(psRoot);
