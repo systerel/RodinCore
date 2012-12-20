@@ -43,25 +43,16 @@ public class UserSupportManager implements IUserSupportManager {
 		return new UserSupport();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupportManager#getUserSupports()
-	 */
 	@Override
 	public Collection<IUserSupport> getUserSupports() {
-		return userSupports;
+		return new ArrayList<IUserSupport>(userSupports);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTree#addChangeListener(org.eventb.core.prover.IProofTreeChangedListener)
-	 */
 	@Override
 	public void addChangeListener(IUserSupportManagerChangedListener listener) {
 		deltaProcessor.addChangeListener(listener);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.prover.IProofTree#addChangeListener(org.eventb.core.prover.IProofTreeChangedListener)
-	 */
 	@Override
 	public void removeChangeListener(IUserSupportManagerChangedListener listener) {
 		deltaProcessor.removeChangeListener(listener);
@@ -78,9 +69,6 @@ public class UserSupportManager implements IUserSupportManager {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupportManager#disposeUserSupport(org.eventb.core.pm.IUserSupport)
-	 */
 	public void removeUserSupport(IUserSupport userSupport) {
 		synchronized (userSupports) {
 			if (userSupports.contains(userSupport))

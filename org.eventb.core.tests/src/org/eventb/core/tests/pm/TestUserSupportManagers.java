@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - test about internal state leakage
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
@@ -15,6 +16,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Collection;
 
@@ -22,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPORoot;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
+import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
@@ -33,16 +37,22 @@ import org.rodinp.core.RodinDBException;
  */
 public class TestUserSupportManagers extends TestPM {
 
-	@Test
-	public void testUserSupportManager() throws RodinDBException, CoreException {
+	private IRodinFile psFile1;
+	private IRodinFile psFile2;
+
+	@Before
+	public void createPSFiles() throws Exception {
 		final IPORoot poRoot1 = createPOFile("x");
-		final IRodinFile psFile1 = poRoot1.getPSRoot().getRodinFile();
+		psFile1 = poRoot1.getPSRoot().getRodinFile();
 
 		final IPORoot poRoot2 = createPOFile("y");
-		final IRodinFile psFile2 = poRoot2.getPSRoot().getRodinFile();
+		psFile2 = poRoot2.getPSRoot().getRodinFile();
 
 		runBuilder();
+	}
 
+	@Test
+	public void testUserSupportManager() throws RodinDBException, CoreException {
 		// Initial number of opened user supports
 		final int nbUS = manager.getUserSupports().size();
 		
@@ -94,7 +104,46 @@ public class TestUserSupportManagers extends TestPM {
 		userSupports = manager.getUserSupports();
 		assertEquals("There are no user supports left ",
 				nbUS, userSupports.size());
+	}
 
+	/**
+	 * Ensures that the collection returned by
+	 * {@link IUserSupportManager#getUserSupports()} can be modified by clients
+	 * with no harm.
+	 */
+	@Test
+	public void getUserSupportsIsRobust() throws Exception {
+		manager.newUserSupport();
+		final Collection<IUserSupport> initial = manager.getUserSupports();
+		final IUserSupport[] backup = toArray(initial);
+
+		assertFalse(initial.isEmpty());
+		initial.clear();
+
+		final Collection<IUserSupport> actual = manager.getUserSupports();
+		assertArrayEquals(backup, toArray(actual));
+	}
+
+	/**
+	 * Ensures that the collection returned by
+	 * {@link IUserSupportManager#getUserSupports()} is stable.
+	 */
+	@Test
+	public void getUserSupportsDoesNotLeak() throws Exception {
+		final Collection<IUserSupport> initial = manager.getUserSupports();
+		final IUserSupport[] backup = toArray(initial);
+
+		// The collection returned the first time does not change
+		manager.newUserSupport();
+		assertArrayEquals(backup, toArray(initial));
+
+		// The collections returned before and after creation differ
+		final Collection<IUserSupport> actual = manager.getUserSupports();
+		assertFalse(initial.equals(actual));
+	}
+
+	protected IUserSupport[] toArray(Collection<IUserSupport> coll) {
+		return coll.toArray(new IUserSupport[coll.size()]);
 	}
 
 }
