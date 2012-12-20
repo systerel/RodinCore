@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
  *     Systerel - checked reasoner versions before reusing proofs
  *******************************************************************************/
 package org.eventb.internal.core.pom;
+
+import static org.eventb.internal.core.Util.log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +35,6 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofDependencies;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverLib;
-import org.eventb.internal.core.Util;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
@@ -224,19 +225,15 @@ public class PSUpdater {
 		return broken == true || status.getConfidence() <= IConfidence.PENDING; 
 	}
 
+	// Check only the dependencies of the proof, not all of it.
 	private static boolean isBroken(IProverSequent seq, IPRProof prProof,
 			FormulaFactory ff, IProgressMonitor pm) {
 		try {
-			// TODO make an external action for checking data corruption
-			// the following line throws an exception in case of corruption
-//			prProof.getSkeleton(ff, pm);
-			
-			// check dependencies
 			final IProofDependencies deps = prProof
 					.getProofDependencies(ff, pm);
 			return !ProverLib.proofReusable(deps, seq);
 		} catch (Throwable e) {
-			Util.log(e, "while updating status of PO " + seq);
+			log(e, "while updating status of proof " + prProof);
 			return true;
 		}
 	}

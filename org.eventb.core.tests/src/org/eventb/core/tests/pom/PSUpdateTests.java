@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,6 +112,13 @@ public class PSUpdateTests extends BuilderTest {
 		lemma(BTRUE.toString()).apply(root, null);
 		pa.commit(true, null);
 		pc.save(null, false);
+	}
+
+	// Remove an essential field of a proof dependency
+	private void damageProofDependency(String name) throws RodinDBException {
+		final IPRProof proof = poRoot.getPRRoot().getProof(name);
+		proof.removeAttribute(HYPS_ATTRIBUTE, null);
+		proof.getRodinFile().save(null, false);
 	}
 
 	// Remove an essential field of a rule
@@ -644,8 +651,28 @@ public class PSUpdateTests extends BuilderTest {
 	}
 
 	/**
-	 * Ensures that a damaged proof does not prevent POM from succeeding. The PO
-	 * with the damaged proof is then marked as broken.
+	 * Ensures that a damaged proof dependency does not prevent POM from
+	 * succeeding. The PO with the damaged proof is then marked as broken.
+	 */
+	@Test
+	public final void testErroneousProofDependency() throws CoreException {
+		createPOFile();
+		addPO("1", null);
+		addPO("2", null);
+		addPO("3", null);
+		runBuilder("1,2,3");
+
+		addProof("2");
+		damageProofDependency("2");
+		changePO("2");
+		runBuilder("1,2,3");
+		assertTrue(psRoot.getStatus("2").isBroken());
+	}
+
+	/**
+	 * Ensures that a damaged proof does not prevent POM from succeeding.
+	 * However, the PO with the damaged proof is not marked as broken if the
+	 * proof dependencies match.
 	 */
 	@Test
 	public final void testErroneousProof() throws CoreException {
@@ -659,14 +686,13 @@ public class PSUpdateTests extends BuilderTest {
 		damageProof("2");
 		changePO("2");
 		runBuilder("1,2,3");
-		// FIXME perform data corruption tests separately from ps update
-		// see PSUpdater.isBroken()
-		assertTrue(psRoot.getStatus("2").isBroken());
+		assertFalse(psRoot.getStatus("2").isBroken());
 	}
 
 	/**
 	 * Ensures that a proof with a damaged input does not prevent POM from
-	 * succeeding. The PO with the damaged proof is then marked as broken.
+	 * succeeding. However, the PO with the damaged proof is not marked as
+	 * broken if the proof dependencies match.
 	 */
 	@Test
 	public final void testErroneousProofInput() throws CoreException {
@@ -680,9 +706,7 @@ public class PSUpdateTests extends BuilderTest {
 		damageProofInput("2");
 		changePO("2");
 		runBuilder("1,2,3");
-		// FIXME perform data corruption tests separately from ps update
-		// see PSUpdater.isBroken()
-		assertTrue(psRoot.getStatus("2").isBroken());
+		assertFalse(psRoot.getStatus("2").isBroken());
 	}
 	
 	public static class Signature extends EmptyInputReasoner implements ISignatureReasoner {
