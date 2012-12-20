@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static junit.framework.Assert.assertSame;
+import static org.junit.Assert.assertSame;
 import static org.eventb.core.ast.LanguageVersion.LATEST;
 
 import org.eventb.core.ast.Formula;

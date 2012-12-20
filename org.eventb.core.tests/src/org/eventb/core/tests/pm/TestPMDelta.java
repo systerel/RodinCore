@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;

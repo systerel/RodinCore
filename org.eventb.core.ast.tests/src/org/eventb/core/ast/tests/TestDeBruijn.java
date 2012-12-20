@@ -11,7 +11,7 @@
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.ast.Predicate;
 import org.junit.Test;

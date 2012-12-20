@@ -13,14 +13,15 @@
 package org.eventb.core.seqprover.tests;
 
 import static org.eventb.core.seqprover.tests.Util.TEST_PLUGIN_ID;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -49,7 +50,7 @@ import org.junit.Test;
  * @author Farhad Mehta
  *
  */
-public class ProverChecksTests extends TestCase{
+public class ProverChecksTests {
 
 	private static final FormulaFactory factory = FormulaFactory.getDefault();
 	

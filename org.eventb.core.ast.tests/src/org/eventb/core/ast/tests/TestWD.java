@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 

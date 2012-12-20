@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotSame;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.eventb.core.tests.pom.POUtil.addToTypeEnvironment;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 

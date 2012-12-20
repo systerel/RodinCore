@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.sc;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IContextRoot;

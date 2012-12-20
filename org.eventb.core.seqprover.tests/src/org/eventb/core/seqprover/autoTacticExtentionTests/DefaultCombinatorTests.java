@@ -11,9 +11,9 @@
 package org.eventb.core.seqprover.autoTacticExtentionTests;
 
 import static java.util.Collections.singletonList;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.eventb.core.seqprover.ProverFactory.makeProofTree;
 import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingDischarge.DISCHARGE;
 import static org.eventb.core.seqprover.autoTacticExtentionTests.DefaultCombinatorTests.TracingFailure.FAILURE;

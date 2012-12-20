@@ -13,7 +13,7 @@ package org.eventb.core.ast.tests;
 
 import java.util.Stack;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;

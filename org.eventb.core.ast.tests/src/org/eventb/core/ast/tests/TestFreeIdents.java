@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
@@ -451,7 +451,7 @@ public class TestFreeIdents extends AbstractTests {
 	
 	// Check equality of arrays of identifiers, including source locations.
 	private void assertEqualsFI(String msg, FreeIdentifier[] expected, List<BoundIdentDecl> actual) {
-		junit.framework.Assert.assertEquals(msg, expected.length, actual.size());
+		org.junit.Assert.assertEquals(msg, expected.length, actual.size());
 		for (int i = 0; i < expected.length; i++) {
 			// Same name
 			assertEquals(msg, expected[i].getName(), actual.get(i).getName());

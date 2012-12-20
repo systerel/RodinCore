@@ -11,8 +11,8 @@
 package org.eventb.core.tests.indexers;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT1;
 import static org.eventb.core.tests.ResourceUtils.INTERNAL_ELEMENT2;
 import static org.eventb.core.tests.indexers.ListAssert.assertSameElements;

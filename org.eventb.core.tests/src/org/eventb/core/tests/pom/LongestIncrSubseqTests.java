@@ -1,6 +1,7 @@
 package org.eventb.core.tests.pom;
 
 import org.eventb.internal.core.pom.LongestIncrSubseq;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -27,7 +28,7 @@ public class LongestIncrSubseqTests {
 	}
 
 	private static void fail(int[] exp, int[] act) {
-		junit.framework.Assert.fail("expected: " + toString(exp) + " but was: " + toString(act));
+		Assert.fail("expected: " + toString(exp) + " but was: " + toString(act));
 	}
 
 	private static String toString(int[] seq) {

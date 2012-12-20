@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.fail;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import org.eventb.core.EventBPlugin;

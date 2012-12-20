@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.proofSimplifier;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.hyp;
 import static org.eventb.core.tests.ResourceUtils.CTX_BARE_NAME;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;

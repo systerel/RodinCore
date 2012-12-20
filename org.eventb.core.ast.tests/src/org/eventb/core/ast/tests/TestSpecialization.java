@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.fail;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;

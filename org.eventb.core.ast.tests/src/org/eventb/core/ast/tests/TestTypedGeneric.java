@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;

@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 

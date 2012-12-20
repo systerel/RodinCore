@@ -11,14 +11,14 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNotSame;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertSame;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.eventb.core.ast.AssociativeExpression.BCOMP_ID;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;

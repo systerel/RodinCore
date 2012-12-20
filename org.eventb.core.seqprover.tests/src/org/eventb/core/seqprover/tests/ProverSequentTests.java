@@ -15,6 +15,13 @@ package org.eventb.core.seqprover.tests;
 
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,8 +29,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
@@ -35,14 +40,13 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverLib;
 import org.eventb.internal.core.seqprover.IInternalProverSequent;
 import org.junit.Test;
-
 /**
  * Unit tests for Prover Sequents
  *
  * 
  * @author Farhad Mehta
  */
-public class ProverSequentTests extends TestCase{	
+public class ProverSequentTests {	
 	
 	public final static FormulaFactory factory = FormulaFactory.getDefault();
 	public final static Predicate True = factory.makeLiteralPredicate(Formula.BTRUE,null);

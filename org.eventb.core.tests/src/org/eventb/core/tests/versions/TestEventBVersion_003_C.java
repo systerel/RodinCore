@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IAxiom;

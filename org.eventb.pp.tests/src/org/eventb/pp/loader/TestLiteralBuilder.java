@@ -25,7 +25,7 @@
 //
 //import java.util.List;
 //
-//import junit.framework.TestCase;
+//import org.junit.TestCase;
 //
 //import org.eventb.core.ast.FormulaFactory;
 //import org.eventb.core.ast.ITypeEnvironment;

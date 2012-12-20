@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.proofSimplifier;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IAxiom;

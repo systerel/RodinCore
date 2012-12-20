@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.expander.tests;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;

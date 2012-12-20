@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;

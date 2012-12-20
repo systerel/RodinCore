@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 

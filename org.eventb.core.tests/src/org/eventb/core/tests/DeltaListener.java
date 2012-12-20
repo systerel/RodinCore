@@ -13,7 +13,7 @@
 package org.eventb.core.tests;
 
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

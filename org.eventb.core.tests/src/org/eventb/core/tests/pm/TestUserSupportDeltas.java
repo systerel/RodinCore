@@ -12,7 +12,7 @@
 package org.eventb.core.tests.pm;
 
 import static java.util.Collections.singleton;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
 import java.util.HashSet;

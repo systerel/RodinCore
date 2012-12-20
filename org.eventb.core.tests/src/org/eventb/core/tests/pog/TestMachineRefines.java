@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 import static org.eventb.core.IEvent.INITIALISATION;
 import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;

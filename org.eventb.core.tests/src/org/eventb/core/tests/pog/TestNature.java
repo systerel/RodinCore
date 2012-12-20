@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotSame;
-import static junit.framework.Assert.assertSame;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
 import org.eventb.core.pog.IPOGNature;
 import org.eventb.internal.core.pog.POGNatureFactory;

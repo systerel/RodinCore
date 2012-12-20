@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 
 import org.eventb.core.ast.BoundIdentDecl;

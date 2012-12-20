@@ -11,7 +11,7 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
@@ -43,7 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;

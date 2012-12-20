@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.tests.versions;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.IEvent;
 import org.eventb.core.IMachineRoot;

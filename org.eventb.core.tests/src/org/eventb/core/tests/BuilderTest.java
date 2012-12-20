@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.fail;
 import static org.eventb.core.EventBPlugin.getAutoPostTacticManager;
 import static org.eventb.core.EventBPlugin.getProofManager;
 import static org.eventb.core.EventBPlugin.getUserSupportManager;

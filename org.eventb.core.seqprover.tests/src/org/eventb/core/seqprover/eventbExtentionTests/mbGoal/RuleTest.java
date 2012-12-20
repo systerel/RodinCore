@@ -13,7 +13,7 @@ package org.eventb.core.seqprover.eventbExtentionTests.mbGoal;
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;

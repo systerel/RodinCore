@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.tests.FastFactory.mBecomesSuchThat;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;

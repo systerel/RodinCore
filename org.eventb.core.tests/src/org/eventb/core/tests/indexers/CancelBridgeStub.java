@@ -11,7 +11,7 @@
 package org.eventb.core.tests.indexers;
 
 import static org.eventb.core.tests.indexers.OccUtils.newDecl;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.IEventBRoot;
 import org.rodinp.core.IInternalElement;
@@ -110,15 +110,15 @@ public class CancelBridgeStub implements IIndexingBridge {
 	}
 
 	public void assertNumDecl(int expected) {
-		TestCase.assertEquals("bad number of declarations", expected, numDecl);
+		assertEquals("bad number of declarations", expected, numDecl);
 	}
 
 	public void assertNumOcc(int expected) {
-		TestCase.assertEquals("bad number of occurrences", expected, numOcc);
+		assertEquals("bad number of occurrences", expected, numOcc);
 	}
 
 	public void assertNumExp(int expected) {
-		TestCase.assertEquals("bad number of exports", expected, numExp);
+		assertEquals("bad number of exports", expected, numExp);
 	}
 
 	@Override

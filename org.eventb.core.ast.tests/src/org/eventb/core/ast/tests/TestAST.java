@@ -11,7 +11,7 @@
  *******************************************************************************/ 
 package org.eventb.core.ast.tests;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.INTLIT;
 import static org.eventb.core.ast.Formula.KBOOL;

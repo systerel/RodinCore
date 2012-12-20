@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eventb.core.tests.indexers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collection;
-
-import junit.framework.TestCase;
 
 /**
  * @author Nicolas Beauger
@@ -25,11 +26,11 @@ public class ListAssert {
 			Collection<T> actual, String listEltDesc) {
 		final String actExpString = ListAssert.makeActExpString(expected,
 				actual);
-		TestCase.assertEquals(listEltDesc + ": bad size in\n" + actExpString,
+		assertEquals(listEltDesc + ": bad size in\n" + actExpString,
 				expected.size(), actual.size());
 
 		final boolean containsAll = actual.containsAll(expected);
-		TestCase.assertTrue(listEltDesc + ": incorrect items in\n"
+		assertTrue(listEltDesc + ": incorrect items in\n"
 				+ actExpString, containsAll);
 	}
 
