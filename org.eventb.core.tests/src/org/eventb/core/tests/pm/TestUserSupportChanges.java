@@ -120,7 +120,7 @@ public class TestUserSupportChanges extends TestPM {
 						+ "** Searched **\n"
 						+ "Current node: null\n"
 						+ "****************************\n"
-						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
+						+ "Current psStatus: original PO[org.eventb.core.psStatus]\n"
 						+ "********************************************************\n");
 		PSWrapperUtil.removePO(poRoot, psRoot, prRoot, dischargedPO);
 		// Check the status of the User Support here
@@ -129,7 +129,7 @@ public class TestUserSupportChanges extends TestPM {
 				userSupport.toString(),
 				"****** User Support for: x ******\n"
 						+ "** Proof States **\n"
-						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
+						+ "Current psStatus: original PO[org.eventb.core.psStatus]\n"
 						+ "********************************************************\n");
 	}
 
@@ -166,7 +166,7 @@ public class TestUserSupportChanges extends TestPM {
 						+ "1 pending subgoals\n"
 						+ "\n"
 						+ "****************************\n"
-						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
+						+ "Current psStatus: original PO[org.eventb.core.psStatus]\n"
 						+ "********************************************************\n");
 		PSWrapperUtil.removePO(poRoot, psRoot, prRoot, originalPO);
 		// Check the status of the User Support here
@@ -175,7 +175,7 @@ public class TestUserSupportChanges extends TestPM {
 				userSupport.toString(),
 				"****** User Support for: x ******\n"
 						+ "** Proof States **\n"
-						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
+						+ "Current psStatus: original PO[org.eventb.core.psStatus]\n"
 						+ "********************************************************\n");
 	}
 
@@ -227,7 +227,7 @@ public class TestUserSupportChanges extends TestPM {
 						+ "** Searched **\n"
 						+ "Current node: null\n"
 						+ "****************************\n"
-						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
+						+ "Current psStatus: original PO[org.eventb.core.psStatus]\n"
 						+ "********************************************************\n");
 	}
 
@@ -303,7 +303,7 @@ public class TestUserSupportChanges extends TestPM {
 						+ "** Searched **\n"
 						+ "Current node: null\n"
 						+ "****************************\n"
-						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
+						+ "Current psStatus: original PO[org.eventb.core.psStatus]\n"
 						+ "********************************************************\n");
 	}
 
@@ -356,7 +356,7 @@ public class TestUserSupportChanges extends TestPM {
 						+ "** Searched **\n"
 						+ "Current node: null\n"
 						+ "****************************\n"
-						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
+						+ "Current psStatus: original PO[org.eventb.core.psStatus]\n"
 						+ "********************************************************\n");
 	}
 
@@ -419,7 +419,7 @@ public class TestUserSupportChanges extends TestPM {
 						+ "** Searched **\n"
 						+ "Current node: null\n"
 						+ "****************************\n"
-						+ "Current psSatus: original PO[org.eventb.core.psStatus]\n"
+						+ "Current psStatus: original PO[org.eventb.core.psStatus]\n"
 						+ "********************************************************\n");
 	}
 
@@ -492,7 +492,7 @@ public class TestUserSupportChanges extends TestPM {
 				"** Searched **\n" + 
 				"Current node: null\n" + 
 				"****************************\n" + 
-				"Current psSatus: original PO[org.eventb.core.psStatus]\n" + 
+				"Current psStatus: original PO[org.eventb.core.psStatus]\n" + 
 				"********************************************************\n");
 	}
 

@@ -547,6 +547,11 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	
 	@Override
 	public void elementChanged(final ElementChangedEvent event) {
+		if (pc == null) {
+			// No file to listen to yet
+			return;
+		}
+
 		final IProgressMonitor monitor = new NullProgressMonitor();
 		usDeltaProcessor = new UserSupportDeltaProcessor(this);
 		IRodinElementDelta delta = event.getDelta();
@@ -635,16 +640,27 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("****** User Support for: ");
-		buffer.append(this.getInput().getBareName() + " ******\n");
+		final StringBuffer buffer = new StringBuffer();
+		final IRodinFile input = this.getInput();
+		if (input == null) {
+			buffer.append("****** User Support with no proof component");
+		} else {
+			buffer.append("****** User Support for: ");
+			buffer.append(input.getBareName());
+		}
+		buffer.append(" ******\n");
 		buffer.append("** Proof States **\n");
-		IProofState[] tab = getPOs();
-		for (IProofState proofState : tab) {
+		final IProofState[] tab = getPOs();
+		for (final IProofState proofState : tab) {
 			buffer.append(proofState.toString());
 			buffer.append("\n");
 		}
-		buffer.append("Current psSatus: ");
-		buffer.append(currentPS.getPSStatus());
+		buffer.append("Current psStatus: ");
+		if (currentPS == null) {
+			buffer.append("not available");
+		} else {
+			buffer.append(currentPS.getPSStatus());
+		}
 		buffer.append("\n");
 		buffer.append("********************************************************\n");
 		return buffer.toString();

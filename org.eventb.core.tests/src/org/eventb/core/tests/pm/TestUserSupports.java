@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - added tests for additional getters of IProofState
+ *     Systerel - tests for NPE
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
@@ -18,6 +19,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -37,10 +39,14 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.pm.UserSupport;
+import org.eventb.internal.core.pm.UserSupportDeltaProcessor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -633,6 +639,55 @@ public class TestUserSupports extends TestPM {
 
 		currentPO.unloadProofTree();
 		assertIterable(currentPO.filterHypotheses(asList(hyp1, hyp4)));
+	}
+
+	/**
+	 * Ensures that one can ask for the String image of a fresh user support
+	 * before it has been attached some input.
+	 */
+	@Test
+	public void toStringWorksOnFreshUserSupport() {
+		final IUserSupport us = manager.newUserSupport();
+		us.toString();  // shall not raise an exception
+		us.dispose();
+	}
+
+	/**
+	 * Ensures that deltas can be processed for a fresh user support before it
+	 * has been attached some input.
+	 */
+	@Test
+	public void processDeltaWorksForFreshUserSupport() throws Exception {
+		final IUserSupport us = manager.newUserSupport();
+		final DeltaProcessorTest helper = new DeltaProcessorTest(us);
+		try {
+			RodinCore.addElementChangedListener(helper);
+			// Make a change to the database to generate a delta
+			psRoot.clear(false, null);
+		} finally {
+			RodinCore.removeElementChangedListener(helper);
+			us.dispose();
+		}
+	}
+
+	private static class DeltaProcessorTest implements IElementChangedListener {
+		private final UserSupport us;
+
+		public DeltaProcessorTest(IUserSupport us) {
+			this.us = (UserSupport) us;
+		}
+
+		@Override
+		public void elementChanged(ElementChangedEvent event) {
+			final UserSupportDeltaProcessor dp;
+			try {
+				dp = new UserSupportDeltaProcessor(us);
+				dp.processDelta(event.getDelta(), null);
+			} catch (Exception exc) {
+				fail("Delta processor raised " + exc);
+			}
+		}
+
 	}
 
 }
