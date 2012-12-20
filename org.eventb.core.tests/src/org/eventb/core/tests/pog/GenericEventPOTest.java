@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public class GenericEventPOTest extends GenericEventTest<EventBPOTest>
 		super(test);
 	}
 
+	@Override
 	public void addSuper(IEvent event, IEvent abs) throws RodinDBException {
 		final String absName = getMachineRoot(abs).getElementName();
 		test.addMachineRefines(getMachineRoot(event), absName);
@@ -37,6 +38,7 @@ public class GenericEventPOTest extends GenericEventTest<EventBPOTest>
 		return (IMachineRoot) event.getRoot();
 	}
 
+	@Override
 	public IPORoot getPOFile(IEvent event) throws RodinDBException {
 		final IEventBRoot root = (IEventBRoot) event.getRoot();
 		return root.getPORoot();

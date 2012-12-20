@@ -34,6 +34,7 @@ import org.rodinp.core.RodinDBException;
  */
 public abstract class BasicTest extends BuilderTest {
 	
+	@Override
 	protected void runBuilder() throws CoreException {
 		super.runBuilder();
 		checkPSFiles();

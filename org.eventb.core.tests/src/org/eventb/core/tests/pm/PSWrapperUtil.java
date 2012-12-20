@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,18 +35,19 @@ public class PSWrapperUtil {
 
 	public static void removePO(final IPORoot poRoot, final IPSRoot psRoot,
 			final IPRRoot prRoot, final String name) {
-		final IProgressMonitor monitor = new NullProgressMonitor();
+		final IProgressMonitor npm = new NullProgressMonitor();
 
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IPOSequent poSequent = poRoot.getSequent(name);
 					poSequent.delete(true, monitor);
 					saveRodinFileOf(poRoot);
 				}
 
-			}, monitor);
+			}, npm);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -54,6 +55,7 @@ public class PSWrapperUtil {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IPSStatus psStatus = psRoot.getStatus(name);
 					psStatus.delete(true, monitor);
@@ -61,7 +63,7 @@ public class PSWrapperUtil {
 					// Do not remove the corresponding prProof
 				}
 
-			}, monitor);
+			}, npm);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -69,11 +71,12 @@ public class PSWrapperUtil {
 
 	public static void copyPO(final IPORoot poRoot, final IPSRoot psRoot,
 			final IPRRoot prRoot, final String from, final String to) {
-		final IProgressMonitor monitor = new NullProgressMonitor();
+		final IProgressMonitor npm = new NullProgressMonitor();
 
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IPOSequent poSequentFrom = poRoot.getSequent(from);
 					// Find the correct sibling
@@ -92,7 +95,7 @@ public class PSWrapperUtil {
 					saveRodinFileOf(poRoot);
 				}
 
-			}, monitor);
+			}, npm);
 		} catch (RodinDBException e) {
 			e.printStackTrace();
 		}
@@ -100,6 +103,7 @@ public class PSWrapperUtil {
 		try {
 			RodinCore.run(new IWorkspaceRunnable() {
 
+				@Override
 				public void run(IProgressMonitor monitor) throws CoreException {
 					IPSStatus psStatusFrom = psRoot.getStatus(from);
 
@@ -135,7 +139,7 @@ public class PSWrapperUtil {
 					saveRodinFileOf(prRoot);
 				}
 
-			}, monitor);
+			}, npm);
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

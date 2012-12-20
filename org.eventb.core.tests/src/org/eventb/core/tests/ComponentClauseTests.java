@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -72,6 +72,7 @@ public class ComponentClauseTests extends BuilderTest {
 				IExtendsContext.ELEMENT_TYPE, null, null);
 		assertFalse(clause.hasAbstractContextName());
 		assertError(ATTRIBUTE_DOES_NOT_EXIST, clause, new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				clause.getAbstractContextRoot();
 			}
@@ -97,6 +98,7 @@ public class ComponentClauseTests extends BuilderTest {
 				null, null);
 		assertFalse(clause.hasSeenContextName());
 		assertError(ATTRIBUTE_DOES_NOT_EXIST, clause, new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				clause.getSeenContextRoot();
 			}
@@ -123,6 +125,7 @@ public class ComponentClauseTests extends BuilderTest {
 				IRefinesMachine.ELEMENT_TYPE, null, null);
 		assertFalse(clause.hasAbstractMachineName());
 		assertError(ATTRIBUTE_DOES_NOT_EXIST, clause, new IWorkspaceRunnable() {
+			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
 				clause.getAbstractMachineRoot();
 			}

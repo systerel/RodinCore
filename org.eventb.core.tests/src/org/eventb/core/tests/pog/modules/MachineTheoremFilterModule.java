@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2008 University of Southampton.
+ * Copyright (c) 2008, 2012 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     University of Southampton - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.tests.pog.modules;
 
@@ -22,32 +25,26 @@ public class MachineTheoremFilterModule extends POGFilterTestModule {
 	public static final IModuleType<MachineTheoremFilterModule> MODULE_TYPE = 
 		POGCore.getModuleType(PLUGIN_ID + ".machineTheoremFilterModule"); //$NON-NLS-1$
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pog.IPOGFilterModule#accept(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public boolean accept(String poName, IProgressMonitor monitor)
 			throws CoreException {
 		String[] strings = poName.split("/");
 		return !strings[strings.length-1].equals("THM");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pog.IPOGFilterModule#endModule(org.eventb.core.pog.state.IPOGStateRepository, org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void endModule(IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
+		// Nothing to do
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pog.IPOGFilterModule#initModule(org.eventb.core.pog.state.IPOGStateRepository, org.eclipse.core.runtime.IProgressMonitor)
-	 */
+	@Override
 	public void initModule(IPOGStateRepository repository,
 			IProgressMonitor monitor) throws CoreException {
+		// Nothing to do
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.tool.IModule#getModuleType()
-	 */
+	@Override
 	public IModuleType<?> getModuleType() {
 		return MODULE_TYPE;
 	}

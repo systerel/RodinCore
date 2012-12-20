@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,9 @@ package org.eventb.core.tests;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertSame;
+import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBProject;
@@ -43,11 +42,10 @@ public class EventBFileTest {
 	
 	private static final String BARE_NAME = "foo";
 
-	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	private static final IRodinProject rodinProject = RodinCore
+			.valueOf(getWorkspace().getRoot().getProject("P"));
 
-	IRodinProject rodinProject = RodinCore.valueOf(root.getProject("P"));
-
-	IEventBProject evbProject = (IEventBProject) rodinProject
+	private static final IEventBProject evbProject = (IEventBProject) rodinProject
 			.getAdapter(IEventBProject.class);
 
 	private void assertFileName(String name, IRodinFile file) {
@@ -66,7 +64,7 @@ public class EventBFileTest {
 	 *            an event-B file
 	 */
 	private void checkFileConversions(IRodinFile file) {
-		IEventBRoot root = (IEventBRoot)file.getRoot();
+		final IEventBRoot root = (IEventBRoot)file.getRoot();
 		final String bareName = file.getBareName();
 		assertEquals(bareName, root.getComponentName());
 		assertRootFileName("buc", root.getContextRoot());

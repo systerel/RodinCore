@@ -1,9 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 ETH Zurich.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.tests.tool;
 
@@ -24,6 +27,7 @@ import org.junit.Test;
  * @author Stefan Hallerstede
  *
  */
+@SuppressWarnings("synthetic-access")
 public class ModuleConfigGraphTest extends Declarations {
 	
 	private static class ShortProcDesc extends ProcDesc {
@@ -75,20 +79,14 @@ public class ModuleConfigGraphTest extends Declarations {
 	}
 	
 	private static abstract class ConfigTest {
-		protected final List<ModuleConfig> items;
-		ConfigTest(ConfigItem[] items) {
-			this.items = Arrays.asList( (ModuleConfig[]) items);
-		}
-		
 		protected abstract void test();
-	};
+	}
 	
 	private static class ClosureTest extends ConfigTest {
 		private final ConfigItem item;
 		private final Map<String, ConfigItem> map;
 		private final String closure;
 		public ClosureTest(ConfigItem[] items, ConfigItem item, String closure) {
-			super(items);
 			this.item = item;
 			this.closure = closure;
 			this.map = new HashMap<String, ConfigItem>(items.length * 4 / 3 + 1);

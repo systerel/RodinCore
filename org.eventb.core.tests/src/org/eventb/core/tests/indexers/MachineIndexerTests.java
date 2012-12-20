@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1110,19 +1110,6 @@ public class MachineIndexerTests extends EventBIndexerTests {
 
 	@Test
 	public void testBadFileType() throws Exception {
-		final String CST_1DECL_1REF_THM =
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-						+ "<org.eventb.core.contextFile org.eventb.core.configuration=\"org.eventb.core.fwd\" version=\"3\">"
-						+ "<org.eventb.core.constant"
-						+ "		name=\"internal_element1\""
-						+ "		org.eventb.core.identifier=\"cst1\"/>"
-						+ "<org.eventb.core.axiom"
-						+ "		name=\"internal_element1\""
-						+ "		org.eventb.core.label=\"thm1\""
-						+ "		org.eventb.core.predicate=\"∀i·i∈ℕ ⇒ cst1 = i\""
-						+ " 	org.eventb.core.theorem=\"true\"/>"
-						+ "</org.eventb.core.contextFile>";
-
 		final IContextRoot context =
 				ResourceUtils.createContext(rodinProject, CTX_BARE_NAME, CST_1DECL_1REF_THM);
 

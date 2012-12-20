@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,18 +35,22 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 		super(test);
 	}
 
+	@Override
 	public void containsIdents(ISCEvent element, String... strings) throws RodinDBException {
 		test.containsParameters(element, strings);
 	}
 
+	@Override
 	public void containsMarkers(IEvent element, boolean yes) throws CoreException {
 		test.containsMarkers(element, yes);
 	}
 
+	@Override
 	public void containsPredicates(ISCEvent element, ITypeEnvironment environment, String[] labels, String[] strings, boolean... derived) throws RodinDBException {
 		test.containsGuards(element, environment, labels, strings, derived);
 	}
 
+	@Override
 	public ISCEvent getSCElement(IEvent element) throws RodinDBException {
 		final IMachineRoot mchRoot = (IMachineRoot) element.getRoot();
 		final ISCMachineRoot scRoot = mchRoot.getSCMachineRoot();
@@ -55,14 +59,17 @@ public class GenericEventSCTest extends GenericEventTest<BasicSCTest> implements
 		return events[1];
 	}
 
+	@Override
 	public void save(IEvent element) throws RodinDBException {
 		saveRodinFileOf(element);
 	}
 
+	@Override
 	public IRodinElement[] getIdents(IEvent element) throws RodinDBException {
 		return element.getParameters();
 	}
 
+	@Override
 	public IRodinElement[] getPredicates(IEvent element) throws RodinDBException {
 		return element.getGuards();
 	}

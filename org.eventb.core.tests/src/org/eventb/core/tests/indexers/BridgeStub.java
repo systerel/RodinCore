@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,12 +61,14 @@ public class BridgeStub implements IIndexingBridge {
 		this.exports = new ArrayList<IDeclaration>();
 	}
 
+	@Override
 	public IDeclaration declare(IInternalElement element, String name) {
 		final IDeclaration declaration = newDecl(element, name);
 		declarations.add(declaration);
 		return declaration;
 	}
 
+	@Override
 	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
 			IInternalLocation location) {
 		final IOccurrence occurrence = newOcc(kind, location, declaration);
@@ -79,18 +81,22 @@ public class BridgeStub implements IIndexingBridge {
 		list.add(occurrence);
 	}
 
+	@Override
 	public void export(IDeclaration declaration) {
 		exports.add(declaration);
 	}
 
+	@Override
 	public IDeclaration[] getImports() {
 		return imports.toArray(new IDeclaration[imports.size()]);
 	}
 
+	@Override
 	public IInternalElement getRootToIndex() {
 		return root;
 	}
 
+	@Override
 	public boolean isCancelled() {
 		return false;
 	}
@@ -205,6 +211,7 @@ public class BridgeStub implements IIndexingBridge {
 		return result;
 	}
 
+	@Override
 	public IDeclaration[] getDeclarations() {
 		return declarations.toArray(new IDeclaration[declarations.size()]);
 	}

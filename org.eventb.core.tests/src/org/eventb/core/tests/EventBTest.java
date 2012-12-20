@@ -451,6 +451,7 @@ public abstract class EventBTest extends BuilderTest {
 			deltas = new ArrayList<IRodinElementDelta>();
 		}
 
+		@Override
 		public void elementChanged(ElementChangedEvent event) {
 			deltas.add(event.getDelta());
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ public class CancelBridgeStub implements IIndexingBridge {
 		this.cancel = cancel;
 	}
 
+	@Override
 	public void addOccurrence(IDeclaration declaration, IOccurrenceKind kind,
 			IInternalLocation location) {
 		numOcc++;
@@ -76,6 +77,7 @@ public class CancelBridgeStub implements IIndexingBridge {
 		}
 	}
 
+	@Override
 	public IDeclaration declare(IInternalElement element, String name) {
 		numDecl++;
 		if (numDecl >= maxDecl) {
@@ -84,6 +86,7 @@ public class CancelBridgeStub implements IIndexingBridge {
 		return newDecl(element, name);
 	}
 
+	@Override
 	public void export(IDeclaration declaration) {
 		numExp++;
 		if (numExp >= maxExp) {
@@ -91,14 +94,17 @@ public class CancelBridgeStub implements IIndexingBridge {
 		}
 	}
 
+	@Override
 	public IDeclaration[] getImports() {
 		return imports;
 	}
 
+	@Override
 	public IInternalElement getRootToIndex() {
 		return root;
 	}
 
+	@Override
 	public boolean isCancelled() {
 		return cancel;
 	}
@@ -115,6 +121,7 @@ public class CancelBridgeStub implements IIndexingBridge {
 		TestCase.assertEquals("bad number of exports", expected, numExp);
 	}
 
+	@Override
 	public IDeclaration[] getDeclarations() {
 		return new IDeclaration[0];
 	}

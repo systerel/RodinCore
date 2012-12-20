@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ implements IGenericElementTest<IMachineRoot> {
 	IEvent init;
 	int k = 0;
 	
+	@Override
 	public void addIdents(IMachineRoot element, String... names) throws RodinDBException {
 		test.addVariables(element, names);
 		IAction action = init.createChild(IAction.ELEMENT_TYPE, null, null);
@@ -37,10 +38,12 @@ implements IGenericElementTest<IMachineRoot> {
 		}
 	}
 
+	@Override
 	public void addPredicates(IMachineRoot element, String[] names, String[] nonTheorems, boolean...derived) throws RodinDBException {
 		test.addInvariants(element, names, nonTheorems, derived);
 	}
 
+	@Override
 	public IMachineRoot createElement(String bareName) throws RodinDBException {
 		IMachineRoot mac = test.createMachine(bareName);
 		init = test.addInitialisation(mac);

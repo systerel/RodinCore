@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,10 +26,12 @@ public class DummyConfigurationElement implements IConfigurationElement {
 
 	private static final IConfigurationElement[] NO_ELEMENTS = new IConfigurationElement[0];
 
+	@Override
 	public Object createExecutableExtension(String propertyName) {
 		return null;
 	}
 
+	@Override
 	public String getAttribute(String name) {
 		if (name.equals("input"))
 			return IContextRoot.ELEMENT_TYPE.getId();
@@ -37,62 +39,80 @@ public class DummyConfigurationElement implements IConfigurationElement {
 			return name;
 	}
 
+	@Override
 	public String getAttribute(String attrName, String locale) {
 		return getAttribute(attrName);
 	}
 
+	@Deprecated
+	@Override
 	public String getAttributeAsIs(String name) {
 		return name;
 	}
 
+	@Override
 	public String[] getAttributeNames() {
 		return new String[0];
 	}
 
+	@Override
 	public IConfigurationElement[] getChildren() {
 		return NO_ELEMENTS;
 	}
 
+	@Override
 	public IConfigurationElement[] getChildren(String name) {
 		return NO_ELEMENTS;
 	}
 
+	@Override
 	public IContributor getContributor() {
 		return null;
 	}
 
+	@Override
 	public IExtension getDeclaringExtension() {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return "name";
 	}
 
+	@Deprecated
+	@Override
 	public String getNamespace() {
 		return "org.name.bin";
 	}
 
+	@Override
 	public String getNamespaceIdentifier() {
 		return "org.name.bin";
 	}
 
+	@Override
 	public Object getParent() {
 		return null;
 	}
 
+	@Override
 	public String getValue() {
 		return "value";
 	}
 
+	@Override
 	public String getValue(String locale) {
 		return getValue();
 	}
 
+	@Deprecated
+	@Override
 	public String getValueAsIs() {
 		return "value";
 	}
 
+	@Override
 	public boolean isValid() {
 		return true;
 	}

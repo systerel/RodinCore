@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,16 +29,19 @@ public class ReasonerV2 extends EmptyInputReasoner implements
 	public static final String REASONER_ID = "org.eventb.core.tests.reasonerV2";
 	private static final int VERSION = 2;
 
+	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
 		return ProverFactory.makeProofRule(this, input, seq.goal(),
 				"It's always a success !", new IAntecedent[0]);
 	}
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 
+	@Override
 	public int getVersion() {
 		return VERSION;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,7 @@ public class AutoPOMTest extends BuilderTest {
 		checkProofsConsistent(prRoot, psRoot);
 		
 		// Checks that all POs are discharged except the last one.
-		IPSStatus[] prs = (IPSStatus[]) psRoot.getStatuses();
+		IPSStatus[] prs = psRoot.getStatuses();
 		for (int i = 0; i < prs.length - 1; i++) {
 			IPSStatus prSequent = prs[i];
 			assertDischarged(prSequent);

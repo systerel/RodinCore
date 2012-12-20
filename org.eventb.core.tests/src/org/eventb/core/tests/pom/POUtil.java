@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,7 +175,7 @@ public class POUtil {
 	/**
 	 * Adds a predicate set to the given PO file, using the given contents.
 	 * 
-	 * @param poFile
+	 * @param poRoot
 	 *            file in which to add the predicate set
 	 * @param setName
 	 *            name of the set
@@ -200,7 +200,7 @@ public class POUtil {
 	/**
 	 * Adds a PO to the given PO file with the supplied information.
 	 * 
-	 * @param poFile
+	 * @param poRoot
 	 *            file where to create the PO
 	 * @param poName
 	 *            name of the PO
@@ -232,7 +232,7 @@ public class POUtil {
 	/**
 	 * Adds a PO to the given PO file with the supplied information.
 	 * 
-	 * @param poFile
+	 * @param poRoot
 	 *            file where to create the PO
 	 * @param poName
 	 *            name of the PO

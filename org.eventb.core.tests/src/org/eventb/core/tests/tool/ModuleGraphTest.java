@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class ModuleGraphTest extends Declarations {
 		}
 		
 		protected abstract void test();
-	};
+	}
 	
 	private static class SortingTest extends ModuleTest {
 		private final String sorted;
@@ -78,6 +78,7 @@ public class ModuleGraphTest extends Declarations {
 				getAnalysedGraph();
 				fail("analysis should have failed");
 			} catch (Exception e) {
+				// Success
 			}
 			
 		}
@@ -176,13 +177,14 @@ public class ModuleGraphTest extends Declarations {
 				run();
 				fail("test should have failed");
 			} catch (Exception e) {
+				// Success
 			}
 			
 		}
 		
 	}
 	
-	private static final IInternalElementType<?>[][] types = 
+	private static final IInternalElementType<?>[][] TYPES = 
 		new IInternalElementType<?>[][] {
 			new IInternalElementType<?>[] {
 			},
@@ -197,6 +199,7 @@ public class ModuleGraphTest extends Declarations {
 	
 	private static IProcessorModule cProcessor = new IProcessorModule() {
 
+		@Override
 		public IModuleType<?> getModuleType() {
 			return ContextModule.MODULE_TYPE;
 		}
@@ -205,13 +208,14 @@ public class ModuleGraphTest extends Declarations {
 	
 	private static IProcessorModule mProcessor = new IProcessorModule() {
 
+		@Override
 		public IModuleType<?> getModuleType() {
 			return MachineModule.MODULE_TYPE;
 		}
 		
 	};
 	
-	private static final IModuleType<?>[][] mTypes = 
+	private static final IModuleType<?>[][] MTYPES = 
 		new IModuleType[][] {
 			new IModuleType[] {
 			},
@@ -338,10 +342,10 @@ public class ModuleGraphTest extends Declarations {
 				new FactoryTest(moduleDescs[11], moduleDescs[11][0],
 				"org.m.X, org.m.A, org.m.Y, org.m.B, org.m.C"),
 				// root modules must be unique for file element types
-				new FailingRootTest(moduleDescs[12], types[0]),
+				new FailingRootTest(moduleDescs[12], TYPES[0]),
 				// the right modules become roots
-				new GetRootTest(moduleDescs[13], types[1], mTypes[1]),
-				new GetRootTest(moduleDescs[14], types[2], mTypes[2]),
+				new GetRootTest(moduleDescs[13], TYPES[1], MTYPES[1]),
+				new GetRootTest(moduleDescs[14], TYPES[2], MTYPES[2]),
 				// the root module has the right children
 				new FactoryTest(moduleDescs[15], moduleDescs[15][0], "org.m.A, org.m.B, org.m.C"),
 		};

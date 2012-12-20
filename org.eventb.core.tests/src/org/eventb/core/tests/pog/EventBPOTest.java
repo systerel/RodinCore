@@ -133,7 +133,7 @@ public abstract class EventBPOTest extends EventBTest {
 	}
 	
 	public IPOSequent getSequent(IPORoot root, String name) {
-		IPOSequent sequent = (IPOSequent) root.getInternalElement(IPOSequent.ELEMENT_TYPE, name);
+		IPOSequent sequent = root.getInternalElement(IPOSequent.ELEMENT_TYPE, name);
 		
 		assertTrue("sequent should exist: " + name, sequent.exists());
 		

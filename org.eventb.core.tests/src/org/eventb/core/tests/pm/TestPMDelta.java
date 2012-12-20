@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     ETH Zurich - initial API and implementation
+ *******************************************************************************/
 package org.eventb.core.tests.pm;
 
 import static junit.framework.Assert.assertTrue;
@@ -15,10 +25,7 @@ public abstract class TestPMDelta extends TestPM implements
 	List<IUserSupportManagerDelta> deltas;
 
 	/**
-	 * Starts recording delta for the given proof tree.
-	 * 
-	 * @param tree
-	 *            the proof tree for which deltas should get recorded
+	 * Starts recording delta from the user support manager.
 	 */
 	void startDeltas() {
 		deltas = new ArrayList<IUserSupportManagerDelta>();
@@ -26,10 +33,7 @@ public abstract class TestPMDelta extends TestPM implements
 	}
 
 	/**
-	 * Stops recording delta for the given proof tree.
-	 * 
-	 * @param tree
-	 *            the proof tree for which deltas should not be recorded
+	 * Stops recording delta from the user support manager.
 	 */
 	void stopDeltas() {
 		manager.removeChangeListener(this);
@@ -56,6 +60,7 @@ public abstract class TestPMDelta extends TestPM implements
 		}
 	}
 
+	@Override
 	public void userSupportManagerChanged(IUserSupportManagerDelta delta) {
 		assertTrue(deltas != null);
 		deltas.add(delta);

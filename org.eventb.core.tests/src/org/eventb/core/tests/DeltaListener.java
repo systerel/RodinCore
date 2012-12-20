@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,6 +76,7 @@ public class DeltaListener implements IElementChangedListener {
 		stackTraces = new ByteArrayOutputStream();
 	}
 
+	@Override
 	public void elementChanged(ElementChangedEvent ev) {
 		IRodinElementDelta[] copy = new IRodinElementDelta[deltas.length + 1];
 		System.arraycopy(deltas, 0, copy, 0, deltas.length);
@@ -88,6 +89,7 @@ public class DeltaListener implements IElementChangedListener {
 
 	private void sortDeltas(IRodinElementDelta[] elementDeltas) {
 		Comparator<IRodinElementDelta> comparator = new Comparator<IRodinElementDelta>() {
+			@Override
 			public int compare(IRodinElementDelta deltaA,
 					IRodinElementDelta deltaB) {
 				return deltaA.getElement().getElementName().compareTo(
