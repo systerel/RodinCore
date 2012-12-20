@@ -501,34 +501,30 @@ public final class Lib {
 
 	/**
 	 * Type checks a formula and returns <code>true</code> iff no new type
-	 * information was infreed from this type check (i.e. the formula contains
+	 * information was inferred from this type check (i.e. the formula contains
 	 * only free identifiers present in the type environment provided).
 	 * 
 	 * @param formula
 	 *            The formula to type check
 	 * @param typEnv
-	 *            The type environemnt to use for this check
+	 *            The type environment to use for this check
 	 * @return <code>true</code> iff the type check was successful and no new
-	 *         type information was infered from this type check
+	 *         type information was inferred from this type check
 	 */
 	public static boolean typeCheckClosed(Formula<?> formula,
 			ITypeEnvironment typEnv) {
-		ITypeCheckResult tcr = formula.typeCheck(typEnv);
-		// new free variables introduced?
-		if (tcr.isSuccess()) {
-			return tcr.getInferredEnvironment().isEmpty();
-		}
-		return false;
+		final ITypeCheckResult tcr = formula.typeCheck(typEnv);
+		return typeCheckClosed(tcr);
 	}
 
 	public static boolean isWellTypedInstantiation(Expression e, Type expT,
 			ITypeEnvironment te) {
-		ITypeCheckResult tcr = e.typeCheck(te, expT);
-		// new free variables introduced?
-		if (tcr.isSuccess()) {
-			return tcr.getInferredEnvironment().isEmpty();
-		}
-		return false;
+		final ITypeCheckResult tcr = e.typeCheck(te, expT);
+		return typeCheckClosed(tcr);
+	}
+	
+	private static boolean typeCheckClosed(ITypeCheckResult tcr) {
+		return tcr.isSuccess() && tcr.getInferredEnvironment().isEmpty();
 	}
 
 	public static boolean isFunApp(Formula<?> formula) {
