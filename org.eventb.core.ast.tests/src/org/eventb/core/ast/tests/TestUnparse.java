@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,6 +88,7 @@ import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.tests.Common.TagSupply;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -1631,7 +1632,9 @@ public class TestUnparse extends AbstractTests {
 	 * Ensures that a quantified expression which cannot be parsed back as
 	 * Implicit is unparsed in Explicit form.
 	 */
-	public void disabled_testQuantifiedExpressionOrder() throws Exception {
+	@Ignore("Known limitation of the pretty-print.")
+	@Test
+	public void testQuantifiedExpressionOrder() throws Exception {
 		// Lambda with inverted pattern
 		routineTestStringExpression(
 				"{x ↦ y ↦ x+y ∣ ⊤}", 

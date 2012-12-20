@@ -97,7 +97,7 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 				msgAxioms + "|- sender(message(a ↦ b ↦ c)) = a");
 	}
 
-	public void testSequentTranslation(String typeEnvStr, String sequentImage,
+	private void testSequentTranslation(String typeEnvStr, String sequentImage,
 			String expectedImage) {
 		final IDatatypeExtension dt = injectExtension(msgDatatypeSpec);
 		final IDatatype datatype = ff.makeDatatype(dt);

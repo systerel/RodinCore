@@ -42,6 +42,7 @@ import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.
 import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.OneOrMore;
 import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.Two;
 import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.Zero;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -278,6 +279,8 @@ public class AutoTacticRegistryTest {
 		return null;
 	}
 	
+	@Ignore("Not implemented yet")
+	@Test
 	public void testgetInstanceUninstantiatedParamDesc() throws Exception {
 		fail("to be implemented");
 	}
@@ -423,6 +426,7 @@ public class AutoTacticRegistryTest {
 		assertEquals(FakeTacComb.MESSAGE, result);
 	}
 	
+	@Test
 	public void testgetInstanceUninstantiatedCombinedDesc() throws Exception {
 		
 	}
