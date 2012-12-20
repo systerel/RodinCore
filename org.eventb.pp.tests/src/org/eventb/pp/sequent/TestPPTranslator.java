@@ -13,6 +13,7 @@ package org.eventb.pp.sequent;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
+import static org.eventb.pp.TestSequent.makeSequent;
 
 import java.util.List;
 
@@ -67,24 +68,14 @@ public class TestPPTranslator extends AbstractRodinTest {
 	private static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
 
 	private static ISimpleSequent makeInputSequent(ITypeEnvironment typenv,
-			List<String> hyps, String goal, FormulaFactory factory) {
-		return TestSequent.makeSequent(typenv, hyps, goal, factory);
-	}
-
-	private static ISimpleSequent makeInputSequent(ITypeEnvironment typenv,
 			List<String> hyps, String goal) {
-		return makeInputSequent(typenv, hyps, goal, ff);
+		return makeSequent(typenv, hyps, goal);
 	}
 
 	private static TestSequent makeTestSequent(ITypeEnvironment typenv,
-	List<String> hyps, final String goal, FormulaFactory factory) {
-		return new TestSequent(typenv, hyps, goal, factory);
+			List<String> hyps, String goal) {
+		return new TestSequent(typenv, hyps, goal);
 	}
-	
-	private static TestSequent makeTestSequent(ITypeEnvironment typenv,
-			List<String> hyps, final String goal) {
-				return makeTestSequent(typenv, hyps, goal, ff);
-			}
 			
 	/**
 	 * Ensures that a closed sequent is properly normalized and translated.
@@ -159,9 +150,9 @@ public class TestPPTranslator extends AbstractRodinTest {
 				"∀y⦂DT,z⦂DT·y=z");
 		final List<String> transHyps = asList("a = 0");
 		final String goal = "a < a";
-		final ISimpleSequent is = makeInputSequent(tEnv, inHyps, goal, DT_FF);
+		final ISimpleSequent is = makeInputSequent(tEnv, inHyps, goal);
 		final TestSequent exp = makeTestSequent(mTypeEnvironment("a=ℤ", DT_FF),
-				transHyps, goal, DT_FF);
+				transHyps, goal);
 		exp.assertTranslatedSequentOf(is);
 	}
 
@@ -173,9 +164,9 @@ public class TestPPTranslator extends AbstractRodinTest {
 	public void testExtensionsInGoal() throws Exception {
 		final ITypeEnvironment tEnv = mTypeEnvironment("p=DT; a=ℤ", DT_FF);
 		final List<String> hyp = asList("a = 0");
-		final ISimpleSequent is = makeInputSequent(tEnv, hyp, "p = dt", DT_FF);
+		final ISimpleSequent is = makeInputSequent(tEnv, hyp, "p = dt");
 		final TestSequent expected = makeTestSequent(
-				mTypeEnvironment("a=ℤ", ff), hyp, "⊥", DT_FF);
+				mTypeEnvironment("a=ℤ", ff), hyp, "⊥");
 		expected.assertTranslatedSequentOf(is);
 	}
 
@@ -189,9 +180,9 @@ public class TestPPTranslator extends AbstractRodinTest {
 		final List<String> inHyps = asList("a = 0", "x ∈ DT");
 		final List<String> transHyps = asList("a = 0");
 		final String goal = "∀y⦂DT·y=x";
-		final ISimpleSequent is = makeInputSequent(tEnv, inHyps, goal, DT_FF);
+		final ISimpleSequent is = makeInputSequent(tEnv, inHyps, goal);
 		final TestSequent exp = makeTestSequent(mTypeEnvironment("a=ℤ", DT_FF),
-				transHyps, "⊥", DT_FF);
+				transHyps, "⊥");
 		exp.assertTranslatedSequentOf(is);
 	}
 

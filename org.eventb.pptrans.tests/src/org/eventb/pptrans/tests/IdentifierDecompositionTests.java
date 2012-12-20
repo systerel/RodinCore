@@ -14,6 +14,7 @@ package org.eventb.pptrans.tests;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryExpression;
@@ -31,7 +32,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
-import org.eventb.core.ast.tests.FastFactory;
 import org.eventb.pptrans.Translator;
 import org.junit.Test;
 
@@ -44,7 +44,7 @@ import org.junit.Test;
 @SuppressWarnings({ "deprecation", "javadoc" })
 public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	
-	protected final ITypeEnvironmentBuilder te = FastFactory.mTypeEnvironment(
+	protected final ITypeEnvironmentBuilder te = mTypeEnvironment(
 			"S=ℙ(S); T=ℙ(T); U=ℙ(U); V=ℙ(V)", ff);
 
 	private static void assertDecomposed(Predicate pred) {

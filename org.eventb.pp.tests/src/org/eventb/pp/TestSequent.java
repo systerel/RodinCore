@@ -57,7 +57,8 @@ public class TestSequent {
 	}
 
 	public static ISimpleSequent makeSequent(ITypeEnvironment initTypeEnv,
-			Iterable<String> hypotheses, String goal, FormulaFactory ff) {
+			Iterable<String> hypotheses, String goal) {
+		final FormulaFactory ff = initTypeEnv.getFormulaFactory();
 		final List<Predicate> pHyps = parseHypotheses(hypotheses, ff);
 		final Predicate pGoal = parsePredicate(goal, ff);
 		final ITypeEnvironmentBuilder typeEnv = initTypeEnv.makeBuilder();
@@ -83,8 +84,8 @@ public class TestSequent {
 	}
 	
 	public TestSequent(ITypeEnvironment typenv, Iterable<String> hypotheses,
-				String goal, FormulaFactory ff) {
-		this(makeSequent(typenv, hypotheses, goal, ff));
+				String goal) {
+		this(makeSequent(typenv, hypotheses, goal));
 	}
 	
 	public ISealedTypeEnvironment typeEnvironment() {

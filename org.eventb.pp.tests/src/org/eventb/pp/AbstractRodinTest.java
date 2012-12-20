@@ -67,15 +67,13 @@ public abstract class AbstractRodinTest extends AbstractPPTest {
 
 	protected static void doTest(ITypeEnvironment typenv,
 			Set<String> hypotheses, String goal, boolean result) {
-		final ISimpleSequent sequent = makeSequent(typenv, hypotheses, goal,
-				typenv.getFormulaFactory());
+		final ISimpleSequent sequent = makeSequent(typenv, hypotheses, goal);
 		new TestItem(sequent, result).run();
 	}
 
 	protected static void doTest(ITypeEnvironment typenv,
 			Set<String> hypotheses, String goal, boolean result, int timeout) {
-		final ISimpleSequent sequent = makeSequent(typenv, hypotheses, goal,
-				typenv.getFormulaFactory());
+		final ISimpleSequent sequent = makeSequent(typenv, hypotheses, goal);
 		new TestItem(sequent, result, timeout).run();
 	}
 }
