@@ -13,15 +13,19 @@ package org.eventb.core.seqprover.tests;
 
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
@@ -360,19 +364,58 @@ public class TestLib {
 	 *            The string version of the predicate
 	 * @param typeEnv
 	 *            The type environment to check the predicate with
-	 * @return The type checked predicate
+	 * @return the type checked predicate
 	 */
 	public static Predicate genPred(ITypeEnvironmentBuilder typeEnv, String str) {
 		final DLib lib = mDLib(typeEnv.getFormulaFactory());
 		final Predicate result = lib.parsePredicate(str);
 		if (result == null)
 			throw new IllegalArgumentException("Invalid predicate: " + str);
-		final ITypeCheckResult tcResult = result.typeCheck(typeEnv);
-		if (!tcResult.isSuccess())
-			throw new IllegalArgumentException("Predicate: " + result
-					+ " does not typecheck in environment " + typeEnv);
-		typeEnv.addAll(tcResult.getInferredEnvironment());
+		typeCheck(typeEnv, result);
 		return result;
+	}
+	
+	/**
+	 * Generates a type checked predicate from a string and a type environment.
+	 * This version does not modify the given type environment.
+	 * 
+	 * @param str
+	 *            The string version of the predicate
+	 * @param typeEnv
+	 *            The type environment to check the predicate with
+	 * @return the type checked predicate
+	 */
+	public static Predicate genPred(ISealedTypeEnvironment typeEnv, String str) {
+		final DLib lib = mDLib(typeEnv.getFormulaFactory());
+		final Predicate result = lib.parsePredicate(str);
+		if (result == null)
+			throw new IllegalArgumentException("Invalid predicate: " + str);
+		typeCheck(typeEnv, result);
+		return result;
+	}
+
+	private static void typeCheck(ITypeEnvironmentBuilder typeEnv,
+			Formula<?> formula) {
+		final ITypeCheckResult tcResult = doTypeCheck(typeEnv, formula);
+		typeEnv.addAll(tcResult.getInferredEnvironment());
+	}
+
+	private static void typeCheck(ISealedTypeEnvironment typeEnv,
+			Formula<?> formula) {
+		final ITypeCheckResult tcResult = doTypeCheck(typeEnv, formula);
+		final ITypeEnvironment inferred = tcResult.getInferredEnvironment();
+		if (!inferred.isEmpty())
+			throw new IllegalArgumentException("Formula " + formula
+					+ " generates inferred identifiers " + inferred);
+	}
+
+	private static ITypeCheckResult doTypeCheck(ITypeEnvironment typeEnv,
+			Formula<?> formula) {
+		final ITypeCheckResult tcResult = formula.typeCheck(typeEnv);
+		if (!tcResult.isSuccess())
+			throw new IllegalArgumentException("Formula " + formula
+					+ " does not typecheck in environment " + typeEnv);
+		return tcResult;
 	}
 	
 	/**
@@ -387,7 +430,7 @@ public class TestLib {
 
 	
 	/**
-	 * A Set version of {@link #genPred(ITypeEnvironment, String)}
+	 * A Set version of {@link #genPred(ITypeEnvironmentBuilder, String)}
 	 * 
 	 * @param strs
 	 * @return
@@ -395,6 +438,36 @@ public class TestLib {
 	public static LinkedHashSet<Predicate> genPreds(ITypeEnvironmentBuilder typeEnv,
 			String... strs) {
 		final LinkedHashSet<Predicate> hyps = new LinkedHashSet<Predicate>(
+				strs.length * 4 / 3);
+		for (String s : strs)
+			hyps.add(genPred(typeEnv, s));
+		return hyps;
+	}
+
+	/**
+	 * A Set version of {@link #genPred(ISealedTypeEnvironment, String)}
+	 * 
+	 * @param strs
+	 * @return
+	 */
+	public static LinkedHashSet<Predicate> genPreds(
+			ISealedTypeEnvironment typeEnv, String... strs) {
+		final LinkedHashSet<Predicate> hyps = new LinkedHashSet<Predicate>(
+				strs.length * 4 / 3);
+		for (String s : strs)
+			hyps.add(genPred(typeEnv, s));
+		return hyps;
+	}
+
+	/**
+	 * A List version of {@link #genPred(ITypeEnvironmentBuilder, String)}
+	 * 
+	 * @param strs
+	 * @return
+	 */
+	public static List<Predicate> genPredList(ITypeEnvironmentBuilder typeEnv,
+			String... strs) {
+		final List<Predicate> hyps = new ArrayList<Predicate>(
 				strs.length * 4 / 3);
 		for (String s : strs)
 			hyps.add(genPred(typeEnv, s));
@@ -410,17 +483,31 @@ public class TestLib {
 	 *            The string version of the expression
 	 * @param typeEnv
 	 *            The type environment to check the expression with
-	 * @return The type checked expression
+	 * @return the type checked expression
 	 */
 	public static Expression genExpr(ITypeEnvironmentBuilder typeEnv, String str) {
 		final Expression result = mDLib(ff).parseExpression(str);
 		if (result == null)
 			throw new IllegalArgumentException("Invalid expression: " + str);
-		final ITypeCheckResult tcResult = result.typeCheck(typeEnv);
-		if (!tcResult.isSuccess())
-			throw new IllegalArgumentException("Expression: " + result
-					+ " does not typecheck in environment " + typeEnv);
-		typeEnv.addAll(tcResult.getInferredEnvironment());
+		typeCheck(typeEnv, result);
+		return result;
+	}
+	
+	/**
+	 * Generates a type checked expression from a string and a type environment.
+	 * This version does not modify the given type environment.
+	 * 
+	 * @param str
+	 *            The string version of the expression
+	 * @param typeEnv
+	 *            The type environment to check the expression with
+	 * @return the type checked expression
+	 */
+	public static Expression genExpr(ISealedTypeEnvironment typeEnv, String str) {
+		final Expression result = mDLib(ff).parseExpression(str);
+		if (result == null)
+			throw new IllegalArgumentException("Invalid expression: " + str);
+		typeCheck(typeEnv, result);
 		return result;
 	}
 	

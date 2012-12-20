@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.internal.core.seqprover.proofBuilder;
 
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ISimpleVisitor2;
+import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -53,15 +53,14 @@ import org.eventb.core.ast.UnaryPredicate;
  * 
  * @since 2.0
  */
-
 public class PredicateDecomposer implements ISimpleVisitor2 {
 
 	private final Set<Predicate> subGoals;
 	private ISealedTypeEnvironment env;
 
-	public PredicateDecomposer(ISealedTypeEnvironment env) {
+	public PredicateDecomposer(ITypeEnvironment env) {
 		this.subGoals = new HashSet<Predicate>();
-		this.env = env;
+		this.env = env.makeSnapshot();
 	}
 
 	/**

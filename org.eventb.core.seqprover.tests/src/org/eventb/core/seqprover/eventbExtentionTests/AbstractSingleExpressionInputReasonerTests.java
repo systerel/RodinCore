@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import static org.eventb.core.seqprover.tests.TestLib.genExpr;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -44,8 +46,8 @@ public abstract class AbstractSingleExpressionInputReasonerTests extends Abstrac
 
 		SuccessfullReasonerApplication makeSuccessfullReasonerApplication() {
 			final IProverSequent sequent = TestLib.genSeq(sequentImage);
-			final ITypeEnvironmentBuilder te = sequent.typeEnvironment().makeBuilder();
-			final IReasonerInput input = makeInput(TestLib.genExpr(te, expressionImage));
+			final ISealedTypeEnvironment te = sequent.typeEnvironment();
+			final IReasonerInput input = makeInput(genExpr(te, expressionImage));
 			return new SuccessfullReasonerApplication(sequent, input, results);
 		}
 

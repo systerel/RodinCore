@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 ETH Zurich and others.
+ * Copyright (c) 2009, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@
 package org.eventb.core.seqprover.rewriterTests;
 
 import static org.eventb.core.ast.FormulaFactory.makePosition;
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -30,7 +32,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -144,11 +146,10 @@ public class TotalDomRewriterTests {
 
 	@Test
 	public void testInHypothesis() throws Exception {
-		final IProverSequent seq = TestLib.genSeq("f∈ℕ→ℕ ;; dom(f)=ℕ |- ⊥");
-		final ITypeEnvironmentBuilder typeEnv = seq.typeEnvironment()
-				.makeBuilder();
-		final Predicate neededHyp = TestLib.genPred(typeEnv, "f∈ℕ→ℕ");
-		final Predicate toRewrite = TestLib.genPred(typeEnv, "dom(f)=ℕ");
+		final IProverSequent seq = genSeq("f∈ℕ→ℕ ;; dom(f)=ℕ |- ⊥");
+		final ISealedTypeEnvironment typeEnv = seq.typeEnvironment();
+		final Predicate neededHyp = genPred(typeEnv, "f∈ℕ→ℕ");
+		final Predicate toRewrite = genPred(typeEnv, "dom(f)=ℕ");
 
 		assertSubstitutions(seq, ID_F, mList(NAT), mList(neededHyp));
 
