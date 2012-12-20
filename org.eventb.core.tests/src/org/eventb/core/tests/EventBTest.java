@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,8 +47,6 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
-import org.junit.After;
-import org.junit.Before;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
@@ -436,7 +434,7 @@ public abstract class EventBTest extends BuilderTest {
 		return assn.toStringWithTypes();
 	}
 
-	public Set<IEventBRoot> roots;
+	public Set<IEventBRoot> roots = new HashSet<IEventBRoot>();
 	
 	@Override
 	protected void runBuilder() throws CoreException {
@@ -526,16 +524,6 @@ public abstract class EventBTest extends BuilderTest {
 	protected void addRoot(IEventBRoot root) {
 		if (!roots.contains(root))
 			roots.add(root);
-	}
-
-	@Before
-	public void setUpEBT() throws Exception {
-		roots = new HashSet<IEventBRoot>();
-	}
-
-	@After
-	public void tearDownEBT() throws Exception {
-		roots = null;
 	}
 
 }

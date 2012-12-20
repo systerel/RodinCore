@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.core.tests.autocompletion;
 
 import static java.util.Arrays.asList;
@@ -31,12 +30,10 @@ import org.eventb.core.IWitness;
 import org.eventb.core.tests.BuilderTest;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.autocompletion.AutoCompletion;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.location.IAttributeLocation;
-import org.rodinp.internal.core.debug.DebugHelpers;
 /**
  * @author Nicolas Beauger
  * 
@@ -220,14 +217,8 @@ public class AutoCompletionTests extends BuilderTest {
 		+ "</org.eventb.core.machineFile>";
 	
 	@Before
-	public void setUpACT() throws Exception {
-		DebugHelpers.enableIndexing();
-	}
-
-	@After
-	public void tearDownACT() throws Exception {
-		DebugHelpers.disableIndexing();
-		
+	public void turnOnIndexing() throws Exception {
+		enableIndexing();
 	}
 
 	private void doTest(IAttributeLocation location, String... expected) {

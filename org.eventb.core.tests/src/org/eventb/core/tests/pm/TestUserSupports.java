@@ -40,7 +40,6 @@ import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.internal.core.pm.UserSupport;
 import org.eventb.internal.core.pm.UserSupportDeltaProcessor;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.ElementChangedEvent;
@@ -75,21 +74,15 @@ public class TestUserSupports extends TestPM {
 	}
 
 	@Before
-	public void setUpTUS() throws Exception {
-		disablePostTactic();
+	public void createUserSupport() throws Exception {
 		enableTestAutoProver();
 		
-		poRoot = createPOFile("x");
+		poRoot = createPOFileWithContents("x");
 		psRoot = poRoot.getPSRoot();
 		runBuilder();
 		userSupport = newUserSupport(psRoot);
 	}
 	
-	@After
-	public void tearDownTUS() throws Exception {
-		userSupport.dispose();
-	}
-
 	@Test
 	public void testSetInput() throws CoreException {
 		// Select the first undischarged PO.

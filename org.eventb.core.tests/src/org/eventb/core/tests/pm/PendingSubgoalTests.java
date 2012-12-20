@@ -39,7 +39,6 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IRodinFile;
@@ -132,7 +131,7 @@ public class PendingSubgoalTests extends TestPM {
 	}
 	
 	@Before
-	public void setUpPST() throws Exception {
+	public void createProofFiles() throws Exception {
 		disablePostTactic();
 
 		poRoot = createPOFile();
@@ -143,11 +142,6 @@ public class PendingSubgoalTests extends TestPM {
 		runBuilder();
 
 		userSupport = newUserSupport(psRoot);
-	}
-
-	@After
-	public void tearDownPST() throws Exception {
-		userSupport.dispose();		
 	}
 
 	private void setCurrentPO(String poName) throws RodinDBException {

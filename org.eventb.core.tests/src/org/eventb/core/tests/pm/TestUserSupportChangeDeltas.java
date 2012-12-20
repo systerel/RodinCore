@@ -23,7 +23,6 @@ import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IRodinFile;
@@ -59,7 +58,7 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 	private static IPOPredicateSet hyp1;
 
 	@Before
-	public void setUpTUSCD() throws Exception {
+	public void createProofFiles() throws Exception {
 		poRoot = createPOFile("x");
 		psRoot = poRoot.getPSRoot();
 		prRoot = poRoot.getPRRoot();
@@ -76,17 +75,10 @@ public class TestUserSupportChangeDeltas extends TestPMDelta {
 	}
 
 	@Override
-	IPORoot createPOFile(String fileName) throws RodinDBException {
+	protected IPORoot createPOFile(String fileName) throws RodinDBException {
 		IRodinFile poFile = rodinProject.getRodinFile(fileName + ".bpo");
 		poFile.create(true, null);
 		return (IPORoot) poFile.getRoot();
-	}
-
-	@After
-	public void tearDownTUSCD() throws Exception {
-		if (userSupport != null) {
-			userSupport.dispose();
-		}
 	}
 
 	@Test

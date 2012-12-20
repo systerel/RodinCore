@@ -42,7 +42,7 @@ public class TestUserSupportManagers extends TestPM {
 
 	@Before
 	public void createPSFiles() throws Exception {
-		final IPORoot poRoot1 = createPOFile("x");
+		final IPORoot poRoot1 = createPOFileWithContents("x");
 		psFile1 = poRoot1.getPSRoot().getRodinFile();
 
 		final IPORoot poRoot2 = createPOFile("y");

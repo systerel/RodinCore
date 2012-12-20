@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -40,11 +40,8 @@ public class OriginTest extends EventBPOTest {
 	private IContextRoot ctx;
 
 	@Before
-	public void setUpOT() throws Exception {
+	public void createInitialContext() throws Exception {
 		ctx = createContext("ctx_origin");
-		disablePostTactic();
-		disableAutoProver();
-
 	}
 
 	protected static void disablePostTactic() {

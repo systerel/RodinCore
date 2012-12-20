@@ -19,6 +19,7 @@ import static org.eventb.core.EventBPlugin.getProofManager;
 import static org.eventb.core.EventBPlugin.getUserSupportManager;
 import static org.eventb.core.seqprover.SequentProver.getAutoTacticRegistry;
 import static org.eventb.core.tests.ResourceUtils.importProjectFiles;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,10 +75,34 @@ public abstract class BuilderTest {
 
 	protected IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-	public BuilderTest() {
-		super();
+	////////////////////////////////////////////////////////////////
+	//
+	//  Creating and importing Rodin projects
+	//
+	////////////////////////////////////////////////////////////////
+
+	protected IRodinProject createRodinProject(String projectName)
+			throws CoreException {
+		IProject project = workspace.getRoot().getProject(projectName);
+		project.create(null);
+		project.open(null);
+		IProjectDescription pDescription = project.getDescription();
+		pDescription.setNatureIds(new String[] {RodinCore.NATURE_ID});
+		project.setDescription(pDescription, null);
+		IRodinProject result = RodinCore.valueOf(project);
+		return result;
 	}
 	
+	protected void importProject(String prjName) throws Exception {
+		importProjectFiles(rodinProject.getProject(), prjName);
+	}
+
+	////////////////////////////////////////////////////////////////
+	//
+	//  Creating and saving event-B files
+	//
+	////////////////////////////////////////////////////////////////
+
 	protected IContextRoot createContext(String bareName) throws RodinDBException {
 		final IContextRoot result = eventBProject.getContextRoot(bareName);
 		createRodinFileOf(result);
@@ -116,7 +141,13 @@ public abstract class BuilderTest {
 	public static void saveRodinFileOf(IInternalElement elem) throws RodinDBException {
 		elem.getRodinFile().save(null, false);
 	}
-	
+
+	////////////////////////////////////////////////////////////////
+	//
+	//  Building projects
+	//
+	////////////////////////////////////////////////////////////////
+
 	protected void runBuilder() throws CoreException {
 		runBuilder(rodinProject);
 	}
@@ -124,13 +155,13 @@ public abstract class BuilderTest {
 	protected void runBuilder(IRodinProject rp) throws CoreException {
 		final IProject project = rp.getProject();
 		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
-		IMarker[] buildPbs= project.findMarkers(
+		final IMarker[] buildPbs= project.findMarkers(
 				RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER,
 				true,
 				IResource.DEPTH_INFINITE
 		);
 		if (buildPbs.length != 0) {
-			for (IMarker marker: buildPbs) {
+			for (final IMarker marker: buildPbs) {
 				System.out.println("Build problem for " + marker.getResource());
 				System.out.println("  " + marker.getAttribute(IMarker.MESSAGE));
 			}
@@ -138,26 +169,11 @@ public abstract class BuilderTest {
 		}
 	}
 
-	private static void enableAutoTactics(IAutoTacticPreference pref,
-			String[] tacticIds) {
-		final IAutoTacticRegistry reg = getAutoTacticRegistry();
-		final ICombinatorDescriptor comb = reg
-				.getCombinatorDescriptor(LoopOnAllPending.COMBINATOR_ID);
-		final List<ITacticDescriptor> descrs = new ArrayList<ITacticDescriptor>(
-				tacticIds.length);
-		for (String id : tacticIds) {
-			descrs.add(reg.getTacticDescriptor(id));
-		}
-		final ITacticDescriptor tactic = comb.combine(descrs, PLUGIN_ID
-				+ ".autoTactic");
-		enableAutoTactic(pref, tactic);
-	}
-
-	private static void enableAutoTactic(IAutoTacticPreference pref,
-			ITacticDescriptor tactic) {
-		pref.setSelectedDescriptor(tactic);
-		pref.setEnabled(true);
-	}
+	////////////////////////////////////////////////////////////////
+	//
+	//  Auto-prover
+	//
+	////////////////////////////////////////////////////////////////
 
 	private static final String[] autoTacticIds = new String[] {
 		"org.eventb.core.seqprover.trueGoalTac",
@@ -173,7 +189,11 @@ public abstract class BuilderTest {
 	};
 	
 	protected static void enableAutoProver() {
-		enableAutoTactics(getAutoTacticPreference(), autoTacticIds);
+		enableAutoProver(autoTacticIds);
+	}
+
+	protected static void enableAutoProver(String... ids) {
+		enableAutoProver(getCombinedTacticDescriptors(ids));
 	}
 
 	protected static void enableAutoProver(ITacticDescriptor descriptor) {
@@ -184,9 +204,36 @@ public abstract class BuilderTest {
 		getAutoTacticPreference().setEnabled(false);
 	}
 
-	private static IAutoTacticPreference getAutoTacticPreference() {
+	protected static IAutoTacticPreference getAutoTacticPreference() {
 		return getAutoPostTacticManager().getAutoTacticPreference();
 	}
+
+	private static ITacticDescriptor getCombinedTacticDescriptors(String... ids) {
+		assertTrue("There must be at least one tactic", ids.length > 0);
+		final IAutoTacticRegistry reg = getAutoTacticRegistry();
+		final List<ITacticDescriptor> descs = new ArrayList<ITacticDescriptor>();
+		for (final String id : ids) {
+			descs.add(reg.getTacticDescriptor(id));
+		}
+		return loopOnAllPending(reg).combine(descs, PLUGIN_ID + ".autoTactic");
+	}
+
+	private static ICombinatorDescriptor loopOnAllPending(
+			IAutoTacticRegistry reg) {
+		return reg.getCombinatorDescriptor(LoopOnAllPending.COMBINATOR_ID);
+	}
+
+	private static void enableAutoTactic(IAutoTacticPreference pref,
+			ITacticDescriptor tactic) {
+		pref.setSelectedDescriptor(tactic);
+		pref.setEnabled(true);
+	}
+
+	////////////////////////////////////////////////////////////////
+	//
+	//  Post-tactic
+	//
+	////////////////////////////////////////////////////////////////
 
 	private static final String[] postTacticIds = new String[] {
 		"org.eventb.core.seqprover.trueGoalTac",
@@ -196,17 +243,41 @@ public abstract class BuilderTest {
 		"org.eventb.core.seqprover.typeRewriteTac",
 	};
 	
-	protected static void enablePostTactics() {
-		enableAutoTactics(getPostTacticPreference(), postTacticIds);
+	protected static void enablePostTactic() {
+		enablePostTactic(postTacticIds);
 	}
 
-	protected static void disablePostTactics() {
+	protected static void enablePostTactic(String... tacticIds) {
+		enablePostTactic(getCombinedTacticDescriptors(tacticIds));
+	}
+
+	protected static void enablePostTactic(ITacticDescriptor descriptor) {
+		enableAutoTactic(getPostTacticPreference(), descriptor);
+	}
+
+	protected static void disablePostTactic() {
 		getPostTacticPreference().setEnabled(false);
 	}
 
 	protected static IAutoTacticPreference getPostTacticPreference() {
 		return getAutoPostTacticManager().getPostTacticPreference();
 	}
+
+	////////////////////////////////////////////////////////////////
+	//
+	//  Indexer
+	//
+	////////////////////////////////////////////////////////////////
+	
+	protected void enableIndexing() {
+		DebugHelpers.enableIndexing();
+	}
+
+	////////////////////////////////////////////////////////////////
+	//
+	//  User support and proof attempts
+	//
+	////////////////////////////////////////////////////////////////
 
 	/**
 	 * Deletes all user supports and proof attempts that where created and not
@@ -222,8 +293,7 @@ public abstract class BuilderTest {
 	}
 
 	@Before
-	public void setUpBT() throws Exception {
-		
+	public void createFreshProjectEverythingDisabled() throws Exception {
 		// ensure autobuilding is turned off
 		IWorkspaceDescription wsDescription = workspace.getDescription();
 		if (wsDescription.isAutoBuilding()) {
@@ -235,25 +305,9 @@ public abstract class BuilderTest {
 		eventBProject = (IEventBProject) rodinProject.getAdapter(IEventBProject.class);
 		
 		disableAutoProver();
-		disablePostTactics();
+		disablePostTactic();
 		
 		DebugHelpers.disableIndexing();
-	}
-
-	protected IRodinProject createRodinProject(String projectName)
-			throws CoreException {
-		IProject project = workspace.getRoot().getProject(projectName);
-		project.create(null);
-		project.open(null);
-		IProjectDescription pDescription = project.getDescription();
-		pDescription.setNatureIds(new String[] {RodinCore.NATURE_ID});
-		project.setDescription(pDescription, null);
-		IRodinProject result = RodinCore.valueOf(project);
-		return result;
-	}
-	
-	protected void importProject(String prjName) throws Exception {
-		importProjectFiles(rodinProject.getProject(), prjName);
 	}
 
 	public static void setReadOnly(IResource resource, boolean readOnly)
@@ -266,7 +320,7 @@ public abstract class BuilderTest {
 	}
 
 	@After
-	public void tearDownBT() throws Exception {
+	public void cleanupWorkspaceAndProofAttempts() throws Exception {
 		cleanupWorkspace();
 		deleteAllProofAttempts();
 	}

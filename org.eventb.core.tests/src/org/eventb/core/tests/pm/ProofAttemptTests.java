@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Systerel and others.
+ * Copyright (c) 2009, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,6 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
 import org.eventb.core.tests.DeltaListener;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.RodinDBException;
@@ -67,17 +66,10 @@ public class ProofAttemptTests extends AbstractProofTests {
 	private IProofComponent pc;
 
 	@Before
-	public void setUpPAT() throws Exception {
+	public void createProofComponent() throws Exception {
 		createPOFile();
 		runBuilder();
 		pc = pm.getProofComponent(poRoot);
-	}
-
-	@After
-	public void tearDownPAT() throws Exception {
-		for (final IProofAttempt pa : pm.getProofAttempts()) {
-			pa.dispose();
-		}
 	}
 
 	/**

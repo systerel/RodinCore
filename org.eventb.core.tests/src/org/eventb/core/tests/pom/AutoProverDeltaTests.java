@@ -167,8 +167,7 @@ public class AutoProverDeltaTests extends BuilderTest {
 	}
 
 	@Before
-	public void setUpAPDT() throws Exception {
-		// Change the auto-tactic and enable it.
+	public void enableLocalAutoProver() throws Exception {
 		enableAutoProver(tacticDesc);
 	}
 

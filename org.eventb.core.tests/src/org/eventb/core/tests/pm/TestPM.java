@@ -20,25 +20,21 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.tests.pom.POUtil;
 import org.junit.Before;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 public abstract class TestPM extends BasicTest {
+	
 	IUserSupportManager manager;
 
 	@Before
-	public void setUpTPM() throws Exception {
+	public void setUpUserSupportManager() throws Exception {
 		manager = EventBPlugin.getUserSupportManager();
-		disablePostTactic();
-		enableTestAutoProver();
+		enableAutoProver();
 		manager.setConsiderHiddenHypotheses(false);
 	}
 
-	
-	IPORoot createPOFile(String fileName) throws RodinDBException {
-		IRodinFile poFile = rodinProject.getRodinFile(fileName + ".bpo");
-		poFile.create(true, null);
-		IPORoot poRoot = (IPORoot) poFile.getRoot();
+	protected IPORoot createPOFileWithContents(String fileName) throws RodinDBException {
+		final IPORoot poRoot = super.createPOFile(fileName);
 		IPOPredicateSet hyp0 = POUtil.addPredicateSet(poRoot, "hyp0", null,
 				mTypeEnvironment("x=ℤ"), "¬x=1", "¬x=2", "x∈ℕ");
 		POUtil.addSequent(poRoot, "PO1", "¬x=1 ∧¬x=2 ∧x ∈ℕ", hyp0,
@@ -55,7 +51,7 @@ public abstract class TestPM extends BasicTest {
 				mTypeEnvironment("y=ℤ; x'=ℤ"), "y∈ℕ");
 		POUtil.addSequent(poRoot, "PO7", "y∈ℕ", hyp0,
 				mTypeEnvironment("y=ℤ"), "x=x");
-		poFile.save(null, true);
+		saveRodinFileOf(poRoot);
 		return poRoot;
 	}
 	

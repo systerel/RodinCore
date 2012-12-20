@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,8 +60,6 @@ import org.eventb.core.ISCVariant;
 import org.eventb.core.ISCWitness;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.tests.EventBTest;
-import org.junit.After;
-import org.junit.Before;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -83,16 +81,6 @@ public abstract class BasicSCTest extends EventBTest {
 		super.runBuilder();
 		for (IEventBRoot root : sourceRoots)
 			assertTrue("ill-formed markers", GraphProblemTest.check(root));
-	}
-
-	@Before
-	public void setUpBSCT() throws Exception {
-		sourceRoots.clear();
-	}
-
-	@After
-	public void tearDownBSCT() throws Exception {
-		sourceRoots.clear();
 	}
 
 	private final List<IEventBRoot> sourceRoots = new ArrayList<IEventBRoot>();

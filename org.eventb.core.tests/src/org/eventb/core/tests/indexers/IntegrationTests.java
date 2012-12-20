@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,6 @@ import org.eventb.core.IVariable;
 import org.eventb.core.IWitness;
 import org.eventb.core.tests.ResourceUtils;
 import org.eventb.internal.core.indexers.EventPropagator;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IRodinFile;
@@ -52,7 +51,6 @@ import org.rodinp.core.indexer.IDeclaration;
 import org.rodinp.core.indexer.IIndexQuery;
 import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.core.location.IInternalLocation;
-import org.rodinp.internal.core.debug.DebugHelpers;
 
 /**
  * @author Nicolas Beauger
@@ -168,15 +166,8 @@ public class IntegrationTests extends EventBIndexerTests {
 					+ "</org.eventb.core.machineFile>";
 
 	@Before
-	public void setUpIT() throws Exception {
-		;
-		DebugHelpers.enableIndexing();
-	}
-
-	@After
-	public void tearDownIT() throws Exception {
-		DebugHelpers.disableIndexing();
-		
+	public void turnOnIndexing() throws Exception {
+		enableIndexing();
 	}
 
 	@Test

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
-import org.junit.After;
-import org.junit.Before;
 import org.rodinp.core.IInternalElement;
 
 /**
@@ -21,22 +19,10 @@ import org.rodinp.core.IInternalElement;
  */
 public abstract class GenericEventBPOTest<E extends IInternalElement> extends EventBPOTest {
 
-	@Before
-	public void setUpGEBPOT() throws Exception {
-		generic = newGeneric();
-		;
-	}
-
+	private IGenericPOTest<E> generic = newGeneric();
+	
 	protected abstract IGenericPOTest<E> newGeneric();
 
-	@After
-	public void tearDownGEBPOT() throws Exception {
-		generic = null;
-		
-	}
-
-	private IGenericPOTest<E> generic;
-	
 	public IGenericPOTest<E> getGeneric() {
 		return generic;
 	}

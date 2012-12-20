@@ -26,16 +26,10 @@ import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRProofRule;
 import org.eventb.core.IPRRoot;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IConfidence;
@@ -55,13 +49,11 @@ import org.eventb.core.seqprover.eventbExtensions.AutoTactics.TrueGoalTac;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
 import org.eventb.core.seqprover.tactics.BasicTactics;
-import org.junit.After;
+import org.eventb.core.tests.BuilderTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinFile;
-import org.rodinp.core.IRodinProject;
-import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -70,10 +62,8 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  */
-public class ProofSerializationTests {
+public class ProofSerializationTests extends BuilderTest {
 	
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-
 	private static void checkProofTreeSerialization(IPRProof proof,
 			IProofTree proofTree, boolean hasDeps) throws RodinDBException {
 
@@ -87,10 +77,10 @@ public class ProofSerializationTests {
 
 	private static void checkDeserialization(IPRProof proof,
 			IProofTree proofTree, boolean hasDeps) throws RodinDBException {
-		IProofSkeleton skel = proof.getSkeleton(ff, null);
+		IProofSkeleton skel = proof.getSkeleton(factory, null);
 		assertTrue(ProverLib.deepEquals(proofTree.getRoot(), skel));
 		
-		assertEquals(hasDeps, proof.getProofDependencies(ff, null).hasDeps());
+		assertEquals(hasDeps, proof.getProofDependencies(factory, null).hasDeps());
 	}
 
 	private static ITactic autoRewriteL2() {
@@ -104,8 +94,6 @@ public class ProofSerializationTests {
 		importProjectFiles(rodinProject.getProject(), "ProofSerialization");
 	}
 
-	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	private IRodinProject rodinProject;
 	private IPRRoot prRoot;
 	
 	private Predicate getFirstUnivHyp(IProverSequent seq) {
@@ -118,36 +106,12 @@ public class ProofSerializationTests {
 	}
 
 	@Before
-	public void setUpPST() throws Exception {
-		
-		// ensure auto-building is turned off
-		IWorkspaceDescription wsDescription = workspace.getDescription();
-		if (wsDescription.isAutoBuilding()) {
-			wsDescription.setAutoBuilding(false);
-			workspace.setDescription(wsDescription);
-		}
-		
-		// Create a new project
-		IProject project = workspace.getRoot().getProject("P");
-		project.create(null);
-		project.open(null);
-		IProjectDescription pDescription = project.getDescription();
-		pDescription.setNatureIds(new String[] {RodinCore.NATURE_ID});
-		project.setDescription(pDescription, null);
-		rodinProject = RodinCore.valueOf(project);
-		
-		// Create a new proof file
-		IRodinFile prFile = rodinProject.getRodinFile("x.bpr");
+	public void createProofFile() throws Exception {
+		final IRodinFile prFile = rodinProject.getRodinFile("x.bpr");
 		prFile.create(true, null);
 		prRoot = (IPRRoot) prFile.getRoot();
 		assertTrue(prRoot.exists());
 		assertEquals(0, prRoot.getProofs().length);
-	}
-
-	@After
-	public void tearDownPST() throws Exception {
-		rodinProject.getProject().delete(true, true, null);
-		
 	}
 
 	@Test
@@ -159,7 +123,7 @@ public class ProofSerializationTests {
 		assertTrue(proof1.exists());
 		assertEquals(proof1, prRoot.getProof("proof1"));
 		assertEquals(IConfidence.UNATTEMPTED, proof1.getConfidence());
-		assertFalse(proof1.getProofDependencies(ff, null).hasDeps());
+		assertFalse(proof1.getProofDependencies(factory, null).hasDeps());
 		
 		// Test 1
 		
@@ -306,7 +270,7 @@ public class ProofSerializationTests {
 		rule.removeAttribute(HYPS_ATTRIBUTE, null);
 
 		try {
-			proof.getSkeleton(ff, null);
+			proof.getSkeleton(factory, null);
 			fail("Should have raised an exception");
 		} catch (RodinDBException e) {
 			final IRodinDBStatus status = e.getRodinDBStatus();
@@ -350,7 +314,7 @@ public class ProofSerializationTests {
 	// check repaired input correctly applies  
 	private static void checkReplay(final IProverSequent sequent,
 			final IPRProof proof) throws RodinDBException {
-		final IProofSkeleton oldSkel = proof.getSkeleton(ff, null);
+		final IProofSkeleton oldSkel = proof.getSkeleton(factory, null);
 		final IProofTree replayTree = ProverFactory.makeProofTree(
 				sequent, null);
 		final IProofTreeNode oldRoot = replayTree.getRoot();

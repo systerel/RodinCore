@@ -29,10 +29,10 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 	@Test
 	public void testUserSupportManagerDeltas() throws RodinDBException,
 			CoreException {
-		IPORoot poRoot1 = createPOFile("x");
+		IPORoot poRoot1 = createPOFileWithContents("x");
 		IRodinFile psFile1 = poRoot1.getPSRoot().getRodinFile();
 
-		IPORoot poRoot2 = createPOFile("y");
+		IPORoot poRoot2 = createPOFileWithContents("y");
 		IRodinFile psFile2 = poRoot2.getPSRoot().getRodinFile();
 
 		enableTestAutoProver();

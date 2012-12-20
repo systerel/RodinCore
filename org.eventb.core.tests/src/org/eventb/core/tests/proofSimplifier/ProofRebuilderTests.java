@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,7 +102,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 	}
 
 	private void doTest(String goal, boolean tacticsClose,
-			boolean applyPostTactics, boolean eventuallyClosed,
+			boolean applyPostTactic, boolean eventuallyClosed,
 			ITactic... tactics) throws Exception {
 		// create context and PO for ∀ x oftype ℤ· ∃ y · x=y
 		final IAxiom thm = createTheorem("axm", goal);
@@ -121,7 +121,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 		// final int confidence = status.getConfidence();
 		// call EventBPlugin.rebuild()
 		final boolean success = EventBPlugin.rebuildProof(status.getProof(),
-				applyPostTactics, null);
+				applyPostTactic, null);
 		// verify that rebuild worked properly
 		assertTrue(success);
 		if (eventuallyClosed) {
@@ -143,8 +143,8 @@ public class ProofRebuilderTests extends EventBPOTest {
 	}
 	
 	@Test
-	public void testRebuildWithPostTacticsDisabled() throws Exception {
-		disablePostTactics();
+	public void testRebuildWithPostTacticDisabled() throws Exception {
+		disablePostTactic();
 		// given tactics do NOT close the proof tree
 		// do not apply post tactics
 		// eventually, the proof tree is NOT closed
@@ -152,8 +152,8 @@ public class ProofRebuilderTests extends EventBPOTest {
 	}
 	
 	@Test
-	public void testRebuildWithPostTacticsEnabled() throws Exception {
-		enablePostTactics();
+	public void testRebuildWithPostTacticEnabled() throws Exception {
+		enablePostTactic();
 		// given tactics do NOT close the proof tree
 		// do apply post tactics
 		// eventually, the proof tree is closed

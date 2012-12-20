@@ -22,7 +22,6 @@ import org.eventb.core.IPSRoot;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.core.tests.pom.POUtil;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IRodinFile;
@@ -61,7 +60,7 @@ public class TestUserSupportChanges extends TestPM {
 	private static IPOPredicateSet hyp1;
 
 	@Before
-	public void setUpTUSC() throws Exception {
+	public void createProofFiles() throws Exception {
 		poRoot = createPOFile("x");
 		psRoot = poRoot.getPSRoot();
 		prRoot = poRoot.getPRRoot();
@@ -77,17 +76,10 @@ public class TestUserSupportChanges extends TestPM {
 	}
 
 	@Override
-	IPORoot createPOFile(String fileName) throws RodinDBException {
+	protected IPORoot createPOFile(String fileName) throws RodinDBException {
 		IRodinFile poFile = rodinProject.getRodinFile(fileName + ".bpo");
 		poFile.create(true, null);
 		return (IPORoot) poFile.getRoot();
-	}
-
-	@After
-	public void tearDownTUSC() throws Exception {
-		if (userSupport != null) {
-			userSupport.dispose();
-		}
 	}
 
 	@Test
@@ -232,7 +224,7 @@ public class TestUserSupportChanges extends TestPM {
 	}
 
 	/**
-	 * This corresponding to the case where the orinal PO is not loaded. The
+	 * This corresponding to the case where the original PO is not loaded. The
 	 * User Support does nothing.
 	 * <p>
 	 * TODO associated with document REQUIREMENTS

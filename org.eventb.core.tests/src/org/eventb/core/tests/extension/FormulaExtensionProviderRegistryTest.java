@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,15 +15,11 @@ import static junit.framework.Assert.assertEquals;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.tests.EventBTest;
 import org.eventb.internal.core.FormulaExtensionProviderRegistry;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,18 +28,11 @@ import org.junit.Test;
  */
 public class FormulaExtensionProviderRegistryTest extends EventBTest {
 
-	protected IWorkspace workspace = ResourcesPlugin.getWorkspace();
-
 	private IContextRoot contextRoot;
 
 	@Before
-	public void setUpFEPRT() throws Exception {
+	public void createContextRoot() throws Exception {
 		contextRoot = createContext("ctx");
-	}
-
-	@After
-	public void cleanUp() throws CoreException {
-		rodinProject.getResource().delete(true, null);
 	}
 
 	/**

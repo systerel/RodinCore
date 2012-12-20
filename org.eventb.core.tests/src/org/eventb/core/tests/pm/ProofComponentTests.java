@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2012 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import org.eventb.core.IPSStatus;
 import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IProofComponent;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.IRodinElement;
@@ -111,22 +110,13 @@ public class ProofComponentTests extends AbstractProofTests {
 	}
 
 	@Before
-	public void setUpPCT() throws Exception {
-		;
+	public void createProofComponent() throws Exception {
 		mchroot = eventBProject.getMachineRoot("m");
 		scRoot = mchroot.getSCMachineRoot();
 		poRoot = mchroot.getPORoot();
 		prRoot = mchroot.getPRRoot();
 		psRoot = mchroot.getPSRoot();
 		pc = pm.getProofComponent(mchroot);
-	}
-
-	@After
-	public void tearDownPCT() throws Exception {
-		for (final IProofAttempt pa : pm.getProofAttempts()) {
-			pa.dispose();
-		}
-		
 	}
 
 	/**

@@ -32,7 +32,6 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,21 +49,15 @@ public class TestUserSupportDeltas extends TestPMDelta {
 	private IUserSupport userSupport;
 
 	@Before
-	public void setUpTUSD() throws Exception {
+	public void createProofFiles() throws Exception {
 		disablePostTactic();
 		enableTestAutoProver();
 		
-		poRoot = createPOFile("x");
+		poRoot = createPOFileWithContents("x");
 		psRoot = poRoot.getPSRoot();
 		runBuilder();
 	}
 	
-	@After
-	public void tearDownTUSD() throws Exception {
-		stopDeltas();
-		userSupport.dispose();
-	}
-
 	@Test
 	public void testSetInput() throws CoreException {
 		userSupport = EventBPlugin.getUserSupportManager().newUserSupport();

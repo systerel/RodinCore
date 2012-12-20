@@ -95,9 +95,7 @@ public class FunOvrGoalTacTests extends BasicTest {
 	private IPSRoot psRoot;
 	
 	@Before
-	public void setUpFOGTT() throws Exception {
-		disableAutoProver();
-		disablePostTactic();
+	public void createProofFiles() throws Exception {
 		createPOFile();
 		psRoot = poRoot.getPSRoot();
 	}
@@ -166,12 +164,8 @@ public class FunOvrGoalTacTests extends BasicTest {
 
 		enablePostTactic(tactics);
 		final IUserSupport us = newUserSupport(psRoot);
-		try {
-			us.setCurrentPO(status, null);
-			assertTrue(us.getCurrentPO().isClosed());
-		} finally {
-			us.dispose();
-		}
+		us.setCurrentPO(status, null);
+		assertTrue(us.getCurrentPO().isClosed());
 	}
 
 }
