@@ -98,6 +98,8 @@ public class BecomesMemberOf extends Assignment {
 
 	@Override
 	protected void synthesizeType(FormulaFactory ff) {
+		// assignedIdents contains only one element since it is guaranteed by
+		// constructor
 		IdentListMerger freeIdentMerger = IdentListMerger.makeMerger(
 					assignedIdents[0].freeIdents, setExpr.freeIdents);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();

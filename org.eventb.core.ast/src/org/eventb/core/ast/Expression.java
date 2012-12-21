@@ -91,6 +91,25 @@ public abstract class Expression extends Formula<Expression> {
 			result.unify(this.type, type, this);
 		}
 	}
+	
+	/**
+	 * Sets the type at the given type value. Must be only used to set temporary
+	 * a type before a call to {@link #setFinalType(Type, Type)} method. If not
+	 * the type must be set to precedent value at the end of the temporary treatment.
+	 * 
+	 * This method should only be used by method
+	 * {@link FreeIdentifier#synthesizeType(FormulaFactory, Type)}.
+	 * 
+	 * @param type
+	 *            the given type to set
+	 * @return the precedent value type
+	 * @since 3.0
+	 */
+	protected final Type setTemporaryType(Type type){
+		Type old_type = this.type;
+		this.type = type;
+		return old_type;
+	}
 
 	/**
 	 * Returns whether this expression denotes a type.
@@ -172,6 +191,8 @@ public abstract class Expression extends Formula<Expression> {
 		success &= solveChildrenTypes(unifier);
 		if (success) {
 			synthesizeType(unifier.getFormulaFactory(), inferredType);
+		}else{
+			synthesizeType(unifier.getFormulaFactory(), null);
 		}
 		return isTypeChecked();
 	}

@@ -106,13 +106,11 @@ public abstract class Assignment extends Formula<Assignment> {
 		if (isTypeChecked()) {
 			return true;
 		}
-		boolean success = solveChildrenTypes(unifier);
+		solveChildrenTypes(unifier);
 		for (FreeIdentifier ident: assignedIdents) {
-			success &= ident.solveType(unifier);
+			ident.solveType(unifier);
 		}
-		if (success) {
-			synthesizeType(unifier.getFormulaFactory());
-		}
+		synthesizeType(unifier.getFormulaFactory());
 		return isTypeChecked();
 	}
 

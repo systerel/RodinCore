@@ -169,6 +169,22 @@ public class AtomicExpression extends Expression {
 		setPredicateVariableCache();
 		synthesizeType(factory, type);
 	}
+	
+	/**
+	 * Set given sets as free idents, precedent free idents content must be
+	 * undefined or empty.
+	 * 
+	 * @param givenType
+	 *            the given type that may contain given sets
+	 */
+	private void setGivenSetsAsFreeIdents(Type givenType){
+		assert freeIdents == null || freeIdents.length == 0;
+		if (givenType != null) {
+			// Ok since it was empty before
+			this.freeIdents = this.getFreeIdentsFromGivenTypes(givenType);
+		}
+
+	}
 
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
@@ -192,6 +208,7 @@ public class AtomicExpression extends Expression {
 		case Formula.EMPTYSET:
 			assert givenType == null || givenType instanceof PowerSetType;
 			resultType = givenType;
+			setGivenSetsAsFreeIdents(givenType);
 			break;
 		case Formula.KPRED:
 		case Formula.KSUCC:
@@ -205,12 +222,14 @@ public class AtomicExpression extends Expression {
 				assertPrjType(givenType, true);
 			}
 			resultType = givenType;
+			setGivenSetsAsFreeIdents(givenType);
 			break;
 		case Formula.KPRJ2_GEN:
 			if (givenType != null) {
 				assertPrjType(givenType, false);
 			}
 			resultType = givenType;
+			setGivenSetsAsFreeIdents(givenType);
 			break;
 		case Formula.KID_GEN:
 			if (givenType != null) {
@@ -218,6 +237,7 @@ public class AtomicExpression extends Expression {
 				assert source != null && source.equals(givenType.getTarget());
 			}
 			resultType = givenType;
+			setGivenSetsAsFreeIdents(givenType);
 			break;
 		default:
 			assert false;

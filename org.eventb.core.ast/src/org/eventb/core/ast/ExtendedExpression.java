@@ -236,6 +236,15 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 					childPredicates, new TypeMediator(factory));
 		} else {
 			resultType = givenType;
+			freeIdentMerger = IdentListMerger.makeMerger(
+					freeIdentMerger.getFreeMergedArray(),
+					this.getFreeIdentsFromGivenTypes(givenType));
+			this.freeIdents = freeIdentMerger.getFreeMergedArray();
+
+			if (freeIdentMerger.containsError()) {
+				// Incompatible type environments, don't bother going further.
+				return;
+			}
 		}
 		if (resultType == null || !isValidType(resultType)) {
 			return;

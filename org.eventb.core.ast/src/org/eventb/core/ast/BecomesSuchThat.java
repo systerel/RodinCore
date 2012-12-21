@@ -165,6 +165,14 @@ public class BecomesSuchThat extends Assignment {
 		children[length] = condition;
 		
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
+
+		// We need to add free identifiers from primed identifiers since
+		// they could contain given sets identifiers
+		for (BoundIdentDecl bound_id_decl : this.primedIdents) {
+			freeIdentMerger = IdentListMerger.makeMerger(
+					freeIdentMerger.getFreeMergedArray(),
+					bound_id_decl.getFreeIdentifiers());
+		}
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
 		final BoundIdentifier[] boundIdentsBelow = condition.boundIdents; 

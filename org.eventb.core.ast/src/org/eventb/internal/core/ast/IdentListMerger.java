@@ -24,6 +24,8 @@ public abstract class IdentListMerger {
 	
 	protected final Class<?> itemClass;
 
+	// FIXME: change implementation, boolean value not sufficient to have a
+	// detailed information on error
 	protected boolean errorFound = false;
 	
 	/**

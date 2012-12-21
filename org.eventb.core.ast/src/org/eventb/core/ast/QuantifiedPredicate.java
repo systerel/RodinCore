@@ -36,6 +36,7 @@ import org.eventb.internal.core.ast.BoundIdentDeclRemover;
 import org.eventb.internal.core.ast.BoundIdentSubstitution;
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.ast.Position;
@@ -184,12 +185,28 @@ public class QuantifiedPredicate extends Predicate {
 
 	@Override
 	protected void synthesizeType(FormulaFactory ff) {
-		this.freeIdents = pred.freeIdents;
+		IdentListMerger freeIdentMerger = 
+				IdentListMerger.makeMerger(pred.freeIdents, new FreeIdentifier[0]);
 
+		// We need to add free identifiers from quantified identifiers since
+		// they could contain given sets identifiers
+		for (BoundIdentDecl bound_id_decl : this.quantifiedIdentifiers) {
+			freeIdentMerger = IdentListMerger.makeMerger(
+					freeIdentMerger.getFreeMergedArray(),
+					bound_id_decl.getFreeIdentifiers());
+		}
+		
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
+		
 		final BoundIdentifier[] boundIdentsBelow = pred.boundIdents; 
 		this.boundIdents = 
 			getBoundIdentsAbove(boundIdentsBelow, quantifiedIdentifiers, ff);
 
+		if (freeIdentMerger.containsError()) {
+			// Incompatible type environments, don't bother going further.
+			return;
+		}
+		
 		// Check types of identifiers bound here.
 		if (! checkBoundIdentTypes(boundIdentsBelow, quantifiedIdentifiers)) {
 			return;

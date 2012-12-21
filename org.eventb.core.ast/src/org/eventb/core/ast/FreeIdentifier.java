@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -56,6 +57,17 @@ public class FreeIdentifier extends Identifier {
 		synthesizeType(ff, type);
 	}
 
+	// Tells whether (name, type) corresponds to a given set declaration
+	private static boolean isGivenSet(String name, Type type) {
+		final Type baseType = type.getBaseType();
+		if (baseType instanceof GivenType) {
+			final GivenType givenType = (GivenType) baseType;
+			return givenType.getName().equals(name);
+		}
+		return false;
+	}
+
+
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		this.freeIdents = new FreeIdentifier[] {this};
@@ -64,6 +76,24 @@ public class FreeIdentifier extends Identifier {
 		if (givenType == null) {
 			return;
 		}
+
+		// Avoid infinite recursion when adding a given set as new free
+		// identifier
+		if (!isGivenSet(name, givenType)) {
+			Type old_type = this.getType();
+			this.setTemporaryType(givenType);
+			FreeIdentifier[] given_sets = this
+					.getFreeIdentsFromGivenTypes(givenType);
+			IdentListMerger freeIdentMerger = IdentListMerger.makeMerger(
+					this.freeIdents, given_sets);
+			this.freeIdents = freeIdentMerger.getFreeMergedArray();
+			this.setTemporaryType(old_type);
+			if (freeIdentMerger.containsError()) {
+				// Incompatible type environments, don't bother going further.
+				return;
+			}
+		}
+
 		setFinalType(givenType, givenType);
 	}
 	

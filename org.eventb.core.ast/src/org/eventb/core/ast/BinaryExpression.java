@@ -311,6 +311,8 @@ public class BinaryExpression extends Expression {
 	
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+		// No need to add free identifiers of given sets since it has been done
+		// in children and we merge here
 		IdentListMerger freeIdentMerger = 
 			IdentListMerger.makeMerger(left.freeIdents, right.freeIdents);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();

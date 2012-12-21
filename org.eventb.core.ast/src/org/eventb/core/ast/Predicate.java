@@ -46,10 +46,8 @@ public abstract class Predicate extends Formula<Predicate> {
 		if (isTypeChecked()) {
 			return true;
 		}
-		boolean success = solveChildrenTypes(unifier);
-		if (success) {
-			synthesizeType(unifier.getFormulaFactory());
-		}
+		solveChildrenTypes(unifier);
+		synthesizeType(unifier.getFormulaFactory());
 		return isTypeChecked();
 	}
 

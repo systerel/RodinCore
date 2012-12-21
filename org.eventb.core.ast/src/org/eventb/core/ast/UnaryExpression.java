@@ -230,6 +230,8 @@ public class UnaryExpression extends Expression {
 	@Override
 	@SuppressWarnings("deprecation")
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+		// No need to add free identifiers of given sets since it has been done
+		// in child expression
 		this.freeIdents = child.freeIdents;
 		this.boundIdents = child.boundIdents;
 

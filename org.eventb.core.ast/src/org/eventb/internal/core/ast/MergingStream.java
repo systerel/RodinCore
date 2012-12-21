@@ -104,6 +104,7 @@ public final class MergingStream extends IdentListMerger {
 			final Type type1 = id1.getType();
 			final Type type2 = id2.getType();
 			errorFound = type1 == null || ! type1.equals(type2);
+			// FIXME: in this case we should return a result with null type
 		}
 		if (comparison <= 0) {
 			result = id1;

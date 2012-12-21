@@ -28,11 +28,13 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IVisitor;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
@@ -42,6 +44,8 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
+import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 
@@ -103,6 +107,45 @@ public class IdentsChecker implements IVisitor {
 				&& areEqual(boundIdents, formula.getBoundIdentifiers());
 	}
 	
+	private final void addFreeIdentsFromGivenTypes(
+			Set<FreeIdentifier> set,
+			SourceLocation sloc, Type givenType) {
+		Set<GivenType> givenTypes = givenType.getGivenTypes();
+		FormulaFactory ff = this.factory;
+		for (final GivenType type : givenTypes) {
+			String name = type.getName();
+			set.add(ff.makeFreeIdentifier(name, sloc, ff.makePowerSetType(type)));
+		}
+	}
+	
+	private Set<FreeIdentifier> getGivenSetsFreeId(Formula<?> formula) {
+		Set<FreeIdentifier> free_ids = new HashSet<FreeIdentifier>();
+		boolean stop = false;
+		@SuppressWarnings("unchecked")
+		Stack<Formula<?>> localStack = (Stack<Formula<?>>) this.stack.clone();
+		while (!stop) {
+			if (localStack.peek() == formula) {
+				stop = true;
+			}
+			final Formula<?> child = localStack.pop();
+			Type type = null;
+			if (child instanceof Expression) {
+				type = ((Expression) child).getType();
+			}
+			if (child instanceof BoundIdentDecl) {
+				type = ((BoundIdentDecl) child).getType();
+			}
+			if (type != null) {
+				addFreeIdentsFromGivenTypes(free_ids,
+						child.getSourceLocation(), type);
+			}
+			if (child instanceof FreeIdentifier) {
+				free_ids.add((FreeIdentifier) child);
+			}
+		}
+		return free_ids;
+	}
+
 	/**
 	 * Checks that the given array is empty.
 	 * 
@@ -116,22 +159,6 @@ public class IdentsChecker implements IVisitor {
 		return array.length == 0;
 	}
 	
-	/**
-	 * Checks that the given array is a singleton containing the given element.
-	 * 
-	 * @param <T>
-	 *            type of the elements
-	 * @param array
-	 *            an array
-	 * @param value
-	 *            a value
-	 * @return <code>true</code> iff the given array contains exactly the
-	 *         given element
-	 */
-	private static <T> boolean isSingleton(T[] array, T value) {
-		return array.length == 1 && array[0] == value;
-	}
-
 	final private FormulaFactory factory;
 
 	final private Stack<Formula<?>> stack;
@@ -1172,6 +1199,8 @@ public class IdentsChecker implements IVisitor {
 		}
 		final Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
 		Set<BoundIdentifier> boundIdents = new HashSet<BoundIdentifier>();
+		// FIXME: we must do the same treatment as in IdentListMerger when two
+		// identifiers have same name and different types (see FIXME of MergingStream).
 		while (stack.peek() != formula) {
 			final Formula<?> child = stack.pop();
 			freeIdents.addAll(Arrays.asList(child.getFreeIdentifiers()));
@@ -1223,11 +1252,12 @@ public class IdentsChecker implements IVisitor {
 	}
 
 	private boolean standardVisit(Formula<?> formula) {
-		if (! success) {
+		if (!success) {
 			return false;
 		}
 		stack.push(formula);
-		return isEmpty(formula.getFreeIdentifiers())
+		Set<FreeIdentifier> givenSetsFreeId = getGivenSetsFreeId(formula);
+		return areEqual(givenSetsFreeId, formula.getFreeIdentifiers())
 				&& isEmpty(formula.getBoundIdentifiers());
 	}
 
@@ -1243,14 +1273,17 @@ public class IdentsChecker implements IVisitor {
 
 	@Override
 	public boolean visitBOUND_IDENT(BoundIdentifier ident) {
-		if (! success) {
+		if (!success) {
 			return false;
 		}
 		stack.push(ident);
-		return success = isEmpty(ident.getFreeIdentifiers())
-				&& isSingleton(ident.getBoundIdentifiers(), ident);
+		Set<FreeIdentifier> givenSetsFreeId = getGivenSetsFreeId(ident);
+		Set<BoundIdentifier> boundIdents = new HashSet<BoundIdentifier>();
+		boundIdents.add(ident);
+		return success = areEqual(givenSetsFreeId, ident.getFreeIdentifiers())
+				&& areEqual(boundIdents, ident.getBoundIdentifiers());
 	}
-
+	
 	@Override
 	public boolean visitBOUND_IDENT_DECL(BoundIdentDecl ident) {
 		return standardVisit(ident);
@@ -1273,12 +1306,7 @@ public class IdentsChecker implements IVisitor {
 
 	@Override
 	public boolean visitFREE_IDENT(FreeIdentifier ident) {
-		if (! success) {
-			return false;
-		}
-		stack.push(ident);
-		return success = isSingleton(ident.getFreeIdentifiers(), ident)
-				&& isEmpty(ident.getBoundIdentifiers());
+		return standardVisit(ident);
 	}
 
 	@Override

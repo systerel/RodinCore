@@ -47,6 +47,10 @@ public class DocTests extends AbstractTests {
 
 	private static  List<String> serialized = Arrays.asList(
 			"(∅ ⦂ ℙ(S))=(∅ ⦂ ℙ(S))∧(∃x⦂T·x∈(∅ ⦂ ℙ(T)))∧x∉(∅ ⦂ ℙ(S×T))", //
+			"S", //
+			"ℙ(S)", //
+			"T", //
+			"ℙ(T)", //
 			"x", //
 			"S×T");
 

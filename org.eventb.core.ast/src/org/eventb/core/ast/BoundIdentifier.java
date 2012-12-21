@@ -65,6 +65,7 @@ public class BoundIdentifier extends Identifier {
 		if (givenType == null) {
 			return;
 		}
+		this.freeIdents = this.getFreeIdentsFromGivenTypes(givenType);
 		setFinalType(givenType, givenType);
 	}
 

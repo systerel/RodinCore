@@ -74,6 +74,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 			return;
 		
 		assert givenType.isSolved();
+		this.freeIdents = this.getFreeIdentsFromGivenTypes(givenType);
 		this.type = givenType;
 		this.typeChecked = true;
 	}
@@ -166,6 +167,8 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		type = null;
 		if (inferredType != null && inferredType.isSolved()) {
 			synthesizeType(inferredType);
+		}else{
+			synthesizeType(null);
 		}
 		return isTypeChecked();
 	}
