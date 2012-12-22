@@ -35,6 +35,7 @@ public class PredicateDecomposerTests {
 	@Test
 	public void simpleTest() {
 		predicateTest("x=ℤ", "x=0", "x=0");
+		predicateTest("x=ℤ", "∀x· x=0", "x0=0");
 		predicateTest("", "∀x,y · x=0∧y=0", "y=0", "x=0");
 		predicateTest("", "∀x· x=0∧(∀x· x=0)", "x=0 ");
 		predicateTest("", "∀x· x=0∧(∀x·(∀x·x=0)∧x=0)", "x=0");
