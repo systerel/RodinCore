@@ -334,7 +334,7 @@ public class DLib {
 	}
 
 	/**
-	 * Contruct an integer literal ({@link IntegerLiteral} from an integer.
+	 * Construct an integer literal ({@link IntegerLiteral} from an integer.
 	 * <p>
 	 * 
 	 * @param n
