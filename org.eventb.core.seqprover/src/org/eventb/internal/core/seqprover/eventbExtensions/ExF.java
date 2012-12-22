@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,8 @@ public class ExF extends ForwardInfReasoner {
 			Predicate pred) throws IllegalArgumentException {
 		
 		if (! Lib.isExQuant(pred)) {
-			throw new IllegalArgumentException("Predicate "+ pred +" is not existentially quantified.");
+			throw new IllegalArgumentException(
+					"Predicate is not existentially quantified: " + pred);
 		}
 		
 		final QuantifiedPredicate exQ = (QuantifiedPredicate) pred;

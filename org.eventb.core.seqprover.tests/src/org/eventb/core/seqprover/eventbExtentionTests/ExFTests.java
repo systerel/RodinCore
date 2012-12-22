@@ -15,52 +15,56 @@ import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
-import org.eventb.internal.core.seqprover.eventbExtensions.ExE;
+import org.eventb.internal.core.seqprover.eventbExtensions.ExF;
 
 /**
- * Acceptance tests for deprecated reasoner ExE.
+ * Acceptance tests for reasoner ExF.
  * 
  * @author Laurent Voisin
  */
-@SuppressWarnings("deprecation")
-public class ExETests extends AbstractReasonerTests {
+public class ExFTests extends AbstractReasonerTests {
 	
-	private static final Predicate HYP = genPred("∃x·x=1");
-	private static final Predicate HYP2PREDS = genPred("∃x·x=1∧x=2");
-	private static final Predicate HYP2VARS = genPred("∃x,y·x↦y=1↦2");
+	private static Predicate HYP = genPred("∃x·x=1");
+	private static Predicate HYP2PREDS = genPred("∃x·x=1∧x=2");
+	private static Predicate HYP2VARS = genPred("∃x,y·x↦y=1↦2");
 
 	@Override
 	public String getReasonerID() {
-		return ExE.REASONER_ID;
+		return ExF.REASONER_ID;
 	}
 
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		return new SuccessfullReasonerApplication[]{
+				// hyp not present: success but no effect
+				new SuccessfullReasonerApplication(genSeq(" |- ⊥ "),
+						new ExF.Input(HYP),
+						"{}[][][] |- ⊥"
+				),
 				// one bound variable
 				new SuccessfullReasonerApplication(genSeq(HYP + " |- ⊥ "), 
-						new ExE.Input(HYP),
-						"{}[][" + HYP + "][x=1] |- ⊥"
+						new ExF.Input(HYP),
+						"{}[" + HYP + "][][x=1] |- ⊥"
 				),
 				// two predicates generated
 				new SuccessfullReasonerApplication(genSeq(HYP2PREDS + " |- ⊥ "), 
-						new ExE.Input(HYP2PREDS),
-						"{}[][" + HYP2PREDS + "][x=1;; x=2] |- ⊥"
+						new ExF.Input(HYP2PREDS),
+						"{}[" + HYP2PREDS + "][][x=1;; x=2] |- ⊥"
 				),
 				// two bound variables
 				new SuccessfullReasonerApplication(genSeq(HYP2VARS + " |- ⊥ "), 
-						new ExE.Input(HYP2VARS),
-						"{}[][" + HYP2VARS + "][x↦y=1↦2] |- ⊥"
+						new ExF.Input(HYP2VARS),
+						"{}[" + HYP2VARS + "][][x↦y=1↦2] |- ⊥"
 				),
 				// name collision
 				new SuccessfullReasonerApplication(genSeq(HYP + ";; x=3 |- ⊥ "), 
-						new ExE.Input(HYP),
-						"{}[][" + HYP + "][x0=1;; x=3] |- ⊥"
+						new ExF.Input(HYP),
+						"{}[" + HYP + "][][x0=1;; x=3] |- ⊥"
 				),
 				// name collision, different type
 				new SuccessfullReasonerApplication(genSeq(HYP + ";; x=TRUE |- ⊥ "), 
-						new ExE.Input(HYP),
-						"{}[][" + HYP + "][x0=1;; x=TRUE] |- ⊥"
+						new ExF.Input(HYP),
+						"{}[" + HYP + "][][x0=1;; x=TRUE] |- ⊥"
 				),
 		};
 	}
@@ -71,20 +75,14 @@ public class ExETests extends AbstractReasonerTests {
 				// hyp null
 				new UnsuccessfullReasonerApplication(
 						genSeq(" ⊤ |- ⊥ "),
-						new ExE.Input(null),
+						new ExF.Input(null),
 						"Null hypothesis"
-				),
-				// hyp not present
-				new UnsuccessfullReasonerApplication(
-						genSeq(" ⊤ |- ⊥ "),
-						new ExE.Input(HYP),
-						"Nonexistent hypothesis: " + HYP
 				),
 				// hyp not existentially quantified
 				new UnsuccessfullReasonerApplication(
 						genSeq(" ∀x·x = 1 |- ⊥ "),
-						new ExE.Input(genPred("∀x·x=1")),
-						"Hypothesis is not existentially quantified: ∀x·x=1"
+						new ExF.Input(genPred("∀x·x=1")),
+						"Predicate is not existentially quantified: ∀x·x=1"
 				),	
 		};
 	}

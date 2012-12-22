@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,9 @@ import java.util.List;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerInput;
@@ -27,8 +29,6 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IHypAction.IForwardInfHypAction;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 import org.eventb.internal.core.seqprover.ReasonerFailure;
 
@@ -127,6 +127,9 @@ public abstract class ForwardInfReasoner implements IReasoner {
 		
 		final Input input = (Input) rInput;
 		final Predicate pred = input.pred;
+		if (pred == null) {
+			return new ReasonerFailure(this, input, "Null hypothesis");
+		}
 
 		final String display = getDisplay(pred);
 		final IForwardInfHypAction forwardInf;
@@ -146,19 +149,21 @@ public abstract class ForwardInfReasoner implements IReasoner {
 	}
 	
 	/**
-	 * Return the forward infernece to put in the generated rule, or throw an
+	 * Return the forward inference to put in the generated rule, or throw an
 	 * <code>IllegalArgumentException</code> in case of reasoner failure. In
 	 * the latter case, the message associated to the exception will be returned
 	 * in the reasoner failure.
 	 * 
 	 * @param sequent
-	 *            the goal of the current sequent
+	 *            the current sequent
 	 * @param pred
-	 *            the required predicate for the forward inference.
+	 *            the required predicate for the forward inference. There is no
+	 *            guarantee that this predicate is indeed a hypothesis of the
+	 *            given sequent
 	 *            
 	 * @return the forward inference of the generated rule
 	 * @throws IllegalArgumentException
-	 *             if no forward inference could be genreated with the given predicate.
+	 *             if no forward inference could be generated with the given predicate.
 	 */
 	protected abstract IForwardInfHypAction getForwardInf (IProverSequent sequent,
 			Predicate pred) throws IllegalArgumentException;
