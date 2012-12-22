@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.FormulaFactory;
+import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
+import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
+
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.ISealedTypeEnvironment;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -26,6 +28,7 @@ import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
+import org.eventb.internal.core.seqprover.eventbExtensions.utils.FreshInstantiaton;
 
 /**
  * Generates the introduntion rule for universal quantification.
@@ -35,59 +38,47 @@ import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
  * </p>
  * 
  * @author Farhad Mehta
- *
+ * 
  */
-public class AllI extends EmptyInputReasoner{
-	
+public class AllI extends EmptyInputReasoner {
+
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".allI";
-	
+
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
-	
+
 	@ProverRule("ALL_R")
-	public IReasonerOutput apply(IProverSequent seq,IReasonerInput input, IProofMonitor pm){
-		
-		if (! Lib.isUnivQuant(seq.goal()))
-			return ProverFactory.reasonerFailure(
-					this,input,"Goal is not universally quantified");
-		
-		QuantifiedPredicate UnivQ = (QuantifiedPredicate)seq.goal();
-		BoundIdentDecl[] boundIdentDecls = Lib.getBoundIdents(UnivQ);
-		
-		// The type environment is cloned since makeFresh.. adds directly to the
-		// given type environment
-		// TODO : Change implementation
-		ITypeEnvironmentBuilder newITypeEnvironment = seq.typeEnvironment()
-				.makeBuilder();
-		final FormulaFactory ff = seq.getFormulaFactory();
-		FreeIdentifier[] freeIdents = newITypeEnvironment.makeFreshIdentifiers(boundIdentDecls);		
-		assert boundIdentDecls.length == freeIdents.length;
-		
-		IAntecedent[] anticidents = new IAntecedent[1];
-		anticidents[0] = ProverFactory.makeAntecedent(
-				UnivQ.instantiate(freeIdents,ff),
-				null,
-				freeIdents,
-				null);
-		
-		IProofRule reasonerOutput = ProverFactory.makeProofRule(
-				this,input,
-				seq.goal(),
-				"∀ goal (frees "+displayFreeIdents(freeIdents)+")",
-				anticidents
-				);
-				
+	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
+			IProofMonitor pm) {
+
+		final Predicate goal = seq.goal();
+		if (!Lib.isUnivQuant(goal)) {
+			return ProverFactory.reasonerFailure(this, input,
+					"Goal is not universally quantified");
+		}
+		final QuantifiedPredicate univQ = (QuantifiedPredicate) goal;
+		final ISealedTypeEnvironment typenv = seq.typeEnvironment();
+		final FreshInstantiaton inst = new FreshInstantiaton(univQ, typenv);
+		final FreeIdentifier[] freshIdents = inst.getFreshIdentifiers();
+		final IAntecedent[] antecedents = new IAntecedent[] {//
+		makeAntecedent(inst.getResult(), null, freshIdents, null),//
+		};
+		final IProofRule reasonerOutput = makeProofRule(this, input, goal,
+				"∀ goal (frees " + displayFreeIdents(freshIdents) + ")",
+				antecedents);
 		return reasonerOutput;
 	}
-	
+
 	private String displayFreeIdents(FreeIdentifier[] freeIdents) {
-		StringBuilder str = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
+		String sep = "";
 		for (int i = 0; i < freeIdents.length; i++) {
-				str.append(freeIdents[i].toString());
-			if (i != freeIdents.length-1) str.append(",");
+			sb.append(sep);
+			sep = ",";
+			sb.append(freeIdents[i].toString());
 		}
-		return str.toString();
+		return sb.toString();
 	}
 
 }
