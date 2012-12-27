@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added FunOvrGoalTac and FunOvrHypTac tactics
@@ -15,7 +15,7 @@
  *     Systerel - added DTDestrWDTac tactic (discharge)
  *     Systerel - added tactics to combine rm and ri
  *     Systerel - added tactic combinators
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.ast.IPosition.ROOT;

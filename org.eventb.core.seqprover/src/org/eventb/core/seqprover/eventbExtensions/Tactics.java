@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added partition tactic (math V2)
@@ -14,7 +14,7 @@
  *     Systerel - fixed rules FIN_FUN_*
  *     Systerel - implemented rules FUNIMG_SET_DOMSUB_L and FUNIMG_DOMSUB_L
  *     Systerel - implemented DATATYPE_DISTINCT_CASE and DATATYPE_INDUCTION
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
