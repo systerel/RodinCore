@@ -10,7 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added default name
  *     Systerel - added renaming of proof files
- *     Systerel - added renaming of occurrences 
+ *     Systerel - added renaming of occurrences
  *******************************************************************************/
 package org.eventb.internal.ui.projectexplorer.actions;
 

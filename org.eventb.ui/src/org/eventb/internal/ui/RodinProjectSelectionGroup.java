@@ -7,11 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Igor Fedorenko <igorfie@yahoo.com> -
- *     		Fix for Bug 136921 [IDE] New File dialog locks for 20 seconds
- *   ETH Zurich - adaptation to Event-B
- *   Systerel - remove unused code
-*******************************************************************************/
+ *     Igor Fedorenko - Fix for Bug 136921 [IDE]
+ *     ETH Zurich - adaptation to Event-B
+ *     Systerel - remove unused code
+ *******************************************************************************/
 package org.eventb.internal.ui;
 
 import java.util.ArrayList;

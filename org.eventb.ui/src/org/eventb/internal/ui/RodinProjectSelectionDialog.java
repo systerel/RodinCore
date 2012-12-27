@@ -6,11 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   IBM Corporation - initial API and implementation 
- *   Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
- *     font should be activated and used by other components.
- *   ETH Zurich - adaptation to Event-B
- *   Systerel - remove unused code
+ *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids - Fix bug 19346
+ *     ETH Zurich - adaptation to Event-B
+ *     Systerel - remove unused code
  *******************************************************************************/
 package org.eventb.internal.ui;
 

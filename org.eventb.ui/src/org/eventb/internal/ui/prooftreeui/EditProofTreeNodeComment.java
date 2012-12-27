@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Systerel - Initial API and implementation
- ******************************************************************************/
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui;
 
 import org.eclipse.jface.action.IAction;

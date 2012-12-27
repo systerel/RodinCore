@@ -16,9 +16,9 @@
  *     Systerel - added method to remove MouseWheel Listener of CCombo
  *     Systerel - used ElementDescRegistry
  *     Systerel - update combo list on focus gain
- *	   Systerel - added dialog opening methods
- *	   Systerel - made showView return the shown view
- *	   Systerel - refactored to support the new preference mechanism
+ *     Systerel - added dialog opening methods
+ *     Systerel - made showView return the shown view
+ *     Systerel - refactored to support the new preference mechanism
  *******************************************************************************/
 package org.eventb.internal.ui;
 

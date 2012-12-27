@@ -4,14 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - Added a constant for the user support manager
  *     Systerel - separation of file and root element
  *     Systerel - handled user support saving state
  *     Systerel - redirected dialog opening and externalized strings
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
 import static org.eventb.internal.ui.utils.Messages.dialogs_prover_error_creating_page;

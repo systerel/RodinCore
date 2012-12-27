@@ -7,9 +7,8 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *	   Systerel - redirected dialog opening	
- ******************************************************************************/
-
+ *     Systerel - redirected dialog opening
+ *******************************************************************************/
 package org.eventb.internal.ui;
 
 import org.eclipse.core.runtime.CoreException;

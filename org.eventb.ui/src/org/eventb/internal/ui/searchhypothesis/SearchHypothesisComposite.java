@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.internal.ui.searchhypothesis;
 
 import java.util.Set;

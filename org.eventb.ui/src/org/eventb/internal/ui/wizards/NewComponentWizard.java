@@ -1,6 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
- * 
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +10,7 @@
  *     Systerel - replaced inherited by extended, added tool configuration
  *     Systerel - separation of file and root element
  *     Systerel - redirected dialog opening and externalized strings
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.internal.ui.wizards;
 
 import static org.eventb.core.IConfigurationElement.DEFAULT_CONFIGURATION;

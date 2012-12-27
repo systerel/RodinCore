@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - changed axiom form for enumerated sets
@@ -17,8 +17,8 @@
  *     Systerel - added checkAndShowReadOnly
  *     Systerel - replaced Messages.bind() by a static method
  *     Systerel - add widget to edit theorem attribute in new dialogs
- *     Systerel - moved wizard behaviour to dedicated classes 
- ******************************************************************************/
+ *     Systerel - moved wizard behaviour to dedicated classes
+ *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
 import static org.eventb.internal.ui.EventBUtils.isReadOnly;

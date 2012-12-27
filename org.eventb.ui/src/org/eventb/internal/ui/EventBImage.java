@@ -1,17 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
- * 
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rodin @ ETH Zurich - initial API and implementation
+ *     ETH Zurich - initial API and implementation
  *     Systerel - used element description in getImageDescriptor()
  *     Systerel - used eclipse decorator mechanism
- ******************************************************************************/
-
+ *******************************************************************************/
 package org.eventb.internal.ui;
 
 import static org.eventb.ui.IEventBSharedImages.IMG_ACTION;

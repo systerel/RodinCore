@@ -10,7 +10,7 @@
  *     Systerel - refactored to use ITacticProvider2 and ITacticApplication
  *     Systerel - added getParsed()
  *     Systerel - fixed Hyperlink.setImage() calls
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.internal.ui.prover;
 
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
