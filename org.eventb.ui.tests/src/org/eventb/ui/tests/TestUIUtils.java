@@ -8,7 +8,6 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-
 package org.eventb.ui.tests;
 
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;

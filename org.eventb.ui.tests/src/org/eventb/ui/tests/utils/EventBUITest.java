@@ -1,6 +1,5 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2012 ETH Zurich and others.
- * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +10,7 @@
  *     Systerel - added methods for creating elements
  *     Systerel - replaced inherited by extended, added tool configuration
  *     Systerel - separation of file and root element
- *     Systerel - disabled database indexer in setup 
+ *     Systerel - disabled database indexer in setup
  *******************************************************************************/
 package org.eventb.ui.tests.utils;
 
