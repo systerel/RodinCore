@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language v2
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eventb.core.ast;
 
 /**

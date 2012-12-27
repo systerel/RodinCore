@@ -8,8 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added support for specialization
- *     Systerel - added support for an immutable type environment 
- *     			  and move mutable methods to TypeEnvironmentBuilder
+ *     Systerel - immutable type environments
  *******************************************************************************/
 package org.eventb.internal.core.typecheck;
 

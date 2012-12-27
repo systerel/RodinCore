@@ -8,8 +8,8 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - published method getFormulaFactory()
- *     Systerel - added support for specialization 
- *     Systerel - added support for immutable type environments
+ *     Systerel - added support for specialization
+ *     Systerel - immutable type environments
  *******************************************************************************/
 package org.eventb.core.ast;
 

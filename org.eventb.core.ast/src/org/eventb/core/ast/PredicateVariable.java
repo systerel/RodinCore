@@ -7,8 +7,6 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
- *     Systerel - generalised getPositions() into inspect()
- *     Systerel - externalized wd lemmas generation
  *******************************************************************************/
 package org.eventb.core.ast;
 
