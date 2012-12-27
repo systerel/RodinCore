@@ -1,6 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
- * 
+ * Copyright (c) 2007, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added tests for SIMP_TYPE_SUBSETEQ and SIMP_TYPE_SUBSET_L
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
 import org.eventb.core.ast.IFormulaRewriter;

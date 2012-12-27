@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added genPred() and genPreds() with a type environment
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
 import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
