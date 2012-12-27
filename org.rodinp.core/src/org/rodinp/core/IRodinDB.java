@@ -6,9 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation as
- *     		org.eclipse.jdt.core.IJavaModel
- *     ETH Zurich - adaptation from JDT to Rodin
+ *     IBM Corporation - initial API and implementation
+ *     ETH Zurich - adapted from org.eclipse.jdt.core.IJavaModel
  *     Systerel - separation of file and root element
  *******************************************************************************/
 package org.rodinp.core;

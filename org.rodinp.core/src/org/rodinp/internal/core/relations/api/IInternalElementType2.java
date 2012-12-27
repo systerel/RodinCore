@@ -4,12 +4,11 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added item relations API methods
  *******************************************************************************/
-
 package org.rodinp.internal.core.relations.api;
 
 import org.rodinp.core.IAttributeType;

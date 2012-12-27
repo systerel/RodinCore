@@ -10,7 +10,6 @@
  *     Systerel - generic attribute manipulation
  *     Systerel - implementation of IAttributeType2
  *******************************************************************************/
-
 package org.rodinp.internal.core;
 
 import java.util.List;
