@@ -4,12 +4,12 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored expression and predicate storage
  *     Systerel - moved used reasoners to proof root
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.internal.core.basis;
 
 import static org.eventb.core.seqprover.SequentProver.getReasonerRegistry;

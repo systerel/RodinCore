@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.core.pm;
 
 import java.util.Collection;

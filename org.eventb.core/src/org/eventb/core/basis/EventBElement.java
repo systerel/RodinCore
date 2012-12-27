@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     University of Dusseldorf - added theorem attribute
+ *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - added method getEventBProject()
  *     Systerel - added methods for generated elements
  *******************************************************************************/

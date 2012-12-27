@@ -4,14 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored for using the Proof Manager API
  *     Systerel - added missing cleanup in dispose() and refresh()
  *     Systerel - separation of file and root element
  *     Systerel - added saving state
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.internal.core.pm;
 
 import java.util.Collection;

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored for using the Proof Manager API
@@ -13,7 +13,7 @@
  *     Systerel - got formula factory from proof attempt
  *     Systerel - added more getters
  *     Systerel - added simplify proof preference
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.internal.core.pm;
 
 import static java.util.Collections.emptyList;

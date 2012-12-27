@@ -9,7 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - Mathematical Language V2
  *     Systerel - added origin of predicates in proof
- ******************************************************************************/
+ *******************************************************************************/
 package org.eventb.core.basis;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
