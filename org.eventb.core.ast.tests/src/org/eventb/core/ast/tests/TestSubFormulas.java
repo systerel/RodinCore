@@ -12,7 +12,7 @@
  *     Systerel - added support for mathematical extensions
  *     Systerel - added tests for child index
  *     Systerel - added tests for mathematical extensions
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.junit.Assert.assertEquals;

@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - port to JUnit 4
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.junit.Assert.assertEquals;

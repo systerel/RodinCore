@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 University of Dusseldorf and others.
+ * Copyright (c) 2009, 2012 Universitaet Duesseldorf and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     University of Dusseldorf - initial API and implementation
+ *     Universitaet Duesseldorf - initial API and implementation
  *     Systerel - port to JUnit 4
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import org.eventb.core.ast.expander.tests.PartitionExpanderTests;

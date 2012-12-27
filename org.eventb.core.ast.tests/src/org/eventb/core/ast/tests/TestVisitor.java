@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Systerel - mathematical language v2
  *     Systerel - added support for predicate variables
  *     Systerel - added support for mathematical extensions
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.junit.Assert.assertEquals;
