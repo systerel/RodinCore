@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
- *     University of Dusseldorf - added theorem attribute
+ *     Universitaet Duesseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests;
 

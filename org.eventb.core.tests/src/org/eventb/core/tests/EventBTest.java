@@ -9,7 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - mathematical language V2
- *     University of Dusseldorf - added theorem attribute
+ *     Universitaet Duesseldorf - added theorem attribute
  *******************************************************************************/
 package org.eventb.core.tests;
 
