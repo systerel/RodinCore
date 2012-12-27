@@ -741,7 +741,7 @@ public final class ProverFactory {
 	 * @param usedReasoners
 	 * @return An instance of {@link IProofDependencies} with the values given as 
 	 * 	input parameters
-	 * @since 3.0 : the type environment became immutable
+	 * @since 3.0
 	 */
 	public static IProofDependencies makeProofDependencies(
 			final boolean hasDeps,

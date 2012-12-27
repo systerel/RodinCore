@@ -102,7 +102,7 @@ public class SCContextRoot extends EventBRoot implements ISCContextRoot{
 	}
 
 	/**
-	 * @since 3.0 : The returned type environment became explicitly mutable
+	 * @since 3.0
 	 */
 	@Override
 	public ITypeEnvironmentBuilder getTypeEnvironment(FormulaFactory factory)

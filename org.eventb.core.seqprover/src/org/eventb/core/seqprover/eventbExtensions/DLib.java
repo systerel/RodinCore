@@ -347,7 +347,7 @@ public class DLib {
 	}
 
 	/**
-	 * @since 3.0: the returned type environment became explicitly mutable
+	 * @since 3.0
 	 */
 	public ITypeEnvironmentBuilder makeTypeEnvironment() {
 		return ff.makeTypeEnvironment();

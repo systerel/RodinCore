@@ -50,7 +50,7 @@ public interface IPRStoredPred extends IInternalElement {
 	 * @return the predicate stored in this element
 	 * @throws RodinDBException
 	 *             in case of an error accessing the Rodin database
-	 * @since 3.0: use immutable type environment
+	 * @since 3.0
 	 */
 	Predicate getPredicate(ISealedTypeEnvironment baseTypenv)
 			throws RodinDBException;
@@ -68,7 +68,7 @@ public interface IPRStoredPred extends IInternalElement {
 	 *            is not desired
 	 * @throws RodinDBException
 	 *             in case of an error accessing the Rodin database
-	 * @since 3.0: use immutable type environment
+	 * @since 3.0
 	 */
 	void setPredicate(Predicate predicate, ISealedTypeEnvironment baseTypenv,
 			IProgressMonitor monitor) throws RodinDBException;

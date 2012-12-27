@@ -39,7 +39,7 @@ public class PRStoredPred extends SCPredicateElement implements IPRStoredPred {
 	}
 
 	/**
-	 * @since 3.0: use immutable type environment
+	 * @since 3.0
 	 */
 	@Override
 	public Predicate getPredicate(ISealedTypeEnvironment baseTypenv)
@@ -49,7 +49,7 @@ public class PRStoredPred extends SCPredicateElement implements IPRStoredPred {
 	}
 
 	/**
-	 * @since 3.0: use immutable type environment
+	 * @since 3.0
 	 */
 	@Override
 	public void setPredicate(Predicate predicate,

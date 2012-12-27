@@ -491,7 +491,7 @@ public class FormulaFactory {
 	 *            type of this expression. Must be <code>null</code> or
 	 *            compatible with the tag
 	 * @return a new atomic expression
-	 * @since Math Language V2
+	 * @since 1.0
 	 */
 	public AtomicExpression makeAtomicExpression(int tag,
 			SourceLocation location, Type type) {
@@ -1089,7 +1089,7 @@ public class FormulaFactory {
 	 * Returns a new empty type environment.
 	 * 
 	 * @return a new empty type environment
-	 * @since 3.0 : the return type environment became explicitly mutable
+	 * @since 3.0
 	 */
 	public ITypeEnvironmentBuilder makeTypeEnvironment() {
 		return new TypeEnvironmentBuilder(this);
@@ -1145,7 +1145,7 @@ public class FormulaFactory {
 	 *            the location of the multiple predicate
 	 * 
 	 * @return a new multiple predicate
-	 * @since Math Language V2
+	 * @since 1.0
 	 */
 	public MultiplePredicate makeMultiplePredicate(int tag,
 			Expression[] children, SourceLocation location) {
@@ -1165,7 +1165,7 @@ public class FormulaFactory {
 	 *            the location of the multiple predicate
 	 * 
 	 * @return a new multiple predicate
-	 * @since Math Language V2
+	 * @since 1.0
 	 */
 	public MultiplePredicate makeMultiplePredicate(int tag,
 			Collection<Expression> children, SourceLocation location) {
@@ -1213,7 +1213,7 @@ public class FormulaFactory {
 	 * @param version the version of the math language used in the formula
 	 * @param origin the origin to be traced to the built AST
 	 * @return the result of the parse
-	 * @since Mathematical Language V2
+	 * @since 1.0
 	 */
 	public IParseResult parseAssignment(String formula, LanguageVersion version,
 			Object origin) {
@@ -1261,7 +1261,7 @@ public class FormulaFactory {
 	 * @param version the version of the math language used in the formula
 	 * @param origin the origin to be traced to the built AST
 	 * @return the result of the parse
-	 * @since Mathematical Language V2
+	 * @since 1.0
 	 */
 	public IParseResult parseExpression(String formula, LanguageVersion version,
 			Object origin) {
@@ -1327,7 +1327,7 @@ public class FormulaFactory {
 	 * @param version the version of the math language used in the formula
 	 * @param origin the origin to be traced to the built AST
 	 * @return the result of the parse
-	 * @since Mathematical Language V2
+	 * @since 1.0
 	 */
 	public IParseResult parsePredicate(String formula, LanguageVersion version,
 			Object origin) {
@@ -1373,7 +1373,7 @@ public class FormulaFactory {
 	 * @param formula the formula to be parsed
 	 * @param version the version of the math language used in the formula
 	 * @return the result of the parse
-	 * @since Mathematical Language V2
+	 * @since 1.0
 	 */
 	public IParseResult parseType(String formula, LanguageVersion version) {
 		return parseGeneric(formula, version, null, Type.class, false);

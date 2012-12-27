@@ -52,7 +52,7 @@ public interface ISCExpressionElement extends IInternalElement {
 	 *             if there was a problem accessing the database
 	 * 
 	 * @see ISCMachineRoot#getTypeEnvironment(FormulaFactory)
-	 * @since 3.0: Remove formula factory parameter
+	 * @since 3.0
 	 */
 	Expression getExpression(ITypeEnvironment typenv) throws RodinDBException;
 

@@ -54,7 +54,7 @@ implements ISCPredicateElement {
 	}
 
 	/**
-	 * @since 3.0: Remove formula factory parameter
+	 * @since 3.0
 	 */
 	@Override
 	public Predicate getPredicate(ITypeEnvironment typenv)

@@ -50,7 +50,7 @@ public interface ISCAssignmentElement extends IInternalElement {
 	 *             if there was a problem accessing the database
 	 * 
 	 * @see ISCEvent#getTypeEnvironment(ITypeEnvironment)
-	 * @since 3.0: Remove formula factory parameter
+	 * @since 3.0
 	 */
 	Assignment getAssignment(ITypeEnvironment typenv) throws RodinDBException;
 

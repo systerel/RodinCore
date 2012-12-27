@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,7 @@ public interface IStateRepository <I extends IState> {
 	 * @return the type environment stored in the repository
 	 * @throws CoreException
 	 *             if an exception has occurred earlier with this repository
-	 * @since 3.0 : the returned type environment became explicitly mutable
+	 * @since 3.0
 	 */
 	ITypeEnvironmentBuilder getTypeEnvironment() throws CoreException;
 	
@@ -91,7 +91,7 @@ public interface IStateRepository <I extends IState> {
 	 * @throws CoreException
 	 *             if the passed type environment is <code>null</code> or if
 	 *             an exception has occurred earlier with this repository
-	 * @since 3.0 : the provided type environment became explicitly mutable
+	 * @since 3.0
 	 */
 	void setTypeEnvironment(ITypeEnvironmentBuilder environment) throws CoreException;
 	

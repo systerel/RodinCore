@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,7 @@ public interface ISCContextRoot extends ISCContext, IEventBRoot, IAccuracyElemen
 	 * @return the type environment of this context
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @since 3.0 : The type environment became explicitly mutable
+	 * @since 3.0
 	 */
 	ITypeEnvironmentBuilder getTypeEnvironment(FormulaFactory factory)
 			throws RodinDBException;

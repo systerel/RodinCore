@@ -135,7 +135,7 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 	}
 
 	/**
-	 * @since 3.0 : The returned type environment became mutable
+	 * @since 3.0
 	 */
 	@Override
 	public ITypeEnvironmentBuilder getTypeEnvironment(FormulaFactory factory)

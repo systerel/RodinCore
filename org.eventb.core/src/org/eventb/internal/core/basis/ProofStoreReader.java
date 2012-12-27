@@ -63,7 +63,7 @@ public class ProofStoreReader implements IProofStoreReader {
 	}
 
 	/**
-	 * @since 3.0: returns an immutable type environment
+	 * @since 3.0
 	 */
 	@Override
 	public ISealedTypeEnvironment getBaseTypeEnv() throws RodinDBException {

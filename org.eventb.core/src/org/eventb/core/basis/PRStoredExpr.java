@@ -39,7 +39,7 @@ public class PRStoredExpr extends SCExpressionElement implements IPRStoredExpr {
 	}
 
 	/**
-	 * @since 3.0: use immutable type environment
+	 * @since 3.0
 	 */
 	@Override
 	public Expression getExpression(ISealedTypeEnvironment baseTypenv)
@@ -49,7 +49,7 @@ public class PRStoredExpr extends SCExpressionElement implements IPRStoredExpr {
 	}
 
 	/**
-	 * @since 3.0: use immutable type environment
+	 * @since 3.0
 	 */
 	@Override
 	public void setExpression(Expression expression,

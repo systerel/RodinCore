@@ -51,7 +51,7 @@ public abstract class SCExpressionElement extends EventBElement
 	}
 
 	/**
-	 * @since 3.0: Remove formula factory parameter
+	 * @since 3.0
 	 */
 	@Override
 	public Expression getExpression(ITypeEnvironment typenv)

@@ -45,7 +45,7 @@ public class PRUtil {
 	 *         given Rodin element
 	 * @throws RodinDBException
 	 *             in case of problem accessing the Rodin database
-	 * @since 3.0 : the returned type environment became explicitly mutable
+	 * @since 3.0
 	 */
 	public static ISealedTypeEnvironment buildTypenv(IInternalElement ie,
 			ISealedTypeEnvironment baseTypenv)

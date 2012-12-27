@@ -617,7 +617,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <code>KPRJ1_GEN</code> represents prj1
 	 * 
 	 * @see AtomicExpression
-	 * @since Math Language V2
+	 * @since 1.0
 	 */
 	public static final int KPRJ1_GEN = FIRST_ATOMIC_EXPRESSION + 9;
 
@@ -625,7 +625,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <code>KPRJ2_GEN</code> represents prj2
 	 * 
 	 * @see AtomicExpression
-	 * @since Math Language V2
+	 * @since 1.0
 	 */
 	public static final int KPRJ2_GEN = FIRST_ATOMIC_EXPRESSION + 10;
 
@@ -633,7 +633,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <code>KID_GEN</code> represents id
 	 * 
 	 * @see AtomicExpression
-	 * @since Math Language V2
+	 * @since 1.0
 	 */
 	public static final int KID_GEN = FIRST_ATOMIC_EXPRESSION + 11;
 
@@ -864,7 +864,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * First tag for a multiple predicate.
 	 * 
 	 * @see MultiplePredicate
-	 * @since Math Language V2
+	 * @since 1.0
 	 */
 	public final static int FIRST_MULTIPLE_PREDICATE = 901;
 
@@ -872,7 +872,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * <code>KPARTITION</code> represents a "partition" predicate.
 	 * 
 	 * @see MultiplePredicate
-	 * @since Math Language V2
+	 * @since 1.0
 	 */
 	public final static int KPARTITION = FIRST_MULTIPLE_PREDICATE + 0;
 

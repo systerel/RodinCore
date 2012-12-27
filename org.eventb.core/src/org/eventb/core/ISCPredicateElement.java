@@ -59,7 +59,7 @@ public interface ISCPredicateElement extends IPredicateElement {
 	 * @see ISCContextRoot#getTypeEnvironment(FormulaFactory)
 	 * @see ISCMachineRoot#getTypeEnvironment(FormulaFactory)
 	 * @see ISCEvent#getTypeEnvironment(ITypeEnvironment)
-	 * @since 3.0: Remove formula factory parameter
+	 * @since 3.0
 	 */
 	Predicate getPredicate(ITypeEnvironment typenv) throws RodinDBException;
 

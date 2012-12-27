@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public interface ITypeCheckResult extends IResult {
 	 * 
 	 * @return the inferred type environment or <code>null</code> if
 	 *         type-check failed
-	 * @since 3.0: the return type changed from ITypeEnvironment to IInferredTypeEnvironment
+	 * @since 3.0
 	 */
 	IInferredTypeEnvironment getInferredEnvironment();
 

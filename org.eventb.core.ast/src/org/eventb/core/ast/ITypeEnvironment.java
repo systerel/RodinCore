@@ -228,7 +228,7 @@ public interface ITypeEnvironment {
 	 *            the specialization to apply
 	 * @return the type environment obtained by applying the given
 	 *         specialization to this type environment
-	 * @since 3.0: the returned type environment became explicitly mutable
+	 * @since 3.0
 	 */
 	ITypeEnvironmentBuilder specialize(ISpecialization specialization);
 

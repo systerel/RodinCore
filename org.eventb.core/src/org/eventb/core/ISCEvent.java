@@ -192,7 +192,7 @@ extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElemen
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 * @see ISCMachineRoot#getTypeEnvironment(FormulaFactory)
-	 * @since 3.0 The type environment became explicitly mutable
+	 * @since 3.0
 	 */
 	ITypeEnvironmentBuilder getTypeEnvironment(ITypeEnvironment mchTypenv)
 			throws RodinDBException;

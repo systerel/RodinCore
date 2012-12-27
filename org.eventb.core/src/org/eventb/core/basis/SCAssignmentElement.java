@@ -51,7 +51,7 @@ public abstract class SCAssignmentElement extends EventBElement
 	}
 
 	/**
-	 * @since 3.0: Remove formula factory parameter
+	 * @since 3.0
 	 */
 	@Override
 	public Assignment getAssignment(ITypeEnvironment typenv)

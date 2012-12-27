@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2012 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ public interface IProofDependencies {
 	 * 
 	 * @return the type environment corresponding to the used free identifiers
 	 *         in a proof.
-	 * @since 3.0 : the returned type environment became immutable
+	 * @since 3.0
 	 */
 	ISealedTypeEnvironment getUsedFreeIdents();
 	

@@ -239,7 +239,7 @@ public interface ISCMachineRoot extends IEventBRoot, IAccuracyElement, IConfigur
 	 * @return the type environment of this machine
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
-	 * @since 3.0 : The type environment became explicitly mutable
+	 * @since 3.0
 	 */
 	ITypeEnvironmentBuilder getTypeEnvironment(FormulaFactory factory)
 			throws RodinDBException;

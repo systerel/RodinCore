@@ -133,7 +133,7 @@ public class SCEvent extends EventBElement implements ISCEvent {
 
 
 	/**
-	 * @since 3.0 : The returned type environment became immutable
+	 * @since 3.0
 	 */
 	@Override
 	public ITypeEnvironmentBuilder getTypeEnvironment(ITypeEnvironment mchTypenv)

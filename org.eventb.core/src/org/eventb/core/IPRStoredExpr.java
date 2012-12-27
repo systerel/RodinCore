@@ -50,7 +50,7 @@ public interface IPRStoredExpr extends IInternalElement {
 	 * @return the expression stored in this element
 	 * @throws RodinDBException
 	 *             in case of an error accessing the Rodin database
-	 * @since 3.0: use immutable type environment
+	 * @since 3.0
 	 */
 	Expression getExpression(ISealedTypeEnvironment baseTypenv)
 			throws RodinDBException;
@@ -68,7 +68,7 @@ public interface IPRStoredExpr extends IInternalElement {
 	 *            is not desired
 	 * @throws RodinDBException
 	 *             in case of an error accessing the Rodin database
-	 * @since 3.0: use immutable type environment
+	 * @since 3.0
 	 */
 	void setExpression(Expression expression,
 			ISealedTypeEnvironment baseTypenv, IProgressMonitor monitor)
