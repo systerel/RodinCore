@@ -1,0 +1,6 @@
+/bin/
+/src/org/eventb/internal/pptrans/translator/BoundIdentifierDecomposition.java
+/src/org/eventb/internal/pptrans/translator/DecomposedQuant.java
+/src/org/eventb/internal/pptrans/translator/GoalChecker.java
+/src/org/eventb/internal/pptrans/translator/IdentityTranslator.java
+/src/org/eventb/internal/pptrans/translator/Translator.java
