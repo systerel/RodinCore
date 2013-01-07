@@ -147,11 +147,6 @@ public class PredicateVariable extends Predicate {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		// Nothing to add
-	}
-
-	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
 		if (acc.childrenSkipped()) {

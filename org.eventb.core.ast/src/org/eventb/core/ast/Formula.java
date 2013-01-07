@@ -2009,35 +2009,21 @@ public abstract class Formula<T extends Formula<T>> {
 	
 	/**
 	 * Returns a set of all given types which are used for typing this formula.
-	 * This method traverses recursively this formula, searching for all
-	 * occurrences of given types in the types of sub-expressions.
-	 * <p>
-	 * This formula must be type-checked when calling this method.
-	 * </p>
+	 * This method uses the free identifier cache of the formula to extract the
+	 * given types used.
 	 * 
 	 * @return a set containing all given types which are used in this formula
 	 *         types
 	 */
 	public final Set<GivenType> getGivenTypes() {
-		assert isTypeChecked();
-		final HashSet<GivenType> result = new HashSet<GivenType>();
-
-		// First process all free and bound identifiers now (rather than
-		// processing each occurrence later)
-		for (FreeIdentifier ident: getFreeIdentifiers()) {
-			ident.getType().addGivenTypes(result);
+		final Set<GivenType> result = new HashSet<GivenType>();
+		for (FreeIdentifier ident : getFreeIdentifiers()) {
+			if (ident.isATypeExpression()) {
+				result.add((GivenType) ident.getType().getBaseType());
+			}
 		}
-		for (BoundIdentifier ident: getBoundIdentifiers()) {
-			ident.getType().addGivenTypes(result);
-		}
-
-		// Then, traverse the formula looking for locally used given types
-		this.addGivenTypes(result);
-
 		return result;
 	}
-
-	protected abstract void addGivenTypes(Set<GivenType> set);
 
 	/**
 	 * Returns the sub-formula at the given position in this formula, or

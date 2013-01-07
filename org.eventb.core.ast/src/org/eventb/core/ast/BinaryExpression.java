@@ -799,12 +799,6 @@ public class BinaryExpression extends Expression {
 			throw new InvalidExpressionException();
 		}
 	}
-	
-	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		left.addGivenTypes(set);
-		right.addGivenTypes(set);
-	}
 
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {

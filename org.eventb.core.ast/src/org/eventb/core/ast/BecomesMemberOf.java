@@ -252,11 +252,6 @@ public class BecomesMemberOf extends Assignment {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		setExpr.addGivenTypes(set);
-	}
-
-	@Override
 	public boolean isWDStrict() {
 		return true;
 	}

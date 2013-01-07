@@ -297,13 +297,6 @@ public class MultiplePredicate extends Predicate {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		for (Expression child: children) {
-			child.addGivenTypes(set);
-		}
-	}
-
-	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
 		if (acc.childrenSkipped()) {

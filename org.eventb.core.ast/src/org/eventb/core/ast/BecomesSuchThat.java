@@ -343,11 +343,6 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		condition.addGivenTypes(set);
-	}
-
-	@Override
 	public boolean isWDStrict() {
 		return true;
 	}

@@ -412,14 +412,6 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		if (isAtomic()) {
-			getType().addGivenTypes(set);
-		}
-		ExtensionHelper.addGivenTypes(set, childExpressions, childPredicates);
-	}
-
-	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
 		ExtensionHelper.inspectChildren(acc, childExpressions, childPredicates);

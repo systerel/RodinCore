@@ -155,11 +155,6 @@ public class IntegerLiteral extends Expression {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		// Nothing to do
-	}
-
-	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
 		if (acc.childrenSkipped()) {
