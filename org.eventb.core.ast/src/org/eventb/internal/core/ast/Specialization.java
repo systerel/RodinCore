@@ -179,9 +179,6 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 			final FreeIdentifier ident = ff.makeFreeIdentifier(iter.getName(),
 					null, iter.getType());
 			final Expression expr = this.get(ident);
-			for (final GivenType gt : expr.getGivenTypes()) {
-				result.addGivenSet(gt.getName());
-			}
 			for (final FreeIdentifier free : expr.getFreeIdentifiers()) {
 				result.add(free);
 			}
