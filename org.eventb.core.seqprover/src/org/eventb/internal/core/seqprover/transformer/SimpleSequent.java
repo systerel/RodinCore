@@ -16,10 +16,8 @@ import static org.eventb.internal.core.seqprover.transformer.TrackedPredicate.ma
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
@@ -72,10 +70,6 @@ public class SimpleSequent implements ISimpleSequent {
 			assert pred.isTypeChecked();
 			// TODO move all this into AST library: pred.typeEnvironment()
 			typenvBuilder.addAll(pred.getFreeIdentifiers());
-			final Set<GivenType> types = pred.getGivenTypes();
-			for (GivenType type : types) {
-				typenvBuilder.addGivenSet(type.getName());
-			}
 		}
 		return typenvBuilder.makeSnapshot();
 	}
