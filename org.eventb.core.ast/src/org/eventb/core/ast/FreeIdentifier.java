@@ -57,6 +57,10 @@ public class FreeIdentifier extends Identifier {
 		this.name = name;
 		setPredicateVariableCache();
 		synthesizeType(ff, type);
+		
+		// ensures that type was coherent (final type cannot be null if given
+		// type was not)
+		assert type == null || type == this.getType();
 	}
 
 	// Tells whether (name, type) corresponds to a given set declaration
