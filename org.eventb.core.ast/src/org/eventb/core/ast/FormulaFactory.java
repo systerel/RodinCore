@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -808,11 +808,15 @@ public class FormulaFactory {
 	 * Creates a new node representing a free occurrence of an identifier.
 	 * 
 	 * @param name
-	 *            the name of the identifier. Must not be null or an empty string.
+	 *            the name of the identifier. Must not be null or an empty
+	 *            string.
 	 * @param location
 	 *            the source location of this identifier occurrence
 	 * @param type
-	 *            the type of this identifier. Can be <code>null</code>.
+	 *            the type of this identifier. Can be <code>null</code>. If the
+	 *            type contains a given set implying that the name of the free
+	 *            identifier is incompatible, then the final type of the free
+	 *            identifier will be <code>null</code>.
 	 * @return a free identifier
 	 * 
 	 * @see #makeBoundIdentDecl(String, SourceLocation)

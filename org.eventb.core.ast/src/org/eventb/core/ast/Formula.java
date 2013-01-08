@@ -15,6 +15,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
  *     Systerel - added support for specialization
+ *     Systerel - add given sets to free identifier cache
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -1301,13 +1302,17 @@ public abstract class Formula<T extends Formula<T>> {
 	 * array are different.
 	 * </p>
 	 * <p>
+	 * Since 3.0, all identifiers of given types occurring within this formula
+	 * are also included in the result.
+	 * </p>
+	 * <p>
 	 * Clients having special requirements on the order of identifiers should
 	 * rather use {@link #getSyntacticallyFreeIdentifiers()} to compute a sorted
 	 * list of free identifiers of this formula (that latter method will indeed
 	 * traverse the formula).
 	 * </p>
 	 * 
-	 * @return an array of all free identifiers occurring in this formula.
+	 * @return an array of all free identifiers occurring in this formula
 	 * 
 	 * @see #getSyntacticallyFreeIdentifiers()
 	 */
@@ -1524,29 +1529,34 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 
 	/**
-	 * Statically type-checks the formula.
+	 * Statically type-checks this well-formed formula. The type-check procedure
+	 * traverses this formula and tries to infer the types of all
+	 * sub-expressions. The type of some free identifiers can be specified by
+	 * passing a non-empty type environment.
 	 * <p>
-	 * The different steps are the following:
-	 * <ul>
-	 * <li>Initialize the type check result
-	 * <li>Launch the typecheck procedure that define the type equations
-	 * <li>Launch the solveTypeVariables procedure that solve the type equations
-	 * <li>Launch the solveType procedure that propagate the solved types (must
-	 * not fail if precedent steps succeed)
-	 * </ul>
-	 * If the type equations are not solved in the solveTypeVariables procedure,
-	 * then the solveType procedure propagates solved types with a best effort
-	 * policy. Types that could not be solved are set to <code>null</code>
-	 * value.
+	 * Type-checking fails if some type could not be inferred or if some
+	 * inconsistency is detected during the traversal (e.g., an illegal
+	 * combination of child types or inconsistent typing of identifiers). In
+	 * this case, all sub-formulas for which a type could be inferred are then
+	 * type-checked, but not this formula.
 	 * </p>
 	 * <p>
-	 * Returns the {@link ITypeCheckResult} containing all the informations
-	 * about the type-check run.
+	 * If this formula is already type-checked, the type-checking can
+	 * nevertheless fail if the type of some free identifier of this formula is
+	 * not compatible with the contents of the given type environment. However,
+	 * the type-checked status of this formula will not be modified.
+	 * </p>
+	 * <p>
+	 * Returns the {@link ITypeCheckResult} containing all information about the
+	 * type-check run.
 	 * </p>
 	 * 
 	 * @param environment
 	 *            an initial type environment
 	 * @return the result of the type checker
+	 * @see #isTypeChecked()
+	 * @see Expression#getType()
+	 * @see BoundIdentDecl#getType()
 	 */
 	public final ITypeCheckResult typeCheck(ITypeEnvironment environment) {
 		TypeCheckResult result = new TypeCheckResult(environment.makeSnapshot());
@@ -1950,9 +1960,15 @@ public abstract class Formula<T extends Formula<T>> {
 	public abstract void accept(ISimpleVisitor visitor);
 
 	/**
-	 * Returns whether this formula has been type-checked.
+	 * Returns whether this formula has been type-checked. A formula can be
+	 * type-checked by construction (e.g., an integer literal) or by running the
+	 * type checker. If this formula is marked as type-checked, then it is also
+	 * the case of all its descendants. Once a formula has been type-checked,
+	 * this method will always return <code>true</code>.
 	 * 
 	 * @return <code>true</code> iff this formula has been type-checked
+	 * @see #typeCheck(ITypeEnvironment)
+	 * @see Expression#typeCheck(ITypeEnvironment, Type)
 	 */
 	public final boolean isTypeChecked() {
 		return typeChecked;

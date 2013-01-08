@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - add given sets to free identifier cache
  *******************************************************************************/
 package org.eventb.internal.core.typecheck;
 
@@ -37,10 +38,18 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.ast.AbstractResult;
 
 /**
- * This class implements the result of the type checker.
+ * This class implements most of the algorithm of the type checker and provides
+ * the result to clients.
+ * <p>
+ * Type-checking is implemented in two passes. First, traverse the formula with
+ * <code>Formula.typeCheck(TypeCheckResult, BoundIdentDecl[])</code>, creating
+ * fresh type variables and registering type equations. Then, attempt to solve
+ * all type variables by calling {@link #solveTypeVariables()}, then traverse
+ * again the formula with <code>Formula.solveType(TypeUnifier)</code>, storing
+ * solved types or <code>null</code> if the type could not be inferred.
+ * </p>
  * 
  * @author François Terrier
- *
  */
 public class TypeCheckResult extends AbstractResult implements ITypeCheckResult {
 
@@ -99,18 +108,12 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		return result;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.ITypeCheckResult#getInferredEnvironment()
-	 */
 	@Override
 	public final IInferredTypeEnvironment getInferredEnvironment() {
 		if (! isSuccess()) return null;
 		return inferredTypeEnvironment;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.ITypeCheckResult#getInitialTypeEnvironment()
-	 */
 	@Override
 	public final ITypeEnvironment getInitialTypeEnvironment() {
 		return initialTypeEnvironment;
@@ -125,9 +128,6 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		return unifier;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.TypeFactory#makeBooleanType()
-	 */
 	public final BooleanType makeBooleanType() {
 		return factory.makeBooleanType();
 	}
@@ -137,37 +137,22 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		return factory.makeParametricType(typePrms, exprExt);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.TypeFactory#makeGivenType(java.lang.String)
-	 */
 	public final GivenType makeGivenType(String name) {
 		return factory.makeGivenType(name);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.TypeFactory#makeIntegerType()
-	 */
 	public final IntegerType makeIntegerType() {
 		return factory.makeIntegerType();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.TypeFactory#makePowerSetType(org.eventb.core.ast.Type)
-	 */
 	public final PowerSetType makePowerSetType(Type base) {
 		return factory.makePowerSetType(base);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.TypeFactory#makeProductType(org.eventb.core.ast.Type, org.eventb.core.ast.Type)
-	 */
 	public final ProductType makeProductType(Type left, Type right) {
 		return factory.makeProductType(left, right);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.ast.TypeFactory#makeRelationalType(org.eventb.core.ast.Type, org.eventb.core.ast.Type)
-	 */
 	public final PowerSetType makeRelationalType(Type left, Type right) {
 		return factory.makeRelationalType(left, right);
 	}
@@ -210,7 +195,8 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 							tvi.getSourceLocation(), 
 							ProblemKind.TypeUnknown, ProblemSeverities.Error));
 				}
-				// chercher les endroits faisant référence à cette typevariable et ajouter les erreurs
+				// Lookup for places where this type variable is referenced and
+				// add corresponding errors.
 				for (int j = 0; j < typeVariables.size(); j++) {
 					final TypeVariable tvj = typeVariables.get(j);
 					if (!errorReported.get(j) && 

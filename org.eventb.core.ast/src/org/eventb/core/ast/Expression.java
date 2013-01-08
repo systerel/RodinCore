@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - add given sets to free identifier cache
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -80,10 +81,12 @@ public abstract class Expression extends Formula<Expression> {
 	}
 
 	/**
-	 * Returns the type of this expression.
+	 * Returns the type of this expression if it is type-checked, or
+	 * <code>null</code> otherwise. Once the type of this expression is known,
+	 * it will never change.
 	 * 
-	 * @return the type of this expression. <code>null</code> if this 
-	 * expression is ill-typed or typecheck has not been done yet
+	 * @return the type of this expression or <code>null</code>
+	 * @see #isTypeChecked()
 	 */
 	public final Type getType() {
 		return type;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - add given sets to free identifier cache
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -15,7 +16,9 @@ package org.eventb.core.ast;
  * <p>
  * In case of success, a new type environment has been inferred from the
  * formula. This new environment specifies the type of all free identifiers of
- * the formula that didn't occur in the initial type environment.
+ * the formula that didn't occur in the initial type environment, including
+ * identifiers that correspond to given types that occur in types of the
+ * formula.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.

@@ -12,6 +12,7 @@
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
+ *     Systerel - add given sets to free identifier cache
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -178,6 +179,14 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		return isTypeChecked();
 	}
 
+	/**
+	 * Returns the type of this declaration if it is type-checked, or
+	 * <code>null</code> otherwise. Once the type of this declaration is known,
+	 * it will never change.
+	 * 
+	 * @return the type of this declaration or <code>null</code>
+	 * @see #isTypeChecked()
+	 */
 	public Type getType() {
 		return type;
 	}
