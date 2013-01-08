@@ -57,6 +57,10 @@ public class BoundIdentifier extends Identifier {
 		
 		setPredicateVariableCache();
 		synthesizeType(ff, type);
+		
+		// ensures that type was coherent (final type cannot be null if given
+		// type was not)
+		assert type == null || type == this.getType();
 	}
 
 	@Override

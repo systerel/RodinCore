@@ -186,6 +186,10 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		checkPreconditions();
 		setPredicateVariableCache(getChildren());
 		synthesizeType(ff, type);
+		
+		// ensures that type was coherent (final type cannot be null if given
+		// type was not)
+		assert type == null || type == this.getType();
 	}
 
 	private void checkPreconditions() {
