@@ -155,6 +155,8 @@ public class BoundIdentifier extends Identifier {
 		final BoundIdentDecl decl = getDeclaration(quantifiedIdentifiers);
 		assert decl != null : "Bound variable without a declaration";
 		setTemporaryType(decl.getType(), result);
+		// No verification on given sets in type since it has been done in the
+		// BoundIdentDecl
 	}
 	
 	@Override

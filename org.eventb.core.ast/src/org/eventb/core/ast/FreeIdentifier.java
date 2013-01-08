@@ -260,6 +260,7 @@ public class FreeIdentifier extends Identifier {
 	@Override
 	protected void typeCheck(TypeCheckResult result, BoundIdentDecl[] quantifiedIdentifiers) {
 		setTemporaryType(result.getIdentType(this), result);
+		result.analyzeExpression(this);
 	}
 	
 	@Override

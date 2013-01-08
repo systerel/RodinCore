@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
@@ -291,6 +292,81 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		addProblem(problem);
 	}
 	
+	/**
+	 * Analyze the expression type to check that given sets introduced are
+	 * present in the initial or inferred environment and otherwise to check
+	 * their compatibility with existent environments and add them in the
+	 * inferred environment.
+	 * 
+	 * @param expr
+	 *            the expression for which the type will be checked
+	 */
+	public void analyzeExpression(Expression expr) {
+		analyzeType(expr.getType(), expr);
+	}
+
+	/**
+	 * Analyze the type to check that given sets introduced are present in the
+	 * initial or inferred environment and otherwise to check their
+	 * compatibility with existent environments and add them in the inferred
+	 * environment.
+	 * 
+	 * @param type
+	 *            the type that will be checked
+	 * @param source
+	 *            the formula from which the type has been extracted
+	 */
+	public void analyzeType(Type type, Formula<?> source) {
+		for (GivenType given : type.getGivenTypes()) {
+			add(given, source);
+		}
+	}
+
+	// Check that type is compatible with type environments and add it to
+	// inferred type environment if necessary
+	private void add(GivenType type, Formula<?> source) {
+		if (!checkGivenType(type, initialTypeEnvironment, source)
+				&& !checkGivenType(type, inferredTypeEnvironment, source)) {
+			inferredTypeEnvironment.addGivenSet(type.getName());
+		}
+	}
+
+	// Tells whether (name, type) corresponds to a given set declaration
+	private static boolean isGivenSet(String name, Type type) {
+		final Type baseType = type.getBaseType();
+		if (baseType instanceof GivenType) {
+			final GivenType givenType = (GivenType) baseType;
+			return givenType.getName().equals(name);
+		}
+		return false;
+	}
+
+	// Returns true if the given type was found in the given type environment
+	private boolean checkGivenType(GivenType type, TypeEnvironment typenv,
+			Formula<?> source) {
+		final String name = type.getName();
+		final Type otherType = typenv.getType(name);
+		if (otherType == null) {
+			return false;
+		}
+		if (isGivenSet(name, otherType)) {
+			// Already present as given type
+			return true;
+		}
+		if (otherType instanceof TypeVariable) {
+			// Register that this name must denote a given type
+			final FormulaFactory ff = inferredTypeEnvironment
+					.getFormulaFactory();
+			unify(otherType, ff.makePowerSetType(type), source);
+			return true;
+		}
+		// The name cannot denote a given type
+		addProblem(new ASTProblem(source.getSourceLocation(),
+				ProblemKind.TypeNameUsedForRegularIdentifier,
+				ProblemSeverities.Error, name, otherType));
+		return true;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();

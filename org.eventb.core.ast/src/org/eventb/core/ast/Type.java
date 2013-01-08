@@ -183,7 +183,10 @@ public abstract class Type {
 	/**
 	 * Returns a set of all given types which are used in this type.
 	 * <p>
-	 * This type must be solved when calling this method.
+	 * Since 3.0 this type does not need anymore to be solved for using this
+	 * method. If the type is not solved the method will return given types only
+	 * for solved parts of the type. The type must be unsolved only during the
+	 * type checking phase.
 	 * </p>
 	 * 
 	 * @return a set containing all given types which are used in this formula
@@ -191,7 +194,6 @@ public abstract class Type {
 	 * @since 2.6
 	 */
 	public final Set<GivenType> getGivenTypes() {
-		assert isSolved();
 		final HashSet<GivenType> result = new HashSet<GivenType>();
 		this.addGivenTypes(result);
 		return result;

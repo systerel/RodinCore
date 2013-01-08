@@ -185,6 +185,7 @@ public abstract class Expression extends Formula<Expression> {
 		boolean wasTypeChecked = isTypeChecked();
 		typeCheck(result, NO_BOUND_IDENT_DECL);
 		result.unify(getType(), expectedType, this);
+		result.analyzeType(expectedType, this);
 		result.solveTypeVariables();
 		if (! wasTypeChecked) {
 			solveType(result.getUnifier());

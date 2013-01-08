@@ -897,7 +897,7 @@ public class TestTypeChecker extends AbstractTests {
 		// Test with typed empty set
 		testPredicate("(∅⦂S↔ℤ) ∈ (∅⦂ℙ(S)) → ℤ",
 				mTypeEnvironment(),
-				mTypeEnvironment()
+				mTypeEnvironment("S=ℙ(S)", ff)
 		);
 
 		// Nested quantified expressions
@@ -981,12 +981,22 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment(),
 				mTypeEnvironment("x=ℤ; y=BOOL", ff)
 		);
-		// FIXME: synthesizeType: fix code to reject incompatible types in this
-		// assignement
-		// testAssignment("f(S) ≔ (∅⦂ℙ(S)↔T)(∅⦂ℙ(S))", //
-		// mTypeEnvironment("S=BOOL", ff), //
-		// null //
-		//	);
+	}
+
+	/**
+	 * Regression test for rejecting incompatible types when introducing
+	 * implicitly given sets.
+	 */
+	@Test
+	public void testStrengtheningTypeChecker() {
+		testAssignment("f(S) ≔ (∅⦂ℙ(S)↔T)(∅⦂ℙ(S))", //
+				mTypeEnvironment("S=BOOL", ff), //
+				null //
+		);
+		testPredicate("f(S) = (∅⦂ℙ(S)↔U)(∅⦂ℙ(S))", //
+				mTypeEnvironment("f=T↔U", ff), //
+				null //
+		);
 	}
 
 	/**

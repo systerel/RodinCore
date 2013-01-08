@@ -289,6 +289,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 				isAtomic());
 		final Type resultType = extension.typeCheck(this, mediator);
 		setTemporaryType(resultType, result);
+		result.analyzeExpression(this);
 	}
 
 	public boolean isAtomic() {
