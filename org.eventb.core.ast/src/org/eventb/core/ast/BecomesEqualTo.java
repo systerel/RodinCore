@@ -320,13 +320,6 @@ public class BecomesEqualTo extends Assignment {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		for (Expression value: values) {
-			value.addGivenTypes(set);
-		}
-	}
-
-	@Override
 	public boolean isWDStrict() {
 		return true;
 	}

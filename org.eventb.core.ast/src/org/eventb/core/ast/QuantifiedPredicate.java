@@ -475,14 +475,6 @@ public class QuantifiedPredicate extends Predicate {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		for (BoundIdentDecl decl: quantifiedIdentifiers) {
-			decl.addGivenTypes(set);
-		}
-		pred.addGivenTypes(set);
-	}
-
-	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
 

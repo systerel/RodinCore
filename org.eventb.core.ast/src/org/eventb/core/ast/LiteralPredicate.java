@@ -211,11 +211,6 @@ public class LiteralPredicate extends Predicate {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		// Nothing to do
-	}
-
-	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
 		acc.childrenSkipped();

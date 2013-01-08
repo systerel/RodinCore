@@ -354,18 +354,6 @@ public class SetExtension extends Expression {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		if (members.length == 0) {
-			// Special case when the set is actually empty
-			getType().addGivenTypes(set);
-		} else {
-			for (Expression member: members) {
-				member.addGivenTypes(set);
-			}
-		}
-	}
-
-	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
 		if (acc.childrenSkipped()) {

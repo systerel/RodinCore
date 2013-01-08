@@ -228,11 +228,6 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		type.addGivenTypes(set);
-	}
-
-	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
 		if (acc.childrenSkipped()) {

@@ -2025,8 +2025,6 @@ public abstract class Formula<T extends Formula<T>> {
 		return result;
 	}
 
-	protected abstract void addGivenTypes(Set<GivenType> set);
-
 	/**
 	 * Returns the sub-formula at the given position in this formula, or
 	 * <code>null</code> if the given position does not correspond to any

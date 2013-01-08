@@ -250,11 +250,6 @@ public class SimplePredicate extends Predicate {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		child.addGivenTypes(set);
-	}
-
-	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
 		if (acc.childrenSkipped()) {

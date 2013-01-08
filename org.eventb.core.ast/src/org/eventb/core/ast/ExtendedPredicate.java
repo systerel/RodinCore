@@ -328,11 +328,6 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		ExtensionHelper.addGivenTypes(set, childExpressions, childPredicates);
-	}
-
-	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
 		acc.inspect(this);
 		ExtensionHelper.inspectChildren(acc, childExpressions, childPredicates);

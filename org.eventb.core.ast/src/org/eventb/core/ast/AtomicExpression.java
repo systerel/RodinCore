@@ -408,11 +408,6 @@ public class AtomicExpression extends Expression {
 			throw new InvalidExpressionException();
 		}
 	}
-	
-	@Override
-	protected void addGivenTypes(Set<GivenType> set) {
-		getType().addGivenTypes(set);
-	}
 
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {
