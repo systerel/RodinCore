@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IDatatypeTranslation;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -87,7 +86,7 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 
 		@Override
 		public boolean isGivenSet() throws NoSuchElementException {
-			return TypeEnvironment.isGivenSet(getName(), getType());
+			return getType().isGivenSet(getName());
 		}
 	}
 
@@ -194,16 +193,6 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 	@Override
 	public ITypeEnvironmentBuilder makeBuilder() {
 		return new TypeEnvironmentBuilder(this);
-	}
-
-	// Tells whether (name, type) corresponds to a given set declaration
-	static boolean isGivenSet(String name, Type type) {
-		final Type baseType = type.getBaseType();
-		if (baseType instanceof GivenType) {
-			final GivenType givenType = (GivenType) baseType;
-			return givenType.getName().equals(name);
-		}
-		return false;
 	}
  
 }

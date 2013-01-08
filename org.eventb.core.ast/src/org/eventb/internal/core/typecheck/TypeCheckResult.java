@@ -317,16 +317,6 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		}
 	}
 
-	// Tells whether (name, type) corresponds to a given set declaration
-	private static boolean isGivenSet(String name, Type type) {
-		final Type baseType = type.getBaseType();
-		if (baseType instanceof GivenType) {
-			final GivenType givenType = (GivenType) baseType;
-			return givenType.getName().equals(name);
-		}
-		return false;
-	}
-
 	// Returns true if the given type was found in the given type environment
 	private boolean checkGivenType(GivenType type, TypeEnvironment typenv,
 			Formula<?> source) {
@@ -335,7 +325,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		if (otherType == null) {
 			return false;
 		}
-		if (isGivenSet(name, otherType)) {
+		if (otherType.isGivenSet(name)) {
 			// Already present as given type
 			return true;
 		}

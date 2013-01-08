@@ -65,17 +65,6 @@ public class FreeIdentifier extends Identifier {
 		assert type == null || type == this.getType();
 	}
 
-	// Tells whether (name, type) corresponds to a given set declaration
-	private static boolean isGivenSet(String name, Type type) {
-		final Type baseType = type.getBaseType();
-		if (baseType instanceof GivenType) {
-			final GivenType givenType = (GivenType) baseType;
-			return givenType.getName().equals(name);
-		}
-		return false;
-	}
-
-
 	/*
 	 * We must proceed in two steps for constructing the cache of free
 	 * identifiers. This is because this identifier is not typed initially and
@@ -94,7 +83,7 @@ public class FreeIdentifier extends Identifier {
 		}
 
 		final FreeIdentifier[] givenTypeIdents;
-		if (!isGivenSet(name, givenType)) {
+		if (!givenType.isGivenSet(name)) {
 			// Check there is no occurrence of this identifier in given types
 			givenTypeIdents = getGivenTypeIdentifiers(givenType, ff);
 			for (final FreeIdentifier givenTypeIdent : givenTypeIdents) {
