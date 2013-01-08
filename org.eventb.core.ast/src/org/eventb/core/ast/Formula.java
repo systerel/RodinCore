@@ -1538,6 +1538,9 @@ public abstract class Formula<T extends Formula<T>> {
 		typeCheck(result, NO_BOUND_IDENT_DECL);
 		result.solveTypeVariables();
 		solveType(result.getUnifier());
+		// Ensure that we are consistent:
+		// Success reported implies that this node is type-checked
+		assert !result.isSuccess() || typeChecked;
 		return result;
 	}
 
