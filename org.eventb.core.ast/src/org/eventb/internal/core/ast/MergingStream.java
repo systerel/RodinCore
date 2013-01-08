@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,7 +106,6 @@ public final class MergingStream extends IdentListMerger {
 			final Type type1 = id1.getType();
 			final Type type2 = id2.getType();
 			errorFound = type1 == null || ! type1.equals(type2);
-			// FIXME: in this case we should return a result with null type
 		}
 		if (comparison <= 0) {
 			result = id1;
