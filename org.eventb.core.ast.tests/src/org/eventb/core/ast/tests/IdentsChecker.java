@@ -54,7 +54,10 @@ import org.eventb.core.ast.UnaryPredicate;
 
 /**
  * Implements the checking of the identifier caches of the formula type-checker,
- * using the AST Visitor design pattern.
+ * using the AST Visitor design pattern. Identifier cache in a formula must
+ * always be coherent with the set of identifiers that could be constructed when
+ * exiting a node using the stack part of visited nodes and leaves under that
+ * node to retrieve all identifiers defined.
  * 
  * @author Laurent Voisin
  */
@@ -79,7 +82,28 @@ public class IdentsChecker implements IVisitor {
 		Set<T> other = new HashSet<T>(Arrays.asList(array));
 		return set.equals(other);
 	}
-	
+
+	private static boolean areEqualFreeIdentifiers(Formula<?> f,
+			Set<FreeIdentifier> expected, FreeIdentifier[] found) {
+		if (f.isTypeChecked()) {
+			return areEqual(expected, found);
+		} else {
+			// If formula is not typed we can only check that all free
+			// identifiers names are present (same name could have different
+			// types in expected set whereas in the array found only one type is
+			// keeped).
+			Set<String> names_expected = new HashSet<String>(expected.size());
+			Set<String> names_present = new HashSet<String>(found.length);
+			for (FreeIdentifier freeid : expected) {
+				names_expected.add(freeid.getName());
+			}
+			for (FreeIdentifier freeid : found) {
+				names_present.add(freeid.getName());
+			}
+			return names_expected.equals(names_expected);
+		}
+	}
+
 	public static boolean check(Formula<?> f, FormulaFactory factory) {
 		IdentsChecker checker = new IdentsChecker(f, factory);
 		f.accept(checker);
@@ -90,7 +114,7 @@ public class IdentsChecker implements IVisitor {
 		}
 		return checker.success;
 	}
-	
+
 	/**
 	 * Checks whether the formula bears the expected type-checker caches of
 	 * identifiers.
@@ -106,7 +130,8 @@ public class IdentsChecker implements IVisitor {
 	 */
 	private static boolean checkFormula(Formula<?> formula,
 			Set<FreeIdentifier> freeIdents, Set<BoundIdentifier> boundIdents) {
-		return areEqual(freeIdents, formula.getFreeIdentifiers())
+		return areEqualFreeIdentifiers(formula, freeIdents,
+				formula.getFreeIdentifiers())
 				&& areEqual(boundIdents, formula.getBoundIdentifiers());
 	}
 	
@@ -145,12 +170,12 @@ public class IdentsChecker implements IVisitor {
 		this.stack = new Stack<Formula<?>>();
 		this.factory = factory;
 	}
-	
+
 	@Override
 	public boolean continueBCOMP(AssociativeExpression expr) {
 		return success;
 	}
-	
+
 	@Override
 	public boolean continueBINTER(AssociativeExpression expr) {
 		return success;
@@ -170,7 +195,7 @@ public class IdentsChecker implements IVisitor {
 	public boolean continueCSET(QuantifiedExpression expr) {
 		return success;
 	}
-	
+
 	@Override
 	public boolean continueDIV(BinaryExpression expr) {
 		return success;
@@ -1166,13 +1191,11 @@ public class IdentsChecker implements IVisitor {
 	 * @return <code>true</code> if successful
 	 */
 	private boolean quantifiedExit(Formula<?> formula, int nbBoundIdentDecls) {
-		if (! success) {
+		if (!success) {
 			return false;
 		}
 		final Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
 		Set<BoundIdentifier> boundIdents = new HashSet<BoundIdentifier>();
-		// FIXME: we must do the same treatment as in IdentListMerger when two
-		// identifiers have same name and different types (see FIXME of MergingStream).
 		while (stack.peek() != formula) {
 			final Formula<?> child = stack.pop();
 			freeIdents.addAll(Arrays.asList(child.getFreeIdentifiers()));
@@ -1182,14 +1205,14 @@ public class IdentsChecker implements IVisitor {
 		return success = checkFormula(formula, freeIdents, boundIdents);
 	}
 
-	private Set<BoundIdentifier> renumber(Set<BoundIdentifier> boundIdents, int nbBoundIdentDecls) {
+	private Set<BoundIdentifier> renumber(Set<BoundIdentifier> boundIdents,
+			int nbBoundIdentDecls) {
 		final Set<BoundIdentifier> result = new HashSet<BoundIdentifier>();
-		for (final BoundIdentifier boundIdent: boundIdents) {
+		for (final BoundIdentifier boundIdent : boundIdents) {
 			final int index = boundIdent.getBoundIndex();
 			if (nbBoundIdentDecls <= index) {
-				result.add(factory.makeBoundIdentifier(
-						index - nbBoundIdentDecls, 
-						boundIdent.getSourceLocation(), 
+				result.add(factory.makeBoundIdentifier(index
+						- nbBoundIdentDecls, boundIdent.getSourceLocation(),
 						boundIdent.getType()));
 			}
 		}
@@ -1206,11 +1229,12 @@ public class IdentsChecker implements IVisitor {
 	/**
 	 * Checks cached identifier sets of a non-atomic formula (on exit).
 	 * 
-	 * @param formula the formula to check
+	 * @param formula
+	 *            the formula to check
 	 * @return <code>true</code> if successful
 	 */
 	private boolean standardExit(Formula<?> formula) {
-		if (! success) {
+		if (!success) {
 			return false;
 		}
 		final Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
@@ -1418,8 +1442,7 @@ public class IdentsChecker implements IVisitor {
 	}
 
 	@Override
-	public boolean continueExtendedExpression(
-			ExtendedExpression expr) {
+	public boolean continueExtendedExpression(ExtendedExpression expr) {
 		return success;
 	}
 
@@ -1442,5 +1465,5 @@ public class IdentsChecker implements IVisitor {
 	public boolean exitExtendedPredicate(ExtendedPredicate pred) {
 		return standardExit(pred);
 	}
-	
+
 }

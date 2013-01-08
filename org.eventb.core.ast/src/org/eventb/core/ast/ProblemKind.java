@@ -52,6 +52,14 @@ public enum ProblemKind {
 	LexerError ("Lexer error, character '%1$s' has been ignored"),
 	
 	/**
+	 * Argument 1 is the name, argument 2 the alternative type.
+	 * 
+	 * @since 3.0
+	 */
+	TypeNameUsedForRegularIdentifier(
+			"Name %1$s is used both as a given type and as a free identifier with type %2$s"),
+	
+	/**
 	 * Argument 1 is the name of the first type, argument 2 is the name of the second type.
 	 */
 	TypesDoNotMatch ("Type: %1$s does not match type: %2$s"),

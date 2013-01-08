@@ -278,6 +278,7 @@ public class SetExtension extends Expression {
 			result.unify(member.getType(), alpha, this);
 		}
 		setTemporaryType(result.makePowerSetType(alpha), result);
+		result.analyzeExpression(this);
 	}
 	
 	@Override
