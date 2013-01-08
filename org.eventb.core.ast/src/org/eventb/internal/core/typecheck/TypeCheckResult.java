@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.typecheck;
 
+import static org.eventb.internal.core.ast.GivenTypeHelper.isGivenSet;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -315,16 +317,6 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 				&& !checkGivenType(type, inferredTypeEnvironment, source)) {
 			inferredTypeEnvironment.addGivenSet(type.getName());
 		}
-	}
-
-	// Tells whether (name, type) corresponds to a given set declaration
-	private static boolean isGivenSet(String name, Type type) {
-		final Type baseType = type.getBaseType();
-		if (baseType instanceof GivenType) {
-			final GivenType givenType = (GivenType) baseType;
-			return givenType.getName().equals(name);
-		}
-		return false;
 	}
 
 	// Returns true if the given type was found in the given type environment

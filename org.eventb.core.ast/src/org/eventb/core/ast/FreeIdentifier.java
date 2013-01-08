@@ -17,6 +17,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
+import static org.eventb.internal.core.ast.GivenTypeHelper.isGivenSet;
 import static org.eventb.internal.core.ast.IdentListMerger.makeMerger;
 
 import java.util.LinkedHashSet;
@@ -64,17 +65,6 @@ public class FreeIdentifier extends Identifier {
 		// type was not)
 		assert type == null || type == this.getType();
 	}
-
-	// Tells whether (name, type) corresponds to a given set declaration
-	private static boolean isGivenSet(String name, Type type) {
-		final Type baseType = type.getBaseType();
-		if (baseType instanceof GivenType) {
-			final GivenType givenType = (GivenType) baseType;
-			return givenType.getName().equals(name);
-		}
-		return false;
-	}
-
 
 	/*
 	 * We must proceed in two steps for constructing the cache of free
