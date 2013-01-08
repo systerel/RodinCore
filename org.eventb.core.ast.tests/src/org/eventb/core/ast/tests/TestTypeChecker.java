@@ -897,7 +897,7 @@ public class TestTypeChecker extends AbstractTests {
 		// Test with typed empty set
 		testPredicate("(∅⦂S↔ℤ) ∈ (∅⦂ℙ(S)) → ℤ",
 				mTypeEnvironment(),
-				mTypeEnvironment()
+				mTypeEnvironment("S=ℙ(S)", ff)
 		);
 
 		// Nested quantified expressions

@@ -48,7 +48,7 @@ public class TypeVariable extends Type {
 
 	@Override
 	protected void addGivenTypes(Set<GivenType> set) {
-		assert false;
+		// no given types to add since it's an unsolved type variable
 	}
 	
 	@Override

@@ -156,6 +156,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		if (type == null) {
 			type = result.newFreshVariable(getSourceLocation());
 		}
+		result.analyzeType(type, this);
 	}
 
 	@Override

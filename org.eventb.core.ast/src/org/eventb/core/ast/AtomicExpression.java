@@ -315,6 +315,7 @@ public class AtomicExpression extends Expression {
 			return;
 		}
 		setTemporaryType(resultType, result);
+		result.analyzeExpression(this);
 	}
 	
 	@Override

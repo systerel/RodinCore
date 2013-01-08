@@ -1526,9 +1526,24 @@ public abstract class Formula<T extends Formula<T>> {
 	/**
 	 * Statically type-checks the formula.
 	 * <p>
-	 * Returns the {@link TypeCheckResult} containing all the informations about
-	 * the type-check run.
+	 * The different steps are the following:
+	 * <ul>
+	 * <li>Initialize the type check result
+	 * <li>Launch the typecheck procedure that define the type equations
+	 * <li>Launch the solveTypeVariables procedure that solve the type equations
+	 * <li>Launch the solveType procedure that propagate the solved types (must
+	 * not fail if precedent steps succeed)
+	 * </ul>
+	 * If the type equations are not solved in the solveTypeVariables procedure,
+	 * then the solveType procedure propagates solved types with a best effort
+	 * policy. Types that could not be solved are set to <code>null</code>
+	 * value.
 	 * </p>
+	 * <p>
+	 * Returns the {@link ITypeCheckResult} containing all the informations
+	 * about the type-check run.
+	 * </p>
+	 * 
 	 * @param environment
 	 *            an initial type environment
 	 * @return the result of the type checker
