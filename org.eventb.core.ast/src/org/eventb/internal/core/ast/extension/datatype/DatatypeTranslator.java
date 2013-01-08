@@ -367,7 +367,7 @@ public class DatatypeTranslator {
 
 	private ExtendedExpression makeSrcSet(Expression[] srcExprs) {
 		return srcFactory.makeExtendedExpression(srcTypeConstructor, srcExprs,
-				NO_PREDICATES, null, srcTypeInstance);
+				NO_PREDICATES, null, null);
 	}
 
 	private BoundIdentDecl[] makeTrgBoundIdentDecls() {
