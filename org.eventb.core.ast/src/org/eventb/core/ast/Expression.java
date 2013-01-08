@@ -189,6 +189,11 @@ public abstract class Expression extends Formula<Expression> {
 		if (! wasTypeChecked) {
 			solveType(result.getUnifier());
 		}
+		// Ensure that we are consistent:
+		// Success reported implies that this node is type-checked and bears
+		// the given expected type
+		assert !result.isSuccess()
+				|| (typeChecked && getType().equals(expectedType));
 		return result;
 	}
 

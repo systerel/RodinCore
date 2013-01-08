@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,13 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.Set;
@@ -999,6 +1000,22 @@ public class TestTypeChecker extends AbstractTests {
 		testPredicate("b(1) ∈ A(ℤ)", mTypeEnvironment("", fac), null);
 	}
 
+	/**
+	 * Ensures that the type-checker returns a failure if the given
+	 * type-environment is not compatible with the formula, but the formula
+	 * itself remains type-checked if it was.
+	 */
+	@Test
+	public void incompatibleTypeEnvironment() {
+		final ITypeEnvironment empty = mTypeEnvironment();
+		final ITypeEnvironment goodTypenv = mTypeEnvironment("x=ℤ", ff);
+		final ITypeEnvironment badTypenv = mTypeEnvironment("x=ℙ(S)", ff);
+		final Predicate pred = testPredicate("1≤x", empty, goodTypenv);
+		final ITypeCheckResult result = pred.typeCheck(badTypenv);
+		assertFalse(result.isSuccess());
+		assertTrue(pred.isTypeChecked());
+	}
+
 	private FormulaFactory makeDatatypeFactory(FormulaFactory initial,
 			String datatypeImage) {
 		final IDatatypeExtension dtExt = injectExtension(datatypeImage, initial);
@@ -1008,11 +1025,12 @@ public class TestTypeChecker extends AbstractTests {
 		return FormulaFactory.getInstance(exts);
 	}
 
-	private void testPredicate(String image, ITypeEnvironment initialEnv,
+	private Predicate testPredicate(String image, ITypeEnvironment initialEnv,
 			ITypeEnvironment finalEnv) {
 		final FormulaFactory factory = initialEnv.getFormulaFactory();
 		final Predicate formula = parsePredicate(image, factory);
 		doTest(formula, initialEnv, finalEnv, image);
+		return formula;
 	}
 
 	private void testAssignment(String image, ITypeEnvironment initialEnv,
