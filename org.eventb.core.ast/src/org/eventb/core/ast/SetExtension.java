@@ -122,6 +122,10 @@ public class SetExtension extends Expression {
 		checkPreconditions();
 		setPredicateVariableCache(this.members);
 		synthesizeType(factory, type);
+		
+		// ensures that type was coherent (final type cannot be null if given
+		// type was not)
+		assert type == null || type == this.getType();
 	}
 
 	protected SetExtension(Expression expression, SourceLocation location,
