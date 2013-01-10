@@ -183,15 +183,10 @@ public class SetExtension extends Expression {
 			}
 			assert givenType instanceof PowerSetType;
 			resultType = givenType;
-			freeIdentMerger = IdentListMerger.makeMerger(
-					freeIdentMerger.getFreeMergedArray(),
-					this.getFreeIdentsFromGivenTypes(givenType));
-			this.freeIdents = freeIdentMerger.getFreeMergedArray();
-			if (freeIdentMerger.containsError()) {
+			if (!mergeGivenTypes(resultType, ff)) {
 				// Incompatible type environments, don't set the type
 				return;
 			}
-			
 		} else {
 			final Type memberType = members[0].getType();
 			if (memberType == null) {

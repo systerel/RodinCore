@@ -17,6 +17,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_EXPR;
+import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -225,7 +226,7 @@ public class AtomicExpression extends Expression {
 			return;
 		}
 		if (resultType != null) {
-			this.freeIdents = getFreeIdentsFromGivenTypes(resultType);
+			this.freeIdents = getGivenTypeIdentifiers(resultType, ff);
 			setFinalType(resultType, givenType);
 		}
 	}

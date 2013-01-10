@@ -23,9 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -1999,50 +1997,6 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 
 	protected abstract void addGivenTypes(Set<GivenType> set);
-	
-	
-	/**
-	 * Returns the sorted array of free identifiers corresponding to given sets
-	 * included in the given type.
-	 * 
-	 * @param givenType
-	 *            the given type that may contain given sets defining free
-	 *            identifiers
-	 * 
-	 * @return the array of free identifiers corresponding to given sets
-	 *         included in the given type.
-	 * 
-	 * @since 3.0
-	 */
-	protected final FreeIdentifier[] getFreeIdentsFromGivenTypes(Type givenType) {
-		Set<GivenType> givenTypes = givenType.getGivenTypes();
-		LinkedList<FreeIdentifier> free_idents = new LinkedList<FreeIdentifier>();
-		FormulaFactory ff = this.getFactory();
-		
-		for (final GivenType type : givenTypes) {
-			String name = type.getName();
-			int insert_ind = 0;
-			
-			ListIterator<FreeIdentifier> l_it = free_idents.listIterator();
-			boolean found = false;
-			
-			while (l_it.hasNext() && !found) {
-				insert_ind = l_it.nextIndex();
-				if (name.compareTo(l_it.next().getName()) < 0) {
-					found = true;
-				} else {
-					// if it is the last list element insert just after
-					insert_ind++;
-				}
-			}
-			
-			free_idents.add(insert_ind,
-					new FreeIdentifier(name, Formula.FREE_IDENT, this.location,
-							ff.makePowerSetType(type), ff));
-		}
-		FreeIdentifier[] result = new FreeIdentifier[free_idents.size()];
-		return free_idents.toArray(result);
-	}
 
 	/**
 	 * Returns the sub-formula at the given position in this formula, or

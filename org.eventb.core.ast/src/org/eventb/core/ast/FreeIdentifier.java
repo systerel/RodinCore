@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
-import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -82,14 +81,10 @@ public class FreeIdentifier extends Identifier {
 		if (!isGivenSet(name, givenType)) {
 			Type old_type = this.getType();
 			this.setTemporaryType(givenType);
-			FreeIdentifier[] given_sets = this
-					.getFreeIdentsFromGivenTypes(givenType);
-			IdentListMerger freeIdentMerger = IdentListMerger.makeMerger(
-					this.freeIdents, given_sets);
-			this.freeIdents = freeIdentMerger.getFreeMergedArray();
+			final boolean valid = mergeGivenTypes(givenType, ff);
 			this.setTemporaryType(old_type);
-			if (freeIdentMerger.containsError()) {
-				// Incompatible type environments, don't bother going further.
+			if (!valid) {
+				// Incompatible type environments, don't set the type
 				return;
 			}
 		}

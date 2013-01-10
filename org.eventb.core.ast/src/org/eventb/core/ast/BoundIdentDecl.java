@@ -16,6 +16,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedHelper.sameType;
+import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
 
 import java.util.LinkedHashSet;
@@ -64,10 +65,10 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		assert ff.isValidIdentifierName(name);
 		this.name = name;
 		setPredicateVariableCache();
-		synthesizeType(givenType);
+		synthesizeType(ff, givenType);
 	}
 
-	private void synthesizeType(Type givenType) {
+	private void synthesizeType(FormulaFactory ff, Type givenType) {
 		this.freeIdents = NO_FREE_IDENT;
 		this.boundIdents = NO_BOUND_IDENT;
 
@@ -75,7 +76,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 			return;
 		
 		assert givenType.isSolved();
-		this.freeIdents = this.getFreeIdentsFromGivenTypes(givenType);
+		this.freeIdents = getGivenTypeIdentifiers(givenType, ff);
 		this.type = givenType;
 		this.typeChecked = true;
 	}
@@ -166,9 +167,9 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		Type inferredType = unifier.solve(type);
 		type = null;
 		if (inferredType != null && inferredType.isSolved()) {
-			synthesizeType(inferredType);
-		}else{
-			synthesizeType(null);
+			synthesizeType(unifier.getFormulaFactory(), inferredType);
+		} else {
+			synthesizeType(unifier.getFormulaFactory(), null);
 		}
 		return isTypeChecked();
 	}

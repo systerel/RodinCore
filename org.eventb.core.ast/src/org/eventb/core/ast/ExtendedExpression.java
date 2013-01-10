@@ -241,10 +241,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 		// The type we are about to set on this expression can contribute
 		// some given sets, add them to the identifier cache
-		freeIdentMerger = IdentListMerger.makeMerger(freeIdents,
-				getFreeIdentsFromGivenTypes(resultType));
-		this.freeIdents = freeIdentMerger.getFreeMergedArray();
-		if (freeIdentMerger.containsError()) {
+		if (!mergeGivenTypes(resultType, factory)) {
 			// Incompatible type environments, don't set the type
 			return;
 		}
