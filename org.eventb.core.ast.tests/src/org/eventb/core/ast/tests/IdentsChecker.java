@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
  *     Systerel - added support for mathematical extensions
  *******************************************************************************/
 package org.eventb.core.ast.tests;
+
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -39,12 +42,12 @@ import org.eventb.core.ast.IVisitor;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
@@ -107,58 +110,27 @@ public class IdentsChecker implements IVisitor {
 				&& areEqual(boundIdents, formula.getBoundIdentifiers());
 	}
 	
-	private final void addFreeIdentsFromGivenTypes(
-			Set<FreeIdentifier> set,
-			SourceLocation sloc, Type givenType) {
-		Set<GivenType> givenTypes = givenType.getGivenTypes();
-		FormulaFactory ff = this.factory;
-		for (final GivenType type : givenTypes) {
-			String name = type.getName();
-			set.add(ff.makeFreeIdentifier(name, sloc, ff.makePowerSetType(type)));
-		}
-	}
-	
-	private Set<FreeIdentifier> getGivenSetsFreeId(Formula<?> formula) {
-		Set<FreeIdentifier> free_ids = new HashSet<FreeIdentifier>();
-		boolean stop = false;
-		@SuppressWarnings("unchecked")
-		Stack<Formula<?>> localStack = (Stack<Formula<?>>) this.stack.clone();
-		while (!stop) {
-			if (localStack.peek() == formula) {
-				stop = true;
-			}
-			final Formula<?> child = localStack.pop();
-			Type type = null;
-			if (child instanceof Expression) {
-				type = ((Expression) child).getType();
-			}
-			if (child instanceof BoundIdentDecl) {
-				type = ((BoundIdentDecl) child).getType();
-			}
-			if (type != null) {
-				addFreeIdentsFromGivenTypes(free_ids,
-						child.getSourceLocation(), type);
-			}
-			if (child instanceof FreeIdentifier) {
-				free_ids.add((FreeIdentifier) child);
-			}
-		}
-		return free_ids;
+	// Returns a set containing the identifiers for each given type
+	// occurring in the type of the given formula (if any)
+	private Set<FreeIdentifier> getGivenTypeIdentifiers(Expression expr) {
+		return getGivenTypeIdentifiers(expr.getType());
 	}
 
-	/**
-	 * Checks that the given array is empty.
-	 * 
-	 * @param <T>
-	 *            type of the elements
-	 * @param array
-	 *            an array
-	 * @return <code>true</code> iff the given array is empty
-	 */
-	private static <T> boolean isEmpty(T[] array) {
-		return array.length == 0;
+	private Set<FreeIdentifier> getGivenTypeIdentifiers(BoundIdentDecl decl) {
+		return getGivenTypeIdentifiers(decl.getType());
 	}
-	
+
+	private Set<FreeIdentifier> getGivenTypeIdentifiers(Type type) {
+		final Set<FreeIdentifier> result = new HashSet<FreeIdentifier>();
+		if (type == null) {
+			return result;
+		}
+		for (final GivenType givenType : type.getGivenTypes()) {
+			result.add(givenType.toExpression(factory));
+		}
+		return result;
+	}
+
 	final private FormulaFactory factory;
 
 	final private Stack<Formula<?>> stack;
@@ -1251,97 +1223,118 @@ public class IdentsChecker implements IVisitor {
 		return success = checkFormula(formula, freeIdents, boundIdents);
 	}
 
-	private boolean standardVisit(Formula<?> formula) {
+	private boolean standardVisitExpression(Expression expr) {
 		if (!success) {
 			return false;
 		}
-		stack.push(formula);
-		Set<FreeIdentifier> givenSetsFreeId = getGivenSetsFreeId(formula);
-		return areEqual(givenSetsFreeId, formula.getFreeIdentifiers())
-				&& isEmpty(formula.getBoundIdentifiers());
+		stack.push(expr);
+		final Set<FreeIdentifier> freeIdents = getGivenTypeIdentifiers(expr);
+		final Set<BoundIdentifier> boundIdents = emptySet();
+		return success = checkFormula(expr, freeIdents, boundIdents);
+	}
+
+	private boolean standardVisitPredicate(Predicate pred) {
+		if (!success) {
+			return false;
+		}
+		stack.push(pred);
+		final Set<FreeIdentifier> freeIdents = emptySet();
+		final Set<BoundIdentifier> boundIdents = emptySet();
+		return success = checkFormula(pred, freeIdents, boundIdents);
 	}
 
 	@Override
 	public boolean visitBFALSE(LiteralPredicate pred) {
-		return standardVisit(pred);
+		return standardVisitPredicate(pred);
 	}
 
 	@Override
 	public boolean visitBOOL(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
 	public boolean visitBOUND_IDENT(BoundIdentifier ident) {
-		if (!success) {
+		if (! success) {
 			return false;
 		}
 		stack.push(ident);
-		Set<FreeIdentifier> givenSetsFreeId = getGivenSetsFreeId(ident);
-		Set<BoundIdentifier> boundIdents = new HashSet<BoundIdentifier>();
-		boundIdents.add(ident);
-		return success = areEqual(givenSetsFreeId, ident.getFreeIdentifiers())
-				&& areEqual(boundIdents, ident.getBoundIdentifiers());
+		final Set<FreeIdentifier> freeIdents = getGivenTypeIdentifiers(ident);
+		final Set<BoundIdentifier> boundIdents = singleton(ident);
+		return success = checkFormula(ident, freeIdents, boundIdents);
 	}
-	
+
 	@Override
-	public boolean visitBOUND_IDENT_DECL(BoundIdentDecl ident) {
-		return standardVisit(ident);
+	public boolean visitBOUND_IDENT_DECL(BoundIdentDecl decl) {
+		if (! success) {
+			return false;
+		}
+		stack.push(decl);
+		final Set<FreeIdentifier> freeIdents = getGivenTypeIdentifiers(decl);
+		final Set<BoundIdentifier> boundIdents = emptySet();
+		return success = checkFormula(decl, freeIdents, boundIdents);
 	}
 
 	@Override
 	public boolean visitBTRUE(LiteralPredicate pred) {
-		return standardVisit(pred);
+		return standardVisitPredicate(pred);
 	}
 
 	@Override
 	public boolean visitEMPTYSET(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
 	public boolean visitFALSE(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
 	public boolean visitFREE_IDENT(FreeIdentifier ident) {
-		return standardVisit(ident);
+		if (! success) {
+			return false;
+		}
+		stack.push(ident);
+		final Set<FreeIdentifier> freeIdents = getGivenTypeIdentifiers(ident);
+		freeIdents.add(ident);
+		final Set<BoundIdentifier> boundIdents = emptySet();
+		return success = checkFormula(ident, freeIdents, boundIdents);
 	}
 
 	@Override
 	public boolean visitINTEGER(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
 	public boolean visitINTLIT(IntegerLiteral lit) {
-		return standardVisit(lit);
+		return standardVisitExpression(lit);
 	}
 
 	@Override
 	public boolean visitKPRED(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
 	public boolean visitKSUCC(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
 	public boolean visitNATURAL(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
 	public boolean visitNATURAL1(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
 	public boolean visitTRUE(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
@@ -1406,17 +1399,17 @@ public class IdentsChecker implements IVisitor {
 
 	@Override
 	public boolean visitKID_GEN(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
 	public boolean visitKPRJ1_GEN(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
 	public boolean visitKPRJ2_GEN(AtomicExpression expr) {
-		return standardVisit(expr);
+		return standardVisitExpression(expr);
 	}
 
 	@Override
