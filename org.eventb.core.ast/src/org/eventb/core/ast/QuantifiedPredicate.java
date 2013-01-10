@@ -185,19 +185,14 @@ public class QuantifiedPredicate extends Predicate {
 
 	@Override
 	protected void synthesizeType(FormulaFactory ff) {
-		IdentListMerger freeIdentMerger = 
-				IdentListMerger.makeMerger(pred.freeIdents, new FreeIdentifier[0]);
+		final int length = quantifiedIdentifiers.length;
+		final Formula<?>[] children = new Formula<?>[length + 1];
+		System.arraycopy(quantifiedIdentifiers, 0, children, 0, length);
+		children[length] = pred;
 
-		// We need to add free identifiers from quantified identifiers since
-		// they could contain given sets identifiers
-		for (BoundIdentDecl bound_id_decl : this.quantifiedIdentifiers) {
-			freeIdentMerger = IdentListMerger.makeMerger(
-					freeIdentMerger.getFreeMergedArray(),
-					bound_id_decl.getFreeIdentifiers());
-		}
-		
+		final IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
-		
+
 		final BoundIdentifier[] boundIdentsBelow = pred.boundIdents; 
 		this.boundIdents = 
 			getBoundIdentsAbove(boundIdentsBelow, quantifiedIdentifiers, ff);

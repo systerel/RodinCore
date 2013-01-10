@@ -409,17 +409,13 @@ public class QuantifiedExpression extends Expression {
 	
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
-		IdentListMerger freeIdentMerger = 
-			IdentListMerger.makeMerger(pred.freeIdents, expr.freeIdents);
+		final int length = quantifiedIdentifiers.length;
+		final Formula<?>[] children = new Formula<?>[length + 2];
+		System.arraycopy(quantifiedIdentifiers, 0, children, 0, length);
+		children[length] = pred;
+		children[length + 1] = expr;
 
-		// We need to add free identifiers from quantified identifiers since
-		// they could contain given sets identifiers
-		for (BoundIdentDecl bound_id_decl : this.quantifiedIdentifiers) {
-			freeIdentMerger = IdentListMerger.makeMerger(
-					freeIdentMerger.getFreeMergedArray(),
-					bound_id_decl.getFreeIdentifiers());
-		}
-		
+		final IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
 		final IdentListMerger boundIdentMerger = 
