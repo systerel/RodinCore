@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,10 @@ public abstract class AbstractTests {
 
 	// Formula factory for the old V1 language
 	public static final FormulaFactory ffV1 = FormulaFactory.getV1Default();
+
+	// Utility arrays for building extended formulas
+	public static final Expression[] NO_EXPRS = new Expression[0];
+	public static final Predicate[] NO_PREDS = new Predicate[0];
 
 	protected static final IntegerType INT_TYPE = ff.makeIntegerType();
 	private static final IDatatypeExtension LIST_TYPE = new IDatatypeExtension() {

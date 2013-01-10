@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
@@ -37,6 +34,9 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +50,7 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.LiteralPredicate;
@@ -707,6 +708,20 @@ public class TestFreeIdents extends AbstractTests {
 		BoundIdentDecl bf = a.asPrimedDecl(ff);
 		assertEquals("name of primed bound should equal name of primed free",
 				ap.getName(), bf.getName());
+	}
+
+	/**
+	 * Ensures that the identifier cache is empty, when an invalid type is given
+	 * at extended expression construction.
+	 */
+	// FIXME Remove this test when makeExtendedExpression raises an exception
+	@Test
+	public void illTypedExtendedExpression() {
+		final GivenType givenType = LIST_FAC.makeGivenType("S");
+		final Expression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
+				NO_EXPRS, NO_PREDS, null, givenType);
+		assertFalse(nil.isTypeChecked());
+		assertEquals(0, nil.getFreeIdentifiers().length);
 	}
 
 }
