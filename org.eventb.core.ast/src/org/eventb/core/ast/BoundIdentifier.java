@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -65,7 +67,7 @@ public class BoundIdentifier extends Identifier {
 		if (givenType == null) {
 			return;
 		}
-		this.freeIdents = this.getFreeIdentsFromGivenTypes(givenType);
+		this.freeIdents = getGivenTypeIdentifiers(givenType, ff);
 		setFinalType(givenType, givenType);
 	}
 

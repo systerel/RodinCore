@@ -11,7 +11,10 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedHelper.sameType;
+import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
+import static org.eventb.internal.core.ast.IdentListMerger.makeMerger;
 
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
 
@@ -40,7 +43,34 @@ public abstract class Expression extends Formula<Expression> {
 	}
 	
 	protected abstract void synthesizeType(FormulaFactory ff, Type givenType);
-	
+
+	/**
+	 * Adds the free identifiers for the GivenTypes occurring in the given type
+	 * into the free identifier cache. Returns whether these given types are
+	 * compatible with the current contents of the cache.
+	 * <p>
+	 * Must be called only by <code>synthesizeType()</code>.
+	 * </p>
+	 * 
+	 * @param aType
+	 *            the type we are about to set on this formula
+	 * @param factory
+	 *            the formula factory to use for building the identifiers
+	 * @return <code>true</code> iff the identifier cache is still type-checked
+	 * @since 3.0
+	 */
+	protected final boolean mergeGivenTypes(Type aType, FormulaFactory factory) {
+		final FreeIdentifier[] newIdents = getGivenTypeIdentifiers(aType,
+				factory);
+		if (newIdents.length == 0) {
+			// Nothing new
+			return true;
+		}
+		final IdentListMerger merger = makeMerger(freeIdents, newIdents);
+		this.freeIdents = merger.getFreeMergedArray();
+		return !merger.containsError();
+	}
+
 	protected final void setFinalType(Type synType, Type givenType) {
 		assert synType != null;
 		assert synType.isSolved();
