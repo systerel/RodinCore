@@ -160,19 +160,12 @@ public class BecomesSuchThat extends Assignment {
 	@Override
 	protected void synthesizeType(FormulaFactory ff) {
 		final int length = assignedIdents.length;
-		final Formula<?>[] children = new Formula[length + 1];
+		final Formula<?>[] children = new Formula[2 * length + 1];
 		System.arraycopy(assignedIdents, 0, children, 0, length);
-		children[length] = condition;
+		System.arraycopy(primedIdents, 0, children, length, length);
+		children[2 * length] = condition;
 		
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
-
-		// We need to add free identifiers from primed identifiers since
-		// they could contain given sets identifiers
-		for (BoundIdentDecl bound_id_decl : this.primedIdents) {
-			freeIdentMerger = IdentListMerger.makeMerger(
-					freeIdentMerger.getFreeMergedArray(),
-					bound_id_decl.getFreeIdentifiers());
-		}
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
 		final BoundIdentifier[] boundIdentsBelow = condition.boundIdents; 
