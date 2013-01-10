@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BCOMP;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
@@ -126,6 +124,8 @@ import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 import static org.eventb.core.ast.tests.IdentsChecker.check;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -309,12 +309,50 @@ public class TestTypedConstructor extends AbstractTests {
 		assertExpressionType(qexpr, expected);
 	}
 
+	/*
+	 * Special test for given type coherence. The child predicate or expression
+	 * contains an identifier "S" which is not a given type.
+	 */
+	private static void assertQExprGivenSets(Type...declTypes) {
+		final BoundIdentDecl[] bids = mDeclarations(declTypes);
+		final Expression qexpr1 = mQuantifiedExpression(CSET, Explicit, bids,
+				mPredicateWithSOfTypeZ(), mExpression(pB));
+		final Expression qexpr2 = mQuantifiedExpression(CSET, Explicit, bids,
+				mPredicate(true), mExpressionWithSOfTypeZ());
+		boolean expected = typesDoNotContainS(declTypes);
+		// FIXME use regular assertFormulaTypeChecked()
+		assertEquals(expected, qexpr1.isTypeChecked());
+		assertEquals(expected, qexpr2.isTypeChecked());
+	}
+
 	private static void assertQuantifiedPredicate(int tag, boolean expected,
 			Type[] types, boolean typed) {
 		final BoundIdentDecl[] bids = mDeclarations(types);
 		final Predicate child = mPredicate(typed);
 		final Predicate qpred = mQuantifiedPredicate(tag, bids, child);
 		assertFormulaTypeChecked(qpred, expected);
+	}
+
+	/*
+	 * Special test for given type coherence. The child predicate contains an
+	 * identifier "S" which is not a given type.
+	 */
+	private static void assertQPredGivenSets(Type...bidTypes) {
+		final BoundIdentDecl[] bids = mDeclarations(bidTypes);
+		final Predicate qpred = mQuantifiedPredicate(FORALL, bids,
+				mPredicateWithSOfTypeZ());
+		boolean expected = typesDoNotContainS(bidTypes);
+		// FIXME use regular assertFormulaTypeChecked()
+		assertEquals(expected, qpred.isTypeChecked());
+	}
+
+	private static boolean typesDoNotContainS(Type[] types) {
+		for (final Type type : types) {
+			if (type.getGivenTypes().contains(S)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static void assertRelationalPredicate(int tag, boolean expected,
@@ -431,6 +469,21 @@ public class TestTypedConstructor extends AbstractTests {
 		}
 		return result;
 
+	}
+
+	// Returns a type-checked predicate where the identifier "S" is of type "ℤ"
+	private static Predicate mPredicateWithSOfTypeZ() {
+		final Predicate result = mRelationalPredicate(EQUAL,
+				mExpressionWithSOfTypeZ(), mIntegerLiteral());
+		assertTrue(result.isTypeChecked());
+		return result;
+	}
+
+	// Returns a type-checked expression where the identifier "S" is of type "ℤ"
+	private static Expression mExpressionWithSOfTypeZ() {
+		final Expression result = mFreeIdentifier("S", Z);
+		assertTrue(result.isTypeChecked());
+		return result;
 	}
 
 	private static void runTypeCheck(Formula<?> form) {
@@ -1002,4 +1055,21 @@ public class TestTypedConstructor extends AbstractTests {
 		assertUnaryPredicate(NOT, false, false);
 	}
 
+	/**
+	 * Ensures that given sets are taken into account when synthesizing the
+	 * result type.
+	 */
+	@Test
+	public void givenSetErrors() throws Exception {
+		assertQPredGivenSets(S);
+		assertQPredGivenSets(T);
+		assertQPredGivenSets(S, T);
+		assertQPredGivenSets(T, S);
+		
+		assertQExprGivenSets(S);
+		assertQExprGivenSets(T);
+		assertQExprGivenSets(S, T);
+		assertQExprGivenSets(T, S);
+	}
+	
 }
