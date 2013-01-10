@@ -164,11 +164,11 @@ public class SetExtension extends Expression {
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(members);
+		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
 		IdentListMerger boundIdentMerger = mergeBoundIdentifiers(members);
 		this.boundIdents = boundIdentMerger.getBoundMergedArray();
-		this.freeIdents = freeIdentMerger.getFreeMergedArray();
-		
+
 		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
 			// Incompatible type environments, don't bother going further.
 			return;
@@ -187,9 +187,8 @@ public class SetExtension extends Expression {
 					freeIdentMerger.getFreeMergedArray(),
 					this.getFreeIdentsFromGivenTypes(givenType));
 			this.freeIdents = freeIdentMerger.getFreeMergedArray();
-			
 			if (freeIdentMerger.containsError()) {
-				// Incompatible type environments, don't bother going further.
+				// Incompatible type environments, don't set the type
 				return;
 			}
 			
