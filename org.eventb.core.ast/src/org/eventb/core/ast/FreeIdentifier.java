@@ -15,11 +15,14 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -76,20 +79,33 @@ public class FreeIdentifier extends Identifier {
 			return;
 		}
 
+		FreeIdentifier[] given_sets = new FreeIdentifier[0];
+
 		// Avoid infinite recursion when adding a given set as new free
 		// identifier
 		if (!isGivenSet(name, givenType)) {
-			Type old_type = this.getType();
-			this.setTemporaryType(givenType);
-			final boolean valid = mergeGivenTypes(givenType, ff);
-			this.setTemporaryType(old_type);
-			if (!valid) {
-				// Incompatible type environments, don't set the type
-				return;
+			given_sets = getGivenTypeIdentifiers(givenType, ff);
+			for (FreeIdentifier free_id : given_sets) {
+				if (name.equals(free_id.getName())) {
+					// Error a given set has the same name as the current
+					// identifier which is not the given set
+					return;
+				}
 			}
 		}
 
 		setFinalType(givenType, givenType);
+
+		if(given_sets.length != 0){
+			IdentListMerger freeIdentMerger = IdentListMerger.makeMerger(
+					this.freeIdents, given_sets);
+			this.freeIdents = freeIdentMerger.getFreeMergedArray();
+			// In this case an error cannot occur: givenType is not null and
+			// pathological cases were rejected by the precedent check on the
+			// name
+			assert !freeIdentMerger.containsError();
+		}
+
 	}
 	
 	/**
