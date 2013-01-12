@@ -1302,7 +1302,8 @@ public class TestTypedConstructor extends AbstractTests {
 
 	/**
 	 * Ensures that given sets are taken into account when synthesizing the
-	 * result type.
+	 * result type. This can happen only when there are several children,
+	 * therefore atomic and unary operators are not tested.
 	 */
 	@Test
 	public void givenSetErrors() throws Exception {
@@ -1313,7 +1314,7 @@ public class TestTypedConstructor extends AbstractTests {
 		assertAssocPredGivenSets(S);
 		assertAssocPredGivenSets(T);
 		
-		// AtomicExpression: no possible case
+		// AtomicExpression: atomic operator
 		
 		assertBecEqualToGivenSets("S");
 		assertBecEqualToGivenSets("T");
@@ -1326,16 +1327,29 @@ public class TestTypedConstructor extends AbstractTests {
 		assertBecSuchThatGivenSets(S, T);
 		assertBecSuchThatGivenSets(T, S);
 
-		assertBinPredGivenSets(S);
-		assertBinPredGivenSets(T);
-		
 		assertBinExprGivenSets(pS);
 		assertBinExprGivenSets(pT);
 		
-		// BoolExpression: already detected in children
-		// BoundIdentDecl: no possible case
-		// BoundIdentifier: no possible case
+		assertBinPredGivenSets(S);
+		assertBinPredGivenSets(T);
+		
+		// BoolExpression: unary operator
+		// BoundIdentDecl: atomic operator
+		// BoundIdentifier: atomic operator
 
+		assertExtExprGivenSets("S");
+		assertExtExprGivenSets("T");
+		
+		assertExtPredGivenSets("S");
+		assertExtPredGivenSets("T");
+
+		assertFreeIdGivenSet(S);
+		assertFreeIdGivenSet(pS);
+		assertFreeIdGivenSet(T);
+		
+		// IntegerLiteral: atomic operator
+		// LiteralPredicate: atomic operator
+		
 		assertMultPredGivenSets("S");
 		assertMultPredGivenSets("T");
 
@@ -1355,21 +1369,9 @@ public class TestTypedConstructor extends AbstractTests {
 		assertSetExtGivenSets("S");
 		assertSetExtGivenSets("T");
 		
-		// SimplePredicate: already detected in child
-		// UnaryExpression: already detected in child
-		// UnaryPredicate: already detected in child
-		
-		assertFreeIdGivenSet(S);
-		assertFreeIdGivenSet(pS);
-		assertFreeIdGivenSet(T);
-		
-		assertExtExprGivenSets("S");
-		assertExtExprGivenSets("T");
-		
-		assertExtPredGivenSets("S");
-		assertExtPredGivenSets("T");
-	
-		// no possible case: IntegerLiteral, LiteralPredicate, PredicateVariable
+		// SimplePredicate: unary operator
+		// UnaryExpression: unary operator
+		// UnaryPredicate: unary operator
 	}
 	
 }
