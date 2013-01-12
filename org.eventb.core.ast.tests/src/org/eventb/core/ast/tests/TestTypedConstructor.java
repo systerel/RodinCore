@@ -213,15 +213,15 @@ public class TestTypedConstructor extends AbstractTests {
 	
 	/*
 	 * Special test for given type coherence. A child expression defines the
-	 * given set S, all children have type ℙ(T). id_name defines the name of the
+	 * given set S, all children have type ℙ(T). idName defines the name of the
 	 * free identifier child added.
 	 */
-	private static void assertAssocExprGivenSets(String id_name) {
-		final Expression expr1 = mFreeIdentifier(id_name, pT);
+	private static void assertAssocExprGivenSets(String idName) {
+		final Expression expr1 = mFreeIdentifier(idName, pT);
 		final Expression expr2 = parseExpression("(∅⦂ℙ(S)↔ℙ(T))(∅⦂ℙ(S))");
 		final Expression expr = mAssociativeExpression(BUNION,
 				new Expression[] { expr1, expr2 });
-		boolean expected = !"S".equals(id_name);
+		boolean expected = !"S".equals(idName);
 		// FIXME use regular assertFormulaTypeChecked()
 		assertEquals(expected, expr.isTypeChecked());
 	}
@@ -264,14 +264,14 @@ public class TestTypedConstructor extends AbstractTests {
 	
 	/*
 	 * Special test for given type coherence. The right hand side of assignment
-	 * contains the given type S. Both sides have the coherent type "ℤ". id_name
+	 * contains the given type S. Both sides have the coherent type "ℤ". idName
 	 * defines the name of the free identifier child added.
 	 */
-	private static void assertBecEqualToGivenSets(String id_name) {
-		final FreeIdentifier free_id = mFreeIdentifier(id_name, Z);
+	private static void assertBecEqualToGivenSets(String idName) {
+		final FreeIdentifier freeId = mFreeIdentifier(idName, Z);
 		final Expression value = parseExpression("(∅⦂ℙ(S)↔ℤ)(∅⦂ℙ(S))");
-		final Assignment assign = mBecomesEqualTo(free_id, value);
-		boolean expected = !"S".equals(id_name);
+		final Assignment assign = mBecomesEqualTo(freeId, value);
+		boolean expected = !"S".equals(idName);
 		// FIXME use regular assertFormulaTypeChecked()
 		assertEquals(expected, assign.isTypeChecked());
 	}
@@ -286,13 +286,13 @@ public class TestTypedConstructor extends AbstractTests {
 	/*
 	 * Special test for given type coherence. The right hand side expression
 	 * defines a given set S. Left hand side has type U and right hand side has
-	 * type ℙ(U). id_name is the name of the left hand side identifier.
+	 * type ℙ(U). idName is the name of the left hand side identifier.
 	 */
-	private static void assertBecMemberOfGivenSets(String id_name) {
+	private static void assertBecMemberOfGivenSets(String idName) {
 		final Expression set = parseExpression("(∅⦂ℙ(S)↔ℙ(U))(∅⦂ℙ(S))");
 		final Assignment assign = mBecomesMemberOf(
-				mFreeIdentifier(id_name, U), set);
-		boolean expected = !"S".equals(id_name);
+				mFreeIdentifier(idName, U), set);
+		boolean expected = !"S".equals(idName);
 		// FIXME use regular assertFormulaTypeChecked()
 		assertEquals(expected, assign.isTypeChecked());
 	}
@@ -411,9 +411,9 @@ public class TestTypedConstructor extends AbstractTests {
 	 */
 	private static void assertFreeIdGivenSet(final Type type) {
 		final String nameS = "S";
-		boolean success_expected = typesDoNotContainS(new Type[] { type })
+		boolean successExpected = typesDoNotContainS(new Type[] { type })
 				|| isGivenSet(nameS, type);
-		if (success_expected) {
+		if (successExpected) {
 			mFreeIdentifier(nameS, type);
 		} else {
 			new FailedAssertionChecker() {
@@ -439,15 +439,15 @@ public class TestTypedConstructor extends AbstractTests {
 	
 	/*
 	 * Special test for given type coherence. A child expression defines a given
-	 * set S, all expressions have type ℙ(T). id_name is the name of a free
+	 * set S, all expressions have type ℙ(T). idName is the name of a free
 	 * identifier child expression.
 	 */
-	private static void assertMultPredGivenSets(String id_name) {
-		final Expression expr1 = mFreeIdentifier(id_name, pT);
+	private static void assertMultPredGivenSets(String idName) {
+		final Expression expr1 = mFreeIdentifier(idName, pT);
 		final Expression expr2 = parseExpression("(∅⦂ℙ(S)↔ℙ(T))(∅⦂ℙ(S))");
 		final Predicate pred = mMultiplePredicate(new Expression[] { expr1,
 				expr2 });
-		boolean expected = !"S".equals(id_name);
+		boolean expected = !"S".equals(idName);
 		// FIXME use regular assertFormulaTypeChecked()
 		assertEquals(expected, pred.isTypeChecked());
 	}
@@ -518,15 +518,15 @@ public class TestTypedConstructor extends AbstractTests {
 	
 	/*
 	 * Special test for given type coherence. The left child expression defines
-	 * a given set S, all expressions have type ℙ(T). id_name is the name of a
+	 * a given set S, all expressions have type ℙ(T). idName is the name of a
 	 * free identifier left child expression.
 	 */
-	private static void assertRelPredGivenSets(String id_name) {
-		final Expression expr1 = mFreeIdentifier(id_name, pT);
+	private static void assertRelPredGivenSets(String idName) {
+		final Expression expr1 = mFreeIdentifier(idName, pT);
 		final Expression expr2 = parseExpression("(∅⦂ℙ(S)↔ℙ(T))(∅⦂ℙ(S))");
 		final Predicate pred = mRelationalPredicate(expr1,
 				expr2);
-		boolean expected = !"S".equals(id_name);
+		boolean expected = !"S".equals(idName);
 		// FIXME use regular assertFormulaTypeChecked()
 		assertEquals(expected, pred.isTypeChecked());
 	}
@@ -547,14 +547,14 @@ public class TestTypedConstructor extends AbstractTests {
 	
 	/*
 	 * Special test for given type coherence. A child expression defines a given
-	 * set S, all expressions have type ℙ(T). id_name is the name of a free
+	 * set S, all expressions have type ℙ(T). idName is the name of a free
 	 * identifier child expression.
 	 */
-	private static void assertSetExtGivenSets(String id_name) {
-		final Expression expr1 = mFreeIdentifier(id_name, pT);
+	private static void assertSetExtGivenSets(String idName) {
+		final Expression expr1 = mFreeIdentifier(idName, pT);
 		final Expression expr2 = parseExpression("(∅⦂ℙ(S)↔ℙ(T))(∅⦂ℙ(S))");
 		final Expression expr = mSetExtension(new Expression[]{expr1, expr2});
-		boolean expected = !"S".equals(id_name);
+		boolean expected = !"S".equals(idName);
 		// FIXME use regular assertFormulaTypeChecked()
 		assertEquals(expected, expr.isTypeChecked());
 	}
@@ -581,33 +581,33 @@ public class TestTypedConstructor extends AbstractTests {
 	
 	/*
 	 * Special test for given type coherence. A child expression defines the
-	 * given set S, all children expressions have type ℤ. id_name defines the
+	 * given set S, all children expressions have type ℤ. idName defines the
 	 * name of the free identifier child added.
 	 */
-	private static void assertExtExprGivenSets(String id_name) {
-		final Expression expr1 = mFreeIdentifier(id_name, Z);
+	private static void assertExtExprGivenSets(String idName) {
+		final Expression expr1 = mFreeIdentifier(idName, Z);
 		final Expression expr2 = parseExpression("(∅⦂ℙ(S)↔ℤ)(∅⦂ℙ(S))");
 		final Expression expr = mExtendedExpression(new Expression[] { expr1,
 				expr2 });
-		boolean expected = !"S".equals(id_name);
+		boolean expected = !"S".equals(idName);
 		// FIXME use regular assertFormulaTypeChecked()
 		assertEquals(expected, expr.isTypeChecked());
 	}
 
 	/*
 	 * Special test for given type coherence. A child expression defines the
-	 * given set S, all children expressions have type ℤ. id_name defines the
+	 * given set S, all children expressions have type ℤ. idName defines the
 	 * name of the free identifier child added.
 	 */
-	private static void assertExtPredGivenSets(String id_name) {
-		final Expression expr1 = mFreeIdentifier(id_name, Z);
+	private static void assertExtPredGivenSets(String idName) {
+		final Expression expr1 = mFreeIdentifier(idName, Z);
 		final Expression expr2 = parseExpression("(∅⦂ℙ(S)↔ℤ)(∅⦂ℙ(S))");
 		final Predicate PT = mLiteralPredicate(BTRUE);
-		final Predicate[] TWO_PREDS = new Predicate[] { PT, PT };
+		final Predicate[] twoPreds = new Predicate[] { PT, PT };
 		final Predicate pred = ExtendedFormulas.EFF.makeExtendedPredicate(
 				ExtendedFormulas.fooL, new Expression[] { expr1, expr2 },
-				TWO_PREDS, null);
-		boolean expected = !"S".equals(id_name);
+				twoPreds, null);
+		boolean expected = !"S".equals(idName);
 		// FIXME use regular assertFormulaTypeChecked()
 		assertEquals(expected, pred.isTypeChecked());
 	}
