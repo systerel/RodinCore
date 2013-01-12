@@ -808,7 +808,8 @@ public class FormulaFactory {
 	 * Creates a new node representing a free occurrence of an identifier.
 	 * 
 	 * @param name
-	 *            the name of the identifier. Must not be null or an empty string.
+	 *            the name of the identifier. Must not be null or an empty
+	 *            string.
 	 * @param location
 	 *            the source location of this identifier occurrence
 	 * @param type

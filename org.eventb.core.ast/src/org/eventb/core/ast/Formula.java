@@ -1301,6 +1301,10 @@ public abstract class Formula<T extends Formula<T>> {
 	 * array are different.
 	 * </p>
 	 * <p>
+	 * Since 3.0 the given sets defined in given types are also included in the
+	 * free identifiers array.
+	 * </p>
+	 * <p>
 	 * Clients having special requirements on the order of identifiers should
 	 * rather use {@link #getSyntacticallyFreeIdentifiers()} to compute a sorted
 	 * list of free identifiers of this formula (that latter method will indeed
