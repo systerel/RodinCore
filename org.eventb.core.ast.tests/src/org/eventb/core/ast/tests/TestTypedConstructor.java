@@ -796,6 +796,13 @@ public class TestTypedConstructor extends AbstractTests {
 	public void testFreeIdentifier() throws Exception {
 		assertFreeIdentifierType(S);
 		assertFreeIdentifierType(null);
+		
+		// Regular given set
+		assertExpressionType(ff.makeFreeIdentifier("S", null, pS), pS);
+		
+		// Name occurs with a different type in type
+		assertExpressionType(ff.makeFreeIdentifier("S", null, ppS), null);
+		assertExpressionType(ff.makeFreeIdentifier("S", null, rSS), null);
 	}
 
 	@Test 

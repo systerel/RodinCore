@@ -15,11 +15,15 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
+import static org.eventb.internal.core.ast.IdentListMerger.makeMerger;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
+import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.LegibilityResult;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -67,6 +71,14 @@ public class FreeIdentifier extends Identifier {
 	}
 
 
+	/*
+	 * We must proceed in two steps for constructing the cache of free
+	 * identifiers. This is because this identifier is not typed initially and
+	 * therefore cannot be merged successfully. So we split the test in two
+	 * parts: we verify that this identifier name does not occur in the proposed
+	 * type BEFORE setting the type; once the type has been set, we compute the
+	 * free identifier cache.
+	 */
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		this.freeIdents = new FreeIdentifier[] {this};
@@ -76,20 +88,26 @@ public class FreeIdentifier extends Identifier {
 			return;
 		}
 
-		// Avoid infinite recursion when adding a given set as new free
-		// identifier
+		final FreeIdentifier[] givenTypeIdents;
 		if (!isGivenSet(name, givenType)) {
-			Type old_type = this.getType();
-			this.setTemporaryType(givenType);
-			final boolean valid = mergeGivenTypes(givenType, ff);
-			this.setTemporaryType(old_type);
-			if (!valid) {
-				// Incompatible type environments, don't set the type
-				return;
+			// Check there is no occurrence of this identifier in given types
+			givenTypeIdents = getGivenTypeIdentifiers(givenType, ff);
+			for (final FreeIdentifier givenTypeIdent : givenTypeIdents) {
+				if (name.equals(givenTypeIdent.getName())) {
+					return;
+				}
 			}
+		} else {
+			givenTypeIdents = null;
 		}
 
 		setFinalType(givenType, givenType);
+
+		if (givenTypeIdents != null) {
+			final IdentListMerger merger = makeMerger(freeIdents, givenTypeIdents);
+			this.freeIdents = merger.getFreeMergedArray();
+			assert !merger.containsError();
+		}
 	}
 	
 	/**
