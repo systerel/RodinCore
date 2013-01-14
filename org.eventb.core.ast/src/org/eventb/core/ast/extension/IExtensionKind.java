@@ -12,7 +12,7 @@ package org.eventb.core.ast.extension;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
-
+// FIXME: add comments in whole class
 /**
  * @since 2.0
  * @author Nicolas Beauger

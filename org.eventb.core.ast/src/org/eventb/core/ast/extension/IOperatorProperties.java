@@ -17,7 +17,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 
-
+// FIXME: add comments in whole class
 /**
  * Common protocol for operator properties.
  * 

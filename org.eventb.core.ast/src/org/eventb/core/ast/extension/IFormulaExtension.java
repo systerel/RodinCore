@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension;
 
-import static org.eventb.core.ast.extension.ExtensionFactory.TWO_EXPRS;
-import static org.eventb.core.ast.extension.ExtensionFactory.TWO_OR_MORE_EXPRS;
 import static org.eventb.core.ast.extension.ExtensionFactory.NO_CHILD;
 import static org.eventb.core.ast.extension.ExtensionFactory.ONE_EXPR;
+import static org.eventb.core.ast.extension.ExtensionFactory.TWO_EXPRS;
+import static org.eventb.core.ast.extension.ExtensionFactory.TWO_OR_MORE_EXPRS;
 import static org.eventb.core.ast.extension.ExtensionFactory.makePrefixKind;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.PREDICATE;
@@ -133,10 +133,13 @@ public interface IFormulaExtension {
 	 */
 	boolean conjoinChildrenWD();
 
+	// FIXME: add comments
 	String getId();
-
+	
+	// FIXME: add comments
 	String getGroupId();
-
+	
+	// FIXME: add comments
 	IExtensionKind getKind();
 
 	/**
@@ -146,9 +149,11 @@ public interface IFormulaExtension {
 	 * @return an Object or <code>null</code>
 	 */
 	Object getOrigin();
-
+	
+	// FIXME: add comments
 	void addCompatibilities(ICompatibilityMediator mediator);
-
+	
+	// FIXME: add comments
 	void addPriorities(IPriorityMediator mediator);
 
 }
