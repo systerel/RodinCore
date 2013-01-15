@@ -222,8 +222,7 @@ public class TestTypedConstructor extends AbstractTests {
 		final Expression expr = mAssociativeExpression(BUNION,
 				new Expression[] { expr1, expr2 });
 		boolean expected = !"S".equals(idName);
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, expr.isTypeChecked());
+		assertFormulaTypeChecked(expr, expected);
 	}
 
 
@@ -245,8 +244,7 @@ public class TestTypedConstructor extends AbstractTests {
 				mExpression(otherPredTypeIn), mExpression(otherPredTypeIn));
 		final Predicate pred = mAssociativePredicate(LAND, new Predicate[]{pred1, pred2});
 		boolean expected = typesDoNotContainS(new Type[] { otherPredTypeIn });
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, pred.isTypeChecked());
+		assertFormulaTypeChecked(pred, expected);
 	}
 
 
@@ -272,8 +270,7 @@ public class TestTypedConstructor extends AbstractTests {
 		final Expression value = parseExpression("(∅⦂ℙ(S)↔ℤ)(∅⦂ℙ(S))");
 		final Assignment assign = mBecomesEqualTo(freeId, value);
 		boolean expected = !"S".equals(idName);
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, assign.isTypeChecked());
+		assertFormulaTypeChecked(assign, expected);
 	}
 
 	private static void assertBecomesMemberOf(boolean expected, Type left,
@@ -293,8 +290,7 @@ public class TestTypedConstructor extends AbstractTests {
 		final Assignment assign = mBecomesMemberOf(
 				mFreeIdentifier(idName, U), set);
 		boolean expected = !"S".equals(idName);
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, assign.isTypeChecked());
+		assertFormulaTypeChecked(assign, expected);
 	}
 	
 	private static void assertBecomesSuchThat(boolean expected, Type[] left,
@@ -315,8 +311,7 @@ public class TestTypedConstructor extends AbstractTests {
 		final Assignment assign = mBecomesSuchThat(fids, bids,
 				mPredicateWithSOfTypeZ());
 		boolean expected = typesDoNotContainS(declTypes);
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, assign.isTypeChecked());
+		assertFormulaTypeChecked(assign, expected);
 	}
 
 	private static void assertBinaryExpressionType(int tag, Type expected,
@@ -334,8 +329,7 @@ public class TestTypedConstructor extends AbstractTests {
 		final Expression expr = mBinaryExpression(REL, mFreeIdentifier("S", pT),
 				mExpression(rightPowerSet));
 		boolean expected = typesDoNotContainS(new Type[]{rightPowerSet});
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, expr.isTypeChecked());
+		assertFormulaTypeChecked(expr, expected);
 	}
 
 	private static void assertBinaryPredicate(int tag, boolean expected,
@@ -358,8 +352,7 @@ public class TestTypedConstructor extends AbstractTests {
 				mRelationalPredicate(EQUAL, mExpression(rightPredTypeIn),
 						mExpression(rightPredTypeIn)));
 		boolean expected = typesDoNotContainS(new Type[] { rightPredTypeIn });
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, pred.isTypeChecked());
+		assertFormulaTypeChecked(pred, expected);
 	}
 
 	private static void assertBoolExpressionType(boolean typed, Type expected) {
@@ -448,8 +441,7 @@ public class TestTypedConstructor extends AbstractTests {
 		final Predicate pred = mMultiplePredicate(new Expression[] { expr1,
 				expr2 });
 		boolean expected = !"S".equals(idName);
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, pred.isTypeChecked());
+		assertFormulaTypeChecked(pred, expected);
 	}
 	
 
@@ -473,9 +465,8 @@ public class TestTypedConstructor extends AbstractTests {
 		final Expression qexpr2 = mQuantifiedExpression(CSET, Explicit, bids,
 				mPredicate(true), mExpressionWithSOfTypeZ());
 		boolean expected = typesDoNotContainS(declTypes);
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, qexpr1.isTypeChecked());
-		assertEquals(expected, qexpr2.isTypeChecked());
+		assertFormulaTypeChecked(qexpr1, expected);
+		assertFormulaTypeChecked(qexpr2, expected);
 	}
 
 	private static void assertQuantifiedPredicate(int tag, boolean expected,
@@ -492,11 +483,10 @@ public class TestTypedConstructor extends AbstractTests {
 	 */
 	private static void assertQPredGivenSets(Type...bidTypes) {
 		final BoundIdentDecl[] bids = mDeclarations(bidTypes);
-		final Predicate qpred = mQuantifiedPredicate(FORALL, bids,
+		final Predicate pred = mQuantifiedPredicate(FORALL, bids,
 				mPredicateWithSOfTypeZ());
 		boolean expected = typesDoNotContainS(bidTypes);
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, qpred.isTypeChecked());
+		assertFormulaTypeChecked(pred, expected);
 	}
 
 	private static boolean typesDoNotContainS(Type[] types) {
@@ -527,8 +517,7 @@ public class TestTypedConstructor extends AbstractTests {
 		final Predicate pred = mRelationalPredicate(expr1,
 				expr2);
 		boolean expected = !"S".equals(idName);
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, pred.isTypeChecked());
+		assertFormulaTypeChecked(pred, expected);
 	}
 
 	private static void assertRelationCompositionType(Type expected,
@@ -555,8 +544,7 @@ public class TestTypedConstructor extends AbstractTests {
 		final Expression expr2 = parseExpression("(∅⦂ℙ(S)↔ℙ(T))(∅⦂ℙ(S))");
 		final Expression expr = mSetExtension(new Expression[]{expr1, expr2});
 		boolean expected = !"S".equals(idName);
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, expr.isTypeChecked());
+		assertFormulaTypeChecked(expr, expected);
 	}
 
 
@@ -590,8 +578,7 @@ public class TestTypedConstructor extends AbstractTests {
 		final Expression expr = mExtendedExpression(new Expression[] { expr1,
 				expr2 });
 		boolean expected = !"S".equals(idName);
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, expr.isTypeChecked());
+		assertFormulaTypeChecked(expr, expected);
 	}
 
 	/*
@@ -608,8 +595,7 @@ public class TestTypedConstructor extends AbstractTests {
 				ExtendedFormulas.fooL, new Expression[] { expr1, expr2 },
 				twoPreds, null);
 		boolean expected = !"S".equals(idName);
-		// FIXME use regular assertFormulaTypeChecked()
-		assertEquals(expected, pred.isTypeChecked());
+		assertFormulaTypeChecked(pred, expected);
 	}
 
 
