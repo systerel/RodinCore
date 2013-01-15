@@ -1254,34 +1254,6 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 
 	/**
-	 * Checks whether two formulae are strictly equal, that is ignoring
-	 * alpha-conversion.
-	 * <p>
-	 * Returns <code>true</code> if the formulae are equal.
-	 * </p>
-	 * 
-	 * @param obj
-	 *            the object to be compared to
-	 * @return <code>true</code> iff the two formulae are equal
-	 * @deprecated This method never computed what it advertised and is in fact
-	 *             strictly equivalent to {@link #equals(Object)}.
-	 */
-	@Deprecated
-	public final boolean equalsNoAlphaConversion(Object obj) {
-		if (this == obj) { 
-			return true;
-		}
-		if (! (obj instanceof Formula<?>)) {
-			return false;
-		}
-		Formula<?> otherFormula = (Formula<?>) obj;
-		if (getTag() != otherFormula.getTag()) {
-			return false;
-		}
-		return equals((Formula<?>) obj, true);
-	}
-
-	/**
 	 * Returns the flattened form of this formula.
 	 * <p>
 	 * Flattening consists in performing the following operations on the
