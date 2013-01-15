@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,12 +187,9 @@ public class SimplePredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
-		if (this.getTag() != other.getTag()) {
-			return false;
-		}
-		SimplePredicate temp = (SimplePredicate) other;
-		return child.equals(temp.child, withAlphaConversion);
+	protected boolean equalsInternal(Formula<?> formula) {
+		final SimplePredicate other = (SimplePredicate) formula;
+		return child.equals(other.child);
 	}
 
 	@Override

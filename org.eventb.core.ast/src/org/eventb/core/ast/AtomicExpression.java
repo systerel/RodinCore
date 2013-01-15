@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -272,8 +272,8 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
-	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
-		return this.getTag() == other.getTag() && hasSameType(other);
+	boolean equalsInternalExpr(Expression expr) {
+		return true;
 	}
 
 	@Override

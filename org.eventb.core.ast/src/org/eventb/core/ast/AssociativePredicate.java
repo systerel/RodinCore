@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.extension.StandardGroup.LOGIC_PRED;
 
 import java.util.ArrayList;
@@ -202,12 +201,9 @@ public class AssociativePredicate extends Predicate {
 	}
 
 	@Override
-	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
-		if (this.getTag() != other.getTag()) {
-			return false;
-		}
-		return equalsHelper(children, ((AssociativePredicate) other).children,
-				withAlphaConversion);
+	protected boolean equalsInternal(Formula<?> formula) {
+		final AssociativePredicate other = (AssociativePredicate) formula;
+		return Arrays.equals(children, other.children);
 	}
 
 	@Override

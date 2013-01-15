@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-// FIXME should not use AssociativeHelper
-import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import static org.eventb.core.ast.ExtensionHelper.makeParserPrinter;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
@@ -273,17 +271,10 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 	
 	@Override
-	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
-		if (this.getTag() != other.getTag()) {
-			return false;
-		}
-		return hasSameType(other)
-				&& equalsHelper(childExpressions,
-						((ExtendedExpression) other).childExpressions,
-						withAlphaConversion)
-				&& equalsHelper(childPredicates,
-						((ExtendedExpression) other).childPredicates,
-						withAlphaConversion);
+	boolean equalsInternalExpr(Expression expr) {
+		final ExtendedExpression other = (ExtendedExpression) expr;
+		return Arrays.equals(childExpressions, other.childExpressions)
+				&& Arrays.equals(childPredicates, other.childPredicates);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.QuantifiedHelper.sameType;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
 
 import java.util.LinkedHashSet;
@@ -106,14 +107,13 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 	
 	@Override
-	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
-		if (this.getTag() != other.getTag()) {
-			return false;
-		}
-		final BoundIdentDecl otherDecl = (BoundIdentDecl) other;
-		final boolean sameType = type == null ? otherDecl.type == null :
-			type.equals(otherDecl.type);
-		return sameType && name.equals(otherDecl.name);
+	protected boolean equalsInternal(Formula<?> formula) {
+		final BoundIdentDecl other = (BoundIdentDecl) formula;
+		return name.equals(other.name) && equalsWithAlphaConversion(other);
+	}
+	
+	boolean equalsWithAlphaConversion(BoundIdentDecl other) {
+		return sameType(type, other.type);
 	}
 	
 	/*

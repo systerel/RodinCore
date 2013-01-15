@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedHelper.addUsedBoundIdentifiers;
 import static org.eventb.core.ast.QuantifiedHelper.areAllUsed;
-import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
+import static org.eventb.core.ast.QuantifiedHelper.areEqualDecls;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
@@ -293,14 +293,10 @@ public class QuantifiedPredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
-		if (this.getTag() != other.getTag()) {
-			return false;
-		}
-		QuantifiedPredicate temp = (QuantifiedPredicate) other;
-		return areEqualQuantifiers(quantifiedIdentifiers,
-				temp.quantifiedIdentifiers, withAlphaConversion)
-				&& pred.equals(temp.pred, withAlphaConversion);
+	protected boolean equalsInternal(Formula<?> formula) {
+		final QuantifiedPredicate other = (QuantifiedPredicate) formula;
+		return areEqualDecls(quantifiedIdentifiers, other.quantifiedIdentifiers)
+				&& pred.equals(other.pred);
 	}
 
 	@Override

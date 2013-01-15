@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.INFIX_SUBST;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -218,18 +219,10 @@ public class BecomesEqualTo extends Assignment {
 	}
 
 	@Override
-	protected boolean equals(Formula<?> otherFormula, boolean withAlphaConversion) {
-		if (this.getTag() != otherFormula.getTag()) {
-			return false;
-		}
-		BecomesEqualTo other = (BecomesEqualTo) otherFormula;
-		if (! this.hasSameAssignedIdentifiers(other))
-			return false;
-		for (int i = 0; i < values.length; i++) {
-			if (! values[i].equals(other.values[i], withAlphaConversion))
-				return false;
-		}
-		return true;
+	protected boolean equalsInternal(Formula<?> formula) {
+		final BecomesEqualTo other = (BecomesEqualTo) formula;
+		return this.hasSameAssignedIdentifiers(other)
+				&& Arrays.equals(values, other.values);
 	}
 
 	@Override

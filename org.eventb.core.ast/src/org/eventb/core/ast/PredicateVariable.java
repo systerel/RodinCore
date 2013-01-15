@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,11 +102,9 @@ public class PredicateVariable extends Predicate {
 	}
 
 	@Override
-	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
-		if (this.getTag() != other.getTag()) {
-			return false;
-		}
-		return name.equals(((PredicateVariable) other).name);
+	protected boolean equalsInternal(Formula<?> formula) {
+		final PredicateVariable other = (PredicateVariable) formula;
+		return name.equals(other.name);
 	}
 
 	@Override

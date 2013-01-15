@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eventb.core.ast;
 
 import org.eventb.internal.core.ast.LegibilityResult;
 
-
 /**
  * Helper class for implementing associative formulae of event-B.
  * <p>
@@ -25,25 +24,6 @@ import org.eventb.internal.core.ast.LegibilityResult;
  */
 /* package */ class AssociativeHelper {
 
-	protected static boolean equalsHelper(Formula<?>[] list1,
-			Formula<?>[] list2, boolean withAlphaConversion) {
-
-		if (list1.length != list2.length) { 
-			return false;
-		}
-		for (int i = 0, length = list1.length; i < length; i++) {
-			if (! list1[i].equals(list2[i], withAlphaConversion)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see Formula#getSyntaxTree(FreeIdentifier[], String)
-	 */
 	protected static String getSyntaxTreeHelper(String[] boundNames,
 			String tabs, Formula<?>[] children, String tagOperator,
 			String typeName, String className) {

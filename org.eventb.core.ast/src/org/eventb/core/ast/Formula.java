@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1243,14 +1243,18 @@ public abstract class Formula<T extends Formula<T>> {
 		if (this == obj) {
 			return true;
 		}
-		if (! (obj instanceof Formula<?>)) {
+		if (obj == null || this.getClass() != obj.getClass()) {
 			return false;
 		}
-		Formula<?> otherFormula = (Formula<?>) obj;
-		if (hashCode != otherFormula.hashCode) {
+		final Formula<?> other = (Formula<?>) obj;
+		// Must be done here since this check is expected by sub-classes
+		if (this.tag != other.tag) {
 			return false;
 		}
-		return equals(otherFormula, true);
+		if (this.hashCode != other.hashCode) {
+			return false;
+		}
+		return equalsInternal(other);
 	}
 
 	/**
@@ -1796,20 +1800,18 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 	
 	/**
-	 * Internal method.
-	 * 
-	 * Checks whether two formulae are equal or alpha-equal. Tags are already
-	 * known to be the same.
+	 * Tells whether two formulae are equal modulo alpha-conversion. In other
+	 * terms, whether the two formulae have the same tree, where the names of
+	 * bound identifier declarations are ignored. Tags are already known to be
+	 * the same. This method must only be called by
+	 * {@link Formula#equals(Object)}, and never directly by recursive calls.
 	 * 
 	 * @param other
 	 *            the formula to be compared to
-	 * @param withAlphaConversion
-	 *            <code>true</code> for a comparison modulo alpha-conversion,
-	 *            <code>false</code> for strict comparison
-	 * 
 	 * @return <code>true</code> if both objects are equal
+	 * @since 3.0
 	 */
-	protected abstract boolean equals(Formula<?> other, boolean withAlphaConversion);
+	protected abstract boolean equalsInternal(Formula<?> other);
 
 	/**
 	 * Internal methods that statically type-checks the formula.

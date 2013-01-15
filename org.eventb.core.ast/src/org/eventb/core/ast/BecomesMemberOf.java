@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,13 +178,10 @@ public class BecomesMemberOf extends Assignment {
 	}
 
 	@Override
-	protected boolean equals(Formula<?> otherFormula, boolean withAlphaConversion) {
-		if (this.getTag() != otherFormula.getTag()) {
-			return false;
-		}
-		BecomesMemberOf other = (BecomesMemberOf) otherFormula;
+	protected boolean equalsInternal(Formula<?> formula) {
+		final BecomesMemberOf other = (BecomesMemberOf) formula;
 		return this.hasSameAssignedIdentifiers(other)
-				&& setExpr.equals(other.setExpr, withAlphaConversion);
+				&& setExpr.equals(other.setExpr);
 	}
 
 	@Override

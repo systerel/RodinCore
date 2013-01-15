@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,34 +43,27 @@ abstract class QuantifiedHelper {
 		return str.toString();
 	}
 	
-	protected static boolean areEqualQuantifiers(BoundIdentDecl[] leftBound, BoundIdentDecl[] rightBound, boolean withAlphaConversion) {
-		if (leftBound.length != rightBound.length) {
+	/*
+	 * Compares two lists of bound identifier declarations. Note that the
+	 * comparison is not equality, but equality modulo alpha-conversion
+	 * (declaration names are not compared). This is why we cannot use regular
+	 * equality {@link Object#equals(Object)}.
+	 */
+	protected static boolean areEqualDecls(BoundIdentDecl[] leftDecls,
+			BoundIdentDecl[] rightDecls) {
+		if (leftDecls.length != rightDecls.length) {
 			return false;
 		}
-		if (withAlphaConversion) {
-			// With alpha conversion, check only types
-			for (int i = 0; i < leftBound.length; i++) {
-				if (!haveSameType(leftBound[i], rightBound[i])) {
-					return false;
-				}
-			}
-		} else {
-			// No alpha conversion, check each identifier.
-			for (int i = 0; i < leftBound.length; i++) {
-				if (! leftBound[i].equals(rightBound[i])) {
-					return false;
-				}
+		for (int i = 0; i < leftDecls.length; i++) {
+			if (!leftDecls[i].equalsWithAlphaConversion(rightDecls[i])) {
+				return false;
 			}
 		}
 		return true;
 	}
 
-	private static boolean haveSameType(BoundIdentDecl left,
-			BoundIdentDecl right) {
-		final Type leftType = left.getType();
-		final Type rightType = right.getType();
-		return leftType == null ? rightType == null : //
-				leftType.equals(rightType);
+	static boolean sameType(Type left, Type right) {
+		return left == null ? right == null : left.equals(right);
 	}
 	
 	/*

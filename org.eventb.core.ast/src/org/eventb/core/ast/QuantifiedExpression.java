@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
-import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
+import static org.eventb.core.ast.QuantifiedHelper.areEqualDecls;
 import static org.eventb.core.ast.QuantifiedHelper.checkBoundIdentTypes;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
@@ -563,16 +563,10 @@ public class QuantifiedExpression extends Expression {
 	}
 	
 	@Override
-	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
-		if (this.getTag() != other.getTag()) {
-			return false;
-		}
-		QuantifiedExpression temp = (QuantifiedExpression) other;
-		return hasSameType(other)
-				&& areEqualQuantifiers(quantifiedIdentifiers,
-						temp.quantifiedIdentifiers, withAlphaConversion)
-				&& expr.equals(temp.expr, withAlphaConversion)
-				&& pred.equals(temp.pred, withAlphaConversion);
+	boolean equalsInternalExpr(Expression expression) {
+		final QuantifiedExpression other = (QuantifiedExpression) expression;
+		return areEqualDecls(quantifiedIdentifiers, other.quantifiedIdentifiers)
+				&& expr.equals(other.expr) && pred.equals(other.pred);
 	}
 
 	@Override

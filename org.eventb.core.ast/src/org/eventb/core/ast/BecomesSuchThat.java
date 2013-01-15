@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.core.ast.QuantifiedHelper.areEqualQuantifiers;
+import static org.eventb.core.ast.QuantifiedHelper.areEqualDecls;
 import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
@@ -259,15 +259,11 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected boolean equals(Formula<?> otherFormula, boolean withAlphaConversion) {
-		if (this.getTag() != otherFormula.getTag()) {
-			return false;
-		}
-		final BecomesSuchThat other = (BecomesSuchThat) otherFormula;
+	protected boolean equalsInternal(Formula<?> formula) {
+		final BecomesSuchThat other = (BecomesSuchThat) formula;
 		return hasSameAssignedIdentifiers(other)
-				&& areEqualQuantifiers(primedIdents, other.primedIdents,
-						withAlphaConversion)
-				&& condition.equals(other.condition, withAlphaConversion);
+				&& areEqualDecls(primedIdents, other.primedIdents)
+				&& condition.equals(other.condition);
 	}
 
 	@Override

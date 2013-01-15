@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,10 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.extension.StandardGroup.BRACE_SETS;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -262,13 +262,9 @@ public class SetExtension extends Expression {
 	}
 	
 	@Override
-	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
-		if (this.getTag() != other.getTag()) {
-			return false;
-		}
-		return hasSameType(other)
-				&& equalsHelper(members, ((SetExtension) other).members,
-						withAlphaConversion);
+	boolean equalsInternalExpr(Expression expr) {
+		final SetExtension other = (SetExtension) expr;
+		return Arrays.equals(members, other.members);
 	}
 
 	@Override

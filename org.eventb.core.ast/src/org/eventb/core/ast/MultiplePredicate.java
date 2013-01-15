@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.core.ast.AssociativeHelper.equalsHelper;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import static org.eventb.core.ast.AssociativeHelper.isLegibleList;
 import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PARTITION;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -212,12 +212,9 @@ public class MultiplePredicate extends Predicate {
 	}
 
 	@Override
-	protected boolean equals(Formula<?> other, boolean withAlphaConversion) {
-		if (this.getTag() != other.getTag()) {
-			return false;
-		}
-		return equalsHelper(children, ((MultiplePredicate) other).children,
-				withAlphaConversion);
+	protected boolean equalsInternal(Formula<?> formula) {
+		final MultiplePredicate other = (MultiplePredicate) formula;
+		return Arrays.equals(children, other.children);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.ast;
+
+import static org.eventb.core.ast.QuantifiedHelper.sameType;
 
 import org.eventb.internal.core.typecheck.TypeCheckResult;
 import org.eventb.internal.core.typecheck.TypeUnifier;
@@ -67,12 +69,15 @@ public abstract class Expression extends Formula<Expression> {
 		return type != null ? " [type: " + type + "]" : "";
 	}
 
-	protected final boolean hasSameType(Formula<?> other) {
-		// By construction, other is also an expression
-		Expression otherExpr = (Expression) other;
-		return type == null ? otherExpr.type == null : type.equals(otherExpr.type);
+	@Override
+	protected final boolean equalsInternal(Formula<?> formula) {
+		final Expression other = (Expression) formula;
+		return sameType(type, other.type) && equalsInternalExpr(other);
 	}
-	
+
+	 // Just verify equality of children, types have already been checked.
+	abstract boolean equalsInternalExpr(Expression other);
+
 	/**
 	 * Sets a temporary type for this expression. This method should only be
 	 * used by method {@link Formula#typeCheck(ITypeEnvironment)}.
