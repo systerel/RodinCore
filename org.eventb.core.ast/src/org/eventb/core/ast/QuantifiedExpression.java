@@ -15,6 +15,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -356,8 +357,8 @@ public class QuantifiedExpression extends Expression {
 	 */
 	protected QuantifiedExpression(Expression expr, Predicate pred,
 			BoundIdentDecl[] boundIdentifiers, int tag,
-			SourceLocation location, Form form, FormulaFactory factory) {
-		super(tag, location, combineHashCodes(
+			SourceLocation location, Form form, FormulaFactory ff) {
+		super(tag, ff, location, combineHashCodes(
 				boundIdentifiers.length, 
 				pred.hashCode(), 
 				expr.hashCode())
@@ -368,7 +369,7 @@ public class QuantifiedExpression extends Expression {
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureMinLength(boundIdentifiers, 1);
 		setPredicateVariableCache(this.pred, this.expr);
-		synthesizeType(factory, null);
+		synthesizeType(ff, null);
 
 		// Must be after synthesizeType()
 		this.form = filterForm(form);

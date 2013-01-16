@@ -12,6 +12,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - bug #3574162: AST does not compare bound ident decl types
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -131,7 +132,7 @@ public class BecomesSuchThat extends Assignment {
 			FormulaFactory ff) {
 		// Note: primedIdents must not be part of hash-code as their name is
 		// not relevant for equality
-		super(Formula.BECOMES_SUCH_THAT, location, condition.hashCode(), assignedIdents);
+		super(Formula.BECOMES_SUCH_THAT, ff, location, condition.hashCode(), assignedIdents);
 		this.condition = condition;
 		this.primedIdents = primedIdents;
 		ensureSameLength(assignedIdents, primedIdents);

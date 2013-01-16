@@ -13,6 +13,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -122,11 +123,11 @@ public class SetExtension extends Expression {
 	 * @since 3.0
 	 */
 	protected SetExtension(Expression[] expressions, SourceLocation location,
-			FormulaFactory factory, Type type) {
-		super(SETEXT, location, combineHashCodes(expressions));
+			FormulaFactory ff, Type type) {
+		super(SETEXT, ff, location, combineHashCodes(expressions));
 		this.members = expressions;
 		setPredicateVariableCache(this.members);
-		synthesizeType(factory, type);
+		synthesizeType(ff, type);
 		ensureHasType(this, type);
 	}
 

@@ -192,7 +192,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	protected ExtendedExpression(int tag, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location,
 			FormulaFactory ff, IExpressionExtension extension, Type type) {
-		super(tag, location, combineHashCodes(expressions, predicates));
+		super(tag, ff, location, combineHashCodes(expressions, predicates));
 		this.childExpressions = expressions;
 		this.childPredicates = predicates;
 		this.extension = extension;

@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -28,11 +29,14 @@ public abstract class Predicate extends Formula<Predicate> {
 	 * Creates a new predicate with the specified tag and source location.
 	 * 
 	 * @param tag node tag of this predicate
+	 * @param ff the formula factory used to build this predicate
 	 * @param location source location of this predicate
 	 * @param hashCode combined hash code for children
+	 * @since 3.0
 	 */
-	protected Predicate(int tag, SourceLocation location, int hashCode) {
-		super(tag, location, hashCode);
+	protected Predicate(int tag, FormulaFactory ff,
+			SourceLocation location, int hashCode) {
+		super(tag, ff, location, hashCode);
 	}
 
 	@Override

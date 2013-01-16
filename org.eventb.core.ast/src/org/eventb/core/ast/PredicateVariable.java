@@ -78,7 +78,7 @@ public class PredicateVariable extends Predicate {
 	 */
 	protected PredicateVariable(String name, SourceLocation location,
 			FormulaFactory ff) {
-		super(tag, location, name.hashCode());
+		super(tag, ff, location, name.hashCode());
 		if (!name.startsWith(LEADING_SYMBOL)) {
 			throw new IllegalArgumentException("Name " + name
 					+ " does not start with " + LEADING_SYMBOL);

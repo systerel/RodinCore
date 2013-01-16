@@ -11,6 +11,7 @@
  *     Systerel - added support for predicate variables
  *     Systerel - externalized wd lemmas generation
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -96,7 +97,7 @@ public class BecomesMemberOf extends Assignment {
 	 */
 	protected BecomesMemberOf(FreeIdentifier assignedIdent, Expression setExpr,
 			SourceLocation location, FormulaFactory ff) {
-		super(BECOMES_MEMBER_OF, location, setExpr.hashCode(),
+		super(BECOMES_MEMBER_OF, ff, location, setExpr.hashCode(),
 				new FreeIdentifier[] { assignedIdent });
 		this.setExpr = setExpr;
 		setPredicateVariableCache(this.setExpr);

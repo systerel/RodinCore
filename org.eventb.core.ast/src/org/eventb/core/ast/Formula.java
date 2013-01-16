@@ -16,6 +16,7 @@
  *     Systerel - added child indexes
  *     Systerel - added support for specialization
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -28,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.core.ast.ExtensionHelper.ExtensionGatherer;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
 import org.eventb.internal.core.ast.FilteringInspector;
@@ -72,6 +71,10 @@ public abstract class Formula<T extends Formula<T>> {
 
 	// The tag for this AST node.
 	private final int tag;
+
+	// The factory that created this node
+	// Must include factories of all children
+	private final FormulaFactory fac;
 
 	// The source location of this AST node.
 	private final SourceLocation location;
@@ -900,10 +903,12 @@ public abstract class Formula<T extends Formula<T>> {
 
 	// Internal constructor for derived classes (with location).
 	/**
-	 * @since 2.0
+	 * @since 3.0
 	 */
-	protected Formula(int tag, SourceLocation location, int hashCode) {
+	protected Formula(int tag, FormulaFactory fac, SourceLocation location,
+			int hashCode) {
 		this.tag = tag;
+		this.fac = fac;
 		this.location = location;
 		this.hashCode = combineHashCodes(hashCode, tag);
 	}
@@ -1175,12 +1180,14 @@ public abstract class Formula<T extends Formula<T>> {
 	protected abstract int getKind(KindMediator mediator);
 	
 	/**
-	 * @since 2.0
+	 * Returns the formula factory used to build this formula.
+	 * 
+	 * @return the formula factory used to build this formula
+	 * 
+	 * @since 3.0
 	 */
-	protected final FormulaFactory getFactory() {
-		final Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
-		accept(new ExtensionGatherer(extensions));
-		return FormulaFactory.getInstance(extensions);
+	public final FormulaFactory getFactory() {
+		return fac;
 	}
 	
 	/**

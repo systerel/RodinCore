@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added child indexes
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -37,8 +38,12 @@ public abstract class Identifier extends Expression {
 		grammar.addReservedSubParser(IDENT, IDENT_SUBPARSER);
 	}
 
-	protected Identifier(int tag, SourceLocation location, int hashCode) {
-		super(tag, location, hashCode);
+	/**
+	 * @since 3.0
+	 */
+	protected Identifier(int tag, FormulaFactory ff,
+			SourceLocation location, int hashCode) {
+		super(tag, ff, location, hashCode);
 	}
 
 	@Override

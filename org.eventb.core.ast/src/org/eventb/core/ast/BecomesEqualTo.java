@@ -11,6 +11,7 @@
  *     Systerel - added support for predicate variables
  *     Systerel - externalized wd lemmas generation
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -102,7 +103,7 @@ public class BecomesEqualTo extends Assignment {
 	 */
 	protected BecomesEqualTo(FreeIdentifier[] assignedIdents, Expression[] values,
 			SourceLocation location, FormulaFactory ff) {
-		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
+		super(BECOMES_EQUAL_TO, ff, location, combineHashCodes(values), assignedIdents);
 		this.values = values;
 		ensureSameLength(assignedIdents, values);
 		setPredicateVariableCache(this.values);

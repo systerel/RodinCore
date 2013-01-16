@@ -13,6 +13,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added support for specialization
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -51,6 +52,7 @@ public class FreeIdentifier extends Identifier {
 	
 	private final String name;
 	
+
 	/**
 	 * Must never be called directly: use the factory method instead.
 	 * 
@@ -61,7 +63,7 @@ public class FreeIdentifier extends Identifier {
 	 */
 	protected FreeIdentifier(String name, SourceLocation location, Type type,
 			FormulaFactory ff) {
-		super(FREE_IDENT, location, name.hashCode());
+		super(FREE_IDENT, ff, location, name.hashCode());
 		ensureValidIdentifierName(name, ff);
 		this.name = name;
 		setPredicateVariableCache();

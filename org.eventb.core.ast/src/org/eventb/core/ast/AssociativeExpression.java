@@ -14,6 +14,7 @@
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -172,13 +173,13 @@ public class AssociativeExpression extends Expression {
 	 *      SourceLocation)
 	 */
 	protected AssociativeExpression(Expression[] children, int tag,
-			SourceLocation location, FormulaFactory factory) {
-		super(tag, location, combineHashCodes(children));
+			SourceLocation location, FormulaFactory ff) {
+		super(tag, ff, location, combineHashCodes(children));
 		this.children = children;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureMinLength(children, 2);
 		setPredicateVariableCache(this.children);
-		synthesizeType(factory, null);
+		synthesizeType(ff, null);
 	}
 
 	@Override

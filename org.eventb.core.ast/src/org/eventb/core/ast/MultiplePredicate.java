@@ -129,13 +129,13 @@ public class MultiplePredicate extends Predicate {
 	 *      SourceLocation)
 	 */
 	protected MultiplePredicate(Expression[] children, int tag,
-			SourceLocation location, FormulaFactory factory) {
-		super(tag, location, combineHashCodes(children));
+			SourceLocation location, FormulaFactory ff) {
+		super(tag, ff, location, combineHashCodes(children));
 		this.children = children;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureMinLength(children, 1);
 		setPredicateVariableCache(this.children);
-		synthesizeType(factory);
+		synthesizeType(ff);
 	}
 
 	@Override

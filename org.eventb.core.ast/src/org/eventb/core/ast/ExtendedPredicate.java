@@ -149,7 +149,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	protected ExtendedPredicate(int tag, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location,
 			FormulaFactory ff, IPredicateExtension extension) {
-		super(tag, location, combineHashCodes(expressions, predicates));
+		super(tag, ff, location, combineHashCodes(expressions, predicates));
 		this.childExpressions = expressions;
 		this.childPredicates = predicates;
 		this.extension = extension;

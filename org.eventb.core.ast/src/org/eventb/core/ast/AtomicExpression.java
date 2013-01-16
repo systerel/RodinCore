@@ -14,6 +14,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -172,11 +173,11 @@ public class AtomicExpression extends Expression {
 	 * @see FormulaFactory#makeAtomicExpression(int, SourceLocation, Type)
 	 */
 	protected AtomicExpression(int tag, SourceLocation location, Type type,
-			FormulaFactory factory) {
-		super(tag, location, 0);
+			FormulaFactory ff) {
+		super(tag, ff, location, 0);
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		setPredicateVariableCache();
-		synthesizeType(factory, type);
+		synthesizeType(ff, type);
 		ensureHasType(this, type);
 	}
 	

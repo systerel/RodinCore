@@ -12,6 +12,7 @@
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -64,7 +65,7 @@ public class IntegerLiteral extends Expression {
 	 */
 	protected IntegerLiteral(BigInteger literal, SourceLocation location,
 			FormulaFactory ff) {
-		super(INTLIT, location, literal.hashCode());
+		super(INTLIT, ff, location, literal.hashCode());
 		assert literal != null;
 		this.literal = literal;
 		

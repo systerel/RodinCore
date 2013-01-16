@@ -12,6 +12,7 @@
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -117,7 +118,7 @@ public class BoolExpression extends Expression {
 	 */
 	protected BoolExpression(Predicate child, SourceLocation location,
 			FormulaFactory ff) {
-		super(KBOOL, location, child.hashCode());
+		super(KBOOL, ff, location, child.hashCode());
 		this.child = child;
 		setPredicateVariableCache(this.child);
 		synthesizeType(ff, null);
