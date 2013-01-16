@@ -12,6 +12,7 @@
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -57,7 +58,7 @@ public class BoundIdentifier extends Identifier {
 	 */
 	protected BoundIdentifier(int boundIndex, SourceLocation location,
 			Type type, FormulaFactory ff) {
-		super(BOUND_IDENT, location, boundIndex);
+		super(BOUND_IDENT, ff, location, boundIndex);
 		if (boundIndex < 0) {
 			throw new IllegalArgumentException("Negative de Bruijn index: "
 					+ boundIndex);

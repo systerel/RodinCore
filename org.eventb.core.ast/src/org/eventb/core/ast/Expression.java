@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -35,12 +36,19 @@ public abstract class Expression extends Formula<Expression> {
 	/**
 	 * Creates a new expression with the specified tag and source location.
 	 * 
-	 * @param tag node tag of this expression
-	 * @param location source location of this expression
-	 * @param hashCode combined hash code for children
+	 * @param tag
+	 *            node tag of this expression
+	 * @param ff
+	 *            the formula factory used to build this expression
+	 * @param location
+	 *            source location of this expression
+	 * @param hashCode
+	 *            combined hash code for children
+	 * @since 3.0
 	 */
-	protected Expression(int tag, SourceLocation location, int hashCode) {
-		super(tag, location, hashCode);
+	protected Expression(int tag, FormulaFactory ff,
+			SourceLocation location, int hashCode) {
+		super(tag, ff, location, hashCode);
 	}
 	
 	protected abstract void synthesizeType(FormulaFactory ff, Type givenType);

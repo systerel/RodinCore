@@ -12,6 +12,7 @@
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -150,7 +151,7 @@ public class RelationalPredicate extends Predicate {
 	 */
 	protected RelationalPredicate(Expression left, Expression right,
 			int tag, SourceLocation location, FormulaFactory ff) {
-		super(tag, location, combineHashCodes(left.hashCode(), right.hashCode()));
+		super(tag, ff, location, combineHashCodes(left.hashCode(), right.hashCode()));
 		this.left = left;
 		this.right = right;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);

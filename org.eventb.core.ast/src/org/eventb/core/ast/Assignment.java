@@ -10,6 +10,7 @@
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - added child indexes
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -47,13 +48,17 @@ public abstract class Assignment extends Formula<Assignment> {
 	 * Creates a new assignment with the given arguments.
 	 * 
 	 * @param tag node tag of this expression
+	 * @param ff the formula factory used to build this assignment
 	 * @param location source location of this expression
 	 * @param hashCode combined hash code for children
 	 * @param assignedIdents array of free identifiers that constitute the left-hand side
+	 * @since 3.0
 	 */
-	protected Assignment(int tag, SourceLocation location, int hashCode, 
+	protected Assignment(int tag, FormulaFactory ff,
+			SourceLocation location, int hashCode,
 			FreeIdentifier[] assignedIdents) {
-		super(tag, location, combineHashCodes(combineHashCodes(assignedIdents), hashCode));
+		super(tag, ff, location, combineHashCodes(
+				combineHashCodes(assignedIdents), hashCode));
 		ensureMinLength(assignedIdents, 1);
 		this.assignedIdents = assignedIdents;
 	}

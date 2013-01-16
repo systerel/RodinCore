@@ -13,6 +13,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -161,7 +162,7 @@ public class QuantifiedPredicate extends Predicate {
 	protected QuantifiedPredicate(Predicate pred,
 			BoundIdentDecl[] boundIdentifiers, int tag,
 			SourceLocation location, FormulaFactory ff) {
-		super(tag, location,
+		super(tag, ff, location,
 				combineHashCodes(boundIdentifiers.length, pred.hashCode()));
 		this.quantifiedIdentifiers = boundIdentifiers;
 		this.pred = pred;

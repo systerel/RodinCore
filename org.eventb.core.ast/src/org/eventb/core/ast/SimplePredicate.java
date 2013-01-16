@@ -13,6 +13,7 @@
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -122,7 +123,7 @@ public class SimplePredicate extends Predicate {
 	 */
 	protected SimplePredicate(Expression child, int tag,
 			SourceLocation location, FormulaFactory ff) {
-		super(tag, location, child.hashCode());
+		super(tag, ff, location, child.hashCode());
 		this.child = child;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		setPredicateVariableCache(this.child);

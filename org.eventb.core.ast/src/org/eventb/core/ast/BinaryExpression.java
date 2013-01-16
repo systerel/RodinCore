@@ -13,6 +13,7 @@
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -302,14 +303,14 @@ public class BinaryExpression extends Expression {
 	 *      SourceLocation)
 	 */
 	protected BinaryExpression(Expression left, Expression right, int tag,
-			SourceLocation location, FormulaFactory factory) {
-		super (tag, location, 
+			SourceLocation location, FormulaFactory ff) {
+		super (tag, ff, location, 
 				combineHashCodes(left.hashCode(), right.hashCode()));
 		this.left = left;
 		this.right = right;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		setPredicateVariableCache(this.left, this.right);
-		synthesizeType(factory, null);
+		synthesizeType(ff, null);
 	}
 	
 	@Override

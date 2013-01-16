@@ -12,6 +12,7 @@
  *     Systerel - generalised getPositions() into inspect()
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
+ *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -142,7 +143,7 @@ public class AssociativePredicate extends Predicate {
 	 */
 	protected AssociativePredicate(Predicate[] children, int tag,
 			SourceLocation location, FormulaFactory ff) {
-		super(tag, location, combineHashCodes(children));
+		super(tag, ff, location, combineHashCodes(children));
 		this.children = children;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureMinLength(children, 2);
