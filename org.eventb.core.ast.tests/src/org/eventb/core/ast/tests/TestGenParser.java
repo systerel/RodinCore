@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,6 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.eventb.core.ast.AssociativeExpression.BCOMP_ID;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;
@@ -80,6 +72,14 @@ import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
 import static org.eventb.core.ast.tests.FastFactory.mList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -180,6 +180,7 @@ public class TestGenParser extends AbstractTests {
 	protected static final IntegerLiteral ONE = ff.makeIntegerLiteral(BigInteger.ONE, null);
 	protected static final AtomicExpression EMPTY = ff.makeEmptySet(null, null);
 	protected static final FreeIdentifier FRID_S = ff.makeFreeIdentifier("S", null);
+	protected static final FreeIdentifier FRID_S_V1 = ffV1.makeFreeIdentifier("S", null);
 	protected static final GivenType S_TYPE = ff.makeGivenType("S");
 	protected static final PowerSetType POW_S_TYPE = ff.makePowerSetType(S_TYPE);
 	protected static final FreeIdentifier FRID_x = ff.makeFreeIdentifier("x", null);
@@ -191,6 +192,7 @@ public class TestGenParser extends AbstractTests {
 	protected static final FreeIdentifier FRID_B = ff.makeFreeIdentifier("B", null);
 	protected static final FreeIdentifier FRID_C = ff.makeFreeIdentifier("C", null);
 	protected static final FreeIdentifier FRID_f = ff.makeFreeIdentifier("f", null);
+	protected static final FreeIdentifier FRID_f_V1 = ffV1.makeFreeIdentifier("f", null);
 	protected static final PredicateVariable PV_P = ff.makePredicateVariable("$P", null);
 	protected static final AtomicExpression INT = ff.makeAtomicExpression(Formula.INTEGER, null);
 	protected static final AtomicExpression BOOL = ff.makeAtomicExpression(Formula.BOOL, null);
@@ -786,7 +788,7 @@ public class TestGenParser extends AbstractTests {
 						extFac.makeFreeIdentifier("B", null)),
 				Collections.<Predicate> emptySet(), null);
 
-		final Expression expected = ff.makeAssociativeExpression(BUNION,
+		final Expression expected = extFac.makeAssociativeExpression(BUNION,
 				Arrays.<Expression> asList(prodAB, prodAB), null);
 		doExpressionTest("(A§B) ∪ (A§B)", expected, extFac);
 	}
@@ -1782,7 +1784,7 @@ public class TestGenParser extends AbstractTests {
 	@SuppressWarnings("deprecation")
 	@Test 
 	public void testIdV1V2() throws Exception {
-		final Expression expectedV1 = ff.makeUnaryExpression(KID, FRID_S, null);
+		final Expression expectedV1 = ffV1.makeUnaryExpression(KID, FRID_S_V1, null);
 		final Expression expectedV2 = ff.makeBinaryExpression(FUNIMAGE,
 				ff.makeAtomicExpression(KID_GEN, null),
 				FRID_S, null);
@@ -1792,7 +1794,7 @@ public class TestGenParser extends AbstractTests {
 	@SuppressWarnings("deprecation")
 	@Test 
 	public void testPrj1V1V2() throws Exception {
-		final Expression expectedV1 = ff.makeUnaryExpression(KPRJ1, FRID_f, null);
+		final Expression expectedV1 = ffV1.makeUnaryExpression(KPRJ1, FRID_f_V1, null);
 		final Expression expectedV2 = ff.makeBinaryExpression(FUNIMAGE,
 				ff.makeAtomicExpression(KPRJ1_GEN, null),
 				FRID_f, null);
@@ -1802,7 +1804,7 @@ public class TestGenParser extends AbstractTests {
 	@SuppressWarnings("deprecation")
 	@Test 
 	public void testPrj2V1V2() throws Exception {
-		final Expression expectedV1 = ff.makeUnaryExpression(KPRJ2, FRID_f, null);
+		final Expression expectedV1 = ffV1.makeUnaryExpression(KPRJ2, FRID_f_V1, null);
 		final Expression expectedV2 = ff.makeBinaryExpression(FUNIMAGE,
 				ff.makeAtomicExpression(KPRJ2_GEN, null),
 				FRID_f, null);
@@ -1813,7 +1815,7 @@ public class TestGenParser extends AbstractTests {
 	public void testPartitionV1V2() throws Exception {
 		final Expression expectedV1 = ffV1.makeBinaryExpression(FUNIMAGE,
 				ffV1.makeFreeIdentifier("partition", null),
-				FRID_S, null);
+				FRID_S_V1, null);
 		final Predicate expectedV2 = ff.makeMultiplePredicate(KPARTITION,
 				Arrays.<Expression>asList(FRID_S), null);
 		doVersionTest("partition(S)", expectedV1, expectedV2);

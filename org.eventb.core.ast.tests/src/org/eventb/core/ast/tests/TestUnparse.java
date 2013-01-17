@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BCOMP;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BTRUE;
@@ -57,14 +55,14 @@ import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mMaplet;
-import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
-import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -77,6 +75,7 @@ import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IntegerLiteral;
@@ -622,201 +621,24 @@ public class TestUnparse extends AbstractTests {
 	//  SYSTEMATIC TESTS
 	//
 	//--------------------------------------------------------------
-
-	private Expression[] constructBinaryBinaryTrees (TagSupply tagSupply) {
-		// {MAPSTO,REL,TREL,SREL,STREL,PFUN,TFUN,PINJ,TINJ,PSUR,TSUR,TBIJ,SETMINUS,CPROD,DPROD,PPROD,DOMRES,DOMSUB,RANRES,RANSUB,UPTO,MINUS,DIV,MOD,EXPN}
-		final Set<Integer> binaryExpressions = tagSupply.binaryExpressionTags;
-		int length = binaryExpressions.size();
-		Expression[]  formulae = new Expression[(length)*(length)*2];
-		int idx = 0;
-		for (int binTag1 : binaryExpressions) {
-			for (int binTag2 : binaryExpressions) {
-				formulae[idx ++] = mBinaryExpression(
-						binTag2,
-						mBinaryExpression(binTag1, id_x, id_y),
-						id_z);
-				formulae[idx ++] = mBinaryExpression(
-						binTag2, 
-						id_x, 
-						mBinaryExpression(binTag1, id_y, id_z));
-			}
-		}
-		assert idx == formulae.length;
-		return formulae;
-	}
 	
-	private Formula<?>[] constructAssociativeAssociativeTrees(TagSupply tagSupply) {
-		// {BUNION, BINTER, BCOMP, FCOMP, OVR, PLUS, MUL}
-		final Set<Integer> associativeExpressions = tagSupply.associativeExpressionTags;
-		int length = associativeExpressions.size();
-		Expression[]  formulae = new Expression[3 * length * length];
-		int idx = 0;
-		for (int assocTag1 : associativeExpressions) {
-			for (int assocTag2 : associativeExpressions) {
-				formulae[idx ++] = mAssociativeExpression(
-						assocTag2,
-						mAssociativeExpression(assocTag1, id_y, id_z),
-						id_x);
-				formulae[idx ++] = mAssociativeExpression(
-						assocTag2,
-						id_x,
-						mAssociativeExpression(assocTag1, id_y, id_z),
-						id_t);
-				formulae[idx ++] = mAssociativeExpression(
-						assocTag2,
-						id_x,
-						mAssociativeExpression(assocTag1, id_y, id_z));
-			}
-		}
-		assert idx == formulae.length;
-		return formulae;
-	}
-	
-	private Expression[] constructAssociativeBinaryTrees(TagSupply tagSupply) {
-		final Set<Integer> associativeExpressions = tagSupply.associativeExpressionTags;
-		final int assocSize = associativeExpressions.size();
-		final Set<Integer> binaryExpressions = tagSupply.binaryExpressionTags;
-		final int binarySize = binaryExpressions.size();
-		Expression[]  formulae = new Expression[5 * assocSize * binarySize];
-		int idx = 0;
-		for (int assocTag : associativeExpressions) {
-			for (int binaryTag : binaryExpressions) {
-				formulae[idx ++] = mAssociativeExpression(
-						assocTag,
-						id_x,
-						mBinaryExpression(binaryTag, id_y, id_z));
-				formulae[idx ++] = mAssociativeExpression(
-						assocTag,
-						id_x,
-						mBinaryExpression(binaryTag, id_y, id_z),
-						id_t);
-				formulae[idx ++] = mAssociativeExpression(
-						assocTag,
-						mBinaryExpression(binaryTag, id_x, id_y),
-						id_z);
-				formulae[idx ++] = mBinaryExpression(
-						binaryTag,
-						mAssociativeExpression(assocTag, id_x, id_y),
-						id_z);
-				formulae[idx ++] = mBinaryExpression(
-						binaryTag,
-						id_x,
-						mAssociativeExpression(assocTag, id_y, id_z));
-			}
-		}
-		assert idx == formulae.length;
-		return formulae;
-	}
-	
-	private Expression[] constructBinaryUnaryTrees(TagSupply tagSupply) {
-		// {KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID, KMIN, KMAX, CONVERSE}
-		final Set<Integer> unaryExpressions = tagSupply.unaryExpressionTags;
-		final int unarySize = unaryExpressions.size();
-		final Set<Integer> binaryExpressions = tagSupply.binaryExpressionTags;
-		final int binarySize = binaryExpressions.size();
-		final int length = (3 * unarySize * binarySize)
-				+ (2 * binarySize);
-		final Expression[] formulae = new Expression[length];
-		int idx = 0;
-		for (int unaryTag:unaryExpressions) {
-			for (int binaryTag: binaryExpressions) {
-				formulae[idx ++] = mUnaryExpression(
-						unaryTag, 
-						mBinaryExpression(binaryTag, id_x, id_y));
-				formulae[idx ++] = mBinaryExpression(
-						binaryTag,
-						mUnaryExpression(unaryTag, id_x),
-						id_y);
-				formulae[idx ++] = mBinaryExpression(
-						binaryTag,
-						id_x,
-						mUnaryExpression(unaryTag, id_y));
-			}
-		}
-		// Special case of negative integer literal
-		for (int binaryTag: binaryExpressions) {
-			formulae[idx ++] = mBinaryExpression(
-					binaryTag,
-					mIntegerLiteral(-1),
-					id_y);
-			formulae[idx ++] = mBinaryExpression(
-					binaryTag,
-					id_x,
-					mIntegerLiteral(-1));
-		}
-		assert idx == formulae.length;
-		return formulae;
-	}
-	
-	private Expression[] constructAssociativeUnaryTrees(TagSupply tagSupply) {
-		// {KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID, KMIN, KMAX, CONVERSE}
-		final Set<Integer> unaryExpressions = tagSupply.unaryExpressionTags;
-		final int unarySize = unaryExpressions.size();
-		final Set<Integer> associativeExpressions = tagSupply.associativeExpressionTags;
-		final int assocSize = associativeExpressions.size();
-		final int length = (4 * unarySize * assocSize)
-				+ (3 * assocSize);
-		final Expression[] formulae = new Expression[length];
-		int idx = 0;
-		for (int unaryTag: unaryExpressions) {
-			for (int assocTag: associativeExpressions) {
-				formulae[idx ++] = mUnaryExpression(
-						unaryTag,
-						mAssociativeExpression(assocTag, id_x, id_y));
-				formulae[idx ++] = mAssociativeExpression(
-						assocTag,
-						id_x,
-						mUnaryExpression(unaryTag, id_y));
-				formulae[idx ++] = mAssociativeExpression(
-						assocTag,
-						id_x,
-						mUnaryExpression(unaryTag, id_y), 
-						id_z);
-				formulae[idx ++] = mAssociativeExpression(
-						assocTag, 
-						mUnaryExpression(unaryTag, id_x), 
-						id_y);
-			}
-		}
-		// Special case of negative integer literal
-		for (int assocTag: associativeExpressions) {
-			formulae[idx ++] = mAssociativeExpression(
-					assocTag,
-					id_x,
-					mIntegerLiteral(-1));
-			formulae[idx ++] = mAssociativeExpression(
-					assocTag,
-					id_x,
-					mIntegerLiteral(-1), 
-					id_z);
-			formulae[idx ++] = mAssociativeExpression(
-					assocTag, 
-					mIntegerLiteral(-1), 
-					id_y);
-		}
-		assert idx == length;
-		return formulae;
-	}
-	
-	private Expression[] constructUnaryUnaryTrees(TagSupply tagSupply) {
-		final Set<Integer> unaryExpressions = tagSupply.unaryExpressionTags;
-		final int unaryExpSize = unaryExpressions.size();
-		
-		final int length = (2 * unaryExpSize * unaryExpSize) + unaryExpSize;
-		final Expression[] formulae = new Expression[length];
-		int idx = 0;
-		for (int tag1 : unaryExpressions) {
-			for (int tag2 : unaryExpressions) {
-				formulae[idx++] = mUnaryExpression(tag1, mUnaryExpression(tag2, id_x));
-				formulae[idx++] = mUnaryExpression(tag2, mUnaryExpression(tag1, id_x));
-			}
-		}
-		// Special case of negative integer literal
-		for (int tag : unaryExpressions) {
-			formulae[idx++] = mUnaryExpression(tag, mIntegerLiteral(-1));
-		}
-		assert idx == formulae.length;
-		return formulae;
+	private Expression makeQuantifiedExpression(int firstTag, int secondTag, QuantifiedExpression.Form firstForm, QuantifiedExpression.Form secondForm) {
+		return mQuantifiedExpression(
+				firstTag,
+				firstForm,
+				mList(bd_z),
+				btrue,
+				mQuantifiedExpression(
+						secondTag,
+						secondForm,
+						(secondForm == Implicit ? mList(bd_y,bd_z) : mList(bd_y)),
+						btrue,
+						mBinaryExpression(MAPSTO,
+								secondForm == Lambda ? b0 : b1,
+								secondForm == Implicit || firstForm == Implicit
+								? (secondForm == Lambda ? b1 : b0)
+								: id_x)
+				));
 	}
 	
 	// test that they are all handled the same way
@@ -859,34 +681,220 @@ public class TestUnparse extends AbstractTests {
 		};
 	}
 	
-	private Expression makeQuantifiedExpression(int firstTag, int secondTag, QuantifiedExpression.Form firstForm, QuantifiedExpression.Form secondForm) {
-		return mQuantifiedExpression(
-				firstTag,
-				firstForm,
-				mList(bd_z),
-				btrue,
-				mQuantifiedExpression(
-						secondTag,
-						secondForm,
-						(secondForm == Implicit ? mList(bd_y,bd_z) : mList(bd_y)),
-						btrue,
-						mBinaryExpression(MAPSTO,
-								secondForm == Lambda ? b0 : b1,
-								secondForm == Implicit || firstForm == Implicit
-								? (secondForm == Lambda ? b1 : b0)
-								: id_x)
-				));
+	private Expression[] constructBinaryBinaryTrees(TagSupply tagSupply) {
+		// {MAPSTO,REL,TREL,SREL,STREL,PFUN,TFUN,PINJ,TINJ,PSUR,TSUR,TBIJ,SETMINUS,CPROD,DPROD,PPROD,DOMRES,DOMSUB,RANRES,RANSUB,UPTO,MINUS,DIV,MOD,EXPN}
+		final FormulaFactory factory = tagSupply.factory;
+		final Set<Integer> binaryExpressions = tagSupply.binaryExpressionTags;
+		int length = binaryExpressions.size();
+		Expression[] formulae = new Expression[(length) * (length) * 2];
+		int idx = 0;
+		for (int binTag1 : binaryExpressions) {
+			for (int binTag2 : binaryExpressions) {
+				formulae[idx++] = factory
+						.makeBinaryExpression(binTag2,
+								factory.makeBinaryExpression(binTag1, factory.makeFreeIdentifier("x", null),
+										factory.makeFreeIdentifier("y", null), null), factory.makeFreeIdentifier("z", null), null);
+				formulae[idx++] = factory
+						.makeBinaryExpression(binTag2, factory.makeFreeIdentifier("x", null),
+								factory.makeBinaryExpression(binTag1, factory.makeFreeIdentifier("y", null),
+										factory.makeFreeIdentifier("z", null), null), null);
+			}
+		}
+		assert idx == formulae.length;
+		return formulae;
 	}
 	
-	private Expression mQExpr(int qtag, QuantifiedExpression.Form form, BoundIdentDecl bid,
-			Expression expr) {
-		if (form == Lambda) {
-			return mQuantifiedExpression(qtag, form, mList(bid), btrue, mMaplet(b0, expr));
+	private Formula<?>[] constructAssociativeAssociativeTrees(TagSupply tagSupply) {
+		// {BUNION, BINTER, BCOMP, FCOMP, OVR, PLUS, MUL}
+		final FormulaFactory factory = tagSupply.factory;
+		final Set<Integer> associativeExpressions = tagSupply.associativeExpressionTags;
+		final Expression[] id_y_z = {factory.makeFreeIdentifier("y", null), factory.makeFreeIdentifier("z", null)};
+		int length = associativeExpressions.size();
+		Expression[]  formulae = new Expression[3 * length * length];
+		int idx = 0;
+		for (int assocTag1 : associativeExpressions) {
+			for (int assocTag2 : associativeExpressions) {
+				formulae[idx++] = factory.makeAssociativeExpression(
+						assocTag2,
+						mList(factory.makeAssociativeExpression(assocTag1,
+								id_y_z, null), factory.makeFreeIdentifier("x", null)), null);
+				formulae[idx++] = factory.makeAssociativeExpression(
+						assocTag2,
+						mList(factory.makeFreeIdentifier("x", null), factory.makeAssociativeExpression(
+								assocTag1, id_y_z, null), factory.makeFreeIdentifier("t", null)), null);
+				formulae[idx++] = factory.makeAssociativeExpression(
+						assocTag2,
+						mList(factory.makeFreeIdentifier("x", null), factory.makeAssociativeExpression(
+								assocTag1, id_y_z, null)), null);
+			}
 		}
-		return mQuantifiedExpression(qtag, form, mList(bid), btrue, mMaplet(b0, expr));
+		assert idx == formulae.length;
+		return formulae;
+	}
+	
+	private Expression[] constructAssociativeBinaryTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
+		final Set<Integer> associativeExpressions = tagSupply.associativeExpressionTags;
+		final int assocSize = associativeExpressions.size();
+		final Set<Integer> binaryExpressions = tagSupply.binaryExpressionTags;
+		final Expression[] id_y_z = {factory.makeFreeIdentifier("y", null), factory.makeFreeIdentifier("z", null)};
+		final Expression[] id_x_y = {factory.makeFreeIdentifier("x", null), factory.makeFreeIdentifier("y", null)};
+		final int binarySize = binaryExpressions.size();
+		Expression[]  formulae = new Expression[5 * assocSize * binarySize];
+		int idx = 0;
+		for (int assocTag : associativeExpressions) {
+			for (int binaryTag : binaryExpressions) {
+				formulae[idx++] = factory.makeAssociativeExpression(
+						assocTag,
+						mList(factory.makeFreeIdentifier("x", null), factory.makeBinaryExpression(binaryTag,
+								factory.makeFreeIdentifier("y", null), factory.makeFreeIdentifier("z", null), null)), null);
+				formulae[idx++] = factory.makeAssociativeExpression(
+						assocTag,
+						mList(factory.makeFreeIdentifier("x", null), factory.makeBinaryExpression(binaryTag,
+								factory.makeFreeIdentifier("y", null), factory.makeFreeIdentifier("z", null), null), factory.makeFreeIdentifier("t", null)), null);
+				formulae[idx++] = factory.makeAssociativeExpression(
+						assocTag,
+						mList(factory.makeBinaryExpression(binaryTag, factory.makeFreeIdentifier("x", null),
+								factory.makeFreeIdentifier("y", null), null), factory.makeFreeIdentifier("z", null)), null);
+				formulae[idx++] = factory.makeBinaryExpression(binaryTag,
+						factory.makeAssociativeExpression(assocTag, id_x_y,
+								null), factory.makeFreeIdentifier("z", null), null);
+				formulae[idx++] = factory.makeBinaryExpression(binaryTag,
+						factory.makeFreeIdentifier("x", null), factory
+								.makeAssociativeExpression(assocTag, id_y_z,
+										null), null);
+		}
+		}
+		assert idx == formulae.length;
+		return formulae;
+	}
+	
+	private Expression[] constructBinaryUnaryTrees(TagSupply tagSupply) {
+		// {KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID, KMIN, KMAX, CONVERSE}
+		final FormulaFactory factory = tagSupply.factory;
+		final Set<Integer> unaryExpressions = tagSupply.unaryExpressionTags;
+		final int unarySize = unaryExpressions.size();
+		final Set<Integer> binaryExpressions = tagSupply.binaryExpressionTags;
+		final int binarySize = binaryExpressions.size();
+		final int length = (3 * unarySize * binarySize) + (2 * binarySize);
+		final Expression[] formulae = new Expression[length];
+		int idx = 0;
+		for (int unaryTag : unaryExpressions) {
+			for (int binaryTag : binaryExpressions) {
+				formulae[idx++] = factory.makeUnaryExpression(unaryTag, factory
+						.makeBinaryExpression(binaryTag, factory.makeFreeIdentifier("x", null), factory.makeFreeIdentifier("y", null), null),
+						null);
+				formulae[idx++] = factory.makeBinaryExpression(binaryTag,
+						factory.makeUnaryExpression(unaryTag, factory.makeFreeIdentifier("x", null), null),
+						factory.makeFreeIdentifier("y", null), null);
+				formulae[idx++] = factory
+						.makeBinaryExpression(binaryTag, factory.makeFreeIdentifier("x", null), factory
+								.makeUnaryExpression(unaryTag, factory.makeFreeIdentifier("y", null), null),
+								null);
+			}
+		}
+		// Special case of negative integer literal
+		for (int binaryTag : binaryExpressions) {
+			formulae[idx++] = factory.makeBinaryExpression(binaryTag,
+					factory.makeIntegerLiteral(BigInteger.valueOf(-1), null),
+					factory.makeFreeIdentifier("y", null), null);
+			formulae[idx++] = factory.makeBinaryExpression(binaryTag, factory.makeFreeIdentifier("x", null),
+					factory.makeIntegerLiteral(BigInteger.valueOf(-1), null),
+					null);
+		}
+		assert idx == formulae.length;
+		return formulae;
+	}
+	
+	private Expression[] constructAssociativeUnaryTrees(TagSupply tagSupply) {
+		// {KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID, KMIN, KMAX, CONVERSE}
+		final FormulaFactory factory = tagSupply.factory;
+		final Set<Integer> unaryExpressions = tagSupply.unaryExpressionTags;
+		final int unarySize = unaryExpressions.size();
+		final Set<Integer> associativeExpressions = tagSupply.associativeExpressionTags;
+		final int assocSize = associativeExpressions.size();
+		final int length = (4 * unarySize * assocSize)
+				+ (3 * assocSize);
+		final Expression[] formulae = new Expression[length];
+		int idx = 0;
+		for (int unaryTag: unaryExpressions) {
+			for (int assocTag: associativeExpressions) {
+				formulae[idx++] = factory.makeUnaryExpression(
+						unaryTag,
+						factory.makeAssociativeExpression(assocTag,
+								mList(factory.makeFreeIdentifier("x", null), factory.makeFreeIdentifier("y", null)), null), null);
+				formulae[idx++] = factory.makeAssociativeExpression(
+						assocTag,
+						mList(factory.makeFreeIdentifier("x", null), factory.makeUnaryExpression(unaryTag, factory.makeFreeIdentifier("y", null),
+								null)), null);
+				formulae[idx++] = factory.makeAssociativeExpression(
+						assocTag,
+						mList(factory.makeFreeIdentifier("x", null), factory.makeUnaryExpression(unaryTag, factory.makeFreeIdentifier("y", null),
+								null), factory.makeFreeIdentifier("z", null)), null);
+				formulae[idx++] = factory
+						.makeAssociativeExpression(
+								assocTag,
+								mList(factory.makeUnaryExpression(unaryTag,
+										factory.makeFreeIdentifier("x", null), null), factory.makeFreeIdentifier("y", null)), null);
+			}
+		}
+		// Special case of negative integer literal
+		for (int assocTag: associativeExpressions) {
+			formulae[idx++] = factory.makeAssociativeExpression(
+					assocTag,
+					mList(factory.makeFreeIdentifier("x", null), factory.makeIntegerLiteral(
+							BigInteger.valueOf(-1), null)), null);
+			formulae[idx++] = factory.makeAssociativeExpression(
+					assocTag,
+					mList(factory.makeFreeIdentifier("x", null), factory.makeIntegerLiteral(
+							BigInteger.valueOf(-1), null), factory.makeFreeIdentifier("z", null)), null);
+			formulae[idx++] = factory.makeAssociativeExpression(
+					assocTag,
+					mList(factory.makeIntegerLiteral(BigInteger.valueOf(-1),
+							null), factory.makeFreeIdentifier("y", null)), null);
+		}
+		assert idx == length;
+		return formulae;
+	}
+	
+	private Expression[] constructUnaryUnaryTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
+		final Set<Integer> unaryExpressions = tagSupply.unaryExpressionTags;
+		final int unaryExpSize = unaryExpressions.size();
+		
+		final int length = (2 * unaryExpSize * unaryExpSize) + unaryExpSize;
+		final Expression[] formulae = new Expression[length];
+		int idx = 0;
+		for (int tag1 : unaryExpressions) {
+			for (int tag2 : unaryExpressions) {
+				formulae[idx++] = factory.makeUnaryExpression(tag1,
+						factory.makeUnaryExpression(tag2, factory.makeFreeIdentifier("x", null), null), null);
+				formulae[idx++] = factory.makeUnaryExpression(tag2,
+						factory.makeUnaryExpression(tag1, factory.makeFreeIdentifier("x", null), null), null);
+			}
+		}
+		// Special case of negative integer literal
+		for (int tag : unaryExpressions) {
+			formulae[idx++] = factory.makeUnaryExpression(tag,
+					factory.makeIntegerLiteral(BigInteger.valueOf(-1), null),
+					null);
+		}
+		assert idx == formulae.length;
+		return formulae;
+	}
+			
+	private Expression mQExpr(FormulaFactory factory, int qtag,
+			QuantifiedExpression.Form form, BoundIdentDecl bid, Expression expr) {
+		if (form == Lambda) {
+			return factory.makeQuantifiedExpression(qtag, mList(bid), factory.makeLiteralPredicate(BTRUE, null),
+					factory.makeBinaryExpression(MAPSTO, factory.makeBoundIdentifier(0, null), expr, null), null, form);
+		}
+		return factory.makeQuantifiedExpression(qtag, mList(bid), factory.makeLiteralPredicate(BTRUE, null),
+				factory.makeBinaryExpression(MAPSTO, factory.makeBoundIdentifier(0, null), expr, null), null, form);
 	}
 	
 	private Expression[] constructQuantifiedBinaryTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> quantifiedExpressions = tagSupply.quantifiedExpressionTags;
 		final int quantSize = quantifiedExpressions.size();
 		final Set<Integer> binaryExpressions = tagSupply.binaryExpressionTags;
@@ -896,18 +904,19 @@ public class TestUnparse extends AbstractTests {
 		int idx = 0;
 		for (int quantTag : quantifiedExpressions) {
 			for (int binaryTag : binaryExpressions) {
-				for (QuantifiedExpression.Form form: QuantifiedExpression.Form.values()) {
+				for (QuantifiedExpression.Form form : QuantifiedExpression.Form
+						.values()) {
 					if (form == Lambda && quantTag != CSET)
 						continue;
-					formulae[idx ++] = mQExpr(quantTag, form, 
-							bd_x,
-							mBinaryExpression(binaryTag, id_y, id_z));
-					formulae[idx ++] = mBinaryExpression(binaryTag,
-							id_x,
-							mQExpr(quantTag, form, bd_y, id_z));
-					formulae[idx ++] = mBinaryExpression(binaryTag,
-							mQExpr(quantTag, form, bd_x, id_y),
-							id_z);
+					formulae[idx++] = mQExpr(factory, quantTag, form, factory.makeBoundIdentDecl("x", null),
+							factory.makeBinaryExpression(binaryTag, factory.makeFreeIdentifier("y", null), factory.makeFreeIdentifier("z", null),
+									null));
+					formulae[idx++] = factory.makeBinaryExpression(binaryTag,
+							factory.makeFreeIdentifier("x", null), mQExpr(factory, quantTag, form, factory.makeBoundIdentDecl("y", null), factory.makeFreeIdentifier("z", null)),
+							null);
+					formulae[idx++] = factory.makeBinaryExpression(binaryTag,
+							mQExpr(factory, quantTag, form, factory.makeBoundIdentDecl("x", null), factory.makeFreeIdentifier("y", null)), factory.makeFreeIdentifier("z", null),
+							null);
 				}
 			}
 		}
@@ -916,6 +925,7 @@ public class TestUnparse extends AbstractTests {
 	}
 
 	private Expression[] constructQuantifiedAssociativeTree(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> quantifiedExpressions = tagSupply.quantifiedExpressionTags;
 		final int quantSize = quantifiedExpressions.size();
 		final Set<Integer> associativeExpressions = tagSupply.associativeExpressionTags;
@@ -928,18 +938,29 @@ public class TestUnparse extends AbstractTests {
 				for (QuantifiedExpression.Form form: QuantifiedExpression.Form.values()) {
 					if (form == Lambda &&  + quantTag != CSET)
 						continue;
-					formulae[idx ++] = mQExpr(quantTag, form, bd_x,
-							mAssociativeExpression(assocTag, id_y, id_z));
-					formulae[idx ++] = mAssociativeExpression(assocTag,
-							id_x,
-							mQExpr(quantTag, form, bd_y, id_z));
-					formulae[idx ++] = mAssociativeExpression(assocTag,
-							id_x,
-							mQExpr(quantTag, form, bd_y, id_z),
-							id_t);
-					formulae[idx ++] = mAssociativeExpression(assocTag, 
-							mQExpr(quantTag, form, bd_x, id_y),
-							id_z);
+					formulae[idx++] = mQExpr(
+							factory,
+							quantTag,
+							form,
+							factory.makeBoundIdentDecl("x", null),
+							factory.makeAssociativeExpression(assocTag,
+									mList(factory.makeFreeIdentifier("y", null), factory.makeFreeIdentifier("z", null)), null));
+					formulae[idx++] = factory
+							.makeAssociativeExpression(
+									assocTag,
+									mList(factory.makeFreeIdentifier("x", null),
+											mQExpr(factory, quantTag, form,
+													factory.makeBoundIdentDecl("y", null), factory.makeFreeIdentifier("z", null))), null);
+					formulae[idx++] = factory
+							.makeAssociativeExpression(
+									assocTag,
+									mList(factory.makeFreeIdentifier("x", null),
+											mQExpr(factory, quantTag, form,
+													factory.makeBoundIdentDecl("y", null), factory.makeFreeIdentifier("z", null)), factory.makeFreeIdentifier("t", null)), null);
+					formulae[idx++] = factory.makeAssociativeExpression(
+							assocTag,
+							mList(mQExpr(factory, quantTag, form, factory.makeBoundIdentDecl("x", null), factory.makeFreeIdentifier("y", null)),
+									factory.makeFreeIdentifier("z", null)), null);
 				}
 			}
 		}
@@ -948,6 +969,7 @@ public class TestUnparse extends AbstractTests {
 	}
 	
 	private Expression[] constructQuantifiedUnaryTree(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> quantifiedExpressions = tagSupply.quantifiedExpressionTags;
 		final int quantSize = quantifiedExpressions.size();
 		final Set<Integer> unaryExpressions = tagSupply.unaryExpressionTags;
@@ -956,23 +978,29 @@ public class TestUnparse extends AbstractTests {
 				* (2 * quantSize + 1);
 		final Expression[]  formulae = new Expression[length];
 		int idx = 0;
-		for (int quantTag: quantifiedExpressions) {
-			for (int unaryTag: unaryExpressions) {
-				for (QuantifiedExpression.Form form: QuantifiedExpression.Form.values()) {
+		for (int quantTag : quantifiedExpressions) {
+			for (int unaryTag : unaryExpressions) {
+				for (QuantifiedExpression.Form form : QuantifiedExpression.Form
+						.values()) {
 					if (form == Lambda && quantTag != CSET)
 						continue;
-					formulae[idx ++] = mQExpr(quantTag, form, bd_x, 
-							mUnaryExpression(unaryTag, b0));
-					formulae[idx ++] = mUnaryExpression(unaryTag,
-							mQExpr(quantTag, form, bd_x, b0));
+					formulae[idx++] = mQExpr(factory, quantTag, form, factory.makeBoundIdentDecl("x", null),
+							factory.makeUnaryExpression(unaryTag, factory.makeBoundIdentifier(0, null), null));
+					formulae[idx++] = factory.makeUnaryExpression(unaryTag,
+							mQExpr(factory, quantTag, form, factory.makeBoundIdentDecl("x", null), factory.makeBoundIdentifier(0, null)), null);
 				}
 			}
 			// Special case of negative integer literal
-			for (QuantifiedExpression.Form form: QuantifiedExpression.Form.values()) {
+			for (QuantifiedExpression.Form form : QuantifiedExpression.Form
+					.values()) {
 				if (form == Lambda && quantTag != CSET)
 					continue;
-				formulae[idx ++] = mQExpr(quantTag, form, bd_x, 
-						mIntegerLiteral(-1));
+				formulae[idx++] = mQExpr(
+						factory,
+						quantTag,
+						form,
+						factory.makeBoundIdentDecl("x", null),
+						factory.makeIntegerLiteral(BigInteger.valueOf(-1), null));
 			}
 		}
 		assert idx == formulae.length;
@@ -980,22 +1008,26 @@ public class TestUnparse extends AbstractTests {
 	}
 	
 	private Predicate[] constructAssociativeAssociativePredicateTree(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> associativePredicates = tagSupply.associativePredicateTags;
 		final int length = associativePredicates.size();
-		Predicate[]  formulae = new Predicate[length * length * 3];
+		Predicate[] formulae = new Predicate[length * length * 3];
 		int idx = 0;
 		for (int assocTag1 : associativePredicates) {
 			for (int assocTag2 : associativePredicates) {
-				formulae[idx ++] = mAssociativePredicate(assocTag2,
-						mAssociativePredicate(assocTag1, btrue, btrue),
-						btrue);
-				formulae[idx ++] = mAssociativePredicate(assocTag2,
-						btrue,
-						mAssociativePredicate(assocTag1, btrue, btrue),
-						btrue);
-				formulae[idx ++] = mAssociativePredicate(assocTag2,
-						btrue,
-						mAssociativePredicate(assocTag1, btrue, btrue));
+				formulae[idx++] = factory.makeAssociativePredicate(
+						assocTag2,
+						mList(factory.makeAssociativePredicate(assocTag1,
+								mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null)), null), factory.makeLiteralPredicate(BTRUE, null)), null);
+				formulae[idx++] = factory.makeAssociativePredicate(
+						assocTag2,
+						mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeAssociativePredicate(
+								assocTag1, mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null)), null), factory.makeLiteralPredicate(BTRUE, null)),
+						null);
+				formulae[idx++] = factory.makeAssociativePredicate(
+						assocTag2,
+						mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeAssociativePredicate(
+								assocTag1, mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null)), null)), null);
 			}
 		}
 		assert idx == formulae.length;
@@ -1003,27 +1035,25 @@ public class TestUnparse extends AbstractTests {
 	}
 	
 	private Predicate[] constructAssociativePredicateVariableTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> associativePredicates = tagSupply.associativePredicateTags;
 		final int length = associativePredicates.size();
 		Predicate[]  formulae = new Predicate[length * 1 * 3];
 		int idx = 0;
 		for (int assocTag : associativePredicates) {
-			formulae[idx ++] = mAssociativePredicate(assocTag,
-					pv_P,
-					btrue);
-			formulae[idx ++] = mAssociativePredicate(assocTag,
-					btrue,
-					pv_P,
-					btrue);
-			formulae[idx ++] = mAssociativePredicate(assocTag,
-					btrue,
-					pv_P);
+			formulae[idx++] = factory.makeAssociativePredicate(assocTag,
+					mList(factory.makePredicateVariable("$P", null), factory.makeLiteralPredicate(BTRUE, null)), null);
+			formulae[idx++] = factory.makeAssociativePredicate(assocTag,
+					mList(factory.makeLiteralPredicate(BTRUE, null), factory.makePredicateVariable("$P", null), factory.makeLiteralPredicate(BTRUE, null)), null);
+			formulae[idx++] = factory.makeAssociativePredicate(assocTag,
+					mList(factory.makeLiteralPredicate(BTRUE, null), factory.makePredicateVariable("$P", null)), null);
 		}
 		assert idx == formulae.length;
 		return formulae;
 	}
 
 	private Predicate[] constructBinaryBinaryPredicateTrees (TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> binaryPredicates = tagSupply.binaryPredicateTags;
 		final int binarySize = binaryPredicates.size();
 		int length = binarySize;
@@ -1031,12 +1061,12 @@ public class TestUnparse extends AbstractTests {
 		int idx = 0;
 		for (int binaryTag1 : binaryPredicates) {
 			for (int binaryTag2 : binaryPredicates) {
-				formulae[idx ++] = mBinaryPredicate(binaryTag2,
-						mBinaryPredicate(binaryTag1, btrue, btrue),
-						btrue);
-				formulae[idx ++] = mBinaryPredicate(binaryTag2,
-						btrue,
-						mBinaryPredicate(binaryTag1, btrue, btrue));
+				formulae[idx++] = factory.makeBinaryPredicate(binaryTag2,
+						factory.makeBinaryPredicate(binaryTag1, factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null),
+								null), factory.makeLiteralPredicate(BTRUE, null), null);
+				formulae[idx++] = factory.makeBinaryPredicate(binaryTag2,
+						factory.makeLiteralPredicate(BTRUE, null), factory.makeBinaryPredicate(binaryTag1, factory.makeLiteralPredicate(BTRUE, null),
+								factory.makeLiteralPredicate(BTRUE, null), null), null);
 			}
 		}
 		assert idx == formulae.length;
@@ -1044,24 +1074,24 @@ public class TestUnparse extends AbstractTests {
 	}
 
 	private Predicate[] constructBinaryPredicateVariableTrees (TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> binaryPredicates = tagSupply.binaryPredicateTags;
 		final int binarySize = binaryPredicates.size();
 		int length = binarySize;
 		Predicate[]  formulae = new Predicate[length * 1 * 2];
 		int idx = 0;
 		for (int binaryTag : binaryPredicates) {
-			formulae[idx ++] = mBinaryPredicate(binaryTag,
-					pv_P,
-					btrue);
-			formulae[idx ++] = mBinaryPredicate(binaryTag,
-					btrue,
-					pv_P);
+			formulae[idx++] = factory.makeBinaryPredicate(binaryTag, factory.makePredicateVariable("$P", null),
+					factory.makeLiteralPredicate(BTRUE, null), null);
+			formulae[idx++] = factory.makeBinaryPredicate(binaryTag, factory.makeLiteralPredicate(BTRUE, null),
+					factory.makePredicateVariable("$P", null), null);
 		}
 		assert idx == formulae.length;
 		return formulae;
 	}
 
 	private Predicate[] constructAssociativeBinaryPredicateTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> associativePredicates = tagSupply.associativePredicateTags;
 		final int assocSize = associativePredicates.size();
 		final Set<Integer> binaryPredicates = tagSupply.binaryPredicateTags;
@@ -1070,23 +1100,28 @@ public class TestUnparse extends AbstractTests {
 		int idx = 0;
 		for (int assocTag : associativePredicates) {
 			for (int binaryTag : binaryPredicates) {
-				formulae[idx ++] = mAssociativePredicate(assocTag,
-						btrue,
-						mBinaryPredicate(binaryTag, btrue, btrue));
-				formulae[idx ++] = mAssociativePredicate(assocTag,
-						btrue,
-						mBinaryPredicate(binaryTag, btrue, btrue),
-						btrue);
-				formulae[idx ++] = mAssociativePredicate(assocTag,
-						mBinaryPredicate(binaryTag, btrue, btrue),
-						btrue);
-				formulae[idx ++] = mBinaryPredicate(binaryTag,
-						mAssociativePredicate(assocTag, btrue,btrue),
-						btrue);
-				formulae[idx ++] = mBinaryPredicate(binaryTag,
-						btrue,
-						mAssociativePredicate(assocTag, btrue,btrue));
-				
+				formulae[idx++] = factory.makeAssociativePredicate(
+						assocTag,
+						mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeBinaryPredicate(binaryTag,
+								factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null), null)), null);
+				formulae[idx++] = factory.makeAssociativePredicate(
+						assocTag,
+						mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeBinaryPredicate(binaryTag,
+								factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null), null), factory.makeLiteralPredicate(BTRUE, null)), null);
+				formulae[idx++] = factory.makeAssociativePredicate(
+						assocTag,
+						mList(factory.makeBinaryPredicate(binaryTag, factory.makeLiteralPredicate(BTRUE, null),
+								factory.makeLiteralPredicate(BTRUE, null), null), factory.makeLiteralPredicate(BTRUE, null)), null);
+				formulae[idx++] = factory.makeBinaryPredicate(
+						binaryTag,
+						factory.makeAssociativePredicate(assocTag,
+								mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null)), null), factory.makeLiteralPredicate(BTRUE, null), null);
+				formulae[idx++] = factory.makeBinaryPredicate(
+						binaryTag,
+						factory.makeLiteralPredicate(BTRUE, null),
+						factory.makeAssociativePredicate(assocTag,
+								mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null)), null), null);
+
 			}
 		}
 		assert idx == formulae.length;
@@ -1094,34 +1129,37 @@ public class TestUnparse extends AbstractTests {
 	}
 	
 	private Predicate[] constructUnaryUnaryPredicateTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> unaryPredicates = tagSupply.unaryPredicateTags;
 		final int unarySize = unaryPredicates.size();
-		Predicate[]  formulae = new Predicate[unarySize * unarySize];
+		Predicate[] formulae = new Predicate[unarySize * unarySize];
 		int idx = 0;
 		for (int unaryTag1 : unaryPredicates) {
 			for (int unaryTag2 : unaryPredicates) {
-				formulae[idx ++] = mUnaryPredicate(unaryTag1,
-						mUnaryPredicate(unaryTag2, btrue));
+				formulae[idx++] = factory.makeUnaryPredicate(unaryTag1,
+						factory.makeUnaryPredicate(unaryTag2, factory.makeLiteralPredicate(BTRUE, null), null),
+						null);
 			}
 		}
 		assert idx == formulae.length;
 		return formulae;
 	}
-	
+
 	private Predicate[] constructUnaryPredicateVariableTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> unaryPredicates = tagSupply.unaryPredicateTags;
 		final int unarySize = unaryPredicates.size();
 		Predicate[] formulae = new Predicate[unarySize * 1];
 		int idx = 0;
 		for (int unaryTag : unaryPredicates) {
-			formulae[idx ++] = mUnaryPredicate(unaryTag,
-					pv_P);
+			formulae[idx++] = factory.makeUnaryPredicate(unaryTag, factory.makePredicateVariable("$P", null), null);
 		}
 		assert idx == formulae.length;
 		return formulae;
 	}
 
 	private Predicate[] constructAssociativeUnaryPredicateTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> associativePredicates = tagSupply.associativePredicateTags;
 		final int assocSize = associativePredicates.size();
 		final Set<Integer> unaryPredicates = tagSupply.unaryPredicateTags;
@@ -1130,18 +1168,23 @@ public class TestUnparse extends AbstractTests {
 		int idx = 0;
 		for (int unaryTag : unaryPredicates) {
 			for (int assocTag : associativePredicates) {
-				formulae[idx ++] = mUnaryPredicate(unaryTag,
-						mAssociativePredicate(assocTag, btrue,btrue));
-				formulae[idx ++] = mAssociativePredicate(assocTag,
-						btrue,
-						mUnaryPredicate(unaryTag, btrue));
-				formulae[idx ++] = mAssociativePredicate(assocTag,
-						btrue,
-						mUnaryPredicate(unaryTag, btrue),
-						btrue);
-				formulae[idx ++] = mAssociativePredicate(assocTag,
-						mUnaryPredicate(unaryTag, btrue),
-						btrue);
+				formulae[idx++] = factory.makeUnaryPredicate(
+						unaryTag,
+						factory.makeAssociativePredicate(assocTag,
+								mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null)), null), null);
+				formulae[idx++] = factory.makeAssociativePredicate(
+						assocTag,
+						mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeUnaryPredicate(unaryTag,
+								factory.makeLiteralPredicate(BTRUE, null), null)), null);
+				formulae[idx++] = factory.makeAssociativePredicate(
+						assocTag,
+						mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeUnaryPredicate(unaryTag,
+								factory.makeLiteralPredicate(BTRUE, null), null), factory.makeLiteralPredicate(BTRUE, null)), null);
+				formulae[idx++] = factory
+						.makeAssociativePredicate(
+								assocTag,
+								mList(factory.makeUnaryPredicate(unaryTag,
+										factory.makeLiteralPredicate(BTRUE, null), null), factory.makeLiteralPredicate(BTRUE, null)), null);
 			}
 		}
 		assert idx == formulae.length;
@@ -1149,22 +1192,25 @@ public class TestUnparse extends AbstractTests {
 	}
 
 	private Predicate[] constructBinaryUnaryPredicateTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> binaryPredicates = tagSupply.binaryPredicateTags;
 		final int binarySize = binaryPredicates.size();
 		final Set<Integer> unaryPredicates = tagSupply.unaryPredicateTags;
 		final int unarySize = unaryPredicates.size();
-		Predicate[]  formulae = new Predicate[(unarySize)*(binarySize)*3];
+		Predicate[] formulae = new Predicate[(unarySize) * (binarySize) * 3];
 		int idx = 0;
 		for (int unaryTag : unaryPredicates) {
 			for (int binaryTag : binaryPredicates) {
-				formulae[idx ++] = mUnaryPredicate(unaryTag,
-						mBinaryPredicate(binaryTag, btrue, btrue));
-				formulae[idx ++] = mBinaryPredicate(binaryTag,
-						mUnaryPredicate(unaryTag, btrue),
-						btrue);
-				formulae[idx ++] = mBinaryPredicate(binaryTag,
-						btrue,
-						mUnaryPredicate(unaryTag, btrue));
+				formulae[idx++] = factory.makeUnaryPredicate(unaryTag, factory
+						.makeBinaryPredicate(binaryTag, factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null), null),
+						null);
+				formulae[idx++] = factory.makeBinaryPredicate(binaryTag,
+						factory.makeUnaryPredicate(unaryTag, factory.makeLiteralPredicate(BTRUE, null), null),
+						factory.makeLiteralPredicate(BTRUE, null), null);
+				formulae[idx++] = factory
+						.makeBinaryPredicate(binaryTag, factory.makeLiteralPredicate(BTRUE, null), factory
+								.makeUnaryPredicate(unaryTag, factory.makeLiteralPredicate(BTRUE, null), null),
+								null);
 			}
 		}
 		assert idx == formulae.length;
@@ -1172,15 +1218,16 @@ public class TestUnparse extends AbstractTests {
 	}
 
 	private Predicate[] constructQuantifiedQuantifiedPredicateTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> quantifiedPredicates = tagSupply.quantifiedPredicateTags;
 		final int quantSize = quantifiedPredicates.size();
-		Predicate[]  formulae = new Predicate[quantSize * quantSize];
+		Predicate[] formulae = new Predicate[quantSize * quantSize];
 		int idx = 0;
 		for (int quantTag1 : quantifiedPredicates) {
 			for (int quantTag2 : quantifiedPredicates) {
-				formulae[idx ++] = mQuantifiedPredicate(quantTag2,
-						mList(bd_x),
-						mQuantifiedPredicate(quantTag1, mList(bd_y), btrue));
+				formulae[idx++] = factory.makeQuantifiedPredicate(quantTag2,
+						mList(factory.makeBoundIdentDecl("x", null)), factory.makeQuantifiedPredicate(quantTag1,
+								mList(factory.makeBoundIdentDecl("y", null)), factory.makeLiteralPredicate(BTRUE, null), null), null);
 			}
 		}
 		assert idx == formulae.length;
@@ -1188,6 +1235,7 @@ public class TestUnparse extends AbstractTests {
 	}
 	
 	private Predicate[] constructQuantifiedBinaryPredicateTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> quantifiedPredicates = tagSupply.quantifiedPredicateTags;
 		final int quantSize = quantifiedPredicates.size();
 		final Set<Integer> binaryPredicates = tagSupply.binaryPredicateTags;
@@ -1196,15 +1244,15 @@ public class TestUnparse extends AbstractTests {
 		int idx = 0;
 		for (int quantTag : quantifiedPredicates) {
 			for (int binaryTag : binaryPredicates) {
-				formulae[idx ++] = mQuantifiedPredicate(quantTag,
-						mList(bd_x),
-						mBinaryPredicate(binaryTag, btrue, btrue));
-				formulae[idx ++] = mBinaryPredicate(binaryTag,
-						mQuantifiedPredicate(quantTag, mList(bd_x), btrue),
-						btrue);
-				formulae[idx ++] = mBinaryPredicate(binaryTag,
-						btrue,
-						mQuantifiedPredicate(quantTag, mList(bd_x), btrue));
+				formulae[idx++] = factory.makeQuantifiedPredicate(quantTag,
+						mList(factory.makeBoundIdentDecl("x", null)), factory.makeBinaryPredicate(binaryTag,
+								factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null), null), null);
+				formulae[idx++] = factory.makeBinaryPredicate(binaryTag,
+						factory.makeQuantifiedPredicate(quantTag, mList(factory.makeBoundIdentDecl("x", null)),
+								factory.makeLiteralPredicate(BTRUE, null), null), factory.makeLiteralPredicate(BTRUE, null), null);
+				formulae[idx++] = factory.makeBinaryPredicate(binaryTag, factory.makeLiteralPredicate(BTRUE, null),
+						factory.makeQuantifiedPredicate(quantTag, mList(factory.makeBoundIdentDecl("x", null)),
+								factory.makeLiteralPredicate(BTRUE, null), null), null);
 			}
 		}
 		assert idx == formulae.length;
@@ -1212,6 +1260,7 @@ public class TestUnparse extends AbstractTests {
 	}
 	
 	private Predicate[] constructQuantifiedAssociativePredicateTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> quantifiedPredicates = tagSupply.quantifiedPredicateTags;
 		final int quantSize = quantifiedPredicates.size();
 		final Set<Integer> associativePredicates = tagSupply.associativePredicateTags;
@@ -1220,26 +1269,31 @@ public class TestUnparse extends AbstractTests {
 		int idx = 0;
 		for (int quantTag : quantifiedPredicates) {
 			for (int assocTag : associativePredicates) {
-				formulae[idx ++] = mQuantifiedPredicate(quantTag,
-						mList(bd_x),
-						mAssociativePredicate(assocTag, btrue, btrue));
-				formulae[idx ++] = mAssociativePredicate(assocTag,
-						btrue,
-						mQuantifiedPredicate(quantTag, mList(bd_x), btrue));
-				formulae[idx ++] = mAssociativePredicate(assocTag,
-						btrue,
-						mQuantifiedPredicate(quantTag, mList(bd_x), btrue),
-						btrue);
-				formulae[idx ++] = mAssociativePredicate(assocTag,
-						mQuantifiedPredicate(quantTag, mList(bd_x), btrue),
-						btrue);
-			}
+				formulae[idx++] = factory.makeQuantifiedPredicate(
+						quantTag,
+						mList(factory.makeBoundIdentDecl("x", null)),
+						factory.makeAssociativePredicate(assocTag,
+								mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeLiteralPredicate(BTRUE, null)), null), null);
+				formulae[idx++] = factory.makeAssociativePredicate(
+						assocTag,
+						mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeQuantifiedPredicate(quantTag,
+								mList(factory.makeBoundIdentDecl("x", null)), factory.makeLiteralPredicate(BTRUE, null), null)), null);
+				formulae[idx++] = factory.makeAssociativePredicate(
+						assocTag,
+						mList(factory.makeLiteralPredicate(BTRUE, null), factory.makeQuantifiedPredicate(quantTag,
+								mList(factory.makeBoundIdentDecl("x", null)), factory.makeLiteralPredicate(BTRUE, null), null), factory.makeLiteralPredicate(BTRUE, null)), null);
+				formulae[idx++] = factory.makeAssociativePredicate(
+						assocTag,
+						mList(factory.makeQuantifiedPredicate(quantTag,
+								mList(factory.makeBoundIdentDecl("x", null)), factory.makeLiteralPredicate(BTRUE, null), null), factory.makeLiteralPredicate(BTRUE, null)), null);
+		}
 		}
 		assert idx == formulae.length;
 		return formulae;
 	}
 	
 	private Predicate[] constructQuantifiedUnaryPredicateTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> quantifiedPredicates = tagSupply.quantifiedPredicateTags;
 		final int quantSize = quantifiedPredicates.size();
 		final Set<Integer> unaryPredicates = tagSupply.unaryPredicateTags;
@@ -1248,11 +1302,13 @@ public class TestUnparse extends AbstractTests {
 		int idx = 0;
 		for (int quantTag : quantifiedPredicates) {
 			for (int unaryTag : unaryPredicates) {
-				formulae[idx ++] = mQuantifiedPredicate(quantTag,
-						mList(bd_y),
-						mUnaryPredicate(unaryTag, btrue));
-				formulae[idx ++] = mUnaryPredicate(unaryTag,
-						mQuantifiedPredicate(quantTag, mList(bd_y), btrue));
+				formulae[idx++] = factory
+						.makeQuantifiedPredicate(quantTag, mList(factory.makeBoundIdentDecl("y", null)), factory
+								.makeUnaryPredicate(unaryTag, factory.makeLiteralPredicate(BTRUE, null), null),
+								null);
+				formulae[idx++] = factory.makeUnaryPredicate(unaryTag, factory
+						.makeQuantifiedPredicate(quantTag, mList(factory.makeBoundIdentDecl("y", null)), factory.makeLiteralPredicate(BTRUE, null),
+								null), null);
 			}
 		}
 		assert idx == formulae.length;
@@ -1260,20 +1316,21 @@ public class TestUnparse extends AbstractTests {
 	}
 	
 	private Predicate[] constructQuantifiedPredicateVariableTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final Set<Integer> quantifiedPredicates = tagSupply.quantifiedPredicateTags;
 		final int quantSize = quantifiedPredicates.size();
 		Predicate[] formulae = new Predicate[quantSize * 1];
 		int idx = 0;
 		for (int quantTag : quantifiedPredicates) {
-			formulae[idx ++] = mQuantifiedPredicate(quantTag,
-					mList(bd_y),
-					pv_P);
+			formulae[idx++] = factory.makeQuantifiedPredicate(quantTag,
+					mList(factory.makeBoundIdentDecl("y", null)), factory.makePredicateVariable("$P", null), null);
 		}
 		assert idx == formulae.length;
 		return formulae;
 	}
 
 	private Predicate[] constructMultiplePredicateTrees(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		final List<Expression> exprs = Common.constructExpressions(tagSupply);
 		final int exprsSize = exprs.size();
 		final Set<Integer> multiplePredicates = tagSupply.multiplePredicateTags;
@@ -1283,7 +1340,7 @@ public class TestUnparse extends AbstractTests {
 		for (int multiTag : multiplePredicates) {
 			for (Expression exp1 : exprs) {
 				for (Expression exp2 : exprs) {
-					formulae[idx ++] = mMultiplePredicate(multiTag, exp1, exp2);
+					formulae[idx ++] = factory.makeMultiplePredicate(multiTag, mList(exp1, exp2), null);
 				}
 			}
 		}
@@ -1292,6 +1349,7 @@ public class TestUnparse extends AbstractTests {
 	}
 	
 	private Predicate[] constructRelop(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		List<Expression> exprs = Common.constructExpressions(tagSupply);
 		final int exprsSize = exprs.size();
 		final Set<Integer> relationalPredicates = tagSupply.relationalPredicateTags;
@@ -1300,8 +1358,10 @@ public class TestUnparse extends AbstractTests {
 		int idx = 0;
 		for (Expression expr: exprs) {
 			for (int relTag : relationalPredicates) {
-				formulae[idx ++] = mRelationalPredicate(relTag, expr, id_t); 
-				formulae[idx ++] = mRelationalPredicate(relTag, id_t, expr); 
+				formulae[idx++] = factory.makeRelationalPredicate(relTag, expr,
+						factory.makeFreeIdentifier("t", null), null);
+				formulae[idx++] = factory.makeRelationalPredicate(relTag, factory.makeFreeIdentifier("t", null),
+						expr, null);
 			}
 		}
 		assert idx == formulae.length;
@@ -1309,6 +1369,7 @@ public class TestUnparse extends AbstractTests {
 	}
 	
 	private Expression[] constructQuantifierWithPredicate(TagSupply tagSupply) {
+		final FormulaFactory factory = tagSupply.factory;
 		List<Predicate> preds = Common.constructPredicates(tagSupply);
 		final Set<Integer> quantifiedExpressions = tagSupply.quantifiedExpressionTags;
 		final int quantSize = quantifiedExpressions.size();
@@ -1316,10 +1377,10 @@ public class TestUnparse extends AbstractTests {
 		int idx = 0;
 		for (Predicate pred: preds) {
 			for (int quantTag : quantifiedExpressions) {
-				formulae[idx ++] = mQuantifiedExpression(quantTag, Explicit,
-						mList(bd_x), pred, two); 
-				formulae[idx ++] = mQuantifiedExpression(quantTag, Implicit,
-						mList(bd_x), pred, b0); 
+				formulae[idx++] = factory.makeQuantifiedExpression(quantTag,
+						mList(factory.makeBoundIdentDecl("x", null)), pred, factory.makeIntegerLiteral(Common.TWO, null), null, Explicit);
+				formulae[idx++] = factory.makeQuantifiedExpression(quantTag,
+						mList(factory.makeBoundIdentDecl("x", null)), pred, factory.makeBoundIdentifier(0, null), null, Implicit);
 			}
 		}
 		assert idx == formulae.length;

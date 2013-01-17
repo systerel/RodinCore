@@ -1688,6 +1688,12 @@ public class FormulaFactory {
 			return false;
 		}
 		FormulaFactory other = (FormulaFactory) obj;
+		// grammar is not null by construction
+		if (grammar.getClass() != other.grammar.getClass()) {
+			// If the grammar classes are different then those 2 factories
+			// cannot be equal (it implies different versions of the language)
+			return false;
+		}
 		return extensions.equals(other.extensions);
 	}
 
