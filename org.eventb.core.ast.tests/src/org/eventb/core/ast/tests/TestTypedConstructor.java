@@ -560,6 +560,13 @@ public class TestTypedConstructor extends AbstractTests {
 		assertExpressionType(mUnaryExpression(tag, child), expected);
 	}
 
+	private static void assertUnaryExpressionTypeV1(int tag, Type expected,
+			Type type) {
+		final Expression child = mExpressionV1(type);
+		assertExpressionType(ffV1.makeUnaryExpression(tag, child, null),
+				expected);
+	}
+
 	private static void assertUnaryPredicate(int tag, boolean expected,
 			boolean typed) {
 		final Predicate child = mPredicate(typed);
@@ -626,6 +633,13 @@ public class TestTypedConstructor extends AbstractTests {
 			return mEmptySet(null);
 		}
 		return mFreeIdentifier("v" + getFreshIndex(), type);
+	}
+
+	private static Expression mExpressionV1(Type type) {
+		if (type == null) {
+			return ffV1.makeEmptySet(null, null);
+		}
+		return ffV1.makeFreeIdentifier("v" + getFreshIndex(), null, type);
 	}
 
 	private static Expression mMapletExpression(Type type) {
@@ -1245,26 +1259,26 @@ public class TestTypedConstructor extends AbstractTests {
 		assertUnaryExpressionType(KRAN, null, pS);
 		assertUnaryExpressionType(KRAN, pT, rST);
 
-		assertUnaryExpressionType(KPRJ1, null, null);
-		assertUnaryExpressionType(KPRJ1, null, B);
-		assertUnaryExpressionType(KPRJ1, null, S);
-		assertUnaryExpressionType(KPRJ1, null, Z);
-		assertUnaryExpressionType(KPRJ1, null, pS);
-		assertUnaryExpressionType(KPRJ1, REL(ST, S), rST);
+		assertUnaryExpressionTypeV1(KPRJ1, null, null);
+		assertUnaryExpressionTypeV1(KPRJ1, null, B);
+		assertUnaryExpressionTypeV1(KPRJ1, null, S);
+		assertUnaryExpressionTypeV1(KPRJ1, null, Z);
+		assertUnaryExpressionTypeV1(KPRJ1, null, pS);
+		assertUnaryExpressionTypeV1(KPRJ1, REL(ST, S), rST);
 
-		assertUnaryExpressionType(KPRJ2, null, null);
-		assertUnaryExpressionType(KPRJ2, null, B);
-		assertUnaryExpressionType(KPRJ2, null, S);
-		assertUnaryExpressionType(KPRJ2, null, Z);
-		assertUnaryExpressionType(KPRJ2, null, pS);
-		assertUnaryExpressionType(KPRJ2, REL(ST, T), rST);
+		assertUnaryExpressionTypeV1(KPRJ2, null, null);
+		assertUnaryExpressionTypeV1(KPRJ2, null, B);
+		assertUnaryExpressionTypeV1(KPRJ2, null, S);
+		assertUnaryExpressionTypeV1(KPRJ2, null, Z);
+		assertUnaryExpressionTypeV1(KPRJ2, null, pS);
+		assertUnaryExpressionTypeV1(KPRJ2, REL(ST, T), rST);
 
-		assertUnaryExpressionType(KID, null, null);
-		assertUnaryExpressionType(KID, null, B);
-		assertUnaryExpressionType(KID, null, S);
-		assertUnaryExpressionType(KID, null, Z);
-		assertUnaryExpressionType(KID, rSS, pS);
-		assertUnaryExpressionType(KID, REL(ST, ST), rST);
+		assertUnaryExpressionTypeV1(KID, null, null);
+		assertUnaryExpressionTypeV1(KID, null, B);
+		assertUnaryExpressionTypeV1(KID, null, S);
+		assertUnaryExpressionTypeV1(KID, null, Z);
+		assertUnaryExpressionTypeV1(KID, rSS, pS);
+		assertUnaryExpressionTypeV1(KID, REL(ST, ST), rST);
 
 		for (int tag : Arrays.asList(KMIN, KMAX)) {
 			assertUnaryExpressionType(tag, null, null);

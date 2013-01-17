@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,8 +72,6 @@ import org.eventb.core.ast.UnaryPredicate;
  */
 public class Common {
 
-	private static FormulaFactory ff = FormulaFactory.getDefault();
-
 	public static final BigInteger ONE = BigInteger.ONE;
 	public static final BigInteger TWO = BigInteger.valueOf(2);
 	public static final BigInteger FIVE = BigInteger.valueOf(5);
@@ -91,7 +89,7 @@ public class Common {
 
 		private static class V1TagSupply extends TagSupply {
 			protected V1TagSupply() {
-				super(V1);
+				super(FormulaFactory.getV1Default(), V1);
 				atomicExpressionTags.removeAll(notV1AtomicExprTags);
 				multiplePredicateTags.clear();
 			}
@@ -99,13 +97,9 @@ public class Common {
 
 		private static class V2TagSupply extends TagSupply {
 			protected V2TagSupply() {
-				super(V2);
+				super(FormulaFactory.getDefault(), V2);
 				unaryExpressionTags.removeAll(onlyV1UnaryTags);
 			}
-		}
-
-		public static TagSupply getAllTagSupply() {
-			return new TagSupply(null);
 		}
 
 		public static TagSupply getV1TagSupply() {
@@ -128,6 +122,11 @@ public class Common {
 			return set;
 		}
 		
+		/**
+		 * Formula factory compatible with the tag supply version
+		 */
+		protected final FormulaFactory factory;
+
 		protected final LanguageVersion version;
 		
 		protected final Set<Integer> associativeExpressionTags = setOf(
@@ -158,7 +157,8 @@ public class Common {
 		protected final Set<Integer> unaryPredicateTags = setOf(
 				FIRST_UNARY_PREDICATE, UnaryPredicate.TAGS_LENGTH);
 		
-		public TagSupply(LanguageVersion version) {
+		protected TagSupply(FormulaFactory factory, LanguageVersion version) {
+			this.factory = factory;
 			this.version = version;
 		}
 
@@ -170,6 +170,7 @@ public class Common {
 	 * @return an array of all expressions
 	 */
 	public static List<Expression> constructExpressions(TagSupply tagGetter) {
+		final FormulaFactory ff = tagGetter.factory;
 		final List<Expression> expressions = new ArrayList<Expression>();
 		FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
 		BoundIdentDecl bd_x = ff.makeBoundIdentDecl("x", null);
@@ -207,6 +208,7 @@ public class Common {
 	 * @return an array of all predicates
 	 */
 	public static List<Predicate> constructPredicates(TagSupply tagGetter) {
+		final FormulaFactory ff = tagGetter.factory;
 		final List<Predicate> predicates = new ArrayList<Predicate>();
 		BoundIdentDecl bd_x = ff.makeBoundIdentDecl("x", null);
 		LiteralPredicate btrue = ff.makeLiteralPredicate(Formula.BTRUE, null);

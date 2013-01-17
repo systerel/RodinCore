@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 
@@ -60,6 +60,7 @@ import org.junit.Test;
 public class TestVisitor {
 	
 	FormulaFactory ff = FormulaFactory.getDefault();
+	FormulaFactory ffV1 = FormulaFactory.getV1Default();
 	
 	private static class TestItem {
 		private final Formula<?> formula;
@@ -1548,6 +1549,7 @@ public class TestVisitor {
 
 	// Some simple expressions.
 	private Expression e1 = mIntegerLiteral();
+	private Expression e1_V1 = ffV1.makeIntegerLiteral(BigInteger.ZERO, null);
 	private Expression e2 = mIntegerLiteral();
 	private Expression e3 = mIntegerLiteral();
 	
@@ -1885,15 +1887,15 @@ public class TestVisitor {
 					3
 				),
 				new TestItem(
-					ff.makeUnaryExpression(Formula.KPRJ1, e1, null),
+					ffV1.makeUnaryExpression(Formula.KPRJ1, e1_V1, null),
 					3
 				),
 				new TestItem(
-					ff.makeUnaryExpression(Formula.KPRJ2, e1, null),
+					ffV1.makeUnaryExpression(Formula.KPRJ2, e1_V1, null),
 					3
 				),
 				new TestItem(
-					ff.makeUnaryExpression(Formula.KID, e1, null),
+					ffV1.makeUnaryExpression(Formula.KID, e1_V1, null),
 					3
 				),
 				new TestItem(

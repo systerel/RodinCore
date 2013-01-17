@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BCOMP;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
@@ -129,6 +127,8 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
@@ -427,13 +427,13 @@ public class TestWDStrict extends AbstractTests {
 		assertWDStrict(mUnaryExpression(KRAN, id_x));
 
 		// KPRJ1
-		assertWDStrict(mUnaryExpression(KPRJ1, id_x));
+		assertWDStrict(ffV1.makeUnaryExpression(KPRJ1, ffV1.makeFreeIdentifier("x", null), null));
 
 		// KPRJ2
-		assertWDStrict(mUnaryExpression(KPRJ2, id_x));
+		assertWDStrict(ffV1.makeUnaryExpression(KPRJ2, ffV1.makeFreeIdentifier("x", null), null));
 
 		// KID
-		assertWDStrict(mUnaryExpression(KID, id_x));
+		assertWDStrict(ffV1.makeUnaryExpression(KID, ffV1.makeFreeIdentifier("x", null), null));
 
 		// KMIN
 		assertWDStrict(mUnaryExpression(KMIN, id_x));

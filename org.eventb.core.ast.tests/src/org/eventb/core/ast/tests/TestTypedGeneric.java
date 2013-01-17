@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
@@ -41,6 +39,8 @@ import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.AtomicExpression;
@@ -172,13 +172,13 @@ public class TestTypedGeneric extends AbstractTests {
 		
 		doTest(mUnaryExpression(Formula.KRAN, eST), POW(ty_T));
 		
-		doTest(mUnaryExpression(Formula.KPRJ1, eST), REL(CPROD(ty_S, ty_T), ty_S),
+		doTest(ffV1.makeUnaryExpression(Formula.KPRJ1, eST, null), REL(CPROD(ty_S, ty_T), ty_S),
 				V1);
 
-		doTest(mUnaryExpression(Formula.KPRJ2, eST), REL(CPROD(ty_S, ty_T), ty_T),
+		doTest(ffV1.makeUnaryExpression(Formula.KPRJ2, eST, null), REL(CPROD(ty_S, ty_T), ty_T),
 				V1);
 
-		doTest(mUnaryExpression(Formula.KID, eS), REL(ty_S, ty_S),
+		doTest(ffV1.makeUnaryExpression(Formula.KID, eS, null), REL(ty_S, ty_S),
 				V1);
 
 		
