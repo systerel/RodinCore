@@ -16,6 +16,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IVisitor;
+import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
@@ -103,19 +105,50 @@ public class IdentsChecker implements IVisitor {
 
 	// If the formula is not type-checked, we check only names, ignoring any
 	// type information.
-	private static void assertEqualFreeIdentifiers(Formula<?> f,
+	private static void assertEqualFreeIdentifiers(Formula<?> formula,
 			Set<FreeIdentifier> expected) {
-		final FreeIdentifier[] actual = f.getFreeIdentifiers();
-		if (f.isTypeChecked()) {
+		final FreeIdentifier[] actual = formula.getFreeIdentifiers();
+		assertSorted(actual);
+		if (formula.isTypeChecked()) {
+			assertTypeChecked(actual);
 			assertEqualSets(expected, actual);
 		} else {
 			assertEqualNames(expected, actual);
 		}
 	}
 
+	private static void assertSorted(FreeIdentifier[] actual) {
+		String last = "";
+		for (final FreeIdentifier ident : actual) {
+			final String name = ident.getName();
+			assertTrue(last.compareTo(name) < 0);
+			last = name;
+		}
+	}
+
 	private static void assertEqualBoundIdentifiers(Formula<?> formula,
 			Set<BoundIdentifier> expected) {
-		assertEqualSets(expected, formula.getBoundIdentifiers());
+		final BoundIdentifier[] actual = formula.getBoundIdentifiers();
+		assertSorted(actual);
+		if (formula.isTypeChecked()) {
+			assertTypeChecked(actual);
+		}
+		assertEqualSets(expected, actual);
+	}
+
+	private static void assertSorted(BoundIdentifier[] actual) {
+		int last = -1;
+		for (final BoundIdentifier ident : actual) {
+			final int index = ident.getBoundIndex();
+			assertTrue(last < index);
+			last = index;
+		}
+	}
+
+	private static <T extends Identifier> void assertTypeChecked(T[] idents) {
+		for (final T ident : idents) {
+			assertTrue(ident.isTypeChecked());
+		}
 	}
 
 	private static <T> void assertEqualSets(Set<T> expected, T[] array) {
