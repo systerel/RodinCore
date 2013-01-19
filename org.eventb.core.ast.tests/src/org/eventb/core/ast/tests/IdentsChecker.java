@@ -12,10 +12,12 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
+import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -63,53 +65,14 @@ import org.eventb.core.ast.UnaryPredicate;
  * <p>
  * The traversal uses a stack to remember the nodes that have been traversed. At
  * any time, the stack contains all the nodes that are either above (parents) of
- * before (left-hand side siblings) of the current node.
+ * before (left-hand side siblings) of the current node. During the traversal of
+ * an internal node, the stack also contains the children of the node (which are
+ * popped off when exiting the node).
  * </p>
  * 
  * @author Laurent Voisin
  */
 public class IdentsChecker implements IVisitor {
-
-	/**
-	 * Checks that the given set contains exactly the elements of the array.
-	 * 
-	 * @param <T>
-	 *            type of the elements
-	 * @param set
-	 *            a set of elements
-	 * @param array
-	 *            an array of elements
-	 * @return <code>true</code> iff the set and the array contain exactly the
-	 *         same elements (without duplicates)
-	 */
-	private static <T> boolean areEqual(Set<T> set, T[] array) {
-		if (set.size() != array.length) {
-			return false;
-		}
-		Set<T> other = new HashSet<T>(Arrays.asList(array));
-		return set.equals(other);
-	}
-
-	private static boolean areEqualFreeIdentifiers(Formula<?> f,
-			Set<FreeIdentifier> expected, FreeIdentifier[] found) {
-		if (f.isTypeChecked()) {
-			return areEqual(expected, found);
-		} else {
-			// If formula is not typed we can only check that all free
-			// identifiers names are present (same name could have different
-			// types in expected set whereas in the array found only one type is
-			// keeped).
-			Set<String> names_expected = new HashSet<String>(expected.size());
-			Set<String> names_present = new HashSet<String>(found.length);
-			for (FreeIdentifier freeid : expected) {
-				names_expected.add(freeid.getName());
-			}
-			for (FreeIdentifier freeid : found) {
-				names_present.add(freeid.getName());
-			}
-			return names_expected.equals(names_expected);
-		}
-	}
 
 	/**
 	 * Checks the identifiers cache of the given formula. This is the entry
@@ -119,56 +82,58 @@ public class IdentsChecker implements IVisitor {
 	 *            the formula to check
 	 * @param factory
 	 *            a formula factory compatible with the given formula
-	 * @return <code>true</code> iff all identifier caches are correct.
 	 */
-	public static boolean check(Formula<?> formula, FormulaFactory factory) {
-		final IdentsChecker checker = new IdentsChecker(formula, factory);
+	public static void check(Formula<?> formula, FormulaFactory factory) {
+		final IdentsChecker checker = new IdentsChecker(factory);
 		formula.accept(checker);
-		if (checker.success) {
-			// Self-test ensure stack contains only root if successful
-			assert checker.stack.size() == 1;
-			assert checker.stack.peek() == formula;
-		}
-		return checker.success;
+		// Self-test ensure stack contains only root
+		assertEquals(1, checker.stack.size());
+		assertEquals(formula, checker.stack.peek());
 	}
 
-	/**
+	/*
 	 * Checks whether the formula bears the expected type-checker caches of
 	 * identifiers.
-	 * 
-	 * @param formula
-	 *            the formula to test
-	 * @param freeIdents
-	 *            expected set of free identifiers
-	 * @param boundIdents
-	 *            expected set of bound identifiers
-	 * @return <code>true</code> iff the formula bears the expected set of
-	 *         cached identifiers
 	 */
-	private static boolean checkFormula(Formula<?> formula,
+	private static void checkFormula(Formula<?> formula,
 			Set<FreeIdentifier> freeIdents, Set<BoundIdentifier> boundIdents) {
-		return areEqualFreeIdentifiers(formula, freeIdents,
-				formula.getFreeIdentifiers())
-				&& areEqual(boundIdents, formula.getBoundIdentifiers());
-	}
-	
-	// Returns a set containing the identifiers for each given type
-	// occurring in the type of the given formula (if any)
-	private Set<FreeIdentifier> getGivenTypeIdentifiers(Expression expr) {
-		return getGivenTypeIdentifiers(expr.getType());
+		assertEqualFreeIdentifiers(formula, freeIdents);
+		assertEqualBoundIdentifiers(formula, boundIdents);
 	}
 
-	private Set<FreeIdentifier> getGivenTypeIdentifiers(BoundIdentDecl decl) {
-		return getGivenTypeIdentifiers(decl.getType());
-	}
-
-	private Set<FreeIdentifier> getGivenTypeIdentifiers(Type type) {
-		final Set<FreeIdentifier> result = new HashSet<FreeIdentifier>();
-		if (type == null) {
-			return result;
+	// If the formula is not type-checked, we check only names, ignoring any
+	// type information.
+	private static void assertEqualFreeIdentifiers(Formula<?> f,
+			Set<FreeIdentifier> expected) {
+		final FreeIdentifier[] actual = f.getFreeIdentifiers();
+		if (f.isTypeChecked()) {
+			assertEqualSets(expected, actual);
+		} else {
+			assertEqualNames(expected, actual);
 		}
-		for (final GivenType givenType : type.getGivenTypes()) {
-			result.add(givenType.toExpression(factory));
+	}
+
+	private static void assertEqualBoundIdentifiers(Formula<?> formula,
+			Set<BoundIdentifier> expected) {
+		assertEqualSets(expected, formula.getBoundIdentifiers());
+	}
+
+	private static <T> void assertEqualSets(Set<T> expected, T[] array) {
+		final Set<T> actual = new HashSet<T>(asList(array));
+		assertEquals(expected, actual);
+	}
+
+	private static void assertEqualNames(Set<FreeIdentifier> expected,
+			FreeIdentifier[] actual) {
+		final Set<String> expectedNames = namesOf(expected);
+		final Set<String> actualNames = namesOf(asList(actual));
+		assertEquals(expectedNames, actualNames);
+	}
+
+	private static Set<String> namesOf(Collection<FreeIdentifier> idents) {
+		final Set<String> result = new HashSet<String>(idents.size());
+		for (FreeIdentifier ident : idents) {
+			result.add(ident.getName());
 		}
 		return result;
 	}
@@ -177,295 +142,289 @@ public class IdentsChecker implements IVisitor {
 
 	final private Stack<Formula<?>> stack;
 
-	private boolean success;
-
-	/**
-	 * Creates a new instance of this checker.
-	 */
-	private IdentsChecker(Formula<?> f, FormulaFactory factory) {
-		this.success = true;
+	private IdentsChecker(FormulaFactory factory) {
 		this.stack = new Stack<Formula<?>>();
 		this.factory = factory;
 	}
 
 	@Override
 	public boolean continueBCOMP(AssociativeExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueBINTER(AssociativeExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueBUNION(AssociativeExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueCPROD(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueCSET(QuantifiedExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueDIV(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueDOMRES(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueDOMSUB(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueDPROD(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueEQUAL(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueEXISTS(QuantifiedPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueEXPN(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueFCOMP(AssociativeExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueFORALL(QuantifiedPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueFUNIMAGE(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueGE(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueGT(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueIN(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueLAND(AssociativePredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueLE(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueLEQV(BinaryPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueLIMP(BinaryPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueLOR(AssociativePredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueLT(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueMAPSTO(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueMINUS(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueMOD(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueMUL(AssociativeExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueNOTEQUAL(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueNOTIN(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueNOTSUBSET(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueNOTSUBSETEQ(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueOVR(AssociativeExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continuePFUN(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continuePINJ(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continuePLUS(AssociativeExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continuePPROD(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continuePSUR(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueQINTER(QuantifiedExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueQUNION(QuantifiedExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueRANRES(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueRANSUB(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueREL(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueRELIMAGE(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueSETEXT(SetExtension set) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueSETMINUS(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueSREL(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueSTREL(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueSUBSET(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueSUBSETEQ(RelationalPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueTBIJ(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueTFUN(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueTINJ(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueTREL(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueTSUR(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean continueUPTO(BinaryExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
@@ -1198,28 +1157,20 @@ public class IdentsChecker implements IVisitor {
 		return standardExit(expr);
 	}
 
-	/**
+	/*
 	 * Checks cached identifier sets of a quantified formula (on exit).
-	 * 
-	 * @param formula
-	 *            the formula to check
-	 * @param nbBoundIdentDecls
-	 *            number of identifiers bound by the given formula
-	 * @return <code>true</code> if successful
 	 */
 	private boolean quantifiedExit(Formula<?> formula, int nbBoundIdentDecls) {
-		if (!success) {
-			return false;
-		}
 		final Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
 		Set<BoundIdentifier> boundIdents = new HashSet<BoundIdentifier>();
 		while (stack.peek() != formula) {
 			final Formula<?> child = stack.pop();
-			freeIdents.addAll(Arrays.asList(child.getFreeIdentifiers()));
-			boundIdents.addAll(Arrays.asList(child.getBoundIdentifiers()));
+			freeIdents.addAll(asList(child.getFreeIdentifiers()));
+			boundIdents.addAll(asList(child.getBoundIdentifiers()));
 		}
 		boundIdents = renumber(boundIdents, nbBoundIdentDecls);
-		return success = checkFormula(formula, freeIdents, boundIdents);
+		checkFormula(formula, freeIdents, boundIdents);
+		return true;
 	}
 
 	private Set<BoundIdentifier> renumber(Set<BoundIdentifier> boundIdents,
@@ -1237,51 +1188,39 @@ public class IdentsChecker implements IVisitor {
 	}
 
 	private boolean standardEnter(Formula<?> formula) {
-		if (success) {
-			stack.push(formula);
-		}
-		return success;
+		stack.push(formula);
+		return true;
 	}
 
-	/**
+	/*
 	 * Checks cached identifier sets of a non-atomic formula (on exit).
-	 * 
-	 * @param formula
-	 *            the formula to check
-	 * @return <code>true</code> if successful
 	 */
 	private boolean standardExit(Formula<?> formula) {
-		if (!success) {
-			return false;
-		}
 		final Set<FreeIdentifier> freeIdents = new HashSet<FreeIdentifier>();
 		final Set<BoundIdentifier> boundIdents = new HashSet<BoundIdentifier>();
 		while (stack.peek() != formula) {
 			final Formula<?> child = stack.pop();
-			freeIdents.addAll(Arrays.asList(child.getFreeIdentifiers()));
-			boundIdents.addAll(Arrays.asList(child.getBoundIdentifiers()));
+			freeIdents.addAll(asList(child.getFreeIdentifiers()));
+			boundIdents.addAll(asList(child.getBoundIdentifiers()));
 		}
-		return success = checkFormula(formula, freeIdents, boundIdents);
+		checkFormula(formula, freeIdents, boundIdents);
+		return true;
 	}
 
 	private boolean standardVisitExpression(Expression expr) {
-		if (!success) {
-			return false;
-		}
 		stack.push(expr);
 		final Set<FreeIdentifier> freeIdents = getGivenTypeIdentifiers(expr);
 		final Set<BoundIdentifier> boundIdents = emptySet();
-		return success = checkFormula(expr, freeIdents, boundIdents);
+		checkFormula(expr, freeIdents, boundIdents);
+		return true;
 	}
 
 	private boolean standardVisitPredicate(Predicate pred) {
-		if (!success) {
-			return false;
-		}
 		stack.push(pred);
 		final Set<FreeIdentifier> freeIdents = emptySet();
 		final Set<BoundIdentifier> boundIdents = emptySet();
-		return success = checkFormula(pred, freeIdents, boundIdents);
+		checkFormula(pred, freeIdents, boundIdents);
+		return true;
 	}
 
 	@Override
@@ -1296,24 +1235,20 @@ public class IdentsChecker implements IVisitor {
 
 	@Override
 	public boolean visitBOUND_IDENT(BoundIdentifier ident) {
-		if (! success) {
-			return false;
-		}
 		stack.push(ident);
 		final Set<FreeIdentifier> freeIdents = getGivenTypeIdentifiers(ident);
 		final Set<BoundIdentifier> boundIdents = singleton(ident);
-		return success = checkFormula(ident, freeIdents, boundIdents);
+		checkFormula(ident, freeIdents, boundIdents);
+		return true;
 	}
 
 	@Override
 	public boolean visitBOUND_IDENT_DECL(BoundIdentDecl decl) {
-		if (! success) {
-			return false;
-		}
 		stack.push(decl);
 		final Set<FreeIdentifier> freeIdents = getGivenTypeIdentifiers(decl);
 		final Set<BoundIdentifier> boundIdents = emptySet();
-		return success = checkFormula(decl, freeIdents, boundIdents);
+		checkFormula(decl, freeIdents, boundIdents);
+		return true;
 	}
 
 	@Override
@@ -1333,14 +1268,12 @@ public class IdentsChecker implements IVisitor {
 
 	@Override
 	public boolean visitFREE_IDENT(FreeIdentifier ident) {
-		if (! success) {
-			return false;
-		}
 		stack.push(ident);
 		final Set<FreeIdentifier> freeIdents = getGivenTypeIdentifiers(ident);
 		freeIdents.add(ident);
 		final Set<BoundIdentifier> boundIdents = emptySet();
-		return success = checkFormula(ident, freeIdents, boundIdents);
+		checkFormula(ident, freeIdents, boundIdents);
+		return true;
 	}
 
 	@Override
@@ -1385,7 +1318,7 @@ public class IdentsChecker implements IVisitor {
 
 	@Override
 	public boolean continueBECOMES_EQUAL_TO(BecomesEqualTo assign) {
-		return success;
+		return true;
 	}
 
 	@Override
@@ -1400,7 +1333,7 @@ public class IdentsChecker implements IVisitor {
 
 	@Override
 	public boolean continueBECOMES_MEMBER_OF(BecomesMemberOf assign) {
-		return success;
+		return true;
 	}
 
 	@Override
@@ -1415,7 +1348,7 @@ public class IdentsChecker implements IVisitor {
 
 	@Override
 	public boolean continueBECOMES_SUCH_THAT(BecomesSuchThat assign) {
-		return success;
+		return true;
 	}
 
 	@Override
@@ -1430,7 +1363,7 @@ public class IdentsChecker implements IVisitor {
 
 	@Override
 	public boolean continueKPARTITION(MultiplePredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
@@ -1460,7 +1393,7 @@ public class IdentsChecker implements IVisitor {
 
 	@Override
 	public boolean continueExtendedExpression(ExtendedExpression expr) {
-		return success;
+		return true;
 	}
 
 	@Override
@@ -1475,12 +1408,33 @@ public class IdentsChecker implements IVisitor {
 
 	@Override
 	public boolean continueExtendedPredicate(ExtendedPredicate pred) {
-		return success;
+		return true;
 	}
 
 	@Override
 	public boolean exitExtendedPredicate(ExtendedPredicate pred) {
 		return standardExit(pred);
+	}
+
+	// Returns a set containing the identifiers for each given type
+	// occurring in the type of the given formula (if any)
+	private Set<FreeIdentifier> getGivenTypeIdentifiers(Expression expr) {
+		return getGivenTypeIdentifiers(expr.getType());
+	}
+
+	private Set<FreeIdentifier> getGivenTypeIdentifiers(BoundIdentDecl decl) {
+		return getGivenTypeIdentifiers(decl.getType());
+	}
+
+	private Set<FreeIdentifier> getGivenTypeIdentifiers(Type type) {
+		final Set<FreeIdentifier> result = new HashSet<FreeIdentifier>();
+		if (type == null) {
+			return result; // must not be immutable
+		}
+		for (final GivenType givenType : type.getGivenTypes()) {
+			result.add(givenType.toExpression(factory));
+		}
+		return result;
 	}
 
 }
