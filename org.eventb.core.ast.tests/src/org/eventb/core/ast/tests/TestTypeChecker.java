@@ -1089,7 +1089,6 @@ public class TestTypeChecker extends AbstractTests {
 				result.getInferredEnvironment());
 		assertEquals("Incompatible result for isTypeChecked()", expectSuccess,
 				formula.isTypeChecked());
-		assertTrue("Problem with identifier caches",
-				IdentsChecker.check(formula, ff));
+		IdentsChecker.check(formula, ff);
 	}
 }

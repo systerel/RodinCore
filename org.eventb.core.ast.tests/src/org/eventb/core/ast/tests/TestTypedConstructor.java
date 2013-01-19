@@ -124,7 +124,6 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
-import static org.eventb.core.ast.tests.IdentsChecker.check;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -376,7 +375,7 @@ public class TestTypedConstructor extends AbstractTests {
 
 	private static void assertFormulaTypeChecked(Formula<?> form,
 			boolean expected) {
-		assertTrue("Problem with identifier caches", check(form, ff));
+		IdentsChecker.check(form, ff);
 		assertEquals(expected, form.isTypeChecked());
 		if (expected) {
 			runTypeCheck(form);
@@ -701,7 +700,7 @@ public class TestTypedConstructor extends AbstractTests {
 	private static void runTypeCheck(Formula<?> form) {
 		if (form.isWellFormed()) {
 			typeCheck(form);
-			assertTrue("Problem with identifier caches", check(form, ff));
+			IdentsChecker.check(form, ff);
 		}
 	}
 
