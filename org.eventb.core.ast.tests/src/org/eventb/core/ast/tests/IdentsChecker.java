@@ -53,11 +53,18 @@ import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 
 /**
- * Implements the checking of the identifier caches of the formula type-checker,
- * using the AST Visitor design pattern. Identifier cache in a formula must
- * always be coherent with the set of identifiers that could be constructed when
- * exiting a node using the stack part of visited nodes and leaves under that
- * node to retrieve all identifiers defined.
+ * Checks the identifier caches of formulas. Call method
+ * {@link #check(Formula, FormulaFactory)} to check some formula.
+ * <p>
+ * The check is implemented by traversing the AST of the formula, collecting
+ * both bound and free identifiers. We then verify on every node that the caches
+ * indeed contain the identifiers that were collected during traversal.
+ * </p>
+ * <p>
+ * The traversal uses a stack to remember the nodes that have been traversed. At
+ * any time, the stack contains all the nodes that are either above (parents) of
+ * before (left-hand side siblings) of the current node.
+ * </p>
  * 
  * @author Laurent Voisin
  */
@@ -104,13 +111,23 @@ public class IdentsChecker implements IVisitor {
 		}
 	}
 
-	public static boolean check(Formula<?> f, FormulaFactory factory) {
-		IdentsChecker checker = new IdentsChecker(f, factory);
-		f.accept(checker);
+	/**
+	 * Checks the identifiers cache of the given formula. This is the entry
+	 * point of this class.
+	 * 
+	 * @param formula
+	 *            the formula to check
+	 * @param factory
+	 *            a formula factory compatible with the given formula
+	 * @return <code>true</code> iff all identifier caches are correct.
+	 */
+	public static boolean check(Formula<?> formula, FormulaFactory factory) {
+		final IdentsChecker checker = new IdentsChecker(formula, factory);
+		formula.accept(checker);
 		if (checker.success) {
 			// Self-test ensure stack contains only root if successful
 			assert checker.stack.size() == 1;
-			assert checker.stack.peek() == f;
+			assert checker.stack.peek() == formula;
 		}
 		return checker.success;
 	}
