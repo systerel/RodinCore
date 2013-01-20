@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,21 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.eventb.core.ast.Formula.PLUS;
+import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
+import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.IInferredTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.junit.Test;
 
@@ -35,7 +41,7 @@ public class TestExprTypeChecker extends AbstractTests {
 	 * Main test routine.
 	 */
 	@Test 
-	public void testExpTypeChecker() {
+	public void testExprTypeChecker() {
 		testExpression("x", "S",//
 				mTypeEnvironment(),//
 				mTypeEnvironment("x=S", ff));
@@ -65,6 +71,29 @@ public class TestExprTypeChecker extends AbstractTests {
 				mTypeEnvironment());
 	}
 
+	// This is a type-checked expression of type ℤ containing free variable
+	// "x" also of type ℤ.
+	private static final Expression typeChecked = mAssociativeExpression(PLUS,
+			mFreeIdentifier("x", INT_TYPE), mIntegerLiteral());
+	
+	static {
+		assertTrue(typeChecked.isTypeChecked());
+		assertEquals(INT_TYPE, typeChecked.getType());
+	}
+
+	public void errorCausedByIncompatibleTypeEnvironment() {
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("x=S", ff);
+		final ITypeCheckResult tcResult = typeChecked.typeCheck(typenv, INT_TYPE);
+		assertFalse(tcResult.isSuccess());
+	}
+
+	public void errorCausedByIncompatibleExpectedType() {
+		final ITypeEnvironmentBuilder typenv = mTypeEnvironment();
+		final ITypeCheckResult tcResult = typeChecked.typeCheck(typenv,
+				POW(INT_TYPE));
+		assertFalse(tcResult.isSuccess());
+	}
+	
 	private void testExpression(String image, String typeImage,
 			ITypeEnvironment initialEnv, ITypeEnvironment inferredEnv) {
 		final Expression expr = parseExpression(image);
