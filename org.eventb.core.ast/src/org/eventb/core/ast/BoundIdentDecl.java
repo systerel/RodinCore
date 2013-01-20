@@ -168,7 +168,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		type = null;
 		if (inferredType != null && inferredType.isSolved()) {
 			synthesizeType(unifier.getFormulaFactory(), inferredType);
-		}else{
+		} else {
 			synthesizeType(unifier.getFormulaFactory(), null);
 		}
 		return isTypeChecked();

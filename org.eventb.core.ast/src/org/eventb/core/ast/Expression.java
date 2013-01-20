@@ -226,7 +226,7 @@ public abstract class Expression extends Formula<Expression> {
 		success &= solveChildrenTypes(unifier);
 		if (success) {
 			synthesizeType(unifier.getFormulaFactory(), inferredType);
-		}else{
+		} else {
 			synthesizeType(unifier.getFormulaFactory(), null);
 		}
 		return isTypeChecked();
