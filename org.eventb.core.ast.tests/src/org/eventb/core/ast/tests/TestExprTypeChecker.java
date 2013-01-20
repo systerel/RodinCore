@@ -53,24 +53,48 @@ public class TestExprTypeChecker extends AbstractTests {
 				null);
 		testExpression("{}", "ℙ(S)",//
 				mTypeEnvironment(),//
-				mTypeEnvironment());
+				mTypeEnvironment("S=ℙ(S)", ff));
 		testExpression("{}", "ℙ(ℙ(S))",//
 				mTypeEnvironment(),//
-				mTypeEnvironment());
+				mTypeEnvironment("S=ℙ(S)", ff));
 		testExpression("{}", "ℙ(S × T)",//
 				mTypeEnvironment(),//
-				mTypeEnvironment());
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T)", ff));
 		testExpression("x ↦ y", "S",//
 				mTypeEnvironment(),//
 				null);
 		testExpression("x ↦ y", "S × T",//
 				mTypeEnvironment("x=S; y=T", ff),//
-				mTypeEnvironment());
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T)", ff));
 		testExpression("x ↦ {}", "S × ℙ(T)",//
 				mTypeEnvironment("x=S", ff),//
-				mTypeEnvironment());
+				mTypeEnvironment("S=ℙ(S); T=ℙ(T)", ff));
 	}
 
+	/**
+	 * Regression test for rejecting incompatible types when introducing
+	 * implicitly given sets.
+	 */
+	@Test
+	public void errorIncompatibleGivenSet() {
+		testExpression("(∅⦂ℙ(S))", "ℙ(S)",//
+				mTypeEnvironment("S=BOOL", ff), //
+				null //
+		);
+	}
+
+	/**
+	 * Regression test for rejecting incompatible types when introducing
+	 * implicitly given sets.
+	 */
+	@Test
+	public void errorIncompatibleGivenSetInExpectedType() {
+		testExpression("∅", "ℙ(S)",//
+				mTypeEnvironment("S=BOOL", ff), //
+				null //
+		);
+	}
+	
 	// This is a type-checked expression of type ℤ containing free variable
 	// "x" also of type ℤ.
 	private static final Expression typeChecked = mAssociativeExpression(PLUS,
