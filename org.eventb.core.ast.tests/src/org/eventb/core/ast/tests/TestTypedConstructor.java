@@ -139,6 +139,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.tests.TestFormulaFactory.FailedAssertionChecker;
 import org.junit.Test;
 
 /**
@@ -792,17 +793,28 @@ public class TestTypedConstructor extends AbstractTests {
 		assertExpressionType(mPrj2(null), null);
 	}
 
-	@Test 
+	@Test
+	@SuppressWarnings("synthetic-access")
 	public void testFreeIdentifier() throws Exception {
 		assertFreeIdentifierType(S);
 		assertFreeIdentifierType(null);
-		
+
 		// Regular given set
 		assertExpressionType(ff.makeFreeIdentifier("S", null, pS), pS);
-		
+
 		// Name occurs with a different type in type
-		assertExpressionType(ff.makeFreeIdentifier("S", null, ppS), null);
-		assertExpressionType(ff.makeFreeIdentifier("S", null, rSS), null);
+		new FailedAssertionChecker() {
+			@Override
+			protected void test() throws AssertionError {
+				ff.makeFreeIdentifier("S", null, ppS);
+			}
+		}.run();
+		new FailedAssertionChecker() {
+			@Override
+			protected void test() throws AssertionError {
+				ff.makeFreeIdentifier("S", null, rSS);
+			}
+		}.run();
 	}
 
 	@Test 
