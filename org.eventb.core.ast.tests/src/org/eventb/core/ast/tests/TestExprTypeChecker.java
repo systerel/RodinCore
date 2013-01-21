@@ -14,6 +14,7 @@ package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.Formula.PLUS;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
@@ -94,6 +95,17 @@ public class TestExprTypeChecker extends AbstractTests {
 				mTypeEnvironment("S=BOOL", ff), //
 				null //
 		);
+	}
+
+	/**
+	 * Ensures that type-check throws an exception on an ill-formed formulas.
+	 */
+	@Test(expected = IllegalStateException.class)
+	public void illFormedPredicate() {
+		final Expression expr = mBoundIdentifier(0, INT_TYPE);
+		assertTrue(expr.isTypeChecked());
+		assertFalse(expr.isWellFormed());
+		expr.typeCheck(mTypeEnvironment(), INT_TYPE);
 	}
 
 	// This is a type-checked expression of type ℤ containing free variable
