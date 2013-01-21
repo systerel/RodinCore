@@ -283,13 +283,11 @@ public class BecomesSuchThat extends Assignment {
 	}
 
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		boolean success = true;
+	protected void solveChildrenTypes(TypeUnifier unifier) {
 		for (BoundIdentDecl ident : primedIdents) {
-			success &= ident.solveType(unifier);
+			ident.solveType(unifier);
 		}
-		success &= condition.solveType(unifier);
-		return success;
+		condition.solveType(unifier);
 	}
 
 	@Override

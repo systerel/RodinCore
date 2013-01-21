@@ -115,9 +115,11 @@ public abstract class Assignment extends Formula<Assignment> {
 		return isTypeChecked();
 	}
 
-	// Calls recursively solveType on each child of this node and
-	// returns true if all calls where successful.
-	protected abstract boolean solveChildrenTypes(TypeUnifier unifier);
+	/**
+	 * @since 3.0
+	 */
+	// Calls recursively solveType on each child of this node.
+	protected abstract void solveChildrenTypes(TypeUnifier unifier);
 
 	/**
 	 * Return the left-hand side of this assignment.
