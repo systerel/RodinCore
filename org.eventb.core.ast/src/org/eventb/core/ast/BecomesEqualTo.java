@@ -246,12 +246,10 @@ public class BecomesEqualTo extends Assignment {
 	}
 
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		boolean success = true;
+	protected void solveChildrenTypes(TypeUnifier unifier) {
 		for (Expression value: values) {
-			success &= value.solveType(unifier);
+			value.solveType(unifier);
 		}
-		return success;
 	}
 
 	@Override

@@ -205,8 +205,8 @@ public class BecomesMemberOf extends Assignment {
 	}
 
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		return setExpr.solveType(unifier);
+	protected void solveChildrenTypes(TypeUnifier unifier) {
+		setExpr.solveType(unifier);
 	}
 
 	@Override
