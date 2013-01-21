@@ -139,10 +139,7 @@ public class BoundIdentifier extends Identifier {
 	 */
 	@Override
 	protected void isLegible(LegibilityResult result) {
-		// this has now been moved to isWellFormed because the user cannot cause this problem!
-//		if (boundIndex >= quantifiedIdents.length) {
-//			result.addProblem(new LegibilityProblem(getSourceLocation(),Problem.BoundIdentifierIndexOutOfBounds,new String[]{""},ProblemSeverities.Error));
-//		}
+		// Nothing to check.
 	}
 	
 	@Override
