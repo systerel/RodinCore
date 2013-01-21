@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - added abstract test class
+ *     Systerel - add given sets to free identifier cache
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 

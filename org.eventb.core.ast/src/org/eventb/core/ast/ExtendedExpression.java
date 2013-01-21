@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - add given sets to free identifier cache
  *******************************************************************************/
 package org.eventb.core.ast;
 

@@ -10,6 +10,7 @@
  *     Systerel - fully refactored all tests and added error tests
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
+ *     Systerel - add given sets to free identifier cache
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 

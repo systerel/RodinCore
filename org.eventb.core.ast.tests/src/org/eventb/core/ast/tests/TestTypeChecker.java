@@ -11,6 +11,7 @@
  *     Systerel - mathematical language v2
  *     Systerel - test for bug #3574565
  *     Systerel - new implementation of inferred environment
+ *     Systerel - add given sets to free identifier cache
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 

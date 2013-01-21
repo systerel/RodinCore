@@ -15,6 +15,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
  *     Systerel - added support for specialization
+ *     Systerel - add given sets to free identifier cache
  *******************************************************************************/
 package org.eventb.core.ast;
 

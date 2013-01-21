@@ -11,6 +11,7 @@
  *     Systerel - added support for predicate variables
  *     Systerel - added kinds related to parser 2.0
  *	   Systerel - added kind for name conflict between a given type and a free identifier
+ *     Systerel - add given sets to free identifier cache
  *******************************************************************************/
 package org.eventb.core.ast;
 
