@@ -1554,11 +1554,18 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @param environment
 	 *            an initial type environment
 	 * @return the result of the type checker
+	 * @throws IllegalStateException
+	 *             is this formulas is not well-formed
+	 * @see #isWellFormed()
 	 * @see #isTypeChecked()
 	 * @see Expression#getType()
 	 * @see BoundIdentDecl#getType()
 	 */
 	public final ITypeCheckResult typeCheck(ITypeEnvironment environment) {
+		if (!isWellFormed()) {
+			throw new IllegalStateException(
+					"Cannot typecheck ill-formed formula: " + this);
+		}
 		TypeCheckResult result = new TypeCheckResult(environment.makeSnapshot());
 		typeCheck(result, NO_BOUND_IDENT_DECL);
 		result.solveTypeVariables();

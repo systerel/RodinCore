@@ -15,7 +15,10 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
+import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
 import static org.junit.Assert.assertEquals;
@@ -1009,6 +1012,19 @@ public class TestTypeChecker extends AbstractTests {
 		final FormulaFactory fac = makeDatatypeFactory(ff,
 				"A[T] ::= a; d[T] || B[U] ::= b; e[U]");
 		testPredicate("b(1) ∈ A(ℤ)", mTypeEnvironment("", fac), null);
+	}
+
+	/**
+	 * Ensures that type-check throws an exception on an ill-formed formulas.
+	 */
+	@Test(expected = IllegalStateException.class)
+	public void illFormedPredicate() {
+		final Predicate pred = mRelationalPredicate(
+				mFreeIdentifier("x", INT_TYPE),//
+				mBoundIdentifier(0, INT_TYPE));
+		assertTrue(pred.isTypeChecked());
+		assertFalse(pred.isWellFormed());
+		pred.typeCheck(mTypeEnvironment());
 	}
 
 	/**
