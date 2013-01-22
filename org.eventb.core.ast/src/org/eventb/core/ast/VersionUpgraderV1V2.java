@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,45 +8,39 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.upgrade;
+package org.eventb.core.ast;
 
+import static org.eventb.core.ast.Formula.DOMRES;
 import static org.eventb.core.ast.FormulaFactory.isEventBWhiteSpace;
+import static org.eventb.core.ast.ProblemKind.NotUpgradableError;
+import static org.eventb.core.ast.ProblemSeverities.Error;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.eventb.core.ast.ASTProblem;
-import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.DefaultRewriter;
-import org.eventb.core.ast.DefaultVisitor;
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.IFormulaRewriter;
-import org.eventb.core.ast.LanguageVersion;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProblemKind;
-import org.eventb.core.ast.ProblemSeverities;
-import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.SourceLocation;
-import org.eventb.core.ast.Type;
-import org.eventb.core.ast.UnaryExpression;
+import org.eventb.internal.core.ast.DefaultTypeCheckingRewriter;
+import org.eventb.internal.core.ast.ITypeCheckingRewriter;
+import org.eventb.internal.core.upgrade.UpgradeResult;
+import org.eventb.internal.core.upgrade.VersionUpgrader;
 
 /**
- * @author Nicolas Beauger
+ * Upgrades a formula from language V1 to language V2.
  * 
+ * The check whether upgrade is needed and can be done, is performed with the
+ * {@link UpgradeVisitorV1V2}.
+ * 
+ * The upgrade is performed by rewriting the formula with {@link RewriterV1V2}.
+ * 
+ * @author Nicolas Beauger
  */
-public class VersionUpgraderV1V2 extends VersionUpgrader {
+class VersionUpgraderV1V2 extends VersionUpgrader {
 
-	private static class RewriterV1V2 extends DefaultRewriter {
+	private static class RewriterV1V2 extends DefaultTypeCheckingRewriter {
 
 		private final List<String> reservedNames;
 
 		public RewriterV1V2(FormulaFactory factory, List<String> reservedNames) {
-			super(false, factory);
+			super(factory);
 			this.reservedNames = reservedNames;
 		}
 
@@ -64,65 +58,42 @@ public class VersionUpgraderV1V2 extends VersionUpgrader {
 			}
 		}
 
-		private boolean updateReservedKeywords(
-				final BoundIdentDecl[] boundIdentDecls) {
-			boolean changed = false;
-			for (int index = 0; index < boundIdentDecls.length; index++) {
-				final BoundIdentDecl decl = boundIdentDecls[index];
-				final String name = decl.getName();
-				if (reservedNames.contains(name)) {
-					boundIdentDecls[index] = ff.makeBoundIdentDecl(name + "1",
-							null, decl.getType());
-					changed = true;
-				}
+		private String getNotReservedName(String name) {
+			if (!reservedNames.contains(name)) {
+				return name;
 			}
-			return changed;
+			final String newName = name + "1";
+			assert !reservedNames.contains(newName);
+			return newName;
 		}
 
 		@Override
-		public Expression rewrite(QuantifiedExpression expression) {
-			final BoundIdentDecl[] boundIdentDecls = expression
-					.getBoundIdentDecls();
-			boolean changed = updateReservedKeywords(boundIdentDecls);
-			if (changed) {
-				return ff.makeQuantifiedExpression(expression.getTag(),
-						boundIdentDecls, expression.getPredicate(), expression
-								.getExpression(), null, expression.getForm());
-			}
-			return expression;
+		public BoundIdentDecl rewrite(BoundIdentDecl src) {
+			final String name = getNotReservedName(src.getName());
+			// node must be rebuilt with V2 factory
+			return ff.makeBoundIdentDecl(name, null, src.getType());
 		}
 
 		@Override
-		public Predicate rewrite(QuantifiedPredicate predicate) {
-			final BoundIdentDecl[] boundIdentDecls = predicate
-					.getBoundIdentDecls();
-			final boolean changed = updateReservedKeywords(boundIdentDecls);
-			if (changed) {
-				return ff.makeQuantifiedPredicate(predicate.getTag(),
-						boundIdentDecls, predicate.getPredicate(), null);
-			}
-			return predicate;
-		}
-
-		@Override
-		public Expression rewrite(UnaryExpression expression) {
-			final int tag = expression.getTag();
+		public Expression rewrite(UnaryExpression src, boolean changed,
+				Expression newChild) {
+			final int tag = src.getTag();
 			final int genericTag = getGenericTag(tag);
 			if (genericTag < 0) {
-				return expression;
+				// not a generic operator
+				return super.rewrite(src, changed, newChild);
 			}
-			final Type type = expression.getType();
-			final Expression child = expression.getChild();
-			if (child.isATypeExpression()) {
+			final Type type = src.getType();
+			if (newChild.isATypeExpression()) {
 				return ff.makeAtomicExpression(genericTag, null, type);
 			} else {
-				return makeDomRes(child, genericTag, type);
+				return makeDomRes(newChild, genericTag, type);
 			}
 		}
 
 		private Expression makeDomRes(Expression left, int genTag, Type type) {
-			return ff.makeBinaryExpression(Formula.DOMRES, left, ff
-					.makeAtomicExpression(genTag, null, type), null);
+			return ff.makeBinaryExpression(DOMRES, left,
+					ff.makeAtomicExpression(genTag, null, type), null);
 		}
 
 	}
@@ -278,10 +249,8 @@ public class VersionUpgraderV1V2 extends VersionUpgrader {
 		public boolean visitFREE_IDENT(FreeIdentifier ident) {
 			if (reservedNames.contains(ident.getName())) {
 				result.setUpgradeNeeded(true);
-				result
-						.addProblem(new ASTProblem(ident.getSourceLocation(),
-								ProblemKind.NotUpgradableError,
-								ProblemSeverities.Error));
+				result.addProblem(new ASTProblem(ident.getSourceLocation(),
+						NotUpgradableError, Error));
 				return false;
 			}
 			return true;
@@ -303,12 +272,16 @@ public class VersionUpgraderV1V2 extends VersionUpgrader {
 	@Override
 	protected <T extends Formula<T>> void upgrade(T formula,
 			UpgradeResult<T> result) {
-		final IFormulaRewriter rewriter = new RewriterV1V2(result.getFactory(),
-				getReservedKeywords());
+		final ITypeCheckingRewriter rewriter = new RewriterV1V2(
+				result.getFactory(), getReservedKeywords());
 		try {
 			final T rewritten = formula.rewrite(rewriter);
 			result.setUpgradedFormula(rewritten);
 		} catch (Exception e) {
+			if (!result.hasProblem()) {
+				result.addProblem(new ASTProblem(formula.getSourceLocation(),
+						NotUpgradableError, Error));
+			}
 			if (VersionUpgrader.DEBUG) {
 				System.out.println("Exception while rewriting formula "
 						+ formula);

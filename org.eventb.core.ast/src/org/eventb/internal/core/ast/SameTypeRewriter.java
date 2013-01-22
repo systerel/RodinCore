@@ -208,7 +208,15 @@ public class SameTypeRewriter implements ITypeCheckingRewriter {
 	}
 
 	@Override
-	public Expression rewrite(UnaryExpression src, UnaryExpression expr) {
+	public Expression rewrite(UnaryExpression src, boolean changed,
+			Expression newChild) {
+		final UnaryExpression expr;
+		if (changed) {
+			expr = getFactory().makeUnaryExpression(src.getTag(), newChild,
+					src.getSourceLocation());
+		} else {
+			expr = src;
+		}
 		return checkReplacement(src, rewriter.rewrite(expr));
 	}
 

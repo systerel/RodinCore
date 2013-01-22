@@ -56,9 +56,11 @@ import org.eventb.core.ast.UnaryPredicate;
  * <p>
  * Finally, there are special cases for mathematical extensions where it is not
  * always possible to build an intermediate node (i.e., with children already
- * rewritten to a different mathematical language). For extended expressions and
- * predicates, we instead pass part of the internal data-structures that hold
- * the already rewritten children, rather than a complete node.
+ * rewritten to a different mathematical language) and for unary expression due
+ * to introduction of generic operators between V1 and V2. For extended
+ * expressions and predicates, and unary expressions, we instead pass part of
+ * the internal data-structures that hold the already rewritten children, rather
+ * than a complete node.
  * </p>
  * <p>
  * Implementation note: All rewrite methods have the post-condition that the
@@ -152,7 +154,7 @@ public interface ITypeCheckingRewriter {
 
 	Predicate rewrite(SimplePredicate src, SimplePredicate pred);
 
-	Expression rewrite(UnaryExpression src, UnaryExpression expr);
+	Expression rewrite(UnaryExpression src, boolean changed, Expression newChild);
 
 	Expression rewrite(UnaryExpression src, IntegerLiteral expr);
 

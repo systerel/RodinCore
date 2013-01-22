@@ -564,13 +564,8 @@ public class UnaryExpression extends Expression {
 					sloc);
 			return rewriter.rewrite(this, before);
 		}
-		final UnaryExpression before;
-		if (newChild == child) {
-			before = this;
-		} else {
-			before = ff.makeUnaryExpression(getTag(), newChild, sloc);
-		}
-		return rewriter.rewrite(this, before);
+		final boolean changed = newChild != child;
+		return rewriter.rewrite(this, changed, newChild);
 	}
 
 	@Override

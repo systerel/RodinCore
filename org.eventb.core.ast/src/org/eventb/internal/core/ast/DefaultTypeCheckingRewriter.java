@@ -273,8 +273,14 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 	}
 
 	@Override
-	public Expression rewrite(UnaryExpression src, UnaryExpression expr) {
-		return expr;
+	public Expression rewrite(UnaryExpression src, boolean changed,
+			Expression newChild) {
+		if (!changed) {
+			assert ff == src.getFactory();
+			return src;
+		}
+		return ff.makeUnaryExpression(src.getTag(), newChild,
+				src.getSourceLocation());
 	}
 
 	@Override
