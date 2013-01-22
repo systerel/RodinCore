@@ -2009,24 +2009,20 @@ public abstract class Formula<T extends Formula<T>> {
 	
 	/**
 	 * Returns a set of all given types which are used for typing this formula.
-	 * This method uses the free identifiers of the formula to extract the given
-	 * types used.
+	 * This method uses the free identifier cache of the formula to extract the
+	 * given types used.
 	 * 
 	 * @return a set containing all given types which are used in this formula
 	 *         types
 	 */
 	public final Set<GivenType> getGivenTypes() {
-		Set<GivenType> result = new HashSet<GivenType>();
-		for(FreeIdentifier free_id : this.getFreeIdentifiers()){
-			Type free_id_type = free_id.getType();
-			if (free_id_type.isGivenSet(free_id.getName())
-					&& free_id_type.getBaseType() instanceof GivenType) {
-				result.add((GivenType) free_id_type.getBaseType());
+		final Set<GivenType> result = new HashSet<GivenType>();
+		for (FreeIdentifier ident : getFreeIdentifiers()) {
+			if (ident.isATypeExpression()) {
+				result.add((GivenType) ident.getType().getBaseType());
 			}
 		}
-		
 		return result;
-		
 	}
 
 	protected abstract void addGivenTypes(Set<GivenType> set);
