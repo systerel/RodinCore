@@ -993,6 +993,10 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment("S=BOOL", ff), //
 				null //
 		);
+		testPredicate("f(S) = (∅⦂ℙ(S)↔U)(∅⦂ℙ(S))", //
+				mTypeEnvironment("f=T↔U", ff), //
+				null //
+		);
 	}
 
 	/**

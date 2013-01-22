@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -349,11 +349,18 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		if (otherType == null) {
 			return false;
 		}
-		if (type.equals(otherType) || isGivenSet(name, otherType)
-				|| otherType instanceof TypeVariable) {
-			// Already present as given set or as variable type
+		if (isGivenSet(name, otherType)) {
+			// Already present as given type
 			return true;
 		}
+		if (otherType instanceof TypeVariable) {
+			// Register that this name must denote a given type
+			final FormulaFactory ff = inferredTypeEnvironment
+					.getFormulaFactory();
+			unify(otherType, ff.makePowerSetType(type), source);
+			return true;
+		}
+		// The name cannot denote a given type
 		addProblem(new ASTProblem(source.getSourceLocation(),
 				ProblemKind.TypeNameUsedForRegularIdentifier,
 				ProblemSeverities.Error, name, otherType));
