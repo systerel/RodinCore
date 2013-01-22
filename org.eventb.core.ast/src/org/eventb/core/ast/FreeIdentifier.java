@@ -17,6 +17,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
+import static org.eventb.internal.core.ast.GivenTypeHelper.isGivenSet;
 import static org.eventb.internal.core.ast.IdentListMerger.makeMerger;
 
 import java.util.LinkedHashSet;
@@ -83,7 +84,7 @@ public class FreeIdentifier extends Identifier {
 		}
 
 		final FreeIdentifier[] givenTypeIdents;
-		if (!givenType.isGivenSet(name)) {
+		if (!isGivenSet(name, givenType)) {
 			// Check there is no occurrence of this identifier in given types
 			givenTypeIdents = getGivenTypeIdentifiers(givenType, ff);
 			for (final FreeIdentifier givenTypeIdent : givenTypeIdents) {

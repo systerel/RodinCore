@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.typecheck;
 
+import static org.eventb.internal.core.ast.GivenTypeHelper.isGivenSet;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -325,7 +327,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 		if (otherType == null) {
 			return false;
 		}
-		if (otherType.isGivenSet(name)) {
+		if (isGivenSet(name, otherType)) {
 			// Already present as given type
 			return true;
 		}

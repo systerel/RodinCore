@@ -20,12 +20,38 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
 
 /**
- * Utility class for extracting given type identifiers from a type and sort
- * them.
+ * Utility class for recognizing given types, extracting their identifiers from
+ * a type and sort them.
  * 
  * @author Laurent Voisin
  */
 public class GivenTypeHelper {
+
+	/**
+	 * Returns whether the given type is a powerset of a <code>GivenType</code>
+	 * and its name is the given name. This is equivalent to
+	 * 
+	 * <pre>
+	 * ff.makeFreeIdentifier(name, null, type).isATypeExpression()
+	 * </pre>
+	 * 
+	 * but avoids the creation of a needless identifier.
+	 * @param name
+	 *            the name to check
+	 * @param type
+	 *            the type to check
+	 * 
+	 * @return <code>true</code> iff <code>type</code> denotes the type of a
+	 *         given set named <code>name</code>
+	 */
+	public static boolean isGivenSet(String name, Type type) {
+		final Type baseType = type.getBaseType();
+		if (baseType instanceof GivenType) {
+			final GivenType givenType = (GivenType) baseType;
+			return givenType.getName().equals(name);
+		}
+		return false;
+	}
 
 	// Natural order on free identifiers (for sorting by name)
 	private static final Comparator<FreeIdentifier> comparator = //

@@ -27,6 +27,7 @@ import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
+import org.eventb.internal.core.ast.GivenTypeHelper;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 
@@ -86,7 +87,7 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 
 		@Override
 		public boolean isGivenSet() throws NoSuchElementException {
-			return getType().isGivenSet(getName());
+			return GivenTypeHelper.isGivenSet(getName(), getType());
 		}
 	}
 

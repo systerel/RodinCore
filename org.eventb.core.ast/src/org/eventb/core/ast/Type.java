@@ -85,25 +85,6 @@ public abstract class Type {
 	public boolean isSolved() {
 		return solved;
 	}
-	
-	/**
-	 * Returns whether this type associated with the given name corresponds to a
-	 * given set declaration
-	 * 
-	 * @param name
-	 *            the name of the possible declared given set
-	 * @return true if then name and type corresponds to a given set.
-	 * @since 3.0
-	 */
-	public boolean isGivenSet(String name) {
-		final Type baseType = this.getBaseType();
-		if (baseType instanceof GivenType) {
-			final GivenType givenType = (GivenType) baseType;
-			return givenType.getName().equals(name);
-		}
-		return false;
-	}
-
 
 	/**
 	 * Returns the expression that denotes the set corresponding to this type.
