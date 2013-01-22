@@ -59,7 +59,6 @@ import org.eventb.internal.core.parser.GenParser;
 import org.eventb.internal.core.parser.ParseResult;
 import org.eventb.internal.core.typecheck.TypeEnvironmentBuilder;
 import org.eventb.internal.core.upgrade.UpgradeResult;
-import org.eventb.internal.core.upgrade.UpgraderFactory;
 import org.eventb.internal.core.upgrade.VersionUpgrader;
 
 /**
@@ -2059,8 +2058,7 @@ public class FormulaFactory {
 			LanguageVersion targetVersion) {
 		final UpgradeResult<Assignment> result = new UpgradeResult<Assignment>(
 				this);
-		final VersionUpgrader upgrader = UpgraderFactory.getUpgrader(
-				targetVersion, this);
+		final VersionUpgrader upgrader = new VersionUpgraderV1V2(this);
 		upgrader.upgradeAssignment(input, result);
 		return result;
 	}
@@ -2079,8 +2077,7 @@ public class FormulaFactory {
 			LanguageVersion targetVersion) {
 		final UpgradeResult<Expression> result = new UpgradeResult<Expression>(
 				this);
-		final VersionUpgrader upgrader = UpgraderFactory.getUpgrader(
-				targetVersion, this);
+		final VersionUpgrader upgrader = new VersionUpgraderV1V2(this);
 		upgrader.upgradeExpression(input, result);
 		return result;
 	}
@@ -2099,8 +2096,7 @@ public class FormulaFactory {
 			LanguageVersion targetVersion) {
 		final UpgradeResult<Predicate> result = new UpgradeResult<Predicate>(
 				this);
-		final VersionUpgrader upgrader = UpgraderFactory.getUpgrader(
-				targetVersion, this);
+		final VersionUpgrader upgrader = new VersionUpgraderV1V2(this);
 		upgrader.upgradePredicate(input, result);
 		return result;
 	}
