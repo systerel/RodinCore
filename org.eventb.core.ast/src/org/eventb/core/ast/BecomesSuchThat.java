@@ -21,7 +21,6 @@ import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.extension.StandardGroup.INFIX_SUBST;
 
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -115,45 +114,20 @@ public class BecomesSuchThat extends Assignment {
 	// Post-condition of this assignment
 	private final Predicate condition;
 	
-	protected BecomesSuchThat(FreeIdentifier assignedIdent,
-			BoundIdentDecl primedIdent, Predicate condition,
-			SourceLocation location,
-			FormulaFactory ff) {
-		
-		super(Formula.BECOMES_SUCH_THAT, location, condition.hashCode(), assignedIdent);
-		this.condition = condition;
-		this.primedIdents = new BoundIdentDecl[] {primedIdent};
-		checkPreconditions();
-		setPredicateVariableCache(this.condition);
-		synthesizeType(ff);
-	}
-
 	protected BecomesSuchThat(FreeIdentifier[] assignedIdents,
 			BoundIdentDecl[] primedIdents, Predicate condition,
 			SourceLocation location,
 			FormulaFactory ff) {
-		
+		// Note: primedIdents must not be part of hash-code as their name is
+		// not relevant for equality
 		super(Formula.BECOMES_SUCH_THAT, location, condition.hashCode(), assignedIdents);
 		this.condition = condition;
-		this.primedIdents = primedIdents.clone();
+		this.primedIdents = primedIdents;
 		checkPreconditions();
 		setPredicateVariableCache(this.condition);
 		synthesizeType(ff);
 	}
 
-	protected BecomesSuchThat(Collection<FreeIdentifier> assignedIdents,
-			Collection<BoundIdentDecl> primedIdents, Predicate condition,
-			SourceLocation location,
-			FormulaFactory ff) {
-
-		super(Formula.BECOMES_SUCH_THAT, location, condition.hashCode(), assignedIdents);
-		this.condition = condition;
-		this.primedIdents = primedIdents.toArray(new BoundIdentDecl[primedIdents.size()]);
-		checkPreconditions();
-		setPredicateVariableCache(this.condition);
-		synthesizeType(ff);
-	}
-	
 	private void checkPreconditions() {
 		assert this.primedIdents.length == assignedIdents.length;
 	}

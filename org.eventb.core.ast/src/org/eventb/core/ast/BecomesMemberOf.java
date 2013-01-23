@@ -90,7 +90,8 @@ public class BecomesMemberOf extends Assignment {
 	
 	protected BecomesMemberOf(FreeIdentifier assignedIdent, Expression setExpr,
 			SourceLocation location, FormulaFactory ff) {
-		super(BECOMES_MEMBER_OF, location, setExpr.hashCode(), assignedIdent);
+		super(BECOMES_MEMBER_OF, location, setExpr.hashCode(),
+				new FreeIdentifier[] { assignedIdent });
 		this.setExpr = setExpr;
 
 		setPredicateVariableCache(this.setExpr);

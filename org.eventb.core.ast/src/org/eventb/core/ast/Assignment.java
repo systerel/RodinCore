@@ -14,7 +14,7 @@
 package org.eventb.core.ast;
 
 import java.util.Arrays;
-import java.util.Collection;
+
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IntStack;
@@ -47,51 +47,15 @@ public abstract class Assignment extends Formula<Assignment> {
 	 * @param tag node tag of this expression
 	 * @param location source location of this expression
 	 * @param hashCode combined hash code for children
-	 * @param assignedIdent free identifier that constitute the left-hand side
-	 */
-	protected Assignment(int tag, SourceLocation location, int hashCode, 
-			FreeIdentifier assignedIdent) {
-		
-		super(tag, location, combineHashCodes(assignedIdent.hashCode(), hashCode));
-		this.assignedIdents = new FreeIdentifier[] {assignedIdent};
-	}
-
-	/**
-	 * Creates a new assignment with the given arguments.
-	 * 
-	 * @param tag node tag of this expression
-	 * @param location source location of this expression
-	 * @param hashCode combined hash code for children
 	 * @param assignedIdents array of free identifiers that constitute the left-hand side
 	 */
 	protected Assignment(int tag, SourceLocation location, int hashCode, 
 			FreeIdentifier[] assignedIdents) {
 		
 		super(tag, location, combineHashCodes(combineHashCodes(assignedIdents), hashCode));
-		this.assignedIdents = assignedIdents.clone();
+		this.assignedIdents = assignedIdents;
 	}
 
-	/**
-	 * Creates a new assignment with the given arguments.
-	 * 
-	 * @param tag node tag of this expression
-	 * @param location source location of this expression
-	 * @param hashCode combined hash code for children
-	 * @param assignedIdents array of free identifiers that constitute the left-hand side
-	 */
-	protected Assignment(int tag, SourceLocation location, int hashCode,
-			Collection<FreeIdentifier> assignedIdents) {
-		
-		super(
-				tag,
-				location,
-				combineHashCodes(
-						combineHashCodes((Collection<? extends Expression>) assignedIdents),
-						hashCode));
-		this.assignedIdents = assignedIdents.toArray(new FreeIdentifier[assignedIdents.size()]);
-	}
-
-	
 	protected final void appendAssignedIdents(StringBuilder result) {
 		boolean comma = false;
 		for (FreeIdentifier ident : assignedIdents) {

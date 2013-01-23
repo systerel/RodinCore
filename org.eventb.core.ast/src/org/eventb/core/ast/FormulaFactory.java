@@ -16,7 +16,9 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.LanguageVersion.V1;
+import static org.eventb.internal.core.ast.FactoryHelper.toBIDArray;
 import static org.eventb.internal.core.ast.FactoryHelper.toExprArray;
+import static org.eventb.internal.core.ast.FactoryHelper.toIdentArray;
 import static org.eventb.internal.core.ast.FactoryHelper.toPredArray;
 import static org.eventb.internal.core.ast.FactoryHelper.toTypeArray;
 import static org.eventb.internal.core.parser.BMathV1.B_MATH_V1;
@@ -541,7 +543,8 @@ public class FormulaFactory {
 	 */
 	public BecomesEqualTo makeBecomesEqualTo(FreeIdentifier ident,
 			Expression value, SourceLocation location) {
-		return new BecomesEqualTo(ident, value, location, this);
+		return new BecomesEqualTo(new FreeIdentifier[] { ident },
+				new Expression[] { value }, location, this);
 	}
 
 	/**
@@ -558,7 +561,8 @@ public class FormulaFactory {
 	 */
 	public BecomesEqualTo makeBecomesEqualTo(FreeIdentifier[] idents,
 			Expression[] values, SourceLocation location) {
-		return new BecomesEqualTo(idents, values, location, this);
+		return new BecomesEqualTo(idents.clone(), values.clone(), location,
+				this);
 	}
 
 	/**
@@ -575,7 +579,8 @@ public class FormulaFactory {
 	 */
 	public BecomesEqualTo makeBecomesEqualTo(Collection<FreeIdentifier> idents,
 			Collection<Expression> values, SourceLocation location) {
-		return new BecomesEqualTo(idents, values, location, this);
+		return new BecomesEqualTo(toIdentArray(idents), toExprArray(values),
+				location, this);
 	}
 
 	/**
@@ -612,7 +617,8 @@ public class FormulaFactory {
 	public BecomesSuchThat makeBecomesSuchThat(FreeIdentifier ident,
 			BoundIdentDecl primedIdent, Predicate condition,
 			SourceLocation location) {
-		return new BecomesSuchThat(ident, primedIdent, condition, location, this);
+		return new BecomesSuchThat(new FreeIdentifier[] { ident },
+				new BoundIdentDecl[] { primedIdent }, condition, location, this);
 	}
 
 	/**
@@ -632,7 +638,8 @@ public class FormulaFactory {
 	public BecomesSuchThat makeBecomesSuchThat(FreeIdentifier[] idents,
 			BoundIdentDecl[] primedIdents, Predicate condition,
 			SourceLocation location) {
-		return new BecomesSuchThat(idents, primedIdents, condition, location, this);
+		return new BecomesSuchThat(idents.clone(), primedIdents.clone(),
+				condition, location, this);
 	}
 
 	/**
@@ -652,7 +659,8 @@ public class FormulaFactory {
 	public BecomesSuchThat makeBecomesSuchThat(Collection<FreeIdentifier> idents,
 			Collection<BoundIdentDecl> primedIdents, Predicate condition,
 			SourceLocation location) {
-		return new BecomesSuchThat(idents, primedIdents, condition, location, this);
+		return new BecomesSuchThat(toIdentArray(idents),
+				toBIDArray(primedIdents), condition, location, this);
 	}
 
 	/**

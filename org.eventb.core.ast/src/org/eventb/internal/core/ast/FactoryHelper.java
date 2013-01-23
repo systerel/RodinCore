@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 
@@ -32,6 +33,11 @@ public class FactoryHelper {
 
 	public static Expression[] toExprArray(Collection<Expression> coll) {
 		final Expression[] model = new Expression[coll.size()];
+		return coll.toArray(model);
+	}
+
+	public static FreeIdentifier[] toIdentArray(Collection<FreeIdentifier> coll) {
+		final FreeIdentifier[] model = new FreeIdentifier[coll.size()];
 		return coll.toArray(model);
 	}
 
