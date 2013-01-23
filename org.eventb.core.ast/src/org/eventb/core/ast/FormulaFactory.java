@@ -16,6 +16,9 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.LanguageVersion.V1;
+import static org.eventb.internal.core.ast.FactoryHelper.toExprArray;
+import static org.eventb.internal.core.ast.FactoryHelper.toPredArray;
+import static org.eventb.internal.core.ast.FactoryHelper.toTypeArray;
 import static org.eventb.internal.core.parser.BMathV1.B_MATH_V1;
 import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
 
@@ -268,17 +271,21 @@ public class FormulaFactory {
 		return grammar.asExternalView();
 	}
 	
-	private static IllegalArgumentException newIllegalArgument(
-			IFormulaExtension extension) {
-		return new IllegalArgumentException(
-				"the extension is not supported by this factory: "
-						+ extension.getSyntaxSymbol());
-	}
-	
-	private void checkExtension(IFormulaExtension extension) {
-		if (!extensions.containsValue(extension)) {
-			throw newIllegalArgument(extension);
+	/*
+	 * Returns the tag of the given extension. As a side-effect, verifies that
+	 * this extension is indeed known and supported by this formula factory
+	 */
+	private int getExtensionTag(IFormulaExtension extension) {
+		final Integer result = ALL_EXTENSIONS.get(extension);
+		if (result == null) {
+			throw new IllegalArgumentException("Unknown formula extension "
+					+ extension.getId());
 		}
+		if (!extension.equals(extensions.get(result))) {
+			throw new IllegalArgumentException("Formula extension "
+					+ extension.getId() + " is not supported by this factory");
+		}
+		return result;
 	}
 
 	/**
@@ -287,12 +294,11 @@ public class FormulaFactory {
 	public ExtendedExpression makeExtendedExpression(
 			IExpressionExtension extension, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location, Type type) {
-		checkExtension(extension);
-		final int tag = ALL_EXTENSIONS.get(extension);
-		return new ExtendedExpression(tag, expressions, predicates, location,
-				this, extension, type);
+		final int tag = getExtensionTag(extension);
+		return new ExtendedExpression(tag, expressions.clone(),
+				predicates.clone(), location, this, extension, type);
 	}
-	
+
 	/**
 	 * @since 2.0
 	 */
@@ -302,17 +308,26 @@ public class FormulaFactory {
 		return makeExtendedExpression(extension, expressions, predicates,
 				location, null);
 	}
-	
+
+	/**
+	 * @since 3.0
+	 */
+	public ExtendedExpression makeExtendedExpression(
+			IExpressionExtension extension, Collection<Expression> expressions,
+			Collection<Predicate> predicates, SourceLocation location, Type type) {
+		final int tag = getExtensionTag(extension);
+		return new ExtendedExpression(tag, toExprArray(expressions),
+				toPredArray(predicates), location, this, extension, type);
+	}
+
 	/**
 	 * @since 2.0
 	 */
-	public ExtendedExpression makeExtendedExpression(IExpressionExtension extension,
-			Collection<Expression> expressions,
-			Collection<Predicate> predicates,
-			SourceLocation sourceLocation) {
-		final Expression[] expr = expressions.toArray(new Expression[expressions.size()]);
-		final Predicate[] pred = predicates.toArray(new Predicate[predicates.size()]);
-		return makeExtendedExpression(extension, expr, pred, sourceLocation);
+	public ExtendedExpression makeExtendedExpression(
+			IExpressionExtension extension, Collection<Expression> expressions,
+			Collection<Predicate> predicates, SourceLocation location) {
+		return makeExtendedExpression(extension, expressions, predicates,
+				location, null);
 	}
 
 	/**
@@ -321,22 +336,20 @@ public class FormulaFactory {
 	public ExtendedPredicate makeExtendedPredicate(
 			IPredicateExtension extension, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location) {
-		checkExtension(extension);
-		final int tag = ALL_EXTENSIONS.get(extension);
-		return new ExtendedPredicate(tag, expressions, predicates, location,
-				this, extension);
+		final int tag = getExtensionTag(extension);
+		return new ExtendedPredicate(tag, expressions.clone(),
+				predicates.clone(), location, this, extension);
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	public ExtendedPredicate makeExtendedPredicate(IPredicateExtension extension,
-			Collection<Expression> expressions,
-			Collection<Predicate> predicates,
-			SourceLocation location) {
-		final Expression[] exprs = expressions.toArray(new Expression[expressions.size()]);
-		final Predicate[] preds = predicates.toArray(new Predicate[predicates.size()]);
-		return makeExtendedPredicate(extension, exprs, preds, location);
+	public ExtendedPredicate makeExtendedPredicate(
+			IPredicateExtension extension, Collection<Expression> expressions,
+			Collection<Predicate> predicates, SourceLocation location) {
+		final int tag = getExtensionTag(extension);
+		return new ExtendedPredicate(tag, toExprArray(expressions),
+				toPredArray(predicates), location, this, extension);
 	}
 
 	/**
@@ -1430,9 +1443,8 @@ public class FormulaFactory {
 	 */
 	public ParametricType makeParametricType(List<Type> typePrms,
 			IExpressionExtension typeConstructor) {
-		checkExtension(typeConstructor);
-		return new ParametricType(typeConstructor,
-				typePrms.toArray(new Type[typePrms.size()]));
+		getExtensionTag(typeConstructor);
+		return new ParametricType(typeConstructor, toTypeArray(typePrms));
 	}
 
 	/**
@@ -1443,7 +1455,7 @@ public class FormulaFactory {
 	 */
 	public ParametricType makeParametricType(Type[] typePrms,
 			IExpressionExtension typeConstructor) {
-		checkExtension(typeConstructor);
+		getExtensionTag(typeConstructor);
 		return new ParametricType(typeConstructor, typePrms.clone());
 	}
 
