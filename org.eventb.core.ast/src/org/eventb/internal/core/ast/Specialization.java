@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - always rewrite leaf node when factory changed 
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
@@ -51,13 +52,13 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 	// Identifier substitutions
 	private final Map<FreeIdentifier, Expression> identSubst;
 	
-	private final TypeRewriter typeRewriter;
+	private final TypeRewriter speTypeRewriter;
 
 	public Specialization(FormulaFactory ff) {
 		super(ff);
 		typeSubst = new HashMap<GivenType, Type>();
 		identSubst = new HashMap<FreeIdentifier, Expression>();
-		typeRewriter = new TypeRewriter(ff) {
+		speTypeRewriter = new TypeRewriter(ff) {
 			@Override
 			public void visit(GivenType type) {
 				final Type rewritten = get(type);
@@ -72,7 +73,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 		super(other.ff);
 		typeSubst = new HashMap<GivenType, Type>(other.typeSubst);
 		identSubst = new HashMap<FreeIdentifier, Expression>(other.identSubst);
-		typeRewriter = other.typeRewriter;
+		speTypeRewriter = other.speTypeRewriter;
 	}
 
 	@Override
@@ -162,7 +163,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 	}
 	
 	public Type specialize(Type type) {
-		return typeRewriter.rewrite(type);
+		return speTypeRewriter.rewrite(type);
 	}
 
 	/*
@@ -195,7 +196,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 		final Type newType = type.specialize(this);
 		final Expression result;
 		if (newType == type) {
-			result = ident;
+			result = super.rewrite(ident);
 		} else {
 			result = ff.makeFreeIdentifier(ident.getName(),
 					ident.getSourceLocation(), newType);
@@ -208,7 +209,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 	public Expression rewrite(FreeIdentifier identifier) {
 		final Expression newIdent = get(identifier);
 		if (newIdent.equals(identifier)) {
-			return identifier;
+			return super.rewrite(identifier);
 		}
 		return newIdent;
 	}
@@ -218,7 +219,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 		final Type type = decl.getType();
 		final Type newType = type.specialize(this);
 		if (newType == type) {
-			return decl;
+			return super.rewrite(decl);
 		}
 		final String name = decl.getName();
 		final SourceLocation sloc = decl.getSourceLocation();
@@ -230,7 +231,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 		final Type type = identifier.getType();
 		final Type newType = type.specialize(this);
 		if (newType == type) {
-			return identifier;
+			return super.rewrite(identifier);
 		}
 		return ff.makeBoundIdentifier(identifier.getBoundIndex(),
 				identifier.getSourceLocation(), newType);
@@ -241,7 +242,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 		final Type type = expression.getType();
 		final Type newType = type.specialize(this);
 		if (newType == type) {
-			return expression;
+			return super.rewrite(expression);
 		}
 		final SourceLocation loc = expression.getSourceLocation();
 		return ff.makeAtomicExpression(expression.getTag(), loc, newType);
@@ -253,7 +254,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 		final Type type = expr.getType();
 		final Type newType = type.specialize(this);
 		if (!changed && newType == type) {
-			return expr;
+			return super.rewrite(expr, changed, newChildExprs, newChildPreds);
 		}
 		final IExpressionExtension extension = expr.getExtension();
 		final SourceLocation loc = expr.getSourceLocation();

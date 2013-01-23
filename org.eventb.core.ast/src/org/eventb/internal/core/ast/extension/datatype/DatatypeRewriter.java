@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - always rewrite leaf node when factory changed 
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
@@ -49,7 +50,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 		final Type type = decl.getType();
 		final Type newType = translation.translate(type);
 		if (newType == type) {
-			return decl;
+			return super.rewrite(decl);
 		}
 		final String name = decl.getName();
 		final SourceLocation sLoc = decl.getSourceLocation();
@@ -61,7 +62,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 		final Type type = expression.getType();
 		final Type newType = translation.translate(type);
 		if (newType == type) {
-			return expression;
+			return super.rewrite(expression);
 		}
 		final SourceLocation sLoc = expression.getSourceLocation();
 		return ff.makeAtomicExpression(expression.getTag(), sLoc, newType);
@@ -72,7 +73,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 		final Type type = identifier.getType();
 		final Type newType = translation.translate(type);
 		if (newType == type) {
-			return identifier;
+			return super.rewrite(identifier);
 		}
 		final SourceLocation sLoc = identifier.getSourceLocation();
 		final int index = identifier.getBoundIndex();
@@ -84,7 +85,7 @@ public class DatatypeRewriter extends DefaultTypeCheckingRewriter {
 		final Type type = ident.getType();
 		final Type newType = translation.translate(type);
 		if (newType == type) {
-			return ident;
+			return super.rewrite(ident);
 		}
 		final SourceLocation sLoc = ident.getSourceLocation();
 		final String name = ident.getName();

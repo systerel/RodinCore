@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - always rewrite leaf node when factory changed 
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
@@ -43,6 +44,14 @@ import org.eventb.core.ast.UnaryPredicate;
  * methods because the result bears the same type by construction. However,
  * these methods must be used by sub-classes that actually perform a rewrite
  * when it cannot be proven that the rewrite is always type-checked.
+ * 
+ * <p>
+ * This implementation guarantee that a leaf node is rebuilt with the rewriter
+ * factory if the factory of the node if the factory of the node is different as
+ * requested in {@link ITypeCheckingRewriter}. As consequence if this class is
+ * extended, the implementor should use this guarantee to always return the
+ * super method result when he needs to return identity on a leaf node.
+ * </p>
  * 
  * @author Laurent Voisin
  */
@@ -117,7 +126,12 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public BoundIdentDecl rewrite(BoundIdentDecl src) {
-		return src;
+		if (!ff.equals(src.getFactory())) {
+			return ff.makeBoundIdentDecl(src.getName(),
+					src.getSourceLocation(), src.getType());
+		} else {
+			return src;
+		}
 	}
 
 	@Override
@@ -133,7 +147,12 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewrite(AtomicExpression src) {
-		return src;
+		if (!ff.equals(src.getFactory())) {
+			return ff.makeAtomicExpression(src.getTag(),
+					src.getSourceLocation(), src.getType());
+		} else {
+			return src;
+		}
 	}
 
 	@Override
@@ -153,42 +172,64 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewrite(BoundIdentifier src) {
-		return src;
+		if (!ff.equals(src.getFactory())) {
+			return ff.makeBoundIdentifier(src.getBoundIndex(),
+					src.getSourceLocation(), src.getType());
+		} else {
+			return src;
+		}
 	}
 
 	@Override
 	public Expression rewrite(ExtendedExpression src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
-		if (!changed) {
+		if (!changed && ff.equals(src.getFactory())) {
 			return src;
+		} else {
+			return ff.makeExtendedExpression(src.getExtension(), newChildExprs,
+					newChildPreds, src.getSourceLocation(), src.getType());
 		}
-		return ff.makeExtendedExpression(src.getExtension(), newChildExprs,
-				newChildPreds, src.getSourceLocation(), src.getType());
 	}
 
 	@Override
 	public Predicate rewrite(ExtendedPredicate src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
-		if (!changed) {
+		if (!changed && ff.equals(src.getFactory())) {
 			return src;
+		} else {
+			return ff.makeExtendedPredicate(src.getExtension(), newChildExprs,
+					newChildPreds, src.getSourceLocation());
 		}
-		return ff.makeExtendedPredicate(src.getExtension(), newChildExprs,
-				newChildPreds, src.getSourceLocation());
 	}
 
 	@Override
 	public Expression rewrite(FreeIdentifier src) {
-		return src;
+		if (!ff.equals(src.getFactory())) {
+			return ff.makeFreeIdentifier(src.getName(),
+					src.getSourceLocation(), src.getType());
+		} else {
+			return src;
+		}
 	}
 
 	@Override
 	public Expression rewrite(IntegerLiteral src) {
-		return src;
+		if (!ff.equals(src.getFactory())) {
+			return ff.makeIntegerLiteral(src.getValue(),
+					src.getSourceLocation());
+		} else {
+			return src;
+		}
 	}
 
 	@Override
 	public Predicate rewrite(LiteralPredicate src) {
-		return src;
+		if (!ff.equals(src.getFactory())) {
+			return ff.makeLiteralPredicate(src.getTag(),
+					src.getSourceLocation());
+		} else {
+			return src;
+		}
 	}
 
 	@Override
@@ -198,7 +239,12 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Predicate rewrite(PredicateVariable src) {
-		return src;
+		if (!ff.equals(src.getFactory())) {
+			return ff.makePredicateVariable(src.getName(),
+					src.getSourceLocation());
+		} else {
+			return src;
+		}
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - always rewrite leaf node when factory changed 
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 
 /**
  * This substitution applies a standard offset to all externally bound
@@ -38,16 +38,11 @@ public class BoundIdentifierShifter extends Substitution {
 	}
 
 	@Override
-	public Expression rewrite(FreeIdentifier ident) {
-		return ident;
-	}
-
-	@Override
 	public Expression rewrite(BoundIdentifier ident) {
 		final int index = ident.getBoundIndex();
 		if (index < getBindingDepth() || offset == 0) {
 			// Internally bound, no change
-			return ident;
+			return super.rewrite(ident);
 		}
 		return ff.makeBoundIdentifier(
 				index + offset, 
