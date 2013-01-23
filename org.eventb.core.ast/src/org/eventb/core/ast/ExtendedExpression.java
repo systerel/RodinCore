@@ -180,8 +180,8 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			Predicate[] predicates, SourceLocation location,
 			FormulaFactory ff, IExpressionExtension extension, Type type) {
 		super(tag, location, combineHashCodes(expressions, predicates));
-		this.childExpressions = expressions.clone();
-		this.childPredicates = predicates.clone();
+		this.childExpressions = expressions;
+		this.childPredicates = predicates;
 		this.extension = extension;
 		checkPreconditions();
 		setPredicateVariableCache(getChildren());

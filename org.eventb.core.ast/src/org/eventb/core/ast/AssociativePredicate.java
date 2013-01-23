@@ -19,7 +19,6 @@ import static org.eventb.core.ast.extension.StandardGroup.LOGIC_PRED;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -135,20 +134,8 @@ public class AssociativePredicate extends Predicate {
 			SourceLocation location, FormulaFactory ff) {
 		
 		super(tag, location, combineHashCodes(children));
-		this.children = children.clone();
+		this.children = children;
 		
-		checkPreconditions();
-		setPredicateVariableCache(this.children);
-		synthesizeType(ff);
-	}
-
-	protected AssociativePredicate(Collection<Predicate> children, int tag,
-			SourceLocation location, FormulaFactory ff) {
-		
-		super(tag, location, combineHashCodes(children));
-		Predicate[] model = new Predicate[children.size()];
-		this.children = children.toArray(model);
-
 		checkPreconditions();
 		setPredicateVariableCache(this.children);
 		synthesizeType(ff);

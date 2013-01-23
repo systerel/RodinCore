@@ -16,7 +16,6 @@ import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PARTITION;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -122,18 +121,7 @@ public class MultiplePredicate extends Predicate {
 	protected MultiplePredicate(Expression[] children, int tag,
 			SourceLocation location, FormulaFactory factory) {
 		super(tag, location, combineHashCodes(children));
-		this.children = children.clone();
-
-		checkPreconditions();
-		setPredicateVariableCache(this.children);
-		synthesizeType(factory);
-	}
-
-	protected MultiplePredicate(Collection<Expression> children, int tag,
-			SourceLocation location, FormulaFactory factory) {
-		super(tag, location, combineHashCodes(children));
-		Expression[] temp = new Expression[children.size()];
-		this.children = children.toArray(temp);
+		this.children = children;
 
 		checkPreconditions();
 		setPredicateVariableCache(this.children);

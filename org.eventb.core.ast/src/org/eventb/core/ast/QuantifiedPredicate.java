@@ -26,7 +26,6 @@ import static org.eventb.core.ast.QuantifiedHelper.rewriteDecls;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.extension.StandardGroup.QUANTIFIED_PRED;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -154,22 +153,7 @@ public class QuantifiedPredicate extends Predicate {
 		super(tag, location,
 				combineHashCodes(boundIdentifiers.length, pred.hashCode()));
 
-		this.quantifiedIdentifiers = boundIdentifiers.clone();
-		this.pred = pred;
-		
-		checkPreconditions();
-		setPredicateVariableCache(this.pred);
-		synthesizeType(ff);
-	}
-
-	protected QuantifiedPredicate(Predicate pred,
-			Collection<BoundIdentDecl> boundIdentifiers, int tag,
-			SourceLocation location, FormulaFactory ff) {
-		super(tag, location,
-				combineHashCodes(boundIdentifiers.size(), pred.hashCode()));
-		
-		BoundIdentDecl[] model = new BoundIdentDecl[boundIdentifiers.size()];
-		this.quantifiedIdentifiers = boundIdentifiers.toArray(model);
+		this.quantifiedIdentifiers = boundIdentifiers;
 		this.pred = pred;
 		
 		checkPreconditions();

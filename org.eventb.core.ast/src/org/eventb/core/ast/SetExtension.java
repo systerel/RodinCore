@@ -20,7 +20,6 @@ import static org.eventb.core.ast.extension.StandardGroup.BRACE_SETS;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -54,7 +53,6 @@ import org.eventb.internal.core.typecheck.TypeVariable;
  */
 public class SetExtension extends Expression {
 
-	private static final Expression[] NO_EXPRESSIONS = new Expression[0];
 	private static final String SETEXT_ID = "Set Extension";
 	private static enum Operators implements IOperatorInfo<SetExtension> {
 		OP_SETEXT(LBRACE.getImage(), SETEXT_ID, BRACE_SETS),
@@ -113,12 +111,12 @@ public class SetExtension extends Expression {
 	private final Expression[] members;
 	
 	/**
-	 * @since 2.6
+	 * @since 3.0
 	 */
-	protected SetExtension(Type type, SourceLocation location,
-			FormulaFactory factory) {
-		super(SETEXT, location, 0);
-		this.members = NO_EXPRESSIONS;
+	protected SetExtension(Expression[] expressions, SourceLocation location,
+			FormulaFactory factory, Type type) {
+		super(SETEXT, location, combineHashCodes(expressions));
+		this.members = expressions;
 
 		checkPreconditions();
 		setPredicateVariableCache(this.members);
@@ -127,37 +125,6 @@ public class SetExtension extends Expression {
 		// ensures that type was coherent (final type cannot be null if given
 		// type was not)
 		assert type == null || type == this.getType();
-	}
-
-	protected SetExtension(Expression expression, SourceLocation location,
-			FormulaFactory factory) {
-		super(SETEXT, location, expression.hashCode());
-		this.members = new Expression[] {expression};
-
-		checkPreconditions();
-		setPredicateVariableCache(this.members);
-		synthesizeType(factory, null);
-	}
-
-	protected SetExtension(Expression[] expressions, SourceLocation location,
-			FormulaFactory factory) {
-		super(SETEXT, location, combineHashCodes(expressions));
-		this.members = expressions.clone();
-
-		checkPreconditions();
-		setPredicateVariableCache(this.members);
-		synthesizeType(factory, null);
-	}
-
-	protected SetExtension(Collection<? extends Expression> expressions,
-			SourceLocation location, FormulaFactory factory) {
-		super(SETEXT, location, combineHashCodes(expressions));
-		Expression[] temp = new Expression[expressions.size()];
-		this.members = expressions.toArray(temp);
-
-		checkPreconditions();
-		setPredicateVariableCache(this.members);
-		synthesizeType(factory, null);
 	}
 
 	// Common initialization.

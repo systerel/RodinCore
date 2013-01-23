@@ -23,7 +23,6 @@ import static org.eventb.core.ast.extension.StandardGroup.BINOP;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -166,18 +165,7 @@ public class AssociativeExpression extends Expression {
 			SourceLocation location, FormulaFactory factory) {
 
 		super(tag, location, combineHashCodes(children));
-		this.children = children.clone();
-		checkPreconditions();
-		setPredicateVariableCache(this.children);
-		synthesizeType(factory, null);
-	}
-
-	protected AssociativeExpression(Collection<? extends Expression> children,
-			int tag, SourceLocation location, FormulaFactory factory) {
-
-		super(tag, location, combineHashCodes(children));
-		Expression[] model = new Expression[children.size()];
-		this.children = children.toArray(model);
+		this.children = children;
 		checkPreconditions();
 		setPredicateVariableCache(this.children);
 		synthesizeType(factory, null);

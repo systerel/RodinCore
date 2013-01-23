@@ -17,7 +17,6 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.extension.StandardGroup.INFIX_SUBST;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -90,29 +89,10 @@ public class BecomesEqualTo extends Assignment {
 	
 	private final Expression[] values;
 	
-	protected BecomesEqualTo(FreeIdentifier assignedIdent, Expression value,
-			SourceLocation location, FormulaFactory ff) {
-		super(BECOMES_EQUAL_TO, location, value.hashCode(), assignedIdent);
-		this.values = new Expression[] {value};
-		checkPreconditions();
-		setPredicateVariableCache(this.values);
-		synthesizeType(ff);
-	}
-
 	protected BecomesEqualTo(FreeIdentifier[] assignedIdents, Expression[] values,
 			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
-		this.values = values.clone();
-		checkPreconditions();
-		setPredicateVariableCache(this.values);
-		synthesizeType(ff);
-	}
-
-	protected BecomesEqualTo(Collection<FreeIdentifier> assignedIdents,
-			Collection<Expression> values, SourceLocation location,
-			FormulaFactory ff) {
-		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
-		this.values = values.toArray(new Expression[values.size()]);
+		this.values = values;
 		checkPreconditions();
 		setPredicateVariableCache(this.values);
 		synthesizeType(ff);
