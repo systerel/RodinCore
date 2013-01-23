@@ -115,6 +115,11 @@ public class LiteralPredicate extends Predicate {
 		}
 	}
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeLiteralPredicate(int, SourceLocation)
+	 */
 	protected LiteralPredicate(int tag, SourceLocation location,
 			FormulaFactory ff) {
 		

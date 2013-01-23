@@ -294,6 +294,12 @@ public class BinaryExpression extends Expression {
 		}
 	}
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeBinaryExpression(int, Expression, Expression,
+	 *      SourceLocation)
+	 */
 	protected BinaryExpression(Expression left, Expression right, int tag,
 			SourceLocation location, FormulaFactory factory) {
 		super (tag, location, 

@@ -70,6 +70,11 @@ public class PredicateVariable extends Predicate {
 	// The name of the PredicateVariable including the leading symbol '$'
 	private final String name;
 
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makePredicateVariable(String, SourceLocation)
+	 */
 	protected PredicateVariable(String name, SourceLocation location,
 			FormulaFactory ff) {
 		super(tag, location, name.hashCode());

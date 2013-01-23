@@ -114,6 +114,16 @@ public class BecomesSuchThat extends Assignment {
 	// Post-condition of this assignment
 	private final Predicate condition;
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeBecomesSuchThat(FreeIdentifier, BoundIdentDecl,
+	 *      Predicate, SourceLocation)
+	 * @see FormulaFactory#makeBecomesSuchThat(FreeIdentifier[],
+	 *      BoundIdentDecl[], Predicate, SourceLocation)
+	 * @see FormulaFactory#makeBecomesSuchThat(java.util.Collection,
+	 *      java.util.Collection, Predicate, SourceLocation)
+	 */
 	protected BecomesSuchThat(FreeIdentifier[] assignedIdents,
 			BoundIdentDecl[] primedIdents, Predicate condition,
 			SourceLocation location,

@@ -138,7 +138,15 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	private final Predicate[] childPredicates;
 	private final IPredicateExtension extension;
 
-	public ExtendedPredicate(int tag, Expression[] expressions,
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeExtendedPredicate(IPredicateExtension,
+	 *      Expression[], Predicate[], SourceLocation)
+	 * @see FormulaFactory#makeExtendedPredicate(IPredicateExtension,
+	 *      java.util.Collection, java.util.Collection, SourceLocation)
+	 */
+	protected ExtendedPredicate(int tag, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location,
 			FormulaFactory ff, IPredicateExtension extension) {
 		super(tag, location, combineHashCodes(expressions, predicates));

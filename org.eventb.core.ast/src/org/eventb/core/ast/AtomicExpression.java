@@ -163,6 +163,12 @@ public class AtomicExpression extends Expression {
 		}
 	}
 
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeAtomicExpression(int, SourceLocation)
+	 * @see FormulaFactory#makeAtomicExpression(int, SourceLocation, Type)
+	 */
 	protected AtomicExpression(int tag, SourceLocation location, Type type,
 			FormulaFactory factory) {
 		super(tag, location, 0);

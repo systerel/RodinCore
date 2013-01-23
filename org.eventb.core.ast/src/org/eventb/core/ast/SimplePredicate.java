@@ -114,6 +114,11 @@ public class SimplePredicate extends Predicate {
 		}
 	}
 
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeSimplePredicate(int, Expression, SourceLocation)
+	 */
 	protected SimplePredicate(Expression child, int tag,
 			SourceLocation location, FormulaFactory ff) {
 		

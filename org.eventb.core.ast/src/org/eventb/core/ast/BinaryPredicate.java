@@ -124,6 +124,12 @@ public class BinaryPredicate extends Predicate {
 	// For testing purposes
 	public static final int TAGS_LENGTH = tags.length;
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeBinaryPredicate(int, Predicate, Predicate,
+	 *      SourceLocation)
+	 */
 	protected BinaryPredicate(Predicate left, Predicate right, int tag,
 			SourceLocation location, FormulaFactory ff) {
 		super(tag, location, combineHashCodes(left.hashCode(), right.hashCode()));

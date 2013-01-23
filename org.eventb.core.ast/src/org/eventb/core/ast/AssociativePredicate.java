@@ -130,6 +130,14 @@ public class AssociativePredicate extends Predicate {
 		}
 	}
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeAssociativePredicate(int, Predicate[],
+	 *      SourceLocation)
+	 * @see FormulaFactory#makeAssociativePredicate(int, java.util.Collection,
+	 *      SourceLocation)
+	 */
 	protected AssociativePredicate(Predicate[] children, int tag,
 			SourceLocation location, FormulaFactory ff) {
 		

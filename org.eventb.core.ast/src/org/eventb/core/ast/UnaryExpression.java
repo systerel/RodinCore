@@ -214,6 +214,11 @@ public class UnaryExpression extends Expression {
 		initCommon(grammar);
 	}
 
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeUnaryExpression(int, Expression, SourceLocation)
+	 */
 	protected UnaryExpression(Expression child, int tag, SourceLocation location,
 			FormulaFactory factory) {
 		

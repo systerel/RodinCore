@@ -57,6 +57,12 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	private final String name;
 	private Type type;
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeBoundIdentDecl(String, SourceLocation)
+	 * @see FormulaFactory#makeBoundIdentDecl(String, SourceLocation, Type)
+	 */
 	protected BoundIdentDecl(String name, int tag, SourceLocation location,
 			Type givenType, FormulaFactory ff) {
 		super(tag, location, name.hashCode());

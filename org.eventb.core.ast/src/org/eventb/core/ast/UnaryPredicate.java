@@ -116,6 +116,11 @@ public class UnaryPredicate extends Predicate {
 
 	protected final Predicate child;
 
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeUnaryPredicate(int, Predicate, SourceLocation)
+	 */
 	protected UnaryPredicate(Predicate child, int tag, SourceLocation location,
 			FormulaFactory ff) {
 

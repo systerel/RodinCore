@@ -176,6 +176,18 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	private final Predicate[] childPredicates;
 	private final IExpressionExtension extension;
 
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeExtendedExpression(IExpressionExtension,
+	 *      Expression[], Predicate[], SourceLocation)
+	 * @see FormulaFactory#makeExtendedExpression(IExpressionExtension,
+	 *      Expression[], Predicate[], SourceLocation, Type)
+	 * @see FormulaFactory#makeExtendedExpression(IExpressionExtension,
+	 *      java.util.Collection, java.util.Collection, SourceLocation)
+	 * @see FormulaFactory#makeExtendedExpression(IExpressionExtension,
+	 *      java.util.Collection, java.util.Collection, SourceLocation, Type)
+	 */
 	protected ExtendedExpression(int tag, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location,
 			FormulaFactory ff, IExpressionExtension extension, Type type) {

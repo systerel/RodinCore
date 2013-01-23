@@ -88,6 +88,12 @@ public class BecomesMemberOf extends Assignment {
 	
 	private final Expression setExpr;
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeBecomesMemberOf(FreeIdentifier, Expression,
+	 *      SourceLocation)
+	 */
 	protected BecomesMemberOf(FreeIdentifier assignedIdent, Expression setExpr,
 			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_MEMBER_OF, location, setExpr.hashCode(),
