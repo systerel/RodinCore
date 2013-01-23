@@ -161,6 +161,14 @@ public class AssociativeExpression extends Expression {
 	// Is never null and contains at least two elements by construction.
 	private final Expression[] children;
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeAssociativeExpression(int, Expression[],
+	 *      SourceLocation)
+	 * @see FormulaFactory#makeAssociativeExpression(int, java.util.Collection,
+	 *      SourceLocation)
+	 */
 	protected AssociativeExpression(Expression[] children, int tag,
 			SourceLocation location, FormulaFactory factory) {
 

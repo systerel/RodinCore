@@ -89,6 +89,16 @@ public class BecomesEqualTo extends Assignment {
 	
 	private final Expression[] values;
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeBecomesEqualTo(FreeIdentifier, Expression,
+	 *      SourceLocation)
+	 * @see FormulaFactory#makeBecomesEqualTo(FreeIdentifier[], Expression[],
+	 *      SourceLocation)
+	 * @see FormulaFactory#makeBecomesEqualTo(java.util.Collection,
+	 *      java.util.Collection, SourceLocation)
+	 */
 	protected BecomesEqualTo(FreeIdentifier[] assignedIdents, Expression[] values,
 			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);

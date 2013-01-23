@@ -141,6 +141,12 @@ public class RelationalPredicate extends Predicate {
 		}
 	}
 
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeRelationalPredicate(int, Expression, Expression,
+	 *      SourceLocation)
+	 */
 	protected RelationalPredicate(Expression left, Expression right,
 			int tag, SourceLocation location, FormulaFactory ff) {
 		

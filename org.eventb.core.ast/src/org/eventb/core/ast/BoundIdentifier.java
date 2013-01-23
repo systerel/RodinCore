@@ -47,6 +47,12 @@ public class BoundIdentifier extends Identifier {
 	// helps find its corresponding declaration in the formula
 	private final int boundIndex;
 
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeBoundIdentifier(int, SourceLocation)
+	 * @see FormulaFactory#makeBoundIdentifier(int, SourceLocation, Type)
+	 */
 	protected BoundIdentifier(int boundIndex, int tag, SourceLocation location,
 			Type type, FormulaFactory ff) {
 

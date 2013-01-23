@@ -56,6 +56,11 @@ public class IntegerLiteral extends Expression {
 	// This literal value.  Can never be null.
 	private final BigInteger literal;
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeIntegerLiteral(BigInteger, SourceLocation)
+	 */
 	protected IntegerLiteral(BigInteger literal, int tag, SourceLocation location,
 			FormulaFactory ff) {
 		super(tag, location, literal.hashCode());

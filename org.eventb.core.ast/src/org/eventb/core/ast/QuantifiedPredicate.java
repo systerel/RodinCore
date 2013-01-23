@@ -148,7 +148,16 @@ public class QuantifiedPredicate extends Predicate {
 		}
 	}
 
-	protected QuantifiedPredicate(Predicate pred, BoundIdentDecl[] boundIdentifiers, int tag,
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeQuantifiedPredicate(int, BoundIdentDecl[],
+	 *      Predicate, SourceLocation)
+	 * @see FormulaFactory#makeQuantifiedPredicate(int, java.util.Collection,
+	 *      Predicate, SourceLocation)
+	 */
+	protected QuantifiedPredicate(Predicate pred,
+			BoundIdentDecl[] boundIdentifiers, int tag,
 			SourceLocation location, FormulaFactory ff) {
 		super(tag, location,
 				combineHashCodes(boundIdentifiers.length, pred.hashCode()));

@@ -49,6 +49,12 @@ public class FreeIdentifier extends Identifier {
 	
 	private final String name;
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeFreeIdentifier(String, SourceLocation)
+	 * @see FormulaFactory#makeFreeIdentifier(String, SourceLocation, Type)
+	 */
 	protected FreeIdentifier(String name, int tag, SourceLocation location,
 			Type type, FormulaFactory ff) {
 		super(tag, location, name.hashCode());

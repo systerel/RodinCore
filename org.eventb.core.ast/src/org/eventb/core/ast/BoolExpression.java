@@ -109,6 +109,11 @@ public class BoolExpression extends Expression {
 	// child
 	private final Predicate child;
 	
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeBoolExpression(Predicate, SourceLocation)
+	 */
 	protected BoolExpression(Predicate child, int tag, SourceLocation location,
 			FormulaFactory ff) {
 		

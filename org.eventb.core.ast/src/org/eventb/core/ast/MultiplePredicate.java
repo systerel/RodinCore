@@ -118,6 +118,14 @@ public class MultiplePredicate extends Predicate {
 		}
 	}
 
+	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeMultiplePredicate(int, Expression[],
+	 *      SourceLocation)
+	 * @see FormulaFactory#makeMultiplePredicate(int, java.util.Collection,
+	 *      SourceLocation)
+	 */
 	protected MultiplePredicate(Expression[] children, int tag,
 			SourceLocation location, FormulaFactory factory) {
 		super(tag, location, combineHashCodes(children));

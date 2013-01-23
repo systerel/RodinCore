@@ -111,6 +111,13 @@ public class SetExtension extends Expression {
 	private final Expression[] members;
 	
 	/**
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeSetExtension(Expression, SourceLocation)
+	 * @see FormulaFactory#makeSetExtension(Expression[], SourceLocation)
+	 * @see FormulaFactory#makeSetExtension(java.util.Collection,
+	 *      SourceLocation)
+	 * @see FormulaFactory#makeEmptySetExtension(Type, SourceLocation)
 	 * @since 3.0
 	 */
 	protected SetExtension(Expression[] expressions, SourceLocation location,

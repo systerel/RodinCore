@@ -341,12 +341,12 @@ public class QuantifiedExpression extends Expression {
 	}
 	
 	/**
-	 * @param expr the expression in the quantified expression. Must not be <code>null</code>
-	 * @param pred the predicate in the quantified expression. Must not be <code>null</code>
-	 * @param boundIdentifiers the identifiers that are bound to this specific quantified expression. Must not be <code>null</code>
-	 * @param tag the associated tag
-	 * @param location the location in the formula {@link org.eventb.core.ast.SourceLocation}
-	 * @param form form of the quantified expression
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makeQuantifiedExpression(int, BoundIdentDecl[],
+	 *      Predicate, Expression, SourceLocation, Form)
+	 * @see FormulaFactory#makeQuantifiedExpression(int, java.util.Collection,
+	 *      Predicate, Expression, SourceLocation, Form)
 	 */
 	protected QuantifiedExpression(Expression expr, Predicate pred,
 			BoundIdentDecl[] boundIdentifiers, int tag,
