@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - always rewrite leaf node when factory changed
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
@@ -51,8 +52,9 @@ public class BindingSubstitution extends SimpleSubstitution {
 	@Override
 	public Expression rewrite(BoundIdentifier ident) {
 		final int index = ident.getBoundIndex();
-		if (index < getBindingDepth() || offset == 0)
-			return ident;
+		if (index < getBindingDepth() || offset == 0) {
+			return super.rewrite(ident);
+		}
 		return ff.makeBoundIdentifier(
 				index + offset, 
 				ident.getSourceLocation(),

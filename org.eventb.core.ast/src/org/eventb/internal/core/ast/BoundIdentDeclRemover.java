@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - always rewrite leaf node when factory changed
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 
@@ -18,7 +19,6 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 
 /**
  * A substitution that removes some bound identifier declarations, renumbering
@@ -27,8 +27,7 @@ import org.eventb.core.ast.FreeIdentifier;
  * @author Laurent Voisin
  * 
  */
-public class BoundIdentDeclRemover extends Substitution implements
-		ITypeCheckingRewriter {
+public class BoundIdentDeclRemover extends Substitution {
 
 	// New declarations to use after substitution
 	protected final List<BoundIdentDecl> newDecls;
@@ -78,22 +77,13 @@ public class BoundIdentDeclRemover extends Substitution implements
 	}
 
 	@Override
-	public Expression rewrite(FreeIdentifier ident) {
-		return ident;
-	}
-
-	@Override
-	public BoundIdentDecl rewrite(BoundIdentDecl decl) {
-		return decl;
-	}
-
-	@Override
 	public Expression rewrite(BoundIdentifier ident) {
 		final int nbOfInternallyBound = getBindingDepth();
 		final int index = ident.getBoundIndex();
 		// Locally bound identifier ?
-		if (index < nbOfInternallyBound)
-			return ident;
+		if (index < nbOfInternallyBound) {
+			return super.rewrite(ident);
+		}
 		// Substituted identifier ?
 		final int rootIndex = index - nbOfInternallyBound;
 		if (rootIndex < substitutes.length) {
@@ -104,12 +94,11 @@ public class BoundIdentDeclRemover extends Substitution implements
 		// Externally bound identifier
 		final int newIndex = index - substitutes.length + newDecls.size();
 		if (newIndex == index) {
-			return ident;
+			return super.rewrite(ident);
+		} else {
+			return ff.makeBoundIdentifier(newIndex, ident.getSourceLocation(),
+					ident.getType());
 		}
-		return ff.makeBoundIdentifier(
-				newIndex, 
-				ident.getSourceLocation(),
-				ident.getType());
 	}
 
 	public List<BoundIdentDecl> getNewDeclarations() {

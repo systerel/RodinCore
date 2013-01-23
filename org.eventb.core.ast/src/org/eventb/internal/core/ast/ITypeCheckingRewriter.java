@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,13 @@ import org.eventb.core.ast.UnaryPredicate;
  * predicates, we instead pass part of the internal data-structures that hold
  * the already rewritten children, rather than a complete node.
  * </p>
+ * <p>
+ * Implementation note: All rewrite methods have the post-condition that the
+ * returned formula has been built with the formula factory of this rewriter.
+ * For internal node, this happens automatically. However, for leaf nodes, care
+ * must be taken to build a copy of the node if it does not carry yet the right
+ * formula factory.
+ * </p>
  * 
  * @author Laurent Voisin
  * @since 2.6
@@ -74,6 +81,10 @@ public interface ITypeCheckingRewriter {
 
 	void leavingQuantifier(int nbOfBoundIdentDecls);
 
+	/**
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
+	 */
 	BoundIdentDecl rewrite(BoundIdentDecl src);
 
 	Expression rewrite(AssociativeExpression src,
@@ -81,8 +92,16 @@ public interface ITypeCheckingRewriter {
 
 	Predicate rewrite(AssociativePredicate src, AssociativePredicate pred);
 
+	/**
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
+	 */
 	Predicate rewrite(PredicateVariable src);
 
+	/**
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
+	 */
 	Expression rewrite(AtomicExpression src);
 
 	Expression rewrite(BinaryExpression src, BinaryExpression expr);
@@ -91,12 +110,28 @@ public interface ITypeCheckingRewriter {
 
 	Expression rewrite(BoolExpression src, BoolExpression expr);
 
+	/**
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
+	 */
 	Expression rewrite(BoundIdentifier src);
 
+	/**
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
+	 */
 	Expression rewrite(FreeIdentifier src);
 
+	/**
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
+	 */
 	Expression rewrite(IntegerLiteral src);
 
+	/**
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
+	 */
 	Predicate rewrite(LiteralPredicate src);
 
 	Predicate rewrite(MultiplePredicate src, MultiplePredicate pred);
@@ -107,6 +142,10 @@ public interface ITypeCheckingRewriter {
 
 	Predicate rewrite(RelationalPredicate src, RelationalPredicate pred);
 
+	/*
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
+	 */
 	Expression rewrite(SetExtension src, SetExtension expr);
 
 	Expression rewrite(SetExtension src, AtomicExpression expr);
@@ -119,9 +158,17 @@ public interface ITypeCheckingRewriter {
 
 	Predicate rewrite(UnaryPredicate src, UnaryPredicate pred);
 
+	/**
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
+	 */
 	Expression rewrite(ExtendedExpression src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds);
 
+	/**
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
+	 */
 	Predicate rewrite(ExtendedPredicate src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds);
 
