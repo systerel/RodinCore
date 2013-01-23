@@ -29,7 +29,6 @@ import static org.eventb.core.ast.extension.StandardGroup.BRACE_SETS;
 import static org.eventb.core.ast.extension.StandardGroup.QUANTIFICATION;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -359,7 +358,7 @@ public class QuantifiedExpression extends Expression {
 				expr.hashCode())
 		);
 		
-		this.quantifiedIdentifiers = boundIdentifiers.clone();
+		this.quantifiedIdentifiers = boundIdentifiers;
 		this.expr = expr;
 		this.pred = pred;
 
@@ -370,30 +369,7 @@ public class QuantifiedExpression extends Expression {
 		// Must be after synthesizeType()
 		this.form = filterForm(form);
 	}
-	
-	protected QuantifiedExpression(Expression expr, Predicate pred,
-			Collection<BoundIdentDecl> boundIdentifiers, int tag,
-			SourceLocation location, Form form, FormulaFactory factory) {
 
-		super(tag, location, combineHashCodes(
-				boundIdentifiers.size(), 
-				pred.hashCode(),
-				expr.hashCode())
-		);
-
-		BoundIdentDecl[] model = new BoundIdentDecl[boundIdentifiers.size()];
-		this.quantifiedIdentifiers = boundIdentifiers.toArray(model);
-		this.expr = expr;
-		this.pred = pred;
-
-		checkPreconditions(form);
-		setPredicateVariableCache(this.pred, this.expr);
-		synthesizeType(factory, null);
-
-		// Must be after synthesizeType()
-		this.form = filterForm(form);
-	}
-	
 	// Common initialization.
 	private void checkPreconditions(Form inputForm) {
 		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;

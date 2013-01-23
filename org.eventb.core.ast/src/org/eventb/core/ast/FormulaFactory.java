@@ -72,6 +72,8 @@ import org.eventb.internal.core.upgrade.VersionUpgrader;
  */
 public class FormulaFactory {
 
+	private static final Expression[] NO_EXPRESSIONS = new Expression[0];
+
 	private static final Map<IFormulaExtension, Integer> ALL_EXTENSIONS = Collections
 			.synchronizedMap(new HashMap<IFormulaExtension, Integer>());
 
@@ -405,7 +407,7 @@ public class FormulaFactory {
 	 */
 	public AssociativeExpression makeAssociativeExpression(
 			int tag, Expression[] children, SourceLocation location) {
-		return new AssociativeExpression(children, tag, location, this);
+		return new AssociativeExpression(children.clone(), tag, location, this);
 	}
 
 	/**
@@ -424,7 +426,7 @@ public class FormulaFactory {
 	 */
 	public AssociativeExpression makeAssociativeExpression(
 			int tag, Collection<Expression> children, SourceLocation location) {
-		return new AssociativeExpression(children, tag, location, this);
+		return new AssociativeExpression(toExprArray(children), tag, location, this);
 	}
 	
 	/**
@@ -443,7 +445,8 @@ public class FormulaFactory {
 	 */
 	public AssociativePredicate makeAssociativePredicate(
 			int tag, Collection<Predicate> predicates, SourceLocation location) {
-		return new AssociativePredicate(predicates, tag, location, this);
+		return new AssociativePredicate(toPredArray(predicates), tag, location,
+				this);
 	}
 
 	/**
@@ -462,7 +465,7 @@ public class FormulaFactory {
 	 */
 	public AssociativePredicate makeAssociativePredicate(
 			int tag, Predicate[] predicates, SourceLocation location) {
-		return new AssociativePredicate(predicates, tag, location, this);
+		return new AssociativePredicate(predicates.clone(), tag, location, this);
 	}
 
 	/**
@@ -937,8 +940,8 @@ public class FormulaFactory {
 	public QuantifiedExpression makeQuantifiedExpression(int tag,
 			BoundIdentDecl[] boundIdentifiers, Predicate pred, Expression expr,
 			SourceLocation location, QuantifiedExpression.Form form) {
-		return new QuantifiedExpression(expr, pred, boundIdentifiers, tag,
-				location, form, this);
+		return new QuantifiedExpression(expr, pred, boundIdentifiers.clone(),
+				tag, location, form, this);
 	}
 
 	/**
@@ -963,8 +966,8 @@ public class FormulaFactory {
 	public QuantifiedExpression makeQuantifiedExpression(int tag,
 			Collection<BoundIdentDecl> boundIdentifiers, Predicate pred, Expression expr,
 			SourceLocation location, QuantifiedExpression.Form form) {
-		return new QuantifiedExpression(expr, pred, boundIdentifiers, tag,
-				location, form, this);
+		return new QuantifiedExpression(expr, pred,
+				toBIDArray(boundIdentifiers), tag, location, form, this);
 	}
 
 	/**
@@ -982,8 +985,10 @@ public class FormulaFactory {
 	 * @return a new quantified predicate
 	 */
 	public QuantifiedPredicate makeQuantifiedPredicate(int tag,
-			BoundIdentDecl[] boundIdentifiers, Predicate pred, SourceLocation location) {
-		return new QuantifiedPredicate(pred, boundIdentifiers, tag, location, this);
+			BoundIdentDecl[] boundIdentifiers, Predicate pred,
+			SourceLocation location) {
+		return new QuantifiedPredicate(pred, boundIdentifiers.clone(), tag,
+				location, this);
 	}
 
 	/**
@@ -1001,8 +1006,10 @@ public class FormulaFactory {
 	 * @return a new quantified predicate
 	 */
 	public QuantifiedPredicate makeQuantifiedPredicate(int tag,
-			Collection<BoundIdentDecl> boundIdentifiers, Predicate pred, SourceLocation location) {
-		return new QuantifiedPredicate(pred, boundIdentifiers, tag, location, this);
+			Collection<BoundIdentDecl> boundIdentifiers, Predicate pred,
+			SourceLocation location) {
+		return new QuantifiedPredicate(pred, toBIDArray(boundIdentifiers), tag,
+				location, this);
 	}
 	
 	/**
@@ -1037,8 +1044,10 @@ public class FormulaFactory {
 	 *            the location of the set extension
 	 * @return a new set extension
 	 */
-	public SetExtension makeSetExtension(Expression expression, SourceLocation location) {
-		return new SetExtension(expression, location, this);
+	public SetExtension makeSetExtension(Expression expression,
+			SourceLocation location) {
+		return new SetExtension(new Expression[] { expression }, location,
+				this, null);
 	}
 
 	/**
@@ -1052,8 +1061,9 @@ public class FormulaFactory {
 	 *            the location of the set extension
 	 * @return a new set extension
 	 */
-	public SetExtension makeSetExtension(Expression[] expressions, SourceLocation location) {
-		return new SetExtension(expressions, location, this);
+	public SetExtension makeSetExtension(Expression[] expressions,
+			SourceLocation location) {
+		return new SetExtension(expressions.clone(), location, this, null);
 	}
 
 	/**
@@ -1073,7 +1083,7 @@ public class FormulaFactory {
 	 * @since 2.6
 	 */
 	public SetExtension makeEmptySetExtension(Type type, SourceLocation location) {
-		return new SetExtension(type, location, this);
+		return new SetExtension(NO_EXPRESSIONS, location, this, type);
 	}
 
 	/**
@@ -1088,8 +1098,9 @@ public class FormulaFactory {
 	 *            the location of the set extension
 	 * @return a new set extension
 	 */
-	public SetExtension makeSetExtension(Collection<Expression> expressions, SourceLocation location) {
-		return new SetExtension(expressions, location, this);
+	public SetExtension makeSetExtension(Collection<Expression> expressions,
+			SourceLocation location) {
+		return new SetExtension(toExprArray(expressions), location, this, null);
 	}
 
 	/**
@@ -1174,7 +1185,7 @@ public class FormulaFactory {
 	 */
 	public MultiplePredicate makeMultiplePredicate(int tag,
 			Expression[] children, SourceLocation location) {
-		return new MultiplePredicate(children, tag, location, this);
+		return new MultiplePredicate(children.clone(), tag, location, this);
 	}
 
 	/**
@@ -1194,7 +1205,7 @@ public class FormulaFactory {
 	 */
 	public MultiplePredicate makeMultiplePredicate(int tag,
 			Collection<Expression> children, SourceLocation location) {
-		return new MultiplePredicate(children, tag, location, this);
+		return new MultiplePredicate(toExprArray(children), tag, location, this);
 	}
 
 	/**
