@@ -20,6 +20,7 @@ import static org.eventb.core.ast.QuantifiedHelper.getBoundIdentsAbove;
 import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.extension.StandardGroup.INFIX_SUBST;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureSameLength;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -133,15 +134,11 @@ public class BecomesSuchThat extends Assignment {
 		super(Formula.BECOMES_SUCH_THAT, location, condition.hashCode(), assignedIdents);
 		this.condition = condition;
 		this.primedIdents = primedIdents;
-		checkPreconditions();
+		ensureSameLength(assignedIdents, primedIdents);
 		setPredicateVariableCache(this.condition);
 		synthesizeType(ff);
 	}
 
-	private void checkPreconditions() {
-		assert this.primedIdents.length == assignedIdents.length;
-	}
-	
 	@Override
 	protected void synthesizeType(FormulaFactory ff) {
 		final int length = assignedIdents.length;

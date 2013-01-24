@@ -21,9 +21,11 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.ITypeCheckResult;
@@ -61,6 +63,9 @@ public abstract class AbstractTests {
 	// Utility arrays for building extended formulas
 	public static final Expression[] NO_EXPRS = new Expression[0];
 	public static final Predicate[] NO_PREDS = new Predicate[0];
+
+	public static final FreeIdentifier[] NO_IDS = new FreeIdentifier[0];
+	public static final BoundIdentDecl[] NO_BIDS = new BoundIdentDecl[0];
 
 	protected static final IntegerType INT_TYPE = ff.makeIntegerType();
 	private static final IDatatypeExtension LIST_TYPE = new IDatatypeExtension() {

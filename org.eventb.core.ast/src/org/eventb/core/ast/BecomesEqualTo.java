@@ -15,6 +15,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.INFIX_SUBST;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureSameLength;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -103,16 +104,11 @@ public class BecomesEqualTo extends Assignment {
 			SourceLocation location, FormulaFactory ff) {
 		super(BECOMES_EQUAL_TO, location, combineHashCodes(values), assignedIdents);
 		this.values = values;
-		checkPreconditions();
+		ensureSameLength(assignedIdents, values);
 		setPredicateVariableCache(this.values);
 		synthesizeType(ff);
 	}
 
-	private void checkPreconditions() {
-		assert assignedIdents.length != 0;
-		assert assignedIdents.length == values.length;
-	}
-	
 	@Override
 	protected void synthesizeType(FormulaFactory ff) {
 		final int length = assignedIdents.length;

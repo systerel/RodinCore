@@ -42,4 +42,18 @@ public class FormulaChecks {
 		}
 	}
 
+	public static void ensureMinLength(Object[] array, int minLength) {
+		if (array.length < minLength) {
+			throw new IllegalArgumentException("Array of length "
+					+ array.length + " is too small (at least " + minLength
+					+ " required)");
+		}
+	}
+
+	public static void ensureSameLength(Object[] left, Object[] right) {
+		if (left.length != right.length) {
+			throw new IllegalArgumentException("Mismatched sizes: "
+					+ left.length + " vs " + right.length);
+		}
+	}
 }

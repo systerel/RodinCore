@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.ast.FormulaChecks.ensureMinLength;
+
 import java.util.Arrays;
 
 import org.eventb.internal.core.ast.FindingAccumulator;
@@ -51,8 +53,8 @@ public abstract class Assignment extends Formula<Assignment> {
 	 */
 	protected Assignment(int tag, SourceLocation location, int hashCode, 
 			FreeIdentifier[] assignedIdents) {
-		
 		super(tag, location, combineHashCodes(combineHashCodes(assignedIdents), hashCode));
+		ensureMinLength(assignedIdents, 1);
 		this.assignedIdents = assignedIdents;
 	}
 
