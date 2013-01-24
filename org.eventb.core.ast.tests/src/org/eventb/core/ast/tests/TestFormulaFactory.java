@@ -11,17 +11,23 @@
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.FormulaFactory.getInstance;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
+import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
+import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mList;
+import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.TestGenParser.MONEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
@@ -47,6 +53,16 @@ public class TestFormulaFactory extends AbstractTests {
 
 	private static final GivenType tS = ff.makeGivenType("S");
 	private static final GivenType tT = ff.makeGivenType("T");
+
+	private static final FreeIdentifier iS = mFreeIdentifier("s", POW(tS));
+
+	private static final BoundIdentDecl dS = mBoundIdentDecl("s'", POW(tS));
+	private static final BoundIdentDecl dT = mBoundIdentDecl("t'", POW(tT));
+
+	private static final Expression eS = mEmptySet(POW(tS));
+	private static final Expression eT = mEmptySet(POW(tT));
+
+	private static final Predicate P = mLiteralPredicate();
 
 	private static final String BAD_NAME = "bad-name";
 
@@ -133,6 +149,120 @@ public class TestFormulaFactory extends AbstractTests {
 		final Type[] typeParams = { tS };
 		assertArrayProtected(LIST_FAC.makeParametricType(typeParams, EXT_LIST),
 				typeParams);
+	}
+
+	/*----------------------------------------------------------------
+	 *  CONSTRUCTION OF ASSIGNMENT OBJECTS
+	 *----------------------------------------------------------------*/
+
+	@Test(expected = NullPointerException.class)
+	public void becomesEqualTo_singleNullLHS() {
+		ff.makeBecomesEqualTo(null, eS, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesEqualTo_singleNullRHS() {
+		ff.makeBecomesEqualTo(iS, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void becomesEqualTo_emptyArrays() {
+		ff.makeBecomesEqualTo(NO_IDS, NO_EXPRS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void becomesEqualTo_DifferentSizes() {
+		ff.makeBecomesEqualTo(mList(iS), mList(eS, eT), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesEqualTo_NullLHS() {
+		ff.makeBecomesEqualTo(null, mList(eS), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesEqualTo_NullInLHS() {
+		final FreeIdentifier[] left = { null };
+		ff.makeBecomesEqualTo(left, mList(eS), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesEqualTo_NullRHS() {
+		ff.makeBecomesEqualTo(mList(iS), null, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesEqualTo_NullInRHS() {
+		final Expression[] right = { null };
+		ff.makeBecomesEqualTo(mList(iS), right, null);
+	}
+
+	@Test
+	public void becomesEqualTo_ArrayParameterLHS() {
+		final FreeIdentifier[] idents = { iS };
+		assertArrayProtected(ff.makeBecomesEqualTo(idents, mList(eS), null),
+				idents);
+	}
+
+	@Test
+	public void becomesEqualTo_ArrayParameterRHS() {
+		final Expression[] exprs = { eS };
+		assertArrayProtected(ff.makeBecomesEqualTo(mList(iS), exprs, null),
+				exprs);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesMemberOf_NullLHS() {
+		ff.makeBecomesMemberOf(null, eS, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesMemberOf_NullRHS() {
+		ff.makeBecomesMemberOf(iS, null, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesSuchThat_singleNullLHS() {
+		ff.makeBecomesSuchThat(null, dS, P, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesSuchThat_singleNullRHS() {
+		ff.makeBecomesSuchThat(iS, dS, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void becomesSuchThat_emptyArrays() {
+		ff.makeBecomesSuchThat(NO_IDS, NO_BIDS, P, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void becomesSuchThat_DifferentSizes() {
+		ff.makeBecomesSuchThat(mList(iS), mList(dS, dT), P, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesSuchThat_NullLHS() {
+		ff.makeBecomesSuchThat(null, mList(dS), P, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesSuchThat_NullInLHS() {
+		final FreeIdentifier[] left = { null };
+		ff.makeBecomesSuchThat(left, mList(dS), P, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void becomesSuchThat_NullRHS() {
+		ff.makeBecomesSuchThat(mList(iS), mList(dS), null, null);
+	}
+
+	@Test
+	public void becomesSuchThat_ArrayParameterLHS() {
+		final FreeIdentifier[] idents = { iS };
+		assertArrayProtected(
+				ff.makeBecomesSuchThat(idents, mList(dS), P, null),//
+				idents);
 	}
 
 	/**
