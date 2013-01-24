@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static java.util.Collections.emptyMap;
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.internal.core.ast.FactoryHelper.toBIDArray;
 import static org.eventb.internal.core.ast.FactoryHelper.toExprArray;
@@ -35,7 +36,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IGrammar;
 import org.eventb.core.ast.extension.IOperatorGroup;
@@ -128,11 +131,11 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Return an instance of a formula factory supporting the given extensions
+	 * Returns an instance of a formula factory supporting the given extensions
 	 * (and only them) in addition to the regular event-B mathematical language.
 	 * 
 	 * @param extensions
-	 *            mathematical extensions to support
+	 *            set of mathematical extensions to support
 	 * @return a formula factory supporting the given extensions
 	 * @since 2.0
 	 */
@@ -164,11 +167,11 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Return an instance of a formula factory supporting the given extensions
+	 * Returns an instance of a formula factory supporting the given extensions
 	 * (and only them) in addition to the regular event-B mathematical language.
 	 * 
 	 * @param extensions
-	 *            mathematical extensions to support
+	 *            the mathematical extensions to support
 	 * @return a formula factory supporting the given extensions
 	 * @since 2.3
 	 */
@@ -205,18 +208,17 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Makes a new formula factory that recognizes extensions of this factory
-	 * plus given extensions.
-	 * 
+	 * Returns a new formula factory that supports the extensions of this
+	 * factory, together with the given extensions.
 	 * <p>
-	 * Adding already recognized extensions has no effect. The resulting
-	 * recognized extensions are a union of known extensions and given
+	 * Adding already supported extensions has no effect. The resulting
+	 * supported extensions are a union of known extensions and given
 	 * extensions.
 	 * </p>
 	 * 
 	 * @param addedExtns
 	 *            a set of extensions to add
-	 * @return a new factory
+	 * @return a new factory supporting additional extensions
 	 * @since 2.0
 	 */
 	public FormulaFactory withExtensions(Set<IFormulaExtension> addedExtns) {
@@ -227,15 +229,16 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Computes extensions out of the given data type.
+	 * Returns a new datatype descriptor from the given datatype description.
 	 * <p>
-	 * It is possible to have the data type make references to other parametric
-	 * types (through argument types or return types) provided that these other
-	 * types are known by this factory.
+	 * A data type can make reference to other parametric types (through
+	 * argument types or return types) provided that these other types are
+	 * already supported by this factory.
 	 * </p>
-	 * <p>
 	 * 
-	 * </p>
+	 * @param extension
+	 *            a description of the datatype to build
+	 * @return a new datatype descriptor
 	 * @since 2.0
 	 */
 	public synchronized IDatatype makeDatatype(IDatatypeExtension extension) {
@@ -249,15 +252,12 @@ public class FormulaFactory {
 	
 	// for V1_INSTANCE only
 	private FormulaFactory(BMath grammar) {
-		this.extensions = Collections.<Integer, IFormulaExtension>emptyMap();
+		this.extensions = emptyMap();
 		this.grammar = grammar;
 	}
 	
 	// for all V2 instances
-	/**
-	 * @since 2.0
-	 */
-	protected FormulaFactory(Map<Integer, IFormulaExtension> extMap) {
+	private FormulaFactory(Map<Integer, IFormulaExtension> extMap) {
 		this.extensions = extMap;
 		this.grammar = new ExtendedGrammar(
 				new LinkedHashSet<IFormulaExtension>(extMap.values()));
@@ -302,7 +302,28 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns a new extended expression.
+	 * 
+	 * @param extension
+	 *            the expression extension
+	 * @param expressions
+	 *            the children expressions
+	 * @param predicates
+	 *            the children predicates
+	 * @param location
+	 *            the source location or <code>null</code>
+	 * @param type
+	 *            the type of the extended expression or <code>null</code>
+	 * @return a new extended expression
+	 * @throws IllegalArgumentException
+	 *             if the extension is not supported by this factory
+	 * @throws IllegalArgumentException
+	 *             if the preconditions of the extension on children are not
+	 *             verified
+	 * @throws IllegalArgumentException
+	 *             if the given type is not valid
 	 * @since 2.0
+	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
 	public ExtendedExpression makeExtendedExpression(
 			IExpressionExtension extension, Expression[] expressions,
@@ -313,7 +334,24 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns a new extended expression.
+	 * 
+	 * @param extension
+	 *            the expression extension
+	 * @param expressions
+	 *            the children expressions
+	 * @param predicates
+	 *            the children predicates
+	 * @param location
+	 *            the source location or <code>null</code>
+	 * @return a new extended expression
+	 * @throws IllegalArgumentException
+	 *             if the extension is not supported by this factory
+	 * @throws IllegalArgumentException
+	 *             if the preconditions of the extension on children are not
+	 *             verified
 	 * @since 2.0
+	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
 	public ExtendedExpression makeExtendedExpression(
 			IExpressionExtension extension, Expression[] expressions,
@@ -323,7 +361,28 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns a new extended expression.
+	 * 
+	 * @param extension
+	 *            the expression extension
+	 * @param expressions
+	 *            the children expressions
+	 * @param predicates
+	 *            the children predicates
+	 * @param location
+	 *            the source location or <code>null</code>
+	 * @param type
+	 *            the type of the extended expression or <code>null</code>
+	 * @return a new extended expression
+	 * @throws IllegalArgumentException
+	 *             if the extension is not supported by this factory
+	 * @throws IllegalArgumentException
+	 *             if the preconditions of the extension on children are not
+	 *             verified
+	 * @throws IllegalArgumentException
+	 *             if the given type is not valid
 	 * @since 3.0
+	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
 	public ExtendedExpression makeExtendedExpression(
 			IExpressionExtension extension, Collection<Expression> expressions,
@@ -334,7 +393,24 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns a new extended expression.
+	 * 
+	 * @param extension
+	 *            the expression extension
+	 * @param expressions
+	 *            the children expressions
+	 * @param predicates
+	 *            the children predicates
+	 * @param location
+	 *            the source location or <code>null</code>
+	 * @return a new extended expression
+	 * @throws IllegalArgumentException
+	 *             if the extension is not supported by this factory
+	 * @throws IllegalArgumentException
+	 *             if the preconditions of the extension on children are not
+	 *             verified
 	 * @since 2.0
+	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
 	public ExtendedExpression makeExtendedExpression(
 			IExpressionExtension extension, Collection<Expression> expressions,
@@ -344,7 +420,24 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns a new extended predicate.
+	 * 
+	 * @param extension
+	 *            the predicate extension
+	 * @param expressions
+	 *            the children expressions
+	 * @param predicates
+	 *            the children predicates
+	 * @param location
+	 *            the source location or <code>null</code>
+	 * @return a new extended expression
+	 * @throws IllegalArgumentException
+	 *             if the extension is not supported by this factory
+	 * @throws IllegalArgumentException
+	 *             if the preconditions of the extension on children are not
+	 *             verified
 	 * @since 2.0
+	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
 	public ExtendedPredicate makeExtendedPredicate(
 			IPredicateExtension extension, Expression[] expressions,
@@ -355,7 +448,24 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns a new extended predicate.
+	 * 
+	 * @param extension
+	 *            the predicate extension
+	 * @param expressions
+	 *            the children expressions
+	 * @param predicates
+	 *            the children predicates
+	 * @param location
+	 *            the source location or <code>null</code>
+	 * @return a new extended expression
+	 * @throws IllegalArgumentException
+	 *             if the extension is not supported by this factory
+	 * @throws IllegalArgumentException
+	 *             if the preconditions of the extension on children are not
+	 *             verified
 	 * @since 2.0
+	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
 	public ExtendedPredicate makeExtendedPredicate(
 			IPredicateExtension extension, Collection<Expression> expressions,
@@ -366,9 +476,11 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns the conditional expression extension.
+	 * Returns the conditional expression extension. This extension takes one
+	 * predicate and two expression children. Its value is the first expression
+	 * if the predicate holds, the second expression otherwise.
 	 * 
-	 * @return an expression extension
+	 * @return the expression extension of the <code>COND</code> operator
 	 * @since 2.0
 	 */
 	public static IExpressionExtension getCond() {
@@ -376,6 +488,9 @@ public class FormulaFactory {
 	}
 
 	/**
+	 * Returns the integer tag corresponding to the given formula extension.
+	 * 
+	 * @return the tag associated to the given extension
 	 * @since 2.0
 	 */
 	public static int getTag(IFormulaExtension extension) {
@@ -383,6 +498,9 @@ public class FormulaFactory {
 	}
 	
 	/**
+	 * Returns the formula extension corresponding to the given tag.
+	 * 
+	 * @return the extension associated to the given tag
 	 * @since 2.0
 	 */
 	public IFormulaExtension getExtension(int tag) {
@@ -391,6 +509,8 @@ public class FormulaFactory {
 	
 	/**
 	 * Returns all the extensions of the current formula factory.
+	 * 
+	 * @return all extensions supported by this factory
 	 * @since 2.0
 	 */
 	public Set<IFormulaExtension> getExtensions() {
@@ -402,17 +522,28 @@ public class FormulaFactory {
 	}
 	
 	/**
-	 * Returns a new associative expression
-	 * <p>
-	 * {BUNION, BINTER, BCOMP, FCOMP, OVR, PLUS, MUL}
+	 * Returns a new associative expression. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#BUNION} set union</li>
+	 * <li>{@link Formula#BINTER} set intersection</li>
+	 * <li>{@link Formula#BCOMP} backward composition of relations</li>
+	 * <li>{@link Formula#FCOMP} forward composition of relations</li>
+	 * <li>{@link Formula#OVR} functional overriding</li>
+	 * <li>{@link Formula#PLUS} addition</li>
+	 * <li>{@link Formula#MUL} multiplication</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the associative expression
 	 * @param children
-	 *            the children of the associative expression
+	 *            the children of the associative expression (at least two)
 	 * @param location
-	 *            the location of the associative expression
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new associative expression
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a valid associative expression tag
+	 * @throws IllegalArgumentException
+	 *             if the children collection contains less than two elements
 	 */
 	public AssociativeExpression makeAssociativeExpression(
 			int tag, Expression[] children, SourceLocation location) {
@@ -420,18 +551,28 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new associative expression
-	 * <p>
-	 * {BUNION, BINTER, BCOMP, FCOMP, OVR, PLUS, MUL}
-	 * </p>
+	 * Returns a new associative expression. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#BUNION} set union</li>
+	 * <li>{@link Formula#BINTER} set intersection</li>
+	 * <li>{@link Formula#BCOMP} backward composition of relations</li>
+	 * <li>{@link Formula#FCOMP} forward composition of relations</li>
+	 * <li>{@link Formula#OVR} functional overriding</li>
+	 * <li>{@link Formula#PLUS} addition</li>
+	 * <li>{@link Formula#MUL} multiplication</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the associative expression
 	 * @param children
-	 *            the children of the associative expression
+	 *            the children of the associative expression (at least two)
 	 * @param location
-	 *            the location of the associative expression
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new associative expression
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a valid associative expression tag
+	 * @throws IllegalArgumentException
+	 *             if the children collection contains less than two elements
 	 */
 	public AssociativeExpression makeAssociativeExpression(
 			int tag, Collection<Expression> children, SourceLocation location) {
@@ -439,18 +580,23 @@ public class FormulaFactory {
 	}
 	
 	/**
-	 * Returns a new associative predicate
-	 * <p>
-	 * {LAND, LOR}
-	 * </p>
+	 * Returns a new associative predicate. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#LAND} conjunction</li>
+	 * <li>{@link Formula#LOR} disjunction</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the associative predicate
 	 * @param predicates
-	 *            the children of the associative predicate
+	 *            the children of the associative predicate (at least two)
 	 * @param location
-	 *            the location of the associative predicate
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new associative predicate
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a valid associative predicate tag
+	 * @throws IllegalArgumentException
+	 *             if the children collection contains less than two elements
 	 */
 	public AssociativePredicate makeAssociativePredicate(
 			int tag, Collection<Predicate> predicates, SourceLocation location) {
@@ -459,18 +605,23 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new associative predicate
-	 * <p>
-	 * {LAND, LOR}
-	 * </p>
+	 * Returns a new associative predicate. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#LAND} conjunction</li>
+	 * <li>{@link Formula#LOR} disjunction</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the associative predicate
 	 * @param predicates
-	 *            the children of the associative predicate
+	 *            the children of the associative predicate (at least two)
 	 * @param location
-	 *            the location of the associative predicate
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new associative predicate
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a valid associative predicate tag
+	 * @throws IllegalArgumentException
+	 *             if the children collection contains less than two elements
 	 */
 	public AssociativePredicate makeAssociativePredicate(
 			int tag, Predicate[] predicates, SourceLocation location) {
@@ -478,16 +629,32 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new atomic expression
+	 * Returns a new atomic expression. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#INTEGER} the set of integers</li>
+	 * <li>{@link Formula#NATURAL} the set of natural numbers</li>
+	 * <li>{@link Formula#NATURAL1} the set of non-null natural numbers</li>
+	 * <li>{@link Formula#BOOL} the set of Boolean values</li>
+	 * <li>{@link Formula#TRUE} the Boolean value <code>TRUE</code></li>
+	 * <li>{@link Formula#FALSE} the Boolean value <code>FALSE</code></li>
+	 * <li>{@link Formula#EMPTYSET} the empty set</li>
+	 * <li>{@link Formula#KPRED} the predecessor relation on integers</li>
+	 * <li>{@link Formula#KSUCC} the successor relation on integers</li>
+	 * <li>{@link Formula#KPRJ1_GEN} the generic first projection</li>
+	 * <li>{@link Formula#KPRJ2_GEN} the generic second projection</li>
+	 * <li>{@link Formula#KID_GEN} the generic identity relation</li>
+	 * </ul>
 	 * <p>
-	 * {INTEGER, NATURAL, NATURAL1, BOOL, TRUE, FALSE, EMPTYSET, KPRED, KSUCC,
-	 * KPRJ1_GEN, KPRJ2_GEN, KID_GEN}
+	 * The last three tags are not supported by a V1 factory.
+	 * </p>
 	 * 
 	 * @param tag
 	 *            the tag of the atomic expression
 	 * @param location
-	 *            the location of the atomic expression
+	 *            the source location or <code>null</code>
 	 * @return a new atomic expression
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a valid atomic expression tag
 	 */
 	public AtomicExpression makeAtomicExpression(int tag,
 			SourceLocation location) {
@@ -495,7 +662,21 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new typed atomic expression.
+	 * Returns a new atomic expression. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#INTEGER} the set of integers</li>
+	 * <li>{@link Formula#NATURAL} the set of natural numbers</li>
+	 * <li>{@link Formula#NATURAL1} the set of non-null natural numbers</li>
+	 * <li>{@link Formula#BOOL} the set of Boolean values</li>
+	 * <li>{@link Formula#TRUE} the Boolean value <code>TRUE</code></li>
+	 * <li>{@link Formula#FALSE} the Boolean value <code>FALSE</code></li>
+	 * <li>{@link Formula#EMPTYSET} the empty set</li>
+	 * <li>{@link Formula#KPRED} the predecessor relation on integers</li>
+	 * <li>{@link Formula#KSUCC} the successor relation on integers</li>
+	 * <li>{@link Formula#KPRJ1_GEN} the generic first projection</li>
+	 * <li>{@link Formula#KPRJ2_GEN} the generic second projection</li>
+	 * <li>{@link Formula#KID_GEN} the generic identity relation</li>
+	 * </ul>
 	 * <p>
 	 * The allowed type patterns are given below for each tag:
 	 * <ul>
@@ -509,15 +690,20 @@ public class FormulaFactory {
 	 * <li><code>KPRJ2_GEN</code>: <code>ℙ(alpha × beta × beta)</code></li>
 	 * <li><code>KID_GEN</code>: <code>ℙ(alpha × alpha)</code></li>
 	 * </ul>
+	 * </p>
+	 * <p>
+	 * The last three tags are not supported by a V1 factory.
+	 * </p>
 	 * 
 	 * @param tag
 	 *            the tag of the atomic expression
 	 * @param location
-	 *            the location of the atomic expression
-	 * @param type
-	 *            type of this expression. Must be <code>null</code> or
-	 *            compatible with the tag
+	 *            the source location or <code>null</code>
 	 * @return a new atomic expression
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a valid atomic expression tag
+	 * @throws IllegalArgumentException
+	 *             if the given type is not valid
 	 * @since 1.0
 	 */
 	public AtomicExpression makeAtomicExpression(int tag,
@@ -532,9 +718,11 @@ public class FormulaFactory {
 	 *            the type of the empty set. Must be <code>null</code> or a
 	 *            power set type
 	 * @param location
-	 *            the location of the empty set
+	 *            the source location or <code>null</code>
 	 * 
 	 * @return a new empty set expression
+	 * @throws IllegalArgumentException
+	 *             if the given type is not valid
 	 */
 	public AtomicExpression makeEmptySet(Type type, SourceLocation location) {
 		return new AtomicExpression(Formula.EMPTYSET, location, type, this);
@@ -542,14 +730,13 @@ public class FormulaFactory {
 
 	/**
 	 * Returns a new "becomes equal to" assignment.
-	 * <p>
 	 * 
 	 * @param ident
 	 *            identifier which is assigned to (left-hand side)
 	 * @param value
 	 *            after-value for this identifier (right-hand side)
 	 * @param location
-	 *            the location of the assignment
+	 *            the source location or <code>null</code>
 	 * 
 	 * @return a new "becomes equal to" assignment
 	 */
@@ -561,15 +748,18 @@ public class FormulaFactory {
 
 	/**
 	 * Returns a new "becomes equal to" assignment.
-	 * <p>
-	 * @param idents
-	 *            array of identifier which are assigned to (left-hand side)
-	 * @param values
-	 *            array of after-values for these identifiers (right-hand side)
-	 * @param location
-	 *            the location of the assignment
 	 * 
+	 * @param idents
+	 *            the identifiers which are assigned to (left-hand side)
+	 * @param values
+	 *            the after-values for these identifiers (right-hand side)
+	 * @param location
+	 *            the source location or <code>null</code>
 	 * @return a new "becomes equal to" assignment
+	 * @throws IllegalArgumentException
+	 *             if there is no assigned identifier
+	 * @throws IllegalArgumentException
+	 *             if the number of identifiers and after-values are not equal
 	 */
 	public BecomesEqualTo makeBecomesEqualTo(FreeIdentifier[] idents,
 			Expression[] values, SourceLocation location) {
@@ -579,15 +769,18 @@ public class FormulaFactory {
 
 	/**
 	 * Returns a new "becomes equal to" assignment.
-	 * <p>
-	 * @param idents
-	 *            list of identifier which are assigned to (left-hand side)
-	 * @param values
-	 *            list of after-values for these identifiers (right-hand side)
-	 * @param location
-	 *            the location of the assignment
 	 * 
+	 * @param idents
+	 *            the identifiers which are assigned to (left-hand side)
+	 * @param values
+	 *            the after-values for these identifiers (right-hand side)
+	 * @param location
+	 *            the source location or <code>null</code>
 	 * @return a new "becomes equal to" assignment
+	 * @throws IllegalArgumentException
+	 *             if there is no assigned identifier
+	 * @throws IllegalArgumentException
+	 *             if the number of identifiers and after-values are not equal
 	 */
 	public BecomesEqualTo makeBecomesEqualTo(Collection<FreeIdentifier> idents,
 			Collection<Expression> values, SourceLocation location) {
@@ -597,14 +790,13 @@ public class FormulaFactory {
 
 	/**
 	 * Returns a new "becomes member of" assignment.
-	 * <p>
+	 * 
 	 * @param ident
 	 *            identifier which is assigned to (left-hand side)
 	 * @param setExpr
 	 *            set to which the after-value belongs (right-hand side)
 	 * @param location
-	 *            the location of the assignment
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new "becomes member of" assignment
 	 */
 	public BecomesMemberOf makeBecomesMemberOf(FreeIdentifier ident,
@@ -614,16 +806,17 @@ public class FormulaFactory {
 
 	/**
 	 * Returns a new "becomes such that" assignment.
-	 * <p>
+	 * 
 	 * @param ident
 	 *            identifier which is assigned to (left-hand side)
 	 * @param primedIdent
-	 *            bound identifier declaration for primed identifier (after values)
+	 *            bound identifier declaration for primed identifier (after
+	 *            values)
 	 * @param condition
-	 *            condition on before and after values of this identifier (right-hand side)
+	 *            condition on before and after values of this identifier
+	 *            (right-hand side)
 	 * @param location
-	 *            the location of the assignment
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new "becomes such that" assignment
 	 */
 	public BecomesSuchThat makeBecomesSuchThat(FreeIdentifier ident,
@@ -635,17 +828,23 @@ public class FormulaFactory {
 
 	/**
 	 * Returns a new "becomes such that" assignment.
-	 * <p>
-	 * @param idents
-	 *            array of identifiers that are assigned to (left-hand side)
-	 * @param primedIdents
-	 *            array of bound identifier declarations for primed identifiers (after values)
-	 * @param condition
-	 *            condition on before and after values of these identifiers (right-hand side)
-	 * @param location
-	 *            the location of the assignment
 	 * 
+	 * @param idents
+	 *            identifiers that are assigned to (left-hand side)
+	 * @param primedIdents
+	 *            bound identifier declarations for primed identifiers (after
+	 *            values)
+	 * @param condition
+	 *            condition on before and after values of these identifiers
+	 *            (right-hand side)
+	 * @param location
+	 *            the source location or <code>null</code>
 	 * @return a new "becomes such that" assignment
+	 * @throws IllegalArgumentException
+	 *             if there is no assigned identifier
+	 * @throws IllegalArgumentException
+	 *             if the number of identifiers and primed identifiers are not
+	 *             equal
 	 */
 	public BecomesSuchThat makeBecomesSuchThat(FreeIdentifier[] idents,
 			BoundIdentDecl[] primedIdents, Predicate condition,
@@ -656,17 +855,23 @@ public class FormulaFactory {
 
 	/**
 	 * Returns a new "becomes such that" assignment.
-	 * <p>
-	 * @param idents
-	 *            list of identifiers that are assigned to (left-hand side)
-	 * @param primedIdents
-	 *            list of bound identifier declarations for primed identifiers (after values)
-	 * @param condition
-	 *            condition on before and after values of these identifiers (right-hand side)
-	 * @param location
-	 *            the location of the assignment
 	 * 
+	 * @param idents
+	 *            identifiers that are assigned to (left-hand side)
+	 * @param primedIdents
+	 *            bound identifier declarations for primed identifiers (after
+	 *            values)
+	 * @param condition
+	 *            condition on before and after values of these identifiers
+	 *            (right-hand side)
+	 * @param location
+	 *            the source location or <code>null</code>
 	 * @return a new "becomes such that" assignment
+	 * @throws IllegalArgumentException
+	 *             if there is no assigned identifier
+	 * @throws IllegalArgumentException
+	 *             if the number of identifiers and primed identifiers are not
+	 *             equal
 	 */
 	public BecomesSuchThat makeBecomesSuchThat(Collection<FreeIdentifier> idents,
 			Collection<BoundIdentDecl> primedIdents, Predicate condition,
@@ -676,21 +881,48 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new binary expression
-	 * <p>
-	 * {MAPSTO, REL, TREL, SREL, STREL, PFUN, TFUN, PINJ, TINJ, PSUR, TSUR,
-	 * TBIJ, SETMINUS, CPROD, DPROD, PPROD, DOMRES, DOMSUB, RANRES, RANSUB,
-	 * UPTO, MINUS, DIV, MOD, EXPN, FUNIMAGE, RELIMAGE}
+	 * Returns a new binary expression. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#MAPSTO} the maplet operator</li>
+	 * <li>{@link Formula#REL} the set of all relations</li>
+	 * <li>{@link Formula#TREL} the set of all total relations</li>
+	 * <li>{@link Formula#SREL} the set of all surjective relations</li>
+	 * <li>{@link Formula#STREL} the set of all total and surjective relations</li>
+	 * <li>{@link Formula#PFUN} the set of all partial functions</li>
+	 * <li>{@link Formula#TFUN} the set of all total functions</li>
+	 * <li>{@link Formula#PINJ} the set of all partial injections</li>
+	 * <li>{@link Formula#TINJ} the set of all total injections</li>
+	 * <li>{@link Formula#PSUR} the set of all partial surjections</li>
+	 * <li>{@link Formula#TSUR} the set of all total surjections</li>
+	 * <li>{@link Formula#TBIJ} the set of all total bijections</li>
+	 * <li>{@link Formula#SETMINUS} set subtraction</li>
+	 * <li>{@link Formula#CPROD} Cartesian product</li>
+	 * <li>{@link Formula#DPROD} direct product</li>
+	 * <li>{@link Formula#PPROD} parallel product</li>
+	 * <li>{@link Formula#DOMRES} domain restriction</li>
+	 * <li>{@link Formula#DOMSUB} domain subtraction</li>
+	 * <li>{@link Formula#RANRES} range restriction</li>
+	 * <li>{@link Formula#RANSUB} range subtraction</li>
+	 * <li>{@link Formula#UPTO} integer interval</li>
+	 * <li>{@link Formula#MINUS} integer subtraction</li>
+	 * <li>{@link Formula#DIV} integer division</li>
+	 * <li>{@link Formula#MOD} integer modulo</li>
+	 * <li>{@link Formula#EXPN} integer exponentiation</li>
+	 * <li>{@link Formula#FUNIMAGE} functional image</li>
+	 * <li>{@link Formula#RELIMAGE} relational image</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the binary expression
 	 * @param left
-	 *            the left child of the binary expression
+	 *            the left-hand child of the binary expression
 	 * @param right
-	 *            the right child of the binary expression
+	 *            the right-hand child of the binary expression
 	 * @param location
-	 *            the location of the binary expression
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new binary expression
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a valid binary expression tag
 	 */
 	public BinaryExpression makeBinaryExpression(int tag,
 			Expression left, Expression right, SourceLocation location) {
@@ -698,19 +930,23 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new binary predicate
-	 * <p>
-	 * {LIMP, LEQV}
+	 * Returns a new binary predicate. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#LIMP} logical implication</li>
+	 * <li>{@link Formula#LEQV} logical equivalence</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the binary predicate
 	 * @param left
-	 *            the left child of the binary predicate
+	 *            the left-hand child of the binary predicate
 	 * @param right
-	 *            the right child of the binary predicate
+	 *            the right-hand child of the binary predicate
 	 * @param location
-	 *            the location of the binary predicate
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new binary predicate
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a valid binary predicate tag
 	 */
 	public BinaryPredicate makeBinaryPredicate(int tag,
 			Predicate left, Predicate right, SourceLocation location) {
@@ -718,14 +954,12 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new "bool" expression.
-	 * <p>
-	 * {KBOOL}
+	 * Returns a new "bool" expression. Its tag will be {@link Formula#KBOOL}.
 	 * 
 	 * @param child
-	 *            the child of the bool expression
+	 *            the predicate of the bool expression
 	 * @param location
-	 *            the location of the bool expression
+	 *            the source location or <code>null</code>
 	 * @return a new bool expression
 	 */
 	public BoolExpression makeBoolExpression(Predicate child, SourceLocation location) {
@@ -734,7 +968,8 @@ public class FormulaFactory {
 
 	/**
 	 * Creates a new node representing a declaration of a bound identifier,
-	 * using as model a free occurrence of the same identifier.
+	 * using as model a free occurrence of the same identifier. Its tag will be
+	 * {@link Formula#BOUND_IDENT_DECL}.
 	 * 
 	 * @param ident
 	 *            a free identifier occurrence
@@ -747,14 +982,17 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Creates a new node representing a declaration of a bound identifier.
+	 * Creates a new node representing a declaration of a bound identifier. Its
+	 * tag will be {@link Formula#BOUND_IDENT_DECL}.
 	 * 
 	 * @param name
-	 *            the name of the identifier. Must not be null or an empty string.
+	 *            the name of the identifier
 	 * @param location
-	 *            the source location of this identifier declaration
+	 *            the source location or <code>null</code>
 	 * @return a bound identifier declaration
-	 * 
+	 * @throws IllegalArgumentException
+	 *             if the name is not a valid identifier name
+	 * @see #isValidIdentifierName(String)
 	 * @see #makeFreeIdentifier(String, SourceLocation)
 	 * @see #makeBoundIdentifier(int, SourceLocation)
 	 */
@@ -765,16 +1003,19 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Creates a new node representing a declaration of a bound identifier.
+	 * Creates a new node representing a declaration of a bound identifier. Its
+	 * tag will be {@link Formula#BOUND_IDENT_DECL}.
 	 * 
 	 * @param name
-	 *            the name of the identifier. Must not be null or an empty string.
+	 *            the name of the identifier
 	 * @param location
-	 *            the source location of this identifier declaration
+	 *            the source location or <code>null</code>
 	 * @param type
-	 *            the type of this identifier. Can be <code>null</code>.
+	 *            the type of the identifier or <code>null</code>
 	 * @return a bound identifier declaration
-	 * 
+	 * @throws IllegalArgumentException
+	 *             if the name is not a valid identifier name
+	 * @see #isValidIdentifierName(String)
 	 * @see #makeFreeIdentifier(String, SourceLocation)
 	 * @see #makeBoundIdentifier(int, SourceLocation)
 	 */
@@ -785,14 +1026,16 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new bound occurrence of an identifier.
+	 * Returns a new bound occurrence of an identifier. Its tag will be
+	 * {@link Formula#BOUND_IDENT}.
 	 * 
 	 * @param index
-	 *            the index in the De Bruijn notation. Must be non-negative.
+	 *            the index in De Bruijn notation. Must be non-negative
 	 * @param location
-	 *            the source location of this identifier occurrence
+	 *            the source location or <code>null</code>
 	 * @return a bound identifier occurrence
-	 * 
+	 * @throws IllegalArgumentException
+	 *             if the index is negative
 	 * @see #makeBoundIdentDecl(String, SourceLocation)
 	 * @see #makeFreeIdentifier(String, SourceLocation)
 	 */
@@ -802,16 +1045,18 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new bound occurrence of an identifier.
+	 * Returns a new bound occurrence of an identifier. Its tag will be
+	 * {@link Formula#BOUND_IDENT}.
 	 * 
 	 * @param index
-	 *            the index in the De Bruijn notation. Must be non-negative.
+	 *            the index in the De Bruijn notation. Must be non-negative
 	 * @param location
-	 *            the source location of this identifier occurrence
+	 *            the source location or <code>null</code>
 	 * @param type
-	 *            the type of this identifier. Can be <code>null</code>.
+	 *            the type of this identifier or <code>null</code>
 	 * @return a bound identifier occurrence
-	 * 
+	 * @throws IllegalArgumentException
+	 *             if the index is negative
 	 * @see #makeBoundIdentDecl(String, SourceLocation)
 	 * @see #makeFreeIdentifier(String, SourceLocation)
 	 */
@@ -821,14 +1066,17 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Creates a new node representing a free occurrence of an identifier.
+	 * Creates a new node representing a free occurrence of an identifier. Its tag will be
+	 * {@link Formula#FREE_IDENT}.
 	 * 
 	 * @param name
-	 *            the name of the identifier. Must not be null or an empty string.
+	 *            the name of the identifier
 	 * @param location
-	 *            the source location of this identifier occurrence
+	 *            the source location or <code>null</code>
 	 * @return a free identifier
-	 * 
+	 * @throws IllegalArgumentException
+	 *             if the name is not a valid identifier name
+	 * @see #isValidIdentifierName(String)
 	 * @see #makeBoundIdentDecl(String, SourceLocation)
 	 * @see #makeBoundIdentifier(int, SourceLocation)
 	 */
@@ -838,20 +1086,27 @@ public class FormulaFactory {
 	}
 	
 	/**
-	 * Creates a new node representing a free occurrence of an identifier.
+	 * Creates a new node representing a free occurrence of an identifier. Its
+	 * tag will be {@link Formula#FREE_IDENT}.
+	 * <p>
+	 * The name of the identifier must not be used to denote a given type in the
+	 * type parameter, except when the identifier denotes a given set. In other
+	 * words, the only case where the given name can occur in the type parameter
+	 * is when the type is exactly <code>ℙ(name)</code>.
+	 * </p>
 	 * 
 	 * @param name
-	 *            the name of the identifier. Must not be null or an empty
-	 *            string.
+	 *            the name of the identifier
 	 * @param location
-	 *            the source location of this identifier occurrence
+	 *            the source location or <code>null</code>
 	 * @param type
-	 *            the type of this identifier. Can be <code>null</code>. If the
-	 *            type contains a given set implying that the name of the free
-	 *            identifier is incompatible, then the final type of the free
-	 *            identifier will be <code>null</code>.
+	 *            the type of this identifier or <code>null</code>
 	 * @return a free identifier
-	 * 
+	 * @throws IllegalArgumentException
+	 *             if the name is not a valid identifier name
+	 * @throws IllegalArgumentException
+	 *             if the given type is not valid
+	 * @see #isValidIdentifierName(String)
 	 * @see #makeBoundIdentDecl(String, SourceLocation)
 	 * @see #makeBoundIdentifier(int, SourceLocation)
 	 */
@@ -882,12 +1137,12 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new integer literal.
+	 * Returns a new integer literal. Its tag will be {@link Formula#INTLIT}.
 	 * 
 	 * @param literal
 	 *            the integer value for this literal
 	 * @param location
-	 *            the source location of the literal
+	 *            the source location or <code>null</code>
 	 * @return a new integer literal
 	 */
 	public IntegerLiteral makeIntegerLiteral(BigInteger literal,
@@ -896,15 +1151,19 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new literal predicate
-	 * <p>
-	 * {BTRUE, BFALSE}
+	 * Returns a new literal predicate. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#BTRUE} truth</li>
+	 * <li>{@link Formula#BFALSE} falsity</li>
+	 * </ul>
 	 * 
 	 * @param tag
 	 *            the tag of the predicate
 	 * @param location
-	 *            the location of the predicate
+	 *            the source location or <code>null</code>
 	 * @return a new literal predicate
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a literal predicate tag
 	 */
 	public LiteralPredicate makeLiteralPredicate(int tag,
 			SourceLocation location) {
@@ -912,14 +1171,28 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new PredicateVariable
+	 * Returns a new PredicateVariable. Its tag will be
+	 * {@link Formula#PREDICATE_VARIABLE}.
+	 * <p>
+	 * Predicate variables are named with a special prefix (
+	 * {@link PredicateVariable#LEADING_SYMBOL}) followed by a valid identifier
+	 * name.
+	 * </p>
 	 * 
 	 * @param name
-	 *            the name of the predicate variable. Must start with '$'.
+	 *            the name of the predicate variable
 	 * @param location
-	 *            the location of the predicate
+	 *            the source location or <code>null</code>
 	 * @return a new predicate variable
+	 * @throws IllegalArgumentException
+	 *             if the name does not start with
+	 *             {@link PredicateVariable#LEADING_SYMBOL}
+	 * @throws IllegalArgumentException
+	 *             if the name without the
+	 *             {@link PredicateVariable#LEADING_SYMBOL} prefix is not a
+	 *             valid identifier
 	 * @since 1.2
+	 * @see #isValidIdentifierName(String)
 	 */
 	public PredicateVariable makePredicateVariable(String name,
 			SourceLocation location) {
@@ -927,71 +1200,116 @@ public class FormulaFactory {
 	}
 	
 	/**
-	 * Returns a new quantified expression
+	 * Returns a new quantified expression. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#QUNION} quantified set union</li>
+	 * <li>{@link Formula#QINTER} quantified set intersection</li>
+	 * <li>{@link Formula#CSET} set comprehension</li>
+	 * </ul>
 	 * <p>
-	 * {QUNION, QINTER, CSET}
+	 * One can also specify the written form of the expression. The allowed
+	 * values are (in decreasing order of generality)
+	 * <ul>
+	 * <li>{@link Form#Explicit} explicit declaration of quantifiers</li>
+	 * <li>{@link Form#Implicit} implicit declaration of quantifiers</li>
+	 * <li>{@link Form#Lambda} lambda abstraction</li>
+	 * </ul>
+	 * Lambda abstraction is only meaningful for set comprehension. If the given
+	 * form is not compatible with the structure of the quantified expression,
+	 * it will automatically be upgraded it to the least general that fits.
 	 * </p>
+	 * 
 	 * @param tag
 	 *            the tag of the quantified expression
 	 * @param boundIdentifiers
-	 *            a list of the quantifiers
+	 *            the bound identifier declarations
 	 * @param pred
-	 *            the corresponding predicate
+	 *            the child predicate
 	 * @param expr
-	 *            the corresponding expression
+	 *            the child expression
 	 * @param location
-	 *            the location of the quantified expression
+	 *            the source location or <code>null</code>
 	 * @param form
 	 *            the written form of the quantified expression
 	 * @return a new quantified expression
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a quantified expression tag
+	 * @throws IllegalArgumentException
+	 *             if there is no bound identifier declaration
 	 */
 	// TODO: maybe make different creators for every form
 	public QuantifiedExpression makeQuantifiedExpression(int tag,
 			BoundIdentDecl[] boundIdentifiers, Predicate pred, Expression expr,
-			SourceLocation location, QuantifiedExpression.Form form) {
+			SourceLocation location, Form form) {
 		return new QuantifiedExpression(expr, pred, boundIdentifiers.clone(),
 				tag, location, form, this);
 	}
 
 	/**
-	 * Returns a new quantified expression
+	 * Returns a new quantified expression. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#QUNION} quantified set union</li>
+	 * <li>{@link Formula#QINTER} quantified set intersection</li>
+	 * <li>{@link Formula#CSET} set comprehension</li>
+	 * </ul>
 	 * <p>
-	 * {QUNION, QINTER, CSET}
+	 * One can also specify the written form of the expression. The allowed
+	 * values are (in decreasing order of generality)
+	 * <ul>
+	 * <li>{@link Form#Explicit} explicit declaration of quantifiers</li>
+	 * <li>{@link Form#Implicit} implicit declaration of quantifiers</li>
+	 * <li>{@link Form#Lambda} lambda abstraction</li>
+	 * </ul>
+	 * Lambda abstraction is only meaningful for set comprehension. If the given
+	 * form is not compatible with the structure of the quantified expression,
+	 * it will automatically be upgraded it to the least general that fits.
 	 * </p>
+	 * 
 	 * @param tag
 	 *            the tag of the quantified expression
 	 * @param boundIdentifiers
-	 *            a list of the quantifiers
+	 *            the bound identifier declarations
 	 * @param pred
-	 *            the corresponding predicate
+	 *            the child predicate
 	 * @param expr
-	 *            the corresponding expression
+	 *            the child expression
 	 * @param location
-	 *            the location of the quantified expression
+	 *            the source location or <code>null</code>
 	 * @param form
 	 *            the written form of the quantified expression
 	 * @return a new quantified expression
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a quantified expression tag
+	 * @throws IllegalArgumentException
+	 *             if there is no bound identifier declaration
 	 */
 	public QuantifiedExpression makeQuantifiedExpression(int tag,
 			Collection<BoundIdentDecl> boundIdentifiers, Predicate pred, Expression expr,
-			SourceLocation location, QuantifiedExpression.Form form) {
+			SourceLocation location, Form form) {
 		return new QuantifiedExpression(expr, pred,
 				toBIDArray(boundIdentifiers), tag, location, form, this);
 	}
 
 	/**
-	 * Returns a new quantified predicate
-	 * <p>
-	 * {FORALL, EXISTS}
+	 * Returns a new quantified predicate. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#FORALL} universal quantification</li>
+	 * <li>{@link Formula#EXISTS} existential quantification</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the quantified predicate
 	 * @param boundIdentifiers
-	 *            a list of the quantifiers
+	 *            the bound identifier declarations
 	 * @param pred
 	 *            the corresponding predicate
 	 * @param location
-	 *            the location of the quantified predicate
+	 *            the source location or <code>null</code>
 	 * @return a new quantified predicate
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a quantified predicate tag
+	 * @throws IllegalArgumentException
+	 *             if there is no bound identifier declaration
 	 */
 	public QuantifiedPredicate makeQuantifiedPredicate(int tag,
 			BoundIdentDecl[] boundIdentifiers, Predicate pred,
@@ -1001,18 +1319,25 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new quantified predicate
-	 * <p>
-	 * {FORALL, EXISTS}
+	 * Returns a new quantified predicate. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#FORALL} universal quantification</li>
+	 * <li>{@link Formula#EXISTS} existential quantification</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the quantified predicate
 	 * @param boundIdentifiers
-	 *            a list of the quantifiers
+	 *            the bound identifier declarations
 	 * @param pred
 	 *            the corresponding predicate
 	 * @param location
-	 *            the location of the quantified predicate
+	 *            the source location or <code>null</code>
 	 * @return a new quantified predicate
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a quantified predicate tag
+	 * @throws IllegalArgumentException
+	 *             if there is no bound identifier declaration
 	 */
 	public QuantifiedPredicate makeQuantifiedPredicate(int tag,
 			Collection<BoundIdentDecl> boundIdentifiers, Predicate pred,
@@ -1022,20 +1347,33 @@ public class FormulaFactory {
 	}
 	
 	/**
-	 * Returns a new relational predicate
-	 * <p>
-	 * {EQUAL, NOTEQUAL, LT, LE, GT, GE, IN, NOTIN, SUBSET, NOTSUBSET, SUBSETEQ,
-	 * NOTSUBSETEQ}
+	 * Returns a new relational predicate. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#EQUAL} equality</li>
+	 * <li>{@link Formula#NOTEQUAL} disequality</li>
+	 * <li>{@link Formula#LT} less than</li>
+	 * <li>{@link Formula#LE} less than or equal to</li>
+	 * <li>{@link Formula#GT} greater than</li>
+	 * <li>{@link Formula#GE} greater than or equal to</li>
+	 * <li>{@link Formula#IN} membership</li>
+	 * <li>{@link Formula#NOTIN} non membership</li>
+	 * <li>{@link Formula#SUBSET} strict subset</li>
+	 * <li>{@link Formula#NOTSUBSET} not strict subset</li>
+	 * <li>{@link Formula#SUBSETEQ} subset or equal to</li>
+	 * <li>{@link Formula#NOTSUBSETEQ} neither subset nor equal to</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the relational predicate
 	 * @param left
-	 *            the left child of the relational predicate
+	 *            the left-hand child of the relational predicate
 	 * @param right
-	 *            the right child of the relational predicate
+	 *            the right-hand child of the relational predicate
 	 * @param location
-	 *            the location of the relational predicate
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new relational predicate
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a valid relational predicate tag
 	 */
 	public RelationalPredicate makeRelationalPredicate(int tag,
 			Expression left, Expression right, SourceLocation location) {
@@ -1043,14 +1381,12 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new singleton set.
-	 * <p>
-	 * {SETEXT}
-	 * </p>
+	 * Returns a new singleton set. Its tag will be {@link Formula#SETEXT}.
+	 * 
 	 * @param expression
 	 *            the unique member of this singleton set
 	 * @param location
-	 *            the location of the set extension
+	 *            the source location or <code>null</code>
 	 * @return a new set extension
 	 */
 	public SetExtension makeSetExtension(Expression expression,
@@ -1060,35 +1396,34 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new set extension
-	 * <p>
-	 * {SETEXT}
-	 * </p>
-	 * @param expressions
-	 *            the children of the set extension
+	 * Returns a new set extension. Its tag will be {@link Formula#SETEXT}.
+	 * 
+	 * @param members
+	 *            the members of the set extension
 	 * @param location
-	 *            the location of the set extension
+	 *            the source location or <code>null</code>
 	 * @return a new set extension
 	 */
-	public SetExtension makeSetExtension(Expression[] expressions,
+	public SetExtension makeSetExtension(Expression[] members,
 			SourceLocation location) {
-		return new SetExtension(expressions.clone(), location, this, null);
+		return new SetExtension(members.clone(), location, this, null);
 	}
 
 	/**
 	 * Returns a new set extension containing no child, but having the given
-	 * type. This method is hardly useful to end-users, except when writing
-	 * tests. One should prefer using
-	 * {@link #makeEmptySet(Type, SourceLocation)}.
+	 * type. Its tag will be {@link Formula#SETEXT}.
 	 * <p>
-	 * {SETEXT}
+	 * This method is hardly useful to end-users, except when writing tests. One
+	 * should prefer using {@link #makeEmptySet(Type, SourceLocation)}.
 	 * </p>
 	 * 
 	 * @param type
 	 *            the type of the set extension
 	 * @param location
-	 *            the location of the set extension
+	 *            the source location or <code>null</code>
 	 * @return a new empty set extension of the given type
+	 * @throws IllegalArgumentException
+	 *             if the given type is not a powerset type
 	 * @since 2.6
 	 */
 	public SetExtension makeEmptySetExtension(Type type, SourceLocation location) {
@@ -1096,34 +1431,34 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new set extension
-	 * <p>
-	 * {SETEXT}
-	 * </p>
+	 * Returns a new set extension. Its tag will be {@link Formula#SETEXT}.
 	 * 
-	 * @param expressions
-	 *            the children of the set extension
+	 * @param members
+	 *            the members of the set extension
 	 * @param location
-	 *            the location of the set extension
+	 *            the source location or <code>null</code>
 	 * @return a new set extension
 	 */
-	public SetExtension makeSetExtension(Collection<Expression> expressions,
+	public SetExtension makeSetExtension(Collection<Expression> members,
 			SourceLocation location) {
-		return new SetExtension(toExprArray(expressions), location, this, null);
+		return new SetExtension(toExprArray(members), location, this, null);
 	}
 
 	/**
-	 * Returns a new simple predicate
-	 * <p>
-	 * {KFINITE}
+	 * Returns a new simple predicate. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#KFINITE} finiteness</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the simple predicate
 	 * @param child
 	 *            the child of the simple predicate
 	 * @param location
-	 *            the location of the simple predicate
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new simple predicate
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a simple predicate tag
 	 */
 	public SimplePredicate makeSimplePredicate(int tag, Expression child,
 			SourceLocation location) {
@@ -1141,36 +1476,60 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new unary expression
+	 * Returns a new unary expression. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#KCARD} set cardinality</li>
+	 * <li>{@link Formula#POW} powerset</li>
+	 * <li>{@link Formula#POW1} powerset without empty set</li>
+	 * <li>{@link Formula#KUNION} generalized union</li>
+	 * <li>{@link Formula#KINTER} generalized intersection</li>
+	 * <li>{@link Formula#KDOM} domain</li>
+	 * <li>{@link Formula#KRAN} range</li>
+	 * <li>{@link Formula#KMIN} minimum</li>
+	 * <li>{@link Formula#KMAX} maximum</li>
+	 * <li>{@link Formula#CONVERSE} converse of a relation</li>
+	 * <li>{@link Formula#UNMINUS} opposite</li>
+	 * </ul>
 	 * <p>
-	 * {KCARD, POW, POW1, KUNION, KINTER, KDOM, KRAN, KPRJ1, KPRJ2, KID, KMIN,
-	 * KMAX, CONVERSE, UNMINUS}
+	 * For backward compatibility with the mathematical language V1, the
+	 * following additional tags are also accepted by a V1 factory
+	 * <ul>
+	 * <li>{@link Formula#KPRJ1} unary first projection</li>
+	 * <li>{@link Formula#KPRJ2} unary second projection</li>
+	 * <li>{@link Formula#KID} unary identity</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the unary expression
 	 * @param child
 	 *            the child of the unary expression
 	 * @param location
-	 *            the location of the unary expression
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new unary expression
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a unary expression tag
 	 */
+	@SuppressWarnings("javadoc")
 	public UnaryExpression makeUnaryExpression(int tag, Expression child,
 			SourceLocation location) {
 		return new UnaryExpression(child, tag, location, this);
 	}
 
 	/**
-	 * Returns a new unary predicate
-	 * <p>
-	 * {NOT}
+	 * Returns a new unary predicate. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#NOT} logical negation</li>
+	 * </ul>
+	 * 
 	 * @param tag
 	 *            the tag of the unary predicate
 	 * @param child
 	 *            the child of the unary predicate
 	 * @param location
-	 *            the location of the unary predicate
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new unary predicate
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a unary predicate tag
 	 */
 	public UnaryPredicate makeUnaryPredicate(int tag, Predicate child,
 			SourceLocation location) {
@@ -1178,18 +1537,25 @@ public class FormulaFactory {
 	}
 	
 	/**
-	 * Returns a new multiple predicate.
+	 * Returns a new multiple predicate. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#KPARTITION} partition</li>
+	 * </ul>
 	 * <p>
-	 * {KPARTITION}
+	 * This method is not supported by a V1 factory.
+	 * </p>
 	 * 
 	 * @param tag
 	 *            the tag of the multiple predicate
 	 * @param children
 	 *            the children of the multiple predicate
 	 * @param location
-	 *            the location of the multiple predicate
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new multiple predicate
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a multiple predicate tag
+	 * @throws IllegalArgumentException
+	 *             if there is no child
 	 * @since 1.0
 	 */
 	public MultiplePredicate makeMultiplePredicate(int tag,
@@ -1198,18 +1564,25 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns a new multiple predicate.
+	 * Returns a new multiple predicate. The allowed tag values are
+	 * <ul>
+	 * <li>{@link Formula#KPARTITION} partition</li>
+	 * </ul>
 	 * <p>
-	 * {KPARTITION}
+	 * This method is not supported by a V1 factory.
+	 * </p>
 	 * 
 	 * @param tag
 	 *            the tag of the multiple predicate
 	 * @param children
 	 *            the children of the multiple predicate
 	 * @param location
-	 *            the location of the multiple predicate
-	 * 
+	 *            the source location or <code>null</code>
 	 * @return a new multiple predicate
+	 * @throws IllegalArgumentException
+	 *             if the tag is not a multiple predicate tag
+	 * @throws IllegalArgumentException
+	 *             if there is no child
 	 * @since 1.0
 	 */
 	public MultiplePredicate makeMultiplePredicate(int tag,
@@ -1467,6 +1840,17 @@ public class FormulaFactory {
 	 * Returns the instance of the parametric type of the given constructor with
 	 * the given type parameters.
 	 * 
+	 * @param typePrms
+	 *            the parameters of the parametric type
+	 * @param typeConstructor
+	 *            the constructor of the parametric type
+	 * @return a new parametric type
+	 * @throws IllegalArgumentException
+	 *             if the given extension is not supported by this factory or is
+	 *             not a type constructor
+	 * @throws IllegalArgumentException
+	 *             if the number of type parameters do not correspond to the
+	 *             type constructor specification
 	 * @since 2.0
 	 */
 	public ParametricType makeParametricType(List<Type> typePrms,
@@ -1479,6 +1863,17 @@ public class FormulaFactory {
 	 * Returns the instance of the parametric type of the given constructor with
 	 * the given type parameters.
 	 * 
+	 * @param typePrms
+	 *            the parameters of the parametric type
+	 * @param typeConstructor
+	 *            the constructor of the parametric type
+	 * @return a new parametric type
+	 * @throws IllegalArgumentException
+	 *             if the given extension is not supported by this factory or is
+	 *             not a type constructor
+	 * @throws IllegalArgumentException
+	 *             if the number of type parameters do not correspond to the
+	 *             type constructor specification
 	 * @since 2.1
 	 */
 	public ParametricType makeParametricType(Type[] typePrms,
@@ -1494,6 +1889,9 @@ public class FormulaFactory {
 	 * @param name
 	 *            name of the type
 	 * @return a given type with the given name
+	 * @throws IllegalArgumentException
+	 *             if the name is not a valid identifier name
+	 * @see #isValidIdentifierName(String)
 	 */
 	public GivenType makeGivenType(String name) {
 		return new GivenType(name, this);
