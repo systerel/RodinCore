@@ -250,6 +250,20 @@ public class FormulaFactory {
 		return cached;
 	}
 	
+	@SuppressWarnings("deprecation")
+	private boolean isV1Specific(int tag) {
+		return tag == Formula.KPRJ1 //
+				|| tag == Formula.KPRJ2 //
+				|| tag == Formula.KID;
+	}
+
+	private boolean isV2Specific(int tag) {
+		return tag == Formula.KPARTITION //
+				|| tag == Formula.KPRJ1_GEN //
+				|| tag == Formula.KPRJ2_GEN //
+				|| tag == Formula.KID_GEN;
+	}
+
 	// for V1_INSTANCE only
 	private FormulaFactory(BMath grammar) {
 		this.extensions = emptyMap();
@@ -658,6 +672,9 @@ public class FormulaFactory {
 	 */
 	public AtomicExpression makeAtomicExpression(int tag,
 			SourceLocation location) {
+		if (this == V1_INSTANCE && isV2Specific(tag)) {
+			throw new IllegalArgumentException("Unsupported tag in V1: " + tag);
+		}
 		return new AtomicExpression(tag, location, null, this);
 	}
 
@@ -708,6 +725,9 @@ public class FormulaFactory {
 	 */
 	public AtomicExpression makeAtomicExpression(int tag,
 			SourceLocation location, Type type) {
+		if (this == V1_INSTANCE && isV2Specific(tag)) {
+			throw new IllegalArgumentException("Unsupported tag in V1: " + tag);
+		}
 		return new AtomicExpression(tag, location, type, this);
 	}
 
@@ -1512,6 +1532,9 @@ public class FormulaFactory {
 	@SuppressWarnings("javadoc")
 	public UnaryExpression makeUnaryExpression(int tag, Expression child,
 			SourceLocation location) {
+		if (this != V1_INSTANCE && isV1Specific(tag)) {
+			throw new IllegalArgumentException("Unsupported V1 tag: " + tag);
+		}
 		return new UnaryExpression(child, tag, location, this);
 	}
 

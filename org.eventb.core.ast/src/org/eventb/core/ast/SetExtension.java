@@ -17,6 +17,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.BRACE_SETS;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureHasType;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
 
 import java.util.Arrays;
@@ -124,22 +125,11 @@ public class SetExtension extends Expression {
 			FormulaFactory factory, Type type) {
 		super(SETEXT, location, combineHashCodes(expressions));
 		this.members = expressions;
-
-		checkPreconditions();
 		setPredicateVariableCache(this.members);
 		synthesizeType(factory, type);
-
-		// ensures that type was coherent (final type cannot be null if given
-		// type was not)
-		assert type == null || type == this.getType();
+		ensureHasType(this, type);
 	}
 
-	// Common initialization.
-	private void checkPreconditions() {
-		assert getTag() == SETEXT;
-		assert members != null;
-	}
-	
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(members);
@@ -157,10 +147,9 @@ public class SetExtension extends Expression {
 		final Type resultType;
 		if (length == 0) {
 			// Empty set, no way to synthesize its type.
-			if (givenType == null) {
+			if (!(givenType instanceof PowerSetType)) {
 				return;
 			}
-			assert givenType instanceof PowerSetType;
 			resultType = givenType;
 			if (!mergeGivenTypes(resultType, ff)) {
 				// Incompatible type environments, don't set the type

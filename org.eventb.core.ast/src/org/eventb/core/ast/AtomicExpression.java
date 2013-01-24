@@ -18,6 +18,8 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_EXPR;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureHasType;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
 import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
 
 import java.util.LinkedHashSet;
@@ -172,14 +174,10 @@ public class AtomicExpression extends Expression {
 	protected AtomicExpression(int tag, SourceLocation location, Type type,
 			FormulaFactory factory) {
 		super(tag, location, 0);
-		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
-
+		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		setPredicateVariableCache();
 		synthesizeType(factory, type);
-
-		// ensures that type was coherent (final type cannot be null if given
-		// type was not)
-		assert type == null || type == this.getType();
+		ensureHasType(this, type);
 	}
 	
 	@Override
@@ -203,7 +201,9 @@ public class AtomicExpression extends Expression {
 			resultType = ff.makeBooleanType();
 			break;
 		case Formula.EMPTYSET:
-			assert givenType == null || givenType instanceof PowerSetType;
+			if (!isEmptySetType(givenType)) {
+				return;
+			}
 			resultType = givenType;
 			break;
 		case Formula.KPRED:
@@ -214,21 +214,20 @@ public class AtomicExpression extends Expression {
 			);
 			break;
 		case Formula.KPRJ1_GEN:
-			if (givenType != null) {
-				assertPrjType(givenType, true);
+			if (!isPrjType(givenType, true)) {
+				return;
 			}
 			resultType = givenType;
 			break;
 		case Formula.KPRJ2_GEN:
-			if (givenType != null) {
-				assertPrjType(givenType, false);
+			if (!isPrjType(givenType, false)) {
+				return;
 			}
 			resultType = givenType;
 			break;
 		case Formula.KID_GEN:
-			if (givenType != null) {
-				final Type source = givenType.getSource();
-				assert source != null && source.equals(givenType.getTarget());
+			if (!isIdType(givenType)) {
+				return;
 			}
 			resultType = givenType;
 			break;
@@ -242,19 +241,34 @@ public class AtomicExpression extends Expression {
 		}
 	}
 
-	private static void assertPrjType(Type givenType, boolean left) {
-		final Type source = givenType.getSource();
-		final Type target = givenType.getTarget();
-		assert target != null && source instanceof ProductType;
+	private boolean isEmptySetType(Type proposedType) {
+		return proposedType instanceof PowerSetType;
+	}
 
-		final ProductType prodSource = (ProductType) source;
-		final Type child;
-		if (left) {
-			child = prodSource.getLeft();
-		} else {
-			child = prodSource.getRight();
+	private static boolean isPrjType(Type proposedType, boolean left) {
+		if (proposedType == null) {
+			// Type not specified
+			return false;
 		}
-		assert target.equals(child);
+		final Type source = proposedType.getSource();
+		final Type target = proposedType.getTarget();
+		if (!(source instanceof ProductType)) {
+			// Wrong shape of type
+			return false;
+		}
+		final ProductType pSource = (ProductType) source;
+		final Type child = left ? pSource.getLeft() : pSource.getRight();
+		return child.equals(target);
+	}
+
+	private static boolean isIdType(Type proposedType) {
+		if (proposedType == null) {
+			// Type not specified
+			return false;
+		}
+		final Type source = proposedType.getSource();
+		final Type target = proposedType.getTarget();
+		return source != null && source.equals(target);
 	}
 
 	/**

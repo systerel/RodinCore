@@ -10,17 +10,29 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.Formula.BUNION;
+import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.FREE_IDENT;
+import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.ast.Formula.KID_GEN;
 import static org.eventb.core.ast.Formula.KPARTITION;
+import static org.eventb.core.ast.Formula.KPRJ1_GEN;
+import static org.eventb.core.ast.Formula.KPRJ2_GEN;
 import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
+import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.NOT;
+import static org.eventb.core.ast.Formula.QUNION;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.PredicateVariable.LEADING_SYMBOL;
+import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
+import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
+import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mList;
@@ -31,14 +43,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.BoundIdentDecl;
+import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
+import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
@@ -66,6 +81,8 @@ public class TestFormulaFactory extends AbstractTests {
 
 	private static final BoundIdentDecl dS = mBoundIdentDecl("s'", POW(tS));
 	private static final BoundIdentDecl dT = mBoundIdentDecl("t'", POW(tT));
+
+	private static final BoundIdentifier b0 = mBoundIdentifier(0);
 
 	private static final Expression eS = mEmptySet(POW(tS));
 	private static final Expression eT = mEmptySet(POW(tT));
@@ -487,6 +504,252 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = NullPointerException.class)
 	public void unaryPredicate_NullChild() {
 		ff.makeUnaryPredicate(NOT, null, null);
+	}
+
+	/*----------------------------------------------------------------
+	 *  CONSTRUCTION OF REGULAR EXPRESSION OBJECTS
+	 *----------------------------------------------------------------*/
+
+	@Test(expected = IllegalArgumentException.class)
+	public void associativeExpression_InvalidTag() {
+		ff.makeAssociativeExpression(FREE_IDENT, mList(eS, eS), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void associativeExpression_NullChildren() {
+		final Expression[] children = null;
+		ff.makeAssociativeExpression(BUNION, children, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void associativeExpression_NullChild() {
+		ff.makeAssociativeExpression(BUNION, mList(eS, null), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void associativeExpression_OneChild() {
+		ff.makeAssociativeExpression(BUNION, mList(eS), null);
+	}
+
+	@Test
+	public void associativeExpression_ArrayParameter() {
+		final Expression[] children = { eS, eS };
+		assertArrayProtected(
+				ff.makeAssociativeExpression(BUNION, children, null),//
+				children);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void atomicExpression_InvalidTag() {
+		ff.makeAtomicExpression(FREE_IDENT, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void atomicExpression_Prj1NotInV1() {
+		ffV1.makeAtomicExpression(KPRJ1_GEN, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void atomicExpression_Prj2NotInV1() {
+		ffV1.makeAtomicExpression(KPRJ2_GEN, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void atomicExpression_IdNotInV1() {
+		ffV1.makeAtomicExpression(KID_GEN, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void emptySet_InvalidType() {
+		ff.makeEmptySet(tS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void atomicExpression_InvalidTypeForPrj1() {
+		ff.makeAtomicExpression(KPRJ1_GEN, null, REL(CPROD(tS, tT), tT));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void atomicExpression_InvalidTypeForPrj2() {
+		ff.makeAtomicExpression(KPRJ2_GEN, null, REL(CPROD(tS, tT), tS));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void atomicExpression_InvalidTypeForId() {
+		ff.makeAtomicExpression(KID_GEN, null, REL(tS, tT));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void binaryExpression_InvalidTag() {
+		ff.makeBinaryExpression(FREE_IDENT, eS, eS, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void binaryExpression_NullLeft() {
+		ff.makeBinaryExpression(MAPSTO, null, eS, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void binaryExpression_NullRight() {
+		ff.makeBinaryExpression(MAPSTO, eS, null, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void boolExpression_NullChild() {
+		ff.makeBoolExpression(null, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void integerLiteral_NullChild() {
+		ff.makeIntegerLiteral(null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void quantifiedExpression_InvalidTag() {
+		ff.makeQuantifiedExpression(FREE_IDENT, mList(dS), P, eS, null,
+				Explicit);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void quantifiedExpression_NullDecls() {
+		final BoundIdentDecl[] decls = null;
+		ff.makeQuantifiedExpression(CSET, decls, P, eS, null, Explicit);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void quantifiedExpression_NullInDecls() {
+		ff.makeQuantifiedExpression(CSET, mList(dS, null), P, eS, null,
+				Explicit);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void quantifiedExpression_NullPredicate() {
+		ff.makeQuantifiedExpression(CSET, mList(dS), null, eS, null, Explicit);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void quantifiedExpression_NullExpression() {
+		ff.makeQuantifiedExpression(CSET, mList(dS), P, null, null, Explicit);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void quantifiedExpression_NoChild() {
+		ff.makeQuantifiedExpression(CSET, NO_BIDS, P, eS, null, Explicit);
+	}
+
+	@Test
+	public void quantifiedExpression_ArrayParameter() {
+		final BoundIdentDecl[] decls = { dS };
+		assertArrayProtected(
+				ff.makeQuantifiedExpression(CSET, decls, P, eS, null, Explicit),//
+				decls);
+	}
+
+	@Test
+	public void quantifiedExpression_ImplicitToExplicit() {
+		final QuantifiedExpression expr = ff.makeQuantifiedExpression(CSET,
+				mList(dS), P, iS, null, Implicit);
+		assertEquals(Explicit, expr.getForm());
+	}
+
+	@Test
+	public void quantifiedExpression_LambdaToImplicit() {
+		final QuantifiedExpression expr = ff.makeQuantifiedExpression(CSET,
+				mList(dS), P, eS, null, Lambda);
+		assertEquals(Implicit, expr.getForm());
+	}
+
+	/**
+	 * A quantified expression other than a comprehension set cannot be in
+	 * lambda form.
+	 */
+	@Test
+	public void quantifiedExpression_LambdaToImplicitNotCSet() {
+		final QuantifiedExpression good = ff.makeQuantifiedExpression(CSET,
+				mList(dS), P, FastFactory.mMaplet(b0, b0), null, Lambda);
+		assertEquals(Lambda, good.getForm());
+
+		final QuantifiedExpression expr = ff.makeQuantifiedExpression(QUNION,
+				mList(dS), P, FastFactory.mMaplet(b0, b0), null, Lambda);
+		assertEquals(Implicit, expr.getForm());
+	}
+
+	@Test
+	public void quantifiedExpression_LambdaToExplicit() {
+		final QuantifiedExpression expr = ff.makeQuantifiedExpression(CSET,
+				mList(dS), P, iS, null, Lambda);
+		assertEquals(Explicit, expr.getForm());
+	}
+
+	/**
+	 * A quantified expression other than a comprehension set cannot be in
+	 * lambda form.
+	 */
+	@Test
+	public void quantifiedExpression_LambdaToExplicitNotCSet() {
+		final QuantifiedExpression good = ff.makeQuantifiedExpression(CSET,
+				mList(dS), P, FastFactory.mMaplet(b0, iS), null, Lambda);
+		assertEquals(Lambda, good.getForm());
+
+		final QuantifiedExpression expr = ff.makeQuantifiedExpression(QUNION,
+				mList(dS), P, FastFactory.mMaplet(b0, iS), null, Lambda);
+		assertEquals(Explicit, expr.getForm());
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void singleton_NullChild() {
+		final Expression child = null;
+		ff.makeSetExtension(child, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void setExtension_NullChildren() {
+		final Expression[] children = null;
+		ff.makeSetExtension(children, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void setExtension_NullChild() {
+		ff.makeSetExtension(mList(eS, null), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void setExtension_InvalidType() {
+		ff.makeEmptySetExtension(tS, null);
+	}
+
+	@Test
+	public void setExtension_ArrayParameter() {
+		final Expression[] members = { eS };
+		assertArrayProtected(ff.makeSetExtension(members, null), members);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void unaryExpression_InvalidTag() {
+		ff.makeUnaryExpression(FREE_IDENT, eS, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void unaryExpression_NullChild() {
+		ff.makeUnaryExpression(KCARD, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	@SuppressWarnings("deprecation")
+	public void unaryExpression_Prj1NotInV2() {
+		ff.makeUnaryExpression(Formula.KPRJ1, eS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	@SuppressWarnings("deprecation")
+	public void unaryExpression_Prj2NotInV2() {
+		ff.makeUnaryExpression(Formula.KPRJ2, eS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	@SuppressWarnings("deprecation")
+	public void unaryExpression_IdNotInV2() {
+		ff.makeUnaryExpression(Formula.KID, eS, null);
 	}
 
 	/**
