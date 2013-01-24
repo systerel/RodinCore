@@ -127,6 +127,7 @@ import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -142,7 +143,6 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.tests.TestFormulaFactory.FailedAssertionChecker;
 import org.junit.Test;
 
 /**
@@ -408,14 +408,15 @@ public class TestTypedConstructor extends AbstractTests {
 				|| isGivenSet(nameS, type);
 		if (successExpected) {
 			mFreeIdentifier(nameS, type);
-		} else {
-			new FailedAssertionChecker() {
-				@Override
-				protected void test() throws AssertionError {
-					mFreeIdentifier(nameS, type);
-				}
-			}.run();
+			return;
 		}
+		try {
+			mFreeIdentifier(nameS, type);
+		} catch (IllegalArgumentException e) {
+			// Ok we were expecting this exception
+			return;
+		}
+		fail("The free identifier construction succeeds whereas it was expected to fail");
 	}
 
 	private static void assertLiteralPredicate(int tag, boolean expected) {
@@ -1019,27 +1020,12 @@ public class TestTypedConstructor extends AbstractTests {
 	}
 
 	@Test
-	@SuppressWarnings("synthetic-access")
 	public void testFreeIdentifier() throws Exception {
 		assertFreeIdentifierType(S);
 		assertFreeIdentifierType(null);
 
 		// Regular given set
 		assertExpressionType(ff.makeFreeIdentifier("S", null, pS), pS);
-
-		// Name occurs with a different type in type
-		new FailedAssertionChecker() {
-			@Override
-			protected void test() throws AssertionError {
-				ff.makeFreeIdentifier("S", null, ppS);
-			}
-		}.run();
-		new FailedAssertionChecker() {
-			@Override
-			protected void test() throws AssertionError {
-				ff.makeFreeIdentifier("S", null, rSS);
-			}
-		}.run();
 	}
 
 	@Test 

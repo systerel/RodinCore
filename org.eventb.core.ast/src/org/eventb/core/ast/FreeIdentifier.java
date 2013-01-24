@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.ast.FormulaChecks.ensureHasType;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureValidIdentifierName;
 import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
 import static org.eventb.internal.core.ast.GivenTypeHelper.isGivenSet;
 import static org.eventb.internal.core.ast.IdentListMerger.makeMerger;
@@ -59,17 +61,11 @@ public class FreeIdentifier extends Identifier {
 			Type type, FormulaFactory ff) {
 		super(tag, location, name.hashCode());
 		assert tag == Formula.FREE_IDENT;
-		assert name != null;
-		assert name.length() != 0;
-		assert ff.isValidIdentifierName(name);
-
+		ensureValidIdentifierName(name, ff);
 		this.name = name;
 		setPredicateVariableCache();
 		synthesizeType(ff, type);
-		
-		// ensures that type was coherent (final type cannot be null if given
-		// type was not)
-		assert type == null || type == this.getType();
+		ensureHasType(this, type);
 	}
 
 	/*
@@ -81,18 +77,18 @@ public class FreeIdentifier extends Identifier {
 	 * free identifier cache.
 	 */
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(FormulaFactory ff, Type proposedType) {
 		this.freeIdents = new FreeIdentifier[] {this};
 		this.boundIdents = NO_BOUND_IDENT;
 		
-		if (givenType == null) {
+		if (proposedType == null) {
 			return;
 		}
 
 		final FreeIdentifier[] givenTypeIdents;
-		if (!isGivenSet(name, givenType)) {
+		if (!isGivenSet(name, proposedType)) {
 			// Check there is no occurrence of this identifier in given types
-			givenTypeIdents = getGivenTypeIdentifiers(givenType, ff);
+			givenTypeIdents = getGivenTypeIdentifiers(proposedType, ff);
 			for (final FreeIdentifier givenTypeIdent : givenTypeIdents) {
 				if (name.equals(givenTypeIdent.getName())) {
 					return;
@@ -102,7 +98,7 @@ public class FreeIdentifier extends Identifier {
 			givenTypeIdents = null;
 		}
 
-		setFinalType(givenType, givenType);
+		setFinalType(proposedType, proposedType);
 
 		if (givenTypeIdents != null) {
 			final IdentListMerger merger = makeMerger(freeIdents, givenTypeIdents);
