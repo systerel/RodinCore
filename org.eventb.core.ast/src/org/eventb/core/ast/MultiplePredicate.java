@@ -13,6 +13,8 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import static org.eventb.core.ast.AssociativeHelper.isLegibleList;
 import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureMinLength;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PARTITION;
 
 import java.util.Arrays;
@@ -130,15 +132,10 @@ public class MultiplePredicate extends Predicate {
 			SourceLocation location, FormulaFactory factory) {
 		super(tag, location, combineHashCodes(children));
 		this.children = children;
-
-		checkPreconditions();
+		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
+		ensureMinLength(children, 1);
 		setPredicateVariableCache(this.children);
 		synthesizeType(factory);
-	}
-
-	private void checkPreconditions() {
-		assert getTag() == KPARTITION;
-		assert children != null && children.length != 0;
 	}
 
 	@Override

@@ -16,6 +16,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.NOT_PRED;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -49,7 +50,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 public class UnaryPredicate extends Predicate {
 	
 	// offset in the corresponding tag interval
-	private static final int firstTag = FIRST_UNARY_PREDICATE;
+	private static final int FIRST_TAG = FIRST_UNARY_PREDICATE;
 	
 	/**
 	 * @since 2.0
@@ -123,13 +124,9 @@ public class UnaryPredicate extends Predicate {
 	 */
 	protected UnaryPredicate(Predicate child, int tag, SourceLocation location,
 			FormulaFactory ff) {
-
 		super(tag, location, child.hashCode());
 		this.child = child;
-		
-		assert tag >= firstTag && tag < firstTag + TAGS_LENGTH;
-		assert child != null;
-		
+		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		setPredicateVariableCache(this.child);
 		synthesizeType(ff);
 	}
@@ -158,7 +155,7 @@ public class UnaryPredicate extends Predicate {
 	}
 
 	private Operators getOperator() {
-		return Operators.values()[getTag()-firstTag];
+		return Operators.values()[getTag()-FIRST_TAG];
 	}
 	
 	@Override
