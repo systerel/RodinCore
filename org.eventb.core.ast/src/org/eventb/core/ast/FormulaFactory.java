@@ -1560,6 +1560,9 @@ public class FormulaFactory {
 	 */
 	public MultiplePredicate makeMultiplePredicate(int tag,
 			Expression[] children, SourceLocation location) {
+		if (this == V1_INSTANCE) {
+			throw new IllegalArgumentException("Unsupported in V1");
+		}
 		return new MultiplePredicate(children.clone(), tag, location, this);
 	}
 
@@ -1587,6 +1590,9 @@ public class FormulaFactory {
 	 */
 	public MultiplePredicate makeMultiplePredicate(int tag,
 			Collection<Expression> children, SourceLocation location) {
+		if (this == V1_INSTANCE) {
+			throw new IllegalArgumentException("Unsupported in V1");
+		}
 		return new MultiplePredicate(toExprArray(children), tag, location, this);
 	}
 

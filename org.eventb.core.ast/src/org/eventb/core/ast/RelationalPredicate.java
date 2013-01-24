@@ -16,6 +16,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.RELOP_PRED;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -149,15 +150,10 @@ public class RelationalPredicate extends Predicate {
 	 */
 	protected RelationalPredicate(Expression left, Expression right,
 			int tag, SourceLocation location, FormulaFactory ff) {
-		
 		super(tag, location, combineHashCodes(left.hashCode(), right.hashCode()));
 		this.left = left;
 		this.right = right;
-
-		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
-		assert left != null;
-		assert right != null;
-		
+		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		setPredicateVariableCache(this.left, this.right);
 		synthesizeType(ff);
 	}

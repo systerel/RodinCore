@@ -25,6 +25,8 @@ import static org.eventb.core.ast.QuantifiedHelper.getSyntaxTreeQuantifiers;
 import static org.eventb.core.ast.QuantifiedHelper.rewriteDecls;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.extension.StandardGroup.QUANTIFIED_PRED;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureMinLength;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -161,20 +163,12 @@ public class QuantifiedPredicate extends Predicate {
 			SourceLocation location, FormulaFactory ff) {
 		super(tag, location,
 				combineHashCodes(boundIdentifiers.length, pred.hashCode()));
-
 		this.quantifiedIdentifiers = boundIdentifiers;
 		this.pred = pred;
-		
-		checkPreconditions();
+		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
+		ensureMinLength(boundIdentifiers, 1);
 		setPredicateVariableCache(this.pred);
 		synthesizeType(ff);
-	}
-
-	private void checkPreconditions() {
-		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;
-		assert quantifiedIdentifiers != null;
-		assert 1 <= quantifiedIdentifiers.length;
-		assert pred != null;
 	}
 
 	@Override

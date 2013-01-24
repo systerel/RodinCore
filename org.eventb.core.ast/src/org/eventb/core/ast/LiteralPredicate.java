@@ -16,6 +16,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -122,10 +123,8 @@ public class LiteralPredicate extends Predicate {
 	 */
 	protected LiteralPredicate(int tag, SourceLocation location,
 			FormulaFactory ff) {
-		
 		super(tag, location, 0);
-		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
-		
+		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		setPredicateVariableCache();
 		synthesizeType(ff);
 	}

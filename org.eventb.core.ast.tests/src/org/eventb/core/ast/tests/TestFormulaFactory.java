@@ -10,6 +10,14 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.FORALL;
+import static org.eventb.core.ast.Formula.FREE_IDENT;
+import static org.eventb.core.ast.Formula.KFINITE;
+import static org.eventb.core.ast.Formula.KPARTITION;
+import static org.eventb.core.ast.Formula.LIMP;
+import static org.eventb.core.ast.Formula.LOR;
+import static org.eventb.core.ast.Formula.NOT;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.PredicateVariable.LEADING_SYMBOL;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
@@ -324,6 +332,161 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void predicateVariable_InvalidSuffix() {
 		ff.makePredicateVariable(LEADING_SYMBOL + BAD_NAME, null);
+	}
+
+	/*----------------------------------------------------------------
+	 *  CONSTRUCTION OF REGULAR PREDICATE OBJECTS
+	 *----------------------------------------------------------------*/
+
+	@Test(expected = IllegalArgumentException.class)
+	public void associativePredicate_InvalidTag() {
+		ff.makeAssociativePredicate(FREE_IDENT, mList(P, P), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void associativePredicate_NullChildren() {
+		final Predicate[] children = null;
+		ff.makeAssociativePredicate(LOR, children, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void associativePredicate_NullChild() {
+		ff.makeAssociativePredicate(LOR, mList(P, null), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void associativePredicate_OneChild() {
+		ff.makeAssociativePredicate(LOR, mList(P), null);
+	}
+
+	@Test
+	public void associativePredicate_ArrayParameter() {
+		final Predicate[] children = { P, P };
+		assertArrayProtected(ff.makeAssociativePredicate(LOR, children, null),
+				children);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void binaryPredicate_InvalidTag() {
+		ff.makeBinaryPredicate(FREE_IDENT, P, P, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void binaryPredicate_NullLeft() {
+		ff.makeBinaryPredicate(LIMP, null, P, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void binaryPredicate_NullRight() {
+		ff.makeBinaryPredicate(LIMP, P, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void literalPredicate_InvalidTag() {
+		ff.makeLiteralPredicate(FREE_IDENT, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void multiplePredicate_InvalidTag() {
+		ff.makeMultiplePredicate(FREE_IDENT, mList(eS), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void multiplePredicate_NotInV1() {
+		ffV1.makeMultiplePredicate(KPARTITION, mList(eS), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void multiplePredicate_NullChildren() {
+		final Expression[] children = null;
+		ff.makeMultiplePredicate(KPARTITION, children, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void multiplePredicate_NullChild() {
+		ff.makeMultiplePredicate(KPARTITION, mList(eS, null), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void multiplePredicate_NoChild() {
+		ff.makeMultiplePredicate(KPARTITION, NO_EXPRS, null);
+	}
+
+	@Test
+	public void multiplePredicate_ArrayParameter() {
+		final Expression[] children = { eS, eS };
+		assertArrayProtected(
+				ff.makeMultiplePredicate(KPARTITION, children, null),//
+				children);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void quantifiedPredicate_InvalidTag() {
+		ff.makeQuantifiedPredicate(FREE_IDENT, mList(dS), P, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void quantifiedPredicate_NullDecls() {
+		final BoundIdentDecl[] decls = null;
+		ff.makeQuantifiedPredicate(FORALL, decls, P, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void quantifiedPredicate_NullInDecls() {
+		ff.makeQuantifiedPredicate(FORALL, mList(dS, null), P, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void quantifiedPredicate_NullPredicate() {
+		ff.makeQuantifiedPredicate(FORALL, mList(dS), null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void quantifiedPredicate_NoChild() {
+		ff.makeQuantifiedPredicate(FORALL, NO_BIDS, P, null);
+	}
+
+	@Test
+	public void quantifiedPredicate_ArrayParameter() {
+		final BoundIdentDecl[] decls = { dS };
+		assertArrayProtected(
+				ff.makeQuantifiedPredicate(FORALL, mList(dS), P, null),//
+				decls);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void relationalPredicate_InvalidTag() {
+		ff.makeRelationalPredicate(FREE_IDENT, eS, eS, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void relationalPredicate_NullLeft() {
+		ff.makeRelationalPredicate(EQUAL, null, eS, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void relationalPredicate_NullRight() {
+		ff.makeRelationalPredicate(EQUAL, eS, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void simplePredicate_InvalidTag() {
+		ff.makeSimplePredicate(FREE_IDENT, eS, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void simplePredicate_NullChild() {
+		ff.makeSimplePredicate(KFINITE, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void unaryPredicate_InvalidTag() {
+		ff.makeUnaryPredicate(FREE_IDENT, P, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void unaryPredicate_NullChild() {
+		ff.makeUnaryPredicate(NOT, null, null);
 	}
 
 	/**

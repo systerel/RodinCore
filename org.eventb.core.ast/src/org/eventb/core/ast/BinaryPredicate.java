@@ -16,6 +16,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.INFIX_PRED;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -50,6 +51,9 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
  */
 public class BinaryPredicate extends Predicate {
 	
+	// offset of the corresponding tag-interval in Formula
+	private final static int FIRST_TAG = FIRST_BINARY_PREDICATE;
+
 	private static final String LIMP_ID = "Logical Implication";
 	private static final String LEQV_ID = "Equivalent";
 	
@@ -115,14 +119,8 @@ public class BinaryPredicate extends Predicate {
 	private final Predicate left;
 	private final Predicate right;
 	
-	// offset of the corresponding tag-interval in Formula
-	protected final static int firstTag = FIRST_BINARY_PREDICATE;
-	protected final static String[] tags = {
-		"\u21d2", // LIMP
-		"\u21d4"  // LEQV
-	};
 	// For testing purposes
-	public static final int TAGS_LENGTH = tags.length;
+	public static final int TAGS_LENGTH = Operators.values().length;
 	
 	/**
 	 * Must never be called directly: use the factory method instead.
@@ -135,11 +133,7 @@ public class BinaryPredicate extends Predicate {
 		super(tag, location, combineHashCodes(left.hashCode(), right.hashCode()));
 		this.left = left;
 		this.right = right;
-		
-		assert tag >= firstTag && tag < firstTag+tags.length;
-		assert left != null;
-		assert right != null;
-
+		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		setPredicateVariableCache(this.left, this.right);
 		synthesizeType(ff);
 	}
@@ -169,7 +163,7 @@ public class BinaryPredicate extends Predicate {
 	}
 
 	private Operators getOperator() {
-		return Operators.values()[getTag()-firstTag];
+		return Operators.values()[getTag()-FIRST_TAG];
 	}
 
 	@Override
