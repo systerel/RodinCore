@@ -17,6 +17,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.QuantifiedHelper.sameType;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureValidIdentifierName;
 import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
 import static org.eventb.internal.core.parser.SubParsers.BOUND_IDENT_DECL_SUBPARSER;
 
@@ -67,9 +68,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 			Type givenType, FormulaFactory ff) {
 		super(tag, location, name.hashCode());
 		assert tag == Formula.BOUND_IDENT_DECL;
-		assert name != null;
-		assert name.length() != 0;
-		assert ff.isValidIdentifierName(name);
+		ensureValidIdentifierName(name, ff);
 		this.name = name;
 		setPredicateVariableCache();
 		synthesizeType(ff, givenType);

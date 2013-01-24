@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.ast.FormulaChecks.ensureHasType;
 import static org.eventb.internal.core.ast.GivenTypeHelper.getGivenTypeIdentifiers;
 
 import java.util.LinkedHashSet;
@@ -55,19 +56,16 @@ public class BoundIdentifier extends Identifier {
 	 */
 	protected BoundIdentifier(int boundIndex, int tag, SourceLocation location,
 			Type type, FormulaFactory ff) {
-
 		super(tag, location, boundIndex);
 		assert tag == Formula.BOUND_IDENT;
-		assert 0 <= boundIndex;
-		
+		if (boundIndex < 0) {
+			throw new IllegalArgumentException("Negative de Bruijn index: "
+					+ boundIndex);
+		}
 		this.boundIndex = boundIndex;
-		
 		setPredicateVariableCache();
 		synthesizeType(ff, type);
-		
-		// ensures that type was coherent (final type cannot be null if given
-		// type was not)
-		assert type == null || type == this.getType();
+		ensureHasType(this, type);
 	}
 
 	@Override

@@ -11,6 +11,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.core.ast.extension.StandardGroup.GROUP_0;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureValidIdentifierName;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 import static org.eventb.internal.core.parser.SubParsers.PRED_VAR_SUBPARSER;
 
@@ -78,10 +79,12 @@ public class PredicateVariable extends Predicate {
 	protected PredicateVariable(String name, SourceLocation location,
 			FormulaFactory ff) {
 		super(tag, location, name.hashCode());
-		assert name != null;
-		assert name.startsWith(LEADING_SYMBOL);
+		if (!name.startsWith(LEADING_SYMBOL)) {
+			throw new IllegalArgumentException("Name " + name
+					+ " does not start with " + LEADING_SYMBOL);
+		}
 		final String suffix = name.substring(LEADING_SYMBOL.length());
-		assert ff.isValidIdentifierName(suffix);
+		ensureValidIdentifierName(suffix, ff);
 		this.name = name;
 		setPredicateVariableCache(this);
 		synthesizeType(ff);

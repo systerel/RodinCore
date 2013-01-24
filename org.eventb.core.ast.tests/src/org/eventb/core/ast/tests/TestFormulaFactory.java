@@ -11,6 +11,7 @@
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.FormulaFactory.getInstance;
+import static org.eventb.core.ast.PredicateVariable.LEADING_SYMBOL;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
@@ -20,7 +21,6 @@ import static org.eventb.core.ast.tests.TestGenParser.MONEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
@@ -74,8 +74,8 @@ public class TestFormulaFactory extends AbstractTests {
 	 * version of the mathematical language supported by the formula factory
 	 * instance.
 	 */
-	@Test 
-	public void testValidIdentifierName() throws Exception {
+	@Test
+	public void validIdentifierName() throws Exception {
 		final String validName = "foo";
 		assertTrue(ffV1.isValidIdentifierName(validName));
 		assertTrue(ff.isValidIdentifierName(validName));
@@ -265,151 +265,65 @@ public class TestFormulaFactory extends AbstractTests {
 				idents);
 	}
 
-	/**
-	 * Common implementation for testing methods that should detect a violation
-	 * of an assertion. The issue with such tests is that
-	 * <code>AssertionError</code> is also used internally by JUnit, so we
-	 * cannot use the usual test pattern for tests that raise an assertion: the
-	 * <code>fail()</code> method raises itself <code>AssertionError</code>,
-	 * which makes the test always succeed.
-	 * <p>
-	 * To use this code, just instantiate this class, provide code for method
-	 * {@link #test()} and call the {@link #run()} method.
-	 * </p>
-	 */
-	abstract static class FailedAssertionChecker {
+	/*----------------------------------------------------------------
+	 *  CONSTRUCTION OF IDENTIFIER OBJECTS
+	 *----------------------------------------------------------------*/
 
-		private boolean failed = true;
-
-		public void run() {
-			try {
-				test();
-			} catch (AssertionError e) {
-				failed = false;
-			}
-			if (failed) {
-				fail("Test should have violated an assertion.");
-			}
-		}
-
-		/**
-		 * Put the code that should violate an assertion here.
-		 */
-		protected abstract void test() throws AssertionError;
-
+	@Test(expected = NullPointerException.class)
+	public void boundIdentDecl_NullName() {
+		ff.makeBoundIdentDecl(null, null);
 	}
 
-	/**
-	 * Ensures that the name of a free identifier is checked for validity when
-	 * the identifier is built without a type.
-	 */
-	@Test 
-	public void testFreeIdentifierUntyped() {
-		new FailedAssertionChecker() {
-			@Override
-			protected void test() throws AssertionError {
-				ff.makeFreeIdentifier(BAD_NAME, null);
-			}
-		}.run();
+	@Test(expected = IllegalArgumentException.class)
+	public void boundIdentDecl_InvalidName() {
+		ff.makeBoundIdentDecl(BAD_NAME, null);
 	}
 
-	/**
-	 * Ensures that the name of a free identifier cannot look like a predicate
-	 * variable.
-	 */
-	@Test 
-	public void testFreeIdentifierPredicateVariable() {
-		new FailedAssertionChecker() {
-			@Override
-			protected void test() throws AssertionError {
-				ff.makeFreeIdentifier(PRED_VAR_NAME, null);
-			}
-		}.run();
+	@Test(expected = IllegalArgumentException.class)
+	public void boundIdentDecl_PredicateVariable() {
+		ff.makeBoundIdentDecl(PRED_VAR_NAME, null);
 	}
 
-	/**
-	 * Ensures that the name of a free identifier is checked for validity when
-	 * the identifier is built with a type.
-	 */
-	@Test 
-	public void testFreeIdentifierTyped() {
-		new FailedAssertionChecker() {
-			@Override
-			protected void test() throws AssertionError {
-				ff.makeFreeIdentifier(BAD_NAME, null, INT_TYPE);
-			}
-		}.run();
+	@Test(expected = NullPointerException.class)
+	public void freeIdentifier_NullName() {
+		ff.makeFreeIdentifier(null, null);
 	}
 
-	/**
-	 * Ensures that the name of a bound identifier declaration is checked for
-	 * validity when the declaration is built without a type.
-	 */
-	@Test 
-	public void testBoundIdentDeclUntyped() {
-		new FailedAssertionChecker() {
-			@Override
-			protected void test() throws AssertionError {
-				ff.makeBoundIdentDecl(BAD_NAME, null);
-			}
-		}.run();
+	@Test(expected = IllegalArgumentException.class)
+	public void freeIdentifier_InvalidName() {
+		ff.makeFreeIdentifier(BAD_NAME, null);
 	}
 
-	/**
-	 * Ensures that the name of a bound identifier declaration cannot look like
-	 * a predicate variable.
-	 */
-	@Test 
-	public void testBoundIdentDeclPredicateVariable() {
-		new FailedAssertionChecker() {
-			@Override
-			protected void test() throws AssertionError {
-				ff.makeBoundIdentDecl(PRED_VAR_NAME, null);
-			}
-		}.run();
+	@Test(expected = IllegalArgumentException.class)
+	public void freeIdentifier_PredicateVariable() {
+		ff.makeFreeIdentifier(PRED_VAR_NAME, null);
 	}
 
-	/**
-	 * Ensures that the name of a bound identifier declaration is checked for
-	 * validity when the declaration is built with a type.
-	 */
-	@Test 
-	public void testBoundIdentDeclTyped() {
-		new FailedAssertionChecker() {
-			@Override
-			protected void test() throws AssertionError {
-				ff.makeBoundIdentDecl(BAD_NAME, null, INT_TYPE);
-			}
-		}.run();
+	// Type of free identifier is tested in TestTypedConstructor
+
+	@Test(expected = IllegalArgumentException.class)
+	public void boundIdentifier_InvalidIndex() {
+		ff.makeBoundIdentifier(-1, null);
 	}
 
-	/**
-	 * Ensures that the name of a predicate variable is checked for validity
-	 * when the variable is built.
-	 */
-	@Test 
-	public void testPredicateVariable() {
-		new FailedAssertionChecker() {
-			@Override
-			protected void test() throws AssertionError {
-				final String name = PredicateVariable.LEADING_SYMBOL + BAD_NAME;
-				ff.makePredicateVariable(name, null);
-			}
-		}.run();
+	@Test(expected = NullPointerException.class)
+	public void predicateVariable_NullName() {
+		ff.makePredicateVariable(null, null);
 	}
 
-	/**
-	 * Ensures that the name of a predicate variable is checked for the leading
-	 * character when the variable is built.
-	 */
-	@Test 
-	public void testPredicateVariableLeader() {
-		new FailedAssertionChecker() {
-			@Override
-			protected void test() throws AssertionError {
-				ff.makePredicateVariable("P", null);
-			}
-		}.run();
+	@Test(expected = IllegalArgumentException.class)
+	public void predicateVariable_NoPrefix() {
+		ff.makePredicateVariable("P", null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void predicateVariable_NoSuffix() {
+		ff.makePredicateVariable(LEADING_SYMBOL, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void predicateVariable_InvalidSuffix() {
+		ff.makePredicateVariable(LEADING_SYMBOL + BAD_NAME, null);
 	}
 
 	/**
