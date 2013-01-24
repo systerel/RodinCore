@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -482,7 +482,7 @@ public class DatatypeTranslator {
 	}
 
 	private Type mTrgProdType(Type t1, Type t2) {
-		return srcFactory.makeProductType(t1, t2);
+		return trgFactory.makeProductType(t1, t2);
 	}
 
 	private Type mTrgRelType(Type t1, Type t2) {
