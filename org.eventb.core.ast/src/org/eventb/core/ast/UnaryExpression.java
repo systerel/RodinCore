@@ -20,6 +20,7 @@ import static org.eventb.core.ast.BinaryExpression.MINUS_ID;
 import static org.eventb.core.ast.extension.StandardGroup.ARITHMETIC;
 import static org.eventb.core.ast.extension.StandardGroup.CLOSED;
 import static org.eventb.core.ast.extension.StandardGroup.UNARY_RELATION;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
 
 import java.math.BigInteger;
 import java.util.LinkedHashSet;
@@ -221,13 +222,9 @@ public class UnaryExpression extends Expression {
 	 */
 	protected UnaryExpression(Expression child, int tag, SourceLocation location,
 			FormulaFactory factory) {
-		
 		super(tag, location, child.hashCode());
 		this.child = child;
-
-		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
-		assert child != null;
-		
+		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		setPredicateVariableCache(this.child);
 		synthesizeType(factory, null);
 	}

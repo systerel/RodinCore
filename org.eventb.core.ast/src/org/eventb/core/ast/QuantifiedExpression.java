@@ -27,6 +27,8 @@ import static org.eventb.core.ast.QuantifiedHelper.rewriteDecls;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
 import static org.eventb.core.ast.extension.StandardGroup.BRACE_SETS;
 import static org.eventb.core.ast.extension.StandardGroup.QUANTIFICATION;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureMinLength;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACE;
 
 import java.util.HashSet;
@@ -119,7 +121,11 @@ public class QuantifiedExpression extends Expression {
 			this.expectedIndex = nbBoundIdentDecls - 1;
 		}
 
-		public boolean verify(Expression pattern) {
+		public boolean verify(Expression expr) {
+			if (expr.getTag() != MAPSTO) {
+				return false;
+			}
+			final Expression pattern = ((BinaryExpression) expr).getLeft();
 			return traverse(pattern) && expectedIndex == -1;
 		}
 
@@ -351,18 +357,16 @@ public class QuantifiedExpression extends Expression {
 	protected QuantifiedExpression(Expression expr, Predicate pred,
 			BoundIdentDecl[] boundIdentifiers, int tag,
 			SourceLocation location, Form form, FormulaFactory factory) {
-		
 		super(tag, location, combineHashCodes(
 				boundIdentifiers.length, 
 				pred.hashCode(), 
 				expr.hashCode())
 		);
-		
 		this.quantifiedIdentifiers = boundIdentifiers;
 		this.expr = expr;
 		this.pred = pred;
-
-		checkPreconditions(form);
+		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
+		ensureMinLength(boundIdentifiers, 1);
 		setPredicateVariableCache(this.pred, this.expr);
 		synthesizeType(factory, null);
 
@@ -370,20 +374,6 @@ public class QuantifiedExpression extends Expression {
 		this.form = filterForm(form);
 	}
 
-	// Common initialization.
-	private void checkPreconditions(Form inputForm) {
-		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;
-		assert quantifiedIdentifiers != null;
-		assert 1 <= quantifiedIdentifiers.length;
-		assert pred != null;
-		assert expr != null;
-
-		if (inputForm == Form.Lambda) {
-			assert getTag() == Formula.CSET;
-			assert expr.getTag() == Formula.MAPSTO;
-		}
-	}
-	
 	@Override
 	protected void synthesizeType(FormulaFactory ff, Type givenType) {
 		final int length = quantifiedIdentifiers.length;
@@ -446,12 +436,12 @@ public class QuantifiedExpression extends Expression {
 		case Lambda:
 			final PatternChecker checker = new PatternChecker(
 					quantifiedIdentifiers.length);
-			if (checker.verify(((BinaryExpression) expr).getLeft())) {
+			if (checker.verify(expr)) {
 				return Form.Lambda;
 			}
 			// Fall through
 		case Implicit:
-			if (expr.freeIdents.length == 0) {
+			if (expr.getSyntacticallyFreeIdentifiers().length == 0) {
 				// Expression is closed
 				return Form.Implicit;
 			}

@@ -20,6 +20,8 @@ package org.eventb.core.ast;
 import static org.eventb.core.ast.AssociativeHelper.getSyntaxTreeHelper;
 import static org.eventb.core.ast.extension.StandardGroup.ARITHMETIC;
 import static org.eventb.core.ast.extension.StandardGroup.BINOP;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureMinLength;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -171,18 +173,12 @@ public class AssociativeExpression extends Expression {
 	 */
 	protected AssociativeExpression(Expression[] children, int tag,
 			SourceLocation location, FormulaFactory factory) {
-
 		super(tag, location, combineHashCodes(children));
 		this.children = children;
-		checkPreconditions();
+		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
+		ensureMinLength(children, 2);
 		setPredicateVariableCache(this.children);
 		synthesizeType(factory, null);
-	}
-
-	private void checkPreconditions() {
-		assert getTag() >= FIRST_TAG && getTag() < FIRST_TAG+TAGS_LENGTH;
-		assert children != null;
-		assert children.length >= 2;
 	}
 
 	@Override

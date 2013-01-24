@@ -22,6 +22,7 @@ import static org.eventb.core.ast.extension.StandardGroup.FUNCTIONAL;
 import static org.eventb.core.ast.extension.StandardGroup.INTERVAL;
 import static org.eventb.core.ast.extension.StandardGroup.PAIR;
 import static org.eventb.core.ast.extension.StandardGroup.RELATION;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LBRACKET;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.LPAR;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MAPS_TO;
@@ -306,11 +307,7 @@ public class BinaryExpression extends Expression {
 				combineHashCodes(left.hashCode(), right.hashCode()));
 		this.left = left;
 		this.right = right;
-		
-		assert tag >= FIRST_TAG && tag < FIRST_TAG+TAGS_LENGTH;
-		assert left != null;
-		assert right != null;
-		
+		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		setPredicateVariableCache(this.left, this.right);
 		synthesizeType(factory, null);
 	}
