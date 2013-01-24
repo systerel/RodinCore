@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.internal.core.ast.FormulaChecks.ensureValidIdentifierName;
+
 import java.util.Set;
 
 /**
@@ -33,7 +35,7 @@ public class GivenType extends Type {
 	 */
 	protected GivenType(String name, FormulaFactory ff) {
 		super(true);
-		assert ff.isValidIdentifierName(name);
+		ensureValidIdentifierName(name, ff);
 		this.name = name;
 	}
 

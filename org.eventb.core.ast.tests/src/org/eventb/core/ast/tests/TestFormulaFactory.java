@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,32 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.FormulaFactory.getInstance;
+import static org.eventb.core.ast.tests.FastFactory.mList;
+import static org.eventb.core.ast.tests.TestGenParser.MONEY;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
+import org.eventb.core.ast.ExtendedPredicate;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
+import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.ICompatibilityMediator;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IExtensionKind;
+import org.eventb.core.ast.extension.IPredicateExtension;
+import org.eventb.core.ast.extension.IPriorityMediator;
+import org.eventb.core.ast.extension.ITypeCheckMediator;
+import org.eventb.core.ast.extension.ITypeMediator;
+import org.eventb.core.ast.extension.IWDMediator;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -23,6 +44,9 @@ import org.junit.Test;
  * @author Laurent Voisin
  */
 public class TestFormulaFactory extends AbstractTests {
+
+	private static final GivenType tS = ff.makeGivenType("S");
+	private static final GivenType tT = ff.makeGivenType("T");
 
 	private static final String BAD_NAME = "bad-name";
 
@@ -60,6 +84,55 @@ public class TestFormulaFactory extends AbstractTests {
 		assertTrue(ffV1.isValidIdentifierName(destructorName));
 		assertTrue(ff.isValidIdentifierName(destructorName));
 		assertFalse(LIST_FAC.isValidIdentifierName(destructorName));
+	}
+
+	/*----------------------------------------------------------------
+	 *  CONSTRUCTION OF TYPE OBJECTS
+	 *----------------------------------------------------------------*/
+
+	@Test(expected = IllegalArgumentException.class)
+	public void givenType_InvalidIdentifierName() {
+		ff.makeGivenType(BAD_NAME);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void parametricType_UnknownExtension() {
+		ff.makeParametricType(mList(tS), new UnknownExtension());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void parametricType_InvalidExtension() {
+		ff.makeParametricType(mList(tS), EXT_LIST);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void parametricType_NotATypeConstructor() {
+		final FormulaFactory extFac = getInstance();
+		extFac.makeParametricType(mList(tS), MONEY);
+	}
+
+	@Ignore("Known bug")
+	@Test(expected = IllegalArgumentException.class)
+	public void parametricType_WrongNumberOfParameter() {
+		LIST_FAC.makeParametricType(mList(tS, tT), EXT_LIST);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void parametricType_NullParameters() {
+		final Type[] typeParams = null;
+		LIST_FAC.makeParametricType(typeParams, EXT_LIST);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void parametricType_NullInParameter() {
+		LIST_FAC.makeParametricType(new Type[] { null }, EXT_LIST);
+	}
+
+	@Test
+	public void parametricType_ArrayParameter() {
+		final Type[] typeParams = { tS };
+		assertArrayProtected(LIST_FAC.makeParametricType(typeParams, EXT_LIST),
+				typeParams);
 	}
 
 	/**
@@ -210,17 +283,110 @@ public class TestFormulaFactory extends AbstractTests {
 	}
 
 	/**
-	 * Ensures that the name of a given type is checked for validity when the
-	 * type is built.
+	 * Verifies that object construction is protected against array mutation.
+	 * The test consists in verifying that the behavior of
+	 * <code>toString()</code> is not impacted by changing the array.
+	 * 
+	 * @param obj
+	 *            an object which was constructed with the given array
+	 * @param array
+	 *            a non-empty array
 	 */
-	@Test 
-	public void testGivenType() {
-		new FailedAssertionChecker() {
-			@Override
-			protected void test() throws AssertionError {
-				ff.makeGivenType(BAD_NAME);
-			}
-		}.run();
+	private static final void assertArrayProtected(Object obj, Object[] array) {
+		final String expected = obj.toString();
+		final Object save = array[0];
+		array[0] = null;
+		final String actual = obj.toString();
+		array[0] = save;
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Instances of this class must never be used to construct a formula
+	 * factory.
+	 */
+	private static final class UnknownExtension implements
+			IExpressionExtension, IPredicateExtension {
+
+		public UnknownExtension() {
+			// Do nothing
+		}
+
+		@Override
+		public String getSyntaxSymbol() {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public boolean conjoinChildrenWD() {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public String getId() {
+			return "Unknown id";
+		}
+
+		@Override
+		public String getGroupId() {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public Object getOrigin() {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public void addPriorities(IPriorityMediator mediator) {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public void typeCheck(ExtendedPredicate predicate,
+				ITypeCheckMediator tcMediator) {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
+			throw new AssertionError("Must never be called");
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			throw new AssertionError("Must never be called");
+		}
+
 	}
 
 }

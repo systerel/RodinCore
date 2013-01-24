@@ -63,7 +63,10 @@ public class ParametricType extends Type {
 	// without any reference leaked outside
 	ParametricType(IExpressionExtension typeConstructor, Type[] typeParameters) {
 		super(isSolved(typeParameters));
-		assert typeConstructor.isATypeConstructor();
+		if (!typeConstructor.isATypeConstructor()) {
+			throw new IllegalArgumentException("Invalid type constructor "
+					+ typeConstructor.getId());
+		}
 		this.typeParameters = typeParameters;
 		this.typeConstructor = typeConstructor;
 	}
