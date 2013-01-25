@@ -101,4 +101,9 @@ public class ArgProduct extends ArgumentType {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "'(" + left + "×" + right + ")";
+	}
+
 }

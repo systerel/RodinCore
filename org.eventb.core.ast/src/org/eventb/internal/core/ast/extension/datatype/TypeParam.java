@@ -55,4 +55,9 @@ public class TypeParam implements ITypeParameter {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "'" + name;
+	}
+
 }

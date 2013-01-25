@@ -85,4 +85,14 @@ public class Argument implements IArgument {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		if (destructorName != null) {
+			sb.append(destructorName);
+			sb.append(": ");
+		}
+		sb.append(type);
+		return sb.toString();
+	}
 }

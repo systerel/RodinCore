@@ -268,7 +268,12 @@ public class ConstructorMediator extends ArgumentMediator implements
 			}
 			return true;
 		}
-		
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
 	}
 
 	public static class DestructorExtension implements IExpressionExtension {

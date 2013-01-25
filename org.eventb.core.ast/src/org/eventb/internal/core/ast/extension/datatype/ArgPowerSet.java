@@ -84,5 +84,9 @@ public class ArgPowerSet extends ArgumentType {
 		return true;
 	}
 
-	
+	@Override
+	public String toString() {
+		return "'ℙ(" + arg + ")";
+	}
+
 }

@@ -76,4 +76,9 @@ public class ArgSimpleType extends ArgumentType {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return type.toString();
+	}
+
 }

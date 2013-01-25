@@ -227,6 +227,11 @@ public class TypeConstrMediator implements ITypeConstructorMediator {
 			return true;
 		}
 
+		@Override
+		public String toString() {
+			return typeName;
+		}
+
 	}
 
 	private final List<ITypeParameter> typeParams = new ArrayList<ITypeParameter>();
