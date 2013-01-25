@@ -93,6 +93,11 @@ public class Datatype implements IDatatype {
 			return destrs;
 		}
 
+		@Override
+		public String toString() {
+			return "" + constructor + arguments;
+		}
+
 	}
 
 	private final List<ITypeParameter> typeParams;
@@ -274,6 +279,11 @@ public class Datatype implements IDatatype {
 			instantiation.put(typePrms.get(i), typeValues[i]);
 		}
 		return instantiation;
+	}
+
+	@Override
+	public String toString() {
+		return "" + typeConstructor + typeParams + " ::= " + constructors;
 	}
 
 }

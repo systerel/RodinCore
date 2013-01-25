@@ -40,4 +40,7 @@ public abstract class ArgumentType implements IArgumentType {
 	public abstract Expression toSet(FormulaFactory factory,
 			Map<ITypeParameter, Expression> substitution);
 
+	@Override
+	public abstract String toString();
+
 }

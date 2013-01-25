@@ -120,6 +120,22 @@ public class ArgParametricType extends ArgumentType {
 		}
 		return true;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("'");
+		sb.append(typeConstr.getSyntaxSymbol());
+		char sep = '(';
+		for (final ArgumentType argType : argTypes) {
+			sb.append(sep);
+			sep = ',';
+			sb.append(argType);
+		}
+		if (sep != '(') {
+			sb.append(')');
+		}
+		return sb.toString();
+	}
+
 }

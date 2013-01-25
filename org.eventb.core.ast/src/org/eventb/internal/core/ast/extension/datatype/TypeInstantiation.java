@@ -41,4 +41,10 @@ public class TypeInstantiation {
 		}
 		return type;
 	}
+
+	@Override
+	public String toString() {
+		return paramInst.toString();
+	}
+
 }
