@@ -161,7 +161,9 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	private void checkPreconditions() {
 		final IExtensionKind kind = extension.getKind();
 		assert kind.getProperties().getFormulaType() == PREDICATE;
-		assert kind.checkPreconditions(childExpressions, childPredicates);
+		if (!kind.checkPreconditions(childExpressions, childPredicates)) {
+			throw new IllegalArgumentException("Incorrect kind of children");
+		}
 	}
 
 	@Override

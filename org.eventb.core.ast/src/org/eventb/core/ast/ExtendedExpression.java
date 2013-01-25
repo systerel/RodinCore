@@ -15,6 +15,7 @@ import static org.eventb.core.ast.ExtensionHelper.makeParserPrinter;
 import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.INFIX;
 import static org.eventb.core.ast.extension.IOperatorProperties.Notation.PREFIX;
+import static org.eventb.internal.core.ast.FormulaChecks.ensureHasType;
 import static org.eventb.internal.core.ast.extension.ArityCoverage.ANY;
 import static org.eventb.internal.core.ast.extension.ArityCoverage.NONE;
 import static org.eventb.internal.core.ast.extension.ArityCoverage.ONE_OR_MORE;
@@ -198,16 +199,15 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		checkPreconditions();
 		setPredicateVariableCache(getChildren());
 		synthesizeType(ff, type);
-		
-		// ensures that type was coherent (final type cannot be null if given
-		// type was not)
-		assert type == null || type == this.getType();
+		ensureHasType(this, type);
 	}
 
 	private void checkPreconditions() {
 		final IExtensionKind kind = extension.getKind();
 		assert kind.getProperties().getFormulaType() == EXPRESSION;
-		assert kind.checkPreconditions(childExpressions, childPredicates);
+		if (!kind.checkPreconditions(childExpressions, childPredicates)) {
+			throw new IllegalArgumentException("Incorrect kind of children");
+		}
 	}
 
 	private Formula<?>[] getChildren() {
@@ -248,10 +248,12 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		if (givenType == null) {
 			resultType = extension.synthesizeType(childExpressions,
 					childPredicates, new TypeMediator(factory));
+		} else if (!isValidType(givenType)) {
+			resultType = null;
 		} else {
 			resultType = givenType;
 		}
-		if (resultType == null || !isValidType(resultType)) {
+		if (resultType == null) {
 			return;
 		}
 

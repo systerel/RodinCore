@@ -31,6 +31,9 @@ import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.BooleanType;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IInferredTypeEnvironment;
@@ -38,7 +41,17 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
+import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.ICompatibilityMediator;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IPriorityMediator;
+import org.eventb.core.ast.extension.ITypeCheckMediator;
+import org.eventb.core.ast.extension.ITypeMediator;
+import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.extension.StandardGroup;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.junit.Test;
@@ -1016,6 +1029,18 @@ public class TestTypeChecker extends AbstractTests {
 	}
 
 	/**
+	 * Regression test for an extended operator that requires that its child
+	 * expression bears some fixed type. This used to wreak havoc in the
+	 * type-checker, because it can infer a type for the node, but the node can
+	 * never be type-checked, because its child has the wrong type.
+	 */
+	@Test
+	public void strangeTypeCheck() {
+		final FormulaFactory fac = FormulaFactory.getInstance(new Strange());
+		testPredicate("strange(1) ∈ S", mTypeEnvironment("S=ℙ(S)", fac), null);
+	}
+
+	/**
 	 * Ensures that type-check throws an exception on an ill-formed formulas.
 	 */
 	@Test(expected = IllegalStateException.class)
@@ -1118,4 +1143,93 @@ public class TestTypeChecker extends AbstractTests {
 				formula.isTypeChecked());
 		IdentsChecker.check(formula, ff);
 	}
+
+	/**
+	 * This is a strange operator. It has the same shape as a unary expression.
+	 * But it insists that its child is of Boolean type, while the result can be
+	 * of any type. Its type-checking algorithm is thus quite peculiar, as there
+	 * is no relation between the child type and the result type. Also, method
+	 * <code>verifyType</code> can fail although the proposed type is perfectly
+	 * valid, which makes auto-verification of the type-checker difficult.
+	 */
+	private static class Strange implements IExpressionExtension {
+
+		public Strange() {
+			// Do nothing, but is publicly visible
+		}
+
+		@Override
+		public String getSyntaxSymbol() {
+			return "strange";
+		}
+
+		@Override
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
+			return wdMediator.makeTrueWD();
+		}
+
+		@Override
+		public boolean conjoinChildrenWD() {
+			return true;
+		}
+
+		@Override
+		public String getId() {
+			return "STRANGE";
+		}
+
+		@Override
+		public String getGroupId() {
+			return StandardGroup.CLOSED.getId();
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			return PARENTHESIZED_UNARY_EXPRESSION;
+		}
+
+		@Override
+		public Object getOrigin() {
+			return null;
+		}
+
+		@Override
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			// None to add
+		}
+
+		@Override
+		public void addPriorities(IPriorityMediator mediator) {
+			// None to add
+		}
+
+		@Override
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
+			return null;
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
+			return childExprs[0].getType() instanceof BooleanType;
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
+			final Expression[] childExprs = expression.getChildExpressions();
+			final Type childType = childExprs[0].getType();
+			tcMediator.sameType(childType, tcMediator.makeBooleanType());
+			return tcMediator.newTypeVariable();
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return false;
+		}
+
+	}
+
 }

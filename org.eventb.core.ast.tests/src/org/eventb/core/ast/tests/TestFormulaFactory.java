@@ -31,6 +31,9 @@ import static org.eventb.core.ast.PredicateVariable.LEADING_SYMBOL;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
+import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
+import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
+import static org.eventb.core.ast.tests.ExtendedFormulas.fooS;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
@@ -750,6 +753,117 @@ public class TestFormulaFactory extends AbstractTests {
 	@SuppressWarnings("deprecation")
 	public void unaryExpression_IdNotInV2() {
 		ff.makeUnaryExpression(Formula.KID, eS, null);
+	}
+
+	/*----------------------------------------------------------------
+	 *  CONSTRUCTION OF EXTENSION OBJECTS
+	 *----------------------------------------------------------------*/
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedPredicate_Unknown() {
+		ff.makeExtendedPredicate(new UnknownExtension(), NO_EXPRS, NO_PREDS,
+				null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedPredicate_Unsupported() {
+		ff.makeExtendedPredicate(fooS, mList(eS, eT), mList(P, P), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void extendedPredicate_NullExpressions() {
+		EFF.makeExtendedPredicate(fooS, null, mList(P, P), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void extendedPredicate_NullInExpressions() {
+		EFF.makeExtendedPredicate(fooS, mList(eS, null), mList(P, P), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedPredicate_WrongNumberOfExpressions() {
+		EFF.makeExtendedPredicate(fooS, mList(eS), mList(P, P), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void extendedPredicate_NullPredicates() {
+		EFF.makeExtendedPredicate(fooS, mList(eS, eT), null, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void extendedPredicate_NullInPredicates() {
+		EFF.makeExtendedPredicate(fooS, mList(eS, eT), mList(P, null), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedPredicate_WrongNumberOfPredicates() {
+		EFF.makeExtendedPredicate(fooS, mList(eS, eT), mList(P), null);
+	}
+
+	@Test
+	public void extendedPredicate_ArrayParameter() {
+		final Expression[] exprs = { eS, eT };
+		final Predicate[] preds = { P, P };
+		assertArrayProtected(
+				EFF.makeExtendedPredicate(fooS, exprs, preds, null), exprs);
+		assertArrayProtected(
+				EFF.makeExtendedPredicate(fooS, exprs, preds, null), preds);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedExpression_Unknown() {
+		ff.makeExtendedExpression(new UnknownExtension(), NO_EXPRS, NO_PREDS,
+				null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedExpression_Unsupported() {
+		ff.makeExtendedExpression(barS, mList(eS, eT), mList(P, P), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void extendedExpression_NullExpressions() {
+		EFF.makeExtendedExpression(barS, null, mList(P, P), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void extendedExpression_NullInExpressions() {
+		EFF.makeExtendedExpression(barS, mList(eS, null), mList(P, P), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedExpression_WrongNumberOfExpressions() {
+		EFF.makeExtendedExpression(barS, mList(eS), mList(P, P), null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void extendedExpression_NullPredicates() {
+		EFF.makeExtendedExpression(barS, mList(eS, eT), null, null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void extendedExpression_NullInPredicates() {
+		EFF.makeExtendedExpression(barS, mList(eS, eT), mList(P, null), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedExpression_WrongNumberOfPredicates() {
+		EFF.makeExtendedExpression(barS, mList(eS, eT), mList(P), null);
+	}
+
+	@Test
+	public void extendedExpression_ArrayParameter() {
+		final Expression[] exprs = { eS, eT };
+		final Predicate[] preds = { P, P };
+		assertArrayProtected(
+				EFF.makeExtendedExpression(barS, exprs, preds, null), exprs);
+		assertArrayProtected(
+				EFF.makeExtendedExpression(barS, exprs, preds, null), preds);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedExpression_InvalidType() {
+		EFF.makeExtendedExpression(barS, mList(eS, eT), mList(P, P), null, tS);
 	}
 
 	/**
