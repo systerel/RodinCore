@@ -72,10 +72,13 @@ public abstract class Expression extends Formula<Expression> {
 		return !merger.containsError();
 	}
 
-	protected final void setFinalType(Type synType, Type givenType) {
+	protected final void setFinalType(Type synType, Type proposedType) {
 		assert synType != null;
 		assert synType.isSolved();
-		assert givenType == null || givenType.equals(synType);
+		if (proposedType != null && proposedType.equals(synType)) {
+			// We prefer the type coming from the client
+			synType = proposedType;
+		}
 		type = synType;
 		typeChecked = true;
 	}
