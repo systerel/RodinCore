@@ -72,6 +72,15 @@ import org.eventb.internal.core.upgrade.VersionUpgrader;
  */
 public class FormulaFactory {
 
+	/*
+	 * IMPLEMENTATION NOTES:
+	 *
+	 * We use a cache to ensure that each instance of this class has a unique
+	 * set of extensions. Therefore, equality of factories is reduced to
+	 * identity of references and we do not override the equals() and hashcode()
+	 * methods inherited from Object.
+	 */
+
 	private static final Expression[] NO_EXPRESSIONS = new Expression[0];
 
 	private static final Map<IFormulaExtension, Integer> ALL_EXTENSIONS = Collections
@@ -1669,26 +1678,6 @@ public class FormulaFactory {
 				targetVersion, this);
 		upgrader.upgradePredicate(input, result);
 		return result;
-	}
-
-	@Override
-	public int hashCode() {
-		return 31 + extensions.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof FormulaFactory)) {
-			return false;
-		}
-		FormulaFactory other = (FormulaFactory) obj;
-		return extensions.equals(other.extensions);
 	}
 
 }
