@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.datatype.IArgument;
 import org.eventb.core.ast.extension.datatype.IArgumentType;
@@ -57,7 +56,6 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 	 */
 	private static final Pattern extensionDefPattern = compile("(.+)::=(.+)");
 
-	private final FormulaFactory ff;
 	private final String extensionExpression;
 	private final String typeConsSymbol;
 
@@ -65,18 +63,7 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 		return new InjectedDatatypeExtension(extensionExpr);
 	}
 
-	public static IDatatypeExtension injectExtension(String extensionExpr,
-			FormulaFactory ff) {
-		return new InjectedDatatypeExtension(extensionExpr, ff);
-	}
-
 	private InjectedDatatypeExtension(String extensionExpression) {
-		this(extensionExpression, FormulaFactory.getDefault());
-	}
-
-	private InjectedDatatypeExtension(String extensionExpression,
-			FormulaFactory ff) {
-		this.ff = ff;
 		this.extensionExpression = extensionExpression;
 		this.typeConsSymbol = getTypeConstructor(extensionExpression);
 	}
@@ -184,34 +171,38 @@ public class InjectedDatatypeExtension implements IDatatypeExtension {
 	}
 
 	private IArgumentType getType(IConstructorMediator mediator, String dest) {
-		final Pattern prodPattern = Pattern.compile("(.+)×(.+)");
-		final Matcher prodTypeMatcher = prodPattern.matcher(dest);
-		if (prodTypeMatcher.find()) {
-			return mediator.makeProductType(
-					getType(mediator, prodTypeMatcher.group(1)),
-					getType(mediator, prodTypeMatcher.group(2)));
-		}
-		final String regex = "(" + typeConsSymbol + ")" + "(\\()(.+)(\\))";
+		/*
+		 * If the argument type is inductive we cannot use the mediator's
+		 * factory. Instead, the type is decomposed with regular expressions.
+		 * This is limited (DFA are not parsers) but does the job for the
+		 * current test.
+		 */
+		final String regex = "^" + typeConsSymbol + "\\(([^)]+)\\)$";
 		final Pattern currentDatatypePattern = Pattern.compile(regex);
 		final Matcher currentMatcher = currentDatatypePattern.matcher(dest);
 		if (currentMatcher.find()) {
-			final String types = currentMatcher.group(3);
+			final String types = currentMatcher.group(1);
 			return mediator.makeParametricType(mediator.getTypeConstructor(),
-					getListOfTypeArgs(mediator, types));
+					getListOfArgTypes(mediator, types));
 		}
-		final Type type = parseType(dest, ff);
-		return mediator.newArgumentType(type);
+		return parseArgumentType(dest, mediator);
 	}
 
-	private List<IArgumentType> getListOfTypeArgs(
+	private List<IArgumentType> getListOfArgTypes(
 			IConstructorMediator mediator, String typeStrs) {
 		final List<IArgumentType> result = new ArrayList<IArgumentType>();
 		final String[] typeStrsArray = splitOn(typeStrs, ",");
 		for (String typeStr : typeStrsArray) {
-			final Type type = parseType(typeStr, ff);
-			result.add(mediator.newArgumentType(type));
+			final IArgumentType argType = parseArgumentType(typeStr, mediator);
+			result.add(argType);
 		}
 		return result;
+	}
+
+	private IArgumentType parseArgumentType(String dest,
+			IConstructorMediator mediator) {
+		final Type type = parseType(dest, mediator.getFactory());
+		return mediator.newArgumentType(type);
 	}
 
 }

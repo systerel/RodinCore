@@ -50,7 +50,7 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 		final Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
 		extensions.addAll(LIST_FAC.getExtensions());
 		for (final String ext : DATATYPE_SPECS) {
-			final IDatatypeExtension dtExt = injectExtension(ext, LIST_FAC);
+			final IDatatypeExtension dtExt = injectExtension(ext);
 			final IDatatype dt = LIST_FAC.makeDatatype(dtExt);
 			extensions.addAll(dt.getExtensions());
 		}
