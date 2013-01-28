@@ -1935,9 +1935,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * 
 	 * @param unifier
 	 *            a type unifier
-	 * @return whether it was successful
+	 * @since 3.0
 	 */
-	protected abstract boolean solveType(TypeUnifier unifier);
+	protected abstract void solveType(TypeUnifier unifier);
 
 	/**
 	 * Traverses this formula with the given visitor. In this complex version,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,18 +43,19 @@ public abstract class Predicate extends Formula<Predicate> {
 	protected abstract void synthesizeType(FormulaFactory ff);
 	
 	@Override
-	protected final boolean solveType(TypeUnifier unifier) {
+	protected final void solveType(TypeUnifier unifier) {
 		if (isTypeChecked()) {
-			return true;
+			return;
 		}
 		solveChildrenTypes(unifier);
 		synthesizeType(unifier.getFormulaFactory());
-		return isTypeChecked();
 	}
 
-	// Calls recursively solveType on each child of this node and
-	// returns true if all calls where successful.
-	protected abstract boolean solveChildrenTypes(TypeUnifier unifier);
+	/**
+	 * @since 3.0
+	 */
+	// Calls recursively solveType() on each child of this node.
+	protected abstract void solveChildrenTypes(TypeUnifier unifier);
 	
 	@Override
 	protected final Predicate getCheckedReplacement(SingleRewriter rewriter) {

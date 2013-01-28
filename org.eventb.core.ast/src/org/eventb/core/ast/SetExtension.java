@@ -246,12 +246,10 @@ public class SetExtension extends Expression {
 	}
 	
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		boolean success = true;
+	protected void solveChildrenTypes(TypeUnifier unifier) {
 		for (Expression member : members) {
-			success &= member.solveType(unifier);
+			member.solveType(unifier);
 		}
-		return success;
 	}
 
 	@Override

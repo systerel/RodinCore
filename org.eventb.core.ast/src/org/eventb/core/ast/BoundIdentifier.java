@@ -161,9 +161,12 @@ public class BoundIdentifier extends Identifier {
 		// BoundIdentDecl
 	}
 	
+	/**
+	 * @since 3.0
+	 */
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		return true;
+	protected void solveChildrenTypes(TypeUnifier unifier) {
+		// No child
 	}
 
 	@Override
