@@ -983,7 +983,7 @@ public class FormulaFactory {
 	 * @return a new bool expression
 	 */
 	public BoolExpression makeBoolExpression(Predicate child, SourceLocation location) {
-		return new BoolExpression(child, Formula.KBOOL, location, this);
+		return new BoolExpression(child, location, this);
 	}
 
 	/**
@@ -997,8 +997,8 @@ public class FormulaFactory {
 	 */
 	@Deprecated
 	public BoundIdentDecl makeBoundIdentDecl(FreeIdentifier ident) {
-		return new BoundIdentDecl(ident.getName(), Formula.BOUND_IDENT_DECL,
-				ident.getSourceLocation(), ident.getType(), this);
+		return new BoundIdentDecl(ident.getName(), ident.getSourceLocation(),
+				ident.getType(), this);
 	}
 
 	/**
@@ -1018,8 +1018,7 @@ public class FormulaFactory {
 	 */
 	public BoundIdentDecl makeBoundIdentDecl(String name,
 			SourceLocation location) {
-		return new BoundIdentDecl(name, Formula.BOUND_IDENT_DECL, location,
-				null, this);
+		return new BoundIdentDecl(name, location, null, this);
 	}
 
 	/**
@@ -1041,8 +1040,7 @@ public class FormulaFactory {
 	 */
 	public BoundIdentDecl makeBoundIdentDecl(String name,
 			SourceLocation location, Type type) {
-		return new BoundIdentDecl(name, Formula.BOUND_IDENT_DECL, location,
-				type, this);
+		return new BoundIdentDecl(name, location, type, this);
 	}
 
 	/**
@@ -1061,7 +1059,7 @@ public class FormulaFactory {
 	 */
 	public BoundIdentifier makeBoundIdentifier(int index,
 			SourceLocation location) {
-		return new BoundIdentifier(index, Formula.BOUND_IDENT, location, null, this);
+		return new BoundIdentifier(index, location, null, this);
 	}
 
 	/**
@@ -1082,7 +1080,7 @@ public class FormulaFactory {
 	 */
 	public BoundIdentifier makeBoundIdentifier(int index,
 			SourceLocation location, Type type) {
-		return new BoundIdentifier(index, Formula.BOUND_IDENT, location, type, this);
+		return new BoundIdentifier(index, location, type, this);
 	}
 
 	/**
@@ -1102,7 +1100,7 @@ public class FormulaFactory {
 	 */
 	public FreeIdentifier makeFreeIdentifier(String name,
 			SourceLocation location) {
-		return new FreeIdentifier(name, Formula.FREE_IDENT, location, null, this);
+		return new FreeIdentifier(name, location, null, this);
 	}
 	
 	/**
@@ -1132,7 +1130,7 @@ public class FormulaFactory {
 	 */
 	public FreeIdentifier makeFreeIdentifier(String name,
 			SourceLocation location, Type type) {
-		return new FreeIdentifier(name, Formula.FREE_IDENT, location, type, this);
+		return new FreeIdentifier(name, location, type, this);
 	}
 	
 	/**
@@ -1167,7 +1165,7 @@ public class FormulaFactory {
 	 */
 	public IntegerLiteral makeIntegerLiteral(BigInteger literal,
 			SourceLocation location) {
-		return new IntegerLiteral(literal, Formula.INTLIT, location, this);
+		return new IntegerLiteral(literal, location, this);
 	}
 
 	/**

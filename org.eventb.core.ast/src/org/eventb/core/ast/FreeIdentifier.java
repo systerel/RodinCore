@@ -56,11 +56,12 @@ public class FreeIdentifier extends Identifier {
 	 * 
 	 * @see FormulaFactory#makeFreeIdentifier(String, SourceLocation)
 	 * @see FormulaFactory#makeFreeIdentifier(String, SourceLocation, Type)
+	 * 
+	 * @since 3.0
 	 */
-	protected FreeIdentifier(String name, int tag, SourceLocation location,
-			Type type, FormulaFactory ff) {
-		super(tag, location, name.hashCode());
-		assert tag == Formula.FREE_IDENT;
+	protected FreeIdentifier(String name, SourceLocation location, Type type,
+			FormulaFactory ff) {
+		super(FREE_IDENT, location, name.hashCode());
 		ensureValidIdentifierName(name, ff);
 		this.name = name;
 		setPredicateVariableCache();

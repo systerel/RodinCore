@@ -53,11 +53,11 @@ public class BoundIdentifier extends Identifier {
 	 * 
 	 * @see FormulaFactory#makeBoundIdentifier(int, SourceLocation)
 	 * @see FormulaFactory#makeBoundIdentifier(int, SourceLocation, Type)
+	 * @since 3.0
 	 */
-	protected BoundIdentifier(int boundIndex, int tag, SourceLocation location,
+	protected BoundIdentifier(int boundIndex, SourceLocation location,
 			Type type, FormulaFactory ff) {
-		super(tag, location, boundIndex);
-		assert tag == Formula.BOUND_IDENT;
+		super(BOUND_IDENT, location, boundIndex);
 		if (boundIndex < 0) {
 			throw new IllegalArgumentException("Negative de Bruijn index: "
 					+ boundIndex);
