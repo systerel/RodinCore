@@ -80,7 +80,7 @@ public class TestParser extends AbstractTests {
 	private static FreeIdentifier id_T = mFreeIdentifier("T");
 	private static FreeIdentifier id_f = mFreeIdentifier("f");
 	private static FreeIdentifier id_filter = mFreeIdentifier("filter");
-	
+
 	private static FreeIdentifier id_x_V1 = ffV1.makeFreeIdentifier("x", null);
 	private static FreeIdentifier id_y_V1 = ffV1.makeFreeIdentifier("y", null);
 	private static FreeIdentifier id_z_V1 = ffV1.makeFreeIdentifier("z", null);
@@ -92,7 +92,8 @@ public class TestParser extends AbstractTests {
 	private static FreeIdentifier id_S_V1 = ffV1.makeFreeIdentifier("S", null);
 	private static FreeIdentifier id_T_V1 = ffV1.makeFreeIdentifier("T", null);
 	private static FreeIdentifier id_f_V1 = ffV1.makeFreeIdentifier("f", null);
-	private static FreeIdentifier id_filter_V1 = ffV1.makeFreeIdentifier("filter", null);
+	private static FreeIdentifier id_filter_V1 = ffV1.makeFreeIdentifier(
+			"filter", null);
 	private static FreeIdentifier id_partition_V1 = ffV1.makeFreeIdentifier(
 			"partition", null);
 	
@@ -106,7 +107,7 @@ public class TestParser extends AbstractTests {
 	private static BoundIdentDecl bd_xp = mBoundIdentDecl("x'");
 	private static BoundIdentDecl bd_yp = mBoundIdentDecl("y'");
 	private static BoundIdentDecl bd_zp = mBoundIdentDecl("z'");
-	
+
 	private static BoundIdentDecl bd_x_V1 = ffV1.makeBoundIdentDecl("x", null);
 	private static BoundIdentDecl bd_y_V1 = ffV1.makeBoundIdentDecl("y", null);
 	private static BoundIdentDecl bd_z_V1 = ffV1.makeBoundIdentDecl("z", null);
@@ -145,6 +146,15 @@ public class TestParser extends AbstractTests {
 		private final String image;
 		private final Formula<?>[] expects;
 
+		/**
+		 * Constructs a test case for some formula to parse
+		 *
+		 * @param image
+		 *            the string image of the formula
+		 * @param expects
+		 *            the expected formula trees, one for each language version.
+		 *            Provide <code>null</code> if the formula should not parse
+		 */
 		TestPair(String image, Formula<?>[] expects) {
 			this.image = image;
 			this.expects = expects;
@@ -249,74 +259,74 @@ public class TestParser extends AbstractTests {
 					bfalse
 			), new PredTestPair(
 					"\u22a4", 
-					ffV1.makeLiteralPredicate(Formula.BTRUE, null), 
+					ffV1.makeLiteralPredicate(Formula.BTRUE, null),
 					mLiteralPredicate(Formula.BTRUE)
 			), new PredTestPair(
 					"finite(x)", 
-					ffV1.makeSimplePredicate(Formula.KFINITE, id_x_V1, null) , 
+					ffV1.makeSimplePredicate(Formula.KFINITE, id_x_V1, null),
 					mSimplePredicate(id_x) 
 			), new PredTestPair(
 					"x=x", 
-					ffV1.makeRelationalPredicate(Formula.EQUAL, id_x_V1, id_x_V1, null) , 
+					ffV1.makeRelationalPredicate(Formula.EQUAL, id_x_V1, id_x_V1, null),
 					mRelationalPredicate(Formula.EQUAL, id_x, id_x) 
 			), new PredTestPair(
 					"x\u2260x", 
-					ffV1.makeRelationalPredicate(Formula.NOTEQUAL, id_x_V1, id_x_V1, null) , 
+					ffV1.makeRelationalPredicate(Formula.NOTEQUAL, id_x_V1, id_x_V1, null),
 					mRelationalPredicate(Formula.NOTEQUAL, id_x, id_x) 
 			), new PredTestPair(
 					"x<x", 
-					ffV1.makeRelationalPredicate(Formula.LT, id_x_V1, id_x_V1, null), 
+					ffV1.makeRelationalPredicate(Formula.LT, id_x_V1, id_x_V1, null),
 					mRelationalPredicate(Formula.LT, id_x, id_x)
 			), new PredTestPair(
 					"x≤x", 
-					ffV1.makeRelationalPredicate(Formula.LE, id_x_V1, id_x_V1, null) , 
+					ffV1.makeRelationalPredicate(Formula.LE, id_x_V1, id_x_V1, null),
 					mRelationalPredicate(Formula.LE, id_x, id_x) 
 			), new PredTestPair(
 					"x>x", 
-					ffV1.makeRelationalPredicate(Formula.GT, id_x_V1, id_x_V1, null) , 
+					ffV1.makeRelationalPredicate(Formula.GT, id_x_V1, id_x_V1, null),
 					mRelationalPredicate(Formula.GT, id_x, id_x) 
 			), new PredTestPair(
 					"x≥x", 
-					ffV1.makeRelationalPredicate(Formula.GE, id_x_V1, id_x_V1, null) , 
+					ffV1.makeRelationalPredicate(Formula.GE, id_x_V1, id_x_V1, null),
 					mRelationalPredicate(Formula.GE, id_x, id_x) 
 			), new PredTestPair(
 					"x\u2208S", 
-					ffV1.makeRelationalPredicate(Formula.IN, id_x_V1, id_S_V1, null), 
+					ffV1.makeRelationalPredicate(Formula.IN, id_x_V1, id_S_V1, null),
 					mRelationalPredicate(Formula.IN, id_x, id_S)
 			), new PredTestPair(
 					"x\u2209S", 
-					ffV1.makeRelationalPredicate(Formula.NOTIN, id_x_V1, id_S_V1, null) , 
+					ffV1.makeRelationalPredicate(Formula.NOTIN, id_x_V1, id_S_V1, null),
 					mRelationalPredicate(Formula.NOTIN, id_x, id_S) 
 			), new PredTestPair(
 					"x\u2282S", 
-					ffV1.makeRelationalPredicate(Formula.SUBSET, id_x_V1, id_S_V1, null) , 
+					ffV1.makeRelationalPredicate(Formula.SUBSET, id_x_V1, id_S_V1, null),
 					mRelationalPredicate(Formula.SUBSET, id_x, id_S) 
 			), new PredTestPair(
 					"x\u2284S", 
-					ffV1.makeRelationalPredicate(Formula.NOTSUBSET, id_x_V1, id_S_V1, null) , 
+					ffV1.makeRelationalPredicate(Formula.NOTSUBSET, id_x_V1, id_S_V1, null),
 					mRelationalPredicate(Formula.NOTSUBSET, id_x, id_S) 
 			), new PredTestPair(
 					"x\u2286S", 
-					ffV1.makeRelationalPredicate(Formula.SUBSETEQ, id_x_V1, id_S_V1, null), 
+					ffV1.makeRelationalPredicate(Formula.SUBSETEQ, id_x_V1, id_S_V1, null),
 					mRelationalPredicate(Formula.SUBSETEQ, id_x, id_S)
 			), new PredTestPair(
 					"x\u2288S", 
-					ffV1.makeRelationalPredicate(Formula.NOTSUBSETEQ, id_x_V1, id_S_V1, null) , 
+					ffV1.makeRelationalPredicate(Formula.NOTSUBSETEQ, id_x_V1, id_S_V1, null),
 					mRelationalPredicate(Formula.NOTSUBSETEQ, id_x, id_S) 
 			), new PredTestPair(
 					"(\u22a5)", 
-					ffV1.makeLiteralPredicate(Formula.BFALSE, null), 
+					ffV1.makeLiteralPredicate(Formula.BFALSE, null),
 					bfalse
 			),
 			
 			// LiteralPredicate
 			new PredTestPair(
 					"\u00ac\u22a5", 
-					ffV1.makeUnaryPredicate(Formula.NOT, bfalse_V1, null) , 
+					ffV1.makeUnaryPredicate(Formula.NOT, bfalse_V1, null),
 					mUnaryPredicate(Formula.NOT, bfalse) 
 			), new PredTestPair(
 					"\u00ac\u00ac\u22a5", 
-					ffV1.makeUnaryPredicate(Formula.NOT, 
+					ffV1.makeUnaryPredicate(Formula.NOT,
 							ffV1.makeUnaryPredicate(Formula.NOT, bfalse_V1, null), null
 					),
 					mUnaryPredicate(Formula.NOT, 
@@ -341,19 +351,19 @@ public class TestParser extends AbstractTests {
 			// SimplePredicate
 			new PredTestPair(
 					"\u22a5\u2227\u22a5", 
-					ffV1.makeAssociativePredicate(Formula.LAND, mList(bfalse_V1, bfalse_V1), null) , 
+					ffV1.makeAssociativePredicate(Formula.LAND, mList(bfalse_V1, bfalse_V1), null),
 					mAssociativePredicate(Formula.LAND, bfalse, bfalse) 
 			), new PredTestPair(
 					"\u22a5\u2228\u22a5", 
-					ffV1.makeAssociativePredicate(Formula.LOR, mList(bfalse_V1, bfalse_V1), null), 
+					ffV1.makeAssociativePredicate(Formula.LOR, mList(bfalse_V1, bfalse_V1), null),
 					mAssociativePredicate(Formula.LOR, bfalse, bfalse)
 			), new PredTestPair(
 					"\u22a5\u2227\u22a5\u2227\u22a5", 
-					ffV1.makeAssociativePredicate(Formula.LAND, mList(bfalse_V1, bfalse_V1, bfalse_V1), null) , 
+					ffV1.makeAssociativePredicate(Formula.LAND, mList(bfalse_V1, bfalse_V1, bfalse_V1), null),
 					mAssociativePredicate(Formula.LAND, bfalse, bfalse, bfalse) 
 			), new PredTestPair(
 					"\u22a5\u2228\u22a5\u2228\u22a5", 
-					ffV1.makeAssociativePredicate(Formula.LOR, mList(bfalse_V1, bfalse_V1, bfalse_V1), null) , 
+					ffV1.makeAssociativePredicate(Formula.LOR, mList(bfalse_V1, bfalse_V1, bfalse_V1), null),
 					mAssociativePredicate(Formula.LOR, bfalse, bfalse, bfalse) 
 			),
 			
@@ -387,42 +397,42 @@ public class TestParser extends AbstractTests {
 			// UnquantifiedPredicate
 			new PredTestPair(
 					"\u22a5\u21d2\u22a5", 
-					ffV1.makeBinaryPredicate(Formula.LIMP, bfalse_V1, bfalse_V1, null) , 
+					ffV1.makeBinaryPredicate(Formula.LIMP, bfalse_V1, bfalse_V1, null),
 					mBinaryPredicate(Formula.LIMP, bfalse, bfalse) 
 			), new PredTestPair(
 					"\u22a5\u21d4\u22a5", 
-					ffV1.makeBinaryPredicate(Formula.LEQV, bfalse_V1, bfalse_V1, null) , 
+					ffV1.makeBinaryPredicate(Formula.LEQV, bfalse_V1, bfalse_V1, null),
 					mBinaryPredicate(Formula.LEQV, bfalse, bfalse) 
 			),
 			
 			// Quantifier + IdentList + Predicate
 			new PredTestPair(
 					"\u2200x\u00b7\u22a5", 
-					ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1), bfalse_V1, null), 
+					ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1), bfalse_V1, null),
 					mQuantifiedPredicate(Formula.FORALL, mList(bd_x), bfalse)
 			), new PredTestPair(
 					"\u2203x\u00b7\u22a5", 
-					ffV1.makeQuantifiedPredicate(Formula.EXISTS, mList(bd_x_V1), bfalse_V1, null), 
+					ffV1.makeQuantifiedPredicate(Formula.EXISTS, mList(bd_x_V1), bfalse_V1, null),
 					mQuantifiedPredicate(Formula.EXISTS, mList(bd_x), bfalse)
 			), new PredTestPair(
 					"\u2200x, y, z\u00b7\u22a5", 
-					ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1, bd_y_V1, bd_z_V1), bfalse_V1, null), 
+					ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1, bd_y_V1, bd_z_V1), bfalse_V1, null),
 					mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y, bd_z), bfalse)
 			), new PredTestPair(
 					"\u2203x, y, z\u00b7\u22a5", 
-					ffV1.makeQuantifiedPredicate(Formula.EXISTS, mList(bd_x_V1, bd_y_V1, bd_z_V1), bfalse_V1, null), 
+					ffV1.makeQuantifiedPredicate(Formula.EXISTS, mList(bd_x_V1, bd_y_V1, bd_z_V1), bfalse_V1, null),
 					mQuantifiedPredicate(Formula.EXISTS, mList(bd_x, bd_y, bd_z), bfalse)
 			), new PredTestPair(
 					"\u2200x, y\u00b7\u2200s, t\u00b7\u22a5", 
-					ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1, bd_y_V1), 
+					ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1, bd_y_V1),
 							ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_s, bd_t), bfalse_V1, null), null
 					),
-					mQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1, bd_y_V1), 
+					mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y), 
 							mQuantifiedPredicate(Formula.FORALL, mList(bd_s, bd_t), bfalse)
 					)
 			), new PredTestPair(
 					"\u2203x, y\u00b7\u2203s, t\u00b7\u22a5", 
-					ffV1.makeQuantifiedPredicate(Formula.EXISTS, mList(bd_x_V1, bd_y_V1), 
+					ffV1.makeQuantifiedPredicate(Formula.EXISTS, mList(bd_x_V1, bd_y_V1),
 							ffV1.makeQuantifiedPredicate(Formula.EXISTS, mList(bd_s_V1, bd_t_V1), bfalse_V1, null), null
 					),
 					mQuantifiedPredicate(Formula.EXISTS, mList(bd_x, bd_y), 
@@ -430,7 +440,7 @@ public class TestParser extends AbstractTests {
 					)
 			), new PredTestPair(
 					"\u2200x, y\u00b7\u2203s, t\u00b7\u22a5", 
-					ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1, bd_y_V1), 
+					ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1, bd_y_V1),
 							ffV1.makeQuantifiedPredicate(Formula.EXISTS, mList(bd_s_V1, bd_t_V1), bfalse_V1, null), null
 					),
 					mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y), 
@@ -438,7 +448,7 @@ public class TestParser extends AbstractTests {
 					)
 			), new PredTestPair(
 					"\u2200 x,y \u00b7\u2200 s,t \u00b7 x\u2208s \u2227 y\u2208t",
-					ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1, bd_y_V1), 
+					ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1, bd_y_V1),
 							ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_s_V1, bd_t_V1),
 									ffV1.makeAssociativePredicate(Formula.LAND,
 											mList(ffV1.makeRelationalPredicate(Formula.IN, b3_V1, b1_V1, null),
@@ -459,16 +469,16 @@ public class TestParser extends AbstractTests {
 			// Special cases
 			new PredTestPair(
 					"filter =  { f ∣ ( ∀ a · ⊤ ) } ∧  a = b", 
-					ffV1.makeAssociativePredicate(Formula.LAND, 
+					ffV1.makeAssociativePredicate(Formula.LAND,
 							mList(ffV1.makeRelationalPredicate(
-									Formula.EQUAL, 
-									id_filter_V1, 
+									Formula.EQUAL,
+									id_filter_V1,
 									ffV1.makeQuantifiedExpression(
-											Formula.CSET, 
-											mList(bd_f_V1), 
+											Formula.CSET,
+											mList(bd_f_V1),
 											ffV1.makeQuantifiedPredicate(
-													Formula.FORALL, 
-													mList(bd_a_V1), 					
+													Formula.FORALL,
+													mList(bd_a_V1),
 													ffV1.makeLiteralPredicate(Formula.BTRUE, null), null
 											),
 											b0_V1, null, Implicit), null
@@ -601,7 +611,7 @@ public class TestParser extends AbstractTests {
 			// SimpleExpression
 			new ExprTestPair(
 					"bool(\u22a5)", 
-					ffV1.makeBoolExpression(bfalse_V1, null), 
+					ffV1.makeBoolExpression(bfalse_V1, null),
 					mBoolExpression(bfalse)
 			), new ExprTestPair(
 					"bool($P)",
@@ -609,35 +619,35 @@ public class TestParser extends AbstractTests {
 					mBoolExpression(mPredicateVariable("$P"))
 			), new ExprTestPair(
 					"card(x)", 
-					ffV1.makeUnaryExpression(Formula.KCARD, id_x_V1, null) , 
+					ffV1.makeUnaryExpression(Formula.KCARD, id_x_V1, null),
 					mUnaryExpression(Formula.KCARD, id_x) 
 			), new ExprTestPair(
 					"\u2119(x)", 
-					ffV1.makeUnaryExpression(Formula.POW, id_x_V1, null) , 
+					ffV1.makeUnaryExpression(Formula.POW, id_x_V1, null),
 					mUnaryExpression(Formula.POW, id_x) 
 			), new ExprTestPair(
 					"\u21191(x)", 
-					ffV1.makeUnaryExpression(Formula.POW1, id_x_V1, null) , 
+					ffV1.makeUnaryExpression(Formula.POW1, id_x_V1, null),
 					mUnaryExpression(Formula.POW1, id_x) 
 			), new ExprTestPair(
 					"union(x)", 
-					ffV1.makeUnaryExpression(Formula.KUNION, id_x_V1, null) , 
+					ffV1.makeUnaryExpression(Formula.KUNION, id_x_V1, null),
 					mUnaryExpression(Formula.KUNION, id_x) 
 			), new ExprTestPair(
 					"inter(x)", 
-					ffV1.makeUnaryExpression(Formula.KINTER, id_x_V1, null) , 
+					ffV1.makeUnaryExpression(Formula.KINTER, id_x_V1, null),
 					mUnaryExpression(Formula.KINTER, id_x) 
 			), new ExprTestPair(
 					"dom(x)", 
-					ffV1.makeUnaryExpression(Formula.KDOM, id_x_V1, null) , 
+					ffV1.makeUnaryExpression(Formula.KDOM, id_x_V1, null),
 					mUnaryExpression(Formula.KDOM, id_x) 
 			), new ExprTestPair(
 					"ran(x)", 
-					ffV1.makeUnaryExpression(Formula.KRAN, id_x_V1, null) , 
+					ffV1.makeUnaryExpression(Formula.KRAN, id_x_V1, null),
 					mUnaryExpression(Formula.KRAN, id_x) 
 			), new ExprTestPair(
 					"prj1(x)", 
-					ffV1.makeUnaryExpression(Formula.KPRJ1, ffV1.makeFreeIdentifier("x", null), null),
+					ffV1.makeUnaryExpression(Formula.KPRJ1, id_x_V1, null),
 					mBinaryExpression(Formula.FUNIMAGE,
 							mAtomicExpression(Formula.KPRJ1_GEN), id_x)
 			), new ExprTestPair(
@@ -652,13 +662,13 @@ public class TestParser extends AbstractTests {
 							mAtomicExpression(Formula.KID_GEN), id_x)
 			), new ExprTestPair(
 					"(x)", 
-					id_x_V1 , 
+					id_x_V1,
 					id_x 
 			), new ExprTestPair(
 					"{x, y\u00b7\u22a5\u2223z}", 
 					ffV1.makeQuantifiedExpression(Formula.CSET,
 							mList(bd_x_V1, bd_y_V1), bfalse_V1, id_z_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Explicit,
 							mList(bd_x, bd_y), bfalse, id_z
 					) 
@@ -666,42 +676,42 @@ public class TestParser extends AbstractTests {
 					"{x\u00b7\u22a5\u2223z}", 
 					ffV1.makeQuantifiedExpression(Formula.CSET,
 							mList(bd_x_V1), bfalse_V1, id_z_V1, null, Explicit
-					), 
-					mQuantifiedExpression(Formula.CSET, Explicit,
+					),
+					mQuantifiedExpression(Formula.CSET, Explicit, 
 							mList(bd_x), bfalse, id_z
 					) 
 			), new ExprTestPair(
 					"{x, y\u00b7\u22a5\u2223y}", 
-					ffV1.makeQuantifiedExpression(Formula.CSET, 
+					ffV1.makeQuantifiedExpression(Formula.CSET,
 							mList(bd_x_V1, bd_y_V1), bfalse_V1, b0_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Explicit, 
 							mList(bd_x, bd_y), bfalse, b0
 					) 
 			), new ExprTestPair(
 					"{x\u00b7\u22a5\u2223x}", 
-					ffV1.makeQuantifiedExpression(Formula.CSET, 
+					ffV1.makeQuantifiedExpression(Formula.CSET,
 							mList(bd_x_V1), bfalse_V1, b0_V1, null, Implicit
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Implicit, 
 							mList(bd_x), bfalse, b0
 					) 
 			), new ExprTestPair(
 					"{x\u2223\u22a5}", 
-					ffV1.makeQuantifiedExpression(Formula.CSET, 
+					ffV1.makeQuantifiedExpression(Formula.CSET,
 							mList(bd_x_V1), bfalse_V1, b0_V1, null, Implicit
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Implicit, 
 							mList(bd_x), bfalse, b0
 					) 
 			), new ExprTestPair(
 					"{x+y\u2223\u22a5}", 
-					ffV1.makeQuantifiedExpression(Formula.CSET, mList(bd_x_V1, bd_y_V1), bfalse_V1, 
-							ffV1.makeAssociativeExpression(Formula.PLUS, 
-									mList(b1_V1, 
+					ffV1.makeQuantifiedExpression(Formula.CSET, mList(bd_x_V1, bd_y_V1), bfalse_V1,
+							ffV1.makeAssociativeExpression(Formula.PLUS,
+									mList(b1_V1,
 									b0_V1), null
 							), null, Implicit
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Implicit, mList(bd_x, bd_y), bfalse, 
 							mAssociativeExpression(Formula.PLUS, 
 									b1, 
@@ -710,51 +720,51 @@ public class TestParser extends AbstractTests {
 					) 
 			), new ExprTestPair(
 					"{}", 
-					ffV1.makeSetExtension(new Expression[0], null), 
+					ffV1.makeSetExtension(new Expression[0], null),
 					mSetExtension()
 			), new ExprTestPair(
 					"{x}", 
-					ffV1.makeSetExtension(id_x_V1, null), 
+					ffV1.makeSetExtension(id_x_V1, null),
 					mSetExtension(id_x)
 			), new ExprTestPair(
 					"{x, y}", 
-					ffV1.makeSetExtension(mList(id_x_V1, id_y_V1), null), 
+					ffV1.makeSetExtension(mList(id_x_V1, id_y_V1), null),
 					mSetExtension(id_x, id_y)
 			), new ExprTestPair(
 					"{x, y, z}", 
-					ffV1.makeSetExtension(mList(id_x_V1, id_y_V1, id_z_V1), null), 
+					ffV1.makeSetExtension(mList(id_x_V1, id_y_V1, id_z_V1), null),
 					mSetExtension(id_x, id_y, id_z)
 			), new ExprTestPair(
 					"\u2124", 
-					ffV1.makeAtomicExpression(Formula.INTEGER, null) , 
+					ffV1.makeAtomicExpression(Formula.INTEGER, null),
 					mAtomicExpression(Formula.INTEGER) 
 			), new ExprTestPair(
 					"\u2115", 
-					ffV1.makeAtomicExpression(Formula.NATURAL, null) , 
+					ffV1.makeAtomicExpression(Formula.NATURAL, null),
 					mAtomicExpression(Formula.NATURAL) 
 			), new ExprTestPair(
 					"\u21151", 
-					ffV1.makeAtomicExpression(Formula.NATURAL1, null) , 
+					ffV1.makeAtomicExpression(Formula.NATURAL1, null),
 					mAtomicExpression(Formula.NATURAL1) 
 			), new ExprTestPair(
 					"BOOL", 
-					ffV1.makeAtomicExpression(Formula.BOOL, null) , 
+					ffV1.makeAtomicExpression(Formula.BOOL, null),
 					mAtomicExpression(Formula.BOOL) 
 			), new ExprTestPair(
 					"TRUE", 
-					ffV1.makeAtomicExpression(Formula.TRUE, null) , 
+					ffV1.makeAtomicExpression(Formula.TRUE, null),
 					mAtomicExpression(Formula.TRUE) 
 			), new ExprTestPair(
 					"FALSE", 
-					ffV1.makeAtomicExpression(Formula.FALSE, null) , 
+					ffV1.makeAtomicExpression(Formula.FALSE, null),
 					mAtomicExpression(Formula.FALSE) 
 			), new ExprTestPair(
 					"pred", 
-					ffV1.makeAtomicExpression(Formula.KPRED, null) , 
+					ffV1.makeAtomicExpression(Formula.KPRED, null),
 					mAtomicExpression(Formula.KPRED) 
 			), new ExprTestPair(
 					"succ", 
-					ffV1.makeAtomicExpression(Formula.KSUCC, null) , 
+					ffV1.makeAtomicExpression(Formula.KSUCC, null),
 					mAtomicExpression(Formula.KSUCC) 
 			), new ExprTestPair(
 					"prj1",
@@ -770,7 +780,7 @@ public class TestParser extends AbstractTests {
 					mAtomicExpression(Formula.KID_GEN)
 			), new ExprTestPair(
 					"2", 
-					ffV1.makeIntegerLiteral(BigInteger.valueOf(2), null) , 
+					ffV1.makeIntegerLiteral(BigInteger.valueOf(2), null),
 					mIntegerLiteral(2) 
 			), new ExprTestPair(
 					"3000000000",
@@ -794,20 +804,20 @@ public class TestParser extends AbstractTests {
 							new BigInteger("-50000000000000000000"), null)
 			), new ExprTestPair(
 					"−1", 
-					ffV1.makeIntegerLiteral(BigInteger.valueOf(-1), null) , 
+					ffV1.makeIntegerLiteral(BigInteger.valueOf(-1), null),
 					mIntegerLiteral(-1) 
 			),
 			
 			// Primary
 			new ExprTestPair(
 					"x\u223c", 
-					ffV1.makeUnaryExpression(Formula.CONVERSE, id_x_V1, null), 
+					ffV1.makeUnaryExpression(Formula.CONVERSE, id_x_V1, null),
 					mUnaryExpression(Formula.CONVERSE, id_x)
 			), new ExprTestPair(
 					"x\u223c\u223c", 
-					ffV1.makeUnaryExpression(Formula.CONVERSE, 
+					ffV1.makeUnaryExpression(Formula.CONVERSE,
 							ffV1.makeUnaryExpression(Formula.CONVERSE, id_x_V1, null), null
-					), 
+					),
 					mUnaryExpression(Formula.CONVERSE, 
 							mUnaryExpression(Formula.CONVERSE, id_x)
 					)
@@ -816,48 +826,48 @@ public class TestParser extends AbstractTests {
 			// Image
 			new ExprTestPair(
 					"f(x)", 
-					ffV1.makeBinaryExpression(Formula.FUNIMAGE, id_f_V1, id_x_V1, null), 
+					ffV1.makeBinaryExpression(Formula.FUNIMAGE, id_f_V1, id_x_V1, null),
 					mBinaryExpression(Formula.FUNIMAGE, id_f, id_x)
 			), new ExprTestPair(
 					"f[x]", 
-					ffV1.makeBinaryExpression(Formula.RELIMAGE, id_f_V1, id_x_V1, null), 
+					ffV1.makeBinaryExpression(Formula.RELIMAGE, id_f_V1, id_x_V1, null),
 					mBinaryExpression(Formula.RELIMAGE, id_f, id_x)
 			), new ExprTestPair(
 					"f[x](y)", 
-					ffV1.makeBinaryExpression(Formula.FUNIMAGE, 
+					ffV1.makeBinaryExpression(Formula.FUNIMAGE,
 							ffV1.makeBinaryExpression(Formula.RELIMAGE, id_f_V1, id_x_V1, null),
 							id_y_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.FUNIMAGE, 
 							mBinaryExpression(Formula.RELIMAGE, id_f, id_x),
 							id_y
 					)
 			), new ExprTestPair(
 					"f(x)[y]", 
-					ffV1.makeBinaryExpression(Formula.RELIMAGE, 
-							ffV1.makeBinaryExpression(Formula.FUNIMAGE, id_f_V1, id_x_V1, null), 
+					ffV1.makeBinaryExpression(Formula.RELIMAGE,
+							ffV1.makeBinaryExpression(Formula.FUNIMAGE, id_f_V1, id_x_V1, null),
 							id_y_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.RELIMAGE, 
 							mBinaryExpression(Formula.FUNIMAGE, id_f, id_x), 
 							id_y
 					) 
 			), new ExprTestPair(
 					"f(x)(y)", 
-					ffV1.makeBinaryExpression(Formula.FUNIMAGE, 
-							ffV1.makeBinaryExpression(Formula.FUNIMAGE, id_f_V1, id_x_V1, null), 
+					ffV1.makeBinaryExpression(Formula.FUNIMAGE,
+							ffV1.makeBinaryExpression(Formula.FUNIMAGE, id_f_V1, id_x_V1, null),
 							id_y_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.FUNIMAGE, 
 							mBinaryExpression(Formula.FUNIMAGE, id_f, id_x), 
 							id_y
 					)
 			), new ExprTestPair(
 					"f[x][y]", 
-					ffV1.makeBinaryExpression(Formula.RELIMAGE, 
-							ffV1.makeBinaryExpression(Formula.RELIMAGE, id_f_V1, id_x_V1, null), 
+					ffV1.makeBinaryExpression(Formula.RELIMAGE,
+							ffV1.makeBinaryExpression(Formula.RELIMAGE, id_f_V1, id_x_V1, null),
 							id_y_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.RELIMAGE, 
 							mBinaryExpression(Formula.RELIMAGE, id_f, id_x), 
 							id_y
@@ -867,45 +877,45 @@ public class TestParser extends AbstractTests {
 			// Factor
 			new ExprTestPair(
 					"x^y", 
-					ffV1.makeBinaryExpression(Formula.EXPN, id_x_V1, id_y_V1, null), 
+					ffV1.makeBinaryExpression(Formula.EXPN, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.EXPN, id_x, id_y)
 			), 
 			
 			// Term
 			new ExprTestPair(
 					"x\u2217y", 
-					ffV1.makeAssociativeExpression(Formula.MUL, mList(id_x_V1, id_y_V1), null), 
+					ffV1.makeAssociativeExpression(Formula.MUL, mList(id_x_V1, id_y_V1), null),
 					mAssociativeExpression(Formula.MUL, id_x, id_y)
 			), new ExprTestPair(
 					"x\u2217y\u2217z", 
-					ffV1.makeAssociativeExpression(Formula.MUL, mList(id_x_V1, id_y_V1, id_z_V1), null), 
+					ffV1.makeAssociativeExpression(Formula.MUL, mList(id_x_V1, id_y_V1, id_z_V1), null),
 					mAssociativeExpression(Formula.MUL, id_x, id_y, id_z)
 			), new ExprTestPair(
 					"x\u00f7y", 
-					ffV1.makeBinaryExpression(Formula.DIV, id_x_V1, id_y_V1, null), 
+					ffV1.makeBinaryExpression(Formula.DIV, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.DIV, id_x, id_y)
 			), new ExprTestPair(
 					"x mod y", 
-					ffV1.makeBinaryExpression(Formula.MOD, id_x_V1, id_y_V1, null), 
+					ffV1.makeBinaryExpression(Formula.MOD, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.MOD, id_x, id_y)
 			), 
 			
 			// ArithmeticExpr
 			new ExprTestPair(
 					"x+y", 
-					ffV1.makeAssociativeExpression(Formula.PLUS, mList(id_x_V1, id_y_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.PLUS, mList(id_x_V1, id_y_V1), null),
 					mAssociativeExpression(Formula.PLUS, id_x, id_y) 
 			), new ExprTestPair(
 					"x+y+z", 
-					ffV1.makeAssociativeExpression(Formula.PLUS, mList(id_x_V1, id_y_V1, id_z_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.PLUS, mList(id_x_V1, id_y_V1, id_z_V1), null),
 					mAssociativeExpression(Formula.PLUS, id_x, id_y, id_z) 
 			), new ExprTestPair(
 					"−x+y+z", 
-					ffV1.makeAssociativeExpression(Formula.PLUS, 
-							mList(ffV1.makeUnaryExpression(Formula.UNMINUS, id_x_V1, null), 
-							id_y_V1, 
+					ffV1.makeAssociativeExpression(Formula.PLUS,
+							mList(ffV1.makeUnaryExpression(Formula.UNMINUS, id_x_V1, null),
+							id_y_V1,
 							id_z_V1), null
-					), 
+					),
 					mAssociativeExpression(Formula.PLUS, 
 							mUnaryExpression(Formula.UNMINUS, id_x), 
 							id_y, 
@@ -913,36 +923,36 @@ public class TestParser extends AbstractTests {
 					) 
 			), new ExprTestPair(
 					"x−y", 
-					ffV1.makeBinaryExpression(Formula.MINUS, id_x_V1, id_y_V1, null) , 
+					ffV1.makeBinaryExpression(Formula.MINUS, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.MINUS, id_x, id_y) 
 			), new ExprTestPair(
 					"x−y−z", 
-					ffV1.makeBinaryExpression(Formula.MINUS, 
-							ffV1.makeBinaryExpression(Formula.MINUS, id_x_V1, id_y_V1, null), 
+					ffV1.makeBinaryExpression(Formula.MINUS,
+							ffV1.makeBinaryExpression(Formula.MINUS, id_x_V1, id_y_V1, null),
 							id_z_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.MINUS, 
 							mBinaryExpression(Formula.MINUS, id_x, id_y), 
 							id_z
-					)  
+					) 
 			), new ExprTestPair(
 					"−x−y", 
-					ffV1.makeBinaryExpression(Formula.MINUS, 
-							ffV1.makeUnaryExpression(Formula.UNMINUS, id_x_V1, null), 
+					ffV1.makeBinaryExpression(Formula.MINUS,
+							ffV1.makeUnaryExpression(Formula.UNMINUS, id_x_V1, null),
 							id_y_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.MINUS, 
 							mUnaryExpression(Formula.UNMINUS, id_x), 
 							id_y
 					) 
 			), new ExprTestPair(
 					"x−y+z−t", 
-					ffV1.makeBinaryExpression(Formula.MINUS, 
-							ffV1.makeAssociativeExpression(Formula.PLUS, 
-									mList(ffV1.makeBinaryExpression(Formula.MINUS, id_x_V1, id_y_V1, null), 
+					ffV1.makeBinaryExpression(Formula.MINUS,
+							ffV1.makeAssociativeExpression(Formula.PLUS,
+									mList(ffV1.makeBinaryExpression(Formula.MINUS, id_x_V1, id_y_V1, null),
 									id_z_V1), null
 							), id_t_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.MINUS, 
 							mAssociativeExpression(Formula.PLUS, 
 									mBinaryExpression(Formula.MINUS, id_x, id_y), 
@@ -951,14 +961,14 @@ public class TestParser extends AbstractTests {
 					) 
 			), new ExprTestPair(
 					"−x−y+z−t", 
-					ffV1.makeBinaryExpression(Formula.MINUS, 
-							ffV1.makeAssociativeExpression(Formula.PLUS, 
-									mList(ffV1.makeBinaryExpression(Formula.MINUS, 
-											ffV1.makeUnaryExpression(Formula.UNMINUS, id_x_V1, null), 
+					ffV1.makeBinaryExpression(Formula.MINUS,
+							ffV1.makeAssociativeExpression(Formula.PLUS,
+									mList(ffV1.makeBinaryExpression(Formula.MINUS,
+											ffV1.makeUnaryExpression(Formula.UNMINUS, id_x_V1, null),
 											id_y_V1, null
 									), id_z_V1), null
 							), id_t_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.MINUS, 
 							mAssociativeExpression(Formula.PLUS, 
 									mBinaryExpression(Formula.MINUS, 
@@ -969,9 +979,9 @@ public class TestParser extends AbstractTests {
 					) 
 			), new ExprTestPair(
 					"x+y−z+t", 
-					ffV1.makeAssociativeExpression(Formula.PLUS, 
-							mList(ffV1.makeBinaryExpression(Formula.MINUS, 
-									ffV1.makeAssociativeExpression(Formula.PLUS, mList(id_x_V1, id_y_V1), null), 
+					ffV1.makeAssociativeExpression(Formula.PLUS,
+							mList(ffV1.makeBinaryExpression(Formula.MINUS,
+									ffV1.makeAssociativeExpression(Formula.PLUS, mList(id_x_V1, id_y_V1), null),
 									id_z_V1, null
 							), id_t_V1), null
 					),
@@ -983,14 +993,14 @@ public class TestParser extends AbstractTests {
 					)
 			), new ExprTestPair(
 					"−x+y−z+t", 
-					ffV1.makeAssociativeExpression(Formula.PLUS, 
-							mList(ffV1.makeBinaryExpression(Formula.MINUS, 
-									ffV1.makeAssociativeExpression(Formula.PLUS, 
-											mList(ffV1.makeUnaryExpression(Formula.UNMINUS, id_x_V1, null), 
+					ffV1.makeAssociativeExpression(Formula.PLUS,
+							mList(ffV1.makeBinaryExpression(Formula.MINUS,
+									ffV1.makeAssociativeExpression(Formula.PLUS,
+											mList(ffV1.makeUnaryExpression(Formula.UNMINUS, id_x_V1, null),
 											id_y_V1), null
 									), id_z_V1, null
 							), id_t_V1), null
-					), 
+					),
 					mAssociativeExpression(Formula.PLUS, 
 							mBinaryExpression(Formula.MINUS, 
 									mAssociativeExpression(Formula.PLUS, 
@@ -1001,21 +1011,21 @@ public class TestParser extends AbstractTests {
 					) 
 			), new ExprTestPair(
 					"− 3", 
-					ffV1.makeUnaryExpression(Formula.UNMINUS, ffV1.makeIntegerLiteral(BigInteger.valueOf(3), null), null), 
+					ffV1.makeUnaryExpression(Formula.UNMINUS, ffV1.makeIntegerLiteral(BigInteger.valueOf(3), null), null),
 					mUnaryExpression(Formula.UNMINUS, mIntegerLiteral(3))
 			), new ExprTestPair(
 					"−(4)", 
-					ffV1.makeUnaryExpression(Formula.UNMINUS, ffV1.makeIntegerLiteral(BigInteger.valueOf(4), null), null), 
+					ffV1.makeUnaryExpression(Formula.UNMINUS, ffV1.makeIntegerLiteral(BigInteger.valueOf(4), null), null),
 					mUnaryExpression(Formula.UNMINUS, mIntegerLiteral(4))
 			), new ExprTestPair(
 					"−x", 
-					ffV1.makeUnaryExpression(Formula.UNMINUS, id_x_V1, null), 
+					ffV1.makeUnaryExpression(Formula.UNMINUS, id_x_V1, null),
 					mUnaryExpression(Formula.UNMINUS, id_x)
 			), new ExprTestPair(
 					"−(x+y)", 
 					ffV1.makeUnaryExpression(Formula.UNMINUS,
-							ffV1.makeAssociativeExpression(Formula.PLUS, mList(id_x_V1, id_y_V1), null), null 
-					), 
+							ffV1.makeAssociativeExpression(Formula.PLUS, mList(id_x_V1, id_y_V1), null), null
+					),
 					mUnaryExpression(Formula.UNMINUS,
 							mAssociativeExpression(Formula.PLUS, id_x, id_y) 
 					)
@@ -1024,69 +1034,69 @@ public class TestParser extends AbstractTests {
 			// IntervalExpr
 			new ExprTestPair(
 					"x\u2025y", 
-					ffV1.makeBinaryExpression(Formula.UPTO, id_x_V1, id_y_V1, null), 
+					ffV1.makeBinaryExpression(Formula.UPTO, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.UPTO, id_x, id_y)
 			), 
 			
 			// RelationExpr
 			new ExprTestPair(
 					"x\u2297y", 
-					ffV1.makeBinaryExpression(Formula.DPROD, id_x_V1, id_y_V1, null) , 
+					ffV1.makeBinaryExpression(Formula.DPROD, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.DPROD, id_x, id_y) 
 			), new ExprTestPair(
 					"x;y", 
-					ffV1.makeAssociativeExpression(Formula.FCOMP, mList(id_x_V1, id_y_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.FCOMP, mList(id_x_V1, id_y_V1), null),
 					mAssociativeExpression(Formula.FCOMP, id_x, id_y) 
 			), new ExprTestPair(
 					"x;y;z", 
-					ffV1.makeAssociativeExpression(Formula.FCOMP, mList(id_x_V1, id_y_V1, id_z_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.FCOMP, mList(id_x_V1, id_y_V1, id_z_V1), null),
 					mAssociativeExpression(Formula.FCOMP, id_x, id_y, id_z) 
 			), new ExprTestPair(
 					"x\u25b7y", 
-					ffV1.makeBinaryExpression(Formula.RANRES, id_x_V1, id_y_V1, null) , 
+					ffV1.makeBinaryExpression(Formula.RANRES, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.RANRES, id_x, id_y) 
 			), new ExprTestPair(
 					"x\u2a65y", 
-					ffV1.makeBinaryExpression(Formula.RANSUB, id_x_V1, id_y_V1, null) , 
+					ffV1.makeBinaryExpression(Formula.RANSUB, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.RANSUB, id_x, id_y) 
 			), new ExprTestPair(
 					"x\u2229y", 
-					ffV1.makeAssociativeExpression(Formula.BINTER, mList(id_x_V1, id_y_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.BINTER, mList(id_x_V1, id_y_V1), null),
 					mAssociativeExpression(Formula.BINTER, id_x, id_y) 
 			), new ExprTestPair(
 					"x\u2229y\u2229z", 
-					ffV1.makeAssociativeExpression(Formula.BINTER, mList(id_x_V1, id_y_V1, id_z_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.BINTER, mList(id_x_V1, id_y_V1, id_z_V1), null),
 					mAssociativeExpression(Formula.BINTER, id_x, id_y, id_z) 
 			), new ExprTestPair(
 					"x\u2216y", 
-					ffV1.makeBinaryExpression(Formula.SETMINUS, id_x_V1, id_y_V1, null) , 
+					ffV1.makeBinaryExpression(Formula.SETMINUS, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.SETMINUS, id_x, id_y) 
 			), new ExprTestPair(
 					"x;y\u2a65z", 
-					ffV1.makeBinaryExpression(Formula.RANSUB, 
-							ffV1.makeAssociativeExpression(Formula.FCOMP, mList(id_x_V1, id_y_V1), null), 
+					ffV1.makeBinaryExpression(Formula.RANSUB,
+							ffV1.makeAssociativeExpression(Formula.FCOMP, mList(id_x_V1, id_y_V1), null),
 							id_z_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.RANSUB, 
 							mAssociativeExpression(Formula.FCOMP, id_x, id_y), 
 							id_z
 					) 
 			), new ExprTestPair(
 					"x\u2229y\u2a65z", 
-					ffV1.makeBinaryExpression(Formula.RANSUB, 
-							ffV1.makeAssociativeExpression(Formula.BINTER, mList(id_x_V1, id_y_V1), null), 
+					ffV1.makeBinaryExpression(Formula.RANSUB,
+							ffV1.makeAssociativeExpression(Formula.BINTER, mList(id_x_V1, id_y_V1), null),
 							id_z_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.RANSUB, 
 							mAssociativeExpression(Formula.BINTER, id_x, id_y), 
 							id_z
 					) 
 			), new ExprTestPair(
 					"x\u2229y\u2216z", 
-					ffV1.makeBinaryExpression(Formula.SETMINUS, 
-							ffV1.makeAssociativeExpression(Formula.BINTER, mList(id_x_V1, id_y_V1), null), 
+					ffV1.makeBinaryExpression(Formula.SETMINUS,
+							ffV1.makeAssociativeExpression(Formula.BINTER, mList(id_x_V1, id_y_V1), null),
 							id_z_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.SETMINUS, 
 							mAssociativeExpression(Formula.BINTER, id_x, id_y), 
 							id_z
@@ -1096,162 +1106,162 @@ public class TestParser extends AbstractTests {
 			// SetExpr
 			new ExprTestPair(
 					"x\u222ay", 
-					ffV1.makeAssociativeExpression(Formula.BUNION, mList(id_x_V1, id_y_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.BUNION, mList(id_x_V1, id_y_V1), null),
 					mAssociativeExpression(Formula.BUNION, id_x, id_y) 
 			), new ExprTestPair(
 					"x\u222ay\u222az", 
-					ffV1.makeAssociativeExpression(Formula.BUNION, mList(id_x_V1, id_y_V1, id_z_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.BUNION, mList(id_x_V1, id_y_V1, id_z_V1), null),
 					mAssociativeExpression(Formula.BUNION, id_x, id_y, id_z) 
 			), new ExprTestPair(
 					"x\u00d7y", 
-					ffV1.makeBinaryExpression(Formula.CPROD, id_x_V1, id_y_V1, null) , 
+					ffV1.makeBinaryExpression(Formula.CPROD, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.CPROD, id_x, id_y) 
 			), new ExprTestPair(
 					"x\u00d7y\u00d7z", 
-					ffV1.makeBinaryExpression(Formula.CPROD, 
+					ffV1.makeBinaryExpression(Formula.CPROD,
 							ffV1.makeBinaryExpression(Formula.CPROD, id_x_V1, id_y_V1, null), id_z_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.CPROD, 
 							mBinaryExpression(Formula.CPROD, id_x, id_y), id_z
 					) 
 			), new ExprTestPair(
 					"x\ue103y", 
-					ffV1.makeAssociativeExpression(Formula.OVR, mList(id_x_V1, id_y_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.OVR, mList(id_x_V1, id_y_V1), null),
 					mAssociativeExpression(Formula.OVR, id_x, id_y) 
 			), new ExprTestPair(
 					"x\ue103y\ue103z", 
-					ffV1.makeAssociativeExpression(Formula.OVR, mList(id_x_V1, id_y_V1, id_z_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.OVR, mList(id_x_V1, id_y_V1, id_z_V1), null),
 					mAssociativeExpression(Formula.OVR, id_x, id_y, id_z) 
 			), new ExprTestPair(
 					"x\u2218y", 
-					ffV1.makeAssociativeExpression(Formula.BCOMP, mList(id_x_V1, id_y_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.BCOMP, mList(id_x_V1, id_y_V1), null),
 					mAssociativeExpression(Formula.BCOMP, id_x, id_y) 
 			), new ExprTestPair(
 					"x\u2218y\u2218z", 
-					ffV1.makeAssociativeExpression(Formula.BCOMP, mList(id_x_V1, id_y_V1, id_z_V1), null) , 
+					ffV1.makeAssociativeExpression(Formula.BCOMP, mList(id_x_V1, id_y_V1, id_z_V1), null),
 					mAssociativeExpression(Formula.BCOMP, id_x, id_y, id_z) 
 			), new ExprTestPair(
 					"x\u2225y", 
-					ffV1.makeBinaryExpression(Formula.PPROD, id_x_V1, id_y_V1, null) , 
+					ffV1.makeBinaryExpression(Formula.PPROD, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.PPROD, id_x, id_y) 
 			), new ExprTestPair(
 					"x\u25c1y", 
-					ffV1.makeBinaryExpression(Formula.DOMRES, id_x_V1, id_y_V1, null) , 
+					ffV1.makeBinaryExpression(Formula.DOMRES, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.DOMRES, id_x, id_y) 
 			), new ExprTestPair(
 					"x\u2a64y", 
-					ffV1.makeBinaryExpression(Formula.DOMSUB, id_x_V1, id_y_V1, null), 
+					ffV1.makeBinaryExpression(Formula.DOMSUB, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.DOMSUB, id_x, id_y)
 			),
 			
 			// RelationalSetExpr
 			new ExprTestPair(
 					"x\ue100y", 
-					ffV1.makeBinaryExpression(Formula.TREL, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.TREL, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.TREL, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\ue100y\ue100z", 
-					ffV1.makeBinaryExpression(Formula.TREL, 
+					ffV1.makeBinaryExpression(Formula.TREL,
 							ffV1.makeBinaryExpression(Formula.TREL, id_x_V1, id_y_V1, null), id_z_V1, null
 					) 					
 					, null
 			), new ExprTestPair(
 					"x\ue101y", 
-					ffV1.makeBinaryExpression(Formula.SREL, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.SREL, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.SREL, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\ue101y\ue101z", 
-					ffV1.makeBinaryExpression(Formula.SREL, 
+					ffV1.makeBinaryExpression(Formula.SREL,
 							ffV1.makeBinaryExpression(Formula.SREL, id_x_V1, id_y_V1, null), id_z_V1, null
 					) 					
 					, null
 			), new ExprTestPair(
 					"x\ue102y", 
-					ffV1.makeBinaryExpression(Formula.STREL, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.STREL, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.STREL, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\ue102y\ue102z", 
-					ffV1.makeBinaryExpression(Formula.STREL, 
+					ffV1.makeBinaryExpression(Formula.STREL,
 							ffV1.makeBinaryExpression(Formula.STREL, id_x_V1, id_y_V1, null), id_z_V1, null
 					) 					
 					, null
 			), new ExprTestPair(
 					"x\u2900y", 
-					ffV1.makeBinaryExpression(Formula.PSUR, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.PSUR, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.PSUR, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\u2900y\u2900z", 
-					ffV1.makeBinaryExpression(Formula.PSUR, 
+					ffV1.makeBinaryExpression(Formula.PSUR,
 							ffV1.makeBinaryExpression(Formula.PSUR, id_x_V1, id_y_V1, null), id_z_V1, null
 					) 					
 					, null
 			), new ExprTestPair(
 					"x\u2914y", 
-					ffV1.makeBinaryExpression(Formula.PINJ, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.PINJ, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.PINJ, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\u2914y\u2914z", 
-					ffV1.makeBinaryExpression(Formula.PINJ, 
+					ffV1.makeBinaryExpression(Formula.PINJ,
 							ffV1.makeBinaryExpression(Formula.PINJ, id_x_V1, id_y_V1, null), id_z_V1, null
 					) 					
 					, null
 			), new ExprTestPair(
 					"x\u2916y", 
-					ffV1.makeBinaryExpression(Formula.TBIJ, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.TBIJ, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.TBIJ, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\u2916y\u2916z", 
-					ffV1.makeBinaryExpression(Formula.TBIJ, 
+					ffV1.makeBinaryExpression(Formula.TBIJ,
 							ffV1.makeBinaryExpression(Formula.TBIJ, id_x_V1, id_y_V1, null), id_z_V1, null
 					) 					
 					, null
 			), new ExprTestPair(
 					"x\u2192y", 
-					ffV1.makeBinaryExpression(Formula.TFUN, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.TFUN, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.TFUN, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\u2192y\u2192z", 
-					ffV1.makeBinaryExpression(Formula.TFUN, 
+					ffV1.makeBinaryExpression(Formula.TFUN,
 							ffV1.makeBinaryExpression(Formula.TFUN, id_x_V1, id_y_V1, null), id_z_V1, null
 					) 					
 					, null
 			), new ExprTestPair(
 					"x\u2194y", 
-					ffV1.makeBinaryExpression(Formula.REL, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.REL, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.REL, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\u2194y\u2194z", 
-					ffV1.makeBinaryExpression(Formula.REL, 
+					ffV1.makeBinaryExpression(Formula.REL,
 							ffV1.makeBinaryExpression(Formula.REL, id_x_V1, id_y_V1, null), id_z_V1, null
 					) 					
 					, null
 			), new ExprTestPair(
 					"x\u21a0y", 
-					ffV1.makeBinaryExpression(Formula.TSUR, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.TSUR, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.TSUR, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\u21a0y\u21a0z", 
-					ffV1.makeBinaryExpression(Formula.TSUR, 
+					ffV1.makeBinaryExpression(Formula.TSUR,
 							ffV1.makeBinaryExpression(Formula.TSUR, id_x_V1, id_y_V1, null), id_z_V1, null
 					) 					
 					, null
 			), new ExprTestPair(
 					"x\u21a3y", 
-					ffV1.makeBinaryExpression(Formula.TINJ, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.TINJ, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.TINJ, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\u21a3y\u21a3z", 
-					ffV1.makeBinaryExpression(Formula.TINJ, 
+					ffV1.makeBinaryExpression(Formula.TINJ,
 							ffV1.makeBinaryExpression(Formula.TINJ, id_x_V1, id_y_V1, null), id_z_V1, null
 					) 					
 					, null
 			), new ExprTestPair(
 					"x\u21f8y", 
-					ffV1.makeBinaryExpression(Formula.PFUN, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.PFUN, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.PFUN, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\u21f8y\u21f8z", 
-					ffV1.makeBinaryExpression(Formula.PFUN, 
+					ffV1.makeBinaryExpression(Formula.PFUN,
 							ffV1.makeBinaryExpression(Formula.PFUN, id_x_V1, id_y_V1, null), id_z_V1, null
 					) 					
 					, null
@@ -1260,13 +1270,13 @@ public class TestParser extends AbstractTests {
 			// PairExpr
 			new ExprTestPair(
 					"x\u21a6y", 
-					ffV1.makeBinaryExpression(Formula.MAPSTO, id_x_V1, id_y_V1, null) 					, 
+					ffV1.makeBinaryExpression(Formula.MAPSTO, id_x_V1, id_y_V1, null),
 					mBinaryExpression(Formula.MAPSTO, id_x, id_y) 					
 			), new ExprTestPair(
 					"x\u21a6y\u21a6z", 
-					ffV1.makeBinaryExpression(Formula.MAPSTO, 
+					ffV1.makeBinaryExpression(Formula.MAPSTO,
 							ffV1.makeBinaryExpression(Formula.MAPSTO, id_x_V1, id_y_V1, null), id_z_V1, null
-					), 
+					),
 					mBinaryExpression(Formula.MAPSTO, 
 							mBinaryExpression(Formula.MAPSTO, id_x, id_y), id_z
 					) 					
@@ -1276,10 +1286,10 @@ public class TestParser extends AbstractTests {
 			// UnBound
 			new ExprTestPair(
 					"\u03bb x\u00b7\u22a5\u2223z", 
-					ffV1.makeQuantifiedExpression(Formula.CSET,  
-							mList(bd_x_V1), bfalse_V1, 
+					ffV1.makeQuantifiedExpression(Formula.CSET,
+							mList(bd_x_V1), bfalse_V1,
 							ffV1.makeBinaryExpression(Formula.MAPSTO, b0_V1, id_z_V1, null), null, Lambda
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Lambda,  
 							mList(bd_x), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, b0, id_z)
@@ -1287,12 +1297,12 @@ public class TestParser extends AbstractTests {
 			), new ExprTestPair(
 					"\u03bb x\u21a6y\u00b7\u22a5\u2223z", 
 					ffV1.makeQuantifiedExpression(Formula.CSET,
-							mList(bd_x_V1, bd_y_V1), bfalse_V1, 
-							ffV1.makeBinaryExpression(Formula.MAPSTO, 
-									ffV1.makeBinaryExpression(Formula.MAPSTO, b1_V1, b0_V1, null), 
+							mList(bd_x_V1, bd_y_V1), bfalse_V1,
+							ffV1.makeBinaryExpression(Formula.MAPSTO,
+									ffV1.makeBinaryExpression(Formula.MAPSTO, b1_V1, b0_V1, null),
 									id_z_V1, null
 							), null, Lambda
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, 
@@ -1303,15 +1313,15 @@ public class TestParser extends AbstractTests {
 			), new ExprTestPair(
 					"\u03bb x\u21a6y\u21a6s\u00b7\u22a5\u2223z", 
 					ffV1.makeQuantifiedExpression(Formula.CSET,
-							mList(bd_x_V1, bd_y_V1, bd_s_V1), 
-							bfalse_V1, 
-							ffV1.makeBinaryExpression(Formula.MAPSTO, 
-									ffV1.makeBinaryExpression(Formula.MAPSTO, 
-											ffV1.makeBinaryExpression(Formula.MAPSTO, b2_V1, 	b1_V1, null), 
+							mList(bd_x_V1, bd_y_V1, bd_s_V1),
+							bfalse_V1,
+							ffV1.makeBinaryExpression(Formula.MAPSTO,
+									ffV1.makeBinaryExpression(Formula.MAPSTO,
+											ffV1.makeBinaryExpression(Formula.MAPSTO, b2_V1, 	b1_V1, null),
 											b0_V1, null
 									), id_z_V1, null
 							), null, Lambda
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y, bd_s), 
 							bfalse, 
@@ -1325,15 +1335,15 @@ public class TestParser extends AbstractTests {
 			), new ExprTestPair(
 					"\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223z", 
 					ffV1.makeQuantifiedExpression(Formula.CSET,
-							mList(bd_x_V1, bd_y_V1, bd_s_V1), 
-							bfalse_V1, 
-							ffV1.makeBinaryExpression(Formula.MAPSTO, 
-									ffV1.makeBinaryExpression(Formula.MAPSTO, 
-											b2_V1, 
+							mList(bd_x_V1, bd_y_V1, bd_s_V1),
+							bfalse_V1,
+							ffV1.makeBinaryExpression(Formula.MAPSTO,
+									ffV1.makeBinaryExpression(Formula.MAPSTO,
+											b2_V1,
 											ffV1.makeBinaryExpression(Formula.MAPSTO, b1_V1, b0_V1, null), null
 									), id_z_V1, null
 							), null, Lambda
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y, bd_s), 
 							bfalse, 
@@ -1350,9 +1360,9 @@ public class TestParser extends AbstractTests {
 			new ExprTestPair(
 					"\u03bb x\u00b7\u22a5\u2223x", 
 					ffV1.makeQuantifiedExpression(Formula.CSET,
-							mList(bd_x_V1), bfalse_V1, 
+							mList(bd_x_V1), bfalse_V1,
 							ffV1.makeBinaryExpression(Formula.MAPSTO, b0_V1, b0_V1, null), null, Lambda
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, b0, b0)
@@ -1360,12 +1370,12 @@ public class TestParser extends AbstractTests {
 			), new ExprTestPair(
 					"\u03bb x\u21a6y\u00b7\u22a5\u2223y", 
 					ffV1.makeQuantifiedExpression(Formula.CSET,
-							mList(bd_x_V1, bd_y_V1), bfalse_V1, 
-							ffV1.makeBinaryExpression(Formula.MAPSTO, 
+							mList(bd_x_V1, bd_y_V1), bfalse_V1,
+							ffV1.makeBinaryExpression(Formula.MAPSTO,
 									ffV1.makeBinaryExpression(Formula.MAPSTO, b1_V1, b0_V1, null),
 									b0_V1, null
 							), null, Lambda
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, 
@@ -1376,15 +1386,15 @@ public class TestParser extends AbstractTests {
 			), new ExprTestPair(
 					"\u03bb x\u21a6y\u21a6s\u00b7\u22a5\u2223s", 
 					ffV1.makeQuantifiedExpression(Formula.CSET,
-							mList(bd_x_V1, bd_y_V1, bd_s_V1), bfalse_V1, 
-							ffV1.makeBinaryExpression(Formula.MAPSTO, 
-									ffV1.makeBinaryExpression(Formula.MAPSTO, 
-											ffV1.makeBinaryExpression(Formula.MAPSTO, b2_V1, b1_V1, null), 
+							mList(bd_x_V1, bd_y_V1, bd_s_V1), bfalse_V1,
+							ffV1.makeBinaryExpression(Formula.MAPSTO,
+									ffV1.makeBinaryExpression(Formula.MAPSTO,
+											ffV1.makeBinaryExpression(Formula.MAPSTO, b2_V1, b1_V1, null),
 											b0_V1, null
-									), 
+									),
 									b0_V1, null
 							), null, Lambda
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y, bd_s), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, 
@@ -1398,13 +1408,13 @@ public class TestParser extends AbstractTests {
 			), new ExprTestPair(
 					"\u03bb x\u21a6(y\u21a6s)\u00b7\u22a5\u2223s", 
 					ffV1.makeQuantifiedExpression(Formula.CSET,
-							mList(bd_x_V1, bd_y_V1, bd_s_V1), bfalse_V1, 
-							ffV1.makeBinaryExpression(Formula.MAPSTO, 
-									ffV1.makeBinaryExpression(Formula.MAPSTO, b2_V1, 
+							mList(bd_x_V1, bd_y_V1, bd_s_V1), bfalse_V1,
+							ffV1.makeBinaryExpression(Formula.MAPSTO,
+									ffV1.makeBinaryExpression(Formula.MAPSTO, b2_V1,
 											ffV1.makeBinaryExpression(Formula.MAPSTO, b1_V1, b0_V1, null), null
 									), b0_V1, null
 							), null, Lambda
-					), 
+					),
 					mQuantifiedExpression(Formula.CSET, Lambda,
 							mList(bd_x, bd_y, bd_s), bfalse, 
 							mBinaryExpression(Formula.MAPSTO, 
@@ -1420,7 +1430,7 @@ public class TestParser extends AbstractTests {
 					"\u22c3x\u00b7\u22a5\u2223z", 
 					ffV1.makeQuantifiedExpression(Formula.QUNION,
 							mList(bd_x_V1), bfalse_V1, id_z_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x), bfalse, id_z
 					)
@@ -1428,7 +1438,7 @@ public class TestParser extends AbstractTests {
 					"\u22c3 x, y \u00b7\u22a5\u2223z", 
 					ffV1.makeQuantifiedExpression(Formula.QUNION,
 							mList(bd_x_V1, bd_y_V1), bfalse_V1, id_z_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x, bd_y), bfalse, id_z
 					)
@@ -1436,7 +1446,7 @@ public class TestParser extends AbstractTests {
 					"\u22c3 x, y, s \u00b7\u22a5\u2223z", 
 					ffV1.makeQuantifiedExpression(Formula.QUNION,
 							mList(bd_x_V1, bd_y_V1, bd_s_V1), bfalse_V1, id_z_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x, bd_y, bd_s), bfalse, id_z
 					)
@@ -1447,7 +1457,7 @@ public class TestParser extends AbstractTests {
 					"\u22c3x\u00b7\u22a5\u2223x", 
 					ffV1.makeQuantifiedExpression(Formula.QUNION,
 							mList(bd_x_V1), bfalse_V1, b0_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x), bfalse, b0
 					)
@@ -1455,7 +1465,7 @@ public class TestParser extends AbstractTests {
 					"\u22c3 x, y \u00b7\u22a5\u2223y", 
 					ffV1.makeQuantifiedExpression(Formula.QUNION,
 							mList(bd_x_V1, bd_y_V1), bfalse_V1, b0_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x, bd_y), bfalse, b0
 					)
@@ -1463,7 +1473,7 @@ public class TestParser extends AbstractTests {
 					"\u22c3 x, y, s \u00b7\u22a5\u2223s", 
 					ffV1.makeQuantifiedExpression(Formula.QUNION,
 							mList(bd_x_V1, bd_y_V1, bd_s_V1), bfalse_V1, b0_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QUNION, Explicit,
 							mList(bd_x, bd_y, bd_s), bfalse, b0
 					)
@@ -1474,16 +1484,16 @@ public class TestParser extends AbstractTests {
 					"\u22c3x\u2223\u22a5", 
 					ffV1.makeQuantifiedExpression(Formula.QUNION,
 							mList(bd_x_V1), bfalse_V1, b0_V1, null, Implicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QUNION, Implicit,
 							mList(bd_x), bfalse, b0
 					)
 			), new ExprTestPair(
 					"\u22c3 x−y \u2223\u22a5", 
 					ffV1.makeQuantifiedExpression(Formula.QUNION,
-							mList(bd_x_V1, bd_y_V1), bfalse_V1, 
+							mList(bd_x_V1, bd_y_V1), bfalse_V1,
 							ffV1.makeBinaryExpression(Formula.MINUS, b1_V1, b0_V1, null), null, Implicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QUNION, Implicit,
 							mList(bd_x, bd_y), bfalse, 
 							mBinaryExpression(Formula.MINUS, b1, b0)
@@ -1495,7 +1505,7 @@ public class TestParser extends AbstractTests {
 					"\u22c2x\u00b7\u22a5\u2223z", 
 					ffV1.makeQuantifiedExpression(Formula.QINTER,
 							mList(bd_x_V1), bfalse_V1, id_z_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x), bfalse, id_z
 					)
@@ -1503,7 +1513,7 @@ public class TestParser extends AbstractTests {
 					"\u22c2 x, y \u00b7\u22a5\u2223z", 
 					ffV1.makeQuantifiedExpression(Formula.QINTER,
 							mList(bd_x_V1, bd_y_V1), bfalse_V1, id_z_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x, bd_y), bfalse, id_z
 					)
@@ -1511,7 +1521,7 @@ public class TestParser extends AbstractTests {
 					"\u22c2 x, y, s \u00b7\u22a5\u2223z", 
 					ffV1.makeQuantifiedExpression(Formula.QINTER,
 							mList(bd_x_V1, bd_y_V1, bd_s_V1), bfalse_V1, id_z_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x, bd_y, bd_s), bfalse, id_z
 					)
@@ -1522,7 +1532,7 @@ public class TestParser extends AbstractTests {
 					"\u22c2 x \u00b7\u22a5\u2223x", 
 					ffV1.makeQuantifiedExpression(Formula.QINTER,
 							mList(bd_x_V1), bfalse_V1, b0_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x), bfalse, b0
 					)
@@ -1530,7 +1540,7 @@ public class TestParser extends AbstractTests {
 					"\u22c2 x, y \u00b7\u22a5\u2223y", 
 					ffV1.makeQuantifiedExpression(Formula.QINTER,
 							mList(bd_x_V1, bd_y_V1), bfalse_V1, b0_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x, bd_y), bfalse, b0
 					)
@@ -1538,7 +1548,7 @@ public class TestParser extends AbstractTests {
 					"\u22c2 x, y, s \u00b7\u22a5\u2223s", 
 					ffV1.makeQuantifiedExpression(Formula.QINTER,
 							mList(bd_x_V1, bd_y_V1, bd_s_V1), bfalse_V1, b0_V1, null, Explicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QINTER, Explicit,
 							mList(bd_x, bd_y, bd_s), bfalse, b0
 					)
@@ -1549,16 +1559,16 @@ public class TestParser extends AbstractTests {
 					"\u22c2x\u2223\u22a5", 
 					ffV1.makeQuantifiedExpression(Formula.QINTER,
 							mList(bd_x_V1), bfalse_V1, b0_V1, null, Implicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QINTER, Implicit,
 							mList(bd_x), bfalse, b0
 					)
 			), new ExprTestPair(
 					"\u22c2y−x\u2223\u22a5", 
 					ffV1.makeQuantifiedExpression(Formula.QINTER,
-							mList(bd_y_V1, bd_x_V1), bfalse_V1, 
+							mList(bd_y_V1, bd_x_V1), bfalse_V1,
 							ffV1.makeBinaryExpression(Formula.MINUS, b1_V1, b0_V1, null), null, Implicit
-					), 
+					),
 					mQuantifiedExpression(Formula.QINTER, Implicit,
 							mList(bd_y, bd_x), bfalse, 
 							mBinaryExpression(Formula.MINUS, b1, b0)
@@ -1568,11 +1578,11 @@ public class TestParser extends AbstractTests {
 			// Typed empty set
 			new ExprTestPair(
 					"(\u2205\u2982\u2119(\u2124))", 
-					ffV1.makeEmptySet(POW(ffV1.makeIntegerType()), null), 
+					ffV1.makeEmptySet(POW(ffV1.makeIntegerType()), null),
 					mEmptySet(POW(ff.makeIntegerType()))
 			), new ExprTestPair(
 					"(\u2205\u2982\u2119(\u2119(\u2124)))", 
-					ffV1.makeEmptySet(POW(POW(ffV1.makeIntegerType())), null), 
+					ffV1.makeEmptySet(POW(POW(ffV1.makeIntegerType())), null),
 					mEmptySet(POW(POW(ff.makeIntegerType())))
 			),
 			
@@ -1582,7 +1592,7 @@ public class TestParser extends AbstractTests {
 					ffV1.makeBinaryExpression(Formula.FUNIMAGE,
 							ffV1.makeUnaryExpression(Formula.CONVERSE,
 									id_f_V1, null),
-							id_x_V1, null), 
+							id_x_V1, null),
 					mBinaryExpression(Formula.FUNIMAGE,
 							mUnaryExpression(Formula.CONVERSE,
 									id_f),
@@ -1602,7 +1612,7 @@ public class TestParser extends AbstractTests {
 					ffV1.makeBinaryExpression(Formula.RELIMAGE,
 							ffV1.makeUnaryExpression(Formula.CONVERSE,
 									id_f_V1, null),
-							id_x_V1, null), 
+							id_x_V1, null),
 					mBinaryExpression(Formula.RELIMAGE,
 							mUnaryExpression(Formula.CONVERSE,
 									id_f),
@@ -1613,7 +1623,7 @@ public class TestParser extends AbstractTests {
 							ffV1.makeUnaryExpression(Formula.CONVERSE,
 									ffV1.makeBinaryExpression(Formula.FUNIMAGE,
 											id_f_V1, id_x_V1, null), null),
-							id_y_V1, null), 
+							id_y_V1, null),
 					mBinaryExpression(Formula.RELIMAGE,
 							mUnaryExpression(Formula.CONVERSE,
 									mBinaryExpression(Formula.FUNIMAGE,
