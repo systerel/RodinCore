@@ -37,7 +37,9 @@ public class TypeVariable extends Type {
 	private Type value;
 	
 	/**
-	 * Creates a new instance of this type.
+	 * Must never be called outside of the formula type-checker.
+	 * 
+	 * @see TypeCheckResult#newFreshVariable(SourceLocation)
 	 */
 	protected TypeVariable(int index, SourceLocation location) {
 		super(false);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,10 +23,13 @@ import java.util.Set;
 public class PowerSetType extends Type {
 	
 	// Name of the carrier-set corresponding to this type.
-	private Type base;
+	private final Type base;
 
 	/**
-	 * Creates a new instance of this type.
+	 * Must never be called directly: use the factory method instead.
+	 * 
+	 * @see FormulaFactory#makePowerSetType(Type)
+	 * @see FormulaFactory#makeRelationalType(Type, Type)
 	 */
 	protected PowerSetType(Type base) {
 		super(base.isSolved());
