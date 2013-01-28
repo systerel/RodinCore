@@ -222,4 +222,5 @@ public class TestFormulaFactory extends AbstractTests {
 			}
 		}.run();
 	}
+
 }
