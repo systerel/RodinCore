@@ -101,7 +101,6 @@ public class Common {
 				unaryExpressionTags.removeAll(onlyV1UnaryTags);
 			}
 		}
-		
 
 		public static TagSupply getV1TagSupply() {
 			return new V1TagSupply();
@@ -124,7 +123,7 @@ public class Common {
 		}
 		
 		/**
-		 * formula factory compatible with the tag supply version
+		 * Formula factory compatible with the tag supply version
 		 */
 		protected final FormulaFactory factory;
 
@@ -159,8 +158,8 @@ public class Common {
 				FIRST_UNARY_PREDICATE, UnaryPredicate.TAGS_LENGTH);
 		
 		protected TagSupply(FormulaFactory factory, LanguageVersion version) {
-			this.version = version;
 			this.factory = factory;
+			this.version = version;
 		}
 
 	}
@@ -171,33 +170,33 @@ public class Common {
 	 * @return an array of all expressions
 	 */
 	public static List<Expression> constructExpressions(TagSupply tagGetter) {
-		FormulaFactory factory = tagGetter.factory;
+		final FormulaFactory ff = tagGetter.factory;
 		final List<Expression> expressions = new ArrayList<Expression>();
-		FreeIdentifier id_x = factory.makeFreeIdentifier("x", null);
-		BoundIdentDecl bd_x = factory.makeBoundIdentDecl("x", null);
-		FreeIdentifier id_y = factory.makeFreeIdentifier("y", null);
-		LiteralPredicate btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
-		IntegerLiteral two = factory.makeIntegerLiteral(TWO, null);
+		FreeIdentifier id_x = ff.makeFreeIdentifier("x", null);
+		BoundIdentDecl bd_x = ff.makeBoundIdentDecl("x", null);
+		FreeIdentifier id_y = ff.makeFreeIdentifier("y", null);
+		LiteralPredicate btrue = ff.makeLiteralPredicate(Formula.BTRUE, null);
+		IntegerLiteral two = ff.makeIntegerLiteral(TWO, null);
 
 		for (int tag : tagGetter.associativeExpressionTags) {
-			expressions.add(factory.makeAssociativeExpression(tag,
+			expressions.add(ff.makeAssociativeExpression(tag,
 					mList(id_y, id_x), null));
 		}
 		for (int tag : tagGetter.binaryExpressionTags) {
-			expressions.add(factory.makeBinaryExpression(tag, id_x, id_x, null));
+			expressions.add(ff.makeBinaryExpression(tag, id_x, id_x, null));
 		}
 		for (int tag : tagGetter.atomicExpressionTags) {
-			expressions.add(factory.makeAtomicExpression(tag, null));
+			expressions.add(ff.makeAtomicExpression(tag, null));
 		}
-		expressions.add(factory.makeBoolExpression(btrue, null));
-		expressions.add(factory.makeIntegerLiteral(ONE, null));
+		expressions.add(ff.makeBoolExpression(btrue, null));
+		expressions.add(ff.makeIntegerLiteral(ONE, null));
 		for (int tag : tagGetter.quantifiedExpressionTags) {
-			expressions.add(factory.makeQuantifiedExpression(tag, mList(bd_x),
+			expressions.add(ff.makeQuantifiedExpression(tag, mList(bd_x),
 					btrue, two, null, QuantifiedExpression.Form.Explicit));
 		}
-		expressions.add(factory.makeSetExtension(mList(id_x), null));
+		expressions.add(ff.makeSetExtension(mList(id_x), null));
 		for (int tag : tagGetter.unaryExpressionTags) {
-			expressions.add(factory.makeUnaryExpression(tag, id_x, null));
+			expressions.add(ff.makeUnaryExpression(tag, id_x, null));
 		}
 		expressions.add(id_x);
 		return expressions;
@@ -209,41 +208,41 @@ public class Common {
 	 * @return an array of all predicates
 	 */
 	public static List<Predicate> constructPredicates(TagSupply tagGetter) {
-		FormulaFactory factory = tagGetter.factory;
+		final FormulaFactory ff = tagGetter.factory;
 		final List<Predicate> predicates = new ArrayList<Predicate>();
-		BoundIdentDecl bd_x = factory.makeBoundIdentDecl("x", null);
-		LiteralPredicate btrue = factory.makeLiteralPredicate(Formula.BTRUE, null);
-		IntegerLiteral two = factory.makeIntegerLiteral(TWO, null);
-		final FreeIdentifier id_S = factory.makeFreeIdentifier("S", null);
-		final FreeIdentifier id_s = factory.makeFreeIdentifier("s", null);
-		final SetExtension singleton_s = factory.makeSetExtension(id_s, null);
+		BoundIdentDecl bd_x = ff.makeBoundIdentDecl("x", null);
+		LiteralPredicate btrue = ff.makeLiteralPredicate(Formula.BTRUE, null);
+		IntegerLiteral two = ff.makeIntegerLiteral(TWO, null);
+		final FreeIdentifier id_S = ff.makeFreeIdentifier("S", null);
+		final FreeIdentifier id_s = ff.makeFreeIdentifier("s", null);
+		final SetExtension singleton_s = ff.makeSetExtension(id_s, null);
 
 		for (int tag : tagGetter.binaryPredicateTags) {
-			predicates.add(factory.makeBinaryPredicate(tag, btrue, btrue, null));
+			predicates.add(ff.makeBinaryPredicate(tag, btrue, btrue, null));
 		}
 		for (int tag : tagGetter.literalPredicateTags) {
-			predicates.add(factory.makeLiteralPredicate(tag, null));
+			predicates.add(ff.makeLiteralPredicate(tag, null));
 		}
-		predicates.add(factory.makeSimplePredicate(Formula.KFINITE, two, null));
+		predicates.add(ff.makeSimplePredicate(Formula.KFINITE, two, null));
 		for (int tag : tagGetter.quantifiedPredicateTags) {
-			predicates.add(factory.makeQuantifiedPredicate(tag, mList(bd_x), btrue,
+			predicates.add(ff.makeQuantifiedPredicate(tag, mList(bd_x), btrue,
 					null));
 		}
 		for (int tag : tagGetter.relationalPredicateTags) {
-			predicates.add(factory.makeRelationalPredicate(tag, two, two, null));
+			predicates.add(ff.makeRelationalPredicate(tag, two, two, null));
 		}
 		for (int tag : tagGetter.unaryPredicateTags) {
-			predicates.add(factory.makeUnaryPredicate(tag, btrue, null));
+			predicates.add(ff.makeUnaryPredicate(tag, btrue, null));
 		}
 		for (int tag : tagGetter.associativePredicateTags) {
-			predicates.add(factory.makeAssociativePredicate(tag,
+			predicates.add(ff.makeAssociativePredicate(tag,
 					mList(btrue, btrue), null));
 		}
 		for (int tag : tagGetter.multiplePredicateTags) {
-			predicates.add(factory.makeMultiplePredicate(tag, mList(id_S,
+			predicates.add(ff.makeMultiplePredicate(tag, mList(id_S,
 					singleton_s), null));
 		}
-		predicates.add(factory.makePredicateVariable(PRED_VAR_P_NAME, null));
+		predicates.add(ff.makePredicateVariable(PRED_VAR_P_NAME, null));
 		return predicates;
 	}
 
