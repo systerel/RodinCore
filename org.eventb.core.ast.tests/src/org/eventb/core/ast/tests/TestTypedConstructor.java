@@ -559,7 +559,7 @@ public class TestTypedConstructor extends AbstractTests {
 		final Expression child = mExpression(type);
 		assertExpressionType(mUnaryExpression(tag, child), expected);
 	}
-	
+
 	private static void assertUnaryExpressionTypeV1(int tag, Type expected,
 			Type type) {
 		final Expression child = mExpressionV1(type);
@@ -634,7 +634,7 @@ public class TestTypedConstructor extends AbstractTests {
 		}
 		return mFreeIdentifier("v" + getFreshIndex(), type);
 	}
-	
+
 	private static Expression mExpressionV1(Type type) {
 		if (type == null) {
 			return ffV1.makeEmptySet(null, null);
