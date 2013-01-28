@@ -1009,8 +1009,9 @@ public class TestTypeChecker extends AbstractTests {
 	 */
 	@Test 
 	public void testBug3574565() {
-		final FormulaFactory fac = makeDatatypeFactory(ff,
-				"A[T] ::= a; d[T] || B[U] ::= b; e[U]");
+		final FormulaFactory fac = makeDatatypeFactory(ff,//
+				"A[T] ::= a; d[T]",//
+				"B[U] ::= b; e[U]");
 		testPredicate("b(1) ∈ A(ℤ)", mTypeEnvironment("", fac), null);
 	}
 
@@ -1044,8 +1045,17 @@ public class TestTypeChecker extends AbstractTests {
 	}
 
 	private FormulaFactory makeDatatypeFactory(FormulaFactory initial,
+			String... datatypeImages) {
+		FormulaFactory fac = initial;
+		for (final String datatypeImage : datatypeImages) {
+			fac = makeDatatypeFactory(fac, datatypeImage);
+		}
+		return fac;
+	}
+
+	private FormulaFactory makeDatatypeFactory(FormulaFactory initial,
 			String datatypeImage) {
-		final IDatatypeExtension dtExt = injectExtension(datatypeImage, initial);
+		final IDatatypeExtension dtExt = injectExtension(datatypeImage);
 		final IDatatype datatype = initial.makeDatatype(dtExt);
 		final Set<IFormulaExtension> exts = initial.getExtensions();
 		exts.addAll(datatype.getExtensions());

@@ -109,7 +109,7 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 		private void injectDatatypeExtensions(FormulaFactory startFac,
 				String[] extensionSpecs) {
 			for (String spec : extensionSpecs) {
-				final IDatatypeExtension extension = injectExtension(spec, startFac);
+				final IDatatypeExtension extension = injectExtension(spec);
 				extensions.add(extension);
 				datatypes.add(startFac.makeDatatype(extension));
 			}
