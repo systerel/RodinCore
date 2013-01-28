@@ -257,9 +257,12 @@ public class FreeIdentifier extends Identifier {
 		result.analyzeExpression(this);
 	}
 	
+	/**
+	 * @since 3.0
+	 */
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		return true;
+	protected void solveChildrenTypes(TypeUnifier unifier) {
+		// No child
 	}
 
 	@Override

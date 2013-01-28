@@ -166,22 +166,18 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	}
 
 	@Override
-	protected boolean solveType(TypeUnifier unifier) {
-		if (isTypeChecked()) {
-			return true;
+	protected void solveType(TypeUnifier unifier) {
+		if (isTypeChecked() || type == null) {
+			// Already done or shared node, already solved (and failed).
+			return;
 		}
-		if (type == null) {
-			// Shared node, already solved (and failed).
-			return false;
-		}
-		Type inferredType = unifier.solve(type);
+		final Type inferredType = unifier.solve(type);
 		type = null;
 		if (inferredType != null && inferredType.isSolved()) {
 			synthesizeType(unifier.getFormulaFactory(), inferredType);
 		} else {
 			synthesizeType(unifier.getFormulaFactory(), null);
 		}
-		return isTypeChecked();
 	}
 
 	/**

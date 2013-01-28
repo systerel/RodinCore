@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,16 +69,15 @@ public abstract class Assignment extends Formula<Assignment> {
 	}
 	
 	@Override
-	protected final boolean solveType(TypeUnifier unifier) {
+	protected final void solveType(TypeUnifier unifier) {
 		if (isTypeChecked()) {
-			return true;
+			return;
 		}
 		solveChildrenTypes(unifier);
 		for (FreeIdentifier ident: assignedIdents) {
 			ident.solveType(unifier);
 		}
 		synthesizeType(unifier.getFormulaFactory());
-		return isTypeChecked();
 	}
 
 	/**

@@ -221,12 +221,10 @@ public class MultiplePredicate extends Predicate {
 	}
 
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		boolean success = true;
+	protected void solveChildrenTypes(TypeUnifier unifier) {
 		for (Expression child: children) {
-			success &= child.solveType(unifier);
+			child.solveType(unifier);
 		}
-		return success;
 	}
 
 	@Override

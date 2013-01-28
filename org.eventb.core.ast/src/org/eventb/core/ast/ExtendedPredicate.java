@@ -224,9 +224,8 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		return ExtensionHelper.solveTypes(unifier, childExpressions,
-				childPredicates);
+	protected void solveChildrenTypes(TypeUnifier unifier) {
+		ExtensionHelper.solveTypes(unifier, childExpressions, childPredicates);
 	}
 
 	@SuppressWarnings("unchecked")

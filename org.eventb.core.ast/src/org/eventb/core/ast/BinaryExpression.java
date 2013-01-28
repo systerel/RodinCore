@@ -598,8 +598,9 @@ public class BinaryExpression extends Expression {
 	}
 	
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		return left.solveType(unifier) & right.solveType(unifier);
+	protected void solveChildrenTypes(TypeUnifier unifier) {
+		left.solveType(unifier);
+		right.solveType(unifier);
 	}
 
 	@Override

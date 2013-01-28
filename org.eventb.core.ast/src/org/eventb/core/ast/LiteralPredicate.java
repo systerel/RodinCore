@@ -155,8 +155,8 @@ public class LiteralPredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		return true;
+	protected void solveChildrenTypes(TypeUnifier unifier) {
+		// No child
 	}
 	
 	private String getOperatorImage() {

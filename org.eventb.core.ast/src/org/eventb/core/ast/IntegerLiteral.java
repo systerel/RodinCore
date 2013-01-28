@@ -109,8 +109,8 @@ public class IntegerLiteral extends Expression {
 	}
 	
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		return true;
+	protected void solveChildrenTypes(TypeUnifier unifier) {
+		// No child
 	}
 	
 	@Override

@@ -292,13 +292,11 @@ public class QuantifiedPredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		boolean success = true;
+	protected void solveChildrenTypes(TypeUnifier unifier) {
 		for (BoundIdentDecl ident: quantifiedIdentifiers) {
-			success &= ident.solveType(unifier);
+			ident.solveType(unifier);
 		}
-		success &= pred.solveType(unifier);
-		return success;
+		pred.solveType(unifier);
 	}
 
 	@Override

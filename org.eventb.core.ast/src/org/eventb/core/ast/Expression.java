@@ -211,29 +211,26 @@ public abstract class Expression extends Formula<Expression> {
 	}
 
 	@Override
-	protected final boolean solveType(TypeUnifier unifier) {
-		if (isTypeChecked()) {
-			return true;
-		}
-		if (type == null) {
-			// Shared node, already solved (and failed).
-			return false;
+	protected final void solveType(TypeUnifier unifier) {
+		if (isTypeChecked() || type == null) {
+			// Already done or shared node, already solved (and failed).
+			return;
 		}
 		Type inferredType = unifier.solve(type);
 		type = null;
-		boolean success = inferredType != null && inferredType.isSolved();
-		success &= solveChildrenTypes(unifier);
-		if (success) {
+		solveChildrenTypes(unifier);
+		if (inferredType != null && inferredType.isSolved()) {
 			synthesizeType(unifier.getFormulaFactory(), inferredType);
 		} else {
 			synthesizeType(unifier.getFormulaFactory(), null);
 		}
-		return isTypeChecked();
 	}
 
-	// Calls recursively solveType on each child of this node and
-	// returns true if all calls where successful.
-	protected abstract boolean solveChildrenTypes(TypeUnifier unifier);
+	/**
+	 * @since 3.0
+	 */
+	// Calls recursively solveType on each child of this node.
+	protected abstract void solveChildrenTypes(TypeUnifier unifier);
 
 	@Override
 	protected final Expression getCheckedReplacement(SingleRewriter rewriter) {

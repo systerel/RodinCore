@@ -170,8 +170,8 @@ public class UnaryPredicate extends Predicate {
 	}
 	
 	@Override
-	protected boolean solveChildrenTypes(TypeUnifier unifier) {
-		return child.solveType(unifier);
+	protected void solveChildrenTypes(TypeUnifier unifier) {
+		child.solveType(unifier);
 	}
 
 	@Override

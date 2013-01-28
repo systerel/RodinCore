@@ -68,16 +68,14 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 		return children;
 	}
 
-	public static boolean solveTypes(TypeUnifier unifier,
+	public static void solveTypes(TypeUnifier unifier,
 			Expression[] expressions, Predicate[] predicates) {
-		boolean success = true;
 		for (Expression expression : expressions) {
-			success &= expression.solveType(unifier);
+			expression.solveType(unifier);
 		}
 		for (Predicate predicate : predicates) {
-			success &= predicate.solveType(unifier);
+			predicate.solveType(unifier);
 		}
-		return success;
 	}
 
 	public static void collectFreeIdentifiers(
