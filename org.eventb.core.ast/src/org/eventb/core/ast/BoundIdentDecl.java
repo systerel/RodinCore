@@ -63,11 +63,11 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 	 * 
 	 * @see FormulaFactory#makeBoundIdentDecl(String, SourceLocation)
 	 * @see FormulaFactory#makeBoundIdentDecl(String, SourceLocation, Type)
+	 * @since 3.0
 	 */
-	protected BoundIdentDecl(String name, int tag, SourceLocation location,
+	protected BoundIdentDecl(String name, SourceLocation location,
 			Type givenType, FormulaFactory ff) {
-		super(tag, location, name.hashCode());
-		assert tag == Formula.BOUND_IDENT_DECL;
+		super(BOUND_IDENT_DECL, location, name.hashCode());
 		ensureValidIdentifierName(name, ff);
 		this.name = name;
 		setPredicateVariableCache();

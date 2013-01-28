@@ -113,12 +113,11 @@ public class BoolExpression extends Expression {
 	 * Must never be called directly: use the factory method instead.
 	 * 
 	 * @see FormulaFactory#makeBoolExpression(Predicate, SourceLocation)
+	 * @since 3.0
 	 */
-	protected BoolExpression(Predicate child, int tag, SourceLocation location,
+	protected BoolExpression(Predicate child, SourceLocation location,
 			FormulaFactory ff) {
-		
-		super(tag, location, child.hashCode());
-		assert tag == KBOOL;
+		super(KBOOL, location, child.hashCode());
 		this.child = child;
 		setPredicateVariableCache(this.child);
 		synthesizeType(ff, null);

@@ -60,11 +60,11 @@ public class IntegerLiteral extends Expression {
 	 * Must never be called directly: use the factory method instead.
 	 * 
 	 * @see FormulaFactory#makeIntegerLiteral(BigInteger, SourceLocation)
+	 * @since 3.0
 	 */
-	protected IntegerLiteral(BigInteger literal, int tag, SourceLocation location,
+	protected IntegerLiteral(BigInteger literal, SourceLocation location,
 			FormulaFactory ff) {
-		super(tag, location, literal.hashCode());
-		assert tag == Formula.INTLIT;
+		super(INTLIT, location, literal.hashCode());
 		assert literal != null;
 		this.literal = literal;
 		
