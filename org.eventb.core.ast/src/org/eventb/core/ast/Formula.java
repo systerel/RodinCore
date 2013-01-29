@@ -2074,9 +2074,6 @@ public abstract class Formula<T extends Formula<T>> {
 	 * Returns the child at the given index. Child indexes are counted from
 	 * <code>0</code> for the first child to <code>getChildCount() - 1</code>.
 	 * for the last one.
-	 * <p>
-	 * This method is not applicable to assignments.
-	 * </p>
 	 * 
 	 * @param index
 	 *            index of the child to retrieve
@@ -2084,21 +2081,14 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return the child at the given index
 	 * @throws IllegalArgumentException
 	 *             is the index is not in the appropriate range
-	 * @throws UnsupportedOperationException
-	 *             if this formula is an assignment
 	 * @since 2.1
 	 */
 	public abstract Formula<?> getChild(int index);
 
 	/**
 	 * Returns the number of children of this formula.
-	 * <p>
-	 * This method is not applicable to assignments.
-	 * </p>
 	 * 
 	 * @return the number of children
-	 * @throws UnsupportedOperationException
-	 *             if this formula is an assignment
 	 * @since 2.1
 	 */
 	public abstract int getChildCount();

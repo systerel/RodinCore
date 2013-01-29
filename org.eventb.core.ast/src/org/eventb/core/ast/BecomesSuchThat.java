@@ -12,6 +12,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - bug #3574162: AST does not compare bound ident decl types
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - added child indexes
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -326,6 +327,24 @@ public class BecomesSuchThat extends Assignment {
 	@Override
 	public boolean isWDStrict() {
 		return true;
+	}
+
+	@Override
+	public Formula<?> getChild(int index) {
+		checkChildIndex(index);
+		if (index < assignedIdents.length) {
+			return assignedIdents[index];
+		}
+		index = index - assignedIdents.length;
+		if (index < primedIdents.length) {
+			return primedIdents[index];
+		}
+		return condition;
+	}
+
+	@Override
+	public int getChildCount() {
+		return assignedIdents.length * 2 + 1;
 	}
 
 }

@@ -15,11 +15,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static java.lang.System.arraycopy;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.CSET;
@@ -40,6 +36,9 @@ import static org.eventb.core.ast.tests.FastFactory.ff;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesMemberOf;
+import static org.eventb.core.ast.tests.FastFactory.mBecomesSuchThat;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
@@ -63,12 +62,18 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.BecomesSuchThat;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
@@ -1390,6 +1395,75 @@ public class TestSubFormulas{
 		} catch (IllegalArgumentException e) {
 			// as expected
 		}
+	}
+
+	/**
+	 * Ensures that child indexes are correctly implemented in
+	 * "becomes equal to" assignments.
+	 */
+	@Test
+	public void becomesEqualToChildIndexes() {
+		assertChildIndexes(//
+				mBecomesEqualTo(mList(id_x), mList(id_S)),//
+				mList(id_x, id_S));
+		assertChildIndexes(
+				mBecomesEqualTo(mList(id_x, id_y), mList(id_S, id_T)),
+				mList(id_x, id_y, id_S, id_T));
+	}
+
+	/**
+	 * Ensures that child indexes are correctly implemented in
+	 * "becomes member of" assignments.
+	 */
+	@Test
+	public void becomesMemberOfChildIndexes() {
+		assertChildIndexes(mBecomesMemberOf(id_x, id_S), id_x, id_S);
+	}
+
+	/**
+	 * Ensures that child indexes are correctly implemented in
+	 * "becomes such that" assignments.
+	 */
+	@Test
+	public void becomesSuchThatChildIndexes() {
+		assertBecomesSuchThatChildIndexes(mList(id_x), equals);
+		assertBecomesSuchThatChildIndexes(mList(id_x, id_y), equals);
+	}
+
+	private static void assertBecomesSuchThatChildIndexes(FreeIdentifier[] lhs,
+			Predicate cond) {
+		final BecomesSuchThat bst = mBecomesSuchThat(lhs, cond);
+		final BoundIdentDecl[] primed = bst.getPrimedIdents();
+		assertChildIndexes(bst, concat(lhs, primed, cond));
+	}
+
+	private static Formula<?>[] concat(Formula<?>[] fs, Formula<?>[] gs,
+			Formula<?> h) {
+		final Formula<?>[] result = new Formula<?>[fs.length + gs.length + 1];
+		arraycopy(fs, 0, result, 0, fs.length);
+		arraycopy(gs, 0, result, fs.length, gs.length);
+		result[fs.length + gs.length] = h;
+		return result;
+	}
+
+	/**
+	 * Checks methods {@link Formula#getChildCount()} and
+	 * {@link Formula#getChild(int)}, including boundary conditions.
+	 * 
+	 * @param formula
+	 *            the formula on which checks are performed
+	 * @param children
+	 *            the ordered list of children of the given formula
+	 */
+	private static void assertChildIndexes(Formula<?> formula,
+			Formula<?>... children) {
+		assertEquals(children.length, formula.getChildCount());
+
+		assertGetChildFails(formula, -1);
+		for (int i = 0; i < children.length; i++) {
+			assertSame(children[i], formula.getChild(i));
+		}
+		assertGetChildFails(formula, children.length);
 	}
 
 	private static void assertGetChildFails(Formula<?> formula, int index) {

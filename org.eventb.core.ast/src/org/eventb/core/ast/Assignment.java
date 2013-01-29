@@ -174,18 +174,6 @@ public abstract class Assignment extends Formula<Assignment> {
 	}
 
 	@Override
-	public final Formula<?> getChild(int index) {
-		throw new UnsupportedOperationException(
-				"Assignments cannot be rewritten");
-	}
-
-	@Override
-	public final int getChildCount() {
-		throw new UnsupportedOperationException(
-				"Assignments cannot be rewritten");
-	}
-
-	@Override
 	protected final IPosition getDescendantPos(SourceLocation sloc,
 			IntStack indexes) {
 		throw new UnsupportedOperationException(

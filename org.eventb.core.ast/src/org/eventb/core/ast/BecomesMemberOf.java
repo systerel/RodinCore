@@ -11,6 +11,7 @@
  *     Systerel - added support for predicate variables
  *     Systerel - externalized wd lemmas generation
  *     Systerel - add given sets to free identifier cache
+ *     Systerel - added child indexes
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -260,6 +261,20 @@ public class BecomesMemberOf extends Assignment {
 	@Override
 	public boolean isWDStrict() {
 		return true;
+	}
+
+	@Override
+	public Formula<?> getChild(int index) {
+		checkChildIndex(index);
+		if (index < assignedIdents.length) {
+			return assignedIdents[index];
+		}
+		return setExpr;
+	}
+
+	@Override
+	public int getChildCount() {
+		return assignedIdents.length + 1;
 	}
 
 }
