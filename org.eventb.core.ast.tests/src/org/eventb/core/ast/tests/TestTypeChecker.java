@@ -1106,6 +1106,7 @@ public class TestTypeChecker extends AbstractTests {
 			ITypeEnvironment finalEnv, String image) {
 		final boolean expectSuccess = finalEnv != null;
 		final ITypeCheckResult result = formula.typeCheck(initialEnv);
+		TypeCheckedChecker.check(formula);
 		if (expectSuccess && !result.isSuccess()) {
 			StringBuilder builder = new StringBuilder(
 					"Type-checker unexpectedly failed for " + formula

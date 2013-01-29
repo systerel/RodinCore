@@ -138,6 +138,7 @@ public class TestExprTypeChecker extends AbstractTests {
 		final Type expectedType = parseType(typeImage);
 		final ITypeCheckResult actualResult = expr.typeCheck(initialEnv,
 				expectedType);
+		TypeCheckedChecker.check(expr);
 		IInferredTypeEnvironment inferredTypEnv = null;
 		if (inferredEnv != null) {
 			inferredTypEnv = mInferredTypeEnvironment(initialEnv);

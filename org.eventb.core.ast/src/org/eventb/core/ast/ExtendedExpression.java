@@ -214,14 +214,17 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		return ExtensionHelper.concat(childExpressions, childPredicates);
 	}
 
-	private boolean isFirstChildTypechecked() {
-		if (childExpressions.length > 0) {
-			return childExpressions[0].isTypeChecked();
+	private boolean areChildrenTypechecked() {
+		for (final Expression child : childExpressions) {
+			if (!child.isTypeChecked()) {
+				return false;
+			}
 		}
-		if (childPredicates.length > 0) {
-			return childPredicates[0].isTypeChecked();
+		for (final Predicate child : childPredicates) {
+			if (!child.isTypeChecked()) {
+				return false;
+			}
 		}
-		// atomic expression: consider children type checked
 		return true;
 	}
 
@@ -238,9 +241,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			return;
 		}
 
-		// Fast exit if first child is not typed
-		// (the most common case where type synthesis can't be done)
-		if (!isFirstChildTypechecked()) {
+		if (!areChildrenTypechecked()) {
 			return;
 		}
 

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.math.BigInteger.ZERO;
 import static org.eventb.core.ast.Formula.BCOMP;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BINTER;
@@ -136,13 +137,25 @@ import java.util.List;
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedExpression.Form;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.extension.ICompatibilityMediator;
+import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IExtensionKind;
+import org.eventb.core.ast.extension.IPriorityMediator;
+import org.eventb.core.ast.extension.ITypeCheckMediator;
+import org.eventb.core.ast.extension.ITypeMediator;
+import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.extension.StandardGroup;
 import org.junit.Test;
 
 /**
@@ -377,6 +390,7 @@ public class TestTypedConstructor extends AbstractTests {
 	private static void assertFormulaTypeChecked(Formula<?> form,
 			boolean expected) {
 		IdentsChecker.check(form, ff);
+		TypeCheckedChecker.check(form);
 		assertEquals(expected, form.isTypeChecked());
 		if (expected) {
 			runTypeCheck(form);
@@ -1359,5 +1373,101 @@ public class TestTypedConstructor extends AbstractTests {
 		// UnaryExpression: unary operator
 		// UnaryPredicate: unary operator
 	}
-	
+
+	/**
+	 * Ensure that type-check consistency is enforced even when an expression
+	 * extension does not perform all necessary checks.
+	 */
+	@Test
+	public void misbehavedExpressionExtension() {
+		final BadTypeCheck extension = new BadTypeCheck();
+		final FormulaFactory fac = FormulaFactory.getInstance(extension);
+		final Expression[] childExprs = { fac.makeIntegerLiteral(ZERO, null),
+				fac.makeEmptySet(null, null) };
+		final Predicate[] childPreds = {};
+		final Expression expr = fac.makeExtendedExpression(extension,
+				childExprs, childPreds, null);
+		assertExpressionType(expr, null);
+	}
+
+	/**
+	 * An expression extension that forgets to check the type of its children.
+	 */
+	private static class BadTypeCheck implements IExpressionExtension {
+
+		public BadTypeCheck() {
+			// Do nothing, but is publicly visible
+		}
+
+		@Override
+		public String getSyntaxSymbol() {
+			return "bad";
+		}
+
+		@Override
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
+			return wdMediator.makeTrueWD();
+		}
+
+		@Override
+		public boolean conjoinChildrenWD() {
+			return true;
+		}
+
+		@Override
+		public String getId() {
+			return "BAD";
+		}
+
+		@Override
+		public String getGroupId() {
+			return StandardGroup.CLOSED.getId();
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			return PARENTHESIZED_BINARY_EXPRESSION;
+		}
+
+		@Override
+		public Object getOrigin() {
+			return null;
+		}
+
+		@Override
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			// None to add
+		}
+
+		@Override
+		public void addPriorities(IPriorityMediator mediator) {
+			// None to add
+		}
+
+		@Override
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
+			return mediator.makeIntegerType();
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
+			return proposedType instanceof IntegerType;
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
+			return tcMediator.makeIntegerType();
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return false;
+		}
+
+	}
+
 }

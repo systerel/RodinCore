@@ -46,6 +46,7 @@ public class TestTypeCheckError extends AbstractTests {
 	
 	private void doTest(Formula<?> formula, ITypeEnvironment te, ProblemKind... problems) {
 		final ITypeCheckResult tcResult = formula.typeCheck(te);
+		TypeCheckedChecker.check(formula);
 		assertFailure("Type checker succeeded unexpectedly", tcResult);
 		assertFalse("Predicate shouldn't be typechecked", formula.isTypeChecked());
 		List<ASTProblem> actualProblems = tcResult.getProblems();
