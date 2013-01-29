@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Universitaet Duesseldorf and others.
+ * Copyright (c) 2009, 2013 Universitaet Duesseldorf and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ import org.junit.runners.Suite;
 	TestDatatypeTranslator.class,
 	TestEnumDatatypeTranslator.class,
 	TestFreshNameSolver.class,
+	TestFactoryTranslation.class,
 	// $JUnit-END$
 })
 public class AllTests {
