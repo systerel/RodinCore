@@ -42,12 +42,12 @@ public abstract class Identifier extends Expression {
 	}
 
 	@Override
-	public Formula<?> getChild(int index) {
+	public final Formula<?> getChild(int index) {
 		throw invalidIndex(index);
 	}
 
 	@Override
-	public int getChildCount() {
+	public final int getChildCount() {
 		return 0;
 	}
 

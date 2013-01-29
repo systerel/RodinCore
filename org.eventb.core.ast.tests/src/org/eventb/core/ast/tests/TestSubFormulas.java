@@ -924,11 +924,13 @@ public class TestSubFormulas{
 			IPosition p) {
 		Formula<?> s = f.getSubFormula(p);
 		if (s != null) {
+			assertGetChildFails(s, -1);
 			checkChildIndex(f, p, s);
 			checkAllPositions(f, p.getFirstChild());
 			if (! p.isRoot()) {
 				checkAllPositions(f, p.getNextSibling());
 			}
+			assertGetChildFails(s, s.getChildCount());
 		} else {
 			checkChildIndex(f, p, s);
 		}
@@ -1387,6 +1389,15 @@ public class TestSubFormulas{
 			fail("IllegalArgumentException expected");
 		} catch (IllegalArgumentException e) {
 			// as expected
+		}
+	}
+
+	private static void assertGetChildFails(Formula<?> formula, int index) {
+		try {
+			formula.getChild(index);
+			fail("getChild(" + index + ") should have raised an exception");
+		} catch (IllegalArgumentException e) {
+			// pass
 		}
 	}
 

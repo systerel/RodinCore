@@ -709,18 +709,12 @@ public class QuantifiedExpression extends Expression {
 	
 	@Override
 	public Formula<?> getChild(int index) {
+		checkChildIndex(index);
 		if (index < quantifiedIdentifiers.length) {
 			return quantifiedIdentifiers[index];
 		}
 		index = index - quantifiedIdentifiers.length;
-		switch (index) {
-		case 0:
-			return pred;
-		case 1:
-			return expr;
-		default:
-			throw invalidIndex(index);
-		}
+		return index == 0 ? pred : expr;
 	}
 
 	@Override

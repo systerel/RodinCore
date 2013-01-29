@@ -105,9 +105,6 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 
 	public static Formula<?> getChild(Expression[] exprs, Predicate[] preds,
 			int index) {
-		if (index < 0 || index >= getChildCount(exprs, preds)) {
-			throw Formula.invalidIndex(index);
-		}
 		if (index < exprs.length) {
 			return exprs[index];
 		}
