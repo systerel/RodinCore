@@ -12,16 +12,32 @@ package org.eventb.core.ast.extension;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
-// FIXME: add comments in whole class
+
+
 /**
+ * Describes the signature of an operator contributed by an extension.
+ * 
  * @since 2.0
  * @author Nicolas Beauger
+ * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IExtensionKind {
 
+	/**
+	 * Returns the signature of an operator, including its relative position
+	 * (prefix, infix, postfix), whether the operator is associative and the
+	 * kinds of its children.
+	 * 
+	 * @return the signature of an operator
+	 */
 	IOperatorProperties getProperties();
-	
+
+	/**
+	 * This method is not intended to be called by clients.
+	 * 
+	 * FIXME move this method outside of the API
+	 */
 	boolean checkPreconditions(Expression[] childExprs, Predicate[] childPreds);
 
 }

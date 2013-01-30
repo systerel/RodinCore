@@ -110,12 +110,35 @@ public interface IFormulaExtension {
 	IExtensionKind PARENTHESIZED_BINARY_PREDICATE = makePrefixKind(PREDICATE,
 			TWO_EXPRS);
 
+	/**
+	 * Returns the token for the operator described by this extension. The
+	 * returned string will become a new token of the Event-B scanner. If it
+	 * looks like an identifier name, then it will become a reserved word.
+	 * 
+	 * @return the token for this operator
+	 */
 	String getSyntaxSymbol();
 
+	/**
+	 * Returns the well-definedness predicate for the given extended formula.
+	 * The resulting predicate must be built with the factory provided by the
+	 * given mediator.
+	 * <p>
+	 * If this extension has no special requirement concerning well-definedness,
+	 * this method shall return <code>wdMediator.makeTrueWD()</code>.
+	 * </p>
+	 * 
+	 * @param formula
+	 *            the extended formula for which the WD predicate must be
+	 *            computed
+	 * @param wdMediator
+	 *            a mediator for creating the WD predicate
+	 * @return the WD predicate for the given formula
+	 */
 	Predicate getWDPredicate(IExtendedFormula formula, IWDMediator wdMediator);
 
 	/**
-	 * Whether or not children WD is conjoined to the returned WD predicate.
+	 * Tells whether children WD should be conjoined to the WD predicate.
 	 * <p>
 	 * If <code>true</code>, the resulting WD is 'getWDPredicate() and
 	 * WD(children)'. If <code>false</code>, the resulting WD is just
@@ -129,31 +152,62 @@ public interface IFormulaExtension {
 	 * embed the WD conditions for children in the returned predicate.
 	 * </p>
 	 * 
-	 * @return <code>true</code> iff children WD is conjoined.
+	 * @return <code>true</code> iff children WD should be conjoined.
 	 */
 	boolean conjoinChildrenWD();
 
-	// FIXME: add comments
+	/**
+	 * Returns the unique identity of this extension. To avoid identity clashes,
+	 * client should build this identity based on their plug-in id.
+	 * 
+	 * @return the unique id of this extension
+	 */
 	String getId();
-	
-	// FIXME: add comments
+
+	/**
+	 * Returns the identity of the operator group of this extension. All
+	 * operators that are in the same group have the same priority and can be
+	 * freely mixed.
+	 * 
+	 * @return the id of the operator group of this extension
+	 */
 	String getGroupId();
-	
-	// FIXME: add comments
+
+	/**
+	 * Returns the signature of this extension. The returned signature tells the
+	 * kind of the children that this extension accepts and the order in which
+	 * they are parsed.
+	 * 
+	 * @return the signature of the operator of this extension
+	 */
 	IExtensionKind getKind();
 
 	/**
 	 * Returns the origin of this extension, or <code>null</code> if no origin
-	 * is defined.
+	 * is defined. The semantics of the returned object is up to the client.
 	 * 
-	 * @return an Object or <code>null</code>
+	 * @return some Object or <code>null</code>
 	 */
 	Object getOrigin();
-	
-	// FIXME: add comments
+
+	/**
+	 * Defines compatibility relations between the operator of this extension
+	 * and other operators. These relations must be registered with the given
+	 * mediator.
+	 * 
+	 * @param mediator
+	 *            some means for registering compatibility relations.
+	 */
 	void addCompatibilities(ICompatibilityMediator mediator);
-	
-	// FIXME: add comments
+
+	/**
+	 * Defines priority relations between the operator of this extension and
+	 * other operators. These relations must be registered with the given
+	 * mediator.
+	 * 
+	 * @param mediator
+	 *            some means for registering priority relations.
+	 */
 	void addPriorities(IPriorityMediator mediator);
 
 }

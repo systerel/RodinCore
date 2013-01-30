@@ -17,7 +17,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.Predicate;
 
-// FIXME: add comments in whole class
 /**
  * Common protocol for operator properties.
  * 
@@ -28,15 +27,46 @@ import org.eventb.core.ast.Predicate;
  */
 public interface IOperatorProperties {
 
+	/**
+	 * Represents the relative position of an operator with respect to its
+	 * arguments.
+	 */
 	enum Notation {
-		PREFIX, INFIX, POSTFIX
+		/**
+		 * The operator is before all its arguments.
+		 */
+		PREFIX,
+		/**
+		 * The operator is in between its arguments. Consequently, the operator
+		 * must be binary.
+		 */
+		INFIX,
+		/**
+		 * The operator is after its arguments.
+		 */
+		POSTFIX,
 	}
-	
+
+	/**
+	 * The operator does not take any argument.
+	 */
 	IArity NULLARY = makeFixedArity(0);
+
+	/**
+	 * The operator takes exactly one argument.
+	 */
 	IArity UNARY = makeFixedArity(1);
+
+	/**
+	 * The operator takes exactly two arguments.
+	 */
 	IArity BINARY = makeFixedArity(2);
+
+	/**
+	 * The operator takes at least two arguments.
+	 */
 	IArity MULTARY_2 = makeArity(2, IArity.MAX_ARITY);
-	
+
 	enum FormulaType {
 		EXPRESSION {
 			@Override
@@ -54,12 +84,34 @@ public interface IOperatorProperties {
 		public abstract boolean check(Formula<?> formula);
 	}
 
+	/**
+	 * Returns the relative position of an operator with respect to its
+	 * arguments (prefix, infix or postfix).
+	 * 
+	 * @return the relative position of an operator
+	 */
 	Notation getNotation();
-	
+
+	/**
+	 * Returns the kind of formula that this operator builds: expression or
+	 * predicate.
+	 * 
+	 * @return the kind of formula of this operator
+	 */
 	FormulaType getFormulaType();
-	
+
+	/**
+	 * Returns the kind of children that this operator takes.
+	 * 
+	 * @return the kind of children of this operator
+	 */
 	ITypeDistribution getChildTypes();
 
+	/**
+	 * Tells whether this operator is associative.
+	 * 
+	 * @return <code>true</code> iff this operator is associative
+	 */
 	// FIXME clarify relation with the associativity property, set through
 	// addCompatibilities; maybe remove this method
 	boolean isAssociative();
