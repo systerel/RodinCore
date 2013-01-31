@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ package org.eventb.internal.core.pom;
 
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.seqprover.ProverFactory.makeSequent;
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.breakPossibleConjunct;
 
 import java.util.HashSet;
@@ -37,6 +36,7 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
+import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IAccumulator;
@@ -232,7 +232,7 @@ public final class POLoader {
 			FormulaFactory ff) {
 		if (! shouldWDpredBeAdded(pred)) return;
 		Set<Predicate> toAdd = breakPossibleConjunct(pred.getWDPredicate(ff));
-		toAdd.remove(mDLib(ff).True());
+		toAdd.remove(ff.makeLiteralPredicate(Formula.BTRUE, null));
 		predSet.addAll(toAdd);
 	}
 

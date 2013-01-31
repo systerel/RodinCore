@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -20,11 +18,11 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 /**
  * This is a collection of static methods for conveniently constructing objects used for
@@ -65,13 +63,14 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 		String goalStr = sequentAsString.split("\\|-")[1];
 		
 		// Parsing
-		final DLib lib = mDLib(ff);
 		Predicate[] hyps = new Predicate[hypsStr.length];
 		for (int i=0;i<hypsStr.length;i++){
-			hyps[i] = lib.parsePredicate(hypsStr[i]);
+			hyps[i] = ff.parsePredicate(hypsStr[i], LanguageVersion.V2, null)
+					.getParsedPredicate();
 			if (hyps[i] == null) return null;
 		}
-		Predicate goal = lib.parsePredicate(goalStr);
+		Predicate goal = ff.parsePredicate(goalStr, LanguageVersion.V2, null)
+				.getParsedPredicate();
 		if (goal == null) return null;
 		
 		// Type check
@@ -111,7 +110,7 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 	 * 		of type checking error. 
 	 */
 	public static Predicate genPred(String str){
-		Predicate result = mDLib(ff).parsePredicate(str);
+		Predicate result = ff.parsePredicate(str, LanguageVersion.V2, null).getParsedPredicate();
 		if (result == null) return null;
 		ITypeCheckResult tcResult =  result.typeCheck(ff.makeTypeEnvironment());
 		if (! tcResult.isSuccess()) return null;
