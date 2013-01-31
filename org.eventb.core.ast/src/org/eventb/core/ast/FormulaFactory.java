@@ -2105,4 +2105,22 @@ public class FormulaFactory {
 		return result;
 	}
 
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		char sep = '{';
+		sb.append("FFactory(");
+		sb.append(this.grammar.getVersion());
+		sb.append(")");
+		for (IFormulaExtension extension : this.extensions.values()) {
+			sb.append(sep);
+			sep = ';';
+			sb.append(extension.getId());
+		}
+		if (sep != '{') {
+			sb.append('}');
+		}
+		return sb.toString();
+	}
+
 }
