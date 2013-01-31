@@ -29,6 +29,11 @@ package org.eventb.core.ast;
  * mathematical type.
  * </p>
  * <p>
+ * Rewriting must return nodes with the same formula factory as original nodes.
+ * Formula factory modification can only be done with the
+ * {@link Formula#translate(FormulaFactory)} procedure.
+ * </p>
+ * <p>
  * Implementation note: If a rewrite method does not make any change to a
  * sub-formula, it should return a formula identical to its input (same
  * reference). This makes it much easier for testing whether a rewriter made any
