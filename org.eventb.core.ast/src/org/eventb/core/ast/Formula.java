@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
+import org.eventb.internal.core.ast.DefaultTypeCheckingRewriter;
 import org.eventb.internal.core.ast.FilteringInspector;
 import org.eventb.internal.core.ast.FindingAccumulator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
@@ -2341,6 +2342,27 @@ public abstract class Formula<T extends Formula<T>> {
 		ensureTypeChecked();
 		final DatatypeTranslation real = (DatatypeTranslation) translation;
 		return rewrite(real.getFormulaRewriter());
+	}
+	
+	/**
+	 * Returns the formula built by using the given formula factory.
+	 * <p>
+	 * If the translation does not change the formula, which means that given
+	 * factory and formula factory are the same, then a reference to this
+	 * formula is returned (rather than a copy of it).
+	 * </p>
+	 * </p>This operation is not supported for assignments.</p>
+	 * 
+	 * @param ff
+	 *            the formula factory to use for rebuilding the formula.
+	 * @return the formula build with the given formula factory
+	 * 
+	 * @throws UnsupportedOperationException
+	 *             if this formula is an assignment
+	 * @since 3.0
+	 */
+	public T translate(FormulaFactory ff){
+		return rewrite(new DefaultTypeCheckingRewriter(ff));
 	}
 
 }
