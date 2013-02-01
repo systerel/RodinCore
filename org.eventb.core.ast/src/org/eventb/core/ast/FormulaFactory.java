@@ -1876,11 +1876,11 @@ public class FormulaFactory {
 	 *             if the given extension is not supported by this factory or is
 	 *             not a type constructor
 	 * @throws IllegalArgumentException
-	 *             if the number of type parameters do not correspond to the
+	 *             if the number of type parameters does not correspond to the
 	 *             type constructor specification
 	 * @throws IllegalArgumentException
-	 *             if some type parameter was not built with this formula
-	 *             factory
+	 *             if some type parameter has been built with a different
+	 *             formula factory
 	 * @since 2.0
 	 */
 	public ParametricType makeParametricType(List<Type> typePrms,
@@ -1903,11 +1903,11 @@ public class FormulaFactory {
 	 *             if the given extension is not supported by this factory or is
 	 *             not a type constructor
 	 * @throws IllegalArgumentException
-	 *             if the number of type parameters do not correspond to the
+	 *             if the number of type parameters does not correspond to the
 	 *             type constructor specification
 	 * @throws IllegalArgumentException
-	 *             if some type parameter was not built with this formula
-	 *             factory
+	 *             if some type parameter has been built with a different
+	 *             formula factory
 	 * @since 2.1
 	 */
 	public ParametricType makeParametricType(Type[] typePrms,
@@ -1961,7 +1961,8 @@ public class FormulaFactory {
 	 *            the base type to build upon
 	 * @return the power set type of the given type
 	 * @throws IllegalArgumentException
-	 *             if the given type was not built with this formula factory
+	 *             if the given type has been built with a different formula
+	 *             factory
 	 */
 	public PowerSetType makePowerSetType(Type base) {
 		return new PowerSetType(this, base);
@@ -1977,7 +1978,7 @@ public class FormulaFactory {
 	 *            the second component of the Cartesian product
 	 * @return the product type of the two given types
 	 * @throws IllegalArgumentException
-	 *             if the given left and right types were not built with this
+	 *             if one of the the given types has been built with a different
 	 *             formula factory
 	 */
 	public ProductType makeProductType(Type left, Type right) {
@@ -2001,6 +2002,9 @@ public class FormulaFactory {
 	 * @param right
 	 *            the range of the relations
 	 * @return the relational type between the two given types
+	 * @throws IllegalArgumentException
+	 *             if one of the the given types has been built with a different
+	 *             formula factory
 	 */
 	public PowerSetType makeRelationalType(Type left, Type right) {
 		return makePowerSetType(makeProductType(left, right));

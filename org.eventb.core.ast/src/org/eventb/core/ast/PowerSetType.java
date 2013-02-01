@@ -36,6 +36,7 @@ public class PowerSetType extends Type {
 	protected PowerSetType(FormulaFactory ff, Type base) {
 		super(ff, base.isSolved());
 		this.base = base;
+		ensureSameFactory(this.base);
 	}
 
 	@Override

@@ -72,6 +72,7 @@ public class ParametricType extends Type {
 		}
 		this.typeParameters = typeParameters;
 		this.typeConstructor = typeConstructor;
+		ensureSameFactory(this.typeParameters);
 	}
 
 	@Override

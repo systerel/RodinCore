@@ -101,6 +101,61 @@ public abstract class Type {
 	}
 
 	/**
+	 * Ensures that the formula factory of each of the given types is the same
+	 * as the formula factory of this type. Throws an
+	 * {@link IllegalArgumentException} otherwise.
+	 * 
+	 * @param types
+	 *            types to check
+	 * @throws IllegalArgumentException
+	 *             if any of the given types has a different formula factory
+	 * @since 3.0
+	 */
+	protected void ensureSameFactory(Type[] types) {
+		for (final Type type : types) {
+			ensureSameFactory(type);
+		}
+	}
+
+	/**
+	 * Ensures that the formula factory of each of the given types is the same
+	 * as the formula factory of this type. Throws an
+	 * {@link IllegalArgumentException} otherwise.
+	 * 
+	 * @param left
+	 *            type to check
+	 * @param right
+	 *            type to check
+	 * @throws IllegalArgumentException
+	 *             if any of the given types has a different formula factory
+	 * @since 3.0
+	 */
+	protected void ensureSameFactory(Type left, Type right) {
+		ensureSameFactory(left);
+		ensureSameFactory(right);
+	}
+
+	/**
+	 * Ensures that the formula factory of the given type is the same as the
+	 * formula factory of this type. Throws an {@link IllegalArgumentException}
+	 * otherwise.
+	 * 
+	 * @param other
+	 *            type to check
+	 * @throws IllegalArgumentException
+	 *             if any of the given types has a different formula factory
+	 * @since 3.0
+	 */
+	protected void ensureSameFactory(Type other) {
+		final FormulaFactory otherFactory = other.getFactory();
+		if (this.fac != otherFactory) {
+			throw new IllegalArgumentException("The type " + other
+					+ " has an incompatible factory: " + otherFactory
+					+ " instead of: " + this.fac);
+		}
+	}
+
+	/**
 	 * Returns the expression that denotes the set corresponding to this type.
 	 * 
 	 * @return the set corresponding to this type
