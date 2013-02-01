@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
@@ -646,6 +648,8 @@ public class ConstructorMediator extends ArgumentMediator implements
 			final ITypeParameter typeParam = getTypeParameter(name);
 			if (typeParam != null) {
 				return newArgumentType(typeParam);
+			} else {
+				return new ArgSimpleType(type);
 			}
 		} else if (type instanceof ParametricType) {
 			final ParametricType paramType = (ParametricType) type;
@@ -673,8 +677,11 @@ public class ConstructorMediator extends ArgumentMediator implements
 		} else if (type instanceof PowerSetType) {
 			final Type baseType = ((PowerSetType) type).getBaseType();
 			return makePowerSetType(newArgumentType(baseType));
+		} else if (type instanceof IntegerType || type instanceof BooleanType){
+			return new ArgSimpleType(type);
 		}
-		return new ArgSimpleType(type);
+		assert false;
+		return null;
 	}
 
 	public IDatatype getDatatype() {
