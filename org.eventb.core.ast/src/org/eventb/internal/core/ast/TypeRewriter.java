@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,17 +54,29 @@ public class TypeRewriter implements ITypeVisitor {
 
 	@Override
 	public void visit(BooleanType type) {
-		result = type;
+		if (ff == type.getFactory()) {
+			result = type;
+		} else {
+			result = ff.makeBooleanType();
+		}
 	}
 
 	@Override
 	public void visit(GivenType type) {
-		result = type;
+		if (ff == type.getFactory()) {
+			result = type;
+		} else {
+			result = ff.makeGivenType(type.getName());
+		}
 	}
 
 	@Override
 	public void visit(IntegerType type) {
-		result = type;
+		if (ff == type.getFactory()) {
+			result = type;
+		} else {
+			result = ff.makeIntegerType();
+		}
 	}
 
 	@Override
