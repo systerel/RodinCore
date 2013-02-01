@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,11 @@ package org.eventb.internal.core.ast.extension.datatype;
 
 import java.util.Map;
 
+import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.datatype.ITypeParameter;
@@ -26,12 +29,31 @@ public class ArgSimpleType extends ArgumentType {
 
 	private final Type type;
 
+	/**
+	 * Build an simple type argument. The type must be an instance of the
+	 * following types: {@link GivenType}, {@link IntegerType} or
+	 * {@link BooleanType}.
+	 * 
+	 * @param type
+	 *            the simple type instance of one of the following types:
+	 *            {@link GivenType}, {@link IntegerType} or {@link BooleanType}
+	 */
 	public ArgSimpleType(Type type) {
+		assert type instanceof IntegerType || type instanceof BooleanType
+				|| type instanceof GivenType;
 		this.type = type;
 	}
 
 	@Override
 	public Type toType(ITypeMediator mediator, TypeInstantiation instantiation) {
+		if (type instanceof IntegerType){
+			return mediator.makeIntegerType();
+		} else if (type instanceof BooleanType) {
+			return mediator.makeBooleanType();
+		} else if (type instanceof GivenType) {
+			return mediator.makeGivenType(((GivenType) type).getName());
+		}
+		assert false;
 		return type;
 	}
 
