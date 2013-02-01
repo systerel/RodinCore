@@ -39,6 +39,7 @@ public class ProductType extends Type {
 		super(ff, left.isSolved() && right.isSolved());
 		this.left = left;
 		this.right = right;
+		checkFormulaFactories(this.left, this.right);
 	}
 
 	@Override

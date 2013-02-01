@@ -99,6 +99,36 @@ public abstract class Type {
 	public FormulaFactory getFactory() {
 		return fac;
 	}
+	
+	/**
+	 * Checks that the formula factory of this formula and those of its type and
+	 * children are equals. If it is not the case an
+	 * {@link IllegalArgumentException} exception is raised.
+	 * 
+	 * @param children
+	 *            children of this formula whose formula factories must be
+	 *            checked to be compatible
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the children have a different formula factory than
+	 * 
+	 * @since 3.0
+	 */
+	protected void checkFormulaFactories(Type... children) {
+
+		if (children.length == 0) {
+			return;
+		}
+
+		for (final Type child : children) {
+			FormulaFactory childFactory = child.getFactory();
+			if (!this.fac.equals(childFactory)) {
+				throw new IllegalArgumentException("The child type " + child
+						+ " has an incompatible factory " + childFactory
+						+ " with the current type formula factory " + this.fac);
+			}
+		}
+	}
 
 	/**
 	 * Returns the expression that denotes the set corresponding to this type.
