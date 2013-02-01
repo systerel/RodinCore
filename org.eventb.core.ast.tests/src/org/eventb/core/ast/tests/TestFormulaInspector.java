@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,12 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.eventb.core.ast.Formula.BTRUE;
+import static org.eventb.core.ast.Formula.EQUAL;
+import static org.eventb.core.ast.Formula.LIMP;
+import static org.eventb.core.ast.Formula.MINUS;
+import static org.eventb.core.ast.Formula.PLUS;
+import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.FormulaFactory.makePosition;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
@@ -34,6 +39,7 @@ import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertEquals;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -42,8 +48,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import org.junit.Assert;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -75,6 +79,7 @@ import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -369,6 +374,11 @@ public class TestFormulaInspector {
 	private static BoundIdentDecl b_y = mBoundIdentDecl("y");
 	private static BoundIdentDecl b_z = mBoundIdentDecl("z");
 
+	private static final Expression eAEFF =  EFF.makeAtomicExpression(TRUE, null);
+	private static final Expression eBEFF =  EFF.makeAtomicExpression(TRUE, null);
+	private static final LiteralPredicate pAEFF = EFF.makeLiteralPredicate(BTRUE, null);
+	private static final LiteralPredicate pBEFF = EFF.makeLiteralPredicate(BTRUE, null);
+
 	public static final FormulaFactory ff = FormulaFactory.getDefault();
 	protected static final IntegerLiteral ONE = ff.makeIntegerLiteral(BigInteger.ONE, null);
 
@@ -431,8 +441,8 @@ public class TestFormulaInspector {
 	@Test 
 	public void testExtendedPredicate() throws Exception {
 		final Predicate predicate = EFF.makeExtendedPredicate(fooS,
-				Arrays.<Expression> asList(eA, eB),
-				Arrays.<Predicate> asList(pA, pB), null);
+				Arrays.<Expression> asList(eAEFF, eBEFF),
+				Arrays.<Predicate> asList(pAEFF, pBEFF), null);
 		assertTrace(predicate, "");
 		assertTrace(predicate, "0");
 		assertTrace(predicate, "1");
@@ -447,8 +457,8 @@ public class TestFormulaInspector {
 	@Test 
 	public void testExtendedExpression() throws Exception {
 		final Expression expression = EFF.makeExtendedExpression(barS,
-				Arrays.<Expression> asList(eA, eB),
-				Arrays.<Predicate> asList(pA, pB), null);
+				Arrays.<Expression> asList(eAEFF, eBEFF),
+				Arrays.<Predicate> asList(pAEFF, pBEFF), null);
 		assertTrace(expression, "");
 		assertTrace(expression, "0");
 		assertTrace(expression, "1");
@@ -632,7 +642,10 @@ public class TestFormulaInspector {
 	 *            the predicate on which test is realized
 	 */
 	private void assertSkipChildrenOnce(final Predicate predicate) {
-		assertTrace(mBinaryPredicate(predicate, mRelationalPredicate(eA, eB)),
+		final FormulaFactory fact = predicate.getFactory();
+		final AtomicExpression leaf = fact.makeAtomicExpression(TRUE, null);
+		assertTrace(fact.makeBinaryPredicate(LIMP, predicate,
+				fact.makeRelationalPredicate(EQUAL, leaf, leaf, null), null),
 				"0");
 	}
 
@@ -644,9 +657,11 @@ public class TestFormulaInspector {
 	 *            the expression on which test is realized
 	 */
 	private void assertSkipChildrenOnce(final Expression expression) {
-		assertTrace(
-				mBinaryExpression(expression, mAssociativeExpression(eA, eB)),
-				"0");
+		final FormulaFactory fact = expression.getFactory();
+		final AtomicExpression leaf = fact.makeAtomicExpression(TRUE, null);
+		assertTrace(fact.makeBinaryExpression(MINUS, expression,
+				fact.makeAssociativeExpression(PLUS, mList(leaf, leaf), null),
+				null), "0");
 	}
 
 }

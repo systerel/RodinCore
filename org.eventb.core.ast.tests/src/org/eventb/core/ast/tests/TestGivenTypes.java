@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CPROD;
 import static org.eventb.core.ast.Formula.CSET;
@@ -48,6 +46,8 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -110,7 +110,6 @@ public class TestGivenTypes extends AbstractTests {
 		return mAssociativeExpression(FCOMP, left, right);
 	}
 	
-	
 	private static final Expression eS = mEmptySet(POW(tS));
 	private static final Expression eT = mEmptySet(POW(tT));
 	private static final Expression eU = mEmptySet(POW(tU));
@@ -120,7 +119,7 @@ public class TestGivenTypes extends AbstractTests {
 	private static final Expression prj2ST = mPrj2(REL(CPROD(tS, tT), tT));
 
 	private static final ParametricType LIST_S_TYPE = LIST_FAC
-	.makeParametricType(Collections.<Type> singletonList(tS),
+	.makeParametricType(Collections.<Type> singletonList(LIST_FAC.makeGivenType("S")),
 			EXT_LIST);
 	private static Expression[] NO_EXPR = new Expression[0];
 	private static Predicate[] NO_PRED = new Predicate[0];
@@ -387,7 +386,7 @@ public class TestGivenTypes extends AbstractTests {
 		doTest(mFreeIdentifier("x", INT));
 		doTest(mFreeIdentifier("x", POW(tS)), tS);
 		doTest(mFreeIdentifier("x", CPROD(tS, tT)), tS, tT);
-		doTest(mFreeIdentifier("x", LIST_S_TYPE), tS);
+		doTest(LIST_FAC.makeFreeIdentifier("x", null, LIST_S_TYPE), LIST_FAC.makeGivenType("S"));
 	}
 	
 }

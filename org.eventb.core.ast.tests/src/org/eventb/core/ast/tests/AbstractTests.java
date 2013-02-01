@@ -110,7 +110,7 @@ public abstract class AbstractTests {
 	protected static final IExpressionExtension EXT_LIST = LIST_DT
 				.getTypeConstructor();
 	protected static final ParametricType LIST_INT_TYPE = LIST_FAC
-				.makeParametricType(Collections.<Type> singletonList(INT_TYPE),
+				.makeParametricType(Collections.<Type> singletonList(LIST_FAC.makeIntegerType()),
 						EXT_LIST);
 	protected static final PowerSetType POW_LIST_INT_TYPE = LIST_FAC
 				.makePowerSetType(LIST_INT_TYPE);
@@ -278,7 +278,7 @@ public abstract class AbstractTests {
 	public static ITypeEnvironmentBuilder typeCheck(Formula<?> formula,
 			ITypeEnvironment tenv) {
 		if (tenv == null) {
-			tenv = ff.makeTypeEnvironment();
+			tenv = formula.getFactory().makeTypeEnvironment();
 		}
 		final ITypeCheckResult result = formula.typeCheck(tenv);
 		assertSuccess(formula.toString(), result);
@@ -290,20 +290,31 @@ public abstract class AbstractTests {
 	}
 	
 	public static ITypeEnvironment typeCheck(Formula<?> formula) {
-		return typeCheck(formula, ff.makeTypeEnvironment());
+		return typeCheck(formula, formula.getFactory().makeTypeEnvironment());
 	}
 
 	protected static Type POW(Type base) {
 		return ff.makePowerSetType(base);
 	}
 
+	protected static Type POWV1(Type base) {
+		return ffV1.makePowerSetType(base);
+	}
+
 	protected static Type CPROD(Type left, Type right) {
 		return ff.makeProductType(left, right);
+	}
+
+	protected static Type CPRODV1(Type left, Type right) {
+		return ffV1.makeProductType(left, right);
 	}
 
 	protected static Type REL(Type left, Type right) {
 		return ff.makeRelationalType(left, right);
 	}
 
-	
+	protected static Type RELV1(Type left, Type right) {
+		return ffV1.makeRelationalType(left, right);
+	}
+
 }

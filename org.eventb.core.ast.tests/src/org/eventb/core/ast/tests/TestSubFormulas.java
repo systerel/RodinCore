@@ -15,11 +15,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.CSET;
@@ -37,6 +32,7 @@ import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Lambda;
 import static org.eventb.core.ast.tests.FastFactory.ff;
+import static org.eventb.core.ast.tests.FastFactory.ff_extns;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
@@ -63,6 +59,11 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -239,7 +240,7 @@ public class TestSubFormulas{
 		final T to;
 		
 		public FixedRewriter(T from, T to) {
-			super(false, FastFactory.ff);
+			super(false, to.getFactory());
 			this.from = from;
 			this.to = to;
 		}
@@ -488,6 +489,7 @@ public class TestSubFormulas{
 	}
 
 	private static Type INT = ff.makeIntegerType();
+	private static Type eINT = ff_extns.makeIntegerType();
 	
 	private static Type POW(Type base) {
 		return ff.makePowerSetType(base);
@@ -507,6 +509,10 @@ public class TestSubFormulas{
 	private static FreeIdentifier id_T = mFreeIdentifier("T", POW(INT));
 	private static FreeIdentifier id_U = mFreeIdentifier("U", POW(INT));
 	
+	private static FreeIdentifier eid_x = mFreeIdentifier("x", eINT, ff_extns);
+	private static FreeIdentifier eid_X = mFreeIdentifier("X", eINT, ff_extns);
+	private static FreeIdentifier eid_y = mFreeIdentifier("y", eINT, ff_extns);
+
 	private static Expression b0 = mBoundIdentifier(0, INT);
 	private static Expression b1 = mBoundIdentifier(1, INT);
 
@@ -525,6 +531,8 @@ public class TestSubFormulas{
 			= new FixedFilter<BoundIdentDecl>(bd_x, bd_X);
 	private static FixedFilter<Expression> idFilter
 			= new FixedFilter<Expression>(id_x, id_X);
+	private static FixedFilter<Expression> eidFilter
+			= new FixedFilter<Expression>(eid_x, eid_X);
 	private static FixedFilter<Expression> setIdFilter
 			= new FixedFilter<Expression>(id_S, id_U);
 
@@ -557,7 +565,8 @@ public class TestSubFormulas{
 			assertEquals("Unexpected sub-formula",
 					filter.searched, formula.getSubFormula(actualPos));
 			assertEquals("Unexpected rewrite", expRewrite,
-					formula.rewriteSubFormula(actualPos, filter.replacement, ff));
+					formula.rewriteSubFormula(actualPos, filter.replacement,
+							formula.getFactory()));
 		}
 		
 		// Additional transversal test with the default filter
@@ -1031,14 +1040,14 @@ public class TestSubFormulas{
 				mUnaryPredicate(NOT, btrue)
 		);
 		checkRootPosition(
-				mExtendedPredicate(id_x),
-				mExtendedPredicate(id_y));
+				mExtendedPredicate(eid_x),
+				mExtendedPredicate(eid_y));
 		checkRootPosition(
-				mExtendedExpression(id_x, id_y),
-				mExtendedExpression(id_y, id_x));
+				mExtendedExpression(eid_x, eid_y),
+				mExtendedExpression(eid_y, eid_x));
 		checkRootPosition(
-				mListCons(id_x, id_y),
-				mListCons(id_y, id_x));
+				mListCons(eid_x, eid_y),
+				mListCons(eid_y, eid_x));
 	}
 	
 	/**
@@ -1066,14 +1075,14 @@ public class TestSubFormulas{
 								mBinaryExpression(MINUS, id_X, id_y))
 				)
 		);
-		checkPositions(idFilter,
-				mExtendedExpression(id_x, id_y),
+		checkPositions(eidFilter,
+				mExtendedExpression(eid_x, eid_y),
 				"0",
-				mExtendedExpression(id_X, id_y));
-		checkPositions(idFilter,
-				mListCons(id_x),
+				mExtendedExpression(eid_X, eid_y));
+		checkPositions(eidFilter,
+				mListCons(eid_x),
 				"0",
-				mListCons(id_X));
+				mListCons(eid_X));
 	}
 	
 	private final IFormulaRewriter identity = new DefaultRewriter(false, ff);
@@ -1116,6 +1125,10 @@ public class TestSubFormulas{
 		final Expression i1 = mBinaryExpression(MINUS, id_x, zero);
 		final Expression i2 = zero;
 
+		final Expression ezero = mIntegerLiteral(0, ff_extns);
+		final Expression ei1 = mBinaryExpression(MINUS, eid_x, ezero, ff_extns);
+		final Expression ei2 = ezero;
+
 		final Expression empty = mEmptySet(POW(INT));
 		final Expression s1 = mBinaryExpression(SETMINUS, id_S, empty);
 		final Expression s2 = id_S;
@@ -1151,13 +1164,13 @@ public class TestSubFormulas{
 		checkRewriting(i1, i2, b0, b0);
 
 		// Extended expression
-		final Expression nil = mListCons(INT);
-		checkRewriting(i1, i2, mListCons(i1), mListCons(i2));
-		checkRewriting(nil, mListCons(i2), mListCons(i1), mListCons(i1, i2));
-		checkRewriting(nil, mListCons(i1, i2), nil, mListCons(i1, i2));
+		final Expression nil = mListCons(eINT);
+		checkRewriting(ei1, ei2, mListCons(ei1), mListCons(ei2));
+		checkRewriting(nil, mListCons(ei2), mListCons(ei1), mListCons(ei1, ei2));
+		checkRewriting(nil, mListCons(ei1, ei2), nil, mListCons(ei1, ei2));
 
 		// Extended predicate
-		checkRewriting(i1, i2, mExtendedPredicate(i1), mExtendedPredicate(i2));
+		checkRewriting(ei1, ei2, mExtendedPredicate(ei1), mExtendedPredicate(ei2));
 
 		checkRewriting(i1, i2, id_x, id_x);
 

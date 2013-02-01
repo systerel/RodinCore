@@ -526,7 +526,7 @@ public class TestFreeIdents extends AbstractTests {
 		Predicate pp = ff.makeRelationalPredicate(Formula.EQUAL,ff.makeQuantifiedExpression(Formula.CSET,mList(bd_x, bd_y),
 						ff.makeQuantifiedPredicate(Formula.FORALL,mList(bd_s, bd_t, bd_u),bfalse,null),ff.makeBoundIdentifier(4,null),null, QuantifiedExpression.Form.Explicit),id_a,null);
 
-		IdentsChecker.check(pp, ff);
+		IdentsChecker.check(pp);
 		assertFalse("Formula has dangling bound index", pp.isWellFormed());
 	}
 	
@@ -537,14 +537,14 @@ public class TestFreeIdents extends AbstractTests {
 	public void testIsWellFormed() {
 		for (TestItem testItem : testItemsBindPartial) {
 			final Formula<?> formula = testItem.formula;
-			IdentsChecker.check(formula, ff);
+			IdentsChecker.check(formula);
 			assertTrue("Should be well-formed: " + formula, formula.isWellFormed());
 			FreeIdentifier[] result = formula.getSyntacticallyFreeIdentifiers();
 			TreeSet<String> freeIds = new TreeSet<String>(freeToString(result));
 			freeIds.removeAll(freeToString(testItem.freeIdents));
 			boolean varBound = freeIds.size() < result.length;
 			final Formula<?> boundFormula = testItem.boundFormula;
-			IdentsChecker.check(boundFormula, ff);
+			IdentsChecker.check(boundFormula);
 			if (varBound)
 				assertFalse("Should not be well-formed: " + boundFormula, boundFormula.isWellFormed());
 			else

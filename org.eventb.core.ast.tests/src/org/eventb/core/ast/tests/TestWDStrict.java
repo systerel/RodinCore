@@ -150,9 +150,6 @@ public class TestWDStrict extends AbstractTests {
 
 	private static final Predicate T = mLiteralPredicate(BTRUE);
 
-	private static final Expression[] TWO_EXPRS = new Expression[] { id_x, id_x };
-	private static final Predicate[] TWO_PREDS = new Predicate[] { T, T };
-
 	private static void assertWDStrict(Formula<?> formula) {
 		assertTrue(formula.isWDStrict());
 	}
@@ -472,6 +469,11 @@ public class TestWDStrict extends AbstractTests {
 	 */
 	@Test 
 	public void testWDStrictExtensions() {
+		final Expression idE_x = EFF.makeFreeIdentifier("x", null);
+		final Expression[] TWO_EXPRS = new Expression[] { idE_x, idE_x };
+		final Predicate TE = EFF.makeLiteralPredicate(BTRUE, null);
+		final Predicate[] TWO_PREDS = new Predicate[] { TE, TE };
+
 		assertWDStrict(EFF.makeExtendedPredicate(fooS, TWO_EXPRS, TWO_PREDS,
 				null));
 		assertWDStrict(EFF.makeExtendedExpression(barS, TWO_EXPRS, TWO_PREDS,

@@ -59,7 +59,7 @@ import org.eventb.core.ast.UnaryPredicate;
 
 /**
  * Checks the identifier caches of formulas. Call method
- * {@link #check(Formula, FormulaFactory)} to check some formula.
+ * {@link #check(Formula)} to check some formula.
  * <p>
  * The check is implemented by traversing the AST of the formula, collecting
  * both bound and free identifiers. We then verify on every node that the caches
@@ -83,11 +83,9 @@ public class IdentsChecker implements IVisitor {
 	 * 
 	 * @param formula
 	 *            the formula to check
-	 * @param factory
-	 *            a formula factory compatible with the given formula
 	 */
-	public static void check(Formula<?> formula, FormulaFactory factory) {
-		final IdentsChecker checker = new IdentsChecker(factory);
+	public static void check(Formula<?> formula) {
+		final IdentsChecker checker = new IdentsChecker();
 		formula.accept(checker);
 		// Self-test ensure stack contains only root
 		assertEquals(1, checker.stack.size());
@@ -172,13 +170,11 @@ public class IdentsChecker implements IVisitor {
 		return result;
 	}
 
-	final private FormulaFactory factory;
-
 	final private Stack<Formula<?>> stack;
 
-	private IdentsChecker(FormulaFactory factory) {
+
+	private IdentsChecker() {
 		this.stack = new Stack<Formula<?>>();
-		this.factory = factory;
 	}
 
 	@Override
@@ -1213,9 +1209,9 @@ public class IdentsChecker implements IVisitor {
 		for (final BoundIdentifier boundIdent : boundIdents) {
 			final int index = boundIdent.getBoundIndex();
 			if (nbBoundIdentDecls <= index) {
-				result.add(factory.makeBoundIdentifier(index
-						- nbBoundIdentDecls, boundIdent.getSourceLocation(),
-						boundIdent.getType()));
+				result.add(boundIdent.getFactory().makeBoundIdentifier(
+						index - nbBoundIdentDecls,
+						boundIdent.getSourceLocation(), boundIdent.getType()));
 			}
 		}
 		return result;
@@ -1453,14 +1449,14 @@ public class IdentsChecker implements IVisitor {
 	// Returns a set containing the identifiers for each given type
 	// occurring in the type of the given formula (if any)
 	private Set<FreeIdentifier> getGivenTypeIdentifiers(Expression expr) {
-		return getGivenTypeIdentifiers(expr.getType());
+		return getGivenTypeIdentifiers(expr.getFactory(), expr.getType());
 	}
 
 	private Set<FreeIdentifier> getGivenTypeIdentifiers(BoundIdentDecl decl) {
-		return getGivenTypeIdentifiers(decl.getType());
+		return getGivenTypeIdentifiers(decl.getFactory(), decl.getType());
 	}
 
-	private Set<FreeIdentifier> getGivenTypeIdentifiers(Type type) {
+	private Set<FreeIdentifier> getGivenTypeIdentifiers(FormulaFactory factory, Type type) {
 		final Set<FreeIdentifier> result = new HashSet<FreeIdentifier>();
 		if (type == null) {
 			return result; // must not be immutable

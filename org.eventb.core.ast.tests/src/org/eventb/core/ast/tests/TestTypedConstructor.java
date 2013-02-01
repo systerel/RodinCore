@@ -137,6 +137,7 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
@@ -196,6 +197,18 @@ public class TestTypedConstructor extends AbstractTests {
 	private static final Type rZZ = REL(Z, Z);
 
 	private static final Type prST = POW(rST);
+
+	private static final Type Bv1 = ffV1.makeBooleanType();
+	private static final Type Zv1 = ffV1.makeIntegerType();
+
+	private static final Type Sv1 = ffV1.makeGivenType("S");
+	private static final Type Tv1 = ffV1.makeGivenType("T");
+	private static final Type pSv1 = POWV1(Sv1);
+
+	private static final Type rSSv1 = RELV1(Sv1, Sv1);
+
+	private static final Type STv1 = CPRODV1(Sv1, Tv1);
+	private static final Type rSTv1 = RELV1(Sv1, Tv1);
 
 	private static final Type[] l_ = new Type[] { null };
 
@@ -376,7 +389,7 @@ public class TestTypedConstructor extends AbstractTests {
 
 	private static void assertFormulaTypeChecked(Formula<?> form,
 			boolean expected) {
-		IdentsChecker.check(form, ff);
+		IdentsChecker.check(form);
 		assertEquals(expected, form.isTypeChecked());
 		if (expected) {
 			runTypeCheck(form);
@@ -581,8 +594,10 @@ public class TestTypedConstructor extends AbstractTests {
 	 * name of the free identifier child added.
 	 */
 	private static void assertExtExprGivenSets(String idName) {
-		final Expression expr1 = mFreeIdentifier(idName, Z);
-		final Expression expr2 = parseExpression("(∅⦂ℙ(S)↔ℤ)(∅⦂ℙ(S))");
+		final FormulaFactory ffE = FastFactory.ff_extns;
+		final Expression expr1 = ffE.makeFreeIdentifier(idName, null,
+				ffE.makeIntegerType());
+		final Expression expr2 = parseExpression("(∅⦂ℙ(S)↔ℤ)(∅⦂ℙ(S))", ffE);
 		final Expression expr = mExtendedExpression(new Expression[] { expr1,
 				expr2 });
 		boolean expected = !"S".equals(idName);
@@ -595,11 +610,12 @@ public class TestTypedConstructor extends AbstractTests {
 	 * name of the free identifier child added.
 	 */
 	private static void assertExtPredGivenSets(String idName) {
-		final Expression expr1 = mFreeIdentifier(idName, Z);
-		final Expression expr2 = parseExpression("(∅⦂ℙ(S)↔ℤ)(∅⦂ℙ(S))");
-		final Predicate PT = mLiteralPredicate(BTRUE);
+		final FormulaFactory ffEF = ExtendedFormulas.EFF;
+		final Expression expr1 = ffEF.makeFreeIdentifier(idName, null, ffEF.makeIntegerType());
+		final Expression expr2 = parseExpression("(∅⦂ℙ(S)↔ℤ)(∅⦂ℙ(S))", ffEF);
+		final Predicate PT = ffEF.makeLiteralPredicate(BTRUE, null);
 		final Predicate[] twoPreds = new Predicate[] { PT, PT };
-		final Predicate pred = ExtendedFormulas.EFF.makeExtendedPredicate(
+		final Predicate pred = ffEF.makeExtendedPredicate(
 				ExtendedFormulas.fooL, new Expression[] { expr1, expr2 },
 				twoPreds, null);
 		boolean expected = !"S".equals(idName);
@@ -716,7 +732,7 @@ public class TestTypedConstructor extends AbstractTests {
 	private static void runTypeCheck(Formula<?> form) {
 		if (form.isWellFormed()) {
 			typeCheck(form);
-			IdentsChecker.check(form, ff);
+			IdentsChecker.check(form);
 		}
 	}
 
@@ -1246,25 +1262,25 @@ public class TestTypedConstructor extends AbstractTests {
 		assertUnaryExpressionType(KRAN, pT, rST);
 
 		assertUnaryExpressionTypeV1(KPRJ1, null, null);
-		assertUnaryExpressionTypeV1(KPRJ1, null, B);
-		assertUnaryExpressionTypeV1(KPRJ1, null, S);
-		assertUnaryExpressionTypeV1(KPRJ1, null, Z);
-		assertUnaryExpressionTypeV1(KPRJ1, null, pS);
-		assertUnaryExpressionTypeV1(KPRJ1, REL(ST, S), rST);
+		assertUnaryExpressionTypeV1(KPRJ1, null, Bv1);
+		assertUnaryExpressionTypeV1(KPRJ1, null, Sv1);
+		assertUnaryExpressionTypeV1(KPRJ1, null, Zv1);
+		assertUnaryExpressionTypeV1(KPRJ1, null, pSv1);
+		assertUnaryExpressionTypeV1(KPRJ1, RELV1(STv1, Sv1), rSTv1);
 
 		assertUnaryExpressionTypeV1(KPRJ2, null, null);
-		assertUnaryExpressionTypeV1(KPRJ2, null, B);
-		assertUnaryExpressionTypeV1(KPRJ2, null, S);
-		assertUnaryExpressionTypeV1(KPRJ2, null, Z);
-		assertUnaryExpressionTypeV1(KPRJ2, null, pS);
-		assertUnaryExpressionTypeV1(KPRJ2, REL(ST, T), rST);
+		assertUnaryExpressionTypeV1(KPRJ2, null, Bv1);
+		assertUnaryExpressionTypeV1(KPRJ2, null, Sv1);
+		assertUnaryExpressionTypeV1(KPRJ2, null, Zv1);
+		assertUnaryExpressionTypeV1(KPRJ2, null, pSv1);
+		assertUnaryExpressionTypeV1(KPRJ2, RELV1(STv1, Tv1), rSTv1);
 
 		assertUnaryExpressionTypeV1(KID, null, null);
-		assertUnaryExpressionTypeV1(KID, null, B);
-		assertUnaryExpressionTypeV1(KID, null, S);
-		assertUnaryExpressionTypeV1(KID, null, Z);
-		assertUnaryExpressionTypeV1(KID, rSS, pS);
-		assertUnaryExpressionTypeV1(KID, REL(ST, ST), rST);
+		assertUnaryExpressionTypeV1(KID, null, Bv1);
+		assertUnaryExpressionTypeV1(KID, null, Sv1);
+		assertUnaryExpressionTypeV1(KID, null, Zv1);
+		assertUnaryExpressionTypeV1(KID, rSSv1, pSv1);
+		assertUnaryExpressionTypeV1(KID, RELV1(STv1, STv1), rSTv1);
 
 		for (int tag : Arrays.asList(KMIN, KMAX)) {
 			assertUnaryExpressionType(tag, null, null);

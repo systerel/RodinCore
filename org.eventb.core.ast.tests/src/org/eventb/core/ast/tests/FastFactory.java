@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,10 @@ public class FastFactory {
 	static {
 		EXTNS.addAll(LIST_DT.getExtensions());
 	}
-	public static FormulaFactory ff = FormulaFactory.getInstance(EXTNS);
+
+	public static FormulaFactory ff = FormulaFactory.getDefault();
+
+	public static FormulaFactory ff_extns = FormulaFactory.getInstance(EXTNS);
 
 	public static AssociativeExpression mAssociativeExpression(
 			Expression... children) {
@@ -190,6 +193,11 @@ public class FastFactory {
 		return ff.makeBinaryExpression(tag, left, right, null);
 	}
 
+	public static BinaryExpression mBinaryExpression(int tag, Expression left,
+			Expression right, FormulaFactory fac) {
+		return fac.makeBinaryExpression(tag, left, right, null);
+	}
+
 	public static BinaryPredicate mBinaryPredicate(int tag, Predicate left,
 			Predicate right) {
 		return ff.makeBinaryPredicate(tag, left, right, null);
@@ -228,12 +236,21 @@ public class FastFactory {
 		return ff.makeFreeIdentifier(name, null, type);
 	}
 
+	public static FreeIdentifier mFreeIdentifier(String name, Type type,
+			FormulaFactory fac) {
+		return fac.makeFreeIdentifier(name, null, type);
+	}
+
 	public static IntegerLiteral mIntegerLiteral() {
 		return ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	}
 
 	public static IntegerLiteral mIntegerLiteral(long value) {
 		return ff.makeIntegerLiteral(BigInteger.valueOf(value), null);
+	}
+
+	public static IntegerLiteral mIntegerLiteral(long value, FormulaFactory fac) {
+		return fac.makeIntegerLiteral(BigInteger.valueOf(value), null);
 	}
 
 	public static <T> T[] mList(T... objs) {
@@ -428,13 +445,13 @@ public class FastFactory {
 	}
 
 	public static ExtendedPredicate mExtendedPredicate(Expression e) {
-		return ff.makeExtendedPredicate(EXT_PRIME, Collections.singleton(e),
+		return ff_extns.makeExtendedPredicate(EXT_PRIME, Collections.singleton(e),
 				Collections.<Predicate> emptySet(), null);
 	}
 
 	public static ExtendedExpression mExtendedExpression(
 			Expression... expressions) {
-		return ff
+		return ff_extns
 				.makeExtendedExpression(MONEY, expressions, NO_PREDICATE, null);
 	}
 
@@ -454,16 +471,16 @@ public class FastFactory {
 		if (eType == null) {
 			listType = null;
 		} else {
-			listType = ff.makeParametricType(singletonList(eType),
+			listType = ff_extns.makeParametricType(singletonList(eType),
 					LIST_DT.getTypeConstructor());
 		}
-		ExtendedExpression result = ff.makeExtendedExpression(
+		ExtendedExpression result = ff_extns.makeExtendedExpression(
 				LIST_DT.getConstructor("NIL"), NO_EXPRESSION, NO_PREDICATE,
 				null, listType);
 		for (int i = expressions.length - 1; i >= 0; i--) {
 			final Expression[] exprs = new Expression[] { expressions[i],
 					result };
-			result = ff.makeExtendedExpression(LIST_DT.getConstructor("CONS"),
+			result = ff_extns.makeExtendedExpression(LIST_DT.getConstructor("CONS"),
 					exprs, NO_PREDICATE, null, listType);
 		}
 		return result;

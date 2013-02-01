@@ -425,7 +425,7 @@ public class TestParser extends AbstractTests {
 			), new PredTestPair(
 					"\u2200x, y\u00b7\u2200s, t\u00b7\u22a5", 
 					ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_x_V1, bd_y_V1),
-							ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_s, bd_t), bfalse_V1, null), null
+							ffV1.makeQuantifiedPredicate(Formula.FORALL, mList(bd_s_V1, bd_t_V1), bfalse_V1, null), null
 					),
 					mQuantifiedPredicate(Formula.FORALL, mList(bd_x, bd_y), 
 							mQuantifiedPredicate(Formula.FORALL, mList(bd_s, bd_t), bfalse)

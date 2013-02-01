@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.EXISTS;
@@ -32,13 +30,13 @@ import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mMaplet;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedExpression;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
-import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
@@ -51,8 +49,6 @@ public class TestTypedIdentDecl extends AbstractTests {
 	private static GivenType ty_T = ff.makeGivenType("T");
 	private static GivenType ty_U = ff.makeGivenType("U");
 
-	private static ITypeEnvironment env = mTypeEnvironment();
-	
 	private static BoundIdentDecl bxS = mBoundIdentDecl("x", ty_S);
 	private static BoundIdentDecl bxPS = mBoundIdentDecl("x", POW(ty_S));
 	private static BoundIdentDecl byT = mBoundIdentDecl("y", ty_T);
@@ -184,7 +180,7 @@ public class TestTypedIdentDecl extends AbstractTests {
 		final String image = expr.toStringWithTypes();
 		for (LanguageVersion version : LanguageVersion.values()) {
 			final Expression actual = parseExpression(image, version);
-			typeCheck(actual, env);
+			typeCheck(actual, actual.getFactory().makeTypeEnvironment());
 			assertEquals("Typed string is a different expression", expr, actual);
 		}
 	}
@@ -217,7 +213,7 @@ public class TestTypedIdentDecl extends AbstractTests {
 		final String image = pred.toStringWithTypes();
 		for (LanguageVersion version : LanguageVersion.values()) {
 			final Predicate actual = parsePredicate(image, version);
-			typeCheck(actual, env);
+			typeCheck(actual, actual.getFactory().makeTypeEnvironment());
 			assertEquals("Typed string is a different predicate", pred, actual);
 		}
 	}

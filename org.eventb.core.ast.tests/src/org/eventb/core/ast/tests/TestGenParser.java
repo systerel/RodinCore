@@ -202,6 +202,19 @@ public class TestGenParser extends AbstractTests {
 	protected static final PowerSetType REL_INT_INT = ff.makeRelationalType(INT_TYPE, INT_TYPE);
 	protected static final SourceLocationChecker slChecker = new SourceLocationChecker();
 
+	protected static final AtomicExpression INT_ffLIST = LIST_FAC
+			.makeAtomicExpression(Formula.INTEGER, null);
+
+	protected static final BooleanType BOOL_TYPE_ffLIST = LIST_FAC
+			.makeBooleanType();
+
+	protected static final IntegerLiteral ONE_ffLIST = LIST_FAC
+			.makeIntegerLiteral(BigInteger.ONE, null);
+	protected static final IntegerLiteral ZERO_ffLIST = LIST_FAC
+			.makeIntegerLiteral(BigInteger.ZERO, null);
+	protected static final FreeIdentifier FRID_x_ffLIST = LIST_FAC
+			.makeFreeIdentifier("x", null);
+
 	private static void assertFailure(IParseResult result, ASTProblem... expected) {
 		assertTrue("expected parsing to fail", result.hasProblem());
 		final List<ASTProblem> problems = result.getProblems();
@@ -663,8 +676,8 @@ public class TestGenParser extends AbstractTests {
 			if (beta == null || gamma == null) {
 				return null;
 			}
-			return ff.makeRelationalType(alphaLeft,
-					ff.makeProductType(beta, gamma));
+			return mediator.getFactory().makeRelationalType(alphaLeft,
+					mediator.getFactory().makeProductType(beta, gamma));
 		}
 
 		@Override
@@ -2237,7 +2250,7 @@ public class TestGenParser extends AbstractTests {
 	public void testDatatypeType() throws Exception {
 
 		final ExtendedExpression list = LIST_FAC.makeExtendedExpression(
-				EXT_LIST, Collections.<Expression> singleton(INT),
+				EXT_LIST, Collections.<Expression> singleton(INT_ffLIST),
 				Collections.<Predicate> emptyList(), null);
 
 		final Expression expr = doExpressionTest("List(ℤ)", list,
@@ -2249,14 +2262,15 @@ public class TestGenParser extends AbstractTests {
 		doTypeTest("List(ℤ)", LIST_INT_TYPE, LIST_FAC);
 
 		final ParametricType listBoolType = LIST_FAC.makeParametricType(
-				Collections.<Type> singletonList(BOOL_TYPE), EXT_LIST);
+				Collections.<Type> singletonList(BOOL_TYPE_ffLIST), EXT_LIST);
 		assertFalse(listBoolType.equals(LIST_INT_TYPE));
 	}
 
 	@Test 
 	public void testDatatypeExpr() throws Exception {
-		final Expression upTo = LIST_FAC.makeBinaryExpression(UPTO, ZERO, ONE,
-				null);
+		final Expression upTo = LIST_FAC.makeBinaryExpression(UPTO,
+				LIST_FAC.makeIntegerLiteral(BigInteger.ZERO, null),
+				LIST_FAC.makeIntegerLiteral(BigInteger.ONE, null), null);
 
 		final ExtendedExpression list0upTo1 = LIST_FAC.makeExtendedExpression(
 				EXT_LIST, Collections.<Expression> singleton(upTo),
@@ -2287,7 +2301,7 @@ public class TestGenParser extends AbstractTests {
 
 		final ParametricType listBoolBoolType = LIST_FAC.makeParametricType(
 				Collections.<Type> singletonList(LIST_FAC.makeProductType(
-						BOOL_TYPE, BOOL_TYPE)), EXT_LIST);
+						BOOL_TYPE_ffLIST, BOOL_TYPE_ffLIST)), EXT_LIST);
 		final ExtendedExpression nilBoolBool = LIST_FAC.makeExtendedExpression(
 				EXT_NIL, NO_EXPR, NO_PRED, null, listBoolBoolType);
 
@@ -2314,15 +2328,15 @@ public class TestGenParser extends AbstractTests {
 				NO_EXPR, NO_PRED, null);
 
 		final ExtendedExpression list1 = LIST_FAC.makeExtendedExpression(EXT_CONS,
-				Arrays.asList(ONE, nil), Collections
+				Arrays.asList(ONE_ffLIST, nil), Collections
 						.<Predicate> emptyList(), null);
 		
 		doExpressionTest("cons(1, nil)", list1, LIST_INT_TYPE, LIST_FAC, true);
 
 		final ExtendedExpression list01 = LIST_FAC.makeExtendedExpression(
-				EXT_CONS, Arrays.asList(ZERO,
+				EXT_CONS, Arrays.asList(ZERO_ffLIST,
 						LIST_FAC.makeExtendedExpression(
-								EXT_CONS, Arrays.asList(ONE,
+								EXT_CONS, Arrays.asList(ONE_ffLIST,
 										nil),
 										Collections.<Predicate> emptyList(), null)),
 										Collections.<Predicate> emptyList(), null);
@@ -2339,13 +2353,13 @@ public class TestGenParser extends AbstractTests {
 		assertNotNull("tail destructor not found", EXT_TAIL);
 		
 		final ExtendedExpression head = LIST_FAC.makeExtendedExpression(
-				EXT_HEAD, Arrays.<Expression> asList(FRID_x),
+				EXT_HEAD, Arrays.<Expression> asList(FRID_x_ffLIST),
 				Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("head(x)", head, LIST_FAC);
 
 		final ExtendedExpression tail = LIST_FAC.makeExtendedExpression(
-				EXT_TAIL, Arrays.<Expression> asList(FRID_x),
+				EXT_TAIL, Arrays.<Expression> asList(FRID_x_ffLIST),
 				Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("tail(x)", tail, LIST_FAC);
@@ -2354,10 +2368,10 @@ public class TestGenParser extends AbstractTests {
 	@Test 
 	public void testTypeConstrTypeCheck() throws Exception {
 		final Expression listIntExpr = LIST_FAC.makeExtendedExpression(
-				EXT_LIST, Collections.<Expression> singleton(INT),
+				EXT_LIST, Collections.<Expression> singleton(INT_ffLIST),
 				Collections.<Predicate> emptySet(), null);
-		final Predicate expected = LIST_FAC.makeRelationalPredicate(IN, FRID_x,
-				listIntExpr, null);
+		final Predicate expected = LIST_FAC.makeRelationalPredicate(IN,
+				LIST_FAC.makeFreeIdentifier("x", null), listIntExpr, null);
 		
 		final Predicate pred = doPredicateTest("x ∈ List(ℤ)", expected,
 				LIST_FAC);
@@ -2426,7 +2440,7 @@ public class TestGenParser extends AbstractTests {
 						.<Predicate> emptyList(), null);
 
 		final ExtendedExpression list1 = LIST_FAC.makeExtendedExpression(EXT_CONS,
-				Arrays.asList(ONE, nil), Collections
+				Arrays.asList(ONE_ffLIST, nil), Collections
 						.<Predicate> emptyList(), null);
 
 		final ExtendedExpression headList1 = LIST_FAC.makeExtendedExpression(
@@ -2463,7 +2477,7 @@ public class TestGenParser extends AbstractTests {
 				LIST_INT_TYPE, LIST_FAC, true);
 
 		final ExtendedExpression cons1 = LIST_FAC.makeExtendedExpression(
-				EXT_CONS, Arrays.asList(ONE, nil),
+				EXT_CONS, Arrays.asList(ONE_ffLIST, nil),
 				Collections.<Predicate> emptyList(), null);
 
 		final ExtendedExpression consCons1 = LIST_FAC.makeExtendedExpression(
@@ -2862,10 +2876,13 @@ public class TestGenParser extends AbstractTests {
 	private static final FormulaFactory PRIME_FAC = FormulaFactory
 			.getInstance(EXT_PRIME);
 
+	private static final IntegerLiteral ONE_PRIME = PRIME_FAC
+			.makeIntegerLiteral(BigInteger.ONE, null);
+
 	@Test 
 	public void testPredicateExtension() throws Exception {
 		final ExtendedPredicate expected = PRIME_FAC.makeExtendedPredicate(
-				EXT_PRIME, Arrays.<Expression> asList(ONE),
+				EXT_PRIME, Arrays.<Expression> asList(ONE_PRIME),
 				Collections.<Predicate> emptySet(), null);
 		doPredicateTest("prime(1)", expected, PRIME_FAC);
 	}
@@ -2873,7 +2890,7 @@ public class TestGenParser extends AbstractTests {
 	@Test 
 	public void testPredicateExtensionInFormula() throws Exception {
 		final Predicate primeOne = PRIME_FAC.makeExtendedPredicate(EXT_PRIME,
-				Arrays.<Expression> asList(ONE),
+				Arrays.<Expression> asList(ONE_PRIME),
 				Collections.<Predicate> emptySet(), null);
 		final Predicate expected = PRIME_FAC.makeAssociativePredicate(LAND,
 				asList(primeOne, primeOne), null);
@@ -2922,10 +2939,17 @@ public class TestGenParser extends AbstractTests {
 	private static final IExpressionExtension EXT_MOULT = MOULT_DT
 			.getTypeConstructor();
 	private static final ParametricType MOULT_INT_BOOL_TYPE = MOULT_FAC
-			.makeParametricType(Arrays.<Type> asList(INT_TYPE, BOOL_TYPE),
+			.makeParametricType(Arrays.<Type>asList(
+					MOULT_FAC.makeIntegerType(),
+					MOULT_FAC.makeBooleanType()),
 					EXT_MOULT);
 	private static final IExpressionExtension EXT_MAKE_MOULT = MOULT_DT
 			.getConstructor("MAKE MOULT");
+
+	private static final IntegerLiteral ONE_MOULT = MOULT_FAC
+			.makeIntegerLiteral(BigInteger.ONE, null);
+	private static final AtomicExpression ATOM_TRUE_MOULT = MOULT_FAC
+			.makeAtomicExpression(TRUE, null);
 
 	@Test 
 	public void testMoult() throws Exception {
@@ -2933,7 +2957,7 @@ public class TestGenParser extends AbstractTests {
 		doTypeTest("Moult(ℤ, BOOL)", MOULT_INT_BOOL_TYPE, MOULT_FAC);
 
 		final ExtendedExpression moult1True = MOULT_FAC.makeExtendedExpression(
-				EXT_MAKE_MOULT, Arrays.asList(ONE, ATOM_TRUE),
+				EXT_MAKE_MOULT, Arrays.asList(ONE_MOULT, ATOM_TRUE_MOULT),
 				Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("makeMoult(1, TRUE)", moult1True, MOULT_INT_BOOL_TYPE,
@@ -3009,8 +3033,21 @@ public class TestGenParser extends AbstractTests {
 	private static final IExpressionExtension EXT_NO_INDUC = NO_INDUC_EXTNS
 			.getTypeConstructor();
 	private static final ParametricType NO_INDUC_INT_BOOL_TYPE = NO_INDUC_FAC
-			.makeParametricType(Arrays.<Type> asList(INT_TYPE, BOOL_TYPE),
-					EXT_NO_INDUC);
+			.makeParametricType(Arrays.<Type> asList(
+					NO_INDUC_FAC.makeIntegerType(),
+					NO_INDUC_FAC.makeBooleanType()), EXT_NO_INDUC);
+	private static final IntegerLiteral ONE_ffNO_INDUC = NO_INDUC_FAC
+			.makeIntegerLiteral(BigInteger.ONE, null);
+	private static final IntegerLiteral ZERO_ffNO_INDUC = NO_INDUC_FAC
+			.makeIntegerLiteral(BigInteger.ZERO, null);
+	private static final AtomicExpression ATOM_TRUE_ffNO_INDUC = NO_INDUC_FAC
+			.makeAtomicExpression(TRUE, null);
+	private static final IntegerLiteral ONE_NO_INDUC = NO_INDUC_FAC
+			.makeIntegerLiteral(BigInteger.ONE, null);
+	private static final IntegerLiteral ZERO_NO_INDUC = NO_INDUC_FAC
+			.makeIntegerLiteral(BigInteger.ZERO, null);
+	private static final AtomicExpression ATOM_TRUE_NO_INDUC = NO_INDUC_FAC
+			.makeAtomicExpression(TRUE, null);
 
 	@Test 
 	public void testNoInducType() throws Exception {
@@ -3023,8 +3060,8 @@ public class TestGenParser extends AbstractTests {
 				.getConstructor(NoInducType.CONS1);
 
 		final ExtendedExpression c1Sing0True = NO_INDUC_FAC
-				.makeExtendedExpression(extCons1, Arrays.asList(ONE,
-						NO_INDUC_FAC.makeSetExtension(ZERO, null), ATOM_TRUE),
+				.makeExtendedExpression(extCons1, Arrays.asList(ONE_NO_INDUC,
+						NO_INDUC_FAC.makeSetExtension(ZERO_NO_INDUC, null), ATOM_TRUE_NO_INDUC),
 						Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("cons1(1, {0}, TRUE)", c1Sing0True,
@@ -3038,10 +3075,10 @@ public class TestGenParser extends AbstractTests {
 
 		final ExtendedExpression c2Sing2MapSing0True = NO_INDUC_FAC
 				.makeExtendedExpression(extCons2, Arrays.asList(
-						NO_INDUC_FAC.makeSetExtension(ONE, null),
+						NO_INDUC_FAC.makeSetExtension(ONE_ffNO_INDUC, null),
 						NO_INDUC_FAC.makeBinaryExpression(MAPSTO,
-								NO_INDUC_FAC.makeSetExtension(ZERO, null),
-								ATOM_TRUE, null)), Collections
+								NO_INDUC_FAC.makeSetExtension(ZERO_ffNO_INDUC, null),
+								ATOM_TRUE_ffNO_INDUC, null)), Collections
 						.<Predicate> emptyList(), null);
 
 		doExpressionTest("cons2({1}, {0} ↦ TRUE)", c2Sing2MapSing0True,
@@ -3057,8 +3094,8 @@ public class TestGenParser extends AbstractTests {
 				.makeExtendedExpression(extCons3, Arrays.<Expression>asList(
 						NO_INDUC_FAC.makeSetExtension(Arrays.<Expression>asList(
 								NO_INDUC_FAC.makeBinaryExpression(MAPSTO,
-								ZERO, ATOM_TRUE, null)), null)), Collections
-						.<Predicate> emptyList(), null);
+								ZERO_ffNO_INDUC, ATOM_TRUE_ffNO_INDUC, null)), null)),
+						Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("cons3({0 ↦ TRUE})", c3SingMaps0True,
 				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
@@ -3081,26 +3118,26 @@ public class TestGenParser extends AbstractTests {
 	
 	@Test 
 	public void testAddingExtensions() throws Exception {
-		final Predicate primeOne = PRIME_FAC.makeExtendedPredicate(EXT_PRIME,
-				Arrays.<Expression> asList(ONE),
-				Collections.<Predicate> emptySet(), null);
+		final FormulaFactory facListPrime = LIST_FAC.withExtensions(Collections
+				.<IFormulaExtension> singleton(EXT_PRIME));
 
-		final Expression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
+		final Expression nil = facListPrime.makeExtendedExpression(EXT_NIL,
 				Collections.<Expression> emptyList(),
 				Collections.<Predicate> emptyList(), null);
 
-		final Expression listInt = LIST_FAC.makeExtendedExpression(EXT_LIST,
-				Collections.<Expression> singleton(INT),
+		final Expression listInt = facListPrime.makeExtendedExpression(EXT_LIST,
+				Collections.<Expression> singleton(facListPrime.makeAtomicExpression(Formula.INTEGER, null)),
 				Collections.<Predicate> emptyList(), null);
 
-		final Expression powListInt = LIST_FAC.makeUnaryExpression(POW,
+		final Expression powListInt = facListPrime.makeUnaryExpression(POW,
 				listInt, null);
 
-		final Predicate nilInListInt = LIST_FAC.makeRelationalPredicate(IN,
-				nil, powListInt, null);
+		final Predicate primeOne = facListPrime.makeExtendedPredicate(EXT_PRIME,
+				Arrays.<Expression> asList(facListPrime.makeIntegerLiteral(BigInteger.ONE, null)),
+				Collections.<Predicate> emptySet(), null);
 
-		final FormulaFactory facListPrime = LIST_FAC.withExtensions(Collections
-				.<IFormulaExtension> singleton(EXT_PRIME));
+		final Predicate nilInListInt = facListPrime.makeRelationalPredicate(IN,
+				nil, powListInt, null);
 
 		final Predicate separate = facListPrime.makeAssociativePredicate(LAND,
 				asList(primeOne, nilInListInt), null);
@@ -3116,19 +3153,26 @@ public class TestGenParser extends AbstractTests {
 	
 	@Test 
 	public void testMixedTypesToType() throws Exception {
-		final Expression moultIntBool = MOULT_FAC.makeExtendedExpression(
-				EXT_MOULT, Arrays.<Expression> asList(INT, BOOL),
-				Collections.<Predicate> emptySet(), null);
-
 		final FormulaFactory listMoultFac = LIST_FAC.withExtensions(MOULT_DT
 				.getExtensions());
 		
+		final Expression moultIntBool = listMoultFac
+				.makeExtendedExpression(EXT_MOULT, Arrays.<Expression> asList(
+						listMoultFac.makeAtomicExpression(Formula.INTEGER, null),
+						listMoultFac.makeAtomicExpression(Formula.BOOL, null)),
+						Collections.<Predicate> emptySet(), null);
+
+		final ParametricType moultIntBoolType = listMoultFac
+				.makeParametricType(Arrays.<Type> asList(
+						listMoultFac.makeIntegerType(),
+						listMoultFac.makeBooleanType()), EXT_MOULT);
+
 		final Expression listMoult = listMoultFac.makeExtendedExpression(
 				EXT_LIST, Collections.<Expression> singleton(moultIntBool),
 				Collections.<Predicate> emptyList(), null);
 		
 		final ParametricType listMoultType = listMoultFac.makeParametricType(
-				Collections.<Type> singletonList(MOULT_INT_BOOL_TYPE), EXT_LIST);
+				Collections.<Type> singletonList(moultIntBoolType), EXT_LIST);
 		
 		final Type powListMoultType = listMoultFac.makePowerSetType(listMoultType);
 		
@@ -3154,14 +3198,22 @@ public class TestGenParser extends AbstractTests {
 
 	@Test 
 	public void testCond() throws Exception {
-		final Expression expectedInt = makeCond(LIT_BTRUE, ZERO, ONE, null);
-		doExpressionTest("COND(⊤, 0, 1)", expectedInt, INT_TYPE, FAC_COND, false);
 		
+		final Predicate LIT_BTRUE_COND = FAC_COND.makeLiteralPredicate(Formula.BTRUE, null);
+		final Expression ZERO_COND = FAC_COND.makeIntegerLiteral(BigInteger.ZERO, null);
+		final Expression ONE_COND = FAC_COND.makeIntegerLiteral(BigInteger.ONE, null);
+		final Type INT_TYPE_COND = FAC_COND.makeIntegerType();
+		final Expression expectedInt = makeCond(LIT_BTRUE_COND, ZERO_COND, ONE_COND, null);
+		doExpressionTest("COND(⊤, 0, 1)", expectedInt, INT_TYPE_COND, FAC_COND, false);
+
+		final Predicate LIT_BFALSE_COND = FAC_COND.makeLiteralPredicate(Formula.BFALSE, null);
+		final Expression ATOM_TRUE_COND = FAC_COND.makeAtomicExpression(TRUE, null);
+		final Type BOOL_TYPE_COND = FAC_COND.makeBooleanType();
 		// fresh ident because typecheck will set type and subsequent tests
 		// using FRID_a would fail
-		final FreeIdentifier frid_a = ff.makeFreeIdentifier("a", null);
-		final Expression expected = makeCond(LIT_BFALSE, frid_a, ATOM_TRUE, null);
-		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE, FAC_COND, true);
+		final FreeIdentifier frid_a = FAC_COND.makeFreeIdentifier("a", null);
+		final Expression expected = makeCond(LIT_BFALSE_COND, frid_a, ATOM_TRUE_COND, null);
+		doExpressionTest("COND(⊥, a, TRUE)", expected, BOOL_TYPE_COND, FAC_COND, true);
 	}
 	
 	@Test 
@@ -3366,12 +3418,15 @@ public class TestGenParser extends AbstractTests {
 	 */
 	@Test 
 	public void testExprExtWithEquals() {
+		final Predicate LIT_BTRUE_EFF = EFF.makeLiteralPredicate(Formula.BTRUE, null);
+		final Expression ZERO_EFF = EFF.makeIntegerLiteral(BigInteger.ZERO, null);
+		final Expression ONE_EFF = EFF.makeIntegerLiteral(BigInteger.ONE, null);
 		final Expression extended = EFF.makeExtendedExpression(barS,
-				mList(ZERO, ONE), mList(LIT_BTRUE, LIT_BTRUE), null);
+				mList(ZERO_EFF, ONE_EFF), mList(LIT_BTRUE_EFF, LIT_BTRUE_EFF), null);
 		doPredicateTest("barS(⊤, 0, ⊤, 1) = 0",
-				EFF.makeRelationalPredicate(EQUAL, extended, ZERO, null), EFF);
+				EFF.makeRelationalPredicate(EQUAL, extended, ZERO_EFF, null), EFF);
 		doPredicateTest("0 = barS(⊤, 0, ⊤, 1)",
-				EFF.makeRelationalPredicate(EQUAL, ZERO, extended, null), EFF);
+				EFF.makeRelationalPredicate(EQUAL, ZERO_EFF, extended, null), EFF);
 	}
 
 }

@@ -92,6 +92,11 @@ public class TestFormulaFactory extends AbstractTests {
 
 	private static final Predicate P = mLiteralPredicate();
 
+	private static final Expression EFFeS = EFF.makeEmptySet(POW(tS), null);
+	private static final Expression EFFeT = EFF.makeEmptySet(POW(tT), null);
+
+	private static final Predicate EFFP = EFF.makeLiteralPredicate(Formula.BTRUE, null);
+
 	private static final String BAD_NAME = "bad-name";
 
 	private static final String PRED_VAR_NAME = PredicateVariable.LEADING_SYMBOL
@@ -174,7 +179,7 @@ public class TestFormulaFactory extends AbstractTests {
 
 	@Test
 	public void parametricType_ArrayParameter() {
-		final Type[] typeParams = { tS };
+		final Type[] typeParams = { LIST_FAC.makeGivenType("S") };
 		assertArrayProtected(LIST_FAC.makeParametricType(typeParams, EXT_LIST),
 				typeParams);
 	}
@@ -772,38 +777,40 @@ public class TestFormulaFactory extends AbstractTests {
 
 	@Test(expected = NullPointerException.class)
 	public void extendedPredicate_NullExpressions() {
-		EFF.makeExtendedPredicate(fooS, null, mList(P, P), null);
+		EFF.makeExtendedPredicate(fooS, null, mList(EFFP, EFFP), null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void extendedPredicate_NullInExpressions() {
-		EFF.makeExtendedPredicate(fooS, mList(eS, null), mList(P, P), null);
+		EFF.makeExtendedPredicate(fooS, mList(EFFeS, null), mList(EFFP, EFFP),
+				null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void extendedPredicate_WrongNumberOfExpressions() {
-		EFF.makeExtendedPredicate(fooS, mList(eS), mList(P, P), null);
+		EFF.makeExtendedPredicate(fooS, mList(EFFeS), mList(EFFP, EFFP), null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void extendedPredicate_NullPredicates() {
-		EFF.makeExtendedPredicate(fooS, mList(eS, eT), null, null);
+		EFF.makeExtendedPredicate(fooS, mList(EFFeS, EFFeT), null, null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void extendedPredicate_NullInPredicates() {
-		EFF.makeExtendedPredicate(fooS, mList(eS, eT), mList(P, null), null);
+		EFF.makeExtendedPredicate(fooS, mList(EFFeS, EFFeT), mList(EFFP, null),
+				null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void extendedPredicate_WrongNumberOfPredicates() {
-		EFF.makeExtendedPredicate(fooS, mList(eS, eT), mList(P), null);
+		EFF.makeExtendedPredicate(fooS, mList(EFFeS, EFFeT), mList(EFFP), null);
 	}
 
 	@Test
 	public void extendedPredicate_ArrayParameter() {
-		final Expression[] exprs = { eS, eT };
-		final Predicate[] preds = { P, P };
+		final Expression[] exprs = { EFFeS, EFFeT };
+		final Predicate[] preds = { EFFP, EFFP };
 		assertArrayProtected(
 				EFF.makeExtendedPredicate(fooS, exprs, preds, null), exprs);
 		assertArrayProtected(
@@ -823,38 +830,40 @@ public class TestFormulaFactory extends AbstractTests {
 
 	@Test(expected = NullPointerException.class)
 	public void extendedExpression_NullExpressions() {
-		EFF.makeExtendedExpression(barS, null, mList(P, P), null);
+		EFF.makeExtendedExpression(barS, null, mList(EFFP, EFFP), null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void extendedExpression_NullInExpressions() {
-		EFF.makeExtendedExpression(barS, mList(eS, null), mList(P, P), null);
+		EFF.makeExtendedExpression(barS, mList(EFFeS, null), mList(EFFP, EFFP),
+				null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void extendedExpression_WrongNumberOfExpressions() {
-		EFF.makeExtendedExpression(barS, mList(eS), mList(P, P), null);
+		EFF.makeExtendedExpression(barS, mList(EFFeS), mList(EFFP, EFFP), null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void extendedExpression_NullPredicates() {
-		EFF.makeExtendedExpression(barS, mList(eS, eT), null, null);
+		EFF.makeExtendedExpression(barS, mList(EFFeS, EFFeT), null, null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void extendedExpression_NullInPredicates() {
-		EFF.makeExtendedExpression(barS, mList(eS, eT), mList(P, null), null);
+		EFF.makeExtendedExpression(barS, mList(EFFeS, EFFeT),
+				mList(EFFP, null), null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void extendedExpression_WrongNumberOfPredicates() {
-		EFF.makeExtendedExpression(barS, mList(eS, eT), mList(P), null);
+		EFF.makeExtendedExpression(barS, mList(EFFeS, EFFeT), mList(EFFP), null);
 	}
 
 	@Test
 	public void extendedExpression_ArrayParameter() {
-		final Expression[] exprs = { eS, eT };
-		final Predicate[] preds = { P, P };
+		final Expression[] exprs = { EFFeS, EFFeT };
+		final Predicate[] preds = { EFFP, EFFP };
 		assertArrayProtected(
 				EFF.makeExtendedExpression(barS, exprs, preds, null), exprs);
 		assertArrayProtected(
@@ -863,7 +872,8 @@ public class TestFormulaFactory extends AbstractTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void extendedExpression_InvalidType() {
-		EFF.makeExtendedExpression(barS, mList(eS, eT), mList(P, P), null, tS);
+		EFF.makeExtendedExpression(barS, mList(EFFeS, EFFeT),
+				mList(EFFP, EFFP), null, tS);
 	}
 
 	/**
