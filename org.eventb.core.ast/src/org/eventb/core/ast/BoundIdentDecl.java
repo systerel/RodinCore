@@ -72,8 +72,8 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		this.name = name;
 		setPredicateVariableCache();
 		synthesizeType(ff, givenType);
-		// ensures that type was coherent (final type cannot be null if given
-		// type was not)
+		// final type cannot be null if given
+		// type was not since all possible given types are valid
 		assert givenType == null || givenType == this.type;
 	}
 
