@@ -36,7 +36,6 @@ import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
-import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
 import static org.junit.Assert.assertEquals;
@@ -50,13 +49,11 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -77,13 +74,9 @@ public class TestTypedGeneric extends AbstractTests {
 	private static GivenType ty_U = ff.makeGivenType("U");
 	private static GivenType ty_V = ff.makeGivenType("V");
 
-	ITypeEnvironment env;
+	private static GivenType ty_Sv1 = ffV1.makeGivenType("S");
+	private static GivenType ty_Tv1 = ffV1.makeGivenType("T");
 
-	@Before
-	public void setUp() throws Exception {
-		env = mTypeEnvironment();
-	}
-	
 	/**
 	 * Main test routine for expressions containing generic atomic operators.
 	 * 
@@ -103,6 +96,9 @@ public class TestTypedGeneric extends AbstractTests {
 		final AtomicExpression eUV = mEmptySet(REL(ty_U, ty_V));
 		final AtomicExpression ePST = mEmptySet(REL(POW(ty_S), ty_T));
 
+		final AtomicExpression eSv1 = mEmptySet(POWV1(ty_Sv1));
+		final AtomicExpression eSTv1 = mEmptySet(RELV1(ty_Sv1, ty_Tv1));
+		
 		final BoundIdentDecl bd_x = mBoundIdentDecl("x", POW(ty_S));
 		final BoundIdentifier b0S = mBoundIdentifier(0, POW(ty_S));
 
@@ -172,13 +168,13 @@ public class TestTypedGeneric extends AbstractTests {
 		
 		doTest(mUnaryExpression(Formula.KRAN, eST), POW(ty_T));
 		
-		doTest(ffV1.makeUnaryExpression(Formula.KPRJ1, eST, null), REL(CPROD(ty_S, ty_T), ty_S),
+		doTest(ffV1.makeUnaryExpression(Formula.KPRJ1, eSTv1, null), RELV1(CPRODV1(ty_Sv1, ty_Tv1), ty_Sv1),
 				V1);
 
-		doTest(ffV1.makeUnaryExpression(Formula.KPRJ2, eST, null), REL(CPROD(ty_S, ty_T), ty_T),
+		doTest(ffV1.makeUnaryExpression(Formula.KPRJ2, eSTv1, null), RELV1(CPRODV1(ty_Sv1, ty_Tv1), ty_Tv1),
 				V1);
 
-		doTest(ffV1.makeUnaryExpression(Formula.KID, eS, null), REL(ty_S, ty_S),
+		doTest(ffV1.makeUnaryExpression(Formula.KID, eSv1, null), RELV1(ty_Sv1, ty_Sv1),
 				V1);
 
 		
@@ -221,7 +217,7 @@ public class TestTypedGeneric extends AbstractTests {
 		final String image = expr.toStringWithTypes();
 		for (LanguageVersion version : versions) {
 			final Expression actual = parseExpression(image, version);
-			typeCheck(actual, env);
+			typeCheck(actual, actual.getFactory().makeTypeEnvironment());
 			assertEquals("Typed string is a different expression", expr, actual);
 		}
 	}
@@ -310,7 +306,7 @@ public class TestTypedGeneric extends AbstractTests {
 		final String image = pred.toStringWithTypes();
 		for (LanguageVersion version : versions) {
 			final Predicate actual = parsePredicate(image, version);
-			typeCheck(actual, env);
+			typeCheck(actual, actual.getFactory().makeTypeEnvironment());
 			assertEquals("Typed string is a different predicate", pred, actual);
 		}
 	}
@@ -371,7 +367,7 @@ public class TestTypedGeneric extends AbstractTests {
 		final String image = assign.toStringWithTypes();
 		for (LanguageVersion version : LanguageVersion.values()) {
 			final Assignment actual = parseAssignment(image, version);
-			typeCheck(actual, env);
+			typeCheck(actual, actual.getFactory().makeTypeEnvironment());
 			assertEquals("Typed string is a different predicate", assign, actual);
 		}
 	}

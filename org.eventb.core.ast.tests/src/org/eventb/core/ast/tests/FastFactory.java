@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,10 @@ public class FastFactory {
 	static {
 		EXTNS.addAll(LIST_DT.getExtensions());
 	}
-	public static FormulaFactory ff = FormulaFactory.getInstance(EXTNS);
+
+	public static FormulaFactory ff = FormulaFactory.getDefault();
+	
+	public static FormulaFactory ff_extns = FormulaFactory.getInstance(EXTNS);
 
 	public static AssociativeExpression mAssociativeExpression(
 			Expression... children) {
@@ -428,13 +431,13 @@ public class FastFactory {
 	}
 
 	public static ExtendedPredicate mExtendedPredicate(Expression e) {
-		return ff.makeExtendedPredicate(EXT_PRIME, Collections.singleton(e),
+		return ff_extns.makeExtendedPredicate(EXT_PRIME, Collections.singleton(e),
 				Collections.<Predicate> emptySet(), null);
 	}
 
 	public static ExtendedExpression mExtendedExpression(
 			Expression... expressions) {
-		return ff
+		return ff_extns
 				.makeExtendedExpression(MONEY, expressions, NO_PREDICATE, null);
 	}
 
@@ -454,16 +457,16 @@ public class FastFactory {
 		if (eType == null) {
 			listType = null;
 		} else {
-			listType = ff.makeParametricType(singletonList(eType),
+			listType = ff_extns.makeParametricType(singletonList(eType),
 					LIST_DT.getTypeConstructor());
 		}
-		ExtendedExpression result = ff.makeExtendedExpression(
+		ExtendedExpression result = ff_extns.makeExtendedExpression(
 				LIST_DT.getConstructor("NIL"), NO_EXPRESSION, NO_PREDICATE,
 				null, listType);
 		for (int i = expressions.length - 1; i >= 0; i--) {
 			final Expression[] exprs = new Expression[] { expressions[i],
 					result };
-			result = ff.makeExtendedExpression(LIST_DT.getConstructor("CONS"),
+			result = ff_extns.makeExtendedExpression(LIST_DT.getConstructor("CONS"),
 					exprs, NO_PREDICATE, null, listType);
 		}
 		return result;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CPROD;
 import static org.eventb.core.ast.Formula.CSET;
@@ -48,6 +46,8 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,6 +81,42 @@ public class TestGivenTypes extends AbstractTests {
 	private static final GivenType tT = ff.makeGivenType("T");
 	private static final GivenType tU = ff.makeGivenType("U");
 
+	private static final Expression eS = mEmptySet(POW(tS));
+	private static final Expression eT = mEmptySet(POW(tT));
+	private static final Expression eU = mEmptySet(POW(tU));
+	
+	private static final Expression idSS = mId(REL(tS, tS));
+	private static final Expression prj1ST = mPrj1(REL(CPROD(tS, tT), tS));
+	private static final Expression prj2ST = mPrj2(REL(CPROD(tS, tT), tT));
+
+	private static final ParametricType LIST_S_TYPE = LIST_FAC
+	.makeParametricType(Collections.<Type> singletonList(LIST_FAC.makeGivenType("S")),
+			EXT_LIST);
+	private static Expression[] NO_EXPR = new Expression[0];
+	private static Predicate[] NO_PRED = new Predicate[0];
+	private static final Expression nilListS = LIST_FAC.makeExtendedExpression(
+			EXT_NIL, NO_EXPR, NO_PRED, null, LIST_S_TYPE);
+
+	private static final Predicate peS = mRelationalPredicate(EQUAL, eS, eS);
+	private static final Predicate peT = mRelationalPredicate(EQUAL, eT, eT);
+	private static final Predicate peU = mRelationalPredicate(EQUAL, eU, eU);
+	
+	private static final Expression heS = mHidingRelation(tS);
+	private static final Expression heT = mHidingRelation(tT);
+	private static final Expression heU = mHidingRelation(tU);
+
+	private static final Expression hiS = mHidingRelation("a", "b", tS);
+	private static final Expression hiT = mHidingRelation("c", "d", tT);
+	private static final Expression hiU = mHidingRelation("e", "f", tU);
+
+	private static final FreeIdentifier iS = mFreeIdentifier("s", POW(tS));
+	private static final FreeIdentifier iT = mFreeIdentifier("t", POW(tT));
+	private static final FreeIdentifier iU = mFreeIdentifier("u", POW(tU));
+	
+	private static final Predicate piS = mRelationalPredicate(EQUAL, iS, iS);
+	private static final Predicate piT = mRelationalPredicate(EQUAL, iT, iT);
+	private static final Predicate piU = mRelationalPredicate(EQUAL, iU, iU);
+	
 	/**
 	 * Returns a relation from integer to integer that hides the given type.
 	 * 
@@ -109,43 +145,6 @@ public class TestGivenTypes extends AbstractTests {
 		Expression right = mFreeIdentifier(rName, REL(type, INT));
 		return mAssociativeExpression(FCOMP, left, right);
 	}
-	
-	
-	private static final Expression eS = mEmptySet(POW(tS));
-	private static final Expression eT = mEmptySet(POW(tT));
-	private static final Expression eU = mEmptySet(POW(tU));
-	
-	private static final Expression idSS = mId(REL(tS, tS));
-	private static final Expression prj1ST = mPrj1(REL(CPROD(tS, tT), tS));
-	private static final Expression prj2ST = mPrj2(REL(CPROD(tS, tT), tT));
-
-	private static final ParametricType LIST_S_TYPE = LIST_FAC
-	.makeParametricType(Collections.<Type> singletonList(tS),
-			EXT_LIST);
-	private static Expression[] NO_EXPR = new Expression[0];
-	private static Predicate[] NO_PRED = new Predicate[0];
-	private static final Expression nilListS = LIST_FAC.makeExtendedExpression(
-			EXT_NIL, NO_EXPR, NO_PRED, null, LIST_S_TYPE);
-
-	private static final Predicate peS = mRelationalPredicate(EQUAL, eS, eS);
-	private static final Predicate peT = mRelationalPredicate(EQUAL, eT, eT);
-	private static final Predicate peU = mRelationalPredicate(EQUAL, eU, eU);
-	
-	private static final Expression heS = mHidingRelation(tS);
-	private static final Expression heT = mHidingRelation(tT);
-	private static final Expression heU = mHidingRelation(tU);
-
-	private static final Expression hiS = mHidingRelation("a", "b", tS);
-	private static final Expression hiT = mHidingRelation("c", "d", tT);
-	private static final Expression hiU = mHidingRelation("e", "f", tU);
-
-	private static final FreeIdentifier iS = mFreeIdentifier("s", POW(tS));
-	private static final FreeIdentifier iT = mFreeIdentifier("t", POW(tT));
-	private static final FreeIdentifier iU = mFreeIdentifier("u", POW(tU));
-	
-	private static final Predicate piS = mRelationalPredicate(EQUAL, iS, iS);
-	private static final Predicate piT = mRelationalPredicate(EQUAL, iT, iT);
-	private static final Predicate piU = mRelationalPredicate(EQUAL, iU, iU);
 	
 	private <T extends Formula<T>> void doTest(Formula<T> formula,
 			GivenType... types) {

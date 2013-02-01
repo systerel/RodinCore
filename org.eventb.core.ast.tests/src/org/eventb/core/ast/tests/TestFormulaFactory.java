@@ -174,7 +174,7 @@ public class TestFormulaFactory extends AbstractTests {
 
 	@Test
 	public void parametricType_ArrayParameter() {
-		final Type[] typeParams = { tS };
+		final Type[] typeParams = { LIST_FAC.makeGivenType("S") };
 		assertArrayProtected(LIST_FAC.makeParametricType(typeParams, EXT_LIST),
 				typeParams);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Formula;
@@ -815,7 +815,7 @@ public class TestWD extends AbstractTests {
 		final FormulaFactory fac = FormulaFactory.getInstance(dt
 				.getExtensions());
 		final ITypeEnvironmentBuilder env = fac.makeTypeEnvironment();
-		env.addName("l", INT_TYPE);
+		env.addName("l", fac.makeIntegerType());
 
 		// Value constructor
 		assertWDLemma(env, "x = foo(l)", "⊤");
