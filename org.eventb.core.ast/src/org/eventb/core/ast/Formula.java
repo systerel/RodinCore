@@ -1296,7 +1296,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 *             if this formula is an assignment.
 	 */
 	public final T flatten(FormulaFactory factory) {
-		IFormulaRewriter rewriter = new DefaultRewriter(true, factory);
+		IFormulaRewriter rewriter = new DefaultRewriter(true);
 		return rewrite(rewriter);
 	}
 
@@ -1798,7 +1798,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @see IFormulaRewriter
 	 */
 	public T rewrite(IFormulaRewriter rewriter) {
-		return rewrite(new SameTypeRewriter(rewriter));
+		return rewrite(new SameTypeRewriter(this.fac, rewriter));
 	}
 	
 	/**
