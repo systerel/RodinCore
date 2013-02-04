@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - add type visitor
+ *     Systerel - store factory used to build a type
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -29,9 +30,10 @@ public class BooleanType extends Type {
 	 * Must never be called directly: use the factory method instead.
 	 * 
 	 * @see FormulaFactory#makeBooleanType()
+	 * @since 3.0
 	 */
-	protected BooleanType() {
-		super(true);
+	protected BooleanType(FormulaFactory ff) {
+		super(ff, true);
 	}
 
 	@Override

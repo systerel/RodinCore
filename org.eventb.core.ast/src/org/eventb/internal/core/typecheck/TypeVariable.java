@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - add type visitor
+ *     Systerel - store factory used to build a type
  *******************************************************************************/
 package org.eventb.internal.core.typecheck;
 
@@ -41,8 +42,8 @@ public class TypeVariable extends Type {
 	 * 
 	 * @see TypeCheckResult#newFreshVariable(SourceLocation)
 	 */
-	protected TypeVariable(int index, SourceLocation location) {
-		super(false);
+	protected TypeVariable(FormulaFactory ff, int index, SourceLocation location) {
+		super(ff, false);
 		assert 0 <= index;
 		this.index = index;
 		this.location = location;

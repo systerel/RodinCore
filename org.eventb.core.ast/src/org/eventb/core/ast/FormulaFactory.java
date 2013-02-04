@@ -12,6 +12,7 @@
  *     Systerel - added support for predicate variables
  *     Systerel - added support for mathematical extensions
  *     Systerel - added support for specialization
+ *     Systerel - store factory used to build a formula or type
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -1859,7 +1860,7 @@ public class FormulaFactory {
 	 * @return the predefined boolean type
 	 */
 	public BooleanType makeBooleanType() {
-		return new BooleanType();
+		return new BooleanType(this);
 	}
 
 	/**
@@ -1877,12 +1878,16 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the number of type parameters do not correspond to the
 	 *             type constructor specification
+	 * @throws IllegalArgumentException
+	 *             if some type parameter was not built with this formula
+	 *             factory
 	 * @since 2.0
 	 */
 	public ParametricType makeParametricType(List<Type> typePrms,
 			IExpressionExtension typeConstructor) {
 		getExtensionTag(typeConstructor);
-		return new ParametricType(typeConstructor, toTypeArray(typePrms));
+		return new ParametricType(this, typeConstructor,
+				toTypeArray(typePrms));
 	}
 
 	/**
@@ -1900,12 +1905,15 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the number of type parameters do not correspond to the
 	 *             type constructor specification
+	 * @throws IllegalArgumentException
+	 *             if some type parameter was not built with this formula
+	 *             factory
 	 * @since 2.1
 	 */
 	public ParametricType makeParametricType(Type[] typePrms,
 			IExpressionExtension typeConstructor) {
 		getExtensionTag(typeConstructor);
-		return new ParametricType(typeConstructor, typePrms.clone());
+		return new ParametricType(this, typeConstructor, typePrms.clone());
 	}
 
 	/**
@@ -1920,7 +1928,7 @@ public class FormulaFactory {
 	 * @see #isValidIdentifierName(String)
 	 */
 	public GivenType makeGivenType(String name) {
-		return new GivenType(name, this);
+		return new GivenType(this, name);
 	}
 
 	/**
@@ -1929,7 +1937,7 @@ public class FormulaFactory {
 	 * @return the predefined integer type
 	 */
 	public IntegerType makeIntegerType() {
-		return new IntegerType();
+		return new IntegerType(this);
 	}
 
 	/**
@@ -1952,9 +1960,11 @@ public class FormulaFactory {
 	 * @param base
 	 *            the base type to build upon
 	 * @return the power set type of the given type
+	 * @throws IllegalArgumentException
+	 *             if the given type was not built with this formula factory
 	 */
 	public PowerSetType makePowerSetType(Type base) {
-		return new PowerSetType(base);
+		return new PowerSetType(this, base);
 	}
 
 	/**
@@ -1966,9 +1976,12 @@ public class FormulaFactory {
 	 * @param right
 	 *            the second component of the Cartesian product
 	 * @return the product type of the two given types
+	 * @throws IllegalArgumentException
+	 *             if the given left and right types were not built with this
+	 *             formula factory
 	 */
 	public ProductType makeProductType(Type left, Type right) {
-		return new ProductType(left, right);
+		return new ProductType(this, left, right);
 	}
 
 	/**

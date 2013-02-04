@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - add type visitor
+ *     Systerel - store factory used to build a type
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -30,9 +31,10 @@ public class PowerSetType extends Type {
 	 * 
 	 * @see FormulaFactory#makePowerSetType(Type)
 	 * @see FormulaFactory#makeRelationalType(Type, Type)
+	 * @since 3.0
 	 */
-	protected PowerSetType(Type base) {
-		super(base.isSolved());
+	protected PowerSetType(FormulaFactory ff, Type base) {
+		super(ff, base.isSolved());
 		this.base = base;
 	}
 
@@ -43,6 +45,7 @@ public class PowerSetType extends Type {
 	
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
+		@SuppressWarnings("deprecation")
 		Expression baseExpr = base.toExpression(factory);
 		return factory.makeUnaryExpression(Formula.POW, baseExpr, null);
 	}

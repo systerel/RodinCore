@@ -40,6 +40,7 @@ public class ParametricType extends Type {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	private static Expression[] buildExprs(Type[] typeParams,
 			FormulaFactory factory) {
 		final int length = typeParams.length;
@@ -58,11 +59,13 @@ public class ParametricType extends Type {
 	 * 
 	 * @see FormulaFactory#makeParametricType(Type[], IExpressionExtension)
 	 * @see FormulaFactory#makeParametricType(java.util.List, IExpressionExtension)
+	 * @since 3.0
 	 */
 	// The array of type parameters must have been built by a formula factory
 	// without any reference leaked outside
-	ParametricType(IExpressionExtension typeConstructor, Type[] typeParameters) {
-		super(isSolved(typeParameters));
+	protected ParametricType(FormulaFactory ff,
+			IExpressionExtension typeConstructor, Type[] typeParameters) {
+		super(ff, isSolved(typeParameters));
 		if (!typeConstructor.isATypeConstructor()) {
 			throw new IllegalArgumentException("Invalid type constructor "
 					+ typeConstructor.getId());
