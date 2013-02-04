@@ -1710,7 +1710,7 @@ public class TestUnparse extends AbstractTests {
 		final ExprTestPair pairsPos[] = new ExprTestPair[length];
 		final Pattern pattern = Pattern.compile(id_x.getName());
 		final IntegerLiteral il_1 = mIntegerLiteral(1);
-		final IFormulaRewriter rewriterPos = new DefaultRewriter(false, ff) {
+		final IFormulaRewriter rewriterPos = new DefaultRewriter(false) {
 			@Override
 			public Expression rewrite(FreeIdentifier identifier) {
 				return identifier == id_x ? il_1 : identifier;
@@ -1728,7 +1728,7 @@ public class TestUnparse extends AbstractTests {
 		// Same test with a negative integer literal
 		final ExprTestPair pairsNeg[] = new ExprTestPair[length];
 		final IntegerLiteral il_m1 = mIntegerLiteral(-1);
-		final IFormulaRewriter rewriterNeg = new DefaultRewriter(false, ff) {
+		final IFormulaRewriter rewriterNeg = new DefaultRewriter(false) {
 			@Override
 			public Expression rewrite(UnaryExpression expr) {
 				return expr.getChild() == id_x ? il_m1 : expr;
