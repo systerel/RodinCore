@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - store factory used to build a type 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -45,7 +46,7 @@ public class ParametricType extends Type {
 		final int length = typeParams.length;
 		final Expression[] result = new Expression[length];
 		for (int i = 0; i < length; i++) {
-			result[i] = typeParams[i].toExpression(factory);
+			result[i] = typeParams[i].buildExpression(factory);
 		}
 		return result;
 	}
@@ -58,11 +59,13 @@ public class ParametricType extends Type {
 	 * 
 	 * @see FormulaFactory#makeParametricType(Type[], IExpressionExtension)
 	 * @see FormulaFactory#makeParametricType(java.util.List, IExpressionExtension)
+	 * @since 3.0
 	 */
 	// The array of type parameters must have been built by a formula factory
 	// without any reference leaked outside
-	ParametricType(IExpressionExtension typeConstructor, Type[] typeParameters) {
-		super(isSolved(typeParameters));
+	protected ParametricType(FormulaFactory ff,
+			IExpressionExtension typeConstructor, Type[] typeParameters) {
+		super(ff, isSolved(typeParameters));
 		if (!typeConstructor.isATypeConstructor()) {
 			throw new IllegalArgumentException("Invalid type constructor "
 					+ typeConstructor.getId());

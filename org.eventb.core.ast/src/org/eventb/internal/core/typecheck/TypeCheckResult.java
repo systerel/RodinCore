@@ -168,7 +168,7 @@ public class TypeCheckResult extends AbstractResult implements ITypeCheckResult 
 	 * @return a type variable
 	 */
 	public final TypeVariable newFreshVariable(SourceLocation location) {
-		TypeVariable tv = new TypeVariable(typeVariables.size(), location);
+		TypeVariable tv = new TypeVariable(this.factory, typeVariables.size(), location);
 		typeVariables.add(tv);
 		return tv;
 	}

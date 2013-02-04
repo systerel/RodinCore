@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - add type visitor
+ *     Systerel - store factory used to build a type 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -32,9 +33,10 @@ public class ProductType extends Type {
 	 * Must never be called directly: use the factory method instead.
 	 * 
 	 * @see FormulaFactory#makeProductType(Type, Type)
+	 * @since 3.0
 	 */
-	protected ProductType(Type left, Type right) {
-		super(left.isSolved() && right.isSolved());
+	protected ProductType(FormulaFactory ff, Type left, Type right) {
+		super(ff, left.isSolved() && right.isSolved());
 		this.left = left;
 		this.right = right;
 	}
@@ -47,8 +49,8 @@ public class ProductType extends Type {
 	
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
-		Expression leftExpr = left.toExpression(factory);
-		Expression rightExpr = right.toExpression(factory);
+		Expression leftExpr = left.buildExpression(factory);
+		Expression rightExpr = right.buildExpression(factory);
 		return factory.makeBinaryExpression(Formula.CPROD, leftExpr, rightExpr, null);
 	}
 

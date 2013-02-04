@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
+ *     Systerel - store factory used to build a type 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -164,7 +165,7 @@ public abstract class Expression extends Formula<Expression> {
 	 * @return the type represented by this expression
 	 * @throws InvalidExpressionException
 	 *             when this expression doesn't denote a type
-	 * @see Type#toExpression(FormulaFactory)
+	 * @see Type#toExpression()
 	 * @see #isATypeExpression()
 	 */
 	protected Type toType(FormulaFactory factory) throws InvalidExpressionException {

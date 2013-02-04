@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - add type visitor
+ *     Systerel - store factory used to build a type 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -32,9 +33,10 @@ public class GivenType extends Type {
 	 * Must never be called directly: use the factory method instead.
 	 * 
 	 * @see FormulaFactory#makeGivenType(String)
+	 * @since 3.0
 	 */
-	protected GivenType(String name, FormulaFactory ff) {
-		super(true);
+	protected GivenType(FormulaFactory ff, String name) {
+		super(ff, true);
 		ensureValidIdentifierName(name, ff);
 		this.name = name;
 	}
@@ -83,11 +85,24 @@ public class GivenType extends Type {
 	 * Returns the free identifier that denotes the set corresponding to this
 	 * given type.
 	 * 
+	 * @return the set corresponding to this type
+	 * @since 3.0
+	 */
+	@Override
+	public FreeIdentifier toExpression() {
+		return (FreeIdentifier) super.toExpression();
+	}
+	
+	/**
+	 * Returns the free identifier that denotes the set corresponding to this
+	 * given type.
+	 * 
 	 * @param factory
 	 *            factory to use for building the result identifier
 	 * @return the set corresponding to this type
 	 * @since 2.6
 	 */
+	@Deprecated
 	@Override
 	public FreeIdentifier toExpression(FormulaFactory factory) {
 		return (FreeIdentifier) super.toExpression(factory);
