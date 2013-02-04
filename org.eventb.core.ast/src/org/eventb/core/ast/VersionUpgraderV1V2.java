@@ -70,8 +70,8 @@ class VersionUpgraderV1V2 extends VersionUpgrader {
 		@Override
 		public BoundIdentDecl rewrite(BoundIdentDecl src) {
 			final String name = getNotReservedName(src.getName());
-			// node must be rebuilt with V2 factory
-			return ff.makeBoundIdentDecl(name, null, src.getType());
+			final Type type = typeRewriter.rewrite(src.getType());
+			return ff.makeBoundIdentDecl(name, null, type);
 		}
 
 		@Override
@@ -83,7 +83,7 @@ class VersionUpgraderV1V2 extends VersionUpgrader {
 				// not a generic operator
 				return super.rewrite(src, changed, newChild);
 			}
-			final Type type = src.getType();
+			final Type type = typeRewriter.rewrite(src.getType());
 			if (newChild.isATypeExpression()) {
 				return ff.makeAtomicExpression(genericTag, null, type);
 			} else {

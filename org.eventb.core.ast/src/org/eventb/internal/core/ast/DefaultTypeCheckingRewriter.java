@@ -86,10 +86,12 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 	}
 
 	protected final FormulaFactory ff;
+	protected final TypeRewriter typeRewriter;
 	private int bindingDepth;
 
 	public DefaultTypeCheckingRewriter(FormulaFactory ff) {
 		this.ff = ff;
+		this.typeRewriter = new TypeRewriter(ff);
 	}
 
 	@Override
@@ -128,7 +130,7 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 			return src;
 		}
 		return ff.makeBoundIdentDecl(src.getName(), src.getSourceLocation(),
-				src.getType());
+				typeRewriter.rewrite(src.getType()));
 	}
 
 	@Override
@@ -148,7 +150,7 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 			return src;
 		}
 		return ff.makeAtomicExpression(src.getTag(), src.getSourceLocation(),
-				src.getType());
+				typeRewriter.rewrite(src.getType()));
 	}
 
 	@Override
@@ -172,7 +174,7 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 			return src;
 		}
 		return ff.makeBoundIdentifier(src.getBoundIndex(),
-				src.getSourceLocation(), src.getType());
+				src.getSourceLocation(), typeRewriter.rewrite(src.getType()));
 	}
 
 	@Override
@@ -182,7 +184,8 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 			return src;
 		}
 		return ff.makeExtendedExpression(src.getExtension(), newChildExprs,
-				newChildPreds, src.getSourceLocation(), src.getType());
+				newChildPreds, src.getSourceLocation(),
+				typeRewriter.rewrite(src.getType()));
 	}
 
 	@Override
@@ -201,7 +204,7 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 			return src;
 		}
 		return ff.makeFreeIdentifier(src.getName(), src.getSourceLocation(),
-				src.getType());
+				typeRewriter.rewrite(src.getType()));
 	}
 
 	@Override
@@ -256,15 +259,16 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 		}
 		if (expr.getMembers().length == 0) {
 			return ff.makeEmptySetExtension(
-					expr.getType(),
+					typeRewriter.rewrite(expr.getType()),
 					expr.getSourceLocation());
 		}
 		return ff.makeSetExtension(expr.getMembers(), expr.getSourceLocation());
 	}
 
 	@Override
-	public Expression rewrite(SetExtension src, AtomicExpression expr) {
-		return expr;
+	public Expression rewriteToEmptySet(SetExtension src) {
+		final Type type = typeRewriter.rewrite(src.getType());
+		return ff.makeEmptySet(type, src.getSourceLocation());
 	}
 
 	@Override
