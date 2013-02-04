@@ -61,6 +61,7 @@ public abstract class Assignment extends Formula<Assignment> {
 				combineHashCodes(assignedIdents), hashCode));
 		ensureMinLength(assignedIdents, 1);
 		this.assignedIdents = assignedIdents;
+		ensureSameFactory(this.assignedIdents);
 	}
 
 	protected final void appendAssignedIdents(StringBuilder result) {

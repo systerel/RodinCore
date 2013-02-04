@@ -100,6 +100,7 @@ public class BecomesMemberOf extends Assignment {
 		super(BECOMES_MEMBER_OF, ff, location, setExpr.hashCode(),
 				new FreeIdentifier[] { assignedIdent });
 		this.setExpr = setExpr;
+		ensureSameFactory(this.setExpr);
 		setPredicateVariableCache(this.setExpr);
 		synthesizeType(ff);
 	}

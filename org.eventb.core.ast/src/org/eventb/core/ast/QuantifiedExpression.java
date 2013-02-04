@@ -368,6 +368,8 @@ public class QuantifiedExpression extends Expression {
 		this.pred = pred;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureMinLength(boundIdentifiers, 1);
+		ensureSameFactory(this.quantifiedIdentifiers);
+		ensureSameFactory(this.pred, this.expr);
 		setPredicateVariableCache(this.pred, this.expr);
 		synthesizeType(ff, null);
 

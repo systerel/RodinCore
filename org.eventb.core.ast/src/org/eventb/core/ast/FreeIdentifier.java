@@ -66,6 +66,7 @@ public class FreeIdentifier extends Identifier {
 		super(FREE_IDENT, ff, location, name.hashCode());
 		ensureValidIdentifierName(name, ff);
 		this.name = name;
+		ensureSameFactory(type);
 		setPredicateVariableCache();
 		synthesizeType(ff, type);
 		ensureHasType(this, type);

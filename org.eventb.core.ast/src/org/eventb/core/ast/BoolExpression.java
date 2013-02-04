@@ -120,6 +120,7 @@ public class BoolExpression extends Expression {
 			FormulaFactory ff) {
 		super(KBOOL, ff, location, child.hashCode());
 		this.child = child;
+		ensureSameFactory(this.child);
 		setPredicateVariableCache(this.child);
 		synthesizeType(ff, null);
 	}

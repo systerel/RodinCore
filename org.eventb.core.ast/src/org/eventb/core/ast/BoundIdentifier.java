@@ -64,6 +64,7 @@ public class BoundIdentifier extends Identifier {
 					+ boundIndex);
 		}
 		this.boundIndex = boundIndex;
+		ensureSameFactory(type);
 		setPredicateVariableCache();
 		synthesizeType(ff, type);
 		ensureHasType(this, type);

@@ -176,6 +176,7 @@ public class AtomicExpression extends Expression {
 			FormulaFactory ff) {
 		super(tag, ff, location, 0);
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
+		ensureSameFactory(type);
 		setPredicateVariableCache();
 		synthesizeType(ff, type);
 		ensureHasType(this, type);
