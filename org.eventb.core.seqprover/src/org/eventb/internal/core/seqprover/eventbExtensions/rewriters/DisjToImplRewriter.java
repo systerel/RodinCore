@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.disjuncts;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isDisj;
 
@@ -46,7 +45,6 @@ public class DisjToImplRewriter implements Rewriter{
 	}
 
 	public Predicate apply(Predicate p, FormulaFactory ff) {
-		final DLib lib = mDLib(ff);
 		// (P or Q or ...) == (-P => (Q or ..))
 		if (isDisj(p))
 		{
@@ -55,9 +53,8 @@ public class DisjToImplRewriter implements Rewriter{
 			Predicate firstDisjunct = disjuncts[0];
 			Predicate[] restDisjuncts = new Predicate[disjuncts.length - 1];
 			System.arraycopy(disjuncts,1,restDisjuncts,0,disjuncts.length - 1);
-			return lib.makeImp(
-					lib.makeNeg(firstDisjunct),
-					lib.makeDisj(restDisjuncts)
+			return DLib.makeImp(DLib.makeNeg(firstDisjunct),
+					DLib.makeDisj(ff, restDisjuncts)
 					);
 		}
 

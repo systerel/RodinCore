@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,8 +52,8 @@ public class RelOvrRewriterImpl extends DefaultRewriter {
 
 	private Expression subExp;
 
-	public RelOvrRewriterImpl(Expression subExp, FormulaFactory ff) {
-		super(true, ff);
+	public RelOvrRewriterImpl(Expression subExp) {
+		super(true);
 		this.subExp = subExp;
 	}
 		
@@ -62,6 +62,7 @@ public class RelOvrRewriterImpl extends DefaultRewriter {
     @ProverRule("DEF_OVERL")	
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
+		FormulaFactory ff = expression.getFactory();
 	    %match (Expression expression) {
 
 			/**
@@ -87,8 +88,8 @@ public class RelOvrRewriterImpl extends DefaultRewriter {
 				if (pToQ.size() == 0 || rToS.size() == 0)
 					return expression;
 				
-				Expression pToQOvr = makeOvrIfNeccessary(pToQ);
-				Expression rToSOvr = makeOvrIfNeccessary(rToS);
+				Expression pToQOvr = makeOvrIfNeccessary(ff, pToQ);
+				Expression rToSOvr = makeOvrIfNeccessary(ff, rToS);
 				
 				Expression dom = ff.makeUnaryExpression(Expression.KDOM, rToSOvr,
 						null);
@@ -103,7 +104,8 @@ public class RelOvrRewriterImpl extends DefaultRewriter {
 	    return expression;
 	}
 
-	private Expression makeOvrIfNeccessary(Collection<Expression> children) {
+	private Expression makeOvrIfNeccessary(FormulaFactory ff, 
+				Collection<Expression> children) {
 		if (children.size() == 1)
 			return children.iterator().next();
 		else

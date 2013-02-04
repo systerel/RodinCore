@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *     Systerel - added checking methods about predicate variables
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
-
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -170,14 +168,13 @@ public class ProverChecks {
 	public static List<IProverSequent> genRuleJustifications(IProofRule rule, FormulaFactory ff){
 
 		List<IProverSequent> justifications = new ArrayList<IProverSequent>();
-		final DLib lib = mDLib(ff);
-		final ITypeEnvironmentBuilder typeEnv = lib.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typeEnv = ff.makeTypeEnvironment();
 
 		// Get G_r and H_r
 		Predicate g_r = rule.getGoal();
 		boolean goalIndependent = (rule.getGoal() == null);
 		if (goalIndependent){
-			g_r = lib.False();
+			g_r = DLib.False(ff);
 		}
 
 		Set<Predicate> h_r = rule.getNeededHyps();
@@ -197,7 +194,7 @@ public class ProverChecks {
 			Predicate g_a = antecedents[i].getGoal();
 			if (g_a == null){
 				if (goalIndependent){
-					g_a = lib.False();
+					g_a = DLib.False(ff);
 				}
 				else
 				{
@@ -205,7 +202,7 @@ public class ProverChecks {
 				}
 			}
 
-			antecedentParts[i] = lib.makeUnivQuant(i_a, lib.makeImpl(h_a, g_a));
+			antecedentParts[i] = DLib.makeUnivQuant(i_a, DLib.makeImpl(h_a, g_a));
 			typeEnv.addAll(antecedentParts[i].getFreeIdentifiers());
 
 			// Compute the forward inference justifications
@@ -217,8 +214,9 @@ public class ProverChecks {
 					Set<Predicate> hyps = new LinkedHashSet<Predicate>(h_r);
 					hyps.addAll(h_a);
 					hyps.addAll(fwdInf.getHyps());
-					Predicate goal = lib.makeExQuant(fwdInf.getAddedFreeIdents(), lib.makeConj(fwdInf.getInferredHyps()));
-					ITypeEnvironmentBuilder localTypeEnv = lib.makeTypeEnvironment();
+					Predicate goal = DLib.makeExQuant(fwdInf.getAddedFreeIdents(),
+							DLib.makeConj(ff, fwdInf.getInferredHyps()));
+					ITypeEnvironmentBuilder localTypeEnv = ff.makeTypeEnvironment();
 					for (Predicate hyp : h_r) {
 						localTypeEnv.addAll(hyp.getFreeIdentifiers());
 					}
@@ -228,7 +226,7 @@ public class ProverChecks {
 			}
 		}
 
-		Predicate goal = lib.makeImpl(Arrays.asList(antecedentParts), g_r);
+		Predicate goal = DLib.makeImpl(Arrays.asList(antecedentParts), g_r);
 
 		typeEnv.addAll(goal.getFreeIdentifiers());
 

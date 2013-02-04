@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,8 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class ContImplRewriter extends DefaultRewriter {
 
-	public ContImplRewriter(boolean autoFlattening,
-			FormulaFactory ff) {
-		super(autoFlattening, ff);
+	public ContImplRewriter(boolean autoFlattening) {
+		super(autoFlattening);
 	}
 
 	@ProverRule("DERIV_IMP")
@@ -30,6 +29,7 @@ public class ContImplRewriter extends DefaultRewriter {
 		if (!Lib.isImp(predicate)) {
 			return predicate;
 		}
+		final FormulaFactory ff = predicate.getFactory();
 		Predicate P = predicate.getLeft();
 		Predicate Q = predicate.getRight();
 		Predicate notP = ff.makeUnaryPredicate(Predicate.NOT, P, null);

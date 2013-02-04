@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,8 +44,8 @@ public class ImpCase extends ImpHypothesisReasoner {
 	@ProverRule("IMP_CASE")
 	@Override
 	protected IAntecedent[] getAntecedents(Predicate left, Predicate right,
-			DLib lib, IHypAction hideHypAction) {
-		final Predicate notLeft = lib.makeNeg(left);
+			IHypAction hideHypAction) {
+		final Predicate notLeft = DLib.makeNeg(left);
 		return new IAntecedent[] {
 				makeAntecedent(null, singleton(notLeft), hideHypAction),
 				makeAntecedent(null, Lib.breakPossibleConjunct(right), hideHypAction) };

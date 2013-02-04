@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static org.eventb.core.ast.Formula.CONVERSE;
 import static org.eventb.core.ast.Formula.FCOMP;
 import static org.eventb.core.ast.Formula.IN;
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +54,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public abstract class AbstractManualInference extends PredicatePositionReasoner {
@@ -254,7 +254,7 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 	}
 
 	protected IAntecedent makeWD(FormulaFactory ff, Predicate pred) {
-		return ProverFactory.makeAntecedent(mDLib(ff).WD(pred));
+		return ProverFactory.makeAntecedent(DLib.WD(pred));
 	}
 
 	protected Expression makeCompIfNeccessary(Collection<Expression> children, FormulaFactory ff) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,15 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-
 import java.util.Collections;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
@@ -49,18 +47,17 @@ public class Contr extends HypothesisReasoner{
 			Predicate pred) {
 
 		final Predicate newGoal;
-		final DLib lib = mDLib(sequent.getFormulaFactory());
 		IHypAction deselect = null;
 		if (pred == null) {
-			newGoal = lib.False();
+			newGoal = DLib.False(sequent.getFormulaFactory());
 		} else {
-			newGoal = lib.makeNeg(pred);
+			newGoal = DLib.makeNeg(pred);
 			deselect = ProverFactory.makeDeselectHypAction(Collections.singleton(pred));
 		}
 		return new IAntecedent[] {
 				ProverFactory.makeAntecedent(
 						newGoal,
-						Lib.breakPossibleConjunct(lib.makeNeg(sequent.goal())),
+						Lib.breakPossibleConjunct(DLib.makeNeg(sequent.goal())),
 						deselect)
 		};
 	}

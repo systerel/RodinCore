@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeDeselectHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeSelectHypAction;
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -137,14 +136,12 @@ public abstract class EqHe extends HypothesisReasoner implements
 		private final Predicate source;
 		private final Expression from;
 		private final Expression to;
-		private final DLib dlib;
 
 		public Rewriter(Predicate hypEq, Expression from, Expression to,
 				FormulaFactory ff) {
 			this.source = hypEq;
 			this.from = from;
 			this.to = to;
-			this.dlib = mDLib(ff);
 		}
 
 		// Rewrites given predicate, returns null if nothing happens
@@ -152,7 +149,7 @@ public abstract class EqHe extends HypothesisReasoner implements
 			if (source.equals(pred)) {
 				return null;
 			}
-			final Predicate rewritten = dlib.rewrite(pred, from, to);
+			final Predicate rewritten = DLib.rewrite(pred, from, to);
 			if (rewritten == pred) {
 				return null;
 			}

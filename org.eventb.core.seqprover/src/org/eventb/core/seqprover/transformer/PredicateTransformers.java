@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.transformer;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter2;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.transformer.SimpleSequents.SimplificationOption;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier;
 
@@ -68,12 +65,11 @@ public class PredicateTransformers {
 	 */
 	public static IFormulaRewriter2 makeSimplifier(FormulaFactory factory,
 			SimplificationOption... options) {
-		final DLib dLib = mDLib(factory);
 		int flags = 0;
 		for (SimplificationOption option : options) {
 			flags |= option.flags;
 		}
-		return new PredicateSimplifier(dLib, flags, false, "SequentSimplifier");
+		return new PredicateSimplifier(flags, false, "SequentSimplifier");
 	}
 
 	private PredicateTransformers() {

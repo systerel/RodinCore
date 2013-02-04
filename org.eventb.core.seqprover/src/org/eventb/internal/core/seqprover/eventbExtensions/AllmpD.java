@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -50,10 +51,12 @@ public class AllmpD extends AllD implements IVersionedReasoner {
 
 	private static final String display = "∀ hyp mp";
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
 	
+	@Override
 	public int getVersion() {
 		return VERSION;
 	}
@@ -78,8 +81,9 @@ public class AllmpD extends AllD implements IVersionedReasoner {
 	 * -----------------------------------------------
 	 * H,  ∀x· P ⇒ Q ⊢ G
 	 */
+	@Override
 	@ProverRule("FORALL_INST_MP")
-	protected IAntecedent[] getAntecedents(DLib lib, Set<Predicate> WDpreds,
+	protected IAntecedent[] getAntecedents(FormulaFactory ff, Set<Predicate> WDpreds,
 			Predicate univHyp, Predicate instantiatedPred) {
 		assert instantiatedPred != null;
 		assert Lib.isImp(instantiatedPred);
@@ -89,7 +93,7 @@ public class AllmpD extends AllD implements IVersionedReasoner {
 		final IAntecedent[] antecedents = new IAntecedent[3];
 		// Well definedness condition : H ⊢ WD(E)
 		{
-			antecedents[0] = makeAntecedent(lib.makeConj(WDpreds), null,
+			antecedents[0] = makeAntecedent(DLib.makeConj(ff, WDpreds), null,
 					getDeselectAction(univHyp));
 		}
 		// The instantiated impLeft to goal : H,WD(E) ⊢[x≔E]P

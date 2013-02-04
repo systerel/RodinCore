@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,9 +60,10 @@ public abstract class AbstractFormulaRewriterTests {
 		protected final FormulaFactory factory;
 		private final ITypeEnvironmentBuilder typenv;
 
-		public FormulaTest(IFormulaRewriter rewriter, String... env) {
+		public FormulaTest(FormulaFactory ff, IFormulaRewriter rewriter,
+				String... env) {
 			this.rewriter = rewriter;
-			this.factory = rewriter.getFactory();
+			this.factory = ff;
 			this.typenv = makeTypeEnvironment(env);
 		}
 
@@ -143,8 +144,9 @@ public abstract class AbstractFormulaRewriterTests {
 
 	private static class ExpressionTest extends FormulaTest<Expression> {
 
-		public ExpressionTest(IFormulaRewriter rewriter, String... env) {
-			super(rewriter, env);
+		public ExpressionTest(FormulaFactory ff, IFormulaRewriter rewriter,
+				String... env) {
+			super(ff, rewriter, env);
 		}
 
 		@Override
@@ -166,8 +168,9 @@ public abstract class AbstractFormulaRewriterTests {
 
 	private static class PredicateTest extends FormulaTest<Predicate> {
 
-		public PredicateTest(IFormulaRewriter rewriter, String... env) {
-			super(rewriter, env);
+		public PredicateTest(FormulaFactory ff, IFormulaRewriter rewriter,
+				String... env) {
+			super(ff, rewriter, env);
 		}
 
 		@Override
@@ -185,9 +188,9 @@ public abstract class AbstractFormulaRewriterTests {
 	}
 
 	/**
-	 * The formula factory used to create different formulas for testing.
+	 * The formula factory used to create formulas.
 	 */
-	protected static final FormulaFactory ff = FormulaFactory.getDefault();
+	private final FormulaFactory ff;
 
 	/**
 	 * The rewriter under test.
@@ -200,8 +203,9 @@ public abstract class AbstractFormulaRewriterTests {
 	 * @param rewriter
 	 *            the rewriter under test
 	 */
-	protected AbstractFormulaRewriterTests(IFormulaRewriter rewriter) {
+	protected AbstractFormulaRewriterTests(FormulaFactory ff, IFormulaRewriter rewriter) {
 		this.rewriter = rewriter;
+		this.ff = ff;
 	}
 
 	/**
@@ -226,7 +230,7 @@ public abstract class AbstractFormulaRewriterTests {
 	 */
 	protected void rewritePred(String inputImage, String expectedImage,
 			String... env) {
-		new PredicateTest(rewriter, env).run(inputImage, expectedImage);
+		new PredicateTest(ff, rewriter, env).run(inputImage, expectedImage);
 	}
 
 	/**
@@ -248,7 +252,7 @@ public abstract class AbstractFormulaRewriterTests {
 	 *            type-checking
 	 */
 	protected void noRewritePred(String inputImage, String... env) {
-		new PredicateTest(rewriter, env).run(inputImage, null);
+		new PredicateTest(ff, rewriter, env).run(inputImage, null);
 	}
 
 	/**
@@ -273,7 +277,7 @@ public abstract class AbstractFormulaRewriterTests {
 	 */
 	protected void rewriteExpr(String inputImage, String expectedImage,
 			String... env) {
-		new ExpressionTest(rewriter, env).run(inputImage, expectedImage);
+		new ExpressionTest(ff, rewriter, env).run(inputImage, expectedImage);
 	}
 
 	/**
@@ -293,7 +297,7 @@ public abstract class AbstractFormulaRewriterTests {
 	 *            type-checking
 	 */
 	protected void noRewriteExpr(String inputImage, String... env) {
-		new ExpressionTest(rewriter, env).run(inputImage, null);
+		new ExpressionTest(ff, rewriter, env).run(inputImage, null);
 	}
 
 }

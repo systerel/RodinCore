@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class InclusionSetMinusLeftRewriterImpl extends AutoRewriterImpl {
     @ProverRule("DERIV_SUBSETEQ_SETMINUS_L")	
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
-
+		FormulaFactory ff = predicate.getFactory();
 	    %match (Predicate predicate) {
 	    	    	
 	    	/**
@@ -68,9 +68,9 @@ public class InclusionSetMinusLeftRewriterImpl extends AutoRewriterImpl {
 	    		Expression [] children = new Expression[2];
 	    		children[0] = `S;
 	    		children[1] = `B;
-	    		Expression union = makeAssociativeExpression(Expression.BUNION,
-	    				children);
-	    		return makeRelationalPredicate(Predicate.SUBSETEQ, `A, union);
+	    		Expression union = ff.makeAssociativeExpression(Expression.BUNION,
+	    				children, null);
+	    		return ff.makeRelationalPredicate(Predicate.SUBSETEQ, `A, union, null);
 	    	}
 	    }
 	    return predicate;

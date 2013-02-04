@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.reasonerInputs;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -19,6 +17,7 @@ import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.SerializeException;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 
@@ -35,7 +34,7 @@ public class SingleExprInput implements IReasonerInput{
 	public SingleExprInput(String exprString, ITypeEnvironment typeEnv){
 		
 		final FormulaFactory ff = typeEnv.getFormulaFactory();
-		expression = mDLib(ff).parseExpression(exprString);
+		expression = DLib.parseExpression(ff, exprString);
 		if (expression == null)
 		{
 			setError("Parse error for expression: " + exprString);

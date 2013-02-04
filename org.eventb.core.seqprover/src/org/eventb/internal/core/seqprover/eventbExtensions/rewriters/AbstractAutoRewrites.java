@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
-
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +25,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
@@ -58,7 +57,7 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 				continue;
 
 			// Check if rewriting generated something interesting
-			inferredHyps.remove(mDLib(ff).True());
+			inferredHyps.remove(DLib.True(ff));
 
 			Collection<Predicate> originalHyps = Collections.singleton(hyp);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class PartitionRewrites extends AbstractManualRewrites {
 
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
-		IFormulaRewriter rewriter = new PartitionRewriterImpl(ff);
+		IFormulaRewriter rewriter = new PartitionRewriterImpl();
 		Formula<?> subFormula = pred.getSubFormula(position);
 		if (subFormula == null || subFormula.getTag() != Formula.KPARTITION) {
 			return null;

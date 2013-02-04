@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -26,6 +25,7 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -104,7 +104,6 @@ public abstract class AbstractTacticTests {
 	 */
 	protected void setFormulaFactory(FormulaFactory ff) {
 		this.ff = ff;
-		this.dl = mDLib(ff);
 		this.typenv = ff.makeTypeEnvironment();
 	}
 
@@ -125,7 +124,8 @@ public abstract class AbstractTacticTests {
 	 * the current type environment.
 	 */
 	protected Predicate parsePredicate(String predImage) {
-		final Predicate pred = dl.parsePredicate(predImage);
+		final Predicate pred = ff.parsePredicate(predImage, LanguageVersion.V2,
+				null).getParsedPredicate();
 		typecheck(pred);
 		return pred;
 	}
@@ -135,7 +135,8 @@ public abstract class AbstractTacticTests {
 	 * the current type environment.
 	 */
 	protected Expression parseExpression(String exprImage) {
-		final Expression expr = dl.parseExpression(exprImage);
+		final Expression expr = ff.parseExpression(exprImage,
+				LanguageVersion.V2, null).getParsedExpression();
 		typecheck(expr);
 		return expr;
 	}
@@ -145,8 +146,10 @@ public abstract class AbstractTacticTests {
 	 * can bear the given type within the current type environment.
 	 */
 	protected FreeIdentifier parseIdent(String identImage, String typeImage) {
-		final Expression expr = dl.parseExpression(identImage);
-		final Type type = dl.parseType(typeImage);
+		final Expression expr = ff.parseExpression(identImage,
+				LanguageVersion.V2, null).getParsedExpression();
+		final Type type = ff.parseType(typeImage, LanguageVersion.V2)
+				.getParsedType();
 		assertTypechecked(expr, expr.typeCheck(typenv, type));
 		assertTrue(identImage + "is not an identifier",
 				expr instanceof FreeIdentifier);

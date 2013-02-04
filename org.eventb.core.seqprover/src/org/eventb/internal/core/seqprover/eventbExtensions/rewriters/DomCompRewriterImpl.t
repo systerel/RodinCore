@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,8 +52,8 @@ public class DomCompRewriterImpl extends DefaultRewriter {
 
 	private BinaryExpression subExp;
 
-	public DomCompRewriterImpl(BinaryExpression subExp, FormulaFactory ff) {
-		super(true, ff);
+	public DomCompRewriterImpl(BinaryExpression subExp) {
+		super(true);
 		this.subExp = subExp;
 	}
 		
@@ -62,6 +62,7 @@ public class DomCompRewriterImpl extends DefaultRewriter {
 	@ProverRule({"DERIV_FCOMP_DOMRES", "DERIV_FCOMP_DOMSUB"})
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
+		final FormulaFactory ff = expression.getFactory();
 		if (subExp.getTag() != Expression.DOMRES &&
 				subExp.getTag() != Expression.DOMSUB)
 			return expression;
@@ -93,7 +94,7 @@ public class DomCompRewriterImpl extends DefaultRewriter {
 				if (rToS.size() <= 1)
 					return expression;
 				
-				Expression rToSComp = makeCompIfNeccessary(rToS);
+				Expression rToSComp = makeCompIfNeccessary(ff, rToS);
 				
 				Expression domMan = ff.makeBinaryExpression(
 						subExp.getTag(), S, rToSComp, null);
@@ -111,7 +112,8 @@ public class DomCompRewriterImpl extends DefaultRewriter {
 	    return expression;
 	}
 
-	private Expression makeCompIfNeccessary(Collection<Expression> children) {
+	private Expression makeCompIfNeccessary(FormulaFactory ff, 
+				Collection<Expression> children) {
 		if (children.size() == 1)
 			return children.iterator().next();
 		else

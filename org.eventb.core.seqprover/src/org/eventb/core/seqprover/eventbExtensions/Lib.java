@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -276,18 +276,16 @@ public final class Lib {
 
 	static class EquivalenceRewriter extends FixedRewriter<Predicate> {
 		// TODO consider associative matching as in EqualityRewriter
-		public EquivalenceRewriter(Predicate from, Predicate to,
-				FormulaFactory ff) {
-			super(from, to, ff);
+		public EquivalenceRewriter(Predicate from, Predicate to) {
+			super(from, to);
 		}
 
 	}
 
 	static class EqualityRewriter extends FixedRewriter<Expression> {
 
-		public EqualityRewriter(Expression from, Expression to,
-				FormulaFactory ff) {
-			super(from, to, ff);
+		public EqualityRewriter(Expression from, Expression to) {
+			super(from, to);
 		}
 
 		private static Expression[] associativeRewrite(Expression[] exprs, Expression[] match, Expression into) {
@@ -322,7 +320,7 @@ public final class Lib {
 		// given expression is considered associative and has same type as from
 		private Expression associativeRewrite(Expression expr,
 				Expression[] exprChildren, Expression[] fromChildren) {
-			
+			final FormulaFactory factory = expr.getFactory();
 			final Expression[] newChildren = associativeRewrite(exprChildren,
 					fromChildren, to);
 			if (newChildren == exprChildren) {
@@ -333,14 +331,14 @@ public final class Lib {
 			}
 			final Expression result;
 			if (expr instanceof ExtendedExpression) {
-				result = ff.makeExtendedExpression(
+				result = factory.makeExtendedExpression(
 						((ExtendedExpression) expr).getExtension(),
 						newChildren, NO_PREDICATE, null, expr.getType());
 			} else {
-				result = ff.makeAssociativeExpression(expr.getTag(),
+				result = factory.makeAssociativeExpression(expr.getTag(),
 						newChildren, null);
 			}
-			return result.flatten(ff);
+			return result.flatten(factory);
 		}
 		
 		@Override
@@ -379,8 +377,8 @@ public final class Lib {
 
 		// TODO add check of compatibility between from and to
 		// rather than breaking later when the rewriting is done.
-		public FixedRewriter(T from, T to, FormulaFactory ff) {
-			super(true, ff);
+		public FixedRewriter(T from, T to) {
+			super(true);
 			this.from = from;
 			this.to = to;
 		}
@@ -907,14 +905,12 @@ public final class Lib {
 	 *            the expression that will be replaced
 	 * @param to           
 	 *            the substitute 
-	 * @param ff 
-	 * 			  formula factory	         
 	 * @return the rewritten predicate
-	 * @since 2.0
+	 * @since 3.0
 	 */ 
 	public static Predicate equalityRewrite(Predicate pred, Expression from,
-			Expression to, FormulaFactory ff) {
-		return pred.rewrite(new EqualityRewriter(from, to, ff));
+			Expression to) {
+		return pred.rewrite(new EqualityRewriter(from, to));
 	}
 
 	/**
@@ -961,14 +957,12 @@ public final class Lib {
 	 *            the replaced predicate
 	 * @param to
 	 *            the replacing predicate
-	 * @param ff
-	 *            the formula factory for the predicate <code>pred</code>
 	 * @return the predicate <code>pred</code> re-written
-	 * @since 2.2
+	 * @since 3.0
 	 */
 	public static Predicate equivalenceRewrite(Predicate pred, Predicate from,
-			Predicate to, FormulaFactory ff) {
-		return pred.rewrite(new EquivalenceRewriter(from, to, ff));
+			Predicate to) {
+		return pred.rewrite(new EquivalenceRewriter(from, to));
 	}
 
 }

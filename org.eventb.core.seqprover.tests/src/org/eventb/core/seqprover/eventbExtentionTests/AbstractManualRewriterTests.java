@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
@@ -61,19 +62,27 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		String predicateImage;
 		String positionImage;
 		String[] results;
+		FormulaFactory factory;
+
 		public SuccessfulTest(String predicateImage, String positionImage,
-				String... results) {
+				FormulaFactory ff, String... results) {
 			this.predicateImage = predicateImage;
 			this.positionImage = positionImage;
+			this.factory = ff;
 			this.results = results;
+		}
+		
+		public SuccessfulTest(String predicateImage, String positionImage, String... results) {
+			this(predicateImage, positionImage, FormulaFactory.getDefault(), results);
 		}
 		
 	}
 
 	protected Collection<SuccessfullReasonerApplication> makeSuccessfullReasonerApplication(
-			String predicateImage, String positionImage, String [] results) {
+			FormulaFactory ff, String predicateImage, String positionImage,
+			String[] results) {
 		final List<SuccessfullReasonerApplication> apps = new ArrayList<SuccessfullReasonerApplication>();		
-		final ITypeEnvironmentBuilder typenv = lib.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 		final Predicate predicate = TestLib.genPred(typenv, predicateImage);
 
 		// Successful in goal
@@ -152,7 +161,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		Collection<SuccessfullReasonerApplication> successfullReasonerApps = new ArrayList<SuccessfullReasonerApplication>();
 		SuccessfulTest [] successfulTests = getSuccessfulTests();
 		for (SuccessfulTest test : successfulTests) {
-			Collection<SuccessfullReasonerApplication> apps = makeSuccessfullReasonerApplication(
+			Collection<SuccessfullReasonerApplication> apps = makeSuccessfullReasonerApplication(test.factory,
 					test.predicateImage, test.positionImage, test.results);
 			successfullReasonerApps.addAll(apps);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.eqLeft;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.eqRight;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.getSet;
@@ -77,7 +76,6 @@ public class TypePredRewriter implements Rewriter{
 	}
 
 	public Predicate apply(Predicate p, FormulaFactory ff) {
-		final DLib lib = mDLib(ff);
 		// Ty is a type expression (NAT, BOOL, carrierset, Pow(Ty), etc)
 		// t is an expression of type Ty
 		
@@ -85,29 +83,29 @@ public class TypePredRewriter implements Rewriter{
 		if (isNotEq(p)) {
 			if (isEmptySet(notEqRight(p)) &&
 					notEqLeft(p).isATypeExpression())
-				return lib.True();
+				return DLib.True(ff);
 			if (isEmptySet(notEqLeft(p)) &&
 					notEqRight(p).isATypeExpression())
-				return lib.True();
+				return DLib.True(ff);
 		}
 		
 		//	  Ty={} <OR> {}=Ty  ==  F
 		if (isEq(p)) {
 			if (isEmptySet(eqRight(p)) &&
 					eqLeft(p).isATypeExpression())
-				return lib.False();
+				return DLib.False(ff);
 			if (isEmptySet(eqLeft(p)) &&
 					eqRight(p).isATypeExpression())
-				return lib.False();
+				return DLib.False(ff);
 		}
 		
 		// t : Ty  == T
 		if (isInclusion(p) && getSet(p).isATypeExpression())
-			return lib.True();
+			return DLib.True(ff);
 		
 		// t /: Ty  == F
 		if (isNotInclusion(p) && getSet(p).isATypeExpression())
-			return lib.False();
+			return DLib.False(ff);
 		
 		
 		return null;

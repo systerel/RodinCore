@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.seqprover.IReasoner;
@@ -31,14 +30,15 @@ public class HideOriginalRewrites extends AbstractAutoRewrites implements
 		private final Expression number0;
 		private final Expression number1;
 		private final Expression number2;
-		private final DLib lib;
 		
 		public HideOriginalRewriter(boolean autoFlattening, FormulaFactory ff) {
-			super(autoFlattening, ff);
-			lib = mDLib(ff);
-			number0 = lib.parseExpression("0");
-			number1 = lib.parseExpression("1");
-			number2 = lib.parseExpression("2");
+			super(autoFlattening);
+			number0 = ff.parseExpression("0", LanguageVersion.V2, null)
+					.getParsedExpression();
+			number1 = ff.parseExpression("1", LanguageVersion.V2, null)
+					.getParsedExpression();
+			number2 = ff.parseExpression("2", LanguageVersion.V2, null)
+					.getParsedExpression();
 			number0.typeCheck(ff.makeTypeEnvironment());
 			number1.typeCheck(ff.makeTypeEnvironment());
 			number2.typeCheck(ff.makeTypeEnvironment());
@@ -55,7 +55,7 @@ public class HideOriginalRewrites extends AbstractAutoRewrites implements
 
 		@Override
 		public Predicate rewrite(SimplePredicate predicate) {
-			return lib.True();
+			return DLib.True(predicate.getFactory());
 		}
 		
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,8 +52,8 @@ public class AndOrDistRewriterImpl extends DefaultRewriter {
 
 	private AssociativePredicate subPred;
 
-	public AndOrDistRewriterImpl(AssociativePredicate subPred, FormulaFactory ff) {
-		super(true, ff);
+	public AndOrDistRewriterImpl(AssociativePredicate subPred) {
+		super(true);
 		this.subPred = subPred;
 	}
 		
@@ -75,6 +75,7 @@ public class AndOrDistRewriterImpl extends DefaultRewriter {
 			(Lor | Land)(children) -> {
 				Collection<Predicate> newChildren = new ArrayList<Predicate>(
 						subPred.getChildren().length);
+				FormulaFactory ff = predicate.getFactory();
 				
 				for (Predicate toDistribute : subPred.getChildren()) {
 					Predicate [] subChildren = new Predicate[`children.length];

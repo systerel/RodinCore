@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,26 +116,19 @@ public class ArithRewriterImpl extends DefaultRewriter {
         }
 	}
 
-	protected AssociativeExpression makeAssociativeExpression(int tag, Collection<Expression> children) {
-		return ff.makeAssociativeExpression(tag, children, null);
-	}
-
-	protected RelationalPredicate makeRelationalPredicate(int tag, Expression left,
-			Expression right) {
-		return ff.makeRelationalPredicate(tag, left, right, null);
-	}
-
-	public ArithRewriterImpl(FormulaFactory ff) {
-		super(true, ff);
+	public ArithRewriterImpl() {
+		super(true);
 	}
     
     private Expression simplify(Expression expression, IPosition... positions) {
-        return AdditiveSimplifier.simplify(expression, positions, ff);
+        return AdditiveSimplifier.simplify(
+        		expression, positions, expression.getFactory());
     }
 
-    private RelationalPredicate simplify(RelationalPredicate predicate,
-            IPosition... positions) {
-        return AdditiveSimplifier.simplify(predicate, positions, ff);
+    private RelationalPredicate simplify(RelationalPredicate predicate, 
+    	IPosition... positions) {
+        return AdditiveSimplifier.simplify(
+        		predicate, positions, predicate.getFactory());
     }
     
 	%include {FormulaV2.tom}
@@ -144,6 +137,7 @@ public class ArithRewriterImpl extends DefaultRewriter {
             "SIMP_MULTI_MINUS_PLUS_PLUS", "SIMP_MINUS_UNMINUS" })
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
+		FormulaFactory ff = expression.getFactory();
 	    %match (Expression expression) {
 	        /**
              * SIMP_MULTI_MINUS_PLUS_L
@@ -192,9 +186,10 @@ public class ArithRewriterImpl extends DefaultRewriter {
              * Arithmetics: A − (− B)  == A + B
              */
 			Minus(A, UnMinus(B)) -> {
-			    final Expression result = makeAssociativeExpression(
+			    final Expression result = ff.makeAssociativeExpression(
 			                                     Expression.PLUS,
-			                                     Arrays.asList(`A, `B));
+			                                     Arrays.asList(`A, `B),
+			                                     null);
                 if(autoFlatteningMode()) {
                     return result.flatten(ff);
                 }
@@ -204,9 +199,10 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			Minus(A, IntegerLiteral(b)) -> {
 			    if (`b.signum() < 0) {
 			        final IntegerLiteral bNeg = ff.makeIntegerLiteral(`b.negate(), null);
-                    final Expression result = makeAssociativeExpression(
+                    final Expression result = ff.makeAssociativeExpression(
                                                      Expression.PLUS,
-                                                     Arrays.asList(`A, bNeg));
+                                                     Arrays.asList(`A, bNeg),
+                                                     null);
                     if(autoFlatteningMode()) {
                         return result.flatten(ff);
                     }
@@ -309,7 +305,9 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			 * Arithmetic: C − A < C − B  == B < A
 			 */
 			(Equal|Lt|Le|Gt|Ge)(Minus(C, A), Minus(C, B)) -> {
-				return makeRelationalPredicate(predicate.getTag(), `B, `A);
+				return predicate.getFactory()
+						.makeRelationalPredicate(
+							predicate.getTag(), `B, `A, null);
 			}
 		}
 		return predicate;

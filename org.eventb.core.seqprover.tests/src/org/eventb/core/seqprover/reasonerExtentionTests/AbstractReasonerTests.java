@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -103,8 +102,6 @@ public abstract class AbstractReasonerTests {
 
 	protected final FormulaFactory ff;
 
-	protected final DLib lib;
-
 	private IReasoner reasoner;
 
 	public AbstractReasonerTests() {
@@ -113,9 +110,7 @@ public abstract class AbstractReasonerTests {
 
 	public AbstractReasonerTests(FormulaFactory ff) {
 		this.ff = ff;
-		this.lib = mDLib(ff);
 	}
-
 	/**
 	 * Returns the reasoner id of the reasoner to test
 	 * 
@@ -332,7 +327,7 @@ public abstract class AbstractReasonerTests {
 
 	private Predicate getGoal(IProofRule rule, FormulaFactory ff) {
 		final Predicate goal = rule.getGoal();
-		return goal == null ? mDLib(ff).False() : goal;
+		return goal == null ? DLib.False(ff) : goal;
 	}
 
 	/**

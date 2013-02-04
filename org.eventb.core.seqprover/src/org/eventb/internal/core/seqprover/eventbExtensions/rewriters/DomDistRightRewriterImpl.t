@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,8 +48,8 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class DomDistRightRewriterImpl extends DefaultRewriter {
 
-	public DomDistRightRewriterImpl(FormulaFactory ff) {
-		super(true, ff);
+	public DomDistRightRewriterImpl() {
+		super(true);
 	}
 		
 	%include {FormulaV2.tom}
@@ -58,6 +58,7 @@ public class DomDistRightRewriterImpl extends DefaultRewriter {
 			"DISTRI_DOMSUB_BUNION_R", "DISTRI_DOMSUB_BINTER_R" })
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
+		final FormulaFactory ff = expression.getFactory();
 	    %match (Expression expression) {
 
 			/**
@@ -98,6 +99,7 @@ public class DomDistRightRewriterImpl extends DefaultRewriter {
 
 	private Expression makeDomainAssociative(int tag, int domTag, Expression s,
 			Expression [] children) {
+		final FormulaFactory ff = s.getFactory();
 		Expression [] newChildren = new Expression[children.length];
 		for (int i = 0; i < children.length; ++i) {
 			newChildren[i] = ff.makeBinaryExpression(

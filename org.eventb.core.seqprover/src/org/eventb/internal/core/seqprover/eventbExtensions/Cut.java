@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
-
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -25,6 +23,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInput;
 import org.eventb.core.seqprover.reasonerInputs.SinglePredInputReasoner;
@@ -71,10 +70,10 @@ public class Cut extends SinglePredInputReasoner {
 		
 		// We can now assume that lemma has been properly parsed and typed.
 		
-		final Predicate lemmaWD = mDLib(seq.getFormulaFactory()).WD(lemma);
+		final Predicate lemmaWD = DLib.WD(lemma);
 		
 		final Set<Predicate> lemmaWDs = Lib.breakPossibleConjunct(lemmaWD);
-		mDLib(seq.getFormulaFactory()).removeTrue(lemmaWDs);
+		DLib.removeTrue(lemma.getFactory(), lemmaWDs);
 		// final ISelectionHypAction deselectWDpreds = ProverFactory.makeDeselectHypAction(lemmaWDs);
 		
 		

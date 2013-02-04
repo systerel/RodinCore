@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import static java.util.Collections.singleton;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeForwardInfHypAction;
 import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -28,6 +27,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
 
 /**
@@ -104,7 +104,7 @@ public class OnePointRule extends HypothesisReasoner implements
 		final Predicate simplified = processor.getProcessedResult();
 		final Expression replacement = processor.getReplacement();
 
-		final Predicate replacementWD = mDLib(ff).WD(replacement);
+		final Predicate replacementWD = DLib.WD(replacement);
 
 		// There will be 2 antecedents
 		final IAntecedent a1;

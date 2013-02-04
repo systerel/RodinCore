@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -48,6 +49,7 @@ public class AllmtD extends AllD implements IVersionedReasoner {
 		return VERSION;
 	}
 
+	@Override
 	public String getReasonerID() {
 		return REASONER_ID;
 	}
@@ -72,8 +74,9 @@ public class AllmtD extends AllD implements IVersionedReasoner {
 	 * -----------------------------------------------
 	 * H,  ∀x· P ⇒ Q ⊢ G
 	 */
+	@Override
 	@ProverRule("FORALL_INST_MT")
-	protected IAntecedent[] getAntecedents(DLib lib, Set<Predicate> WDpreds,
+	protected IAntecedent[] getAntecedents(FormulaFactory ff, Set<Predicate> WDpreds,
 			Predicate univHyp, Predicate instantiatedPred) {
 
 		assert instantiatedPred != null;
@@ -85,11 +88,11 @@ public class AllmtD extends AllD implements IVersionedReasoner {
 		// Well definedness condition : H⊢WD(E)
 		{
 			antecedents[0] = ProverFactory.makeAntecedent(
-					lib.makeConj(WDpreds), null, getDeselectAction(univHyp));
+					DLib.makeConj(ff, WDpreds), null, getDeselectAction(univHyp));
 		}
 		// The instantiated and negated impRight to goal : H,WD(E)⊢[x≔E]¬ Q
 		{
-			final Predicate negImpRight = lib.makeNeg(impRight);
+			final Predicate negImpRight = DLib.makeNeg(impRight);
 			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>(
 					WDpreds);
 			final Set<Predicate> toDeselect = new LinkedHashSet<Predicate>(
@@ -108,7 +111,7 @@ public class AllmtD extends AllD implements IVersionedReasoner {
 		{
 			final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>(
 					WDpreds);
-			final Predicate negImpLeft = lib.makeNeg(impLeft);
+			final Predicate negImpLeft = DLib.makeNeg(impLeft);
 			addedHyps.add(negImpLeft);
 			final Set<Predicate> toDeselect = new LinkedHashSet<Predicate>(
 					WDpreds);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.NOT;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +29,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 public class FormulaUnfold {
 
@@ -148,7 +148,7 @@ public class FormulaUnfold {
 		for (int i = 0; i < members.length; ++i) {
 			Expression member = members[i];
 			if (member.equals(E)) {
-				return mDLib(ff).True();
+				return DLib.True(ff);
 			} else {
 				predicates[i] = ff.makeRelationalPredicate(Predicate.EQUAL, E,
 						member, null);
