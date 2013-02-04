@@ -139,7 +139,7 @@ public class FastFactory {
 	}
 
 	public static AtomicExpression mEmptySet(Type type) {
-		return ff.makeEmptySet(type, null);
+		return type.getFactory().makeEmptySet(type, null);
 	}
 
 	public static AtomicExpression mPrj1(Type type) {
@@ -257,8 +257,16 @@ public class FastFactory {
 		return objs;
 	}
 
+	public static LiteralPredicate mLiteralPredicate(FormulaFactory fac, int tag) {
+		return fac.makeLiteralPredicate(tag, null);
+	}
+
 	public static LiteralPredicate mLiteralPredicate(int tag) {
-		return ff.makeLiteralPredicate(tag, null);
+		return mLiteralPredicate(ff, tag);
+	}
+
+	public static LiteralPredicate mLiteralPredicate(FormulaFactory fac) {
+		return mLiteralPredicate(fac, BTRUE);
 	}
 
 	public static LiteralPredicate mLiteralPredicate() {

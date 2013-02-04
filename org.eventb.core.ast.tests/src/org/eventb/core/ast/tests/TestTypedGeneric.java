@@ -96,8 +96,8 @@ public class TestTypedGeneric extends AbstractTests {
 		final AtomicExpression eUV = mEmptySet(REL(ty_U, ty_V));
 		final AtomicExpression ePST = mEmptySet(REL(POW(ty_S), ty_T));
 
-		final AtomicExpression eSv1 = ffV1.makeEmptySet(POWV1(ty_Sv1), null);
-		final AtomicExpression eSTv1 = ffV1.makeEmptySet(RELV1(ty_Sv1, ty_Tv1), null);
+		final AtomicExpression eSv1 = ffV1.makeEmptySet(POW(ty_Sv1), null);
+		final AtomicExpression eSTv1 = ffV1.makeEmptySet(REL(ty_Sv1, ty_Tv1), null);
 
 		final BoundIdentDecl bd_x = mBoundIdentDecl("x", POW(ty_S));
 		final BoundIdentifier b0S = mBoundIdentifier(0, POW(ty_S));
@@ -168,13 +168,13 @@ public class TestTypedGeneric extends AbstractTests {
 		
 		doTest(mUnaryExpression(Formula.KRAN, eST), POW(ty_T));
 		
-		doTest(ffV1.makeUnaryExpression(Formula.KPRJ1, eSTv1, null), RELV1(CPRODV1(ty_Sv1, ty_Tv1), ty_Sv1),
+		doTest(ffV1.makeUnaryExpression(Formula.KPRJ1, eSTv1, null), REL(CPROD(ty_Sv1, ty_Tv1), ty_Sv1),
 				V1);
 
-		doTest(ffV1.makeUnaryExpression(Formula.KPRJ2, eSTv1, null), RELV1(CPRODV1(ty_Sv1, ty_Tv1), ty_Tv1),
+		doTest(ffV1.makeUnaryExpression(Formula.KPRJ2, eSTv1, null), REL(CPROD(ty_Sv1, ty_Tv1), ty_Tv1),
 				V1);
 
-		doTest(ffV1.makeUnaryExpression(Formula.KID, eSv1, null), RELV1(ty_Sv1, ty_Sv1),
+		doTest(ffV1.makeUnaryExpression(Formula.KID, eSv1, null), REL(ty_Sv1, ty_Sv1),
 				V1);
 
 		

@@ -294,27 +294,15 @@ public abstract class AbstractTests {
 	}
 
 	protected static Type POW(Type base) {
-		return ff.makePowerSetType(base);
-	}
-
-	protected static Type POWV1(Type base) {
-		return ffV1.makePowerSetType(base);
+		return base.getFactory().makePowerSetType(base);
 	}
 
 	protected static Type CPROD(Type left, Type right) {
-		return ff.makeProductType(left, right);
-	}
-
-	protected static Type CPRODV1(Type left, Type right) {
-		return ffV1.makeProductType(left, right);
+		return left.getFactory().makeProductType(left, right);
 	}
 
 	protected static Type REL(Type left, Type right) {
-		return ff.makeRelationalType(left, right);
-	}
-
-	protected static Type RELV1(Type left, Type right) {
-		return ffV1.makeRelationalType(left, right);
+		return left.getFactory().makeRelationalType(left, right);
 	}
 
 }
