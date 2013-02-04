@@ -27,22 +27,13 @@ public class DefaultRewriter implements IFormulaRewriter2 {
 	
 	private final boolean autoFlattening;
 	
-	protected final FormulaFactory ff;
-	
 	private int bindingDepth;
-	
-	@Deprecated
-	public DefaultRewriter(boolean autoFlattening, FormulaFactory ff) {
-		this.autoFlattening = autoFlattening;
-		this.ff = ff;
-	}
 	
 	/**
 	 * @since 3.0
 	 */
 	public DefaultRewriter(boolean autoFlattening) {
 		this.autoFlattening = autoFlattening;
-		this.ff = null;
 	}
 
 	@Override
@@ -65,12 +56,6 @@ public class DefaultRewriter implements IFormulaRewriter2 {
 		return bindingDepth;
 	}
 	
-	@Deprecated
-	@Override
-	public final FormulaFactory getFactory() {
-		return ff;
-	}
-
 	@Override
 	public final void leavingQuantifier(int nbOfDeclarations) {
 		bindingDepth -= nbOfDeclarations;

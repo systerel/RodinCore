@@ -81,7 +81,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaFilter;
 import org.eventb.core.ast.IFormulaFilter2;
@@ -374,12 +373,6 @@ public class TestSubFormulas{
 		@Override
 		public void enteringQuantifier(int nbOfDeclarations) {
 			// nothing to do
-		}
-
-		@Deprecated
-		@Override
-		public FormulaFactory getFactory() {
-			return null;
 		}
 
 		@Override
