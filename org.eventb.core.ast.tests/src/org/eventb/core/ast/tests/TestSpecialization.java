@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,7 +131,7 @@ public class TestSpecialization extends AbstractTests {
 	@Test 
 	public void testGivenTypeIdentifier() {
 		try {
-			spec.put(S.toExpression(ff), Z.toExpression(ff));
+			spec.put(S.toExpression(), Z.toExpression());
 			fail("Shall have raised an exception");
 		} catch (IllegalArgumentException e) {
 			// pass
@@ -145,7 +145,7 @@ public class TestSpecialization extends AbstractTests {
 	@Test 
 	public void testGivenTypeIdentifierAlready() {
 		spec.put(S, Z);
-		spec.put(S.toExpression(ff), Z.toExpression(ff));
+		spec.put(S.toExpression(), Z.toExpression());
 	}
 
 	/**

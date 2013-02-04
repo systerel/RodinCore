@@ -423,7 +423,7 @@ public class DLib {
 	 * @since 3.0
 	 */
 	public static Expression typeToExpression(FormulaFactory ff, Type type) {
-		Expression result = type.toExpression(ff);
+		Expression result = type.toExpression();
 		Lib.postConstructionCheck(result);
 		return result;
 	}

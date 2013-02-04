@@ -71,7 +71,7 @@ public class RemoveInclusionUniversalRewriterImpl extends AutoRewriterImpl {
 	    	SubsetEq(S, T) -> {
 				Type type = `S.getType();
 				Type baseType = type.getBaseType();
-				Expression U = baseType.toExpression(ff);
+				Expression U = baseType.toExpression();
 				Expression left = ff.makeBinaryExpression(Expression.SETMINUS,
 						U, `T, null);
 				Expression right = ff.makeBinaryExpression(Expression.SETMINUS,

@@ -235,8 +235,8 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 	protected IAntecedent makeFunctionalAntecident(Expression f,
 			boolean converse, int tag, FormulaFactory ff) {
 		final Type type = f.getType();
-		final Expression A = type.getSource().toExpression(ff);
-		final Expression B = type.getTarget().toExpression(ff);
+		final Expression A = type.getSource().toExpression();
+		final Expression B = type.getTarget().toExpression();
 		final Predicate pred;
 		if (converse) {
 			pred = makeInRelset(ff.makeUnaryExpression(CONVERSE, f, null), tag,
