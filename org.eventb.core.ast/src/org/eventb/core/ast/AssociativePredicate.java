@@ -13,6 +13,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
  *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -147,6 +148,7 @@ public class AssociativePredicate extends Predicate {
 		this.children = children;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureMinLength(children, 2);
+		checkFormulaFactories(null, this.children);
 		setPredicateVariableCache(this.children);
 		synthesizeType(ff);
 	}

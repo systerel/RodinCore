@@ -17,6 +17,7 @@
  *     Systerel - added support for specialization
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -1082,6 +1083,43 @@ public abstract class Formula<T extends Formula<T>> {
 		predVars = result.toArray(new PredicateVariable[result.size()]);
 	}
 
+	/**
+	 * Checks that the formula factory of this formula and those of its type and
+	 * children are equals. If it is not the case an
+	 * {@link IllegalArgumentException} exception is raised.
+	 * 
+	 * @param children
+	 *            children of this formula whose formula factories must be
+	 *            checked to be compatible
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the children have a different formula factory than
+	 * 
+	 * @since 3.0
+	 */
+	protected void checkFormulaFactories(Type givenType, Formula<?>... children) {
+
+		if (givenType != null && !this.fac.equals(givenType.getFactory())) {
+			throw new IllegalArgumentException("The type " + givenType
+					+ " has an incompatible factory " + givenType.getFactory()
+					+ " with the current formula factory " + this.fac);
+		}
+		
+		if (children.length == 0) {
+			return;
+		}
+
+		for (final Formula<?> child : children) {
+			FormulaFactory childFactory = child.getFactory();
+			if (!this.fac.equals(childFactory)) {
+				throw new IllegalArgumentException("The child " + child
+						+ " has an incompatible factory " + childFactory
+						+ " with the current formula factory " + this.fac);
+			}
+		}
+	}
+
+	
 	/**
 	 * Returns the tag of this AST node.
 	 * <p>

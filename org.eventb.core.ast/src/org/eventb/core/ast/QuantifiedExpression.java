@@ -16,6 +16,7 @@
  *     Systerel - added child indexes
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -368,6 +369,8 @@ public class QuantifiedExpression extends Expression {
 		this.pred = pred;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureMinLength(boundIdentifiers, 1);
+		checkFormulaFactories(null, this.quantifiedIdentifiers);
+		checkFormulaFactories(null, this.expr, this.pred);
 		setPredicateVariableCache(this.pred, this.expr);
 		synthesizeType(ff, null);
 

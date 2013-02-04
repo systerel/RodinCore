@@ -14,6 +14,7 @@
  *     Systerel - added child indexes
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -71,6 +72,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		super(BOUND_IDENT_DECL, ff, location, name.hashCode());
 		ensureValidIdentifierName(name, ff);
 		this.name = name;
+		checkFormulaFactories(givenType);
 		setPredicateVariableCache();
 		synthesizeType(ff, givenType);
 		// final type cannot be null if given

@@ -13,6 +13,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
  *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -135,6 +136,7 @@ public class BinaryPredicate extends Predicate {
 		this.left = left;
 		this.right = right;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
+		checkFormulaFactories(null, this.left, this.right);
 		setPredicateVariableCache(this.left, this.right);
 		synthesizeType(ff);
 	}

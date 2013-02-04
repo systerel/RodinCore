@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -134,6 +136,7 @@ public class MultiplePredicate extends Predicate {
 		this.children = children;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureMinLength(children, 1);
+		checkFormulaFactories(null, this.children);
 		setPredicateVariableCache(this.children);
 		synthesizeType(ff);
 	}

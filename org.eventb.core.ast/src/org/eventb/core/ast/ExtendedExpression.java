@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -197,6 +199,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		this.childPredicates = predicates;
 		this.extension = extension;
 		checkPreconditions();
+		checkFormulaFactories(type, this.getChildren());
 		setPredicateVariableCache(getChildren());
 		synthesizeType(ff, type);
 		ensureHasType(this, type);

@@ -13,6 +13,7 @@
  *     Systerel - bug #3574162: AST does not compare bound ident decl types
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -136,6 +137,8 @@ public class BecomesSuchThat extends Assignment {
 		this.condition = condition;
 		this.primedIdents = primedIdents;
 		ensureSameLength(assignedIdents, primedIdents);
+		checkFormulaFactories(null, this.primedIdents);
+		checkFormulaFactories(null, this.condition);
 		setPredicateVariableCache(this.condition);
 		synthesizeType(ff);
 	}

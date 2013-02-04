@@ -11,6 +11,7 @@
  *     Systerel - added child indexes
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -61,6 +62,7 @@ public abstract class Assignment extends Formula<Assignment> {
 				combineHashCodes(assignedIdents), hashCode));
 		ensureMinLength(assignedIdents, 1);
 		this.assignedIdents = assignedIdents;
+		checkFormulaFactories(null, this.assignedIdents);
 	}
 
 	protected final void appendAssignedIdents(StringBuilder result) {

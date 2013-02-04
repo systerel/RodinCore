@@ -13,6 +13,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -64,6 +65,7 @@ public class BoundIdentifier extends Identifier {
 					+ boundIndex);
 		}
 		this.boundIndex = boundIndex;
+		checkFormulaFactories(type);
 		setPredicateVariableCache();
 		synthesizeType(ff, type);
 		ensureHasType(this, type);

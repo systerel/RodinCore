@@ -13,6 +13,7 @@
  *     Systerel - externalized wd lemmas generation
  *     Systerel - added child indexes
  *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -120,6 +121,7 @@ public class BoolExpression extends Expression {
 			FormulaFactory ff) {
 		super(KBOOL, ff, location, child.hashCode());
 		this.child = child;
+		checkFormulaFactories(null, this.child);
 		setPredicateVariableCache(this.child);
 		synthesizeType(ff, null);
 	}

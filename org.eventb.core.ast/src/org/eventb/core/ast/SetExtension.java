@@ -14,6 +14,7 @@
  *     Systerel - added child indexes
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
+ *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -126,6 +127,7 @@ public class SetExtension extends Expression {
 			FormulaFactory ff, Type type) {
 		super(SETEXT, ff, location, combineHashCodes(expressions));
 		this.members = expressions;
+		checkFormulaFactories(type, this.members);
 		setPredicateVariableCache(this.members);
 		synthesizeType(ff, type);
 		ensureHasType(this, type);
