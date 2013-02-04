@@ -91,14 +91,6 @@ public interface IFormulaRewriter {
 	void enteringQuantifier(int nbOfDeclarations);
 
 	/**
-	 * Return the formula factory which is used for the rewriting.
-	 * 
-	 * @return the formula factory to use when rewriting
-	 */
-	@Deprecated
-	FormulaFactory getFactory();
-
-	/**
 	 * Rewriting is leaving a quantifier. When traversing the formula tree, this
 	 * method is called when the rewriting traverses a quantifier, while going
 	 * back up the tree. In other term, this method is called just after
