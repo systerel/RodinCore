@@ -473,6 +473,16 @@ public class TestVersionUpgrader extends AbstractTests {
 	}
 
 	@Test 
+	public void testPartitionRightHandSide() throws Exception {
+		final String assign = "v ≔ partition + 1";
+		final UpgradeResultChecker<Assignment> checker = new UpgradeResultChecker<Assignment>(
+				new ASTProblem(new SourceLocation(4, 12), NotUpgradableError,
+						Error));
+		final TestItem<?> ti = new TestItemAssign(assign, V2, checker);
+		ti.verifyUpgrade();
+	}
+
+	@Test 
 	public void testParenUpgradeNeeded() throws Exception {
 		final String pred = "x ∈ A → B → C";
 
