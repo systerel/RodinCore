@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
-import org.eventb.core.seqprover.eventbExtensions.DLib;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier;
 import org.junit.Test;
 
@@ -36,20 +36,20 @@ public abstract class PredicateSimplifierTests extends
 	// Each inner class allows to run tests with a different set of options.
 	public static class MinimalTests extends PredicateSimplifierTests {
 		public MinimalTests() {
-			super(new PredicateSimplifier(DLib.mDLib(ff), 0, false,
-					"PredicateSimplifier"));
+			super(FormulaFactory.getDefault(), new PredicateSimplifier(0,
+					false, "PredicateSimplifier"));
 		}
 	}
 
 	public static class FullTests extends PredicateSimplifierTests {
 		public FullTests() {
-			super(new PredicateSimplifier(DLib.mDLib(ff), 0xffffffff, false,
-					"PredicateSimplifier"));
+			super(FormulaFactory.getDefault(), new PredicateSimplifier(
+					0xffffffff, false, "PredicateSimplifier"));
 		}
 	}
 
-	public PredicateSimplifierTests(PredicateSimplifier rewriter) {
-		super(rewriter);
+	public PredicateSimplifierTests(FormulaFactory ff,PredicateSimplifier rewriter) {
+		super(ff, rewriter);
 		this.withMultiImp = rewriter.withMultiImp;
 		this.withMultiImpNot = rewriter.withMultiImpNot;
 		this.withMultiEqvNot = rewriter.withMultiEqvNot;

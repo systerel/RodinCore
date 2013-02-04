@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -255,17 +255,16 @@ public class GenMPC {
 			Map<Predicate, List<IPosition>> modifGoalMap,
 			Set<Predicate> neededHyps) {
 		final FormulaFactory ff = seq.getFormulaFactory();
-		final DLib lib = DLib.mDLib(ff);
 		Predicate rewriteGoal = goal;
 		for (Entry<Predicate, List<IPosition>> entry : modifGoalMap.entrySet()) {
 			final Predicate value = entry.getKey();
 			final Predicate negValue = ff.makeUnaryPredicate(NOT, value, null);
 			final Predicate substitute;
 			if (seq.containsHypothesis(value)) {
-				substitute = lib.True();
+				substitute = DLib.True(ff);
 				neededHyps.add(value);
 			} else if (seq.containsHypothesis(negValue)) {
-				substitute = lib.False();
+				substitute = DLib.False(ff);
 				neededHyps.add(negValue);
 			} else {
 				continue;
@@ -366,17 +365,16 @@ public class GenMPC {
 	public static Predicate[] computeSubstitutionForHyp(IProverSequent sequent,
 			Predicate predicate, Level level) {
 		final FormulaFactory ff = sequent.getFormulaFactory();
-		final DLib lib = DLib.mDLib(ff);
 		final Predicate goal = sequent.goal();
 		final Predicate negPred = ff.makeUnaryPredicate(NOT, predicate, null);
 		final Predicate[] result = new Predicate[2];
 		if (sequent.containsHypothesis(predicate)) {
 			result[0] = predicate;
-			result[1] = lib.True();
+			result[1] = DLib.True(ff);
 			return result;
 		} else if (sequent.containsHypothesis(negPred)) {
 			result[0] = negPred;
-			result[1] = lib.False();
+			result[1] = DLib.False(ff);
 			return result;
 		}
 		if (!level.from(Level.L1)) {
@@ -387,22 +385,22 @@ public class GenMPC {
 			for (Predicate child : children) {
 				if (child.equals(predicate)) {
 					result[0] = null;
-					result[1] = lib.False();
+					result[1] = DLib.False(ff);
 					return result;
 				} else if (child.equals(negPred)) {
 					result[0] = null;
-					result[1] = lib.True();
+					result[1] = DLib.True(ff);
 					return result;
 				}
 			}
 		} else {
 			if (goal.equals(predicate)) {
 				result[0] = null;
-				result[1] = lib.False();
+				result[1] = DLib.False(ff);
 				return result;
 			} else if (goal.equals(negPred)) {
 				result[0] = null;
-				result[1] = lib.True();
+				result[1] = DLib.True(ff);
 				return result;
 			}
 		}

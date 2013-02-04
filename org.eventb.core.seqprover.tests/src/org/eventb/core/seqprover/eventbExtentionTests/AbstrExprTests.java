@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,12 +37,12 @@ public class AbstrExprTests extends AbstractReasonerTests {
 				// Expression not parsable
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq(" ⊤ |- ⊤ "),
-						new SingleExprInput("@unparsable@",lib.makeTypeEnvironment())
+						new SingleExprInput("@unparsable@", ff.makeTypeEnvironment())
 				),
 				// Expression not typecheckable
 				new UnsuccessfullReasonerApplication(
 						TestLib.genSeq(" ⊤ |- ⊤ "),
-						new SingleExprInput("x",lib.makeTypeEnvironment())
+						new SingleExprInput("x", ff.makeTypeEnvironment())
 				),	
 		};
 	}

@@ -12,7 +12,6 @@ package org.eventb.internal.ui.prover.tactics;
 
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -58,17 +57,14 @@ public class RemoveNegation extends AbstractHypGoalTacticProvider {
 	public static class RemoveNegationAppliInspector extends
 			DefaultApplicationInspector {
 
-		private final FormulaFactory ff;
-
-		public RemoveNegationAppliInspector(FormulaFactory ff, Predicate hyp) {
+		public RemoveNegationAppliInspector(Predicate hyp) {
 			super(hyp);
-			this.ff = ff;
 		}
 
 		@Override
 		public void inspect(UnaryPredicate predicate,
 				IAccumulator<ITacticApplication> accumulator) {
-			if (Tactics.isRemoveNegationApplicable(predicate, ff)) {
+			if (Tactics.isRemoveNegationApplicable(predicate)) {
 				final IPosition position = accumulator.getCurrentPosition();
 				accumulator.add(new RemoveNegationApplication(hyp,
 						position));
@@ -81,8 +77,7 @@ public class RemoveNegation extends AbstractHypGoalTacticProvider {
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new RemoveNegationAppliInspector(node
-				.getFormulaFactory(), hyp));
+		return predicate.inspect(new RemoveNegationAppliInspector(hyp));
 	}
 
 }

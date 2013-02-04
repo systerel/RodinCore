@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Systerel - added used reasoners to proof dependencies
  *******************************************************************************/
 package org.eventb.internal.core.seqprover;
-
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -98,7 +96,7 @@ public class ProofDependenciesBuilder {
 				! usedFreeIdents.isEmpty() ||
 				! introducedFreeIdents.isEmpty() ||
 				! usedReasoners.isEmpty()); 
-		final ITypeEnvironmentBuilder usedTypEnv = mDLib(ff).makeTypeEnvironment();
+		final ITypeEnvironmentBuilder usedTypEnv = ff.makeTypeEnvironment();
 		for (FreeIdentifier freeIdent : usedFreeIdents) {
 			usedTypEnv.add(freeIdent);
 		}

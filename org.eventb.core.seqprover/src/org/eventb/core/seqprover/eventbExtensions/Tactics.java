@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@
  *     Systerel - implemented DATATYPE_DISTINCT_CASE and DATATYPE_INDUCTION
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
-
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -465,11 +463,11 @@ public class Tactics {
 
 	public static boolean contradictGoal_applicable(IProofTreeNode node) {
 		Predicate goal = node.getSequent().goal();
-		final DLib lib = mDLib(node.getFormulaFactory());
-		if (goal.equals(lib.False()))
+		final FormulaFactory ff = node.getFormulaFactory();
+		if (goal.equals(DLib.False(ff)))
 			return false;
-		Predicate negGoal = lib.makeNeg(goal);
-		if (negGoal.equals(lib.True()))
+		Predicate negGoal = DLib.makeNeg(goal);
+		if (negGoal.equals(DLib.True(ff)))
 			return false;
 		// if (Predicate.containsPredicate(
 		// node.getSequent().selectedHypotheses(),
@@ -689,7 +687,7 @@ public class Tactics {
 
 	public static boolean falsifyHyp_applicable(Predicate hyp,
 			IProverSequent seq) {
-		return (!seq.goal().equals(mDLib(seq.getFormulaFactory()).makeNeg(hyp)));
+		return (!seq.goal().equals(DLib.makeNeg(hyp)));
 	}
 	
 	/**
@@ -831,11 +829,10 @@ public class Tactics {
 	 *            the current sequent
 	 * @return <code>true</code> if the tactic is not applicable,
 	 *         <code>false</code> otherwise
-	 * @since 2.0
+	 * @since 3.0
 	 */
-	public static boolean isRemoveNegationApplicable(Predicate pred,
-			final FormulaFactory ff) {
-		return new RemoveNegationRewriterImpl(ff, false)
+	public static boolean isRemoveNegationApplicable(Predicate pred) {
+		return new RemoveNegationRewriterImpl(false)
 				.isApplicableOrRewrite(pred);
 	}
 
@@ -868,8 +865,7 @@ public class Tactics {
 					if (child instanceof AssociativePredicate) {
 						return true;
 					}
-					final DLib lib = mDLib(ff);
-					if (child.equals(lib.True()) || child.equals(lib.False())) {
+					if (child.equals(DLib.True(ff)) || child.equals(DLib.False(ff))) {
 						return true;
 					}
 					if (Lib.isNeg(child)) {
@@ -906,7 +902,7 @@ public class Tactics {
 		return pred.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(RelationalPredicate predicate) {
-				return isRemoveMembershipApplicable(ff, predicate);
+				return isRemoveMembershipApplicable(predicate);
 			}
 		});
 	}
@@ -920,11 +916,10 @@ public class Tactics {
 	 *            the current sequent
 	 * @return <code>true</code> if the tactic is not applicable,
 	 *         <code>false</code> otherwise
-	 * @since 2.0
+	 * @since 3.0
 	 */
-	public static boolean isRemoveMembershipApplicable(FormulaFactory ff,
-			Predicate pred) {
-		return new RemoveMembershipRewriterImpl(ff, RMLevel.L1, false)
+	public static boolean isRemoveMembershipApplicable(Predicate pred) {
+		return new RemoveMembershipRewriterImpl(RMLevel.L1, false)
 				.isApplicableOrRewrite(pred);
 	}
 
@@ -3106,14 +3101,16 @@ public class Tactics {
 
 	/**
 	 * Returns the arithmetic rewriter.
+	 * <p>
+	 * Since 3.0 there is no FormulaFactory anymore since the rewriter use the
+	 * factory of the original formula.
+	 * </p>
 	 * 
-	 * @param ff
-	 *            the currently used formula factory
 	 * @return the arithmetic rewriter
-	 * @since 2.0
+	 * @since 3.0
 	 */
-	public static IFormulaRewriter getArithRewriter(FormulaFactory ff) {
-		return new ArithRewriterImpl(ff);
+	public static IFormulaRewriter getArithRewriter() {
+		return new ArithRewriterImpl();
 	}
 
 	/**
@@ -3122,13 +3119,11 @@ public class Tactics {
 	 * 
 	 * @param predicate
 	 *            a predicate
-	 * @param ff
-	 *            the currently used formula factory
 	 * @return a list of applicable positions
-	 * @since 2.0
+	 * @since 3.0
 	 */
-	public static List<IPosition> arithGetPositions(Predicate predicate, FormulaFactory ff) {
-		final IFormulaRewriter rewriter = new ArithRewriterImpl(ff);
+	public static List<IPosition> arithGetPositions(Predicate predicate) {
+		final IFormulaRewriter rewriter = new ArithRewriterImpl();
 		return predicate.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(BinaryExpression expr) {

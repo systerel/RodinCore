@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.SequentProver;
@@ -42,8 +41,8 @@ public class TypeRewrites extends AbstractAutoRewrites implements IVersionedReas
 	}
 
 	@Override
-	protected IFormulaRewriter getRewriter(FormulaFactory formulaFactory) {
-		return new TypeRewriterImpl(formulaFactory);
+	protected IFormulaRewriter getRewriter() {
+		return new TypeRewriterImpl();
 	}
 
 }

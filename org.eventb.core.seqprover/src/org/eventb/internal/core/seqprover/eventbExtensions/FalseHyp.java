@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
-
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -22,6 +20,7 @@ import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
 
 public class FalseHyp extends EmptyInputReasoner{
@@ -34,7 +33,7 @@ public class FalseHyp extends EmptyInputReasoner{
 	
 	@ProverRule("FALSE_HYP")
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input, IProofMonitor pm){
-		final Predicate False = mDLib(seq.getFormulaFactory()).False();
+		final Predicate False = DLib.False(seq.getFormulaFactory());
 		if (! seq.containsHypothesis(False))
 			return ProverFactory.reasonerFailure(this,input,"no false hypothesis");
 		

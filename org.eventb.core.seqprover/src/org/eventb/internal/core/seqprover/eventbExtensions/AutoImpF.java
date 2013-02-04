@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -82,8 +81,9 @@ public class AutoImpF extends EmptyInputReasoner {
 			if (newLhs.size() == 0){
 				inferredHyps = Lib.breakPossibleConjunct(Lib.impRight(hyp));
 			} else {
-				final DLib lib = mDLib(seq.getFormulaFactory());
-				inferredHyps = Collections.singleton(lib.makeImp(lib.makeConj(newLhs), Lib.impRight(hyp)));
+				FormulaFactory ff = seq.getFormulaFactory();
+				inferredHyps = Collections.singleton(DLib.makeImp(
+						DLib.makeConj(ff, newLhs), Lib.impRight(hyp)));
 			}
 			
 			// Check if rewriting made a change

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,19 +66,18 @@ public class AbstrExpr extends SingleExprInputReasoner implements
 		// We can now assume that lemma has been properly parsed and typed.
 		
 		// Generate the well definedness condition for the lemma
-		final DLib lib = DLib.mDLib(seq.getFormulaFactory());
-		final Predicate exprWD = lib.WD(expr);
+		final FormulaFactory ff = seq.getFormulaFactory();
+		final Predicate exprWD = DLib.WD(expr);
 		final Set<Predicate> exprWDs = Lib.breakPossibleConjunct(exprWD);
-		lib.removeTrue(exprWDs);
+		DLib.removeTrue(ff, exprWDs);
 		
 		// Generate a fresh free identifier
-		final FormulaFactory ff = seq.getFormulaFactory();
 		final FreeIdentifier freeIdent = ff.makeFreeIdentifier(
 				genFreshFreeIdentName(seq.typeEnvironment()),
 				null, expr.getType());
 		
 		// Generate the equality predicate
-		final Predicate aeEq = lib.makeEq(freeIdent, expr);
+		final Predicate aeEq = DLib.makeEq(freeIdent, expr);
 		
 		// Generate the anticidents
 		final IAntecedent[] anticidents = new IAntecedent[2];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,8 +52,8 @@ public class UnionInterDistRewriterImpl extends DefaultRewriter {
 
 	private AssociativeExpression subExp;
 
-	public UnionInterDistRewriterImpl(AssociativeExpression subExp, FormulaFactory ff) {
-		super(true, ff);
+	public UnionInterDistRewriterImpl(AssociativeExpression subExp) {
+		super(true);
 		this.subExp = subExp;
 	}
 		
@@ -62,6 +62,7 @@ public class UnionInterDistRewriterImpl extends DefaultRewriter {
     @ProverRule({"DISTRI_BUNION_BINTER", "DISTRI_BINTER_BUNION"})
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
+		FormulaFactory ff = expression.getFactory();
 	    %match (Expression expression) {
 
 			/**

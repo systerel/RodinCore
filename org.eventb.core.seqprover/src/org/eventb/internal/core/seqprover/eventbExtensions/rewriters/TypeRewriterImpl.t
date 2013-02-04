@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *     Systerel - added support for SIMP_TYPE_SUBSETEQ and SIMP_TYPE_SUBSET_L
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
-
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.math.BigInteger;
 
@@ -52,8 +50,8 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
 @SuppressWarnings("unused")
 public class TypeRewriterImpl extends DefaultRewriter {
 
-	public TypeRewriterImpl(FormulaFactory ff) {
-		super(true, ff);
+	public TypeRewriterImpl() {
+		super(true);
 	}
 		
 	%include {FormulaV2.tom}
@@ -62,7 +60,7 @@ public class TypeRewriterImpl extends DefaultRewriter {
             "SIMP_TYPE_SUBSETEQ", "SIMP_TYPE_SUBSET_L" })
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
-	    final DLib lib = mDLib(ff);
+		FormulaFactory ff = predicate.getFactory();
     	%match (Predicate predicate) {
 
 			/**
@@ -70,7 +68,7 @@ public class TypeRewriterImpl extends DefaultRewriter {
 	    	 */
 			In(_, Typ) -> {
 				if (`Typ.isATypeExpression())
-					return lib.True();
+					return DLib.True(ff);
 				return predicate;			
 			}
 			
@@ -79,7 +77,7 @@ public class TypeRewriterImpl extends DefaultRewriter {
 			 */
 			Equal(Typ, EmptySet()) -> {
 				if (`Typ.isATypeExpression())
-					return lib.False();
+					return DLib.False(ff);
 				return predicate;
 			}
 
@@ -88,7 +86,7 @@ public class TypeRewriterImpl extends DefaultRewriter {
 			 */
 			Equal(EmptySet(), Typ) -> {
 				if (`Typ.isATypeExpression())
-					return lib.False();
+					return DLib.False(ff);
 				return predicate;
 			}
 
@@ -97,7 +95,7 @@ public class TypeRewriterImpl extends DefaultRewriter {
              */
             SubsetEq(_, Typ) -> {
                 if (`Typ.isATypeExpression())
-                    return lib.True();
+                    return DLib.True(ff);
                 return predicate;
             }
             
@@ -106,7 +104,7 @@ public class TypeRewriterImpl extends DefaultRewriter {
              */
             Subset(S, Typ) -> {
                 if (`Typ.isATypeExpression())
-                    return lib.makeNotEq(`S, `Typ);
+                    return DLib.makeNotEq(`S, `Typ);
                 return predicate;
             }
             

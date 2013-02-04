@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewriterImpl;
 import org.junit.Test;
@@ -25,7 +26,7 @@ import org.junit.Test;
 public class TypeRewriterTests extends AbstractFormulaRewriterTests {
 
 	// The type rewriter for testing.
-	private static final IFormulaRewriter rewriter = new TypeRewriterImpl(ff);
+	private static final IFormulaRewriter rewriter = new TypeRewriterImpl();
 	
 	/**
 	 * Constructor.
@@ -33,7 +34,7 @@ public class TypeRewriterTests extends AbstractFormulaRewriterTests {
 	 * Create an abstract formula rewriter test with the input is the type rewriter.
 	 */
 	public TypeRewriterTests() {
-		super(rewriter);
+		super(FormulaFactory.getDefault(), rewriter);
 	}
 
 	@Test

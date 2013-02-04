@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,44 +69,37 @@ import org.eventb.core.seqprover.eventbExtensions.DLib;
  */
 public abstract class AssociativeSimplification<T extends Formula<T>> {
 
-	public static Predicate simplifyLand(AssociativePredicate predicate,
-			DLib dLib, boolean doMulti) {
-		return new LandSimplification(predicate, dLib, doMulti).simplify();
+	public static Predicate simplifyLand(AssociativePredicate predicate, boolean doMulti) {
+		return new LandSimplification(predicate, doMulti).simplify();
 	}
 
 	public static Predicate simplifyLor(AssociativePredicate predicate,
-			DLib dLib, boolean doMulti) {
-		return new LorSimplification(predicate, dLib, doMulti).simplify();
+			boolean doMulti) {
+		return new LorSimplification(predicate, doMulti).simplify();
 	}
 
-	public static Expression simplifyInter(AssociativeExpression expression,
-			DLib dLib) {
-		return new InterSimplification(expression, dLib).simplify();
+	public static Expression simplifyInter(AssociativeExpression expression) {
+		return new InterSimplification(expression).simplify();
 	}
 
-	public static Expression simplifyUnion(AssociativeExpression expression,
-			DLib dLib) {
-		return new UnionSimplification(expression, dLib).simplify();
+	public static Expression simplifyUnion(AssociativeExpression expression) {
+		return new UnionSimplification(expression).simplify();
 	}
 
-	public static Expression simplifyMult(AssociativeExpression expression,
-			DLib dLib) {
-		return new MultSimplification(expression, dLib).simplify();
+	public static Expression simplifyMult(AssociativeExpression expression) {
+		return new MultSimplification(expression).simplify();
 	}
 
-	public static Expression simplifyPlus(AssociativeExpression expression,
-			DLib dLib) {
-		return new PlusSimplification(expression, dLib).simplify();
+	public static Expression simplifyPlus(AssociativeExpression expression) {
+		return new PlusSimplification(expression).simplify();
 	}
 
-	public static Expression simplifyComp(AssociativeExpression expression,
-			DLib dLib) {
-		return new CompSimplification(expression, dLib).simplify();
+	public static Expression simplifyComp(AssociativeExpression expression) {
+		return new CompSimplification(expression).simplify();
 	}
 
-	public static Expression simplifyOvr(AssociativeExpression expression,
-			DLib dLib) {
-		return new OvrSimplification(expression, dLib).simplify();
+	public static Expression simplifyOvr(AssociativeExpression expression) {
+		return new OvrSimplification(expression).simplify();
 	}
 
 	private static abstract class PredicateSimplification extends
@@ -115,9 +108,8 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 		// Tells whether to consider duplicates and contradictions.
 		private final boolean doMulti;
 
-		PredicateSimplification(AssociativePredicate original, DLib dLib,
-				boolean doMulti) {
-			super(original, original.getChildren(), dLib, doMulti);
+		PredicateSimplification(AssociativePredicate original, boolean doMulti) {
+			super(original, original.getChildren(), doMulti);
 			this.doMulti = doMulti;
 		}
 
@@ -132,7 +124,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 			if (!doMulti) {
 				return false;
 			}
-			final Predicate negation = dLib.makeNeg(child);
+			final Predicate negation = DLib.makeNeg(child);
 			return newChildren.contains(negation);
 		}
 
@@ -168,9 +160,8 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	private static class LandSimplification extends PredicateSimplification {
 
-		LandSimplification(AssociativePredicate original, DLib dLib,
-				boolean doMulti) {
-			super(original, dLib, doMulti);
+		LandSimplification(AssociativePredicate original, boolean doMulti) {
+			super(original, doMulti);
 		}
 
 		@Override
@@ -187,9 +178,8 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	private static class LorSimplification extends PredicateSimplification {
 
-		LorSimplification(AssociativePredicate original, DLib dLib,
-				boolean doMulti) {
-			super(original, dLib, doMulti);
+		LorSimplification(AssociativePredicate original, boolean doMulti) {
+			super(original, doMulti);
 		}
 
 		@Override
@@ -207,9 +197,9 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 	private static abstract class ExpressionSimplification extends
 			AssociativeSimplification<Expression> {
 
-		ExpressionSimplification(AssociativeExpression original, DLib dLib,
+		ExpressionSimplification(AssociativeExpression original,
 				boolean eliminateDuplicate) {
-			super(original, original.getChildren(), dLib, eliminateDuplicate);
+			super(original, original.getChildren(), eliminateDuplicate);
 		}
 
 		@Override
@@ -260,8 +250,8 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 		private CompAccumulator accumulator;
 
-		CompSimplification(AssociativeExpression original, DLib dLib) {
-			super(original, dLib, false);
+		CompSimplification(AssociativeExpression original) {
+			super(original, false);
 			accumulator = new CompAccumulator(ff);
 		}
 
@@ -420,8 +410,8 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	private static class InterSimplification extends ExpressionSimplification {
 
-		InterSimplification(AssociativeExpression original, DLib dLib) {
-			super(original, dLib, true);
+		InterSimplification(AssociativeExpression original) {
+			super(original, true);
 		}
 
 		@Override
@@ -451,8 +441,8 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 		private boolean positive = true;
 
-		MultSimplification(AssociativeExpression original, DLib dLib) {
-			super(original, dLib, false);
+		MultSimplification(AssociativeExpression original) {
+			super(original, false);
 		}
 
 		@Override
@@ -538,8 +528,8 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 	 */
 	private static class OvrSimplification extends ExpressionSimplification {
 
-		OvrSimplification(AssociativeExpression original, DLib dLib) {
-			super(original, dLib, true);
+		OvrSimplification(AssociativeExpression original) {
+			super(original, true);
 		}
 
 		@Override
@@ -605,8 +595,8 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	private static class PlusSimplification extends ExpressionSimplification {
 
-		PlusSimplification(AssociativeExpression original, DLib dLib) {
-			super(original, dLib, false);
+		PlusSimplification(AssociativeExpression original) {
+			super(original, false);
 		}
 
 		@Override
@@ -628,8 +618,8 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	private static class UnionSimplification extends ExpressionSimplification {
 
-		UnionSimplification(AssociativeExpression original, DLib dLib) {
-			super(original, dLib, true);
+		UnionSimplification(AssociativeExpression original) {
+			super(original, true);
 		}
 
 		@Override
@@ -662,15 +652,14 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 	// Set to true if a new result must be created
 	protected boolean changed = false;
 
-	protected final DLib dLib;
 	protected FormulaFactory ff;
 
-	protected AssociativeSimplification(T original, T[] children, DLib dLib,
+	protected AssociativeSimplification(T original, T[] children,
 			boolean eliminateDuplicate) {
 		this.original = original;
 		this.children = children;
-		this.dLib = dLib;
-		this.ff = dLib.getFormulaFactory();
+
+		this.ff = original.getFactory();
 
 		if (eliminateDuplicate) {
 			this.newChildren = new LinkedHashSet<T>();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,67 +13,61 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import java.math.BigInteger;
 
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 public class DivisionUtils {
 
-	private DLib dLib;
-
-	public DivisionUtils(DLib lib) {
-		dLib = lib;
+	public static Expression getFaction(Expression E, Expression F) {
+		return E.getFactory().makeBinaryExpression(Expression.DIV, E, F, null);
 	}
 
-	public Expression getFaction(Expression E, Expression F) {
-		return dLib.getFormulaFactory().makeBinaryExpression(Expression.DIV, E,
-				F, null);
-	}
-
-	public Expression getFaction(Expression expression, BigInteger E,
+	public static Expression getFaction(Expression expression, BigInteger E,
 			Expression F) {
+		FormulaFactory ff = expression.getFactory();
 		switch (E.signum()) {
 		case -1:
-			final Expression minusE = negate(E);
-			return dLib.getFormulaFactory().makeBinaryExpression(
-					Expression.DIV, minusE, F, null);
+			final Expression minusE = negate(ff, E);
+			return ff.makeBinaryExpression(Expression.DIV, minusE, F, null);
 		case 0:
-			return dLib.getFormulaFactory().makeIntegerLiteral(E, null);
+			return ff.makeIntegerLiteral(E, null);
 		default:
 			return expression;
 		}
 	}
 
-	public Expression getFaction(Expression expression, Expression E,
+	public static Expression getFaction(Expression expression, Expression E,
 			BigInteger F) {
+		FormulaFactory ff = expression.getFactory();
 		if (F.signum() < 0) {
-			final Expression minusF = negate(F);
-			return dLib.getFormulaFactory().makeBinaryExpression(
+			final Expression minusF = negate(ff, F);
+			return ff.makeBinaryExpression(
 					Expression.DIV, E, minusF, null);
 		}
 		if (F.equals(BigInteger.ONE)) {
-			return dLib.getFormulaFactory().makeUnaryExpression(
+			return ff.makeUnaryExpression(
 					Expression.UNMINUS, E, null);
 		}
 		return expression;
 	}
 
-	private IntegerLiteral negate(BigInteger value) {
-		return dLib.getFormulaFactory()
-				.makeIntegerLiteral(value.negate(), null);
+	private static IntegerLiteral negate(FormulaFactory ff, BigInteger value) {
+		return ff.makeIntegerLiteral(value.negate(), null);
 	}
 
-	public Expression getFaction(Expression expression, BigInteger E,
+	public static Expression getFaction(Expression expression, BigInteger E,
 			BigInteger F) {
+		FormulaFactory ff = expression.getFactory();
 		if (E.signum() == 0)
-			return dLib.getFormulaFactory().makeIntegerLiteral(BigInteger.ZERO,
+			return ff.makeIntegerLiteral(BigInteger.ZERO,
 					null);
 		if (F.equals(BigInteger.ONE)) {
-			return dLib.getFormulaFactory().makeIntegerLiteral(E, null);
+			return ff.makeIntegerLiteral(E, null);
 		}
 		if (E.signum() < 0 && F.signum() < 0) {
-			final Expression minusE = negate(E);
-			final Expression minusF = negate(F);
-			return dLib.getFormulaFactory().makeBinaryExpression(
+			final Expression minusE = negate(ff, E);
+			final Expression minusF = negate(ff, F);
+			return ff.makeBinaryExpression(
 					Expression.DIV, minusE, minusF, null);
 		}
 		return expression;

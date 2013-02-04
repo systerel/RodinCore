@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.UnaryExpression;
@@ -71,21 +70,20 @@ public class InDomGoalManager {
 				sequent, domExpression.getChild());
 		final List<Expression> substitutesList = new ArrayList<Expression>(
 				substitutes);
-		final FormulaFactory ff = sequent.getFormulaFactory();
 		final List<Predicate> autoGoals = new ArrayList<Predicate>();
 
 		for (Expression substitute : substitutesList) {
 			final Predicate rewrittenGoal = Lib.equalityRewrite(sequent.goal(),
-					domExpression, substitute, ff);
+					domExpression, substitute);
 			final Predicate typerewrittenGoal = rewrittenGoal
-					.rewrite(new TypeRewriterImpl(ff));
+					.rewrite(new TypeRewriterImpl());
 			if (typerewrittenGoal.getTag() == Formula.BTRUE) {
 				truegoalTac = true;
 				this.substitute = substitute;
 				return true;
 			}
 			final Predicate autorewrittenGoal = rewrittenGoal
-					.rewrite(new AutoRewriterImpl(ff, Level.LATEST));
+					.rewrite(new AutoRewriterImpl(Level.LATEST));
 			autoGoals.add(autorewrittenGoal);
 		}
 		for (int i = 0; i < autoGoals.size(); i++) {

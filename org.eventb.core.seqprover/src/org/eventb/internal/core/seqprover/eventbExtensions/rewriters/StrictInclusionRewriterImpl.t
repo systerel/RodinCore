@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 @SuppressWarnings("unused")
 public class StrictInclusionRewriterImpl extends AutoRewriterImpl {
 
-	public StrictInclusionRewriterImpl(FormulaFactory ff) {
-		super(ff, Level.L0);
+	public StrictInclusionRewriterImpl() {
+		super(Level.L0);
 	}
 	
 	%include {FormulaV2.tom}
@@ -35,6 +35,7 @@ public class StrictInclusionRewriterImpl extends AutoRewriterImpl {
 		if (!newPredicate.equals(predicate))
 			return newPredicate;
 
+		FormulaFactory ff = predicate.getFactory();
 	    %match (Predicate predicate) {
 	    	    	
 	    	/**

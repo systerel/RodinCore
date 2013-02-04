@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static java.util.Collections.singleton;
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -180,18 +179,17 @@ public class AllD implements IReasoner {
 		
 		// Generate the well definedness predicate for the instantiations
 		final FormulaFactory factory = seq.getFormulaFactory();
-		final DLib lib = mDLib(factory);
-		final Predicate WDpred = lib.WD(instantiations);
+		final Predicate WDpred = DLib.WD(factory, instantiations);
 		final Set<Predicate> WDpreds = Lib.breakPossibleConjunct(WDpred);
-		lib.removeTrue(WDpreds);
+		DLib.removeTrue(factory, WDpreds);
 
 		// Generate the instantiated predicate
-		final Predicate instantiatedPred = lib.instantiateBoundIdents(univHyp,
-				instantiations);
+		final Predicate instantiatedPred = 
+			DLib.instantiateBoundIdents(univHyp, instantiations);
 		assert instantiatedPred != null;
 
 		// Generate the antecedents
-		final IAntecedent[] antecedents = getAntecedents(lib, WDpreds, univHyp,
+		final IAntecedent[] antecedents = getAntecedents(factory, WDpreds, univHyp,
 				instantiatedPred);
 
 		// Generate the successful reasoner output
@@ -203,8 +201,8 @@ public class AllD implements IReasoner {
 	/**
 	 * Generates the antecedents for the rule to make.
 	 * 
-	 * @param lib
-	 *            the dynamic library
+	 * @param ff
+	 *            the formula factory
 	 * @param WDpreds
 	 *            the well definedness predicates for the instantiations.
 	 * @param univHyp
@@ -213,13 +211,13 @@ public class AllD implements IReasoner {
 	 *            the universal predicate after instantiation
 	 * @return the antecedent of the rule to make
 	 */
-	protected IAntecedent[] getAntecedents(DLib lib, Set<Predicate> WDpreds,
+	protected IAntecedent[] getAntecedents(FormulaFactory ff, Set<Predicate> WDpreds,
 			Predicate univHyp, Predicate instantiatedPred) {
 
 		final IAntecedent[] antecedents = new IAntecedent[2];
 
 		// First antecedent : Well Definedness condition
-		antecedents[0] = ProverFactory.makeAntecedent(lib.makeConj(WDpreds));
+		antecedents[0] = ProverFactory.makeAntecedent(DLib.makeConj(ff, WDpreds));
 
 		// The instantiated goal
 		final Set<Predicate> addedHyps = new LinkedHashSet<Predicate>();

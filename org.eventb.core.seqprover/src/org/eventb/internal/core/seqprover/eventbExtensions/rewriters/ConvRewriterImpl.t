@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,8 +48,8 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class ConvRewriterImpl extends DefaultRewriter {
 
-	public ConvRewriterImpl(FormulaFactory ff) {
-		super(true, ff);
+	public ConvRewriterImpl() {
+		super(true);
 	}
 		
 	%include {FormulaV2.tom}
@@ -57,6 +57,7 @@ public class ConvRewriterImpl extends DefaultRewriter {
 	@ProverRule("DISTRI_CONVERSE_BUNION") 
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
+		final FormulaFactory ff = expression.getFactory();
 	    %match (Expression expression) {
 
 			/**
@@ -131,6 +132,7 @@ public class ConvRewriterImpl extends DefaultRewriter {
 	}
 
 	private Expression makeConverseAssociative(int tag, Expression [] children) {
+		final FormulaFactory ff = children[0].getFactory();
 		Expression [] newChildren = new Expression[children.length];
 		for (int i = 0; i < children.length; ++i) {
 			newChildren[i] = ff.makeUnaryExpression(

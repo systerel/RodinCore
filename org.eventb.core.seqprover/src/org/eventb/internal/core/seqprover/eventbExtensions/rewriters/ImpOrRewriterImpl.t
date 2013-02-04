@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,8 +50,8 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class ImpOrRewriterImpl extends DefaultRewriter {
 
-	public ImpOrRewriterImpl(FormulaFactory ff) {
-		super(true, ff);
+	public ImpOrRewriterImpl() {
+		super(true);
 	}
 		
 	%include {FormulaV2.tom}
@@ -59,6 +59,7 @@ public class ImpOrRewriterImpl extends DefaultRewriter {
 	@ProverRule( { "DISTRI_IMP_OR", "IMP_OR_L" })
 	@Override
 	public Predicate rewrite(BinaryPredicate predicate) {
+		FormulaFactory ff = predicate.getFactory();
 	    %match (Predicate predicate) {
 
 			/**

@@ -45,7 +45,7 @@ public class RemoveInclusion extends AbstractManualRewrites implements
 
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
-		IFormulaRewriter rewriter = new RemoveInclusionRewriterImpl(ff);
+		IFormulaRewriter rewriter = new RemoveInclusionRewriterImpl();
 		Formula<?> predicate = pred.getSubFormula(position);
 
 		Formula<?> newSubPredicate = null;

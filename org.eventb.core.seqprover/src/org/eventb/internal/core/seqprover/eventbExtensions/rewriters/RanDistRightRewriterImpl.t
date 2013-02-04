@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,8 +49,8 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class RanDistRightRewriterImpl extends DefaultRewriter {
 
-	public RanDistRightRewriterImpl(FormulaFactory ff) {
-		super(true, ff);
+	public RanDistRightRewriterImpl() {
+		super(true);
 	}
 		
 	%include {FormulaV2.tom}
@@ -99,6 +99,7 @@ public class RanDistRightRewriterImpl extends DefaultRewriter {
 
 	private Expression makeRangeAssociative(int tag, int ranTag, Expression r,
 			Expression [] children) {
+		FormulaFactory ff = r.getFactory();
 		Expression [] newChildren = new Expression[children.length];
 		for (int i = 0; i < children.length; ++i) {
 			newChildren[i] = ff.makeBinaryExpression(

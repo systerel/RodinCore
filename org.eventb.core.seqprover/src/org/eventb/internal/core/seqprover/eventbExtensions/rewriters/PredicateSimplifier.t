@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,8 @@ import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyLand;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyLor;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
+
 
 import java.math.BigInteger;
 
@@ -33,11 +35,12 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.ProverRule;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
+
 
 /**
  * Implements syntactic simplification of event-B predicates based on some
@@ -58,7 +61,6 @@ public class PredicateSimplifier extends DefaultRewriter {
 	protected final boolean debug;
 	private final String rewriterName;
 
-	protected final DLib dLib;
 
 	// Enabled options (public for testing purposes only)
 	public final boolean withMultiImp;
@@ -80,10 +82,9 @@ public class PredicateSimplifier extends DefaultRewriter {
 	 * the call to the abstract constructor). Unfortunately, it is not possible
 	 * to trace auto-flattening.
 	 */
-	public PredicateSimplifier(DLib dLib, int options, boolean debug,
+	public PredicateSimplifier(int options, boolean debug,
 			String rewriterName) {
-		super(true, dLib.getFormulaFactory());
-		this.dLib = dLib;
+		super(true);
 		this.debug = debug;
 		this.withMultiImp = isSet(options, MULTI_IMP);
 		this.withMultiEqvNot = isSet(options, MULTI_EQV_NOT);
@@ -132,15 +133,18 @@ public class PredicateSimplifier extends DefaultRewriter {
 
 	protected AssociativePredicate makeAssociativePredicate(int tag,
 			Predicate... children) {
+		final FormulaFactory ff = children[0].getFactory();
 		return ff.makeAssociativePredicate(tag, children, null);
 	}
 
 	protected BinaryPredicate makeBinaryPredicate(int tag, Predicate left, Predicate right) {
+		final FormulaFactory ff = left.getFactory();
 		return ff.makeBinaryPredicate(tag, left, right, null);
 	}
 
 	protected QuantifiedPredicate makeQuantifiedPredicate(int tag,
 			BoundIdentDecl[] boundIdentifiers, Predicate child) {
+		final FormulaFactory ff = child.getFactory();
 		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
 	}
 
@@ -176,7 +180,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 *    P ∧ ... ∧ Q ∧ ... ∧ ¬Q ∧ ... ∧ R  == ⊥
 			 */
 			Land(_) -> {
-				result = simplifyLand(predicate, dLib, withMultiAndOr);
+				result = simplifyLand(predicate, withMultiAndOr);
 				trace(predicate, result, "SIMP_SPECIAL_AND_BTRUE",
 						"SIMP_SPECIAL_AND_BFALSE", "SIMP_MULTI_AND",
 						"SIMP_MULTI_AND_NOT");
@@ -194,7 +198,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 *    P ⋁ ... ⋁ Q ⋁ ... ⋁ ¬Q ⋁ ... ⋁ R  == P ⋁ ... ⋁ Q ⋁ ... ⋁ R
 			 */
 			Lor(_) -> {
-				result = simplifyLor(predicate, dLib, withMultiAndOr);
+				result = simplifyLor(predicate, withMultiAndOr);
 				trace(predicate, result, "SIMP_SPECIAL_OR_BTRUE",
 						"SIMP_SPECIAL_OR_BFALSE", "SIMP_MULTI_OR",
 						"SIMP_MULTI_OR_NOT");
@@ -214,6 +218,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 	@Override
 	public Predicate rewrite(BinaryPredicate predicate) {
 		final Predicate result;
+		FormulaFactory ff = predicate.getFactory();
 		%match (Predicate predicate) {
 			/**
 			 * SIMP_SPECIAL_IMP_BTRUE_L
@@ -230,7 +235,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 *    ⊥ ⇒ P == ⊤
 			 */
 			Limp(BFALSE(), _) -> {
-				result = dLib.True();
+				result = DLib.True(ff);
 				trace(predicate, result, "SIMP_SPECIAL_IMP_BFALSE_L");
 				return result;
 			}
@@ -250,7 +255,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 *    P ⇒ ⊥ == ¬P
 			 */
 			Limp(P, BFALSE()) -> {
-				result = dLib.makeNeg(`P);
+				result = DLib.makeNeg(`P);
 				trace(predicate, result, "SIMP_SPECIAL_IMP_BFALSE_R");
 				return result;
 			}
@@ -261,7 +266,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 */
 			Limp(P, P) -> {
 				if (withMultiImp) {
-					result = dLib.True();
+					result = DLib.True(ff);
 					trace(predicate, result, "SIMP_MULTI_IMP");
 					return result;
 				}
@@ -292,7 +297,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 *    P ⇔ P == ⊤
 			 */
 			Leqv(P, P) -> {
-				result = dLib.True();
+				result = DLib.True(ff);
 				trace(predicate, result, "SIMP_MULTI_EQV");
 				return result;
 			}
@@ -302,7 +307,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 *    P ⇔ ⊥ = ¬P
 			 */
 			Leqv(P, BFALSE()) -> {
-				result = dLib.makeNeg(`P);
+				result = DLib.makeNeg(`P);
 				trace(predicate, result, "SIMP_SPECIAL_EQV_BFALSE");
 				return result;
 			}
@@ -312,7 +317,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 *    ⊥ ⇔ P == ¬P
 			 */
 			Leqv(BFALSE(), P) -> {
-				result = dLib.makeNeg(`P);
+				result = DLib.makeNeg(`P);
 				trace(predicate, result, "SIMP_SPECIAL_EQV_BFALSE");
 				return result;
 			}
@@ -324,14 +329,14 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 */
 			Leqv(P, Not(P)) -> {
 				if (withMultiEqvNot) {
-					result = dLib.False();
+					result = DLib.False(ff);
 					trace(predicate, result, "SIMP_MULTI_EQV_NOT");
 					return result;
 				}
 			}
 			Leqv(Not(P), P) -> {
 				if (withMultiEqvNot) {
-					result = dLib.False();
+					result = DLib.False(ff);
 					trace(predicate, result, "SIMP_MULTI_EQV_NOT");
 					return result;
 				}
@@ -343,7 +348,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 */
 			Limp(Land(pList(_*, Q, _*)), Q) -> {
 				if (withMultiImpAnd) {
-					result = dLib.True();
+					result = DLib.True(ff);
 					trace(predicate, result, "SIMP_MULTI_IMP_AND");
 					return result;
 				}
@@ -359,11 +364,11 @@ public class PredicateSimplifier extends DefaultRewriter {
 			Limp(and@Land(children), Q) -> {
 				/* Tom-2.8 doc says the following should work:
 				 *    Limp(and@Land(pList(_*, nQ, _*)), Q)
-				 *    && (nQ << Predicate dLib.makeNeg(Q))
+				 *    && (nQ << Predicate DLib.makeNeg(Q))
 				 * but this raises an internal error in Tom!
 				 */
-				if (withMultiImpAnd && contains(`children, dLib.makeNeg(`Q))) {
-					result = dLib.makeNeg(`and);
+				if (withMultiImpAnd && contains(`children, DLib.makeNeg(`Q))) {
+					result = DLib.makeNeg(`and);
 					trace(predicate, result, "SIMP_MULTI_IMP_AND_NOT_R",
 							"SIMP_MULTI_IMP_AND_NOT_L");
 					return result;
@@ -402,6 +407,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			"SIMP_NOT_NOT" })
 	@Override
 	public Predicate rewrite(UnaryPredicate predicate) {
+		FormulaFactory ff = predicate.getFactory();
 		final Predicate result;
 		%match (Predicate predicate) {
 			/**
@@ -409,7 +415,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 *    ¬⊤ == ⊥
 			 */
 			Not(BTRUE()) -> {
-				result = dLib.False();
+				result = DLib.False(ff);
 				trace(predicate, result, "SIMP_SPECIAL_NOT_BTRUE");
 				return result;
 			}
@@ -419,7 +425,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 *    ¬⊥ == ⊤
 			 */
 			Not(BFALSE()) -> {
-				result =  dLib.True();
+				result =  DLib.True(ff);
 				trace(predicate, result, "SIMP_SPECIAL_NOT_BFALSE");
 				return result;
 			}

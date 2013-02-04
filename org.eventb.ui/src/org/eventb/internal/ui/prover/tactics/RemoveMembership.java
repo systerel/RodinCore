@@ -12,7 +12,6 @@ package org.eventb.internal.ui.prover.tactics;
 
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -56,17 +55,14 @@ public class RemoveMembership extends AbstractHypGoalTacticProvider {
 	public static class RemoveMembershipAppliInspector extends
 			DefaultApplicationInspector {
 
-		private final FormulaFactory ff;
-
-		public RemoveMembershipAppliInspector(FormulaFactory ff, Predicate hyp) {
+		public RemoveMembershipAppliInspector(Predicate hyp) {
 			super(hyp);
-			this.ff = ff;
 		}
 
 		@Override
 		public void inspect(RelationalPredicate predicate,
 				IAccumulator<ITacticApplication> accumulator) {
-			if (Tactics.isRemoveMembershipApplicable(ff, predicate)) {
+			if (Tactics.isRemoveMembershipApplicable(predicate)) {
 				final IPosition position = accumulator.getCurrentPosition();
 				accumulator.add(new RemoveMembershipApplication(hyp, position));
 			}
@@ -78,8 +74,7 @@ public class RemoveMembership extends AbstractHypGoalTacticProvider {
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new RemoveMembershipAppliInspector(node
-				.getFormulaFactory(), hyp));
+		return predicate.inspect(new RemoveMembershipAppliInspector(hyp));
 	}
 
 }

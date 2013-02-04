@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Systerel - added support for rewriting with needed hypotheses
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
-
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,6 +31,7 @@ import org.eventb.core.seqprover.IReasonerInputWriter;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.SerializeException;
+import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.proofBuilder.ReplayHints;
 import org.eventb.internal.core.seqprover.ForwardInfHypAction;
@@ -131,7 +130,7 @@ public abstract class AbstractManualRewrites implements IReasoner {
 			final Collection<Predicate> inferredHyps = Lib
 				.breakPossibleConjunct(inferredHyp);
 			// Check if rewriting generated something interesting
-			inferredHyps.remove(mDLib(seq.getFormulaFactory()).True());
+			inferredHyps.remove(DLib.True(seq.getFormulaFactory()));
 			final List<IHypAction> hypActions;
 			// make the forward inference action
 			if (!inferredHyps.isEmpty()) {

@@ -46,7 +46,7 @@ public class RemoveInclusionUniversal extends AbstractManualRewrites implements
 
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
-		IFormulaRewriter rewriter = new RemoveInclusionUniversalRewriterImpl(ff);
+		IFormulaRewriter rewriter = new RemoveInclusionUniversalRewriterImpl();
 		Formula<?> predicate = pred.getSubFormula(position);
 
 		Formula<?> newSubPredicate = null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,8 +51,8 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class SetMinusRewriterImpl extends DefaultRewriter {
 
-	public SetMinusRewriterImpl(FormulaFactory ff) {
-		super(true, ff);
+	public SetMinusRewriterImpl() {
+		super(true);
 	}
 		
 	%include {FormulaV2.tom}
@@ -61,6 +61,7 @@ public class SetMinusRewriterImpl extends DefaultRewriter {
        	           "DERIV_TYPE_SETMINUS_SETMINUS" })
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
+		FormulaFactory ff = expression.getFactory();
 	    %match (Expression expression) {
 
 			/**
@@ -106,6 +107,7 @@ public class SetMinusRewriterImpl extends DefaultRewriter {
 
 	private Expression makeSetMinusAssociative(int tag, Expression U,
 			Expression [] children) {
+		FormulaFactory ff = U.getFactory();
 		Expression [] newChildren = new Expression[children.length];
 		for (int i = 0; i < children.length; ++i) {
 			newChildren[i] = ff.makeBinaryExpression(

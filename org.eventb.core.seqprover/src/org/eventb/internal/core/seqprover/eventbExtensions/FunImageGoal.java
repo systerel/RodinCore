@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,8 +73,7 @@ public class FunImageGoal extends PredicatePositionReasoner {
 			return reasonerFailure(this, input, "Ill-formed hypothesis " + hyp);
 		}
 
-		final DLib dl = DLib.mDLib(seq.getFormulaFactory());
-		final Predicate addedHyp = dl.makeInclusion(funImage, E2);
+		final Predicate addedHyp = DLib.makeInclusion(funImage, E2);
 		final IAntecedent antecedent = makeAntecedent(goal,
 				singleton(addedHyp), null);
 		final String display = getDisplayName() + " for " + funImage;

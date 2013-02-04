@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 /**
@@ -46,7 +45,7 @@ public class ImpE extends ImpHypothesisReasoner implements IVersionedReasoner {
 	@ProverRule("MH")
 	@Override
 	protected IAntecedent[] getAntecedents(Predicate left, Predicate right,
-			DLib lib, IHypAction hideHypAction) {
+			IHypAction hideHypAction) {
 		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(right);
 		return new IAntecedent[] {
 				ProverFactory.makeAntecedent(left, null, hideHypAction),

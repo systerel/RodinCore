@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
+
+import java.math.BigInteger;
 
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
@@ -26,36 +29,30 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractAut
 public class HideOriginalRewrites extends AbstractAutoRewrites implements
 		IReasoner {
 
-	private static class HideOriginalRewriter extends DefaultRewriter {
+	static class HideOriginalRewriter extends DefaultRewriter {
 
-		private final Expression number0;
-		private final Expression number1;
-		private final Expression number2;
-		private final DLib lib;
+		private static final BigInteger TWO = BigInteger.valueOf(2L);
 		
-		public HideOriginalRewriter(boolean autoFlattening, FormulaFactory ff) {
-			super(autoFlattening, ff);
-			lib = mDLib(ff);
-			number0 = lib.parseExpression("0");
-			number1 = lib.parseExpression("1");
-			number2 = lib.parseExpression("2");
-			number0.typeCheck(ff.makeTypeEnvironment());
-			number1.typeCheck(ff.makeTypeEnvironment());
-			number2.typeCheck(ff.makeTypeEnvironment());
+		public HideOriginalRewriter(boolean autoFlattening) {
+			super(autoFlattening);
 		}
 
 		@Override
 		public Expression rewrite(IntegerLiteral literal) {
-			if (literal.equals(number0))
-				return number1;
-			if (literal.equals(number1))
-				return number2;
+			final FormulaFactory ff = literal.getFactory();
+			final BigInteger value = literal.getValue();
+			if (value.equals(ZERO)) {
+				return ff.makeIntegerLiteral(ONE, null);
+			}
+			if (value.equals(ONE)) {
+				return ff.makeIntegerLiteral(TWO, null);
+			}
 			return super.rewrite(literal);
 		}
 
 		@Override
 		public Predicate rewrite(SimplePredicate predicate) {
-			return lib.True();
+			return DLib.True(predicate.getFactory());
 		}
 		
 	}
@@ -70,8 +67,8 @@ public class HideOriginalRewrites extends AbstractAutoRewrites implements
 	}
 
 	@Override
-	protected IFormulaRewriter getRewriter(FormulaFactory formulaFactory) {
-		return new HideOriginalRewriter(true, formulaFactory);
+	protected IFormulaRewriter getRewriter() {
+		return new HideOriginalRewriter(true);
 	}
 
 	public String getReasonerID() {

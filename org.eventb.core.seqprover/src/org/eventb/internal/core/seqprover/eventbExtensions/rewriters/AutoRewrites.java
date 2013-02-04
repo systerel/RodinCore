@@ -16,7 +16,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IVersionedReasoner;
@@ -111,8 +110,8 @@ public abstract class AutoRewrites extends AbstractAutoRewrites implements
 	}
 
 	@Override
-	public final IFormulaRewriter getRewriter(FormulaFactory ff) {
-		return new AutoRewriterImpl(ff, level);
+	public final IFormulaRewriter getRewriter() {
+		return new AutoRewriterImpl(level);
 	}
 
 }

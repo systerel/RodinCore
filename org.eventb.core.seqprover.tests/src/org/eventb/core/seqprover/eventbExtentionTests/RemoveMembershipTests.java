@@ -41,7 +41,7 @@ public abstract class RemoveMembershipTests extends AbstractManualRewriterTests 
 		this.posFilter = new DefaultFilter() {
 			@Override
 			public boolean select(RelationalPredicate predicate) {
-				return new RemoveMembershipRewriterImpl(ff, level, false)
+				return new RemoveMembershipRewriterImpl(level, false)
 						.isApplicableOrRewrite(predicate);
 			}
 		};

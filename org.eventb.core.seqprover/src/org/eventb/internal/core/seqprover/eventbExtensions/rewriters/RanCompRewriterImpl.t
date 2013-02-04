@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -52,8 +52,8 @@ public class RanCompRewriterImpl extends DefaultRewriter {
 
 	private BinaryExpression subExp;
 
-	public RanCompRewriterImpl(BinaryExpression subExp, FormulaFactory ff) {
-		super(true, ff);
+	public RanCompRewriterImpl(BinaryExpression subExp) {
+		super(true);
 		this.subExp = subExp;
 	}
 		
@@ -62,6 +62,7 @@ public class RanCompRewriterImpl extends DefaultRewriter {
 	@ProverRule( { "DERIV_FCOMP_RANRES", "DERIV_FCOMP_RANSUB" })
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
+		FormulaFactory ff = expression.getFactory();
 		if (subExp.getTag() != Expression.RANRES &&
 				subExp.getTag() != Expression.RANSUB)
 			return expression;
@@ -73,8 +74,8 @@ public class RanCompRewriterImpl extends DefaultRewriter {
 	    	 *              p;...;(q ⩥ S);r;...;s == ((p;...;q) ⩥ S);r;...;s
 	    	 */
 			Fcomp(children) -> {
-				Collection<Expression> newChildren = new ArrayList<Expression>();
-				Collection<Expression> pToQ = new ArrayList<Expression>();
+				List<Expression> newChildren = new ArrayList<Expression>();
+				List<Expression> pToQ = new ArrayList<Expression>();
 				Expression S = null;
 				boolean found = false;
 				for (Expression child : `children) {
@@ -98,26 +99,23 @@ public class RanCompRewriterImpl extends DefaultRewriter {
 				Expression ranMan = ff.makeBinaryExpression(
 						subExp.getTag(), pToQComp, S, null);
 
-				Collection<Expression> exps =
+				List<Expression> exps =
 						new ArrayList<Expression>(newChildren.size() + 1);
 				exps.add(ranMan);
 				exps.addAll(newChildren);
 
-				if (exps.size() == 1)
-					return exps.iterator().next();
-					
-				return ff.makeAssociativeExpression(Expression.FCOMP,
-						exps, null);
+				return makeCompIfNeccessary(exps);
 			}
 			
 	    }
 	    return expression;
 	}
 
-	private Expression makeCompIfNeccessary(Collection<Expression> children) {
+	private Expression makeCompIfNeccessary(List<Expression> children) {
+		final Expression first = children.get(0);
 		if (children.size() == 1)
-			return children.iterator().next();
-		else
-			return ff.makeAssociativeExpression(Expression.FCOMP, children, null);	
+			return first;
+		final FormulaFactory ff = first.getFactory();
+		return ff.makeAssociativeExpression(Expression.FCOMP, children, null);
 	}
 }

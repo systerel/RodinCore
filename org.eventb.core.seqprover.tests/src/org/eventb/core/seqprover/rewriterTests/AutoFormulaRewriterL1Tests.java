@@ -26,7 +26,7 @@ public class AutoFormulaRewriterL1Tests extends AutoFormulaRewriterL0Tests {
 
 	// The automatic rewriter for testing.
 	private static final AutoRewriterImpl REWRITER_L1 = new AutoRewriterImpl(
-			DT_FAC, Level.L1);
+			Level.L1);
 
 	public AutoFormulaRewriterL1Tests() {
 		this(REWRITER_L1);

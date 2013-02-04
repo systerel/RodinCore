@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ public class AutoFormulaRewriterL0Tests extends AutoFormulaRewriterTests {
 
 	// The automatic rewriter for testing.
 	private static final AutoRewriterImpl REWRITER_L0 = new AutoRewriterImpl(
-			DT_FAC, Level.L0);
+			Level.L0);
 
 	public AutoFormulaRewriterL0Tests() {
 		this(REWRITER_L0);

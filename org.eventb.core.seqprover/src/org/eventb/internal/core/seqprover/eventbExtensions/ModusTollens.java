@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,12 +50,12 @@ public class ModusTollens extends ImpHypothesisReasoner
 
 	@ProverRule("HM")
 	@Override
-	protected IAntecedent[] getAntecedents(Predicate left, Predicate right, 
-			DLib lib, IHypAction hideHypAction) {
+	protected IAntecedent[] getAntecedents(Predicate left, Predicate right,
+			IHypAction hideHypAction) {
 		
 
-		final Predicate notRight = lib.makeNeg(right);
-		final Predicate notLeft = lib.makeNeg(left);
+		final Predicate notRight = DLib.makeNeg(right);
+		final Predicate notLeft = DLib.makeNeg(left);
 		final Set<Predicate> addedHyps = Lib.breakPossibleConjunct(notLeft);
 		return new IAntecedent[] {
 				makeAntecedent(notRight, null, hideHypAction),

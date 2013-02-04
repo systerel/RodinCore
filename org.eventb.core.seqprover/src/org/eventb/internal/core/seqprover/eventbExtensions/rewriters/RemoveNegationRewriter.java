@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import static org.eventb.core.seqprover.eventbExtensions.DLib.mDLib;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.conjuncts;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.disjuncts;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.eqLeft;
@@ -97,48 +96,47 @@ public class RemoveNegationRewriter implements Rewriter {
 	}
 
 	public Predicate apply(Predicate p, FormulaFactory ff) {
-		final DLib lib = mDLib(ff);
 		if (! (isNeg(p))) return null;
 		Predicate negP = negPred(p);
 		
 		// - T == F
 		if (isTrue(negP))
-			return lib.False();
+			return DLib.False(ff);
 		// - F == T
 		if (isFalse(negP))
-			return lib.True();
+			return DLib.True(ff);
 		// - - P == P
 		if (isNeg(negP))
 			return negPred(negP);
 		// - (P & Q &..)  = (-P or -Q or ..) 
 		if (isConj(negP))
-			return lib.makeDisj(lib.makeNeg(conjuncts(negP)));
+			return DLib.makeDisj(ff, DLib.makeNeg(conjuncts(negP)));
 		// - (P or Q &..) = (-P & -Q &..)
 		if (isDisj(negP))
-			return lib.makeConj(lib.makeNeg(disjuncts(negP)));
+			return DLib.makeConj(ff, DLib.makeNeg(disjuncts(negP)));
 		// - ( P => Q) = ( P & -Q)
 		if (isImp(negP))
-			return lib.makeConj(impLeft(negP),lib.makeNeg(impRight(negP)));
+			return DLib.makeConj(ff, impLeft(negP),DLib.makeNeg(impRight(negP)));
 		// -(#x . Px) == !x. -Px
 		if (isExQuant(negP))
-			return lib.makeUnivQuant(getBoundIdents(negP),
-					lib.makeNeg(getBoundPredicate(negP)));
+			return DLib.makeUnivQuant(getBoundIdents(negP),
+					DLib.makeNeg(getBoundPredicate(negP)));
 		// -(!x. Px) == #x. - Px
 		if (isUnivQuant(negP))
-			return lib.makeExQuant(getBoundIdents(negP),
-					lib.makeNeg(getBoundPredicate(negP)));
+			return DLib.makeExQuant(getBoundIdents(negP),
+					DLib.makeNeg(getBoundPredicate(negP)));
 		// -(a=b) == a/=b
 		if (isEq(negP))
-			return lib.makeNotEq(eqLeft(negP),eqRight(negP));
+			return DLib.makeNotEq(eqLeft(negP),eqRight(negP));
 		// -(a/=b) == (a=b)
 		if (isNotEq(negP))
-			return lib.makeEq(notEqLeft(negP),notEqRight(negP));
+			return DLib.makeEq(notEqLeft(negP),notEqRight(negP));
 		// -(a:A) == a/:A
 		if (isInclusion(negP))
-			return lib.makeNotInclusion(getElement(negP),getSet(negP));
+			return DLib.makeNotInclusion(ff, getElement(negP),getSet(negP));
 		// -(a/:A) == a:A
 		if (isNotInclusion(negP))
-			return lib.makeInclusion(getElement(negP),getSet(negP));
+			return DLib.makeInclusion(getElement(negP),getSet(negP));
 		
 		return null;
 	}

@@ -12,7 +12,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.util.Arrays;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
@@ -32,8 +31,8 @@ public class RemoveMembershipL1 extends RemoveMembership {
 	}
 
 	@Override
-	protected RemoveMembershipRewriterImpl getRewriter(FormulaFactory ff) {
-		return new RemoveMembershipRewriterImpl(ff, RMLevel.L1);
+	protected RemoveMembershipRewriterImpl getRewriter() {
+		return new RemoveMembershipRewriterImpl(RMLevel.L1);
 	}
 	
 	public String getReasonerID() {

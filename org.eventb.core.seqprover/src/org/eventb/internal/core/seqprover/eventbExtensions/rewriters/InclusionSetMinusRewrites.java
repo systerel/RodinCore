@@ -40,11 +40,11 @@ public abstract class InclusionSetMinusRewrites extends AbstractManualRewrites i
 		return ProverFactory.makeHideHypAction(Arrays.asList(pred));
 	}
 
-	protected abstract IFormulaRewriter makeRewriter(FormulaFactory ff);
+	protected abstract IFormulaRewriter makeRewriter();
 	
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
-		IFormulaRewriter rewriter = makeRewriter(ff);
+		IFormulaRewriter rewriter = makeRewriter();
 		Formula<?> predicate = pred.getSubFormula(position);
 
 		Formula<?> newSubPredicate = null;

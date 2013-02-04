@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,34 +13,22 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
+
 import java.math.BigInteger;
 
 import org.eventb.core.ast.AssociativeExpression;
-import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.Identifier;
-import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
-import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
@@ -60,8 +48,8 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	/**
 	 * Default rewriter.
 	 */
-	public RemoveMembershipRewriterImpl(FormulaFactory ff, RMLevel level) {
-		this(ff, level, true);
+	public RemoveMembershipRewriterImpl(RMLevel level) {
+		this(level, true);
 	}
 	
 	/**
@@ -69,8 +57,8 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	 * should give the result of rewriting, or just tell if the rewriting is
 	 * possible.
 	 */
-	public RemoveMembershipRewriterImpl(FormulaFactory ff, RMLevel rmLevel, boolean isRewrite) {
-		super(ff, RM_TO_AUTO_LEVEL[rmLevel.ordinal()]);
+	public RemoveMembershipRewriterImpl(RMLevel rmLevel, boolean isRewrite) {
+		super(RM_TO_AUTO_LEVEL[rmLevel.ordinal()]);
 		this.rmLevel = rmLevel;
 		this.isRewrite = isRewrite;
 	}
@@ -78,7 +66,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	%include {FormulaV2.tom}
 	
 	public boolean isApplicableOrRewrite(Predicate predicate) {
-    	
+		FormulaFactory ff = predicate.getFactory();
     	%match (Predicate predicate) {
 
 			/**
@@ -512,7 +500,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    		if (isRewrite) {
 	    			final Expression powT = makeUnaryExpression(Expression.POW, `T);
 	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `S, `powT);
-	    			final Predicate pred2 = makeRelationalPredicate(Predicate.NOTEQUAL, `S, makeEmptySet(`S.getType()));
+					final Predicate pred2 = makeRelationalPredicate(Predicate.NOTEQUAL, `S, makeEmptySet(ff, `S.getType()));
 	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    		}
 	    		return true;
@@ -538,6 +526,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
             In(E, Natural())->{
             	if(rmLevel.from(RMLevel.L1)) {
 	            	if (isRewrite) {
+						final Expression number0 = ff.makeIntegerLiteral(ZERO, null);
 	            		rewrittenPredicate = makeRelationalPredicate(Formula.LE, number0, `E );				
 	            	}
 	            	return true;
@@ -551,6 +540,7 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
             In(E, Natural1())->{
                	if(rmLevel.from(RMLevel.L1)) {
                		if (isRewrite) {
+						final Expression number1 = ff.makeIntegerLiteral(ONE, null);
                			rewrittenPredicate = makeRelationalPredicate(Formula.LE, number1, `E );				
                		}
                		return true;

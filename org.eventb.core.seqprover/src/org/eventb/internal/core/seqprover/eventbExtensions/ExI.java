@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofRule;
@@ -86,13 +87,13 @@ public class ExI implements IReasoner {
 		
 		
 		// Generate the well definedness predicate for the witnesses
-		final DLib lib = DLib.mDLib(seq.getFormulaFactory());
-		final Predicate WDpred = lib.WD(instantiations);
+		final FormulaFactory ff = seq.getFormulaFactory();
+		final Predicate WDpred = DLib.WD(ff, instantiations);
 		final Set<Predicate> WDpreds = Lib.breakPossibleConjunct(WDpred);
-		lib.removeTrue(WDpreds);
+		DLib.removeTrue(ff, WDpreds);
 		
 		// Generate the instantiated predicate
-		Predicate instantiatedPred = lib.instantiateBoundIdents(goal,instantiations);
+		Predicate instantiatedPred = DLib.instantiateBoundIdents(goal,instantiations);
 		assert instantiatedPred != null;
 		
 		// Generate the anticidents

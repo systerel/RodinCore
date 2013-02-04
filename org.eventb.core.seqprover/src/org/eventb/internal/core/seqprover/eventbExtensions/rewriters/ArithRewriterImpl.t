@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,26 +116,28 @@ public class ArithRewriterImpl extends DefaultRewriter {
         }
 	}
 
-	protected AssociativeExpression makeAssociativeExpression(int tag, Collection<Expression> children) {
+	protected AssociativeExpression makeAssociativeExpression(int tag, List<Expression> children) {
+		final FormulaFactory ff = children.get(0).getFactory();
 		return ff.makeAssociativeExpression(tag, children, null);
 	}
 
 	protected RelationalPredicate makeRelationalPredicate(int tag, Expression left,
 			Expression right) {
+		final FormulaFactory ff = left.getFactory();
 		return ff.makeRelationalPredicate(tag, left, right, null);
 	}
 
-	public ArithRewriterImpl(FormulaFactory ff) {
-		super(true, ff);
+	public ArithRewriterImpl() {
+		super(true);
 	}
     
     private Expression simplify(Expression expression, IPosition... positions) {
-        return AdditiveSimplifier.simplify(expression, positions, ff);
+        return AdditiveSimplifier.simplify(expression, positions);
     }
 
     private RelationalPredicate simplify(RelationalPredicate predicate,
             IPosition... positions) {
-        return AdditiveSimplifier.simplify(predicate, positions, ff);
+        return AdditiveSimplifier.simplify(predicate, positions);
     }
     
 	%include {FormulaV2.tom}
@@ -144,6 +146,7 @@ public class ArithRewriterImpl extends DefaultRewriter {
             "SIMP_MULTI_MINUS_PLUS_PLUS", "SIMP_MINUS_UNMINUS" })
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
+		FormulaFactory ff = expression.getFactory();
 	    %match (Expression expression) {
 	        /**
              * SIMP_MULTI_MINUS_PLUS_L
