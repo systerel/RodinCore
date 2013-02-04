@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,8 +185,8 @@ public class FormulaBuilder {
 
 	public Predicate partial(Expression fun) {
 		final Type funType = fun.getType();
-		final Expression src = funType.getSource().toExpression(ff);
-		final Expression trg = funType.getTarget().toExpression(ff);
+		final Expression src = funType.getSource().toExpression();
+		final Expression trg = funType.getTarget().toExpression();
 		final Expression pfun = ff.makeBinaryExpression(PFUN, src, trg, null);
 		return ff.makeRelationalPredicate(IN, fun, pfun, null);
 	}

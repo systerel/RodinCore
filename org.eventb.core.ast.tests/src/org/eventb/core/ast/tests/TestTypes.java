@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.LanguageVersion.LATEST;
+import static org.eventb.core.ast.tests.FastFactory.NO_PREDICATE;
+import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.eventb.core.ast.LanguageVersion.LATEST;
-import static org.eventb.core.ast.tests.FastFactory.NO_PREDICATE;
-import static org.eventb.core.ast.tests.FastFactory.mList;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -144,7 +144,7 @@ public class TestTypes extends AbstractTests {
 	@Test 
 	public void testTypeFactory() {
 		for (TestItem item : items) {
-			final Expression expr = item.type.toExpression(tf);
+			final Expression expr = item.type.toExpression();
 			assertEquals(item.expr, expr);
 			assertEquals(item.image, item.type.toString());
 			final Type expectedExprType = tf.makePowerSetType(item.type);

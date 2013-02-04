@@ -39,7 +39,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IVisitor;
@@ -1449,20 +1448,20 @@ public class IdentsChecker implements IVisitor {
 	// Returns a set containing the identifiers for each given type
 	// occurring in the type of the given formula (if any)
 	private Set<FreeIdentifier> getGivenTypeIdentifiers(Expression expr) {
-		return getGivenTypeIdentifiers(expr.getFactory(), expr.getType());
+		return getGivenTypeIdentifiers(expr.getType());
 	}
 
 	private Set<FreeIdentifier> getGivenTypeIdentifiers(BoundIdentDecl decl) {
-		return getGivenTypeIdentifiers(decl.getFactory(), decl.getType());
+		return getGivenTypeIdentifiers(decl.getType());
 	}
 
-	private Set<FreeIdentifier> getGivenTypeIdentifiers(FormulaFactory factory, Type type) {
+	private Set<FreeIdentifier> getGivenTypeIdentifiers(Type type) {
 		final Set<FreeIdentifier> result = new HashSet<FreeIdentifier>();
 		if (type == null) {
 			return result; // must not be immutable
 		}
 		for (final GivenType givenType : type.getGivenTypes()) {
-			result.add(givenType.toExpression(factory));
+			result.add(givenType.toExpression());
 		}
 		return result;
 	}

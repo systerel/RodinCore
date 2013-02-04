@@ -92,7 +92,9 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 			throw new IllegalArgumentException("Type substitution for " + type
 					+ " already registered");
 		}
-		identSubst.put(type.toExpression(ff), value.toExpression(ff));
+		// TODO: If formula factory is the same do not rewrite (to be checked
+		// after Formula factory cleaning)
+		identSubst.put(type.toExpression(), value.toExpression());
 	}
 
 	public Type get(GivenType key) {

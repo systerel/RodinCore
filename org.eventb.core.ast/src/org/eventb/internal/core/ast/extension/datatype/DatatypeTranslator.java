@@ -134,7 +134,7 @@ public class DatatypeTranslator {
 	}
 
 	private Expression toTrgExpr(Type trgType) {
-		return trgType.toExpression(trgFactory);
+		return trgType.toExpression();
 	}
 
 	private Type[] translateTypeParameters() {

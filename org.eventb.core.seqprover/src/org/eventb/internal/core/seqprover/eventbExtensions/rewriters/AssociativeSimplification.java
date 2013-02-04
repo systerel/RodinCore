@@ -427,7 +427,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 		@Override
 		protected Expression getNeutral() {
-			return original.getType().getBaseType().toExpression(ff);
+			return original.getType().getBaseType().toExpression();
 		}
 
 	}

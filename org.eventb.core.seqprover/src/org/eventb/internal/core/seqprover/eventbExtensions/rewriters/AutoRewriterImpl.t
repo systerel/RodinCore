@@ -414,7 +414,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Finite(id@IdGen()) -> {
 				if (level2) {
 					final Type s = `id.getType().getSource();
-					result = makeFinite(s.toExpression(ff));
+					result = makeFinite(s.toExpression());
 					trace(predicate, result, "SIMP_FINITE_ID");
 					return result;
 				}
@@ -523,7 +523,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Finite(prj1@Prj1Gen()) -> {
 				if (level2) {
-					result = makeFinite(`prj1.getType().getSource().toExpression(ff));
+					result = makeFinite(`prj1.getType().getSource().toExpression());
 					trace(predicate, result, "SIMP_FINITE_PRJ1");
 					return result;
 				}
@@ -535,7 +535,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Finite(prj2@Prj2Gen()) -> {
 				if (level2) {
-					result = makeFinite(`prj2.getType().getSource().toExpression(ff));
+					result = makeFinite(`prj2.getType().getSource().toExpression());
 					trace(predicate, result, "SIMP_FINITE_PRJ2");
 					return result;
 				}
@@ -3249,7 +3249,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Dom(id@IdGen()) -> {
 				if (level2) {
 					final Type s = `id.getType().getSource();
-					result = s.toExpression(ff);
+					result = s.toExpression();
 					trace(expression, result, "SIMP_DOM_ID");
 					return result;
 				}
@@ -3262,7 +3262,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Ran(id@IdGen()) -> {
 				if (level2) {
 					final Type s = `id.getType().getSource();
-					result = s.toExpression(ff);
+					result = s.toExpression();
 					trace(expression, result, "SIMP_RAN_ID");
 					return result;
 				}
@@ -3275,7 +3275,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Dom(prj1@Prj1Gen()) -> {
 				if (level2) {
 					final Type st = `prj1.getType().getSource();
-					result = st.toExpression(ff);
+					result = st.toExpression();
 					trace(expression, result, "SIMP_DOM_PRJ1");
 					return result;
 				}
@@ -3288,7 +3288,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Dom(prj2@Prj2Gen()) -> {
 				if (level2) {
 					final Type st = `prj2.getType().getSource();
-					result = st.toExpression(ff);
+					result = st.toExpression();
 					trace(expression, result, "SIMP_DOM_PRJ2");
 					return result;
 				}
@@ -3301,7 +3301,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Ran(prj1@Prj1Gen()) -> {
 				if (level2) {
 					final Type st = `prj1.getType().getTarget();
-					result = st.toExpression(ff);
+					result = st.toExpression();
 					trace(expression, result, "SIMP_RAN_PRJ1");
 					return result;
 				}
@@ -3314,7 +3314,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Ran(prj2@Prj2Gen()) -> {
 				if (level2) {
 					final Type st = `prj2.getType().getTarget();
-					result = st.toExpression(ff);
+					result = st.toExpression();
 					trace(expression, result, "SIMP_RAN_PRJ2");
 					return result;
 				}
@@ -3554,7 +3554,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Card(op@(IdGen | Prj1Gen | Prj2Gen)()) -> {
 				if (level2) {
-					result = makeCard(`op.getType().getSource().toExpression(ff));
+					result = makeCard(`op.getType().getSource().toExpression());
 					trace(expression, result, "SIMP_CARD_ID", "SIMP_CARD_PRJ1", "SIMP_CARD_PRJ2");
 					return result;
 				}
@@ -3833,7 +3833,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Cset(decls, BTRUE(), E) -> {
 	    		if (level2 && partialLambdaPatternCheck(`E, `decls.length)) {
-	    			result = `E.getType().toExpression(ff);
+	    			result = `E.getType().toExpression();
 		    		trace(expression, result, "SIMP_SPECIAL_COMPSET_BTRUE");
 		    		return result;
 	    		}
