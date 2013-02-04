@@ -78,6 +78,8 @@ public interface ITypeCheckingRewriter {
 	boolean autoFlatteningMode();
 
 	FormulaFactory getFactory();
+	
+	TypeRewriter getTypeRewriter();
 
 	void enteringQuantifier(int nbOfBoundIdentDecls);
 
