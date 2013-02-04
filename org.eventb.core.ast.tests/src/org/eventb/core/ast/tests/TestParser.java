@@ -1578,11 +1578,13 @@ public class TestParser extends AbstractTests {
 			// Typed empty set
 			new ExprTestPair(
 					"(\u2205\u2982\u2119(\u2124))", 
-					ffV1.makeEmptySet(POW(ffV1.makeIntegerType()), null),
+					ffV1.makeEmptySet(ffV1.makePowerSetType(ffV1.makeIntegerType()), null),
 					mEmptySet(POW(ff.makeIntegerType()))
 			), new ExprTestPair(
 					"(\u2205\u2982\u2119(\u2119(\u2124)))", 
-					ffV1.makeEmptySet(POW(POW(ffV1.makeIntegerType())), null),
+					ffV1.makeEmptySet(
+							ffV1.makePowerSetType(
+									ffV1.makePowerSetType(ffV1.makeIntegerType())), null),
 					mEmptySet(POW(POW(ff.makeIntegerType())))
 			),
 			

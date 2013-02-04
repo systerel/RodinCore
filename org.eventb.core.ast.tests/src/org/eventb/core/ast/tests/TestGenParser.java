@@ -683,6 +683,7 @@ public class TestGenParser extends AbstractTests {
 		@Override
 		public boolean verifyType(Type proposedType, Expression[] childExprs,
 				Predicate[] childPreds) {
+			final FormulaFactory fac = proposedType.getFactory();
 			final Type alpha = proposedType.getSource();
 			if (alpha == null) {
 				return false;
@@ -696,8 +697,8 @@ public class TestGenParser extends AbstractTests {
 			final Type gamma = ptarget.getRight();
 			final Expression left = childExprs[0];
 			final Expression right = childExprs[1];
-			return verifyType(left, ff.makeRelationalType(alpha, beta))
-					&& verifyType(right, ff.makeRelationalType(alpha, gamma));
+			return verifyType(left, fac.makeRelationalType(alpha, beta))
+					&& verifyType(right, fac.makeRelationalType(alpha, gamma));
 		}
 
 		private boolean verifyType(Expression expr, Type proposedType) {

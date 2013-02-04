@@ -91,9 +91,12 @@ public class TestFormulaFactory extends AbstractTests {
 	private static final Expression eT = mEmptySet(POW(tT));
 
 	private static final Predicate P = mLiteralPredicate();
+	
+	private static final GivenType EFFtS = EFF.makeGivenType("S");
+	private static final GivenType EFFtT = EFF.makeGivenType("T");
 
-	private static final Expression EFFeS = EFF.makeEmptySet(POW(tS), null);
-	private static final Expression EFFeT = EFF.makeEmptySet(POW(tT), null);
+	private static final Expression EFFeS = EFF.makeEmptySet(EFF.makePowerSetType(EFFtS), null);
+	private static final Expression EFFeT = EFF.makeEmptySet(EFF.makePowerSetType(EFFtT), null);
 
 	private static final Predicate EFFP = EFF.makeLiteralPredicate(Formula.BTRUE, null);
 
@@ -873,7 +876,7 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void extendedExpression_InvalidType() {
 		EFF.makeExtendedExpression(barS, mList(EFFeS, EFFeT),
-				mList(EFFP, EFFP), null, tS);
+				mList(EFFP, EFFP), null, EFFtS);
 	}
 
 	/**
