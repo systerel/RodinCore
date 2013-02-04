@@ -239,17 +239,8 @@ class VersionUpgraderV1V2 extends VersionUpgrader {
 		}
 
 		@Override
-		public boolean visitBOUND_IDENT_DECL(BoundIdentDecl ident) {
-			if (reservedNames.contains(ident.getName())) {
-				result.setUpgradeNeeded(true);
-			}
-			return true;
-		}
-
-		@Override
 		public boolean visitFREE_IDENT(FreeIdentifier ident) {
 			if (reservedNames.contains(ident.getName())) {
-				result.setUpgradeNeeded(true);
 				result.addProblem(new ASTProblem(ident.getSourceLocation(),
 						NotUpgradableError, Error));
 				return false;
@@ -268,6 +259,9 @@ class VersionUpgraderV1V2 extends VersionUpgrader {
 		final UpgradeVisitorV1V2<T> upgradeVisitor = new UpgradeVisitorV1V2<T>(
 				formulaString, result, getReservedKeywords());
 		formula.accept(upgradeVisitor);
+		// Node need a rebuild in all cases since it is a V1 to V2 upgrade
+		// (different factory)
+		result.setUpgradeNeeded(true);
 	}
 
 	@Override
