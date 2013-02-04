@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -240,7 +240,7 @@ public class TestSubFormulas{
 		final T to;
 		
 		public FixedRewriter(T from, T to) {
-			super(false, to.getFactory());
+			super(false);
 			this.from = from;
 			this.to = to;
 		}
@@ -376,9 +376,10 @@ public class TestSubFormulas{
 			// nothing to do
 		}
 
+		@Deprecated
 		@Override
 		public FormulaFactory getFactory() {
-			return ff;
+			return null;
 		}
 
 		@Override
@@ -1085,7 +1086,7 @@ public class TestSubFormulas{
 				mListCons(eid_X));
 	}
 	
-	private final IFormulaRewriter identity = new DefaultRewriter(false, ff);
+	private final IFormulaRewriter identity = new DefaultRewriter(false);
 
 	private void checkIdentityRewriting(Formula<?> formula) {
 		assertSame(formula, formula.rewrite(identity));

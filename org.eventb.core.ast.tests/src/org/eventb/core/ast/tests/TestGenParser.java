@@ -2767,17 +2767,17 @@ public class TestGenParser extends AbstractTests {
 		assertEquals("bad toString", "⋃x∗y ∣ x<y", implStr);
 		doExpressionTest(implStr, expected);
 		
-		final Expression exprFreeIdents = expected.rewrite(new DefaultRewriter(false, ff) {
+		final Expression exprFreeIdents = expected.rewrite(new DefaultRewriter(false) {
 			@Override
 			public Expression rewrite(AssociativeExpression expression) {
 				// rewrite x*y  with free x
-				return ff.makeAssociativeExpression(MUL,
+				return expression.getFactory().makeAssociativeExpression(MUL,
 						Arrays.<Expression>asList(FRID_x, BI_0), null);
 			}
 			@Override
 			public Predicate rewrite(RelationalPredicate predicate) {
 				// rewrite x<y with free y
-				return ff.makeRelationalPredicate(LT,
+				return predicate.getFactory().makeRelationalPredicate(LT,
 						BI_1,
 						FRID_y, null);
 			}
