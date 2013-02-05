@@ -196,7 +196,7 @@ public class TestTypedConstructor extends AbstractTests {
 	private static final Type rZZ = REL(Z, Z);
 
 	private static final Type prST = POW(rST);
-	
+
 	private static final Type Bv1 = ffV1.makeBooleanType();
 	private static final Type Zv1 = ffV1.makeIntegerType();
 
@@ -205,7 +205,7 @@ public class TestTypedConstructor extends AbstractTests {
 	private static final Type pSv1 = POWV1(Sv1);
 
 	private static final Type rSSv1 = RELV1(Sv1, Sv1);
-	
+
 	private static final Type STv1 = CPRODV1(Sv1, Tv1);
 	private static final Type rSTv1 = RELV1(Sv1, Tv1);
 

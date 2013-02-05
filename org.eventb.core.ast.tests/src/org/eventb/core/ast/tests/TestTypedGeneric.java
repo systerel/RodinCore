@@ -98,7 +98,7 @@ public class TestTypedGeneric extends AbstractTests {
 
 		final AtomicExpression eSv1 = mEmptySet(POWV1(ty_Sv1));
 		final AtomicExpression eSTv1 = mEmptySet(RELV1(ty_Sv1, ty_Tv1));
-		
+
 		final BoundIdentDecl bd_x = mBoundIdentDecl("x", POW(ty_S));
 		final BoundIdentifier b0S = mBoundIdentifier(0, POW(ty_S));
 

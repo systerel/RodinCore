@@ -107,7 +107,7 @@ public class FastFactory {
 	}
 
 	public static FormulaFactory ff = FormulaFactory.getDefault();
-	
+
 	public static FormulaFactory ff_extns = FormulaFactory.getInstance(EXTNS);
 
 	public static AssociativeExpression mAssociativeExpression(
