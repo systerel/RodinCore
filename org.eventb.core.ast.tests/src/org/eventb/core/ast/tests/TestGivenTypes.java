@@ -81,6 +81,35 @@ public class TestGivenTypes extends AbstractTests {
 	private static final GivenType tT = ff.makeGivenType("T");
 	private static final GivenType tU = ff.makeGivenType("U");
 
+	/**
+	 * Returns a relation from integer to integer that hides the given type.
+	 * 
+	 * @param type
+	 *            an arbitrary type
+	 * @return an integer relation hiding the given type
+	 */
+	private static Expression mHidingRelation(Type type) {
+		Expression left = mEmptySet(REL(INT, type));
+		Expression right = mEmptySet(REL(type, INT));
+		return mAssociativeExpression(FCOMP, left, right);
+	}
+	
+	/**
+	 * Returns a relation from integer to integer that hides the given type and
+	 * contains free identifiers with the given names.
+	 * 
+	 * @param type
+	 *            an arbitrary type
+	 * @return an integer relation hiding the given type
+	 */
+	private static Expression mHidingRelation(String lName, String rName,
+			Type type) {
+
+		Expression left = mFreeIdentifier(lName, REL(INT, type));
+		Expression right = mFreeIdentifier(rName, REL(type, INT));
+		return mAssociativeExpression(FCOMP, left, right);
+	}
+	
 	private static final Expression eS = mEmptySet(POW(tS));
 	private static final Expression eT = mEmptySet(POW(tT));
 	private static final Expression eU = mEmptySet(POW(tU));
@@ -116,35 +145,6 @@ public class TestGivenTypes extends AbstractTests {
 	private static final Predicate piS = mRelationalPredicate(EQUAL, iS, iS);
 	private static final Predicate piT = mRelationalPredicate(EQUAL, iT, iT);
 	private static final Predicate piU = mRelationalPredicate(EQUAL, iU, iU);
-	
-	/**
-	 * Returns a relation from integer to integer that hides the given type.
-	 * 
-	 * @param type
-	 *            an arbitrary type
-	 * @return an integer relation hiding the given type
-	 */
-	private static Expression mHidingRelation(Type type) {
-		Expression left = mEmptySet(REL(INT, type));
-		Expression right = mEmptySet(REL(type, INT));
-		return mAssociativeExpression(FCOMP, left, right);
-	}
-	
-	/**
-	 * Returns a relation from integer to integer that hides the given type and
-	 * contains free identifiers with the given names.
-	 * 
-	 * @param type
-	 *            an arbitrary type
-	 * @return an integer relation hiding the given type
-	 */
-	private static Expression mHidingRelation(String lName, String rName,
-			Type type) {
-
-		Expression left = mFreeIdentifier(lName, REL(INT, type));
-		Expression right = mFreeIdentifier(rName, REL(type, INT));
-		return mAssociativeExpression(FCOMP, left, right);
-	}
 	
 	private <T extends Formula<T>> void doTest(Formula<T> formula,
 			GivenType... types) {
