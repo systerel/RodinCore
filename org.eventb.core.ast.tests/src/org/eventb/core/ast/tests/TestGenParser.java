@@ -201,10 +201,12 @@ public class TestGenParser extends AbstractTests {
 	protected static final PowerSetType POW_INT_TYPE = ff.makePowerSetType(INT_TYPE);
 	protected static final PowerSetType REL_INT_INT = ff.makeRelationalType(INT_TYPE, INT_TYPE);
 	protected static final SourceLocationChecker slChecker = new SourceLocationChecker();
-	
-	protected static final AtomicExpression INT_LIST = LIST_FAC.makeAtomicExpression(Formula.INTEGER, null);
-	
-	protected static final BooleanType BOOL_TYPE_LIST = LIST_FAC.makeBooleanType();
+
+	protected static final AtomicExpression INT_ffLIST = LIST_FAC
+			.makeAtomicExpression(Formula.INTEGER, null);
+
+	protected static final BooleanType BOOL_TYPE_ffLIST = LIST_FAC
+			.makeBooleanType();
 
 	private static void assertFailure(IParseResult result, ASTProblem... expected) {
 		assertTrue("expected parsing to fail", result.hasProblem());
@@ -2241,7 +2243,7 @@ public class TestGenParser extends AbstractTests {
 	public void testDatatypeType() throws Exception {
 
 		final ExtendedExpression list = LIST_FAC.makeExtendedExpression(
-				EXT_LIST, Collections.<Expression> singleton(INT_LIST),
+				EXT_LIST, Collections.<Expression> singleton(INT_ffLIST),
 				Collections.<Predicate> emptyList(), null);
 
 		final Expression expr = doExpressionTest("List(ℤ)", list,
@@ -2253,7 +2255,7 @@ public class TestGenParser extends AbstractTests {
 		doTypeTest("List(ℤ)", LIST_INT_TYPE, LIST_FAC);
 
 		final ParametricType listBoolType = LIST_FAC.makeParametricType(
-				Collections.<Type> singletonList(BOOL_TYPE_LIST), EXT_LIST);
+				Collections.<Type> singletonList(BOOL_TYPE_ffLIST), EXT_LIST);
 		assertFalse(listBoolType.equals(LIST_INT_TYPE));
 	}
 
@@ -2289,9 +2291,10 @@ public class TestGenParser extends AbstractTests {
 
 		doExpressionTest("(nil ⦂ List(ℤ))", nilInt, LIST_INT_TYPE, LIST_FAC,
 				false);
+
 		final ParametricType listBoolBoolType = LIST_FAC.makeParametricType(
 				Collections.<Type> singletonList(LIST_FAC.makeProductType(
-						BOOL_TYPE_LIST, BOOL_TYPE_LIST)), EXT_LIST);
+						BOOL_TYPE_ffLIST, BOOL_TYPE_ffLIST)), EXT_LIST);
 		final ExtendedExpression nilBoolBool = LIST_FAC.makeExtendedExpression(
 				EXT_NIL, NO_EXPR, NO_PRED, null, listBoolBoolType);
 
@@ -2358,7 +2361,7 @@ public class TestGenParser extends AbstractTests {
 	@Test 
 	public void testTypeConstrTypeCheck() throws Exception {
 		final Expression listIntExpr = LIST_FAC.makeExtendedExpression(
-				EXT_LIST, Collections.<Expression> singleton(INT_LIST),
+				EXT_LIST, Collections.<Expression> singleton(INT_ffLIST),
 				Collections.<Predicate> emptySet(), null);
 		final Predicate expected = LIST_FAC.makeRelationalPredicate(IN,
 				LIST_FAC.makeFreeIdentifier("x", null), listIntExpr, null);
@@ -2926,7 +2929,9 @@ public class TestGenParser extends AbstractTests {
 	private static final IExpressionExtension EXT_MOULT = MOULT_DT
 			.getTypeConstructor();
 	private static final ParametricType MOULT_INT_BOOL_TYPE = MOULT_FAC
-			.makeParametricType(Arrays.<Type> asList(MOULT_FAC.makeIntegerType(), MOULT_FAC.makeBooleanType()),
+			.makeParametricType(Arrays.<Type>asList(
+					MOULT_FAC.makeIntegerType(),
+					MOULT_FAC.makeBooleanType()),
 					EXT_MOULT);
 	private static final IExpressionExtension EXT_MAKE_MOULT = MOULT_DT
 			.getConstructor("MAKE MOULT");
@@ -3010,12 +3015,18 @@ public class TestGenParser extends AbstractTests {
 			.makeDatatype(NO_INDUC_TYPE);
 	private static final FormulaFactory NO_INDUC_FAC = FormulaFactory
 			.getInstance(NO_INDUC_EXTNS.getExtensions());
-	
 	private static final IExpressionExtension EXT_NO_INDUC = NO_INDUC_EXTNS
 			.getTypeConstructor();
 	private static final ParametricType NO_INDUC_INT_BOOL_TYPE = NO_INDUC_FAC
-			.makeParametricType(Arrays.<Type> asList(NO_INDUC_FAC.makeIntegerType(), NO_INDUC_FAC.makeBooleanType()),
-					EXT_NO_INDUC);
+			.makeParametricType(Arrays.<Type> asList(
+					NO_INDUC_FAC.makeIntegerType(),
+					NO_INDUC_FAC.makeBooleanType()), EXT_NO_INDUC);
+	private static final IntegerLiteral ONE_ffNO_INDUC = NO_INDUC_FAC
+			.makeIntegerLiteral(BigInteger.ONE, null);
+	private static final IntegerLiteral ZERO_ffNO_INDUC = NO_INDUC_FAC
+			.makeIntegerLiteral(BigInteger.ZERO, null);
+	final AtomicExpression ATOM_TRUE_ffNO_INDUC = NO_INDUC_FAC
+			.makeAtomicExpression(TRUE, null);
 
 	@Test 
 	public void testNoInducType() throws Exception {
@@ -3041,19 +3052,12 @@ public class TestGenParser extends AbstractTests {
 		final IExpressionExtension extCons2 = NO_INDUC_EXTNS
 				.getConstructor(NoInducType.CONS2);
 
-		final IntegerLiteral NO_INDUC_ONE = NO_INDUC_FAC.makeIntegerLiteral(
-				BigInteger.ONE, null);
-		final IntegerLiteral NO_INDUC_ZERO = NO_INDUC_FAC.makeIntegerLiteral(
-				BigInteger.ZERO, null);
-		
-		final AtomicExpression NO_INDUC_ATOM_TRUE = NO_INDUC_FAC.makeAtomicExpression(TRUE, null);
-		
 		final ExtendedExpression c2Sing2MapSing0True = NO_INDUC_FAC
 				.makeExtendedExpression(extCons2, Arrays.asList(
-						NO_INDUC_FAC.makeSetExtension(NO_INDUC_ONE, null),
+						NO_INDUC_FAC.makeSetExtension(ONE_ffNO_INDUC, null),
 						NO_INDUC_FAC.makeBinaryExpression(MAPSTO,
-								NO_INDUC_FAC.makeSetExtension(NO_INDUC_ZERO, null),
-								NO_INDUC_ATOM_TRUE, null)), Collections
+								NO_INDUC_FAC.makeSetExtension(ZERO_ffNO_INDUC, null),
+								ATOM_TRUE_ffNO_INDUC, null)), Collections
 						.<Predicate> emptyList(), null);
 
 		doExpressionTest("cons2({1}, {0} ↦ TRUE)", c2Sing2MapSing0True,
@@ -3065,21 +3069,12 @@ public class TestGenParser extends AbstractTests {
 		final IExpressionExtension extCons3 = NO_INDUC_EXTNS
 				.getConstructor(NoInducType.CONS3);
 
-		final IntegerLiteral NO_INDUC_ZERO = NO_INDUC_FAC.makeIntegerLiteral(
-				BigInteger.ZERO, null);
-		
-		final AtomicExpression NO_INDUC_ATOM_TRUE = NO_INDUC_FAC.makeAtomicExpression(TRUE, null);
-
-		
 		final ExtendedExpression c3SingMaps0True = NO_INDUC_FAC
-				.makeExtendedExpression(extCons3, Arrays
-						.<Expression> asList(NO_INDUC_FAC.makeSetExtension(
-								Arrays.<Expression> asList(NO_INDUC_FAC
-										.makeBinaryExpression(MAPSTO,
-												NO_INDUC_ZERO,
-												NO_INDUC_ATOM_TRUE, null)),
-								null)), Collections.<Predicate> emptyList(),
-						null);
+				.makeExtendedExpression(extCons3, Arrays.<Expression>asList(
+						NO_INDUC_FAC.makeSetExtension(Arrays.<Expression>asList(
+								NO_INDUC_FAC.makeBinaryExpression(MAPSTO,
+								ZERO_ffNO_INDUC, ATOM_TRUE_ffNO_INDUC, null)), null)),
+						Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("cons3({0 ↦ TRUE})", c3SingMaps0True,
 				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
@@ -3111,7 +3106,7 @@ public class TestGenParser extends AbstractTests {
 				Collections.<Predicate> emptyList(), null);
 
 		final Expression listInt = LIST_FAC.makeExtendedExpression(EXT_LIST,
-				Collections.<Expression> singleton(INT_LIST),
+				Collections.<Expression> singleton(INT_ffLIST),
 				Collections.<Predicate> emptyList(), null);
 
 		final Expression powListInt = LIST_FAC.makeUnaryExpression(POW,
@@ -3137,27 +3132,26 @@ public class TestGenParser extends AbstractTests {
 	
 	@Test 
 	public void testMixedTypesToType() throws Exception {
-
 		final FormulaFactory listMoultFac = LIST_FAC.withExtensions(MOULT_DT
 				.getExtensions());
 		
-		final ParametricType LIST_MOULT_INT_BOOL_TYPE = listMoultFac
+		final Expression moultIntBool = listMoultFac
+				.makeExtendedExpression(EXT_MOULT, Arrays.<Expression> asList(
+						listMoultFac.makeAtomicExpression(Formula.INTEGER, null),
+						listMoultFac.makeAtomicExpression(Formula.BOOL, null)),
+						Collections.<Predicate> emptySet(), null);
+
+		final ParametricType moultIntBoolType = listMoultFac
 				.makeParametricType(Arrays.<Type> asList(
 						listMoultFac.makeIntegerType(),
 						listMoultFac.makeBooleanType()), EXT_MOULT);
 
-		final Expression listMoultIntBool = listMoultFac.makeExtendedExpression(
-				EXT_MOULT, Arrays.<Expression> asList(
-						listMoultFac.makeAtomicExpression(Formula.INTEGER, null),
-						listMoultFac.makeAtomicExpression(Formula.BOOL, null)),
-				Collections.<Predicate> emptySet(), null);
-		
 		final Expression listMoult = listMoultFac.makeExtendedExpression(
-				EXT_LIST, Collections.<Expression> singleton(listMoultIntBool),
+				EXT_LIST, Collections.<Expression> singleton(moultIntBool),
 				Collections.<Predicate> emptyList(), null);
 		
 		final ParametricType listMoultType = listMoultFac.makeParametricType(
-				Collections.<Type> singletonList(LIST_MOULT_INT_BOOL_TYPE), EXT_LIST);
+				Collections.<Type> singletonList(moultIntBoolType), EXT_LIST);
 		
 		final Type powListMoultType = listMoultFac.makePowerSetType(listMoultType);
 		
