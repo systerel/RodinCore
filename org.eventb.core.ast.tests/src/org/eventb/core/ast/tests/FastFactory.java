@@ -193,6 +193,11 @@ public class FastFactory {
 		return ff.makeBinaryExpression(tag, left, right, null);
 	}
 
+	public static BinaryExpression mBinaryExpression(int tag, Expression left,
+			Expression right, FormulaFactory fac) {
+		return fac.makeBinaryExpression(tag, left, right, null);
+	}
+
 	public static BinaryPredicate mBinaryPredicate(int tag, Predicate left,
 			Predicate right) {
 		return ff.makeBinaryPredicate(tag, left, right, null);
@@ -231,12 +236,21 @@ public class FastFactory {
 		return ff.makeFreeIdentifier(name, null, type);
 	}
 
+	public static FreeIdentifier mFreeIdentifier(String name, Type type,
+			FormulaFactory fac) {
+		return fac.makeFreeIdentifier(name, null, type);
+	}
+
 	public static IntegerLiteral mIntegerLiteral() {
 		return ff.makeIntegerLiteral(BigInteger.ZERO, null);
 	}
 
 	public static IntegerLiteral mIntegerLiteral(long value) {
 		return ff.makeIntegerLiteral(BigInteger.valueOf(value), null);
+	}
+
+	public static IntegerLiteral mIntegerLiteral(long value, FormulaFactory fac) {
+		return fac.makeIntegerLiteral(BigInteger.valueOf(value), null);
 	}
 
 	public static <T> T[] mList(T... objs) {
