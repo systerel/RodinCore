@@ -72,14 +72,15 @@ public abstract class Formula<T extends Formula<T>> {
 	// The tag for this AST node.
 	private final int tag;
 
+	// The factory that created this node
+	// Must include factories of all children
+	private final FormulaFactory fac;
+	
 	// The source location of this AST node.
 	private final SourceLocation location;
 
 	// Hash code for this formula
 	private final int hashCode;
-	
-	// The factory of this node, it must include factories of all children
-	private final FormulaFactory fac;
 	
 	// Array of predicate variables occurring in this formula.
 	// This is a quasi-final field, it must only be set in a constructor (but
@@ -904,11 +905,12 @@ public abstract class Formula<T extends Formula<T>> {
 	/**
 	 * @since 3.0
 	 */
-	protected Formula(int tag, FormulaFactory fac, SourceLocation location, int hashCode) {
+	protected Formula(int tag, FormulaFactory fac, SourceLocation location,
+			int hashCode) {
 		this.tag = tag;
+		this.fac = fac;
 		this.location = location;
 		this.hashCode = combineHashCodes(hashCode, tag);
-		this.fac = fac;
 	}
 	
 	/**
