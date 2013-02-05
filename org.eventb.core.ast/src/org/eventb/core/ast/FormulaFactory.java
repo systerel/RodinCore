@@ -2108,8 +2108,10 @@ public class FormulaFactory {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
-		sb.append("FFactory(" + this.grammar.getVersion() + ")");
 		char sep = '{';
+		sb.append("FFactory(");
+		sb.append(this.grammar.getVersion());
+		sb.append(")");
 		for (IFormulaExtension extension : this.extensions.values()) {
 			sb.append(sep);
 			sep = ';';
