@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - always rewrite leaf node when factory changed 
+ *     Systerel - always rewrite leaf node when factory changed
  *******************************************************************************/
 package org.eventb.internal.core.ast;
 

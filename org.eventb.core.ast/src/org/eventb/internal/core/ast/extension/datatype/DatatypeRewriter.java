@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
- *     Systerel - always rewrite leaf node when factory changed 
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype;
 
