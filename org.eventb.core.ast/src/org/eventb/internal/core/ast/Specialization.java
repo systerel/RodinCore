@@ -274,7 +274,7 @@ public class Specialization extends DefaultTypeCheckingRewriter implements
 		final Type type = expr.getType();
 		final Type newType = type.specialize(this);
 		if (newType == type) {
-			return expr;
+			return super.rewrite(src, expr);
 		}
 		return ff.makeEmptySetExtension(newType, expr.getSourceLocation());
 	}

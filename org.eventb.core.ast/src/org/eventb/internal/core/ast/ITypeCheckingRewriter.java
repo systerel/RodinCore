@@ -143,6 +143,10 @@ public interface ITypeCheckingRewriter {
 
 	Predicate rewrite(RelationalPredicate src, RelationalPredicate pred);
 
+	/*
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
+	 */
 	Expression rewrite(SetExtension src, SetExtension expr);
 
 	Expression rewrite(SetExtension src, AtomicExpression expr);

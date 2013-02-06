@@ -264,7 +264,12 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewrite(SetExtension src, SetExtension expr) {
-		return expr;
+		if (!ff.equals(expr.getFactory())) {
+			return ff.makeSetExtension(expr.getMembers(),
+					expr.getSourceLocation());
+		} else {
+			return expr;
+		}
 	}
 
 	@Override
