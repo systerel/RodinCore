@@ -125,12 +125,11 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public BoundIdentDecl rewrite(BoundIdentDecl src) {
-		if (!ff.equals(src.getFactory())) {
-			return ff.makeBoundIdentDecl(src.getName(),
-					src.getSourceLocation(), src.getType());
-		} else {
+		if (ff == src.getFactory()) {
 			return src;
 		}
+		return ff.makeBoundIdentDecl(src.getName(), src.getSourceLocation(),
+				src.getType());
 	}
 
 	@Override
@@ -146,12 +145,11 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewrite(AtomicExpression src) {
-		if (!ff.equals(src.getFactory())) {
-			return ff.makeAtomicExpression(src.getTag(),
-					src.getSourceLocation(), src.getType());
-		} else {
+		if (ff == src.getFactory()) {
 			return src;
 		}
+		return ff.makeAtomicExpression(src.getTag(), src.getSourceLocation(),
+				src.getType());
 	}
 
 	@Override
@@ -171,64 +169,56 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewrite(BoundIdentifier src) {
-		if (!ff.equals(src.getFactory())) {
-			return ff.makeBoundIdentifier(src.getBoundIndex(),
-					src.getSourceLocation(), src.getType());
-		} else {
+		if (ff == src.getFactory()) {
 			return src;
 		}
+		return ff.makeBoundIdentifier(src.getBoundIndex(),
+				src.getSourceLocation(), src.getType());
 	}
 
 	@Override
 	public Expression rewrite(ExtendedExpression src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
-		if (!changed && ff.equals(src.getFactory())) {
+		if (!changed && ff == src.getFactory()) {
 			return src;
-		} else {
-			return ff.makeExtendedExpression(src.getExtension(), newChildExprs,
-					newChildPreds, src.getSourceLocation(), src.getType());
 		}
+		return ff.makeExtendedExpression(src.getExtension(), newChildExprs,
+				newChildPreds, src.getSourceLocation(), src.getType());
 	}
 
 	@Override
 	public Predicate rewrite(ExtendedPredicate src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds) {
-		if (!changed && ff.equals(src.getFactory())) {
+		if (!changed && ff == src.getFactory()) {
 			return src;
-		} else {
-			return ff.makeExtendedPredicate(src.getExtension(), newChildExprs,
-					newChildPreds, src.getSourceLocation());
 		}
+		return ff.makeExtendedPredicate(src.getExtension(), newChildExprs,
+				newChildPreds, src.getSourceLocation());
 	}
 
 	@Override
 	public Expression rewrite(FreeIdentifier src) {
-		if (!ff.equals(src.getFactory())) {
-			return ff.makeFreeIdentifier(src.getName(),
-					src.getSourceLocation(), src.getType());
-		} else {
+		if (ff == src.getFactory()) {
 			return src;
 		}
+		return ff.makeFreeIdentifier(src.getName(), src.getSourceLocation(),
+				src.getType());
 	}
 
 	@Override
 	public Expression rewrite(IntegerLiteral src) {
-		if (!ff.equals(src.getFactory())) {
-			return ff.makeIntegerLiteral(src.getValue(),
-					src.getSourceLocation());
-		} else {
+		if (ff == src.getFactory()) {
 			return src;
 		}
+		return ff.makeIntegerLiteral(src.getValue(), src.getSourceLocation());
 	}
 
 	@Override
 	public Predicate rewrite(LiteralPredicate src) {
-		if (!ff.equals(src.getFactory())) {
-			return ff.makeLiteralPredicate(src.getTag(),
-					src.getSourceLocation());
-		} else {
+		if (ff == src.getFactory()) {
 			return src;
 		}
+		return ff.makeLiteralPredicate(src.getTag(), src.getSourceLocation());
 	}
 
 	@Override
@@ -238,12 +228,10 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Predicate rewrite(PredicateVariable src) {
-		if (!ff.equals(src.getFactory())) {
-			return ff.makePredicateVariable(src.getName(),
-					src.getSourceLocation());
-		} else {
+		if (ff == src.getFactory()) {
 			return src;
 		}
+		return ff.makePredicateVariable(src.getName(), src.getSourceLocation());
 	}
 
 	@Override
@@ -264,12 +252,10 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewrite(SetExtension src, SetExtension expr) {
-		if (!ff.equals(expr.getFactory())) {
-			return ff.makeSetExtension(expr.getMembers(),
-					expr.getSourceLocation());
-		} else {
+		if (ff == expr.getFactory()) {
 			return expr;
 		}
+		return ff.makeSetExtension(expr.getMembers(), expr.getSourceLocation());
 	}
 
 	@Override
