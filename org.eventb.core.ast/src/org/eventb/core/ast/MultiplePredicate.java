@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
- *     Systerel - store factory used to build a formula
  *******************************************************************************/
 package org.eventb.core.ast;
 
