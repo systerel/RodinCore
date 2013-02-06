@@ -70,6 +70,8 @@ public class LanguageFilter implements ISequentTranslator,
 
 	// Set to true by the visitor when encountering an operator to filter
 	private boolean found;
+	
+	private static FormulaFactory targetFactory = FormulaFactory.getDefault();
 
 	public LanguageFilter(int[] tags) {
 		toFilterOut = new BitSet();
@@ -80,7 +82,7 @@ public class LanguageFilter implements ISequentTranslator,
 
 	@Override
 	public FormulaFactory getTargetFormulaFactory() {
-		return FormulaFactory.getDefault();
+		return targetFactory;
 	}
 
 	@Override
@@ -94,7 +96,7 @@ public class LanguageFilter implements ISequentTranslator,
 		if (hasParamTypeFreeIdent(pred) || containsOperatorToFilter(pred)) {
 			return null;
 		}
-		return pred;
+		return pred.translate(targetFactory);
 	}
 
 	private boolean hasParamTypeFreeIdent(Predicate pred) {
