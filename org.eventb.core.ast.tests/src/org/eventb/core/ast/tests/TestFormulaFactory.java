@@ -143,6 +143,31 @@ public class TestFormulaFactory extends AbstractTests {
 	 *----------------------------------------------------------------*/
 
 	@Test(expected = IllegalArgumentException.class)
+	public void powerSetType_DifferentFactory() {
+		LIST_FAC.makePowerSetType(tS);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void productType_DifferentFactoryLeft() {
+		LIST_FAC.makeProductType(tS, LIST_FAC.makeGivenType("T"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void productType_DifferentFactoryRight() {
+		LIST_FAC.makeProductType(LIST_FAC.makeGivenType("S"), tT);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void relationalType_DifferentFactoryLeft() {
+		LIST_FAC.makeRelationalType(tS, LIST_FAC.makeGivenType("T"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void relationalType_DifferentFactoryRight() {
+		LIST_FAC.makeRelationalType(LIST_FAC.makeGivenType("S"), tT);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
 	public void givenType_InvalidIdentifierName() {
 		ff.makeGivenType(BAD_NAME);
 	}
@@ -160,14 +185,22 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void parametricType_NotATypeConstructor() {
 		final FormulaFactory extFac = getInstance();
-		extFac.makeParametricType(mList(tS), MONEY);
+		extFac.makeParametricType(mList(extFac.makeGivenType("S")), MONEY);
 	}
 
 	@Ignore("Known bug")
 	@Test(expected = IllegalArgumentException.class)
 	public void parametricType_WrongNumberOfParameter() {
-		LIST_FAC.makeParametricType(mList(tS, tT), EXT_LIST);
+		LIST_FAC.makeParametricType(
+				mList(LIST_FAC.makeGivenType("S"), LIST_FAC.makeGivenType("T")),
+				EXT_LIST);
 	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void parametricType_DifferentFactory() {
+		LIST_FAC.makeParametricType(mList(tS), EXT_LIST);
+	}
+
 
 	@Test(expected = NullPointerException.class)
 	public void parametricType_NullParameters() {
