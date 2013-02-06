@@ -80,6 +80,9 @@ public class TestFormulaFactory extends AbstractTests {
 	private static final GivenType tS = ff.makeGivenType("S");
 	private static final GivenType tT = ff.makeGivenType("T");
 
+	private static final GivenType tS_LIST = LIST_FAC.makeGivenType("S");
+	private static final GivenType tT_LIST = LIST_FAC.makeGivenType("T");
+
 	private static final FreeIdentifier iS = mFreeIdentifier("s", POW(tS));
 
 	private static final BoundIdentDecl dS = mBoundIdentDecl("s'", POW(tS));
@@ -143,6 +146,31 @@ public class TestFormulaFactory extends AbstractTests {
 	 *----------------------------------------------------------------*/
 
 	@Test(expected = IllegalArgumentException.class)
+	public void powerSetType_DifferentFactory() {
+		LIST_FAC.makePowerSetType(tS);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void productType_DifferentFactoryLeft() {
+		LIST_FAC.makeProductType(tS, tT_LIST);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void productType_DifferentFactoryRight() {
+		LIST_FAC.makeProductType(tS_LIST, tT);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void relationalType_DifferentFactoryLeft() {
+		LIST_FAC.makeRelationalType(tS, tT_LIST);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void relationalType_DifferentFactoryRight() {
+		LIST_FAC.makeRelationalType(tS_LIST, tT);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
 	public void givenType_InvalidIdentifierName() {
 		ff.makeGivenType(BAD_NAME);
 	}
@@ -160,13 +188,18 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void parametricType_NotATypeConstructor() {
 		final FormulaFactory extFac = getInstance();
-		extFac.makeParametricType(mList(tS), MONEY);
+		extFac.makeParametricType(mList(extFac.makeGivenType("S")), MONEY);
 	}
 
 	@Ignore("Known bug")
 	@Test(expected = IllegalArgumentException.class)
 	public void parametricType_WrongNumberOfParameter() {
-		LIST_FAC.makeParametricType(mList(tS, tT), EXT_LIST);
+		LIST_FAC.makeParametricType(mList(tS_LIST, tT_LIST), EXT_LIST);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void parametricType_DifferentFactory() {
+		LIST_FAC.makeParametricType(mList(tS), EXT_LIST);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -182,7 +215,7 @@ public class TestFormulaFactory extends AbstractTests {
 
 	@Test
 	public void parametricType_ArrayParameter() {
-		final Type[] typeParams = { LIST_FAC.makeGivenType("S") };
+		final Type[] typeParams = { tS_LIST };
 		assertArrayProtected(LIST_FAC.makeParametricType(typeParams, EXT_LIST),
 				typeParams);
 	}
