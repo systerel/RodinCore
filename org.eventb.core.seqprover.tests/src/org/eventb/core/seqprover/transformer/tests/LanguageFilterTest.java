@@ -97,7 +97,7 @@ public class LanguageFilterTest extends AbstractTransformerTests {
 
 	private static void assertFiltered(boolean expected, String predImage,
 			int[] tags) {
-		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = DT_FAC.makeTypeEnvironment();
 		assertFiltered(expected, typenv, predImage, tags);
 	}
 
@@ -301,7 +301,7 @@ public class LanguageFilterTest extends AbstractTransformerTests {
 		// MultiplePredicate
 		assertTagFiltered("partition(a, {1})", KPARTITION);
 		// PredicateVariable
-		assertTagFiltered(ff.makePredicateVariable("$P", null),
+		assertTagFiltered(DT_FAC.makePredicateVariable("$P", null),
 				PREDICATE_VARIABLE);
 		// QuantifiedExpression
 		assertTagFiltered("{x∣x∈ℤ} = ∅", CSET);

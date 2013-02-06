@@ -16,8 +16,8 @@ import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Pred
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_AND_OR;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_EQV_NOT;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_IMP;
-import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_IMP_NOT;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_IMP_AND;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.MULTI_IMP_NOT;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier.QUANT_DISTR;
 import static org.eventb.internal.core.seqprover.transformer.TrackedPredicate.makeGoal;
 import static org.eventb.internal.core.seqprover.transformer.TrackedPredicate.makeHyp;
@@ -49,6 +49,9 @@ public class SimpleSequents {
 	 * Returns a new simple sequent created with the given predicates. All
 	 * non-null predicates must be type-checked. Null predicates will be
 	 * ignored.
+	 * <p>
+	 * All predicates must have been built with the given formula factory.
+	 * </p>
 	 * 
 	 * @param hypotheses
 	 *            sequent hypotheses, can be or contain <code>null</code>
@@ -59,12 +62,14 @@ public class SimpleSequents {
 	 * @param origin
 	 *            origin of the sequent
 	 * @return a new simple sequent with the given hypotheses and goal
+	 * @throw IllegalArgumentException if some given predicate was built with
+	 *        another factory
 	 * @since 2.4
 	 */
 	public static ISimpleSequent make(Iterable<Predicate> hypotheses,
 			Predicate goal, FormulaFactory factory, Object origin) {
 		final List<TrackedPredicate> preds = makeTrackedPredicates(hypotheses,
-				goal);
+				goal, factory);
 		final TrackedPredicate trivial = getTrivial(preds);
 		if (trivial != null) {
 			return new SimpleSequent(factory, trivial, origin);
@@ -76,6 +81,9 @@ public class SimpleSequents {
 	 * Returns a new simple sequent created with the given predicates. All
 	 * non-null predicates must be type-checked. Null predicates will be
 	 * ignored.
+	 * <p>
+	 * All predicates must have been built with the given formula factory.
+	 * </p>
 	 * 
 	 * @param hypotheses
 	 *            sequent hypotheses, can be or contain <code>null</code>
@@ -84,6 +92,8 @@ public class SimpleSequents {
 	 * @param factory
 	 *            formula factory for the given predicates
 	 * @return a new simple sequent with the given hypotheses and goal
+	 * @throw IllegalArgumentException if some given predicate was built with
+	 *        another factory
 	 */
 	public static ISimpleSequent make(Iterable<Predicate> hypotheses,
 			Predicate goal, FormulaFactory factory) {
@@ -104,6 +114,8 @@ public class SimpleSequents {
 	 * @param origin
 	 *            the origin of the sequent
 	 * @return a new simple sequent with the given hypotheses and goal
+	 * @throw IllegalArgumentException if some given predicate was built with
+	 *        another factory
 	 * @since 2.4
 	 */
 	public static ISimpleSequent make(Predicate[] hypotheses, Predicate goal,
@@ -121,6 +133,9 @@ public class SimpleSequents {
 	 * Returns a new simple sequent created with the given predicates. All
 	 * non-null predicates must be type-checked. Null predicates will be
 	 * ignored.
+	 * <p>
+	 * All predicates must have been built with the given formula factory.
+	 * </p>
 	 * 
 	 * @param hypotheses
 	 *            sequent hypotheses, can be or contain <code>null</code>
@@ -129,6 +144,8 @@ public class SimpleSequents {
 	 * @param factory
 	 *            formula factory for the given predicates
 	 * @return a new simple sequent with the given hypotheses and goal
+	 * @throw IllegalArgumentException if some given predicate was built with
+	 *        another factory
 	 */
 	public static ISimpleSequent make(Predicate[] hypotheses, Predicate goal,
 			FormulaFactory factory) {
@@ -136,19 +153,29 @@ public class SimpleSequents {
 	}
 
 	private static List<TrackedPredicate> makeTrackedPredicates(
-			Iterable<Predicate> hypotheses, Predicate goal) {
+			Iterable<Predicate> hypotheses, Predicate goal,
+			FormulaFactory factory) {
 		final List<TrackedPredicate> preds = new ArrayList<TrackedPredicate>();
 		if (hypotheses != null) {
 			for (Predicate hyp : hypotheses) {
 				if (hyp != null) {
+					checkFactory(hyp, factory);
 					preds.add(makeHyp(hyp));
 				}
 			}
 		}
 		if (goal != null) {
+			checkFactory(goal, factory);
 			preds.add(makeGoal(goal));
 		}
 		return preds;
+	}
+
+	private static void checkFactory(Predicate hyp, FormulaFactory factory) {
+		if (factory != hyp.getFactory()) {
+			throw new IllegalArgumentException(
+					"Invalid factory for predicate: " + hyp);
+		}
 	}
 
 	private static TrackedPredicate getTrivial(List<TrackedPredicate> preds) {
@@ -264,7 +291,7 @@ public class SimpleSequents {
 	 * @since 2.6
 	 */
 	public static ISimpleSequent translateDatatypes(ISimpleSequent sequent) {
-		final ITypeEnvironment typenv = sequent.getTypeEnvironment(); 
+		final ITypeEnvironment typenv = sequent.getTypeEnvironment();
 		return sequent.apply(new SequentDatatypeTranslator(typenv));
 	}
 
