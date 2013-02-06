@@ -98,6 +98,11 @@ public class TestFormulaFactory extends AbstractTests {
 	private static final GivenType EFFtS = EFF.makeGivenType("S");
 	private static final GivenType EFFtT = EFF.makeGivenType("T");
 
+	private static final FreeIdentifier EFFiS = mFreeIdentifier("s", POW(EFFtS));
+
+	private static final BoundIdentDecl EFFdS = mBoundIdentDecl("s'",
+			POW(EFFtS));
+
 	private static final Expression EFFeS = mEmptySet(POW(EFFtS));
 	private static final Expression EFFeT = mEmptySet(POW(EFFtT));
 
@@ -235,6 +240,16 @@ public class TestFormulaFactory extends AbstractTests {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
+	public void becomesEqualTo_DifferentFactoryLHS() {
+		ff.makeBecomesEqualTo(EFFiS, eS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void becomesEqualTo_DifferentFactoryRHS() {
+		ff.makeBecomesEqualTo(iS, EFFeS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
 	public void becomesEqualTo_emptyArrays() {
 		ff.makeBecomesEqualTo(NO_IDS, NO_EXPRS, null);
 	}
@@ -290,6 +305,16 @@ public class TestFormulaFactory extends AbstractTests {
 		ff.makeBecomesMemberOf(iS, null, null);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void becomesMemberOf_DifferentFactoryLHS() {
+		ff.makeBecomesMemberOf(EFFiS, eS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void becomesMemberOf_DifferentFactoryRHS() {
+		ff.makeBecomesMemberOf(iS, EFFeS, null);
+	}
+
 	@Test(expected = NullPointerException.class)
 	public void becomesSuchThat_singleNullLHS() {
 		ff.makeBecomesSuchThat(null, dS, P, null);
@@ -298,6 +323,21 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = NullPointerException.class)
 	public void becomesSuchThat_singleNullRHS() {
 		ff.makeBecomesSuchThat(iS, dS, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void becomesSuchThat_DifferentFactoryFreeId() {
+		ff.makeBecomesSuchThat(EFFiS, dS, P, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void becomesSuchThat_DifferentFactoryConditionBoundId() {
+		ff.makeBecomesSuchThat(iS, EFFdS, P, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void becomesSuchThat_DifferentFactoryRHS() {
+		ff.makeBecomesSuchThat(iS, dS, EFFP, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -353,6 +393,11 @@ public class TestFormulaFactory extends AbstractTests {
 		ff.makeBoundIdentDecl(PRED_VAR_NAME, null);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void boundIdentDecl_DifferentFactoryType() {
+		ff.makeBoundIdentDecl("x", null, EFFtS);
+	}
+
 	@Test(expected = NullPointerException.class)
 	public void freeIdentifier_NullName() {
 		ff.makeFreeIdentifier(null, null);
@@ -368,11 +413,22 @@ public class TestFormulaFactory extends AbstractTests {
 		ff.makeFreeIdentifier(PRED_VAR_NAME, null);
 	}
 
-	// Type of free identifier is tested in TestTypedConstructor
+	@Test(expected = IllegalArgumentException.class)
+	public void freeIdentifier_DifferentFactoryType() {
+		ff.makeFreeIdentifier("x", null, EFFtS);
+	}
+
+	// Type of free identifier is tested in
+	// TestTypedConstructor.givenSetErrors()
 
 	@Test(expected = IllegalArgumentException.class)
 	public void boundIdentifier_InvalidIndex() {
 		ff.makeBoundIdentifier(-1, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void boundIdentifier_DifferentFactoryType() {
+		ff.makeBoundIdentifier(0, null, EFFtS);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -420,6 +476,16 @@ public class TestFormulaFactory extends AbstractTests {
 		ff.makeAssociativePredicate(LOR, mList(P), null);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void associativePredicate_DifferentFactory1stChild() {
+		ff.makeAssociativePredicate(LOR, mList(EFFP, P), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void associativePredicate_DifferentFactory2ndChild() {
+		ff.makeAssociativePredicate(LOR, mList(P, EFFP), null);
+	}
+
 	@Test
 	public void associativePredicate_ArrayParameter() {
 		final Predicate[] children = { P, P };
@@ -440,6 +506,16 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = NullPointerException.class)
 	public void binaryPredicate_NullRight() {
 		ff.makeBinaryPredicate(LIMP, P, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void binaryPredicate_DifferentFactoryLeft() {
+		ff.makeBinaryPredicate(LIMP, EFFP, P, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void binaryPredicate_DifferentFactoryRight() {
+		ff.makeBinaryPredicate(LIMP, P, EFFP, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -473,6 +549,16 @@ public class TestFormulaFactory extends AbstractTests {
 		ff.makeMultiplePredicate(KPARTITION, NO_EXPRS, null);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void multiplePredicate_DifferentFactory1stChild() {
+		ff.makeMultiplePredicate(KPARTITION, mList(EFFeS, eS), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void multiplePredicate_DifferentFactory2ndChild() {
+		ff.makeMultiplePredicate(KPARTITION, mList(eS, EFFeS), null);
+	}
+
 	@Test
 	public void multiplePredicate_ArrayParameter() {
 		final Expression[] children = { eS, eS };
@@ -500,6 +586,21 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = NullPointerException.class)
 	public void quantifiedPredicate_NullPredicate() {
 		ff.makeQuantifiedPredicate(FORALL, mList(dS), null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void quantifiedPredicate_DifferentFactory1stDecl() {
+		ff.makeQuantifiedPredicate(FORALL, mList(EFFdS, dS), P, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void quantifiedPredicate_DifferentFactory2ndDecl() {
+		ff.makeQuantifiedPredicate(FORALL, mList(dS, EFFdS), P, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void quantifiedPredicate_DifferentFactoryPredicate() {
+		ff.makeQuantifiedPredicate(FORALL, mList(dS), EFFP, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -531,6 +632,16 @@ public class TestFormulaFactory extends AbstractTests {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
+	public void relationalPredicate_DifferentFactoryLeft() {
+		ff.makeRelationalPredicate(EQUAL, EFFeS, eS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void relationalPredicate_DifferentFactoryRight() {
+		ff.makeRelationalPredicate(EQUAL, eS, EFFeS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
 	public void simplePredicate_InvalidTag() {
 		ff.makeSimplePredicate(FREE_IDENT, eS, null);
 	}
@@ -541,6 +652,11 @@ public class TestFormulaFactory extends AbstractTests {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
+	public void simplePredicate_DifferentFactoryChild() {
+		ff.makeSimplePredicate(KFINITE, EFFeS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
 	public void unaryPredicate_InvalidTag() {
 		ff.makeUnaryPredicate(FREE_IDENT, P, null);
 	}
@@ -548,6 +664,11 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = NullPointerException.class)
 	public void unaryPredicate_NullChild() {
 		ff.makeUnaryPredicate(NOT, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void unaryPredicate_DifferentFactoryChild() {
+		ff.makeUnaryPredicate(NOT, EFFP, null);
 	}
 
 	/*----------------------------------------------------------------
@@ -568,6 +689,16 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = NullPointerException.class)
 	public void associativeExpression_NullChild() {
 		ff.makeAssociativeExpression(BUNION, mList(eS, null), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void associativeExpression_DifferentFactory1stChild() {
+		ff.makeAssociativeExpression(BUNION, mList(EFFeS, eS), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void associativeExpression_DifferentFactory2ndChild() {
+		ff.makeAssociativeExpression(BUNION, mList(eS, EFFeS), null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -601,6 +732,11 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = IllegalArgumentException.class)
 	public void atomicExpression_IdNotInV1() {
 		ffV1.makeAtomicExpression(KID_GEN, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void emptySet_DifferentFactoryType() {
+		ff.makeEmptySet(POW(EFFtS), null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -638,9 +774,24 @@ public class TestFormulaFactory extends AbstractTests {
 		ff.makeBinaryExpression(MAPSTO, eS, null, null);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void binaryExpression_DifferentFactoryLeft() {
+		ff.makeBinaryExpression(MAPSTO, EFFeS, eS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void binaryExpression_DifferentFactoryRight() {
+		ff.makeBinaryExpression(MAPSTO, eS, EFFeS, null);
+	}
+
 	@Test(expected = NullPointerException.class)
 	public void boolExpression_NullChild() {
 		ff.makeBoolExpression(null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void boolExpression_DifferentFactoryChild() {
+		ff.makeBoolExpression(EFFP, null);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -674,6 +825,28 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = NullPointerException.class)
 	public void quantifiedExpression_NullExpression() {
 		ff.makeQuantifiedExpression(CSET, mList(dS), P, null, null, Explicit);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void quantifiedExpression_DifferentFactory1stDecls() {
+		ff.makeQuantifiedExpression(CSET, mList(EFFdS, dS), P, eS, null,
+				Explicit);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void quantifiedExpression_DifferentFactory2ndDecls() {
+		ff.makeQuantifiedExpression(CSET, mList(dS, EFFdS), P, eS, null,
+				Explicit);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void quantifiedExpression_DifferentFactoryPredicate() {
+		ff.makeQuantifiedExpression(CSET, mList(dS), EFFP, eS, null, Explicit);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void quantifiedExpression_DifferentFactoryExpression() {
+		ff.makeQuantifiedExpression(CSET, mList(dS), P, EFFeS, null, Explicit);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -758,8 +931,23 @@ public class TestFormulaFactory extends AbstractTests {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
+	public void setExtension_DifferentFactory1stChild() {
+		ff.makeSetExtension(mList(EFFeS, eS), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void setExtension_DifferentFactory2ndChild() {
+		ff.makeSetExtension(mList(eS, EFFeS), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
 	public void setExtension_InvalidType() {
 		ff.makeEmptySetExtension(tS, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void setExtension_DifferentFactoryType() {
+		ff.makeEmptySetExtension(POW(EFFtS), null);
 	}
 
 	@Test
@@ -776,6 +964,11 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = NullPointerException.class)
 	public void unaryExpression_NullChild() {
 		ff.makeUnaryExpression(KCARD, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void unaryExpression_DifferentFactoryChild() {
+		ff.makeUnaryExpression(KCARD, EFFeS, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -823,6 +1016,18 @@ public class TestFormulaFactory extends AbstractTests {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
+	public void extendedPredicate_DifferentFactory1stExpression() {
+		EFF.makeExtendedPredicate(fooS, mList(eS, EFFeS), mList(EFFP, EFFP),
+				null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedPredicate_DifferentFactory2ndExpression() {
+		EFF.makeExtendedPredicate(fooS, mList(EFFeS, eS), mList(EFFP, EFFP),
+				null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
 	public void extendedPredicate_WrongNumberOfExpressions() {
 		EFF.makeExtendedPredicate(fooS, mList(EFFeS), mList(EFFP, EFFP), null);
 	}
@@ -835,6 +1040,18 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test(expected = NullPointerException.class)
 	public void extendedPredicate_NullInPredicates() {
 		EFF.makeExtendedPredicate(fooS, mList(EFFeS, EFFeT), mList(EFFP, null),
+				null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedPredicate_DifferentFactory1stPredicate() {
+		EFF.makeExtendedPredicate(fooS, mList(EFFeS, EFFeT), mList(P, EFFP),
+				null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedPredicate_DifferentFactory2ndPredicate() {
+		EFF.makeExtendedPredicate(fooS, mList(EFFeS, EFFeT), mList(EFFP, P),
 				null);
 	}
 
@@ -876,6 +1093,18 @@ public class TestFormulaFactory extends AbstractTests {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
+	public void extendedExpression_DifferentFactory1stExpression() {
+		EFF.makeExtendedExpression(barS, mList(eS, EFFeS), mList(EFFP, EFFP),
+				null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedExpression_DifferentFactory2ndExpression() {
+		EFF.makeExtendedExpression(barS, mList(EFFeS, eS), mList(EFFP, EFFP),
+				null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
 	public void extendedExpression_WrongNumberOfExpressions() {
 		EFF.makeExtendedExpression(barS, mList(EFFeS), mList(EFFP, EFFP), null);
 	}
@@ -889,6 +1118,18 @@ public class TestFormulaFactory extends AbstractTests {
 	public void extendedExpression_NullInPredicates() {
 		EFF.makeExtendedExpression(barS, mList(EFFeS, EFFeT),
 				mList(EFFP, null), null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedExpression_DifferentFactory1stPredicate() {
+		EFF.makeExtendedExpression(barS, mList(EFFeS, EFFeT), mList(P, EFFP),
+				null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedExpression_DifferentFactory2ndPredicate() {
+		EFF.makeExtendedExpression(barS, mList(EFFeS, EFFeT), mList(EFFP, P),
+				null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -910,6 +1151,12 @@ public class TestFormulaFactory extends AbstractTests {
 	public void extendedExpression_InvalidType() {
 		EFF.makeExtendedExpression(barS, mList(EFFeS, EFFeT),
 				mList(EFFP, EFFP), null, EFFtS);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void extendedExpression_DifferentFactoryType() {
+		EFF.makeExtendedExpression(barS, mList(EFFeS, EFFeS),
+				mList(EFFP, EFFP), null, POW(tS));
 	}
 
 	/**
