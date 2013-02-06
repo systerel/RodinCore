@@ -62,10 +62,11 @@ import org.eventb.core.ast.UnaryPredicate;
  * the already rewritten children, rather than a complete node.
  * </p>
  * <p>
- * Implementation note: In case the node is a leaf, the implementor must
- * guarantee that the node is rebuilt with the rewriter factory if the factory
- * of the node if the factory of the node is different. Pay attention to the
- * fact that extensions can be leaf nodes.
+ * Implementation note: All rewrite methods have the post-condition that the
+ * returned formula has been built with the formula factory of this rewriter.
+ * For internal node, this happens automatically. However, for leaf nodes, care
+ * must be taken to build a copy of the node if it does not carry yet the right
+ * formula factory.
  * </p>
  * 
  * @author Laurent Voisin
@@ -81,15 +82,9 @@ public interface ITypeCheckingRewriter {
 
 	void leavingQuantifier(int nbOfBoundIdentDecls);
 
-	/**
-	 * Rewrite the bound identifier declaration leaf node.
-	 * <p>
+	/*
 	 * The node must be rebuilt with the rewriter factory if the node factory is
-	 * different whatever the node content is modified or not.
-	 * </p>
-	 * 
-	 * @param src the leaf node to be rewritten
-	 * @return the rewritten node
+	 * different whether the node content is modified or not.
 	 */
 	BoundIdentDecl rewrite(BoundIdentDecl src);
 
@@ -98,29 +93,15 @@ public interface ITypeCheckingRewriter {
 
 	Predicate rewrite(AssociativePredicate src, AssociativePredicate pred);
 
-	/**
-	 * Rewrite the predicate variable leaf node.
-	 * <p>
+	/*
 	 * The node must be rebuilt with the rewriter factory if the node factory is
-	 * different whatever the node content is modified or not.
-	 * </p>
-	 * 
-	 * @param src
-	 *            the leaf node to be rewritten
-	 * @return the rewritten node
+	 * different whether the node content is modified or not.
 	 */
 	Predicate rewrite(PredicateVariable src);
 
-	/**
-	 * Rewrite the atomic expression leaf node.
-	 * <p>
+	/*
 	 * The node must be rebuilt with the rewriter factory if the node factory is
-	 * different whatever the node content is modified or not.
-	 * </p>
-	 * 
-	 * @param src
-	 *            the leaf node to be rewritten
-	 * @return the rewritten node
+	 * different whether the node content is modified or not.
 	 */
 	Expression rewrite(AtomicExpression src);
 
@@ -130,51 +111,27 @@ public interface ITypeCheckingRewriter {
 
 	Expression rewrite(BoolExpression src, BoolExpression expr);
 
-	/**
-	 * Rewrite the bound identifier leaf node.
-	 * <p>
+	/*
 	 * The node must be rebuilt with the rewriter factory if the node factory is
-	 * different whatever the node content is modified or not.
-	 * </p>
-	 * 
-	 * @param src the leaf node to be rewritten
-	 * @return the rewritten node
+	 * different whether the node content is modified or not.
 	 */
 	Expression rewrite(BoundIdentifier src);
 
-	/**
-	 * Rewrite the free identifier leaf node.
-	 * <p>
+	/*
 	 * The node must be rebuilt with the rewriter factory if the node factory is
-	 * different whatever the node content is modified or not.
-	 * </p>
-	 * 
-	 * @param src the leaf node to be rewritten
-	 * @return the rewritten node
+	 * different whether the node content is modified or not.
 	 */
 	Expression rewrite(FreeIdentifier src);
 
-	/**
-	 * Rewrite the integer literal leaf node.
-	 * <p>
+	/*
 	 * The node must be rebuilt with the rewriter factory if the node factory is
-	 * different whatever the node content is modified or not.
-	 * </p>
-	 * 
-	 * @param src the leaf node to be rewritten
-	 * @return the rewritten node
+	 * different whether the node content is modified or not.
 	 */
 	Expression rewrite(IntegerLiteral src);
 
-	/**
-	 * Rewrite the literal predicate leaf node.
-	 * <p>
+	/*
 	 * The node must be rebuilt with the rewriter factory if the node factory is
-	 * different whatever the node content is modified or not.
-	 * </p>
-	 * 
-	 * @param src the leaf node to be rewritten
-	 * @return the rewritten node
+	 * different whether the node content is modified or not.
 	 */
 	Predicate rewrite(LiteralPredicate src);
 
@@ -198,32 +155,16 @@ public interface ITypeCheckingRewriter {
 
 	Predicate rewrite(UnaryPredicate src, UnaryPredicate pred);
 
-	/**
-	 * Rewrite the extended expression node.
-	 * <p>
-	 * Since this node can be a leaf, it must be rebuilt with the rewriter
-	 * factory if the node factory is different whatever the node content is
-	 * modified or not.
-	 * </p>
-	 * 
-	 * @param src
-	 *            the extended expression node to be rewritten
-	 * @return the rewritten node
+	/*
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
 	 */
 	Expression rewrite(ExtendedExpression src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds);
 
-	/**
-	 * Rewrite the extended predicate node.
-	 * <p>
-	 * Since this node can be a leaf, it must be rebuilt with the rewriter
-	 * factory if the node factory is different whatever the node content is
-	 * modified or not.
-	 * </p>
-	 * 
-	 * @param src
-	 *            the extended predicate node to be rewritten
-	 * @return the rewritten node
+	/*
+	 * The node must be rebuilt with the rewriter factory if the node factory is
+	 * different whether the node content is modified or not.
 	 */
 	Predicate rewrite(ExtendedPredicate src, boolean changed,
 			Expression[] newChildExprs, Predicate[] newChildPreds);

@@ -46,11 +46,10 @@ import org.eventb.core.ast.UnaryPredicate;
  * when it cannot be proven that the rewrite is always type-checked.
  * 
  * <p>
- * This implementation guarantee that a leaf node is rebuilt with the rewriter
- * factory if the factory of the node if the factory of the node is different as
- * requested in {@link ITypeCheckingRewriter}. As consequence if this class is
- * extended, the implementor should use this guarantee to always return the
- * super method result when he needs to return identity on a leaf node.
+ * This implementation guarantees that a leaf node is rebuilt with the rewriter
+ * factory if the factory of the node is different as required by
+ * {@link ITypeCheckingRewriter}. Consequently, when extending this class,
+ * always call the super method, rather than returning the formula unchanged.
  * </p>
  * 
  * @author Laurent Voisin
