@@ -154,7 +154,7 @@ public class SetExtension extends Expression {
 				return;
 			}
 			resultType = givenType;
-			if (!mergeGivenTypes(resultType, ff)) {
+			if (!mergeGivenTypes(resultType)) {
 				// Incompatible type environments, don't set the type
 				return;
 			}

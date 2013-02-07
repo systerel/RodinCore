@@ -262,7 +262,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 		// The type we are about to set on this expression can contribute
 		// some given sets, add them to the identifier cache
-		if (!mergeGivenTypes(resultType, factory)) {
+		if (!mergeGivenTypes(resultType)) {
 			// Incompatible type environments, don't set the type
 			return;
 		}

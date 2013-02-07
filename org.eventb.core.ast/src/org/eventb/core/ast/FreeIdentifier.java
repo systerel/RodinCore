@@ -92,7 +92,7 @@ public class FreeIdentifier extends Identifier {
 		final FreeIdentifier[] givenTypeIdents;
 		if (!isGivenSet(name, proposedType)) {
 			// Check there is no occurrence of this identifier in given types
-			givenTypeIdents = getGivenTypeIdentifiers(proposedType, ff);
+			givenTypeIdents = getGivenTypeIdentifiers(proposedType);
 			for (final FreeIdentifier givenTypeIdent : givenTypeIdents) {
 				if (name.equals(givenTypeIdent.getName())) {
 					return;

@@ -63,14 +63,11 @@ public abstract class Expression extends Formula<Expression> {
 	 * 
 	 * @param aType
 	 *            the type we are about to set on this formula
-	 * @param factory
-	 *            the formula factory to use for building the identifiers
 	 * @return <code>true</code> iff the identifier cache is still type-checked
 	 * @since 3.0
 	 */
-	protected final boolean mergeGivenTypes(Type aType, FormulaFactory factory) {
-		final FreeIdentifier[] newIdents = getGivenTypeIdentifiers(aType,
-				factory);
+	protected final boolean mergeGivenTypes(Type aType) {
+		final FreeIdentifier[] newIdents = getGivenTypeIdentifiers(aType);
 		if (newIdents.length == 0) {
 			// Nothing new
 			return true;

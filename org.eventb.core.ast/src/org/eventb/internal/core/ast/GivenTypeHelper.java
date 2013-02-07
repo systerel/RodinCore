@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Set;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
@@ -70,12 +69,9 @@ public class GivenTypeHelper {
 	 * 
 	 * @param type
 	 *            some solved type
-	 * @param factory
-	 *            the formula factory to use for building the identifiers
 	 * @return a sorted array of given type identifiers
 	 */
-	public static FreeIdentifier[] getGivenTypeIdentifiers(Type type,
-			FormulaFactory factory) {
+	public static FreeIdentifier[] getGivenTypeIdentifiers(Type type) {
 		final Set<GivenType> givenTypes = type.getGivenTypes();
 		final FreeIdentifier[] result = new FreeIdentifier[givenTypes.size()];
 		int idx = 0;

@@ -238,7 +238,7 @@ public class AtomicExpression extends Expression {
 			return;
 		}
 		if (resultType != null) {
-			this.freeIdents = getGivenTypeIdentifiers(resultType, ff);
+			this.freeIdents = getGivenTypeIdentifiers(resultType);
 			setFinalType(resultType, givenType);
 		}
 	}
