@@ -44,7 +44,10 @@ public abstract class Predicate extends Formula<Predicate> {
 		return this;
 	}
 
-	protected abstract void synthesizeType(FormulaFactory ff);
+	/**
+	 * @since 3.0
+	 */
+	protected abstract void synthesizeType();
 	
 	@Override
 	protected final void solveType(TypeUnifier unifier) {
@@ -52,7 +55,7 @@ public abstract class Predicate extends Formula<Predicate> {
 			return;
 		}
 		solveChildrenTypes(unifier);
-		synthesizeType(unifier.getFormulaFactory());
+		synthesizeType();
 	}
 
 	/**

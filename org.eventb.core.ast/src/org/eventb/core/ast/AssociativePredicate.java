@@ -149,11 +149,11 @@ public class AssociativePredicate extends Predicate {
 		ensureMinLength(children, 2);
 		ensureSameFactory(this.children);
 		setPredicateVariableCache(this.children);
-		synthesizeType(ff);
+		synthesizeType();
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff) {
+	protected void synthesizeType() {
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 

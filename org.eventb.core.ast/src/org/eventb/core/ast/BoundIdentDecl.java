@@ -73,13 +73,13 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		this.name = name;
 		ensureSameFactory(givenType);
 		setPredicateVariableCache();
-		synthesizeType(ff, givenType);
+		synthesizeType(givenType);
 		// final type cannot be null if given
 		// type was not since all possible given types are valid
 		assert givenType == null || givenType == this.type;
 	}
 
-	private void synthesizeType(FormulaFactory ff, Type givenType) {
+	private void synthesizeType(Type givenType) {
 		this.freeIdents = NO_FREE_IDENT;
 		this.boundIdents = NO_BOUND_IDENT;
 
@@ -176,9 +176,9 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		final Type inferredType = unifier.solve(type);
 		type = null;
 		if (inferredType != null && inferredType.isSolved()) {
-			synthesizeType(unifier.getFormulaFactory(), inferredType);
+			synthesizeType(inferredType);
 		} else {
-			synthesizeType(unifier.getFormulaFactory(), null);
+			synthesizeType(null);
 		}
 	}
 

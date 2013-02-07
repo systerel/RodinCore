@@ -66,12 +66,12 @@ public class BoundIdentifier extends Identifier {
 		this.boundIndex = boundIndex;
 		ensureSameFactory(type);
 		setPredicateVariableCache();
-		synthesizeType(ff, type);
+		synthesizeType(type);
 		ensureHasType(this, type);
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(Type givenType) {
 		this.freeIdents = NO_FREE_IDENT;
 		this.boundIdents = new BoundIdentifier[] {this};
 		

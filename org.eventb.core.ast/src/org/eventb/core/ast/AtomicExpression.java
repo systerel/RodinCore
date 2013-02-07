@@ -178,16 +178,17 @@ public class AtomicExpression extends Expression {
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureSameFactory(type);
 		setPredicateVariableCache();
-		synthesizeType(ff, type);
+		synthesizeType(type);
 		ensureHasType(this, type);
 	}
 	
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(Type givenType) {
 		// May change at the end of this method
 		this.freeIdents = NO_FREE_IDENT;
 		this.boundIdents = NO_BOUND_IDENT;
 
+		final FormulaFactory ff = getFactory();
 		final Type resultType;
 		switch (getTag()) {
 		case Formula.INTEGER:

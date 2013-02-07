@@ -70,15 +70,15 @@ public class IntegerLiteral extends Expression {
 		this.literal = literal;
 		
 		setPredicateVariableCache();
-		synthesizeType(ff, null);
+		synthesizeType(null);
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(Type givenType) {
 		this.freeIdents = NO_FREE_IDENT;
 		this.boundIdents = NO_BOUND_IDENT;
 		
-		setFinalType(ff.makeIntegerType(), givenType);
+		setFinalType(getFactory().makeIntegerType(), givenType);
 	}
 
 	/**

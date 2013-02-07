@@ -311,11 +311,11 @@ public class BinaryExpression extends Expression {
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureSameFactory(this.left, this.right);
 		setPredicateVariableCache(this.left, this.right);
-		synthesizeType(ff, null);
+		synthesizeType(null);
 	}
 	
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(Type givenType) {
 		// No need to add free identifiers of given sets since it has been done
 		// in children and we merge here
 		IdentListMerger freeIdentMerger = 
@@ -339,6 +339,7 @@ public class BinaryExpression extends Expression {
 		Type leftType = left.getType();
 		Type rightType = right.getType();
 		
+		final FormulaFactory ff = getFactory();
 		final Type resultType;
 		Type alpha, beta, gamma, delta;
 		switch (getTag()) {

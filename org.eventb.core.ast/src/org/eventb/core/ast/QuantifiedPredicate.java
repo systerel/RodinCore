@@ -171,11 +171,11 @@ public class QuantifiedPredicate extends Predicate {
 		ensureSameFactory(this.quantifiedIdentifiers);
 		ensureSameFactory(this.pred);
 		setPredicateVariableCache(this.pred);
-		synthesizeType(ff);
+		synthesizeType();
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff) {
+	protected void synthesizeType() {
 		final int length = quantifiedIdentifiers.length;
 		final Formula<?>[] children = new Formula<?>[length + 1];
 		System.arraycopy(quantifiedIdentifiers, 0, children, 0, length);
@@ -185,8 +185,8 @@ public class QuantifiedPredicate extends Predicate {
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
 		final BoundIdentifier[] boundIdentsBelow = pred.boundIdents; 
-		this.boundIdents = 
-			getBoundIdentsAbove(boundIdentsBelow, quantifiedIdentifiers, ff);
+		this.boundIdents = getBoundIdentsAbove(boundIdentsBelow,
+				quantifiedIdentifiers, getFactory());
 
 		if (freeIdentMerger.containsError()) {
 			// Incompatible type environments, don't bother going further.

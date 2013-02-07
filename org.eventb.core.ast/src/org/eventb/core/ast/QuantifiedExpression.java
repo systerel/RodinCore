@@ -371,14 +371,14 @@ public class QuantifiedExpression extends Expression {
 		ensureSameFactory(this.quantifiedIdentifiers);
 		ensureSameFactory(this.pred, this.expr);
 		setPredicateVariableCache(this.pred, this.expr);
-		synthesizeType(ff, null);
+		synthesizeType(null);
 
 		// Must be after synthesizeType()
 		this.form = filterForm(form);
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(Type givenType) {
 		final int length = quantifiedIdentifiers.length;
 		final Formula<?>[] children = new Formula<?>[length + 2];
 		System.arraycopy(quantifiedIdentifiers, 0, children, 0, length);
@@ -392,8 +392,8 @@ public class QuantifiedExpression extends Expression {
 			IdentListMerger.makeMerger(pred.boundIdents, expr.boundIdents);
 		final BoundIdentifier[] boundIdentsBelow = 
 			boundIdentMerger.getBoundMergedArray(); 
-		this.boundIdents = 
-			getBoundIdentsAbove(boundIdentsBelow, quantifiedIdentifiers, ff);
+		this.boundIdents = getBoundIdentsAbove(boundIdentsBelow,
+				quantifiedIdentifiers, getFactory());
 
 		if (freeIdentMerger.containsError() || boundIdentMerger.containsError()) {
 			// Incompatible type environments, don't bother going further.
@@ -424,7 +424,7 @@ public class QuantifiedExpression extends Expression {
 			}
 			break;
 		case Formula.CSET:
-			resultType = ff.makePowerSetType(exprType);
+			resultType = getFactory().makePowerSetType(exprType);
 			break;
 		default:
 			assert false;

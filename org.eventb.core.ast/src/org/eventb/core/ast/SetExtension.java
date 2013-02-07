@@ -129,12 +129,12 @@ public class SetExtension extends Expression {
 		ensureSameFactory(this.members);
 		ensureSameFactory(type);
 		setPredicateVariableCache(this.members);
-		synthesizeType(ff, type);
+		synthesizeType(type);
 		ensureHasType(this, type);
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(Type givenType) {
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(members);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
@@ -168,7 +168,7 @@ public class SetExtension extends Expression {
 					return;
 				}
 			}
-			resultType = ff.makePowerSetType(memberType);
+			resultType = getFactory().makePowerSetType(memberType);
 		}
 		setFinalType(resultType, givenType);
 	}

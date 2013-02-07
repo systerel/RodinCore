@@ -102,11 +102,11 @@ public class BecomesMemberOf extends Assignment {
 		this.setExpr = setExpr;
 		ensureSameFactory(this.setExpr);
 		setPredicateVariableCache(this.setExpr);
-		synthesizeType(ff);
+		synthesizeType();
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff) {
+	protected void synthesizeType() {
 		// assignedIdents contains only one element since it is guaranteed by
 		// constructor
 		IdentListMerger freeIdentMerger = IdentListMerger.makeMerger(

@@ -157,7 +157,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		ensureSameFactory(this.childExpressions);
 		ensureSameFactory(this.childPredicates);
 		setPredicateVariableCache(getChildren());
-		synthesizeType(ff);
+		synthesizeType();
 	}
 
 	private void checkPreconditions() {
@@ -169,7 +169,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory factory) {
+	protected void synthesizeType() {
 		final Formula<?>[] children = getChildren();
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();

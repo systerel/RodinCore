@@ -68,7 +68,7 @@ public class FreeIdentifier extends Identifier {
 		this.name = name;
 		ensureSameFactory(type);
 		setPredicateVariableCache();
-		synthesizeType(ff, type);
+		synthesizeType(type);
 		ensureHasType(this, type);
 	}
 
@@ -81,7 +81,7 @@ public class FreeIdentifier extends Identifier {
 	 * free identifier cache.
 	 */
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type proposedType) {
+	protected void synthesizeType(Type proposedType) {
 		this.freeIdents = new FreeIdentifier[] {this};
 		this.boundIdents = NO_BOUND_IDENT;
 		

@@ -180,11 +180,11 @@ public class AssociativeExpression extends Expression {
 		ensureMinLength(children, 2);
 		ensureSameFactory(this.children);
 		setPredicateVariableCache(this.children);
-		synthesizeType(ff, null);
+		synthesizeType(null);
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(Type givenType) {
 		// No need to add free identifiers of given sets since it has been done
 		// in children and we merge here
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
@@ -207,6 +207,7 @@ public class AssociativeExpression extends Expression {
 		Type resultType;
 		Type partType, sourceType, targetType;
 		final int last = children.length - 1;
+		final FormulaFactory ff = getFactory();
 		switch (getTag()) {
 		case Formula.BUNION:
 		case Formula.BINTER:

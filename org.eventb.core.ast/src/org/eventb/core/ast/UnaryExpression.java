@@ -228,12 +228,12 @@ public class UnaryExpression extends Expression {
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureSameFactory(this.child);
 		setPredicateVariableCache(this.child);
-		synthesizeType(ff, null);
+		synthesizeType(null);
 	}
 
 	@Override
 	@SuppressWarnings("deprecation")
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(Type givenType) {
 		// No need to add free identifiers of given sets since it has been done
 		// in child expression
 		this.freeIdents = child.freeIdents;
@@ -245,6 +245,7 @@ public class UnaryExpression extends Expression {
 			return;
 		}
 		
+		final FormulaFactory ff = getFactory();
 		Type childType = child.getType();
 		final Type resultType;
 		final Type alpha, beta;
