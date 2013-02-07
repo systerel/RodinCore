@@ -139,11 +139,11 @@ public class BecomesSuchThat extends Assignment {
 		ensureSameFactory(this.primedIdents);
 		ensureSameFactory(this.condition);
 		setPredicateVariableCache(this.condition);
-		synthesizeType(ff);
+		synthesizeType();
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff) {
+	protected void synthesizeType() {
 		final int length = assignedIdents.length;
 		final Formula<?>[] children = new Formula[2 * length + 1];
 		System.arraycopy(assignedIdents, 0, children, 0, length);
@@ -154,8 +154,8 @@ public class BecomesSuchThat extends Assignment {
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
 		final BoundIdentifier[] boundIdentsBelow = condition.boundIdents; 
-		this.boundIdents = 
-			getBoundIdentsAbove(boundIdentsBelow, primedIdents, ff);
+		this.boundIdents = getBoundIdentsAbove(boundIdentsBelow, primedIdents,
+				getFactory());
 
 		if (freeIdentMerger.containsError()) {
 			// Incompatible type environments, don't bother going further.

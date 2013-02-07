@@ -201,7 +201,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		ensureSameFactory(this.childPredicates);
 		ensureSameFactory(type);
 		setPredicateVariableCache(getChildren());
-		synthesizeType(ff, type);
+		synthesizeType(type);
 		ensureHasType(this, type);
 	}
 
@@ -229,7 +229,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory factory, Type givenType) {
+	protected void synthesizeType(Type givenType) {
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(getChildren());
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();
 
@@ -250,7 +250,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		final Type resultType;
 		if (givenType == null) {
 			resultType = extension.synthesizeType(childExpressions,
-					childPredicates, new TypeMediator(factory));
+					childPredicates, new TypeMediator(getFactory()));
 		} else if (!isValidType(givenType)) {
 			resultType = null;
 		} else {

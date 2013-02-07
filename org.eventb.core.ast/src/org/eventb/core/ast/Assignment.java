@@ -83,7 +83,7 @@ public abstract class Assignment extends Formula<Assignment> {
 		for (FreeIdentifier ident: assignedIdents) {
 			ident.solveType(unifier);
 		}
-		synthesizeType(unifier.getFormulaFactory());
+		synthesizeType();
 	}
 
 	/**
@@ -171,7 +171,10 @@ public abstract class Assignment extends Formula<Assignment> {
 	 */
 	public abstract FreeIdentifier[] getUsedIdentifiers();
 	
-	protected abstract void synthesizeType(FormulaFactory ff);
+	/**
+	 * @since 3.0
+	 */
+	protected abstract void synthesizeType();
 
 	@Override
 	protected final <F> void inspect(FindingAccumulator<F> acc) {

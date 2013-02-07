@@ -122,11 +122,11 @@ public class BoolExpression extends Expression {
 		this.child = child;
 		ensureSameFactory(this.child);
 		setPredicateVariableCache(this.child);
-		synthesizeType(ff, null);
+		synthesizeType(null);
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(Type givenType) {
 		this.freeIdents = child.freeIdents;
 		this.boundIdents = child.boundIdents;
 		
@@ -134,7 +134,7 @@ public class BoolExpression extends Expression {
 			return;
 		}
 		
-		setFinalType(ff.makeBooleanType(), givenType);
+		setFinalType(getFactory().makeBooleanType(), givenType);
 	}
 
 	/**

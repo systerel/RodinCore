@@ -51,7 +51,10 @@ public abstract class Expression extends Formula<Expression> {
 		super(tag, ff, location, hashCode);
 	}
 	
-	protected abstract void synthesizeType(FormulaFactory ff, Type givenType);
+	/**
+	 * @since 3.0
+	 */
+	protected abstract void synthesizeType(Type givenType);
 
 	/**
 	 * Adds the free identifiers for the GivenTypes occurring in the given type
@@ -230,9 +233,9 @@ public abstract class Expression extends Formula<Expression> {
 		type = null;
 		solveChildrenTypes(unifier);
 		if (inferredType != null && inferredType.isSolved()) {
-			synthesizeType(unifier.getFormulaFactory(), inferredType);
+			synthesizeType(inferredType);
 		} else {
-			synthesizeType(unifier.getFormulaFactory(), null);
+			synthesizeType(null);
 		}
 	}
 

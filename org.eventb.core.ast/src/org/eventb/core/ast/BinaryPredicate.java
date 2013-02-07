@@ -137,11 +137,11 @@ public class BinaryPredicate extends Predicate {
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureSameFactory(this.left, this.right);
 		setPredicateVariableCache(this.left, this.right);
-		synthesizeType(ff);
+		synthesizeType();
 	}
 	
 	@Override
-	protected void synthesizeType(FormulaFactory ff) {
+	protected void synthesizeType() {
 		IdentListMerger freeIdentMerger = 
 			IdentListMerger.makeMerger(left.freeIdents, right.freeIdents);
 		this.freeIdents = freeIdentMerger.getFreeMergedArray();

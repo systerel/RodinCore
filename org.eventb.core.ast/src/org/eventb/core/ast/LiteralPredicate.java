@@ -127,11 +127,11 @@ public class LiteralPredicate extends Predicate {
 		super(tag, ff, location, 0);
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		setPredicateVariableCache();
-		synthesizeType(ff);
+		synthesizeType();
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff) {
+	protected void synthesizeType() {
 		this.freeIdents = NO_FREE_IDENT;
 		this.boundIdents = NO_BOUND_IDENT;
 		typeChecked = true;

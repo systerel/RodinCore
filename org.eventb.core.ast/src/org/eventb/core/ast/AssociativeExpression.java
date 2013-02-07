@@ -180,11 +180,11 @@ public class AssociativeExpression extends Expression {
 		ensureMinLength(children, 2);
 		ensureSameFactory(this.children);
 		setPredicateVariableCache(this.children);
-		synthesizeType(ff, null);
+		synthesizeType(null);
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff, Type givenType) {
+	protected void synthesizeType(Type givenType) {
 		// No need to add free identifiers of given sets since it has been done
 		// in children and we merge here
 		IdentListMerger freeIdentMerger = mergeFreeIdentifiers(children);
@@ -237,7 +237,8 @@ public class AssociativeExpression extends Expression {
 			}
 			sourceType = children[last].getType().getSource();
 			targetType = children[0].getType().getTarget();
-			resultType = ff.makeRelationalType(sourceType, targetType);
+			resultType = getFactory()
+					.makeRelationalType(sourceType, targetType);
 			break;
 		case Formula.FCOMP:
 			partType = children[0].getType().getTarget();
@@ -256,7 +257,8 @@ public class AssociativeExpression extends Expression {
 			}
 			sourceType = children[0].getType().getSource();
 			targetType = children[last].getType().getTarget();
-			resultType = ff.makeRelationalType(sourceType, targetType);
+			resultType = getFactory()
+					.makeRelationalType(sourceType, targetType);
 			break;
 		case Formula.OVR:
 			resultType = children[0].getType();

@@ -87,7 +87,7 @@ public class PredicateVariable extends Predicate {
 		ensureValidIdentifierName(suffix, ff);
 		this.name = name;
 		setPredicateVariableCache(this);
-		synthesizeType(ff);
+		synthesizeType();
 	}
 
 	public String getName() {
@@ -95,7 +95,7 @@ public class PredicateVariable extends Predicate {
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff) {
+	protected void synthesizeType() {
 		this.freeIdents = NO_FREE_IDENT;
 		this.boundIdents = NO_BOUND_IDENT;
 		typeChecked = true;

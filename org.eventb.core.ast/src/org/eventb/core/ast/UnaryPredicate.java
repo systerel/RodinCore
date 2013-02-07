@@ -130,11 +130,11 @@ public class UnaryPredicate extends Predicate {
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureSameFactory(this.child);
 		setPredicateVariableCache(this.child);
-		synthesizeType(ff);
+		synthesizeType();
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff) {
+	protected void synthesizeType() {
 		this.freeIdents = child.freeIdents;
 		this.boundIdents = child.boundIdents;
 		

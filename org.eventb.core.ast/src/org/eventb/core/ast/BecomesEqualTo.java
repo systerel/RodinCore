@@ -108,11 +108,11 @@ public class BecomesEqualTo extends Assignment {
 		ensureSameLength(assignedIdents, values);
 		ensureSameFactory(this.values);
 		setPredicateVariableCache(this.values);
-		synthesizeType(ff);
+		synthesizeType();
 	}
 
 	@Override
-	protected void synthesizeType(FormulaFactory ff) {
+	protected void synthesizeType() {
 		final int length = assignedIdents.length;
 		final Expression[] children = new Expression[length * 2];
 		System.arraycopy(assignedIdents, 0, children, 0, length);
