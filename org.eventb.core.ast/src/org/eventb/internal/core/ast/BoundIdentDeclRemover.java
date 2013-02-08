@@ -78,6 +78,8 @@ public class BoundIdentDeclRemover extends Substitution {
 
 	@Override
 	public Expression rewrite(BoundIdentifier ident) {
+		// no factory change in substitutions
+		assert (ff == ident.getFactory());
 		final int nbOfInternallyBound = getBindingDepth();
 		final int index = ident.getBoundIndex();
 		// Locally bound identifier ?

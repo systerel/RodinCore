@@ -51,6 +51,8 @@ public class BindingSubstitution extends SimpleSubstitution {
 
 	@Override
 	public Expression rewrite(BoundIdentifier ident) {
+		// no factory change in substitutions
+		assert (ff == ident.getFactory());
 		final int index = ident.getBoundIndex();
 		if (index < getBindingDepth() || offset == 0) {
 			return super.rewrite(ident);
