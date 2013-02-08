@@ -654,7 +654,7 @@ public abstract class AssociativeSimplification<T extends Formula<T>> {
 
 	protected FormulaFactory ff;
 
-	protected AssociativeSimplification(T original, T[] children, 
+	protected AssociativeSimplification(T original, T[] children,
 			boolean eliminateDuplicate) {
 		this.original = original;
 		this.children = children;

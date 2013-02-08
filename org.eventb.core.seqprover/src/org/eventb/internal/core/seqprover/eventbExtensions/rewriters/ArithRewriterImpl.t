@@ -116,19 +116,28 @@ public class ArithRewriterImpl extends DefaultRewriter {
         }
 	}
 
+	protected AssociativeExpression makeAssociativeExpression(int tag, List<Expression> children) {
+		final FormulaFactory ff = children.get(0).getFactory();
+		return ff.makeAssociativeExpression(tag, children, null);
+	}
+
+	protected RelationalPredicate makeRelationalPredicate(int tag, Expression left,
+			Expression right) {
+		final FormulaFactory ff = left.getFactory();
+		return ff.makeRelationalPredicate(tag, left, right, null);
+	}
+
 	public ArithRewriterImpl() {
 		super(true);
 	}
     
     private Expression simplify(Expression expression, IPosition... positions) {
-        return AdditiveSimplifier.simplify(
-        		expression, positions, expression.getFactory());
+        return AdditiveSimplifier.simplify(expression, positions);
     }
 
-    private RelationalPredicate simplify(RelationalPredicate predicate, 
-    	IPosition... positions) {
-        return AdditiveSimplifier.simplify(
-        		predicate, positions, predicate.getFactory());
+    private RelationalPredicate simplify(RelationalPredicate predicate,
+            IPosition... positions) {
+        return AdditiveSimplifier.simplify(predicate, positions);
     }
     
 	%include {FormulaV2.tom}
@@ -186,10 +195,9 @@ public class ArithRewriterImpl extends DefaultRewriter {
              * Arithmetics: A − (− B)  == A + B
              */
 			Minus(A, UnMinus(B)) -> {
-			    final Expression result = ff.makeAssociativeExpression(
+			    final Expression result = makeAssociativeExpression(
 			                                     Expression.PLUS,
-			                                     Arrays.asList(`A, `B),
-			                                     null);
+			                                     Arrays.asList(`A, `B));
                 if(autoFlatteningMode()) {
                     return result.flatten(ff);
                 }
@@ -199,10 +207,9 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			Minus(A, IntegerLiteral(b)) -> {
 			    if (`b.signum() < 0) {
 			        final IntegerLiteral bNeg = ff.makeIntegerLiteral(`b.negate(), null);
-                    final Expression result = ff.makeAssociativeExpression(
+                    final Expression result = makeAssociativeExpression(
                                                      Expression.PLUS,
-                                                     Arrays.asList(`A, bNeg),
-                                                     null);
+                                                     Arrays.asList(`A, bNeg));
                     if(autoFlatteningMode()) {
                         return result.flatten(ff);
                     }
@@ -305,9 +312,7 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			 * Arithmetic: C − A < C − B  == B < A
 			 */
 			(Equal|Lt|Le|Gt|Ge)(Minus(C, A), Minus(C, B)) -> {
-				return predicate.getFactory()
-						.makeRelationalPredicate(
-							predicate.getTag(), `B, `A, null);
+				return makeRelationalPredicate(predicate.getTag(), `B, `A);
 			}
 		}
 		return predicate;

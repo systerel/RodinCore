@@ -66,7 +66,7 @@ public class AdditiveSimplifierTests {
 		for (int i = 0; i < len; i++) {
 			ps[i] = mPos(positions[i]);
 		}
-		final Expression actual = AdditiveSimplifier.simplify(expr, ps, ff);
+		final Expression actual = AdditiveSimplifier.simplify(expr, ps);
 		assertEquals(expected, actual);
 	}
 
@@ -82,7 +82,7 @@ public class AdditiveSimplifierTests {
 		for (int i = 0; i < len; i++) {
 			ps[i] = mPos(positions[i]);
 		}
-		final Predicate actual = AdditiveSimplifier.simplify(pred, ps, ff);
+		final Predicate actual = AdditiveSimplifier.simplify(pred, ps);
 		assertEquals(expected, actual);
 	}
 

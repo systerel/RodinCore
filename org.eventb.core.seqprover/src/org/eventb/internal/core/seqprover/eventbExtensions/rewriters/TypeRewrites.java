@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.SequentProver;
@@ -42,7 +41,7 @@ public class TypeRewrites extends AbstractAutoRewrites implements IVersionedReas
 	}
 
 	@Override
-	protected IFormulaRewriter getRewriter(FormulaFactory formulaFactory) {
+	protected IFormulaRewriter getRewriter() {
 		return new TypeRewriterImpl();
 	}
 

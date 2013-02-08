@@ -113,13 +113,11 @@ public class AdditiveSimplifier {
 	 *            original expression (must be type-checked and arithmetic)
 	 * @param positions
 	 *            position of terms to be removed
-	 * @param ff
-	 *            formula factory to use for building the result
 	 * @return a copy of the given expression with the given terms removed
 	 */
-	public static Expression simplify(Expression expr, IPosition[] positions,
-			FormulaFactory ff) {
+	public static Expression simplify(Expression expr, IPosition[] positions) {
 		assert expr.isTypeChecked() && expr.getType() instanceof IntegerType;
+		final FormulaFactory ff = expr.getFactory();
 		final AdditiveSimplifier s = new AdditiveSimplifier(positions, ff);
 		return s.simplifyExpr(expr, IPosition.ROOT);
 	}
@@ -133,13 +131,12 @@ public class AdditiveSimplifier {
 	 *            original predicate (must be type-checked and arithmetic)
 	 * @param positions
 	 *            position of terms to be removed
-	 * @param ff
-	 *            formula factory to use for building the result
 	 * @return a copy of the original predicate with the given terms removed
 	 */
 	public static RelationalPredicate simplify(RelationalPredicate pred,
-			IPosition[] positions, FormulaFactory ff) {
+			IPosition[] positions) {
 		assert pred.isTypeChecked();
+		final FormulaFactory ff = pred.getFactory();
 		final AdditiveSimplifier s = new AdditiveSimplifier(positions, ff);
 		final Expression left = pred.getLeft();
 		final Expression right = pred.getRight();

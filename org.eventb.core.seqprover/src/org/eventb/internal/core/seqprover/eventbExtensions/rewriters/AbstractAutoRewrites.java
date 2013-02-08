@@ -41,7 +41,7 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 			IProofMonitor pm) {
 		
 		final FormulaFactory ff = seq.getFormulaFactory();
-		final IFormulaRewriter rewriter = getRewriter(ff);
+		final IFormulaRewriter rewriter = getRewriter();
 		
 		final List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate hyp : seq.visibleHypIterable()) {
@@ -133,7 +133,7 @@ public abstract class AbstractAutoRewrites extends EmptyInputReasoner {
 	}
 	
 	
-	protected abstract IFormulaRewriter getRewriter(FormulaFactory formulaFactory);
+	protected abstract IFormulaRewriter getRewriter();
 	
 	protected abstract String getDisplayName();
 

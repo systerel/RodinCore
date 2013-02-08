@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
+
+import java.math.BigInteger;
+
 import org.eventb.core.ast.DefaultRewriter;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.seqprover.IReasoner;
@@ -25,31 +29,24 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AbstractAut
 public class HideOriginalRewrites extends AbstractAutoRewrites implements
 		IReasoner {
 
-	private static class HideOriginalRewriter extends DefaultRewriter {
+	static class HideOriginalRewriter extends DefaultRewriter {
 
-		private final Expression number0;
-		private final Expression number1;
-		private final Expression number2;
+		private static final BigInteger TWO = BigInteger.valueOf(2L);
 		
-		public HideOriginalRewriter(boolean autoFlattening, FormulaFactory ff) {
+		public HideOriginalRewriter(boolean autoFlattening) {
 			super(autoFlattening);
-			number0 = ff.parseExpression("0", LanguageVersion.V2, null)
-					.getParsedExpression();
-			number1 = ff.parseExpression("1", LanguageVersion.V2, null)
-					.getParsedExpression();
-			number2 = ff.parseExpression("2", LanguageVersion.V2, null)
-					.getParsedExpression();
-			number0.typeCheck(ff.makeTypeEnvironment());
-			number1.typeCheck(ff.makeTypeEnvironment());
-			number2.typeCheck(ff.makeTypeEnvironment());
 		}
 
 		@Override
 		public Expression rewrite(IntegerLiteral literal) {
-			if (literal.equals(number0))
-				return number1;
-			if (literal.equals(number1))
-				return number2;
+			final FormulaFactory ff = literal.getFactory();
+			final BigInteger value = literal.getValue();
+			if (value.equals(ZERO)) {
+				return ff.makeIntegerLiteral(ONE, null);
+			}
+			if (value.equals(ONE)) {
+				return ff.makeIntegerLiteral(TWO, null);
+			}
 			return super.rewrite(literal);
 		}
 
@@ -70,8 +67,8 @@ public class HideOriginalRewrites extends AbstractAutoRewrites implements
 	}
 
 	@Override
-	protected IFormulaRewriter getRewriter(FormulaFactory formulaFactory) {
-		return new HideOriginalRewriter(true, formulaFactory);
+	protected IFormulaRewriter getRewriter() {
+		return new HideOriginalRewriter(true);
 	}
 
 	public String getReasonerID() {
