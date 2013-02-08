@@ -135,7 +135,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		return result;
 	}
 	
-	public AutoRewriterImpl(FormulaFactory ff, Level level) {
+	public AutoRewriterImpl(Level level) {
 		super(optionsForLevel(level), DEBUG, "AutoRewriter");
 		this.level = level;
 		this.level1 = level.from(Level.L1);

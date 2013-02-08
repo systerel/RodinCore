@@ -55,8 +55,8 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 	/**
 	 * Default constructor.
 	 */
-	public RemoveNegationRewriterImpl(FormulaFactory ff) {
-		this(ff, true);
+	public RemoveNegationRewriterImpl() {
+		this(true);
 	}
 	
 	/**
@@ -64,8 +64,8 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 	 * should give the result of rewriting, or just tell if the rewriting is
 	 * possible.
 	 */
-	public RemoveNegationRewriterImpl(FormulaFactory ff, boolean isRewrite) {
-		super(ff, Level.L0);
+	public RemoveNegationRewriterImpl(boolean isRewrite) {
+		super(Level.L0);
 		this.isRewrite = isRewrite;
 	} 
 	

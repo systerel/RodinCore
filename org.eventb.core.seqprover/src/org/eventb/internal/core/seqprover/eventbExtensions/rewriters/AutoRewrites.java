@@ -111,8 +111,9 @@ public abstract class AutoRewrites extends AbstractAutoRewrites implements
 	}
 
 	@Override
+	// FIXME remove ff parameter
 	public final IFormulaRewriter getRewriter(FormulaFactory ff) {
-		return new AutoRewriterImpl(ff, level);
+		return new AutoRewriterImpl(level);
 	}
 
 }

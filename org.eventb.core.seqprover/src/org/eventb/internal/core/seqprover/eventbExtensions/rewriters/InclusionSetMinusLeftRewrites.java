@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.seqprover.SequentProver;
 
@@ -23,8 +22,8 @@ public class InclusionSetMinusLeftRewrites extends InclusionSetMinusRewrites {
 	}
 
 	@Override
-	protected IFormulaRewriter makeRewriter(FormulaFactory ff) {
-		return new InclusionSetMinusLeftRewriterImpl(ff);
+	protected IFormulaRewriter makeRewriter() {
+		return new InclusionSetMinusLeftRewriterImpl();
 	}
 
 }

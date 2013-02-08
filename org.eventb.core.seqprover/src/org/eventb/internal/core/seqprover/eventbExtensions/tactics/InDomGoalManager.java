@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.UnaryExpression;
@@ -71,7 +70,6 @@ public class InDomGoalManager {
 				sequent, domExpression.getChild());
 		final List<Expression> substitutesList = new ArrayList<Expression>(
 				substitutes);
-		final FormulaFactory ff = sequent.getFormulaFactory();
 		final List<Predicate> autoGoals = new ArrayList<Predicate>();
 
 		for (Expression substitute : substitutesList) {
@@ -85,7 +83,7 @@ public class InDomGoalManager {
 				return true;
 			}
 			final Predicate autorewrittenGoal = rewrittenGoal
-					.rewrite(new AutoRewriterImpl(ff, Level.LATEST));
+					.rewrite(new AutoRewriterImpl(Level.LATEST));
 			autoGoals.add(autorewrittenGoal);
 		}
 		for (int i = 0; i < autoGoals.size(); i++) {

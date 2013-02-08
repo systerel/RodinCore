@@ -49,8 +49,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 @SuppressWarnings("unused")
 public class RemoveInclusionUniversalRewriterImpl extends AutoRewriterImpl {
 
-	public RemoveInclusionUniversalRewriterImpl(FormulaFactory ff) {
-		super(ff, Level.L0);
+	public RemoveInclusionUniversalRewriterImpl() {
+		super(Level.L0);
 	}
 
 	%include {FormulaV2.tom}

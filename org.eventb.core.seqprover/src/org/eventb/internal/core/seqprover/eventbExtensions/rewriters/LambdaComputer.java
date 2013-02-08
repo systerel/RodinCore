@@ -128,7 +128,7 @@ public class LambdaComputer {
 				innerExpr, null);
 		final Predicate exists = ff.makeQuantifiedPredicate(EXISTS, decls,
 				equals, null);
-		final AutoRewriterImpl rewriter = new AutoRewriterImpl(ff, Level.L0);
+		final AutoRewriterImpl rewriter = new AutoRewriterImpl(Level.L0);
 		boolean changed;
 		Predicate pred = exists;
 		do {

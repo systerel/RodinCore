@@ -45,7 +45,7 @@ public class StrictInclusionRewrites extends AbstractManualRewrites implements
 
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
-		IFormulaRewriter rewriter = new StrictInclusionRewriterImpl(ff);
+		IFormulaRewriter rewriter = new StrictInclusionRewriterImpl();
 		Formula<?> predicate = pred.getSubFormula(position);
 
 		Formula<?> newSubPredicate = null;

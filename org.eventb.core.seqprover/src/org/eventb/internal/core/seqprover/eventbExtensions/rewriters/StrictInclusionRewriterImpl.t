@@ -22,8 +22,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 @SuppressWarnings("unused")
 public class StrictInclusionRewriterImpl extends AutoRewriterImpl {
 
-	public StrictInclusionRewriterImpl(FormulaFactory ff) {
-		super(ff, Level.L0);
+	public StrictInclusionRewriterImpl() {
+		super(Level.L0);
 	}
 	
 	%include {FormulaV2.tom}

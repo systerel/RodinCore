@@ -48,8 +48,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 @SuppressWarnings("unused")
 public class InclusionSetMinusRightRewriterImpl extends AutoRewriterImpl {
 
-	public InclusionSetMinusRightRewriterImpl(FormulaFactory ff) {
-		super(ff, Level.L0);
+	public InclusionSetMinusRightRewriterImpl() {
+		super(Level.L0);
 	}
 
 	%include {FormulaV2.tom}

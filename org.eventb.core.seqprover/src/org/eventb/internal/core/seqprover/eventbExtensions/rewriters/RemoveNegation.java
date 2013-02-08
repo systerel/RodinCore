@@ -45,7 +45,7 @@ public class RemoveNegation extends AbstractManualRewrites implements IReasoner 
 
 	@Override
 	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
-		IFormulaRewriter rewriter = new RemoveNegationRewriterImpl(ff);
+		IFormulaRewriter rewriter = new RemoveNegationRewriterImpl();
 		Formula<?> predicate = pred.getSubFormula(position);
 
 		Formula<?> newSubPredicate = null;

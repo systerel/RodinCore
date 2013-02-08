@@ -60,8 +60,8 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	/**
 	 * Default rewriter.
 	 */
-	public RemoveMembershipRewriterImpl(FormulaFactory ff, RMLevel level) {
-		this(ff, level, true);
+	public RemoveMembershipRewriterImpl(RMLevel level) {
+		this(level, true);
 	}
 	
 	/**
@@ -69,8 +69,8 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	 * should give the result of rewriting, or just tell if the rewriting is
 	 * possible.
 	 */
-	public RemoveMembershipRewriterImpl(FormulaFactory ff, RMLevel rmLevel, boolean isRewrite) {
-		super(ff, RM_TO_AUTO_LEVEL[rmLevel.ordinal()]);
+	public RemoveMembershipRewriterImpl(RMLevel rmLevel, boolean isRewrite) {
+		super(RM_TO_AUTO_LEVEL[rmLevel.ordinal()]);
 		this.rmLevel = rmLevel;
 		this.isRewrite = isRewrite;
 	}

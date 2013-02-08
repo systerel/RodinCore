@@ -829,11 +829,10 @@ public class Tactics {
 	 *            the current sequent
 	 * @return <code>true</code> if the tactic is not applicable,
 	 *         <code>false</code> otherwise
-	 * @since 2.0
+	 * @since 3.0
 	 */
-	public static boolean isRemoveNegationApplicable(Predicate pred,
-			final FormulaFactory ff) {
-		return new RemoveNegationRewriterImpl(ff, false)
+	public static boolean isRemoveNegationApplicable(Predicate pred) {
+		return new RemoveNegationRewriterImpl(false)
 				.isApplicableOrRewrite(pred);
 	}
 
@@ -903,7 +902,7 @@ public class Tactics {
 		return pred.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(RelationalPredicate predicate) {
-				return isRemoveMembershipApplicable(ff, predicate);
+				return isRemoveMembershipApplicable(predicate);
 			}
 		});
 	}
@@ -917,11 +916,10 @@ public class Tactics {
 	 *            the current sequent
 	 * @return <code>true</code> if the tactic is not applicable,
 	 *         <code>false</code> otherwise
-	 * @since 2.0
+	 * @since 3.0
 	 */
-	public static boolean isRemoveMembershipApplicable(FormulaFactory ff,
-			Predicate pred) {
-		return new RemoveMembershipRewriterImpl(ff, RMLevel.L1, false)
+	public static boolean isRemoveMembershipApplicable(Predicate pred) {
+		return new RemoveMembershipRewriterImpl(RMLevel.L1, false)
 				.isApplicableOrRewrite(pred);
 	}
 
