@@ -13,34 +13,22 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
+
 import java.math.BigInteger;
 
 import org.eventb.core.ast.AssociativeExpression;
-import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.BoolExpression;
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.ExtendedPredicate;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.Identifier;
-import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.LiteralPredicate;
-import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
-import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
-import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryExpression;
-import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.RemoveMembership.RMLevel;
@@ -281,12 +269,8 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	In(r, Rel(S, T) ) -> {
 	    		if(rmLevel.from(RMLevel.L1)) {
 	    			if(isRewrite){
-	    				final Expression cprod = 
-	    					ff.makeBinaryExpression(
-	    						Expression.CPROD,`S,`T, null);
-	    				rewrittenPredicate = 
-	    					ff.makeRelationalPredicate(
-	    						Predicate.SUBSETEQ, `r, cprod, null);
+	    				final Expression cprod = makeBinaryExpression(Expression.CPROD,`S,`T);
+	    				rewrittenPredicate = makeRelationalPredicate(Predicate.SUBSETEQ, `r, cprod);
 	    			}
 	    			return true;
 	    		}
@@ -416,17 +400,11 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 */
 	    	In(f, Tfun(S, T)) -> {
 	    		if (isRewrite) {
-	    			final Expression pfun = 
-	    				ff.makeBinaryExpression(Expression.PFUN, `S, `T, null);
-	    			final Predicate pred1 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, `f, pfun, null);
-	    			final Expression dom = 
-	    				ff.makeUnaryExpression(Expression.KDOM, `f, null);
-	    			final Predicate pred2 = 
-	    				ff.makeRelationalPredicate(Predicate.EQUAL, dom, `S, null);
-	    			rewrittenPredicate = 
-	    				ff.makeAssociativePredicate(
-	    					Predicate.LAND, new Predicate[]{pred1, pred2}, null);
+	    			final Expression pfun = makeBinaryExpression(Expression.PFUN, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    			final Expression dom = makeUnaryExpression(Expression.KDOM, `f);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    		}
 	    		return true;
 	    	}
@@ -437,19 +415,12 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 */
 	    	In(f, Pinj(S, T)) -> {
 	    		if (isRewrite) {
-	    			final Expression pfun1 = 
-	    				ff.makeBinaryExpression(Expression.PFUN, `S, `T, null);
-	    			final Predicate pred1 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, `f, pfun1, null);
-	    			final Expression inv = 
-	    				ff.makeUnaryExpression(Expression.CONVERSE, `f, null);
-	    			final Expression pfun2 = 
-	    				ff.makeBinaryExpression(Expression.PFUN, `T, `S, null);
-	    			final Predicate pred2 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, inv, pfun2, null);
-	    			rewrittenPredicate = 
-	    				ff.makeAssociativePredicate(
-	    					Predicate.LAND, new Predicate[]{pred1, pred2}, null);
+	    			final Expression pfun1 = makeBinaryExpression(Expression.PFUN, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun1);
+	    			final Expression inv = makeUnaryExpression(Expression.CONVERSE, `f);
+	    			final Expression pfun2 = makeBinaryExpression(Expression.PFUN, `T, `S);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.IN, inv, pfun2);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    		}
 	    		return true;
 	    	}
@@ -460,17 +431,11 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 */
 	    	In(f, Tinj(S, T)) -> {
 	    		if (isRewrite) {
-	    			final Expression pfun = 
-	    				ff.makeBinaryExpression(Expression.PINJ, `S, `T, null);
-	    			final Predicate pred1 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, `f, pfun, null);
-	    			final Expression dom = 
-	    				ff.makeUnaryExpression(Expression.KDOM, `f, null);
-	    			final Predicate pred2 = 
-	    				ff.makeRelationalPredicate(Predicate.EQUAL, dom, `S, null);
-	    			rewrittenPredicate = 
-	    				ff.makeAssociativePredicate(
-	    					Predicate.LAND, new Predicate[]{pred1, pred2}, null);
+	    			final Expression pfun = makeBinaryExpression(Expression.PINJ, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    			final Expression dom = makeUnaryExpression(Expression.KDOM, `f);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    		}
 	    		return true;
 	    	}
@@ -481,17 +446,11 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 */
 	    	In(f, Psur(S, T)) -> {
 	    		if (isRewrite) {
-	    			final Expression pfun = 
-	    				ff.makeBinaryExpression(Expression.PFUN, `S, `T, null);
-	    			final Predicate pred1 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, `f, pfun, null);
-	    			final Expression ran = 
-	    				ff.makeUnaryExpression(Expression.KRAN, `f, null);
-	    			final Predicate pred2 = 
-	    				ff.makeRelationalPredicate(Predicate.EQUAL, ran, `T, null);
-	    			rewrittenPredicate = 
-	    				ff.makeAssociativePredicate(
-	    					Predicate.LAND, new Predicate[]{pred1, pred2}, null);
+	    			final Expression pfun = makeBinaryExpression(Expression.PFUN, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    			final Expression ran = makeUnaryExpression(Expression.KRAN, `f);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    		}
 	    		return true;
 	    	}
@@ -502,17 +461,11 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 */
 	    	In(f, Tsur(S, T)) -> {
 	    		if (isRewrite) {
-	    			final Expression pfun = 
-	    				ff.makeBinaryExpression(Expression.PSUR, `S, `T, null);
-	    			final Predicate pred1 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, `f, pfun, null);
-	    			final Expression dom = 
-	    				ff.makeUnaryExpression(Expression.KDOM, `f, null);
-	    			final Predicate pred2 = 
-	    				ff.makeRelationalPredicate(Predicate.EQUAL, dom, `S, null);
-	    			rewrittenPredicate = 
-	    				ff.makeAssociativePredicate(
-	    					Predicate.LAND, new Predicate[]{pred1, pred2}, null);
+	    			final Expression pfun = makeBinaryExpression(Expression.PSUR, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun);
+	    			final Expression dom = makeUnaryExpression(Expression.KDOM, `f);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, dom, `S);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    		}
 	    		return true;
 	    	}
@@ -523,17 +476,11 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 */
 	    	In(f, Tbij(S, T)) -> {
 	    		if (isRewrite) {
-	    			final Expression pfun1 = 
-	    				ff.makeBinaryExpression(Expression.TINJ, `S, `T, null);
-	    			final Predicate pred1 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, `f, pfun1, null);
-	    			final Expression ran = 
-	    				ff.makeUnaryExpression(Expression.KRAN, `f, null);
-	    			final Predicate pred2 = 
-	    				ff.makeRelationalPredicate(Predicate.EQUAL, ran, `T, null);
-	    			rewrittenPredicate = 
-	    				ff.makeAssociativePredicate(
-	    					Predicate.LAND, new Predicate[]{pred1, pred2}, null);
+	    			final Expression pfun1 = makeBinaryExpression(Expression.TINJ, `S, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `f, pfun1);
+	    			final Expression ran = makeUnaryExpression(Expression.KRAN, `f);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.EQUAL, ran, `T);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    		}
 	    		return true;
 	    	}
@@ -544,17 +491,11 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 */
 	    	In(Mapsto(E, Mapsto(F, G)), Dprod(p, q)) -> {
 	    		if (isRewrite) {
-	    			final Expression eMapstoF = 
-	    				ff.makeBinaryExpression(Expression.MAPSTO, `E, `F, null);
-	    			final Expression eMapstoG = 
-	    				ff.makeBinaryExpression(Expression.MAPSTO, `E, `G, null);
-	    			final Predicate pred1 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, eMapstoF, `p, null);
-	    			final Predicate pred2 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, eMapstoG, `q, null);
-	    			rewrittenPredicate = 
-	    				ff.makeAssociativePredicate(
-	    					Predicate.LAND, new Predicate[]{pred1, pred2}, null);
+	    			final Expression eMapstoF = makeBinaryExpression(Expression.MAPSTO, `E, `F);
+	    			final Expression eMapstoG = makeBinaryExpression(Expression.MAPSTO, `E, `G);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, eMapstoF, `p);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.IN, eMapstoG, `q);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    		}
 	    		return true;
 	    	}
@@ -565,17 +506,11 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 */
 	    	In(Mapsto(Mapsto(E, G), Mapsto(F, H)), Pprod(p, q)) -> {
 	    		if (isRewrite) {
-	    			final Expression eMapstoF = 
-	    				ff.makeBinaryExpression(Expression.MAPSTO, `E, `F, null);
-	    			final Expression gMapstoH = 
-	    				ff.makeBinaryExpression(Expression.MAPSTO, `G, `H, null);
-	    			final Predicate pred1 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, eMapstoF, `p, null);
-	    			final Predicate pred2 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, gMapstoH, `q, null);
-	    			rewrittenPredicate = 
-	    				ff.makeAssociativePredicate(
-	    					Predicate.LAND, new Predicate[]{pred1, pred2}, null);
+	    			final Expression eMapstoF = makeBinaryExpression(Expression.MAPSTO, `E, `F);
+	    			final Expression gMapstoH = makeBinaryExpression(Expression.MAPSTO, `G, `H);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, eMapstoF, `p);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.IN, gMapstoH, `q);
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    		}
 	    		return true;
 	    	}
@@ -586,19 +521,10 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
 	    	 */
 	    	In(S, Pow1(T)) -> {
 	    		if (isRewrite) {
-	    			final Expression powT = 
-	    				ff.makeUnaryExpression(Expression.POW, `T, null);
-	    			final Predicate pred1 = 
-	    				ff.makeRelationalPredicate(Predicate.IN, `S, `powT, null);
-	    			final Predicate pred2 = 
-	    				ff.makeRelationalPredicate(
-	    					Predicate.NOTEQUAL, 
-	    					`S, 
-	    					ff.makeEmptySet(`S.getType(), null), 
-	    				null);
-	    			rewrittenPredicate = 
-	    				ff.makeAssociativePredicate(
-	    					Predicate.LAND, new Predicate[]{pred1, pred2}, null);
+	    			final Expression powT = makeUnaryExpression(Expression.POW, `T);
+	    			final Predicate pred1 = makeRelationalPredicate(Predicate.IN, `S, `powT);
+	    			final Predicate pred2 = makeRelationalPredicate(Predicate.NOTEQUAL, `S, makeEmptySet(ff, `S.getType()));
+	    			rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);
 	    		}
 	    		return true;
 	    	}
@@ -609,13 +535,9 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
              */
             In(E, UpTo(a, b))->{
             	if (isRewrite) {
-            		final Predicate pred1 = 
-	    				ff.makeRelationalPredicate(Formula.LE, `a, `E, null);
-            		final Predicate pred2 = 
-	    				ff.makeRelationalPredicate(Formula.LE, `E, `b, null);
-            		rewrittenPredicate = 
-            			ff.makeAssociativePredicate(
-	    					Predicate.LAND, new Predicate[]{pred1, pred2}, null);				
+            		final Predicate pred1 = makeRelationalPredicate(Formula.LE, `a, `E );
+            		final Predicate pred2 = makeRelationalPredicate(Formula.LE, `E, `b);
+            		rewrittenPredicate = makeAssociativePredicate(Predicate.LAND, pred1, pred2);				
             	}
             	return true;
 			}
@@ -627,10 +549,8 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
             In(E, Natural())->{
             	if(rmLevel.from(RMLevel.L1)) {
 	            	if (isRewrite) {
-	            		rewrittenPredicate = 
-	            			ff.makeRelationalPredicate(Formula.LE, 
-	            				ff.makeIntegerLiteral(BigInteger.ZERO, null), 
-	            				`E , null);				
+	            		final Expression number0 = ff.makeIntegerLiteral(ZERO, null);
+	            		rewrittenPredicate = makeRelationalPredicate(Formula.LE, number0, `E );				
 	            	}
 	            	return true;
             	}
@@ -643,12 +563,8 @@ public class RemoveMembershipRewriterImpl extends AutoRewriterImpl {
             In(E, Natural1())->{
                	if(rmLevel.from(RMLevel.L1)) {
                		if (isRewrite) {
-               			rewrittenPredicate = 
-	    					ff.makeRelationalPredicate(
-	    						Formula.LE, 
-               					ff.makeIntegerLiteral(BigInteger.ONE, null), 
-               					`E , 
-               					null);				
+	            		final Expression number1 = ff.makeIntegerLiteral(ONE, null);
+               			rewrittenPredicate = makeRelationalPredicate(Formula.LE, number1, `E );				
                		}
                		return true;
                	}

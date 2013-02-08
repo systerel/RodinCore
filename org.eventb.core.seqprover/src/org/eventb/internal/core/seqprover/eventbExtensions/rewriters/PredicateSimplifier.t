@@ -49,6 +49,9 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class PredicateSimplifier extends DefaultRewriter {
 
+	// FIXME place-holder
+	protected final BigInteger ff = BigInteger.ZERO;
+
 	public static final int MULTI_IMP = 1 << 0;
 	public static final int MULTI_EQV_NOT = 1 << 1;
 	public static final int MULTI_IMP_NOT = 1 << 2;
@@ -131,15 +134,32 @@ public class PredicateSimplifier extends DefaultRewriter {
 		return false;
 	}
 
-	private Predicate distributeQuantifier(FormulaFactory ff, int tag, 
-			BoundIdentDecl[] bids, Predicate... children) {
+	protected AssociativePredicate makeAssociativePredicate(int tag,
+			Predicate... children) {
+		final FormulaFactory ff = children[0].getFactory();
+		return ff.makeAssociativePredicate(tag, children, null);
+	}
+
+	protected BinaryPredicate makeBinaryPredicate(int tag, Predicate left, Predicate right) {
+		final FormulaFactory ff = left.getFactory();
+		return ff.makeBinaryPredicate(tag, left, right, null);
+	}
+
+	protected QuantifiedPredicate makeQuantifiedPredicate(int tag,
+			BoundIdentDecl[] boundIdentifiers, Predicate child) {
+		final FormulaFactory ff = child.getFactory();
+		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
+	}
+
+	private Predicate distributeQuantifier(int tag,	BoundIdentDecl[] bids,
+			Predicate... children) {
 		final int length = children.length;
 		final Predicate[] newChildren = new Predicate[length];
 		for (int i = 0; i < length; ++i) {
-			newChildren[i] = ff.makeQuantifiedPredicate(tag, bids, children[i], null);
+			newChildren[i] = makeQuantifiedPredicate(tag, bids, children[i]);
 		}
 
-		return ff.makeAssociativePredicate(tag == FORALL ? LAND : LOR, newChildren, null);
+		return makeAssociativePredicate(tag == FORALL ? LAND : LOR, newChildren);
 	}
 
 	%include {FormulaV2.tom}
@@ -150,7 +170,6 @@ public class PredicateSimplifier extends DefaultRewriter {
 			"SIMP_MULTI_OR", "SIMP_MULTI_OR_NOT" })
 	@Override
 	public Predicate rewrite(AssociativePredicate predicate) {
-
 		final Predicate result;
 		%match (Predicate predicate) {
 			/**
@@ -430,7 +449,6 @@ public class PredicateSimplifier extends DefaultRewriter {
 	@ProverRule({"SIMP_FORALL_AND", "SIMP_EXISTS_OR", "SIMP_EXISTS_IMP"})
 	@Override
 	public Predicate rewrite(QuantifiedPredicate predicate) {
-		FormulaFactory ff = predicate.getFactory();
 		final Predicate result;
 		%match (Predicate predicate) {
 			/**
@@ -439,7 +457,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 */
 			ForAll(bids, Land(children)) -> {
 				if (withQuantDistr) {
-					result = distributeQuantifier(ff, FORALL, `bids, `children);
+					result = distributeQuantifier(FORALL, `bids, `children);
 					trace(predicate, result, "SIMP_FORALL_AND");
 					return result;
 				}
@@ -451,7 +469,7 @@ public class PredicateSimplifier extends DefaultRewriter {
 			 */
 			Exists(bids, Lor(children)) -> {
 				if (withQuantDistr) {
-					result = distributeQuantifier(ff, EXISTS, `bids, `children);
+					result = distributeQuantifier(EXISTS, `bids, `children);
 					trace(predicate, result, "SIMP_EXISTS_OR");
 					return result;
 				}
@@ -464,10 +482,10 @@ public class PredicateSimplifier extends DefaultRewriter {
 			Exists(bids, Limp(P, Q)) -> {
 				if (withExistsImp) {
 					final Predicate left =
-							ff.makeQuantifiedPredicate(FORALL, `bids, `P, null);
+							makeQuantifiedPredicate(FORALL, `bids, `P);
 					final Predicate right =
-							ff.makeQuantifiedPredicate(EXISTS, `bids, `Q, null);
-					result = ff.makeBinaryPredicate(LIMP, left, right, null);
+							makeQuantifiedPredicate(EXISTS, `bids, `Q);
+					result = makeBinaryPredicate(LIMP, left, right);
 					trace(predicate, result, "SIMP_EXISTS_IMP");
 					return result;
 				}

@@ -13,7 +13,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -70,8 +70,8 @@ public class RelOvrRewriterImpl extends DefaultRewriter {
 	    	 *              ((dom(r  ...  s)) ⩤ (p  ...  q)) ∪ (r  ...  s)
 	    	 */
 			Ovr(children) -> {
-				Collection<Expression> pToQ = new ArrayList<Expression>();
-				Collection<Expression> rToS = new ArrayList<Expression>();
+				List<Expression> pToQ = new ArrayList<Expression>();
+				List<Expression> rToS = new ArrayList<Expression>();
 				boolean found = false;				
 				for (Expression child : `children) {
 					if (found)
@@ -88,8 +88,8 @@ public class RelOvrRewriterImpl extends DefaultRewriter {
 				if (pToQ.size() == 0 || rToS.size() == 0)
 					return expression;
 				
-				Expression pToQOvr = makeOvrIfNeccessary(ff, pToQ);
-				Expression rToSOvr = makeOvrIfNeccessary(ff, rToS);
+				Expression pToQOvr = makeOvrIfNeccessary(pToQ);
+				Expression rToSOvr = makeOvrIfNeccessary(rToS);
 				
 				Expression dom = ff.makeUnaryExpression(Expression.KDOM, rToSOvr,
 						null);
@@ -104,11 +104,12 @@ public class RelOvrRewriterImpl extends DefaultRewriter {
 	    return expression;
 	}
 
-	private Expression makeOvrIfNeccessary(FormulaFactory ff, 
-				Collection<Expression> children) {
-		if (children.size() == 1)
-			return children.iterator().next();
-		else
-			return ff.makeAssociativeExpression(Expression.OVR, children, null);	
+	private Expression makeOvrIfNeccessary(List<Expression> children) {
+		final Expression first = children.get(0);
+		if (children.size() == 1) {
+			return first;
+		}
+		final FormulaFactory ff = first.getFactory();
+		return ff.makeAssociativeExpression(Expression.OVR, children, null);	
 	}
 }

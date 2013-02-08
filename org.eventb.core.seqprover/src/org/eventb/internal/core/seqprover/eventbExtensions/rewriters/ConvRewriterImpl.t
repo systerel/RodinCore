@@ -64,14 +64,14 @@ public class ConvRewriterImpl extends DefaultRewriter {
 	    	 * Set Theory : (p ∪ ... ∪ q)∼ == p∼ ∪ ... ∪ q∼
 	    	 */
 			Converse(BUnion(children)) -> {
-				return makeConverseAssociative(ff, Expression.BUNION, `children);
+				return makeConverseAssociative(Expression.BUNION, `children);
 			}
 			
 			/**
 	    	 * Set Theory : (p ∩ ... ∩ q)∼ == p∼ ∩ ... ∩ q∼
 	    	 */
 			Converse(BInter(children)) -> {
-				return makeConverseAssociative(ff, Expression.BINTER, `children);
+				return makeConverseAssociative(Expression.BINTER, `children);
 			}
 			
 			/**
@@ -131,8 +131,8 @@ public class ConvRewriterImpl extends DefaultRewriter {
 	    return expression;
 	}
 
-	private Expression makeConverseAssociative(FormulaFactory ff, int tag, 
-				Expression [] children) {
+	private Expression makeConverseAssociative(int tag, Expression [] children) {
+		final FormulaFactory ff = children[0].getFactory();
 		Expression [] newChildren = new Expression[children.length];
 		for (int i = 0; i < children.length; ++i) {
 			newChildren[i] = ff.makeUnaryExpression(

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 ETH Zurich and others.
+ * Copyright (c) 2006, 2011 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,6 @@ import static org.eventb.core.ast.Formula.INTEGER;
 import static org.eventb.core.ast.Formula.KCARD;
 import static org.eventb.core.ast.Formula.KDOM;
 import static org.eventb.core.ast.Formula.KFINITE;
-import static org.eventb.core.ast.Formula.KPRED;
 import static org.eventb.core.ast.Formula.KMAX;
 import static org.eventb.core.ast.Formula.KMIN;
 import static org.eventb.core.ast.Formula.KRAN;
@@ -65,6 +64,7 @@ import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.Asso
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyOvr;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyPlus;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyUnion;
+import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.DivisionUtils.getFaction;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.FunctionalCheck.functionalCheck;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PartialLambdaPatternCheck.partialLambdaPatternCheck;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.SetExtensionSimplifier.simplifyMax;
@@ -113,6 +113,8 @@ import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrite
 @SuppressWarnings("unused")
 public class AutoRewriterImpl extends PredicateSimplifier {
 
+	private static final BigInteger TWO = BigInteger.valueOf(2L);
+
 	public static boolean DEBUG;
 
 	private final Level level;
@@ -121,7 +123,6 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	private final boolean level1;
 	private final boolean level2;
 	private final boolean level3;
-
 
 	private static int optionsForLevel(Level level) {
 		int result = 0;
@@ -134,7 +135,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		}
 		return result;
 	}
-	
+
 	public AutoRewriterImpl(Level level) {
 		super(optionsForLevel(level), DEBUG, "AutoRewriter");
 		this.level = level;
@@ -145,6 +146,79 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 	public Level getLevel() {
 		return level;
+	}
+
+	protected UnaryPredicate makeUnaryPredicate(int tag, Predicate child) {
+		final FormulaFactory ff = child.getFactory();
+		return ff.makeUnaryPredicate(tag, child, null);
+	}
+
+	protected RelationalPredicate makeRelationalPredicate(int tag, Expression left,
+			Expression right) {
+		final FormulaFactory ff = left.getFactory();
+		return ff.makeRelationalPredicate(tag, left, right, null);
+	}
+
+	protected AssociativePredicate makeAssociativePredicate(int tag, Predicate... children) {
+		final FormulaFactory ff = children[0].getFactory();
+		return ff.makeAssociativePredicate(tag, children, null);
+	}
+
+	protected QuantifiedPredicate makeQuantifiedPredicate(int tag, BoundIdentDecl[] boundIdentifiers, Predicate child) {
+		final FormulaFactory ff = child.getFactory();
+		return ff.makeQuantifiedPredicate(tag, boundIdentifiers, child, null);
+	}
+
+	protected SetExtension makeSetExtension(Collection<Expression> expressions) {
+		final FormulaFactory ff = expressions.iterator().next().getFactory();
+		return ff.makeSetExtension(expressions, null);
+	}
+
+	protected SetExtension makeSetExtension(Expression... expressions) {
+		final FormulaFactory ff = expressions[0].getFactory();
+		return ff.makeSetExtension(expressions, null);
+	}
+
+	protected UnaryExpression makeUnaryExpression(int tag, Expression child) {
+		final FormulaFactory ff = child.getFactory();
+		return ff.makeUnaryExpression(tag, child, null);
+	}
+
+	protected BinaryExpression makeBinaryExpression(int tag, Expression left, Expression right) {
+		final FormulaFactory ff = left.getFactory();
+		return ff.makeBinaryExpression(tag, left, right, null);
+	}
+
+	protected AtomicExpression makeEmptySet(FormulaFactory ff, Type type) {
+		return ff.makeEmptySet(type, null);
+	}
+
+	protected AssociativeExpression makeAssociativeExpression(int tag, Expression... children) {
+		final FormulaFactory ff = children[0].getFactory();
+		return ff.makeAssociativeExpression(tag, children, null);
+	}
+
+	protected AssociativeExpression makeAssociativeExpression(int tag, List<Expression> children) {
+		final FormulaFactory ff = children.get(0).getFactory();
+		return ff.makeAssociativeExpression(tag, children, null);
+	}
+
+	protected SimplePredicate makeSimplePredicate(int tag, Expression expression) {
+		final FormulaFactory ff = expression.getFactory();
+		return ff.makeSimplePredicate(tag, expression, null);
+	}
+
+	protected QuantifiedExpression makeQuantifiedExpression(int tag, BoundIdentDecl[] boundIdentifiers, Predicate pred, Expression expr, Form form) {
+		final FormulaFactory ff = pred.getFactory();
+		return ff.makeQuantifiedExpression(tag, boundIdentifiers, pred, expr, null, form);
+	}
+
+	protected BoundIdentifier makeBoundIdentifier(FormulaFactory ff, int index, Type type) {
+		return ff.makeBoundIdentifier(index, null, type);
+	}
+
+	protected AtomicExpression makeAtomicExpression(FormulaFactory ff, int tag) {
+		return ff.makeAtomicExpression(tag, null);
 	}
 
 	protected boolean notLocallyBound(Formula<?> form, int nbBound) {
@@ -159,8 +233,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	// Removes exactly one occurrence of the given child from the given
 	// associative expression, if possible. Otherwise, returns the given
 	// associative expression unchanged.
-	protected Expression removeChild(FormulaFactory ff, 
-				AssociativeExpression parent, Expression toRemove) {
+	protected Expression removeChild(AssociativeExpression parent,
+				Expression toRemove) {
 		final int tag = parent.getTag();
 		final Expression[] children = parent.getChildren();
 		final int length = children.length;
@@ -180,11 +254,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		final Expression[] newChildren = new Expression[length - 1];
 		System.arraycopy(children, 0, newChildren, 0, index);
 		System.arraycopy(children, index+1, newChildren, index, length - index - 1);
-		return ff.makeAssociativeExpression(tag, newChildren, null);
+		return makeAssociativeExpression(tag, newChildren);
 	}
 
-	private Expression simplifyExtremumOfUnion(FormulaFactory ff, 
-				Expression[] children, int tag) {
+	private Expression simplifyExtremumOfUnion(Expression[] children, int tag) {
 		final int length = children.length;
 		final Expression[] newChildren = new Expression[length];
 		boolean changed = false;
@@ -201,9 +274,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		if (!changed) {
 			return null;
 		}
-		return ff.makeUnaryExpression(
-					tag, ff.makeAssociativeExpression(
-								BUNION, newChildren, null), null);
+		return makeUnaryExpression(tag,	makeAssociativeExpression(BUNION, newChildren));
 	}
 
 	private Expression extractSingletonWithTag(Expression expression, int tag) {
@@ -230,38 +301,36 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		return image;
 	}
 
-	private Expression convertSetextOfMapsto(FormulaFactory ff, 
-				Expression[] children) {
+	private Expression convertSetextOfMapsto(Expression[] children) {
 		final Expression[] newChildren = new Expression[children.length];
 		for (int i = 0 ; i < children.length ; i++) {
 			final Expression child = children[i];
 			if (child.getTag() == MAPSTO) {
 				final BinaryExpression bExp = (BinaryExpression) child;
-				newChildren[i] = ff.makeBinaryExpression(
-										MAPSTO, bExp.getRight(), bExp.getLeft(), null);
+				newChildren[i] = makeBinaryExpression(MAPSTO, bExp.getRight(), bExp.getLeft());
 			} else {
 				return null;
 			}
 		}
-		return ff.makeSetExtension(newChildren, null);
+		return makeSetExtension(newChildren);
 	}
 
-	protected RelationalPredicate makeIsEmpty(FormulaFactory ff, Expression set) {
-		return ff.makeRelationalPredicate(EQUAL, set,
-			ff.makeEmptySet(set.getType(), null), null);
+	protected RelationalPredicate makeIsEmpty(Expression set) {
+		return makeRelationalPredicate(EQUAL, set,
+			makeEmptySet(set.getFactory(), set.getType()));
 	}
 
-	protected SimplePredicate makeFinite(FormulaFactory ff, Expression set) {
-		return ff.makeSimplePredicate(KFINITE, set, null);
+	protected SimplePredicate makeFinite(Expression set) {
+		return makeSimplePredicate(KFINITE, set);
 	}
 
-	protected UnaryExpression makeCard(FormulaFactory ff, Expression set) {
-		return ff.makeUnaryExpression(KCARD, set, null);
+	protected UnaryExpression makeCard(Expression set) {
+		return makeUnaryExpression(KCARD, set);
 	}
 
-	protected Predicate makeNotEqual(FormulaFactory ff, Expression left, Expression right) {
-		return ff.makeUnaryPredicate(NOT,
-			ff.makeRelationalPredicate(EQUAL, left, right, null), null);
+	protected Predicate makeNotEqual(Expression left, Expression right) {
+		return makeUnaryPredicate(NOT,
+			makeRelationalPredicate(EQUAL, left, right));
 	}
 
 	%include {FormulaV2.tom}
@@ -276,8 +345,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_FINITE_BOOL" })
 	@Override
 	public Predicate rewrite(SimplePredicate predicate) {
+		final FormulaFactory ff = predicate.getFactory();
 		final Predicate result;
-		FormulaFactory ff = predicate.getFactory();
 	    %match (Predicate predicate) {
 
 			/**
@@ -345,7 +414,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Finite(id@IdGen()) -> {
 				if (level2) {
 					final Type s = `id.getType().getSource();
-					result = makeFinite(ff, s.toExpression(ff));
+					result = makeFinite(s.toExpression(ff));
 					trace(predicate, result, "SIMP_FINITE_ID");
 					return result;
 				}
@@ -368,9 +437,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Finite(BUnion(children)) -> {
 				Predicate [] newChildren = new Predicate[`children.length];
 				for (int i = 0; i < `children.length; ++i) {
-					newChildren[i] = makeFinite(ff, `children[i]);
+					newChildren[i] = makeFinite(`children[i]);
 				}
-				result = ff.makeAssociativePredicate(LAND, newChildren, null);
+				result = makeAssociativePredicate(LAND, newChildren);
 				trace(predicate, result, "SIMP_FINITE_BUNION");
 				return result;
 			}
@@ -380,7 +449,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Finite: finite(ℙ(S)) == finite(S)
 	    	 */
 			Finite(Pow(S)) -> {
-				result = makeFinite(ff, `S);
+				result = makeFinite(`S);
 				trace(predicate, result, "SIMP_FINITE_POW");
 				return result;
 			}
@@ -391,14 +460,14 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 			Finite(Cprod(S, T)) -> {
 				Predicate [] children = new Predicate[3];
-				children[0] = makeIsEmpty(ff, `S);
-				children[1] = makeIsEmpty(ff, `T);
+				children[0] = makeIsEmpty(`S);
+				children[1] = makeIsEmpty(`T);
 				Predicate [] subChildren = new Predicate[2];
-				subChildren[0] = makeFinite(ff, `S);
-				subChildren[1] = makeFinite(ff, `T);
-				children[2] = ff.makeAssociativePredicate(LAND,
-						subChildren, null);
-				result = ff.makeAssociativePredicate(LOR, children, null);
+				subChildren[0] = makeFinite(`S);
+				subChildren[1] = makeFinite(`T);
+				children[2] = makeAssociativePredicate(LAND,
+						subChildren);
+				result = makeAssociativePredicate(LOR, children);
 				trace(predicate, result, "DERIV_FINITE_CPROD");
 				return result;
 			}
@@ -408,7 +477,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Finite: finite(r∼) == finite(r)
 	    	 */
 			Finite(Converse(r)) -> {
-				result = makeFinite(ff, `r);
+				result = makeFinite(`r);
 				trace(predicate, result, "SIMP_FINITE_CONVERSE");
 				return result;
 			}
@@ -429,8 +498,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Finite(lambda@Cset(bil, P, Mapsto(E,_))) -> {
 				if (level2 && functionalCheck((QuantifiedExpression) `lambda)) {
-					result = makeFinite(ff, ff.makeQuantifiedExpression(
-								CSET, `bil, `P, `E, null, Form.Explicit));
+					result = makeFinite(makeQuantifiedExpression(
+								CSET, `bil, `P, `E, Form.Explicit));
 					trace(predicate, result, "SIMP_FINITE_LAMBDA");
 					return result;
 				}
@@ -442,7 +511,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Finite(DomRes(E, IdGen())) -> {
 				if (level2) {
-					result = makeFinite(ff, `E);
+					result = makeFinite(`E);
 					trace(predicate, result, "SIMP_FINITE_ID_DOMRES");
 					return result;
 				}
@@ -454,7 +523,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Finite(prj1@Prj1Gen()) -> {
 				if (level2) {
-					result = makeFinite(ff, `prj1.getType().getSource().toExpression(ff));
+					result = makeFinite(`prj1.getType().getSource().toExpression(ff));
 					trace(predicate, result, "SIMP_FINITE_PRJ1");
 					return result;
 				}
@@ -466,7 +535,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Finite(prj2@Prj2Gen()) -> {
 				if (level2) {
-					result = makeFinite(ff, `prj2.getType().getSource().toExpression(ff));
+					result = makeFinite(`prj2.getType().getSource().toExpression(ff));
 					trace(predicate, result, "SIMP_FINITE_PRJ2");
 					return result;
 				}
@@ -478,7 +547,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Finite(DomRes(E, Prj1Gen())) -> {
 				if (level2) {
-					result = makeFinite(ff, `E);
+					result = makeFinite(`E);
 					trace(predicate, result, "SIMP_FINITE_PRJ1_DOMRES");
 					return result;
 				}
@@ -490,7 +559,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Finite(DomRes(E, Prj2Gen())) -> {
 				if (level2) {
-					result = makeFinite(ff, `E);
+					result = makeFinite(`E);
 					trace(predicate, result, "SIMP_FINITE_PRJ2_DOMRES");
 					return result;
 				}
@@ -506,12 +575,12 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_SPECIAL_NOT_EQUAL_TRUE_L" })
 	@Override
 	public Predicate rewrite(UnaryPredicate predicate) {
-		FormulaFactory ff = predicate.getFactory();
 		final Predicate attempt = super.rewrite(predicate);
 		if (attempt != predicate) {
 			return attempt;
 		}
 
+		final FormulaFactory ff = predicate.getFactory();
 		final Predicate result;
 	    %match (Predicate predicate) {
 	    	/**
@@ -519,7 +588,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 8: ¬ a ≤ b == a > b
 	    	 */
 			Not(Le(a, b)) -> {
-				result =  ff.makeRelationalPredicate(GT, `a, `b, null);
+				result =  makeRelationalPredicate(GT, `a, `b);
 	    		trace(predicate, result, "SIMP_NOT_LE");
 				return result;
 			}
@@ -529,7 +598,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 9: ¬ a ≥ b == a < b
 	    	 */
 			Not(Ge(a, b)) -> {
-				result =  ff.makeRelationalPredicate(LT, `a, `b, null);
+				result =  makeRelationalPredicate(LT, `a, `b);
 	    		trace(predicate, result, "SIMP_NOT_GE");
 				return result;
 			}
@@ -539,7 +608,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 10: ¬ a > b == a ≤ b
 	    	 */
 			Not(Gt(a, b)) -> {
-				result =  ff.makeRelationalPredicate(LE, `a, `b, null);
+				result =  makeRelationalPredicate(LE, `a, `b);
 	    		trace(predicate, result, "SIMP_NOT_GT");
 				return result;
 			}
@@ -549,7 +618,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 11: ¬ a < b == a ≥ b
 	    	 */
 			Not(Lt(a, b)) -> {
-				result =  ff.makeRelationalPredicate(GE, `a, `b, null);
+				result =  makeRelationalPredicate(GE, `a, `b);
 	    		trace(predicate, result, "SIMP_NOT_LT");
 				return result;
 			}
@@ -559,7 +628,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 12: ¬ (E = FALSE) == E = TRUE
 	    	 */
 			Not(Equal(E, FALSE())) -> {
-				result =  ff.makeRelationalPredicate(EQUAL, `E, DLib.TRUE(ff), null);
+				result =  makeRelationalPredicate(EQUAL, `E, DLib.TRUE(ff));
 	    		trace(predicate, result, "SIMP_SPECIAL_NOT_EQUAL_FALSE_R");
 				return result;
 			}
@@ -569,7 +638,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 13: ¬ (E = TRUE) == E = FALSE
 	    	 */
 			Not(Equal(E, TRUE())) -> {
-				result =  ff.makeRelationalPredicate(EQUAL, `E, DLib.FALSE(ff), null);
+				result =  makeRelationalPredicate(EQUAL, `E, DLib.FALSE(ff));
 	    		trace(predicate, result, "SIMP_SPECIAL_NOT_EQUAL_TRUE_R");
 				return result;
 			}
@@ -579,7 +648,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 14: ¬ (FALSE = E) == TRUE = E
 	    	 */
 			Not(Equal(FALSE(), E)) -> {
-				result =  ff.makeRelationalPredicate(EQUAL, DLib.TRUE(ff), `E, null);
+				result =  makeRelationalPredicate(EQUAL, DLib.TRUE(ff), `E);
 	    		trace(predicate, result, "SIMP_SPECIAL_NOT_EQUAL_FALSE_L");
 				return result;
 			}
@@ -589,7 +658,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 15: ¬ (TRUE = E) == FALSE = E
 	    	 */
 			Not(Equal(TRUE(), E)) -> {
-				result =  ff.makeRelationalPredicate(EQUAL, DLib.FALSE(ff), `E, null);
+				result =  makeRelationalPredicate(EQUAL, DLib.FALSE(ff), `E);
 	    		trace(predicate, result, "SIMP_SPECIAL_NOT_EQUAL_TRUE_L");
 				return result;
 			}
@@ -627,9 +696,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"DERIV_MULTI_IN_BUNION" })
     @Override
 	public Predicate rewrite(RelationalPredicate predicate) {
-		FormulaFactory ff = predicate.getFactory();
-		IntegerLiteral number0 = ff.makeIntegerLiteral(ZERO, null);
-		IntegerLiteral number1 = ff.makeIntegerLiteral(ONE, null);
+		final FormulaFactory ff = predicate.getFactory();
+		final IntegerLiteral number0 = ff.makeIntegerLiteral(ZERO, null);
+		final IntegerLiteral number1 = ff.makeIntegerLiteral(ONE, null);
 		final Predicate result;
 	    %match (Predicate predicate) {
 
@@ -698,10 +767,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Equality 3: E ↦ F = G ↦ H == E = G ∧ F = H
 	    	 */
 	    	Equal(Mapsto(E, F) , Mapsto(G, H)) -> {
-	    		Predicate pred1 = ff.makeRelationalPredicate(EQUAL, `E, `G, null);
-				Predicate pred2 = ff.makeRelationalPredicate(EQUAL, `F, `H, null);
-				result = ff.makeAssociativePredicate(LAND, new Predicate[] {
-						pred1, pred2 }, null);
+	    		Predicate pred1 = makeRelationalPredicate(EQUAL, `E, `G);
+				Predicate pred2 = makeRelationalPredicate(EQUAL, `F, `H);
+				result = makeAssociativePredicate(LAND, new Predicate[] {
+						pred1, pred2 });
 	    		trace(predicate, result, "SIMP_EQUAL_MAPSTO");
 				return result;
 	    	}
@@ -731,7 +800,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 4: E ≠ F == ¬ E = F
 	    	 */
 	    	NotEqual(E, F) -> {
-	    		result = makeNotEqual(ff, `E, `F);
+	    		result = makeNotEqual(`E, `F);
 	    		trace(predicate, result, "SIMP_NOTEQUAL");
 				return result;
 	    	}
@@ -741,8 +810,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 5: E ∉ F == ¬ E ∈ F
 	    	 */
 	    	NotIn(E, F) -> {
-	    		result = ff.makeUnaryPredicate(
-	    			NOT, ff.makeRelationalPredicate(IN, `E, `F, null), null);
+	    		result = makeUnaryPredicate(
+	    			NOT, makeRelationalPredicate(IN, `E, `F));
 	    		trace(predicate, result, "SIMP_NOTIN");
 				return result;
 	    	}
@@ -753,8 +822,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 6: E ⊄ F == ¬ E ⊂ F
 	    	 */
 	    	NotSubset(E, F) -> {
-	    		result = ff.makeUnaryPredicate(
-	    			NOT, ff.makeRelationalPredicate(SUBSET, `E, `F, null), null);
+	    		result = makeUnaryPredicate(
+	    			NOT, makeRelationalPredicate(SUBSET, `E, `F));
 	    		trace(predicate, result, "SIMP_NOTSUBSET");
 				return result;
 	    	}
@@ -764,8 +833,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Negation 7: E ⊈ F == ¬ E ⊆ F
 	    	 */
 	    	NotSubsetEq(E, F) -> {
-	    		result = ff.makeUnaryPredicate(
-	    			NOT, ff.makeRelationalPredicate(SUBSETEQ, `E, `F, null), null);
+	    		result = makeUnaryPredicate(
+	    			NOT, makeRelationalPredicate(SUBSETEQ, `E, `F));
 	    		trace(predicate, result, "SIMP_NOTSUBSETEQ");
 				return result;
 	    	}
@@ -817,10 +886,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	SubsetEq(BUnion(children), S) -> {
 	    		Predicate [] newChildren = new Predicate[`children.length];
 	    		for (int i = 0; i < `children.length; ++i) {
-	    			newChildren[i] = ff.makeRelationalPredicate(SUBSETEQ,
-	    					`children[i], `S, null);
+	    			newChildren[i] = makeRelationalPredicate(SUBSETEQ,
+	    					`children[i], `S);
 	    		}
-	    		result = ff.makeAssociativePredicate(LAND, newChildren, null);
+	    		result = makeAssociativePredicate(LAND, newChildren);
 	    		trace(predicate, result, "DERIV_SUBSETEQ_BUNION");
 				return result;
 	    	}
@@ -832,10 +901,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	SubsetEq(S, BInter(children)) -> {
 	    		Predicate [] newChildren = new Predicate[`children.length];
 	    		for (int i = 0; i < `children.length; ++i) {
-	    			newChildren[i] = ff.makeRelationalPredicate(SUBSETEQ,
-	    					`S, `children[i], null);
+	    			newChildren[i] = makeRelationalPredicate(SUBSETEQ,
+	    					`S, `children[i]);
 	    		}
-	    		result = ff.makeAssociativePredicate(LAND, newChildren, null);
+	    		result = makeAssociativePredicate(LAND, newChildren);
 	    		trace(predicate, result, "DERIV_SUBSETEQ_BINTER");
 				return result;
 	    	}
@@ -865,7 +934,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
              * Set Theory 18: E ∈ {F} == E = F (if F is a single expression)
 	    	 */
 	    	In(E, SetExtension(eList(F))) -> {
-				result = ff.makeRelationalPredicate(EQUAL, `E, `F, null);
+				result = makeRelationalPredicate(EQUAL, `E, `F);
 				trace(predicate, result, "SIMP_IN_SING");
 				return result;
 	    	}
@@ -895,7 +964,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Set Theory 19: {E} = {F} == E = F   if E, F is a single expression
 	    	 */
 	    	Equal(SetExtension(eList(E)), SetExtension(eList(F))) -> {
-				result = ff.makeRelationalPredicate(EQUAL, `E, `F, null);
+				result = makeRelationalPredicate(EQUAL, `E, `F);
 				trace(predicate, result, "SIMP_EQUAL_SING");
 				return result;
 	    	}
@@ -959,7 +1028,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Equal(Card(S), E) -> {
 	    		if (`E.equals(number0)) {
-	    			result = makeIsEmpty(ff, `S);
+	    			result = makeIsEmpty(`S);
 	    			trace(predicate, result, "SIMP_SPECIAL_EQUAL_CARD");
 	    			return result;
 	    		}
@@ -979,7 +1048,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Equal(E, Card(S)) -> {
 	    		if (`E.equals(number0)) {
-	    			result = makeIsEmpty(ff, `S);
+	    			result = makeIsEmpty(`S);
 	    			trace(predicate, result, "SIMP_SPECIAL_EQUAL_CARD");
 	    			return result;
 	    		}
@@ -996,8 +1065,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Gt(Card(S), E)-> {
 	    		if (`E.equals(number0)) {
-	    			Predicate equal = makeIsEmpty(ff, `S);
-	    			result = ff.makeUnaryPredicate(NOT, equal, null);
+	    			Predicate equal = makeIsEmpty(`S);
+	    			result = makeUnaryPredicate(NOT, equal);
 	    			trace(predicate, result, "SIMP_LIT_GT_CARD_0");
 	    			return result;
 	    		}
@@ -1009,8 +1078,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Lt(E, Card(S)) -> {
 	    		if (`E.equals(number0)) {
-	    			Predicate equal = makeIsEmpty(ff, `S);
-	    			result = ff.makeUnaryPredicate(NOT, equal, null);
+	    			Predicate equal = makeIsEmpty(`S);
+	    			result = makeUnaryPredicate(NOT, equal);
 	    			trace(predicate, result, "SIMP_LIT_LT_CARD_0");
 	    			return result;
 	    		}
@@ -1041,7 +1110,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Boolean: FALSE = bool(P) == ¬P
 	    	 */
 	    	Equal(FALSE(), Bool(P)) -> {
-	    		result = ff.makeUnaryPredicate(NOT, `P, null);
+	    		result = makeUnaryPredicate(NOT, `P);
 	    		trace(predicate, result, "SIMP_LIT_EQUAL_KBOOL_FALSE");
 				return result;
 	    	}
@@ -1051,7 +1120,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Boolean: bool(P) = FALSE == ¬P
 	    	 */
 	    	Equal(Bool(P), FALSE()) -> {
-	    		result = ff.makeUnaryPredicate(NOT, `P, null);
+	    		result = makeUnaryPredicate(NOT, `P);
 	    		trace(predicate, result, "SIMP_LIT_EQUAL_KBOOL_FALSE");
 				return result;
 	    	}
@@ -1097,7 +1166,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			SubsetEq(SetExtension(eList(E)), S) -> {
 				if (level2) {
-					result = ff.makeRelationalPredicate(IN, `E, `S, null);
+					result = makeRelationalPredicate(IN, `E, `S);
 					trace(predicate, result, "SIMP_SUBSETEQ_SING");
 					return result;
 				}
@@ -1149,13 +1218,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Equal((Tfun | Trel | Tinj | Tsur | Tbij)(A, B), EmptySet()) -> {
 				if (level2) {
-					result = 
-						ff.makeAssociativePredicate(
-							LAND, 
-							new Predicate[]
-							 {ff.makeUnaryPredicate(NOT, makeIsEmpty(ff, `A), null),
-							  makeIsEmpty(ff, `B)}, 
-							null);
+					result = makeAssociativePredicate(LAND,
+								makeUnaryPredicate(NOT, makeIsEmpty(`A)),
+								makeIsEmpty(`B));
 					trace(predicate, result, "SIMP_SPECIAL_EQUAL_RELDOM");
 					return result;
 				}
@@ -1179,8 +1244,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			In(Card(S), Natural1()) -> {
 				if (level2) {
-					result = ff.makeUnaryPredicate(
-									NOT, makeIsEmpty(ff, `S), null);
+					result = makeUnaryPredicate(NOT, makeIsEmpty(`S));
 					trace(predicate, result, "SIMP_CARD_NATURAL1");
 					return result;
 				}
@@ -1249,8 +1313,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 						trace(predicate, result, "SIMP_LIT_LE_CARD_0");
 						return result;
  	    			} else if (`i.equals(ONE)) {
-	 	    			result = ff.makeUnaryPredicate(
-	 	    							NOT, makeIsEmpty(ff, `S), null);
+	 	    			result = makeUnaryPredicate(NOT, makeIsEmpty(`S));
 	 	    			trace(predicate, result, "SIMP_LIT_LE_CARD_1");
 						return result;
  	    			}
@@ -1270,8 +1333,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 						trace(predicate, result, "SIMP_LIT_GE_CARD_0");
 						return result;
  	    			} else if (`i.equals(ONE)) {
-	 	    			result = ff.makeUnaryPredicate(
-	 	    							NOT, makeIsEmpty(ff, `S), null);
+	 	    			result = makeUnaryPredicate(NOT, makeIsEmpty(`S));
 	 	    			trace(predicate, result, "SIMP_LIT_GE_CARD_1");
 						return result;
  	    			}
@@ -1321,8 +1383,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Equal(expr@BInter(eList(_*, T, _*)), T) -> {
 				if (level2) {
 					final Expression inter =
-							removeChild(ff, (AssociativeExpression) `expr, `T);
-					result = ff.makeRelationalPredicate(SUBSETEQ, `T, inter, null);
+							removeChild((AssociativeExpression) `expr, `T);
+					result = makeRelationalPredicate(SUBSETEQ, `T, inter);
 					trace(predicate, result, "SIMP_MULTI_EQUAL_BINTER");
 					return result;
 				}
@@ -1335,8 +1397,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Equal(expr@BUnion(eList(_*, T, _*)), T) -> {
 				if (level2) {
 					final Expression union =
-							removeChild(ff, (AssociativeExpression) `expr, `T);
-					result = ff.makeRelationalPredicate(SUBSETEQ, union, `T, null);
+							removeChild((AssociativeExpression) `expr, `T);
+					result = makeRelationalPredicate(SUBSETEQ, union, `T);
 					trace(predicate, result, "SIMP_MULTI_EQUAL_BUNION");
 					return result;
 				}
@@ -1348,7 +1410,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Subset(empty@EmptySet(), S) -> {
 				if (level2) {
-					result = makeNotEqual(ff, `S, `empty);
+					result = makeNotEqual(`S, `empty);
 					trace(predicate, result, "SIMP_SPECIAL_SUBSET_L");
 					return result;
 				}
@@ -1360,15 +1422,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			SubsetEq(Cset(bidl, P, E), S) -> {
 				if (level2) {
-					final Predicate pred = 
-							ff.makeBinaryPredicate(
-								LIMP, `P, ff.makeRelationalPredicate(
-												IN,
-												`E, 
-												`S.shiftBoundIdentifiers(`bidl.length, ff),
-												 null), 
-								null);
-					result = ff.makeQuantifiedPredicate(FORALL, `bidl, pred, null);
+					final Predicate pred = makeBinaryPredicate(LIMP, `P,
+												makeRelationalPredicate(IN,`E,
+													`S.shiftBoundIdentifiers(`bidl.length, ff)));
+					result = makeQuantifiedPredicate(FORALL, `bidl, pred);
 					trace(predicate, result, "SIMP_SUBSETEQ_COMPSET_L");
 					return result;
 				}
@@ -1380,8 +1437,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Equal(Cset(bidl, P, _), EmptySet()) ->  {
 				if (level2) {
-					final Predicate pred = ff.makeUnaryPredicate(NOT, `P, null);
-					result = ff.makeQuantifiedPredicate(FORALL, `bidl, pred, null);
+					final Predicate pred = makeUnaryPredicate(NOT, `P);
+					result = makeQuantifiedPredicate(FORALL, `bidl, pred);
 					trace(predicate, result, "SIMP_SPECIAL_EQUAL_COMPSET");
 					return result;
 				}
@@ -1393,12 +1450,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			In(Mapsto(a,b), Cprod(A,B)) -> {
 				if (level3) {
-					final Predicate aInA = 
-							ff.makeRelationalPredicate(IN, `a, `A, null);
-					final Predicate bInB = 
-							ff.makeRelationalPredicate(IN, `b, `B, null);
-					result = ff.makeAssociativePredicate(
-									LAND, new Predicate[]{aInA, bInB}, null);
+					final Predicate aInA = makeRelationalPredicate(IN, `a, `A);
+					final Predicate bInB = makeRelationalPredicate(IN, `b, `B);
+					result = makeAssociativePredicate(LAND, aInA, bInB);
 					trace(predicate, result, "DEF_IN_MAPSTO");
 					return result;
 				}
@@ -1455,7 +1509,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
             "SIMP_MULTI_OVERL" })
 	@Override
 	public Expression rewrite(AssociativeExpression expression) {
-		FormulaFactory ff = expression.getFactory();
+		final FormulaFactory ff = expression.getFactory();
 		final Expression result;
 	    %match (Expression expression) {
 
@@ -1585,7 +1639,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Fcomp(eList(DomRes(S, IdGen()), r)) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(DOMRES, `S, `r, null);
+					result = makeBinaryExpression(DOMRES, `S, `r);
 					trace(expression, result, "SIMP_FCOMP_ID_L");
 					return result;
 				}
@@ -1597,7 +1651,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Fcomp(eList(r, DomRes(S, IdGen()))) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(RANRES, `r, `S, null);
+					result = makeBinaryExpression(RANRES, `r, `S);
 					trace(expression, result, "SIMP_FCOMP_ID_R");
 					return result;
 				}
@@ -1609,9 +1663,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Fcomp(eList(r, Ty@Cprod(_, Tb))) -> {
 	    		if (level2 && `Ty.isATypeExpression()) {
-	    			result = ff.makeBinaryExpression(CPROD,
-	    						ff.makeUnaryExpression(KDOM, `r, null),
-	    						`Tb, null);
+	    			result = makeBinaryExpression(CPROD,
+	    						makeUnaryExpression(KDOM, `r),
+	    						`Tb);
 	    			trace(expression, result, "SIMP_TYPE_FCOMP_R");
 					return result;
 	    		}
@@ -1623,9 +1677,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Fcomp(eList(Ty@Cprod(Ta, _), r)) -> {
 	    		if (level2 && `Ty.isATypeExpression()) {
-	    			result = ff.makeBinaryExpression(CPROD,
+	    			result = makeBinaryExpression(CPROD,
 	    						`Ta,
-	    						ff.makeUnaryExpression(KRAN, `r, null), null);
+	    						makeUnaryExpression(KRAN, `r));
 	    			trace(expression, result, "SIMP_TYPE_FCOMP_L");
 					return result;
 	    		}
@@ -1637,9 +1691,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Bcomp(eList(Ty@Cprod(_, Tb), r)) -> {
 	    		if (level2 && `Ty.isATypeExpression()) {
-	    			result = ff.makeBinaryExpression(CPROD,
-	    						ff.makeUnaryExpression(KDOM, `r, null),
-	    						`Tb, null);
+	    			result = makeBinaryExpression(CPROD,
+	    						makeUnaryExpression(KDOM, `r),
+	    						`Tb);
 	    			trace(expression, result, "SIMP_TYPE_BCOMP_L");
 					return result;
 	    		}
@@ -1651,9 +1705,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Bcomp(eList(r, Ty@Cprod(Ta, _))) -> {
 	    		if (level2 && `Ty.isATypeExpression()) {
-	    			result = ff.makeBinaryExpression(CPROD,
+	    			result = makeBinaryExpression(CPROD,
 	    						`Ta,
-	    						ff.makeUnaryExpression(KRAN, `r, null), null);
+	    						makeUnaryExpression(KRAN, `r));
 	    			trace(expression, result, "SIMP_TYPE_BCOMP_R");
 					return result;
 	    		}
@@ -1709,9 +1763,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_RELIMAGE_DOMRES_ID", "SIMP_RELIMAGE_DOMSUB_ID" } )
 	@Override
 	public Expression rewrite(BinaryExpression expression) {
-		FormulaFactory ff = expression.getFactory();
-		IntegerLiteral number0 = ff.makeIntegerLiteral(ZERO, null);
-		IntegerLiteral number1 = ff.makeIntegerLiteral(ONE, null);		
+		final FormulaFactory ff = expression.getFactory();
+		final IntegerLiteral number0 = ff.makeIntegerLiteral(ZERO, null);
+		final IntegerLiteral number1 = ff.makeIntegerLiteral(ONE, null);
 		final Expression result;
 	    %match (Expression expression) {
 
@@ -1720,7 +1774,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Set Theory 11: S ∖ S == ∅
 	    	 */
 	    	SetMinus(S, S) -> {
-	    		result = ff.makeEmptySet(`S.getType(), null);
+	    		result = makeEmptySet(ff, `S.getType());
 	    		trace(expression, result, "SIMP_MULTI_SETMINUS");
 	    		return result;
 	    	}
@@ -1751,7 +1805,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	SetMinus(_, T) -> {
 				if (`T.isATypeExpression()) {
-					result = ff.makeEmptySet(`T.getType(), null);
+					result = makeEmptySet(ff, `T.getType());
 		    		trace(expression, result, "SIMP_TYPE_SETMINUS");
 		    		return result;
 				}
@@ -1791,7 +1845,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		    		trace(expression, result, "SIMP_SPECIAL_MINUS_R");
 		    		return result;
 				} else if (`E.equals(number0)) {
-					result = ff.makeUnaryExpression(UNMINUS, `F, null);
+					result = makeUnaryExpression(UNMINUS, `F);
 		    		trace(expression, result, "SIMP_SPECIAL_MINUS_L");
 		    		return result;
 				}
@@ -1803,7 +1857,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
              * Arithmetic: E ÷ E = 1
 	    	 */
 	    	Div(E, E) -> {
-	    		result = DLib.makeIntegerLiteral(ff, 1);
+	    		result = number1;
 	    		trace(expression, result, "SIMP_MULTI_DIV");
 	    		return result;
 	    	}
@@ -1837,7 +1891,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
              * Arithmetic: (X ∗ ... ∗ E ∗ ... ∗ Y) ÷ E == X ∗ ... ∗ Y
 	    	 */
 	    	Div(mul@Mul(eList(_*, E, _*)), E) -> {
-	    		result = removeChild(ff, (AssociativeExpression) `mul, `E);
+	    		result = removeChild((AssociativeExpression) `mul, `E);
 	    		trace(expression, result, "SIMP_MULTI_DIV_PROD");
 	    		return result;
 	    	}
@@ -1847,7 +1901,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
              * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(UnMinus(E), UnMinus(F)) -> {
-	    		result = DivisionUtils.getFaction(`E, `F);
+	    		result = getFaction(`E, `F);
 	    		trace(expression, result, "SIMP_DIV_MINUS");
 	    		return result;
 	    	}
@@ -1857,7 +1911,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
              * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(UnMinus(E), IntegerLiteral(F)) -> {
-	    		result = DivisionUtils.getFaction(`expression, `E, `F);
+	    		result = getFaction(`expression, `E, `F);
 	    		trace(expression, result, "SIMP_DIV_MINUS");
 	    		return result;
 	    	}
@@ -1867,7 +1921,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
              * Arithmetic 10: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(IntegerLiteral(E), UnMinus(F)) -> {
-	    		result = DivisionUtils.getFaction(`expression, `E, `F);
+	    		result = getFaction(`expression, `E, `F);
 	    		trace(expression, result, "SIMP_DIV_MINUS");
 	    		return result;
 	    	}
@@ -1881,7 +1935,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
              * Arithmetic: (−E) ÷ (−F) == E ÷ F
 	    	 */
 	    	Div(IntegerLiteral(E), IntegerLiteral(F)) -> {
-	    		result = DivisionUtils.getFaction(`expression, `E, `F);
+	    		result = getFaction(`expression, `E, `F);
 	    		trace(expression, result, "SIMP_SPECIAL_DIV_1", "SIMP_SPECIAL_DIV_0", "SIMP_DIV_MINUS");
 	    		return result;
 	    	}
@@ -1978,7 +2032,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
              * Set Theory: r[∅] == ∅
 			 */
 			RelImage(r, EmptySet()) -> {
-				result = ff.makeEmptySet(ff.makePowerSetType(Lib.getRangeType(`r)), null);
+				result = makeEmptySet(ff, ff.makePowerSetType(Lib.getRangeType(`r)));
 	    		trace(expression, result, "SIMP_SPECIAL_RELIMAGE_R");
 	    		return result;
 			}
@@ -1988,7 +2042,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
              * Set Theory: ∅[A] == ∅
 			 */
 			RelImage(r@EmptySet(), _) -> {
-				result = ff.makeEmptySet(ff.makePowerSetType(Lib.getRangeType(`r)), null);
+				result = makeEmptySet(ff, ff.makePowerSetType(Lib.getRangeType(`r)));
 	    		trace(expression, result, "SIMP_SPECIAL_RELIMAGE_L");
 	    		return result;
 			}
@@ -1999,7 +2053,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RelImage(r, Ty) -> {
 				if (level2 && `Ty.isATypeExpression()) {
-					result = ff.makeUnaryExpression(KRAN, `r, null);
+					result = makeUnaryExpression(KRAN, `r);
 					trace(expression, result, "SIMP_TYPE_RELIMAGE");
 	    			return result;
 				}
@@ -2011,7 +2065,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RelImage(r, Dom(r)) -> {
 				if (level2) {
-					result = ff.makeUnaryExpression(KRAN, `r, null);
+					result = makeUnaryExpression(KRAN, `r);
 					trace(expression, result, "SIMP_MULTI_RELIMAGE_DOM");
 	    			return result;
 				}
@@ -2047,7 +2101,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RelImage(SetExtension(eList(Mapsto(E, F))), SetExtension(eList(E))) -> {
 				if (level2) {
-					result = ff.makeSetExtension(`F, null);
+					result = makeSetExtension(`F);
 					trace(expression, result, "SIMP_MULTI_RELIMAGE_SING_MAPSTO");
 	    			return result;
 				}
@@ -2059,7 +2113,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RelImage(Converse(RanSub(_, S)), S) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_MULTI_RELIMAGE_CONVERSE_RANSUB");
 	    			return result;
 				}
@@ -2071,9 +2125,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RelImage(Converse(RanRes(r, S)), S) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(RELIMAGE,
-								ff.makeUnaryExpression(CONVERSE, `r, null),
-								`S, null);
+					result = makeBinaryExpression(RELIMAGE,
+								makeUnaryExpression(CONVERSE, `r),
+								`S);
 					trace(expression, result, "SIMP_MULTI_RELIMAGE_CONVERSE_RANRES");
 	    			return result;
 				}
@@ -2085,10 +2139,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RelImage(Converse(DomSub(S, r)), T) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(SETMINUS,
-								ff.makeBinaryExpression(RELIMAGE,
-									ff.makeUnaryExpression(CONVERSE, `r, null),
-									`T, null), `S, null);
+					result = makeBinaryExpression(SETMINUS,
+								makeBinaryExpression(RELIMAGE,
+									makeUnaryExpression(CONVERSE, `r),
+									`T), `S);
 					trace(expression, result, "SIMP_RELIMAGE_CONVERSE_DOMSUB");
 	    			return result;
 				}
@@ -2100,7 +2154,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RelImage(DomSub(S, _), S) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_MULTI_RELIMAGE_DOMSUB");
 	    			return result;
 				}
@@ -2135,7 +2189,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Cprod(_, EmptySet()) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_CPROD_R");
 					return result;
 				}
@@ -2147,7 +2201,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Cprod(EmptySet(), _) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_CPROD_L");
 					return result;
 				}
@@ -2159,7 +2213,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			DomRes(EmptySet(), _) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_DOMRES_L");
 					return result;
 				}
@@ -2219,7 +2273,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RanRes(_, EmptySet()) ->  {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_RANRES_R");
 					return result;
 				}
@@ -2303,7 +2357,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			  */
 			 DomSub(Ty, _) -> {
 			 	if (level2 && `Ty.isATypeExpression()) {
-			 		result = ff.makeEmptySet(expression.getType(), null);
+			 		result = makeEmptySet(ff, expression.getType());
 			 		trace(expression, result, "SIMP_TYPE_DOMSUB");
 					return result;
 			 	}
@@ -2315,7 +2369,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			  */
 			 DomSub(Dom(r), r) -> {
 			 	if (level2) {
-			 		result = ff.makeEmptySet(expression.getType(), null);
+			 		result = makeEmptySet(ff, expression.getType());
 			 		trace(expression, result, "SIMP_MULTI_DOMSUB_DOM");
 					return result;
 			 	}
@@ -2351,7 +2405,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RanSub(_, Ty) -> {
 				if (level2 && `Ty.isATypeExpression()) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_TYPE_RANSUB");
 					return result;
 				}
@@ -2363,7 +2417,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RanSub(r, Ran(r)) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_MULTI_RANSUB_RAN");
 					return result;
 				}
@@ -2375,7 +2429,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Dprod(_, EmptySet()) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_DPROD_R");
 					return result;
 				}
@@ -2387,7 +2441,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Dprod(EmptySet(), _) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_DPROD_L");
 					return result;
 				}
@@ -2399,7 +2453,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Pprod(_, EmptySet()) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_PPROD_R");
 					return result;
 				}
@@ -2411,7 +2465,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Pprod(EmptySet(), _) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_PPROD_L");
 					return result;
 				}
@@ -2427,7 +2481,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			(Rel | Srel | Pfun | Pinj | Psur)(_, EmptySet()) -> {
 				if (level2) {
-					result = ff.makeSetExtension(ff.makeEmptySet(expression.getType().getBaseType(), null), null);
+					result = makeSetExtension(makeEmptySet(ff, expression.getType().getBaseType()));
 					trace(expression, result, "SIMP_SPECIAL_REL_R");
 					return result;
 				}
@@ -2444,7 +2498,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			(Rel | Trel | Pfun | Tfun | Pinj | Tinj)(EmptySet(), _) -> {
 				if (level2) {
-					result = ff.makeSetExtension(ff.makeEmptySet(expression.getType().getBaseType(), null), null);
+					result = makeSetExtension(makeEmptySet(ff, expression.getType().getBaseType()));
 					trace(expression, result, "SIMP_SPECIAL_REL_L");
 					return result;
 				}
@@ -2494,7 +2548,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			(Strel | Tsur | Tbij)(EmptySet(), EmptySet()) -> {
 				if (level2) {
-					result = ff.makeSetExtension(ff.makeEmptySet(expression.getType().getBaseType(), null), null);
+					result = makeSetExtension(makeEmptySet(ff, expression.getType().getBaseType()));
 					trace(expression, result, "SIMP_SPECIAL_EQUAL_RELDOMRAN");
 					return result;
 				}
@@ -2506,12 +2560,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Dprod(Cprod(S, T), Cprod(U, V)) -> {
 				if (level2) {
-					Expression[] exprs = new Expression[2];
-					exprs[0] = `S;
-					exprs[1] = `U;
-					result = ff.makeBinaryExpression(CPROD,
-								ff.makeAssociativeExpression(BINTER, exprs, null),
-								ff.makeBinaryExpression(CPROD, `T, `V, null), null);
+					result = makeBinaryExpression(CPROD,
+								makeAssociativeExpression(BINTER, `S, `U),
+								makeBinaryExpression(CPROD, `T, `V));
 					trace(expression, result, "SIMP_DPROD_CPROD");
 					return result;
 				}
@@ -2523,9 +2574,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Pprod(Cprod(S, T), Cprod(U, V)) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(CPROD,
-								ff.makeBinaryExpression(CPROD, `S, `U, null),
-								ff.makeBinaryExpression(CPROD, `T, `V, null), null);
+					result = makeBinaryExpression(CPROD,
+								makeBinaryExpression(CPROD, `S, `U),
+								makeBinaryExpression(CPROD, `T, `V));
 					trace(expression, result, "SIMP_PPROD_CPROD");
 					return result;
 				}
@@ -2573,7 +2624,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			UpTo(IntegerLiteral(i), IntegerLiteral(j)) -> {
 				if (level2 && `i.compareTo(`j) > 0) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_LIT_UPTO");
 					return result;
 				}
@@ -2624,11 +2675,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			DomRes(S, DomRes(T, id@IdGen())) -> {
 				if (level2) {
-					Expression[] exprs = new Expression[2];
-					exprs[0] = `S;
-					exprs[1] = `T;
-					result = ff.makeBinaryExpression(DOMRES,
-								ff.makeAssociativeExpression(BINTER, exprs, null), `id, null);
+					result = makeBinaryExpression(DOMRES,
+								makeAssociativeExpression(BINTER, `S, `T), `id);
 					trace(expression, result, "SIMP_DOMRES_DOMRES_ID");
 					return result;
 				}
@@ -2640,11 +2688,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RanRes(DomRes(S, id@IdGen()), T) -> {
 				if (level2) {
-					Expression[] exprs = new Expression[2];
-					exprs[0] = `S;
-					exprs[1] = `T;
-					result = ff.makeBinaryExpression(DOMRES,
-								ff.makeAssociativeExpression(BINTER, exprs, null), `id, null);
+					result = makeBinaryExpression(DOMRES,
+								makeAssociativeExpression(BINTER, `S, `T), `id);
 					trace(expression, result, "SIMP_RANRES_DOMRES_ID");
 					return result;
 				}
@@ -2656,8 +2701,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			DomSub(S, DomRes(T, id@IdGen())) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(DOMRES,
-								ff.makeBinaryExpression(SETMINUS, `T, `S, null), `id, null);
+					result = makeBinaryExpression(DOMRES,
+								makeBinaryExpression(SETMINUS, `T, `S), `id);
 					trace(expression, result, "SIMP_DOMSUB_DOMRES_ID");
 					return result;
 				}
@@ -2669,8 +2714,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RanSub(DomRes(S, id@IdGen()), T) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(DOMRES,
-								ff.makeBinaryExpression(SETMINUS, `S, `T, null), `id, null);
+					result = makeBinaryExpression(DOMRES,
+								makeBinaryExpression(SETMINUS, `S, `T), `id);
 					trace(expression, result, "SIMP_RANSUB_DOMRES_ID");
 					return result;
 				}
@@ -2682,8 +2727,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			DomRes(S, DomSub(T, id@IdGen())) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(DOMRES,
-								ff.makeBinaryExpression(SETMINUS, `S, `T, null), `id, null);
+					result = makeBinaryExpression(DOMRES,
+								makeBinaryExpression(SETMINUS, `S, `T), `id);
 					trace(expression, result, "SIMP_DOMRES_DOMSUB_ID");
 					return result;
 				}
@@ -2695,8 +2740,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RanRes(DomSub(S, id@IdGen()), T) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(DOMRES,
-								ff.makeBinaryExpression(SETMINUS, `T, `S, null), `id, null);
+					result = makeBinaryExpression(DOMRES,
+								makeBinaryExpression(SETMINUS, `T, `S), `id);
 					trace(expression, result, "SIMP_RANRES_DOMSUB_ID");
 					return result;
 				}
@@ -2708,11 +2753,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			DomSub(S, DomSub(T, id@IdGen())) -> {
 				if (level2) {
-					Expression[] exprs = new Expression[2];
-					exprs[0] = `S;
-					exprs[1] = `T;
-					result = ff.makeBinaryExpression(DOMSUB,
-								ff.makeAssociativeExpression(BUNION, exprs, null), `id, null);
+					result = makeBinaryExpression(DOMSUB,
+								makeAssociativeExpression(BUNION, `S, `T), `id);
 					trace(expression, result, "SIMP_DOMSUB_DOMSUB_ID");
 					return result;
 				}
@@ -2724,11 +2766,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RanSub(DomSub(S, id@IdGen()), T) -> {
 				if (level2) {
-					Expression[] exprs = new Expression[2];
-					exprs[0] = `S;
-					exprs[1] = `T;
-					result = ff.makeBinaryExpression(DOMSUB,
-								ff.makeAssociativeExpression(BUNION, exprs, null), `id, null);
+					result = makeBinaryExpression(DOMSUB,
+								makeAssociativeExpression(BUNION, `S, `T), `id);
 					trace(expression, result, "SIMP_RANSUB_DOMSUB_ID");
 					return result;
 				}
@@ -2740,7 +2779,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RanRes(id@IdGen(), S) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(DOMRES, `S, `id, null);
+					result = makeBinaryExpression(DOMRES, `S, `id);
 					trace(expression, result, "SIMP_RANRES_ID");
 					return result;
 				}
@@ -2752,7 +2791,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RanSub(id@IdGen(), S) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(DOMSUB, `S, `id, null);
+					result = makeBinaryExpression(DOMSUB, `S, `id);
 					trace(expression, result, "SIMP_RANSUB_ID");
 					return result;
 				}
@@ -2764,7 +2803,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			DomSub(Ran(r), cr@Converse(r)) -> {
 				if (level2) {
-					result = ff.makeEmptySet(`cr.getType(), null);
+					result = makeEmptySet(ff, `cr.getType());
 					trace(expression, result, "SIMP_MULTI_DOMSUB_RAN");
 					return result;
 				}
@@ -2776,7 +2815,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RanSub(cr@Converse(r), Dom(r)) -> {
 				if (level2) {
-					result = ff.makeEmptySet(`cr.getType(), null);
+					result = makeEmptySet(ff, `cr.getType());
 					trace(expression, result, "SIMP_MULTI_RANSUB_DOM");
 					return result;
 				}
@@ -2788,10 +2827,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RelImage(DomRes(S, IdGen()), T) -> {
 				if (level2) {
-				Expression[] exprs = new Expression[2];
-					exprs[0] = `S;
-					exprs[1] = `T;
-					result = ff.makeAssociativeExpression(BINTER, exprs, null);
+					result = makeAssociativeExpression(BINTER, `S, `T);
 					trace(expression, result, "SIMP_RELIMAGE_DOMRES_ID");
 					return result;
 				}
@@ -2803,7 +2839,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			RelImage(DomSub(S, IdGen()), T) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(SETMINUS, `T, `S, null);
+					result = makeBinaryExpression(SETMINUS, `T, `S);
 					trace(expression, result, "SIMP_RELIMAGE_DOMSUB_ID");
 					return result;
 				}
@@ -2816,7 +2852,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	@ProverRule( { "DEF_PRED" })
 	@Override
 	public Expression rewrite(AtomicExpression expression) {
-		FormulaFactory ff = expression.getFactory();
+		final FormulaFactory ff = expression.getFactory();
 		final Expression result;
 		%match (Expression expression) {
 			
@@ -2826,7 +2862,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			PRED() -> {
 				if (level3) {
-					result = ff.makeUnaryExpression(CONVERSE, ff.makeAtomicExpression(KSUCC, null), null);
+					result = makeUnaryExpression(CONVERSE, makeAtomicExpression(ff, KSUCC));
 					trace(expression, result, "DEF_PRED");
 					return result;
 				}
@@ -2860,11 +2896,11 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 "SIMP_MULTI_RAN_RANRES", "SIMP_DOM_SUCC", "SIMP_RAN_SUCC" })
 	@Override
 	public Expression rewrite(UnaryExpression expression) {
+		final FormulaFactory ff = expression.getFactory();
+		final IntegerLiteral number0 = ff.makeIntegerLiteral(ZERO, null);
+		final IntegerLiteral number1 = ff.makeIntegerLiteral(ONE, null);
+		final IntegerLiteral number2 = ff.makeIntegerLiteral(TWO, null);
 		final Expression result;
-		FormulaFactory ff = expression.getFactory();
-		IntegerLiteral number0 = ff.makeIntegerLiteral(ZERO, null);
-		IntegerLiteral number1 = ff.makeIntegerLiteral(ONE, null);
-		IntegerLiteral number2 = ff.makeIntegerLiteral(BigInteger.valueOf(2), null);
 	    %match (Expression expression) {
 
 			/**
@@ -2882,7 +2918,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Set Theory: {x ↦ a, ..., y ↦ b}∼ == {a ↦ x, ..., b ↦ y}
 	    	 */
 	    	Converse(SetExtension(members)) -> {
-	    		final Expression rewritten = convertSetextOfMapsto(ff, `members);
+	    		final Expression rewritten = convertSetextOfMapsto(`members);
 	    		if (rewritten != null) {
 	    			result = rewritten;
 	    			trace(expression, result, "SIMP_CONVERSE_SETENUM");
@@ -2910,7 +2946,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					}
 				}
 
-				result = ff.makeSetExtension(domain, null);
+				result = makeSetExtension(domain);
 	    		trace(expression, result, "SIMP_DOM_SETENUM");
 	    		return result;
 	    	}
@@ -2931,7 +2967,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					}
 				}
 
-				result = ff.makeSetExtension(range, null);
+				result = makeSetExtension(range);
 	    		trace(expression, result, "SIMP_RAN_SETENUM");
 	    		return result;
 	    	}
@@ -2971,8 +3007,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Cardinality: card(ℙ(S)) == 2^(card(S))
 	    	 */
 			Card(Pow(S)) -> {
-				Expression cardS = makeCard(ff, `S);
-				result = ff.makeBinaryExpression(EXPN, number2, cardS, null);
+				Expression cardS = makeCard(`S);
+				result = makeBinaryExpression(EXPN, number2, cardS);
 	    		trace(expression, result, "SIMP_CARD_POW");
 	    		return result;
 			}
@@ -2998,14 +3034,14 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 						if (list.size() == 1)
 							inter = list.iterator().next();
 						else
-							inter = ff.makeAssociativeExpression(
-									BINTER, list, null);
-						Expression card = makeCard(ff, inter);
+							inter = makeAssociativeExpression(
+									BINTER, list);
+						Expression card = makeCard(inter);
 						newChildren.add(card);
 					}
 					if (newChildren.size() != 1)
-						subFormulas[i-1] = ff.makeAssociativeExpression(
-								PLUS, newChildren, null);
+						subFormulas[i-1] = makeAssociativeExpression(
+								PLUS, newChildren);
 					else
 						subFormulas[i-1] = newChildren.iterator().next();
 	    		}
@@ -3016,12 +3052,12 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 						Expression [] newChildren = new Expression[2];
 						newChildren[0] = temp;
 						newChildren[1] = subFormulas[i];
-						temp = ff.makeAssociativeExpression(PLUS,
-								newChildren, null);
+						temp = makeAssociativeExpression(PLUS,
+								newChildren);
 	    			}
 	    			else {
-	    				temp = ff.makeBinaryExpression(MINUS,
-	    						temp, subFormulas[i], null);
+	    				temp = makeBinaryExpression(MINUS,
+	    						temp, subFormulas[i]);
 	    			}
 	    			positive = !positive;
 	    		}
@@ -3035,8 +3071,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 * Set Theory: dom(∅) == ∅
 			 */
 			Dom(r@EmptySet()) -> {
-				result = ff.makeEmptySet(
-							ff.makePowerSetType(Lib.getDomainType(`r)), null);
+				result = makeEmptySet(ff, ff.makePowerSetType(Lib.getDomainType(`r)));
 	    		trace(expression, result, "SIMP_SPECIAL_DOM");
 	    		return result;
 			}
@@ -3046,8 +3081,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 * Set Theory: ran(∅) == ∅
 			 */
 			Ran(r@EmptySet()) -> {
-				result = ff.makeEmptySet(
-							ff.makePowerSetType(Lib.getRangeType(`r)), null);
+				result = makeEmptySet(ff, ff.makePowerSetType(Lib.getRangeType(`r)));
 	    		trace(expression, result, "SIMP_SPECIAL_RAN");
 	    		return result;
 			}
@@ -3058,7 +3092,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Pow(empty@EmptySet()) -> {
 				if (level2) {
-					result = ff.makeSetExtension(`empty, null);
+					result = makeSetExtension(`empty);
 					trace(expression, result, "SIMP_SPECIAL_POW");
 					return result;
 				}
@@ -3070,7 +3104,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Pow1(EmptySet()) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_POW1");
 					return result;
 				}
@@ -3082,7 +3116,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Dom(Converse(r)) -> {
 				if (level2) {
-					result = ff.makeUnaryExpression(KRAN, `r, null);
+					result = makeUnaryExpression(KRAN, `r);
 					trace(expression, result, "SIMP_DOM_CONVERSE");
 					return result;
 				}
@@ -3094,7 +3128,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	     	 */
 	     	Ran(Converse(r)) -> {
 	     		if (level2) {
-	     			result = ff.makeUnaryExpression(KDOM, `r, null);
+	     			result = makeUnaryExpression(KDOM, `r);
 	     			trace(expression, result, "SIMP_RAN_CONVERSE");
 	     			return result;
 	     		}
@@ -3118,7 +3152,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Converse(EmptySet()) -> {
 				if (level2) {
-					result = ff.makeEmptySet(expression.getType(), null);
+					result = makeEmptySet(ff, expression.getType());
 					trace(expression, result, "SIMP_SPECIAL_CONVERSE");
 	    			return result;
 				}
@@ -3202,7 +3236,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Inter(Pow(S)) -> {
 				if (level2) {
-					result = ff.makeEmptySet(`S.getType(), null);
+					result = makeEmptySet(ff, `S.getType());
 					trace(expression, result, "SIMP_KINTER_POW");
 					return result;
 				}
@@ -3388,7 +3422,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Card(Converse(r)) -> {
 				if (level2) {
-					result = makeCard(ff, `r);
+					result = makeCard(`r);
 					trace(expression, result, "SIMP_CARD_CONVERSE");
 					return result;
 				}
@@ -3400,7 +3434,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Converse(Cprod(A, B)) -> {
 				if (level2) {
-					result = ff.makeBinaryExpression(CPROD, `B, `A, null);
+					result = makeBinaryExpression(CPROD, `B, `A);
 					trace(expression, result, "SIMP_CONVERSE_CPROD");
 					return result;
 				}
@@ -3412,9 +3446,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Converse(Cset(bil, P, Mapsto(x, y))) -> {
 				if (level2) {
-					result = ff.makeQuantifiedExpression(CSET, `bil, `P,
-								ff.makeBinaryExpression(MAPSTO, `y, `x, null)
-								, null, Form.Explicit);
+					result = makeQuantifiedExpression(CSET, `bil, `P,
+								makeBinaryExpression(MAPSTO, `y, `x),
+								Form.Explicit);
 					trace(expression, result, "SIMP_CONVERSE_COMPSET");
 					return result;
 				}
@@ -3426,8 +3460,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Dom(Cset(bil, P, Mapsto(E, _))) -> {
 				if (level2) {
-					result = ff.makeQuantifiedExpression(CSET,
-								`bil, `P, `E, null, Form.Explicit);
+					result = makeQuantifiedExpression(CSET,
+								`bil, `P, `E, Form.Explicit);
 					trace(expression, result, "SIMP_DOM_LAMBDA");
 					return result;
 				}
@@ -3439,8 +3473,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Ran(Cset(bil, P, Mapsto(_, F))) -> {
 				if (level2) {
-					result = ff.makeQuantifiedExpression(CSET,
-								`bil, `P, `F, null, Form.Explicit);
+					result = makeQuantifiedExpression(CSET,
+								`bil, `P, `F, Form.Explicit);
 					trace(expression, result, "SIMP_RAN_LAMBDA");
 					return result;
 				}
@@ -3453,7 +3487,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Min(BUnion(children)) -> {
 				if (level2) {
 					final Expression rewritten =
-							simplifyExtremumOfUnion(ff, `children, KMIN);
+							simplifyExtremumOfUnion(`children, KMIN);
 					if (rewritten != null) {
 						result = rewritten;
 						trace(expression, result, "SIMP_MIN_BUNION_SING");
@@ -3469,7 +3503,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Max(BUnion(children)) -> {
 				if (level2) {
 					final Expression rewritten =
-							simplifyExtremumOfUnion(ff, `children, KMAX);
+							simplifyExtremumOfUnion(`children, KMAX);
 					if (rewritten != null) {
 						result = rewritten;
 						trace(expression, result, "SIMP_MAX_BUNION_SING");
@@ -3487,7 +3521,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2) {
 					Expression newSet = simplifyMin((SetExtension) `setext, ff);
 					if (newSet != `setext) {
-						result = ff.makeUnaryExpression(KMIN, newSet, null);
+						result = makeUnaryExpression(KMIN, newSet);
 						trace(expression, result, "SIMP_LIT_MIN");
 						return result;
 					}
@@ -3503,7 +3537,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2) {
 					Expression newSet = simplifyMax((SetExtension) `setext, ff);
 					if (newSet != `setext) {
-						result = ff.makeUnaryExpression(KMAX, newSet, null);
+						result = makeUnaryExpression(KMAX, newSet);
 						trace(expression, result, "SIMP_LIT_MAX");
 						return result;
 					}
@@ -3520,7 +3554,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Card(op@(IdGen | Prj1Gen | Prj2Gen)()) -> {
 				if (level2) {
-					result = makeCard(ff, `op.getType().getSource().toExpression(ff));
+					result = makeCard(`op.getType().getSource().toExpression(ff));
 					trace(expression, result, "SIMP_CARD_ID", "SIMP_CARD_PRJ1", "SIMP_CARD_PRJ2");
 					return result;
 				}
@@ -3536,7 +3570,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Card(DomRes(E, (IdGen | Prj1Gen | Prj2Gen)())) -> {
 				if (level2) {
-					result = makeCard(ff, `E);
+					result = makeCard(`E);
 					trace(expression, result, "SIMP_CARD_ID_DOMRES", "SIMP_CARD_PRJ1_DOMRES", "SIMP_CARD_PRJ2_DOMRES");
 					return result;
 				}
@@ -3548,9 +3582,9 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Card(lambda@Cset(bil, P, Mapsto(E,_))) -> {
 				if (level2 && functionalCheck((QuantifiedExpression) `lambda)) {
-					result = makeCard(ff, 
-								ff.makeQuantifiedExpression(CSET,
-								`bil, `P, `E, null, Form.Explicit));
+					result = makeCard(
+								makeQuantifiedExpression(CSET,
+								`bil, `P, `E, Form.Explicit));
 					trace(expression, result, "SIMP_CARD_LAMBDA");
 					return result;
 				}
@@ -3562,7 +3596,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Dom(DomSub(A, f)) -> {
 				if (level3) {
-					result = ff.makeBinaryExpression(SETMINUS, ff.makeUnaryExpression(KDOM, `f, null), `A, null);
+					result = makeBinaryExpression(SETMINUS, makeUnaryExpression(KDOM, `f), `A);
 					trace(expression, result, "SIMP_MULTI_DOM_DOMSUB");
 					return result;
 				}
@@ -3574,11 +3608,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Dom(DomRes(A, f)) -> {
 				if (level3) {
-					Expression[] exprs = new Expression[2];
-					exprs[0] = ff.makeUnaryExpression(KDOM, `f, null);
-					exprs[1] = `A;
-					result = ff.makeAssociativeExpression(
-						BINTER, exprs, null);
+					result = makeAssociativeExpression(BINTER, makeUnaryExpression(KDOM, `f), `A);
 					trace(expression, result, "SIMP_MULTI_DOM_DOMRES");
 					return result;
 				}
@@ -3590,7 +3620,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Ran(RanSub(f, A)) -> {
 				if (level3) {
-					result = ff.makeBinaryExpression(SETMINUS, ff.makeUnaryExpression(KRAN, `f, null), `A, null);
+					result = makeBinaryExpression(SETMINUS, makeUnaryExpression(KRAN, `f), `A);
 					trace(expression, result, "SIMP_MULTI_RAN_RANSUB");
 					return result;
 				}
@@ -3602,10 +3632,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Ran(RanRes(f, A)) -> {
 				if (level3) {
-					Expression[] exprs = new Expression[2];
-					exprs[0] = ff.makeUnaryExpression(KRAN, `f, null);
-					exprs[1] = `A;
-					result = ff.makeAssociativeExpression(BINTER, exprs, null);
+					result = makeAssociativeExpression(BINTER, makeUnaryExpression(KRAN, `f), `A);
 					trace(expression, result, "SIMP_MULTI_RAN_RANRES");
 					return result;
 				}
@@ -3617,7 +3644,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Dom(SUCC()) -> {
 				if (level3) {
-					result = ff.makeAtomicExpression(INTEGER, null);
+					result = makeAtomicExpression(ff, INTEGER);
 					trace(expression, result, "SIMP_DOM_SUCC");
 					return result;
 				}
@@ -3629,7 +3656,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			Ran(SUCC()) -> {
 				if (level3) {
-					result = ff.makeAtomicExpression(INTEGER, null);
+					result = makeAtomicExpression(ff, INTEGER);
 					trace(expression, result, "SIMP_RAN_SUCC");
 					return result;
 				}
@@ -3642,7 +3669,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	@ProverRule( { "SIMP_SPECIAL_KBOOL_BFALSE", "SIMP_SPECIAL_KBOOL_BTRUE" })
     @Override
 	public Expression rewrite(BoolExpression expression) {
-		FormulaFactory ff = expression.getFactory();
+		final FormulaFactory ff = expression.getFactory();
 		final Expression result;
 	    %match (Expression expression) {
 	   		/**
@@ -3650,7 +3677,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Set Theory:	bool(⊥) = FALSE
 	    	 */
 	    	Bool(BFALSE()) -> {
-				result = ff.makeAtomicExpression(FALSE, null);
+				result = DLib.FALSE(ff);
 	    		trace(expression, result, "SIMP_SPECIAL_KBOOL_BFALSE");
 	    		return result;
 			}
@@ -3660,7 +3687,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 * Set Theory:	bool(⊤) = TRUE
 	    	 */
 	    	Bool(BTRUE()) -> {
-				result = ff.makeAtomicExpression(TRUE, null);
+				result = DLib.TRUE(ff);
 	    		trace(expression, result, "SIMP_SPECIAL_KBOOL_BTRUE");
 	    		return result;
 			}
@@ -3690,7 +3717,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
     @ProverRule( {"SIMP_MULTI_SETENUM" } )
 	@Override
 	public Expression rewrite(SetExtension expression) {
-		FormulaFactory ff = expression.getFactory();
+		final FormulaFactory ff = expression.getFactory();
     	final Expression result;
 	    %match (Expression expression) {
 			/**
@@ -3704,7 +3731,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 					newMembers.add(member);
 				}
 				if (newMembers.size() != `members.length) {
-					result = ff.makeSetExtension(newMembers, null);
+					result = makeSetExtension(newMembers);
 		    		trace(expression, result, "SIMP_MULTI_SETENUM");
 		    		return result;
 				}
@@ -3718,7 +3745,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_SPECIAL_COND_BFALSE", "SIMP_MULTI_COND" })
 	@Override
 	public Expression rewrite(ExtendedExpression expression) {
-		FormulaFactory ff = expression.getFactory();
+		final FormulaFactory ff = expression.getFactory();
     	final Expression result;
     	%match (Expression expression) {
 
@@ -3784,7 +3811,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
     			"SIMP_COMPSET_IN", "SIMP_COMPSET_SUBSETEQ" } )
     @Override
     public Expression rewrite(QuantifiedExpression expression) {
-   		FormulaFactory ff = expression.getFactory();
+		final FormulaFactory ff = expression.getFactory();
     	final Expression result;
     	%match (Expression expression) {
 
@@ -3794,7 +3821,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Cset(_, BFALSE(), _) -> {
 	    		if (level2) {
-	    			result = ff.makeEmptySet(expression.getType(), null);
+	    			result = makeEmptySet(ff, expression.getType());
 	    			trace(expression, result, "SIMP_SPECIAL_COMPSET_BFALSE");
 		    		return result;
 	    		}
@@ -3818,7 +3845,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Qunion(_, BFALSE(), _) -> {
 	    		if (level2) {
-	    			result = ff.makeEmptySet(expression.getType(), null);
+	    			result = makeEmptySet(ff, expression.getType());
 	    			trace(expression, result, "SIMP_SPECIAL_QUNION");
 		    		return result;
 	    		}
@@ -3845,7 +3872,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	Cset(decls, SubsetEq(bi@BoundIdentifier(_), S), bi) -> {
 	    		final int nbBound = `decls.length;
 	    		if (level2 && notLocallyBound(`S, nbBound)) {
-	    			result = ff.makeUnaryExpression(POW, `S, null);
+	    			result = makeUnaryExpression(POW, `S);
 	    			trace(expression, result, "SIMP_COMPSET_SUBSETEQ");
     				return result;
 	    		}

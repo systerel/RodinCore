@@ -13,7 +13,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -74,8 +74,8 @@ public class DomCompRewriterImpl extends DefaultRewriter {
 	    	 *              p;...q;(S ⩤ r);...;s == (p;...;q);(S ⩤ (r;...;s))
 	    	 */
 			Fcomp(children) -> {
-				Collection<Expression> newChildren = new ArrayList<Expression>();
-				Collection<Expression> rToS = new ArrayList<Expression>();
+				List<Expression> newChildren = new ArrayList<Expression>();
+				List<Expression> rToS = new ArrayList<Expression>();
 				Expression S = null;
 				boolean found = false;
 				for (Expression child : `children) {
@@ -94,29 +94,25 @@ public class DomCompRewriterImpl extends DefaultRewriter {
 				if (rToS.size() <= 1)
 					return expression;
 				
-				Expression rToSComp = makeCompIfNeccessary(ff, rToS);
+				Expression rToSComp = makeCompIfNeccessary(rToS);
 				
 				Expression domMan = ff.makeBinaryExpression(
 						subExp.getTag(), S, rToSComp, null);
 
 				newChildren.add(domMan);
-
-				if (newChildren.size() == 1)
-					return newChildren.iterator().next();
-					
-				return ff.makeAssociativeExpression(Expression.FCOMP,
-						newChildren, null);
+				return makeCompIfNeccessary(newChildren);
 			}
 			
 	    }
 	    return expression;
 	}
 
-	private Expression makeCompIfNeccessary(FormulaFactory ff, 
-				Collection<Expression> children) {
-		if (children.size() == 1)
-			return children.iterator().next();
-		else
-			return ff.makeAssociativeExpression(Expression.FCOMP, children, null);	
+	private Expression makeCompIfNeccessary(List<Expression> children) {
+		final Expression first = children.get(0);
+		if (children.size() == 1) {
+			return first;
+		}
+		final FormulaFactory ff = first.getFactory();
+		return ff.makeAssociativeExpression(Expression.FCOMP, children, null);
 	}
 }

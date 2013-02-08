@@ -64,6 +64,7 @@ public class UnionInterDistRewriterImpl extends DefaultRewriter {
 	public Expression rewrite(AssociativeExpression expression) {
 		FormulaFactory ff = expression.getFactory();
 	    %match (Expression expression) {
+
 			/**
 	    	 * Union/Inter distribution :
 	    	 * S ∪ ... ∪ (T ∩ ... ∩ U) ∪ ... ∪ V ==  

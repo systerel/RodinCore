@@ -13,7 +13,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -74,8 +74,8 @@ public class RanCompRewriterImpl extends DefaultRewriter {
 	    	 *              p;...;(q ⩥ S);r;...;s == ((p;...;q) ⩥ S);r;...;s
 	    	 */
 			Fcomp(children) -> {
-				Collection<Expression> newChildren = new ArrayList<Expression>();
-				Collection<Expression> pToQ = new ArrayList<Expression>();
+				List<Expression> newChildren = new ArrayList<Expression>();
+				List<Expression> pToQ = new ArrayList<Expression>();
 				Expression S = null;
 				boolean found = false;
 				for (Expression child : `children) {
@@ -94,32 +94,28 @@ public class RanCompRewriterImpl extends DefaultRewriter {
 				if (pToQ.size() <= 1)
 					return expression;
 				
-				Expression pToQComp = makeCompIfNeccessary(ff, pToQ);
+				Expression pToQComp = makeCompIfNeccessary(pToQ);
 				
 				Expression ranMan = ff.makeBinaryExpression(
 						subExp.getTag(), pToQComp, S, null);
 
-				Collection<Expression> exps =
+				List<Expression> exps =
 						new ArrayList<Expression>(newChildren.size() + 1);
 				exps.add(ranMan);
 				exps.addAll(newChildren);
 
-				if (exps.size() == 1)
-					return exps.iterator().next();
-					
-				return ff.makeAssociativeExpression(Expression.FCOMP,
-						exps, null);
+				return makeCompIfNeccessary(exps);
 			}
 			
 	    }
 	    return expression;
 	}
 
-	private Expression makeCompIfNeccessary(FormulaFactory ff, 
-				Collection<Expression> children) {
+	private Expression makeCompIfNeccessary(List<Expression> children) {
+		final Expression first = children.get(0);
 		if (children.size() == 1)
-			return children.iterator().next();
-		else
-			return ff.makeAssociativeExpression(Expression.FCOMP, children, null);	
+			return first;
+		final FormulaFactory ff = first.getFactory();
+		return ff.makeAssociativeExpression(Expression.FCOMP, children, null);	
 	}
 }

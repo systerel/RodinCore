@@ -68,9 +68,9 @@ public class InclusionSetMinusLeftRewriterImpl extends AutoRewriterImpl {
 	    		Expression [] children = new Expression[2];
 	    		children[0] = `S;
 	    		children[1] = `B;
-	    		Expression union = ff.makeAssociativeExpression(Expression.BUNION,
-	    				children, null);
-	    		return ff.makeRelationalPredicate(Predicate.SUBSETEQ, `A, union, null);
+	    		Expression union = makeAssociativeExpression(Expression.BUNION,
+	    				children);
+	    		return makeRelationalPredicate(Predicate.SUBSETEQ, `A, union);
 	    	}
 	    }
 	    return predicate;
