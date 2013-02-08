@@ -1015,6 +1015,13 @@ public class TestTypeChecker extends AbstractTests {
 				null //
 		);
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testIncompatibleEnvironmentFactoryError() {
+		Predicate pred = parsePredicate("ℤ = {x∣x∈{y∣y∈ℤ ∧ y≤x}}", ff);
+		ITypeEnvironment typEnv = FastFactory.ff_extns.makeTypeEnvironment();
+		doTest(pred, typEnv, typEnv, "ℤ = {x∣x∈{y∣y∈ℤ ∧ y≤x}}");
+	}
 
 	/**
 	 * Regression test for bug #3574565: Inconsistent result of formula
