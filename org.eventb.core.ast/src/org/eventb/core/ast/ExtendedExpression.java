@@ -327,7 +327,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	@Override
 	protected void toString(IToStringMediator mediator) {
 		final IParserPrinter<? extends Formula<?>> parser = makeParserPrinter(
-				getTag(), extension, mediator);
+				this, extension, mediator);
 		final IParserPrinter<ExtendedExpression> extParser = (IParserPrinter<ExtendedExpression>) parser;
 		extParser.toString(mediator, this);
 	}

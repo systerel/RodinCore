@@ -144,15 +144,16 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 	}
 
 	public static IParserPrinter<? extends Formula<?>> makeParserPrinter(
-			int tag, IFormulaExtension extension, IToStringMediator mediator) {
+			Formula<?> formula, IFormulaExtension extension,
+			IToStringMediator mediator) {
 		final IOperatorProperties properties = extension.getKind()
 				.getProperties();
 		final String opId = extension.getId();
 		final String groupId = extension.getGroupId();
 		final String syntaxSymbol = extension.getSyntaxSymbol();
-		final AbstractGrammar grammar = mediator.getFactory().getGrammar();
+		final AbstractGrammar grammar = formula.getFactory().getGrammar();
 		final IOperatorInfo<? extends Formula<?>> opInfo = grammar.getParser(
-				properties, syntaxSymbol, tag, opId, groupId);
+				properties, syntaxSymbol, formula.getTag(), opId, groupId);
 		return opInfo.makeParser(mediator.getKind());
 	}
 
