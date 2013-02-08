@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.ff_extns;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
@@ -1014,6 +1015,12 @@ public class TestTypeChecker extends AbstractTests {
 				mTypeEnvironment("f=T↔U", ff), //
 				null //
 		);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void testIncompatibleEnvironmentFactoryError() {
+		final Predicate pred = parsePredicate("ℤ = {x∣x∈{y∣y∈ℤ ∧ y≤x}}", ff);
+		pred.typeCheck(ff_extns.makeTypeEnvironment());
 	}
 
 	/**
