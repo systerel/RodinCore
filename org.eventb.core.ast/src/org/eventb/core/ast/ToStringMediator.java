@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,25 +32,35 @@ import org.eventb.internal.core.parser.SubParsers;
 	private static final String[] NO_NAME = new String[0];
 
 	private final int kind;
-	protected final FormulaFactory factory;
+	protected final AbstractGrammar grammar;
 	protected final StringBuilder builder;
 	protected final String[] boundNames;
 	protected final boolean isRight;
 	private final boolean withTypes;
+	protected final KindMediator kindMed;
 
-	public ToStringMediator(int kind, FormulaFactory factory, StringBuilder builder,
-			String[] boundNames, boolean withTypes, boolean isRight) {
+	protected ToStringMediator(int kind, AbstractGrammar grammar,
+			StringBuilder builder, String[] boundNames, boolean isRight,
+			boolean withTypes, KindMediator kindMed) {
 		this.kind = kind;
-		this.factory = factory;
+		this.grammar = grammar;
 		this.builder = builder;
 		this.boundNames = boundNames;
 		this.isRight = isRight;
 		this.withTypes = withTypes;
+		this.kindMed = kindMed;
 	}
 
-	public ToStringMediator(Formula<?> formula, FormulaFactory factory, StringBuilder builder,
+	public ToStringMediator(Formula<?> formula, StringBuilder builder,
 			String[] boundNames, boolean withTypes, boolean isRight) {
-		this(getKind(formula, factory), factory, builder, boundNames, withTypes, isRight);
+		this.grammar = formula.getFactory().getGrammar();
+		this.builder = builder;
+		this.boundNames = boundNames;
+		this.isRight = isRight;
+		this.withTypes = withTypes;
+
+		this.kindMed = new KindMediator(grammar);
+		this.kind = formula.getKind(kindMed);
 	}
 
 	@Override
@@ -83,19 +93,19 @@ import org.eventb.internal.core.parser.SubParsers;
 
 	private void subPrintNoPar(Formula<?> child, boolean isRightOvr,
 			String[] addedBoundNames, boolean withTypesOvr) {
-		final int childKind = getKind(child, factory);
+		final int childKind = child.getKind(kindMed);
 		printFormula(child, childKind, isRightOvr, addedBoundNames, withTypesOvr, false);
 	}
 	
 	@Override
 	public void subPrintWithPar(Formula<?> child) {
-		final int childKind = getKind(child, factory);
+		final int childKind = child.getKind(kindMed);
 		printFormula(child, childKind, false, NO_NAME, withTypes, true);
 	}
 	
 	private void printChild(Formula<?> child, boolean isRightOvr,
 			String[] addedBoundNames, boolean withTypesOvr) {
-		final int childKind = getKind(child, factory);
+		final int childKind = child.getKind(kindMed);
 		final boolean needsParen;
 		if (withTypesOvr && isTypePrintable(child)) {
 			needsParen = true;
@@ -106,7 +116,6 @@ import org.eventb.internal.core.parser.SubParsers;
 	}
 
 	protected boolean needsParentheses(int childKind, boolean isRightOvr) {
-		final AbstractGrammar grammar = factory.getGrammar();
 		return grammar.needsParentheses(isRightOvr, childKind, kind);
 	}
 
@@ -121,10 +130,9 @@ import org.eventb.internal.core.parser.SubParsers;
 		}
 	}
 
-	// FIXME same formula => remove argument and avoid recomputing kind
 	@Override
 	public void forward(Formula<?> formula) {
-		final int formulaKind = getKind(formula, factory);
+		final int formulaKind = formula.getKind(kindMed);
 		printFormula(formula, formulaKind, isRight, NO_NAME, withTypes);
 	}
 
@@ -151,7 +159,7 @@ import org.eventb.internal.core.parser.SubParsers;
 			boolean isRightOvr, boolean withTypesOvr,
 			final String[] newBoundNames) {
 		if (withTypesOvr && isTypePrintable(formula)) {
-			final int oftype = factory.getGrammar().getKind(OFTYPE);
+			final int oftype = grammar.getKind(OFTYPE);
 			final IToStringMediator mediator = makeInstance(oftype, isRightOvr,
 					withTypesOvr, newBoundNames);
 			SubParsers.OFTYPE_PARSER.toString(mediator, (Expression) formula);
@@ -165,18 +173,12 @@ import org.eventb.internal.core.parser.SubParsers;
 	protected IToStringMediator makeInstance(int formulaKind,
 			boolean isRightOvr, boolean withTypesOvr,
 			final String[] newBoundNames) {
-		return new ToStringMediator(formulaKind, factory, builder,
-				newBoundNames, withTypesOvr, isRightOvr);
-	}
-
-	@Override
-	public FormulaFactory getFactory() {
-		return factory;
+		return new ToStringMediator(formulaKind, grammar, builder,
+				newBoundNames, isRightOvr, withTypesOvr, kindMed);
 	}
 
 	@Override
 	public void appendImage(int lexKind) {
-		final AbstractGrammar grammar = factory.getGrammar();
 		final boolean spaced = grammar.isOperator(lexKind)
 				&& grammar.isSpaced(lexKind);
 		appendImage(lexKind, spaced);
@@ -185,7 +187,6 @@ import org.eventb.internal.core.parser.SubParsers;
 	@Override
 	public void appendImage(int lexKind, boolean withSpaces) {
 		// TODO make a cache or compute image of this.kind and check if ==
-		final AbstractGrammar grammar = factory.getGrammar();
 		final String image = grammar.getImage(lexKind);
 		if (withSpaces) {
 			builder.append(SPACE);
@@ -219,12 +220,6 @@ import org.eventb.internal.core.parser.SubParsers;
 	@Override
 	public boolean isWithTypes() {
 		return withTypes;
-	}
-
-	private static int getKind(Formula<?> child, FormulaFactory factory) {
-		// TODO could make kind mediator a field
-		final KindMediator mediator = new KindMediator(factory.getGrammar());
-		return child.getKind(mediator);
 	}
 
 	// TODO rename method, document it must be called systematically before parser.toString()

@@ -234,7 +234,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 	@Override
 	protected void toString(IToStringMediator mediator) {
 		final IParserPrinter<? extends Formula<?>> parser = makeParserPrinter(
-				getTag(), extension, mediator);
+				this, extension, mediator);
 		final IParserPrinter<ExtendedPredicate> extParser = (IParserPrinter<ExtendedPredicate>) parser;
 		extParser.toString(mediator, this);
 	}

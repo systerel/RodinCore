@@ -743,7 +743,7 @@ public class SubParsers {
 		}
 
 		public static void appendOftype(IToStringMediator mediator, Type type, boolean withSpaces) {
-			final int oftype = mediator.getFactory().getGrammar().getKind(OFTYPE);
+			final int oftype = type.getFactory().getGrammar().getKind(OFTYPE);
 			mediator.appendImage(oftype, withSpaces);
 			/*
 			 * If we were rigorous, the next line should be
@@ -1004,7 +1004,7 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator,
 				BinaryExpression toPrint) {
 			super.toString(mediator, toPrint);
-			final int closeKind = getCloseKind(mediator.getFactory()
+			final int closeKind = getCloseKind(toPrint.getFactory()
 					.getGrammar());
 			mediator.appendImage(closeKind);
 		}
@@ -1091,7 +1091,7 @@ public class SubParsers {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
 			printBoundIdentDecls(mediator, boundDecls);
-			final int dot = mediator.getFactory().getGrammar().getKind(DOT);
+			final int dot = toPrint.getFactory().getGrammar().getKind(DOT);
 			mediator.appendImage(dot);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 		}
@@ -1190,14 +1190,14 @@ public class SubParsers {
 			if (members.length > 0) {
 				EXPR_LIST_PARSER.toString(mediator, asList(members));
 			}
-			final int rbrace = mediator.getFactory().getGrammar().getKind(RBRACE);
+			final int rbrace = toPrint.getFactory().getGrammar().getKind(RBRACE);
 			mediator.appendImage(rbrace);
 		}
 	}
 	
-	static void printMid(IToStringMediator mediator) {
+	static void printMid(IToStringMediator mediator, Formula<?> toPrint) {
 		mediator.append(SPACE);
-		final int mid = mediator.getFactory().getGrammar().getKind(MID);
+		final int mid = toPrint.getFactory().getGrammar().getKind(MID);
 		mediator.appendImage(mid);
 		mediator.append(SPACE);
 	}
@@ -1263,10 +1263,10 @@ public class SubParsers {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
 			printBoundIdentDecls(mediator, boundDecls);
-			final int dot = mediator.getFactory().getGrammar().getKind(DOT);
+			final int dot = toPrint.getFactory().getGrammar().getKind(DOT);
 			mediator.appendImage(dot);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
-			printMid(mediator);
+			printMid(mediator, toPrint);
 			mediator.subPrintNoPar(toPrint.getExpression(), false, getLocalNames());
 		}
 	}
@@ -1286,7 +1286,7 @@ public class SubParsers {
 		@Override
 		public void toString(IToStringMediator mediator, QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
-			final int rbrace = mediator.getFactory().getGrammar().getKind(RBRACE);
+			final int rbrace = toPrint.getFactory().getGrammar().getKind(RBRACE);
 			mediator.appendImage(rbrace);
 		}
 	}
@@ -1331,7 +1331,7 @@ public class SubParsers {
 				QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
 			mediator.subPrintNoPar(toPrint.getExpression(), false, getLocalNames());
-			printMid(mediator);
+			printMid(mediator, toPrint);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 		}
 		
@@ -1352,7 +1352,7 @@ public class SubParsers {
 		@Override
 		public void toString(IToStringMediator mediator, QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
-			final int rbrace = mediator.getFactory().getGrammar().getKind(RBRACE);
+			final int rbrace = toPrint.getFactory().getGrammar().getKind(RBRACE);
 			mediator.appendImage(rbrace);
 		}
 	}
@@ -1392,10 +1392,10 @@ public class SubParsers {
 			
 			PatternParser.appendPattern(mediator, pattern, toPrint.getBoundIdentDecls(), getLocalNames());
 			
-			final int dot = mediator.getFactory().getGrammar().getKind(DOT);
+			final int dot = toPrint.getFactory().getGrammar().getKind(DOT);
 			mediator.appendImage(dot);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
-			printMid(mediator);
+			printMid(mediator, toPrint);
 			mediator.subPrintNoPar(pair.getRight(), false, getLocalNames());
 		}
 	}

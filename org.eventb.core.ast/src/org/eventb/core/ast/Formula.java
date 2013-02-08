@@ -1215,8 +1215,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final String toStringFullyParenthesized() {
 		final StringBuilder builder = new StringBuilder();
-		final ToStringFullParenMediator strMed = new ToStringFullParenMediator(this, 
-				getFactory(), builder, NO_STRING, false);
+		final ToStringFullParenMediator strMed = new ToStringFullParenMediator(
+				this, builder, NO_STRING, false);
 		strMed.forward(getTypedThis());
 		return builder.toString();
 	}
@@ -1237,8 +1237,8 @@ public abstract class Formula<T extends Formula<T>> {
 	@Override
 	public final String toString() {
 		final StringBuilder builder = new StringBuilder();
-		final ToStringMediator strMed = new ToStringMediator(this, getFactory(),
-				builder, NO_STRING, false, false);
+		final ToStringMediator strMed = new ToStringMediator(this, builder,
+				NO_STRING, false, false);
 		strMed.forward(getTypedThis());
 		return builder.toString();
 	}
@@ -1257,8 +1257,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final String toStringWithTypes() {
 		final StringBuilder builder = new StringBuilder();
-		final ToStringMediator strMed = new ToStringMediator(this, getFactory(),
-				builder, NO_STRING, true, false);
+		final ToStringMediator strMed = new ToStringMediator(this, builder,
+				NO_STRING, true, false);
 		strMed.forward(getTypedThis());
 		return builder.toString();
 	}
