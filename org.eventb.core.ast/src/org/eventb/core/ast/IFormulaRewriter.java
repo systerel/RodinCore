@@ -98,7 +98,8 @@ public interface IFormulaRewriter {
 	@Deprecated
 	FormulaFactory getFactory();
 
-	/**	 * Rewriting is leaving a quantifier. When traversing the formula tree, this
+	/**
+	 * Rewriting is leaving a quantifier. When traversing the formula tree, this
 	 * method is called when the rewriting traverses a quantifier, while going
 	 * back up the tree. In other term, this method is called just after
 	 * rewriting the children of a quantified formula, and just before rewriting
