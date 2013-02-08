@@ -28,7 +28,7 @@ public class AutoFormulaRewriterL0Tests extends AutoFormulaRewriterTests {
 	}
 
 	protected AutoFormulaRewriterL0Tests(AutoRewriterImpl rewriter) {
-		super(DT_FAC, rewriter);
+		super(rewriter);
 	}
 
 	/**

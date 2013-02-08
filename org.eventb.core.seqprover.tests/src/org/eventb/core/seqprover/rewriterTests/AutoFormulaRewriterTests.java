@@ -95,8 +95,8 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 	 * Create an abstract formula rewriter test with the input is the automatic
 	 * rewriter.
 	 */
-	public AutoFormulaRewriterTests(FormulaFactory ff, AutoRewriterImpl rewriter) {
-		super(ff, rewriter);
+	public AutoFormulaRewriterTests(AutoRewriterImpl rewriter) {
+		super(DT_FAC, rewriter);
 		this.level2AndHigher = rewriter.getLevel().from(Level.L2);
 	}
 
