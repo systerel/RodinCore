@@ -30,6 +30,10 @@ public class UpgradeResult<T extends Formula<T>> extends AbstractResult
 		this.factory = factory;
 	}
 
+	public UpgradeResult(UpgradeResult<?> other) {
+		this.factory = other.factory;
+	}
+
 	@Override
 	public T getUpgradedFormula() {
 		return upgradedFormula;

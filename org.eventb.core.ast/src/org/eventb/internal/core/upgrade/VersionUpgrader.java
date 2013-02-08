@@ -17,13 +17,10 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.ProblemKind;
-import org.eventb.core.ast.ProblemSeverities;
 
 /**
  * @author Nicolas Beauger
@@ -58,27 +55,9 @@ public abstract class VersionUpgrader {
 		}
 
 		final Assignment assign = parseResult.getParsedAssignment();
-
-		checkIdents(assign.getAssignedIdentifiers(), result);
-		if (result.hasProblem()) {
-			result.setUpgradeNeeded(true);
-			return;
-		}
-		
-		final AssignmentUpgrader assignUpg = new AssignmentUpgrader(this,
-				input, factory, result);
-		assign.accept(assignUpg);
-	}
-
-	private void checkIdents(FreeIdentifier[] identifiers,
-			UpgradeResult<Assignment> result) {
-		final List<String> reservedNames = getReservedKeywords();
-		for (FreeIdentifier ident : identifiers) {
-			if (reservedNames.contains(ident.getName())) {
-				result.addProblem(new ASTProblem(ident.getSourceLocation(),
-								ProblemKind.NotUpgradableError,
-								ProblemSeverities.Error));
-			}
+		checkUpgrade(input, assign, result);
+		if (result.upgradeNeeded() && !result.hasProblem()) {
+			assign.accept(new AssignmentUpgrader(this, result));
 		}
 	}
 

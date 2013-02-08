@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.upgrade;
 
+import static org.eventb.internal.core.upgrade.VersionUpgrader.copyProblems;
+
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BecomesEqualTo;
 import org.eventb.core.ast.BecomesMemberOf;
@@ -22,145 +24,78 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 
+/**
+ * Upgrades an assignment. It is already known that the assignment needs to be
+ * upgraded. This is implemented differently from other kinds of formulas
+ * because we cannot rewrite assignments.
+ */
 class AssignmentUpgrader extends DefaultSimpleVisitor {
 
 	private final VersionUpgrader upg;
-	private final String formulaString;
 	private final UpgradeResult<Assignment> result;
+	private final FormulaFactory factory;
 
-	public AssignmentUpgrader(VersionUpgrader upg, String formulaString,
-			FormulaFactory ff, UpgradeResult<Assignment> result) {
+	public AssignmentUpgrader(VersionUpgrader upg,
+			UpgradeResult<Assignment> result) {
 		this.upg = upg;
-		this.formulaString = formulaString;
 		this.result = result;
-	}
-
-	private <T extends Formula<T>> void makeUpgrade(T expr,
-			UpgradeResult<T> localResult) {
-		upg.upgrade(formulaString, expr, localResult);
-	}
-
-	private void mergeWithResult(final UpgradeResult<?> localResult) {
-		VersionUpgrader.copyProblems(localResult, result);
-		if (localResult.upgradeNeeded()) {
-			result.setUpgradeNeeded(true);
-		}
-	}
-
-	private boolean upgradeAssignedIdentifiers(FormulaFactory factory,
-			FreeIdentifier[] identifiers, FreeIdentifier[] upgradedIdentifiers) {
-		boolean changed = false;
-		for (int i = 0; i < identifiers.length; i++) {
-			final UpgradeResult<Expression> localResult = new UpgradeResult<Expression>(
-					factory);
-			makeUpgrade(identifiers[i], localResult);
-			mergeWithResult(localResult);
-			changed |= localResult.upgradeNeeded();
-			upgradedIdentifiers[i] = (FreeIdentifier) localResult
-					.getUpgradedFormula();
-			if (upgradedIdentifiers[i] == null) {
-				upgradedIdentifiers[i] = identifiers[i];
-				// needed if others do change
-			}
-		}
-		return changed;
+		this.factory = result.getFactory();
 	}
 
 	@Override
 	public void visitBecomesEqualTo(BecomesEqualTo assignment) {
-		final Expression[] expressions = assignment.getExpressions();
-		final Expression[] upgraded = new Expression[expressions.length];
-		final FreeIdentifier[] identifiers = assignment.getAssignedIdentifiers();
-		final FreeIdentifier[] upgradedIdentifiers = new FreeIdentifier[identifiers.length];
-		final FormulaFactory factory = result.getFactory();
-		boolean changed = false;
-		for (int i = 0; i < expressions.length; i++) {
-			final UpgradeResult<Expression> localResult = new UpgradeResult<Expression>(
-					factory);
-			makeUpgrade(expressions[i], localResult);
-			mergeWithResult(localResult);
-			changed |= localResult.upgradeNeeded();
-			upgraded[i] = localResult.getUpgradedFormula();
-			if (upgraded[i] == null) {
-				upgraded[i] = expressions[i];
-				// needed if others do change
-			}
+		final FreeIdentifier[] idents = assignment.getAssignedIdentifiers();
+		final Expression[] exprs = assignment.getExpressions();
+		final FreeIdentifier[] upgIdents = upgradeIdentifiers(idents);
+		final Expression[] upgExprs = new Expression[exprs.length];
+		for (int i = 0; i < exprs.length; i++) {
+			upgExprs[i] = upgradeChild(exprs[i]);
 		}
-		
-		boolean idChanged = upgradeAssignedIdentifiers(factory, identifiers,
-				upgradedIdentifiers);
-		if (changed || idChanged) {
-			result.setUpgradedFormula(factory.makeBecomesEqualTo(
-					upgradedIdentifiers, upgraded, null));
-		}
+		final Assignment upgAssignment = factory.makeBecomesEqualTo(upgIdents,
+				upgExprs, null);
+		result.setUpgradedFormula(upgAssignment);
 	}
 
 	@Override
 	public void visitBecomesMemberOf(BecomesMemberOf assignment) {
+		final FreeIdentifier[] idents = assignment.getAssignedIdentifiers();
+		final FreeIdentifier[] upgIdents = upgradeIdentifiers(idents);
 		final Expression set = assignment.getSet();
-		final FreeIdentifier[] identifiers = assignment
-				.getAssignedIdentifiers();
-		final FreeIdentifier[] upgradedIdentifiers = new FreeIdentifier[identifiers.length];
-		final FormulaFactory factory = result.getFactory();
-		final UpgradeResult<Expression> localResult = new UpgradeResult<Expression>(
-				factory);
-		makeUpgrade(set, localResult);
-		mergeWithResult(localResult);
-		boolean changed = localResult.upgradeNeeded();
-
-		boolean idChanged = upgradeAssignedIdentifiers(factory, identifiers,
-				upgradedIdentifiers);
-		if (changed || idChanged) {
-			final Expression upgExpr = localResult.getUpgradedFormula();
-			if (upgExpr != null) {
-				result.setUpgradedFormula(factory.makeBecomesMemberOf(
-						upgradedIdentifiers[0], upgExpr, null));
-			}
-		}
+		final Expression upgSet = upgradeChild(set);
+		final Assignment upgAssignment = factory.makeBecomesMemberOf(
+				upgIdents[0], upgSet, null);
+		result.setUpgradedFormula(upgAssignment);
 	}
 
 	@Override
 	public void visitBecomesSuchThat(BecomesSuchThat assignment) {
+		final FreeIdentifier[] idents = assignment.getAssignedIdentifiers();
+		final FreeIdentifier[] upgIdents = upgradeIdentifiers(idents);
+		final BoundIdentDecl[] primedIdents = assignment.getPrimedIdents();
+		final BoundIdentDecl[] upgPrimed = new BoundIdentDecl[primedIdents.length];
+		for (int i = 0; i < primedIdents.length; i++) {
+			upgPrimed[i] = upgradeChild(primedIdents[i]);
+		}
 		final Predicate condition = assignment.getCondition();
-		final FreeIdentifier[] identifiers = assignment
-				.getAssignedIdentifiers();
-		final FreeIdentifier[] upgradedIdentifiers = new FreeIdentifier[identifiers.length];
-		final BoundIdentDecl[] primedIdentifiers = assignment.getPrimedIdents();
-		final BoundIdentDecl[] upgradedPrimedIdentifiers = new BoundIdentDecl[primedIdentifiers.length];
-		final FormulaFactory factory = result.getFactory();
-		
-		//condition
-		final UpgradeResult<Predicate> predResult = new UpgradeResult<Predicate>(
-				factory);
-		makeUpgrade(condition, predResult);
-		mergeWithResult(predResult);
-		boolean changed = predResult.upgradeNeeded();
+		final Predicate upgCondition = upgradeChild(condition);
+		final BecomesSuchThat upgAssignment = factory.makeBecomesSuchThat(
+				upgIdents, upgPrimed, upgCondition, null);
+		result.setUpgradedFormula(upgAssignment);
+	}
 
-		// primed identifiers
-		for (int i = 0; i < primedIdentifiers.length; i++) {
-			final UpgradeResult<BoundIdentDecl> localResult = new UpgradeResult<BoundIdentDecl>(
-					factory);
-			makeUpgrade(primedIdentifiers[i], localResult);
-			mergeWithResult(localResult);
-			changed |= localResult.upgradeNeeded();
-			upgradedPrimedIdentifiers[i] = localResult.getUpgradedFormula();
-			if (upgradedPrimedIdentifiers[i] == null) {
-				upgradedPrimedIdentifiers[i] = primedIdentifiers[i];
-				// needed if others do change
-			}
+	private FreeIdentifier[] upgradeIdentifiers(FreeIdentifier[] identifiers) {
+		final FreeIdentifier[] newIdents = new FreeIdentifier[identifiers.length];
+		for (int i = 0; i < identifiers.length; i++) {
+			newIdents[i] = (FreeIdentifier) upgradeChild((Expression) identifiers[i]);
 		}
-		
-		// assigned identifiers
-		boolean idChanged = upgradeAssignedIdentifiers(factory, identifiers,
-				upgradedIdentifiers);
-		if (changed || idChanged) {
-			final Predicate upgPred = predResult.getUpgradedFormula();
-			if (upgPred != null) {
-				result.setUpgradedFormula(factory.makeBecomesSuchThat(
-						upgradedIdentifiers, upgradedPrimedIdentifiers,
-						upgPred, null));
-			}
-		}
+		return newIdents;
+	}
+
+	private <T extends Formula<T>> T upgradeChild(T formula) {
+		final UpgradeResult<T> localResult = new UpgradeResult<T>(result);
+		upg.upgrade(formula, localResult);
+		copyProblems(localResult, result);
+		return localResult.getUpgradedFormula();
 	}
 
 }
