@@ -105,11 +105,6 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 	}
 	
 	@Override
-	public TypeRewriter getTypeRewriter() {
-		return this.typeRewriter;
-	}
-
-	@Override
 	public final void enteringQuantifier(int nbOfDeclarations) {
 		bindingDepth += nbOfDeclarations;
 	}
@@ -271,8 +266,14 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 	}
 
 	@Override
-	public Expression rewrite(SetExtension src, AtomicExpression expr) {
-		return expr;
+	public Expression rewriteToAtomicExpression(SetExtension src) {
+		Type type;
+		if (ff == getFactory()) {
+			type = src.getType();
+		} else {
+			type = typeRewriter.rewrite(src.getType());
+		}
+		return ff.makeEmptySet(type, src.getSourceLocation());
 	}
 
 	@Override

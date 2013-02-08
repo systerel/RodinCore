@@ -78,8 +78,6 @@ public interface ITypeCheckingRewriter {
 	boolean autoFlatteningMode();
 
 	FormulaFactory getFactory();
-	
-	TypeRewriter getTypeRewriter();
 
 	void enteringQuantifier(int nbOfBoundIdentDecls);
 
@@ -152,7 +150,7 @@ public interface ITypeCheckingRewriter {
 	 */
 	Expression rewrite(SetExtension src, SetExtension expr);
 
-	Expression rewrite(SetExtension src, AtomicExpression expr);
+	Expression rewriteToAtomicExpression(SetExtension src);
 
 	Predicate rewrite(SimplePredicate src, SimplePredicate pred);
 

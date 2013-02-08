@@ -37,7 +37,6 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.SimplePredicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 
@@ -54,20 +53,10 @@ public class SameTypeRewriter implements ITypeCheckingRewriter {
 	private final FormulaFactory factory;
 	
 	private final IFormulaRewriter rewriter;
-	
-	private final TypeRewriter typeRewriter;
-
 
 	public SameTypeRewriter(FormulaFactory ff, IFormulaRewriter rewriter) {
 		this.rewriter = rewriter;
 		this.factory = ff;
-		this.typeRewriter = new TypeRewriter(this.getFactory()){
-			@Override
-			public Type rewrite(Type type) {
-				// Since language is the same we never rewrite anything
-				return type;
-			}
-		};
 	}
 
 	@Override
@@ -83,11 +72,6 @@ public class SameTypeRewriter implements ITypeCheckingRewriter {
 	@Override
 	public FormulaFactory getFactory() {
 		return factory;
-	}
-	
-	@Override
-	public TypeRewriter getTypeRewriter() {
-		return typeRewriter;
 	}
 
 	@Override
@@ -217,8 +201,11 @@ public class SameTypeRewriter implements ITypeCheckingRewriter {
 	}
 
 	@Override
-	public Expression rewrite(SetExtension src, AtomicExpression expr) {
-		return checkReplacement(src, rewriter.rewrite(expr));
+	public Expression rewriteToAtomicExpression(SetExtension src) {
+		return checkReplacement(
+				src,
+				rewriter.rewrite(factory.makeEmptySet(src.getType(),
+						src.getSourceLocation())));
 	}
 
 	@Override
