@@ -1161,6 +1161,20 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 
 	/**
+	 * Ensures that the formula factory of this formula and the factory of this
+	 * type environment are the same. If it is not the case an
+	 * {@link IllegalArgumentException} exception is raised.
+	 */
+	private void ensureSameFormulaFactory(ITypeEnvironment typEnv) {
+		if (fac != typEnv.getFormulaFactory()) {
+			throw new IllegalArgumentException("The environment " + typEnv
+					+ " has an incompatible factory "
+					+ typEnv.getFormulaFactory()
+					+ " with the current formula factory " + this.fac);
+		}
+	}
+
+	/**
 	 * Returns the tag of this AST node.
 	 * <p>
 	 * Each node has an attached tag that represents the operator associated to
@@ -1652,6 +1666,7 @@ public abstract class Formula<T extends Formula<T>> {
 			throw new IllegalStateException(
 					"Cannot typecheck ill-formed formula: " + this);
 		}
+		ensureSameFormulaFactory(environment);
 		TypeCheckResult result = new TypeCheckResult(environment.makeSnapshot());
 		typeCheck(result, NO_BOUND_IDENT_DECL);
 		result.solveTypeVariables();
