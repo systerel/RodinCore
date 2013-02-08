@@ -116,6 +116,6 @@ public class RanCompRewriterImpl extends DefaultRewriter {
 		if (children.size() == 1)
 			return first;
 		final FormulaFactory ff = first.getFactory();
-		return ff.makeAssociativeExpression(Expression.FCOMP, children, null);	
+		return ff.makeAssociativeExpression(Expression.FCOMP, children, null);
 	}
 }

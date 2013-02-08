@@ -59,7 +59,7 @@ public class SetEqlRewriterImpl extends DefaultRewriter {
 	@ProverRule("DERIV_EQUAL")
 	@Override
 	public Predicate rewrite(RelationalPredicate predicate) {
-		FormulaFactory ff = predicate.getFactory();	
+		FormulaFactory ff = predicate.getFactory();
 	    %match (Predicate predicate) {
 
 			/**

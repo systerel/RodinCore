@@ -72,7 +72,7 @@ public class RemoveNegationRewriterImpl extends AutoRewriterImpl {
 	%include {FormulaV2.tom}
 	
 	public boolean isApplicableOrRewrite(Predicate predicate) {
-		FormulaFactory ff = predicate.getFactory();	
+		FormulaFactory ff = predicate.getFactory();
 		%match (Predicate predicate) {
 
 			/**

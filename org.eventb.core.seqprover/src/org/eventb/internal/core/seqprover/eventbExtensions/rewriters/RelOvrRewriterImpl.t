@@ -110,6 +110,6 @@ public class RelOvrRewriterImpl extends DefaultRewriter {
 			return first;
 		}
 		final FormulaFactory ff = first.getFactory();
-		return ff.makeAssociativeExpression(Expression.OVR, children, null);	
+		return ff.makeAssociativeExpression(Expression.OVR, children, null);
 	}
 }

@@ -107,7 +107,7 @@ public class SetMinusRewriterImpl extends DefaultRewriter {
 
 	private Expression makeSetMinusAssociative(int tag, Expression U,
 			Expression [] children) {
-		FormulaFactory ff = U.getFactory();		
+		FormulaFactory ff = U.getFactory();
 		Expression [] newChildren = new Expression[children.length];
 		for (int i = 0; i < children.length; ++i) {
 			newChildren[i] = ff.makeBinaryExpression(

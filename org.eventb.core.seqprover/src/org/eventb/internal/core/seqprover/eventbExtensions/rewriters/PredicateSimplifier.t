@@ -49,9 +49,6 @@ import org.eventb.core.seqprover.ProverRule;
 @SuppressWarnings("unused")
 public class PredicateSimplifier extends DefaultRewriter {
 
-	// FIXME place-holder
-	protected final BigInteger ff = BigInteger.ZERO;
-
 	public static final int MULTI_IMP = 1 << 0;
 	public static final int MULTI_EQV_NOT = 1 << 1;
 	public static final int MULTI_IMP_NOT = 1 << 2;
