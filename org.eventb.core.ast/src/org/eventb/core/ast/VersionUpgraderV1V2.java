@@ -11,7 +11,10 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
+import static org.eventb.core.ast.Formula.DOMRES;
 import static org.eventb.core.ast.FormulaFactory.isEventBWhiteSpace;
+import static org.eventb.core.ast.ProblemKind.NotUpgradableError;
+import static org.eventb.core.ast.ProblemSeverities.Error;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,10 +25,12 @@ import org.eventb.internal.core.upgrade.UpgradeResult;
 import org.eventb.internal.core.upgrade.VersionUpgrader;
 
 /**
- * This class allows to upgrade a formula from language version 1 to version 2.
- * It provides the {@link ITypeCheckingRewriter} class {@link RewriterV1V2} to
- * rewrite all formulas excepted assignments and the {@link IVisitor2} class
- * {@link UpgradeVisitorV1V2} to could rewrite assignments.
+ * Upgrades a formula from language V1 to language V2.
+ * 
+ * The check whether upgrade is needed and can be done, is performed with the
+ * {@link UpgradeVisitorV1V2}.
+ * 
+ * The upgrade is performed by rewriting the formula with {@link RewriterV1V2}.
  * 
  * @author Nicolas Beauger
  */
@@ -54,36 +59,29 @@ class VersionUpgraderV1V2 extends VersionUpgrader {
 			}
 		}
 
-		private String getNotReservedNameWithIndex(String name, int i){
-			if (reservedNames.contains(name + i)) { 
-				return getNotReservedNameWithIndex(name, ++i);
-			} else {
-				return name + i;
-			}
-		}
-		
-		private String getNotReservedName(String name){
-			if (reservedNames.contains(name)) { 
-				return getNotReservedNameWithIndex(name, 1);
-			} else {
+		private String getNotReservedName(String name) {
+			if (!reservedNames.contains(name)) {
 				return name;
 			}
+			final String newName = name + "1";
+			assert !reservedNames.contains(newName);
+			return newName;
 		}
 
 		@Override
 		public BoundIdentDecl rewrite(BoundIdentDecl src) {
-			String name = getNotReservedName(src.getName());
-			// node is rebuilt in all cases since the factory have changed for
-			// V1 -> V2 upgrade
+			final String name = getNotReservedName(src.getName());
+			// node must be rebuilt with V2 factory
 			return ff.makeBoundIdentDecl(name, null, src.getType());
 		}
 
 		@Override
-		public Expression rewrite(UnaryExpression src, boolean changed, Expression newChild) {
+		public Expression rewrite(UnaryExpression src, boolean changed,
+				Expression newChild) {
 			final int tag = src.getTag();
 			final int genericTag = getGenericTag(tag);
 			if (genericTag < 0) {
-				// not a generic operator case
+				// not a generic operator
 				return super.rewrite(src, changed, newChild);
 			}
 			final Type type = src.getType();
@@ -95,10 +93,10 @@ class VersionUpgraderV1V2 extends VersionUpgrader {
 		}
 
 		private Expression makeDomRes(Expression left, int genTag, Type type) {
-			return ff.makeBinaryExpression(Formula.DOMRES, left, ff
-					.makeAtomicExpression(genTag, null, type), null);
+			return ff.makeBinaryExpression(DOMRES, left,
+					ff.makeAtomicExpression(genTag, null, type), null);
 		}
-		
+
 	}
 
 	private static class UpgradeVisitorV1V2<T extends Formula<T>> extends
@@ -252,10 +250,8 @@ class VersionUpgraderV1V2 extends VersionUpgrader {
 		public boolean visitFREE_IDENT(FreeIdentifier ident) {
 			if (reservedNames.contains(ident.getName())) {
 				result.setUpgradeNeeded(true);
-				result
-						.addProblem(new ASTProblem(ident.getSourceLocation(),
-								ProblemKind.NotUpgradableError,
-								ProblemSeverities.Error));
+				result.addProblem(new ASTProblem(ident.getSourceLocation(),
+						NotUpgradableError, Error));
 				return false;
 			}
 			return true;
@@ -277,16 +273,15 @@ class VersionUpgraderV1V2 extends VersionUpgrader {
 	@Override
 	protected <T extends Formula<T>> void upgrade(T formula,
 			UpgradeResult<T> result) {
-		final ITypeCheckingRewriter rewriter = new RewriterV1V2(result.getFactory(),
-				getReservedKeywords());
+		final ITypeCheckingRewriter rewriter = new RewriterV1V2(
+				result.getFactory(), getReservedKeywords());
 		try {
 			final T rewritten = formula.rewrite(rewriter);
 			result.setUpgradedFormula(rewritten);
 		} catch (Exception e) {
 			if (!result.hasProblem()) {
 				result.addProblem(new ASTProblem(formula.getSourceLocation(),
-								ProblemKind.NotUpgradableError,
-								ProblemSeverities.Error));
+						NotUpgradableError, Error));
 			}
 			if (VersionUpgrader.DEBUG) {
 				System.out.println("Exception while rewriting formula "
