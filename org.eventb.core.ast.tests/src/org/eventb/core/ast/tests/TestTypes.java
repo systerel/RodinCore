@@ -27,7 +27,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.junit.Test;
@@ -207,7 +206,7 @@ public class TestTypes extends AbstractTests {
 		};
 
 		for (String image: valid) {
-			Expression expr = parseAndTypeCheck(image, typenv);
+			Expression expr = parseExpression(image, typenv);
 			assertTrue("Expression " + expr + " denotes a type", 
 					expr.isATypeExpression());
 		}
@@ -225,16 +224,10 @@ public class TestTypes extends AbstractTests {
 				"S × y",
 		};
 		for (String image: illFormed) {
-			Expression expr = parseAndTypeCheck(image, typenv);
+			Expression expr = parseExpression(image, typenv);
 			assertFalse("Expression " + expr + " doesn't denote a type", 
 					expr.isATypeExpression());
 		}
 	}
 
-	private Expression parseAndTypeCheck(String image, ITypeEnvironment typenv) {
-		Expression expr = parseExpression(image);
-		typeCheck(expr, typenv);
-		return expr;
-	}
-	
 }
