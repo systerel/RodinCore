@@ -291,7 +291,7 @@ public class MainParsers {
 
 		@Override
 		public void toString(IToStringMediator mediator, Type toPrint) {
-			final Expression expression = toPrint.toExpression(mediator.getFactory());
+			final Expression expression = toPrint.toExpression();
 			mediator.forward(expression);
 		}
 	};
