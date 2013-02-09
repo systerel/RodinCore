@@ -267,12 +267,7 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewriteToEmptySet(SetExtension src) {
-		Type type;
-		if (ff == getFactory()) {
-			type = src.getType();
-		} else {
-			type = typeRewriter.rewrite(src.getType());
-		}
+		final Type type = typeRewriter.rewrite(src.getType());
 		return ff.makeEmptySet(type, src.getSourceLocation());
 	}
 
