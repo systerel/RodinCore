@@ -266,7 +266,7 @@ public class DefaultTypeCheckingRewriter implements ITypeCheckingRewriter {
 	}
 
 	@Override
-	public Expression rewriteToAtomicExpression(SetExtension src) {
+	public Expression rewriteToEmptySet(SetExtension src) {
 		Type type;
 		if (ff == getFactory()) {
 			type = src.getType();

@@ -150,7 +150,7 @@ public interface ITypeCheckingRewriter {
 	 */
 	Expression rewrite(SetExtension src, SetExtension expr);
 
-	Expression rewriteToAtomicExpression(SetExtension src);
+	Expression rewriteToEmptySet(SetExtension src);
 
 	Predicate rewrite(SimplePredicate src, SimplePredicate pred);
 

@@ -295,7 +295,7 @@ public class SetExtension extends Expression {
 		final SourceLocation sloc = getSourceLocation();
 
 		if (length == 0 && rewriter.autoFlatteningMode()) {
-			return rewriter.rewriteToAtomicExpression(this);
+			return rewriter.rewriteToEmptySet(this);
 		}
 		boolean changed = false;
 		final Expression[] newMembers = new Expression[length];
