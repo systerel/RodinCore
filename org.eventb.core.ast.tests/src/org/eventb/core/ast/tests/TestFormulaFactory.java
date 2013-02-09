@@ -95,10 +95,10 @@ public class TestFormulaFactory extends AbstractTests {
 	private static final GivenType EFFtS = EFF.makeGivenType("S");
 	private static final GivenType EFFtT = EFF.makeGivenType("T");
 
-	private static final Expression EFFeS = EFF.makeEmptySet(EFF.makePowerSetType(EFFtS), null);
-	private static final Expression EFFeT = EFF.makeEmptySet(EFF.makePowerSetType(EFFtT), null);
+	private static final Expression EFFeS = mEmptySet(POW(EFFtS));
+	private static final Expression EFFeT = mEmptySet(POW(EFFtT));
 
-	private static final Predicate EFFP = EFF.makeLiteralPredicate(Formula.BTRUE, null);
+	private static final Predicate EFFP = mLiteralPredicate(EFF);
 
 	private static final String BAD_NAME = "bad-name";
 
