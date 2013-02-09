@@ -97,7 +97,7 @@ public class BoundIdentDeclRemover extends Substitution {
 			return super.rewrite(ident);
 		} else {
 			return ff.makeBoundIdentifier(newIndex, ident.getSourceLocation(),
-					typeRewriter.rewrite(ident.getType()));
+					ident.getType());
 		}
 	}
 
