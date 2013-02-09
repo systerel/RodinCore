@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.math.BigInteger.ONE;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CSET;
 import static org.eventb.core.ast.Formula.EQUAL;
@@ -35,75 +36,86 @@ import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mListCons;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-import java.math.BigInteger;
 import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Class checking factory translation
+ * Acceptance tests for factory translation. We first test factory translation
+ * on arbitrary formulas. Then, we test exhaustively all operators.
  * 
  * @author Vincent Monfort
  */
 public class TestFactoryTranslation extends AbstractTests {
 
-	private static void assertToEqualsTargetPredSample(FormulaFactory from, FormulaFactory to){
-		final String predstr = "∀X· ((((S ↔ S)  T)  (S  (S ⇸ T))) → S) ⤔ (((S ↣ T) ⤀(S ↠ T))⤖ S)⊆ X";
-		final Predicate pred = from.parsePredicate(predstr,
-				LanguageVersion.V2, null).getParsedPredicate();
-		assertToEqualsTargetFactory(from, to, pred);
-	}
-	
-	private static void assertToEqualsTargetFactory(FormulaFactory from, FormulaFactory to, Formula<?> f){
-		Formula<?> f2 = f.translate(to);
-		final FormulaFactory after = f2.getFactory();
-		assertEquals("Formula has not been translated correctly: " + after
-				+ " instead of " + to + " expected", to, after);
-	}
-	
 	/**
-	 * Compatible translation on a node from a factory with extensions to a
-	 * factory with a subset of those extensions
+	 * Verifies formula translation between two factories on an arbitrary
+	 * formula.
 	 */
-	@Test 
-	public void testCompatibleTranslationToSubSet() {
-		assertToEqualsTargetPredSample(FastFactory.ff_extns, ff);
-	}
-	
-	/**
-	 * Compatible translation on a node from a factory with extensions to a
-	 * factory with a superset of those extensions
-	 */
-	@Test 
-	public void testCompatibleTranslationToSuperSet() {
-		assertToEqualsTargetPredSample(ff, FastFactory.ff_extns);
+	private static void assertTranslation(FormulaFactory from, FormulaFactory to) {
+		final Predicate pred = parsePredicate("1 = 2", from);
+		assertTranslation(to, pred);
 	}
 
+	/**
+	 * Verifies that formula translation to <code>ff_extns</code> fulfills its
+	 * specification.
+	 */
+	private static void assertTranslation(Formula<?> f) {
+		assertTranslation(ff_extns, f);
+	}
+
+	/**
+	 * Verifies that formula translation to a given factory fulfills its
+	 * specification.
+	 */
+	private static void assertTranslation(FormulaFactory to, Formula<?> f) {
+		assertFalse(f.getFactory().equals(to));
+		final Formula<?> actual = f.translate(to);
+		assertEquals(to, actual.getFactory());
+		assertEquals(f, actual);
+	}
+
+	/**
+	 * Compatible translation on a node from a factory with extensions to a
+	 * factory with a subset of these extensions
+	 */
+	@Test
+	public void testCompatibleTranslationToSubSet() {
+		assertTranslation(ff_extns, ff);
+	}
+
+	/**
+	 * Compatible translation on a node from a factory with extensions to a
+	 * factory with a superset of these extensions
+	 */
+	@Test
+	public void testCompatibleTranslationToSuperSet() {
+		assertTranslation(ff, ff_extns);
+	}
 
 	/**
 	 * Incompatible translation to a factory with an incompatible extension
 	 * subset
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void testIncompatibleTranslation() {
 		final IntegerType INTe = ff_extns.makeIntegerType();
 		final Expression nil = mListCons(INTe);
 		nil.translate(ff);
 	}
-	
+
 	/*----------------------------------------------------------------
 	 *  TEST NORMAL BEHAVIOR ON ALL POSSIBLE FORMULAS
 	 *----------------------------------------------------------------*/
@@ -121,42 +133,39 @@ public class TestFactoryTranslation extends AbstractTests {
 	private static final Expression eT = mEmptySet(POW(tT));
 
 	private static final Predicate P = mLiteralPredicate();
-	
+
 	private static final Predicate Q = mLiteralPredicate();
-	
-	
+
 	private static final GivenType EFFtS = EFF.makeGivenType("S");
 	private static final GivenType EFFtT = EFF.makeGivenType("T");
 
 	private static final Expression EFFeS = EFF.makeEmptySet(POW(EFFtS), null);
 	private static final Expression EFFeT = EFF.makeEmptySet(POW(EFFtT), null);
 
-	private static final Predicate EFFP = EFF.makeLiteralPredicate(Formula.BTRUE, null);
-	private static final Predicate EFFQ = EFF.makeLiteralPredicate(Formula.BTRUE, null);
+	private static final Predicate EFFP = EFF.makeLiteralPredicate(
+			Formula.BTRUE, null);
+	private static final Predicate EFFQ = EFF.makeLiteralPredicate(
+			Formula.BTRUE, null);
 
-	
 	/*----------------------------------------------------------------
 	 *  NO POSSIBLE TRANSLATION OF ASSIGNEMENTS
 	 *----------------------------------------------------------------*/
 
-	@Test(expected=UnsupportedOperationException.class)
+	@Test(expected = UnsupportedOperationException.class)
 	public void becomesEqualTo() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeBecomesEqualTo(mList(iS), mList(eS), null));
+		ff.makeBecomesEqualTo(mList(iS), mList(eS), null).translate(ff_extns);
 	}
 
-	@Test(expected=UnsupportedOperationException.class)
+	@Test(expected = UnsupportedOperationException.class)
 	public void becomesMember() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeBecomesMemberOf(iS, eS, null));
+		ff.makeBecomesMemberOf(iS, eS, null).translate(ff_extns);
 	}
 
-	@Test(expected=UnsupportedOperationException.class)
+	@Test(expected = UnsupportedOperationException.class)
 	public void becomesSuchThat() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeBecomesSuchThat(mList(iS, iT), mList(dS, dT), P, null));
+		ff.makeBecomesSuchThat(mList(iS, iT), mList(dS, dT), P, null)
+				.translate(ff_extns);
 	}
-
 
 	/*----------------------------------------------------------------
 	 *  TRANSLATION OF IDENTIFIER OBJECTS
@@ -164,26 +173,22 @@ public class TestFactoryTranslation extends AbstractTests {
 
 	@Test
 	public void boundIdentDecl() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeBoundIdentDecl("x", null));
+		assertTranslation(ff.makeBoundIdentDecl("x", null));
 	}
 
 	@Test
 	public void freeIdentifier() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeFreeIdentifier("s", null, tS));
+		assertTranslation(ff.makeFreeIdentifier("s", null, tS));
 	}
 
 	@Test
 	public void boundIdentifier() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeBoundIdentifier(0, null));
+		assertTranslation(ff.makeBoundIdentifier(0, null));
 	}
 
 	@Test
 	public void predicateVariable() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makePredicateVariable(LEADING_SYMBOL + "p", null));
+		assertTranslation(ff.makePredicateVariable(LEADING_SYMBOL + "p", null));
 	}
 
 	/*----------------------------------------------------------------
@@ -192,49 +197,43 @@ public class TestFactoryTranslation extends AbstractTests {
 
 	@Test
 	public void associativePredicate() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeAssociativePredicate(LOR, mList(P, Q), null));
+		assertTranslation(ff.makeAssociativePredicate(LOR, mList(P, Q), null));
 	}
 
 	@Test
 	public void binaryPredicate() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeBinaryPredicate(LIMP, P, Q, null));
+		assertTranslation(ff.makeBinaryPredicate(LIMP, P, Q, null));
 	}
 
 	@Test
 	public void literalPredicate() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeLiteralPredicate(Formula.BTRUE, null));
+		assertTranslation(ff.makeLiteralPredicate(Formula.BTRUE, null));
 	}
 
 	@Test
 	public void multiplePredicate() {
-		ff.makeMultiplePredicate(KPARTITION, mList(eS), null);
+		assertTranslation(ff.makeMultiplePredicate(KPARTITION, mList(eS), null));
 	}
 
 	@Test
 	public void quantifiedPredicate() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeQuantifiedPredicate(FORALL, mList(dS), P, null));
+		assertTranslation(ff
+				.makeQuantifiedPredicate(FORALL, mList(dS), P, null));
 	}
 
 	@Test
 	public void relationalPredicate() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeRelationalPredicate(EQUAL, eT, eS, null));
+		assertTranslation(ff.makeRelationalPredicate(EQUAL, eT, eS, null));
 	}
 
 	@Test
 	public void simplePredicate() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeSimplePredicate(KFINITE, eS, null));
+		assertTranslation(ff.makeSimplePredicate(KFINITE, eS, null));
 	}
 
 	@Test
 	public void unaryPredicate_NullChild() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeUnaryPredicate(NOT, P, null));
+		assertTranslation(ff.makeUnaryPredicate(NOT, P, null));
 	}
 
 	/*----------------------------------------------------------------
@@ -243,74 +242,65 @@ public class TestFactoryTranslation extends AbstractTests {
 
 	@Test
 	public void associativeExpression_OneChild() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeAssociativeExpression(BUNION, mList(eS, eT), null));
+		assertTranslation(ff.makeAssociativeExpression(BUNION, mList(eS, eT),
+				null));
 	}
 
 	@Test
 	public void atomicExpression() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeAtomicExpression(KID_GEN, null, null));
+		assertTranslation(ff.makeAtomicExpression(KID_GEN, null, null));
 	}
 
 	@Test
 	public void emptySet() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeEmptySet(POW(tS), null));
+		assertTranslation(ff.makeEmptySet(POW(tS), null));
 	}
 
 	@Test
 	public void binaryExpression() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeBinaryExpression(MAPSTO, eS, eS, null));
+		assertTranslation(ff.makeBinaryExpression(MAPSTO, eS, eS, null));
 	}
 
 	@Test
 	public void boolExpression() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeBoolExpression(P, null));
+		assertTranslation(ff.makeBoolExpression(P, null));
 	}
 
 	@Test
 	public void integerLiteral() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeIntegerLiteral(BigInteger.ONE, null));
+		assertTranslation(ff.makeIntegerLiteral(ONE, null));
 	}
 
 	@Test
 	public void quantifiedExpression() {
-		assertToEqualsTargetFactory(ff, ff_extns, ff.makeQuantifiedExpression(
-				CSET, mList(dS), P, eS, null, Explicit));
+		assertTranslation(ff.makeQuantifiedExpression(CSET, mList(dS), P, eS,
+				null, Explicit));
 	}
 
 	@Test
 	public void setExtension() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeSetExtension(mList(eS), null));
+		assertTranslation(ff.makeSetExtension(mList(eS), null));
 	}
 
 	@Test
 	public void unaryExpression() {
-		assertToEqualsTargetFactory(ff, ff_extns,
-				ff.makeUnaryExpression(KCARD, eS, null));
+		assertTranslation(ff.makeUnaryExpression(KCARD, eS, null));
 	}
 
 	/*----------------------------------------------------------------
-	 *  CONSTRUCTION OF EXTENSION OBJECTS
+	 *  TRANSLATION OF EXTENSION OBJECTS
 	 *----------------------------------------------------------------*/
-	private static FormulaFactory EFFPlus;
-	
-	@BeforeClass
-	public static void initEFFPlus(){
-		Set<IFormulaExtension> extns = EFF.getExtensions();
+	private static final FormulaFactory EFFPlus;
+
+	static {
+		final Set<IFormulaExtension> extns = EFF.getExtensions();
 		extns.addAll(ff_extns.getExtensions());
 		EFFPlus = FormulaFactory.getInstance(extns);
 	}
-	
+
 	@Test
 	public void extendedPredicate() {
-		assertToEqualsTargetFactory(
-				EFF,
+		assertTranslation(
 				EFFPlus,
 				EFF.makeExtendedPredicate(fooS, mList(EFFeS, EFFeT),
 						mList(EFFP, EFFQ), null));
@@ -318,9 +308,10 @@ public class TestFactoryTranslation extends AbstractTests {
 
 	@Test
 	public void extendedExpression() {
-		ExtendedExpression extendedExpr = EFF.makeExtendedExpression(barS,
-				mList(EFFeS, EFFeS), mList(EFFP, EFFP), null);
-		assertToEqualsTargetFactory(EFF, EFFPlus, extendedExpr);
+		assertTranslation(
+				EFFPlus,
+				EFF.makeExtendedExpression(barS, mList(EFFeS, EFFeS),
+						mList(EFFP, EFFP), null));
 	}
-	
+
 }
