@@ -647,7 +647,7 @@ public class TestTypedConstructor extends AbstractTests {
 
 	private static Expression mExpression(Type type) {
 		if (type == null) {
-			return mEmptySet(null);
+			return ff.makeEmptySet(null, null);
 		}
 		return mFreeIdentifier("v" + getFreshIndex(), type);
 	}
@@ -661,12 +661,12 @@ public class TestTypedConstructor extends AbstractTests {
 
 	private static Expression mMapletExpression(Type type) {
 		if (type == null) {
-			return mMaplet(mEmptySet(null), mEmptySet(null));
+			return mMaplet(mExpression(null), mExpression(null));
 		}
 		if (type instanceof ProductType) {
 			final ProductType pType = (ProductType) type;
 			final Expression left = mMapletExpression(pType.getLeft());
-			final Expression right = mExpression(pType.getRight());
+			final Expression right = mMapletExpression(pType.getRight());
 			return mMaplet(left, right);
 		}
 		return mExpression(type);
@@ -699,7 +699,7 @@ public class TestTypedConstructor extends AbstractTests {
 		if (typed) {
 			pred = mLiteralPredicate();
 		} else {
-			pred = mRelationalPredicate(mEmptySet(null), mEmptySet(null));
+			pred = mRelationalPredicate(mExpression(null), mExpression(null));
 		}
 		return pred;
 	}
@@ -1023,7 +1023,7 @@ public class TestTypedConstructor extends AbstractTests {
 	@Test 
 	public void testGenericTypes() throws Exception {
 		assertExpressionType(mEmptySet(pS), pS);
-		assertExpressionType(mEmptySet(null), null);
+		assertExpressionType(mExpression(null), null);
 
 		assertExpressionType(mId(rSS), rSS);
 		assertExpressionType(mId(null), null);
