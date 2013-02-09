@@ -49,8 +49,10 @@ public class ProductType extends Type {
 	
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
-		Expression leftExpr = left.buildExpression(factory);
-		Expression rightExpr = right.buildExpression(factory);
+		@SuppressWarnings("deprecation")
+		Expression leftExpr = left.toExpression(factory);
+		@SuppressWarnings("deprecation")
+		Expression rightExpr = right.toExpression(factory);
 		return factory.makeBinaryExpression(Formula.CPROD, leftExpr, rightExpr, null);
 	}
 

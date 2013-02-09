@@ -92,7 +92,7 @@ public class GivenType extends Type {
 	public FreeIdentifier toExpression() {
 		return (FreeIdentifier) super.toExpression();
 	}
-	
+
 	/**
 	 * Returns the free identifier that denotes the set corresponding to this
 	 * given type.

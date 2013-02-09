@@ -45,7 +45,8 @@ public class PowerSetType extends Type {
 	
 	@Override
 	protected Expression buildExpression(FormulaFactory factory) {
-		Expression baseExpr = base.buildExpression(factory);
+		@SuppressWarnings("deprecation")
+		Expression baseExpr = base.toExpression(factory);
 		return factory.makeUnaryExpression(Formula.POW, baseExpr, null);
 	}
 
