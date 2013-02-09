@@ -50,22 +50,16 @@ public abstract class Type {
 	// True if this type doesn't contain any type variable
 	private final boolean solved; 
 
-	// Disabled default constructor
 	/**
 	 * @since 3.0
 	 */
-	protected Type(FormulaFactory ff, boolean solved) {
+	protected Type(FormulaFactory fac, boolean solved) {
+		this.fac = fac;
 		this.solved = solved;
-		this.fac = ff;
 	}
 
-	/**
-	 * Build the expression that denotes the set corresponding to this type with
-	 * the given formula factory.
-	 * 
-	 * @return the set corresponding to this type
-	 */
-	protected abstract Expression buildExpression(FormulaFactory ffactory);
+	// Build the expression that denotes the set corresponding to this type
+	protected abstract Expression buildExpression(FormulaFactory factory);
 
 	// Build the string image of this type
 	protected abstract void buildString(StringBuilder buffer);
@@ -95,12 +89,11 @@ public abstract class Type {
 	public boolean isSolved() {
 		return solved;
 	}
-	
+
 	/**
 	 * Returns the formula factory used to build this type.
 	 * 
-	 * @return the formula factory used to build this type.
-	 * 
+	 * @return the formula factory used to build this type
 	 * @since 3.0
 	 */
 	public FormulaFactory getFactory() {
@@ -111,7 +104,6 @@ public abstract class Type {
 	 * Returns the expression that denotes the set corresponding to this type.
 	 * 
 	 * @return the set corresponding to this type
-	 * 
 	 * @since 3.0
 	 */
 	public Expression toExpression() {
@@ -120,24 +112,24 @@ public abstract class Type {
 		}
 		return expr;
 	}
-	
+
 	/**
-	 * Returns the expression that denotes the set corresponding to this type
-	 * for this formula factory.
+	 * Returns the expression that denotes the set corresponding to this type.
 	 * 
-	 * @param ff the given formula factory to use for building the expression
-	 * 
-	 * @return the set corresponding to this type for this formula factory.
+	 * @param factory
+	 *            factory to use for building the result expression
+	 * @return the set corresponding to this type
+	 * @deprecated use {@link #toExpression()} instead
 	 */
 	@Deprecated
-	public Expression toExpression(FormulaFactory ff){
-		if (this.fac.equals(ff)){
+	public Expression toExpression(FormulaFactory factory){
+		if (factory == this.fac) {
 			return toExpression();
 		} else {
-			return buildExpression(ff);
+			return buildExpression(factory);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
