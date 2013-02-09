@@ -113,7 +113,6 @@ import static org.eventb.core.ast.tests.FastFactory.mBinaryPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBoolExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
-import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mIntegerLiteral;
 import static org.eventb.core.ast.tests.FastFactory.mList;
@@ -147,6 +146,8 @@ public class TestWDStrict extends AbstractTests {
 	private static final BoundIdentDecl[] bids = mList(mBoundIdentDecl("x"));
 
 	private static final FreeIdentifier id_x = mFreeIdentifier("x");
+
+	private static final Expression empty = ff.makeEmptySet(null, null);
 
 	private static final Predicate T = mLiteralPredicate(BTRUE);
 
@@ -193,7 +194,7 @@ public class TestWDStrict extends AbstractTests {
 		assertWDStrict(mBecomesEqualTo(id_x, mIntegerLiteral()));
 
 		// BECOMES_MEMBER_OF
-		assertWDStrict(mBecomesMemberOf(id_x, mEmptySet(null)));
+		assertWDStrict(mBecomesMemberOf(id_x, empty));
 
 		// BECOMES_SUCH_THAT
 		assertWDStrict(mBecomesSuchThat(mList(id_x), mLiteralPredicate()));
