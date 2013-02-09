@@ -202,10 +202,9 @@ public class SameTypeRewriter implements ITypeCheckingRewriter {
 
 	@Override
 	public Expression rewriteToEmptySet(SetExtension src) {
-		return checkReplacement(
-				src,
-				rewriter.rewrite(factory.makeEmptySet(src.getType(),
-						src.getSourceLocation())));
+		final AtomicExpression expr = factory.makeEmptySet(src.getType(),
+				src.getSourceLocation());
+		return checkReplacement(src, rewriter.rewrite(expr));
 	}
 
 	@Override
