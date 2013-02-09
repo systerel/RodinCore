@@ -1877,6 +1877,9 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the number of type parameters do not correspond to the
 	 *             type constructor specification
+	 * @throws IllegalArgumentException
+	 *             if some type parameter was not built with this formula
+	 *             factory
 	 * @since 2.0
 	 */
 	public ParametricType makeParametricType(List<Type> typePrms,
@@ -1902,7 +1905,7 @@ public class FormulaFactory {
 	 *             if the number of type parameters do not correspond to the
 	 *             type constructor specification
 	 * @throws IllegalArgumentException
-	 *             if the type parameters were not built with this formula
+	 *             if some type parameter was not built with this formula
 	 *             factory
 	 * @since 2.1
 	 */
@@ -1956,6 +1959,8 @@ public class FormulaFactory {
 	 * @param base
 	 *            the base type to build upon
 	 * @return the power set type of the given type
+	 * @throws IllegalArgumentException
+	 *             if the given type was not built with this formula factory
 	 */
 	public PowerSetType makePowerSetType(Type base) {
 		return new PowerSetType(this, base);
@@ -1970,7 +1975,6 @@ public class FormulaFactory {
 	 * @param right
 	 *            the second component of the Cartesian product
 	 * @return the product type of the two given types
-	 * 
 	 * @throws IllegalArgumentException
 	 *             if the given left and right types were not built with this
 	 *             formula factory
