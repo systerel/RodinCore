@@ -87,27 +87,7 @@ public class AbstractTransformerTests {
 
 	protected static ISimpleSequent makeSequent(Predicate goal,
 			Predicate... hyps) {
-		FormulaFactory factory = null;
-		
-		if (goal != null){
-			factory = goal.getFactory();
-		} else if (hyps != null && hyps.length != 0) {
-			for (Predicate hyp : hyps){
-				if (hyp != null){
-					FormulaFactory old_fac = factory;
-					if (old_fac != null){
-						assert factory == old_fac;
-					}
-				}
-			}
-			if (factory == null) {
-				factory = ff;
-			}
-		} else {
-			factory = ff;
-		}
-		
-		return SimpleSequents.make(hyps, goal, factory);
+		return SimpleSequents.make(hyps, goal, ff);
 	}
 
 	protected static <T> void assertNotEquals(T left, T right) {
