@@ -54,7 +54,7 @@ public class TypeRewriter implements ITypeVisitor {
 
 	@Override
 	public void visit(BooleanType type) {
-		if (ff.equals(type.getFactory())){
+		if (ff == type.getFactory()) {
 			result = type;
 		} else {
 			result = ff.makeBooleanType();
@@ -63,7 +63,7 @@ public class TypeRewriter implements ITypeVisitor {
 
 	@Override
 	public void visit(GivenType type) {
-		if (ff.equals(type.getFactory())){
+		if (ff == type.getFactory()) {
 			result = type;
 		} else {
 			result = ff.makeGivenType(type.getName());
@@ -72,7 +72,7 @@ public class TypeRewriter implements ITypeVisitor {
 
 	@Override
 	public void visit(IntegerType type) {
-		if (ff.equals(type.getFactory())){
+		if (ff == type.getFactory()) {
 			result = type;
 		} else {
 			result = ff.makeIntegerType();
