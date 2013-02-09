@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
- *     Systerel - store factory used to build a type 
  *******************************************************************************/
 package org.eventb.core.ast;
 

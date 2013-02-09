@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - add type visitor
- *     Systerel - store factory used to build a type 
+ *     Systerel - store factory used to build a type
  *******************************************************************************/
 package org.eventb.core.ast;
 

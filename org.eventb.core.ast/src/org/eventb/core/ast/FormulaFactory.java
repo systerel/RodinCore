@@ -12,6 +12,7 @@
  *     Systerel - added support for predicate variables
  *     Systerel - added support for mathematical extensions
  *     Systerel - added support for specialization
+ *     Systerel - store factory used to build a formula or type
  *******************************************************************************/
 package org.eventb.core.ast;
 

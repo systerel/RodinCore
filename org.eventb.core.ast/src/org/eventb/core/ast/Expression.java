@@ -9,7 +9,6 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
- *     Systerel - store factory used to build a type 
  *******************************************************************************/
 package org.eventb.core.ast;
 
