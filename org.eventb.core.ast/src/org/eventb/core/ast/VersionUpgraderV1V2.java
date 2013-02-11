@@ -257,7 +257,7 @@ class VersionUpgraderV1V2 extends VersionUpgrader {
 		}
 	}
 
-	public VersionUpgraderV1V2(FormulaFactory ff) {
+	public VersionUpgraderV1V2() {
 		super(LanguageVersion.V1);
 	}
 
