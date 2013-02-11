@@ -132,7 +132,8 @@ public class FreeIdentifier extends Identifier {
 	 * @return a copy of this identifier with a prime added
 	 */
 	public FreeIdentifier withPrime(FormulaFactory factory) {
-		
+		assert (factory == getFactory());
+
 		assert !isPrimed();
 		
 		FreeIdentifier primedIdentifier = factory.makeFreeIdentifier(
@@ -153,7 +154,8 @@ public class FreeIdentifier extends Identifier {
 	 *         identifier
 	 */
 	public BoundIdentDecl asDecl(FormulaFactory factory) {
-		
+		assert (factory == getFactory());
+
 		BoundIdentDecl decl = factory.makeBoundIdentDecl(
 				name, 
 				getSourceLocation(), 
@@ -176,7 +178,8 @@ public class FreeIdentifier extends Identifier {
 	 *         identifier, except for the name which is primed
 	 */
 	public BoundIdentDecl asPrimedDecl(FormulaFactory factory) {
-		
+		assert (factory == getFactory());
+
 		assert !isPrimed();
 		
 		BoundIdentDecl primedDecl = factory.makeBoundIdentDecl(
@@ -200,7 +203,8 @@ public class FreeIdentifier extends Identifier {
 	 * @return a copy of this identifier with the prime removed
 	 */
 	public FreeIdentifier withoutPrime(FormulaFactory factory) {
-		
+		assert (factory == getFactory());
+
 		assert isPrimed();
 		
 		FreeIdentifier unprimedIdentifier = factory.makeFreeIdentifier(
