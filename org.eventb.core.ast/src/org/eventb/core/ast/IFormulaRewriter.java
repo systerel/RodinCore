@@ -69,7 +69,7 @@ public interface IFormulaRewriter {
 	 * </p>
 	 * 
 	 * @return <code>true</code> iff rewritten formulas should be flattened
-	 * @see Formula#flatten(FormulaFactory)
+	 * @see Formula#flatten()
 	 */
 	boolean autoFlatteningMode();
 	

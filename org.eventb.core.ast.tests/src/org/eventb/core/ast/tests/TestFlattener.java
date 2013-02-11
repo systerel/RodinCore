@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EMPTYSET;
 import static org.eventb.core.ast.Formula.FORALL;
@@ -33,6 +31,8 @@ import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.math.BigInteger;
 
@@ -279,8 +279,8 @@ public class TestFlattener {
 					+ expressions[i].getSyntaxTree() + "\nExpected result: "
 					+ norms[i] + "\nTree: " + norms[i].getSyntaxTree()
 					+ "\nObtained tree:\n"
-					+ expressions[i].flatten(ff).getSyntaxTree(),
-					norms[i], expressions[i].flatten(ff));
+					+ expressions[i].flatten().getSyntaxTree(),
+					norms[i], expressions[i].flatten());
 		}
 	}
 	
@@ -309,7 +309,7 @@ public class TestFlattener {
 
 	private void assertNop(Formula<?>[] formulas) {
 		for (Formula<?> formula : formulas) {
-			final Formula<?> flattened = formula.flatten(ff);
+			final Formula<?> flattened = formula.flatten();
 			assertEquals("Flattener not involutive for formula: " + formula, formula, flattened);
 			assertSame("Flattener created a copy of formula: " + formula, formula, flattened);
 		}

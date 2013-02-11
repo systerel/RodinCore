@@ -199,7 +199,7 @@ public class ArithRewriterImpl extends DefaultRewriter {
 			                                     Expression.PLUS,
 			                                     Arrays.asList(`A, `B));
                 if(autoFlatteningMode()) {
-                    return result.flatten(ff);
+                    return result.flatten();
                 }
                 return result;
 			}
@@ -211,7 +211,7 @@ public class ArithRewriterImpl extends DefaultRewriter {
                                                      Expression.PLUS,
                                                      Arrays.asList(`A, bNeg));
                     if(autoFlatteningMode()) {
-                        return result.flatten(ff);
+                        return result.flatten();
                     }
                     return result;
 			    }
