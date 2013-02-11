@@ -498,7 +498,7 @@ public class TestFreeIdents extends AbstractTests {
 		for (TestItem testItem : testItemsBindPartial) {
 			List<FreeIdentifier> identsToBind = Arrays.asList(testItem.freeIdents);
 			String msg = "binding " + identsToBind + " in " + testItem.formula.toString();
-			Formula<?> result = testItem.formula.bindTheseIdents(identsToBind, ff);
+			Formula<?> result = testItem.formula.bindTheseIdents(identsToBind);
 			assertEquals(msg, testItem.boundFormula, result);
 		}
 	}
