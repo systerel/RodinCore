@@ -529,7 +529,7 @@ public class MainParsers {
 			if (ident.isPrimed()) {
 				decls.add(ident.asDecl());
 			} else {
-				decls.add(ident.asPrimedDecl(factory));
+				decls.add(ident.asPrimedDecl());
 			}
 		}
 		return decls;

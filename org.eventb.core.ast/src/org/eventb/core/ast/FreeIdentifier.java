@@ -166,21 +166,16 @@ public class FreeIdentifier extends Identifier {
 	 * implemented in a more efficient way.
 	 * </p>
 	 * 
-	 * @param factory
-	 *            a formula factory
 	 * @return a bound identifier declaration with the same properties as this
 	 *         identifier, except for the name which is primed
+	 * @since 3.0
 	 */
-	public BoundIdentDecl asPrimedDecl(FormulaFactory factory) {
-		assert (factory == getFactory());
-
+	public BoundIdentDecl asPrimedDecl() {
 		assert !isPrimed();
-		
-		BoundIdentDecl primedDecl = factory.makeBoundIdentDecl(
-				name + primeSuffix, 
-				getSourceLocation(), 
-				getType());
-		
+
+		BoundIdentDecl primedDecl = getFactory().makeBoundIdentDecl(name
+				+ primeSuffix, getSourceLocation(), getType());
+
 		return primedDecl;
 		
 	}

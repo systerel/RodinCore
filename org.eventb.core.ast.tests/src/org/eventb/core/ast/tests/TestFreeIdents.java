@@ -704,7 +704,7 @@ public class TestFreeIdents extends AbstractTests {
 		FreeIdentifier ap = a.withPrime();
 		assertTrue("ap should be primed", ap.isPrimed());
 		
-		BoundIdentDecl bf = a.asPrimedDecl(ff);
+		BoundIdentDecl bf = a.asPrimedDecl();
 		assertEquals("name of primed bound should equal name of primed free",
 				ap.getName(), bf.getName());
 	}
