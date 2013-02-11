@@ -13,7 +13,6 @@
  *     Systerel - bug #3574162: AST does not compare bound ident decl types
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
- *     Systerel - check arguments factory equality when building a formula 
  *******************************************************************************/
 package org.eventb.core.ast;
 
