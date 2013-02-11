@@ -240,18 +240,16 @@ public class BecomesMemberOf extends Assignment {
 
 
 	@Override
-	protected Predicate getFISPredicateRaw(FormulaFactory ff) {
-		assert (ff == getFactory());
-
+	protected Predicate getFISPredicateRaw() {
+		final FormulaFactory ff = getFactory();
 		final SourceLocation loc = getSourceLocation();
 		final Expression emptySet = ff.makeEmptySet(setExpr.getType(), null);
 		return ff.makeRelationalPredicate(NOTEQUAL, setExpr, emptySet, loc);
 	}
 
 	@Override
-	protected Predicate getBAPredicateRaw(FormulaFactory ff) {
-		assert (ff == getFactory());
-
+	protected Predicate getBAPredicateRaw() {
+		final FormulaFactory ff = getFactory();
 		final SourceLocation loc = getSourceLocation();
 		final FreeIdentifier primedIdentifier = 
 			assignedIdents[0].withPrime(ff);

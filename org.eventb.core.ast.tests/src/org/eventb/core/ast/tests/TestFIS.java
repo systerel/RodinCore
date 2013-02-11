@@ -42,7 +42,7 @@ public class TestFIS extends AbstractTests {
 			Assignment inA = parseAssignment(input);
 			ITypeEnvironment newEnv = typeCheck(inA, tenv);
 			
-			Predicate inFIS = inA.getFISPredicate(ff);
+			Predicate inFIS = inA.getFISPredicate();
 			assertTrue(input + "\n" + inFIS.toString() + "\n"
 					+ inFIS.getSyntaxTree() + "\n",
 					inFIS.isTypeChecked());

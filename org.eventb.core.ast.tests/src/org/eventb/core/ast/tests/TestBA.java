@@ -40,7 +40,7 @@ public class TestBA extends AbstractTests {
 			Assignment inA = parseAssignment(input);
 			ITypeEnvironment newEnv = typeCheck(inA, tenv);
 			
-			Predicate inBA = inA.getBAPredicate(ff);
+			Predicate inBA = inA.getBAPredicate();
 			assertTrue(input + "\n" + inBA.toString() + "\n"
 					+ inBA.getSyntaxTree() + "\n",
 					inBA.isTypeChecked());
