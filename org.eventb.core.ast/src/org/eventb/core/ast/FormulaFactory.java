@@ -337,8 +337,8 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the given type is not valid
 	 * @throws IllegalArgumentException
-	 *             if the given extension, type or children have been built with
-	 *             a different factory
+	 *             if the given type or some given child has been built with a
+	 *             different factory
 	 * @since 2.0
 	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
@@ -368,8 +368,7 @@ public class FormulaFactory {
 	 *             if the preconditions of the extension on children are not
 	 *             verified
 	 * @throws IllegalArgumentException
-	 *             if the given extension or children have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 * @since 2.0
 	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
@@ -402,8 +401,8 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the given type is not valid
 	 * @throws IllegalArgumentException
-	 *             if the given extension, type or children have been built with
-	 *             a different factory
+	 *             if the given type or some given child has been built with a
+	 *             different factory
 	 * @since 3.0
 	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
@@ -433,8 +432,7 @@ public class FormulaFactory {
 	 *             if the preconditions of the extension on children are not
 	 *             verified
 	 * @throws IllegalArgumentException
-	 *             if the given extension or children have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 * @since 2.0
 	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
@@ -463,8 +461,7 @@ public class FormulaFactory {
 	 *             if the preconditions of the extension on children are not
 	 *             verified
 	 * @throws IllegalArgumentException
-	 *             if the given extension or children have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 * @since 2.0
 	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
@@ -494,8 +491,7 @@ public class FormulaFactory {
 	 *             if the preconditions of the extension on children are not
 	 *             verified
 	 * @throws IllegalArgumentException
-	 *             if the given extension or children have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 * @since 2.0
 	 * @see IExtensionKind#checkPreconditions(Expression[], Predicate[])
 	 */
@@ -577,8 +573,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the children collection contains less than two elements
 	 * @throws IllegalArgumentException
-	 *             if the given children have been built with a different
-	 *             factory
+	 *             if some given child has been built with a different factory
 	 */
 	public AssociativeExpression makeAssociativeExpression(
 			int tag, Expression[] children, SourceLocation location) {
@@ -609,8 +604,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the children collection contains less than two elements
 	 * @throws IllegalArgumentException
-	 *             if the given children have been built with a different
-	 *             factory
+	 *             if some given child has been built with a different factory
 	 */
 	public AssociativeExpression makeAssociativeExpression(
 			int tag, Collection<Expression> children, SourceLocation location) {
@@ -636,8 +630,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the children collection contains less than two elements
 	 * @throws IllegalArgumentException
-	 *             if the given children have been built with a different
-	 *             factory
+	 *             if some given child has been built with a different factory
 	 */
 	public AssociativePredicate makeAssociativePredicate(
 			int tag, Collection<Predicate> predicates, SourceLocation location) {
@@ -664,8 +657,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the children collection contains less than two elements
 	 * @throws IllegalArgumentException
-	 *             if the given children have been built with a different
-	 *             factory
+	 *             if some given child has been built with a different factory
 	 */
 	public AssociativePredicate makeAssociativePredicate(
 			int tag, Predicate[] predicates, SourceLocation location) {
@@ -794,8 +786,7 @@ public class FormulaFactory {
 	 * 
 	 * @return a new "becomes equal to" assignment
 	 * @throws IllegalArgumentException
-	 *             if the given identifier or value has been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 */
 	public BecomesEqualTo makeBecomesEqualTo(FreeIdentifier ident,
 			Expression value, SourceLocation location) {
@@ -818,8 +809,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the number of identifiers and after-values are not equal
 	 * @throws IllegalArgumentException
-	 *             if the given identifiers or values have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 */
 	public BecomesEqualTo makeBecomesEqualTo(FreeIdentifier[] idents,
 			Expression[] values, SourceLocation location) {
@@ -842,8 +832,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the number of identifiers and after-values are not equal
 	 * @throws IllegalArgumentException
-	 *             if the given identifiers or values have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 */
 	public BecomesEqualTo makeBecomesEqualTo(Collection<FreeIdentifier> idents,
 			Collection<Expression> values, SourceLocation location) {
@@ -862,8 +851,7 @@ public class FormulaFactory {
 	 *            the source location or <code>null</code>
 	 * @return a new "becomes member of" assignment
 	 * @throws IllegalArgumentException
-	 *             if the given identifier or set has been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 */
 	public BecomesMemberOf makeBecomesMemberOf(FreeIdentifier ident,
 			Expression setExpr, SourceLocation location) {
@@ -885,8 +873,7 @@ public class FormulaFactory {
 	 *            the source location or <code>null</code>
 	 * @return a new "becomes such that" assignment
 	 * @throws IllegalArgumentException
-	 *             if the given identifiers or condition have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 */
 	public BecomesSuchThat makeBecomesSuchThat(FreeIdentifier ident,
 			BoundIdentDecl primedIdent, Predicate condition,
@@ -915,8 +902,7 @@ public class FormulaFactory {
 	 *             if the number of identifiers and primed identifiers are not
 	 *             equal
 	 * @throws IllegalArgumentException
-	 *             if the given identifiers or condition have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 */
 	public BecomesSuchThat makeBecomesSuchThat(FreeIdentifier[] idents,
 			BoundIdentDecl[] primedIdents, Predicate condition,
@@ -945,8 +931,7 @@ public class FormulaFactory {
 	 *             if the number of identifiers and primed identifiers are not
 	 *             equal
 	 * @throws IllegalArgumentException
-	 *             if the given identifiers or condition have been built with a
-	 *             different factory             
+	 *             if some given child has been built with a different factory
 	 */
 	public BecomesSuchThat makeBecomesSuchThat(Collection<FreeIdentifier> idents,
 			Collection<BoundIdentDecl> primedIdents, Predicate condition,
@@ -999,8 +984,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the tag is not a valid binary expression tag
 	 * @throws IllegalArgumentException
-	 *             if the given children have been built with a different
-	 *             factory
+	 *             if some given child has been built with a different factory
 	 */
 	public BinaryExpression makeBinaryExpression(int tag,
 			Expression left, Expression right, SourceLocation location) {
@@ -1026,8 +1010,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the tag is not a valid binary predicate tag
 	 * @throws IllegalArgumentException
-	 *             if the given children have been built with a different
-	 *             factory
+	 *             if some given child has been built with a different factory
 	 */
 	public BinaryPredicate makeBinaryPredicate(int tag,
 			Predicate left, Predicate right, SourceLocation location) {
@@ -1324,8 +1307,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if there is no bound identifier declaration
 	 * @throws IllegalArgumentException
-	 *             if the given identifiers or children have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 */
 	// TODO: maybe make different creators for every form
 	public QuantifiedExpression makeQuantifiedExpression(int tag,
@@ -1373,8 +1355,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if there is no bound identifier declaration
 	 * @throws IllegalArgumentException
-	 *             if the given identifiers or children have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 */
 	public QuantifiedExpression makeQuantifiedExpression(int tag,
 			Collection<BoundIdentDecl> boundIdentifiers, Predicate pred, Expression expr,
@@ -1404,8 +1385,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if there is no bound identifier declaration
 	 * @throws IllegalArgumentException
-	 *             if the given identifiers or predicate have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 */
 	public QuantifiedPredicate makeQuantifiedPredicate(int tag,
 			BoundIdentDecl[] boundIdentifiers, Predicate pred,
@@ -1435,8 +1415,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if there is no bound identifier declaration
 	 * @throws IllegalArgumentException
-	 *             if the given identifiers or predicate have been built with a
-	 *             different factory
+	 *             if some given child has been built with a different factory
 	 */
 	public QuantifiedPredicate makeQuantifiedPredicate(int tag,
 			Collection<BoundIdentDecl> boundIdentifiers, Predicate pred,
@@ -1474,8 +1453,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if the tag is not a valid relational predicate tag
 	 * @throws IllegalArgumentException
-	 *             if the given children have been built with a different
-	 *             factory
+	 *             if some given child has been built with a different factory
 	 */
 	public RelationalPredicate makeRelationalPredicate(int tag,
 			Expression left, Expression right, SourceLocation location) {
@@ -1508,7 +1486,7 @@ public class FormulaFactory {
 	 *            the source location or <code>null</code>
 	 * @return a new set extension
 	 * @throws IllegalArgumentException
-	 *             if the given members have been built with a different factory
+	 *             if some given member has been built with a different factory
 	 */
 	public SetExtension makeSetExtension(Expression[] members,
 			SourceLocation location) {
@@ -1547,7 +1525,7 @@ public class FormulaFactory {
 	 *            the source location or <code>null</code>
 	 * @return a new set extension
 	 * @throws IllegalArgumentException
-	 *             if the given members have been built with a different factory
+	 *             if some given member has been built with a different factory
 	 */
 	public SetExtension makeSetExtension(Collection<Expression> members,
 			SourceLocation location) {
@@ -1676,8 +1654,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if there is no child
 	 * @throws IllegalArgumentException
-	 *             if the given children have been built with a different
-	 *             factory
+	 *             if some given child has been built with a different factory
 	 * @since 1.0
 	 */
 	public MultiplePredicate makeMultiplePredicate(int tag,
@@ -1709,8 +1686,7 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if there is no child
 	 * @throws IllegalArgumentException
-	 *             if the given children have been built with a different
-	 *             factory
+	 *             if some given child has been built with a different factory
 	 * @since 1.0
 	 */
 	public MultiplePredicate makeMultiplePredicate(int tag,
