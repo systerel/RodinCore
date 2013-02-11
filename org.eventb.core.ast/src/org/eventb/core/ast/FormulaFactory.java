@@ -2155,7 +2155,7 @@ public class FormulaFactory {
 			LanguageVersion targetVersion) {
 		final UpgradeResult<Assignment> result = new UpgradeResult<Assignment>(
 				this);
-		final VersionUpgrader upgrader = new VersionUpgraderV1V2(this);
+		final VersionUpgrader upgrader = new VersionUpgraderV1V2();
 		upgrader.upgradeAssignment(input, result);
 		return result;
 	}
@@ -2174,7 +2174,7 @@ public class FormulaFactory {
 			LanguageVersion targetVersion) {
 		final UpgradeResult<Expression> result = new UpgradeResult<Expression>(
 				this);
-		final VersionUpgrader upgrader = new VersionUpgraderV1V2(this);
+		final VersionUpgrader upgrader = new VersionUpgraderV1V2();
 		upgrader.upgradeExpression(input, result);
 		return result;
 	}
@@ -2193,7 +2193,7 @@ public class FormulaFactory {
 			LanguageVersion targetVersion) {
 		final UpgradeResult<Predicate> result = new UpgradeResult<Predicate>(
 				this);
-		final VersionUpgrader upgrader = new VersionUpgraderV1V2(this);
+		final VersionUpgrader upgrader = new VersionUpgraderV1V2();
 		upgrader.upgradePredicate(input, result);
 		return result;
 	}
