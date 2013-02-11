@@ -11,7 +11,6 @@
 package org.eventb.internal.core.ast;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 
 /**
  * Common abstraction for a substitute expression used in a substitution.
@@ -23,8 +22,6 @@ import org.eventb.core.ast.FormulaFactory;
  */
 public abstract class Substitute {
 
-	protected final FormulaFactory ff;
-
 	/**
 	 * Simple substitute where the expression doesn't contain any externally
 	 * bound identifier.
@@ -33,8 +30,7 @@ public abstract class Substitute {
 
 		Expression expr;
 
-		public SimpleSubstitute(Expression expr, FormulaFactory ff) {
-			super(ff);
+		public SimpleSubstitute(Expression expr) {
 			this.expr = expr;
 		}
 
@@ -66,16 +62,14 @@ public abstract class Substitute {
 		 */
 		final int index;
 
-		public BoundIdentSubstitute(int index, FormulaFactory ff) {
-			super(ff);
+		public BoundIdentSubstitute(int index) {
 			this.index = index;
 		}
 
 		@Override
 		public Expression getSubstitute(Expression original, int nbOfInternallyBound) {
-			return ff.makeBoundIdentifier(
-					index + nbOfInternallyBound,
-					original.getSourceLocation(),
+			return original.getFactory().makeBoundIdentifier(
+					index + nbOfInternallyBound, original.getSourceLocation(),
 					original.getType());
 		}
 
@@ -104,8 +98,7 @@ public abstract class Substitute {
 		 */
 		private Cache<Expression> cache;
 
-		public ComplexSubstitute(Expression expr, FormulaFactory ff) {
-			super(ff);
+		public ComplexSubstitute(Expression expr) {
 			this.cache = new Cache<Expression>();
 			this.cache.set(0, expr);
 		}
@@ -136,8 +129,8 @@ public abstract class Substitute {
 
 		private final int offset;
 
-		public ComplexSubstituteWithOffset(Expression expr, int offset, FormulaFactory ff) {
-			super(expr, ff);
+		public ComplexSubstituteWithOffset(Expression expr, int offset) {
+			super(expr);
 			this.offset = offset;
 		}
 
@@ -158,15 +151,13 @@ public abstract class Substitute {
 	 * 
 	 * @param expr
 	 *            initial substitute expression
-	 * @param ff
-	 *            factory to used when building the actual substitute expression
 	 * @return the substitute object for that expression
 	 */
-	public static Substitute makeSubstitute(Expression expr, FormulaFactory ff) {
+	public static Substitute makeSubstitute(Expression expr) {
 		if (expr.isWellFormed()) {
-			return new SimpleSubstitute(expr, ff);
+			return new SimpleSubstitute(expr);
 		}
-		return new ComplexSubstitute(expr, ff);
+		return new ComplexSubstitute(expr);
 	}
 
 	/**
@@ -177,12 +168,10 @@ public abstract class Substitute {
 	 *            initial substitute expression
 	 * @param offset
 	 *            offset to systematically apply
-	 * @param ff
-	 *            factory to used when building the actual substitute expression
 	 * @return the substitute object for that expression
 	 */
-	public static Substitute makeSubstitute(Expression expr, int offset, FormulaFactory ff) {
-		return new ComplexSubstituteWithOffset(expr, offset, ff);
+	public static Substitute makeSubstitute(Expression expr, int offset) {
+		return new ComplexSubstituteWithOffset(expr, offset);
 	}
 
 	/**
@@ -190,16 +179,10 @@ public abstract class Substitute {
 	 * 
 	 * @param index
 	 *            initial index of the bound identifier
-	 * @param ff
-	 *            factory to use when building the actual substitute expression
 	 * @return the substitute object for that identifier
 	 */
-	public static Substitute makeSubstitute(int index, FormulaFactory ff) {
-		return new BoundIdentSubstitute(index, ff);
-	}
-
-	protected Substitute(FormulaFactory ff) {
-		this.ff = ff;
+	public static Substitute makeSubstitute(int index) {
+		return new BoundIdentSubstitute(index);
 	}
 
 	/**

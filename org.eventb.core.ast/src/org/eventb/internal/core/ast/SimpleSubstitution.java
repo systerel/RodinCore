@@ -48,7 +48,7 @@ public class SimpleSubstitution extends Substitution {
 			FreeIdentifier ident = entry.getKey();
 			Expression expr = entry.getValue();
 			assert ident.getType() == null || ident.getType().equals(expr.getType());
-			this.map.put(entry.getKey(), Substitute.makeSubstitute(entry.getValue(), ff));
+			this.map.put(entry.getKey(), Substitute.makeSubstitute(entry.getValue()));
 		}
 	}
 	
