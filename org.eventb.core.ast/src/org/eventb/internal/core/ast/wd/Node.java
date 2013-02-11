@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 
 /**
@@ -95,7 +94,7 @@ public abstract class Node {
 	public Predicate simplifyTree(FormulaBuilder fb) {
 
 		final int depthmax = maxBindingDepth();
-		boundIdentifiersEqualizer(depthmax, fb.ff);
+		boundIdentifiersEqualizer(depthmax);
 		Set<Lemma> knownLemmas = new LinkedHashSet<Lemma>();
 		simplify(knownLemmas, new HashSet<Predicate>(), fb);
 		return asPredicate(fb, true).flatten();
@@ -140,11 +139,8 @@ public abstract class Node {
 	 * 
 	 * @param offset
 	 *            offset applied to the bound identifiers
-	 * @param ff
-	 *            formula factory used to modify the formula
 	 */
-	protected abstract void boundIdentifiersEqualizer(int offset,
-			FormulaFactory ff);
+	protected abstract void boundIdentifiersEqualizer(int offset);
 
 	/**
 	 * Builds a new AST using the simplified tree

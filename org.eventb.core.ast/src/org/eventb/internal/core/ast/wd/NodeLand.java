@@ -12,7 +12,6 @@ package org.eventb.internal.core.ast.wd;
 
 import java.util.Set;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 
 /**
@@ -37,9 +36,9 @@ public class NodeLand extends Node {
 	}
 
 	@Override
-	protected void boundIdentifiersEqualizer(int offset, FormulaFactory ff) {
+	protected void boundIdentifiersEqualizer(int offset) {
 		for (Node child : children) {
-			child.boundIdentifiersEqualizer(offset, ff);
+			child.boundIdentifiersEqualizer(offset);
 		}
 	}
 
