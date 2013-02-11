@@ -71,7 +71,7 @@ public class BoundIdentDecl extends Formula<BoundIdentDecl> {
 		super(BOUND_IDENT_DECL, ff, location, name.hashCode());
 		ensureValidIdentifierName(name, ff);
 		this.name = name;
-		checkFormulaFactories(givenType);
+		ensureSameFactory(givenType);
 		setPredicateVariableCache();
 		synthesizeType(ff, givenType);
 		// final type cannot be null if given

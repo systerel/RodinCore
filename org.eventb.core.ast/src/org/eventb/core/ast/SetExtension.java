@@ -126,7 +126,8 @@ public class SetExtension extends Expression {
 			FormulaFactory ff, Type type) {
 		super(SETEXT, ff, location, combineHashCodes(expressions));
 		this.members = expressions;
-		checkFormulaFactories(type, this.members);
+		ensureSameFactory(this.members);
+		ensureSameFactory(type);
 		setPredicateVariableCache(this.members);
 		synthesizeType(ff, type);
 		ensureHasType(this, type);

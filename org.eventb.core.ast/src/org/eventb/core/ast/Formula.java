@@ -1083,42 +1083,83 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 
 	/**
-	 * Checks that the formula factory of this formula and those of its type and
-	 * children are equals. If it is not the case an
-	 * {@link IllegalArgumentException} exception is raised.
+	 * Ensures that the formula factory of the given type is the same as the
+	 * formula factory of this formula. Throws an
+	 * {@link IllegalArgumentException} otherwise.
 	 * 
-	 * @param children
-	 *            children of this formula whose formula factories must be
-	 *            checked to be compatible
-	 * 
+	 * @param type
+	 *            type to check
 	 * @throws IllegalArgumentException
-	 *             if the children have a different formula factory than
-	 * 
+	 *             if the given type has a different formula factory
 	 * @since 3.0
 	 */
-	protected void checkFormulaFactories(Type givenType, Formula<?>... children) {
-
-		if (givenType != null && !this.fac.equals(givenType.getFactory())) {
-			throw new IllegalArgumentException("The type " + givenType
-					+ " has an incompatible factory " + givenType.getFactory()
-					+ " with the current formula factory " + this.fac);
-		}
-		
-		if (children.length == 0) {
+	protected void ensureSameFactory(Type type) {
+		if (type == null) {
 			return;
 		}
-
-		for (final Formula<?> child : children) {
-			FormulaFactory childFactory = child.getFactory();
-			if (!this.fac.equals(childFactory)) {
-				throw new IllegalArgumentException("The child " + child
-						+ " has an incompatible factory " + childFactory
-						+ " with the current formula factory " + this.fac);
-			}
+		final FormulaFactory typeFactory = type.getFactory();
+		if (this.fac != typeFactory) {
+			throw new IllegalArgumentException("The type " + type
+					+ " has an incompatible factory: " + typeFactory
+					+ " instead of: " + this.fac);
 		}
 	}
 
-	
+	/**
+	 * Ensures that the formula factory of each of the given formulas is the
+	 * same as the formula factory of this formula. Throws an
+	 * {@link IllegalArgumentException} otherwise.
+	 * 
+	 * @param children
+	 *            formulas to check
+	 * @throws IllegalArgumentException
+	 *             if any of the given formulas has a different formula factory
+	 * @since 3.0
+	 */
+	protected void ensureSameFactory(Formula<?>[] children) {
+		for (final Formula<?> child : children) {
+			ensureSameFactory(child);
+		}
+	}
+
+	/**
+	 * Ensures that the formula factory of each of the given formulas is the
+	 * same as the formula factory of this formula. Throws an
+	 * {@link IllegalArgumentException} otherwise.
+	 * 
+	 * @param left
+	 *            formula to check
+	 * @param right
+	 *            formula to check
+	 * @throws IllegalArgumentException
+	 *             if any of the given formulas has a different formula factory
+	 * @since 3.0
+	 */
+	protected void ensureSameFactory(Formula<?> left, Formula<?> right) {
+		ensureSameFactory(left);
+		ensureSameFactory(right);
+	}
+
+	/**
+	 * Ensures that the formula factory of the given formulas is the same as the
+	 * formula factory of this formula. Throws an
+	 * {@link IllegalArgumentException} otherwise.
+	 * 
+	 * @param child
+	 *            formula to check
+	 * @throws IllegalArgumentException
+	 *             if the given formulas has a different formula factory
+	 * @since 3.0
+	 */
+	protected void ensureSameFactory(Formula<?> child) {
+		final FormulaFactory childFactory = child.getFactory();
+		if (this.fac != childFactory) {
+			throw new IllegalArgumentException("The child " + child
+					+ " has an incompatible factory: " + childFactory
+					+ " instead of: " + this.fac);
+		}
+	}
+
 	/**
 	 * Returns the tag of this AST node.
 	 * <p>

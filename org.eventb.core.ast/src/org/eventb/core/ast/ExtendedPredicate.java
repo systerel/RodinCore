@@ -154,7 +154,8 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 		this.childPredicates = predicates;
 		this.extension = extension;
 		checkPreconditions();
-		checkFormulaFactories(null, this.getChildren());
+		ensureSameFactory(this.childExpressions);
+		ensureSameFactory(this.childPredicates);
 		setPredicateVariableCache(getChildren());
 		synthesizeType(ff);
 	}

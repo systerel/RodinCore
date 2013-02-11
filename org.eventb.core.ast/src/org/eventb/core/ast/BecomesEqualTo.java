@@ -106,7 +106,7 @@ public class BecomesEqualTo extends Assignment {
 		super(BECOMES_EQUAL_TO, ff, location, combineHashCodes(values), assignedIdents);
 		this.values = values;
 		ensureSameLength(assignedIdents, values);
-		checkFormulaFactories(null, this.values);
+		ensureSameFactory(this.values);
 		setPredicateVariableCache(this.values);
 		synthesizeType(ff);
 	}

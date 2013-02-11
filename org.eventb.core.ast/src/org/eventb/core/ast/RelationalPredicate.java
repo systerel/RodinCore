@@ -155,7 +155,7 @@ public class RelationalPredicate extends Predicate {
 		this.left = left;
 		this.right = right;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
-		checkFormulaFactories(null, this.left, this.right);
+		ensureSameFactory(this.left, this.right);
 		setPredicateVariableCache(this.left, this.right);
 		synthesizeType(ff);
 	}

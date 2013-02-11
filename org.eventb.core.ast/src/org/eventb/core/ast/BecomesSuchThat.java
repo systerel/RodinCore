@@ -136,8 +136,8 @@ public class BecomesSuchThat extends Assignment {
 		this.condition = condition;
 		this.primedIdents = primedIdents;
 		ensureSameLength(assignedIdents, primedIdents);
-		checkFormulaFactories(null, this.primedIdents);
-		checkFormulaFactories(null, this.condition);
+		ensureSameFactory(this.primedIdents);
+		ensureSameFactory(this.condition);
 		setPredicateVariableCache(this.condition);
 		synthesizeType(ff);
 	}

@@ -126,7 +126,7 @@ public class SimplePredicate extends Predicate {
 		super(tag, ff, location, child.hashCode());
 		this.child = child;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
-		checkFormulaFactories(null, this.child);
+		ensureSameFactory(this.child);
 		setPredicateVariableCache(this.child);
 		synthesizeType(ff);
 	}

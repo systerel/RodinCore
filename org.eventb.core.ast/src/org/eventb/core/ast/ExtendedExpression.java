@@ -197,7 +197,9 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		this.childPredicates = predicates;
 		this.extension = extension;
 		checkPreconditions();
-		checkFormulaFactories(type, this.getChildren());
+		ensureSameFactory(this.childExpressions);
+		ensureSameFactory(this.childPredicates);
+		ensureSameFactory(type);
 		setPredicateVariableCache(getChildren());
 		synthesizeType(ff, type);
 		ensureHasType(this, type);

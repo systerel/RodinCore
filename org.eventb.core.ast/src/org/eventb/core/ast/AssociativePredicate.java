@@ -147,7 +147,7 @@ public class AssociativePredicate extends Predicate {
 		this.children = children;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureMinLength(children, 2);
-		checkFormulaFactories(null, this.children);
+		ensureSameFactory(this.children);
 		setPredicateVariableCache(this.children);
 		synthesizeType(ff);
 	}

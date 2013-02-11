@@ -168,8 +168,8 @@ public class QuantifiedPredicate extends Predicate {
 		this.pred = pred;
 		ensureTagInRange(tag, FIRST_TAG, TAGS_LENGTH);
 		ensureMinLength(boundIdentifiers, 1);
-		checkFormulaFactories(null, this.quantifiedIdentifiers);
-		checkFormulaFactories(null, this.pred);
+		ensureSameFactory(this.quantifiedIdentifiers);
+		ensureSameFactory(this.pred);
 		setPredicateVariableCache(this.pred);
 		synthesizeType(ff);
 	}
