@@ -1680,15 +1680,15 @@ public class TestGenParser extends AbstractTests {
 	@Test 
 	public void testBecomesSuchThat() throws Exception {
 		final Assignment expected = ff.makeBecomesSuchThat(FRID_a,
-				FRID_a.asPrimedDecl(ff), LIT_BTRUE, null);
+				FRID_a.asPrimedDecl(), LIT_BTRUE, null);
 		doAssignmentTest("a :∣  ⊤", expected);
 	}
 
 	@Test 
 	public void testBecomesSuchThatList() throws Exception {
 		final List<FreeIdentifier> idents = asList(FRID_a, FRID_b);
-		final List<BoundIdentDecl> primed = asList(FRID_a.asPrimedDecl(ff),
-				FRID_b.asPrimedDecl(ff));
+		final List<BoundIdentDecl> primed = asList(FRID_a.asPrimedDecl(),
+				FRID_b.asPrimedDecl());
 		final Assignment expected = ff.makeBecomesSuchThat(idents, primed,
 				LIT_BTRUE, null);
 		doAssignmentTest("a,b :∣  ⊤", expected);
@@ -1697,8 +1697,8 @@ public class TestGenParser extends AbstractTests {
 	@Test 
 	public void testBecomesSuchThatPrimed() throws Exception {
 		final List<FreeIdentifier> idents = asList(FRID_a, FRID_b);
-		final List<BoundIdentDecl> primed = asList(FRID_a.asPrimedDecl(ff),
-				FRID_b.asPrimedDecl(ff));
+		final List<BoundIdentDecl> primed = asList(FRID_a.asPrimedDecl(),
+				FRID_b.asPrimedDecl());
 		final Predicate condition = ff.makeAssociativePredicate(LAND, Arrays.<Predicate>asList(
 				ff.makeRelationalPredicate(EQUAL, BI_1, FRID_b, null),
 				ff.makeRelationalPredicate(EQUAL, BI_0, FRID_a, null)), null);
