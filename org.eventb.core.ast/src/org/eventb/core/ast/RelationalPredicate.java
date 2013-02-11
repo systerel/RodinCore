@@ -466,8 +466,6 @@ public class RelationalPredicate extends Predicate {
 
 	@Override
 	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
-		assert (rewriter.factory == getFactory());
-
 		Expression newLeft = left;
 		Expression newRight = right;
 		switch (index) {
@@ -480,7 +478,7 @@ public class RelationalPredicate extends Predicate {
 		default:
 			throw new IllegalArgumentException("Position is outside the formula");
 		}
-		return rewriter.factory.makeRelationalPredicate(getTag(), newLeft,
+		return getFactory().makeRelationalPredicate(getTag(), newLeft,
 				newRight, getSourceLocation());
 	}
 

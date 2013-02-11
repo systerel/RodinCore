@@ -858,8 +858,6 @@ public class BinaryExpression extends Expression {
 
 	@Override
 	protected Expression rewriteChild(int index, SingleRewriter rewriter) {
-		assert (rewriter.factory == getFactory());
-
 		Expression newLeft = left;
 		Expression newRight = right;
 		switch (index) {
@@ -872,7 +870,7 @@ public class BinaryExpression extends Expression {
 		default:
 			throw new IllegalArgumentException("Position is outside the formula");
 		}
-		return rewriter.factory.makeBinaryExpression(getTag(), newLeft, newRight,
+		return getFactory().makeBinaryExpression(getTag(), newLeft, newRight,
 				getSourceLocation());
 	}
 
