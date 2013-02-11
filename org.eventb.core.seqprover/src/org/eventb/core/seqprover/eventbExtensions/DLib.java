@@ -289,7 +289,7 @@ public class DLib {
 		final FormulaFactory ff = pred.getFactory();
 		// Bind the given free identifiers
 		final List<FreeIdentifier> idents = Arrays.asList(freeIdents);
-		final Predicate boundPred = pred.bindTheseIdents(idents, ff);
+		final Predicate boundPred = pred.bindTheseIdents(idents);
 		// Generate bound identifier declarations.
 		BoundIdentDecl[] boundIdentDecls = new BoundIdentDecl[freeIdents.length];
 		for (int i = 0; i < freeIdents.length; i++) {
@@ -347,8 +347,7 @@ public class DLib {
 			return pred;
 		final FormulaFactory ff = pred.getFactory();
 		// Bind the given free identifiers
-		Predicate boundPred = pred.bindTheseIdents(Arrays.asList(freeIdents),
-				ff);
+		Predicate boundPred = pred.bindTheseIdents(Arrays.asList(freeIdents));
 		// Generate bound identifier declarations.
 		BoundIdentDecl[] boundIdentDecls = new BoundIdentDecl[freeIdents.length];
 		for (int i = 0; i < freeIdents.length; i++) {

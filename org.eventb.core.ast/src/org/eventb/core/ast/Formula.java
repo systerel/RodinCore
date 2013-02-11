@@ -1725,7 +1725,7 @@ public abstract class Formula<T extends Formula<T>> {
 		for (FreeIdentifier ident: list) {
 			boundIdentDecls.add(ident.asDecl(fac));
 		}
-		return bindTheseIdents(list, fac);
+		return bindTheseIdents(list);
 	}
 
 	/**
@@ -1748,20 +1748,16 @@ public abstract class Formula<T extends Formula<T>> {
 	 * 
 	 * @param identsToBind
 	 *            ordered collection of free identifier to bind
-	 * @param factory
-	 *            factory to use to create the result
 	 * @return a copy of this formula with the specified identifiers bound
+	 * @since 3.0
 	 */
-	public final T bindTheseIdents(Collection<FreeIdentifier> identsToBind,
-			FormulaFactory factory) {
-		assert (factory == fac);
-
+	public final T bindTheseIdents(Collection<FreeIdentifier> identsToBind) {
 		// Fast return when there is nothing to change.
 		if (identsToBind.size() == 0) {
 			return getTypedThis();
 		}
 		
-		Substitution subst = new BindingSubstitution(identsToBind, factory);
+		Substitution subst = new BindingSubstitution(identsToBind, fac);
 		return rewrite(subst);
 	}
 
