@@ -1710,26 +1710,22 @@ public abstract class Formula<T extends Formula<T>> {
 	 * This operation is not supported by assignments.
 	 * </p>
 	 * 
-	 * @param factory
-	 *            the formula factory to use for creating the result.
 	 * @param boundIdentDecls
 	 *            initially an empty list. Upon return, the list is filled with
 	 *            the declaration of the bound identifiers that correspond to
 	 *            all free identifiers that have been bound in the resut.
 	 * 
 	 * @return a copy of this formula where all free identifiers became bound.
+	 * @since 3.0
 	 */
-	public final T bindAllFreeIdents(List<BoundIdentDecl> boundIdentDecls,
-			FormulaFactory factory) {
-		assert (factory == fac);
-
+	public final T bindAllFreeIdents(List<BoundIdentDecl> boundIdentDecls) {
 		assert boundIdentDecls.size() == 0;
 		LinkedHashSet<FreeIdentifier> list = new LinkedHashSet<FreeIdentifier>();
 		collectFreeIdentifiers(list);
 		for (FreeIdentifier ident: list) {
-			boundIdentDecls.add(ident.asDecl(factory));
+			boundIdentDecls.add(ident.asDecl(fac));
 		}
-		return bindTheseIdents(list, factory);
+		return bindTheseIdents(list, fac);
 	}
 
 	/**

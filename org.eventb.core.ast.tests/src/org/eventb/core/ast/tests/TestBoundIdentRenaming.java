@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mAtomicExpression;
@@ -31,6 +30,7 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 import java.util.Vector;
@@ -111,7 +111,7 @@ public class TestBoundIdentRenaming extends AbstractTests {
 	private static QuantifiedExpression mLambda(
 			Expression pattern, Predicate pred, Expression expr) {
 		List<BoundIdentDecl> boundIdents = new Vector<BoundIdentDecl>();
-		Expression boundPattern = pattern.bindAllFreeIdents(boundIdents, ff);
+		Expression boundPattern = pattern.bindAllFreeIdents(boundIdents);
 		Expression pair = ff.makeBinaryExpression(Formula.MAPSTO, boundPattern, expr, null);
 		return ff.makeQuantifiedExpression(Formula.CSET, boundIdents
 				.toArray(new BoundIdentDecl[boundIdents.size()]), pred, pair,
