@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,10 +67,10 @@ public class Cond implements IExpressionExtension {
 		// WD(cond) & (cond => WD(e1)) & (not cond => WD(e2))
 		final FormulaFactory ff = wdMediator.getFormulaFactory();
 		final Predicate cond = formula.getChildPredicates()[0];
-		final Predicate wdCond = cond.getWDPredicate(ff);
+		final Predicate wdCond = cond.getWDPredicate();
 		final Expression[] exprs = formula.getChildExpressions();
-		final Predicate wdE1 = exprs[0].getWDPredicate(ff);
-		final Predicate wdE2 = exprs[1].getWDPredicate(ff);
+		final Predicate wdE1 = exprs[0].getWDPredicate();
+		final Predicate wdE2 = exprs[1].getWDPredicate();
 		final Predicate condE1 = ff.makeBinaryPredicate(LIMP, cond, wdE1, null);
 		final UnaryPredicate notCond = ff.makeUnaryPredicate(NOT, cond, null);
 		final Predicate notCondE2 = ff.makeBinaryPredicate(LIMP, notCond, wdE2,

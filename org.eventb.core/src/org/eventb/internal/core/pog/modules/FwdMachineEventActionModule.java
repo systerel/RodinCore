@@ -96,7 +96,7 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			List<IPOGPredicate> hyp = makeAbstractActionHypothesis(baPredicate);
 
 			if (abstractHasNotSameAction(k)) {
-				Predicate wdPredicate = assignment.getWDPredicate(factory);
+				Predicate wdPredicate = assignment.getWDPredicate();
 				createProofObligation(target, hyp,
 						wdPredicate, action, sources, hints, 
 						"WD", IPOGNature.ACTION_WELL_DEFINEDNESS, monitor);

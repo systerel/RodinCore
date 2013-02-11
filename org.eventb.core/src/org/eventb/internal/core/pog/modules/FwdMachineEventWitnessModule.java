@@ -78,7 +78,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 			ISCWitness witness = witnesses.get(i);
 			Predicate predicate = predicates.get(i);
 			
-			Predicate wdPredicate = predicate.getWDPredicate(factory);
+			Predicate wdPredicate = predicate.getWDPredicate();
 			String witnessLabel = witness.getLabel();
 			FreeIdentifier witnessIdentifier = factory.makeFreeIdentifier(witnessLabel, null);
 			witnessIdentifier.typeCheck(typeEnvironment);
