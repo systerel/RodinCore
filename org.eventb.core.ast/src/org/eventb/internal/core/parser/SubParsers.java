@@ -1308,7 +1308,7 @@ public class SubParsers {
 			final int mid = pc.getGrammar().getKind(MID);
 			pc.accept(mid);
 			final List<BoundIdentDecl> boundIdents = new ArrayList<BoundIdentDecl>();
-			final Expression boundExpr = expr.bindAllFreeIdents(boundIdents, pc.factory);
+			final Expression boundExpr = expr.bindAllFreeIdents(boundIdents);
 			if (boundIdents.isEmpty()) {
 				throw pc.syntaxError(new ASTProblem(expr.getSourceLocation(),
 						ProblemKind.ExpressionNotBinding,

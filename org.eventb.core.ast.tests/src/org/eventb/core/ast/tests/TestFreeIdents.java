@@ -484,7 +484,7 @@ public class TestFreeIdents extends AbstractTests {
 		for (TestItem testItem : testItemsBindAll) {
 			String msg = testItem.formula.toString();
 			List<BoundIdentDecl> actualIdents = new ArrayList<BoundIdentDecl>();
-			Formula<?> result = testItem.formula.bindAllFreeIdents(actualIdents, ff);
+			Formula<?> result = testItem.formula.bindAllFreeIdents(actualIdents);
 			assertEqualsFI(msg, testItem.freeIdents, actualIdents);
 			assertEquals(msg, testItem.boundFormula, result);
 		}
