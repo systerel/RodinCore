@@ -71,7 +71,7 @@ public class FormulaBuilder {
 		final int tag = lower ? LE : GE;
 		final Predicate rel = ff.makeRelationalPredicate(tag, b1, b0, null);
 		final RelationalPredicate xInSet = ff.makeRelationalPredicate(IN, b0,
-				set.shiftBoundIdentifiers(2, ff), null);
+				set.shiftBoundIdentifiers(2), null);
 		final Predicate impl = ff.makeBinaryPredicate(LIMP, xInSet, rel, null);
 		final BoundIdentDecl[] b = new BoundIdentDecl[] { ff
 				.makeBoundIdentDecl("b", null, Z()) };

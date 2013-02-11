@@ -1424,7 +1424,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				if (level2) {
 					final Predicate pred = makeBinaryPredicate(LIMP, `P,
 												makeRelationalPredicate(IN,`E,
-													`S.shiftBoundIdentifiers(`bidl.length, ff)));
+													`S.shiftBoundIdentifiers(`bidl.length)));
 					result = makeQuantifiedPredicate(FORALL, `bidl, pred);
 					trace(predicate, result, "SIMP_SUBSETEQ_COMPSET_L");
 					return result;
@@ -3859,7 +3859,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		final int nbBound = `decls.length;
 	    		if (level2 && notLocallyBound(`S, nbBound)
 	    				&& partialLambdaPatternCheck(`E, nbBound)) {
-   					result = `S.shiftBoundIdentifiers(-nbBound, ff);
+   					result = `S.shiftBoundIdentifiers(-nbBound);
    					trace(expression, result, "SIMP_COMPSET_IN");
     				return result;
 	    		}

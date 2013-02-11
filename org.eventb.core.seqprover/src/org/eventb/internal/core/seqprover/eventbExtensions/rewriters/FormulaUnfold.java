@@ -48,8 +48,8 @@ public class FormulaUnfold {
 		
 		Expression exp = getExpression(identDecls.length - 1, baseType);
 
-		Predicate pred = ff.makeRelationalPredicate(Predicate.IN, exp, S
-				.shiftBoundIdentifiers(identDecls.length, ff), null);
+		Predicate pred = ff.makeRelationalPredicate(Predicate.IN, exp,
+				S.shiftBoundIdentifiers(identDecls.length), null);
 		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
 				Predicate.EXISTS, identDecls, pred, null);
 		return qPred;
@@ -169,9 +169,9 @@ public class FormulaUnfold {
 
 		BoundIdentifier ident = ff.makeBoundIdentifier(0, null, baseType);
 		Predicate P = ff.makeRelationalPredicate(Predicate.IN, ident, S
-				.shiftBoundIdentifiers(1, ff), null);
+				.shiftBoundIdentifiers(1), null);
 		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, E
-				.shiftBoundIdentifiers(1, ff), ident, null);
+				.shiftBoundIdentifiers(1), ident, null);
 		if (tag == Predicate.EXISTS)
 			return ff.makeQuantifiedPredicate(tag,
 					new BoundIdentDecl[] { decl }, ff.makeAssociativePredicate(
@@ -187,7 +187,7 @@ public class FormulaUnfold {
 	public Predicate inQuantified(int tag, Expression E,
 			BoundIdentDecl[] boundIdentDecls, Predicate P, Expression T) {
 		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, E
-				.shiftBoundIdentifiers(boundIdentDecls.length, ff), T, null);
+				.shiftBoundIdentifiers(boundIdentDecls.length), T, null);
 		if (tag == Predicate.EXISTS)
 			return ff.makeQuantifiedPredicate(tag, boundIdentDecls, ff
 					.makeAssociativePredicate(Predicate.LAND, new Predicate[] {
@@ -203,9 +203,9 @@ public class FormulaUnfold {
 		BoundIdentDecl[] boundIdentDecls = getBoundIdentDecls(rType);
 		Expression expression = getExpression(boundIdentDecls.length - 1, rType);
 		Expression left = ff.makeBinaryExpression(Expression.MAPSTO, E
-				.shiftBoundIdentifiers(boundIdentDecls.length, ff), expression, null);
+				.shiftBoundIdentifiers(boundIdentDecls.length), expression, null);
 		Predicate pred = ff.makeRelationalPredicate(Predicate.IN, left, r
-				.shiftBoundIdentifiers(boundIdentDecls.length, ff), null);
+				.shiftBoundIdentifiers(boundIdentDecls.length), null);
 		return ff.makeQuantifiedPredicate(Predicate.EXISTS,
 				boundIdentDecls, pred, null);
 	}
@@ -216,9 +216,9 @@ public class FormulaUnfold {
 		Expression expression = getExpression(boundIdentDecls.length - 1, rType);
 
 		Expression left = ff.makeBinaryExpression(Expression.MAPSTO, expression, F
-				.shiftBoundIdentifiers(boundIdentDecls.length, ff), null);
+				.shiftBoundIdentifiers(boundIdentDecls.length), null);
 		Predicate pred = ff.makeRelationalPredicate(Predicate.IN, left, r
-				.shiftBoundIdentifiers(boundIdentDecls.length, ff), null);
+				.shiftBoundIdentifiers(boundIdentDecls.length), null);
 		return ff.makeQuantifiedPredicate(Predicate.EXISTS,
 				boundIdentDecls, pred, null);
 	}
@@ -269,10 +269,10 @@ public class FormulaUnfold {
 		Expression exp = getExpression(identDecls.length - 1, baseType);
 
 		Predicate P = ff.makeRelationalPredicate(Predicate.IN, exp, S
-				.shiftBoundIdentifiers(identDecls.length, ff), null);
+				.shiftBoundIdentifiers(identDecls.length), null);
 
 		Predicate Q = ff.makeRelationalPredicate(Predicate.IN, exp, T
-				.shiftBoundIdentifiers(identDecls.length, ff), null);
+				.shiftBoundIdentifiers(identDecls.length), null);
 		return ff.makeQuantifiedPredicate(Predicate.FORALL, identDecls, ff
 				.makeBinaryPredicate(Predicate.LIMP, P, Q, null), null);
 	}
@@ -296,15 +296,15 @@ public class FormulaUnfold {
 
 		// x : S
 		Predicate pred1 = ff.makeRelationalPredicate(Predicate.IN, exp, S
-				.shiftBoundIdentifiers(identDecls.length, ff), null);
+				.shiftBoundIdentifiers(identDecls.length), null);
 		
 		// x |-> F
 		Expression map = ff.makeBinaryExpression(Predicate.MAPSTO, exp, F
-				.shiftBoundIdentifiers(identDecls.length, ff), null);
+				.shiftBoundIdentifiers(identDecls.length), null);
 		
 		// x |-> F : r
 		Predicate pred2 = ff.makeRelationalPredicate(Predicate.IN, map, r
-				.shiftBoundIdentifiers(identDecls.length, ff), null);
+				.shiftBoundIdentifiers(identDecls.length), null);
 		
 		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
 				Predicate.EXISTS, identDecls,
@@ -330,7 +330,7 @@ public class FormulaUnfold {
 		Collection<Predicate> newChildren = new ArrayList<Predicate>();
 		int size = identDecls.size();
 		final int maxSize = size;
-		Expression prev = E.shiftBoundIdentifiers(maxSize, ff);
+		Expression prev = E.shiftBoundIdentifiers(maxSize);
 		for (int i = 0; i < rels.length - 1; i++) {
 			Expression rel = rels[i];
 			final Type right = rel.getType().getTarget();
@@ -340,13 +340,13 @@ public class FormulaUnfold {
 			BinaryExpression map = ff.makeBinaryExpression(Expression.MAPSTO,
 					prev, expression, null);
 			newChildren.add(ff.makeRelationalPredicate(Predicate.IN, map, rel
-					.shiftBoundIdentifiers(maxSize, ff), null));
+					.shiftBoundIdentifiers(maxSize), null));
 			prev = expression;
 		}
 		BinaryExpression map = ff.makeBinaryExpression(Expression.MAPSTO, prev,
-				F.shiftBoundIdentifiers(maxSize, ff), null);
+				F.shiftBoundIdentifiers(maxSize), null);
 		newChildren.add(ff.makeRelationalPredicate(Predicate.IN, map,
-				rels[rels.length - 1].shiftBoundIdentifiers(maxSize, ff), null));
+				rels[rels.length - 1].shiftBoundIdentifiers(maxSize), null));
 
 		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
 				Predicate.EXISTS, identDecls, ff.makeAssociativePredicate(
@@ -375,7 +375,7 @@ public class FormulaUnfold {
 		System.arraycopy(y, 0, boundIdentifiers, x.length, y.length);
 		System.arraycopy(z, 0, boundIdentifiers, x.length + y.length, z.length);
 
-		f = f.shiftBoundIdentifiers(length, ff);
+		f = f.shiftBoundIdentifiers(length);
 		
 		Expression xExpression = getExpression(length
 				- 1, sBaseType);
@@ -416,7 +416,7 @@ public class FormulaUnfold {
 
 		Expression singleton = ff.makeSetExtension(exp, null);
 		Predicate pred = ff.makeRelationalPredicate(Predicate.EQUAL, S
-				.shiftBoundIdentifiers(identDecls.length, ff), singleton, null);
+				.shiftBoundIdentifiers(identDecls.length), singleton, null);
 		QuantifiedPredicate qPred = ff.makeQuantifiedPredicate(
 				Predicate.EXISTS, identDecls, pred, null);
 		return qPred;

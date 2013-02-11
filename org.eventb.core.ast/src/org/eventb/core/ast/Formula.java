@@ -2083,18 +2083,15 @@ public abstract class Formula<T extends Formula<T>> {
 	 *            bound identifier declarations that you plan to add just atop
 	 *            this formula. If you plan to remove some bound identifier
 	 *            declarations, then use a negative offset
-	 * @param factory
-	 *            factory to use for building the result
 	 * @return a copy of this formula with all bound identifiers shifted by the
 	 *         given offset
+	 * @since 3.0
 	 */
-	public T shiftBoundIdentifiers(int offset, FormulaFactory factory) {
-		assert (factory == fac);
-
+	public T shiftBoundIdentifiers(int offset) {
 		if (offset == 0) {
 			return getTypedThis();
 		}
-		final Substitution subst = new BoundIdentifierShifter(offset, factory);
+		final Substitution subst = new BoundIdentifierShifter(offset, fac);
 		return rewrite(subst);
 	}
 	

@@ -36,7 +36,6 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerType;
@@ -548,7 +547,7 @@ public class TestSubstituteFormula extends AbstractTests {
 		
 		@Override
 		public void doTest() {
-			Formula<?> result = formula.shiftBoundIdentifiers(offset, ff);
+			Formula<?> result = formula.shiftBoundIdentifiers(offset);
 			assertEquals(formula + "\n" + offset + "\n" , expected, result);
 		}
 		
@@ -594,7 +593,7 @@ public class TestSubstituteFormula extends AbstractTests {
 	};
 	
 	/**
-	 * Test for {@link Formula#shiftBoundIdentifiers(int, FormulaFactory)}.
+	 * Test for {@link Formula#shiftBoundIdentifiers(int)}.
 	 */
 	@Test 
 	public void testShiftBoundIdentifiers() {
