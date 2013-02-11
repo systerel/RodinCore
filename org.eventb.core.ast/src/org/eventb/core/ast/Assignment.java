@@ -139,7 +139,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	 */
 	public final Predicate getFISPredicate(FormulaFactory formulaFactory) {
 		assert isTypeChecked();
-		return getFISPredicateRaw(formulaFactory).flatten(formulaFactory);
+		return getFISPredicateRaw(formulaFactory).flatten();
 	}
 	
 	protected abstract Predicate getFISPredicateRaw(FormulaFactory formulaFactory);
@@ -154,7 +154,7 @@ public abstract class Assignment extends Formula<Assignment> {
 	 */
 	public final Predicate getBAPredicate(FormulaFactory formulaFactory) {
 		assert isTypeChecked();
-		return getBAPredicateRaw(formulaFactory).flatten(formulaFactory);
+		return getBAPredicateRaw(formulaFactory).flatten();
 	}
 	
 	protected abstract Predicate getBAPredicateRaw(FormulaFactory formulaFactory);

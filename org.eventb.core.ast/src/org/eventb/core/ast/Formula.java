@@ -1383,15 +1383,12 @@ public abstract class Formula<T extends Formula<T>> {
 	 * Flattening is not supported for assignments.
 	 * </p>
 	 * 
-	 * @param factory
-	 *            a formula factory
 	 * @return the formula in its flattened form
 	 * @throws UnsupportedOperationException
 	 *             if this formula is an assignment.
+	 * @since 3.0
 	 */
-	public final T flatten(FormulaFactory factory) {
-		assert (factory == fac);
-
+	public final T flatten() {
 		IFormulaRewriter rewriter = new DefaultRewriter(true);
 		return rewrite(rewriter);
 	}

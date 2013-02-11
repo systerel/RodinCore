@@ -338,7 +338,7 @@ public final class Lib {
 				result = ff.makeAssociativeExpression(expr.getTag(),
 						newChildren, null);
 			}
-			return result.flatten(ff);
+			return result.flatten();
 		}
 		
 		@Override
