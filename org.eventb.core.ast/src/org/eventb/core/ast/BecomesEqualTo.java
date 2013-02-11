@@ -270,11 +270,15 @@ public class BecomesEqualTo extends Assignment {
 
 	@Override
 	protected Predicate getFISPredicateRaw(FormulaFactory formulaFactory) {
+		assert (formulaFactory == getFactory());
+
 		return formulaFactory.makeLiteralPredicate(BTRUE, getSourceLocation());
 	}
 
 	@Override
 	protected Predicate getBAPredicateRaw(FormulaFactory ff) {
+		assert (ff == getFactory());
+
 		final SourceLocation loc = getSourceLocation();
 		final int length = assignedIdents.length;
 		final Predicate[] predicates = new Predicate[length];

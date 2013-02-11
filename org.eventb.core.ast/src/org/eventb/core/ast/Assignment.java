@@ -138,6 +138,8 @@ public abstract class Assignment extends Formula<Assignment> {
 	 * @return Returns the feasibility predicate
 	 */
 	public final Predicate getFISPredicate(FormulaFactory formulaFactory) {
+		assert (formulaFactory == getFactory());
+
 		assert isTypeChecked();
 		return getFISPredicateRaw(formulaFactory).flatten();
 	}
@@ -153,6 +155,8 @@ public abstract class Assignment extends Formula<Assignment> {
 	 * @return Returns the before-after predicate of this assignment
 	 */
 	public final Predicate getBAPredicate(FormulaFactory formulaFactory) {
+		assert (formulaFactory == getFactory());
+
 		assert isTypeChecked();
 		return getBAPredicateRaw(formulaFactory).flatten();
 	}

@@ -306,6 +306,8 @@ public class BecomesSuchThat extends Assignment {
 
 	@Override
 	protected Predicate getFISPredicateRaw(FormulaFactory ff) {
+		assert (ff == getFactory());
+
 		final SourceLocation loc = getSourceLocation();
 		return QuantifiedHelper.getWDSimplifyQ(ff, EXISTS, primedIdents,
 				condition, loc);
@@ -313,6 +315,8 @@ public class BecomesSuchThat extends Assignment {
 
 	@Override
 	protected Predicate getBAPredicateRaw(FormulaFactory ff) {
+		assert (ff == getFactory());
+
 		ITypeEnvironmentBuilder typeEnvironment = ff.makeTypeEnvironment();
 		FreeIdentifier[] freshIdents = 
 				typeEnvironment.makeFreshIdentifiers(primedIdents);
