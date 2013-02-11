@@ -1165,12 +1165,12 @@ public abstract class Formula<T extends Formula<T>> {
 	 * type environment are the same. If it is not the case an
 	 * {@link IllegalArgumentException} exception is raised.
 	 */
-	private void ensureSameFormulaFactory(ITypeEnvironment typEnv) {
-		if (fac != typEnv.getFormulaFactory()) {
+	private void ensureSameFactory(ITypeEnvironment typEnv) {
+		final FormulaFactory otherFactory = typEnv.getFormulaFactory();
+		if (this.fac != otherFactory) {
 			throw new IllegalArgumentException("The environment " + typEnv
-					+ " has an incompatible factory "
-					+ typEnv.getFormulaFactory()
-					+ " with the current formula factory " + this.fac);
+					+ " has an incompatible factory: " + otherFactory
+					+ " instead of: " + this.fac);
 		}
 	}
 
@@ -1666,7 +1666,7 @@ public abstract class Formula<T extends Formula<T>> {
 			throw new IllegalStateException(
 					"Cannot typecheck ill-formed formula: " + this);
 		}
-		ensureSameFormulaFactory(environment);
+		ensureSameFactory(environment);
 		TypeCheckResult result = new TypeCheckResult(environment.makeSnapshot());
 		typeCheck(result, NO_BOUND_IDENT_DECL);
 		result.solveTypeVariables();
