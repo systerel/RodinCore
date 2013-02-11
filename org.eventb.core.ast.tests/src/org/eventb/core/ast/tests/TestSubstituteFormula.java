@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.DIV;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
@@ -23,6 +21,8 @@ import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mQuantifiedPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -462,7 +462,7 @@ public class TestSubstituteFormula extends AbstractTests {
 
 	/**
 	 * Examples given in the Javadoc of
-	 * {@link Formula#applyAssignment(BecomesEqualTo, FormulaFactory)}.
+	 * {@link Formula#applyAssignment(BecomesEqualTo)}.
 	 */
 	@Test 
 	public void testApplyAssignment() {
@@ -475,7 +475,7 @@ public class TestSubstituteFormula extends AbstractTests {
 		typeCheck(assignment, te);
 		Expression expExpr = plus(num(0), id_y);
 		typeCheck(expExpr, te);
-		Expression actual = expr.applyAssignment(assignment, ff);
+		Expression actual = expr.applyAssignment(assignment);
 		assertTrue("Formula " + actual + " should be typechecked.",
 				actual.isTypeChecked());
 		assertEquals(expExpr, actual);
@@ -485,7 +485,7 @@ public class TestSubstituteFormula extends AbstractTests {
 		typeCheck(assignment, te);
 		expExpr = plus(plus(id_x, num(1)), id_y);
 		typeCheck(expExpr, te);
-		actual = expr.applyAssignment(assignment, ff);
+		actual = expr.applyAssignment(assignment);
 		assertTrue("Formula " + actual + " should be typechecked.",
 				actual.isTypeChecked());
 		assertEquals(expExpr, actual);
@@ -495,7 +495,7 @@ public class TestSubstituteFormula extends AbstractTests {
 		typeCheck(assignment, te);
 		expExpr = plus(id_y, id_x);
 		typeCheck(expExpr, te);
-		actual = expr.applyAssignment(assignment, ff);
+		actual = expr.applyAssignment(assignment);
 		assertTrue("Formula " + actual + " should be typechecked.",
 				actual.isTypeChecked());
 		assertEquals(expExpr, actual);
@@ -507,7 +507,7 @@ public class TestSubstituteFormula extends AbstractTests {
 		typeCheck(assignment, te);
 		Predicate expPred = forall(BD("z"), eq(bd(0), id_y));
 		typeCheck(expPred, te);
-		Predicate actualPred = pred.applyAssignment(assignment, ff);
+		Predicate actualPred = pred.applyAssignment(assignment);
 		assertTrue("Formula " + actualPred + " should be typechecked.",
 				actualPred.isTypeChecked());
 		assertEquals(expPred, actualPred);
