@@ -66,7 +66,7 @@ public class FiniteDefRewrites extends AbstractManualRewrites {
 		}
 		final Predicate newSubPredicate = rewrite((SimplePredicate) subFormula,
 				ff);
-		return pred.rewriteSubFormula(position, newSubPredicate, ff);
+		return pred.rewriteSubFormula(position, newSubPredicate);
 	}
 
 	private Predicate rewrite(SimplePredicate predicate, FormulaFactory ff) {

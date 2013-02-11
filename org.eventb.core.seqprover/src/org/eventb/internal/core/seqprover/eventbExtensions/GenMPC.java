@@ -454,7 +454,7 @@ public class GenMPC {
 		if (!pred.getSubFormula(pos).equals(replaced)) {
 			return pred;
 		}
-		return pred.rewriteSubFormula(pos, substitute, ff);
+		return pred.rewriteSubFormula(pos, substitute);
 	}
 
 	/**

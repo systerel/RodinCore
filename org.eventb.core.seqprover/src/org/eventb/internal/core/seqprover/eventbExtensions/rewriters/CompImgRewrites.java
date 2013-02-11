@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public class CompImgRewrites extends AbstractManualRewrites {
 		final Expression pToq = fcomp(children, 0, index, ff);
 		final Expression rTos = fcomp(children, index, children.length, ff);
 		final Expression newImage = relImage(rTos, relImage(pToq, set, ff), ff);
-		return pred.rewriteSubFormula(grandParentPos, newImage, ff);
+		return pred.rewriteSubFormula(grandParentPos, newImage);
 	}
 
 	private Expression fcomp(Expression[] children, int start, int end,

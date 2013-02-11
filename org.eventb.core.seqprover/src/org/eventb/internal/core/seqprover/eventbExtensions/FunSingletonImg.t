@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,8 +120,7 @@ public class FunSingletonImg extends AbstractManualInference {
 		Expression exp = ff.makeBinaryExpression(Expression.FUNIMAGE, f, E, null);
 		Expression setExt = ff.makeSetExtension(exp, null);
 		
-		Predicate inferredPred = predicate.rewriteSubFormula(position,
-				setExt, ff);
+		Predicate inferredPred = predicate.rewriteSubFormula(position, setExt);
 
 		// Well-definedness
 		antecidents[0] = makeWD(seq.getFormulaFactory(), inferredPred);

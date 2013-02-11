@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,7 +185,7 @@ public class LocalEqRewrite implements IReasoner {
 			return false;
 		}
 		final Predicate rewritten = toRewrite.rewriteSubFormula(position,
-				substitute, ff);
+				substitute);
 		if (!rewritten.equals(result)) {
 			return false;
 		}
@@ -313,7 +313,7 @@ public class LocalEqRewrite implements IReasoner {
 		if (exp == null) {
 			return null;
 		}
-		return pred.rewriteSubFormula(position, exp, ff);
+		return pred.rewriteSubFormula(position, exp);
 	}
 
 	/**

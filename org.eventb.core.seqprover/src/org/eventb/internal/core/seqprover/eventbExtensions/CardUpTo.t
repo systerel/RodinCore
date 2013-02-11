@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,7 +126,7 @@ public class CardUpTo extends AbstractManualInference {
 		Expression replaced0 = ff.makeAssociativeExpression(Predicate.PLUS,
 				newChildren, null);
 		Predicate inferredHyp0 = predicate.rewriteSubFormula(position,
-				replaced0, ff); 
+				replaced0);
 		
 		antecedents[0] = makeAntecedent(pred, inferredHyp0, le);
 		
@@ -136,7 +136,7 @@ public class CardUpTo extends AbstractManualInference {
 		Expression number0 = ff.makeIntegerLiteral(new BigInteger(
 			"0"), null);
 		Predicate inferredHyp1 = predicate.rewriteSubFormula(position,
-				number0, ff); 
+				number0);
 		
 		antecedents[1] = makeAntecedent(pred, inferredHyp1, lt);
 		return antecedents; 
