@@ -335,7 +335,7 @@ public class ConstructorMediator extends ArgumentMediator implements
 			final Expression[] params = buildParams(bids, constrArgs, argTypes,
 					ff);
 
-			final Expression dt = child.shiftBoundIdentifiers(argSize, ff);
+			final Expression dt = child.shiftBoundIdentifiers(argSize);
 			return makeWD(dt, bids, params, ff);
 		}
 

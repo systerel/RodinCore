@@ -90,7 +90,7 @@ public interface IFormulaRewriter {
 	 * 
 	 * @param nbOfDeclarations
 	 *            nb of bound identifiers declared
-	 * @see Formula#shiftBoundIdentifiers(int, FormulaFactory)
+	 * @see Formula#shiftBoundIdentifiers(int)
 	 * @see #leavingQuantifier(int)
 	 */
 	void enteringQuantifier(int nbOfDeclarations);
@@ -109,7 +109,7 @@ public interface IFormulaRewriter {
 	 * 
 	 * @param nbOfDeclarations
 	 *            nb of bound identifiers declared
-	 * @see Formula#shiftBoundIdentifiers(int, FormulaFactory)
+	 * @see Formula#shiftBoundIdentifiers(int)
 	 * @see #enteringQuantifier(int)
 	 */
 	void leavingQuantifier(int nbOfDeclarations);

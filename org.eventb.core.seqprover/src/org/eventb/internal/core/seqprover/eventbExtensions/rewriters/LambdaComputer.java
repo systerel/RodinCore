@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,15 +113,14 @@ public class LambdaComputer {
 				null, funImg.getType());
 
 		// The argument needs to be pushed through A and the bound declaration.
-		final Expression innerArg = arg.shiftBoundIdentifiers(1 + decls.length,
-				ff);
+		final Expression innerArg = arg.shiftBoundIdentifiers(1 + decls.length);
 		final Expression yMapstoA = ff.makeBinaryExpression(MAPSTO, innerArg,
 				AInExists, null);
 
 		// The expression must be pushed through A, but in the context of the
 		// comprehension set. Do not attempt to simplify the following lines!
 		final QuantifiedExpression innerCset = (QuantifiedExpression) cset
-				.shiftBoundIdentifiers(1, ff);
+				.shiftBoundIdentifiers(1);
 		final Expression innerExpr = innerCset.getExpression();
 
 		final Predicate equals = ff.makeRelationalPredicate(EQUAL, yMapstoA,
@@ -140,7 +139,7 @@ public class LambdaComputer {
 		if (hasExpectedFinalForm(pred)) {
 			final Expression right = ((RelationalPredicate) pred).getRight();
 			// Remove implicit quantification on A
-			return right.shiftBoundIdentifiers(-1, ff);
+			return right.shiftBoundIdentifiers(-1);
 		}
 		return null;
 	}
