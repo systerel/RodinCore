@@ -13,7 +13,6 @@ package org.eventb.internal.core.ast.wd;
 import java.util.Set;
 
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 
 /**
@@ -35,9 +34,9 @@ public class NodeForAll extends Node {
 	}
 
 	@Override
-	protected void boundIdentifiersEqualizer(int offset, FormulaFactory ff) {
+	protected void boundIdentifiersEqualizer(int offset) {
 		assert offset >= 0;
-		child.boundIdentifiersEqualizer(offset - decls.length, ff);
+		child.boundIdentifiersEqualizer(offset - decls.length);
 	}
 
 	@Override

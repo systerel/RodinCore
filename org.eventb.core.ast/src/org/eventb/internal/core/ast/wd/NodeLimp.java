@@ -13,7 +13,6 @@ package org.eventb.internal.core.ast.wd;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 
 /**
@@ -36,9 +35,9 @@ public class NodeLimp extends Node {
 	}
 
 	@Override
-	protected void boundIdentifiersEqualizer(int offset, FormulaFactory ff) {
-		left.boundIdentifiersEqualizer(offset, ff);
-		right.boundIdentifiersEqualizer(offset, ff);
+	protected void boundIdentifiersEqualizer(int offset) {
+		left.boundIdentifiersEqualizer(offset);
+		right.boundIdentifiersEqualizer(offset);
 	}
 
 	@Override
