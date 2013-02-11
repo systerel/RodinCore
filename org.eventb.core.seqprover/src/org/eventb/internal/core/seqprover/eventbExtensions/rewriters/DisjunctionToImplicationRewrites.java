@@ -55,7 +55,7 @@ public class DisjunctionToImplicationRewrites extends AbstractManualRewrites {
 		AssociativePredicate predicate = (AssociativePredicate) subFormula;
 		IFormulaRewriter rewriter = new DisjunctionToImplicationRewriter(true);
 		Predicate newSubPredicate = predicate.rewrite(rewriter);
-		return pred.rewriteSubFormula(position, newSubPredicate, ff);
+		return pred.rewriteSubFormula(position, newSubPredicate);
 	}
 
 }

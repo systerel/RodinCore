@@ -67,7 +67,7 @@ public class DomCompRewrites extends AbstractManualRewrites {
 			if (newSubFormula == formula) // No rewrite occurs
 				return null;
 
-			return pred.rewriteSubFormula(parentPos, newSubFormula, ff);
+			return pred.rewriteSubFormula(parentPos, newSubFormula);
 		}
 		return null;
 	}

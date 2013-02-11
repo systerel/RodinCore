@@ -63,7 +63,7 @@ public class ConvRewrites extends AbstractManualRewrites {
 		if (newSubFormula == subFormula) // No rewrite occurs
 			return null;
 
-		return pred.rewriteSubFormula(position, newSubFormula, ff);
+		return pred.rewriteSubFormula(position, newSubFormula);
 	}
 
 }

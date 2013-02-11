@@ -559,8 +559,7 @@ public class TestSubFormulas{
 			assertEquals("Unexpected sub-formula",
 					filter.searched, formula.getSubFormula(actualPos));
 			assertEquals("Unexpected rewrite", expRewrite,
-					formula.rewriteSubFormula(actualPos, filter.replacement,
-							formula.getFactory()));
+					formula.rewriteSubFormula(actualPos, filter.replacement));
 		}
 		
 		// Additional transversal test with the default filter

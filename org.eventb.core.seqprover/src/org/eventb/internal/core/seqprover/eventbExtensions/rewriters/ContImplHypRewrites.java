@@ -65,7 +65,7 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 		final BinaryPredicate predicate = (BinaryPredicate) subFormula;
 		final IFormulaRewriter rewriter = new ContImplRewriter(true);
 		final Predicate newSubPredicate = rewriter.rewrite(predicate);
-		return pred.rewriteSubFormula(position, newSubPredicate, ff);
+		return pred.rewriteSubFormula(position, newSubPredicate);
 	}
 
 	@Override

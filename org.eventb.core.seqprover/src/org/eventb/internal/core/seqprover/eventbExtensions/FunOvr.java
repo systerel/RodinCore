@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,11 +22,11 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SetExtension;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IVersionedReasoner;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
@@ -108,7 +108,7 @@ public class FunOvr extends AbstractManualInference implements IVersionedReasone
 		// Make predicate (domSub(dom(g),f))(G)
 		Expression domG = ff.makeUnaryExpression(Expression.KDOM, g, null);
 		Expression fG = makeExpressionFOfG(domG, children, G, ff);
-		Predicate inferredPred = predicate.rewriteSubFormula(position, fG, ff);
+		Predicate inferredPred = predicate.rewriteSubFormula(position, fG);
 		
 		// Make predicate not(G : dom(g))
 		Predicate gInDomG = ff.makeRelationalPredicate(Predicate.IN, G,
@@ -141,7 +141,7 @@ public class FunOvr extends AbstractManualInference implements IVersionedReasone
 		// Generate the new predicate
 		//        P((f <+ ... <+ g)(G)) == P(g(G))
 		Expression F = ff.makeBinaryExpression(Expression.FUNIMAGE, g, G, null);
-		Predicate inferredPred = predicate.rewriteSubFormula(position, F, ff);
+		Predicate inferredPred = predicate.rewriteSubFormula(position, F);
 
 		// Make predicate G : dom(g)
 		Expression domH = ff.makeUnaryExpression(Expression.KDOM, g, null);
@@ -158,7 +158,7 @@ public class FunOvr extends AbstractManualInference implements IVersionedReasone
 		// Make predicate (domSub({E},f))(G)
 		Expression setE = ff.makeSetExtension(E, null);
 		Expression fG = makeExpressionFOfG(setE,children, G, ff);
-		Predicate inferredPred = predicate.rewriteSubFormula(position, fG, ff);
+		Predicate inferredPred = predicate.rewriteSubFormula(position, fG);
 		
 		// Make predicate not(G = E)
 		Predicate gEqualsE = ff.makeRelationalPredicate(Predicate.EQUAL, G,
@@ -174,7 +174,7 @@ public class FunOvr extends AbstractManualInference implements IVersionedReasone
 			Expression F, Expression G, FormulaFactory ff) {
 		// Generate the new predicate
 		//        P((f <+ ... <+ {E |-> F})(G)) == P(F)
-		Predicate inferredPred = predicate.rewriteSubFormula(position, F, ff);
+		Predicate inferredPred = predicate.rewriteSubFormula(position, F);
 
 		// Make predicate G = E
 		Predicate gEqualsE = ff.makeRelationalPredicate(Predicate.EQUAL, G,

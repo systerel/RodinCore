@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -133,8 +133,7 @@ public class FunSetMinusImg extends AbstractManualInference
 		Expression exp2 = ff.makeBinaryExpression(Expression.RELIMAGE, f, T, null);
 		Expression exp = ff.makeBinaryExpression(Expression.SETMINUS, exp1, exp2, null);
 		
-		Predicate inferredPred = predicate.rewriteSubFormula(position,
-				exp, ff);
+		Predicate inferredPred = predicate.rewriteSubFormula(position, exp);
 
 		antecidents[1] = makeAntecedent(pred, inferredPred);
 		return antecidents;

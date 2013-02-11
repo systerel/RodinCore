@@ -2329,8 +2329,6 @@ public abstract class Formula<T extends Formula<T>> {
 	 *            the position of the sub-formula to rewrite
 	 * @param newFormula
 	 *            the new sub-formula to replace with
-	 * @param factory
-	 *            factory to use for building the result
 	 * @return a copy of this formula where the sub-formula at the given
 	 *         position has been replaced by the given new sub-formula
 	 * @throws UnsupportedOperationException
@@ -2344,21 +2342,18 @@ public abstract class Formula<T extends Formula<T>> {
 	 *             <li>the replaced and new sub-formulas are incompatible
 	 *             (different kind or different type).</li>
 	 *             </ul>
+	 * @since 3.0
 	 */
-	public final T rewriteSubFormula(IPosition position, Formula<?> newFormula,
-			FormulaFactory factory) {
-		assert (factory == fac);
-		assert (newFormula.getFactory() == fac);
-
+	public final T rewriteSubFormula(IPosition position, Formula<?> newFormula) {
 		ensureTypeChecked();
 		if (position == null)
 			throw new NullPointerException("Null position");
 		if (! newFormula.isTypeChecked())
 			throw new IllegalArgumentException("New sub-formula is not type-checked.");
-		if (factory == null)
-			throw new NullPointerException("Null factory");
+		if (newFormula.getFactory() != fac)
+			throw new IllegalArgumentException("New sub-formula has a different factory.");
 		final SingleRewriter rewriter =
-			new SingleRewriter(position, newFormula, factory);
+			new SingleRewriter(position, newFormula, fac);
 		T result = rewriter.rewrite(this);
 		assert result.isTypeChecked();
 		return result;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public abstract class InclusionSetMinusRewrites extends AbstractManualRewrites i
 		}
 		if (newSubPredicate == null || newSubPredicate == predicate)
 			return null;
-		return pred.rewriteSubFormula(position, newSubPredicate, ff);
+		return pred.rewriteSubFormula(position, newSubPredicate);
 	}
 
 }

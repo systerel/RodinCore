@@ -67,8 +67,7 @@ public class ArithRewrites extends AbstractManualRewrites implements IVersionedR
 		}
 		if (newSubFormula == subFormula) // No rewrite occurs
 			return null;
-		return pred.rewriteSubFormula(position, newSubFormula, FormulaFactory
-				.getDefault());
+		return pred.rewriteSubFormula(position, newSubFormula);
 	}
 
 	public int getVersion() {

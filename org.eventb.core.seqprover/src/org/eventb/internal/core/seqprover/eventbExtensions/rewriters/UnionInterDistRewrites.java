@@ -68,8 +68,7 @@ public class UnionInterDistRewrites extends AbstractManualRewrites {
 			if (newSubFormula == formula) // No rewrite occurs
 				return null;
 
-			return pred.rewriteSubFormula(position.getParent(), newSubFormula,
-					ff);
+			return pred.rewriteSubFormula(position.getParent(), newSubFormula);
 		}
 		return null;
 	}
