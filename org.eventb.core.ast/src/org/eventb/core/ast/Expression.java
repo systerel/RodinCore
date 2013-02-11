@@ -191,7 +191,10 @@ public abstract class Expression extends Formula<Expression> {
 	 *            expected type of this expression
 	 * @return the result of the type checker
 	 * @throws IllegalStateException
-	 *             is this formulas is not well-formed
+	 *             if this formula is not well-formed
+	 * @throws IllegalArgumentException
+	 *             if the given type or type environment has been built with a
+	 *             different formula factory
 	 * @see #isWellFormed()
 	 */
 	public final ITypeCheckResult typeCheck(
@@ -201,6 +204,8 @@ public abstract class Expression extends Formula<Expression> {
 			throw new IllegalStateException(
 					"Cannot typecheck ill-formed expression: " + this);
 		}
+		ensureSameFactory(environment);
+		ensureSameFactory(expectedType);
 		TypeCheckResult result = new TypeCheckResult(environment.makeSnapshot());
 		boolean wasTypeChecked = isTypeChecked();
 		typeCheck(result, NO_BOUND_IDENT_DECL);

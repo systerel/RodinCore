@@ -1164,8 +1164,9 @@ public abstract class Formula<T extends Formula<T>> {
 	 * Ensures that the formula factory of this formula and the factory of this
 	 * type environment are the same. If it is not the case an
 	 * {@link IllegalArgumentException} exception is raised.
+	 * @since 3.0
 	 */
-	private void ensureSameFactory(ITypeEnvironment typEnv) {
+	protected void ensureSameFactory(ITypeEnvironment typEnv) {
 		final FormulaFactory otherFactory = typEnv.getFormulaFactory();
 		if (this.fac != otherFactory) {
 			throw new IllegalArgumentException("The environment " + typEnv

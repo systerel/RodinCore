@@ -13,6 +13,7 @@
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.Formula.PLUS;
+import static org.eventb.core.ast.tests.FastFactory.ff_extns;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
@@ -106,6 +107,18 @@ public class TestExprTypeChecker extends AbstractTests {
 		assertTrue(expr.isTypeChecked());
 		assertFalse(expr.isWellFormed());
 		expr.typeCheck(mTypeEnvironment(), INT_TYPE);
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void testIncompatibleEnvironmentFactoryError() {
+		final Expression expr = parseExpression("1", ff);
+		expr.typeCheck(ff_extns.makeTypeEnvironment(), ff.makeIntegerType());
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void testIncompatibleTypeFactoryError() {
+		final Expression expr = parseExpression("1", ff);
+		expr.typeCheck(ff.makeTypeEnvironment(), ff_extns.makeIntegerType());
 	}
 
 	// This is a type-checked expression of type ℤ containing free variable
