@@ -578,6 +578,8 @@ public class UnaryExpression extends Expression {
 	@Deprecated
 	@Override
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
+		assert (factory == getFactory());
+
 		if (getTag() != POW)
 			throw new InvalidExpressionException();
 		Type childAsType = child.toType(factory);

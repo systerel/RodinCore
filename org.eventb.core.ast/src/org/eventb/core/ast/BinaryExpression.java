@@ -794,6 +794,8 @@ public class BinaryExpression extends Expression {
 
 	@Override
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
+		assert (factory == getFactory());
+
 		Type leftAsType = left.toType(factory);
 		Type rightAsType = right.toType(factory);
 		Type result = factory.makeProductType(leftAsType, rightAsType);
