@@ -358,13 +358,11 @@ public class AssociativePredicate extends Predicate {
 
 	@Override
 	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
-		assert (rewriter.factory == getFactory());
-
 		if (index < 0 || children.length <= index) 
 			throw new IllegalArgumentException("Position is outside the formula");
 		Predicate[] newChildren = children.clone();
 		newChildren[index] = rewriter.rewrite(children[index]);
-		return rewriter.factory.makeAssociativePredicate(
+		return getFactory().makeAssociativePredicate(
 				getTag(), newChildren, getSourceLocation());
 	}
 

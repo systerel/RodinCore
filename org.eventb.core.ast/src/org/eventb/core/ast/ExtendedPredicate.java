@@ -364,8 +364,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 
 	@Override
 	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
-		assert (rewriter.factory == getFactory());
-
+		final FormulaFactory factory = getFactory();
 		if (index < 0
 				|| childExpressions.length + childPredicates.length <= index)
 			throw new IllegalArgumentException(
@@ -374,7 +373,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 			Expression[] newChildExpressions = childExpressions.clone();
 			newChildExpressions[index] = rewriter
 					.rewrite(childExpressions[index]);
-			return rewriter.factory.makeExtendedPredicate(extension,
+			return factory.makeExtendedPredicate(extension,
 					newChildExpressions, childPredicates.clone(),
 					getSourceLocation());
 		} else {
@@ -382,7 +381,7 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 			Predicate[] newChildPredicates = childPredicates.clone();
 			newChildPredicates[index] = rewriter
 					.rewrite(childPredicates[index]);
-			return rewriter.factory.makeExtendedPredicate(extension,
+			return factory.makeExtendedPredicate(extension,
 					childExpressions.clone(), newChildPredicates,
 					getSourceLocation());
 		}

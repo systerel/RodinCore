@@ -284,12 +284,10 @@ public class UnaryPredicate extends Predicate {
 
 	@Override
 	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
-		assert (rewriter.factory == getFactory());
-
 		if (index != 0) 
 			throw new IllegalArgumentException("Position is outside the formula");
 		Predicate newChild = rewriter.rewrite(child);
-		return rewriter.factory.makeUnaryPredicate(getTag(), newChild,
+		return getFactory().makeUnaryPredicate(getTag(), newChild,
 				getSourceLocation());
 	}
 

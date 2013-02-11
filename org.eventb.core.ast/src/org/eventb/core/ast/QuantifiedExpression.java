@@ -772,8 +772,6 @@ public class QuantifiedExpression extends Expression {
 
 	@Override
 	protected Expression rewriteChild(int index, SingleRewriter rewriter) {
-		assert (rewriter.factory == getFactory());
-
 		BoundIdentDecl[] newDecls = quantifiedIdentifiers;
 		Predicate newPred = pred;
 		Expression newExpr = expr;
@@ -788,8 +786,8 @@ public class QuantifiedExpression extends Expression {
 		} else {
 			throw new IllegalArgumentException("Position is outside the formula");
 		}
-		return rewriter.factory.makeQuantifiedExpression(getTag(),
-				newDecls, newPred, newExpr, getSourceLocation(), form);
+		return getFactory().makeQuantifiedExpression(getTag(), newDecls,
+				newPred, newExpr, getSourceLocation(), form);
 	}
 
 	@Override

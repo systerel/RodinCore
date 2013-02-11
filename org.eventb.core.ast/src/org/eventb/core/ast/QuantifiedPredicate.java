@@ -516,8 +516,6 @@ public class QuantifiedPredicate extends Predicate {
 
 	@Override
 	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
-		assert (rewriter.factory == getFactory());
-
 		BoundIdentDecl[] newDecls = quantifiedIdentifiers;
 		Predicate newPred = pred;
 		final int length = quantifiedIdentifiers.length;
@@ -529,8 +527,8 @@ public class QuantifiedPredicate extends Predicate {
 		} else {
 			throw new IllegalArgumentException("Position is outside the formula");
 		}
-		return rewriter.factory.makeQuantifiedPredicate(getTag(),
-				newDecls, newPred, getSourceLocation());
+		return getFactory().makeQuantifiedPredicate(getTag(), newDecls,
+				newPred, getSourceLocation());
 	}
 
 	@Override

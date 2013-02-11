@@ -453,8 +453,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 	@Override
 	protected Expression rewriteChild(int index, SingleRewriter rewriter) {
-		assert (rewriter.factory == getFactory());
-
+		final FormulaFactory factory = getFactory();
 		if (index < 0
 				|| childExpressions.length + childPredicates.length <= index)
 			throw new IllegalArgumentException(
@@ -466,7 +465,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			Expression[] newChildExpressions = childExpressions.clone();
 			newChildExpressions[index] = rewriter
 					.rewrite(childExpressions[index]);
-			return rewriter.factory.makeExtendedExpression(extension,
+			return factory.makeExtendedExpression(extension,
 					newChildExpressions, childPredicates.clone(),
 					getSourceLocation(), getType());
 		} else {
@@ -474,7 +473,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 			Predicate[] newChildPredicates = childPredicates.clone();
 			newChildPredicates[index] = rewriter
 					.rewrite(childPredicates[index]);
-			return rewriter.factory.makeExtendedExpression(extension,
+			return factory.makeExtendedExpression(extension,
 					childExpressions.clone(), newChildPredicates,
 					getSourceLocation(), getType());
 		}

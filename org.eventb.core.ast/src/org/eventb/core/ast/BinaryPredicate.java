@@ -343,8 +343,6 @@ public class BinaryPredicate extends Predicate {
 
 	@Override
 	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
-		assert (rewriter.factory == getFactory());
-
 		Predicate newLeft = left;
 		Predicate newRight = right;
 		switch (index) {
@@ -357,7 +355,7 @@ public class BinaryPredicate extends Predicate {
 		default:
 			throw new IllegalArgumentException("Position is outside the formula");
 		}
-		return rewriter.factory.makeBinaryPredicate(getTag(), newLeft, newRight,
+		return getFactory().makeBinaryPredicate(getTag(), newLeft, newRight,
 				getSourceLocation());
 	}
 
