@@ -362,7 +362,7 @@ public class DLib {
 	 * @since 3.0
 	 */
 	public static Predicate WD(Formula<?> f) {
-		final Predicate result = f.getWDPredicate(f.getFactory());
+		final Predicate result = f.getWDPredicate();
 		Lib.postConstructionCheck(result);
 		return result;
 	}

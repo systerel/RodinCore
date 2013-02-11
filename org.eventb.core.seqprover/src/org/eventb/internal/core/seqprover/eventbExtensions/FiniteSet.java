@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public class FiniteSet extends SingleExprInputReasoner implements
 		final FormulaFactory ff = seq.getFormulaFactory();
 		final IAntecedent[] antecedents = new IAntecedent[] {
 		// T is well-defined
-				makeAntecedent(T.getWDPredicate(ff)),
+				makeAntecedent(T.getWDPredicate()),
 
 				// finite(T)
 				makeAntecedent(ff.makeSimplePredicate(KFINITE, T, null)),

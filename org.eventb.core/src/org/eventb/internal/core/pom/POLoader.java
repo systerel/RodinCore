@@ -231,7 +231,7 @@ public final class POLoader {
 	private static void addWDpredicates(Predicate pred, Set<Predicate> predSet,
 			FormulaFactory ff) {
 		if (! shouldWDpredBeAdded(pred)) return;
-		Set<Predicate> toAdd = breakPossibleConjunct(pred.getWDPredicate(ff));
+		Set<Predicate> toAdd = breakPossibleConjunct(pred.getWDPredicate());
 		toAdd.remove(ff.makeLiteralPredicate(Formula.BTRUE, null));
 		predSet.addAll(toAdd);
 	}

@@ -1996,17 +1996,14 @@ public abstract class Formula<T extends Formula<T>> {
 	 * can be invoked.
 	 * </p>
 	 * 
-	 * @param formulaFactory
-	 *            factory to use for creating the WD predicate
 	 * @return the well-definedness predicate for this formula.
+	 * @since 3.0
 	 */
-	public final Predicate getWDPredicate(FormulaFactory formulaFactory) {
-		assert (formulaFactory == fac);
-
+	public final Predicate getWDPredicate() {
 		ensureTypeChecked();
-		final WDComputer wdComputer = new WDComputer(formulaFactory);
+		final WDComputer wdComputer = new WDComputer(fac);
 		final Predicate wdLemma = wdComputer.getWDLemma(this);
-		final WDImprover wdImprover = new WDImprover(formulaFactory);
+		final WDImprover wdImprover = new WDImprover(fac);
 		return wdImprover.improve(wdLemma);
 	}
 

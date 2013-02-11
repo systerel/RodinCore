@@ -68,7 +68,7 @@ public class TestWD extends AbstractTests {
 		}
 
 		private Predicate getSimplifiedWD() {
-			return input.getWDPredicate(factory);
+			return input.getWDPredicate();
 		}
 
 		private void assertCorrect(Predicate expected, Predicate actual) {
