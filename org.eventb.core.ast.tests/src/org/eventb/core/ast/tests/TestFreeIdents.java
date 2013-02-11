@@ -678,13 +678,13 @@ public class TestFreeIdents extends AbstractTests {
 		FreeIdentifier a = ff.makeFreeIdentifier("a", null);
 		assertFalse("a should be unprimed", a.isPrimed());
 		
-		FreeIdentifier ap = a.withPrime(ff);
+		FreeIdentifier ap = a.withPrime();
 		assertTrue("ap should be primed", ap.isPrimed());
 		
 		FreeIdentifier np = ap.withoutPrime(ff);
 		assertEquals("Primed should be the inverse of Unprimed", a, np);
 		
-		FreeIdentifier pp = np.withPrime(ff);
+		FreeIdentifier pp = np.withPrime();
 		assertEquals("Unprimed should be the inverse of Primed", ap, pp);
 	}
 	
@@ -701,7 +701,7 @@ public class TestFreeIdents extends AbstractTests {
 		assertEquals("name of bound should equal name of free identifier", 
 				a.getName(), bd.getName());
 		
-		FreeIdentifier ap = a.withPrime(ff);
+		FreeIdentifier ap = a.withPrime();
 		assertTrue("ap should be primed", ap.isPrimed());
 		
 		BoundIdentDecl bf = a.asPrimedDecl(ff);

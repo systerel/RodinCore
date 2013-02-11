@@ -132,7 +132,7 @@ public abstract class EventActionTable extends State implements IEventActionTabl
 			FreeIdentifier[] unprimedLeft = becomesEqualTo.getAssignedIdentifiers();
 			FreeIdentifier[] primedLeft = new FreeIdentifier[unprimedLeft.length];
 			for (int i=0; i<unprimedLeft.length; i++)
-				primedLeft[i] = unprimedLeft[i].withPrime(factory);
+				primedLeft[i] = unprimedLeft[i].withPrime();
 			BecomesEqualTo primed = 
 				factory.makeBecomesEqualTo(primedLeft, becomesEqualTo.getExpressions(), null);
 			primedDetAssn.add(primed);

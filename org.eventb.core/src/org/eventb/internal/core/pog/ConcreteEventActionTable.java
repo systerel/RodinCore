@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,9 +51,9 @@ public class ConcreteEventActionTable extends EventActionTable implements
 		for (FreeIdentifier variable : variables.getVariables()) {
 			if (assignedVariables.contains(variable)) {
 				deltaLeft.add(variable);
-				deltaRight.add(variable.withPrime(factory));
+				deltaRight.add(variable.withPrime());
 			} else {
-				xiLeft.add(variable.withPrime(factory));
+				xiLeft.add(variable.withPrime());
 				xiRight.add(variable);
 			}
 		}
