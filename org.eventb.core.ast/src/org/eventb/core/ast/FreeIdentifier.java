@@ -309,6 +309,8 @@ public class FreeIdentifier extends Identifier {
 
 	@Override
 	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
+		assert (factory == getFactory());
+
 		return factory.makeGivenType(getName());
 	}
 

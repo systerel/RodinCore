@@ -497,6 +497,8 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	@Override
 	public Type toType(FormulaFactory factory)
 			throws InvalidExpressionException {
+		assert (factory == getFactory());
+
 		if (!extension.isATypeConstructor()) {
 			throw new InvalidExpressionException();
 		}
