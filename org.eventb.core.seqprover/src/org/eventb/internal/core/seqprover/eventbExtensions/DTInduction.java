@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class DTInduction extends DTReasoner {
 			if (param.getType().equals(type)) {
 				final Map<FreeIdentifier, Expression> subst = Collections
 						.<FreeIdentifier, Expression> singletonMap(ident, param);
-				newHyps.add(goal.substituteFreeIdents(subst, ff));
+				newHyps.add(goal.substituteFreeIdents(subst));
 			}
 		}
 		return newHyps;
