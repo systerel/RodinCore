@@ -101,7 +101,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 				Predicate fisPredicate = predicate;
 				FreeIdentifier[] freeIdentifiers = predicate.getFreeIdentifiers();
 				if (containsIdent(witnessIdentifier, freeIdentifiers)) {
-					BoundIdentDecl boundIdent = witnessIdentifier.asDecl(factory);
+					BoundIdentDecl boundIdent = witnessIdentifier.asDecl();
 					ArrayList<FreeIdentifier> toBind = new ArrayList<FreeIdentifier>(1);
 					toBind.add(witnessIdentifier);
 					fisPredicate = fisPredicate.bindTheseIdents(toBind);

@@ -1723,7 +1723,7 @@ public abstract class Formula<T extends Formula<T>> {
 		LinkedHashSet<FreeIdentifier> list = new LinkedHashSet<FreeIdentifier>();
 		collectFreeIdentifiers(list);
 		for (FreeIdentifier ident: list) {
-			boundIdentDecls.add(ident.asDecl(fac));
+			boundIdentDecls.add(ident.asDecl());
 		}
 		return bindTheseIdents(list);
 	}

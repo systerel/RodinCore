@@ -178,7 +178,7 @@ public class FastFactory {
 			Predicate rhs) {
 		BoundIdentDecl[] primed = new BoundIdentDecl[lhs.length];
 		for (int i = 0; i < lhs.length; i++) {
-			primed[i] = lhs[i].asDecl(ff);
+			primed[i] = lhs[i].asDecl();
 		}
 		return mBecomesSuchThat(lhs, primed, rhs);
 	}
