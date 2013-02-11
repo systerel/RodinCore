@@ -252,7 +252,7 @@ public class BecomesMemberOf extends Assignment {
 		final FormulaFactory ff = getFactory();
 		final SourceLocation loc = getSourceLocation();
 		final FreeIdentifier primedIdentifier = 
-			assignedIdents[0].withPrime(ff);
+			assignedIdents[0].withPrime();
 		return ff.makeRelationalPredicate(IN, primedIdentifier, setExpr, loc);
 	}
 

@@ -94,10 +94,8 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 			
 			hyp.clear();
 			
-			Predicate predicate =
-				factory.makeRelationalPredicate(Formula.EQUAL, 
-						variable.withPrime(factory), 
-						variable, null);
+			Predicate predicate = factory.makeRelationalPredicate(
+					Formula.EQUAL, variable.withPrime(), variable, null);
 			
 			ISCAction action = null;
 			
