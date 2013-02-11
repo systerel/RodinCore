@@ -111,7 +111,7 @@ public class FwdMachineEventActionFrameSimModule extends MachineEventRefinementM
 				pos = findIndex(variable, detAssignments);
 				
 				if (pos >= 0) {
-					predicate = predicate.applyAssignment(primedDetAssignments.get(pos), factory);
+					predicate = predicate.applyAssignment(primedDetAssignments.get(pos));
 					action = detActions.get(pos);
 				} else
 					continue;

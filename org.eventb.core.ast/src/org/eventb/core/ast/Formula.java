@@ -1785,18 +1785,15 @@ public abstract class Formula<T extends Formula<T>> {
 	 * 
 	 * @param assignment
 	 *            the assignment to apply
-	 * @param ff
-	 *            factory to use for building the result
 	 * @return this formula with the given assignment applied to it
 	 * @see #applyAssignments(Iterable, FormulaFactory)
+	 * @since 3.0
 	 */
-	public final T applyAssignment(BecomesEqualTo assignment, FormulaFactory ff) {
-		assert (ff == fac);
-
+	public final T applyAssignment(BecomesEqualTo assignment) {
 		Map<FreeIdentifier, Expression> map =
 			new HashMap<FreeIdentifier, Expression>();
 		addAssignmentToMap(map, assignment);
-		return substituteFreeIdents(map, ff);
+		return substituteFreeIdents(map, fac);
 	}
 	
 	/**
@@ -1819,7 +1816,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @param ff
 	 *            factory to use for building the result
 	 * @return this formula with the given assignments applied to it
-	 * @see #applyAssignment(BecomesEqualTo, FormulaFactory)
+	 * @see #applyAssignment(BecomesEqualTo)
 	 */
 	public final T applyAssignments(Iterable<BecomesEqualTo> assignments,
 			FormulaFactory ff) {
