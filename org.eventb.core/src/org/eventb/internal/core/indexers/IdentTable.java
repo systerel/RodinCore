@@ -45,7 +45,7 @@ public class IdentTable {
 		return ident;
 	}
 
-	private static FreeIdentifier getPrimed(FreeIdentifier ident, FormulaFactory formulaFactory) {
+	private static FreeIdentifier getPrimed(FreeIdentifier ident) {
 		if (!ident.isPrimed()) {
 			return ident.withPrime();
 		}
@@ -64,7 +64,7 @@ public class IdentTable {
 	
 	public static String getPrimedName(String name, FormulaFactory formulaFactory) {
 		final FreeIdentifier ident = formulaFactory.makeFreeIdentifier(name, null);
-		return getPrimed(ident, formulaFactory).getName();
+		return getPrimed(ident).getName();
 	}
 	
 	public IDeclaration get(FreeIdentifier ident) {
