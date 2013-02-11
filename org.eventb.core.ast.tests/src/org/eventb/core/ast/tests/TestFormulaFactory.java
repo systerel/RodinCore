@@ -98,13 +98,10 @@ public class TestFormulaFactory extends AbstractTests {
 	private static final GivenType EFFtS = EFF.makeGivenType("S");
 	private static final GivenType EFFtT = EFF.makeGivenType("T");
 	
-	private static final Type EFFPs = POW(EFFtS);
+	private static final FreeIdentifier EFFiS = mFreeIdentifier("s", POW(EFFtS));
 
-	private static final FreeIdentifier EFFiS = EFF.makeFreeIdentifier("s",
-			null, EFFPs);
-
-	private static final BoundIdentDecl EFFdS = EFF.makeBoundIdentDecl("s'",
-			null, EFFPs);
+	private static final BoundIdentDecl EFFdS = mBoundIdentDecl("s'",
+			POW(EFFtS));
 
 	private static final Expression EFFeS = mEmptySet(POW(EFFtS));
 	private static final Expression EFFeT = mEmptySet(POW(EFFtT));
@@ -741,7 +738,7 @@ public class TestFormulaFactory extends AbstractTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void emptySet_DifferentFactoryType() {
-		ff.makeEmptySet(EFFPs, null);
+		ff.makeEmptySet(POW(EFFtS), null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
@@ -952,7 +949,7 @@ public class TestFormulaFactory extends AbstractTests {
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void setExtension_DifferentFactoryType() {
-		ff.makeEmptySetExtension(EFFPs, null);
+		ff.makeEmptySetExtension(POW(EFFtS), null);
 	}
 
 	@Test

@@ -217,7 +217,8 @@ public class FastFactory {
 	}
 
 	public static BoundIdentDecl mBoundIdentDecl(String name, Type type) {
-		return ff.makeBoundIdentDecl(name, null, type);
+		final FormulaFactory fac = type != null ? type.getFactory() : ff;
+		return fac.makeBoundIdentDecl(name, null, type);
 	}
 
 	public static BoundIdentifier mBoundIdentifier(int index) {
@@ -225,7 +226,8 @@ public class FastFactory {
 	}
 
 	public static BoundIdentifier mBoundIdentifier(int index, Type type) {
-		return ff.makeBoundIdentifier(index, null, type);
+		final FormulaFactory fac = type != null ? type.getFactory() : ff;
+		return fac.makeBoundIdentifier(index, null, type);
 	}
 
 	public static FreeIdentifier mFreeIdentifier(String name) {
@@ -233,7 +235,8 @@ public class FastFactory {
 	}
 
 	public static FreeIdentifier mFreeIdentifier(String name, Type type) {
-		return ff.makeFreeIdentifier(name, null, type);
+		final FormulaFactory fac = type != null ? type.getFactory() : ff;
+		return fac.makeFreeIdentifier(name, null, type);
 	}
 
 	public static FreeIdentifier mFreeIdentifier(String name, Type type,
