@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,12 +146,12 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 					Formula.LOR, 
 					disjPredList, null);
 		
-		disjPredicate = disjPredicate.applyAssignments(witnessTable.getEventDetAssignments(), factory);
+		disjPredicate = disjPredicate.applyAssignments(witnessTable.getEventDetAssignments());
 		LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 		if (concreteEventActionTable.getXiUnprime() != null)
 			substitution.add(concreteEventActionTable.getXiUnprime());
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
-		disjPredicate = disjPredicate.applyAssignments(substitution, factory);
+		disjPredicate = disjPredicate.applyAssignments(substitution);
 		
 		List<ISCEvent> absEvents = abstractEventGuardList.getAbstractEvents();
 		
@@ -205,12 +205,12 @@ public class FwdMachineEventStrengthenGuardModule extends MachineEventRefinement
 				continue;
 			}
 			
-			absGuard = absGuard.applyAssignments(witnessTable.getEventDetAssignments(), factory);
+			absGuard = absGuard.applyAssignments(witnessTable.getEventDetAssignments());
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 			if (concreteEventActionTable.getXiUnprime() != null)
 				substitution.add(concreteEventActionTable.getXiUnprime());
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
-			absGuard = absGuard.applyAssignments(substitution, factory);
+			absGuard = absGuard.applyAssignments(substitution);
 		
 			ArrayList<IPOGPredicate> hyp = makeActionAndWitnessHypothesis(absGuard);
 			

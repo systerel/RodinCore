@@ -103,12 +103,12 @@ public class FwdMachineEventActionBodySimModule extends
 			LinkedList<BecomesEqualTo> substitution = new LinkedList<BecomesEqualTo>();
 			substitution.addAll(witnessTable.getMachinePrimedDetAssignments());
 			substitution.addAll(witnessTable.getEventDetAssignments());
-			simPredicate = simPredicate.applyAssignments(substitution, factory);
+			simPredicate = simPredicate.applyAssignments(substitution);
 			substitution.clear();
 			if (concreteEventActionTable.getXiUnprime() != null)
 				substitution.add(concreteEventActionTable.getXiUnprime());
 			substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
-			simPredicate = simPredicate.applyAssignments(substitution, factory);
+			simPredicate = simPredicate.applyAssignments(substitution);
 			
 			ArrayList<IPOGPredicate> hyp = makeActionAndWitnessHypothesis(simPredicate);
 			

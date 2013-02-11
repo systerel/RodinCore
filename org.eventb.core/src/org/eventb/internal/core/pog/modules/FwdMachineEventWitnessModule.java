@@ -171,7 +171,7 @@ public class FwdMachineEventWitnessModule extends MachineEventActionUtilityModul
 		if (concreteEventActionTable.getXiUnprime() != null)
 			substitution.add(concreteEventActionTable.getXiUnprime());
 		substitution.addAll(concreteEventActionTable.getPrimedDetAssignments());
-		wdPredicate = wdPredicate.applyAssignments(substitution, factory);
+		wdPredicate = wdPredicate.applyAssignments(substitution);
 		return wdPredicate;
 	}
 

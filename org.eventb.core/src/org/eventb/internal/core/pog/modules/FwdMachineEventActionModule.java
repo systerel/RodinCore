@@ -130,7 +130,7 @@ public class FwdMachineEventActionModule extends MachineEventActionUtilityModule
 			
 			for (int i=0; i<actions.size(); i++) {
 				Predicate predicate = predicates.get(i);
-				predicate = predicate.applyAssignments(substitution, factory);
+				predicate = predicate.applyAssignments(substitution);
 				hyp.add(makePredicate(predicate, actions.get(i).getSource()));
 			}
 			
