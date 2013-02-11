@@ -187,16 +187,13 @@ public class FreeIdentifier extends Identifier {
 	 * This identifier <b>must</b> be primed.
 	 * </p>
 	 * 
-	 * @param factory
-	 *            a formula factory
 	 * @return a copy of this identifier with the prime removed
+	 * @since 3.0
 	 */
-	public FreeIdentifier withoutPrime(FormulaFactory factory) {
-		assert (factory == getFactory());
-
+	public FreeIdentifier withoutPrime() {
 		assert isPrimed();
-		
-		FreeIdentifier unprimedIdentifier = factory.makeFreeIdentifier(
+
+		FreeIdentifier unprimedIdentifier = getFactory().makeFreeIdentifier(
 				name.substring(0, name.length() - primeSuffix.length()),
 				getSourceLocation(),
 				getType());
