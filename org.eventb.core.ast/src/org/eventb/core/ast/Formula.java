@@ -1793,7 +1793,7 @@ public abstract class Formula<T extends Formula<T>> {
 		Map<FreeIdentifier, Expression> map =
 			new HashMap<FreeIdentifier, Expression>();
 		addAssignmentToMap(map, assignment);
-		return substituteFreeIdents(map, fac);
+		return substituteFreeIdents(map);
 	}
 	
 	/**
@@ -1823,7 +1823,7 @@ public abstract class Formula<T extends Formula<T>> {
 		for (BecomesEqualTo assignment: assignments) {
 			addAssignmentToMap(map, assignment);
 		}
-		return substituteFreeIdents(map, fac);
+		return substituteFreeIdents(map);
 	}
 	
 	private static void addAssignmentToMap(Map<FreeIdentifier, Expression> map,
@@ -1914,14 +1914,11 @@ public abstract class Formula<T extends Formula<T>> {
 	 * 
 	 * @param map
 	 *            The substitution to be carried out
-	 * @param ff
-	 *            formula factory to use for building the result
 	 * @return this formula after application of the substitution
+	 * @since 3.0
 	 */
-	public T substituteFreeIdents(Map<FreeIdentifier, Expression> map, FormulaFactory ff) {
-		assert (ff == fac);
-
-		SimpleSubstitution subst = new SimpleSubstitution(map, ff);
+	public T substituteFreeIdents(Map<FreeIdentifier, Expression> map) {
+		SimpleSubstitution subst = new SimpleSubstitution(map, fac);
 		return rewrite(subst);
 	}
 	

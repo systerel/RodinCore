@@ -92,7 +92,7 @@ public class TestSubstituteFormula extends AbstractTests {
 			// Type-check the expected result before comparing it
 			typeCheck(expected);
 
-			Predicate result = formula.substituteFreeIdents(sbs, ff);
+			Predicate result = formula.substituteFreeIdents(sbs);
 			assertTrue(formula.toString(), result.isTypeChecked());
 			assertEquals(formula + "\n" + sbs + "\n" , expected, result);
 		}
@@ -128,7 +128,7 @@ public class TestSubstituteFormula extends AbstractTests {
 			typeCheck(expected);
 
 			Map<FreeIdentifier, Expression> sbsMap = makeSBS(sbs);
-			Predicate iresult = formula.getPredicate().substituteFreeIdents(sbsMap, ff);
+			Predicate iresult = formula.getPredicate().substituteFreeIdents(sbsMap);
 			assertTrue(formula.toString(), iresult.isTypeChecked());
 
 			Predicate result = ff.makeQuantifiedPredicate(formula.getTag(),

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ public class IdentifierDecomposer implements ISequentTransformer {
 	@Override
 	public Predicate transform(ITrackedPredicate tpred) {
 		Predicate pred = tpred.getPredicate();
-		pred = pred.substituteFreeIdents(substitution, ff);
+		pred = pred.substituteFreeIdents(substitution);
 		pred = BoundIdentifierDecomposition.decomposeBoundIdentifiers(pred, ff);
 		return pred;
 	}
