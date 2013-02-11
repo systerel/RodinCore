@@ -40,7 +40,7 @@ public class IdentTable {
 
 	private static FreeIdentifier getUnprimed(FreeIdentifier ident, FormulaFactory formulaFactory) {
 		if (ident.isPrimed()) {
-			return ident.withoutPrime(formulaFactory);
+			return ident.withoutPrime();
 		}
 		return ident;
 	}

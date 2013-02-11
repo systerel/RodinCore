@@ -681,7 +681,7 @@ public class TestFreeIdents extends AbstractTests {
 		FreeIdentifier ap = a.withPrime();
 		assertTrue("ap should be primed", ap.isPrimed());
 		
-		FreeIdentifier np = ap.withoutPrime(ff);
+		FreeIdentifier np = ap.withoutPrime();
 		assertEquals("Primed should be the inverse of Unprimed", a, np);
 		
 		FreeIdentifier pp = np.withPrime();
