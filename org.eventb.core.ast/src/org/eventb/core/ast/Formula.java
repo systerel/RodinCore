@@ -1390,6 +1390,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 *             if this formula is an assignment.
 	 */
 	public final T flatten(FormulaFactory factory) {
+		assert (factory == fac);
+
 		IFormulaRewriter rewriter = new DefaultRewriter(true);
 		return rewrite(rewriter);
 	}
@@ -1722,7 +1724,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final T bindAllFreeIdents(List<BoundIdentDecl> boundIdentDecls,
 			FormulaFactory factory) {
-		
+		assert (factory == fac);
+
 		assert boundIdentDecls.size() == 0;
 		LinkedHashSet<FreeIdentifier> list = new LinkedHashSet<FreeIdentifier>();
 		collectFreeIdentifiers(list);
@@ -1758,6 +1761,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final T bindTheseIdents(Collection<FreeIdentifier> identsToBind,
 			FormulaFactory factory) {
+		assert (factory == fac);
 
 		// Fast return when there is nothing to change.
 		if (identsToBind.size() == 0) {
@@ -1798,6 +1802,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @see #applyAssignments(Iterable, FormulaFactory)
 	 */
 	public final T applyAssignment(BecomesEqualTo assignment, FormulaFactory ff) {
+		assert (ff == fac);
+
 		Map<FreeIdentifier, Expression> map =
 			new HashMap<FreeIdentifier, Expression>();
 		addAssignmentToMap(map, assignment);
@@ -1828,7 +1834,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final T applyAssignments(Iterable<BecomesEqualTo> assignments,
 			FormulaFactory ff) {
-		
+		assert (ff == fac);
+
 		Map<FreeIdentifier, Expression> map =
 			new HashMap<FreeIdentifier, Expression>();
 		for (BecomesEqualTo assignment: assignments) {
@@ -1930,6 +1937,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return this formula after application of the substitution
 	 */
 	public T substituteFreeIdents(Map<FreeIdentifier, Expression> map, FormulaFactory ff) {
+		assert (ff == fac);
+
 		SimpleSubstitution subst = new SimpleSubstitution(map, ff);
 		return rewrite(subst);
 	}
@@ -2013,6 +2022,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @return the well-definedness predicate for this formula.
 	 */
 	public final Predicate getWDPredicate(FormulaFactory formulaFactory) {
+		assert (formulaFactory == fac);
+
 		ensureTypeChecked();
 		final WDComputer wdComputer = new WDComputer(formulaFactory);
 		final Predicate wdLemma = wdComputer.getWDLemma(this);
@@ -2102,6 +2113,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 *         given offset
 	 */
 	public T shiftBoundIdentifiers(int offset, FormulaFactory factory) {
+		assert (factory == fac);
+
 		if (offset == 0) {
 			return getTypedThis();
 		}
@@ -2361,6 +2374,8 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public final T rewriteSubFormula(IPosition position, Formula<?> newFormula,
 			FormulaFactory factory) {
+		assert (factory == fac);
+		assert (newFormula.getFactory() == fac);
 
 		ensureTypeChecked();
 		if (position == null)
