@@ -577,13 +577,11 @@ public class UnaryExpression extends Expression {
 
 	@Deprecated
 	@Override
-	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
-		assert (factory == getFactory());
-
+	public Type toType() throws InvalidExpressionException {
 		if (getTag() != POW)
 			throw new InvalidExpressionException();
-		Type childAsType = child.toType(factory);
-		return factory.makePowerSetType(childAsType);
+		Type childAsType = child.toType();
+		return getFactory().makePowerSetType(childAsType);
 	}
 
 	@Override

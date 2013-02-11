@@ -151,31 +151,21 @@ public abstract class Expression extends Formula<Expression> {
 		return false;
 	}
 	
-	
 	/**
 	 * Returns the type corresponding to this type-checked expression.
 	 * <p>
 	 * The returned type is <em>not</em> the type of this expression.
 	 * </p>
 	 * 
-	 * @param factory
-	 *            factory to use for building the result; it is guaranteed to
-	 *            recognize all extensions contained in this expression
 	 * @return the type represented by this expression
 	 * @throws InvalidExpressionException
 	 *             when this expression doesn't denote a type
 	 * @see Type#toExpression()
 	 * @see #isATypeExpression()
-	 */
-	protected Type toType(FormulaFactory factory) throws InvalidExpressionException {
-		throw new InvalidExpressionException();
-	}
-	
-	/**
 	 * @since 2.0
 	 */
-	public final Type toType() throws InvalidExpressionException {
-		return toType(getFactory());
+	public Type toType() throws InvalidExpressionException {
+		throw new InvalidExpressionException();
 	}
 	
 	/**
