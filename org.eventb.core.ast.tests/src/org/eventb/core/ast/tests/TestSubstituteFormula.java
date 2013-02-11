@@ -531,7 +531,7 @@ public class TestSubstituteFormula extends AbstractTests {
 		Expression expected = plus(id_y, id_x);
 		typeCheck(expected, te); 
 
-		Expression actual = expr.applyAssignments(Arrays.asList(assignments), ff);
+		Expression actual = expr.applyAssignments(Arrays.asList(assignments));
 		assertEquals("Wrong result of substitution", expected, actual);
 	}
 	

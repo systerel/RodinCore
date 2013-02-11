@@ -1786,7 +1786,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @param assignment
 	 *            the assignment to apply
 	 * @return this formula with the given assignment applied to it
-	 * @see #applyAssignments(Iterable, FormulaFactory)
+	 * @see #applyAssignments(Iterable)
 	 * @since 3.0
 	 */
 	public final T applyAssignment(BecomesEqualTo assignment) {
@@ -1813,21 +1813,17 @@ public abstract class Formula<T extends Formula<T>> {
 	 * 
 	 * @param assignments
 	 *            the assignments to apply
-	 * @param ff
-	 *            factory to use for building the result
 	 * @return this formula with the given assignments applied to it
 	 * @see #applyAssignment(BecomesEqualTo)
+	 * @since 3.0
 	 */
-	public final T applyAssignments(Iterable<BecomesEqualTo> assignments,
-			FormulaFactory ff) {
-		assert (ff == fac);
-
+	public final T applyAssignments(Iterable<BecomesEqualTo> assignments) {
 		Map<FreeIdentifier, Expression> map =
 			new HashMap<FreeIdentifier, Expression>();
 		for (BecomesEqualTo assignment: assignments) {
 			addAssignmentToMap(map, assignment);
 		}
-		return substituteFreeIdents(map, ff);
+		return substituteFreeIdents(map, fac);
 	}
 	
 	private static void addAssignmentToMap(Map<FreeIdentifier, Expression> map,
