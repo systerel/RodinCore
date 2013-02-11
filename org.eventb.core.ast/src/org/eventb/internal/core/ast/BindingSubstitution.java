@@ -45,7 +45,7 @@ public class BindingSubstitution extends SimpleSubstitution {
 
 		int index = offset - 1;
 		for (FreeIdentifier ident : identsToBind) {
-			map.put(ident, Substitute.makeSubstitute(index--, ff));
+			map.put(ident, Substitute.makeSubstitute(index--));
 		}
 	}
 

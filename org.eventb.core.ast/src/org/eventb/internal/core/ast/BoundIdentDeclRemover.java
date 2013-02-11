@@ -68,7 +68,7 @@ public class BoundIdentDeclRemover extends Substitution {
 		// declarations is built in reverse order.
 		for (int i = 0; i <= lastIndex; i++) {
 			if (keep[lastIndex - i]) {
-				substitutes[i] = Substitute.makeSubstitute(newIndex ++, ff);
+				substitutes[i] = Substitute.makeSubstitute(newIndex ++);
 				newDecls.add(decls[lastIndex - i]);
 			}
 		}

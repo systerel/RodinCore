@@ -55,7 +55,7 @@ public class BoundIdentSubstitution extends BoundIdentDeclRemover {
 		for (int i = 0; i <= lastIndex; i++) {
 			Expression expr = exprs[lastIndex - i];
 			if (expr != null) {
-				substitutes[i] = Substitute.makeSubstitute(expr, newDeclSize, ff);
+				substitutes[i] = Substitute.makeSubstitute(expr, newDeclSize);
 			}
 		}
 	}
