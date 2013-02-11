@@ -271,7 +271,7 @@ public class GenMPC {
 			}
 
 			for (IPosition pos : entry.getValue()) {
-				rewriteGoal = Rewrite(rewriteGoal, value, pos, substitute, ff);
+				rewriteGoal = Rewrite(rewriteGoal, value, pos, substitute);
 			}
 		}
 
@@ -303,7 +303,6 @@ public class GenMPC {
 			Level level) {
 		boolean isGoalDependent = false;
 		List<IHypAction> hypActions = new ArrayList<IHypAction>();
-		final FormulaFactory ff = seq.getFormulaFactory();
 		for (Entry<Predicate, Map<Predicate, List<IPosition>>> entryMap : modifHypMap
 				.entrySet()) {
 			Set<Predicate> inferredHyps = new HashSet<Predicate>();
@@ -326,7 +325,7 @@ public class GenMPC {
 				}
 				final Predicate substitute = substitution[1];
 				for (IPosition pos : entryPos.getValue()) {
-					rewriteHyp = Rewrite(rewriteHyp, pred, pos, substitute, ff);
+					rewriteHyp = Rewrite(rewriteHyp, pred, pos, substitute);
 				}
 			}
 			if (rewriteHyp != hyp) {
@@ -442,15 +441,13 @@ public class GenMPC {
 	 *            the position of the sub-predicate to be replaced
 	 * @param substitute
 	 *            the substitute of the predicate to be replace
-	 * @param ff
-	 *            the formula factory of the sequent containing the predicate
 	 * @return the re-written predicate with the parameters given her-above if
 	 *         the sub-formula of <code>pred</code> at the position
 	 *         <code>pos</code> is equal to the predicate <code>replaced</code>,
 	 *         <code>pred</code> else.
 	 */
 	private static Predicate Rewrite(Predicate pred, Predicate replaced,
-			IPosition pos, Predicate substitute, FormulaFactory ff) {
+			IPosition pos, Predicate substitute) {
 		if (!pred.getSubFormula(pos).equals(replaced)) {
 			return pred;
 		}
