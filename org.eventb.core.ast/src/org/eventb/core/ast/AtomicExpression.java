@@ -421,9 +421,8 @@ public class AtomicExpression extends Expression {
 	}
 
 	@Override
-	public Type toType(FormulaFactory factory) throws InvalidExpressionException {
-		assert (factory == getFactory());
-
+	public Type toType() throws InvalidExpressionException {
+		final FormulaFactory factory = getFactory();
 		switch (getTag()) {
 		case INTEGER:
 			return factory.makeIntegerType();

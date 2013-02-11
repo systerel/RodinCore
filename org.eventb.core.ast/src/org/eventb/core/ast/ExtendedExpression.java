@@ -495,18 +495,16 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 	}
 	
 	@Override
-	public Type toType(FormulaFactory factory)
+	public Type toType()
 			throws InvalidExpressionException {
-		assert (factory == getFactory());
-
 		if (!extension.isATypeConstructor()) {
 			throw new InvalidExpressionException();
 		}
 		final List<Type> typeParams = new ArrayList<Type>();
 		for (Expression child : childExpressions) {
-			typeParams.add(child.toType(factory));
+			typeParams.add(child.toType());
 		}
-		return factory.makeParametricType(typeParams, extension);
+		return getFactory().makeParametricType(typeParams, extension);
 	}
 	
 	@Override
