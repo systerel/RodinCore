@@ -527,7 +527,7 @@ public class MainParsers {
 		final List<BoundIdentDecl> decls = new ArrayList<BoundIdentDecl>(lhsList.size());
 	    for (FreeIdentifier ident: lhsList) {
 			if (ident.isPrimed()) {
-				decls.add(ident.asDecl(factory));
+				decls.add(ident.asDecl());
 			} else {
 				decls.add(ident.asPrimedDecl(factory));
 			}

@@ -148,15 +148,12 @@ public class FreeIdentifier extends Identifier {
 	 * Returns a declaration of a bound identifier, using this identifier as
 	 * model.
 	 * 
-	 * @param factory
-	 *            a formula factory
 	 * @return a bound identifier declaration with the same properties as this
 	 *         identifier
+	 * @since 3.0
 	 */
-	public BoundIdentDecl asDecl(FormulaFactory factory) {
-		assert (factory == getFactory());
-
-		BoundIdentDecl decl = factory.makeBoundIdentDecl(
+	public BoundIdentDecl asDecl() {
+		BoundIdentDecl decl = getFactory().makeBoundIdentDecl(
 				name, 
 				getSourceLocation(), 
 				getType());

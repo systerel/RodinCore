@@ -697,7 +697,7 @@ public class TestFreeIdents extends AbstractTests {
 		FreeIdentifier a = ff.makeFreeIdentifier("a", null);
 		assertFalse("a should be unprimed", a.isPrimed());
 		
-		BoundIdentDecl bd = a.asDecl(ff);
+		BoundIdentDecl bd = a.asDecl();
 		assertEquals("name of bound should equal name of free identifier", 
 				a.getName(), bd.getName());
 		
