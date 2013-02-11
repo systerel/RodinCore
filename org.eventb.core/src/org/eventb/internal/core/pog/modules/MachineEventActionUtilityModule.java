@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,10 +156,8 @@ public abstract class MachineEventActionUtilityModule extends UtilityModule {
 			new ArrayList<IPOGPredicate>(nondetAssignments.size());
 		
 		for (int i=0; i<nondetAssignments.size(); i++) {
-			hyp.add(
-					makePredicate(
-							nondetAssignments.get(i).getBAPredicate(factory),
-							nondetActions.get(i).getSource()));
+			hyp.add(makePredicate(nondetAssignments.get(i).getBAPredicate(),
+					nondetActions.get(i).getSource()));
 		}
 		return hyp;		
 	}
