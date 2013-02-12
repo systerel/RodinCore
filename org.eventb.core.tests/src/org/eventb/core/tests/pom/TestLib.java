@@ -34,8 +34,6 @@ import org.eventb.core.seqprover.ProverFactory;
  *  org.eventb.core.seqprover.tests). Find a way to use ony one copy, without placing it in seqprover.
  *
  */public class TestLib {
-
-	public final static FormulaFactory ff = FormulaFactory.getDefault();
 	
 	/**
 	 * Constructs a simple sequent (only with selected hypotheses and a goal) from
@@ -49,13 +47,15 @@ import org.eventb.core.seqprover.ProverFactory;
 	 * 
 	 * This method is used to easily construct sequents for test cases.
 	 * 
+	 * @param ff
+	 * 		The factory used to parse the sequent
 	 * @param sequentAsString
 	 * 			The sequent as a string
 	 * @return
 	 * 			The resulting sequent, or <code>null</code> in case the sequent 
 	 * 			could not be constructed due to a parsing or typechecking error.
 	 */
-	public static IProverSequent genSeq(String sequentAsString){
+	public static IProverSequent genSeq(FormulaFactory ff, String sequentAsString){
 		String[] hypsStr = (sequentAsString.split("\\|-")[0]).split(";;");
 		if ((hypsStr.length == 1) && (hypsStr[0].matches("^[ ]*$")))
 			hypsStr = new String[0];
@@ -93,8 +93,8 @@ import org.eventb.core.seqprover.ProverFactory;
 		return seq;
 	}
 	
-	public static IProofTreeNode genProofTreeNode(String str){
-		return ProverFactory.makeProofTree(genSeq(str), null).getRoot();
+	public static IProofTreeNode genProofTreeNode(FormulaFactory ff, String str){
+		return ProverFactory.makeProofTree(genSeq(ff, str), null).getRoot();
 	}
 		
 	/**
@@ -103,13 +103,15 @@ import org.eventb.core.seqprover.ProverFactory;
 	 * The type environment must be completely inferrable from the given predicate.
 	 * (eg. "x=x" will not work since the type of x is unknown)
 	 * 
+ 	 * @param ff
+	 * 		The factory used to parse the predicate
 	 * @param str
 	 * 		The string version of the predicate
 	 * @return
 	 * 		The type checked predicate, or <code>null</code> if there was a parsing
 	 * 		of type checking error. 
 	 */
-	public static Predicate genPred(String str){
+	public static Predicate genPred(FormulaFactory ff, String str){
 		Predicate result = ff.parsePredicate(str, LanguageVersion.V2, null).getParsedPredicate();
 		if (result == null) return null;
 		ITypeCheckResult tcResult =  result.typeCheck(ff.makeTypeEnvironment());
@@ -118,15 +120,15 @@ import org.eventb.core.seqprover.ProverFactory;
 	}
 	
 	/**
-	 * A Set version of {@link #genPred(String)}
+	 * A Set version of {@link #genPred(FormulaFactory, String)}
 	 * 
 	 * @param strs
 	 * @return a set of predicates
 	 */
-	public static Set<Predicate> genPreds(String... strs){
+	public static Set<Predicate> genPreds(FormulaFactory ff, String... strs){
 		Set<Predicate> hyps = new HashSet<Predicate>(strs.length);
 		for (String s : strs) 
-			hyps.add(genPred(s));
+			hyps.add(genPred(ff, s));
 		return hyps;
 	}
 
