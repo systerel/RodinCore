@@ -61,8 +61,7 @@ public class FiniteFunRelImg extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input,
-			FormulaFactory ff) {
+	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input) {
 		// f[s]
 		final BinaryExpression img = (BinaryExpression) getFiniteExpression(goal);
 		final Expression f = img.getLeft();
@@ -76,12 +75,12 @@ public class FiniteFunRelImg extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input,
-			FormulaFactory ff) {
+	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input) {
 		final BinaryExpression img = (BinaryExpression) getFiniteExpression(goal);
 		final Expression f = img.getLeft();
 		final Expression s = img.getRight();
 		final Expression inputExpr = input.getExpression();
+		final FormulaFactory ff = goal.getFactory();
 		return new Predicate[] {
 		// WD(S +-> T)
 				inputExpr.getWDPredicate(), //

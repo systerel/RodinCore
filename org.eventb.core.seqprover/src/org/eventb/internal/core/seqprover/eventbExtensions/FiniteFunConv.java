@@ -61,9 +61,8 @@ public class FiniteFunConv extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input,
-			FormulaFactory ff) {
-		final Expression fConverse = getFunctionConverse(goal, ff);
+	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input) {
+		final Expression fConverse = getFunctionConverse(goal);
 		final Expression expr = input.getExpression();
 		if (!fConverse.getType().equals(expr.getType().getBaseType())) {
 			return reasonerFailure(this, input, "Type check failed for "
@@ -73,11 +72,11 @@ public class FiniteFunConv extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input,
-			FormulaFactory ff) {
-		final Expression fConverse = getFunctionConverse(goal, ff);
+	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input) {
+		final Expression fConverse = getFunctionConverse(goal);
 		final Expression inputExpr = input.getExpression();
 		final Expression S = input.getLeft();
+		final FormulaFactory ff = goal.getFactory();
 		return new Predicate[] {
 		// WD(S +-> T)
 				inputExpr.getWDPredicate(), //
@@ -90,8 +89,9 @@ public class FiniteFunConv extends PFunSetInputReasoner {
 		};
 	}
 
-	private Expression getFunctionConverse(Predicate goal, FormulaFactory ff) {
+	private Expression getFunctionConverse(Predicate goal) {
 		final Expression f = getFiniteExpression(goal);
+		final FormulaFactory ff = goal.getFactory();
 		return ff.makeUnaryExpression(CONVERSE, f, null);
 	}
 

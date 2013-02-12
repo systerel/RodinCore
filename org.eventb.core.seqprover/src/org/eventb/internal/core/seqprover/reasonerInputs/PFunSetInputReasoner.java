@@ -15,17 +15,16 @@ import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.seqprover.IProofMonitor;
+import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerFailure;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerInputReader;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.SingleExprInputReasoner;
 
@@ -56,13 +55,11 @@ public abstract class PFunSetInputReasoner extends SingleExprInputReasoner {
 			return reasonerFailure(this, input,
 					"Expected a set of all partial functions S ⇸ T");
 		final PFunSetInput pInput = (PFunSetInput) input;
-		final FormulaFactory ff = seq.getFormulaFactory();
-		final IReasonerFailure inputFailure = verifyInput(goal, pInput, ff);
+		final IReasonerFailure inputFailure = verifyInput(goal, pInput);
 		if (inputFailure != null) {
 			return inputFailure;
 		}
-		final IAntecedent[] antes = makeAntecedents(getSubgoals(goal, pInput,
-				ff));
+		final IAntecedent[] antes = makeAntecedents(getSubgoals(goal, pInput));
 		return makeProofRule(this, input, goal, getReasonerDesc(), antes);
 	}
 
@@ -91,12 +88,10 @@ public abstract class PFunSetInputReasoner extends SingleExprInputReasoner {
 	 * @param input
 	 *            the set of partial functions given by the user, to type check
 	 *            the function
-	 * @param ff 
-	 * 			  the formula factory to use
 	 * @return an IReasonerFailure if type check failed, null otherwise
 	 */
 	abstract protected IReasonerFailure verifyInput(Predicate goal,
-			PFunSetInput input, FormulaFactory ff);
+			PFunSetInput input);
 
 	/**
 	 * Computes an array of subgoals that constitute the antecedents of the rule
@@ -106,12 +101,10 @@ public abstract class PFunSetInputReasoner extends SingleExprInputReasoner {
 	 *            the predicate enclosing the function f
 	 * @param input
 	 *            the input given by the user
-	 * @param ff
-	 * 			  the formula factory to use
 	 * @return an array of subgoals to build the ProofRule
 	 */
 	abstract protected Predicate[] getSubgoals(Predicate goal,
-			PFunSetInput input, FormulaFactory ff);
+			PFunSetInput input);
 
 	/**
 	 * Assuming the goal to be of form <code>finite(E)</code>, returns

@@ -60,8 +60,7 @@ public class FiniteFunRan extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input,
-			FormulaFactory ff) {
+	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input) {
 		final Expression ranF = getFiniteExpression(goal);
 		Expression f = ((UnaryExpression) ranF).getChild();
 		final PFunSetInput pFunInput = (PFunSetInput) input;
@@ -74,12 +73,12 @@ public class FiniteFunRan extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input,
-			FormulaFactory ff) {
+	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input) {
 		final Expression ranF = getFiniteExpression(goal);
 		final Expression f = ((UnaryExpression) ranF).getChild();
 		final Expression expr = input.getExpression();
 		final Expression S = input.getLeft();
+		final FormulaFactory ff = goal.getFactory();
 		return new Predicate[] {
 		// WD(S +-> T)
 				expr.getWDPredicate(), //

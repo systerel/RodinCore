@@ -59,8 +59,7 @@ public class FiniteFunction extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input,
-			FormulaFactory ff) {
+	protected IReasonerFailure verifyInput(Predicate goal, PFunSetInput input) {
 		final Expression f = getFiniteExpression(goal);
 		final Expression expr = input.getExpression();
 		if (!f.getType().equals(expr.getType().getBaseType())) {
@@ -71,11 +70,11 @@ public class FiniteFunction extends PFunSetInputReasoner {
 	}
 
 	@Override
-	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input,
-			FormulaFactory ff) {
+	protected Predicate[] getSubgoals(Predicate goal, PFunSetInput input) {
 		final Expression f = getFiniteExpression(goal);
 		final Expression expr = input.getExpression();
 		final Expression S = input.getLeft();
+		final FormulaFactory ff = goal.getFactory();
 		return new Predicate[] {
 		// WD(S +-> T)
 				expr.getWDPredicate(), //
