@@ -49,10 +49,11 @@ public class Expanders {
 	 * @param pred
 	 *            the partition predicate to expand
 	 * @return the definition of the predicate
+	 * @since 3.0
 	 */
-	public static Predicate expandPARTITION(Predicate pred, FormulaFactory ff) {
+	public static Predicate expandPARTITION(Predicate pred) {
 		assert pred.getTag() == KPARTITION;
-		return new PartitionExpander((MultiplePredicate) pred, ff).expand();
+		return new PartitionExpander((MultiplePredicate) pred).expand();
 	}
 
 }

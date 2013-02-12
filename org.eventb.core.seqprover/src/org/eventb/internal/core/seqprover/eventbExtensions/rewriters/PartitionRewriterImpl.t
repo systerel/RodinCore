@@ -58,7 +58,6 @@ public class PartitionRewriterImpl extends DefaultRewriter {
 	@ProverRule("DEF_PARTITION")
 	@Override
 	public Predicate rewrite(MultiplePredicate predicate) {
-		FormulaFactory ff = predicate.getFactory();
 	    %match (Predicate predicate) {
 
 			/**
@@ -70,7 +69,7 @@ public class PartitionRewriterImpl extends DefaultRewriter {
 	    	 *                                               (where S and Si are sets)
 	    	 */
 			Partition(_) -> {
-				return Expanders.expandPARTITION(predicate, ff);
+				return Expanders.expandPARTITION(predicate);
 			}
 			
 	    }
