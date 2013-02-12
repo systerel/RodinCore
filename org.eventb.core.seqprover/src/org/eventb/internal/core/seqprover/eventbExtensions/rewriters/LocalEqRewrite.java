@@ -124,8 +124,7 @@ public class LocalEqRewrite implements IReasoner {
 		} else {
 			// Hypothesis rewriting
 			final Predicate[] hyps = deserializeHypotheses(reader);
-			final FormulaFactory ff = reader.getFormulaFactory();
-			final Input input = makeInput(hyps, position, ff);
+			final Input input = makeInput(hyps, position);
 			if (input == null) {
 				throw new SerializeException(new IllegalStateException(
 						"Cannot proceed re-writing with the given hypotheses"));
@@ -138,16 +137,15 @@ public class LocalEqRewrite implements IReasoner {
 	 * Try to re-create the input using the two hypotheses and position
 	 * serialized, as well as the predicate created by the rule.
 	 */
-	private Input makeInput(Predicate[] hyps, IPosition position,
-			FormulaFactory ff) {
+	private Input makeInput(Predicate[] hyps, IPosition position) {
 		final Predicate hyp0 = hyps[0];
 		final Predicate hyp1 = hyps[1];
 		final Predicate result = hyps[2];
-		final Input input0 = makeInput(hyp0, hyp1, position, result, ff);
+		final Input input0 = makeInput(hyp0, hyp1, position, result);
 		if (input0 != null) {
 			return input0;
 		}
-		final Input input1 = makeInput(hyp1, hyp0, position, result, ff);
+		final Input input1 = makeInput(hyp1, hyp0, position, result);
 		if (input1 != null) {
 			return input1;
 		}
@@ -155,7 +153,7 @@ public class LocalEqRewrite implements IReasoner {
 	}
 
 	private Input makeInput(Predicate equality, Predicate toRewrite,
-			IPosition position, Predicate result, FormulaFactory ff) {
+			IPosition position, Predicate result) {
 		if (equality.getTag() != EQUAL) {
 			return null;
 		}
@@ -166,10 +164,10 @@ public class LocalEqRewrite implements IReasoner {
 		final RelationalPredicate rEq = (RelationalPredicate) equality;
 		final Expression right = rEq.getRight();
 		final Expression left = rEq.getLeft();
-		if (makeInput(right, left, replaced, toRewrite, position, result, ff)) {
+		if (makeInput(right, left, replaced, toRewrite, position, result)) {
 			return new Input(toRewrite, position, equality);
 		}
-		if (makeInput(left, right, replaced, toRewrite, position, result, ff)) {
+		if (makeInput(left, right, replaced, toRewrite, position, result)) {
 			return new Input(toRewrite, position, equality);
 		}
 		return null;
@@ -177,7 +175,7 @@ public class LocalEqRewrite implements IReasoner {
 
 	private boolean makeInput(Expression ident, Expression substitute,
 			Formula<?> replaced, Predicate toRewrite, IPosition position,
-			Predicate result, FormulaFactory ff) {
+			Predicate result) {
 		if (ident.getTag() != FREE_IDENT) {
 			return false;
 		}
@@ -259,7 +257,6 @@ public class LocalEqRewrite implements IReasoner {
 		if (!(input instanceof Input)) {
 			return reasonerFailure(this, input, "Wrong input's class.");
 		}
-		final FormulaFactory ff = seq.getFormulaFactory();
 		final Input myInput = (Input) input;
 		final Predicate hyp = myInput.getPred();
 		final IPosition position = myInput.getPosition();
@@ -274,7 +271,7 @@ public class LocalEqRewrite implements IReasoner {
 		}
 		if (hyp == null) {
 			final Predicate goal = seq.goal();
-			final Predicate newGoal = rewrite(goal, position, eqPred, ff);
+			final Predicate newGoal = rewrite(goal, position, eqPred);
 			if (newGoal == null) {
 				return reasonerFailure(this, input,
 						"The goal cannot be re-written with the given input.");
@@ -286,7 +283,7 @@ public class LocalEqRewrite implements IReasoner {
 				return reasonerFailure(this, input, hyp
 						+ " is not a hypothesis of the given sequent");
 			}
-			final Predicate newHyp = rewrite(hyp, position, eqPred, ff);
+			final Predicate newHyp = rewrite(hyp, position, eqPred);
 			if (newHyp == null) {
 				return reasonerFailure(this, input,
 						"The hypothesis cannot be re-written with the given input.");
@@ -307,7 +304,7 @@ public class LocalEqRewrite implements IReasoner {
 	 * and the predicate denoting an equality. Returns the predicte re-written.
 	 */
 	private Predicate rewrite(final Predicate pred, final IPosition position,
-			final Predicate equality, final FormulaFactory ff) {
+			final Predicate equality) {
 		final Expression ident = (Expression) pred.getSubFormula(position);
 		final Expression exp = testIdent((RelationalPredicate) equality, ident);
 		if (exp == null) {
