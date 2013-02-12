@@ -47,8 +47,7 @@ public class DoubleImplHypRewrites extends AbstractManualRewrites {
 	public Predicate rewrite(Predicate pred, IPosition position) {
 		BinaryPredicate predicate = (BinaryPredicate) pred
 				.getSubFormula(position);
-		IFormulaRewriter rewriter = new DoubleImplicationRewriter(true,
-				pred.getFactory());
+		IFormulaRewriter rewriter = new DoubleImplicationRewriter(true);
 		Predicate newSubPredicate = rewriter.rewrite(predicate);
 		return pred.rewriteSubFormula(position, newSubPredicate);
 	}
