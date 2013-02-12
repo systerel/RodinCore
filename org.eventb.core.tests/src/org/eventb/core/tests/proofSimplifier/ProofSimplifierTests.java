@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.tests.proofSimplifier;
 
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.hyp;
 import static org.eventb.core.tests.ResourceUtils.CTX_BARE_NAME;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
@@ -21,6 +21,7 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSRoot;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.pm.IProofAttempt;
@@ -136,18 +137,17 @@ public class ProofSimplifierTests extends BuilderTest {
 		createPSFile();
 		final IPRRoot prRoot = ResourceUtils.createPRFile(rodinProject,
 				CTX_BARE_NAME, contents);
-		
+		final FormulaFactory fac = prRoot.getFormulaFactory();
 		final IProofManager pm = EventBPlugin.getProofManager();
 		final IProofComponent pc = pm.getProofComponent(prRoot);
-		
 		final IProofAttempt pa = pc.createProofAttempt(AXM1_THM, "TEST", null);
 		final IProofTreeNode root = pa.getProofTree().getRoot();
 		IProofTreeNode node = root;
 		
-		Tactics.removeMembership(TestLib.genPred("c ∈ ℤ∖{0}"), IPosition.ROOT)
+		Tactics.removeMembership(TestLib.genPred(fac, "c ∈ ℤ∖{0}"), IPosition.ROOT)
 				.apply(node, null);
 		node = node.getFirstOpenDescendant();
-		Tactics.removeMembership(TestLib.genPred("c ∈ ℕ∖{0}"), IPosition.ROOT)
+		Tactics.removeMembership(TestLib.genPred(fac, "c ∈ ℕ∖{0}"), IPosition.ROOT)
 				.apply(node, null);
 		node = node.getFirstOpenDescendant();
 		hyp().apply(node, null);
@@ -156,6 +156,6 @@ public class ProofSimplifierTests extends BuilderTest {
 		pa.dispose();
 		
 		// the following throws IllegalStateException when the bug is present
-		pc.getProofSkeleton(AXM1_THM, factory, null);
+		pc.getProofSkeleton(AXM1_THM, fac, null);
 	}
 }

@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eventb.core.tests.pom;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.eventb.core.EventBAttributes.HYPS_ATTRIBUTE;
 import static org.eventb.core.seqprover.eventbExtensions.Tactics.impI;
 import static org.eventb.core.seqprover.tactics.BasicTactics.replayTac;
 import static org.eventb.core.tests.ResourceUtils.importProjectFiles;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.rodinp.core.IRodinDBStatusConstants.ATTRIBUTE_DOES_NOT_EXIST;
 
 import java.util.Collections;
@@ -127,7 +127,7 @@ public class ProofSerializationTests extends BuilderTest {
 		
 		// Test 1
 		
-		IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
+		IProverSequent sequent = TestLib.genSeq(factory, "|- ⊤ ⇒ ⊤");
 		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
 		checkProofTreeSerialization(proof1, proofTree, false);
 		
@@ -142,7 +142,7 @@ public class ProofSerializationTests extends BuilderTest {
 		
 		// Test 2
 		
-		sequent = TestLib.genSeq("⊤ |- ⊤ ∧ ⊤");
+		sequent = TestLib.genSeq(factory, "⊤ |- ⊤ ∧ ⊤");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
 		(new AutoTactics.ClarifyGoalTac()).apply(proofTree.getRoot(), null);
 		// The next check is to see if the prover is behaving itself.
@@ -151,7 +151,7 @@ public class ProofSerializationTests extends BuilderTest {
 		
 		// Test 3
 		
-		sequent = TestLib.genSeq("⊤ |- 0 ∈ ℕ ∧ 0 ∈ ℤ");
+		sequent = TestLib.genSeq(factory, "⊤ |- 0 ∈ ℕ ∧ 0 ∈ ℤ");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
 		checkProofTreeSerialization(proof1, proofTree, false);
 		
@@ -159,7 +159,7 @@ public class ProofSerializationTests extends BuilderTest {
 		checkProofTreeSerialization(proof1, proofTree, true);
 		
 		// Test 4 ; a proof tree with no goal dependencies, open
-		sequent = TestLib.genSeq("⊥ |- ⊥");
+		sequent = TestLib.genSeq(factory, "⊥ |- ⊥");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
 		checkProofTreeSerialization(proof1, proofTree, false);
 		
@@ -171,7 +171,7 @@ public class ProofSerializationTests extends BuilderTest {
 		
 		
 		// Test 4 ; a proof tree with no goal dependencies, closed
-		sequent = TestLib.genSeq("⊥ |- ⊥");
+		sequent = TestLib.genSeq(factory, "⊥ |- ⊥");
 		proofTree = ProverFactory.makeProofTree(sequent, null);
 		checkProofTreeSerialization(proof1, proofTree, false);
 		(new AutoTactics.FalseHypTac()).apply(proofTree.getRoot(), null);
@@ -187,7 +187,7 @@ public class ProofSerializationTests extends BuilderTest {
 		final IPRProof proof = prRoot.createChild(IPRProof.ELEMENT_TYPE, null,
 				null);
 
-		final IProverSequent seq = TestLib.genSeq(
+		final IProverSequent seq = TestLib.genSeq(factory,
 				"   x ∈ ℕ" +
 				";; y ∈ ℕ" +
 				";; (∀a,b· a ∈ ℕ ∧ b ∈ ℕ ⇒ a+b ∈ ℕ)" +
@@ -219,7 +219,7 @@ public class ProofSerializationTests extends BuilderTest {
 	public void testReasonerVersionCurrent() throws Exception {
 		IPRProof proof1 = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
-		IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
+		IProverSequent sequent = TestLib.genSeq(factory, "|- ⊤ ⇒ ⊤");
 		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
 		
 		checkProofTreeSerialization(proof1, proofTree, false);
@@ -235,7 +235,7 @@ public class ProofSerializationTests extends BuilderTest {
 	public void testReasonerVersionOld() throws Exception {
 		IPRProof proof1 = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
-		IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
+		IProverSequent sequent = TestLib.genSeq(factory, "|- ⊤ ⇒ ⊤");
 		IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
 
 		final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
@@ -256,7 +256,7 @@ public class ProofSerializationTests extends BuilderTest {
 	public void testErroneousProof() throws Exception {
 		final IPRProof proof = prRoot.createChild(IPRProof.ELEMENT_TYPE, null, null);
 
-		final IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
+		final IProverSequent sequent = TestLib.genSeq(factory, "|- ⊤ ⇒ ⊤");
 		final IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
 		final IProofTreeNode root = proofTree.getRoot();
 		impI().apply(root, null);
@@ -301,7 +301,7 @@ public class ProofSerializationTests extends BuilderTest {
 		final IPRRoot prFile = getProofRoot("reasonerStorage");
 		final IPRProof proof = prFile.getProof("oldProof");
 
-		final IProverSequent sequent = TestLib.genSeq("|- ⊤ ⇒ ⊤");
+		final IProverSequent sequent = TestLib.genSeq(factory, "|- ⊤ ⇒ ⊤");
 		final IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
 		final IProofTreeNode root = proofTree.getRoot();
 		impI().apply(root, null);
@@ -334,8 +334,8 @@ public class ProofSerializationTests extends BuilderTest {
 		final IPRRoot prFile = getProofRoot("contrapInHyp");
 		final IPRProof proof = prFile.getProof("oldContrapHyp");
 
-		final IProverSequent sequent = TestLib.genSeq("0=0⇒⊥ |- 0≠0");
-		Predicate hyp = TestLib.genPred("0=0⇒⊥");
+		final IProverSequent sequent = TestLib.genSeq(factory, "0=0⇒⊥ |- 0≠0");
+		Predicate hyp = TestLib.genPred(factory, "0=0⇒⊥");
 		final IProofTree proofTree = ProverFactory.makeProofTree(sequent, null);
 		final IProofTreeNode root = proofTree.getRoot();
 
@@ -359,7 +359,7 @@ public class ProofSerializationTests extends BuilderTest {
 		final IPRRoot prFile = getProofRoot("contrapInHyp2");
 		final IPRProof proof = prFile.getProof("cplx");
 
-		final IProverSequent sequent = TestLib.genSeq(
+		final IProverSequent sequent = TestLib.genSeq(factory,
 				"s≠(∅ ⦂ ℙ(S))⇒(∀x⦂ℙ(S)·s⊆x⇒(x⊆t⇒t=s)) ;; " +
 				"s∈ℙ(S)∧s⊆t ;; " +
 				"s≠(∅ ⦂ ℙ(S))" +
@@ -376,7 +376,7 @@ public class ProofSerializationTests extends BuilderTest {
 		final IPRRoot prFile = getProofRoot("ae");
 		final IPRProof proof = prFile.getProof("oldAE");
 
-		final IProverSequent sequent = TestLib.genSeq("|- 0≥0");
+		final IProverSequent sequent = TestLib.genSeq(factory, "|- 0≥0");
 		final IProofTree expected = ProverFactory.makeProofTree(sequent, null);
 		final IProofTreeNode expectedRoot = expected.getRoot();
 
@@ -401,7 +401,8 @@ public class ProofSerializationTests extends BuilderTest {
 		final IPRRoot prFile = getProofRoot("ae_WD");
 		final IPRProof proof = prFile.getProof("ae_with_wd");
 
-		final IProverSequent sequent = TestLib.genSeq("s∈ℙ(BOOL) ;; finite(s) |- card(s)≥0");
+		final IProverSequent sequent = TestLib.genSeq(factory,
+				"s∈ℙ(BOOL) ;; finite(s) |- card(s)≥0");
 
 		checkReplay(sequent, proof);
 	}
