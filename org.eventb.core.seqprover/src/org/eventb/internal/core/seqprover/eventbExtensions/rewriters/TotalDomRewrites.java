@@ -108,8 +108,7 @@ public class TotalDomRewrites implements IVersionedReasoner {
 		if (function == null) {
 			return failure(input, toRewrite);
 		}
-		final FormulaFactory ff = seq.getFormulaFactory();
-		final Predicate rewritten = rewrite(toRewrite, input, function, substitutions, ff);
+		final Predicate rewritten = rewrite(toRewrite, input, function, substitutions);
 		if (rewritten == null) {
 			return failure(input, toRewrite);
 		}
@@ -171,7 +170,7 @@ public class TotalDomRewrites implements IVersionedReasoner {
 	}
 
 	protected Predicate rewrite(Predicate pred, Input input, Expression function,
-			TotalDomSubstitutions substitutions, FormulaFactory ff) {
+			TotalDomSubstitutions substitutions) {
 
 		final Set<Expression> substitutes = substitutions.get(function);
 		if (!substitutes.contains(input.substitute)) {
