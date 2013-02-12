@@ -2353,7 +2353,7 @@ public abstract class Formula<T extends Formula<T>> {
 		if (newFormula.getFactory() != fac)
 			throw new IllegalArgumentException("New sub-formula has a different factory.");
 		final SingleRewriter rewriter =
-			new SingleRewriter(position, newFormula, fac);
+			new SingleRewriter(position, newFormula);
 		T result = rewriter.rewrite(this);
 		assert result.isTypeChecked();
 		return result;

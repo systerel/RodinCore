@@ -11,6 +11,7 @@
 package org.eventb.core.ast;
 
 import static org.eventb.internal.core.ast.DefaultTypeCheckingRewriter.checkReplacement;
+
 import org.eventb.internal.core.ast.Position;
 
 /*package*/class SingleRewriter {
@@ -19,16 +20,13 @@ import org.eventb.internal.core.ast.Position;
 	final int[] indexes;
 	int depth;
 	final Formula<?> subFormula;
-	final FormulaFactory factory;
 
-	public SingleRewriter(IPosition position, Formula<?> subFormula,
-			FormulaFactory factory) {
+	public SingleRewriter(IPosition position, Formula<?> subFormula) {
 
 		this.position = position;
 		this.indexes = ((Position) position).indexes;
 		this.depth = 0;
 		this.subFormula = subFormula;
-		this.factory = factory;
 	}
 
 	BoundIdentDecl getBoundIdentDecl(BoundIdentDecl src) {
