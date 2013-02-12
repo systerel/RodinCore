@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 
@@ -31,8 +30,8 @@ public class PartitionExpander extends SmartFactory {
 	private final Expression set;
 	private final Expression[] components;
 
-	public PartitionExpander(MultiplePredicate predicate, FormulaFactory ff) {
-		super(ff);
+	public PartitionExpander(MultiplePredicate predicate) {
+		super(predicate.getFactory());
 
 		final Expression[] children = predicate.getChildren();
 		this.set = children[0];

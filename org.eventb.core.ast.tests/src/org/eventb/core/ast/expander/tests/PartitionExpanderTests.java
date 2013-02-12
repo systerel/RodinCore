@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.ast.expander.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mMultiplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -85,7 +85,7 @@ public class PartitionExpanderTests extends AbstractTests {
 			String expectedString) {
 		final ITypeEnvironment tenv = inferTypeEnvironment(input);
 		final Predicate expected = parseAndTypeCheck(tenv, expectedString);
-		final Predicate actual = Expanders.expandPARTITION(input, ff);
+		final Predicate actual = Expanders.expandPARTITION(input);
 		assertEquals(expected, actual);
 	}
 

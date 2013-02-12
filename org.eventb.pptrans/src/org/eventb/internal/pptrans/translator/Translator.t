@@ -356,7 +356,7 @@ public class Translator extends IdentityTranslator {
             *               sn−1 ∩ sn = ∅
             */
 	    	Partition(_) -> {
-	    		return translate(Expanders.expandPARTITION(pred, ff));
+	    		return translate(Expanders.expandPARTITION(pred));
 	    	}
 	    	
 	    	/**
