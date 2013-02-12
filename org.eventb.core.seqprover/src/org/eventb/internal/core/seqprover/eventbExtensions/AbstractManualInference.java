@@ -253,7 +253,7 @@ public abstract class AbstractManualInference extends PredicatePositionReasoner 
 		return ff.makeRelationalPredicate(IN, f, set, null);
 	}
 
-	protected IAntecedent makeWD(FormulaFactory ff, Predicate pred) {
+	protected IAntecedent makeWD(Predicate pred) {
 		return ProverFactory.makeAntecedent(DLib.WD(pred));
 	}
 

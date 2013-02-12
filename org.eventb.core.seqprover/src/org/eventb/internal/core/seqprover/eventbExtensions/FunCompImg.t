@@ -177,7 +177,7 @@ public class FunCompImg extends AbstractManualInference {
 		antecidents[0] = makeAntecedent(pred, inferredPred);
 
 		// Well-definedness
-		antecidents[1] = makeWD(seq.getFormulaFactory(), inferredPred);
+		antecidents[1] = makeWD(inferredPred);
 
 		return antecidents;
 	}
