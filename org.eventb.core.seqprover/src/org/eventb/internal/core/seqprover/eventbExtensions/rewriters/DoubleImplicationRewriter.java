@@ -19,8 +19,7 @@ import org.eventb.core.seqprover.eventbExtensions.Lib;
 
 public class DoubleImplicationRewriter extends DefaultRewriter {
 
-	public DoubleImplicationRewriter(boolean autoFlattening,
-			FormulaFactory ff) {
+	public DoubleImplicationRewriter(boolean autoFlattening) {
 		super(autoFlattening);
 	}
 	
