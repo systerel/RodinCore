@@ -232,7 +232,7 @@ public class SimpleSequents {
 	 * <p>
 	 * The simplification is performed by applying to each predicate of the
 	 * sequent the simplifier obtained from
-	 * {@link PredicateTransformers#makeSimplifier(FormulaFactory, SimplificationOption...)}
+	 * {@link PredicateTransformers#makeSimplifier(SimplificationOption...)}
 	 * .
 	 * 
 	 * @param sequent
@@ -243,8 +243,7 @@ public class SimpleSequents {
 	 */
 	public static ISimpleSequent simplify(ISimpleSequent sequent,
 			SimplificationOption... options) {
-		final FormulaFactory factory = sequent.getFormulaFactory();
-		return sequent.apply(new SequentSimplifier(factory, options));
+		return sequent.apply(new SequentSimplifier(options));
 	}
 
 	/**
