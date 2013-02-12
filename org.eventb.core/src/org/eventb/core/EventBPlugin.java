@@ -21,7 +21,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pog.POGModule;
@@ -521,8 +520,6 @@ public class EventBPlugin extends Plugin {
 	 * 
 	 * @param proof
 	 *            a proof to simplify
-	 * @param factory
-	 *            the formula factory to use for building the proof skeleton
 	 * @param monitor
 	 *            the progress monitor to use for reporting progress to the
 	 *            user. It is the caller's responsibility to call done() on the
@@ -532,11 +529,10 @@ public class EventBPlugin extends Plugin {
 	 * @return <code>true</code> iff the proof has been successfully simplified
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the proof
-	 * FIXME FF: consider removing the factory parameter as it should be computed
-	 * from informations located in proof file; else provide a method to get it
+	 * @since 3.0
 	 */
-	public static boolean simplifyProof(IPRProof proof, FormulaFactory factory,
-			IProgressMonitor monitor) throws RodinDBException {
+	public static boolean simplifyProof(IPRProof proof, IProgressMonitor monitor)
+			throws RodinDBException {
 		return new ProofSimplifier(proof).perform(monitor);
 	}
 

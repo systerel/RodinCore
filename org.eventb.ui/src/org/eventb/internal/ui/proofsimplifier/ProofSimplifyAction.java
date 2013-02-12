@@ -32,7 +32,6 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSStatus;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.utils.Messages;
 import org.rodinp.core.IRodinProject;
@@ -64,11 +63,8 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 								proofs.length);
 						subMonitor.setTaskName(Messages.proofSimplification_symplifyingProofs);
 						for (IPRProof proof : proofs) {
-							final IEventBRoot root = (IEventBRoot) proof
-									.getRoot();
-							final FormulaFactory ff = root.getFormulaFactory();
 							try {
-								EventBPlugin.simplifyProof(proof, ff,
+								EventBPlugin.simplifyProof(proof,
 										subMonitor.newChild(1));
 							} catch (RodinDBException e) {
 								UIUtils.log(e, "while simplifying proof: " //$NON-NLS-1$
