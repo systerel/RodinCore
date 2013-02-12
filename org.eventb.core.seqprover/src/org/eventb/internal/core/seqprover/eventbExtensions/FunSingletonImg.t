@@ -123,7 +123,7 @@ public class FunSingletonImg extends AbstractManualInference {
 		Predicate inferredPred = predicate.rewriteSubFormula(position, setExt);
 
 		// Well-definedness
-		antecidents[0] = makeWD(seq.getFormulaFactory(), inferredPred);
+		antecidents[0] = makeWD(inferredPred);
 
 		antecidents[1] = makeAntecedent(pred, inferredPred);
 		return antecidents;
