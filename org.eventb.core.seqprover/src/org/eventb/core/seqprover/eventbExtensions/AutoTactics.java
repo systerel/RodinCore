@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -801,8 +801,7 @@ public class AutoTactics {
 				return "Canceled";
 			}
 			for (Predicate pred : getPredicates(ptNode)) {
-				final List<IPosition> pos = getPositions(pred,
-						ptNode.getFormulaFactory());
+				final List<IPosition> pos = getPositions(pred);
 				if (pm != null && pm.isCanceled()) {
 					return "Canceled";
 				}
@@ -831,13 +830,10 @@ public class AutoTactics {
 		 * 
 		 * @param predicate
 		 *            the predicate on which the positions are calculated
-		 * @param ff
-		 *            the formula factory to be used
 		 * @return the positions where the current tactic can apply on the given
 		 *         predicate
 		 */
-		protected abstract List<IPosition> getPositions(Predicate predicate,
-				FormulaFactory ff);
+		protected abstract List<IPosition> getPositions(Predicate predicate);
 
 		/**
 		 * Returns the tactic to be applied on a given predicate at a given
@@ -862,11 +858,13 @@ public class AutoTactics {
 	 */
 	private static abstract class RmOnceTac extends AbstractPredOnceTac {
 
-		protected List<IPosition> getPositions(Predicate pred, FormulaFactory ff) {
+		@Override
+		protected List<IPosition> getPositions(Predicate pred) {
 			
-			return Tactics.rmGetPositions(pred, ff);
+			return Tactics.rmGetPositions(pred);
 		}
 
+		@Override
 		protected ITactic getTactic(Predicate pred, IPosition pos) {
 			return Tactics.removeMembership(pred, pos);
 		}
@@ -882,7 +880,7 @@ public class AutoTactics {
 	private static abstract class RiOnceTac extends AbstractPredOnceTac {
 
 		@Override
-		protected List<IPosition> getPositions(Predicate pred, FormulaFactory ff) {
+		protected List<IPosition> getPositions(Predicate pred) {
 			return Tactics.riGetPositions(pred);
 		}
 
@@ -988,8 +986,7 @@ public class AutoTactics {
 			AbstractPredOnceTac {
 
 		@Override
-		protected List<IPosition> getPositions(Predicate predicate,
-				FormulaFactory ff) {
+		protected List<IPosition> getPositions(Predicate predicate) {
 			return Tactics.eqvGetPositions(predicate);
 		}
 

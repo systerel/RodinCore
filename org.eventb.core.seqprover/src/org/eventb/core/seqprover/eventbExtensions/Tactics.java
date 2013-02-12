@@ -891,14 +891,11 @@ public class Tactics {
 	 * @param pred
 	 *            the predicate from which we retrieve the positions where the
 	 *            tactic "Remove Membership" can apply
-	 * @param ff
-	 *            the formula factory to use
 	 * @return the positions where the tactic "Remove Membership" can apply on
 	 *         the given predicate
-	 * @since 2.1
+	 * @since 3.0
 	 */
-	public static List<IPosition> rmGetPositions(Predicate pred,
-			final FormulaFactory ff) {
+	public static List<IPosition> rmGetPositions(Predicate pred) {
 		return pred.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(RelationalPredicate predicate) {
