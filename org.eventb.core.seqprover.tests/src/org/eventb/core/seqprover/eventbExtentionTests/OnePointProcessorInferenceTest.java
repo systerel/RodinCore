@@ -55,7 +55,7 @@ public class OnePointProcessorInferenceTest {
 	private static void assertSuccess(QuantifiedPredicate qPred,
 			Predicate expected, Expression replacement) {
 		final OnePointProcessorInference processor = new OnePointProcessorInference(
-				qPred, ff);
+				qPred);
 		processor.matchAndInstantiate();
 		assertTrue(processor.wasSuccessfullyApplied());
 		assertEquals(replacement, processor.getReplacement());
@@ -69,7 +69,7 @@ public class OnePointProcessorInferenceTest {
 
 	private static void assertFailure(QuantifiedPredicate qPred) {
 		final OnePointProcessorInference processor = new OnePointProcessorInference(
-				qPred, ff);
+				qPred);
 		processor.matchAndInstantiate();
 		assertFalse(processor.wasSuccessfullyApplied());
 	}

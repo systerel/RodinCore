@@ -3161,16 +3161,12 @@ public class Tactics {
 	 * 
 	 * @param predicate
 	 *            a predicate to check
-	 * @param ff
-	 *            the formula factory used by the sequent owning the given
-	 *            predicate
 	 * @return <code>true</code> iff one-point rules is applicable to the given
 	 *         predicate
-	 * @since 2.0
+	 * @since 3.0
 	 */
-	public static boolean isOnePointApplicable(Predicate predicate,
-			FormulaFactory ff) {
-		return OnePointRule.isApplicable(predicate, ff);
+	public static boolean isOnePointApplicable(Predicate predicate) {
+		return OnePointRule.isApplicable(predicate);
 	}
 
 	/**
