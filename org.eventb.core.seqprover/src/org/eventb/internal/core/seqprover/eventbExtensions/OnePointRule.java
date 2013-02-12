@@ -18,7 +18,6 @@ import static org.eventb.core.seqprover.ProverFactory.makeHideHypAction;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.seqprover.IHypAction;
@@ -60,13 +59,13 @@ public class OnePointRule extends HypothesisReasoner implements
 		return "One Point Rule in " + (pred == null ? "goal" : pred);
 	}
 
-	public static boolean isApplicable(Formula<?> formula, FormulaFactory ff) {
+	public static boolean isApplicable(Formula<?> formula) {
 		if (!(formula instanceof QuantifiedPredicate)) {
 			return false;
 		}
 
 		final OnePointProcessorInference matcher = new OnePointProcessorInference(
-				(QuantifiedPredicate) formula, ff);
+				(QuantifiedPredicate) formula);
 		matcher.matchAndInstantiate();
 		return matcher.wasSuccessfullyApplied();
 	}
@@ -82,7 +81,6 @@ public class OnePointRule extends HypothesisReasoner implements
 			Predicate pred) {
 
 		final boolean appliesToGoal = isGoalDependent(sequent, pred);
-		final FormulaFactory ff = sequent.getFormulaFactory();
 		final Predicate applyTo = appliesToGoal ? sequent.goal() : pred;
 
 		if (!(applyTo instanceof QuantifiedPredicate)) {
@@ -92,7 +90,7 @@ public class OnePointRule extends HypothesisReasoner implements
 		}
 		
 		final OnePointProcessorInference processor = new OnePointProcessorInference(
-				(QuantifiedPredicate) applyTo, ff);
+				(QuantifiedPredicate) applyTo);
 		processor.matchAndInstantiate();
 
 		if (!processor.wasSuccessfullyApplied()) {

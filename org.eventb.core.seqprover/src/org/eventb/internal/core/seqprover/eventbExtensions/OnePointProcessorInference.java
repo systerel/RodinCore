@@ -26,7 +26,6 @@ import java.util.List;
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -46,21 +45,20 @@ public class OnePointProcessorInference extends OnePointProcessor<Predicate> {
 
 	private boolean replacementFound;
 
-	public OnePointProcessorInference(QuantifiedPredicate qPred,
-			FormulaFactory ff) {
-		super(ff);
+	public OnePointProcessorInference(QuantifiedPredicate qPred) {
+		super(qPred.getFactory());
 		this.original = qPred;
 		this.bids = qPred.getBoundIdentDecls();
 		this.processing = qPred.getPredicate();
 		this.replacements = new Expression[bids.length];
 	}
 
-	public static Predicate rewrite(Predicate predicate, FormulaFactory ff) {
+	public static Predicate rewrite(Predicate predicate) {
 		if (!(predicate instanceof QuantifiedPredicate)) {
 			return predicate;
 		}
 		final OnePointProcessorInference opp = new OnePointProcessorInference(
-				(QuantifiedPredicate) predicate, ff);
+				(QuantifiedPredicate) predicate);
 		opp.matchAndInstantiate();
 		if (opp.wasSuccessfullyApplied()) {
 			return opp.getProcessedResult();

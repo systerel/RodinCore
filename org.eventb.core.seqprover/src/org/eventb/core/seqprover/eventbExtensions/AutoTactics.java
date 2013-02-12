@@ -34,7 +34,6 @@ import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ParametricType;
@@ -1206,8 +1205,7 @@ public class AutoTactics {
 			}
 			final IProverSequent sequent = ptNode.getSequent();
 			final Predicate goal = sequent.goal();
-			final FormulaFactory ff = sequent.getFormulaFactory();
-			if (!Tactics.isOnePointApplicable(goal, ff)) {
+			if (!Tactics.isOnePointApplicable(goal)) {
 				return "Tactic unapplicable";
 			}
 			if (pm != null && pm.isCanceled()) {
@@ -1232,9 +1230,8 @@ public class AutoTactics {
 				return "Canceled";
 			}
 			final IProverSequent sequent = ptNode.getSequent();
-			final FormulaFactory formulaFactory = sequent.getFormulaFactory();
 			for (Predicate shyp : sequent.selectedHypIterable()) {
-				if (Tactics.isOnePointApplicable(shyp, formulaFactory)) {
+				if (Tactics.isOnePointApplicable(shyp)) {
 					return Tactics.onePointHyp(shyp).apply(ptNode, pm);
 				}
 				if (pm != null && pm.isCanceled()) {

@@ -133,7 +133,7 @@ public class LambdaComputer {
 		do {
 			final Predicate old = pred;
 			pred = pred.rewrite(rewriter);
-			pred = OnePointProcessorInference.rewrite(pred, ff);
+			pred = OnePointProcessorInference.rewrite(pred);
 			changed = old != pred;
 		} while (changed);
 		if (hasExpectedFinalForm(pred)) {
