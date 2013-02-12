@@ -19,7 +19,6 @@ import java.util.List;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.DefaultFilter;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -81,8 +80,7 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 		final Predicate infHyp = getUniqueElement(fwd.getInferredHyps());
 		if (hyp == null || infHyp == null) return null;
 		
-		final IPosition position = findContraPosition(hyp, infHyp,
-				reader.getFormulaFactory());
+		final IPosition position = findContraPosition(hyp, infHyp);
 		if (position == null)
 			return null;
 		
@@ -106,7 +104,7 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 		return null;
 	}
 
-	private IPosition findContraPosition(Predicate hyp, Predicate infHyp, FormulaFactory ff) {
+	private IPosition findContraPosition(Predicate hyp, Predicate infHyp) {
 		final List<IPosition> positions = hyp.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(BinaryPredicate predicate) {
