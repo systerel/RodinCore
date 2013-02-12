@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,15 +35,13 @@ public class ReorganisationTests extends AbstractTranslationTests {
 			"S=ℙ(S); T=ℙ(T); U=ℙ(U); V=ℙ(V); a=ℤ; b=S; A=ℙ(ℤ); B=ℙ(S)", ff);
 
 	private static void doTest(String input, String expected) {
-		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
-		te.addAll(defaultTe);
+		ITypeEnvironmentBuilder te = defaultTe.makeBuilder();
 		doTest(input, expected, false, te);
 	}
 	
 	private static void doTest(String input, String expected,
 			boolean transformExpected) {
-		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
-		te.addAll(defaultTe);
+		ITypeEnvironmentBuilder te = defaultTe.makeBuilder();
 		doTest(input, expected, transformExpected, te);
 	}
 	
