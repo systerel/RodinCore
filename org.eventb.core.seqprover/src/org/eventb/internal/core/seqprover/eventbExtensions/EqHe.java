@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -79,7 +78,7 @@ public abstract class EqHe extends HypothesisReasoner implements
 		}
 
 		final Rewriter rewriter = new Rewriter(hypEq, getFrom(hypEq),
-				getTo(hypEq), sequent.getFormulaFactory());
+				getTo(hypEq));
 		final List<IHypAction> actions = rewriteHypotheses(sequent, rewriter);
 		final Predicate newGoal = rewriteGoal(sequent, rewriter);
 		goalDependant = newGoal != null;
@@ -137,8 +136,7 @@ public abstract class EqHe extends HypothesisReasoner implements
 		private final Expression from;
 		private final Expression to;
 
-		public Rewriter(Predicate hypEq, Expression from, Expression to,
-				FormulaFactory ff) {
+		public Rewriter(Predicate hypEq, Expression from, Expression to) {
 			this.source = hypEq;
 			this.from = from;
 			this.to = to;
