@@ -15,7 +15,6 @@ import java.util.Arrays;
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -52,7 +51,7 @@ public class ArithRewrites extends AbstractManualRewrites implements IVersionedR
 	}
 
 	@Override
-	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position) {
 		Formula<?> subFormula = pred.getSubFormula(position);
 		final Formula<?> newSubFormula;
 		final IFormulaRewriter rewriter = new ArithRewriterImpl();

@@ -13,7 +13,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import java.util.Arrays;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -43,7 +42,7 @@ public abstract class InclusionSetMinusRewrites extends AbstractManualRewrites i
 	protected abstract IFormulaRewriter makeRewriter();
 	
 	@Override
-	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = makeRewriter();
 		Formula<?> predicate = pred.getSubFormula(position);
 

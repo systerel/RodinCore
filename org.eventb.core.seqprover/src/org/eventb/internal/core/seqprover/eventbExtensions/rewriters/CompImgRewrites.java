@@ -60,8 +60,7 @@ public class CompImgRewrites extends AbstractManualRewrites {
 	 */
 	@Override
 	@ProverRule("DERIV_RELIMAGE_FCOMP")
-	public Predicate rewrite(Predicate pred, IPosition position,
-			FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position) {
 		if (position.isRoot())
 			return null;
 		final IPosition parentPos = position.getParent();
@@ -83,6 +82,7 @@ public class CompImgRewrites extends AbstractManualRewrites {
 		final int index = position.getChildIndex();
 		if (index < 1 || index >= children.length)
 			return null;
+		final FormulaFactory ff = pred.getFactory();
 		final Expression pToq = fcomp(children, 0, index, ff);
 		final Expression rTos = fcomp(children, index, children.length, ff);
 		final Expression newImage = relImage(rTos, relImage(pToq, set, ff), ff);

@@ -58,18 +58,17 @@ public class FiniteDefRewrites extends AbstractManualRewrites {
 
 	@Override
 	@ProverRule("DEF_FINITE")
-	public Predicate rewrite(Predicate pred, IPosition position,
-			FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position) {
 		final Formula<?> subFormula = pred.getSubFormula(position);
 		if (subFormula == null || subFormula.getTag() != Formula.KFINITE) {
 			return null;
 		}
-		final Predicate newSubPredicate = rewrite((SimplePredicate) subFormula,
-				ff);
+		final Predicate newSubPredicate = rewrite((SimplePredicate) subFormula);
 		return pred.rewriteSubFormula(position, newSubPredicate);
 	}
 
-	private Predicate rewrite(SimplePredicate predicate, FormulaFactory ff) {
+	private Predicate rewrite(SimplePredicate predicate) {
+		final FormulaFactory ff = predicate.getFactory();
 		final Expression set = predicate.getExpression();
 
 		final Type intType = ff.makeIntegerType();

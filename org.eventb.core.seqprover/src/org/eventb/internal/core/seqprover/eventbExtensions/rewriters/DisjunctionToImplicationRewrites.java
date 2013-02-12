@@ -14,7 +14,6 @@ import java.util.Arrays;
 
 import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -47,7 +46,7 @@ public class DisjunctionToImplicationRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position) {
 		Formula<?> subFormula = pred
 						.getSubFormula(position);
 		if (subFormula == null || !(subFormula instanceof AssociativePredicate)) 

@@ -18,7 +18,6 @@ import java.util.Set;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
@@ -77,14 +76,14 @@ public class FunImgSimplifies extends AbstractManualRewrites implements
 	}
 
 	@Override
-	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position) {
 		final Formula<?> subFormula = pred.getSubFormula(position);
 		if (subFormula == null || subFormula.getTag() != Expression.FUNIMAGE) {
 			return null;
 		}
 		final BinaryExpression funImage = (BinaryExpression) subFormula;
 		final Expression G = funImage.getRight();
-		final Expression replacement = ff.makeBinaryExpression(
+		final Expression replacement = pred.getFactory().makeBinaryExpression(
 				Expression.FUNIMAGE, getFunction(pred, position), G, null);
 		return pred.rewriteSubFormula(position, replacement);
 	}

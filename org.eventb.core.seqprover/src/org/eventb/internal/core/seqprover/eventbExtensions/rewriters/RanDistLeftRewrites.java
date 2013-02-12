@@ -14,7 +14,6 @@ import java.util.Arrays;
 
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -48,7 +47,7 @@ public class RanDistLeftRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = new RanDistLeftRewriterImpl();
 		Formula<?> subFormula = pred.getSubFormula(position);
 		

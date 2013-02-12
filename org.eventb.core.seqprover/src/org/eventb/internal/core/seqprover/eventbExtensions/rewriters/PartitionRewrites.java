@@ -13,7 +13,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import java.util.Arrays;
 
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.MultiplePredicate;
@@ -51,7 +50,7 @@ public class PartitionRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position) {
 		IFormulaRewriter rewriter = new PartitionRewriterImpl();
 		Formula<?> subFormula = pred.getSubFormula(position);
 		if (subFormula == null || subFormula.getTag() != Formula.KPARTITION) {
