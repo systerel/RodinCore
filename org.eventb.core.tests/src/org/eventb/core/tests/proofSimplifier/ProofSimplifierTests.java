@@ -104,7 +104,7 @@ public class ProofSimplifierTests extends BuilderTest {
 				CTX_BARE_NAME, contents);
 		
 		final IPRProof proof = prRoot.getProof(AXM1_THM);
-		final boolean success = EventBPlugin.simplifyProof(proof, factory, null);
+		final boolean success = EventBPlugin.simplifyProof(proof, null);
 		assertTrue("should have succeeded", success);
 		final IProofTree simplified = proof.getProofTree(null);
 		assertTrue(simplified.getRoot().getChildNodes().length == 0);
