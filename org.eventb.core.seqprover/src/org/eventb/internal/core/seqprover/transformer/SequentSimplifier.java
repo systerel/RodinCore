@@ -12,7 +12,6 @@ package org.eventb.internal.core.seqprover.transformer;
 
 import static org.eventb.core.seqprover.transformer.PredicateTransformers.makeSimplifier;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter2;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISequentTransformer;
@@ -29,8 +28,7 @@ public class SequentSimplifier implements ISequentTransformer {
 
 	private final IFormulaRewriter2 simplifier;
 
-	public SequentSimplifier(FormulaFactory factory,
-			SimplificationOption... options) {
+	public SequentSimplifier(SimplificationOption... options) {
 		simplifier = makeSimplifier(options);
 	}
 
