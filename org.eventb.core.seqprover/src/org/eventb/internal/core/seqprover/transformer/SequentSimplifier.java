@@ -31,7 +31,7 @@ public class SequentSimplifier implements ISequentTransformer {
 
 	public SequentSimplifier(FormulaFactory factory,
 			SimplificationOption... options) {
-		simplifier = makeSimplifier(factory, options);
+		simplifier = makeSimplifier(options);
 	}
 
 	@Override

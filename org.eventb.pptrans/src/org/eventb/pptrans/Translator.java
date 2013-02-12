@@ -171,8 +171,7 @@ public class Translator {
 	 *            the formula factory to use
 	 * @return a simplified predicate equivalent to the input predicate
 	 * @see SimpleSequents#simplify(ISimpleSequent, SimplificationOption...)
-	 * @see PredicateTransformers#makeSimplifier(FormulaFactory,
-	 *      SimplificationOption...)
+	 * @see PredicateTransformers#makeSimplifier(SimplificationOption...)
 	 * @deprecated Use
 	 *             {@link SimpleSequents#simplify(ISimpleSequent, SimplificationOption...)}
 	 *             or
@@ -182,7 +181,7 @@ public class Translator {
 	@Deprecated
 	public static Predicate simplifyPredicate(Predicate predicate,
 			FormulaFactory ff) {
-		return predicate.rewrite(makeSimplifier(ff));
+		return predicate.rewrite(makeSimplifier());
 	}
 
 	/**
