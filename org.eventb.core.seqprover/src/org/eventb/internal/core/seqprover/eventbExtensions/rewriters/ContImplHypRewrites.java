@@ -57,7 +57,7 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 	}
 
 	@Override
-	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position) {
 		final Formula<?> subFormula = pred.getSubFormula(position);
 		if (subFormula.getTag() != Formula.LIMP) {
 			return null;
@@ -116,7 +116,7 @@ public class ContImplHypRewrites extends AbstractManualRewrites implements IRepa
 
 		IPosition contraPos = null;
 		for (IPosition pos : positions) {
-			final Predicate rewritten = rewrite(hyp, pos, ff);
+			final Predicate rewritten = rewrite(hyp, pos);
 			if (rewritten.equals(infHyp)) {
 				contraPos = pos;
 				break;

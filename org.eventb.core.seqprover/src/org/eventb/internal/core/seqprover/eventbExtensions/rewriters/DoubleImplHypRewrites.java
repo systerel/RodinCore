@@ -13,7 +13,6 @@ package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 import java.util.Arrays;
 
 import org.eventb.core.ast.BinaryPredicate;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -45,10 +44,11 @@ public class DoubleImplHypRewrites extends AbstractManualRewrites {
 	}
 
 	@Override
-	public Predicate rewrite(Predicate pred, IPosition position, FormulaFactory ff) {
+	public Predicate rewrite(Predicate pred, IPosition position) {
 		BinaryPredicate predicate = (BinaryPredicate) pred
 				.getSubFormula(position);
-		IFormulaRewriter rewriter = new DoubleImplicationRewriter(true, ff);
+		IFormulaRewriter rewriter = new DoubleImplicationRewriter(true,
+				pred.getFactory());
 		Predicate newSubPredicate = rewriter.rewrite(predicate);
 		return pred.rewriteSubFormula(position, newSubPredicate);
 	}

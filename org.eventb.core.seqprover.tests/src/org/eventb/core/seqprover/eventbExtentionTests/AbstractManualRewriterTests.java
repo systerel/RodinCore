@@ -227,7 +227,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		final Predicate input = genPred(typenv, inputImage);
 		final Predicate expected = genPred(typenv, expectedImage);
 		final IPosition pos = makePosition(posImage);
-		final Predicate actual = rewriter.rewrite(input, pos, ff);
+		final Predicate actual = rewriter.rewrite(input, pos);
 		assertEquals(expected, actual);
 	}
 
@@ -260,7 +260,7 @@ public abstract class AbstractManualRewriterTests extends AbstractManualReasoner
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(typenvImage);
 		final Predicate input = genPred(typenv, inputImage);
 		final IPosition pos = makePosition(posImage);
-		final Predicate actual = rewriter.rewrite(input, pos, ff);
+		final Predicate actual = rewriter.rewrite(input, pos);
 		assertNull(actual);
 	}
 
