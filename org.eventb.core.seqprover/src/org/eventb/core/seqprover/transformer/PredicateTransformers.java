@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.transformer;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter2;
 import org.eventb.core.seqprover.transformer.SimpleSequents.SimplificationOption;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.PredicateSimplifier;
@@ -62,8 +61,9 @@ public class PredicateTransformers {
 	 * @param options
 	 *            simplification options
 	 * @return a simplified sequent equivalent to the given one
+	 * @since 3.0
 	 */
-	public static IFormulaRewriter2 makeSimplifier(FormulaFactory factory,
+	public static IFormulaRewriter2 makeSimplifier(
 			SimplificationOption... options) {
 		int flags = 0;
 		for (SimplificationOption option : options) {
