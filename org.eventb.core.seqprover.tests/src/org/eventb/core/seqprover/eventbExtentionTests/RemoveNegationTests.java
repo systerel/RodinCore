@@ -155,7 +155,7 @@ public class RemoveNegationTests extends AbstractManualRewriterTests {
 	}
 
 	protected List<IPosition> getPositions(Predicate predicate) {
-		return Tactics.rnGetPositions(predicate, ff);
+		return Tactics.rnGetPositions(predicate);
 	}
 
 	@Override

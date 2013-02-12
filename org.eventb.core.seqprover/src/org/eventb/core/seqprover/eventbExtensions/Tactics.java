@@ -837,9 +837,10 @@ public class Tactics {
 	}
 
 	/**
-	 * @since 2.0
+	 * @since 3.0
 	 */
-	public static List<IPosition> rnGetPositions(Predicate pred, final FormulaFactory ff) {
+	public static List<IPosition> rnGetPositions(Predicate pred) {
+		final FormulaFactory ff = pred.getFactory();
 		return pred.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(UnaryPredicate predicate) {
