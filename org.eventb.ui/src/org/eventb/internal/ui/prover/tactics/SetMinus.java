@@ -17,7 +17,6 @@ import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
@@ -85,11 +84,8 @@ public class SetMinus extends AbstractHypGoalTacticProvider {
 
 	public class SetMinusAppliInspector extends DefaultApplicationInspector {
 
-		private final FormulaFactory ff;
-
-		public SetMinusAppliInspector(FormulaFactory ff, Predicate hyp) {
+		public SetMinusAppliInspector(Predicate hyp) {
 			super(hyp);
-			this.ff = ff;
 		}
 
 		@Override
@@ -100,7 +96,7 @@ public class SetMinus extends AbstractHypGoalTacticProvider {
 			}
 			final Expression left = expression.getLeft();
 			final Type baseType = left.getType().getBaseType();
-			if (left.equals(baseType.toExpression(ff))) {
+			if (left.equals(baseType.toExpression())) {
 				final Expression right = expression.getRight();
 				if (Lib.isUnion(right) || Lib.isInter(right)
 						|| Lib.isSetMinus(right)) {
@@ -116,8 +112,7 @@ public class SetMinus extends AbstractHypGoalTacticProvider {
 	protected List<ITacticApplication> getApplicationsOnPredicate(
 			IProofTreeNode node, Predicate hyp, String globalInput,
 			Predicate predicate) {
-		return predicate.inspect(new SetMinusAppliInspector(node
-				.getFormulaFactory(), hyp));
+		return predicate.inspect(new SetMinusAppliInspector(hyp));
 	}
 
 }
