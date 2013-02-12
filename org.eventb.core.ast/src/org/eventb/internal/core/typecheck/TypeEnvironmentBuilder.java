@@ -93,12 +93,10 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 	 * @param type the type to associate to the given name
 	 */
 	protected void setName(String name, Type type) {
-		if (type.isSolved()) {
-			// Avoid infinite recursion when adding a given set
-			if (!isGivenSet(name, type)) {
-				for (final GivenType givenType : type.getGivenTypes()) {
-					addGivenSet(givenType);
-				}
+		// Avoid infinite recursion when adding a given set
+		if (!isGivenSet(name, type)) {
+			for (final GivenType givenType : type.getGivenTypes()) {
+				addGivenSet(givenType);
 			}
 		}
 		map.put(name, type);
