@@ -516,6 +516,8 @@ public class QuantifiedPredicate extends Predicate {
 
 	@Override
 	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
+		assert (rewriter.factory == getFactory());
+
 		BoundIdentDecl[] newDecls = quantifiedIdentifiers;
 		Predicate newPred = pred;
 		final int length = quantifiedIdentifiers.length;

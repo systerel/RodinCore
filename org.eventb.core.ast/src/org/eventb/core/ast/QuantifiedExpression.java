@@ -772,6 +772,8 @@ public class QuantifiedExpression extends Expression {
 
 	@Override
 	protected Expression rewriteChild(int index, SingleRewriter rewriter) {
+		assert (rewriter.factory == getFactory());
+
 		BoundIdentDecl[] newDecls = quantifiedIdentifiers;
 		Predicate newPred = pred;
 		Expression newExpr = expr;

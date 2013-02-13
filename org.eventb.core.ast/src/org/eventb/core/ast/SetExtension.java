@@ -359,6 +359,8 @@ public class SetExtension extends Expression {
 
 	@Override
 	protected Expression rewriteChild(int index, SingleRewriter rewriter) {
+		assert (rewriter.factory == getFactory());
+
 		if (index < 0 || members.length <= index) 
 			throw new IllegalArgumentException("Position is outside the formula");
 		Expression[] newMembers = members.clone();

@@ -364,6 +364,8 @@ public class ExtendedPredicate extends Predicate implements IExtendedFormula {
 
 	@Override
 	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
+		assert (rewriter.factory == getFactory());
+
 		if (index < 0
 				|| childExpressions.length + childPredicates.length <= index)
 			throw new IllegalArgumentException(
