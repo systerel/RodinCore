@@ -180,7 +180,7 @@ public class TestTypedIdentDecl extends AbstractTests {
 		final String image = expr.toStringWithTypes();
 		for (LanguageVersion version : LanguageVersion.values()) {
 			final Expression actual = parseExpression(image, version);
-			typeCheck(actual, actual.getFactory().makeTypeEnvironment());
+			typeCheck(actual);
 			assertEquals("Typed string is a different expression", expr, actual);
 		}
 	}
@@ -213,7 +213,7 @@ public class TestTypedIdentDecl extends AbstractTests {
 		final String image = pred.toStringWithTypes();
 		for (LanguageVersion version : LanguageVersion.values()) {
 			final Predicate actual = parsePredicate(image, version);
-			typeCheck(actual, actual.getFactory().makeTypeEnvironment());
+			typeCheck(actual);
 			assertEquals("Typed string is a different predicate", pred, actual);
 		}
 	}

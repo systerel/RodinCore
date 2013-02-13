@@ -277,9 +277,6 @@ public abstract class AbstractTests {
 	 */
 	public static ITypeEnvironmentBuilder typeCheck(Formula<?> formula,
 			ITypeEnvironment tenv) {
-		if (tenv == null) {
-			tenv = formula.getFactory().makeTypeEnvironment();
-		}
 		final ITypeCheckResult result = formula.typeCheck(tenv);
 		assertSuccess(formula.toString(), result);
 		assertTrue(formula.isTypeChecked());

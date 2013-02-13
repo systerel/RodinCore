@@ -217,7 +217,7 @@ public class TestTypedGeneric extends AbstractTests {
 		final String image = expr.toStringWithTypes();
 		for (LanguageVersion version : versions) {
 			final Expression actual = parseExpression(image, version);
-			typeCheck(actual, actual.getFactory().makeTypeEnvironment());
+			typeCheck(actual);
 			assertEquals("Typed string is a different expression", expr, actual);
 		}
 	}
@@ -306,7 +306,7 @@ public class TestTypedGeneric extends AbstractTests {
 		final String image = pred.toStringWithTypes();
 		for (LanguageVersion version : versions) {
 			final Predicate actual = parsePredicate(image, version);
-			typeCheck(actual, actual.getFactory().makeTypeEnvironment());
+			typeCheck(actual);
 			assertEquals("Typed string is a different predicate", pred, actual);
 		}
 	}
@@ -367,7 +367,7 @@ public class TestTypedGeneric extends AbstractTests {
 		final String image = assign.toStringWithTypes();
 		for (LanguageVersion version : LanguageVersion.values()) {
 			final Assignment actual = parseAssignment(image, version);
-			typeCheck(actual, actual.getFactory().makeTypeEnvironment());
+			typeCheck(actual);
 			assertEquals("Typed string is a different predicate", assign, actual);
 		}
 	}
