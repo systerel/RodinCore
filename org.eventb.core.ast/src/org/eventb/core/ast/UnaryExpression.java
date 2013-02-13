@@ -620,6 +620,8 @@ public class UnaryExpression extends Expression {
 
 	@Override
 	protected Expression rewriteChild(int index, SingleRewriter rewriter) {
+		assert (rewriter.factory == getFactory());
+
 		if (index != 0) 
 			throw new IllegalArgumentException("Position is outside the formula");
 		Expression newChild = rewriter.rewrite(child);

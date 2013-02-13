@@ -858,6 +858,8 @@ public class BinaryExpression extends Expression {
 
 	@Override
 	protected Expression rewriteChild(int index, SingleRewriter rewriter) {
+		assert (rewriter.factory == getFactory());
+
 		Expression newLeft = left;
 		Expression newRight = right;
 		switch (index) {

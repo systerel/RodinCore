@@ -331,6 +331,8 @@ public class MultiplePredicate extends Predicate {
 
 	@Override
 	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
+		assert (rewriter.factory == getFactory());
+
 		if (index < 0 || children.length <= index)
 			throw new IllegalArgumentException(
 					"Position is outside the formula");

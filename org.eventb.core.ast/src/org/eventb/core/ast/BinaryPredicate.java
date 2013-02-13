@@ -343,6 +343,8 @@ public class BinaryPredicate extends Predicate {
 
 	@Override
 	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
+		assert (rewriter.factory == getFactory());
+
 		Predicate newLeft = left;
 		Predicate newRight = right;
 		switch (index) {

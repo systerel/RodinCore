@@ -453,6 +453,8 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 
 	@Override
 	protected Expression rewriteChild(int index, SingleRewriter rewriter) {
+		assert (rewriter.factory == getFactory());
+
 		if (index < 0
 				|| childExpressions.length + childPredicates.length <= index)
 			throw new IllegalArgumentException(

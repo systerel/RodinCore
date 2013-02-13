@@ -537,6 +537,8 @@ public class AssociativeExpression extends Expression {
 
 	@Override
 	protected Expression rewriteChild(int index, SingleRewriter rewriter) {
+		assert (rewriter.factory == getFactory());
+
 		if (index < 0 || children.length <= index) 
 			throw new IllegalArgumentException("Position is outside the formula");
 		Expression[] newChildren = children.clone();

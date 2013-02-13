@@ -466,6 +466,8 @@ public class RelationalPredicate extends Predicate {
 
 	@Override
 	protected Predicate rewriteChild(int index, SingleRewriter rewriter) {
+		assert (rewriter.factory == getFactory());
+
 		Expression newLeft = left;
 		Expression newRight = right;
 		switch (index) {
