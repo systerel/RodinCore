@@ -2141,18 +2141,27 @@ public class FormulaFactory {
 				|| ('\u001c' <= codePoint && codePoint <= '\u001F');
 	}
 
+	private void ensuresFactoryV2() {
+		if (this == V1_INSTANCE) {
+			throw new IllegalArgumentException(
+					"The current factory with version V1 cannot be used to upgrade assignment from V1 to V2");
+		}
+	}
+
 	/**
-	 * Upgrades the given assignment string to the given language version.
+	 * Upgrades the given assignment string from language version V1 to the V2
+	 * using the current factory.
 	 * 
 	 * @param input
 	 *            an assignment string assumed to be parsable in the language
-	 *            version immediately preceding the target version
-	 * @param targetVersion
-	 *            the desired version after upgrade
+	 *            version V1
 	 * @return the result of the upgrade
+	 * @throws IllegalArgumentException
+	 *             if the current factory is a V1 version
+	 * @since 3.0
 	 */
-	public IUpgradeResult<Assignment> upgradeAssignment(String input,
-			LanguageVersion targetVersion) {
+	public IUpgradeResult<Assignment> upgradeAssignment(String input) {
+		ensuresFactoryV2();
 		final UpgradeResult<Assignment> result = new UpgradeResult<Assignment>(
 				this);
 		final VersionUpgrader upgrader = new VersionUpgraderV1V2();
@@ -2161,17 +2170,19 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Upgrades the given expression string to the given language version.
+	 * Upgrades the given expression string from language version V1 to the V2
+	 * using the current factory.
 	 * 
 	 * @param input
 	 *            an expression string assumed to be parsable in the language
 	 *            version immediately preceding the target version
-	 * @param targetVersion
-	 *            the desired version after upgrade
 	 * @return the result of the upgrade
+	 * @throws IllegalArgumentException
+	 *             if the current factory is a V1 version
+	 * @since 3.0
 	 */
-	public IUpgradeResult<Expression> upgradeExpression(String input,
-			LanguageVersion targetVersion) {
+	public IUpgradeResult<Expression> upgradeExpression(String input) {
+		ensuresFactoryV2();
 		final UpgradeResult<Expression> result = new UpgradeResult<Expression>(
 				this);
 		final VersionUpgrader upgrader = new VersionUpgraderV1V2();
@@ -2180,17 +2191,16 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Upgrades the given predicate string to the given language version.
+	 * Upgrades the given predicate string from language version V1 to the V2
+	 * using the current factory.
 	 * 
 	 * @param input
 	 *            a predicate string assumed to be parsable in the language
 	 *            version immediately preceding the target version
-	 * @param targetVersion
-	 *            the desired version after upgrade
 	 * @return the result of the upgrade
+	 * @since 3.0
 	 */
-	public IUpgradeResult<Predicate> upgradePredicate(String input,
-			LanguageVersion targetVersion) {
+	public IUpgradeResult<Predicate> upgradePredicate(String input) {
 		final UpgradeResult<Predicate> result = new UpgradeResult<Predicate>(
 				this);
 		final VersionUpgrader upgrader = new VersionUpgraderV1V2();

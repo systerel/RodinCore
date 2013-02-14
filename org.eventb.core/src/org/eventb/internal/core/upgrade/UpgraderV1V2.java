@@ -13,7 +13,6 @@ package org.eventb.internal.core.upgrade;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IUpgradeResult;
-import org.eventb.core.ast.LanguageVersion;
 import org.rodinp.core.version.IAttributeModifier;
 
 public class UpgraderV1V2 {
@@ -22,8 +21,6 @@ public class UpgraderV1V2 {
 	private static abstract class Upgrader implements IAttributeModifier {
 		// Default factory is sufficient for V1 formulae 
 		protected static final FormulaFactory ff = FormulaFactory.getDefault();
-
-		protected static final LanguageVersion targetVersion = LanguageVersion.V2;
 		
 		public Upgrader() {
 			// avoid synthetic accessor emulation
@@ -47,7 +44,7 @@ public class UpgraderV1V2 {
 
 		@Override
 		protected IUpgradeResult<?> getUpgraded(String formulaString) {
-			return ff.upgradeAssignment(formulaString, targetVersion);
+			return ff.upgradeAssignment(formulaString);
 		}
 
 		@Override
@@ -61,7 +58,7 @@ public class UpgraderV1V2 {
 
 		@Override
 		protected IUpgradeResult<?> getUpgraded(String formulaString) {
-			return ff.upgradeExpression(formulaString, targetVersion);
+			return ff.upgradeExpression(formulaString);
 		}
 
 		@Override
@@ -75,7 +72,7 @@ public class UpgraderV1V2 {
 
 		@Override
 		protected IUpgradeResult<?> getUpgraded(String formulaString) {
-			return ff.upgradePredicate(formulaString, targetVersion);
+			return ff.upgradePredicate(formulaString);
 		}
 
 		@Override

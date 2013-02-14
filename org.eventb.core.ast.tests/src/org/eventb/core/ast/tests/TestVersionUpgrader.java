@@ -31,7 +31,6 @@ import static org.eventb.core.ast.Formula.TINJ;
 import static org.eventb.core.ast.Formula.TREL;
 import static org.eventb.core.ast.Formula.TSUR;
 import static org.eventb.core.ast.FormulaFactory.isEventBWhiteSpace;
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.ast.ProblemKind.NotUpgradableError;
 import static org.eventb.core.ast.ProblemKind.UnexpectedSymbol;
 import static org.eventb.core.ast.ProblemSeverities.Error;
@@ -61,7 +60,6 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IUpgradeResult;
 import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
 import org.junit.Test;
@@ -109,13 +107,10 @@ public class TestVersionUpgrader extends AbstractTests {
 
 	private static abstract class TestItem<T extends Formula<T>> {
 		protected final String input;
-		protected final LanguageVersion targetVersion;
 		private final UpgradeResultChecker<T> checker;
 
-		public TestItem(String beforeUpgrade, LanguageVersion targetVersion,
-				UpgradeResultChecker<T> checker) {
+		public TestItem(String beforeUpgrade, UpgradeResultChecker<T> checker) {
 			this.input = beforeUpgrade;
-			this.targetVersion = targetVersion;
 			this.checker = checker;
 		}
 
@@ -128,40 +123,37 @@ public class TestVersionUpgrader extends AbstractTests {
 
 	private static class TestItemAssign extends TestItem<Assignment> {
 		public TestItemAssign(String beforeUpgrade,
-				LanguageVersion targetVersion,
 				UpgradeResultChecker<Assignment> checker) {
-			super(beforeUpgrade, targetVersion, checker);
+			super(beforeUpgrade, checker);
 		}
 
 		@Override
 		protected IUpgradeResult<Assignment> upgrade() {
-			return ff.upgradeAssignment(input, targetVersion);
+			return ff.upgradeAssignment(input);
 		}
 	}
 
 	private static class TestItemExpr extends TestItem<Expression> {
 		public TestItemExpr(String beforeUpgrade,
-				LanguageVersion targetVersion,
 				UpgradeResultChecker<Expression> checker) {
-			super(beforeUpgrade, targetVersion, checker);
+			super(beforeUpgrade, checker);
 		}
 
 		@Override
 		protected IUpgradeResult<Expression> upgrade() {
-			return ff.upgradeExpression(input, targetVersion);
+			return ff.upgradeExpression(input);
 		}
 	}
 
 	private static class TestItemPred extends TestItem<Predicate> {
 		public TestItemPred(String beforeUpgrade,
-				LanguageVersion targetVersion,
 				UpgradeResultChecker<Predicate> checker) {
-			super(beforeUpgrade, targetVersion, checker);
+			super(beforeUpgrade, checker);
 		}
 
 		@Override
 		protected IUpgradeResult<Predicate> upgrade() {
-			return ff.upgradePredicate(input, targetVersion);
+			return ff.upgradePredicate(input);
 		}
 	}
 
@@ -248,8 +240,9 @@ public class TestVersionUpgrader extends AbstractTests {
 			final ParenExpMaker parenExpMaker = new ParenExpMaker(setOp);
 			final TestItem<?> ti = new TestItemExpr(
 					parenExpMaker.makeNoParen(), // V1: no parentheses
-					V2, makeResult(
-							mBinaryExpression(setOp.getTag(),
+					makeResult(
+							mBinaryExpression(
+									setOp.getTag(),
 									mBinaryExpression(setOp.getTag(), id_x,
 											id_y), id_z), true));// V2:
 			// parenthesised
@@ -273,11 +266,11 @@ public class TestVersionUpgrader extends AbstractTests {
 		final Expression prj1_gen = mAtomicExpression(KPRJ1_GEN);
 		final Expression prj2_gen = mAtomicExpression(KPRJ2_GEN);
 		final TestItem<?>[] exprsGen = new TestItem<?>[] {
-				new TestItemExpr("id(S)", V2, makeResult(mBinaryExpression(
+				new TestItemExpr("id(S)", makeResult(mBinaryExpression(
 						DOMRES, id_S, id_gen), true)),
-				new TestItemExpr("prj1(S)", V2, makeResult(mBinaryExpression(
+				new TestItemExpr("prj1(S)", makeResult(mBinaryExpression(
 						DOMRES, id_S, prj1_gen), true)),
-				new TestItemExpr("prj2(S)", V2, makeResult(mBinaryExpression(
+				new TestItemExpr("prj2(S)", makeResult(mBinaryExpression(
 						DOMRES, id_S, prj2_gen), true)), };
 		verifyUpgrade(exprsGen);
 	}
@@ -290,7 +283,7 @@ public class TestVersionUpgrader extends AbstractTests {
 
 	@Test 
 	public void testNotTypedGenericFromNotTypedChild() throws Exception {
-		final TestItem<?> ti = new TestItemPred("v ∈ id(S)", V2, makeResult(
+		final TestItem<?> ti = new TestItemPred("v ∈ id(S)", makeResult(
 				mRelationalPredicate(IN, mFreeIdentifier("v"),
 						mBinaryExpression(DOMRES, mFreeIdentifier("S"),
 								mAtomicExpression(KID_GEN))), true));
@@ -300,7 +293,7 @@ public class TestVersionUpgrader extends AbstractTests {
 	@Test 
 	public void testTypedGenericFromTypeExpr() throws Exception {
 		final IntegerType integerType = ff.makeIntegerType();
-		final TestItem<?> ti = new TestItemPred("v ∈ id(ℤ)", V2, makeResult(
+		final TestItem<?> ti = new TestItemPred("v ∈ id(ℤ)", makeResult(
 				mRelationalPredicate(IN, mFreeIdentifier("v"), ff
 						.makeAtomicExpression(KID_GEN, null, REL(integerType,
 								integerType))), true));
@@ -310,7 +303,7 @@ public class TestVersionUpgrader extends AbstractTests {
 	@Test 
 	public void testTypedGenericFromTypedChild() throws Exception {
 		final IntegerType integerType = ff.makeIntegerType();
-		final TestItem<?> ti = new TestItemPred("v ∈ id(ℕ)", V2, makeResult(
+		final TestItem<?> ti = new TestItemPred("v ∈ id(ℕ)", makeResult(
 				mRelationalPredicate(IN, mFreeIdentifier("v"),
 						mBinaryExpression(DOMRES, mAtomicExpression(NATURAL),
 								ff.makeAtomicExpression(KID_GEN, null, REL(
@@ -320,7 +313,7 @@ public class TestVersionUpgrader extends AbstractTests {
 
 	@Test 
 	public void testBecomesEqualTo() throws Exception {
-		final TestItem<?> ti = new TestItemAssign("v ≔ id(S)", V2, makeResult(
+		final TestItem<?> ti = new TestItemAssign("v ≔ id(S)", makeResult(
 				mBecomesEqualTo(mFreeIdentifier("v"), mBinaryExpression(DOMRES,
 						mFreeIdentifier("S"), mAtomicExpression(KID_GEN))),
 				true));
@@ -329,7 +322,7 @@ public class TestVersionUpgrader extends AbstractTests {
 
 	@Test 
 	public void testBecomesEqualToSeveral() throws Exception {
-		final TestItem<?> ti = new TestItemAssign("v,w ≔ 0,id(S)", V2,
+		final TestItem<?> ti = new TestItemAssign("v,w ≔ 0,id(S)",
 				makeResult(mBecomesEqualTo(new FreeIdentifier[] {
 						mFreeIdentifier("v"), mFreeIdentifier("w") },
 						new Expression[] {
@@ -341,7 +334,7 @@ public class TestVersionUpgrader extends AbstractTests {
 
 	@Test 
 	public void testBecomesMemberOf() throws Exception {
-		final TestItem<?> ti = new TestItemAssign("v :∈ prj1(S)", V2,
+		final TestItem<?> ti = new TestItemAssign("v :∈ prj1(S)",
 				makeResult(mBecomesMemberOf(mFreeIdentifier("v"),
 						mBinaryExpression(DOMRES, mFreeIdentifier("S"),
 								mAtomicExpression(KPRJ1_GEN))), true));
@@ -350,7 +343,7 @@ public class TestVersionUpgrader extends AbstractTests {
 
 	@Test 
 	public void testBecomesSuchThat() throws Exception {
-		final TestItem<?> ti = new TestItemAssign("v :∣ v' ∈ prj2(S)", V2,
+		final TestItem<?> ti = new TestItemAssign("v :∣ v' ∈ prj2(S)",
 				makeResult(mBecomesSuchThat(
 						new FreeIdentifier[] { mFreeIdentifier("v") },
 						new BoundIdentDecl[] { mBoundIdentDecl("v'") },
@@ -363,9 +356,9 @@ public class TestVersionUpgrader extends AbstractTests {
 	@Test 
 	public void testAssignmentNoChange() throws Exception {
 		final TestItem<?>[] testItems = new TestItem<?>[] {
-				new TestItemAssign("v :∣ 0 =    0", V2, makeResult(
+				new TestItemAssign("v :∣ 0 =    0", makeResult(
 						(Assignment) null, false)),
-				new TestItemAssign("v,w  ≔ 0, 0", V2, makeResult(
+				new TestItemAssign("v,w  ≔ 0, 0", makeResult(
 						(Assignment) null, false)), };
 		verifyUpgrade(testItems);
 	}
@@ -379,7 +372,7 @@ public class TestVersionUpgrader extends AbstractTests {
 
 		final String form = " ( " + spec + " S \u2194 S " + spec
 				+ " ) \u2194 U";
-		final TestItem<?> ti = new TestItemExpr(form, V2, makeResult(
+		final TestItem<?> ti = new TestItemExpr(form, makeResult(
 				(Expression) null, false));
 		ti.verifyUpgrade();
 	}
@@ -389,8 +382,8 @@ public class TestVersionUpgrader extends AbstractTests {
 		final String pred1 = "∀X· ⊤";
 		final String pred2 = "∀X· ((((S ↔ S)  T)  (S  (S ⇸ T))) → S) ⤔ (((S ↣ T) ⤀(S ↠ T))⤖ S)⊆ X";
 		final TestItem<?>[] items = new TestItem<?>[] {
-				new TestItemPred(pred1, V2, makeResult((Predicate) null, false)),
-				new TestItemPred(pred2, V2, makeResult((Predicate) null, false)) };
+				new TestItemPred(pred1, makeResult((Predicate) null, false)),
+				new TestItemPred(pred2, makeResult((Predicate) null, false)) };
 		verifyUpgrade(items);
 	}
 
@@ -400,7 +393,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		final UpgradeResultChecker<Predicate> checker = new UpgradeResultChecker<Predicate>(
 				new ASTProblem(new SourceLocation(1, 1),
 						UnexpectedSymbol, Error, "an identifier", "("));
-		final TestItem<?> ti = new TestItemPred(pred, V2, checker);
+		final TestItem<?> ti = new TestItemPred(pred, checker);
 		ti.verifyUpgrade();
 	}
 
@@ -412,7 +405,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		final UpgradeResultChecker<Predicate> checker = new UpgradeResultChecker<Predicate>(
 				new ASTProblem(new SourceLocation(1, 9), NotUpgradableError,
 						Error));
-		final TestItem<?> item = new TestItemPred(pred1, V2, checker);
+		final TestItem<?> item = new TestItemPred(pred1, checker);
 		item.verifyUpgrade();
 	}
 
@@ -425,7 +418,7 @@ public class TestVersionUpgrader extends AbstractTests {
 						new BoundIdentDecl[] { mBoundIdentDecl("partition1") },
 						mRelationalPredicate(IN, mBoundIdentifier(0),
 								mFreeIdentifier("S"))), true);
-		final TestItem<?> item = new TestItemPred(pred, V2, checker);
+		final TestItem<?> item = new TestItemPred(pred, checker);
 		item.verifyUpgrade();
 	}
 
@@ -442,7 +435,7 @@ public class TestVersionUpgrader extends AbstractTests {
 								mRelationalPredicate(EQUAL,
 										mBoundIdentifier(0),
 										mBoundIdentifier(1)))), true);
-		final TestItem<?> item = new TestItemPred(pred, V2, checker);
+		final TestItem<?> item = new TestItemPred(pred, checker);
 		item.verifyUpgrade();
 	}
 
@@ -457,7 +450,7 @@ public class TestVersionUpgrader extends AbstractTests {
 						new BoundIdentDecl[] { mBoundIdentDecl("partition1") },
 						mRelationalPredicate(IN, mFreeIdentifier("x"),
 								mBinaryExpression(DOMRES, id_S, id_gen))), true);
-		final TestItem<?> ti = new TestItemPred(assign, V2, checker);
+		final TestItem<?> ti = new TestItemPred(assign, checker);
 		ti.verifyUpgrade();
 
 	}
@@ -468,7 +461,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		final UpgradeResultChecker<Assignment> checker = new UpgradeResultChecker<Assignment>(
 				new ASTProblem(new SourceLocation(0, 8), NotUpgradableError,
 						Error));
-		final TestItem<?> ti = new TestItemAssign(assign, V2, checker);
+		final TestItem<?> ti = new TestItemAssign(assign, checker);
 		ti.verifyUpgrade();
 	}
 
@@ -478,7 +471,7 @@ public class TestVersionUpgrader extends AbstractTests {
 		final UpgradeResultChecker<Assignment> checker = new UpgradeResultChecker<Assignment>(
 				new ASTProblem(new SourceLocation(4, 12), NotUpgradableError,
 						Error));
-		final TestItem<?> ti = new TestItemAssign(assign, V2, checker);
+		final TestItem<?> ti = new TestItemAssign(assign, checker);
 		ti.verifyUpgrade();
 	}
 
@@ -491,7 +484,7 @@ public class TestVersionUpgrader extends AbstractTests {
 						mBinaryExpression(TFUN, mBinaryExpression(TFUN,
 								mFreeIdentifier("A"), mFreeIdentifier("B")),
 								mFreeIdentifier("C"))), true);
-		final TestItem<?> ti = new TestItemPred(pred, V2, checker);
+		final TestItem<?> ti = new TestItemPred(pred, checker);
 		ti.verifyUpgrade();
 	}
 
@@ -501,7 +494,7 @@ public class TestVersionUpgrader extends AbstractTests {
 
 		final UpgradeResultChecker<Assignment> checker = makeResult(
 				(Assignment) null, false);
-		final TestItem<?> ti = new TestItemAssign(assign, V2, checker);
+		final TestItem<?> ti = new TestItemAssign(assign, checker);
 		ti.verifyUpgrade();
 	}
 
