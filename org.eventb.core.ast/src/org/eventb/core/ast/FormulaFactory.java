@@ -17,7 +17,6 @@
 package org.eventb.core.ast;
 
 import static java.util.Collections.emptyMap;
-import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.internal.core.ast.FactoryHelper.toBIDArray;
 import static org.eventb.internal.core.ast.FactoryHelper.toExprArray;
 import static org.eventb.internal.core.ast.FactoryHelper.toIdentArray;
@@ -1702,39 +1701,6 @@ public class FormulaFactory {
 	 * method does not allow predicate variables.
 	 * 
 	 * @param formula the formula to be parsed
-	 * @return the result of the parse
-	 * @deprecated Since the introduction of mathematical language versions,
-	 *             clients should use the similar method taking a language
-	 *             version as argument
-	 * @see #parseAssignment(String, LanguageVersion, Object)
-	 */
-	@Deprecated
-	public IParseResult parseAssignment(String formula) {
-		return parseGeneric(formula, V1, null, Assignment.class, false);
-	}
-	
-	/**
-	 * Parses the specified formula and returns the corresponding result. This
-	 * method does not allow predicate variables.
-	 * 
-	 * @param formula the formula to be parsed
-	 * @param origin the origin to be traced to the built AST
-	 * @return the result of the parse
-	 * @deprecated Since the introduction of mathematical language versions,
-	 *             clients should use the similar method taking a language
-	 *             version as argument
-	 * @see #parseAssignment(String, LanguageVersion, Object)
-	 */
-	@Deprecated
-	public IParseResult parseAssignment(String formula, Object origin) {
-		return parseGeneric(formula, V1, origin, Assignment.class, false);
-	}
-	
-	/**
-	 * Parses the specified formula and returns the corresponding result. This
-	 * method does not allow predicate variables.
-	 * 
-	 * @param formula the formula to be parsed
 	 * @param version the version of the math language used in the formula
 	 * @param origin the origin to be traced to the built AST
 	 * @return the result of the parse
@@ -1743,39 +1709,6 @@ public class FormulaFactory {
 	public IParseResult parseAssignment(String formula, LanguageVersion version,
 			Object origin) {
 		return parseGeneric(formula, version, origin, Assignment.class, false);
-	}
-
-	/**
-	 * Parses the specified formula and returns the corresponding result. This
-	 * method does not allow predicate variables.
-	 * 
-	 * @param formula the formula to be parsed
-	 * @return the result of the parse
-	 * @deprecated Since the introduction of mathematical language versions,
-	 *             clients should use the similar method taking a language
-	 *             version as argument
-	 * @see #parseExpression(String, LanguageVersion, Object)
-	 */
-	@Deprecated
-	public IParseResult parseExpression(String formula) {
-		return parseGeneric(formula, V1, null, Expression.class, false);
-	}
-	
-	/**
-	 * Parses the specified formula and returns the corresponding result. This
-	 * method does not allow predicate variables.
-	 * 
-	 * @param formula the formula to be parsed
-	 * @param origin the origin to be traced to the built AST
-	 * @return the result of the parse
-	 * @deprecated Since the introduction of mathematical language versions,
-	 *             clients should use the similar method taking a language
-	 *             version as argument
-	 * @see #parseExpression(String, LanguageVersion, Object)
-	 */
-	@Deprecated
-	public IParseResult parseExpression(String formula, Object origin) {
-		return parseGeneric(formula, V1, origin, Expression.class, false);
 	}
 
 	/**
@@ -1816,39 +1749,6 @@ public class FormulaFactory {
 	 * method does not allow predicate variables.
 	 * 
 	 * @param formula the formula to be parsed
-	 * @return the result of the parse
-	 * @deprecated Since the introduction of mathematical language versions,
-	 *             clients should use the similar method taking a language
-	 *             version as argument
-	 * @see #parsePredicate(String, LanguageVersion, Object)
-	 */
-	@Deprecated
-	public IParseResult parsePredicate(String formula) {
-		return parseGeneric(formula, V1, null, Predicate.class, false);
-	}
-
-	/**
-	 * Parses the specified predicate and returns the corresponding result. This
-	 * method does not allow predicate variables.
-	 * 
-	 * @param formula the formula to be parsed
-	 * @param origin the origin to be traced to the built AST
-	 * @return the result of the parse
-	 * @deprecated Since the introduction of mathematical language versions,
-	 *             clients should use the similar method taking a language
-	 *             version as argument
-	 * @see #parsePredicate(String, LanguageVersion, Object)
-	 */
-	@Deprecated
-	public IParseResult parsePredicate(String formula, Object origin) {
-		return parseGeneric(formula, V1, origin, Predicate.class, false);
-	}
-	
-	/**
-	 * Parses the specified predicate and returns the corresponding result. This
-	 * method does not allow predicate variables.
-	 * 
-	 * @param formula the formula to be parsed
 	 * @param version the version of the math language used in the formula
 	 * @param origin the origin to be traced to the built AST
 	 * @return the result of the parse
@@ -1875,20 +1775,6 @@ public class FormulaFactory {
 	public IParseResult parsePredicatePattern(String formula,
 			LanguageVersion version, Object origin) {
 		return parseGeneric(formula, version, origin, Predicate.class, true);
-	}
-	
-	
-	/**
-	 * Parses the specified type and returns the corresponding result. This
-	 * method does not allow predicate variables.
-	 * 
-	 * @param formula the formula to be parsed
-	 * @return the result of the parse
-	 * @deprecated use {@link #parseType(String, LanguageVersion)}
-	 */
-	@Deprecated
-	public IParseResult parseType(String formula) {
-		return parseGeneric(formula, V1, null, Type.class, false);
 	}
 	
 	/**
