@@ -161,6 +161,11 @@ public abstract class AbstractTests {
 		return parseExpression(image, version, getFormulaFactory(version));
 	}
 	
+	public static IParseResult parseResultExpression(String image,
+			LanguageVersion version) {
+		return getFormulaFactory(version).parseExpression(image, version, null);
+	}
+
 	public static Expression parseExpression(String image,
 			LanguageVersion version, FormulaFactory factory) {
 		final IParseResult result;
@@ -194,6 +199,11 @@ public abstract class AbstractTests {
 		return parsePredicate(image, version, getFormulaFactory(version));
 	}
 	
+	public static IParseResult parseResultPredicate(String image,
+			LanguageVersion version) {
+		return getFormulaFactory(version).parsePredicate(image, version, null);
+	}
+
 	public static Predicate parsePredicate(String image,
 			LanguageVersion version, FormulaFactory factory) {
 		final IParseResult result;
@@ -228,6 +238,11 @@ public abstract class AbstractTests {
 		return parseAssignment(image, version, getFormulaFactory(version));
 	}
 	
+	public static IParseResult parseResultAssignment(String image,
+			LanguageVersion version) {
+		return getFormulaFactory(version).parseAssignment(image, version, null);
+	}
+
 	public static Assignment parseAssignment(String image,
 			LanguageVersion version, FormulaFactory factory) {
 		final IParseResult result = factory.parseAssignment(image, version,

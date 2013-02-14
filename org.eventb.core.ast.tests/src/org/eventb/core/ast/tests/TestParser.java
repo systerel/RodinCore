@@ -209,7 +209,7 @@ public class TestParser extends AbstractTests {
 		}
 		@Override 
 		IParseResult parseResult(String input, LanguageVersion version) {
-			return ff.parseExpression(input, version, null);
+			return parseResultExpression(input, version);
 		}
 	}
 	
@@ -223,7 +223,7 @@ public class TestParser extends AbstractTests {
 		}
 		@Override 
 		IParseResult parseResult(String input, LanguageVersion version) {
-			return ff.parsePredicate(input, version, null);
+			return parseResultPredicate(input, version);
 		}
 	}
 	
@@ -237,7 +237,7 @@ public class TestParser extends AbstractTests {
 		}
 		@Override 
 		IParseResult parseResult(String input, LanguageVersion version) {
-			return ff.parseAssignment(input, version, null);
+			return parseResultAssignment(input, version);
 		}
 	}
 	

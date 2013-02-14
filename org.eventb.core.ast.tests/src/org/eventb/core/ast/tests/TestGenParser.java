@@ -305,9 +305,9 @@ public class TestGenParser extends AbstractTests {
 		return actual;
 	}
 
-	private static Predicate parsePred(String formula,
-			LanguageVersion version) {
-		final IParseResult result = parsePredRes(formula, version);
+	private static Predicate parsePred(String formula, LanguageVersion version,
+			FormulaFactory factory) {
+		final IParseResult result = parsePredRes(formula, version, factory);
 		assertFalse("unexpected problem(s) for " + formula + ": "
 				+ result.getProblems(), result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
@@ -319,7 +319,7 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	private static Predicate parsePred(String formula) {
-		return parsePred(formula, LanguageVersion.LATEST);
+		return parsePred(formula, LanguageVersion.LATEST, ff);
 	}
 
 	private static IParseResult parseExprRes(String formula,
@@ -357,7 +357,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	private static Predicate doPredicateTest(String formula, Predicate expected) {
-		return doPredicateTest(formula, expected, LanguageVersion.V2);
+		return doPredicateTest(formula, expected, LanguageVersion.V2, ff);
 	}
 	
 	private static Predicate doPredicateTest(String formula, Predicate expected, LanguageVersion version, FormulaFactory factory) {
@@ -372,29 +372,13 @@ public class TestGenParser extends AbstractTests {
 		return doPredicateTest(formula, expected, LanguageVersion.LATEST, factory);
 	}
 	
-	private static Predicate doPredicateTest(String formula, Predicate expected, LanguageVersion version) {
-		return doPredicateTest(formula, expected, version, ff);
-		
-//		final String actToStr = actual.toStringWithTypes();
-//		final IParseResult resToStr = parsePredRes(actToStr, version);
-//		assertFalse(result.hasProblem());
-//		final Predicate reparsed = resToStr.getParsedPredicate();
-//		checkParsedFormula(actToStr, expected, reparsed);
-		
-	}
-
 	private static IParseResult parsePredRes(String formula,
 			LanguageVersion version, FormulaFactory factory) {
 		return factory.parsePredicate(formula, version, null);
 	}
 	
-	private static IParseResult parsePredRes(String formula,
-			LanguageVersion version) {
-		return parsePredRes(formula, version, ff);
-	}
-	
 	private static IParseResult parsePredRes(String formula) {
-		return parsePredRes(formula, LanguageVersion.LATEST);
+		return parsePredRes(formula, LanguageVersion.LATEST, ff);
 	}
 
 	private static void doQuantPredicateTest(String formula, QuantifiedPredicate expected, Type...types) {
@@ -455,17 +439,18 @@ public class TestGenParser extends AbstractTests {
 		return actual;
 	}
 
-	private static void doTest(String formula, Formula<?> expected, LanguageVersion version) {
+	private static void doTest(String formula, Formula<?> expected,
+			FormulaFactory fac, LanguageVersion version) {
 		if (expected instanceof Expression) {
-			parseAndCheck(formula, (Expression) expected,ff, version);
+			parseAndCheck(formula, (Expression) expected, fac, version);
 		} else if (expected instanceof Predicate) {
-			doPredicateTest(formula, (Predicate) expected, version);
+			doPredicateTest(formula, (Predicate) expected, version, fac);
 		}
 	}
 	
 	private static void doVersionTest(String formula, Formula<?> expectedV1, Formula<?> expectedV2) {
-		doTest(formula, expectedV1, LanguageVersion.V1);
-		doTest(formula, expectedV2, LanguageVersion.V2);
+		doTest(formula, expectedV1, FormulaFactory.getV1Default(), LanguageVersion.V1);
+		doTest(formula, expectedV2, ff, LanguageVersion.V2);
 	}
 
 	@Test 
