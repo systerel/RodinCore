@@ -32,8 +32,11 @@ public abstract class VersionUpgrader {
 
 	private final LanguageVersion sourceVersion;
 
-	public VersionUpgrader(LanguageVersion sourceVer) {
+	private final FormulaFactory sourceFactory;
+
+	public VersionUpgrader(FormulaFactory sourceFac, LanguageVersion sourceVer) {
 		this.sourceVersion = sourceVer;
+		this.sourceFactory = sourceFac;
 	}
 
 	/**
@@ -45,8 +48,7 @@ public abstract class VersionUpgrader {
 	 *            the result of the upgrade
 	 */
 	public void upgradeAssignment(String input, UpgradeResult<Assignment> result) {
-		final FormulaFactory factory = result.getFactory();
-		final IParseResult parseResult = factory.parseAssignment(input,
+		final IParseResult parseResult = sourceFactory.parseAssignment(input,
 				sourceVersion, null);
 		if (parseResult.hasProblem()) {
 			copyProblems(parseResult, result);
@@ -70,8 +72,7 @@ public abstract class VersionUpgrader {
 	 *            the result of the upgrade
 	 */
 	public void upgradeExpression(String input, UpgradeResult<Expression> result) {
-		final FormulaFactory factory = result.getFactory();
-		final IParseResult parseResult = factory.parseExpression(input,
+		final IParseResult parseResult = sourceFactory.parseExpression(input,
 				sourceVersion, null);
 		if (parseResult.hasProblem()) {
 			copyProblems(parseResult, result);
@@ -92,8 +93,7 @@ public abstract class VersionUpgrader {
 	 *            the result of the upgrade
 	 */
 	public void upgradePredicate(String input, UpgradeResult<Predicate> result) {
-		final FormulaFactory factory = result.getFactory();
-		final IParseResult parseResult = factory.parsePredicate(input,
+		final IParseResult parseResult = sourceFactory.parsePredicate(input,
 				sourceVersion, null);
 		if (parseResult.hasProblem()) {
 			copyProblems(parseResult, result);
