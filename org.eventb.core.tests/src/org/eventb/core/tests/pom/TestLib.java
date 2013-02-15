@@ -18,7 +18,6 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -65,11 +64,11 @@ import org.eventb.core.seqprover.ProverFactory;
 		// Parsing
 		Predicate[] hyps = new Predicate[hypsStr.length];
 		for (int i=0;i<hypsStr.length;i++){
-			hyps[i] = ff.parsePredicate(hypsStr[i], LanguageVersion.V2, null)
+			hyps[i] = ff.parsePredicate(hypsStr[i], null)
 					.getParsedPredicate();
 			if (hyps[i] == null) return null;
 		}
-		Predicate goal = ff.parsePredicate(goalStr, LanguageVersion.V2, null)
+		Predicate goal = ff.parsePredicate(goalStr, null)
 				.getParsedPredicate();
 		if (goal == null) return null;
 		
@@ -112,7 +111,7 @@ import org.eventb.core.seqprover.ProverFactory;
 	 * 		of type checking error. 
 	 */
 	public static Predicate genPred(FormulaFactory ff, String str){
-		Predicate result = ff.parsePredicate(str, LanguageVersion.V2, null).getParsedPredicate();
+		Predicate result = ff.parsePredicate(str, null).getParsedPredicate();
 		if (result == null) return null;
 		ITypeCheckResult tcResult =  result.typeCheck(ff.makeTypeEnvironment());
 		if (! tcResult.isSuccess()) return null;
