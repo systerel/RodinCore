@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,10 @@
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
+
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isInter;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isSetMinus;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isUnion;
 
 import java.util.List;
 
@@ -20,10 +24,8 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.eventbExtensions.Tactics;
 import org.eventb.ui.prover.DefaultTacticProvider.DefaultPositionApplication;
 import org.eventb.ui.prover.ITacticApplication;
@@ -91,19 +93,22 @@ public class SetMinus extends AbstractHypGoalTacticProvider {
 		@Override
 		public void inspect(BinaryExpression expression,
 				IAccumulator<ITacticApplication> accumulator) {
-			if (!(expression.getTag() == Expression.SETMINUS)) {
-				return;
+			if (isApplicable(expression)) {
+				final IPosition position = accumulator.getCurrentPosition();
+				accumulator.add(new SetMinusApplication(hyp, position));
+			}
+		}
+
+		private boolean isApplicable(BinaryExpression expression) {
+			if (!isSetMinus(expression)) {
+				return false;
 			}
 			final Expression left = expression.getLeft();
-			final Type baseType = left.getType().getBaseType();
-			if (left.equals(baseType.toExpression())) {
-				final Expression right = expression.getRight();
-				if (Lib.isUnion(right) || Lib.isInter(right)
-						|| Lib.isSetMinus(right)) {
-					final IPosition position = accumulator.getCurrentPosition();
-					accumulator.add(new SetMinusApplication(hyp, position));
-				}
+			if (!left.isATypeExpression()) {
+				return false;
 			}
+			final Expression right = expression.getRight();
+			return isUnion(right) || isInter(right) || isSetMinus(right);
 		}
 		
 	}
