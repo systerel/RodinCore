@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 ETH Zurich and others.
+ * Copyright (c) 2008, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eventb.pp;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -51,7 +50,7 @@ public class TestSequent {
 	}
 
 	private static Predicate parsePredicate(String pred, FormulaFactory ff) {
-		final IParseResult result = ff.parsePredicate(pred, V2, null);
+		final IParseResult result = ff.parsePredicate(pred, null);
 		assertFalse(pred, result.hasProblem());
 		return result.getParsedPredicate();
 	}
