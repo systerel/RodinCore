@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.eventb.core.ast.LanguageVersion.V2;
-import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -414,21 +413,21 @@ public abstract class EventBTest extends BuilderTest {
 	}
 
 	public String getNormalizedExpression(String input, ITypeEnvironment environment) {
-		Expression expr = factory.parseExpression(input, V2, null).getParsedExpression();
+		Expression expr = factory.parseExpression(input, null).getParsedExpression();
 		expr.typeCheck(environment);
 		assertTrue(expr.isTypeChecked());
 		return expr.toStringWithTypes();
 	}
 
 	public String getNormalizedPredicate(String input, ITypeEnvironment environment) {
-		Predicate pred = factory.parsePredicate(input, V2, null).getParsedPredicate();
+		Predicate pred = factory.parsePredicate(input, null).getParsedPredicate();
 		pred.typeCheck(environment);
 		assertTrue(pred.isTypeChecked());
 		return pred.toStringWithTypes();
 	}
 
 	public String getNormalizedAssignment(String input, ITypeEnvironment environment) {
-		Assignment assn = factory.parseAssignment(input, V2, null).getParsedAssignment();
+		Assignment assn = factory.parseAssignment(input, null).getParsedAssignment();
 		assn.typeCheck(environment);
 		assertTrue(assn.isTypeChecked());
 		return assn.toStringWithTypes();

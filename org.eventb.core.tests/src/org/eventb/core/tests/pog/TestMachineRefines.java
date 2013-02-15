@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.pog;
 
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.IEvent.INITIALISATION;
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
@@ -1314,7 +1313,7 @@ public class TestMachineRefines extends EventBPOTest {
 		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		for (IAxiom axiom: ctx.getAxioms()) {
 			final String s = axiom.getPredicateString();
-			final Predicate p = factory.parsePredicate(s, V2, null)
+			final Predicate p = factory.parsePredicate(s, null)
 					.getParsedPredicate();
 			final ITypeCheckResult tcResult = p.typeCheck(typenv);
 			assertTrue(p.isTypeChecked());
