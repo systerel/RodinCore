@@ -11,8 +11,6 @@
 package org.eventb.core.ast.tests;
 
 import static java.util.Arrays.asList;
-import static org.eventb.core.ast.LanguageVersion.V1;
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -32,7 +30,6 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
@@ -59,6 +56,9 @@ public abstract class AbstractTests {
 
 	// Formula factory for the old V1 language
 	public static final FormulaFactory ffV1 = FormulaFactory.getV1Default();
+
+	// Default formula factories for V1 and V2 languages versions
+	protected static final FormulaFactory[] FACTORIES_VERSIONS = { ffV1, ff };
 
 	// Utility arrays for building extended formulas
 	public static final Expression[] NO_EXPRS = new Expression[0];
@@ -144,11 +144,6 @@ public abstract class AbstractTests {
 	}
 	
 	public static Expression parseExpression(String image,
-			FormulaFactory factory) {
-		return parseExpression(image, getLanguageVersion(factory), factory);
-	}
-	
-	public static Expression parseExpression(String image,
 			ITypeEnvironment typenv) {
 		final FormulaFactory fac = typenv.getFormulaFactory();
 		final Expression result = parseExpression(image, fac);
@@ -156,18 +151,7 @@ public abstract class AbstractTests {
 		return result;
 	}
 
-	public static Expression parseExpression(String image,
-			LanguageVersion version) {
-		return parseExpression(image, getFormulaFactory(version));
-	}
-	
-	public static IParseResult parseResultExpression(String image,
-			LanguageVersion version) {
-		return getFormulaFactory(version).parseExpression(image, null);
-	}
-
-	public static Expression parseExpression(String image,
-			LanguageVersion version, FormulaFactory factory) {
+	public static Expression parseExpression(String image, FormulaFactory factory) {
 		final IParseResult result;
 		if (image.contains(PredicateVariable.LEADING_SYMBOL)) {
 			result = factory.parseExpressionPattern(image, null);
@@ -182,10 +166,6 @@ public abstract class AbstractTests {
 		return parsePredicate(image, FormulaFactory.getDefault());
 	}
 
-	public static Predicate parsePredicate(String image, FormulaFactory factory) {
-		return parsePredicate(image, getLanguageVersion(factory), factory);
-	}
-	
 	public static Predicate parsePredicate(String image,
 			ITypeEnvironment typenv) {
 		final FormulaFactory fac = typenv.getFormulaFactory();
@@ -193,19 +173,8 @@ public abstract class AbstractTests {
 		typeCheck(result, typenv);
 		return result;
 	}
-
-	public static Predicate parsePredicate(String image,
-			LanguageVersion version) {
-		return parsePredicate(image, getFormulaFactory(version));
-	}
 	
-	public static IParseResult parseResultPredicate(String image,
-			LanguageVersion version) {
-		return getFormulaFactory(version).parsePredicate(image, null);
-	}
-
-	public static Predicate parsePredicate(String image,
-			LanguageVersion version, FormulaFactory factory) {
+	public static Predicate parsePredicate(String image, FormulaFactory factory) {
 		final IParseResult result;
 		if (image.contains(PredicateVariable.LEADING_SYMBOL)) {
 			result = factory.parsePredicatePattern(image, null);
@@ -221,11 +190,6 @@ public abstract class AbstractTests {
 	}
 		
 	public static Assignment parseAssignment(String image,
-			FormulaFactory factory) {
-		return parseAssignment(image, getLanguageVersion(factory), factory);
-	}
-	
-	public static Assignment parseAssignment(String image,
 			ITypeEnvironment typenv) {
 		final FormulaFactory fac = typenv.getFormulaFactory();
 		final Assignment result = parseAssignment(image, fac);
@@ -234,19 +198,8 @@ public abstract class AbstractTests {
 	}
 
 	public static Assignment parseAssignment(String image,
-			LanguageVersion version) {
-		return parseAssignment(image, getFormulaFactory(version));
-	}
-	
-	public static IParseResult parseResultAssignment(String image,
-			LanguageVersion version) {
-		return getFormulaFactory(version).parseAssignment(image, null);
-	}
-
-	public static Assignment parseAssignment(String image,
-			LanguageVersion version, FormulaFactory factory) {
-		final IParseResult result = factory.parseAssignment(image,
-				null);
+			FormulaFactory factory) {
+		final IParseResult result = factory.parseAssignment(image, null);
 		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedAssignment();
 	}
@@ -261,23 +214,6 @@ public abstract class AbstractTests {
 		return result.getParsedType();
 	}
 
-	private static LanguageVersion getLanguageVersion(FormulaFactory factory) {
-		final LanguageVersion version = factory == ffV1 ? V1 : V2;
-		return version;
-	}
-	
-	protected static FormulaFactory getFormulaFactory(LanguageVersion version) {
-		switch (version) {
-		case V1:
-			return ffV1;
-		case V2:
-			return ff;
-		default:
-			assert false;
-			return null;
-		}
-	}
-	
 	/**
 	 * Type-checks the given formula and returns the type environment made of the
 	 * given type environment and the type environment inferred during

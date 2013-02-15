@@ -79,7 +79,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
@@ -138,13 +137,13 @@ public class TestUnparse extends AbstractTests {
 
 	private static abstract class TestPair {
 		final String image;
-		final LanguageVersion version;
+		final FormulaFactory fVersion;
 		TestPair(String image) {
-			this(image, LanguageVersion.V1);
+			this(image, ffV1);
 		}
-		TestPair(String image, LanguageVersion version) {
+		TestPair(String image, FormulaFactory fVersion) {
 			this.image = image;
-			this.version = version;
+			this.fVersion = fVersion;
 		}
 		abstract Formula<?> getFormula();
 		abstract Formula<?> parseAndCheck(String input);
@@ -170,8 +169,8 @@ public class TestUnparse extends AbstractTests {
 			super(image);
 			this.formula = formula;
 		}
-		ExprTestPair(String image, LanguageVersion version, Expression formula) {
-			super(image, version);
+		ExprTestPair(String image, FormulaFactory fVersion, Expression formula) {
+			super(image, fVersion);
 			this.formula = formula;
 		}
 		@Override 
@@ -180,7 +179,7 @@ public class TestUnparse extends AbstractTests {
 		}
 		@Override 
 		Expression parseAndCheck(String input) {
-			final Expression actual = parseExpression(input, version);
+			final Expression actual = parseExpression(input, fVersion);
 			assertEquals("Unexpected parser result", formula, actual);
 			return actual;
 		}
@@ -192,8 +191,8 @@ public class TestUnparse extends AbstractTests {
 			super(image);
 			this.formula = formula;
 		}
-		PredTestPair(String image, LanguageVersion version, Predicate formula) {
-			super(image, version);
+		PredTestPair(String image, FormulaFactory fVersion, Predicate formula) {
+			super(image, fVersion);
 			this.formula = formula;
 		}
 		@Override 
@@ -202,7 +201,7 @@ public class TestUnparse extends AbstractTests {
 		}
 		@Override 
 		Predicate parseAndCheck(String input) {
-			final Predicate actual = parsePredicate(input, version);
+			final Predicate actual = parsePredicate(input, fVersion);
 			assertEquals("Unexpected parser result", formula, actual);
 			return actual;
 		}
@@ -220,7 +219,7 @@ public class TestUnparse extends AbstractTests {
 		}
 		@Override 
 		Assignment parseAndCheck(String input) {
-			final Assignment actual = parseAssignment(input, version);
+			final Assignment actual = parseAssignment(input, fVersion);
 			assertEquals("Unexpected parser result", formula, actual);
 			return actual;
 		}
@@ -1608,46 +1607,46 @@ public class TestUnparse extends AbstractTests {
 	}
 
 	public void routineUnparse(TagSupply tagSupply) {
-		final LanguageVersion ver = tagSupply.version;
+		final FormulaFactory fVer = tagSupply.factory;
 
-		routineTest(constructAssociativeAssociativeTrees(tagSupply), ver);
-		routineTest(constructBinaryBinaryTrees(tagSupply), ver);
-		routineTest(constructUnaryUnaryTrees(tagSupply), ver);
-		routineTest(constructQuantifiedQuantifiedTrees(), ver);
-		routineTest(constructAssociativeBinaryTrees(tagSupply), ver);
-		routineTest(constructAssociativeUnaryTrees(tagSupply), ver);
-		routineTest(constructBinaryUnaryTrees(tagSupply), ver);
-		routineTest(constructQuantifiedBinaryTrees(tagSupply), ver);
-		routineTest(constructQuantifiedAssociativeTree(tagSupply), ver);
-		routineTest(constructQuantifiedUnaryTree(tagSupply), ver);
-		routineTest(constructAssociativeAssociativePredicateTree(tagSupply), ver);
-		routineTest(constructAssociativePredicateVariableTrees(tagSupply), ver);
-		routineTest(constructBinaryBinaryPredicateTrees(tagSupply), ver);
-		routineTest(constructBinaryPredicateVariableTrees(tagSupply), ver);
-		routineTest(constructUnaryUnaryPredicateTrees(tagSupply), ver);
-		routineTest(constructUnaryPredicateVariableTrees(tagSupply), ver);
-		routineTest(constructAssociativeBinaryPredicateTrees(tagSupply), ver);
-		routineTest(constructAssociativeUnaryPredicateTrees(tagSupply), ver);
-		routineTest(constructBinaryUnaryPredicateTrees(tagSupply), ver);
-		routineTest(constructQuantifiedQuantifiedPredicateTrees(tagSupply), ver);
-		routineTest(constructQuantifiedBinaryPredicateTrees(tagSupply), ver);
-		routineTest(constructQuantifiedAssociativePredicateTrees(tagSupply), ver);
-		routineTest(constructQuantifiedUnaryPredicateTrees(tagSupply), ver);
-		routineTest(constructQuantifiedPredicateVariableTrees(tagSupply), ver);
-		routineTest(constructMultiplePredicateTrees(tagSupply), ver);
-		routineTest(constructRelop(tagSupply), ver);
-		routineTest(constructQuantifierWithPredicate(tagSupply), ver);
+		routineTest(constructAssociativeAssociativeTrees(tagSupply), fVer);
+		routineTest(constructBinaryBinaryTrees(tagSupply), fVer);
+		routineTest(constructUnaryUnaryTrees(tagSupply), fVer);
+		routineTest(constructQuantifiedQuantifiedTrees(), fVer);
+		routineTest(constructAssociativeBinaryTrees(tagSupply), fVer);
+		routineTest(constructAssociativeUnaryTrees(tagSupply), fVer);
+		routineTest(constructBinaryUnaryTrees(tagSupply), fVer);
+		routineTest(constructQuantifiedBinaryTrees(tagSupply), fVer);
+		routineTest(constructQuantifiedAssociativeTree(tagSupply), fVer);
+		routineTest(constructQuantifiedUnaryTree(tagSupply), fVer);
+		routineTest(constructAssociativeAssociativePredicateTree(tagSupply), fVer);
+		routineTest(constructAssociativePredicateVariableTrees(tagSupply), fVer);
+		routineTest(constructBinaryBinaryPredicateTrees(tagSupply), fVer);
+		routineTest(constructBinaryPredicateVariableTrees(tagSupply), fVer);
+		routineTest(constructUnaryUnaryPredicateTrees(tagSupply), fVer);
+		routineTest(constructUnaryPredicateVariableTrees(tagSupply), fVer);
+		routineTest(constructAssociativeBinaryPredicateTrees(tagSupply), fVer);
+		routineTest(constructAssociativeUnaryPredicateTrees(tagSupply), fVer);
+		routineTest(constructBinaryUnaryPredicateTrees(tagSupply), fVer);
+		routineTest(constructQuantifiedQuantifiedPredicateTrees(tagSupply), fVer);
+		routineTest(constructQuantifiedBinaryPredicateTrees(tagSupply), fVer);
+		routineTest(constructQuantifiedAssociativePredicateTrees(tagSupply), fVer);
+		routineTest(constructQuantifiedUnaryPredicateTrees(tagSupply), fVer);
+		routineTest(constructQuantifiedPredicateVariableTrees(tagSupply), fVer);
+		routineTest(constructMultiplePredicateTrees(tagSupply), fVer);
+		routineTest(constructRelop(tagSupply), fVer);
+		routineTest(constructQuantifierWithPredicate(tagSupply), fVer);
 	}
 	
 	
-	private void routineTest(Formula<?>[] formulae, LanguageVersion version) {
+	private void routineTest(Formula<?>[] formulae, FormulaFactory fVersion) {
 		for (int i = 0; i < formulae.length; i++) {
 			final TestPair pair;
 			if (formulae[i] instanceof Expression) {
-				pair = new ExprTestPair(null, version,
+				pair = new ExprTestPair(null, fVersion,
 						(Expression) formulae[i]);
 			} else {
-				pair = new PredTestPair(null, version,
+				pair = new PredTestPair(null, fVersion,
 						(Predicate) formulae[i]);
 			}
 			

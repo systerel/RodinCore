@@ -31,8 +31,6 @@ import static org.eventb.core.ast.Formula.KPRJ1_GEN;
 import static org.eventb.core.ast.Formula.KPRJ2;
 import static org.eventb.core.ast.Formula.KPRJ2_GEN;
 import static org.eventb.core.ast.Formula.PREDICATE_VARIABLE;
-import static org.eventb.core.ast.LanguageVersion.V1;
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 
 import java.math.BigInteger;
@@ -53,7 +51,6 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IntegerLiteral;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
@@ -89,7 +86,7 @@ public class Common {
 
 		private static class V1TagSupply extends TagSupply {
 			protected V1TagSupply() {
-				super(FormulaFactory.getV1Default(), V1);
+				super(FormulaFactory.getV1Default());
 				atomicExpressionTags.removeAll(notV1AtomicExprTags);
 				multiplePredicateTags.clear();
 			}
@@ -97,7 +94,7 @@ public class Common {
 
 		private static class V2TagSupply extends TagSupply {
 			protected V2TagSupply() {
-				super(FormulaFactory.getDefault(), V2);
+				super(FormulaFactory.getDefault());
 				unaryExpressionTags.removeAll(onlyV1UnaryTags);
 			}
 		}
@@ -126,8 +123,6 @@ public class Common {
 		 * Formula factory compatible with the tag supply version
 		 */
 		protected final FormulaFactory factory;
-
-		protected final LanguageVersion version;
 		
 		protected final Set<Integer> associativeExpressionTags = setOf(
 				FIRST_ASSOCIATIVE_EXPRESSION, AssociativeExpression.TAGS_LENGTH);
@@ -157,9 +152,8 @@ public class Common {
 		protected final Set<Integer> unaryPredicateTags = setOf(
 				FIRST_UNARY_PREDICATE, UnaryPredicate.TAGS_LENGTH);
 		
-		protected TagSupply(FormulaFactory factory, LanguageVersion version) {
+		protected TagSupply(FormulaFactory factory) {
 			this.factory = factory;
-			this.version = version;
 		}
 
 	}

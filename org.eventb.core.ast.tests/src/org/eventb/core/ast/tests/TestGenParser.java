@@ -111,7 +111,6 @@ import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
@@ -246,11 +245,11 @@ public class TestGenParser extends AbstractTests {
 		checkSourceLocation(actual, formula.length());
 	}
 	
-	private static Expression parseAndCheck(String formula, Expression expected,
-			FormulaFactory factory, LanguageVersion version) {
-		final Expression actual = parseExpr(formula, factory, version);
+	private static Expression parseAndCheck(String formula,
+			Expression expected, FormulaFactory factory) {
+		final Expression actual = parseExpr(formula, factory);
 		checkParsedFormula(formula, expected, actual);
-		
+
 		return actual;
 	}
 
@@ -266,11 +265,11 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	private static Expression doParseUnparseTest(String formula, Expression expected, FormulaFactory factory) {
-		final Expression actual = parseExpr(formula, factory, LanguageVersion.LATEST);
+		final Expression actual = parseExpr(formula, factory);
 		checkParsedFormula(formula, expected, actual);
 		
 		final String actToStr = actual.toString();
-		final Expression reparsed = parseExpr(actToStr, factory, LanguageVersion.LATEST);
+		final Expression reparsed = parseExpr(actToStr, factory);
 		assertEquals("bad reparsed", expected, reparsed);
 	
 		return actual;
@@ -295,18 +294,16 @@ public class TestGenParser extends AbstractTests {
 		return actual;
 	}
 
-	private static Expression parseExpr(String formula, FormulaFactory factory,
-			LanguageVersion version) {
-		final IParseResult result = parseExprRes(formula, factory, version);
+	private static Expression parseExpr(String formula, FormulaFactory factory) {
+		final IParseResult result = factory.parseExpression(formula, null);
 		assertFalse("unexpected problem(s): " + result.getProblems(), result
 				.hasProblem());
 		final Expression actual = result.getParsedExpression();
 		return actual;
 	}
 
-	private static Predicate parsePred(String formula, LanguageVersion version,
-			FormulaFactory factory) {
-		final IParseResult result = parsePredRes(formula, version, factory);
+	private static Predicate parsePred(String formula, FormulaFactory factory) {
+		final IParseResult result = factory.parsePredicate(formula, null);
 		assertFalse("unexpected problem(s) for " + formula + ": "
 				+ result.getProblems(), result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
@@ -314,24 +311,19 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	private static Expression parseExpr(String formula) {
-		return parseExpr(formula, ff, LanguageVersion.LATEST);
+		return parseExpr(formula, ff);
 	}
 
 	private static Predicate parsePred(String formula) {
-		return parsePred(formula, LanguageVersion.LATEST, ff);
+		return parsePred(formula, ff);
 	}
 
-	private static IParseResult parseExprRes(String formula,
-			FormulaFactory factory, LanguageVersion version) {
-		return factory.parseExpression(formula, null);
-	}
-	
 	private static IParseResult parseExprRes(String formula) {
-		return parseExprRes(formula, ff, LanguageVersion.LATEST);
+		return ff.parseExpression(formula, null);
 	}
 	
 	private static Expression doExpressionTest(String formula, Expression expected, FormulaFactory factory) {
-		return parseAndCheck(formula, expected, factory, LanguageVersion.V2);
+		return parseAndCheck(formula, expected, factory);
 	}
 	
 	private static Expression doExpressionTest(String formula, Expression expected, Type expectedType, boolean typeCheck) {
@@ -355,28 +347,19 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	private static Predicate doPredicateTest(String formula, Predicate expected) {
-		return doPredicateTest(formula, expected, LanguageVersion.V2, ff);
+		return doPredicateTest(formula, expected, ff);
 	}
 	
-	private static Predicate doPredicateTest(String formula, Predicate expected, LanguageVersion version, FormulaFactory factory) {
-		final IParseResult result = parsePredRes(formula, version, factory);
+	private static Predicate doPredicateTest(String formula, Predicate expected, FormulaFactory factory) {
+		final IParseResult result = factory.parsePredicate(formula, null);
 		assertFalse("unexpected problem(s): " + result.getProblems(), result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
 		checkParsedFormula(formula, expected, actual);
 		return actual;
 	}
 	
-	private static Predicate doPredicateTest(String formula, Predicate expected, FormulaFactory factory) {
-		return doPredicateTest(formula, expected, LanguageVersion.LATEST, factory);
-	}
-	
-	private static IParseResult parsePredRes(String formula,
-			LanguageVersion version, FormulaFactory factory) {
-		return factory.parsePredicate(formula, null);
-	}
-	
 	private static IParseResult parsePredRes(String formula) {
-		return parsePredRes(formula, LanguageVersion.LATEST, ff);
+		return ff.parsePredicate(formula, null);
 	}
 
 	private static void doQuantPredicateTest(String formula, QuantifiedPredicate expected, Type...types) {
@@ -436,17 +419,17 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	private static void doTest(String formula, Formula<?> expected,
-			FormulaFactory fac, LanguageVersion version) {
+			FormulaFactory fac) {
 		if (expected instanceof Expression) {
-			parseAndCheck(formula, (Expression) expected, fac, version);
+			parseAndCheck(formula, (Expression) expected, fac);
 		} else if (expected instanceof Predicate) {
-			doPredicateTest(formula, (Predicate) expected, version, fac);
+			doPredicateTest(formula, (Predicate) expected, fac);
 		}
 	}
 	
 	private static void doVersionTest(String formula, Formula<?> expectedV1, Formula<?> expectedV2) {
-		doTest(formula, expectedV1, FormulaFactory.getV1Default(), LanguageVersion.V1);
-		doTest(formula, expectedV2, ff, LanguageVersion.V2);
+		doTest(formula, expectedV1, ffV1);
+		doTest(formula, expectedV2, ff);
 	}
 
 	@Test 
@@ -2060,9 +2043,8 @@ public class TestGenParser extends AbstractTests {
 		
 		final FreeIdentifier expectedDefault = ff.makeFreeIdentifier(emax, null);
 		doExpressionTest(emax, expectedDefault, ff);
-	
-		final IParseResult result = parseExprRes(emax, extFac,
-				LanguageVersion.LATEST);
+
+		final IParseResult result = extFac.parseExpression(emax, null);
 		assertFailure(result, new ASTProblem(new SourceLocation(3, 3),
 				ProblemKind.UnexpectedSymbol, ProblemSeverities.Error, "(", "End of Formula"));
 	}
@@ -2082,8 +2064,7 @@ public class TestGenParser extends AbstractTests {
 	@Test 
 	public void testEMaxInvalidNumberOfChildren() throws Exception {
 		final FormulaFactory extFac = FormulaFactory.getInstance(EMAX);
-		final IParseResult result = parseExprRes("emax(a)", extFac,
-				LanguageVersion.LATEST);
+		final IParseResult result = extFac.parseExpression("emax(a)", null);
 		assertFailure(result, new ASTProblem(new SourceLocation(0, 6),
 				ProblemKind.ExtensionPreconditionError, ProblemSeverities.Error));
 	}
@@ -2297,8 +2278,7 @@ public class TestGenParser extends AbstractTests {
 	
 	@Test 
 	public void testDatatypeNilInvalidType() throws Exception {
-		final IParseResult result = parseExprRes("(nil ⦂ ℤ)", LIST_FAC,
-				LanguageVersion.LATEST);
+		final IParseResult result = LIST_FAC.parseExpression("(nil ⦂ ℤ)", null);
 		assertFailure(result, new ASTProblem(new SourceLocation(1, 7),
 				InvalidGenericType, Error, "[see operator definition]"));
 	}

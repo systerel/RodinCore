@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.LanguageVersion.V1;
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativeExpression;
 import static org.eventb.core.ast.tests.FastFactory.mAssociativePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mBecomesEqualTo;
@@ -47,9 +45,9 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.RelationalPredicate;
@@ -169,13 +167,13 @@ public class TestTypedGeneric extends AbstractTests {
 		doTest(mUnaryExpression(Formula.KRAN, eST), POW(ty_T));
 		
 		doTest(ffV1.makeUnaryExpression(Formula.KPRJ1, eSTv1, null), REL(CPROD(ty_Sv1, ty_Tv1), ty_Sv1),
-				V1);
+				ffV1);
 
 		doTest(ffV1.makeUnaryExpression(Formula.KPRJ2, eSTv1, null), REL(CPROD(ty_Sv1, ty_Tv1), ty_Tv1),
-				V1);
+				ffV1);
 
 		doTest(ffV1.makeUnaryExpression(Formula.KID, eSv1, null), REL(ty_Sv1, ty_Sv1),
-				V1);
+				ffV1);
 
 		
 		//--------------------
@@ -208,15 +206,15 @@ public class TestTypedGeneric extends AbstractTests {
 	}
 	
 	private void doTest(Expression expr, Type expected) {
-		doTest(expr, expected, LanguageVersion.values());
+		doTest(expr, expected, FACTORIES_VERSIONS);
 	}
 	
-	private void doTest(Expression expr, Type expected, LanguageVersion... versions) {
+	private void doTest(Expression expr, Type expected, FormulaFactory... fVersions) {
 		assertTrue("Input is not typed", expr.isTypeChecked());
 		assertEquals("Bad type", expected, expr.getType());
 		final String image = expr.toStringWithTypes();
-		for (LanguageVersion version : versions) {
-			final Expression actual = parseExpression(image, version);
+		for (FormulaFactory fVersion : fVersions) {
+			final Expression actual = parseExpression(image, fVersion);
 			typeCheck(actual);
 			assertEquals("Typed string is a different expression", expr, actual);
 		}
@@ -257,8 +255,8 @@ public class TestTypedGeneric extends AbstractTests {
 		//-----------------
 		//  Multiple predicate
 		//-----------------
-		doTest(mMultiplePredicate(Formula.KPARTITION, eS), V2);
-		doTest(mMultiplePredicate(Formula.KPARTITION, eS, eS), V2);
+		doTest(mMultiplePredicate(Formula.KPARTITION, eS), ff);
+		doTest(mMultiplePredicate(Formula.KPARTITION, eS, eS), ff);
 
 		//-----------------------
 		//  Quantified predicates
@@ -298,14 +296,14 @@ public class TestTypedGeneric extends AbstractTests {
 	
 	// test on all parser versions
 	private void doTest(Predicate pred) {
-		doTest(pred, LanguageVersion.values());
+		doTest(pred, FACTORIES_VERSIONS);
 	}
 	
-	private void doTest(Predicate pred, LanguageVersion... versions) {
+	private void doTest(Predicate pred, FormulaFactory... fVersions) {
 		assertTrue("Input is not typed", pred.isTypeChecked());
 		final String image = pred.toStringWithTypes();
-		for (LanguageVersion version : versions) {
-			final Predicate actual = parsePredicate(image, version);
+		for (FormulaFactory fVersion : fVersions){
+			final Predicate actual = parsePredicate(image, fVersion);
 			typeCheck(actual);
 			assertEquals("Typed string is a different predicate", pred, actual);
 		}
@@ -365,8 +363,8 @@ public class TestTypedGeneric extends AbstractTests {
 	private void doTest(Assignment assign) {
 		assertTrue("Input is not typed", assign.isTypeChecked());
 		final String image = assign.toStringWithTypes();
-		for (LanguageVersion version : LanguageVersion.values()) {
-			final Assignment actual = parseAssignment(image, version);
+		for (FormulaFactory fVersion : FACTORIES_VERSIONS) {
+			final Assignment actual = parseAssignment(image, fVersion);
 			typeCheck(actual);
 			assertEquals("Typed string is a different predicate", assign, actual);
 		}
@@ -380,13 +378,13 @@ public class TestTypedGeneric extends AbstractTests {
 	@Test 
 	public void testOtherGenericAtomicExpressions() throws Exception {
 		final Type rSTS = REL(CPROD(ty_S, ty_T), ty_S);
-		doTest(mPrj1(rSTS), rSTS, V2);
+		doTest(mPrj1(rSTS), rSTS, ff);
 		
 		final Type rSTT = REL(CPROD(ty_S, ty_T), ty_T);
-		doTest(mPrj2(rSTT), rSTT, V2);
+		doTest(mPrj2(rSTT), rSTT, ff);
 		
 		final Type rSS = REL(ty_S, ty_S);
-		doTest(mId(rSS), rSS, V2);
+		doTest(mId(rSS), rSS, ff);
 	}
 	
 }

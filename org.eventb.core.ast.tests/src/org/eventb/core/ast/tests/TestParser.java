@@ -54,9 +54,9 @@ import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SourceLocation;
@@ -140,9 +140,6 @@ public class TestParser extends AbstractTests {
 	
 	private static abstract class TestPair {
 
-		private static final LanguageVersion[] VERSIONS
-				= LanguageVersion.values();
-
 		private final String image;
 		private final Formula<?>[] expects;
 
@@ -152,33 +149,33 @@ public class TestParser extends AbstractTests {
 		 * @param image
 		 *            the string image of the formula
 		 * @param expects
-		 *            the expected formula trees, one for each language version.
+		 *            the expected formula trees, one for each language fLangVersion.
 		 *            Provide <code>null</code> if the formula should not parse
 		 */
 		TestPair(String image, Formula<?>[] expects) {
 			this.image = image;
 			this.expects = expects;
-			assertEquals(VERSIONS.length, expects.length);
+			assertEquals(FACTORIES_VERSIONS.length, expects.length);
 		}
 		final void verify() {
-			for (int i = 0; i < VERSIONS.length; ++i) {
-				final LanguageVersion version = VERSIONS[i];
+			for (int i = 0; i < FACTORIES_VERSIONS.length; ++i) {
+				final FormulaFactory fLangVersion = FACTORIES_VERSIONS[i];
 				final Formula<?> expected = expects[i];
 				if (expected == null) {
-					verifyFailure(version);
+					verifyFailure(fLangVersion);
 				} else {
-					verify(version, expected);
+					verify(fLangVersion, expected);
 				}
 			}
 		}
 		@SuppressWarnings("deprecation")
-		final void verifyFailure(LanguageVersion version) {
-			final IParseResult result = parseResult(image, version);
+		final void verifyFailure(FormulaFactory fLangVersion) {
+			final IParseResult result = parseResult(image, fLangVersion);
 			assertTrue(result.hasProblem());
 			assertFalse(result.isSuccess());
 		}
-		final void verify(LanguageVersion version, Formula<?> exp) {
-			final Formula<?> parsedFormula = parseAndCheck(image, version, exp);
+		final void verify(FormulaFactory fLangVersion, Formula<?> exp) {
+			final Formula<?> parsedFormula = parseAndCheck(image, fLangVersion, exp);
 			
 			// Verify that source locations are properly nested
 			parsedFormula.accept(slChecker);
@@ -187,16 +184,16 @@ public class TestParser extends AbstractTests {
 			// whole substring.
 			final SourceLocation loc = parsedFormula.getSourceLocation();
 			final String subImage = image.substring(loc.getStart(), loc.getEnd() + 1);
-			parseAndCheck(subImage, version, exp);
+			parseAndCheck(subImage, fLangVersion, exp);
 		}
 		final Formula<?> parseAndCheck(String stringToParse,
-				LanguageVersion version, Formula<?> expected) {
-			Formula<?> actual = parse(stringToParse, version);
+				FormulaFactory fLangVersion, Formula<?> expected) {
+			Formula<?> actual = parse(stringToParse, fLangVersion);
 			assertEquals("Unexpected parser result", expected, actual);
 			return actual;
 		}
-		abstract Formula<?> parse(String input, LanguageVersion version);
-		abstract IParseResult parseResult(String input, LanguageVersion version);
+		abstract Formula<?> parse(String input, FormulaFactory fLangVersion);
+		abstract IParseResult parseResult(String input, FormulaFactory fLangVersion);
 	}
 	
 	private static class ExprTestPair extends TestPair {
@@ -204,12 +201,12 @@ public class TestParser extends AbstractTests {
 			super(image, expects);
 		}
 		@Override 
-		Formula<?> parse(String input, LanguageVersion version) {
-			return parseExpression(input, version);
+		Formula<?> parse(String input, FormulaFactory fLangVersion) {
+			return parseExpression(input, fLangVersion);
 		}
 		@Override 
-		IParseResult parseResult(String input, LanguageVersion version) {
-			return parseResultExpression(input, version);
+		IParseResult parseResult(String input, FormulaFactory fLangVersion) {
+			return fLangVersion.parseExpression(input, null);
 		}
 	}
 	
@@ -218,12 +215,12 @@ public class TestParser extends AbstractTests {
 			super(image, expects);
 		}
 		@Override 
-		Formula<?> parse(String input, LanguageVersion version) {
-			return parsePredicate(input, version);
+		Formula<?> parse(String input, FormulaFactory fLangVersion) {
+			return parsePredicate(input, fLangVersion);
 		}
 		@Override 
-		IParseResult parseResult(String input, LanguageVersion version) {
-			return parseResultPredicate(input, version);
+		IParseResult parseResult(String input, FormulaFactory fLangVersion) {
+			return fLangVersion.parsePredicate(input, null);
 		}
 	}
 	
@@ -232,12 +229,12 @@ public class TestParser extends AbstractTests {
 			super(image, expects);
 		}
 		@Override 
-		Formula<?> parse(String input, LanguageVersion version) {
-			return parseAssignment(input, version);
+		Formula<?> parse(String input, FormulaFactory fLangVersion) {
+			return parseAssignment(input, fLangVersion);
 		}
 		@Override 
-		IParseResult parseResult(String input, LanguageVersion version) {
-			return parseResultAssignment(input, version);
+		IParseResult parseResult(String input, FormulaFactory fLangVersion) {
+			return fLangVersion.parseAssignment(input, null);
 		}
 	}
 	

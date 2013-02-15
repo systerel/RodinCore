@@ -36,8 +36,8 @@ import static org.junit.Assert.assertTrue;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.junit.Test;
@@ -178,8 +178,8 @@ public class TestTypedIdentDecl extends AbstractTests {
 		assertTrue("Input is not typed", expr.isTypeChecked());
 		assertEquals("Bad type", expected, expr.getType());
 		final String image = expr.toStringWithTypes();
-		for (LanguageVersion version : LanguageVersion.values()) {
-			final Expression actual = parseExpression(image, version);
+		for (FormulaFactory fVersion : FACTORIES_VERSIONS) {
+			final Expression actual = parseExpression(image, fVersion);
 			typeCheck(actual);
 			assertEquals("Typed string is a different expression", expr, actual);
 		}
@@ -211,8 +211,8 @@ public class TestTypedIdentDecl extends AbstractTests {
 	private void doTest(Predicate pred) {
 		assertTrue("Input is not typed", pred.isTypeChecked());
 		final String image = pred.toStringWithTypes();
-		for (LanguageVersion version : LanguageVersion.values()) {
-			final Predicate actual = parsePredicate(image, version);
+		for (FormulaFactory fVersion : FACTORIES_VERSIONS) {
+			final Predicate actual = parsePredicate(image, fVersion);
 			typeCheck(actual);
 			assertEquals("Typed string is a different predicate", pred, actual);
 		}
