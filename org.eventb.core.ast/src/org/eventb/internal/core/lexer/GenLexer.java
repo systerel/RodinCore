@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.lexer;
 
-import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.internal.core.lexer.LexicalClass.IDENTIFIER;
 import static org.eventb.internal.core.lexer.LexicalClass.SYMBOL;
 import static org.eventb.internal.core.lexer.LexicalClass.WHITESPACE;
@@ -19,6 +18,7 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PARTITION;
 
 import org.eventb.core.ast.ASTProblem;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
@@ -199,8 +199,10 @@ public class GenLexer {
 	}
 
 	private Token makeToken(int kind, String val) {
-		if (result.getLanguageVersion() == V1 && kind == grammar.getKind(PARTITION)) {
-			return new Token(grammar.getKind(IDENT), val, stream.getTokenStart());
+		if (result.getFormulaFactory() == FormulaFactory.getV1Default()
+				&& kind == grammar.getKind(PARTITION)) {
+			return new Token(grammar.getKind(IDENT), val,
+					stream.getTokenStart());
 		} else {
 			return new Token(kind, val, stream.getTokenStart());
 		}

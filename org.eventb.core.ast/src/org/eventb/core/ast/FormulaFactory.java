@@ -1786,9 +1786,7 @@ public class FormulaFactory {
 
 	private final <T> IParseResult parseGeneric(String formula, Object origin, Class<T> clazz,
 			boolean withPredVars) {
-		final LanguageVersion version =
-				(this == V1_INSTANCE ? LanguageVersion.V1 : LanguageVersion.V2);
-		final ParseResult result = new ParseResult(this, version, origin);
+		final ParseResult result = new ParseResult(this, origin);
 		final Scanner scanner = new Scanner(formula, result, grammar);
 		final GenParser parser = new GenParser(clazz, scanner, result, withPredVars);
 		parser.parse();
