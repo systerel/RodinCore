@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@
  *     Systerel - got factory from repository
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
-
-import static org.eventb.core.ast.LanguageVersion.V2;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -84,7 +82,7 @@ public abstract class IdentifierModule extends SCProcessorModule {
 			FormulaFactory factory, IMarkerDisplay display, boolean primeAllowed)
 			throws RodinDBException {
 
-		IParseResult pResult = factory.parseExpression(name, V2, element);
+		IParseResult pResult = factory.parseExpression(name, element);
 		Expression expr = pResult.getParsedExpression();
 		if (pResult.hasProblem() || !(expr instanceof FreeIdentifier)) {
 			display.createProblemMarker(element, attrType,

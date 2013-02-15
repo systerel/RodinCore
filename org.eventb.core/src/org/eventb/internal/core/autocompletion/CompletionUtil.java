@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.internal.core.Util;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinFile;
@@ -179,8 +178,7 @@ public class CompletionUtil {
 				// Retrieve root to get the associated formula factory
 				final IEventBRoot root = (IEventBRoot) locElem.getRoot();
 				final FormulaFactory ff = root.getFormulaFactory();
-				final IParseResult result = ff.parseAssignment(assign,
-						LanguageVersion.LATEST, assign);
+				final IParseResult result = ff.parseAssignment(assign, assign);
 				if (result.hasProblem()) {
 					continue;
 				}

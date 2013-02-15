@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Systerel - Mathematical Language V2
  *******************************************************************************/
 package org.eventb.core.basis;
-
-import static org.eventb.core.ast.LanguageVersion.V2;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.EventBAttributes;
@@ -59,7 +57,7 @@ public abstract class SCIdentifierElement extends EventBElement
 	public Type getType(FormulaFactory factory) 
 	throws RodinDBException {
 		String contents = getAttributeValue(EventBAttributes.TYPE_ATTRIBUTE);
-		IParseResult parserResult = factory.parseType(contents, V2);
+		IParseResult parserResult = factory.parseType(contents);
 		if (parserResult.getProblems().size() != 0) {
 			throw Util.newRodinDBException(
 					Messages.database_SCIdentifierTypeParseFailure,

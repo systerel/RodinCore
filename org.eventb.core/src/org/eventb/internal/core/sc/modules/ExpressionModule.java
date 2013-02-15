@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
  *     Systerel - mathematical language V2
  *******************************************************************************/
 package org.eventb.internal.core.sc.modules;
-
-import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.Collection;
 
@@ -68,8 +66,7 @@ public abstract class ExpressionModule<I extends IInternalElement> extends
 
 		// parse the predicate
 
-		IParseResult parseResult = factory.parseExpression(expressionString,
-				V2, expressionElement);
+		IParseResult parseResult = factory.parseExpression(expressionString, expressionElement);
 		if (issueASTProblemMarkers(expressionElement, attributeType,
 				parseResult)) {
 			return null;
