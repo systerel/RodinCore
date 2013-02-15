@@ -840,7 +840,6 @@ public class Tactics {
 	 * @since 3.0
 	 */
 	public static List<IPosition> rnGetPositions(Predicate pred) {
-		final FormulaFactory ff = pred.getFactory();
 		return pred.getPositions(new DefaultFilter() {
 			@Override
 			public boolean select(UnaryPredicate predicate) {
@@ -866,7 +865,7 @@ public class Tactics {
 					if (child instanceof AssociativePredicate) {
 						return true;
 					}
-					if (child.equals(DLib.True(ff)) || child.equals(DLib.False(ff))) {
+					if (Lib.isTrue(child) || Lib.isFalse(child)) {
 						return true;
 					}
 					if (Lib.isNeg(child)) {
