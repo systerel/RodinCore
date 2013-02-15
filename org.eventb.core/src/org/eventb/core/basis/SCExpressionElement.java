@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.basis;
-
-import static org.eventb.core.ast.LanguageVersion.V2;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ISCExpressionElement;
@@ -59,7 +57,7 @@ public abstract class SCExpressionElement extends EventBElement
 		
 		final FormulaFactory factory = typenv.getFormulaFactory();
 		String contents = getExpressionString();
-				IParseResult parserResult = factory.parseExpression(contents, V2, null);
+				IParseResult parserResult = factory.parseExpression(contents, null);
 				if (parserResult.getProblems().size() != 0) {
 					throw Util.newRodinDBException(
 							Messages.database_SCExpressionParseFailure,
