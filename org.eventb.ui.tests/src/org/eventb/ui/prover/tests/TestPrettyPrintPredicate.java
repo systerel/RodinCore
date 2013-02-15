@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eventb.ui.prover.tests;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -26,7 +25,7 @@ public class TestPrettyPrintPredicate {
 	private void predTest(String msg, String predString,
 			String expectedPrettyPrint) {
 		final FormulaFactory ff = FormulaFactory.getDefault();
-		IParseResult parseResult = ff.parsePredicate(predString, V2, null);
+		IParseResult parseResult = ff.parsePredicate(predString, null);
 		if (parseResult.hasProblem()) {
 			System.out.println(parseResult.getProblems());
 			fail("Parse failed");

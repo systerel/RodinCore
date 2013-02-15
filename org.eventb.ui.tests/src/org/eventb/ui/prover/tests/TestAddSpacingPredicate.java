@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eventb.ui.prover.tests;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.internal.ui.prover.PredicateUtil.appendPredicate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -27,7 +26,7 @@ public class TestAddSpacingPredicate {
 	private void addSpacingTest(String msg, String predString,
 			String expectedPrettyPrint) {
 		final FormulaFactory ff = FormulaFactory.getDefault();
-		final IParseResult parseResult = ff.parsePredicate(predString, V2, null);
+		final IParseResult parseResult = ff.parsePredicate(predString, null);
 		if (parseResult.hasProblem()) {
 			System.out.println(parseResult.getProblems());
 			fail("Parse failed");
