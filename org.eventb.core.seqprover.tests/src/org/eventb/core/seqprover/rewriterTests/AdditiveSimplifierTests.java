@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AdditiveSimplifier;
@@ -38,8 +37,8 @@ public class AdditiveSimplifierTests {
 	}
 
 	private Expression parseExpr(String input, ITypeEnvironmentBuilder typenv) {
-		final Expression expr = ff.parseExpression(input, LanguageVersion.V2,
-				this).getParsedExpression();
+		final Expression expr = ff.parseExpression(input, this)
+				.getParsedExpression();
 		final ITypeCheckResult res = expr.typeCheck(typenv);
 		typenv.addAll(res.getInferredEnvironment());
 		assertTrue(expr.isTypeChecked());
@@ -47,8 +46,8 @@ public class AdditiveSimplifierTests {
 	}
 
 	private Predicate parsePred(String input, ITypeEnvironmentBuilder typenv) {
-		final Predicate pred = ff.parsePredicate(input, LanguageVersion.V2,
-				this).getParsedPredicate();
+		final Predicate pred = ff.parsePredicate(input, this)
+				.getParsedPredicate();
 		final ITypeCheckResult res = pred.typeCheck(typenv);
 		typenv.addAll(res.getInferredEnvironment());
 		assertTrue(pred.isTypeChecked());

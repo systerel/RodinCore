@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -284,7 +283,7 @@ public abstract class AbstractProofTreeTests implements IProofTreeChangedListene
 	 */
 	public static IProverSequent makeSimpleSequent(String goal) {
 		FormulaFactory ff = FormulaFactory.getDefault();
-		IParseResult parseResult = ff.parsePredicate(goal, V2, null);
+		IParseResult parseResult = ff.parsePredicate(goal, null);
 		Predicate goalPredicate = parseResult.getParsedPredicate();
 		assertNotNull("Can't parse predicate: " + goal, goalPredicate);
 		ITypeEnvironment te = ff.makeTypeEnvironment();
