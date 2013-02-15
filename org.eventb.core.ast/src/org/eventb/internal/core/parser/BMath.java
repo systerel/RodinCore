@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,6 @@ import org.eventb.core.ast.BecomesSuchThat;
 import org.eventb.core.ast.BinaryExpression;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoolExpression;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.QuantifiedExpression;
@@ -83,16 +82,6 @@ import org.eventb.core.ast.extension.CycleError;
  */
 public abstract class BMath extends AbstractGrammar {
 	
-	private final LanguageVersion version;
-	
-	protected BMath(LanguageVersion version) {
-		this.version = version;
-	}
-	
-	public LanguageVersion getVersion() {
-		return version;
-	}
-
 	@Override
 	protected void addOperators() {
 		
