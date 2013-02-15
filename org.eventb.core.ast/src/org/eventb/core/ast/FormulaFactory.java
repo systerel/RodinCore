@@ -1696,15 +1696,6 @@ public class FormulaFactory {
 		return new MultiplePredicate(toExprArray(children), tag, location, this);
 	}
 
-	private void ensureSameLanguageVersion(LanguageVersion version) {
-		LanguageVersion fVersion = grammar.getVersion();
-		if (version != fVersion) {
-			throw new IllegalArgumentException(
-					"The given language version is not compatible with the factory language: "
-							+ version + " instead of: " + fVersion);
-		}
-	}
-
 	/**
 	 * Parses the specified formula and returns the corresponding result. This
 	 * method does not allow predicate variables.
@@ -1717,25 +1708,6 @@ public class FormulaFactory {
 	 * @since 3.0
 	 */
 	public IParseResult parseAssignment(String formula, Object origin) {
-		return parseGeneric(formula, origin, Assignment.class, false);
-	}
-
-	/**
-	 * Parses the specified formula and returns the corresponding result. This
-	 * method does not allow predicate variables.
-	 * 
-	 * @param formula the formula to be parsed
-	 * @param version the version of the math language used in the formula
-	 * @param origin the origin to be traced to the built AST
-	 * @return the result of the parse
-	 * @throws IllegalArgumentException
-	 *             if the version provided is not the factory version
-	 * @since 1.0
-	 */
-	@Deprecated
-	public IParseResult parseAssignment(String formula, LanguageVersion version,
-			Object origin) {
-		ensureSameLanguageVersion(version);
 		return parseGeneric(formula, origin, Assignment.class, false);
 	}
 
@@ -1756,25 +1728,6 @@ public class FormulaFactory {
 
 	/**
 	 * Parses the specified formula and returns the corresponding result. This
-	 * method does not allow predicate variables.
-	 * 
-	 * @param formula the formula to be parsed
-	 * @param version the version of the math language used in the formula
-	 * @param origin the origin to be traced to the built AST
-	 * @return the result of the parse
-	 * @throws IllegalArgumentException
-	 *             if the version provided is not the factory version
-	 * @since 1.0
-	 */
-	@Deprecated
-	public IParseResult parseExpression(String formula, LanguageVersion version,
-			Object origin) {
-		ensureSameLanguageVersion(version);
-		return parseGeneric(formula, origin, Expression.class, false);
-	}
-
-	/**
-	 * Parses the specified formula and returns the corresponding result. This
 	 * method allows predicate variables.
 	 * 
 	 * @param formula
@@ -1789,28 +1742,6 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Parses the specified formula and returns the corresponding result. This
-	 * method allows predicate variables.
-	 * 
-	 * @param formula
-	 *            the formula to be parsed
-	 * @param version
-	 *            the version of the math language used in the formula
-	 * @param origin
-	 *            the origin to be traced to the built AST
-	 * @return the result of the parse
-	 * @throws IllegalArgumentException
-	 *             if the version provided is not the factory version
-	 * @since 1.2
-	 */
-	@Deprecated
-	public IParseResult parseExpressionPattern(String formula,
-			LanguageVersion version, Object origin) {
-		ensureSameLanguageVersion(version);
-		return parseGeneric(formula, origin, Expression.class, true);
-	}
-	
-	/**
 	 * Parses the specified predicate and returns the corresponding result. This
 	 * method does not allow predicate variables.
 	 * 
@@ -1822,25 +1753,6 @@ public class FormulaFactory {
 	 * @since 3.0
 	 */
 	public IParseResult parsePredicate(String formula, Object origin) {
-		return parseGeneric(formula, origin, Predicate.class, false);
-	}
-
-	/**
-	 * Parses the specified predicate and returns the corresponding result. This
-	 * method does not allow predicate variables.
-	 * 
-	 * @param formula the formula to be parsed
-	 * @param version the version of the math language used in the formula
-	 * @param origin the origin to be traced to the built AST
-	 * @return the result of the parse
-	 * @throws IllegalArgumentException
-	 *             if the version provided is not the factory version
-	 * @since 1.0
-	 */
-	@Deprecated
-	public IParseResult parsePredicate(String formula, LanguageVersion version,
-			Object origin) {
-		ensureSameLanguageVersion(version);
 		return parseGeneric(formula, origin, Predicate.class, false);
 	}
 
@@ -1860,28 +1772,6 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Parses the specified predicate and returns the corresponding result.
-	 * This method allows predicate variables.
-	 * 
-	 * @param formula
-	 *            the formula to be parsed
-	 * @param version
-	 *            the version of the math language used in the formula
-	 * @param origin
-	 *            the origin to be traced to the built AST
-	 * @return the result of the parse
-	 * @throws IllegalArgumentException
-	 *             if the version provided is not the factory version
-	 * @since 1.2
-	 */
-	@Deprecated
-	public IParseResult parsePredicatePattern(String formula,
-			LanguageVersion version, Object origin) {
-		ensureSameLanguageVersion(version);
-		return parseGeneric(formula, origin, Predicate.class, true);
-	}
-	
-	/**
 	 * Parses the specified type and returns the corresponding result. This
 	 * method does not allow predicate variables.
 	 * 
@@ -1891,23 +1781,6 @@ public class FormulaFactory {
 	 * @since 3.0
 	 */
 	public IParseResult parseType(String formula) {
-		return parseGeneric(formula, null, Type.class, false);
-	}
-
-	/**
-	 * Parses the specified type and returns the corresponding result. This
-	 * method does not allow predicate variables.
-	 * 
-	 * @param formula the formula to be parsed
-	 * @param version the version of the math language used in the formula
-	 * @return the result of the parse
-	 * @throws IllegalArgumentException
-	 *             if the version provided is not the factory version
-	 * @since 1.0
-	 */
-	@Deprecated
-	public IParseResult parseType(String formula, LanguageVersion version) {
-		ensureSameLanguageVersion(version);
 		return parseGeneric(formula, null, Type.class, false);
 	}
 
