@@ -402,7 +402,7 @@ public class DLib {
 	 * @since 3.0
 	 */
 	public static Predicate parsePredicate(FormulaFactory ff, String str) {
-		IParseResult plr = ff.parsePredicate(str, Lib.LANGUAGE_VERSION, null);
+		IParseResult plr = ff.parsePredicate(str, null);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedPredicate();
@@ -412,7 +412,7 @@ public class DLib {
 	 * @since 3.0
 	 */
 	public static Assignment parseAssignment(FormulaFactory ff, String str) {
-		IParseResult plr = ff.parseAssignment(str, Lib.LANGUAGE_VERSION, null);
+		IParseResult plr = ff.parseAssignment(str, null);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedAssignment();
@@ -431,7 +431,7 @@ public class DLib {
 	 * @since 3.0
 	 */
 	public static Type parseType(FormulaFactory ff, String str) {
-		IParseResult plr = ff.parseType(str, Lib.LANGUAGE_VERSION);
+		IParseResult plr = ff.parseType(str);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedType();
@@ -441,7 +441,7 @@ public class DLib {
 	 * @since 3.0
 	 */
 	public static Expression parseExpression(FormulaFactory ff, String str) {
-		final IParseResult plr = ff.parseExpression(str, Lib.LANGUAGE_VERSION, null);
+		final IParseResult plr = ff.parseExpression(str, null);
 		if (plr.hasProblem())
 			return null;
 		return plr.getParsedExpression();
