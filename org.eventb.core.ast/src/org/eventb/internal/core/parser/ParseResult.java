@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.AbstractResult;
@@ -35,9 +34,6 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	// Origin
 	private final Object origin;
 	
-	// Parser version
-	protected final LanguageVersion version;
-
 	// Parsed assignment
 	private Assignment assignment = null;
 
@@ -50,11 +46,9 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	// Parsed type
 	private Type type = null;
 
-	public ParseResult(FormulaFactory factory, LanguageVersion parserVersion,
-			Object origin) {
+	public ParseResult(FormulaFactory factory, 	Object origin) {
 		this.factory = factory;
 		this.origin = origin;
-		this.version = parserVersion;
 	}
 
 	/*
@@ -102,8 +96,8 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	}
 
 	@Override
-	public LanguageVersion getLanguageVersion() {
-		return version;
+	public FormulaFactory getFormulaFactory() {
+		return factory;
 	}
 
 	public Object getOrigin() {

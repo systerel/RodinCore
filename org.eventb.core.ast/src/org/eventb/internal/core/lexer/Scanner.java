@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,10 +97,7 @@ public class Scanner {
 			FormulaFactory factory,
 			String name) {
 		final BMath grammar = (BMath) factory.getGrammar();
-		final ParseResult result = new ParseResult(
-				factory,
-				grammar.getVersion(),
-				name);
+		final ParseResult result = new ParseResult(factory, name);
 		final Scanner scanner = new Scanner(name, result, grammar);
 		final Token token = scanner.Peek();
 		final int identKind = grammar.getKind(IDENT);

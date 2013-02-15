@@ -71,7 +71,7 @@ public class POUtil {
 	
 	private static String makeFailMessage(String image, IParseResult result) {
 		return "Parse failed for " + image + " (parser "
-				+ result.getLanguageVersion() + "): " + result.getProblems();
+				+ result.getFormulaFactory() + "): " + result.getProblems();
 	}
 
 	public static Expression parseExpression(String image,

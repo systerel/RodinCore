@@ -13,10 +13,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
@@ -24,6 +20,9 @@ import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_L
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PARTITION;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.List;
@@ -98,7 +97,7 @@ public class TestLexer extends AbstractTests {
 	}
 
 	private void testToken(String image, Integer kind, LanguageVersion version) {
-		ParseResult result = new ParseResult(ff, version, null);
+		ParseResult result = new ParseResult(getFormulaFactory(version), null);
 		Scanner scanner = new Scanner(image, result, B_MATH_V2);
 		Token t = scanner.Scan();
 		assertEquals(image, t.val);
@@ -119,7 +118,7 @@ public class TestLexer extends AbstractTests {
 	@SuppressWarnings("deprecation")
 	private void testInvalidStrings(LanguageVersion version) {
 		for (String string : invalidStrings) {
-			final IParseResult result = new ParseResult(ff, version, null);
+			final IParseResult result = new ParseResult(getFormulaFactory(version), null);
 			Scanner scanner = new Scanner(string, (ParseResult) result,
 					B_MATH_V2);
 			Token t = scanner.Scan();
@@ -154,7 +153,7 @@ public class TestLexer extends AbstractTests {
 
 		assertTrue(FormulaFactory.checkSymbol(ident));
 
-		final ParseResult result = new ParseResult(ff, LATEST, null);
+		final ParseResult result = new ParseResult(ff, null);
 		final Scanner scanner = new Scanner(ident, result, B_MATH_V2);
 		final Token t = scanner.Scan();
 		
@@ -252,7 +251,7 @@ public class TestLexer extends AbstractTests {
 		extensions.addAll(dtSeq2.getExtensions());
 
 		final FormulaFactory ffSeqs = ff.withExtensions(extensions);
-		final ParseResult result = new ParseResult(ffSeqs, LATEST, null);
+		final ParseResult result = new ParseResult(ffSeqs, null);
 
 		// an AssertionError is thrown when the bug is present
 		new Scanner("", result, ffSeqs.getGrammar());

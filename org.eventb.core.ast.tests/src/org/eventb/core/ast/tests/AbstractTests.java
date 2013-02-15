@@ -136,7 +136,7 @@ public abstract class AbstractTests {
 
 	private static String makeFailMessage(String image, IParseResult result) {
 		return "Parse failed for " + image + " (parser "
-				+ result.getLanguageVersion() + "): " + result.getProblems();
+				+ result.getFormulaFactory() + "): " + result.getProblems();
 	}
 
 	public static Expression parseExpression(String image) {
@@ -266,7 +266,7 @@ public abstract class AbstractTests {
 		return version;
 	}
 	
-	private static FormulaFactory getFormulaFactory(LanguageVersion version) {
+	protected static FormulaFactory getFormulaFactory(LanguageVersion version) {
 		switch (version) {
 		case V1:
 			return ffV1;
