@@ -70,9 +70,6 @@ public class BoundIdentifier extends Identifier {
 		ensureHasType(this, type);
 	}
 
-	/**
-	 * @since 3.0
-	 */
 	@Override
 	protected void synthesizeType(Type givenType) {
 		this.freeIdents = NO_FREE_IDENT;

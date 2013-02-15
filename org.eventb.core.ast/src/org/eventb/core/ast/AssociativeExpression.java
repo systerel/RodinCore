@@ -207,6 +207,7 @@ public class AssociativeExpression extends Expression {
 		Type resultType;
 		Type partType, sourceType, targetType;
 		final int last = children.length - 1;
+		final FormulaFactory ff = getFactory();
 		switch (getTag()) {
 		case Formula.BUNION:
 		case Formula.BINTER:
@@ -237,8 +238,7 @@ public class AssociativeExpression extends Expression {
 			}
 			sourceType = children[last].getType().getSource();
 			targetType = children[0].getType().getTarget();
-			resultType = getFactory()
-					.makeRelationalType(sourceType, targetType);
+			resultType = ff.makeRelationalType(sourceType, targetType);
 			break;
 		case Formula.FCOMP:
 			partType = children[0].getType().getTarget();
@@ -257,8 +257,7 @@ public class AssociativeExpression extends Expression {
 			}
 			sourceType = children[0].getType().getSource();
 			targetType = children[last].getType().getTarget();
-			resultType = getFactory()
-					.makeRelationalType(sourceType, targetType);
+			resultType = ff.makeRelationalType(sourceType, targetType);
 			break;
 		case Formula.OVR:
 			resultType = children[0].getType();

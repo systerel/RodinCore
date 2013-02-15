@@ -80,9 +80,6 @@ public class FreeIdentifier extends Identifier {
 	 * type BEFORE setting the type; once the type has been set, we compute the
 	 * free identifier cache.
 	 */
-	/**
-	 * @since 3.0
-	 */
 	@Override
 	protected void synthesizeType(Type proposedType) {
 		this.freeIdents = new FreeIdentifier[] {this};
