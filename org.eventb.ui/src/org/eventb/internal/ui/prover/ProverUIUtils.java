@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.pm.IProofState;
 import org.eventb.core.pm.IProofStateDelta;
@@ -495,7 +494,7 @@ public class ProverUIUtils {
 	public static Predicate getParsed(String predString,
 			FormulaFactory formulaFactory) {
 		final IParseResult parseResult = formulaFactory.parsePredicate(
-				predString, LanguageVersion.LATEST, null);
+				predString, null);
 		assert !parseResult.hasProblem();
 		return parseResult.getParsedPredicate();
 	}
