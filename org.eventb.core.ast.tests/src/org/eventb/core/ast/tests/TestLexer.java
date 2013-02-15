@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.LanguageVersion.V1;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_LIT;
@@ -32,7 +31,6 @@ import java.util.Set;
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -58,8 +56,8 @@ public class TestLexer extends AbstractTests {
 
 	private static final String[] invalidStrings = new String[] { "-", "/", };
 
-	private static int getExpectedKind(int kind, LanguageVersion version) {
-		if (kind == B_MATH_V2.getKind(PARTITION) && version == V1)
+	private static int getExpectedKind(int kind, FormulaFactory factory) {
+		if (kind == B_MATH_V2.getKind(PARTITION) && factory == ffV1)
 			return B_MATH_V2.getKind(IDENT);
 		return kind;
 	}
@@ -70,39 +68,39 @@ public class TestLexer extends AbstractTests {
 	@Test 
 	public void testToken() {
 
-		for (LanguageVersion version : LanguageVersion.values()) {
-			testAllTokens(version);
+		for (FormulaFactory factory : ALL_VERSION_FACTORIES) {
+			testAllTokens(factory);
 		}
 	}
 
 	// Check each token string through the lexical analyzer.
-	private void testAllTokens(LanguageVersion version) {
+	private void testAllTokens(FormulaFactory factory) {
 		for (Entry<String, Integer> token : B_MATH_V2.getTokens().entrySet()) {
 			final String image = token.getKey();
 			final Integer kind = token.getValue();
-			testToken(image, kind, version);
+			testToken(image, kind, factory);
 		}
-		testToken("", B_MATH_V2.getKind(EOF), version);
-		testToken("x", B_MATH_V2.getKind(IDENT), version);
-		testToken("_toto", B_MATH_V2.getKind(IDENT), version);
-		testToken("x'", B_MATH_V2.getKind(IDENT), version);
-		testToken("2", B_MATH_V2.getKind(INT_LIT), version);
-		testToken("3000000000", B_MATH_V2.getKind(INT_LIT), version);
-		testToken("50000000000000000000", B_MATH_V2.getKind(INT_LIT), version);
-		testToken("001", B_MATH_V2.getKind(INT_LIT), version);
-		testToken("$P", B_MATH_V2.getKind(PRED_VAR), version);
-		testToken("$_toto", B_MATH_V2.getKind(PRED_VAR), version);
-		testToken("p'", B_MATH_V2.getKind(IDENT), version);
-		testToken("prj'", B_MATH_V2.getKind(IDENT), version);
+		testToken("", B_MATH_V2.getKind(EOF), factory);
+		testToken("x", B_MATH_V2.getKind(IDENT), factory);
+		testToken("_toto", B_MATH_V2.getKind(IDENT), factory);
+		testToken("x'", B_MATH_V2.getKind(IDENT), factory);
+		testToken("2", B_MATH_V2.getKind(INT_LIT), factory);
+		testToken("3000000000", B_MATH_V2.getKind(INT_LIT), factory);
+		testToken("50000000000000000000", B_MATH_V2.getKind(INT_LIT), factory);
+		testToken("001", B_MATH_V2.getKind(INT_LIT), factory);
+		testToken("$P", B_MATH_V2.getKind(PRED_VAR), factory);
+		testToken("$_toto", B_MATH_V2.getKind(PRED_VAR), factory);
+		testToken("p'", B_MATH_V2.getKind(IDENT), factory);
+		testToken("prj'", B_MATH_V2.getKind(IDENT), factory);
 	}
 
-	private void testToken(String image, Integer kind, LanguageVersion version) {
-		ParseResult result = new ParseResult(getFormulaFactory(version), null);
+	private void testToken(String image, Integer kind, FormulaFactory factory) {
+		ParseResult result = new ParseResult(factory, null);
 		Scanner scanner = new Scanner(image, result, B_MATH_V2);
 		Token t = scanner.Scan();
 		assertEquals(image, t.val);
-		final String msg = "for \"" + image + "\" with language " + version;
-		assertEquals(msg, getExpectedKind(kind, version), t.kind);
+		final String msg = "for \"" + image + "\" with factory " + factory;
+		assertEquals(msg, getExpectedKind(kind, factory), t.kind);
 	}
 
 	/**
@@ -110,15 +108,15 @@ public class TestLexer extends AbstractTests {
 	 */
 	@Test 
 	public void testInvalidStrings() {
-		for (LanguageVersion version : LanguageVersion.values()) {
-			testInvalidStrings(version);
+		for (FormulaFactory factory : ALL_VERSION_FACTORIES) {
+			testInvalidStrings(factory);
 		}
 	}
 
 	@SuppressWarnings("deprecation")
-	private void testInvalidStrings(LanguageVersion version) {
+	private void testInvalidStrings(FormulaFactory factory) {
 		for (String string : invalidStrings) {
-			final IParseResult result = new ParseResult(getFormulaFactory(version), null);
+			final IParseResult result = new ParseResult(factory, null);
 			Scanner scanner = new Scanner(string, (ParseResult) result,
 					B_MATH_V2);
 			Token t = scanner.Scan();

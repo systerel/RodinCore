@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,14 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
 import static org.eventb.core.ast.tests.FastFactory.mList;
+import static org.junit.Assert.assertEquals;
 
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.junit.Before;
@@ -38,16 +38,16 @@ public class TestConflictResolver extends AbstractTests {
 	private class TestItem {
 		final String input;
 		final Formula<?> expectedTree;
-		final LanguageVersion[] versions;
-		
+		final FormulaFactory[] factories;
+
 		TestItem(String input, Formula<?> expectedTree,
-				LanguageVersion... versions) {
+				FormulaFactory... factories) {
 			this.expectedTree = expectedTree;
 			this.input = input;
-			if (versions.length == 0) {
-				this.versions = LanguageVersion.values();
+			if (factories.length == 0) {
+				this.factories = ALL_VERSION_FACTORIES;
 			} else {
-				this.versions = versions;
+				this.factories = factories;
 			}
 		}
 	}
@@ -163,8 +163,8 @@ public class TestConflictResolver extends AbstractTests {
 	@Test 
 	public void testConflict() {
 		for (TestItem item : testItems) {
-			for (LanguageVersion version: item.versions) {
-				final Predicate actual = parsePredicate(item.input, version);
+			for (FormulaFactory factory: item.factories) {
+				final Predicate actual = parsePredicate(item.input, factory);
 				assertEquals("\nTest failed on: " + item.input
 						+ "\nTree expected: " + item.expectedTree.getSyntaxTree()
 						+ "\nTree received: "
