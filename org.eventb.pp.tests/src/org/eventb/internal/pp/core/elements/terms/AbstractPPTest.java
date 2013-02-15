@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eventb.internal.pp.core.elements.terms;
 
 import static org.eventb.core.ast.Formula.FREE_IDENT;
-import static org.eventb.core.ast.LanguageVersion.V1;
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.eventb.internal.pp.core.elements.terms.Util.cCons;
 import static org.eventb.internal.pp.core.elements.terms.Util.cELocVar;
 import static org.eventb.internal.pp.core.elements.terms.Util.cFLocVar;
@@ -40,7 +38,6 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.pp.core.Level;
@@ -132,35 +129,22 @@ public abstract class AbstractPPTest {
 		return newEnv;
 	}
 
-	public static Expression parseExpression(String image,
-			FormulaFactory factory) {
-		return parseExpression(image, getLanguageVersion(factory), factory);
-	}
-	
-	public static Expression parseExpression(String image,
-			LanguageVersion version, FormulaFactory factory) {
+	public static Expression parseExpression(String image, FormulaFactory factory) {
 		final IParseResult result;
 		if (image.contains(PredicateVariable.LEADING_SYMBOL)) {
-			result = factory.parseExpressionPattern(image, version, null);
+			result = factory.parseExpressionPattern(image, null);
 		} else {
-			result = factory.parseExpression(image, version, null);
+			result = factory.parseExpression(image, null);
 		}
 		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedExpression();
 	}
 	
 	public static Type parseType(String image, FormulaFactory factory) {
-		final LanguageVersion version = getLanguageVersion(factory);
-		final IParseResult result = factory.parseType(image, version);
+		final IParseResult result = factory.parseType(image);
 		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedType();
 	}
-
-	private static LanguageVersion getLanguageVersion(FormulaFactory factory) {
-		final LanguageVersion version = factory == ffV1 ? V1 : V2;
-		return version;
-	}
-
 	
 	private static final Pattern typenvPairSeparator = Pattern.compile(";");
 	private static final Pattern typenvPairPattern = Pattern
