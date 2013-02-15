@@ -54,7 +54,6 @@ import static org.eventb.core.ast.Formula.TFUN;
 import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.core.ast.Formula.UPTO;
-import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.ProblemKind.InvalidGenericType;
 import static org.eventb.core.ast.ProblemKind.InvalidTypeExpression;
 import static org.eventb.core.ast.ProblemKind.PrematureEOF;
@@ -324,8 +323,7 @@ public class TestGenParser extends AbstractTests {
 
 	private static IParseResult parseExprRes(String formula,
 			FormulaFactory factory, LanguageVersion version) {
-		return factory.parseExpression(formula,
-				version, null);
+		return factory.parseExpression(formula, null);
 	}
 	
 	private static IParseResult parseExprRes(String formula) {
@@ -374,7 +372,7 @@ public class TestGenParser extends AbstractTests {
 	
 	private static IParseResult parsePredRes(String formula,
 			LanguageVersion version, FormulaFactory factory) {
-		return factory.parsePredicate(formula, version, null);
+		return factory.parsePredicate(formula, null);
 	}
 	
 	private static IParseResult parsePredRes(String formula) {
@@ -403,15 +401,14 @@ public class TestGenParser extends AbstractTests {
 	}
 
 	private static void doPredicatePatternTest(String formula, Predicate expected) {
-		final IParseResult result = ff.parsePredicatePattern(formula,
-				LanguageVersion.V2, null);
+		final IParseResult result = ff.parsePredicatePattern(formula, null);
 		assertFalse(result.hasProblem());
 		final Predicate actual = result.getParsedPredicate();
 		checkParsedFormula(formula, expected, actual);
 	}
 
 	private static IParseResult parseTypeRes(String image, FormulaFactory factory) {
-		return factory.parseType(image, LATEST);
+		return factory.parseType(image);
 	}
 
 	private static Type doTypeTest(String formula, Type expected) {
@@ -428,8 +425,7 @@ public class TestGenParser extends AbstractTests {
 	}
 	
 	private static Assignment doAssignmentTest(String formula, Assignment expected) {
-		final IParseResult result = ff.parseAssignment(formula,
-				LanguageVersion.V2, null);
+		final IParseResult result = ff.parseAssignment(formula, null);
 		assertFalse("parse failed for " + formula + ", problems: "
 				+ result.getProblems(), result.hasProblem());
 		final Assignment actual = result.getParsedAssignment();
@@ -1656,9 +1652,9 @@ public class TestGenParser extends AbstractTests {
 	public void testBecomesMemberOfList() throws Exception {
 		final ASTProblem becmoError = new ASTProblem(new SourceLocation(1, 1),
 				ProblemKind.BECMOAppliesToOneIdent, ProblemSeverities.Error);
-		assertFailure(ff.parseAssignment("a,b :∈ S", LanguageVersion.V2, null),
+		assertFailure(ff.parseAssignment("a,b :∈ S", null),
 				becmoError);
-		assertFailure(ff.parseAssignment("a,b :∈ S,S", LanguageVersion.V2, null),
+		assertFailure(ff.parseAssignment("a,b :∈ S,S", null),
 				becmoError);
 	}
 
@@ -3204,22 +3200,22 @@ public class TestGenParser extends AbstractTests {
 	
 	@Test 
 	public void testExtraParentheses() throws Exception {
-		assertFailure(ff.parseExpression(")", LATEST, null),
+		assertFailure(ff.parseExpression(")", null),
 				makeError(0, 0, UnmatchedTokens), makeError(0, 0, PrematureEOF));
 
-		assertFailure(ff.parseExpression("f(x))", LATEST, null),
+		assertFailure(ff.parseExpression("f(x))", null),
 				makeError(4, 4, UnmatchedTokens));
 
-		assertFailure(ff.parseExpression("(", LATEST, null),
+		assertFailure(ff.parseExpression("(", null),
 				makeError(0, 0, PrematureEOF));
 
-		assertFailure(ff.parseExpression("f(x)(", LATEST, null),
+		assertFailure(ff.parseExpression("f(x)(", null),
 				makeError(4, 4, PrematureEOF));
 		
-		assertFailure(ff.parseExpression("(]", LATEST, null),
+		assertFailure(ff.parseExpression("(]", null),
 				makeError(1, 1, UnknownOperator, "]"));
 		
-		assertFailure(ff.parseExpression("(0]", LATEST, null),
+		assertFailure(ff.parseExpression("(0]", null),
 				makeError(2, 2, ProblemKind.UnexpectedSymbol, ")", "]"));
 	}
 
@@ -3230,7 +3226,7 @@ public class TestGenParser extends AbstractTests {
 
 	@Test 
 	public void testEqualInAssign() throws Exception {
-		final IParseResult res = ff.parseAssignment("x = 0", LATEST, null);
+		final IParseResult res = ff.parseAssignment("x = 0", null);
 		assertFailure(
 				res,
 				makeError(0, 4, UnknownOperator,

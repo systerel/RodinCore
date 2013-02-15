@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.tests.FastFactory.NO_PREDICATE;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.junit.Assert.assertEquals;
@@ -169,7 +168,7 @@ public class TestTypes extends AbstractTests {
 	@Test 
 	public void testTypeParser() {
 		for (TestItem item : items) {
-			IParseResult result = tf.parseType(item.image, LATEST);
+			IParseResult result = tf.parseType(item.image);
 			assertSuccess(item.image, result);
 			assertNull(result.getParsedExpression());
 			assertEquals(item.type, result.getParsedType());
@@ -180,7 +179,7 @@ public class TestTypes extends AbstractTests {
 				"ℕ", "ℙ(ℕ)", "ℙ1(ℤ)", "S ⇸ T"
 		};
 		for (String input: illFormed) {
-			IParseResult result = tf.parseType(input, LATEST);
+			IParseResult result = tf.parseType(input);
 			assertFailure("parse should have failed", result);
 			assertNull(result.getParsedExpression());
 			assertNull(result.getParsedType());

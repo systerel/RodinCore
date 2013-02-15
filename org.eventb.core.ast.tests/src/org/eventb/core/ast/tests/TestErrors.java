@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.eventb.core.ast.LanguageVersion.LATEST;
 import static org.eventb.core.ast.ProblemKind.InvalidGenericType;
 import static org.eventb.core.ast.ProblemKind.LexerError;
 import static org.eventb.core.ast.ProblemKind.PredicateVariableNotAllowed;
@@ -25,6 +20,10 @@ import static org.eventb.core.ast.ProblemKind.UnexpectedSubFormulaKind;
 import static org.eventb.core.ast.ProblemKind.UnexpectedSymbol;
 import static org.eventb.core.ast.ProblemSeverities.Error;
 import static org.eventb.core.ast.ProblemSeverities.Warning;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.IParseResult;
@@ -58,7 +57,7 @@ public class TestErrors extends AbstractTests {
 
 		@Override
 		public IParseResult parse() {
-			return ff.parsePredicate(input, LATEST, null);
+			return ff.parsePredicate(input, null);
 		}
 	}
 	
@@ -70,7 +69,7 @@ public class TestErrors extends AbstractTests {
 
 		@Override
 		public IParseResult parse() {
-			return ff.parsePredicatePattern(input, LATEST, null);
+			return ff.parsePredicatePattern(input, null);
 		}
 	}
 	

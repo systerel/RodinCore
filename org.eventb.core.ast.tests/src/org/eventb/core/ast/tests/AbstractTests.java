@@ -158,21 +158,21 @@ public abstract class AbstractTests {
 
 	public static Expression parseExpression(String image,
 			LanguageVersion version) {
-		return parseExpression(image, version, getFormulaFactory(version));
+		return parseExpression(image, getFormulaFactory(version));
 	}
 	
 	public static IParseResult parseResultExpression(String image,
 			LanguageVersion version) {
-		return getFormulaFactory(version).parseExpression(image, version, null);
+		return getFormulaFactory(version).parseExpression(image, null);
 	}
 
 	public static Expression parseExpression(String image,
 			LanguageVersion version, FormulaFactory factory) {
 		final IParseResult result;
 		if (image.contains(PredicateVariable.LEADING_SYMBOL)) {
-			result = factory.parseExpressionPattern(image, version, null);
+			result = factory.parseExpressionPattern(image, null);
 		} else {
-			result = factory.parseExpression(image, version, null);
+			result = factory.parseExpression(image, null);
 		}
 		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedExpression();
@@ -196,21 +196,21 @@ public abstract class AbstractTests {
 
 	public static Predicate parsePredicate(String image,
 			LanguageVersion version) {
-		return parsePredicate(image, version, getFormulaFactory(version));
+		return parsePredicate(image, getFormulaFactory(version));
 	}
 	
 	public static IParseResult parseResultPredicate(String image,
 			LanguageVersion version) {
-		return getFormulaFactory(version).parsePredicate(image, version, null);
+		return getFormulaFactory(version).parsePredicate(image, null);
 	}
 
 	public static Predicate parsePredicate(String image,
 			LanguageVersion version, FormulaFactory factory) {
 		final IParseResult result;
 		if (image.contains(PredicateVariable.LEADING_SYMBOL)) {
-			result = factory.parsePredicatePattern(image, version, null);
+			result = factory.parsePredicatePattern(image, null);
 		} else {
-			result = factory.parsePredicate(image, version, null);
+			result = factory.parsePredicate(image, null);
 		}
 		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedPredicate();
@@ -235,17 +235,17 @@ public abstract class AbstractTests {
 
 	public static Assignment parseAssignment(String image,
 			LanguageVersion version) {
-		return parseAssignment(image, version, getFormulaFactory(version));
+		return parseAssignment(image, getFormulaFactory(version));
 	}
 	
 	public static IParseResult parseResultAssignment(String image,
 			LanguageVersion version) {
-		return getFormulaFactory(version).parseAssignment(image, version, null);
+		return getFormulaFactory(version).parseAssignment(image, null);
 	}
 
 	public static Assignment parseAssignment(String image,
 			LanguageVersion version, FormulaFactory factory) {
-		final IParseResult result = factory.parseAssignment(image, version,
+		final IParseResult result = factory.parseAssignment(image,
 				null);
 		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedAssignment();
@@ -256,8 +256,7 @@ public abstract class AbstractTests {
 	}
 
 	public static Type parseType(String image, FormulaFactory factory) {
-		final LanguageVersion version = getLanguageVersion(factory);
-		final IParseResult result = factory.parseType(image, version);
+		final IParseResult result = factory.parseType(image);
 		assertSuccess(makeFailMessage(image, result), result);
 		return result.getParsedType();
 	}
