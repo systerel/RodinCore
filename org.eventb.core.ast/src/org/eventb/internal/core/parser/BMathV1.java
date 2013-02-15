@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import static org.eventb.core.ast.BinaryExpression.TREL_ID;
 import static org.eventb.core.ast.BinaryExpression.TSUR_ID;
 
 import org.eventb.core.ast.AtomicExpression;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.UnaryExpression;
 
 /**
@@ -33,7 +32,7 @@ import org.eventb.core.ast.UnaryExpression;
 public class BMathV1 extends BMath {
 	
 	protected BMathV1() {
-		super(LanguageVersion.V1);
+		// constructor is protected
 	}
 
 	public static final BMath B_MATH_V1 = new BMathV1();
@@ -67,6 +66,11 @@ public class BMathV1 extends BMath {
 		addCompatibility(TSUR_ID, TSUR_ID);
 		addCompatibility(TBIJ_ID, TBIJ_ID);
 		
+	}
+
+	@Override
+	public String toString() {
+		return "V1";
 	}
 
 }

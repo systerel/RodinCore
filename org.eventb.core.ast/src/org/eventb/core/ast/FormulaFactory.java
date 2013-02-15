@@ -2072,7 +2072,7 @@ public class FormulaFactory {
 		final StringBuilder sb = new StringBuilder();
 		char sep = '{';
 		sb.append("FFactory(");
-		sb.append(this.grammar.getVersion());
+		sb.append(this.grammar);
 		sb.append(")");
 		for (IFormulaExtension extension : this.extensions.values()) {
 			sb.append(sep);
