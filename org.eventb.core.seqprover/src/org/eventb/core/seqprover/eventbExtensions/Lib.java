@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtensions;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -41,7 +39,6 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.IntegerType;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.LiteralPredicate;
 import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
@@ -78,7 +75,6 @@ import org.eventb.core.ast.UnaryPredicate;
  */
 public final class Lib {
 
-	static final LanguageVersion LANGUAGE_VERSION = V2;
 	static final FormulaFactory ff = FormulaFactory.getDefault();
 
 	/**
