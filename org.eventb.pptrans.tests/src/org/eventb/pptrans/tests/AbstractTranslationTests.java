@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,9 @@
 package org.eventb.pptrans.tests;
 
 import static java.util.Collections.emptyList;
+import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.eventb.core.ast.FormulaFactory.getInstance;
-import static org.eventb.core.ast.LanguageVersion.V2;
 
 import java.util.List;
 
@@ -92,7 +91,7 @@ public abstract class AbstractTranslationTests {
 
 	public static Predicate parse(String string, ITypeEnvironmentBuilder te) {
 		final FormulaFactory factory = te.getFormulaFactory();
-		IParseResult parseResult = factory.parsePredicate(string, V2, null);
+		IParseResult parseResult = factory.parsePredicate(string, null);
 		assertFalse("Parse error for: " + string +
 				"\nProblems: " + parseResult.getProblems(),
 				parseResult.hasProblem());
