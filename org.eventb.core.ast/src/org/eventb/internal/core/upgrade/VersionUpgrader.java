@@ -19,7 +19,6 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 
 /**
@@ -30,12 +29,9 @@ public abstract class VersionUpgrader {
 
 	public static boolean DEBUG;
 
-	private final LanguageVersion sourceVersion;
-
 	private final FormulaFactory sourceFactory;
 
-	public VersionUpgrader(FormulaFactory sourceFac, LanguageVersion sourceVer) {
-		this.sourceVersion = sourceVer;
+	public VersionUpgrader(FormulaFactory sourceFac) {
 		this.sourceFactory = sourceFac;
 	}
 
@@ -48,8 +44,7 @@ public abstract class VersionUpgrader {
 	 *            the result of the upgrade
 	 */
 	public void upgradeAssignment(String input, UpgradeResult<Assignment> result) {
-		final IParseResult parseResult = sourceFactory.parseAssignment(input,
-				sourceVersion, null);
+		final IParseResult parseResult = sourceFactory.parseAssignment(input, null);
 		if (parseResult.hasProblem()) {
 			copyProblems(parseResult, result);
 			result.setUpgradeNeeded(true);
@@ -72,8 +67,7 @@ public abstract class VersionUpgrader {
 	 *            the result of the upgrade
 	 */
 	public void upgradeExpression(String input, UpgradeResult<Expression> result) {
-		final IParseResult parseResult = sourceFactory.parseExpression(input,
-				sourceVersion, null);
+		final IParseResult parseResult = sourceFactory.parseExpression(input, null);
 		if (parseResult.hasProblem()) {
 			copyProblems(parseResult, result);
 			result.setUpgradeNeeded(true);
@@ -93,8 +87,7 @@ public abstract class VersionUpgrader {
 	 *            the result of the upgrade
 	 */
 	public void upgradePredicate(String input, UpgradeResult<Predicate> result) {
-		final IParseResult parseResult = sourceFactory.parsePredicate(input,
-				sourceVersion, null);
+		final IParseResult parseResult = sourceFactory.parsePredicate(input, null);
 		if (parseResult.hasProblem()) {
 			copyProblems(parseResult, result);
 			result.setUpgradeNeeded(true);

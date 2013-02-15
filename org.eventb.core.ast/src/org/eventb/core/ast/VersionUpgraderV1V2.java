@@ -258,7 +258,7 @@ class VersionUpgraderV1V2 extends VersionUpgrader {
 	}
 
 	public VersionUpgraderV1V2() {
-		super(FormulaFactory.getV1Default(), LanguageVersion.V1);
+		super(FormulaFactory.getV1Default());
 	}
 
 	@Override
