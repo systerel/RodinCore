@@ -27,7 +27,6 @@ import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.IProofTreeNode;
@@ -313,14 +312,13 @@ public class TestLib {
 				throw new IllegalArgumentException(
 						"Invalid type environment pair: " + pairImage);
 			}
-			final Expression expr = factory.parseExpression(m.group(1),
-					LanguageVersion.V2, null).getParsedExpression();
+			final Expression expr = factory.parseExpression(m.group(1), null)
+					.getParsedExpression();
 			if (!(expr instanceof FreeIdentifier)) {
 				throw new IllegalArgumentException(
 						"Invalid type environment pair: " + pairImage);
 			}
-			final Type type = factory.parseType(m.group(2), LanguageVersion.V2)
-					.getParsedType();
+			final Type type = factory.parseType(m.group(2)).getParsedType();
 			result.addName(expr.toString(), type);
 		}
 		return result;
@@ -367,8 +365,7 @@ public class TestLib {
 	 */
 	public static Predicate genPred(ITypeEnvironmentBuilder typeEnv, String str) {
 		final Predicate result = typeEnv.getFormulaFactory()
-				.parsePredicate(str, LanguageVersion.V2, null)
-				.getParsedPredicate();
+				.parsePredicate(str, null).getParsedPredicate();
 		if (result == null)
 			throw new IllegalArgumentException("Invalid predicate: " + str);
 		typeCheck(typeEnv, result);
@@ -387,8 +384,7 @@ public class TestLib {
 	 */
 	public static Predicate genPred(ISealedTypeEnvironment typeEnv, String str) {
 		final Predicate result = typeEnv.getFormulaFactory()
-				.parsePredicate(str, LanguageVersion.V2, null)
-				.getParsedPredicate();
+				.parsePredicate(str, null).getParsedPredicate();
 		if (result == null)
 			throw new IllegalArgumentException("Invalid predicate: " + str);
 		typeCheck(typeEnv, result);
@@ -487,8 +483,8 @@ public class TestLib {
 	 * @return the type checked expression
 	 */
 	public static Expression genExpr(ITypeEnvironmentBuilder typeEnv, String str) {
-		final Expression result = ff.parseExpression(str, LanguageVersion.V2,
-				null).getParsedExpression();
+		final Expression result = ff.parseExpression(str, null)
+				.getParsedExpression();
 		if (result == null)
 			throw new IllegalArgumentException("Invalid expression: " + str);
 		typeCheck(typeEnv, result);
@@ -506,8 +502,8 @@ public class TestLib {
 	 * @return the type checked expression
 	 */
 	public static Expression genExpr(ISealedTypeEnvironment typeEnv, String str) {
-		final Expression result = ff.parseExpression(str, LanguageVersion.V2,
-				null).getParsedExpression();
+		final Expression result = ff.parseExpression(str, null)
+				.getParsedExpression();
 		if (result == null)
 			throw new IllegalArgumentException("Invalid expression: " + str);
 		typeCheck(typeEnv, result);

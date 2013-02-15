@@ -25,7 +25,6 @@ import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.LanguageVersion;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -124,8 +123,8 @@ public abstract class AbstractTacticTests {
 	 * the current type environment.
 	 */
 	protected Predicate parsePredicate(String predImage) {
-		final Predicate pred = ff.parsePredicate(predImage, LanguageVersion.V2,
-				null).getParsedPredicate();
+		final Predicate pred = ff.parsePredicate(predImage, null)
+				.getParsedPredicate();
 		typecheck(pred);
 		return pred;
 	}
@@ -135,8 +134,8 @@ public abstract class AbstractTacticTests {
 	 * the current type environment.
 	 */
 	protected Expression parseExpression(String exprImage) {
-		final Expression expr = ff.parseExpression(exprImage,
-				LanguageVersion.V2, null).getParsedExpression();
+		final Expression expr = ff.parseExpression(exprImage, null)
+				.getParsedExpression();
 		typecheck(expr);
 		return expr;
 	}
@@ -146,9 +145,9 @@ public abstract class AbstractTacticTests {
 	 * can bear the given type within the current type environment.
 	 */
 	protected FreeIdentifier parseIdent(String identImage, String typeImage) {
-		final Expression expr = ff.parseExpression(identImage,
-				LanguageVersion.V2, null).getParsedExpression();
-		final Type type = ff.parseType(typeImage, LanguageVersion.V2)
+		final Expression expr = ff.parseExpression(identImage, null)
+				.getParsedExpression();
+		final Type type = ff.parseType(typeImage)
 				.getParsedType();
 		assertTypechecked(expr, expr.typeCheck(typenv, type));
 		assertTrue(identImage + "is not an identifier",

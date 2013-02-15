@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
-import static org.eventb.core.ast.LanguageVersion.V2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -93,7 +92,7 @@ public abstract class AbstractFormulaRewriterTests {
 			for (int i = 0; i < env.length; i += 2) {
 				final String name = env[i];
 				final String typeString = env[i + 1];
-				final IParseResult res = factory.parseType(typeString, V2);
+				final IParseResult res = factory.parseType(typeString);
 				assertNoProblem(res, typeString, "is not a type");
 				typenv.addName(name, res.getParsedType());
 			}
@@ -158,8 +157,7 @@ public abstract class AbstractFormulaRewriterTests {
 
 		@Override
 		protected Expression parseString(String image) {
-			final IParseResult result = factory
-					.parseExpression(image, V2, null);
+			final IParseResult result = factory.parseExpression(image, null);
 			assertNoProblem(result, image, "does not parse as an expression");
 			return result.getParsedExpression();
 		}
@@ -180,7 +178,7 @@ public abstract class AbstractFormulaRewriterTests {
 
 		@Override
 		protected Predicate parseString(String image) {
-			final IParseResult result = factory.parsePredicate(image, V2, null);
+			final IParseResult result = factory.parsePredicate(image, null);
 			assertNoProblem(result, image, "does not parse as a predicate");
 			return result.getParsedPredicate();
 		}
