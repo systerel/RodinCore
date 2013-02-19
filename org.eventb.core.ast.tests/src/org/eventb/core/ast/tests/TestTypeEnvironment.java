@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - port to JUnit 4
+ *     Systerel - test factory equality
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.ff_extns;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -35,6 +37,7 @@ public class TestTypeEnvironment {
 	private static Type t_T = ff.makeGivenType("T"); 
 	private static Type INT = ff.makeIntegerType();
 	private static Type BOOL = ff.makeBooleanType();
+	private static Type eBOOL = ff_extns.makeBooleanType();
 	
 	private static Type POW(Type base) {
 		return ff.makePowerSetType(base);
@@ -69,7 +72,19 @@ public class TestTypeEnvironment {
 		te1.addName("y", INT);
 		assertEquals(te1, te2);
 	}
-	
+
+	/*
+	 * Test method for
+	 * 'org.eventb.core.ast.ITypeEnvironment.addAll(ITypeEnvironment)' with a
+	 * given type environment using a different factory
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddAllTypeEnvDifferentFactory() {
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		ITypeEnvironmentBuilder te_extns = ff_extns.makeTypeEnvironment();
+		te.addAll(te_extns);
+	}
+
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addAll(FreeIdentifier[])'
 	 */
@@ -97,7 +112,36 @@ public class TestTypeEnvironment {
 		assertEquals(te1, te2);
 		
 	}
-	
+
+	/*
+	 * Test method for
+	 * 'org.eventb.core.ast.ITypeEnvironment.addAll(FreeIdentifier[])' with free
+	 * identifiers using a different factory
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddAllFreeIdentDifferentFactory() {
+		ITypeEnvironmentBuilder te_extns = ff_extns.makeTypeEnvironment();
+
+		FreeIdentifier x_INT = ff.makeFreeIdentifier("x", null, INT);
+		FreeIdentifier y_S = ff.makeFreeIdentifier("y", null, t_S);
+
+		te_extns.addAll(new FreeIdentifier[] { x_INT, y_S });
+	}
+
+	/*
+	 * Test method for
+	 * 'org.eventb.core.ast.ITypeEnvironment.add(FreeIdentifier)' with free
+	 * identifier using a different factory
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddFreeIdentDifferentFactory() {
+		ITypeEnvironmentBuilder te_extns = ff_extns.makeTypeEnvironment();
+
+		FreeIdentifier y_S = ff.makeFreeIdentifier("y", null, t_S);
+
+		te_extns.add(y_S);
+	}
+
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addGivenSet(String)'
 	 */
@@ -176,7 +220,17 @@ public class TestTypeEnvironment {
 		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
 		te.addName("id", BOOL);
 	}
-	
+
+	/*
+	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.addName(String,
+	 * Type)' using a different type factory
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddNameWithDifferentFactory() {
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		te.addName("s", eBOOL);
+	}
+
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.clone()'
 	 */
