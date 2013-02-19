@@ -61,6 +61,13 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 
 	@Override
 	public void addAll(ITypeEnvironment other) {
+		if (this.getFormulaFactory() != other.getFormulaFactory()) {
+			throw new IllegalArgumentException(
+					"The given type environment formula factory is not the same as the current type environment formula factory: "
+							+ other.getFormulaFactory()
+							+ " instead of: "
+							+ this.getFormulaFactory());
+		}
 		final Map<String, Type> otherMap = ((TypeEnvironment) other).map;
 		// Use addName() to check for duplicates.
 		for (final Entry<String, Type> entry : otherMap.entrySet()) {
@@ -93,6 +100,16 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 	 * @param type the type to associate to the given name
 	 */
 	protected void setName(String name, Type type) {
+		if (type != null && this.getFormulaFactory() != type.getFactory()) {
+			throw new IllegalArgumentException(
+					"The type formula factory of the element '"
+							+ name
+							+ " : "
+							+ type
+							+ "' is not the same as the type environment formula factory: "
+							+ type.getFactory() + " instead of: "
+							+ this.getFormulaFactory());
+		}
 		// Avoid infinite recursion when adding a given set
 		if (!isGivenSet(name, type)) {
 			for (final GivenType givenType : type.getGivenTypes()) {
