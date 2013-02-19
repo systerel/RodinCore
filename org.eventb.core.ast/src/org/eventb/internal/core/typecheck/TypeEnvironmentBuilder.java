@@ -61,6 +61,10 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 
 	@Override
 	public void addAll(ITypeEnvironment other) {
+		if (other.getFormulaFactory() != ff) {
+			throw new IllegalArgumentException("Incompatible formula factory: "
+					+ other.getFormulaFactory() + ", should be: " + ff);
+		}
 		final Map<String, Type> otherMap = ((TypeEnvironment) other).map;
 		// Use addName() to check for duplicates.
 		for (final Entry<String, Type> entry : otherMap.entrySet()) {
@@ -113,6 +117,11 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 		}
 		if (type == null) {
 			throw new NullPointerException("Null type");
+		}
+		if (type.getFactory() != ff) {
+			throw new IllegalArgumentException("Invalid formula factory for ("
+					+ name + " : " + type + "): " + type.getFactory()
+					+ ", should be: " + ff);
 		}
 		final Type oldType = internalGetType(name);
 		if (oldType != null && !oldType.equals(type)) {

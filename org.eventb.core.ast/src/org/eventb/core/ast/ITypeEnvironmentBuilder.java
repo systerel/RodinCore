@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,9 @@ public interface ITypeEnvironmentBuilder extends ITypeEnvironment {
 	 * @throws IllegalArgumentException
 	 *             if the mappings of the given type environment are
 	 *             incompatible with this type environment
+	 * @throws IllegalArgumentException
+	 *             if the given type environment formula factory is not the
+	 *             same as the current type environment formula factory
 	 */
 	void addAll(ITypeEnvironment other);
 
@@ -59,6 +62,9 @@ public interface ITypeEnvironmentBuilder extends ITypeEnvironment {
 	 * @throws IllegalArgumentException
 	 *             if the given free identifier is either not a valid identifier
 	 *             or not typed, or incompatible with this type environment
+	 * @throws IllegalArgumentException
+	 *             if the free identifier formula factory is not the same as
+	 *             the type environment formula factory
 	 */
 	void add(FreeIdentifier freeIdent);
 
@@ -74,6 +80,9 @@ public interface ITypeEnvironmentBuilder extends ITypeEnvironment {
 	 *            array of free identifiers
 	 * @throws IllegalArgumentException
 	 *             if any given free identifier is ill-formed
+	 * @throws IllegalArgumentException
+	 *             if a free identifier formula factory is not the same as
+	 *             the type environment formula factory
 	 */
 	void addAll(FreeIdentifier[] freeIdents);
 	
@@ -110,6 +119,9 @@ public interface ITypeEnvironmentBuilder extends ITypeEnvironment {
 	 *             given type is not compatible with this type environment:
 	 *             different from a type already registered with the same name
 	 *             or containing incompatible carrier sets
+	 * @throws IllegalArgumentException
+	 *             if the given type formula factory is not the same as the type
+	 *             environment formula factory
 	 */
 	void addName(String name, Type type);
 	
