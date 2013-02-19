@@ -141,6 +141,12 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 		return map.get(name);
 	}
 	
+	@Override
+	protected final ITypeEnvironment translateResult(
+			TypeEnvironmentBuilder result) {
+		return result;
+	}
+
 	private FreeIdentifier makeFreshIdentifier(BoundIdentDecl bIdent,
 			FreshNameSolver solver) {
 		final String bName = bIdent.getName();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,17 @@ package org.eventb.core.ast;
  * All value access methods return only values from inferred environment and all
  * value set methods add values in inferred environment only if they do not
  * exist in the initial environment.
+ * </p>
+ * <p>
+ * An inferred type environment cannot be translated with a given formula
+ * factory. It means that calls to
+ * {@link ITypeEnvironment#isTranslatable(FormulaFactory)} always return
+ * <code>false</code> and calls to
+ * {@link ITypeEnvironment#translate(FormulaFactory)} always raise an
+ * {@link UnsupportedOperationException}. If a translation is needed then build an
+ * inferred type environment with a translated initial type environment or
+ * extract the inferred type environment to a standard type environment and then
+ * translate it.
  * </p>
  * 
  * @author Vincent Monfort

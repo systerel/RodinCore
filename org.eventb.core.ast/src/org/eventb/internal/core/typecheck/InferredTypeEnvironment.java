@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eventb.internal.core.typecheck;
 
 import java.util.ArrayList;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IInferredTypeEnvironment;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -77,6 +78,17 @@ public class InferredTypeEnvironment extends TypeEnvironmentBuilder implements
 	@Override
 	public int hashCode() {
 		return super.hashCode() + 17 * initialTypeEnvironment.hashCode();
+	}
+
+	@Override
+	public final boolean isTranslatable(FormulaFactory fac) {
+		return false;
+	}
+
+	@Override
+	public ITypeEnvironment translate(FormulaFactory fac) {
+		throw new UnsupportedOperationException(
+				"An IInferredTypeEnvironment cannot be translated.");
 	}
 
 }

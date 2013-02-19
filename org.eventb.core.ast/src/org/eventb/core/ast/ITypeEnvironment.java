@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - published method getFormulaFactory()
  *     Systerel - added support for specialization
  *     Systerel - immutable type environments
+ *     Systerel - added support for factory translation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -231,6 +232,61 @@ public interface ITypeEnvironment {
 	 * @since 3.0
 	 */
 	ITypeEnvironmentBuilder specialize(ISpecialization specialization);
+
+	/**
+	 * Checks if the current type environment can be translated with the given
+	 * factory.
+	 * <p>
+	 * A type environment is compatible with the given factory either if the
+	 * factory is the type environment factory or if type environment elements
+	 * names are not reserved words in the given factory and elements types can
+	 * be translated.
+	 * </p>
+	 * 
+	 * @return <code>false</code> only if a call to
+	 *         {@link ITypeEnvironment#translate(FormulaFactory)} will fail by
+	 *         raising an exception and returns <code>true</code> otherwise.
+	 * @since 3.0
+	 */
+	boolean isTranslatable(FormulaFactory fac);
+
+	/**
+	 * Returns the type environment built by using the given formula factory.
+	 * <p>
+	 * If the type environment factory and the given factory are the same then
+	 * the same type environment object is returned. Otherwise a new type
+	 * environment object is built. In both cases the type environment returned
+	 * has the same type as the current type environment (e.g. if the type
+	 * environment is a {@link ITypeEnvironmentBuilder}, then the returned one
+	 * is also a {@link ITypeEnvironmentBuilder}).
+	 * </p>
+	 * <p>
+	 * The translation of the type environment can fail if an element has a name
+	 * that is a reserved keyword in the target formula factory or if an element
+	 * has a type which is not translatable.
+	 * </p>
+	 * <p>
+	 * This operation is not supported for {@link IInferredTypeEnvironment}.
+	 * </p>
+	 * 
+	 * @param fac
+	 *            the factory to use to rebuild the type environment
+	 * @return the type environment obtained by the rebuilt based on the given
+	 *         factory
+	 * @throws IllegalArgumentException
+	 *             if the type environment contains elements for which names are
+	 *             reserved keywords in the given formula factory
+	 * @throws IllegalArgumentException
+	 *             if the type environment contains elements for which type use
+	 *             a reserved keywords in the given formula factory
+	 * @throws IllegalArgumentException
+	 *             if the type environment contains elements for which type use
+	 *             an extension not supported by the given factory
+	 * @throws UnsupportedOperationException
+	 *             if the type environment is an inferred type environment
+	 * @since 3.0
+	 */
+	ITypeEnvironment translate(FormulaFactory fac);
 
 	/**
 	 * Get an immutable snapshot of this type environment.

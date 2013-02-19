@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added support for specialization
  *     Systerel - immutable type environments
+ *     Systerel - added support for factory translation
  *******************************************************************************/
 package org.eventb.internal.core.typecheck;
 
@@ -29,6 +30,7 @@ import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.GivenTypeHelper;
 import org.eventb.internal.core.ast.Specialization;
+import org.eventb.internal.core.ast.TypeRewriter;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
 
 /**
@@ -195,5 +197,45 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 	public ITypeEnvironmentBuilder makeBuilder() {
 		return new TypeEnvironmentBuilder(this);
 	}
- 
+
+	@Override
+	public boolean isTranslatable(FormulaFactory fac) {
+		if (fac != ff) {
+			IIterator iter = getIterator();
+			while (iter.hasNext()) {
+				iter.advance();
+				if (!fac.isValidIdentifierName(iter.getName())) {
+					return false;
+				}
+				if (!iter.getType().isTranslatable(fac)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public ITypeEnvironment translate(FormulaFactory fac) {
+		if (fac == ff) {
+			return this;
+		} else {
+			TypeRewriter rewriter = new TypeRewriter(fac);
+			TypeEnvironmentBuilder result = new TypeEnvironmentBuilder(fac);
+			IIterator iter = getIterator();
+			while (iter.hasNext()) {
+				iter.advance();
+				result.addName(iter.getName(), rewriter.rewrite(iter.getType()));
+			}
+			return translateResult(result);
+		}
+	}
+
+	/*
+	 * This method must return the given type environment result with the same
+	 * type environment type as the current type environment.
+	 */
+	protected abstract ITypeEnvironment translateResult(
+			TypeEnvironmentBuilder result);
+
 }
