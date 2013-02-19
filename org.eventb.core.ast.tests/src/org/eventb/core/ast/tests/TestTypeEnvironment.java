@@ -9,13 +9,18 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - port to JUnit 4
  *     Systerel - test factory equality
+ *     Systerel - test translation with factory
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.tests.AbstractTests.LIST_FAC;
 import static org.eventb.core.ast.tests.FastFactory.ff_extns;
+import static org.eventb.core.ast.tests.TestTypes.LIST_LIST_S;
+import static org.eventb.core.ast.tests.TestTypes.gTypePrime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
@@ -24,6 +29,8 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IInferredTypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
@@ -457,6 +464,91 @@ public class TestTypeEnvironment {
 			final Type type = iter.getType();
 			assertEquals(givenSetType.equals(type), iter.isGivenSet());
 		}
+	}
+
+	@Test
+	public void testTranslation() {
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		te.addGivenSet("S");
+		te.addName("x", INT);
+		assertSame(
+				"Environment translated with same factory must be the same object",
+				te, te.translate(ff));
+		ITypeEnvironment te_extns = te.translate(ff_extns);
+		boolean is_builder = te_extns instanceof ITypeEnvironmentBuilder;
+		assertTrue(
+				"A translated type environment builder result must be a type environment builder",
+				is_builder);
+		assertTrue(
+				"A translated type environment must references the target factory",
+				ff_extns == te_extns.getFormulaFactory());
+		ITypeEnvironment te_extns_sealed = te.makeSnapshot()
+				.translate(ff_extns);
+		boolean is_sealed = te_extns_sealed instanceof ISealedTypeEnvironment;
+		assertTrue(
+				"A translated sealed type environment result must be a sealed type environment",
+				is_sealed);
+	}
+
+	@Test
+	public void testIsTranslatable() {
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		te.addGivenSet("S");
+		te.addName("prime", INT);
+		assertFalse(
+				"A type environment which is containing elements with a reserved keyword as name must not be translatable",
+				te.isTranslatable(ff_extns));
+
+		te = LIST_FAC.makeTypeEnvironment();
+		te.addName("a", gTypePrime);
+		assertFalse(
+				"A type environment which is containing elements with a type not translatable (use keyword) must not be translatable",
+				te.isTranslatable(ff_extns));
+
+		te = LIST_FAC.makeTypeEnvironment();
+		te.addName("a", LIST_LIST_S);
+		assertFalse(
+				"A type environment which is containing elements with a type not translatable (use extension) must not be translatable",
+				te.isTranslatable(ff));
+
+		te = ff.makeTypeEnvironment();
+		te.addGivenSet("S");
+		assertTrue(
+				"A type environment which is not containing any element with a reserved keyword as name must be translatable",
+				te.isTranslatable(ff_extns));
+
+		IInferredTypeEnvironment inf = FastFactory.mInferredTypeEnvironment(te);
+		assertFalse("A inferred type environment cannot be translated",
+				inf.isTranslatable(ff));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testImpossibleTranslatationOnReservedWord() {
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		te.addGivenSet("S");
+		te.addName("prime", INT);
+		te.translate(ff_extns);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testImpossibleTranslatationOnType() {
+		ITypeEnvironmentBuilder te = LIST_FAC.makeTypeEnvironment();
+		te.addName("a", gTypePrime);
+		te.translate(ff_extns);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testImpossibleTranslatationOnTypeExtension() {
+		ITypeEnvironmentBuilder te = LIST_FAC.makeTypeEnvironment();
+		te.addName("a", LIST_LIST_S);
+		te.translate(ff);
+	}
+
+	@Test(expected = UnsupportedOperationException.class)
+	public void testImpossibleTranslatationOnInferred() {
+		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		te.addGivenSet("S");
+		FastFactory.mInferredTypeEnvironment(te).translate(ff);
 	}
 
 }
