@@ -167,4 +167,12 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 		return new SealedTypeEnvironment(this);
 	}
 
+	@Override
+	public ITypeEnvironmentBuilder translate(FormulaFactory factory) {
+		if (factory == ff) {
+			return this;
+		}
+		return doTranslate(factory);
+	}
+
 }

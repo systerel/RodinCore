@@ -22,6 +22,7 @@ package org.eventb.core.ast;
  */
 public interface ISealedTypeEnvironment extends ITypeEnvironment {
 
-	// No new methods
+	@Override
+	public ISealedTypeEnvironment translate(FormulaFactory factory);
 
 }

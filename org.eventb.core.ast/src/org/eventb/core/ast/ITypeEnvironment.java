@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - published method getFormulaFactory()
  *     Systerel - added support for specialization
  *     Systerel - immutable type environments
+ *     Systerel - added support for factory translation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -231,6 +232,48 @@ public interface ITypeEnvironment {
 	 * @since 3.0
 	 */
 	ITypeEnvironmentBuilder specialize(ISpecialization specialization);
+
+	/**
+	 * Tells whether this type environment can be translated to the given
+	 * formula factory. This method therefore implements the precondition of the
+	 * translation method.
+	 * <p>
+	 * This type environment is translatable to the given factory if
+	 * <ul>
+	 * <li>no name of this type environment becomes a reserved word;</li>
+	 * <li>all types of this type environment can be translated.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param factory
+	 *            the target formula factory
+	 * @return <code>true</code> iff a call to
+	 *         {@link ITypeEnvironment#translate(FormulaFactory)} would succeed
+	 * @since 3.0
+	 */
+	boolean isTranslatable(FormulaFactory factory);
+
+	/**
+	 * Returns a copy of this type environment built with the given formula
+	 * factory.
+	 * <p>
+	 * If the factory of this type environment and the given factory are the
+	 * same, then this type environment is returned, rather than an identical
+	 * copy of it. Otherwise a new type environment object is built.
+	 * </p>
+	 * <p>
+	 * Calling this method when {@link #isTranslatable(FormulaFactory)} returns
+	 * <code>false</code> will raise an <code>IllegalArgumentException</code>.
+	 * </p>
+	 * 
+	 * @param factory
+	 *            the target formula factory
+	 * @return an equivalent type environment built with the given factory
+	 * @throws IllegalArgumentException
+	 *             if this type environment is not translatable
+	 * @since 3.0
+	 */
+	ITypeEnvironment translate(FormulaFactory factory);
 
 	/**
 	 * Get an immutable snapshot of this type environment.

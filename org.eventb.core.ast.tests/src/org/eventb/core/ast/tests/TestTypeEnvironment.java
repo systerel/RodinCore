@@ -9,14 +9,19 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - port to JUnit 4
  *     Systerel - test factory equality
+ *     Systerel - test translation with factory
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.ff_extns;
+import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
+import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.NoSuchElementException;
@@ -24,6 +29,8 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IInferredTypeEnvironment;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Type;
@@ -456,6 +463,74 @@ public class TestTypeEnvironment {
 			final Type givenSetType = POW(ff.makeGivenType(name));
 			final Type type = iter.getType();
 			assertEquals(givenSetType.equals(type), iter.isGivenSet());
+		}
+	}
+
+	/**
+	 * Ensures that translation works as expected in a nominal case.
+	 */
+	@Test
+	public void testTranslation() {
+		final ITypeEnvironmentBuilder te = mTypeEnvironment("S=ℙ(S); x=ℤ", ff);
+		assertTranslation(te, ff);
+		assertTranslation(te, ff_extns);
+		final ISealedTypeEnvironment snapshot = te.makeSnapshot();
+		assertTranslation(snapshot, ff);
+		assertTranslation(snapshot, ff_extns);
+	}
+
+	// Checks isTranslatable() and translate() post-conditions in nominal case.
+	private void assertTranslation(ITypeEnvironment te, FormulaFactory target) {
+		assertTrue(te.isTranslatable(target));
+		if (target == te.getFormulaFactory()) {
+			assertSame(te, te.translate(target));
+		} else {
+			final ITypeEnvironment actual = te.translate(target);
+			assertEquals(te, actual);
+			assertSame(target, actual.getFormulaFactory());
+			assertSame(te.getClass(), actual.getClass());
+		}
+	}
+
+	/**
+	 * Ensures that translation fails as expected in erroneous cases.
+	 */
+	@Test
+	public void testNotTranslation() {
+		final ITypeEnvironment reservedName = mTypeEnvironment("prime=ℤ", ff);
+		final ITypeEnvironment untranslatableType = mTypeEnvironment(
+				"x=List(BOOL)", ff_extns);
+		assertNotTranslation(reservedName, ff_extns);
+		assertNotTranslation(untranslatableType, ff);
+		assertNotTranslation(reservedName.makeSnapshot(), ff_extns);
+		assertNotTranslation(untranslatableType.makeSnapshot(), ff);
+	}
+
+	// Checks isTranslatable() and translate() post-conditions in erroneous case.
+	private void assertNotTranslation(ITypeEnvironment te, FormulaFactory target) {
+		assertFalse(te.isTranslatable(target));
+		try {
+			te.translate(target);
+			fail("Translation should have failed");
+		} catch (IllegalArgumentException exc) {
+			// pass
+		}
+	}
+
+	/**
+	 * Ensures that translation fails as expected for inferred type
+	 * environments.
+	 */
+	@Test
+	public void testInferredTypeEnvironmentTranslation() {
+		final ITypeEnvironmentBuilder te = mTypeEnvironment();
+		final IInferredTypeEnvironment inferred = mInferredTypeEnvironment(te);
+		assertFalse(inferred.isTranslatable(ff));
+		try {
+			inferred.translate(ff);
+			fail("Translation should have failed");
+		} catch (UnsupportedOperationException exc) {
+			// pass
 		}
 	}
 
