@@ -80,7 +80,7 @@ public class RelationsComputer {
 		}
 	}
 
-	public void setAttributeRelations() {
+	private void setAttributeRelations() {
 		for (AttributeType<?> attribute : attrTypes) {
 			attribute.setRelation(attrRels.getElementTypes(attribute));
 		}
