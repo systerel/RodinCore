@@ -1,0 +1,45 @@
+/*******************************************************************************
+ * Copyright (c) 2013 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Systerel - initial API and implementation
+ *******************************************************************************/
+package org.rodinp.core.tests.basis;
+
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.basis.InternalElement;
+import org.rodinp.core.tests.AbstractRodinDBTests;
+
+/**
+ * An element class for child elements of NamedElement2s.
+ * 
+ * @author Thomas Muller
+ */
+public class NamedElement22 extends InternalElement {
+
+	private static final String ELEMENT_TYPE = AbstractRodinDBTests.PLUGIN_ID
+			+ ".namedElement22";
+
+	/**
+	 * @param name
+	 *            the value of this element
+	 * @param parent
+	 *            the parent of this element
+	 */
+	public NamedElement22(String name, IRodinElement parent) {
+		super(name, parent);
+	}
+
+	@Override
+	public IInternalElementType<? extends IInternalElement> getElementType() {
+		return RodinCore.getInternalElementType(ELEMENT_TYPE);
+	}
+
+}

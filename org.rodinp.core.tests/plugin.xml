@@ -105,9 +105,19 @@
             id="namedElement"
             name="Named Element"/>
       <internalElementType
+            class="org.rodinp.core.tests.basis.NamedElement11"
+            id="namedElement11"
+            name="Named Element 11">
+      </internalElementType>
+      <internalElementType
             class="org.rodinp.core.tests.basis.NamedElement2"
             id="namedElement2"
             name="Named Element 2"/>
+      <internalElementType
+            class="org.rodinp.core.tests.basis.NamedElement22"
+            id="namedElement22"
+            name="Named Element 22">
+      </internalElementType>
       <internalElementType
             class="org.rodinp.core.tests.builder.basis.Dependency"
             id="dependency"
