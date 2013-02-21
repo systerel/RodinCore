@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -316,6 +316,14 @@ public interface IRodinDBStatusConstants {
 	 * <code>getElements</code> on the status object.
 	 */
 	int ROOT_ELEMENT = 1005;
+	
+	/**
+	 * Status indicating that a child creation operation has been attempted
+	 * while the element type, of the child to create, is not allowed
+	 * considering the type of its parent element. The parent element can be
+	 * retrieved using <code>getElements()</code> on the status object.
+	 */
+	int INVALID_CHILD_TYPE = 1006;
 
 	/**
 	 * Status indicating that an error occurred while performing the indexing of
