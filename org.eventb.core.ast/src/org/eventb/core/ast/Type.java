@@ -16,6 +16,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.internal.core.ast.Specialization;
+import org.eventb.internal.core.ast.TypeRewriter;
+import org.eventb.internal.core.ast.TypeTranslatabilityChecker;
+import org.eventb.internal.core.typecheck.TypeVariable;
 
 /**
  * Common protocol for event-B types.
@@ -311,5 +314,58 @@ public abstract class Type {
 	 * @since 2.7
 	 */
 	public abstract void accept(ITypeVisitor visitor);
+
+	/**
+	 * Tells whether this type can be translated to the given factory.
+	 * <p>
+	 * This type is translatable if and only if:
+	 * <ul>
+	 * <li>All the given types it contains are compatible with the given factory
+	 * (their names are not reserved keywords);</li>
+	 * <li>All parametric types it contains are supported by the given factory.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff this type can be translated to the given
+	 *         factory
+	 * @see #translate(FormulaFactory)
+	 * @since 3.0
+	 */
+	public boolean isTranslatable(FormulaFactory ff) {
+		return TypeTranslatabilityChecker.isTranslatable(this, ff);
+	}
+
+	/**
+	 * Returns a copy of this type built with the given formula factory.
+	 * <p>
+	 * If the factory of this type and the given factory are equal, then this
+	 * type is returned. Otherwise a new type object is built.
+	 * </p>
+	 * <p>
+	 * Clients must ensure that this type can be translated to the given
+	 * factory, prior to calling this method. If it is not translatable, an
+	 * exception is raised.
+	 * </p>
+	 * <p>
+	 * This operation is not supported by {@link TypeVariable}
+	 * </p>
+	 * 
+	 * @param ff
+	 *            the factory to use to build a copy of this type
+	 * @return a type equivalent to this type and built with the given factory
+	 * @throws IllegalArgumentException
+	 *             if this type cannot be translated to the given factory
+	 * @throws UnsupportedOperationException
+	 *             if this type contains a type variable
+	 * @see #isTranslatable(FormulaFactory)
+	 * @since 3.0
+	 */
+	public Type translate(FormulaFactory ff) {
+		if (fac == ff) {
+			return this;
+		}
+		final TypeRewriter rewriter = new TypeRewriter(ff);
+		return rewriter.rewrite(this);
+	}
 
 }

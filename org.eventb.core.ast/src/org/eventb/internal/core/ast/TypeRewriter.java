@@ -37,7 +37,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
  */
 public class TypeRewriter implements ITypeVisitor {
 
-	// Formula factory to use for building the rewrited types
+	// Formula factory to use for building the rewritten types
 	private final FormulaFactory ff;
 
 	// Result of the last call to visit()
@@ -85,7 +85,7 @@ public class TypeRewriter implements ITypeVisitor {
 
 	@Override
 	public void visit(ParametricType type) {
-		boolean changed = false;
+		boolean changed = (ff != type.getFactory());
 		final Type[] typeParameters = type.getTypeParameters();
 		final Type[] newTypeParameters = new Type[typeParameters.length];
 		for (int i = 0; i < typeParameters.length; i++) {
