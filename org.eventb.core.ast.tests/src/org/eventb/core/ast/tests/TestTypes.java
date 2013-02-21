@@ -10,17 +10,21 @@
  *     Systerel - added abstract test class
  *     Systerel - mathematical language v2
  *     Systerel - mathematical extensions
+ *     Systerel - translation to another factory
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.NO_TYPES;
 import static org.eventb.core.ast.tests.FastFactory.mDatatypeFactory;
+import static org.eventb.core.ast.tests.FastFactory.ff_extns;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
@@ -33,8 +37,8 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.junit.Test;
 
 /**
- * Unit tests for Event-B type construction, and conversion back and forth to
- * strings and expressions.
+ * Unit tests for Event-B type construction, conversion back and forth to
+ * strings and expressions, and translation to another factory.
  * 
  * @author Laurent Voisin
  */
@@ -183,6 +187,70 @@ public class TestTypes extends AbstractTests {
 	private void assertIsNotATypeExpression(String image) {
 		final Expression expr = parseExpression(image, typenv);
 		assertFalse(expr.isATypeExpression());
+	}
+
+	/**
+	 * Ensures that a type, which can be translated to another factory, is
+	 * properly translated.
+	 */
+	@Test
+	public void testTypeTranslation() {
+		assertTypeTranslation("BOOL");
+		assertTypeTranslation("ℤ");
+		assertTypeTranslation("S");
+		assertTypeTranslation("ℙ(S)");
+		assertTypeTranslation("S×T");
+		assertTypeTranslation("ℙ(S×T)");
+		assertTypeTranslation("S×T×U");
+		assertTypeTranslation("S×(T×U)");
+		assertTypeTranslation("List(S)");
+		assertTypeTranslation("List(List(S))");
+	}
+
+	// Translating from tf to ff_extns
+	private void assertTypeTranslation(String image) {
+		final Type type = parseType(image, tf);
+
+		// Translation to same factory
+		assertTrue(type.isTranslatable(tf));
+		assertSame(type, type.translate(tf));
+
+		// Translation to compatible factory
+		assertTrue(type.isTranslatable(ff_extns));
+		final Type translated = type.translate(ff_extns);
+		assertSame(ff_extns, translated.getFactory());
+		assertEquals(type, translated);
+	}
+
+	/**
+	 * Ensures that a type, which cannot be translated to another factory, is
+	 * properly identified as such and that attempting to translate it raises an
+	 * exception.
+	 */
+	@Test
+	public void testIsTranslatable() {
+		// Given type "prime" is a reserved keyword in target factory
+		assertNotTypeTranslation("prime", ff_extns);
+		assertNotTypeTranslation("ℙ(prime)", ff_extns);
+		assertNotTypeTranslation("prime×T", ff_extns);
+		assertNotTypeTranslation("S×prime", ff_extns);
+		assertNotTypeTranslation("List(prime)", ff_extns);
+
+		// Missing extension in target factory
+		assertNotTypeTranslation("List(S)", ff);
+	}
+
+	// Translation to trg (incompatible factory)
+	private void assertNotTypeTranslation(String image, FormulaFactory trg) {
+		final Type type = parseType(image, tf);
+
+		assertFalse(type.isTranslatable(trg));
+		try {
+			type.translate(trg);
+			fail("Type " + type + " shall not translate to " + trg);
+		} catch (IllegalArgumentException exc) {
+			// pass
+		}
 	}
 
 }
