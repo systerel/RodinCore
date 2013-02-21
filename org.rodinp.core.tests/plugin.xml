@@ -628,4 +628,31 @@
            second-participant-id="org.rodinp.core.tests.testParticipant2">
      </Order>
   </extension>
+  <extension
+        point="org.rodinp.core.itemRelations">
+     <relationship
+           parentTypeId="org.rodinp.core.tests.test">
+        <childType
+              typeId="org.rodinp.core.tests.namedElement">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.namedElement">
+        <childType
+              typeId="org.rodinp.core.tests.namedElement11">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.test2">
+        <childType
+              typeId="org.rodinp.core.tests.namedElement2">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.namedElement2">
+        <childType
+              typeId="org.rodinp.core.tests.namedElement22">
+        </childType>
+     </relationship>
+  </extension>
 </plugin>
