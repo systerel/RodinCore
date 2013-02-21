@@ -106,4 +106,15 @@ public class TypeVariable extends Type {
 				"A TypeVariable cannot be visited.");
 	}
 
+	@Override
+	public boolean isTranslatable(FormulaFactory ff) {
+		return false;
+	}
+
+	@Override
+	public Type translate(FormulaFactory ff) {
+		throw new UnsupportedOperationException(
+				"A TypeVariable cannot be translated.");
+	}
+
 }

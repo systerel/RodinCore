@@ -15,7 +15,10 @@ package org.eventb.core.ast;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.ast.Specialization;
+import org.eventb.internal.core.ast.TypeRewriter;
+import org.eventb.internal.core.typecheck.TypeVariable;
 
 /**
  * Common protocol for event-B types.
@@ -311,5 +314,131 @@ public abstract class Type {
 	 * @since 2.7
 	 */
 	public abstract void accept(ITypeVisitor visitor);
+
+	/**
+	 * Checks if the current type can be translated with the given factory.
+	 * <p>
+	 * A type is compatible with the given factory either if the factory is the
+	 * type factory or if the type does not contain given types which have a
+	 * name that is a reserved word in the given factory and if no extension
+	 * incompatible with the given factory is used in a parametric type.
+	 * </p>
+	 * 
+	 * @return <code>false</code> only if a call to
+	 *         {@link Type#translate(FormulaFactory)} will fail by raising an
+	 *         exception and returns <code>true</code> otherwise.
+	 * @since 3.0
+	 */
+	public boolean isTranslatable(FormulaFactory ff) {
+		TranslationVisitor visitor = new TranslationVisitor(ff);
+		accept(visitor);
+		return visitor.isTranslatable();
+	}
+
+	/**
+	 * Returns the type built by using the given formula factory.
+	 * <p>
+	 * If the type factory and the given factory are the same then the same type
+	 * object is returned. Otherwise a new type object is built.
+	 * </p>
+	 * <p>
+	 * The translation of the type can fail if it contains a given type which
+	 * has a name that is a reserved keyword in the target formula factory or if
+	 * it contains a parametric type which uses an extension that is not
+	 * supported by the target factory. In this latter case an
+	 * {@link IllegalArgumentException} will be raised.
+	 * </p>
+	 * <p>
+	 * This operation is not supported for {@link TypeVariable}
+	 * </p>
+	 * 
+	 * @param ff
+	 *            the factory to use to rebuild the type environment
+	 * @return the type obtained by the rebuilt based on the given factory
+	 * @throws IllegalArgumentException
+	 *             if the type contains a given type for which name is a
+	 *             reserved keyword in the given formula factory
+	 * @throws IllegalArgumentException
+	 *             if the type contains a parametric type which use an extension
+	 *             that is not supported by the given formula factory
+	 * @throws UnsupportedOperationException
+	 *             if the type contains a type variable
+	 * @since 3.0
+	 */
+	public Type translate(FormulaFactory ff) {
+		if (fac != ff) {
+			TypeRewriter rewriter = new TypeRewriter(ff);
+			return rewriter.rewrite(this);
+		} else {
+			return this;
+		}
+	}
+
+	// Visitor which checks that given types do not use a reserved keyword and
+	// parametric types use only extension supported in the given factory
+	private class TranslationVisitor implements ITypeVisitor {
+
+		private boolean isTranslatable;
+
+		private final FormulaFactory ff;
+
+		public TranslationVisitor(FormulaFactory ff) {
+			this.ff = ff;
+			this.isTranslatable = true;
+		}
+
+		public boolean isTranslatable() {
+			return isTranslatable;
+		}
+
+		private void checkChild(Type child) {
+			if (isTranslatable) {
+				if (child instanceof TypeVariable) {
+					isTranslatable = false;
+				} else {
+					child.accept(this);
+				}
+			}
+		}
+
+		private void checkExtensionTranslatable(IExpressionExtension exprExt) {
+			isTranslatable &= ff.hasExtension(exprExt);
+		}
+
+		@Override
+		public void visit(ProductType type) {
+			checkChild(type.getLeft());
+			checkChild(type.getRight());
+		}
+
+		@Override
+		public void visit(PowerSetType type) {
+			checkChild(type.getBaseType());
+		}
+
+		@Override
+		public void visit(ParametricType type) {
+			checkExtensionTranslatable(type.getExprExtension());
+			for (Type child : type.getTypeParameters()) {
+				checkChild(child);
+			}
+		}
+
+		@Override
+		public void visit(IntegerType type) {
+			// translation ok
+		}
+
+		@Override
+		public void visit(GivenType type) {
+			isTranslatable &= ff.isValidIdentifierName(type.getName());
+		}
+
+		@Override
+		public void visit(BooleanType type) {
+			// translation ok
+		}
+
+	}
 
 }
