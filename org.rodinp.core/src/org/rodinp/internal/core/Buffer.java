@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Systerel - made NAME_ATTRIBUTE and VERSION_ATTRIBUTE public
  *     Systerel - refactored automatic file conversion
  *     Systerel - fix file not closed on erroneous XML
+ *     Systerel - add database relations
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -412,6 +413,12 @@ public class Buffer {
 		try {
 			final IInternalElementType<? extends IInternalElement> childType =
 				getElementType(domChild);
+			final IInternalElementType<?> parentType = parent.getElementType();
+			if (!parentType.canParent(childType)) {
+				Util.log(null, "Ignored invalid child element of type "
+						+ childType + " for parent " + parent.getPath());
+				return null;
+			}
 			final String childName = getElementName(domChild);
 			if (childName == null) {
 				Util.log(null, "internal element with no name in file " + owner);

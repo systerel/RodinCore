@@ -631,6 +631,39 @@
   <extension
         point="org.rodinp.core.itemRelations">
      <relationship
+           parentTypeId="org.rodinp.core.tests.context">
+        <childType
+              typeId="org.rodinp.core.tests.dependency">
+        </childType>
+        <childType
+              typeId="org.rodinp.core.tests.data">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.machine">
+        <childType
+              typeId="org.rodinp.core.tests.dependency">
+        </childType>
+        <childType
+              typeId="org.rodinp.core.tests.reference">
+        </childType>
+        <childType
+              typeId="org.rodinp.core.tests.data">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.scContext">
+        <childType
+              typeId="org.rodinp.core.tests.data">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.scMachine">
+        <childType
+              typeId="org.rodinp.core.tests.data">
+        </childType>
+     </relationship>
+     <relationship
            parentTypeId="org.rodinp.core.tests.test">
         <childType
               typeId="org.rodinp.core.tests.namedElement">
@@ -639,19 +672,82 @@
      <relationship
            parentTypeId="org.rodinp.core.tests.namedElement">
         <childType
-              typeId="org.rodinp.core.tests.namedElement11">
+              typeId="org.rodinp.core.tests.namedElement">
+        </childType>
+     </relationship>
+  </extension>
+  <extension
+        point="org.rodinp.core.itemRelations">
+     <relationship
+           parentTypeId="org.rodinp.core.tests.versionFileA">
+        <childType
+              typeId="org.rodinp.core.tests.versionEA">
         </childType>
      </relationship>
      <relationship
-           parentTypeId="org.rodinp.core.tests.test2">
+           parentTypeId="org.rodinp.core.tests.versionFileB">
         <childType
-              typeId="org.rodinp.core.tests.namedElement2">
+              typeId="org.rodinp.core.tests.versionEA">
         </childType>
      </relationship>
      <relationship
-           parentTypeId="org.rodinp.core.tests.namedElement2">
+           parentTypeId="org.rodinp.core.tests.versionFileC">
         <childType
-              typeId="org.rodinp.core.tests.namedElement22">
+              typeId="org.rodinp.core.tests.versionEA">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.versionFileD">
+        <childType
+              typeId="org.rodinp.core.tests.versionEC">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.versionFileE">
+        <childType
+              typeId="org.rodinp.core.tests.versionEA">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.versionFileF">
+        <childType
+              typeId="org.rodinp.core.tests.versionEA">
+        </childType>
+        <childType
+              typeId="org.rodinp.core.tests.versionEB">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.versionFileG">
+        <childType
+              typeId="org.rodinp.core.tests.versionEA">
+        </childType>
+        <childType
+              typeId="org.rodinp.core.tests.versionEB">
+        </childType>
+        <childType
+              typeId="org.rodinp.core.tests.versionEC">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.versionFileH">
+        <childType
+              typeId="org.rodinp.core.tests.versionEA">
+        </childType>
+        <childType
+              typeId="org.rodinp.core.tests.versionEC">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.versionEA">
+        <childType
+              typeId="org.rodinp.core.tests.versionEC">
+        </childType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.versionEB">
+        <childType
+              typeId="org.rodinp.core.tests.versionEC">
         </childType>
      </relationship>
   </extension>
