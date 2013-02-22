@@ -731,6 +731,12 @@
               typeId="org.rodinp.core.tests.fString">
         </attributeType>
      </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.test2">
+        <childType
+              typeId="org.rodinp.core.tests.namedElement2">
+        </childType>
+     </relationship>
   </extension>
   <extension
         point="org.rodinp.core.itemRelations">
