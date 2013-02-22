@@ -102,7 +102,8 @@ public class TypeVariable extends Type {
 
 	@Override
 	public void accept(ITypeVisitor visitor) {
-		assert false : "TypeVariable.visit()";
+		throw new UnsupportedOperationException(
+				"A TypeVariable cannot be visited.");
 	}
 
 }
