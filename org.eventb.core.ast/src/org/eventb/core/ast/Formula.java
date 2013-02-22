@@ -17,6 +17,7 @@
  *     Systerel - added support for specialization
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
+ *     Systerel - added support for factory translation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
 import org.eventb.internal.core.ast.DefaultTypeCheckingRewriter;
@@ -2422,24 +2424,144 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 
 	/**
+	 * Checks if the current formula can be translated with the given factory.
+	 * <p>
+	 * A formula is compatible with the given factory either if the factory is
+	 * the formula factory or if the formula free identifiers do not use
+	 * reserved keyword in the factory, the formula types are translatable and
+	 * extensions used are supported by the given factory.
+	 * </p>
+	 * 
+	 * @return <code>false</code> only if a call to
+	 *         {@link Formula#translate(FormulaFactory)} will fail by raising an
+	 *         exception and returns <code>true</code> otherwise.
+	 * @since 3.0
+	 */
+	public boolean isTranslatable(FormulaFactory ff) {
+		for(FreeIdentifier freeId : freeIdents){
+			if (!ff.isValidIdentifierName(freeId.getName())) {
+				return false;
+			}
+		}
+		List<String> result = inspect(new TranslationInspector(ff));
+		return result.isEmpty();
+	}
+
+	/**
 	 * Returns the formula built by using the given formula factory.
 	 * <p>
 	 * If the translation does not change the formula, which means that given
 	 * factory and formula factory are the same, then a reference to this
 	 * formula is returned (rather than a copy of it).
 	 * </p>
-	 * </p>This operation is not supported for assignments.</p>
+	 * <p>
+	 * The translation of the formula can fail if the formula contains:
+	 * <ul>
+	 * <li>free identifiers for which name is a reserved keyword in the target
+	 * factory</li>
+	 * <li>given types for which name is a reserved keyword in the target
+	 * factory</li>
+	 * <li>parametric types for which formula extension is not supported by the
+	 * target factory</li>
+	 * <li>extended expressions or predicates for which formula extension is not
+	 * supported by the target factory</li>
+	 * </ul>
+	 * </p>
+	 * <p>This operation is not supported for assignments.</p>
 	 * 
 	 * @param ff
 	 *            the formula factory to use for rebuilding the formula.
 	 * @return the formula build with the given formula factory
 	 * 
+	 * @throws IllegalArgumentException
+	 *             if formula free identifiers names are reserved keyword in the
+	 *             given factory
+	 * @throws IllegalArgumentException
+	 *             if formula given types use reserved keyword in the given
+	 *             factory
+	 * @throws IllegalArgumentException
+	 *             if formula parametric types use an extension not supported by
+	 *             the given factory
+	 * @throws IllegalArgumentException
+	 *             if formula extended expressions or predicates use an
+	 *             extension not supported by the given factory
 	 * @throws UnsupportedOperationException
 	 *             if this formula is an assignment
 	 * @since 3.0
 	 */
 	public T translate(FormulaFactory ff){
 		return rewrite(new DefaultTypeCheckingRewriter(ff));
+	}
+
+	// Inspector which checks that extended formulas and types externally
+	// introduced when formulas were built can be translated with the given
+	// factory
+	private class TranslationInspector extends DefaultInspector<String> {
+
+		private FormulaFactory ff;
+
+		public TranslationInspector(FormulaFactory ff) {
+			this.ff = ff;
+		}
+
+		private void checkTypeTranslatable(Formula<?> f, Type t,
+				IAccumulator<String> acc) {
+			if (t != null && !t.isTranslatable(ff)) {
+				acc.add("Incompatible type: " + t + " in formula: " + f);
+			}
+		}
+
+		private void checkExtensionTranslatable(IExtendedFormula ext,
+				IAccumulator<String> acc) {
+			if (!ff.hasExtension(ext.getExtension())) {
+				acc.add("Incompatible extension: " + ext.getExtension()
+						+ " in formula: " + ext);
+			}
+		}
+
+		@Override
+		public void inspect(AtomicExpression expression,
+				IAccumulator<String> accumulator) {
+			checkTypeTranslatable(expression, expression.getType(), accumulator);
+		}
+
+		@Override
+		public void inspect(BoundIdentDecl decl,
+				IAccumulator<String> accumulator) {
+			checkTypeTranslatable(decl, decl.getType(), accumulator);
+		}
+
+		@Override
+		public void inspect(BoundIdentifier identifier,
+				IAccumulator<String> accumulator) {
+			checkTypeTranslatable(identifier, identifier.getType(), accumulator);
+		}
+
+		@Override
+		public void inspect(ExtendedExpression expression,
+				IAccumulator<String> accumulator) {
+			checkExtensionTranslatable(expression, accumulator);
+			checkTypeTranslatable(expression, expression.getType(), accumulator);
+		}
+
+		@Override
+		public void inspect(ExtendedPredicate predicate,
+				IAccumulator<String> accumulator) {
+			checkExtensionTranslatable(predicate, accumulator);
+		}
+
+		@Override
+		public void inspect(FreeIdentifier identifier,
+				IAccumulator<String> accumulator) {
+			checkTypeTranslatable(identifier, identifier.getType(), accumulator);
+		}
+
+		@Override
+		public void inspect(SetExtension expression,
+				IAccumulator<String> accumulator) {
+			checkTypeTranslatable(expression, expression.getType(), accumulator);
+		}
+
 	}
 
 }
