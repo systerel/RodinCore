@@ -30,13 +30,16 @@ import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
 import static org.eventb.core.ast.tests.ExtendedFormulas.fooS;
 import static org.eventb.core.ast.tests.FastFactory.ff_extns;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mList;
-import static org.eventb.core.ast.tests.FastFactory.mListCons;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
+import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Set;
 
@@ -46,8 +49,9 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.SetExtension;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.junit.Test;
 
@@ -81,10 +85,25 @@ public class TestFactoryTranslation extends AbstractTests {
 	 * specification.
 	 */
 	private static void assertTranslation(FormulaFactory to, Formula<?> f) {
-		assertFalse(f.getFactory().equals(to));
+		assertFalse(f.getFactory() ==  to);
+		assertTrue(f.isTranslatable(to));
 		final Formula<?> actual = f.translate(to);
 		assertEquals(to, actual.getFactory());
 		assertEquals(f, actual);
+	}
+
+	/**
+	 * Verifies that a formula which cannot be translated is properly handled.
+	 */
+	private static void assertNoTranslation(FormulaFactory to, Formula<?> f) {
+		assertFalse(f.getFactory() ==  to);
+		assertFalse(f.isTranslatable(to));
+		try {
+			f.translate(to);
+			fail("Translation should have failed");
+		} catch (IllegalArgumentException exc) {
+			// pass
+		}
 	}
 
 	/**
@@ -107,13 +126,113 @@ public class TestFactoryTranslation extends AbstractTests {
 
 	/**
 	 * Incompatible translation to a factory with an incompatible extension
-	 * subset
+	 * subset. We test the root of the formula AST, and some interior node.
 	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslation() {
-		final IntegerType INTe = ff_extns.makeIntegerType();
-		final Expression nil = mListCons(INTe);
-		nil.translate(ff);
+	@Test
+	public void testIncompatibleTranslationOnExpressionExtension() {
+		final Expression nil = parseExpression("nil ⦂ List(prime)", LIST_FAC);
+		assertNoTranslation(ff, nil);
+		assertNoTranslation(ff, mSimplePredicate(nil));
+	}
+
+	/**
+	 * Incompatible translation to a factory with an incompatible extension
+	 * subset. We test the root of the formula AST, and some interior node.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnPredicateExtension() {
+		final Predicate pred = parsePredicate("prime({0})", ff_extns);
+		assertNoTranslation(ff, pred);
+	}
+
+	/**
+	 * Incompatible translation to a factory with an incompatible free
+	 * identifier name.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnIdName() {
+		assertNoTranslation(ff_extns, mFreeIdentifier("prime"));
+	}
+
+	/**
+	 * Incompatible translation due to given set on free identifier.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnFreeIdTypeName() {
+		final Type type = ff.makeGivenType("prime");
+		assertNoTranslation(ff_extns, mFreeIdentifier("x", type));
+	}
+
+	/**
+	 * Incompatible translation due to unsupported formula extension in type of
+	 * a free identifier.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnFreeIdTypeExt() {
+		assertNoTranslation(ff, mFreeIdentifier("x", LIST_INT_TYPE));
+	}
+
+	/**
+	 * Compatible translation of a bound identifier declaration, even if its
+	 * name becomes reserved. However, as the name changes, we cannot do a
+	 * simple comparison.
+	 */
+	@Test
+	public void testCompatibleTranslationOnBoundIdDeclName() {
+		final BoundIdentDecl decl = mBoundIdentDecl("prime");
+		assertTrue(decl.isTranslatable(ff_extns));
+		final BoundIdentDecl actual = decl.translate(ff_extns);
+		assertEquals(ff_extns, actual.getFactory());
+		assertEquals(decl.getSourceLocation(), actual.getSourceLocation());
+		assertEquals(decl.getType(), actual.getType());
+	}
+
+	/**
+	 * Incompatible translation due to non-translatable type of a bound
+	 * identifier declaration.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnBoundIdDeclType() {
+		assertNoTranslation(ff, mBoundIdentDecl("x", LIST_INT_TYPE));
+	}
+
+	/**
+	 * Incompatible translation due to non-translatable type of a bound
+	 * identifier.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnBoundIdentType() {
+		assertNoTranslation(ff, mBoundIdentifier(0, LIST_INT_TYPE));
+	}
+
+	/**
+	 * Incompatible translation due to non-translatable type of an atomic
+	 * expression.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnAtomicExprType() {
+		assertNoTranslation(ff, mEmptySet(POW_LIST_INT_TYPE));
+	}
+
+	/**
+	 * Incompatible translation due to non-translatable type of an empty set
+	 * extension.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnSetExtType() {
+		final SetExtension setext = LIST_FAC.makeEmptySetExtension(
+				POW_LIST_INT_TYPE, null);
+		assertNoTranslation(ff, setext);
+	}
+
+	/**
+	 * Incompatible translation due to non-translatable type of an extended
+	 * expression.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnExtExprType() {
+		final Expression expr = parseExpression("nil ⦂ List(prime)", LIST_FAC);
+		assertNoTranslation(ff_extns, expr);
 	}
 
 	/*----------------------------------------------------------------

@@ -346,7 +346,7 @@ public class FastFactory {
 	}
 
 	public static SimplePredicate mSimplePredicate(Expression expr) {
-		return ff.makeSimplePredicate(KFINITE, expr, null);
+		return expr.getFactory().makeSimplePredicate(KFINITE, expr, null);
 	}
 
 	public static ITypeEnvironmentBuilder mTypeEnvironment() {

@@ -17,6 +17,7 @@
  *     Systerel - added support for specialization
  *     Systerel - add given sets to free identifier cache
  *     Systerel - store factory used to build a formula
+ *     Systerel - added support for factory translation
  *******************************************************************************/
 package org.eventb.core.ast;
 
@@ -31,9 +32,10 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
-import org.eventb.internal.core.ast.DefaultTypeCheckingRewriter;
 import org.eventb.internal.core.ast.FilteringInspector;
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.FormulaTranslatabilityChecker;
+import org.eventb.internal.core.ast.FormulaTranslator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
@@ -2422,24 +2424,59 @@ public abstract class Formula<T extends Formula<T>> {
 	}
 
 	/**
-	 * Returns the formula built by using the given formula factory.
+	 * Checks if the current formula can be translated to the given factory.
 	 * <p>
-	 * If the translation does not change the formula, which means that given
-	 * factory and formula factory are the same, then a reference to this
-	 * formula is returned (rather than a copy of it).
+	 * A formula can be translated to the given factory iff
+	 * <ul>
+	 * <li>no free identifier occurring in this formula becomes a reserved
+	 * keyword,</li>
+	 * <li>all extensions occurring in this formula are supported,</li>
+	 * <li>all types occurring in this formula can be translated.</li>
+	 * </ul>
 	 * </p>
-	 * </p>This operation is not supported for assignments.</p>
+	 * <p>
+	 * This operation is not supported for assignments.
+	 * </p>
 	 * 
-	 * @param ff
-	 *            the formula factory to use for rebuilding the formula.
-	 * @return the formula build with the given formula factory
-	 * 
+	 * @param factory
+	 *            the target formula factory
+	 * @return <code>true</code> iff a call to
+	 *         {@link Formula#translate(FormulaFactory)} would succeed
 	 * @throws UnsupportedOperationException
 	 *             if this formula is an assignment
 	 * @since 3.0
 	 */
-	public T translate(FormulaFactory ff){
-		return rewrite(new DefaultTypeCheckingRewriter(ff));
+	public boolean isTranslatable(FormulaFactory factory) {
+		return FormulaTranslatabilityChecker.isTranslatable(this, factory,
+				freeIdents);
+	}
+
+	/**
+	 * Returns a copy of this formula built with the given formula factory.
+	 * <p>
+	 * If the given factory is the formula factory that built this formula, then
+	 * this formula is returned, rather than a copy of it.
+	 * </p>
+	 * <p>
+	 * The translation of this formula will fail if the preconditions tested by
+	 * {@link #isTranslatable(FormulaFactory)} are not fulfilled.
+	 * </p>
+	 * <p>
+	 * This operation is not supported for assignments.
+	 * </p>
+	 * 
+	 * @param factory
+	 *            the target formula factory
+	 * @return a copy of this formula built with the given formula factory
+	 * @throws IllegalArgumentException
+	 *             if preconditions are not fulfilled
+	 * @throws UnsupportedOperationException
+	 *             if this formula is an assignment
+	 * @see #isTranslatable(FormulaFactory)
+	 * @since 3.0
+	 */
+	public T translate(FormulaFactory factory) {
+		return rewrite(new FormulaTranslator(factory));
 	}
 
 }
