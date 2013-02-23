@@ -11,7 +11,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.core.seqprover.xprover.BundledFileExtractor;
 import org.eventb.pp.PPProof;
 import org.eventb.pp.PPResult;
@@ -39,7 +42,7 @@ public class AbstractPPTests {
 	}
 	
 	protected final ITypeEnvironment typeCheck(Sequent sequent) {
-		ITypeEnvironment typenv = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
 		for (Predicate hyp: sequent.getHypotheses()) {
 			typeCheck(hyp, typenv);
 		}
@@ -56,7 +59,7 @@ public class AbstractPPTests {
 	 * @param typenv
 	 *            initial type environment. Will be extended with inferred types
 	 */
-	protected final void typeCheck(Predicate pred, ITypeEnvironment typenv) {
+	protected final void typeCheck(Predicate pred, ITypeEnvironmentBuilder typenv) {
 		ITypeCheckResult result = pred.typeCheck(typenv);
 		assertTrue("TypeChecker failed on predicate " + pred, result.isSuccess());
 		typenv.addAll(result.getInferredEnvironment());
@@ -73,8 +76,9 @@ public class AbstractPPTests {
 		}
 
 		typeCheck(sequent);
-		final PPProof proof = new PPProof(sequent.getHypotheses(),
-				sequent.getGoal(), null);
+		final ISimpleSequent ss = SimpleSequents.make(sequent.getHypotheses(),
+				sequent.getGoal(), ff);
+		final PPProof proof = new PPProof(ss, null);
 		proof.translate();
 		proof.load();
 		proof.prove(400);
