@@ -4,11 +4,10 @@ Bundle-Name: Event-B Sequent Prover Tests
 Bundle-SymbolicName: org.eventb.core.seqprover.tests; singleton:=true
 Bundle-Version: 2.6.0.qualifier
 Bundle-Vendor: ETH Zurich
-Require-Bundle: org.junit4;visibility:=reexport,
- org.eclipse.jdt.junit4.runtime;visibility:=reexport,
- org.eventb.core.ast.tests,
+Require-Bundle: org.eventb.core.ast.tests,
  org.eventb.core.seqprover;visibility:=reexport,
- org.eclipse.core.runtime;visibility:=reexport
+ org.eclipse.core.runtime;visibility:=reexport,
+ org.junit
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eventb.core.seqprover.reasonerExtentionTests,
  org.eventb.core.seqprover.rewriterTests,

@@ -4,7 +4,7 @@ Bundle-Name: Tests Plug-in
 Bundle-SymbolicName: org.rodinp.keyboard.tests;singleton:=true
 Bundle-Version: 1.1.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.rodinp.keyboard;visibility:=reexport,
- org.junit4;visibility:=reexport
+Require-Bundle: org.rodinp.keyboard,
+ org.junit
 Export-Package: org.rodinp.keyboard.tests
 Bundle-Localization: plugin
