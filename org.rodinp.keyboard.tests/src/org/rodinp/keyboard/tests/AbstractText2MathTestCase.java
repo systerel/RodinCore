@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,11 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - port to JUnit 4
  *******************************************************************************/
 package org.rodinp.keyboard.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
@@ -20,7 +21,7 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
  *         This class contains some simple test cases for Text2EventBMath
  *         translator. This tests the translation on all the symbols separately.
  */
-public abstract class AbstractText2MathTestCase extends TestCase {
+public abstract class AbstractText2MathTestCase {
 
 	protected void testTranslator(String message, String input, String expected) {
 		RodinKeyboardPlugin kbrdPlugin = RodinKeyboardPlugin.getDefault();

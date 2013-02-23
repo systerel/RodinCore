@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.rodinp.keyboard.tests.registry;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.rodinp.internal.keyboard.translators.Symbol;
 import org.rodinp.internal.keyboard.translators.SymbolRegistry;
 import org.rodinp.internal.keyboard.translators.Symbols;
@@ -22,7 +24,7 @@ import org.rodinp.internal.keyboard.translators.Symbols;
  * @author "Nicolas Beauger"
  * 
  */
-public class SymbolRegistryTests extends TestCase {
+public class SymbolRegistryTests {
 
 	private static final SymbolRegistry registry = SymbolRegistry.getDefault();
 
@@ -44,14 +46,17 @@ public class SymbolRegistryTests extends TestCase {
 				dup1Count + dup2Count);
 	}
 
+	@Test
 	public void testDuplicateIDs() throws Exception {
 		assertNoDuplicate("dupID1", "dupID2");
 	}
 
+	@Test
 	public void testDuplicateCombos() throws Exception {
 		assertNoDuplicate("dupCombo", "dupCombo");
 	}
 
+	@Test
 	public void testAddContainsRawSymbol() throws Exception {
 		final Symbols symbols = new Symbols();
 		final String combo = "testSymbol";

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 ETH Zurich and others.
+ * Copyright (c) 2009, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,18 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - port to JUnit 4
  *******************************************************************************/
 package org.rodinp.keyboard.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
+import org.junit.After;
+import org.junit.Before;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
 
 /**
@@ -25,19 +28,14 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
  *         This test the Keyboard on some large expressions taken from Prof.
  *         Jean-Raymond Abrial's Marriage and SHWT developments
  */
-public abstract class AbstractRodinKeyboardTestCase extends TestCase {
+public abstract class AbstractRodinKeyboardTestCase {
 
 	protected Text widget;
 
 	protected ModifyListener listener;
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		RodinKeyboardPlugin keyboardPlugin = RodinKeyboardPlugin.getDefault();
 		widget = keyboardPlugin.getRodinKeyboardViewWidget();
 
@@ -49,9 +47,8 @@ public abstract class AbstractRodinKeyboardTestCase extends TestCase {
 		widget.removeModifyListener(listener);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		widget.addModifyListener(listener);
 	}
 
