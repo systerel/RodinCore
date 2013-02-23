@@ -8,6 +8,8 @@ import static junit.framework.Assert.fail;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.Path;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.pp.PPProof;
 import org.eventb.pp.PPResult;
 import org.eventb.pp.PPResult.Result;
@@ -111,7 +113,9 @@ public class NewPPValidationTests extends AbstractPPTests {
 		System.out.println("Proving: " + name);
 		
 
-		PPProof proof = new PPProof(sequent.getHypotheses(),sequent.getGoal(), null);
+		final ISimpleSequent ss = SimpleSequents.make(sequent.getHypotheses(),
+				sequent.getGoal(), ff);
+		final PPProof proof = new PPProof(ss, null);
 		proof.translate();
 		proof.load();
 		proof.prove(5000);
