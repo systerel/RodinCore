@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,13 @@
  *     Systerel - replaced inherited by extended, added tool configuration
  *     Systerel - separation of file and root element
  *     Systerel - disabled database indexer in setup
+ *     Systerel - port to JUnit 4
  *******************************************************************************/
 package org.eventb.ui.tests.utils;
 
 import static org.eventb.core.IConfigurationElement.DEFAULT_CONFIGURATION;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -64,7 +65,7 @@ import org.rodinp.internal.core.debug.DebugHelpers;
  *         Abstract class for Event-B UI tests. This is the simplification of
  *         the builder tests by Laurent Voisin.
  */
-public abstract class EventBUITest extends TestCase {
+public abstract class EventBUITest {
 	
 	public static final FormulaFactory ff = FormulaFactory.getDefault();
 
@@ -78,23 +79,6 @@ public abstract class EventBUITest extends TestCase {
 	 */
 	protected IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-	/**
-	 * Constructor: Create a test case.
-	 */
-	public EventBUITest() {
-		super();
-	}
-	
-	/**
-	 * Constructor: Create a test case with the given name.
-	 * 
-	 * @param name
-	 *            the name of test
-	 */
-	public EventBUITest(String name) {
-		super(name);
-	}
-	
 	/**
 	 * Utility method to create a context with the given bare name. The context
 	 * is created as a child of the test Rodin project ({@link #rodinProject}).
@@ -385,10 +369,7 @@ public abstract class EventBUITest extends TestCase {
 	}
 
 	@Before
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
+	public void setUp() throws Exception {
 		// ensure autobuilding is turned off
 		IWorkspaceDescription wsDescription = workspace.getDescription();
 		if (wsDescription.isAutoBuilding()) {
@@ -416,11 +397,9 @@ public abstract class EventBUITest extends TestCase {
 	}
 	
 	@After
-	@Override
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		EventBUIPlugin.getActivePage().closeAllEditors(false);
 		workspace.getRoot().delete(true, null);
-		super.tearDown();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,16 @@
  *******************************************************************************/
 package org.eventb.ui.wizards;
 
-import static org.eventb.internal.ui.wizards.EventBProjectValidator.*;
+import static org.eventb.internal.ui.wizards.EventBProjectValidator.CLOSED;
+import static org.eventb.internal.ui.wizards.EventBProjectValidator.EMPTY_NAME;
+import static org.eventb.internal.ui.wizards.EventBProjectValidator.INEXISTENT;
+import static org.eventb.internal.ui.wizards.EventBProjectValidator.INVALID_NAME;
+import static org.eventb.internal.ui.wizards.EventBProjectValidator.NOT_RODIN;
+import static org.eventb.internal.ui.wizards.EventBProjectValidator.READ_ONLY;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourceAttributes;
@@ -18,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IEventBProject;
 import org.eventb.internal.ui.wizards.EventBProjectValidator;
 import org.eventb.ui.tests.utils.EventBUITest;
+import org.junit.Test;
 
 /**
  * Unit tests for class {@link EventBProjectValidator}.
@@ -44,6 +54,7 @@ public class EventBProjectValidatorTest extends EventBUITest {
 	/**
 	 * Ensures that an empty project name is rejected.
 	 */
+	@Test
 	public void testEmpty() {
 		validator.validate("");
 		assertError(EMPTY_NAME);
@@ -52,6 +63,7 @@ public class EventBProjectValidatorTest extends EventBUITest {
 	/**
 	 * Ensures that an invalid project name is rejected.
 	 */
+	@Test
 	public void testInvalid() {
 		validator.validate("a/b");
 		assertError(INVALID_NAME);
@@ -60,6 +72,7 @@ public class EventBProjectValidatorTest extends EventBUITest {
 	/**
 	 * Ensures that an inexistent project is rejected.
 	 */
+	@Test
 	public void testInexistent() {
 		validator.validate("inexistent");
 		assertError(INEXISTENT);
@@ -68,6 +81,7 @@ public class EventBProjectValidatorTest extends EventBUITest {
 	/**
 	 * Ensures that a closed project is rejected.
 	 */
+	@Test
 	public void testClosed() throws Exception {
 		rodinProject.getProject().close(null);
 		validator.validate(rodinProject.getElementName());
@@ -77,6 +91,7 @@ public class EventBProjectValidatorTest extends EventBUITest {
 	/**
 	 * Ensures that a non Rodin project is rejected.
 	 */
+	@Test
 	public void testNonRodin() throws Exception {
 		final IProject project = workspace.getRoot().getProject("new");
 		project.create(null);
@@ -88,6 +103,7 @@ public class EventBProjectValidatorTest extends EventBUITest {
 	/**
 	 * Ensures that a read-only project is rejected.
 	 */
+	@Test
 	public void testReadOnly() throws Exception {
 		final IProject project = rodinProject.getProject();
 		try {
@@ -103,6 +119,7 @@ public class EventBProjectValidatorTest extends EventBUITest {
 	 * Ensures that a valid project is accepted and produces the expected
 	 * event-B project.
 	 */
+	@Test
 	public void testValid() throws Exception {
 		validator.validate(rodinProject.getElementName());
 		assertFalse(validator.hasError());

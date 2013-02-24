@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,10 @@ package org.eventb.ui.preferences.tests;
 
 import static java.lang.Math.abs;
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -54,6 +58,7 @@ import org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils;
 import org.eventb.internal.ui.preferences.tactics.TacticsProfilesCache;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.tests.utils.EventBUITest;
+import org.junit.Test;
 
 public class TacticsPreferencesTest extends EventBUITest {
 
@@ -74,6 +79,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 	 * the read profile are equals.
 	 * </p>
 	 */
+	@Test
 	public void testProfilesList1() {
 		final IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
@@ -114,6 +120,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 	 * existing profiles
 	 * </p>
 	 * */
+	@Test
 	public void testProfilesList2() {
 		final IPreferenceStore store = EventBUIPlugin.getDefault()
 				.getPreferenceStore();
@@ -179,6 +186,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		return combinator.combine(modified, "modified");
 	}
 
+	@Test
 	public void testStoreLoadDeepCombined() throws Exception {
 		final List<ITacticDescriptor> available = new ArrayList<ITacticDescriptor>(TacticPreferenceUtils
 				.getAvailableTactics());
@@ -192,6 +200,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		assertStoreLoad(expected);
 	}
 
+	@Test
 	@SuppressWarnings("deprecation")
 	public void testRecoverOldStorage() throws Exception {
 		
@@ -337,6 +346,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 	 * workspace property and checks that the profile used is the workspace's
 	 * one.
 	 */
+	@Test
 	public void testWorkspaceProjectSpecificDistinction() throws Exception {
 		final IContextRoot c = createContext("c");
 		final IProject p = c.getRodinProject().getProject();
@@ -459,9 +469,8 @@ public class TacticsPreferencesTest extends EventBUITest {
 	 * consideration. Indeed, for a preference store, the absence of value means
 	 * default value. With eclipse's preferences mechanism, no value means no
 	 * preference.
-	 * 
-	 * @throws Exception
 	 */
+	@Test
 	public void testBug3189256() throws Exception {
 		final IContextRoot c = createContext("c");
 		final IProject p = c.getRodinProject().getProject();

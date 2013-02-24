@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,26 +10,28 @@
  *******************************************************************************/
 package org.eventb.ui.proofpurger.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IPRProof;
 import org.eventb.core.IPRRoot;
+import org.eventb.internal.ui.proofpurger.ProofPurgerContentProvider;
+import org.junit.Test;
 import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 
-import org.eventb.internal.ui.proofpurger.ProofPurgerContentProvider;
-import org.junit.Test;
-
-public class ProofPurgerContentProviderTests extends TestCase {
+public class ProofPurgerContentProviderTests {
 
 	private static final IPRRoot[] NO_ROOT = new IPRRoot[0];
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 ETH Zurich and others.
+ * Copyright (c) 2009, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,14 @@
  *     Systerel - refactored all tests to make them unit tests
  *     Systerel - added tests for getImplicitChildren()
  *     Systerel - separation of file and root element
+ *     Systerel - port to JUnit 4
  *******************************************************************************/
 package org.eventb.ui.tests;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.EventBPlugin;
@@ -321,14 +325,10 @@ public class TestEventBUtils extends EventBUITest {
 		assertFreeChildName(4, m0, IEvent.ELEMENT_TYPE, "int_evt");
 	}
 
-	private <T> void assertEquals(T[] expected, T[] actual) {
-		assertEquals(Arrays.asList(expected), Arrays.asList(actual));
-	}
-
 	private void assertImplicitChildren(IEvent event, IRodinElement... expected)
 			throws Exception {
 		final IRodinElement[] actual = EventBUtils.getImplicitChildren(event);
-		assertEquals(expected, actual);
+		assertArrayEquals(expected, actual);
 	}
 
 	/**

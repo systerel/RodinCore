@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.THEOREM_ATTRIBUTE;
 import static org.eventb.core.IConfigurationElement.DEFAULT_CONFIGURATION;
 import static org.eventb.core.IConvergenceElement.Convergence.ORDINARY;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eventb.core.EventBAttributes;
@@ -32,6 +34,7 @@ import org.eventb.core.IVariant;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.eventb.ui.tests.utils.EventBUITest;
+import org.junit.Before;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -47,9 +50,10 @@ public abstract class OperationTest extends EventBUITest {
 	protected Element mchElement;
 	protected Element ctxElement;
 
-	@SuppressWarnings("unchecked")
+	@Before
 	@Override
-	protected void setUp() throws Exception {
+	@SuppressWarnings("unchecked")
+	public void setUp() throws Exception {
 		super.setUp();
 		mch = createMachine("mch");
 		mch.getRodinFile().save(null, true);
@@ -60,11 +64,6 @@ public abstract class OperationTest extends EventBUITest {
 		ctx.getRodinFile().save(null, true);
 		contextEditor = (IEventBEditor<IContextRoot>) openEditor(ctx);
 		ctxElement = getContextElement("ctx");
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
 	}
 
 	/**
