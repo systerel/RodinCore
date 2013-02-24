@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,11 +40,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 public class TestOperation extends OperationTest {
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
 
 	@Test
 	public void testChangeAttribute() throws Exception {

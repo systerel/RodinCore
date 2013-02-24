@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,11 @@ package org.eventb.ui.eventbeditor.operation.tests.utils;
 
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.HashSet;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 
-public class TestElement extends TestCase {
+public class TestElement {
 
 	protected static void assertChildren(Element element, Element... expected) {
 		assertEquals(Arrays.asList(expected), element.getChildren());

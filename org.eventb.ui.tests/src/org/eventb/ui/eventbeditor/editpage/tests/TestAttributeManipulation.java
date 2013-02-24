@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,9 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.ui.eventbeditor.editpage.tests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,11 +49,13 @@ import org.eventb.internal.ui.eventbeditor.manipulation.RefinesEventAbstractEven
 import org.eventb.internal.ui.eventbeditor.manipulation.RefinesMachineAbstractMachineNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation;
 import org.eventb.ui.tests.utils.EventBUITest;
+import org.junit.Test;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
 
 public class TestAttributeManipulation extends EventBUITest {
 
+	@Test
 	public void testExtendsContextGetPossibleValueWithoutExtendsClause()
 			throws RodinDBException {
 		final IAttributeManipulation manipulation = new ExtendsContextAbstractContextNameAttributeManipulation();
@@ -68,6 +73,7 @@ public class TestAttributeManipulation extends EventBUITest {
 				possibleValues, "ctx0", "ctx1", "ctx2");
 	}
 
+	@Test
 	public void testExtendsContextGetPossibleValueWithExtendsClause()
 			throws RodinDBException {
 		final IAttributeManipulation manipulation = new ExtendsContextAbstractContextNameAttributeManipulation();
@@ -87,6 +93,7 @@ public class TestAttributeManipulation extends EventBUITest {
 				possibleValues, "ctx0");
 	}
 
+	@Test
 	public void testExtendsContextGetPossibleValueWithExtendsClauseCalledWithExistingClause()
 			throws RodinDBException {
 		final IAttributeManipulation manipulation = new ExtendsContextAbstractContextNameAttributeManipulation();
@@ -106,6 +113,7 @@ public class TestAttributeManipulation extends EventBUITest {
 
 	}
 
+	@Test
 	public void testExtendsContextGetPossibleValueWithExtendsClauseDetectCycle()
 			throws RodinDBException {
 		final IAttributeManipulation manipulation = new ExtendsContextAbstractContextNameAttributeManipulation();
@@ -130,6 +138,7 @@ public class TestAttributeManipulation extends EventBUITest {
 				possibleValues, "ctx0", "ctx4", "ctx5");
 	}
 
+	@Test
 	public void testSeeContextGetPossibleValueWithoutSeesClause()
 			throws RodinDBException {
 		final IAttributeManipulation manipulation = new SeesContextNameAttributeManipulation();
@@ -148,6 +157,7 @@ public class TestAttributeManipulation extends EventBUITest {
 				possibleValues, "ctx0", "ctx1", "ctx2", "ctx3");
 	}
 
+	@Test
 	public void testSeeContextGetPossibleValueWithSeesClause()
 			throws RodinDBException {
 		final IAttributeManipulation manipulation = new SeesContextNameAttributeManipulation();
@@ -166,6 +176,7 @@ public class TestAttributeManipulation extends EventBUITest {
 				possibleValues, "ctx0", "ctx2", "ctx3");
 	}
 
+	@Test
 	public void testSeeContextGetPossibleValueWithSeesClauseCalledWithExistingClause()
 			throws RodinDBException {
 		final IAttributeManipulation manipulation = new SeesContextNameAttributeManipulation();
@@ -184,6 +195,7 @@ public class TestAttributeManipulation extends EventBUITest {
 				possibleValues, "ctx0", "ctx2", "ctx3");
 	}
 
+	@Test
 	public void testRefineMachineGetPossibleValue() throws RodinDBException {
 		final IAttributeManipulation manipulation = new RefinesMachineAbstractMachineNameAttributeManipulation();
 		createMachine("mch0");
@@ -199,6 +211,7 @@ public class TestAttributeManipulation extends EventBUITest {
 				possibleValues, "mch0", "mch1");
 	}
 
+	@Test
 	public void testRefineMachineGetPossibleValueCyclic()
 			throws RodinDBException {
 		final IAttributeManipulation manipulation = new RefinesMachineAbstractMachineNameAttributeManipulation();
@@ -248,6 +261,7 @@ public class TestAttributeManipulation extends EventBUITest {
 				possibleValues1bis, "mch0", "mch3");
 	}
 
+	@Test
 	public void testRefineEventGetPossibleValue() throws RodinDBException {
 		final IAttributeManipulation manipulation = new RefinesEventAbstractEventLabelAttributeManipulation();
 		final IMachineRoot mch0 = createMachine("mch0");
@@ -270,6 +284,7 @@ public class TestAttributeManipulation extends EventBUITest {
 
 	}
 
+	@Test
 	public void testExtendsContextHasValueTrue() throws Exception {
 		final IExtendsContext extendsContext = createExtendsContext();
 		final ExtendsContextAbstractContextNameAttributeManipulation manipulation = new ExtendsContextAbstractContextNameAttributeManipulation();
@@ -282,6 +297,7 @@ public class TestAttributeManipulation extends EventBUITest {
 		assertHasValue(manipulation, extendsContext, true);
 	}
 
+	@Test
 	public void testSeesContextHasValue() throws Exception {
 		final ISeesContext seesContext = createSeesContext();
 		final SeesContextNameAttributeManipulation manipulation = new SeesContextNameAttributeManipulation();
@@ -294,6 +310,7 @@ public class TestAttributeManipulation extends EventBUITest {
 		assertHasValue(manipulation, seesContext, true);
 	}
 
+	@Test
 	public void testAssignmentHasValue() throws Exception {
 		final IAssignmentElement assignment = createAssignment();
 		final AssignmentAttributeManipulation manipulation = new AssignmentAttributeManipulation();
@@ -306,6 +323,7 @@ public class TestAttributeManipulation extends EventBUITest {
 		assertHasValue(manipulation, assignment, true);
 	}
 
+	@Test
 	public void testCommentAttributeHasValue() throws Exception {
 		final ICommentedElement commented = createCommented();
 		final CommentAttributeManipulation manipulation = new CommentAttributeManipulation();
@@ -318,6 +336,7 @@ public class TestAttributeManipulation extends EventBUITest {
 		assertHasValue(manipulation, commented, true);
 	}
 
+	@Test
 	public void testConvergenceHasValue() throws Exception {
 		final IConvergenceElement convergence = createConvergence();
 		final ConvergenceAttributeManipulation manipulation = new ConvergenceAttributeManipulation();
@@ -331,6 +350,7 @@ public class TestAttributeManipulation extends EventBUITest {
 		assertHasValue(manipulation, convergence, true);
 	}
 
+	@Test
 	public void testExpressionHasValue() throws Exception {
 		final IExpressionElement expression = createExpression();
 		final ExpressionAttributeManipulation manipulation = new ExpressionAttributeManipulation();
@@ -343,6 +363,7 @@ public class TestAttributeManipulation extends EventBUITest {
 		assertHasValue(manipulation, expression, true);
 	}
 
+	@Test
 	public void testExtendedHasValue() throws Exception {
 		final IEvent event = createEvent();
 		final ExtendedAttributeManipulation manipulation = new ExtendedAttributeManipulation();
@@ -355,6 +376,7 @@ public class TestAttributeManipulation extends EventBUITest {
 		assertHasValue(manipulation, event, true);
 	}
 
+	@Test
 	public void testIdentifierHasValue() throws Exception {
 		final IIdentifierElement identifier = createIdentifier();
 		final IdentifierAttributeManipulation manipulation = new IdentifierAttributeManipulation();
@@ -367,6 +389,7 @@ public class TestAttributeManipulation extends EventBUITest {
 		assertHasValue(manipulation, identifier, true);
 	}
 
+	@Test
 	public void testLabelHasValue() throws Exception {
 		final ILabeledElement labeled = createLabeled();
 		final LabelAttributeManipulation manipulation = new LabelAttributeManipulation();
@@ -379,6 +402,7 @@ public class TestAttributeManipulation extends EventBUITest {
 		assertHasValue(manipulation, labeled, true);
 	}
 
+	@Test
 	public void testPredicateHasValue() throws Exception {
 		final IPredicateElement predicate = createPredicate();
 		final PredicateAttributeManipulation manipulation = new PredicateAttributeManipulation();
@@ -391,6 +415,7 @@ public class TestAttributeManipulation extends EventBUITest {
 		assertHasValue(manipulation, predicate, true);
 	}
 
+	@Test
 	public void testRefinesEventHasValue() throws Exception {
 		final IRefinesEvent refines = createRefinesEvent();
 		final RefinesEventAbstractEventLabelAttributeManipulation manipulation = new RefinesEventAbstractEventLabelAttributeManipulation();
@@ -403,6 +428,7 @@ public class TestAttributeManipulation extends EventBUITest {
 		assertHasValue(manipulation, refines, true);
 	}
 
+	@Test
 	public void testRefinesMachineHasValue() throws Exception {
 		final IRefinesMachine refines = createRefinesMachine();
 		final RefinesMachineAbstractMachineNameAttributeManipulation manipulation = new RefinesMachineAbstractMachineNameAttributeManipulation();

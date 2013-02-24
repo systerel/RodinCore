@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,9 @@ package org.eventb.ui.tests;
 import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 
@@ -27,6 +30,7 @@ import org.eventb.core.IParameter;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.ui.tests.utils.EventBUITest;
+import org.junit.Test;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
@@ -49,7 +53,7 @@ public class TestUIUtils extends EventBUITest {
 	protected static IMachineRoot m0;
 
 	@Override
-	protected void setUp() throws Exception {
+	public void setUp() throws Exception {
 		super.setUp();
 		m0 = createMachine("m0");
 		m0.getRodinFile().save(null, true);
@@ -86,12 +90,14 @@ public class TestUIUtils extends EventBUITest {
 		return e2;
 	}
 
+	@Test
 	public void testGetFreeIndexNameFirst() throws RodinDBException {
 		// Currently, there are no elements, so the free index for a name
 		// should be 1
 		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, eventLabelPrefix, "1");
 	}
 
+	@Test
 	public void testGetFreeIndexNameSecond() throws RodinDBException {
 		// Create 1 event with label "evt1".
 		createNEvents(m0, eventLabelPrefix, 1, 1);
@@ -99,6 +105,7 @@ public class TestUIUtils extends EventBUITest {
 		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, eventLabelPrefix, "2");
 	}
 
+	@Test
 	public void testGetFreeIndexNameThird() throws RodinDBException {
 		createNEvents(m0, eventLabelPrefix, 2, 1);
 		// There are "event1" and "event2" so the free index
@@ -106,6 +113,7 @@ public class TestUIUtils extends EventBUITest {
 		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, eventLabelPrefix, "3");
 	}
 
+	@Test
 	public void testGetFreeIndexNameWithHoles() throws RodinDBException {
 		// create event with label "evt314"
 		createNEvents(m0, eventLabelPrefix, 1, 314);
@@ -115,12 +123,14 @@ public class TestUIUtils extends EventBUITest {
 
 	}
 
+	@Test
 	public void testGetFreeIndexAttributeFirst() throws RodinDBException {
 		// no axiom has been created yet so it should return index 1
 		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE,
 				axiomLabelPrefix, "1");
 	}
 
+	@Test
 	public void testGetFreeIndexAttributeDifferentType()
 			throws RodinDBException {
 		// create events with a label attribute
@@ -133,6 +143,7 @@ public class TestUIUtils extends EventBUITest {
 
 	}
 
+	@Test
 	public void testGetFreeIndexAttributeSecond() throws RodinDBException {
 		createNAxioms(m0, axiomLabelPrefix, 1, 1);
 
@@ -142,6 +153,7 @@ public class TestUIUtils extends EventBUITest {
 				axiomLabelPrefix, "2");
 	}
 
+	@Test
 	public void testGetFreeIndexAttributeManyExisting() throws RodinDBException {
 		createNAxioms(m0, axiomLabelPrefix, 100, 31);
 
@@ -155,6 +167,7 @@ public class TestUIUtils extends EventBUITest {
 	 * Ensures that abstract guards are taken into account when computing a free
 	 * label for a guard in an extended concrete event. ( bug ID 2142052 fixed )
 	 */
+	@Test
 	public void testGetFreeIndexLabelGuardExtended() throws Exception {
 		final IEvent con = createRefiningEvent();
 		con.setExtended(true, null);
@@ -170,6 +183,7 @@ public class TestUIUtils extends EventBUITest {
 	 * Ensures that abstract guards are ignored when computing a free label for
 	 * a guard in a non-extended concrete event.
 	 */
+	@Test
 	public void testGetFreeIndexLabelGuardNotExtended() throws Exception {
 		final IEvent con = createRefiningEvent();
 		con.setExtended(false, null);
@@ -202,6 +216,7 @@ public class TestUIUtils extends EventBUITest {
 		}
 	}
 
+	@Test
 	public void testGetFreeIndexAttributeDifferentAttribute()
 			throws RodinDBException {
 		createNAxioms(m0, axiomLabelPrefix, 100, 31);
@@ -213,6 +228,7 @@ public class TestUIUtils extends EventBUITest {
 				"this axiom is false", "1");
 	}
 
+	@Test
 	public void testConstantIdentifier() throws Exception {
 		final IConstant cst = createInternalElement(m0, IConstant.ELEMENT_TYPE);
 		cst.setIdentifierString(constantIdentifierPrefix + "1", null);
@@ -227,14 +243,17 @@ public class TestUIUtils extends EventBUITest {
 				eventLabelPrefix, expected.toString());
 	}
 
+	@Test
 	public void testMaxInt() throws Exception {
 		doBigIndex(Integer.toString(Integer.MAX_VALUE));
 	}
 
+	@Test
 	public void testMaxLong() throws Exception {
 		doBigIndex(Long.toString(Long.MAX_VALUE));
 	}
 
+	@Test
 	public void testVeryBig() throws Exception {
 		doBigIndex("314159265358979323846264338327950288419"
 				+ "716939937510582097494459230781640628620"
@@ -242,6 +261,7 @@ public class TestUIUtils extends EventBUITest {
 	}
 
 	// CALLING THE CALLING METHODS //
+	@Test
 	public void testGetFreeIndexCallingMethods() throws RodinDBException {
 		String freeIndexFound;
 
@@ -264,6 +284,7 @@ public class TestUIUtils extends EventBUITest {
 	 * Ensures that the given prefix can look like a regular expression, in
 	 * which case meta-characters are ignored.
 	 */
+	@Test
 	public void testRegexPrefix() throws Exception {
 		createEvent(m0, "cst+1");
 		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, "cst+", "2");
@@ -273,6 +294,7 @@ public class TestUIUtils extends EventBUITest {
 	 * Ensures that the whole prefix of existing elements is taken into account
 	 * (no partial match).
 	 */
+	@Test
 	public void testLongerPrefix() throws Exception {
 		createEvent(m0, "foo_cst1");
 		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, "cst", "1");
@@ -282,6 +304,7 @@ public class TestUIUtils extends EventBUITest {
 	 * Ensures that the whole suffix of existing elements is taken into account
 	 * (no partial match).
 	 */
+	@Test
 	public void testLongerSuffix() throws Exception {
 		createEvent(m0, "cst1a");
 		assertFreeIndex(m0, IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, "cst", "1");
@@ -291,6 +314,7 @@ public class TestUIUtils extends EventBUITest {
 	 * Ensures that the case where an attribute doesn't exist in the database is
 	 * correctly handled (the element is ignored and no exception is thrown).
 	 */
+	@Test
 	public void testInexistentLabel() throws Exception {
 		createInternalElement(m0, IConstant.ELEMENT_TYPE);
 		assertFreeIndex(m0, IConstant.ELEMENT_TYPE, LABEL_ATTRIBUTE,

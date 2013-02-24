@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,11 +20,11 @@ import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.TARGET_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.THEOREM_ATTRIBUTE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
@@ -70,24 +70,20 @@ import org.eventb.internal.ui.eventbeditor.manipulation.RefinesEventAbstractEven
 import org.eventb.internal.ui.eventbeditor.manipulation.RefinesMachineAbstractMachineNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.TheoremAttributeManipulation;
+import org.junit.Test;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;
 
-public class TestElementDescRegistry extends TestCase {
+public class TestElementDescRegistry {
 
-	private IElementDescRegistry registry;
+	private IElementDescRegistry registry = ElementDescRegistry.getInstance();
 
 	private final IInternalElementType<?>[] noChildren = new IInternalElementType<?>[0];
 	private final String nullPrefix = "";
 	private final IAttributeDesc nullAttribute = new NullAttributeDesc();
 	private final Class<? extends IImageProvider> defaultImgProvider = DefaultImageProvider.class;
 	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		registry = ElementDescRegistry.getInstance();
-	}
-
+	@Test
 	public void testGetMachineDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(IMachineRoot.ELEMENT_TYPE);
@@ -105,6 +101,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetContextDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(IContextRoot.ELEMENT_TYPE);
@@ -121,6 +118,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetRefinesMachineDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(IRefinesMachine.ELEMENT_TYPE);
@@ -139,6 +137,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetSeesContextDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(ISeesContext.ELEMENT_TYPE);
@@ -157,6 +156,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetVariablesDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(IVariable.ELEMENT_TYPE);
@@ -174,6 +174,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetInvariantsDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(IInvariant.ELEMENT_TYPE);
@@ -194,6 +195,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetVariantDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(IVariant.ELEMENT_TYPE);
@@ -211,6 +213,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetEventDesc() {
 		final IElementDesc desc = registry.getElementDesc(IEvent.ELEMENT_TYPE);
 
@@ -236,6 +239,7 @@ public class TestElementDescRegistry extends TestCase {
 				IAction.ELEMENT_TYPE);
 	}
 
+	@Test
 	public void testGetRefinesEventDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(IRefinesEvent.ELEMENT_TYPE);
@@ -254,6 +258,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetParameterDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(IParameter.ELEMENT_TYPE);
@@ -271,6 +276,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetGuardDesc() {
 		final IElementDesc desc = registry.getElementDesc(IGuard.ELEMENT_TYPE);
 
@@ -290,6 +296,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetWitnessDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(IWitness.ELEMENT_TYPE);
@@ -308,6 +315,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetActionDesc() {
 		final IElementDesc desc = registry.getElementDesc(IAction.ELEMENT_TYPE);
 
@@ -325,6 +333,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetExtendsContextDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(IExtendsContext.ELEMENT_TYPE);
@@ -342,6 +351,7 @@ public class TestElementDescRegistry extends TestCase {
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
 	}
 
+	@Test
 	public void testGetCarrierSetDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(ICarrierSet.ELEMENT_TYPE);
@@ -359,6 +369,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetConstantDesc() {
 		final IElementDesc desc = registry
 				.getElementDesc(IConstant.ELEMENT_TYPE);
@@ -376,6 +387,7 @@ public class TestElementDescRegistry extends TestCase {
 
 	}
 
+	@Test
 	public void testGetAxiomDesc() {
 		final IElementDesc desc = registry.getElementDesc(IAxiom.ELEMENT_TYPE);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 ETH Zurich and others.
+ * Copyright (c) 2008, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,17 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - port to JUnit 4
  *******************************************************************************/
 package org.eventb.ui.eventbeditor.tests;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.eventb.internal.ui.eventbeditor.DependenciesPage;
 import org.eventb.internal.ui.eventbeditor.EditorPagesRegistry;
@@ -23,6 +28,8 @@ import org.eventb.internal.ui.eventbeditor.htmlpage.HTMLPage;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.tests.EventBUITestsPlugin;
 import org.eventb.ui.tests.utils.Util;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -31,7 +38,7 @@ import org.junit.Test;
  *         This is the sets of JUnit tests for the editor pages registry
  *         {@link EditorPagesRegistry}
  */
-public class TestEditorPagesRegistry extends TestCase {
+public class TestEditorPagesRegistry {
 
 	// The registry under test.
 	private IEditorPagesRegistry registry;
@@ -55,18 +62,16 @@ public class TestEditorPagesRegistry extends TestCase {
 
 	private String editPageID = "org.eventb.ui.edit";
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		registry = EditorPagesRegistry.getDefault();
 		((EditorPagesRegistry) registry)
 				.setAlternateExtensionPointID(TEST_EXTENSION_POINT_ID);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		((EditorPagesRegistry) registry).setAlternateExtensionPointID(null);
-		super.tearDown();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,21 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - port to JUnit 4
  *******************************************************************************/
 package org.eventb.ui.prover.tests;
 
 import static org.eventb.core.ast.LanguageVersion.V2;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.Predicate;
 import org.eventb.internal.ui.prover.PredicateUtil;
+import org.junit.Test;
 
-public class TestPrettyPrintPredicate extends TestCase {
+public class TestPrettyPrintPredicate {
 
 	private void predTest(String msg, String predString,
 			String expectedPrettyPrint) {
@@ -36,6 +39,7 @@ public class TestPrettyPrintPredicate extends TestCase {
 		assertEquals(msg, expectedPrettyPrint, prettyPrint);
 	}
 
+	@Test
 	public void testAssociativePredicate() {
 		predTest("And 1", "⊤\u2227⊤", "⊤ \u2227 ⊤");
 		predTest(
@@ -59,6 +63,7 @@ public class TestPrettyPrintPredicate extends TestCase {
 		);
 	}
 
+	@Test
 	public void testBinaryPredicate() {
 		predTest("Imply 1", "⊤" + "\u21d2" + "⊤", "⊤ \u21d2 ⊤");
 		predTest(
@@ -71,15 +76,18 @@ public class TestPrettyPrintPredicate extends TestCase {
 		predTest("Equivalent", "⊤" + "\u21d4" + "⊤", "⊤ \u21d4 ⊤");
 	}
 
+	@Test
 	public void testLiteralPredicate() {
 		// TODO implement this test
 	}
 
+	@Test
 	public void testQuantifiedPredicate() {
 		// TODO implement this test
 		predTest("Forall", "x∈dom(f)⇒f(x)∈T", "x∈dom(f) ⇒ f(x)∈T");
 	}
 
+	@Test
 	public void testRelationalPred() {
 		predTest("Equal", "1" + "=" + "2", "1=2");
 		predTest("Not Equal", "1" + "\u2260" + "2", "1" + "\u2260" + "2");
@@ -95,14 +103,17 @@ public class TestPrettyPrintPredicate extends TestCase {
 		predTest("Not Subset Equal", "ℕ" + "\u2288" + "ℕ", "ℕ\u2288ℕ");
 	}
 
+	@Test
 	public void testSimplePredicate() {
 		// TODO implement this test
 	}
 
+	@Test
 	public void testUnaryPredicate() {
 		predTest("Not", "\u00ac" + "⊤", " \u00ac " + "⊤");
 	}
 
+	@Test
 	public void testBrackets() {
 		predTest("Brackets", "(1=2" + "\u2228" + "2=3" + "\u2228" + "3=4)"
 				+ "\u2227" + "4=5" + "\u2227" + "5=6", "(1=2" + " \u2228 "
