@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,14 +48,15 @@ import static org.eventb.core.ast.tests.FastFactory.mSetExtension;
 import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryExpression;
 import static org.eventb.core.ast.tests.FastFactory.mUnaryPredicate;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.eventb.core.ast.AssociativeExpression;
 import org.eventb.core.ast.AssociativePredicate;
@@ -73,6 +74,7 @@ import org.eventb.core.ast.QuantifiedPredicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.junit.Test;
 
 /**
  * Ensures that the AST pretty-printer uses as few parentheses as needed.
@@ -91,7 +93,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * 
  * @author Laurent Voisin
  */
-public class NeededParentheses extends TestCase {
+public class NeededParentheses {
 
 	private static List<Expression> expr0 = makeExpr0();
 	private static List<Predicate> pred0 = makePred0();
@@ -478,36 +480,42 @@ public class NeededParentheses extends TestCase {
 		return KPRJ1 <= tag && tag <= KID;
 	}
 
-	public void testParenExpr0() throws Exception {
+	@Test
+	public void parenExpr0() throws Exception {
 		for (final Expression expr : expr0) {
 			new ExprChecker(expr).run();
 		}
 	}
 
-	public void testParenExpr1() throws Exception {
+	@Test
+	public void parenExpr1() throws Exception {
 		final Processor<Expression> processor = new CheckProcessor<Expression>();
 		processExpressions(processor, pred0, expr0);
 	}
 
-	public void testParenExpr2() throws Exception {
+	@Test
+	public void parenExpr2() throws Exception {
 		final List<Predicate> p1 = makePred1();
 		final List<Expression> e1 = makeExpr1();
 		final Processor<Expression> processor = new CheckProcessor<Expression>();
 		processExpressions(processor, p1, e1);
 	}
 
-	public void testParenPred0() throws Exception {
+	@Test
+	public void parenPred0() throws Exception {
 		for (final Predicate pred : pred0) {
 			new PredChecker(pred).run();
 		}
 	}
 
-	public void testParenPred1() throws Exception {
+	@Test
+	public void parenPred1() throws Exception {
 		final Processor<Predicate> processor = new CheckProcessor<Predicate>();
 		processPredicates(processor, pred0, expr0);
 	}
 
-	public void testParenPred2() throws Exception {
+	@Test
+	public void parenPred2() throws Exception {
 		final List<Predicate> p1 = makePred1();
 		final List<Expression> e1 = makeExpr1();
 		final Processor<Predicate> processor = new CheckProcessor<Predicate>();

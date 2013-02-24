@@ -4,8 +4,8 @@ Bundle-Name: Performance Tests of Event-B Abstract syntax Tree Plug-in
 Bundle-SymbolicName: org.eventb.core.ast.tests.performance
 Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: Systerel
-Require-Bundle: org.eventb.core.ast.tests;bundle-version="1.1.0",
- org.eventb.core.ast,
+Require-Bundle: org.eventb.core.ast,
+ org.eventb.core.ast.tests,
  org.junit
 Export-Package: org.eventb.core.ast.tests.performance
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
