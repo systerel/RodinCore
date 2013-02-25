@@ -31,8 +31,8 @@ public abstract class VersionUpgrader {
 
 	private final FormulaFactory sourceFactory;
 
-	public VersionUpgrader(FormulaFactory sourceFac) {
-		this.sourceFactory = sourceFac;
+	public VersionUpgrader(FormulaFactory sourceFactory) {
+		this.sourceFactory = sourceFactory;
 	}
 
 	/**
