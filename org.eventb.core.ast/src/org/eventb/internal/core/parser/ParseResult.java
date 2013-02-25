@@ -46,7 +46,7 @@ public class ParseResult extends AbstractResult implements IParseResult {
 	// Parsed type
 	private Type type = null;
 
-	public ParseResult(FormulaFactory factory, 	Object origin) {
+	public ParseResult(FormulaFactory factory, Object origin) {
 		this.factory = factory;
 		this.origin = origin;
 	}
