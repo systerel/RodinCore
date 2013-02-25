@@ -86,34 +86,36 @@ public class TestElementRelationLoading extends ModifyingResourceTests {
 	}
 
 	/**
-	 * Ensures that a Rodin file with a invalid child for a given root element
-	 * is well constructed : "namedElement" can not be a valid child type of
-	 * "test" root element.
+	 * Ensures that a Rodin file with an invalid child for a given root element
+	 * is well constructed : "namedElement2" can not be a valid child type of
+	 * "test" root element. It is thus ignored at loading of the file contents.
 	 */
 	public void testCreateAbNormalRootChild() throws Exception {
 		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<org.rodinp.core.tests.test>\n"
-				+ "<org.rodinp.core.tests.namedElement2 />"
-				+ " </org.rodinp.core.tests.test>\n";
-		final TypeTreeShape expectedShape = s("test", s("namedElement2"));
+				+ "<org.rodinp.core.tests.namedElement name=\"*\"/>\n"
+				+ "<org.rodinp.core.tests.namedElement2 name=\"-\"/>\n"
+				+ "<org.rodinp.core.tests.namedElement name=\"'\"/>\n"
+				+ "</org.rodinp.core.tests.test>\n";
+		final TypeTreeShape expectedShape = s("test", s("namedElement"),
+				s("namedElement"));
 		assertSameHierarchy("toto.test", contents, expectedShape);
 	}
 
 	/**
-	 * Ensures that a Rodin file with an invalid child for a given element is
-	 * well constructed : "namedElement22" can not be a valid child type of
-	 * "namedElement" root element.
+	 * Ensures that a Rodin file with an invalid child for a given child element
+	 * is well constructed : "namedElement" can not be a valid child type of
+	 * "test2" root element. Thus any sub-element of an invalid child is
+	 * ignored.
 	 */
 	public void testCreateAbNormalElementChild() throws Exception {
 		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<org.rodinp.core.tests.test2>\n"
-				+ "<org.rodinp.core.tests.namedElement name=\"'\">"
+				+ "<org.rodinp.core.tests.namedElement name=\"'\"> \n"
 				+ "<org.rodinp.core.tests.namedElement2 name=\"(\" /> \n"
-				+ "</org.rodinp.core.tests.namedElement>"
+				+ "</org.rodinp.core.tests.namedElement> \n"
 				+ " </org.rodinp.core.tests.test2>\n";
-		final TypeTreeShape expectedShape = s("test2", //
-				s("namedElement", //
-						s("namedElement2")));
+		final TypeTreeShape expectedShape = s("test2");
 		assertSameHierarchy("toto.test2", contents, expectedShape);
 	}
 	
