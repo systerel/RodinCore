@@ -227,10 +227,10 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		rewriteExpr("S ∩ T ∩ S ∩ {x ∣ x > 0} ∩ S", "S ∩ T ∩ {x ∣ x > 0}");
 		rewriteExpr("S ∩ T ∩ S ∩ T ∩ {x ∣ x > 0} ∩ S ∩ T", "S ∩ T ∩ {x ∣ x > 0}");
 
-		rewriteExpr("S ∩ S", "S", "S", "ℙ(S)");
-		rewriteExpr("S ∩ S ∩ S", "S", "S", "ℙ(S)");
-		rewriteExpr("t ∩ t", "t", "t", "ℙ(S)");
-		rewriteExpr("t ∩ t ∩ t", "t", "t", "ℙ(S)");
+		rewriteExpr("S ∩ S", "S", "S=ℙ(S)");
+		rewriteExpr("S ∩ S ∩ S", "S", "S=ℙ(S)");
+		rewriteExpr("t ∩ t", "t", "t=ℙ(S)");
+		rewriteExpr("t ∩ t ∩ t", "t", "t=ℙ(S)");
 
 
 		// S \/ ... \/ {} \/ ... \/ T == S ... \/ ... \/ T
@@ -244,10 +244,10 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		rewriteExpr("{x ∣ x > 0} ∪ ∅ ∪ S ∪ T ∪ ∅", "{x ∣ x > 0} ∪ S ∪ T");
 		rewriteExpr("∅ ∪ {x ∣ x > 0} ∪ ∅ ∪ S ∪ T ∪ ∅", "{x ∣ x > 0} ∪ S ∪ T");
 
-		rewriteExpr("S ∪ S", "S", "S", "ℙ(S)");
-		rewriteExpr("S ∪ S ∪ S", "S", "S", "ℙ(S)");
-		rewriteExpr("t ∪ t", "t", "t", "ℙ(S)");
-		rewriteExpr("t ∪ t ∪ t", "t", "t", "ℙ(S)");
+		rewriteExpr("S ∪ S", "S", "S=ℙ(S)");
+		rewriteExpr("S ∪ S ∪ S", "S", "S=ℙ(S)");
+		rewriteExpr("t ∪ t", "t", "t=ℙ(S)");
+		rewriteExpr("t ∪ t ∪ t", "t", "t=ℙ(S)");
 
 		
 		// S \/ ... \/ T \/ ... \/ T \/ ... \/ U == S \/ ... \/ T \/ ... \/ ... \/ U
@@ -434,7 +434,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 
 		
 		// f(f~(E)) == E
-		rewriteExpr("f(f∼(E))", "E", "f", "S↔T");
+		rewriteExpr("f(f∼(E))", "E", "f=S↔T");
 		if (level2AndHigher) {
 			rewriteExpr("{x + 2 ↦ 3}(({x + 2 ↦ 3}∼)(y + 2))", "3");
 		} else {
@@ -443,7 +443,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 
 		
 		// f~(f(E)) == E
-		rewriteExpr("f∼(f(E))", "E", "f", "S↔T", "E", "S");
+		rewriteExpr("f∼(f(E))", "E", "f=S↔T; E=S");
 		if (level2AndHigher) {
 			rewriteExpr("({x + 2 ↦ 3}∼)({x + 2 ↦ 3}(y + 2))", "x + 2");
 		} else {
@@ -453,7 +453,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		
 		// {x |-> a, ..., y |-> b}({a |-> x, ..., b |-> y}(E)) = E
 		rewriteExpr("{x ↦ a, y ↦ b}({a ↦ x, b ↦ y}(E))", "E", //
-				"E", "S", "a", "S", "x", "T");
+				"E=S; a=S; x=T");
 		if (level2AndHigher) {
 			rewriteExpr("{x + 2 ↦ 3}({3 ↦ x + 2}(y + 2))", "3");
 			rewriteExpr("{x + 2 ↦ 3, y ↦ 2}({3 ↦ x + 2, 2 ↦ y}(y + 2))",
@@ -469,41 +469,41 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		}
 
 		// p;...;{};...;q == {}
-		rewriteExpr("f;(∅⦂T↔U)", "(∅⦂S↔U)", "f", "S↔T");
-		rewriteExpr("(∅⦂S↔T);f", "(∅⦂S↔U)", "f", "T↔U");
+		rewriteExpr("f;(∅⦂T↔U)", "(∅⦂S↔U)", "f=S↔T");
+		rewriteExpr("(∅⦂S↔T);f", "(∅⦂S↔U)", "f=T↔U");
 		rewriteExpr("(∅⦂S↔T);f;g;h", "(∅⦂S↔W)",//
-				"f", "T↔U", "g", "U↔V", "h", "V↔W");
+				"f=T↔U; g=U↔V; h=V↔W");
 		rewriteExpr("f;(∅⦂T↔U);g;h", "(∅⦂S↔W)",//
-				"f", "S↔T", "g", "U↔V", "h", "V↔W");
+				"f=S↔T; g=U↔V; h=V↔W");
 		rewriteExpr("f;g;h;(∅⦂V↔W)", "(∅⦂S↔W)",//
-				"f", "S↔T", "g", "T↔U", "h", "U↔V");
+				"f=S↔T; g=T↔U; h=U↔V");
 		rewriteExpr("(∅⦂S↔T);f;(∅⦂U↔V);g;h", "(∅⦂S↔X)",//
-				"f", "T↔U", "g", "V↔W", "h", "W↔X");
+				"f=T↔U; g=V↔W; h=W↔X");
 		rewriteExpr("(∅⦂S↔T);f;g;h;(∅⦂W↔X)", "(∅⦂S↔X)",//
-				"f", "T↔U", "g", "U↔V", "h", "V↔W");
+				"f=T↔U; g=U↔V; h=V↔W");
 		rewriteExpr("f;(∅⦂T↔U);g;h;(∅⦂W↔X)", "(∅⦂S↔X)",//
-				"f", "S↔T", "g", "U↔V", "h", "V↔W");
+				"f=S↔T; g=U↔V; h=V↔W");
 		rewriteExpr("(∅⦂S↔T);f;(∅⦂U↔V);g;h;(∅⦂X↔Y)", "(∅⦂S↔Y)",//
-				"f", "T↔U", "g", "V↔W", "h", "W↔X");
+				"f=T↔U; g=V↔W; h=W↔X");
 
 
 		// p circ ... circ {} circ ... circ q == {}
-		rewriteExpr("f∘(∅⦂S↔T)", "(∅⦂S↔U)", "f", "T↔U");
-		rewriteExpr("(∅⦂T↔U)∘f", "(∅⦂S↔U)", "f", "S↔T");
+		rewriteExpr("f∘(∅⦂S↔T)", "(∅⦂S↔U)", "f=T↔U");
+		rewriteExpr("(∅⦂T↔U)∘f", "(∅⦂S↔U)", "f=S↔T");
 		rewriteExpr("(∅⦂V↔W)∘h∘g∘f", "(∅⦂S↔W)",//
-				"f", "S↔T", "g", "T↔U", "h", "U↔V");
+				"f=S↔T; g=T↔U; h=U↔V");
 		rewriteExpr("h∘g∘(∅⦂T↔U)∘f", "(∅⦂S↔W)",//
-				"f", "S↔T", "g", "U↔V", "h", "V↔W");
+				"f=S↔T; g=U↔V; h=V↔W");
 		rewriteExpr("h∘g∘f∘(∅⦂S↔T)", "(∅⦂S↔W)",//
-				"f", "T↔U", "g", "U↔V", "h", "V↔W");
+				"f=T↔U; g=U↔V; h=V↔W");
 		rewriteExpr("(∅⦂W↔X)∘h∘g∘(∅⦂T↔U)∘f", "(∅⦂S↔X)",//
-				"f", "S↔T", "g", "U↔V", "h", "V↔W");
+				"f=S↔T; g=U↔V; h=V↔W");
 		rewriteExpr("h∘g∘(∅⦂U↔V)∘f∘(∅⦂S↔T)", "(∅⦂S↔X)",//
-				"f", "T↔U", "g", "V↔W", "h", "W↔X");
+				"f=T↔U; g=V↔W; h=W↔X");
 		rewriteExpr("(∅⦂W↔X)∘h∘g∘f∘(∅⦂S↔T)", "(∅⦂S↔X)",//
-				"f", "T↔U", "g", "U↔V", "h", "V↔W");
+				"f=T↔U; g=U↔V; h=V↔W");
 		rewriteExpr("(∅⦂X↔Y)∘h∘g∘(∅⦂U↔V)∘f∘(∅⦂S↔T)", "(∅⦂S↔Y)",//
-				"f", "T↔U", "g", "V↔W", "h", "W↔X");
+				"f=T↔U; g=V↔W; h=W↔X");
 
 
 		// U \ (U \ S) == S
@@ -540,11 +540,11 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		rewriteExpr("ℤ ∩ {x ∣ x > 0} ∩ ℤ ∩ S ∩ T ∩ ℤ ", "{x ∣ x > 0} ∩ S ∩ T");
 
 		// r[∅] == ∅
-		rewriteExpr("r[(∅ ⦂ ℙ(S))]", "(∅ ⦂ ℙ(T))", "r", "ℙ(S×T)");
+		rewriteExpr("r[(∅ ⦂ ℙ(S))]", "(∅ ⦂ ℙ(T))", "r=ℙ(S×T)");
 		rewriteExpr("(∅ ⦂ ℙ(S×T))[(∅ ⦂ ℙ(S))]", "(∅ ⦂ ℙ(T))");
 
 		// ∅[A] == ∅
-		rewriteExpr("(∅ ⦂ ℙ(S×T))[A]", "(∅ ⦂ ℙ(T))", "A", "ℙ(S)");
+		rewriteExpr("(∅ ⦂ ℙ(S×T))[A]", "(∅ ⦂ ℙ(T))", "A=ℙ(S)");
 		
 		// dom({}) == {}
 		rewriteExpr("dom((∅ ⦂ ℙ(S×T)))", "(∅ ⦂ ℙ(S))");
@@ -574,7 +574,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		rewritePred("∀x·x=ℕ⇒x=(λa↦b·a∈ℕ∧b∈ℕ∣{m∣m>a+b})(0↦0)",
 				"∀x·x=ℕ⇒x={m∣m>0}");
 		// verify that no exception is thrown when no rewrite occurs
-		noRewriteExpr("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "w", "ℤ×ℤ");
+		noRewriteExpr("(λx↦y·x∈ℤ∧y∈ℤ∣x+y)(w)", "w=ℤ×ℤ");
 		// Rewriting fails as "x" is not a maplet
 		if (level2AndHigher) {
 			rewriteExpr("{x·x∈ℤ×ℤ∣x}(1)", "(ℤ×ℤ)(1)");
@@ -595,7 +595,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 	@Test
 	public void testBug2995930() {
 		// Checks that internal lambda is conserved, and De Bruijn index are correct
-		rewriteExpr("(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(s)", "(λx↦p·x∈s∧p⊆s∣p)", "s", "ℙ(S)");
+		rewriteExpr("(λs·s⊆S∣(λx↦p·x∈s∧p⊆s∣p))(s)", "(λx↦p·x∈s∧p⊆s∣p)", "s=ℙ(S)");
 		// Checks that external lambda disappear and x is instantiated
 		rewriteExpr("(λx·x∈ℙ(ℕ) ∣ (λz·z∈ℕ ∣ z+z)[x])({1,2,3})", "(λz·z∈ℕ ∣ z+z)[{1,2,3}]");
 		// Real example from Bug 2995930 with an argument containing a bound identifier.
@@ -853,7 +853,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		
 		
 		// finite(r~) == finite(r)
-		rewritePred("finite(r∼)", "finite(r)", "r", "S↔T");
+		rewritePred("finite(r∼)", "finite(r)", "r=S↔T");
 		// In level 2, expression "r~" can be rewritten earlier
 		if (level2AndHigher) {
 			rewritePred("finite((ℤ × BOOL)∼)",
@@ -926,18 +926,18 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		//                              + (-1)^(n-1)card(S(1) /\ ... card(S(n)))
 		if (level2AndHigher) {
 			rewriteExpr("card(A ∪ B)", "card(A) + card(B) − card(A ∩ B)", //
-					"A", "ℙ(S)", "B", "ℙ(S)");
+					"A=ℙ(S); B=ℙ(S)");
 			rewriteExpr(
 					"card(A ∪ B ∪ C)", //
 					"card(A) + card(B)  + card(C) − (card(A ∩ B) + card(A ∩ C) + card(B ∩ C)) + card(A ∩ B ∩ C)", //
-					"A", "ℙ(S)");
+					"A=ℙ(S)");
 			rewriteExpr(
 					"card(A ∪ B ∪ C ∪ D)",//
 					"card(A) + card(B) + card(C) + card(D) − "
 							+ "(card(A ∩ B) + card(A ∩ C) + card(A ∩ D) + card(B ∩ C) + card(B ∩ D) + card(C ∩ D)) + "
 							+ "(card(A ∩ B ∩ C) + card(A ∩ B ∩ D) + card(A ∩ C ∩ D) + card(B ∩ C ∩ D)) − "
 							+ "card(A ∩ B ∩ C ∩ D)", //
-					"A", "ℙ(S)");
+					"A=ℙ(S)");
 		} else {
 			rewriteExpr(
 					"card({x ∣ x ∈ BOOL} ∪ S)",

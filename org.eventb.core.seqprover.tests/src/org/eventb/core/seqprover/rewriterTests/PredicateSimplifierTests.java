@@ -60,47 +60,40 @@ public abstract class PredicateSimplifierTests extends
 	}
 
 	protected void rewriteCond(boolean condition, String inputImage,
-			String expectedImage, String... env) {
+			String expectedImage) {
 		if (condition) {
-			rewritePred(inputImage, expectedImage, env);
+			rewritePred(inputImage, expectedImage);
 		} else {
-			noRewritePred(inputImage, env);
+			noRewritePred(inputImage);
 		}
 	}
 
-	protected void rewriteMultiImp(String inputImage, String expectedImage,
-			String... env) {
-		rewriteCond(withMultiImp, inputImage, expectedImage, env);
+	protected void rewriteMultiImp(String inputImage, String expectedImage) {
+		rewriteCond(withMultiImp, inputImage, expectedImage);
 	}
 
-	protected void rewriteMultiEqvNot(String inputImage, String expectedImage,
-			String... env) {
-		rewriteCond(withMultiEqvNot, inputImage, expectedImage, env);
+	protected void rewriteMultiEqvNot(String inputImage, String expectedImage) {
+		rewriteCond(withMultiEqvNot, inputImage, expectedImage);
 	}
 
-	protected void rewriteMultiImpNot(String inputImage, String expectedImage,
-			String... env) {
-		rewriteCond(withMultiImpNot, inputImage, expectedImage, env);
+	protected void rewriteMultiImpNot(String inputImage, String expectedImage) {
+		rewriteCond(withMultiImpNot, inputImage, expectedImage);
 	}
 
-	protected void rewriteMultiImpAnd(String inputImage,
-			String expectedImage, String... env) {
-		rewriteCond(withMultiImpAnd, inputImage, expectedImage, env);
+	protected void rewriteMultiImpAnd(String inputImage, String expectedImage) {
+		rewriteCond(withMultiImpAnd, inputImage, expectedImage);
 	}
 
-	protected void rewriteQuantDistr(String inputImage, String expectedImage,
-			String... env) {
-		rewriteCond(withQuantDistr, inputImage, expectedImage, env);
+	protected void rewriteQuantDistr(String inputImage, String expectedImage) {
+		rewriteCond(withQuantDistr, inputImage, expectedImage);
 	}
 
-	protected void rewriteExistsImp(String inputImage, String expectedImage,
-			String... env) {
-		rewriteCond(withExistsImp, inputImage, expectedImage, env);
+	protected void rewriteExistsImp(String inputImage, String expectedImage) {
+		rewriteCond(withExistsImp, inputImage, expectedImage);
 	}
 
-	protected void rewriteMultiAndOr(String inputImage, String expectedImage,
-			String... env) {
-		rewriteCond(withMultiAndOr, inputImage, expectedImage, env);
+	protected void rewriteMultiAndOr(String inputImage, String expectedImage) {
+		rewriteCond(withMultiAndOr, inputImage, expectedImage);
 	}
 
 	/**

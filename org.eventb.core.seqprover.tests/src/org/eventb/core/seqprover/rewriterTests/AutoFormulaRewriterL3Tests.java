@@ -54,8 +54,8 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 	 */
 	@Test
 	public void testMY_NAME() {
-		rewritePred("a↦b∈A×B", "a∈A ∧ b∈B", "A", "ℙ(S)", "B", "ℙ(T)");
-		rewritePred("a↦b↦c∈A×B×C", "a↦b∈A×B ∧ c∈C", "A", "ℙ(S)", "B", "ℙ(T)", "C", "ℙ(U)");
+		rewritePred("a↦b∈A×B", "a∈A ∧ b∈B", "A=ℙ(S); B=ℙ(T)");
+		rewritePred("a↦b↦c∈A×B×C", "a↦b∈A×B ∧ c∈C", "A=ℙ(S); B=ℙ(T); C=ℙ(U)");
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 	 */
 	@Test
 	public void testSIMP_MULTI_DOM_DOMSUB() {
-		rewriteExpr("dom(A⩤f)", "dom(f)∖A", "A", "ℙ(S)", "f", "ℙ(S×S)");
+		rewriteExpr("dom(A⩤f)", "dom(f)∖A", "A=ℙ(S); f=ℙ(S×S)");
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 	 */
 	@Test
 	public void testSIMP_MULTI_DOM_DOMRES() {
-		rewriteExpr("dom(A◁f)", "dom(f)∩A", "A", "ℙ(S)", "f", "ℙ(S×S)");
+		rewriteExpr("dom(A◁f)", "dom(f)∩A", "A=ℙ(S); f=ℙ(S×S)");
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RAN_RANSUB() {
-		rewriteExpr("ran(f⩥A)", "ran(f)∖A", "A", "ℙ(S)", "f", "ℙ(S×S)");
+		rewriteExpr("ran(f⩥A)", "ran(f)∖A", "A=ℙ(S); f=ℙ(S×S)");
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 	 */
 	@Test
 	public void testSIMP_MULTI_RAN_RANRES() {
-		rewriteExpr("ran(f▷A)", "ran(f)∩A", "A", "ℙ(S)", "f", "ℙ(S×S)");
+		rewriteExpr("ran(f▷A)", "ran(f)∩A", "A=ℙ(S); f=ℙ(S×S)");
 	}
 
 	/**
@@ -95,8 +95,8 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 	 */
 	@Test
 	public void test5() {
-		rewritePred("x∈A∖{x}", "⊥", "A", "ℙ(S)", "x", "S");
-		rewritePred("x∈A∖{w, x, y}", "⊥", "A", "ℙ(S)", "w", "S", "x", "S", "y", "S");
+		rewritePred("x∈A∖{x}", "⊥", "A=ℙ(S); x=S");
+		rewritePred("x∈A∖{w, x, y}", "⊥", "A=ℙ(S); w=S; x=S; y=S");
 	}
 
 	/**
@@ -104,8 +104,8 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 	 */
 	@Test
 	public void test6() {
-		rewritePred("x∈A∪B∪{x}∪C∪D", "⊤", "A", "ℙ(S)");
-		rewritePred("x∈A∪B∪{w, x, y}∪C∪D", "⊤", "A", "ℙ(S)");
+		rewritePred("x∈A∪B∪{x}∪C∪D", "⊤", "A=ℙ(S)");
+		rewritePred("x∈A∪B∪{w, x, y}∪C∪D", "⊤", "A=ℙ(S)");
 	}
 
 	/**
@@ -146,8 +146,8 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 	 */
 	@Test
 	public void testSIMP_MULTI_IMP_NOT() {
-		rewritePred("¬x∈A ⇒  x∈A", " x∈A", "x", "ℤ");
-		rewritePred(" x∈A ⇒ ¬x∈A", "¬x∈A", "x", "ℤ");
+		rewritePred("¬x∈A ⇒  x∈A", " x∈A", "x=ℤ");
+		rewritePred(" x∈A ⇒ ¬x∈A", "¬x∈A", "x=ℤ");
 	}
 
 }
