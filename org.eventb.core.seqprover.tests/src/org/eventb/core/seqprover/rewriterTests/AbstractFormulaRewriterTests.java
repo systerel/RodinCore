@@ -27,6 +27,7 @@ import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.tests.TestLib;
 
 /**
  * Abstract base class for testing formula rewriters.
@@ -56,7 +57,7 @@ public abstract class AbstractFormulaRewriterTests {
 
 		private final IFormulaRewriter rewriter;
 		protected final FormulaFactory factory;
-		private final ITypeEnvironmentBuilder typenv;
+		protected final ITypeEnvironmentBuilder typenv;
 
 		public FormulaTest(FormulaFactory ff, IFormulaRewriter rewriter,
 				String... env) {
@@ -138,9 +139,7 @@ public abstract class AbstractFormulaRewriterTests {
 
 		@Override
 		protected Expression parseString(String image) {
-			final IParseResult result = factory.parseExpression(image, null);
-			assertNoProblem(result, image, "does not parse as an expression");
-			return result.getParsedExpression();
+			return TestLib.genExpr(typenv, image);
 		}
 
 	}

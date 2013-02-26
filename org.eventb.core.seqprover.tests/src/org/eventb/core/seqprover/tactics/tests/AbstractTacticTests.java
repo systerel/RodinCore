@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tactics.tests;
 
+import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -134,10 +135,7 @@ public abstract class AbstractTacticTests {
 	 * the current type environment.
 	 */
 	protected Expression parseExpression(String exprImage) {
-		final Expression expr = ff.parseExpression(exprImage, null)
-				.getParsedExpression();
-		typecheck(expr);
-		return expr;
+		return genExpr(typenv, exprImage);
 	}
 
 	/**

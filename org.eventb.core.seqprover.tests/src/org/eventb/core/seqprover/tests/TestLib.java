@@ -26,6 +26,7 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
@@ -316,8 +317,7 @@ public class TestLib {
 				throw new IllegalArgumentException(
 						"Invalid type environment pair: " + pairImage);
 			}
-			final Expression expr = factory.parseExpression(m.group(1), null)
-					.getParsedExpression();
+			final Expression expr = parseExpr(m.group(1), factory);
 			if (!(expr instanceof FreeIdentifier)) {
 				throw new IllegalArgumentException(
 						"Invalid type environment pair: " + pairImage);
@@ -475,6 +475,34 @@ public class TestLib {
 	}
 
 	/**
+	 * Generates an expression from a string without type-checking it. The
+	 * string is parsed with the default formula factory.
+	 * 
+	 * @param str
+	 *            the string version of the expression
+	 * @return the parsed expression
+	 */
+	public static Expression parseExpr(String str) {
+		return parseExpr(str, ff);
+	}
+
+	/**
+	 * Generates an expression from a string without type-checking it. The
+	 * string is parsed with the given formula factory.
+	 * 
+	 * @param str
+	 *            the string version of the expression
+	 * @param factory
+	 *            formula factory to use for parsing the expression
+	 * @return the parsed expression
+	 */
+	public static Expression parseExpr(String str, FormulaFactory factory) {
+		final IParseResult result = factory.parseExpression(str, null);
+		assertNoProblem(result, str, "does not parse");
+		return result.getParsedExpression();
+	}
+
+	/**
 	 * Generates a type checked expression from a string and a type environment.
 	 * As a side-effect the given type environment gets completed with the types
 	 * inferred during type check.
@@ -486,10 +514,7 @@ public class TestLib {
 	 * @return the type checked expression
 	 */
 	public static Expression genExpr(ITypeEnvironmentBuilder typeEnv, String str) {
-		final Expression result = ff.parseExpression(str, null)
-				.getParsedExpression();
-		if (result == null)
-			throw new IllegalArgumentException("Invalid expression: " + str);
+		final Expression result = parseExpr(str, typeEnv.getFormulaFactory());
 		typeCheck(typeEnv, result);
 		return result;
 	}
@@ -505,10 +530,7 @@ public class TestLib {
 	 * @return the type checked expression
 	 */
 	public static Expression genExpr(ISealedTypeEnvironment typeEnv, String str) {
-		final Expression result = ff.parseExpression(str, null)
-				.getParsedExpression();
-		if (result == null)
-			throw new IllegalArgumentException("Invalid expression: " + str);
+		final Expression result = parseExpr(str, typeEnv.getFormulaFactory());
 		typeCheck(typeEnv, result);
 		return result;
 	}
