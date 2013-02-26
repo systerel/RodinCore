@@ -13,18 +13,17 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
+import static org.eventb.core.seqprover.tests.TestLib.assertNoProblem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
 import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
@@ -64,24 +63,6 @@ public abstract class AbstractFormulaRewriterTests {
 			this.rewriter = rewriter;
 			this.factory = ff;
 			this.typenv = makeTypeEnvironment(env);
-		}
-
-		protected final void assertNoProblem(IResult result, String image,
-				String message) {
-			if (result.hasProblem()) {
-				final StringBuilder sb = new StringBuilder();
-				sb.append("Formula '");
-				sb.append(image);
-				sb.append("' ");
-				sb.append(message);
-				sb.append(":\n");
-				for (final ASTProblem pb : result.getProblems()) {
-					sb.append('\t');
-					sb.append(pb);
-					sb.append('\n');
-				}
-				fail(sb.toString());
-			}
 		}
 
 		protected abstract void checkCompatibility(T input, T expected);
