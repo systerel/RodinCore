@@ -671,6 +671,9 @@
         <childType
               typeId="org.rodinp.core.tests.namedElement2">
         </childType>
+        <childType
+              typeId="org.rodinp.core.tests.test">
+        </childType>
      </relationship>
      <relationship
            parentTypeId="org.rodinp.core.tests.test2">
