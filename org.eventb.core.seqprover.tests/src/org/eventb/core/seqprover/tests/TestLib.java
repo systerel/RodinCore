@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -19,10 +21,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -409,9 +413,8 @@ public class TestLib {
 	private static ITypeCheckResult doTypeCheck(ITypeEnvironment typeEnv,
 			Formula<?> formula) {
 		final ITypeCheckResult tcResult = formula.typeCheck(typeEnv);
-		if (!tcResult.isSuccess())
-			throw new IllegalArgumentException("Formula " + formula
-					+ " does not typecheck in environment " + typeEnv);
+		assertNoProblem(tcResult, formula, "does not typecheck in environment "
+				+ typeEnv);
 		return tcResult;
 	}
 	
@@ -562,5 +565,23 @@ public class TestLib {
 		}
 		throw new IllegalArgumentException("Sequent " + seq +" contains no hypotheses.");
 	}
-	
+
+	public static void assertNoProblem(IResult result, Object object,
+			String message) {
+		if (result.hasProblem()) {
+			final StringBuilder sb = new StringBuilder();
+			sb.append("Formula '");
+			sb.append(object.toString());
+			sb.append("' ");
+			sb.append(message);
+			sb.append(":\n");
+			for (final ASTProblem pb : result.getProblems()) {
+				sb.append('\t');
+				sb.append(pb);
+				sb.append('\n');
+			}
+			fail(sb.toString());
+		}
+	}
+
 }
