@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
+import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -36,15 +37,6 @@ public class AdditiveSimplifierTests {
 		return FormulaFactory.makePosition(image);
 	}
 
-	private Expression parseExpr(String input, ITypeEnvironmentBuilder typenv) {
-		final Expression expr = ff.parseExpression(input, this)
-				.getParsedExpression();
-		final ITypeCheckResult res = expr.typeCheck(typenv);
-		typenv.addAll(res.getInferredEnvironment());
-		assertTrue(expr.isTypeChecked());
-		return expr;
-	}
-
 	private Predicate parsePred(String input, ITypeEnvironmentBuilder typenv) {
 		final Predicate pred = ff.parsePredicate(input, this)
 				.getParsedPredicate();
@@ -58,8 +50,8 @@ public class AdditiveSimplifierTests {
 			String... positions) {
 
 		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
-		final Expression expr = parseExpr(input, typenv);
-		final Expression expected = parseExpr(expString, typenv);
+		final Expression expr = genExpr(typenv, input);
+		final Expression expected = genExpr(typenv, expString);
 		final int len = positions.length;
 		final IPosition[] ps = new IPosition[len];
 		for (int i = 0; i < len; i++) {
