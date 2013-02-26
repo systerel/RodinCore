@@ -97,6 +97,7 @@ public final class Messages {
 	public static String status_updateConflict;
 	public static String status_upgradedFile;
 	public static String status_invalidChildType;
+	public static String status_invalidAttributeType;
 	public static String status_indexerError;
 	
 	public static String type_database;
@@ -108,6 +109,7 @@ public final class Messages {
 	public static String converter_failedConversion;
 	public static String converter_convertingFiles;
 	public static String converter_savingFiles;
+
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

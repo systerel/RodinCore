@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.rodinp.internal.core;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -83,6 +84,13 @@ public class ChangeElementAttributeOperation extends RodinDBOperation{
 					IRodinDBStatusConstants.READ_ONLY,
 					element
 			);
+		}
+		final IInternalElementType<?> elemType = element.getElementType();
+		final AttributeType<?> attrType = attrValue.getType();
+		if (!attrType.isAttributeOf(elemType)) {
+			return new RodinDBStatus(
+					IRodinDBStatusConstants.INVALID_ATTRIBUTE_TYPE, element,
+					attrType.getId());
 		}
 		return RodinDBStatus.VERIFIED_OK;
 	}

@@ -638,6 +638,9 @@
         <childType
               typeId="org.rodinp.core.tests.data">
         </childType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fString">
+        </attributeType>
      </relationship>
      <relationship
            parentTypeId="org.rodinp.core.tests.machine">
@@ -650,18 +653,27 @@
         <childType
               typeId="org.rodinp.core.tests.data">
         </childType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fString">
+        </attributeType>
      </relationship>
      <relationship
            parentTypeId="org.rodinp.core.tests.scContext">
         <childType
               typeId="org.rodinp.core.tests.data">
         </childType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fString">
+        </attributeType>
      </relationship>
      <relationship
            parentTypeId="org.rodinp.core.tests.scMachine">
         <childType
               typeId="org.rodinp.core.tests.data">
         </childType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fString">
+        </attributeType>
      </relationship>
      <relationship
            parentTypeId="org.rodinp.core.tests.test">
@@ -674,6 +686,21 @@
         <childType
               typeId="org.rodinp.core.tests.test">
         </childType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fBool">
+        </attributeType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fHandle">
+        </attributeType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fInt">
+        </attributeType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fLong">
+        </attributeType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fString">
+        </attributeType>
      </relationship>
      <relationship
            parentTypeId="org.rodinp.core.tests.test2">
@@ -686,6 +713,30 @@
         <childType
               typeId="org.rodinp.core.tests.namedElement">
         </childType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fBool">
+        </attributeType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fHandle">
+        </attributeType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fInt">
+        </attributeType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fLong">
+        </attributeType>
+        <attributeType
+              typeId="org.rodinp.core.tests.fString">
+        </attributeType>
+        <attributeType
+              typeId="org.rodinp.core.tests.testAttributeType">
+        </attributeType>
+     </relationship>
+     <relationship
+           parentTypeId="org.rodinp.core.tests.data">
+        <attributeType
+              typeId="org.rodinp.core.tests.fString">
+        </attributeType>
      </relationship>
   </extension>
   <extension

@@ -360,8 +360,16 @@ public class RodinDBStatus extends Status implements IRodinDBStatus,
 						((RodinElement) elements[0]).toStringWithAncestors());
 				
 			case INVALID_CHILD_TYPE:
+				final IRodinElement parent = elements[0];
 				return Messages.bind(Messages.status_invalidChildType, string,
-						elements[0].getPath());
+						elements[0].getPath() + " of type "
+								+ parent.getElementType().getId());
+
+			case INVALID_ATTRIBUTE_TYPE:
+				final IRodinElement parent1 = elements[0];
+				return Messages.bind(Messages.status_invalidAttributeType,
+						string, elements[0].getPath() + " of type "
+								+ parent1.getElementType().getId());
 
 			case INDEXER_ERROR:
 				return Messages.bind(Messages.status_indexerError,
