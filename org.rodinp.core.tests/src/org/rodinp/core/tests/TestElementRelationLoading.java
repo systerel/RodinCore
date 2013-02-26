@@ -94,7 +94,7 @@ public class TestElementRelationLoading extends ModifyingResourceTests {
 		final String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 				+ "<org.rodinp.core.tests.test>\n"
 				+ "<org.rodinp.core.tests.namedElement name=\"*\"/>\n"
-				+ "<org.rodinp.core.tests.namedElement2 name=\"-\"/>\n"
+				+ "<org.rodinp.core.tests.namedElement22 name=\"-\"/>\n"
 				+ "<org.rodinp.core.tests.namedElement name=\"'\"/>\n"
 				+ "</org.rodinp.core.tests.test>\n";
 		final TypeTreeShape expectedShape = s("test", s("namedElement"),

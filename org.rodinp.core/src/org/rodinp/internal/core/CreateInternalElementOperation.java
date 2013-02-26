@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@
 package org.rodinp.internal.core;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -75,10 +77,13 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 	 * <ul>
 	 * <li>NO_ELEMENTS_TO_PROCESS - the newElement supplied to the operation is
 	 * <code>null</code>.</li>
+	 * <li>INVALID_CHILD_TYPE - the type of the newElement supplied to the
+	 * operation is invalid with the type of the parent element</li>
 	 * <li>READ_ONLY - the parent of the newElement supplied is readonly.</li>
-	 * <li>NAME_COLLISION - the newElement supplied already exists and creating it
-	 * anew would create a duplicate element.</li>
-	 * <li>INVALID_SIBLING - the sibling supplied to the operation has a different parent.</li>
+	 * <li>NAME_COLLISION - the newElement supplied already exists and creating
+	 * it anew would create a duplicate element.</li>
+	 * <li>INVALID_SIBLING - the sibling supplied to the operation has a
+	 * different parent.</li>
 	 * <li>ELEMENT_DOES_NOT_EXIST - the sibling supplied doesn't exist.</li>
 	 * </ul>
 	 */
@@ -93,6 +98,20 @@ public class CreateInternalElementOperation extends RodinDBOperation{
 					IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST,
 					parent
 			);
+		}
+		final IElementType<? extends IRodinElement> pType = parent
+				.getElementType();
+		if (pType instanceof IInternalElementType<?>) {
+			final IInternalElementType<?> iType = (IInternalElementType<?>) pType;
+			if (newElement != null) {
+				final IInternalElementType<?> childType = newElement
+						.getElementType();
+				if (!iType.canParent(childType)) {
+					return new RodinDBStatus(
+							IRodinDBStatusConstants.INVALID_CHILD_TYPE, parent,
+							childType.getId());
+				}
+			}
 		}
 		if (parent.isReadOnly()) {
 			return new RodinDBStatus(

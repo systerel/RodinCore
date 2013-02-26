@@ -15,6 +15,7 @@
 package org.rodinp.core.tests;
 
 import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
+import static org.rodinp.core.IRodinDBStatusConstants.INVALID_CHILD_TYPE;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_SIBLING;
 import static org.rodinp.core.IRodinDBStatusConstants.READ_ONLY;
 
@@ -42,6 +43,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.NamedElement22;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 
 public class TestInternalManipulation extends ModifyingResourceTests {
@@ -491,12 +493,63 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		assertCreateNewChildError(root, type, sibling, ELEMENT_DOES_NOT_EXIST,
 				sibling);
 	}
+	
+	/**
+	 * Ensures that an element which type is invalid for a child of the given
+	 * root element cannot be created.
+	 */
+	public void testInvalidChildTypeRootError() {
+		final IInternalElementType<?> elemType = NamedElement22.ELEMENT_TYPE;
+		assertInvalidChildCreationError(root, elemType);
+		assertInvalidChildCreationFromHandleError(root, elemType);
+	}
+	
+	/**
+	 * Ensures that an element which type is invalid for a child of the given
+	 * non-root parent element cannot be created.
+	 * @throws RodinDBException 
+	 */
+	public void testInvalidChildTypeElementError() throws RodinDBException {
+		final NamedElement named = createNEPositive(root, "elem1", null);
+		final IInternalElementType<?> elemType = NamedElement22.ELEMENT_TYPE;
+		assertInvalidChildCreationError(named, elemType);
+		assertInvalidChildCreationFromHandleError(named, elemType);
+	}
+	
+	private void assertInvalidChildCreationError(IInternalElement parent,
+			IInternalElementType<?> type) {
+		assertCreateNewChildError(parent, type, null, INVALID_CHILD_TYPE,
+				new IInternalElement[] { parent });
+	}
+	
+	private void assertInvalidChildCreationFromHandleError(
+			IInternalElement parent, IInternalElementType<?> type) {
+		assertCreateNewChildFromHandleError(parent, type, INVALID_CHILD_TYPE,
+				"named", new IInternalElement[] { parent });
+	}
 
 	private void assertCreateNewChildError(IInternalElement parent,
 			IInternalElementType<?> type, IInternalElement nextSibling,
 			int errorCode, IInternalElement... elements) {
 		try {
 			parent.createChild(type, nextSibling, null);
+			fail("Should have raised an error");
+		} catch (RodinDBException e) {
+			final IRodinDBStatus status = e.getRodinDBStatus();
+			assertEquals(IStatus.ERROR, status.getSeverity());
+			assertEquals(errorCode, status.getCode());
+			assertEquals(Arrays.asList(elements), //
+					Arrays.asList(status.getElements()));
+		}
+	}
+	
+	private void assertCreateNewChildFromHandleError(IInternalElement parent,
+			IInternalElementType<?> childType, int errorCode, String name,
+			IInternalElement... elements) {
+		final IInternalElement handle = parent.getInternalElement(childType,
+				name);
+		try {
+			handle.create(null, null);
 			fail("Should have raised an error");
 		} catch (RodinDBException e) {
 			final IRodinDBStatus status = e.getRodinDBStatus();

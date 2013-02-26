@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.rodinp.core.tests.basis;
 
+import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
+
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.basis.InternalElement;
-import org.rodinp.core.tests.AbstractRodinDBTests;
 
 /**
  * An element class for child elements of NamedElements.
@@ -24,8 +25,8 @@ import org.rodinp.core.tests.AbstractRodinDBTests;
  */
 public class NamedElement11 extends InternalElement {
 
-	private static final String ELEMENT_TYPE = AbstractRodinDBTests.PLUGIN_ID
-			+ ".namedElement11";
+	private static final IInternalElementType<?> ELEMENT_TYPE = RodinCore
+			.getInternalElementType(PLUGIN_ID + ".namedElement11");
 
 	/**
 	 * @param name
@@ -39,7 +40,7 @@ public class NamedElement11 extends InternalElement {
 
 	@Override
 	public IInternalElementType<? extends IInternalElement> getElementType() {
-		return RodinCore.getInternalElementType(ELEMENT_TYPE);
+		return ELEMENT_TYPE;
 	}
 
 }
