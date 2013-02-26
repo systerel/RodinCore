@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ package org.rodinp.internal.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -99,10 +100,18 @@ public abstract class MultiOperation extends RodinDBOperation {
 
 	/**
 	 * Convenience method to create a <code>RodinDBException</code>
-	 * embending a <code>RodinDBStatus</code>.
+	 * embedding a <code>RodinDBStatus</code>.
 	 */
 	protected void error(int code, IRodinElement element) throws RodinDBException {
 		throw new RodinDBException(new RodinDBStatus(code, element));
+	}
+	
+	/**
+	 * Convenience method to create a <code>RodinDBException</code>
+	 * embedding a <code>RodinDBStatus</code>.
+	 */
+	protected void error(int code, IRodinElement element, String msg) throws RodinDBException {
+		throw new RodinDBException(new RodinDBStatus(code, element, msg));
 	}
 	
 	/**
@@ -255,8 +264,9 @@ public abstract class MultiOperation extends RodinDBOperation {
 	 * Verifies that the <code>destination</code> specified for the <code>element</code> is valid
 	 * for the types of the <code>element</code> and <code>destination</code>.
 	 */
-	protected void verifyDestination(IRodinElement element, IRodinElement destination) throws RodinDBException {
-		if (destination == null || ! destination.exists())
+	protected void verifyDestination(IRodinElement element,
+			IRodinElement destination) throws RodinDBException {
+		if (destination == null || !destination.exists())
 			error(IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST, destination);
 		
 		if (destination.isReadOnly())
@@ -266,12 +276,24 @@ public abstract class MultiOperation extends RodinDBOperation {
 			if (! (destination instanceof RodinProject)) {
 				error(IRodinDBStatusConstants.INVALID_DESTINATION, destination);
 			}
-		} else if (element instanceof InternalElement) {
-			if (! (destination instanceof InternalElement)) {
-				error(IRodinDBStatusConstants.INVALID_DESTINATION, destination);
-			}
-		} else {
+			return;
+		} 
+		
+		if (!(element instanceof InternalElement)) {
 			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
+		}
+
+		// element is instanceof InternalElement
+		if (!(destination instanceof InternalElement)) {
+			error(IRodinDBStatusConstants.INVALID_DESTINATION, destination);
+		}
+
+		final InternalElementType<?> destType = (InternalElementType<?>) destination
+				.getElementType();
+		final IInternalElementType<?> childType = (IInternalElementType<?>) element
+				.getElementType();
+		if (!destType.canParent(childType)) {
+			error(IRodinDBStatusConstants.INVALID_CHILD_TYPE, destination);
 		}
 	}
 

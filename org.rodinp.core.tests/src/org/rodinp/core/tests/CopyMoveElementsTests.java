@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.NamedElement2;
 
 public class CopyMoveElementsTests extends CopyMoveTests {
 
@@ -335,6 +336,43 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 	}
 	
 	/**
+	 * Ensures that an internal element can not be copied to an invalid
+	 * top-level destination.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testCopyIntInvalidRelationWithTopParent() throws CoreException {
+		final IRodinFile rfSource = createRodinFile("P/X.test");
+		final IInternalElement rSource = rfSource.getRoot();
+		final NamedElement ne = createNEPositive(rSource, "foo", null);
+
+		final IRodinFile rfDest = createRodinFile("P/Y.test2");
+		final IInternalElement rDest = rfDest.getRoot();
+		copyNegative(ne, rDest, null, null, false,
+				IRodinDBStatusConstants.INVALID_CHILD_TYPE);
+	}
+
+	/**
+	 * Ensures that an internal element can not be copied to an invalid non
+	 * top-level destination.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testCopyIntInvalidRelationWithParent() throws CoreException {
+		final IRodinFile rfSource = createRodinFile("P/X.test");
+		final IInternalElement rSource = rfSource.getRoot();
+		final NamedElement ne = createNEPositive(rSource, "foo", null);
+		final NamedElement ne1 = createNEPositive(ne, "bar", null);
+
+		final IRodinFile rfDest = createRodinFile("P/Y.test2");
+		final IInternalElement rDest = rfDest.getRoot();
+		final NamedElement2 neDest = rDest.createChild(
+				NamedElement2.ELEMENT_TYPE, null, null);
+		copyNegative(ne1, neDest, null, null, false,
+				IRodinDBStatusConstants.INVALID_CHILD_TYPE);
+	}
+	
+	/**
 	 * Ensures that a top-level internal element cannot be copied to an invalid destination.
 	 */
 	public void testCopyTopWithInvalidDestination() throws CoreException {
@@ -618,6 +656,45 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 		} finally {
 			stopDeltas();
 		}
+	}
+	
+	
+	/**
+	 * Ensures that an element which type is not valid with a top-level
+	 * destination parent, can not be moved to this parent.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testMoveIntInvalidRelationWithDestination()
+			throws CoreException {
+		final IRodinFile rfSource = createRodinFile("P/X.test");
+		final IInternalElement rSource = rfSource.getRoot();
+		final NamedElement ne = createNEPositive(rSource, "foo", null);
+
+		final IRodinFile rfDest = createRodinFile("P/Y.test2");
+		final IInternalElement rDest = rfDest.getRoot();
+		moveNegative(ne, rDest, null, null, false,
+				IRodinDBStatusConstants.INVALID_CHILD_TYPE);
+	}
+
+	/**
+	 * Ensures that a non top-level element which type is not valid with a given
+	 * non top-level destination parent, can not be moved to this parent.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testMoveTopInvalidRelationWithDestination()
+			throws CoreException {
+		final IRodinFile rfSource = createRodinFile("P/X.test");
+		final IInternalElement rSource = rfSource.getRoot();
+		final NamedElement ne = createNEPositive(rSource, "foo", null);
+
+		final IRodinFile rfDest = createRodinFile("P/Y.test2");
+		final IInternalElement rDest = rfDest.getRoot();
+		final NamedElement2 ne2 = rDest.createChild(NamedElement2.ELEMENT_TYPE,
+				null, null);
+		moveNegative(ne, ne2, null, null, false,
+				IRodinDBStatusConstants.INVALID_CHILD_TYPE);
 	}
 	
 	/**
