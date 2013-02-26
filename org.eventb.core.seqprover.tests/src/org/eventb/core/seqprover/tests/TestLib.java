@@ -337,23 +337,65 @@ public class TestLib {
 	}
 
 	/**
-	 * Generates a type checked predicate from a string.
-	 * 
-	 * The type environment must be completely inferrable from the given predicate.
-	 * (e.g., "x=x" will not work since the type of x is unknown)
+	 * Generates a predicate from a string without type-checking it. The string
+	 * is parsed with the default formula factory.
 	 * 
 	 * @param str
-	 * 		The string version of the predicate
-	 * @return
-	 * 		The type checked predicate, or <code>null</code> if there was a parsing
-	 * 		of type checking error. 
+	 *            the string version of the predicate
+	 * @return the type checked predicate
+	 */
+	public static Predicate parsePred(String str){
+		return parsePred(str, ff);
+	}
+
+	/**
+	 * Generates a predicate from a string without type-checking it. The string
+	 * is parsed with the given formula factory.
+	 * 
+	 * @param str
+	 *            the string version of the predicate
+	 * @param factory
+	 *            the formula factory to use for parsing the string
+	 * @return the type checked predicate
+	 */
+	public static Predicate parsePred(String str, FormulaFactory factory){
+		final IParseResult result = factory.parsePredicate(str, null);
+		assertNoProblem(result, str, "does not parse");
+		return result.getParsedPredicate();
+	}
+
+	/**
+	 * Generates a type checked predicate from a string. The string is parsed
+	 * with the default formula factory.
+	 * 
+	 * The type environment must be completely inferrable from the given
+	 * predicate. (e.g., "x=x" will not work since the type of x is unknown)
+	 * 
+	 * @param str
+	 *            the string version of the predicate
+	 * @return the type checked predicate
 	 */
 	public static Predicate genPred(String str){
 		return genPred(str, ff);
 	}
 
+	/**
+	 * Generates a type checked predicate from a string. The string is parsed
+	 * with the given formula factory.
+	 * 
+	 * The type environment must be completely inferrable from the given
+	 * predicate. (e.g., "x=x" will not work since the type of x is unknown)
+	 * 
+	 * @param str
+	 *            the string version of the predicate
+	 * @param factory
+	 *            the formula factory to use for parsing the string
+	 * @return the type checked predicate
+	 */
 	public static Predicate genPred(String str, FormulaFactory factory){
-		return genPred(factory.makeTypeEnvironment(), str);
+		final Predicate result = parsePred(str, factory);
+		typeCheck(factory.makeTypeEnvironment(), result);
+		return result;
 	}
 
 	/**
@@ -368,10 +410,7 @@ public class TestLib {
 	 * @return the type checked predicate
 	 */
 	public static Predicate genPred(ITypeEnvironmentBuilder typeEnv, String str) {
-		final Predicate result = typeEnv.getFormulaFactory()
-				.parsePredicate(str, null).getParsedPredicate();
-		if (result == null)
-			throw new IllegalArgumentException("Invalid predicate: " + str);
+		final Predicate result = parsePred(str, typeEnv.getFormulaFactory());
 		typeCheck(typeEnv, result);
 		return result;
 	}
@@ -387,10 +426,7 @@ public class TestLib {
 	 * @return the type checked predicate
 	 */
 	public static Predicate genPred(ISealedTypeEnvironment typeEnv, String str) {
-		final Predicate result = typeEnv.getFormulaFactory()
-				.parsePredicate(str, null).getParsedPredicate();
-		if (result == null)
-			throw new IllegalArgumentException("Invalid predicate: " + str);
+		final Predicate result = parsePred(str, typeEnv.getFormulaFactory());
 		typeCheck(typeEnv, result);
 		return result;
 	}
