@@ -124,10 +124,7 @@ public abstract class AbstractTacticTests {
 	 * the current type environment.
 	 */
 	protected Predicate parsePredicate(String predImage) {
-		final Predicate pred = ff.parsePredicate(predImage, null)
-				.getParsedPredicate();
-		typecheck(pred);
-		return pred;
+		return TestLib.genPred(typenv, predImage);
 	}
 
 	/**
@@ -151,11 +148,6 @@ public abstract class AbstractTacticTests {
 		assertTrue(identImage + "is not an identifier",
 				expr instanceof FreeIdentifier);
 		return (FreeIdentifier) expr;
-	}
-
-	private <T extends Formula<T>> void typecheck(T formula) {
-		final ITypeCheckResult tcResult = formula.typeCheck(typenv);
-		assertTypechecked(formula, tcResult);
 	}
 
 	private <T extends Formula<T>> void assertTypechecked(T formula,

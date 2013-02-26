@@ -83,7 +83,6 @@ public abstract class AbstractFormulaRewriterTests {
 
 		private T parse(String image) {
 			T formula = parseString(image);
-			typeCheck(formula, image);
 			assertTypeChecked(formula);
 			return formula;
 		}
@@ -158,9 +157,7 @@ public abstract class AbstractFormulaRewriterTests {
 
 		@Override
 		protected Predicate parseString(String image) {
-			final IParseResult result = factory.parsePredicate(image, null);
-			assertNoProblem(result, image, "does not parse as a predicate");
-			return result.getParsedPredicate();
+			return TestLib.genPred(typenv, image);
 		}
 
 	}

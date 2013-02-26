@@ -11,13 +11,12 @@
 package org.eventb.core.seqprover.rewriterTests;
 
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IPosition;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
@@ -35,15 +34,6 @@ public class AdditiveSimplifierTests {
 
 	private IPosition mPos(String image) {
 		return FormulaFactory.makePosition(image);
-	}
-
-	private Predicate parsePred(String input, ITypeEnvironmentBuilder typenv) {
-		final Predicate pred = ff.parsePredicate(input, this)
-				.getParsedPredicate();
-		final ITypeCheckResult res = pred.typeCheck(typenv);
-		typenv.addAll(res.getInferredEnvironment());
-		assertTrue(pred.isTypeChecked());
-		return pred;
 	}
 
 	private void assertSimplifiedE(String input, String expString,
@@ -65,9 +55,8 @@ public class AdditiveSimplifierTests {
 			String... positions) {
 
 		final ITypeEnvironmentBuilder typenv = ff.makeTypeEnvironment();
-		final RelationalPredicate pred = (RelationalPredicate) parsePred(input,
-				typenv);
-		final Predicate expected = parsePred(expString, typenv);
+		final RelationalPredicate pred = (RelationalPredicate) genPred(typenv, input);
+		final Predicate expected = genPred(typenv, expString);
 		final int len = positions.length;
 		final IPosition[] ps = new IPosition[len];
 		for (int i = 0; i < len; i++) {

@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
+import static java.util.Collections.emptySet;
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
+import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -21,12 +24,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Set;
 
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IParseResult;
-import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
+import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofTree;
@@ -282,16 +282,10 @@ public abstract class AbstractProofTreeTests implements IProofTreeChangedListene
 	 * @return a new sequent with the given goal
 	 */
 	public static IProverSequent makeSimpleSequent(String goal) {
-		FormulaFactory ff = FormulaFactory.getDefault();
-		IParseResult parseResult = ff.parsePredicate(goal, null);
-		Predicate goalPredicate = parseResult.getParsedPredicate();
-		assertNotNull("Can't parse predicate: " + goal, goalPredicate);
-		ITypeEnvironment te = ff.makeTypeEnvironment();
-		ITypeCheckResult tr = goalPredicate.typeCheck(te);
-		assertTrue("Can't typecheck predicate" + goalPredicate, goalPredicate
-				.isTypeChecked());
-		return ProverFactory.makeSequent(tr.getInferredEnvironment(),
-				new HashSet<Predicate>(), goalPredicate);
+		final ITypeEnvironmentBuilder te = mTypeEnvironment();
+		final Predicate goalPredicate = genPred(te, goal);
+		final Set<Predicate> hypotheses = emptySet();
+		return ProverFactory.makeSequent(te, hypotheses, goalPredicate);
 	}
 
 	/**
