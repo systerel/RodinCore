@@ -38,6 +38,12 @@ public class ItemRelations {
 		this.elementTypes = elementTypes;
 		this.attributeTypes = attributeTypes;
 		setRelations();
+		makeRelationsImmutable();
+	}
+
+	private void makeRelationsImmutable() {
+		elementTypes.makeRelationsImmutable();
+		attributeTypes.makeRelationsImmutable();
 	}
 
 	private void setRelations() {

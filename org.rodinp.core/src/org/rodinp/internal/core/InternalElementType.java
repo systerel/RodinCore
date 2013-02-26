@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import static java.util.Collections.emptyList;
+
 import java.lang.reflect.Array;
 import java.util.List;
 
@@ -44,6 +46,8 @@ public class InternalElementType<T extends IInternalElement> extends
 	private List<InternalElementType<?>> parentTypes = null;
 	private List<InternalElementType<?>> childTypes = null;
 	private List<AttributeType<?>> attributeTypes = null;
+	
+	private boolean relationsImmutable = false;
 
 	public InternalElementType(IConfigurationElement configurationElement,
 			ElementTypeManager elementTypeManager) {
@@ -148,7 +152,8 @@ public class InternalElementType<T extends IInternalElement> extends
 
 	public void setRelation(List<InternalElementType<?>> pTypes,
 			List<InternalElementType<?>> cTypes, List<AttributeType<?>> aTypes) {
-		if (parentTypes != null || childTypes != null || attributeTypes != null) {
+		if (relationsImmutable || parentTypes != null || childTypes != null
+				|| attributeTypes != null) {
 			throw new IllegalStateException(
 					"Illegal attempt to set relations for internal element type "
 							+ getName());
@@ -156,6 +161,22 @@ public class InternalElementType<T extends IInternalElement> extends
 		this.parentTypes = pTypes;
 		this.childTypes = cTypes;
 		this.attributeTypes = aTypes;
+	}
+	
+	public void makeRelationsImmutable() {
+		if (relationsImmutable) {
+			throw new IllegalStateException(
+					"Illegal attempt to set relations for internal element type "
+							+ getName()
+							+ " immutable although they already are.");
+		}
+		if (parentTypes == null)
+			parentTypes = emptyList();
+		if (childTypes == null)
+			childTypes = emptyList();
+		if (attributeTypes == null)
+			attributeTypes = emptyList();
+		relationsImmutable = true;
 	}
 
 	@Override

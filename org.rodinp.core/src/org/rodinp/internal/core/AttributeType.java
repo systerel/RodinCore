@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import static java.util.Collections.emptyList;
+
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -356,6 +358,8 @@ public abstract class AttributeType<V> implements IAttributeType,
 	private final java.lang.String name;
 	
 	private List<InternalElementType<?>> elementTypes = null;
+	
+	private boolean relationsImmutable = false;
 
 	protected AttributeType(Kind kind, java.lang.String id,
 			java.lang.String name) {
@@ -432,7 +436,7 @@ public abstract class AttributeType<V> implements IAttributeType,
 			java.lang.String rawValue) throws RodinDBException;
 
 	public void setRelation(List<InternalElementType<?>> eTypes) {
-		if (elementTypes != null) {
+		if (relationsImmutable || elementTypes != null) {
 			throw new IllegalStateException(
 					"Illegal attempt to set relations for attribute type "
 							+ getName());
@@ -445,6 +449,18 @@ public abstract class AttributeType<V> implements IAttributeType,
 	@Override
 	public int compareTo(AttributeType<V> other) {
 		return this.id.compareTo(other.id);
+	}
+
+	public void makeRelationsImmutable() {
+		if (relationsImmutable) {
+			throw new IllegalStateException(
+					"Illegal attempt to set relations for internal element type "
+							+ getName()
+							+ " immutable although they already are.");
+		}
+		if (elementTypes == null)
+			elementTypes = emptyList();
+		relationsImmutable = true;
 	}
 
 }
