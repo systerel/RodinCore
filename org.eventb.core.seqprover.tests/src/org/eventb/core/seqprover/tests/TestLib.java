@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.tests;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -322,7 +323,7 @@ public class TestLib {
 				throw new IllegalArgumentException(
 						"Invalid type environment pair: " + pairImage);
 			}
-			final Type type = factory.parseType(m.group(2)).getParsedType();
+			final Type type = genType(m.group(2), factory);
 			result.addName(expr.toString(), type);
 		}
 		return result;
@@ -569,6 +570,46 @@ public class TestLib {
 		final Expression result = parseExpr(str, typeEnv.getFormulaFactory());
 		typeCheck(typeEnv, result);
 		return result;
+	}
+
+	/**
+	 * Generates a type-checked identifier with the given name and type. All
+	 * strings are parsed with the formula factory of the given type
+	 * environment.
+	 * 
+	 * @param identImage
+	 *            the name of the identifier
+	 * @param typeImage
+	 *            the type of the identifier in string form
+	 * @param typenv
+	 *            some type environment
+	 * @return the type checked identifier
+	 */
+	public static FreeIdentifier genIdent(String identImage, String typeImage,
+			FormulaFactory factory) {
+		final Expression expr = parseExpr(identImage, factory);
+		assertTrue(expr instanceof FreeIdentifier);
+		final Type type = genType(typeImage, factory);
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
+		final ITypeCheckResult tcResult = expr.typeCheck(typenv, type);
+		assertNoProblem(tcResult, identImage, "cannot bear type " + typeImage);
+		return (FreeIdentifier) expr;
+	}
+
+	/**
+	 * Generates a type from a string. The string is parsed with the given
+	 * factory.
+	 * 
+	 * @param str
+	 *            the string version of the type
+	 * @param factory
+	 *            the formula factory to use for parsing
+	 * @return the type
+	 */
+	public static Type genType(String str, FormulaFactory factory) {
+		final IParseResult result = factory.parseType(str);
+		assertNoProblem(result, str, "does not parse");
+		return result.getParsedType();
 	}
 	
 	/**
