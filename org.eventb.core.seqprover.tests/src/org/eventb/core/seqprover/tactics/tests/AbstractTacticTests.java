@@ -12,22 +12,16 @@ package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.tests.TestLib.genExpr;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.FreeIdentifier;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
@@ -133,27 +127,6 @@ public abstract class AbstractTacticTests {
 	 */
 	protected Expression parseExpression(String exprImage) {
 		return genExpr(typenv, exprImage);
-	}
-
-	/**
-	 * Parses the given identifier using the current factory and checks that it
-	 * can bear the given type within the current type environment.
-	 */
-	protected FreeIdentifier parseIdent(String identImage, String typeImage) {
-		final Expression expr = ff.parseExpression(identImage, null)
-				.getParsedExpression();
-		final Type type = ff.parseType(typeImage)
-				.getParsedType();
-		assertTypechecked(expr, expr.typeCheck(typenv, type));
-		assertTrue(identImage + "is not an identifier",
-				expr instanceof FreeIdentifier);
-		return (FreeIdentifier) expr;
-	}
-
-	private <T extends Formula<T>> void assertTypechecked(T formula,
-			ITypeCheckResult tcResult) {
-		assertFalse(tcResult.toString(), tcResult.hasProblem());
-		assertTrue(formula.isTypeChecked());
 	}
 
 	/**

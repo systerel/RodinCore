@@ -11,6 +11,7 @@
 package org.eventb.core.seqprover.tactics.tests;
 
 import static org.eventb.core.seqprover.tactics.tests.TreeShape.dtDestrWD;
+import static org.eventb.core.seqprover.tests.TestLib.genIdent;
 
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.seqprover.eventbExtensions.AutoTactics;
@@ -35,8 +36,8 @@ public class DTDestrWDTacTests extends AbstractTacticTests {
 	 */
 	@Test
 	public void success() {
-		final FreeIdentifier prm0 = parseIdent("p_intDestr", "ℤ");
-		final FreeIdentifier prm1 = parseIdent("p_boolDestr", "BOOL");
+		final FreeIdentifier prm0 = genIdent("p_intDestr", "ℤ", ff);
+		final FreeIdentifier prm1 = genIdent("p_boolDestr", "BOOL", ff);
 		assertSuccess(" ;H; ;S; |- ∃m,n·x=rd(m,n)",
 				dtDestrWD("2.0", prm0, prm1));
 	}
