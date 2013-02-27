@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
 import org.rodinp.core.IInternalElement;
@@ -30,6 +31,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 import org.rodinp.internal.core.AttributeType;
 
@@ -674,6 +676,43 @@ public class AttributeTests extends ModifyingResourceTests {
 
 		root.setAttributeValue(v2, null);
 		assertAttributeValues(root, v2);
+	}
+	
+	/**
+	 * Ensures that an attribute of invalid type for a given root cannot be set.
+	 */
+	public void testSetInvalidAttributeForRoot() throws CoreException {
+		final IRodinFile rf = createRodinFile("P/X.test2");
+		final IInternalElement r = rf.getRoot();
+		final IAttributeValue v = fBool.makeValue(true);
+		assertSetAttributeFailure(r, v);
+	}
+
+	/**
+	 * Ensures that an attribute of invalid type for a given non-root element
+	 * cannot be set.
+	 */
+	public void testSetInvalidAttributeForElement() throws CoreException {
+		final IRodinFile rf = createRodinFile("P/X.test2");
+		final IInternalElement r = rf.getRoot();
+		final NamedElement2 ne2 = r.createChild(NamedElement2.ELEMENT_TYPE,
+				null, null);
+		final IAttributeValue v = fBool.makeValue(true);
+		assertSetAttributeFailure(ne2, v);
+	}
+
+	private void assertSetAttributeFailure(IInternalElement owner,
+			IAttributeValue value) {
+		try {
+			owner.setAttributeValue(value, null);
+			fail("Should have raised a RodinDBException");
+		} catch (RodinDBException e) {
+			final IRodinDBStatus status = e.getRodinDBStatus();
+			assertEquals(IStatus.ERROR, status.getSeverity());
+			assertEquals(IRodinDBStatusConstants.INVALID_ATTRIBUTE_TYPE,
+					status.getCode());
+			assertEquals(owner, status.getElements()[0]);
+		}
 	}
 
 }
