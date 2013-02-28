@@ -123,7 +123,7 @@ public class PredicateVariable extends Predicate {
 
 	@Override
 	protected void toString(IToStringMediator mediator) {
-		PRED_VAR_SUBPARSER.toString(mediator, getTypedThis());
+		PRED_VAR_SUBPARSER.toString(mediator, this);
 	}
 
 	@Override

@@ -1217,7 +1217,7 @@ public abstract class Formula<T extends Formula<T>> {
 		final StringBuilder builder = new StringBuilder();
 		final ToStringFullParenMediator strMed = new ToStringFullParenMediator(
 				this, builder, NO_STRING, false);
-		strMed.forward(getTypedThis());
+		strMed.forward(this);
 		return builder.toString();
 	}
 
@@ -1239,7 +1239,7 @@ public abstract class Formula<T extends Formula<T>> {
 		final StringBuilder builder = new StringBuilder();
 		final ToStringMediator strMed = new ToStringMediator(this, builder,
 				NO_STRING, false, false);
-		strMed.forward(getTypedThis());
+		strMed.forward(this);
 		return builder.toString();
 	}
 
@@ -1259,7 +1259,7 @@ public abstract class Formula<T extends Formula<T>> {
 		final StringBuilder builder = new StringBuilder();
 		final ToStringMediator strMed = new ToStringMediator(this, builder,
 				NO_STRING, true, false);
-		strMed.forward(getTypedThis());
+		strMed.forward(this);
 		return builder.toString();
 	}
 	
