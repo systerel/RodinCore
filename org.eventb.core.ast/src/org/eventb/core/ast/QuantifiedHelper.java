@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eventb.core.ast;
 
-import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
-
 import java.util.List;
 
 import org.eventb.internal.core.ast.BoundIdentDeclRemover;
@@ -64,27 +62,6 @@ abstract class QuantifiedHelper {
 
 	static boolean sameType(Type left, Type right) {
 		return left == null ? right == null : left.equals(right);
-	}
-	
-	/*
-	 * Appends the list of names to the given string builder.
-	 */
-	protected static void appendBoundIdentifiersString(StringBuilder builder,
-			String[] names, BoundIdentDecl[] decls, boolean withTypes) {
-		
-		String separator = "";
-		for (int i = 0; i < names.length; ++i) {
-			builder.append(separator);
-			separator = ",";
-			builder.append(names[i]);
-			if (withTypes) {
-				final BoundIdentDecl decl = decls[i];
-				if (decl.isTypeChecked()) {
-					builder.append(OFTYPE.getImage());
-					builder.append(decl.getType());
-				}
-			}
-		}
 	}
 
 	/**
