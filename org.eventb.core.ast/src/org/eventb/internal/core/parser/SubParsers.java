@@ -640,11 +640,8 @@ public class SubParsers {
 			final Expression result;
 			if (left instanceof ExtendedExpression) {
 				final ExtendedExpression extExpr = (ExtendedExpression) left;
-				// TODO ExtendedExpression.getExtension()
-				final IExpressionExtension extension = (IExpressionExtension) pc.factory
-						.getExtension(left.getTag());
-				result = pc.factory.makeExtendedExpression(extension,
-						extExpr.getChildExpressions(),
+				result = pc.factory.makeExtendedExpression(
+						extExpr.getExtension(), extExpr.getChildExpressions(),
 						extExpr.getChildPredicates(), sourceLoc, type);
 			} else {
 				result = pc.factory.makeAtomicExpression(left.getTag(),
