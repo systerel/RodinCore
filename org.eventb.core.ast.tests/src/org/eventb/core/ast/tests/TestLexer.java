@@ -16,7 +16,6 @@ package org.eventb.core.ast.tests;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.INT_LIT;
-import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PARTITION;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PRED_VAR;
 import static org.eventb.internal.core.parser.BMathV2.B_MATH_V2;
 import static org.junit.Assert.assertEquals;
@@ -30,7 +29,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.extension.IFormulaExtension;
@@ -40,6 +38,7 @@ import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.lexer.Token;
+import org.eventb.internal.core.parser.AbstractGrammar;
 import org.eventb.internal.core.parser.ParseResult;
 import org.junit.Test;
 
@@ -54,20 +53,16 @@ import org.junit.Test;
  */
 public class TestLexer extends AbstractTests {
 
+	/*
+	 * Operators that are used in classical B but are meaningless in Event-B. 
+	 */
 	private static final String[] invalidStrings = new String[] { "-", "/", };
-
-	private static int getExpectedKind(int kind, FormulaFactory factory) {
-		if (kind == B_MATH_V2.getKind(PARTITION) && factory == ffV1)
-			return B_MATH_V2.getKind(IDENT);
-		return kind;
-	}
 
 	/**
 	 * Tests all the tokens that are needed to construct an event-B formula.
 	 */
 	@Test 
 	public void testToken() {
-
 		for (FormulaFactory factory : ALL_VERSION_FACTORIES) {
 			testAllTokens(factory);
 		}
@@ -75,32 +70,34 @@ public class TestLexer extends AbstractTests {
 
 	// Check each token string through the lexical analyzer.
 	private void testAllTokens(FormulaFactory factory) {
-		for (Entry<String, Integer> token : B_MATH_V2.getTokens().entrySet()) {
+		final AbstractGrammar grammar = factory.getGrammar();
+		for (Entry<String, Integer> token : grammar.getTokens().entrySet()) {
 			final String image = token.getKey();
 			final Integer kind = token.getValue();
 			testToken(image, kind, factory);
 		}
-		testToken("", B_MATH_V2.getKind(EOF), factory);
-		testToken("x", B_MATH_V2.getKind(IDENT), factory);
-		testToken("_toto", B_MATH_V2.getKind(IDENT), factory);
-		testToken("x'", B_MATH_V2.getKind(IDENT), factory);
-		testToken("2", B_MATH_V2.getKind(INT_LIT), factory);
-		testToken("3000000000", B_MATH_V2.getKind(INT_LIT), factory);
-		testToken("50000000000000000000", B_MATH_V2.getKind(INT_LIT), factory);
-		testToken("001", B_MATH_V2.getKind(INT_LIT), factory);
-		testToken("$P", B_MATH_V2.getKind(PRED_VAR), factory);
-		testToken("$_toto", B_MATH_V2.getKind(PRED_VAR), factory);
-		testToken("p'", B_MATH_V2.getKind(IDENT), factory);
-		testToken("prj'", B_MATH_V2.getKind(IDENT), factory);
+		testToken("", grammar.getKind(EOF), factory);
+		testToken("x", grammar.getKind(IDENT), factory);
+		testToken("_toto", grammar.getKind(IDENT), factory);
+		testToken("x'", grammar.getKind(IDENT), factory);
+		testToken("2", grammar.getKind(INT_LIT), factory);
+		testToken("3000000000", grammar.getKind(INT_LIT), factory);
+		testToken("50000000000000000000", grammar.getKind(INT_LIT), factory);
+		testToken("001", grammar.getKind(INT_LIT), factory);
+		testToken("$P", grammar.getKind(PRED_VAR), factory);
+		testToken("$_toto", grammar.getKind(PRED_VAR), factory);
+		testToken("p'", grammar.getKind(IDENT), factory);
+		testToken("prj'", grammar.getKind(IDENT), factory);
 	}
 
-	private void testToken(String image, Integer kind, FormulaFactory factory) {
-		ParseResult result = new ParseResult(factory, null);
-		Scanner scanner = new Scanner(image, result, B_MATH_V2);
-		Token t = scanner.Scan();
+	private void testToken(String image, int expectedKind, FormulaFactory factory) {
+		final ParseResult result = new ParseResult(factory, null);
+		final AbstractGrammar grammar = factory.getGrammar();
+		final Scanner scanner = new Scanner(image, result, grammar);
+		final Token t = scanner.Scan();
 		assertEquals(image, t.val);
 		final String msg = "for \"" + image + "\" with factory " + factory;
-		assertEquals(msg, getExpectedKind(kind, factory), t.kind);
+		assertEquals(msg, expectedKind, t.kind);
 	}
 
 	/**
@@ -113,12 +110,11 @@ public class TestLexer extends AbstractTests {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void testInvalidStrings(FormulaFactory factory) {
 		for (String string : invalidStrings) {
-			final IParseResult result = new ParseResult(factory, null);
-			Scanner scanner = new Scanner(string, (ParseResult) result,
-					B_MATH_V2);
+			final ParseResult result = new ParseResult(factory, null);
+			final AbstractGrammar grammar = factory.getGrammar();
+			final Scanner scanner = new Scanner(string, result, grammar);
 			Token t = scanner.Scan();
 			assertTrue("Scanner should have succeeded", result.isSuccess());
 			assertTrue(t.kind == 0); // _EOF
@@ -152,7 +148,8 @@ public class TestLexer extends AbstractTests {
 		assertTrue(FormulaFactory.checkSymbol(ident));
 
 		final ParseResult result = new ParseResult(ff, null);
-		final Scanner scanner = new Scanner(ident, result, B_MATH_V2);
+		final AbstractGrammar grammar = ff.getGrammar();
+		final Scanner scanner = new Scanner(ident, result, grammar);
 		final Token t = scanner.Scan();
 		
 		assertFalse(result.hasProblem());
