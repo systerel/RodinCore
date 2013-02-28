@@ -155,11 +155,11 @@ public class TestParser extends AbstractTests {
 		TestPair(String image, Formula<?>[] expects) {
 			this.image = image;
 			this.expects = expects;
-			assertEquals(FACTORIES_VERSIONS.length, expects.length);
+			assertEquals(ALL_VERSION_FACTORIES.length, expects.length);
 		}
 		final void verify() {
-			for (int i = 0; i < FACTORIES_VERSIONS.length; ++i) {
-				final FormulaFactory fLangVersion = FACTORIES_VERSIONS[i];
+			for (int i = 0; i < ALL_VERSION_FACTORIES.length; ++i) {
+				final FormulaFactory fLangVersion = ALL_VERSION_FACTORIES[i];
 				final Formula<?> expected = expects[i];
 				if (expected == null) {
 					verifyFailure(fLangVersion);

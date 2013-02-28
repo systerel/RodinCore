@@ -206,15 +206,15 @@ public class TestTypedGeneric extends AbstractTests {
 	}
 	
 	private void doTest(Expression expr, Type expected) {
-		doTest(expr, expected, FACTORIES_VERSIONS);
+		doTest(expr, expected, ALL_VERSION_FACTORIES);
 	}
 	
-	private void doTest(Expression expr, Type expected, FormulaFactory... fVersions) {
+	private void doTest(Expression expr, Type expected, FormulaFactory... factories) {
 		assertTrue("Input is not typed", expr.isTypeChecked());
 		assertEquals("Bad type", expected, expr.getType());
 		final String image = expr.toStringWithTypes();
-		for (FormulaFactory fVersion : fVersions) {
-			final Expression actual = parseExpression(image, fVersion);
+		for (FormulaFactory factory : factories) {
+			final Expression actual = parseExpression(image, factory);
 			typeCheck(actual);
 			assertEquals("Typed string is a different expression", expr, actual);
 		}
@@ -296,14 +296,14 @@ public class TestTypedGeneric extends AbstractTests {
 	
 	// test on all parser versions
 	private void doTest(Predicate pred) {
-		doTest(pred, FACTORIES_VERSIONS);
+		doTest(pred, ALL_VERSION_FACTORIES);
 	}
 	
-	private void doTest(Predicate pred, FormulaFactory... fVersions) {
+	private void doTest(Predicate pred, FormulaFactory... factories) {
 		assertTrue("Input is not typed", pred.isTypeChecked());
 		final String image = pred.toStringWithTypes();
-		for (FormulaFactory fVersion : fVersions){
-			final Predicate actual = parsePredicate(image, fVersion);
+		for (FormulaFactory factory : factories){
+			final Predicate actual = parsePredicate(image, factory);
 			typeCheck(actual);
 			assertEquals("Typed string is a different predicate", pred, actual);
 		}
@@ -363,8 +363,8 @@ public class TestTypedGeneric extends AbstractTests {
 	private void doTest(Assignment assign) {
 		assertTrue("Input is not typed", assign.isTypeChecked());
 		final String image = assign.toStringWithTypes();
-		for (FormulaFactory fVersion : FACTORIES_VERSIONS) {
-			final Assignment actual = parseAssignment(image, fVersion);
+		for (FormulaFactory factory : ALL_VERSION_FACTORIES) {
+			final Assignment actual = parseAssignment(image, factory);
 			typeCheck(actual);
 			assertEquals("Typed string is a different predicate", assign, actual);
 		}

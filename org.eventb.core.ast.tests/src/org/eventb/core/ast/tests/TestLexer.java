@@ -56,8 +56,8 @@ public class TestLexer extends AbstractTests {
 
 	private static final String[] invalidStrings = new String[] { "-", "/", };
 
-	private static int getExpectedKind(int kind, FormulaFactory fVersion) {
-		if (kind == B_MATH_V2.getKind(PARTITION) && fVersion == ffV1)
+	private static int getExpectedKind(int kind, FormulaFactory factory) {
+		if (kind == B_MATH_V2.getKind(PARTITION) && factory == ffV1)
 			return B_MATH_V2.getKind(IDENT);
 		return kind;
 	}
@@ -68,39 +68,39 @@ public class TestLexer extends AbstractTests {
 	@Test 
 	public void testToken() {
 
-		for (FormulaFactory fVersion : FACTORIES_VERSIONS) {
-			testAllTokens(fVersion);
+		for (FormulaFactory factory : ALL_VERSION_FACTORIES) {
+			testAllTokens(factory);
 		}
 	}
 
 	// Check each token string through the lexical analyzer.
-	private void testAllTokens(FormulaFactory fVersion) {
+	private void testAllTokens(FormulaFactory factory) {
 		for (Entry<String, Integer> token : B_MATH_V2.getTokens().entrySet()) {
 			final String image = token.getKey();
 			final Integer kind = token.getValue();
-			testToken(image, kind, fVersion);
+			testToken(image, kind, factory);
 		}
-		testToken("", B_MATH_V2.getKind(EOF), fVersion);
-		testToken("x", B_MATH_V2.getKind(IDENT), fVersion);
-		testToken("_toto", B_MATH_V2.getKind(IDENT), fVersion);
-		testToken("x'", B_MATH_V2.getKind(IDENT), fVersion);
-		testToken("2", B_MATH_V2.getKind(INT_LIT), fVersion);
-		testToken("3000000000", B_MATH_V2.getKind(INT_LIT), fVersion);
-		testToken("50000000000000000000", B_MATH_V2.getKind(INT_LIT), fVersion);
-		testToken("001", B_MATH_V2.getKind(INT_LIT), fVersion);
-		testToken("$P", B_MATH_V2.getKind(PRED_VAR), fVersion);
-		testToken("$_toto", B_MATH_V2.getKind(PRED_VAR), fVersion);
-		testToken("p'", B_MATH_V2.getKind(IDENT), fVersion);
-		testToken("prj'", B_MATH_V2.getKind(IDENT), fVersion);
+		testToken("", B_MATH_V2.getKind(EOF), factory);
+		testToken("x", B_MATH_V2.getKind(IDENT), factory);
+		testToken("_toto", B_MATH_V2.getKind(IDENT), factory);
+		testToken("x'", B_MATH_V2.getKind(IDENT), factory);
+		testToken("2", B_MATH_V2.getKind(INT_LIT), factory);
+		testToken("3000000000", B_MATH_V2.getKind(INT_LIT), factory);
+		testToken("50000000000000000000", B_MATH_V2.getKind(INT_LIT), factory);
+		testToken("001", B_MATH_V2.getKind(INT_LIT), factory);
+		testToken("$P", B_MATH_V2.getKind(PRED_VAR), factory);
+		testToken("$_toto", B_MATH_V2.getKind(PRED_VAR), factory);
+		testToken("p'", B_MATH_V2.getKind(IDENT), factory);
+		testToken("prj'", B_MATH_V2.getKind(IDENT), factory);
 	}
 
-	private void testToken(String image, Integer kind, FormulaFactory fVersion) {
-		ParseResult result = new ParseResult(fVersion, null);
+	private void testToken(String image, Integer kind, FormulaFactory factory) {
+		ParseResult result = new ParseResult(factory, null);
 		Scanner scanner = new Scanner(image, result, B_MATH_V2);
 		Token t = scanner.Scan();
 		assertEquals(image, t.val);
-		final String msg = "for \"" + image + "\" with factory " + fVersion;
-		assertEquals(msg, getExpectedKind(kind, fVersion), t.kind);
+		final String msg = "for \"" + image + "\" with factory " + factory;
+		assertEquals(msg, getExpectedKind(kind, factory), t.kind);
 	}
 
 	/**
@@ -108,15 +108,15 @@ public class TestLexer extends AbstractTests {
 	 */
 	@Test 
 	public void testInvalidStrings() {
-		for (FormulaFactory fVersion : FACTORIES_VERSIONS) {
-			testInvalidStrings(fVersion);
+		for (FormulaFactory factory : ALL_VERSION_FACTORIES) {
+			testInvalidStrings(factory);
 		}
 	}
 
 	@SuppressWarnings("deprecation")
-	private void testInvalidStrings(FormulaFactory fVersion) {
+	private void testInvalidStrings(FormulaFactory factory) {
 		for (String string : invalidStrings) {
-			final IParseResult result = new ParseResult(fVersion, null);
+			final IParseResult result = new ParseResult(factory, null);
 			Scanner scanner = new Scanner(string, (ParseResult) result,
 					B_MATH_V2);
 			Token t = scanner.Scan();

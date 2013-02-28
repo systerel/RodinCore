@@ -58,7 +58,7 @@ public abstract class AbstractTests {
 	public static final FormulaFactory ffV1 = FormulaFactory.getV1Default();
 
 	// Default formula factories for V1 and V2 languages versions
-	protected static final FormulaFactory[] FACTORIES_VERSIONS = { ffV1, ff };
+	protected static final FormulaFactory[] ALL_VERSION_FACTORIES = { ffV1, ff };
 
 	// Utility arrays for building extended formulas
 	public static final Expression[] NO_EXPRS = new Expression[0];

@@ -137,13 +137,13 @@ public class TestUnparse extends AbstractTests {
 
 	private static abstract class TestPair {
 		final String image;
-		final FormulaFactory fVersion;
+		final FormulaFactory factory;
 		TestPair(String image) {
 			this(image, ffV1);
 		}
-		TestPair(String image, FormulaFactory fVersion) {
+		TestPair(String image, FormulaFactory factory) {
 			this.image = image;
-			this.fVersion = fVersion;
+			this.factory = factory;
 		}
 		abstract Formula<?> getFormula();
 		abstract Formula<?> parseAndCheck(String input);
@@ -169,8 +169,8 @@ public class TestUnparse extends AbstractTests {
 			super(image);
 			this.formula = formula;
 		}
-		ExprTestPair(String image, FormulaFactory fVersion, Expression formula) {
-			super(image, fVersion);
+		ExprTestPair(String image, FormulaFactory factory, Expression formula) {
+			super(image, factory);
 			this.formula = formula;
 		}
 		@Override 
@@ -179,7 +179,7 @@ public class TestUnparse extends AbstractTests {
 		}
 		@Override 
 		Expression parseAndCheck(String input) {
-			final Expression actual = parseExpression(input, fVersion);
+			final Expression actual = parseExpression(input, factory);
 			assertEquals("Unexpected parser result", formula, actual);
 			return actual;
 		}
@@ -191,8 +191,8 @@ public class TestUnparse extends AbstractTests {
 			super(image);
 			this.formula = formula;
 		}
-		PredTestPair(String image, FormulaFactory fVersion, Predicate formula) {
-			super(image, fVersion);
+		PredTestPair(String image, FormulaFactory factory, Predicate formula) {
+			super(image, factory);
 			this.formula = formula;
 		}
 		@Override 
@@ -201,7 +201,7 @@ public class TestUnparse extends AbstractTests {
 		}
 		@Override 
 		Predicate parseAndCheck(String input) {
-			final Predicate actual = parsePredicate(input, fVersion);
+			final Predicate actual = parsePredicate(input, factory);
 			assertEquals("Unexpected parser result", formula, actual);
 			return actual;
 		}
@@ -219,7 +219,7 @@ public class TestUnparse extends AbstractTests {
 		}
 		@Override 
 		Assignment parseAndCheck(String input) {
-			final Assignment actual = parseAssignment(input, fVersion);
+			final Assignment actual = parseAssignment(input, factory);
 			assertEquals("Unexpected parser result", formula, actual);
 			return actual;
 		}
@@ -1607,46 +1607,46 @@ public class TestUnparse extends AbstractTests {
 	}
 
 	public void routineUnparse(TagSupply tagSupply) {
-		final FormulaFactory fVer = tagSupply.factory;
+		final FormulaFactory fac = tagSupply.factory;
 
-		routineTest(constructAssociativeAssociativeTrees(tagSupply), fVer);
-		routineTest(constructBinaryBinaryTrees(tagSupply), fVer);
-		routineTest(constructUnaryUnaryTrees(tagSupply), fVer);
-		routineTest(constructQuantifiedQuantifiedTrees(), fVer);
-		routineTest(constructAssociativeBinaryTrees(tagSupply), fVer);
-		routineTest(constructAssociativeUnaryTrees(tagSupply), fVer);
-		routineTest(constructBinaryUnaryTrees(tagSupply), fVer);
-		routineTest(constructQuantifiedBinaryTrees(tagSupply), fVer);
-		routineTest(constructQuantifiedAssociativeTree(tagSupply), fVer);
-		routineTest(constructQuantifiedUnaryTree(tagSupply), fVer);
-		routineTest(constructAssociativeAssociativePredicateTree(tagSupply), fVer);
-		routineTest(constructAssociativePredicateVariableTrees(tagSupply), fVer);
-		routineTest(constructBinaryBinaryPredicateTrees(tagSupply), fVer);
-		routineTest(constructBinaryPredicateVariableTrees(tagSupply), fVer);
-		routineTest(constructUnaryUnaryPredicateTrees(tagSupply), fVer);
-		routineTest(constructUnaryPredicateVariableTrees(tagSupply), fVer);
-		routineTest(constructAssociativeBinaryPredicateTrees(tagSupply), fVer);
-		routineTest(constructAssociativeUnaryPredicateTrees(tagSupply), fVer);
-		routineTest(constructBinaryUnaryPredicateTrees(tagSupply), fVer);
-		routineTest(constructQuantifiedQuantifiedPredicateTrees(tagSupply), fVer);
-		routineTest(constructQuantifiedBinaryPredicateTrees(tagSupply), fVer);
-		routineTest(constructQuantifiedAssociativePredicateTrees(tagSupply), fVer);
-		routineTest(constructQuantifiedUnaryPredicateTrees(tagSupply), fVer);
-		routineTest(constructQuantifiedPredicateVariableTrees(tagSupply), fVer);
-		routineTest(constructMultiplePredicateTrees(tagSupply), fVer);
-		routineTest(constructRelop(tagSupply), fVer);
-		routineTest(constructQuantifierWithPredicate(tagSupply), fVer);
+		routineTest(constructAssociativeAssociativeTrees(tagSupply), fac);
+		routineTest(constructBinaryBinaryTrees(tagSupply), fac);
+		routineTest(constructUnaryUnaryTrees(tagSupply), fac);
+		routineTest(constructQuantifiedQuantifiedTrees(), fac);
+		routineTest(constructAssociativeBinaryTrees(tagSupply), fac);
+		routineTest(constructAssociativeUnaryTrees(tagSupply), fac);
+		routineTest(constructBinaryUnaryTrees(tagSupply), fac);
+		routineTest(constructQuantifiedBinaryTrees(tagSupply), fac);
+		routineTest(constructQuantifiedAssociativeTree(tagSupply), fac);
+		routineTest(constructQuantifiedUnaryTree(tagSupply), fac);
+		routineTest(constructAssociativeAssociativePredicateTree(tagSupply), fac);
+		routineTest(constructAssociativePredicateVariableTrees(tagSupply), fac);
+		routineTest(constructBinaryBinaryPredicateTrees(tagSupply), fac);
+		routineTest(constructBinaryPredicateVariableTrees(tagSupply), fac);
+		routineTest(constructUnaryUnaryPredicateTrees(tagSupply), fac);
+		routineTest(constructUnaryPredicateVariableTrees(tagSupply), fac);
+		routineTest(constructAssociativeBinaryPredicateTrees(tagSupply), fac);
+		routineTest(constructAssociativeUnaryPredicateTrees(tagSupply), fac);
+		routineTest(constructBinaryUnaryPredicateTrees(tagSupply), fac);
+		routineTest(constructQuantifiedQuantifiedPredicateTrees(tagSupply), fac);
+		routineTest(constructQuantifiedBinaryPredicateTrees(tagSupply), fac);
+		routineTest(constructQuantifiedAssociativePredicateTrees(tagSupply), fac);
+		routineTest(constructQuantifiedUnaryPredicateTrees(tagSupply), fac);
+		routineTest(constructQuantifiedPredicateVariableTrees(tagSupply), fac);
+		routineTest(constructMultiplePredicateTrees(tagSupply), fac);
+		routineTest(constructRelop(tagSupply), fac);
+		routineTest(constructQuantifierWithPredicate(tagSupply), fac);
 	}
 	
 	
-	private void routineTest(Formula<?>[] formulae, FormulaFactory fVersion) {
+	private void routineTest(Formula<?>[] formulae, FormulaFactory factory) {
 		for (int i = 0; i < formulae.length; i++) {
 			final TestPair pair;
 			if (formulae[i] instanceof Expression) {
-				pair = new ExprTestPair(null, fVersion,
+				pair = new ExprTestPair(null, factory,
 						(Expression) formulae[i]);
 			} else {
-				pair = new PredTestPair(null, fVersion,
+				pair = new PredTestPair(null, factory,
 						(Predicate) formulae[i]);
 			}
 			

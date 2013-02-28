@@ -38,16 +38,16 @@ public class TestConflictResolver extends AbstractTests {
 	private class TestItem {
 		final String input;
 		final Formula<?> expectedTree;
-		final FormulaFactory[] fVersions;
-		
+		final FormulaFactory[] factories;
+
 		TestItem(String input, Formula<?> expectedTree,
-				FormulaFactory... fVersions) {
+				FormulaFactory... factories) {
 			this.expectedTree = expectedTree;
 			this.input = input;
-			if (fVersions.length == 0) {
-				this.fVersions = FACTORIES_VERSIONS;
+			if (factories.length == 0) {
+				this.factories = ALL_VERSION_FACTORIES;
 			} else {
-				this.fVersions = fVersions;
+				this.factories = factories;
 			}
 		}
 	}
@@ -163,8 +163,8 @@ public class TestConflictResolver extends AbstractTests {
 	@Test 
 	public void testConflict() {
 		for (TestItem item : testItems) {
-			for (FormulaFactory fVersion: item.fVersions) {
-				final Predicate actual = parsePredicate(item.input, fVersion);
+			for (FormulaFactory factory: item.factories) {
+				final Predicate actual = parsePredicate(item.input, factory);
 				assertEquals("\nTest failed on: " + item.input
 						+ "\nTree expected: " + item.expectedTree.getSyntaxTree()
 						+ "\nTree received: "
