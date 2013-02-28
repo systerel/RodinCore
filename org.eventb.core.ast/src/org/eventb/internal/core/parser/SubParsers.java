@@ -37,6 +37,7 @@ import static org.eventb.internal.core.parser.MainParsers.PRED_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.TYPE_PARSER;
 import static org.eventb.internal.core.parser.MainParsers.asExpression;
 import static org.eventb.internal.core.parser.MainParsers.asPredicate;
+import static org.eventb.internal.core.parser.MainParsers.PatternParser.appendPattern;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -1004,8 +1005,7 @@ public class SubParsers {
 		public void toString(IToStringMediator mediator,
 				BinaryExpression toPrint) {
 			super.toString(mediator, toPrint);
-			final int closeKind = getCloseKind(toPrint.getFactory()
-					.getGrammar());
+			final int closeKind = getCloseKind(mediator.getGrammar());
 			mediator.appendImage(closeKind);
 		}
 	}
@@ -1091,8 +1091,7 @@ public class SubParsers {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
 			printBoundIdentDecls(mediator, boundDecls);
-			final int dot = toPrint.getFactory().getGrammar().getKind(DOT);
-			mediator.appendImage(dot);
+			mediator.append(DOT);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 		}
 	}
@@ -1190,18 +1189,10 @@ public class SubParsers {
 			if (members.length > 0) {
 				EXPR_LIST_PARSER.toString(mediator, asList(members));
 			}
-			final int rbrace = toPrint.getFactory().getGrammar().getKind(RBRACE);
-			mediator.appendImage(rbrace);
+			mediator.append(RBRACE);
 		}
 	}
 	
-	static void printMid(IToStringMediator mediator, Formula<?> toPrint) {
-		mediator.append(SPACE);
-		final int mid = toPrint.getFactory().getGrammar().getKind(MID);
-		mediator.appendImage(mid);
-		mediator.append(SPACE);
-	}
-
 	public static interface IQuantifiedParser<R> extends INudParser<R> {
 		void setLocalNames(String[] localNames);
 	}
@@ -1263,10 +1254,9 @@ public class SubParsers {
 			super.toString(mediator, toPrint);
 			final BoundIdentDecl[] boundDecls = toPrint.getBoundIdentDecls();
 			printBoundIdentDecls(mediator, boundDecls);
-			final int dot = toPrint.getFactory().getGrammar().getKind(DOT);
-			mediator.appendImage(dot);
+			mediator.append(DOT);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
-			printMid(mediator, toPrint);
+			mediator.append(MID);
 			mediator.subPrintNoPar(toPrint.getExpression(), false, getLocalNames());
 		}
 	}
@@ -1286,8 +1276,7 @@ public class SubParsers {
 		@Override
 		public void toString(IToStringMediator mediator, QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
-			final int rbrace = toPrint.getFactory().getGrammar().getKind(RBRACE);
-			mediator.appendImage(rbrace);
+			mediator.append(RBRACE);
 		}
 	}
 	
@@ -1331,7 +1320,7 @@ public class SubParsers {
 				QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
 			mediator.subPrintNoPar(toPrint.getExpression(), false, getLocalNames());
-			printMid(mediator, toPrint);
+			mediator.append(MID);
 			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
 		}
 		
@@ -1352,8 +1341,7 @@ public class SubParsers {
 		@Override
 		public void toString(IToStringMediator mediator, QuantifiedExpression toPrint) {
 			super.toString(mediator, toPrint);
-			final int rbrace = toPrint.getFactory().getGrammar().getKind(RBRACE);
-			mediator.appendImage(rbrace);
+			mediator.append(RBRACE);
 		}
 	}
 	
@@ -1389,14 +1377,13 @@ public class SubParsers {
 			assert child.getTag() == MAPSTO;
 			final BinaryExpression pair = (BinaryExpression) child;
 			final Expression pattern = pair.getLeft();
-			
-			PatternParser.appendPattern(mediator, pattern, toPrint.getBoundIdentDecls(), getLocalNames());
-			
-			final int dot = toPrint.getFactory().getGrammar().getKind(DOT);
-			mediator.appendImage(dot);
-			mediator.subPrintNoPar(toPrint.getPredicate(), false, getLocalNames());
-			printMid(mediator, toPrint);
-			mediator.subPrintNoPar(pair.getRight(), false, getLocalNames());
+			final BoundIdentDecl[] bids = toPrint.getBoundIdentDecls();
+			final String[] localNames = getLocalNames();
+			appendPattern(mediator, pattern, bids, localNames);
+			mediator.append(DOT);
+			mediator.subPrintNoPar(toPrint.getPredicate(), false, localNames);
+			mediator.append(MID);
+			mediator.subPrintNoPar(pair.getRight(), false, localNames);
 		}
 	}
 
