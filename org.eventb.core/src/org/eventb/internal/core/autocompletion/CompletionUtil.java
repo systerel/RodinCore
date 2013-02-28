@@ -178,7 +178,7 @@ public class CompletionUtil {
 				// Retrieve root to get the associated formula factory
 				final IEventBRoot root = (IEventBRoot) locElem.getRoot();
 				final FormulaFactory ff = root.getFormulaFactory();
-				final IParseResult result = ff.parseAssignment(assign, assign);
+				final IParseResult result = ff.parseAssignment(assign, null);
 				if (result.hasProblem()) {
 					continue;
 				}
