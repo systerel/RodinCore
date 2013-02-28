@@ -151,7 +151,7 @@ import org.eventb.internal.core.typecheck.TypeUnifier;
 		final String opId = extension.getId();
 		final String groupId = extension.getGroupId();
 		final String syntaxSymbol = extension.getSyntaxSymbol();
-		final AbstractGrammar grammar = formula.getFactory().getGrammar();
+		final AbstractGrammar grammar = mediator.getGrammar();
 		final IOperatorInfo<? extends Formula<?>> opInfo = grammar.getParser(
 				properties, syntaxSymbol, formula.getTag(), opId, groupId);
 		return opInfo.makeParser(mediator.getKind());

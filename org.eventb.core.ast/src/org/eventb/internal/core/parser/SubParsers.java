@@ -744,7 +744,7 @@ public class SubParsers {
 		}
 
 		public static void appendOftype(IToStringMediator mediator, Type type, boolean withSpaces) {
-			final int oftype = type.getFactory().getGrammar().getKind(OFTYPE);
+			final int oftype = mediator.getGrammar().getKind(OFTYPE);
 			mediator.appendImage(oftype, withSpaces);
 			/*
 			 * If we were rigorous, the next line should be
