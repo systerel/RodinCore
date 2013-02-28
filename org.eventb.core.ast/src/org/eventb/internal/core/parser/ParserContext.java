@@ -517,7 +517,7 @@ public class ParserContext {
 		if (parentKind.val != eof) {
 			throw new IllegalStateException("Improper parent stack: "
 					+ parentKind + " with " + parentKind.val + " = "
-					+ factory.getGrammar().getImage(parentKind.val));
+					+ grammar.getImage(parentKind.val));
 		}
 	}
 }
