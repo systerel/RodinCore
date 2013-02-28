@@ -15,10 +15,8 @@ import static org.eventb.internal.core.lexer.LexicalClass.SYMBOL;
 import static org.eventb.internal.core.lexer.LexicalClass.WHITESPACE;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
-import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PARTITION;
 
 import org.eventb.core.ast.ASTProblem;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.SourceLocation;
@@ -195,17 +193,7 @@ public class GenLexer {
 			stream.goForward();
 			lexem = stream.getLexem();
 		}
-		return makeToken(kind, lexem);
-	}
-
-	private Token makeToken(int kind, String val) {
-		if (result.getFormulaFactory() == FormulaFactory.getV1Default()
-				&& kind == grammar.getKind(PARTITION)) {
-			return new Token(grammar.getKind(IDENT), val,
-					stream.getTokenStart());
-		} else {
-			return new Token(kind, val, stream.getTokenStart());
-		}
+		return new Token(kind, lexem, stream.getTokenStart());
 	}
 
 	private Token makeEOF() {

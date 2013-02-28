@@ -80,7 +80,6 @@ public abstract class AbstractGrammar {
 		MAPS_TO("\u21a6", false),
 		MID("\u2223", false),
 		DOT("\u00b7", false),
-		PARTITION("partition", false),
 		OFTYPE("\u2982", false);
 
 		private final String image;

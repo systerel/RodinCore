@@ -15,7 +15,6 @@ import static org.eventb.core.ast.AssociativeHelper.isLegibleList;
 import static org.eventb.core.ast.extension.StandardGroup.ATOMIC_PRED;
 import static org.eventb.internal.core.ast.FormulaChecks.ensureMinLength;
 import static org.eventb.internal.core.ast.FormulaChecks.ensureTagInRange;
-import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.PARTITION;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -61,7 +60,7 @@ public class MultiplePredicate extends Predicate {
 	private static final int FIRST_TAG = FIRST_MULTIPLE_PREDICATE;
 
 	private static enum Operators implements IOperatorInfo<MultiplePredicate> {
-		OP_KPARTITION(PARTITION.getImage(), KPARTITION_ID, ATOMIC_PRED),
+		OP_KPARTITION("partition", KPARTITION_ID, ATOMIC_PRED),
 		;
 		
 		private final String image;
