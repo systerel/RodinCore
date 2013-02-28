@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Universitaet Duesseldorf - added theorem attribute
  *     Systerel - added method getEventBProject()
  *     Systerel - added methods for generated elements
+ *     Systerel - added method for fetching source
  *******************************************************************************/
 package org.eventb.core.basis;
 
@@ -241,6 +242,18 @@ public abstract class EventBElement extends InternalElement {
 
 	public IRodinElement getSource() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE);
+	}
+
+	/**
+	 * Returns the source attribute of this element or <code>null</code> if
+	 * absent.
+	 * @since 3.0
+	 */
+	public IRodinElement getSourceIfExists() throws RodinDBException {
+		if (hasAttribute(EventBAttributes.SOURCE_ATTRIBUTE)) {
+			return getAttributeValue(EventBAttributes.SOURCE_ATTRIBUTE);
+		}
+		return null;
 	}
 
 	public boolean hasTheorem() throws RodinDBException {

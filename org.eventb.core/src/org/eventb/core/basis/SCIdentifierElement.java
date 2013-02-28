@@ -17,6 +17,7 @@ import org.eventb.core.ISCIdentifierElement;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IParseResult;
+import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.internal.core.Messages;
 import org.eventb.internal.core.Util;
@@ -54,15 +55,12 @@ public abstract class SCIdentifierElement extends EventBElement
 	}
 	
 	@Override
-	public Type getType(FormulaFactory factory) 
-	throws RodinDBException {
-		String contents = getAttributeValue(EventBAttributes.TYPE_ATTRIBUTE);
-		IParseResult parserResult = factory.parseType(contents);
-		if (parserResult.getProblems().size() != 0) {
+	public Type getType(FormulaFactory factory) throws RodinDBException {
+		final String contents = getAttributeValue(EventBAttributes.TYPE_ATTRIBUTE);
+		final IParseResult parserResult = factory.parseType(contents);
+		if (parserResult.hasProblem()) {
 			throw Util.newRodinDBException(
-					Messages.database_SCIdentifierTypeParseFailure,
-					this
-			);
+					Messages.database_SCIdentifierTypeParseFailure, this);
 		}
 		return parserResult.getParsedType();
 	}
@@ -75,17 +73,17 @@ public abstract class SCIdentifierElement extends EventBElement
 	@Override
 	public FreeIdentifier getIdentifier(FormulaFactory factory)
 			throws RodinDBException {
-
 		final Type type = getType(factory);
-		final String myName = getElementName();
-		if (! factory.isValidIdentifierName(myName)) {
+		final String name = getElementName();
+		if (!factory.isValidIdentifierName(name)) {
 			throw Util.newRodinDBException(
-					Messages.database_SCIdentifierNameParseFailure,
-					this
-			);
+					Messages.database_SCIdentifierNameParseFailure, this);
 		}
-		// TODO enquire about what source location to put
-		return factory.makeFreeIdentifier(getElementName(), null, type);
+		final IRodinElement source = getSourceIfExists();
+		final int start = 0;
+		final int end = name.length() - 1;
+		final SourceLocation sloc = new SourceLocation(start, end, source);
+		return factory.makeFreeIdentifier(name, sloc, type);
 	}
-	
+
 }

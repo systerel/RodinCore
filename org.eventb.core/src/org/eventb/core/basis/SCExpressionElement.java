@@ -54,24 +54,19 @@ public abstract class SCExpressionElement extends EventBElement
 	@Override
 	public Expression getExpression(ITypeEnvironment typenv)
 			throws RodinDBException {
-		
+		final String contents = getExpressionString();
 		final FormulaFactory factory = typenv.getFormulaFactory();
-		String contents = getExpressionString();
-				IParseResult parserResult = factory.parseExpression(contents, null);
-				if (parserResult.getProblems().size() != 0) {
-					throw Util.newRodinDBException(
-							Messages.database_SCExpressionParseFailure,
-							this
-					);
-				}
-				Expression result1 = parserResult.getParsedExpression();
-		Expression result = result1;
-		ITypeCheckResult tcResult = result.typeCheck(typenv);
-		if (! tcResult.isSuccess())  {
+		final IRodinElement source = getSourceIfExists();
+		final IParseResult pResult = factory.parseExpression(contents, source);
+		if (pResult.hasProblem()) {
 			throw Util.newRodinDBException(
-					Messages.database_SCExpressionTCFailure,
-					this
-			);
+					Messages.database_SCExpressionParseFailure, this);
+		}
+		final Expression result = pResult.getParsedExpression();
+		final ITypeCheckResult tcResult = result.typeCheck(typenv);
+		if (!tcResult.isSuccess()) {
+			throw Util.newRodinDBException(
+					Messages.database_SCExpressionTCFailure, this);
 		}
 		assert result.isTypeChecked();
 		return result;

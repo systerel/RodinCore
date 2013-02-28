@@ -54,21 +54,19 @@ public abstract class SCAssignmentElement extends EventBElement
 	@Override
 	public Assignment getAssignment(ITypeEnvironment typenv)
 			throws RodinDBException {
-		
-		String contents = getAssignmentString();
+		final String contents = getAssignmentString();
 		final FormulaFactory factory = typenv.getFormulaFactory();
-		IParseResult parserResult = factory.parseAssignment(contents, null);
-		if (parserResult.getProblems().size() != 0) {
+		final IRodinElement source = getSourceIfExists();
+		final IParseResult pResult = factory.parseAssignment(contents, source);
+		if (pResult.hasProblem()) {
 			throw Util.newRodinDBException(
 					Messages.database_SCAssignmentParseFailure, this);
 		}
-		Assignment result = parserResult.getParsedAssignment();
-		ITypeCheckResult tcResult = result.typeCheck(typenv);
-		if (! tcResult.isSuccess())  {
+		final Assignment result = pResult.getParsedAssignment();
+		final ITypeCheckResult tcResult = result.typeCheck(typenv);
+		if (!tcResult.isSuccess()) {
 			throw Util.newRodinDBException(
-					Messages.database_SCAssignmentTCFailure,
-					this
-			);
+					Messages.database_SCAssignmentTCFailure, this);
 		}
 		assert result.isTypeChecked();
 		return result;
