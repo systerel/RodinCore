@@ -376,13 +376,11 @@ public class MainParsers {
 				final Expression left = maplet.getLeft();
 				final Expression right = maplet.getRight();
 				appendPattern(mediator, left, identDecls, boundNames);
-				final int mapsto = pattern.getFactory().getGrammar()
-						.getKind(MAPS_TO);
-				mediator.appendImage(mapsto);
+				mediator.append(MAPS_TO);
 				final boolean needsParen = right.getTag() == MAPSTO;
-				if (needsParen) mediator.append(LPAR.getImage());
+				if (needsParen) mediator.append(LPAR);
 				appendPattern(mediator, right, identDecls, boundNames);
-				if (needsParen) mediator.append(RPAR.getImage());
+				if (needsParen) mediator.append(RPAR);
 				break;
 			case BOUND_IDENT:
 				final BoundIdentifier ident = (BoundIdentifier) pattern;
@@ -485,7 +483,7 @@ public class MainParsers {
 		}
 
 		protected void appendSeparator(IToStringMediator mediator) {
-			mediator.append(COMMA.getImage());
+			mediator.append(COMMA);
 		}
 		
 	}
@@ -514,7 +512,7 @@ public class MainParsers {
 			assert decls.length == localNames.length;
 			printIdent(mediator, decls, localNames, 0);
 			for (int i = 1; i < decls.length; i++) {
-				mediator.append(COMMA.getImage());
+				mediator.append(COMMA);
 				printIdent(mediator, decls, localNames, i);
 			}
 		}

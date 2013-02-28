@@ -15,11 +15,16 @@ import static org.eventb.core.ast.Formula.KID_GEN;
 import static org.eventb.core.ast.Formula.KPRJ1_GEN;
 import static org.eventb.core.ast.Formula.KPRJ2_GEN;
 import static org.eventb.core.ast.QuantifiedUtil.catenateBoundIdentLists;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MAPS_TO;
+import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.MID;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.OFTYPE;
+
+import java.util.EnumSet;
 
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.parser.AbstractGrammar;
+import org.eventb.internal.core.parser.AbstractGrammar.DefaultToken;
 import org.eventb.internal.core.parser.SubParsers;
 
 /**
@@ -28,7 +33,11 @@ import org.eventb.internal.core.parser.SubParsers;
 /* package */class ToStringMediator implements IToStringMediator {
 
 	private static final char SPACE = ' ';
-	
+
+	// Special tokens which must be surrounded by spaces when pretty-printed.
+	private static final EnumSet<DefaultToken> SPACED = EnumSet
+			.of(MAPS_TO, MID);
+
 	private static final String[] NO_NAME = new String[0];
 
 	private final int kind;
@@ -64,6 +73,16 @@ import org.eventb.internal.core.parser.SubParsers;
 	}
 
 	@Override
+	public void append(DefaultToken token) {
+		boolean withSpaces = SPACED.contains(token);
+		if (withSpaces)
+			builder.append(SPACE);
+		builder.append(token.getImage());
+		if (withSpaces)
+			builder.append(SPACE);
+	}
+
+	@Override
 	public void append(String string) {
 		builder.append(string);
 	}
@@ -73,8 +92,7 @@ import org.eventb.internal.core.parser.SubParsers;
 		subPrint(child, isRightOvr, NO_NAME);
 	}
 
-	@Override
-	public void subPrint(Formula<?> child, boolean isRightOvr,
+	private void subPrint(Formula<?> child, boolean isRightOvr,
 			String[] addedBoundNames) {
 		printChild(child, isRightOvr, addedBoundNames, withTypes);
 	}
@@ -242,6 +260,11 @@ import org.eventb.internal.core.parser.SubParsers;
 			return ((ExtendedExpression)toPrint).isAtomic();
 		}
 		return false;
+	}
+
+	@Override
+	public AbstractGrammar getGrammar() {
+		return grammar;
 	}
 
 }
