@@ -316,62 +316,58 @@ public abstract class Type {
 	public abstract void accept(ITypeVisitor visitor);
 
 	/**
-	 * Checks if the current type can be translated with the given factory.
+	 * Tells whether this type can be translated to the given factory.
 	 * <p>
-	 * A type is compatible with the given factory either if the factory is the
-	 * type factory or if the type does not contain given types which have a
-	 * name that is a reserved word in the given factory and if no extension
-	 * incompatible with the given factory is used in a parametric type.
+	 * This type is translatable if and only if:
+	 * <ul>
+	 * <li>All the given types it contains are compatible with the given factory
+	 * (their names are not reserved keywords);</li>
+	 * <li>All parametric types it contains are supported by the given factory.</li>
+	 * </ul>
 	 * </p>
 	 * 
-	 * @return <code>false</code> only if a call to
-	 *         {@link Type#translate(FormulaFactory)} will fail by raising an
-	 *         exception and returns <code>true</code> otherwise.
+	 * @return <code>true</code> iff this type can be translated to the given
+	 *         factory
+	 * @see #translate(FormulaFactory)
 	 * @since 3.0
 	 */
 	public boolean isTranslatable(FormulaFactory ff) {
-		TranslationVisitor visitor = new TranslationVisitor(ff);
+		final TranslationVisitor visitor = new TranslationVisitor(ff);
 		accept(visitor);
 		return visitor.isTranslatable();
 	}
 
 	/**
-	 * Returns the type built by using the given formula factory.
+	 * Returns a copy of this type built with the given formula factory.
 	 * <p>
-	 * If the type factory and the given factory are the same then the same type
-	 * object is returned. Otherwise a new type object is built.
+	 * If the factory of this type and the given factory are equal, then this
+	 * type is returned. Otherwise a new type object is built.
 	 * </p>
 	 * <p>
-	 * The translation of the type can fail if it contains a given type which
-	 * has a name that is a reserved keyword in the target formula factory or if
-	 * it contains a parametric type which uses an extension that is not
-	 * supported by the target factory. In this latter case an
-	 * {@link IllegalArgumentException} will be raised.
+	 * Clients must ensure that this type can be translated to the given
+	 * factory, prior to calling this method. If it is not translatable, an
+	 * exception is raised.
 	 * </p>
 	 * <p>
-	 * This operation is not supported for {@link TypeVariable}
+	 * This operation is not supported by {@link TypeVariable}
 	 * </p>
 	 * 
 	 * @param ff
-	 *            the factory to use to rebuild the type environment
-	 * @return the type obtained by the rebuilt based on the given factory
+	 *            the factory to use to build a copy of this type
+	 * @return a type equivalent to this type and built with the given factory
 	 * @throws IllegalArgumentException
-	 *             if the type contains a given type for which name is a
-	 *             reserved keyword in the given formula factory
-	 * @throws IllegalArgumentException
-	 *             if the type contains a parametric type which use an extension
-	 *             that is not supported by the given formula factory
+	 *             if this type cannot be translated to the given factory
 	 * @throws UnsupportedOperationException
-	 *             if the type contains a type variable
+	 *             if this type contains a type variable
+	 * @see #isTranslatable(FormulaFactory)
 	 * @since 3.0
 	 */
 	public Type translate(FormulaFactory ff) {
-		if (fac != ff) {
-			TypeRewriter rewriter = new TypeRewriter(ff);
-			return rewriter.rewrite(this);
-		} else {
+		if (fac == ff) {
 			return this;
 		}
+		final TypeRewriter rewriter = new TypeRewriter(ff);
+		return rewriter.rewrite(this);
 	}
 
 	// Visitor which checks that given types do not use a reserved keyword and
