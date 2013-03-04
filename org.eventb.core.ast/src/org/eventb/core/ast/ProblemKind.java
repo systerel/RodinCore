@@ -53,6 +53,14 @@ public enum ProblemKind {
 	LexerError ("Lexer error, character '%1$s' has been ignored"),
 	
 	/**
+	 * Argument 1 is the contents of the token which was expected
+	 * 
+	 * @since 3.0
+	 */
+	DatatypeParsingError(
+			"Invalid recursive datatype: expected '%1$s'"),
+
+	/**
 	 * Argument 1 is the name, argument 2 the alternative type.
 	 * 
 	 * @since 3.0

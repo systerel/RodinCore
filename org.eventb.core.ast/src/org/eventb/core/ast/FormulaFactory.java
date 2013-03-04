@@ -46,11 +46,13 @@ import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.internal.core.ast.extension.ExtnUnicityChecker;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer;
+import org.eventb.internal.core.ast.extension.datatype2.DatatypeBuilder;
 import org.eventb.internal.core.lexer.GenLexer;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.parser.AbstractGrammar;
@@ -226,6 +228,54 @@ public class FormulaFactory {
 				extensions.values());
 		newExtns.addAll(addedExtns);
 		return getInstance(newExtns);
+	}
+
+	/**
+	 * Returns a new datatype builder for the datatype with the given name and
+	 * type parameters. The type parameters are specified as given types.
+	 * 
+	 * @param name
+	 *            the datatype name
+	 * @param parameters
+	 *            the formal type parameters of the datatype
+	 * @return a datatype builder
+	 * @throws IllegalArgumentException
+	 *             if the datatype name is not a valid identifier in this
+	 *             factory
+	 * @throws IllegalArgumentException
+	 *             if the type parameters names are in conflict with each other
+	 *             or with the datatype name
+	 * @throws IllegalArgumentException
+	 *             if one of the type parameters was built with another factory
+	 * @since 3.0
+	 */
+	public IDatatypeBuilder makeDatatypeBuilder(String name,
+			List<GivenType> parameters) {
+		return new DatatypeBuilder(this, name, parameters);
+	}
+
+	/**
+	 * Returns a new datatype builder for the datatype with the given name and
+	 * type parameters. The type parameters are specified as given types.
+	 * 
+	 * @param name
+	 *            the datatype name
+	 * @param parameters
+	 *            the formal type parameters of the datatype
+	 * @return a datatype builder
+	 * @throws IllegalArgumentException
+	 *             if the datatype name is not a valid identifier in this
+	 *             factory
+	 * @throws IllegalArgumentException
+	 *             if the type parameters names are in conflict with each other
+	 *             or with the datatype name
+	 * @throws IllegalArgumentException
+	 *             if one of the type parameters was built with another factory
+	 * @since 3.0
+	 */
+	public IDatatypeBuilder makeDatatypeBuilder(String name,
+			GivenType... parameters) {
+		return new DatatypeBuilder(this, name, Arrays.asList(parameters));
 	}
 
 	/**

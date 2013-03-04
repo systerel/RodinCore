@@ -74,6 +74,8 @@ import org.junit.runners.Suite;
 	TestEnumDatatypeTranslator.class,
 	TestFreshNameSolver.class,
 	TestFactoryTranslation.class,
+	TestDatatypes.class,
+	TestDatatypeParser.class,
 	// $JUnit-END$
 })
 public class AllTests {
