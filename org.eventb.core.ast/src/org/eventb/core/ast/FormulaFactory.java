@@ -530,15 +530,18 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns the formula extension corresponding to the given tag.
+	 * Returns the formula extension corresponding to the given tag, or
+	 * <code>null</code> if the given extension is not supported by this
+	 * factory.
 	 * 
-	 * @return the extension associated to the given tag
+	 * @return the extension associated to the given tag or <code>null</code> if
+	 *         unsupported
 	 * @since 2.0
 	 */
 	public IFormulaExtension getExtension(int tag) {
 		return extensions.get(tag);
 	}
-	
+
 	/**
 	 * Returns all the extensions of the current formula factory.
 	 * 

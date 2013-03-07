@@ -43,6 +43,7 @@ import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
 import static org.eventb.core.ast.tests.TestGenParser.MONEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eventb.core.ast.BoundIdentDecl;
@@ -122,6 +123,34 @@ public class TestFormulaFactory extends AbstractTests {
 		final IPredicateExtension dummy = new PredicateExtension("dummy", false);
 		final int actual = FormulaFactory.getTag(dummy);
 		assertEquals(Formula.NO_TAG, actual);
+	}
+
+	/**
+	 * Ensures that getExtension() returns the extension when supported.
+	 */
+	@Test
+	public void getExtensionForSupportedTag() {
+		final int tag = FormulaFactory.getTag(EXT_LIST);
+		assertEquals(EXT_LIST, LIST_FAC.getExtension(tag));
+	}
+
+	/**
+	 * Ensures that getExtension() returns <code>null</code> when given the tag
+	 * of regular operator (not a formula extension).
+	 */
+	@Test
+	public void getExtensionForRegularTag() {
+		assertNull(ff.getExtension(BUNION));
+	}
+
+	/**
+	 * Ensures that getTag() returns <code>null</code> when passed an extension
+	 * which is not supported by the factory.
+	 */
+	@Test
+	public void getExtensionForUnsupportedTag() {
+		final int tag = FormulaFactory.getTag(EXT_LIST);
+		assertNull(ff.getExtension(tag));
 	}
 
 	/**
