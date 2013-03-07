@@ -300,9 +300,10 @@ public class FormulaFactory {
 	
 	/*
 	 * Returns the tag of the given extension. As a side-effect, verifies that
-	 * this extension is indeed known and supported by this formula factory
+	 * this extension is indeed known and supported by this formula factory.
+	 * Throws an IllegalArgumentException if it is not the case.
 	 */
-	private int getExtensionTag(IFormulaExtension extension) {
+	private int getCheckedExtensionTag(IFormulaExtension extension) {
 		final Integer result = ALL_EXTENSIONS.get(extension);
 		if (result == null) {
 			throw new IllegalArgumentException("Unknown formula extension "
@@ -345,7 +346,7 @@ public class FormulaFactory {
 	public ExtendedExpression makeExtendedExpression(
 			IExpressionExtension extension, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location, Type type) {
-		final int tag = getExtensionTag(extension);
+		final int tag = getCheckedExtensionTag(extension);
 		return new ExtendedExpression(tag, expressions.clone(),
 				predicates.clone(), location, this, extension, type);
 	}
@@ -409,7 +410,7 @@ public class FormulaFactory {
 	public ExtendedExpression makeExtendedExpression(
 			IExpressionExtension extension, Collection<Expression> expressions,
 			Collection<Predicate> predicates, SourceLocation location, Type type) {
-		final int tag = getExtensionTag(extension);
+		final int tag = getCheckedExtensionTag(extension);
 		return new ExtendedExpression(tag, toExprArray(expressions),
 				toPredArray(predicates), location, this, extension, type);
 	}
@@ -468,7 +469,7 @@ public class FormulaFactory {
 	public ExtendedPredicate makeExtendedPredicate(
 			IPredicateExtension extension, Expression[] expressions,
 			Predicate[] predicates, SourceLocation location) {
-		final int tag = getExtensionTag(extension);
+		final int tag = getCheckedExtensionTag(extension);
 		return new ExtendedPredicate(tag, expressions.clone(),
 				predicates.clone(), location, this, extension);
 	}
@@ -498,7 +499,7 @@ public class FormulaFactory {
 	public ExtendedPredicate makeExtendedPredicate(
 			IPredicateExtension extension, Collection<Expression> expressions,
 			Collection<Predicate> predicates, SourceLocation location) {
-		final int tag = getExtensionTag(extension);
+		final int tag = getCheckedExtensionTag(extension);
 		return new ExtendedPredicate(tag, toExprArray(expressions),
 				toPredArray(predicates), location, this, extension);
 	}
@@ -1828,7 +1829,7 @@ public class FormulaFactory {
 	 */
 	public ParametricType makeParametricType(List<Type> typePrms,
 			IExpressionExtension typeConstructor) {
-		getExtensionTag(typeConstructor);
+		getCheckedExtensionTag(typeConstructor);
 		return new ParametricType(this, typeConstructor,
 				toTypeArray(typePrms));
 	}
@@ -1855,7 +1856,7 @@ public class FormulaFactory {
 	 */
 	public ParametricType makeParametricType(Type[] typePrms,
 			IExpressionExtension typeConstructor) {
-		getExtensionTag(typeConstructor);
+		getCheckedExtensionTag(typeConstructor);
 		return new ParametricType(this, typeConstructor, typePrms.clone());
 	}
 
