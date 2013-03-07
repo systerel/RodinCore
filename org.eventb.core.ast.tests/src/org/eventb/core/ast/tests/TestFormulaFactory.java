@@ -132,6 +132,7 @@ public class TestFormulaFactory extends AbstractTests {
 	public void getExtensionForSupportedTag() {
 		final int tag = FormulaFactory.getTag(EXT_LIST);
 		assertEquals(EXT_LIST, LIST_FAC.getExtension(tag));
+		assertTrue(LIST_FAC.hasExtension(tag));
 	}
 
 	/**
@@ -141,6 +142,7 @@ public class TestFormulaFactory extends AbstractTests {
 	@Test
 	public void getExtensionForRegularTag() {
 		assertNull(ff.getExtension(BUNION));
+		assertFalse(ff.hasExtension(BUNION));
 	}
 
 	/**
@@ -151,6 +153,7 @@ public class TestFormulaFactory extends AbstractTests {
 	public void getExtensionForUnsupportedTag() {
 		final int tag = FormulaFactory.getTag(EXT_LIST);
 		assertNull(ff.getExtension(tag));
+		assertFalse(ff.hasExtension(tag));
 	}
 
 	/**
