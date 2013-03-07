@@ -15,9 +15,9 @@ package org.eventb.core.ast;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.TypeRewriter;
+import org.eventb.internal.core.ast.TypeTranslatabilityChecker;
 import org.eventb.internal.core.typecheck.TypeVariable;
 
 /**
@@ -332,9 +332,7 @@ public abstract class Type {
 	 * @since 3.0
 	 */
 	public boolean isTranslatable(FormulaFactory ff) {
-		final TranslationVisitor visitor = new TranslationVisitor(ff);
-		accept(visitor);
-		return visitor.isTranslatable();
+		return TypeTranslatabilityChecker.isTranslatable(this, ff);
 	}
 
 	/**
@@ -368,73 +366,6 @@ public abstract class Type {
 		}
 		final TypeRewriter rewriter = new TypeRewriter(ff);
 		return rewriter.rewrite(this);
-	}
-
-	// Visitor which checks that given types do not use a reserved keyword and
-	// parametric types use only extension supported in the given factory
-	private class TranslationVisitor implements ITypeVisitor {
-
-		private boolean isTranslatable;
-
-		private final FormulaFactory ff;
-
-		public TranslationVisitor(FormulaFactory ff) {
-			this.ff = ff;
-			this.isTranslatable = true;
-		}
-
-		public boolean isTranslatable() {
-			return isTranslatable;
-		}
-
-		private void checkChild(Type child) {
-			if (isTranslatable) {
-				if (child instanceof TypeVariable) {
-					isTranslatable = false;
-				} else {
-					child.accept(this);
-				}
-			}
-		}
-
-		private void checkExtensionTranslatable(IExpressionExtension exprExt) {
-			isTranslatable &= ff.hasExtension(exprExt);
-		}
-
-		@Override
-		public void visit(ProductType type) {
-			checkChild(type.getLeft());
-			checkChild(type.getRight());
-		}
-
-		@Override
-		public void visit(PowerSetType type) {
-			checkChild(type.getBaseType());
-		}
-
-		@Override
-		public void visit(ParametricType type) {
-			checkExtensionTranslatable(type.getExprExtension());
-			for (Type child : type.getTypeParameters()) {
-				checkChild(child);
-			}
-		}
-
-		@Override
-		public void visit(IntegerType type) {
-			// translation ok
-		}
-
-		@Override
-		public void visit(GivenType type) {
-			isTranslatable &= ff.isValidIdentifierName(type.getName());
-		}
-
-		@Override
-		public void visit(BooleanType type) {
-			// translation ok
-		}
-
 	}
 
 }
