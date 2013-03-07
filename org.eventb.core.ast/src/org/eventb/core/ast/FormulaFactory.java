@@ -546,11 +546,7 @@ public class FormulaFactory {
 	 * @since 2.0
 	 */
 	public Set<IFormulaExtension> getExtensions() {
-		final Set<IFormulaExtension> result = new LinkedHashSet<IFormulaExtension>();
-		for (IFormulaExtension ext : extensions.values()) {
-			result.add(ext);
-		}
-		return result;
+		return new LinkedHashSet<IFormulaExtension>(extensions.values());
 	}
 	
 	/**
