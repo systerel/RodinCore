@@ -304,16 +304,16 @@ public class FormulaFactory {
 	 * Throws an IllegalArgumentException if it is not the case.
 	 */
 	private int getCheckedExtensionTag(IFormulaExtension extension) {
-		final Integer result = ALL_EXTENSIONS.get(extension);
-		if (result == null) {
+		final int tag = getTag(extension);
+		if (tag == NO_TAG) {
 			throw new IllegalArgumentException("Unknown formula extension "
 					+ extension.getId());
 		}
-		if (!extension.equals(extensions.get(result))) {
+		if (!hasExtension(tag)) {
 			throw new IllegalArgumentException("Formula extension "
 					+ extension.getId() + " is not supported by this factory");
 		}
-		return result;
+		return tag;
 	}
 
 	/**
@@ -541,6 +541,39 @@ public class FormulaFactory {
 	 */
 	public IFormulaExtension getExtension(int tag) {
 		return extensions.get(tag);
+	}
+
+	/**
+	 * Tells whether the given tag corresponds to a formula extension supported
+	 * by this factory. Consequently, returns <code>false</code> if the given
+	 * tag does not correspond to a formula extension.
+	 * <p>
+	 * This is a short-hand method fully equivalent to
+	 * 
+	 * <pre>
+	 * factory.getExtension(tag) != null
+	 * </pre>
+	 * 
+	 * </p>
+	 * 
+	 * @return <code>true</code> iff the given tag corresponds to a formula
+	 *         extension supported by this factory
+	 * @since 3.0
+	 */
+	public boolean hasExtension(int tag) {
+		return getExtension(tag) != null;
+	}
+
+	/**
+	 * Tells whether the given formula extension is supported by this factory.
+	 * 
+	 * @return <code>true</code> iff the given formula extension is supported by
+	 *         this factory
+	 * @since 3.0
+	 */
+	public boolean hasExtension(IFormulaExtension extension) {
+		final int tag = getTag(extension);
+		return hasExtension(tag);
 	}
 
 	/**
