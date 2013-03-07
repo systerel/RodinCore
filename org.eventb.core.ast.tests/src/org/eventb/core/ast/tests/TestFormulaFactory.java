@@ -67,6 +67,7 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.tests.ExtendedFormulas.PredicateExtension;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -112,6 +113,16 @@ public class TestFormulaFactory extends AbstractTests {
 
 	private static final String PRED_VAR_NAME = PredicateVariable.LEADING_SYMBOL
 			+ "P";
+
+	/**
+	 * Ensures that getTag() returns NO_TAG when passed an unknown extension.
+	 */
+	@Test
+	public void getTagForUnknownExtension() {
+		final IPredicateExtension dummy = new PredicateExtension("dummy", false);
+		final int actual = FormulaFactory.getTag(dummy);
+		assertEquals(Formula.NO_TAG, actual);
+	}
 
 	/**
 	 * Ensures that method isValidIdentifierName() takes into account the
