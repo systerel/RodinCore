@@ -157,6 +157,34 @@ public class TestFormulaFactory extends AbstractTests {
 	}
 
 	/**
+	 * Ensures that hasExtension() returns <code>true</code> for a supported
+	 * extension.
+	 */
+	@Test
+	public void hasExtensionForSupportedExtension() {
+		assertTrue(LIST_FAC.hasExtension(EXT_LIST));
+	}
+
+	/**
+	 * Ensures that hasExtension() returns <code>false</code> for an unknown
+	 * extension.
+	 */
+	@Test
+	public void hasExtensionForUnknownExtension() {
+		final IPredicateExtension dummy = new PredicateExtension("dummy", false);
+		assertFalse(ff.hasExtension(dummy));
+	}
+
+	/**
+	 * Ensures that hasExtension() returns <code>false</code> for an unsupported
+	 * extension.
+	 */
+	@Test
+	public void hasExtensionForUnsupportedExtension() {
+		assertFalse(ff.hasExtension(EXT_LIST));
+	}
+
+	/**
 	 * Ensures that method isValidIdentifierName() takes into account the
 	 * version of the mathematical language supported by the formula factory
 	 * instance.

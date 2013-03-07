@@ -352,26 +352,6 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Checks if the extension is supported by the factory.
-	 * 
-	 * @param extension
-	 *            the extension that will be checked to be supported
-	 * @return <code>true</code> if the extension is supported by this factory,
-	 *         <code>false</code> otherwise.
-	 * @throws IllegalArgumentException
-	 *             if the formula extension is unknown
-	 * @since 3.0
-	 */
-	public boolean hasExtension(IFormulaExtension extension){
-		final Integer result = ALL_EXTENSIONS.get(extension);
-		if (result == null) {
-			throw new IllegalArgumentException("Unknown formula extension "
-					+ extension.getId());
-		}
-		return extension.equals(extensions.get(result));
-	}
-
-	/**
 	 * Returns a new extended expression.
 	 * 
 	 * @param extension
@@ -582,6 +562,18 @@ public class FormulaFactory {
 	 */
 	public boolean hasExtension(int tag) {
 		return getExtension(tag) != null;
+	}
+
+	/**
+	 * Tells whether the given formula extension is supported by this factory.
+	 * 
+	 * @return <code>true</code> iff the given formula extension is supported by
+	 *         this factory
+	 * @since 3.0
+	 */
+	public boolean hasExtension(IFormulaExtension extension) {
+		final int tag = getTag(extension);
+		return hasExtension(tag);
 	}
 
 	/**
