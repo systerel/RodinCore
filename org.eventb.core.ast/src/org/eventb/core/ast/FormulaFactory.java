@@ -17,6 +17,7 @@
 package org.eventb.core.ast;
 
 import static java.util.Collections.emptyMap;
+import static org.eventb.core.ast.Formula.NO_TAG;
 import static org.eventb.internal.core.ast.FactoryHelper.toBIDArray;
 import static org.eventb.internal.core.ast.FactoryHelper.toExprArray;
 import static org.eventb.internal.core.ast.FactoryHelper.toIdentArray;
@@ -515,15 +516,19 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Returns the integer tag corresponding to the given formula extension.
+	 * Returns the integer tag corresponding to the given formula extension, or
+	 * <code>NO_TAG</code> if the given extension is unknown to the AST library
+	 * (i.e., has never been used for any factory).
 	 * 
-	 * @return the tag associated to the given extension
+	 * @return the tag associated to the given extension or
+	 *         {@link Formula#NO_TAG} if unknown
 	 * @since 2.0
 	 */
 	public static int getTag(IFormulaExtension extension) {
-		return ALL_EXTENSIONS.get(extension);
+		final Integer tag = ALL_EXTENSIONS.get(extension);
+		return tag == null ? NO_TAG : tag;
 	}
-	
+
 	/**
 	 * Returns the formula extension corresponding to the given tag.
 	 * 
