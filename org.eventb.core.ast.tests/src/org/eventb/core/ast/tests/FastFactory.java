@@ -38,6 +38,7 @@ import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.tests.AbstractTests.LIST_DT;
 import static org.eventb.core.ast.tests.AbstractTests.parseExpression;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
+import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
 import static org.eventb.core.ast.tests.TestGenParser.EXT_PRIME;
 import static org.eventb.core.ast.tests.TestGenParser.MONEY;
 
@@ -83,6 +84,8 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.internal.core.typecheck.InferredTypeEnvironment;
 
 /**
@@ -109,6 +112,24 @@ public class FastFactory {
 	public static FormulaFactory ff = FormulaFactory.getDefault();
 
 	public static FormulaFactory ff_extns = FormulaFactory.getInstance(EXTNS);
+
+	public static FormulaFactory mDatatypeFactory(FormulaFactory initial,
+			String... datatypeImages) {
+		FormulaFactory fac = initial;
+		for (final String datatypeImage : datatypeImages) {
+			fac = mDatatypeFactory(fac, datatypeImage);
+		}
+		return fac;
+	}
+
+	public static FormulaFactory mDatatypeFactory(FormulaFactory initial,
+			String datatypeImage) {
+		final IDatatypeExtension dtExt = injectExtension(datatypeImage);
+		final IDatatype datatype = initial.makeDatatype(dtExt);
+		final Set<IFormulaExtension> exts = initial.getExtensions();
+		exts.addAll(datatype.getExtensions());
+		return FormulaFactory.getInstance(exts);
+	}
 
 	public static AssociativeExpression mAssociativeExpression(
 			Expression... children) {
