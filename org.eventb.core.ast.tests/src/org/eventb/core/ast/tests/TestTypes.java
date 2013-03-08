@@ -15,8 +15,8 @@
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.NO_TYPES;
-import static org.eventb.core.ast.tests.FastFactory.mDatatypeFactory;
 import static org.eventb.core.ast.tests.FastFactory.ff_extns;
+import static org.eventb.core.ast.tests.FastFactory.mDatatypeFactory;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
@@ -44,12 +44,14 @@ import org.junit.Test;
  */
 public class TestTypes extends AbstractTests {
 
+	private static final String ENUM_SPEC = "Enum ::= e";
+
 	/**
 	 * Factory used to build types. Contains the classical List datatype and a
 	 * simple enumerate with one value.
 	 */
 	private static final FormulaFactory tf = mDatatypeFactory(LIST_FAC,
-			"Enum ::= e");
+			ENUM_SPEC);
 
 	private static final ITypeEnvironment typenv = mTypeEnvironment(
 			"S=ℙ(S); T=ℙ(T); U=ℙ(U); x=ℙ(S); y=ℙ(T)", tf);
@@ -203,6 +205,7 @@ public class TestTypes extends AbstractTests {
 		assertTypeTranslation("ℙ(S×T)");
 		assertTypeTranslation("S×T×U");
 		assertTypeTranslation("S×(T×U)");
+		assertTypeTranslation("Enum");
 		assertTypeTranslation("List(S)");
 		assertTypeTranslation("List(List(S))");
 	}
@@ -216,9 +219,10 @@ public class TestTypes extends AbstractTests {
 		assertSame(type, type.translate(tf));
 
 		// Translation to compatible factory
-		assertTrue(type.isTranslatable(ff_extns));
-		final Type translated = type.translate(ff_extns);
-		assertSame(ff_extns, translated.getFactory());
+		final FormulaFactory trg = mDatatypeFactory(ff_extns, ENUM_SPEC);
+		assertTrue(type.isTranslatable(trg));
+		final Type translated = type.translate(trg);
+		assertSame(trg, translated.getFactory());
 		assertEquals(type, translated);
 	}
 
@@ -237,6 +241,7 @@ public class TestTypes extends AbstractTests {
 		assertNotTypeTranslation("List(prime)", ff_extns);
 
 		// Missing extension in target factory
+		assertNotTypeTranslation("Enum", ff);
 		assertNotTypeTranslation("List(S)", ff);
 	}
 

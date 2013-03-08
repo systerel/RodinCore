@@ -85,7 +85,7 @@ public class TypeRewriter implements ITypeVisitor {
 
 	@Override
 	public void visit(ParametricType type) {
-		boolean changed = false;
+		boolean changed = (ff != type.getFactory());
 		final Type[] typeParameters = type.getTypeParameters();
 		final Type[] newTypeParameters = new Type[typeParameters.length];
 		for (int i = 0; i < typeParameters.length; i++) {
