@@ -17,18 +17,17 @@ package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.FastFactory.ff_extns;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
+import static org.eventb.core.ast.tests.FastFactory.mDatatypeFactory;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mRelationalPredicate;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
-import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
-import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.Assignment;
@@ -47,14 +46,11 @@ import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtendedFormula;
 import org.eventb.core.ast.extension.IExtensionKind;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.extension.StandardGroup;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.junit.Test;
 
 /**
@@ -1029,7 +1025,7 @@ public class TestTypeChecker extends AbstractTests {
 	 */
 	@Test 
 	public void testBug3574565() {
-		final FormulaFactory fac = makeDatatypeFactory(ff,//
+		final FormulaFactory fac = mDatatypeFactory(ff,//
 				"A[T] ::= a; d[T]",//
 				"B[U] ::= b; e[U]");
 		testPredicate("b(1) ∈ A(ℤ)", mTypeEnvironment("", fac), null);
@@ -1074,24 +1070,6 @@ public class TestTypeChecker extends AbstractTests {
 		final ITypeCheckResult result = pred.typeCheck(badTypenv);
 		assertFalse(result.isSuccess());
 		assertTrue(pred.isTypeChecked());
-	}
-
-	private FormulaFactory makeDatatypeFactory(FormulaFactory initial,
-			String... datatypeImages) {
-		FormulaFactory fac = initial;
-		for (final String datatypeImage : datatypeImages) {
-			fac = makeDatatypeFactory(fac, datatypeImage);
-		}
-		return fac;
-	}
-
-	private FormulaFactory makeDatatypeFactory(FormulaFactory initial,
-			String datatypeImage) {
-		final IDatatypeExtension dtExt = injectExtension(datatypeImage);
-		final IDatatype datatype = initial.makeDatatype(dtExt);
-		final Set<IFormulaExtension> exts = initial.getExtensions();
-		exts.addAll(datatype.getExtensions());
-		return FormulaFactory.getInstance(exts);
 	}
 
 	private Predicate testPredicate(String image, ITypeEnvironment initialEnv,
