@@ -102,6 +102,7 @@ public class FastFactory {
 
 	public static final Predicate[] NO_PREDICATE = new Predicate[0];
 	public static final Expression[] NO_EXPRESSION = new Expression[0];
+	public static final Type[] NO_TYPES = new Type[0];
 
 	private static final Set<IFormulaExtension> EXTNS = new HashSet<IFormulaExtension>(
 			Arrays.asList(EXT_PRIME, MONEY));
