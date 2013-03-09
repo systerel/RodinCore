@@ -28,15 +28,10 @@ package org.eventb.core.ast;
  * exist in the initial environment.
  * </p>
  * <p>
- * An inferred type environment cannot be translated with a given formula
- * factory. It means that calls to
- * {@link ITypeEnvironment#isTranslatable(FormulaFactory)} always return
- * <code>false</code> and calls to
- * {@link ITypeEnvironment#translate(FormulaFactory)} always raise an
- * {@link UnsupportedOperationException}. If a translation is needed then build an
- * inferred type environment with a translated initial type environment or
- * extract the inferred type environment to a standard type environment and then
- * translate it.
+ * Inferred type environments cannot be translated to another formula factory.
+ * If a translation is needed then, either build the inferred type environment
+ * from a translated initial type environment, or extract the inferred type
+ * environment to a regular type environment and then translate the latter.
  * </p>
  * 
  * @author Vincent Monfort
@@ -54,5 +49,28 @@ public interface IInferredTypeEnvironment extends ITypeEnvironmentBuilder {
 	 * @return the initial type environment
 	 */
 	public ISealedTypeEnvironment getInitialTypeEnvironment();
+
+	/**
+	 * Always return <code>false</code> as inferred type environments cannot be
+	 * translated.
+	 * 
+	 * @param factory
+	 *            some formula factory
+	 * @return <code>false</code>
+	 */
+	@Override
+	public boolean isTranslatable(FormulaFactory factory);
+
+	/**
+	 * Always throws <code>UnsupportedOperationException</code>.
+	 * 
+	 * @param factory
+	 *            some formula factory
+	 * @return never
+	 * @throws UnsupportedOperationException
+	 *             in all cases
+	 */
+	@Override
+	public IInferredTypeEnvironment translate(FormulaFactory factory);
 
 }

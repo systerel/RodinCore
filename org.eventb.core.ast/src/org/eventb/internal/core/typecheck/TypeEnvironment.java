@@ -199,43 +199,32 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 	}
 
 	@Override
-	public boolean isTranslatable(FormulaFactory fac) {
-		if (fac != ff) {
-			IIterator iter = getIterator();
-			while (iter.hasNext()) {
-				iter.advance();
-				if (!fac.isValidIdentifierName(iter.getName())) {
-					return false;
-				}
-				if (!iter.getType().isTranslatable(fac)) {
-					return false;
-				}
+	public boolean isTranslatable(FormulaFactory factory) {
+		if (factory == ff) {
+			return true;
+		}
+		final IIterator iter = getIterator();
+		while (iter.hasNext()) {
+			iter.advance();
+			if (!factory.isValidIdentifierName(iter.getName())) {
+				return false;
+			}
+			if (!iter.getType().isTranslatable(factory)) {
+				return false;
 			}
 		}
 		return true;
 	}
 
-	@Override
-	public ITypeEnvironment translate(FormulaFactory fac) {
-		if (fac == ff) {
-			return this;
-		} else {
-			TypeRewriter rewriter = new TypeRewriter(fac);
-			TypeEnvironmentBuilder result = new TypeEnvironmentBuilder(fac);
-			IIterator iter = getIterator();
-			while (iter.hasNext()) {
-				iter.advance();
-				result.addName(iter.getName(), rewriter.rewrite(iter.getType()));
-			}
-			return translateResult(result);
+	protected ITypeEnvironmentBuilder doTranslate(FormulaFactory fac) {
+		final TypeRewriter rewriter = new TypeRewriter(fac);
+		final TypeEnvironmentBuilder result = new TypeEnvironmentBuilder(fac);
+		final IIterator iter = getIterator();
+		while (iter.hasNext()) {
+			iter.advance();
+			result.addName(iter.getName(), rewriter.rewrite(iter.getType()));
 		}
+		return result;
 	}
-
-	/*
-	 * This method must return the given type environment result with the same
-	 * type environment type as the current type environment.
-	 */
-	protected abstract ITypeEnvironment translateResult(
-			TypeEnvironmentBuilder result);
 
 }

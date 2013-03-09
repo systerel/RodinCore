@@ -234,59 +234,46 @@ public interface ITypeEnvironment {
 	ITypeEnvironmentBuilder specialize(ISpecialization specialization);
 
 	/**
-	 * Checks if the current type environment can be translated with the given
-	 * factory.
+	 * Tells whether this type environment can be translated to the given
+	 * formula factory. This method therefore implements the precondition of the
+	 * translation method.
 	 * <p>
-	 * A type environment is compatible with the given factory either if the
-	 * factory is the type environment factory or if type environment elements
-	 * names are not reserved words in the given factory and elements types can
-	 * be translated.
+	 * This type environment is translatable to the given factory if
+	 * <ul>
+	 * <li>no name of this type environment becomes a reserved word;</li>
+	 * <li>all types of this type environment can be translated.</li>
+	 * </ul>
 	 * </p>
 	 * 
-	 * @return <code>false</code> only if a call to
-	 *         {@link ITypeEnvironment#translate(FormulaFactory)} will fail by
-	 *         raising an exception and returns <code>true</code> otherwise.
+	 * @param factory
+	 *            the target formula factory
+	 * @return <code>true</code> iff a call to
+	 *         {@link ITypeEnvironment#translate(FormulaFactory)} would succeed
 	 * @since 3.0
 	 */
-	boolean isTranslatable(FormulaFactory fac);
+	boolean isTranslatable(FormulaFactory factory);
 
 	/**
-	 * Returns the type environment built by using the given formula factory.
+	 * Returns a copy of this type environment built with the given formula
+	 * factory.
 	 * <p>
-	 * If the type environment factory and the given factory are the same then
-	 * the same type environment object is returned. Otherwise a new type
-	 * environment object is built. In both cases the type environment returned
-	 * has the same type as the current type environment (e.g. if the type
-	 * environment is a {@link ITypeEnvironmentBuilder}, then the returned one
-	 * is also a {@link ITypeEnvironmentBuilder}).
+	 * If the factory of this type environment and the given factory are the
+	 * same, then this type environment is returned, rather than an identical
+	 * copy of it. Otherwise a new type environment object is built.
 	 * </p>
 	 * <p>
-	 * The translation of the type environment can fail if an element has a name
-	 * that is a reserved keyword in the target formula factory or if an element
-	 * has a type which is not translatable.
-	 * </p>
-	 * <p>
-	 * This operation is not supported for {@link IInferredTypeEnvironment}.
+	 * Calling this method when {@link #isTranslatable(FormulaFactory)} returns
+	 * <code>false</code> will raise an <code>IllegalArgumentException</code>.
 	 * </p>
 	 * 
-	 * @param fac
-	 *            the factory to use to rebuild the type environment
-	 * @return the type environment obtained by the rebuilt based on the given
-	 *         factory
+	 * @param factory
+	 *            the target formula factory
+	 * @return an equivalent type environment built with the given factory
 	 * @throws IllegalArgumentException
-	 *             if the type environment contains elements for which names are
-	 *             reserved keywords in the given formula factory
-	 * @throws IllegalArgumentException
-	 *             if the type environment contains elements for which type use
-	 *             a reserved keywords in the given formula factory
-	 * @throws IllegalArgumentException
-	 *             if the type environment contains elements for which type use
-	 *             an extension not supported by the given factory
-	 * @throws UnsupportedOperationException
-	 *             if the type environment is an inferred type environment
+	 *             if this type environment is not translatable
 	 * @since 3.0
 	 */
-	ITypeEnvironment translate(FormulaFactory fac);
+	ITypeEnvironment translate(FormulaFactory factory);
 
 	/**
 	 * Get an immutable snapshot of this type environment.

@@ -149,4 +149,7 @@ public interface ITypeEnvironmentBuilder extends ITypeEnvironment {
 	 */
 	FreeIdentifier[] makeFreshIdentifiers(BoundIdentDecl[] boundIdents);
 
+	@Override
+	public ITypeEnvironmentBuilder translate(FormulaFactory factory);
+
 }

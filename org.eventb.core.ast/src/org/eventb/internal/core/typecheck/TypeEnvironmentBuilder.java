@@ -141,12 +141,6 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 		return map.get(name);
 	}
 	
-	@Override
-	protected final ITypeEnvironment translateResult(
-			TypeEnvironmentBuilder result) {
-		return result;
-	}
-
 	private FreeIdentifier makeFreshIdentifier(BoundIdentDecl bIdent,
 			FreshNameSolver solver) {
 		final String bName = bIdent.getName();
@@ -171,6 +165,14 @@ public class TypeEnvironmentBuilder extends TypeEnvironment implements ITypeEnvi
 	@Override
 	public ISealedTypeEnvironment makeSnapshot() {
 		return new SealedTypeEnvironment(this);
+	}
+
+	@Override
+	public ITypeEnvironmentBuilder translate(FormulaFactory factory) {
+		if (factory == ff) {
+			return this;
+		}
+		return doTranslate(factory);
 	}
 
 }

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.core.typecheck;
 
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ISealedTypeEnvironment;
-import org.eventb.core.ast.ITypeEnvironment;
 
 /**
  * Here we reuse the implementation of type environment, only creating a
@@ -31,10 +31,13 @@ public final class SealedTypeEnvironment extends TypeEnvironment implements
 		// No need to make a copy, as we already are immutable.
 		return this;
 	}
-	
-	@Override
-	protected ITypeEnvironment translateResult(TypeEnvironmentBuilder result) {
-		return result.makeSnapshot();
-	}
 
+	@Override
+	public ISealedTypeEnvironment translate(FormulaFactory factory) {
+		if (factory == ff) {
+			return this;
+		}
+		return doTranslate(factory).makeSnapshot();
+	}
+	
 }

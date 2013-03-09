@@ -86,7 +86,7 @@ public class InferredTypeEnvironment extends TypeEnvironmentBuilder implements
 	}
 
 	@Override
-	public ITypeEnvironment translate(FormulaFactory fac) {
+	public IInferredTypeEnvironment translate(FormulaFactory fac) {
 		throw new UnsupportedOperationException(
 				"An IInferredTypeEnvironment cannot be translated.");
 	}
