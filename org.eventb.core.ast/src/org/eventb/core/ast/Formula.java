@@ -32,9 +32,10 @@ import java.util.Set;
 
 import org.eventb.internal.core.ast.BindingSubstitution;
 import org.eventb.internal.core.ast.BoundIdentifierShifter;
-import org.eventb.internal.core.ast.DefaultTypeCheckingRewriter;
 import org.eventb.internal.core.ast.FilteringInspector;
 import org.eventb.internal.core.ast.FindingAccumulator;
+import org.eventb.internal.core.ast.FormulaTranslatabilityChecker;
+import org.eventb.internal.core.ast.FormulaTranslator;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.IdentListMerger;
 import org.eventb.internal.core.ast.IntStack;
@@ -44,7 +45,6 @@ import org.eventb.internal.core.ast.SameTypeRewriter;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.Substitution;
-import org.eventb.internal.core.ast.FormulaTranslatabilityChecker;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
 import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
@@ -2476,7 +2476,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 * @since 3.0
 	 */
 	public T translate(FormulaFactory factory) {
-		return rewrite(new DefaultTypeCheckingRewriter(factory));
+		return rewrite(new FormulaTranslator(factory));
 	}
 
 }

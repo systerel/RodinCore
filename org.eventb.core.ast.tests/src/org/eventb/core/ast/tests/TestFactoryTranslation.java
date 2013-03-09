@@ -13,7 +13,6 @@ package org.eventb.core.ast.tests;
 import static java.math.BigInteger.ONE;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CSET;
-import static org.eventb.core.ast.Formula.EMPTYSET;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.KCARD;
@@ -31,30 +30,25 @@ import static org.eventb.core.ast.tests.ExtendedFormulas.barS;
 import static org.eventb.core.ast.tests.ExtendedFormulas.fooS;
 import static org.eventb.core.ast.tests.FastFactory.ff_extns;
 import static org.eventb.core.ast.tests.FastFactory.mBoundIdentDecl;
+import static org.eventb.core.ast.tests.FastFactory.mBoundIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mList;
-import static org.eventb.core.ast.tests.FastFactory.mListCons;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
-import static org.eventb.core.ast.tests.TestTypes.LIST_LIST_S;
-import static org.eventb.core.ast.tests.TestTypes.powsetTypePrime;
+import static org.eventb.core.ast.tests.FastFactory.mSimplePredicate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.Set;
 
-import org.eventb.core.ast.AtomicExpression;
 import org.eventb.core.ast.BoundIdentDecl;
-import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.IntegerType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.Type;
@@ -87,33 +81,29 @@ public class TestFactoryTranslation extends AbstractTests {
 	}
 
 	/**
-	 * Verifies that the formula is translatable before translation.
-	 */
-	private static void assertIsTranslatable(FormulaFactory to, Formula<?> f) {
-		assertTrue("The formula: " + f
-				+ " was expected to be translatable with factory: " + to,
-				f.isTranslatable(to));
-	}
-
-	/**
-	 * Verifies that the formula is not translatable before translation try.
-	 */
-	private static void assertIsNotTranslatable(FormulaFactory to, Formula<?> f) {
-		assertFalse("The formula: " + f
-				+ " was NOT expected to be translatable with factory: " + to,
-				f.isTranslatable(to));
-	}
-
-	/**
 	 * Verifies that formula translation to a given factory fulfills its
 	 * specification.
 	 */
 	private static void assertTranslation(FormulaFactory to, Formula<?> f) {
 		assertFalse(f.getFactory() ==  to);
-		assertIsTranslatable(to, f);
+		assertTrue(f.isTranslatable(to));
 		final Formula<?> actual = f.translate(to);
 		assertEquals(to, actual.getFactory());
 		assertEquals(f, actual);
+	}
+
+	/**
+	 * Verifies that a formula which cannot be translated is properly handled.
+	 */
+	private static void assertNoTranslation(FormulaFactory to, Formula<?> f) {
+		assertFalse(f.getFactory() ==  to);
+		assertFalse(f.isTranslatable(to));
+		try {
+			f.translate(to);
+			fail("Translation should have failed");
+		} catch (IllegalArgumentException exc) {
+			// pass
+		}
 	}
 
 	/**
@@ -136,129 +126,113 @@ public class TestFactoryTranslation extends AbstractTests {
 
 	/**
 	 * Incompatible translation to a factory with an incompatible extension
-	 * subset
+	 * subset. We test the root of the formula AST, and some interior node.
 	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslationOnExtension() {
-		final IntegerType INTe = ff_extns.makeIntegerType();
-		final Expression nil = mListCons(INTe);
-		final Predicate unaryPred = ff_extns.makeSimplePredicate(KFINITE, nil,
-				null);
-		unaryPred.translate(ff);
+	@Test
+	public void testIncompatibleTranslationOnExpressionExtension() {
+		final Expression nil = parseExpression("nil ⦂ List(prime)", LIST_FAC);
+		assertNoTranslation(ff, nil);
+		assertNoTranslation(ff, mSimplePredicate(nil));
+	}
+
+	/**
+	 * Incompatible translation to a factory with an incompatible extension
+	 * subset. We test the root of the formula AST, and some interior node.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnPredicateExtension() {
+		final Predicate pred = parsePredicate("prime({0})", ff_extns);
+		assertNoTranslation(ff, pred);
 	}
 
 	/**
 	 * Incompatible translation to a factory with an incompatible free
-	 * identifier name
+	 * identifier name.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testIncompatibleTranslationOnIdName() {
-		final FreeIdentifier freeId = ff.makeFreeIdentifier("prime", null);
-		assertIsNotTranslatable(ff_extns, freeId);
-		freeId.translate(ff_extns);
+		assertNoTranslation(ff_extns, mFreeIdentifier("prime"));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	/**
+	 * Incompatible translation due to given set on free identifier.
+	 */
+	@Test
 	public void testIncompatibleTranslationOnFreeIdTypeName() {
-		final FreeIdentifier freeId = LIST_FAC.makeFreeIdentifier("l", null,
-				powsetTypePrime);
-		assertIsNotTranslatable(ff_extns, freeId);
-		freeId.translate(ff_extns);
+		final Type type = ff.makeGivenType("prime");
+		assertNoTranslation(ff_extns, mFreeIdentifier("x", type));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	/**
+	 * Incompatible translation due to unsupported formula extension in type of
+	 * a free identifier.
+	 */
+	@Test
 	public void testIncompatibleTranslationOnFreeIdTypeExt() {
-		final FreeIdentifier freeId = LIST_FAC.makeFreeIdentifier("l", null,
-				LIST_LIST_S);
-		assertIsNotTranslatable(ff, freeId);
-		freeId.translate(ff);
+		assertNoTranslation(ff, mFreeIdentifier("x", LIST_INT_TYPE));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslationOnBoundIdDeclTypeName() {
-		final BoundIdentDecl declId = LIST_FAC.makeBoundIdentDecl("l", null,
-				powsetTypePrime);
-		assertIsNotTranslatable(ff_extns, declId);
-		declId.translate(ff_extns);
+	/**
+	 * Compatible translation of a bound identifier declaration, even if its
+	 * name becomes reserved. However, as the name changes, we cannot do a
+	 * simple comparison.
+	 */
+	@Test
+	public void testCompatibleTranslationOnBoundIdDeclName() {
+		final BoundIdentDecl decl = mBoundIdentDecl("prime");
+		assertTrue(decl.isTranslatable(ff_extns));
+		final BoundIdentDecl actual = decl.translate(ff_extns);
+		assertEquals(ff_extns, actual.getFactory());
+		assertEquals(decl.getSourceLocation(), actual.getSourceLocation());
+		assertEquals(decl.getType(), actual.getType());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslationOnBoundIdDeclTypeExt() {
-		final BoundIdentDecl declId = LIST_FAC.makeBoundIdentDecl("l", null,
-				LIST_LIST_S);
-		assertIsNotTranslatable(ff, declId);
-		declId.translate(ff);
+	/**
+	 * Incompatible translation due to non-translatable type of a bound
+	 * identifier declaration.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnBoundIdDeclType() {
+		assertNoTranslation(ff, mBoundIdentDecl("x", LIST_INT_TYPE));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslationOnBoundIdTypeName() {
-		final BoundIdentifier declId = LIST_FAC.makeBoundIdentifier(0, null,
-				powsetTypePrime);
-		assertIsNotTranslatable(ff_extns, declId);
-		declId.translate(ff_extns);
+	/**
+	 * Incompatible translation due to non-translatable type of a bound
+	 * identifier.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnBoundIdentType() {
+		assertNoTranslation(ff, mBoundIdentifier(0, LIST_INT_TYPE));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslationOnBoundIdTypeExt() {
-		final BoundIdentifier declId = LIST_FAC.makeBoundIdentifier(0, null,
-				LIST_LIST_S);
-		assertIsNotTranslatable(ff, declId);
-		declId.translate(ff);
+	/**
+	 * Incompatible translation due to non-translatable type of an atomic
+	 * expression.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnAtomicExprType() {
+		assertNoTranslation(ff, mEmptySet(POW_LIST_INT_TYPE));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslationOnAtomicExprTypeName() {
-		final AtomicExpression atomExpr = LIST_FAC.makeAtomicExpression(
-				EMPTYSET, null, powsetTypePrime);
-		assertIsNotTranslatable(ff_extns, atomExpr);
-		atomExpr.translate(ff_extns);
+	/**
+	 * Incompatible translation due to non-translatable type of an empty set
+	 * extension.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnSetExtType() {
+		final SetExtension setext = LIST_FAC.makeEmptySetExtension(
+				POW_LIST_INT_TYPE, null);
+		assertNoTranslation(ff, setext);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslationOnAtomicExprTypeExt() {
-		final AtomicExpression atomExpr = LIST_FAC.makeAtomicExpression(
-				EMPTYSET, null, LIST_FAC.makePowerSetType(LIST_LIST_S));
-		assertIsNotTranslatable(ff, atomExpr);
-		atomExpr.translate(ff);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslationOnSetExtTypeName() {
-		final SetExtension setExt = LIST_FAC.makeEmptySetExtension(
-				powsetTypePrime, null);
-		assertIsNotTranslatable(ff_extns, setExt);
-		setExt.translate(ff_extns);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslationOnSetExtTypeExt() {
-		final SetExtension setExt = LIST_FAC.makeEmptySetExtension(
-				LIST_FAC.makePowerSetType(LIST_LIST_S), null);
-		assertIsNotTranslatable(ff, setExt);
-		setExt.translate(ff);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslationOnExtExprTypeName() {
-		Type listType = LIST_FAC.makeParametricType(mList(powsetTypePrime),
-				LIST_DT.getTypeConstructor());
-		final ExtendedExpression extExpr = LIST_FAC.makeExtendedExpression(
-				LIST_DT.getConstructor("NIL"), new ArrayList<Expression>(0),
-				new ArrayList<Predicate>(0), null, listType);
-		assertIsNotTranslatable(ff_extns, extExpr);
-		extExpr.translate(ff_extns);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testIncompatibleTranslationOnExtExprTypeExt() {
-		Type listType = LIST_FAC.makeParametricType(
-				mList(LIST_FAC.makeGivenType("S")),
-				LIST_DT.getTypeConstructor());
-		final ExtendedExpression extExpr = LIST_FAC.makeExtendedExpression(
-				LIST_DT.getConstructor("NIL"), new ArrayList<Expression>(0),
-				new ArrayList<Predicate>(0), null, listType);
-		assertIsNotTranslatable(ff, extExpr);
-		extExpr.translate(ff);
+	/**
+	 * Incompatible translation due to non-translatable type of an extended
+	 * expression.
+	 */
+	@Test
+	public void testIncompatibleTranslationOnExtExprType() {
+		final Expression expr = parseExpression("nil ⦂ List(prime)", LIST_FAC);
+		assertNoTranslation(ff_extns, expr);
 	}
 
 	/*----------------------------------------------------------------
