@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - remove formula files
  *******************************************************************************/
 package org.eventb.rubin.tests;
 
@@ -112,5 +113,41 @@ public class AbstractPPTests {
 		}
 	}
 
+	protected void testProblem(int maxSteps, IProblem problem) {
+		final String name = problem.name();
+		final Sequent sequent = problem.sequent();
+		final long start, end;
+		if (PERF) {
+			start = System.currentTimeMillis();
+			System.out.println("-------------------");
+			System.out.println("Proving: " + name);
+		}
+
+		typeCheck(sequent);
+		final ISimpleSequent ss = SimpleSequents.make(sequent.getHypotheses(),
+				sequent.getGoal(), ff);
+		final PPProof proof = new PPProof(ss, null);
+		proof.translate();
+		proof.load();
+		proof.prove(maxSteps);
+		final PPResult ppr = proof.getResult();
+
+		switch (problem.status()) {
+		case VALID:
+		case VALIDPPFAILS:
+			assertEquals("" + sequent, Result.valid, ppr.getResult());
+			break;
+		case INVALID:
+			assertTrue("" + sequent, !ppr.getResult().equals(Result.valid));
+			break;
+		default:
+			fail("Invalid status for problem " + name);
+			break;
+		}
+		if (PERF) {
+			end = System.currentTimeMillis();
+			System.out.println("Time: " + (end - start) + " ms");
+		}
+	}
 
 }

@@ -7,145 +7,149 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - remove formula files
  *******************************************************************************/
 package org.eventb.rubin.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static java.util.Arrays.asList;
+import static org.eventb.rubin.problems.Chapter02.*;
+import static org.eventb.rubin.problems.Chapter03.*;
+import static org.eventb.rubin.problems.Chapter08.*;
+import static org.eventb.rubin.problems.Chapter11.*;
+import static org.eventb.rubin.tests.ProblemStatus.INVALID;
 
-import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.eclipse.core.runtime.Path;
-import org.eventb.core.seqprover.transformer.ISimpleSequent;
-import org.eventb.core.seqprover.transformer.SimpleSequents;
-import org.eventb.pp.PPProof;
-import org.eventb.pp.PPResult;
-import org.eventb.pp.PPResult.Result;
-import org.eventb.rubin.PredicateFrontEnd;
-import org.eventb.rubin.Sequent;
+import org.eventb.rubin.problems.Chapter01;
+import org.eventb.rubin.problems.Chapter02;
+import org.eventb.rubin.problems.Chapter03;
+import org.eventb.rubin.problems.Chapter07;
+import org.eventb.rubin.problems.Chapter08;
+import org.eventb.rubin.problems.Chapter09;
+import org.eventb.rubin.problems.Chapter10;
+import org.eventb.rubin.problems.Chapter11;
+import org.eventb.rubin.problems.Others;
 import org.junit.Test;
 
+/**
+ * Run the new predicate prover on invalid variants of known valid sequents.
+ * This demonstrates that the predicate prover is not seriously unsound.
+ * 
+ * The problems that are not tested are the one that contain a contradiction
+ * among their hypotheses, because we cannot easily derive an invalid problem
+ * from them.
+ * 
+ * @author Laurent Voisin
+ */
 public class NewPPValidationTests extends AbstractPPTests {
-	
-	public static final String FILE_PATH = "formulas.valid/"; 
-	
+
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 1
+	 * Runs the new predicate prover on a set of sequents taken from chapter 1
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter01() throws Exception {
-		testChapter("rubin_01");
+		testChapter(Chapter01.values());
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 2
+	 * Runs the new predicate prover on a set of sequents taken from chapter 2
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter02() throws Exception {
-		testChapter("rubin_02");
+		testChapter(Chapter02.values(),//
+				Exercise_2_H10,//
+				Exercise_2_H11//
+		);
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 3
+	 * Runs the new predicate prover on a set of sequents taken from chapter 3
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter03() throws Exception {
-		testChapter("rubin_03");
+		testChapter(Chapter03.values(),//
+				Example_3_1,//
+				Example_3_2a,//
+				Example_3_2c,//
+				Exercise_3_A1,//
+				Exercise_3_A5,//
+				Exercise_3_A7,//
+				Exercise_3_A8,//
+				Exercise_3_A17//
+		);
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 7
+	 * Runs the new predicate prover on a set of sequents taken from chapter 7
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter07() throws Exception {
-		testChapter("rubin_07");
+		testChapter(Chapter07.values());
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 8
+	 * Runs the new predicate prover on a set of sequents taken from chapter 8
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter08() throws Exception {
-		testChapter("rubin_08");
+		testChapter(Chapter08.values(),//
+				Exercise_8_A20_simp//
+		);
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 9
+	 * Runs the new predicate prover on a set of sequents taken from chapter 9
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter09() throws Exception {
-		testChapter("rubin_09");
+		testChapter(Chapter09.values());
 	}
-	
+
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 10
+	 * Runs the new predicate prover on a set of sequents taken from chapter 10
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter10() throws Exception {
-		testChapter("rubin_10");
+		testChapter(Chapter10.values());
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 11
+	 * Runs the new predicate prover on a set of sequents taken from chapter 11
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter11() throws Exception {
-		testChapter("rubin_11");
+		testChapter(Chapter11.values(),//
+				Example_11_2,//
+				Example_11_D2,//
+				Example_11_D3,//
+				Example_11_D5,//
+				Example_11_D8,//
+				Example_11_D13,//
+				Example_11_D14//
+		);
 	}
-	
-	private void testChapter(String chapNo) throws IOException {
-		String fileName = getLocalPath(new Path(FILE_PATH + chapNo + ".txt"));
-		Sequent[] sequents = PredicateFrontEnd.parseFile(fileName);
-		assertNotNull("Parser failed unexpectedly", sequents);
-		for (Sequent sequent: sequents) {
-			testSequent(sequent);
-		}
-	}
-	
-	protected void testSequent(Sequent sequent) throws IOException {
-		String name = sequent.getName();
-		typeCheck(sequent);
-		
-//		if (!name.startsWith("VALID")) return;
-		
-		long start = System.currentTimeMillis();
-		System.out.println("-------------------");
-		System.out.println("Proving: " + name);
-		
 
-		final ISimpleSequent ss = SimpleSequents.make(sequent.getHypotheses(),
-				sequent.getGoal(), ff);
-		final PPProof proof = new PPProof(ss, null);
-		proof.translate();
-		proof.load();
-		proof.prove(5000);
-//		proof.prove(-1);
-		PPResult ppr = proof.getResult();
-		
-		if (name.startsWith("VALIDPPFAILS")) {
-			// Test for an valid sequent that PP fails to discharge
-			assertEquals(name, ppr.getResult(), Result.valid);
-		} else if (name.startsWith("VALID")) {
-			// Test for a valid sequent
-			assertEquals(name, ppr.getResult(), Result.valid);
-		} else if (name.startsWith("INVALID")) {
-			// Test for an invalid sequent
-			assertTrue(name, !ppr.getResult().equals(Result.valid));
-		} else {
-			fail("Invalid name for sequent:\n" + sequent);
+	@Test
+	public void testOthers() throws Exception {
+		testChapter(Others.values());
+	}
+
+	private void testChapter(IProblem problems[], IProblem... ignore) {
+		final Set<IProblem> skip = new HashSet<IProblem>(asList(ignore));
+		for (final IProblem problem : problems) {
+			if (problem.status() != INVALID && !skip.contains(problem)) {
+				testProblem(5000, problem.invalidVariant());
+			}
 		}
-		long stop = System.currentTimeMillis();
-		System.out.println("Time: " + (stop-start) + "ms");
 	}
 
 }

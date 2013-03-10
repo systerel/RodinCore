@@ -115,7 +115,7 @@ public class ParserTests extends AbstractPPTests {
 		return goal;
 	}
 
-	private static Sequent mSequent(String name, String... preds) {
+	public static Sequent mSequent(String name, String... preds) {
 		final int nbHyps = preds.length - 1;
 		assert nbHyps >= 0;
 		Predicate[] hyps = new Predicate[nbHyps];

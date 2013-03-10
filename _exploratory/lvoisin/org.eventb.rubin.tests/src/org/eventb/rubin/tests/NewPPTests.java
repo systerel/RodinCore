@@ -7,17 +7,26 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - remove formula files
  *******************************************************************************/
 package org.eventb.rubin.tests;
 
-import static org.junit.Assert.assertNotNull;
+import static java.util.Arrays.asList;
+import static org.eventb.rubin.problems.Chapter11.*;
+import static org.eventb.rubin.problems.Others.*;
 
-import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.eclipse.core.runtime.Path;
-import org.eventb.rubin.PredicateFrontEnd;
-import org.eventb.rubin.Sequent;
-import org.junit.Ignore;
+import org.eventb.rubin.problems.Chapter01;
+import org.eventb.rubin.problems.Chapter02;
+import org.eventb.rubin.problems.Chapter03;
+import org.eventb.rubin.problems.Chapter07;
+import org.eventb.rubin.problems.Chapter08;
+import org.eventb.rubin.problems.Chapter09;
+import org.eventb.rubin.problems.Chapter10;
+import org.eventb.rubin.problems.Chapter11;
+import org.eventb.rubin.problems.Others;
 import org.junit.Test;
 
 /**
@@ -28,101 +37,96 @@ import org.junit.Test;
  */
 public class NewPPTests extends AbstractPPTests {
 
-	private static final String FILE_PATH = "formulas/";
-
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 1
+	 * Runs the new predicate prover on a set of sequents taken from chapter 1
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter01() throws Exception {
-		testChapter("rubin_01");
+		testChapter(Chapter01.values());
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 2
+	 * Runs the new predicate prover on a set of sequents taken from chapter 2
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter02() throws Exception {
-		testChapter("rubin_02");
+		testChapter(Chapter02.values());
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 3
+	 * Runs the new predicate prover on a set of sequents taken from chapter 3
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter03() throws Exception {
-		testChapter("rubin_03");
+		testChapter(Chapter03.values());
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 7
+	 * Runs the new predicate prover on a set of sequents taken from chapter 7
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter07() throws Exception {
-		testChapter("rubin_07");
+		testChapter(Chapter07.values());
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 8
+	 * Runs the new predicate prover on a set of sequents taken from chapter 8
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter08() throws Exception {
-		testChapter("rubin_08");
+		testChapter(Chapter08.values());
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 9
+	 * Runs the new predicate prover on a set of sequents taken from chapter 9
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter09() throws Exception {
-		testChapter("rubin_09");
+		testChapter(Chapter09.values());
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 10
+	 * Runs the new predicate prover on a set of sequents taken from chapter 10
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter10() throws Exception {
-		testChapter("rubin_10");
+		testChapter(Chapter10.values());
 	}
 
 	/**
-	 * Runs the old predicate prover on a set of sequents taken from chapter 11
+	 * Runs the new predicate prover on a set of sequents taken from chapter 11
 	 * of Jean E. Rubin's book.
 	 */
 	@Test
 	public void testChapter11() throws Exception {
-		testChapter("rubin_11");
+		testChapter(Chapter11.values(),//
+				Example_11_D8,//
+				Example_11_E7,//
+				Example_11_E17 //
+		);
 	}
 
 	@Test
 	public void testOthers() throws Exception {
-		testChapter("others");
+		testChapter(Others.values(),//
+				Animals,//
+				AnimalsPlus //
+		);
 	}
 
-	/*
-	 * This test allows to check specifically the formulas in the special file
-	 * "test". This is used only for debugging purposes.
-	 */
-	@Test
-	@Ignore
-	public void testTests() throws Exception {
-		testChapter("test");
-	}
-
-	private void testChapter(String name) throws IOException {
-		final String filePath = getLocalPath(new Path(FILE_PATH + name + ".txt"));
-		final Sequent[] sequents = PredicateFrontEnd.parseFile(filePath);
-		assertNotNull("Parser failed unexpectedly", sequents);
-		for (Sequent sequent : sequents) {
-			testSequent(sequent);
+	private void testChapter(IProblem problems[], IProblem... ignore) {
+		final Set<IProblem> skip = new HashSet<IProblem>(asList(ignore));
+		for (final IProblem problem : problems) {
+			if (!skip.contains(problem)) {
+				testProblem(400, problem);
+			}
 		}
 	}
 
