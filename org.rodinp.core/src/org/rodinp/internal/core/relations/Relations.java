@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.rodinp.internal.core.AttributeType;
-import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
+import org.rodinp.internal.core.InternalElementType;
 
 /**
  * Generic class storing parent-children and child-parents relations where all
@@ -80,17 +80,17 @@ public abstract class Relations<S extends Comparable<S>, T extends Comparable<T>
 
 	// public for testing purpose only
 	public static class AttributeTypeRelations extends
-			Relations<InternalElementType2<?>, AttributeType<?>> {
+			Relations<InternalElementType<?>, AttributeType<?>> {
 
 		/** Returns all element types that can carry the given element type. */
-		public List<InternalElementType2<?>> getElementTypes(
+		public List<InternalElementType<?>> getElementTypes(
 				AttributeType<?> type) {
 			return getParentsOf(type);
 		}
 
 		/** Returns all attribute types of the given element type. */
 		public List<AttributeType<?>> getAttributeTypes(
-				InternalElementType2<?> type) {
+				InternalElementType<?> type) {
 			return getChildrenOf(type);
 		}
 
@@ -98,17 +98,17 @@ public abstract class Relations<S extends Comparable<S>, T extends Comparable<T>
 
 	// public for testing purpose only
 	public static class ElementTypeRelations extends
-			Relations<InternalElementType2<?>, InternalElementType2<?>> {
+			Relations<InternalElementType<?>, InternalElementType<?>> {
 
 		/** Returns all parent element types of the given element type. */
-		public List<InternalElementType2<?>> getParentTypes(
-				InternalElementType2<?> type) {
+		public List<InternalElementType<?>> getParentTypes(
+				InternalElementType<?> type) {
 			return getParentsOf(type);
 		}
 
 		/** Returns all child element types of the given element type. */
-		public List<InternalElementType2<?>> getChildTypes(
-				InternalElementType2<?> type) {
+		public List<InternalElementType<?>> getChildTypes(
+				InternalElementType<?> type) {
 			return getChildrenOf(type);
 		}
 

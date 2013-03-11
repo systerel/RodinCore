@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,16 +17,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.rodinp.internal.core.AttributeType;
+import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.relations.Relations.AttributeTypeRelations;
 import org.rodinp.internal.core.relations.Relations.ElementTypeRelations;
-import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * Computes the item relations that have been parsed in order to provide
  * internal element types and attribute types with relationship information.
  * 
  * @author Thomas Muller
- * @see InternalElementType2
+ * @see InternalElementType
  * @see AttributeType
  * @see ItemRelation
  */
@@ -35,13 +35,13 @@ public class RelationsComputer {
 	private final ElementTypeRelations elemRels;
 	private final AttributeTypeRelations attrRels;
 
-	private final Set<InternalElementType2<?>> elemTypes;
+	private final Set<InternalElementType<?>> elemTypes;
 	private final Set<AttributeType<?>> attrTypes;
 
 	public RelationsComputer() {
 		elemRels = new ElementTypeRelations();
 		attrRels = new AttributeTypeRelations();
-		elemTypes = new LinkedHashSet<InternalElementType2<?>>();
+		elemTypes = new LinkedHashSet<InternalElementType<?>>();
 		attrTypes = new LinkedHashSet<AttributeType<?>>();
 	}
 
@@ -55,8 +55,8 @@ public class RelationsComputer {
 	 */
 	public void setRelations(List<ItemRelation> relations) {
 		for (ItemRelation rel : relations) {
-			final InternalElementType2<?> parentType = rel.getParentType();
-			final List<InternalElementType2<?>> childTypes = rel
+			final InternalElementType<?> parentType = rel.getParentType();
+			final List<InternalElementType<?>> childTypes = rel
 					.getChildTypes();
 			elemRels.putAll(parentType, childTypes);
 			elemTypes.add(parentType);
@@ -71,7 +71,7 @@ public class RelationsComputer {
 	}
 
 	private void setElementRelations() {
-		for (InternalElementType2<?> type : elemTypes) {
+		for (InternalElementType<?> type : elemTypes) {
 			type.setRelation(//
 					elemRels.getParentTypes(type), //
 					elemRels.getChildTypes(type), //
@@ -87,7 +87,7 @@ public class RelationsComputer {
 	}
 
 	// For testing purposes
-	public Set<InternalElementType2<?>> getElemTypes() {
+	public Set<InternalElementType<?>> getElemTypes() {
 		return unmodifiableSet(elemTypes);
 	}
 

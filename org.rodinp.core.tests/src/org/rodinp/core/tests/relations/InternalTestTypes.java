@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.internal.core.ElementTypeManager;
 import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.InternalElementTypes;
-import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * A class registering dynamic IInternalElementTypes for testing. This is done
@@ -60,7 +59,7 @@ public class InternalTestTypes extends InternalElementTypes {
 
 	@Override
 	protected InternalElementType<?> makeType(IConfigurationElement element) {
-		return new InternalElementType2<IInternalElement>(element,
+		return new InternalElementType<IInternalElement>(element,
 				elementTypeManager);
 	}
 

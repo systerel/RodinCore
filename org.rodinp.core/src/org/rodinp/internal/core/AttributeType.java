@@ -21,7 +21,6 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 import org.rodinp.internal.core.util.Util;
 
 /**
@@ -356,7 +355,7 @@ public abstract class AttributeType<V> implements IAttributeType,
 
 	private final java.lang.String name;
 	
-	private List<InternalElementType2<?>> elementTypes = null;
+	private List<InternalElementType<?>> elementTypes = null;
 
 	protected AttributeType(Kind kind, java.lang.String id,
 			java.lang.String name) {
@@ -408,8 +407,8 @@ public abstract class AttributeType<V> implements IAttributeType,
 	}
 
 	@Override
-	public InternalElementType2<?>[] getElementTypes() {
-		return elementTypes.toArray(new InternalElementType2<?>[elementTypes
+	public InternalElementType<?>[] getElementTypes() {
+		return elementTypes.toArray(new InternalElementType<?>[elementTypes
 				.size()]);
 	}
 
@@ -432,7 +431,7 @@ public abstract class AttributeType<V> implements IAttributeType,
 	public abstract AttributeValue<?, ?> makeValueFromRaw(
 			java.lang.String rawValue) throws RodinDBException;
 
-	public void setRelation(List<InternalElementType2<?>> eTypes) {
+	public void setRelation(List<InternalElementType<?>> eTypes) {
 		if (elementTypes != null) {
 			throw new IllegalStateException(
 					"Illegal attempt to set relations for attribute type "

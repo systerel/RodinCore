@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.rodinp.internal.core.AttributeType;
-import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
+import org.rodinp.internal.core.InternalElementType;
 
 /**
  * Parsers for single configuration elements contributed to the
@@ -47,7 +47,7 @@ public abstract class ElementParser {
 		@Override
 		protected void process(IConfigurationElement element,
 				String parentTypeId) {
-			final InternalElementType2<?> parentType = parent
+			final InternalElementType<?> parentType = parent
 					.getInternalElementType(parentTypeId);
 			if (parentType == null) {
 				parent.addError("Unknown parent type '" + parentTypeId + "'",
@@ -79,7 +79,7 @@ public abstract class ElementParser {
 
 		@Override
 		protected void process(IConfigurationElement element, String elementId) {
-			final InternalElementType2<?> childType = parent
+			final InternalElementType<?> childType = parent
 					.getInternalElementType(elementId);
 			if (childType == null) {
 				parent.addError("Unknown child element type '" + elementId

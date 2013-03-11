@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,25 +18,25 @@ import java.util.List;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.AttributeType;
-import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
+import org.rodinp.internal.core.InternalElementType;
 
 public class ItemRelation {
 
-	private final InternalElementType2<?> parentType;
-	private final List<InternalElementType2<?>> childTypes;
+	private final InternalElementType<?> parentType;
+	private final List<InternalElementType<?>> childTypes;
 	private final List<AttributeType<?>> attributeTypes;
 
-	public ItemRelation(InternalElementType2<?> parentType) {
+	public ItemRelation(InternalElementType<?> parentType) {
 		this.parentType = parentType;
-		this.childTypes = new ArrayList<InternalElementType2<?>>();
+		this.childTypes = new ArrayList<InternalElementType<?>>();
 		this.attributeTypes = new ArrayList<AttributeType<?>>();
 	}
 
-	public InternalElementType2<?> getParentType() {
+	public InternalElementType<?> getParentType() {
 		return parentType;
 	}
 
-	public List<InternalElementType2<?>> getChildTypes() {
+	public List<InternalElementType<?>> getChildTypes() {
 		return unmodifiableList(childTypes);
 	}
 
@@ -44,7 +44,7 @@ public class ItemRelation {
 		return unmodifiableList(attributeTypes);
 	}
 
-	public void addChildType(InternalElementType2<?> childType) {
+	public void addChildType(InternalElementType<?> childType) {
 		childTypes.add(childType);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,32 +7,84 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - add database relations
  *******************************************************************************/
 package org.rodinp.core;
 
-
 /**
- * Common protocol for internal element types, that is the types associated to Rodin
- * internal elements. Internal element types are contributed to the Rodin database
- * through extension point <code>org.rodinp.core.internalElementTypes</code>.
+ * Common protocol for defining and traversing internal element types and
+ * attribute types. Element types are the types associated to Rodin internal
+ * elements. These types are contributed to the Rodin database through extension
+ * point <code>org.rodinp.core.internalElementTypes</code>.
  * <p>
- * Element type instances are guaranteed to be unique. Hence, two element types
- * can be compared directly using identity (<code>==</code>). Instances can
- * be obtained using the static factory method
- * <code>RodinCore.getInternalElementType()</code>.
+ * This interface also allows to retrieve the possible relationships between
+ * internal elements (child-parent) and between elements and attributes. These
+ * relationships are defined through the
+ * <code>org.rodinp.core.itemRelations</code> extension point.
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients.
+ * Element type instances are guaranteed to be unique. Hence, two element types
+ * can be compared directly using identity (<code>==</code>). Instances can be
+ * obtained using the static factory method
+ * <code>RodinCore.getInternalElementType()</code>.
  * </p>
  * 
  * @author Laurent Voisin
- * 
  * @see RodinCore#getInternalElementType(String)
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IInternalElementType<T extends IInternalElement> extends
 		IElementType<T> {
 
-	// No additional method
-	
+	/**
+	 * Returns the types of the internal elements that can parent an element of
+	 * this type.
+	 * 
+	 * @return the types of the internal elements that can parent an element of
+	 *         this type
+	 */
+	IInternalElementType<?>[] getParentTypes();
+
+	/**
+	 * Returns the types of the internal elements that can occur as children of
+	 * an internal element of this type.
+	 * 
+	 * @return the types of the internal elements that can occur as children of
+	 *         an internal element of this type
+	 */
+	IInternalElementType<?>[] getChildTypes();
+
+	/**
+	 * Returns the types of the attributes that internal elements of this type
+	 * can carry.
+	 * 
+	 * @return the types of the attributes that internal elements of this type
+	 *         can carry
+	 */
+	IAttributeType[] getAttributeTypes();
+
+	/**
+	 * Tells whether an internal element of this type can parent an internal
+	 * element of the given type.
+	 * 
+	 * @param childType
+	 *            an internal element type
+	 * @return <code>true</code> iff an internal element of this type can parent
+	 *         an internal element of the given type
+	 */
+	boolean canParent(IInternalElementType<?> childType);
+
+	/**
+	 * Tells whether an internal element of this type can carry an attribute of
+	 * the given type.
+	 * 
+	 * @param attributeType
+	 *            an attribute type
+	 * @return <code>true</code> iff an internal element of this type can carry
+	 *         an attribute of the given type
+	 */
+	boolean canCarry(IAttributeType attributeType);
+
 }
