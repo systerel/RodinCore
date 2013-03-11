@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - generic attribute manipulation
+ *     Systerel - add database relations
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -38,12 +39,12 @@ package org.rodinp.core;
  * </p>
  * <p>
  * Attribute type instances are guaranteed to be unique. Hence, two attribute
- * types can be compared directly using identity (<code>==</code>).
- * Instances can be obtained using the static factory methods from
- * <code>RodinCore</code>.
+ * types can be compared directly using identity (<code>==</code>). Instances
+ * can be obtained using the static factory methods from <code>RodinCore</code>.
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients.
+ * Moreover, this interface provides a protocol to retrieve and check the
+ * relationships existing between attribute and element types.
  * </p>
  * 
  * @author Laurent Voisin
@@ -55,6 +56,8 @@ package org.rodinp.core;
  * @see RodinCore#getLongAttrType(java.lang.String)
  * @see RodinCore#getStringAttrType(java.lang.String)
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IAttributeType {
 
@@ -176,5 +179,24 @@ public interface IAttributeType {
 	 * @return the name of this attribute type
 	 */
 	java.lang.String getName();
+
+	/**
+	 * Returns the types of internal elements that can carry an attribute of
+	 * this type.
+	 * 
+	 * @return the types of element that can carry an attribute of this type
+	 */
+	IInternalElementType<?>[] getElementTypes();
+
+	/**
+	 * Tells whether an attribute of this type can be carried by an element of
+	 * the given type.
+	 * 
+	 * @param elementType
+	 *            an internal element type
+	 * @return <code>true</code> iff an element of the given type can carry an
+	 *         attribute of this type
+	 */
+	boolean isAttributeOf(IInternalElementType<?> elementType);
 
 }

@@ -14,6 +14,7 @@ import org.eventb.internal.ui.eventbeditor.editpage.IEditComposite;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.NullAttributeManipulation;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElementType;
 
 public class NullAttributeDesc extends AttributeDesc {
 
@@ -50,6 +51,16 @@ public class NullAttributeDesc extends AttributeDesc {
 				final IAttributeType at = (IAttributeType) obj;
 				return this.getId().equals(at.getId())
 						&& this.getName().equals(at.getName());
+			}
+
+			@Override
+			public IInternalElementType<?>[] getElementTypes() {
+				return new IInternalElementType[0];
+			}
+
+			@Override
+			public boolean isAttributeOf(IInternalElementType<?> elementType) {
+				return false;
 			}
 		};
 	}
