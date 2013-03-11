@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.Relations.AttributeTypeRelations;
 import org.rodinp.internal.core.relations.Relations.ElementTypeRelations;
 import org.rodinp.internal.core.relations.RelationsComputer;
-import org.rodinp.internal.core.relations.api.IAttributeType2;
 import org.rodinp.internal.core.relations.api.IInternalElementType2;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
@@ -123,7 +122,7 @@ public class RelationsTests {
 		computeItemRelations("p5:c5:a5");
 		final IInternalElementType2<?> p5 = getInternalElementType("p5");
 		final IInternalElementType2<?> c5 = getInternalElementType("c5");
-		final IAttributeType2 a5 = getAttributeType("a5");
+		final IAttributeType a5 = getAttributeType("a5");
 		new ChildTypeMutator().test(p5);
 		new ParentTypeMutator().test(c5);
 		new AttrTypeMutator().test(p5);
@@ -134,7 +133,7 @@ public class RelationsTests {
 		return (IInternalElementType2<?>) eTypes.get(PREFIX + shortId);
 	}
 
-	private IAttributeType2 getAttributeType(String shortId) {
+	private IAttributeType getAttributeType(String shortId) {
 		return aTypes.get(PREFIX + shortId);
 	}
 
@@ -188,9 +187,9 @@ public class RelationsTests {
 	}
 
 	private static class ElemTypeMutator extends
-			Mutator<IAttributeType2, IInternalElementType<?>> {
+			Mutator<IAttributeType, IInternalElementType<?>> {
 		@Override
-		protected IInternalElementType<?>[] getArray(IAttributeType2 itemType) {
+		protected IInternalElementType<?>[] getArray(IAttributeType itemType) {
 			return itemType.getElementTypes();
 		}
 	}

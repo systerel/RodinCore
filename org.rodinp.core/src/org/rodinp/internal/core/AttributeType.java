@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - generic attribute manipulation
- *     Systerel - implementation of IAttributeType2
+ *     Systerel - add database relations
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -21,7 +21,6 @@ import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.internal.core.relations.api.IAttributeType2;
 import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 import org.rodinp.internal.core.util.Util;
 
@@ -30,7 +29,7 @@ import org.rodinp.internal.core.util.Util;
  * 
  * @author Laurent Voisin
  */
-public abstract class AttributeType<V> implements IAttributeType, IAttributeType2,
+public abstract class AttributeType<V> implements IAttributeType,
 		IContributedItemType, Comparable<AttributeType<V>> {
 
 	public static enum Kind {
