@@ -28,16 +28,15 @@ import org.junit.Test;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.internal.core.AttributeType;
+import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.Relations.AttributeTypeRelations;
 import org.rodinp.internal.core.relations.Relations.ElementTypeRelations;
 import org.rodinp.internal.core.relations.RelationsComputer;
-import org.rodinp.internal.core.relations.api.IInternalElementType2;
-import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * Acceptance tests of the relations API introduced by
- * {@link IInternalElementType2} and {@link IAttributeType2}.
+ * {@link IInternalElementType} and {@link IAttributeType2}.
  * 
  * @author Thomas Muller
  */
@@ -120,8 +119,8 @@ public class RelationsTests {
 	@Test
 	public void testAPIGetters() {
 		computeItemRelations("p5:c5:a5");
-		final IInternalElementType2<?> p5 = getInternalElementType("p5");
-		final IInternalElementType2<?> c5 = getInternalElementType("c5");
+		final IInternalElementType<?> p5 = getInternalElementType("p5");
+		final IInternalElementType<?> c5 = getInternalElementType("c5");
 		final IAttributeType a5 = getAttributeType("a5");
 		new ChildTypeMutator().test(p5);
 		new ParentTypeMutator().test(c5);
@@ -129,8 +128,8 @@ public class RelationsTests {
 		new ElemTypeMutator().test(a5);
 	}
 
-	private IInternalElementType2<?> getInternalElementType(String shortId) {
-		return (IInternalElementType2<?>) eTypes.get(PREFIX + shortId);
+	private IInternalElementType<?> getInternalElementType(String shortId) {
+		return eTypes.get(PREFIX + shortId);
 	}
 
 	private IAttributeType getAttributeType(String shortId) {
@@ -161,27 +160,27 @@ public class RelationsTests {
 	}
 
 	private static class ChildTypeMutator extends
-			Mutator<IInternalElementType2<?>, IInternalElementType<?>> {
+			Mutator<IInternalElementType<?>, IInternalElementType<?>> {
 		@Override
 		protected IInternalElementType<?>[] getArray(
-				IInternalElementType2<?> itemType) {
+				IInternalElementType<?> itemType) {
 			return itemType.getChildTypes();
 		}
 	}
 
 	private static class ParentTypeMutator extends
-			Mutator<IInternalElementType2<?>, IInternalElementType<?>> {
+			Mutator<IInternalElementType<?>, IInternalElementType<?>> {
 		@Override
 		protected IInternalElementType<?>[] getArray(
-				IInternalElementType2<?> itemType) {
+				IInternalElementType<?> itemType) {
 			return itemType.getParentTypes();
 		}
 	}
 
 	private static class AttrTypeMutator extends
-			Mutator<IInternalElementType2<?>, IAttributeType> {
+			Mutator<IInternalElementType<?>, IAttributeType> {
 		@Override
-		protected IAttributeType[] getArray(IInternalElementType2<?> itemType) {
+		protected IAttributeType[] getArray(IInternalElementType<?> itemType) {
 			return itemType.getAttributeTypes();
 		}
 	}
@@ -206,7 +205,7 @@ public class RelationsTests {
 		computeItemRelations(relationStrs);
 		final ElementTypeRelations expectedElemRels = getExpectedElemRelations(itemRels);
 		final AttributeTypeRelations expectedAttrRels = getExpectedAttrRelations(itemRels);
-		for (InternalElementType2<?> type : computer.getElemTypes()) {
+		for (InternalElementType<?> type : computer.getElemTypes()) {
 			assertEquals(expectedElemRels.getParentTypes(type),
 					asList(type.getParentTypes()));
 			assertEquals(expectedElemRels.getChildTypes(type),
@@ -222,8 +221,8 @@ public class RelationsTests {
 			List<ItemRelation> itemRelations) {
 		final ElementTypeRelations eRels = new ElementTypeRelations();
 		for (ItemRelation rel : itemRelations) {
-			final InternalElementType2<?> parentType = rel.getParentType();
-			final List<InternalElementType2<?>> childTypes = rel
+			final InternalElementType<?> parentType = rel.getParentType();
+			final List<InternalElementType<?>> childTypes = rel
 					.getChildTypes();
 			eRels.putAll(parentType, childTypes);
 		}
@@ -234,7 +233,7 @@ public class RelationsTests {
 			List<ItemRelation> itemRelations) {
 		final AttributeTypeRelations aRels = new AttributeTypeRelations();
 		for (ItemRelation rel : itemRelations) {
-			final InternalElementType2<?> parentType = rel.getParentType();
+			final InternalElementType<?> parentType = rel.getParentType();
 			final List<AttributeType<?>> childAttributes = rel
 					.getAttributeTypes();
 			aRels.putAll(parentType, childAttributes);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.rodinp.internal.core.AttributeType;
 import org.rodinp.internal.core.AttributeTypes;
+import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.InternalElementTypes;
 import org.rodinp.internal.core.relations.ElementParser.RelationshipParser;
-import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * Parser for the <code>itemRelations</code> extension point. Errors encountered
@@ -84,8 +84,8 @@ public class ItemRelationParser {
 		errors.add(message + " from " + elem.getContributor().getName());
 	}
 
-	public InternalElementType2<?> getInternalElementType(String id) {
-		return (InternalElementType2<?>) elementTypes.get(id);
+	public InternalElementType<?> getInternalElementType(String id) {
+		return elementTypes.get(id);
 	}
 	
 	public AttributeType<?> getAttributeType(String id) {

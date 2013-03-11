@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.junit.Test;
 import org.rodinp.internal.core.ElementTypeManager;
+import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.ItemRelationParser;
-import org.rodinp.internal.core.relations.tomerge.InternalElementType2;
 
 /**
  * Unit tests for class {@link ItemRelationParser}.
@@ -340,13 +340,13 @@ public class ItemRelationParserTests {
 		if (m.matches()) {
 			final String parentId = m.group(1);
 			final ItemRelation itemRelation = new ItemRelation(
-					(InternalElementType2<?>) eTypes.get(p(parentId)));
+					(InternalElementType<?>) eTypes.get(p(parentId)));
 			final Pattern p2 = compile(",");
 			final String children = m.group(2);
 			for (String child : p2.split(children)) {
 				if (child.isEmpty())
 					continue;
-				itemRelation.addChildType((InternalElementType2<?>) eTypes
+				itemRelation.addChildType((InternalElementType<?>) eTypes
 						.get(p(child)));				
 			}
 			final String attributes = m.group(3);
