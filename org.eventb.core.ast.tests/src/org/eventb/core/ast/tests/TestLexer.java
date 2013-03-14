@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -29,13 +30,12 @@ import java.util.Set;
 
 import org.eventb.core.ast.ASTProblem;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.AbstractGrammar;
@@ -197,48 +197,29 @@ public class TestLexer extends AbstractTests {
 		assertFalse(FormulaFactory.checkSymbol("spaced ident"));
 	}
 
-	private static class DT implements IDatatypeExtension {
-
-		private final String name;
-
-		public DT(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String getTypeName() {
-			return name;
-		}
-
-		@Override
-		public String getId() {
-			return "id" + name;
-		}
-
-		@Override
-		public void addTypeParameters(ITypeConstructorMediator mediator) {
-			// none
-		}
-
-		@Override
-		public void addConstructors(IConstructorMediator mediator) {
-			// none
-		}
-
-	}
-
-	@Test 
+	@Test
 	public void testExtensions() throws Exception {
-//		final String prefix = "oo"; // no bug
+		// final String prefix = "oo"; // no bug
 		final String prefix = "o"; // bug
-//		final String prefix = "S"; // no bug
-//		final String prefix = "Se"; // no bug
-//		final String prefix = "Seq"; // bug
+		// final String prefix = "S"; // no bug
+		// final String prefix = "Se"; // no bug
+		// final String prefix = "Seq"; // bug
 
 		// no bug if we do: new DT(prefix + "0")
-		final IDatatype dtSeq = ff.makeDatatype(new DT(prefix));
-		final IDatatype dtSeq1 = ff.makeDatatype(new DT(prefix + "1"));
-		final IDatatype dtSeq2 = ff.makeDatatype(new DT(prefix + "2"));
+		final List<GivenType> emptyArgs = new ArrayList<GivenType>();
+		final IDatatypeBuilder dtSeqBuild = ff.makeDatatypeBuilder(prefix,
+				emptyArgs);
+		final IDatatypeBuilder dtSeq1Build = ff.makeDatatypeBuilder(prefix
+				+ "1", emptyArgs);
+		final IDatatypeBuilder dtSeq2Build = ff.makeDatatypeBuilder(prefix
+				+ "2", emptyArgs);
+		dtSeqBuild.addConstructor("new" + prefix);
+		dtSeq1Build.addConstructor("new" + prefix + "1");
+		dtSeq2Build.addConstructor("new" + prefix + "2");
+
+		final IDatatype2 dtSeq = dtSeqBuild.finalizeDatatype();
+		final IDatatype2 dtSeq1 = dtSeq1Build.finalizeDatatype();
+		final IDatatype2 dtSeq2 = dtSeq2Build.finalizeDatatype();
 
 		final Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
 		extensions.addAll(dtSeq.getExtensions());

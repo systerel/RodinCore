@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.tests.FastFactory.addToTypeEnvironment;
 import static org.eventb.core.ast.tests.FastFactory.mList;
-import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,9 +27,8 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.internal.core.ast.extension.datatype2.Datatype2Translation;
 
 /**
  * Common methods to check translation of expression formulas and axioms.
@@ -83,13 +81,12 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 	protected static class TestTranslationSupport {
 
 		private Set<IFormulaExtension> allExts = new LinkedHashSet<IFormulaExtension>();
-		private Set<IDatatypeExtension> extensions = new LinkedHashSet<IDatatypeExtension>();
-		private Set<IDatatype> datatypes = new LinkedHashSet<IDatatype>();
+		private Set<IDatatype2> datatypes = new LinkedHashSet<IDatatype2>();
 
 		private ITypeEnvironmentBuilder sourceTypeEnv;
 		private ITypeEnvironment targetTypeEnv;
 
-		private DatatypeTranslation translation;
+		private Datatype2Translation translation;
 
 		public TestTranslationSupport(String... extensionSpecs) {
 			this(ff, extensionSpecs);
@@ -103,15 +100,14 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 			injectDatatypeExtensions(startFac, extensionSpecs);
 			final FormulaFactory fac = buildSourceFactory();
 			this.sourceTypeEnv = fac.makeTypeEnvironment();
-			this.translation = new DatatypeTranslation(sourceTypeEnv);
+			this.translation = new Datatype2Translation(sourceTypeEnv);
 		}
 
 		private void injectDatatypeExtensions(FormulaFactory startFac,
 				String[] extensionSpecs) {
 			for (String spec : extensionSpecs) {
-				final IDatatypeExtension extension = injectExtension(spec);
-				extensions.add(extension);
-				datatypes.add(startFac.makeDatatype(extension));
+				final IDatatype2 datatype = DatatypeParser.parse(startFac, spec);
+				datatypes.add(datatype);
 			}
 		}
 
@@ -122,21 +118,21 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 		}
 
 		public FormulaFactory buildSourceFactory() {
-			for (IDatatype dt : datatypes) {
+			for (IDatatype2 dt : datatypes) {
 				allExts.addAll(dt.getExtensions());
 			}
 			return FormulaFactory.getInstance(allExts);
 		}
 
-		public List<IDatatype> getDatatypes() {
-			return new ArrayList<IDatatype>(datatypes);
+		public List<IDatatype2> getDatatypes() {
+			return new ArrayList<IDatatype2>(datatypes);
 		}
 
 		public ITypeEnvironment getSourceTypeEnvironment() {
 			return sourceTypeEnv;
 		}
 
-		public DatatypeTranslation getTranslation() {
+		public Datatype2Translation getTranslation() {
 			return translation;
 		}
 

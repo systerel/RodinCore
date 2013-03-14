@@ -10,27 +10,24 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.eventb.core.ast.tests.TestDatatypes.NLIST_FF;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.fail;
-import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.junit.Test;
 
 /**
  * Acceptance tests for method
- * {@link IDatatype#getArgumentSets(IExpressionExtension, ExtendedExpression, FormulaFactory)}
+ * {@link IConstructorExtension#getArgumentSets(Expression)}
  * 
  * @author Laurent Voisin
  */
@@ -48,10 +45,9 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	private static final FormulaFactory dtFF;
 	static {
 		final Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
-		extensions.addAll(LIST_FAC.getExtensions());
+		extensions.addAll(NLIST_FF.getExtensions());
 		for (final String ext : DATATYPE_SPECS) {
-			final IDatatypeExtension dtExt = injectExtension(ext);
-			final IDatatype dt = LIST_FAC.makeDatatype(dtExt);
+			final IDatatype2 dt = DatatypeParser.parse(NLIST_FF, ext);
 			extensions.addAll(dt.getExtensions());
 		}
 		dtFF = FormulaFactory.getInstance(extensions);
@@ -102,34 +98,6 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	}
 
 	/**
-	 * Ensures that passing an extension which is not a constructor raises an
-	 * error.
-	 */
-	@Test 
-	public void testNotConstructor() {
-		try {
-			assertArgumentSets("List(1‥2)", "head");
-			fail("Incompatible constructor");
-		} catch (IllegalArgumentException e) {
-			// pass
-		}
-	}
-
-	/**
-	 * Ensures that passing a type constructor instead of a value constructor
-	 * raises an error.
-	 */
-	@Test 
-	public void testNotValueConstructor() {
-		try {
-			assertArgumentSets("List(1‥2)", "List");
-			fail("Incompatible constructor");
-		} catch (IllegalArgumentException e) {
-			// pass
-		}
-	}
-
-	/**
 	 * Ensures that passing a constructor from another datatype raises an error.
 	 */
 	@Test 
@@ -148,11 +116,10 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	 */
 	@Test 
 	public void testWrongTypeConstructor() {
-		final IExpressionExtension cons = extensionFromSymbol("cons");
-		final IDatatype dt = (IDatatype) cons.getOrigin();
-		final ExtendedExpression set = parseExtendedExpression("Pow(1‥2)");
+		final IConstructorExtension cons = (IConstructorExtension) extensionFromSymbol("cons");
+		final Expression set = parseExpression("Pow(1‥2)");
 		try {
-			dt.getArgumentSets(cons, set, dtFF);
+			cons.getArgumentSets(set);
 			fail("Incompatible type constructor in set");
 		} catch (IllegalArgumentException e) {
 			// pass
@@ -165,11 +132,10 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	 */
 	@Test 
 	public void testNotTypeConstructor() {
-		final IExpressionExtension cons = extensionFromSymbol("cons");
-		final IDatatype dt = (IDatatype) cons.getOrigin();
-		final ExtendedExpression set = parseExtendedExpression("cons(1‥2, nil)");
+		final IConstructorExtension cons = (IConstructorExtension) extensionFromSymbol("cons");
+		final Expression set = parseExpression("cons(1‥2, nil)", dtFF);
 		try {
-			dt.getArgumentSets(cons, set, dtFF);
+			cons.getArgumentSets(set);
 			fail("Incompatible type constructor in set");
 		} catch (IllegalArgumentException e) {
 			// pass
@@ -178,12 +144,11 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 
 	private void assertArgumentSets(String setImage, String constructorSymbol,
 			String... expectedImages) {
-		final IExpressionExtension cons = extensionFromSymbol(constructorSymbol);
-		final ExtendedExpression set = parseExtendedExpression(setImage);
-		final IDatatype dt = (IDatatype) set.getExtension().getOrigin();
+		final IConstructorExtension cons = (IConstructorExtension) extensionFromSymbol(constructorSymbol);
+		final Expression set = parseExpression(setImage, dtFF);
 		final Expression[] expected = parseExpressions(expectedImages);
-		final List<Expression> actual = dt.getArgumentSets(cons, set, dtFF);
-		assertEquals(asList(expected), actual);
+		final Expression[] actual = cons.getArgumentSets(set);
+		assertArrayEquals(expected, actual);
 	}
 
 	private IExpressionExtension extensionFromSymbol(String symbol) {
@@ -194,10 +159,6 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 		}
 		fail("Unknown extension symbol: " + symbol);
 		return null;
-	}
-
-	private ExtendedExpression parseExtendedExpression(String exprImage) {
-		return (ExtendedExpression) parseExpression(exprImage, dtFF);
 	}
 
 	private Expression[] parseExpressions(String[] images) {

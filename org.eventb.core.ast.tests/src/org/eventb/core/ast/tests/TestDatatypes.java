@@ -72,6 +72,7 @@ public class TestDatatypes extends AbstractTests {
 
 	/* Copy equivalent of AbstractTests List definition */
 	protected static final IDatatype2 NLIST_DT;
+	protected static final FormulaFactory NLIST_FF;
 
 	static {
 		final GivenType tyS = ff.makeGivenType("S");
@@ -82,9 +83,9 @@ public class TestDatatypes extends AbstractTests {
 		cons.addArgument(tyS, "head");
 		cons.addArgument(tyList, "tail");
 		NLIST_DT = builder.finalizeDatatype();
+		NLIST_FF = FormulaFactory.getInstance(NLIST_DT.getExtensions());
 	}
 
-	protected static final FormulaFactory NLIST_FF = NLIST_DT.getFactory();
 
 	protected static final IExpressionExtension NEXT_LIST = NLIST_DT
 			.getTypeConstructor();

@@ -12,7 +12,6 @@ package org.eventb.core.seqprover.transformer.tests;
 
 import static java.util.Arrays.copyOf;
 import static org.eventb.core.ast.FormulaFactory.getInstance;
-import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.eventb.core.seqprover.transformer.SimpleSequents.translateDatatypes;
 import static org.junit.Assert.assertEquals;
@@ -23,8 +22,8 @@ import java.util.Set;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.tests.DatatypeParser;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.junit.Test;
@@ -99,8 +98,7 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 
 	private void testSequentTranslation(String typeEnvStr, String sequentImage,
 			String expectedImage) {
-		final IDatatypeExtension dt = injectExtension(msgDatatypeSpec);
-		final IDatatype datatype = ff.makeDatatype(dt);
+		final IDatatype2 datatype = DatatypeParser.parse(ff, msgDatatypeSpec);
 		final FormulaFactory srcFac = getInstance(datatype.getExtensions());
 		final ITypeEnvironmentBuilder srcTypenv = mTypeEnvironment(typeEnvStr, srcFac);
 		final ISimpleSequent srcSequent = getSimpleSequent(srcTypenv,
@@ -117,7 +115,7 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 	private void assertNoDatatypeExtension(FormulaFactory fac) {
 		final Set<IFormulaExtension> extensions = fac.getExtensions();
 		for (final IFormulaExtension extension : extensions) {
-			assertFalse(extension.getOrigin() instanceof IDatatype);
+			assertFalse(extension.getOrigin() instanceof IDatatype2);
 		}
 	}
 

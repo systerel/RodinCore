@@ -20,8 +20,8 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.internal.core.ast.extension.datatype.DatatypeTranslation;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.internal.core.ast.extension.datatype2.Datatype2Translation;
 import org.junit.Test;
 
 /**
@@ -59,8 +59,8 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 
 	private void assertCorrectParametricType(String expression) {
 		final TestTranslationSupport s = mSupport(LIST__DT);
-		final IDatatype listDatatype = s.getDatatypes().get(0);
-		final DatatypeTranslation trans = s.getTranslation();
+		final IDatatype2 listDatatype = s.getDatatypes().get(0);
+		final Datatype2Translation trans = s.getTranslation();
 		final Expression parsedExpr = s.parseSourceExpression(expression);
 		assertTrue(parsedExpr instanceof ExtendedExpression);
 		final ExtendedExpression extendedExpr = (ExtendedExpression) parsedExpr;
