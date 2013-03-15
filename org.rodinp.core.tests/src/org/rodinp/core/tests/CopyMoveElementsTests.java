@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,11 @@
  *     ETH Zurich - adapted from org.eclipse.jdt.core.tests.model.CopyMoveElementsTests
  *     Systerel - fixed use of pseudo-attribute "contents"
  *     Systerel - separation of file and root element
+ *     Systerel - add database relations
  *******************************************************************************/
 package org.rodinp.core.tests;
+
+import static org.rodinp.core.IRodinDBStatusConstants.INVALID_CHILD_TYPE;
 
 import org.eclipse.core.runtime.CoreException;
 import org.rodinp.core.IInternalElement;
@@ -22,6 +25,8 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.NamedElement2;
+import org.rodinp.core.tests.basis.RodinTestRoot;
 
 public class CopyMoveElementsTests extends CopyMoveTests {
 
@@ -333,7 +338,54 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 			stopDeltas();
 		}
 	}
-	
+
+	/**
+	 * Ensures that an internal element can not be copied to an invalid
+	 * top-level destination.
+	 */
+	public void testCopyIntToTopInvalidChildType() throws CoreException {
+		final IInternalElement rSource = createRodinFile("P/X.test").getRoot();
+		final NamedElement ne = createNEPositive(rSource, "foo", null);
+
+		final IInternalElement rDest = createRodinFile("P/Y.test2").getRoot();
+		copyNegative(ne, rDest, null, null, false, INVALID_CHILD_TYPE);
+	}
+
+	/**
+	 * Ensures that an internal element can not be copied to an invalid non
+	 * top-level destination.
+	 */
+	public void testCopyIntToIntInvalidChildType() throws CoreException {
+		final IRodinFile rfSource = createRodinFile("P/X.test");
+		final IInternalElement rSource = rfSource.getRoot();
+		final NamedElement ne = createNEPositive(rSource, "foo", null);
+		final NamedElement ne1 = createNEPositive(ne, "bar", null);
+
+		final IRodinFile rfDest = createRodinFile("P/Y.test2");
+		final IInternalElement rDest = rfDest.getRoot();
+		final NamedElement2 neDest = createNE2Positive(rDest, "baz", null);
+		copyNegative(ne1, neDest, null, null, false, INVALID_CHILD_TYPE);
+	}
+
+	/**
+	 * Ensures that an internal element can not be copied to an invalid non
+	 * top-level destination from a multiple element copy operation.
+	 */
+	public void testCopyManyIntInvalidChildType() throws CoreException {
+		final IInternalElement rSrc = createRodinFile("P/X.test").getRoot();
+		final NamedElement ne = createNEPositive(rSrc, "foo", null);
+		final NamedElement ne1 = createNEPositive(rSrc, "bar", null);
+
+		final IInternalElement r2 = createRodinFile("P/Z.test2").getRoot();
+
+		final IInternalElement rDest = createRodinFile("P/Y.test").getRoot();
+		final IInternalElement[] toCopy = new IInternalElement[] { ne, r2, ne1 };
+		final IInternalElement[] dest = new IInternalElement[] { rDest };
+		copyNegative(toCopy, dest, null, null, false, INVALID_CHILD_TYPE);
+		// Only two elements out of three were copied
+		assertEquals(2, rDest.getChildren().length);
+	}
+
 	/**
 	 * Ensures that a top-level internal element cannot be copied to an invalid destination.
 	 */
@@ -619,7 +671,55 @@ public class CopyMoveElementsTests extends CopyMoveTests {
 			stopDeltas();
 		}
 	}
-	
+
+	/**
+	 * Ensures that an element which type is not allowed by a top-level
+	 * destination parent, can not be moved to this parent.
+	 */
+	public void testMoveToTopInvalidChildType() throws CoreException {
+		final IInternalElement rSource = createRodinFile("P/X.test").getRoot();
+		final NamedElement ne = createNEPositive(rSource, "foo", null);
+
+		final IInternalElement rDest = createRodinFile("P/Y.test2").getRoot();
+		moveNegative(ne, rDest, null, null, false, INVALID_CHILD_TYPE);
+	}
+
+	/**
+	 * Ensures that an element which type is not allowed by a non top-level
+	 * destination parent, can not be moved to this parent.
+	 */
+	public void testMoveToIntInvalidChildType() throws CoreException {
+		final IInternalElement rSource = createRodinFile("P/X.test").getRoot();
+		final NamedElement ne = createNEPositive(rSource, "foo", null);
+
+		final IInternalElement rDest = createRodinFile("P/Y.test2").getRoot();
+		final NamedElement2 ne2 = createNE2Positive(rDest, "bar", null);
+		moveNegative(ne, ne2, null, null, false, INVALID_CHILD_TYPE);
+	}
+
+	/**
+	 * Ensures that an internal element can not be moved to an invalid non
+	 * top-level destination from a multiple element move operation.
+	 */
+	public void testMoveManyInvalidChildType() throws CoreException {
+		final IRodinFile rfSrc = createRodinFile("P/X.test");
+		final IInternalElement rSrc = rfSrc.getRoot();
+		final RodinTestRoot r2 = rSrc.createChild(RodinTestRoot.ELEMENT_TYPE,
+				null, null);
+
+		final NamedElement foo = createNEPositive(rSrc, "foo", null);
+		final NamedElement bar = createNEPositive(rSrc, "bar", null);
+		final NamedElement bar2 = createNEPositive(rSrc, "bar2", null);
+
+		final IInternalElement[] toMove = new IInternalElement[] { bar, r2,
+				bar2 };
+		final IInternalElement[] dest = new IInternalElement[] { foo };
+		moveNegative(toMove, dest, null, null, false, INVALID_CHILD_TYPE);
+		// Only two elements out of three were moved
+		assertEquals(2, rSrc.getChildren().length);
+		assertEquals(2, foo.getChildren().length);
+	}
+
 	/**
 	 * Ensures that a top-level internal element cannot be moved to an invalid destination.
 	 */

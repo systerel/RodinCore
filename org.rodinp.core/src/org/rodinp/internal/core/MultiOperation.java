@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,12 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import static org.rodinp.core.IRodinDBStatusConstants.INVALID_CHILD_TYPE;
+
 import java.util.HashMap;
 import java.util.Map;
 
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
 import org.rodinp.core.IRodinElement;
@@ -99,12 +102,12 @@ public abstract class MultiOperation extends RodinDBOperation {
 
 	/**
 	 * Convenience method to create a <code>RodinDBException</code>
-	 * embending a <code>RodinDBStatus</code>.
+	 * embedding a <code>RodinDBStatus</code>.
 	 */
 	protected void error(int code, IRodinElement element) throws RodinDBException {
 		throw new RodinDBException(new RodinDBStatus(code, element));
 	}
-	
+
 	/**
 	 * Executes the operation.
 	 *
@@ -270,8 +273,18 @@ public abstract class MultiOperation extends RodinDBOperation {
 			if (! (destination instanceof InternalElement)) {
 				error(IRodinDBStatusConstants.INVALID_DESTINATION, destination);
 			}
+			verifyChildType(((InternalElement) destination), ((InternalElement) element));
 		} else {
 			error(IRodinDBStatusConstants.INVALID_ELEMENT_TYPES, element);
+		}
+	}
+
+	private void verifyChildType(InternalElement parent, InternalElement element)
+			throws RodinDBException {
+		final IInternalElementType<?> childType = element.getElementType();
+		if (!parent.getElementType().canParent(childType)) {
+			throw new RodinDBException(new RodinDBStatus(INVALID_CHILD_TYPE,
+					parent, childType.getId()));
 		}
 	}
 
