@@ -527,7 +527,10 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource
+	 *                while accessing its corresponding resource or if this
+	 *                element cannot carry an attribute of the given type
+	 * @see IInternalElementType#canCarry(IAttributeType)
+	 * @since 3.0
 	 */
 	void setAttributeValue(IAttributeType.Boolean type, boolean newValue,
 			IProgressMonitor monitor) throws RodinDBException;
@@ -548,7 +551,10 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource
+	 *                while accessing its corresponding resource or if this
+	 *                element cannot carry an attribute of the given type
+	 * @see IInternalElementType#canCarry(IAttributeType)
+	 * @since 3.0
 	 */
 	void setAttributeValue(IAttributeType.Handle type, IRodinElement newValue,
 			IProgressMonitor monitor) throws RodinDBException;
@@ -569,7 +575,10 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource
+	 *                while accessing its corresponding resource or if this
+	 *                element cannot carry an attribute of the given type
+	 * @see IInternalElementType#canCarry(IAttributeType)
+	 * @since 3.0
 	 */
 	void setAttributeValue(IAttributeType.Integer type, int newValue,
 			IProgressMonitor monitor) throws RodinDBException;
@@ -590,7 +599,10 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource
+	 *                while accessing its corresponding resource or if this
+	 *                element cannot carry an attribute of the given type
+	 * @see IInternalElementType#canCarry(IAttributeType)
+	 * @since 3.0
 	 */
 	void setAttributeValue(IAttributeType.Long type, long newValue,
 			IProgressMonitor monitor) throws RodinDBException;
@@ -611,7 +623,10 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 *            reporting is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource
+	 *                while accessing its corresponding resource or if this
+	 *                element cannot carry an attribute of the given type
+	 * @see IInternalElementType#canCarry(IAttributeType)
+	 * @since 3.0
 	 */
 	void setAttributeValue(IAttributeType.String type, String newValue,
 			IProgressMonitor monitor) throws RodinDBException;
@@ -630,7 +645,10 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 *            is not desired
 	 * @exception RodinDBException
 	 *                if this element does not exist or if an exception occurs
-	 *                while accessing its corresponding resource
+	 *                while accessing its corresponding resource or if this
+	 *                element cannot carry an attribute with the given value
+	 * @see IInternalElementType#canCarry(IAttributeType)
+	 * @since 3.0
 	 */
 	void setAttributeValue(IAttributeValue newValue, IProgressMonitor monitor)
 			throws RodinDBException;

@@ -326,6 +326,14 @@ public interface IRodinDBStatusConstants {
 	int INVALID_CHILD_TYPE = 1006;
 
 	/**
+	 * Status indicating that an attribute setting operation has been attempted
+	 * while the attribute type, of the attribute to set, is not allowed
+	 * considering the owner element type. The owner element can be retrieved
+	 * using <code>getElements()</code> on the status object.
+	 */
+	int INVALID_ATTRIBUTE_TYPE = 1007;
+
+	/**
 	 * Status indicating that an error occurred while performing the indexing of
 	 * some file. The file element can be retrieved using
 	 * <code>getElements</code> on the status object.

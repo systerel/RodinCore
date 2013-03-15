@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,10 @@
  *     Systerel - generic attribute manipulation
  *******************************************************************************/
 package org.rodinp.core.tests;
+
+import static java.util.Arrays.asList;
+import static org.eclipse.core.runtime.IStatus.ERROR;
+import static org.rodinp.core.IRodinDBStatusConstants.INVALID_ATTRIBUTE_TYPE;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,6 +34,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 import org.rodinp.internal.core.AttributeType;
 
@@ -674,6 +679,40 @@ public class AttributeTests extends ModifyingResourceTests {
 
 		root.setAttributeValue(v2, null);
 		assertAttributeValues(root, v2);
+	}
+
+	/**
+	 * Ensures that an attribute of invalid type for a given root element cannot
+	 * be set.
+	 */
+	public void testSetInvalidAttributeRoot() throws CoreException {
+		final IInternalElement r = createRodinFile("P/X.test2").getRoot();
+		final IAttributeValue v = fBool.makeValue(true);
+		assertSetAttributeInvalidType(r, v);
+	}
+
+	/**
+	 * Ensures that an attribute of invalid type for a given non-root element
+	 * cannot be set.
+	 */
+	public void testSetInvalidAttributeInternal() throws CoreException {
+		final IInternalElement r = createRodinFile("P/X.test2").getRoot();
+		final NamedElement2 ne2 = createNE2Positive(r, "foo", null);
+		final IAttributeValue v = fBool.makeValue(true);
+		assertSetAttributeInvalidType(ne2, v);
+	}
+
+	private void assertSetAttributeInvalidType(IInternalElement owner,
+			IAttributeValue value) {
+		try {
+			owner.setAttributeValue(value, null);
+			fail("Should have raised a RodinDBException");
+		} catch (RodinDBException e) {
+			final IRodinDBStatus status = e.getRodinDBStatus();
+			assertEquals(ERROR, status.getSeverity());
+			assertEquals(INVALID_ATTRIBUTE_TYPE, status.getCode());
+			assertEquals(asList(owner), asList(status.getElements()));
+		}
 	}
 
 }

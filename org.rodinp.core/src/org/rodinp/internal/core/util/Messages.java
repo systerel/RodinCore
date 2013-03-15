@@ -97,6 +97,7 @@ public final class Messages {
 	public static String status_updateConflict;
 	public static String status_upgradedFile;
 	public static String status_invalidChildType;
+	public static String status_invalidAttributeType;
 	public static String status_indexerError;
 	
 	public static String type_database;
