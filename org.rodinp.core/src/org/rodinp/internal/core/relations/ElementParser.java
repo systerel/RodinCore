@@ -116,7 +116,7 @@ public abstract class ElementParser {
 
 	protected final ItemRelationParser parent;
 	protected final String elementName;
-	private final String attributeName;
+	protected final String attributeName;
 
 	public ElementParser(ItemRelationParser parent, String elementName,
 			String attributeName) {
@@ -144,7 +144,7 @@ public abstract class ElementParser {
 	protected abstract void process(IConfigurationElement element,
 			String attributeValue);
 
-	private boolean containsSpace(String string) {
+	protected boolean containsSpace(String string) {
 		return SPACE_PATTERN.matcher(string).find();
 	}
 
