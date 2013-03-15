@@ -15,6 +15,7 @@
 package org.rodinp.core.tests;
 
 import static org.rodinp.core.IRodinDBStatusConstants.ELEMENT_DOES_NOT_EXIST;
+import static org.rodinp.core.IRodinDBStatusConstants.INVALID_CHILD_TYPE;
 import static org.rodinp.core.IRodinDBStatusConstants.INVALID_SIBLING;
 import static org.rodinp.core.IRodinDBStatusConstants.READ_ONLY;
 
@@ -44,6 +45,7 @@ import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.tests.basis.NamedElement;
 import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.core.tests.basis.RodinTestRoot;
+import org.rodinp.core.tests.basis.RodinTestRoot2;
 
 public class TestInternalManipulation extends ModifyingResourceTests {
 
@@ -54,6 +56,7 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 	private IRodinProject rodinProject;
 	private IRodinFile rodinFile;
 	private RodinTestRoot root;
+	private RodinTestRoot2 root2;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -61,11 +64,13 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		rodinProject = createRodinProject("P");
 		rodinFile = createRodinFile("P/x.test");
 		root = (RodinTestRoot) rodinFile.getRoot();
+		root2 = (RodinTestRoot2) createRodinFile("P/y.test2").getRoot();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		root2.getResource().delete(true, null);
 		rodinFile.getResource().delete(true, null);
 		rodinProject.getProject().delete(true, true, null);
 		rodinProject.getRodinDB().close();
@@ -520,6 +525,25 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 				.getInternalElement(type, "inexistent");
 		assertCreateNewChildError(root, type, sibling, ELEMENT_DOES_NOT_EXIST,
 				sibling);
+	}
+
+	/**
+	 * Ensures that an element which type is invalid for a child of a root
+	 * element cannot be created.
+	 */
+	public void testCreateNewChildRootInvalidType() throws RodinDBException {
+		assertCreateNewChildError(root2, NamedElement.ELEMENT_TYPE, null,
+				INVALID_CHILD_TYPE, root2);
+	}
+
+	/**
+	 * Ensures that an element which type is invalid for a child of a non-root
+	 * parent element cannot be created.
+	 */
+	public void testCreateNewChildNonRootInvalidType() throws RodinDBException {
+		final NamedElement named = createNEPositive(root, "elem1", null);
+		assertCreateNewChildError(named, NamedElement2.ELEMENT_TYPE, null,
+				INVALID_CHILD_TYPE, named);
 	}
 
 	private void assertCreateNewChildError(IInternalElement parent,

@@ -95,6 +95,8 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 *                (ELEMENT_DOES_NOT_EXIST)</li>
 	 *                <li>This element is read-only (READ_ONLY)</li>
 	 *                <li>The given sibling is invalid (INVALID_SIBLING)</li>
+	 *                <li>The given type is not allowed for a child of this
+	 *                element (INVALID_CHILD_TYPE)</li>
 	 *                <li>A <code>CoreException</code> occurred while accessing
 	 *                an underlying resource
 	 *                </ul>
