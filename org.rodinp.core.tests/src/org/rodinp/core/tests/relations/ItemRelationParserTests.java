@@ -10,20 +10,10 @@
  *******************************************************************************/
 package org.rodinp.core.tests.relations;
 
-import static java.util.regex.Pattern.compile;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.rodinp.core.tests.AbstractRodinDBTests.PLUGIN_ID;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.junit.Test;
-import org.rodinp.internal.core.ElementTypeManager;
-import org.rodinp.internal.core.InternalElementType;
 import org.rodinp.internal.core.relations.ItemRelation;
 import org.rodinp.internal.core.relations.ItemRelationParser;
 
@@ -49,15 +39,7 @@ import org.rodinp.internal.core.relations.ItemRelationParser;
  * 
  * @author Thomas Muller
  */
-public class ItemRelationParserTests {
-
-	public static final String PREFIX = PLUGIN_ID + ".";
-
-	public static final ElementTypeManager typeManager = ElementTypeManager
-			.getInstanceForTests();
-	public static final InternalTestTypes eTypes = new InternalTestTypes(
-			typeManager);
-	public static final AttributeTestTypes aTypes = new AttributeTestTypes(typeManager);
+public class ItemRelationParserTests extends AbstractItemRelationParserTests {
 
 	private static final IConfigurationElement VALID_CHILD = node(
 			"relationship : parentTypeId='p'",
@@ -71,12 +53,7 @@ public class ItemRelationParserTests {
 
 	private static final ItemRelation VALID_BOTH_CHILDREN = relation("p:child:attr");
 
-	private static final String REL_ATTR_SEP = "\\s*:\\s*";
-	private static final String ATTR_SEP = "\\s*;\\s*";
 	private static final FakeConfigurationElement[] NONE = new FakeConfigurationElement[0];
-
-	private final ItemRelationParser parser = new ItemRelationParser(eTypes,
-			aTypes);
 
 	/**
 	 * Ensures that a valid one-to-one parent-child relationship between two
@@ -291,81 +268,6 @@ public class ItemRelationParserTests {
 				), //
 				VALID_CHILD_REL, //
 				VALID_ATTRIBUTE_REL);
-	}
-
-	private void assertSuccess(IConfigurationElement[] nodes,
-			ItemRelation... expected) {
-		assertTrue(parser.parse(nodes));
-		final List<ItemRelation> actual = parser.getRelations();
-		assertEquals(expected.length, actual.size());
-		int i = 0;
-		for (ItemRelation rel : expected) {
-			assertEquals(rel, actual.get(i));
-			i++;
-		}
-	}
-
-	private void assertFailure(IConfigurationElement[] nodes,
-			ItemRelation... expected) {
-		assertFalse(parser.parse(nodes));
-		final List<ItemRelation> relations = parser.getRelations();
-		assertEquals(expected.length, relations.size());
-		int i = 0;
-		for (ItemRelation rel : expected) {
-			assertEquals(rel, relations.get(i));
-			i++;
-		}
-	}
-
-	private static IConfigurationElement node(String nodeSpec,
-			IConfigurationElement... children) {
-		final String[] specs = nodeSpec.split(REL_ATTR_SEP);
-		final String nodeName = specs[0];
-		final String[] attributeStrs = getIDs(specs[1].split(ATTR_SEP));
-		return new FakeConfigurationElement(nodeName, attributeStrs, children);
-	}
-
-	private static String[] getIDs(String[] ids) {
-		final String[] result = new String[ids.length];
-		final String separator = "='";
-		for (int i = 0; i < ids.length; i++) {
-			result[i] = ids[i].replaceAll(separator, separator + PREFIX);
-		}
-		return result;
-	}
-
-	/*package*/ static ItemRelation relation(String relationImage) {
-		final Pattern p = compile("(\\S+):(\\S*):(\\S*)");
-		final Matcher m = p.matcher(relationImage);
-		if (m.matches()) {
-			final String parentId = m.group(1);
-			final ItemRelation itemRelation = new ItemRelation(
-					(InternalElementType<?>) eTypes.get(p(parentId)));
-			final Pattern p2 = compile(",");
-			final String children = m.group(2);
-			for (String child : p2.split(children)) {
-				if (child.isEmpty())
-					continue;
-				itemRelation.addChildType((InternalElementType<?>) eTypes
-						.get(p(child)));				
-			}
-			final String attributes = m.group(3);
-			for (String attr : p2.split(attributes)) {
-				if (attr.isEmpty())
-					continue;
-				itemRelation.addAttributeType(aTypes.get(p(attr)));				
-			}
-			return itemRelation;
-		}
-		return null;
-	}
-
-	private static String p(String string) {
-		return PREFIX + string;
-	}
-
-	private static <T> T[] t(T... ts) {
-		return ts;
 	};
 
 }
