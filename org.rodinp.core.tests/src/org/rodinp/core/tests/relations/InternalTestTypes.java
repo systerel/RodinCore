@@ -41,6 +41,8 @@ public class InternalTestTypes extends InternalElementTypes {
 			"cy31", "cy32", "cy33", //
 			"p3", "p4", "c4", //
 			"p5", "p6", "c5", "c6", //
+			"parent",
+
 	};
 
 	@Override

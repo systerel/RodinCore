@@ -40,6 +40,7 @@ import org.rodinp.core.tests.indexer.tables.TotalOrderUsageTests;
 import org.rodinp.core.tests.location.LocationInclusionTests;
 import org.rodinp.core.tests.location.RodinLocationTests;
 import org.rodinp.core.tests.relations.ItemRelationParserTests;
+import org.rodinp.core.tests.relations.LegacyRelationParserTests;
 import org.rodinp.core.tests.relations.RelationsTests;
 import org.rodinp.core.tests.version.BasicVersionTest;
 import org.rodinp.core.tests.version.FaultyVersionTest;
@@ -108,6 +109,7 @@ import org.rodinp.internal.core.util.tests.UtilTests;
 	
 	NullToolTest.class,
 	ItemRelationParserTests.class,
+	LegacyRelationParserTests.class,
 	
 	RelationsTests.class,
 	TestElementRelationLoading.class,

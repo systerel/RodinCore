@@ -29,8 +29,10 @@ public class AttributeTestTypes extends AttributeTypes {
 
 	private static final IConfigurationElement[] NONE = new IConfigurationElement[0];
 
-	private static final String[] TYPE_IDS = new String[] { //
+	private static final String[] TYPE_IDS = { //
 	"attr", "a1", "a2", "a5", //
+			"attrType", "a1Type", "a2Type", "a3Type",
+
 	};
 
 	@Override
