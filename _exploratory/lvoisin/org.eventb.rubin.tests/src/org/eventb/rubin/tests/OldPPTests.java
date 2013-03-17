@@ -12,11 +12,11 @@
 package org.eventb.rubin.tests;
 
 import static java.util.Arrays.asList;
+import static org.eventb.core.seqprover.ProverFactory.makeSequent;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,9 +41,9 @@ import org.junit.Test;
 import com.clearsy.atelierb.provers.core.AtbProversCore;
 
 public class OldPPTests extends AbstractPPTests {
-	
-	private static final long PP_DELAY = 800; 
-	
+
+	private static final long PP_DELAY = 800; // milliseconds
+
 	/**
 	 * Runs the new predicate prover on a set of sequents taken from chapter 1
 	 * of Jean E. Rubin's book.
@@ -120,7 +120,7 @@ public class OldPPTests extends AbstractPPTests {
 	public void testOthers() throws Exception {
 		testChapter(Others.values());
 	}
-	
+
 	private void testChapter(IProblem problems[], IProblem... ignore) {
 		final Set<IProblem> skip = new HashSet<IProblem>(asList(ignore));
 		for (final IProblem problem : problems) {
@@ -129,36 +129,38 @@ public class OldPPTests extends AbstractPPTests {
 			}
 		}
 	}
-	
+
 	protected void testProblem(IProblem problem) {
 		final Sequent sequent = problem.sequent();
-		final String name = sequent.getName();
-		
-		// Translate to a prover sequent
-		final ITypeEnvironment typenv = typeCheck(sequent);
-		final IProverSequent ps = ProverFactory.makeSequent(
-				typenv,
-				new HashSet<Predicate>(Arrays.asList(sequent.getHypotheses())),
-				sequent.getGoal()
-		);
-
-		// Create the tactic and apply PP
-		final ITactic tactic = AtbProversCore.externalPP(false, PP_DELAY);
-		final IProofTree tree = ProverFactory.makeProofTree(ps,null);
-		tactic.apply(tree.getRoot(), null);
-
+		final boolean ppValid = runAtelierBPP(sequent);
 		switch (problem.status()) {
 		case VALID:
-			assertTrue("PP failed unexpectedly on sequent " + sequent, tree.isClosed());
+			assertTrue("PP failed unexpectedly on sequent " + sequent, ppValid);
 			break;
 		case INVALID:
 		case VALIDPPFAILS:
-			assertFalse("PP succeeded unexpectedly on sequent" + sequent, tree.isClosed());
+			assertFalse("PP succeeded unexpectedly on sequent " + sequent,
+					ppValid);
 			break;
 		default:
-			fail("Invalid status for problem " + name);
+			fail("Invalid status for problem " + problem.name());
 			break;
 		}
+	}
+
+	private boolean runAtelierBPP(Sequent sequent) {
+		// Translate to a prover sequent
+		final ITypeEnvironment typenv = typeCheck(sequent);
+		final IProverSequent ps = makeSequent(
+				typenv,//
+				new HashSet<Predicate>(asList(sequent.getHypotheses())),
+				sequent.getGoal());
+
+		// Create the tactic and apply PP
+		final ITactic tactic = AtbProversCore.externalPP(false, PP_DELAY);
+		final IProofTree tree = ProverFactory.makeProofTree(ps, null);
+		tactic.apply(tree.getRoot(), null);
+		return tree.isClosed();
 	}
 
 }
