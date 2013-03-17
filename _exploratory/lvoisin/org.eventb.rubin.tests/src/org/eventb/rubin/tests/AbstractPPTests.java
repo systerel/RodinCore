@@ -113,7 +113,21 @@ public class AbstractPPTests {
 		}
 	}
 
-	protected void testProblem(int maxSteps, IProblem problem) {
+	protected static interface IProblemFilter {
+		IProblem filter(IProblem problem);
+	}
+
+	protected void testProblems(IProblemFilter filter, int maxSteps,
+			IProblem[] problems) {
+		for (final IProblem problem : problems) {
+			final IProblem toRun = filter.filter(problem);
+			if (toRun != null) {
+				testProblem(maxSteps, toRun);
+			}
+		}
+	}
+
+	private void testProblem(int maxSteps, IProblem problem) {
 		final String name = problem.name();
 		final Sequent sequent = problem.sequent();
 		final long start, end;

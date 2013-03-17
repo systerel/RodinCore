@@ -12,8 +12,11 @@
 package org.eventb.rubin.tests;
 
 import static java.util.Arrays.asList;
-import static org.eventb.rubin.problems.Chapter11.*;
-import static org.eventb.rubin.problems.Others.*;
+import static org.eventb.rubin.problems.Chapter11.Example_11_D8;
+import static org.eventb.rubin.problems.Chapter11.Example_11_E17;
+import static org.eventb.rubin.problems.Chapter11.Example_11_E7;
+import static org.eventb.rubin.problems.Others.Animals;
+import static org.eventb.rubin.problems.Others.AnimalsPlus;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -123,11 +126,16 @@ public class NewPPTests extends AbstractPPTests {
 
 	private void testChapter(IProblem problems[], IProblem... ignore) {
 		final Set<IProblem> skip = new HashSet<IProblem>(asList(ignore));
-		for (final IProblem problem : problems) {
-			if (!skip.contains(problem)) {
-				testProblem(400, problem);
+		final IProblemFilter filter = new IProblemFilter() {
+			@Override
+			public IProblem filter(IProblem problem) {
+				if (skip.contains(problem)) {
+					return null;
+				}
+				return problem;
 			}
-		}
+		};
+		testProblems(filter, 400, problems);
 	}
 
 }

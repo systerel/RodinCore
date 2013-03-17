@@ -12,10 +12,24 @@
 package org.eventb.rubin.tests;
 
 import static java.util.Arrays.asList;
-import static org.eventb.rubin.problems.Chapter02.*;
-import static org.eventb.rubin.problems.Chapter03.*;
-import static org.eventb.rubin.problems.Chapter08.*;
-import static org.eventb.rubin.problems.Chapter11.*;
+import static org.eventb.rubin.problems.Chapter02.Exercise_2_H10;
+import static org.eventb.rubin.problems.Chapter02.Exercise_2_H11;
+import static org.eventb.rubin.problems.Chapter03.Example_3_1;
+import static org.eventb.rubin.problems.Chapter03.Example_3_2a;
+import static org.eventb.rubin.problems.Chapter03.Example_3_2c;
+import static org.eventb.rubin.problems.Chapter03.Exercise_3_A1;
+import static org.eventb.rubin.problems.Chapter03.Exercise_3_A17;
+import static org.eventb.rubin.problems.Chapter03.Exercise_3_A5;
+import static org.eventb.rubin.problems.Chapter03.Exercise_3_A7;
+import static org.eventb.rubin.problems.Chapter03.Exercise_3_A8;
+import static org.eventb.rubin.problems.Chapter08.Exercise_8_A20_simp;
+import static org.eventb.rubin.problems.Chapter11.Example_11_2;
+import static org.eventb.rubin.problems.Chapter11.Example_11_D13;
+import static org.eventb.rubin.problems.Chapter11.Example_11_D14;
+import static org.eventb.rubin.problems.Chapter11.Example_11_D2;
+import static org.eventb.rubin.problems.Chapter11.Example_11_D3;
+import static org.eventb.rubin.problems.Chapter11.Example_11_D5;
+import static org.eventb.rubin.problems.Chapter11.Example_11_D8;
 import static org.eventb.rubin.tests.ProblemStatus.INVALID;
 
 import java.util.HashSet;
@@ -145,11 +159,19 @@ public class NewPPValidationTests extends AbstractPPTests {
 
 	private void testChapter(IProblem problems[], IProblem... ignore) {
 		final Set<IProblem> skip = new HashSet<IProblem>(asList(ignore));
-		for (final IProblem problem : problems) {
-			if (problem.status() != INVALID && !skip.contains(problem)) {
-				testProblem(5000, problem.invalidVariant());
+		final IProblemFilter filter = new IProblemFilter() {
+			@Override
+			public IProblem filter(IProblem problem) {
+				if (problem.status() == INVALID) {
+					return null;
+				}
+				if (skip.contains(problem)) {
+					return null;
+				}
+				return problem.invalidVariant();
 			}
-		}
+		};
+		testProblems(filter, 5000, problems);
 	}
 
 }
