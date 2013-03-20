@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eventb</groupId>
+		<artifactId>parent</artifactId>
+		<version>3.0.0-SNAPSHOT</version>
+		<relativePath>../org.eventb.parent/pom.xml</relativePath>
+	</parent>
+
+	<groupId>org.eventb</groupId>
+	<artifactId>org.eventb.core.tests</artifactId>
+	<version>2.5.0-SNAPSHOT</version>
+
+	<packaging>eclipse-test-plugin</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<excludes>
+						<!-- these tests are not compatible with Tycho -->
+						<exclude>**/TestPrettyPrint.java</exclude>
+						<exclude>**/ModuleGraphTest*.java</exclude>
+						<exclude>**/BaseConfigGraphTest*.java</exclude>
+					</excludes>
+					<testRuntime>p2Installed</testRuntime>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<dependency-resolution>
+						<extraRequirements>
+							<!-- add dependency to product IU under test -->
+							<requirement>
+								<type>p2-installable-unit</type>
+								<id>org.rodinp.platform.product</id>
+								<versionRange>[3.0,3.1)</versionRange>
+							</requirement>
+						</extraRequirements>
+					</dependency-resolution>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

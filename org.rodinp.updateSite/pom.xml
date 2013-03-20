@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>org.eventb</groupId>
+    <artifactId>eventb-parent</artifactId>
+    <version>3.0-SNAPSHOT</version>
+  </parent>
+  
+  <groupId>org.eventb</groupId>
+  <artifactId>org.rodinp.updateSite</artifactId>
+  <version>3.0.0-SNAPSHOT</version>
+  
+  <packaging>eclipse-repository</packaging>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <id>deploy-site</id>
+            <phase>install</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+               <includeAllDependencies>true</includeAllDependencies>
+			   <tasks>
+                <copy includeemptydirs="false" todir="${www-basedir}/update-site">
+                  <fileset dir="target/repository">
+                    <include name="**" />
+                  </fileset>
+                </copy>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
+</project>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eventb.ide_2.8.0.qualifier.jar" id="org.eventb.ide" version="2.8.0.qualifier">
+      <category name="rodin"/>
+   </feature>
+   <feature url="features/org.rodinp.platform_2.8.0.qualifier.jar" id="org.rodinp.platform" version="2.8.0.qualifier" os="linux,win32,macosx" ws="gtk,win32,cocoa" arch="x86,x86_64">
+      <category name="rodin"/>
+   </feature>
+   <feature url="features/org.rodinp_1.6.1.qualifier.jar" id="org.rodinp" version="1.6.1.qualifier">
+      <category name="rodin"/>
+   </feature>
+   <category-def name="rodin" label="Rodin"/>
+</site>
