@@ -20,15 +20,14 @@ import java.util.List;
 
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
 
@@ -42,32 +41,16 @@ public abstract class AbstractTranslationTests {
 	protected static final Type ty_S = ff.makeGivenType("S");
 
 	/**
-	 * A simple datatype extension.
+	 * A simple datatype
 	 */
-	private static final IDatatypeExtension DT_TYPE = new IDatatypeExtension() {
-
-		@Override
-		public String getTypeName() {
-			return "DT";
-		}
-
-		@Override
-		public String getId() {
-			return "DT.id";
-		}
-
-		@Override
-		public void addTypeParameters(ITypeConstructorMediator mediator) {
-			// none
-		}
-
-		@Override
-		public void addConstructors(IConstructorMediator mediator) {
-			mediator.addConstructor("dt", "dt.id");
-		}
-	};
-
-	private static final IDatatype DT = ff.makeDatatype(DT_TYPE);
+	public static final IDatatype2 DT;
+	static {
+		final GivenType[] typeParams = {};
+		final IDatatypeBuilder DT_BUILDER = ff.makeDatatypeBuilder(
+				"DT", typeParams);
+		DT_BUILDER.addConstructor("dt");
+		DT = DT_BUILDER.finalizeDatatype();
+	}
 
 	protected static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
 
