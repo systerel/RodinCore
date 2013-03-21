@@ -14,6 +14,7 @@
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.ExtendedFormulas.EFF;
+import static org.eventb.core.ast.tests.FastFactory.mDatatypeFactory;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -25,7 +26,6 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
 import org.eventb.internal.core.ast.wd.WDComputer;
 import org.junit.Test;
 
@@ -811,9 +811,8 @@ public class TestWD extends AbstractTests {
 	 */
 	@Test 
 	public void testDatatypeOneConstructorOnly() {
-		final IDatatype dt = ff.makeDatatype(ExtensionHelper.FOOBARTYPE);
-		final FormulaFactory fac = FormulaFactory.getInstance(dt
-				.getExtensions());
+		final String spec = "FooBar[S] ::= foo; bar[S]";
+		final FormulaFactory fac = mDatatypeFactory(ff, spec);
 		final ITypeEnvironmentBuilder env = fac.makeTypeEnvironment();
 		env.addName("l", fac.makeIntegerType());
 

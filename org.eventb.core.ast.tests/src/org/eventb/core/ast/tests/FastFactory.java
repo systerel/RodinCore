@@ -38,7 +38,7 @@ import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.tests.AbstractTests.LIST_DT;
 import static org.eventb.core.ast.tests.AbstractTests.parseExpression;
 import static org.eventb.core.ast.tests.AbstractTests.parseType;
-import static org.eventb.core.ast.tests.InjectedDatatypeExtension.injectExtension;
+import static org.eventb.core.ast.tests.DatatypeParser.parse;
 import static org.eventb.core.ast.tests.TestGenParser.EXT_PRIME;
 import static org.eventb.core.ast.tests.TestGenParser.MONEY;
 
@@ -84,8 +84,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.eventb.internal.core.typecheck.InferredTypeEnvironment;
 
 /**
@@ -125,8 +124,7 @@ public class FastFactory {
 
 	public static FormulaFactory mDatatypeFactory(FormulaFactory initial,
 			String datatypeImage) {
-		final IDatatypeExtension dtExt = injectExtension(datatypeImage);
-		final IDatatype datatype = initial.makeDatatype(dtExt);
+		final IDatatype2 datatype = parse(initial, datatypeImage);
 		final Set<IFormulaExtension> exts = initial.getExtensions();
 		exts.addAll(datatype.getExtensions());
 		return FormulaFactory.getInstance(exts);
@@ -508,12 +506,12 @@ public class FastFactory {
 					LIST_DT.getTypeConstructor());
 		}
 		ExtendedExpression result = ff_extns.makeExtendedExpression(
-				LIST_DT.getConstructor("NIL"), NO_EXPRESSION, NO_PREDICATE,
+				LIST_DT.getConstructor("nil"), NO_EXPRESSION, NO_PREDICATE,
 				null, listType);
 		for (int i = expressions.length - 1; i >= 0; i--) {
 			final Expression[] exprs = new Expression[] { expressions[i],
 					result };
-			result = ff_extns.makeExtendedExpression(LIST_DT.getConstructor("CONS"),
+			result = ff_extns.makeExtendedExpression(LIST_DT.getConstructor("cons"),
 					exprs, NO_PREDICATE, null, listType);
 		}
 		return result;

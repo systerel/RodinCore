@@ -12,7 +12,6 @@ package org.eventb.core.ast.tests;
 
 import static java.math.BigInteger.ONE;
 import static java.math.BigInteger.ZERO;
-import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.extension.ExtensionFactory.NO_CHILD;
 import static org.eventb.core.ast.extension.ExtensionFactory.makeChildTypes;
@@ -39,12 +38,6 @@ import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeDistribution;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
-import org.eventb.core.ast.extension.datatype.ITypeParameter;
 
 /**
  * A class to help building extended formulae.
@@ -52,47 +45,6 @@ import org.eventb.core.ast.extension.datatype.ITypeParameter;
  * @autor Thomas Muller
  */
 public class ExtensionHelper {
-
-	/**
-	 * Implementation of a datatype <code>FooBar</code> defined by:
-	 * 
-	 * <pre>
-	 *   FooBar[S] ::= foo; bar[S)
-	 * </pre>
-	 * 
-	 * The datatype therefore takes one type parameter <code>S</code> and
-	 * contains one value constructor <code>foo</code> taking a parameter
-	 * <bar>bar</code> of type <code>S</code>.
-	 */
-	public static final IDatatypeExtension FOOBARTYPE = new IDatatypeExtension() {
-
-		private static final String TYPE_NAME = "FooBar";
-		private static final String TYPE_IDENTIFIER = "org.eventb.core.ast.tests.FooBar";
-
-		@Override
-		public String getTypeName() {
-			return TYPE_NAME;
-		}
-
-		@Override
-		public String getId() {
-			return TYPE_IDENTIFIER;
-		}
-
-		@Override
-		public void addTypeParameters(ITypeConstructorMediator mediator) {
-			mediator.addTypeParam("S");
-		}
-
-		@Override
-		public void addConstructors(IConstructorMediator mediator) {
-			final ITypeParameter typeS = mediator.getTypeParameter("S");
-			final IArgumentType refS = mediator.newArgumentType(typeS);
-			final IArgument bar = mediator.newArgument("bar", refS);
-			mediator.addConstructor("foo", "FOO", singletonList(bar));
-		}
-
-	};
 
 	/*
 	 * Abstract implementation of basic formula extension for tests

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.tests.TestDatatypes.NLIST_FF;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.fail;
 
@@ -45,9 +44,9 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	private static final FormulaFactory dtFF;
 	static {
 		final Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
-		extensions.addAll(NLIST_FF.getExtensions());
+		extensions.addAll(LIST_FAC.getExtensions());
 		for (final String ext : DATATYPE_SPECS) {
-			final IDatatype2 dt = DatatypeParser.parse(NLIST_FF, ext);
+			final IDatatype2 dt = DatatypeParser.parse(LIST_FAC, ext);
 			extensions.addAll(dt.getExtensions());
 		}
 		dtFF = FormulaFactory.getInstance(extensions);

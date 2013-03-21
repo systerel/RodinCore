@@ -15,23 +15,26 @@ import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.IN;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LIMP;
+import static org.eventb.core.ast.Formula.MAPSTO;
+import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.Formula.UPTO;
 import static org.eventb.core.ast.ProblemKind.InvalidGenericType;
 import static org.eventb.core.ast.ProblemKind.InvalidTypeExpression;
 import static org.eventb.core.ast.ProblemSeverities.Error;
-import static org.eventb.core.ast.tests.FastFactory.mInferredTypeEnvironment;
-import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+import static org.eventb.core.ast.tests.FastFactory.ff_extns;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -46,14 +49,11 @@ import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.IInferredTypeEnvironment;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.ITypeCheckResult;
-import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.IntegerLiteral;
 import org.eventb.core.ast.ParametricType;
-import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
@@ -62,63 +62,29 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
-import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
-import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
+import org.eventb.core.ast.extension.datatype2.ITypeConstructorExtension;
+import org.eventb.internal.core.ast.extension.datatype2.DatatypeBuilder;
+import org.eventb.internal.core.ast.extension.datatype2.ExtensionHarvester;
 import org.junit.Test;
 
 public class TestDatatypes extends AbstractTests {
 
-	/* Copy equivalent of AbstractTests List definition */
-	protected static final IDatatype2 NLIST_DT;
-	protected static final FormulaFactory NLIST_FF;
-
-	static {
-		final GivenType tyS = ff.makeGivenType("S");
-		final GivenType tyList = ff.makeGivenType("List");
-		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("List", tyS);
-		builder.addConstructor("nil");
-		final IConstructorBuilder cons = builder.addConstructor("cons");
-		cons.addArgument(tyS, "head");
-		cons.addArgument(tyList, "tail");
-		NLIST_DT = builder.finalizeDatatype();
-		NLIST_FF = FormulaFactory.getInstance(NLIST_DT.getExtensions());
-	}
-
-
-	protected static final IExpressionExtension NEXT_LIST = NLIST_DT
-			.getTypeConstructor();
-
-	protected static final ParametricType NLIST_INT_TYPE = NLIST_FF
-			.makeParametricType(Collections.<Type> singletonList(NLIST_FF
-					.makeIntegerType()), NEXT_LIST);
-	protected static final PowerSetType NPOW_LIST_INT_TYPE = NLIST_FF
-			.makePowerSetType(NLIST_INT_TYPE);
-	protected static final IConstructorExtension NEXT_NIL = NLIST_DT
-			.getConstructor("nil");
-	protected static final IConstructorExtension NEXT_CONS = NLIST_DT
-			.getConstructor("cons");
-	protected static final IDestructorExtension NEXT_HEAD = NEXT_CONS
-			.getDestructor("head");
-	protected static final IDestructorExtension NEXT_TAIL = NEXT_CONS
-			.getDestructor("tail");
-	/* End of copy */
-
 	private static final Predicate[] NO_PRED = new Predicate[0];
 	private static final Expression[] NO_EXPR = new Expression[0];
 
-	protected static final AtomicExpression INT_ffLIST = NLIST_FF
+	protected static final AtomicExpression INT_ffLIST = LIST_FAC
 			.makeAtomicExpression(Formula.INTEGER, null);
 
-	protected static final BooleanType BOOL_TYPE_ffLIST = NLIST_FF
+	protected static final BooleanType BOOL_TYPE_ffLIST = LIST_FAC
 			.makeBooleanType();
 
-	protected static final IntegerLiteral ONE_ffLIST = NLIST_FF
+	protected static final IntegerLiteral ONE_ffLIST = LIST_FAC
 			.makeIntegerLiteral(BigInteger.ONE, null);
-	protected static final IntegerLiteral ZERO_ffLIST = NLIST_FF
+	protected static final IntegerLiteral ZERO_ffLIST = LIST_FAC
 			.makeIntegerLiteral(BigInteger.ZERO, null);
-	protected static final FreeIdentifier FRID_x_ffLIST = NLIST_FF
+	protected static final FreeIdentifier FRID_x_ffLIST = LIST_FAC
 			.makeFreeIdentifier("x", null);
 
 	protected static final SourceLocationChecker slChecker = new SourceLocationChecker();
@@ -220,37 +186,37 @@ public class TestDatatypes extends AbstractTests {
 	@Test
 	public void testDatatypeType() throws Exception {
 
-		final ExtendedExpression list = NLIST_FF.makeExtendedExpression(
-				NEXT_LIST, Collections.<Expression> singleton(INT_ffLIST),
+		final ExtendedExpression list = LIST_FAC.makeExtendedExpression(
+				EXT_LIST, Collections.<Expression> singleton(INT_ffLIST),
 				Collections.<Predicate> emptyList(), null);
 
 		final Expression expr = doExpressionTest("List(ℤ)", list,
-				NPOW_LIST_INT_TYPE, NLIST_FF, false);
+				POW_LIST_INT_TYPE, LIST_FAC, false);
 
 		assertTrue("expected a type expression", expr.isATypeExpression());
-		assertEquals("unexpected toType", NLIST_INT_TYPE, expr.toType());
+		assertEquals("unexpected toType", LIST_INT_TYPE, expr.toType());
 
-		doTypeTest("List(ℤ)", NLIST_INT_TYPE, NLIST_FF);
+		doTypeTest("List(ℤ)", LIST_INT_TYPE, LIST_FAC);
 
-		final ParametricType listBoolType = NLIST_FF.makeParametricType(
-				Collections.<Type> singletonList(BOOL_TYPE_ffLIST), NEXT_LIST);
-		assertFalse(listBoolType.equals(NLIST_INT_TYPE));
+		final ParametricType listBoolType = LIST_FAC.makeParametricType(
+				Collections.<Type> singletonList(BOOL_TYPE_ffLIST), EXT_LIST);
+		assertFalse(listBoolType.equals(LIST_INT_TYPE));
 	}
 
 	@Test
 	public void testDatatypeExpr() throws Exception {
-		final Expression upTo = NLIST_FF.makeBinaryExpression(UPTO,
-				NLIST_FF.makeIntegerLiteral(BigInteger.ZERO, null),
-				NLIST_FF.makeIntegerLiteral(BigInteger.ONE, null), null);
+		final Expression upTo = LIST_FAC.makeBinaryExpression(UPTO,
+				LIST_FAC.makeIntegerLiteral(BigInteger.ZERO, null),
+				LIST_FAC.makeIntegerLiteral(BigInteger.ONE, null), null);
 
-		final ExtendedExpression list0upTo1 = NLIST_FF.makeExtendedExpression(
-				NEXT_LIST, Collections.<Expression> singleton(upTo),
+		final ExtendedExpression list0upTo1 = LIST_FAC.makeExtendedExpression(
+				EXT_LIST, Collections.<Expression> singleton(upTo),
 				Collections.<Predicate> emptyList(), null);
 
 		final Expression expr = doExpressionTest("List(0‥1)", list0upTo1,
-				NPOW_LIST_INT_TYPE, NLIST_FF, false);
+				POW_LIST_INT_TYPE, LIST_FAC, false);
 		assertFalse("unexpected type expression", expr.isATypeExpression());
-		final IParseResult result = parseTypeRes("List(0‥1)", NLIST_FF);
+		final IParseResult result = parseTypeRes("List(0‥1)", LIST_FAC);
 		assertFailure(result, new ASTProblem(new SourceLocation(0, 8),
 				InvalidTypeExpression, ProblemSeverities.Error));
 	}
@@ -258,26 +224,26 @@ public class TestDatatypes extends AbstractTests {
 	@Test
 	public void testDatatypeNil() throws Exception {
 
-		final ExtendedExpression nil = NLIST_FF.makeExtendedExpression(
-				NEXT_NIL, Collections.<Expression> emptyList(),
+		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
+				Collections.<Expression> emptyList(),
 				Collections.<Predicate> emptyList(), null);
 
-		doExpressionTest("nil", nil, NLIST_FF);
+		doExpressionTest("nil", nil, LIST_FAC);
 
-		final ExtendedExpression nilInt = NLIST_FF.makeExtendedExpression(
-				NEXT_NIL, NO_EXPR, NO_PRED, null, NLIST_INT_TYPE);
+		final ExtendedExpression nilInt = LIST_FAC.makeExtendedExpression(
+				EXT_NIL, NO_EXPR, NO_PRED, null, LIST_INT_TYPE);
 
-		doExpressionTest("(nil ⦂ List(ℤ))", nilInt, NLIST_INT_TYPE, NLIST_FF,
+		doExpressionTest("(nil ⦂ List(ℤ))", nilInt, LIST_INT_TYPE, LIST_FAC,
 				false);
 
-		final ParametricType listBoolBoolType = NLIST_FF.makeParametricType(
-				Collections.<Type> singletonList(NLIST_FF.makeProductType(
-						BOOL_TYPE_ffLIST, BOOL_TYPE_ffLIST)), NEXT_LIST);
-		final ExtendedExpression nilBoolBool = NLIST_FF.makeExtendedExpression(
-				NEXT_NIL, NO_EXPR, NO_PRED, null, listBoolBoolType);
+		final ParametricType listBoolBoolType = LIST_FAC.makeParametricType(
+				Collections.<Type> singletonList(LIST_FAC.makeProductType(
+						BOOL_TYPE_ffLIST, BOOL_TYPE_ffLIST)), EXT_LIST);
+		final ExtendedExpression nilBoolBool = LIST_FAC.makeExtendedExpression(
+				EXT_NIL, NO_EXPR, NO_PRED, null, listBoolBoolType);
 
 		doExpressionTest("(nil ⦂ List(BOOL×BOOL))", nilBoolBool,
-				listBoolBoolType, NLIST_FF, false);
+				listBoolBoolType, LIST_FAC, false);
 
 		assertFalse(nil.equals(nilInt));
 		assertFalse(nil.equals(nilBoolBool));
@@ -286,7 +252,7 @@ public class TestDatatypes extends AbstractTests {
 
 	@Test
 	public void testDatatypeNilInvalidType() throws Exception {
-		final IParseResult result = NLIST_FF.parseExpression("(nil ⦂ ℤ)", null);
+		final IParseResult result = LIST_FAC.parseExpression("(nil ⦂ ℤ)", null);
 		assertFailure(result, new ASTProblem(new SourceLocation(1, 7),
 				InvalidGenericType, Error, "[see operator definition]"));
 	}
@@ -294,106 +260,106 @@ public class TestDatatypes extends AbstractTests {
 	@Test
 	public void testDatatypeConstructor() throws Exception {
 
-		final ExtendedExpression nil = NLIST_FF.makeExtendedExpression(
-				NEXT_NIL, NO_EXPR, NO_PRED, null);
+		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
+				NO_EXPR, NO_PRED, null);
 
-		final ExtendedExpression list1 = NLIST_FF.makeExtendedExpression(
-				NEXT_CONS, Arrays.asList(ONE_ffLIST, nil),
+		final ExtendedExpression list1 = LIST_FAC.makeExtendedExpression(
+				EXT_CONS, Arrays.asList(ONE_ffLIST, nil),
 				Collections.<Predicate> emptyList(), null);
 
-		doExpressionTest("cons(1, nil)", list1, NLIST_INT_TYPE, NLIST_FF, true);
+		doExpressionTest("cons(1, nil)", list1, LIST_INT_TYPE, LIST_FAC, true);
 
-		final ExtendedExpression list01 = NLIST_FF.makeExtendedExpression(
-				NEXT_CONS,
+		final ExtendedExpression list01 = LIST_FAC.makeExtendedExpression(
+				EXT_CONS,
 				Arrays.asList(
 						ZERO_ffLIST,
-						NLIST_FF.makeExtendedExpression(NEXT_CONS,
+						LIST_FAC.makeExtendedExpression(EXT_CONS,
 								Arrays.asList(ONE_ffLIST, nil),
 								Collections.<Predicate> emptyList(), null)),
 				Collections.<Predicate> emptyList(), null);
 
-		doExpressionTest("cons(0, cons(1, nil))", list01, NLIST_INT_TYPE,
-				NLIST_FF, true);
+		doExpressionTest("cons(0, cons(1, nil))", list01, LIST_INT_TYPE,
+				LIST_FAC, true);
 
 		assertFalse(list1.equals(list01));
 	}
 
 	@Test
 	public void testDatatypeDestructors() throws Exception {
-		assertNotNull("head destructor not found", NEXT_HEAD);
+		assertNotNull("head destructor not found", EXT_HEAD);
 
-		assertNotNull("tail destructor not found", NEXT_TAIL);
+		assertNotNull("tail destructor not found", EXT_TAIL);
 
-		final ExtendedExpression head = NLIST_FF.makeExtendedExpression(
-				NEXT_HEAD, Arrays.<Expression> asList(FRID_x_ffLIST),
+		final ExtendedExpression head = LIST_FAC.makeExtendedExpression(
+				EXT_HEAD, Arrays.<Expression> asList(FRID_x_ffLIST),
 				Collections.<Predicate> emptyList(), null);
 
-		doExpressionTest("head(x)", head, NLIST_FF);
+		doExpressionTest("head(x)", head, LIST_FAC);
 
-		final ExtendedExpression tail = NLIST_FF.makeExtendedExpression(
-				NEXT_TAIL, Arrays.<Expression> asList(FRID_x_ffLIST),
+		final ExtendedExpression tail = LIST_FAC.makeExtendedExpression(
+				EXT_TAIL, Arrays.<Expression> asList(FRID_x_ffLIST),
 				Collections.<Predicate> emptyList(), null);
 
-		doExpressionTest("tail(x)", tail, NLIST_FF);
+		doExpressionTest("tail(x)", tail, LIST_FAC);
 	}
 
 	@Test
 	public void testTypeConstrTypeCheck() throws Exception {
-		final Expression listIntExpr = NLIST_FF.makeExtendedExpression(
-				NEXT_LIST, Collections.<Expression> singleton(INT_ffLIST),
+		final Expression listIntExpr = LIST_FAC.makeExtendedExpression(
+				EXT_LIST, Collections.<Expression> singleton(INT_ffLIST),
 				Collections.<Predicate> emptySet(), null);
-		final Predicate expected = NLIST_FF.makeRelationalPredicate(IN,
-				NLIST_FF.makeFreeIdentifier("x", null), listIntExpr, null);
+		final Predicate expected = LIST_FAC.makeRelationalPredicate(IN,
+				LIST_FAC.makeFreeIdentifier("x", null), listIntExpr, null);
 
 		final Predicate pred = doPredicateTest("x ∈ List(ℤ)", expected,
-				NLIST_FF);
-		final ITypeCheckResult tcResult = pred.typeCheck(NLIST_FF
+				LIST_FAC);
+		final ITypeCheckResult tcResult = pred.typeCheck(LIST_FAC
 				.makeTypeEnvironment());
 		assertFalse(tcResult.hasProblem());
 		assertTrue(pred.isTypeChecked());
 		final FreeIdentifier[] freeIdentifiers = pred.getFreeIdentifiers();
 		assertEquals(1, freeIdentifiers.length);
 		final FreeIdentifier x = freeIdentifiers[0];
-		assertEquals(NLIST_INT_TYPE, x.getType());
+		assertEquals(LIST_INT_TYPE, x.getType());
 	}
 
 	@Test
 	public void testTypeCheckError() throws Exception {
 		// problem raised by Issam, produced a StackOverflowError
-		final Expression A_Id = NLIST_FF.makeFreeIdentifier("A", null);
+		final Expression A_Id = LIST_FAC.makeFreeIdentifier("A", null);
 
-		final Expression List_A = NLIST_FF.makeExtendedExpression(NEXT_LIST,
+		final Expression List_A = LIST_FAC.makeExtendedExpression(EXT_LIST,
 				asList(A_Id), Collections.<Predicate> emptySet(), null);
-		final Expression List_List_A = NLIST_FF.makeExtendedExpression(
-				NEXT_LIST, asList(List_A), Collections.<Predicate> emptySet(),
+		final Expression List_List_A = LIST_FAC.makeExtendedExpression(
+				EXT_LIST, asList(List_A), Collections.<Predicate> emptySet(),
 				null);
 
-		final BoundIdentDecl bid_x = NLIST_FF.makeBoundIdentDecl("x", null);
-		final BoundIdentDecl bid_y = NLIST_FF.makeBoundIdentDecl("y", null);
-		final BoundIdentifier bi_x = NLIST_FF.makeBoundIdentifier(1, null);
-		final BoundIdentifier bi_y = NLIST_FF.makeBoundIdentifier(0, null);
+		final BoundIdentDecl bid_x = LIST_FAC.makeBoundIdentDecl("x", null);
+		final BoundIdentDecl bid_y = LIST_FAC.makeBoundIdentDecl("y", null);
+		final BoundIdentifier bi_x = LIST_FAC.makeBoundIdentifier(1, null);
+		final BoundIdentifier bi_y = LIST_FAC.makeBoundIdentifier(0, null);
 
-		final Predicate x_In_A = NLIST_FF.makeRelationalPredicate(IN, bi_x,
+		final Predicate x_In_A = LIST_FAC.makeRelationalPredicate(IN, bi_x,
 				A_Id, null);
 
-		final Predicate y_In_ListListA = NLIST_FF.makeRelationalPredicate(IN,
+		final Predicate y_In_ListListA = LIST_FAC.makeRelationalPredicate(IN,
 				bi_y, List_List_A, null);
 
-		final ExtendedExpression cons_x_y = NLIST_FF.makeExtendedExpression(
-				NEXT_CONS, new Expression[] { bi_x, bi_y }, NO_PRED, null);
-		final Predicate cons_In_ListA = NLIST_FF.makeRelationalPredicate(IN,
+		final ExtendedExpression cons_x_y = LIST_FAC.makeExtendedExpression(
+				EXT_CONS, new Expression[] { bi_x, bi_y }, NO_PRED, null);
+		final Predicate cons_In_ListA = LIST_FAC.makeRelationalPredicate(IN,
 				cons_x_y, List_A, null);
 
-		final Predicate expected = NLIST_FF.makeQuantifiedPredicate(FORALL,
-				asList(bid_x, bid_y), NLIST_FF.makeBinaryPredicate(
+		final Predicate expected = LIST_FAC.makeQuantifiedPredicate(FORALL,
+				asList(bid_x, bid_y), LIST_FAC.makeBinaryPredicate(
 						LIMP,
-						NLIST_FF.makeAssociativePredicate(LAND,
+						LIST_FAC.makeAssociativePredicate(LAND,
 								asList(x_In_A, y_In_ListListA), null),
 						cons_In_ListA, null), null);
 		final Predicate pred = doPredicateTest(
 				"∀ x,y· (x ∈A ∧ y ∈List(List(A))) ⇒ cons(x,y)∈ List(A)",
-				expected, NLIST_FF);
-		final ITypeCheckResult tcRes = pred.typeCheck(NLIST_FF
+				expected, LIST_FAC);
+		final ITypeCheckResult tcRes = pred.typeCheck(LIST_FAC
 				.makeTypeEnvironment());
 		assertTrue(tcRes.hasProblem());
 
@@ -406,85 +372,274 @@ public class TestDatatypes extends AbstractTests {
 	@Test
 	public void testDatatypeDestructorsTyping() throws Exception {
 
-		final ExtendedExpression nil = NLIST_FF.makeExtendedExpression(
-				NEXT_NIL, Collections.<Expression> emptyList(),
+		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
+				Collections.<Expression> emptyList(),
 				Collections.<Predicate> emptyList(), null);
 
-		final ExtendedExpression list1 = NLIST_FF.makeExtendedExpression(
-				NEXT_CONS, Arrays.asList(ONE_ffLIST, nil),
+		final ExtendedExpression list1 = LIST_FAC.makeExtendedExpression(
+				EXT_CONS, Arrays.asList(ONE_ffLIST, nil),
 				Collections.<Predicate> emptyList(), null);
 
-		final ExtendedExpression headList1 = NLIST_FF.makeExtendedExpression(
-				NEXT_HEAD, Arrays.<Expression> asList(list1),
+		final ExtendedExpression headList1 = LIST_FAC.makeExtendedExpression(
+				EXT_HEAD, Arrays.<Expression> asList(list1),
 				Collections.<Predicate> emptyList(), null);
 
-		doExpressionTest("head(cons(1, nil))", headList1, INT_TYPE, NLIST_FF,
+		doExpressionTest("head(cons(1, nil))", headList1, INT_TYPE, LIST_FAC,
 				true);
 
-		final ExtendedExpression tail = NLIST_FF.makeExtendedExpression(
-				NEXT_TAIL, Arrays.<Expression> asList(list1),
+		final ExtendedExpression tail = LIST_FAC.makeExtendedExpression(
+				EXT_TAIL, Arrays.<Expression> asList(list1),
 				Collections.<Predicate> emptyList(), null);
 
-		doExpressionTest("tail(cons(1, nil))", tail, NLIST_INT_TYPE, NLIST_FF,
+		doExpressionTest("tail(cons(1, nil))", tail, LIST_INT_TYPE, LIST_FAC,
 				true);
 	}
 
 	@Test
 	public void testListOfLists() throws Exception {
-		final ExtendedExpression nil = NLIST_FF.makeExtendedExpression(
-				NEXT_NIL, Collections.<Expression> emptyList(),
+		final ExtendedExpression nil = LIST_FAC.makeExtendedExpression(EXT_NIL,
+				Collections.<Expression> emptyList(),
 				Collections.<Predicate> emptyList(), null);
 
-		final ExtendedExpression nilInt = NLIST_FF.makeExtendedExpression(
-				NEXT_NIL, NO_EXPR, NO_PRED, null, NLIST_INT_TYPE);
+		final ExtendedExpression nilInt = LIST_FAC.makeExtendedExpression(
+				EXT_NIL, NO_EXPR, NO_PRED, null, LIST_INT_TYPE);
 
-		final ExtendedExpression listNilNil = NLIST_FF.makeExtendedExpression(
-				NEXT_CONS, Arrays.<Expression> asList(nilInt, nil),
+		final ExtendedExpression listNilNil = LIST_FAC.makeExtendedExpression(
+				EXT_CONS, Arrays.<Expression> asList(nilInt, nil),
 				Collections.<Predicate> emptyList(), null);
 
-		final ExtendedExpression headListNil = NLIST_FF.makeExtendedExpression(
-				NEXT_HEAD, Arrays.<Expression> asList(listNilNil),
+		final ExtendedExpression headListNil = LIST_FAC.makeExtendedExpression(
+				EXT_HEAD, Arrays.<Expression> asList(listNilNil),
 				Collections.<Predicate> emptyList(), null);
 
 		doExpressionTest("head(cons((nil ⦂ List(ℤ)), nil))", headListNil,
-				NLIST_INT_TYPE, NLIST_FF, true);
+				LIST_INT_TYPE, LIST_FAC, true);
 
-		final ExtendedExpression cons1 = NLIST_FF.makeExtendedExpression(
-				NEXT_CONS, Arrays.asList(ONE_ffLIST, nil),
+		final ExtendedExpression cons1 = LIST_FAC.makeExtendedExpression(
+				EXT_CONS, Arrays.asList(ONE_ffLIST, nil),
 				Collections.<Predicate> emptyList(), null);
 
-		final ExtendedExpression consCons1 = NLIST_FF.makeExtendedExpression(
-				NEXT_CONS, Arrays.<Expression> asList(cons1, nil),
+		final ExtendedExpression consCons1 = LIST_FAC.makeExtendedExpression(
+				EXT_CONS, Arrays.<Expression> asList(cons1, nil),
 				Collections.<Predicate> emptyList(), null);
 
-		final ExtendedExpression tailConsCons1 = NLIST_FF
-				.makeExtendedExpression(NEXT_TAIL,
+		final ExtendedExpression tailConsCons1 = LIST_FAC
+				.makeExtendedExpression(EXT_TAIL,
 						Arrays.<Expression> asList(consCons1),
 						Collections.<Predicate> emptyList(), null);
 
-		final ParametricType NLIST_LIST_INT_TYPE = NLIST_FF.makeParametricType(
-				Arrays.<Type> asList(NLIST_INT_TYPE), NEXT_LIST);
+		final ParametricType NLIST_LIST_INT_TYPE = LIST_FAC.makeParametricType(
+				Arrays.<Type> asList(LIST_INT_TYPE), EXT_LIST);
 
 		doExpressionTest("tail(cons(cons(1, nil), nil))", tailConsCons1,
-				NLIST_LIST_INT_TYPE, NLIST_FF, true);
+				NLIST_LIST_INT_TYPE, LIST_FAC, true);
 	}
 
 	@Test
 	public void testDatatypeOrigins() throws Exception {
-		for (IFormulaExtension extension : NLIST_DT.getExtensions()) {
+		for (IFormulaExtension extension : LIST_DT.getExtensions()) {
 			final Object origin = extension.getOrigin();
-			assertSame("wrong origin for " + extension.getId(), NLIST_DT,
-					origin);
+			assertSame("wrong origin for " + extension.getId(), LIST_DT, origin);
 		}
 	}
 
-	@Test
-	public void testDTbuilder() {
-		final GivenType tyList3 = ff.makeGivenType("List3");
+
+	public static final IDatatype2 MOULT_DT;
+	public static final FormulaFactory MOULT_FAC;
+
+	static {
 		final GivenType tyS = ff.makeGivenType("S");
 		final GivenType tyT = ff.makeGivenType("T");
-		final GivenType tyU = ff.makeGivenType("U");
-		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("List3", tyS,
+		final IDatatypeBuilder bldr = ff.makeDatatypeBuilder("Moult", tyS, tyT);
+		final IConstructorBuilder cons = bldr.addConstructor("makeMoult");
+		cons.addArgument(tyS);
+		cons.addArgument(tyT);
+		MOULT_DT = bldr.finalizeDatatype();
+		MOULT_FAC = FormulaFactory.getInstance(MOULT_DT.getExtensions());
+	}
+
+	public static final IExpressionExtension EXT_MOULT = MOULT_DT
+			.getTypeConstructor();
+	private static final ParametricType MOULT_INT_BOOL_TYPE = MOULT_FAC
+			.makeParametricType(
+					Arrays.<Type> asList(MOULT_FAC.makeIntegerType(),
+							MOULT_FAC.makeBooleanType()), EXT_MOULT);
+	private static final IExpressionExtension EXT_MAKE_MOULT = MOULT_DT
+			.getConstructor("makeMoult");
+
+	private static final IntegerLiteral ONE_MOULT = MOULT_FAC
+			.makeIntegerLiteral(BigInteger.ONE, null);
+	private static final AtomicExpression ATOM_TRUE_MOULT = MOULT_FAC
+			.makeAtomicExpression(TRUE, null);
+
+	@Test
+	public void testMoult() throws Exception {
+
+		doTypeTest("Moult(ℤ, BOOL)", MOULT_INT_BOOL_TYPE, MOULT_FAC);
+
+		final ExtendedExpression moult1True = MOULT_FAC.makeExtendedExpression(
+				EXT_MAKE_MOULT, Arrays.asList(ONE_MOULT, ATOM_TRUE_MOULT),
+				Collections.<Predicate> emptyList(), null);
+
+		doExpressionTest("makeMoult(1, TRUE)", moult1True, MOULT_INT_BOOL_TYPE,
+				MOULT_FAC, true);
+	}
+
+	public static final GivenType[] noInducTypeParams = {
+			ff.makeGivenType("S"), ff.makeGivenType("T") };
+
+	private static final IDatatypeBuilder NO_INDUC_BUILDER = ff
+			.makeDatatypeBuilder("NoInduc", noInducTypeParams);
+
+	static {
+		IConstructorBuilder cons1 = NO_INDUC_BUILDER.addConstructor("cons1");
+		cons1.addArgument(NO_INDUC_BUILDER.parseType("S").getParsedType());
+		cons1.addArgument(NO_INDUC_BUILDER.parseType("ℙ(ℤ)").getParsedType());
+		cons1.addArgument(NO_INDUC_BUILDER.parseType("T").getParsedType());
+		IConstructorBuilder cons2 = NO_INDUC_BUILDER.addConstructor("cons2");
+		cons2.addArgument(NO_INDUC_BUILDER.parseType("ℙ(S)").getParsedType());
+		cons2.addArgument(NO_INDUC_BUILDER.parseType("ℙ(ℤ)×T").getParsedType());
+		IConstructorBuilder cons3 = NO_INDUC_BUILDER.addConstructor("cons3");
+		cons3.addArgument(NO_INDUC_BUILDER.parseType("S↔T").getParsedType());
+	}
+
+	private static final IDatatype2 NO_INDUC_EXTNS = NO_INDUC_BUILDER
+			.finalizeDatatype();
+
+	private static final FormulaFactory NO_INDUC_FAC = FormulaFactory
+			.getInstance(NO_INDUC_EXTNS.getExtensions());
+	private static final IExpressionExtension EXT_NO_INDUC = NO_INDUC_EXTNS
+			.getTypeConstructor();
+	private static final ParametricType NO_INDUC_INT_BOOL_TYPE = NO_INDUC_FAC
+			.makeParametricType(Arrays.<Type> asList(
+					NO_INDUC_FAC.makeIntegerType(),
+					NO_INDUC_FAC.makeBooleanType()), EXT_NO_INDUC);
+	private static final IntegerLiteral ONE_ffNO_INDUC = NO_INDUC_FAC
+			.makeIntegerLiteral(BigInteger.ONE, null);
+	private static final IntegerLiteral ZERO_ffNO_INDUC = NO_INDUC_FAC
+			.makeIntegerLiteral(BigInteger.ZERO, null);
+	private static final AtomicExpression ATOM_TRUE_ffNO_INDUC = NO_INDUC_FAC
+			.makeAtomicExpression(TRUE, null);
+	private static final IntegerLiteral ONE_NO_INDUC = NO_INDUC_FAC
+			.makeIntegerLiteral(BigInteger.ONE, null);
+	private static final IntegerLiteral ZERO_NO_INDUC = NO_INDUC_FAC
+			.makeIntegerLiteral(BigInteger.ZERO, null);
+	private static final AtomicExpression ATOM_TRUE_NO_INDUC = NO_INDUC_FAC
+			.makeAtomicExpression(TRUE, null);
+
+	@Test
+	public void testNoInducType() throws Exception {
+		doTypeTest("NoInduc(ℤ, BOOL)", NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC);
+	}
+
+	@Test
+	public void testArgSimpleType() throws Exception {
+		final IExpressionExtension extCons1 = NO_INDUC_EXTNS
+				.getConstructor("cons1");
+
+		final ExtendedExpression c1Sing0True = NO_INDUC_FAC
+				.makeExtendedExpression(extCons1, Arrays.asList(ONE_NO_INDUC,
+						NO_INDUC_FAC.makeSetExtension(ZERO_NO_INDUC, null),
+						ATOM_TRUE_NO_INDUC), Collections
+						.<Predicate> emptyList(), null);
+
+		doExpressionTest("cons1(1, {0}, TRUE)", c1Sing0True,
+				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
+	}
+
+	@Test
+	public void testArgPowerSetType() throws Exception {
+		final IExpressionExtension extCons2 = NO_INDUC_EXTNS
+				.getConstructor("cons2");
+
+		final ExtendedExpression c2Sing2MapSing0True = NO_INDUC_FAC
+				.makeExtendedExpression(extCons2, Arrays.asList(NO_INDUC_FAC
+						.makeSetExtension(ONE_ffNO_INDUC, null), NO_INDUC_FAC
+						.makeBinaryExpression(MAPSTO, NO_INDUC_FAC
+								.makeSetExtension(ZERO_ffNO_INDUC, null),
+								ATOM_TRUE_ffNO_INDUC, null)), Collections
+						.<Predicate> emptyList(), null);
+
+		doExpressionTest("cons2({1}, {0} ↦ TRUE)", c2Sing2MapSing0True,
+				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
+	}
+
+	@Test
+	public void testArgRelationalType() throws Exception {
+		final IExpressionExtension extCons3 = NO_INDUC_EXTNS
+				.getConstructor("cons3");
+
+		final ExtendedExpression c3SingMaps0True = NO_INDUC_FAC
+				.makeExtendedExpression(extCons3, Arrays
+						.<Expression> asList(NO_INDUC_FAC.makeSetExtension(
+								Arrays.<Expression> asList(NO_INDUC_FAC
+										.makeBinaryExpression(MAPSTO,
+												ZERO_ffNO_INDUC,
+												ATOM_TRUE_ffNO_INDUC, null)),
+								null)), Collections.<Predicate> emptyList(),
+						null);
+
+		doExpressionTest("cons3({0 ↦ TRUE})", c3SingMaps0True,
+				NO_INDUC_INT_BOOL_TYPE, NO_INDUC_FAC, true);
+	}
+
+	@Test
+	public void testDatatypeSameExtensions() throws Exception {
+		final IDatatype2 extns1 = NO_INDUC_BUILDER.finalizeDatatype();
+		final IDatatype2 extns2 = NO_INDUC_BUILDER.finalizeDatatype();
+		final IExpressionExtension typeExt1 = extns1.getTypeConstructor();
+		final IExpressionExtension typeExt2 = extns2.getTypeConstructor();
+		assertSame("expected same extensions", typeExt1, typeExt2);
+
+		final IExpressionExtension cons1Ext1 = extns1.getConstructor("cons1");
+		final IExpressionExtension cons1Ext2 = extns2.getConstructor("cons1");
+		assertSame("expected same extensions", cons1Ext1, cons1Ext2);
+	}
+
+	// Specific tests for new datatypes:
+
+	// Test FormulaFactory builder error cases
+
+	@Test(expected = NullPointerException.class)
+	public void testNullDatatypeName() {
+		ff.makeDatatypeBuilder(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidDatatypeName() {
+		ff.makeDatatypeBuilder("partition");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testIncompatibleDatatypeAndTypeName() {
+		ff.makeDatatypeBuilder("List", ff.makeGivenType("List"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testIncompatibleTypeParametersNames() {
+		ff.makeDatatypeBuilder("List", ff.makeGivenType("S"),
+				ff.makeGivenType("S"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testIncompatibleTypeParametersFactory() {
+		ff.makeDatatypeBuilder("List", ff.makeGivenType("S"),
+				ff_extns.makeGivenType("T"));
+	}
+
+	// Tests on datatype builder
+
+	@Test
+	public void testDatatypeBuilder() {
+		assertNotNull(makeList3(ff));
+	}
+
+	private IDatatype2 makeList3(final FormulaFactory fac) {
+		final GivenType tyList3 = fac.makeGivenType("List3");
+		final GivenType tyS = fac.makeGivenType("S");
+		final GivenType tyT = fac.makeGivenType("T");
+		final GivenType tyU = fac.makeGivenType("U");
+		final IDatatypeBuilder dtBuilder = fac.makeDatatypeBuilder("List3", tyS,
 				tyT, tyU);
 		dtBuilder.addConstructor("nil");
 		final IConstructorBuilder cons = dtBuilder.addConstructor("cons");
@@ -492,91 +647,228 @@ public class TestDatatypes extends AbstractTests {
 		cons.addArgument(tyT, "head2");
 		cons.addArgument(tyU, "head3");
 		cons.addArgument(tyList3, "tail");
+		final IDatatype2 datatype = dtBuilder.finalizeDatatype();
+		return datatype;
+	}
+
+	@Test
+	public void testHasBasicConstructor() {
+		final GivenType tyDT = ff.makeGivenType("DT");
+		final GivenType tyT = ff.makeGivenType("T");
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
+		assertFalse("A datatype without constructor has not basic constructor",
+				dtBuilder.hasBasicConstructor());
+		final IConstructorBuilder cons = dtBuilder.addConstructor("dt");
+		cons.addArgument(tyDT);
+		cons.addArgument(tyT);
+		assertFalse(
+				"A datatype with a constructor using the datatype type is not a basic constructor",
+				dtBuilder.hasBasicConstructor());
+		final IConstructorBuilder cons2 = dtBuilder.addConstructor("dt2");
+		cons2.addArgument(tyT);
+		assertTrue(
+				"A datatype with a constructor which do not use the datatype type has a basic constructor",
+				dtBuilder.hasBasicConstructor());
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void testFinalizeWithoutConstructor() {
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
 		dtBuilder.finalizeDatatype();
 	}
 
-	/* Copy of TestTypeChecker tests begin */
-
-	private FormulaFactory makeDatatypeFactory(FormulaFactory initial,
-			String... datatypeImages) {
-		FormulaFactory fac = initial;
-		for (final String datatypeImage : datatypeImages) {
-			fac = makeDatatypeFactory(fac, datatypeImage);
-		}
-		return fac;
+	@Test(expected = IllegalStateException.class)
+	public void testFinalizeWithoutBasicConstructor() {
+		final GivenType tyDT = ff.makeGivenType("DT");
+		final GivenType tyT = ff.makeGivenType("T");
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
+		final IConstructorBuilder cons = dtBuilder.addConstructor("dt");
+		cons.addArgument(tyDT);
+		cons.addArgument(tyT);
+		dtBuilder.finalizeDatatype();
 	}
 
-	private FormulaFactory makeDatatypeFactory(FormulaFactory initial,
-			String datatypeImage) {
-		final IDatatype2 datatype = DatatypeParser
-				.parse(initial, datatypeImage);
-		final Set<IFormulaExtension> exts = initial.getExtensions();
-		exts.addAll(datatype.getExtensions());
-		return FormulaFactory.getInstance(exts);
+	@Test
+	public void testFinalize() {
+		final GivenType tyDT = ff.makeGivenType("DT");
+		final GivenType tyT = ff.makeGivenType("T");
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
+		final IConstructorBuilder cons = dtBuilder.addConstructor("dt");
+		cons.addArgument(tyDT);
+		cons.addArgument(tyT);
+		final IConstructorBuilder cons2 = dtBuilder.addConstructor("dt2");
+		cons2.addArgument(tyT);
+		dtBuilder.finalizeDatatype();
 	}
 
-	private void doTest(Formula<?> formula, ITypeEnvironment initialEnv,
-			ITypeEnvironment finalEnv, String image) {
-		final boolean expectSuccess = finalEnv != null;
-		final ITypeCheckResult result = formula.typeCheck(initialEnv);
-		if (expectSuccess && !result.isSuccess()) {
-			StringBuilder builder = new StringBuilder(
-					"Type-checker unexpectedly failed for " + formula
-							+ "\nInitial type environment:\n"
-							+ result.getInitialTypeEnvironment() + "\n");
-			final List<ASTProblem> problems = result.getProblems();
-			for (ASTProblem problem : problems) {
-				builder.append(problem);
-				final SourceLocation loc = problem.getSourceLocation();
-				if (loc != null) {
-					builder.append(", where location is: ");
-					builder.append(image.substring(loc.getStart(),
-							loc.getEnd() + 1));
-				}
-				builder.append("\n");
-			}
-			fail(builder.toString());
-		}
-		if (!expectSuccess && result.isSuccess()) {
-			fail("Type checking should have failed for: " + formula
-					+ "\nParser result: " + formula.toString()
-					+ "\nType check results:\n" + result.toString()
-					+ "\nInitial type environment:\n"
-					+ result.getInitialTypeEnvironment() + "\n");
-		}
-		IInferredTypeEnvironment inferredTypEnv = null;
-		if (finalEnv != null) {
-			// Create an inferred environment from the final environment
-			inferredTypEnv = mInferredTypeEnvironment(initialEnv);
-			inferredTypEnv.addAll(finalEnv);
-		}
-		assertEquals("Inferred typenv differ", inferredTypEnv,
-				result.getInferredEnvironment());
-		assertEquals("Incompatible result for isTypeChecked()", expectSuccess,
-				formula.isTypeChecked());
-		IdentsChecker.check(formula);
+	@Test(expected = IllegalStateException.class)
+	public void testIllegalAddConstructor() {
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
+		dtBuilder.addConstructor("dt");
+		dtBuilder.finalizeDatatype();
+		dtBuilder.addConstructor("void");
 	}
 
-	private Predicate testPredicate(String image, ITypeEnvironment initialEnv,
-			ITypeEnvironment finalEnv) {
-		final FormulaFactory factory = initialEnv.getFormulaFactory();
-		final Predicate formula = parsePredicate(image, factory);
-		doTest(formula, initialEnv, finalEnv, image);
-		return formula;
+	// Tests on datatype constructor builder
+
+	@Test(expected = IllegalStateException.class)
+	public void testIllegalAddArgument() {
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
+		final IConstructorBuilder cons = dtBuilder.addConstructor("dt");
+		dtBuilder.finalizeDatatype();
+		cons.addArgument(ff.makeGivenType("S"));
+	}
+
+	@Test
+	public void testIsBasicConstructor() {
+		final GivenType tyDT = ff.makeGivenType("DT");
+		final GivenType tyT = ff.makeGivenType("T");
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
+		final IConstructorBuilder cons = dtBuilder.addConstructor("dt");
+		assertTrue("A constructor without argument is a basic constructor",
+				cons.isBasic());
+		cons.addArgument(tyT);
+		assertTrue(
+				"A constructor which do not use the datatype is a basic constructor",
+				cons.isBasic());
+		cons.addArgument(tyDT);
+		assertFalse(
+				"A datatype which use the datatype is not a basic constructor",
+				dtBuilder.hasBasicConstructor());
 	}
 
 	/**
-	 * Regression test for bug #3574565: Inconsistent result of formula
-	 * type-checking
+	 * Ensures that the base factory of a datatype is indeed minimal.
 	 */
 	@Test
-	public void testBug3574565() {
-		final FormulaFactory fac = makeDatatypeFactory(ff,//
-				"A[T] ::= a; d[T]",//
-				"B[U] ::= b; e[U]");
-		testPredicate("b(1) ∈ A(ℤ)", mTypeEnvironment("", fac), null);
+	public void testBaseFactoryMinimal() {
+		final DatatypeBuilder builder = (DatatypeBuilder) LIST_FAC
+				.makeDatatypeBuilder("foo");
+		assertSame(ff, builder.getBaseFactory());
+		final IConstructorBuilder cons = builder.addConstructor("cons");
+		cons.addArgument(LIST_INT_TYPE);
+		assertSame(LIST_FAC, builder.getBaseFactory());
 	}
 
-	/* Copy of TestTypeChecker end */
+	/**
+	 * Ensure uniqueness of datatypes.
+	 */
+	@Test
+	public void testDatatypeUniqueness() {
+		final IDatatype2 dt1 = makeList3(ff);
+		final IDatatype2 dt2 = makeList3(LIST_FAC);
+		final IDatatype2 dt3 = makeList3(MOULT_FAC);
+		assertSame(dt1, dt2);
+		assertSame(dt2, dt3);
+	}
+	
+	@Test
+	public void testDatatypeDifferentTypeConstructors() {
+		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
+		b1.addConstructor("f");
+		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("E");
+		b2.addConstructor("f");
+		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+	}
+	
+	@Test
+	public void testDatatypeMissingConstructor() {
+		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
+		b1.addConstructor("f");
+		b1.addConstructor("g");
+		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
+		b2.addConstructor("f");
+		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+	}
+	
+	@Test
+	public void testDatatypeDifferentConstructors() {
+		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
+		b1.addConstructor("f");
+		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
+		b2.addConstructor("g");
+		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+	}
+	
+	@Test
+	public void testDatatypeMissingDestructor() {
+		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
+		b1.addConstructor("f").addArgument(INT_TYPE);
+		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
+		b2.addConstructor("f");
+		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+	}
+	
+	@Test
+	public void testDatatypeDifferentDestructorTypes() {
+		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
+		b1.addConstructor("f").addArgument(INT_TYPE, "d");
+		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
+		b2.addConstructor("f").addArgument(BOOL_TYPE);
+		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+	}
+	
+	@Test
+	public void testDatatypeUnnamedDestructor() {
+		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
+		b1.addConstructor("f").addArgument(INT_TYPE, "d");
+		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
+		b2.addConstructor("f").addArgument(INT_TYPE);
+		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+	}
+	
+	@Test
+	public void testDatatypeDifferentDestructorNames() {
+		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
+		b1.addConstructor("f").addArgument(INT_TYPE, "d");
+		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
+		b2.addConstructor("f").addArgument(INT_TYPE, "e");
+		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+	}
+	
+	// Partial tests on extensions since these are already tested with old
+	// datatypes tests
+
+	@Test
+	public void testTypeConstructorExtension() {
+		final IDatatype2 dt = makeList3(ff);
+		final ITypeConstructorExtension tconsExt = dt.getTypeConstructor();
+		final String[] actuals = tconsExt.getFormalNames();
+		final String[] expecteds = { "S", "T", "U" };
+		assertArrayEquals("Type parameters names: " + expecteds
+				+ " were expected instead of " + actuals, expecteds, actuals);
+		assertSame(
+				"ITypeConstructorExtension origin must be the datatype object instead of: "
+						+ tconsExt.getOrigin(), dt, tconsExt.getOrigin());
+	}
+
+	/*
+	 * Unit tests for extension harvester
+	 */
+	private static final FormulaFactory LIST_MOULT_FAC = LIST_FAC
+			.withExtensions(MOULT_DT.getExtensions());
+
+	@Test
+	public void testExtensionHarvester() {
+		assertExtensions("BOOL");
+		assertExtensions("ℤ");
+		assertExtensions("S");
+		assertExtensions("List(S)", EXT_LIST);
+		assertExtensions("Moult(List(S), T)", EXT_LIST, EXT_MOULT);
+		assertExtensions("Moult(S, List(T))", EXT_LIST, EXT_MOULT);
+		assertExtensions("ℙ(List(S))", EXT_LIST);
+		assertExtensions("List(S) × T", EXT_LIST);
+		assertExtensions("S × List(T)", EXT_LIST);
+	}
+
+	private void assertExtensions(String typeImage,
+			IFormulaExtension... expecteds) {
+		final Type type = parseType(typeImage, LIST_MOULT_FAC);
+		final Set<IFormulaExtension> expectedSet = new HashSet<IFormulaExtension>(
+				asList(expecteds));
+		final ExtensionHarvester harvester = new ExtensionHarvester();
+		harvester.harvest(type);
+		assertEquals(expectedSet, harvester.getResult());
+	}
 
 }

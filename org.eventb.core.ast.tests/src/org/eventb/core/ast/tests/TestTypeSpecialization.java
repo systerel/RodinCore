@@ -13,7 +13,7 @@ package org.eventb.core.ast.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.eventb.core.ast.tests.FastFactory.mTypeSpecialization;
-import static org.eventb.core.ast.tests.TestGenParser.MOULT_FAC;
+import static org.eventb.core.ast.tests.TestDatatypes.MOULT_FAC;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;

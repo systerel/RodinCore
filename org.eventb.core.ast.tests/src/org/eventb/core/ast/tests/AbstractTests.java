@@ -10,20 +10,20 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.eventb.core.ast.Assignment;
+import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
 import org.eventb.core.ast.IResult;
 import org.eventb.core.ast.ITypeCheckResult;
@@ -36,13 +36,11 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
-import org.eventb.core.ast.extension.datatype.ITypeParameter;
+import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
+import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
+import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 
 /**
  * Base abstract class for AST tests.
@@ -67,61 +65,42 @@ public abstract class AbstractTests {
 	public static final FreeIdentifier[] NO_IDS = new FreeIdentifier[0];
 	public static final BoundIdentDecl[] NO_BIDS = new BoundIdentDecl[0];
 
+	protected static final BooleanType BOOL_TYPE = ff.makeBooleanType();
 	protected static final IntegerType INT_TYPE = ff.makeIntegerType();
-	private static final IDatatypeExtension LIST_TYPE = new IDatatypeExtension() {
 
-		private static final String TYPE_NAME = "List";
-		private static final String TYPE_IDENTIFIER = "org.eventb.core.ast.tests.list";
+	protected static final IDatatype2 LIST_DT;
+	protected static final FormulaFactory LIST_FAC;
 
-		@Override
-		public String getTypeName() {
-			return TYPE_NAME;
-		}
+	static {
+		final GivenType tyList = ff.makeGivenType("List");
+		final GivenType tyS = ff.makeGivenType("S");
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("List", tyS);
+		dtBuilder.addConstructor("nil");
+		final IConstructorBuilder cons = dtBuilder.addConstructor("cons");
+		cons.addArgument(tyS, "head");
+		cons.addArgument(tyList, "tail");
+		LIST_DT = dtBuilder.finalizeDatatype();
+		LIST_FAC = FormulaFactory.getInstance(LIST_DT.getExtensions());
+	}
 
-		@Override
-		public String getId() {
-			return TYPE_IDENTIFIER;
-		}
 
-		@Override
-		public void addTypeParameters(ITypeConstructorMediator mediator) {
-			mediator.addTypeParam("S");
-		}
-
-		@Override
-		public void addConstructors(IConstructorMediator mediator) {
-			mediator.addConstructor("nil", "NIL");
-			final ITypeParameter typeS = mediator.getTypeParameter("S");
-
-			final IArgumentType refS = mediator.newArgumentType(typeS);
-			final IArgument head = mediator.newArgument("head", refS);
-			final IExpressionExtension typeCons = mediator.getTypeConstructor();
-			final IArgumentType listS = mediator.makeParametricType(typeCons,
-					asList(refS));
-			final IArgument tail = mediator.newArgument("tail", listS);
-
-			mediator.addConstructor("cons", "CONS", Arrays.asList(head, tail));
-		}
-
-	};
-	protected static final IDatatype LIST_DT = ff.makeDatatype(LIST_TYPE);
-	protected static final FormulaFactory LIST_FAC = FormulaFactory
-				.getInstance(LIST_DT.getExtensions());
 	protected static final IExpressionExtension EXT_LIST = LIST_DT
-				.getTypeConstructor();
+			.getTypeConstructor();
+
 	protected static final ParametricType LIST_INT_TYPE = LIST_FAC
-				.makeParametricType(Collections.<Type> singletonList(LIST_FAC.makeIntegerType()),
-						EXT_LIST);
+			.makeParametricType(Collections.<Type> singletonList(LIST_FAC
+					.makeIntegerType()), EXT_LIST);
 	protected static final PowerSetType POW_LIST_INT_TYPE = LIST_FAC
-				.makePowerSetType(LIST_INT_TYPE);
-	protected static final IExpressionExtension EXT_NIL = LIST_DT
-				.getConstructor("NIL");
-	protected static final IExpressionExtension EXT_CONS = LIST_DT
-				.getConstructor("CONS");
-	protected static final IExpressionExtension EXT_HEAD = LIST_DT.getDestructor(
-				"CONS", 0);
-	protected static final IExpressionExtension EXT_TAIL = LIST_DT.getDestructor(
-				"CONS", 1);
+			.makePowerSetType(LIST_INT_TYPE);
+	protected static final IConstructorExtension EXT_NIL = LIST_DT
+			.getConstructor("nil");
+	protected static final IConstructorExtension EXT_CONS = LIST_DT
+			.getConstructor("cons");
+	protected static final IDestructorExtension EXT_HEAD = EXT_CONS
+			.getDestructor("head");
+	protected static final IDestructorExtension EXT_TAIL = EXT_CONS
+			.getDestructor("tail");
+
 	
 	public static void assertSuccess(String message, IResult result) {
 		if (!result.isSuccess() || result.hasProblem()) {
