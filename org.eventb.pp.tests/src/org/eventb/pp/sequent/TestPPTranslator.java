@@ -18,12 +18,11 @@ import static org.eventb.pp.TestSequent.makeSequent;
 import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.internal.pp.PPTranslator;
 import org.eventb.pp.AbstractRodinTest;
@@ -40,30 +39,14 @@ public class TestPPTranslator extends AbstractRodinTest {
 	private static final ITypeEnvironmentBuilder NO_TE = ff.makeTypeEnvironment();
 	private static final List<String> NO_HYP = emptyList();
 	
-	private static final IDatatypeExtension DT_TYPE = new IDatatypeExtension() {
-		
-		@Override
-		public String getTypeName() {
-			return "DT";
-		}
-		
-		@Override
-		public String getId() {
-			return "DT.id";
-		}
-		
-		@Override
-		public void addTypeParameters(ITypeConstructorMediator mediator) {
-			// none
-		}
-		
-		@Override
-		public void addConstructors(IConstructorMediator mediator) {
-			mediator.addConstructor("dt", "dt.id");
-		}
-	};
-	
-	private static final IDatatype DT = ff.makeDatatype(DT_TYPE);
+	public static final IDatatype2 DT;
+	static {
+		final GivenType[] typeParams = {};
+		final IDatatypeBuilder DT_BUILDER = ff.makeDatatypeBuilder(
+				"DT", typeParams);
+		DT_BUILDER.addConstructor("dt");
+		DT = DT_BUILDER.finalizeDatatype();
+	}
 	
 	private static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
 
