@@ -102,7 +102,8 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
+import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
@@ -2150,13 +2151,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	}
 
     private static boolean isDTConstructor(ExtendedExpression expr) {
-    	final IExpressionExtension extension = expr.getExtension();
-    	final Object origin = extension.getOrigin();
-    	if (!(origin instanceof IDatatype)) {
-    		return false;
-    	}
-    	final IDatatype datatype = (IDatatype) origin;
-    	return datatype.isConstructor(extension);
+		return expr.getExtension() instanceof IConstructorExtension;
 	}
 
 	@ProverRule( { "SIMP_SPECIAL_BINTER", "SIMP_SPECIAL_BUNION",
@@ -4546,13 +4541,22 @@ public class AutoRewriterImpl extends PredicateSimplifier {
     }
 
     private static int getParamIndex(ExtendedExpression destr, ExtendedExpression cons) {
-    	final IExpressionExtension consExt = cons.getExtension();
-    	final Object origin = consExt.getOrigin();
-    	if (!(origin instanceof IDatatype)) {
+		if (!(destr.getExtension() instanceof IDestructorExtension)
+			|| !(cons.getExtension() instanceof IConstructorExtension)) {
+			return -1;
+		}
+    	final IConstructorExtension consExt = (IConstructorExtension) cons.getExtension();
+    	final IDestructorExtension destrExt = (IDestructorExtension) destr.getExtension();
+    	if (destrExt.getConstructor() != consExt) {
     		return -1;
     	}
-    	final IDatatype datatype = (IDatatype) origin;
-    	return datatype.getDestructorIndex(consExt, destr.getExtension());
+    	IDestructorExtension[] args = consExt.getArguments();
+    	for (int idx = 0; idx < args.length; idx ++) {
+    		if (args[idx] == destrExt) {
+    			return idx;
+    		}
+    	}
+    	return -1;
     }
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,62 +10,31 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
-import static java.util.Arrays.asList;
+import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
 
-import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
-import org.eventb.core.ast.extension.datatype.ITypeParameter;
+public class InductiveDatatype {
 
-public class InductiveDatatype implements IDatatypeExtension {
-
-	private static final String TYPE_NAME = "Induc";
-	private static final String TYPE_IDENTIFIER = "Induc DT Id";
-	
-	private static final InductiveDatatype INSTANCE = new InductiveDatatype();
-	
-	private InductiveDatatype() {
-		// singleton
+	private static final IDatatype2 INSTANCE;
+	static {
+		final FormulaFactory ff = FormulaFactory.getDefault();
+		final GivenType tyT = ff.makeGivenType("T");
+		final GivenType tyInduc = ff.makeGivenType("Induc");
+		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("Induc", tyT);
+		builder.addConstructor("ind0");
+		final IConstructorBuilder ind1 = builder.addConstructor("ind1");
+		ind1.addArgument(tyInduc, "ind1_0");
+		final IConstructorBuilder ind2 = builder.addConstructor("ind2");
+		ind2.addArgument(tyInduc, "ind2_0");
+		ind2.addArgument(tyInduc, "ind2_1");
+		INSTANCE = builder.finalizeDatatype();
 	}
-	
-	public static InductiveDatatype getInstance() {
+
+	public static IDatatype2 getInstance() {
 		return INSTANCE;
-	}
-	
-	@Override
-	public String getTypeName() {
-		return TYPE_NAME;
-	}
-
-	@Override
-	public String getId() {
-		return TYPE_IDENTIFIER;
-	}
-	
-	@Override
-	public void addTypeParameters(ITypeConstructorMediator mediator) {
-		mediator.addTypeParam("T");
-	}
-
-	@Override
-	public void addConstructors(IConstructorMediator mediator) {
-		final ITypeParameter prmT = mediator.getTypeParameter("T");
-		final IArgumentType argTypeT = mediator.newArgumentType(prmT);
-		final IExpressionExtension typeCons = mediator.getTypeConstructor();
-		final IArgumentType argTypeInducT = mediator.makeParametricType(
-				typeCons, asList(argTypeT));
-		
-		final IArgument destr1 = mediator.newArgument("ind1_0", argTypeInducT);
-		final IArgument destr2_0 = mediator.newArgument("ind2_0", argTypeInducT);
-		final IArgument destr2_1 = mediator.newArgument("ind2_1", argTypeInducT);
-		
-		mediator.addConstructor("ind0", "IND_0");
-		mediator.addConstructor("ind1", "IND_1", asList(destr1));
-		mediator.addConstructor("ind2", "IND_2",
-				asList(destr2_0, destr2_1));
 	}
 
 }

@@ -23,7 +23,7 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -48,11 +48,10 @@ import org.junit.Test;
 public abstract class AbstractTacticTests {
 
 	private static FormulaFactory makeFormulaFactory(
-			IDatatypeExtension... dtExts) {
-		final FormulaFactory factory = FormulaFactory.getDefault();
+			IDatatype2... dts) {
 		final Set<IFormulaExtension> exts = new HashSet<IFormulaExtension>();
-		for (final IDatatypeExtension dtExt : dtExts) {
-			exts.addAll(factory.makeDatatype(dtExt).getExtensions());
+		for (final IDatatype2 dt : dts) {
+			exts.addAll(dt.getExtensions());
 		}
 		return FormulaFactory.getInstance(exts);
 	}
@@ -68,7 +67,7 @@ public abstract class AbstractTacticTests {
 	}
 
 	public AbstractTacticTests(ITactic tactic, String tacticId,
-			IDatatypeExtension... dtExtensions) {
+			IDatatype2... dtExtensions) {
 		this(tactic, tacticId, makeFormulaFactory(dtExtensions));
 	}
 

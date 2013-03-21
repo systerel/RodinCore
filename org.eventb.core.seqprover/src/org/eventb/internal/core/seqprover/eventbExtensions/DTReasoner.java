@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,9 @@ import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
@@ -47,7 +48,7 @@ public abstract class DTReasoner extends AbstractManualInference {
 		}
 		final ParametricType prmType = (ParametricType) type;
 		final IExpressionExtension ext = prmType.getExprExtension();
-		return ext.getOrigin() instanceof IDatatype;
+		return ext.getOrigin() instanceof IDatatype2;
 	}
 
 	private final String reasonerId;
@@ -86,7 +87,7 @@ public abstract class DTReasoner extends AbstractManualInference {
 
 		final ParametricType prmType = (ParametricType) ident.getType();
 		final IExpressionExtension ext = prmType.getExprExtension();
-		final IDatatype dt = (IDatatype) ext.getOrigin();
+		final IDatatype2 dt = (IDatatype2) ext.getOrigin();
 		return makeAntecedents(seq, ident, prmType, dt);
 	}
 
@@ -105,13 +106,13 @@ public abstract class DTReasoner extends AbstractManualInference {
 	}
 
 	private IAntecedent[] makeAntecedents(IProverSequent seq,
-			FreeIdentifier ident, ParametricType type, IDatatype dt) {
+			FreeIdentifier ident, ParametricType type, IDatatype2 dt) {
 		final List<IAntecedent> antecedents = new ArrayList<IAntecedent>();
 		final FormulaFactory ff = seq.getFormulaFactory();
 		final ITypeEnvironment env = seq.typeEnvironment();
-		for (IExpressionExtension constr : dt.getConstructors()) {
-			final List<IArgument> arguments = dt.getArguments(constr);
-			final List<Type> argTypes = dt.getArgumentTypes(constr, type, ff);
+		for (IConstructorExtension constr : dt.getConstructors()) {
+			final IDestructorExtension[] arguments = constr.getArguments();
+			final Type[] argTypes = constr.getArgumentTypes(type);
 
 			final FreeIdentifier[] params = makeFreshIdents(arguments,
 					argTypes, ff, env);
@@ -123,26 +124,26 @@ public abstract class DTReasoner extends AbstractManualInference {
 		return antecedents.toArray(new IAntecedent[antecedents.size()]);
 	}
 
-	private static FreeIdentifier[] makeFreshIdents(List<IArgument> arguments,
-			List<Type> argTypes, FormulaFactory ff, ITypeEnvironment env) {
-		assert arguments.size() == argTypes.size();
-		final int size = arguments.size();
+	private static FreeIdentifier[] makeFreshIdents(IDestructorExtension[] arguments,
+			Type[] argTypes, FormulaFactory ff, ITypeEnvironment env) {
+		assert arguments.length == argTypes.length;
+		final int size = arguments.length;
 		final FreeIdentifier[] idents = new FreeIdentifier[size];
 		for (int i = 0; i < size; i++) {
-			final IArgument arg = arguments.get(i);
+			final IDestructorExtension arg = arguments[i];
 			final String argName = makeFreshName(arg, i, env);
-			final Type argType = argTypes.get(i);
+			final Type argType = argTypes[i];
 			idents[i] = ff.makeFreeIdentifier(argName, null, argType);
 		}
 		return idents;
 	}
 
-	private static String makeFreshName(IArgument arg, int i,
+	private static String makeFreshName(IDestructorExtension arg, int i,
 			ITypeEnvironment env) {
 		final String prefix = "p_";
 		final String suffix;
-		if (arg.hasDestructor()) {
-			suffix = arg.getDestructor();
+		if (arg != null) {
+			suffix = arg.getName();
 		} else {
 			suffix = Integer.toString(i);
 		}

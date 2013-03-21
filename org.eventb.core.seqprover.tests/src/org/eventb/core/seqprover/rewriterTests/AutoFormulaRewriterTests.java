@@ -13,20 +13,15 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
-import static java.util.Arrays.asList;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype.IArgument;
-import org.eventb.core.ast.extension.datatype.IArgumentType;
-import org.eventb.core.ast.extension.datatype.IConstructorMediator;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
-import org.eventb.core.ast.extension.datatype.ITypeConstructorMediator;
+import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.junit.Test;
@@ -39,53 +34,28 @@ import org.junit.Test;
  *         {@link AbstractFormulaRewriterTests}.
  */
 public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests {
-	
-	private static final IDatatypeExtension DATATYPE = new IDatatypeExtension() {
 
-		private static final String TYPE_NAME = "List";
-		private static final String TYPE_IDENTIFIER = "List Id";
-		
-		
-		@Override
-		public String getTypeName() {
-			return TYPE_NAME;
-		}
-
-		@Override
-		public String getId() {
-			return TYPE_IDENTIFIER;
-		}
-		
-		@Override
-		public void addTypeParameters(ITypeConstructorMediator mediator) {
-			// no type parameter			
-		}
-
-		@Override
-		public void addConstructors(IConstructorMediator mediator) {
-			mediator.addConstructor("void", "VOID");
-			
-			final IntegerType intType = mediator.makeIntegerType();
-			final IArgumentType intArgType = mediator.newArgumentType(intType);
-			final IArgument destr1 = mediator.newArgument("destr1", intArgType);
-			final IArgument destr2_0 = mediator.newArgument("destr2_0", intArgType);
-			final IArgument destr2_1 = mediator.newArgument("destr2_1", intArgType);
-			
-			mediator.addConstructor("cons1", "CONS_1", asList(destr1));
-			mediator.addConstructor("cons2", "CONS_2",
-					asList(destr2_0, destr2_1));
-		}
-
-	};
-
-	private static final IDatatype DT = FormulaFactory.getDefault().makeDatatype(DATATYPE);
-
-	private static final Set<IFormulaExtension> EXTENSIONS = new HashSet<IFormulaExtension>();
+	public static final IDatatype2 DT;
 	static {
-		EXTENSIONS.addAll(DT.getExtensions());
-		EXTENSIONS.add(FormulaFactory.getCond());
+		final FormulaFactory ff = FormulaFactory.getDefault();
+		final Type integerType = ff.makeIntegerType();
+		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("List");
+		dtBuilder.addConstructor("void");
+		final IConstructorBuilder cons1 = dtBuilder.addConstructor("cons1");
+		cons1.addArgument(integerType, "destr1");
+		final IConstructorBuilder cons2 = dtBuilder.addConstructor("cons2");
+		cons2.addArgument(integerType, "destr2_0");
+		cons2.addArgument(integerType, "destr2_1");
+		DT = dtBuilder.finalizeDatatype();
 	}
-	protected static final FormulaFactory DT_FAC = FormulaFactory.getInstance(EXTENSIONS);
+
+	protected static final FormulaFactory DT_FAC;
+	static {
+		final Set<IFormulaExtension> extns = new HashSet<IFormulaExtension>();
+		extns.addAll(DT.getExtensions());
+		extns.add(FormulaFactory.getCond());
+		DT_FAC = FormulaFactory.getInstance(extns);
+	}
 	
 	protected final boolean level2AndHigher;
 	protected final boolean level3AndHigher;

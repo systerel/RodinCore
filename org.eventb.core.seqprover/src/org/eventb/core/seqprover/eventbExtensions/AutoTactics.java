@@ -44,7 +44,8 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
+import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -374,12 +375,12 @@ public class AutoTactics {
 			}
 			final IExpressionExtension idTypeExtn = ((ParametricType) idType).getExprExtension();
 			final Object origin = idTypeExtn.getOrigin();
-			if (!(origin instanceof IDatatype)) {
+			if (!(origin instanceof IDatatype2)) {
 				return Appli.NOT_APPLI;
 			}
-			final IDatatype dt = (IDatatype) origin;
-			final Set<IExpressionExtension> constructors = dt.getConstructors();
-			if (constructors.size() != 1) {
+			final IDatatype2 dt = (IDatatype2) origin;
+			final IConstructorExtension[] constructors = dt.getConstructors();
+			if (constructors.length != 1) {
 				return Appli.NOT_APPLI;
 			}
 			final Expression eqRight = Lib.eqRight(boundPred);
@@ -388,7 +389,7 @@ public class AutoTactics {
 			}
 			final IExpressionExtension constrExtn = ((ExtendedExpression) eqRight)
 					.getExtension();
-			final IExpressionExtension constr = constructors.iterator().next();
+			final IExpressionExtension constr = constructors[0];
 			
 			if (!constrExtn.equals(constr)) {
 				return Appli.NOT_APPLI;
