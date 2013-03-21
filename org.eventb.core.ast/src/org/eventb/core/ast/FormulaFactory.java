@@ -44,14 +44,11 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IGrammar;
 import org.eventb.core.ast.extension.IOperatorGroup;
 import org.eventb.core.ast.extension.IPredicateExtension;
-import org.eventb.core.ast.extension.datatype.IDatatype;
-import org.eventb.core.ast.extension.datatype.IDatatypeExtension;
 import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.extension.Cond;
 import org.eventb.internal.core.ast.extension.ExtnUnicityChecker;
-import org.eventb.internal.core.ast.extension.datatype.DatatypeExtensionComputer;
 import org.eventb.internal.core.ast.extension.datatype2.DatatypeBuilder;
 import org.eventb.internal.core.lexer.GenLexer;
 import org.eventb.internal.core.lexer.Scanner;
@@ -105,9 +102,6 @@ public class FormulaFactory {
 	
 	// tags of extensions managed by this formula factory
 	private final Map<Integer, IFormulaExtension> extensions;
-	
-	// already computed datatype extensions
-	private final Map<IDatatypeExtension, IDatatype> datatypeCache = new HashMap<IDatatypeExtension, IDatatype>();
 	
 	private final BMath grammar;
 	
@@ -278,28 +272,6 @@ public class FormulaFactory {
 		return new DatatypeBuilder(this, name, Arrays.asList(parameters));
 	}
 
-	/**
-	 * Returns a new datatype descriptor from the given datatype description.
-	 * <p>
-	 * A data type can make reference to other parametric types (through
-	 * argument types or return types) provided that these other types are
-	 * already supported by this factory.
-	 * </p>
-	 * 
-	 * @param extension
-	 *            a description of the datatype to build
-	 * @return a new datatype descriptor
-	 * @since 2.0
-	 */
-	public synchronized IDatatype makeDatatype(IDatatypeExtension extension) {
-		IDatatype cached = datatypeCache.get(extension);
-		if (cached == null) {
-			cached = new DatatypeExtensionComputer(extension, this).compute();
-			datatypeCache.put(extension, cached);
-		}
-		return cached;
-	}
-	
 	@SuppressWarnings("deprecation")
 	private boolean isV1Specific(int tag) {
 		return tag == Formula.KPRJ1 //
