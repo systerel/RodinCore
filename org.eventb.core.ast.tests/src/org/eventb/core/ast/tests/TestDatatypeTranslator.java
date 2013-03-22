@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import java.util.Set;
+import static org.eventb.core.ast.tests.FastFactory.mDatatypeFactory;
 
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.junit.Test;
 
 /**
@@ -155,9 +153,7 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 	 */
 	@Test 
 	public void testDatatypeInDatatype() {
-		final IDatatype2 datatype = DatatypeParser.parse(ff, "A[T] ::= a; d[T]");
-		final Set<IFormulaExtension> exts = datatype.getExtensions();
-		final FormulaFactory fac = FormulaFactory.getInstance(exts);
+		final FormulaFactory fac = mDatatypeFactory(ff, "A[T] ::= a; d[T]");
 		final TestTranslationSupport s = new TestTranslationSupport(fac,
 				"B[U] ::= b; e[A(U)]");
 		s.addToSourceEnvironment("x=A(B(ℤ))");

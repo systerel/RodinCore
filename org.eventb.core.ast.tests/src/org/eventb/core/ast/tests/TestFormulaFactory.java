@@ -26,7 +26,6 @@ import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.MAPSTO;
 import static org.eventb.core.ast.Formula.NOT;
 import static org.eventb.core.ast.Formula.QUNION;
-import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.ast.PredicateVariable.LEADING_SYMBOL;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Explicit;
 import static org.eventb.core.ast.QuantifiedExpression.Form.Implicit;
@@ -40,7 +39,6 @@ import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
 import static org.eventb.core.ast.tests.FastFactory.mFreeIdentifier;
 import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mLiteralPredicate;
-import static org.eventb.core.ast.tests.TestGenParser.MONEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -263,8 +261,8 @@ public class TestFormulaFactory extends AbstractTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void parametricType_NotATypeConstructor() {
-		final FormulaFactory extFac = getInstance();
-		extFac.makeParametricType(mList(extFac.makeGivenType("S")), MONEY);
+		final Type[] noParams = new Type[0];
+		LIST_FAC.makeParametricType(noParams, EXT_NIL);
 	}
 
 	@Ignore("Known bug")

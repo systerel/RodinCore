@@ -142,7 +142,7 @@ public abstract class AbstractTests {
 	}
 
 	public static Predicate parsePredicate(String image) {
-		return parsePredicate(image, FormulaFactory.getDefault());
+		return parsePredicate(image, ff);
 	}
 
 	public static Predicate parsePredicate(String image,

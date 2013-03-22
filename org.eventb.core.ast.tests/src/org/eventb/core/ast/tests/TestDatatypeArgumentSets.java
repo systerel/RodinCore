@@ -13,15 +13,11 @@ package org.eventb.core.ast.tests;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.fail;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.junit.Test;
 
 /**
@@ -32,25 +28,14 @@ import org.junit.Test;
  */
 public class TestDatatypeArgumentSets extends AbstractTests {
 
-	// Specifications of datatypes common to all tests
-	private static final String[] DATATYPE_SPECS = {
+	// Factory including LIST and several datatypes common to all tests
+	private static final FormulaFactory dtFF = FastFactory.mDatatypeFactory(
+			LIST_FAC,//
 			"Param[S]      ::= param; param1[List(S)]",//
 			"Pow[S]        ::= pow; pow1[ℙ(S)]",//
 			"Product[S, T] ::= prod; prod1[S × T]",//
-			"Simple        ::= simple; simple1[BOOL]",//
-	};
-
-	// Factory including LIST and all the datatypes specified above
-	private static final FormulaFactory dtFF;
-	static {
-		final Set<IFormulaExtension> extensions = new LinkedHashSet<IFormulaExtension>();
-		extensions.addAll(LIST_FAC.getExtensions());
-		for (final String ext : DATATYPE_SPECS) {
-			final IDatatype2 dt = DatatypeParser.parse(LIST_FAC, ext);
-			extensions.addAll(dt.getExtensions());
-		}
-		dtFF = FormulaFactory.getInstance(extensions);
-	}
+			"Simple        ::= simple; simple1[BOOL]"//
+	);
 
 	/**
 	 * Ensures that a constructor argument of parametric type is instantiated
