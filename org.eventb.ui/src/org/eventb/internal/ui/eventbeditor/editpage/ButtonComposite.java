@@ -222,9 +222,12 @@ public class ButtonComposite implements ILabelProviderListener {
 	// Postponed until new editor implementation
 	@Override
 	public void labelProviderChanged(LabelProviderChangedEvent event) {
-		final Object[] elements = event.getElements();
 		final IRodinElement element = elementComp.getElement();
-		if (Arrays.asList(elements).contains(element)) {
+		final Object[] elements = event.getElements();
+		if (elements == null) {
+			// null means refresh all elements
+			updateSelectHyperlink();
+		} else if (Arrays.asList(elements).contains(element)) {
 			updateSelectHyperlink();
 		}
 	}
