@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.lexer;
 
-import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.EOF;
 import static org.eventb.internal.core.parser.AbstractGrammar.DefaultToken.IDENT;
 
 import java.util.ArrayList;
@@ -24,13 +23,9 @@ import org.eventb.internal.core.parser.BMath;
 import org.eventb.internal.core.parser.ParseResult;
 
 /**
- * This class maps the JFlex lexer with the Coco/R scanner. Note that the lexer
- * returns the first recognized token of a string. It respects the specification
- * of a Coco/R scanner, described in the Coco/R user manual.
+ * This class introduces a look-ahead mechanism on top of a regular lexer.
  * 
  * @author François Terrier
- * 
- * FIXME update comment
  */
 public class Scanner {
 	
@@ -40,7 +35,9 @@ public class Scanner {
 	// iterator on the look-ahead list
 	private ListIterator<Token> iterator = list.listIterator();
 
-	private GenLexer lexer = null;
+	private final int eofKind;
+
+	private final ILexer lexer;
 	
 	/**
 	 * Creates a new scanner that takes its input from <code>str</code>.
@@ -53,7 +50,12 @@ public class Scanner {
 	 *            grammar defining tokens to recognize
 	 */
 	public Scanner(String str, ParseResult result, AbstractGrammar grammar) {
-		lexer = new GenLexer(str, result, grammar);
+		this(new GenLexer(str, result, grammar));
+	}
+
+	public Scanner(ILexer lexer) {
+		this.lexer = lexer;
+		this.eofKind = lexer.eofKind();
 	}
 
 	private Token getNextToken() {
@@ -90,7 +92,7 @@ public class Scanner {
 	// Returns the lexer result.
 	// Used by class Parser to share common problems (error reports).
 	protected ParseResult getResult() {
-		return lexer.result;
+		return lexer.getResult();
 	}
 
 	public static boolean isValidIdentifierName(
@@ -137,8 +139,7 @@ public class Scanner {
 	public boolean lookAheadFor(int searchedKind) {
 		ResetPeek();
 		Token peek = Peek();
-		final int eof = lexer.getGrammar().getKind(EOF);
-		while (peek.kind != eof) {
+		while (peek.kind != eofKind) {
 			if (peek.kind == searchedKind) {
 				return true;
 			}

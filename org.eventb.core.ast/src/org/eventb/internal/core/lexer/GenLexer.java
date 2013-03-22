@@ -29,9 +29,8 @@ import org.eventb.internal.core.parser.TokenSet;
  * Generic lexer for any {@link BMath} grammar (potentially extended).
  * 
  * @author Nicolas Beauger
- * 
  */
-public class GenLexer {
+public class GenLexer implements ILexer {
 
 	/**
 	 * The lambda character.
@@ -152,14 +151,12 @@ public class GenLexer {
 		this.reader = new LexemReader(grammar);
 	}
 
-	public AbstractGrammar getGrammar() {
-		return grammar;
-	}
-	
+	@Override
 	public LexState save() {
 		return new LexState(stream.getTokenStart(), stream.getCurPos());
 	}
 
+	@Override
 	public void restore(LexState lexState) {
 		stream.setTokenStart(lexState.tokenStart);
 		stream.setCurPos(lexState.curPos);
@@ -170,6 +167,7 @@ public class GenLexer {
 	 * 
 	 * @return a token
 	 */
+	@Override
 	public Token nextToken() {
 		if (stream.isEOF()) {
 			return makeEOF();
@@ -196,7 +194,8 @@ public class GenLexer {
 		return new Token(kind, lexem, stream.getTokenStart());
 	}
 
-	private Token makeEOF() {
+	@Override
+	public Token makeEOF() {
 		return new Token(grammar.getKind(EOF), "", stream.getCurPos());
 	}
 
@@ -208,6 +207,16 @@ public class GenLexer {
 
 	private static boolean isPrime(LexStream stream) {
 		return !stream.isEOF() && stream.curCodePoint() == PRIME;
+	}
+
+	@Override
+	public int eofKind() {
+		return grammar.getKind(EOF);
+	}
+
+	@Override
+	public ParseResult getResult() {
+		return result;
 	}
 
 }
