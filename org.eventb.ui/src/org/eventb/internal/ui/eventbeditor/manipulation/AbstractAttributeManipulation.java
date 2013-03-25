@@ -11,6 +11,7 @@
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 
 public abstract class AbstractAttributeManipulation implements

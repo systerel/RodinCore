@@ -168,10 +168,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of a class which will be used for creating/editing the attribute. The class must implement &lt;samp&gt;org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation&lt;/samp&gt; and also must have a default contructor.
+                  the name of a class which will be used for creating/editing the attribute. The class must implement interface &lt;code&gt;org.eventb.ui.manipulation.IAttributeManipulation&lt;/code&gt; and have a public default contructor.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation"/>
+                  <meta.attribute kind="java" basedOn=":org.eventb.ui.manipulation.IAttributeManipulation"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -244,10 +244,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of a class which will be used for creating/editing the attribute. The class must implement &lt;samp&gt;org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation&lt;/samp&gt; and also must have a default contructor.
+                  the name of a class which will be used for creating/editing the attribute. The class must implement interface &lt;code&gt;org.eventb.ui.manipulation.IAttributeManipulation&lt;/code&gt; and have a public default contructor.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation"/>
+                  <meta.attribute kind="java" basedOn=":org.eventb.ui.manipulation.IAttributeManipulation"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -399,10 +399,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of a class which will be used for creating/editing the attribute. The class must extends &lt;samp&gt;org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation&lt;/samp&gt; and also must have a default contructor.
+                  the name of a class which will be used for creating/editing the attribute. The class must implement interface &lt;code&gt;org.eventb.ui.manipulation.IAttributeManipulation&lt;/code&gt; and have a public default contructor.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulation:org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation"/>
+                  <meta.attribute kind="java" basedOn=":org.eventb.ui.manipulation.IAttributeManipulation"/>
                </appInfo>
             </annotation>
          </attribute>

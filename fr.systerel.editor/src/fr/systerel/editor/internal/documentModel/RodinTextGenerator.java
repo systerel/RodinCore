@@ -49,7 +49,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc.Style;
-import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;

@@ -12,7 +12,7 @@ package fr.systerel.editor.internal.documentModel;
 
 import static fr.systerel.editor.internal.editors.EditPos.newPosOffLen;
 
-import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;

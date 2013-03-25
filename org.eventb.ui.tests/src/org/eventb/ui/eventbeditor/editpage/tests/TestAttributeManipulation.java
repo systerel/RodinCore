@@ -41,13 +41,13 @@ import org.eventb.internal.ui.eventbeditor.manipulation.ConvergenceAttributeMani
 import org.eventb.internal.ui.eventbeditor.manipulation.ExpressionAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.ExtendedAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.ExtendsContextAbstractContextNameAttributeManipulation;
-import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.IdentifierAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.LabelAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.PredicateAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.RefinesEventAbstractEventLabelAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.RefinesMachineAbstractMachineNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation;
+import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.eventb.ui.tests.utils.EventBUITest;
 import org.junit.Test;
 import org.rodinp.core.IInternalElement;

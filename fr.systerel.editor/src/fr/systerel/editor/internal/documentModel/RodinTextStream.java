@@ -20,7 +20,7 @@ import static fr.systerel.editor.internal.presentation.RodinConfiguration.getAtt
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
+import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.emf.api.itf.ILElement;
 
