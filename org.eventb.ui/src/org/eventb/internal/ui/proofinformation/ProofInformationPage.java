@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ package org.eventb.internal.ui.proofinformation;
 import static org.eventb.internal.ui.UIUtils.getVisibleChildrenOfType;
 import static org.eventb.internal.ui.proofinformation.ProofInformationListItem.getInfo;
 import static org.eventb.ui.EventBUIPlugin.NAVIGATOR_VIEW_ID;
+import static org.eventb.ui.eventbeditor.EventBEditorPage.createEventBFormText;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +60,6 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.prover.ProverUIUtils;
-import org.eventb.ui.EventBFormText;
 import org.eventb.ui.IEventBFormText;
 import org.eventb.ui.IImplicitChildProvider;
 import org.rodinp.core.IInternalElement;
@@ -130,7 +130,7 @@ public class ProofInformationPage extends Page implements
 		final GridLayout gl = new GridLayout();
 		body.setLayout(gl);
 
-		formText = new EventBFormText(toolkit.createFormText(body, true));
+		formText = createEventBFormText(toolkit.createFormText(body, true));
 		if (proofState != null)
 			setFormText(proofState.getPSStatus(), new NullProgressMonitor());
 

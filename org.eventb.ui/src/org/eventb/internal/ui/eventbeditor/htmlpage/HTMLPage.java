@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import org.eventb.core.IRefinesMachine;
 import org.eventb.internal.ui.EventBControl;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.utils.Messages;
-import org.eventb.ui.EventBFormText;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBFormText;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
@@ -128,7 +127,7 @@ public class HTMLPage extends EventBEditorPage implements
 					.setText(
 							"<form>Your platform does not support SWT Browser widget. Platform requirements for the widget are available from the SWT FAQ website: http://www.eclipse.org/swt/faq.php#howusemozilla</form>",
 							true, false);
-			formText = new EventBFormText(widget);
+			formText = createEventBFormText(widget);
 			widget.setWhitespaceNormalized(false);
 		}
 

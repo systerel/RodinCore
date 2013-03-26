@@ -18,6 +18,7 @@
 package org.eventb.internal.ui.eventbeditor.editpage;
 
 import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
+import static org.eventb.ui.eventbeditor.EventBEditorPage.createEventBFormText;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -49,7 +50,6 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.handlers.CreateElementHandler;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
-import org.eventb.ui.EventBFormText;
 import org.eventb.ui.IEventBSharedImages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
@@ -185,7 +185,7 @@ public class SectionComposite implements ISectionComposite {
 		final FormText widget = toolkit.createFormText(comp, true);
 
 		widget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		new EventBFormText(widget);
+		createEventBFormText(widget);
 		widget.setText(getPrefixFormText(str, -5), true, true);
 	}
 
@@ -257,7 +257,7 @@ public class SectionComposite implements ISectionComposite {
 
 		prefixFormText = toolkit.createFormText(headerComp, true);
 
-		new EventBFormText(prefixFormText);
+		createEventBFormText(prefixFormText);
 		prefixFormText.setText(getPrefixFormText(str, -20), true, true);
 		refreshPrefixMarker();
 

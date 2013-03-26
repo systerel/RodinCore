@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,15 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - add createEventBFormText()
  *******************************************************************************/
 package org.eventb.ui.eventbeditor;
 
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eventb.internal.ui.EventBFormText;
+import org.eventb.ui.IEventBFormText;
 
 /**
  * @author htson
@@ -44,6 +48,23 @@ public abstract class EventBEditorPage extends FormPage {
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
+	}
+
+	/**
+	 * Returns an Event-B decoration around the given form text.
+	 * <p>
+	 * This method is provided for backward compatibility with Rodin 2.x and
+	 * replaces calls to <code>new EventBFormText(text)</code>, as the class is
+	 * no longer published in the API.
+	 * </p>
+	 * 
+	 * @param text
+	 *            the form text to decorate
+	 * @return an Event-B form text
+	 * @since 3.0
+	 */
+	public static IEventBFormText createEventBFormText(FormText text) {
+		return new EventBFormText(text);
 	}
 
 	/**

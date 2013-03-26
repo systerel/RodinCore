@@ -68,7 +68,6 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.utils.Messages;
-import org.eventb.ui.EventBFormText;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
@@ -347,7 +346,7 @@ public class EditPage extends EventBEditorPage implements
 		final FormText widget = toolkit.createFormText(comp, true);
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, false, false);
 		widget.setLayoutData(gd);
-		new EventBFormText(widget);
+		createEventBFormText(widget);
 		final IInternalElement rodinInput = getRodinInput();
 		final String declaration = ElementDescRegistry.getInstance().getPrefix(
 				rodinInput.getElementType());
