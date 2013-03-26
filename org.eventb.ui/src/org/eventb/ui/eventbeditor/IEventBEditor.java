@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ package org.eventb.ui.eventbeditor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.internal.ui.eventbeditor.IStatusChangedListener;
+import org.eventb.ui.IStatusChangedListener;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
@@ -47,6 +47,7 @@ public interface IEventBEditor<R extends IInternalElement> extends IEditorPart,
 	 * 
 	 * @param listener
 	 *            a status changed listener
+	 * @since 3.0
 	 */
 	public abstract void addStatusListener(IStatusChangedListener listener);
 
@@ -56,6 +57,7 @@ public interface IEventBEditor<R extends IInternalElement> extends IEditorPart,
 	 * 
 	 * @param listener
 	 *            a status changed listener
+	 * @since 3.0
 	 */
 	public abstract void removeStatusListener(IStatusChangedListener listener);
 

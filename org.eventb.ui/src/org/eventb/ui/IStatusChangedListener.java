@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,25 +8,29 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.ui.eventbeditor;
+package org.eventb.ui;
 
 import org.rodinp.core.IRodinElement;
 
 /**
+ * Common protocol for listening to changes of the Event-B editor.
+ * 
  * @author htson
- *         <p>
- *         An inteface for status change listeners.
+ * @since 3.0
  */
 public interface IStatusChangedListener {
 
 	/**
-	 * A call-back when the status (saved/unsaved) of an element has been
-	 * changed.
+	 * Called when the status (saved/unsaved) of an element has changed.
 	 * <p>
+	 * This method is called for each new elements that gets created in the
+	 * editor, and called again when the edited file is saved to notify that the
+	 * elements is no longer new.
+	 * </p>
 	 * 
 	 * @param element
-	 *            the element whose status has been changed.
+	 *            the element which made the saved/unsaved status change
 	 */
-	public void statusChanged(IRodinElement element);
+	void statusChanged(IRodinElement element);
 
 }
