@@ -6,7 +6,10 @@ Bundle-Version: 0.2.1.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eventb.core.seqprover,
  org.eventb.pp,
- org.eventb.ui
+ org.eventb.ui,
+ org.eventb.core.ast,
+ org.eclipse.swt,
+ org.eclipse.core.runtime
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy

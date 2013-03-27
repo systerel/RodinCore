@@ -9,5 +9,7 @@ Require-Bundle: org.eclipse.ui,
  fr.systerel.explorer,
  org.eclipse.core.resources,
  org.eventb.core,
- org.junit
+ org.junit,
+ org.rodinp.core,
+ org.eventb.core.seqprover
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

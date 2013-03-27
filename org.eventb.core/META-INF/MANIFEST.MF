@@ -7,9 +7,10 @@ Bundle-Activator: org.eventb.core.EventBPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.rodinp.core;visibility:=reexport,
- org.eventb.core.ast;visibility:=reexport,
- org.eventb.core.seqprover;visibility:=reexport
+ org.rodinp.core,
+ org.eventb.core.ast,
+ org.eventb.core.seqprover,
+ org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eventb.core,
  org.eventb.core.basis,

@@ -5,6 +5,8 @@ Bundle-SymbolicName: org.rodinp.keyboard.tests;singleton:=true
 Bundle-Version: 1.1.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.rodinp.keyboard,
- org.junit
+ org.junit,
+ org.eclipse.ui,
+ org.eclipse.core.runtime
 Export-Package: org.rodinp.keyboard.tests
 Bundle-Localization: plugin

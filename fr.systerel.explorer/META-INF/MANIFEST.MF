@@ -8,7 +8,12 @@ Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eventb.ui,
- org.eclipse.ui.navigator
+ org.eclipse.ui.navigator,
+ org.eclipse.core.resources,
+ org.eventb.core,
+ org.rodinp.core,
+ org.eventb.core.seqprover,
+ org.eclipse.ui.ide
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Export-Package: fr.systerel.explorer,

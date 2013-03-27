@@ -5,7 +5,9 @@ Bundle-SymbolicName: org.eventb.ui.symboltable;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eventb.ui.symboltable.internal.SymbolTablePlugin
 Require-Bundle: org.eventb.ui,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.ui,
+ org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %BundleVendor

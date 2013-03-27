@@ -8,6 +8,7 @@ Bundle-Vendor: ETH Zurich
 Require-Bundle: org.eclipse.core.runtime,
  org.eventb.rubin,
  org.eventb.core.seqprover,
+ org.eventb.core.ast,
  com.clearsy.atelierb.provers.core,
  org.eventb.pp,
  org.junit

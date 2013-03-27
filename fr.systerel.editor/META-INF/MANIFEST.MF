@@ -8,7 +8,18 @@ Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.jface.text,
  org.rodinp.keyboard,
  org.rodinp.core.emf,
- org.eventb.ui
+ org.eventb.ui,
+ org.rodinp.core,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.swt,
+ org.eventb.core,
+ org.eclipse.ui,
+ org.eclipse.emf.common,
+ org.eclipse.emf.ecore,
+ org.eclipse.ui.editors,
+ org.eclipse.core.expressions,
+ org.eclipse.ui.ide
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
