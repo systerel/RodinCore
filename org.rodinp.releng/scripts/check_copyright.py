@@ -23,6 +23,7 @@ HOLDER = (
                 'IBM Corporation',
                 'ETH Zurich',
                 'Systerel',
+                'UFRN',
                 'University of Southampton',
                 'Universitaet Duesseldorf',
                 'Sebastian Davids',
