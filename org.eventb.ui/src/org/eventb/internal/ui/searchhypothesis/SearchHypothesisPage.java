@@ -14,22 +14,24 @@ package org.eventb.internal.ui.searchhypothesis;
 
 import static org.eclipse.jface.action.IAction.AS_CHECK_BOX;
 import static org.eclipse.jface.action.IAction.AS_PUSH_BUTTON;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES;
 import static org.eventb.internal.ui.preferences.PreferenceConstants.PROVING_UI_PAGE_ID;
-import static org.eventb.internal.ui.preferences.PreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES;
 import static org.eventb.internal.ui.utils.Messages.searchedHypothesis_toolItem_preferences;
 import static org.eventb.internal.ui.utils.Messages.searchedHypothesis_toolItem_refresh_toolTipText;
 import static org.eventb.internal.ui.utils.Messages.searchedHypothesis_toolItem_search_toolTipText;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.internal.ui.preferences.EventBPreferenceStore;
+import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.internal.ui.prover.HypothesisComposite;
 import org.eventb.internal.ui.prover.HypothesisPage;
 import org.eventb.internal.ui.prover.ProverUI;
@@ -47,7 +49,9 @@ import org.eventb.ui.IEventBSharedImages;
  * @author Thomas Muller
  */
 public class SearchHypothesisPage extends HypothesisPage implements
-		ISearchHypothesisPage, IPropertyChangeListener {
+		ISearchHypothesisPage, IPreferenceChangeListener {
+
+	static final IUserSupportManager USM = EventBPlugin.getUserSupportManager();
 
 	private static class PrefAction extends Action {
 		
@@ -65,7 +69,7 @@ public class SearchHypothesisPage extends HypothesisPage implements
 		}
 	}
 
-	private final IPreferenceStore store;
+	private final IEclipsePreferences store;
 
 	private Action considerHidden;
 
@@ -84,8 +88,9 @@ public class SearchHypothesisPage extends HypothesisPage implements
 	 */
 	public SearchHypothesisPage(IUserSupport userSupport, ProverUI proverUI) {
 		super(userSupport, proverUI);
-		store = EventBPreferenceStore.getPreferenceStore();
-		store.addPropertyChangeListener(this);
+		USM.addChangeListener(this);
+		store = InstanceScope.INSTANCE.getNode(EventBPlugin.PLUGIN_ID);
+		store.addPreferenceChangeListener(this);
 	}
 
 	@Override
@@ -96,16 +101,13 @@ public class SearchHypothesisPage extends HypothesisPage implements
 	@Override
 	protected void fillLocalPullDown(IMenuManager manager) {
 		super.fillLocalPullDown(manager);
-		considerHidden = new Action(P_CONSIDER_HIDDEN_HYPOTHESES, AS_CHECK_BOX) {
+		considerHidden = new Action("Consider hidden hypotheses in search", AS_CHECK_BOX) {
 			@Override
 			public void run() {
-				setPreferences(this.isChecked());
+				USM.setConsiderHiddenHypotheses(this.isChecked());
 			}
 		};
-		final boolean b = EventBPreferenceStore
-				.getBooleanPreference(P_CONSIDER_HIDDEN_HYPOTHESES);
-		considerHidden.setChecked(b);
-		setPreferences(b);
+		considerHidden.setChecked(USM.isConsiderHiddenHypotheses());
 		manager.add(considerHidden);
 
 		final Action openPreferences = new PrefAction();
@@ -162,19 +164,6 @@ public class SearchHypothesisPage extends HypothesisPage implements
 		return searchBox.getSearchedText();
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(P_CONSIDER_HIDDEN_HYPOTHESES)) {
-			final Object newValue = event.getNewValue();
-			assert newValue instanceof Boolean;
-			final Boolean b = (Boolean) newValue;
-			if (considerHidden != null)
-				considerHidden.setChecked(b);
-			setPreferences(b);
-			updatePage();
-		}
-	}
-
 	/**
 	 * Searches hypotheses with the current string to refresh the view.
 	 */
@@ -184,11 +173,14 @@ public class SearchHypothesisPage extends HypothesisPage implements
 		}
 	}
 
-	/**
-	 * Sets the preferences in store and support manager.
-	 */
-	public void setPreferences(boolean b) {
-		store.setValue(P_CONSIDER_HIDDEN_HYPOTHESES, b);
+	@Override
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (event.getKey().equals(P_CONSIDER_HIDDEN_HYPOTHESES)) {
+			if (considerHidden != null) {
+				considerHidden.setChecked(USM.isConsiderHiddenHypotheses());
+			}
+			updatePage();
+		}
 	}
 
 }

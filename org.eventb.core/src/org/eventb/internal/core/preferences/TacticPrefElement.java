@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.preferences;
 
-import static org.eventb.core.EventBPlugin.getAutoPostTacticManager;
-
 import org.eventb.core.preferences.IPrefElementTranslator;
-import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
@@ -43,11 +40,6 @@ public class TacticPrefElement implements
 
 		final ITacticDescriptor tacticDescriptor = tacticRegistry
 				.getTacticDescriptor(str);
-		if (!isDeclared(tacticDescriptor)) {
-			printDebug("Tactic is not declared in this scope" + str);
-			return null;
-
-		}
 		return tacticDescriptor;
 	}
 
@@ -56,12 +48,4 @@ public class TacticPrefElement implements
 			System.out.println(msg);
 		}
 	}
-
-	private boolean isDeclared(ITacticDescriptor tacticDesc) {
-		final IAutoPostTacticManager manager = getAutoPostTacticManager();
-		if (manager.getAutoTacticPreference().isDeclared(tacticDesc))
-			return true;
-		return manager.getPostTacticPreference().isDeclared(tacticDesc);
-	}
-
 }

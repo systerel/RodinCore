@@ -19,16 +19,11 @@ import org.eventb.internal.core.preferences.PreferenceUtils;
 
 public class PostTacticPreference extends AutoTacticPreference {
 
-	// The identifier of the extension point (value
-	// <code>"org.eventb.core.postTactics"</code>).
-	private final static String POSTTACTICS_ID = EventBPlugin.PLUGIN_ID
-			+ ".postTactics";	
-
 	private static PostTacticPreference instance;
 
 	private PostTacticPreference() {
 		// Singleton: Private default constructor
-		super(POSTTACTICS_ID);
+		super();
 	}
 
 	public static PostTacticPreference getDefault() {
@@ -62,8 +57,8 @@ public class PostTacticPreference extends AutoTacticPreference {
 
 	@Override
 	public ITacticDescriptor getDefaultDescriptor() {
-		return PreferenceUtils.loopOnAllPending(DEFAULT_IDS, POSTTACTICS_ID
-				+ ".default");
+		return PreferenceUtils.loopOnAllPending(DEFAULT_IDS,
+				EventBPlugin.PLUGIN_ID + ".postTactics.default");
 	}
 
 }

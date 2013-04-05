@@ -111,4 +111,13 @@ public interface IUserSupportManager {
 	 */
 	void setConsiderHiddenHypotheses(boolean value);
 
+	/**
+	 * Returns whether or not to consider hidden hypotheses in search results.
+	 * 
+	 * @return <code>true</code> if hidden hypotheses are included in search
+	 *         results, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	boolean isConsiderHiddenHypotheses();
+
 }

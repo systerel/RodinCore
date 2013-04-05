@@ -22,6 +22,7 @@
    <extension
          point="org.eventb.core.seqprover.autoTactics">
       <autoTactic
+            auto="true"
             class="org.eventb.core.tests.pom.TracingReasoner$TracingTactic"
             id="tracingTactic"
             name="Tracing Tactic">
@@ -93,6 +94,7 @@
    <extension
          point="org.eventb.core.seqprover.autoTactics">
       <autoTactic
+            auto="true"
             class="org.eventb.core.tests.preferences.TestingAutoTactics$SimpleTestAutoTac"
             id="simple"
             name="Simple Auto Tactic">
@@ -107,15 +109,6 @@
             minArity="1"
             name="Test Combinator">
       </combinator>
-   </extension>
-   <extension
-         point="org.eventb.core.pomTactics">
-      <tactic
-            id="org.eventb.core.tests.simple">
-      </tactic>
-      <tactic
-            id="org.eventb.core.tests.tracingTactic">
-      </tactic>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tacticParameterizers">

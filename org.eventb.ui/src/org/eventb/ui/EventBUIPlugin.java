@@ -229,8 +229,7 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	 */
 	private void initializePreferences() {
 		final IPreferenceStore store = getPreferenceStore();
-		final UIPreferenceObserver prefObs = new UIPreferenceObserver(store);
-		prefObs.initPreferences();
+		final UIPreferenceObserver prefObs = new UIPreferenceObserver();
 		store.addPropertyChangeListener(prefObs);
 	}
 

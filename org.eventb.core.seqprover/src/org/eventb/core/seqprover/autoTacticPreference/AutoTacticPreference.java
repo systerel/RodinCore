@@ -11,22 +11,10 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticPreference;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
-import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
-import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.eventbExtensions.TacticCombinators;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.Util;
-import org.eventb.internal.core.seqprover.tacticPreference.TacticPreferenceUtils;
 
 /**
  * @since 1.0
@@ -34,8 +22,6 @@ import org.eventb.internal.core.seqprover.tacticPreference.TacticPreferenceUtils
 public abstract class AutoTacticPreference implements IAutoTacticPreference {
 
 	private boolean enabled = false;
-
-	private List<ITacticDescriptor> declaredDescriptors = null;
 
 	private ITactic selectedComposedTactic;
 
@@ -45,84 +31,11 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	
 	private final ITacticDescriptor defaultDescriptor;
 	
-	// The identifier of the extension point.
-	private final String registryID;
-
-	public AutoTacticPreference(String registryID) {
-		this.registryID = registryID;
-		this.defaultDescriptor = getDefaultDescriptor();
-		setSelectedDescriptors(getDeclaredDescriptors());
-	}
-
 	/**
-	 * Initialises the registry using extensions to the element UI extension
-	 * point
+	 * @since 3.0
 	 */
-	private synchronized void loadRegistry() {
-		if (declaredDescriptors != null) {
-			// avoid to read the registry at the same time in different threads
-			return;
-		}
-		declaredDescriptors = new ArrayList<ITacticDescriptor>();
-
-		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint extensionPoint = reg.getExtensionPoint(registryID);
-		if (extensionPoint == null) // Invalid registry ID
-			return;
-
-		IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
-		IConfigurationElement[] configurations = extensionPoint
-				.getConfigurationElements();
-		for (IConfigurationElement configuration : configurations) {
-			String tacticID = configuration.getAttribute("id"); //$NON-NLS-1$
-			
-			// Check if the id is registered as a tactic
-			if (!tacticRegistry.isRegistered(tacticID)) {
-				if (TacticPreferenceUtils.DEBUG) {
-					System.out.println("Tactic " + tacticID
-							+ " is not registered, ignore this configuration.");
-				}
-				continue;
-			}
-			
-			ITacticDescriptor tacticDescriptor = tacticRegistry
-					.getTacticDescriptor(tacticID);
-			// Check if the id is registered
-			if (declaredDescriptors.contains(tacticDescriptor)) {
-				if (TacticPreferenceUtils.DEBUG) {
-					System.out
-							.println("Tactic "
-									+ tacticID
-									+ " is already declared, ignore this configuration.");
-				}
-			} else {
-				declaredDescriptors.add(tacticDescriptor);
-			} 
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#isDeclared(org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor)
-	 */
-	public boolean isDeclared(ITacticDescriptor tacticDesc) {
-		if (declaredDescriptors == null)
-			loadRegistry();
-
-		return declaredDescriptors.contains(tacticDesc);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#getDeclaredDescriptors()
-	 */
-	public List<ITacticDescriptor> getDeclaredDescriptors() {
-		if (declaredDescriptors == null)
-			loadRegistry();
-
-		return declaredDescriptors;
+	public AutoTacticPreference() {
+		this.defaultDescriptor = getDefaultDescriptor();
 	}
 
 	/*
@@ -177,28 +90,11 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 		selectedComposedTactic = null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eventb.core.sequenprover.tacticPreference.ITacticPreference#setSelectedDescriptors(org.eventb.core.seqprover.ITacticRegistry.ITacticDescriptor[])
-	 */
-	public void setSelectedDescriptors(List<ITacticDescriptor> tacticDescs) {
-		final ITacticDescriptor loop = loopOnAllPending(tacticDescs, registryID
-				+ ".selected");
-		setSelectedDescriptor(loop);
-	}
-
 	public ITactic getDefaultComposedTactic() {
 		if (defaultComposedTactic == null) {
 			defaultComposedTactic = defaultDescriptor.getTacticInstance();
 		}
 		return defaultComposedTactic;
-	}
-
-	// for compatibility
-	private static ITacticDescriptor loopOnAllPending(List<ITacticDescriptor> descs, String id) {
-		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-		final ICombinatorDescriptor comb = reg
-				.getCombinatorDescriptor(TacticCombinators.LoopOnAllPending.COMBINATOR_ID);
-		return comb.combine(descs, id);
 	}
 
 }

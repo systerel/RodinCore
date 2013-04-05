@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.p
 
 import org.eclipse.swt.widgets.Composite;
 import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 
@@ -23,14 +24,14 @@ import org.eventb.core.seqprover.IParamTacticDescriptor;
  */
 public class TacticDetailsProvider implements IDetailsProvider {
 
-	private final TacticsProfilesCache cache;
+	private final ITacticProfileCache cache;
 	private Composite parent;
 
 	private final ParamTacticViewer paramViewer = new ParamTacticViewer();
 	private final CombinedTacticViewer combViewer = new CombinedTacticViewer();
 	private IPrefMapEntry<ITacticDescriptor> currentProfile = null;
 	
-	public TacticDetailsProvider(TacticsProfilesCache cache) {
+	public TacticDetailsProvider(ITacticProfileCache cache) {
 		this.cache = cache;
 	}
 

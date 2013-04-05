@@ -16,6 +16,7 @@ import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticProfileCache;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticRefMaker;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticXMLSerializer;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_pomtactic_enablementdescription;
@@ -46,7 +47,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -60,14 +60,15 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.ICacheListener;
 import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.AbstractFieldPreferenceAndPropertyPage;
 import org.eventb.internal.ui.preferences.EnabledComboEditor;
-import org.eventb.internal.ui.preferences.EventBPreferenceStore;
 import org.eventb.internal.ui.preferences.IEventBFieldEditor;
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.internal.ui.utils.Messages;
@@ -83,12 +84,12 @@ public class PostAutoTacticPreferencePage extends
 	public static final String PAGE_ID = PreferenceConstants.AUTO_POST_TACTIC_PREFERENCE_PAGE_ID;
 
 	// Cache containing the current list of profiles. Used in both tabs
-	protected TacticsProfilesCache cache;
+	protected ITacticProfileCache cache;
 	/*
 	 * Additional cache containing the profiles list of workspace. Used in
 	 * export profile tab > export
 	 */
-	protected TacticsProfilesCache workspaceCache = null;
+	protected ITacticProfileCache workspaceCache = null;
 	// Auto/Post Tactics tab : auto-tactic group
 	protected EnabledComboEditor autoTactic;
 	// Auto/Post Tactics tab : post-tactic group
@@ -104,7 +105,7 @@ public class PostAutoTacticPreferencePage extends
 	
 	
 	public PostAutoTacticPreferencePage() {
-		super(PAGE_ID);
+		super(PAGE_ID, EventBPlugin.PLUGIN_ID);
 	}
 
 	@Override
@@ -114,7 +115,7 @@ public class PostAutoTacticPreferencePage extends
 
 	@Override
 	protected void initializeDefaultProperties() {
-		TacticPreferenceUtils.initializeDefault(getPreferenceStore());
+		// nothing to do
 	}
 
 	@Override
@@ -137,16 +138,14 @@ public class PostAutoTacticPreferencePage extends
 
 	private void initializeCaches() {
 		// current cache
-		cache = new TacticsProfilesCache(getPreferenceStore());
+		cache = makeTacticProfileCache(node);
 
 		if (getWorkspacePreferencePage() instanceof PostAutoTacticPreferencePage) {
 			final PostAutoTacticPreferencePage page = (PostAutoTacticPreferencePage) getWorkspacePreferencePage();
 			// this page is opened from an other preference page
 			workspaceCache = page.cache;
 		} else {
-			final IPreferenceStore wsStore = EventBPreferenceStore
-					.getPreferenceStore();
-			workspaceCache = new TacticsProfilesCache(wsStore);
+			workspaceCache = makeTacticProfileCache(node);
 			workspaceCache.load();
 		}
 	}
@@ -447,7 +446,7 @@ public class PostAutoTacticPreferencePage extends
 	}
 
 	protected void importTactics() {
-		final CachedPreferenceMap<ITacticDescriptor> loaded = ProfileImportExport
+		final ITacticProfileCache loaded = ProfileImportExport
 				.loadImported(getShell());
 		if (loaded == null) {
 			return;
@@ -468,7 +467,7 @@ public class PostAutoTacticPreferencePage extends
 	}
 
 	private List<IPrefMapEntry<ITacticDescriptor>> selectImport(
-			CachedPreferenceMap<ITacticDescriptor> available,
+			ITacticProfileCache available,
 			List<IPrefMapEntry<ITacticDescriptor>> initSelected) {
 
 		final ListSelectionDialog select = ProfileImportExport

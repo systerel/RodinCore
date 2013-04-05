@@ -96,7 +96,7 @@ public abstract class HypothesisPage extends Page implements
 	 * the appropriate hypothesis composite of their choice.
 	 * 
 	 * @return a hypothesis composite.
-	 */
+	 *///TODO rename
 	public abstract HypothesisComposite getHypypothesisCompsite();
 
 	/*

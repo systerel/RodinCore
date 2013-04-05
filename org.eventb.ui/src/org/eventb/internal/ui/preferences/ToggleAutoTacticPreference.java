@@ -11,19 +11,20 @@
 package org.eventb.internal.ui.preferences;
 
 import static java.util.Collections.EMPTY_MAP;
-import static org.eventb.internal.ui.preferences.EventBPreferenceStore.getPreferenceStore;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
 
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.menus.UIElement;
+import org.eventb.core.EventBPlugin;
 
 /**
  * Implements a command for easily changing the "enable auto-tactic preference"
@@ -53,29 +54,31 @@ public class ToggleAutoTacticPreference extends AbstractHandler implements
 	}
 
 	private static boolean getAutoTacticPreference() {
-		return getPreferenceStore().getBoolean(P_AUTOTACTIC_ENABLE);
+		return EventBPlugin.getAutoPostTacticManager()
+				.getAutoTacticPreference().isEnabled();
 	}
 
 	private static void setAutoTacticPreference(boolean enabled) {
-		getPreferenceStore().setValue(P_AUTOTACTIC_ENABLE, enabled);
+		InstanceScope.INSTANCE.getNode(EventBPlugin.PLUGIN_ID).putBoolean(P_AUTOTACTIC_ENABLE, enabled);
 	}
 
 	// Register a listener for updating the UI representation of this command
 	// status
 	public static void registerListener() {
-		getPreferenceStore().addPropertyChangeListener(new ChangeListener());
+		InstanceScope.INSTANCE.getNode(EventBPlugin.PLUGIN_ID)
+				.addPreferenceChangeListener(new ChangeListener());
 	}
 
-	static class ChangeListener implements IPropertyChangeListener {
+	static class ChangeListener implements IPreferenceChangeListener {
 
 		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			if (P_AUTOTACTIC_ENABLE.equals(event.getProperty())) {
+		public void preferenceChange(PreferenceChangeEvent event) {
+			if (P_AUTOTACTIC_ENABLE.equals(event.getKey())) {
 				getCommandService().refreshElements(COMMAND_ID, EMPTY_MAP);
 			}
 		}
 
-		private ICommandService getCommandService() {
+		private static ICommandService getCommandService() {
 			return (ICommandService) PlatformUI.getWorkbench().getService(
 					ICommandService.class);
 		}

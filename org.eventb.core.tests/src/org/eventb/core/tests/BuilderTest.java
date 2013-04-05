@@ -13,13 +13,15 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
-import static org.junit.Assert.fail;
 import static org.eventb.core.EventBPlugin.getAutoPostTacticManager;
 import static org.eventb.core.EventBPlugin.getProofManager;
 import static org.eventb.core.EventBPlugin.getUserSupportManager;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_CHOICE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.core.seqprover.SequentProver.getAutoTacticRegistry;
 import static org.eventb.core.tests.ResourceUtils.importProjectFiles;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,9 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.IMachineRoot;
@@ -45,11 +50,14 @@ import org.eventb.core.ISCMachineRoot;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofAttempt;
 import org.eventb.core.pm.IUserSupport;
+import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.LoopOnAllPending;
+import org.eventb.internal.core.pom.POMTacticPreference;
+import org.eventb.internal.core.preferences.TacticsProfilesCache;
 import org.junit.After;
 import org.junit.Before;
 import org.rodinp.core.IInternalElement;
@@ -225,6 +233,25 @@ public abstract class BuilderTest {
 
 	private static void enableAutoTactic(IAutoTacticPreference pref,
 			ITacticDescriptor tactic) {
+		final IEclipsePreferences node = InstanceScope.INSTANCE
+				.getNode(EventBPlugin.PLUGIN_ID);
+		final TacticsProfilesCache tactics = new TacticsProfilesCache(node);
+		final String name = "builderTestTactic";
+		final IPrefMapEntry<ITacticDescriptor> entry = tactics.getEntry(name);
+		if (entry == null) {
+			tactics.add(name, tactic);
+		} else {
+			entry.setValue(tactic);
+		}
+		tactics.store();
+		final String choice;
+		if (pref instanceof POMTacticPreference) {
+			choice = P_AUTOTACTIC_CHOICE;
+		} else {
+			choice = P_POSTTACTIC_CHOICE;
+		}
+		node.put(choice, name);
+
 		pref.setSelectedDescriptor(tactic);
 		pref.setEnabled(true);
 	}

@@ -10,23 +10,32 @@
  *******************************************************************************/
 package org.eventb.internal.core.pm;
 
+import static org.eventb.core.EventBPlugin.PLUGIN_ID;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 
 public class UserSupportManager implements IUserSupportManager {
 
+	private static boolean DEFAULT_CONSIDER_HIDDEN_HYPS = DefaultScope.INSTANCE
+			.getNode(EventBPlugin.PLUGIN_ID).getBoolean(
+					P_CONSIDER_HIDDEN_HYPOTHESES, false);
+
 	private Collection<IUserSupport> userSupports = new ArrayList<IUserSupport>();
 
 	private static UserSupportManager instance;
-	
+
 	private DeltaProcessor deltaProcessor;
 
-	private boolean considerHiddenHypotheses = false;
-	
 	private UserSupportManager() {
 		// Singleton: Private default constructor
 		deltaProcessor = new DeltaProcessor(this);
@@ -42,7 +51,7 @@ public class UserSupportManager implements IUserSupportManager {
 	public IUserSupport newUserSupport() {
 		return new UserSupport();
 	}
-	
+
 	@Override
 	public Collection<IUserSupport> getUserSupports() {
 		return new ArrayList<IUserSupport>(userSupports);
@@ -52,7 +61,7 @@ public class UserSupportManager implements IUserSupportManager {
 	public void addChangeListener(IUserSupportManagerChangedListener listener) {
 		deltaProcessor.addChangeListener(listener);
 	}
-	
+
 	@Override
 	public void removeChangeListener(IUserSupportManagerChangedListener listener) {
 		deltaProcessor.removeChangeListener(listener);
@@ -83,20 +92,25 @@ public class UserSupportManager implements IUserSupportManager {
 			if (wasEnable)
 				deltaProcessor.setEnable(false);
 			op.run();
-		}
-		finally {
+		} finally {
 			if (wasEnable)
 				deltaProcessor.setEnable(true);
 		}
 		deltaProcessor.fireDeltas();
 	}
 
-	@Override
-	public void setConsiderHiddenHypotheses(boolean value) {
-		this.considerHiddenHypotheses  = value;
+	private static IEclipsePreferences getPrefNode() {
+		return InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 	}
 
+	@Override
+	public void setConsiderHiddenHypotheses(boolean value) {
+		getPrefNode().putBoolean(P_CONSIDER_HIDDEN_HYPOTHESES, value);
+	}
+
+	@Override
 	public boolean isConsiderHiddenHypotheses() {
-		return considerHiddenHypotheses;
+		return getPrefNode().getBoolean(P_CONSIDER_HIDDEN_HYPOTHESES,
+				DEFAULT_CONSIDER_HIDDEN_HYPS);
 	}
 }

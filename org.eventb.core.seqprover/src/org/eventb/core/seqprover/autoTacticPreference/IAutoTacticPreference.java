@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticPreference;
 
-import java.util.Collection;
-
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ITactic;
 
@@ -35,25 +33,6 @@ import org.eventb.core.seqprover.ITactic;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IAutoTacticPreference {
-
-	/**
-	 * Checked if a tactic is declared for using with the tactic container.
-	 * 
-	 * @param tacticDesc
-	 *            a tactic descriptor {@link ITacticDescriptor}.
-	 * @return <code>true</code> if the tactic can be used with the tactic
-	 *         container. Return <code>false</code> otherwise.
-	 */
-	public abstract boolean isDeclared(ITacticDescriptor tacticDesc);
-
-	/**
-	 * Return the set of tactic that are declared for using with the tactic
-	 * container.
-	 * <p>
-	 * 
-	 * @return array of tactic descriptors {@link ITacticDescriptor}.
-	 */
-	public abstract Collection<ITacticDescriptor> getDeclaredDescriptors();
 
 	/**
 	 * Returns the descriptor of the default tactic.

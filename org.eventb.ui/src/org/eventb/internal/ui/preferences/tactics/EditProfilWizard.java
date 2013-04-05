@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IPreferenceCheckResult;
+import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
@@ -77,7 +78,7 @@ public class EditProfilWizard extends Wizard {
 	private final ChoiceParamCombined choiceParamCombined = new ChoiceParamCombined();
 	final ChoiceParameterizer choiceParameterizer = new ChoiceParameterizer();
 
-	final TacticsProfilesCache cache;
+	final ITacticProfileCache cache;
 	// indicates if the wizard has to create the profile
 	final boolean created;
 	// the profile name to edit or empty. Not null
@@ -89,14 +90,14 @@ public class EditProfilWizard extends Wizard {
 
 	TacticKind kind = null;
 
-	public EditProfilWizard(TacticsProfilesCache cache) {
+	public EditProfilWizard(ITacticProfileCache cache) {
 		this.cache = cache;
 		this.created = true;
 		this.profileName = "";
 		this.selected = null;
 	}
 
-	public EditProfilWizard(TacticsProfilesCache cache, String profileName) {
+	public EditProfilWizard(ITacticProfileCache cache, String profileName) {
 		this.cache = cache;
 		created = false;
 		this.profileName = profileName;
@@ -147,7 +148,7 @@ public class EditProfilWizard extends Wizard {
 	/**
 	 * If new profile, create the profile with selected tactics. Else change the
 	 * tactics list of existing profile. The modification is only in the
-	 * {@link TacticsProfilesCache}.
+	 * {@link ITacticProfileCache}.
 	 */
 	@Override
 	public boolean performFinish() {

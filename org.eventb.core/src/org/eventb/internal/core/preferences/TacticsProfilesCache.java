@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,22 +8,23 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.ui.preferences.tactics;
+package org.eventb.internal.core.preferences;
 
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticRefMaker;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticXMLSerializer;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.recoverOldPreference;
 
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eventb.core.preferences.CachedPreferenceMap;
+import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 public class TacticsProfilesCache extends
-		StorablePreferenceMap<ITacticDescriptor> {
+		StorablePreferenceMap<ITacticDescriptor> implements ITacticProfileCache {
 
-	public TacticsProfilesCache(IPreferenceStore store) {
-		super(store, P_TACTICSPROFILES, makeTacticXMLSerializer(),
+	public TacticsProfilesCache(IEclipsePreferences preferenceNode) {
+		super(preferenceNode, P_TACTICSPROFILES, makeTacticXMLSerializer(),
 				makeTacticRefMaker());
 	}
 

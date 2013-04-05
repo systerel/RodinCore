@@ -89,6 +89,20 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="auto" type="boolean">
+            <annotation>
+               <documentation>
+                  Indicate whether this tactic would be generally relevant in an auto tactic profile.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="post" type="boolean">
+            <annotation>
+               <documentation>
+                  Indicate whether this tactic would be generally relevant in a post tactic profile.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

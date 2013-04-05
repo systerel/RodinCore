@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
@@ -150,7 +151,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 	// TODO make a 'trash' composite where user can drop tactic nodes 
 	// (destroys ? stores with a viewer ?)
 
-	private final TacticsProfilesCache cache;
+	private final ITacticProfileCache cache;
 	private final CombinedTacticViewer combViewer = new CombinedTacticViewer();
 	private Composite composite;
 	private ListViewer simpleList;
@@ -160,7 +161,7 @@ public class CombinedTacticEditor extends AbstractTacticViewer<ITacticDescriptor
 
 	private TacSelListener tacSelListener;
 
-	public CombinedTacticEditor(TacticsProfilesCache profiles) {
+	public CombinedTacticEditor(ITacticProfileCache profiles) {
 		this.cache = profiles;
 	}
 	

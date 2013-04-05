@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.ui.preferences.tests;
+package org.eventb.core.tests.preferences;
 
 import static java.lang.Math.abs;
 import static java.util.Arrays.asList;
@@ -19,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -33,18 +32,20 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.ListPreference;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
+import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.preferences.autotactics.TacticPreferenceConstants;
 import org.eventb.core.preferences.autotactics.TacticPreferenceFactory;
+import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
@@ -53,14 +54,44 @@ import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.LoopOnAllPending;
-import org.eventb.internal.ui.preferences.PreferenceUtils;
-import org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils;
-import org.eventb.internal.ui.preferences.tactics.TacticsProfilesCache;
-import org.eventb.ui.EventBUIPlugin;
-import org.eventb.ui.tests.utils.EventBUITest;
+import org.eventb.core.tests.BuilderTest;
 import org.junit.Test;
+import org.osgi.service.prefs.BackingStoreException;
 
-public class TacticsPreferencesTest extends EventBUITest {
+public class TacticsPreferencesTest extends BuilderTest {
+
+	private static ITacticProfileCache makeTacticProfileCache() {
+		return TacticPreferenceFactory
+				.makeTacticProfileCache(InstanceScope.INSTANCE
+						.getNode(store));
+	}
+
+	/**
+	 * Clear all preference nodes related to the preference name given as
+	 * parameter for a given project (i.e. clear the project properties).
+	 * 
+	 * @param cnode
+	 *            the preference preference node we want to clear
+	 * @param prj
+	 *            the project on which the property is to clear
+	 */
+	public static void clearAllProperties(IEclipsePreferences cnode,
+			IProject prj) {
+		try {
+			cnode.accept(new IPreferenceNodeVisitor() {
+
+				@Override
+				public boolean visit(IEclipsePreferences node)
+						throws BackingStoreException {
+					node.clear();
+					node.flush();
+					return true;
+				}
+			});
+		} catch (BackingStoreException e) {
+			// no need to bother the user with that
+		}
+	}
 
 	private static final String[] prjTacticIDs = {
 			"org.eventb.core.seqprover.trueGoalTac",
@@ -70,7 +101,18 @@ public class TacticsPreferencesTest extends EventBUITest {
 			"org.eventb.core.seqprover.goalInHypTac",
 			"org.eventb.core.seqprover.funGoalTac", };
 
-	private static final String PREF_QUALIFIER = "org.eventb.ui";
+	private static final String store = "org.eventb.ui.tests";
+
+	public static Collection<ITacticDescriptor> getAvailableTactics() {
+		final IAutoTacticRegistry autoTacticRegistry = SequentProver.getAutoTacticRegistry();
+		final String[] registeredIDs = autoTacticRegistry.getRegisteredIDs();
+		final Collection<ITacticDescriptor> result = new ArrayList<ITacticDescriptor>();
+
+		for (String autoTacticID : registeredIDs) {
+			result.add(autoTacticRegistry.getTacticDescriptor(autoTacticID));
+		}
+		return result;
+	}
 
 	/**
 	 * Test the read and write operations in preference store of a profile list.
@@ -81,12 +123,9 @@ public class TacticsPreferencesTest extends EventBUITest {
 	 */
 	@Test
 	public void testProfilesList1() {
-		final IPreferenceStore store = EventBUIPlugin.getDefault()
-				.getPreferenceStore();
 		// tactics1 is used to store the preference
-		final TacticsProfilesCache tactics1 = new TacticsProfilesCache(store);
-		final Collection<ITacticDescriptor> available = TacticPreferenceUtils
-				.getAvailableTactics();
+		final ITacticProfileCache tactics1 = makeTacticProfileCache();
+		final Collection<ITacticDescriptor> available = getAvailableTactics();
 		final Map<String, ITacticDescriptor> expected = new HashMap<String, ITacticDescriptor>();
 		expected.put("Profile 1", getRandomSubList(available));
 		expected.put("Profile 2", getRandomSubList(available));
@@ -98,7 +137,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		tactics1.store();
 
 		// tactics2 is used to read and compare the preference
-		final TacticsProfilesCache tactics2 = new TacticsProfilesCache(store);
+		final ITacticProfileCache tactics2 = makeTacticProfileCache();
 		tactics2.load();
 		final List<IPrefMapEntry<ITacticDescriptor>> actual = tactics2
 				.getEntries();
@@ -122,12 +161,9 @@ public class TacticsPreferencesTest extends EventBUITest {
 	 * */
 	@Test
 	public void testProfilesList2() {
-		final IPreferenceStore store = EventBUIPlugin.getDefault()
-				.getPreferenceStore();
 		// tactics1 is used to store the preference
-		final TacticsProfilesCache tactics1 = new TacticsProfilesCache(store);
-		final Collection<ITacticDescriptor> available = TacticPreferenceUtils
-				.getAvailableTactics();
+		final ITacticProfileCache tactics1 = makeTacticProfileCache();
+		final Collection<ITacticDescriptor> available = getAvailableTactics();
 		final Map<String, ITacticDescriptor> expected = new HashMap<String, ITacticDescriptor>();
 		expected.put("Profile 1", getRandomSubList(available));
 		expected.put("Profile 2", getRandomSubList(available));
@@ -139,7 +175,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		tactics1.store();
 
 		// tactics2 is used to modify the existing preference
-		final TacticsProfilesCache tactics2 = new TacticsProfilesCache(store);
+		final ITacticProfileCache tactics2 = makeTacticProfileCache();
 		tactics2.load();
 		// modify an existing profile
 		final ICombinedTacticDescriptor storedList = (ICombinedTacticDescriptor) tactics2
@@ -165,7 +201,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 				list1.equals(list2));
 
 		// tactics3 is used to read and compare the preference
-		final TacticsProfilesCache tactics3 = new TacticsProfilesCache(store);
+		final ITacticProfileCache tactics3 = makeTacticProfileCache();
 		tactics3.load();
 		final List<IPrefMapEntry<ITacticDescriptor>> actual = tactics3
 				.getEntries();
@@ -176,20 +212,22 @@ public class TacticsPreferencesTest extends EventBUITest {
 		}
 	}
 
-	private static ICombinedTacticDescriptor removeFirst(ICombinedTacticDescriptor desc) {
+	private static ICombinedTacticDescriptor removeFirst(
+			ICombinedTacticDescriptor desc) {
 		final String combinatorId = desc.getCombinatorId();
 		final ICombinatorDescriptor combinator = SequentProver
 				.getAutoTacticRegistry().getCombinatorDescriptor(combinatorId);
 		final List<ITacticDescriptor> tactics = desc.getCombinedTactics();
-		final List<ITacticDescriptor> modified =  new ArrayList<ITacticDescriptor>(tactics);
+		final List<ITacticDescriptor> modified = new ArrayList<ITacticDescriptor>(
+				tactics);
 		modified.remove(0);
 		return combinator.combine(modified, "modified");
 	}
 
 	@Test
 	public void testStoreLoadDeepCombined() throws Exception {
-		final List<ITacticDescriptor> available = new ArrayList<ITacticDescriptor>(TacticPreferenceUtils
-				.getAvailableTactics());
+		final List<ITacticDescriptor> available = new ArrayList<ITacticDescriptor>(
+				getAvailableTactics());
 		final ITacticDescriptor desc = loopOnAllPending(asList(
 				loopOnAllPending(asList(available.get(0), available.get(1))),
 				available.get(2)));
@@ -203,7 +241,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 	@Test
 	@SuppressWarnings("deprecation")
 	public void testRecoverOldStorage() throws Exception {
-		
+
 		final IAutoPostTacticManager manager = EventBPlugin
 				.getAutoPostTacticManager();
 		final IAutoTacticPreference autoTac = manager.getAutoTacticPreference();
@@ -211,29 +249,30 @@ public class TacticsPreferencesTest extends EventBUITest {
 		final String dftAutoProfileName = "Default Auto Tactic Profile";
 		final ICombinedTacticDescriptor defaultDescriptor = (ICombinedTacticDescriptor) autoTac
 				.getDefaultDescriptor();
-		final List<ITacticDescriptor> defaultDescriptors = defaultDescriptor.getCombinedTactics();
-		
+		final List<ITacticDescriptor> defaultDescriptors = defaultDescriptor
+				.getCombinedTactics();
+
 		final CachedPreferenceMap<List<ITacticDescriptor>> oldMap = new CachedPreferenceMap<List<ITacticDescriptor>>(
 				new ListPreference<ITacticDescriptor>(
-						TacticPreferenceFactory.getTacticPrefElement()));		
+						TacticPreferenceFactory.getTacticPrefElement()));
 
 		oldMap.add(dftAutoProfileName, defaultDescriptors);
-		
+
 		final String oldPref = oldMap.extract();
-		
-		final IPreferenceStore wsStore = EventBUIPlugin.getDefault().getPreferenceStore();
 
 		// store with old preference format
-		wsStore.setValue(TacticPreferenceConstants.P_TACTICSPROFILES, oldPref);
-		
+		InstanceScope.INSTANCE.getNode(store).put(
+				TacticPreferenceConstants.P_TACTICSPROFILES, oldPref);
+
 		// load with a new format tactics cache, supposedly compatible
-		final TacticsProfilesCache newCache = new TacticsProfilesCache(wsStore);
+		final ITacticProfileCache newCache = makeTacticProfileCache();
 		newCache.load();
-		
-		final IPrefMapEntry<ITacticDescriptor> newEntry = newCache.getEntry(dftAutoProfileName);
+
+		final IPrefMapEntry<ITacticDescriptor> newEntry = newCache
+				.getEntry(dftAutoProfileName);
 		assertNotNull(newEntry);
 		final ITacticDescriptor newDesc = newEntry.getValue();
-		
+
 		// verify descriptor
 		assertTacDesc(defaultDescriptor, newDesc);
 
@@ -242,19 +281,18 @@ public class TacticsPreferencesTest extends EventBUITest {
 		expected.put(dftAutoProfileName, defaultDescriptor);
 		assertStoreLoad(expected);
 	}
-	
-	private static void assertStoreLoad(final Map<String, ITacticDescriptor> expected) {
-		final IPreferenceStore store = EventBUIPlugin.getDefault()
-				.getPreferenceStore();
+
+	private static void assertStoreLoad(
+			final Map<String, ITacticDescriptor> expected) {
 		// tactics1 is used to store the preference
-		final TacticsProfilesCache tactics1 = new TacticsProfilesCache(store);
+		final ITacticProfileCache tactics1 = makeTacticProfileCache();
 		for (Entry<String, ITacticDescriptor> entry : expected.entrySet()) {
 			tactics1.add(entry.getKey(), entry.getValue());
 		}
 		tactics1.store();
 
 		// tactics2 is used to modify the existing preference
-		final TacticsProfilesCache tactics2 = new TacticsProfilesCache(store);
+		final ITacticProfileCache tactics2 = makeTacticProfileCache();
 		tactics2.load();
 		final List<IPrefMapEntry<ITacticDescriptor>> actual = tactics2
 				.getEntries();
@@ -264,7 +302,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 			assertTacDesc(expected.get(profile.getKey()), profile.getValue());
 		}
 	}
-	
+
 	private static void assertTacDesc(ITacticDescriptor expectedDesc,
 			ITacticDescriptor actualDesc) {
 		if (expectedDesc instanceof ICombinedTacticDescriptor) {
@@ -287,7 +325,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		final List<ITacticDescriptor> expected = expectedDesc
 				.getCombinedTactics();
 		final List<ITacticDescriptor> actual = actualDesc.getCombinedTactics();
-		
+
 		assertEquals("Wrong size of combined tactics", expected.size(),
 				actual.size());
 		final List<String> expIds = getIds(expected);
@@ -310,7 +348,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		assertEquals(expectedDesc.getValuation(),
 				actualDesc.getParameterizerId());
 	}
-	
+
 	/**
 	 * Returns a sublist of a given list. The size of the list and the order of
 	 * elements are chosen randomly.
@@ -329,17 +367,18 @@ public class TacticsPreferencesTest extends EventBUITest {
 				% list.size());
 		index = Math.max(index, 2);
 		final List<ITacticDescriptor> subList = list.subList(0, index);
-		
+
 		return loopOnAllPending(subList);
 	}
 
-	private static ITacticDescriptor loopOnAllPending(List<ITacticDescriptor> tactics) {
+	private static ITacticDescriptor loopOnAllPending(
+			List<ITacticDescriptor> tactics) {
 		final ICombinatorDescriptor combinator = SequentProver
 				.getAutoTacticRegistry().getCombinatorDescriptor(
 						LoopOnAllPending.COMBINATOR_ID);
 		return combinator.combine(tactics, "testLoop");
 	}
-	
+
 	/**
 	 * Sets a project specific profile, and verifies that this is the profile
 	 * used to build the tactic. Then erases the property, modifies the
@@ -354,67 +393,66 @@ public class TacticsPreferencesTest extends EventBUITest {
 				.getAutoPostTacticManager();
 		final IAutoTacticPreference autoTac = manager.getAutoTacticPreference();
 		final IAutoTacticPreference postTac = manager.getPostTacticPreference();
-		
+		final IEclipsePreferences wsNode = InstanceScope.INSTANCE
+				.getNode(EventBPlugin.PLUGIN_ID);
+
 		// Creates the project scoped preference store
 		final ProjectScope scope = new ProjectScope(p);
-		final IEclipsePreferences node = scope
-		.getNode(EventBUIPlugin.PLUGIN_ID);
-		final ScopedPreferenceStore scStore = new ScopedPreferenceStore(scope,
-				EventBUIPlugin.PLUGIN_ID);
+		final IEclipsePreferences projectNode = scope.getNode(EventBPlugin.PLUGIN_ID);
 
-		
 		final String prjProfileName = "Profile 1";
 		// Saving project profile
-		final ITacticDescriptor prjDesc = getTacticDescList(autoTac, prjTacticIDs);
-		storeProfile(scStore, prjDesc, prjProfileName);
-		scStore.setValue(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE,	prjProfileName);
-		scStore.setValue(TacticPreferenceConstants.P_POSTTACTIC_CHOICE,	prjProfileName);
-		
+		final ITacticDescriptor prjDesc = getTacticDescList(autoTac,
+				prjTacticIDs);
+		storeProfile(projectNode, prjDesc, prjProfileName);
+		projectNode.put(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE,
+				 prjProfileName);
+		projectNode.put(TacticPreferenceConstants.P_POSTTACTIC_CHOICE,
+				 prjProfileName);
+		projectNode.sync();
+
 		// We load the auto tactic
 		manager.getSelectedAutoTactics(c);
 		manager.getSelectedPostTactics(c);
-		
-		final ICombinedTacticDescriptor projectAutoSelected = (ICombinedTacticDescriptor) getSelectedDesc((AutoTacticPreference) autoTac);
-		final ICombinedTacticDescriptor projectPostSelected = (ICombinedTacticDescriptor) getSelectedDesc((AutoTacticPreference) postTac);
-		
+
+		final ICombinedTacticDescriptor projectAutoSelected = (ICombinedTacticDescriptor) getSelectedDesc(autoTac);
+		final ICombinedTacticDescriptor projectPostSelected = (ICombinedTacticDescriptor) getSelectedDesc(postTac);
+
 		// We check that the selected profile is the project one
 		assertTacDesc(prjDesc, projectAutoSelected);
 		assertTacDesc(prjDesc, projectPostSelected);
-		
+
 		// WE CLEAR ALL PROJECT PROPERTIES!
 		// Now the workspace preferences shall be used
-		PreferenceUtils.clearAllProperties(node.name(), p);
-		
-		final IPreferenceStore wsStore = EventBUIPlugin.getDefault().getPreferenceStore();
-		
+		clearAllProperties(projectNode, p);
+
 		final String wsProfileName = "WSProfile 1";
 		// Saving workspace profile
-		final ITacticDescriptor wsDescs = getTacticDescList(autoTac, wsTacticIDs);
-		storeProfile(wsStore, wsDescs, wsProfileName);
-		wsStore.setValue(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE,	wsProfileName);
-		scStore.setValue(TacticPreferenceConstants.P_POSTTACTIC_CHOICE,	wsProfileName);
+		final ITacticDescriptor wsDescs = getTacticDescList(autoTac,
+				wsTacticIDs);
+		storeProfile(wsNode, wsDescs, wsProfileName);
+		projectNode.put(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE, wsProfileName);
+		projectNode.put(TacticPreferenceConstants.P_POSTTACTIC_CHOICE, wsProfileName);
 
 		// We load the auto tactic
 		manager.getSelectedAutoTactics(c);
-		final ICombinedTacticDescriptor wsSelected = (ICombinedTacticDescriptor) getSelectedDesc((AutoTacticPreference) autoTac);
+		final ICombinedTacticDescriptor wsSelected = (ICombinedTacticDescriptor) getSelectedDesc(autoTac);
 		// We check that the selected profile is the workspace one
 		assertTacDesc(wsDescs, wsSelected);
 	}
-	
+
 	/**
 	 * Stores a profile with the given name composed by the given
 	 * tacticDescritors in the given store.
 	 * 
-	 * @param store
-	 *            the store used by the tactic cache
 	 * @param descs
 	 *            the descriptors that shall compose the profile
 	 * @param profileName
 	 *            the profile name
 	 */
-	private void storeProfile(IPreferenceStore store, ITacticDescriptor descs,
-			String profileName) {
-		final TacticsProfilesCache tactics = new TacticsProfilesCache(store);
+	private void storeProfile(IEclipsePreferences node, ITacticDescriptor descs, String profileName) {
+		final ITacticProfileCache tactics = TacticPreferenceFactory
+				.makeTacticProfileCache(node);
 		final Map<String, ITacticDescriptor> wsProfiles = new HashMap<String, ITacticDescriptor>();
 		wsProfiles.put(profileName, descs);
 		for (Entry<String, ITacticDescriptor> entry : wsProfiles.entrySet()) {
@@ -422,7 +460,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		}
 		tactics.store();
 	}
-	
+
 	/**
 	 * Returns the list of tactic descriptors corresponding to the tactic ids
 	 * given as parameters. They are retrieved from the set of declared tactic
@@ -434,33 +472,32 @@ public class TacticsPreferencesTest extends EventBUITest {
 	 *            the ids of tactics that we want the descriptors for
 	 * @return a list of tactic descriptors
 	 */
-	private ITacticDescriptor getTacticDescList(
-			IAutoTacticPreference tac, String[] ids) {
-		final Collection<ITacticDescriptor> declaredDescs = tac
-				.getDeclaredDescriptors();
+	private ITacticDescriptor getTacticDescList(IAutoTacticPreference tac,
+			String[] ids) {
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final List<ITacticDescriptor> selected = new ArrayList<ITacticDescriptor>();
-		for (ITacticDescriptor desc : declaredDescs) {
-			if (Arrays.asList(ids).contains(desc.getTacticID())) {
-				selected.add(desc);
-			}
+		for (String tacticID : ids) {
+			final ITacticDescriptor desc = reg.getTacticDescriptor(tacticID);
+			selected.add(desc);
 		}
 		return loopOnAllPending(selected);
 	}
-	
+
 	/**
-	 * Get the list of selected descriptors of an {@link AutoTacticPreference}.
+	 * Get the list of selected descriptors of an {@link IAutoTacticPreference}.
 	 * 
 	 * @param autopref
-	 * 		the autoTacticPreference to retrieve the selected descriptors from
+	 *            the autoTacticPreference to retrieve the selected descriptors
+	 *            from
 	 */
-	private ITacticDescriptor getSelectedDesc(
-			AutoTacticPreference autopref) throws Exception {
+	private ITacticDescriptor getSelectedDesc(IAutoTacticPreference autopref)
+			throws Exception {
 		final Class<AutoTacticPreference> clazz = AutoTacticPreference.class;
 		final Field field = clazz.getDeclaredField("selectedDescriptor");
 		field.setAccessible(true);
 		return (ITacticDescriptor) field.get(autopref);
 	}
-	
+
 	/**
 	 * Bug #3189256. THIS IS A NON REGRESSION TEST. Ensures that the default
 	 * profile for the auto tactic is used in case of project specific settings
@@ -480,13 +517,13 @@ public class TacticsPreferencesTest extends EventBUITest {
 
 		// Creates the project scoped preference store
 		final ProjectScope scope = new ProjectScope(p);
-		final ScopedPreferenceStore scStore = new ScopedPreferenceStore(scope,
-				EventBUIPlugin.PLUGIN_ID);
+		final IEclipsePreferences prjNode = scope.getNode(EventBPlugin.PLUGIN_ID);
 
 		final String dftAutoProfileName = "Default Auto Tactic Profile";
 		final ICombinedTacticDescriptor defaultDescriptor = (ICombinedTacticDescriptor) autoTac
 				.getDefaultDescriptor();
-		final List<ITacticDescriptor> defaultDescriptors = defaultDescriptor.getCombinedTactics();
+		final List<ITacticDescriptor> defaultDescriptors = defaultDescriptor
+				.getCombinedTactics();
 		final String[] defaultAutoDescs = new String[defaultDescriptors.size()];
 		int i = 0;
 		for (ITacticDescriptor td : defaultDescriptors) {
@@ -495,26 +532,29 @@ public class TacticsPreferencesTest extends EventBUITest {
 		}
 		// Saving project profile
 		final ITacticDescriptor defaultAuto = autoTac.getDefaultDescriptor();
-		storeProfile(scStore, defaultAuto, dftAutoProfileName);
+		storeProfile(prjNode, defaultAuto, dftAutoProfileName);
 		// **************************************************************
 		// IMPORTANT ! Forces serialization of the choice at project scope
-		scStore.putValue(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE,
+		prjNode.put(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE,
 				dftAutoProfileName);
+		prjNode.sync();
 		// **************************************************************
-		final IPreferenceStore wsStore = EventBUIPlugin.getDefault()
-				.getPreferenceStore();
+
+		final IEclipsePreferences wsNode = InstanceScope.INSTANCE
+				.getNode(EventBPlugin.PLUGIN_ID);
 		final String wsProfileName = "WSProfile 1";
 		// Saving workspace profile
 		final ITacticDescriptor wsDesc = getTacticDescList(autoTac, wsTacticIDs);
-		storeProfile(wsStore, wsDesc, wsProfileName);
-		wsStore.setValue(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE,
+		storeProfile(wsNode, wsDesc, wsProfileName);
+		wsNode.put(TacticPreferenceConstants.P_AUTOTACTIC_CHOICE,
 				wsProfileName);
-
+		wsNode.sync();
 		// Verifies that the choice is "Default Auto Tactic Profile"
 		final IPreferencesService preferencesService = Platform
 				.getPreferencesService();
 		final IScopeContext[] sc = { scope };
-		final String choice = preferencesService.getString(PREF_QUALIFIER,
+		final String choice = preferencesService.getString(
+				EventBPlugin.PLUGIN_ID,
 				TacticPreferenceConstants.P_AUTOTACTIC_CHOICE, null, sc);
 		assertEquals("Project scope choice is invalid", dftAutoProfileName,
 				choice);
@@ -522,7 +562,7 @@ public class TacticsPreferencesTest extends EventBUITest {
 		// We load the auto tactic
 		manager.getSelectedAutoTactics(c);
 
-		final ITacticDescriptor projectAutoSelected = getSelectedDesc((AutoTacticPreference) autoTac);
+		final ITacticDescriptor projectAutoSelected = getSelectedDesc(autoTac);
 		// We check that the selected profile is the project specific one
 		assertTacDesc(defaultDescriptor, projectAutoSelected);
 	}

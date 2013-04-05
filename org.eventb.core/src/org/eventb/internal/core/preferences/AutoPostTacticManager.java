@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.preferences;
 
+import static org.eventb.core.EventBPlugin.PLUGIN_ID;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.recoverOldPreference;
-import static org.eventb.internal.core.preferences.PreferenceUtils.PREF_QUALIFIER;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -41,6 +41,8 @@ import org.eventb.internal.core.pom.POMTacticPreference;
  */
 public class AutoPostTacticManager implements IAutoPostTacticManager {
 
+	// FIXME: workspace/project scope auto/post enable + consider hidden hyps
+	
 	private static final IAutoTacticPreference postTacPref = PostTacticPreference
 			.getDefault();
 	private static final IAutoTacticPreference autoTacPref = POMTacticPreference
@@ -81,11 +83,12 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 	private ITactic getSelectedComposedTactics(IProject project, boolean auto) {
 		final IScopeContext sc = new ProjectScope(project);
 		final IScopeContext[] contexts = { sc };
-		final String profiles = preferencesService.getString(PREF_QUALIFIER,
+		final String profiles = preferencesService.getString(PLUGIN_ID,
 				P_TACTICSPROFILES, null, contexts);
-		// Case where the UI was not initialized (e.g. tests)
-		// We return the selected tactics
 		if (profiles == null) {
+			// The preference was not initialized, this should not happen
+			// We return the selected tactics
+			Util.log(null, "Tactic preference has not been initialized");
 			return auto ? autoTacPref.getSelectedComposedTactic() : postTacPref
 					.getSelectedComposedTactic();
 		}
@@ -104,10 +107,10 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 		}
 		final String choice;
 		if (auto) {
-			choice = preferencesService.getString(PREF_QUALIFIER,
+			choice = preferencesService.getString(PLUGIN_ID,
 					P_AUTOTACTIC_CHOICE, null, contexts);
 		} else { // (type.equals(POST_TACTICS_TAG))
-			choice = preferencesService.getString(PREF_QUALIFIER,
+			choice = preferencesService.getString(PLUGIN_ID,
 					P_POSTTACTIC_CHOICE, null, contexts);			
 		}
 		return getCorrespondingTactic(choice, auto);

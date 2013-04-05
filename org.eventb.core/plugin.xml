@@ -6,8 +6,6 @@
    <extension-point id="scModuleTypes" name="%scModuleTypes" schema="schema/scModuleTypes.exsd"/>
    <extension-point id="pogModuleTypes" name="%pogModuleTypes" schema="schema/pogModuleTypes.exsd"/>
    <extension-point id="configurations" name="%configurations" schema="schema/configurations.exsd"/>
-   <extension-point id="postTactics" name="%postTactics" schema="schema/postTactics.exsd"/>
-   <extension-point id="pomTactics" name="%pomTactics" schema="schema/pomTactics.exsd"/>
    <extension-point id="formulaExtensionProviders" name="%formulaExtensionProviders" schema="schema/formulaExtensionProviders.exsd"/>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
@@ -1213,97 +1211,6 @@
       </processorType>
    </extension>
    <extension
-         point="org.eventb.core.postTactics">
-      <tactic id="org.eventb.core.seqprover.trueGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.falseHypTac"/>
-      <tactic id="org.eventb.core.seqprover.goalInHypTac"/>
-      <tactic id="org.eventb.core.seqprover.goalDisjInHypTac"/>
-      <tactic id="org.eventb.core.seqprover.funGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.typeRewriteTac"/>
-      <tactic id="org.eventb.core.seqprover.autoRewriteTac"/>
-      <tactic id="org.eventb.core.seqprover.impGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.forallGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.existsHypTac"/>
-      <tactic id="org.eventb.core.seqprover.findContrHypsTac"/>
-      <tactic id="org.eventb.core.seqprover.eqHypTac"/>
-      <tactic id="org.eventb.core.seqprover.shrinkImpHypTac"/>
-      <tactic id="org.eventb.core.seqprover.shrinkEnumHypTac"/>
-      <tactic id="org.eventb.core.seqprover.splitRightConjImpHypTac"/>
-      <tactic id="org.eventb.core.seqprover.splitLeftDisjImpHypTac"/>
-      <tactic id="org.eventb.core.seqprover.conjGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.clarifyGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.funOvrGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.funOvrHypTac"/>
-      <tactic id="org.eventb.core.seqprover.onePointHypTac"/>
-      <tactic id="org.eventb.core.seqprover.onePointGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.finiteHypBoundedGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.funImgSimpTac"/>      
-      <tactic id="org.eventb.core.seqprover.FunImgInGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.InDomGoalTac" />
-      <tactic id="org.eventb.core.seqprover.dtDestrWDTac" />
-      <tactic
-            id="org.eventb.core.seqprover.rmiHypTac">
-      </tactic>
-      <tactic
-            id="org.eventb.core.seqprover.rmiGoalTac">
-      </tactic>
-      <tactic
-            id="org.eventb.core.seqprover.eqvHypTac">
-      </tactic>
-      <tactic
-            id="org.eventb.core.seqprover.eqvGoalTac">
-      </tactic>
-      <tactic id="org.eventb.core.seqprover.NNFTac"/>
-      <tactic id="org.eventb.core.seqprover.genMPTac"/>
-      <tactic id="org.eventb.core.seqprover.DisjGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.mbGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.funAppInDomGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.mapOvrGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.totalDomToCProdTac"/>
-   </extension>
-   <extension
-         point="org.eventb.core.pomTactics">
-      <tactic id="org.eventb.core.seqprover.trueGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.falseHypTac"/>
-      <tactic id="org.eventb.core.seqprover.goalInHypTac"/>
-      <tactic id="org.eventb.core.seqprover.funGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.typeRewriteTac"/>
-      <tactic id="org.eventb.core.seqprover.autoRewriteTac"/>
-      <tactic id="org.eventb.core.seqprover.findContrHypsTac"/>
-      <tactic id="org.eventb.core.seqprover.eqHypTac"/>
-      <tactic id="org.eventb.core.seqprover.shrinkImpHypTac"/>
-      <tactic id="org.eventb.core.seqprover.clarifyGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.funOvrGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.funOvrHypTac"/>
-      <tactic id="org.eventb.core.seqprover.partitionRewriteTac"/>
-      <tactic id="org.eventb.core.seqprover.onePointHypTac"/>
-      <tactic id="org.eventb.core.seqprover.onePointGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.finiteHypBoundedGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.funImgSimpTac"/>
-      <tactic id="org.eventb.core.seqprover.FunImgInGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.InDomGoalTac" />
-      <tactic id="org.eventb.core.seqprover.dtDestrWDTac" />
-      <tactic
-            id="org.eventb.core.seqprover.rmiHypTac">
-      </tactic>
-      <tactic
-            id="org.eventb.core.seqprover.rmiGoalTac">
-      </tactic>
-      <tactic
-            id="org.eventb.core.seqprover.eqvHypTac">
-      </tactic>
-      <tactic
-            id="org.eventb.core.seqprover.eqvGoalTac">
-      </tactic>
-      <tactic id="org.eventb.core.seqprover.NNFTac"/>
-      <tactic id="org.eventb.core.seqprover.genMPTac"/>
-      <tactic id="org.eventb.core.seqprover.DisjGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.mbGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.funAppInDomGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.mapOvrGoalTac"/>
-      <tactic id="org.eventb.core.seqprover.totalDomToCProdTac"/>
-   </extension>
-   <extension
          point="org.rodinp.core.fileElementVersions">
       <fileElementVersion
             id="org.eventb.core.contextFile"
@@ -1497,6 +1404,12 @@
             id="machineRefiner"
             refinement-id="org.eventb.core.machineRefinement">
       </Participant>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eventb.internal.core.preferences.PreferenceInitializer">
+      </initializer>
    </extension>
 
 </plugin>

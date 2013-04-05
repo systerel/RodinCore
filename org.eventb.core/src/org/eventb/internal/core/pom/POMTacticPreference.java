@@ -20,16 +20,11 @@ import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 
 public class POMTacticPreference extends AutoTacticPreference {
 
-	// The identifier of the extension point (value
-	// <code>"org.eventb.core.pomTactics"</code>).
-	private final static String AUTOTACTICS_ID = EventBPlugin.PLUGIN_ID
-			+ ".pomTactics";	
-
 	private static POMTacticPreference instance;
 
 	private POMTacticPreference() {
 		// Singleton: Private default constructor
-		super(AUTOTACTICS_ID);
+		super();
 	}
 
 	public static POMTacticPreference getDefault() {
@@ -67,7 +62,8 @@ public class POMTacticPreference extends AutoTacticPreference {
 
 	@Override
 	public ITacticDescriptor getDefaultDescriptor() {
-		return loopOnAllPending(DEFAULT_IDS, AUTOTACTICS_ID + ".default");
+		return loopOnAllPending(DEFAULT_IDS, EventBPlugin.PLUGIN_ID
+				+ ".pomTactics.default");
 	}
 
 }

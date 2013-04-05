@@ -47,4 +47,10 @@ public class TacticPreferenceConstants {
 	 */
 	public static final String P_SIMPLIFY_PROOFS = "Simplify Proofs";
 	
+	/**
+	 * Preference key for considering hidden hypotheses in search
+	 * @since 3.0
+	 */
+	public static final String P_CONSIDER_HIDDEN_HYPOTHESES = "Consider hidden hypotheses in search";
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eventb.core;
 
+import static org.eventb.internal.core.preferences.PreferenceUtils.initTacticPreferenceUpdater;
 import static org.rodinp.core.RodinCore.getOccurrenceKind;
 
 import java.util.Set;
@@ -54,11 +55,12 @@ import org.rodinp.core.location.IAttributeLocation;
 
 /**
  * The Event-B core plugin class.
+ * 
  * @since 1.0
  */
 public class EventBPlugin extends Plugin {
 
-	//The shared instance.
+	// The shared instance.
 	private static EventBPlugin plugin;
 
 	/**
@@ -66,30 +68,42 @@ public class EventBPlugin extends Plugin {
 	 * <code>"org.eventb.core"</code>).
 	 */
 	public static final String PLUGIN_ID = "org.eventb.core"; //$NON-NLS-1$
-	
+
 	/**
 	 * debugging/tracing option names
 	 */
 	private static final String SC_TRACE = PLUGIN_ID + "/debug/sc"; //$NON-NLS-1$
 	private static final String SC_TRACE_STATE = PLUGIN_ID + "/debug/sc/state"; //$NON-NLS-1$
-	private static final String SC_TRACE_MODULECONF = PLUGIN_ID + "/debug/sc/moduleconf"; //$NON-NLS-1$
-	private static final String SC_TRACE_MODULES = PLUGIN_ID + "/debug/sc/modules"; //$NON-NLS-1$
-	private static final String SC_TRACE_MARKERS = PLUGIN_ID + "/debug/sc/markers"; //$NON-NLS-1$
+	private static final String SC_TRACE_MODULECONF = PLUGIN_ID
+			+ "/debug/sc/moduleconf"; //$NON-NLS-1$
+	private static final String SC_TRACE_MODULES = PLUGIN_ID
+			+ "/debug/sc/modules"; //$NON-NLS-1$
+	private static final String SC_TRACE_MARKERS = PLUGIN_ID
+			+ "/debug/sc/markers"; //$NON-NLS-1$
 	private static final String POG_TRACE = PLUGIN_ID + "/debug/pog"; //$NON-NLS-1$
-	private static final String POG_TRACE_STATE = PLUGIN_ID + "/debug/pog/state"; //$NON-NLS-1$
-	private static final String POG_TRACE_MODULECONF = PLUGIN_ID + "/debug/pog/moduleconf"; //$NON-NLS-1$
-	private static final String POG_TRACE_MODULES = PLUGIN_ID + "/debug/pog/modules"; //$NON-NLS-1$
-	private static final String POG_TRACE_TRIVIAL = PLUGIN_ID + "/debug/pog/trivial"; //$NON-NLS-1$
+	private static final String POG_TRACE_STATE = PLUGIN_ID
+			+ "/debug/pog/state"; //$NON-NLS-1$
+	private static final String POG_TRACE_MODULECONF = PLUGIN_ID
+			+ "/debug/pog/moduleconf"; //$NON-NLS-1$
+	private static final String POG_TRACE_MODULES = PLUGIN_ID
+			+ "/debug/pog/modules"; //$NON-NLS-1$
+	private static final String POG_TRACE_TRIVIAL = PLUGIN_ID
+			+ "/debug/pog/trivial"; //$NON-NLS-1$
 	private static final String POM_TRACE = PLUGIN_ID + "/debug/pom"; //$NON-NLS-1$
-	private static final String POM_TRACE_RECALCULATE = PLUGIN_ID + "/debug/pom/recalculate"; //$NON-NLS-1$
+	private static final String POM_TRACE_RECALCULATE = PLUGIN_ID
+			+ "/debug/pom/recalculate"; //$NON-NLS-1$
 	private static final String PO_LOADER_TRACE = PLUGIN_ID + "/debug/poloader"; //$NON-NLS-1$
 	private static final String PM_TRACE = PLUGIN_ID + "/debug/pm"; //$NON-NLS-1$
-	private static final String PERF_POM_PROOFREUSE_TRACE = PLUGIN_ID + "/perf/pom/proofReuse"; //$NON-NLS-1$
-	private static final String EXTENSIONPROVIDER_REGISTRY_TRACE = PLUGIN_ID + "/debug/formulaExtensionProvider";//$NON-NLS-1$
-	private static final String PREFERENCES_TRACE = PLUGIN_ID + "/debug/preferences"; //$NON-NLS-1$
-	
+	private static final String PERF_POM_PROOFREUSE_TRACE = PLUGIN_ID
+			+ "/perf/pom/proofReuse"; //$NON-NLS-1$
+	private static final String EXTENSIONPROVIDER_REGISTRY_TRACE = PLUGIN_ID
+			+ "/debug/formulaExtensionProvider";//$NON-NLS-1$
+	private static final String PREFERENCES_TRACE = PLUGIN_ID
+			+ "/debug/preferences"; //$NON-NLS-1$
+
 	/**
-	 * Returns the name of the component whose data are stored in the file with the given name.
+	 * Returns the name of the component whose data are stored in the file with
+	 * the given name.
 	 * 
 	 * @param fileName
 	 *            name of the file
@@ -141,10 +155,10 @@ public class EventBPlugin extends Plugin {
 	public static EventBPlugin getPlugin() {
 		return plugin;
 	}
-	
+
 	/**
-	 * Returns the name of the Rodin file that contains the proof obligations for the component of the
-	 * given name.
+	 * Returns the name of the Rodin file that contains the proof obligations
+	 * for the component of the given name.
 	 * 
 	 * @param bareName
 	 *            name of the component
@@ -155,8 +169,8 @@ public class EventBPlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the name of the Rodin file that contains the proofs for the component of the
-	 * given name.
+	 * Returns the name of the Rodin file that contains the proofs for the
+	 * component of the given name.
 	 * 
 	 * @param bareName
 	 *            name of the component
@@ -165,10 +179,10 @@ public class EventBPlugin extends Plugin {
 	public static String getPRFileName(String bareName) {
 		return bareName + ".bpr";
 	}
-	
+
 	/**
-	 * Returns the name of the Rodin file that contains the proof status 
-	 * for the component of the given name.
+	 * Returns the name of the Rodin file that contains the proof status for the
+	 * component of the given name.
 	 * 
 	 * @param bareName
 	 *            name of the component
@@ -179,8 +193,8 @@ public class EventBPlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the name of the Rodin file that contains the checked context with the
-	 * given name.
+	 * Returns the name of the Rodin file that contains the checked context with
+	 * the given name.
 	 * 
 	 * @param bareName
 	 *            name of the checked context
@@ -191,8 +205,8 @@ public class EventBPlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the name of the Rodin file that contains the checked machine with the
-	 * given name.
+	 * Returns the name of the Rodin file that contains the checked machine with
+	 * the given name.
 	 * 
 	 * @param bareName
 	 *            name of the checked machine
@@ -207,8 +221,13 @@ public class EventBPlugin extends Plugin {
 		super.start(context);
 		plugin = this;
 		enableAssertions();
-		if (isDebugging())
+		if (isDebugging()) {
 			configureDebugOptions();
+		}
+		PreferenceUtils.init();
+
+		initTacticPreferenceUpdater();
+		PreferenceUtils.restoreFromUIPreferences();
 	}
 
 	@Override
@@ -216,7 +235,7 @@ public class EventBPlugin extends Plugin {
 		super.stop(context);
 		plugin = null;
 	}
-	
+
 	/**
 	 * Enable Java assertion checks for this plug-in.
 	 */
@@ -271,6 +290,7 @@ public class EventBPlugin extends Plugin {
 
 	/**
 	 * Return the Auto/Post tactic manager.
+	 * 
 	 * @since 2.1
 	 */
 	public static IAutoPostTacticManager getAutoPostTacticManager() {
@@ -287,8 +307,8 @@ public class EventBPlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the given object as an event-B file if possible, <code>null</code>
-	 * otherwise.
+	 * Returns the given object as an event-B file if possible,
+	 * <code>null</code> otherwise.
 	 * <p>
 	 * A non-<code>null</code> value is returned iff the given object is an
 	 * event-B file or adaptable to an event-B file.
@@ -305,10 +325,11 @@ public class EventBPlugin extends Plugin {
 		final IRodinElement elem = RodinCore.asRodinElement(object);
 		if (elem instanceof IRodinFile) {
 			IRodinFile rf = (IRodinFile) elem;
-			if(rf.getRoot() instanceof IEventBRoot){
+			if (rf.getRoot() instanceof IEventBRoot) {
 				return rf;
 			}
-		} if (elem instanceof IEventBRoot) {
+		}
+		if (elem instanceof IEventBRoot) {
 			IRodinFile rf = ((IEventBRoot) elem).getRodinFile();
 			return rf;
 		}
@@ -320,9 +341,9 @@ public class EventBPlugin extends Plugin {
 		if (elem == null) {
 			return null;
 		}
-		return ((IEventBRoot)elem.getRoot());
+		return ((IEventBRoot) elem.getRoot());
 	}
-	
+
 	/**
 	 * Returns the given object as a context file if possible, <code>null</code>
 	 * otherwise.
@@ -427,9 +448,9 @@ public class EventBPlugin extends Plugin {
 	 * Returns the given object as a proof obligation file if possible,
 	 * <code>null</code> otherwise.
 	 * <p>
-	 * A non-<code>null</code> value is returned iff the given object is a
-	 * proof obligation file or adaptable to an event-B file. In the latter
-	 * case, the corresponding proof obligation file is returned.
+	 * A non-<code>null</code> value is returned iff the given object is a proof
+	 * obligation file or adaptable to an event-B file. In the latter case, the
+	 * corresponding proof obligation file is returned.
 	 * </p>
 	 * <p>
 	 * This is a handle-only method. The returned file may or may not exist.
@@ -451,8 +472,8 @@ public class EventBPlugin extends Plugin {
 	 * Returns the given object as a proof file if possible, <code>null</code>
 	 * otherwise.
 	 * <p>
-	 * A non-<code>null</code> value is returned iff the given object is a
-	 * proof file or adaptable to an event-B file. In the latter case, the
+	 * A non-<code>null</code> value is returned iff the given object is a proof
+	 * file or adaptable to an event-B file. In the latter case, the
 	 * corresponding proof file is returned.
 	 * </p>
 	 * <p>
@@ -475,9 +496,9 @@ public class EventBPlugin extends Plugin {
 	 * Returns the given object as a proof status file if possible,
 	 * <code>null</code> otherwise.
 	 * <p>
-	 * A non-<code>null</code> value is returned iff the given object is a
-	 * proof status file or adaptable to an event-B file. In the latter case,
-	 * the corresponding proof status file is returned.
+	 * A non-<code>null</code> value is returned iff the given object is a proof
+	 * status file or adaptable to an event-B file. In the latter case, the
+	 * corresponding proof status file is returned.
 	 * </p>
 	 * <p>
 	 * This is a handle-only method. The returned file may or may not exist.
@@ -577,4 +598,4 @@ public class EventBPlugin extends Plugin {
 			boolean waitUpToDate) {
 		return AutoCompletion.getProposals(location, waitUpToDate);
 	}
- }
+}

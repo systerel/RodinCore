@@ -1,23 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
+ * Copyright (c) 2010, 2013 Systerel and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Contributors:
- *     Systerel - Initial API and implementation
+ *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
 import static org.eventb.internal.ui.utils.Messages.preferencepage_enableProjectSpecifixSettings;
-import static org.eventb.ui.EventBUIPlugin.PLUGIN_ID;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -38,7 +38,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eventb.internal.ui.utils.Messages;
-import org.eventb.ui.EventBUIPlugin;
 import org.osgi.service.prefs.BackingStoreException;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
@@ -54,6 +53,8 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 		AbstractEventBPreferencePage implements IWorkbenchPropertyPage,
 		IWorkbenchPreferencePage {
 
+	private final String storePluginId;
+
 	// The current preference store used
 	protected IPreferenceStore preferenceStore;
 
@@ -64,7 +65,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	private ImageDescriptor image;
 
 	// Cache for page id
-	private String prefPageId;
+	private final String prefPageId;
 
 	// The button to enable/disable project specific settings
 	private Button specificButton;
@@ -73,7 +74,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	private IScopeContext sc;
 
 	// The preferences node attached to this page
-	private IEclipsePreferences node;
+	protected IEclipsePreferences node;
 
 	// Cache to save if the properties at opening
 	private boolean wasEnabled;
@@ -87,43 +88,9 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 	 * @param prefPageID
 	 *            the ID of this page used to store the preferences
 	 */
-	public AbstractFieldPreferenceAndPropertyPage(String prefPageID) {
+	public AbstractFieldPreferenceAndPropertyPage(String prefPageID, String storePluginId) {
 		super();
-		this.prefPageId = prefPageID;
-	}
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param title
-	 *            the title string
-	 * @param style
-	 *            the layout style
-	 * @param prefPageID
-	 *            the ID of this page used to store the preferences
-	 */
-	public AbstractFieldPreferenceAndPropertyPage(String title, int style,
-			String prefPageID) {
-		super();
-		this.prefPageId = prefPageID;
-	}
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param title
-	 *            the title string
-	 * @param image
-	 *            the title image
-	 * @param style
-	 *            the layout style
-	 * @param prefPageID
-	 *            the ID of this page used to store the preferences
-	 */
-	public AbstractFieldPreferenceAndPropertyPage(String title,
-			ImageDescriptor image, int style, String prefPageID) {
-		super();
-		this.image = image;
+		this.storePluginId = storePluginId;
 		this.prefPageId = prefPageID;
 	}
 
@@ -152,11 +119,11 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 		// In case of property pages we create a new ScopedPreferenceStore
 		if (isPropertyPage()) {
 			sc = new ProjectScope(project);
-			node = sc.getNode(PLUGIN_ID);
-			preferenceStore = new ScopedPreferenceStore(sc, PLUGIN_ID);
 		} else {
-			preferenceStore = EventBUIPlugin.getDefault().getPreferenceStore();
+			sc = InstanceScope.INSTANCE;
 		}
+		node = sc.getNode(storePluginId);
+		preferenceStore = new ScopedPreferenceStore(sc, storePluginId);
 		super.setPreferenceStore(preferenceStore);
 	}
 

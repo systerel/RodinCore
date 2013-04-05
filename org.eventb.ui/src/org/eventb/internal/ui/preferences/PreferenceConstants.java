@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,10 @@
  *     Systerel - added constant for expand section preference
  *     Systerel - added constants to handle new prefix preferences
  *     Systerel - added constants to handle auto/post-tactics profiles preferences
+ *     Systerel - moved auto/post-tactics preferences to EventB Core
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
-import org.eventb.core.preferences.autotactics.TacticPreferenceConstants;
 
 /**
  * @author htson
@@ -87,35 +87,6 @@ public class PreferenceConstants {
 	 */
 	public static final String PREFIX_PREFERENCE_PAGE_ID = "org.eventb.ui.preferences.prefixPage";
 	
-	
-	/**
-	 * Preference key for the enablement of Post-Tactics.
-	 * @deprecated use {@link TacticPreferenceConstants} constants instead
-	 */
-	 @Deprecated
-	public static final String P_POSTTACTIC_ENABLE = "Post-Tactic enable"; //$NON-NLS-1$
-
-	/**
-	 * Preference key for the list of selected Post-Tactics.
-	 * @deprecated use {@link TacticPreferenceConstants} constants instead
-	 */
-	@Deprecated
-	public static final String P_POSTTACTICS = "Post-Tactics"; //$NON-NLS-1$
-
-	/**
-	 * Preference key for the enablement of Auto-Tactics.
-	 * @deprecated use {@link TacticPreferenceConstants} constants instead
-	 */
-	@Deprecated
-	public static final String P_AUTOTACTIC_ENABLE = "Auto-Tactic enable"; //$NON-NLS-1$
-
-	/**
-	 * Preference key for the list of selected Auto-Tactics.
-	 * @deprecated use {@link TacticPreferenceConstants} constants instead
-	 */
-	@Deprecated
-	public static final String P_AUTOTACTICS = "Auto-Tactics"; //$NON-NLS-1$
-
 	/**
 	 * Preference key for the list of machine editor pages.
 	 */

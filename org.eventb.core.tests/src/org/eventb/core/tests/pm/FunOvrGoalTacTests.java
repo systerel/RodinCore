@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.eventb.core.tests.pom.POUtil.mTypeEnvironment;
-
-import java.util.Collection;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IPOPredicateSet;
@@ -50,15 +47,6 @@ public class FunOvrGoalTacTests extends BasicTest {
 		"org.eventb.core.seqprover.shrinkImpHypTac",
 		TAC_ID,
 	};
-
-	private static void assertIn(Collection<ITacticDescriptor> set) {
-		for (ITacticDescriptor desc: set) {
-			if (TAC_ID.equals(desc.getTacticID())) {
-				return;
-			}
-		}
-		fail("Tactic " + TAC_ID + " not found.");
-	}
 
 	private static void assertIn(ITacticDescriptor desc) {
 		assertTrue("Tactic " + TAC_ID + " not found.", contains(desc));
@@ -124,7 +112,6 @@ public class FunOvrGoalTacTests extends BasicTest {
 	@Test
 	public void testRegisteredAsAuto() throws Exception {
 		final IAutoTacticPreference pref = getAutoTacticPreference();
-		assertIn(pref.getDeclaredDescriptors());
 		assertIn(pref.getDefaultDescriptor());
 	}
 
@@ -136,7 +123,6 @@ public class FunOvrGoalTacTests extends BasicTest {
 	public void testRegisteredAsPost() throws Exception {
 		final IAutoTacticPreference pref = EventBPlugin
 				.getAutoPostTacticManager().getPostTacticPreference();
-		assertIn(pref.getDeclaredDescriptors());
 		assertIn(pref.getDefaultDescriptor());
 	}
 

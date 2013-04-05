@@ -12,10 +12,13 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.eventb.core.EventBPlugin;
 import org.eventb.internal.ui.utils.Messages;
 
 /**
@@ -42,7 +45,8 @@ public class ProverUIPreferencePage extends FieldEditorPreferencePage implements
 	 */
 	public ProverUIPreferencePage() {
 		super(GRID);
-		setPreferenceStore(EventBPreferenceStore.getPreferenceStore());
+		setPreferenceStore(new ScopedPreferenceStore(InstanceScope.INSTANCE,
+				EventBPlugin.PLUGIN_ID));
 		setDescription(Messages.preferencepage_provingui_description);
 	}
 	

@@ -11,11 +11,13 @@
 package org.eventb.ui.prover.tests;
 
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
-import static org.eventb.internal.ui.preferences.EventBPreferenceStore.getPreferenceStore;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eventb.core.EventBPlugin;
 import org.eventb.internal.ui.preferences.ToggleAutoTacticPreference;
 import org.junit.Test;
 
@@ -54,11 +56,17 @@ public class TestHandler {
 	}
 
 	private boolean getAutoTacticPreference() {
-		return getPreferenceStore().getBoolean(P_AUTOTACTIC_ENABLE);
+		final boolean defEnable = DefaultScope.INSTANCE.getNode(
+				EventBPlugin.PLUGIN_ID).getBoolean(P_AUTOTACTIC_ENABLE, false);
+		final boolean enable = InstanceScope.INSTANCE.getNode(
+				EventBPlugin.PLUGIN_ID).getBoolean(P_AUTOTACTIC_ENABLE,
+				defEnable);
+		return enable;
 	}
 
 	private void setAutoTacticPreference(boolean value) {
-		getPreferenceStore().setValue(P_AUTOTACTIC_ENABLE, value);
+		InstanceScope.INSTANCE.getNode(EventBPlugin.PLUGIN_ID).putBoolean(
+				P_AUTOTACTIC_ENABLE, value);
 	}
 
 }

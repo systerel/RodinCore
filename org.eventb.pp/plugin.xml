@@ -11,44 +11,26 @@
  <extension
        point="org.eventb.core.seqprover.autoTactics">
     <autoTactic
+          auto="true"
           class="org.eventb.internal.pp.AutoTactics$PPrestricted"
           id="ppRestricted"
-          name="%ppRestrictedName">
+          name="%ppRestrictedName"
+          post="true">
     </autoTactic>
     <autoTactic
+          auto="true"
           class="org.eventb.internal.pp.AutoTactics$PPunrestricted"
           id="ppUnrestricted"
-          name="%ppUnrestrictedName">
+          name="%ppUnrestrictedName"
+          post="true">
     </autoTactic>
     <autoTactic
+          auto="true"
           class="org.eventb.internal.pp.AutoTactics$PPlasoo"
           id="ppLasoo"
-          name="%ppLasooName">
+          name="%ppLasooName"
+          post="true">
     </autoTactic>
- </extension>
- <extension
-       point="org.eventb.core.pomTactics">
-    <tactic
-          id="org.eventb.pp.ppRestricted">
-    </tactic>
-    <tactic
-          id="org.eventb.pp.ppLasoo">
-    </tactic>
-    <tactic
-          id="org.eventb.pp.ppUnrestricted">
-    </tactic>
- </extension>
- <extension
-       point="org.eventb.core.postTactics">
-    <tactic
-          id="org.eventb.pp.ppRestricted">
-    </tactic>
-    <tactic
-          id="org.eventb.pp.ppLasoo">
-    </tactic>
-    <tactic
-          id="org.eventb.pp.ppUnrestricted">
-    </tactic>
  </extension>
  <extension
        point="org.eventb.core.seqprover.tacticParameterizers">

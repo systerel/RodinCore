@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
-import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticRefMaker;
-import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticXMLSerializer;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticProfileCache;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.internal.ui.UIUtils;
 
@@ -93,7 +93,7 @@ public class ProfileImportExport {
 	}
 
 	public static ListSelectionDialog makeProfileSelectionDialog(
-			Shell parentShell, CachedPreferenceMap<ITacticDescriptor> input,
+			Shell parentShell, ITacticProfileCache input,
 			String message, List<IPrefMapEntry<ITacticDescriptor>> initSelected) {
 		final ListSelectionDialog dialog = new ListSelectionDialog(parentShell,
 				input, new ProfileContentProvider(),
@@ -115,7 +115,16 @@ public class ProfileImportExport {
 		writeFile(file, prefStr);
 	}
 
-	public static CachedPreferenceMap<ITacticDescriptor> loadImported(
+	/**
+	 * Returns a profile cache containing imported profiles. The returned cache
+	 * is intended to be merged into another one; any attempt at storing it
+	 * would result in an exception.
+	 * 
+	 * @param parentShell
+	 *            the parent shell
+	 * @return a tactic profile
+	 */
+	public static ITacticProfileCache loadImported(
 			Shell parentShell) {
 		final FileDialog fileDialog = new FileDialog(parentShell, SWT.OPEN);
 		final String path = fileDialog.open();
@@ -128,8 +137,8 @@ public class ProfileImportExport {
 			return null;
 		}
 
-		final CachedPreferenceMap<ITacticDescriptor> newCache = new CachedPreferenceMap<ITacticDescriptor>(
-				makeTacticXMLSerializer(), makeTacticRefMaker());
+		// not storeable cache
+		final ITacticProfileCache newCache = makeTacticProfileCache(null);
 		final String prefStr = readFile(file);
 		if (prefStr == null) {
 			showImportError(parentShell, path);

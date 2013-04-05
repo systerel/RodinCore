@@ -56,12 +56,8 @@ import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
 import org.eventb.core.pm.IUserSupportManagerDelta;
-import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.ITactic;
-import org.eventb.core.seqprover.SequentProver;
-import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.prover.tactics.ExistsInstantiationGoal.ExistsInstantiationGoalApplication;
@@ -297,49 +293,6 @@ public class ProverUIUtils {
 		return tacticIDs;
 	}
 	
-	/**
-	 * Converts an array of tactic IDs to an array of tactic descriptor
-	 * {@link ITacticDescriptor} given the tactic preference
-	 * {@link IAutoTacticPreference}.
-	 * 
-	 * @param tacticPreference
-	 *            the tactic preference
-	 * @param tacticIDs
-	 *            an array of tactic IDs
-	 * @return an array of registered tactic descriptors corresponding to the
-	 *         input tactic IDs, i.e. ignores invalid tactic IDs and tactic
-	 *         which are not registered to be used for this tactic preference.
-	 */
-	public static ArrayList<ITacticDescriptor> stringsToTacticDescriptors(
-			IAutoTacticPreference tacticPreference, String[] tacticIDs) {
-		ArrayList<ITacticDescriptor> result = new ArrayList<ITacticDescriptor>();
-		for (String tacticID : tacticIDs) {
-			IAutoTacticRegistry tacticRegistry = SequentProver.getAutoTacticRegistry();
-			if (!tacticRegistry.isRegistered(tacticID)) {
-				if (UIUtils.DEBUG) {
-					System.out.println("Tactic " + tacticID
-							+ " is not registered.");
-				}
-				continue;
-			}
-			
-			ITacticDescriptor tacticDescriptor = tacticRegistry
-					.getTacticDescriptor(tacticID);
-			if (!tacticPreference.isDeclared(tacticDescriptor)) {
-				if (UIUtils.DEBUG) {
-					System.out
-							.println("Tactic "
-									+ tacticID
-									+ " is not declared for using within this tactic container.");
-				}
-			}
-			else {
-				result.add(tacticDescriptor);
-			}
-		}
-		return result;
-	}
-
 	/**
 	 * Check if a proof status is discharged or not.
 	 * 

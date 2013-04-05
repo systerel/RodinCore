@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,8 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.pm.IUserSupport;
-import org.eventb.ui.EventBUIPlugin;
 
 /**
  * Action for opening the preferences dialog about proof tactics. The dialog
@@ -42,7 +42,7 @@ public class OpenPreferencesAction extends Action implements
 		IPreferenceChangeListener {
 
 	// Name of the preference node that holds the tactic preferences
-	private static final String PREF_NODE_NAME = EventBUIPlugin.PLUGIN_ID;
+	private static final String PREF_NODE_NAME = EventBPlugin.PLUGIN_ID;
 
 	// Name of the witness preference
 	private static final String PREF_NAME = P_POSTTACTIC_CHOICE;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ public class PrefixPreferencePage extends
 	public static final Set<String> keys = new HashSet<String>();
 
 	public PrefixPreferencePage() {
-		super(PAGE_ID);
+		super(PAGE_ID, EventBUIPlugin.PLUGIN_ID);
 	}
 
 	@Override

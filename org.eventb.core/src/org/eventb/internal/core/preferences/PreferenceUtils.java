@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,17 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.internal.core.preferences;
+
+import static org.eventb.core.EventBPlugin.PLUGIN_ID;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_CHOICE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_CONSIDER_HIDDEN_HYPOTHESES;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_SIMPLIFY_PROOFS;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
+import static org.eventb.internal.core.preferences.PreferenceInitializer.DEFAULT_AUTO_ENABLE;
+import static org.eventb.internal.core.preferences.PreferenceInitializer.DEFAULT_POST_ENABLE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,13 +39,23 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.preferences.IPrefMapEntry;
-import org.eventb.core.preferences.autotactics.TacticPreferenceConstants;
+import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -54,12 +75,51 @@ public class PreferenceUtils {
 	 */
 	public static boolean DEBUG = false;
 
-	/**
-	 * This string identifies the qualifier used to store tactic preferences by
-	 * the UI. It shows a dependency to the UI which is the price to pay if one
-	 * wants to use the PreferenceStore API owned by Jface.
-	 */
-	public static final String PREF_QUALIFIER = "org.eventb.ui";
+	private static final class BoolPrefUpdater implements
+			IPreferenceChangeListener {
+
+		private static final IScopeContext[] CONTEXTS = new IScopeContext[] {
+				InstanceScope.INSTANCE, DefaultScope.INSTANCE };
+
+		public BoolPrefUpdater() {
+			// avoid synthetic access
+		}
+
+		private void update(IAutoTacticPreference pref, String qualifier,
+				String key) {
+			final boolean enabled = Platform.getPreferencesService()
+					.getBoolean(qualifier, key, false, CONTEXTS);
+			pref.setEnabled(enabled);
+		}
+
+		@Override
+		public void preferenceChange(PreferenceChangeEvent event) {
+			final String key = event.getKey();
+			final Preferences node = event.getNode();
+			final String qualifier = node.name();
+			
+			if (key.equals(P_CONSIDER_HIDDEN_HYPOTHESES)) {
+				EventBPlugin.getUserSupportManager()
+						.setConsiderHiddenHypotheses(
+								(Boolean) event.getNewValue());
+				return;
+			}
+			
+			final IAutoTacticPreference pref;
+
+			if (key.equals(P_POSTTACTIC_ENABLE)) {
+				pref = EventBPlugin.getAutoPostTacticManager()
+						.getPostTacticPreference();
+			} else if (key.equals(P_AUTOTACTIC_ENABLE)) {
+				pref = EventBPlugin.getAutoPostTacticManager()
+						.getAutoTacticPreference();
+			} else {
+				return;
+			}
+
+			update(pref, qualifier, key);
+		}
+	}
 
 	public static class PreferenceException extends RuntimeException {
 
@@ -80,7 +140,7 @@ public class PreferenceUtils {
 
 		private final String key;
 		private final T value;
-		
+
 		public ReadPrefMapEntry(String key, T value) {
 			this.key = key;
 			this.value = value;
@@ -110,17 +170,17 @@ public class PreferenceUtils {
 		public T getReference() {
 			return null;
 		}
-		
+
 	}
-	
+
 	public static class UnresolvedPrefMapEntry<T> extends ReadPrefMapEntry<T> {
 
 		public UnresolvedPrefMapEntry(String key) {
 			super(key, null);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Returns a string representation of a list of input objects. The objects
 	 * are separated by a given character.
@@ -172,7 +232,7 @@ public class PreferenceUtils {
 				.getCombinatorDescriptor(TacticCombinators.LoopOnAllPending.COMBINATOR_ID);
 		return comb.combine(descs, id);
 	}
-	
+
 	/**
 	 * Returns a 'loop on all pending' tactic descriptor on auto tactics with
 	 * given ids; the resulting tactic ears the given id.
@@ -263,7 +323,7 @@ public class PreferenceUtils {
 		Document doc = docBuilder.newDocument();
 		return doc;
 	}
-	
+
 	/**
 	 * Makes a DOM document from the given string.
 	 * 
@@ -281,7 +341,7 @@ public class PreferenceUtils {
 		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
 		return docBuilder.parse(new InputSource(new StringReader(str)));
 	}
-	
+
 	/**
 	 * Serializes a XML document into a string - encoded in UTF8 format, with
 	 * platform line separators.
@@ -310,7 +370,7 @@ public class PreferenceUtils {
 
 		return s.toString("UTF8"); //$NON-NLS-1$			
 	}
-	
+
 	public static Node getUniqueChild(Node node) {
 		final NodeList unitChildren = node.getChildNodes();
 		for (int j = 0; j < unitChildren.getLength(); j++) {
@@ -323,8 +383,58 @@ public class PreferenceUtils {
 	}
 
 	public static boolean getSimplifyProofPref() {
-		return Platform.getPreferencesService().getBoolean(PREF_QUALIFIER,
-				TacticPreferenceConstants.P_SIMPLIFY_PROOFS, false, null);
+		return Platform.getPreferencesService().getBoolean(PLUGIN_ID,
+				P_SIMPLIFY_PROOFS, false, null);
 	}
-	
+
+	public static void initTacticPreferenceUpdater() {
+		final IEclipsePreferences prefNode = InstanceScope.INSTANCE
+				.getNode(PLUGIN_ID);
+		prefNode.addPreferenceChangeListener(new BoolPrefUpdater());
+	}
+
+	private static void movePref(String key, IEclipsePreferences from,
+			IEclipsePreferences to) {
+		final String value = from.get(key, null);
+		if (value != null) {
+			to.put(key, value);
+			from.remove(key);
+		}
+	}
+
+	/**
+	 * Initialize from stored preferences.
+	 */
+	public static void init() {
+		final IAutoPostTacticManager manager = EventBPlugin.getAutoPostTacticManager();
+		
+		final IEclipsePreferences defaultNode = DefaultScope.INSTANCE.getNode(PLUGIN_ID);
+		final IEclipsePreferences node = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
+
+		final boolean defAutoEnable = defaultNode.getBoolean(P_AUTOTACTIC_ENABLE, DEFAULT_AUTO_ENABLE);
+		final boolean autoTacticEnable = node.getBoolean(P_AUTOTACTIC_ENABLE, defAutoEnable);
+		manager.getAutoTacticPreference().setEnabled(autoTacticEnable);
+		
+		final boolean defPostEnable = defaultNode.getBoolean(P_POSTTACTIC_ENABLE, DEFAULT_POST_ENABLE);
+		final boolean postTacticEnable = node.getBoolean(P_POSTTACTIC_ENABLE, defPostEnable);
+		manager.getPostTacticPreference().setEnabled(postTacticEnable);
+	}
+
+	public static void restoreFromUIPreferences() throws BackingStoreException {
+		final IEclipsePreferences uiPrefNode = InstanceScope.INSTANCE
+				.getNode("org.eventb.ui");
+		final IEclipsePreferences corePrefNode = InstanceScope.INSTANCE
+				.getNode(PLUGIN_ID);
+		movePref(P_AUTOTACTIC_ENABLE, uiPrefNode, corePrefNode);
+		movePref(P_AUTOTACTIC_CHOICE, uiPrefNode, corePrefNode);
+		movePref(P_POSTTACTIC_ENABLE, uiPrefNode, corePrefNode);
+		movePref(P_POSTTACTIC_CHOICE, uiPrefNode, corePrefNode);
+		movePref(P_TACTICSPROFILES, uiPrefNode, corePrefNode);
+
+		corePrefNode.sync();
+		uiPrefNode.flush();
+		uiPrefNode.sync();
+		
+		// TODO project scope
+	}
 }
