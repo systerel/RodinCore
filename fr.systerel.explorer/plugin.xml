@@ -631,12 +631,9 @@
          </command>
       </menuContribution>
       <menuContribution
-            allPopups="false"
             locationURI="toolbar:fr.systerel.explorer.navigator.view">
          <command
                commandId="org.eclipse.ui.file.refresh"
-               icon="icons/full/clcl16/refresh.gif"
-               label="%navigatorCommand.refresh.name"
                style="push">
          </command>
       </menuContribution>
