@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - on tool error, put marker on creator file instead of target
  *     Systerel - added builder performance trace
+ *     Systerel - rework traces
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -127,7 +128,7 @@ public class Graph implements Serializable, Iterable<Node> {
 					cleanNode(n, manager.getZeroProgressMonitor());
 				} catch(CoreException e) {
 					if(RodinBuilder.DEBUG_RUN)
-						System.out.println(getClass().getName() + ": Error during remove&clean"); //$NON-NLS-1$
+						trace("Error during remove&clean"); //$NON-NLS-1$
 				}
 			}
 		}
@@ -181,19 +182,23 @@ public class Graph implements Serializable, Iterable<Node> {
 		 * 		If any problem occurred during build.
 		 */
 		public void builderBuildGraph(ProgressManager manager) throws CoreException {
-			if(RodinBuilder.DEBUG_GRAPH)
-				System.out.print(getClass().getName() + ": IN Graph:\n" + printGraph()); //$NON-NLS-1$
+			if(RodinBuilder.DEBUG_GRAPH) {
+				trace("IN Graph:"); //$NON-NLS-1$
+				System.out.print(printGraph());
+			}
 			instable = true;
 			while(instable) {
 				topSortInit();
 				topSortNodes(nodePreList, true, manager);
+				if(RodinBuilder.DEBUG_GRAPH) {
+					trace("OUT Graph:"); //$NON-NLS-1$
+					System.out.print(printGraph());
+				}
 				if(RodinBuilder.DEBUG_GRAPH)
-					System.out.print(getClass().getName() + ": OUT Graph:\n" + printGraph()); //$NON-NLS-1$
-				if(RodinBuilder.DEBUG_GRAPH)
-					System.out.println(getClass().getName() + ": Build Order: " + nodePreList.toString()); //$NON-NLS-1$
+					trace("Build Order: " + nodePreList.toString()); //$NON-NLS-1$
 				if(instable) {
 					if(RodinBuilder.DEBUG_GRAPH)
-						System.out.println(getClass().getName() + ": Graph structure may have changed. Reordering ..."); //$NON-NLS-1$
+						trace("Graph structure may have changed. Reordering ..."); //$NON-NLS-1$
 					continue;
 				}
 				commit();
@@ -276,8 +281,7 @@ public class Graph implements Serializable, Iterable<Node> {
 			Util.log(null, "Builder resource not a file" + 
 					node.getTarget().getName()); //$NON-NLS-1$
 			if (RodinBuilder.DEBUG_RUN)
-				System.out.println(getClass().getName() + 
-						": Builder resource not a file!"); //$NON-NLS-1$
+				trace("Builder resource not a file!"); //$NON-NLS-1$
 			return;
 		}
 		
@@ -285,15 +289,14 @@ public class Graph implements Serializable, Iterable<Node> {
 		
 		if (!node.isDerived()) {
 			if(RodinBuilder.DEBUG_GRAPH)
-				System.out.println(getClass().getName() + ": Root node changed: " + 
+				trace("Root node changed: " + 
 						node.getTarget().getName());
 			
 			changed = true;
 			
 		} else {
 			if(RodinBuilder.DEBUG_RUN)
-				System.out.println(getClass().getName() + 
-					 ": Running tool: " + node.getToolId() + " on node: " + 
+				trace("Running tool: " + node.getToolId() + " on node: " + 
 					 node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 			ToolDescription toolDescription = getManager().getToolDescription(node.getToolId());
 			IAutomaticTool tool = toolDescription.getTool();
@@ -379,8 +382,7 @@ public class Graph implements Serializable, Iterable<Node> {
 			try {
 				String toolId = descriptions[j].getId();
 				if(RodinBuilder.DEBUG_RUN)
-					System.out.println(getClass().getName() + 
-							": Extracting: " + toolId + " on node: " + node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
+					trace("Extracting: " + toolId + " on node: " + node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				GraphTransaction transaction = new GraphTransaction(handler, toolId);
 				transaction.openGraph();
 				descriptions[j].getExtractor().extract(
@@ -435,7 +437,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		if(!node.isDerived())
 			return;
 		if (RodinBuilder.DEBUG_RUN)
-			System.out.println(getClass().getName() + ": Cleaning tool: "
+			trace("Cleaning tool: "
 					+ node.getToolId() + " on node: "
 					+ node.getTarget().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 		IAutomaticTool tool = getManager().getToolDescription(node.getToolId()).getTool(); 
@@ -527,7 +529,7 @@ public class Graph implements Serializable, Iterable<Node> {
 		// dependency.
 		
 		if(RodinBuilder.DEBUG_GRAPH)
-			System.out.print(getClass().getName() + ": Checking:"); //$NON-NLS-1$
+			System.out.print("Checking:"); //$NON-NLS-1$
 		
 		// first we modify the graph to find out more about the cause of the cycle
 		for(Node node : nodePreList) {
@@ -554,7 +556,7 @@ public class Graph implements Serializable, Iterable<Node> {
 				if(file != null)
 					MarkerHelper.deleteAllProblemMarkers(file);
 				else if(RodinBuilder.DEBUG_GRAPH)
-					System.out.println(getClass().getName() + ": File not found: " + node.getTarget().getName()); //$NON-NLS-1$
+					trace("File not found: " + node.getTarget().getName()); //$NON-NLS-1$
 
 		}
 
@@ -618,6 +620,10 @@ public class Graph implements Serializable, Iterable<Node> {
 	
 	public int size() {
 		return nodes.size();
+	}
+
+	private void trace(String msg) {
+		System.out.println(getClass().getName() + ": " + msg);
 	}
 
 }
