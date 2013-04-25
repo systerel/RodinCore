@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added builder performance trace
  *     Systerel - build only direct children of project
+ *     Systerel - rework traces
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -190,6 +191,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		ProgressManager progressManager = 
 			new ProgressManager(monitor, this);
 	
+		final IProject project = getProject();
+
 		try {
 		
 			if (DEBUG) {
@@ -199,19 +202,20 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 							kind == INCREMENTAL_BUILD ? "incremental" :
 								"unknown";
 				System.out.println("##############################################");
-				System.out.println("BUILDER: Starting " + kindImage + " build.");
+				System.out.println("BUILDER: Starting " + kindImage
+						+ " build for project " + project.getName());
 			}
 		
 			if (state == null)
 				state = 
 					BuildState.getBuildState(
-						getProject(), 
+						project, 
 						progressManager.getZeroProgressMonitor());
 			
 			if (kind == FULL_BUILD) {
 				fullBuild(progressManager);
 			} else {
-				IResourceDelta delta = getDelta(getProject());
+				IResourceDelta delta = getDelta(project);
 				if (delta == null) {
 					fullBuild(progressManager);
 				} else {
@@ -221,7 +225,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		} finally {
 			progressManager.done(); 
 			if (DEBUG) {
-				System.out.println("BUILDER: Finished build.");
+				System.out.println("BUILDER: Finished build for project "
+						+ project.getName());
 				System.out.println("##############################################");
 			}
 		}
@@ -324,20 +329,23 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		ProgressManager progressManager = 
 			new ProgressManager(monitor, this);
 	
+		final IProject project = getProject();
+		if (DEBUG) {
+			System.out.println("##############################################");
+			System.out.println("BUILDER: Starting cleaning project " + project.getName());
+		}
+
 		if (state == null)
 			state = 
 				BuildState.getBuildState(
-					getProject(), 
+					project, 
 					progressManager.getZeroProgressMonitor());
 		
 		progressManager.makeSlices(state.graph);
 		
       try {
-			if (DEBUG) {
-				System.out.println("BUILDER: Starting cleaning");
-			}
         	cleanGraph(progressManager, true);
-        	MarkerHelper.deleteAllProblemMarkers(getProject());
+        	MarkerHelper.deleteAllProblemMarkers(project);
         } catch (CoreException e) {
 			Util.log(e, "during builder clean");
 		} catch (OperationCanceledException e) {
@@ -347,7 +355,8 @@ public class RodinBuilder extends IncrementalProjectBuilder {
 		} finally {
 			progressManager.done();
 			if (DEBUG) {
-				System.out.println("BUILDER: Finished cleaning");
+				System.out.println("BUILDER: Finished cleaning project " + project.getName());
+				System.out.println("##############################################");
 			}
 		}
      }

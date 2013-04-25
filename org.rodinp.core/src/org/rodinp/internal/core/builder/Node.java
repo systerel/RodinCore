@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
+ *     Systerel - rework traces
  *******************************************************************************/
 package org.rodinp.internal.core.builder;
 
@@ -31,7 +32,7 @@ import org.rodinp.internal.core.util.Messages;
  * @author Stefan Hallerstede
  *
  */
-public class Node implements Serializable {
+public class Node implements Serializable, Comparable<Node> {
 	
 	private static final long serialVersionUID = -710145997192071089L;
 
@@ -116,6 +117,11 @@ public class Node implements Serializable {
 		return target.getName().equals(((Node) o).target.getName());
 	}
 	
+	@Override
+	public int compareTo(Node o) {
+		return target.getName().compareTo(o.target.getName());
+	}
+
 	protected List<Link> getPredessorLinks() {
 		return predessorLinks;
 	}
