@@ -660,10 +660,11 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 		// this test is the total relation
 		rewritePred("A  B = ∅", "¬ A=∅ ∧ B=∅", "A", "ℙ(S)", "B", "ℙ(T)");
 		rewritePred("A → B = ∅", "¬ A=∅ ∧ B=∅", "A", "ℙ(S)", "B", "ℙ(T)");
-		rewritePred("A ↣ B = ∅", "¬ A=∅ ∧ B=∅", "A", "ℙ(S)", "B", "ℙ(T)");
-		rewritePred("A ↠ B = ∅", "¬ A=∅ ∧ B=∅", "A", "ℙ(S)", "B", "ℙ(T)");
-		rewritePred("A ⤖ B = ∅", "¬ A=∅ ∧ B=∅", "A", "ℙ(S)", "B", "ℙ(T)");
 
+		// Fix bug #661
+		noRewritePred("A ↣ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		noRewritePred("A ↠ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
+		noRewritePred("A ⤖ B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
 		// this test is the surjective relation
 		noRewritePred("A  B = ∅", "A", "ℙ(S)", "B", "ℙ(T)");
 		// this test is the surjective total relation

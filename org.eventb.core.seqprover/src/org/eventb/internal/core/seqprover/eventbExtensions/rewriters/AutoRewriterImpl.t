@@ -1202,11 +1202,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 * SIMP_SPECIAL_EQUAL_RELDOM
 			 *    A  B = ∅ == ¬(A = ∅) ∧ B = ∅
 			 *    A → B = ∅ == ¬(A = ∅) ∧ B = ∅
-			 *    A ↣ B = ∅ == ¬(A = ∅) ∧ B = ∅
-			 *    A ↠ B = ∅ == ¬(A = ∅) ∧ B = ∅
-			 *    A ⤖ B = ∅ == ¬(A = ∅) ∧ B = ∅
 			 */
-			Equal((Tfun | Trel | Tinj | Tsur | Tbij)(A, B), EmptySet()) -> {
+			Equal((Tfun | Trel)(A, B), EmptySet()) -> {
 				if (level2) {
 					result = makeAssociativePredicate(LAND,
 								makeUnaryPredicate(NOT, makeIsEmpty(`A)),
