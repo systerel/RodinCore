@@ -14,15 +14,10 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-
 import org.rodinp.core.emf.api.ApiFactory;
-
 import org.rodinp.core.emf.api.ApiPackage;
-import org.rodinp.core.emf.api.itf.*;
 
 /**
  * <!-- begin-user-doc -->
