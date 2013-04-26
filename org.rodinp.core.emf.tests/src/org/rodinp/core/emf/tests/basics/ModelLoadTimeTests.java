@@ -24,11 +24,16 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Tests the time needed to create a resource.
+ * 
+ * To run this test, store a big model file on your disk, enter its file path
+ * into the Java system property "filePath" and enable this test.
  */
+@Ignore("Peformance test")
 public class ModelLoadTimeTests extends AbstractRodinEMFCoreTest {
 
 	/**
