@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,15 +47,12 @@ public interface IFormulaExtensionProvider {
 	Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root);
 
 	/**
-	 * Sets the given formula factory on the given root. This method shall set
-	 * the formula factory for a newly created root. A later call on
-	 * getFormulaFactory() shall return this factory.
+	 * This method is never called by the Event-B Core plug-in and will
+	 * disappear in Rodin 3.0.
 	 * 
-	 * @param root
-	 *            the root element
-	 * @param ff
-	 *            the formula factory to be set on the given root
+	 * @deprecated Not used anymore
 	 */
+	@Deprecated
 	void setFormulaFactory(IEventBRoot root, FormulaFactory ff);
 
 	/**

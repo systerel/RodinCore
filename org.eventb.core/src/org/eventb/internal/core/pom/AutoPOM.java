@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSRoot;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.internal.core.Util;
@@ -198,10 +197,6 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 						+ prRoot.getResource().getFullPath().toString());
 			}
 			prRoot.getRodinFile().create(true, pm);
-
-			// Register the formula factory to use for the proof file
-			final FormulaFactory ff = pc.getFormulaFactory();
-			prRoot.setFormulaFactory(ff);
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,15 +113,6 @@ public class FormulaExtensionProviderRegistry {
 				log(e, "while loading extension provider");
 			}
 		}
-	}
-
-	public synchronized void setFormulaFactory(IEventBRoot root,
-			FormulaFactory ff) {
-		if (provider == null) {
-			// Do nothing as mathematical extensions are not here
-			return;
-		}
-		provider.setFormulaFactory(root, ff);
 	}
 
 	public synchronized Set<IRodinFile> getAllExtensionFiles(
