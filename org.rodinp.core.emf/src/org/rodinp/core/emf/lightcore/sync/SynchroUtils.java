@@ -32,8 +32,6 @@ import org.rodinp.core.emf.lightcore.Attribute;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightObject;
 import org.rodinp.core.emf.lightcore.LightcoreFactory;
-import org.rodinp.core.emf.lightcore.adapters.AttributeUpdateAdapter;
-import org.rodinp.core.emf.lightcore.adapters.AttributeUpdateAdapterFactory;
 import org.rodinp.core.emf.lightcore.adapters.DeltaRootAdapter;
 import org.rodinp.core.emf.lightcore.adapters.DeltaRootAdapterFactory;
 import org.rodinp.core.emf.lightcore.adapters.ImplicitDeltaRootAdapterFactory;
@@ -227,11 +225,6 @@ public class SynchroUtils {
 		if (e.isEIsRoot()) {
 			f.adapt(e, DeltaRootAdapterFactory.class);
 		}
-	}
-
-	public static void adaptForAttributeUpdate(LightObject e) {
-		final AttributeUpdateAdapterFactory f = new AttributeUpdateAdapterFactory();
-		f.adapt(e, AttributeUpdateAdapter.class);
 	}
 
 	public static Map<IInternalElement, LightElement> getImplicitChildren(

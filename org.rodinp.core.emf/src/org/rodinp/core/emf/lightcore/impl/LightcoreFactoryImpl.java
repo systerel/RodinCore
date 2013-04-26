@@ -18,7 +18,6 @@ import org.rodinp.core.emf.lightcore.ImplicitElement;
 import org.rodinp.core.emf.lightcore.InternalElement;
 import org.rodinp.core.emf.lightcore.LightcoreFactory;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
-import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
 /**
  * <!-- begin-user-doc -->
@@ -86,11 +85,10 @@ public class LightcoreFactoryImpl extends EFactoryImpl implements LightcoreFacto
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	public Attribute createAttribute() {
 		AttributeImpl attribute = new AttributeImpl();
-		SynchroUtils.adaptForAttributeUpdate(attribute);
 		return attribute;
 	}
 
