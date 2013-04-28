@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
+import org.rodinp.core.emf.lightcore.adapters.dboperations.OperationProcessor;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 import org.rodinp.core.tests.basis.NamedElement;
 
@@ -62,7 +63,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		ne.removeAttribute(fBool, null);
 
 		((IRodinFile) ne.getRodinFile()).save(null, true);
-		Thread.sleep(500);
+		OperationProcessor.waitUpToDate();
 
 		assertTrue(ne.getAttributeTypes().length == 0);
 		assertTrue(neLight.getAttribute(fBool) == null);
@@ -87,7 +88,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		ne.setAttributeValue(v1, null);
 
 		((IRodinFile) ne.getRodinFile()).save(null, true);
-		Thread.sleep(500);
+		OperationProcessor.waitUpToDate();
 		
 		// we search for NE child in the Light model
 		// it has been created by the database delta listener
@@ -100,7 +101,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		ne.setAttributeValue(v2, null);
 
 		((IRodinFile) ne.getRodinFile()).save(null, true);
-		Thread.sleep(500);
+		OperationProcessor.waitUpToDate();
 		
 		final Boolean a2 = neLightElement.getAttribute(fBool);
 		assertTrue(a2.equals(false));
@@ -122,7 +123,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		final NamedElement ne3 = getNamedElement(rodinRoot, "NE3");
 		final NamedElement[] ordered = { ne, ne2, ne3 };
 		assertArrayEquals(ordered, rodinRoot.getChildren());
-		Thread.sleep(500);
+		OperationProcessor.waitUpToDate();
 
 		// we get the root element of the light model
 		final ILElement root = rodinResource.getRoot();
@@ -133,7 +134,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		ne2.move(rodinRoot, ne, null, false, null);
 
 		((IRodinFile) ne.getRodinFile()).save(null, true);
-		Thread.sleep(500);
+		OperationProcessor.waitUpToDate();
 
 		final NamedElement[] ordered2 = { ne2, ne, ne3 };
 		assertArrayEquals(ordered2, rodinRoot.getChildren());
@@ -153,7 +154,7 @@ public class ModificationTests extends AbstractRodinEMFCoreTest {
 		final NamedElement[] ordered = { ne, ne2, ne3 };
 		assertArrayEquals(ordered, rodinRoot.getChildren());
 
-		Thread.sleep(1000);
+		OperationProcessor.waitUpToDate();
 
 		// we get the root element of the light model
 		final ILElement root = rodinResource.getRoot();

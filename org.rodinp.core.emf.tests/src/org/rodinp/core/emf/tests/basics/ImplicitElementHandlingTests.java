@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightcorePackage;
+import org.rodinp.core.emf.lightcore.adapters.dboperations.OperationProcessor;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 import org.rodinp.core.emf.tests.basis.ImplicitHolder;
 import org.rodinp.core.emf.tests.basis.RodinTestDependency;
@@ -108,6 +109,7 @@ public class ImplicitElementHandlingTests {
 		rf1.save(null, true);
 		rf2.save(null, true);
 		rf3.save(null, true);
+		OperationProcessor.waitUpToDate();
 
 		createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 		// now checking the loaded resource
@@ -179,7 +181,7 @@ public class ImplicitElementHandlingTests {
 				"dependencyToRf1");
 		d.setDependency(rf1.getRoot());
 		rf2.save(null, true);
-		Thread.sleep(500);
+		OperationProcessor.waitUpToDate();
 		// we check that implicit elements have been recomputed and that holder2
 		// carries s1 and s2
 		final List<? extends ILElement> children2 = eHolder2.getChildren();
@@ -190,7 +192,7 @@ public class ImplicitElementHandlingTests {
 		// left.
 		d.delete(true, null);
 		rf2.save(null, true);
-		Thread.sleep(1500);
+		OperationProcessor.waitUpToDate();
 		// we check that implicit elements have been recomputed and that holder2
 		// does not contain implicit children
 		assertTrue(eHolder2.getChildren().isEmpty());
@@ -230,6 +232,7 @@ public class ImplicitElementHandlingTests {
 		rf1.save(null, true);
 		rf2.save(null, true);
 		rf3.save(null, true);
+		OperationProcessor.waitUpToDate();
 
 		final ICoreImplicitChildProvider p = createProvider(ImplicitHolder.ELEMENT_TYPE, NamedElement.ELEMENT_TYPE);
 
@@ -253,6 +256,7 @@ public class ImplicitElementHandlingTests {
 		final RodinTestDependency d = getDependencyElement(rf2Root,
 				"dependencyToRf1");
 		d.setDependency(rf1.getRoot());
+		OperationProcessor.waitUpToDate();
 
 		// checks that rf3 contains implicit children from rf1 and rf2 in the
 		// right order
@@ -270,7 +274,8 @@ public class ImplicitElementHandlingTests {
 		final RodinTestDependency rDependency = dArray[0];
 		assertNotNull(rDependency);
 		rDependency.delete(true, null);
-		
+		OperationProcessor.waitUpToDate();
+
 		// check that there is no more implicit children
 		assertTrue(eHolder3.getChildren().isEmpty());
 		

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.rodinp.core.emf.lightcore.adapters;
 
 import static org.rodinp.core.emf.lightcore.LightCoreUtils.debug;
+import static org.rodinp.core.emf.lightcore.adapters.dboperations.OperationProcessor.submit;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
@@ -20,7 +21,6 @@ import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.LightElement;
-import org.rodinp.core.emf.lightcore.adapters.dboperations.DeltaProcessManager;
 import org.rodinp.core.emf.lightcore.adapters.dboperations.ElementOperation;
 
 /**
@@ -64,8 +64,7 @@ public class DeltaProcessor {
 		// if the element is from this root and doesn't exists in the EMF model
 		if (kind == IRodinElementDelta.ADDED) {
 			if (element instanceof IInternalElement) {
-				DeltaProcessManager.getDefault().enqueueOperation(
-						new ElementOperation.AddElementOperation(element, root));
+				submit(new ElementOperation.AddElementOperation(element, root));
 			}
 			return;
 		}
@@ -78,14 +77,12 @@ public class DeltaProcessor {
 				if (element instanceof IRodinFile && element.equals(rFile)) {
 					owner.finishListening();
 					// remove the machine from the model
-					DeltaProcessManager.getDefault().enqueueOperation(
-							new ElementOperation.RemoveElementOperation(rFile.getRoot(), root));
+					submit(new ElementOperation.RemoveElementOperation(rFile.getRoot(), root));
 					return;
 				}
 			}
 			if (element instanceof IInternalElement) {
-				DeltaProcessManager.getDefault().enqueueOperation(
-						new ElementOperation.RemoveElementOperation(element, root));
+				submit(new ElementOperation.RemoveElementOperation(element, root));
 			}
 			return;
 		}
@@ -103,8 +100,7 @@ public class DeltaProcessor {
 			}
 
 			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				DeltaProcessManager.getDefault().enqueueOperation(
-						new ElementOperation.ReorderElementOperation(element, root));
+				submit(new ElementOperation.ReorderElementOperation(element, root));
 				return;
 			}
 
@@ -120,8 +116,7 @@ public class DeltaProcessor {
 			}
 
 			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
-				DeltaProcessManager.getDefault().enqueueOperation(
-						new ElementOperation.ReloadAttributesElementOperation(element, root));
+				submit(new ElementOperation.ReloadAttributesElementOperation(element, root));
 				return;
 			}
 		}

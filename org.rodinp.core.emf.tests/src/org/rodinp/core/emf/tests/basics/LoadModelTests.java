@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.InternalElement;
+import org.rodinp.core.emf.lightcore.adapters.dboperations.OperationProcessor;
 import org.rodinp.core.tests.AbstractRodinDBTests;
 import org.rodinp.core.tests.basis.NamedElement;
 
@@ -56,8 +57,7 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 		// Then delete the file
 		rodinFile.getResource().delete(true, null);
 		assertFalse("The rodin file should not exist.", rodinFile.exists());
-
-		Thread.sleep(500); // wait for the resource to be deleted
+		OperationProcessor.waitUpToDate();
 		
 		// Ensures that the resource contents is empty (i.e. resource is
 		// unloaded)
@@ -124,7 +124,7 @@ public class LoadModelTests extends AbstractRodinEMFCoreTest {
 		ne2.setAttributeValue(v2, null);
 
 		rodinResource.save(); // Force delta handling
-		Thread.sleep(500);
+		OperationProcessor.waitUpToDate();
 		// We verify that the elements are created
 		final List<? extends ILElement> children = root.getChildren();
 		assertTrue(children.size() == 1);
