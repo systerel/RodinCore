@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 package org.rodinp.core.emf.lightcore.sync;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Adapter;
@@ -230,6 +232,18 @@ public class SynchroUtils {
 	public static void adaptForAttributeUpdate(LightObject e) {
 		final AttributeUpdateAdapterFactory f = new AttributeUpdateAdapterFactory();
 		f.adapt(e, AttributeUpdateAdapter.class);
+	}
+
+	public static Map<IInternalElement, LightElement> getImplicitChildren(
+			LightElement parent) {
+		final Map<IInternalElement, LightElement> result //
+		= new HashMap<IInternalElement, LightElement>();
+		for (final LightElement child : parent.getEChildren()) {
+			if (child.isImplicit()) {
+				result.put(child.getElement(), child);
+			}
+		}
+		return result;
 	}
 
 }
