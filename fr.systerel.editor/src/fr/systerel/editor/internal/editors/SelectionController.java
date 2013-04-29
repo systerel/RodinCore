@@ -74,6 +74,11 @@ public class SelectionController implements MouseListener, VerifyListener,
 
 
 	private final ListenerList postSelectionChangedListeners;
+	
+	/**
+	 * Last selected offset
+	 */
+	private int clickedOffset;
 
 	public SelectionController(StyledText styledText, DocumentMapper mapper,
 			ProjectionViewer viewer, OverlayEditor overlayEditor) {
@@ -120,6 +125,12 @@ public class SelectionController implements MouseListener, VerifyListener,
 		final EditorElement editElem = mapper.findEditorElement(element);
 		if (editElem == null) return null;
 		return toggleSelection(editElem);
+	}
+	
+	public void toggleSelection(EditorElement[] editElems) {
+		for (EditorElement elem : editElems) {
+			toggleSelection(elem);
+		}
 	}
 	
 	private EditPos toggleSelection(EditorElement editElem) {
@@ -172,6 +183,20 @@ public class SelectionController implements MouseListener, VerifyListener,
 			return styledText.getOffsetAtLine(lineIndex);
 		}
 	}
+	
+	private EditorElement[] keepTopLevelElements(EditorElement[] editElems) {
+		final List<ILElement> parents = new ArrayList<ILElement>();
+		for (EditorElement elem : editElems) {
+			parents.add(elem.getLightElement());
+		}
+		final List<EditorElement> result = new ArrayList<EditorElement>();
+		for (EditorElement elem : editElems) {
+			if (!parents.contains(elem.getLightElement().getParent())) {
+				result.add(elem);
+			}
+		}
+		return result.toArray(new EditorElement[result.size()]);
+	}
 
 	@Override
 	public void mouseDown(MouseEvent e) {
@@ -187,6 +212,15 @@ public class SelectionController implements MouseListener, VerifyListener,
 		}
 		// Button 3 is the right button
 		if (e.button == 3) {
+			return;
+		}
+		if ((e.stateMask & SWT.MOD2) != 0) {
+				selectZone(clickedOffset, offset);
+				return;
+		}
+		clickedOffset = offset;
+		if ((e.stateMask & SWT.MOD1) != 0) {
+			toggleSelection(offset);
 			return;
 		}
 		if (selection.contains(offset)) {
@@ -241,6 +275,27 @@ public class SelectionController implements MouseListener, VerifyListener,
 		selection.clear();
 	}
 
+	public void selectZone(int offset1, int offset2) {
+		clearSelection();
+		final int minOffset = Math.min(offset1, offset2);
+		final int maxOffset = Math.max(offset1, offset2);
+		final int firstLine = styledText.getLineAtOffset(minOffset);
+		final int lastLine = styledText.getLineAtOffset(maxOffset);
+		final int startOffset = styledText.getOffsetAtLine(firstLine);
+		final int lastLineOffset = styledText.getOffsetAtLine(lastLine);
+		final int lastLineLength = styledText.getLine(lastLine).length();
+		final int endOffset = lastLineOffset + lastLineLength;
+		final EditorElement[] editElems = mapper.findEditorElementsBetween(
+				startOffset, endOffset);
+		if (editElems.length == 0)
+			return;
+		// clear the native and cumbersome selection
+		// that occurs after double click
+		styledText.setSelection(minOffset);
+		overlayEditor.quitEdition(false);
+		toggleSelection(keepTopLevelElements(editElems));
+	}
+	
 	@Override
 	public void mouseUp(MouseEvent e) {
 		if (DEBUG)

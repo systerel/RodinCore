@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -410,6 +410,28 @@ public class DocumentMapper {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Return all elements which are included in the zone covered between
+	 * offset1 and offset2. This method assumes offset1 <= offset2.
+	 * 
+	 * @param offset1
+	 *            the offset starting the zone
+	 * @param offset2
+	 *            the offset ending the zone
+	 * @return all editor elements which are in the zone
+	 */
+	public EditorElement[] findEditorElementsBetween(int offset1, int offset2) {
+		final List<EditorElement> result = new ArrayList<EditorElement>();
+		final EditPos zone = EditPos.newPosStartEnd(offset1, offset2);
+		for (EditorElement item : editorElements.getItems()) {
+			final EditPos pos = item.getPos();
+			if (zone.includes(pos)) {
+				result.add((EditorElement) item);
+			}
+		}
+		return result.toArray(new EditorElement[result.size()]);
 	}
 
 	public EditPos getItemPosition(ILElement element) {
