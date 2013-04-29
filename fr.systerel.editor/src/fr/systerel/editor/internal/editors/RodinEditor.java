@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,15 @@ package fr.systerel.editor.internal.editors;
 
 import static org.eclipse.ui.actions.ActionFactory.REDO;
 import static org.eclipse.ui.actions.ActionFactory.UNDO;
+import static org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE;
 import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
@@ -157,10 +160,29 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		font = JFaceResources.getFont(RODIN_MATH_FONT);
 		JFaceResources.getFontRegistry().addListener(this);
 		styledText.setFont(font);
+		makeWideCaret();
+		
 		markerAnnotationsUpdater.initializeMarkersAnnotations();
 	
 		setTitleImageAndPartName();
 		contextMenuSimplifier = ContextMenuSimplifier.startSimplifying(styledText.getMenu());
+	}
+
+	/**
+	 * Let the caret be wider by using the 'insert overwrite' caret of the basic
+	 * text editor. It was chosen to not create a custom caret, but rather reuse
+	 * the action of enabling the overwrite mode, which changes the form of the
+	 * caret (i.e. what is expected here). This is indeed allowed as the Rodin
+	 * Editor presents a non-editable text.
+	 */
+	private void makeWideCaret() {
+		final IAction action = getAction(TOGGLE_OVERWRITE);
+		final ActionHandler actionHandler = new ActionHandler(action);
+		try {
+			actionHandler.execute(new ExecutionEvent());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void setTitleImageAndPartName() {
