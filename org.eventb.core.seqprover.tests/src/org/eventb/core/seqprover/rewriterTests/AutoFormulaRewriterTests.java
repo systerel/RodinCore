@@ -89,6 +89,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 	
 	protected final boolean level2AndHigher;
 	protected final boolean level3AndHigher;
+	protected final boolean level4AndHigher;
 
 	/**
 	 * Constructor.
@@ -100,6 +101,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		super(DT_FAC, rewriter);
 		this.level2AndHigher = rewriter.getLevel().from(Level.L2);
 		this.level3AndHigher = rewriter.getLevel().from(Level.L3);
+		this.level4AndHigher = rewriter.getLevel().from(Level.L4);
 	}
 
 	/**
@@ -423,12 +425,22 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 
 		// Typ = {} == false (where Typ is a type expression) is NOT done here
 		noRewritePred("ℤ = ∅");
-		noRewritePred("ℙ(ℤ) = ∅");
+		if (level4AndHigher) {
+			// However powerset rewriting has been added at level 4
+			rewritePred("ℙ(ℤ) = ∅", "⊥");
+		} else {
+			noRewritePred("ℙ(ℤ) = ∅");
+		}
 
 		
 		// {} = Typ == false (where Typ is a type expression) is NOT done here
 		noRewritePred("∅ = ℤ");
-		noRewritePred("∅ = ℙ(ℤ)");
+		if (level4AndHigher) {
+			// However powerset rewriting has been added at level 4
+			rewritePred("∅ = ℙ(ℤ)", "⊥");
+		} else {
+			noRewritePred("∅ = ℙ(ℤ)");
+		}
 		
 
 		// E : Typ == true (where Typ is a type expression) is NOT done here
@@ -613,8 +625,8 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 	public void testBug3025836() {
 		rewritePred("∀x,y,z·x∈ℤ ∧ y∈BOOL ∧ z∈BOOL ⇒ (λa·a∈ℤ ∣ a)(x)=0",
 				"∀x,y,z·x∈ℤ ∧ y∈BOOL ∧ z∈BOOL ⇒ x=0");
-		rewritePred("∀x⦂ℤ,y⦂ℙ(ℤ)·(λa·a∈ℤ∣y∪{a})(x)=∅",
-				"∀x⦂ℤ,y⦂ℙ(ℤ)·y∪{x}=∅");
+		rewritePred("∀x⦂ℤ,y⦂ℙ(ℤ)·(λa·a∈ℤ∣y∪{a})(x)=A",
+				"∀x⦂ℤ,y⦂ℙ(ℤ)·y∪{x}=A");
 	}
 
 	/**

@@ -639,10 +639,14 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 		rewritePred("A ⇸ B = ∅", "⊥", "A=ℙ(S); B=ℙ(T)");
 		rewritePred("A ⤔ B = ∅", "⊥", "A=ℙ(S); B=ℙ(T)");
 
-		// this test is the surjective relation
-		noRewritePred("A  B = ∅", "A=ℙ(S); B=ℙ(T)");
-		// this test is the surjective total relation
-		noRewritePred("A  B = ∅", "A=ℙ(S); B=ℙ(T)");
+		if(level4AndHigher) {
+			// Tests are in AutoFormulaRewriterL4Tests
+		} else {
+			// this test is the surjective relation
+			noRewritePred("A  B = ∅", "A=ℙ(S); B=ℙ(T)");
+			// this test is the surjective total relation
+			noRewritePred("A  B = ∅", "A=ℙ(S); B=ℙ(T)");
+		}
 		noRewritePred("A ⤀ B = ∅", "A=ℙ(S); B=ℙ(T)");
 
 		// negative tests for the other types of relations are not written
@@ -662,10 +666,15 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 		noRewritePred("A ↣ B = ∅", "A=ℙ(S); B=ℙ(T)");
 		noRewritePred("A ↠ B = ∅", "A=ℙ(S); B=ℙ(T)");
 		noRewritePred("A ⤖ B = ∅", "A=ℙ(S); B=ℙ(T)");
-		// this test is the surjective relation
-		noRewritePred("A  B = ∅", "A=ℙ(S); B=ℙ(T)");
-		// this test is the surjective total relation
-		noRewritePred("A  B = ∅", "A=ℙ(S); B=ℙ(T)");
+
+		if(level4AndHigher) {
+			// Tests are in AutoFormulaRewriterL4Tests
+		} else {
+			// this test is the surjective relation
+			noRewritePred("A  B = ∅", "A=ℙ(S); B=ℙ(T)");
+			// this test is the surjective total relation
+			noRewritePred("A  B = ∅", "A=ℙ(S); B=ℙ(T)");
+		}
 		noRewritePred("A ⤀ B = ∅", "A=ℙ(S); B=ℙ(T)");
 
 		// negative tests for the other types of relations are not written

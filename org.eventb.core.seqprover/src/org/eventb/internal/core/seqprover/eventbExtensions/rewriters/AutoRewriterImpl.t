@@ -44,6 +44,7 @@ import static org.eventb.core.ast.Formula.KSUCC;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LE;
 import static org.eventb.core.ast.Formula.LIMP;
+import static org.eventb.core.ast.Formula.LEQV;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.LT;
 import static org.eventb.core.ast.Formula.MAPSTO;
@@ -123,6 +124,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	private final boolean level1;
 	private final boolean level2;
 	private final boolean level3;
+	private final boolean level4;
 
 	private static int optionsForLevel(Level level) {
 		int result = 0;
@@ -142,6 +144,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		this.level1 = level.from(Level.L1);
 		this.level2 = level.from(Level.L2);
 		this.level3 = level.from(Level.L3);
+		this.level4 = level.from(Level.L4);
 	}
 
 	public Level getLevel() {
@@ -320,6 +323,15 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			makeEmptySet(set.getFactory(), set.getType()));
 	}
 
+	// produces E_1 = {} & E_2 = {} & ... & E_n = {}
+	protected AssociativePredicate makeAreAllEmpty(Expression[] expressions) {
+		final Predicate[] newChildren = new Predicate[expressions.length];
+		for (int i = 0; i < expressions.length; ++i) {
+			newChildren[i] = makeIsEmpty(expressions[i]);
+		}
+		return makeAssociativePredicate(LAND, newChildren);
+	}
+
 	protected Predicate makeIsNotEmpty(Expression set) {
 		return makeUnaryPredicate(NOT, makeIsEmpty(set));
 	}
@@ -335,6 +347,11 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	protected Predicate makeNotEqual(Expression left, Expression right) {
 		return makeUnaryPredicate(NOT,
 			makeRelationalPredicate(EQUAL, left, right));
+	}
+
+	protected RelationalPredicate makeEmptyInter(Expression left,
+			Expression right) {
+		return makeIsEmpty(makeAssociativeExpression(BINTER, left, right));
 	}
 
 	%include {FormulaV2.tom}
@@ -862,6 +879,22 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    		trace(predicate, result, "SIMP_MULTI_SUBSETEQ");
 				return result;
 	    	}
+
+			/**
+			 * Rules for equality with an empty set
+			 * E = ∅ == ...
+			 * E ⊆ ∅ == ...
+			 * ∅ = E == ...
+			 */
+			(Equal|SubsetEq)(E, EmptySet()) ||
+			Equal(EmptySet(), E) << predicate -> {
+				if (level4) {
+					final Predicate pred = rewriteEqualsEmptySet(predicate, `E);
+					if (pred != null) {
+						return pred;
+					}
+				}
+			}
 
 	    	/**
              * SIMP_SUBSETEQ_BUNION
@@ -1485,6 +1518,368 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 	    }
 	    return predicate;
+	}
+
+    @ProverRule( { "SIMP_SETENUM_EQUAL_EMPTY", "SIMP_BINTER_SING_EQUAL_EMPTY",
+			"SIMP_BINTER_SETMINUS_EQUAL_EMPTY", "SIMP_BUNION_EQUAL_EMPTY",
+			"SIMP_SETMINUS_EQUAL_EMPTY", "SIMP_POW_EQUAL_EMPTY",
+			"SIMP_POW1_EQUAL_EMPTY", "SIMP_KUNION_EQUAL_EMPTY",
+			"SIMP_QUNION_EQUAL_EMPTY", "SIMP_NATURAL_EQUAL_EMPTY",
+			"SIMP_NATURAL1_EQUAL_EMPTY", "SIMP_CPROD_EQUAL_EMPTY",
+		    "SIMP_UPTO_EQUAL_EMPTY", "SIMP_SREL_EQUAL_EMPTY",
+		    "SIMP_STREL_EQUAL_EMPTY", "SIMP_DOM_EQUAL_EMPTY",
+			"SIMP_RAN_EQUAL_EMPTY", "SIMP_FCOMP_EQUAL_EMPTY",
+			"SIMP_BCOMP_EQUAL_EMPTY", "SIMP_DOMRES_EQUAL_EMPTY",
+			"SIMP_DOMSUB_EQUAL_EMPTY", "SIMP_RANRES_EQUAL_EMPTY",
+			"SIMP_RANSUB_EQUAL_EMPTY", "SIMP_CONVERSE_EQUAL_EMPTY",
+			"SIMP_RELIMAGE_EQUAL_EMPTY", "SIMP_OVERL_EQUAL_EMPTY",
+			"SIMP_DPROD_EQUAL_EMPTY", "SIMP_PPROD_EQUAL_EMPTY",
+			"SIMP_ID_EQUAL_EMPTY", "SIMP_PRJ1_EQUAL_EMPTY",
+			"SIMP_PRJ2_EQUAL_EMPTY"})
+	private Predicate rewriteEqualsEmptySet(Predicate predicate,
+			Expression expression) {
+		final FormulaFactory ff = predicate.getFactory();
+		final Predicate result;
+	    %match (Expression expression) {
+
+			/**
+			 * SIMP_SETENUM_EQUAL_EMPTY
+			 * {A...B} = ∅ == ⊥
+			 */
+			SetExtension(eList(_, _*)) -> {
+				result = DLib.False(ff);
+				trace(predicate, result, "SIMP_SETENUM_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_BINTER_SING_EQUAL_EMPTY
+			 * A ∩ {a} = ∅ == ¬ a ∈ A
+			 */
+			BInter(eList(A, SetExtension(eList(a)))) -> {
+				result = makeUnaryPredicate(
+						NOT, makeRelationalPredicate(IN, `a, `A));
+				trace(predicate, result, "SIMP_BINTER_SING_EQUAL_EMPTY");
+				return result;
+	        }
+
+            /**
+			 * SIMP_BINTER_SETMINUS_EQUAL_EMPTY
+			 * (A ∖ B) ∩ C == (A ∩ C) ∖ B = ∅
+			 */
+            BInter(eList(SetMinus(A, B), C)) -> {
+				result = makeIsEmpty(makeBinaryExpression(SETMINUS,
+						makeAssociativeExpression(BINTER, `A, `C),
+						`B));
+				trace(predicate, result, "SIMP_BINTER_SETMINUS_EQUAL_EMPTY");
+				return result;
+	         }
+
+			/**
+			 * SIMP_BUNION_EQUAL_EMPTY
+			 * A ∪...∪ B = ∅ == A=∅ ∧...∧ B=∅
+			 */
+			BUnion(children) -> {
+				result = makeAreAllEmpty(`children);
+				trace(predicate, result, "SIMP_BUNION_EQUAL_EMPTY");
+				return result;
+			}
+
+            /**
+             * SIMP_SETMINUS_EQUAL_EMPTY
+             *    A ∖ B = ∅ == A ⊆ B
+             */
+			SetMinus(A, B) -> {
+				result = makeRelationalPredicate(SUBSETEQ, `A, `B);
+				trace(predicate, result, "SIMP_SETMINUS_EQUAL_EMPTY");
+				return result;
+			}
+
+            /**
+             * SIMP_POW_EQUAL_EMPTY
+             *    ℙ(S) = ∅ == ⊥
+             */
+			Pow(_) -> {
+				result = DLib.False(ff);
+				trace(predicate, result, "SIMP_POW_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+             * SIMP_POW1_EQUAL_EMPTY
+             *    ℙ1(S) = ∅ == S=∅
+             */
+			Pow1(S) -> {
+				result = makeIsEmpty(`S);
+				trace(predicate, result, "SIMP_POW1_EQUAL_EMPTY");
+				return result;
+			}
+
+            /**
+             * SIMP_KUNION_EQUAL_EMPTY
+             *    union(S) = ∅ == S⊆{∅}
+             */
+			Union(S) -> {
+				final SetExtension singleton = makeSetExtension(
+						makeEmptySet(ff, expression.getType()));
+				result = makeRelationalPredicate(SUBSETEQ, `S, singleton);
+				trace(predicate, result, "SIMP_KUNION_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+             * SIMP_QUNION_EQUAL_EMPTY
+             *    (⋃x· P(x) ∣ E(x)) = ∅ == ∀x· P(x) ⇒ E(x)=∅
+             */
+			Qunion(bidl, P, E) -> {
+				final Predicate pred = makeBinaryPredicate(LIMP,
+						`P,
+						makeIsEmpty(`E));
+				result = makeQuantifiedPredicate(FORALL, `bidl, pred);
+				trace(predicate, result, "SIMP_QUNION_EQUAL_EMPTY");
+				return result;
+			}
+
+            /**
+			 * SIMP_NATURAL_EQUAL_EMPTY
+			 *    ℕ = ∅ == ⊥
+			 */
+			Natural() -> {
+				result = DLib.False(ff);
+				trace(predicate, result, "SIMP_NATURAL_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_NATURAL1_EQUAL_EMPTY
+			 *    ℕ1 = ∅ == ⊥
+			 */
+			Natural1() -> {
+				result = DLib.False(ff);
+				trace(predicate, result, "SIMP_NATURAL1_EQUAL_EMPTY");
+				return result;
+			}
+
+            /**
+             * SIMP_CPROD_EQUAL_EMPTY
+             *    S × T = ∅ == S=∅ ∨ T=∅
+             */
+            Cprod(S, T) -> {
+				result = makeAssociativePredicate(LOR,
+						makeIsEmpty(`S),
+						makeIsEmpty(`T));
+				trace(predicate, result, "SIMP_CPROD_EQUAL_EMPTY");
+				return result;
+            }
+
+            /**
+			 * SIMP_UPTO_EQUAL_EMPTY
+			 *    i‥j = ∅ == i > j
+			 */
+			UpTo(i, j) -> {
+				result = makeRelationalPredicate(GT, `i, `j);
+				trace(predicate, result, "SIMP_UPTO_EQUAL_EMPTY");
+				return result;
+			}
+
+            /**
+			 * SIMP_SREL_EQUAL_EMPTY
+			 *    A  B = ∅ == A=∅  ∧ ¬ B=∅
+			 */
+			Srel(A, B) -> {
+				result = makeAssociativePredicate(LAND,
+						makeIsEmpty(`A),
+						makeIsNotEmpty(`B));
+				trace(predicate, result, "SIMP_SREL_EQUAL_EMPTY");
+				return result;
+			}
+
+            /**
+			 * SIMP_STREL_EQUAL_EMPTY
+			 *    A  B = ∅ == A=∅  ⇔ ¬ B=∅
+			 */
+			Strel(A, B) -> {
+				result = makeBinaryPredicate(LEQV,
+						makeIsEmpty(`A),
+						makeIsNotEmpty(`B));
+				trace(predicate, result, "SIMP_STREL_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_DOM_EQUAL_EMPTY
+			 *    dom(r) = ∅ == r = ∅
+			 */
+			Dom(r) -> {
+				result = makeIsEmpty(`r);
+				trace(predicate, result, "SIMP_DOM_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_RAN_EQUAL_EMPTY
+			 *    ran(r) = ∅ == r = ∅
+			 */
+			Ran(r) -> {
+				result = makeIsEmpty(`r);
+				trace(predicate, result, "SIMP_RAN_EQUAL_EMPTY");
+				return result;
+			 }
+
+			/**
+			 * SIMP_FCOMP_EQUAL_EMPTY
+			 *    p ; q = ∅ == (ran(p) ∩ dom(q) = ∅)
+			 */
+			Fcomp(eList(p, q)) -> {
+				result = makeEmptyInter(
+							makeUnaryExpression(KRAN, `p),
+							makeUnaryExpression(KDOM, `q));
+				trace(predicate, result, "SIMP_FCOMP_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_BCOMP_EQUAL_EMPTY
+			 *    p ∘ q = ∅ == (ran(q) ∩ dom(p) = ∅)
+			 */
+			Bcomp(eList(p, q)) -> {
+				result = makeEmptyInter(
+							makeUnaryExpression(KRAN, `q),
+							makeUnaryExpression(KDOM, `p));
+				trace(predicate, result, "SIMP_BCOMP_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_DOMRES_EQUAL_EMPTY
+			 *    S ◁ r = ∅ == (dom(r) ∩ S = ∅)
+			 */
+			DomRes(S, r) -> {
+				result = makeEmptyInter(makeUnaryExpression(KDOM, `r), `S);
+				trace(predicate, result, "SIMP_DOMRES_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_DOMSUB_EQUAL_EMPTY
+			 *    S ⩤ r = ∅ ⇔ dom(r) ⊆ S
+			 */
+			DomSub(S, r) -> {
+				result = makeRelationalPredicate(
+						SUBSETEQ,
+						makeUnaryExpression(KDOM, `r),
+						`S);
+				trace(predicate, result, "SIMP_DOMSUB_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_RANRES_EQUAL_EMPTY
+			 *    r ▷ S = ∅ == (ran(r) ∩ S = ∅)
+			 */
+			RanRes(r, S) -> {
+				result = makeEmptyInter(makeUnaryExpression(KRAN, `r), `S);
+				trace(predicate, result, "SIMP_RANRES_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_RANSUB_EQUAL_EMPTY
+			 *    r ⩥ S = ∅ ⇔ ran(r) ⊆ S
+			 */
+			RanSub(r, S) -> {
+				result = makeRelationalPredicate(SUBSETEQ,
+						makeUnaryExpression(KRAN, `r),
+						`S);
+				trace(predicate, result, "SIMP_RANSUB_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_CONVERSE_EQUAL_EMPTY
+			 *    r∼ = ∅ == r = ∅
+			 */
+			Converse(r) -> {
+				result = makeIsEmpty(`r);
+				trace(predicate, result, "SIMP_CONVERSE_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_RELIMAGE_EQUAL_EMPTY
+             * 	  r[S] = ∅ == S ◁ r = ∅
+			 */
+			RelImage(r, S) -> {
+				result = makeIsEmpty(makeBinaryExpression(DOMRES, `S, `r));
+				trace(predicate, result, "SIMP_RELIMAGE_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_OVERL_EQUAL_EMPTY
+             *   r  ...  s = ∅ == r=∅ ∧ ... ∧ s=∅
+			 */
+			Ovr(children) -> {
+				result = makeAreAllEmpty(`children);
+				trace(predicate, result, "SIMP_OVERL_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_DPROD_EQUAL_EMPTY
+             * 	  p ⊗ q = ∅ ⇔ (dom(p) ∩ dom(q) = ∅)
+			 */
+			Dprod(p, q) -> {
+				result = makeEmptyInter(
+							makeUnaryExpression(KDOM, `p),
+							makeUnaryExpression(KDOM, `q));
+				trace(predicate, result, "SIMP_DPROD_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_PPROD_EQUAL_EMPTY
+             * 	  p ∥ q = ∅ == p=∅ ∨ q=∅
+			 */
+			Pprod(p, q) -> {
+				result = makeAssociativePredicate(LOR,
+						makeIsEmpty(`p),
+						makeIsEmpty(`q));
+				trace(predicate, result, "SIMP_PPROD_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_ID_EQUAL_EMPTY
+             * 	  id = ∅ == ⊥
+			 */
+			IdGen() -> {
+				result = DLib.False(ff);
+				trace(predicate, result, "SIMP_ID_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_PRJ1_EQUAL_EMPTY
+             * 	  prj1 = ∅ == ⊥
+			 */
+			Prj1Gen() -> {
+				result = DLib.False(ff);
+				trace(predicate, result, "SIMP_PRJ1_EQUAL_EMPTY");
+				return result;
+			}
+
+			/**
+			 * SIMP_PRJ2_EQUAL_EMPTY
+             * 	  prj2 = ∅ == ⊥
+			 */
+			Prj2Gen() -> {
+				result = DLib.False(ff);
+				trace(predicate, result, "SIMP_PRJ2_EQUAL_EMPTY");
+				return result;
+			}
+	    }
+	    return null;
 	}
 
     private static boolean isDTConstructor(ExtendedExpression expr) {

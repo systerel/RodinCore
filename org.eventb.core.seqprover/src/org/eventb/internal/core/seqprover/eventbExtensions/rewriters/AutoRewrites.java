@@ -29,12 +29,13 @@ public abstract class AutoRewrites extends AbstractAutoRewrites implements
 	 * 
 	 * - First create a new Level in the enum below - Then create a new subclass
 	 * of this class. - Don't forget to also change the value of DEFAULT below.
+	 * - Update plugin.xml to declare the new level.
 	 */
 
 	/**
 	 * Default instance of this family of reasoners.
 	 */
-	public static final IReasoner DEFAULT = new AutoRewritesL3();
+	public static final IReasoner DEFAULT = new AutoRewritesL4();
 
 	public static final String REASONER_ID = SequentProver.PLUGIN_ID
 			+ ".autoRewrites";
@@ -44,7 +45,7 @@ public abstract class AutoRewrites extends AbstractAutoRewrites implements
 		// The parameter is the version of the associated level.
 		// Names of existing levels must not be changed to ensure backward
 		// compatibility of reasoner ids.
-		L0(4), L1(1), L2(1), L3(1);
+		L0(4), L1(1), L2(1), L3(1), L4(0);
 
 		public static final Level LATEST = Level.latest();
 

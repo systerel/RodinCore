@@ -148,6 +148,10 @@
             id="autoRewritesL3"
             name="%autoRewritesName"/>
       <reasoner
+            class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewritesL4"
+            id="autoRewritesL4"
+            name="%autoRewritesName"/>
+      <reasoner
             class="org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites"
             id="typeRewrites"
             name="%typeRewritesName"/>
