@@ -475,6 +475,15 @@
                id="fr.systerel.editor.addSiblingPossibilities">
          </dynamic>
          <separator
+               name="fr.systerel.editor.RefreshSeparator"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.eclipse.ui.file.refresh"
+               label="Refresh"
+               style="push">
+         </command>
+         <separator
                name="fr.systerel.editor.CreationSeparator"
                visible="true">
          </separator>
@@ -751,6 +760,15 @@
                      </iterate>
                   </with>
                </visibleWhen>
+            </command>
+         </toolbar>
+         <toolbar
+               id="fr.systerel.editor.editorBasicCommands"
+               label="Rodin Editor Basic Commands">
+            <command
+                  commandId="org.eclipse.ui.file.refresh"
+                  label="Refresh"
+                  style="push">
             </command>
          </toolbar>
       </menuContribution>
