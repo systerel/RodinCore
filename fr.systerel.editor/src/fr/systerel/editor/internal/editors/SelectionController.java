@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package fr.systerel.editor.internal.editors;
 
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.convertEventToKeystroke;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.HANDLE_TYPE;
 import static org.eclipse.jface.bindings.keys.KeyStroke.NO_KEY;
 
 import java.util.ArrayList;
@@ -191,6 +192,12 @@ public class SelectionController implements MouseListener, VerifyListener,
 		if (selection.contains(offset)) {
 			if (styledText.dragDetect(e))
 				return;
+		}
+		final Interval inter = mapper.findInterval(offset);
+		if (inter != null && inter.getContentType().equals(HANDLE_TYPE)) {
+			clearSelection();
+			toggleSelection(offset);
+			return;
 		}
 		if (overlayEditor.isActive()) {
 			// the user clicked outside the overlay editor

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,6 +189,12 @@ public class RodinTextStream {
 	
 	public void appendPresentationTabs(ILElement e) {
 		addPresentationRegion(getTabs(level), e);
+	}
+	
+	public void appendElementHandle(ILElement element, ContentType contentType) {
+		// \u26ac is the handle character "⚬"
+		final String s = String.format("%s", "\t\u26ac\t");
+		addElementRegion(s, element, contentType, false);
 	}
 
 	public void incrementIndentation(int i) {

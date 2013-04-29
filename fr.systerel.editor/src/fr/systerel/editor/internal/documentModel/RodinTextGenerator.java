@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,11 @@ import static fr.systerel.editor.internal.presentation.RodinConfiguration.BOLD_I
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.BOLD_LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.COMMENT_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.CONTENT_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.HANDLE_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IDENTIFIER_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_CONTENT_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_HANDLE_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.LABEL_TYPE;
@@ -129,16 +131,15 @@ public class RodinTextGenerator {
 			} else {
 				stream.addKeywordRegion(childDesc.getPrefix(), e);
 			}
-			stream.incrementIndentation();
 			for (ILElement in : c) {
 				stream.appendLeftPresentationTabs(in);
+				stream.appendElementHandle(in, getContentType(in, IMPLICIT_HANDLE_TYPE, HANDLE_TYPE));
 				processElement(in);
 				traverse(mon, in);
 				if (in.getElementType() == IEvent.ELEMENT_TYPE) {
 					stream.appendLineSeparator(e);
 				}
 			}
-			stream.decrementIndentation();
 			final int length = stream.getLength() - start -1;
 			if (start != -1 && stream.getLevel() <= MIN_LEVEL) {
 				mapper.addEditorSection(rel.getChildType(), start, length);
