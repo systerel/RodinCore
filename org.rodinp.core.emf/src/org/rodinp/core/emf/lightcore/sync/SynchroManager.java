@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.rodinp.core.emf.lightcore.sync;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
@@ -105,43 +107,61 @@ public class SynchroManager {
 	 *            the IInternalElement counterpart of the parent
 	 */
 	public static void implicitLoad(LightElement parent,
-			final IInternalElement iParent) {
+			IInternalElement iParent) {
+		final List<IInternalElement> implicitChildren = getImplicitChildren(iParent);
+		final Map<IInternalElement, LightElement> known = SynchroUtils
+				.getImplicitChildren(parent);
 		try {
-			final List<ICoreImplicitChildProvider> providers = ImplicitChildProviderManager
-					.getProvidersFor(iParent.getElementType());
 			parent.eSetDeliver(false);
-			for (final ICoreImplicitChildProvider p : providers) {
-				final List<? extends IInternalElement> implicitChildren = ImplicitChildrenComputer
-						.safeGetImplicitChildren(iParent, p);
-				int insertionPosition = 0;
-				for (IInternalElement e : implicitChildren) {
-					final LightElement eRoot = parent.getERoot();
-					final ImplicitElement implicit = loadImplicitElementFor(e,
-							eRoot);
-					final LightElement original = SynchroUtils
-							.findChildElement(e, parent);
-					final EList<LightElement> eChildren = parent.getEChildren();
-					if (original != null) {
-						reloadImplicitElement(original, implicit);
-						final int childPosition = parent
-								.getChildPosition(original);
-						if (childPosition >= 0
-								&& insertionPosition < eChildren.size()
-								&& childPosition != insertionPosition) {
-							parent.moveChild(insertionPosition, childPosition);
-						}
-					} else {
-						if (insertionPosition > eChildren.size())
-							eChildren.add(implicit);
-						else
-							eChildren.add(insertionPosition, implicit);
+			final LightElement eRoot = parent.getERoot();
+			final EList<LightElement> eChildren = parent.getEChildren();
+			int insertionPosition = 0;
+			for (IInternalElement e : implicitChildren) {
+				final LightElement original = known.remove(e);
+				final ImplicitElement implicit = loadImplicitElementFor(e,
+						eRoot);
+				if (original != null) {
+					reloadImplicitElement(original, implicit);
+					final int childPosition = parent.getChildPosition(original);
+					if (childPosition >= 0
+							&& insertionPosition < eChildren.size()
+							&& childPosition != insertionPosition) {
+						parent.moveChild(insertionPosition, childPosition);
 					}
-					insertionPosition++;
+				} else {
+					if (insertionPosition > eChildren.size())
+						eChildren.add(implicit);
+					else
+						eChildren.add(insertionPosition, implicit);
 				}
+				insertionPosition++;
 			}
+			// Remove all remaining implicit children which are no longer
+			// present
+			eChildren.removeAll(known.values());
 		} finally {
 			parent.eSetDeliver(true);
 		}
+	}
+
+	/**
+	 * Computes all the implicit children for the given element.
+	 * 
+	 * @param iParent
+	 *            some internal element
+	 * @return the list of all implicit children of the given element
+	 */
+	private static List<IInternalElement> getImplicitChildren(
+			IInternalElement iParent) {
+		final List<IInternalElement> result = new ArrayList<IInternalElement>();
+		final List<ICoreImplicitChildProvider> providers = ImplicitChildProviderManager
+				.getProvidersFor(iParent.getElementType());
+		for (final ICoreImplicitChildProvider p : providers) {
+			final List<? extends IInternalElement> children = ImplicitChildrenComputer
+					.safeGetImplicitChildren(iParent, p);
+			result.addAll(children);
+		}
+		return result;
 	}
 
 	private static class ImplicitChildrenComputer {

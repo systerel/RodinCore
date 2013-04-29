@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.rodinp.core.emf.lightcore.LightcoreFactory;
 import org.rodinp.core.emf.lightcore.sync.SynchroManager;
 import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
-public abstract class ElementOperation {
+public abstract class ElementOperation implements Runnable {
 
 	public static enum ElementOperationType {
 
@@ -60,7 +60,7 @@ public abstract class ElementOperation {
 		}
 
 		@Override
-		public void perform() {
+		public void run() {
 			if (!(element instanceof IInternalElement))
 				return;
 			final InternalElement el = LightcoreFactory.eINSTANCE
@@ -85,7 +85,7 @@ public abstract class ElementOperation {
 				}
 				for (IRodinElement child : ((IInternalElement) element)
 						.getChildren()) {
-					new AddElementOperation(child, root).perform();
+					new AddElementOperation(child, root).run();
 				}
 			} catch (RodinDBException e) {
 				Messages.dbOperationError(e.getMessage());
@@ -100,7 +100,7 @@ public abstract class ElementOperation {
 			super(ElementOperationType.REORDER, element, root);
 		}
 
-		public void perform() {
+		public void run() {
 			final IRodinElement parent = element.getParent();
 			final LightElement toMove = findElement(element, root);
 			if (toMove == null)
@@ -124,7 +124,7 @@ public abstract class ElementOperation {
 		}
 
 		@Override
-		public void perform() {
+		public void run() {
 			final LightElement found = findElement(element, root);
 			if (element instanceof IInternalElement && found != null)
 				SynchroUtils
@@ -140,7 +140,7 @@ public abstract class ElementOperation {
 		}
 
 		@Override
-		public void perform() {
+		public void run() {
 			LightElement found = findElement(element, root);
 			if (found != null) {
 				if (found.isEIsRoot()) {
@@ -166,7 +166,8 @@ public abstract class ElementOperation {
 					root);
 		}
 
-		public void perform() {
+		@Override
+		public void run() {
 			recursiveImplicitLoadFromRoot();
 			// send a notification to update the root
 			final ImplicitElement implicitStub = LightcoreFactory.eINSTANCE
@@ -209,8 +210,6 @@ public abstract class ElementOperation {
 		this.element = element;
 		this.type = type;
 	}
-
-	public abstract void perform();
 
 	public String getType() {
 		return type.getKind();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.rodinp.core.emf.lightcore.adapters;
 
+import static org.rodinp.core.emf.lightcore.adapters.dboperations.OperationProcessor.submit;
+
 import org.eclipse.emf.common.notify.Adapter;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDB;
@@ -19,7 +21,6 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.lightcore.LightElement;
-import org.rodinp.core.emf.lightcore.adapters.dboperations.DeltaProcessManager;
 import org.rodinp.core.emf.lightcore.adapters.dboperations.ElementOperation;
 
 /**
@@ -47,7 +48,7 @@ public class ImplicitDeltaProcessor {
 	public void processDelta(final IRodinElementDelta delta)
 			throws RodinDBException {
 		if (traverseDelta(delta)) {
-			DeltaProcessManager.getDefault().enqueueOperation(
+			submit(
 					new ElementOperation.RecalculateImplicitElementOperation(
 							delta.getElement(), root));
 		}

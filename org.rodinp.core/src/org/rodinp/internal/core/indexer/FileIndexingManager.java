@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinDBStatus;
 import org.rodinp.core.IRodinDBStatusConstants;
@@ -51,23 +49,17 @@ public class FileIndexingManager {
 		final List<IIndexer> indexers = indexerRegistry.getIndexersFor(file);
 		final Set<IRodinFile> result = new HashSet<IRodinFile>();
 		
-		final ISchedulingRule fileRule = file.getSchedulingRule();
-		try {
-			Job.getJobManager().beginRule(fileRule, monitor);
-			boolean valid = false;
-			for (IIndexer indexer : indexers) {
-				final boolean success = addDependencies(file, indexer, result);
-				if (!success)
-					break;
-				valid = true;
-			}
-			if (valid) {
-				return result;
-			} else {
-				throw new IndexingException();
-			}
-		} finally {
-			Job.getJobManager().endRule(fileRule);
+		boolean valid = false;
+		for (IIndexer indexer : indexers) {
+			final boolean success = addDependencies(file, indexer, result);
+			if (!success)
+				break;
+			valid = true;
+		}
+		if (valid) {
+			return result;
+		} else {
+			throw new IndexingException();
 		}
 	}
 
@@ -129,21 +121,15 @@ public class FileIndexingManager {
 		final IndexerRegistry indexerRegistry = IndexerRegistry.getDefault();
 		final List<IIndexer> indexers = indexerRegistry.getIndexersFor(file);
 		IIndexingResult prevResult = IndexingResult.failed(file);
-
-		final ISchedulingRule fileRule = file.getSchedulingRule();
-		try {
-			Job.getJobManager().beginRule(fileRule, monitor);
-			for (IIndexer indexer : indexers) {
-				final IIndexingResult result = doIndexing(indexer, bridge);
-				if (!result.isSuccess()) {
-					return prevResult;
-				}
-				prevResult = result;
+		
+		for (IIndexer indexer : indexers) {
+			final IIndexingResult result = doIndexing(indexer, bridge);
+			if (!result.isSuccess()) {
+				return prevResult;
 			}
-			return prevResult;
-		} finally {
-			Job.getJobManager().endRule(fileRule);
+			prevResult = result;
 		}
+		return prevResult;
 	}
 
 	private IIndexingResult doIndexing(IIndexer indexer,

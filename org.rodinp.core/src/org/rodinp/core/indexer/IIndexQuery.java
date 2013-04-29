@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,11 +94,6 @@ public interface IIndexQuery {
 	 * To ensure accurate results, clients should call this method before
 	 * querying the index.
 	 * </p>
-	 * <p>
-	 * WARNING: The calling thread must <strong>not hold any lock on an Eclipse
-	 * resource or part of the Rodin database</strong> when calling this method,
-	 * otherwise <strong>deadlock</strong> can happen.
-	 * </p>
 	 * 
 	 * @throws InterruptedException
 	 *             if the current thread is interrupted before or while it is
@@ -112,11 +107,6 @@ public interface IIndexQuery {
 	 * <p>
 	 * To ensure accurate results, clients should call this method before
 	 * querying the index.
-	 * </p>
-	 * <p>
-	 * WARNING: The calling thread must <strong>not hold any lock on an Eclipse
-	 * resource or part of the Rodin database</strong> when calling this method,
-	 * otherwise <strong>deadlock</strong> can happen.
 	 * </p>
 	 * 
 	 * @param monitor
