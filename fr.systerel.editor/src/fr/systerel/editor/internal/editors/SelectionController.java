@@ -206,40 +206,37 @@ public class SelectionController implements MouseListener, VerifyListener,
 		final int offset = getOffset(e);
 		if (offset < 0)
 			return;
-		if ((e.stateMask & SWT.MOD1) != 0) {
-			toggleSelection(offset);
-			return;
-		}
 		// Button 3 is the right button
+		// Filtering event to display the context menu
 		if (e.button == 3) {
-			return;
-		}
-		if ((e.stateMask & SWT.MOD2) != 0) {
-				selectZone(clickedOffset, offset);
-				return;
-		}
-		clickedOffset = offset;
-		if ((e.stateMask & SWT.MOD1) != 0) {
-			toggleSelection(offset);
 			return;
 		}
 		if (selection.contains(offset)) {
 			if (styledText.dragDetect(e))
 				return;
 		}
-		final Interval inter = mapper.findInterval(offset);
-		if (inter != null && inter.getContentType().equals(HANDLE_TYPE)) {
-			clearSelection();
+		if ((e.stateMask & SWT.MOD1) != 0) {
 			toggleSelection(offset);
 			return;
 		}
+		if ((e.stateMask & SWT.MOD2) != 0) {
+			selectZone(clickedOffset, offset);
+			return;
+		}
+		clickedOffset = offset;
+		clearSelection();
 		if (overlayEditor.isActive()) {
 			// the user clicked outside the overlay editor
 			// as this listener is on the main text therefore
 			// we quit overlay edition
 			overlayEditor.saveAndExit(false);
+		}
+		final Interval inter = mapper.findInterval(offset);
+		if (inter != null && inter.getContentType().equals(HANDLE_TYPE)) {
+			toggleSelection(offset);
+			return;
 		} else {
-			overlayEditor.showAtOffset(getOffset(e));
+			overlayEditor.showAtOffset(offset);
 		}
 		resetSelection(offset);
 	}
