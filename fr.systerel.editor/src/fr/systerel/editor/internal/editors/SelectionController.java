@@ -184,6 +184,15 @@ public class SelectionController implements MouseListener, VerifyListener,
 		}
 	}
 	
+	private boolean handleHandleSelection(final int offset) {
+		final Interval inter = mapper.findInterval(offset);
+		if (inter != null && inter.getContentType().equals(HANDLE_TYPE)) {
+			toggleSelection(offset);
+			return true;
+		}
+		return false;
+	}
+
 	private EditorElement[] keepTopLevelElements(EditorElement[] editElems) {
 		final List<ILElement> parents = new ArrayList<ILElement>();
 		for (EditorElement elem : editElems) {
@@ -231,9 +240,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 			// we quit overlay edition
 			overlayEditor.saveAndExit(false);
 		}
-		final Interval inter = mapper.findInterval(offset);
-		if (inter != null && inter.getContentType().equals(HANDLE_TYPE)) {
-			toggleSelection(offset);
+		if (handleHandleSelection(offset)) {
 			return;
 		} else {
 			overlayEditor.showAtOffset(offset);
@@ -328,7 +335,11 @@ public class SelectionController implements MouseListener, VerifyListener,
 		final KeyStroke keystroke = convertEventToKeystroke(event);
 		if (keystroke.getNaturalKey() == CR
 				&& keystroke.getModifierKeys() == NO_KEY) {
-			overlayEditor.showAtOffset(styledText.getCaretOffset());
+			final int offset = styledText.getCaretOffset();
+			if (offset >= 0 && handleHandleSelection(offset)) {
+				return;
+			}
+			overlayEditor.showAtOffset(offset);
 		}
 	}
 
