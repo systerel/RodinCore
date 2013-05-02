@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
@@ -31,6 +32,56 @@ public class DeltaProcessor {
 	
 	public DeltaProcessor(IRodinElementDelta delta) {
 		processDelta(delta);
+	}
+
+	/**
+	 * Returns the model element of the given element.
+	 * <p>
+	 * <ul>
+	 * <li>If it is a project, the element itself is returned.</li>
+	 * <li>If it is either a file or a root of a context or machine, the root is
+	 * returned.</li>
+	 * <li><code>null</code> is returned in all other cases.</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param element
+	 *            an element
+	 * @return a root or project element, or <code>null</code>
+	 */
+	private static IRodinElement getModelElement(IRodinElement element) {
+		if (element instanceof IRodinProject) {
+			return element;
+		}
+		
+		final IInternalElement root;
+		if (element instanceof IRodinFile) {
+			root = ((IRodinFile) element).getRoot();
+		} else if (element instanceof IEventBRoot) {
+			root = (IInternalElement) element;
+		} else {
+			return null;
+		}
+		
+		if (root instanceof IContextRoot || root instanceof IMachineRoot) {
+			return root;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Returns the parent to refresh if the given element has been removed.
+	 * 
+	 * @param element
+	 *            an element
+	 * @return a parent element
+	 */
+	private static IRodinElement getParentToRefresh(IRodinElement element) {
+		if (element instanceof IEventBRoot) {
+			return element.getRodinProject();
+		}
+		return element.getParent();
 	}
 
 	/**
@@ -49,43 +100,11 @@ public class DeltaProcessor {
 		}
 
 		if (kind == IRodinElementDelta.REMOVED) {
-			if (element instanceof IRodinProject) {
-				addToRemove(element);
-				// This will update everything.
-				addToRefresh(element.getRodinDB());
-			} else {
-				if (element instanceof IRodinFile)  {
-					IRodinFile file = (IRodinFile) element;
-					//remove the context from the model
-					if (file.getRoot() instanceof IContextRoot) {
-						addToRemove(file.getRoot());
-						addToRefresh(element.getRodinProject());
-					}
-					//remove the machine from the model
-					if (file.getRoot() instanceof IMachineRoot) {
-						addToRemove(file.getRoot());
-						addToRefresh(element.getRodinProject());
-					}
-				}
-				//remove the context from the model
-				if (element instanceof IContextRoot) {
-					addToRemove(element);
-				}
-				//remove the machine from the model
-				if (element instanceof IMachineRoot) {
-					addToRemove(element);
-				}
-
-				
-				//add the containing project to refresh.
-				// if it is a root 
-				if (element instanceof IEventBRoot) {
-					addToRefresh(element.getRodinProject());
-				//otherwise add the parent to refresh
-				} else {
-					addToRefresh(element.getParent());
-				}
+			final IRodinElement modelElement = getModelElement(element);
+			if (modelElement != null) {
+				addToRemove(modelElement);
 			}
+			addToRefresh(getParentToRefresh(element));
 			return;
 		}
 
