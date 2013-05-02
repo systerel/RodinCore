@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinElementDelta;
 import org.rodinp.core.IRodinFile;
@@ -53,38 +54,34 @@ public class DeltaProcessor {
 				addToRemove(element);
 				// This will update everything.
 				addToRefresh(element.getRodinDB());
-			} else {
-				if (element instanceof IRodinFile)  {
-					IRodinFile file = (IRodinFile) element;
-					//remove the context from the model
-					if (file.getRoot() instanceof IContextRoot) {
-						addToRemove(file.getRoot());
-						addToRefresh(element.getRodinProject());
-					}
-					//remove the machine from the model
-					if (file.getRoot() instanceof IMachineRoot) {
-						addToRemove(file.getRoot());
-						addToRefresh(element.getRodinProject());
-					}
+			} else if (element instanceof IRodinFile) {
+				final IRodinFile file = (IRodinFile) element;
+				final IInternalElement root = file.getRoot();
+				if (root instanceof IContextRoot) {
+					// remove the context from the model
+					addToRemove(root);
+				} else if (root instanceof IMachineRoot) {
+					// remove the machine from the model
+					addToRemove(root);
 				}
-				//remove the context from the model
-				if (element instanceof IContextRoot) {
-					addToRemove(element);
-				}
-				//remove the machine from the model
-				if (element instanceof IMachineRoot) {
-					addToRemove(element);
-				}
-
-				
-				//add the containing project to refresh.
-				// if it is a root 
-				if (element instanceof IEventBRoot) {
+				if (root instanceof IEventBRoot) {
+					// add the containing project to refresh.
+					// if it is a root
 					addToRefresh(element.getRodinProject());
-				//otherwise add the parent to refresh
-				} else {
-					addToRefresh(element.getParent());
 				}
+			} else if (element instanceof IContextRoot) {
+				// remove the context from the model
+				addToRemove(element);
+			} else if (element instanceof IMachineRoot) {
+				// remove the machine from the model
+				addToRemove(element);
+			} else if (element instanceof IEventBRoot) {
+				// add the containing project to refresh.
+				// if it is a root
+				addToRefresh(element.getRodinProject());
+			} else {
+				// otherwise add the parent to refresh
+				addToRefresh(element.getParent());
 			}
 			return;
 		}
