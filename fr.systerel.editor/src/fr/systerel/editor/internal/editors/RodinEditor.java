@@ -423,10 +423,21 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	/**
 	 * Aborts the current overlay edition. The modification are not saved. This
 	 * has no effect if the overlay is inactive.
+	 * <p>
+	 * This method can be called from outside the UI thred.
+	 * </p>
 	 */
 	public void abordEdition() {
-		if (overlayEditor.isActive()) {
-			overlayEditor.abortEdition(true);
+		if (styledText != null && !styledText.isDisposed()) {
+			final Display display = styledText.getDisplay();
+			display.syncExec(new Runnable() {
+				public void run() {
+					if (overlayEditor.isActive()) {
+						overlayEditor.abortEdition(true);
+					}
+
+				};
+			});
 		}
 	}
 
