@@ -330,22 +330,27 @@
             name="Move Down">
       </command>
       <command
+            categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.abortEditionFreeSelection"
-            name="Abort edition and free selected items">
+            name="Cancel edition / Free selection">
       </command>
       <command
+            categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.traverseNext"
             name="Traverse to the next editable interval">
       </command>
       <command
+            categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.traversePrevious"
             name="Traverse to the previous editable interval">
       </command>
       <command
+            categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.showAddChild"
             name="Show Add Child Menu">
       </command>
       <command
+            categoryId="fr.systerel.editor.editionCategory"
             id="fr.systerel.editor.showAddSibling"
             name="Show Add Sibling Menu">
       </command>
@@ -357,6 +362,7 @@
             name="Renaming Commands">
       </category>
       <command
+            categoryId="fr.systerel.editor.renamingCommandsCategory"
             id="fr.systerel.editor.rename.customizePrefixes"
             name="Customize prefixes...">
       </command>
