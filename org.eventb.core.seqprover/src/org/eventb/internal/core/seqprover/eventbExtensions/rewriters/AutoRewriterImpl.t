@@ -1199,6 +1199,8 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			/**
 			 * SIMP_SPECIAL_EQUAL_REL
 			 *    A ↔ B = ∅ == ⊥
+			 *    A ⇸ B = ∅ == ⊥
+			 *    A ⤔ B = ∅ == ⊥
 			 */
 			Equal((Rel | Pfun | Pinj)(_, _), EmptySet()) -> {
 				if (level2) {
