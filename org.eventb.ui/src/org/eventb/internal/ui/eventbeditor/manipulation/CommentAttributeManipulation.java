@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - added history support
  *     Systerel - made IAttributeFactory generic
+ *     Systerel - remove empty comment attributes within setValue()
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.manipulation;
 
@@ -39,6 +40,10 @@ public class CommentAttributeManipulation extends AbstractAttributeManipulation 
 	@Override
 	public void setValue(IRodinElement element, String newValue,
 			IProgressMonitor monitor) throws RodinDBException {
+		if (newValue.isEmpty()) {
+			asCommented(element).removeAttribute(COMMENT_ATTRIBUTE, monitor);
+			return;
+		}
 		asCommented(element).setComment(newValue, monitor);
 	}
 
