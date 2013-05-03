@@ -39,18 +39,28 @@ import fr.systerel.editor.internal.editors.RodinEditor;
  */
 public class PresentationUpdater extends EContentAdapter {
 
-	private final DocumentMapper mapper;
-	private final RodinEditor editor;
+	private static class NotificationProcessor implements Runnable {
 
-	private final BlockingQueue<Notification> notifications = new LinkedBlockingQueue<Notification>();
-	
-	private final Runnable processNotifications = new Runnable() {
-		
+		private final RodinEditor editor;
+		private final DocumentMapper mapper;
+		private final BlockingQueue<Notification> notifications;
+
+		public NotificationProcessor(RodinEditor editor, DocumentMapper mapper) {
+			this.editor = editor;
+			this.mapper = mapper;
+			this.notifications = new LinkedBlockingQueue<Notification>();
+		}
+
+		public void schedule(Notification notification) {
+			notifications.add(notification);
+			Display.getDefault().asyncExec(this);
+		}
+
 		@Override
 		public void run() {
 			Collection<Notification> currentNotifications = new ArrayList<Notification>();
 			notifications.drainTo(currentNotifications);
-			
+
 			if (currentNotifications.isEmpty()) {
 				return;
 			}
@@ -63,76 +73,77 @@ public class PresentationUpdater extends EContentAdapter {
 					return;
 				}
 			}
-			
+
 			/*
 			 * Other cases where the editor can be finely synchronized:
-			 * attribute update. THIS IS A SECURITY TO MAINTAIN CONSISTENCY,
-			 * IF OTHER THINGS THAN THE EDITOR MODIFY THE RODIN DB.
+			 * attribute update. THIS IS A SECURITY TO MAINTAIN CONSISTENCY, IF
+			 * OTHER THINGS THAN THE EDITOR MODIFY THE RODIN DB.
 			 */
 			for (Notification notification : currentNotifications) {
-				final Object oldObject = notification.getOldValue();
-				final Object notifier = notification.getNotifier();
-				final boolean wasILElement = !(oldObject instanceof ILElement);
-				if (notifier instanceof ILElement && wasILElement) {
-					mapper.elementChanged((ILElement) notifier);
-				}
-				if (notifier instanceof ILAttribute) {
-					mapper.elementChanged(((ILAttribute) notifier)
-							.getOwner());
-				}
-				if (oldObject instanceof ILElement) {
-					mapper.elementChanged((ILElement) oldObject);
-				}
-				if (oldObject instanceof ILAttribute) {
-					mapper.elementChanged(((ILAttribute) oldObject)
-							.getOwner());
-				}
+				processNotification(notification);
 			}
 		}
-	};
+
+		private boolean performFullResyncIfNeeded(Notification notification) {
+			if ((notification.getEventType() == Notification.REMOVE && notification
+					.getOldValue() instanceof ILElement)
+					|| (notification.getEventType() == Notification.MOVE)) {
+				editor.resync(null, false);
+				return true;
+			}
+			if (notification.getEventType() == Notification.ADD
+					&& notification.getNewValue() instanceof ILElement) {
+				editor.resync(null, false,
+						(ILElement) notification.getNewValue());
+				return true;
+			}
+			return false;
+		}
+
+		private void processNotification(Notification notification) {
+			final Object oldObject = notification.getOldValue();
+			final Object notifier = notification.getNotifier();
+			final boolean wasILElement = !(oldObject instanceof ILElement);
+			if (notifier instanceof ILElement && wasILElement) {
+				mapper.elementChanged((ILElement) notifier);
+			}
+			if (notifier instanceof ILAttribute) {
+				mapper.elementChanged(((ILAttribute) notifier).getOwner());
+			}
+			if (oldObject instanceof ILElement) {
+				mapper.elementChanged((ILElement) oldObject);
+			}
+			if (oldObject instanceof ILAttribute) {
+				mapper.elementChanged(((ILAttribute) oldObject).getOwner());
+			}
+		}
+
+	}
+
+	private final NotificationProcessor processor;
 
 	public PresentationUpdater(RodinEditor editor, DocumentMapper mapper) {
-		this.editor = editor;
-		this.mapper = mapper;
-	}
-	
-	private static boolean isAboutImplicitElement(Notification notification) {
-		if (notification.getNewValue() instanceof ILElement
-				&& ((ILElement) notification.getNewValue()).isImplicit()) {
-			return true;
-		}
-		if (notification.getNotifier() instanceof ILElement
-				&& ((ILElement) notification.getNotifier()).isImplicit()) {
-			return true;
-		}
-		return false;
-	}
-	
-	private boolean performFullResyncIfNeeded(Notification notification) {
-		if ((notification.getEventType() == Notification.REMOVE && notification
-				.getOldValue() instanceof ILElement)
-				|| (notification.getEventType() == Notification.MOVE)) {
-			editor.resync(null, false);
-			return true;
-		}
-		if (notification.getEventType() == Notification.ADD
-				&& notification.getNewValue() instanceof ILElement) {
-			editor.resync(null, false, (ILElement) notification.getNewValue());
-			return true;
-		}
-		return false;
+		this.processor = new NotificationProcessor(editor, mapper);
 	}
 
 	@Override
 	public void notifyChanged(Notification notification) {
-		
-		if (isAboutImplicitElement(notification)) {
-			return; // we don't care about implicit elements
+		// Implicit elements are processed separately
+		if (!isAboutImplicitElement(notification)) {
+			processor.schedule(notification);
 		}
+	}
 
-		notifications.add(notification);
-		
-		Display.getDefault().asyncExec(processNotifications);
+	private static boolean isAboutImplicitElement(Notification notification) {
+		return isImplicit(notification.getNewValue())
+				|| isImplicit(notification.getNotifier());
+	}
+
+	private static boolean isImplicit(Object object) {
+		if (object instanceof ILElement) {
+			return ((ILElement) object).isImplicit();
+		}
+		return false;
 	}
 
 }
