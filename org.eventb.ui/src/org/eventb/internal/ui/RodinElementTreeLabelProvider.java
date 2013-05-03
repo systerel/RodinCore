@@ -45,17 +45,17 @@ public class RodinElementTreeLabelProvider extends
 		for (IMarkerDelta delta : rodinProblemMakerDeltas) {
 			Object element = RodinMarkerUtil.getElement(delta);
 			if (element != null && !elements.contains(element)) { 
-				elements.add(element);
 				final IContentProvider contentProvider = viewer.getContentProvider();
 				if (!(contentProvider instanceof ITreeContentProvider)) {
 					break;
 				}
 				ITreeContentProvider cp = (ITreeContentProvider) contentProvider;
-				element = cp.getParent(element);
-				while (element != null) {
+				
+				do {
 					elements.add(element);
 					element = cp.getParent(element);
 				}
+				while (element != null);
 			}
 		}
 		return elements;
