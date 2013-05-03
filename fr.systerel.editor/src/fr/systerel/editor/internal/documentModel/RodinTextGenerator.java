@@ -11,8 +11,9 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
-import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getAttributeDescs;
+import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getManipulation;
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getElementDesc;
+import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getNonBasicAttributeDescs;
 import static fr.systerel.editor.internal.documentModel.RodinTextStream.MIN_LEVEL;
 import static fr.systerel.editor.internal.documentModel.RodinTextStream.getTabs;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.BOLD_IMPLICIT_LABEL_TYPE;
@@ -45,7 +46,6 @@ import org.eventb.core.IExpressionElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
@@ -92,14 +92,13 @@ public class RodinTextGenerator {
 	}
 
 	private void traverseRoot(IProgressMonitor monitor, ILElement e) {
-		final IInternalElement element = e.getElement();
-		final IElementDesc desc = ElementDescRegistry.getInstance()
-				.getElementDesc(element);
+		final IElementDesc desc = getElementDesc(e);
 		stream.addSectionRegion(desc.getPrefix(), e);
 		stream.incrementIndentation();
 		stream.appendPresentationTabs(e, 1);
 		final TextAlignator sizer = new TextAlignator();
 		stream.appendAlignementTab(e);
+		final IInternalElement element = e.getElement();
 		stream.addLabelRegion(element.getElementName(), e);
 		sizer.append(element.getElementName());
 		processOtherAttributes(e, sizer);
@@ -173,13 +172,14 @@ public class RodinTextGenerator {
 	 */
 	private void processOtherAttributes(ILElement element, TextAlignator sizer) {
 		final IInternalElement rElement = element.getElement();
-		for (IAttributeDesc d : getAttributeDescs(element.getElementType())) {
+		for (IAttributeDesc d : getNonBasicAttributeDescs(element)) {
 			stream.addPresentationRegion(WHITESPACE, element);
 			sizer.append(WHITESPACE);
 			String value = "";
 			try {
 				final IAttributeManipulation manipulation = d.getManipulation();
-				if (!manipulation.hasValue(rElement, null)
+				if (!(d.getAttributeType() instanceof IAttributeType.String)
+						&& !manipulation.hasValue(rElement, null)
 						&& manipulation.getPossibleValues(rElement, null) != null) {
 					value = "--undefined--";
 				} else {
@@ -211,12 +211,13 @@ public class RodinTextGenerator {
 		sizer.append(WHITESPACE);
 	}
 
-	private void processStringEventBAttribute(ILElement element,
-			IAttributeType.String type, ContentType t, boolean multiline,
-			String alignmentStr) {
-		final String attribute = element.getAttribute(type);
+	private void processStringEventBAttribute(ILElement elem,
+			IAttributeType.String attrType, ContentType ct, boolean multiLine,
+			String alignStr) {
+		final String attribute = elem.getAttribute(attrType);
 		final String value = (attribute != null) ? attribute : "";
-		stream.addElementRegion(value, element, t, multiline, alignmentStr);
+		final IAttributeManipulation manip = getManipulation(elem, attrType);
+		stream.addElementRegion(value, elem, ct, manip, multiLine, alignStr);
 	}
 
 	private void processCommentedElement(ILElement element, TextAlignator sizer) {

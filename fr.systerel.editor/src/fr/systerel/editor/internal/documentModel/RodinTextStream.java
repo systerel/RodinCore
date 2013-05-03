@@ -79,17 +79,6 @@ public class RodinTextStream {
 	}
 
 	protected void addElementRegion(String text, ILElement element,
-			ContentType contentType, boolean multiLine) {
-		addElementRegion(text, element, contentType, null, multiLine, "");
-	}
-
-	protected void addElementRegion(String text, ILElement element,
-			ContentType contentType, boolean multiLine, String alignmentStr) {
-		addElementRegion(text, element, contentType, null, multiLine,
-				alignmentStr);
-	}
-
-	protected void addElementRegion(String text, ILElement element,
 			ContentType contentType, IAttributeManipulation manipulation,
 			boolean multiLine, String alignmentStr) {
 		final int start = builder.length();
@@ -115,31 +104,32 @@ public class RodinTextStream {
 	}
 
 	protected void addLabelRegion(String text, ILElement element) {
-		addElementRegion(text, element, LABEL_TYPE, false);
+		addElementRegion(text, element, LABEL_TYPE, null, false, text);
 	}
 
 	protected void addLeftPresentationRegion(String text, ILElement element) {
-		addElementRegion(text, element, LEFT_PRESENTATION_TYPE, false);
+		addElementRegion(text, element, LEFT_PRESENTATION_TYPE, null, false,
+				text);
 	}
 	
 	protected void addPresentationRegion(String text, ILElement element) {
-		addElementRegion(text, element, PRESENTATION_TYPE, false);
+		addElementRegion(text, element, PRESENTATION_TYPE, null, false, text);
 	}
 
 	protected void addCommentHeaderRegion(ILElement element) {
 		addElementRegion(COMMENT_HEADER_DELIMITER, element,
-				COMMENT_HEADER_TYPE, false);
+				COMMENT_HEADER_TYPE, null, false, null);
 	}
 
 	protected void addKeywordRegion(String title, ILElement element) {
 		appendPresentationTabs(element);
-		addElementRegion(title, element, KEYWORD_TYPE, false);
+		addElementRegion(title, element, KEYWORD_TYPE, null, false, title);
 		appendLineSeparator(element);
 	}
 
 	protected void addSectionRegion(String title, ILElement element) {
 		appendPresentationTabs(element);
-		addElementRegion(title, element, KEYWORD_TYPE, false);
+		addElementRegion(title, element, KEYWORD_TYPE, null, false, title);
 		appendLineSeparator(element);
 	}
 
@@ -194,7 +184,7 @@ public class RodinTextStream {
 	public void appendElementHandle(ILElement element, ContentType contentType) {
 		// \u26ac is the handle character "⚬"
 		final String s = String.format("%s", "\t\u26ac\t");
-		addElementRegion(s, element, contentType, false);
+		addElementRegion(s, element, contentType, null, false, s);
 	}
 
 	public void incrementIndentation(int i) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,7 @@ package fr.systerel.editor.internal.editors;
 import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.changeAttribute;
 import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
 import static org.eclipse.jface.bindings.keys.KeyStroke.NO_KEY;
-import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
-import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
-import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
-import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
-import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,11 +55,8 @@ import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.EventBAttributes;
 import org.eventb.core.IAssignmentElement;
-import org.eventb.core.ICommentedElement;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IExpressionElement;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.ui.autocompletion.EventBContentProposalFactory;
@@ -142,6 +134,9 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			}
 			final IAttributeType attType = ((AttributeContentType) contentType)
 					.getAttributeType();
+			if (attType.equals(COMMENT_ATTRIBUTE)) {
+				return EditType.TEXT;
+			}
 			if (attType instanceof IAttributeType.Boolean) {
 				return EditType.BOOL;
 			} else if (inter.getPossibleValues() != null) {
@@ -443,7 +438,8 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		}
 		final ContentType contentType = interval.getContentType();
 		final ILElement element = interval.getElement();
-		final IInternalElement ielement = element.getElement();
+		final IAttributeManipulation manipulation = interval
+				.getAttributeManipulation();
 		final String original = editorText.getText();
 		final String text;
 		if (!contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
@@ -452,37 +448,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		} else {
 			text = original;
 		}
-		if (ielement instanceof IIdentifierElement
-				&& contentType.equals(RodinConfiguration.IDENTIFIER_TYPE)) {
-			changeAttribute(ielement, IDENTIFIER_ATTRIBUTE, text);
-		}
-		if (ielement instanceof ILabeledElement
-				&& contentType.equals(RodinConfiguration.LABEL_TYPE)
-				|| contentType.equals(RodinConfiguration.BOLD_LABEL_TYPE)) {
-			changeAttribute(ielement, LABEL_ATTRIBUTE, text);
-		}
-		if (ielement instanceof IExpressionElement
-				&& contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-			changeAttribute(ielement, EXPRESSION_ATTRIBUTE, text);
-		}
-		if (ielement instanceof IPredicateElement
-				&& contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-			changeAttribute(ielement, PREDICATE_ATTRIBUTE, text);
-		}
-		if (ielement instanceof IAssignmentElement
-				&& contentType.equals(RodinConfiguration.CONTENT_TYPE)) {
-			changeAttribute(ielement, ASSIGNMENT_ATTRIBUTE, text);
-		}
-		if (ielement instanceof ICommentedElement
-				&& contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
-			changeAttribute(ielement, COMMENT_ATTRIBUTE, text);
-		}
-		if (contentType instanceof AttributeContentType) {
-			final IAttributeType attributeType = ((AttributeContentType)contentType).getAttributeType();
-			if (attributeType instanceof IAttributeType.String) {
-				changeAttribute(ielement, (IAttributeType.String)attributeType, text);				
-			}
-		}
+		changeAttribute(element, manipulation, text);
 	}
 
 	public void saveAndExit(boolean maintainCaretPosition) {
