@@ -24,11 +24,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.rodinp.core.RodinMarkerUtil;
 
 /**
+ * This class provides labels for different elements appeared in the UI.
+ * 
  * @author htson
- *         <p>
- *         This class extends
- *         <code>org.eclipse.jface.viewers.LabelProvider</code> and provides
- *         labels for different elements appeared in the UI
  */
 public class RodinElementTreeLabelProvider extends
 		RodinElementStructuredLabelProvider {
@@ -39,26 +37,26 @@ public class RodinElementTreeLabelProvider extends
 
 	@Override
 	protected Set<Object> getRefreshElements(IResourceChangeEvent event) {
-		IMarkerDelta[] rodinProblemMakerDeltas = event.findMarkerDeltas(
+		final IMarkerDelta[] rodinProblemMakerDeltas = event.findMarkerDeltas(
 				RodinMarkerUtil.RODIN_PROBLEM_MARKER, true);
 		final Set<Object> elements = new HashSet<Object>();
-		for (IMarkerDelta delta : rodinProblemMakerDeltas) {
-			Object element = RodinMarkerUtil.getElement(delta);
-			if (element != null && !elements.contains(element)) { 
-				final IContentProvider contentProvider = viewer.getContentProvider();
-				if (!(contentProvider instanceof ITreeContentProvider)) {
-					break;
+
+		final IContentProvider contentProvider = viewer.getContentProvider();
+		if (contentProvider instanceof ITreeContentProvider) {
+			final ITreeContentProvider cp = (ITreeContentProvider) contentProvider;
+
+			for (IMarkerDelta delta : rodinProblemMakerDeltas) {
+				Object element = RodinMarkerUtil.getElement(delta);
+				if (element != null && !elements.contains(element)) {
+					do {
+						elements.add(element);
+						element = cp.getParent(element);
+					} while (element != null);
 				}
-				ITreeContentProvider cp = (ITreeContentProvider) contentProvider;
-				
-				do {
-					elements.add(element);
-					element = cp.getParent(element);
-				}
-				while (element != null);
 			}
 		}
+
 		return elements;
 	}
-		
+
 }
