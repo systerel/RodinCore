@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,12 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 import org.eventb.core.IEventBRoot;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IRodinFile;
+import org.rodinp.core.RodinCore;
+import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.api.itf.ILFileFactory;
@@ -57,6 +63,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	
 	protected boolean synchronizing = false;
 	private ILFile resource;
+	private RodinEditorElementInfo info;
 
 	public RodinDocumentProvider(DocumentMapper mapper, RodinEditor editor) {
 		this.documentMapper = mapper;
@@ -99,7 +106,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 	@Override
 	protected IDocument createDocument(Object element) throws CoreException {
-		document = new Document();
+		final IDocument doc = new Document();
 		if (element instanceof IEditorInput) {
 			final IFile file = (IFile) ((IEditorInput) element)
 					.getAdapter(IFile.class);
@@ -109,8 +116,8 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 			inputRoot = inputResource.getRoot();
 			documentMapper.setRoot(inputRoot);
 			textGenerator = new RodinTextGenerator(documentMapper);
-			document.set(textGenerator.createText(inputRoot));
-			documentMapper.setDocument(document);
+			doc.set(textGenerator.createText(inputRoot));
+			documentMapper.setDocument(doc);
 			documentMapper.setDocumentProvider(this);
 
 		}
@@ -120,9 +127,9 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 						RodinConfiguration.COMMENT_TYPE.getName(),
 						RodinConfiguration.LABEL_TYPE.getName(),
 						RodinConfiguration.CONTENT_TYPE.getName() });
-		document.setDocumentPartitioner(partitioner);
-		partitioner.connect(document, false);
-		return document;
+		doc.setDocumentPartitioner(partitioner);
+		partitioner.connect(doc, false);
+		return doc;
 	}
 
 	/**
@@ -232,6 +239,8 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	}
 
 	public void unloadResource() {
+		if (info != null)
+			RodinCore.removeElementChangedListener(info);
 		inputResource.unloadResource();
 	}
 
@@ -243,8 +252,11 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	@Override
 	protected ElementInfo createElementInfo(Object element)
 			throws CoreException {
-		return new RodinEditorElementInfo(createDocument(element),
-				createAnnotationModel(element));
+		document = createDocument(element);
+		final IAnnotationModel annotations = createAnnotationModel(element);
+		info = new RodinEditorElementInfo(document, annotations);
+		RodinCore.addElementChangedListener(info);
+		return info;
 	}
 
 	
@@ -252,15 +264,17 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 	 * The ElementInfo class contains a flag <code>fCanBeSaved</code> indicating
 	 * that the document can be saved of not. By default, the ElementInfo class
 	 * listens to document changes and sets this 'dirty' state flag to
-	 * <code>true</code>(see <code>documentChanged()</code> method). In our
-	 * case, this is cumbersome, as refreshing the editor shall not modify this
-	 * flag. Indeed, we want to update the document (i.e. set its text) when the
-	 * editor is refreshed (i.e. synchronized), without modifying the 'dirty'
-	 * state flag, as the refreshment is just supposed to change the
-	 * presentation of our document in the editor. Thus, we provide here a way
-	 * to avoid propagating the 'change' info during a refresh.
+	 * <code>true</code>(see <code>documentChanged()</code> method) when the
+	 * text of the document has changed. In our case, this is cumbersome, as
+	 * refreshing the editor can occur from outside the editor, and shall not
+	 * modify this flag. Indeed, we want to update the document (i.e. set its
+	 * text) when the Rodin Database changes. The document is recomputed when
+	 * the presentation updaters listening to the Rodin Database synchronize:
+	 * the documentChanged() callback is systematically triggered after the
+	 * Rodin Database has changed.
 	 */
-	protected class RodinEditorElementInfo extends ElementInfo {
+	protected class RodinEditorElementInfo extends ElementInfo implements
+			IElementChangedListener {
 
 		public RodinEditorElementInfo(IDocument document, IAnnotationModel model) {
 			super(document, model);
@@ -268,8 +282,25 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 		@Override
 		public void documentChanged(DocumentEvent event) {
-			if (!synchronizing)
-				super.documentChanged(event);
+			if (!synchronizing) {
+				try {
+					final boolean oldFCanBeSaved = fCanBeSaved;
+					final IInternalElement rootElement = inputRoot.getElement();
+					final IRodinFile rodinFile = rootElement.getRodinFile();
+					fCanBeSaved = rodinFile.hasUnsavedChanges();
+					if (oldFCanBeSaved != fCanBeSaved) {
+						removeUnchangedElementListeners(fElement, this);
+						fireElementDirtyStateChanged(fElement, fCanBeSaved);
+					}
+				} catch (RodinDBException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		@Override
+		public void elementChanged(ElementChangedEvent event) {
+			documentChanged(new DocumentEvent());
 		}
 		
 	}
