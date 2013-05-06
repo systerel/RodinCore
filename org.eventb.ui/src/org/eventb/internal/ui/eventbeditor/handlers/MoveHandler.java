@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,11 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eventb.internal.ui.EventBUtils;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
+import org.eventb.internal.ui.eventbeditor.operations.History;
+import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
@@ -48,54 +53,75 @@ public abstract class MoveHandler extends AbstractHandler implements IHandler {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 
 		IRodinElement [] elements = getRodinElements(ssel);
-		if (elements == null)
-			return "Invalid selected elements";
+		if (elements == null) {
+			// selection is not a valid list of RODIN elements
+			throw new ExecutionException("Invalid selection");
+		}
 
 		// Now, the list of elements should have the same type and has the same
 		// parent.
 		
-		IInternalElement firstElement = (IInternalElement) elements[0];
-		IInternalElement lastElement = (IInternalElement) elements[elements.length - 1];
-		IRodinElement parent = firstElement.getParent();
-		IInternalElementType<?> type = firstElement.getElementType();
+		final IInternalElement firstElement = (IInternalElement) elements[0];
+		final IInternalElement lastElement = (IInternalElement) elements[elements.length - 1];
+		final IInternalElementType<?> type = firstElement.getElementType();
 
-		if (parent != null && parent instanceof IInternalElement) {
-			try {
-				IInternalElement[] children = ((IInternalElement) parent)
-						.getChildrenOfType(type);
-				assert (children.length > 0);
-				IInternalElement prevElement = null;
-				for (int i = 0; i < children.length; ++i) {
-					if (children[i].equals(firstElement))
-						break;
-					prevElement = children[i];
-				}
-				IInternalElement nextElement = null;
-				for (int i = children.length - 1; i >= 0; --i) {
-					if (children[i].equals(lastElement))
-						break;
-					nextElement = children[i];
-				}
-				
-				if (getDirection()) {
-					if (prevElement != null) {
-						prevElement.move(parent, nextElement, null, false,
-								new NullProgressMonitor());
-					}
-				} else {
-					if (nextElement != null) {
-						nextElement.move(parent, firstElement, null, false,
-								new NullProgressMonitor());
-					}
-				}
-			} catch (RodinDBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		if ( ! (firstElement.getParent()!= null && firstElement.getParent() instanceof IInternalElement)) {
+			throw new ExecutionException("selection has an invalid parent");
 		}
+		final IInternalElement parent = (IInternalElement)firstElement.getParent(); 
+		
+		// Enforce read-only model
+		if(EventBEditorUtils.checkAndShowReadOnly(parent)) {
+			return null;
+		}
+		
+		try {
+			IInternalElement[] children = parent.getChildrenOfType(type);
+			assert (children.length > 0);
+			IInternalElement prevElement = null;
+			for (int i = 0; i < children.length; ++i) {
+				if (children[i].equals(firstElement))
+					break;
+				prevElement = children[i];
+			}
+			IInternalElement nextElement = null;
+			for (int i = children.length - 1; i >= 0; --i) {
+				if (children[i].equals(lastElement))
+					break;
+				nextElement = children[i];
+			}
+			
+			AtomicOperation operation = null;
+			
+			if (getDirection()) {
+				if (prevElement != null) {					
+					operation =	OperationFactory.move(firstElement.getRoot(),
+							prevElement, parent, nextElement);
+				}
+			} else {
+				if (nextElement != null) {
+					operation =	OperationFactory.move(firstElement.getRoot(),
+							nextElement, parent, firstElement);
+				}
+			}
+			
+			if(operation!=null) {
+				History.getInstance().addOperation(operation);
+			} else {
+				// ignore
+			}
+			
+		} catch (RodinDBException e) {
+			throw new ExecutionException("Move Operation Failed", e);
+		}
+		
 		return null;
 	}
 
+	/**
+	 * @return true=up, false=down
+	 * 
+	 */
 	protected abstract boolean getDirection();
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,8 +87,6 @@ public class SectionComposite implements ISectionComposite {
 
 	FormText prefixFormText;
 
-	// Before hyperlink composite
-	AbstractHyperlinkComposite beforeHyperlinkComposite;
 
 	// The element composite
 	Composite elementComposite;
@@ -122,6 +120,7 @@ public class SectionComposite implements ISectionComposite {
 		composite = toolkit.createComposite(compParent);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		final GridLayout gridLayout = new GridLayout();
+		gridLayout.marginHeight = 0;
 		gridLayout.verticalSpacing = 0;
 		gridLayout.marginWidth = 0;
 		composite.setLayout(gridLayout);
@@ -137,8 +136,6 @@ public class SectionComposite implements ISectionComposite {
 			createPrefixLabel(prefix);
 		}
 
-		beforeHyperlinkComposite = new BeforeHyperlinkComposite(page, parent,
-				rel.getChildType(), toolkit, composite);
 
 		elementComposite = toolkit.createComposite(composite);
 		elementComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -284,7 +281,6 @@ public class SectionComposite implements ISectionComposite {
 				recursiveSetExpand();
 			}
 		} else {
-			beforeHyperlinkComposite.setHeightHint(0);
 			final GridData gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = 0;
 			afterHyperlinkComposite.setHeightHint(0);
@@ -310,14 +306,14 @@ public class SectionComposite implements ISectionComposite {
 		try {
 			final IRodinElement[] children = parent.getChildrenOfType(rel
 					.getChildType());
-			if (!beforeHyperlinkComposite.isInitialised()) {
-				beforeHyperlinkComposite.createHyperlinks(toolkit, level);
+			if (!afterHyperlinkComposite.isInitialised()) {
+				afterHyperlinkComposite.createContent(toolkit, level);
 			}
 
-			if (children.length != 0) {
-				beforeHyperlinkComposite.setHeightHint(SWT.DEFAULT);
+			if (children.length == 0) {
+				afterHyperlinkComposite.setHeightHint(SWT.DEFAULT);
 			} else {
-				beforeHyperlinkComposite.setHeightHint(0);
+				afterHyperlinkComposite.setHeightHint(0);
 			}
 
 			if (elementComps == null) {
@@ -341,11 +337,7 @@ public class SectionComposite implements ISectionComposite {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (!afterHyperlinkComposite.isInitialised()) {
-			afterHyperlinkComposite.createHyperlinks(toolkit, level);
-		}
-
-		afterHyperlinkComposite.setHeightHint(SWT.DEFAULT);
+		
 	}
 
 	@Override
@@ -393,11 +385,11 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	private void updateHyperlink() {
-		if (elementComps == null || elementComps.size() == 0 || !isExpanded) {
-			beforeHyperlinkComposite.setHeightHint(0);
-		} else {
-			beforeHyperlinkComposite.setHeightHint(SWT.DEFAULT);
-		}
+		
+		final boolean show = 
+				isExpanded && (elementComps == null || elementComps.size() == 0);
+		
+		afterHyperlinkComposite.setHeightHint(show ? SWT.DEFAULT : 0);
 	}
 
 	@Override

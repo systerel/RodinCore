@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,9 +43,6 @@ public abstract class AbstractHyperlinkComposite {
 	
 	IInternalElementType<?> type;
 
-	ImageHyperlink upHyperlink;
-	
-	ImageHyperlink downHyperlink;
 	
 	public AbstractHyperlinkComposite(EditPage page, IInternalElement parent,
 			IInternalElementType<?> type,
@@ -62,7 +59,7 @@ public abstract class AbstractHyperlinkComposite {
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		composite.setLayoutData(gridData);
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 4;
+		gridLayout.numColumns = 2;
 		gridLayout.marginWidth = 0;
 		gridLayout.marginHeight = 0;
 		composite.setLayout(gridLayout);
@@ -72,50 +69,19 @@ public abstract class AbstractHyperlinkComposite {
 		}
 	}
 
+	abstract void createContent(FormToolkit toolkit, int level);
+	
 	public boolean isInitialised() {
 		return initialised;
+	}
+	
+	protected void setInitialised(boolean init) {
+		initialised=init;
 	}
 	
 	public void setHeightHint(int heightHint) {
 		GridData gridData = (GridData) composite.getLayoutData();
 		gridData.heightHint = heightHint;
-	}
-
-	public void createHyperlinks(FormToolkit toolkit, int level) {
-		initialised = true;
-		upHyperlink = toolkit.createImageHyperlink(
-				composite, SWT.TOP);
-		setHyperlinkImage(upHyperlink, EventBImage
-				.getImage(IEventBSharedImages.IMG_UP));
-		upHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
-
-			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				if (checkAndShowReadOnly()) {
-					return;
-				}
-				page.move(type, true);
-			}
-
-		});
-		upHyperlink.setLayoutData(new GridData());
-		
-		downHyperlink = toolkit.createImageHyperlink(
-				composite, SWT.TOP);
-		setHyperlinkImage(downHyperlink, EventBImage
-				.getImage(IEventBSharedImages.IMG_DOWN));
-		downHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
-
-			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				if (checkAndShowReadOnly()) {
-					return;
-				}
-				page.move(type, false);
-			}
-
-		});
-		downHyperlink.setLayoutData(new GridData());
 	}
 
 	protected boolean checkAndShowReadOnly() {

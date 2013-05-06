@@ -1730,6 +1730,11 @@
             name="%categories.EditName"/>
       <command
             categoryId="org.eventb.ui.categories.edit"
+            description="%commands.createDescription"
+            id="org.eventb.ui.edit.create"
+            name="%commands.createName"/>
+      <command
+            categoryId="org.eventb.ui.categories.edit"
             description="%commands.moveUpDescription"
             id="org.eventb.ui.edit.moveUp"
             name="%commands.moveUpName"/>
@@ -1819,6 +1824,11 @@
    <extension
          point="org.eclipse.ui.bindings">
       <key
+            commandId="org.eventb.ui.edit.create"
+            contextId="org.eventb.ui.contexts.eventBEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+INSERT"/>
+      <key
             commandId="org.eventb.ui.edit.moveUp"
             contextId="org.eventb.ui.contexts.eventBEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
@@ -1843,38 +1853,46 @@
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
+         
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.handlers.CreateElementHandler"
+            commandId="org.eventb.ui.edit.create">
+         <activeWhen>
+            <and>
+         	  <reference definitionId="activeEventBContext"/>
+         	  <!-- default variable is current Selection-->
+         	  <count value="1"/>
+         	  <iterate
+                  ifEmpty="false"
+                  operator="and">
+                <instanceof value="org.rodinp.core.IInternalElement"/>
+         	  </iterate>
+         	</and>
+         </activeWhen>
+      </handler>
+      
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.MoveUpHandler"
             commandId="org.eventb.ui.edit.moveUp">
          <activeWhen>
-            <with
-                  variable="activePartId">
-               <or>
-                  <equals
-                        value="org.eventb.ui.editors.machine">
-                  </equals>
-                  <equals
-                        value="org.eventb.ui.editors.context">
-                  </equals>
-               </or>
-            </with>
+            <and>
+                <reference definitionId="activeEventBContext"/>
+                <iterate ifEmpty="false" operator="and">
+                   <instanceof value="org.rodinp.core.IInternalElement"/>
+                 </iterate>
+            </and>
          </activeWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.MoveDownHandler"
             commandId="org.eventb.ui.edit.moveDown">
          <activeWhen>
-            <with
-                  variable="activePartId">
-               <or>
-                  <equals
-                        value="org.eventb.ui.editors.machine">
-                  </equals>
-                  <equals
-                        value="org.eventb.ui.editors.context">
-                  </equals>
-               </or>
-            </with>
+            <and>
+                <reference definitionId="activeEventBContext"/>
+                <iterate ifEmpty="false" operator="and">
+                   <instanceof value="org.rodinp.core.IInternalElement"/>
+                 </iterate>
+            </and>
          </activeWhen>
       </handler>
       <handler
@@ -2597,6 +2615,19 @@
             namePrefix="axm">
       </autoNaming>
    </extension>
+   
+	<extension point="org.eclipse.core.expressions.definitions">
+    	<definition id="activeEventBContext">    
+	    	<with variable="activeContexts">
+			  <iterate
+			    ifEmpty="false"
+			    operator="or">
+			 	<equals value="org.eventb.ui.contexts.eventBEditorScope"/>
+			  </iterate>
+	        </with>
+    	</definition>
+  	</extension>
+  
   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -2615,6 +2646,57 @@
             </command>
          </toolbar>
       </menuContribution>
+      
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+	   
+	   <!--  Note. Must add visibleWhen on each command. 
+	   It does not suffice to put it on the toolbar only.
+		-->
+         <toolbar id="addmove.toolbar">
+         	<visibleWhen checkEnabled="false">
+                  <reference definitionId="activeEventBContext"/>
+         	</visibleWhen>
+         
+            <command
+                  commandId="org.eventb.ui.edit.create"
+                  icon="icons/full/ctool16/add.gif"
+                  id="addmove.create"
+                  style="push">
+                  
+                  <visibleWhen checkEnabled="false">
+					<reference definitionId="activeEventBContext"/>               
+				  </visibleWhen>
+				 
+				  
+            </command>
+            
+            <command
+                  commandId="org.eventb.ui.edit.moveUp"
+                  icon="icons/full/ctool16/up_edit.gif"
+                  id="addmove.moveUp"
+                  style="push">
+                  
+                  <visibleWhen checkEnabled="false">
+					<reference definitionId="activeEventBContext"/>               
+				  </visibleWhen>
+            </command>
+            <command
+                  commandId="org.eventb.ui.edit.moveDown"
+                  icon="icons/full/ctool16/down_edit.gif"
+                  id="addmove.moveDown"
+                  style="push">
+
+                  <visibleWhen checkEnabled="false">
+					<reference definitionId="activeEventBContext"/>               
+				  </visibleWhen>
+            </command>
+         </toolbar>
+         
+      </menuContribution>
+      
+      
+      
       <menuContribution
             locationURI="menu:project?after=build.ext">
          <command
