@@ -122,9 +122,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		setEditorContextMenuId(EDITOR_ID);
 		documentProvider = new RodinDocumentProvider(mapper, this);
 		setDocumentProvider(documentProvider);
-		stateListener = EditorElementStateListener.getNewListener(this,
-				documentProvider);
-		documentProvider.addElementStateListener(stateListener);
 	}
 
 	@Override
