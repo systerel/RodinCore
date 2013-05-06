@@ -28,15 +28,12 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 	private static final AutoRewriterImpl REWRITER_L2 = new AutoRewriterImpl(
 			Level.L2);
 
-	private final boolean level2;
-
 	public AutoFormulaRewriterL2Tests() {
 		this(REWRITER_L2);
 	}
 
 	protected AutoFormulaRewriterL2Tests(AutoRewriterImpl rewriter) {
 		super(rewriter);
-		this.level2 = rewriter.getLevel() == Level.L2;
 	}
 
 	/**
@@ -1058,18 +1055,18 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 		noRewriteExpr("card({x, y · x↦y∈S ∣ y↦x})", "S=ℙ(T×U)");
 		noRewriteExpr("card({x, y · x↦y+1∈S ∣ x↦y+1})", "S=ℙ(T×ℤ)");
 
-		if (level2) {
-			noRewriteExpr("card({x · x∈S∪{x} ∣ x})", "S=ℙ(T)");
-			noRewriteExpr("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", "S=ℙ(T×U)");
-			noRewriteExpr("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})", //
-					"S=ℙ(T); U=ℙ(V)");
-		} else {
+		if (level3AndHigher) {
 			rewriteExpr("card({x · x∈S∪{x} ∣ x})", "card(T)", //
 					"S=ℙ(T); T=ℙ(T)");
 			rewriteExpr("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", "card(T×U)", //
 					"S=ℙ(T×U); T=ℙ(T); U=ℙ(U)");
 			rewriteExpr("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})",
 					"card({x, y · x∈S ∧ y∈U∪{y} ∣ x↦y})", //
+					"S=ℙ(T); U=ℙ(V)");
+		} else {
+			noRewriteExpr("card({x · x∈S∪{x} ∣ x})", "S=ℙ(T)");
+			noRewriteExpr("card({x, y · x↦y∈S∪{x↦y} ∣ x↦y})", "S=ℙ(T×U)");
+			noRewriteExpr("card({x, y · x↦y∈S×(U∪{y}) ∣ x↦y})", //
 					"S=ℙ(T); U=ℙ(V)");
 		}
 	}
@@ -1666,14 +1663,14 @@ public class AutoFormulaRewriterL2Tests extends AutoFormulaRewriterL1Tests {
 		noRewriteExpr("{x, y · x↦y∈S ∣ y↦x}", "S=ℙ(T×U)");
 		noRewriteExpr("{x, y · x↦y+1∈S ∣ x↦y+1}", "S=ℙ(T×ℤ)");
 
-		if (level2) {
-			noRewriteExpr("{x · x∈S∪{x} ∣ x}", "S=ℙ(T)");
-			noRewriteExpr("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}", "S=ℙ(T); U=ℙ(V)");
-		} else {
+		if (level3AndHigher) {
 			rewriteExpr("{x · x∈S∪{x} ∣ x}", "T", "S=ℙ(T); T=ℙ(T)");
 			rewriteExpr("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}",
 					"{x, y · x∈S ∧ y∈U∪{y} ∣ x↦y}", //
 					"S=ℙ(T); U=ℙ(V)");
+		} else {
+			noRewriteExpr("{x · x∈S∪{x} ∣ x}", "S=ℙ(T)");
+			noRewriteExpr("{x, y · x↦y∈S×(U∪{y}) ∣ x↦y}", "S=ℙ(T); U=ℙ(V)");
 		}
 		noRewriteExpr("{x, y⦂ℙ(T) · x∈y ∣ x}", "T=ℙ(T)");
 	}

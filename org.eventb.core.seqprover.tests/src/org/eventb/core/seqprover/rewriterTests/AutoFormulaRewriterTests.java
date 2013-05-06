@@ -87,7 +87,8 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 	}
 	protected static final FormulaFactory DT_FAC = FormulaFactory.getInstance(EXTENSIONS);
 	
-	private final boolean level2AndHigher;
+	protected final boolean level2AndHigher;
+	protected final boolean level3AndHigher;
 
 	/**
 	 * Constructor.
@@ -98,6 +99,7 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 	public AutoFormulaRewriterTests(AutoRewriterImpl rewriter) {
 		super(DT_FAC, rewriter);
 		this.level2AndHigher = rewriter.getLevel().from(Level.L2);
+		this.level3AndHigher = rewriter.getLevel().from(Level.L3);
 	}
 
 	/**
