@@ -11,23 +11,22 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
-import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getManipulation;
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getElementDesc;
+import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getManipulation;
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getNonBasicAttributeDescs;
 import static fr.systerel.editor.internal.documentModel.RodinTextStream.MIN_LEVEL;
 import static fr.systerel.editor.internal.documentModel.RodinTextStream.getTabs;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.BOLD_IMPLICIT_LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.BOLD_LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.COMMENT_TYPE;
-import static fr.systerel.editor.internal.presentation.RodinConfiguration.CONTENT_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.HANDLE_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IDENTIFIER_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_COMMENT_TYPE;
-import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_CONTENT_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_HANDLE_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.IMPLICIT_LABEL_TYPE;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.LABEL_TYPE;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.getFormulaContentType;
 import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
@@ -59,6 +58,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 
+import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
 
 /**
@@ -245,8 +245,7 @@ public class RodinTextGenerator {
 			IAttributeType.String attrType, TextAlignator sizer) {
 		sizer.appendCheckForMultiline(element.getAttribute(attrType));
 		processStringEventBAttribute(element, attrType,
-				getContentType(element, IMPLICIT_CONTENT_TYPE, CONTENT_TYPE),
-				true,
+				getFormulaContentType(attrType, element.isImplicit()), true,
 				getTabs(stream.getLevel()) + sizer.getFirstAlignementString());
 	}
 

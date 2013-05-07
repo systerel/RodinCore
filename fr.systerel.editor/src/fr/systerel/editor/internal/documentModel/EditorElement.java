@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License  v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,6 @@
 package fr.systerel.editor.internal.documentModel;
 
 import static fr.systerel.editor.internal.editors.EditPos.computeLength;
-import static fr.systerel.editor.internal.presentation.RodinConfiguration.CONTENT_TYPE;
-import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
-import static org.eventb.core.EventBAttributes.EXPRESSION_ATTRIBUTE;
-import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,15 +78,6 @@ public class EditorElement extends EditorItem {
 			final IAttributeType ctAttrType = ((AttributeContentType) contentType).getAttributeType();
 			if (attrType.equals(ctAttrType)) {
 				return i;
-			}
-			// FIXME really got to do something to avoid checking
-			// the following everywhere
-			if (contentType.equals(CONTENT_TYPE)) {
-				if (attrType == PREDICATE_ATTRIBUTE
-						|| attrType == ASSIGNMENT_ATTRIBUTE
-						|| attrType == EXPRESSION_ATTRIBUTE) {
-					return i;
-				}
 			}
 		}
 		return null;
