@@ -178,7 +178,7 @@ public class RodinTextGenerator {
 			String value = "";
 			try {
 				final IAttributeManipulation manipulation = d.getManipulation();
-				if (!(d.getAttributeType() instanceof IAttributeType.String)
+				if (d.getAttributeType() instanceof IAttributeType.String
 						&& !manipulation.hasValue(rElement, null)
 						&& manipulation.getPossibleValues(rElement, null) != null) {
 					value = "--undefined--";
