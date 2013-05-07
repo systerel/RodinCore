@@ -320,6 +320,10 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			makeEmptySet(set.getFactory(), set.getType()));
 	}
 
+	protected Predicate makeIsNotEmpty(Expression set) {
+		return makeUnaryPredicate(NOT, makeIsEmpty(set));
+	}
+
 	protected SimplePredicate makeFinite(Expression set) {
 		return makeSimplePredicate(KFINITE, set);
 	}
@@ -1065,8 +1069,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Gt(Card(S), E)-> {
 	    		if (`E.equals(number0)) {
-	    			Predicate equal = makeIsEmpty(`S);
-	    			result = makeUnaryPredicate(NOT, equal);
+					result = makeIsNotEmpty(`S);
 	    			trace(predicate, result, "SIMP_LIT_GT_CARD_0");
 	    			return result;
 	    		}
@@ -1078,8 +1081,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	    	 */
 	    	Lt(E, Card(S)) -> {
 	    		if (`E.equals(number0)) {
-	    			Predicate equal = makeIsEmpty(`S);
-	    			result = makeUnaryPredicate(NOT, equal);
+					result = makeIsNotEmpty(`S);
 	    			trace(predicate, result, "SIMP_LIT_LT_CARD_0");
 	    			return result;
 	    		}
@@ -1218,7 +1220,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			Equal((Tfun | Trel)(A, B), EmptySet()) -> {
 				if (level2) {
 					result = makeAssociativePredicate(LAND,
-								makeUnaryPredicate(NOT, makeIsEmpty(`A)),
+								makeIsNotEmpty(`A),
 								makeIsEmpty(`B));
 					trace(predicate, result, "SIMP_SPECIAL_EQUAL_RELDOM");
 					return result;
@@ -1243,7 +1245,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			 */
 			In(Card(S), Natural1()) -> {
 				if (level2) {
-					result = makeUnaryPredicate(NOT, makeIsEmpty(`S));
+					result = makeIsNotEmpty(`S);
 					trace(predicate, result, "SIMP_CARD_NATURAL1");
 					return result;
 				}
@@ -1312,7 +1314,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 						trace(predicate, result, "SIMP_LIT_LE_CARD_0");
 						return result;
  	    			} else if (`i.equals(ONE)) {
-	 	    			result = makeUnaryPredicate(NOT, makeIsEmpty(`S));
+						result = makeIsNotEmpty(`S);
 	 	    			trace(predicate, result, "SIMP_LIT_LE_CARD_1");
 						return result;
  	    			}
@@ -1332,7 +1334,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 						trace(predicate, result, "SIMP_LIT_GE_CARD_0");
 						return result;
  	    			} else if (`i.equals(ONE)) {
-	 	    			result = makeUnaryPredicate(NOT, makeIsEmpty(`S));
+						result = makeIsNotEmpty(`S);
 	 	    			trace(predicate, result, "SIMP_LIT_GE_CARD_1");
 						return result;
  	    			}
