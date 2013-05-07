@@ -12,7 +12,7 @@
 <org.eventb.core.prRule name="org.eventb.core.seqprover.mngHyp" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="sl/ds" org.eventb.core.prHyps="">
 <org.eventb.core.prAnte name="0">
 <org.eventb.core.prHypAction name="DESELECT0" org.eventb.core.prHyps="p2"/>
-<org.eventb.core.prRule name="org.eventb.core.seqprover.autoRewritesL2:0" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p3" org.eventb.core.prHyps="">
+<org.eventb.core.prRule name="org.eventb.core.seqprover.autoRewritesL2:1" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="simplification rewrites" org.eventb.core.prGoal="p3" org.eventb.core.prHyps="">
 <org.eventb.core.prAnte name="0" org.eventb.core.prGoal="p1">
 <org.eventb.core.prRule name="org.eventb.core.seqprover.trueGoal" org.eventb.core.confidence="1000" org.eventb.core.prDisplay="⊤ goal" org.eventb.core.prGoal="p1" org.eventb.core.prHyps=""/>
 </org.eventb.core.prAnte>
