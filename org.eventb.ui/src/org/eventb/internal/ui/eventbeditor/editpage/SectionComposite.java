@@ -260,13 +260,19 @@ public class SectionComposite implements ISectionComposite {
 
 	@Override
 	public void setExpand(final boolean isExpanded, boolean recursive) {
-		final long beforeTime = System.currentTimeMillis();
+		
+		long beforeTime=0;
+		if (EventBEditorUtils.DEBUG) {
+			beforeTime = System.currentTimeMillis();
+		}
+		
 		form.setRedraw(false);
 		setExpandNoReflow(isExpanded, recursive);
 		form.reflow(true);
 		form.setRedraw(true);
-		final long afterTime = System.currentTimeMillis();
+		
 		if (EventBEditorUtils.DEBUG) {
+			final long afterTime = System.currentTimeMillis();
 			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
 					+ " ms");
 		}
