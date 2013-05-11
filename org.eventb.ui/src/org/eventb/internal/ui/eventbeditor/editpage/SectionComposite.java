@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
@@ -45,9 +46,6 @@ import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.handlers.CreateElementHandler;
-import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
-import org.eventb.internal.ui.eventbeditor.operations.History;
-import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.ui.EventBFormText;
 import org.eventb.ui.IEventBSharedImages;
@@ -284,25 +282,18 @@ public class SectionComposite implements ISectionComposite {
 					setExpand(true, false);
 				}
 				
-				final Object[] pageSel =page.getCurrentSelection();
+				final IInternalElement selectedEl = CreateElementHandler.insertionPointForSelection(
+						new StructuredSelection(page.getCurrentSelection()));
 
-				// Element in the section at the end of the selection
-				IInternalElement last=null;
-				if(pageSel.length>0) {
-					Object lastSel = pageSel[pageSel.length-1];
-					if(lastSel instanceof IInternalElement) {
-						final IInternalElement lastElem = (IInternalElement)lastSel;
-						
-						if(lastElem.getParent().equals(parent)
-								&& lastElem.getElementType().equals(rel.getChildType())) {
-							
-							last = lastElem; 
-						}
-					}
-				}
+				// insert at selected element, if it is in the current section
+				final IInternalElement insertionPoint =
+						selectedEl.getParent().equals(parent)
+								&& selectedEl.getElementType().equals(rel.getChildType()) ?
+						selectedEl
+						: null;
 				
 				try {
-					CreateElementHandler.doExecute(parent, rel.getChildType(), last);
+					CreateElementHandler.doExecute(parent, rel.getChildType(), insertionPoint);
 				} catch (RodinDBException e1) {
 					UIUtils.log(e1, "o.e.i.u.eventbeditor.editpage");
 				}

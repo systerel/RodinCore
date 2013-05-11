@@ -1861,7 +1861,6 @@
             <and>
          	  <reference definitionId="activeEventBContext"/>
          	  <!-- default variable is current Selection-->
-         	  <count value="1"/>
          	  <iterate
                   ifEmpty="false"
                   operator="and">

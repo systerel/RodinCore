@@ -53,21 +53,24 @@ public class CreateElementHandler extends AbstractHandler {
 	 */
 	public static IInternalElement insertionPointForSelection(ISelection selection) {
 
-		// If there is no selection or selection is empty then do nothing.
+		// If there is no selection or selection is empty then return null.
 		if (selection == null || selection.isEmpty()) {
 			return null;
 		}
 
 		final IInternalElement insertionPoint;
+		
 		if (selection instanceof IInternalElement) {
 			insertionPoint = (IInternalElement) selection;
 		} else if (selection instanceof IStructuredSelection) {
 
 			final IStructuredSelection ssel = (IStructuredSelection) selection;
 
-			if (ssel.size() == 1
-					&& ssel.getFirstElement() instanceof IInternalElement) {
-				insertionPoint = (IInternalElement) ssel.getFirstElement();
+			if (ssel.size() > 0) {
+				Object last = ssel.toArray()[ssel.size()-1];
+
+				insertionPoint = last instanceof IInternalElement ? 
+						(IInternalElement) last : null;
 			} else {
 				return null;
 			}
