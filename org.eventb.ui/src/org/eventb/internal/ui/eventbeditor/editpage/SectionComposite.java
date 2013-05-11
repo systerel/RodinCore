@@ -208,7 +208,7 @@ public class SectionComposite implements ISectionComposite {
 		headerComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 4;
-		gridLayout.horizontalSpacing = 0;
+		gridLayout.horizontalSpacing = 5;
 		gridLayout.verticalSpacing = 0;
 		headerComp.setLayout(gridLayout);
 
