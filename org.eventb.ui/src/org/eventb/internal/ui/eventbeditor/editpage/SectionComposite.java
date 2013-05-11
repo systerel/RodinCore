@@ -100,9 +100,6 @@ public class SectionComposite implements ISectionComposite {
 	LinkedList<IElementComposite> elementComps;
 	private Map<IRodinElement, IElementComposite> mapComps;
 
-	// After hyperlink composite
-	AbstractHyperlinkComposite afterHyperlinkComposite;
-
 	int displayedSeverity = IMarker.SEVERITY_INFO;
 
 	public SectionComposite(final EditPage page, final FormToolkit toolkit,
@@ -156,10 +153,6 @@ public class SectionComposite implements ISectionComposite {
 			elementComposite.setBackground(EventBSharedColor
 					.getSystemColor(SWT.COLOR_GREEN));
 		}
-
-		// XXX - to remove
-		afterHyperlinkComposite = new AfterHyperlinkComposite(page, parent, rel
-				.getChildType(), toolkit, composite);
 
 		final String suffix = registry.getChildrenSuffix(rel.getParentType(),
 				rel.getChildType());
@@ -287,10 +280,11 @@ public class SectionComposite implements ISectionComposite {
 
 				// insert at selected element, if it is in the current section
 				final IInternalElement insertionPoint =
-						selectedEl.getParent().equals(parent)
-								&& selectedEl.getElementType().equals(rel.getChildType()) ?
-						selectedEl
-						: null;
+						selectedEl!=null 
+						&& selectedEl.getParent().equals(parent)
+						&& selectedEl.getElementType().equals(rel.getChildType()) ?
+								selectedEl
+								: null;
 				
 				try {
 					CreateElementHandler.doExecute(parent, rel.getChildType(), insertionPoint);
@@ -346,7 +340,6 @@ public class SectionComposite implements ISectionComposite {
 		} else {
 			final GridData gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = 0;
-			afterHyperlinkComposite.setHeightHint(0);
 			// collapse is always recursive
 			recursiveSetExpand();
 		}
@@ -369,15 +362,6 @@ public class SectionComposite implements ISectionComposite {
 		try {
 			final IRodinElement[] children = parent.getChildrenOfType(rel
 					.getChildType());
-			if (!afterHyperlinkComposite.isInitialised()) {
-				afterHyperlinkComposite.createContent(toolkit, level);
-			}
-
-			if (children.length == 0) {
-				afterHyperlinkComposite.setHeightHint(SWT.DEFAULT);
-			} else {
-				afterHyperlinkComposite.setHeightHint(0);
-			}
 
 			if (elementComps == null) {
 				elementComps = new LinkedList<IElementComposite>();
@@ -443,17 +427,9 @@ public class SectionComposite implements ISectionComposite {
 			final GridData gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = 0;
 		}
-		updateHyperlink();
 		form.reflow(true);
 	}
 
-	private void updateHyperlink() {
-		
-		final boolean show = 
-				isExpanded && (elementComps == null || elementComps.size() == 0);
-		
-		afterHyperlinkComposite.setHeightHint(show ? SWT.DEFAULT : 0);
-	}
 
 	@Override
 	public void elementAdded(final IRodinElement element) {
@@ -470,7 +446,6 @@ public class SectionComposite implements ISectionComposite {
 			mapComps.put(element, comp);
 			final GridData gridData = (GridData) elementComposite.getLayoutData();
 			gridData.heightHint = SWT.DEFAULT;
-			updateHyperlink();
 			form.reflow(true);
 		} else {
 			final IElementComposite comp = getCompositeTowards(element);
@@ -478,7 +453,6 @@ public class SectionComposite implements ISectionComposite {
 				comp.elementAdded(element);
 			}
 		}
-		updateHyperlink();
 	}
 
 	@Override
