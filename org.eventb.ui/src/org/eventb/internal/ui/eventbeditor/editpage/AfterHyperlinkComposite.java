@@ -45,7 +45,7 @@ public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 	public void createContent(FormToolkit toolkit, int level) {
 		Composite tmp = toolkit.createComposite(composite);
 		GridData gridData = new GridData();
-		gridData.widthHint = (level + 1) * 40;
+		gridData.widthHint = (level + 1) * EditPage.LEVEL_INDENT;
 		gridData.heightHint = 0;
 		tmp.setLayoutData(gridData);
 

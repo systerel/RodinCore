@@ -82,7 +82,7 @@ public class ButtonComposite implements ILabelProviderListener {
 
 		Composite tmp = toolkit.createComposite(composite);
 		GridData gridData = new GridData();
-		gridData.widthHint = level * 40 + 20;
+		gridData.widthHint = level * EditPage.LEVEL_INDENT + EditPage.LEVEL_INDENT/2;
 		gridData.heightHint = 0;
 		tmp.setLayoutData(gridData);
 

@@ -101,6 +101,9 @@ public class EditPage extends EventBEditorPage implements
 
 	public static final String PAGE_TAB_TITLE = Messages.editorPage_edit_tabTitle;
 
+	static final int LEVEL_INDENT = 40;
+	
+	
 	// The next two variables maintain a link to the sections embedded in this
 	// page. The list gives the order of the sections, while the map allows
 	// direct access to a section, based on the type of the elements it
@@ -220,7 +223,7 @@ public class EditPage extends EventBEditorPage implements
 		return revert;
 	}
 
-	private Object[] getCurrentSelection(){
+	Object[] getCurrentSelection(){
 		if (currentSelection instanceof StructuredSelection) {
 			StructuredSelection ssel = (StructuredSelection) currentSelection;
 			return ssel.toArray();
