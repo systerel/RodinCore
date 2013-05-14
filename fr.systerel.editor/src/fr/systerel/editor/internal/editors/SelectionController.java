@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.isReadOnly;
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.convertEventToKeystroke;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.HANDLE_TYPE;
 import static org.eclipse.jface.bindings.keys.KeyStroke.NO_KEY;
@@ -159,6 +160,25 @@ public class SelectionController implements MouseListener, VerifyListener,
 	public boolean isSelected(ILElement element) {
 		return selection.contains(element); // FIXME or contains a parent ?
 	}
+	
+	public boolean isReadOnlyElementSelected() {
+		for (ILElement element : selection.getElements()) {
+			if (isReadOnly(element)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Tells whether the selected elements can move
+	public boolean canMoveSelection() {
+		for (ILElement element : selection.getElements()) {
+			if (isReadOnly(element.getParent())) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	private int getModelCaretOffset() {
 		return viewer.widgetOffset2ModelOffset(styledText
@@ -221,8 +241,13 @@ public class SelectionController implements MouseListener, VerifyListener,
 			return;
 		}
 		if (selection.contains(offset)) {
-			if (styledText.dragDetect(e))
-				return;
+			if (canMoveSelection()) {
+				styledText.setDragDetect(true);
+				if (styledText.dragDetect(e))
+					return;
+			} else {
+				styledText.setDragDetect(false);
+			}
 		}
 		if ((e.stateMask & SWT.MOD1) != 0) {
 			toggleSelection(offset);

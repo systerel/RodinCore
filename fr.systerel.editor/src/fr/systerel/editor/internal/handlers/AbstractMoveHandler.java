@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.handlers;
 
+import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.isReadOnly;
 import static java.util.Arrays.asList;
 
 import java.util.Arrays;
@@ -90,6 +91,9 @@ public abstract class AbstractMoveHandler extends AbstractEditionHandler {
 		if (selection.length <= 0) {
 			return false;
 		}
+		if (isReadOnlyElementSelected(editor)) {
+			return false;
+		}
 		return isMovePossible(selection);
 	}
 	
@@ -125,6 +129,9 @@ public abstract class AbstractMoveHandler extends AbstractEditionHandler {
 			return false;
 		final ILElement parent = getParent(selection);
 		if (parent == null) {
+			return false;
+		}
+		if (isReadOnly(parent)) {
 			return false;
 		}
 		final List<ILElement> cot = parent

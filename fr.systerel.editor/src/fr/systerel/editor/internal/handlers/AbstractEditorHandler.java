@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,14 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 			return null;
 		}
 		return (RodinEditor) activeEditor;
+	}
+	
+	/**
+	 * Returns <code>true</code> if one or more of the selected elements is
+	 * read-only, <code>false</code> otherwise.
+	 */
+	public static boolean isReadOnlyElementSelected(RodinEditor editor) {
+		return editor.getSelectionController().isReadOnlyElementSelected();
 	}
 	
 }

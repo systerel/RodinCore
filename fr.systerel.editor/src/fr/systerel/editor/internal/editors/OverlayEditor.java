@@ -11,6 +11,7 @@
 package fr.systerel.editor.internal.editors;
 
 import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.changeAttribute;
+import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.isReadOnly;
 import static fr.systerel.editor.internal.editors.EditPos.computeEnd;
 import static org.eclipse.jface.bindings.keys.KeyStroke.NO_KEY;
 import static org.eventb.core.EventBAttributes.COMMENT_ATTRIBUTE;
@@ -129,7 +130,9 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		
 		private static EditType computeEditType(Interval inter) {
 			final ContentType contentType = inter.getContentType();
-			if (!(contentType instanceof AttributeContentType)) {
+			final ILElement element = inter.getElement();
+			final boolean isReadOnly = isReadOnly(element);
+			if (isReadOnly || !(contentType instanceof AttributeContentType)) {
 				return EditType.NONE;
 			}
 			final IAttributeType attType = ((AttributeContentType) contentType)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,12 +23,10 @@ import fr.systerel.editor.internal.editors.SelectionController;
 public class DeleteHandler extends AbstractEditionHandler {
 
 	@Override
-	public boolean isEnabled() {
-		final RodinEditor re = getActiveRodinEditor();
-		if (re != null)
-			return re.getSelectionController().getSelectedElements().length > 0
-					&& super.isEnabled();
-		return false;
+	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
+		return super.checkEnablement(editor, caretOffset)
+				&& editor.getSelectionController().getSelectedElements().length > 0
+				&& !isReadOnlyElementSelected(editor);
 	}
 	
 	@Override

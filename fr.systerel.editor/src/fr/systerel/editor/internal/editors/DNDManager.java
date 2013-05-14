@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.isReadOnly;
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.log;
 
 import java.util.ArrayList;
@@ -158,6 +159,9 @@ public class DNDManager {
 					siblingType, parentType);
 			if (pos == null)
 				return;
+			if (isReadOnly(pos.targetParent)) {
+				return;
+			}
 			final List<ILElement> elems = toLElements(elements);
 			if (elems == null)
 				return;

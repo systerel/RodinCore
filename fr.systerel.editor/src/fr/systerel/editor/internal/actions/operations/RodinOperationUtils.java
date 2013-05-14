@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,6 +185,10 @@ public class RodinOperationUtils {
 	public static void move(IInternalElement parent, IInternalElement element,
 			IInternalElement nextSibling) {
 		ElementManipulationFacade.move(parent, element, nextSibling);
+	}
+
+	public static boolean isReadOnly(ILElement element) {
+		return ElementManipulationFacade.isReadOnly(element.getElement());
 	}
 
 }
