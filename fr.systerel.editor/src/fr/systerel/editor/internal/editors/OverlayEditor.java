@@ -129,10 +129,15 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		}
 		
 		private static EditType computeEditType(Interval inter) {
-			final ContentType contentType = inter.getContentType();
+			if (inter.getAttributeManipulation() == null) {
+				return EditType.NONE;
+			}
 			final ILElement element = inter.getElement();
-			final boolean isReadOnly = isReadOnly(element);
-			if (isReadOnly || !(contentType instanceof AttributeContentType)) {
+			if (isReadOnly(element)) {
+				return EditType.NONE;
+			}
+			final ContentType contentType = inter.getContentType();
+			if (!(contentType instanceof AttributeContentType)) {
 				return EditType.NONE;
 			}
 			final IAttributeType attType = ((AttributeContentType) contentType)
