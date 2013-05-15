@@ -206,7 +206,15 @@ public class SelectionController implements MouseListener, VerifyListener,
 	
 	private boolean handleHandleSelection(final int offset) {
 		final Interval inter = mapper.findInterval(offset);
+		final Interval interNext = mapper.findIntervalAfter(inter);
 		if (inter != null && inter.getContentType().equals(HANDLE_TYPE)) {
+			if (interNext != null && interNext.getOffset() != offset) {
+				toggleSelection(offset);
+				return true;
+			}
+		}
+		if (interNext != null && interNext.getContentType().equals(HANDLE_TYPE)
+				&& interNext.getOffset() == offset) {
 			toggleSelection(offset);
 			return true;
 		}

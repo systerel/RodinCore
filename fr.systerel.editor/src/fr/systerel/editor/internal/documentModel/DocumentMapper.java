@@ -121,6 +121,14 @@ public class DocumentMapper {
 		return null;
 	}
 
+	public Interval findIntervalAfter(Interval inter) {
+		final int index = intervals.indexOf(inter) + 1;
+		if (index < intervals.size()) {
+			return intervals.get(index);
+		}
+		return null;
+	}
+
 	/**
 	 * Binary search to find an interval that contains an offset
 	 * 
