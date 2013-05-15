@@ -94,18 +94,29 @@ public class RodinTextGenerator {
 		final IElementDesc desc = getElementDesc(e);
 		stream.addSectionRegion(desc.getPrefix(), e);
 		stream.incrementIndentation();
-		stream.appendPresentationTabs(e, 1);
+		stream.appendPresentationTabs(e, MIN_LEVEL);
 		final TextAlignator sizer = new TextAlignator();
 		stream.appendAlignementTab(e);
 		final IInternalElement element = e.getElement();
 		stream.addLabelRegion(element.getElementName(), e);
-		sizer.append(element.getElementName());
+		sizer.append(getRootNameSpace(element));
 		processOtherAttributes(e, sizer);
 		stream.appendAlignementTab(e);
+		sizer.append(getTabs(1));
 		processCommentedElement(e, sizer);
 		stream.appendLineSeparator(e);
 		stream.decrementIndentation();
 		traverse(monitor, e);
+	}
+
+	// there is no ":" after the root name so we remove it from the sizer
+	private String getRootNameSpace(final IInternalElement element) {
+		final String elementName = element.getElementName();
+		final StringBuilder b = new StringBuilder();
+		for (int i = 0; i < elementName.length() - 1; i++) {
+			b.append(" ");
+		}
+		return b.toString();
 	}
 
 	private void traverse(IProgressMonitor mon, ILElement e) {
@@ -131,7 +142,6 @@ public class RodinTextGenerator {
 			}
 			for (ILElement in : c) {
 				stream.appendLeftPresentationTabs(in);
-				stream.appendElementHandle(in, getContentType(in, IMPLICIT_HANDLE_TYPE, HANDLE_TYPE));
 				processElement(in);
 				traverse(mon, in);
 				if (in.getElementType() == IEvent.ELEMENT_TYPE) {
@@ -294,6 +304,7 @@ public class RodinTextGenerator {
 			return;
 		}
 		final TextAlignator sizer = new TextAlignator();
+		processElementHandle(element, sizer);
 		if (rodinElement instanceof ILabeledElement) {
 			processLabeledElement(element, sizer);
 		} else if (rodinElement instanceof IIdentifierElement) {
@@ -316,6 +327,12 @@ public class RodinTextGenerator {
 		}
 		// the separator belongs to the parent element
 		stream.appendLineSeparator(element.getParent());
+	}
+
+	private void processElementHandle(ILElement element, TextAlignator sizer) {
+		stream.appendElementHandle(element,
+				getContentType(element, IMPLICIT_HANDLE_TYPE, HANDLE_TYPE));
+		sizer.append(RodinTextStream.ELEMENT_PREFIX);
 	}
 
 	private static ContentType getContentType(ILElement element,
@@ -355,8 +372,12 @@ public class RodinTextGenerator {
 		public String getFirstAlignementString() {
 			final String string = b.toString();
 			final String[] split = string.split("\t");
-			final String r = split[0].replaceAll("[^\t]", " ");
-			return r.concat("\t");
+			final StringBuilder result = new StringBuilder();
+			for (int i = 0; i < Math.min(split.length, 2); i ++) {
+				result.append(split[i].replaceAll("[^\t]", " "));
+				result.append("\t");
+			}
+			return result.toString();
 		}
 	}
 
