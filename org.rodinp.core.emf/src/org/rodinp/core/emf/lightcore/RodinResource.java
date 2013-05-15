@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Southampton and others.
+ * Copyright (c) 2011, 2013 Southampton and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.adapters.ImplicitDeltaRootAdapter;
 import org.rodinp.core.emf.lightcore.sync.SynchroManager;
+import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
 /**
  * This is the serialisation of Event-B models from EMF into the Rodin database.
@@ -238,6 +239,18 @@ public class RodinResource extends ResourceImpl implements ILFile {
 	public void addAdapter(Adapter adapter) {
 		if (!eAdapters().contains(adapter))
 			eAdapters().add(adapter);
+	}
+
+	@Override
+	public void reload() {
+		final boolean oldIsLoading = isLoading;
+		try {
+			isLoading = true;
+			final LightElement root = (LightElement) getRoot();
+			SynchroUtils.reloadElement(root);
+		} finally {
+			isLoading = oldIsLoading;
+		}
 	}
 	
 }

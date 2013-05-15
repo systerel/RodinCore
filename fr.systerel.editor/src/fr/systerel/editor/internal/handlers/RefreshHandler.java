@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.RefreshAction;
+import org.rodinp.core.emf.api.itf.ILFile;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
 
@@ -28,6 +29,8 @@ import fr.systerel.editor.internal.editors.RodinEditor;
  * @author "Thomas Muller"
  */
 public class RefreshHandler extends AbstractEditionHandler {
+	
+	private static final MutexRule MUTEX = new MutexRule();
 
 	/**
 	 * Schedules sequentially two jobs:
@@ -41,12 +44,11 @@ public class RefreshHandler extends AbstractEditionHandler {
 	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
 		final IWorkbenchWindow ww = editor.getSite().getWorkbenchWindow();
-		final MutexRule rule = new MutexRule();
-		final RefreshAction refreshAction = new CustomRefreshAction(ww, rule);
+		final RefreshAction refreshAction = new CustomRefreshAction(ww, MUTEX);
 		refreshAction.run();
 
 		final Job c = new RefreshEditorJob(editor);
-		c.setRule(rule);
+		c.setRule(MUTEX);
 		c.schedule();
 		return null;
 	}
@@ -78,6 +80,8 @@ public class RefreshHandler extends AbstractEditionHandler {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			editor.abordEdition();
+			final ILFile resource = editor.getResource();
+			resource.reload();
 			editor.resync(null, true);
 			return Status.OK_STATUS;
 		}
