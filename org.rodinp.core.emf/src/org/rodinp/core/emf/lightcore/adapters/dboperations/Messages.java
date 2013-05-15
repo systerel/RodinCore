@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,8 @@ public class Messages extends NLS {
 	public static String elementOperation_implicit_creation_error;
 	public static String elementOperationType_addition_type;
 	public static String elementOperationType_recalculateImplicit_type;
-	public static String elementOperationType_reload_type;
+	public static String elementOperationType_reload_element_type;
+	public static String elementOperationType_reload_attributes_type;
 	public static String elementOperationType_remove_type;
 	public static String elementOperationType_reorder_type;
 	static {
