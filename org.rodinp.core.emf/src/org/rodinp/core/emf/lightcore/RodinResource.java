@@ -78,6 +78,7 @@ public class RodinResource extends ResourceImpl implements ILFile {
 
 	@Override
 	public void load(final Map<?, ?> options) throws IOException {
+		final boolean oldIsLoading = isLoading;
 		try {
 			isLoading = true;
 			// does file already exist? -> load
@@ -98,7 +99,7 @@ public class RodinResource extends ResourceImpl implements ILFile {
 				throw new IOException("Resource does not exist");
 			}
 		} finally {
-			isLoading = false;
+			isLoading = oldIsLoading;
 		}
 	}
 
@@ -118,21 +119,17 @@ public class RodinResource extends ResourceImpl implements ILFile {
 	private void saveAsRodin(final Map<?, ?> options) throws IOException {
 		if (!isLoaded || isLoading) // || !isModified )
 			return;
-		try {
+		if (!exists()) {
+			// create new RodinFile
+			try {
+				rodinFile.create(true, null);
+				// success
+				setTimeStamp(System.currentTimeMillis());
 
-			if (!exists()) {
-				// create new RodinFile
-				try {
-					rodinFile.create(true, null);
-					// success
-					setTimeStamp(System.currentTimeMillis());
-
-				} catch (final RodinDBException e) {
-					throw new IOException("Error while creating rodin file: "
-							+ e.getLocalizedMessage());
-				}
+			} catch (final RodinDBException e) {
+				throw new IOException("Error while creating rodin file: "
+						+ e.getLocalizedMessage());
 			}
-
 			try {
 				RodinCore.run(new IWorkspaceRunnable() {
 					public void run(final IProgressMonitor monitor)
@@ -156,7 +153,14 @@ public class RodinResource extends ResourceImpl implements ILFile {
 			// success
 			setTimeStamp(System.currentTimeMillis());
 			isModified = false;
-		} finally {
+		} else {
+			try {
+				rodinFile.save(null, false, true);
+			} catch (RodinDBException e) {
+				System.err.println("Could not save the Rodin file"
+						+ rodinFile.getBareName() + ".\nCause:"
+						+ e.getMessage());
+			}
 		}
 	}
 
