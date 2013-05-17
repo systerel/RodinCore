@@ -41,10 +41,10 @@ public class CutHandler extends AbstractEditorHandler {
 	}
 	
 	@Override
-	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
-		return editor.isOverlayActive()
-				|| editor.getSelectionController().getSelectedElements().length > 0
-				&& !isReadOnlyElementSelected(editor);
+	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
+	return editor.isOverlayActive()
+			|| editor.getSelectionController().getSelectedElements().length > 0
+			&& !isReadOnlyElementSelected(editor);
 	}
 
 }

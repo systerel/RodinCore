@@ -84,7 +84,7 @@ public class PasteHandler extends AbstractEditionHandler {
 	}
 
 	@Override
-	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
+	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
 		if (editor.isOverlayActive())
 			return true;
 		final EditorElement target = editor.getDocumentMapper()

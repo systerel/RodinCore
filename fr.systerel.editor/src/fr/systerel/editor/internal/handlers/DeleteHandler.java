@@ -23,8 +23,8 @@ import fr.systerel.editor.internal.editors.SelectionController;
 public class DeleteHandler extends AbstractEditionHandler {
 
 	@Override
-	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
-		return super.checkEnablement(editor, caretOffset)
+	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
+		return super.isEnabled(editor, caretOffset)
 				&& editor.getSelectionController().getSelectedElements().length > 0
 				&& !isReadOnlyElementSelected(editor);
 	}

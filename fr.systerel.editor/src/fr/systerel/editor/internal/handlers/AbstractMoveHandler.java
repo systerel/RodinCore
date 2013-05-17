@@ -85,7 +85,7 @@ public abstract class AbstractMoveHandler extends AbstractEditionHandler {
 	}
 	
 	@Override
-	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
+	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
 		final ILElement[] selection = editor.getSelectionController()
 		.getSelectedElements();
 		if (selection.length <= 0) {
