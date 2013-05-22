@@ -13,8 +13,11 @@
  *     Systerel - optimized tree traversal
  *     Systerel - fixed expanding
  *     Systerel - fixed Hyperlink.setImage() calls
+ *     vgheorgh - added a 'add' button at the end of sections
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.editpage;
+
+import static org.eventb.internal.ui.EventBUtils.setHyperlinkImage;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -40,7 +43,6 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
@@ -56,7 +58,6 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 
 public class SectionComposite implements ISectionComposite {
-
 
 	// The Form Toolkit used to create different Widget
 	final FormToolkit toolkit;
@@ -90,7 +91,6 @@ public class SectionComposite implements ISectionComposite {
 
 	FormText prefixFormText;
 
-
 	// The element composite
 	Composite elementComposite;
 
@@ -117,10 +117,10 @@ public class SectionComposite implements ISectionComposite {
 	}
 
 	/**
-	 *  Create section's contents.
-	 *  
-	 *  XXX If the prefix label is empty, then the section's header (including folding and add controls) 
-	 *  is not created.
+	 * Create section's contents.
+	 * 
+	 * XXX If the prefix label is empty, then the section's header (including
+	 * folding and add controls) is not created.
 	 * 
 	 */
 	private void createContents() {
@@ -131,7 +131,7 @@ public class SectionComposite implements ISectionComposite {
 		gridLayout.verticalSpacing = 0;
 		gridLayout.marginWidth = 0;
 		composite.setLayout(gridLayout);
-		
+
 		if (EventBEditorUtils.DEBUG) {
 			composite.setBackground(EventBSharedColor
 					.getSystemColor(SWT.COLOR_DARK_CYAN));
@@ -144,11 +144,10 @@ public class SectionComposite implements ISectionComposite {
 			createHeader(prefix);
 		}
 
-
 		elementComposite = toolkit.createComposite(composite);
 		elementComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		elementComposite.setLayout(gridLayout);
-		
+
 		if (EventBEditorUtils.DEBUG) {
 			elementComposite.setBackground(EventBSharedColor
 					.getSystemColor(SWT.COLOR_GREEN));
@@ -194,14 +193,15 @@ public class SectionComposite implements ISectionComposite {
 	 * Create the header of the section.
 	 * <p>
 	 * This consists of:
-	 * <li> A spacer composite for indentation according to the level
-	 * <li> A twistie control which controls section folding.
-	 * <li> Text for the section prefix label (e.g. 'EVENTS')
-	 * <li> An 'add' button - to add new elements into this section
+	 * <ul>
+	 * <li>A spacer composite for indentation according to the level</li>
+	 * <li>A twistie control which controls section folding.</li>
+	 * <li>Text for the section prefix label (e.g. 'EVENTS')</li>
+	 * <li>An 'add' button - to add new elements into this section</li>
+	 * </ul>
 	 * 
 	 * @param str
-	 * 
-	 * 
+	 *            leading spaces
 	 */
 	private void createHeader(final String str) {
 		final Composite headerComp = toolkit.createComposite(composite);
@@ -219,8 +219,9 @@ public class SectionComposite implements ISectionComposite {
 		spacer.setLayoutData(gridData);
 
 		folding = toolkit.createImageHyperlink(headerComp, SWT.TOP);
-		EventBUtils.setHyperlinkImage(folding, EventBImage.getImage(IEventBSharedImages.IMG_COLLAPSED));
-		
+		setHyperlinkImage(folding,
+				EventBImage.getImage(IEventBSharedImages.IMG_COLLAPSED));
+
 		folding.addHyperlinkListener(new HyperlinkAdapter() {
 
 			@Override
@@ -234,10 +235,10 @@ public class SectionComposite implements ISectionComposite {
 			@Override
 			public void mouseEnter(final MouseEvent e) {
 				if (isExpanded()) {
-					EventBUtils.setHyperlinkImage(folding, EventBImage
+					setHyperlinkImage(folding, EventBImage
 							.getImage(IEventBSharedImages.IMG_EXPANDED_HOVER));
 				} else {
-					EventBUtils.setHyperlinkImage(folding, EventBImage
+					setHyperlinkImage(folding, EventBImage
 							.getImage(IEventBSharedImages.IMG_COLLAPSED_HOVER));
 				}
 			}
@@ -259,35 +260,36 @@ public class SectionComposite implements ISectionComposite {
 		new EventBFormText(prefixFormText);
 		prefixFormText.setText(getPrefixFormText(str, -20), true, true);
 		refreshPrefixMarker();
-		
-		
+
 		// Add button
-		final ImageHyperlink addButton = toolkit.createImageHyperlink(headerComp, SWT.TOP);
-		EventBUtils.setHyperlinkImage(addButton, EventBImage.getImage(IEventBSharedImages.IMG_ADD));
-		
+		final ImageHyperlink addButton = toolkit.createImageHyperlink(
+				headerComp, SWT.TOP);
+		setHyperlinkImage(addButton,
+				EventBImage.getImage(IEventBSharedImages.IMG_ADD));
+
 		addButton.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				
-				// adding an element will show contents anyway 
-				//  - force expanding
-				if(!isExpanded) {
+
+				// adding an element will show contents anyway
+				// - force expanding
+				if (!isExpanded) {
 					setExpand(true, false);
 				}
-				
-				final IInternalElement selectedEl = CreateElementHandler.insertionPointForSelection(
-						new StructuredSelection(page.getCurrentSelection()));
+
+				final IInternalElement selectedEl = CreateElementHandler
+						.insertionPointForSelection(new StructuredSelection(
+								page.getCurrentSelection()));
 
 				// insert at selected element, if it is in the current section
-				final IInternalElement insertionPoint =
-						selectedEl!=null 
+				final IInternalElement insertionPoint = selectedEl != null
 						&& selectedEl.getParent().equals(parent)
-						&& selectedEl.getElementType().equals(rel.getChildType()) ?
-								selectedEl
-								: null;
-				
+						&& selectedEl.getElementType().equals(
+								rel.getChildType()) ? selectedEl : null;
+
 				try {
-					CreateElementHandler.doExecute(parent, rel.getChildType(), insertionPoint);
+					CreateElementHandler.doExecute(parent, rel.getChildType(),
+							insertionPoint);
 				} catch (RodinDBException e1) {
 					UIUtils.log(e1, "o.e.i.u.eventbeditor.editpage");
 				}
@@ -295,10 +297,10 @@ public class SectionComposite implements ISectionComposite {
 
 		});
 	}
-	
+
 	private static String getPrefixFormText(String sectionName, int spaceBefore) {
-		return "<form><li style=\"text\" bindent = \"" + spaceBefore
-		+ "\"><b>" + sectionName + "</b></li></form>";
+		return "<form><li style=\"text\" bindent = \"" + spaceBefore + "\"><b>"
+				+ sectionName + "</b></li></form>";
 	}
 
 	protected boolean isExpanded() {
@@ -311,24 +313,24 @@ public class SectionComposite implements ISectionComposite {
 
 	@Override
 	public void setExpand(final boolean isExpanded, boolean recursive) {
-		
-		long beforeTime=0;
+
+		long beforeTime = 0;
 		if (EventBEditorUtils.DEBUG) {
 			beforeTime = System.currentTimeMillis();
 		}
-		
+
 		form.setRedraw(false);
 		setExpandNoReflow(isExpanded, recursive);
 		form.reflow(true);
 		form.setRedraw(true);
-		
+
 		if (EventBEditorUtils.DEBUG) {
 			final long afterTime = System.currentTimeMillis();
 			EventBEditorUtils.debug("Duration: " + (afterTime - beforeTime)
 					+ " ms");
 		}
 	}
-	
+
 	@Override
 	public void setExpandNoReflow(final boolean isExpanded, boolean recursive) {
 		this.isExpanded = isExpanded;
@@ -338,7 +340,8 @@ public class SectionComposite implements ISectionComposite {
 				recursiveSetExpand();
 			}
 		} else {
-			final GridData gridData = (GridData) elementComposite.getLayoutData();
+			final GridData gridData = (GridData) elementComposite
+					.getLayoutData();
 			gridData.heightHint = 0;
 			// collapse is always recursive
 			recursiveSetExpand();
@@ -349,11 +352,11 @@ public class SectionComposite implements ISectionComposite {
 
 	void updateExpandStatus() {
 		if (isExpanded()) {
-			EventBUtils.setHyperlinkImage(folding, EventBImage
-					.getImage(IEventBSharedImages.IMG_EXPANDED));
+			setHyperlinkImage(folding,
+					EventBImage.getImage(IEventBSharedImages.IMG_EXPANDED));
 		} else {
-			EventBUtils.setHyperlinkImage(folding, EventBImage
-					.getImage(IEventBSharedImages.IMG_COLLAPSED));
+			setHyperlinkImage(folding,
+					EventBImage.getImage(IEventBSharedImages.IMG_COLLAPSED));
 		}
 	}
 
@@ -373,7 +376,8 @@ public class SectionComposite implements ISectionComposite {
 					mapComps.put(child, comp);
 				}
 			}
-			final GridData gridData = (GridData) elementComposite.getLayoutData();
+			final GridData gridData = (GridData) elementComposite
+					.getLayoutData();
 			if (elementComps.size() != 0) {
 				gridData.heightHint = SWT.DEFAULT;
 			} else {
@@ -384,7 +388,7 @@ public class SectionComposite implements ISectionComposite {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	@Override
@@ -424,12 +428,12 @@ public class SectionComposite implements ISectionComposite {
 		}
 
 		if (elementComps.size() == 0) {
-			final GridData gridData = (GridData) elementComposite.getLayoutData();
+			final GridData gridData = (GridData) elementComposite
+					.getLayoutData();
 			gridData.heightHint = 0;
 		}
 		form.reflow(true);
 	}
-
 
 	@Override
 	public void elementAdded(final IRodinElement element) {
@@ -444,7 +448,8 @@ public class SectionComposite implements ISectionComposite {
 					form, elementComposite, element, level);
 			elementComps.add(comp);
 			mapComps.put(element, comp);
-			final GridData gridData = (GridData) elementComposite.getLayoutData();
+			final GridData gridData = (GridData) elementComposite
+					.getLayoutData();
 			gridData.heightHint = SWT.DEFAULT;
 			form.reflow(true);
 		} else {
@@ -476,7 +481,8 @@ public class SectionComposite implements ISectionComposite {
 					if (index == i) {
 						continue;
 					}
-					final IElementComposite elementComp = elementComps.get(index);
+					final IElementComposite elementComp = elementComps
+							.get(index);
 					assert (elementComp != null);
 
 					elementComps.remove(elementComp);
@@ -631,7 +637,7 @@ public class SectionComposite implements ISectionComposite {
 			elementComp.setExpand(isExpanded, true);
 		}
 	}
-	
+
 	protected IElementComposite getComposite(final IRodinElement element) {
 		if (element == null || mapComps == null) {
 			return null;

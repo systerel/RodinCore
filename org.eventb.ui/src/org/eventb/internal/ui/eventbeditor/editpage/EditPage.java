@@ -101,7 +101,7 @@ public class EditPage extends EventBEditorPage implements
 
 	public static final String PAGE_TAB_TITLE = Messages.editorPage_edit_tabTitle;
 
-	static final int LEVEL_INDENT = 40;
+	public static final int LEVEL_INDENT = 40;
 	
 	
 	// The next two variables maintain a link to the sections embedded in this
@@ -223,11 +223,16 @@ public class EditPage extends EventBEditorPage implements
 		return revert;
 	}
 
-	Object[] getCurrentSelection(){
+	/**
+	 * Returns the current selection of this edit page.
+	 * 
+	 * @return an array of selected objects, possibly empty.
+	 */
+	public Object[] getCurrentSelection() {
 		if (currentSelection instanceof StructuredSelection) {
 			StructuredSelection ssel = (StructuredSelection) currentSelection;
 			return ssel.toArray();
-		}else{
+		} else {
 			return new Object[0];
 		}
 	}
