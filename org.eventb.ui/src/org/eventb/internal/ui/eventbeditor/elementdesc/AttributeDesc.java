@@ -57,6 +57,26 @@ public abstract class AttributeDesc extends ItemDesc implements IAttributeDesc {
 	}
 
 	@Override
+	public boolean isChoiceAttribute() {
+		return false;
+	}
+
+	@Override
+	public boolean isToggleAttribute() {
+		return false;
+	}
+
+	@Override
+	public boolean isTextAttribute() {
+		return false;
+	}
+
+	@Override
+	public boolean isMultiLine() {
+		return false;
+	}
+
+	@Override
 	public String toString() {
 		return factory.getClass().toString() + ", "
 				+ (isHorizontalExpand ? "horizontal" : "not horizontal") + ", "

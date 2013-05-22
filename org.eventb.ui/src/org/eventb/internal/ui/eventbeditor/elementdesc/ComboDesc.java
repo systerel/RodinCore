@@ -33,4 +33,10 @@ public class ComboDesc extends AttributeDesc {
 	public boolean isRequired() {
 		return required;
 	}
+
+	@Override
+	public boolean isChoiceAttribute() {
+		return true;
+	}
+
 }

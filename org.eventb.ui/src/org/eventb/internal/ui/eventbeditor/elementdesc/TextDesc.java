@@ -66,6 +66,17 @@ public class TextDesc extends AttributeDesc {
 		return style;
 	}
 
+
+	@Override
+	public boolean isTextAttribute() {
+		return true;
+	}
+
+	@Override
+	public boolean isMultiLine() {
+		return style == Style.MULTI;
+	}
+
 	@Override
 	public String toString() {
 		return super.toString() + ", " + (isMath ? "math" : "not math") + ", "

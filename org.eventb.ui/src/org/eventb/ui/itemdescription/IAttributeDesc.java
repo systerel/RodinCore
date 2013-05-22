@@ -52,4 +52,45 @@ public interface IAttributeDesc extends IItemDesc {
 	 */
 	IAttributeManipulation getManipulation();
 
+	/**
+	 * Tells if the attribute is displayed as a choice in a list, that is was
+	 * contributed as a <code>choiceAttribute</code> to the
+	 * <code>editorItems</code> extension point.
+	 * 
+	 * @return <code>true</code> if the attribute is a choice attribute,
+	 *         <code>false</code> otherwise
+	 */
+	boolean isChoiceAttribute();
+
+	/**
+	 * Tells if the attribute is displayed as a toggle, that is was contributed
+	 * as a <code>toggleAttribute</code> to the <code>editorItems</code>
+	 * extension point.
+	 * 
+	 * @return <code>true</code> if the attribute is a toggle attribute,
+	 *         <code>false</code> otherwise
+	 */
+	boolean isToggleAttribute();
+
+	/**
+	 * Tells if the attribute is displayed as text, that is was contributed as a
+	 * <code>textAttribute</code> to the <code>editorItems</code> extension
+	 * point.
+	 * 
+	 * @return <code>true</code> if the attribute is a text attribute,
+	 *         <code>false</code> otherwise
+	 */
+	boolean isTextAttribute();
+
+	/**
+	 * Tells if the attribute is displayed as text on several lines. This means
+	 * that the attribute is a text attribute and that the <code>style</code>
+	 * attribute was set to <code>multi</code>.
+	 * 
+	 * @return <code>true</code> if the attribute is a text attribute displayed
+	 *         on several lines, <code>false</code> otherwise
+	 * @see #isTextAttribute()
+	 */
+	boolean isMultiLine();
+
 }

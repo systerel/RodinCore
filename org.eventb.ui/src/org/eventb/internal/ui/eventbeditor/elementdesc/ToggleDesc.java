@@ -26,4 +26,9 @@ public class ToggleDesc extends AttributeDesc {
 		return new ToggleEditComposite(this);
 	}
 
+	@Override
+	public boolean isToggleAttribute() {
+		return true;
+	}
+
 }
