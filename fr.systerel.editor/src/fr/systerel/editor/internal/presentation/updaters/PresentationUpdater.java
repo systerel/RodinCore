@@ -85,16 +85,20 @@ public class PresentationUpdater extends EContentAdapter {
 		}
 
 		private boolean performFullResyncIfNeeded(Notification notification) {
-			if ((notification.getEventType() == Notification.REMOVE && notification
-					.getOldValue() instanceof ILElement)
-					|| (notification.getEventType() == Notification.MOVE)) {
+			final int eventType = notification.getEventType();
+			if (eventType == Notification.MOVE //
+					|| eventType == Notification.REMOVE_MANY //
+					|| eventType == Notification.REMOVE) {
 				editor.resync(null, false);
 				return true;
 			}
-			if (notification.getEventType() == Notification.ADD
-					&& notification.getNewValue() instanceof ILElement) {
-				editor.resync(null, false,
-						(ILElement) notification.getNewValue());
+			if (eventType == Notification.ADD) {
+				final Object newValue = notification.getNewValue();
+				if (newValue instanceof ILElement) {
+					editor.resync(null, false, (ILElement) newValue);
+				} else {
+					editor.resync(null, false);
+				}
 				return true;
 			}
 			return false;

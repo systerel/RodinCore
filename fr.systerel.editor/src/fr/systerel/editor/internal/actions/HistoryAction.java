@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,9 +20,7 @@ import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eventb.ui.eventbeditor.IRodinHistory;
 import org.eventb.ui.manipulation.ElementManipulationFacade;
 
@@ -152,24 +150,8 @@ public abstract class HistoryAction extends Action implements
 				doRun(context);
 			} else {
 				doRun(context);
-				refreshContents(); // refreshes in case of attribute change				
 			}
 		}
-	}
-
-	public void refreshContents() {
-		final IWorkbenchWindow ww = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (ww == null)
-			return;
-		final IWorkbenchPage activePage = ww.getActivePage();
-		if (activePage == null)
-			return;
-		final IWorkbenchPart editor = activePage.getActivePart();
-		if (!(editor instanceof RodinEditor))
-			return;
-		final RodinEditor rEditor = (RodinEditor) editor;
-		rEditor.resync(null, false);
 	}
 
 	public void refresh() {

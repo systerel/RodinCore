@@ -14,6 +14,7 @@ package org.rodinp.core.emf.lightcore;
 import static java.lang.System.currentTimeMillis;
 import static org.rodinp.core.emf.lightcore.LightCorePlugin.DEBUG;
 import static org.rodinp.core.emf.lightcore.LightCoreUtils.debug;
+import static org.rodinp.core.emf.lightcore.adapters.dboperations.OperationProcessor.submit;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -39,8 +40,8 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.adapters.ImplicitDeltaRootAdapter;
+import org.rodinp.core.emf.lightcore.adapters.dboperations.ElementOperation;
 import org.rodinp.core.emf.lightcore.sync.SynchroManager;
-import org.rodinp.core.emf.lightcore.sync.SynchroUtils;
 
 /**
  * This is the serialisation of Event-B models from EMF into the Rodin database.
@@ -247,7 +248,8 @@ public class RodinResource extends ResourceImpl implements ILFile {
 		try {
 			isLoading = true;
 			final LightElement root = (LightElement) getRoot();
-			SynchroUtils.reloadElement(root);
+			submit(new ElementOperation.ReloadElementOperation(
+					root.getElement(), root));
 		} finally {
 			isLoading = oldIsLoading;
 		}

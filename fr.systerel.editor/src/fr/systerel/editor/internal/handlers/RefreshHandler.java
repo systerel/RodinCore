@@ -82,7 +82,6 @@ public class RefreshHandler extends AbstractEditionHandler {
 			editor.abordEdition();
 			final ILFile resource = editor.getResource();
 			resource.reload();
-			editor.resync(null, true);
 			return Status.OK_STATUS;
 		}
 

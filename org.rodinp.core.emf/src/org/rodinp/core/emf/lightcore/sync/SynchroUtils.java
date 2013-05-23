@@ -20,9 +20,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
@@ -63,6 +66,7 @@ public class SynchroUtils {
 					lAttribute.setType(type);
 					lAttribute.setValue(value.getValue());
 					lElement.getEAttributes().put(type.getId(), lAttribute);
+					addParentEContentAdapter(lElement, lAttribute);
 				} finally {
 					lAttribute.eSetDeliver(true);
 				}
@@ -280,10 +284,13 @@ public class SynchroUtils {
 			if (ichild instanceof IInternalElement)
 				recursiveLoad(lChild, child, (IInternalElement) ichild);
 		}
+		addParentEContentAdapter(parent, lChild);
 	}
 	
 	public static void reloadElement(LightElement parent) {
 		final IInternalElement iParent = parent.getElement();
+		final boolean deliver = parent.eDeliver();
+		parent.eSetDeliver(false);
 		parent.getEChildren().clear();
 		try {
 			for (IRodinElement child : iParent.getChildren()) {
@@ -295,6 +302,11 @@ public class SynchroUtils {
 		} catch (RodinDBException e) {
 			System.out.println("Could not reload the element"
 					+ iParent.toString() + " " + e.getMessage());
+		} finally {
+			parent.eSetDeliver(deliver);
+			parent.eNotify(new ENotificationImpl((InternalEObject) parent,
+					Notification.REMOVE_MANY, null, null, null,
+					Notification.NO_INDEX, true));
 		}
 	}
 
