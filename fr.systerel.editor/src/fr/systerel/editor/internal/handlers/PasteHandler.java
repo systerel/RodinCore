@@ -33,13 +33,6 @@ import fr.systerel.editor.internal.editors.RodinEditorUtils;
 public class PasteHandler extends AbstractEditionHandler {
 
 	@Override
-	public boolean isEnabled() {
-		final RodinEditor rEditor = getActiveRodinEditor();
-		return super.isEnabled()
-				|| (rEditor != null && rEditor.isOverlayActive());
-	}
-
-	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
 		if (editor.isOverlayActive()) {
 			final IAction action = editor.getOverlayEditorAction(ST.PASTE);
