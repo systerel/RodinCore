@@ -12,6 +12,7 @@
  *     Systerel - Added tracing mechanism
  *     Systerel - SIMP_EQUAL_CONSTR*, SIMP_DESTR_CONSTR
  *     Systerel - move to tom-2.8
+ *     Systerel - SIMP_*_EQUAL_(EMPTY|TYPE|NATURAL|NATURAL1)
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.rewriters;
 
@@ -196,12 +197,18 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 		return ff.makeEmptySet(type, null);
 	}
 
-	protected AssociativeExpression makeAssociativeExpression(int tag, Expression... children) {
+	protected Expression makeAssociativeExpression(int tag, Expression... children) {
+		if (children.length == 1) {
+			return children[0];
+		}
 		final FormulaFactory ff = children[0].getFactory();
 		return ff.makeAssociativeExpression(tag, children, null);
 	}
 
-	protected AssociativeExpression makeAssociativeExpression(int tag, List<Expression> children) {
+	protected Expression makeAssociativeExpression(int tag, List<Expression> children) {
+		if (children.size() == 1) {
+			return children.get(0);
+		}
 		final FormulaFactory ff = children.get(0).getFactory();
 		return ff.makeAssociativeExpression(tag, children, null);
 	}
@@ -234,8 +241,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	}
 
 	// Removes exactly one occurrence of the given child from the given
-	// associative expression, if possible. Otherwise, returns the given
-	// associative expression unchanged.
+	// associative expression. If not possible raises an error.
 	protected Expression removeChild(AssociativeExpression parent,
 				Expression toRemove) {
 		final int tag = parent.getTag();
@@ -248,16 +254,22 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			if (toRemove.equals(children[1])) {
 				return children[0];
 			}
-			return parent;
+			assert false;
 		}
-		final int index = Arrays.asList(children).indexOf(toRemove);
-		if (index == -1) {
-			return parent;
-		}
-		final Expression[] newChildren = new Expression[length - 1];
-		System.arraycopy(children, 0, newChildren, 0, index);
-		System.arraycopy(children, index+1, newChildren, index, length - index - 1);
+		final Expression[] newChildren = remove(toRemove, children);
 		return makeAssociativeExpression(tag, newChildren);
+	}
+
+	// Removes exactly one occurrence of the given expression from the given
+	// expressions. If not possible raises an error.
+	protected Expression[] remove(Expression toRemove, Expression[] exprs) {
+		final int index = Arrays.asList(exprs).indexOf(toRemove);
+		assert 0 <= index;
+		final int length = exprs.length;
+		final Expression[] newExprs = new Expression[length - 1];
+		System.arraycopy(exprs, 0, newExprs, 0, index);
+		System.arraycopy(exprs, index+1, newExprs, index, length - index - 1);
+		return newExprs;
 	}
 
 	private Expression simplifyExtremumOfUnion(Expression[] children, int tag) {
@@ -323,11 +335,24 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			makeEmptySet(set.getFactory(), set.getType()));
 	}
 
+	protected RelationalPredicate makeIsType(Expression set) {
+		return makeRelationalPredicate(EQUAL, set,
+				getBaseTypeExpression(set));
+	}
+
 	// produces E_1 = {} & E_2 = {} & ... & E_n = {}
 	protected AssociativePredicate makeAreAllEmpty(Expression[] expressions) {
 		final Predicate[] newChildren = new Predicate[expressions.length];
 		for (int i = 0; i < expressions.length; ++i) {
 			newChildren[i] = makeIsEmpty(expressions[i]);
+		}
+		return makeAssociativePredicate(LAND, newChildren);
+	}
+
+	protected AssociativePredicate makeAreAllType(Expression... expressions) {
+		final Predicate[] newChildren = new Predicate[expressions.length];
+		for (int i = 0; i < expressions.length; ++i) {
+			newChildren[i] = makeIsType(expressions[i]);
 		}
 		return makeAssociativePredicate(LAND, newChildren);
 	}
@@ -352,6 +377,21 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 	protected RelationalPredicate makeEmptyInter(Expression left,
 			Expression right) {
 		return makeIsEmpty(makeAssociativeExpression(BINTER, left, right));
+	}
+
+	protected Expression getBaseTypeExpression(Expression expression) {
+		return expression.getType().getBaseType().toExpression();
+	}
+
+	protected boolean containsSingleton(Expression[] exprs) {
+		for (final Expression expr : exprs) {
+			%match (Expression expr) {
+				SetExtension(eList(_)) -> {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	%include {FormulaV2.tom}
@@ -693,6 +733,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 			"SIMP_EQUAL_MAPSTO", "SIMP_SPECIAL_EQUAL_TRUE", "SIMP_NOTEQUAL",
             "SIMP_NOTIN", "SIMP_NOTSUBSET", "SIMP_NOTSUBSETEQ",
             "SIMP_SPECIAL_SUBSETEQ", "SIMP_MULTI_SUBSETEQ",
+            "SIMP_UPTO_EQUAL_NATURAL", "SIMP_UPTO_EQUAL_NATURAL1",
             "SIMP_SUBSETEQ_BUNION",
             "SIMP_SUBSETEQ_BINTER", "DERIV_SUBSETEQ_BUNION",
             "DERIV_SUBSETEQ_BINTER", "SIMP_SPECIAL_IN", "SIMP_MULTI_IN",
@@ -1516,6 +1557,54 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				}
 			}
 
+			/**
+			 * SIMP_UPTO_EQUAL_NATURAL
+			 * i ‥ j = ℕ == ⊥
+			 * ℕ ⊂ i ‥ j == ⊥
+			 * ℕ ⊆ i ‥ j == ⊥
+			 * ℕ = i ‥ j == ⊥
+			 */
+			Equal(UpTo(_, _), Natural()) ||
+			(Subset|SubsetEq|Equal)(Natural(), UpTo(_, _)) << predicate -> {
+				if (level4) {
+					result = DLib.False(ff);
+					trace(predicate, result, "SIMP_UPTO_EQUAL_NATURAL");
+					return result;
+				}
+			}
+
+			/**
+			 * SIMP_UPTO_EQUAL_NATURAL1
+			 * i ‥ j = ℕ1 == ⊥
+			 * ℕ1 ⊂ i ‥ j == ⊥
+			 * ℕ1 ⊆ i ‥ j == ⊥
+			 * ℕ1 = i ‥ j == ⊥
+			 */
+			Equal(UpTo(_, _), Natural1()) ||
+			(Subset|SubsetEq|Equal)(Natural1(), UpTo(_, _)) << predicate -> {
+				if (level4) {
+					result = DLib.False(ff);
+					trace(predicate, result, "SIMP_UPTO_EQUAL_NATURAL1");
+					return result;
+				}
+			}
+
+			/**
+			 * Rules for equality with a type (where Ty is a type expression)
+			 * E = Ty == ...
+			 * Ty ⊆ E == ...
+			 * Ty = E == ...
+			 */
+			Equal(E, Ty) ||
+			(SubsetEq|Equal)(Ty, E) << predicate -> {
+				if (level4 && `Ty.isATypeExpression()) {
+					final Predicate pred = rewriteEqualsType(predicate, `E);
+					if (pred != null) {
+						return pred;
+					}
+				}
+			}
+
 	    }
 	    return predicate;
 	}
@@ -1554,23 +1643,38 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 			/**
 			 * SIMP_BINTER_SING_EQUAL_EMPTY
-			 * A ∩ {a} = ∅ == ¬ a ∈ A
+			 * A ∩...∩ {a} ∩...∩ B = ∅ == ¬ a ∈ A ∩...∩ B
 			 */
-			BInter(eList(A, SetExtension(eList(a)))) -> {
-				result = makeUnaryPredicate(
-						NOT, makeRelationalPredicate(IN, `a, `A));
-				trace(predicate, result, "SIMP_BINTER_SING_EQUAL_EMPTY");
-				return result;
+			BInter(children@eList(_*, singleton@SetExtension(eList(a)), _*)) -> {
+				final Expression[] newChildren = remove(`singleton, `children);
+				if (newChildren.length == 1 || !containsSingleton(newChildren)) {
+					result = makeUnaryPredicate(NOT,
+							makeRelationalPredicate(IN, `a,
+								makeAssociativeExpression(BINTER, newChildren)));
+					trace(predicate, result, "SIMP_BINTER_SING_EQUAL_EMPTY");
+					return result;
+				}
 	        }
 
             /**
 			 * SIMP_BINTER_SETMINUS_EQUAL_EMPTY
-			 * (A ∖ B) ∩ C == (A ∩ C) ∖ B = ∅
+			 * (A ∖ B) ∩ C ∩ (D ∖ E) == (A ∩ C ∩ D) ⊆ B ∪ E
 			 */
-            BInter(eList(SetMinus(A, B), C)) -> {
-				result = makeIsEmpty(makeBinaryExpression(SETMINUS,
-						makeAssociativeExpression(BINTER, `A, `C),
-						`B));
+			BInter(children@eList(_*, SetMinus(_, _), _*)) -> {
+				final List<Expression> lhs = new ArrayList<Expression>();
+				final List<Expression> rhs = new ArrayList<Expression>();
+				for (final Expression child : `children) {
+					if (child.getTag() == SETMINUS) {
+						final BinaryExpression binExpr = (BinaryExpression) child;
+						lhs.add(binExpr.getLeft());
+						rhs.add(binExpr.getRight());
+					} else {
+						lhs.add(child);
+					}
+				}
+				result = makeRelationalPredicate(SUBSETEQ,
+						makeAssociativeExpression(BINTER, lhs),
+						makeAssociativeExpression(BUNION, rhs));
 				trace(predicate, result, "SIMP_BINTER_SETMINUS_EQUAL_EMPTY");
 				return result;
 	         }
@@ -1879,6 +1983,169 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 				return result;
 			}
 	    }
+	    return null;
+	}
+
+    @ProverRule( {"SIMP_BINTER_EQUAL_TYPE", "SIMP_SETMINUS_EQUAL_TYPE",
+		"SIMP_KINTER_EQUAL_TYPE", "SIMP_QINTER_EQUAL_TYPE",
+		"SIMP_CPROD_EQUAL_TYPE", "SIMP_UPTO_EQUAL_INTEGER",
+		"SIMP_DOMRES_EQUAL_TYPE",
+		"SIMP_DOMSUB_EQUAL_TYPE", "SIMP_RANRES_EQUAL_TYPE",
+		"SIMP_RANSUB_EQUAL_TYPE", "SIMP_CONVERSE_EQUAL_TYPE",
+		"SIMP_DPROD_EQUAL_TYPE", "SIMP_PPROD_EQUAL_TYPE"})
+    private Predicate rewriteEqualsType(Predicate predicate,
+			Expression expression) {
+		final FormulaFactory ff = predicate.getFactory();
+		final Predicate result;
+	    %match (Expression expression) {
+
+			/**
+			 * SIMP_BINTER_EQUAL_TYPE
+			 * A ∩...∩ B = Ty == A=Ty ∧...∧ B=Ty
+			 */
+			BInter(children) -> {
+				result = makeAreAllType(`children);
+				trace(predicate, result, "SIMP_BINTER_EQUAL_TYPE");
+				return result;
+			}
+
+			/**
+			 * SIMP_SETMINUS_EQUAL_TYPE
+			 * A ∖ B = Ty == A=Ty ∧ B=∅
+			 */
+			SetMinus(A, B) -> {
+				Predicate [] newChildren = new Predicate[2];
+				newChildren[0] = makeIsType(`A);
+				newChildren[1] = makeIsEmpty(`B);
+				result =  makeAssociativePredicate(LAND, newChildren);
+				trace(predicate, result, "SIMP_SETMINUS_EQUAL_TYPE");
+				return result;
+			}
+
+			/**
+             * SIMP_KINTER_EQUAL_TYPE
+             *    inter(S) = Ty == S={Ty}
+             */
+			Inter(S) -> {
+				final SetExtension singleton = makeSetExtension(
+						getBaseTypeExpression(expression));
+				result = makeRelationalPredicate(EQUAL, `S, singleton);
+				trace(predicate, result, "SIMP_KINTER_EQUAL_TYPE");
+				return result;
+			}
+
+			/**
+             * SIMP_QINTER_EQUAL_TYPE
+             *    (⋂x· P(x) ∣ E(x)) = Ty == ∀x· P(x) ⇒ E(x)=Ty
+             */
+			Qinter(bidl, P, E) -> {
+				final Predicate pred = makeBinaryPredicate(LIMP,
+						`P,
+						makeIsType(`E));
+				result = makeQuantifiedPredicate(FORALL, `bidl, pred);
+				trace(predicate, result, "SIMP_QINTER_EQUAL_TYPE");
+				return result;
+			}
+
+			/**
+			 * SIMP_CPROD_EQUAL_TYPE
+			 * S × T = Ty == S=Ta ∧ T=Tb
+			 */
+			Cprod(S, T) -> {
+				result = makeAreAllType(`S, `T);
+				trace(predicate, result, "SIMP_CPROD_EQUAL_TYPE");
+				return result;
+			}
+
+            /**
+			 * SIMP_UPTO_EQUAL_INTEGER
+			 *    i‥j = ℤ == ⊥
+			 */
+			UpTo(_, _) -> {
+				result = DLib.False(ff);
+				trace(predicate, result, "SIMP_UPTO_EQUAL_INTEGER");
+				return result;
+			}
+
+			/**
+			 * SIMP_DOMRES_EQUAL_TYPE
+			 *    S ◁ r = Ty == A=Ta ∧ r=Ty (where Ty is a type expression and
+			 *    Ty = Ta × Tb)
+			 */
+			DomRes(S, r) -> {
+				result = makeAreAllType(`S, `r);
+				trace(predicate, result, "SIMP_DOMRES_EQUAL_TYPE");
+				return result;
+			}
+
+			/**
+			 * SIMP_DOMSUB_EQUAL_TYPE
+			 * A ⩤ r = Ty == A=∅ ∧ r=Ty
+			 */
+			DomSub(A, r) -> {
+				Predicate [] newChildren = new Predicate[2];
+				newChildren[0] = makeIsEmpty(`A);
+				newChildren[1] = makeIsType(`r);
+				result =  makeAssociativePredicate(LAND, newChildren);
+				trace(predicate, result, "SIMP_DOMSUB_EQUAL_TYPE");
+				return result;
+			}
+
+			/**
+			 * SIMP_RANRES_EQUAL_TYPE
+			 * r ▷ A = Ty == A=Tb ∧ r=Ty (where Ty is a type expression and
+			 * Ty = Ta × Tb)
+			 */
+			RanRes(r, A) -> {
+				result =  makeAreAllType(`A, `r);
+				trace(predicate, result, "SIMP_RANRES_EQUAL_TYPE");
+				return result;
+			}
+
+			/**
+			 * SIMP_RANSUB_EQUAL_TYPE
+			 * r ⩥ A = Ty == A=∅ ∧ r=Ty
+			 */
+			RanSub(r, A) -> {
+				Predicate [] newChildren = new Predicate[2];
+				newChildren[0] = makeIsEmpty(`A);
+				newChildren[1] = makeIsType(`r);
+				result =  makeAssociativePredicate(LAND, newChildren);
+				trace(predicate, result, "SIMP_RANSUB_EQUAL_TYPE");
+				return result;
+			}
+
+			/**
+			 * SIMP_CONVERSE_EQUAL_TYPE
+			 *    r∼ = T×S == r = S×T
+			 */
+			Converse(r) -> {
+				result = makeIsType(`r);
+				trace(predicate, result, "SIMP_CONVERSE_EQUAL_TYPE");
+				return result;
+			}
+
+			/**
+			 * SIMP_DPROD_EQUAL_TYPE
+             * 	  p ⊗ q = S×(T×U) ⇔ p=S×T ∧ q=S×U
+			 */
+			Dprod(p, q) -> {
+				result =  makeAreAllType(`p, `q);
+				trace(predicate, result, "SIMP_DPROD_EQUAL_TYPE");
+				return result;
+			}
+
+			/**
+			 * SIMP_PPROD_EQUAL_TYPE
+             * 	  p ∥ q = (S×U)×(T×V) == p=S×T ∧ q=U×V
+			 */
+			Pprod(p, q) -> {
+				result =  makeAreAllType(`p, `q);
+				trace(predicate, result, "SIMP_PPROD_EQUAL_TYPE");
+				return result;
+			}
+
+		}
 	    return null;
 	}
 

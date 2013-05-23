@@ -142,7 +142,7 @@ public abstract class AbstractFormulaRewriterTests {
 	/**
 	 * The formula factory used to create formulas.
 	 */
-	private final FormulaFactory ff;
+	protected final FormulaFactory ff;
 
 	/**
 	 * The rewriter under test.
