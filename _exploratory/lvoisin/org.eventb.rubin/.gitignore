@@ -1,3 +1,5 @@
 /bin/
-/src/org/eventb/internal/rubin/Scanner.java
 /src/org/eventb/internal/rubin/Parser.java
+/src/org/eventb/internal/rubin/Parser.java.old
+/src/org/eventb/internal/rubin/Scanner.java
+/src/org/eventb/internal/rubin/Scanner.java.old
