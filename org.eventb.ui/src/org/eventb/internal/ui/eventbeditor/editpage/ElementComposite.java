@@ -33,7 +33,6 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IAttributeType;
@@ -408,7 +407,7 @@ public class ElementComposite implements IElementComposite {
 	}
 
 	@Override
-	public IElementDescRegistry getElemDescRegistry() {
+	public ElementDescRegistry getElemDescRegistry() {
 		return registry;
 	}
 	

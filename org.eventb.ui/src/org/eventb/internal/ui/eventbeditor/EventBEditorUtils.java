@@ -67,7 +67,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
@@ -577,7 +576,7 @@ public class EventBEditorUtils {
 				expanded).getData(), true);
 		try {
 			select((EventBEditableTreeViewer) viewer, selected,
-					IElementDescRegistry.Column.LABEL.getId());
+					ElementDescRegistry.Column.LABEL.getId());
 		} catch (RodinDBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

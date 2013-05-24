@@ -14,7 +14,7 @@ package org.eventb.internal.ui.eventbeditor.editpage;
 import java.util.Set;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
@@ -177,6 +177,6 @@ public interface IElementComposite {
 	 * 
 	 * @return an instance of IElementDescRegistry
 	 */
-	public IElementDescRegistry getElemDescRegistry();
+	public ElementDescRegistry getElemDescRegistry();
 	
 }

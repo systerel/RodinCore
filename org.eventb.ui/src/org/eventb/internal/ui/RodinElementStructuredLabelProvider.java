@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui;
 
-import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
+import static org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.Column.LABEL;
 
 import java.util.Set;
 

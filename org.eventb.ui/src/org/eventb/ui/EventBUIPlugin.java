@@ -36,6 +36,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.cachehypothesis.CacheHypothesisUtils;
 import org.eventb.internal.ui.eventbeditor.EditorManager;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.goal.GoalUtils;
 import org.eventb.internal.ui.preferences.ToggleAutoTacticPreference;
 import org.eventb.internal.ui.preferences.UIPreferenceObserver;
@@ -46,6 +47,7 @@ import org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils;
 import org.eventb.internal.ui.prover.HypothesisComposite;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesisUtils;
+import org.eventb.ui.itemdescription.IElementDescRegistry;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IRodinDB;
@@ -174,6 +176,16 @@ public class EventBUIPlugin extends AbstractUIPlugin {
 	public EventBUIPlugin() {
 		super();
 		plugin = this;
+	}
+
+	/**
+	 * Returns the registry of UI descriptions of elements and attributes in the
+	 * Rodin datatbase.
+	 * 
+	 * @since 3.0
+	 */
+	public static IElementDescRegistry getElementDescRegistry() {
+		return ElementDescRegistry.getInstance();
 	}
 
 	/**

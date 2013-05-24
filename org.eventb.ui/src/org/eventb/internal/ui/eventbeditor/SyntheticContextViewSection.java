@@ -12,8 +12,8 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import static org.eventb.internal.ui.eventbeditor.EventBEditorUtils.checkAndShowReadOnly;
-import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.CONTENT;
-import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
+import static org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.Column.CONTENT;
+import static org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.Column.LABEL;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelectionChangedListener;

@@ -34,6 +34,7 @@ import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IImplicitChildProvider;
 import org.eventb.ui.itemdescription.IElementDesc;
+import org.eventb.ui.itemdescription.IElementDescRegistry;
 import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.eventb.ui.prettyprint.IElementPrettyPrinter;
 import org.rodinp.core.IAttributeType;
@@ -49,6 +50,21 @@ import org.rodinp.core.RodinDBException;
  * <code>org.eventb.ui.editorItems</code> extension point.
  */
 public class ElementDescRegistry implements IElementDescRegistry {
+
+	/**
+	 * Columns in a tree viewer (legacy editor).
+	 */
+	public enum Column {
+		LABEL, CONTENT;
+
+		public int getId() {
+			return ordinal();
+		}
+
+		public static Column valueOf(int id) {
+			return values()[id];
+		}
+	}
 
 	private static final String ATTR_AUTONAMING_ELEMENT_TYPE = "elementTypeId";
 	private static final String ATTR_AUTONAMING_ATTRIBUTE_TYPE = "attributeDescriptionId";
@@ -89,9 +105,13 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	 * 
 	 * @return the descriptor for the given element type
 	 */
-	@Override
 	public ElementDesc getElementDesc(IElementType<?> type) {
 		return elementDescs.get(type);
+	}
+
+	@Override
+	public ElementDesc getElementDesc(IInternalElementType<?> type) {
+		return getElementDesc((IElementType<?>) type);
 	}
 
 	/**
@@ -102,12 +122,10 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	 * 
 	 * @return the descriptor for the given element
 	 */
-	@Override
 	public ElementDesc getElementDesc(IRodinElement element) {
 		return getElementDesc(element.getElementType());
 	}
 
-	@Override
 	public String getValueAtColumn(IRodinElement element, Column column) {
 		final ElementDesc desc = getElementDesc(element);
 		if (desc == null)

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor;
 
-import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
+import static org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.Column.LABEL;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;

@@ -15,7 +15,7 @@
 package org.eventb.internal.ui.eventbeditor;
 
 import static org.eventb.internal.ui.EventBUtils.isReadOnly;
-import static org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column.LABEL;
+import static org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.Column.LABEL;
 
 import java.util.Collection;
 import java.util.HashSet;

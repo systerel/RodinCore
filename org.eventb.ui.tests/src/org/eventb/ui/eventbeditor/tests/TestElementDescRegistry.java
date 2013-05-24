@@ -47,7 +47,6 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.AttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ComboDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.NullAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ToggleDesc;
@@ -71,6 +70,7 @@ import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttribute
 import org.eventb.internal.ui.eventbeditor.manipulation.TheoremAttributeManipulation;
 import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.eventb.ui.itemdescription.IElementDesc;
+import org.eventb.ui.itemdescription.IElementDescRegistry;
 import org.junit.Test;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;

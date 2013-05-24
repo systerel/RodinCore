@@ -41,7 +41,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eventb.internal.ui.EventBImage;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry.Column;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.Column;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
