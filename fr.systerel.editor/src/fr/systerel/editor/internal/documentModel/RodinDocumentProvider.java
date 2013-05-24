@@ -252,6 +252,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 		document = createDocument(element);
 		final IAnnotationModel annotations = createAnnotationModel(element);
 		info = new RodinEditorElementInfo(document, annotations);
+		info.elementChanged(null);
 		RodinCore.addElementChangedListener(info);
 		return info;
 	}
