@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class DescRegistryReader {
 			IEventBEditor<?> editor, FormToolkit toolkit) {
 		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
 		final ElementDesc desc = registry.getElementDesc(element);
-		final AttributeDesc[] attrDescs = desc.getAttributeDescription();
+		final AttributeDesc[] attrDescs = desc.getAttributeDescriptions();
 	
 		final int length = attrDescs.length;
 		final IEditComposite[] result = new IEditComposite[length];

@@ -62,7 +62,7 @@ public class EditRow {
 		final IElementType<? extends IRodinElement> type = element.getElementType();
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		final int numberOfAttributes = elementComp.getElemDescRegistry()
-				.getElementDesc(type).getAttributeDescription().length;
+				.getElementDesc(type).getAttributeDescriptions().length;
 		final int numColumns = 1 + 3 * numberOfAttributes;
 		composite.setLayout(new GridLayout(numColumns + 1, false));
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.ui.EventBUIPlugin;
+import org.eventb.ui.itemdescription.IElementDesc;
 import org.osgi.service.prefs.BackingStoreException;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;

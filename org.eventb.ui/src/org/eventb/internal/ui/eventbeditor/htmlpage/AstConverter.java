@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,9 @@ import org.eventb.core.ICommentedElement;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.ui.IImplicitChildProvider;
+import org.eventb.ui.itemdescription.IElementDesc;
 import org.eventb.ui.prettyprint.IElementPrettyPrinter;
 import org.eventb.ui.prettyprint.PrettyPrintAlignments.HorizontalAlignment;
 import org.eventb.ui.prettyprint.PrettyPrintAlignments.VerticalAlignement;
@@ -104,7 +104,7 @@ public abstract class AstConverter {
 	}
 
 	private void traverse(IProgressMonitor mon, IInternalElement e) {
-		final IElementDesc desc = getElementDesc(e);
+		final ElementDesc desc = getElementDesc(e);
 		for (IElementRelationship rel : desc.getChildRelationships()) {
 			final List<IInternalElement> children;
 			children = retrieveChildrenToProcess(rel, e);

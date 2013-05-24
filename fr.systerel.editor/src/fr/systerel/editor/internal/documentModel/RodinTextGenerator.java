@@ -33,7 +33,6 @@ import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,11 +43,10 @@ import org.eventb.core.IExpressionElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc.Style;
 import org.eventb.ui.itemdescription.IAttributeDesc;
+import org.eventb.ui.itemdescription.IElementDesc;
 import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
@@ -123,12 +121,12 @@ public class RodinTextGenerator {
 		if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
 			stream.incrementIndentation();
 		}
-		for (IElementRelationship rel : desc.getChildRelationships()) {
-			final List<ILElement> c = retrieveChildrenToProcess(rel, e);
-			final IElementDesc childDesc = getElementDesc(rel.getChildType());
+		for (IInternalElementType<?> childType : desc.getChildTypes()) {
+			final IElementDesc childDesc = getElementDesc(childType);
 			if (childDesc == null)
 				continue;
 			int start = -1;
+			final List<ILElement> c = e.getChildrenOfType(childType);
 			final boolean noChildren = c.isEmpty();
 			if (noChildren) {
 				continue;
@@ -149,7 +147,7 @@ public class RodinTextGenerator {
 			}
 			final int length = stream.getLength() - start -1;
 			if (start != -1 && stream.getLevel() <= MIN_LEVEL) {
-				mapper.addEditorSection(rel.getChildType(), start, length);
+				mapper.addEditorSection(childType, start, length);
 				start = -1;
 			}
 		}
@@ -159,20 +157,6 @@ public class RodinTextGenerator {
 		if (e.getElementType().equals(IEvent.ELEMENT_TYPE)) {
 			stream.decrementIndentation();
 		}
-	}
-
-	/**
-	 * We retrieve all children of the element
-	 * <code>elt<code> and if the client defined a
-	 * way to retrieve children including implicit ones, we ask the implicit
-	 * child providers to get this list of visible children
-	 */
-	private List<ILElement> retrieveChildrenToProcess(IElementRelationship rel,
-			ILElement elt) {
-		final ArrayList<ILElement> result = new ArrayList<ILElement>();
-		final IInternalElementType<?> type = rel.getChildType();
-		result.addAll(elt.getChildrenOfType(type));
-		return result;
 	}
 
 	/**

@@ -25,9 +25,9 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.eventb.ui.itemdescription.IAttributeDesc;
+import org.eventb.ui.itemdescription.IElementDesc;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;

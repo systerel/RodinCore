@@ -47,7 +47,6 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.AttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ComboDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.NullAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc;
@@ -71,6 +70,7 @@ import org.eventb.internal.ui.eventbeditor.manipulation.RefinesMachineAbstractMa
 import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.TheoremAttributeManipulation;
 import org.eventb.ui.itemdescription.IAttributeDesc;
+import org.eventb.ui.itemdescription.IElementDesc;
 import org.junit.Test;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;
@@ -92,7 +92,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "MACHINE", "END", defaultImgProvider,
 				nullPrefix, nullAttribute, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				getCommentedDesc());
 
 		assertChildrens("Test children", desc.getChildTypes(),
@@ -110,7 +110,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "CONTEXT", "END", defaultImgProvider,
 				nullPrefix, nullAttribute, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				getCommentedDesc());
 
 		assertChildrens("Test children", desc.getChildTypes(),
@@ -131,7 +131,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "REFINES", "", defaultImgProvider, nullPrefix,
 				nullAttribute, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedAttribute);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
@@ -150,7 +150,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "SEES", "", defaultImgProvider, nullPrefix,
 				nullAttribute, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedAttribute);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
@@ -168,7 +168,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "VARIABLES", "", defaultImgProvider, "var",
 				expectedIdentifier, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedIdentifier, expectedComment);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
@@ -188,7 +188,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "INVARIANTS", "", InvariantImageProvider.class,
 				"inv", expectedLabel, 1);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedLabel, expectedPredicate, expectedTheorem,
 				expectedComment);
 
@@ -207,7 +207,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "VARIANT", "", defaultImgProvider, nullPrefix,
 				nullAttribute, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedExpression, expectedComment);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
@@ -230,7 +230,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "EVENTS", "END", defaultImgProvider, "evt",
 				expectedLabel, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedLabel, expectedExtended, expectedConvergence,
 				expectedComment);
 
@@ -252,7 +252,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "REFINES", "", defaultImgProvider, nullPrefix,
 				nullAttribute, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedAttribute);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
@@ -270,7 +270,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "ANY", "", defaultImgProvider, "prm",
 				expectedIdentifier, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedIdentifier, expectedComment);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
@@ -289,7 +289,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "WHERE", "", GuardImageProvider.class, "grd",
 				expectedLabel, 1);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedLabel, expectedPredicate, expectedTheorem,
 				expectedComment);
 
@@ -309,7 +309,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "WITH", "", defaultImgProvider, "wit",
 				expectedLabel, 1);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedLabel, expectedPredicate, expectedComment);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
@@ -327,7 +327,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "THEN", "", defaultImgProvider, "act",
 				expectedLabel, 1);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedLabel, expectedAssignment, expectedComment);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
@@ -346,7 +346,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "EXTENDS", "", defaultImgProvider, nullPrefix,
 				nullAttribute, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedExtends);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
@@ -363,7 +363,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "SETS", "", defaultImgProvider, "set",
 				expectedIdentifier, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedIdentifier, expectedComment);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
@@ -381,7 +381,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "CONSTANTS", "", defaultImgProvider, "cst",
 				expectedIdentifier, 0);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedIdentifier, expectedComment);
 
 		assertChildrens("Test children", desc.getChildTypes(), noChildren);
@@ -400,7 +400,7 @@ public class TestElementDescRegistry {
 		assertElementDesc(desc, "AXIOMS", "", AxiomImageProvider.class, "axm",
 				expectedLabel, 1);
 
-		assertAttributeDesc("Test attributes", desc.getAttributeDescription(),
+		assertAttributeDesc("Test attributes", desc.getAttributeDescriptions(),
 				expectedLabel, expectedPredicate, expectedTheorem,
 				expectedComment);
 

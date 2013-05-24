@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
+import static org.rodinp.core.RodinCore.getAttributeType;
+
 import org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider;
+import org.eventb.ui.itemdescription.IAttributeDesc;
+import org.eventb.ui.itemdescription.IElementDesc;
 import org.eventb.ui.prettyprint.IElementPrettyPrinter;
-import org.rodinp.core.IElementType;
+import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElementType;
 
 /**
  * This interface is used for declaring how to display an element
@@ -65,36 +70,56 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 		return childrenSuffix;
 	}
 
-	@Override
+	/**
+	 * Return the image provider which will be used to display an icon for
+	 * elements concerned by this description.
+	 * 
+	 * @return an image provider for the elements concerned by this description
+	 */
 	public IImageProvider getImageProvider() {
 		return imgProvider;
 	}
 
-	/**
-	 * Return an array of attribute description.
-	 * 
-	 * @return an array of {@link AttributeDesc}. This must not be
-	 *         <code>null</code>.
-	 * 
-	 */
 	@Override
-	public AttributeDesc[] getAttributeDescription() {
+	public AttributeDesc[] getAttributeDescriptions() {
 		return attributeDesc.clone();
 	}
 
-	@Override
-	public AttributeDesc atColumn(int column) {
-		if (column < 0 || atColumn.length <= column)
+	/**
+	 * Return the description of the attribute at column <code>i</code>, or
+	 * <code>null</code> if the given index is below 0 or exceeds the number of
+	 * columns for the given element description.
+	 * 
+	 * @param i
+	 *            the index of the column to get the attribute description for
+	 * @return the description of the attribute at column <code>i</code>, or
+	 *         <code>null</code> if the given index is out of range
+	 * 
+	 */
+	public AttributeDesc atColumn(int i) {
+		if (i < 0 || atColumn.length <= i)
 			return null;
-		return atColumn[column];
+		return atColumn[i];
 	}
 
-	@Override
+	/**
+	 * Returns the column which shall be edited by default for the given element
+	 * description.
+	 * 
+	 * @return the default column to edit
+	 */
 	public int getDefaultColumn() {
 		return defaultColumn;
 	}
 
-	@Override
+	/**
+	 * Tells if the attribute at column index <code>i</code> can be selected.
+	 * 
+	 * @param i
+	 *            the index of the attribute to be checked
+	 * @return <code>true</code> if the attribute at column <code>i</code> can
+	 *         be selected, <code>false</code> otherwise
+	 */
 	public boolean isSelectable(int i) {
 		if (!(0 <= i && i < atColumn.length))
 			return false;
@@ -102,16 +127,22 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	}
 
 	@Override
-	public IElementType<?>[] getChildTypes() {
+	public IInternalElementType<?>[] getChildTypes() {
 		final int childrenLength = childRelationships.length;
-		IElementType<?>[] result = new IElementType<?>[childrenLength];
+		IInternalElementType<?>[] result = new IInternalElementType<?>[childrenLength];
 		for (int i = 0; i < childrenLength; i++) {
 			result[i] = childRelationships[i].getChildType();
 		}
 		return result;
 	}
 
-	@Override
+	/**
+	 * Returns the ordered list of child relationship for which the element type
+	 * concerned by this description is the parent.
+	 * 
+	 * @return the ordered list of element relationship whose parent is the
+	 *         element type of the current element description
+	 */
 	public IElementRelationship[] getChildRelationships() {
 		return childRelationships.clone();
 	}
@@ -127,12 +158,35 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	}
 	
 	/**
-	 * Returns the pretty printer associated with this ElementDesc, 
-	 * or <code>null</code> if none.
+	 * Returns the pretty printer for the display of the element in the pretty
+	 * print view.
+	 * 
+	 * @return the pretty printer for the element of this description.
 	 */
-	@Override
 	public IElementPrettyPrinter getPrettyPrinter() {
 		return prettyPrinter;
+	}
+
+	@Override
+	public IAttributeDesc getAttributeDescription(String attributeTypeId) {
+		if (canCarry(attributeTypeId)) {
+			for (IAttributeDesc desc : attributeDesc) {
+				if (attributeTypeId.equals(desc.getAttributeType().getId())) {
+					return desc;
+				}
+			}
+		}
+		return null;
+	}
+
+	private boolean canCarry(String attributeTypeId) {
+		final IInternalElementType<?> elementType = ElementDescRegistry
+				.getInstance().getElementType(this);
+		final IAttributeType attrType = getAttributeType(attributeTypeId);
+		if (attrType == null) {
+			return false;
+		}
+		return elementType.canCarry(attrType);
 	}
 
 }

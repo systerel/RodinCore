@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -32,6 +33,7 @@ import org.eventb.internal.ui.eventbeditor.manipulation.AbstractBooleanManipulat
 import org.eventb.internal.ui.preferences.PreferenceConstants;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IImplicitChildProvider;
+import org.eventb.ui.itemdescription.IElementDesc;
 import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.eventb.ui.prettyprint.IElementPrettyPrinter;
 import org.rodinp.core.IAttributeType;
@@ -126,7 +128,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 	private AttributeDesc[] getAttributes(IElementType<?> type) {
 		final ElementDesc desc = getElementDesc(type);
-		return desc.getAttributeDescription();
+		return desc.getAttributeDescriptions();
 	}
 
 	public AttributeDesc getAttribute(IElementType<?> type, int pos) {
@@ -674,5 +676,20 @@ public class ElementDescRegistry implements IElementDescRegistry {
 				return nullElement;
 			return desc;
 		}
+
+		public IInternalElementType<?> getType(IElementDesc desc) {
+			for (Entry<IElementType<?>, ElementDesc> entry : elementMap
+					.entrySet()) {
+				if (desc.equals(entry.getValue())) {
+					return (IInternalElementType<?>) entry.getKey();
+				}
+			}
+			return null;
+		}
+	}
+
+	public IInternalElementType<?> getElementType(ElementDesc elementDesc) {
+		return elementDescs.getType(elementDesc);
+
 	}
 }
