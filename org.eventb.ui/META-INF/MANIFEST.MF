@@ -44,6 +44,7 @@ Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.syster
  org.eventb.ui,
  org.eventb.ui.autocompletion,
  org.eventb.ui.eventbeditor,
+ org.eventb.ui.itemdescription,
  org.eventb.ui.manipulation,
  org.eventb.ui.prettyprint,
  org.eventb.ui.prover

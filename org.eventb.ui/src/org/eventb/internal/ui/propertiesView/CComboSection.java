@@ -16,9 +16,9 @@
  *******************************************************************************/
 package org.eventb.internal.ui.propertiesView;
 
+import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 import static org.eventb.internal.ui.UIUtils.COMBO_VALUE_UNDEFINED;
 import static org.eventb.internal.ui.UIUtils.disableMouseWheel;
-import static org.eventb.internal.ui.EventBUtils.isReadOnly;
 import static org.eventb.internal.ui.UIUtils.resetCComboValues;
 
 import org.eclipse.jface.viewers.ISelection;
@@ -41,7 +41,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ComboDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
+import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;

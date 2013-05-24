@@ -30,7 +30,7 @@ import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.autocompletion.ContentProposalFactory;
 import org.eventb.internal.ui.autocompletion.EventBContentProposalAdapter;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
+import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;

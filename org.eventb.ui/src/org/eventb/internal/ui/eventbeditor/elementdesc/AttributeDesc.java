@@ -11,6 +11,7 @@
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
 import org.eventb.internal.ui.eventbeditor.editpage.IEditComposite;
+import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.eventb.ui.manipulation.IAttributeManipulation;
 import org.rodinp.core.IAttributeType;
 
@@ -35,7 +36,6 @@ public abstract class AttributeDesc extends ItemDesc implements IAttributeDesc {
 		return suffix;
 	}
 
-	@Override
 	public abstract IEditComposite createWidget();
 
 	/**
