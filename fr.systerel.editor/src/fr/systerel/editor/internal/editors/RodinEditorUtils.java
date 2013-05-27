@@ -49,7 +49,14 @@ public class RodinEditorUtils {
 	public static void debug(String message) {
 		System.out.println(EditorPlugin.DEBUG_PREFIX + message);
 	}
-	
+
+	/**
+	 * Logs the given status to the Rodin editor plug-in log.
+	 */
+	public static void log(IStatus status) {
+		EditorPlugin.getDefault().getLog().log(status);
+	}
+
 	public static void log(Throwable exc, String message) {
 		if (exc instanceof RodinDBException) {
 			final Throwable nestedExc = ((RodinDBException) exc).getException();
