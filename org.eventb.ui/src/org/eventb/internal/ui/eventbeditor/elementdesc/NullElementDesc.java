@@ -37,4 +37,9 @@ public class NullElementDesc extends ElementDesc {
 				AUTO_NAME_ATTRIBUTE, NO_DEFAULT_COLUMN, PRETTY_PRINTER);
 	}
 
+	@Override
+	public boolean isValid() {
+		return false;
+	}
+
 }

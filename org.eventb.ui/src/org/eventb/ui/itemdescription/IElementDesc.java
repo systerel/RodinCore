@@ -22,6 +22,15 @@ import org.rodinp.core.IInternalElementType;
 public interface IElementDesc extends IItemDesc {
 
 	/**
+	 * Tells whether this element UI description is a valid registered element
+	 * description, or if it corresponds to a <code>null</code> instance.
+	 * 
+	 * @return <code>true</code> is this description is a valid registered UI
+	 *         description, <code>false</code> otherwise.
+	 */
+	boolean isValid();
+	
+	/**
 	 * Get the attribute description given its <code>id</code>. Returns
 	 * <code>null</code> if no such attribute type can be carried by the element
 	 * considered by the current element description, or if there is no

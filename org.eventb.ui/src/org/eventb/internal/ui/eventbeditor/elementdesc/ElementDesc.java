@@ -189,4 +189,9 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 		return elementType.canCarry(attrType);
 	}
 
+	@Override
+	public boolean isValid() {
+		return true;
+	}
+
 }
