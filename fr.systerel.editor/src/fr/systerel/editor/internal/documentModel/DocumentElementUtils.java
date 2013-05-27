@@ -24,55 +24,67 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.ui.manipulation.IAttributeManipulation;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.eventb.ui.itemdescription.IElementDesc;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
-import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 public class DocumentElementUtils {
 	
-	private static final ElementDescRegistry DESC_REGISTRY = ElementDescRegistry
-			.getInstance();
-	
 	private static final IAttributeType[] BASIC_ATTRIBUTE_TYPES = {
 		ASSIGNMENT_ATTRIBUTE, COMMENT_ATTRIBUTE, IDENTIFIER_ATTRIBUTE,
 		LABEL_ATTRIBUTE, PREDICATE_ATTRIBUTE, EXPRESSION_ATTRIBUTE};
-	
-	// Retrieves the element desc from the registry for the given element e
-	public static IElementDesc getElementDesc(ILElement e) {
-		final IRodinElement rodinElement = (IRodinElement) e.getElement();
-		return DESC_REGISTRY.getElementDesc(rodinElement);
+
+	/**
+	 * Retrieves the element desc from the registry for the given element.
+	 * 
+	 * @param element
+	 *            the element to retrieve the UI description for
+	 */
+	public static IElementDesc getElementDesc(ILElement element) {
+		return getElementDesc(element.getElement());
 	}
 
 	/**
-	 * Retrieves the element desc from the registry for the given element type
-	 * <code>type<code>.
+	 * Retrieves the element desc from the registry for the given element.
+	 * 
+	 * @param element
+	 *            the element to retrieve the UI description for
+	 */
+	public static IElementDesc getElementDesc(IInternalElement element) {
+		final IInternalElementType<?> type = element.getElementType();
+		return getElementDesc(type);
+	}
+
+	/**
+	 * Retrieves the element UI description from the registry for the given
+	 * element type <code>type<code>.
 	 * 
 	 * @param type
-	 *            the element type to retrieve the descriptor for
+	 *            the element type to retrieve the UI description for
 	 */
 	public static IElementDesc getElementDesc(IInternalElementType<?> type) {
-		return DESC_REGISTRY.getElementDesc(type);
+		return EventBUIPlugin.getElementDescRegistry().getElementDesc(type);
 	}
 
 	public static List<IAttributeDesc> getAttributeDescs(ILElement element,
 			boolean filterBasic) {
 		final List<IAttributeDesc> descs = new ArrayList<IAttributeDesc>();
-		int i = 0;
-		IAttributeDesc desc;
-		final List<IAttributeType> basicDescs = Arrays
-				.asList(BASIC_ATTRIBUTE_TYPES);
+		final List<IAttributeType> basicDescs = Arrays.asList(BASIC_ATTRIBUTE_TYPES);
 		final IInternalElementType<?> elementType = element.getElementType();
-		while ((desc = DESC_REGISTRY.getAttribute(elementType, i)) != null) {
-			if (!(filterBasic && basicDescs.contains(desc.getAttributeType()))) {
-				descs.add(desc);
+		final IElementDesc elemDesc = getElementDesc(elementType);
+		if (elemDesc == null) {
+			return descs;
+		}
+		for (IAttributeDesc attrDesc : elemDesc.getAttributeDescriptions()) {
+			if (!(filterBasic && basicDescs.contains(attrDesc.getAttributeType()))) {
+				descs.add(attrDesc);
 			}
-			i++;
 		}
 		return descs;
 	}
