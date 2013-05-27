@@ -43,8 +43,6 @@ import org.eventb.core.IExpressionElement;
 import org.eventb.core.IIdentifierElement;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IPredicateElement;
-import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc;
-import org.eventb.internal.ui.eventbeditor.elementdesc.TextDesc.Style;
 import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.eventb.ui.itemdescription.IElementDesc;
 import org.eventb.ui.manipulation.IAttributeManipulation;
@@ -182,8 +180,7 @@ public class RodinTextGenerator {
 					stream.addPresentationRegion(prefix + WHITESPACE, element);
 					sizer.append(prefix + WHITESPACE);
 				}
-				final boolean multiline = (d instanceof TextDesc && ((TextDesc) d)
-						.getStyle().equals(Style.MULTI));
+				final boolean multiline = d.isMultiLine();
 				final String fas = sizer.getAllAlignementString();
 				stream.addAttributeRegion(value, element, manipulation,
 						d.getAttributeType(), multiline,
