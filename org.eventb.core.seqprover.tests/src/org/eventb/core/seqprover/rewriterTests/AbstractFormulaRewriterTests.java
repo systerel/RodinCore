@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
-import static org.eventb.core.seqprover.tests.TestLib.assertNoProblem;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -24,7 +23,6 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IFormulaRewriter;
-import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.tests.TestLib;
@@ -93,12 +91,6 @@ public abstract class AbstractFormulaRewriterTests {
 				fail("Expected is the same as input " + input);
 			}
 			assertEquals(expected, actual);
-		}
-
-		private void typeCheck(Formula<?> formula, String image) {
-			final ITypeCheckResult tcResult = formula.typeCheck(typenv);
-			assertNoProblem(tcResult, image, "does not typecheck");
-			typenv.addAll(tcResult.getInferredEnvironment());
 		}
 
 		private int typenvSize() {
