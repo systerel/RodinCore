@@ -10,6 +10,9 @@
  *******************************************************************************/
 package fr.systerel.editor;
 
+import static org.rodinp.core.emf.api.itf.ImplicitChildProviderManager.addProviderFor;
+import static org.rodinp.core.emf.api.itf.ImplicitChildProviderManager.getProviderFor;
+
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
@@ -17,13 +20,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.ImplicitChildProviderAssociation;
+import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IImplicitChildProvider;
+import org.eventb.ui.itemdescription.IElementDesc;
+import org.eventb.ui.itemdescription.IElementDescRegistry;
 import org.osgi.framework.BundleContext;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
-import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
 import fr.systerel.editor.internal.documentModel.RodinPartitioner;
@@ -76,14 +82,31 @@ public class EditorPlugin extends AbstractUIPlugin {
 		plugin = this;
 		if (isDebugging())
 			configureDebugOptions();
-		for (ImplicitChildProviderAssociation w : ElementDescRegistry
-				.getInstance().getChildProviderAssociations()) {
-			ImplicitChildProviderManager.addProviderFor(
-					new ChildProviderWrapper(w.getProvider()),
-					w.getParentType(), w.getChildType());
+		final IElementDescRegistry registry = EventBUIPlugin
+				.getElementDescRegistry();
+		final IElementDesc[] elementDescs = registry.getElementDescs();
+		for (IElementDesc desc : elementDescs) {
+			recursiveLoadImplicitProviders(desc);
 		}
 	}
 	
+	private void recursiveLoadImplicitProviders(IElementDesc desc) {
+		final IInternalElementType<?>[] childTypes = desc.getChildTypes();
+		for (IInternalElementType<?> childType : childTypes) {
+			final ElementDescRegistry registry = ElementDescRegistry
+					.getInstance();
+			final IInternalElementType<?> parentType = registry
+					.getElementType((ElementDesc) desc);
+			if (getProviderFor(parentType, childType) == null) {
+				addProviderFor(
+						new ChildProviderWrapper(
+								desc.getImplicitChildProvider(childType)),
+						parentType, childType);
+			}
+			recursiveLoadImplicitProviders(registry.getElementDesc(childType));
+		}
+	}
+
 	private static class ChildProviderWrapper implements ICoreImplicitChildProvider {
 		
 		final IImplicitChildProvider provider;

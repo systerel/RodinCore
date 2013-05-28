@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.ui.itemdescription;
 
+import org.eventb.ui.IImplicitChildProvider;
 import org.rodinp.core.IInternalElementType;
 
 /**
@@ -29,7 +30,7 @@ public interface IElementDesc extends IItemDesc {
 	 *         description, <code>false</code> otherwise.
 	 */
 	boolean isValid();
-	
+
 	/**
 	 * Get the attribute description given its <code>id</code>. Returns
 	 * <code>null</code> if no such attribute type can be carried by the element
@@ -85,5 +86,15 @@ public interface IElementDesc extends IItemDesc {
 	 *         description
 	 */
 	public IInternalElementType<?>[] getChildTypes();
+
+	/**
+	 * Returns the implicit child provider for the given child type. If no
+	 * provider was contributed to the <code>editorItems</code> extension point,
+	 * then a default implementation that provides no child is returned.
+	 * 
+	 * @return the provider for implicit children of the given type
+	 */
+	public IImplicitChildProvider getImplicitChildProvider(
+			IInternalElementType<?> childType);
 
 }

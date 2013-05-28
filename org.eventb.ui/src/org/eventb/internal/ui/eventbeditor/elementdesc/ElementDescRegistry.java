@@ -11,6 +11,7 @@
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,6 +95,8 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	private static final ElementDescRegistry INSTANCE = new ElementDescRegistry();
 	private final List<ImplicitChildProviderAssociation> childProviderAssocs = new ArrayList<ImplicitChildProviderAssociation>();
 
+	private static final IImplicitChildProvider nullProvider = new NullImplicitChildProvider();
+
 	public static ElementDescRegistry getInstance() {
 		return INSTANCE;
 	}
@@ -124,6 +127,16 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	 */
 	public ElementDesc getElementDesc(IRodinElement element) {
 		return getElementDesc(element.getElementType());
+	}
+
+	/**
+	 * Returns all valid registered element UI descriptions.
+	 * 
+	 * @return the array of valid element UI descriptions
+	 */
+	@Override
+	public ElementDesc[] getElementDescs() {
+		return elementDescs.values();
 	}
 
 	public String getValueAtColumn(IRodinElement element, Column column) {
@@ -297,10 +310,6 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		return null;
 	}
 	
-	public List<ImplicitChildProviderAssociation> getChildProviderAssociations() {
-		return new ArrayList<ImplicitChildProviderAssociation>(childProviderAssocs);
-	}
-	
 	public static class ImplicitChildProviderAssociation {
 		
 		private final IImplicitChildProvider provider;
@@ -346,6 +355,18 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			UIUtils.log(e, "Priority attribute is not a number");
 			return HIGHEST_PRIORITY;
 		}
+	}
+	
+	public IImplicitChildProvider getIImplicitChildProvider(IElementDesc desc,
+			IInternalElementType<?> childType) {
+		for (ImplicitChildProviderAssociation assoc : childProviderAssocs) {
+			final IInternalElementType<?> parentType = getElementType((ElementDesc) desc);
+			if (parentType.equals(assoc.getParentType())
+					&& childType.equals(assoc.getChildType())) {
+				return assoc.getProvider();
+			}
+		}
+		return nullProvider;
 	}
 	
 	abstract static class ItemMap {
@@ -704,6 +725,12 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			}
 			return null;
 		}
+		
+		public ElementDesc[] values() {
+			final Collection<ElementDesc> values = elementMap.values();
+			return values.toArray(new ElementDesc[values.size()]);
+		}
+		
 	}
 
 	public IInternalElementType<?> getElementType(ElementDesc elementDesc) {

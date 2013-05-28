@@ -32,4 +32,11 @@ public interface IElementDescRegistry {
 	 */
 	IElementDesc getElementDesc(IInternalElementType<?> type);
 
+	/**
+	 * Returns the array of valid registered element UI descriptions.
+	 * 
+	 * @return the array of valid registered element UI descriptions
+	 */
+	IElementDesc[] getElementDescs();
+
 }

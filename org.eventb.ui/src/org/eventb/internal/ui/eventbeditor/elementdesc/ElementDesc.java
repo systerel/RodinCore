@@ -13,6 +13,7 @@ package org.eventb.internal.ui.eventbeditor.elementdesc;
 import static org.rodinp.core.RodinCore.getAttributeType;
 
 import org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider;
+import org.eventb.ui.IImplicitChildProvider;
 import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.eventb.ui.itemdescription.IElementDesc;
 import org.eventb.ui.prettyprint.IElementPrettyPrinter;
@@ -192,6 +193,13 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	@Override
 	public boolean isValid() {
 		return true;
+	}
+
+	@Override
+	public IImplicitChildProvider getImplicitChildProvider(
+			IInternalElementType<?> childType) {
+		return ElementDescRegistry.getInstance().getIImplicitChildProvider(
+				this, childType);
 	}
 
 }
