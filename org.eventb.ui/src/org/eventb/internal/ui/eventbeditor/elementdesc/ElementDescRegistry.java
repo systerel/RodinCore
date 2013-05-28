@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -360,7 +359,9 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	public IImplicitChildProvider getIImplicitChildProvider(IElementDesc desc,
 			IInternalElementType<?> childType) {
 		for (ImplicitChildProviderAssociation assoc : childProviderAssocs) {
-			final IInternalElementType<?> parentType = getElementType((ElementDesc) desc);
+			final IInternalElementType<?> parentType = desc.getElementType();
+			if (parentType == null)
+				continue;
 			if (parentType.equals(assoc.getParentType())
 					&& childType.equals(assoc.getChildType())) {
 				return assoc.getProvider();
@@ -592,10 +593,10 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			}
 			
 			
-			final ElementDesc elementDesc = new ElementDesc(prefix,
-					childrenSuffix, imgProvider, attributeDesc, atColumn,
-					childrenRelationships, autoNamePrefix, autoNameAttribute,
-					defaultColumn, prettyPrinter);
+			final ElementDesc elementDesc = new ElementDesc(elementType,
+					prefix, childrenSuffix, imgProvider, attributeDesc,
+					atColumn, childrenRelationships, autoNamePrefix,
+					autoNameAttribute, defaultColumn, prettyPrinter);
 
 			elementMap.put(elementType, elementDesc);
 		}
@@ -715,16 +716,6 @@ public class ElementDescRegistry implements IElementDescRegistry {
 				return nullElement;
 			return desc;
 		}
-
-		public IInternalElementType<?> getType(IElementDesc desc) {
-			for (Entry<IElementType<?>, ElementDesc> entry : elementMap
-					.entrySet()) {
-				if (desc.equals(entry.getValue())) {
-					return (IInternalElementType<?>) entry.getKey();
-				}
-			}
-			return null;
-		}
 		
 		public ElementDesc[] values() {
 			final Collection<ElementDesc> values = elementMap.values();
@@ -733,8 +724,4 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		
 	}
 
-	public IInternalElementType<?> getElementType(ElementDesc elementDesc) {
-		return elementDescs.getType(elementDesc);
-
-	}
 }

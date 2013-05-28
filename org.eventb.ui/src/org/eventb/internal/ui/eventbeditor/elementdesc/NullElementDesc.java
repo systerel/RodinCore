@@ -14,12 +14,14 @@ import org.eventb.internal.ui.eventbeditor.imageprovider.DefaultImageProvider;
 import org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IElementPrettyPrinter;
+import org.rodinp.core.IElementType;
 
 /**
  * Dummy implementation for describing unknown elements.
  */
 public class NullElementDesc extends ElementDesc {
 
+	private static final IElementType<?> NO_ELEMENT_TYPE = null;
 	private static final String PREFIX = "";
 	private static final String CHILDREN_SUFFIX = "";
 	private static final IImageProvider IMG_PROVIDER = new DefaultImageProvider(
@@ -32,9 +34,10 @@ public class NullElementDesc extends ElementDesc {
 	private static final IElementPrettyPrinter PRETTY_PRINTER = new DefaultPrettyPrinter();
 
 	public NullElementDesc() {
-		super(PREFIX, CHILDREN_SUFFIX, IMG_PROVIDER, NO_ATTRIBUTES,
-				NO_ATTRIBUTES, NO_CHILD_RELATIONSHIPS, AUTO_NAME_PREFIX,
-				AUTO_NAME_ATTRIBUTE, NO_DEFAULT_COLUMN, PRETTY_PRINTER);
+		super(NO_ELEMENT_TYPE, PREFIX, CHILDREN_SUFFIX, IMG_PROVIDER,
+				NO_ATTRIBUTES, NO_ATTRIBUTES, NO_CHILD_RELATIONSHIPS,
+				AUTO_NAME_PREFIX, AUTO_NAME_ATTRIBUTE, NO_DEFAULT_COLUMN,
+				PRETTY_PRINTER);
 	}
 
 	@Override

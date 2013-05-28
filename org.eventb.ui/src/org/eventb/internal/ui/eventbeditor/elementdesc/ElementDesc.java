@@ -18,6 +18,7 @@ import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.eventb.ui.itemdescription.IElementDesc;
 import org.eventb.ui.prettyprint.IElementPrettyPrinter;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElementType;
 
 /**
@@ -26,6 +27,8 @@ import org.rodinp.core.IInternalElementType;
 public class ElementDesc extends ItemDesc implements IElementDesc {
 
 	private final String childrenSuffix;
+	
+	private final IElementType<?> elementType;
 
 	private final IImageProvider imgProvider;
 
@@ -45,13 +48,14 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	
 	private final IElementPrettyPrinter prettyPrinter;
 
-	public ElementDesc(String prefix, String childrenSuffix,
-			IImageProvider imgProvider, AttributeDesc[] attributeDesc,
-			AttributeDesc[] atColumn,
+	public ElementDesc(IElementType<?> elementType, String prefix,
+			String childrenSuffix, IImageProvider imgProvider,
+			AttributeDesc[] attributeDesc, AttributeDesc[] atColumn,
 			IElementRelationship[] childRelationships, String autoNamePrefix,
 			AttributeDesc autoNameAttribute, int defaultColumn,
 			IElementPrettyPrinter prettyPrinter) {
 		super(prefix);
+		this.elementType = elementType;
 		this.childrenSuffix = childrenSuffix;
 		this.imgProvider = imgProvider;
 		this.attributeDesc = attributeDesc;
@@ -181,13 +185,11 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	}
 
 	private boolean canCarry(String attributeTypeId) {
-		final IInternalElementType<?> elementType = ElementDescRegistry
-				.getInstance().getElementType(this);
 		final IAttributeType attrType = getAttributeType(attributeTypeId);
 		if (attrType == null) {
 			return false;
 		}
-		return elementType.canCarry(attrType);
+		return ((IInternalElementType<?>) elementType).canCarry(attrType);
 	}
 
 	@Override
@@ -200,6 +202,14 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 			IInternalElementType<?> childType) {
 		return ElementDescRegistry.getInstance().getIImplicitChildProvider(
 				this, childType);
+	}
+
+	@Override
+	public IInternalElementType<?> getElementType() {
+		if (elementType instanceof IInternalElementType<?>) {
+			return (IInternalElementType<?>) elementType;
+		}
+		return null;
 	}
 
 }

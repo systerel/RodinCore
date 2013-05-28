@@ -88,6 +88,17 @@ public interface IElementDesc extends IItemDesc {
 	public IInternalElementType<?>[] getChildTypes();
 
 	/**
+	 * Return the element type concerned by this description or
+	 * <code>null</code> if this description does not correspond to an internal
+	 * element.
+	 * 
+	 * @return the element type concerned by this description or
+	 *         <code>null</code> if this description does not correspond to an
+	 *         internal element.
+	 */
+	public IInternalElementType<?> getElementType();
+
+	/**
 	 * Returns the implicit child provider for the given child type. If no
 	 * provider was contributed to the <code>editorItems</code> extension point,
 	 * then a default implementation that provides no child is returned.

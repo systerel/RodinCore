@@ -20,8 +20,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
-import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IImplicitChildProvider;
 import org.eventb.ui.itemdescription.IElementDesc;
@@ -92,18 +90,20 @@ public class EditorPlugin extends AbstractUIPlugin {
 	
 	private void recursiveLoadImplicitProviders(IElementDesc desc) {
 		final IInternalElementType<?>[] childTypes = desc.getChildTypes();
+		final IElementDescRegistry registry = EventBUIPlugin
+				.getElementDescRegistry();
 		for (IInternalElementType<?> childType : childTypes) {
-			final ElementDescRegistry registry = ElementDescRegistry
-					.getInstance();
-			final IInternalElementType<?> parentType = registry
-					.getElementType((ElementDesc) desc);
+			final IInternalElementType<?> parentType = desc.getElementType();
+			if (parentType == null)
+				continue;
 			if (getProviderFor(parentType, childType) == null) {
-				addProviderFor(
-						new ChildProviderWrapper(
-								desc.getImplicitChildProvider(childType)),
-						parentType, childType);
+				final IImplicitChildProvider provider = desc
+						.getImplicitChildProvider(childType);
+				addProviderFor(new ChildProviderWrapper(provider), parentType,
+						childType);
 			}
-			recursiveLoadImplicitProviders(registry.getElementDesc(childType));
+			final IElementDesc childDesc = registry.getElementDesc(childType);
+			recursiveLoadImplicitProviders(childDesc);
 		}
 	}
 
