@@ -266,28 +266,32 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	}
 	
 	
-	private Set<IElementRelationship> getElementRelationShips(IConfigurationElement element) {
-		final IElementType<?> parent = RodinCore.getElementType(element
-				.getAttribute("parentTypeId"));
+	private Set<IElementRelationship> getElementRelationShips(
+			IConfigurationElement element) {
+		final IInternalElementType<?> parent = RodinCore
+				.getInternalElementType(element.getAttribute("parentTypeId"));
 		Set<IElementRelationship> result = new HashSet<IElementRelationship>();
 		for (IConfigurationElement child : element.getChildren("childType")) {
 			try {
 				final String type = child.getAttribute("typeId");
 				final IInternalElementType<?> elementType = RodinCore
 						.getInternalElementType(type);
+				if (!parent.canParent(elementType)) {
+					UIUtils.log(null, "Ignored child relationship from "
+							+ parent.getId() + " to " + elementType.getId()
+							+ " which is incompatible with Rodin DB");
+					continue;
+				}
 				final int priority = parseInt(child.getAttribute("priority"));
 				final IImplicitChildProvider implicitChildProvider = getImplicitChildProvider(child);
-				if (parent instanceof IInternalElementType
-						&& implicitChildProvider != null) {
-					final IInternalElementType<?> parentType = (IInternalElementType<?>) parent;
+				if (implicitChildProvider != null) {
 					childProviderAssocs
 							.add(new ImplicitChildProviderAssociation(
-									implicitChildProvider, parentType,
-									elementType));
+									implicitChildProvider, parent, elementType));
 				}
 				result.add(new ElementDescRelationship(parent, elementType,
 						priority, implicitChildProvider));
-			} catch(Exception e) {
+			} catch (Exception e) {
 				UIUtils.log(e, "Unable to load child relationship from "
 						+ element.getNamespaceIdentifier());
 			}
