@@ -72,6 +72,7 @@ import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.IEventBSharedImages;
 import org.eventb.ui.eventbeditor.EventBEditorPage;
 import org.eventb.ui.eventbeditor.IEventBEditor;
+import org.eventb.ui.itemdescription.IElementDesc;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementChangedListener;
@@ -348,8 +349,9 @@ public class EditPage extends EventBEditorPage implements
 		widget.setLayoutData(gd);
 		createEventBFormText(widget);
 		final IInternalElement rodinInput = getRodinInput();
-		final String declaration = ElementDescRegistry.getInstance().getPrefix(
-				rodinInput.getElementType());
+		final IElementDesc desc = ElementDescRegistry.getInstance()
+				.getElementDesc(rodinInput.getElementType());
+		final String declaration = desc.getPrefix(null);
 
 		final String text = "<form><li style=\"text\" bindent = \"-20\"><b>"
 				+ declaration + "</b> " + rodinInput.getElementName()

@@ -20,7 +20,15 @@ import org.rodinp.core.IAttributeType;
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.0
  */
-public interface IAttributeDesc extends IItemDesc {
+public interface IAttributeDesc {
+
+	/**
+	 * Returns the prefix that should be displayed before the attribute.
+	 * 
+	 * @return the string corresponding to the prefix to display before the
+	 *         attribute value
+	 */
+	String getPrefix();
 
 	/**
 	 * Returns the suffix that should be displayed after the attribute.

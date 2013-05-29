@@ -87,7 +87,7 @@ public class RodinTextGenerator {
 
 	private void traverseRoot(IProgressMonitor monitor, ILElement e) {
 		final IElementDesc desc = getElementDesc(e);
-		stream.addSectionRegion(desc.getPrefix(), e);
+		stream.addSectionRegion(desc.getPrefix(null), e);
 		stream.incrementIndentation();
 		stream.appendPresentationTabs(e, MIN_LEVEL);
 		final TextAlignator sizer = new TextAlignator();
@@ -131,9 +131,9 @@ public class RodinTextGenerator {
 			}
 			start = stream.getLength();
 			if (stream.getLevel() < MIN_LEVEL) {
-				stream.addSectionRegion(childDesc.getPrefix(), e);
+				stream.addSectionRegion(desc.getPrefix(childType), e);
 			} else {
-				stream.addKeywordRegion(childDesc.getPrefix(), e);
+				stream.addKeywordRegion(desc.getPrefix(childType), e);
 			}
 			for (ILElement in : c) {
 				stream.appendLeftPresentationTabs(in);

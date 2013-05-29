@@ -62,7 +62,6 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.ui.IEventBFormText;
 import org.eventb.ui.IImplicitChildProvider;
-import org.eventb.ui.itemdescription.IElementDesc;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
@@ -185,9 +184,7 @@ public class ProofInformationPage extends Page implements
 								.getChildType();
 						children.addAll(Arrays.asList(ie
 								.getChildrenOfType(childType)));
-						final IElementDesc childDesc = descRegistry
-								.getElementDesc(childType);
-						final String prefix = childDesc.getPrefix();
+						final String prefix = elementDesc.getPrefix(childType);
 						if (prefix.length() != 0 && !children.isEmpty()) {
 							appendPrefixOrSuffix(formBuilder, prefix);
 						}

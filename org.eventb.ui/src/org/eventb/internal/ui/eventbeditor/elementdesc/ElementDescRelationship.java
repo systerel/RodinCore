@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,12 +26,15 @@ public class ElementDescRelationship implements IElementRelationship, Comparable
 
 	private final IImplicitChildProvider childProvider;
 
+	private final String prefix;
+
 	public ElementDescRelationship(IElementType<?> parentType,
-			IInternalElementType<?> childType, int priority, IImplicitChildProvider childProvider) {
+			IInternalElementType<?> childType, int priority, String prefix, IImplicitChildProvider childProvider) {
 		this.childType = childType;
 		this.parentType = parentType;
 		this.priority = priority;
 		this.childProvider = childProvider;
+		this.prefix = prefix;
 		id = parentType.getId() + childType.getId();
 	}
 
@@ -78,6 +81,11 @@ public class ElementDescRelationship implements IElementRelationship, Comparable
 			return diff;
 		}
 		return childType.getName().compareTo(rs.getChildType().getName());
+	}
+
+	@Override
+	public String getPrefix() {
+		return prefix;
 	}
 	
 }

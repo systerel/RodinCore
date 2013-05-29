@@ -27,7 +27,7 @@ import org.rodinp.core.IInternalElementType;
 public class ElementDesc extends ItemDesc implements IElementDesc {
 
 	private final String childrenSuffix;
-	
+
 	private final IElementType<?> elementType;
 
 	private final IImageProvider imgProvider;
@@ -45,7 +45,7 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	private final AttributeDesc autoNameAttribute;
 
 	private static final NullAttributeDesc noAttribute = new NullAttributeDesc();
-	
+
 	private final IElementPrettyPrinter prettyPrinter;
 
 	public ElementDesc(IElementType<?> elementType, String prefix,
@@ -161,7 +161,7 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	public AttributeDesc getAutoNameAttribute() {
 		return autoNameAttribute;
 	}
-	
+
 	/**
 	 * Returns the pretty printer for the display of the element in the pretty
 	 * print view.
@@ -210,6 +210,17 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 			return (IInternalElementType<?>) elementType;
 		}
 		return null;
+	}
+
+	@Override
+	public String getPrefix(IInternalElementType<?> childType) {
+		if (childType == null
+				|| !(elementType instanceof IInternalElementType<?>)) {
+			return prefix;
+		}
+		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
+		final IInternalElementType<?> parentType = (IInternalElementType<?>) this.elementType;
+		return registry.getPrefix(parentType, childType);
 	}
 
 }

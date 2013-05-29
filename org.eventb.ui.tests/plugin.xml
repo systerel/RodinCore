@@ -57,5 +57,47 @@
          </target>
       </page>
    </extension>
+   <extension
+         point="org.rodinp.core.internalElementTypes">
+      <internalElementType
+            class="org.eventb.ui.eventbeditor.tests.basis.TestParentElement"
+            id="parentTestElement"
+            name="Parent Test Element">
+      </internalElementType>
+      <internalElementType
+            class="org.eventb.ui.eventbeditor.tests.basis.TestChildElement"
+            id="childTestElement"
+            name="Child Test Element">
+      </internalElementType>
+   </extension>
+   <extension
+         point="org.rodinp.core.itemRelations">
+      <relationship
+            parentTypeId="org.eventb.ui.tests.testParentElement">
+         <childType
+               typeId="org.eventb.ui.tests.testChildElement">
+         </childType>
+      </relationship>
+   </extension>
+   <extension
+         point="org.eventb.ui.editorItems">
+      <element
+            prefix="PARENT_PREFIX"
+            typeId="org.eventb.ui.tests.parentTestElement">
+      </element>
+      <element
+            childrenSuffix="CHILD_SUFFIX"
+            prefix="CHILD_PREFIX"
+            typeId="org.eventb.ui.tests.childTestElement">
+      </element>
+      <childRelation
+            parentTypeId="org.eventb.ui.tests.parentTestElement">
+         <childType
+               prefix="OVERRIDEN_CHILD_PREFIX"
+               priority="10"
+               typeId="org.eventb.ui.tests.childTestElement">
+         </childType>
+      </childRelation>
+   </extension>
 
 </plugin>

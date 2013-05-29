@@ -68,6 +68,8 @@ import org.eventb.internal.ui.eventbeditor.manipulation.RefinesEventAbstractEven
 import org.eventb.internal.ui.eventbeditor.manipulation.RefinesMachineAbstractMachineNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.SeesContextNameAttributeManipulation;
 import org.eventb.internal.ui.eventbeditor.manipulation.TheoremAttributeManipulation;
+import org.eventb.ui.eventbeditor.tests.basis.ITestChildElement;
+import org.eventb.ui.eventbeditor.tests.basis.ITestParentElement;
 import org.eventb.ui.itemdescription.IAttributeDesc;
 import org.eventb.ui.itemdescription.IElementDesc;
 import org.eventb.ui.itemdescription.IElementDescRegistry;
@@ -408,6 +410,34 @@ public class TestElementDescRegistry {
 
 	}
 
+	/**
+	 * Ensures that the default child prefix is returned if there is no
+	 * overriding prefix defined by the relationship.
+	 */
+	@Test
+	public void testGetChildPrefix() {
+		final IElementDesc eDesc = registry.getElementDesc(IEvent.ELEMENT_TYPE);
+
+		final String prefix = eDesc.getPrefix(IGuard.ELEMENT_TYPE);
+		assertEquals("WHERE", prefix);
+	}
+
+	/**
+	 * Ensures that the overridden child prefix is returned if there is a prefix
+	 * defined by the relationship between parent type and child type.
+	 */
+	@Test
+	public void testGetOverridingChildPrefix() {
+		final IElementDesc parentDesc = registry
+				.getElementDesc(ITestParentElement.ELEMENT_TYPE);
+		final IElementDesc childDesc = registry
+				.getElementDesc(ITestChildElement.ELEMENT_TYPE);
+		assertEquals("PARENT_PREFIX", parentDesc.getPrefix(null));
+		assertEquals("OVERRIDEN_CHILD_PREFIX",
+				parentDesc.getPrefix(ITestChildElement.ELEMENT_TYPE));
+		assertEquals("CHILD_PREFIX", childDesc.getPrefix(null));
+	}
+
 	private void assertElementDesc(IElementDesc actualDesc, String prefix,
 			String childrenSuffix, Class<? extends IImageProvider> imageProvider,
 			String autoNamingPrefix, IAttributeDesc autoNamingAttribute,
@@ -416,7 +446,7 @@ public class TestElementDescRegistry {
 		assertNotNull("ElementDesc should not be null", actualDesc);
 		assertAttributeDesc(autoNamingAttribute, actualDesc
 				.getAutoNameAttribute());
-		assertEquals("Unexpected prefix", prefix, actualDesc.getPrefix());
+		assertEquals("Unexpected prefix", prefix, actualDesc.getPrefix(null));
 		assertEquals("Unexpected children suffix", childrenSuffix, actualDesc
 				.getChildrenSuffix());
 		assertEquals("Unexpected prefix for auto naming", autoNamingPrefix,
@@ -525,4 +555,5 @@ public class TestElementDescRegistry {
 		return new ToggleDesc(new TheoremAttributeManipulation(),
 				THEOREM_ATTRIBUTE);
 	}
+
 }

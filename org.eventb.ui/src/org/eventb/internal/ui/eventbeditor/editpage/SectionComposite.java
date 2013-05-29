@@ -51,6 +51,7 @@ import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
 import org.eventb.internal.ui.eventbeditor.handlers.CreateElementHandler;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
 import org.eventb.ui.IEventBSharedImages;
+import org.eventb.ui.itemdescription.IElementDesc;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IElementType;
 import org.rodinp.core.IInternalElement;
@@ -139,7 +140,9 @@ public class SectionComposite implements ISectionComposite {
 
 		final ElementDescRegistry registry = ElementDescRegistry.getInstance();
 
-		final String prefix = registry.getPrefix(rel.getChildType());
+		final IElementDesc desc = registry.getElementDesc(rel
+				.getParentType());
+		final String prefix = desc.getPrefix(rel.getChildType());
 		if (notVoid(prefix)) {
 			createHeader(prefix);
 		}

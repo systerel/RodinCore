@@ -340,6 +340,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="prefix" type="string">
+            <annotation>
+               <documentation>
+                  Prefix to display before the elements. This attribute can be set in order to supersede the &quot;prefix&quot; attribute defined for the UI element description that corresponds to the childType.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="implicitChildProvider" type="string">
             <annotation>
                <documentation>

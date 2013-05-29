@@ -96,7 +96,7 @@ public abstract class AstConverter {
 	private void traverseRoot(IProgressMonitor monitor, IInternalElement e) {
 		final ElementDesc desc = ElementDescRegistry.getInstance()
 				.getElementDesc(e);
-		stream.appendKeyword(desc.getPrefix());
+		stream.appendKeyword(desc.getPrefix(null));
 		final IElementPrettyPrinter pp = desc.getPrettyPrinter();
 		appendItemBegin(e, null, pp);
 		traverse(monitor, e);
@@ -116,8 +116,9 @@ public abstract class AstConverter {
 			final boolean noChildren = children.size() == 0;
 			// We look if the client has overriden the default prefix
 			try {
+				final String prefix = desc.getPrefix(rel.getChildType());
 				final boolean addedSpecialPrefix = pp.appendSpecialPrefix(e,
-						childDesc.getPrefix(), stream, noChildren);
+						prefix, stream, noChildren);
 				if (noChildren && !addedSpecialPrefix) {
 					continue;
 				}
@@ -125,7 +126,7 @@ public abstract class AstConverter {
 				// a
 				// custom prefix
 				if (!(noChildren) && !addedSpecialPrefix) {
-					stream.appendKeyword(childDesc.getPrefix());
+					stream.appendKeyword(prefix);
 				}
 			} catch (Exception exception) {
 				EventBEditorUtils.debugAndLogError(exception,

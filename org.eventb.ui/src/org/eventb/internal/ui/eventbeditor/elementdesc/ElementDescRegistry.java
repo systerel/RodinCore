@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
+import static org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry.ItemMap.getStringAttribute;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -168,8 +170,18 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		return attrDesc[pos];
 	}
 
-	public String getPrefix(IElementType<?> type) {
-		return getElementDesc(type).getPrefix();
+	public String getPrefix(IInternalElementType<?> parentType,
+			IInternalElementType<?> childType) {
+		final IElementRelationship[] childRelationships = getChildRelationships(parentType);
+		final ElementDesc childDesc = getElementDesc(childType);
+		final String defaultPrefix = childDesc.getPrefix();
+		for (IElementRelationship rel : childRelationships) {
+			if (rel.getChildType().equals(childType)) {
+				final String prefix = rel.getPrefix();
+				return (prefix.isEmpty()) ? defaultPrefix : prefix;
+			}
+		}
+		return defaultPrefix;
 	}
 
 	public String getChildrenSuffix(IElementType<?> parentType,
@@ -283,6 +295,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 					continue;
 				}
 				final int priority = parseInt(child.getAttribute("priority"));
+				final String prefix = getStringAttribute(child, "prefix");
 				final IImplicitChildProvider implicitChildProvider = getImplicitChildProvider(child);
 				if (implicitChildProvider != null) {
 					childProviderAssocs
@@ -290,7 +303,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 									implicitChildProvider, parent, elementType));
 				}
 				result.add(new ElementDescRelationship(parent, elementType,
-						priority, implicitChildProvider));
+						priority, prefix, implicitChildProvider));
 			} catch (Exception e) {
 				UIUtils.log(e, "Unable to load child relationship from "
 						+ element.getNamespaceIdentifier());
@@ -373,13 +386,13 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 		return nullProvider;
 	}
-	
+
 	abstract static class ItemMap {
 		/**
 		 * Returns the value of a string attribute with the given name, or an
 		 * empty string if there is none.
 		 */
-		protected String getStringAttribute(IConfigurationElement element,
+		protected static String getStringAttribute(IConfigurationElement element,
 				String name) {
 			if (element == null)
 				return "";
@@ -720,12 +733,12 @@ public class ElementDescRegistry implements IElementDescRegistry {
 				return nullElement;
 			return desc;
 		}
-		
+
 		public ElementDesc[] values() {
 			final Collection<ElementDesc> values = elementMap.values();
 			return values.toArray(new ElementDesc[values.size()]);
 		}
-		
+
 	}
 
 }

@@ -20,7 +20,7 @@ import org.rodinp.core.IInternalElementType;
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.0
  */
-public interface IElementDesc extends IItemDesc {
+public interface IElementDesc {
 
 	/**
 	 * Tells whether this element UI description is a valid registered element
@@ -68,6 +68,18 @@ public interface IElementDesc extends IItemDesc {
 	 * @return the string prefix for the automatic naming of the element
 	 */
 	String getAutoNamePrefix();
+
+	/**
+	 * Return the prefix that shall be displayed before the first child of the
+	 * element corresponding to this description which has the given type, or
+	 * the default prefix for the current element if the given parameter type
+	 * <code>childType</code> is <code>null</code>.
+	 * 
+	 * @return the prefix that shall be displayed before the first child of the
+	 *         element with <code>childType</code> type, or the default prefix
+	 *         for the element if <code>childType</code> is <code>null</code>
+	 */
+	String getPrefix(IInternalElementType<?> childType);
 
 	/**
 	 * Return the suffix that shall be display after the last child of the

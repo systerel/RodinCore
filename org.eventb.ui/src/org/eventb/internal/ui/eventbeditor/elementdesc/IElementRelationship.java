@@ -66,4 +66,12 @@ public interface IElementRelationship extends Comparable<IElementRelationship> {
 	 */
 	public abstract int getPriority();
 
+
+	/**
+	 * Return the prefix to display before child elements.
+	 * 
+	 * @return the string prefix to display before child elements
+	 */
+	public abstract String getPrefix();
+
 }
