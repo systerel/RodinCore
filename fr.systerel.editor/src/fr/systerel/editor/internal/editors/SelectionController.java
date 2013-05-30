@@ -259,6 +259,7 @@ public class SelectionController implements MouseListener, VerifyListener,
 		}
 		if ((e.stateMask & SWT.MOD1) != 0) {
 			toggleSelection(offset);
+			clickedOffset = offset;
 			return;
 		}
 		if ((e.stateMask & SWT.MOD2) != 0) {
@@ -266,7 +267,6 @@ public class SelectionController implements MouseListener, VerifyListener,
 			return;
 		}
 		clickedOffset = offset;
-		clearSelection();
 		if (overlayEditor.isActive()) {
 			// the user clicked outside the overlay editor
 			// as this listener is on the main text therefore
