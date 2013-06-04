@@ -11,3 +11,4 @@ org.rodinp.core/debug/rodintypes/verbose = false
 org.rodinp.core/debug/indexer = false
 org.rodinp.core/debug/indexer/verbose = false
 org.rodinp.core/debug/indexer/delta = false
+org.rodinp.core/debug/buffer = false
