@@ -248,18 +248,20 @@ public class Buffer {
 		final ConversionEntry cv = new ConversionEntry(owner, version);
 		final VersionManager vManager = VersionManager.getInstance();
 		
-		cv.upgrade(vManager, false, null);
+		sm.setWorkRemaining(2);
+		cv.upgrade(vManager, false, sm.newChild(1));
 		final boolean success = cv.success();
 		if (success) {
 			if (isOwningSchedulingRule()) {
 				if (DEBUG) printDebug("About to save file");
-				cv.accept(false, true, null);
+				sm.setWorkRemaining(2);
+				cv.accept(false, true, sm.newChild(1));
 				// Reload from saved file
-				attemptLoad(sm);
+				attemptLoad(sm.newChild(1));
 			} else {
 				// Reload from in-memory byte array
 				if (DEBUG) printDebug("Not saving file: not owning scheduling rule");
-				attemptLoad(cv.toInputStream(), sm);
+				attemptLoad(cv.toInputStream(), sm.newChild(1));
 			}
 		} else {
 			if (DEBUG) printDebug("Upgrade failed");
