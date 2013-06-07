@@ -14,6 +14,7 @@
 package org.eventb.internal.core.pom;
 
 import static org.eclipse.core.runtime.SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK;
+import static org.eventb.internal.core.Util.addExtensionDependencies;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -176,6 +177,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			final IFile target = targetRoot.getResource();
 			graph.addTarget(target);
 			graph.addToolDependency(source, target, true);
+			addExtensionDependencies(graph, targetRoot);
 		} finally {
 			monitor.done();
 		}
