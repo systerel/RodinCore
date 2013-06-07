@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,24 +175,29 @@ public class Buffer {
 		loaded.set(true);
 	}
 	
-	public void attemptLoad(IProgressMonitor pm) throws RodinDBException {
+	private void attemptLoad(InputStream input, IProgressMonitor pm)
+			throws RodinDBException {
 		final RodinDBManager manager = RodinDBManager.getRodinDBManager();
 		final DocumentBuilder builder = manager.getDocumentBuilder();
 		builder.setErrorHandler(errorHandler);
 
-		final IFile file = owner.getResource();
-		stamp = file.getModificationStamp();
-		try {
-			domDocument = parseXML(builder, file.getContents());
-		} catch (RodinDBException e) {
-			throw e;
-		} catch (CoreException e) {
-			throw new RodinDBException(e);
-		}
+		domDocument = parseXML(builder, input);
 
 		// the version is always fetched from the file;
 		// if it cannot be verified, then the document is not fetched (although it was parsed successfully)
 		version = fetchVersion(domDocument);
+	}
+	
+	public void attemptLoad(IProgressMonitor pm) throws RodinDBException {
+		final IFile file = owner.getResource();
+		stamp = file.getModificationStamp();
+		final InputStream input;
+		try {
+			input = file.getContents();
+		} catch (CoreException e) {
+			throw new RodinDBException(e);
+		}
+		attemptLoad(input, pm);
 	}
 
 	private Document parseXML(DocumentBuilder builder, InputStream contents)
