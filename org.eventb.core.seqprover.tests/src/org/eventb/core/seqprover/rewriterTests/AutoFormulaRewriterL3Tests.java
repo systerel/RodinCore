@@ -50,10 +50,10 @@ public class AutoFormulaRewriterL3Tests extends AutoFormulaRewriterL2Tests {
 	}
 
 	/**
-	 * Ensures that rule MY_NAME is implemented correctly.
+	 * Ensures that rule DEF_IN_MAPSTO is implemented correctly.
 	 */
 	@Test
-	public void testMY_NAME() {
+	public void testDEF_IN_MAPSTO() {
 		rewritePred("a↦b∈A×B", "a∈A ∧ b∈B", "A=ℙ(S); B=ℙ(T)");
 		rewritePred("a↦b↦c∈A×B×C", "a↦b∈A×B ∧ c∈C", "A=ℙ(S); B=ℙ(T); C=ℙ(U)");
 	}
