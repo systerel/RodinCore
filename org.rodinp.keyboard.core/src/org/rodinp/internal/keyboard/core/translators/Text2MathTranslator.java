@@ -14,10 +14,8 @@
 package org.rodinp.internal.keyboard.core.translators;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.rodinp.internal.keyboard.core.symbols.SymbolRegistry;
-import org.rodinp.internal.keyboard.core.symbols.Symbols;
 import org.rodinp.keyboard.core.ISymbol;
 import org.rodinp.keyboard.core.ISymbolRegistry;
 import org.rodinp.keyboard.core.KeyboardUtils;
@@ -41,17 +39,11 @@ public class Text2MathTranslator {
 	 */
 	public static String translate(String str) {
 		final ISymbolRegistry registry = SymbolRegistry.getDefault();
-		final Map<String, Collection<ISymbol>> mathSymbols = registry.getMathSymbols();
-		final int maxMathSize = registry.getMaxMathSymbolSize();
-
 		// Math
-		String key = "";
 		String test = null;
 		int i = 0;
-		for (i = maxMathSize; i > 0; i--) {
-			key = Symbols.generateKey(i);
-
-			Collection<ISymbol> collection = mathSymbols.get(key);
+		for (i = registry.getMaxMathSymbolSize(); i > 0; i--) {
+			final Collection<ISymbol> collection = registry.getMathSymbols(i);
 			if (collection != null) {
 				for (ISymbol symbol : collection) {
 					test = symbol.getCombo();
@@ -67,14 +59,9 @@ public class Text2MathTranslator {
 		}
 
 		// Text
-		final Map<String, Collection<ISymbol>> symbols = registry
-				.getTextSymbols();
-		final int maxSize = registry.getMaxTextSymbolSize();
 
-		for (i = maxSize; i > 0; i--) {
-			key = Symbols.generateKey(i);
-
-			Collection<ISymbol> collection = symbols.get(key);
+		for (i = registry.getMaxTextSymbolSize(); i > 0; i--) {
+			final Collection<ISymbol> collection = registry.getTextSymbols(i);
 			if (collection != null) {
 				for (ISymbol symbol : collection) {
 					String combo = symbol.getCombo();

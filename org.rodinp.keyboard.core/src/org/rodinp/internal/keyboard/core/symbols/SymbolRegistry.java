@@ -64,8 +64,9 @@ public class SymbolRegistry implements ISymbolRegistry {
 	
 	/* (non-Javadoc)
 	 * @see org.rodinp.internal.keyboard.core.symbols.ISymbolRegistry#getMathSymbols()
+	 * 
+	 * Public for testing purpose only
 	 */
-	@Override
 	public Map<String, Collection<ISymbol>> getMathSymbols() {
 		loadRegistry();
 		return mathSymbols.getSymbols(getMathProviderSymbols());
@@ -73,8 +74,9 @@ public class SymbolRegistry implements ISymbolRegistry {
 	
 	/* (non-Javadoc)
 	 * @see org.rodinp.internal.keyboard.core.symbols.ISymbolRegistry#getTextSymbols()
+	 * 
+	 * Public for testing purpose only
 	 */
-	@Override
 	public Map<String, Collection<ISymbol>> getTextSymbols() {
 		loadRegistry();
 		return textSymbols.getSymbols(getTextProviderSymbols());
@@ -248,6 +250,7 @@ public class SymbolRegistry implements ISymbolRegistry {
 	 */
 	@Override
 	public int getMaxMathSymbolSize() {
+		getMathSymbols(); // force loading dynamically contributed symbols 
 		return mathSymbols.getMaxSize();
 	}
 
@@ -256,7 +259,18 @@ public class SymbolRegistry implements ISymbolRegistry {
 	 */
 	@Override
 	public int getMaxTextSymbolSize() {
+		getTextSymbols(); // force loading dynamically contributed symbols
 		return textSymbols.getMaxSize();
+	}
+
+	@Override
+	public Collection<ISymbol> getMathSymbols(int i) {
+		return getMathSymbols().get(Symbols.generateKey(i));
+	}
+
+	@Override
+	public Collection<ISymbol> getTextSymbols(int i) {
+		return getTextSymbols().get(Symbols.generateKey(i));
 	}
 	
 }

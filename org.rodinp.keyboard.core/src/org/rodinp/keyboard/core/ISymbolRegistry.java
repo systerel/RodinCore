@@ -13,7 +13,6 @@
 package org.rodinp.keyboard.core;
 
 import java.util.Collection;
-import java.util.Map;
 
 
 /**
@@ -31,7 +30,7 @@ public interface ISymbolRegistry {
 	 * @return a map associating keys and the collection of symbols which
 	 *         correspond to it
 	 */
-	public Map<String, Collection<ISymbol>> getMathSymbols();
+	public Collection<ISymbol> getMathSymbols(int i);
 
 	/**
 	 * Returns the association of keys and the corresponding collection of
@@ -40,7 +39,7 @@ public interface ISymbolRegistry {
 	 * @return a map associating keys and the collection of symbols which
 	 *         correspond to it
 	 */
-	public Map<String, Collection<ISymbol>> getTextSymbols();
+	public Collection<ISymbol> getTextSymbols(int i);
 	
 	/**
 	 * Returns the maximal size of the key that maps to mathematical symbols.
