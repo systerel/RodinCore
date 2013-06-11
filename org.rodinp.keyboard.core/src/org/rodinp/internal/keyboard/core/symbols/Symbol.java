@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,12 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - supported contribution through extension and at runtime
  *******************************************************************************/
-package org.rodinp.internal.keyboard.translators;
+package org.rodinp.internal.keyboard.core.symbols;
+
+import org.rodinp.keyboard.core.ISymbol;
 
 
-public class Symbol {
+public class Symbol implements ISymbol {
 
 	private final String combo;
 	private final String translation;
@@ -24,10 +26,12 @@ public class Symbol {
 		this.translation = translation;
 	}
 
+	@Override
 	public String getCombo() {
 		return combo;
 	}
 
+	@Override
 	public String getTranslation() {
 		return translation;
 	}

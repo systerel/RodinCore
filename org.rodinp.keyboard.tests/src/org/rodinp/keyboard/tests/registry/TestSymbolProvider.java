@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,9 @@ import static java.util.Arrays.asList;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rodinp.keyboard.ExtensionSymbol;
-import org.rodinp.keyboard.ISymbolsProvider;
 import org.rodinp.keyboard.RodinKeyboardPlugin;
+import org.rodinp.keyboard.core.ExtensionSymbol;
+import org.rodinp.keyboard.core.ISymbolsProvider;
 
 public class TestSymbolProvider implements ISymbolsProvider{
 

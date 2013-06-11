@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,10 +21,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.rodinp.internal.keyboard.KeyboardUtils;
+import org.rodinp.internal.keyboard.KeyboardCoreUtils;
 import org.rodinp.internal.keyboard.RodinModifyListener;
-import org.rodinp.internal.keyboard.Text2MathTranslator;
 import org.rodinp.internal.keyboard.views.KeyboardView;
+import org.rodinp.keyboard.core.RodinKeyboardCore;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -36,6 +36,7 @@ public class RodinKeyboardPlugin extends AbstractUIPlugin {
 
 	public static final String RODIN_KEYBOARD_VIEWER_ID = PLUGIN_ID + ".views.KeyboardView";
 
+	//Debug properties	
 	private static final String TRACE = PLUGIN_ID + "/debug";
 
 	private static final String MATH_TRACE = PLUGIN_ID + "/debug/text";
@@ -69,9 +70,9 @@ public class RodinKeyboardPlugin extends AbstractUIPlugin {
 	 * Process debugging/tracing options coming from Eclipse.
 	 */
 	private void configureDebugOptions() {
-		KeyboardUtils.DEBUG = parseOption(TRACE);
-		KeyboardUtils.TEXT_DEBUG = parseOption(TEXT_TRACE);
-		KeyboardUtils.MATH_DEBUG = parseOption(MATH_TRACE);
+		KeyboardCoreUtils.DEBUG = parseOption(TRACE);
+		KeyboardCoreUtils.TEXT_DEBUG = parseOption(TEXT_TRACE);
+		KeyboardCoreUtils.MATH_DEBUG = parseOption(MATH_TRACE);
 	}
 
 	private static boolean parseOption(String key) {
@@ -162,7 +163,7 @@ public class RodinKeyboardPlugin extends AbstractUIPlugin {
 	}
 
 	public String translate(String text) {
-		return Text2MathTranslator.translate(text);
+		return RodinKeyboardCore.translate(text);
 	}
 
 }

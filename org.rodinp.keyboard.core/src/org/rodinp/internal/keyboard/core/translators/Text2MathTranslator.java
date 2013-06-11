@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,16 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - supported contribution through extension and at runtime
  *******************************************************************************/
-package org.rodinp.internal.keyboard;
+package org.rodinp.internal.keyboard.core.translators;
 
 import java.util.Collection;
 import java.util.Map;
 
-import org.rodinp.internal.keyboard.translators.Symbol;
-import org.rodinp.internal.keyboard.translators.SymbolRegistry;
-import org.rodinp.internal.keyboard.translators.Symbols;
+import org.rodinp.internal.keyboard.core.symbols.SymbolRegistry;
+import org.rodinp.internal.keyboard.core.symbols.Symbols;
+import org.rodinp.keyboard.core.ISymbol;
+import org.rodinp.keyboard.core.ISymbolRegistry;
+import org.rodinp.keyboard.core.KeyboardUtils;
 
 /**
  * @author htson
@@ -38,9 +40,8 @@ public class Text2MathTranslator {
 	 *         Language
 	 */
 	public static String translate(String str) {
-		final SymbolRegistry registry = SymbolRegistry.getDefault();
-		final Map<String, Collection<Symbol>> mathSymbols = registry
-				.getMathSymbols();
+		final ISymbolRegistry registry = SymbolRegistry.getDefault();
+		final Map<String, Collection<ISymbol>> mathSymbols = registry.getMathSymbols();
 		final int maxMathSize = registry.getMaxMathSymbolSize();
 
 		// Math
@@ -50,9 +51,9 @@ public class Text2MathTranslator {
 		for (i = maxMathSize; i > 0; i--) {
 			key = Symbols.generateKey(i);
 
-			Collection<Symbol> collection = mathSymbols.get(key);
+			Collection<ISymbol> collection = mathSymbols.get(key);
 			if (collection != null) {
-				for (Symbol symbol : collection) {
+				for (ISymbol symbol : collection) {
 					test = symbol.getCombo();
 					int index = str.indexOf(test);
 					if (index != -1) {
@@ -66,16 +67,16 @@ public class Text2MathTranslator {
 		}
 
 		// Text
-		final Map<String, Collection<Symbol>> symbols = registry
+		final Map<String, Collection<ISymbol>> symbols = registry
 				.getTextSymbols();
 		final int maxSize = registry.getMaxTextSymbolSize();
 
 		for (i = maxSize; i > 0; i--) {
 			key = Symbols.generateKey(i);
 
-			Collection<Symbol> collection = symbols.get(key);
+			Collection<ISymbol> collection = symbols.get(key);
 			if (collection != null) {
-				for (Symbol symbol : collection) {
+				for (ISymbol symbol : collection) {
 					String combo = symbol.getCombo();
 					int index = comboIndex(str, combo);
 					if (index == 0) {

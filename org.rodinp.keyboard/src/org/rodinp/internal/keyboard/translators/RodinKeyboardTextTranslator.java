@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,11 @@ import java.util.Map;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
-import org.rodinp.internal.keyboard.KeyboardUtils;
+import org.rodinp.internal.keyboard.KeyboardCoreUtils;
+import org.rodinp.keyboard.core.ISymbol;
+import org.rodinp.keyboard.core.ISymbolRegistry;
+import org.rodinp.keyboard.core.KeyboardUtils;
+import org.rodinp.keyboard.core.RodinKeyboardCore;
 
 /**
  * @author htson
@@ -28,7 +32,7 @@ import org.rodinp.internal.keyboard.KeyboardUtils;
  */
 public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 
-	private static Map<String, Collection<Symbol>> symbols = null;
+	private static Map<String, Collection<ISymbol>> symbols = null;
 
 	private static int maxSize = 0;
 
@@ -40,7 +44,7 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 	 * @see IRodinKeyboardTranslator#translate(org.eclipse.swt.widgets.Text)
 	 */
 	public void translate(Widget widget) {
-		SymbolRegistry registry = SymbolRegistry.getDefault();
+		ISymbolRegistry registry = RodinKeyboardCore.getSymbolRegistry();
 		symbols = registry.getTextSymbols();
 		maxSize = registry.getMaxTextSymbolSize();
 		if (widget instanceof Text) {
@@ -54,7 +58,7 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 	}
 
 	private void translate(Text widget, int beginIndex, int endIndex) {
-		if (KeyboardUtils.TEXT_DEBUG) {
+		if (KeyboardCoreUtils.TEXT_DEBUG) {
 			KeyboardUtils.debugText("***************************************");
 			KeyboardUtils.debugText("Begin: " + beginIndex);
 			KeyboardUtils.debugText("End: " + endIndex);
@@ -65,7 +69,7 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 		int currentPos = widget.getCaretPosition();
 		String subString = text.substring(beginIndex, endIndex);
 
-		if (KeyboardUtils.TEXT_DEBUG) {
+		if (KeyboardCoreUtils.TEXT_DEBUG) {
 			KeyboardUtils.debugText("Process: \"" + text + "\"");
 			KeyboardUtils.debugText("Pos: " + currentPos);
 			KeyboardUtils.debugText("Substring: \"" + subString + "\"");
@@ -77,11 +81,11 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 		int i = 0;
 		for (i = maxSize; i > 0; i--) {
 			boolean translated = false;
-			key = Symbols.generateKey(i);
+			key = KeyboardUtils.generateKey(i);
 
-			Collection<Symbol> collection = symbols.get(key);
+			Collection<ISymbol> collection = symbols.get(key);
 			if (collection != null) {
-				for (Symbol symbol : collection) {
+				for (ISymbol symbol : collection) {
 					test = symbol.getCombo();
 					int index = subString.indexOf(test);
 
@@ -121,7 +125,7 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 
 						widget.setSelection(realIndex, realIndex
 								+ test.length());
-						if (KeyboardUtils.TEXT_DEBUG)
+						if (KeyboardCoreUtils.TEXT_DEBUG)
 							KeyboardUtils.debugText("Replace at pos "
 									+ realIndex + " from \"" + test
 									+ "\" by \"" + result + "\"");
@@ -163,7 +167,7 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 	}
 
 	private void translate(StyledText widget, int beginIndex, int endIndex) {
-		if (KeyboardUtils.TEXT_DEBUG) {
+		if (KeyboardCoreUtils.TEXT_DEBUG) {
 			KeyboardUtils.debugText("***************************************");
 			KeyboardUtils.debugText("Begin: " + beginIndex);
 			KeyboardUtils.debugText("End: " + endIndex);
@@ -174,7 +178,7 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 		int currentPos = widget.getCaretOffset();
 		String subString = text.substring(beginIndex, endIndex);
 
-		if (KeyboardUtils.TEXT_DEBUG) {
+		if (KeyboardCoreUtils.TEXT_DEBUG) {
 			KeyboardUtils.debugText("Process: \"" + text + "\"");
 			KeyboardUtils.debugText("Pos: " + currentPos);
 			KeyboardUtils.debugText("Substring: \"" + subString + "\"");
@@ -186,11 +190,11 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 		int i = 0;
 		for (i = maxSize; i > 0; i--) {
 			boolean translated = false;
-			key = Symbols.generateKey(i);
+			key = KeyboardUtils.generateKey(i);
 
-			Collection<Symbol> collection = symbols.get(key);
+			Collection<ISymbol> collection = symbols.get(key);
 			if (collection != null) {
-				for (Symbol symbol : collection) {
+				for (ISymbol symbol : collection) {
 					test = symbol.getCombo();
 					int index = subString.indexOf(test);
 
@@ -224,7 +228,7 @@ public class RodinKeyboardTextTranslator implements IRodinKeyboardTranslator {
 
 						widget.setSelection(realIndex, realIndex
 								+ test.length());
-						if (KeyboardUtils.TEXT_DEBUG)
+						if (KeyboardCoreUtils.TEXT_DEBUG)
 							KeyboardUtils.debugText("Replace at pos "
 									+ realIndex + " from \"" + test
 									+ "\" by \"" + result + "\"");

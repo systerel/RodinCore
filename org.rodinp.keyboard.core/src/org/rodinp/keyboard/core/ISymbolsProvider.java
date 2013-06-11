@@ -10,22 +10,18 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.rodinp.keyboard;
+package org.rodinp.keyboard.core;
 
 import java.util.List;
 
 import org.rodinp.keyboard.core.ExtensionSymbol;
 
 /**
- * 
- * Interface kept for backward compatibility which maps to
- * {@link org.rodinp.keyboard.core.ISymbolsProvider}. Users shall use this
- * latter class instead.
+ * Interface used to contribute programatically the new symbols to the keyboard.
  * 
  * @author Thomas Muller
  * @since 1.1
- * @deprecated This interface shall not be used. Use
- *             {@link org.rodinp.keyboard.core.ISymbolsProvider} instead.
+ * 
  */
 public interface ISymbolsProvider {
 
@@ -43,5 +39,5 @@ public interface ISymbolsProvider {
 	 * @return the list of extension symbol to add to the keyboard
 	 */
 	public List<ExtensionSymbol> getExtensionSymbols();
-	
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  *     Systerel - refactored symbol definitions
  *     Systerel - refactored to support programmatic contributions at runtime
  *******************************************************************************/
-package org.rodinp.internal.keyboard.translators;
+package org.rodinp.internal.keyboard.core.symbols;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,16 +22,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.rodinp.internal.keyboard.KeyboardUtils;
-import org.rodinp.keyboard.ExtensionSymbol;
+import org.rodinp.internal.keyboard.core.KeyboardDebugConstants;
+import org.rodinp.keyboard.core.ExtensionSymbol;
+import org.rodinp.keyboard.core.ISymbol;
+import org.rodinp.keyboard.core.KeyboardUtils;
 
 public class Symbols {
 
 	private final Collection<Symbol> rawSymbols = new ArrayList<Symbol>();
 	
-	private final Map<String, Collection<Symbol>> tempSymbols = new HashMap<String, Collection<Symbol>>();
+	private final Map<String, Collection<ISymbol>> tempSymbols = new HashMap<String, Collection<ISymbol>>();
 
-	private final Map<String, Collection<Symbol>> permanentSymbols = new HashMap<String, Collection<Symbol>>();
+	private final Map<String, Collection<ISymbol>> permanentSymbols = new HashMap<String, Collection<ISymbol>>();
 
 	private int maxSize = 0;
 
@@ -42,7 +44,7 @@ public class Symbols {
 	 * @param symbolProviders
 	 * @return
 	 */
-	public Map<String, Collection<Symbol>> getSymbols(Collection<ExtensionSymbol> additionalSymbols) {
+	public Map<String, Collection<ISymbol>> getSymbols(Collection<ExtensionSymbol> additionalSymbols) {
 		if (additionalSymbols.isEmpty() && !permanentSymbols.isEmpty()) {
 			return permanentSymbols;
 		}
@@ -50,24 +52,24 @@ public class Symbols {
 		for (Symbol symbol : rawSymbols) {
 			pushSymbol(symbol, tempSymbols);
 		}
-		if (KeyboardUtils.MATH_DEBUG)
+		if (KeyboardDebugConstants.MATH_DEBUG)
 			KeyboardUtils.debugMath("Original Symbols: " + rawSymbols.size());
 		for (ExtensionSymbol symbol : additionalSymbols) {
 			pushSymbol(symbol, tempSymbols);
 		}
-		final Map<String, Collection<Symbol>> allSymbols;
+		final Map<String, Collection<ISymbol>> allSymbols;
 		if (additionalSymbols.isEmpty()) {
 			allSymbols = permanentSymbols;
 		} else {
-			allSymbols = new HashMap<String, Collection<Symbol>>();
+			allSymbols = new HashMap<String, Collection<ISymbol>>();
 		}
 		mutateSymbols(allSymbols);
 		printSymbols(allSymbols);
 		return allSymbols;
 	}
 
-	private void mutateSymbols(Map<String, Collection<Symbol>> symbs) {
-		Symbol symbol = popNextSymbol();
+	private void mutateSymbols(Map<String, Collection<ISymbol>> symbs) {
+		ISymbol symbol = popNextSymbol();
 		while (symbol != null) {
 			pushSymbol(symbol, symbs);
 			generateNewSymbol(symbol);
@@ -75,13 +77,13 @@ public class Symbols {
 		}
 	}
 
-	private void generateNewSymbol(Symbol symbol) {
+	private void generateNewSymbol(ISymbol symbol) {
 		final Set<Symbol> newSymbols = new HashSet<Symbol>();
 		for (int i = symbol.getCombo().length() + 1; i <= maxSize; i++) {
 			String key = generateKey(i);
-			Collection<Symbol> collection = tempSymbols.get(key);
+			Collection<ISymbol> collection = tempSymbols.get(key);
 			if (collection != null) {
-				for (Symbol oldSymbol : collection) {
+				for (ISymbol oldSymbol : collection) {
 					generateNewSymbol(symbol, oldSymbol, newSymbols);
 				}
 			}
@@ -92,15 +94,15 @@ public class Symbols {
 		}
 	}
 
-	private void pushSymbol(Symbol symbol, Map<String, Collection<Symbol>> symbs) {
+	private void pushSymbol(ISymbol symbol, Map<String, Collection<ISymbol>> symbs) {
 		final int length = symbol.getCombo().length();
 		if (length > maxSize)
 			maxSize = length;
 		String key = generateKey(length);
 		// KeyboardUtils.debugMath("Push Temp: " + symbol.getCombo());
-		Collection<Symbol> collection = symbs.get(key);
+		Collection<ISymbol> collection = symbs.get(key);
 		if (collection == null) {
-			collection = new HashSet<Symbol>();
+			collection = new HashSet<ISymbol>();
 			symbs.put(key, collection);
 		}
 		if (!collection.contains(symbol)) {
@@ -108,13 +110,13 @@ public class Symbols {
 		}
 	}
 
-	private static void generateNewSymbol(Symbol symbol, Symbol oldSymbol, Set<Symbol> newSymbols) {
+	private static void generateNewSymbol(ISymbol symbol, ISymbol oldSymbol, Set<Symbol> newSymbols) {
 		String combo = symbol.getCombo();
 		String oldCombo = oldSymbol.getCombo();
 
 		int i = oldCombo.indexOf(combo);
 		while (i != -1) {
-			if (KeyboardUtils.MATH_DEBUG)
+			if (KeyboardDebugConstants.MATH_DEBUG)
 				KeyboardUtils.debugMath("New Symbol from: \"" + combo
 						+ "\" and \"" + oldCombo + "\"");
 			String newCombo = oldCombo.substring(0, i) + symbol.getTranslation()
@@ -122,21 +124,21 @@ public class Symbols {
 			Symbol newSymbol = new Symbol(newCombo, oldSymbol.getTranslation());
 			newSymbols.add(newSymbol);
 			generateNewSymbol(symbol, newSymbol, newSymbols);
-			if (KeyboardUtils.MATH_DEBUG)
+			if (KeyboardDebugConstants.MATH_DEBUG)
 				KeyboardUtils.debugMath("New Symbol: " + newSymbol.getCombo()
 						+ " ===> " + newSymbol.getTranslation());
 			i = oldCombo.indexOf(combo, i + 1);
 		}
 	}
 
-	private Symbol popNextSymbol() {
+	private ISymbol popNextSymbol() {
 		for (int i = 1; i <= maxSize; i++) {
 			String key = generateKey(i);
-			Collection<Symbol> collection = tempSymbols.get(key);
+			Collection<ISymbol> collection = tempSymbols.get(key);
 			if ((collection != null) && collection.size() != 0) {
-				Symbol symbol = collection.iterator().next();
+				ISymbol symbol = collection.iterator().next();
 				collection.remove(symbol);
-				if (KeyboardUtils.MATH_DEBUG)
+				if (KeyboardDebugConstants.MATH_DEBUG)
 					KeyboardUtils.debugMath("Pop: " + symbol.getCombo());
 				return symbol;
 			}
@@ -144,17 +146,17 @@ public class Symbols {
 		return null;
 	}
 
-	private void printSymbols(Map<String, Collection<Symbol>> symbs) {
-		if (!KeyboardUtils.MATH_DEBUG) {
+	private void printSymbols(Map<String, Collection<ISymbol>> symbs) {
+		if (!KeyboardDebugConstants.MATH_DEBUG) {
 			return;
 		}
 		KeyboardUtils.debugMath("Max Size: " + maxSize);
 		int count = 0;
 		for (int i = 1; i <= maxSize; i++) {
 			String key = generateKey(i);
-			Collection<Symbol> collection = symbs.get(key);
+			Collection<ISymbol> collection = symbs.get(key);
 			if (collection != null) {
-				for (Symbol symbol : collection) {
+				for (ISymbol symbol : collection) {
 					count++;
 					KeyboardUtils.debugMath("Symbol: " + symbol.toString());
 				}
@@ -178,7 +180,7 @@ public class Symbols {
 	}
 
 	public boolean containRawCombo(String combo) {
-		for (Symbol symbol : rawSymbols) {
+		for (ISymbol symbol : rawSymbols) {
 			if (symbol.getCombo().equals(combo)) {
 				return true;
 			}

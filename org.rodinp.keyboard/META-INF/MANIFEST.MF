@@ -2,11 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.rodinp.keyboard;singleton:=true
-Bundle-Version: 1.1.2.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.rodinp.keyboard.RodinKeyboardPlugin
 Require-Bundle: org.eclipse.ui;visibility:=reexport,
  org.eclipse.core.runtime;visibility:=reexport,
- org.eclipse.help;visibility:=reexport
+ org.eclipse.help;visibility:=reexport,
+ org.rodinp.keyboard.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %providerName

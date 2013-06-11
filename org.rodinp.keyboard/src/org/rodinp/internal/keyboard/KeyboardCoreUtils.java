@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@
  *******************************************************************************/
 package org.rodinp.internal.keyboard;
 
-public class KeyboardUtils {
+import org.rodinp.keyboard.core.KeyboardUtils;
+
+public class KeyboardCoreUtils {
 	
 	public static boolean DEBUG = false;
 
@@ -21,15 +23,15 @@ public class KeyboardUtils {
 	public static boolean MATH_DEBUG = false;
 	
 	public static void debug(String str) {
-		System.out.println(str);
+		KeyboardUtils.debug(str);
 	}
 	
 	public static void debugText(String str) {
-		System.out.println(str);
+		KeyboardUtils.debugText(str);
 	}
 	
 	public static void debugMath(String str) {
-		System.out.println(str);
+		KeyboardUtils.debugMath(str);
 	}
 
 	/**
@@ -41,14 +43,16 @@ public class KeyboardUtils {
 	 *         'Z', 'a' to 'z', etc.) false otherwise
 	 */
 	public static boolean isTextCharacter(char c) {
-		if (c <= 'Z' && c >= 'A')
-			return true;
-		if (c <= 'z' && c >= 'a')
-			return true;
-		if (c <= '9' && c >= '0')
-			return true;
-		if (c == '_')
-			return true;
-		return false;
+		return KeyboardUtils.isTextCharacter(c);
 	}
+	
+	/**
+	 * 
+	 * @param length
+	 * @return
+	 */
+	public static String generateKey(int length) {
+		return KeyboardUtils.generateKey(length);
+	}
+	
 }

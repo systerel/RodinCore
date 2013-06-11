@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  *     Systerel - modified loadRegistry() to handle programmatic contributions
  *     Systerel - refactored to support programmatic contributions at runtime
  *******************************************************************************/
-package org.rodinp.internal.keyboard.translators;
+package org.rodinp.internal.keyboard.core.symbols;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,26 +24,33 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.rodinp.internal.keyboard.KeyboardUtils;
-import org.rodinp.keyboard.ExtensionSymbol;
-import org.rodinp.keyboard.ISymbolsProvider;
-import org.rodinp.keyboard.RodinKeyboardPlugin;
+import org.rodinp.internal.keyboard.core.KeyboardDebugConstants;
+import org.rodinp.keyboard.core.ExtensionSymbol;
+import org.rodinp.keyboard.core.ISymbol;
+import org.rodinp.keyboard.core.ISymbolRegistry;
+import org.rodinp.keyboard.core.ISymbolsProvider;
+import org.rodinp.keyboard.core.KeyboardUtils;
 
-public class SymbolRegistry {
-
-	private static final String SYMBOLS_ID = RodinKeyboardPlugin.PLUGIN_ID + ".symbols";
+public class SymbolRegistry implements ISymbolRegistry {
+	
+	//FIXME Rodin 3.0
+	//TODO MOVE THE EXTENSION POINT DEFINITION TO org.rodinp.keyboard.core AND 
+	//REPLACE THE FOLLOWING LINE
+	private static final String SYMBOLS_ID = "org.rodinp.keyboard.symbols";
+	// BY THE FOLLOWING ONE
+	//private static final String SYMBOLS_ID = RodinKeyboardCorePlugin.PLUGIN_ID + ".symbols";
 
 	private static final String SYMBOL_EXTENSION = "symbol";
 	
 	private static final String SYMBOL_PROVIDER_EXTENSION = "symbolProvider";
 	
-	private static SymbolRegistry instance;
+	private static ISymbolRegistry instance;
 	
 	private SymbolRegistry() {
 		// Hide the constructor.
 	}
 	
-	public static SymbolRegistry getDefault() {
+	public static ISymbolRegistry getDefault() {
 		if (instance == null)
 			instance = new SymbolRegistry();
 		return instance;
@@ -55,12 +62,20 @@ public class SymbolRegistry {
 	
 	private List<ISymbolsProvider> symbolProviders = null;
 	
-	public Map<String, Collection<Symbol>> getMathSymbols() {
+	/* (non-Javadoc)
+	 * @see org.rodinp.internal.keyboard.core.symbols.ISymbolRegistry#getMathSymbols()
+	 */
+	@Override
+	public Map<String, Collection<ISymbol>> getMathSymbols() {
 		loadRegistry();
 		return mathSymbols.getSymbols(getMathProviderSymbols());
 	}
 	
-	public Map<String, Collection<Symbol>> getTextSymbols() {
+	/* (non-Javadoc)
+	 * @see org.rodinp.internal.keyboard.core.symbols.ISymbolRegistry#getTextSymbols()
+	 */
+	@Override
+	public Map<String, Collection<ISymbol>> getTextSymbols() {
 		loadRegistry();
 		return textSymbols.getSymbols(getTextProviderSymbols());
 	}
@@ -162,7 +177,7 @@ public class SymbolRegistry {
 	
 	private boolean isNotRegistered(List<String> registeredIds, String id) {
 		if (registeredIds.contains(id)) {
-			if (KeyboardUtils.DEBUG)
+			if (KeyboardDebugConstants.DEBUG)
 				KeyboardUtils.debug("Duplicate id " + id
 						+ ": ignored this configuration.");
 			return false;
@@ -172,14 +187,14 @@ public class SymbolRegistry {
 	
 	private boolean isNotNull(String id, String combo, String translation) {
 		if (combo == null) {
-			if (KeyboardUtils.DEBUG)
+			if (KeyboardDebugConstants.DEBUG)
 				KeyboardUtils.debug("Configuration with id " + id
 						+ " does not have any combo value,"
 						+ " ignored this configuration.");
 			return false;
 		}
 		if (translation == null) {
-			if (KeyboardUtils.DEBUG)
+			if (KeyboardDebugConstants.DEBUG)
 				KeyboardUtils.debug("Configuration with id " + id
 						+ " does not have any translation value,"
 						+ " ignored this configuration.");
@@ -197,7 +212,7 @@ public class SymbolRegistry {
 	
 	private boolean isNewCombo(Symbols symbols, String combo) {
 		if (symbols.containRawCombo(combo)) {
-			if (KeyboardUtils.DEBUG)
+			if (KeyboardDebugConstants.DEBUG)
 				KeyboardUtils
 						.debug("Translation already exists for combination "
 								+ combo + ", ignored this configuration.");
@@ -220,7 +235,7 @@ public class SymbolRegistry {
 			return (ISymbolsProvider) element
 					.createExecutableExtension("class");
 		} catch (CoreException e) {
-			if (KeyboardUtils.DEBUG)
+			if (KeyboardDebugConstants.DEBUG)
 				KeyboardUtils
 						.debug("Could not retrieve the symbols provider for element"
 								+ element.toString() + ".");
@@ -228,10 +243,18 @@ public class SymbolRegistry {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.internal.keyboard.core.symbols.ISymbolRegistry#getMaxMathSymbolSize()
+	 */
+	@Override
 	public int getMaxMathSymbolSize() {
 		return mathSymbols.getMaxSize();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.rodinp.internal.keyboard.core.symbols.ISymbolRegistry#getMaxTextSymbolSize()
+	 */
+	@Override
 	public int getMaxTextSymbolSize() {
 		return textSymbols.getMaxSize();
 	}
