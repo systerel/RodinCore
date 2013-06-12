@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.rodinp.internal.keyboard.core.symbols;
 
+import static org.rodinp.keyboard.core.KeyboardUtils.debug;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,7 +27,6 @@ import java.util.Set;
 import org.rodinp.internal.keyboard.core.KeyboardDebugConstants;
 import org.rodinp.keyboard.core.ExtensionSymbol;
 import org.rodinp.keyboard.core.ISymbol;
-import org.rodinp.keyboard.core.KeyboardUtils;
 
 public class Symbols {
 
@@ -53,7 +54,7 @@ public class Symbols {
 			pushSymbol(symbol, tempSymbols);
 		}
 		if (KeyboardDebugConstants.MATH_DEBUG)
-			KeyboardUtils.debug("Original Symbols: " + rawSymbols.size());
+			debug("Original Symbols: " + rawSymbols.size());
 		for (ExtensionSymbol symbol : additionalSymbols) {
 			pushSymbol(symbol, tempSymbols);
 		}
@@ -117,7 +118,7 @@ public class Symbols {
 		int i = oldCombo.indexOf(combo);
 		while (i != -1) {
 			if (KeyboardDebugConstants.MATH_DEBUG)
-				KeyboardUtils.debug("New Symbol from: \"" + combo
+				debug("New Symbol from: \"" + combo
 						+ "\" and \"" + oldCombo + "\"");
 			String newCombo = oldCombo.substring(0, i) + symbol.getTranslation()
 					+ oldCombo.substring(i + combo.length(), oldCombo.length());
@@ -125,7 +126,7 @@ public class Symbols {
 			newSymbols.add(newSymbol);
 			generateNewSymbol(symbol, newSymbol, newSymbols);
 			if (KeyboardDebugConstants.MATH_DEBUG)
-				KeyboardUtils.debug("New Symbol: " + newSymbol.getCombo()
+				debug("New Symbol: " + newSymbol.getCombo()
 						+ " ===> " + newSymbol.getTranslation());
 			i = oldCombo.indexOf(combo, i + 1);
 		}
@@ -139,7 +140,7 @@ public class Symbols {
 				ISymbol symbol = collection.iterator().next();
 				collection.remove(symbol);
 				if (KeyboardDebugConstants.MATH_DEBUG)
-					KeyboardUtils.debug("Pop: " + symbol.getCombo());
+					debug("Pop: " + symbol.getCombo());
 				return symbol;
 			}
 		}
@@ -150,7 +151,7 @@ public class Symbols {
 		if (!KeyboardDebugConstants.MATH_DEBUG) {
 			return;
 		}
-		KeyboardUtils.debug("Max Size: " + maxSize);
+		debug("Max Size: " + maxSize);
 		int count = 0;
 		for (int i = 1; i <= maxSize; i++) {
 			String key = generateKey(i);
@@ -158,11 +159,11 @@ public class Symbols {
 			if (collection != null) {
 				for (ISymbol symbol : collection) {
 					count++;
-					KeyboardUtils.debug("Symbol: " + symbol.toString());
+					debug("Symbol: " + symbol.toString());
 				}
 			}
 		}
-		KeyboardUtils.debug("Total Symbols: " + count);
+		debug("Total Symbols: " + count);
 	}
 
 	public static String generateKey(int length) {

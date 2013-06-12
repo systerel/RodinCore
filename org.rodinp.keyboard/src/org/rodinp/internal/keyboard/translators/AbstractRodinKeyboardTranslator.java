@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.rodinp.internal.keyboard.translators;
 
+import static org.rodinp.keyboard.core.KeyboardUtils.debug;
 import static org.rodinp.keyboard.core.KeyboardUtils.isTextCharacter;
 
 import java.util.Collection;
@@ -22,7 +23,6 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.rodinp.keyboard.core.ISymbol;
-import org.rodinp.keyboard.core.KeyboardUtils;
 
 /**
  * @author htson
@@ -77,9 +77,9 @@ public abstract class AbstractRodinKeyboardTranslator implements IRodinKeyboardT
 	private void translate(AbstractWidgetWrapper widget, int beginIndex,
 			int endIndex) {
 		if (debug) {
-			KeyboardUtils.debug("***************************************");
-			KeyboardUtils.debug("Begin: " + beginIndex);
-			KeyboardUtils.debug("End: " + endIndex);
+			debug("***************************************");
+			debug("Begin: " + beginIndex);
+			debug("End: " + endIndex);
 		}
 		if (beginIndex == endIndex)
 			return;
@@ -88,9 +88,9 @@ public abstract class AbstractRodinKeyboardTranslator implements IRodinKeyboardT
 		final String subString = text.substring(beginIndex, endIndex);
 
 		if (debug) {
-			KeyboardUtils.debug("Process: \"" + text + "\"");
-			KeyboardUtils.debug("Pos: " + currentPos);
-			KeyboardUtils.debug("Substring: \"" + subString + "\"");
+			debug("Process: \"" + text + "\"");
+			debug("Pos: " + currentPos);
+			debug("Substring: \"" + subString + "\"");
 		}
 		int realIndex = 0;
 		String combo = null;
@@ -123,7 +123,7 @@ public abstract class AbstractRodinKeyboardTranslator implements IRodinKeyboardT
 						widget.setSelection(realIndex,
 								realIndex + combo.length());
 						if (debug)
-							KeyboardUtils.debug("Replace at pos "
+							debug("Replace at pos "
 									+ realIndex + " from \"" + combo
 									+ "\" by \"" + result + "\"");
 						widget.insert(result);
