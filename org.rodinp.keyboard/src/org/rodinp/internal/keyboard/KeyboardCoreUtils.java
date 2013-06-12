@@ -25,14 +25,6 @@ public class KeyboardCoreUtils {
 	public static void debug(String str) {
 		KeyboardUtils.debug(str);
 	}
-	
-	public static void debugText(String str) {
-		KeyboardUtils.debugText(str);
-	}
-	
-	public static void debugMath(String str) {
-		KeyboardUtils.debugMath(str);
-	}
 
 	/**
 	 * Testing if a character is a text character

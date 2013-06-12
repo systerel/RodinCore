@@ -19,14 +19,6 @@ public class KeyboardUtils {
 	public static void debug(String str) {
 		System.out.println(str);
 	}
-	
-	public static void debugText(String str) {
-		System.out.println(str);
-	}
-	
-	public static void debugMath(String str) {
-		System.out.println(str);
-	}
 
 	/**
 	 * Testing if a character is a text character

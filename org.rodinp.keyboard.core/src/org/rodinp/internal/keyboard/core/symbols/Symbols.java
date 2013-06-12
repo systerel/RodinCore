@@ -53,7 +53,7 @@ public class Symbols {
 			pushSymbol(symbol, tempSymbols);
 		}
 		if (KeyboardDebugConstants.MATH_DEBUG)
-			KeyboardUtils.debugMath("Original Symbols: " + rawSymbols.size());
+			KeyboardUtils.debug("Original Symbols: " + rawSymbols.size());
 		for (ExtensionSymbol symbol : additionalSymbols) {
 			pushSymbol(symbol, tempSymbols);
 		}
@@ -117,7 +117,7 @@ public class Symbols {
 		int i = oldCombo.indexOf(combo);
 		while (i != -1) {
 			if (KeyboardDebugConstants.MATH_DEBUG)
-				KeyboardUtils.debugMath("New Symbol from: \"" + combo
+				KeyboardUtils.debug("New Symbol from: \"" + combo
 						+ "\" and \"" + oldCombo + "\"");
 			String newCombo = oldCombo.substring(0, i) + symbol.getTranslation()
 					+ oldCombo.substring(i + combo.length(), oldCombo.length());
@@ -125,7 +125,7 @@ public class Symbols {
 			newSymbols.add(newSymbol);
 			generateNewSymbol(symbol, newSymbol, newSymbols);
 			if (KeyboardDebugConstants.MATH_DEBUG)
-				KeyboardUtils.debugMath("New Symbol: " + newSymbol.getCombo()
+				KeyboardUtils.debug("New Symbol: " + newSymbol.getCombo()
 						+ " ===> " + newSymbol.getTranslation());
 			i = oldCombo.indexOf(combo, i + 1);
 		}
@@ -139,7 +139,7 @@ public class Symbols {
 				ISymbol symbol = collection.iterator().next();
 				collection.remove(symbol);
 				if (KeyboardDebugConstants.MATH_DEBUG)
-					KeyboardUtils.debugMath("Pop: " + symbol.getCombo());
+					KeyboardUtils.debug("Pop: " + symbol.getCombo());
 				return symbol;
 			}
 		}
@@ -150,7 +150,7 @@ public class Symbols {
 		if (!KeyboardDebugConstants.MATH_DEBUG) {
 			return;
 		}
-		KeyboardUtils.debugMath("Max Size: " + maxSize);
+		KeyboardUtils.debug("Max Size: " + maxSize);
 		int count = 0;
 		for (int i = 1; i <= maxSize; i++) {
 			String key = generateKey(i);
@@ -158,11 +158,11 @@ public class Symbols {
 			if (collection != null) {
 				for (ISymbol symbol : collection) {
 					count++;
-					KeyboardUtils.debugMath("Symbol: " + symbol.toString());
+					KeyboardUtils.debug("Symbol: " + symbol.toString());
 				}
 			}
 		}
-		KeyboardUtils.debugMath("Total Symbols: " + count);
+		KeyboardUtils.debug("Total Symbols: " + count);
 	}
 
 	public static String generateKey(int length) {
