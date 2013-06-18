@@ -688,6 +688,12 @@
             id="lasso"
             name="%lassoName">
       </autoTactic>
+      <autoTactic
+            class="org.eventb.core.seqprover.eventbExtensions.AutoTactics$RmiGoalOnceAtRootAutoTac"
+            description="%rmiGoalOnceTacDesc"
+            id="rmiGoalOnceTac"
+            name="%rmiGoalOnceTacName">
+      </autoTactic>
    </extension>
    <extension
          point="org.eventb.core.seqprover.tacticCombinators">
