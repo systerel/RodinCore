@@ -10,7 +10,7 @@
  *     Rodin @ ETH Zurich
  ******************************************************************************/
 
-package org.eventb.keyboard.tests;
+package org.eventb.keyboard.ui.tests;
 
 import org.junit.Test;
 import org.rodinp.keyboard.tests.AbstractRodinKeyboardTestCase;
