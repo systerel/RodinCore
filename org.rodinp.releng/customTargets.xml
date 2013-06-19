@@ -102,6 +102,9 @@
 	        <copy todir="${buildDirectory}/plugins/org.rodinp.keyboard">
 	            <fileset dir="${builder}/../org.rodinp.keyboard" />
 	        </copy>
+	        <copy todir="${buildDirectory}/plugins/org.rodinp.keyboard.core">
+	            <fileset dir="${builder}/../org.rodinp.keyboard.core" />
+	        </copy>
 			<copy todir="${buildDirectory}/plugins/org.rodinp.core.emf">
 	            <fileset dir="${builder}/../org.rodinp.core.emf" />
 	        </copy>

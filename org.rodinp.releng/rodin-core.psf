@@ -23,6 +23,7 @@
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.rodinp.core.emf"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.rodinp.core"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.rodinp.keyboard"/>
+<project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.rodinp.keyboard.core"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.rodinp.platform"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.rodinp.platform-feature"/>
 </provider>
