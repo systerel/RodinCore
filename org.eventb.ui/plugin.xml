@@ -395,17 +395,6 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             adaptable="false"
-            id="org.eventb.ui.InternalElement"
-            objectClass="org.rodinp.core.IInternalElement">
-         <action
-               class="org.eventb.internal.ui.propertiesView.Properties"
-               id="org.eventb.ui.property"
-               label="%popupMenu.property.label"
-               menubarPath="additions"
-               tooltip="%popupMenu.property.tooltip"/>
-      </objectContribution>
-      <objectContribution
-            adaptable="false"
             id="org.eventb.ui.ProofTreeNode"
             objectClass="org.eventb.core.seqprover.IProofTreeNode">
          <action
@@ -531,6 +520,11 @@
             id="org.eventb.ui.rename"
             name="%commands.resource.rename.name">
       </command>
+      <command
+            description="%commands.resource.showProperties.description"
+            id="org.eventb.ui.showProperties"
+            name="%commands.resource.showProperties.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -561,6 +555,26 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="org.eventb.ui.showProperties"
+               mnemonic="%commands.resource.showProperties.mnemonic"
+               style="push"
+               tooltip="%commands.resource.showProperties.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <instanceof
+                        value="org.rodinp.core.IInternalElement">
+                  </instanceof>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -571,6 +585,10 @@
       <handler
             class="org.eventb.internal.ui.handlers.RenameHandler"
             commandId="org.eventb.ui.rename">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.handlers.ShowPropertiesHandler"
+            commandId="org.eventb.ui.showProperties">
       </handler>
    </extension>
    <extension
