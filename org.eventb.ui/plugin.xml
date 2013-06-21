@@ -394,28 +394,6 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            id="org.eventb.ui.MachineFile"
-            objectClass="org.eventb.core.IMachineRoot">
-         <action
-               class="org.eventb.internal.ui.projectexplorer.actions.Renames"
-               enablesFor="1"
-               id="org.eventb.ui.rename"
-               label="%popupMenu.rename.label"
-               menubarPath="modelling"
-               tooltip="%popupMenu.rename.tooltip"/>
-      </objectContribution>
-      <objectContribution
-            id="org.eventb.ui.ContextFile"
-            objectClass="org.eventb.core.IContextRoot">
-         <action
-               class="org.eventb.internal.ui.projectexplorer.actions.Renames"
-               enablesFor="1"
-               id="org.eventb.ui.rename"
-               label="%popupMenu.rename.label"
-               menubarPath="modelling"
-               tooltip="%popupMenu.rename.tooltip"/>
-      </objectContribution>
-      <objectContribution
             adaptable="false"
             id="org.eventb.ui.InternalElement"
             objectClass="org.rodinp.core.IInternalElement">
@@ -536,11 +514,22 @@
             id="org.eventb.ui.category.prove"
             name="%category.ProveName">
       </category>
+      <category
+            description="%category.ModelDescription"
+            id="org.eventb.ui.category.model"
+            name="%category.ModelName">
+      </category>
       <command
             categoryId="org.eventb.ui.category.prove"
             description="%commands.resource.proveInteractively.description"
             id="org.eventb.ui.proveInteractively"
             name="%commands.resource.proveInteractively.name">
+      </command>
+      <command
+            categoryId="org.eventb.ui.category.model"
+            description="%commands.resource.rename.description"
+            id="org.eventb.ui.rename"
+            name="%commands.resource.rename.name">
       </command>
    </extension>
    <extension
@@ -555,22 +544,20 @@
                style="push"
                tooltip="%commands.resource.proveInteractively.tooltip">
             <visibleWhen checkEnabled="false">
-               <or>
-                  <iterate
-                        ifEmpty="false"
-                        operator="or">
-                     <instanceof
-                           value="org.eventb.core.IMachineRoot">
-                     </instanceof>
-                  </iterate>
-                  <iterate
-                        ifEmpty="false"
-                        operator="or">
-                     <instanceof
-                           value="org.eventb.core.IContextRoot">
-                     </instanceof>
-                  </iterate>
-               </or>
+               <reference
+                     definitionId="org.eventb.ui.definition.isIEventBRoot">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eventb.ui.rename"
+               mnemonic="%commands.resource.rename.mnemonic"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isIEventBRoot">
+               </reference>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -580,6 +567,10 @@
       <handler
             class="org.eventb.internal.ui.handlers.ProveInteractivelyHandler"
             commandId="org.eventb.ui.proveInteractively">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.handlers.RenameHandler"
+            commandId="org.eventb.ui.rename">
       </handler>
    </extension>
    <extension
@@ -2875,5 +2866,18 @@
            refinement-id="org.eventb.core.machineRefinement"
            title="%refinementUI.machine.title">
      </UIMessages>
+  </extension>
+  <extension
+        point="org.eclipse.core.expressions.definitions">
+     <definition
+           id="org.eventb.ui.definition.isIEventBRoot">
+        <iterate
+              ifEmpty="false"
+              operator="or">
+           <instanceof
+                 value="org.eventb.core.IEventBRoot">
+           </instanceof>
+        </iterate>
+     </definition>
   </extension>
 </plugin>

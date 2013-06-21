@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,34 +11,38 @@
  *     Systerel - added default name
  *     Systerel - added renaming of proof files
  *     Systerel - added renaming of occurrences
+ *     Systerel - refactored to use commands and handlers
  *******************************************************************************/
-package org.eventb.internal.ui.projectexplorer.actions;
+package org.eventb.internal.ui.handlers;
 
 import static org.eclipse.core.runtime.SubMonitor.convert;
+import static org.eclipse.ui.handlers.HandlerUtil.getActiveShell;
+import static org.eclipse.ui.handlers.HandlerUtil.getCurrentSelection;
 import static org.eventb.internal.ui.utils.Messages.dialogs_cancelRenaming;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Set;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEventBProject;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.projectexplorer.actions.RenamesComponentDialog;
+import org.eventb.internal.ui.projectexplorer.actions.RodinFileInputValidator;
 import org.eventb.internal.ui.utils.Messages;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeType.Handle;
@@ -54,40 +58,51 @@ import org.rodinp.core.indexer.IOccurrence;
 import org.rodinp.core.location.IAttributeLocation;
 import org.rodinp.core.location.IAttributeSubstringLocation;
 
-public class Renames implements IObjectActionDelegate {
+/**
+ * The handler for the 'rename' command on components.
+ */
+public class RenameHandler extends AbstractHandler {
 
-	private ISelection selection;
-
-	private IWorkbenchPart part;
-
-	/**
-	 * Constructor.
-	 */
-	public Renames() {
-		super();
-	}
-
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
-	 */
 	@Override
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		part = targetPart;
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		final ISelection currentSelection = getCurrentSelection(event);
+		if (!(currentSelection instanceof IStructuredSelection)) {
+			return null;
+		}
+		final Shell shell = getActiveShell(event);
+		if (shell == null) {
+			return null;
+		}
+		final IEventBRoot root = getSelectedRoot((IStructuredSelection) currentSelection);
+		if (root == null) {
+			return null;
+		}
+		final IRodinProject prj = root.getRodinProject();
+		final String fileName = root.getElementName();
+		final RenamesComponentDialog dialog = new RenamesComponentDialog(shell,
+				fileName, true, new RodinFileInputValidator(prj));
+		dialog.open();
+		if (dialog.getReturnCode() == InputDialog.CANCEL)
+			return null; // Cancel
+
+		final String newBareName = dialog.getValue();
+		assert newBareName != null;
+
+		UIUtils.runWithProgressDialog(shell, new RenameTask(root, newBareName,
+				dialog.updateReferences()));
+
+		return null;
 	}
 
 	/**
 	 * Return the selected element if it is a {@link IContextRoot} or
 	 * {@link IMachineRoot}. Else return null.
 	 * */
-	private IEventBRoot getSelectedRoot() {
-		if (!(selection instanceof IStructuredSelection))
+	private IEventBRoot getSelectedRoot(IStructuredSelection selection) {
+		if (selection.size() != 1)
 			return null;
 
-		final IStructuredSelection ssel = (IStructuredSelection) selection;
-		if (ssel.size() != 1)
-			return null;
-
-		final Object obj = ssel.getFirstElement();
+		final Object obj = selection.getFirstElement();
 		if (!(obj instanceof IInternalElement))
 			return null;
 
@@ -96,32 +111,6 @@ public class Renames implements IObjectActionDelegate {
 			return null;
 
 		return (IEventBRoot) root;
-	}
-
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
-	@Override
-	public void run(IAction action) {
-		final IEventBRoot root = getSelectedRoot();
-		if (root == null)
-			return;
-
-		final IRodinProject prj = root.getRodinProject();
-		final String fileName = root.getElementName();
-		final Shell shell = part.getSite().getShell();
-
-		final RenamesComponentDialog dialog = new RenamesComponentDialog(shell,
-				fileName, true, new RodinFileInputValidator(prj));
-		dialog.open();
-		if (dialog.getReturnCode() == InputDialog.CANCEL)
-			return; // Cancel
-
-		final String newBareName = dialog.getValue();
-		assert newBareName != null;
-
-		UIUtils.runWithProgressDialog(shell, new RenameTask(root, newBareName,
-				dialog.updateReferences()));
 	}
 
 	private static class RenameTask implements IRunnableWithProgress {
@@ -181,14 +170,6 @@ public class Renames implements IObjectActionDelegate {
 
 	}
 
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	@Override
-	public void selectionChanged(IAction action, ISelection sel) {
-		this.selection = sel;
-	}
-
 	private static class RenameOperation implements IWorkspaceRunnable {
 
 		private final Set<IOccurrence> occurences;
@@ -211,7 +192,7 @@ public class Renames implements IObjectActionDelegate {
 		@Override
 		public void run(IProgressMonitor monitor) throws RodinDBException {
 			monitor.subTask(Messages.rename_task_perform_renaming);
-			 // Two default renamings +  one per occurence to rename
+			// Two default renamings + one per occurence to rename
 			final int nbOccurrences = occurences.size();
 			final SubMonitor subMonitor = convert(monitor, 2 + nbOccurrences);
 			renameComponentFile(subMonitor.newChild(1));
