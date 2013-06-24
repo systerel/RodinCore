@@ -13,15 +13,20 @@ package org.eventb.internal.ui.eventbeditor.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.operations.AtomicOperation;
 import org.eventb.internal.ui.eventbeditor.operations.History;
 import org.eventb.internal.ui.eventbeditor.operations.OperationFactory;
+import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElement;
+import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -33,11 +38,11 @@ import org.rodinp.core.RodinDBException;
 public class CreateElementHandler extends AbstractHandler {
 
 	/**
-	 * 
+	 * @param selection
 	 * @return a valid insertion point corresponding to the current selection,
 	 *         or null
 	 * 
-	 *         The current selection must contain a single object.
+	 *         The given selection must contain a single object.
 	 * 
 	 *         A valid insertion point is: - an IInternalElement - that has a
 	 *         parent which is also an IInternalElement
@@ -46,27 +51,27 @@ public class CreateElementHandler extends AbstractHandler {
 	 *         read-only.
 	 * 
 	 */
-	private static IInternalElement insertionPointForSelection(Object context) {
+	public static IInternalElement insertionPointForSelection(
+			ISelection selection) {
 
-		// Get the selection from the current active workbench page.
-		final ISelection selection = (ISelection) HandlerUtil.getVariable(
-				context, ISources.ACTIVE_CURRENT_SELECTION_NAME);
-
-		// If there is no selection or selection is empty then do nothing.
+		// If there is no selection or selection is empty then return null.
 		if (selection == null || selection.isEmpty()) {
 			return null;
 		}
 
 		final IInternalElement insertionPoint;
+
 		if (selection instanceof IInternalElement) {
 			insertionPoint = (IInternalElement) selection;
 		} else if (selection instanceof IStructuredSelection) {
 
 			final IStructuredSelection ssel = (IStructuredSelection) selection;
 
-			if (ssel.size() == 1
-					&& ssel.getFirstElement() instanceof IInternalElement) {
-				insertionPoint = (IInternalElement) ssel.getFirstElement();
+			if (ssel.size() > 0) {
+				Object last = ssel.toArray()[ssel.size() - 1];
+
+				insertionPoint = last instanceof IInternalElement ? (IInternalElement) last
+						: null;
 			} else {
 				return null;
 			}
@@ -82,11 +87,62 @@ public class CreateElementHandler extends AbstractHandler {
 		return insertionPoint;
 	}
 
+	/**
+	 * Create new element.
+	 * 
+	 * @param parent
+	 *            Parent of the new element
+	 * @param type
+	 *            Type of the new element
+	 * @param insertionPoint
+	 *            An existing child of parent, after which the new element will
+	 *            be added. May be null.
+	 * 
+	 * @throws RodinDBException
+	 * 
+	 * @pre If insertionPoint is not null, then it must have the same type as
+	 *      the new element.
+	 * 
+	 */
+	static public void doExecute(IInternalElement parent,
+			IInternalElementType<? extends IInternalElement> type,
+			IInternalElement insertionPoint) throws RodinDBException {
+
+		// Check preconditions
+		if (!(insertionPoint == null || insertionPoint.getElementType().equals(
+				type))) {
+
+			IStatus status = new Status(IStatus.ERROR,
+					EventBUIPlugin.PLUGIN_ID,
+					"o.e.i.u.eventbeditor.handlers.CreateElementHandler : invalid call");
+			UIUtils.log(status);
+			return;
+		}
+
+		// handle read-only model
+		if (EventBEditorUtils.checkAndShowReadOnly(parent)) {
+			return;
+		}
+
+		final IInternalElement sibling = insertionPoint == null ? null
+				: insertionPoint.getNextSibling();
+
+		// perform creation
+		final AtomicOperation operation = OperationFactory
+				.createElementGeneric(parent, type, sibling);
+
+		History.getInstance().addOperation(operation);
+	}
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		final IInternalElement insertionPoint = insertionPointForSelection(event
-				.getApplicationContext());
+		// Get the selection from the current active workbench page.
+		final ISelection selection = (ISelection) HandlerUtil.getVariable(
+				event.getApplicationContext(),
+				ISources.ACTIVE_CURRENT_SELECTION_NAME);
+
+		final IInternalElement insertionPoint = insertionPointForSelection(selection);
 
 		if (insertionPoint == null) {
 			throw new ExecutionException("invalid selection");
@@ -95,21 +151,8 @@ public class CreateElementHandler extends AbstractHandler {
 		final IInternalElement parent = (IInternalElement) insertionPoint
 				.getParent();
 
-		// handle read-only model
-		if (EventBEditorUtils.checkAndShowReadOnly(parent)) {
-			return null;
-		}
-
 		try {
-
-			// perform creation
-			final AtomicOperation operation = OperationFactory
-					.createElementGeneric(parent,
-							insertionPoint.getElementType(),
-							insertionPoint.getNextSibling());
-
-			History.getInstance().addOperation(operation);
-
+			doExecute(parent, insertionPoint.getElementType(), insertionPoint);
 		} catch (RodinDBException e) {
 			throw new ExecutionException("internal error", e);
 		}
