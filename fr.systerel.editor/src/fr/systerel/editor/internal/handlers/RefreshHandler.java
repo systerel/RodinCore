@@ -11,6 +11,8 @@
 package fr.systerel.editor.internal.handlers;
 
 
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -18,6 +20,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.RefreshAction;
+import org.rodinp.core.emf.api.itf.ILFile;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
 
@@ -27,7 +30,9 @@ import fr.systerel.editor.internal.editors.RodinEditor;
  * 
  * @author "Thomas Muller"
  */
-public class RefreshHandler extends AbstractEditionHandler {
+public class RefreshHandler extends AbstractEditorHandler {
+
+	private static final MutexRule MUTEX = new MutexRule();
 
 	/**
 	 * Schedules sequentially two jobs:
@@ -39,14 +44,16 @@ public class RefreshHandler extends AbstractEditionHandler {
 	 * resource has finished.
 	 */
 	@Override
-	protected String handleSelection(RodinEditor editor, int offset) {
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		final RodinEditor editor = getActiveRodinEditor();
+		if (editor == null)
+			return null;
 		final IWorkbenchWindow ww = editor.getSite().getWorkbenchWindow();
-		final MutexRule rule = new MutexRule();
-		final RefreshAction refreshAction = new CustomRefreshAction(ww, rule);
+		final RefreshAction refreshAction = new CustomRefreshAction(ww, MUTEX);
 		refreshAction.run();
 
 		final Job c = new RefreshEditorJob(editor);
-		c.setRule(rule);
+		c.setRule(MUTEX);
 		c.schedule();
 		return null;
 	}
@@ -78,7 +85,8 @@ public class RefreshHandler extends AbstractEditionHandler {
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			editor.abordEdition();
-			editor.resync(null, true);
+			final ILFile resource = editor.getResource();
+			resource.reload();
 			return Status.OK_STATUS;
 		}
 

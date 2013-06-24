@@ -36,15 +36,12 @@ import fr.systerel.editor.internal.editors.RodinEditor;
 public class CopyHandler extends AbstractEditorHandler {
 	
 	@Override
-	public boolean isEnabled() {
-		final RodinEditor re = getActiveRodinEditor();
-		if (re == null)
-			return false;
+	public boolean isEnabled(RodinEditor re, int caretOffset) {
 		if (re.getSelectionController().getSelectedElements().length > 0)
 			return true;
 		if (re.isOverlayActive())
 			return (re.getSelectionProvider().getSelection() instanceof ITextSelection);
-		return super.isEnabled();
+		return super.isEnabled(re, caretOffset);
 	}
 	
 	@Override

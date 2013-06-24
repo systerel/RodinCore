@@ -90,34 +90,34 @@ public class DeltaProcessor {
 		int flags = delta.getFlags();
 
 		if (kind == IRodinElementDelta.CHANGED) {
-
-			if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
-				final IRodinElementDelta[] deltas = delta.getAffectedChildren();
-				for (IRodinElementDelta elems : deltas) {
-					processDelta(elems);
-				}
-				return;
-			}
-
-			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
-				submit(new ElementOperation.ReorderElementOperation(element, root));
-				return;
-			}
-
-			if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
-				if (element instanceof IRodinFile) {
+			if ((flags & IRodinElementDelta.F_REPLACED) != 0) {
+				submit(new ElementOperation.ReloadElementOperation(element,
+						root));
+			} else {
+				if ((flags & IRodinElementDelta.F_CHILDREN) != 0) {
 					final IRodinElementDelta[] deltas = delta
 							.getAffectedChildren();
 					for (IRodinElementDelta elems : deltas) {
 						processDelta(elems);
 					}
 				}
-				return;
+				if ((flags & IRodinElementDelta.F_CONTENT) != 0) {
+					if (element instanceof IRodinFile) {
+						final IRodinElementDelta[] deltas = delta
+								.getAffectedChildren();
+						for (IRodinElementDelta elems : deltas) {
+							processDelta(elems);
+						}
+					}
+				}
+				if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
+					submit(new ElementOperation.ReloadAttributesElementOperation(
+							element, root));
+				}
 			}
-
-			if ((flags & IRodinElementDelta.F_ATTRIBUTE) != 0) {
-				submit(new ElementOperation.ReloadAttributesElementOperation(element, root));
-				return;
+			if ((flags & IRodinElementDelta.F_REORDERED) != 0) {
+				submit(new ElementOperation.ReorderElementOperation(element,
+						root));
 			}
 		}
 	}

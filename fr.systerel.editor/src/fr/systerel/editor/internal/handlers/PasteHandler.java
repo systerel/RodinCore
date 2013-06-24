@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.emf.api.itf.ILElement;
 
 import fr.systerel.editor.internal.actions.operations.RodinOperationUtils;
+import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.editors.RodinEditor;
 import fr.systerel.editor.internal.editors.RodinEditorUtils;
@@ -30,13 +31,6 @@ import fr.systerel.editor.internal.editors.RodinEditorUtils;
  * @author "Thomas Muller"
  */
 public class PasteHandler extends AbstractEditionHandler {
-
-	@Override
-	public boolean isEnabled() {
-		final RodinEditor rEditor = getActiveRodinEditor();
-		return super.isEnabled()
-				|| (rEditor != null && rEditor.isOverlayActive());
-	}
 
 	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
@@ -83,9 +77,17 @@ public class PasteHandler extends AbstractEditionHandler {
 	}
 
 	@Override
-	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
+	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
 		if (editor.isOverlayActive())
 			return true;
+		final EditorElement target = editor.getDocumentMapper()
+				.findEditorElementAt(caretOffset);
+		if (target == null) {
+			return false;
+		}
+		if (RodinOperationUtils.isReadOnly(target.getLightElement())) {
+			return false;
+		}
 		// Create the clipboard associated with the workbench.
 		final IWorkbench workbench = EventBUIPlugin.getDefault().getWorkbench();
 		final Clipboard clipboard = new Clipboard(workbench.getDisplay());

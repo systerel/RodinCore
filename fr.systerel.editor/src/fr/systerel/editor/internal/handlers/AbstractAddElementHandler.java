@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,11 +51,10 @@ public abstract class AbstractAddElementHandler extends AbstractEditionHandler {
 	}
 
 	@Override
-	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
-		final ChildCreationInfo possibility = getCreationPossibility(editor,
-				caretOffset);
-		return !editor.isOverlayActive() && possibility != null
-				&& !possibility.getPossibleChildTypes().isEmpty();
+	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
+		final ChildCreationInfo p = getCreationPossibility(editor, caretOffset);
+		return super.isEnabled(editor, caretOffset) && p != null
+				&& !p.getPossibleChildTypes().isEmpty();
 	}
 	
 	protected abstract ChildCreationInfo getCreationPossibility(RodinEditor editor,

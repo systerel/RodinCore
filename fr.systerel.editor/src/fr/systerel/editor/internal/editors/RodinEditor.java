@@ -63,6 +63,7 @@ import org.rodinp.core.emf.api.itf.ILFile;
 import fr.systerel.editor.EditorPlugin;
 import fr.systerel.editor.internal.actions.HistoryAction;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
+import fr.systerel.editor.internal.documentModel.EditorElement;
 import fr.systerel.editor.internal.documentModel.Interval;
 import fr.systerel.editor.internal.documentModel.RodinDocumentProvider;
 import fr.systerel.editor.internal.presentation.RodinConfiguration;
@@ -558,15 +559,8 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 						System.out.println("\\ Start refreshing Rodin Editor.");
 					documentProvider.synchronizeRoot(monitor, silent);
 					styledText.setTopIndex(topIndex);
-					if (newElement != null) {
-						final int elemFirstOffset = mapper.findEditorElement(
-								newElement).getOffset();
-						final Interval elemEditInter = mapper
-								.findEditableIntervalAfter(elemFirstOffset);
-						styledText.setCaretOffset(elemEditInter.getOffset());
-					} else {
-						styledText.setCaretOffset(currentOffset);
-					}
+					final int offset = getCaretOffset(currentOffset, newElement);
+					styledText.setCaretOffset(offset);
 					selController.selectItems(selection);
 					if (DEBUG) {
 						System.out
@@ -580,6 +574,23 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		}
 	}
 
+	/**
+	 * Tries to calculate the offset of the first editable field of the given
+	 * element and returns the default offset if it did not succeed.
+	 */
+	private int getCaretOffset(int defaultOffset, ILElement newElement) {
+		if (newElement != null) {
+			final EditorElement edElem = mapper.findEditorElement(newElement);
+			if (edElem == null)
+				return defaultOffset;
+			final int elemFirstOffset = edElem.getOffset();
+			final Interval inter = mapper
+					.findEditableIntervalAfter(elemFirstOffset);
+			return (inter == null) ? defaultOffset : inter.getOffset();
+		}
+		return defaultOffset;
+	}
+	
 	public void reveal(EditPos pos) {
 		selectAndReveal(pos.getOffset(), 0, pos.getOffset(), pos.getLength());
 	}

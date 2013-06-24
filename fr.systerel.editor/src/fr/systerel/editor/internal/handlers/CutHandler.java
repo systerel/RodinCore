@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,9 +41,10 @@ public class CutHandler extends AbstractEditorHandler {
 	}
 	
 	@Override
-	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
-		return editor.getSelectionController().getSelectedElements().length > 0
-				|| editor.isOverlayActive();
+	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
+	return editor.isOverlayActive()
+			|| editor.getSelectionController().getSelectedElements().length > 0
+			&& !isReadOnlyElementSelected(editor);
 	}
 
 }

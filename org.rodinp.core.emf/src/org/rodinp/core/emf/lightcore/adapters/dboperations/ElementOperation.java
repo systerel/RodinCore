@@ -32,7 +32,8 @@ public abstract class ElementOperation implements Runnable {
 
 		ADDITION(Messages.elementOperationType_addition_type), //
 		REORDER(Messages.elementOperationType_reorder_type), //
-		RELOAD_ATTRIBUTES(Messages.elementOperationType_reload_type), //
+		RELOAD_ELEMENT(Messages.elementOperationType_reload_element_type), //
+		RELOAD_ATTRIBUTES(Messages.elementOperationType_reload_attributes_type), //
 		REMOVE(Messages.elementOperationType_remove_type), //
 		RECALCULATE_IMPLICIT_CHILDREN(
 				Messages.elementOperationType_recalculateImplicit_type), //
@@ -110,6 +111,21 @@ public abstract class ElementOperation implements Runnable {
 				final int i = SynchroUtils.getPosFromNextSiblingPos(toMove,
 						eParent);
 				eParent.getEChildren().move(i, toMove);
+			}
+		}
+
+	}
+	
+	public static class ReloadElementOperation extends ElementOperation {
+
+		public ReloadElementOperation(IRodinElement element, LightElement root) {
+			super(ElementOperationType.RELOAD_ELEMENT, element, root);
+		}
+
+		public void run() {
+			final LightElement found = findElement(element, root);
+			if (element instanceof IInternalElement && found != null) {
+				SynchroUtils.reloadElement(found);
 			}
 		}
 

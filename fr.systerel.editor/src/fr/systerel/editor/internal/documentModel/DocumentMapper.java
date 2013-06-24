@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
+import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.isReadOnly;
 import static fr.systerel.editor.internal.documentModel.DocumentElementUtils.getChildrenTypes;
 import static fr.systerel.editor.internal.editors.EditPos.isValidStartEnd;
 import static fr.systerel.editor.internal.editors.EditPos.newPosStartEnd;
@@ -115,6 +116,14 @@ public class DocumentMapper {
 	public Interval findInterval(int offset) {
 		final int index = findIntervalIndex(offset);
 		if (index != -1) {
+			return intervals.get(index);
+		}
+		return null;
+	}
+
+	public Interval findIntervalAfter(Interval inter) {
+		final int index = intervals.indexOf(inter) + 1;
+		if (index < intervals.size()) {
 			return intervals.get(index);
 		}
 		return null;
@@ -864,6 +873,9 @@ public class DocumentMapper {
 
 	public ChildCreationInfo getChildTypesFor(final ILElement element,
 			ILElement sibling) {
+		if (isReadOnly(element)) {
+			return null;
+		}
 		final ILElement creationSibling;
 		if (sibling != null) {
 			final EditorElement siblingElem = findEditorElement(sibling);

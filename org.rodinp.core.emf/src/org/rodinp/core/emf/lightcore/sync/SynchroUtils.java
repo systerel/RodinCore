@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.rodinp.core.emf.lightcore.sync;
 
+import static org.rodinp.core.emf.lightcore.sync.SynchroManager.implicitLoad;
+import static org.rodinp.core.emf.lightcore.sync.SynchroManager.loadInternalElementFor;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,9 +20,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeValue;
@@ -29,6 +35,7 @@ import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.lightcore.Attribute;
+import org.rodinp.core.emf.lightcore.InternalElement;
 import org.rodinp.core.emf.lightcore.LightElement;
 import org.rodinp.core.emf.lightcore.LightObject;
 import org.rodinp.core.emf.lightcore.LightcoreFactory;
@@ -59,6 +66,7 @@ public class SynchroUtils {
 					lAttribute.setType(type);
 					lAttribute.setValue(value.getValue());
 					lElement.getEAttributes().put(type.getId(), lAttribute);
+					addParentEContentAdapter(lElement, lAttribute);
 				} finally {
 					lAttribute.eSetDeliver(true);
 				}
@@ -237,6 +245,69 @@ public class SynchroUtils {
 			}
 		}
 		return result;
+	}
+
+	public static InternalElement loadModel(IInternalElement iParent,
+			boolean adaptRoot, boolean silent) {
+		final InternalElement parent = loadInternalElementFor(iParent, null);
+		final boolean deliver = parent.eDeliver();
+		final boolean shallDeliver = (deliver || !silent);
+		parent.eSetDeliver(shallDeliver);
+		implicitLoad(parent, iParent);
+		if (iParent.isRoot() && adaptRoot) {
+			adaptRootForDBChanges(parent);
+		}
+		try {
+			for (IRodinElement ichild : iParent.getChildren()) {
+				if (ichild instanceof IInternalElement) {
+					final IInternalElement iInChild = (IInternalElement) ichild;
+					recursiveLoad(parent, iParent, iInChild);
+				}
+			}
+		} catch (RodinDBException e) {
+			System.out.println("Could not create children of the UI"
+					+ " model for the element " + iParent.toString() + " "
+					+ e.getMessage());
+		}
+		parent.eSetDeliver(deliver);
+		return parent;
+	}
+
+	public static void recursiveLoad(LightElement parent,
+			IInternalElement iParent, IInternalElement child)
+			throws RodinDBException {
+		final LightElement eRoot = parent.getERoot();
+		final InternalElement lChild = loadInternalElementFor(child, eRoot);
+		parent.getEChildren().add(lChild);
+		implicitLoad(lChild, child);
+		for (IRodinElement ichild : child.getChildren()) {
+			if (ichild instanceof IInternalElement)
+				recursiveLoad(lChild, child, (IInternalElement) ichild);
+		}
+		addParentEContentAdapter(parent, lChild);
+	}
+	
+	public static void reloadElement(LightElement parent) {
+		final IInternalElement iParent = parent.getElement();
+		final boolean deliver = parent.eDeliver();
+		parent.eSetDeliver(false);
+		parent.getEChildren().clear();
+		try {
+			for (IRodinElement child : iParent.getChildren()) {
+				if (child instanceof IInternalElement) {
+					final IInternalElement iChild = (IInternalElement) child;
+					recursiveLoad(parent, iParent, iChild);
+				}
+			}
+		} catch (RodinDBException e) {
+			System.out.println("Could not reload the element"
+					+ iParent.toString() + " " + e.getMessage());
+		} finally {
+			parent.eSetDeliver(deliver);
+			parent.eNotify(new ENotificationImpl((InternalEObject) parent,
+					Notification.REMOVE_MANY, null, null, null,
+					Notification.NO_INDEX, true));
+		}
 	}
 
 }

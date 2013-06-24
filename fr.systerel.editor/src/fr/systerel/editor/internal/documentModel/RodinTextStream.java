@@ -37,7 +37,10 @@ import fr.systerel.editor.internal.presentation.RodinConfiguration.ContentType;
  * intervals by the text generator.
  */
 public class RodinTextStream {
-
+	
+	// \u26ac is the handle character "⚬"
+	public static final String ELEMENT_PREFIX = "\u26ac\t";
+	
 	public static int MIN_LEVEL = 1;
 	private static final String COMMENT_HEADER_DELIMITER = "\u203A"; // the comment "›" character
 	public static final String TAB = "\t";
@@ -189,8 +192,7 @@ public class RodinTextStream {
 	}
 	
 	public void appendElementHandle(ILElement element, ContentType contentType) {
-		// \u26ac is the handle character "⚬"
-		final String s = String.format("%s", "\u26ac\t");
+		final String s = ELEMENT_PREFIX;
 		addElementRegion(s, element, contentType, null, false, s);
 	}
 

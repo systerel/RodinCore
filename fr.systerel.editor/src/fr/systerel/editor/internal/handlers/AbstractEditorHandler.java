@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,9 @@ import fr.systerel.editor.internal.editors.RodinEditor;
 public abstract class AbstractEditorHandler extends AbstractHandler {
 
 	@Override
-	public boolean isEnabled() {
-		final RodinEditor rEditor = getActiveRodinEditor();
-		return rEditor!= null	&& checkEnablement(rEditor, rEditor.getCurrentOffset());
+	public final boolean isEnabled() {
+		final RodinEditor editor = getActiveRodinEditor();
+		return editor != null && isEnabled(editor, editor.getCurrentOffset());
 	}
 
 	/**
@@ -38,7 +38,7 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 	 * @return <code>true</code> is the command should be enabled,
 	 *         <code>false</code> otherwise
 	 */
-	protected boolean checkEnablement(RodinEditor editor, int caretOffset) {
+	protected boolean isEnabled(RodinEditor editor, int caretOffset) {
 		return true;
 	}
 	
@@ -60,6 +60,14 @@ public abstract class AbstractEditorHandler extends AbstractHandler {
 			return null;
 		}
 		return (RodinEditor) activeEditor;
+	}
+	
+	/**
+	 * Returns <code>true</code> if one or more of the selected elements is
+	 * read-only, <code>false</code> otherwise.
+	 */
+	public static boolean isReadOnlyElementSelected(RodinEditor editor) {
+		return editor.getSelectionController().isReadOnlyElementSelected();
 	}
 	
 }

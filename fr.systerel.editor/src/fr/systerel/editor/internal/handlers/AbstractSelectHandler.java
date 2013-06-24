@@ -23,12 +23,6 @@ import fr.systerel.editor.internal.editors.SelectionController;
 public abstract class AbstractSelectHandler extends AbstractEditionHandler {
 
 	@Override
-	public boolean isEnabled() {
-		final RodinEditor editor = getActiveRodinEditor();
-		return editor != null;
-	}
-	
-	@Override
 	protected String handleSelection(RodinEditor editor, int offset) {
 		if (editor.isOverlayActive()) {
 			handleOverlayAction(editor);

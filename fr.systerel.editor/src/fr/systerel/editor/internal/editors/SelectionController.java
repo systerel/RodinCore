@@ -10,6 +10,7 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.editors;
 
+import static fr.systerel.editor.internal.actions.operations.RodinOperationUtils.isReadOnly;
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.convertEventToKeystroke;
 import static fr.systerel.editor.internal.presentation.RodinConfiguration.HANDLE_TYPE;
 import static org.eclipse.jface.bindings.keys.KeyStroke.NO_KEY;
@@ -159,6 +160,25 @@ public class SelectionController implements MouseListener, VerifyListener,
 	public boolean isSelected(ILElement element) {
 		return selection.contains(element); // FIXME or contains a parent ?
 	}
+	
+	public boolean isReadOnlyElementSelected() {
+		for (ILElement element : selection.getElements()) {
+			if (isReadOnly(element)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Tells whether the selected elements can move
+	public boolean canMoveSelection() {
+		for (ILElement element : selection.getElements()) {
+			if (isReadOnly(element.getParent())) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	private int getModelCaretOffset() {
 		return viewer.widgetOffset2ModelOffset(styledText
@@ -186,7 +206,15 @@ public class SelectionController implements MouseListener, VerifyListener,
 	
 	private boolean handleHandleSelection(final int offset) {
 		final Interval inter = mapper.findInterval(offset);
+		final Interval interNext = mapper.findIntervalAfter(inter);
 		if (inter != null && inter.getContentType().equals(HANDLE_TYPE)) {
+			if (interNext != null && interNext.getOffset() != offset) {
+				toggleSelection(offset);
+				return true;
+			}
+		}
+		if (interNext != null && interNext.getContentType().equals(HANDLE_TYPE)
+				&& interNext.getOffset() == offset) {
 			toggleSelection(offset);
 			return true;
 		}
@@ -221,11 +249,17 @@ public class SelectionController implements MouseListener, VerifyListener,
 			return;
 		}
 		if (selection.contains(offset)) {
-			if (styledText.dragDetect(e))
-				return;
+			if (canMoveSelection()) {
+				styledText.setDragDetect(true);
+				if (styledText.dragDetect(e))
+					return;
+			} else {
+				styledText.setDragDetect(false);
+			}
 		}
 		if ((e.stateMask & SWT.MOD1) != 0) {
 			toggleSelection(offset);
+			clickedOffset = offset;
 			return;
 		}
 		if ((e.stateMask & SWT.MOD2) != 0) {
@@ -233,7 +267,6 @@ public class SelectionController implements MouseListener, VerifyListener,
 			return;
 		}
 		clickedOffset = offset;
-		clearSelection();
 		if (overlayEditor.isActive()) {
 			// the user clicked outside the overlay editor
 			// as this listener is on the main text therefore

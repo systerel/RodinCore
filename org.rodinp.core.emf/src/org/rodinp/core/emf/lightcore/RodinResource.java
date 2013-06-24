@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 University of Southampton and others.
+ * Copyright (c) 2011, 2013 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.rodinp.core.emf.lightcore;
 import static java.lang.System.currentTimeMillis;
 import static org.rodinp.core.emf.lightcore.LightCorePlugin.DEBUG;
 import static org.rodinp.core.emf.lightcore.LightCoreUtils.debug;
+import static org.rodinp.core.emf.lightcore.adapters.dboperations.OperationProcessor.submit;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -39,6 +40,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.lightcore.adapters.ImplicitDeltaRootAdapter;
+import org.rodinp.core.emf.lightcore.adapters.dboperations.ElementOperation;
 import org.rodinp.core.emf.lightcore.sync.SynchroManager;
 
 /**
@@ -76,6 +78,7 @@ public class RodinResource extends ResourceImpl implements ILFile {
 
 	@Override
 	public void load(final Map<?, ?> options) throws IOException {
+		final boolean oldIsLoading = isLoading;
 		try {
 			isLoading = true;
 			// does file already exist? -> load
@@ -96,7 +99,7 @@ public class RodinResource extends ResourceImpl implements ILFile {
 				throw new IOException("Resource does not exist");
 			}
 		} finally {
-			isLoading = false;
+			isLoading = oldIsLoading;
 		}
 	}
 
@@ -116,21 +119,17 @@ public class RodinResource extends ResourceImpl implements ILFile {
 	private void saveAsRodin(final Map<?, ?> options) throws IOException {
 		if (!isLoaded || isLoading) // || !isModified )
 			return;
-		try {
+		if (!exists()) {
+			// create new RodinFile
+			try {
+				rodinFile.create(true, null);
+				// success
+				setTimeStamp(System.currentTimeMillis());
 
-			if (!exists()) {
-				// create new RodinFile
-				try {
-					rodinFile.create(true, null);
-					// success
-					setTimeStamp(System.currentTimeMillis());
-
-				} catch (final RodinDBException e) {
-					throw new IOException("Error while creating rodin file: "
-							+ e.getLocalizedMessage());
-				}
+			} catch (final RodinDBException e) {
+				throw new IOException("Error while creating rodin file: "
+						+ e.getLocalizedMessage());
 			}
-
 			try {
 				RodinCore.run(new IWorkspaceRunnable() {
 					public void run(final IProgressMonitor monitor)
@@ -154,7 +153,14 @@ public class RodinResource extends ResourceImpl implements ILFile {
 			// success
 			setTimeStamp(System.currentTimeMillis());
 			isModified = false;
-		} finally {
+		} else {
+			try {
+				rodinFile.save(null, false, true);
+			} catch (RodinDBException e) {
+				System.err.println("Could not save the Rodin file"
+						+ rodinFile.getBareName() + ".\nCause:"
+						+ e.getMessage());
+			}
 		}
 	}
 
@@ -238,6 +244,19 @@ public class RodinResource extends ResourceImpl implements ILFile {
 	public void addAdapter(Adapter adapter) {
 		if (!eAdapters().contains(adapter))
 			eAdapters().add(adapter);
+	}
+
+	@Override
+	public void reload() {
+		final boolean oldIsLoading = isLoading;
+		try {
+			isLoading = true;
+			final LightElement root = (LightElement) getRoot();
+			submit(new ElementOperation.ReloadElementOperation(
+					root.getElement(), root));
+		} finally {
+			isLoading = oldIsLoading;
+		}
 	}
 	
 }

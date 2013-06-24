@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.emf.common.util.EList;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
-import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ICoreImplicitChildProvider;
 import org.rodinp.core.emf.api.itf.ImplicitChildProviderManager;
 import org.rodinp.core.emf.lightcore.ImplicitElement;
@@ -58,43 +57,7 @@ public class SynchroManager {
 		if (!root.isRoot()) {
 			return null;
 		}
-		return loadRodinModel(root);
-	}
-
-	private static InternalElement loadRodinModel(IInternalElement iParent) {
-		final InternalElement parent = loadInternalElementFor(iParent, null);
-		parent.eSetDeliver(false);
-		implicitLoad(parent, iParent);
-		if (iParent.isRoot()) {
-			SynchroUtils.adaptRootForDBChanges(parent);
-		}
-		try {
-			for (IRodinElement ichild : iParent.getChildren()) {
-				if (ichild instanceof IInternalElement) {
-					final IInternalElement iInChild = (IInternalElement) ichild;
-					recursiveLoad(parent, iParent, iInChild);
-				}
-			}
-		} catch (RodinDBException e) {
-			System.out.println("Could not create children of the UI"
-					+ " model for the element " + iParent.toString() + " "
-					+ e.getMessage());
-		}
-		parent.eSetDeliver(true);
-		return parent;
-	}
-
-	private static void recursiveLoad(LightElement parent,
-			IInternalElement iParent, IInternalElement child)
-			throws RodinDBException {
-		final LightElement eRoot = parent.getERoot();
-		final InternalElement lChild = loadInternalElementFor(child, eRoot);
-		parent.getEChildren().add(lChild);
-		implicitLoad(lChild, child);
-		for (IRodinElement ichild : child.getChildren()) {
-			if (ichild instanceof IInternalElement)
-				recursiveLoad(lChild, child, (IInternalElement) ichild);
-		}
+		return SynchroUtils.loadModel(root, true, true);
 	}
 
 	/**
