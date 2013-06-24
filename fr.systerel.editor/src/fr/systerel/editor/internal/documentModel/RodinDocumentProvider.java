@@ -10,6 +10,8 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.documentModel;
 
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.getContentTypeNames;
+
 import java.io.IOException;
 
 import org.eclipse.core.resources.IFile;
@@ -40,7 +42,6 @@ import org.rodinp.core.emf.api.itf.ILFile;
 import org.rodinp.core.emf.api.itf.ILFileFactory;
 
 import fr.systerel.editor.internal.editors.RodinEditor;
-import fr.systerel.editor.internal.presentation.RodinConfiguration;
 import fr.systerel.editor.internal.presentation.updaters.ImplicitPresentationUpdater;
 import fr.systerel.editor.internal.presentation.updaters.PresentationUpdater;
 
@@ -122,11 +123,7 @@ public class RodinDocumentProvider extends AbstractDocumentProvider {
 
 		}
 		final RodinPartitioner partitioner = new RodinPartitioner(
-				documentMapper, new String[] { //
-				RodinConfiguration.IDENTIFIER_TYPE.getName(),
-						RodinConfiguration.COMMENT_TYPE.getName(),
-						RodinConfiguration.LABEL_TYPE.getName(),
-						RodinConfiguration.CONTENT_TYPE.getName() });
+				documentMapper, getContentTypeNames());
 		doc.setDocumentPartitioner(partitioner);
 		partitioner.connect(doc, false);
 		return doc;

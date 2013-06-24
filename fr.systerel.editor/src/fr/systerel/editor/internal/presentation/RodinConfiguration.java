@@ -39,7 +39,9 @@ import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.TextAttribute;
@@ -178,13 +180,6 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			"__implicit_identifier", true, IMPLICIT_IDENTIFIER,
 			IDENTIFIER_DEBUG_BG, IDENTIFIER_ATTRIBUTE);
 
-	// TODO rename to FORMULA_TYPE
-	public static final ContentType CONTENT_TYPE = new AttributeContentType(
-			"__content", false, CONTENT, CONTENT_DEBUG_BG, null);
-	public static final ContentType IMPLICIT_CONTENT_TYPE = new AttributeContentType(
-			"__implicit_content", true, CONTENT_DEBUG_BG, IMPLICIT_CONTENT,
-			null);
-
 	public static final ContentType COMMENT_TYPE = new AttributeContentType(
 			"__comment", false, COMMENT, COMMENT_DEBUG_BG, COMMENT_ATTRIBUTE);
 	public static final ContentType IMPLICIT_COMMENT_TYPE = new AttributeContentType(
@@ -204,12 +199,6 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			"__bold_implicit_label", true, IMPLICIT_LABEL, LABEL_DEBUG_BG,
 			LABEL_ATTRIBUTE, SWT.BOLD);
 
-	public static final ContentType ATTRIBUTE_TYPE = new AttributeContentType(
-			"__attribute", false, ATTRIBUTE, CONTENT_DEBUG_BG, null);
-	public static final ContentType IMPLICIT_ATTRIBUTE_TYPE = new AttributeContentType(
-			"__implicit_attribute", true, IMPLICIT_ATTRIBUTE, CONTENT_DEBUG_BG,
-			null);
-
 	public static final ContentType KEYWORD_TYPE = new ContentType("__keyword",
 			false, false, KEYWORD, KEYWORD_DEBUG_BG);
 	public static final ContentType SECTION_TYPE = new ContentType("__section",
@@ -221,27 +210,69 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 	private static ContentType[] contentTypes = new ContentType[] {
 			LEFT_PRESENTATION_TYPE, PRESENTATION_TYPE, HANDLE_TYPE,
 			IMPLICIT_HANDLE_TYPE, IDENTIFIER_TYPE, IMPLICIT_IDENTIFIER_TYPE,
-			CONTENT_TYPE, IMPLICIT_CONTENT_TYPE, COMMENT_TYPE,
-			IMPLICIT_COMMENT_TYPE, LABEL_TYPE, IMPLICIT_LABEL_TYPE,
-			BOLD_LABEL_TYPE, BOLD_IMPLICIT_LABEL_TYPE, ATTRIBUTE_TYPE,
-			IMPLICIT_ATTRIBUTE_TYPE, KEYWORD_TYPE, SECTION_TYPE,
-			COMMENT_HEADER_TYPE, };
+			COMMENT_TYPE, IMPLICIT_COMMENT_TYPE, LABEL_TYPE,
+			IMPLICIT_LABEL_TYPE, BOLD_LABEL_TYPE, BOLD_IMPLICIT_LABEL_TYPE,
+			KEYWORD_TYPE, SECTION_TYPE, COMMENT_HEADER_TYPE, };
+
+	//--------------------------------------------------------------------------
+	// The following contents are there only to populate damage repairers
+	// They are not supposed to be part of <code>contentTypes</code>
+	public static final ContentType FORMULA_TYPE = new AttributeContentType(
+			"__formula", false, CONTENT, CONTENT_DEBUG_BG, null);
+	public static final ContentType IMPLICIT_FORMULA_TYPE = new AttributeContentType(
+			"__implicit_formula", true, IMPLICIT_CONTENT, CONTENT_DEBUG_BG,
+			null);
+	public static final ContentType ATTRIBUTE_TYPE = new AttributeContentType(
+			"__attribute", false, ATTRIBUTE, CONTENT_DEBUG_BG, null);
+	public static final ContentType IMPLICIT_ATTRIBUTE_TYPE = new AttributeContentType(
+			"__implicit_attribute", true, IMPLICIT_ATTRIBUTE, CONTENT_DEBUG_BG,
+			null);
+
+	private static ContentType[] defaultTypes = new ContentType[] {
+			FORMULA_TYPE, IMPLICIT_FORMULA_TYPE, ATTRIBUTE_TYPE,
+			IMPLICIT_ATTRIBUTE_TYPE };
+	// -------------------------------------------------------------------------
 	
 	private static Map<String, ContentType> typesByName = new HashMap<String, ContentType>();
 	static {
 		for (ContentType contentType : contentTypes) {
 			typesByName.put(contentType.getName(), contentType);
 		}
-
 	}
 
-	public static ContentType getAttributeContentType(IAttributeType type) {
-		return new AttributeContentType("__attribute", false, ATTRIBUTE,
-				CONTENT_DEBUG_BG, type);
+	public static ContentType getAttributeContentType(IAttributeType type,
+			boolean implicit) {
+			final RGB rgb = (implicit) ? IMPLICIT_ATTRIBUTE : ATTRIBUTE;
+			final String id = (implicit) ? "__implicit_attribute" : "__attribute";
+			return new AttributeContentType(id, false, rgb,
+					CONTENT_DEBUG_BG, type);
 	}
 
+	public static ContentType getFormulaContentType(IAttributeType attrType,
+			boolean implicit) {
+		final RGB rgb = (implicit) ? IMPLICIT_CONTENT : CONTENT;
+		final String id = (implicit) ? "__implicit_formula" : "__formula";
+		return new AttributeContentType(id, false, rgb, CONTENT_DEBUG_BG,
+				attrType);
+	}
+
+	/**
+	 *  TODO warning this method is unsafe and shall not be used
+	 * 	DO NOT USE THIS METHOD
+	 */
 	public static ContentType getContentType(String name) {
-		return typesByName.get(name);
+		final ContentType type = typesByName.get(name);
+		if (type != null) {
+			return type;
+		}
+		if (name.equals(FORMULA_TYPE.getName()))
+			return FORMULA_TYPE;
+		if (name.equals(IMPLICIT_FORMULA_TYPE.getName()))
+			return IMPLICIT_FORMULA_TYPE;
+		if (name.equals(IMPLICIT_ATTRIBUTE_TYPE)) {
+			return IMPLICIT_ATTRIBUTE_TYPE;
+		}
+		return ATTRIBUTE_TYPE;
 	}
 
 	private RodinEditor editor;
@@ -254,11 +285,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return new String[] { IDENTIFIER_TYPE.getName(), //
-				PRESENTATION_TYPE.getName(), //
-				COMMENT_TYPE.getName(), //
-				CONTENT_TYPE.getName(), //
-		};
+		return getContentTypeNames();
 	}
 
 	@Override
@@ -266,7 +293,12 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			ISourceViewer sourceViewer) {
 		final PresentationReconciler reconciler = new PresentationReconciler();
 		RodinDamagerRepairer rdr;
-		for (ContentType contentType : contentTypes) {
+		for (ContentType contentType : typesByName.values()) {
+			rdr = new RodinDamagerRepairer(editor, createTextAttribute(contentType));
+			reconciler.setDamager(rdr, contentType.getName());
+			reconciler.setRepairer(rdr, contentType.getName());
+		}
+		for (ContentType contentType : defaultTypes) {
 			rdr = new RodinDamagerRepairer(editor, createTextAttribute(contentType));
 			reconciler.setDamager(rdr, contentType.getName());
 			reconciler.setRepairer(rdr, contentType.getName());
@@ -297,6 +329,15 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 		if (textHover == null)
 			textHover = new RodinProblemTextHover(sourceViewer);
 		return textHover;
+	}
+
+	public static String[] getContentTypeNames() {
+		final Set<String> result = new HashSet<String>();
+		result.addAll(typesByName.keySet());
+		for (ContentType t : defaultTypes) {
+			result.add(t.getName());
+		}
+		return result.toArray(new String[result.size()]);
 	}
 
 }

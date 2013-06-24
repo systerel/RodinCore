@@ -549,6 +549,7 @@ public class DocumentMapper {
 		}
 	}
 
+	// TODO use the attribute types
 	public void elementChanged(ILElement element) {
 		final EditorElement el = findEditorElement(element);
 		final IInternalElement ie = element.getElement();
@@ -581,16 +582,6 @@ public class DocumentMapper {
 									.equals(RodinConfiguration.IDENTIFIER_TYPE) || contentType
 									.equals(RodinConfiguration.IMPLICIT_IDENTIFIER_TYPE))) {
 						checkLabeled((ILabeledElement) ie, interval);
-					} else if (ie instanceof IAssignmentElement
-							&& (contentType
-									.equals(RodinConfiguration.CONTENT_TYPE) || contentType
-									.equals(RodinConfiguration.IMPLICIT_CONTENT_TYPE))) {
-						checkAssignment((IAssignmentElement) ie, interval);
-					} else if (ie instanceof IPredicateElement
-							&& (contentType
-									.equals(RodinConfiguration.CONTENT_TYPE) || contentType
-									.equals(RodinConfiguration.IMPLICIT_CONTENT_TYPE))) {
-						checkPredicate((IPredicateElement) ie, interval);
 					} else if (ie instanceof ICommentedElement
 							&& (contentType
 									.equals(RodinConfiguration.COMMENT_TYPE) || contentType

@@ -105,7 +105,8 @@ public class RodinTextStream {
 	protected void addAttributeRegion(String text, ILElement element,
 			IAttributeManipulation manipulation, IAttributeType attributeType,
 			boolean multiline, String alignStr) {
-		addElementRegion(text, element, getAttributeContentType(attributeType),
+		addElementRegion(text, element,
+				getAttributeContentType(attributeType, element.isImplicit()),
 				manipulation, multiline, alignStr);
 	}
 
@@ -189,7 +190,7 @@ public class RodinTextStream {
 	
 	public void appendElementHandle(ILElement element, ContentType contentType) {
 		// \u26ac is the handle character "⚬"
-		final String s = String.format("%s", "\t\u26ac\t");
+		final String s = String.format("%s", "\u26ac\t");
 		addElementRegion(s, element, contentType, null, false, s);
 	}
 
