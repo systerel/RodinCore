@@ -16,9 +16,11 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import org.junit.Test;
-import org.rodinp.internal.keyboard.translators.Symbol;
-import org.rodinp.internal.keyboard.translators.SymbolRegistry;
-import org.rodinp.internal.keyboard.translators.Symbols;
+import org.rodinp.internal.keyboard.core.symbols.Symbol;
+import org.rodinp.internal.keyboard.core.symbols.SymbolRegistry;
+import org.rodinp.internal.keyboard.core.symbols.Symbols;
+import org.rodinp.keyboard.core.ISymbol;
+import org.rodinp.keyboard.core.RodinKeyboardCore;
 
 /**
  * @author "Nicolas Beauger"
@@ -26,15 +28,16 @@ import org.rodinp.internal.keyboard.translators.Symbols;
  */
 public class SymbolRegistryTests {
 
-	private static final SymbolRegistry registry = SymbolRegistry.getDefault();
+	private static final SymbolRegistry registry = (SymbolRegistry) RodinKeyboardCore
+			.getSymbolRegistry();
 
 	private void assertNoDuplicate(String combo1, String combo2) {
-		final Collection<Collection<Symbol>> textSymbols = registry
+		final Collection<Collection<ISymbol>> textSymbols = registry
 				.getTextSymbols().values();
 		int dup1Count = 0;
 		int dup2Count = 0;
-		for (Collection<Symbol> collection : textSymbols) {
-			for (Symbol symbol : collection) {
+		for (Collection<ISymbol> collection : textSymbols) {
+			for (ISymbol symbol : collection) {
 				if (symbol.getCombo().equals(combo1)) {
 					dup1Count++;
 				} else if (symbol.getCombo().equals(combo2)) {

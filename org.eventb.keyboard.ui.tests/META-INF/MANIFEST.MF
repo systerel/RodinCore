@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Event-B Keyboard UI tests
+Bundle-SymbolicName: org.eventb.keyboard.ui
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle:  org.rodinp.keyboard.tests,
+ org.eclipse.swt,
+ org.junit
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin

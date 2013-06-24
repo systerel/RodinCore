@@ -2,11 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Tests Plug-in
 Bundle-SymbolicName: org.rodinp.keyboard.tests;singleton:=true
-Bundle-Version: 1.1.2.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.rodinp.keyboard,
- org.junit,
+ org.rodinp.keyboard.core,
+ org.eclipse.core.runtime,
  org.eclipse.ui,
- org.eclipse.core.runtime
+ org.junit
 Export-Package: org.rodinp.keyboard.tests
 Bundle-Localization: plugin
