@@ -116,6 +116,12 @@ public class EditPos implements Cloneable {
 		return getStart() <= index && index < getStart() + getLength();
 	}
 	
+	public boolean includes(EditPos other) {
+		return this.getStart() <= other.getStart()
+				&& other.getEnd() <= this.getEnd();
+	}
+	
+	
 	public boolean isIncludedOrTouches(int index) {
 		return getStart() <= index && index <= getStart() + getLength();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package fr.systerel.editor.internal.editors;
 
 import static fr.systerel.editor.internal.editors.RodinEditorUtils.convertEventToKeystroke;
+import static fr.systerel.editor.internal.presentation.RodinConfiguration.HANDLE_TYPE;
 import static org.eclipse.jface.bindings.keys.KeyStroke.NO_KEY;
 
 import java.util.ArrayList;
@@ -73,6 +74,11 @@ public class SelectionController implements MouseListener, VerifyListener,
 
 
 	private final ListenerList postSelectionChangedListeners;
+	
+	/**
+	 * Last selected offset
+	 */
+	private int clickedOffset;
 
 	public SelectionController(StyledText styledText, DocumentMapper mapper,
 			ProjectionViewer viewer, OverlayEditor overlayEditor) {
@@ -119,6 +125,12 @@ public class SelectionController implements MouseListener, VerifyListener,
 		final EditorElement editElem = mapper.findEditorElement(element);
 		if (editElem == null) return null;
 		return toggleSelection(editElem);
+	}
+	
+	public void toggleSelection(EditorElement[] editElems) {
+		for (EditorElement elem : editElems) {
+			toggleSelection(elem);
+		}
 	}
 	
 	private EditPos toggleSelection(EditorElement editElem) {
@@ -171,6 +183,29 @@ public class SelectionController implements MouseListener, VerifyListener,
 			return styledText.getOffsetAtLine(lineIndex);
 		}
 	}
+	
+	private boolean handleHandleSelection(final int offset) {
+		final Interval inter = mapper.findInterval(offset);
+		if (inter != null && inter.getContentType().equals(HANDLE_TYPE)) {
+			toggleSelection(offset);
+			return true;
+		}
+		return false;
+	}
+
+	private EditorElement[] keepTopLevelElements(EditorElement[] editElems) {
+		final List<ILElement> parents = new ArrayList<ILElement>();
+		for (EditorElement elem : editElems) {
+			parents.add(elem.getLightElement());
+		}
+		final List<EditorElement> result = new ArrayList<EditorElement>();
+		for (EditorElement elem : editElems) {
+			if (!parents.contains(elem.getLightElement().getParent())) {
+				result.add(elem);
+			}
+		}
+		return result.toArray(new EditorElement[result.size()]);
+	}
 
 	@Override
 	public void mouseDown(MouseEvent e) {
@@ -180,11 +215,8 @@ public class SelectionController implements MouseListener, VerifyListener,
 		final int offset = getOffset(e);
 		if (offset < 0)
 			return;
-		if ((e.stateMask & SWT.MOD1) != 0) {
-			toggleSelection(offset);
-			return;
-		}
 		// Button 3 is the right button
+		// Filtering event to display the context menu
 		if (e.button == 3) {
 			return;
 		}
@@ -192,13 +224,26 @@ public class SelectionController implements MouseListener, VerifyListener,
 			if (styledText.dragDetect(e))
 				return;
 		}
+		if ((e.stateMask & SWT.MOD1) != 0) {
+			toggleSelection(offset);
+			return;
+		}
+		if ((e.stateMask & SWT.MOD2) != 0) {
+			selectZone(clickedOffset, offset);
+			return;
+		}
+		clickedOffset = offset;
+		clearSelection();
 		if (overlayEditor.isActive()) {
 			// the user clicked outside the overlay editor
 			// as this listener is on the main text therefore
 			// we quit overlay edition
 			overlayEditor.saveAndExit(false);
+		}
+		if (handleHandleSelection(offset)) {
+			return;
 		} else {
-			overlayEditor.showAtOffset(getOffset(e));
+			overlayEditor.showAtOffset(offset);
 		}
 		resetSelection(offset);
 	}
@@ -234,6 +279,27 @@ public class SelectionController implements MouseListener, VerifyListener,
 		selection.clear();
 	}
 
+	public void selectZone(int offset1, int offset2) {
+		clearSelection();
+		final int minOffset = Math.min(offset1, offset2);
+		final int maxOffset = Math.max(offset1, offset2);
+		final int firstLine = styledText.getLineAtOffset(minOffset);
+		final int lastLine = styledText.getLineAtOffset(maxOffset);
+		final int startOffset = styledText.getOffsetAtLine(firstLine);
+		final int lastLineOffset = styledText.getOffsetAtLine(lastLine);
+		final int lastLineLength = styledText.getLine(lastLine).length();
+		final int endOffset = lastLineOffset + lastLineLength;
+		final EditorElement[] editElems = mapper.findEditorElementsBetween(
+				startOffset, endOffset);
+		if (editElems.length == 0)
+			return;
+		// clear the native and cumbersome selection
+		// that occurs after double click
+		styledText.setSelection(minOffset);
+		overlayEditor.quitEdition(false);
+		toggleSelection(keepTopLevelElements(editElems));
+	}
+	
 	@Override
 	public void mouseUp(MouseEvent e) {
 		if (DEBUG)
@@ -269,7 +335,11 @@ public class SelectionController implements MouseListener, VerifyListener,
 		final KeyStroke keystroke = convertEventToKeystroke(event);
 		if (keystroke.getNaturalKey() == CR
 				&& keystroke.getModifierKeys() == NO_KEY) {
-			overlayEditor.showAtOffset(styledText.getCaretOffset());
+			final int offset = styledText.getCaretOffset();
+			if (offset >= 0 && handleHandleSelection(offset)) {
+				return;
+			}
+			overlayEditor.showAtOffset(offset);
 		}
 	}
 

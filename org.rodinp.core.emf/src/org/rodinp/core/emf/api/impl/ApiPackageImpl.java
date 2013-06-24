@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IAttributeType.Handle;
@@ -29,8 +28,6 @@ import org.rodinp.core.emf.api.ApiFactory;
 import org.rodinp.core.emf.api.ApiPackage;
 import org.rodinp.core.emf.api.itf.ILAttribute;
 import org.rodinp.core.emf.api.itf.ILElement;
-import org.rodinp.core.emf.lightcore.LightcorePackage;
-import org.rodinp.core.emf.lightcore.impl.LightcorePackageImpl;
 
 /**
  * <!-- begin-user-doc -->

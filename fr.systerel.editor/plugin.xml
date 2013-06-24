@@ -105,26 +105,6 @@
          </enabledWhen>
       </handler>
       <handler
-            class="fr.systerel.editor.internal.handlers.refactoring.ShowCustomizePreferences"
-            commandId="fr.systerel.editor.rename.customizePrefixes">
-      </handler>
-      <handler
-            class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoActionLabelRenaming"
-            commandId="fr.systerel.editor.rename.action">
-      </handler>
-      <handler
-            class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoGuardLabelRenaming"
-            commandId="fr.systerel.editor.rename.guard">
-      </handler>
-      <handler
-            class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoInvariantLabelRenaming"
-            commandId="fr.systerel.editor.rename.invariant">
-      </handler>
-      <handler
-            class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoAxiomLabelRenaming"
-            commandId="fr.systerel.editor.rename.axiom">
-      </handler>
-      <handler
             class="fr.systerel.editor.internal.handlers.SelectUpHandler"
             commandId="org.eclipse.ui.edit.text.select.lineUp">
          <activeWhen>
@@ -286,6 +266,29 @@
       </handler>
    </extension>
    <extension
+         point="org.eclipse.ui.handlers">
+         <handler
+            class="fr.systerel.editor.internal.handlers.refactoring.ShowCustomizePreferences"
+            commandId="fr.systerel.editor.rename.customizePrefixes">
+      </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoActionLabelRenaming"
+            commandId="fr.systerel.editor.rename.action">
+      </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoGuardLabelRenaming"
+            commandId="fr.systerel.editor.rename.guard">
+      </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoInvariantLabelRenaming"
+            commandId="fr.systerel.editor.rename.invariant">
+      </handler>
+      <handler
+            class="fr.systerel.editor.internal.handlers.refactoring.AutoLabelRenamings$AutoAxiomLabelRenaming"
+            commandId="fr.systerel.editor.rename.axiom">
+      </handler>
+   </extension>
+   <extension
          point="org.eclipse.ui.commands">
       <category
             id="fr.systerel.editor.editionCategory"
@@ -326,14 +329,47 @@
             id="fr.systerel.editor.moveDown"
             name="Move Down">
       </command>
+      <command
+            categoryId="fr.systerel.editor.editionCategory"
+            id="fr.systerel.editor.abortEditionFreeSelection"
+            name="Cancel edition / Free selection">
+      </command>
+      <command
+            categoryId="fr.systerel.editor.editionCategory"
+            id="fr.systerel.editor.traverseNext"
+            name="Traverse to the next editable interval">
+      </command>
+      <command
+            categoryId="fr.systerel.editor.editionCategory"
+            id="fr.systerel.editor.traversePrevious"
+            name="Traverse to the previous editable interval">
+      </command>
+      <command
+            categoryId="fr.systerel.editor.editionCategory"
+            id="fr.systerel.editor.showAddChild"
+            name="Show Add Child Menu">
+      </command>
+      <command
+            categoryId="fr.systerel.editor.editionCategory"
+            id="fr.systerel.editor.showAddSibling"
+            name="Show Add Sibling Menu">
+      </command>
+      </extension>
+      <extension
+         point="org.eclipse.ui.commands">
       <category
             id="fr.systerel.editor.renamingCommandsCategory"
             name="Renaming Commands">
       </category>
       <command
             categoryId="fr.systerel.editor.renamingCommandsCategory"
-            id="fr.systerel.editor.rename.action"
-            name="Automatic Action Labelling">
+            id="fr.systerel.editor.rename.customizePrefixes"
+            name="Customize prefixes...">
+      </command>
+      <command
+            categoryId="fr.systerel.editor.renamingCommandsCategory"
+            id="fr.systerel.editor.rename.axiom"
+            name="Automatic Axiom Labelling">
       </command>
       <command
             categoryId="fr.systerel.editor.renamingCommandsCategory"
@@ -347,32 +383,8 @@
       </command>
       <command
             categoryId="fr.systerel.editor.renamingCommandsCategory"
-            id="fr.systerel.editor.rename.axiom"
-            name="Automatic Axiom Labelling">
-      </command>
-      <command
-            id="fr.systerel.editor.rename.customizePrefixes"
-            name="Customize prefixes...">
-      </command>
-      <command
-            id="fr.systerel.editor.abortEditionFreeSelection"
-            name="Abort edition and free selected items">
-      </command>
-      <command
-            id="fr.systerel.editor.traverseNext"
-            name="Traverse to the next editable interval">
-      </command>
-      <command
-            id="fr.systerel.editor.traversePrevious"
-            name="Traverse to the previous editable interval">
-      </command>
-      <command
-            id="fr.systerel.editor.showAddChild"
-            name="Show Add Child Menu">
-      </command>
-      <command
-            id="fr.systerel.editor.showAddSibling"
-            name="Show Add Sibling Menu">
+            id="fr.systerel.editor.rename.action"
+            name="Automatic Action Labelling">
       </command>
    </extension>
    <extension
@@ -474,6 +486,15 @@
                class="fr.systerel.editor.internal.handlers.DynamicAddSiblingContributionItem"
                id="fr.systerel.editor.addSiblingPossibilities">
          </dynamic>
+         <separator
+               name="fr.systerel.editor.RefreshSeparator"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.eclipse.ui.file.refresh"
+               label="Refresh"
+               style="push">
+         </command>
          <separator
                name="fr.systerel.editor.CreationSeparator"
                visible="true">
@@ -751,6 +772,15 @@
                      </iterate>
                   </with>
                </visibleWhen>
+            </command>
+         </toolbar>
+         <toolbar
+               id="fr.systerel.editor.editorBasicCommands"
+               label="Rodin Editor Basic Commands">
+            <command
+                  commandId="org.eclipse.ui.file.refresh"
+                  label="Refresh"
+                  style="push">
             </command>
          </toolbar>
       </menuContribution>

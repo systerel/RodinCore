@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 	}
 
 	@Override
-	public void createHyperlinks(FormToolkit toolkit, int level) {
+	public void createContent(FormToolkit toolkit, int level) {
 		Composite tmp = toolkit.createComposite(composite);
 		GridData gridData = new GridData();
 		gridData.widthHint = (level + 1) * 40;
@@ -67,6 +67,7 @@ public class AfterHyperlinkComposite extends AbstractHyperlinkComposite {
 
 		});
 		addAfterHyperlink.setLayoutData(new GridData());
-		super.createHyperlinks(toolkit, level);
+
+		setInitialised(true);
 	}
 }

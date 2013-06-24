@@ -1,5 +1,9 @@
 /*******************************************************************************
+<<<<<<< HEAD
  * Copyright (c) 2008, 2012 Systerel and others.
+=======
+ * Copyright (c) 2008, 2013 Systerel and others.
+>>>>>>> b
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +27,9 @@ public interface IRodinColorConstant {
 	RGB CONTENT = new RGB(0, 0, 192);
 	RGB IMPLICIT_CONTENT = new RGB(105, 105, 200);
 
+	RGB HANDLE = new RGB(0, 50, 70);
+	RGB IMPLICIT_HANDLE = new RGB(130, 130, 130);
+	
 	RGB LABEL = new RGB(0, 50, 70);
 	RGB IMPLICIT_LABEL = new RGB(130, 130, 130);
 
@@ -45,6 +52,7 @@ public interface IRodinColorConstant {
 	RGB LABEL_DEBUG_BG = new RGB(240, 255, 110);
 	RGB IDENTIFIER_DEBUG_BG = new RGB(200, 200, 200);
 	RGB CONTENT_DEBUG_BG = new RGB(150, 150, 192);
+	RGB HANDLE_DEBUG_BG = new RGB(150, 150, 192);
 	RGB DEFAULT_DEBUG_BG = new RGB(170, 70, 70);
 	RGB SECTION_DEBUG_BG = new RGB(170, 170, 70);
 	RGB KEYWORD_DEBUG_BG = new RGB(190, 50, 0);

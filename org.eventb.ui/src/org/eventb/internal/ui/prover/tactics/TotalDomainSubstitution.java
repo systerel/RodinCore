@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2010 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Systerel - initial API and implementation
+ *     Systerel - replaced Messages.bind() by tactics_replaceWith()
  *******************************************************************************/
 package org.eventb.internal.ui.prover.tactics;
 import static org.eventb.internal.ui.utils.Messages.tactics_replaceWith;

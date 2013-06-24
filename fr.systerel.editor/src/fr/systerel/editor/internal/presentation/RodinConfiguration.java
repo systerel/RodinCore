@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,14 @@ import static fr.systerel.editor.internal.presentation.IRodinColorConstant.COMME
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.COMMENT_HEADER_DEBUG_BG;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.CONTENT;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.CONTENT_DEBUG_BG;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.HANDLE;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.HANDLE_DEBUG_BG;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IDENTIFIER;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IDENTIFIER_DEBUG_BG;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_ATTRIBUTE;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_COMMENT;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_CONTENT;
+import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_HANDLE;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_IDENTIFIER;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.IMPLICIT_LABEL;
 import static fr.systerel.editor.internal.presentation.IRodinColorConstant.KEYWORD;
@@ -162,6 +165,12 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 	public static final ContentType PRESENTATION_TYPE = new ContentType(
 			"__presentation_", false, false, CONTENT, PRESENTATION_DEBUG_BG);
 
+	public static final ContentType HANDLE_TYPE = new ContentType("__handle",
+			false, false, HANDLE, HANDLE_DEBUG_BG);
+
+	public static final ContentType IMPLICIT_HANDLE_TYPE = new ContentType(
+			"__implicit_handle", false, false, IMPLICIT_HANDLE, HANDLE_DEBUG_BG);
+
 	public static final ContentType IDENTIFIER_TYPE = new AttributeContentType(
 			"__identifier", false, IDENTIFIER, IDENTIFIER_DEBUG_BG,
 			IDENTIFIER_ATTRIBUTE);
@@ -210,12 +219,13 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			COMMENT_HEADER_DEBUG_BG);
 
 	private static ContentType[] contentTypes = new ContentType[] {
-			LEFT_PRESENTATION_TYPE, PRESENTATION_TYPE, IDENTIFIER_TYPE,
-			IMPLICIT_IDENTIFIER_TYPE, CONTENT_TYPE, IMPLICIT_CONTENT_TYPE,
-			COMMENT_TYPE, IMPLICIT_COMMENT_TYPE, LABEL_TYPE,
-			IMPLICIT_LABEL_TYPE, BOLD_LABEL_TYPE, BOLD_IMPLICIT_LABEL_TYPE,
-			ATTRIBUTE_TYPE, IMPLICIT_ATTRIBUTE_TYPE, KEYWORD_TYPE,
-			SECTION_TYPE, COMMENT_HEADER_TYPE, };
+			LEFT_PRESENTATION_TYPE, PRESENTATION_TYPE, HANDLE_TYPE,
+			IMPLICIT_HANDLE_TYPE, IDENTIFIER_TYPE, IMPLICIT_IDENTIFIER_TYPE,
+			CONTENT_TYPE, IMPLICIT_CONTENT_TYPE, COMMENT_TYPE,
+			IMPLICIT_COMMENT_TYPE, LABEL_TYPE, IMPLICIT_LABEL_TYPE,
+			BOLD_LABEL_TYPE, BOLD_IMPLICIT_LABEL_TYPE, ATTRIBUTE_TYPE,
+			IMPLICIT_ATTRIBUTE_TYPE, KEYWORD_TYPE, SECTION_TYPE,
+			COMMENT_HEADER_TYPE, };
 	
 	private static Map<String, ContentType> typesByName = new HashMap<String, ContentType>();
 	static {
