@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -39,6 +41,7 @@ import org.eventb.core.seqprover.IConfidence;
 import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.EventBUIExceptionHandler.UserAwareness;
 import org.eventb.internal.ui.proofcontrol.ProofControlUtils;
+import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinProject;
@@ -416,6 +419,29 @@ public class ExplorerUtils {
 					.newChild(1));
 		}
 		return statuses;
+	}
+
+	/**
+	 * Logs the given exception into Explorer plug-in log.
+	 * 
+	 * @param exc
+	 *            an exception
+	 * @param message
+	 *            a context message
+	 */
+	public static void log(Throwable exc, String message) {
+		if (exc instanceof RodinDBException) {
+			final Throwable nestedExc = ((RodinDBException) exc).getException();
+			if (nestedExc != null) {
+				exc = nestedExc;
+			}
+		}
+		if (message == null) {
+			message = "Unknown context"; //$NON-NLS-1$
+		}
+		IStatus status = new Status(IStatus.ERROR, EventBUIPlugin.PLUGIN_ID,
+				IStatus.ERROR, message, exc);
+		ExplorerPlugin.getDefault().getLog().log(status);
 	}
 
 }

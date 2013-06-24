@@ -11,6 +11,7 @@
 package fr.systerel.explorer.tests.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -18,6 +19,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
@@ -36,7 +39,9 @@ import org.rodinp.core.RodinDBException;
 
 import fr.systerel.explorer.tests.ExplorerTest;
 import fr.systerel.internal.explorer.model.ModelController;
+import fr.systerel.internal.explorer.model.ModelMachine;
 import fr.systerel.internal.explorer.model.ModelProject;
+import fr.systerel.internal.explorer.navigator.EventBNavigator;
 
 /**
  * 
@@ -203,7 +208,61 @@ public class ModelControllerTest extends ExplorerTest {
 		assertTrue(ModelController.getModelPO(status).isDischarged());
 	}
 
-	
+	/**
+	 * Ensures that the refresh() method of the common navigator framework
+	 * triggers a refresh of the event-B navigator model.
+	 * 
+	 * This is demonstrated by deleting a file without notifying the navigator,
+	 * and then calling for a refresh of the navigator.
+	 */
+	@Test
+	public void refreshModelRemovePOFileNoSubscription() throws Exception {
+		// Ensure the navigator is present at the beginning.
+		final EventBNavigator navigator = showEventBNavigator();
+
+		// create a PORoot and a sequent
+		final IPORoot ipo = createIPORoot("m0");
+		createSequent(ipo);
+
+		// process the PO root
+		setUpSubscription();
+		final ModelMachine machine = ModelController.getMachine(m0);
+		machine.processPORoot();
+		assertEquals(1, machine.getPOcount());
+
+		// Remove the PO without notifying the navigator
+		deletePONoNotification(ipo);
+		assertEquals(1, machine.getPOcount());
+
+		// Manually refresh the navigator, the model gets updated
+		navigator.getCommonViewer().refresh();
+		assertEquals(0, machine.getPOcount());
+	}
+
+	private EventBNavigator showEventBNavigator() throws PartInitException {
+		return (EventBNavigator) PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage()
+				.showView("fr.systerel.explorer.navigator.view");
+	}
+
+	/**
+	 * Deletes the file containing the given internal element, without notifying
+	 * the Event-B Navigator. This methods simulates a broken navigator that
+	 * would miss or misinterpret some Rodin deltas.
+	 * 
+	 * @param elem
+	 *            some internal element
+	 */
+	private void deletePONoNotification(IPORoot ipo) throws CoreException {
+		try {
+			RodinCore.removeElementChangedListener(controller);
+			ipo.getResource().delete(false, null);
+		} finally {
+			RodinCore.addElementChangedListener(controller);
+		}
+		assertFalse(ipo.exists());
+	}
+
 	protected void setUpContexts() throws RodinDBException {
 		//create some contexts
 		c0 = createContext("c0");
