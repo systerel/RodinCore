@@ -173,7 +173,8 @@ public class SelectionController implements MouseListener, VerifyListener,
 	// Tells whether the selected elements can move
 	public boolean canMoveSelection() {
 		for (ILElement element : selection.getElements()) {
-			if (isReadOnly(element.getParent())) {
+			final ILElement parent = element.getParent();
+			if (parent == null || isReadOnly(parent)) {
 				return false;
 			}
 		}

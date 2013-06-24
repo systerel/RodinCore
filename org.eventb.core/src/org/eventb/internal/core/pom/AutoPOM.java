@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
 package org.eventb.internal.core.pom;
 
 import static org.eclipse.core.runtime.SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK;
+import static org.eventb.internal.core.Util.addExtensionDependencies;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -25,7 +26,6 @@ import org.eventb.core.IPORoot;
 import org.eventb.core.IPOSequent;
 import org.eventb.core.IPRRoot;
 import org.eventb.core.IPSRoot;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.pm.IProofComponent;
 import org.eventb.core.pm.IProofManager;
 import org.eventb.internal.core.Util;
@@ -177,6 +177,7 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 			final IFile target = targetRoot.getResource();
 			graph.addTarget(target);
 			graph.addToolDependency(source, target, true);
+			addExtensionDependencies(graph, targetRoot);
 		} finally {
 			monitor.done();
 		}
@@ -198,10 +199,6 @@ public class AutoPOM implements IAutomaticTool, IExtractor {
 						+ prRoot.getResource().getFullPath().toString());
 			}
 			prRoot.getRodinFile().create(true, pm);
-
-			// Register the formula factory to use for the proof file
-			final FormulaFactory ff = pc.getFormulaFactory();
-			prRoot.setFormulaFactory(ff);
 		}
 	}
 	

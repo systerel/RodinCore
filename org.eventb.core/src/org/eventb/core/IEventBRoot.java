@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,11 +157,14 @@ public interface IEventBRoot extends IInternalElement, IGeneratedElement {
 	FormulaFactory getFormulaFactory();
 
 	/**
-	 * Sets the formula factory associated with this root element. Later calls
-	 * to getFormulaFactory() must return this formula factory.
+	 * Pretends to set the formula factory associated with this root element,
+	 * but does not do anything actually. Do not use this method anymore. It
+	 * will disappear in Rodin 3.0.
 	 * 
 	 * @since 2.0
+	 * @deprecated Do not use this method anymore
 	 */
+	@Deprecated
 	void setFormulaFactory(FormulaFactory ff);
 
 }
