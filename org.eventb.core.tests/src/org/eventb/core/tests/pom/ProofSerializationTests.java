@@ -86,7 +86,7 @@ public class ProofSerializationTests extends BuilderTest {
 	private static ITactic autoRewriteL2() {
 		final IReasonerRegistry registry = SequentProver.getReasonerRegistry();
 		final IReasonerDesc desc = registry
-				.getReasonerDesc("org.eventb.core.seqprover.autoRewritesL2");
+				.getReasonerDesc("org.eventb.core.seqprover.autoRewritesL2:1");
 		return BasicTactics.reasonerTac(desc.getInstance(), new EmptyInput());
 	}
 

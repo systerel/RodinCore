@@ -1,0 +1,18 @@
+* text=auto
+
+*.java		text
+*.t 		text
+*.tom		text
+*.xml		text
+*.exsd		text
+*.properties	text
+*.launch	text
+*.prefs		text
+*.html		text
+MANIFEST.MF	text
+.api_filters	text
+.project	text
+.options	text
+.classpath	text
+
+*.jar		binary

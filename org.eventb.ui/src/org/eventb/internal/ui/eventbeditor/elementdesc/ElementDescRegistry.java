@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -610,18 +610,38 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			final IConfigurationElement[] children = attributeRelationMap
 					.get(type);
 			initAtColumn(atColumn, children.length);
+			final List<IAttributeDesc> descs = new ArrayList<IAttributeDesc>(children.length);
+			
 			for (IConfigurationElement element : children) {
 				IAttributeDesc desc = attributeMap.get(getStringAttribute(
 						element, "descriptionId"));
-				attributes.add(desc);
+				// taking care of possible override in atColumn
+				descs.add(desc);
 				final String column = getStringAttribute(element, "column");
 				if (!column.equals("")) {
 					atColumn.set(Integer.parseInt(column), desc);
 				}
 			}
+			
+			sortColumnAttributes(attributes, atColumn, descs);
 		}
 
-		private void initAtColumn(List<IAttributeDesc> atColumn, int length) {
+		private static void sortColumnAttributes(
+				List<IAttributeDesc> attributes, List<IAttributeDesc> atColumn,
+				List<IAttributeDesc> descs) {
+			descs.removeAll(atColumn);
+			int descIndex = 0;
+			for (IAttributeDesc colAttribute : atColumn) {
+				if (!colAttribute.equals(nullAttribute)) {
+					attributes.add(colAttribute);
+				} else {
+					attributes.add(descs.get(descIndex));
+					descIndex++;
+				}
+			}
+		}
+
+		private static void initAtColumn(List<IAttributeDesc> atColumn, int length) {
 			for (int i = 0; i < length; i++)
 				atColumn.add(nullAttribute);
 		}
