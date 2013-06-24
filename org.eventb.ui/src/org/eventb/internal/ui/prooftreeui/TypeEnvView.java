@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,14 @@ package org.eventb.internal.ui.prooftreeui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -201,6 +205,48 @@ public class TypeEnvView extends AbstractProofNodeView {
 		}
 	}
 
+	private static class TypeEnvEditingSupport extends EditingSupport
+	{
+
+		private final int column;
+		private final CellEditor editor;
+		
+		public TypeEnvEditingSupport(TableViewer tableViewer, int column) {
+			super(tableViewer);
+			this.column = column;
+			final Composite parent = tableViewer.getTable();
+			this.editor = new TextCellEditor(parent, SWT.READ_ONLY);
+		}
+
+		@Override
+		protected CellEditor getCellEditor(Object element) {
+			if (!(element instanceof Ident)) {
+				return null;
+			}
+			return editor;
+		}
+
+		@Override
+		protected boolean canEdit(Object element) {
+			return element instanceof Ident;
+		}
+
+		@Override
+		protected Object getValue(Object element) {
+			if (!(element instanceof Ident)) {
+				return null;
+			}
+			final Ident ident = (Ident) element;
+			return ident.getColumnText(column);
+		}
+
+		@Override
+		protected void setValue(Object element, Object value) {
+			// nothing to do			
+		}
+		
+	}
+
 	TableViewer tableViewer;
 
 	@Override
@@ -209,21 +255,24 @@ public class TypeEnvView extends AbstractProofNodeView {
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		final ColumnComparator comparator = new ColumnComparator();
 		tableViewer.setComparator(comparator);
+		createColumns(font);
 		tableViewer.setLabelProvider(new TypeEnvLabelProvider());
 		tableViewer.setContentProvider(new TypeEnvContentProvider());
-		createColumns(font);
 		initColumnSorting(comparator);
 	}
-
+	
 	private void createColumns(Font font) {
 		final Table table = tableViewer.getTable();
 		table.setFont(font);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-
+		
 		for (int i = 0; i < Ident.getNumberOfColumns(); i++) {
 			final String columnName = Ident.getColumnTitle(i);
-			final TableColumn col = new TableColumn(table, SWT.WRAP);
+			final TableViewerColumn colViewer = new TableViewerColumn(
+					tableViewer, SWT.WRAP);
+			colViewer.setEditingSupport(new TypeEnvEditingSupport(tableViewer, i));
+			final TableColumn col = colViewer.getColumn();
 			col.setText(columnName);
 			col.pack();
 		}
