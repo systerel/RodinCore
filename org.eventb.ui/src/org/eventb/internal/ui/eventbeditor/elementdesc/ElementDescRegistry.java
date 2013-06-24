@@ -239,17 +239,26 @@ public class ElementDescRegistry implements IElementDescRegistry {
 				.getAttribute("parentTypeId"));
 		Set<IElementRelationship> result = new HashSet<IElementRelationship>();
 		for (IConfigurationElement child : element.getChildren("childType")) {
-			final String type = child.getAttribute("typeId");
-			final IInternalElementType<?> elementType = RodinCore.getInternalElementType(type);
-			final int priority = parseInt(child.getAttribute("priority"));
-			final IImplicitChildProvider implicitChildProvider = getImplicitChildProvider(child);
-			if (parent instanceof IInternalElementType
-					&& implicitChildProvider != null) {
-				final IInternalElementType<?> parentType = (IInternalElementType<?>) parent;
-				childProviderAssocs.add(new ImplicitChildProviderAssociation(
-								implicitChildProvider, parentType, elementType));
+			try {
+				final String type = child.getAttribute("typeId");
+				final IInternalElementType<?> elementType = RodinCore
+						.getInternalElementType(type);
+				final int priority = parseInt(child.getAttribute("priority"));
+				final IImplicitChildProvider implicitChildProvider = getImplicitChildProvider(child);
+				if (parent instanceof IInternalElementType
+						&& implicitChildProvider != null) {
+					final IInternalElementType<?> parentType = (IInternalElementType<?>) parent;
+					childProviderAssocs
+							.add(new ImplicitChildProviderAssociation(
+									implicitChildProvider, parentType,
+									elementType));
+				}
+				result.add(new ElementDescRelationship(parent, elementType,
+						priority, implicitChildProvider));
+			} catch(Exception e) {
+				UIUtils.log(e, "Unable to load child relationship from "
+						+ element.getNamespaceIdentifier());
 			}
-			result.add(new ElementDescRelationship(parent, elementType, priority, implicitChildProvider));
 		}
 		return result;
 	}
@@ -454,7 +463,8 @@ public class ElementDescRegistry implements IElementDescRegistry {
 				}
 				map.put(id, desc);
 			} catch (Exception e) {
-				final String message = "Can't instanciate AttributeDesc";
+				final String message = "Can't instantiate attribute descriptor from "
+						+ element.getNamespaceIdentifier();
 				UIUtils.log(e, message);
 			}
 

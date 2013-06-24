@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Systerel - separation of file and root element
  *     Systerel - added database indexer
  *     Systerel - added builder performance trace
+ *     Systerel - added buffer trace
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -121,6 +122,8 @@ public class RodinDBManager implements ISaveParticipant {
 //	public static final String SELECTION_PERF = RodinCore.PLUGIN_ID + "/perf/selection" ; //$NON-NLS-1$
 //	public static final String DELTA_LISTENER_PERF = RodinCore.PLUGIN_ID + "/perf/rodindeltalistener" ; //$NON-NLS-1$
 
+	private static final String BUFFER_DEBUG = RodinCore.PLUGIN_ID + "/debug/buffer" ; //$NON-NLS-1$
+	
 	/**
 	 * Shortcut class to use instead of the long fully parameterized HashMap.
 	 */
@@ -328,6 +331,8 @@ public class RodinDBManager implements ISaveParticipant {
 			option = Platform.getDebugOption(RODINTYPES_VERBOSE);
 			if(option != null) ElementTypeManager.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
+			option = Platform.getDebugOption(BUFFER_DEBUG);
+			if(option != null) Buffer.DEBUG = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 		}
 		
 		// configure performance options

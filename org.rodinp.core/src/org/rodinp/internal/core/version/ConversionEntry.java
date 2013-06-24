@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactoring and various improvements
@@ -33,10 +33,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.rodinp.core.IConversionResult.IEntry;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.core.IConversionResult.IEntry;
 import org.rodinp.internal.core.Buffer;
 import org.rodinp.internal.core.RodinDBStatus;
 import org.rodinp.internal.core.RodinFile;
@@ -118,6 +118,10 @@ public class ConversionEntry implements IEntry {
 		return new String(buffer);
 	}
 
+	public InputStream toInputStream() {
+		return new ByteArrayInputStream(buffer);
+	}
+	
 	public void upgrade(VersionManager vManager, boolean force,
 			IProgressMonitor pm) {
 		final IInternalElementType<?> type = file.getRoot().getElementType();

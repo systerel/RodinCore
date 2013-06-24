@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Systerel - made NAME_ATTRIBUTE and VERSION_ATTRIBUTE public
  *     Systerel - refactored automatic file conversion
  *     Systerel - fix file not closed on erroneous XML
+ *     Systerel - fix upgrade deadlock
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -50,6 +51,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
@@ -77,6 +79,8 @@ import org.xml.sax.SAXParseException;
  * @author Laurent Voisin
  */
 public class Buffer {
+	
+	public static boolean DEBUG = false;	
 	
 	protected static class XMLErrorHandler implements ErrorHandler {
 		
@@ -138,12 +142,18 @@ public class Buffer {
 	// Whether this buffer has been fully loaded.
 	private AtomicBoolean loaded = new AtomicBoolean();
 
+	// Whether this buffer has changed since latest load or save.
 	private volatile boolean changed;
 
 	public Buffer(RodinFile owner) {
 		this.owner = owner;
 		this.stamp = IResource.NULL_STAMP;
 		this.version = UNKNOWN_VERSION;
+	}
+	
+	private void printDebug(String str) {
+		System.out.println("BUFFER: " + Thread.currentThread().getName() + ": "
+				+ owner.toStringWithAncestors() + ": " + str);
 	}
 	
 	public boolean hasBeenLoaded() {
@@ -154,16 +164,17 @@ public class Buffer {
 	 * Loads this buffer from the corresponding resource.
 	 */
 	public synchronized void load(IProgressMonitor pm) throws RodinDBException {
+		if (DEBUG) printDebug("Start load");
 		if (hasBeenLoaded()) {
 			// Buffer has already been loaded (maybe concurrently by another
 			// thread).
+			if (DEBUG) printDebug("Already loaded");
 			return;
 		}
 		final SubMonitor sm = SubMonitor.convert(pm, 2);
 		attemptLoad(sm.newChild(1));
 		int status = checkVersion();
-		if (status == PAST_VERSION && attemptUpgrade()) {
-			attemptLoad(sm.newChild(1));
+		if (status == PAST_VERSION && attemptUpgrade(sm.newChild(1))) {
 			status = checkVersion();
 		}
 		if (status != OK) {
@@ -175,24 +186,30 @@ public class Buffer {
 		loaded.set(true);
 	}
 	
-	public void attemptLoad(IProgressMonitor pm) throws RodinDBException {
+	private void attemptLoad(InputStream input, IProgressMonitor pm)
+			throws RodinDBException {
 		final RodinDBManager manager = RodinDBManager.getRodinDBManager();
 		final DocumentBuilder builder = manager.getDocumentBuilder();
 		builder.setErrorHandler(errorHandler);
 
-		final IFile file = owner.getResource();
-		stamp = file.getModificationStamp();
-		try {
-			domDocument = parseXML(builder, file.getContents());
-		} catch (RodinDBException e) {
-			throw e;
-		} catch (CoreException e) {
-			throw new RodinDBException(e);
-		}
+		domDocument = parseXML(builder, input);
 
 		// the version is always fetched from the file;
 		// if it cannot be verified, then the document is not fetched (although it was parsed successfully)
 		version = fetchVersion(domDocument);
+	}
+	
+	public void attemptLoad(IProgressMonitor pm) throws RodinDBException {
+		if (DEBUG) printDebug("attempt load");
+		final IFile file = owner.getResource();
+		stamp = file.getModificationStamp();
+		final InputStream input;
+		try {
+			input = file.getContents();
+		} catch (CoreException e) {
+			throw new RodinDBException(e);
+		}
+		attemptLoad(input, pm);
 	}
 
 	private Document parseXML(DocumentBuilder builder, InputStream contents)
@@ -226,15 +243,39 @@ public class Buffer {
 		}
 	}
 
-	private boolean attemptUpgrade() throws RodinDBException {
+	private boolean attemptUpgrade(SubMonitor sm) throws RodinDBException {
+		if (DEBUG) printDebug("About to attempt upgrade");
 		final ConversionEntry cv = new ConversionEntry(owner, version);
 		final VersionManager vManager = VersionManager.getInstance();
-		cv.upgrade(vManager, false, null);
+		
+		sm.setWorkRemaining(2);
+		cv.upgrade(vManager, false, sm.newChild(1));
 		final boolean success = cv.success();
 		if (success) {
-			cv.accept(false, true, null);
+			if (isOwningSchedulingRule()) {
+				if (DEBUG) printDebug("About to save file");
+				sm.setWorkRemaining(2);
+				cv.accept(false, true, sm.newChild(1));
+				// Reload from saved file
+				attemptLoad(sm.newChild(1));
+			} else {
+				// Reload from in-memory byte array
+				if (DEBUG) printDebug("Not saving file: not owning scheduling rule");
+				attemptLoad(cv.toInputStream(), sm.newChild(1));
+			}
+		} else {
+			if (DEBUG) printDebug("Upgrade failed");
 		}
 		return success;
+	}
+	
+	private boolean isOwningSchedulingRule() {
+		final ISchedulingRule currentRule = Job.getJobManager().currentRule();
+		if (currentRule == null) {
+			return false;
+		} else {
+			return currentRule.contains(owner.getSchedulingRule());
+		}
 	}
 
 	private RodinDBException versionProblem(int code, String versionStr) {
