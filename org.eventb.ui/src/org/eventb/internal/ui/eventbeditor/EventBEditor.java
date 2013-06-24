@@ -350,7 +350,6 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		setSite(site);
 		setInput(input);
 		site.setSelectionProvider(new FormEditorSelectionProvider(this));
-		RodinCore.addElementChangedListener(this);
 		rodinFile = getRodinFile(input);
 		root = rodinFile.getRoot();
 		assert (root instanceof IContextRoot) || (root instanceof IMachineRoot);
@@ -366,6 +365,8 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		// set Retargeted Action
 		setRetargetedAction();
 
+		// Listen to change events when fully initialized
+		RodinCore.addElementChangedListener(this);
 	}
 
 	private void setRetargetedAction() {
