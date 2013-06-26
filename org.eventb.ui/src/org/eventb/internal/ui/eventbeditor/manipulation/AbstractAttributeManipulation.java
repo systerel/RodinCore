@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,13 @@ import org.rodinp.core.IAttributeType;
 public abstract class AbstractAttributeManipulation implements
 		IAttributeManipulation {
 
+	/**
+	 * @deprecated Logging each time GetPossibleValues is called produces
+	 *             unnecessary log entries. GetPossibleValues is allowed to
+	 *             return <code>null</code>, this is part of the API and needs
+	 *             not be logged whatsoever.
+	 */
+	@Deprecated
 	protected void logCantGetPossibleValues(IAttributeType attribute) {
 		UIUtils.log(null,
 				"The method GetPossibleValues cannot be called for attribute "

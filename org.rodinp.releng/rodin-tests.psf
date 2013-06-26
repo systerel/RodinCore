@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <psf version="2.0">
 <provider id="org.eclipse.egit.core.GitProvider">
-<project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,ch.ethz.eventb.keyboard.latex.tests"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,fr.systerel.explorer.tests"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,fr.systerel.editor.tests"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.eventb.core.ast.tests"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.eventb.core.seqprover.tests"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.eventb.core.tests"/>
-<project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.eventb.keyboard.tests"/>
+<project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.eventb.keyboard.core.tests"/>
+<project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.eventb.keyboard.ui.tests"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.eventb.pp.tests"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.eventb.pptrans.tests"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.eventb.ui.tests"/>

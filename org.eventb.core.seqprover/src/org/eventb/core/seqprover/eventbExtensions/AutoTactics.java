@@ -904,7 +904,7 @@ public class AutoTactics {
 		}
 
 	}
-
+	
 	/**
 	 * The automatic "Remove Inclusion" tactic to be applied once on a goal.
 	 * 
@@ -934,6 +934,36 @@ public class AutoTactics {
 					new RiGoalOnceAutoTac());
 		}
 
+	}
+
+	/**
+	 * The automatic "Remove Membership" tactic to be applied once on a goal if
+	 * the inclusion is at the root of the goal, for determinism.
+	 * 
+	 * @since 2.7
+	 */
+	public static class RmiGoalOnceAtRootAutoTac implements ITactic {
+
+		@Override
+		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
+			if (pm != null && pm.isCanceled()) {
+				return "Canceled";
+			}
+			final Predicate pred = ptNode.getSequent().goal();
+			if (Tactics.isRemoveMembershipApplicable(pred)) {
+				return Tactics.removeMembership(null, ROOT).apply(ptNode, pm);
+			}
+			if (pm != null && pm.isCanceled()) {
+				return "Canceled";
+			}
+
+			final List<IPosition> riPos = Tactics.riGetPositions(pred);
+			if (riPos.contains(ROOT)) {
+				return Tactics.removeInclusion(null, ROOT).apply(ptNode, pm);
+			}
+
+			return "Tactic unapplicable";
+		}
 	}
 
 	/**

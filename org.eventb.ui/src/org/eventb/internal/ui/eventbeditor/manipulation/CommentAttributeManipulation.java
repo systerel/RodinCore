@@ -63,7 +63,6 @@ public class CommentAttributeManipulation extends AbstractAttributeManipulation 
 	public String[] getPossibleValues(IRodinElement element,
 			IProgressMonitor monitor) {
 		// Not applicable for Commented Element.
-		logCantGetPossibleValues(COMMENT_ATTRIBUTE);
 		return null;
 	}
 
