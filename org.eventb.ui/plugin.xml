@@ -398,15 +398,6 @@
             id="org.eventb.ui.ProofTreeNode"
             objectClass="org.eventb.core.seqprover.IProofTreeNode">
          <action
-               class="org.eventb.internal.ui.prooftreeui.ShowTypeEnv"
-               enablesFor="1"
-               icon="icons/full/ctool16/info_type_env.gif"
-               id="org.eventb.ui.showTypeEnv"
-               label="%popupMenu.showTypeEnv.label"
-               menubarPath="additions"
-               tooltip="%popupMenu.showTypeEnv.tooltip">
-         </action>
-         <action
                class="org.eventb.internal.ui.prooftreeui.Prune"
                enablesFor="1"
                icon="icons/full/ctool16/pn_prover.gif"
@@ -605,6 +596,12 @@
             id="org.eventb.ui.proofTreeUi.showRuleDetails"
             name="%commands.proofTreeNode.showRuleDetails.name">
       </command>
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.proofTreeNode.showTypeEnv.description"
+            id="org.eventb.ui.proofTreeUi.showTypeEnv"
+            name="%commands.proofTreeNode.showTypeEnv.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -618,11 +615,22 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <iterate>
-                  <instanceof
-                        value="org.eventb.core.seqprover.IProofTreeNode">
-                  </instanceof>
-               </iterate>
+               <reference
+                     definitionId="org.eventb.ui.definition.isProofTreeNode">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eventb.ui.proofTreeUi.showTypeEnv"
+               icon="icons/full/ctool16/info_type_env.gif"
+               mnemonic="%commands.proofTreeNode.showTypeEnv.name"
+               style="push"
+               tooltip="%commands.proofTreeNode.showTypeEnv.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isProofTreeNode">
+               </reference>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -632,6 +640,10 @@
       <handler
             class="org.eventb.internal.ui.prooftreeui.handlers.ShowRuleDetailsHandler"
             commandId="org.eventb.ui.proofTreeUi.showRuleDetails">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.prooftreeui.handlers.ShowTypeEnvHandler"
+            commandId="org.eventb.ui.proofTreeUi.showTypeEnv">
       </handler>
    </extension>
    <extension
@@ -2923,6 +2935,14 @@
               operator="or">
            <instanceof
                  value="org.eventb.core.IEventBRoot">
+           </instanceof>
+        </iterate>
+     </definition>
+     <definition
+           id="org.eventb.ui.definition.isProofTreeNode">
+        <iterate>
+           <instanceof
+                 value="org.eventb.core.seqprover.IProofTreeNode">
            </instanceof>
         </iterate>
      </definition>
