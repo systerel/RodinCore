@@ -114,7 +114,8 @@ public abstract class AbstractProofTreeCommandHandler extends AbstractHandler {
 		return page.getUserSupport();
 	}
 
-	protected final void applyTactic(ITactic tactic, boolean applyPostTactic) {
+	protected final void applyTactic(ITactic tactic, boolean applyPostTactic,
+			String successMessage) {
 		final IWorkbenchWindow ww = getActiveIWorkbenchWindow();
 		final ProofTreeUI ui = getActiveProofTreeUI(ww);
 		final Shell shell = ww.getShell();
@@ -128,6 +129,13 @@ public abstract class AbstractProofTreeCommandHandler extends AbstractHandler {
 					proofTreeHandler_noActiveUserSupportError);
 		}
 		applyTacticWithProgress(shell, us, tactic, applyPostTactic);
+		log(successMessage);
+	}
+
+	protected void log(String message) {
+		if (DEBUG) {
+			debug(message);
+		}
 	}
 
 	protected void logNotEnabled(String message) {

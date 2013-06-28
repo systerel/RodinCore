@@ -12,10 +12,12 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui.handlers;
 
+import static org.eventb.core.seqprover.eventbExtensions.Tactics.prune;
+import static org.eventb.internal.ui.prooftreeui.handlers.Messages.proofTreeHandler_pruneSuccessMessage;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eventb.core.seqprover.eventbExtensions.Tactics;
 
 /**
  * Handler for the <code>org.eventb.ui.proofTreeUi.prune</code> ProofTreeNode
@@ -44,7 +46,7 @@ public class PruneHandler extends AbstractProofTreeCommandHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		applyTactic(Tactics.prune(), false);
+		applyTactic(prune(), false, proofTreeHandler_pruneSuccessMessage);
 		return null;
 	}
 

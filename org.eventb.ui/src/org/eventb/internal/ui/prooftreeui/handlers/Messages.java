@@ -11,6 +11,7 @@
 package org.eventb.internal.ui.prooftreeui.handlers;
 
 import org.eclipse.osgi.util.NLS;
+import org.eventb.core.seqprover.IProofSkeleton;
 
 public class Messages extends NLS {
 
@@ -21,6 +22,8 @@ public class Messages extends NLS {
 	public static String proofTreeHandler_commandNotEnabledInfo;
 	public static String proofTreeHandler_moreThanOneElementSelected;
 	public static String proofTreeHandler_elementIsNotProofTreeNode;
+	public static String proofTreeHandler_copyBufferIsEmpty;
+	public static String proofTreeHandler_copyBufferNotAProofSkeleton;
 	public static String proofTreeHandler_commandError;
 	public static String proofTreeHandler_noActiveProofTreeUIError;
 	public static String proofTreeHandler_noActiveUserSupportError;
@@ -47,4 +50,8 @@ public class Messages extends NLS {
 		return bind(proofTreeHandler_commandError, commandID, cause);
 	}
 
+	public static String pasteSuccessMessage(IProofSkeleton node) {
+		return bind(proofTreeHandler_pasteSuccessMessage, node);
+	}
+	
 }
