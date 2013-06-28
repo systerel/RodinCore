@@ -32,6 +32,7 @@ public class Messages extends NLS {
 	
 	public static String proofTreeHandler_pruneSuccessMessage;
 	public static String proofTreeHandler_pasteSuccessMessage;
+	public static String proofTreeHandler_copySuccessMessage;
 
 	static {
 		// initialize resource bundle
@@ -52,6 +53,10 @@ public class Messages extends NLS {
 
 	public static String pasteSuccessMessage(IProofSkeleton node) {
 		return bind(proofTreeHandler_pasteSuccessMessage, node);
+	}
+
+	public static String copySuccessMessage(Object node) {
+		return bind(proofTreeHandler_copySuccessMessage, node);
 	}
 	
 }

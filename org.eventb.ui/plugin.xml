@@ -398,14 +398,6 @@
             id="org.eventb.ui.ProofTreeNode"
             objectClass="org.eventb.core.seqprover.IProofTreeNode">
          <action
-               class="org.eventb.internal.ui.prooftreeui.Copy"
-               enablesFor="1"
-               icon="icons/full/elcl16/copy.gif"
-               id="org.eventb.ui.copy"
-               label="%popupMenu.copy.label"
-               menubarPath="additions"
-               tooltip="%popupMenu.copy.tooltip"/>
-         <action
                class="org.eventb.internal.ui.prooftreeui.EditProofTreeNodeComment"
                enablesFor="1"
                icon="icons/full/ovr16/cmt_ovr.gif"
@@ -598,6 +590,12 @@
             id="org.eventb.ui.proofTreeUi.paste"
             name="%commands.proofTreeNode.paste.name">
       </command>
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.proofTreeNode.copy.description"
+            id="org.eventb.ui.proofTreeUi.copy"
+            name="%commands.proofTreeNode.copy.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -655,6 +653,19 @@
                </reference>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eventb.ui.proofTreeUi.copy"
+               icon="icons/full/elcl16/copy.gif"
+               mnemonic="%commands.proofTreeNode.copy.mnemonic"
+               style="push"
+               tooltip="%commands.proofTreeNode.copy.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isProofTreeNode">
+               </reference>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -674,6 +685,10 @@
       <handler
             class="org.eventb.internal.ui.prooftreeui.handlers.PasteHandler"
             commandId="org.eventb.ui.proofTreeUi.paste">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.prooftreeui.handlers.CopyHandler"
+            commandId="org.eventb.ui.proofTreeUi.copy">
       </handler>
    </extension>
    <extension
