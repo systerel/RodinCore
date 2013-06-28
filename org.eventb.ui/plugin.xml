@@ -398,14 +398,6 @@
             id="org.eventb.ui.ProofTreeNode"
             objectClass="org.eventb.core.seqprover.IProofTreeNode">
          <action
-               class="org.eventb.internal.ui.prooftreeui.Prune"
-               enablesFor="1"
-               icon="icons/full/ctool16/pn_prover.gif"
-               id="org.eventb.ui.prune"
-               label="%popupMenu.prune.label"
-               menubarPath="additions"
-               tooltip="%popupMenu.prune.tooltip"/>
-         <action
                class="org.eventb.internal.ui.prooftreeui.Paste"
                enablesFor="1"
                icon="icons/full/elcl16/paste.gif"
@@ -602,6 +594,12 @@
             id="org.eventb.ui.proofTreeUi.showTypeEnv"
             name="%commands.proofTreeNode.showTypeEnv.name">
       </command>
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.proofTreeNode.prune.description"
+            id="org.eventb.ui.proofTreeUi.prune"
+            name="%commands.proofTreeNode.prune.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -633,6 +631,19 @@
                </reference>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eventb.ui.proofTreeUi.prune"
+               icon="icons/full/ctool16/pn_prover.gif"
+               mnemonic="%commands.proofTreeNode.prune.mnemonic"
+               style="push"
+               tooltip="%commands.proofTreeNode.prune.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isProofTreeNode">
+               </reference>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -644,6 +655,10 @@
       <handler
             class="org.eventb.internal.ui.prooftreeui.handlers.ShowTypeEnvHandler"
             commandId="org.eventb.ui.proofTreeUi.showTypeEnv">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.prooftreeui.handlers.PruneHandler"
+            commandId="org.eventb.ui.proofTreeUi.prune">
       </handler>
    </extension>
    <extension
