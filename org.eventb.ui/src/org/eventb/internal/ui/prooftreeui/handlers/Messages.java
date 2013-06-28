@@ -19,6 +19,7 @@ public class Messages extends NLS {
 
 	// Abstract Proof Tree Command Handler
 	public static String proofTreeHandler_commandNotExecutedTitle;
+	public static String proofTreeHandler_editCommentTitle;
 	public static String proofTreeHandler_commandNotEnabledInfo;
 	public static String proofTreeHandler_moreThanOneElementSelected;
 	public static String proofTreeHandler_elementIsNotProofTreeNode;
@@ -33,6 +34,7 @@ public class Messages extends NLS {
 	public static String proofTreeHandler_pruneSuccessMessage;
 	public static String proofTreeHandler_pasteSuccessMessage;
 	public static String proofTreeHandler_copySuccessMessage;
+	public static String proofTreeHandler_editSuccessMessage;
 
 	static {
 		// initialize resource bundle

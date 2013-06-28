@@ -394,20 +394,6 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            adaptable="false"
-            id="org.eventb.ui.ProofTreeNode"
-            objectClass="org.eventb.core.seqprover.IProofTreeNode">
-         <action
-               class="org.eventb.internal.ui.prooftreeui.EditProofTreeNodeComment"
-               enablesFor="1"
-               icon="icons/full/ovr16/cmt_ovr.gif"
-               id="org.eventb.ui.editComment"
-               label="%popupMenu.editComment.label"
-               menubarPath="additions"
-               tooltip="%popupMenu.editComment.tooltip">
-         </action>
-      </objectContribution>
-      <objectContribution
             adaptable="true"
             id="org.eventb.ui.ProofPurger"
             objectClass="org.rodinp.core.IRodinElement">
@@ -596,6 +582,12 @@
             id="org.eventb.ui.proofTreeUi.copy"
             name="%commands.proofTreeNode.copy.name">
       </command>
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.proofTreeNode.editComment.description"
+            id="org.eventb.ui.proofTreeUi.editComment"
+            name="%commands.proofTreeNode.editComment.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -666,6 +658,19 @@
                </reference>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eventb.ui.proofTreeUi.editComment"
+               icon="icons/full/ovr16/cmt_ovr.gif"
+               mnemonic="%commands.proofTreeNode.editComment.mnemonic"
+               style="push"
+               tooltip="%commands.proofTreeNode.editComment.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isProofTreeNode">
+               </reference>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -689,6 +694,10 @@
       <handler
             class="org.eventb.internal.ui.prooftreeui.handlers.CopyHandler"
             commandId="org.eventb.ui.proofTreeUi.copy">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.prooftreeui.handlers.EditCommentHandler"
+            commandId="org.eventb.ui.proofTreeUi.editComment">
       </handler>
    </extension>
    <extension
