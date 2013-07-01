@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,14 +19,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.IPRProof;
@@ -38,20 +31,16 @@ import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
-/**
- * @author "Nicolas Beauger"
- * 
- */
-public class ProofSimplifyAction implements IObjectActionDelegate {
+public class ProofSimplification {
 
-	private static class Simplify implements IRunnableWithProgress {
-
+	public static class Simplify implements IRunnableWithProgress {
+	
 		final IPRProof[] proofs;
-
+	
 		public Simplify(IPRProof[] proofs) {
 			this.proofs = proofs;
 		}
-
+	
 		@Override
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
@@ -79,19 +68,19 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 				monitor.done();
 			}
 		}
-
+	
 	}
 
-	private static class FecthProofs implements IRunnableWithProgress {
-
+	public static class FecthProofs implements IRunnableWithProgress {
+	
 		private final List<?> proofContainers;
 		private final List<IPRProof> proofs = new ArrayList<IPRProof>();
 		private boolean wasCancelled = false;
-
+	
 		public FecthProofs(List<?> proofContainers) {
 			this.proofContainers = proofContainers;
 		}
-
+	
 		@Override
 		public void run(IProgressMonitor monitor)
 				throws InvocationTargetException, InterruptedException {
@@ -123,11 +112,11 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 				monitor.done();
 			}
 		}
-
+	
 		public IPRProof[] getProofs() {
 			return proofs.toArray(new IPRProof[proofs.size()]);
 		}
-
+	
 		private static void addAllProofs(final IRodinProject project,
 				final List<IPRProof> result, IProgressMonitor monitor) {
 			try {
@@ -147,7 +136,7 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 				monitor.done();
 			}
 		}
-
+	
 		private static void addAllProofs(IEventBRoot root,
 				final List<IPRProof> result, IProgressMonitor monitor) {
 			try {
@@ -159,60 +148,11 @@ public class ProofSimplifyAction implements IObjectActionDelegate {
 				monitor.done();
 			}
 		}
-
+	
 		public boolean wasCancelled() {
 			return wasCancelled;
 		}
-
-	}
-
-	private IWorkbenchPartSite site;
-	private IStructuredSelection selection;
-
-	@Override
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		site = targetPart.getSite();
-	}
-
-	@Override
-	public void run(IAction action) {
-		if (selection == null) {
-			UIUtils.showInfo(Messages.proofSimplification_invalidSelection);
-			return;
-		}
-		final FecthProofs fetchProofs = new FecthProofs(selection.toList());
-		runOp(fetchProofs);
-		if (fetchProofs.wasCancelled())
-			return;
-		IPRProof[] input = fetchProofs.getProofs();
-
-		if (input.length == 0) {
-			UIUtils.showInfo(Messages.proofSimplification_noProofsToSimplify);
-			return;
-		}
-		final Simplify simplify = new Simplify(input);
-		runOp(simplify);
-	}
-
-	private void runOp(final IRunnableWithProgress op) {
-		try {
-			new ProgressMonitorDialog(site.getShell()).run(true, true, op);
-		} catch (InvocationTargetException e) {
-			final Throwable cause = e.getCause();
-			UIUtils.showUnexpectedError(cause, "while simplifying proofs");
-		} catch (InterruptedException e) {
-			// Propagate the interruption
-			Thread.currentThread().interrupt();
-		}
-	}
-
-	@Override
-	public void selectionChanged(IAction action, ISelection s) {
-		if (s instanceof IStructuredSelection) {
-			selection = (IStructuredSelection) s;
-		} else {
-			selection = null;
-		}
+	
 	}
 
 }

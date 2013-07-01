@@ -392,34 +392,6 @@
       </actionSet>
    </extension>
    <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            adaptable="true"
-            id="org.eventb.ui.ProofSimplifier"
-            objectClass="org.rodinp.core.IRodinElement">
-         <action
-               class="org.eventb.internal.ui.proofsimplifier.ProofSimplifyAction"
-               id="org.eventb.ui.simplify"
-               label="%popupMenu.simplify.label"
-               menubarPath="proving"
-               tooltip="%popupMenu.simplify.tooltip">
-         </action>
-         <visibility>
-            <or>
-               <objectClass
-                     name="org.rodinp.core.IRodinProject">
-               </objectClass>
-               <objectClass
-                     name="org.eventb.core.IEventBRoot">
-               </objectClass>
-               <objectClass
-                     name="org.eventb.core.IPSStatus">
-               </objectClass>
-            </or>
-         </visibility>
-      </objectContribution>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <category
             description="%category.ProveDescription"
@@ -458,6 +430,12 @@
             description="%commands.resource.purge.description"
             id="org.eventb.ui.purge"
             name="%commands.resource.purge.name">
+      </command>
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.resource.simplify.description"
+            id="org.eventb.ui.simplify"
+            name="%commands.resource.simplify.name">
       </command>
    </extension>
    <extension
@@ -513,6 +491,36 @@
                </or>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eventb.ui.simplify"
+               mnemonic="%commands.resource.simplify.mnemonic"
+               style="push"
+               tooltip="%commands.resource.simplify.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <or>
+                  <iterate>
+                     <instanceof
+                           value="org.eventb.core.IEventBRoot">
+                     </instanceof>
+                  </iterate>
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                        <test
+                              property="org.eclipse.core.resources.projectNature"
+                              value="org.rodinp.core.rodinnature">
+                        </test>
+                     </adapt>
+                  </iterate>
+                  <iterate>
+                     <instanceof
+                           value="org.eventb.core.IPSStatus">
+                     </instanceof>
+                  </iterate>
+               </or>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -563,6 +571,10 @@
       <handler
             class="org.eventb.internal.ui.handlers.PurgeHandler"
             commandId="org.eventb.ui.purge">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.handlers.ProofSimplifyHandler"
+            commandId="org.eventb.ui.simplify">
       </handler>
    </extension>
    <extension

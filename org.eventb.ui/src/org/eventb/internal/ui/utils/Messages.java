@@ -202,6 +202,7 @@ public final class Messages {
 	// Proof Simplification
 	public static String proofSimplification_fetchingProofs;
 	public static String proofSimplification_invalidSelection;
+	public static String proofSimplification_couldNotRun;
 	public static String proofSimplification_noProofsToSimplify;
 	public static String proofSimplification_symplifyingProofs;
 	
@@ -237,7 +238,7 @@ public final class Messages {
 	public static String rename_renaming_root;
 	public static String rename_task_wait_for_indexer;
 	public static String rename_task_perform_renaming;
-	
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
