@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class ProofPurgerSelectionDialog extends CheckedTreeSelectionDialog {
 	 * @param parentShell
 	 *            The shell to parent from.
 	 */
-	ProofPurgerSelectionDialog(Shell parentShell, ITreeContentProvider contentProvider) {
+	public ProofPurgerSelectionDialog(Shell parentShell, ITreeContentProvider contentProvider) {
 		super(parentShell, new ProofPurgerLabelProvider(), contentProvider);
 		this.contentProvider = contentProvider;
 		this.selectedProofs = new ArrayList<IPRProof>();

@@ -395,27 +395,6 @@
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             adaptable="true"
-            id="org.eventb.ui.ProofPurger"
-            objectClass="org.rodinp.core.IRodinElement">
-         <action
-               class="org.eventb.internal.ui.proofpurger.PurgeAction"
-               id="org.eventb.ui.purge"
-               label="%popupMenu.purge.label"
-               menubarPath="proving"
-               tooltip="%popupMenu.purge.tooltip">
-         </action>
-         <visibility>
-            <or>
-               <objectClass
-                     name="org.rodinp.core.IRodinProject">
-               </objectClass>
-               <objectClass
-                     name="org.eventb.core.IEventBRoot">
-               </objectClass>
-            </or></visibility>
-      </objectContribution>
-      <objectContribution
-            adaptable="true"
             id="org.eventb.ui.ProofSimplifier"
             objectClass="org.rodinp.core.IRodinElement">
          <action
@@ -474,6 +453,12 @@
             id="org.eventb.ui.showProperties"
             name="%commands.resource.showProperties.name">
       </command>
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.resource.purge.description"
+            id="org.eventb.ui.purge"
+            name="%commands.resource.purge.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -501,6 +486,31 @@
                <reference
                      definitionId="org.eventb.ui.definition.isIEventBRoot">
                </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eventb.ui.purge"
+               mnemonic="%commands.resource.purge.mnemonic"
+               style="push"
+               tooltip="%commands.resource.purge.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <or>
+                  <iterate>
+                     <instanceof
+                           value="org.eventb.core.IEventBRoot">
+                     </instanceof>
+                  </iterate>
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                        <test
+                              property="org.eclipse.core.resources.projectNature"
+                              value="org.rodinp.core.rodinnature">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </or>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -549,6 +559,10 @@
       <handler
             class="org.eventb.internal.ui.refine.RefineHandler"
             commandId="org.eventb.ui.refine">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.handlers.PurgeHandler"
+            commandId="org.eventb.ui.purge">
       </handler>
    </extension>
    <extension
