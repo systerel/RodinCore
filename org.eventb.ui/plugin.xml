@@ -240,16 +240,6 @@
             <groupMarker name="New"/>
          </menu>
          <action
-               actionID="org.eventb.ui.actions.newVariable"
-               class="org.eventb.internal.ui.eventbeditor.actions.NewVariable"
-               icon="icons/full/ctool16/newvar_edit.gif"
-               id="org.eventb.ui.actions.newvariable"
-               label="%editorAction.newvariable.label"
-               menubarPath="org.eventb.ui.eventBMenu/New"
-               style="push"
-               toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="%editorAction.newvariable.tooltip"/>
-         <action
                actionID="org.eventb.ui.actions.newInvariants"
                class="org.eventb.internal.ui.eventbeditor.actions.NewInvariants"
                icon="icons/full/ctool16/newinv_edit.gif"
@@ -380,6 +370,12 @@
             id="org.eventb.ui.editor.newEvent"
             name="%commands.editor.newEvent.name">
       </command>
+      <command
+            categoryId="org.eventb.ui.category.model"
+            description="%commands.editor.newVariable.description"
+            id="org.eventb.ui.editor.newVariable"
+            name="%commands.editor.newVariable.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -406,6 +402,22 @@
                </with>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eventb.ui.editor.newVariable"
+               icon="icons/full/ctool16/newvar_edit.gif"
+               mnemonic="%commands.editor.newVariable.mnemonic"
+               style="push"
+               tooltip="%commands.editor.newVariable.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="org.eventb.ui.editors.machine">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -413,6 +425,10 @@
       <handler
             class="org.eventb.internal.ui.eventbeditor.create.handlers.NewEventHandler"
             commandId="org.eventb.ui.editor.newEvent">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.create.handlers.NewVariableHandler"
+            commandId="org.eventb.ui.editor.newVariable">
       </handler>
    </extension>
    <extension
