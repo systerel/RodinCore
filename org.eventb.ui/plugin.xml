@@ -381,12 +381,9 @@
                tooltip="%commands.editor.newEvent.tooltip">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="activeEditorId">
-                  <equals
-                        value="org.eventb.ui.editors.machine">
-                  </equals>
-               </with>
+               <reference
+                     definitionId="org.eventb.ui.definition.isEventBMachineEditorActive">
+               </reference>
             </visibleWhen>
          </command>
          <command
@@ -397,12 +394,9 @@
                tooltip="%commands.editor.newVariable.tooltip">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="activeEditorId">
-                  <equals
-                        value="org.eventb.ui.editors.machine">
-                  </equals>
-               </with>
+               <reference
+                     definitionId="org.eventb.ui.definition.isEventBMachineEditorActive">
+               </reference>
             </visibleWhen>
          </command>
          <command
@@ -413,12 +407,9 @@
                tooltip="%commands.editor.newInvariant.tooltip">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="activeEditorId">
-                  <equals
-                        value="org.eventb.ui.editors.machine">
-                  </equals>
-               </with>
+               <reference
+                     definitionId="org.eventb.ui.definition.isEventBMachineEditorActive">
+               </reference>
             </visibleWhen>
          </command>
          <command
@@ -429,12 +420,9 @@
                tooltip="%commands.editor.newVariant.tooltip">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="activeEditorId">
-                  <equals
-                        value="org.eventb.ui.editors.machine">
-                  </equals>
-               </with>
+               <reference
+                     definitionId="org.eventb.ui.definition.isEventBMachineEditorActive">
+               </reference>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -3096,6 +3084,15 @@
               </adapt>
            </iterate>
         </or>
+     </definition>
+     <definition
+           id="org.eventb.ui.definition.isEventBMachineEditorActive">
+        <with
+              variable="activeEditorId">
+           <equals
+                 value="org.eventb.ui.editors.machine">
+           </equals>
+        </with>
      </definition>
   </extension>
 </plugin>
