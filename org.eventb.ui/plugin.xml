@@ -473,22 +473,9 @@
                tooltip="%commands.resource.purge.tooltip">
             <visibleWhen
                   checkEnabled="false">
-               <or>
-                  <iterate>
-                     <instanceof
-                           value="org.eventb.core.IEventBRoot">
-                     </instanceof>
-                  </iterate>
-                  <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                        <test
-                              property="org.eclipse.core.resources.projectNature"
-                              value="org.rodinp.core.rodinnature">
-                        </test>
-                     </adapt>
-                  </iterate>
-               </or>
+               <reference
+                     definitionId="org.eventb.ui.definition.isEventBRootOrRodinProject">
+               </reference>
             </visibleWhen>
          </command>
          <command
@@ -499,20 +486,9 @@
             <visibleWhen
                   checkEnabled="false">
                <or>
-                  <iterate>
-                     <instanceof
-                           value="org.eventb.core.IEventBRoot">
-                     </instanceof>
-                  </iterate>
-                  <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                        <test
-                              property="org.eclipse.core.resources.projectNature"
-                              value="org.rodinp.core.rodinnature">
-                        </test>
-                     </adapt>
-                  </iterate>
+                  <reference
+                        definitionId="org.eventb.ui.definition.isEventBRootOrRodinProject">
+                  </reference>
                   <iterate>
                      <instanceof
                            value="org.eventb.core.IPSStatus">
@@ -3025,6 +3001,25 @@
                  value="org.eventb.core.seqprover.IProofTreeNode">
            </instanceof>
         </iterate>
+     </definition>
+     <definition
+           id="org.eventb.ui.definition.isEventBRootOrRodinProject">
+        <or>
+           <iterate>
+              <instanceof
+                    value="org.eventb.core.IEventBRoot">
+              </instanceof>
+           </iterate>
+           <iterate>
+              <adapt
+                    type="org.eclipse.core.resources.IResource">
+                 <test
+                       property="org.eclipse.core.resources.projectNature"
+                       value="org.rodinp.core.rodinnature">
+                 </test>
+              </adapt>
+           </iterate>
+        </or>
      </definition>
   </extension>
 </plugin>
