@@ -239,16 +239,6 @@
                label="%editorAction.menu.eventB">
             <groupMarker name="New"/>
          </menu>
-         <action 
-         	   actionID="org.eventb.ui.editors.machinentb.ui.actions.newEvents"
-               class="org.eventb.internal.ui.eventbeditor.actions.NewEvent"
-               icon="icons/full/ctool16/newevt_edit.gif"
-               id="org.eventb.ui.actions.newevent"
-               label="%editorAction.newevent.label"
-               menubarPath="org.eventb.ui.eventBMenu/New"
-               style="push"
-               toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="%editorAction.newevent.tooltip"/>
          <action
                actionID="org.eventb.ui.actions.newVariable"
                class="org.eventb.internal.ui.eventbeditor.actions.NewVariable"
@@ -381,6 +371,49 @@
                style="push">
          </action>
       </editorContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eventb.ui.category.model"
+            description="%commands.editor.newEvent.description"
+            id="org.eventb.ui.editor.newEvent"
+            name="%commands.editor.newEvent.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eventb.ui.editors.machine">
+         <separator
+               name="org.eventb.ui.eventb.separator"
+               visible="true">
+         </separator>
+         <command
+               commandId="org.eventb.ui.editor.newEvent"
+               icon="icons/full/ctool16/newevt_edit.gif"
+               mnemonic="%commands.editor.newEvent.mnemonic"
+               style="push"
+               tooltip="%commands.editor.newEvent.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeEditorId">
+                  <equals
+                        value="org.eventb.ui.editors.machine">
+                  </equals>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.create.handlers.NewEventHandler"
+            commandId="org.eventb.ui.editor.newEvent">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
