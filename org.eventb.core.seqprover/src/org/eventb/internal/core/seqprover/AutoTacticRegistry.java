@@ -52,16 +52,16 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	
 	// TODO make loader class hierarchy for simple, parameterizer, combinator
 	
-	private static String TACTICS_ID =
+	private static final String TACTICS_ID =
 		SequentProver.PLUGIN_ID + ".autoTactics";
-	private static String PARAMETERIZERS_ID =
+	private static final String PARAMETERIZERS_ID =
 			SequentProver.PLUGIN_ID + ".tacticParameterizers";
-	private static String COMBINATORS_ID =
+	private static final String COMBINATORS_ID =
 			SequentProver.PLUGIN_ID + ".tacticCombinators";
 
-	private static String DYN_TACTIC_PROVIDERS_NAME = "dynTacticProvider";
+	private static final String DYN_TACTIC_PROVIDERS_NAME = "dynTacticProvider";
 	
-	private static IAutoTacticRegistry SINGLETON_INSTANCE = new AutoTacticRegistry();
+	private static final IAutoTacticRegistry SINGLETON_INSTANCE = new AutoTacticRegistry();
 
 	private static final String[] NO_STRING = new String[0];
 	
