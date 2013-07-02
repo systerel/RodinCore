@@ -15,13 +15,13 @@ import static java.util.Arrays.asList;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rodinp.keyboard.RodinKeyboardPlugin;
 import org.rodinp.keyboard.core.ExtensionSymbol;
 import org.rodinp.keyboard.core.ISymbolsProvider;
+import org.rodinp.internal.keyboard.core.RodinKeyboardCorePlugin;
 
 public class TestSymbolProvider implements ISymbolsProvider{
 
-	private static final String PLUGIN_NAMESPACE = RodinKeyboardPlugin.PLUGIN_ID;
+	private static final String PLUGIN_NAMESPACE = RodinKeyboardCorePlugin.PLUGIN_ID;
 
 	private static final ExtensionSymbol[] INIT_SYMBOLS = {
 		new ExtensionSymbol("alpha", "alpha", "alpha", "α"),

@@ -30,15 +30,11 @@ import org.rodinp.keyboard.core.ISymbol;
 import org.rodinp.keyboard.core.ISymbolRegistry;
 import org.rodinp.keyboard.core.ISymbolsProvider;
 import org.rodinp.keyboard.core.KeyboardUtils;
+import org.rodinp.internal.keyboard.core.RodinKeyboardCorePlugin;
 
 public class SymbolRegistry implements ISymbolRegistry {
 	
-	//FIXME Rodin 3.0
-	//TODO MOVE THE EXTENSION POINT DEFINITION TO org.rodinp.keyboard.core AND 
-	//REPLACE THE FOLLOWING LINE
-	private static final String SYMBOLS_ID = "org.rodinp.keyboard.symbols";
-	// BY THE FOLLOWING ONE
-	//private static final String SYMBOLS_ID = RodinKeyboardCorePlugin.PLUGIN_ID + ".symbols";
+	private static final String SYMBOLS_ID = RodinKeyboardCorePlugin.PLUGIN_ID + ".symbols";
 
 	private static final String SYMBOL_EXTENSION = "symbol";
 	

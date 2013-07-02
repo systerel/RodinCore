@@ -36,7 +36,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.location.IAttributeLocation;
-import org.rodinp.keyboard.RodinKeyboardPlugin;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -83,7 +83,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 			case SWT.FocusOut:
 				if (adapter.isProposalPopupOpen())
 					break;
-				commit(element, column, RodinKeyboardPlugin.getDefault()
+				commit(element, column, RodinKeyboardUIPlugin.getDefault()
 						.translate(contents));
 				textWidget.getParent().dispose();
 				inputText.dispose();
@@ -124,7 +124,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 					break;
 				switch (event.detail) {
 				case SWT.TRAVERSE_RETURN:
-					commit(element, column, RodinKeyboardPlugin.getDefault()
+					commit(element, column, RodinKeyboardUIPlugin.getDefault()
 							.translate(contents));
 					textWidget.getParent().dispose();
 					inputText.dispose();
@@ -139,7 +139,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 					tree.setFocus();
 					break;
 				case SWT.TRAVERSE_TAB_NEXT:
-					commit(element, column, RodinKeyboardPlugin.getDefault()
+					commit(element, column, RodinKeyboardUIPlugin.getDefault()
 							.translate(contents));
 					textWidget.getParent().dispose();
 					inputText.dispose();
@@ -147,7 +147,7 @@ public abstract class ElementText extends TimerText implements ModifyListener {
 					event.doit = false;
 					break;
 				case SWT.TRAVERSE_TAB_PREVIOUS:
-					commit(element, column, RodinKeyboardPlugin.getDefault()
+					commit(element, column, RodinKeyboardUIPlugin.getDefault()
 							.translate(contents));
 					textWidget.getParent().dispose();
 					inputText.dispose();

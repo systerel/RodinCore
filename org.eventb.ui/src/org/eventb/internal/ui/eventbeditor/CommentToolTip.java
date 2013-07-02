@@ -47,7 +47,7 @@ import org.eventb.internal.ui.TimerText;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.eventbeditor.manipulation.CommentAttributeManipulation;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.keyboard.preferences.PreferenceConstants;
+import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 public class CommentToolTip {
 	Shell parentShell;

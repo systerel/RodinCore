@@ -13,7 +13,7 @@ package fr.systerel.editor.internal.editors;
 import static org.eclipse.ui.actions.ActionFactory.REDO;
 import static org.eclipse.ui.actions.ActionFactory.UNDO;
 import static org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE;
-import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.operations.IUndoContext;

@@ -72,7 +72,7 @@ import org.eventb.internal.ui.prover.ProverUIUtils;
 import org.eventb.internal.ui.prover.TacticHyperlinkManager;
 import org.eventb.internal.ui.prover.TimeTracker;
 import org.eventb.internal.ui.prover.YellowBoxMaker;
-import org.rodinp.keyboard.preferences.PreferenceConstants;
+import org.rodinp.keyboard.ui.preferences.PreferenceConstants;
 
 /**
  * @author htson

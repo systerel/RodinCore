@@ -14,7 +14,7 @@
 package org.eventb.internal.ui.prooftreeui;
 
 import static org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils.setupCommentTooltip;
-import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;

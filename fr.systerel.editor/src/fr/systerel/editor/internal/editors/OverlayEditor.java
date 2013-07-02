@@ -70,7 +70,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.emf.api.itf.ILElement;
 import org.rodinp.core.location.IAttributeLocation;
-import org.rodinp.keyboard.RodinKeyboardPlugin;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 import fr.systerel.editor.internal.actions.StyledTextEditAction;
 import fr.systerel.editor.internal.documentModel.DocumentMapper;
@@ -207,7 +207,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 	
 	private static boolean modifyingText = false;
 
-	private final ModifyListener eventBTranslator = RodinKeyboardPlugin
+	private final ModifyListener eventBTranslator = RodinKeyboardUIPlugin
 			.getDefault().createRodinModifyListener();
 
 	private final ContentProposalManager contentProposal;
@@ -452,7 +452,7 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		final String text;
 		if (!contentType.equals(RodinConfiguration.COMMENT_TYPE)) {
 			// force translation
-			text = RodinKeyboardPlugin.getDefault().translate(original);
+			text = RodinKeyboardUIPlugin.getDefault().translate(original);
 		} else {
 			text = original;
 		}

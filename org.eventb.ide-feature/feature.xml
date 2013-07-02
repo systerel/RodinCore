@@ -89,7 +89,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.rodinp.keyboard"
+         id="org.rodinp.keyboard.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

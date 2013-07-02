@@ -61,7 +61,7 @@ import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.location.IAttributeLocation;
-import org.rodinp.keyboard.RodinKeyboardPlugin;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -513,7 +513,7 @@ public abstract class EventBDialog extends Dialog {
 	}
 
 	protected String translate(IEventBInputText text) {
-		return RodinKeyboardPlugin.getDefault().translate(
+		return RodinKeyboardUIPlugin.getDefault().translate(
 				text.getTextWidget().getText());
 	}
 	

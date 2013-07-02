@@ -30,7 +30,7 @@
 			         org.rodinp,
 			         org.rodinp.core,
 	         		 org.rodinp.core.emf,
-			         org.rodinp.keyboard,
+			         org.rodinp.keyboard.ui,
 			         org.rodinp.keyboard.core,
 			         org.rodinp.platform"
 			qualifier="r${SVNrev}"

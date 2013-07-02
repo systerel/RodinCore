@@ -5,4 +5,4 @@ Bundle-SymbolicName: org.eventb.keyboard;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.rodinp.keyboard
+Require-Bundle: org.rodinp.keyboard.ui

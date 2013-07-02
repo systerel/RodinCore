@@ -16,7 +16,7 @@ package org.eventb.internal.ui.eventbeditor;
 
 import static org.rodinp.core.RodinMarkerUtil.RODIN_PROBLEM_MARKER;
 import static org.rodinp.core.RodinMarkerUtil.getElement;
-import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import java.util.HashSet;
 import java.util.Set;

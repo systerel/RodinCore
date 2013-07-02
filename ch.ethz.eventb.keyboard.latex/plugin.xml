@@ -5,7 +5,7 @@
    <extension
          id="LaTeX"
          name="LaTeX-style keyboard combinations"
-         point="org.rodinp.keyboard.symbols">
+         point="org.rodinp.keyboard.core.symbols">
       <symbol
             combo="\nat"
             id="NAT"

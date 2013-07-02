@@ -19,7 +19,7 @@ import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.searchhypothesis.SearchHypothesis;
 import org.eventb.ui.prover.IProofCommand;
 import org.rodinp.core.RodinDBException;
-import org.rodinp.keyboard.RodinKeyboardPlugin;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 public class SearchHypotheses implements IProofCommand {
 
@@ -27,7 +27,7 @@ public class SearchHypotheses implements IProofCommand {
 	public void apply(IUserSupport us, Predicate hyp, String[] inputs,
 			IProgressMonitor monitor) throws RodinDBException {
 		// TODO should have been fixed at the root (the text widget) rather than here
-		final String input = RodinKeyboardPlugin.getDefault().translate(
+		final String input = RodinKeyboardUIPlugin.getDefault().translate(
 				inputs[0]);
 		final String searched = input.replaceAll("\r", "").replaceAll("\n", "");
 		us.searchHyps(searched);

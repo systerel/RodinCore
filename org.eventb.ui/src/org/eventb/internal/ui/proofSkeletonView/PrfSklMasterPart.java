@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     Systerel - initial API and implementation
- *     ETH Zurich - adapted to org.rodinp.keyboard
+ *     ETH Zurich - adapted to org.rodinp.keyboard.ui
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
 import static org.eventb.internal.ui.prooftreeui.ProofTreeUIUtils.setupCommentTooltip;
-import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;

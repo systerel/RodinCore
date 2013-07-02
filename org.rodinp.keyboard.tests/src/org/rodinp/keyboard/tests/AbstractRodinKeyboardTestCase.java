@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
 import org.junit.After;
 import org.junit.Before;
-import org.rodinp.keyboard.RodinKeyboardPlugin;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -36,7 +36,7 @@ public abstract class AbstractRodinKeyboardTestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		RodinKeyboardPlugin keyboardPlugin = RodinKeyboardPlugin.getDefault();
+		RodinKeyboardUIPlugin keyboardPlugin = RodinKeyboardUIPlugin.getDefault();
 		widget = keyboardPlugin.getRodinKeyboardViewWidget();
 
 		listener = keyboardPlugin.getRodinModifyListener();

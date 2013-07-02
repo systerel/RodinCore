@@ -99,8 +99,8 @@
 	        <copy todir="${buildDirectory}/plugins/org.rodinp.core">
 	            <fileset dir="${builder}/../org.rodinp.core" />
 	        </copy>
-	        <copy todir="${buildDirectory}/plugins/org.rodinp.keyboard">
-	            <fileset dir="${builder}/../org.rodinp.keyboard" />
+	        <copy todir="${buildDirectory}/plugins/org.rodinp.keyboard.ui">
+	            <fileset dir="${builder}/../org.rodinp.keyboard.ui" />
 	        </copy>
 	        <copy todir="${buildDirectory}/plugins/org.rodinp.keyboard.core">
 	            <fileset dir="${builder}/../org.rodinp.keyboard.core" />

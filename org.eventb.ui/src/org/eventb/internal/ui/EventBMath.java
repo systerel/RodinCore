@@ -15,7 +15,7 @@ package org.eventb.internal.ui;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Text;
-import org.rodinp.keyboard.RodinKeyboardPlugin;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -35,7 +35,7 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 	public EventBMath(final Text text) {
 		super(text);
 		text.addMouseListener(new DoubleClickTextListener(text));
-		final RodinKeyboardPlugin keyBPlugin = RodinKeyboardPlugin.getDefault();
+		final RodinKeyboardUIPlugin keyBPlugin = RodinKeyboardUIPlugin.getDefault();
 		text.addModifyListener(keyBPlugin.createRodinModifyListener());
 		text.addFocusListener(new FocusAdapter() {
 
@@ -52,7 +52,7 @@ public class EventBMath extends EventBControl implements IEventBInputText {
 		final Text text = getTextWidget();
 		if (text.getEditable()) {
 			final String before = text.getText();
-			final String after = RodinKeyboardPlugin.getDefault().translate(before);
+			final String after = RodinKeyboardUIPlugin.getDefault().translate(before);
 			if (!before.equals(after)) {
 				text.setText(after);
 			}

@@ -16,7 +16,7 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Text;
-import org.rodinp.keyboard.RodinKeyboardPlugin;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -26,7 +26,7 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
  */
 public class EventBStyledText extends EventBControl implements IEventBInputText {
 
-	private static final RodinKeyboardPlugin KEYBOARD_PLUGIN = RodinKeyboardPlugin.getDefault();
+	private static final RodinKeyboardUIPlugin KEYBOARD_PLUGIN = RodinKeyboardUIPlugin.getDefault();
 	private final StyledText text;
 
 	/**

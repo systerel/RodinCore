@@ -13,7 +13,7 @@ package org.rodinp.keyboard.tests;
 
 import static org.junit.Assert.assertEquals;
 
-import org.rodinp.keyboard.RodinKeyboardPlugin;
+import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
  * @author htson
@@ -24,7 +24,7 @@ import org.rodinp.keyboard.RodinKeyboardPlugin;
 public abstract class AbstractText2MathTestCase {
 
 	protected void testTranslator(String message, String input, String expected) {
-		RodinKeyboardPlugin kbrdPlugin = RodinKeyboardPlugin.getDefault();
+		RodinKeyboardUIPlugin kbrdPlugin = RodinKeyboardUIPlugin.getDefault();
 		assertEquals("1. " + message, expected, kbrdPlugin.translate(input));
 		assertEquals("2. " + message, expected + " ", kbrdPlugin
 				.translate(input + " "));

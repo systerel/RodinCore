@@ -5,7 +5,7 @@
    <extension
          id="Common"
          name="Common Event-B keyboard combinations"
-         point="org.rodinp.keyboard.symbols">
+         point="org.rodinp.keyboard.core.symbols">
       <symbol
             combo="NAT"
             id="NAT"
@@ -380,7 +380,7 @@
       </symbol>
    </extension>
    <extension
-         point="org.rodinp.keyboard.symbols">
+         point="org.rodinp.keyboard.core.symbols">
       <symbol
             combo=",,"
             id="mapsto1"

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.proofSkeletonView;
 
-import static org.rodinp.keyboard.preferences.PreferenceConstants.RODIN_MATH_FONT;
+import static org.rodinp.keyboard.ui.preferences.PreferenceConstants.RODIN_MATH_FONT;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.JFaceResources;
