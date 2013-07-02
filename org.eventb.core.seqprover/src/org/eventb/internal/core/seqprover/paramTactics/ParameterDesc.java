@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ public class ParameterDesc implements IParameterDesc {
 	private final Object defaultValue;
 	private final String description;
 
-	private ParameterDesc(String label, ParameterType type,
+	public ParameterDesc(String label, ParameterType type,
 			Object defaultValue, String description) {
 		this.label = label;
 		this.type = type;
@@ -75,5 +75,48 @@ public class ParameterDesc implements IParameterDesc {
 	public String getDescription() {
 		return description;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((defaultValue == null) ? 0 : defaultValue.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		ParameterDesc other = (ParameterDesc) obj;
+		if (defaultValue == null) {
+			if (other.defaultValue != null) {
+				return false;
+			}
+		} else if (!defaultValue.equals(other.defaultValue)) {
+			return false;
+		}
+		if (label == null) {
+			if (other.label != null) {
+				return false;
+			}
+		} else if (!label.equals(other.label)) {
+			return false;
+		}
+		if (type != other.type) {
+			return false;
+		}
+		return true;
+	}
+
 }

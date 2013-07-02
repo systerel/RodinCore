@@ -11,7 +11,7 @@
 package org.eventb.internal.core.preferences;
 
 import org.eventb.core.preferences.IPrefMapEntry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 
 /**
  * Common protocol for tactic descriptor references.

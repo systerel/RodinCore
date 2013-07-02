@@ -13,7 +13,7 @@ package org.eventb.internal.ui.preferences.tactics;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 
 /**
  * @author Nicolas Beauger

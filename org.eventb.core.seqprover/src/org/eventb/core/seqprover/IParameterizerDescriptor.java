@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     Systerel - initial API and implementation
  *******************************************************************************/
 package org.eventb.core.seqprover;
-
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
  * Common protocol for parameterizer descriptors.
@@ -35,6 +33,7 @@ public interface IParameterizerDescriptor {
 	 * </p>
 	 * 
 	 * @return a tactic descriptor
+	 * @since 3.0
 	 */
 	ITacticDescriptor getTacticDescriptor();
 
@@ -63,8 +62,10 @@ public interface IParameterizerDescriptor {
 	 * @param id
 	 *            the id of the resulting tactic
 	 * @return a tactic
-	 * @throws IllegalArgumentException
-	 *             in case there is a problem instantiating the parameterizer
+	 * @throws IllegalStateException
+	 *             in case there is a problem instantiating the tactic (the
+	 *             class given in the extension point cannot be loaded or does
+	 *             not implement the right interface)
 	 * @since 2.3
 	 */
 	IParamTacticDescriptor instantiate(IParameterValuation valuation, String id)
@@ -90,8 +91,10 @@ public interface IParameterizerDescriptor {
 	 * @param valuation
 	 *            a parameter valuation
 	 * @return a new tactic with the given id
-	 * @throws IllegalArgumentException
-	 *             in case there is a problem instantiating the parameterizer
+	 * @throws IllegalStateException
+	 *             in case there is a problem instantiating the tactic (the
+	 *             class given in the extension point cannot be loaded or does
+	 *             not implement the right interface)
 	 * @since 2.5
 	 */
 	IParamTacticDescriptor instantiate(String id, String name,

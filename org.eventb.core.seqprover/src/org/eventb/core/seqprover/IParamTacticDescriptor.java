@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.seqprover;
 
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
  * Common protocol for instantiated parameterized tactic descriptors.

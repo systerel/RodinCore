@@ -16,7 +16,7 @@ import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.ma
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eventb.core.preferences.autotactics.ITacticProfileCache;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 
 public class TacticsProfilesCache extends
 		StorablePreferenceMap<ITacticDescriptor> implements ITacticProfileCache {

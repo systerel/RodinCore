@@ -11,18 +11,19 @@
 package org.eventb.internal.core.preferences;
 
 import org.eventb.core.preferences.IPrefMapEntry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ITacticDescriptor;
 
 /**
+ * A reference to another tactic descriptor in a preference map.
+ * 
  * @author Nicolas Beauger
- *
  */
 public class TacticDescriptorRef implements ITacticDescriptorRef {
 
 	private static final String INVALID_REFERENCE = "INVALID REFERENCE: ";
 	private final IPrefMapEntry<ITacticDescriptor> prefMapEntry;
-	
+
 	public TacticDescriptorRef(IPrefMapEntry<ITacticDescriptor> prefUnit) {
 		this.prefMapEntry = prefUnit;
 	}
@@ -38,7 +39,7 @@ public class TacticDescriptorRef implements ITacticDescriptorRef {
 		sb.append(prefMapEntry.getKey());
 		return sb.toString();
 	}
-	
+
 	@Override
 	public String getTacticID() {
 		final ITacticDescriptor desc = getDesc();
@@ -67,12 +68,17 @@ public class TacticDescriptorRef implements ITacticDescriptorRef {
 	}
 
 	@Override
-	public ITactic getTacticInstance() throws IllegalArgumentException {
+	public boolean isInstantiable() {
+		return true;
+	}
+
+	@Override
+	public ITactic getTacticInstance() {
 		final ITacticDescriptor desc = getDesc();
 		if (desc == null) {
-			throw new IllegalArgumentException(makeInvalidReference());
+			throw new IllegalStateException(makeInvalidReference());
 		}
-		
+
 		return desc.getTacticInstance();
 	}
 

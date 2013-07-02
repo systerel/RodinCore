@@ -15,7 +15,7 @@ package org.eventb.internal.core.pom;
 import static org.eventb.internal.core.preferences.PreferenceUtils.loopOnAllPending;
 
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 
 public class POMTacticPreference extends AutoTacticPreference {

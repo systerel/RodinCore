@@ -12,7 +12,6 @@ package org.eventb.core.seqprover;
 
 import java.util.List;
 
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
 /**
  * Common protocol for combined tactic descriptors.

@@ -11,12 +11,12 @@
 package org.eventb.core.tests.preferences;
 
 import static java.util.Arrays.asList;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,17 +28,15 @@ import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IPreferenceCheckResult;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParameterSetting;
 import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
-import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.tests.preferences.TestingAutoTactics.CombTestAutoTac;
-import org.eventb.core.tests.preferences.TestingAutoTactics.CombinedTestAutoTac;
 import org.eventb.core.tests.preferences.TestingAutoTactics.ParamerizerTestAutoTac;
 import org.eventb.core.tests.preferences.TestingAutoTactics.SimpleTestAutoTac;
 import org.eventb.internal.core.preferences.ITacticDescriptorRef;
@@ -57,15 +55,19 @@ public class TacticPreferenceTests {
 	}
 
 	private static ITacticDescriptor makeSimple() {
-		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
-		return reg.getTacticDescriptor(SimpleTestAutoTac.TACTIC_ID);
+		return makeSimple(SimpleTestAutoTac.TACTIC_ID);
 	}
 
-	private static void assertSimple(ITacticDescriptor desc) {
+	private static ITacticDescriptor makeSimple(String tacticId) {
+		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
+		return reg.getTacticDescriptor(tacticId);
+	}
+
+	private static void assertSimple(ITacticDescriptor desc, String expectedId) {
 		assertNotNull(desc);
-		assertEquals(SimpleTestAutoTac.TACTIC_ID, desc.getTacticID());
-		final ITactic inst = desc.getTacticInstance();
-		assertTrue(inst instanceof SimpleTestAutoTac);
+		assertEquals(expectedId, desc.getTacticID());
+		// no exception thrown
+		desc.getTacticInstance();
 	}
 	
 	private static IParamTacticDescriptor makeParam() {
@@ -73,9 +75,13 @@ public class TacticPreferenceTests {
 	}
 	
 	private static IParamTacticDescriptor makeParam(boolean b, int i, long l, String s) {
+		return makeParam(ParamerizerTestAutoTac.PARAMETERIZER_ID, b, i, l, s);
+	}
+
+	private static IParamTacticDescriptor makeParam(String parameterizerId, boolean b, int i, long l, String s) {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final IParameterizerDescriptor parameterizer = reg
-				.getParameterizerDescriptor(ParamerizerTestAutoTac.PARAMETERIZER_ID);
+				.getParameterizerDescriptor(parameterizerId);
 		final IParameterSetting params = parameterizer.makeParameterSetting();
 		params.setBoolean("b", b);
 		params.setInt("i", i);
@@ -91,21 +97,30 @@ public class TacticPreferenceTests {
 	}
 	
 	private static ICombinedTacticDescriptor makeCombined(ITacticDescriptor... tactics) {
+		return makeCombined(CombTestAutoTac.COMBINATOR_ID, tactics);
+	}
+
+	private static ICombinedTacticDescriptor makeCombined(String combinatorId, ITacticDescriptor... tactics) {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final ICombinatorDescriptor combinator = reg
-				.getCombinatorDescriptor(CombTestAutoTac.COMBINATOR_ID);
+				.getCombinatorDescriptor(combinatorId);
 		return combinator.combine(Arrays.asList(tactics),
 				"combined id");
 	}
 
-	private static void assertCombined(ITacticDescriptor actual, boolean sameMap,
-			ITacticDescriptor... tactics) {
+	private static void assertCombined(ITacticDescriptor actual,
+			boolean sameMap, ITacticDescriptor... tactics) {
+		assertCombined(actual, sameMap, CombTestAutoTac.COMBINATOR_ID, tactics);
+	}
+
+	private static void assertCombined(ITacticDescriptor actual,
+			boolean sameMap, String combinatorId, ITacticDescriptor... tactics) {
 		assertNotNull(actual);
 		assertTrue(actual instanceof ICombinedTacticDescriptor);
 		final ICombinedTacticDescriptor act = (ICombinedTacticDescriptor) actual;
-		assertEquals(CombTestAutoTac.COMBINATOR_ID, act.getCombinatorId());
-		final ITactic inst = actual.getTacticInstance();
-		assertTrue(inst instanceof CombinedTestAutoTac);
+		assertEquals(combinatorId, act.getCombinatorId());
+		// no exception
+		actual.getTacticInstance();
 		final List<ITacticDescriptor> actualTactics = act.getCombinedTactics();
 		assertEquals(tactics.length, actualTactics.size());
 		for (int i = 0; i < tactics.length; i++) {
@@ -149,16 +164,18 @@ public class TacticPreferenceTests {
 		}
 	
 		if (expected instanceof ICombinedTacticDescriptor) {
-			final List<ITacticDescriptor> combinedTactics = ((ICombinedTacticDescriptor) expected)
+			final ICombinedTacticDescriptor expectedComb = (ICombinedTacticDescriptor) expected;
+			final List<ITacticDescriptor> combinedTactics = expectedComb
 					.getCombinedTactics();
 			final ITacticDescriptor[] combs = combinedTactics
 					.toArray(new ITacticDescriptor[combinedTactics.size()]);
-			assertCombined(actual, sameMap, combs);
+			assertCombined(actual, sameMap, expectedComb.getCombinatorId(),
+					combs);
 		} else if (expected instanceof IParamTacticDescriptor) {
-				assertParam(actual,
+			assertParam(actual,
 					((IParamTacticDescriptor) expected).getValuation());
 		} else {
-			assertSimple(actual);
+			assertSimple(actual, expected.getTacticID());
 		}
 	}
 
@@ -193,9 +210,21 @@ public class TacticPreferenceTests {
 	}
 
 	@Test
+	public void testUnknownTactic() throws Exception {
+		final ITacticDescriptor desc = makeSimple("unknownTestTactic");
+		assertExtractInject(desc);
+	}
+
+	@Test
 	public void testParamTactic() throws Exception {
 		final IParamTacticDescriptor desc = makeParam();
 		
+		assertExtractInject(desc);
+	}
+
+	@Test
+	public void testUnknownParameterizer() throws Exception {
+		final IParamTacticDescriptor desc = makeParam("unknownTestParameterizer", false, 123, 314L, "unknownParam");
 		assertExtractInject(desc);
 	}
 
@@ -208,6 +237,13 @@ public class TacticPreferenceTests {
 		assertExtractInject(desc);
 	}
 	
+	@Test
+	public void testUnknownCombinator() throws Exception {
+		final ITacticDescriptor simple = makeSimple();
+		final ICombinedTacticDescriptor desc = makeCombined("unknownCombinator", simple);
+		assertExtractInject(desc);
+	}
+
 	@Test
 	public void testCombinedParam() throws Exception {
 		final IParamTacticDescriptor param = makeParam();

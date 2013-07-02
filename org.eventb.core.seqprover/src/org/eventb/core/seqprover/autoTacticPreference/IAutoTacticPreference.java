@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticPreference;
 
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ITacticDescriptor;
 
 /**
  * @author htson
@@ -37,8 +37,8 @@ public interface IAutoTacticPreference {
 	/**
 	 * Returns the descriptor of the default tactic.
 	 * 
-	 * @return
-	 * @since 2.3
+	 * @return the descriptor of the default tactic
+	 * @since 3.0
 	 */
 	ITacticDescriptor getDefaultDescriptor();
 	
@@ -78,7 +78,7 @@ public interface IAutoTacticPreference {
 	 * 
 	 * @param tacticDesc
 	 *            a tactic descriptor
-	 * @since 2.3
+	 * @since 3.0
 	 */
 	void setSelectedDescriptor(ITacticDescriptor tacticDesc);
 

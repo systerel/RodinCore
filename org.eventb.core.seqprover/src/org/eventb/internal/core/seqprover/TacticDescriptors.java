@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
@@ -26,6 +25,7 @@ import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.ITacticCombinator;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.ITacticParameterizer;
 import org.eventb.internal.core.seqprover.paramTactics.ParameterSetting;
 
@@ -39,8 +39,8 @@ public class TacticDescriptors {
 	public static <T> T loadInstance(
 			IConfigurationElement configurationElement, Class<T> expectedClass,
 			String id) {
-	if (configurationElement == null) {
-			throw new IllegalArgumentException("Null configuration element");
+		if (configurationElement == null) {
+			throw new IllegalStateException("Null configuration element");
 		}
 
 		// Try creating an instance of the specified class
@@ -48,7 +48,7 @@ public class TacticDescriptors {
 			final Object loadedInstance = configurationElement
 					.createExecutableExtension("class");
 			if (!expectedClass.isInstance(loadedInstance)) {
-				throw new IllegalArgumentException("unexpected instance");
+				throw new IllegalStateException("unexpected instance");
 			}
 			if (AutoTacticRegistry.DEBUG)
 				System.out.println("Successfully loaded " + id);
@@ -61,7 +61,7 @@ public class TacticDescriptors {
 			Util.log(e, errorMsg);
 			if (AutoTacticRegistry.DEBUG)
 				System.out.println(errorMsg);
-			throw new IllegalArgumentException(errorMsg, e);
+			throw new IllegalStateException(errorMsg, e);
 		}
 	}
 
@@ -95,6 +95,10 @@ public class TacticDescriptors {
 			return name;
 		}
 
+		@Override
+		public boolean isInstantiable() {
+			return true;
+		}
 	}
 
 	public static class UninstantiableTacticDescriptor extends
@@ -106,7 +110,12 @@ public class TacticDescriptors {
 		}
 
 		@Override
-		public ITactic getTacticInstance() throws IllegalArgumentException {
+		public boolean isInstantiable() {
+			return false;
+		}
+
+		@Override
+		public ITactic getTacticInstance() {
 			throw new UnsupportedOperationException(
 					"this descriptor cannot be instantiated");
 		}
@@ -211,17 +220,17 @@ public class TacticDescriptors {
 		}
 
 		@Override
-		public ITactic getTacticInstance() throws IllegalArgumentException {
+		public ITactic getTacticInstance() {
 			if (tactic != null) {
 				return tactic;
 			}
 			try {
 				tactic = parameterizer.getTactic(valuation);
 			} catch (Throwable t) {
-				throw new IllegalArgumentException(t);
+				throw new IllegalStateException(t);
 			}
 			if (tactic == null) {
-				throw new IllegalArgumentException(
+				throw new IllegalStateException(
 						"null tactic returned by parameterizer");
 			}
 			return tactic;
@@ -322,7 +331,7 @@ public class TacticDescriptors {
 		}
 
 		@Override
-		public ITactic getTacticInstance() throws IllegalArgumentException {
+		public ITactic getTacticInstance() {
 			if (tactic != null) {
 				return tactic;
 			}
@@ -333,10 +342,10 @@ public class TacticDescriptors {
 			try {
 				tactic = combinator.getTactic(combined);
 			} catch (Throwable t) {
-				throw new IllegalArgumentException(t);
+				throw new IllegalStateException(t);
 			}
 			if (tactic == null) {
-				throw new IllegalArgumentException(
+				throw new IllegalStateException(
 						"null tactic returned by combinator");
 			}
 			return tactic;

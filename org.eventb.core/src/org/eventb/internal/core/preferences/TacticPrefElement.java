@@ -12,7 +12,7 @@ package org.eventb.internal.core.preferences;
 
 import org.eventb.core.preferences.IPrefElementTranslator;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 
 /**
@@ -32,20 +32,9 @@ public class TacticPrefElement implements
 	public ITacticDescriptor inject(String str) {
 		final IAutoTacticRegistry tacticRegistry = SequentProver
 				.getAutoTacticRegistry();
-		if (!tacticRegistry.isRegistered(str)) {
-			printDebug("Trying to inject a tactic which is not registered "
-					+ str);
-			return null;
-		}
-
 		final ITacticDescriptor tacticDescriptor = tacticRegistry
 				.getTacticDescriptor(str);
 		return tacticDescriptor;
 	}
 
-	private void printDebug(String msg) {
-		if (PreferenceUtils.DEBUG) {
-			System.out.println(msg);
-		}
-	}
 }

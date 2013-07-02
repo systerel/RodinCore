@@ -46,9 +46,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 
 /**

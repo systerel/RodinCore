@@ -65,7 +65,7 @@ import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.ICacheListener;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.autotactics.ITacticProfileCache;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.preferences.AbstractFieldPreferenceAndPropertyPage;
 import org.eventb.internal.ui.preferences.EnabledComboEditor;

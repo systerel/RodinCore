@@ -62,8 +62,8 @@ import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.preferences.autotactics.TacticPreferenceFactory;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators;
@@ -269,9 +269,6 @@ public class PreferenceUtils {
 		final IAutoTacticRegistry reg = SequentProver.getAutoTacticRegistry();
 		final ArrayList<ITacticDescriptor> descs = new ArrayList<ITacticDescriptor>();
 		for (String descId : tacticIDs) {
-			if (!reg.isRegistered(descId)) {
-				continue;
-			}
 			final ITacticDescriptor desc = reg.getTacticDescriptor(descId);
 			descs.add(desc);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
  *     Systerel - added tactic combinators
  *******************************************************************************/
 package org.eventb.core.seqprover;
-
 
 /**
  * Common protocol for accessing the Auto Tactic Registry.
@@ -76,17 +75,14 @@ public interface IAutoTacticRegistry {
 	 * <p>
 	 * Clients should first use {@link #isRegistered(String)} to check if a
 	 * tactic extension with the given id is registered. In case no tactic
-	 * extension with the given id has been registered an
-	 * {@link IllegalArgumentException} is thrown.
+	 * extension with the given id has been registered a placeholder is
+	 * returned. Place holder tactics always fail.
 	 * </p>
 	 * 
 	 * @param tacticID
 	 *            the id of the tactic
 	 * @return the tactic descriptor of the tactic with the given id
-	 * 
-	 * @throws IllegalArgumentException
-	 *             in case no tactic extension with the given id has been
-	 *             registered
+ 	 * @since 3.0
 	 */
 	ITacticDescriptor getTacticDescriptor(String tacticID)
 			throws IllegalArgumentException;
@@ -105,12 +101,12 @@ public interface IAutoTacticRegistry {
 	IParameterizerDescriptor[] getParameterizerDescriptors();
 
 	/**
-	 * Returns parameterizer descriptor with given id, or <code>null</code> if
+	 * Returns parameterizer descriptor with given id, or a placeholder if
 	 * it is not registered.
 	 * 
 	 * @param id
 	 *            a parameterizer id
-	 * @return a parameterizer descriptor, or <code>null</code>
+	 * @return a parameterizer descriptor
 	 * @since 2.3
 	 */
 	IParameterizerDescriptor getParameterizerDescriptor(String id);
@@ -128,12 +124,12 @@ public interface IAutoTacticRegistry {
 	ICombinatorDescriptor[] getCombinatorDescriptors();
 
 	/**
-	 * Returns combinator descriptor with given id, or <code>null</code> if it
+	 * Returns combinator descriptor with given id, or a placeholder if it
 	 * is not registered.
 	 * 
 	 * @param id
 	 *            a combinator id
-	 * @return a combinator descriptor, or <code>null</code>
+	 * @return a combinator descriptor
 	 * @since 2.3
 	 */
 	ICombinatorDescriptor getCombinatorDescriptor(String id);
@@ -142,69 +138,8 @@ public interface IAutoTacticRegistry {
 	 * Returns all available dynamically provided tactics.
 	 * 
 	 * @return an array of tactic descriptors
-	 * @since 2.5
+	 * @since 3.0
 	 */
 	ITacticDescriptor[] getDynTactics();
 
-	/**
-	 * An {@link ITacticDescriptor} provides a wrapper around the information
-	 * contained in a tactic extension.
-	 * 
-	 * <p>
-	 * Each tactic extension corresponds to a tactic descriptor. The tactic
-	 * descriptor for a tactic extension can be obtained using the
-	 * {@link IAutoTacticRegistry#getTacticDescriptor(String)} method.
-	 * </p>
-	 * 
-	 * @noimplement This interface is not intended to be implemented by clients.
-	 * @noextend This interface is not intended to be extended by clients.
-	 * @author Farhad Mehta
-	 * 
-	 */
-	public interface ITacticDescriptor {
-
-		/**
-		 * Returns the id of the tactic extension.
-		 * 
-		 * @return the id of the tactic extension
-		 */
-		String getTacticID();
-
-		/**
-		 * Returns the name of the tactic extension.
-		 * 
-		 * @return the name of the tactic extension
-		 */
-		String getTacticName();
-
-		/**
-		 * Returns the description of the tactic extension.
-		 * 
-		 * <p>
-		 * In case no description is provided for a registered tactic, the empty
-		 * string is returned.
-		 * </p>
-		 * 
-		 * @return the description of the tactic with the given id, or the empty
-		 *         string if no description is provided.
-		 * 
-		 */
-		String getTacticDescription();
-
-		/**
-		 * Returns the singleton instance of the tactic corresponding to the
-		 * tactic extension.
-		 * <p>
-		 * In case there is a problem instantiating the tactic class, an
-		 * {@link IllegalArgumentException} is thrown.
-		 * </p>
-		 * 
-		 * @return an instance of the tactic
-		 * 
-		 * @throws IllegalArgumentException
-		 *             in case there is a problem instantiating the tactic
-		 */
-		ITactic getTacticInstance() throws IllegalArgumentException;
-
-	}
 }

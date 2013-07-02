@@ -21,7 +21,7 @@ import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IReferenceMaker;
 import org.eventb.core.preferences.IXMLPrefSerializer;
 import org.eventb.core.preferences.ListPreference;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.preferences.PrefUnitTranslator;
 import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;

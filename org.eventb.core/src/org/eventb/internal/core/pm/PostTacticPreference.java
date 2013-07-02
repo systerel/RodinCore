@@ -13,7 +13,7 @@
 package org.eventb.internal.core.pm;
 
 import org.eventb.core.EventBPlugin;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 import org.eventb.internal.core.preferences.PreferenceUtils;
 

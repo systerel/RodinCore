@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticPreference;
 
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.Util;
 
@@ -82,7 +82,7 @@ public abstract class AutoTacticPreference implements IAutoTacticPreference {
 	}
 
 	/**
-	 * @since 2.3
+	 * @since 3.0
 	 */
 	@Override
 	public void setSelectedDescriptor(ITacticDescriptor tacticDesc) {

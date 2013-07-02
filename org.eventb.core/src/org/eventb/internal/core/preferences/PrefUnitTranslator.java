@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,6 @@ import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IXMLPrefSerializer;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
@@ -45,6 +44,7 @@ import org.eventb.core.seqprover.IParameterDesc.ParameterType;
 import org.eventb.core.seqprover.IParameterSetting;
 import org.eventb.core.seqprover.IParameterValuation;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
@@ -198,13 +198,7 @@ public class PrefUnitTranslator implements
 			final IAutoTacticRegistry reg = SequentProver
 					.getAutoTacticRegistry();
 			final String tacticId = getAttribute(e, TACTIC_ID);
-			if (!reg.isRegistered(tacticId)) {
-				throw handlePrefError("Unknown tactic: "
-						+ tacticId);
-			}
-			final ITacticDescriptor tacticDescriptor = reg
-					.getTacticDescriptor(tacticId);
-			return tacticDescriptor;
+			return reg.getTacticDescriptor(tacticId);
 		}
 
 		@Override
@@ -275,10 +269,6 @@ public class PrefUnitTranslator implements
 					.getAutoTacticRegistry();
 			final IParameterizerDescriptor parameterizer = reg
 					.getParameterizerDescriptor(parameterizerId);
-			if (parameterizer == null) {
-				throw handlePrefError("Unknown tactic parameterizer: "
-						+ parameterizerId);
-			}
 			final IParameterSetting paramSetting = parameterizer
 					.makeParameterSetting();
 
@@ -354,6 +344,9 @@ public class PrefUnitTranslator implements
 	private static class CombinedTacticTranslator implements
 			IInternalXMLSerializer<ICombinedTacticDescriptor> {
 
+		// Combinator ID suffix used when instantiation fails to use a placeholder instead.
+		private static final String PLACEHOLDER_SUFFIX = ".placeholder";
+
 		private static final CombinedTacticTranslator DEFAULT = new CombinedTacticTranslator();
 
 		public static CombinedTacticTranslator getDefault() {
@@ -380,16 +373,17 @@ public class PrefUnitTranslator implements
 		public ICombinedTacticDescriptor get(Node combined) {
 			assertName(combined, COMBINED);
 			final String tacticId = getAttribute(combined, TACTIC_ID);
-			final String combinatorId = getAttribute(combined, COMBINATOR_ID);
+			String combinatorId = getAttribute(combined, COMBINATOR_ID);
 
+			if (combinatorId.endsWith(PLACEHOLDER_SUFFIX)) {
+				// try to load the original combinator
+				combinatorId = combinatorId.substring(0,
+						combinatorId.lastIndexOf(PLACEHOLDER_SUFFIX));
+			}
 			final IAutoTacticRegistry reg = SequentProver
 					.getAutoTacticRegistry();
 			final ICombinatorDescriptor combinator = reg
 					.getCombinatorDescriptor(combinatorId);
-			if (combinator == null) {
-				throw handlePrefError("Unknown tactic combinator: "
-						+ combinatorId);
-			}
 			final NodeList childNodes = combined.getChildNodes();
 			final int length = childNodes.getLength();
 			final List<ITacticDescriptor> combs = new ArrayList<ITacticDescriptor>(
@@ -403,7 +397,17 @@ public class PrefUnitTranslator implements
 					continue;
 				combs.add(combDesc);
 			}
-			return combinator.combine(combs, tacticId);
+
+			try {
+				return combinator.combine(combs, tacticId);
+			} catch (IllegalArgumentException e) {
+				Util.log(e, "while loading preference with tactic combinator "
+						+ combinatorId + ", replaced by a placeholder");
+				final String placeholderCombinatorId = combinatorId + PLACEHOLDER_SUFFIX;
+				final ICombinatorDescriptor placeholderCombinator = reg
+						.getCombinatorDescriptor(placeholderCombinatorId);
+				return placeholderCombinator.combine(combs, tacticId);
+			}
 		}
 
 		@Override
@@ -427,7 +431,7 @@ public class PrefUnitTranslator implements
 					.getAutoTacticRegistry().getCombinatorDescriptor(
 							combinatorId);
 			if (combinator == null) {
-				// should not happen, as deserialization would have failed before
+				// should not happen, as deserialization would have made a placeholder
 				return desc;
 			}
 			return combinator.combine(newCombs, desc.getTacticID());

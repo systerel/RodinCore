@@ -15,8 +15,8 @@ import static org.eventb.internal.ui.preferences.tactics.TacticPreferenceUtils.p
 import org.eclipse.swt.widgets.Composite;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.autotactics.ITacticProfileCache;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 
 /**
  * @author Nicolas Beauger

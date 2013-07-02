@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 
 /**
  * Initializer for plug-in preferences.

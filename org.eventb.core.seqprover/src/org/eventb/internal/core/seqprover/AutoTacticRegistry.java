@@ -32,7 +32,11 @@ import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IDynTacticProvider;
 import org.eventb.core.seqprover.IParameterDesc;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
+import org.eventb.internal.core.seqprover.Placeholders.CombinatorDescriptorPlaceholder;
+import org.eventb.internal.core.seqprover.Placeholders.ParameterizerPlaceholder;
+import org.eventb.internal.core.seqprover.Placeholders.TacticPlaceholder;
 import org.eventb.internal.core.seqprover.TacticDescriptors.CombinatorDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.ParameterizerDescriptor;
 import org.eventb.internal.core.seqprover.TacticDescriptors.TacticDescriptor;
@@ -107,8 +111,8 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		}
 		final ITacticDescriptor tacticDesc = registry.get(id);
 		if (tacticDesc == null) {
-			// Unknown tactic id, throw exception.
-			throw new IllegalArgumentException("Tactic with id:" + id + " not registered.");
+			// Unknown tactic id, return placeholder.
+			return new TacticPlaceholder(id);
 		}
 		return tacticDesc;
 	}
@@ -328,7 +332,12 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		if (registry == null) {
 			loadRegistry();
 		}
-		return parameterizers.get(id);
+		final IParameterizerDescriptor parameterizer = parameterizers.get(id);
+		if (parameterizer == null) {
+			// unknown parameterizer, return placeholder
+			return new ParameterizerPlaceholder(id);
+		}
+		return parameterizer;
 	}
 
 	@Override
@@ -345,7 +354,12 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 		if (registry == null) {
 			loadRegistry();
 		}
-		return combinators.get(id);
+		final ICombinatorDescriptor combinator = combinators.get(id);
+		if (combinator == null) {
+			// unknown combinator, return a placeholder
+			return new CombinatorDescriptorPlaceholder(id);
+		}
+		return combinator;
 	}
 	
 	@Override

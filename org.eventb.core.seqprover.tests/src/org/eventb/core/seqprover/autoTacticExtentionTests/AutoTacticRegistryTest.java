@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ package org.eventb.core.seqprover.autoTacticExtentionTests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -25,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eventb.core.seqprover.IAutoTacticRegistry;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.IParamTacticDescriptor;
 import org.eventb.core.seqprover.IParameterDesc;
@@ -33,6 +31,7 @@ import org.eventb.core.seqprover.IParameterDesc.ParameterType;
 import org.eventb.core.seqprover.IParameterSetting;
 import org.eventb.core.seqprover.IParameterizerDescriptor;
 import org.eventb.core.seqprover.ITactic;
+import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticExtentionTests.IdentityTactic.FailTactic;
 import org.eventb.core.seqprover.autoTacticExtentionTests.ParameterizedTactics.FakeTactic;
@@ -42,7 +41,9 @@ import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.
 import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.OneOrMore;
 import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.Two;
 import org.eventb.core.seqprover.autoTacticExtentionTests.TestTacticCombinators.Zero;
-import org.junit.Ignore;
+import org.eventb.internal.core.seqprover.Placeholders.CombinatorDescriptorPlaceholder;
+import org.eventb.internal.core.seqprover.Placeholders.ParameterizerPlaceholder;
+import org.eventb.internal.core.seqprover.Placeholders.TacticPlaceholder;
 import org.junit.Test;
 
 /**
@@ -91,10 +92,11 @@ public class AutoTacticRegistryTest {
 		final String[] ids = registry.getRegisteredIDs();
 		assertFalse("Id " + id + " occurs in list " + ids,
 				Arrays.asList(ids).contains(id));
+		assertTrue(registry.getTacticDescriptor(id) instanceof TacticPlaceholder);
 		
-		assertNull(registry.getCombinatorDescriptor(id));
+		assertTrue(registry.getCombinatorDescriptor(id) instanceof CombinatorDescriptorPlaceholder);
 
-		assertNull(registry.getParameterizerDescriptor(id));
+		assertTrue(registry.getParameterizerDescriptor(id) instanceof ParameterizerPlaceholder);
 		
 	}
 	
@@ -103,10 +105,10 @@ public class AutoTacticRegistryTest {
 		final IParameterSetting defaultValuation = parameterizer
 				.makeParameterSetting();
 		try {
-			// Illegal Argument Expected
+			// Illegal State Expected
 			parameterizer.instantiate(defaultValuation, "id");
-			fail("illegal argument exception expected");
-		} catch (IllegalArgumentException e) {
+			fail("illegal state exception expected");
+		} catch (IllegalStateException e) {
 			// as expected
 		}
 	}
@@ -118,8 +120,8 @@ public class AutoTacticRegistryTest {
 				param.makeParameterSetting(), id + "_instantiated");
 		try {
 			desc.getTacticInstance();
-			fail("expected illegal argument exception");
-		} catch (IllegalArgumentException e) {
+			fail("expected illegal state exception");
+		} catch (IllegalStateException e) {
 			// as expected
 		}
 
@@ -156,10 +158,10 @@ public class AutoTacticRegistryTest {
 	 * 
 	 * Unregistered ID
 	 */
-	@Test(expected=IllegalArgumentException.class)
 	public void testGetTacticDescriptorUnregistered() {
-		// Should throw an exception
-		registry.getTacticDescriptor(unrigisteredId);
+		// Should not throw an exception
+		final ITacticDescriptor desc = registry.getTacticDescriptor(unrigisteredId);
+		assertTrue(desc instanceof TacticPlaceholder);
 	}
 	
 	/**
@@ -247,7 +249,7 @@ public class AutoTacticRegistryTest {
 	}
 	
 	// class not instance of ITactic
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalStateException.class)
 	public void testBadInstance() throws Exception {
 		final ITacticDescriptor desc = registry.getTacticDescriptor("org.eventb.core.seqprover.tests.badInstance");
 		assertNotNull(desc);
@@ -279,10 +281,12 @@ public class AutoTacticRegistryTest {
 		return null;
 	}
 	
-	@Ignore("Not implemented yet")
-	@Test
-	public void testgetInstanceUninstantiatedParamDesc() throws Exception {
-		fail("to be implemented");
+	@Test(expected = UnsupportedOperationException.class)
+	public void testGetInstanceUninstantiatedParamDesc() throws Exception {
+		final IParameterizerDescriptor parameterizer = registry
+				.getParameterizerDescriptor(TacParameterizer.PARAMETERIZER_ID);
+		final ITacticDescriptor desc = parameterizer.getTacticDescriptor();
+		desc.getTacticInstance();
 	}
 
 	/*
@@ -361,7 +365,7 @@ public class AutoTacticRegistryTest {
 	}
 
 	// class not instance of ITacticParameterizer
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = IllegalStateException.class)
 	public void testBadInstanceNoImplement() throws Exception {
 		final ITacticDescriptor desc = registry.getTacticDescriptor("org.eventb.core.seqprover.tests.badInstance");
 		desc.getTacticInstance();
@@ -373,8 +377,8 @@ public class AutoTacticRegistryTest {
 		assertParameterizerLoadingFailure("org.eventb.core.seqprover.tests.tacWithParam");
 	}
 	
-	// class instance of ITacticParameterizer without parameters => error
-	@Test(expected = IllegalArgumentException.class)
+	// class instance of ITacticParameterizer without parameters => no error expected
+	@Test
 	public void testParameterizerWithoutParam() throws Exception {
 		final ITacticDescriptor desc = registry.getTacticDescriptor("org.eventb.core.seqprover.tests.noParam");
 		desc.getTacticInstance();
@@ -426,23 +430,26 @@ public class AutoTacticRegistryTest {
 		assertEquals(FakeTacComb.MESSAGE, result);
 	}
 	
-	@Test
+	@Test(expected = UnsupportedOperationException.class)
 	public void testgetInstanceUninstantiatedCombinedDesc() throws Exception {
-		
+		final ICombinatorDescriptor combDesc = registry
+				.getCombinatorDescriptor(OneOrMore.COMBINATOR_ID);
+		final ITacticDescriptor desc = combDesc.getTacticDescriptor();
+		desc.getTacticInstance();
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testCombinedOneOrMore() throws Exception {
-		final ICombinatorDescriptor desc = (ICombinatorDescriptor) registry
-				.getTacticDescriptor(OneOrMore.COMBINATOR_ID);
+		final ICombinatorDescriptor desc = registry
+				.getCombinatorDescriptor(OneOrMore.COMBINATOR_ID);
 		// must throw illegal argument exception
 		desc.combine(Collections.<ITacticDescriptor> emptyList(), "id");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testCombinedTwo() throws Exception {
-		final ICombinatorDescriptor desc = (ICombinatorDescriptor) registry
-				.getTacticDescriptor(Two.COMBINATOR_ID);
+		final ICombinatorDescriptor desc = registry
+				.getCombinatorDescriptor(Two.COMBINATOR_ID);
 		// must throw illegal argument exception
 		final List<ITacticDescriptor> combined = Collections
 				.<ITacticDescriptor> singletonList(registry.getTacticDescriptor(IdentityTactic.TACTIC_ID));

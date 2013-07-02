@@ -16,7 +16,7 @@ import java.util.Set;
 import org.eventb.core.preferences.ICacheListener;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IPreferenceCheckResult;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 
 /**
  * Common protocol for tactics profile caches.

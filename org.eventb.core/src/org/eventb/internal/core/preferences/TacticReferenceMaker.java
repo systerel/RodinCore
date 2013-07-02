@@ -16,8 +16,8 @@ import java.util.Set;
 
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IReferenceMaker;
-import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
+import org.eventb.core.seqprover.ITacticDescriptor;
 
 /**
  * @author Nicolas Beauger
