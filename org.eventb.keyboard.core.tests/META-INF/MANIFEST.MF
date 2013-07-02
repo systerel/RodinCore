@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eventb.keyboard.core.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eventb.keyboard,
- org.rodinp.keyboard.tests,
+ org.rodinp.keyboard.core.tests,
  org.junit
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin

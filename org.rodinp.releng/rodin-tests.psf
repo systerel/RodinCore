@@ -12,6 +12,6 @@
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.eventb.pptrans.tests"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.eventb.ui.tests"/>
 <project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.rodinp.core.tests"/>
-<project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.rodinp.keyboard.tests"/>
+<project reference="1.0,git://git.code.sf.net/p/rodin-b-sharp/rodincore,master,org.rodinp.keyboard.core.tests"/>
 </provider>
 </psf>

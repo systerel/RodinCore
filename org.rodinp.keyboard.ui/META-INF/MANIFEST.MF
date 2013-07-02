@@ -11,7 +11,7 @@ Require-Bundle: org.rodinp.keyboard.core,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: %providerName
-Export-Package: org.rodinp.internal.keyboard.ui.translators;x-friends:="org.rodinp.keyboard.tests",
+Export-Package: org.rodinp.internal.keyboard.ui.translators,
  org.rodinp.keyboard.ui,
  org.rodinp.keyboard.ui.preferences
 Bundle-Localization: plugin
