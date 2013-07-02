@@ -242,12 +242,6 @@
             <groupMarker name="Prefix"/>
          </menu>
          <action
-               class="org.eventb.internal.ui.eventbeditor.actions.AutoActNaming"
-               id="org.eventb.ui.actions.autoActLabel"
-               label="%editorAction.autoActLabel.label"
-               menubarPath="org.eventb.ui.rename/Naming"
-               style="push"/>
-         <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoGrdNaming"
                id="org.eventb.ui.actions.autoGrdLabel"
                label="%editorAction.autoGrdLabel.label"
@@ -365,6 +359,14 @@
       </command>
    </extension>
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="%commands.editor.rename.autoActionLabel.description"
+            id="org.eventb.ui.editor.rename.autoActionLabel"
+            name="%commands.editor.rename.autoActionLabel.name">
+      </command>
+   </extension>
+   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
@@ -426,6 +428,26 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?after=project">
+         <menu
+               label="%menu.editor.rename.label"
+               mnemonic="%menu.editor.rename.mnemonic">
+            <command
+                  commandId="org.eventb.ui.editor.rename.autoActionLabel"
+                  mnemonic="%commands.editor.rename.autoActionLabel.mnemonic"
+                  style="push"
+                  tooltip="%commands.editor.rename.autoActionLabel.tooltip">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="org.eventb.ui.definition.isEventBMachineEditorActive">
+                  </reference>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -444,6 +466,13 @@
       <handler
             class="org.eventb.internal.ui.eventbeditor.create.handlers.NewVariantHandler"
             commandId="org.eventb.ui.editor.newVariant">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.rename.handlers.AutoRenameHandlers$AutoActionRenameHandler"
+            commandId="org.eventb.ui.editor.rename.autoActionLabel">
       </handler>
    </extension>
    <extension

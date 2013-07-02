@@ -13,6 +13,8 @@ package org.eventb.ui.tests;
 import static org.eventb.internal.ui.preferences.PreferenceConstants.PREFIX_PREFERENCE_PAGE_ID;
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
@@ -25,11 +27,11 @@ import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.eventbeditor.actions.AutoActNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoElementNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoGrdNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming;
+import org.eventb.internal.ui.eventbeditor.rename.handlers.AutoRenameHandlers;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.tests.utils.EventBUITest;
 import org.junit.Test;
@@ -144,8 +146,10 @@ public class TestUIRenaming extends EventBUITest {
 	}
 
 	private void renameActions(final IMachineRoot mchRoot)
-			throws PartInitException {
-		runAction(mchRoot, new AutoActNaming());
+			throws PartInitException, ExecutionException {
+		final AutoRenameHandlers.AutoActionRenameHandler handler = new AutoRenameHandlers.AutoActionRenameHandler();
+		handler.setEditor(openEditor(mchRoot));
+		handler.execute(new ExecutionEvent());
 	}
 
 	private void renameInvariants(final IMachineRoot mchRoot)
@@ -166,7 +170,7 @@ public class TestUIRenaming extends EventBUITest {
 	}
 
 	private void testRenaming(IInternalElementType<?> type)
-			throws RodinDBException, PartInitException {
+			throws RodinDBException, PartInitException, ExecutionException {
 		final IMachineRoot m1 = createMachine("m1");
 		final IEvent event1 = createEvent(m1, "event");
 		final String prefix = PreferenceUtils.getAutoNamePrefix(m1, type);

@@ -32,6 +32,7 @@ Export-Package: org.eventb.internal.ui;x-friends:="org.eventb.ui.tests,fr.syster
  org.eventb.internal.ui.eventbeditor.imageprovider,
  org.eventb.internal.ui.eventbeditor.manipulation,
  org.eventb.internal.ui.eventbeditor.operations;x-friends:="org.eventb.ui.tests,org.eventb.ui.tests.integration",
+ org.eventb.internal.ui.eventbeditor.rename.handlers;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.eventbeditor.wizards;x-friends:="org.eventb.ui.tests.integration",
  org.eventb.internal.ui.preferences;x-friends:="org.eventb.ui.tests",
  org.eventb.internal.ui.preferences.tactics;x-friends:="org.eventb.ui.tests",
