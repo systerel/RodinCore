@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ package org.eventb.internal.ui.preferences.tactics;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static org.eventb.core.seqprover.IParameterDesc.ParameterType.INT;
+import static org.eventb.core.seqprover.IParameterDesc.ParameterType.LONG;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -218,10 +220,23 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		}
 
 		private final TableViewer tableViewer;
-
+		private final Table table;
+		private final ComboBoxCellEditor boolEditor;
+		private final TextCellEditor stringEditor;
+		private final TextCellEditor intEditor;
+		private final TextCellEditor longEditor;
+		
 		public ParamEditingSupport(TableViewer viewer) {
 			super(viewer);
 			tableViewer = viewer;
+			table = tableViewer.getTable();
+			boolEditor = new ComboBoxCellEditor(table, BOOL_STRINGS,
+					SWT.READ_ONLY);
+			stringEditor = new TextCellEditor(table);
+			intEditor = new TextCellEditor(table);
+			intEditor.setValidator(new NumberEditorValidator(INT));
+			longEditor = new TextCellEditor(table);
+			longEditor.setValidator(new NumberEditorValidator(LONG));
 		}
 
 		@Override
@@ -231,17 +246,19 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			}
 			final Param param = (Param) element;
 			final ParameterType type = param.getDesc().getType();
-			
-			if (type == ParameterType.BOOL) {
-				return new ComboBoxCellEditor(tableViewer.getTable(),
-						BOOL_STRINGS, SWT.READ_ONLY);
+			switch (type) {
+			case BOOL:
+				return boolEditor;
+			case INT:
+				return intEditor;
+			case LONG:
+				return longEditor;
+			case STRING:
+				return stringEditor;
+			default:
+				assert false;
+				return null;
 			}
-			final TextCellEditor editor = new TextCellEditor(tableViewer.getTable());
-			if (type == ParameterType.STRING) {
-				return editor;
-			}
-			editor.setValidator(new NumberEditorValidator(type));
-			return editor;
 		}
 
 		@Override
@@ -299,7 +316,6 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			}
 			param.setValue(paramValue);
 			tableViewer.refresh(element);
-			final Table table = tableViewer.getTable();
 			final int valueColumnIndex = Columns.VALUE.ordinal();
 			final TableColumn valueColumn = table.getColumn(valueColumnIndex);
 			valueColumn.pack();
