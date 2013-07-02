@@ -452,19 +452,19 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eventb.internal.ui.eventbeditor.create.handlers.NewEventHandler"
+            class="org.eventb.internal.ui.eventbeditor.handlers.create.NewEventHandler"
             commandId="org.eventb.ui.editor.newEvent">
       </handler>
       <handler
-            class="org.eventb.internal.ui.eventbeditor.create.handlers.NewVariableHandler"
+            class="org.eventb.internal.ui.eventbeditor.handlers.create.NewVariableHandler"
             commandId="org.eventb.ui.editor.newVariable">
       </handler>
       <handler
-            class="org.eventb.internal.ui.eventbeditor.create.handlers.NewInvariantHandler"
+            class="org.eventb.internal.ui.eventbeditor.handlers.create.NewInvariantHandler"
             commandId="org.eventb.ui.editor.newInvariant">
       </handler>
       <handler
-            class="org.eventb.internal.ui.eventbeditor.create.handlers.NewVariantHandler"
+            class="org.eventb.internal.ui.eventbeditor.handlers.create.NewVariantHandler"
             commandId="org.eventb.ui.editor.newVariant">
       </handler>
    </extension>

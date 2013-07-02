@@ -13,7 +13,7 @@
  *     Systerel - refactored using NewVariantWizard
  *     Systerel - refactored using AbstractCreationWizardHandler
  *******************************************************************************/
-package org.eventb.internal.ui.eventbeditor.create.handlers;
+package org.eventb.internal.ui.eventbeditor.handlers.create;
 
 import static org.eventb.internal.ui.utils.Messages.dialogs_variantAlreadyExists;
 import static org.eventb.internal.ui.utils.Messages.title_variantExists;

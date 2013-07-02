@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.ui.eventbeditor.create.handlers;
+package org.eventb.internal.ui.eventbeditor.handlers.create;
 
 import static org.eventb.internal.ui.eventbeditor.EventBEditorUtils.checkAndShowReadOnly;
 

@@ -7,20 +7,19 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
- *     Systerel - separation of file and root element
  *     Systerel - introduced read only elements through new super class
- *     Systerel - refactored to use NewVariablesWizard
+ *     Systerel - refactored to use NewEventsWizard
  *     Systerel - refactored using AbstractCreationWizardHandler
  *******************************************************************************/
-package org.eventb.internal.ui.eventbeditor.create.handlers;
+package org.eventb.internal.ui.eventbeditor.handlers.create;
 
 import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
 
-public class NewVariableHandler extends AbstractCreationWizardHandler {
+public class NewEventHandler extends AbstractCreationWizardHandler {
 
 	@Override
 	protected void openCreationWizard() {
-		new EventBCreationWizards.NewVariablesWizard().openDialog(editor);
+		new EventBCreationWizards.NewEventsWizard().openDialog(editor);
 	}
 
 }

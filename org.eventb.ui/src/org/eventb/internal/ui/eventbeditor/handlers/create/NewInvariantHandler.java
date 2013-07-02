@@ -12,7 +12,7 @@
  *     Systerel - refactored using NewInvariantsWizard
  *     Systerel - refactored using AbstractCreationWizardHandler
  *******************************************************************************/
-package org.eventb.internal.ui.eventbeditor.create.handlers;
+package org.eventb.internal.ui.eventbeditor.handlers.create;
 
 import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
 
