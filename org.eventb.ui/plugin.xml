@@ -240,16 +240,6 @@
             <groupMarker name="New"/>
          </menu>
          <action
-               actionID="org.eventb.ui.actions.newEnumeratedSet"
-               class="org.eventb.internal.ui.eventbeditor.actions.NewEnumeratedSet"
-               icon="icons/full/ctool16/newenuset_edit.gif"
-               id="org.eventb.ui.actions.newenumeratedset"
-               label="%editorAction.newenumeratedset.label"
-               menubarPath="org.eventb.ui.eventBMenu/New"
-               style="push"
-               toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="%editorAction.newenumeratedset.tooltip"/>
-         <action
                actionID="org.eventb.ui.actions.newConstants"
                class="org.eventb.internal.ui.eventbeditor.actions.NewConstants"
                icon="icons/full/ctool16/newcst_edit.gif"
@@ -315,6 +305,12 @@
             description="%commands.editor.newCarrierSet.description"
             id="org.eventb.ui.editor.newCarrierSet"
             name="%commands.editor.newCarrierSet.name">
+      </command>
+      <command
+            categoryId="org.eventb.ui.category.model"
+            description="%commands.editor.newEnumeratedSet.description"
+            id="org.eventb.ui.editor.newEnumeratedSet"
+            name="%commands.editor.newEnumeratedSet.name">
       </command>
    </extension>
    <extension
@@ -417,6 +413,19 @@
                </reference>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eventb.ui.editor.newEnumeratedSet"
+               icon="icons/full/ctool16/newenuset_edit.gif"
+               mnemonic="%commands.editor.newEnumeratedSet.mnemonic"
+               style="push"
+               tooltip="%commands.editor.newEnumeratedSet.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isEventBContextEditorActive">
+               </reference>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -501,6 +510,10 @@
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewCarrierSetHandler"
             commandId="org.eventb.ui.editor.newCarrierSet">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.handlers.create.NewEnumeratedSetHandler"
+            commandId="org.eventb.ui.editor.newEnumeratedSet">
       </handler>
    </extension>
    <extension
