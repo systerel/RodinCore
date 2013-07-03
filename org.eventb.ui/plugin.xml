@@ -240,16 +240,6 @@
             <groupMarker name="New"/>
          </menu>
          <action
-               actionID="org.eventb.ui.editors.context.actions.newCarrierSets"
-               class="org.eventb.internal.ui.eventbeditor.actions.NewCarrierSets"
-               icon="icons/full/ctool16/newset_edit.gif"
-               id="org.eventb.ui.actions.newcarriersets"
-               label="%editorAction.newcarriersets.label"
-               menubarPath="org.eventb.ui.eventBMenu/New"
-               style="push"
-               toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="%editorAction.newcarriersets.tooltip"/>
-         <action
                actionID="org.eventb.ui.actions.newEnumeratedSet"
                class="org.eventb.internal.ui.eventbeditor.actions.NewEnumeratedSet"
                icon="icons/full/ctool16/newenuset_edit.gif"
@@ -319,6 +309,12 @@
             description="%commands.editor.newVariant.description"
             id="org.eventb.ui.editor.newVariant"
             name="%commands.editor.newVariant.name">
+      </command>
+      <command
+            categoryId="org.eventb.ui.category.model"
+            description="%commands.editor.newCarrierSet.description"
+            id="org.eventb.ui.editor.newCarrierSet"
+            name="%commands.editor.newCarrierSet.name">
       </command>
    </extension>
    <extension
@@ -408,6 +404,22 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
+            locationURI="toolbar:org.eventb.ui.editors.context">
+         <command
+               commandId="org.eventb.ui.editor.newCarrierSet"
+               icon="icons/full/ctool16/newset_edit.gif"
+               mnemonic="%commands.editor.newCarrierSet.mnemonic"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isEventBContextEditorActive">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
             locationURI="menu:org.eclipse.ui.main.menu?after=project">
          <menu
                label="%menu.editor.rename.label"
@@ -485,6 +497,10 @@
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewVariantHandler"
             commandId="org.eventb.ui.editor.newVariant">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.handlers.create.NewCarrierSetHandler"
+            commandId="org.eventb.ui.editor.newCarrierSet">
       </handler>
    </extension>
    <extension
