@@ -240,16 +240,6 @@
             <groupMarker name="New"/>
          </menu>
          <action
-               actionID="org.eventb.ui.actions.newConstants"
-               class="org.eventb.internal.ui.eventbeditor.actions.NewConstants"
-               icon="icons/full/ctool16/newcst_edit.gif"
-               id="org.eventb.ui.actions.newconstants"
-               label="%editorAction.newconstants.label"
-               menubarPath="org.eventb.ui.eventBMenu/New"
-               style="push"
-               toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="%editorAction.newconstants.tooltip"/>
-         <action
                actionID="org.eventb.ui.actions.newAxioms"
                class="org.eventb.internal.ui.eventbeditor.actions.NewAxioms"
                icon="icons/full/ctool16/newaxm_edit.gif"
@@ -311,6 +301,12 @@
             description="%commands.editor.newEnumeratedSet.description"
             id="org.eventb.ui.editor.newEnumeratedSet"
             name="%commands.editor.newEnumeratedSet.name">
+      </command>
+      <command
+            categoryId="org.eventb.ui.category.model"
+            description="%commands.editor.newConstant.description"
+            id="org.eventb.ui.editor.newConstant"
+            name="%commands.editor.newConstant.name">
       </command>
    </extension>
    <extension
@@ -426,6 +422,18 @@
                </reference>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eventb.ui.editor.newConstant"
+               icon="icons/full/ctool16/newcst_edit.gif"
+               mnemonic="%commands.editor.newConstant.mnemonic"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isEventBContextEditorActive">
+               </reference>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -514,6 +522,10 @@
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewEnumeratedSetHandler"
             commandId="org.eventb.ui.editor.newEnumeratedSet">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.handlers.create.NewConstantHandler"
+            commandId="org.eventb.ui.editor.newConstant">
       </handler>
    </extension>
    <extension

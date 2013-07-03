@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,16 @@
  *     Systerel - separation of file and root element
  *     Systerel - introduced read only elements through new super class
  *     Systerel - now using the NewConstantsWizard class
+ *     Systerel - refactored using AbstractCreationWizardHandler
  *******************************************************************************/
-package org.eventb.internal.ui.eventbeditor.actions;
+package org.eventb.internal.ui.eventbeditor.handlers.create;
 
-import org.eclipse.jface.action.IAction;
-import org.eventb.core.IContextRoot;
 import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards;
 
-public class NewConstants extends AbstractNewActionDelegate<IContextRoot> {
+public class NewConstantHandler extends AbstractCreationWizardHandler {
 
 	@Override
-	public void runAction(IAction action) {
+	protected void openCreationWizard() {
 		new EventBCreationWizards.NewConstantsWizard().openDialog(editor);
 	}
 
