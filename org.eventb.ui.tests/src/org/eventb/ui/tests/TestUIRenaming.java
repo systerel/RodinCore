@@ -29,7 +29,6 @@ import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
 import org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoElementNaming;
-import org.eventb.internal.ui.eventbeditor.actions.AutoGrdNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming;
 import org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
@@ -141,8 +140,10 @@ public class TestUIRenaming extends EventBUITest {
 	}
 
 	private void renameGuards(final IMachineRoot mchRoot)
-			throws PartInitException {
-		runAction(mchRoot, new AutoGrdNaming());
+			throws PartInitException, ExecutionException {
+		final AutoRenameHandlers.AutoGuardRenameHandler handler = new AutoRenameHandlers.AutoGuardRenameHandler();
+		handler.setEditor(openEditor(mchRoot));
+		handler.execute(new ExecutionEvent());
 	}
 
 	private void renameActions(final IMachineRoot mchRoot)

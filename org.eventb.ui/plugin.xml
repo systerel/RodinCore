@@ -242,12 +242,6 @@
             <groupMarker name="Prefix"/>
          </menu>
          <action
-               class="org.eventb.internal.ui.eventbeditor.actions.AutoGrdNaming"
-               id="org.eventb.ui.actions.autoGrdLabel"
-               label="%editorAction.autoGrdLabel.label"
-               menubarPath="org.eventb.ui.rename/Naming"
-               style="push"/>
-         <action
                class="org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming"
                id="org.eventb.ui.actions.autoInvNaming"
                label="%editorAction.autoInvLabel.label"
@@ -365,6 +359,11 @@
             id="org.eventb.ui.editor.rename.autoActionLabel"
             name="%commands.editor.rename.autoActionLabel.name">
       </command>
+      <command
+            description="%commands.editor.rename.autoGuardLabel.description"
+            id="org.eventb.ui.editor.rename.autoGuardLabel"
+            name="%commands.editor.rename.autoGuardLabel.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -446,6 +445,18 @@
                   </reference>
                </visibleWhen>
             </command>
+            <command
+                  commandId="org.eventb.ui.editor.rename.autoGuardLabel"
+                  mnemonic="%commands.editor.rename.autoGuardLabel.mnemonic"
+                  style="push"
+                  tooltip="%commands.editor.rename.autoGuardLabel.tooltip">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="org.eventb.ui.definition.isEventBMachineEditorActive">
+                  </reference>
+               </visibleWhen>
+            </command>
          </menu>
       </menuContribution>
    </extension>
@@ -473,6 +484,10 @@
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoActionRenameHandler"
             commandId="org.eventb.ui.editor.rename.autoActionLabel">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoGuardRenameHandler"
+            commandId="org.eventb.ui.editor.rename.autoGuardLabel">
       </handler>
    </extension>
    <extension
