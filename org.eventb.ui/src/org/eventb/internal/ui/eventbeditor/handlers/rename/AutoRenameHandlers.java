@@ -12,6 +12,7 @@ package org.eventb.internal.ui.eventbeditor.handlers.rename;
 
 import org.eventb.core.IAction;
 import org.eventb.core.IGuard;
+import org.eventb.core.IInvariant;
 import org.rodinp.core.IInternalElementType;
 
 /**
@@ -45,6 +46,19 @@ public class AutoRenameHandlers {
 		@Override
 		protected IInternalElementType<?> getType() {
 			return IGuard.ELEMENT_TYPE;
+		}
+
+	}
+	
+	/**
+	 * The handler class for automatic guard label renaming.
+	 */
+	public static class AutoInvariantRenameHandler extends
+			AbstractAutoRenameHandler {
+
+		@Override
+		protected IInternalElementType<?> getType() {
+			return IInvariant.ELEMENT_TYPE;
 		}
 
 	}
