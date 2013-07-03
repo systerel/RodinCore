@@ -239,16 +239,6 @@
                label="%editorAction.menu.eventB">
             <groupMarker name="New"/>
          </menu>
-         <action
-               actionID="org.eventb.ui.actions.newAxioms"
-               class="org.eventb.internal.ui.eventbeditor.actions.NewAxioms"
-               icon="icons/full/ctool16/newaxm_edit.gif"
-               id="org.eventb.ui.actions.newaxioms"
-               label="%editorAction.newaxioms.label"
-               menubarPath="org.eventb.ui.eventBMenu/New"
-               style="push"
-               toolbarPath="org.eventb.ui.eventBEditor"
-               tooltip="%editorAction.newaxioms.tooltip"/>
          <menu
                id="org.eventb.ui.rename"
                label="%editorAction.menu.rename">
@@ -307,6 +297,12 @@
             description="%commands.editor.newConstant.description"
             id="org.eventb.ui.editor.newConstant"
             name="%commands.editor.newConstant.name">
+      </command>
+      <command
+            categoryId="org.eventb.ui.category.model"
+            description="%commands.editor.newAxiom.description"
+            id="org.eventb.ui.editor.newAxiom"
+            name="%commands.editor.newAxiom.name">
       </command>
    </extension>
    <extension
@@ -434,6 +430,19 @@
                </reference>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eventb.ui.editor.newAxiom"
+               icon="icons/full/ctool16/newaxm_edit.gif"
+               mnemonic="%commands.editor.newAxiom.mnemonic"
+               style="push"
+               tooltip="%commands.editor.newAxiom.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isEventBContextEditorActive">
+               </reference>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -526,6 +535,10 @@
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.create.NewConstantHandler"
             commandId="org.eventb.ui.editor.newConstant">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.handlers.create.NewAxiomHandler"
+            commandId="org.eventb.ui.editor.newAxiom">
       </handler>
    </extension>
    <extension
