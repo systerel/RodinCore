@@ -232,24 +232,6 @@
          name="%editorAction.name"
          point="org.eclipse.ui.editorActions">
       <editorContribution
-            id="org.eventb.ui.machineContribution"
-            targetID="org.eventb.ui.editors.machine">
-         <menu
-               id="org.eventb.ui.rename"
-               label="%editorAction.menu.rename">
-            <groupMarker name="Naming"/>
-            <separator name="naming-prefix"/>
-            <groupMarker name="Prefix"/>
-         </menu>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.ShowPrefixPreferencePage"
-               id="org.eventb.ui.openPrefixSettings"
-               label="%action.OpenPrefixSettings"
-               menubarPath="org.eventb.ui.rename/Prefix"
-               style="push">
-         </action>
-      </editorContribution>
-      <editorContribution
             id="org.eventb.ui.contextContribution"
             targetID="org.eventb.ui.editors.context">
          <menu
@@ -310,13 +292,6 @@
                label="%editorAction.autoAxmLabel.label"
                menubarPath="org.eventb.ui.rename/Naming"
                style="push"/>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.ShowPrefixPreferencePage"
-               id="org.eventb.ui.openPrefixSettings"
-               label="%action.OpenPrefixSettings"
-               menubarPath="org.eventb.ui.rename/Prefix"
-               style="push">
-         </action>
       </editorContribution>
    </extension>
    <extension
@@ -362,6 +337,11 @@
             description="%commands.editor.rename.autoInvariantLabel.description"
             id="org.eventb.ui.editor.rename.autoInvariantLabel"
             name="%commands.editor.rename.autoInvariantLabel.name">
+      </command>
+      <command
+            description="%commands.editor.rename.customizePrefixes.description"
+            id="org.eventb.ui.editor.rename.customizePrefixes"
+            name="%commands.editor.rename.customizePrefixes.name">
       </command>
    </extension>
    <extension
@@ -468,6 +448,23 @@
                   </reference>
                </visibleWhen>
             </command>
+            <command
+                  commandId="org.eventb.ui.editor.rename.customizePrefixes"
+                  mnemonic="%commands.editor.rename.customizePrefixes.mnemonic"
+                  style="push"
+                  tooltip="%commands.editor.rename.customizePrefixes.tooltip">
+               <visibleWhen
+                     checkEnabled="false">
+                  <or>
+                     <reference
+                           definitionId="org.eventb.ui.definition.isEventBContextEditorActive">
+                     </reference>
+                     <reference
+                           definitionId="org.eventb.ui.definition.isEventBMachineEditorActive">
+                     </reference>
+                  </or>
+               </visibleWhen>
+            </command>
          </menu>
       </menuContribution>
    </extension>
@@ -492,6 +489,10 @@
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.handlers.rename.CustomizePrefixesHandler"
+            commandId="org.eventb.ui.editor.rename.customizePrefixes">
+      </handler>
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoActionRenameHandler"
             commandId="org.eventb.ui.editor.rename.autoActionLabel">
@@ -3150,6 +3151,15 @@
               variable="activeEditorId">
            <equals
                  value="org.eventb.ui.editors.machine">
+           </equals>
+        </with>
+     </definition>
+     <definition
+           id="org.eventb.ui.definition.isEventBContextEditorActive">
+        <with
+              variable="activeEditorId">
+           <equals
+                 value="org.eventb.ui.editors.context">
            </equals>
         </with>
      </definition>
