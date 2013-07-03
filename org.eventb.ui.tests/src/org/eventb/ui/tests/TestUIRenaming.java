@@ -16,19 +16,15 @@ import static org.junit.Assert.assertEquals;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
-import org.eventb.core.IEventBRoot;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming;
-import org.eventb.internal.ui.eventbeditor.actions.AutoElementNaming;
 import org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.tests.utils.EventBUITest;
@@ -160,15 +156,10 @@ public class TestUIRenaming extends EventBUITest {
 	}
 
 	private void renameAxioms(final IContextRoot ctxRoot)
-			throws PartInitException {
-		runAction(ctxRoot, new AutoAxmNaming());
-	}
-
-	private void runAction(final IEventBRoot root, AutoElementNaming action)
-			throws PartInitException {
-		final IEditorPart targetEditor = openEditor(root);
-		action.setActiveEditor(null, targetEditor);
-		action.run(null);
+			throws PartInitException, ExecutionException {
+		final AutoRenameHandlers.AutoAxiomRenameHandler handler = new AutoRenameHandlers.AutoAxiomRenameHandler();
+		handler.setEditor(openEditor(ctxRoot));
+		handler.execute(new ExecutionEvent());
 	}
 
 	private void testRenaming(IInternalElementType<?> type)

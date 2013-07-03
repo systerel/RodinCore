@@ -228,33 +228,6 @@
             project="false"/>
    </extension>
    <extension
-         id="org.eventb.ui.eventbeditorActions"
-         name="%editorAction.name"
-         point="org.eclipse.ui.editorActions">
-      <editorContribution
-            id="org.eventb.ui.contextContribution"
-            targetID="org.eventb.ui.editors.context">
-         <menu
-               id="org.eventb.ui.eventBMenu"
-               label="%editorAction.menu.eventB">
-            <groupMarker name="New"/>
-         </menu>
-         <menu
-               id="org.eventb.ui.rename"
-               label="%editorAction.menu.rename">
-            <groupMarker name="Naming"/>
-            <separator name="naming-prefix"/>
-            <groupMarker name="Prefix"/>
-         </menu>
-         <action
-               class="org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming"
-               id="org.eventb.ui.actions.autoAxmLabel"
-               label="%editorAction.autoAxmLabel.label"
-               menubarPath="org.eventb.ui.rename/Naming"
-               style="push"/>
-      </editorContribution>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <command
             categoryId="org.eventb.ui.category.model"
@@ -326,6 +299,12 @@
             description="%commands.editor.rename.customizePrefixes.description"
             id="org.eventb.ui.editor.rename.customizePrefixes"
             name="%commands.editor.rename.customizePrefixes.name">
+      </command>
+      <command
+            categoryId="org.eventb.ui.category.model"
+            description="%commands.editor.rename.autoAxiomLabel.description"
+            id="org.eventb.ui.editor.rename.autoAxiomLabel"
+            name="%commands.editor.rename.autoAxiomLabel.name">
       </command>
    </extension>
    <extension
@@ -487,6 +466,18 @@
                </visibleWhen>
             </command>
             <command
+                  commandId="org.eventb.ui.editor.rename.autoAxiomLabel"
+                  mnemonic="%commands.editor.rename.autoAxiomLabel.mnemonic"
+                  style="push"
+                  tooltip="%commands.editor.rename.autoAxiomLabel.tooltip">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="org.eventb.ui.definition.isEventBContextEditorActive">
+                  </reference>
+               </visibleWhen>
+            </command>
+            <command
                   commandId="org.eventb.ui.editor.rename.customizePrefixes"
                   mnemonic="%commands.editor.rename.customizePrefixes.mnemonic"
                   style="push"
@@ -558,6 +549,10 @@
       <handler
             class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoInvariantRenameHandler"
             commandId="org.eventb.ui.editor.rename.autoInvariantLabel">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoAxiomRenameHandler"
+            commandId="org.eventb.ui.editor.rename.autoAxiomLabel">
       </handler>
    </extension>
    <extension

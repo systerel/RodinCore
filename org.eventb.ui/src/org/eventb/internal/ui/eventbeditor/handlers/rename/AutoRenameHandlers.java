@@ -11,6 +11,7 @@
 package org.eventb.internal.ui.eventbeditor.handlers.rename;
 
 import org.eventb.core.IAction;
+import org.eventb.core.IAxiom;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.rodinp.core.IInternalElementType;
@@ -59,6 +60,19 @@ public class AutoRenameHandlers {
 		@Override
 		protected IInternalElementType<?> getType() {
 			return IInvariant.ELEMENT_TYPE;
+		}
+
+	}
+	
+	/**
+	 * The handler class for automatic axiom label renaming.
+	 */
+	public static class AutoAxiomRenameHandler extends
+			AbstractAutoRenameHandler {
+
+		@Override
+		protected IInternalElementType<?> getType() {
+			return IAxiom.ELEMENT_TYPE;
 		}
 
 	}
