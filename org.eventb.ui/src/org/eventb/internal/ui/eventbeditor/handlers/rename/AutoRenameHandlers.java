@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.ui.eventbeditor.rename.handlers;
+package org.eventb.internal.ui.eventbeditor.handlers.rename;
 
 import org.eventb.core.IAction;
 import org.rodinp.core.IInternalElementType;

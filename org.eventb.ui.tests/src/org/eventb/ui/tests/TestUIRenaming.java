@@ -31,7 +31,7 @@ import org.eventb.internal.ui.eventbeditor.actions.AutoAxmNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoElementNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoGrdNaming;
 import org.eventb.internal.ui.eventbeditor.actions.AutoInvNaming;
-import org.eventb.internal.ui.eventbeditor.rename.handlers.AutoRenameHandlers;
+import org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.tests.utils.EventBUITest;
 import org.junit.Test;

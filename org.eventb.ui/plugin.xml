@@ -471,7 +471,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eventb.internal.ui.eventbeditor.rename.handlers.AutoRenameHandlers$AutoActionRenameHandler"
+            class="org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers$AutoActionRenameHandler"
             commandId="org.eventb.ui.editor.rename.autoActionLabel">
       </handler>
    </extension>

@@ -13,7 +13,7 @@
  *     Systerel - now using new prefix preference mechanism
  *     Systerel - refactored to a handler
  *******************************************************************************/
-package org.eventb.internal.ui.eventbeditor.rename.handlers;
+package org.eventb.internal.ui.eventbeditor.handlers.rename;
 
 import static org.eventb.internal.ui.eventbeditor.operations.OperationFactory.renameElements;
 import static org.eventb.internal.ui.preferences.PreferenceUtils.getAutoNamePrefix;
