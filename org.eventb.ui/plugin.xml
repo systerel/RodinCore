@@ -763,6 +763,12 @@
             id="org.eventb.ui.proofTreeUi.editComment"
             name="%commands.proofTreeNode.editComment.name">
       </command>
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.proofTreeUI.collapseAll.description"
+            id="org.eventb.ui.proofTreeUi.collaspeAll"
+            name="%commands.proofTreeUI.collapseAll.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -847,6 +853,17 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eventb.ui.views.ProofTreeUI">
+         <command
+               commandId="org.eventb.ui.proofTreeUi.collaspeAll"
+               icon="$nl$/icons/full/elcl16/collapseall.gif"
+               mnemonic="%commands.proofTreeUI.collapseAll.mnemonic"
+               style="push"
+               tooltip="%commands.proofTreeUI.collapseAll.tooltip">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -873,6 +890,10 @@
       <handler
             class="org.eventb.internal.ui.prooftreeui.handlers.EditCommentHandler"
             commandId="org.eventb.ui.proofTreeUi.editComment">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.prooftreeui.handlers.CollaspeAllHandler"
+            commandId="org.eventb.ui.proofTreeUi.collaspeAll">
       </handler>
    </extension>
    <extension
@@ -2009,13 +2030,6 @@
       <viewContribution
             id="org.eventb.ui.ProofTree.toolbar"
             targetID="org.eventb.ui.views.ProofTreeUI">
-         <action
-               class="org.eventb.internal.ui.prooftreeui.ProofTreeCollapseAllAction"
-               helpContextId="%action.CollapseAll.tooltip"
-               icon="$nl$/icons/full/elcl16/collapseall.gif"
-               id="org.eventb.ui.views.ProofTree.toolbar.collapseAll"
-               label="%action.CollapseAll.label"
-               toolbarPath="navigationGroup"/>
          <action
                class="org.eventb.internal.ui.prooftreeui.ProofTreeExpandAllAction"
                helpContextId="%action.ExpandAll.tooltip"

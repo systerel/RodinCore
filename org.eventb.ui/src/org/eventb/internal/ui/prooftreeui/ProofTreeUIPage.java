@@ -410,7 +410,7 @@ public class ProofTreeUIPage extends Page implements IProofTreeUIPage,
 	 * 
 	 * @return the tree viewer contains in the page
 	 */
-	protected TreeViewer getViewer() {
+	public TreeViewer getViewer() {
 		return viewer;
 	}
 
