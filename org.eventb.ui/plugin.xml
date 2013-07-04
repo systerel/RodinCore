@@ -769,6 +769,12 @@
             id="org.eventb.ui.proofTreeUi.collaspeAll"
             name="%commands.proofTreeUI.collapseAll.name">
       </command>
+            <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.proofTreeUI.expandAll.description"
+            id="org.eventb.ui.proofTreeUi.expandAll"
+            name="%commands.proofTreeUI.expandAll.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -863,6 +869,13 @@
                style="push"
                tooltip="%commands.proofTreeUI.collapseAll.tooltip">
          </command>
+         <command
+               commandId="org.eventb.ui.proofTreeUi.expandAll"
+               icon="$nl$/icons/full/elcl16/expandall.gif"
+               mnemonic="%commands.proofTreeUI.expandAll.mnemonic"
+               style="push"
+               tooltip="%commands.proofTreeUI.expandAll.tooltip">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -894,6 +907,10 @@
       <handler
             class="org.eventb.internal.ui.prooftreeui.handlers.CollaspeAllHandler"
             commandId="org.eventb.ui.proofTreeUi.collaspeAll">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.prooftreeui.handlers.ExpandAllHandler"
+            commandId="org.eventb.ui.proofTreeUi.expandAll">
       </handler>
    </extension>
    <extension
@@ -2027,17 +2044,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
-      <viewContribution
-            id="org.eventb.ui.ProofTree.toolbar"
-            targetID="org.eventb.ui.views.ProofTreeUI">
-         <action
-               class="org.eventb.internal.ui.prooftreeui.ProofTreeExpandAllAction"
-               helpContextId="%action.ExpandAll.tooltip"
-               icon="$nl$/icons/full/elcl16/expandall.gif"
-               id="org.eventb.ui.views.ProofTree.toolbar.expandAll"
-               label="%action.ExpandAll.label"
-               toolbarPath="navigationGroup"/>
-      </viewContribution>
       <viewContribution
             id="org.eventb.ui.ProofSkeleton.toolbar"
             targetID="org.eventb.ui.views.ProofSkeleton">
