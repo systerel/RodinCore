@@ -21,11 +21,16 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
+import org.eventb.core.IEventBRoot;
 import org.eventb.core.IGuard;
 import org.eventb.core.IInvariant;
 import org.eventb.core.ILabeledElement;
 import org.eventb.core.IMachineRoot;
-import org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers;
+import org.eventb.internal.ui.eventbeditor.handlers.rename.AbstractAutoRenameHandler;
+import org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers.AutoActionRenameHandler;
+import org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers.AutoAxiomRenameHandler;
+import org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers.AutoGuardRenameHandler;
+import org.eventb.internal.ui.eventbeditor.handlers.rename.AutoRenameHandlers.AutoInvariantRenameHandler;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.eventb.ui.tests.utils.EventBUITest;
 import org.junit.Test;
@@ -134,32 +139,31 @@ public class TestUIRenaming extends EventBUITest {
 		testContextPrefixRenamingByPreference(IAxiom.ELEMENT_TYPE);
 	}
 
-	private void renameGuards(final IMachineRoot mchRoot)
-			throws PartInitException, ExecutionException {
-		final AutoRenameHandlers.AutoGuardRenameHandler handler = new AutoRenameHandlers.AutoGuardRenameHandler();
+	private void rename(final IEventBRoot mchRoot,
+			AbstractAutoRenameHandler handler) throws PartInitException,
+			ExecutionException {
 		handler.setEditor(openEditor(mchRoot));
 		handler.execute(new ExecutionEvent());
+	}
+
+	private void renameGuards(final IMachineRoot mchRoot)
+			throws PartInitException, ExecutionException {
+		rename(mchRoot, new AutoGuardRenameHandler());
 	}
 
 	private void renameActions(final IMachineRoot mchRoot)
 			throws PartInitException, ExecutionException {
-		final AutoRenameHandlers.AutoActionRenameHandler handler = new AutoRenameHandlers.AutoActionRenameHandler();
-		handler.setEditor(openEditor(mchRoot));
-		handler.execute(new ExecutionEvent());
+		rename(mchRoot, new AutoActionRenameHandler());
 	}
 
 	private void renameInvariants(final IMachineRoot mchRoot)
 			throws PartInitException, ExecutionException {
-		final AutoRenameHandlers.AutoInvariantRenameHandler handler = new AutoRenameHandlers.AutoInvariantRenameHandler();
-		handler.setEditor(openEditor(mchRoot));
-		handler.execute(new ExecutionEvent());
+		rename(mchRoot, new AutoInvariantRenameHandler());
 	}
 
 	private void renameAxioms(final IContextRoot ctxRoot)
 			throws PartInitException, ExecutionException {
-		final AutoRenameHandlers.AutoAxiomRenameHandler handler = new AutoRenameHandlers.AutoAxiomRenameHandler();
-		handler.setEditor(openEditor(ctxRoot));
-		handler.execute(new ExecutionEvent());
+		rename(ctxRoot, new AutoAxiomRenameHandler());
 	}
 
 	private void testRenaming(IInternalElementType<?> type)
