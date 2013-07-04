@@ -556,15 +556,6 @@
       </handler>
    </extension>
    <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            description="%actionSet.eventB.description"
-            id="org.eventb.ui.eventBEditor"
-            label="%actionSet.eventB.label"
-            visible="false">
-      </actionSet>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <category
             description="%category.ProveDescription"
@@ -911,6 +902,70 @@
       <handler
             class="org.eventb.internal.ui.prooftreeui.handlers.ExpandAllHandler"
             commandId="org.eventb.ui.proofTreeUi.expandAll">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.proofSkeleton.collapseAll.description"
+            id="org.eventb.ui.proofSkeleton.collaspeAll"
+            name="%commands.proofSkeleton.collapseAll.name">
+      </command>
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.proofSkeleton.expandAll.description"
+            id="org.eventb.ui.proofSkeleton.expandAll"
+            name="%commands.proofSkeleton.expandAll.name">
+      </command>
+      <command
+            categoryId="org.eventb.ui.category.prove"
+            description="%commands.proofSkeleton.switchOrientation.description"
+            id="org.eventb.ui.proofSkeleton.switchOrientation"
+            name="%commands.proofSkeleton.switchOrientation.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eventb.ui.views.ProofSkeleton">
+         <command
+               commandId="org.eventb.ui.proofSkeleton.collaspeAll"
+               icon="$nl$/icons/full/elcl16/collapseall.gif"
+               mnemonic="%commands.proofSkeleton.collapseAll.mnemonic"
+               style="push"
+               tooltip="%commands.proofSkeleton.collapseAll.tooltip">
+         </command>
+         <command
+               commandId="org.eventb.ui.proofSkeleton.expandAll"
+               icon="$nl$/icons/full/elcl16/expandall.gif"
+               mnemonic="%commands.proofSkeleton.expandAll.mnemonic"
+               style="push"
+               tooltip="%commands.proofSkeleton.expandAll.tooltip">
+         </command>
+         <command
+               commandId="org.eventb.ui.proofSkeleton.switchOrientation"
+               icon="icons/full/ctool16/inv_prover.gif"
+               mnemonic="%commands.proofSkeleton.switchOrientation.mnemonic"
+               style="push"
+               tooltip="%commands.proofSkeleton.switchOrientation.tooltip">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eventb.internal.ui.proofSkeletonView.handlers.CollaspeAllHandler"
+            commandId="org.eventb.ui.proofSkeleton.collaspeAll">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.proofSkeletonView.handlers.ExpandAllHandler"
+            commandId="org.eventb.ui.proofSkeleton.expandAll">
+      </handler>
+      <handler
+            class="org.eventb.internal.ui.proofSkeletonView.handlers.SwitchOrientationHandler"
+            commandId="org.eventb.ui.proofSkeleton.switchOrientation">
       </handler>
    </extension>
    <extension
@@ -2041,36 +2096,6 @@
             target="any"
             tooltip="%proofTactic.locEq.tooltip">
       </tactic>
-   </extension>
-   <extension
-         point="org.eclipse.ui.viewActions">
-      <viewContribution
-            id="org.eventb.ui.ProofSkeleton.toolbar"
-            targetID="org.eventb.ui.views.ProofSkeleton">
-         <action
-               class="org.eventb.internal.ui.proofSkeletonView.ProofSkeletonCollapseAllAction"
-               icon="icons/full/elcl16/collapseall.gif"
-               id="org.eventb.ui.views.ProofSkeleton.toolbar.collapseAll"
-               label="%action.CollapseAll.label"
-               toolbarPath="navigationGroup">
-         </action>
-         <action
-               class="org.eventb.internal.ui.proofSkeletonView.ProofSkeletonExpandAllAction"
-               icon="icons/full/elcl16/expandall.gif"
-               id="org.eventb.ui.views.ProofSkeleton.toolbar.expandAll"
-               label="%action.ExpandAll.label"
-               toolbarPath="navigationGroup">
-         </action>
-         <action
-               class="org.eventb.internal.ui.proofSkeletonView.SwitchOrientationAction"
-               icon="icons/full/ctool16/inv_prover.gif"
-               id="org.eventb.ui.views.ProofSkeleton.toolbar.switchOrientation"
-               label="%action.SwitchOrientation.label"
-               style="push"
-               toolbarPath="navigationGroup"
-               tooltip="%action.SwitchOrientation.tooltip">
-         </action>
-      </viewContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
