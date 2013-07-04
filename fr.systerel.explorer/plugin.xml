@@ -581,27 +581,29 @@
       </commonFilter>
    </extension>
    <extension
-         point="org.eclipse.ui.viewActions">
-      <viewContribution
-            id="fr.systerel.explorer.navigator.viewActions.toolbar"
-            targetID="fr.systerel.explorer.navigator.view">
-         <action
-               class="fr.systerel.internal.explorer.navigator.actionProviders.AbstractNewActionDelegate$NewComponent"
-               icon="icons/full/clcl16/newcomp_wiz.gif"
-               id="fr.systerel.explorer.navigator.actions.newComponent"
-               label="%viewActions.newComponent.label"
-               toolbarPath="new"
-               tooltip="%viewActions.newComponent.tooltip">
-         </action>
-         <action
-               class="fr.systerel.internal.explorer.navigator.actionProviders.AbstractNewActionDelegate$NewProject"
-               icon="icons/full/clcl16/newprj_wiz.gif"
-               id="fr.systerel.explorer.navigator.actions.newProject"
-               label="%viewActions.newProject.label"
-               toolbarPath="new"
-               tooltip="%viewActions.newProject.tooltip">
-         </action>
-      </viewContribution>
+         point="org.eclipse.ui.commands">
+      <command
+            id="fr.systerel.explorer.retryAutoProvers"
+            name="%navigatorCommand.autoProvers.name">
+      </command>
+      <command
+            id="fr.systerel.explorer.recalculateAutoStatus"
+            name="%navigatorCommand.autoStatus.name">
+      </command>
+      <command
+            id="fr.systerel.explorer.replay"
+            name="%navigatorCommand.replay.name">
+      </command>
+      <command
+            description="%commands.newComponent.description"
+            id="fr.systerel.explorer.navigator.newComponent"
+            name="%commands.newComponent.name">
+      </command>
+      <command
+      		description="%commands.newProject.description"
+            id="fr.systerel.explorer.navigator.newProject"
+            name="%commands.newProject.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -636,22 +638,20 @@
                commandId="org.eclipse.ui.file.refresh"
                style="push">
          </command>
+         <command
+               commandId="fr.systerel.explorer.navigator.newComponent"
+               icon="icons/full/clcl16/newcomp_wiz.gif"
+               mnemonic="%commands.newComponent.mnemonic"
+               tooltip="%commands.newComponent.tooltip">
+         </command>
+         <command
+               commandId="fr.systerel.explorer.navigator.newProject"
+               icon="icons/full/clcl16/newprj_wiz.gif"
+               mnemonic="%commands.newProject.mnemonic"
+               style="push"
+               tooltip="%commands.newProject.tooltip">
+         </command>
       </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            id="fr.systerel.explorer.retryAutoProvers"
-            name="%navigatorCommand.autoProvers.name">
-      </command>
-      <command
-            id="fr.systerel.explorer.recalculateAutoStatus"
-            name="%navigatorCommand.autoStatus.name">
-      </command>
-      <command
-            id="fr.systerel.explorer.replay"
-            name="%navigatorCommand.replay.name">
-      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -666,6 +666,14 @@
       <handler
             class="fr.systerel.internal.explorer.navigator.handlers.ReplayUndischargedHandler"
             commandId="fr.systerel.explorer.replay">
+      </handler>
+      <handler
+            class="fr.systerel.internal.explorer.navigator.handlers.NewResourceHandler$NewComponentHandler"
+            commandId="fr.systerel.explorer.navigator.newComponent">
+      </handler>
+      <handler
+            class="fr.systerel.internal.explorer.navigator.handlers.NewResourceHandler$NewProjectHandler"
+            commandId="fr.systerel.explorer.navigator.newProject">
       </handler>
    </extension>
    <extension
