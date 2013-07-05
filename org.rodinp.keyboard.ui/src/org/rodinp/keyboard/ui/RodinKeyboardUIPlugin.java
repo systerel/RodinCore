@@ -19,7 +19,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.rodinp.internal.keyboard.ui.KeyboardCoreUtils;
 import org.rodinp.internal.keyboard.ui.RodinModifyListener;
 import org.rodinp.internal.keyboard.ui.views.KeyboardView;
 import org.rodinp.keyboard.core.RodinKeyboardCore;
@@ -44,7 +43,13 @@ public class RodinKeyboardUIPlugin extends AbstractUIPlugin {
 	// The shared instance
 	private static RodinKeyboardUIPlugin plugin;
 	
-	private final static RodinModifyListener listener = new RodinModifyListener(); 
+	private final static RodinModifyListener listener = new RodinModifyListener();
+
+	public static boolean DEBUG = false;
+
+	public static boolean TEXT_DEBUG = false;
+
+	public static boolean MATH_DEBUG = false; 
 	
 	
 	/**
@@ -68,9 +73,9 @@ public class RodinKeyboardUIPlugin extends AbstractUIPlugin {
 	 * Process debugging/tracing options coming from Eclipse.
 	 */
 	private void configureDebugOptions() {
-		KeyboardCoreUtils.DEBUG = parseOption(TRACE);
-		KeyboardCoreUtils.TEXT_DEBUG = parseOption(TEXT_TRACE);
-		KeyboardCoreUtils.MATH_DEBUG = parseOption(MATH_TRACE);
+		DEBUG = parseOption(TRACE);
+		TEXT_DEBUG = parseOption(TEXT_TRACE);
+		MATH_DEBUG = parseOption(MATH_TRACE);
 	}
 
 	private static boolean parseOption(String key) {

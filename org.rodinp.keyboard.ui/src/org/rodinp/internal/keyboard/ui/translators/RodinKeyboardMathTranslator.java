@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.rodinp.internal.keyboard.ui.translators;
 
-import org.rodinp.internal.keyboard.ui.KeyboardCoreUtils;
+import static org.rodinp.keyboard.ui.RodinKeyboardUIPlugin.MATH_DEBUG;
 
 /**
  * @author htson
@@ -23,8 +23,7 @@ public class RodinKeyboardMathTranslator extends
 		AbstractRodinKeyboardTranslator {
 
 	public RodinKeyboardMathTranslator() {
-		super(false, KeyboardCoreUtils.MATH_DEBUG,
-				new SymbolComputer.MathSymbolComputer());
+		super(false, MATH_DEBUG, new SymbolComputer.MathSymbolComputer());
 	}
 
 }

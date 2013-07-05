@@ -15,7 +15,6 @@
 package org.rodinp.internal.keyboard.ui.translators;
 
 import static org.rodinp.keyboard.core.KeyboardUtils.debug;
-import static org.rodinp.keyboard.core.KeyboardUtils.isTextCharacter;
 
 import java.util.Collection;
 
@@ -23,6 +22,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.rodinp.keyboard.core.ISymbol;
+import org.rodinp.keyboard.core.KeyboardUtils;
 
 /**
  * @author htson
@@ -168,14 +168,14 @@ public abstract class AbstractRodinKeyboardTranslator implements IRodinKeyboardT
 		// if the previous character is a text character then ignore and
 		// continue (similar to identical translation).
 		if (realIndex != 0) {
-			if (isTextCharacter(text.charAt(realIndex - 1))) {
+			if (KeyboardUtils.isTextCharacter(text.charAt(realIndex - 1))) {
 				return true;
 			}
 		}
 		// if the next character is a text character or the end then ignore and
 		// continue (similar to identical translation).
 		if (realIndex + test.length() != endIndex) {
-			if (isTextCharacter(text.charAt(realIndex + test.length()))) {
+			if (KeyboardUtils.isTextCharacter(text.charAt(realIndex + test.length()))) {
 				return true;
 			}
 		} else {

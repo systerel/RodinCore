@@ -10,21 +10,33 @@
  *******************************************************************************/
 package org.rodinp.keyboard.core;
 
-import java.util.Arrays;
-
+/**
+ * Symbol translation utilities.
+ */
 public class KeyboardUtils {
-	
-	public static void debug(String str) {
-		System.out.println(str);
+
+	/**
+	 * Log the given message.
+	 * 
+	 * @param message
+	 * 				the message to log
+	 */
+	public static void debug(String message) {
+		System.out.println(message);
 	}
 
 	/**
-	 * Testing if a character is a text character
+	 * DO NOT USE THIS METHOD
+	 * 
+	 * Testing if a character is a text character.
+	 * 
+	 * This method is used by the UI part of the Rodin Keyboard implementation.
+	 * Client shall not use this method.
 	 * 
 	 * @param c
 	 *            a character
-	 * @return true if the character is one of the text characters (i.e. 'A' to
-	 *         'Z', 'a' to 'z', etc.) false otherwise
+	 * @return <code>true</code> if the character is one of the text characters
+	 *         (i.e. 'A' to 'Z', 'a' to 'z', etc.), <code>false</code> otherwise
 	 */
 	public static boolean isTextCharacter(char c) {
 		if (c <= 'Z' && c >= 'A')
@@ -37,11 +49,5 @@ public class KeyboardUtils {
 			return true;
 		return false;
 	}
-	
-	public static String generateKey(int length) {
-		final char[] temp = new char[length];
-		Arrays.fill(temp, '*');
-		return new String(temp);		
-	}
-	
+
 }
