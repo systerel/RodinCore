@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-package org.eventb.keyboard.tests;
+package org.eventb.keyboard.core.tests;
 
 import org.junit.Test;
 import org.rodinp.keyboard.core.tests.AbstractText2MathTestCase;
