@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.rodinp.keyboard" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.rodinp.keyboard.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.rodinp.keyboard" id="symbols" name="Rodin Keyboard symbols"/>
+         <meta.schema plugin="org.rodinp.keyboard.core" id="symbols" name="Rodin Keyboard symbols"/>
       </appinfo>
       <documentation>
          &lt;p&gt;The Rodin platform supports the use of extensible mathematical symbols that can be typed in when editing models. Mathematical symbols are associated with key combos.
@@ -98,10 +98,10 @@ This extension point allows plugin writers to register new mathematical symbols 
             <annotation>
                <documentation>
                   &lt;p&gt;Attribute defining the class providing the way to retrieve new mathematical symbols to add.&lt;/p&gt;
-&lt;p&gt;This class have to implement org.rodinp.keyboard.ISymbolsProvider interface.&lt;/p&gt;
+&lt;p&gt;This class have to implement org.rodinp.keyboard.core.ISymbolsProvider interface.&lt;/p&gt;
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.rodinp.keyboard.ISymbolsProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.rodinp.keyboard.core.ISymbolsProvider"/>
                </appinfo>
             </annotation>
          </attribute>

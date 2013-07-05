@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.keyboard.tests;
 
-import org.rodinp.keyboard.tests.AbstractText2MathTestCase;
+import org.rodinp.keyboard.core.tests.AbstractText2MathTestCase;
 
 /**
  * @author htson

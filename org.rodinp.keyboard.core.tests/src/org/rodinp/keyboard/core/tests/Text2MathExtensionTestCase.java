@@ -8,29 +8,28 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.rodinp.keyboard.tests;
+package org.rodinp.keyboard.core.tests;
 
 import org.junit.Test;
-import org.rodinp.keyboard.tests.registry.TestSymbolProvider;
+import org.rodinp.keyboard.core.tests.registry.TestSymbolProvider;
 
 /**
- * Tests the keyboard with programmatic contributions.
+ * Test the translation for programmatically contributed symbols.
  */
-public class RodinKeyboardExtensionTestCase extends
-		AbstractRodinKeyboardTestCase {
-
+public class Text2MathExtensionTestCase extends AbstractText2MathTestCase {
+	
 	@Test
 	public void testAlphaExtensionSymbol() {
 		String input = "x alpha p";
 		String expect = "x \u03b1 p";
-		doTest("AlphaTest ", input, expect);
+		testTranslator("AlphaTest ", input, expect);
 	}
 	
 	@Test
 	public void testBetaExtensionSymbol() {
 		String input = "x beta p";
 		String expect = "x \u03b2 p";
-		doTest("BetaTest ", input, expect);
+		testTranslator("BetaTest ", input, expect);
 	}
 	
 	@Test
@@ -39,10 +38,10 @@ public class RodinKeyboardExtensionTestCase extends
 			TestSymbolProvider.addSymbol("epsilon", "ε");
 			String input = "x epsilon p";
 			String expect = "x \u03b5 p";
-			doTest("EpsilonTest ", input, expect);
+			testTranslator("EpsilonTest ", input, expect);
 		} finally {
 			TestSymbolProvider.reset();
 		}
 	}
-
+	
 }

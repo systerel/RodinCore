@@ -9,5 +9,5 @@ Require-Bundle: org.rodinp.keyboard.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.junit
-Export-Package: org.rodinp.keyboard.tests
+Export-Package: org.rodinp.keyboard.core.tests
 Bundle-Localization: plugin

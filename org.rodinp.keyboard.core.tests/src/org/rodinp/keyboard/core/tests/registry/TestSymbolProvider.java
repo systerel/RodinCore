@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.rodinp.keyboard.tests.registry;
+package org.rodinp.keyboard.core.tests.registry;
 
 import static java.util.Arrays.asList;
 

@@ -7,6 +7,6 @@ Bundle-Activator: org.rodinp.internal.keyboard.core.RodinKeyboardCorePlugin
 Require-Bundle: org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.rodinp.internal.keyboard.core;x-friends:="org.rodinp.keyboard.tests",
- org.rodinp.internal.keyboard.core.symbols;x-friends:="org.rodinp.keyboard.tests",
+Export-Package: org.rodinp.internal.keyboard.core;x-friends:="org.rodinp.keyboard.core.tests",
+ org.rodinp.internal.keyboard.core.symbols;x-friends:="org.rodinp.keyboard.core.tests",
  org.rodinp.keyboard.core;uses:="org.rodinp.internal.keyboard.core.symbols"

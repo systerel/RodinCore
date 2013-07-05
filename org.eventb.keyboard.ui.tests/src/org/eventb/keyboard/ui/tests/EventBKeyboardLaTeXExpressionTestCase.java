@@ -11,7 +11,7 @@
 package org.eventb.keyboard.ui.tests;
 
 import org.junit.Test;
-import org.rodinp.keyboard.tests.AbstractRodinKeyboardTestCase;
+import org.rodinp.keyboard.core.tests.AbstractRodinKeyboardTestCase;
 
 /**
  * @author htson

@@ -9,7 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - port to JUnit 4
  *******************************************************************************/
-package org.rodinp.keyboard.tests;
+package org.rodinp.keyboard.core.tests;
 
 import static org.junit.Assert.assertEquals;
 
