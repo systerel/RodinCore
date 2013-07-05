@@ -27,19 +27,24 @@ public interface ISymbolRegistry {
 	 * Returns the association of keys and the corresponding collection of
 	 * mathematical symbols.
 	 * 
+	 * @param keyLength
+	 *            the character length of the symbol key to get symbols for
+	 * 
 	 * @return a map associating keys and the collection of symbols which
 	 *         correspond to it
 	 */
-	public Collection<ISymbol> getMathSymbols(int i);
+	public Collection<ISymbol> getMathSymbols(int keyLength);
 
 	/**
 	 * Returns the association of keys and the corresponding collection of
 	 * mathematical symbols.
 	 * 
+	 * @param keyLength
+	 *            the character length of the symbol key to get symbols for
 	 * @return a map associating keys and the collection of symbols which
 	 *         correspond to it
 	 */
-	public Collection<ISymbol> getTextSymbols(int i);
+	public Collection<ISymbol> getTextSymbols(int keyLength);
 	
 	/**
 	 * Returns the maximal size of the key that maps to mathematical symbols.
