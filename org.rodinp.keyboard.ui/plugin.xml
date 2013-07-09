@@ -17,22 +17,6 @@
       </perspectiveExtension>
    </extension>
    <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            category="org.eventb.ui"
-            class="org.rodinp.internal.keyboard.ui.views.KeyboardView"
-            icon="icons/keyboard.gif"
-            id="org.rodinp.keyboard.ui.views.KeyboardView"
-            name="%rodinKeyboardViewName">
-      </view>
-   </extension>
-   <extension
          point="org.eclipse.ui.themes">
       <themeElementCategory
             id="org.rodinp.keyboard.ui.presentation"
@@ -57,13 +41,6 @@
             %rodinKeyboardBraveSansMono.description
          </description>
       </fontDefinition>
-   </extension>
-   <extension
-         point="org.eclipse.help.toc">
-      <toc
-            file="doc/contents/rodin_keyboard_user_guide.xml"
-            primary="true">
-      </toc>
    </extension>
 
 </plugin>
