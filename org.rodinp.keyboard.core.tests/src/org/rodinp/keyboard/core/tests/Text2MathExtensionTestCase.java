@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,34 +14,28 @@ import org.junit.Test;
 import org.rodinp.keyboard.core.tests.registry.TestSymbolProvider;
 
 /**
- * Test the translation for programmatically contributed symbols.
+ * Test the individual translation for programmatically contributed symbols.
  */
-public class Text2MathExtensionTestCase extends AbstractText2MathTestCase {
-	
+public class Text2MathExtensionTestCase extends AbstractText2EventBMathTestCase {
+
 	@Test
 	public void testAlphaExtensionSymbol() {
-		String input = "x alpha p";
-		String expect = "x \u03b1 p";
-		testTranslator("AlphaTest ", input, expect);
+		testTranslation("AlphaTest ", "x \u03b1 p", "x alpha p");
 	}
-	
+
 	@Test
 	public void testBetaExtensionSymbol() {
-		String input = "x beta p";
-		String expect = "x \u03b2 p";
-		testTranslator("BetaTest ", input, expect);
+		testTranslation("BetaTest ", "x \u03b2 p", "x beta p");
 	}
-	
+
 	@Test
 	public void testRuntimeEpsilonExtensionSymbol() {
 		try {
 			TestSymbolProvider.addSymbol("epsilon", "ε");
-			String input = "x epsilon p";
-			String expect = "x \u03b5 p";
-			testTranslator("EpsilonTest ", input, expect);
+			testTranslation("EpsilonTest ", "x \u03b5 p", "x epsilon p");
 		} finally {
 			TestSymbolProvider.reset();
 		}
 	}
-	
+
 }

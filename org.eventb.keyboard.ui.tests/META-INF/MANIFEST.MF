@@ -4,8 +4,10 @@ Bundle-Name: Event-B Keyboard UI tests
 Bundle-SymbolicName: org.eventb.keyboard.ui.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.rodinp.keyboard.core.tests,
- org.eclipse.swt,
- org.junit
+Require-Bundle: org.junit,
+ org.rodinp.keyboard.core.tests,
+ org.rodinp.keyboard.ui.tests,
+ org.eventb.keyboard.core.tests,
+ org.eclipse.ui
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin

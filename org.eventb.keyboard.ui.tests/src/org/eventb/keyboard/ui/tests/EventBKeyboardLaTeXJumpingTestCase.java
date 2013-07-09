@@ -11,45 +11,47 @@
 package org.eventb.keyboard.ui.tests;
 
 import org.junit.Test;
-import org.rodinp.keyboard.core.tests.AbstractRodinKeyboardTestCase;
 
 /**
+ * This class contains some test cases for the Event-B Keyboard LaTeX
+ * translation with dynamic insertions.
+ * <p>
+ * It checks LaTeX symbols translation on large expressions where text is
+ * dynamically inserted (i.e. "jumping").<br />
+ * The text is taken from Prof. Jean-Raymond Abrial's SHWT development.
+ * </p>
+ * 
  * @author htson
- *         <p>
- *         This class contains some test cases for Event-B Keyboard. This test
- *         the Keyboard on some large expressions where there are some jumpings.
- *         The text is taken from Prof. Jean-Raymond Abrial's SHWT development.
  */
-public class EventBKeyboardLaTeXJumpingTestCase extends AbstractRodinKeyboardTestCase {
+public class EventBKeyboardLaTeXJumpingTestCase extends AbstractKeyboardJumpingTestCase {
 
+	/**
+	 * Checks that insertion of "eq" (i.e. =) after "\\subset" (i.e. "⊂") is
+	 * correclty translated as "\\subseteq" (i.e. "⊆")
+	 */
 	@Test
 	public void testSHWTInvariant() {
-		widget.setText("");
-		insert("bm \\subset NODE");
-		widget.setSelection(4);
-		insert("eq");
-		compare("SHWTInvariant ", "bm \u2286 NODE");
+		testJumping("bm \\subset NODE", 4, "eq", "bm \u2286 NODE");
 	}
 
+	/**
+	 * Checks that insertion of "bc" after "\\meq" is translated to "\\bcmeq"
+	 * (i.e. "≔").
+	 */
 	@Test
 	public void testMarkActions() {
-		widget.setText("");
-		insert("bm \\meq cl[{tp}]");
-		widget.setSelection(4);
-		insert("bc");
-		compare("SHWTInvariant ", "bm \u2254 cl[{tp}]");
+		testJumping("bm \\meq cl[{tp}]", 4, "bc", "bm \u2254 cl[{tp}]");
 	}
 
+	/**
+	 * Checks that insertion of "\bcm" after "eq" is translated to "\\bcmeq"
+	 * (i.e. "≔") and "bunion" after "\ {yy} is translated to "\bunion" (i.e.
+	 * "∪ {yy}").
+	 */
 	@Test
 	public void testProg11Actions() {
-		widget.setText("");
-		insert("bl eq bl");
-		widget.setSelection(3);
-		insert("\\bcm");
-		widget.setSelection(7);
-		insert(" \\ {yy}");
-		widget.setSelection(9);
-		insert("bunion");
-		compare("SHWTInvariant ", "bl \u2254 bl \u222a {yy}");
+		testJumping("bl eq bl", new int[] { 3, 7, 9 }, new String[] { "\\bcm",
+				" \\ {yy}", "bunion" }, "bl \u2254 bl \u222a {yy}");
 	}
+
 }

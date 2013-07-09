@@ -11,53 +11,44 @@
 package org.eventb.keyboard.ui.tests;
 
 import org.junit.Test;
-import org.rodinp.keyboard.core.tests.AbstractRodinKeyboardTestCase;
 
 /**
+ * This class contains some test cases for the Event-B Keyboard translation with
+ * dynamic insertions.
+ * <p>
+ * It checks keyboard symbols translation on large expressions where text is
+ * dynamically inserted (i.e. "jumping").<br />
+ * The text is taken from Prof. Jean-Raymond Abrial's SHWT development.
+ * </p>
+ * 
  * @author htson
- *         <p>
- *         This class contains some test cases for Event-B Keyboard. This test
- *         the Keyboard on some large expressions where there are some jumpings.
- *         The text is taken from Prof. Jean-Raymond Abrial's SHWT development.
  */
-public class EventBKeyboardJumpingTestCase extends AbstractRodinKeyboardTestCase {
+public class EventBKeyboardJumpingTestCase extends AbstractKeyboardJumpingTestCase {
 
+	/**
+	 * Checks that insertion of ":" after "⊂" is translated to "⊆"
+	 */
 	@Test
 	public void testSHWTInvariant() {
-		widget.setText("");
-		String input = "bm < NODE";
-		for (int i = 0; i < input.length(); i++)
-			insert("" + input.charAt(i));
-		widget.setSelection(4);
-		insert(":");
-		compare("SHWTInvariant ", "bm \u2286 NODE");
+		testJumping("bm < NODE", 4, ":", "bm \u2286 NODE");
 	}
 
+	/**
+	 * Checks that insertion of "=" after ":" is translated to "≔"
+	 */
 	@Test
 	public void testMarkActions() {
-		widget.setText("");
-		String input = "bm : cl[{tp}]";
-		for (int i = 0; i < input.length(); i++)
-			insert("" + input.charAt(i));
-		widget.setSelection(4);
-		insert("=");
-		compare("SHWTInvariant ", "bm \u2254 cl[{tp}]");
+		testJumping("bm : cl[{tp}]", 4, "=", "bm \u2254 cl[{tp}]");
 	}
 
+	/**
+	 * Checks that insertion of ":" after "=" is translated to "≔" and "/" after
+	 * "\ {yy} is translated to "∪ {yy}".
+	 */
 	@Test
 	public void testProg11Actions() {
-		widget.setText("");
-		String input = "bl = bl";
-		for (int i = 0; i < input.length(); i++)
-			insert("" + input.charAt(i));
-		widget.setSelection(3);
-		insert(":");
-		widget.setSelection(7);
-		input = " \\ {yy}";
-		for (int i = 0; i < input.length(); i++)
-			insert("" + input.charAt(i));
-		widget.setSelection(9);
-		insert("/");
-		compare("SHWTInvariant ", "bl \u2254 bl \u222a {yy}");
+		testJumping("bl = bl", new int[] { 3, 7, 9 }, new String[] { ":",
+				" \\ {yy}", "/" }, "bl \u2254 bl \u222a {yy}");
 	}
+
 }

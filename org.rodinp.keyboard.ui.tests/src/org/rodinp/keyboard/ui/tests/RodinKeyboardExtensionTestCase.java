@@ -1,28 +1,26 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 ETH Zurich and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     ETH Zurich - initial API and implementation
+ *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.keyboard.ui.tests;
+package org.rodinp.keyboard.ui.tests;
 
-import org.eventb.keyboard.core.tests.Text2EventBMathSimpleTestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.rodinp.keyboard.core.tests.IKeyboardTranslationTester;
-import org.rodinp.keyboard.ui.tests.KeyboardUITestContext;
+import org.rodinp.keyboard.core.tests.Text2MathExtensionTestCase;
 
 /**
- * This class reuses the test cases provided by
- * {@link Text2EventBMathSimpleTestCase} and realize the test in UI.
- * 
- * @author htson
+ * Tests the UI keyboard translation with programmatic contributions reusing
+ * test cases of {@link Text2MathExtensionTestCase}.
  */
-public class EventBKeyboardSimpleTestCase extends Text2EventBMathSimpleTestCase {
+public class RodinKeyboardExtensionTestCase extends Text2MathExtensionTestCase {
+
 
 	protected KeyboardUITestContext context = new KeyboardUITestContext();
 

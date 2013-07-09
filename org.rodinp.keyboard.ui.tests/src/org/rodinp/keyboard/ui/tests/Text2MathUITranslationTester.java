@@ -8,8 +8,9 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - port to JUnit 4
+ *     Systerel - extracted to make test cases reusable
  *******************************************************************************/
-package org.rodinp.keyboard.core.tests;
+package org.rodinp.keyboard.ui.tests;
 
 import static org.junit.Assert.assertEquals;
 
@@ -17,46 +18,29 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Text;
-import org.junit.After;
-import org.junit.Before;
-import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
+import org.rodinp.keyboard.core.tests.IKeyboardTranslationTester;
 
 /**
+ * Tester class for the UI symbol translation.
+ * 
  * @author htson
- *         <p>
- *         This class contains some expression test cases for Event-B Keyboard.
- *         This test the Keyboard on some large expressions taken from Prof.
- *         Jean-Raymond Abrial's Marriage and SHWT developments
  */
-public abstract class AbstractRodinKeyboardTestCase {
+public class Text2MathUITranslationTester implements IKeyboardTranslationTester {
 
-	protected Text widget;
+	private Text widget;
 
-	protected ModifyListener listener;
+	private ModifyListener listener;
 
-	@Before
-	public void setUp() throws Exception {
-		RodinKeyboardUIPlugin keyboardPlugin = RodinKeyboardUIPlugin.getDefault();
-		widget = keyboardPlugin.getRodinKeyboardViewWidget();
-
-		listener = keyboardPlugin.getRodinModifyListener();
-
-		// Remove the listener
-		// In order to simulate user's input, we have to manually setup the
-		// listener.
-		widget.removeModifyListener(listener);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		widget.addModifyListener(listener);
+	public Text2MathUITranslationTester(Text widget, ModifyListener listener) {
+		this.widget = widget;
+		this.listener = listener;
 	}
 
 	/**
 	 * We use this method to simulate the action of typing a character into the
-	 * text area
+	 * text area.
 	 */
-	protected void insert(String s) {
+	public void insert(String s) {
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
 			insert(c);
@@ -72,24 +56,28 @@ public abstract class AbstractRodinKeyboardTestCase {
 		listener.modifyText(new ModifyEvent(e));
 		widget.removeModifyListener(listener);
 	}
-	
-	protected void doTest(String input, String expected) {
-		doTest(input, input, expected);
+
+	public void doTest(String expected, String input) {
+		doTest(input, expected, input);
 	}
-	
-	protected void doTest(String message, String input, String expected) {
+
+	public void doTest(String message, String expected, String input) {
 		widget.setText("");
 		insert(input);
 		compare(message, expected);
 	}
-	
+
 	// Compare the result with the expected result
-	protected void compare(String message, String expect) {
+	public void compare(String message, String expect) {
 		String actual = widget.getText();
 		// replace all platform specific delimiters
 		actual = actual.replaceAll(Text.DELIMITER, "\n");
 		assertEquals(message, expect, actual);
 	}
 
+	@Override
+	public void doTest(String... strings) {
+
+	}
 
 }

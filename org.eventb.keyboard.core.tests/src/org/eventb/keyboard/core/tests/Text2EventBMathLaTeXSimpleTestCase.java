@@ -11,135 +11,168 @@
 package org.eventb.keyboard.core.tests;
 
 import org.junit.Test;
-import org.rodinp.keyboard.core.tests.AbstractText2MathTestCase;
+import org.rodinp.keyboard.core.tests.AbstractText2EventBMathTestCase;
 
 /**
+ * This class contains some simple test cases for Text2EventBMath translator.
+ * This tests the translation on all the LaTeX symbols separately.
+ * 
  * @author htson
- *         <p>
- *         This class contains some simple test cases for Text2EventBMath
- *         translator. This tests the translation on all the symbols separately.
  */
-public class Text2EventBMathLaTeXSimpleTestCase extends AbstractText2MathTestCase {
-
+public class Text2EventBMathLaTeXSimpleTestCase extends
+		AbstractText2EventBMathTestCase {
+	
+	/**
+	 * Checks type LaTeX symbol translation.
+	 */
 	@Test
 	public void testConstants() {
-		testTranslator(
-				"\\nat", "\u2115",
-				"\\natn", "\u2115\u0031",
-				"\\intg", "\u2124"
+		testTranslation(//
+				"\u2115", "\\nat", //
+				"\u2115\u0031", "\\natn", //
+				"\u2124", "\\intg" //
 		);
 	}
 	
+	/**
+	 * Checks propositional calculus LaTeX symbol translation.
+	 */
 	@Test
 	public void testPropositionalCalculus() {
-		testTranslator(
-				"\\land", "\u2227",
-				"\\limp", "\u21d2",
-				"\\leqv", "\u21d4",
-				"\\lnot", "\u00ac",
-				"\\lor", "\u2228",
-				"\\btrue", "\u22a4",
-				"\\bfalse", "\u22a5"
-		);
-	}
-
-	@Test
-	public void testPredicateCalculus() {
-		testTranslator(
-				"\\forall", "\u2200",
-				"\\exists", "\u2203",
-				"\\qdot", "\u00b7"
+		testTranslation(//
+				"\u2227", "\\land", //
+				"\u21d2", "\\limp", //
+				"\u21d4", "\\leqv", //
+				"\u00ac", "\\lnot", //
+				"\u2228", "\\lor", //
+				"\u22a4", "\\btrue", //
+				"\u22a5", "\\bfalse" //
 		);
 	}
 	
+	/**
+	 * Checks predicate calculus LaTeX symbol translation.
+	 */
+	@Test
+	public void testPredicateCalculus() {
+		testTranslation(//
+				"\u2200", "\\forall",//
+				"\u2203", "\\exists", //
+				"\u00b7", "\\qdot" //
+		);
+	}
+	
+	/**
+	 * Checks set theory LaTeX symbol translation.
+	 */
 	@Test
 	public void testBasicSetTheory() {
-		testTranslator(
-				"\\in", "\u2208",
-				"\\notin", "\u2209",
-				"\\pow", "\u2119",
-				"\\pown", "\u2119\u0031",
-				"\\cprod", "\u00d7",
-				"\\mapsto", "\u21a6",
-				"\\mid", "\u2223",
-				"\\subseteq", "\u2286",
-				"\\notsubseteq", "\u2288",
-				"\\subset", "\u2282",
-				"\\notsubset", "\u2284",
-				"\\neq", "\u2260"
+		testTranslation(//
+				"\u2208", "\\in", //
+				"\u2209", "\\notin", //
+				"\u2119", "\\pow", //
+				"\u2119\u0031", "\\pown",//
+				"\u00d7", "\\cprod", //
+				"\u21a6", "\\mapsto", //
+				"\u2223", "\\mid", //
+				"\u2286", "\\subseteq", //
+				"\u2288", "\\notsubseteq", //
+				"\u2282", "\\subset", //
+				"\u2284", "\\notsubset", //
+				"\u2260", "\\neq"//
 		);
 	}
-
+	
+	/**
+	 * Checks element related set theory LaTeX symbols
+	 */
 	@Test
 	public void testElementarySetTheory() {
-		testTranslator(
-				"\\bunion", "\u222a",
-				"\\binter", "\u2229",
-				"\\setminus", "\u2216",
-				"\\emptyset", "\u2205",
-				"\\Union", "\u22c3",
-				"\\Inter", "\u22c2"				
+		testTranslation(//
+				"\u222a", "\\bunion", //
+				"\u2229", "\\binter", //
+				"\u2216", "\\setminus", //
+				"\u2205", "\\emptyset", //
+				"\u22c3", "\\Union", //
+				"\u22c2", "\\Inter" //
 		);
 	}
-
+	
+	/**
+	 * Checks relational LaTeX symbol translation.
+	 */
 	@Test
 	public void testBinaryRelation() {
-		testTranslator(
-				"\\rel", "\u2194",
-				"\\conv", "\u223c",
-				"\\fcomp", "\u003b",
-				"\\bcomp", "\u2218",
-				"\\trel", "\ue100",
-				"\\srel", "\ue101",
-				"\\strel", "\ue102",
-				"\\domres", "\u25c1",
-				"\\ranres", "\u25b7",
-				"\\domsub", "\u2a64",
-				"\\ransub", "\u2a65",
-				"\\ovl", "\ue103",
-				"\\dprod", "\u2297",
-				"\\pprod", "\u2225",
-				"\\lambda", "\u03bb"
+		testTranslation(//
+				"\u2194", "\\rel", //
+				"\u223c", "\\conv", //
+				"\u003b", "\\fcomp", //
+				"\u2218", "\\bcomp", //
+				"\ue100", "\\trel", //
+				"\ue101", "\\srel", //
+				"\ue102", "\\strel", //
+				"\u25c1", "\\domres", //
+				"\u25b7", "\\ranres", //
+				"\u2a64", "\\domsub", //
+				"\u2a65", "\\ransub", //
+				"\ue103", "\\ovl", //
+				"\u2297", "\\dprod", //
+				"\u2225", "\\pprod", //
+				"\u03bb", "\\lambda" //
 		);
 	}
-
-
+	
+	/**
+	 * Checks functional LaTeX symbol translation.
+	 */
 	@Test
 	public void testFunction() {
-		testTranslator(
-				"\\pfun", "\u21f8",
-				"\\tfun", "\u2192",
-				"\\pinj", "\u2914",
-				"\\tinj", "\u21a3",
-				"\\psur", "\u2900",
-				"\\tsur", "\u21a0",
-				"\\tbij", "\u2916"
+		testTranslation(//
+				"\u21f8", "\\pfun", //
+				"\u2192", "\\tfun", //
+				"\u2914", "\\pinj", //
+				"\u21a3", "\\tinj", //
+				"\u2900", "\\psur", //
+				"\u21a0", "\\tsur", //
+				"\u2916", "\\tbij" //
 		);
 	}
-
+	
+	/**
+	 * Checks arithmetical LaTeX symbol translation.
+	 */
 	@Test
 	public void testArithmetics() {
-		testTranslator(
-				"\\upto", "\u2025",
-				"\\leq", "\u2264",
-				"\\geq", "\u2265",
-				"-", "\u2212",
-				"\\expn", "\u005e",
-				"\\div", "\u00f7"
+		testTranslation(//
+				"\u2025", "\\upto", //
+				"\u2264", "\\leq", //
+				"\u2265", "\\geq", //
+				"\u2212", "-", //
+				"\u005e", "\\expn", //
+				"\u00f7", "\\div" //
 		);
 	}
-
+	
+	/**
+	 * Checks assignment LaTeX symbol translation.
+	 */
 	@Test
 	public void testAssignments() {
-		testTranslator(
-				"\\bcmeq", "\u2254",
-				"\\bcmin", ":\u2208",
-				"\\bcmsuch", ":\u2223"
+		testTranslation(//
+				"\u2254", "\\bcmeq", //
+				":\u2208", "\\bcmin", //
+				":\u2223", "\\bcmsuch" //
+		);
+	}
+	
+	/**
+	 * Checks other Event-B LaTeX symbol translation.
+	 */
+	@Test
+	public void testOther() {
+		testTranslation(//
+				"\u2982", "\\oftype"//
 		);
 	}
 
-	@Test
-	public void testOther() {
-		testTranslator("\\oftype", "\u2982");
-	}
 }

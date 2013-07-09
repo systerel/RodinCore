@@ -4,8 +4,8 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eventb.keyboard.core.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.eventb.keyboard,
- org.rodinp.keyboard.core.tests,
+Require-Bundle: org.rodinp.keyboard.core.tests,
  org.junit
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
+Export-Package: org.eventb.keyboard.core.tests;x-friends:="org.eventb.keyboard.ui.tests"
