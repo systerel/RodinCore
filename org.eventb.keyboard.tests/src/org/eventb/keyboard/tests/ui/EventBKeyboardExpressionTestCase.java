@@ -8,9 +8,9 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-package org.eventb.keyboard.ui.tests;
+package org.eventb.keyboard.tests.ui;
 
-import org.eventb.keyboard.core.tests.Text2EventBMathLaTeXSimpleTestCase;
+import org.eventb.keyboard.tests.core.Text2EventBMathExpressionTestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.rodinp.keyboard.core.tests.IKeyboardTranslationTester;
@@ -18,13 +18,12 @@ import org.rodinp.keyboard.ui.tests.KeyboardUITestContext;
 
 /**
  * This class reuses the test cases provided by
- * {@link Text2EventBMathLaTeXSimpleTestCase} and realize the test in UI.
+ * {@link Text2EventBMathExpressionTestCase} and realize the test in UI.
  * 
  * @author htson
  */
-public class EventBKeyboardLaTeXSimpleTestCase extends
-		Text2EventBMathLaTeXSimpleTestCase {
-
+public class EventBKeyboardExpressionTestCase extends Text2EventBMathExpressionTestCase {
+	
 	protected KeyboardUITestContext context = new KeyboardUITestContext();
 
 	@Before
@@ -41,5 +40,5 @@ public class EventBKeyboardLaTeXSimpleTestCase extends
 	protected IKeyboardTranslationTester getTranslatorTester() {
 		return context.getTranslationTester();
 	}
-
+	
 }

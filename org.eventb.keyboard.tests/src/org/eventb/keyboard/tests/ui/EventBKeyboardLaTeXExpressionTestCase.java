@@ -8,9 +8,9 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-package org.eventb.keyboard.ui.tests;
+package org.eventb.keyboard.tests.ui;
 
-import org.eventb.keyboard.core.tests.Text2EventBMathLaTeXExpressionTestCase;
+import org.eventb.keyboard.tests.core.Text2EventBMathLaTeXExpressionTestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.rodinp.keyboard.core.tests.IKeyboardTranslationTester;

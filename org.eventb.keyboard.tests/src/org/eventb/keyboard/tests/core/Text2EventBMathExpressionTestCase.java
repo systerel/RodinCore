@@ -9,7 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - refactored using a translation tester
  *******************************************************************************/
-package org.eventb.keyboard.core.tests;
+package org.eventb.keyboard.tests.core;
 
 import org.rodinp.keyboard.core.tests.AbstractText2EventBMathTestCase;
 

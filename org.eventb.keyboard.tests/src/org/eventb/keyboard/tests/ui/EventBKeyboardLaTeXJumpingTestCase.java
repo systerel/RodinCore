@@ -8,7 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *******************************************************************************/
-package org.eventb.keyboard.ui.tests;
+package org.eventb.keyboard.tests.ui;
 
 import org.junit.Test;
 

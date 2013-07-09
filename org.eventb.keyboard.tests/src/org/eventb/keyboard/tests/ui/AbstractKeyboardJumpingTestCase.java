@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.keyboard.ui.tests;
+package org.eventb.keyboard.tests.ui;
 
 import org.eclipse.swt.widgets.Text;
 import org.junit.After;
