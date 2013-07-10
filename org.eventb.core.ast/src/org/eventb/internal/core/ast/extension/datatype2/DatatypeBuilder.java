@@ -43,11 +43,61 @@ import org.eventb.internal.core.parser.ParseResult;
  */
 public final class DatatypeBuilder implements IDatatypeBuilder {
 
-	private final String name;
-	private final FormulaFactory ff;
-	private final List<GivenType> typeParameters;
-	private final ArrayList<ConstructorBuilder> constructors;
+	/**
+	 * Implements checks of formal type parameters. The parameter names must be
+	 * pairwise distinct and different from the datatype name. Moreover, the
+	 * parameters must have been created with the same factory as the datatype
+	 * builder.
+	 */
+	private static class FormalNameChecker {
 
+		private final FormulaFactory ff;
+		private final Set<String> names;
+
+		public FormalNameChecker(FormulaFactory ff, String datatypeName) {
+			this.ff = ff;
+			this.names = new HashSet<String>();
+			this.names.add(datatypeName);
+		}
+
+		public void check(GivenType param) {
+			if (ff != param.getFactory()) {
+				throw new IllegalArgumentException("The type parameter "
+						+ param + " has an incompatible factory: "
+						+ param.getFactory() + " instead of: " + ff);
+			}
+
+			final String name = param.getName();
+			if (!names.add(name)) {
+				throw new IllegalArgumentException("The type parameter name "
+						+ name + " is duplicated");
+			}
+		}
+
+	}
+
+	// Formula factory for this builder
+	private final FormulaFactory ff;
+
+	// Names defined by the datatype
+	private final Set<String> names;
+
+	// Name of the datatype
+	private final String name;
+
+	// The datatype as a given type for recursive occurrences
+	private final GivenType givenType;
+
+	// Well-formedness checker for argument types
+	private final ArgumentTypeChecker argumentTypeChecker;
+	
+	// Formal type parameters
+	private final List<GivenType> typeParameters;
+
+	// Constructors added so far.
+	private final List<ConstructorBuilder> constructors;
+
+	// The resulting datatype if finalized, null otherwise
 	private Datatype2 finalized = null;
 
 	/**
@@ -61,66 +111,31 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	 * @param typeParams
 	 *            the type parameters of the datatype
 	 * @throws IllegalArgumentException
-	 *             if a given type do not use the given factory for building the
-	 *             datatype
-	 * @throws IllegalArgumentException
 	 *             if the given datatype name is not a valid identifier in the
 	 *             given factory
 	 * @throws IllegalArgumentException
-	 *             if one of the given types parameters name is not a valid
-	 *             identifier in the given factory or has the same name than the
-	 *             datatype
+	 *             if a type parameter was not created by the given factory
 	 * @throws IllegalArgumentException
-	 *             if one of the given types parameters has not the given
-	 *             factory
+	 *             if one of the type parameters has the same name as the
+	 *             datatype or another type parameter
 	 */
 	public DatatypeBuilder(FormulaFactory ff, String name,
 			List<GivenType> typeParams) {
 		this.ff = ff;
-		List<String> names = new ArrayList<String>(1 + typeParams.size());
-		checkDatatypeName(names, name);
 		this.name = name;
-		checkTypeParameters(names, typeParams);
-		this.typeParameters = typeParams;
+		this.givenType = ff.makeGivenType(name);
+		this.argumentTypeChecker = new ArgumentTypeChecker(givenType);
+		checkTypeParameters(typeParams);
+		this.typeParameters = new ArrayList<GivenType>(typeParams);
+		this.names = new HashSet<String>();
+		names.add(name);
 		this.constructors = new ArrayList<ConstructorBuilder>();
 	}
 
-	private void checkNotFinalized() {
-		if (finalized != null) {
-			throw new IllegalStateException(
-					"This operation is forbidden on a finalized DatatypeBuilder");
-		}
-	}
-
-	private void checkDatatypeName(List<String> names, String dtName) {
-		if (!ff.isValidIdentifierName(dtName)) {
-			throw new IllegalArgumentException("The datatype name: " + dtName
-					+ " is not a valid identifier in the factory: " + ff);
-		}
-		names.add(dtName);
-	}
-
-	private void checkTypeParameter(List<String> names, GivenType givenType) {
-		final String gtName = givenType.getName();
-		if (names.contains(gtName)) {
-			throw new IllegalArgumentException("The type parameter name: "
-					+ gtName + " is not a valid identifier in the factory: "
-					+ ff);
-		}
-		names.add(gtName);
-		final FormulaFactory typeFactory = givenType.getFactory();
-		if (this.ff != typeFactory) {
-			throw new IllegalArgumentException("The given type " + givenType
-					+ " has an incompatible factory: " + typeFactory
-					+ " instead of the factory used to build the datatype: "
-					+ this.ff);
-		}
-	}
-
-	private void checkTypeParameters(List<String> names,
-			List<GivenType> givenTypes) {
-		for (GivenType givenType : givenTypes) {
-			checkTypeParameter(names, givenType);
+	private void checkTypeParameters(List<GivenType> typeParams) {
+		final FormalNameChecker checker = new FormalNameChecker(ff, name);
+		for (final GivenType typeParam : typeParams) {
+			checker.check(typeParam);
 		}
 	}
 
@@ -144,9 +159,22 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	@Override
 	public IConstructorBuilder addConstructor(String consName) {
 		checkNotFinalized();
+		checkName(consName, "constructor");
 		final ConstructorBuilder cons = new ConstructorBuilder(this, consName);
 		constructors.add(cons);
 		return cons;
+	}
+
+	void checkName(String consName, String nature) {
+		if (!ff.isValidIdentifierName(consName)) {
+			throw new IllegalArgumentException("The " + nature + " name: "
+					+ consName + " is not a valid identifier in the factory: "
+					+ ff);
+		}
+		if (!names.add(consName)) {
+			throw new IllegalArgumentException("The " + nature + " name: "
+					+ consName + " has already been defined for this datatype");
+		}
 	}
 
 	/*
@@ -178,6 +206,14 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 		return name;
 	}
 
+	public GivenType asGivenType() {
+		return givenType;
+	}
+
+	public ArgumentTypeChecker getArgumentTypeChecker() {
+		return argumentTypeChecker;
+	}
+	
 	public List<ConstructorBuilder> getConstructors() {
 		return constructors;
 	}
@@ -189,6 +225,13 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 			finalized = Datatype2.makeDatatype(this);
 		}
 		return finalized;
+	}
+
+	private void checkNotFinalized() {
+		if (finalized != null) {
+			throw new IllegalStateException(
+					"This operation is forbidden on a finalized DatatypeBuilder");
+		}
 	}
 
 	public FormulaFactory getBaseFactory() {

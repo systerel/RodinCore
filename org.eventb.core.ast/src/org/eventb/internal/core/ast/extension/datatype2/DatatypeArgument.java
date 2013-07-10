@@ -28,42 +28,37 @@ import org.eventb.core.ast.Type;
  */
 public final class DatatypeArgument {
 
-	private final String destName;
-	private final Type argType;
+	private final String name;
+	private final Type type;
 
-	DatatypeArgument(ConstructorBuilder cons, String name, Type argType) {
-		this.destName = name;
-		this.argType = argType;
-	}
-
-	DatatypeArgument(ConstructorBuilder cons, Type argType) {
-		this.destName = null;
-		this.argType = argType;
+	public DatatypeArgument(String name, Type argType) {
+		this.name = name;
+		this.type = argType;
 	}
 
 	public Type getType() {
-		return argType;
+		return type;
 	}
 
 	public Type substitute(FormulaFactory ff, Map<GivenType, Type> instantiated) {
 		TypeSubstitutionRewriter tsRewriter = new TypeSubstitutionRewriter(ff,
 				instantiated);
-		return tsRewriter.rewrite(argType);
+		return tsRewriter.rewrite(type);
 	}
 
 	public Expression substituteToSet(FormulaFactory ff,
 			Map<GivenType, Expression> instantiated) {
 		TypeSubstitutionToSet tsToSet = new TypeSubstitutionToSet(ff,
 				instantiated);
-		return tsToSet.toSet(argType);
+		return tsToSet.toSet(type);
 	}
 
 	public boolean hasDestructor() {
-		return destName != null;
+		return name != null;
 	}
 
 	public String getDestructorName() {
-		return destName;
+		return name;
 	}
 
 	public DestructorExtension finalizeConstructorArgument(Datatype2 origin,
@@ -72,18 +67,18 @@ public final class DatatypeArgument {
 		if (!hasDestructor()) {
 			return null;
 		}
-		return new DestructorExtension(origin, constructorExt, destName, this);
+		return new DestructorExtension(origin, constructorExt, name, this);
 	}
 
 	public void harvest(ExtensionHarvester harvester) {
-		harvester.harvest(argType);
+		harvester.harvest(type);
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		return prime * argType.hashCode()
-				+ ((destName == null) ? 0 : destName.hashCode());
+		return prime * type.hashCode()
+				+ ((name == null) ? 0 : name.hashCode());
 	}
 
 	@Override
@@ -95,13 +90,13 @@ public final class DatatypeArgument {
 			return false;
 		}
 		final DatatypeArgument other = (DatatypeArgument) obj;
-		if (!this.argType.equals(other.argType)) {
+		if (!this.type.equals(other.type)) {
 			return false;
 		}
-		if (this.destName == null) {
-			return other.destName == null;
+		if (this.name == null) {
+			return other.name == null;
 		}
-		return this.destName.equals(other.destName);
+		return this.name.equals(other.name);
 	}
 
 }

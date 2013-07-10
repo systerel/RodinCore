@@ -53,12 +53,18 @@ public interface IDatatypeBuilder {
 
 	/**
 	 * Adds a new constructor to the datatype. The arguments of the constructor
-	 * are then defined through the returned object.
+	 * are then defined through the returned object. The constructor name must
+	 * be an identifier name different from all names already declared in the
+	 * datatype (i.e., the datatype name, the name of already added constructors
+	 * and destructors). However, the given name can be the same as one of the
+	 * formal type parameters of the datatype.
 	 * 
 	 * @param name
 	 *            the constructor name
 	 * @return an {@link IConstructorBuilder} for which arguments could be
 	 *         defined
+	 * @throws IllegalArgumentException
+	 *             if the given name is not an identifier name or is not fresh
 	 * @throws IllegalStateException
 	 *             if this {@link IDatatypeBuilder} has already been finalized
 	 */

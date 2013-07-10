@@ -13,7 +13,6 @@ package org.eventb.internal.core.ast.extension.datatype2;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
@@ -54,40 +53,26 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 		}
 	}
 
-	private void checkArgumentType(Type argType) {
-		final FormulaFactory typeFactory = argType.getFactory();
-		final FormulaFactory ff = dtBuilder.getFactory();
-		if (ff != typeFactory) {
-			throw new IllegalArgumentException("The given argument type "
-					+ argType + " has an incompatible factory: " + typeFactory
-					+ " instead of the factory used to build the datatype: "
-					+ ff);
-		}
-	}
-
 	@Override
 	public void addArgument(Type argType, String argName) {
 		checkNotFinalized();
-		checkArgumentType(argType);
-		arguments.add(new DatatypeArgument(this, argName, argType));
+		dtBuilder.getArgumentTypeChecker().check(argType);
+		if (argName != null) {
+			dtBuilder.checkName(argName, "destructor");
+		}
+		arguments.add(new DatatypeArgument(argName, argType));
 	}
 
 	@Override
 	public void addArgument(Type argType) {
-		checkNotFinalized();
-		checkArgumentType(argType);
-		arguments.add(new DatatypeArgument(this, argType));
-	}
-
-	public DatatypeBuilder getDatatypeBuilder() {
-		return this.dtBuilder;
+		addArgument(argType, null);
 	}
 
 	@Override
 	public boolean isBasic() {
-		GivenType datatypeType = dtBuilder.getFactory().makeGivenType(
-				dtBuilder.getName());
-		ContainsTypeVisitor visitor = new ContainsTypeVisitor(datatypeType);
+		final GivenType datatypeType = dtBuilder.asGivenType();
+		final ContainsTypeVisitor visitor = new ContainsTypeVisitor(
+				datatypeType);
 		for (DatatypeArgument arg : arguments) {
 			if (visitor.containsType(arg.getType())) {
 				return false;
@@ -98,16 +83,15 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 
 	public ConstructorExtension finalize(Datatype2 origin) {
 		assert (origin.getTypeConstructor() != null);
-		GivenType datatypeType = dtBuilder.getFactory().makeGivenType(
-				dtBuilder.getName());
-		ConstructorExtension consExt = new ConstructorExtension(origin,
+		final GivenType datatypeType = dtBuilder.asGivenType();
+		final ConstructorExtension consExt = new ConstructorExtension(origin,
 				datatypeType, dtBuilder.getTypeParameters(), name, arguments);
 		finalized = true;
 		return consExt;
 	}
 
 	public void harvest(ExtensionHarvester harvester) {
-		for (final DatatypeArgument arg: arguments) {
+		for (final DatatypeArgument arg : arguments) {
 			arg.harvest(harvester);
 		}
 	}

@@ -57,46 +57,50 @@ public interface IConstructorBuilder {
 
 	/**
 	 * Adds a constructor argument together with the corresponding destructor.
-	 * 
-	 * @param type
-	 *            the type of the constructor argument
-	 * @param name
-	 *            the name of the corresponding destructor
-	 * 
-	 * @throws IllegalStateException
-	 *             if the this builder has been finalized
-	 * @see #addArgument(Type)
-	 */
-	public void addArgument(Type type, String name);
-
-	/**
-	 * Adds a constructor argument without any corresponding destructor.
-	 * 
 	 * <p>
-	 * The type could be obtained by using the
-	 * {@link DatatypeBuilder#parseType(String)} with the string definition of
-	 * the type as argument or must be constructed as follows:
+	 * The type can be obtained by calling
+	 * {@link DatatypeBuilder#parseType(String)} with a string representation of
+	 * the argument type or must be constructed as follows:
 	 * <ul>
 	 * <li>A type definition using the datatype type must use a
 	 * {@link GivenType} with the datatype name (instead of a parametric type)</li>
 	 * <li>A type definition must refer to a type parameter using a
 	 * {@link GivenType} with the type parameter name</li>
+	 * <li>The datatype type must not occur within a powerset construct</li>
 	 * </ul>
 	 * </p>
 	 * 
+	 * @param type
+	 *            the type of the constructor argument
+	 * @param name
+	 *            the name of the corresponding destructor or <code>null</code>
+	 *            if there is no corresponding destructor
+	 * @throws IllegalArgumentException
+	 *             if the given type was not created by the same factory has the
+	 *             datatype builder of this object
+	 * @throws IllegalArgumentException
+	 *             if the datatype type occurs within a powerset in the argument
+	 *             type
+	 * @throws IllegalStateException
+	 *             if this builder has been finalized
+	 * @see #addArgument(Type)
+	 */
+	public void addArgument(Type type, String name);
+
+	/**
+	 * Adds a constructor argument without any corresponding destructor. This is
+	 * a short-hand method fully equivalent to calling
+	 * {@link #addArgument(Type, String)} with a <code>null</code> String.
+	 * 
 	 * @param argType
 	 *            the type of the argument
-	 * @throws IllegalStateException
-	 *             if the {@link IDatatypeBuilder} that has provided this
-	 *             {@link IConstructorBuilder} was already finalized by a call
-	 *             to {@link IDatatypeBuilder#finalizeDatatype()}
 	 */
 	public void addArgument(Type argType);
 
 	/**
 	 * Tells whether this constructor is a basic constructor. A basic
-	 * constructor that has at least one argument and for which no argument type
-	 * reference the datatype type itself (no recursive use of the datatype).
+	 * constructor is such that none of its argument types reference the
+	 * datatype type itself (no recursive use of the datatype).
 	 * 
 	 * @return <code>true</code> iff this is a basic constructor
 	 */

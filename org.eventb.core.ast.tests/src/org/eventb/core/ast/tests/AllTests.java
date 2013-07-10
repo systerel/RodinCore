@@ -76,6 +76,7 @@ import org.junit.runners.Suite;
 	TestFactoryTranslation.class,
 	TestDatatypes.class,
 	TestDatatypeParser.class,
+	TestConstructorBuilder.class,
 	// $JUnit-END$
 })
 public class AllTests {

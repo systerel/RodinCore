@@ -615,6 +615,21 @@ public class TestDatatypes extends AbstractTests {
 		ff.makeDatatypeBuilder("List", ff.makeGivenType("List"));
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void testNullTypeParameterArray() {
+		ff.makeDatatypeBuilder("List", (GivenType[]) null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testNullTypeaParameterList() {
+		ff.makeDatatypeBuilder("List", (List<GivenType>) null);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void testNullType() {
+		ff.makeDatatypeBuilder("List", ff.makeGivenType("S"), null);
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testIncompatibleTypeParametersNames() {
 		ff.makeDatatypeBuilder("List", ff.makeGivenType("S"),
@@ -627,7 +642,47 @@ public class TestDatatypes extends AbstractTests {
 				ff_extns.makeGivenType("T"));
 	}
 
-	// Tests on datatype builder
+	// Tests on datatype builder addConstructor()
+
+	@Test(expected = NullPointerException.class)
+	public void testAddNullConstructor() {
+		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("DT");
+		builder.addConstructor(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddConstructorNotIdentifierName() {
+		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("DT");
+		builder.addConstructor("123");
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddConstructorSameNameAsDatatype() {
+		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("DT");
+		builder.addConstructor("DT");
+	}
+	
+	public void testAddConstructorSameNameAsTypeParameter() {
+		final GivenType tyS = ff.makeGivenType("S");
+		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("DT", tyS);
+		builder.addConstructor("S");
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddConstructorSameNameAsOtherConstructor() {
+		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("DT");
+		builder.addConstructor("cons");
+		builder.addConstructor("cons");
+	}
+
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddConstructorSameNameAsDestructor() {
+		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("DT");
+		final IConstructorBuilder cons = builder.addConstructor("cons");
+		cons.addArgument(INT_TYPE, "dest");
+		builder.addConstructor("dest");
+	}
 
 	@Test
 	public void testDatatypeBuilder() {
@@ -641,12 +696,12 @@ public class TestDatatypes extends AbstractTests {
 		final GivenType tyU = fac.makeGivenType("U");
 		final IDatatypeBuilder dtBuilder = fac.makeDatatypeBuilder("List3", tyS,
 				tyT, tyU);
-		dtBuilder.addConstructor("nil");
-		final IConstructorBuilder cons = dtBuilder.addConstructor("cons");
+		dtBuilder.addConstructor("nil3");
+		final IConstructorBuilder cons = dtBuilder.addConstructor("cons3");
 		cons.addArgument(tyS, "head1");
 		cons.addArgument(tyT, "head2");
 		cons.addArgument(tyU, "head3");
-		cons.addArgument(tyList3, "tail");
+		cons.addArgument(tyList3, "tail3");
 		final IDatatype2 datatype = dtBuilder.finalizeDatatype();
 		return datatype;
 	}
@@ -711,14 +766,6 @@ public class TestDatatypes extends AbstractTests {
 
 	// Tests on datatype constructor builder
 
-	@Test(expected = IllegalStateException.class)
-	public void testIllegalAddArgument() {
-		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("DT");
-		final IConstructorBuilder cons = dtBuilder.addConstructor("dt");
-		dtBuilder.finalizeDatatype();
-		cons.addArgument(ff.makeGivenType("S"));
-	}
-
 	@Test
 	public void testIsBasicConstructor() {
 		final GivenType tyDT = ff.makeGivenType("DT");
@@ -745,7 +792,7 @@ public class TestDatatypes extends AbstractTests {
 		final DatatypeBuilder builder = (DatatypeBuilder) LIST_FAC
 				.makeDatatypeBuilder("foo");
 		assertSame(ff, builder.getBaseFactory());
-		final IConstructorBuilder cons = builder.addConstructor("cons");
+		final IConstructorBuilder cons = builder.addConstructor("cons2");
 		cons.addArgument(LIST_INT_TYPE);
 		assertSame(LIST_FAC, builder.getBaseFactory());
 	}
