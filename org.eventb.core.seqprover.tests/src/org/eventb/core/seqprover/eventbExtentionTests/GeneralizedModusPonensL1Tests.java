@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import org.eventb.core.seqprover.tests.TestLib;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonensL1;
 
 /**
@@ -33,46 +34,44 @@ public class GeneralizedModusPonensL1Tests extends GeneralizedModusPonensTests {
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		final SuccessfullReasonerApplication[] newTests = new SuccessfullReasonerApplication[] {
 				// Apply once in the hypothesis 1/2 (FALSE)
-				new SuccessfullReasonerApplication(
-						TestLib.genSeq(" 1∈P⇒2∈P |- 1∈P "), new EmptyInput(),
+				makeSuccess(" 1∈P⇒2∈P |- 1∈P ",
 						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊥⇒2∈P] |- 1∈P"),
 				// Apply once in the hypothesis 2/2 (FALSE)
-				new SuccessfullReasonerApplication(
-						TestLib.genSeq(" ¬1∈P⇒2∈P |- 1∈P "), new EmptyInput(),
+				makeSuccess(" ¬1∈P⇒2∈P |- 1∈P ",
 						"{P=ℙ(ℤ)}[¬1∈P⇒2∈P][][¬⊥⇒2∈P] |- 1∈P"),
+
 				// Apply once in the hypothesis 1/2 (TRUE)
-				new SuccessfullReasonerApplication(
-						TestLib.genSeq(" 1∈P⇒2∈P |- ¬1∈P "), new EmptyInput(),
+				makeSuccess(" 1∈P⇒2∈P |- ¬1∈P ",
 						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊤⇒2∈P] |- ¬1∈P"),
 				// Apply once in the hypothesis 2/2 (TRUE)
-				new SuccessfullReasonerApplication(
-						TestLib.genSeq(" ¬1∈P⇒2∈P |- ¬1∈P "), new EmptyInput(),
+				makeSuccess(" ¬1∈P⇒2∈P |- ¬1∈P ",
 						"{P=ℙ(ℤ)}[¬1∈P⇒2∈P][][¬⊤⇒2∈P] |- ¬1∈P"),
 				// Apply many in the hypothesis 1/2
-				new SuccessfullReasonerApplication(
-						TestLib.genSeq(" 1∈P⇒2∈P |- 1∈P∨2∈P "),
-						new EmptyInput(), "{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊥⇒⊥] |- 1∈P∨2∈P"),
+				makeSuccess(" 1∈P⇒2∈P |- 1∈P∨2∈P ",
+						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊥⇒⊥] |- 1∈P∨2∈P"),
 				// Apply many in the hypothesis 2/2
-				new SuccessfullReasonerApplication(
-						TestLib.genSeq(" 1∈P⇒2∈P |- 1∈P∨¬2∈P "),
-						new EmptyInput(),
+				makeSuccess(" 1∈P⇒2∈P |- 1∈P∨¬2∈P ",
 						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊥⇒⊤] |- 1∈P∨¬2∈P"),
 				// Re-writing is prioritary proceeded using hypotheses
-				new SuccessfullReasonerApplication(
-						TestLib.genSeq(" 1∈P ;; 1∈P⇒2∈P |- 1∈P∨2∈P "),
-						new EmptyInput(),
+				makeSuccess(" 1∈P ;; 1∈P⇒2∈P |- 1∈P∨2∈P ",
 						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][1∈P ;; ⊤⇒⊥] |- ⊤∨2∈P"),
-				// Sequent (P⊢P) is not re-written (⊥⊢P) or (P⊢⊤), event when
+				// Sequent (P⊢P) is not re-written (⊥⊢P) or (P⊢⊤), even when
 				// the goal denotes a disjunction.
-				new SuccessfullReasonerApplication(
-						TestLib.genSeq(" 1∈P∨2∈P |- 1∈P∨2∈P "),
-						new EmptyInput(), "{P=ℙ(ℤ)}[1∈P∨2∈P][][⊥∨⊥] |- 1∈P∨2∈P") };
+				makeSuccess(" 1∈P∨2∈P |- 1∈P∨2∈P ",
+						"{P=ℙ(ℤ)}[1∈P∨2∈P][][⊥∨⊥] |- 1∈P∨2∈P") };
 
 		final List<SuccessfullReasonerApplication> result = new ArrayList<SuccessfullReasonerApplication>();
 		result.addAll(Arrays.asList(super.getSuccessfulReasonerApplications()));
 		result.addAll(Arrays.asList(newTests));
 		return result
 				.toArray(new SuccessfullReasonerApplication[result.size()]);
+	}
+
+	private SuccessfullReasonerApplication makeSuccess(String sequentImage,
+			String newSequentImage) {
+		final IProverSequent sequent = genSeq(sequentImage);
+		return new SuccessfullReasonerApplication(sequent, new EmptyInput(),
+				newSequentImage);
 	}
 
 }
