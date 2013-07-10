@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
+
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 //import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import org.eventb.core.seqprover.tests.TestLib;
 
 //import com.b4free.rodin.core.B4freeCore;
 
@@ -30,31 +32,37 @@ public class HypOrTests extends AbstractReasonerTests {
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		return new SuccessfullReasonerApplication[] {
-				new SuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 1 |- x = 2 ∨ x = 1 ∨ x = 3 "), input),
-				new SuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 1 |- x = 1 ∨ x = 2 ∨ x = 3 "), input),
-				new SuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 1 |- x = 2 ∨ x = 3 ∨ x = 1 "), input)				
+				makeSuccess(" x = 1 |- x = 2 ∨ x = 1 ∨ x = 3 "),
+				makeSuccess(" x = 1 |- x = 1 ∨ x = 2 ∨ x = 3 "),
+				makeSuccess(" x = 1 |- x = 2 ∨ x = 3 ∨ x = 1 "),
 		};
+	}
+
+	private SuccessfullReasonerApplication makeSuccess(String sequentImage) {
+		final IProverSequent sequent = genSeq(sequentImage);
+		return new SuccessfullReasonerApplication(sequent, input);
 	}
 
 	@Override
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
 		return new UnsuccessfullReasonerApplication[] {
-				new UnsuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 1 |- x = 2"), input),
-				new UnsuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 1 |- x = 2 "), input,
-						"Goal is not a disjunctive predicate"),			
-				new UnsuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 1 |- x = 2 ∨ x = 4 ∨ x = 3"), input),
-				new UnsuccessfullReasonerApplication(TestLib
-						.genSeq(" x = 1 |- x = 2 ∨ x = 4 ∨ x = 3 "), input,
-						"Hypotheses contain no disjunct in goal")
+			makeFailure(" x = 1 |- x = 2"),
+			makeFailure(" x = 1 |- x = 2", "Goal is not a disjunctive predicate"),
+			makeFailure(" x = 1 |- x = 2 ∨ x = 4 ∨ x = 3"),
+			makeFailure(" x = 1 |- x = 2 ∨ x = 4 ∨ x = 3 ", "Hypotheses contain no disjunct in goal"),
 		};
 	}
 
+	private UnsuccessfullReasonerApplication makeFailure(String sequentImage,
+			String expected) {
+		final IProverSequent sequent = genSeq(sequentImage);
+		return new UnsuccessfullReasonerApplication(sequent, input, expected);
+	}
+
+	private UnsuccessfullReasonerApplication makeFailure(String sequentImage) {
+		final IProverSequent sequent = genSeq(sequentImage);
+		return new UnsuccessfullReasonerApplication(sequent, input);
+	}
 //	@Override
 //	public ITactic getJustDischTactic() {
 //		return B4freeCore.externalPP(false);

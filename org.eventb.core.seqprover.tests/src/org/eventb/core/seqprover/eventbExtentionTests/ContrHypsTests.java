@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import static org.eventb.core.seqprover.tests.TestLib.genPred;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
+import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
-import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner;
-import org.eventb.core.seqprover.tests.TestLib;
+import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner.Input;
 
 public class ContrHypsTests extends AbstractReasonerTests {
 
@@ -26,41 +28,49 @@ public class ContrHypsTests extends AbstractReasonerTests {
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
 		return new SuccessfullReasonerApplication[] {
 				// Simple contradiction
-				new SuccessfullReasonerApplication(
-						TestLib.genSeq(" 1>x ;; ¬ 1>x |- 2>x "),
-						new HypothesisReasoner.Input(TestLib.genPred("¬ 1>x"))),
+				makeSuccess(" 1>x ;; ¬ 1>x |- 2>x ", //
+							"¬ 1>x"),
 				// Conjunctive negation and separate conjunct contradictions
-				new SuccessfullReasonerApplication(
-						TestLib.genSeq(" 1>x ;; 2>x ;; ¬ (1>x ∧ 2>x) |- 3>x "),
-						new HypothesisReasoner.Input(TestLib.genPred("¬ (1>x ∧ 2>x)"))),
+				makeSuccess(" 1>x ;; 2>x ;; ¬ (1>x ∧ 2>x) |- 3>x ", //
+							"¬ (1>x ∧ 2>x)"),
 		};
+	}
+
+	private SuccessfullReasonerApplication makeSuccess(String sequentImage,
+			String inputImage) {
+		final IProverSequent sequent = genSeq(sequentImage);
+		final Input input = new Input(genPred(inputImage));
+		return new SuccessfullReasonerApplication(sequent, input);
 	}
 
 	@Override
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
 		return new UnsuccessfullReasonerApplication[] {
 				// Input is not a negation
-				new UnsuccessfullReasonerApplication(TestLib
-						.genSeq("1>x ;; ¬ 1>x |- 2>x "), 
-						new HypothesisReasoner.Input(TestLib.genPred("1>x")),
-						"Predicate 1>x is not a negation"),
+				makeFailure("1>x ;; ¬ 1>x |- 2>x ", //
+							"1>x", //
+							"Predicate 1>x is not a negation"),
 				// No negation of simple contradiction
-				new UnsuccessfullReasonerApplication(TestLib
-						.genSeq("¬ 1>x |- 2>x "), 
-						new HypothesisReasoner.Input(TestLib.genPred("¬ 1>x")),
-						"Predicate ¬1>x is not contradicted by hypotheses"),
+				makeFailure("¬ 1>x |- 2>x ", //
+							"¬ 1>x", //
+							"Predicate ¬1>x is not contradicted by hypotheses"),
 				// No negation of conjunctive contradiction
-				new UnsuccessfullReasonerApplication(TestLib
-						.genSeq(" 1>x ;; ¬ (1>x ∧ 2>x) |- 3>x "), 
-						new HypothesisReasoner.Input(TestLib.genPred("¬ (1>x ∧ 2>x)")),
-						"Predicate ¬(1>x∧2>x) is not contradicted by hypotheses"),
+				makeFailure(" 1>x ;; ¬ (1>x ∧ 2>x) |- 3>x ", //
+							"¬ (1>x ∧ 2>x)", //
+							"Predicate ¬(1>x∧2>x) is not contradicted by hypotheses"),
 				// Conjunctive negation and conjunctive contradiction
 				// (conjuncts will have to be split so that the rule applies)
-				new UnsuccessfullReasonerApplication(
-						TestLib.genSeq(" 1>x ∧ 2>x ;; ¬ (1>x ∧ 2>x) |- 3>x "),
-						new HypothesisReasoner.Input(TestLib.genPred("¬ (1>x ∧ 2>x)")),
-						"Predicate ¬(1>x∧2>x) is not contradicted by hypotheses"),
+				makeFailure(" 1>x ∧ 2>x ;; ¬ (1>x ∧ 2>x) |- 3>x ", //
+							"¬ (1>x ∧ 2>x)", //
+							"Predicate ¬(1>x∧2>x) is not contradicted by hypotheses"),
 				};
+	}
+
+	private UnsuccessfullReasonerApplication makeFailure(String sequentImage,
+			String inputImage, String expected) {
+		final IProverSequent sequent = genSeq(sequentImage);
+		final Input input = new Input(genPred(inputImage));
+		return new UnsuccessfullReasonerApplication(sequent, input, expected);
 	}
 
 }
