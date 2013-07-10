@@ -93,7 +93,7 @@ public abstract class AbstractGenMP extends EmptyInputReasoner {
 			}
 			final IAntecedent ant = makeAntecedent(goal, null, null, hypActions);
 			return makeProofRule(this, input, goal, "generalized MP", ant);
-		} else { // the goal is re-written and is not used to re-write hypotheses.
+		} else { // the goal is not re-written and is not used to re-write hypotheses.
 			if (!hypActions.isEmpty()) {
 				return makeProofRule(this, input, "generalized MP", hypActions);
 			}
