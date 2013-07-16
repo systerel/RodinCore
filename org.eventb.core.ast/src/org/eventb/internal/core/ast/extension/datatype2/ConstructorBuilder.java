@@ -56,11 +56,7 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 	@Override
 	public void addArgument(Type argType, String argName) {
 		checkNotFinalized();
-		dtBuilder.getArgumentTypeChecker().check(argType);
-		if (argName != null) {
-			dtBuilder.checkName(argName, "destructor");
-		}
-		arguments.add(new DatatypeArgument(argName, argType));
+		arguments.add(new DatatypeArgument(dtBuilder, argName, argType));
 	}
 
 	@Override
@@ -70,11 +66,8 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 
 	@Override
 	public boolean isBasic() {
-		final GivenType datatypeType = dtBuilder.asGivenType();
-		final ContainsTypeVisitor visitor = new ContainsTypeVisitor(
-				datatypeType);
-		for (DatatypeArgument arg : arguments) {
-			if (visitor.containsType(arg.getType())) {
+		for (final DatatypeArgument arg : arguments) {
+			if (!arg.isBasic()) {
 				return false;
 			}
 		}

@@ -23,7 +23,7 @@ import org.eventb.core.ast.Type;
 /**
  * Checks that an argument type is well-formed, i.e. that recursive calls to the
  * datatype type do not occur directly or indirectly within a powerset
- * construct.
+ * construct. Also tells whether there is any recursive occurrence.
  * 
  * @author Laurent Voisin
  */
@@ -31,6 +31,9 @@ public class ArgumentTypeChecker implements ITypeVisitor {
 
 	// The type representing the datatype
 	private final GivenType dtType;
+
+	// Was the datatype found?
+	private boolean found;
 
 	// Number of enclosing power sets
 	private int enclosingPowersets;
@@ -49,9 +52,14 @@ public class ArgumentTypeChecker implements ITypeVisitor {
 					+ dtFactory);
 		}
 		enclosingPowersets = 0;
+		found = false;
 		argType.accept(this);
 	}
-	
+
+	public boolean isBasic() {
+		return !found;
+	}
+
 	@Override
 	public void visit(BooleanType type) {
 		// do nothing
@@ -59,9 +67,12 @@ public class ArgumentTypeChecker implements ITypeVisitor {
 
 	@Override
 	public void visit(GivenType type) {
-		if (enclosingPowersets > 0 && dtType.equals(type)) {
-			throw new IllegalArgumentException(
-					"The datatype type occurs within a powerset");
+		if (dtType.equals(type)) {
+			if (enclosingPowersets > 0) {
+				throw new IllegalArgumentException(
+						"The datatype type occurs within a powerset");
+			}
+			found = true;
 		}
 	}
 

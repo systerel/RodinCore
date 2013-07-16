@@ -30,14 +30,25 @@ public final class DatatypeArgument {
 
 	private final String name;
 	private final Type type;
+	private final boolean isBasic;
 
-	public DatatypeArgument(String name, Type argType) {
+	public DatatypeArgument(DatatypeBuilder dtBuilder, String name, Type argType) {
+		final ArgumentTypeChecker checker = dtBuilder.getArgumentTypeChecker();
+		checker.check(argType);
+		if (name != null) {
+			dtBuilder.checkName(name, "destructor");
+		}
 		this.name = name;
 		this.type = argType;
+		this.isBasic = checker.isBasic();
 	}
 
 	public Type getType() {
 		return type;
+	}
+
+	public boolean isBasic() {
+		return isBasic;
 	}
 
 	public Type substitute(FormulaFactory ff, Map<GivenType, Type> instantiated) {
@@ -77,8 +88,7 @@ public final class DatatypeArgument {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		return prime * type.hashCode()
-				+ ((name == null) ? 0 : name.hashCode());
+		return prime * type.hashCode() + ((name == null) ? 0 : name.hashCode());
 	}
 
 	@Override
