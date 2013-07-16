@@ -53,9 +53,9 @@ public class DestructorExtension extends ConstructorArgument implements
 	private final String groupId;
 
 	public DestructorExtension(Datatype2 origin,
-			ConstructorExtension constructor, DatatypeArgument argument) {
-		super(constructor, argument.getType());
-		this.name = argument.getDestructorName();
+			ConstructorExtension constructor, String name, Type type) {
+		super(constructor, type);
+		this.name = name;
 		this.id = computeId(name);
 		int nbArgs = 1; // one argument (of type datatype)
 		this.kind = computeKind(nbArgs);
@@ -66,7 +66,7 @@ public class DestructorExtension extends ConstructorArgument implements
 	public boolean isDestructor() {
 		return true;
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;

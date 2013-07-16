@@ -54,10 +54,10 @@ public final class DatatypeArgument {
 		return name;
 	}
 
-	public ConstructorArgument finalizeConstructorArgument(Datatype2 origin,
+	public ConstructorArgument finalize(Datatype2 origin,
 			ConstructorExtension constructorExt) {
 		if (hasDestructor()) {
-			return new DestructorExtension(origin, constructorExt, this);
+			return new DestructorExtension(origin, constructorExt, name, type);
 		} else {
 			return new ConstructorArgument(constructorExt, type);
 		}

@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
@@ -83,14 +82,12 @@ public class Datatype2 implements IDatatype2 {
 
 	private Datatype2(DatatypeBuilder dtBuilder) {
 		baseFactory = dtBuilder.getBaseFactory();
-		final List<GivenType> typeParams = dtBuilder.getTypeParameters();
-		typeCons = new TypeConstructorExtension(this, typeParams,
-				dtBuilder.getName());
+		typeCons = new TypeConstructorExtension(this, dtBuilder);
 		constructors = new LinkedHashMap<String, ConstructorExtension>();
 		destructors = new HashMap<String, DestructorExtension>(); 
 		final List<ConstructorBuilder> dtConstrs = dtBuilder.getConstructors();
 		for (final ConstructorBuilder dtCons : dtConstrs) {
-			final ConstructorExtension constructor = dtCons.finalize(this);
+			final ConstructorExtension constructor = dtCons.makeExtension(this);
 			constructors.put(constructor.getName(), constructor);
 			destructors.putAll(constructor.getDestructorMap());
 		}

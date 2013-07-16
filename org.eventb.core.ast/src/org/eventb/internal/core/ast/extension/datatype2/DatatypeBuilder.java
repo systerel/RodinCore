@@ -227,7 +227,7 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 		return finalized;
 	}
 
-	private void checkNotFinalized() {
+	protected void checkNotFinalized() {
 		if (finalized != null) {
 			throw new IllegalStateException(
 					"This operation is forbidden on a finalized DatatypeBuilder");

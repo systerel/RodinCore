@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
@@ -68,8 +67,7 @@ public class ConstructorExtension implements IConstructorExtension {
 	private Set<IFormulaExtension> extensions;
 	private HashMap<String, DestructorExtension> destructors;
 
-	public ConstructorExtension(Datatype2 origin, GivenType datatypeType,
-			List<GivenType> typeParams, String name,
+	public ConstructorExtension(Datatype2 origin, String name,
 			List<DatatypeArgument> builderArgs) {
 		this.origin = origin;
 		this.name = name;
@@ -82,8 +80,7 @@ public class ConstructorExtension implements IConstructorExtension {
 		this.destructors = new HashMap<String, DestructorExtension>(nbArgs);
 		int count = 0;
 		for (final DatatypeArgument builderArg : builderArgs) {
-			final ConstructorArgument arg = builderArg
-					.finalizeConstructorArgument(origin, this);
+			final ConstructorArgument arg = builderArg.finalize(origin, this);
 			if (arg.isDestructor()) {
 				final DestructorExtension destr = arg.asDestructor();
 				extensions.add(destr);

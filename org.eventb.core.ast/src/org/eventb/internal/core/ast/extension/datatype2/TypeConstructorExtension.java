@@ -59,17 +59,22 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 	private final String groupId;
 	private final IExtensionKind kind;
 
-	public TypeConstructorExtension(Datatype2 origin,
-			List<GivenType> typeParams, String typeName) {
+	public TypeConstructorExtension(Datatype2 origin, DatatypeBuilder dtBuilder) {
 		this.origin = origin;
-		this.name = typeName;
+		this.name = dtBuilder.getName();
+		final List<GivenType> typeParams = dtBuilder.getTypeParameters();
 		this.paramNames = new ArrayList<String>(typeParams.size());
-		for (GivenType typeParam : typeParams) {
+		for (final GivenType typeParam : typeParams) {
 			paramNames.add(typeParam.getName());
 		}
-		this.id = computeId(typeName);
+		this.id = computeId(name);
 		this.groupId = computeGroup(typeParams.size());
 		this.kind = computeKind(typeParams.size());
+	}
+
+	@Override
+	public boolean conjoinChildrenWD() {
+		return true;
 	}
 
 	@Override
@@ -164,11 +169,6 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 				return false;
 			}
 		}
-		return true;
-	}
-
-	@Override
-	public boolean conjoinChildrenWD() {
 		return true;
 	}
 

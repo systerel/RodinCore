@@ -13,7 +13,6 @@ package org.eventb.internal.core.ast.extension.datatype2;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
 import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
@@ -37,25 +36,15 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 	// Arguments so far
 	private final List<DatatypeArgument> arguments;
 
-	// When non-null, the final constructor built from this instance
-	private boolean finalized = false;
-
 	ConstructorBuilder(DatatypeBuilder dtBuilder, String name) {
 		this.dtBuilder = dtBuilder;
 		this.name = name;
 		this.arguments = new ArrayList<DatatypeArgument>();
 	}
 
-	private void checkNotFinalized() {
-		if (finalized) {
-			throw new IllegalStateException(
-					"This operation is forbidden on a finalized DatatypeConstructor");
-		}
-	}
-
 	@Override
 	public void addArgument(Type argType, String argName) {
-		checkNotFinalized();
+		dtBuilder.checkNotFinalized();
 		arguments.add(new DatatypeArgument(dtBuilder, argName, argType));
 	}
 
@@ -74,13 +63,9 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 		return true;
 	}
 
-	public ConstructorExtension finalize(Datatype2 origin) {
-		assert (origin.getTypeConstructor() != null);
-		final GivenType datatypeType = dtBuilder.asGivenType();
-		final ConstructorExtension consExt = new ConstructorExtension(origin,
-				datatypeType, dtBuilder.getTypeParameters(), name, arguments);
-		finalized = true;
-		return consExt;
+	/* Must be called only when finalizing the datatype */
+	public ConstructorExtension makeExtension(Datatype2 origin) {
+		return new ConstructorExtension(origin, name, arguments);
 	}
 
 	public void harvest(ExtensionHarvester harvester) {
