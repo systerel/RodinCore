@@ -78,7 +78,7 @@ public final class DatatypeArgument {
 		if (!hasDestructor()) {
 			return null;
 		}
-		return new DestructorExtension(origin, constructorExt, name, this);
+		return new DestructorExtension(origin, constructorExt, this);
 	}
 
 	public void harvest(ExtensionHarvester harvester) {

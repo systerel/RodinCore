@@ -93,6 +93,10 @@ public class Datatype2 implements IDatatype2 {
 		return typeCons;
 	}
 
+	public boolean hasSingleConstructor() {
+		return constructors.size() == 1;
+	}
+
 	@Override
 	public IConstructorExtension[] getConstructors() {
 		final Collection<IConstructorExtension> cons = constructors.values();

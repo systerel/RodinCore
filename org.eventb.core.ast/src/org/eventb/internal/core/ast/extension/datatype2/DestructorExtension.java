@@ -10,23 +10,15 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype2;
 
-import static org.eventb.core.ast.Formula.EQUAL;
-import static org.eventb.core.ast.Formula.EXISTS;
+import static org.eventb.internal.core.ast.extension.datatype2.ConstructorPredicateBuilder.makeInConstructorDomain;
 import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.computeGroup;
 import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.computeId;
 import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.computeKind;
 import static org.eventb.internal.core.ast.extension.datatype2.TypeSubstitution.makeSubstitution;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExtendedFormula;
@@ -50,26 +42,21 @@ import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
  */
 public class DestructorExtension implements IDestructorExtension {
 
-	private static final String PARAM_PREFIX = "p";
-
-	private static final Predicate[] NO_PRED = new Predicate[0];
-
 	private final Datatype2 origin;
 	private final ConstructorExtension constructor;
 	private final String name;
-	private final DatatypeArgument argument;
+	private final Type type;
 	private final String id;
 	private final IExtensionKind kind;
 	private final String groupId;
 
 	public DestructorExtension(Datatype2 origin,
-			ConstructorExtension constructor, String name,
-			DatatypeArgument argument) {
+			ConstructorExtension constructor, DatatypeArgument argument) {
 		this.origin = origin;
 		this.constructor = constructor;
-		this.name = name;
+		this.name = argument.getDestructorName();
+		this.type = argument.getType();
 		this.id = computeId(name);
-		this.argument = argument;
 		int nbArgs = 1; // one argument (of type datatype)
 		this.kind = computeKind(nbArgs);
 		this.groupId = computeGroup(nbArgs);
@@ -85,68 +72,21 @@ public class DestructorExtension implements IDestructorExtension {
 		return constructor;
 	}
 
+	@Override
+	public boolean conjoinChildrenWD() {
+		return true;
+	}
+
 	// formula is "destr(dt)"
-	// WD is "# params . dt = constr(params)"
+	// WD is "# args . dt = constructor(args)"
 	@Override
 	public Predicate getWDPredicate(IExtendedFormula formula,
 			IWDMediator wdMediator) {
-
-		if (origin.getConstructors().length == 1) {
-			// if there is only one constructor the WD is true
+		if (origin.hasSingleConstructor()) {
 			return wdMediator.makeTrueWD();
 		}
-
-		final FormulaFactory ff = wdMediator.getFormulaFactory();
-		final IDestructorExtension[] constrArgs = constructor.getArguments();
-		final int argSize = constrArgs.length;
-		final Expression child = formula.getChildExpressions()[0];
-
-		final ParametricType datatypeType = (ParametricType) child.getType();
-
-		final Type[] argTypes = constructor.getArgumentTypes(datatypeType
-				.translate(ff));
-		assert argTypes.length == argSize;
-
-		final List<BoundIdentDecl> bids = new ArrayList<BoundIdentDecl>(argSize);
-		final Expression[] params = buildParams(bids, constrArgs, argTypes, ff);
-
-		final Expression dt = child.shiftBoundIdentifiers(argSize);
-		return makeWD(dt, bids, params, ff);
-	}
-
-	private static Expression[] buildParams(List<BoundIdentDecl> bids,
-			IDestructorExtension[] constrArgs, Type[] argTypes,
-			FormulaFactory ff) {
-		final int argSize = constrArgs.length;
-		final Expression[] params = new Expression[argSize];
-		for (int i = 0; i < argSize; i++) {
-			final IDestructorExtension arg = constrArgs[i];
-			final String prmName = makeParamName(arg, i);
-
-			final Type argType = argTypes[i];
-			bids.add(ff.makeBoundIdentDecl(prmName, null, argType));
-			params[i] = ff.makeBoundIdentifier(argSize - 1 - i, null, argType);
-		}
-		return params;
-	}
-
-	private static String makeParamName(IDestructorExtension arg, int index) {
-		final String prmName;
-		if (arg != null) {
-			prmName = arg.getName() + index;
-		} else {
-			prmName = PARAM_PREFIX + index;
-		}
-		return prmName;
-	}
-
-	private Predicate makeWD(Expression dt, List<BoundIdentDecl> bids,
-			Expression[] params, FormulaFactory ff) {
-		final ExtendedExpression constr = ff.makeExtendedExpression(
-				constructor, params, NO_PRED, null, dt.getType());
-		final RelationalPredicate eqDtConstr = ff.makeRelationalPredicate(
-				EQUAL, dt, constr, null);
-		return ff.makeQuantifiedPredicate(EXISTS, bids, eqDtConstr, null);
+		final Expression dtValue = formula.getChildExpressions()[0];
+		return makeInConstructorDomain(dtValue, constructor);
 	}
 
 	@Override
@@ -187,7 +127,7 @@ public class DestructorExtension implements IDestructorExtension {
 		if (subst == null) {
 			return null;
 		}
-		return subst.rewrite(argument.getType());
+		return subst.rewrite(type);
 	}
 
 	@Override
@@ -200,7 +140,7 @@ public class DestructorExtension implements IDestructorExtension {
 		if (subst == null) {
 			return false;
 		}
-		final Type expected = subst.rewrite(argument.getType());
+		final Type expected = subst.rewrite(type);
 		return expected.equals(proposedType);
 	}
 
@@ -210,12 +150,7 @@ public class DestructorExtension implements IDestructorExtension {
 		final Type childType = expression.getChildExpressions()[0].getType();
 		final TypeSubstitution subst = makeSubstitution(origin, tcMediator);
 		tcMediator.sameType(childType, subst.getInstance());
-		return subst.rewrite(argument.getType());
-	}
-
-	@Override
-	public boolean conjoinChildrenWD() {
-		return true;
+		return subst.rewrite(type);
 	}
 
 	@Override
