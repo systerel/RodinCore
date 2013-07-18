@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static org.eventb.core.ast.Formula.BFALSE;
-import static org.eventb.core.ast.Formula.BTRUE;
-import static org.eventb.core.ast.Formula.LOR;
-import static org.eventb.core.ast.Formula.NOT;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isDisj;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.disjuncts;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isFalse;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isTrue;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.True;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.False;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,7 +48,6 @@ import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.core.seqprover.eventbExtensions.DLib;
 import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens.Level;
 
 /**
@@ -89,11 +93,11 @@ public class GenMPC {
 	 * @param hyp
 	 *            the hypothesis parsed (should not be <code>⊤</code> or
 	 *            <code>⊥</code>).
-	 * @return <code>hyp</code> if it is not a negation, its child else.
+	 * @return <code>hyp</code> if it is not a negation, <code>¬hyp</code> else.
 	 */
 	private static Predicate computePred(Predicate hyp) {
-		if (hyp.getTag() == NOT) {
-			return ((UnaryPredicate) hyp).getChild();
+		if (isNeg(hyp)) {
+			return (makeNeg(hyp));
 		} else {
 			return hyp;
 		}
@@ -108,8 +112,8 @@ public class GenMPC {
 	 * @return <code>true</code> if and only if the predicate <code>pred</code>
 	 *         is equal to <code>⊤</code> or <code>⊥</code>.
 	 */
-	private static boolean isTrueOrFalsePred(Predicate pred) {
-		return pred.getTag() == BFALSE || pred.getTag() == BTRUE;
+	public static boolean isTrueOrFalsePred(Predicate pred) {
+		return isFalse(pred) || isTrue(pred);
 	}
 
 	/**
@@ -258,13 +262,13 @@ public class GenMPC {
 		Predicate rewriteGoal = goal;
 		for (Entry<Predicate, List<IPosition>> entry : modifGoalMap.entrySet()) {
 			final Predicate value = entry.getKey();
-			final Predicate negValue = ff.makeUnaryPredicate(NOT, value, null);
+			final Predicate negValue = makeNeg(value);
 			final Predicate substitute;
 			if (seq.containsHypothesis(value)) {
-				substitute = DLib.True(ff);
+				substitute = True(ff);
 				neededHyps.add(value);
 			} else if (seq.containsHypothesis(negValue)) {
-				substitute = DLib.False(ff);
+				substitute = False(ff);
 				neededHyps.add(negValue);
 			} else {
 				continue;
@@ -365,41 +369,28 @@ public class GenMPC {
 			Predicate predicate, Level level) {
 		final FormulaFactory ff = sequent.getFormulaFactory();
 		final Predicate goal = sequent.goal();
-		final Predicate negPred = ff.makeUnaryPredicate(NOT, predicate, null);
+		final Predicate negPred = makeNeg(predicate);
 		final Predicate[] result = new Predicate[2];
 		if (sequent.containsHypothesis(predicate)) {
 			result[0] = predicate;
-			result[1] = DLib.True(ff);
+			result[1] = True(ff);
 			return result;
 		} else if (sequent.containsHypothesis(negPred)) {
 			result[0] = negPred;
-			result[1] = DLib.False(ff);
+			result[1] = False(ff);
 			return result;
 		}
 		if (!level.from(Level.L1)) {
 			return null;
-		} else if (goal.getTag() == LOR) {
-			final Predicate[] children = ((AssociativePredicate) goal)
-					.getChildren();
-			for (Predicate child : children) {
-				if (child.equals(predicate)) {
-					result[0] = null;
-					result[1] = DLib.False(ff);
-					return result;
-				} else if (child.equals(negPred)) {
-					result[0] = null;
-					result[1] = DLib.True(ff);
-					return result;
-				}
-			}
-		} else {
-			if (goal.equals(predicate)) {
+		}
+		for (Predicate child : breakPossibleDisjunct(goal)) {
+			if (child.equals(predicate)) {
 				result[0] = null;
-				result[1] = DLib.False(ff);
+				result[1] = False(ff);
 				return result;
-			} else if (goal.equals(negPred)) {
+			} else if (child.equals(negPred)) {
 				result[0] = null;
-				result[1] = DLib.True(ff);
+				result[1] = True(ff);
 				return result;
 			}
 		}
@@ -409,25 +400,37 @@ public class GenMPC {
 	public static Set<Predicate> createGoalToHypSet(Predicate goal, Level level) {
 		final Set<Predicate> goalToHypSet = new HashSet<Predicate>();
 		if (level.from(Level.L1)) {
-			if (goal.getTag() == LOR) {
-				final Predicate[] children = ((AssociativePredicate) goal)
-						.getChildren();
-				for (Predicate child : children) {
-					if (child.getTag() == NOT) {
-						goalToHypSet.add(((UnaryPredicate) child).getChild());
+			if (!isNeg(goal)) {
+				for (Predicate child : breakPossibleDisjunct(goal)) {
+					if (isNeg(child)) {
+						addToSet(goalToHypSet, makeNeg(child));
 					} else {
-						goalToHypSet.add(child);
+						addToSet(goalToHypSet, child);
 					}
 				}
 			} else {
-				if (goal.getTag() == NOT) {
-					goalToHypSet.add(((UnaryPredicate) goal).getChild());
-				} else {
-					goalToHypSet.add(goal);
-				}
+				addToSet(goalToHypSet, makeNeg(goal));
 			}
 		}
 		return goalToHypSet;
+	}
+
+	/**
+	 * Returns a set of disjunct of <code>P</code> when it is a disjunction,
+	 * otherwise a singleton set containing <code>P</code>. The returned set is
+	 * mutable.
+	 *
+	 * @param P
+	 *            a predicate
+	 * @return a mutable set of disjuncts of the given predicate
+	 */
+	public static Set<Predicate> breakPossibleDisjunct(Predicate P) {
+		final List<Predicate> list;
+		if (isDisj(P))
+			list = Arrays.asList(disjuncts(P));
+		else
+			list = Arrays.asList(P);
+		return new LinkedHashSet<Predicate>(list);
 	}
 
 	/**
