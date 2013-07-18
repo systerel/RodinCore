@@ -46,6 +46,7 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.seqprover.IHypAction;
+import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens.Level;
@@ -55,16 +56,95 @@ import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonen
  */
 public class GenMPC {
 
+	private final IProverSequent seq;
+	private final FormulaFactory ff;
+	private final Predicate goal;
+	private final Level level;
+	private final IProofMonitor pm;
+	// the map (hypothesis ↦ set of its child that can be substitute
+	// <code>⊤</code> or <code>⊥</code>) used for the re-writing
+	private final Map<Predicate, Map<Predicate, List<IPosition>>> modifHypMap;
+	// the set of all the sub-predicate of the goal that can be
+	// substitute by <code>⊤</code> or <code>⊥</code>
+	private Map<Predicate, List<IPosition>> modifGoalMap;
+	private Set<Predicate> goalToHypSet;
+	private Predicate rewrittenGoal;
+	private RewriteHypsOutput output;
+	// the set of all the needed hypotheses to rewrite the goal
+	// (computed by this method, it should be an empty set)
+	private final Set<Predicate> neededHyps;
+
+	public GenMPC(Level level, IProofMonitor pm, IProverSequent seq) {
+		super();
+		this.level = level;
+		this.pm = pm;
+		this.seq = seq;
+		ff = seq.getFormulaFactory();
+		neededHyps = new HashSet<Predicate>();
+		modifHypMap = new HashMap<Predicate, Map<Predicate, List<IPosition>>>();
+		modifGoalMap = new HashMap<Predicate, List<IPosition>>();
+		goal = seq.goal();
+	}
+
+	public Predicate goal() {
+		return goal;
+	}
+
+	public Set<Predicate> neededHyps() {
+		return neededHyps;
+	}
+
+	public Predicate rewrittenGoal() {
+		return rewrittenGoal;
+	}
+
+	public RewriteHypsOutput output() {
+		return output;
+	}
+
+	/**
+	 * Runs generalized Modus Ponens reasoner that generate the re-written goal
+	 * and hypotheses and all the hypotheses needed to achieve it and all
+	 * IHypActions computed.
+	 *
+	 * Computes each sub-predicate which will be re-written by ⊤ (respectively ⊥)
+	 * in the goal in a first time and in hypotheses in a second time. Stocks
+	 * in a Map the sub-predicate which will be re-written and its position.
+	 * Rewrites the goal and the hypotheses
+	 *
+	 */
+	public boolean runGenMP() {
+		Set<Predicate> hypSet = createHypSet();
+		goalToHypSet = createGoalToHypSet();
+		goalToHypSet.addAll(hypSet);
+
+		Map<Predicate, List<IPosition>> m = analyzePred(goal, hypSet);
+		if (m != null) {
+			modifGoalMap = m;
+		}
+		for (Predicate hyp : seq.visibleHypIterable()) {
+			if (pm != null && pm.isCanceled()) {
+				return false;
+			}
+			m = analyzePred(hyp, goalToHypSet);
+			if (!m.isEmpty()) {
+				modifHypMap.put(hyp, m);
+			}
+		}
+
+		rewrittenGoal = rewriteGoal();
+		output = rewriteHyps();
+		return true;
+	}
+
 	/**
 	 * Returns a set of the sequent's hypotheses. If one is tagged
 	 * <code>NOT</code>, then the set contains its child.
 	 * 
-	 * @param seq
-	 *            the sequent from whom the hypotheses are taken
 	 * @return a set of the hypotheses of the sequent (no negative predicates
 	 *         allowed)
 	 */
-	public static Set<Predicate> createHypSet(IProverSequent seq) {
+	private Set<Predicate> createHypSet() {
 		Set<Predicate> hypSet = new HashSet<Predicate>();
 		for (Predicate hyp : seq.hypIterable()) {
 			addToSet(hypSet, computePred(hyp));
@@ -81,7 +161,7 @@ public class GenMPC {
 	 * @param pred
 	 *            the predicate possibly added to <code>hypSet</code>
 	 */
-	private static void addToSet(Set<Predicate> hypSet, Predicate pred) {
+	private void addToSet(Set<Predicate> hypSet, Predicate pred) {
 		if (!isTrueOrFalsePred(pred)) {
 			hypSet.add(pred);
 		}
@@ -95,7 +175,7 @@ public class GenMPC {
 	 *            <code>⊥</code>).
 	 * @return <code>hyp</code> if it is not a negation, <code>¬hyp</code> else.
 	 */
-	private static Predicate computePred(Predicate hyp) {
+	private Predicate computePred(Predicate hyp) {
 		if (isNeg(hyp)) {
 			return (makeNeg(hyp));
 		} else {
@@ -112,7 +192,7 @@ public class GenMPC {
 	 * @return <code>true</code> if and only if the predicate <code>pred</code>
 	 *         is equal to <code>⊤</code> or <code>⊥</code>.
 	 */
-	public static boolean isTrueOrFalsePred(Predicate pred) {
+	public boolean isTrueOrFalsePred(Predicate pred) {
 		return isFalse(pred) || isTrue(pred);
 	}
 
@@ -130,7 +210,7 @@ public class GenMPC {
 	 * @return the map (predicate contained both in <code>origin</code> and
 	 *         <code>hypSet</code> ↦ its position in <code>pred</code>)
 	 */
-	public static Map<Predicate, List<IPosition>> analyzePred(Predicate pred,
+	public Map<Predicate, List<IPosition>> analyzePred(Predicate pred,
 			Set<Predicate> hypSet) {
 		Map<Predicate, List<IPosition>> map = new HashMap<Predicate, List<IPosition>>();
 		analyzeSubPred(pred, hypSet, map);
@@ -151,7 +231,7 @@ public class GenMPC {
 	 *            the map (predicate contained both in <code>origin</code> and
 	 *            <code>hypSet</code> ↦ its position in <code>origin</code>)
 	 */
-	public static void analyzeSubPred(final Predicate origin,
+	public void analyzeSubPred(final Predicate origin,
 			final Set<Predicate> hypSet,
 			final Map<Predicate, List<IPosition>> map) {
 
@@ -242,23 +322,10 @@ public class GenMPC {
 	 * Returns the goal re-written using the generalized Modus Ponens and add in
 	 * neededHyps all the hypotheses needed to achieve it.
 	 * 
-	 * @param goal
-	 *            the goal to be re-written
-	 * @param seq
-	 *            the sequent containing the goal
-	 * @param modifGoalMap
-	 *            the set of all the sub-predicate of the goal that can be
-	 *            substitute by <code>⊤</code> or <code>⊥</code>
-	 * @param neededHyps
-	 *            the set of all the needed hypotheses to rewrite the goal
-	 *            (computed by this method, it should be an empty set)
 	 * @return the goal re-written, or <code>null</code> if it has not been
 	 *         re-written
 	 */
-	public static Predicate rewriteGoal(Predicate goal, IProverSequent seq,
-			Map<Predicate, List<IPosition>> modifGoalMap,
-			Set<Predicate> neededHyps) {
-		final FormulaFactory ff = seq.getFormulaFactory();
+	public Predicate rewriteGoal() {
 		Predicate rewriteGoal = goal;
 		for (Entry<Predicate, List<IPosition>> entry : modifGoalMap.entrySet()) {
 			final Predicate value = entry.getKey();
@@ -290,21 +357,11 @@ public class GenMPC {
 	 * Returns a list of IHypActions needed to complete the re-writing done by
 	 * the generalized Modus Ponens.
 	 * 
-	 * @param seq
-	 *            the sequent on which the generalized Modus Ponens is applied
-	 * @param modifHypMap
-	 *            the map (hypothesis ↦ set of its child that can be substitute
-	 *            <code>⊤</code> or <code>⊥</code>) used for the re-writing
-	 * @param level
-	 *            the current level of the reasoner GeneralizedModuPonens
-	 *            called.
 	 * @return a list of IHypActions needed to complete the re-writing done by
 	 *         the generalized Modus Ponens, as well as a boolean telling
 	 *         whether the reasoner is goal dependent or not.
 	 */
-	public static RewriteHypsOutput rewriteHyps(IProverSequent seq,
-			Map<Predicate, Map<Predicate, List<IPosition>>> modifHypMap,
-			Level level) {
+	public RewriteHypsOutput rewriteHyps() {
 		boolean isGoalDependent = false;
 		List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Entry<Predicate, Map<Predicate, List<IPosition>>> entryMap : modifHypMap
@@ -316,8 +373,7 @@ public class GenMPC {
 			Predicate rewriteHyp = hyp;
 			for (Entry<Predicate, List<IPosition>> entryPos : maps.entrySet()) {
 				final Predicate pred = entryPos.getKey();
-				final Predicate[] substitution = computeSubstitutionForHyp(seq,
-						pred, level);
+				final Predicate[] substitution = computeSubstitutionForHyp(pred);
 				if (substitution == null) {
 					continue;
 				}
@@ -350,12 +406,8 @@ public class GenMPC {
 	 * Compute the appropriate substitution for the predicate
 	 * <code>predicate</code>.
 	 * 
-	 * @param sequent
-	 *            the considered sequent
 	 * @param predicate
 	 *            the considered predicate
-	 * @param level
-	 *            the level of the current reasoner
 	 * @return <code>null</code> if the predicate cannot be substituted, or
 	 *         <code>(predicate ↦ ⊤)</code> (respectively
 	 *         <code>(¬predicate ↦ ⊥)</code>) if <code>predicate</code>
@@ -365,17 +417,14 @@ public class GenMPC {
 	 *         equal to the sequent's goal or is among the predicate when the
 	 *         goal denotes a disjunction.
 	 */
-	public static Predicate[] computeSubstitutionForHyp(IProverSequent sequent,
-			Predicate predicate, Level level) {
-		final FormulaFactory ff = sequent.getFormulaFactory();
-		final Predicate goal = sequent.goal();
+	public Predicate[] computeSubstitutionForHyp(Predicate predicate) {
 		final Predicate negPred = makeNeg(predicate);
 		final Predicate[] result = new Predicate[2];
-		if (sequent.containsHypothesis(predicate)) {
+		if (seq.containsHypothesis(predicate)) {
 			result[0] = predicate;
 			result[1] = True(ff);
 			return result;
-		} else if (sequent.containsHypothesis(negPred)) {
+		} else if (seq.containsHypothesis(negPred)) {
 			result[0] = negPred;
 			result[1] = False(ff);
 			return result;
@@ -397,7 +446,7 @@ public class GenMPC {
 		return null;
 	}
 
-	public static Set<Predicate> createGoalToHypSet(Predicate goal, Level level) {
+	public Set<Predicate> createGoalToHypSet() {
 		final Set<Predicate> goalToHypSet = new HashSet<Predicate>();
 		if (level.from(Level.L1)) {
 			if (!isNeg(goal)) {
@@ -424,7 +473,7 @@ public class GenMPC {
 	 *            a predicate
 	 * @return a mutable set of disjuncts of the given predicate
 	 */
-	public static Set<Predicate> breakPossibleDisjunct(Predicate P) {
+	public Set<Predicate> breakPossibleDisjunct(Predicate P) {
 		final List<Predicate> list;
 		if (isDisj(P))
 			list = Arrays.asList(disjuncts(P));
@@ -449,7 +498,7 @@ public class GenMPC {
 	 *         <code>pos</code> is equal to the predicate <code>replaced</code>,
 	 *         <code>pred</code> else.
 	 */
-	private static Predicate Rewrite(Predicate pred, Predicate replaced,
+	private Predicate Rewrite(Predicate pred, Predicate replaced,
 			IPosition pos, Predicate substitute) {
 		if (!pred.getSubFormula(pos).equals(replaced)) {
 			return pred;
@@ -460,7 +509,7 @@ public class GenMPC {
 	/**
 	 * Class used as the outpout of the method rewriteHyps.
 	 */
-	public static class RewriteHypsOutput {
+	public class RewriteHypsOutput {
 		private final boolean isGoalDependent;
 		private final List<IHypAction> hypActions;
 

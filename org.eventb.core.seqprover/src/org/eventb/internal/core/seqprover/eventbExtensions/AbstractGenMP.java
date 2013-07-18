@@ -13,19 +13,9 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
 import static org.eventb.core.seqprover.ProverFactory.reasonerFailure;
-import static org.eventb.internal.core.seqprover.eventbExtensions.GenMPC.analyzePred;
-import static org.eventb.internal.core.seqprover.eventbExtensions.GenMPC.createGoalToHypSet;
-import static org.eventb.internal.core.seqprover.eventbExtensions.GenMPC.createHypSet;
-import static org.eventb.internal.core.seqprover.eventbExtensions.GenMPC.rewriteGoal;
-import static org.eventb.internal.core.seqprover.eventbExtensions.GenMPC.rewriteHyps;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
@@ -43,38 +33,19 @@ import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonen
  * @author Emmanuel Billaud
  */
 public abstract class AbstractGenMP extends EmptyInputReasoner {
-	private Map<Predicate, Map<Predicate, List<IPosition>>> modifHypMap;
-	private Map<Predicate, List<IPosition>> modifGoalMap;
-	private Set<Predicate> hypSet;
-	private Set<Predicate> goalToHypSet;
 
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm, Level level) {
-		modifHypMap = new HashMap<Predicate, Map<Predicate, List<IPosition>>>();
+		final GenMPC genMP = new GenMPC(level, pm, seq);
 
-		hypSet = createHypSet(seq);
-		goalToHypSet = createGoalToHypSet(seq.goal(), level);
-		goalToHypSet.addAll(hypSet);
-		final Predicate goal = seq.goal();
-		Map<Predicate, List<IPosition>> m = analyzePred(goal, hypSet);
-		if (m != null) {
-			modifGoalMap = m;
-		}
-		for (Predicate hyp : seq.visibleHypIterable()) {
-			if (pm != null && pm.isCanceled()) {
-				return reasonerFailure(this, input,
-						"Generalized MP has been canceled");
-			}
-			m = analyzePred(hyp, goalToHypSet);
-			if (!m.isEmpty()) {
-				modifHypMap.put(hyp, m);
-			}
+		if (!genMP.runGenMP()) {
+			return reasonerFailure(this, input,
+					"Generalized MP has been canceled");
 		}
 
-		Set<Predicate> neededHyps = new HashSet<Predicate>();
-		final Predicate rewrittenGoal = rewriteGoal(goal, seq, modifGoalMap,
-				neededHyps);
-		final RewriteHypsOutput output = rewriteHyps(seq, modifHypMap, level);
+		final Predicate rewrittenGoal = genMP.rewrittenGoal();
+		final RewriteHypsOutput output = genMP.output();
+
 		final List<IHypAction> hypActions = output.getHypActions();
 		final boolean isGoalDependent = output.isGoalDependent();
 		if (rewrittenGoal != null) { // The goal is re-written.
@@ -84,15 +55,15 @@ public abstract class AbstractGenMP extends EmptyInputReasoner {
 			} else {
 				ant = makeAntecedent(rewrittenGoal);
 			}
-			return makeProofRule(this, input, goal, neededHyps,
+			return makeProofRule(this, input, genMP.goal(), genMP.neededHyps(),
 					"generalized MP", ant);
 		} else if (isGoalDependent) { // the goal is not re-written but is used 
 			// to re-write hypotheses. There should necessarily be IHypActions.
 			if (hypActions.isEmpty()) {
 				return reasonerFailure(this, input, "failure computing re-writing");
 			}
-			final IAntecedent ant = makeAntecedent(goal, null, null, hypActions);
-			return makeProofRule(this, input, goal, "generalized MP", ant);
+			final IAntecedent ant = makeAntecedent(genMP.goal(), null, null, hypActions);
+			return makeProofRule(this, input, genMP.goal(), "generalized MP", ant);
 		} else { // the goal is not re-written and is not used to re-write hypotheses.
 			if (!hypActions.isEmpty()) {
 				return makeProofRule(this, input, "generalized MP", hypActions);
