@@ -54,8 +54,8 @@ import org.eventb.core.seqprover.reasonerInputs.MultiplePredInput;
 import org.eventb.core.seqprover.reasoners.Hyp;
 import org.eventb.core.seqprover.tactics.BasicTactics;
 import org.eventb.internal.core.seqprover.eventbExtensions.AutoImpF;
-import org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps;
 import org.eventb.internal.core.seqprover.eventbExtensions.FalseHyp;
+import org.eventb.internal.core.seqprover.eventbExtensions.ContradictionFinder.ContradictionInSequentFinder;
 import org.eventb.internal.core.seqprover.eventbExtensions.FiniteHypBoundedGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
@@ -211,15 +211,12 @@ public class AutoTactics {
 	public static class FindContrHypsTac implements ITactic {
 
 		public Object apply(IProofTreeNode ptNode, IProofMonitor pm) {
-			for (Predicate shyp : ptNode.getSequent().selectedHypIterable()) {
-				final Set<Predicate> contrHyps = ContrHyps
-						.contradictingPredicates(shyp);
-				if (contrHyps != null
-						&& ptNode.getSequent().containsHypotheses(contrHyps)) {
-					return Tactics.contrHyps(shyp).apply(ptNode, pm);
-				}
-			}
-			return "Selected hypotheses contain no contradicting negations";
+			final ContradictionInSequentFinder finder;
+			finder = new ContradictionInSequentFinder(ptNode.getSequent());
+			final Predicate hyp = finder.getContrHyp();
+			if (hyp != null)
+				return Tactics.contrHyps(hyp).apply(ptNode, pm);
+			return "No selected hypothesis is contradicted";
 		};
 	}
 	

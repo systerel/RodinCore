@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eventb.core.seqprover.SerializeException;
 import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner.Input;
 import org.eventb.internal.core.seqprover.ReasonerFailure;
+import org.eventb.internal.core.seqprover.eventbExtensions.ContradictionFinder.ContradictionInSetFinder;
 
 /**
  * Discharges a sequent that contains a hypothesis and its contradiction.
@@ -66,13 +67,12 @@ public class ContrHyps implements IVersionedReasoner {
 			// For backward compatibility with faulty version
 			return new Input(neededHyps.iterator().next());
 		}
-
 		// Need to find the hypothesis which is contradicted by the others
-		for (final Predicate hyp : neededHyps) {
-			final Set<Predicate> cntrs = contradictingPredicates(hyp);
-			if (cntrs != null && neededHyps.containsAll(cntrs)) {
-				return new Input(hyp);
-			}
+		final ContradictionInSetFinder finder;
+		finder = new ContradictionInSetFinder(neededHyps);
+		final Predicate hyp = finder.getContrHyp();
+		if (hyp != null) {
+			return new Input(hyp);
 		}
 		throw new SerializeException(new IllegalStateException(
 				"Unexpected set of needed hypothesis: " + neededHyps));
