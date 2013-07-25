@@ -10,11 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype2;
 
-import java.util.Map;
-
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
 
 /**
@@ -49,19 +44,6 @@ public final class DatatypeArgument {
 
 	public boolean isBasic() {
 		return isBasic;
-	}
-
-	public Type substitute(FormulaFactory ff, Map<GivenType, Type> instantiated) {
-		TypeSubstitutionRewriter tsRewriter = new TypeSubstitutionRewriter(ff,
-				instantiated);
-		return tsRewriter.rewrite(type);
-	}
-
-	public Expression substituteToSet(FormulaFactory ff,
-			Map<GivenType, Expression> instantiated) {
-		TypeSubstitutionToSet tsToSet = new TypeSubstitutionToSet(ff,
-				instantiated);
-		return tsToSet.toSet(type);
 	}
 
 	public boolean hasDestructor() {

@@ -13,14 +13,13 @@ package org.eventb.internal.core.ast.extension.datatype2;
 import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.computeGroup;
 import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.computeId;
 import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.computeKind;
-import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.instantiate;
+import static org.eventb.internal.core.ast.extension.datatype2.SetSubstitution.makeSubstitution;
 import static org.eventb.internal.core.ast.extension.datatype2.TypeSubstitution.makeSubstitution;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
@@ -54,8 +53,6 @@ import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 public class ConstructorExtension implements IConstructorExtension {
 
 	private final Datatype2 origin;
-	private final GivenType dtType;
-	private final List<GivenType> typeParams;
 	private final String name;
 	private final List<DatatypeArgument> arguments;
 	private final String id;
@@ -70,8 +67,6 @@ public class ConstructorExtension implements IConstructorExtension {
 			List<GivenType> typeParams, String name,
 			List<DatatypeArgument> arguments) {
 		this.origin = origin;
-		this.dtType = datatypeType;
-		this.typeParams = typeParams;
 		this.name = name;
 		this.id = computeId(name);
 		this.arguments = arguments;
@@ -99,19 +94,16 @@ public class ConstructorExtension implements IConstructorExtension {
 
 	@Override
 	public Type[] getArgumentTypes(Type returnType) {
-		Map<GivenType, Type> instantiation = instantiate(
-				origin.getTypeConstructor(), dtType, typeParams, returnType);
-		if (instantiation == null) {
+		final TypeSubstitution subst = makeSubstitution(origin, returnType);
+		if (subst == null) {
 			throw new IllegalArgumentException("The return type: " + returnType
-					+ " is not compatible for the constructor: " + this
+					+ " is not compatible with the constructor: " + this
 					+ " of the datatype: " + origin.getTypeConstructor());
 		}
-		int length = arguments.size();
-		Type[] argTypes = new Type[length];
+		final int length = arguments.size();
+		final Type[] argTypes = new Type[length];
 		for (int i = 0; i < length; i++) {
-			DatatypeArgument arg = arguments.get(i);
-			argTypes[i] = arg
-					.substitute(returnType.getFactory(), instantiation);
+			argTypes[i] = subst.rewrite(arguments.get(i).getType());
 		}
 		return argTypes;
 	}
@@ -133,43 +125,16 @@ public class ConstructorExtension implements IConstructorExtension {
 
 	@Override
 	public Expression[] getArgumentSets(Expression set) {
-		final Map<GivenType, Expression> subst = extractSubst(set);
-		int length = arguments.size();
-		final Expression[] result = new Expression[length];
-		for (int i = 0; i < length; i++) {
-			final DatatypeArgument arg = arguments.get(i);
-			result[i] = arg.substituteToSet(set.getFactory(), subst);
+		final SetSubstitution subst = makeSubstitution(origin, set);
+		if (subst == null) {
+			throw new IllegalArgumentException("Constructor: " + this
+					+ " is not compatible with set: " + set);
 		}
-		return result;
-	}
-
-	private Map<GivenType, Expression> extractSubst(Expression set) {
-		final ExtendedExpression extExpr = checkTypeConstructor(set);
-		if (extExpr == null) {
-			throw new IllegalArgumentException(
-					"Set not built from the type constructor: " + set);
+		final Type[] argTypes = new Type[arguments.size()];
+		for (int i = 0; i < argTypes.length; i++) {
+			argTypes[i] = arguments.get(i).getType();
 		}
-		final Expression[] setParams = extExpr.getChildExpressions();
-		final int nbParams = setParams.length;
-		final Map<GivenType, Expression> result = new HashMap<GivenType, Expression>();
-		assert nbParams == typeParams.size();
-		for (int i = 0; i < nbParams; i++) {
-			result.put(typeParams.get(i), setParams[i]);
-		}
-		// Add the datatype type representation instantiation
-		result.put(dtType, set);
-		return result;
-	}
-
-	private ExtendedExpression checkTypeConstructor(Expression set) {
-		if (!(set instanceof ExtendedExpression)) {
-			return null;
-		}
-		final ExtendedExpression extExpr = (ExtendedExpression) set;
-		if (extExpr.getExtension() != origin.getTypeConstructor()) {
-			return null;
-		}
-		return extExpr;
+		return subst.substitute(argTypes);
 	}
 
 	@Override
