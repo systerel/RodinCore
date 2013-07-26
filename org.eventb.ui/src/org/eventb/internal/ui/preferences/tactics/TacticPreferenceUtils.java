@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
-import static org.eventb.internal.ui.utils.Messages.preferencepage_autotactic_defaultprofilename;
-import static org.eventb.internal.ui.utils.Messages.preferencepage_posttactic_defaultprofilename;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,14 +20,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eventb.core.seqprover.ITacticDescriptor;
 
 public class TacticPreferenceUtils {
-
-	public static String getDefaultAutoTactics() {
-		return preferencepage_autotactic_defaultprofilename;
-	}
-	
-	public static String getDefaultPostTactics() {
-		return preferencepage_posttactic_defaultprofilename;
-	}
 
 	public static List<String> getLabels(List<ITacticDescriptor> tactics) {
 		final List<String> result = new ArrayList<String>();

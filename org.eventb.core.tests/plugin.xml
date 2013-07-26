@@ -138,5 +138,20 @@
          </tacticParameter>
       </parameterizer>
    </extension>
+   <extension
+         point="org.eventb.core.tacticProfiles">
+      <tacticProfile
+            class="org.eventb.core.tests.preferences.TestingAutoTactics$TestProfile1"
+            name="Test Profile #1">
+      </tacticProfile>
+      <tacticProfile
+            class="org.eventb.core.tests.preferences.TestingAutoTactics$TestProfile2"
+            name="Test Profile #2">
+      </tacticProfile>
+      <tacticProfile
+            class="org.eventb.core.tests.preferences.TestingAutoTactics$TestProfile3"
+            name="Test Profile #3">
+      </tacticProfile>
+   </extension>
 
 </plugin>

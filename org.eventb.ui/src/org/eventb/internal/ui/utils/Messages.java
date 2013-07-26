@@ -112,8 +112,6 @@ public final class Messages {
 	public static String preferencepage_postautotactic_duplicatebutton;
 	public static String preferencepage_postautotactic_import_ws_profiles;
 	public static String preferencepage_postautotactic_export_ws_profiles;
-	public static String preferencepage_autotactic_defaultprofilename;
-	public static String preferencepage_posttactic_defaultprofilename;
 	
 	public static String preferencepage_eventb_description;
 	public static String preferencepage_provingui_description;

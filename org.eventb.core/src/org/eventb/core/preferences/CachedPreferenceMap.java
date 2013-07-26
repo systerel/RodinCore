@@ -55,6 +55,11 @@ public class CachedPreferenceMap<T> {
 	private final Set<ICacheListener<T>> listeners = new HashSet<ICacheListener<T>>();
 
 	/**
+	 * Default entry keys are read only.
+	 */
+	private final Set<String> defaultKeys = new HashSet<String>();
+
+	/**
 	 * Creates a cache for the old serialization format.  Do not use anymore,
 	 * except in code for backward compatibility.
 	 * 
@@ -111,6 +116,16 @@ public class CachedPreferenceMap<T> {
 		return log;
 	}
 
+	private void resolveReferencesWithCheck() {
+		final IInjectLog log = new InjectLog();
+		prefMap.resolveReferences(this, log);
+		if (log.hasErrors()) {
+			// pre add checks failed to prevent errors
+			throw new IllegalStateException("Errors resolving references: "
+					+ log.getErrors());
+		}
+	}
+
 	/**
 	 * Returns the string value of the given element. It uses the translator
 	 * given at instantiation to typically give a significant string
@@ -133,6 +148,7 @@ public class CachedPreferenceMap<T> {
 	 */
 	public void add(String name, T value) {
 		if (doAddCacheEntry(name, value)) {
+			resolveReferencesWithCheck();
 			notifyListeners();
 		}
 	}
@@ -152,6 +168,7 @@ public class CachedPreferenceMap<T> {
 				added.add(entry);
 			}
 		}
+		resolveReferencesWithCheck();
 		notifyListeners();
 		return added;
 	}
@@ -222,21 +239,21 @@ public class CachedPreferenceMap<T> {
 		if (refMaker == null) {
 			return PreferenceCheckResult.getNoError();
 		}
-		
+
 		final PrefEntryGraph<T> graph = new PrefEntryGraph<T>("preference map",
 				refMaker);
 		final List<IPrefMapEntry<T>> entries = getEntries();
 		// if key already exists, it is a replacement, remove it
 		final Iterator<IPrefMapEntry<T>> iterator = entries.iterator();
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			final IPrefMapEntry<T> next = iterator.next();
 			if (next.getKey().equals(key)) {
 				iterator.remove();
 			}
 		}
-		
+
 		graph.addAll(entries);
-		
+
 		// corresponds to references to deleted entries out of added entry
 		// avoid external reference problems
 		// not adding 'key' to avoid duplicating the node below
@@ -253,14 +270,14 @@ public class CachedPreferenceMap<T> {
 			return PreferenceCheckResult.getNoError();
 		} catch (IllegalStateException e) {
 			final PreferenceCheckResult result = new PreferenceCheckResult();
-			
+
 			// if there are unresolved references in added entry
 			final Set<String> unresRefs = graph.addUnresolvedExcept(null);
 			if (!unresRefs.isEmpty()) {
 				result.setUnresolvedReferences(unresRefs);
 				return result;
 			}
-			
+
 			final List<Node<IPrefMapEntry<T>>> nodeCycle = graph.getCycle();
 			final List<String> cycle = new ArrayList<String>(nodeCycle.size());
 			for (Node<IPrefMapEntry<T>> node : nodeCycle) {
@@ -290,7 +307,7 @@ public class CachedPreferenceMap<T> {
 	 */
 	public List<IPrefMapEntry<T>> getEntries() {
 		final List<IPrefMapEntry<T>> entries = new ArrayList<IPrefMapEntry<T>>();
-		
+
 		final ArrayList<String> sortedKeys = new ArrayList<String>(
 				cache.keySet());
 		Collections.sort(sortedKeys);
@@ -358,7 +375,7 @@ public class CachedPreferenceMap<T> {
 		accessedEntries.clear();
 		notifyListeners();
 	}
-	
+
 	private class MapEntry implements IPrefMapEntry<T> {
 
 		private String name;
@@ -379,6 +396,9 @@ public class CachedPreferenceMap<T> {
 
 		@Override
 		public void setKey(String key) {
+			if (isDefaultEntry(name)) {
+				return;
+			}
 			final T value = cache.remove(name);
 			name = key;
 			if (value == null) {
@@ -389,6 +409,7 @@ public class CachedPreferenceMap<T> {
 
 		@Override
 		public void setValue(T value) {
+			// allow for default entries to enable reference resolving
 			doPreAddCheck(name, value);
 			cache.put(name, value);
 			notifyListeners();
@@ -411,10 +432,44 @@ public class CachedPreferenceMap<T> {
 		listeners.add(listener);
 	}
 
+	/**
+	 * Notifies listeners that this cache has changed.
+	 */
 	protected void notifyListeners() {
 		for (ICacheListener<T> listener : listeners) {
 			listener.cacheChanged(this);
 		}
 	}
 
+	/**
+	 * Returns whether the given name is a key for a default entry in this
+	 * preference map.
+	 * 
+	 * @param name
+	 *            an entry name
+	 * @return <code>true</code> if default entry, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	public boolean isDefaultEntry(String name) {
+		return defaultKeys.contains(name);
+	}
+
+	/**
+	 * Adds given default keys to this preference map, which sets corresponding
+	 * entries as default entries.
+	 * <p>
+	 * Corresponding entries need not already exist in this preference map. They
+	 * can be added further on.
+	 * </p>
+	 * <p>
+	 * Default entries cannot be modified (name or value).
+	 * </p>
+	 * 
+	 * @param keys
+	 *            a set of entry keys
+	 * @since 3.0
+	 */
+	protected final void addDefaultKeys(Set<String> keys) {
+		defaultKeys.addAll(keys);
+	}
 }

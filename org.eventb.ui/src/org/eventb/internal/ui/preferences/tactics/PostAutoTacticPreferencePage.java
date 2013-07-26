@@ -12,6 +12,8 @@ package org.eventb.internal.ui.preferences.tactics;
 
 import static java.util.Arrays.asList;
 import static org.eclipse.swt.layout.GridData.FILL_BOTH;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.DEFAULT_AUTO_TACTIC;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.DEFAULT_POST_TACTIC;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
@@ -34,8 +36,10 @@ import static org.eventb.internal.ui.utils.Messages.preferencepage_posttactic_en
 import static org.eventb.internal.ui.utils.Messages.preferencepage_posttactic_selectedtacticprofiledescription;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -74,11 +78,6 @@ import org.eventb.internal.ui.utils.Messages;
 
 public class PostAutoTacticPreferencePage extends
 		AbstractFieldPreferenceAndPropertyPage {
-
-	static final String DEFAULT_AUTO_TACTICS = TacticPreferenceUtils
-			.getDefaultAutoTactics();
-	static final String DEFAULT_POST_TACTICS = TacticPreferenceUtils
-			.getDefaultPostTactics();
 
 	public static final String PAGE_ID = PreferenceConstants.AUTO_POST_TACTIC_PREFERENCE_PAGE_ID;
 
@@ -343,10 +342,7 @@ public class PostAutoTacticPreferencePage extends
 				boolean enableExport = true;
 				final int selectionCount = tacticList.getSelectionCount();
 				if (selectionCount <= 2) {
-					for (String str : tacticList.getSelection()) {
-						enableExport = !(str.equals(DEFAULT_AUTO_TACTICS)
-								|| str.equals(DEFAULT_POST_TACTICS));
-					}
+					enableExport = !containsDefaultProfiles(Arrays.asList(tacticList.getSelection()));
 				} else {
 					enableExport = selectionCount > 0;
 				}
@@ -545,26 +541,46 @@ public class PostAutoTacticPreferencePage extends
 	}
 
 	protected String[] getSortedProfileNames() {
-		final Set<String> profiles = cache.getEntryNames();
-		final boolean addAutoDefault = profiles.remove(DEFAULT_AUTO_TACTICS);
-		final boolean addPostDefault = profiles.remove(DEFAULT_POST_TACTICS);
-		final List<String> labels = new ArrayList<String>();
-		labels.addAll(profiles);
-		Collections.sort(labels);
-		if (addAutoDefault) {
-			labels.add(0, DEFAULT_AUTO_TACTICS);
+		final List<String> profiles = new ArrayList<String>(cache.getEntryNames());
+		final List<String> defaultProfiles = new ArrayList<String>();
+		final Iterator<String> iter = profiles.iterator();
+		while(iter.hasNext()) {
+			final String profile = iter.next(); 
+			if (cache.isDefaultEntry(profile)) {
+				defaultProfiles.add(profile);
+				iter.remove();
+			}
 		}
+		Collections.sort(profiles);
+		
+		final boolean addAutoDefault = defaultProfiles.remove(DEFAULT_AUTO_TACTIC);
+		final boolean addPostDefault = defaultProfiles.remove(DEFAULT_POST_TACTIC);
+		Collections.sort(defaultProfiles);
 		if (addPostDefault) {
-			labels.add(1, DEFAULT_POST_TACTICS);
+			defaultProfiles.add(0, DEFAULT_POST_TACTIC);
 		}
+		if (addAutoDefault) {
+			defaultProfiles.add(0, DEFAULT_AUTO_TACTIC);
+		}
+
+		final List<String> labels = new ArrayList<String>();
+		labels.addAll(defaultProfiles);
+		labels.addAll(profiles);
 		return labels.toArray(new String[labels.size()]);
 	}
 
+	boolean containsDefaultProfiles(Collection<String> selection) {
+		for (String name : selection) {
+			if (cache.isDefaultEntry(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void updateProfilesButton() {
 		final Collection<String> selection = asList(tacticList.getSelection());
-		final boolean enableNoDefault = !selection
-				.contains(DEFAULT_AUTO_TACTICS)
-				&& !selection.contains(DEFAULT_POST_TACTICS);
+		final boolean enableNoDefault = !containsDefaultProfiles(selection);
 		final boolean enableEq1 = selection.size() == 1;
 		final boolean enableMin1 = selection.size() > 0;
 		edit.setEnabled(enableNoDefault && enableEq1);

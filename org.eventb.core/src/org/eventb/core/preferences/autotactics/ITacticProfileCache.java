@@ -95,6 +95,17 @@ public interface ITacticProfileCache {
 	Set<String> getEntryNames();
 
 	/**
+	 * Returns whether the given name is a key for a default entry in this
+	 * preference map.
+	 * 
+	 * @param name
+	 *            an entry name
+	 * @return <code>true</code> if default entry, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	boolean isDefaultEntry(String name);
+
+	/**
 	 * Loads this cache from preference store.
 	 */
 	void load();

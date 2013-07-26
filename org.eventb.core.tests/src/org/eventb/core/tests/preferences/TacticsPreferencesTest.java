@@ -12,6 +12,8 @@ package org.eventb.core.tests.preferences;
 
 import static java.lang.Math.abs;
 import static java.util.Arrays.asList;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.DEFAULT_AUTO_TACTIC;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.DEFAULT_POST_TACTIC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -55,7 +58,12 @@ import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.LoopOnAllPending;
 import org.eventb.core.tests.BuilderTest;
+import org.eventb.core.tests.preferences.TestingAutoTactics.TestProfile1;
+import org.eventb.core.tests.preferences.TestingAutoTactics.TestProfile2;
+import org.eventb.core.tests.preferences.TestingAutoTactics.TestProfile3;
 import org.eventb.internal.core.preferences.TacticPrefElement;
+import org.eventb.internal.core.preferences.TacticProfileContributions;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.service.prefs.BackingStoreException;
@@ -65,7 +73,7 @@ public class TacticsPreferencesTest extends BuilderTest {
 	private static ITacticProfileCache makeTacticProfileCache() {
 		return TacticPreferenceFactory
 				.makeTacticProfileCache(InstanceScope.INSTANCE
-						.getNode(store));
+						.getNode(testStore));
 	}
 
 	/**
@@ -103,7 +111,8 @@ public class TacticsPreferencesTest extends BuilderTest {
 			"org.eventb.core.seqprover.goalInHypTac",
 			"org.eventb.core.seqprover.funGoalTac", };
 
-	private static final String store = "org.eventb.core.tests";
+	private static final String testStore = "org.eventb.core.tests";
+	private static final String coreStore = EventBPlugin.PLUGIN_ID;
 	private static final String uiStore = "org.eventb.ui";
 
 	private static void resetPreference(String qualifier)
@@ -111,13 +120,37 @@ public class TacticsPreferencesTest extends BuilderTest {
 		final IEclipsePreferences node = InstanceScope.INSTANCE
 				.getNode(qualifier);
 		if (node != null) {
-			node.removeNode();
+			for (String key : node.keys()) {
+				node.remove(key);
+			}
+			node.flush();
+			node.sync();
 		}
 	}
 
+	private static void assertTacticProfiles(
+			Map<String, ITacticDescriptor> expected,
+			List<IPrefMapEntry<ITacticDescriptor>> actual) {
+		final Set<String> externalProfiles = TacticProfileContributions
+				.getInstance().getProfileNames();
+		externalProfiles.removeAll(expected.keySet());
+		
+		assertEquals("The number of stored profiles is not correct",
+				expected.size() + externalProfiles.size(), actual.size());
+		
+		for (IPrefMapEntry<ITacticDescriptor> profile : actual) {
+			if (externalProfiles.contains(profile.getKey())) {
+				continue;
+			}
+			assertTacDesc(expected.get(profile.getKey()), profile.getValue());
+		}
+	}
+	
 	@Before
+	@After
 	public void resetPreferences() throws BackingStoreException {
-		resetPreference(store);
+		resetPreference(testStore);
+		resetPreference(coreStore);
 		resetPreference(uiStore);
 	}
 
@@ -159,11 +192,7 @@ public class TacticsPreferencesTest extends BuilderTest {
 		tactics2.load();
 		final List<IPrefMapEntry<ITacticDescriptor>> actual = tactics2
 				.getEntries();
-		assertEquals("The number of stored profiles is not correct",
-				expected.size(), actual.size());
-		for (IPrefMapEntry<ITacticDescriptor> profile : actual) {
-			assertTacDesc(expected.get(profile.getKey()), profile.getValue());
-		}
+		assertTacticProfiles(expected, actual);
 	}
 
 	/**
@@ -223,11 +252,7 @@ public class TacticsPreferencesTest extends BuilderTest {
 		tactics3.load();
 		final List<IPrefMapEntry<ITacticDescriptor>> actual = tactics3
 				.getEntries();
-		assertEquals("The number of stored profiles is not correct",
-				expected.size(), actual.size());
-		for (IPrefMapEntry<ITacticDescriptor> profile : actual) {
-			assertTacDesc(expected.get(profile.getKey()), profile.getValue());
-		}
+		assertTacticProfiles(expected, actual);
 	}
 
 	private static ICombinedTacticDescriptor removeFirst(
@@ -313,11 +338,7 @@ public class TacticsPreferencesTest extends BuilderTest {
 		tactics2.load();
 		final List<IPrefMapEntry<ITacticDescriptor>> actual = tactics2
 				.getEntries();
-		assertEquals("The number of stored profiles is not correct",
-				expected.size(), actual.size());
-		for (IPrefMapEntry<ITacticDescriptor> profile : actual) {
-			assertTacDesc(expected.get(profile.getKey()), profile.getValue());
-		}
+		assertTacticProfiles(expected, actual);
 	}
 
 	private static void assertTacDesc(ITacticDescriptor expectedDesc,
@@ -363,7 +384,7 @@ public class TacticsPreferencesTest extends BuilderTest {
 		assertEquals(expectedDesc.getParameterizerId(),
 				actualDesc.getParameterizerId());
 		assertEquals(expectedDesc.getValuation(),
-				actualDesc.getParameterizerId());
+				actualDesc.getValuation());
 	}
 
 	/**
@@ -584,4 +605,44 @@ public class TacticsPreferencesTest extends BuilderTest {
 		assertTacDesc(defaultDescriptor, projectAutoSelected);
 	}
 
+	/**
+	 * Verify that profiles contributed by this plug-in through extension point
+	 * are correctly loaded in tactic profile cache.
+	 */
+	@Test
+	public void testContributedProfiles() throws Exception {
+		final IAutoPostTacticManager manager = EventBPlugin
+				.getAutoPostTacticManager();
+		final IAutoTacticPreference autoTac = manager.getAutoTacticPreference();
+		final IAutoTacticPreference postTac = manager.getPostTacticPreference();
+		
+		final Map<String, ITacticDescriptor> expected = new HashMap<String, ITacticDescriptor>();
+		expected.put(DEFAULT_AUTO_TACTIC, autoTac.getDefaultDescriptor());
+		expected.put(DEFAULT_POST_TACTIC, postTac.getDefaultDescriptor());
+		expected.put("Test Profile #1", new TestProfile1());
+		expected.put("Test Profile #2", TestProfile2.makeResolvedDescriptor());
+		expected.put("Test Profile #3", (ITacticDescriptor) new TestProfile3().create());
+	
+		final ITacticProfileCache profiles = makeTacticProfileCache();
+		profiles.load();
+		final List<IPrefMapEntry<ITacticDescriptor>> actual = profiles.getEntries();
+		assertTacticProfiles(expected, actual);
+	}
+	
+	/**
+	 * Verify that a profile with a reference to a contributed profile can be
+	 * instantiated. In our contributed profiles, "Test Profile #2" makes a
+	 * reference to "Test Profile #1".
+	 */
+	@Test
+	public void testContributedProfileReference() throws Exception {
+		final ITacticProfileCache profiles = makeTacticProfileCache();
+		profiles.load();
+		final IPrefMapEntry<ITacticDescriptor> entry2 = profiles.getEntry("Test Profile #2");
+		final ITacticDescriptor profile2 = entry2.getValue();
+		assertTrue(profile2.isInstantiable());
+		
+		// throws IllegalStateException if reference to profile 1 is not resolved
+		profile2.getTacticInstance();
+	}
 }

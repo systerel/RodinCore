@@ -71,6 +71,7 @@ public class TacticDetailsProvider implements IDetailsProvider {
 		final ITacticDescriptor desc = currentProfile.getValue();
 		hideAll();
 		if (desc instanceof IParamTacticDescriptor) {
+			paramViewer.setReadOnly(cache.isDefaultEntry(element));
 			paramViewer.setInput((IParamTacticDescriptor) desc);
 			paramViewer.show();
 			packAll(paramViewer.getControl());

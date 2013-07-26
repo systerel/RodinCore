@@ -225,6 +225,7 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 		private final TextCellEditor stringEditor;
 		private final TextCellEditor intEditor;
 		private final TextCellEditor longEditor;
+		private boolean readOnly = false;
 		
 		public ParamEditingSupport(TableViewer viewer) {
 			super(viewer);
@@ -238,7 +239,11 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			longEditor = new TextCellEditor(table);
 			longEditor.setValidator(new NumberEditorValidator(LONG));
 		}
-
+		
+		public void setReadOnly(boolean newValue) {
+			 readOnly = newValue;
+		}
+		
 		@Override
 		protected CellEditor getCellEditor(Object element) {
 			if (!(element instanceof Param)) {
@@ -263,6 +268,9 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 
 		@Override
 		protected boolean canEdit(Object element) {
+			if (readOnly) {
+				return false;
+			}
 			return element instanceof Param;
 		}
 
@@ -361,12 +369,14 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 	
 	private TableViewer tableViewer;
 	private Label tacticName;
+	private ParamEditingSupport editSupport;
 
 	@Override
 	public void createContents(Composite parent) {
 		tacticName = new Label(parent, SWT.NONE);
 		tableViewer = new TableViewer(parent, SWT.FULL_SELECTION | SWT.MULTI
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		editSupport = new ParamEditingSupport(tableViewer);
 		createColumns();
 		tableViewer.setLabelProvider(new ParamLabelProvider());
 		tableViewer.setContentProvider(new ParamContentProvider());
@@ -390,8 +400,7 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 			if (column == Columns.VALUE) {
 				final TableViewerColumn colViewer = new TableViewerColumn(
 						tableViewer, SWT.WRAP);
-				colViewer
-						.setEditingSupport(new ParamEditingSupport(tableViewer));
+				colViewer.setEditingSupport(editSupport);
 				col = colViewer.getColumn();
 			} else {
 				col = new TableColumn(table, SWT.WRAP);
@@ -484,5 +493,21 @@ public class ParamTacticViewer extends AbstractTacticViewer<IParamTacticDescript
 	public void setSelection(ISelection selection, boolean reveal) {
 		tableViewer.setSelection(selection, reveal);
 		
+	}
+
+	/**
+	 * Sets read-only behaviour of this viewer to the given value.
+	 * 
+	 * @param newValue
+	 *            <ul>
+	 *            <li><code>true</code> to prevent the user from editing
+	 *            parameter values,</li>
+	 *            <li><code>false</code> to enable parameter value editing</li>
+	 *            </ul>
+	 */
+	public void setReadOnly(boolean newValue) {
+		if (editSupport != null) {
+			editSupport.setReadOnly(newValue);
+		}
 	}
 }

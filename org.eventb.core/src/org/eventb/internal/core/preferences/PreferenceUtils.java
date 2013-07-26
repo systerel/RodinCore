@@ -310,6 +310,18 @@ public class PreferenceUtils {
 			return super.toString().toLowerCase();
 		}
 
+		/**
+		 * Returns the attribute value for the given attribute type attached to
+		 * the given node.
+		 * 
+		 * @param node
+		 *            a node
+		 * @param attributeType
+		 *            an attribute type
+		 * @return the String value of the attribute
+		 * @throws PreferenceException
+		 *             if the attribute is not present
+		 */
 		public static String getAttribute(Node node,
 				XMLAttributeTypes attributeType) throws PreferenceException {
 			final NamedNodeMap attributes = node.getAttributes();
@@ -323,6 +335,17 @@ public class PreferenceUtils {
 			return att.getNodeValue();
 		}
 
+		/**
+		 * Sets the attribute value for the given attribute type attached to the
+		 * given node.
+		 * 
+		 * @param node
+		 *            a node
+		 * @param attributeType
+		 *            an attribute type
+		 * @param value
+		 *            the value of the attribute
+		 */
 		public static void setAttribute(Element node,
 				XMLAttributeTypes attributeType, String value) {
 			node.setAttribute(attributeType.toString(), value);

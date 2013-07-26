@@ -7,6 +7,7 @@
    <extension-point id="pogModuleTypes" name="%pogModuleTypes" schema="schema/pogModuleTypes.exsd"/>
    <extension-point id="configurations" name="%configurations" schema="schema/configurations.exsd"/>
    <extension-point id="formulaExtensionProviders" name="%formulaExtensionProviders" schema="schema/formulaExtensionProviders.exsd"/>
+   <extension-point id="tacticProfiles" name="%tacticProfiles" schema="schema/tacticProfiles.exsd"/>
    <extension
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type
