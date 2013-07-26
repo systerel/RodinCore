@@ -31,10 +31,10 @@ public class TestDatatypeArgumentSets extends AbstractTests {
 	// Factory including LIST and several datatypes common to all tests
 	private static final FormulaFactory dtFF = FastFactory.mDatatypeFactory(
 			LIST_FAC,//
-			"Param[S]      ::= param; param1[List(S)]",//
-			"Pow[S]        ::= pow; pow1[ℙ(S)]",//
-			"Product[S, T] ::= prod; prod1[S × T]",//
-			"Simple        ::= simple; simple1[BOOL]"//
+			"Param[S]      ::= param[param1: List(S)]",//
+			"Pow[S]        ::= pow[pow1: ℙ(S)]",//
+			"Product[S, T] ::= prod[prod1: S × T]",//
+			"Simple        ::= simple[simple1: BOOL]"//
 	);
 
 	/**

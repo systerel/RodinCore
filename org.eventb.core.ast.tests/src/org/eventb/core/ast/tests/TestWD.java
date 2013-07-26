@@ -811,7 +811,7 @@ public class TestWD extends AbstractTests {
 	 */
 	@Test 
 	public void testDatatypeOneConstructorOnly() {
-		final String spec = "FooBar[S] ::= foo; bar[S]";
+		final String spec = "FooBar[S] ::= foo[bar: S]";
 		final FormulaFactory fac = mDatatypeFactory(ff, spec);
 		final ITypeEnvironmentBuilder env = fac.makeTypeEnvironment();
 		env.addName("l", fac.makeIntegerType());

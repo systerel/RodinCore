@@ -1026,8 +1026,8 @@ public class TestTypeChecker extends AbstractTests {
 	@Test 
 	public void testBug3574565() {
 		final FormulaFactory fac = mDatatypeFactory(ff,//
-				"A[T] ::= a; d[T]",//
-				"B[U] ::= b; e[U]");
+				"A[T] ::= a[d: T]",//
+				"B[U] ::= b[e: U]");
 		testPredicate("b(1) ∈ A(ℤ)", mTypeEnvironment("", fac), null);
 	}
 

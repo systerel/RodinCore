@@ -39,7 +39,7 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 
 	/*-- Record datatype definition, type parameters, and type environment ---*/
 	protected static final String MESSAGE__DT = "Message[U,V] ::= "
-			+ "message ; sender[U] ; receiver[U]; identifier[V]";
+			+ "message[sender: U; receiver: U; identifier: V]";
 
 	protected static final String[] MESSAGE_TPARAMS = mList("Agent",
 			"Identifier", "Person", "Stamp");
@@ -60,7 +60,7 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 	/*------------------------------------------------------------------------*/
 	/*- Recursive datatype definition, type parameters, and type environment -*/
 	protected static final String LIST__DT = "List[S] ::="
-			+ " nil || cons ; head[S] ; tail[List(S)]";
+			+ " nil || cons[head: S; tail: List]";
 
 	protected static final String[] LIST_TPARAMS = mList("Object", "Thing");
 

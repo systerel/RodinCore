@@ -10,30 +10,28 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static java.util.Arrays.copyOfRange;
-import static java.util.Collections.emptyList;
-import static java.util.regex.Pattern.compile;
+import static org.eventb.core.ast.tests.AbstractTests.parseType;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
 import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
 
 /**
- * Parser for {@link IDatatype2}.
+ * Parser for {@link IDatatype2}. This allows to specify a datatype with a
+ * simple string which facilitates writing tests.
  * 
  * @author Thomas Muller
  * @author Vincent Monfort
+ * @author Laurent Voisin
  */
 public class DatatypeParser {
 
@@ -43,133 +41,116 @@ public class DatatypeParser {
 	 * a manner similar to the following (for the classical List datatype):
 	 * 
 	 * <pre>
-	 * List[T] ::= nil || cons; head[T]; tail[List(T)]
+	 * List[T] ::= nil || cons[head: T; tail: List]
 	 * </pre>
 	 * 
-	 * @param ff
+	 * @param factory
 	 *            some formula factory
 	 * @param specification
 	 *            the specification of the datatype as a string
 	 * @return a datatype instance
 	 */
-	public static IDatatype2 parse(FormulaFactory ff, String specification) {
-		return new DatatypeParser(ff, specification).parse();
+	public static IDatatype2 parse(FormulaFactory factory, String specification) {
+		return new DatatypeParser(factory).parse(specification);
 	}
 
-	/**
-	 * The constructor destructor pattern. Group #1 is the constructor or
-	 * destructor identifier, group #2 identifies the type
-	 */
-	private static final Pattern cdPattern = compile("" //
-			+ "\\s*" // initial spaces
-			+ "([^\\[\\s]+)" // operator name
-			+ "\\[?\\s*" // type start
-			+ "([^\\[\\]]*)" // type
-			+ "\\]?\\s*");
+	// Pattern for the left-hand side of a datatype specification
+	private static final Pattern DECL_PATTERN = Pattern.compile("\\s*"
+			+ "(\\w+)" // Datatype name
+			+ "\\s*" //
+			+ "(?:\\[" //
+			+ "(.*)" // Optional parameters
+			+ "\\])?\\s*");
 
-	/**
-	 * Global pattern matching the extension definition. Group #1 concerns the
-	 * type constructor, group #2 concerns the definition of constructor and
-	 * destructors.
-	 */
-	private static final Pattern extensionDefPattern = compile("(.+)::=(.+)");
+	// Pattern for a constructor specification
+	private static final Pattern CONS_PATTERN = Pattern.compile("\\s*"
+			+ "(\\w+)" // Constructor name
+			+ "\\s*" //
+			+ "(?:\\[" //
+			+ "(.*)" // Optional arguments
+			+ "\\])?\\s*");
 
-	private final FormulaFactory ff;
-	private final String extensionExpression;
+	private final FormulaFactory factory;
+	private IDatatypeBuilder builder;
+	private IConstructorBuilder cons;
 
-	private DatatypeParser(FormulaFactory ff, String extensionExpression) {
-		this.ff = ff;
-		this.extensionExpression = extensionExpression;
+	private DatatypeParser(FormulaFactory factory) {
+		this.factory = factory;
 	}
 
-	private IDatatype2 parse() {
-		List<String> stringTypeParams = getTypeArguments();
-		ArrayList<GivenType> typeParams = new ArrayList<GivenType>(
-				stringTypeParams.size());
-		for (String arg : stringTypeParams) {
-			if (!arg.isEmpty())
-				typeParams.add(ff.makeGivenType(arg));
+	private IDatatype2 parse(String specification) {
+		final String[] parts = specification.split("::=");
+		assertEquals(2, parts.length);
+		builder = parseDeclaration(parts[0]);
+		parseConstructors(parts[1]);
+		return builder.finalizeDatatype();
+	}
+
+	private IDatatypeBuilder parseDeclaration(String decl) {
+		final Matcher matcher = DECL_PATTERN.matcher(decl);
+		assertTrue("Invalid declaration " + decl, matcher.matches());
+		final String name = matcher.group(1);
+		final GivenType[] params = parseParameters(matcher.group(2));
+		return factory.makeDatatypeBuilder(name, params);
+	}
+
+	private GivenType[] parseParameters(String params) {
+		if (params == null) {
+			return new GivenType[0];
 		}
-		IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder(
-				getTypeConstructor(extensionExpression), typeParams);
-
-		final Map<String, Map<String, String>> constructors = getConstructors();
-		for (String cons : constructors.keySet()) {
-			final Map<String, String> destructors = constructors.get(cons);
-			IConstructorBuilder dtCons = dtBuilder.addConstructor(cons);
-			for (String dest : destructors.keySet()) {
-				dtCons.addArgument(dtBuilder.parseType(destructors.get(dest))
-						.getParsedType(), dest);
-			}
-		}
-
-		return dtBuilder.finalizeDatatype();
-	}
-
-	private static String getTypeConstructor(String definition) {
-		final String typeDefStr = getGroup(extensionDefPattern, 1, definition);
-		return getGroup(cdPattern, 1, typeDefStr);
-	}
-
-	private static String getGroup(Pattern pattern, int group,
-			final String input) {
-		final Matcher matcher = pattern.matcher(input);
-		if (matcher.find()) {
-			return matcher.group(group);
-		}
-		throw new IllegalArgumentException();
-	}
-
-	private static String[] splitOn(String toSplit, String splitOnSymbol) {
-		return toSplit.split("\\s*" + splitOnSymbol + "\\s*");
-	}
-
-	private List<String> getTypeArguments() {
-		final String typeDefStr = getGroup(extensionDefPattern, 1,
-				extensionExpression);
-		final String typesStr = getGroup(cdPattern, 2, typeDefStr);
-		if (typesStr.isEmpty()) {
-			return emptyList();
-		}
-		final String[] typeArgs = splitOn(typesStr, ",");
-		return Arrays.asList(typeArgs);
-	}
-
-	private Map<String, Map<String, String>> getConstructors() {
-		final String condDestStr = getGroup(extensionDefPattern, 2,
-				extensionExpression);
-		if (condDestStr.matches("\\s*")) // no constructor nor destructor
-			return Collections.emptyMap();
-		final Map<String, Map<String, String>> result = new LinkedHashMap<String, Map<String, String>>();
-		final String[] split = splitOn(condDestStr, "\\|\\|");
-		for (String constDest : split) {
-			final String[] cdStrs = splitOn(constDest, ";");
-			final int cdLength = cdStrs.length;
-			final String consStr = cdStrs[0];
-			if (cdLength == 1) {
-				result.put(removeSpaces(consStr),
-						Collections.<String, String> emptyMap());
-				continue;
-			}
-			final String[] destStrArray = copyOfRange(cdStrs, 1, cdLength);
-			result.put(removeSpaces(consStr), getDestuctors(destStrArray));
-
+		final String[] parts = params.split(",");
+		final GivenType[] result = new GivenType[parts.length];
+		for (int i = 0; i < result.length; i++) {
+			final String name = parts[i].trim();
+			result[i] = factory.makeGivenType(name);
 		}
 		return result;
 	}
 
-	private static Map<String, String> getDestuctors(String[] destructorStrs) {
-		final Map<String, String> result = new LinkedHashMap<String, String>();
-		for (String dest : destructorStrs) {
-			final String destName = getGroup(cdPattern, 1, dest);
-			final String destType = getGroup(cdPattern, 2, dest);
-			result.put(destName, destType);
+	private void parseConstructors(String string) {
+		final String[] parts = string.split("\\|\\|");
+		for (final String part : parts) {
+			parseConstructor(part);
 		}
-		return result;
 	}
 
-	private static String removeSpaces(final String str) {
-		return str.replaceAll("\\s*", "");
+	private void parseConstructor(String spec) {
+		final Matcher matcher = CONS_PATTERN.matcher(spec);
+		assertTrue("Invalid constructor " + spec, matcher.matches());
+		final String name = matcher.group(1);
+		cons = builder.addConstructor(name);
+		final String argSpecs = matcher.group(2);
+		if (argSpecs != null) {
+			parseArguments(argSpecs);
+		}
+	}
+
+	private void parseArguments(String argSpecs) {
+		final String[] parts = argSpecs.split(";");
+		for (final String part : parts) {
+			parseArgument(part);
+		}
+	}
+
+	private void parseArgument(String argSpec) {
+		final String[] parts = argSpec.split(":");
+		final String name;
+		final Type type;
+		switch (parts.length) {
+		case 1:
+			// Nameless argument
+			type = parseType(parts[0], factory);
+			cons.addArgument(type);
+			return;
+		case 2:
+			// Destructor
+			name = parts[0].trim();
+			type = parseType(parts[1], factory);
+			cons.addArgument(type, name);
+			return;
+		default:
+			fail("inconsistent argument " + argSpec);
+		}
 	}
 
 }

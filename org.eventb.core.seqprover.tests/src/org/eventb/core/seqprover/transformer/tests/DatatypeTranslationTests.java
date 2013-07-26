@@ -43,7 +43,7 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 	= "Agent=ℙ(Agent); Identifier=ℙ(Identifier); a=Agent; b=Agent; c=Identifier";
 
 	private static final String msgDatatypeSpec //
-	= "MESSAGES[U,V] ::=  message ; sender[U] ; receiver[U]; identifier[V]";
+	= "MESSAGES[U,V] ::=  message[sender: U; receiver: U; identifier: V]";
 
 	private static final String msgAxioms //
 	= "MESSAGES∈Agent × Identifier  MESSAGES_Type;;"

@@ -153,9 +153,9 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 	 */
 	@Test 
 	public void testDatatypeInDatatype() {
-		final FormulaFactory fac = mDatatypeFactory(ff, "A[T] ::= a; d[T]");
+		final FormulaFactory fac = mDatatypeFactory(ff, "A[T] ::= a[d: T]");
 		final TestTranslationSupport s = new TestTranslationSupport(fac,
-				"B[U] ::= b; e[A(U)]");
+				"B[U] ::= b[e: A(U)]");
 		s.addToSourceEnvironment("x=A(B(ℤ))");
 		s.setExpectedTypeEnvironment(""
 				+ "A_Type=ℙ(A_Type); B_Type=ℙ(B_Type); A_Type0=ℙ(A_Type0); "
