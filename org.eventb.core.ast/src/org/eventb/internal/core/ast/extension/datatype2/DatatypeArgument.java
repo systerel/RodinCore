@@ -63,6 +63,12 @@ public final class DatatypeArgument {
 		return new DestructorExtension(origin, constructorExt, this);
 	}
 
+	public ConstructorArgument finalizeUnnamedArgument(
+			ConstructorExtension constructorExtension) {
+		assert !hasDestructor();
+		return new ConstructorArgument(constructorExtension, type);
+	}
+
 	public void harvest(ExtensionHarvester harvester) {
 		harvester.harvest(type);
 	}

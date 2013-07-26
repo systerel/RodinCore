@@ -55,6 +55,7 @@ public class ConstructorExtension implements IConstructorExtension {
 	private final Datatype2 origin;
 	private final String name;
 	private final List<DatatypeArgument> arguments;
+	private final ConstructorArgument[] arguments2;
 	private final String id;
 	private final IExtensionKind kind;
 	private final String groupId;
@@ -73,9 +74,11 @@ public class ConstructorExtension implements IConstructorExtension {
 		int nbArgs = arguments.size();
 		this.groupId = computeGroup(nbArgs);
 		this.kind = computeKind(nbArgs);
+		this.arguments2 = new ConstructorArgument[nbArgs];
 		this.argumentsExt = new ArrayList<IDestructorExtension>(nbArgs);
 		this.extensions = new HashSet<IFormulaExtension>(nbArgs);
 		this.destructors = new HashMap<String, DestructorExtension>(nbArgs);
+		int count = 0;
 		for (DatatypeArgument arg : arguments) {
 			DestructorExtension destrExt = arg.finalizeConstructorArgument(
 					origin, this);
@@ -83,13 +86,27 @@ public class ConstructorExtension implements IConstructorExtension {
 			if (arg.hasDestructor()) {
 				extensions.add(destrExt);
 				destructors.put(destrExt.getName(), destrExt);
+				arguments2[count] = destrExt;
+			} else {
+				arguments2[count] = arg.finalizeUnnamedArgument(this);
 			}
+			++count;
 		}
 	}
 
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public boolean hasArguments() {
+		return arguments2.length != 0;
+	}
+
+	@Override
+	public ConstructorArgument[] getArguments2() {
+		return arguments2.clone();
 	}
 
 	@Override
@@ -106,11 +123,6 @@ public class ConstructorExtension implements IConstructorExtension {
 			argTypes[i] = subst.rewrite(arguments.get(i).getType());
 		}
 		return argTypes;
-	}
-
-	@Override
-	public boolean hasArguments() {
-		return arguments.size() != 0;
 	}
 
 	@Override

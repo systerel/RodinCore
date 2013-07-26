@@ -25,7 +25,8 @@ import org.eventb.core.ast.extension.IExpressionExtension;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IDestructorExtension extends IExpressionExtension {
+public interface IDestructorExtension extends IConstructorArgument,
+		IExpressionExtension {
 
 	/**
 	 * The destructor name.
@@ -33,20 +34,5 @@ public interface IDestructorExtension extends IExpressionExtension {
 	 * @return the destructor name
 	 */
 	public String getName();
-
-	/**
-	 * The parent constructor extension.
-	 * 
-	 * @return the parent constructor extension
-	 */
-	public IConstructorExtension getConstructor();
-
-	/**
-	 * Returns the datatype to which this destructor extension belongs.
-	 * 
-	 * @return the datatype of this destructor extension
-	 */
-	@Override
-	public IDatatype2 getOrigin();
 
 }

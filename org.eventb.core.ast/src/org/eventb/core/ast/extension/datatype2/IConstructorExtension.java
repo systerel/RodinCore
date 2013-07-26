@@ -46,6 +46,13 @@ public interface IConstructorExtension extends IExpressionExtension {
 	boolean hasArguments();
 
 	/**
+	 * Returns the arguments of this constructor. Each argument is either anonymous or a destructor.
+	 * 
+	 * @return an array of the arguments of this constructor
+	 */
+	IConstructorArgument[] getArguments2();
+
+	/**
 	 * Returns the constructor arguments array. The arguments are provided as an
 	 * ordered array containing {@link IDestructorExtension} values for named
 	 * arguments and <code>null</code> values for arguments only defined by

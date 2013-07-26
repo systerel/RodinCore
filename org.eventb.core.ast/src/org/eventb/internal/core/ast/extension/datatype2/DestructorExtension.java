@@ -27,7 +27,6 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
-import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 
 /**
@@ -40,10 +39,8 @@ import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
  * 
  * @author Vincent Monfort
  */
-public class DestructorExtension implements IDestructorExtension {
+public class DestructorExtension extends ConstructorArgument implements IDestructorExtension {
 
-	private final Datatype2 origin;
-	private final ConstructorExtension constructor;
 	private final String name;
 	private final Type type;
 	private final String id;
@@ -52,8 +49,7 @@ public class DestructorExtension implements IDestructorExtension {
 
 	public DestructorExtension(Datatype2 origin,
 			ConstructorExtension constructor, DatatypeArgument argument) {
-		this.origin = origin;
-		this.constructor = constructor;
+		super(constructor, argument.getType());
 		this.name = argument.getDestructorName();
 		this.type = argument.getType();
 		this.id = computeId(name);
@@ -63,13 +59,13 @@ public class DestructorExtension implements IDestructorExtension {
 	}
 
 	@Override
+	public boolean isDestructor() {
+		return true;
+	}
+	
+	@Override
 	public String getName() {
 		return name;
-	}
-
-	@Override
-	public IConstructorExtension getConstructor() {
-		return constructor;
 	}
 
 	@Override
@@ -82,7 +78,7 @@ public class DestructorExtension implements IDestructorExtension {
 	@Override
 	public Predicate getWDPredicate(IExtendedFormula formula,
 			IWDMediator wdMediator) {
-		if (origin.hasSingleConstructor()) {
+		if (getOrigin().hasSingleConstructor()) {
 			return wdMediator.makeTrueWD();
 		}
 		final Expression dtValue = formula.getChildExpressions()[0];
@@ -123,7 +119,7 @@ public class DestructorExtension implements IDestructorExtension {
 	public Type synthesizeType(Expression[] childExprs, Predicate[] childPreds,
 			ITypeMediator mediator) {
 		final Type childType = childExprs[0].getType();
-		final TypeSubstitution subst = makeSubstitution(origin, childType);
+		final TypeSubstitution subst = makeSubstitution(getOrigin(), childType);
 		if (subst == null) {
 			return null;
 		}
@@ -136,7 +132,7 @@ public class DestructorExtension implements IDestructorExtension {
 		assert childExprs.length == 1;
 		assert childPreds.length == 0;
 		final Type childType = childExprs[0].getType();
-		final TypeSubstitution subst = makeSubstitution(origin, childType);
+		final TypeSubstitution subst = makeSubstitution(getOrigin(), childType);
 		if (subst == null) {
 			return false;
 		}
@@ -148,7 +144,7 @@ public class DestructorExtension implements IDestructorExtension {
 	public Type typeCheck(ExtendedExpression expression,
 			ITypeCheckMediator tcMediator) {
 		final Type childType = expression.getChildExpressions()[0].getType();
-		final TypeSubstitution subst = makeSubstitution(origin, tcMediator);
+		final TypeSubstitution subst = makeSubstitution(getOrigin(), tcMediator);
 		tcMediator.sameType(childType, subst.getInstance());
 		return subst.rewrite(type);
 	}
@@ -156,11 +152,6 @@ public class DestructorExtension implements IDestructorExtension {
 	@Override
 	public boolean isATypeConstructor() {
 		return false;
-	}
-
-	@Override
-	public Datatype2 getOrigin() {
-		return origin;
 	}
 
 }
