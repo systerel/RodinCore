@@ -109,6 +109,11 @@ public class ConstructorExtension implements IConstructorExtension {
 	}
 
 	@Override
+	public boolean hasArguments() {
+		return arguments.size() != 0;
+	}
+
+	@Override
 	public IDestructorExtension[] getArguments() {
 		return argumentsExt.toArray(new IDestructorExtension[argumentsExt
 				.size()]);

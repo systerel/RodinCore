@@ -39,6 +39,13 @@ public interface IConstructorExtension extends IExpressionExtension {
 	public String getName();
 
 	/**
+	 * Tells whether this value constructor takes any argument.
+	 * 
+	 * @return <code>true</code> iff this constructor takes some argument
+	 */
+	boolean hasArguments();
+
+	/**
 	 * Returns the constructor arguments array. The arguments are provided as an
 	 * ordered array containing {@link IDestructorExtension} values for named
 	 * arguments and <code>null</code> values for arguments only defined by
