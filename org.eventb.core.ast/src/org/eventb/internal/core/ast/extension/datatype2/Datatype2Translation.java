@@ -24,6 +24,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IDatatypeTranslation;
+import org.eventb.core.ast.ISealedTypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
@@ -36,7 +37,6 @@ import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 import org.eventb.internal.core.ast.FreshNameSolver;
 import org.eventb.internal.core.ast.ITypeCheckingRewriter;
 import org.eventb.internal.core.ast.TypeRewriter;
-import org.eventb.internal.core.ast.extension.datatype2.Datatype2;
 
 /**
  * Implementation for translating Event-B formulas containing datatype
@@ -52,6 +52,7 @@ public class Datatype2Translation implements IDatatypeTranslation {
 	private final FormulaFactory sourceFactory;
 	private final FormulaFactory targetFactory;
 
+	private final ISealedTypeEnvironment sourceTypeEnvironment;
 	private final FreshNameSolver nameSolver;
 
 	private final Map<ParametricType, Datatype2Translator> translators//
@@ -63,6 +64,7 @@ public class Datatype2Translation implements IDatatypeTranslation {
 	public Datatype2Translation(ITypeEnvironment typenv) {
 		this.sourceFactory = typenv.getFormulaFactory();
 		this.targetFactory = computeTargetFactory();
+		this.sourceTypeEnvironment = typenv.makeSnapshot();
 		final Set<String> usedNames = new HashSet<String>(typenv.getNames());
 		this.nameSolver = new FreshNameSolver(usedNames, targetFactory);
 		this.typeRewriter = new TypeRewriter(targetFactory) {
@@ -110,6 +112,10 @@ public class Datatype2Translation implements IDatatypeTranslation {
 		return targetFactory;
 	}
 
+	public ISealedTypeEnvironment getSourceTypeEnvironment() {
+		return sourceTypeEnvironment;
+	}
+	
 	public ITypeCheckingRewriter getFormulaRewriter() {
 		return formulaRewriter;
 	}

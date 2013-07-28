@@ -2414,12 +2414,30 @@ public abstract class Formula<T extends Formula<T>> {
 	 *             if this formula is an assignment
 	 * @throws IllegalStateException
 	 *             if this formula is not type-checked
+	 * @throws IllegalArgumentException
+	 *             if this formula was built by another factory than the source
+	 *             factory of the given translation
+	 * @throws IllegalArgumentException
+	 *             if this formula contains identifiers that are not in the
+	 *             source type environment of the given translation
 	 * @see ITypeEnvironment#makeDatatypeTranslation()
 	 * @since 2.7
 	 */
 	public T translateDatatype(IDatatypeTranslation translation) {
 		ensureTypeChecked();
 		final Datatype2Translation real = (Datatype2Translation) translation;
+		if (fac != real.getSourceFormulaFactory()) {
+			throw new IllegalArgumentException("Formula factory " + fac
+					+ " incompatible with translation " + translation);
+		}
+		final ISealedTypeEnvironment typenv = real.getSourceTypeEnvironment();
+		for (final FreeIdentifier ident : freeIdents) {
+			if (!typenv.contains(ident)) {
+				throw new IllegalArgumentException("Free identifier " + ident
+						+ " is not part of the source type environment of "
+						+ translation);
+			}
+		}
 		return rewrite(real.getFormulaRewriter());
 	}
 

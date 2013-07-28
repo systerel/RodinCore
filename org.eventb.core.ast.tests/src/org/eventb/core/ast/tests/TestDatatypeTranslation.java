@@ -10,6 +10,14 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.Formula.BOOL;
+import static org.eventb.core.ast.tests.FastFactory.mEmptySet;
+import static org.junit.Assert.*;
+
+import org.eventb.core.ast.AtomicExpression;
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.Type;
+import org.eventb.internal.core.ast.extension.datatype2.Datatype2Translation;
 import org.junit.Test;
 
 /**
@@ -164,6 +172,46 @@ public class TestDatatypeTranslation extends AbstractTranslatorTests {
 				"(head ⊗ tail) = cons∼", //
 				"partition(List_Type, {nil}, ran(cons))", //
 				"∀S·partition(List[S], {nil}, cons[S × List[S]])");
+	}
+
+	public static class DatatypeTranslationErrors {
+
+		final TestTranslationSupport s = mSupport(ff, MESSAGE__DT);
+		final Datatype2Translation trans = s.getTranslation();
+		final AtomicExpression untyped = mEmptySet(null);
+		final AtomicExpression badFactory = LIST_FAC.makeAtomicExpression(BOOL,
+				null);
+		final Type ty_S = ff.makeGivenType("S");
+		final Expression empty_S = mEmptySet(POW(ty_S));
+
+		@Test(expected = IllegalArgumentException.class)
+		public void notTyped() throws Exception {
+			assertFalse(untyped.isTypeChecked());
+			untyped.translateDatatype(trans);
+		}
+
+		@Test(expected = IllegalArgumentException.class)
+		public void invalidFactory() throws Exception {
+			assertTrue(badFactory.isTypeChecked());
+			badFactory.translateDatatype(trans);
+		}
+
+		// The given set S is not in the source type environment
+		@Test(expected = IllegalArgumentException.class)
+		public void notInSourceTypenv() throws Exception {
+			assertTrue(empty_S.isTypeChecked());
+			empty_S.translateDatatype(trans);
+		}
+
+		// The given set S is not in the source type environment and adding it
+		// after starting the translation does not work.
+		@Test(expected = IllegalArgumentException.class)
+		public void notInSourceTypenvModifiedTooLate() throws Exception {
+			assertTrue(empty_S.isTypeChecked());
+			s.addGivenTypes("S");
+			empty_S.translateDatatype(trans);
+		}
+
 	}
 
 }

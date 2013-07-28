@@ -16,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -80,12 +79,14 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 	/*------------------------------------------------------------------------*/
 	protected static class TestTranslationSupport {
 
-		private Set<IFormulaExtension> allExts = new LinkedHashSet<IFormulaExtension>();
-		private Set<IDatatype2> datatypes = new LinkedHashSet<IDatatype2>();
+		private final Set<IFormulaExtension> allExts = new LinkedHashSet<IFormulaExtension>();
+		private final Set<IDatatype2> datatypes = new LinkedHashSet<IDatatype2>();
 
-		private ITypeEnvironmentBuilder sourceTypeEnv;
+		private final ITypeEnvironmentBuilder sourceTypeEnv;
 		private ITypeEnvironment targetTypeEnv;
 
+		// Lazily computed so that clients can first enrich the source type
+		// environment
 		private Datatype2Translation translation;
 
 		public TestTranslationSupport(String... extensionSpecs) {
@@ -100,7 +101,6 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 			injectDatatypeExtensions(startFac, extensionSpecs);
 			final FormulaFactory fac = buildSourceFactory();
 			this.sourceTypeEnv = fac.makeTypeEnvironment();
-			this.translation = new Datatype2Translation(sourceTypeEnv);
 		}
 
 		private void injectDatatypeExtensions(FormulaFactory startFac,
@@ -133,11 +133,14 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 		}
 
 		public Datatype2Translation getTranslation() {
+			if (translation == null) {
+				translation = new Datatype2Translation(sourceTypeEnv);
+			}
 			return translation;
 		}
 
 		public void setExpectedTypeEnvironment(String resultingTypeEnv) {
-			final FormulaFactory targetFac = translation
+			final FormulaFactory targetFac = getTranslation()
 					.getTargetFormulaFactory();
 			final ITypeEnvironmentBuilder tempEnv = targetFac.makeTypeEnvironment();
 			targetTypeEnv = addToTypeEnvironment(tempEnv, resultingTypeEnv);
@@ -145,7 +148,7 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 
 		public void assertExprTranslation(String exprStr, String expectedStr) {
 			final Expression expr = parseExpression(exprStr, sourceTypeEnv);
-			final Expression actual = expr.translateDatatype(translation);
+			final Expression actual = expr.translateDatatype(getTranslation());
 			final Expression expected = parseExpression(expectedStr,
 					targetTypeEnv);
 			assertEquals(expected, actual);
@@ -153,14 +156,14 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 
 		public void assertPredTranslation(String predStr, String expectedStr) {
 			final Predicate pred = parsePredicate(predStr, sourceTypeEnv);
-			final Predicate actual = pred.translateDatatype(translation);
+			final Predicate actual = pred.translateDatatype(getTranslation());
 			final Predicate expected = parsePredicate(expectedStr,
 					targetTypeEnv);
 			assertEquals(expected, actual);
 		}
 
 		public void assertAxioms(String... expectedPredStrs) {
-			final Collection<Predicate> predicates = translation.getAxioms();
+			final List<Predicate> predicates = getTranslation().getAxioms();
 			int i = 0;
 			for (final Predicate pred : predicates) {
 				assertTrue(pred.isTypeChecked());
@@ -186,12 +189,12 @@ public abstract class AbstractTranslatorTests extends AbstractTests {
 
 	}
 
-	public TestTranslationSupport mSupport(String... dtSpecs) {
+	public static TestTranslationSupport mSupport(String... dtSpecs) {
 		return new TestTranslationSupport(dtSpecs);
 	}
 
-	public TestTranslationSupport mSupport(FormulaFactory extendedFactory,
-			String... extensionSpecs) {
+	public static TestTranslationSupport mSupport(
+			FormulaFactory extendedFactory, String... extensionSpecs) {
 		return new TestTranslationSupport(extendedFactory, extensionSpecs);
 	}
 
