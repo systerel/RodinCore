@@ -193,4 +193,27 @@ public class TestDatatypeTranslator extends AbstractTranslatorTests {
 				"∀T⦂ℙ(B_Type)·partition(A0[T], a0[T])");
 	}
 
+	/**
+	 * Ensures that unnamed arguments give rise to the creation of a fresh name
+	 * to represent them.
+	 */
+	@Test
+	public void testUnnamedArgumentTranslation() {
+		final TestTranslationSupport s = mSupport("Unnamed[S] ::= cons[S;S]");
+		s.addGivenTypes("Object");
+		final String setsTypenv = "O=ℙ(Object); d=Object; d1=Object";
+		s.addToSourceEnvironment(setsTypenv);
+		s.setExpectedTypeEnvironment("Unnamed_Type=ℙ(Unnamed_Type); "
+				+ "cons=ℙ(Object×Object×Unnamed_Type); " //
+				+ "d0=ℙ(Unnamed_Type×Object); " //
+				+ "d2=ℙ(Unnamed_Type×Object); " //
+				+ "Unnamed=ℙ(Object×Unnamed_Type);" + setsTypenv);
+		s.assertAxioms("Unnamed ∈ Object  Unnamed_Type", //
+				"cons ∈ Object×Object ⤖ Unnamed_Type", //
+				"d0 ∈ ran(cons) ↠ Object", //
+				"d2 ∈ ran(cons) ↠ Object", //
+				"(d0 ⊗ d2) = cons∼", //
+				"∀S·partition(Unnamed[S], cons[S×S])");
+	}
+
 }

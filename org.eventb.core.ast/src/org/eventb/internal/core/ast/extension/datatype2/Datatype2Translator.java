@@ -42,9 +42,9 @@ import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 
 /**
  * Common implementation of a translator for one datatype instance.
@@ -88,8 +88,8 @@ public class Datatype2Translator {
 	private final GivenType trgDatatype;
 	private final Expression trgDatatypeExpr;
 
-	private final Map<IExpressionExtension, FreeIdentifier> replacements //
-	= new HashMap<IExpressionExtension, FreeIdentifier>();
+	private final Map<Object, FreeIdentifier> replacements //
+	= new HashMap<Object, FreeIdentifier>();
 
 	public Datatype2Translator(ParametricType typeInstance,
 			Datatype2Translation translation) {
@@ -123,7 +123,7 @@ public class Datatype2Translator {
 
 	private boolean hasDestructors() {
 		for (final IConstructorExtension cons : datatype.getConstructors()) {
-			if (cons.getArguments().length > 0)
+			if (cons.hasArguments())
 				return true;
 		}
 		return false;
@@ -167,7 +167,8 @@ public class Datatype2Translator {
 	private void computeReplacements() {
 		for (final IConstructorExtension srcCons : srcConstructors) {
 			final Type[] trgArgTypes = computeDestructorReplacements(srcCons);
-			addReplacement(srcCons, makeTrgConsType(trgArgTypes));
+			addReplacement(srcCons, srcCons.getSyntaxSymbol(),
+					makeTrgConsType(trgArgTypes));
 		}
 	}
 
@@ -178,20 +179,25 @@ public class Datatype2Translator {
 	 */
 	private Type[] computeDestructorReplacements(IConstructorExtension cons) {
 		final Type[] srcArgTypes = cons.getArgumentTypes(srcTypeInstance);
-		final IDestructorExtension[] destructors = cons.getArguments();
+		final IConstructorArgument[] args = cons.getArguments2();
 		final int nbDestructors = srcArgTypes.length;
 		final Type[] trgResult = new Type[nbDestructors];
 		for (int i = 0; i < nbDestructors; i++) {
-			final IExpressionExtension destructor = destructors[i];
+			final IConstructorArgument arg = args[i];
 			final Type trgAlpha = translateType(srcArgTypes[i]);
-			addReplacement(destructor, mTrgRelType(trgDatatype, trgAlpha));
+			final String symbol;
+			if (arg.isDestructor()) {
+				symbol = arg.asDestructor().getSyntaxSymbol();
+			} else {
+				symbol = "d";  // Dummy name for unnamed arguments
+			}
+			addReplacement(arg, symbol, mTrgRelType(trgDatatype, trgAlpha));
 			trgResult[i] = trgAlpha;
 		}
 		return trgResult;
 	}
 
-	private void addReplacement(IExpressionExtension ext, Type trgType) {
-		final String symbol = ext.getSyntaxSymbol();
+	private void addReplacement(Object ext, String symbol, Type trgType) {
 		final FreeIdentifier ident = translation.solveIdentifier(symbol,
 				trgType);
 		replacements.put(ext, ident);
@@ -387,11 +393,11 @@ public class Datatype2Translator {
 
 	// Returns the replacements of the destructors of the given constructor
 	private Expression[] getTrgDestructors(IConstructorExtension cons) {
-		final int nbDestructors = cons.getArguments().length;
-		final IDestructorExtension[] destructors = cons.getArguments();
-		final Expression[] trgResult = new Expression[nbDestructors];
-		for (int i = 0; i < nbDestructors; i++) {
-			trgResult[i] = replacements.get(destructors[i]);
+		final IConstructorArgument[] args = cons.getArguments2();
+		final int nbArgs = args.length;
+		final Expression[] trgResult = new Expression[nbArgs];
+		for (int i = 0; i < nbArgs; i++) {
+			trgResult[i] = replacements.get(args[i]);
 		}
 		return trgResult;
 	}
