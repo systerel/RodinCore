@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.IDatatypeTranslation;
 import org.eventb.core.ast.ISpecialization;
 import org.eventb.core.ast.ITypeEnvironment;
@@ -121,6 +122,16 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 	@Override
 	public boolean contains(String name) {
 		return map.containsKey(name);
+	}
+
+	@Override
+	public boolean contains(FreeIdentifier ident) {
+		final Type type = ident.getType();
+		if (type == null) {
+			throw new IllegalArgumentException("Identifier " + ident
+					+ " has no type");
+		}
+		return type.equals(getType(ident.getName()));
 	}
 
 	@Override

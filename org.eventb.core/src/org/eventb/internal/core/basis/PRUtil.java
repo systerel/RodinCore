@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,10 +112,9 @@ public class PRUtil {
 			FreeIdentifier[] idents, ISealedTypeEnvironment baseTypenv,
 			IProgressMonitor monitor) throws RodinDBException {
 		for (final FreeIdentifier ident : idents) {
-			final String name = ident.getName();
-			final Type type = ident.getType();
-			if (!type.equals(baseTypenv.getType(name))) {
-				createPRIdentifier(ie, name, type, monitor);
+			if (!baseTypenv.contains(ident)) {
+				createPRIdentifier(ie, ident.getName(), ident.getType(),
+						monitor);
 			}
 		}
 	}

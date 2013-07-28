@@ -115,6 +115,10 @@ public class TypeChecker {
 	}
 
 	private void checkIdent(FreeIdentifier ident) {
+		if (typenv.contains(ident)) {
+			// OK, fast exit
+			return;
+		}
 		final String name = ident.getName();
 		final Type type = ident.getType();
 		final Type knownType = typenv.getType(name);

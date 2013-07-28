@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -295,7 +295,7 @@ public class ProofRuleTests {
 		newSeqs = introFreeIdent_x.apply(seq);
 		assertNotNull(newSeqs);
 		assertTrue(newSeqs.length == 1);
-		newSeqs[0].typeEnvironment().contains(freeIdent_x.getName());
+		assertTrue(newSeqs[0].typeEnvironment().contains(freeIdent_x));
 		
 		// Unsuccesful application; clashing name and type
 		seq = TestLib.genSeq(" x=2 |- ⊥ ");
@@ -374,7 +374,7 @@ public class ProofRuleTests {
 		assertTrue(newSeqs.length == 1);
 		assertFalse(ProverLib.deepEquals(seq, newSeqs[0]));
 		assertTrue(newSeqs[0].containsHypothesis(pred2));
-		assertTrue(newSeqs[0].typeEnvironment().contains(freeIdent_x.getName()));
+		assertTrue(newSeqs[0].typeEnvironment().contains(freeIdent_x));
 		
 	}
 

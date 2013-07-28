@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,7 @@ public class ProverSequentTests {
 		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_y_int}, Collections.singleton(pred_y), null, pred_y);
 		assertNotNull(newSeq);
 		assertNotSame(seq, newSeq);
-		assertTrue(containsFreeIdent(newSeq.typeEnvironment(), freeIdent_y_int));
+		assertTrue(newSeq.typeEnvironment().contains(freeIdent_y_int));
 		assertTrue(newSeq.containsHypothesis(pred_y));
 		assertTrue(newSeq.isSelected(pred_y));
 		assertSame(newSeq.goal(), pred_y);
@@ -119,25 +119,13 @@ public class ProverSequentTests {
 		newSeq = ((IInternalProverSequent)seq).modify(new FreeIdentifier[] {freeIdent_y_int}, Collections.singleton(pred_y), Collections.singleton(pred_y), pred_y);
 		assertNotNull(newSeq);
 		assertNotSame(seq, newSeq);
-		assertTrue(containsFreeIdent(newSeq.typeEnvironment(), freeIdent_y_int));
+		assertTrue(newSeq.typeEnvironment().contains(freeIdent_y_int));
 		assertTrue(newSeq.containsHypothesis(pred_y));
 		assertFalse(newSeq.isSelected(pred_y));
 		assertSame(newSeq.goal(), pred_y);
 		
 	}
-	
-	/**
-	 * Returns <code>true</code> iff the given type environment contains the given free identifier
-	 * and their types match
-	 * 
-	 * @param typeEnv
-	 * @param freeIdent
-	 * @return
-	 */
-	private static boolean containsFreeIdent(ITypeEnvironment typeEnv, FreeIdentifier freeIdent){
-		return typeEnv.contains(freeIdent.getName()) && typeEnv.getType(freeIdent.getName()).equals(freeIdent.getType());
-	}
-	
+
 	/**
 	 * Tests for hypothesis selection operations
 	 */
@@ -311,7 +299,7 @@ public class ProverSequentTests {
 		newSeq = ((IInternalProverSequent)seq).hideHypotheses(Collections.singleton(pred1));
 		newSeq = ((IInternalProverSequent)newSeq).performfwdInf(hyps, freeIdent_x, infHyps);
 		assertNotSame(seq, newSeq);
-		assertTrue(newSeq.typeEnvironment().contains(freeIdent_x_int.getName()));
+		assertTrue(newSeq.typeEnvironment().contains(freeIdent_x_int));
 		assertTrue(newSeq.containsHypotheses(infHyps));
 		assertTrue(newSeq.isSelected(pred2_x));
 		assertTrue(newSeq.isSelected(True));
@@ -320,7 +308,7 @@ public class ProverSequentTests {
 		newSeq = ((IInternalProverSequent)seq).hideHypotheses(hyps);
 		newSeq = ((IInternalProverSequent)newSeq).performfwdInf(hyps, freeIdent_x, infHyps);
 		assertNotSame(seq, newSeq);
-		assertTrue(newSeq.typeEnvironment().contains(freeIdent_x_int.getName()));
+		assertTrue(newSeq.typeEnvironment().contains(freeIdent_x_int));
 		assertTrue(newSeq.containsHypotheses(infHyps));
 		assertTrue(newSeq.isHidden(pred2_x));
 		assertTrue(newSeq.isSelected(True));

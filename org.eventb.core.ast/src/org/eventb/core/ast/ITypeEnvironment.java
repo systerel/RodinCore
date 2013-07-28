@@ -141,6 +141,20 @@ public interface ITypeEnvironment {
 	boolean contains(String name);
 
 	/**
+	 * Returns whether this type environment contains the given free identifier,
+	 * that is the identifier name associated with the identifier type.
+	 * 
+	 * @param ident
+	 *            the free identifier to lookup
+	 * @return <code>true</code> iff the type environment contains the given
+	 *         free identifier
+	 * @throws IllegalArgumentException
+	 *             if the given identifier is not type-checked
+	 * @since 3.0
+	 */
+	boolean contains(FreeIdentifier ident);
+
+	/**
 	 * Returns whether the given type environment is a subset of this type
 	 * environment.
 	 * <p>

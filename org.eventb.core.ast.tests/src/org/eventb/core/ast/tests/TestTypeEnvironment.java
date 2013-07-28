@@ -258,23 +258,37 @@ public class TestTypeEnvironment {
 
 	/*
 	 * Test method for 'org.eventb.core.ast.ITypeEnvironment.contains(String)'
+	 * and 'org.eventb.core.ast.ITypeEnvironment.contains(FreeIdentifier)'
 	 */
 	@Test
 	public void testContains() {
-		ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		final ITypeEnvironmentBuilder te = ff.makeTypeEnvironment();
+		final FreeIdentifier S = ff.makeFreeIdentifier("S", null, POW(t_S));
+		final FreeIdentifier x_INT = ff.makeFreeIdentifier("x", null, INT);
+		final FreeIdentifier x_S = ff.makeFreeIdentifier("x", null, t_S);
+
 		assertFalse(te.contains("x"));
 		assertFalse(te.contains("x'"));
 		assertFalse(te.contains("S"));
+		assertFalse(te.contains(S));
+		assertFalse(te.contains(x_INT));
+		assertFalse(te.contains(x_S));
 		
 		te.addGivenSet("S");
 		assertFalse(te.contains("x"));
 		assertFalse(te.contains("x'"));
 		assertTrue(te.contains("S"));
+		assertTrue(te.contains(S));
+		assertFalse(te.contains(x_INT));
+		assertFalse(te.contains(x_S));
 		
 		te.addName("x", INT);
 		assertTrue(te.contains("x"));
 		assertFalse(te.contains("x'"));
 		assertTrue(te.contains("S"));
+		assertTrue(te.contains(S));
+		assertTrue(te.contains(x_INT));
+		assertFalse(te.contains(x_S));
 	}
 
 	/*
