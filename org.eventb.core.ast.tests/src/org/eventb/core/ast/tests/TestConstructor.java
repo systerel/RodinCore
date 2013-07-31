@@ -11,10 +11,7 @@
 package org.eventb.core.ast.tests;
 
 import static org.eventb.core.ast.tests.DatatypeParser.parse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
@@ -36,46 +33,81 @@ public class TestConstructor extends AbstractTests {
 	private static final IConstructorExtension c3 = DT.getConstructor("c3");
 
 	@Test
-	public void getName() throws Exception {
+	public void getName() {
 		assertEquals("c1", c1.getName());
 	}
 
 	@Test
-	public void hasArgumentsFalse() throws Exception {
+	public void getOrigin() {
+		assertEquals(DT, c1.getOrigin());
+	}
+
+	@Test
+	public void hasArgumentsFalse() {
 		assertFalse(c1.hasArguments());
 	}
 
 	@Test
-	public void hasArgumentsTrue() throws Exception {
+	public void hasArgumentsTrue() {
 		assertTrue(c2.hasArguments());
 	}
 
 	@Test
-	public void getArgumentsNone() throws Exception {
-		assertEquals(0, c1.getArguments2().length);
+	public void getArgumentsNone() {
+		assertEquals(0, c1.getArguments().length);
 	}
 
 	@Test
-	public void getArgumentsOne() throws Exception {
-		assertEquals(1, c2.getArguments2().length);
+	public void getArgumentsOne() {
+		assertEquals(1, c2.getArguments().length);
 	}
 
 	@Test
-	public void getArgumentsTwo() throws Exception {
-		assertEquals(2, c3.getArguments2().length);
+	public void getArgumentsTwo() {
+		assertEquals(2, c3.getArguments().length);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getDestructorNone() {
+		c2.getDestructor("unknown");
 	}
 
 	@Test
-	public void isDestructorFalse() throws Exception {
-		final IConstructorArgument arg = c3.getArguments2()[0];
+	public void getDestructorSuccess() {
+		assertEquals(c3.getArguments()[1], c3.getDestructor("d3"));
+	}
+
+	@Test
+	public void isDestructorFalse() {
+		final IConstructorArgument arg = c3.getArguments()[0];
 		assertFalse(arg.isDestructor());
 		assertNull(arg.asDestructor());
 	}
 
 	@Test
-	public void isDestructorTrue() throws Exception {
-		final IConstructorArgument d3 = c3.getArguments2()[1];
+	public void isDestructorTrue() {
+		final IConstructorArgument d3 = c3.getArguments()[1];
 		assertTrue(d3.isDestructor());
+		assertSame(d3, d3.asDestructor());
+	}
+
+	@Test
+	public void getArgumentConstructor() {
+		for (IConstructorArgument arg : c3.getArguments()) {
+			assertSame(c3, arg.getConstructor());
+		}
+	}
+
+	@Test
+	public void getArgumentOrigin() {
+		for (IConstructorArgument arg : c3.getArguments()) {
+			assertSame(DT, arg.getOrigin());
+		}
+	}
+
+	@Test
+	public void getDestructorName() {
+		final IConstructorArgument d3 = c3.getArguments()[1];
 		assertEquals("d3", d3.asDestructor().getName());
 	}
 

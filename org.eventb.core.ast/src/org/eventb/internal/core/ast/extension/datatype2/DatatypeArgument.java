@@ -54,47 +54,17 @@ public final class DatatypeArgument {
 		return name;
 	}
 
-	public DestructorExtension finalizeConstructorArgument(Datatype2 origin,
+	public ConstructorArgument finalizeConstructorArgument(Datatype2 origin,
 			ConstructorExtension constructorExt) {
-		assert (origin.getTypeConstructor() != null);
-		if (!hasDestructor()) {
-			return null;
+		if (hasDestructor()) {
+			return new DestructorExtension(origin, constructorExt, this);
+		} else {
+			return new ConstructorArgument(constructorExt, type);
 		}
-		return new DestructorExtension(origin, constructorExt, this);
-	}
-
-	public ConstructorArgument finalizeUnnamedArgument(
-			ConstructorExtension constructorExtension) {
-		assert !hasDestructor();
-		return new ConstructorArgument(constructorExtension, type);
 	}
 
 	public void harvest(ExtensionHarvester harvester) {
 		harvester.harvest(type);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		return prime * type.hashCode() + ((name == null) ? 0 : name.hashCode());
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null || this.getClass() != obj.getClass()) {
-			return false;
-		}
-		final DatatypeArgument other = (DatatypeArgument) obj;
-		if (!this.type.equals(other.type)) {
-			return false;
-		}
-		if (this.name == null) {
-			return other.name == null;
-		}
-		return this.name.equals(other.name);
 	}
 
 }

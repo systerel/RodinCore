@@ -29,7 +29,6 @@ import static org.eventb.core.ast.Formula.DOMRES;
 import static org.eventb.core.ast.Formula.DOMSUB;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXPN;
-import static org.eventb.core.ast.Formula.FALSE;
 import static org.eventb.core.ast.Formula.FORALL;
 import static org.eventb.core.ast.Formula.GE;
 import static org.eventb.core.ast.Formula.GT;
@@ -44,8 +43,8 @@ import static org.eventb.core.ast.Formula.KRAN;
 import static org.eventb.core.ast.Formula.KSUCC;
 import static org.eventb.core.ast.Formula.LAND;
 import static org.eventb.core.ast.Formula.LE;
-import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LEQV;
+import static org.eventb.core.ast.Formula.LIMP;
 import static org.eventb.core.ast.Formula.LOR;
 import static org.eventb.core.ast.Formula.LT;
 import static org.eventb.core.ast.Formula.MAPSTO;
@@ -58,7 +57,6 @@ import static org.eventb.core.ast.Formula.RELIMAGE;
 import static org.eventb.core.ast.Formula.SETMINUS;
 import static org.eventb.core.ast.Formula.SUBSET;
 import static org.eventb.core.ast.Formula.SUBSETEQ;
-import static org.eventb.core.ast.Formula.TRUE;
 import static org.eventb.core.ast.Formula.UNMINUS;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyComp;
 import static org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AssociativeSimplification.simplifyInter;
@@ -102,6 +100,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 import org.eventb.core.seqprover.ProverRule;
@@ -4550,7 +4549,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
     	if (destrExt.getConstructor() != consExt) {
     		return -1;
     	}
-    	IDestructorExtension[] args = consExt.getArguments();
+    	final IConstructorArgument[] args = consExt.getArguments();
     	for (int idx = 0; idx < args.length; idx ++) {
     		if (args[idx] == destrExt) {
     			return idx;

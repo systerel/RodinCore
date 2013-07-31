@@ -50,18 +50,7 @@ public interface IConstructorExtension extends IExpressionExtension {
 	 * 
 	 * @return an array of the arguments of this constructor
 	 */
-	IConstructorArgument[] getArguments2();
-
-	/**
-	 * Returns the constructor arguments array. The arguments are provided as an
-	 * ordered array containing {@link IDestructorExtension} values for named
-	 * arguments and <code>null</code> values for arguments only defined by
-	 * their type.
-	 * 
-	 * @return the array representing the arguments that may contains
-	 *         {@link IDestructorExtension} and <code>null</code> values.
-	 */
-	public IDestructorExtension[] getArguments();
+	IConstructorArgument[] getArguments();
 
 	/**
 	 * Returns the destructor extension corresponding to the given name or

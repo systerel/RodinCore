@@ -20,7 +20,7 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
+import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 
 /**
  * Utility class for building predicates about constructors.
@@ -41,7 +41,7 @@ public final class ConstructorPredicateBuilder {
 	private static final Predicate[] NO_PRED = new Predicate[0];
 
 	private final ConstructorExtension constructor;
-	private final IDestructorExtension[] destructors;
+	private final IConstructorArgument[] arguments;
 	private final int nbArgs;
 	private final BoundIdentDecl[] bids;
 	private final Expression[] bis;
@@ -50,8 +50,8 @@ public final class ConstructorPredicateBuilder {
 
 	private ConstructorPredicateBuilder(ConstructorExtension constructor) {
 		this.constructor = constructor;
-		this.destructors = constructor.getArguments();
-		this.nbArgs = destructors.length;
+		this.arguments = constructor.getArguments();
+		this.nbArgs = arguments.length;
 		this.bids = new BoundIdentDecl[nbArgs];
 		this.bis = new BoundIdentifier[nbArgs];
 	}
@@ -78,9 +78,9 @@ public final class ConstructorPredicateBuilder {
 	}
 
 	private String makeBoundName(int index) {
-		final IDestructorExtension destr = destructors[index];
-		if (destr != null) {
-			return destr.getName() + index;
+		final IConstructorArgument destr = arguments[index];
+		if (destr.isDestructor()) {
+			return destr.asDestructor().getName() + index;
 		}
 		return PARAM_PREFIX + index;
 	}

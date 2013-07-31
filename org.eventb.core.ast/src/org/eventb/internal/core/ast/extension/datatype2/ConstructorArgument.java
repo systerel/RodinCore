@@ -21,7 +21,7 @@ import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 public class ConstructorArgument implements IConstructorArgument {
 
 	protected final ConstructorExtension constructor;
-	private final Type formalType;
+	protected final Type formalType;
 
 	public ConstructorArgument(ConstructorExtension constructor, Type formalType) {
 		this.constructor = constructor;
@@ -38,6 +38,10 @@ public class ConstructorArgument implements IConstructorArgument {
 		return constructor;
 	}
 
+	public Type getFormalType() {
+		return formalType;
+	}
+
 	@Override
 	public boolean isDestructor() {
 		return false;
@@ -49,6 +53,23 @@ public class ConstructorArgument implements IConstructorArgument {
 			return (DestructorExtension) this;
 		}
 		return null;
+	}
+
+	@Override
+	public int hashCode() {
+		return formalType.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || this.getClass() != obj.getClass()) {
+			return false;
+		}
+		final ConstructorArgument other = (ConstructorArgument) obj;
+		return this.formalType.equals(other.formalType);
 	}
 
 }

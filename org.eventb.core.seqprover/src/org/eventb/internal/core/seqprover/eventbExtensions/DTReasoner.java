@@ -24,9 +24,9 @@ import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
@@ -111,7 +111,7 @@ public abstract class DTReasoner extends AbstractManualInference {
 		final FormulaFactory ff = seq.getFormulaFactory();
 		final ITypeEnvironment env = seq.typeEnvironment();
 		for (IConstructorExtension constr : dt.getConstructors()) {
-			final IDestructorExtension[] arguments = constr.getArguments();
+			final IConstructorArgument[] arguments = constr.getArguments();
 			final Type[] argTypes = constr.getArgumentTypes(type);
 
 			final FreeIdentifier[] params = makeFreshIdents(arguments,
@@ -124,13 +124,14 @@ public abstract class DTReasoner extends AbstractManualInference {
 		return antecedents.toArray(new IAntecedent[antecedents.size()]);
 	}
 
-	private static FreeIdentifier[] makeFreshIdents(IDestructorExtension[] arguments,
-			Type[] argTypes, FormulaFactory ff, ITypeEnvironment env) {
+	private static FreeIdentifier[] makeFreshIdents(
+			IConstructorArgument[] arguments, Type[] argTypes,
+			FormulaFactory ff, ITypeEnvironment env) {
 		assert arguments.length == argTypes.length;
 		final int size = arguments.length;
 		final FreeIdentifier[] idents = new FreeIdentifier[size];
 		for (int i = 0; i < size; i++) {
-			final IDestructorExtension arg = arguments[i];
+			final IConstructorArgument arg = arguments[i];
 			final String argName = makeFreshName(arg, i, env);
 			final Type argType = argTypes[i];
 			idents[i] = ff.makeFreeIdentifier(argName, null, argType);
@@ -138,12 +139,12 @@ public abstract class DTReasoner extends AbstractManualInference {
 		return idents;
 	}
 
-	private static String makeFreshName(IDestructorExtension arg, int i,
+	private static String makeFreshName(IConstructorArgument arg, int i,
 			ITypeEnvironment env) {
 		final String prefix = "p_";
 		final String suffix;
-		if (arg != null) {
-			suffix = arg.getName();
+		if (arg.isDestructor()) {
+			suffix = arg.asDestructor().getName();
 		} else {
 			suffix = Integer.toString(i);
 		}

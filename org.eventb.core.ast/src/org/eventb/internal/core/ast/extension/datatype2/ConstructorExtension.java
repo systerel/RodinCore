@@ -16,7 +16,7 @@ import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.co
 import static org.eventb.internal.core.ast.extension.datatype2.SetSubstitution.makeSubstitution;
 import static org.eventb.internal.core.ast.extension.datatype2.TypeSubstitution.makeSubstitution;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,42 +54,37 @@ public class ConstructorExtension implements IConstructorExtension {
 
 	private final Datatype2 origin;
 	private final String name;
-	private final List<DatatypeArgument> arguments;
-	private final ConstructorArgument[] arguments2;
+	private final ConstructorArgument[] arguments;
+
 	private final String id;
 	private final IExtensionKind kind;
 	private final String groupId;
 
-	private final List<IDestructorExtension> argumentsExt;
 	private Set<IFormulaExtension> extensions;
 	private HashMap<String, DestructorExtension> destructors;
 
 	public ConstructorExtension(Datatype2 origin, GivenType datatypeType,
 			List<GivenType> typeParams, String name,
-			List<DatatypeArgument> arguments) {
+			List<DatatypeArgument> builderArgs) {
 		this.origin = origin;
 		this.name = name;
 		this.id = computeId(name);
-		this.arguments = arguments;
-		int nbArgs = arguments.size();
+		final int nbArgs = builderArgs.size();
 		this.groupId = computeGroup(nbArgs);
 		this.kind = computeKind(nbArgs);
-		this.arguments2 = new ConstructorArgument[nbArgs];
-		this.argumentsExt = new ArrayList<IDestructorExtension>(nbArgs);
+		this.arguments = new ConstructorArgument[nbArgs];
 		this.extensions = new HashSet<IFormulaExtension>(nbArgs);
 		this.destructors = new HashMap<String, DestructorExtension>(nbArgs);
 		int count = 0;
-		for (DatatypeArgument arg : arguments) {
-			DestructorExtension destrExt = arg.finalizeConstructorArgument(
-					origin, this);
-			argumentsExt.add(destrExt);
-			if (arg.hasDestructor()) {
-				extensions.add(destrExt);
-				destructors.put(destrExt.getName(), destrExt);
-				arguments2[count] = destrExt;
-			} else {
-				arguments2[count] = arg.finalizeUnnamedArgument(this);
+		for (final DatatypeArgument builderArg : builderArgs) {
+			final ConstructorArgument arg = builderArg
+					.finalizeConstructorArgument(origin, this);
+			if (arg.isDestructor()) {
+				final DestructorExtension destr = arg.asDestructor();
+				extensions.add(destr);
+				destructors.put(destr.getName(), destr);
 			}
+			arguments[count] = arg;
 			++count;
 		}
 	}
@@ -101,12 +96,12 @@ public class ConstructorExtension implements IConstructorExtension {
 
 	@Override
 	public boolean hasArguments() {
-		return arguments2.length != 0;
+		return arguments.length != 0;
 	}
 
 	@Override
-	public ConstructorArgument[] getArguments2() {
-		return arguments2.clone();
+	public ConstructorArgument[] getArguments() {
+		return arguments.clone();
 	}
 
 	@Override
@@ -117,18 +112,12 @@ public class ConstructorExtension implements IConstructorExtension {
 					+ " is not compatible with the constructor: " + this
 					+ " of the datatype: " + origin.getTypeConstructor());
 		}
-		final int length = arguments.size();
+		final int length = arguments.length;
 		final Type[] argTypes = new Type[length];
 		for (int i = 0; i < length; i++) {
-			argTypes[i] = subst.rewrite(arguments.get(i).getType());
+			argTypes[i] = subst.rewrite(arguments[i].getFormalType());
 		}
 		return argTypes;
-	}
-
-	@Override
-	public IDestructorExtension[] getArguments() {
-		return argumentsExt.toArray(new IDestructorExtension[argumentsExt
-				.size()]);
 	}
 
 	@Override
@@ -147,9 +136,9 @@ public class ConstructorExtension implements IConstructorExtension {
 			throw new IllegalArgumentException("Constructor: " + this
 					+ " is not compatible with set: " + set);
 		}
-		final Type[] argTypes = new Type[arguments.size()];
+		final Type[] argTypes = new Type[arguments.length];
 		for (int i = 0; i < argTypes.length; i++) {
-			argTypes[i] = arguments.get(i).getType();
+			argTypes[i] = arguments[i].getFormalType();
 		}
 		return subst.substitute(argTypes);
 	}
@@ -209,9 +198,9 @@ public class ConstructorExtension implements IConstructorExtension {
 		if (subst == null) {
 			return false;
 		}
-		assert childExprs.length == arguments.size();
+		assert childExprs.length == arguments.length;
 		for (int i = 0; i < childExprs.length; i++) {
-			final Type argType = subst.rewrite(arguments.get(i).getType());
+			final Type argType = subst.rewrite(arguments[i].getFormalType());
 			final Type childType = childExprs[i].getType();
 			if (!argType.equals(childType)) {
 				return false;
@@ -228,7 +217,7 @@ public class ConstructorExtension implements IConstructorExtension {
 		final Expression[] children = expression.getChildExpressions();
 		for (int i = 0; i < children.length; i++) {
 			final Type childType = children[i].getType();
-			final Type argType = subst.rewrite(arguments.get(i).getType());
+			final Type argType = subst.rewrite(arguments[i].getFormalType());
 			tcMediator.sameType(childType, argType);
 		}
 		return subst.getInstance();
@@ -256,7 +245,7 @@ public class ConstructorExtension implements IConstructorExtension {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		return prime * name.hashCode() + arguments.hashCode();
+		return prime * name.hashCode() + Arrays.hashCode(arguments);
 	}
 
 	@Override
@@ -269,7 +258,7 @@ public class ConstructorExtension implements IConstructorExtension {
 		}
 		final ConstructorExtension other = (ConstructorExtension) obj;
 		return this.name.equals(other.name)
-				&& this.arguments.equals(other.arguments);
+				&& Arrays.equals(this.arguments, other.arguments);
 	}
 
 }

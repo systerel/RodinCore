@@ -179,7 +179,7 @@ public class Datatype2Translator {
 	 */
 	private Type[] computeDestructorReplacements(IConstructorExtension cons) {
 		final Type[] srcArgTypes = cons.getArgumentTypes(srcTypeInstance);
-		final IConstructorArgument[] args = cons.getArguments2();
+		final IConstructorArgument[] args = cons.getArguments();
 		final int nbDestructors = srcArgTypes.length;
 		final Type[] trgResult = new Type[nbDestructors];
 		for (int i = 0; i < nbDestructors; i++) {
@@ -393,7 +393,7 @@ public class Datatype2Translator {
 
 	// Returns the replacements of the destructors of the given constructor
 	private Expression[] getTrgDestructors(IConstructorExtension cons) {
-		final IConstructorArgument[] args = cons.getArguments2();
+		final IConstructorArgument[] args = cons.getArguments();
 		final int nbArgs = args.length;
 		final Expression[] trgResult = new Expression[nbArgs];
 		for (int i = 0; i < nbArgs; i++) {

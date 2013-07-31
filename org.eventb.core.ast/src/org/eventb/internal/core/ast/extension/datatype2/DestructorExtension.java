@@ -154,4 +154,23 @@ public class DestructorExtension extends ConstructorArgument implements IDestruc
 		return false;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		return prime * formalType.hashCode() + name.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || this.getClass() != obj.getClass()) {
+			return false;
+		}
+		final DestructorExtension other = (DestructorExtension) obj;
+		return this.formalType.equals(other.formalType)
+				&& this.name.equals(other.name);
+	}
+
 }
