@@ -227,7 +227,6 @@ public class EventBPlugin extends Plugin {
 		PreferenceUtils.init();
 
 		initTacticPreferenceUpdater();
-		PreferenceUtils.restoreFromUIPreferences();
 	}
 
 	@Override

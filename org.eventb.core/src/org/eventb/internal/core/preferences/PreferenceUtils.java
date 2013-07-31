@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.preferences;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.EventBPlugin.PLUGIN_ID;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
@@ -38,6 +39,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -54,6 +59,7 @@ import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators;
+import org.eventb.internal.core.Util;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 import org.w3c.dom.Document;
@@ -395,9 +401,13 @@ public class PreferenceUtils {
 
 	private static void movePref(String key, IEclipsePreferences from,
 			IEclipsePreferences to) {
-		final String value = from.get(key, null);
-		if (value != null) {
-			to.put(key, value);
+		if (to.get(key, null) != null) {
+			// do not override user setting
+			return;
+		}
+		final String fromValue = from.get(key, null);
+		if (fromValue != null) {
+			to.put(key, fromValue);
 			from.remove(key);
 		}
 	}
@@ -420,21 +430,52 @@ public class PreferenceUtils {
 		manager.getPostTacticPreference().setEnabled(postTacticEnable);
 	}
 
-	public static void restoreFromUIPreferences() throws BackingStoreException {
-		final IEclipsePreferences uiPrefNode = InstanceScope.INSTANCE
-				.getNode("org.eventb.ui");
-		final IEclipsePreferences corePrefNode = InstanceScope.INSTANCE
-				.getNode(PLUGIN_ID);
-		movePref(P_AUTOTACTIC_ENABLE, uiPrefNode, corePrefNode);
-		movePref(P_AUTOTACTIC_CHOICE, uiPrefNode, corePrefNode);
-		movePref(P_POSTTACTIC_ENABLE, uiPrefNode, corePrefNode);
-		movePref(P_POSTTACTIC_CHOICE, uiPrefNode, corePrefNode);
-		movePref(P_TACTICSPROFILES, uiPrefNode, corePrefNode);
+	private static final List<String> MOVED_PREFERENCES = asList(
+			P_AUTOTACTIC_ENABLE, P_AUTOTACTIC_CHOICE, P_POSTTACTIC_ENABLE,
+			P_POSTTACTIC_CHOICE, P_TACTICSPROFILES);
 
-		corePrefNode.sync();
-		uiPrefNode.flush();
-		uiPrefNode.sync();
-		
-		// TODO project scope
+	private static boolean mayRequireRestoration(IEclipsePreferences node) throws BackingStoreException {
+			final String[] keys = node.keys();
+			final List<String> nodekeys = new ArrayList<String>(asList(keys));
+			return nodekeys.isEmpty() || !nodekeys.removeAll(MOVED_PREFERENCES);
+	}
+
+	/**
+	 * Restores UI preferences into the given (core) preference node.
+	 * @param prefNode a preference node
+	 */
+	public static void restoreFromUIIfNeeded(IEclipsePreferences prefNode) {
+		try {
+			if (!mayRequireRestoration(prefNode)) {
+				return;
+			}
+			final IEclipsePreferences uiPrefNode = getUIPreference(prefNode);
+			for (String movedPref : MOVED_PREFERENCES) {
+				movePref(movedPref, uiPrefNode, prefNode);
+			}
+
+			prefNode.sync();
+			uiPrefNode.flush();
+			uiPrefNode.sync();
+		} catch (BackingStoreException e) {
+			Util.log(e, "while restoring UI preferences");
+		}
+	}
+
+	private static IScopeContext getScope(IEclipsePreferences prefNode) {
+		final String absolutePath = prefNode.absolutePath();
+		final String[] split = absolutePath.split("/");
+		if (split[1].equals("project")) {
+			final IWorkspace ws = ResourcesPlugin.getWorkspace();
+			final IProject project = ws.getRoot().getProject(split[2]);
+			return new ProjectScope(project);
+		}
+		return InstanceScope.INSTANCE;
+	}
+
+	private static IEclipsePreferences getUIPreference(
+			IEclipsePreferences prefNode) throws BackingStoreException {
+		final IScopeContext scope = getScope(prefNode);
+		return scope.getNode("org.eventb.ui");
 	}
 }
