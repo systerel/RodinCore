@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
 
@@ -121,5 +122,18 @@ public interface IDatatype2 {
 	 * @return an unmodifiable set of all formula extensions
 	 */
 	Set<IFormulaExtension> getExtensions();
+
+	/**
+	 * Returns an object that can be used to compute the actual types of
+	 * arguments of constructors of this datatype.
+	 * 
+	 * @param type
+	 *            a type built with the type constructor of this datatype
+	 * @return a type instantiation usable for computing argument types
+	 * @throws IllegalArgumentException
+	 *             if the given type is not a parametric type built with the
+	 *             type constructor of this datatype
+	 */
+	ITypeInstantiation getTypeInstantiation(Type type);
 
 }

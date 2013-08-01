@@ -40,6 +40,7 @@ public final class ConstructorPredicateBuilder {
 	private static final String PARAM_PREFIX = "p";
 	private static final Predicate[] NO_PRED = new Predicate[0];
 
+	private final Datatype2 datatype;
 	private final ConstructorExtension constructor;
 	private final IConstructorArgument[] arguments;
 	private final int nbArgs;
@@ -49,6 +50,7 @@ public final class ConstructorPredicateBuilder {
 	private FormulaFactory ff;
 
 	private ConstructorPredicateBuilder(ConstructorExtension constructor) {
+		this.datatype = constructor.getOrigin();
 		this.constructor = constructor;
 		this.arguments = constructor.getArguments();
 		this.nbArgs = arguments.length;
@@ -68,19 +70,19 @@ public final class ConstructorPredicateBuilder {
 	}
 
 	public void makeIdentifiers(Type dtType) {
-		final Type[] argTypes = constructor.getArgumentTypes(dtType);
+		final TypeSubstitution inst = datatype.getTypeInstantiation(dtType);
 		for (int i = 0; i < nbArgs; i++) {
 			final String bidName = makeBoundName(i);
-			final Type argType = argTypes[i];
+			final Type argType = arguments[i].getType(inst);
 			bids[i] = ff.makeBoundIdentDecl(bidName, null, argType);
 			bis[i] = ff.makeBoundIdentifier(nbArgs - i - 1, null, argType);
 		}
 	}
 
 	private String makeBoundName(int index) {
-		final IConstructorArgument destr = arguments[index];
-		if (destr.isDestructor()) {
-			return destr.asDestructor().getName() + index;
+		final IConstructorArgument arg = arguments[index];
+		if (arg.isDestructor()) {
+			return arg.asDestructor().getName() + index;
 		}
 		return PARAM_PREFIX + index;
 	}

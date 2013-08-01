@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension.datatype2;
 
+import org.eventb.core.ast.Type;
+
 /**
  * Common protocol for arguments of datatype constructors. Constructors can take
  * two kind of arguments:
@@ -55,5 +57,17 @@ public interface IConstructorArgument {
 	 * @return this argument as a destructor, or <code>null</code>
 	 */
 	IDestructorExtension asDestructor();
+
+	/**
+	 * Returns the type of this argument in the given instantiation.
+	 * 
+	 * @param instantiation
+	 *            a type instantiation obtained from the datatype of this
+	 *            argument
+	 * @return the type of this argument in the given instantiation
+	 * @throws IllegalArgumentException
+	 *             if the instantiation comes from a different origin
+	 */
+	Type getType(ITypeInstantiation instantiation);
 
 }

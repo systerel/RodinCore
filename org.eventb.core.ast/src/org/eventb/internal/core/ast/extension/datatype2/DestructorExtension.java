@@ -44,10 +44,10 @@ import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
  * 
  * @author Vincent Monfort
  */
-public class DestructorExtension extends ConstructorArgument implements IDestructorExtension {
+public class DestructorExtension extends ConstructorArgument implements
+		IDestructorExtension {
 
 	private final String name;
-	private final Type type;
 	private final String id;
 	private final IExtensionKind kind;
 	private final String groupId;
@@ -56,7 +56,6 @@ public class DestructorExtension extends ConstructorArgument implements IDestruc
 			ConstructorExtension constructor, DatatypeArgument argument) {
 		super(constructor, argument.getType());
 		this.name = argument.getDestructorName();
-		this.type = argument.getType();
 		this.id = computeId(name);
 		int nbArgs = 1; // one argument (of type datatype)
 		this.kind = computeKind(nbArgs);
@@ -128,7 +127,7 @@ public class DestructorExtension extends ConstructorArgument implements IDestruc
 		if (subst == null) {
 			return null;
 		}
-		return subst.rewrite(type);
+		return getType(subst);
 	}
 
 	@Override
@@ -141,7 +140,7 @@ public class DestructorExtension extends ConstructorArgument implements IDestruc
 		if (subst == null) {
 			return false;
 		}
-		final Type expected = subst.rewrite(type);
+		final Type expected = getType(subst);
 		return expected.equals(proposedType);
 	}
 
@@ -150,8 +149,8 @@ public class DestructorExtension extends ConstructorArgument implements IDestruc
 			ITypeCheckMediator tcMediator) {
 		final Type childType = expression.getChildExpressions()[0].getType();
 		final TypeSubstitution subst = makeSubstitution(getOrigin(), tcMediator);
-		tcMediator.sameType(childType, subst.getInstance());
-		return subst.rewrite(type);
+		tcMediator.sameType(childType, subst.getInstanceType());
+		return getType(subst);
 	}
 
 	@Override

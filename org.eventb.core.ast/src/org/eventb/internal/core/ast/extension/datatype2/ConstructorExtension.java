@@ -110,22 +110,6 @@ public class ConstructorExtension implements IConstructorExtension {
 	}
 
 	@Override
-	public Type[] getArgumentTypes(Type returnType) {
-		final TypeSubstitution subst = makeSubstitution(origin, returnType);
-		if (subst == null) {
-			throw new IllegalArgumentException("The return type: " + returnType
-					+ " is not compatible with the constructor: " + this
-					+ " of the datatype: " + origin.getTypeConstructor());
-		}
-		final int length = arguments.length;
-		final Type[] argTypes = new Type[length];
-		for (int i = 0; i < length; i++) {
-			argTypes[i] = subst.rewrite(arguments[i].getFormalType());
-		}
-		return argTypes;
-	}
-
-	@Override
 	public IDestructorExtension getDestructor(String destName) {
 		if (!destructors.containsKey(destName)) {
 			throw new IllegalArgumentException("The current constructor: "
@@ -205,7 +189,7 @@ public class ConstructorExtension implements IConstructorExtension {
 		}
 		assert childExprs.length == arguments.length;
 		for (int i = 0; i < childExprs.length; i++) {
-			final Type argType = subst.rewrite(arguments[i].getFormalType());
+			final Type argType = arguments[i].getType(subst);
 			final Type childType = childExprs[i].getType();
 			if (!argType.equals(childType)) {
 				return false;
@@ -222,10 +206,10 @@ public class ConstructorExtension implements IConstructorExtension {
 		final Expression[] children = expression.getChildExpressions();
 		for (int i = 0; i < children.length; i++) {
 			final Type childType = children[i].getType();
-			final Type argType = subst.rewrite(arguments[i].getFormalType());
+			final Type argType = arguments[i].getType(subst);
 			tcMediator.sameType(childType, argType);
 		}
-		return subst.getInstance();
+		return subst.getInstanceType();
 	}
 
 	@Override

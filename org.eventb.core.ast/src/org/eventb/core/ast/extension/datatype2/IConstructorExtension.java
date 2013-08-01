@@ -11,8 +11,6 @@
 package org.eventb.core.ast.extension.datatype2;
 
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 
 /**
@@ -87,26 +85,6 @@ public interface IConstructorExtension extends IExpressionExtension {
 	 *             of this datatype
 	 */
 	public Expression[] getArgumentSets(Expression set);
-
-	/**
-	 * Returns the types that the arguments of this constructor must have to
-	 * build the given instance of the corresponding datatype.
-	 * <p>
-	 * If the given type is not an instance of the datatype to which this
-	 * constructor belongs, then an exception is raised.
-	 * </p>
-	 * <p>
-	 * The types that are returned are built with the same
-	 * {@link FormulaFactory} than the given type.
-	 * </p>
-	 * 
-	 * @param instance
-	 *            a type instance of the datatype of this constructor
-	 * @return the array of argument types
-	 * @throws IllegalArgumentException
-	 *             if the given type is not compatible with this constructor
-	 */
-	public Type[] getArgumentTypes(Type instance);
 
 	/**
 	 * Returns the datatype to which this constructor extension belongs.

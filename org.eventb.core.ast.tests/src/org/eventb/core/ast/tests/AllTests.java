@@ -13,6 +13,7 @@ package org.eventb.core.ast.tests;
 
 import org.eventb.core.ast.expander.tests.PartitionExpanderTests;
 import org.eventb.core.ast.expander.tests.SmartFactoryTests;
+import org.eventb.core.ast.tests.datatype.TestTypeInstantiation;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -78,6 +79,7 @@ import org.junit.runners.Suite;
 	TestDatatypeParser.class,
 	TestConstructorBuilder.class,
 	TestConstructor.class,
+	TestTypeInstantiation.class,
 	// $JUnit-END$
 })
 public class AllTests {

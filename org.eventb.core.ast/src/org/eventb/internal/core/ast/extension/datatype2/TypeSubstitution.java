@@ -20,6 +20,8 @@ import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
+import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.extension.datatype2.ITypeInstantiation;
 import org.eventb.internal.core.ast.TypeRewriter;
 
 /**
@@ -29,7 +31,8 @@ import org.eventb.internal.core.ast.TypeRewriter;
  * 
  * @author Laurent Voisin
  */
-public class TypeSubstitution extends TypeRewriter {
+public class TypeSubstitution extends TypeRewriter implements
+		ITypeInstantiation {
 
 	/**
 	 * Returns a substitution appropriate for type-checking. All actual type
@@ -58,6 +61,9 @@ public class TypeSubstitution extends TypeRewriter {
 	 * Returns a substitution appropriate for verifying types. The actual type
 	 * parameters are inferred from the proposed type, if possible.
 	 * 
+	 * This method must not throw any exception as it is called during
+	 * type-checking.
+	 * 
 	 * @param datatype
 	 *            a datatype
 	 * @param proposedInstance
@@ -81,17 +87,21 @@ public class TypeSubstitution extends TypeRewriter {
 		return new TypeSubstitution(instance);
 	}
 
+	// The datatype
+	private final Datatype2 datatype;
+
 	// The instance of the datatype
 	private final ParametricType instance;
 
 	// A map from type parameter names and datatype name to their instance
 	private final Map<String, Type> map = new HashMap<String, Type>();
 
-	public TypeSubstitution(ParametricType instance) {
+	private TypeSubstitution(ParametricType instance) {
 		super(instance.getFactory());
 		this.instance = instance;
 		final TypeConstructorExtension tcons = (TypeConstructorExtension) instance
 				.getExprExtension();
+		this.datatype = tcons.getOrigin();
 		map.put(tcons.getName(), instance);
 		final String[] formalNames = tcons.getFormalNames();
 		final int nbParams = formalNames.length;
@@ -102,7 +112,13 @@ public class TypeSubstitution extends TypeRewriter {
 		}
 	}
 
-	public ParametricType getInstance() {
+	@Override
+	public IDatatype2 getOrigin() {
+		return datatype;
+	}
+
+	@Override
+	public ParametricType getInstanceType() {
 		return instance;
 	}
 

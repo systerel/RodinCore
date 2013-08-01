@@ -45,6 +45,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.extension.datatype2.ITypeInstantiation;
 
 /**
  * Common implementation of a translator for one datatype instance.
@@ -74,6 +75,7 @@ public class Datatype2Translator {
 
 	// Types and extension of the source language
 	private final ParametricType srcTypeInstance;
+	private final ITypeInstantiation srcInstantiation;
 	private final Type[] srcTypeParameters;
 	private final IExpressionExtension srcTypeConstructor;
 	private final IDatatype2 datatype;
@@ -100,6 +102,7 @@ public class Datatype2Translator {
 		this.srcTypeConstructor = typeInstance.getExprExtension();
 		this.srcTypeParameters = typeInstance.getTypeParameters();
 		this.datatype = (IDatatype2) srcTypeConstructor.getOrigin();
+		this.srcInstantiation = datatype.getTypeInstantiation(srcTypeInstance);
 		this.srcConstructors = datatype.getConstructors();
 
 		// A non-empty datatype must have at least one constructor
@@ -178,13 +181,12 @@ public class Datatype2Translator {
 	 * destructor added.
 	 */
 	private Type[] computeDestructorReplacements(IConstructorExtension cons) {
-		final Type[] srcArgTypes = cons.getArgumentTypes(srcTypeInstance);
 		final IConstructorArgument[] args = cons.getArguments();
-		final int nbDestructors = srcArgTypes.length;
-		final Type[] trgResult = new Type[nbDestructors];
-		for (int i = 0; i < nbDestructors; i++) {
+		final int nbArgs = args.length;
+		final Type[] trgResult = new Type[nbArgs];
+		for (int i = 0; i < nbArgs; i++) {
 			final IConstructorArgument arg = args[i];
-			final Type trgAlpha = translateType(srcArgTypes[i]);
+			final Type trgAlpha = translateType(arg.getType(srcInstantiation));
 			final String symbol;
 			if (arg.isDestructor()) {
 				symbol = arg.asDestructor().getSyntaxSymbol();

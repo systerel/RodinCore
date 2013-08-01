@@ -11,6 +11,7 @@
 package org.eventb.internal.core.ast.extension.datatype2;
 
 import static java.util.Collections.unmodifiableSet;
+import static org.eventb.internal.core.ast.extension.datatype2.TypeSubstitution.makeSubstitution;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDatatype2;
@@ -93,6 +95,19 @@ public class Datatype2 implements IDatatype2 {
 	@Override
 	public TypeConstructorExtension getTypeConstructor() {
 		return typeCons;
+	}
+
+	@Override
+	public TypeSubstitution getTypeInstantiation(Type type) {
+		if (type == null) {
+			throw new NullPointerException("Null type");
+		}
+		final TypeSubstitution ti = makeSubstitution(this, type);
+		if (ti == null) {
+			throw new IllegalArgumentException("Type " + type
+					+ " is not an instance of " + typeCons.getName());
+		}
+		return ti;
 	}
 
 	public boolean hasSingleConstructor() {

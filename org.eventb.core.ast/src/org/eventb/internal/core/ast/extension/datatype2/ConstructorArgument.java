@@ -12,6 +12,7 @@ package org.eventb.internal.core.ast.extension.datatype2;
 
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
+import org.eventb.core.ast.extension.datatype2.ITypeInstantiation;
 
 /**
  * Implements unnamed arguments of constructors.
@@ -76,6 +77,16 @@ public class ConstructorArgument implements IConstructorArgument {
 			return false;
 		}
 		return this.formalType.equals(other.formalType);
+	}
+
+	@Override
+	public Type getType(ITypeInstantiation instantiation) {
+		if (this.getOrigin() != instantiation.getOrigin()) {
+			throw new IllegalArgumentException("Instantiation built for "
+					+ instantiation.getOrigin() + " but used with "
+					+ this.getOrigin());
+		}
+		return ((TypeSubstitution) instantiation).rewrite(formalType);
 	}
 
 }

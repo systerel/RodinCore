@@ -27,6 +27,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.extension.datatype2.ITypeInstantiation;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
@@ -110,12 +111,11 @@ public abstract class DTReasoner extends AbstractManualInference {
 		final List<IAntecedent> antecedents = new ArrayList<IAntecedent>();
 		final FormulaFactory ff = seq.getFormulaFactory();
 		final ITypeEnvironment env = seq.typeEnvironment();
+		final ITypeInstantiation inst = dt.getTypeInstantiation(type);
 		for (IConstructorExtension constr : dt.getConstructors()) {
 			final IConstructorArgument[] arguments = constr.getArguments();
-			final Type[] argTypes = constr.getArgumentTypes(type);
-
 			final FreeIdentifier[] params = makeFreshIdents(arguments,
-					argTypes, ff, env);
+					inst, ff, env);
 			final Set<Predicate> newHyps = makeNewHyps(ident, constr, type,
 					params, seq.goal(), ff);
 			antecedents.add(ProverFactory.makeAntecedent(seq.goal(), newHyps,
@@ -125,15 +125,14 @@ public abstract class DTReasoner extends AbstractManualInference {
 	}
 
 	private static FreeIdentifier[] makeFreshIdents(
-			IConstructorArgument[] arguments, Type[] argTypes,
+			IConstructorArgument[] arguments, ITypeInstantiation inst,
 			FormulaFactory ff, ITypeEnvironment env) {
-		assert arguments.length == argTypes.length;
 		final int size = arguments.length;
 		final FreeIdentifier[] idents = new FreeIdentifier[size];
 		for (int i = 0; i < size; i++) {
 			final IConstructorArgument arg = arguments[i];
 			final String argName = makeFreshName(arg, i, env);
-			final Type argType = argTypes[i];
+			final Type argType = arguments[i].getType(inst);
 			idents[i] = ff.makeFreeIdentifier(argName, null, argType);
 		}
 		return idents;
