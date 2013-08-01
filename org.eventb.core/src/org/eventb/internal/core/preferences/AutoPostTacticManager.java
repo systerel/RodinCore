@@ -22,6 +22,7 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
@@ -82,6 +83,8 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 
 	private ITactic getSelectedComposedTactics(IProject project, boolean auto) {
 		final IScopeContext sc = new ProjectScope(project);
+		PreferenceUtils.restoreFromUIIfNeeded(InstanceScope.INSTANCE.getNode(PLUGIN_ID));
+		PreferenceUtils.restoreFromUIIfNeeded(sc.getNode(PLUGIN_ID));
 		final IScopeContext[] contexts = { sc };
 		final String profiles = preferencesService.getString(PLUGIN_ID,
 				P_TACTICSPROFILES, null, contexts);
