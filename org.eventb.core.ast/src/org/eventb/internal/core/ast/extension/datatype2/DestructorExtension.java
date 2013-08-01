@@ -36,6 +36,11 @@ import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
  * {@link #verifyType(Type, Expression[], Predicate[])},
  * {@link #synthesizeType(Expression[], Predicate[], ITypeMediator)} and
  * {@link #typeCheck(ExtendedExpression, ITypeCheckMediator)} methods.
+ * <p>
+ * This class must <strong>not</strong> override <code>equals</code> as this
+ * would wreak havoc in formula factories. We rely on object identity for
+ * identifying identical destructors.
+ * </p>
  * 
  * @author Vincent Monfort
  */
@@ -161,16 +166,9 @@ public class DestructorExtension extends ConstructorArgument implements IDestruc
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null || this.getClass() != obj.getClass()) {
-			return false;
-		}
-		final DestructorExtension other = (DestructorExtension) obj;
-		return this.formalType.equals(other.formalType)
-				&& this.name.equals(other.name);
+	public boolean isSimilarTo(ConstructorArgument other) {
+		return super.isSimilarTo(other)
+				&& this.name.equals(other.asDestructor().name);
 	}
 
 }

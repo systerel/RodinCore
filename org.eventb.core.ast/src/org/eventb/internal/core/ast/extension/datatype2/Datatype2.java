@@ -15,6 +15,7 @@ import static java.util.Collections.unmodifiableSet;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +30,11 @@ import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 
 /**
  * Implementation of a complete datatype which references all its extensions
- * (type constructor, constructors and their destructors).
+ * (type constructor, value constructors and their destructors).
  * <p>
  * Datatypes which have the exact same definition (except maybe the formula
- * factory used for building it) are represented by the same object.
+ * factory used for building it) are represented by the same object. Therefore,
+ * this class must <strong>not</strong> override <code>equals</code>
  * </p>
  * 
  * @author Vincent Monfort
@@ -66,7 +68,7 @@ public class Datatype2 implements IDatatype2 {
 
 	// The value constructors (order is mostly irrelevant, but clients might
 	// rely on it)
-	private final LinkedHashMap<String, IConstructorExtension> constructors;
+	private final LinkedHashMap<String, ConstructorExtension> constructors;
 
 	// Cache of the extensions provided by this datatype
 	private final Set<IFormulaExtension> extensions;
@@ -78,7 +80,7 @@ public class Datatype2 implements IDatatype2 {
 		typeCons = new TypeConstructorExtension(this, typeParams,
 				dtBuilder.getName());
 		extensions.add(typeCons);
-		constructors = new LinkedHashMap<String, IConstructorExtension>();
+		constructors = new LinkedHashMap<String, ConstructorExtension>();
 		final List<ConstructorBuilder> dtConstrs = dtBuilder.getConstructors();
 		for (final ConstructorBuilder dtCons : dtConstrs) {
 			final ConstructorExtension constructor = dtCons.finalize(this);
@@ -99,7 +101,7 @@ public class Datatype2 implements IDatatype2 {
 
 	@Override
 	public IConstructorExtension[] getConstructors() {
-		final Collection<IConstructorExtension> cons = constructors.values();
+		final Collection<ConstructorExtension> cons = constructors.values();
 		return cons.toArray(new IConstructorExtension[cons.size()]);
 	}
 
@@ -150,8 +152,25 @@ public class Datatype2 implements IDatatype2 {
 			return false;
 		}
 		final Datatype2 other = (Datatype2) obj;
-		return this.typeCons.equals(other.typeCons)
-				&& this.constructors.equals(other.constructors);
+		return this.typeCons.isSimilarTo(other.typeCons)
+				&& areSimilarConstructors(this.constructors.values(),
+						other.constructors.values());
+	}
+
+	private static boolean areSimilarConstructors(
+			Collection<ConstructorExtension> cons1,
+			Collection<ConstructorExtension> cons2) {
+		if (cons1.size() != cons2.size()) {
+			return false;
+		}
+		final Iterator<ConstructorExtension> it1 = cons1.iterator();
+		final Iterator<ConstructorExtension> it2 = cons2.iterator();
+		while (it1.hasNext() && it2.hasNext()) {
+			if (!it1.next().isSimilarTo(it2.next())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

@@ -47,6 +47,11 @@ import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
  * {@link #synthesizeType(Expression[], Predicate[], ITypeMediator)} and {
  * {@link #typeCheck(ExtendedExpression, ITypeCheckMediator)} methods.
  * </p>
+ * <p>
+ * This class must <strong>not</strong> override <code>equals</code> as this
+ * would wreak havoc in formula factories. We rely on object identity for
+ * identifying identical constructors.
+ * </p>
  * 
  * @author Vincent Monfort
  */
@@ -248,17 +253,31 @@ public class ConstructorExtension implements IConstructorExtension {
 		return prime * name.hashCode() + Arrays.hashCode(arguments);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
+	/*
+	 * Implements pseudo-equality, that is equality up to datatype identity.
+	 */
+	public boolean isSimilarTo(ConstructorExtension other) {
+		if (this == other) {
 			return true;
 		}
-		if (obj == null || this.getClass() != obj.getClass()) {
+		if (this.getClass() != other.getClass()) {
 			return false;
 		}
-		final ConstructorExtension other = (ConstructorExtension) obj;
 		return this.name.equals(other.name)
-				&& Arrays.equals(this.arguments, other.arguments);
+				&& areSimilarArguments(this.arguments, other.arguments);
+	}
+
+	private static boolean areSimilarArguments(ConstructorArgument[] arguments1,
+			ConstructorArgument[] arguments2) {
+		if (arguments1.length != arguments2.length) {
+			return false;
+		}
+		for (int i = 0; i < arguments1.length; i++) {
+			if (!arguments1[i].isSimilarTo(arguments2[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

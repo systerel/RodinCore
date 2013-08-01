@@ -61,7 +61,9 @@ import org.eventb.core.ast.SourceLocation;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
+import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
 import org.eventb.core.ast.extension.datatype2.ITypeConstructorExtension;
@@ -811,68 +813,77 @@ public class TestDatatypes extends AbstractTests {
 	
 	@Test
 	public void testDatatypeDifferentTypeConstructors() {
-		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
-		b1.addConstructor("f");
-		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("E");
-		b2.addConstructor("f");
-		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+		assertDifferentDatatypes("D ::= f", "E ::= f");
 	}
 	
 	@Test
 	public void testDatatypeMissingConstructor() {
-		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
-		b1.addConstructor("f");
-		b1.addConstructor("g");
-		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
-		b2.addConstructor("f");
-		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+		assertDifferentDatatypes("D ::= f || g", "D ::= f");
 	}
 	
 	@Test
 	public void testDatatypeDifferentConstructors() {
-		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
-		b1.addConstructor("f");
-		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
-		b2.addConstructor("g");
-		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+		assertDifferentDatatypes("D ::= f", "D ::= g");
 	}
 	
 	@Test
 	public void testDatatypeMissingDestructor() {
-		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
-		b1.addConstructor("f").addArgument(INT_TYPE);
-		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
-		b2.addConstructor("f");
-		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+		assertDifferentDatatypes("D ::= f[ℤ]", "D ::= f");
 	}
 	
 	@Test
-	public void testDatatypeDifferentDestructorTypes() {
-		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
-		b1.addConstructor("f").addArgument(INT_TYPE, "d");
-		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
-		b2.addConstructor("f").addArgument(BOOL_TYPE);
-		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+	public void testDatatypeDifferentArgumentTypes() {
+		assertDifferentDatatypes("D ::= f[ℤ]", "D ::= f[BOOL]");
+		assertDifferentDatatypes("D ::= f[d: ℤ]", "D ::= f[d: BOOL]");
 	}
 	
 	@Test
 	public void testDatatypeUnnamedDestructor() {
-		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
-		b1.addConstructor("f").addArgument(INT_TYPE, "d");
-		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
-		b2.addConstructor("f").addArgument(INT_TYPE);
-		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+		assertDifferentDatatypes("D ::= f[d: ℤ]", "D ::= f[ℤ]");
 	}
 	
 	@Test
 	public void testDatatypeDifferentDestructorNames() {
-		final IDatatypeBuilder b1 = ff.makeDatatypeBuilder("D");
-		b1.addConstructor("f").addArgument(INT_TYPE, "d");
-		final IDatatypeBuilder b2 = ff.makeDatatypeBuilder("D");
-		b2.addConstructor("f").addArgument(INT_TYPE, "e");
-		assertNotSame(b1.finalizeDatatype(), b2.finalizeDatatype());
+		assertDifferentDatatypes("D ::= f[d: ℤ]", "D ::= f[e: ℤ]");
 	}
 	
+	/*
+	 * Verifies that two datatypes are different and that all their extensions
+	 * are also different.
+	 */
+	private void assertDifferentDatatypes(String spec1, String spec2) {
+		final IDatatype2 dt1 = DatatypeParser.parse(ff, spec1);
+		final IDatatype2 dt2 = DatatypeParser.parse(ff, spec2);
+		assertDifferent(dt1, dt2);
+		assertDifferent(dt1.getTypeConstructor(), dt2.getTypeConstructor());
+		assertAllDifferent(dt1.getConstructors(), dt2.getConstructors());
+	}
+	
+	private void assertAllDifferent(IConstructorExtension[] cs1,
+			IConstructorExtension[] cs2) {
+		for (final IConstructorExtension c1 : cs1) {
+			for (final IConstructorExtension c2 : cs2) {
+				assertDifferent(c1, c2);
+				assertAllDifferent(c1.getArguments(), c2.getArguments());
+			}
+		}
+	}
+
+	private void assertAllDifferent(IConstructorArgument[] as1,
+			IConstructorArgument[] as2) {
+		for (final IConstructorArgument a1 : as1) {
+			for (final IConstructorArgument a2 : as2) {
+				assertDifferent(a1, a2);
+			}
+		}
+	}
+
+	private void assertDifferent(Object obj1, Object obj2) {
+		assertNotSame(obj1, obj2);
+		assertFalse(obj1.equals(obj2));
+		assertFalse(obj2.equals(obj1));
+	}
+
 	// Partial tests on extensions since these are already tested with old
 	// datatypes tests
 

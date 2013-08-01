@@ -15,6 +15,11 @@ import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 
 /**
  * Implements unnamed arguments of constructors.
+ * <p>
+ * This class must <strong>not</strong> override <code>equals</code> as this
+ * would wreak havoc in formula factories. We rely on object identity for
+ * identifying identical arguments.
+ * </p>
  * 
  * @author Laurent Voisin
  */
@@ -60,15 +65,16 @@ public class ConstructorArgument implements IConstructorArgument {
 		return formalType.hashCode();
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
+	/*
+	 * Implements pseudo-equality, that is equality up to constructor equality.
+	 */
+	public boolean isSimilarTo(ConstructorArgument other) {
+		if (this == other) {
 			return true;
 		}
-		if (obj == null || this.getClass() != obj.getClass()) {
+		if (this.getClass() != other.getClass()) {
 			return false;
 		}
-		final ConstructorArgument other = (ConstructorArgument) obj;
 		return this.formalType.equals(other.formalType);
 	}
 

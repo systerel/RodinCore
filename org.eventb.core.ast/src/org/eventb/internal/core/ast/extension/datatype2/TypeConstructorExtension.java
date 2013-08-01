@@ -42,6 +42,11 @@ import org.eventb.core.ast.extension.datatype2.ITypeConstructorExtension;
  * {@link #synthesizeType(Expression[], Predicate[], ITypeMediator)} and {
  * {@link #typeCheck(ExtendedExpression, ITypeCheckMediator)} methods.
  * </p>
+ * <p>
+ * This class must <strong>not</strong> override <code>equals</code> as this
+ * would wreak havoc in formula factories. We rely on object identity for
+ * identifying identical type constructors.
+ * </p>
  * 
  * @author Vincent Monfort
  */
@@ -197,8 +202,10 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 		return prime * name.hashCode() + paramNames.hashCode();
 	}
 
-	@Override
-	public boolean equals(Object obj) {
+	/*
+	 * Implements pseudo-equality, that is equality up to datatype identity.
+	 */
+	public boolean isSimilarTo(Object obj) {
 		if (this == obj) {
 			return true;
 		}
