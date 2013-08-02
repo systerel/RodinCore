@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.Expression;
@@ -106,6 +107,16 @@ public class ConstructorExtension implements IConstructorExtension {
 	@Override
 	public ConstructorArgument[] getArguments() {
 		return arguments.clone();
+	}
+
+	/**
+	 * Returns the map of destructors for this constructor. The resulting map
+	 * must be used only for reading and must not be leaked to clients.
+	 * 
+	 * @return the map of destructors
+	 */
+	public Map<String, DestructorExtension> getDestructorMap() {
+		return destructors;
 	}
 
 	@Override

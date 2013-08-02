@@ -75,24 +75,29 @@ public class Datatype2 implements IDatatype2 {
 	// rely on it)
 	private final LinkedHashMap<String, ConstructorExtension> constructors;
 
+	// The destructors
+	private final Map<String, DestructorExtension> destructors;
+
 	// Cache of the extensions provided by this datatype
 	private final Set<IFormulaExtension> extensions;
 
 	private Datatype2(DatatypeBuilder dtBuilder) {
 		baseFactory = dtBuilder.getBaseFactory();
-		extensions = new HashSet<IFormulaExtension>();
 		final List<GivenType> typeParams = dtBuilder.getTypeParameters();
 		typeCons = new TypeConstructorExtension(this, typeParams,
 				dtBuilder.getName());
-		extensions.add(typeCons);
 		constructors = new LinkedHashMap<String, ConstructorExtension>();
+		destructors = new HashMap<String, DestructorExtension>(); 
 		final List<ConstructorBuilder> dtConstrs = dtBuilder.getConstructors();
 		for (final ConstructorBuilder dtCons : dtConstrs) {
 			final ConstructorExtension constructor = dtCons.finalize(this);
 			constructors.put(constructor.getName(), constructor);
-			extensions.add(constructor);
-			extensions.addAll(constructor.getExtensions());
+			destructors.putAll(constructor.getDestructorMap());
 		}
+		extensions = new HashSet<IFormulaExtension>();
+		extensions.add(typeCons);
+		extensions.addAll(constructors.values());
+		extensions.addAll(destructors.values());
 	}
 
 	@Override
@@ -138,14 +143,7 @@ public class Datatype2 implements IDatatype2 {
 
 	@Override
 	public IDestructorExtension getDestructor(String name) {
-		// Lookup in each value constructor, first match is the right one
-		for (final IConstructorExtension cons : constructors.values()) {
-			final IDestructorExtension dest = cons.getDestructor(name);
-			if (dest != null) {
-				return dest;
-			}
-		}
-		return null;
+		return destructors.get(name);
 	}
 
 	@Override
