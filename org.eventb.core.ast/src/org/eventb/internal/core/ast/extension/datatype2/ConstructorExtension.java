@@ -34,6 +34,7 @@ import org.eventb.core.ast.extension.IPriorityMediator;
 import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
+import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 
@@ -119,6 +120,16 @@ public class ConstructorExtension implements IConstructorExtension {
 	@Override
 	public IDestructorExtension getDestructor(String destName) {
 		return destructors.get(destName);
+	}
+
+	@Override
+	public int getArgumentIndex(IConstructorArgument argument) {
+		for (int i = 0; i < arguments.length; i++) {
+			if (argument == arguments[i]) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	@Override

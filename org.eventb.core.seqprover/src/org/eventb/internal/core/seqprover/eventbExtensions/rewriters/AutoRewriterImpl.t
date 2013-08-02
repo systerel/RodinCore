@@ -4411,8 +4411,7 @@ public class AutoRewriterImpl extends PredicateSimplifier {
     		 * destr(cons(a_1, ..., a_n))  ==  a_i   [i is the param index of the destructor]
     		 */
 			ExtendedExpression(eList(cons@ExtendedExpression(as,_)), pList()) -> {
-				final int idx = getParamIndex((ExtendedExpression) expression,
-						(ExtendedExpression) `cons);
+				final int idx = getArgIndex(expression,	(ExtendedExpression) `cons);
 				if (idx >= 0) {
 					result = `as[idx];
 					trace(expression, result, "SIMP_DESTR_CONSTR");
@@ -4539,23 +4538,21 @@ public class AutoRewriterImpl extends PredicateSimplifier {
     	return expression;
     }
 
-    private static int getParamIndex(ExtendedExpression destr, ExtendedExpression cons) {
-		if (!(destr.getExtension() instanceof IDestructorExtension)
-			|| !(cons.getExtension() instanceof IConstructorExtension)) {
+    private static int getArgIndex(ExtendedExpression destrExpr,
+    		ExtendedExpression consExpr) {
+    	final IExpressionExtension destrExt = destrExpr.getExtension();
+    	if (!(destrExt instanceof IDestructorExtension)) {
 			return -1;
 		}
-    	final IConstructorExtension consExt = (IConstructorExtension) cons.getExtension();
-    	final IDestructorExtension destrExt = (IDestructorExtension) destr.getExtension();
-    	if (destrExt.getConstructor() != consExt) {
-    		return -1;
-    	}
-    	final IConstructorArgument[] args = consExt.getArguments();
-    	for (int idx = 0; idx < args.length; idx ++) {
-    		if (args[idx] == destrExt) {
-    			return idx;
-    		}
-    	}
-    	return -1;
+    	final IDestructorExtension destr = (IDestructorExtension) destrExt;
+
+    	final IExpressionExtension consExt = consExpr.getExtension();
+    	if (!(consExt instanceof IConstructorExtension)) {
+			return -1;
+		}
+    	final IConstructorExtension cons = (IConstructorExtension) consExt;
+
+    	return cons.getArgumentIndex(destr);
     }
 
 }

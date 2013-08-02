@@ -111,4 +111,19 @@ public class TestConstructor extends AbstractTests {
 		assertEquals("d3", d3.asDestructor().getName());
 	}
 
+	@Test
+	public void getArgumentIndexUnknown() {
+		assertEquals(-1, c2.getArgumentIndex(null));
+		assertEquals(-1, c2.getArgumentIndex(EXT_HEAD));
+		assertEquals(-1, c2.getArgumentIndex(c3.getArguments()[0]));
+	}
+
+	@Test
+	public void getArgumentIndexKnown() {
+		final IConstructorArgument[] args = c3.getArguments();
+		for (int i = 0; i < args.length; i++) {
+			assertEquals(i, c3.getArgumentIndex(args[i]));
+		}
+	}
+
 }

@@ -43,7 +43,8 @@ public interface IConstructorExtension extends IExpressionExtension {
 	boolean hasArguments();
 
 	/**
-	 * Returns the arguments of this constructor. Each argument is either anonymous or a destructor.
+	 * Returns the arguments of this constructor. Each argument is either
+	 * anonymous or a destructor.
 	 * 
 	 * @return an array of the arguments of this constructor
 	 */
@@ -58,6 +59,17 @@ public interface IConstructorExtension extends IExpressionExtension {
 	 * @return the corresponding destructor extension or <code>null</code>
 	 */
 	public IDestructorExtension getDestructor(String destName);
+
+	/**
+	 * Returns the index of the given argument, counted from 0, if it exists.
+	 * Returns <code>-1</code> if this constructor does not take the given
+	 * argument.
+	 * 
+	 * @param argument
+	 *            a constructor argument
+	 * @return the index of the given argument, or <code>-1</code> if unknown
+	 */
+	int getArgumentIndex(IConstructorArgument argument);
 
 	/**
 	 * Returns the datatype to which this constructor extension belongs.
