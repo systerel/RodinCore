@@ -929,4 +929,10 @@ public class TestDatatypes extends AbstractTests {
 		assertEquals(expectedSet, harvester.getResult());
 	}
 
+	@Test
+	public void testDatatypeToString() {
+		assertEquals("List[S] ::= nil || cons[head: S; tail: List]",
+				LIST_DT.toString());
+	}
+
 }

@@ -170,4 +170,18 @@ public class DestructorExtension extends ConstructorArgument implements
 				&& this.name.equals(other.asDestructor().name);
 	}
 
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		toString(sb);
+		return sb.toString();
+	}
+
+	@Override
+	public void toString(StringBuilder sb) {
+		sb.append(name);
+		sb.append(": ");
+		super.toString(sb);
+	}
+
 }

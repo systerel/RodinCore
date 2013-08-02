@@ -207,11 +207,6 @@ public class ConstructorExtension implements IConstructorExtension {
 		return origin;
 	}
 
-	@Override
-	public String toString() {
-		return name;
-	}
-
 	public Set<IFormulaExtension> getExtensions() {
 		return extensions;
 	}
@@ -247,6 +242,26 @@ public class ConstructorExtension implements IConstructorExtension {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		toString(sb);
+		return sb.toString();
+	}
+
+	public void toString(StringBuilder sb) {
+		sb.append(name);
+		String sep = "[";
+		for (final ConstructorArgument arg : arguments) {
+			sb.append(sep);
+			sep = "; ";
+			arg.toString(sb);
+		}
+		if (arguments.length != 0) {
+			sb.append("]");
+		}
 	}
 
 }

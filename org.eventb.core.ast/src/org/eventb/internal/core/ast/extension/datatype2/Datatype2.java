@@ -199,4 +199,20 @@ public class Datatype2 implements IDatatype2 {
 		return true;
 	}
 
+	/*
+	 * Returns the specification of this datatype as it is used in tests.
+	 */
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		typeCons.toString(sb);
+		String sep = " ::= ";
+		for (final ConstructorExtension cons : constructors.values()) {
+			sb.append(sep);
+			sep = " || ";
+			cons.toString(sb);
+		}
+		return sb.toString();
+	}
+
 }

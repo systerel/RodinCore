@@ -101,4 +101,15 @@ public class ConstructorArgument implements IConstructorArgument {
 		return ((SetSubstitution) instantiation).substitute(formalType);
 	}
 
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		toString(sb);
+		return sb.toString();
+	}
+	
+	public void toString(StringBuilder sb) {
+		sb.append(formalType);
+	}
+
 }

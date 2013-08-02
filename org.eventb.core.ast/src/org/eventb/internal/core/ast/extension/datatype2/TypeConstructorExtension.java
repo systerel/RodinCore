@@ -183,11 +183,6 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 	}
 
 	@Override
-	public String toString() {
-		return name;
-	}
-
-	@Override
 	public String[] getFormalNames() {
 		return paramNames.toArray(new String[paramNames.size()]);
 	}
@@ -215,6 +210,26 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 		final TypeConstructorExtension other = (TypeConstructorExtension) obj;
 		return this.name.equals(other.name)
 				&& this.paramNames.equals(other.paramNames);
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		toString(sb);
+		return sb.toString();
+	}
+
+	public void toString(StringBuilder sb) {
+		sb.append(name);
+		String sep = "[";
+		for (final String paramName: paramNames) {
+			sb.append(sep);
+			sep = ", ";
+			sb.append(paramName);
+		}
+		if (!paramNames.isEmpty()) {
+			sb.append("]");
+		}
 	}
 
 }
