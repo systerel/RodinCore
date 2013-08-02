@@ -83,7 +83,7 @@ public interface IDatatypeBuilder {
 	 * referencing type parameters or the datatype type itself. It returns the
 	 * correct intermediate representation necessary to add constructor
 	 * arguments with {@link IConstructorBuilder#addArgument(Type)} or
-	 * {@link IConstructorBuilder#addArgument(Type, String)}.
+	 * {@link IConstructorBuilder#addArgument(String, Type)}.
 	 * <p>
 	 * A datatype type must only be written as DT(X,Y,Z) with DT the datatype
 	 * name and (X,Y,Z) the type parameters in the exact same order they were
@@ -102,7 +102,7 @@ public interface IDatatypeBuilder {
 	 * @return the parse result in the correct intermediate representation for
 	 *         constructor argument type
 	 * @see IConstructorBuilder#addArgument(Type)
-	 * @see IConstructorBuilder#addArgument(Type, String)
+	 * @see IConstructorBuilder#addArgument(String, Type)
 	 */
 	IParseResult parseType(String strType);
 

@@ -26,10 +26,10 @@ public class InductiveDatatype {
 		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("Induc", tyT);
 		builder.addConstructor("ind0");
 		final IConstructorBuilder ind1 = builder.addConstructor("ind1");
-		ind1.addArgument(tyInduc, "ind1_0");
+		ind1.addArgument("ind1_0", tyInduc);
 		final IConstructorBuilder ind2 = builder.addConstructor("ind2");
-		ind2.addArgument(tyInduc, "ind2_0");
-		ind2.addArgument(tyInduc, "ind2_1");
+		ind2.addArgument("ind2_0", tyInduc);
+		ind2.addArgument("ind2_1", tyInduc);
 		INSTANCE = builder.finalizeDatatype();
 	}
 

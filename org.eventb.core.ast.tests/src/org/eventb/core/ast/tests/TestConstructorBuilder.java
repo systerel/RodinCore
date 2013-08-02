@@ -45,39 +45,39 @@ public class TestConstructorBuilder extends AbstractTests {
 
 	@Test(expected = NullPointerException.class)
 	public void nullNamedArgument() {
-		cons.addArgument(null, "foo");
+		cons.addArgument("foo", null);
 	}
 
 	public void nullNamedArgumentName() {
-		cons.addArgument(tyS, null);
+		cons.addArgument(null, tyS);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void invalidNamedArgumentName() {
-		cons.addArgument(tyS, "123");
+		cons.addArgument("123", tyS);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void conflictingNamedArgumentWithDatatype() {
-		cons.addArgument(tyS, "DT");
+		cons.addArgument("DT", tyS);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void conflictingNamedArgumentWithConstructor() {
-		cons.addArgument(tyS, "cons");
+		cons.addArgument("cons", tyS);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void conflictingNamedArgumentWithDestructor() {
-		cons.addArgument(tyS, "foo");
-		cons.addArgument(tyS, "foo");
+		cons.addArgument("foo", tyS);
+		cons.addArgument("foo", tyS);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void conflictingNamedArgumentWithOtherDestructor() {
 		final IConstructorBuilder other = builder.addConstructor("other");
-		other.addArgument(tyS, "foo");
-		cons.addArgument(tyS, "foo");
+		other.addArgument("foo", tyS);
+		cons.addArgument("foo", tyS);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -128,7 +128,7 @@ public class TestConstructorBuilder extends AbstractTests {
 	@Test(expected = IllegalStateException.class)
 	public void finalizedNamedArgument() {
 		builder.finalizeDatatype();
-		cons.addArgument(tyS, "foo");
+		cons.addArgument("foo", tyS);
 	}
 
 	@Test

@@ -682,7 +682,7 @@ public class TestDatatypes extends AbstractTests {
 	public void testAddConstructorSameNameAsDestructor() {
 		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("DT");
 		final IConstructorBuilder cons = builder.addConstructor("cons");
-		cons.addArgument(INT_TYPE, "dest");
+		cons.addArgument("dest", INT_TYPE);
 		builder.addConstructor("dest");
 	}
 
@@ -700,10 +700,10 @@ public class TestDatatypes extends AbstractTests {
 				tyT, tyU);
 		dtBuilder.addConstructor("nil3");
 		final IConstructorBuilder cons = dtBuilder.addConstructor("cons3");
-		cons.addArgument(tyS, "head1");
-		cons.addArgument(tyT, "head2");
-		cons.addArgument(tyU, "head3");
-		cons.addArgument(tyList3, "tail3");
+		cons.addArgument("head1", tyS);
+		cons.addArgument("head2", tyT);
+		cons.addArgument("head3", tyU);
+		cons.addArgument("tail3", tyList3);
 		final IDatatype2 datatype = dtBuilder.finalizeDatatype();
 		return datatype;
 	}

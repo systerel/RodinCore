@@ -146,7 +146,7 @@ public class DatatypeParser {
 			// Destructor
 			name = parts[0].trim();
 			type = parseType(parts[1], factory);
-			cons.addArgument(type, name);
+			cons.addArgument(name, type);
 			return;
 		default:
 			fail("inconsistent argument " + argSpec);

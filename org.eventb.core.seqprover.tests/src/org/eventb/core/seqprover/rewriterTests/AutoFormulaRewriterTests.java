@@ -42,10 +42,10 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("List");
 		dtBuilder.addConstructor("void");
 		final IConstructorBuilder cons1 = dtBuilder.addConstructor("cons1");
-		cons1.addArgument(integerType, "destr1");
+		cons1.addArgument("destr1", integerType);
 		final IConstructorBuilder cons2 = dtBuilder.addConstructor("cons2");
-		cons2.addArgument(integerType, "destr2_0");
-		cons2.addArgument(integerType, "destr2_1");
+		cons2.addArgument("destr2_0", integerType);
+		cons2.addArgument("destr2_1", integerType);
 		DT = dtBuilder.finalizeDatatype();
 	}
 

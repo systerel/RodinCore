@@ -22,8 +22,8 @@ public class RecordDatatype {
 		final FormulaFactory ff = FormulaFactory.getDefault();
 		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("RD");
 		final IConstructorBuilder rd = builder.addConstructor("rd");
-		rd.addArgument(ff.makeIntegerType(), "intDestr");
-		rd.addArgument(ff.makeBooleanType(), "boolDestr");
+		rd.addArgument("intDestr", ff.makeIntegerType());
+		rd.addArgument("boolDestr", ff.makeBooleanType());
 		INSTANCE = builder.finalizeDatatype();
 	}
 

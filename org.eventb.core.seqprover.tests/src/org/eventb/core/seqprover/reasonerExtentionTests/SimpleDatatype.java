@@ -25,10 +25,10 @@ public class SimpleDatatype {
 		final IDatatypeBuilder builder = ff.makeDatatypeBuilder("SD");
 		builder.addConstructor("cons0");
 		final IConstructorBuilder cons1 = builder.addConstructor("cons1");
-		cons1.addArgument(integerType, "destr1");
+		cons1.addArgument("destr1", integerType);
 		final IConstructorBuilder cons2 = builder.addConstructor("cons2");
-		cons2.addArgument(integerType, "destr2_0");
-		cons2.addArgument(integerType, "destr2_1");
+		cons2.addArgument("destr2_0", integerType);
+		cons2.addArgument("destr2_1", integerType);
 		INSTANCE = builder.finalizeDatatype();
 	}
 

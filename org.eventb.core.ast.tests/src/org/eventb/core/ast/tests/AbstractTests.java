@@ -77,8 +77,8 @@ public abstract class AbstractTests {
 		final IDatatypeBuilder dtBuilder = ff.makeDatatypeBuilder("List", tyS);
 		dtBuilder.addConstructor("nil");
 		final IConstructorBuilder cons = dtBuilder.addConstructor("cons");
-		cons.addArgument(tyS, "head");
-		cons.addArgument(tyList, "tail");
+		cons.addArgument("head", tyS);
+		cons.addArgument("tail", tyList);
 		LIST_DT = dtBuilder.finalizeDatatype();
 		LIST_FAC = FormulaFactory.getInstance(LIST_DT.getExtensions());
 	}

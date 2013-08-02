@@ -43,14 +43,14 @@ public final class ConstructorBuilder implements IConstructorBuilder {
 	}
 
 	@Override
-	public void addArgument(Type argType, String argName) {
+	public void addArgument(String argName, Type argType) {
 		dtBuilder.checkNotFinalized();
 		arguments.add(new DatatypeArgument(dtBuilder, argName, argType));
 	}
 
 	@Override
 	public void addArgument(Type argType) {
-		addArgument(argType, null);
+		addArgument(null, argType);
 	}
 
 	@Override

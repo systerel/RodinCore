@@ -20,7 +20,7 @@ import org.eventb.internal.core.ast.extension.datatype2.DatatypeBuilder;
  * {@link IDatatypeBuilder#addConstructor(String)} with the name of the
  * constructor to build.
  * <p>
- * Call {@link #addArgument(Type)} or {@link #addArgument(Type, String)} to
+ * Call {@link #addArgument(Type)} or {@link #addArgument(String, Type)} to
  * specify the arguments of the constructor (and the corresponding destructors).
  * For each argument, clients must specify its type. In this context, the
  * datatype type parameters are represented as {@link GivenType}s with the type
@@ -70,11 +70,12 @@ public interface IConstructorBuilder {
 	 * </ul>
 	 * </p>
 	 * 
-	 * @param type
-	 *            the type of the constructor argument
 	 * @param name
 	 *            the name of the corresponding destructor or <code>null</code>
 	 *            if there is no corresponding destructor
+	 * @param type
+	 *            the type of the constructor argument
+	 * 
 	 * @throws IllegalArgumentException
 	 *             if the given type was not created by the same factory has the
 	 *             datatype builder of this object
@@ -85,12 +86,12 @@ public interface IConstructorBuilder {
 	 *             if this builder has been finalized
 	 * @see #addArgument(Type)
 	 */
-	void addArgument(Type type, String name);
+	void addArgument(String name, Type type);
 
 	/**
 	 * Adds a constructor argument without any corresponding destructor. This is
 	 * a short-hand method fully equivalent to calling
-	 * {@link #addArgument(Type, String)} with a <code>null</code> String.
+	 * <code>addArgument(null, argType)</code>.
 	 * 
 	 * @param argType
 	 *            the type of the argument
