@@ -92,7 +92,7 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	private final ArgumentTypeChecker argumentTypeChecker;
 	
 	// Formal type parameters
-	private final List<GivenType> typeParameters;
+	private final GivenType[] typeParameters;
 
 	// Constructors added so far.
 	private final List<ConstructorBuilder> constructors;
@@ -108,7 +108,7 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	 *            the initial formula factory used to build the datatype
 	 * @param name
 	 *            the name of the datatype
-	 * @param typeParams
+	 * @param params
 	 *            the type parameters of the datatype
 	 * @throws IllegalArgumentException
 	 *             if the given datatype name is not a valid identifier in the
@@ -120,13 +120,13 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	 *             datatype or another type parameter
 	 */
 	public DatatypeBuilder(FormulaFactory ff, String name,
-			List<GivenType> typeParams) {
+			List<GivenType> params) {
 		this.ff = ff;
 		this.name = name;
 		this.givenType = ff.makeGivenType(name);
 		this.argumentTypeChecker = new ArgumentTypeChecker(givenType);
-		checkTypeParameters(typeParams);
-		this.typeParameters = new ArrayList<GivenType>(typeParams);
+		checkTypeParameters(params);
+		this.typeParameters = params.toArray(new GivenType[params.size()]);
 		this.names = new HashSet<String>();
 		names.add(name);
 		this.constructors = new ArrayList<ConstructorBuilder>();
@@ -186,7 +186,7 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 	 */
 	@Override
 	public IParseResult parseType(String strType) {
-		if (typeParameters.size() == 0) {
+		if (typeParameters.length == 0) {
 			return ff.parseType(strType);
 		}
 		final ParseResult result = new ParseResult(ff, null);
@@ -198,7 +198,7 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 		return parser.getResult();
 	}
 
-	public List<GivenType> getTypeParameters() {
+	public GivenType[] getTypeParameters() {
 		return typeParameters;
 	}
 

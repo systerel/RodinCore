@@ -15,6 +15,7 @@ import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.co
 import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.computeKind;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eventb.core.ast.Expression;
@@ -54,7 +55,8 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 
 	private Datatype2 origin;
 	private final String name;
-	private final ArrayList<String> paramNames;
+	private final String[] formalNames;
+
 	private final String id;
 	private final String groupId;
 	private final IExtensionKind kind;
@@ -62,14 +64,14 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 	public TypeConstructorExtension(Datatype2 origin, DatatypeBuilder dtBuilder) {
 		this.origin = origin;
 		this.name = dtBuilder.getName();
-		final List<GivenType> typeParams = dtBuilder.getTypeParameters();
-		this.paramNames = new ArrayList<String>(typeParams.size());
-		for (final GivenType typeParam : typeParams) {
-			paramNames.add(typeParam.getName());
+		final GivenType[] typeParams = dtBuilder.getTypeParameters();
+		this.formalNames = new String[typeParams.length];
+		for (int i = 0; i < typeParams.length; i++) {
+			formalNames[i] = typeParams[i].getName();
 		}
 		this.id = computeId(name);
-		this.groupId = computeGroup(typeParams.size());
-		this.kind = computeKind(typeParams.size());
+		this.groupId = computeGroup(typeParams.length);
+		this.kind = computeKind(typeParams.length);
 	}
 
 	@Override
@@ -184,17 +186,17 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 
 	@Override
 	public String[] getFormalNames() {
-		return paramNames.toArray(new String[paramNames.size()]);
+		return formalNames.clone();
 	}
 
 	public int getNbParams() {
-		return paramNames.size();
+		return formalNames.length;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		return prime * name.hashCode() + paramNames.hashCode();
+		return prime * name.hashCode() + Arrays.hashCode(formalNames);
 	}
 
 	/*
@@ -209,7 +211,7 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 		}
 		final TypeConstructorExtension other = (TypeConstructorExtension) obj;
 		return this.name.equals(other.name)
-				&& this.paramNames.equals(other.paramNames);
+				&& Arrays.equals(this.formalNames, other.formalNames);
 	}
 
 	@Override
@@ -222,12 +224,12 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 	public void toString(StringBuilder sb) {
 		sb.append(name);
 		String sep = "[";
-		for (final String paramName: paramNames) {
+		for (final String formalName : formalNames) {
 			sb.append(sep);
 			sep = ", ";
-			sb.append(paramName);
+			sb.append(formalName);
 		}
-		if (!paramNames.isEmpty()) {
+		if (formalNames.length != 0) {
 			sb.append("]");
 		}
 	}

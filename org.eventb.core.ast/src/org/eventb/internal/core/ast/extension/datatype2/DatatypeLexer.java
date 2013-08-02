@@ -81,8 +81,8 @@ public class DatatypeLexer implements ILexer {
 	}
 
 	private void makeExpectedTokens(DatatypeBuilder dtBuilder) {
-		final List<GivenType> params = dtBuilder.getTypeParameters();
-		assert params.size() != 0;
+		final GivenType[] params = dtBuilder.getTypeParameters();
+		assert params.length != 0;
 		final Token comma = mToken(",");
 		Token sep = mToken("(");
 		for (final GivenType param : params) {
