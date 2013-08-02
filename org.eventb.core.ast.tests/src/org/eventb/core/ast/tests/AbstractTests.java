@@ -35,12 +35,12 @@ import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.PredicateVariable;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IConstructorBuilder;
+import org.eventb.core.ast.datatype.IConstructorExtension;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
+import org.eventb.core.ast.datatype.IDestructorExtension;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
-import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
-import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
 
 /**
  * Base abstract class for AST tests.
@@ -68,8 +68,8 @@ public abstract class AbstractTests {
 	protected static final BooleanType BOOL_TYPE = ff.makeBooleanType();
 	protected static final IntegerType INT_TYPE = ff.makeIntegerType();
 
-	protected static final IDatatype2 LIST_DT;
-	protected static final FormulaFactory LIST_FAC;
+	protected static final IDatatype LIST_DT;
+	public static final FormulaFactory LIST_FAC;
 
 	static {
 		final GivenType tyList = ff.makeGivenType("List");
@@ -219,15 +219,15 @@ public abstract class AbstractTests {
 		return typeCheck(formula, formula.getFactory().makeTypeEnvironment());
 	}
 
-	protected static Type POW(Type base) {
+	public static Type POW(Type base) {
 		return base.getFactory().makePowerSetType(base);
 	}
 
-	protected static Type CPROD(Type left, Type right) {
+	public static Type CPROD(Type left, Type right) {
 		return left.getFactory().makeProductType(left, right);
 	}
 
-	protected static Type REL(Type left, Type right) {
+	public static Type REL(Type left, Type right) {
 		return left.getFactory().makeRelationalType(left, right);
 	}
 

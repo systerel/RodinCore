@@ -43,9 +43,9 @@ import org.eventb.core.ast.RelationalPredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.ast.datatype.IConstructorExtension;
+import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProverSequent;
@@ -375,10 +375,10 @@ public class AutoTactics {
 			}
 			final IExpressionExtension idTypeExtn = ((ParametricType) idType).getExprExtension();
 			final Object origin = idTypeExtn.getOrigin();
-			if (!(origin instanceof IDatatype2)) {
+			if (!(origin instanceof IDatatype)) {
 				return Appli.NOT_APPLI;
 			}
-			final IDatatype2 dt = (IDatatype2) origin;
+			final IDatatype dt = (IDatatype) origin;
 			final IConstructorExtension[] constructors = dt.getConstructors();
 			if (constructors.length != 1) {
 				return Appli.NOT_APPLI;

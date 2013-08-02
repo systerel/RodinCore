@@ -12,13 +12,13 @@ package org.eventb.core.seqprover.reasonerExtentionTests;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
-import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
+import org.eventb.core.ast.datatype.IConstructorBuilder;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 
 public class InductiveDatatype {
 
-	private static final IDatatype2 INSTANCE;
+	private static final IDatatype INSTANCE;
 	static {
 		final FormulaFactory ff = FormulaFactory.getDefault();
 		final GivenType tyT = ff.makeGivenType("T");
@@ -33,7 +33,7 @@ public class InductiveDatatype {
 		INSTANCE = builder.finalizeDatatype();
 	}
 
-	public static IDatatype2 getInstance() {
+	public static IDatatype getInstance() {
 		return INSTANCE;
 	}
 

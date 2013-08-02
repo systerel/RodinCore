@@ -6,12 +6,12 @@ Bundle-Version: 3.0.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eventb.core.ast,
+ org.eventb.core.ast.datatype,
  org.eventb.core.ast.expanders,
  org.eventb.core.ast.extension,
- org.eventb.core.ast.extension.datatype2,
  org.eventb.internal.core.ast;x-friends:="org.eventb.core.ast.tests",
+ org.eventb.internal.core.ast.datatype;x-friends:="org.eventb.core.ast.tests",
  org.eventb.internal.core.ast.extension;x-friends:="org.eventb.core.ast.tests",
- org.eventb.internal.core.ast.extension.datatype2;x-friends:="org.eventb.core.ast.tests",
  org.eventb.internal.core.ast.wd;x-friends:="org.eventb.core.ast.tests",
  org.eventb.internal.core.lexer;x-friends:="org.eventb.core.ast.tests",
  org.eventb.internal.core.parser;x-friends:="org.eventb.core.ast.tests",

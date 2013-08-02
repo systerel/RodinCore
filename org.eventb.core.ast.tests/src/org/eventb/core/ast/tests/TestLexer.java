@@ -33,9 +33,9 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ProblemKind;
 import org.eventb.core.ast.ProblemSeverities;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
 import org.eventb.internal.core.lexer.Scanner;
 import org.eventb.internal.core.lexer.Token;
 import org.eventb.internal.core.parser.AbstractGrammar;
@@ -217,9 +217,9 @@ public class TestLexer extends AbstractTests {
 		dtSeq1Build.addConstructor("new" + prefix + "1");
 		dtSeq2Build.addConstructor("new" + prefix + "2");
 
-		final IDatatype2 dtSeq = dtSeqBuild.finalizeDatatype();
-		final IDatatype2 dtSeq1 = dtSeq1Build.finalizeDatatype();
-		final IDatatype2 dtSeq2 = dtSeq2Build.finalizeDatatype();
+		final IDatatype dtSeq = dtSeqBuild.finalizeDatatype();
+		final IDatatype dtSeq1 = dtSeq1Build.finalizeDatatype();
+		final IDatatype dtSeq2 = dtSeq2Build.finalizeDatatype();
 
 		final Set<IFormulaExtension> extensions = new HashSet<IFormulaExtension>();
 		extensions.addAll(dtSeq.getExtensions());

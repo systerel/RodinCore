@@ -21,12 +21,12 @@ import java.util.regex.Pattern;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
+import org.eventb.core.ast.datatype.IConstructorBuilder;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 
 /**
- * Parser for {@link IDatatype2}. This allows to specify a datatype with a
+ * Parser for {@link IDatatype}. This allows to specify a datatype with a
  * simple string which facilitates writing tests.
  * 
  * @author Thomas Muller
@@ -50,7 +50,7 @@ public class DatatypeParser {
 	 *            the specification of the datatype as a string
 	 * @return a datatype instance
 	 */
-	public static IDatatype2 parse(FormulaFactory factory, String specification) {
+	public static IDatatype parse(FormulaFactory factory, String specification) {
 		return new DatatypeParser(factory).parse(specification);
 	}
 
@@ -78,7 +78,7 @@ public class DatatypeParser {
 		this.factory = factory;
 	}
 
-	private IDatatype2 parse(String specification) {
+	private IDatatype parse(String specification) {
 		final String[] parts = specification.split("::=");
 		assertEquals(2, parts.length);
 		builder = parseDeclaration(parts[0]);

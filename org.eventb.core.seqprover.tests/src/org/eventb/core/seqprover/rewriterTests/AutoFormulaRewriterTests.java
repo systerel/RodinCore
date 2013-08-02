@@ -18,10 +18,10 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IConstructorBuilder;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype2.IConstructorBuilder;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.junit.Test;
@@ -35,7 +35,7 @@ import org.junit.Test;
  */
 public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests {
 
-	public static final IDatatype2 DT;
+	public static final IDatatype DT;
 	static {
 		final FormulaFactory ff = FormulaFactory.getDefault();
 		final Type integerType = ff.makeIntegerType();

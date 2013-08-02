@@ -21,8 +21,8 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.internal.pp.PPTranslator;
 import org.eventb.pp.AbstractRodinTest;
@@ -39,7 +39,7 @@ public class TestPPTranslator extends AbstractRodinTest {
 	private static final ITypeEnvironmentBuilder NO_TE = ff.makeTypeEnvironment();
 	private static final List<String> NO_HYP = emptyList();
 	
-	public static final IDatatype2 DT;
+	public static final IDatatype DT;
 	static {
 		final GivenType[] typeParams = {};
 		final IDatatypeBuilder DT_BUILDER = ff.makeDatatypeBuilder(

@@ -21,8 +21,8 @@ import java.util.Set;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
+import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.eventb.core.ast.tests.DatatypeParser;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
@@ -98,7 +98,7 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 
 	private void testSequentTranslation(String typeEnvStr, String sequentImage,
 			String expectedImage) {
-		final IDatatype2 datatype = DatatypeParser.parse(ff, msgDatatypeSpec);
+		final IDatatype datatype = DatatypeParser.parse(ff, msgDatatypeSpec);
 		final FormulaFactory srcFac = getInstance(datatype.getExtensions());
 		final ITypeEnvironmentBuilder srcTypenv = mTypeEnvironment(typeEnvStr, srcFac);
 		final ISimpleSequent srcSequent = getSimpleSequent(srcTypenv,
@@ -115,7 +115,7 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 	private void assertNoDatatypeExtension(FormulaFactory fac) {
 		final Set<IFormulaExtension> extensions = fac.getExtensions();
 		for (final IFormulaExtension extension : extensions) {
-			assertFalse(extension.getOrigin() instanceof IDatatype2);
+			assertFalse(extension.getOrigin() instanceof IDatatype);
 		}
 	}
 

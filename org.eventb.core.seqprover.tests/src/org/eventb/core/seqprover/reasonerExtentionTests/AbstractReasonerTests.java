@@ -31,8 +31,8 @@ import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofRule;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
@@ -78,8 +78,8 @@ public abstract class AbstractReasonerTests {
 
 	protected static final FormulaFactory DEFAULT_FACTORY = FormulaFactory.getDefault();
 
-	private static final IDatatype2 SIMPLE_DT = SimpleDatatype.getInstance();
-	private static final IDatatype2 INDUCTIVE_DT = InductiveDatatype.getInstance();
+	private static final IDatatype SIMPLE_DT = SimpleDatatype.getInstance();
+	private static final IDatatype INDUCTIVE_DT = InductiveDatatype.getInstance();
 	private static final Set<IFormulaExtension> EXTENSIONS = new HashSet<IFormulaExtension>();
 	static {
 		EXTENSIONS.addAll(SIMPLE_DT.getExtensions());

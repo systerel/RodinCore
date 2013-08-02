@@ -45,9 +45,9 @@ import org.eventb.internal.core.ast.SameTypeRewriter;
 import org.eventb.internal.core.ast.SimpleSubstitution;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.Substitution;
+import org.eventb.internal.core.ast.datatype.DatatypeTranslation;
 import org.eventb.internal.core.ast.extension.IToStringMediator;
 import org.eventb.internal.core.ast.extension.KindMediator;
-import org.eventb.internal.core.ast.extension.datatype2.Datatype2Translation;
 import org.eventb.internal.core.ast.wd.WDComputer;
 import org.eventb.internal.core.ast.wd.WDImprover;
 import org.eventb.internal.core.typecheck.TypeCheckResult;
@@ -2425,7 +2425,7 @@ public abstract class Formula<T extends Formula<T>> {
 	 */
 	public T translateDatatype(IDatatypeTranslation translation) {
 		ensureTypeChecked();
-		final Datatype2Translation real = (Datatype2Translation) translation;
+		final DatatypeTranslation real = (DatatypeTranslation) translation;
 		if (fac != real.getSourceFormulaFactory()) {
 			throw new IllegalArgumentException("Formula factory " + fac
 					+ " incompatible with translation " + translation);

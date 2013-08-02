@@ -26,8 +26,8 @@ import org.eventb.core.ast.ITypeCheckResult;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.IDatatypeBuilder;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
 
@@ -43,7 +43,7 @@ public abstract class AbstractTranslationTests {
 	/**
 	 * A simple datatype
 	 */
-	public static final IDatatype2 DT;
+	public static final IDatatype DT;
 	static {
 		final GivenType[] typeParams = {};
 		final IDatatypeBuilder DT_BUILDER = ff.makeDatatypeBuilder(

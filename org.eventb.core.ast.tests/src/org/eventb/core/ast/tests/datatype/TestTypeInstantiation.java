@@ -18,8 +18,8 @@ import static org.junit.Assert.assertTrue;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.ITypeInstantiation;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.ITypeInstantiation;
 import org.eventb.core.ast.tests.AbstractTests;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ import org.junit.Test;
  */
 public class TestTypeInstantiation extends AbstractTests {
 
-	private static final IDatatype2 OTHER_DT = parse(ff, "D ::= c");
+	private static final IDatatype OTHER_DT = parse(ff, "D ::= c");
 	private static final FormulaFactory OTHER_FAC = OTHER_DT.getFactory();
 	private static final Type OTHER_TYPE = parseType("D", OTHER_FAC);
 

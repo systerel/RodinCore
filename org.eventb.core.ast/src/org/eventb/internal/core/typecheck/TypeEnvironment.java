@@ -32,7 +32,7 @@ import org.eventb.core.ast.Type;
 import org.eventb.internal.core.ast.GivenTypeHelper;
 import org.eventb.internal.core.ast.Specialization;
 import org.eventb.internal.core.ast.TypeRewriter;
-import org.eventb.internal.core.ast.extension.datatype2.Datatype2Translation;
+import org.eventb.internal.core.ast.datatype.DatatypeTranslation;
 
 /**
  * Common implementation of type environments used to type check event-B
@@ -166,7 +166,7 @@ public abstract class TypeEnvironment implements ITypeEnvironment{
 
 	@Override
 	public IDatatypeTranslation makeDatatypeTranslation() {
-		return new Datatype2Translation(this);
+		return new DatatypeTranslation(this);
 	}
 
 	@Override

@@ -23,11 +23,11 @@ import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.Type;
+import org.eventb.core.ast.datatype.IConstructorArgument;
+import org.eventb.core.ast.datatype.IConstructorExtension;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.ITypeInstantiation;
 import org.eventb.core.ast.extension.IExpressionExtension;
-import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
-import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.ITypeInstantiation;
 import org.eventb.core.seqprover.IProofRule.IAntecedent;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
@@ -49,7 +49,7 @@ public abstract class DTReasoner extends AbstractManualInference {
 		}
 		final ParametricType prmType = (ParametricType) type;
 		final IExpressionExtension ext = prmType.getExprExtension();
-		return ext.getOrigin() instanceof IDatatype2;
+		return ext.getOrigin() instanceof IDatatype;
 	}
 
 	private final String reasonerId;
@@ -88,7 +88,7 @@ public abstract class DTReasoner extends AbstractManualInference {
 
 		final ParametricType prmType = (ParametricType) ident.getType();
 		final IExpressionExtension ext = prmType.getExprExtension();
-		final IDatatype2 dt = (IDatatype2) ext.getOrigin();
+		final IDatatype dt = (IDatatype) ext.getOrigin();
 		return makeAntecedents(seq, ident, prmType, dt);
 	}
 
@@ -107,7 +107,7 @@ public abstract class DTReasoner extends AbstractManualInference {
 	}
 
 	private IAntecedent[] makeAntecedents(IProverSequent seq,
-			FreeIdentifier ident, ParametricType type, IDatatype2 dt) {
+			FreeIdentifier ident, ParametricType type, IDatatype dt) {
 		final List<IAntecedent> antecedents = new ArrayList<IAntecedent>();
 		final FormulaFactory ff = seq.getFormulaFactory();
 		final ITypeEnvironment env = seq.typeEnvironment();

@@ -20,12 +20,12 @@ import static org.junit.Assert.fail;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.datatype.IConstructorArgument;
+import org.eventb.core.ast.datatype.IConstructorExtension;
+import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.datatype.ISetInstantiation;
+import org.eventb.core.ast.datatype.ITypeConstructorExtension;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
-import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
-import org.eventb.core.ast.extension.datatype2.ISetInstantiation;
-import org.eventb.core.ast.extension.datatype2.ITypeConstructorExtension;
 import org.eventb.core.ast.tests.AbstractTests;
 import org.eventb.core.ast.tests.FastFactory;
 import org.junit.Test;
@@ -37,7 +37,7 @@ import org.junit.Test;
  */
 public class TestSetInstantiation extends AbstractTests {
 
-	private static final IDatatype2 OTHER_DT = parse(ff, "D ::= c");
+	private static final IDatatype OTHER_DT = parse(ff, "D ::= c");
 	private static final FormulaFactory OTHER_FAC = OTHER_DT.getFactory();
 	private static final Expression OTHER_SET = parseExpression("D", OTHER_FAC);
 
@@ -191,7 +191,7 @@ public class TestSetInstantiation extends AbstractTests {
 
 	private Expression[] getArgumentSets(Expression set,
 			IConstructorExtension cons) {
-		final IDatatype2 datatype = cons.getOrigin();
+		final IDatatype datatype = cons.getOrigin();
 		final ISetInstantiation inst = datatype.getSetInstantiation(set);
 		final IConstructorArgument[] args = cons.getArguments();
 		final Expression[] result = new Expression[args.length];

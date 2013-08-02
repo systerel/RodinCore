@@ -83,8 +83,8 @@ import org.eventb.core.ast.SimplePredicate;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.UnaryExpression;
 import org.eventb.core.ast.UnaryPredicate;
+import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.extension.IFormulaExtension;
-import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.eventb.internal.core.typecheck.InferredTypeEnvironment;
 
 /**
@@ -124,7 +124,7 @@ public class FastFactory {
 
 	public static FormulaFactory mDatatypeFactory(FormulaFactory initial,
 			String datatypeImage) {
-		final IDatatype2 datatype = parse(initial, datatypeImage);
+		final IDatatype datatype = parse(initial, datatypeImage);
 		final Set<IFormulaExtension> exts = initial.getExtensions();
 		exts.addAll(datatype.getExtensions());
 		return FormulaFactory.getInstance(exts);

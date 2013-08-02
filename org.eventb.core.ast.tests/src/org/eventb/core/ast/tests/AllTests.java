@@ -13,6 +13,14 @@ package org.eventb.core.ast.tests;
 
 import org.eventb.core.ast.expander.tests.PartitionExpanderTests;
 import org.eventb.core.ast.expander.tests.SmartFactoryTests;
+import org.eventb.core.ast.tests.datatype.TestConstructor;
+import org.eventb.core.ast.tests.datatype.TestConstructorBuilder;
+import org.eventb.core.ast.tests.datatype.TestDatatypeParser;
+import org.eventb.core.ast.tests.datatype.TestDatatypeRewriter;
+import org.eventb.core.ast.tests.datatype.TestDatatypeTranslation;
+import org.eventb.core.ast.tests.datatype.TestDatatypeTranslator;
+import org.eventb.core.ast.tests.datatype.TestDatatypes;
+import org.eventb.core.ast.tests.datatype.TestEnumDatatypeTranslator;
 import org.eventb.core.ast.tests.datatype.TestSetInstantiation;
 import org.eventb.core.ast.tests.datatype.TestTypeInstantiation;
 import org.junit.runner.RunWith;
