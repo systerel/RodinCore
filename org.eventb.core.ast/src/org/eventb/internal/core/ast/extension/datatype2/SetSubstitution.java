@@ -29,6 +29,7 @@ import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.datatype2.ISetInstantiation;
 
 /**
  * Represents a set built from a datatype type constructor, where type
@@ -44,7 +45,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
  * 
  * @author Laurent Voisin
  */
-public class SetSubstitution implements ITypeVisitor {
+public class SetSubstitution implements ISetInstantiation, ITypeVisitor {
 
 	/**
 	 * Returns a substitution appropriate for substituting sets. The actual set
@@ -54,26 +55,34 @@ public class SetSubstitution implements ITypeVisitor {
 	 *            a datatype
 	 * @param proposedSet
 	 *            a proposed instance of a datatype set
-	 * @return a substitution that can be applied to constructor arguments, or
-	 *         <code>null</code> if the proposed set is invalid
+	 * @return a substitution that can be applied to constructor arguments
+	 * @throws IllegalArgumentException
+	 *             if the proposed set is invalid
 	 */
 	public static SetSubstitution makeSubstitution(Datatype2 datatype,
 			Expression proposedSet) {
 		if (!(proposedSet instanceof ExtendedExpression)) {
-			return null;
+			throw new IllegalArgumentException("Not an extended expression: "
+					+ proposedSet);
 		}
 		final ExtendedExpression instance = (ExtendedExpression) proposedSet;
 		final IExpressionExtension ext = instance.getExtension();
 		if (!(ext instanceof TypeConstructorExtension)) {
-			return null;
+			throw new IllegalArgumentException(
+					"Not built with a type constructor: " + proposedSet);
 		}
 		if (!datatype.equals(ext.getOrigin())) {
-			return null;
+			throw new IllegalArgumentException(
+					"Built with a type constructor of another datatype: "
+							+ proposedSet);
 		}
 		return new SetSubstitution(instance);
 	}
 
 	private static final Predicate[] NO_PREDS = new Predicate[0];
+
+	// The datatype set
+	private final Datatype2 datatype;
 
 	// The datatype set
 	private final ExtendedExpression set;
@@ -92,6 +101,7 @@ public class SetSubstitution implements ITypeVisitor {
 		this.factory = set.getFactory();
 		final TypeConstructorExtension tcons = (TypeConstructorExtension) set
 				.getExtension();
+		this.datatype = tcons.getOrigin();
 		map.put(tcons.getName(), set);
 		final String[] formalNames = tcons.getFormalNames();
 		final int nbParams = formalNames.length;
@@ -102,7 +112,13 @@ public class SetSubstitution implements ITypeVisitor {
 		}
 	}
 
-	public ExtendedExpression getSet() {
+	@Override
+	public Datatype2 getOrigin() {
+		return datatype;
+	}
+
+	@Override
+	public ExtendedExpression getInstanceSet() {
 		return set;
 	}
 

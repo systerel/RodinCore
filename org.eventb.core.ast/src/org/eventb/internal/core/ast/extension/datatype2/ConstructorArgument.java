@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eventb.internal.core.ast.extension.datatype2;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
+import org.eventb.core.ast.extension.datatype2.ISetInstantiation;
 import org.eventb.core.ast.extension.datatype2.ITypeInstantiation;
 
 /**
@@ -87,6 +89,16 @@ public class ConstructorArgument implements IConstructorArgument {
 					+ this.getOrigin());
 		}
 		return ((TypeSubstitution) instantiation).rewrite(formalType);
+	}
+
+	@Override
+	public Expression getSet(ISetInstantiation instantiation) {
+		if (this.getOrigin() != instantiation.getOrigin()) {
+			throw new IllegalArgumentException("Instantiation built for "
+					+ instantiation.getOrigin() + " but used with "
+					+ this.getOrigin());
+		}
+		return ((SetSubstitution) instantiation).substitute(formalType);
 	}
 
 }

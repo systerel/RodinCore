@@ -11,6 +11,7 @@
 package org.eventb.internal.core.ast.extension.datatype2;
 
 import static java.util.Collections.unmodifiableSet;
+import static org.eventb.internal.core.ast.extension.datatype2.SetSubstitution.makeSubstitution;
 import static org.eventb.internal.core.ast.extension.datatype2.TypeSubstitution.makeSubstitution;
 
 import java.util.Collection;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Type;
@@ -29,6 +31,7 @@ import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDatatype2;
 import org.eventb.core.ast.extension.datatype2.IDestructorExtension;
+import org.eventb.core.ast.extension.datatype2.ISetInstantiation;
 
 /**
  * Implementation of a complete datatype which references all its extensions
@@ -108,6 +111,14 @@ public class Datatype2 implements IDatatype2 {
 					+ " is not an instance of " + typeCons.getName());
 		}
 		return ti;
+	}
+
+	@Override
+	public ISetInstantiation getSetInstantiation(Expression set) {
+		if (set == null) {
+			throw new NullPointerException("Null set");
+		}
+		return makeSubstitution(this, set);
 	}
 
 	public boolean hasSingleConstructor() {

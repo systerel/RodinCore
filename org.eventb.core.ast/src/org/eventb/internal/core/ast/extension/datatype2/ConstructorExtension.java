@@ -13,7 +13,6 @@ package org.eventb.internal.core.ast.extension.datatype2;
 import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.computeGroup;
 import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.computeId;
 import static org.eventb.internal.core.ast.extension.datatype2.DatatypeHelper.computeKind;
-import static org.eventb.internal.core.ast.extension.datatype2.SetSubstitution.makeSubstitution;
 import static org.eventb.internal.core.ast.extension.datatype2.TypeSubstitution.makeSubstitution;
 
 import java.util.Arrays;
@@ -116,20 +115,6 @@ public class ConstructorExtension implements IConstructorExtension {
 					+ this + " does not have a destructor named: " + destName);
 		}
 		return destructors.get(destName);
-	}
-
-	@Override
-	public Expression[] getArgumentSets(Expression set) {
-		final SetSubstitution subst = makeSubstitution(origin, set);
-		if (subst == null) {
-			throw new IllegalArgumentException("Constructor: " + this
-					+ " is not compatible with set: " + set);
-		}
-		final Type[] argTypes = new Type[arguments.length];
-		for (int i = 0; i < argTypes.length; i++) {
-			argTypes[i] = arguments[i].getFormalType();
-		}
-		return subst.substitute(argTypes);
 	}
 
 	@Override

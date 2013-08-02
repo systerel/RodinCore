@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension.datatype2;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Type;
 
 /**
@@ -69,5 +70,19 @@ public interface IConstructorArgument {
 	 *             if the instantiation comes from a different origin
 	 */
 	Type getType(ITypeInstantiation instantiation);
+
+	/**
+	 * Returns the set of this argument in the given instantiation, that is the
+	 * set to which this argument must belong such that a value constructed with
+	 * this argument belongs to the set given at instantiation creation.
+	 * 
+	 * @param instantiation
+	 *            a set instantiation obtained from the datatype of this
+	 *            argument
+	 * @return the set of this argument in the given instantiation
+	 * @throws IllegalArgumentException
+	 *             if the instantiation comes from a different origin
+	 */
+	Expression getSet(ISetInstantiation instantiation);
 
 }

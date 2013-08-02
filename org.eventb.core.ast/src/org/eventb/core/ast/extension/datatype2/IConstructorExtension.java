@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.extension.datatype2;
 
-import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.extension.IExpressionExtension;
 
 /**
@@ -61,30 +60,6 @@ public interface IConstructorExtension extends IExpressionExtension {
 	 *             if the given name is not a destructor name in this extension
 	 */
 	public IDestructorExtension getDestructor(String destName);
-
-	/**
-	 * Returns the array of argument sets according to the given datatype set.
-	 * In other words, returns the sets to which the arguments of this
-	 * constructor must belong for the constructed value to belong to the given
-	 * set. This is done by instantiating the type parameters of the datatype
-	 * with the actual parameters of the type constructor in the given set.
-	 * <p>
-	 * For instance, suppose that the List datatype is defined by
-	 * <code>List(T) ::= nil | cons(hd: T, tl: List(T))</code>, then the call
-	 * <code>cons.getArgumentSets(List(1..2), factory)</code> returns the array
-	 * <code>{ 1..2, List(1..2) }</code>.
-	 * </p>
-	 * 
-	 * @param set
-	 *            a set built with the type constructor of the datatype of this
-	 *            constructor
-	 * @return the array of argument sets
-	 * @throws IllegalArgumentException
-	 *             if the given constructor does not belong to this datatype or
-	 *             if the given set is not an instance of the type constructor
-	 *             of this datatype
-	 */
-	public Expression[] getArgumentSets(Expression set);
 
 	/**
 	 * Returns the datatype to which this constructor extension belongs.

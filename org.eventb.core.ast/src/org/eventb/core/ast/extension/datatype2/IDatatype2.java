@@ -13,6 +13,7 @@ package org.eventb.core.ast.extension.datatype2;
 import java.util.List;
 import java.util.Set;
 
+import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExpressionExtension;
@@ -135,5 +136,18 @@ public interface IDatatype2 {
 	 *             type constructor of this datatype
 	 */
 	ITypeInstantiation getTypeInstantiation(Type type);
+
+	/**
+	 * Returns an object that can be used to compute the actual sets of
+	 * arguments of constructors of this datatype.
+	 * 
+	 * @param set
+	 *            a set built with the type constructor of this datatype
+	 * @return a set instantiation usable for computing argument sets
+	 * @throws IllegalArgumentException
+	 *             if the given set is not a set built with the type constructor
+	 *             of this datatype
+	 */
+	ISetInstantiation getSetInstantiation(Expression set);
 
 }

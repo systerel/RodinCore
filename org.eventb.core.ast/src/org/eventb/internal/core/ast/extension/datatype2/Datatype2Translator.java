@@ -45,6 +45,7 @@ import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.datatype2.IConstructorArgument;
 import org.eventb.core.ast.extension.datatype2.IConstructorExtension;
 import org.eventb.core.ast.extension.datatype2.IDatatype2;
+import org.eventb.core.ast.extension.datatype2.ISetInstantiation;
 import org.eventb.core.ast.extension.datatype2.ITypeInstantiation;
 
 /**
@@ -314,8 +315,10 @@ public class Datatype2Translator {
 		final List<Expression> trgParts = new ArrayList<Expression>();
 		final Expression[] srcBoundIdents = makeSrcBoundIdentifiers();
 		trgParts.add(mTrgRelImage(trgSetCons, translate(srcBoundIdents)));
+		final ExtendedExpression srcSet = makeSrcSet(srcBoundIdents);
+		final ISetInstantiation setInst = datatype.getSetInstantiation(srcSet);
 		for (final IConstructorExtension cons : srcConstructors) {
-			trgParts.add(makeTrgSetPartitionPart(cons, srcBoundIdents));
+			trgParts.add(makeTrgSetPartitionPart(cons, setInst));
 		}
 		final Predicate trgPartition = mTrgPartition(trgParts);
 		final BoundIdentDecl[] trgDecls = makeTrgBoundIdentDecls();
@@ -345,20 +348,26 @@ public class Datatype2Translator {
 		return trgResult;
 	}
 
-	/*
-	 * To create the constructor arguments as sets, we need to work in the
-	 * source language. We then translate the result into the target language.
-	 */
 	private Expression makeTrgSetPartitionPart(IConstructorExtension cons,
-			Expression[] srcIdents) {
+			ISetInstantiation setInst) {
 		final Expression trgCons = replacements.get(cons);
 		if (hasArguments(cons)) {
-			final ExtendedExpression srcSet = makeSrcSet(srcIdents);
-			final Expression[] srcSets = cons.getArgumentSets(srcSet);
-			return mTrgRelImage(trgCons, translate(srcSets));
+			final Expression[] trgArgSets = mTrgArgSets(cons, setInst);
+			return mTrgRelImage(trgCons, trgArgSets);
 		} else {
 			return mTrgSingleton(trgCons);
 		}
+	}
+
+	private Expression[] mTrgArgSets(IConstructorExtension cons,
+			ISetInstantiation setInst) {
+		final IConstructorArgument[] args = cons.getArguments();
+		final Expression[] trgSets = new Expression[args.length];
+		for (int i = 0; i < trgSets.length; i++) {
+			final Expression srcSet = args[i].getSet(setInst);
+			trgSets[i] = srcSet.translateDatatype(translation);
+		}
+		return trgSets;
 	}
 
 	private ExtendedExpression makeSrcSet(Expression[] srcExprs) {
