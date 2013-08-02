@@ -67,9 +67,9 @@ public class TestConstructor extends AbstractTests {
 		assertEquals(2, c3.getArguments().length);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void getDestructorNone() {
-		c2.getDestructor("unknown");
+		assertNull(c2.getDestructor("unknown"));
 	}
 
 	@Test

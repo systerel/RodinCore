@@ -121,10 +121,6 @@ public class ConstructorExtension implements IConstructorExtension {
 
 	@Override
 	public IDestructorExtension getDestructor(String destName) {
-		if (!destructors.containsKey(destName)) {
-			throw new IllegalArgumentException("The current constructor: "
-					+ this + " does not have a destructor named: " + destName);
-		}
 		return destructors.get(destName);
 	}
 

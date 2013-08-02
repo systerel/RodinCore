@@ -54,10 +54,8 @@ public interface IConstructorExtension extends IExpressionExtension {
 	 * <code>null</code> if this name does not correspond to any destructor.
 	 * 
 	 * @param destName
-	 *            the destructor name
-	 * @return the destuctor extension corresponding or <code>null</code>
-	 * @throws IllegalArgumentException
-	 *             if the given name is not a destructor name in this extension
+	 *            a destructor name
+	 * @return the corresponding destructor extension or <code>null</code>
 	 */
 	public IDestructorExtension getDestructor(String destName);
 
