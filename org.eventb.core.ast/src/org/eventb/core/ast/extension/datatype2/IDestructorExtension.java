@@ -33,6 +33,6 @@ public interface IDestructorExtension extends IConstructorArgument,
 	 * 
 	 * @return the destructor name
 	 */
-	public String getName();
+	String getName();
 
 }

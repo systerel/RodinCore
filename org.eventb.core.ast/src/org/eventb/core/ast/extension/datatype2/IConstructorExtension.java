@@ -33,7 +33,7 @@ public interface IConstructorExtension extends IExpressionExtension {
 	 * 
 	 * @return the constructor name
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Tells whether this value constructor takes any argument.
@@ -58,7 +58,7 @@ public interface IConstructorExtension extends IExpressionExtension {
 	 *            a destructor name
 	 * @return the corresponding destructor extension or <code>null</code>
 	 */
-	public IDestructorExtension getDestructor(String destName);
+	IDestructorExtension getDestructor(String destName);
 
 	/**
 	 * Returns the index of the given argument, counted from 0, if it exists.
@@ -77,6 +77,6 @@ public interface IConstructorExtension extends IExpressionExtension {
 	 * @return the datatype of this constructor extension
 	 */
 	@Override
-	public IDatatype2 getOrigin();
+	IDatatype2 getOrigin();
 
 }

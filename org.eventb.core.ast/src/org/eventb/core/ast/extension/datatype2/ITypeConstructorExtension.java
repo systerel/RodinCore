@@ -39,7 +39,7 @@ public interface ITypeConstructorExtension extends IExpressionExtension {
 	 * 
 	 * @return the names of the formal type parameters
 	 */
-	public String[] getFormalNames();
+	String[] getFormalNames();
 
 	/**
 	 * Returns the datatype to which this type constructor extension belongs.
@@ -47,6 +47,6 @@ public interface ITypeConstructorExtension extends IExpressionExtension {
 	 * @return the datatype of this type constructor extension
 	 */
 	@Override
-	public IDatatype2 getOrigin();
+	IDatatype2 getOrigin();
 
 }

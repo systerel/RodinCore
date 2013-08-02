@@ -68,7 +68,7 @@ public interface IDatatypeBuilder {
 	 * @throws IllegalStateException
 	 *             if this {@link IDatatypeBuilder} has already been finalized
 	 */
-	public IConstructorBuilder addConstructor(String name);
+	IConstructorBuilder addConstructor(String name);
 
 	/**
 	 * Returns the base formula factory of this builder, that is the formula
@@ -76,7 +76,7 @@ public interface IDatatypeBuilder {
 	 * 
 	 * @return the base formula factory
 	 */
-	public FormulaFactory getFactory();
+	FormulaFactory getFactory();
 
 	/**
 	 * Provides a parser that can parse a string representation of a type
@@ -104,7 +104,7 @@ public interface IDatatypeBuilder {
 	 * @see IConstructorBuilder#addArgument(Type)
 	 * @see IConstructorBuilder#addArgument(Type, String)
 	 */
-	public IParseResult parseType(String strType);
+	IParseResult parseType(String strType);
 
 	/**
 	 * Tells if the datatype has a basic constructor. A basic constructor is a
@@ -113,7 +113,7 @@ public interface IDatatypeBuilder {
 	 * @return <code>true</code> iff a basic constructor has already been
 	 *         defined
 	 */
-	public boolean hasBasicConstructor();
+	boolean hasBasicConstructor();
 
 	/**
 	 * Finalizes this builder and returns the assembled datatype.
@@ -134,6 +134,6 @@ public interface IDatatypeBuilder {
 	 * @throws IllegalStateException
 	 *             if the datatype does not have a basic constructor
 	 */
-	public IDatatype2 finalizeDatatype();
+	IDatatype2 finalizeDatatype();
 
 }

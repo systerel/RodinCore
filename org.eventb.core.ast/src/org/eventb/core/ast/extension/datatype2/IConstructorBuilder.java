@@ -85,7 +85,7 @@ public interface IConstructorBuilder {
 	 *             if this builder has been finalized
 	 * @see #addArgument(Type)
 	 */
-	public void addArgument(Type type, String name);
+	void addArgument(Type type, String name);
 
 	/**
 	 * Adds a constructor argument without any corresponding destructor. This is
@@ -95,7 +95,7 @@ public interface IConstructorBuilder {
 	 * @param argType
 	 *            the type of the argument
 	 */
-	public void addArgument(Type argType);
+	void addArgument(Type argType);
 
 	/**
 	 * Tells whether this constructor is a basic constructor. A basic
@@ -104,6 +104,6 @@ public interface IConstructorBuilder {
 	 * 
 	 * @return <code>true</code> iff this is a basic constructor
 	 */
-	public boolean isBasic();
+	boolean isBasic();
 
 }
