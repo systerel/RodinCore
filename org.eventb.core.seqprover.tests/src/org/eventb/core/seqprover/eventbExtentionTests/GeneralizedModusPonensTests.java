@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import static org.eventb.core.seqprover.tests.TestLib.genFullSeq;
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import org.eventb.internal.core.seqprover.eventbExtensions.AbstractGenMP;
 
 /**
@@ -84,7 +85,20 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 						"{P=ℙ(ℤ)}[][][1∈P∧2∈P] |- ⊤⇒3∈P "),
 				// With associative predicates exactly equal (∨)
 				makeSuccess(" 1∈P∨2∈P |- 1∈P∨2∈P ⇒ 3∈P ", //
-						"{P=ℙ(ℤ)}[][][1∈P∨2∈P] |- ⊤⇒3∈P "), };
+						"{P=ℙ(ℤ)}[][][1∈P∨2∈P] |- ⊤⇒3∈P "),
+				// Rewrites deeply in expressions
+				makeSuccess(" 1∈P |- bool(1∈P) = TRUE ", //
+						"{P=ℙ(ℤ)}[][][1∈P] |- bool(⊤) = TRUE "),
+				makeSuccess(" 1∈P |- {x ∣ 1∈P ∧ x∈P} = P ", //
+						"{P=ℙ(ℤ)}[][][1∈P] |- {x ∣ ⊤ ∧ x∈P} = P "),
+				// Hidden hypotheses are considered.
+				makeSuccess(seq("1∈P", "1∈P⇒2∈P", "", "⊥"),
+						seq("1∈P ;; 1∈P⇒2∈P", "⊤⇒2∈P", "", "⊥")),
+				// Hidden hypothesis takes precedence over goal.
+				makeSuccess(seq("1∈P", "1∈P⇒2∈P", "", "1∈P"),
+						seq("1∈P ;; 1∈P⇒2∈P", "⊤⇒2∈P", "", "1∈P")),
+
+		};
 	}
 
 	private SuccessfullReasonerApplication makeSuccess(String sequentImage,
@@ -92,6 +106,18 @@ public abstract class GeneralizedModusPonensTests extends AbstractReasonerTests 
 		final IProverSequent sequent = genSeq(sequentImage);
 		return new SuccessfullReasonerApplication(sequent, new EmptyInput(),
 				newSequentImage);
+	}
+
+	private SuccessfullReasonerApplication makeSuccess(IProverSequent sequent,
+			IProverSequent newSequent) {
+		return new SuccessfullReasonerApplication(sequent, new EmptyInput(),
+				newSequent);
+	}
+
+	private IProverSequent seq(String hiddenHypsImage, String defaultHypsImage,
+			String selHypsImage, String goalImage) {
+		return genFullSeq("P=ℙ(ℤ)", hiddenHypsImage, defaultHypsImage,
+				selHypsImage, goalImage);
 	}
 
 	@Override

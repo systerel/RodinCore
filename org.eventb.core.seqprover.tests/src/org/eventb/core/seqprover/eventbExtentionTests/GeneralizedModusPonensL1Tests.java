@@ -58,7 +58,20 @@ public class GeneralizedModusPonensL1Tests extends GeneralizedModusPonensTests {
 				// Sequent (P⊢P) is not re-written (⊥⊢P) or (P⊢⊤), even when
 				// the goal denotes a disjunction.
 				makeSuccess(" 1∈P∨2∈P |- 1∈P∨2∈P ",
-						"{P=ℙ(ℤ)}[1∈P∨2∈P][][⊥∨⊥] |- 1∈P∨2∈P") };
+						"{P=ℙ(ℤ)}[1∈P∨2∈P][][⊥∨⊥] |- 1∈P∨2∈P"),
+				// Double-rewrite, larger formula takes precedence
+				makeSuccess(" 3∈P⇒(1∈P⇒2∈P) |- 1∈P ∨ (1∈P⇒2∈P) ",
+						"{P=ℙ(ℤ)}[3∈P⇒(1∈P⇒2∈P)][][3∈P⇒⊥] |- 1∈P ∨ (1∈P⇒2∈P)"),
+				makeSuccess(" 1∈P ;; 1∈P⇒2∈P |- 1∈P ∨ 3∈P⇒(1∈P⇒2∈P) ",
+						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][1∈P ;; ⊤⇒2∈P] |- ⊤ ∨ 3∈P⇒⊤"),
+				// Ensure that the order of predicates is not significant
+				makeSuccess(" 3∈P⇒(1∈P⇒2∈P) |- (1∈P⇒2∈P) ∨ 1∈P ",
+						"{P=ℙ(ℤ)}[3∈P⇒(1∈P⇒2∈P)][][3∈P⇒⊥] |- (1∈P⇒2∈P) ∨ 1∈P"),
+				// Ensure that goal dependence is correctly computed
+				makeSuccess(" 1∈P⇒2∈P ;; 3∈P ;; 3∈P⇒2∈P |- 1∈P ",
+						"{P=ℙ(ℤ)}[1∈P⇒2∈P ;; 3∈P⇒2∈P][][⊥⇒2∈P ;; 3∈P ;; ⊤⇒2∈P] |- 1∈P"),
+
+		};
 
 		final List<SuccessfullReasonerApplication> result = new ArrayList<SuccessfullReasonerApplication>();
 		result.addAll(Arrays.asList(super.getSuccessfulReasonerApplications()));
