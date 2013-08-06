@@ -59,6 +59,10 @@ public class GenMPC {
 	private final IProverSequent seq;
 	private final FormulaFactory ff;
 	private final Predicate goal;
+	
+	// The goal broken down in possible disjuncts.
+	private final Set<Predicate> goalDisjuncts;
+
 	private final Level level;
 	private final IProofMonitor pm;
 	// the map (hypothesis ↦ set of its child that can be substitute
@@ -84,6 +88,7 @@ public class GenMPC {
 		modifHypMap = new HashMap<Predicate, Map<Predicate, List<IPosition>>>();
 		modifGoalMap = new HashMap<Predicate, List<IPosition>>();
 		goal = seq.goal();
+		goalDisjuncts = breakPossibleDisjunct(goal);
 	}
 
 	public Predicate goal() {
@@ -432,7 +437,7 @@ public class GenMPC {
 		if (!level.from(Level.L1)) {
 			return null;
 		}
-		for (Predicate child : breakPossibleDisjunct(goal)) {
+		for (Predicate child : goalDisjuncts) {
 			if (child.equals(predicate)) {
 				result[0] = null;
 				result[1] = False(ff);
@@ -450,7 +455,7 @@ public class GenMPC {
 		final Set<Predicate> goalToHypSet = new HashSet<Predicate>();
 		if (level.from(Level.L1)) {
 			if (!isNeg(goal)) {
-				for (Predicate child : breakPossibleDisjunct(goal)) {
+				for (Predicate child : goalDisjuncts) {
 					if (isNeg(child)) {
 						addToSet(goalToHypSet, makeNeg(child));
 					} else {
