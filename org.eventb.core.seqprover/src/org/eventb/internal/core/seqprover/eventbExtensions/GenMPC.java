@@ -334,20 +334,13 @@ public class GenMPC {
 		Predicate rewriteGoal = goal;
 		for (Entry<Predicate, List<IPosition>> entry : modifGoalMap.entrySet()) {
 			final Predicate value = entry.getKey();
-			final Predicate negValue = makeNeg(value);
-			final Predicate substitute;
-			if (seq.containsHypothesis(value)) {
-				substitute = True(ff);
-				neededHyps.add(value);
-			} else if (seq.containsHypothesis(negValue)) {
-				substitute = False(ff);
-				neededHyps.add(negValue);
-			} else {
+			final Predicate[] substitute = computeSubstitutionForGoal(value);
+			if (substitute == null) {
 				continue;
 			}
-
+			neededHyps.add(substitute[0]);
 			for (IPosition pos : entry.getValue()) {
-				rewriteGoal = Rewrite(rewriteGoal, value, pos, substitute);
+				rewriteGoal = Rewrite(rewriteGoal, value, pos, substitute[1]);
 			}
 		}
 
@@ -407,12 +400,23 @@ public class GenMPC {
 		return new RewriteHypsOutput(isGoalDependent, hypActions);
 	}
 
+	public Predicate[] computeSubstitutionForHyp(Predicate predicate) {
+		return computeSubstitution(predicate, level.from(Level.L1));
+	}
+
+	public Predicate[] computeSubstitutionForGoal(Predicate predicate) {
+		return computeSubstitution(predicate, false);
+	}
+	
 	/**
 	 * Compute the appropriate substitution for the predicate
 	 * <code>predicate</code>.
 	 * 
 	 * @param predicate
 	 *            the considered predicate
+	 * @param considerGoal
+	 *            <code>true</code> if the goal shall be considered for
+	 *            replacement
 	 * @return <code>null</code> if the predicate cannot be substituted, or
 	 *         <code>(predicate ↦ ⊤)</code> (respectively
 	 *         <code>(¬predicate ↦ ⊥)</code>) if <code>predicate</code>
@@ -422,7 +426,8 @@ public class GenMPC {
 	 *         equal to the sequent's goal or is among the predicate when the
 	 *         goal denotes a disjunction.
 	 */
-	public Predicate[] computeSubstitutionForHyp(Predicate predicate) {
+	public Predicate[] computeSubstitution(Predicate predicate,
+			boolean considerGoal) {
 		final Predicate negPred = makeNeg(predicate);
 		final Predicate[] result = new Predicate[2];
 		if (seq.containsHypothesis(predicate)) {
@@ -434,7 +439,7 @@ public class GenMPC {
 			result[1] = False(ff);
 			return result;
 		}
-		if (!level.from(Level.L1)) {
+		if (!considerGoal) {
 			return null;
 		}
 		for (Predicate child : goalDisjuncts) {
