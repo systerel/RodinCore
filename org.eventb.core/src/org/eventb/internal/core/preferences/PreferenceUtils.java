@@ -43,7 +43,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
@@ -64,6 +67,13 @@ import org.eventb.core.seqprover.eventbExtensions.TacticCombinators;
 import org.eventb.internal.core.Util;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
+import org.rodinp.core.ElementChangedEvent;
+import org.rodinp.core.IElementChangedListener;
+import org.rodinp.core.IRodinDB;
+import org.rodinp.core.IRodinElement;
+import org.rodinp.core.IRodinElementDelta;
+import org.rodinp.core.IRodinProject;
+import org.rodinp.core.RodinCore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -478,6 +488,18 @@ public class PreferenceUtils {
 		}
 	}
 
+	/**
+	 * Returns whether preferences can be synchronized for scope of given
+	 * project, or workspace scope if given project is <code>null</code>.
+	 * <p>
+	 * It is possible to save if current thread owns project rule. Workspace
+	 * preferences can always be saved.s
+	 * </p>
+	 * 
+	 * @param project
+	 *            a project, or <code>null</code> for workspace scope.
+	 * @return <code>true</code> if preferences can be saved
+	 */
 	private static boolean canSave(IProject project) {
 		if (project == null) {
 			return true;
@@ -508,5 +530,58 @@ public class PreferenceUtils {
 			scope = new ProjectScope(project);
 		}
 		return scope.getNode("org.eventb.ui");
+	}
+
+	/**
+	 * Adds a listener to added projects. It creates a job that restores UI
+	 * tactic preferences for the each added project and forces synchronization.
+	 */
+	public static void registerProjectTacticPrefRestorer() {
+		RodinCore.addElementChangedListener(new IElementChangedListener() {
+
+			private void processDelta(IRodinElementDelta delta) {
+				final IRodinElement element = delta.getElement();
+				if (element instanceof IRodinDB) {
+					// process added projects
+					for (IRodinElementDelta child : delta.getAddedChildren()) {
+						processDelta(child);
+					}
+				} else if (element instanceof IRodinProject
+						&& delta.getKind() == IRodinElementDelta.ADDED) {
+					processProject((IRodinProject) element);
+				}
+			}
+
+			private void processProject(final IRodinProject project) {
+				final String projectName = project.getElementName();
+				final Job job = new Job("Restoring preferences for "
+						+ projectName) {
+
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						if (!project.exists()) {
+							// deleted before job is run
+							return new Status(IStatus.CANCEL, PLUGIN_ID,
+									"Cancelled restoration of project "
+											+ projectName);
+						}
+
+						final IEclipsePreferences projectNode = new ProjectScope(
+								project.getProject()).getNode(PLUGIN_ID);
+						restoreFromUIIfNeeded(projectNode, true);
+
+						return new Status(IStatus.OK, PLUGIN_ID,
+								"Restored preferences for " + projectName);
+					}
+				};
+				job.setRule(project.getSchedulingRule());
+				job.schedule();
+			}
+
+			@Override
+			public void elementChanged(ElementChangedEvent event) {
+				processDelta(event.getDelta());
+			}
+		});
 	}
 }
