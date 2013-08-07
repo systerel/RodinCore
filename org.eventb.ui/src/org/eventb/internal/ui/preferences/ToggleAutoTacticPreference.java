@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Systerel and others.
+ * Copyright (c) 2009, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -38,6 +40,10 @@ public class ToggleAutoTacticPreference extends AbstractHandler implements
 
 	public static final String COMMAND_ID = "org.eventb.ui.project.autoTactic";
 
+	private static final boolean DEFAULT_AUTO_ENABLE = DefaultScope.INSTANCE
+			.getNode(EventBPlugin.PLUGIN_ID).getBoolean(P_AUTOTACTIC_ENABLE,
+					false);
+
 	// Toggles the auto-tactic enablement preference
 	@Override
 	public Object execute(ExecutionEvent event) {
@@ -54,19 +60,22 @@ public class ToggleAutoTacticPreference extends AbstractHandler implements
 	}
 
 	private static boolean getAutoTacticPreference() {
-		return EventBPlugin.getAutoPostTacticManager()
-				.getAutoTacticPreference().isEnabled();
+		return getPrefNode().getBoolean(P_AUTOTACTIC_ENABLE,
+				DEFAULT_AUTO_ENABLE);
 	}
 
 	private static void setAutoTacticPreference(boolean enabled) {
-		InstanceScope.INSTANCE.getNode(EventBPlugin.PLUGIN_ID).putBoolean(P_AUTOTACTIC_ENABLE, enabled);
+		getPrefNode().putBoolean(P_AUTOTACTIC_ENABLE, enabled);
+	}
+
+	private static IEclipsePreferences getPrefNode() {
+		return InstanceScope.INSTANCE.getNode(EventBPlugin.PLUGIN_ID);
 	}
 
 	// Register a listener for updating the UI representation of this command
 	// status
 	public static void registerListener() {
-		InstanceScope.INSTANCE.getNode(EventBPlugin.PLUGIN_ID)
-				.addPreferenceChangeListener(new ChangeListener());
+		getPrefNode().addPreferenceChangeListener(new ChangeListener());
 	}
 
 	static class ChangeListener implements IPreferenceChangeListener {
