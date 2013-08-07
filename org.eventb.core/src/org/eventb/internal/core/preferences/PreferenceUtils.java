@@ -115,14 +115,14 @@ public class PreferenceUtils {
 			final String key = event.getKey();
 			final Preferences node = event.getNode();
 			final String qualifier = node.name();
-			
+
 			if (key.equals(P_CONSIDER_HIDDEN_HYPOTHESES)) {
 				EventBPlugin.getUserSupportManager()
 						.setConsiderHiddenHypotheses(
 								(Boolean) event.getNewValue());
 				return;
 			}
-			
+
 			final IAutoTacticPreference pref;
 
 			if (key.equals(P_POSTTACTIC_ENABLE)) {
@@ -415,17 +415,24 @@ public class PreferenceUtils {
 	 * Initialize from stored preferences.
 	 */
 	public static void init() {
-		final IAutoPostTacticManager manager = EventBPlugin.getAutoPostTacticManager();
-		
-		final IEclipsePreferences defaultNode = DefaultScope.INSTANCE.getNode(PLUGIN_ID);
-		final IEclipsePreferences node = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
+		final IAutoPostTacticManager manager = EventBPlugin
+				.getAutoPostTacticManager();
 
-		final boolean defAutoEnable = defaultNode.getBoolean(P_AUTOTACTIC_ENABLE, DEFAULT_AUTO_ENABLE);
-		final boolean autoTacticEnable = node.getBoolean(P_AUTOTACTIC_ENABLE, defAutoEnable);
+		final IEclipsePreferences defaultNode = DefaultScope.INSTANCE
+				.getNode(PLUGIN_ID);
+		final IEclipsePreferences node = InstanceScope.INSTANCE
+				.getNode(PLUGIN_ID);
+
+		final boolean defAutoEnable = defaultNode.getBoolean(
+				P_AUTOTACTIC_ENABLE, DEFAULT_AUTO_ENABLE);
+		final boolean autoTacticEnable = node.getBoolean(P_AUTOTACTIC_ENABLE,
+				defAutoEnable);
 		manager.getAutoTacticPreference().setEnabled(autoTacticEnable);
-		
-		final boolean defPostEnable = defaultNode.getBoolean(P_POSTTACTIC_ENABLE, DEFAULT_POST_ENABLE);
-		final boolean postTacticEnable = node.getBoolean(P_POSTTACTIC_ENABLE, defPostEnable);
+
+		final boolean defPostEnable = defaultNode.getBoolean(
+				P_POSTTACTIC_ENABLE, DEFAULT_POST_ENABLE);
+		final boolean postTacticEnable = node.getBoolean(P_POSTTACTIC_ENABLE,
+				defPostEnable);
 		manager.getPostTacticPreference().setEnabled(postTacticEnable);
 	}
 
@@ -447,16 +454,17 @@ public class PreferenceUtils {
 	}
 
 	private static void moveTacticPrefs(IEclipsePreferences from,
-	IEclipsePreferences to) {
+			IEclipsePreferences to) {
 		for (String movedPref : MOVED_PREFERENCES) {
 			movePref(movedPref, from, to);
 		}
 	}
 
-	private static boolean mayRequireRestoration(IEclipsePreferences node) throws BackingStoreException {
-			final String[] keys = node.keys();
-			final List<String> nodekeys = new ArrayList<String>(asList(keys));
-			return nodekeys.isEmpty() || !nodekeys.removeAll(MOVED_PREFERENCES);
+	private static boolean mayRequireRestoration(IEclipsePreferences node)
+			throws BackingStoreException {
+		final String[] keys = node.keys();
+		final List<String> nodekeys = new ArrayList<String>(asList(keys));
+		return nodekeys.isEmpty() || !nodekeys.removeAll(MOVED_PREFERENCES);
 	}
 
 	/**
@@ -468,7 +476,8 @@ public class PreferenceUtils {
 	 *            <code>true</code> to force restoration and preference
 	 *            synchronization, <code>false</code> otherwise
 	 */
-	public static void restoreFromUIIfNeeded(final IEclipsePreferences prefNode, boolean force) {
+	public static void restoreFromUIIfNeeded(
+			final IEclipsePreferences prefNode, boolean force) {
 		try {
 			if (!force && !mayRequireRestoration(prefNode)) {
 				return;
@@ -522,7 +531,8 @@ public class PreferenceUtils {
 		return null;
 	}
 
-	private static IEclipsePreferences getUIPreference(IProject project) throws BackingStoreException {
+	private static IEclipsePreferences getUIPreference(IProject project)
+			throws BackingStoreException {
 		final IScopeContext scope;
 		if (project == null) {
 			scope = InstanceScope.INSTANCE;
