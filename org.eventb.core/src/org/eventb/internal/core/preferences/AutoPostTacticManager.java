@@ -83,8 +83,8 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 
 	private ITactic getSelectedComposedTactics(IProject project, boolean auto) {
 		final IScopeContext sc = new ProjectScope(project);
-		PreferenceUtils.restoreFromUIIfNeeded(InstanceScope.INSTANCE.getNode(PLUGIN_ID));
-		PreferenceUtils.restoreFromUIIfNeeded(sc.getNode(PLUGIN_ID));
+		PreferenceUtils.restoreFromUIIfNeeded(InstanceScope.INSTANCE.getNode(PLUGIN_ID), false);
+		PreferenceUtils.restoreFromUIIfNeeded(sc.getNode(PLUGIN_ID), false);
 		final IScopeContext[] contexts = { sc };
 		final String profiles = preferencesService.getString(PLUGIN_ID,
 				P_TACTICSPROFILES, null, contexts);

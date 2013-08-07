@@ -44,6 +44,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -399,19 +401,6 @@ public class PreferenceUtils {
 		prefNode.addPreferenceChangeListener(new BoolPrefUpdater());
 	}
 
-	private static void movePref(String key, IEclipsePreferences from,
-			IEclipsePreferences to) {
-		if (to.get(key, null) != null) {
-			// do not override user setting
-			return;
-		}
-		final String fromValue = from.get(key, null);
-		if (fromValue != null) {
-			to.put(key, fromValue);
-			from.remove(key);
-		}
-	}
-
 	/**
 	 * Initialize from stored preferences.
 	 */
@@ -434,6 +423,26 @@ public class PreferenceUtils {
 			P_AUTOTACTIC_ENABLE, P_AUTOTACTIC_CHOICE, P_POSTTACTIC_ENABLE,
 			P_POSTTACTIC_CHOICE, P_TACTICSPROFILES);
 
+	private static void movePref(String key, IEclipsePreferences from,
+			IEclipsePreferences to) {
+		if (to.get(key, null) != null) {
+			// do not override user setting
+			return;
+		}
+		final String fromValue = from.get(key, null);
+		if (fromValue != null) {
+			to.put(key, fromValue);
+			from.remove(key);
+		}
+	}
+
+	private static void moveTacticPrefs(IEclipsePreferences from,
+	IEclipsePreferences to) {
+		for (String movedPref : MOVED_PREFERENCES) {
+			movePref(movedPref, from, to);
+		}
+	}
+
 	private static boolean mayRequireRestoration(IEclipsePreferences node) throws BackingStoreException {
 			final String[] keys = node.keys();
 			final List<String> nodekeys = new ArrayList<String>(asList(keys));
@@ -442,40 +451,62 @@ public class PreferenceUtils {
 
 	/**
 	 * Restores UI preferences into the given (core) preference node.
-	 * @param prefNode a preference node
+	 * 
+	 * @param prefNode
+	 *            a preference node
+	 * @param force
+	 *            <code>true</code> to force restoration and preference
+	 *            synchronization, <code>false</code> otherwise
 	 */
-	public static void restoreFromUIIfNeeded(IEclipsePreferences prefNode) {
+	public static void restoreFromUIIfNeeded(final IEclipsePreferences prefNode, boolean force) {
 		try {
-			if (!mayRequireRestoration(prefNode)) {
+			if (!force && !mayRequireRestoration(prefNode)) {
 				return;
 			}
-			final IEclipsePreferences uiPrefNode = getUIPreference(prefNode);
-			for (String movedPref : MOVED_PREFERENCES) {
-				movePref(movedPref, uiPrefNode, prefNode);
-			}
+			final IProject project = getProject(prefNode);
+			final IEclipsePreferences uiPrefNode = getUIPreference(project);
 
-			prefNode.sync();
-			uiPrefNode.flush();
-			uiPrefNode.sync();
+			moveTacticPrefs(uiPrefNode, prefNode);
+
+			if (force || canSave(project)) {
+				prefNode.sync();
+				uiPrefNode.flush();
+				uiPrefNode.sync();
+			}
 		} catch (BackingStoreException e) {
 			Util.log(e, "while restoring UI preferences");
 		}
 	}
 
-	private static IScopeContext getScope(IEclipsePreferences prefNode) {
+	private static boolean canSave(IProject project) {
+		if (project == null) {
+			return true;
+		}
+		final ISchedulingRule currentRule = Job.getJobManager().currentRule();
+		if (currentRule == null) {
+			return false;
+		}
+		return currentRule.contains(project);
+	}
+
+	private static IProject getProject(IEclipsePreferences prefNode) {
 		final String absolutePath = prefNode.absolutePath();
 		final String[] split = absolutePath.split("/");
 		if (split[1].equals("project")) {
 			final IWorkspace ws = ResourcesPlugin.getWorkspace();
 			final IProject project = ws.getRoot().getProject(split[2]);
-			return new ProjectScope(project);
+			return project;
 		}
-		return InstanceScope.INSTANCE;
+		return null;
 	}
 
-	private static IEclipsePreferences getUIPreference(
-			IEclipsePreferences prefNode) throws BackingStoreException {
-		final IScopeContext scope = getScope(prefNode);
+	private static IEclipsePreferences getUIPreference(IProject project) throws BackingStoreException {
+		final IScopeContext scope;
+		if (project == null) {
+			scope = InstanceScope.INSTANCE;
+		} else {
+			scope = new ProjectScope(project);
+		}
 		return scope.getNode("org.eventb.ui");
 	}
 }

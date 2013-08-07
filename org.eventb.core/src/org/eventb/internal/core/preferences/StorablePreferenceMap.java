@@ -42,6 +42,7 @@ public abstract class StorablePreferenceMap<T> extends CachedPreferenceMap<T> {
 	}
 
 	private String getValue() {
+		PreferenceUtils.restoreFromUIIfNeeded(preferenceNode, false);
 		String defaultPref = getDefaultValue();
 		return preferenceNode.get(preference, defaultPref);
 	}
@@ -56,7 +57,6 @@ public abstract class StorablePreferenceMap<T> extends CachedPreferenceMap<T> {
 	}
 
 	public void load() {
-		PreferenceUtils.restoreFromUIIfNeeded(preferenceNode);
 		final boolean recovered = load(getValue());
 		if (recovered) {
 			store();
