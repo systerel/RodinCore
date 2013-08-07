@@ -605,20 +605,8 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            allPopups="true"
-            locationURI="popup:fr.systerel.explorer.navigator.view">
-         <command
-               commandId="org.eventb.ui.proveInteractively"
-               icon="icons/discharged.gif"
-               mnemonic="%commands.resource.proveInteractively.mnemonic"
-               style="push"
-               tooltip="%commands.resource.proveInteractively.tooltip">
-            <visibleWhen checkEnabled="false">
-               <reference
-                     definitionId="org.eventb.ui.definition.isIEventBRoot">
-               </reference>
-            </visibleWhen>
-         </command>
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any?after=group.edit">
          <command
                commandId="org.eventb.ui.rename"
                mnemonic="%commands.resource.rename.mnemonic"
@@ -630,11 +618,19 @@
                </reference>
             </visibleWhen>
          </command>
+         <dynamic
+               class="org.eventb.internal.ui.refine.RefineItem"
+               id="org.eventb.ui.refineItem">
+         </dynamic>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <command
-               commandId="org.eventb.ui.purge"
-               mnemonic="%commands.resource.purge.mnemonic"
+               commandId="org.eventb.ui.showProperties"
+               mnemonic="%commands.resource.showProperties.mnemonic"
                style="push"
-               tooltip="%commands.resource.purge.tooltip">
+               tooltip="%commands.resource.showProperties.tooltip">
             <visibleWhen
                   checkEnabled="false">
                <reference
@@ -642,6 +638,10 @@
                </reference>
             </visibleWhen>
          </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:fr.systerel.explorer.navigator.view">
          <command
                commandId="org.eventb.ui.simplify"
                mnemonic="%commands.resource.simplify.mnemonic"
@@ -661,33 +661,30 @@
                </or>
             </visibleWhen>
          </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-         <separator
-               name="org.eventb.ui.afterAdditions.separator">
-         </separator>
          <command
-               commandId="org.eventb.ui.showProperties"
-               mnemonic="%commands.resource.showProperties.mnemonic"
+               commandId="org.eventb.ui.purge"
+               mnemonic="%commands.resource.purge.mnemonic"
                style="push"
-               tooltip="%commands.resource.showProperties.tooltip">
+               tooltip="%commands.resource.purge.tooltip">
             <visibleWhen
                   checkEnabled="false">
-               <iterate
-                     ifEmpty="false"
-                     operator="or">
-                  <instanceof
-                        value="org.rodinp.core.IInternalElement">
-                  </instanceof>
-               </iterate>
+               <reference
+                     definitionId="org.eventb.ui.definition.isEventBRootOrRodinProject">
+               </reference>
             </visibleWhen>
          </command>
-         <dynamic
-               class="org.eventb.internal.ui.refine.RefineItem"
-               id="org.eventb.ui.refineItem">
-         </dynamic>
+         <command
+               commandId="org.eventb.ui.proveInteractively"
+               icon="icons/discharged.gif"
+               mnemonic="%commands.resource.proveInteractively.mnemonic"
+               style="push"
+               tooltip="%commands.resource.proveInteractively.tooltip">
+            <visibleWhen checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isIEventBRoot">
+               </reference>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
