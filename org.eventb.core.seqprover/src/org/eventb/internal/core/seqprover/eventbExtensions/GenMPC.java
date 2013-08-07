@@ -334,13 +334,14 @@ public class GenMPC {
 		Predicate rewriteGoal = goal;
 		for (Entry<Predicate, List<IPosition>> entry : modifGoalMap.entrySet()) {
 			final Predicate value = entry.getKey();
-			final Predicate[] substitute = computeSubstitutionForGoal(value);
-			if (substitute == null) {
+			final Substitute substitution = computeSubstitutionForGoal(value);
+			if (substitution == null) {
 				continue;
 			}
-			neededHyps.add(substitute[0]);
+			neededHyps.add(substitution.hypOrGoal());
 			for (IPosition pos : entry.getValue()) {
-				rewriteGoal = Rewrite(rewriteGoal, value, pos, substitute[1]);
+				rewriteGoal = Rewrite(rewriteGoal, value, pos,
+						substitution.substitute());
 			}
 		}
 
@@ -371,19 +372,19 @@ public class GenMPC {
 			Predicate rewriteHyp = hyp;
 			for (Entry<Predicate, List<IPosition>> entryPos : maps.entrySet()) {
 				final Predicate pred = entryPos.getKey();
-				final Predicate[] substitution = computeSubstitutionForHyp(pred);
+				final Substitute substitution = computeSubstitutionForHyp(pred);
 				if (substitution == null) {
 					continue;
 				}
-				final Predicate hypOrGoal = substitution[0];
-				if (hypOrGoal == null) {
+				if (substitution.hypOrGoal() == null) {
 					isGoalDependent = true;
 				} else {
-					sourceHyps.add(hypOrGoal);
+					sourceHyps.add(substitution.hypOrGoal());
 				}
-				final Predicate substitute = substitution[1];
+
 				for (IPosition pos : entryPos.getValue()) {
-					rewriteHyp = Rewrite(rewriteHyp, pred, pos, substitute);
+					rewriteHyp = Rewrite(rewriteHyp, pred, pos,
+							substitution.substitute());
 				}
 			}
 			if (rewriteHyp != hyp) {
@@ -400,14 +401,14 @@ public class GenMPC {
 		return new RewriteHypsOutput(isGoalDependent, hypActions);
 	}
 
-	public Predicate[] computeSubstitutionForHyp(Predicate predicate) {
+	public Substitute computeSubstitutionForHyp(Predicate predicate) {
 		return computeSubstitution(predicate, level.from(Level.L1));
 	}
 
-	public Predicate[] computeSubstitutionForGoal(Predicate predicate) {
+	public Substitute computeSubstitutionForGoal(Predicate predicate) {
 		return computeSubstitution(predicate, false);
 	}
-	
+
 	/**
 	 * Compute the appropriate substitution for the predicate
 	 * <code>predicate</code>.
@@ -426,31 +427,22 @@ public class GenMPC {
 	 *         equal to the sequent's goal or is among the predicate when the
 	 *         goal denotes a disjunction.
 	 */
-	public Predicate[] computeSubstitution(Predicate predicate,
+	public Substitute computeSubstitution(Predicate predicate,
 			boolean considerGoal) {
 		final Predicate negPred = makeNeg(predicate);
-		final Predicate[] result = new Predicate[2];
 		if (seq.containsHypothesis(predicate)) {
-			result[0] = predicate;
-			result[1] = True(ff);
-			return result;
+			return new Substitute(predicate, predicate, True(ff));
 		} else if (seq.containsHypothesis(negPred)) {
-			result[0] = negPred;
-			result[1] = False(ff);
-			return result;
+			return new Substitute(negPred, negPred, False(ff));
 		}
 		if (!considerGoal) {
 			return null;
 		}
 		for (Predicate child : goalDisjuncts) {
 			if (child.equals(predicate)) {
-				result[0] = null;
-				result[1] = False(ff);
-				return result;
+				return new Substitute(predicate, null, False(ff));
 			} else if (child.equals(negPred)) {
-				result[0] = null;
-				result[1] = True(ff);
-				return result;
+				return new Substitute(predicate, null, True(ff));
 			}
 		}
 		return null;
