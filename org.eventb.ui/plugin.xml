@@ -773,49 +773,11 @@
             allPopups="true"
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <command
-               commandId="org.eventb.ui.proofTreeUi.showRuleDetails"
-               icon="icons/full/ctool16/info_prover_rule.gif"
-               mnemonic="%commands.proofTreeNode.showRuleDetails.mnemonic"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eventb.ui.definition.isProofTreeNode">
-               </reference>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eventb.ui.proofTreeUi.showTypeEnv"
-               icon="icons/full/ctool16/info_type_env.gif"
-               mnemonic="%commands.proofTreeNode.showTypeEnv.name"
+               commandId="org.eventb.ui.proofTreeUi.editComment"
+               icon="icons/full/ovr16/cmt_ovr.gif"
+               mnemonic="%commands.proofTreeNode.editComment.mnemonic"
                style="push"
-               tooltip="%commands.proofTreeNode.showTypeEnv.tooltip">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eventb.ui.definition.isProofTreeNode">
-               </reference>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eventb.ui.proofTreeUi.prune"
-               icon="icons/full/ctool16/pn_prover.gif"
-               mnemonic="%commands.proofTreeNode.prune.mnemonic"
-               style="push"
-               tooltip="%commands.proofTreeNode.prune.tooltip">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eventb.ui.definition.isProofTreeNode">
-               </reference>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eventb.ui.proofTreeUi.paste"
-               icon="icons/full/elcl16/paste.gif"
-               mnemonic="%commands.proofTreeNode.paste.mnemonic"
-               style="push"
-               tooltip="%commands.proofTreeNode.paste.tooltip">
+               tooltip="%commands.proofTreeNode.editComment.tooltip">
             <visibleWhen
                   checkEnabled="false">
                <reference
@@ -837,11 +799,49 @@
             </visibleWhen>
          </command>
          <command
-               commandId="org.eventb.ui.proofTreeUi.editComment"
-               icon="icons/full/ovr16/cmt_ovr.gif"
-               mnemonic="%commands.proofTreeNode.editComment.mnemonic"
+               commandId="org.eventb.ui.proofTreeUi.paste"
+               icon="icons/full/elcl16/paste.gif"
+               mnemonic="%commands.proofTreeNode.paste.mnemonic"
                style="push"
-               tooltip="%commands.proofTreeNode.editComment.tooltip">
+               tooltip="%commands.proofTreeNode.paste.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isProofTreeNode">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eventb.ui.proofTreeUi.prune"
+               icon="icons/full/ctool16/pn_prover.gif"
+               mnemonic="%commands.proofTreeNode.prune.mnemonic"
+               style="push"
+               tooltip="%commands.proofTreeNode.prune.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isProofTreeNode">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eventb.ui.proofTreeUi.showTypeEnv"
+               icon="icons/full/ctool16/info_type_env.gif"
+               mnemonic="%commands.proofTreeNode.showTypeEnv.name"
+               style="push"
+               tooltip="%commands.proofTreeNode.showTypeEnv.tooltip">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eventb.ui.definition.isProofTreeNode">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eventb.ui.proofTreeUi.showRuleDetails"
+               icon="icons/full/ctool16/info_prover_rule.gif"
+               mnemonic="%commands.proofTreeNode.showRuleDetails.mnemonic"
+               style="push">
             <visibleWhen
                   checkEnabled="false">
                <reference
