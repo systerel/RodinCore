@@ -408,14 +408,15 @@ public class PreferenceUtils {
 				P_SIMPLIFY_PROOFS, false, null);
 	}
 
-	public static void initTacticPreferenceUpdater() {
+	private static void initTacticPreferenceUpdater() {
 		final IEclipsePreferences prefNode = InstanceScope.INSTANCE
 				.getNode(PLUGIN_ID);
 		prefNode.addPreferenceChangeListener(new BoolPrefUpdater());
 	}
 
 	/**
-	 * Initialize from stored preferences.
+	 * Initialize auto/post tactic manager from stored preferences; add
+	 * listeners for preference updating and restoring.
 	 */
 	public static void init() {
 		final IAutoPostTacticManager manager = EventBPlugin
@@ -437,6 +438,9 @@ public class PreferenceUtils {
 		final boolean postTacticEnable = node.getBoolean(P_POSTTACTIC_ENABLE,
 				defPostEnable);
 		manager.getPostTacticPreference().setEnabled(postTacticEnable);
+
+		initTacticPreferenceUpdater();
+		registerProjectTacticPrefRestorer();
 	}
 
 	private static final List<String> MOVED_PREFERENCES = asList(
@@ -594,7 +598,7 @@ public class PreferenceUtils {
 	 * Adds a listener to added projects. It creates a job that restores UI
 	 * tactic preferences for the each added project and forces synchronization.
 	 */
-	public static void registerProjectTacticPrefRestorer() {
+	private static void registerProjectTacticPrefRestorer() {
 		RodinCore.addElementChangedListener(new IElementChangedListener() {
 
 			private void processDelta(IRodinElementDelta delta) {

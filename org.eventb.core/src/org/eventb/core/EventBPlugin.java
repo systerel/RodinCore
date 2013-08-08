@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eventb.core;
 
-import static org.eventb.internal.core.preferences.PreferenceUtils.initTacticPreferenceUpdater;
 import static org.rodinp.core.RodinCore.getOccurrenceKind;
 
 import java.util.Set;
@@ -225,9 +224,6 @@ public class EventBPlugin extends Plugin {
 			configureDebugOptions();
 		}
 		PreferenceUtils.init();
-
-		initTacticPreferenceUpdater();
-		PreferenceUtils.registerProjectTacticPrefRestorer();
 	}
 
 	@Override
