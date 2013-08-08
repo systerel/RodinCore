@@ -399,14 +399,13 @@ public class GenMPC {
 		}
 		if (rewriteHyp != hyp) {
 			inferredHyps = Collections.singleton(rewriteHyp);
-		} else {
-			return isGoalDependent;
+			sourceHyps.add(hyp);
+			hypActions.add(ProverFactory.makeForwardInfHypAction(sourceHyps,
+					inferredHyps));
+			hypActions.add(ProverFactory.makeHideHypAction(Collections
+					.singleton(hyp)));
 		}
-		sourceHyps.add(hyp);
-		hypActions.add(ProverFactory.makeForwardInfHypAction(sourceHyps,
-				inferredHyps));
-		hypActions.add(ProverFactory.makeHideHypAction(Collections
-				.singleton(hyp)));
+
 		return isGoalDependent;
 	}
 
