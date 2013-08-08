@@ -133,6 +133,10 @@ public class GenMPC {
 		if (m != null) {
 			modifGoalMap = m;
 		}
+		rewrittenGoal = rewriteGoal();
+
+		boolean isGoalDependent = false;
+		List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate hyp : seq.visibleHypIterable()) {
 			if (pm != null && pm.isCanceled()) {
 				return false;
@@ -141,10 +145,10 @@ public class GenMPC {
 			if (!m.isEmpty()) {
 				modifHypMap.put(hyp, m);
 			}
-		}
+			isGoalDependent |= rewriteHyp(hypActions, hyp, m);
 
-		rewrittenGoal = rewriteGoal();
-		output = rewriteHyps();
+		}
+		output = new RewriteHypsOutput(isGoalDependent, hypActions);
 		return true;
 	}
 
@@ -359,49 +363,51 @@ public class GenMPC {
 	}
 
 	/**
-	 * Returns a list of IHypActions needed to complete the re-writing done by
-	 * the generalized Modus Ponens.
+	 * Rewrite each occurence of a hypothesis into the sequent.
 	 * 
-	 * @return a list of IHypActions needed to complete the re-writing done by
-	 *         the generalized Modus Ponens, as well as a boolean telling
-	 *         whether the reasoner is goal dependent or not.
+	 * @param hypActions
+	 *            list of IHypActions needed to complete the re-writing done by
+	 *            the generalized Modus Ponens
+	 * @param hyp
+	 *            the hypothesis
+	 * @param maps
+	 * @return a boolean telling whether the reasoner is goal dependent or not
 	 */
-	public RewriteHypsOutput rewriteHyps() {
+	public boolean rewriteHyp(List<IHypAction> hypActions, Predicate hyp,
+			final Map<Predicate, List<IPosition>> maps) {
 		boolean isGoalDependent = false;
-		List<IHypAction> hypActions = new ArrayList<IHypAction>();
-		for (Entry<Predicate, Map<Predicate, List<IPosition>>> entryMap : modifHypMap
-				.entrySet()) {
-			Set<Predicate> inferredHyps = new HashSet<Predicate>();
-			Set<Predicate> sourceHyps = new LinkedHashSet<Predicate>();
-			final Map<Predicate, List<IPosition>> maps = entryMap.getValue();
-			final Predicate hyp = entryMap.getKey();
-			Predicate rewriteHyp = hyp;
-			for (Entry<Predicate, List<IPosition>> entryPos : maps.entrySet()) {
-				final Predicate pred = entryPos.getKey();
-				final Substitute substitution = findSubstitutionForHyp(pred);
-				if (substitution.hypOrGoal() == null) {
-					isGoalDependent = true;
-				} else {
-					sourceHyps.add(substitution.hypOrGoal());
-				}
-
-				for (IPosition pos : entryPos.getValue()) {
-					rewriteHyp = Rewrite(rewriteHyp, pred, pos,
-							substitution.substitute());
-				}
-			}
-			if (rewriteHyp != hyp) {
-				inferredHyps = Collections.singleton(rewriteHyp);
-			} else {
+		Set<Predicate> inferredHyps = new HashSet<Predicate>();
+		Set<Predicate> sourceHyps = new LinkedHashSet<Predicate>();
+		Predicate rewriteHyp = hyp;
+		for (Entry<Predicate, List<IPosition>> entryPos : maps.entrySet()) {
+			final Predicate pred = entryPos.getKey();
+			final Substitute substitution = findSubstitutionForHyp(pred);
+			if (substitution == null) {
 				continue;
 			}
-			sourceHyps.add(hyp);
-			hypActions.add(ProverFactory.makeForwardInfHypAction(sourceHyps,
-					inferredHyps));
-			hypActions.add(ProverFactory.makeHideHypAction(Collections
-					.singleton(hyp)));
+
+			if (substitution.hypOrGoal() == null) {
+				isGoalDependent = true;
+			} else {
+				sourceHyps.add(substitution.hypOrGoal());
+			}
+
+			for (IPosition pos : entryPos.getValue()) {
+				rewriteHyp = Rewrite(rewriteHyp, pred, pos,
+						substitution.substitute());
+			}
 		}
-		return new RewriteHypsOutput(isGoalDependent, hypActions);
+		if (rewriteHyp != hyp) {
+			inferredHyps = Collections.singleton(rewriteHyp);
+		} else {
+			return isGoalDependent;
+		}
+		sourceHyps.add(hyp);
+		hypActions.add(ProverFactory.makeForwardInfHypAction(sourceHyps,
+				inferredHyps));
+		hypActions.add(ProverFactory.makeHideHypAction(Collections
+				.singleton(hyp)));
+		return isGoalDependent;
 	}
 
 	public Substitute findSubstitutionForHyp(Predicate predicate) {
@@ -434,10 +440,11 @@ public class GenMPC {
 	 * @return a substitute
 	 */
 	public Substitute computeSubstitutionForHyp(Predicate predicate) {
-		final Predicate negPred = makeNeg(predicate);
 		if (seq.containsHypothesis(predicate)) {
 			return new Substitute(predicate, predicate, True(ff));
-		} else if (seq.containsHypothesis(negPred)) {
+		} 
+		final Predicate negPred = makeNeg(predicate);
+		if (seq.containsHypothesis(negPred)) {
 			return new Substitute(negPred, negPred, False(ff));
 		}
 		return null;
