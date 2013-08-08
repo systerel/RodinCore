@@ -13,10 +13,8 @@ package org.eventb.internal.core.preferences;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticRefMaker;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticXMLSerializer;
-import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.recoverOldPreference;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 
@@ -28,9 +26,4 @@ public class TacticsProfilesCache extends
 				makeTacticRefMaker());
 	}
 
-	@Override
-	protected CachedPreferenceMap<ITacticDescriptor> recover(String pref) {
-		return recoverOldPreference(pref);
-	}
-	
 }

@@ -19,6 +19,7 @@ import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_SIMPLIFY_PROOFS;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.recoverOldPreference;
 import static org.eventb.internal.core.preferences.PreferenceInitializer.DEFAULT_AUTO_ENABLE;
 import static org.eventb.internal.core.preferences.PreferenceInitializer.DEFAULT_POST_ENABLE;
 
@@ -56,8 +57,10 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChange
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eventb.core.EventBPlugin;
+import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
+import org.eventb.core.preferences.autotactics.TacticPreferenceFactory;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.IAutoTacticRegistry.ITacticDescriptor;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
@@ -440,14 +443,59 @@ public class PreferenceUtils {
 			P_AUTOTACTIC_ENABLE, P_AUTOTACTIC_CHOICE, P_POSTTACTIC_ENABLE,
 			P_POSTTACTIC_CHOICE, P_TACTICSPROFILES);
 
+	
+	/**
+	 * Returns a tactic preference map in correct XML format from given tactic
+	 * preference.
+	 * <p>
+	 * The given preference string may already be in correct XML format, in
+	 * which case the given string is returned.
+	 * </p>
+	 * <p>
+	 * If given string does not represent a correct tactic preference map (be it
+	 * in old or new format), the given string is returned. Thus the broken
+	 * preference will be propagated to the core preference node to avoid data
+	 * loss. In this case, an exception will be thrown later on when loading the
+	 * preference.
+	 * </p>
+	 * 
+	 * @param tacticPref
+	 *            a tactic preference string
+	 * @return the preference string using new format
+	 */
+	private static String recoverOldTacticPref(String tacticPref) {
+		final CachedPreferenceMap<ITacticDescriptor> newCache = TacticPreferenceFactory
+				.makeTacticPreferenceMap();
+		try {
+			newCache.inject(tacticPref);
+			// no exception: standard storage format
+			return tacticPref;
+		} catch (IllegalArgumentException e) {
+			// old storage format
+			final CachedPreferenceMap<ITacticDescriptor> recovered = recoverOldPreference(tacticPref);
+			if (recovered == null) {
+				// propagate original value, to be saved in core preference node
+				// caught exception will be thrown later on
+				return tacticPref;
+			}
+			return recovered.extract();
+		}
+	}
+
 	private static void movePref(String key, IEclipsePreferences from,
 			IEclipsePreferences to) {
 		if (to.get(key, null) != null) {
 			// do not override user setting
 			return;
 		}
-		final String fromValue = from.get(key, null);
+		String fromValue = from.get(key, null);
 		if (fromValue != null) {
+			if (key.equals(P_TACTICSPROFILES)) {
+				final String recovered = recoverOldTacticPref(fromValue);
+				if (recovered != null) {
+					fromValue = recovered;
+				}
+			}
 			to.put(key, fromValue);
 			from.remove(key);
 		}

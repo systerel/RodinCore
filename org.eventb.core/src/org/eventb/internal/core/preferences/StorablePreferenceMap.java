@@ -57,38 +57,11 @@ public abstract class StorablePreferenceMap<T> extends CachedPreferenceMap<T> {
 	}
 
 	public void load() {
-		final boolean recovered = load(getValue());
-		if (recovered) {
-			store();
-		}
+		inject(getValue());
 	}
 
 	public void loadDefault() {
-		final boolean recovered = load(getDefaultValue());
-		if (recovered) {
-			storeDefault();
-		}
-	}
-
-	protected abstract CachedPreferenceMap<T> recover(String pref);
-
-	// true if recovered
-	private boolean load(String pref) {
-		try {
-			inject(pref);
-			return false;
-		} catch (IllegalArgumentException e) {
-			// backward compatibility: try to recover
-			final CachedPreferenceMap<T> map = recover(pref);
-			if (map == null) {
-				// problem logged by inject()
-				throw e;
-			}
-			clear();
-			addAll(map.getEntries());
-			return true;
-		}
-
+		inject(getDefaultValue());
 	}
 
 }

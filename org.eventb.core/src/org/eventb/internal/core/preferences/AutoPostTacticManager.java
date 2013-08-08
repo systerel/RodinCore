@@ -15,7 +15,6 @@ import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
-import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.recoverOldPreference;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
@@ -42,8 +41,6 @@ import org.eventb.internal.core.pom.POMTacticPreference;
  */
 public class AutoPostTacticManager implements IAutoPostTacticManager {
 
-	// FIXME: workspace/project scope auto/post enable + consider hidden hyps
-	
 	private static final IAutoTacticPreference postTacPref = PostTacticPreference
 			.getDefault();
 	private static final IAutoTacticPreference autoTacPref = POMTacticPreference
@@ -95,19 +92,7 @@ public class AutoPostTacticManager implements IAutoPostTacticManager {
 			return auto ? autoTacPref.getSelectedComposedTactic() : postTacPref
 					.getSelectedComposedTactic();
 		}
-		try {
-			profilesCache.inject(profiles);
-		} catch (IllegalArgumentException e) {
-			// backward compatibility: was stored as lists of tactics
-			// try to recover
-			final CachedPreferenceMap<ITacticDescriptor> recovered = recoverOldPreference(profiles);
-			
-			if (recovered != null) {
-				// problem already logged by inject()
-				profilesCache.clear();
-				profilesCache.addAll(recovered.getEntries());
-			}
-		}
+		profilesCache.inject(profiles);
 		final String choice;
 		if (auto) {
 			choice = preferencesService.getString(PLUGIN_ID,
