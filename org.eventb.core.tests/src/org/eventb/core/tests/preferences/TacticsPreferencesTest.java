@@ -55,6 +55,7 @@ import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.LoopOnAllPending;
 import org.eventb.core.tests.BuilderTest;
+import org.junit.Before;
 import org.junit.Test;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -101,7 +102,23 @@ public class TacticsPreferencesTest extends BuilderTest {
 			"org.eventb.core.seqprover.goalInHypTac",
 			"org.eventb.core.seqprover.funGoalTac", };
 
-	private static final String store = "org.eventb.ui.tests";
+	private static final String store = "org.eventb.core.tests";
+	private static final String uiStore = "org.eventb.ui";
+
+	private static void resetPreference(String qualifier)
+			throws BackingStoreException {
+		final IEclipsePreferences node = InstanceScope.INSTANCE
+				.getNode(qualifier);
+		if (node != null) {
+			node.removeNode();
+		}
+	}
+
+	@Before
+	public void resetPreferences() throws BackingStoreException {
+		resetPreference(store);
+		resetPreference(uiStore);
+	}
 
 	public static Collection<ITacticDescriptor> getAvailableTactics() {
 		final IAutoTacticRegistry autoTacticRegistry = SequentProver.getAutoTacticRegistry();
@@ -261,7 +278,7 @@ public class TacticsPreferencesTest extends BuilderTest {
 		final String oldPref = oldMap.extract();
 
 		// store with old preference format
-		InstanceScope.INSTANCE.getNode(store).put(
+		InstanceScope.INSTANCE.getNode(uiStore).put(
 				TacticPreferenceConstants.P_TACTICSPROFILES, oldPref);
 
 		// load with a new format tactics cache, supposedly compatible
