@@ -72,8 +72,9 @@ public class GenMPC {
 	// the set of all the needed hypotheses to rewrite the goal
 	// (computed by this method, it should be an empty set)
 	private final Set<Predicate> neededHyps;
-	private final Map<Predicate, Substitute> goalSubstitutes;
-	private final Map<Predicate, Substitute> hypSubstitutes;
+	// All possible substitutions
+	// (hypothesis or goal ↦ substitute (<code>⊤</code> or <code>⊥</code>))
+	private final Map<Predicate, Substitute> substitutes;
 
 	public GenMPC(Level level, IProofMonitor pm, IProverSequent seq) {
 		super();
@@ -84,8 +85,7 @@ public class GenMPC {
 		neededHyps = new HashSet<Predicate>();
 		goal = seq.goal();
 		goalDisjuncts = breakPossibleDisjunct(goal);
-		goalSubstitutes = new HashMap<Predicate, Substitute>();
-		hypSubstitutes = new HashMap<Predicate, Substitute>();
+		substitutes = new HashMap<Predicate, Substitute>();
 	}
 
 	public Predicate goal() {
@@ -118,7 +118,6 @@ public class GenMPC {
 	public boolean runGenMP() {
 		hypSet = createHypSet();
 		goalToHypSet = createGoalToHypSet();
-		computeAllSubstitutes();
 		goalToHypSet.addAll(hypSet);
 
 		Map<Predicate, List<IPosition>> m = analyzePred(goal, hypSet);
@@ -148,23 +147,33 @@ public class GenMPC {
 	private Set<Predicate> createHypSet() {
 		Set<Predicate> hypSet = new HashSet<Predicate>();
 		for (Predicate hyp : seq.hypIterable()) {
-			addToSet(hypSet, computePred(hyp));
+			addToSet(hypSet, computePred(hyp), false);
 		}
 		return hypSet;
 	}
 
 	/**
-	 * Add to a set a predicate if and only if it is different from
-	 * <code>⊤</code> and <code>⊥</code>
+	 * Adds to a set a predicate if and only if it is different from
+	 * <code>⊤</code> and <code>⊥</code>. Computes also the substitute of the
+	 * given predicate.
 	 * 
 	 * @param hypSet
 	 *            the set where we want to add <code>pred</code>
 	 * @param pred
 	 *            the predicate possibly added to <code>hypSet</code>
+	 * @param isGoal
+	 *            a boolean telling whether the predicate comes from the goal
 	 */
-	private void addToSet(Set<Predicate> hypSet, Predicate pred) {
+	private void addToSet(Set<Predicate> hypSet, Predicate pred, boolean isGoal) {
 		if (!isTrueOrFalsePred(pred)) {
 			hypSet.add(pred);
+			// Hypotheses take precedence over the goal.
+			if (isGoal && !substitutes.containsKey(pred)
+					&& !seq.containsHypothesis(pred)) {
+				substitutes.put(pred, computeSubstitutionForGoal(pred));
+			} else {
+				substitutes.put(pred, computeSubstitutionForHyp(pred));
+			}
 		}
 	}
 
@@ -404,18 +413,6 @@ public class GenMPC {
 	}
 
 	/**
-	 * Pre-compute all possible substitutions.
-	 */
-	private void computeAllSubstitutes() {
-		for (Predicate hyp : hypSet) {
-			hypSubstitutes.put(hyp, computeSubstitutionForHyp(hyp));
-		}
-		for (Predicate subGoal : goalToHypSet) {
-			goalSubstitutes.put(subGoal, computeSubstitutionForGoal(subGoal));
-		}
-	}
-
-	/**
 	 * Pre-compute a appropriate substitution when a predicate matches the
 	 * hypothesis specified.
 	 *
@@ -474,21 +471,15 @@ public class GenMPC {
 	 *         equal to the sequent's goal or is among the predicate when the
 	 *         goal denotes a disjunction.
 	 */
-	public Substitute findSubstitution(Predicate predicate,
-			boolean considerGoal) {
-		if (hypSubstitutes.containsKey(predicate)) {
-			return hypSubstitutes.get(predicate);
+	public Substitute findSubstitution(Predicate predicate, boolean considerGoal) {
+		final Substitute substitute = substitutes.get(predicate);
+		if (substitute == null) {
+			return null;
 		}
-
-		if (!considerGoal) {
-		return null;
+		if (substitute.fromGoal() && !considerGoal) {
+			return null;
 		}
-
-		if (goalSubstitutes.containsKey(predicate)) {
-			return goalSubstitutes.get(predicate);
-		}
-
-		return null;
+		return substitute;
 	}
 
 	public Set<Predicate> createGoalToHypSet() {
@@ -497,13 +488,13 @@ public class GenMPC {
 			if (!isNeg(goal)) {
 				for (Predicate child : goalDisjuncts) {
 					if (isNeg(child)) {
-						addToSet(goalToHypSet, makeNeg(child));
+						addToSet(goalToHypSet, makeNeg(child), true);
 					} else {
-						addToSet(goalToHypSet, child);
+						addToSet(goalToHypSet, child, true);
 					}
 				}
 			} else {
-				addToSet(goalToHypSet, makeNeg(goal));
+				addToSet(goalToHypSet, makeNeg(goal), true);
 			}
 		}
 		return goalToHypSet;
