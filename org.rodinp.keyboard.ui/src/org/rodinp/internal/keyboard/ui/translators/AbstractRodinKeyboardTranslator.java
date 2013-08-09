@@ -15,6 +15,7 @@
 package org.rodinp.internal.keyboard.ui.translators;
 
 import static org.rodinp.keyboard.core.KeyboardUtils.debug;
+import static org.rodinp.keyboard.core.KeyboardUtils.isTextCharacter;
 
 import java.util.Collection;
 
@@ -22,7 +23,6 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.rodinp.keyboard.core.ISymbol;
-import org.rodinp.keyboard.core.KeyboardUtils;
 
 /**
  * @author htson
@@ -75,111 +75,88 @@ public abstract class AbstractRodinKeyboardTranslator implements IRodinKeyboardT
 	}
 	
 	private void translate(AbstractWidgetWrapper widget, int beginIndex,
-			int endIndex) {
+			int subStringEndIndex) {
 		if (debug) {
 			debug("***************************************");
 			debug("Begin: " + beginIndex);
-			debug("End: " + endIndex);
+			debug("End: " + subStringEndIndex);
 		}
-		if (beginIndex == endIndex)
+		if (beginIndex == subStringEndIndex)
 			return;
-		int currentPos = widget.getCaretOffset();
-		final String text = widget.getText();
-		final String subString = text.substring(beginIndex, endIndex);
-
-		if (debug) {
-			debug("Process: \"" + text + "\"");
-			debug("Pos: " + currentPos);
-			debug("Substring: \"" + subString + "\"");
-		}
-		int realIndex = 0;
-		String combo = null;
-		String result = null;
 
 		int i = 0;
 		for (i = symbolComputer.getMaxSymbolSize(); i > 0; i--) {
-			boolean translated = false;
+
+			String text = widget.getText();
+			int subStringEnd = Math.min(subStringEndIndex, text.length());
+			String subString = text.substring(beginIndex, subStringEnd);
+			int currentPos = widget.getCaretOffset();
+			int indexInSubstring = 0;
+
+			if (debug) {
+				debug("Process: \"" + text + "\"");
+				debug("Pos: " + currentPos);
+				debug("Substring: \"" + subString + "\"");
+			}
 
 			final Collection<ISymbol> collection = symbolComputer.getSymbols(i);
 			if (collection != null) {
 				for (ISymbol symbol : collection) {
-					combo = symbol.getCombo();
+
+					final String combo = symbol.getCombo();
+					final String result = symbol.getTranslation();
+
 					int index = subString.indexOf(combo);
 
-					if (index != -1) {
-						result = symbol.getTranslation();
-						realIndex = beginIndex + index;
+					while (index != -1) {
+
+						indexInSubstring = beginIndex + index;
 
 						// particular treatment for the text translators: do
 						// not translate symbols which could be substrings of
 						// identifiers
-						if (textTranslator && //
-								isNoTextTranslation(text, combo, realIndex,
-										endIndex)) {
-							result = combo;
-							break;
+ 						if (textTranslator && //
+								isNoTextTranslation(text, combo,
+										indexInSubstring, subStringEnd)) {
+							index = subString.indexOf(combo, index + 1);
+							continue;
 						}
 
-						widget.setSelection(realIndex,
-								realIndex + combo.length());
+						widget.setSelection(indexInSubstring, indexInSubstring
+								+ combo.length());
 						if (debug)
-							debug("Replace at pos "
-									+ realIndex + " from \"" + combo
-									+ "\" by \"" + result + "\"");
+							debug("Replace at pos " + indexInSubstring
+									+ " from \"" + combo + "\" by \"" + result
+									+ "\"");
 						widget.insert(result);
 
-						if (currentPos <= realIndex) { // Translate after
-							// current pos
-							widget.setSelection(currentPos);
-						}
-						// Transate before current pos
-						else if (realIndex + combo.length() < currentPos)
-							widget.setSelection(currentPos - combo.length()
-									+ result.length());
-						// Translate within the current pos
-						else {
-							widget.setSelection(realIndex + result.length());
-						}
-						translated = true;
-						break;
+						text = widget.getText();
+						subStringEnd = Math.min(subStringEndIndex, text.length());
+						subString = text.substring(beginIndex, subStringEnd);
+						index = subString.indexOf(combo, indexInSubstring+1);
 					}
 				}
-				if (translated)
-					break;
 			}
-
 		}
-
-		// no translation occurred, exit.
-		if (i == 0)
-			return;
-
-		// otherwise, keep translating the head and last of the string
-		else {
-			translate(widget, realIndex + result.length(),
-					endIndex - combo.length() + result.length());
-			translate(widget, beginIndex, realIndex);
-		}
-		return;
 	}
 	
 	private boolean isNoTextTranslation(String text, String test,
-			int realIndex, int endIndex) {
+			int indexInString, int stringEndIndex) {
 		// if the previous character is a text character then ignore and
 		// continue (similar to identical translation).
-		if (realIndex != 0) {
-			if (KeyboardUtils.isTextCharacter(text.charAt(realIndex - 1))) {
+		if (indexInString != 0) {
+			if (isTextCharacter(text.charAt(indexInString - 1))) {
 				return true;
 			}
 		}
 		// if the next character is a text character or the end then ignore and
 		// continue (similar to identical translation).
-		if (realIndex + test.length() != endIndex) {
-			if (KeyboardUtils.isTextCharacter(text.charAt(realIndex + test.length()))) {
+		if (indexInString + test.length() != stringEndIndex) {
+			if (isTextCharacter(text.charAt(indexInString + test.length()))) {
 				return true;
 			}
 		} else {
-			if (endIndex == text.length()) {
+			if (stringEndIndex == text.length()) {
 				return true;
 			}
 		}

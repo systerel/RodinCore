@@ -50,5 +50,15 @@ public class EventBKeyboardJumpingTestCase extends AbstractKeyboardJumpingTestCa
 		testJumping("bl = bl", new int[] { 3, 7, 9 }, new String[] { ":",
 				" \\ {yy}", "/" }, "bl \u2254 bl \u222a {yy}");
 	}
+	
+	/**
+	 * Checks that insertion of "r" after "o" is translated to "∨" if substring
+	 * "or" is already present in the widget string contents.
+	 */
+	@Test
+	public void testBug686Translation() {
+		testJumping("order=2 o order=3", new int[] { 9 }, new String[] { "r" },
+				"order=2 \u2228 order=3");
+	}
 
 }
