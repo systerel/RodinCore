@@ -65,12 +65,6 @@ public class GenMPC {
 
 	private final Level level;
 	private final IProofMonitor pm;
-	// the map (hypothesis ↦ set of its child that can be substitute
-	// <code>⊤</code> or <code>⊥</code>) used for the re-writing
-	private final Map<Predicate, Map<Predicate, List<IPosition>>> modifHypMap;
-	// the set of all the sub-predicate of the goal that can be
-	// substitute by <code>⊤</code> or <code>⊥</code>
-	private Map<Predicate, List<IPosition>> modifGoalMap;
 	private Set<Predicate> goalToHypSet;
 	private Set<Predicate> hypSet;
 	private Predicate rewrittenGoal;
@@ -88,8 +82,6 @@ public class GenMPC {
 		this.seq = seq;
 		ff = seq.getFormulaFactory();
 		neededHyps = new HashSet<Predicate>();
-		modifHypMap = new HashMap<Predicate, Map<Predicate, List<IPosition>>>();
-		modifGoalMap = new HashMap<Predicate, List<IPosition>>();
 		goal = seq.goal();
 		goalDisjuncts = breakPossibleDisjunct(goal);
 		goalSubstitutes = new HashMap<Predicate, Substitute>();
@@ -130,10 +122,7 @@ public class GenMPC {
 		goalToHypSet.addAll(hypSet);
 
 		Map<Predicate, List<IPosition>> m = analyzePred(goal, hypSet);
-		if (m != null) {
-			modifGoalMap = m;
-		}
-		rewrittenGoal = rewriteGoal();
+		rewrittenGoal = rewriteGoal(m);
 
 		boolean isGoalDependent = false;
 		List<IHypAction> hypActions = new ArrayList<IHypAction>();
@@ -142,9 +131,6 @@ public class GenMPC {
 				return false;
 			}
 			m = analyzePred(hyp, goalToHypSet);
-			if (!m.isEmpty()) {
-				modifHypMap.put(hyp, m);
-			}
 			isGoalDependent |= rewriteHyp(hypActions, hyp, m);
 
 		}
@@ -340,9 +326,9 @@ public class GenMPC {
 	 * @return the goal re-written, or <code>null</code> if it has not been
 	 *         re-written
 	 */
-	public Predicate rewriteGoal() {
+	public Predicate rewriteGoal(Map<Predicate, List<IPosition>> m) {
 		Predicate rewriteGoal = goal;
-		for (Entry<Predicate, List<IPosition>> entry : modifGoalMap.entrySet()) {
+		for (Entry<Predicate, List<IPosition>> entry : m.entrySet()) {
 			final Predicate value = entry.getKey();
 			final Substitute substitution = findSubstitutionForGoal(value);
 			if (substitution == null) {
