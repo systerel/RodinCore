@@ -74,13 +74,10 @@ public class ElementTypeManager {
 	}
 
 	/**
-	 * Returns the singleton ElementTypeManager
+	 * Returns a fresh instance for testing purposes.
 	 */
 	public final static ElementTypeManager getInstanceForTests() {
-		if (INSTANCE == null) {
-			INSTANCE = new ElementTypeManager();
-		}
-		return INSTANCE;
+		return new ElementTypeManager();
 	}
 
 	private ElementTypeManager() {
