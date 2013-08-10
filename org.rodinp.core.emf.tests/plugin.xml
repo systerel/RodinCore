@@ -81,5 +81,32 @@
             name="Test Dependency Attribute">
       </attributeType>
    </extension>
+   <extension
+         point="org.rodinp.core.itemRelations">
+      <relationship
+            parentTypeId="org.rodinp.core.emf.tests.test">
+         <childType
+               typeId="org.rodinp.core.tests.namedElement">
+         </childType>
+         <childType
+               typeId="org.rodinp.core.emf.tests.implicitHolder">
+         </childType>
+         <childType
+               typeId="org.rodinp.core.emf.tests.testDependency">
+         </childType>
+      </relationship>
+      <relationship
+            parentTypeId="org.rodinp.core.emf.tests.implicitHolder">
+         <childType
+               typeId="org.rodinp.core.tests.namedElement">
+         </childType>
+      </relationship>
+      <relationship
+            parentTypeId="org.rodinp.core.emf.tests.testDependency">
+         <attributeType
+               typeId="org.rodinp.core.emf.tests.testDependencyAttribute">
+         </attributeType>
+      </relationship>
+   </extension>
 
 </plugin>
