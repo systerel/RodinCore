@@ -332,36 +332,6 @@ public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 	IPRProofRule[] getProofRules() throws RodinDBException;
 
 	/**
-	 * Returns the comment associated to the root node of this proof. This
-	 * comment is stored in the <code>org.eventb.core.comment</code> attribute
-	 * of this element. If the attribute is not present an empty string is
-	 * returned.
-	 * 
-	 * @return the comment associated to the root node of this proof
-	 * @throws RodinDBException
-	 * @see #setComment(String, IProgressMonitor)
-	 */
-	String getComment() throws RodinDBException;
-
-	/**
-	 * Sets the comment attribute of this proof. If the given comment is
-	 * <code>null</code> or has a length of zero, then the corresponding
-	 * attribute is removed from this element.
-	 * 
-	 * @param comment
-	 *            the comment to set (might be <code>null</code>)
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * 
-	 * @throws RodinDBException
-	 * @see #getComment()
-	 */
-	void setComment(String comment, IProgressMonitor monitor)
-			throws RodinDBException;
-
-	
-	/**
 	 * Returns a handle to the reasoner child with the given name.
 	 * <p>
 	 * This is a handle-only method. The reasoner element may or may not be
