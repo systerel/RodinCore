@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
-import static org.eventb.core.seqprover.eventbExtensions.Lib.isDisj;
-import static org.eventb.core.seqprover.eventbExtensions.Lib.disjuncts;
-import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
-import static org.eventb.core.seqprover.eventbExtensions.Lib.isFalse;
-import static org.eventb.core.seqprover.eventbExtensions.Lib.isTrue;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
-import static org.eventb.core.seqprover.eventbExtensions.DLib.True;
-import static org.eventb.core.seqprover.eventbExtensions.DLib.False;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.disjuncts;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isDisj;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isFalse;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isTrue;
+import static org.eventb.internal.core.seqprover.eventbExtensions.Substitute.makeSubstitute;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +33,6 @@ import org.eventb.core.ast.AssociativePredicate;
 import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.DefaultInspector;
 import org.eventb.core.ast.ExtendedPredicate;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IAccumulator;
 import org.eventb.core.ast.IPosition;
 import org.eventb.core.ast.LiteralPredicate;
@@ -57,7 +55,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonen
 public class GenMPC {
 
 	private final IProverSequent seq;
-	private final FormulaFactory ff;
 	private final Predicate goal;
 	
 	private final Level level;
@@ -76,7 +73,6 @@ public class GenMPC {
 		this.level = level;
 		this.pm = pm;
 		this.seq = seq;
-		ff = seq.getFormulaFactory();
 		neededHyps = new HashSet<Predicate>();
 		goal = seq.goal();
 		substitutes = new HashMap<Predicate, Substitute>();
@@ -135,18 +131,15 @@ public class GenMPC {
 	 */
 	private void extractFromHypotheses() {
 		for (Predicate hyp : seq.hypIterable()) {
-			if (isNeg(hyp)) {
-				final Predicate negPred = makeNeg(hyp);
-				addSubstitute(new Substitute(hyp, false, negPred, False(ff)));
-			} else {
-				addSubstitute(new Substitute(hyp, false, hyp, True(ff)));
-			}
+			addSubstitute(hyp, false, hyp);
 		}
 	}
 
 	// Substitutes coming from hypotheses must be added BEFORE those coming from
 	// the goal.
-	private void addSubstitute(Substitute subst) {
+	private void addSubstitute(Predicate origin, boolean isGoal,
+			Predicate source) {
+		final Substitute subst = makeSubstitute(origin, isGoal, source);
 		final Predicate toReplace = subst.toReplace();
 		if (isTrueOrFalsePred(toReplace)) {
 			return;
@@ -418,11 +411,7 @@ public class GenMPC {
 			return;
 		}
 		for (Predicate child : breakPossibleDisjunct(goal)) {
-			if (isNeg(child)) {
-				addSubstitute(new Substitute(goal, true, makeNeg(child), True(ff)));
-			} else {
-				addSubstitute(new Substitute(goal, true, child, False(ff)));
-			}
+			addSubstitute(goal, true, child);
 		}
 	}
 

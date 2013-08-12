@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.False;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.True;
+import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
+
+import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 
 /**
@@ -19,6 +25,33 @@ import org.eventb.core.ast.Predicate;
  * @author Josselin Dolhen
  */
 public class Substitute {
+
+	/**
+	 * Returns a substitute for the source predicate coming from a hypothesis or
+	 * a goal.
+	 * 
+	 * @param origin
+	 *            the hypothesis or goal predicate
+	 * @param isGoal
+	 *            <code>true</code> if coming from goal
+	 * @param source
+	 *            the predicate to be substituted, modulo negation
+	 * @return a fresh substitution
+	 */
+	public static Substitute makeSubstitute(Predicate origin, boolean isGoal,
+			Predicate source) {
+		final Predicate toReplace;
+		final Predicate substitute;
+		final FormulaFactory ff = origin.getFactory();
+		if (isNeg(source)) {
+			toReplace = makeNeg(source);
+			substitute = isGoal ? True(ff) : False(ff);
+		} else {
+			toReplace = source;
+			substitute = isGoal ? False(ff) : True(ff);
+		}
+		return new Substitute(origin, isGoal, toReplace, substitute);
+	}
 
 	// the predicate from which this substitution comes (hypothesis or goal)
 	private final Predicate origin;
