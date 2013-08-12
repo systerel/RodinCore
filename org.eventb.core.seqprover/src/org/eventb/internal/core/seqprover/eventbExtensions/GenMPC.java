@@ -65,8 +65,6 @@ public class GenMPC {
 
 	private final Level level;
 	private final IProofMonitor pm;
-	private Set<Predicate> goalToHypSet;
-	private Set<Predicate> hypSet;
 	private Predicate rewrittenGoal;
 	private RewriteHypsOutput output;
 	// the set of all the needed hypotheses to rewrite the goal
@@ -116,11 +114,10 @@ public class GenMPC {
 	 *
 	 */
 	public boolean runGenMP() {
-		hypSet = createHypSet();
-		goalToHypSet = createGoalToHypSet();
-		goalToHypSet.addAll(hypSet);
+		extractFromHypotheses();
+		extractFromGoal();
 
-		Map<Predicate, List<IPosition>> m = analyzePred(goal, hypSet);
+		Map<Predicate, List<IPosition>> m = analyzePred(goal);
 		rewrittenGoal = rewriteGoal(m);
 
 		boolean isGoalDependent = false;
@@ -129,7 +126,7 @@ public class GenMPC {
 			if (pm != null && pm.isCanceled()) {
 				return false;
 			}
-			m = analyzePred(hyp, goalToHypSet);
+			m = analyzePred(hyp);
 			isGoalDependent |= rewriteHyp(hypActions, hyp, m);
 
 		}
@@ -138,35 +135,25 @@ public class GenMPC {
 	}
 
 	/**
-	 * Returns a set of the sequent's hypotheses. If one is tagged
-	 * <code>NOT</code>, then the set contains its child.
-	 * 
-	 * @return a set of the hypotheses of the sequent (no negative predicates
-	 *         allowed)
+	 * Adds the substitutes that can be extracted from hypotheses.
 	 */
-	private Set<Predicate> createHypSet() {
-		Set<Predicate> hypSet = new HashSet<Predicate>();
+	private void extractFromHypotheses() {
 		for (Predicate hyp : seq.hypIterable()) {
-			addToSet(hypSet, computePred(hyp), false);
+			addSubstitute(computePred(hyp), false);
 		}
-		return hypSet;
 	}
 
 	/**
-	 * Adds to a set a predicate if and only if it is different from
-	 * <code>⊤</code> and <code>⊥</code>. Computes also the substitute of the
-	 * given predicate.
+	 * Adds to the map of substitutes a new substitute for the given predicate
+	 * if and only if it is different from <code>⊤</code> and <code>⊥</code>.
 	 * 
-	 * @param hypSet
-	 *            the set where we want to add <code>pred</code>
 	 * @param pred
-	 *            the predicate possibly added to <code>hypSet</code>
+	 *            the predicate for which a new substitute shall be added
 	 * @param isGoal
 	 *            a boolean telling whether the predicate comes from the goal
 	 */
-	private void addToSet(Set<Predicate> hypSet, Predicate pred, boolean isGoal) {
+	private void addSubstitute(Predicate pred, boolean isGoal) {
 		if (!isTrueOrFalsePred(pred)) {
-			hypSet.add(pred);
 			// Hypotheses take precedence over the goal.
 			if (isGoal && !substitutes.containsKey(pred)
 					&& !seq.containsHypothesis(pred)) {
@@ -178,11 +165,11 @@ public class GenMPC {
 	}
 
 	/**
-	 * Compute the predicate to stored in the set <code>hypSet</code>.
+	 * Computes the predicate that can be substituted.
 	 * 
 	 * @param hyp
-	 *            the hypothesis parsed (should not be <code>⊤</code> or
-	 *            <code>⊥</code>).
+	 *            the hypothesis (should not be <code>⊤</code> or <code>⊥</code>
+	 *            ).
 	 * @return <code>hyp</code> if it is not a negation, <code>¬hyp</code> else.
 	 */
 	private Predicate computePred(Predicate hyp) {
@@ -208,55 +195,46 @@ public class GenMPC {
 
 	/**
 	 * Returns a map of (Predicate ↦ List of IPositions) where Predicate is a
-	 * sub-predicate contained both in <code>pred</code> and
-	 * <code>hypSet\{hyp}</code> and the List of IPositions is a list of
-	 * positions where Predicate occurs in <code>pred</code>.
+	 * sub-predicate contained both in <code>pred</code> and the known
+	 * substitutes and the List of IPositions is a list of positions where
+	 * Predicate occurs in <code>pred</code>.
 	 * 
 	 * @param pred
-	 *            the predicate analyzed (should be either a hypothesis or a
+	 *            the predicate to analyze (should be either a hypothesis or a
 	 *            goal)
-	 * @param hypSet
-	 *            the set reference of hypotheses
-	 * @return the map (predicate contained both in <code>origin</code> and
-	 *         <code>hypSet</code> ↦ its position in <code>pred</code>)
+	 * @return a map of all possible substitution positions
 	 */
-	public Map<Predicate, List<IPosition>> analyzePred(Predicate pred,
-			Set<Predicate> hypSet) {
+	public Map<Predicate, List<IPosition>> analyzePred(Predicate pred) {
 		Map<Predicate, List<IPosition>> map = new HashMap<Predicate, List<IPosition>>();
-		analyzeSubPred(pred, hypSet, map);
+		analyzeSubPred(pred, map);
 		return map;
 	}
 
 	/**
-	 * Record in <code>map</code> all the sub-predicate of <code>origin</code>
-	 * contained in <code>hypSet</code>, as well as their position in
-	 * <code>origin</code>. If A sub-predicate is recorded, its children are not
-	 * analyzed.
+	 * Records in <code>map</code> all the sub-predicate of <code>origin</code>
+	 * that can be substituted, as well as their position in <code>origin</code>
+	 * . If A sub-predicate is recorded, its children are not analyzed.
 	 * 
 	 * @param origin
 	 *            the predicate (hypothesis or goal) analyzed
-	 * @param hypSet
-	 *            the set reference of hypotheses
 	 * @param map
 	 *            the map (predicate contained both in <code>origin</code> and
-	 *            <code>hypSet</code> ↦ its position in <code>origin</code>)
+	 *            that can be substituted ↦ its position in <code>origin</code>)
 	 */
 	public void analyzeSubPred(final Predicate origin,
-			final Set<Predicate> hypSet,
 			final Map<Predicate, List<IPosition>> map) {
 
 		origin.inspect(new DefaultInspector<Predicate>() {
 
 			private void addPredToMap(
 					final Map<Predicate, List<IPosition>> map,
-					final Set<Predicate> hypSet, Predicate predicate,
-					IAccumulator<Predicate> accumulator) {
+					Predicate predicate, IAccumulator<Predicate> accumulator) {
 
 				if (isTrueOrFalsePred(predicate)
 						|| predicate == computePred(origin)) {
 					return;
 				}
-				if (hypSet.contains(predicate)) {
+				if (substitutes.containsKey(predicate)) {
 					if (!map.containsKey(predicate)) {
 						map.put(predicate, new ArrayList<IPosition>());
 					}
@@ -268,61 +246,61 @@ public class GenMPC {
 			@Override
 			public void inspect(AssociativePredicate predicate,
 					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, hypSet, predicate, accumulator);
+				addPredToMap(map, predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(BinaryPredicate predicate,
 					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, hypSet, predicate, accumulator);
+				addPredToMap(map, predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(ExtendedPredicate predicate,
 					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, hypSet, predicate, accumulator);
+				addPredToMap(map, predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(LiteralPredicate predicate,
 					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, hypSet, predicate, accumulator);
+				addPredToMap(map, predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(MultiplePredicate predicate,
 					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, hypSet, predicate, accumulator);
+				addPredToMap(map, predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(PredicateVariable predicate,
 					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, hypSet, predicate, accumulator);
+				addPredToMap(map, predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(QuantifiedPredicate predicate,
 					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, hypSet, predicate, accumulator);
+				addPredToMap(map, predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(RelationalPredicate predicate,
 					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, hypSet, predicate, accumulator);
+				addPredToMap(map, predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(SimplePredicate predicate,
 					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, hypSet, predicate, accumulator);
+				addPredToMap(map, predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(UnaryPredicate predicate,
 					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, hypSet, predicate, accumulator);
+				addPredToMap(map, predicate, accumulator);
 			}
 
 		});
@@ -482,22 +460,20 @@ public class GenMPC {
 		return substitute;
 	}
 
-	public Set<Predicate> createGoalToHypSet() {
-		final Set<Predicate> goalToHypSet = new HashSet<Predicate>();
+	public void extractFromGoal() {
 		if (level.from(Level.L1)) {
 			if (!isNeg(goal)) {
 				for (Predicate child : goalDisjuncts) {
 					if (isNeg(child)) {
-						addToSet(goalToHypSet, makeNeg(child), true);
+						addSubstitute(makeNeg(child), true);
 					} else {
-						addToSet(goalToHypSet, child, true);
+						addSubstitute(child, true);
 					}
 				}
 			} else {
-				addToSet(goalToHypSet, makeNeg(goal), true);
+				addSubstitute(makeNeg(goal), true);
 			}
 		}
-		return goalToHypSet;
 	}
 
 	/**
