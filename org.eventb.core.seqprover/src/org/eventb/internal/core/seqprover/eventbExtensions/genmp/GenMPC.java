@@ -43,7 +43,7 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonens.Level;
+import org.eventb.internal.core.seqprover.eventbExtensions.genmp.AbstractGenMP.Level;
 
 /**
  * @author Emmanuel Billaud

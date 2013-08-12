@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.genmp;
 
-import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ProverRule;
-import org.eventb.core.seqprover.SequentProver;
 
 /**
  * Simplifies the visible hypotheses and goal in a sequent by replacing
@@ -25,35 +19,9 @@ import org.eventb.core.seqprover.SequentProver;
  * @author Emmanuel Billaud
  */
 public class GeneralizedModusPonens extends AbstractGenMP {
-	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".genMP";
 
-	public static enum Level {
-		L0, L1;
-
-		public static final Level LATEST = Level.latest();
-
-		private static final Level latest() {
-			final Level[] values = Level.values();
-			return values[values.length - 1];
-		}
-
-		public boolean from(Level other) {
-			return this.ordinal() >= other.ordinal();
-		}
-
+	public GeneralizedModusPonens() {
+		super(Level.L0);
 	}
-
-	@Override
-	public String getReasonerID() {
-		return REASONER_ID;
-	}
-
-	@ProverRule({ "GENMP_HYP_HYP", "GENMP_NOT_HYP_HYP", "GENMP_HYP_GOAL",
-			"GENMP_NOT_HYP_GOAL" })
-	@Override
-	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
-			IProofMonitor pm) {
-		return super.apply(seq, input, pm, Level.L0);
-	}
-
+	
 }

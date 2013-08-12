@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.genmp;
 
-import org.eventb.core.seqprover.IProofMonitor;
-import org.eventb.core.seqprover.IProverSequent;
-import org.eventb.core.seqprover.IReasonerInput;
-import org.eventb.core.seqprover.IReasonerOutput;
-import org.eventb.core.seqprover.ProverRule;
-import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonens.Level;
 
 /**
  * Enhancement of the reasoner GeneralizedModusPonens. This reasoner implements
@@ -30,21 +24,9 @@ import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModu
  * @author Emmanuel Billaud
  */
 public class GeneralizedModusPonensL1 extends AbstractGenMP {
-	private static final String REASONER_ID = GeneralizedModusPonens.REASONER_ID
-			+ "L1";
 
-	@Override
-	public String getReasonerID() {
-		return REASONER_ID;
-	}
-
-	@ProverRule({ "GENMP_HYP_HYP", "GENMP_NOT_HYP_HYP", "GENMP_HYP_GOAL",
-			"GENMP_NOT_HYP_GOAL", "GENMP_GOAL_HYP", "GENMP_NOT_GOAL_HYP",
-			"GENMP_OR_GOAL_HYP", "GENMP_OR_NOT_GOAL_HYP" })
-	@Override
-	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
-			IProofMonitor pm) {
-		return super.apply(seq, input, pm, Level.L1);
+	public GeneralizedModusPonensL1() {
+		super(Level.L1);
 	}
 
 }
