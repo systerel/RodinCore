@@ -8,40 +8,30 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.seqprover.eventbExtensions;
+package org.eventb.internal.core.seqprover.eventbExtensions.genmp;
 
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.ProverRule;
-import org.eventb.core.seqprover.SequentProver;
+import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonens.Level;
 
 /**
- * Simplifies the visible hypotheses and goal in a sequent by replacing
- * sub-predicates <code>P</code> by <code>⊤</code> (or <code>⊥</code>) if
- * <code>P</code> (or <code>¬P</code>) appears as hypothesis (global and local).
+ * Enhancement of the reasoner GeneralizedModusPonens. This reasoner implements
+ * 4 more rules than the previous one :
+ * <ul>
+ * <li>(H,φ(G)⊢G) ≡ (H,φ(⊥)⊢G</li>
+ * <li>(H,φ(G)⊢¬G) ≡ (H,φ(⊤)⊢¬G</li>
+ * <li>(H,φ(Gi)⊢G1 ∨ ... ∨ Gi ∨ ... ∨ Gn) ≡ (H,φ(⊥)⊢G1 ∨ ... ∨ Gi ∨ ... ∨ Gn</li>
+ * <li>(H,φ(Gi)⊢G1 ∨ ... ∨ ¬Gi ∨ ... ∨ Gn) ≡ (H,φ(⊤)⊢G1 ∨ ... ∨ ¬Gi ∨ ... ∨ Gn</li>
+ * </ul>
  * 
  * @author Emmanuel Billaud
  */
-public class GeneralizedModusPonens extends AbstractGenMP {
-	public static final String REASONER_ID = SequentProver.PLUGIN_ID + ".genMP";
-
-	public static enum Level {
-		L0, L1;
-
-		public static final Level LATEST = Level.latest();
-
-		private static final Level latest() {
-			final Level[] values = Level.values();
-			return values[values.length - 1];
-		}
-
-		public boolean from(Level other) {
-			return this.ordinal() >= other.ordinal();
-		}
-
-	}
+public class GeneralizedModusPonensL1 extends AbstractGenMP {
+	private static final String REASONER_ID = GeneralizedModusPonens.REASONER_ID
+			+ "L1";
 
 	@Override
 	public String getReasonerID() {
@@ -49,11 +39,12 @@ public class GeneralizedModusPonens extends AbstractGenMP {
 	}
 
 	@ProverRule({ "GENMP_HYP_HYP", "GENMP_NOT_HYP_HYP", "GENMP_HYP_GOAL",
-			"GENMP_NOT_HYP_GOAL" })
+			"GENMP_NOT_HYP_GOAL", "GENMP_GOAL_HYP", "GENMP_NOT_GOAL_HYP",
+			"GENMP_OR_GOAL_HYP", "GENMP_OR_NOT_GOAL_HYP" })
 	@Override
 	public IReasonerOutput apply(IProverSequent seq, IReasonerInput input,
 			IProofMonitor pm) {
-		return super.apply(seq, input, pm, Level.L0);
+		return super.apply(seq, input, pm, Level.L1);
 	}
 
 }

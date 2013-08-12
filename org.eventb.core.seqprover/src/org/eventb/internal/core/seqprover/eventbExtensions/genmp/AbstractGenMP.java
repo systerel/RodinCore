@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.seqprover.eventbExtensions;
+package org.eventb.internal.core.seqprover.eventbExtensions.genmp;
 
 import static org.eventb.core.seqprover.ProverFactory.makeAntecedent;
 import static org.eventb.core.seqprover.ProverFactory.makeProofRule;
@@ -24,7 +24,7 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
-import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens.Level;
+import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonens.Level;
 
 /**
  * Class used for all the level of the reasoner GeneralizedModusPonens.

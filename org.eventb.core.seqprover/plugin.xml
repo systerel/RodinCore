@@ -208,12 +208,12 @@
             id="autoImpE"
             name="%autoImpEname"/>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonens"
             id="genMP"
             name="%genMPName">
       </reasoner>
       <reasoner
-            class="org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonensL1"
+            class="org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonensL1"
             id="genMPL1"
             name="%genMPName">
       </reasoner>

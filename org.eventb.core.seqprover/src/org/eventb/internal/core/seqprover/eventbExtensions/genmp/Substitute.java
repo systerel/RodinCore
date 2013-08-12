@@ -8,7 +8,7 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.seqprover.eventbExtensions;
+package org.eventb.internal.core.seqprover.eventbExtensions.genmp;
 
 import static org.eventb.core.seqprover.eventbExtensions.DLib.False;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.True;

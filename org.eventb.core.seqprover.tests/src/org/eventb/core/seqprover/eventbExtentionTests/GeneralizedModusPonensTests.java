@@ -16,7 +16,7 @@ import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import org.eventb.internal.core.seqprover.eventbExtensions.AbstractGenMP;
+import org.eventb.internal.core.seqprover.eventbExtensions.genmp.AbstractGenMP;
 
 /**
  * Units tests for reasoners GeneralizedModusPonens.

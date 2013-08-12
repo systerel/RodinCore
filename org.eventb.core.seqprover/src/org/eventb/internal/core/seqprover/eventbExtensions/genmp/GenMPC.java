@@ -8,13 +8,13 @@
  * Contributors:
  *     Systerel - initial API and implementation
  *******************************************************************************/
-package org.eventb.internal.core.seqprover.eventbExtensions;
+package org.eventb.internal.core.seqprover.eventbExtensions.genmp;
 
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.disjuncts;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isDisj;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
-import static org.eventb.internal.core.seqprover.eventbExtensions.Substitute.makeSubstitutes;
+import static org.eventb.internal.core.seqprover.eventbExtensions.genmp.Substitute.makeSubstitutes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +43,7 @@ import org.eventb.core.seqprover.IHypAction;
 import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.ProverFactory;
-import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens.Level;
+import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonens.Level;
 
 /**
  * @author Emmanuel Billaud

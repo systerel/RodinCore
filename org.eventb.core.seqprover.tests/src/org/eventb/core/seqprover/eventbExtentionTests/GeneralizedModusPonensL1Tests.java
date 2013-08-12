@@ -18,8 +18,8 @@ import java.util.List;
 
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import org.eventb.internal.core.seqprover.eventbExtensions.AbstractGenMP;
-import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonensL1;
+import org.eventb.internal.core.seqprover.eventbExtensions.genmp.AbstractGenMP;
+import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonensL1;
 
 /**
  * Unit tests for the reasoner GeneralizedModusPonensL1.

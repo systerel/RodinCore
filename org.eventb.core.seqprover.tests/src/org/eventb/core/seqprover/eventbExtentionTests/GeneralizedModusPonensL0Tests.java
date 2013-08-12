@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
-import org.eventb.internal.core.seqprover.eventbExtensions.AbstractGenMP;
-import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens;
+import org.eventb.internal.core.seqprover.eventbExtensions.genmp.AbstractGenMP;
+import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonens;
 
 /**
  * Unit tests for the reasoner GeneralizedModusPonens.
