@@ -13,9 +13,7 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.disjuncts;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isDisj;
-import static org.eventb.core.seqprover.eventbExtensions.Lib.isFalse;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
-import static org.eventb.core.seqprover.eventbExtensions.Lib.isTrue;
 import static org.eventb.internal.core.seqprover.eventbExtensions.Substitute.makeSubstitutes;
 
 import java.util.ArrayList;
@@ -25,7 +23,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eventb.core.ast.AssociativePredicate;
@@ -53,9 +50,26 @@ import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonen
  */
 public class GenMPC {
 
+	private static class SubstAppli {
+
+		final Substitute substitute;
+		final IPosition position;
+
+		public SubstAppli(Substitute substitute, IPosition position) {
+			this.substitute = substitute;
+			this.position = position;
+		}
+
+		@Override
+		public String toString() {
+			return substitute + " at pos " + position;
+		}
+
+	}
+
 	private final IProverSequent seq;
 	private final Predicate goal;
-	
+
 	private final Level level;
 	private final IProofMonitor pm;
 	private Predicate rewrittenGoal;
@@ -97,19 +111,17 @@ public class GenMPC {
 	 * Runs generalized Modus Ponens reasoner that generate the re-written goal
 	 * and hypotheses and all the hypotheses needed to achieve it and all
 	 * IHypActions computed.
-	 *
-	 * Computes each sub-predicate which will be re-written by ⊤ (respectively ⊥)
-	 * in the goal in a first time and in hypotheses in a second time. Stocks
-	 * in a Map the sub-predicate which will be re-written and its position.
-	 * Rewrites the goal and the hypotheses
-	 *
+	 * 
+	 * We first compute possible substitutes from hypotheses and goal. Then, we
+	 * traverse each predicate to get the list of possible applications of
+	 * substitutes and finally apply them.
 	 */
 	public boolean runGenMP() {
 		extractFromHypotheses();
 		extractFromGoal();
 
-		Map<Predicate, List<IPosition>> m = analyzePred(goal);
-		rewrittenGoal = rewriteGoal(m);
+		List<SubstAppli> applis = analyzePred(goal, true);
+		rewrittenGoal = rewriteGoal(applis);
 
 		boolean isGoalDependent = false;
 		List<IHypAction> hypActions = new ArrayList<IHypAction>();
@@ -117,8 +129,8 @@ public class GenMPC {
 			if (pm != null && pm.isCanceled()) {
 				return false;
 			}
-			m = analyzePred(hyp);
-			isGoalDependent |= rewriteHyp(hypActions, hyp, m);
+			applis = analyzePred(hyp, false);
+			isGoalDependent |= rewriteHyp(hypActions, hyp, applis);
 
 		}
 		output = new RewriteHypsOutput(isGoalDependent, hypActions);
@@ -147,7 +159,7 @@ public class GenMPC {
 			substitutes.put(toReplace, subst);
 		}
 	}
-	
+
 	/**
 	 * Computes the predicate that can be substituted.
 	 * 
@@ -165,126 +177,97 @@ public class GenMPC {
 	}
 
 	/**
-	 * Returns <code>true</code> if and only if the predicate <code>pred</code>
-	 * is equal to <code>⊤</code> or <code>⊥</code>.
-	 * 
-	 * @param pred
-	 *            the predicate parsed.
-	 * @return <code>true</code> if and only if the predicate <code>pred</code>
-	 *         is equal to <code>⊤</code> or <code>⊥</code>.
-	 */
-	public boolean isTrueOrFalsePred(Predicate pred) {
-		return isFalse(pred) || isTrue(pred);
-	}
-
-	/**
-	 * Returns a map of (Predicate ↦ List of IPositions) where Predicate is a
-	 * sub-predicate contained both in <code>pred</code> and the known
-	 * substitutes and the List of IPositions is a list of positions where
-	 * Predicate occurs in <code>pred</code>.
-	 * 
-	 * @param pred
-	 *            the predicate to analyze (should be either a hypothesis or a
-	 *            goal)
-	 * @return a map of all possible substitution positions
-	 */
-	public Map<Predicate, List<IPosition>> analyzePred(Predicate pred) {
-		Map<Predicate, List<IPosition>> map = new HashMap<Predicate, List<IPosition>>();
-		analyzeSubPred(pred, map);
-		return map;
-	}
-
-	/**
-	 * Records in <code>map</code> all the sub-predicate of <code>origin</code>
-	 * that can be substituted, as well as their position in <code>origin</code>
-	 * . If A sub-predicate is recorded, its children are not analyzed.
+	 * Returns a list of applications of substitutes to the given predicate. The
+	 * returned applications are guaranteed to not overlap.
 	 * 
 	 * @param origin
-	 *            the predicate (hypothesis or goal) analyzed
-	 * @param map
-	 *            the map (predicate contained both in <code>origin</code> and
-	 *            that can be substituted ↦ its position in <code>origin</code>)
+	 *            the predicate to analyze (should be either a hypothesis or the
+	 *            goal)
+	 * @param isGoal
+	 *            <code>true</code> if <code>origin</code> is the goal
+	 * @return a list of all possible substitution applications
 	 */
-	public void analyzeSubPred(final Predicate origin,
-			final Map<Predicate, List<IPosition>> map) {
+	public List<SubstAppli> analyzePred(final Predicate origin,
+			final boolean isGoal) {
+		return origin.inspect(new DefaultInspector<SubstAppli>() {
 
-		origin.inspect(new DefaultInspector<Predicate>() {
-
-			private void addPredToMap(
-					final Map<Predicate, List<IPosition>> map,
-					Predicate predicate, IAccumulator<Predicate> accumulator) {
-
-				if (isTrueOrFalsePred(predicate)
-						|| predicate == computePred(origin)) {
+			private void addPredToMap(Predicate predicate,
+					IAccumulator<SubstAppli> accumulator) {
+				final Substitute subst = substitutes.get(predicate);
+				if (subst == null) {
 					return;
 				}
-				if (substitutes.containsKey(predicate)) {
-					if (!map.containsKey(predicate)) {
-						map.put(predicate, new ArrayList<IPosition>());
-					}
-					map.get(predicate).add(accumulator.getCurrentPosition());
-					accumulator.skipChildren();
+				// TODO in next level, fix these tests which are wrong.
+				if (isGoal && subst.fromGoal()) {
+					// Do not rewrite the goal with itself
+					return;
 				}
+				if (predicate == computePred(origin)) {
+					return;
+				}
+				final IPosition pos = accumulator.getCurrentPosition();
+				accumulator.add(new SubstAppli(subst, pos));
+				accumulator.skipChildren();
 			}
 
 			@Override
 			public void inspect(AssociativePredicate predicate,
-					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, predicate, accumulator);
+					IAccumulator<SubstAppli> accumulator) {
+				addPredToMap(predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(BinaryPredicate predicate,
-					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, predicate, accumulator);
+					IAccumulator<SubstAppli> accumulator) {
+				addPredToMap(predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(ExtendedPredicate predicate,
-					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, predicate, accumulator);
+					IAccumulator<SubstAppli> accumulator) {
+				addPredToMap(predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(LiteralPredicate predicate,
-					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, predicate, accumulator);
+					IAccumulator<SubstAppli> accumulator) {
+				addPredToMap(predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(MultiplePredicate predicate,
-					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, predicate, accumulator);
+					IAccumulator<SubstAppli> accumulator) {
+				addPredToMap(predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(PredicateVariable predicate,
-					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, predicate, accumulator);
+					IAccumulator<SubstAppli> accumulator) {
+				addPredToMap(predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(QuantifiedPredicate predicate,
-					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, predicate, accumulator);
+					IAccumulator<SubstAppli> accumulator) {
+				addPredToMap(predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(RelationalPredicate predicate,
-					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, predicate, accumulator);
+					IAccumulator<SubstAppli> accumulator) {
+				addPredToMap(predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(SimplePredicate predicate,
-					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, predicate, accumulator);
+					IAccumulator<SubstAppli> accumulator) {
+				addPredToMap(predicate, accumulator);
 			}
 
 			@Override
 			public void inspect(UnaryPredicate predicate,
-					IAccumulator<Predicate> accumulator) {
-				addPredToMap(map, predicate, accumulator);
+					IAccumulator<SubstAppli> accumulator) {
+				addPredToMap(predicate, accumulator);
 			}
 
 		});
@@ -294,22 +277,18 @@ public class GenMPC {
 	 * Returns the goal re-written using the generalized Modus Ponens and add in
 	 * neededHyps all the hypotheses needed to achieve it.
 	 * 
+	 * @param applis
+	 *            list of substitute applications to the goal
 	 * @return the goal re-written, or <code>null</code> if it has not been
 	 *         re-written
 	 */
-	public Predicate rewriteGoal(Map<Predicate, List<IPosition>> m) {
+	private Predicate rewriteGoal(List<SubstAppli> applis) {
 		Predicate rewriteGoal = goal;
-		for (Entry<Predicate, List<IPosition>> entry : m.entrySet()) {
-			final Predicate value = entry.getKey();
-			final Substitute substitution = findSubstitutionForGoal(value);
-			if (substitution == null) {
-				continue;
-			}
+		for (final SubstAppli appli : applis) {
+			final Substitute substitution = appli.substitute;
 			neededHyps.add(substitution.hypOrGoal());
-			for (IPosition pos : entry.getValue()) {
-				rewriteGoal = Rewrite(rewriteGoal, value, pos,
-						substitution.substitute());
-			}
+			rewriteGoal = Rewrite(rewriteGoal, substitution.toReplace(),
+					appli.position, substitution.substitute());
 		}
 
 		if (rewriteGoal != goal) {
@@ -327,32 +306,25 @@ public class GenMPC {
 	 *            the generalized Modus Ponens
 	 * @param hyp
 	 *            the hypothesis
-	 * @param maps
+	 * @param applis
+	 *            list of substitute applications to the hypothesis
 	 * @return a boolean telling whether the reasoner is goal dependent or not
 	 */
-	public boolean rewriteHyp(List<IHypAction> hypActions, Predicate hyp,
-			final Map<Predicate, List<IPosition>> maps) {
+	private boolean rewriteHyp(List<IHypAction> hypActions, Predicate hyp,
+			List<SubstAppli> applis) {
 		boolean isGoalDependent = false;
 		Set<Predicate> inferredHyps = new HashSet<Predicate>();
 		Set<Predicate> sourceHyps = new LinkedHashSet<Predicate>();
 		Predicate rewriteHyp = hyp;
-		for (Entry<Predicate, List<IPosition>> entryPos : maps.entrySet()) {
-			final Predicate pred = entryPos.getKey();
-			final Substitute substitution = findSubstitutionForHyp(pred);
-			if (substitution == null) {
-				continue;
-			}
-
+		for (final SubstAppli appli : applis) {
+			final Substitute substitution = appli.substitute;
 			if (substitution.hypOrGoal() == null) {
 				isGoalDependent = true;
 			} else {
 				sourceHyps.add(substitution.hypOrGoal());
 			}
-
-			for (IPosition pos : entryPos.getValue()) {
-				rewriteHyp = Rewrite(rewriteHyp, pred, pos,
-						substitution.substitute());
-			}
+			rewriteHyp = Rewrite(rewriteHyp, substitution.toReplace(),
+					appli.position, substitution.substitute());
 		}
 		if (rewriteHyp != hyp) {
 			inferredHyps = Collections.singleton(rewriteHyp);
@@ -364,43 +336,6 @@ public class GenMPC {
 		}
 
 		return isGoalDependent;
-	}
-
-	public Substitute findSubstitutionForHyp(Predicate predicate) {
-		return findSubstitution(predicate, level.from(Level.L1));
-	}
-
-	public Substitute findSubstitutionForGoal(Predicate predicate) {
-		return findSubstitution(predicate, false);
-	}
-
-	/**
-	 * Compute the appropriate substitution for the predicate
-	 * <code>predicate</code>.
-	 * 
-	 * @param predicate
-	 *            the considered predicate
-	 * @param considerGoal
-	 *            <code>true</code> if the goal shall be considered for
-	 *            replacement
-	 * @return <code>null</code> if the predicate cannot be substituted, or
-	 *         <code>(predicate ↦ ⊤)</code> (respectively
-	 *         <code>(¬predicate ↦ ⊥)</code>) if <code>predicate</code>
-	 *         (respectively <code>¬predicate</code>) is a sequent's hypothesis,
-	 *         or <code>null ↦ ⊥</code> (respectively <code>null ↦ ⊤</code>) if
-	 *         <code>predicate</code> (respectively <code>¬predicate</code>) is
-	 *         equal to the sequent's goal or is among the predicate when the
-	 *         goal denotes a disjunction.
-	 */
-	public Substitute findSubstitution(Predicate predicate, boolean considerGoal) {
-		final Substitute substitute = substitutes.get(predicate);
-		if (substitute == null) {
-			return null;
-		}
-		if (substitute.fromGoal() && !considerGoal) {
-			return null;
-		}
-		return substitute;
 	}
 
 	public void extractFromGoal() {
