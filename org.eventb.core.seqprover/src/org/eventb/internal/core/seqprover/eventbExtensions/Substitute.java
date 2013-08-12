@@ -13,7 +13,12 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.False;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.True;
 import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isFalse;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isTrue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
@@ -27,8 +32,8 @@ import org.eventb.core.ast.Predicate;
 public class Substitute {
 
 	/**
-	 * Returns a substitute for the source predicate coming from a hypothesis or
-	 * a goal.
+	 * Returns a list of substitutes for the source predicate coming from a
+	 * hypothesis or a goal.
 	 * 
 	 * @param origin
 	 *            the hypothesis or goal predicate
@@ -36,10 +41,17 @@ public class Substitute {
 	 *            <code>true</code> if coming from goal
 	 * @param source
 	 *            the predicate to be substituted, modulo negation
-	 * @return a fresh substitution
+	 * @return a list of fresh substitutes
 	 */
-	public static Substitute makeSubstitute(Predicate origin, boolean isGoal,
-			Predicate source) {
+	public static List<Substitute> makeSubstitutes(Predicate origin,
+			boolean isGoal, Predicate source) {
+		final List<Substitute> result = new ArrayList<Substitute>();
+		addSubstitute(result, origin, isGoal, source);
+		return result;
+	}
+
+	private static void addSubstitute(List<Substitute> substs,
+			Predicate origin, boolean isGoal, Predicate source) {
 		final Predicate toReplace;
 		final Predicate substitute;
 		final FormulaFactory ff = origin.getFactory();
@@ -50,7 +62,10 @@ public class Substitute {
 			toReplace = source;
 			substitute = isGoal ? False(ff) : True(ff);
 		}
-		return new Substitute(origin, isGoal, toReplace, substitute);
+		if (isTrue(toReplace) || isFalse(toReplace)) {
+			return;
+		}
+		substs.add(new Substitute(origin, isGoal, toReplace, substitute));
 	}
 
 	// the predicate from which this substitution comes (hypothesis or goal)

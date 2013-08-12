@@ -16,7 +16,7 @@ import static org.eventb.core.seqprover.eventbExtensions.Lib.isDisj;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isFalse;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isTrue;
-import static org.eventb.internal.core.seqprover.eventbExtensions.Substitute.makeSubstitute;
+import static org.eventb.internal.core.seqprover.eventbExtensions.Substitute.makeSubstitutes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -139,15 +139,14 @@ public class GenMPC {
 	// the goal.
 	private void addSubstitute(Predicate origin, boolean isGoal,
 			Predicate source) {
-		final Substitute subst = makeSubstitute(origin, isGoal, source);
-		final Predicate toReplace = subst.toReplace();
-		if (isTrueOrFalsePred(toReplace)) {
-			return;
+		final List<Substitute> substs = makeSubstitutes(origin, isGoal, source);
+		for (final Substitute subst : substs) {
+			final Predicate toReplace = subst.toReplace();
+			if (substitutes.containsKey(toReplace)) {
+				return;
+			}
+			substitutes.put(toReplace, subst);
 		}
-		if (substitutes.containsKey(toReplace)) {
-			return;
-		}
-		substitutes.put(toReplace, subst);
 	}
 	
 	/**
