@@ -50,28 +50,6 @@ import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModu
  */
 public class GenMPC {
 
-	private static class SubstAppli {
-
-		final Substitute substitute;
-		final IPosition position;
-
-		public SubstAppli(Substitute substitute, IPosition position) {
-			this.substitute = substitute;
-			this.position = position;
-		}
-		
-		public Predicate apply(Predicate pred) {
-			assert(pred.getSubFormula(position).equals(substitute.toReplace()));
-			return pred.rewriteSubFormula(position, substitute.substitute());
-		}
-
-		@Override
-		public String toString() {
-			return substitute + " at pos " + position;
-		}
-
-	}
-
 	private final IProverSequent seq;
 	private final Predicate goal;
 
@@ -294,8 +272,7 @@ public class GenMPC {
 	private Predicate rewriteGoal(List<SubstAppli> applis) {
 		Predicate rewriteGoal = goal;
 		for (final SubstAppli appli : applis) {
-			final Substitute substitution = appli.substitute;
-			neededHyps.add(substitution.origin());
+			neededHyps.add(appli.origin());
 			rewriteGoal = appli.apply(rewriteGoal);
 		}
 
@@ -319,11 +296,10 @@ public class GenMPC {
 		Set<Predicate> sourceHyps = new LinkedHashSet<Predicate>();
 		Predicate rewriteHyp = hyp;
 		for (final SubstAppli appli : applis) {
-			final Substitute substitution = appli.substitute;
-			if (substitution.fromGoal()) {
+			if (appli.fromGoal()) {
 				isGoalDependent = true;
 			} else {
-				sourceHyps.add(substitution.origin());
+				sourceHyps.add(appli.origin());
 			}
 			rewriteHyp = appli.apply(rewriteHyp);
 		}
