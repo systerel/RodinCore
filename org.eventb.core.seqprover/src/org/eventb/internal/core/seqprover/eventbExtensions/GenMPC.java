@@ -59,6 +59,11 @@ public class GenMPC {
 			this.substitute = substitute;
 			this.position = position;
 		}
+		
+		public Predicate apply(Predicate pred) {
+			assert(pred.getSubFormula(position).equals(substitute.toReplace()));
+			return pred.rewriteSubFormula(position, substitute.substitute());
+		}
 
 		@Override
 		public String toString() {
@@ -287,8 +292,7 @@ public class GenMPC {
 		for (final SubstAppli appli : applis) {
 			final Substitute substitution = appli.substitute;
 			neededHyps.add(substitution.origin());
-			rewriteGoal = Rewrite(rewriteGoal, substitution.toReplace(),
-					appli.position, substitution.substitute());
+			rewriteGoal = appli.apply(rewriteGoal);
 		}
 
 		if (rewriteGoal != goal) {
@@ -323,8 +327,7 @@ public class GenMPC {
 			} else {
 				sourceHyps.add(substitution.origin());
 			}
-			rewriteHyp = Rewrite(rewriteHyp, substitution.toReplace(),
-					appli.position, substitution.substitute());
+			rewriteHyp = appli.apply(rewriteHyp);
 		}
 		if (rewriteHyp != hyp) {
 			inferredHyps = Collections.singleton(rewriteHyp);
@@ -350,30 +353,6 @@ public class GenMPC {
 			return;
 		}
 		addSubstitute(goal, true, goal);
-	}
-
-	/**
-	 * Re-write a predicate.
-	 * 
-	 * @param pred
-	 *            the predicate to be re-written
-	 * @param replaced
-	 *            the sub-predicate to be replaced
-	 * @param pos
-	 *            the position of the sub-predicate to be replaced
-	 * @param substitute
-	 *            the substitute of the predicate to be replace
-	 * @return the re-written predicate with the parameters given her-above if
-	 *         the sub-formula of <code>pred</code> at the position
-	 *         <code>pos</code> is equal to the predicate <code>replaced</code>,
-	 *         <code>pred</code> else.
-	 */
-	private Predicate Rewrite(Predicate pred, Predicate replaced,
-			IPosition pos, Predicate substitute) {
-		if (!pred.getSubFormula(pos).equals(replaced)) {
-			return pred;
-		}
-		return pred.rewriteSubFormula(pos, substitute);
 	}
 
 	/**
