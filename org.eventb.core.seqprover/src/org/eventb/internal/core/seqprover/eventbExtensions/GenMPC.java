@@ -148,9 +148,9 @@ public class GenMPC {
 
 	// Substitutes coming from hypotheses must be added BEFORE those coming from
 	// the goal.
-	private void addSubstitute(Predicate origin, boolean isGoal,
+	private void addSubstitute(Predicate origin, boolean fromGoal,
 			Predicate source) {
-		final List<Substitute> substs = makeSubstitutes(origin, isGoal, source);
+		final List<Substitute> substs = makeSubstitutes(origin, fromGoal, source);
 		for (final Substitute subst : substs) {
 			final Predicate toReplace = subst.toReplace();
 			if (substitutes.containsKey(toReplace)) {
@@ -286,7 +286,7 @@ public class GenMPC {
 		Predicate rewriteGoal = goal;
 		for (final SubstAppli appli : applis) {
 			final Substitute substitution = appli.substitute;
-			neededHyps.add(substitution.hypOrGoal());
+			neededHyps.add(substitution.origin());
 			rewriteGoal = Rewrite(rewriteGoal, substitution.toReplace(),
 					appli.position, substitution.substitute());
 		}
@@ -318,10 +318,10 @@ public class GenMPC {
 		Predicate rewriteHyp = hyp;
 		for (final SubstAppli appli : applis) {
 			final Substitute substitution = appli.substitute;
-			if (substitution.hypOrGoal() == null) {
+			if (substitution.fromGoal()) {
 				isGoalDependent = true;
 			} else {
-				sourceHyps.add(substitution.hypOrGoal());
+				sourceHyps.add(substitution.origin());
 			}
 			rewriteHyp = Rewrite(rewriteHyp, substitution.toReplace(),
 					appli.position, substitution.substitute());

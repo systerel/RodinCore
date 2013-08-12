@@ -37,42 +37,42 @@ public class Substitute {
 	 * 
 	 * @param origin
 	 *            the hypothesis or goal predicate
-	 * @param isGoal
+	 * @param fromGoal
 	 *            <code>true</code> if coming from goal
 	 * @param source
 	 *            the predicate to be substituted, modulo negation
 	 * @return a list of fresh substitutes
 	 */
 	public static List<Substitute> makeSubstitutes(Predicate origin,
-			boolean isGoal, Predicate source) {
+			boolean fromGoal, Predicate source) {
 		final List<Substitute> result = new ArrayList<Substitute>();
-		addSubstitute(result, origin, isGoal, source);
+		addSubstitute(result, origin, fromGoal, source);
 		return result;
 	}
 
 	private static void addSubstitute(List<Substitute> substs,
-			Predicate origin, boolean isGoal, Predicate source) {
+			Predicate origin, boolean fromGoal, Predicate source) {
 		final Predicate toReplace;
 		final Predicate substitute;
 		final FormulaFactory ff = origin.getFactory();
 		if (isNeg(source)) {
 			toReplace = makeNeg(source);
-			substitute = isGoal ? True(ff) : False(ff);
+			substitute = fromGoal ? True(ff) : False(ff);
 		} else {
 			toReplace = source;
-			substitute = isGoal ? False(ff) : True(ff);
+			substitute = fromGoal ? False(ff) : True(ff);
 		}
 		if (isTrue(toReplace) || isFalse(toReplace)) {
 			return;
 		}
-		substs.add(new Substitute(origin, isGoal, toReplace, substitute));
+		substs.add(new Substitute(origin, fromGoal, toReplace, substitute));
 	}
 
 	// the predicate from which this substitution comes (hypothesis or goal)
 	private final Predicate origin;
 
 	// Does it come from the goal
-	private final boolean isGoal;
+	private final boolean fromGoal;
 
 	// the sub-predicate to be replaced
 	private final Predicate toReplace;
@@ -80,11 +80,11 @@ public class Substitute {
 	// the substitute (⊤ or ⊥) of the predicate to be replaced
 	private final Predicate substitute;
 
-	public Substitute(Predicate origin, boolean isGoal, Predicate toReplace,
+	public Substitute(Predicate origin, boolean fromGoal, Predicate toReplace,
 			Predicate substitute) {
 		super();
 		this.origin = origin;
-		this.isGoal = isGoal;
+		this.fromGoal = fromGoal;
 		this.toReplace = toReplace;
 		this.substitute = substitute;
 	}
@@ -93,15 +93,8 @@ public class Substitute {
 		return origin;
 	}
 
-	public Predicate hypOrGoal() {
-		if (isGoal) {
-			return null;
-		}
-		return origin;
-	}
-
 	boolean fromGoal() {
-		return isGoal;
+		return fromGoal;
 	}
 
 	public Predicate toReplace() {
@@ -120,7 +113,7 @@ public class Substitute {
 		sb.append(" for ");
 		sb.append(toReplace);
 		sb.append(" (");
-		sb.append(isGoal ? "goal: " : "hyp: ");
+		sb.append(fromGoal ? "goal: " : "hyp: ");
 		sb.append(origin);
 		sb.append(")");
 		return sb.toString();
