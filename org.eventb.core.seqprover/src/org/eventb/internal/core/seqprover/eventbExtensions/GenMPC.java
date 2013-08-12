@@ -461,17 +461,19 @@ public class GenMPC {
 	}
 
 	public void extractFromGoal() {
-		if (level.from(Level.L1)) {
-			if (!isNeg(goal)) {
-				for (Predicate child : goalDisjuncts) {
-					if (isNeg(child)) {
-						addSubstitute(makeNeg(child), true);
-					} else {
-						addSubstitute(child, true);
-					}
-				}
+		if (!level.from(Level.L1)) {
+			// Level 0 ignores all predicates in the goal
+			return;
+		}
+		if (isNeg(goal)) {
+			addSubstitute(makeNeg(goal), true);
+			return;
+		}
+		for (Predicate child : goalDisjuncts) {
+			if (isNeg(child)) {
+				addSubstitute(makeNeg(child), true);
 			} else {
-				addSubstitute(makeNeg(goal), true);
+				addSubstitute(child, true);
 			}
 		}
 	}
