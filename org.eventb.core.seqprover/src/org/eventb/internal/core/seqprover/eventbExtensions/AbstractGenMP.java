@@ -24,7 +24,6 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.IReasonerOutput;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInputReasoner;
-import org.eventb.internal.core.seqprover.eventbExtensions.GenMPC.RewriteHypsOutput;
 import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens.Level;
 
 /**
@@ -44,10 +43,8 @@ public abstract class AbstractGenMP extends EmptyInputReasoner {
 		}
 
 		final Predicate rewrittenGoal = genMP.rewrittenGoal();
-		final RewriteHypsOutput output = genMP.output();
-
-		final List<IHypAction> hypActions = output.getHypActions();
-		final boolean isGoalDependent = output.isGoalDependent();
+		final List<IHypAction> hypActions = genMP.hypActions();
+		final boolean isGoalDependent = genMP.isGoalDependent();
 		if (rewrittenGoal != null) { // The goal is re-written.
 			final IAntecedent ant;
 			if (!hypActions.isEmpty()) {

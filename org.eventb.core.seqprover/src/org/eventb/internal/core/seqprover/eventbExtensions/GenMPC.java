@@ -78,7 +78,8 @@ public class GenMPC {
 	private final Level level;
 	private final IProofMonitor pm;
 	private Predicate rewrittenGoal;
-	private RewriteHypsOutput output;
+	private boolean isGoalDependent;
+	private final List<IHypAction> hypActions;
 	// the set of all the needed hypotheses to rewrite the goal
 	// (computed by this method, it should be an empty set)
 	private final Set<Predicate> neededHyps;
@@ -94,6 +95,8 @@ public class GenMPC {
 		neededHyps = new HashSet<Predicate>();
 		goal = seq.goal();
 		substitutes = new HashMap<Predicate, Substitute>();
+		this.isGoalDependent = false;
+		this.hypActions = new ArrayList<IHypAction>();
 	}
 
 	public Predicate goal() {
@@ -108,8 +111,12 @@ public class GenMPC {
 		return rewrittenGoal;
 	}
 
-	public RewriteHypsOutput output() {
-		return output;
+	public boolean isGoalDependent() {
+		return isGoalDependent;
+	}
+
+	public List<IHypAction> hypActions() {
+		return hypActions;
 	}
 
 	/**
@@ -128,17 +135,14 @@ public class GenMPC {
 		List<SubstAppli> applis = analyzePred(goal, true);
 		rewrittenGoal = rewriteGoal(applis);
 
-		boolean isGoalDependent = false;
-		List<IHypAction> hypActions = new ArrayList<IHypAction>();
 		for (Predicate hyp : seq.visibleHypIterable()) {
 			if (pm != null && pm.isCanceled()) {
 				return false;
 			}
 			applis = analyzePred(hyp, false);
-			isGoalDependent |= rewriteHyp(hypActions, hyp, applis);
+			rewriteHyp(hyp, applis);
 
 		}
-		output = new RewriteHypsOutput(isGoalDependent, hypActions);
 		return true;
 	}
 
@@ -303,20 +307,14 @@ public class GenMPC {
 	}
 
 	/**
-	 * Rewrite each occurence of a hypothesis into the sequent.
+	 * Rewrites the given hypothesis with the given application.
 	 * 
-	 * @param hypActions
-	 *            list of IHypActions needed to complete the re-writing done by
-	 *            the generalized Modus Ponens
 	 * @param hyp
 	 *            the hypothesis
 	 * @param applis
 	 *            list of substitute applications to the hypothesis
-	 * @return a boolean telling whether the reasoner is goal dependent or not
 	 */
-	private boolean rewriteHyp(List<IHypAction> hypActions, Predicate hyp,
-			List<SubstAppli> applis) {
-		boolean isGoalDependent = false;
+	private void rewriteHyp(Predicate hyp, List<SubstAppli> applis) {
 		Set<Predicate> inferredHyps = new HashSet<Predicate>();
 		Set<Predicate> sourceHyps = new LinkedHashSet<Predicate>();
 		Predicate rewriteHyp = hyp;
@@ -337,8 +335,6 @@ public class GenMPC {
 			hypActions.add(ProverFactory.makeHideHypAction(Collections
 					.singleton(hyp)));
 		}
-
-		return isGoalDependent;
 	}
 
 	public void extractFromGoal() {
@@ -353,28 +349,6 @@ public class GenMPC {
 			return;
 		}
 		addSubstitute(goal, true, goal);
-	}
-
-	/**
-	 * Class used as the outpout of the method rewriteHyps.
-	 */
-	public class RewriteHypsOutput {
-		private final boolean isGoalDependent;
-		private final List<IHypAction> hypActions;
-
-		public RewriteHypsOutput(boolean isGoalDependent,
-				List<IHypAction> hypActions) {
-			this.isGoalDependent = isGoalDependent;
-			this.hypActions = hypActions;
-		}
-
-		public boolean isGoalDependent() {
-			return isGoalDependent;
-		}
-
-		public List<IHypAction> getHypActions() {
-			return hypActions;
-		}
 	}
 
 }
