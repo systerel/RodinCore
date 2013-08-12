@@ -60,9 +60,6 @@ public class GenMPC {
 	private final FormulaFactory ff;
 	private final Predicate goal;
 	
-	// The goal broken down in possible disjuncts.
-	private final Set<Predicate> goalDisjuncts;
-
 	private final Level level;
 	private final IProofMonitor pm;
 	private Predicate rewrittenGoal;
@@ -82,7 +79,6 @@ public class GenMPC {
 		ff = seq.getFormulaFactory();
 		neededHyps = new HashSet<Predicate>();
 		goal = seq.goal();
-		goalDisjuncts = breakPossibleDisjunct(goal);
 		substitutes = new HashMap<Predicate, Substitute>();
 	}
 
@@ -421,7 +417,7 @@ public class GenMPC {
 			// Level 0 ignores all predicates in the goal
 			return;
 		}
-		for (Predicate child : goalDisjuncts) {
+		for (Predicate child : breakPossibleDisjunct(goal)) {
 			if (isNeg(child)) {
 				addSubstitute(new Substitute(goal, true, makeNeg(child), True(ff)));
 			} else {
