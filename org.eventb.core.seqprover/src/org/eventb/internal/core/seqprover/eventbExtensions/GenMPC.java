@@ -401,11 +401,11 @@ public class GenMPC {
 	 */
 	public Substitute computeSubstitutionForHyp(Predicate predicate) {
 		if (seq.containsHypothesis(predicate)) {
-			return new Substitute(predicate, predicate, True(ff));
+			return new Substitute(predicate, false, predicate, True(ff));
 		} 
 		final Predicate negPred = makeNeg(predicate);
 		if (seq.containsHypothesis(negPred)) {
-			return new Substitute(negPred, negPred, False(ff));
+			return new Substitute(negPred, false, predicate, False(ff));
 		}
 		return null;
 	}
@@ -423,9 +423,9 @@ public class GenMPC {
 		final Predicate negPred = makeNeg(predicate);
 		for (Predicate child : goalDisjuncts) {
 			if (child.equals(predicate)) {
-				return new Substitute(predicate, null, False(ff));
+				return new Substitute(goal, true, predicate, False(ff));
 			} else if (child.equals(negPred)) {
-				return new Substitute(predicate, null, True(ff));
+				return new Substitute(goal, true, predicate, True(ff));
 			}
 		}
 		return null;

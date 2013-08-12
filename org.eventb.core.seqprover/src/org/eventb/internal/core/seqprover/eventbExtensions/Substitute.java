@@ -13,25 +13,31 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 import org.eventb.core.ast.Predicate;
 
 /**
- *  This class represents one substitution of a predicate into the sequent by
- *  ⊤ or ⊥ in the GenMP reasoner.
- *
+ * Represents one substitution of a predicate into the sequent by ⊤ or ⊥ in the
+ * GenMP reasoner.
+ * 
  * @author Josselin Dolhen
- *
  */
 public class Substitute {
 
-	// the predicate to be re-written
+	// the predicate from which this substitution comes (hypothesis or goal)
 	private final Predicate origin;
+
+	// Does it come from the goal
+	private final boolean isGoal;
+
 	// the sub-predicate to be replaced
-	private final Predicate hypOrGoal;
-	// the substitute of the predicate to be replace (⊤ or ⊥)
+	private final Predicate toReplace;
+
+	// the substitute (⊤ or ⊥) of the predicate to be replaced
 	private final Predicate substitute;
 
-	public Substitute(Predicate origin, Predicate hypOrGoal, Predicate substitute) {
+	public Substitute(Predicate origin, boolean isGoal, Predicate toReplace,
+			Predicate substitute) {
 		super();
 		this.origin = origin;
-		this.hypOrGoal = hypOrGoal;
+		this.isGoal = isGoal;
+		this.toReplace = toReplace;
 		this.substitute = substitute;
 	}
 
@@ -40,15 +46,36 @@ public class Substitute {
 	}
 
 	public Predicate hypOrGoal() {
-		return hypOrGoal;
+		if (isGoal) {
+			return null;
+		}
+		return origin;
+	}
+
+	boolean fromGoal() {
+		return isGoal;
+	}
+
+	public Predicate toReplace() {
+		return toReplace;
 	}
 
 	public Predicate substitute() {
 		return substitute;
 	}
 
-	boolean fromGoal() {
-		return hypOrGoal == null;
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("Substitute ");
+		sb.append(substitute);
+		sb.append(" for ");
+		sb.append(toReplace);
+		sb.append(" (");
+		sb.append(isGoal ? "goal: " : "hyp: ");
+		sb.append(origin);
+		sb.append(")");
+		return sb.toString();
 	}
 
 }
