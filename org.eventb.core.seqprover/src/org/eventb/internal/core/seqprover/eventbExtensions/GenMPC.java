@@ -139,31 +139,28 @@ public class GenMPC {
 	 */
 	private void extractFromHypotheses() {
 		for (Predicate hyp : seq.hypIterable()) {
-			addSubstitute(computePred(hyp), false);
-		}
-	}
-
-	/**
-	 * Adds to the map of substitutes a new substitute for the given predicate
-	 * if and only if it is different from <code>⊤</code> and <code>⊥</code>.
-	 * 
-	 * @param pred
-	 *            the predicate for which a new substitute shall be added
-	 * @param isGoal
-	 *            a boolean telling whether the predicate comes from the goal
-	 */
-	private void addSubstitute(Predicate pred, boolean isGoal) {
-		if (!isTrueOrFalsePred(pred)) {
-			// Hypotheses take precedence over the goal.
-			if (isGoal && !substitutes.containsKey(pred)
-					&& !seq.containsHypothesis(pred)) {
-				substitutes.put(pred, computeSubstitutionForGoal(pred));
+			if (isNeg(hyp)) {
+				final Predicate negPred = makeNeg(hyp);
+				addSubstitute(new Substitute(hyp, false, negPred, False(ff)));
 			} else {
-				substitutes.put(pred, computeSubstitutionForHyp(pred));
+				addSubstitute(new Substitute(hyp, false, hyp, True(ff)));
 			}
 		}
 	}
 
+	// Substitutes coming from hypotheses must be added BEFORE those coming from
+	// the goal.
+	private void addSubstitute(Substitute subst) {
+		final Predicate toReplace = subst.toReplace();
+		if (isTrueOrFalsePred(toReplace)) {
+			return;
+		}
+		if (substitutes.containsKey(toReplace)) {
+			return;
+		}
+		substitutes.put(toReplace, subst);
+	}
+	
 	/**
 	 * Computes the predicate that can be substituted.
 	 * 
@@ -391,47 +388,6 @@ public class GenMPC {
 	}
 
 	/**
-	 * Pre-compute a appropriate substitution when a predicate matches the
-	 * hypothesis specified.
-	 *
-	 * @param predicate
-	 *            a hypothesis
-	 *
-	 * @return a substitute
-	 */
-	public Substitute computeSubstitutionForHyp(Predicate predicate) {
-		if (seq.containsHypothesis(predicate)) {
-			return new Substitute(predicate, false, predicate, True(ff));
-		} 
-		final Predicate negPred = makeNeg(predicate);
-		if (seq.containsHypothesis(negPred)) {
-			return new Substitute(negPred, false, predicate, False(ff));
-		}
-		return null;
-	}
-
-	/**
-	 * Pre-compute a appropriate substitution when a predicate matches the
-	 * goal specified.
-	 *
-	 * @param predicate
-	 *            a goal
-	 *
-	 * @return a substitute
-	 */
-	public Substitute computeSubstitutionForGoal(Predicate predicate) {
-		final Predicate negPred = makeNeg(predicate);
-		for (Predicate child : goalDisjuncts) {
-			if (child.equals(predicate)) {
-				return new Substitute(goal, true, predicate, False(ff));
-			} else if (child.equals(negPred)) {
-				return new Substitute(goal, true, predicate, True(ff));
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Compute the appropriate substitution for the predicate
 	 * <code>predicate</code>.
 	 * 
@@ -465,15 +421,11 @@ public class GenMPC {
 			// Level 0 ignores all predicates in the goal
 			return;
 		}
-		if (isNeg(goal)) {
-			addSubstitute(makeNeg(goal), true);
-			return;
-		}
 		for (Predicate child : goalDisjuncts) {
 			if (isNeg(child)) {
-				addSubstitute(makeNeg(child), true);
+				addSubstitute(new Substitute(goal, true, makeNeg(child), True(ff)));
 			} else {
-				addSubstitute(child, true);
+				addSubstitute(new Substitute(goal, true, child, False(ff)));
 			}
 		}
 	}
