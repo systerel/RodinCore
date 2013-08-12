@@ -19,7 +19,6 @@ import static org.eventb.core.seqprover.eventbExtensions.Lib.isTrue;
 import static org.eventb.internal.core.seqprover.eventbExtensions.Substitute.makeSubstitutes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -409,27 +408,13 @@ public class GenMPC {
 			// Level 0 ignores all predicates in the goal
 			return;
 		}
-		for (Predicate child : breakPossibleDisjunct(goal)) {
-			addSubstitute(goal, true, child);
+		if (isDisj(goal)) {
+			for (final Predicate child : disjuncts(goal)) {
+				addSubstitute(goal, true, child);
+			}
+			return;
 		}
-	}
-
-	/**
-	 * Returns a set of disjunct of <code>P</code> when it is a disjunction,
-	 * otherwise a singleton set containing <code>P</code>. The returned set is
-	 * mutable.
-	 *
-	 * @param P
-	 *            a predicate
-	 * @return a mutable set of disjuncts of the given predicate
-	 */
-	public Set<Predicate> breakPossibleDisjunct(Predicate P) {
-		final List<Predicate> list;
-		if (isDisj(P))
-			list = Arrays.asList(disjuncts(P));
-		else
-			list = Arrays.asList(P);
-		return new LinkedHashSet<Predicate>(list);
+		addSubstitute(goal, true, goal);
 	}
 
 	/**
