@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - add variations
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
@@ -17,8 +18,6 @@ import org.eventb.core.seqprover.IReasonerInput;
 //import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-
-//import com.b4free.rodin.core.B4freeCore;
 
 public class HypOrTests extends AbstractReasonerTests {
 
@@ -31,10 +30,38 @@ public class HypOrTests extends AbstractReasonerTests {
 
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
+		final String typEnv = "A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;;";
 		return new SuccessfullReasonerApplication[] {
+				// Goal disjunct in hypotheses
 				makeSuccess(" x = 1 |- x = 2 ∨ x = 1 ∨ x = 3 "),
 				makeSuccess(" x = 1 |- x = 1 ∨ x = 2 ∨ x = 3 "),
 				makeSuccess(" x = 1 |- x = 2 ∨ x = 3 ∨ x = 1 "),
+				// Equivalent goal disjunct in hypotheses
+				makeSuccess(" x = 1 |- x = 2 ∨ 1 = x ∨ x = 3 "),
+				makeSuccess(" 1 > x |- x = 2 ∨ x < 1 ∨ x = 3 "),
+				makeSuccess(" 1 < x |- x = 2 ∨ x > 1 ∨ x = 3 "),
+				makeSuccess(" 1 ≥ x |- x = 2 ∨ x ≤ 1 ∨ x = 3 "),
+				makeSuccess(" 1 ≤ x |- x = 2 ∨ x ≥ 1 ∨ x = 3 "),
+				// A hypothesis stronger than a positive goal disjunct
+				makeSuccess(" 1 > x |- x = 2 ∨ 1 ≥ x ∨ x = 3 "),
+				makeSuccess(" 1 < x |- x = 2 ∨ 1 ≤ x ∨ x = 3 "),
+				makeSuccess(" 1 = x |- x = 2 ∨ 1 ≥ x ∨ x = 3 "),
+				makeSuccess(" 1 = x |- x = 2 ∨ 1 ≤ x ∨ x = 3 "),
+				makeSuccess(typEnv + " A = B |- x = 2 ∨ A ⊆ B ∨ x = 3 "),
+				makeSuccess(typEnv + " A = B |- x = 2 ∨ B ⊆ A ∨ x = 3 "),
+				makeSuccess(typEnv + " A ⊂ B |- x = 2 ∨ A ⊆ B ∨ x = 3 "),
+				// A hypothesis stronger than a negative goal disjunct
+				makeSuccess(" 1 < x |- x = 2 ∨ ¬x = 1 ∨ x = 3 "),
+				makeSuccess(" 1 > x |- x = 2 ∨ ¬x = 1 ∨ x = 3 ∨ x = 3 "),
+				makeSuccess(typEnv + " A ⊂ B |- x = 2 ∨ ¬A = B ∨ x = 3 "),
+				makeSuccess(typEnv + " B ⊂ A |- x = 2 ∨ ¬A = B ∨ x = 3 "),
+				makeSuccess(typEnv + " A ⊂ B |- x = 2 ∨ ¬B ⊆ A ∨ x = 3 "),
+				makeSuccess(typEnv + " A ⊂ B |- x = 2 ∨ ¬B ⊂ A ∨ x = 3 "),
+				makeSuccess(typEnv + " A ⊆ B |- x = 2 ∨ ¬B ⊂ A ∨ x = 3 "),
+				makeSuccess(typEnv + " ¬A ⊆ B |- x = 2 ∨ ¬A ⊂ B ∨ x = 3 "),
+				makeSuccess(typEnv + " A = B |- x = 2 ∨ ¬B ⊂ A ∨ x = 3 "),
+				makeSuccess(typEnv + " A = B |- x = 2 ∨ ¬B ⊂ A ∨ x = 3 "),
+
 		};
 	}
 
@@ -45,11 +72,15 @@ public class HypOrTests extends AbstractReasonerTests {
 
 	@Override
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
+		final String error = "Hypotheses contain no disjunct of goal";
+
 		return new UnsuccessfullReasonerApplication[] {
-			makeFailure(" x = 1 |- x = 2"),
-			makeFailure(" x = 1 |- x = 2", "Goal is not a disjunctive predicate"),
-			makeFailure(" x = 1 |- x = 2 ∨ x = 4 ∨ x = 3"),
-			makeFailure(" x = 1 |- x = 2 ∨ x = 4 ∨ x = 3 ", "Hypotheses contain no disjunct in goal"),
+				makeFailure(" x = 1 |- x = 2",
+						"Goal is not a disjunctive predicate"),
+				makeFailure(" x = 1 |- x = 2 ∨ x = 4 ∨ x = 3 ", error),
+				makeFailure(" x = 1 |- x = 2 ∨ x > 1 ∨ x < 1 ∨ x = 3", error),
+				makeFailure(" x = 1 |- x = 2 ∨ 1 > x ∨ 1 < x ∨ x = 3", error),
+
 		};
 	}
 
@@ -58,14 +89,5 @@ public class HypOrTests extends AbstractReasonerTests {
 		final IProverSequent sequent = genSeq(sequentImage);
 		return new UnsuccessfullReasonerApplication(sequent, input, expected);
 	}
-
-	private UnsuccessfullReasonerApplication makeFailure(String sequentImage) {
-		final IProverSequent sequent = genSeq(sequentImage);
-		return new UnsuccessfullReasonerApplication(sequent, input);
-	}
-//	@Override
-//	public ITactic getJustDischTactic() {
-//		return B4freeCore.externalPP(false);
-//	}
 
 }

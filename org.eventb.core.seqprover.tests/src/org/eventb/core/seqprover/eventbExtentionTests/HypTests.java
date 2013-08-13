@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - add variations
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
@@ -16,8 +17,6 @@ import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.IReasonerInput;
 import org.eventb.core.seqprover.reasonerExtentionTests.AbstractReasonerTests;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-
-//import com.b4free.rodin.core.B4freeCore;
 
 public class HypTests extends AbstractReasonerTests {
 
@@ -30,9 +29,41 @@ public class HypTests extends AbstractReasonerTests {
 
 	@Override
 	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
+		final String typEnv = "A∈ℙ(ℤ) ;; B∈ℙ(ℤ) ;;";
 		return new SuccessfullReasonerApplication[] {
+				// Goal in hypotheses
 				makeSuccess(" x = 1 |- x = 1 "),
 				makeSuccess(" 1∈P |- 1∈P "),
+				// A hypothesis equivalent to the goal
+				makeSuccess(" 1 = x |- x = 1 "),
+				makeSuccess(" 1 > x |- x < 1 "),
+				makeSuccess(" 1 < x |- x > 1 "),
+				makeSuccess(" 1 ≥ x |- x ≤ 1 "),
+				makeSuccess(" 1 ≤ x |- x ≥ 1 "),
+				// A hypothesis stronger than a positive Goal
+				// H, P |- P†
+				makeSuccess(" 1 = x |- 1 ≥ x "),
+				makeSuccess(" 1 = x |- 1 ≤ x "),
+				makeSuccess(" 1 > x |- 1 ≥ x "),
+				makeSuccess(" 1 < x |- 1 ≤ x "),
+				makeSuccess(typEnv + " A = B |- A ⊆ B "),
+				makeSuccess(typEnv + " A = B |- B ⊆ A "),
+				makeSuccess(typEnv + " A ⊂ B |- A ⊆ B "),
+				// A hypothesis stronger than a negative Goal
+				// H, nP† |- ¬P
+				makeSuccess(" 1 < x |- ¬x = 1 "),
+				makeSuccess(" 1 > x |- ¬x = 1 "),
+				makeSuccess(typEnv + " A ⊂ B |- ¬A = B "),
+				makeSuccess(typEnv + " B ⊂ A |- ¬A = B "),
+				makeSuccess(typEnv + " ¬A ⊆ B |- ¬A = B "),
+				makeSuccess(typEnv + " ¬B ⊆ A |- ¬A = B "),
+				makeSuccess(typEnv + " B ⊂ A |- ¬A ⊆ B "),
+				makeSuccess(typEnv + " B ⊂ A |- ¬A ⊂ B "),
+				makeSuccess(typEnv + " B ⊆ A |- ¬A ⊂ B "),
+				makeSuccess(typEnv + " ¬A ⊆ B |- ¬A ⊂ B "),
+				makeSuccess(typEnv + " B = A |- ¬A ⊂ B "),
+				makeSuccess(typEnv + " B = A |- ¬A ⊂ B "),
+
 		};
 	}
 
@@ -44,20 +75,23 @@ public class HypTests extends AbstractReasonerTests {
 	@Override
 	public UnsuccessfullReasonerApplication[] getUnsuccessfullReasonerApplications() {
 		return new UnsuccessfullReasonerApplication[] {
-				makeFailure(" x = 1 |- x = 2 "),
+				// Sequent not normalized
+				makeFailure(" 1 > x ;; ¬x ≥ 1 |- x = 1 "),
+
+				// simple tests
+				makeFailure(" x = 1 |- x = 2 "), //
 				makeFailure(" 1∈P |- 2∈P "),
+				makeFailure(" x > 1 ;; x < 1 ;; x ≥ 1 ;; x ≤ 1 |- x = 1 "),
+				makeFailure(" 1 > x ;; 1 < x ;; 1 ≥ x ;; 1 ≤ x |- x = 1 "),
+				makeFailure(" 1 > x ;; 1 < x ;; 1 ≥ x ;; 1 ≤ x |- x = 1 "),
+
 		};
 	}
 
 	private UnsuccessfullReasonerApplication makeFailure(String sequentImage) {
 		final IProverSequent sequent = genSeq(sequentImage);
 		return new UnsuccessfullReasonerApplication(sequent, input,
-				"Goal not in hypotheses");
+				"Goal not in hypothesis");
 	}
-
-//	@Override
-//	public ITactic getJustDischTactic() {
-//		return B4freeCore.externalPP(false);
-//	}
 
 }
