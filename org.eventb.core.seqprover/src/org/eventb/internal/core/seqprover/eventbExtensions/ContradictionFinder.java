@@ -12,7 +12,10 @@ package org.eventb.internal.core.seqprover.eventbExtensions;
 
 import static org.eventb.internal.core.seqprover.eventbExtensions.ContrHyps.contradictingPredicates;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.IProverSequent;
@@ -34,7 +37,7 @@ public abstract class ContradictionFinder {
 	 */
 	public Predicate getContrHyp() {
 		for (final Predicate hyp : getCandidates()) {
-			final Set<Predicate> cntrs = contradictingPredicates(hyp);
+			final Map<Predicate, List<Predicate>> cntrs = contradictingPredicates(hyp);
 			if (cntrs != null && areContained(cntrs)) {
 				return hyp;
 			}
@@ -42,9 +45,36 @@ public abstract class ContradictionFinder {
 		return null;
 	}
 
+	/**
+	 * Tells whether every entry is covered in the set, that is contains a
+	 * predicate which is a member of the set.
+	 * 
+	 * @param cntrs
+	 *            the map (sub-predicate ↦ set of contradictory predicates)
+	 * 
+	 * @return <code>true</code> iff each conjunct has a contradictory predicate
+	 *         in hypotheses
+	 */
+	protected boolean areContained(Map<Predicate, List<Predicate>> cntrs) {
+		boolean contain;
+
+		for (Entry<Predicate, List<Predicate>> entry : cntrs.entrySet()) {
+			contain = false;
+			for (Predicate cntr : entry.getValue()) {
+				if (isContained(cntr)) {
+					contain = true;
+				}
+			}
+			if (!contain) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	protected abstract Iterable<Predicate> getCandidates();
 
-	protected abstract boolean areContained(Set<Predicate> cntrs);
+	protected abstract boolean isContained(Predicate pred);
 
 	/**
 	 * Find a predicate which is contradicted by the other predicates of a set
@@ -64,8 +94,8 @@ public abstract class ContradictionFinder {
 		}
 
 		@Override
-		protected boolean areContained(Set<Predicate> cntrs) {
-			return neededHyps.containsAll(cntrs);
+		protected boolean isContained(Predicate pred) {
+			return neededHyps.contains(pred);
 		}
 
 	}
@@ -89,8 +119,8 @@ public abstract class ContradictionFinder {
 		}
 
 		@Override
-		protected boolean areContained(Set<Predicate> cntrs) {
-			return sequent.containsHypotheses(cntrs);
+		protected boolean isContained(Predicate pred) {
+			return sequent.containsHypothesis(pred);
 		}
 
 	}

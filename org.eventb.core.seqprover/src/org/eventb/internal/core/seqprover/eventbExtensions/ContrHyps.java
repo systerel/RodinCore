@@ -10,6 +10,16 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions;
 
+import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.breakPossibleConjunct;
+import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
+import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getStrongerNegative;
+import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getStrongerPositive;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.Predicate;
@@ -25,7 +35,6 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.core.seqprover.ProverRule;
 import org.eventb.core.seqprover.SequentProver;
 import org.eventb.core.seqprover.SerializeException;
-import org.eventb.core.seqprover.eventbExtensions.Lib;
 import org.eventb.core.seqprover.reasonerInputs.HypothesisReasoner.Input;
 import org.eventb.internal.core.seqprover.ReasonerFailure;
 import org.eventb.internal.core.seqprover.eventbExtensions.ContradictionFinder.ContradictionInSetFinder;
@@ -90,12 +99,12 @@ public class ContrHyps implements IVersionedReasoner {
 			return ProverFactory.reasonerFailure(this, input,
 					"Nonexistent hypothesis: " + hyp);
 		}
-		final Set<Predicate> neededHyps = contradictingPredicates(hyp);
+
+		final Map<Predicate, List<Predicate>> contrHyps = contradictingPredicates(
+				hyp);
+
+		final Set<Predicate> neededHyps = getContrHypotheses(seq, contrHyps);
 		if (neededHyps == null) {
-			return new ReasonerFailure(this, input, "Predicate " + hyp
-					+ " is not a negation");
-		}
-		if (!seq.containsHypotheses(neededHyps)) {
 			return new ReasonerFailure(this, input, "Predicate " + hyp
 					+ " is not contradicted by hypotheses");
 		}
@@ -107,11 +116,57 @@ public class ContrHyps implements IVersionedReasoner {
 				display, NO_ANTECEDENT);
 	}
 
-	public static Set<Predicate> contradictingPredicates(Predicate pred) {
-		if (!Lib.isNeg(pred)) {
-			return null;
+	/**
+	 * Returns a map of (Predicate ↦ List of predicate) where Predicate is a
+	 * sub-predicate contained in <code>pred</code> and the List of Predicate
+	 * is a list of contradictory predicate of Predicate.
+	 *
+	 * Split a conjunctive hypothesis into its conjuncts and compute for each
+	 * conjuncts a list of contradictory predicate.
+	 *
+	 * @param pred
+	 * 			the predicate analyzed
+	 */
+	public static Map<Predicate, List<Predicate>> contradictingPredicates(
+			Predicate pred) {
+		Map<Predicate, List<Predicate>> preds = new HashMap<Predicate, List<Predicate>>();
+
+		if (!isNeg(pred)) {
+			final List<Predicate> genContrPredicate = getStrongerNegative(pred);
+			preds.put(pred, genContrPredicate);
+		} else {
+			for (Predicate p : breakPossibleConjunct(makeNeg(pred))) {
+				preds.put(p, getStrongerPositive(p));
+			}
 		}
-		return Lib.breakPossibleConjunct(Lib.negPred(pred));
+		return preds;
+	}
+
+
+	/**
+	 * Return a list of contradictory hypotheses
+	 * @param sequent
+	 *            the current sequent
+	 * @param contrHyps
+	 *            the map (predicate ↦ contradictory predicate)
+	 * @return a set of predicate
+	 */
+	private Set<Predicate> getContrHypotheses(IProverSequent seq,
+			Map<Predicate, List<Predicate>> contrHyps) {
+		Set<Predicate> preds = new HashSet<Predicate>();
+		boolean contain;
+		for (Predicate pred : contrHyps.keySet()) {
+			contain = false;
+			for (Predicate cntr: contrHyps.get(pred)) {
+				if (seq.containsHypothesis(cntr)) {
+					contain = true;
+					preds.add(cntr);
+				}
+			}
+			if (!contain)
+				return null;
+		}
+		return preds;
 	}
 
 }
