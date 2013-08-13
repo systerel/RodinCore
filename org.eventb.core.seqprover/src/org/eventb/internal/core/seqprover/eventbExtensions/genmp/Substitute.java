@@ -16,6 +16,10 @@ import static org.eventb.core.seqprover.eventbExtensions.DLib.makeNeg;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isFalse;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isTrue;
+import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getStrongerNegative;
+import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getStrongerPositive;
+import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getWeakerNegative;
+import static org.eventb.internal.core.seqprover.eventbExtensions.utils.Variations.getWeakerPositive;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +36,10 @@ import org.eventb.core.ast.Predicate;
 public class Substitute {
 
 	/**
+	 * DO NOT MODIFY
+	 * 
 	 * Returns a list of substitutes for the source predicate coming from a
-	 * hypothesis or a goal.
+	 * hypothesis or a goal. For reasoner L0 and L1 only.
 	 * 
 	 * @param origin
 	 *            the hypothesis or goal predicate
@@ -46,26 +52,59 @@ public class Substitute {
 	public static List<Substitute> makeSubstitutes(Predicate origin,
 			boolean fromGoal, Predicate source) {
 		final List<Substitute> result = new ArrayList<Substitute>();
-		addSubstitute(result, origin, fromGoal, source);
+		final boolean isPos = !fromGoal;
+		addSubstitute(result, origin, fromGoal, source, isPos);
 		return result;
 	}
 
-	private static void addSubstitute(List<Substitute> substs,
-			Predicate origin, boolean fromGoal, Predicate source) {
-		final Predicate toReplace;
-		final Predicate substitute;
-		final FormulaFactory ff = origin.getFactory();
-		if (isNeg(source)) {
-			toReplace = makeNeg(source);
-			substitute = fromGoal ? True(ff) : False(ff);
-		} else {
-			toReplace = source;
-			substitute = fromGoal ? False(ff) : True(ff);
+	public static List<Substitute> makeSubstitutesL2(Predicate origin,
+			boolean fromGoal, Predicate source) {
+		return makeSubstitutes(origin, fromGoal, source, !fromGoal);
+	}
+
+	public static List<Substitute> makeSubstitutes(Predicate origin,
+			boolean fromGoal, Predicate source, boolean isPos) {
+		final List<Substitute> result = new ArrayList<Substitute>();
+		while (isNeg(source)) {
+			isPos = !isPos;
+			source = makeNeg(source);
 		}
-		if (isTrue(toReplace) || isFalse(toReplace)) {
+		// Now source does not start with not.
+		if (isPos) {
+			// Add substitutions for all Q such that P => Q
+			addSubstitutes(result, origin, fromGoal, getWeakerPositive(source),
+					true);
+			addSubstitutes(result, origin, fromGoal, getStrongerNegative(source),
+					false);
+		} else {
+			// Add substitutions for all Q such that Q => P
+			addSubstitutes(result, origin, fromGoal, getStrongerPositive(source),
+					false);
+			addSubstitutes(result, origin, fromGoal, getWeakerNegative(source),
+					true);
+		}
+		return result;
+	}
+
+	private static void addSubstitutes(List<Substitute> substs,
+			Predicate origin, boolean fromGoal, List<Predicate> sources, boolean isPos) {
+		for (final Predicate source : sources) {
+			addSubstitute(substs, origin, fromGoal, source, isPos);
+		}
+	}
+
+	private static void addSubstitute(List<Substitute> substs,
+			Predicate origin, boolean fromGoal, Predicate source, boolean isPos) {
+		if (isNeg(source)) {
+			source = makeNeg(source);
+			isPos = !isPos;
+		}
+		if (isTrue(source) || isFalse(source)) {
 			return;
 		}
-		substs.add(new Substitute(origin, fromGoal, toReplace, substitute));
+		final FormulaFactory ff = origin.getFactory();
+		final Predicate substitute = isPos ? True(ff) : False(ff);
+		substs.add(new Substitute(origin, fromGoal, source, substitute));
 	}
 
 	// the predicate from which this substitution comes (hypothesis or goal)
@@ -82,7 +121,6 @@ public class Substitute {
 
 	public Substitute(Predicate origin, boolean fromGoal, Predicate toReplace,
 			Predicate substitute) {
-		super();
 		this.origin = origin;
 		this.fromGoal = fromGoal;
 		this.toReplace = toReplace;

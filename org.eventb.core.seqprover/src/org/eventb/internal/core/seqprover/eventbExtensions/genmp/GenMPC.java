@@ -16,6 +16,7 @@ import static org.eventb.core.seqprover.eventbExtensions.Lib.disjuncts;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isDisj;
 import static org.eventb.core.seqprover.eventbExtensions.Lib.isNeg;
 import static org.eventb.internal.core.seqprover.eventbExtensions.genmp.Substitute.makeSubstitutes;
+import static org.eventb.internal.core.seqprover.eventbExtensions.genmp.Substitute.makeSubstitutesL2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +47,8 @@ import org.eventb.core.seqprover.ProverFactory;
 import org.eventb.internal.core.seqprover.eventbExtensions.genmp.AbstractGenMP.Level;
 
 /**
+ * Core implementation of the generalized modus ponens reasoner.
+ * 
  * @author Emmanuel Billaud
  */
 public class GenMPC {
@@ -117,16 +120,12 @@ public class GenMPC {
 	 */
 	public boolean runGenMP() {
 		extractSubstitutes();
-
-		List<SubstAppli> applis = analyzePred(goal, true);
-		rewriteGoal(applis);
-
+		rewriteGoal();
 		for (Predicate hyp : seq.visibleHypIterable()) {
 			if (pm != null && pm.isCanceled()) {
 				return false;
 			}
-			applis = analyzePred(hyp, false);
-			rewriteHyp(hyp, applis);
+			rewriteHyp(hyp);
 
 		}
 		return true;
@@ -156,12 +155,16 @@ public class GenMPC {
 	// the goal.
 	private void addSubstitute(Predicate origin, boolean fromGoal,
 			Predicate source) {
-		final List<Substitute> substs = makeSubstitutes(origin, fromGoal,
-				source);
+		final List<Substitute> substs;
+		if (level.from(Level.L2)) {
+			substs = makeSubstitutesL2(origin, fromGoal, source);
+		} else {
+			substs = makeSubstitutes(origin, fromGoal, source);
+		}
 		for (final Substitute subst : substs) {
 			final Predicate toReplace = subst.toReplace();
 			if (substitutes.containsKey(toReplace)) {
-				return;
+				continue;
 			}
 			substitutes.put(toReplace, subst);
 		}
@@ -189,17 +192,29 @@ public class GenMPC {
 				if (subst == null) {
 					return;
 				}
-				// TODO in next level, fix these tests which are wrong.
-				if (isGoal && subst.fromGoal()) {
-					// Do not rewrite the goal with itself
-					return;
+				if (!isSelfRewrite(predicate, subst)) {
+					final IPosition pos = accumulator.getCurrentPosition();
+					accumulator.add(new SubstAppli(subst, pos));
+					accumulator.skipChildren();
 				}
-				if (predicate == computePred(origin)) {
-					return;
+			}
+
+			// Tells whether the given predicate would be rewritten by himself.
+			private boolean isSelfRewrite(Predicate predicate, Substitute subst) {
+				if (level.from(Level.L2)) {
+					if (origin == subst.origin() || isGoal && subst.fromGoal()) {
+						return true;
+					}
+				} else {
+					if (isGoal && subst.fromGoal()) {
+						// Do not rewrite the goal with itself
+						return true;
+					}
+					if (predicate == computePred(origin)) {
+						return true;
+					}
 				}
-				final IPosition pos = accumulator.getCurrentPosition();
-				accumulator.add(new SubstAppli(subst, pos));
-				accumulator.skipChildren();
+				return false;
 			}
 
 			// Retained for backward compatibility, do not change.
@@ -274,13 +289,11 @@ public class GenMPC {
 	}
 
 	/**
-	 * Rewrites the goal using the given substitute applications, updating the
-	 * result in fields.
-	 * 
-	 * @param applis
-	 *            list of substitute applications to the goal
+	 * Rewrites the goal using the available substitute applications, updating
+	 * the set of needed hypotheses and new goal.
 	 */
-	private void rewriteGoal(List<SubstAppli> applis) {
+	private void rewriteGoal() {
+		final List<SubstAppli> applis = analyzePred(goal, true);
 		Predicate newGoal = goal;
 		for (final SubstAppli appli : applis) {
 			neededHyps.add(appli.origin());
@@ -292,14 +305,15 @@ public class GenMPC {
 	}
 
 	/**
-	 * Rewrites the given hypothesis with the given application.
+	 * Rewrites the given hypothesis using the available substitute
+	 * applications, producing new hypothesis actions and updating whether the
+	 * rewrite depends on the goal.
 	 * 
 	 * @param hyp
 	 *            the hypothesis
-	 * @param applis
-	 *            list of substitute applications to the hypothesis
 	 */
-	private void rewriteHyp(Predicate hyp, List<SubstAppli> applis) {
+	private void rewriteHyp(Predicate hyp) {
+		final List<SubstAppli> applis = analyzePred(hyp, false);
 		final Set<Predicate> sourceHyps = new LinkedHashSet<Predicate>();
 		Predicate rewrittenHyp = hyp;
 		for (final SubstAppli appli : applis) {

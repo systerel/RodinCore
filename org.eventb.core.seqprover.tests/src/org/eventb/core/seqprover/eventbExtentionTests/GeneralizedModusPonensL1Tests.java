@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eventb.core.seqprover.eventbExtentionTests;
 
 import static org.eventb.core.seqprover.tests.TestLib.genSeq;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eventb.core.seqprover.IProverSequent;
@@ -40,53 +38,52 @@ public class GeneralizedModusPonensL1Tests extends GeneralizedModusPonensL0Tests
 	}
 
 	@Override
-	public SuccessfullReasonerApplication[] getSuccessfulReasonerApplications() {
-		final SuccessfullReasonerApplication[] newTests = new SuccessfullReasonerApplication[] {
-				// Apply once in the hypothesis 1/2 (FALSE)
-				makeSuccess(" 1∈P⇒2∈P |- 1∈P ",
-						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊥⇒2∈P] |- 1∈P"),
-				// Apply once in the hypothesis 2/2 (FALSE)
-				makeSuccess(" ¬1∈P⇒2∈P |- 1∈P ",
-						"{P=ℙ(ℤ)}[¬1∈P⇒2∈P][][¬⊥⇒2∈P] |- 1∈P"),
+	protected void addSuccessfullReasonerApplications(
+			List<SuccessfullReasonerApplication> tests) {
+		// Rewrite goal in hypothesis 1/2 (FALSE)
+		tests.add(makeSuccess(" 1∈P⇒2∈P |- 1∈P ",
+				"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊥⇒2∈P] |- 1∈P"));
+		// Rewrite goal in hypothesis 2/2 (FALSE)
+		tests.add(makeSuccess(" ¬1∈P⇒2∈P |- 1∈P ",
+				"{P=ℙ(ℤ)}[¬1∈P⇒2∈P][][¬⊥⇒2∈P] |- 1∈P"));
+		// Rewrite goal in hypothesis 1/2 (TRUE)
+		tests.add(makeSuccess(" 1∈P⇒2∈P |- ¬1∈P ",
+				"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊤⇒2∈P] |- ¬1∈P"));
+		// Rewrite goal in hypothesis 2/2 (TRUE)
+		tests.add(makeSuccess(" ¬1∈P⇒2∈P |- ¬1∈P ",
+				"{P=ℙ(ℤ)}[¬1∈P⇒2∈P][][¬⊤⇒2∈P] |- ¬1∈P"));
+		// Rewrite goal disjunct in hypothesis 1/2
+		tests.add(makeSuccess(" 1∈P⇒2∈P |- 1∈P∨2∈P ",
+				"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊥⇒⊥] |- 1∈P∨2∈P"));
+		// Rewrite goal disjunct in hypothesis 2/2
+		tests.add(makeSuccess(" 1∈P⇒2∈P |- 1∈P∨¬2∈P ",
+				"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊥⇒⊤] |- 1∈P∨¬2∈P"));
+		// Hypothesis takes precedence other goal for rewriting
+		tests.add(makeSuccess(" 1∈P ;; 1∈P⇒2∈P |- 1∈P∨2∈P ",
+				"{P=ℙ(ℤ)}[1∈P⇒2∈P][][1∈P ;; ⊤⇒⊥] |- ⊤∨2∈P"));
+		if (!fromLevel2) {
+			// Sequent (P⊢P) is not re-written (⊥⊢P) or (P⊢⊤), even when
+			// the goal denotes a disjunction.
+			tests.add(makeSuccess(" 1∈P∨2∈P |- 1∈P∨2∈P ",
+					"{P=ℙ(ℤ)}[1∈P∨2∈P][][⊥∨⊥] |- 1∈P∨2∈P"));
+		} else {
+			// Sequent (P⊢P) is now systematically re-written
+			tests.add(makeSuccess(" 1∈P∨2∈P |- 1∈P∨2∈P ",
+					"{P=ℙ(ℤ)}[1∈P∨2∈P][][⊥∨⊥] |- ⊤"));
+		}
+		// Double-rewrite, larger formula takes precedence
+		tests.add(makeSuccess(" 3∈P⇒(1∈P⇒2∈P) |- 1∈P ∨ (1∈P⇒2∈P) ",
+				"{P=ℙ(ℤ)}[3∈P⇒(1∈P⇒2∈P)][][3∈P⇒⊥] |- 1∈P ∨ (1∈P⇒2∈P)"));
+		tests.add(makeSuccess(" 1∈P ;; 1∈P⇒2∈P |- 1∈P ∨ 3∈P⇒(1∈P⇒2∈P) ",
+				"{P=ℙ(ℤ)}[1∈P⇒2∈P][][1∈P ;; ⊤⇒2∈P] |- ⊤ ∨ 3∈P⇒⊤"));
+		// Ensure that the order of predicates is not significant
+		tests.add(makeSuccess(" 3∈P⇒(1∈P⇒2∈P) |- (1∈P⇒2∈P) ∨ 1∈P ",
+				"{P=ℙ(ℤ)}[3∈P⇒(1∈P⇒2∈P)][][3∈P⇒⊥] |- (1∈P⇒2∈P) ∨ 1∈P"));
+		// Ensure that goal dependence is correctly computed
+		tests.add(makeSuccess(" 1∈P⇒2∈P ;; 3∈P ;; 3∈P⇒2∈P |- 1∈P ",
+				"{P=ℙ(ℤ)}[1∈P⇒2∈P ;; 3∈P⇒2∈P][][⊥⇒2∈P ;; 3∈P ;; ⊤⇒2∈P] |- 1∈P"));
 
-				// Apply once in the hypothesis 1/2 (TRUE)
-				makeSuccess(" 1∈P⇒2∈P |- ¬1∈P ",
-						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊤⇒2∈P] |- ¬1∈P"),
-				// Apply once in the hypothesis 2/2 (TRUE)
-				makeSuccess(" ¬1∈P⇒2∈P |- ¬1∈P ",
-						"{P=ℙ(ℤ)}[¬1∈P⇒2∈P][][¬⊤⇒2∈P] |- ¬1∈P"),
-				// Apply many in the hypothesis 1/2
-				makeSuccess(" 1∈P⇒2∈P |- 1∈P∨2∈P ",
-						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊥⇒⊥] |- 1∈P∨2∈P"),
-				// Apply many in the hypothesis 2/2
-				makeSuccess(" 1∈P⇒2∈P |- 1∈P∨¬2∈P ",
-						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][⊥⇒⊤] |- 1∈P∨¬2∈P"),
-				// Re-writing is prioritary proceeded using hypotheses
-				makeSuccess(" 1∈P ;; 1∈P⇒2∈P |- 1∈P∨2∈P ",
-						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][1∈P ;; ⊤⇒⊥] |- ⊤∨2∈P"),
-				// Sequent (P⊢P) is not re-written (⊥⊢P) or (P⊢⊤), even when
-				// the goal denotes a disjunction.
-				makeSuccess(" 1∈P∨2∈P |- 1∈P∨2∈P ",
-						"{P=ℙ(ℤ)}[1∈P∨2∈P][][⊥∨⊥] |- 1∈P∨2∈P"),
-				// Double-rewrite, larger formula takes precedence
-				makeSuccess(" 3∈P⇒(1∈P⇒2∈P) |- 1∈P ∨ (1∈P⇒2∈P) ",
-						"{P=ℙ(ℤ)}[3∈P⇒(1∈P⇒2∈P)][][3∈P⇒⊥] |- 1∈P ∨ (1∈P⇒2∈P)"),
-				makeSuccess(" 1∈P ;; 1∈P⇒2∈P |- 1∈P ∨ 3∈P⇒(1∈P⇒2∈P) ",
-						"{P=ℙ(ℤ)}[1∈P⇒2∈P][][1∈P ;; ⊤⇒2∈P] |- ⊤ ∨ 3∈P⇒⊤"),
-				// Ensure that the order of predicates is not significant
-				makeSuccess(" 3∈P⇒(1∈P⇒2∈P) |- (1∈P⇒2∈P) ∨ 1∈P ",
-						"{P=ℙ(ℤ)}[3∈P⇒(1∈P⇒2∈P)][][3∈P⇒⊥] |- (1∈P⇒2∈P) ∨ 1∈P"),
-				// Ensure that goal dependence is correctly computed
-				makeSuccess(" 1∈P⇒2∈P ;; 3∈P ;; 3∈P⇒2∈P |- 1∈P ",
-						"{P=ℙ(ℤ)}[1∈P⇒2∈P ;; 3∈P⇒2∈P][][⊥⇒2∈P ;; 3∈P ;; ⊤⇒2∈P] |- 1∈P"),
-
-		};
-
-		final List<SuccessfullReasonerApplication> result = new ArrayList<SuccessfullReasonerApplication>();
-		result.addAll(Arrays.asList(super.getSuccessfulReasonerApplications()));
-		result.addAll(Arrays.asList(newTests));
-		return result
-				.toArray(new SuccessfullReasonerApplication[result.size()]);
+		super.addSuccessfullReasonerApplications(tests);
 	}
 
 	private SuccessfullReasonerApplication makeSuccess(String sequentImage,
