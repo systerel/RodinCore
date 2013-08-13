@@ -15,7 +15,6 @@
 package org.rodinp.internal.keyboard.ui.translators;
 
 import static org.rodinp.keyboard.core.KeyboardUtils.debug;
-import static org.rodinp.keyboard.core.KeyboardUtils.isTextCharacter;
 
 import java.util.Collection;
 
@@ -81,86 +80,23 @@ public abstract class AbstractRodinKeyboardTranslator implements IRodinKeyboardT
 			debug("Begin: " + beginIndex);
 			debug("End: " + subStringEndIndex);
 		}
-		if (beginIndex == subStringEndIndex)
+		if (beginIndex == subStringEndIndex) {
 			return;
-
+		}
 		int i = 0;
+		final SingleSymbolTranslator singleTranslator = new SingleSymbolTranslator(
+				widget, textTranslator, debug);
 		for (i = symbolComputer.getMaxSymbolSize(); i > 0; i--) {
-
-			String text = widget.getText();
-			int subStringEnd = Math.min(subStringEndIndex, text.length());
-			String subString = text.substring(beginIndex, subStringEnd);
-			int currentPos = widget.getCaretOffset();
-			int indexInSubstring = 0;
-
-			if (debug) {
-				debug("Process: \"" + text + "\"");
-				debug("Pos: " + currentPos);
-				debug("Substring: \"" + subString + "\"");
-			}
-
 			final Collection<ISymbol> collection = symbolComputer.getSymbols(i);
-			if (collection != null) {
-				for (ISymbol symbol : collection) {
+			if (collection == null) {
+				continue;
+			}
+			for (ISymbol symbol : collection) {
+				singleTranslator.setSymbol(symbol);
+				singleTranslator.translateAllOccurrences();
 
-					final String combo = symbol.getCombo();
-					final String result = symbol.getTranslation();
-
-					int index = subString.indexOf(combo);
-
-					while (index != -1) {
-
-						indexInSubstring = beginIndex + index;
-
-						// particular treatment for the text translators: do
-						// not translate symbols which could be substrings of
-						// identifiers
- 						if (textTranslator && //
-								isNoTextTranslation(text, combo,
-										indexInSubstring, subStringEnd)) {
-							index = subString.indexOf(combo, index + 1);
-							continue;
-						}
-
-						widget.setSelection(indexInSubstring, indexInSubstring
-								+ combo.length());
-						if (debug)
-							debug("Replace at pos " + indexInSubstring
-									+ " from \"" + combo + "\" by \"" + result
-									+ "\"");
-						widget.insert(result);
-
-						text = widget.getText();
-						subStringEnd = Math.min(subStringEndIndex, text.length());
-						subString = text.substring(beginIndex, subStringEnd);
-						index = subString.indexOf(combo, indexInSubstring+1);
-					}
-				}
 			}
 		}
-	}
-	
-	private boolean isNoTextTranslation(String text, String test,
-			int indexInString, int stringEndIndex) {
-		// if the previous character is a text character then ignore and
-		// continue (similar to identical translation).
-		if (indexInString != 0) {
-			if (isTextCharacter(text.charAt(indexInString - 1))) {
-				return true;
-			}
-		}
-		// if the next character is a text character or the end then ignore and
-		// continue (similar to identical translation).
-		if (indexInString + test.length() != stringEndIndex) {
-			if (isTextCharacter(text.charAt(indexInString + test.length()))) {
-				return true;
-			}
-		} else {
-			if (stringEndIndex == text.length()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }

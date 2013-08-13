@@ -60,5 +60,15 @@ public class EventBKeyboardJumpingTestCase extends AbstractKeyboardJumpingTestCa
 		testJumping("order=2 o order=3", new int[] { 9 }, new String[] { "r" },
 				"order=2 \u2228 order=3");
 	}
+	
+	/**
+	 * Checks that insertion of "r" after "o" is not translated to "∨" as it is
+	 * at the end of the widget string contents.
+	 */
+	@Test
+	public void testTextNoTranslation() {
+		testJumping("order=2 \u2228 o", new int[] { 11 }, new String[] { "r" },
+				"order=2 \u2228 or");
+	}
 
 }
