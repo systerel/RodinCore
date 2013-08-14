@@ -100,8 +100,11 @@ public class InternalElementType<T extends IInternalElement> extends
 	 *            the new element's parent
 	 * @return a handle on the internal element or <code>null</code> if the
 	 *         element type is unknown
+	 * @throws IllegalArgumentException
+	 *             if violating parent-child relationship
 	 */
 	public T createInstance(String elementName, IRodinElement parent) {
+		enforceElementRelationship(parent);
 		if (constructor == null) {
 			computeConstructor();
 		}
@@ -116,7 +119,21 @@ public class InternalElementType<T extends IInternalElement> extends
 			throw new IllegalStateException(message, e);
 		}
 	}
-		
+
+	private void enforceElementRelationship(IRodinElement parent) {
+		if (parent instanceof RodinFile) {
+			// Restriction enforced in RodinFile
+			return;
+		}
+		final IInternalElement iParent = ((IInternalElement) parent);
+		final IInternalElementType<?> parentType = iParent.getElementType();
+		if (parentType.canParent(this)) {
+			return;
+		}
+		throw new IllegalArgumentException("Forbidden child type " + this
+				+ " for element " + parent);
+	}
+
 	String getClassName() {
 		return className;
 	}

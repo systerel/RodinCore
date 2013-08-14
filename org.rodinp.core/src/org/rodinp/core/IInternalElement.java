@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Systerel - added inquiry methods
  *     Systerel - added creation of new internal element child
  *     Systerel - generic attribute manipulation
+ *     Systerel - add database relations
  *******************************************************************************/
 package org.rodinp.core;
 
@@ -342,6 +343,12 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 * Returns a handle to a child internal element with the given type and
 	 * name.
 	 * <p>
+	 * Since Rodin 3.0, the database enforces restrictions on the type of child
+	 * elements. The given type must be allowed as a child type for the type of
+	 * this element through extension point
+	 * <code>org.rodinp.core.itemRelations</code>.
+	 * </p>
+	 * <p>
 	 * This is a handle-only method. The child element may or may not be
 	 * present.
 	 * </p>
@@ -351,8 +358,13 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 * @param childName
 	 *            name of the child element
 	 * @return the child internal element with the given type and name
+	 * @throws IllegalArgumentException
+	 *             if the given type of the child element is not allowed for
+	 *             this element
 	 * @see #createChild(IInternalElementType, IInternalElement,
 	 *      IProgressMonitor)
+	 * @see IInternalElementType#canParent(IInternalElementType)
+	 * @since 3.0
 	 */
 	<T extends IInternalElement> T getInternalElement(
 			IInternalElementType<T> childType, String childName);
@@ -376,6 +388,15 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 * element, but relative to the given file. In particular, if this element
 	 * is a file, then the given file is returned.
 	 * <p>
+	 * Since Rodin 3.0, the database enforces restrictions on the type of child
+	 * elements as declared through extension point
+	 * <code>org.rodinp.core.itemRelations</code>. If this element is not a root
+	 * element and if the root element type of the given file does not allow as
+	 * child the type of the below root ancestor of this element, then an
+	 * {@link IllegalArgumentException} is raised, as the handle to the similar
+	 * element cannot be built.
+	 * </p>
+	 * <p>
 	 * This is a handle-only method.
 	 * </p>
 	 * 
@@ -383,6 +404,9 @@ public interface IInternalElement extends IRodinElement, IElementManipulation,
 	 *            file in which to construct the new handle
 	 * @return an element with the same path relative to the given file as this
 	 *         element
+	 * @throws IllegalArgumentException
+	 *             if the returned handle would violate the database
+	 *             restrictions on parent-child relationships
 	 */
 	IInternalElement getSimilarElement(IRodinFile newFile);
 

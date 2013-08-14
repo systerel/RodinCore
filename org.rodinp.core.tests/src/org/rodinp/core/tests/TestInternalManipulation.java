@@ -42,6 +42,7 @@ import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.InternalElement;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 
 public class TestInternalManipulation extends ModifyingResourceTests {
@@ -93,7 +94,18 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		checkChildren(parent, expChildren);
 		checkEmpty(expChildren);
 	}
-	
+
+	// Test creation of handle that would violate parent-child relationships
+	public void testGetInternalElementError() {
+		final NamedElement e1 = getNamedElement(root, "e1");
+		try {
+			e1.getInternalElement(NamedElement2.ELEMENT_TYPE, "e11");
+			fail("shoud have failed");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
+	}
+
 	// Test creation of some top-level internal elements
 	public void testCreateInternalElement() throws Exception {
 		// File exists and is empty
@@ -367,6 +379,24 @@ public class TestInternalManipulation extends ModifyingResourceTests {
 		final NamedElement ie2 = getNamedElement(r2, ie1.getElementName());
 		assertEquals(ie1, ie1.getSimilarElement(rf1));
 		assertEquals(ie2, ie1.getSimilarElement(rf2));
+	}
+
+	/**
+	 * Ensures that a similar element for an internal element can fail if
+	 * violating parent-child relationships.
+	 */
+	public void testSimilarIntError() {
+		final IRodinFile rf1 = getRodinFile("P/X.test");
+		final RodinTestRoot r1 = (RodinTestRoot) rf1.getRoot();
+		final NamedElement ie1 = getNamedElement(r1, "foo");
+		final IRodinFile rf2 = getRodinFile("P/Y.test2");
+
+		try {
+			ie1.getSimilarElement(rf2);
+			fail("shoud have failed");
+		} catch (IllegalArgumentException e) {
+			// pass
+		}
 	}
 
 	/**

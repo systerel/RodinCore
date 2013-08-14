@@ -22,6 +22,7 @@ import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.core.tests.basis.RodinTestRoot;
 import org.rodinp.core.tests.util.Util;
 
@@ -274,6 +275,27 @@ public class MementoTests extends ModifyingResourceTests {
 		assertEquals(RodinCore.valueOf(prefix + "/"), root);
 		assertEquals(RodinCore.valueOf(prefix + "|" + typeId), root);
 		assertEquals(RodinCore.valueOf(prefix + "|" + typeId + "|"), root);
+	}
+
+	/**
+	 * Ensure that reading a memento that would return a handle violating
+	 * parent-child relationships returns <code>null</code>.
+	 */
+	public void testMementoError() {
+		final IRodinFile rf = getRodinFile("/P/X.test");
+		final RodinTestRoot root = (RodinTestRoot) rf.getRoot();
+		final IInternalElement e1 = getNamedElement(root, "e1");
+		final IInternalElement e11 = getNamedElement(e1, "e11");
+		final String e11Memento = e11.getHandleIdentifier();
+
+		// Value of works for a valid handle
+		assertEquals(e11, RodinCore.valueOf(e11Memento));
+
+		// Change element types to make an invalid memento
+		final String brokenMemento = e11Memento.replace(
+				NamedElement.ELEMENT_TYPE.getId(),
+				NamedElement2.ELEMENT_TYPE.getId());
+		assertNull(RodinCore.valueOf(brokenMemento));
 	}
 
 }

@@ -143,6 +143,13 @@ public abstract class RodinElement extends PlatformObject implements
 			childName = "";
 			lookahead = null;
 		}
+		if (parent instanceof IInternalElement) {
+			final IInternalElement iParent = (IInternalElement) parent;
+			if (!iParent.getElementType().canParent(childType)) {
+				// invalid child type
+				return null;
+			}
+		}
 		final RodinElement child = (RodinElement) childType.createInstance(
 				childName, parent);
 		if (child == null) {
