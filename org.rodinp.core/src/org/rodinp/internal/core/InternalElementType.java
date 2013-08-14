@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import static java.util.Collections.emptyList;
+
 import java.lang.reflect.Array;
 import java.util.List;
 
@@ -41,8 +43,18 @@ public class InternalElementType<T extends IInternalElement> extends
 	// (cached value)
 	protected Class<? extends T> classObject;
 
+	/*
+	 * The three following lists are quasi-immutable: they are all set together
+	 * only once and never change afterwards.
+	 */
+
+	// List of all allowed parent types
 	private List<InternalElementType<?>> parentTypes = null;
+
+	// List of all allowed child types
 	private List<InternalElementType<?>> childTypes = null;
+
+	// List of all allowed attribute types
 	private List<AttributeType<?>> attributeTypes = null;
 
 	public InternalElementType(IConfigurationElement configurationElement,
@@ -148,14 +160,18 @@ public class InternalElementType<T extends IInternalElement> extends
 
 	public void setRelation(List<InternalElementType<?>> pTypes,
 			List<InternalElementType<?>> cTypes, List<AttributeType<?>> aTypes) {
-		if (parentTypes != null || childTypes != null || attributeTypes != null) {
-			throw new IllegalStateException(
-					"Illegal attempt to set relations for internal element type "
-							+ getName());
+		assert parentTypes == null;
+		parentTypes = pTypes;
+		childTypes = cTypes;
+		attributeTypes = aTypes;
+	}
+
+	public void finalizeRelations() {
+		if (parentTypes == null) {
+			parentTypes = emptyList();
+			childTypes = emptyList();
+			attributeTypes = emptyList();
 		}
-		this.parentTypes = pTypes;
-		this.childTypes = cTypes;
-		this.attributeTypes = aTypes;
 	}
 
 	@Override

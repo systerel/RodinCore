@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     ETH Zurich - initial API and implementation
  *     Systerel - separation of file and root element
  *     Systerel - generic attribute manipulation
+ *     Systerel - itemRelations implementation
  *******************************************************************************/
 package org.rodinp.internal.core;
 
@@ -28,6 +29,7 @@ import org.rodinp.core.IRodinDB;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.IRodinFile;
 import org.rodinp.core.IRodinProject;
+import org.rodinp.internal.core.relations.ItemRelations;
 
 /**
  * Manager for Rodin element types.
@@ -91,6 +93,8 @@ public class ElementTypeManager {
 			this.fileAssociations = new FileAssociations();
 			this.internalElementTypes = new InternalElementTypes(this);
 			this.attributeTypes = new AttributeTypes(this);
+			new ItemRelations(internalElementTypes, attributeTypes)
+					.setRelations();
 		}
 	}
 

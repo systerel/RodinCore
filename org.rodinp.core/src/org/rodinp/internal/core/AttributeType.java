@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.rodinp.internal.core;
 
+import static java.util.Collections.emptyList;
+
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -355,6 +357,11 @@ public abstract class AttributeType<V> implements IAttributeType,
 
 	private final java.lang.String name;
 	
+	/*
+	 * List of all allowed element types that can carry an attribute of this
+	 * type. It is quasi-immutable: it is only set once and never changes
+	 * afterwards.
+	 */
 	private List<InternalElementType<?>> elementTypes = null;
 
 	protected AttributeType(Kind kind, java.lang.String id,
@@ -432,12 +439,14 @@ public abstract class AttributeType<V> implements IAttributeType,
 			java.lang.String rawValue) throws RodinDBException;
 
 	public void setRelation(List<InternalElementType<?>> eTypes) {
-		if (elementTypes != null) {
-			throw new IllegalStateException(
-					"Illegal attempt to set relations for attribute type "
-							+ getName());
+		assert elementTypes == null;
+		elementTypes = eTypes;
+	}
+
+	public void finalizeRelations() {
+		if (elementTypes == null) {
+			elementTypes = emptyList();
 		}
-		this.elementTypes = eTypes;
 	}
 
 	public abstract java.lang.String toString(V value);

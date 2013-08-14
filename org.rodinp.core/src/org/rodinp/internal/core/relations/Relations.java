@@ -69,12 +69,14 @@ public abstract class Relations<S extends Comparable<S>, T extends Comparable<T>
 		return asSortedList(childrenMap.get(parentElement));
 	}
 
+	// Finalize the list and makes it as small as possible
 	protected static <U extends Comparable<U>> List<U> asSortedList(Set<U> set) {
 		if (set == null) {
 			return emptyList();
 		}
-		final List<U> result = new ArrayList<U>(set);
+		final ArrayList<U> result = new ArrayList<U>(set);
 		Collections.sort(result);
+		result.trimToSize();
 		return result;
 	}
 
