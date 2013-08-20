@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import static org.eventb.core.seqprover.tests.TestLib.genSeq;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eventb.core.seqprover.IProverSequent;
 import org.eventb.core.seqprover.reasonerInputs.EmptyInput;
-import static org.eventb.core.seqprover.tests.TestLib.genSeq;
+import org.eventb.internal.core.seqprover.eventbExtensions.AbstractGenMP;
 import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonensL1;
 
 /**
@@ -24,10 +26,17 @@ import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonen
  * 
  * @author Emmanuel Billaud
  */
-public class GeneralizedModusPonensL1Tests extends GeneralizedModusPonensTests {
+public class GeneralizedModusPonensL1Tests extends GeneralizedModusPonensL0Tests {
+
+	// The reasoner for testing.
+	private static final AbstractGenMP GenMP_L1 = new GeneralizedModusPonensL1();
 
 	public GeneralizedModusPonensL1Tests() {
-		super(new GeneralizedModusPonensL1());
+		this(GenMP_L1);
+	}
+
+	protected GeneralizedModusPonensL1Tests(AbstractGenMP rewriter) {
+		super(rewriter);
 	}
 
 	@Override

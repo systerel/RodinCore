@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.eventbExtentionTests;
 
+import org.eventb.internal.core.seqprover.eventbExtensions.AbstractGenMP;
 import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonens;
 
 /**
@@ -19,8 +20,15 @@ import org.eventb.internal.core.seqprover.eventbExtensions.GeneralizedModusPonen
  */
 public class GeneralizedModusPonensL0Tests extends GeneralizedModusPonensTests {
 
+	// The reasoner for testing.
+	private static final AbstractGenMP GenMP_L0 = new GeneralizedModusPonens();
+
 	public GeneralizedModusPonensL0Tests() {
-		super(new GeneralizedModusPonens());
+		this(GenMP_L0);
+	}
+
+	protected GeneralizedModusPonensL0Tests(AbstractGenMP rewriter) {
+		super(rewriter);
 	}
 
 }
