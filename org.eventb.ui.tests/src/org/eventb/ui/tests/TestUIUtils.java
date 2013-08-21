@@ -14,7 +14,6 @@ import static org.eventb.core.EventBAttributes.IDENTIFIER_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.LABEL_ATTRIBUTE;
 import static org.eventb.core.EventBAttributes.PREDICATE_ATTRIBUTE;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
@@ -23,6 +22,7 @@ import org.eventb.core.IAction;
 import org.eventb.core.IAxiom;
 import org.eventb.core.ICarrierSet;
 import org.eventb.core.IConstant;
+import org.eventb.core.IContextRoot;
 import org.eventb.core.IEvent;
 import org.eventb.core.IGuard;
 import org.eventb.core.IMachineRoot;
@@ -51,15 +51,15 @@ public class TestUIUtils extends EventBUITest {
 	private static final String constantIdentifierPrefix = "cst";
 	private static final String guardLabelPrefix = "grd";
 
+	protected static IContextRoot c0;
 	protected static IMachineRoot m0;
 
 	@Before
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
+		c0 = createContext("c0");
 		m0 = createMachine("m0");
-		m0.getRodinFile().save(null, true);
-		assertNotNull("m0 should have been created successfully ", m0);
 	}
 
 	private static void assertFreeIndex(IInternalElement element,
@@ -128,7 +128,7 @@ public class TestUIUtils extends EventBUITest {
 	@Test
 	public void testGetFreeIndexAttributeFirst() throws RodinDBException {
 		// no axiom has been created yet so it should return index 1
-		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE,
+		assertFreeIndex(c0, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE,
 				axiomLabelPrefix, "1");
 	}
 
@@ -147,21 +147,21 @@ public class TestUIUtils extends EventBUITest {
 
 	@Test
 	public void testGetFreeIndexAttributeSecond() throws RodinDBException {
-		createNAxioms(m0, axiomLabelPrefix, 1, 1);
+		createNAxioms(c0, axiomLabelPrefix, 1, 1);
 
 		// an axiom has been created with label index 1
 		// so next available index should be 2
-		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE,
+		assertFreeIndex(c0, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE,
 				axiomLabelPrefix, "2");
 	}
 
 	@Test
 	public void testGetFreeIndexAttributeManyExisting() throws RodinDBException {
-		createNAxioms(m0, axiomLabelPrefix, 100, 31);
+		createNAxioms(c0, axiomLabelPrefix, 100, 31);
 
 		// many axioms have been created up to label index 130
 		// so next available index should be 131
-		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE,
+		assertFreeIndex(c0, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE,
 				axiomLabelPrefix, "131");
 	}
 
@@ -221,20 +221,20 @@ public class TestUIUtils extends EventBUITest {
 	@Test
 	public void testGetFreeIndexAttributeDifferentAttribute()
 			throws RodinDBException {
-		createNAxioms(m0, axiomLabelPrefix, 100, 31);
+		createNAxioms(c0, axiomLabelPrefix, 100, 31);
 
 		// many axioms have been created up to label index 130
 		// but no predicate attribute has been set
 		// so next available predicate index
-		assertFreeIndex(m0, IAxiom.ELEMENT_TYPE, PREDICATE_ATTRIBUTE,
+		assertFreeIndex(c0, IAxiom.ELEMENT_TYPE, PREDICATE_ATTRIBUTE,
 				"this axiom is false", "1");
 	}
 
 	@Test
 	public void testConstantIdentifier() throws Exception {
-		final IConstant cst = createInternalElement(m0, IConstant.ELEMENT_TYPE);
+		final IConstant cst = createInternalElement(c0, IConstant.ELEMENT_TYPE);
 		cst.setIdentifierString(constantIdentifierPrefix + "1", null);
-		assertFreeIndex(m0, IConstant.ELEMENT_TYPE, IDENTIFIER_ATTRIBUTE,
+		assertFreeIndex(c0, IConstant.ELEMENT_TYPE, IDENTIFIER_ATTRIBUTE,
 				constantIdentifierPrefix, "2");
 	}
 
@@ -267,16 +267,16 @@ public class TestUIUtils extends EventBUITest {
 	public void testGetFreeIndexCallingMethods() throws RodinDBException {
 		String freeIndexFound;
 
-		freeIndexFound = UIUtils.getFreeElementLabelIndex(m0,
+		freeIndexFound = UIUtils.getFreeElementLabelIndex(c0,
 				IAxiom.ELEMENT_TYPE, axiomLabelPrefix);
 		assertEquals("incorrect free element label index", "1", freeIndexFound);
 
-		freeIndexFound = UIUtils.getFreeElementIdentifierIndex(m0,
+		freeIndexFound = UIUtils.getFreeElementIdentifierIndex(c0,
 				ICarrierSet.ELEMENT_TYPE, "set");
 		assertEquals("incorrect free element identifier index", "1",
 				freeIndexFound);
 
-		freeIndexFound = EventBUtils.getFreeChildNameIndex(m0,
+		freeIndexFound = EventBUtils.getFreeChildNameIndex(c0,
 				ICarrierSet.ELEMENT_TYPE, "internal_element");
 		assertEquals("incorrect free element identifier index", "1",
 				freeIndexFound);
@@ -318,8 +318,8 @@ public class TestUIUtils extends EventBUITest {
 	 */
 	@Test
 	public void testInexistentLabel() throws Exception {
-		createInternalElement(m0, IConstant.ELEMENT_TYPE);
-		assertFreeIndex(m0, IConstant.ELEMENT_TYPE, LABEL_ATTRIBUTE,
+		createInternalElement(c0, IConstant.ELEMENT_TYPE);
+		assertFreeIndex(c0, IConstant.ELEMENT_TYPE, LABEL_ATTRIBUTE,
 				"constant", "1");
 	}
 }
