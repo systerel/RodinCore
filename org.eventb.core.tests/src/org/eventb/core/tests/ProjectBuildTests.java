@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eventb.core.tests;
 
+import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
+import static org.eclipse.core.resources.IncrementalProjectBuilder.INCREMENTAL_BUILD;
+import static org.eventb.core.EventBAttributes.CONFIGURATION_ATTRIBUTE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.eclipse.core.resources.IResource.DEPTH_INFINITE;
-import static org.eclipse.core.resources.IncrementalProjectBuilder.INCREMENTAL_BUILD;
-import static org.eventb.core.EventBAttributes.ASSIGNMENT_ATTRIBUTE;
 import static org.rodinp.core.RodinMarkerUtil.BUILDPATH_PROBLEM_MARKER;
 
 import java.io.PrintStream;
@@ -135,7 +135,7 @@ public class ProjectBuildTests extends EventBTest {
 	private static void makeGarbageFile(IEventBRoot root) throws CoreException {
 		final IRodinFile rodinFile = root.getRodinFile();
 		rodinFile.create(true, null);
-		root.setAttributeValue(ASSIGNMENT_ATTRIBUTE, "garbage", null);
+		root.setAttributeValue(CONFIGURATION_ATTRIBUTE, "garbage", null);
 	}
 
 	/**
