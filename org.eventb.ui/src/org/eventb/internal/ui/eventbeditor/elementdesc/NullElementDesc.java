@@ -10,86 +10,31 @@
  *******************************************************************************/
 package org.eventb.internal.ui.eventbeditor.elementdesc;
 
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eventb.internal.ui.eventbeditor.imageprovider.DefaultImageProvider;
 import org.eventb.internal.ui.eventbeditor.imageprovider.IImageProvider;
 import org.eventb.ui.prettyprint.DefaultPrettyPrinter;
 import org.eventb.ui.prettyprint.IElementPrettyPrinter;
-import org.rodinp.core.IElementType;
-import org.rodinp.core.IRodinElement;
 
-class NullElementDesc implements IElementDesc {
+/**
+ * Dummy implementation for describing unknown elements.
+ */
+public class NullElementDesc extends ElementDesc {
 
-	private static final IImageProvider nullImgProvider = new IImageProvider() {
-		@Override
-		public ImageDescriptor getImageDescriptor(IRodinElement element) {
-			return null;
-		}
-	};
-	
-	private static final IElementPrettyPrinter nullPrettyPrinter = new DefaultPrettyPrinter();
-	
-	private final IAttributeDesc nullAttribute = new NullAttributeDesc();
-	private final AttributeDesc[] nullAttributes = new AttributeDesc[0];
-	private final IElementRelationship[] nullRelationships = new IElementRelationship[0];
-	private final IElementType<?>[] nullChildren = new IElementType<?>[0];
+	private static final String PREFIX = "";
+	private static final String CHILDREN_SUFFIX = "";
+	private static final IImageProvider IMG_PROVIDER = new DefaultImageProvider(
+			null);
+	private static final AttributeDesc[] NO_ATTRIBUTES = {};
+	private static final IElementRelationship[] NO_CHILD_RELATIONSHIPS = {};
+	private static final String AUTO_NAME_PREFIX = "";
+	private static final AttributeDesc AUTO_NAME_ATTRIBUTE = new NullAttributeDesc();
+	private static final int NO_DEFAULT_COLUMN = -1;
+	private static final IElementPrettyPrinter PRETTY_PRINTER = new DefaultPrettyPrinter();
 
-	@Override
-	public AttributeDesc atColumn(int i) {
-		return (AttributeDesc) nullAttribute;
+	public NullElementDesc() {
+		super(PREFIX, CHILDREN_SUFFIX, IMG_PROVIDER, NO_ATTRIBUTES,
+				NO_ATTRIBUTES, NO_CHILD_RELATIONSHIPS, AUTO_NAME_PREFIX,
+				AUTO_NAME_ATTRIBUTE, NO_DEFAULT_COLUMN, PRETTY_PRINTER);
 	}
 
-	@Override
-	public IImageProvider getImageProvider() {
-		return nullImgProvider;
-	}
-
-	@Override
-	public AttributeDesc[] getAttributeDescription() {
-		return nullAttributes;
-	}
-
-	@Override
-	public String getChildrenSuffix() {
-		return "";
-	}
-
-	@Override
-	public IElementRelationship[] getChildRelationships() {
-		return nullRelationships;
-	}
-
-	@Override
-	public int getDefaultColumn() {
-		return -1;
-	}
-
-	@Override
-	public boolean isSelectable(int i) {
-		return false;
-	}
-
-	@Override
-	public String getPrefix() {
-		return "";
-	}
-
-	@Override
-	public String getAutoNamePrefix() {
-		return "";
-	}
-
-	@Override
-	public IAttributeDesc getAutoNameAttribute() {
-		return nullAttribute;
-	}
-
-	@Override
-	public IElementPrettyPrinter getPrettyPrinter() {
-		return nullPrettyPrinter;
-	}
-
-	@Override
-	public IElementType<?>[] getChildTypes() {
-		return nullChildren;
-	}
 }
