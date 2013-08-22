@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import static org.eventb.internal.ui.UIUtils.setStringAttribute;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.FocusAdapter;
@@ -37,9 +36,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eventb.internal.ui.EventBSharedColor;
-import org.eventb.internal.ui.EventBUIExceptionHandler;
 import org.eventb.internal.ui.markers.MarkerUIRegistry;
-import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.RodinDBException;
 
 public class CComboEditComposite extends AbstractEditComposite {
@@ -147,17 +144,6 @@ public class CComboEditComposite extends AbstractEditComposite {
 		setStringAttribute(element, attrDesc.getManipulation(), getText(), null);
 	}
 	
-	public void setDefaultValue(IEventBEditor<?> editor) {
-		try {
-			manipulation.setDefaultValue(element,
-					new NullProgressMonitor());
-			if (combo != null)
-				combo.setFocus();
-		} catch (RodinDBException e) {
-			EventBUIExceptionHandler.handleSetAttributeException(e);
-		}
-	}
-
 	@Override
 	public void edit(int charStart, int charEnd) {
 		combo.setFocus();
