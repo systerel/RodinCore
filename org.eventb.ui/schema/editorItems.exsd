@@ -182,12 +182,20 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="style" type="string" use="required">
+         <attribute name="style" use="required">
             <annotation>
                <documentation>
                   Either single or multi lines. Value must be single or multi
                </documentation>
             </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="single">
+                  </enumeration>
+                  <enumeration value="multi">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
          <attribute name="foregroundColor" type="string">
             <annotation>
