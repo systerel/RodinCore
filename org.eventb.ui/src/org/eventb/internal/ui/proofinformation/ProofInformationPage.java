@@ -56,6 +56,7 @@ import org.eventb.core.pm.IUserSupportManager;
 import org.eventb.core.pm.IUserSupportManagerChangedListener;
 import org.eventb.core.pm.IUserSupportManagerDelta;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
@@ -164,7 +165,7 @@ public class ProofInformationPage extends Page implements
 					appendEventInfo(formBuilder, (IEvent) element, id);
 				} else {
 
-					final IElementDesc elementDesc = descRegistry
+					final ElementDesc elementDesc = descRegistry
 							.getElementDesc(element);
 					for (IElementRelationship rel : elementDesc
 							.getChildRelationships()) {

@@ -23,9 +23,9 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 
 	private final IImageProvider imgProvider;
 
-	private final IAttributeDesc[] attributeDesc;
+	private final AttributeDesc[] attributeDesc;
 
-	private final IAttributeDesc[] atColumn;
+	private final AttributeDesc[] atColumn;
 
 	private final IElementRelationship[] childRelationships;
 
@@ -33,17 +33,17 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 
 	private final String autoNamePrefix;
 
-	private final IAttributeDesc autoNameAttribute;
+	private final AttributeDesc autoNameAttribute;
 
 	private static final NullAttributeDesc noAttribute = new NullAttributeDesc();
 	
 	private final IElementPrettyPrinter prettyPrinter;
 
 	public ElementDesc(String prefix, String childrenSuffix,
-			IImageProvider imgProvider, IAttributeDesc[] attributeDesc,
-			IAttributeDesc[] atColumn,
+			IImageProvider imgProvider, AttributeDesc[] attributeDesc,
+			AttributeDesc[] atColumn,
 			IElementRelationship[] childRelationships, String autoNamePrefix,
-			IAttributeDesc autoNameAttribute, int defaultColumn,
+			AttributeDesc autoNameAttribute, int defaultColumn,
 			IElementPrettyPrinter prettyPrinter) {
 		super(prefix);
 		this.childrenSuffix = childrenSuffix;
@@ -78,12 +78,12 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	 * 
 	 */
 	@Override
-	public IAttributeDesc[] getAttributeDescription() {
+	public AttributeDesc[] getAttributeDescription() {
 		return attributeDesc.clone();
 	}
 
 	@Override
-	public IAttributeDesc atColumn(int column) {
+	public AttributeDesc atColumn(int column) {
 		if (column < 0 || atColumn.length <= column)
 			return null;
 		return atColumn[column];
@@ -122,7 +122,7 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	}
 
 	@Override
-	public IAttributeDesc getAutoNameAttribute() {
+	public AttributeDesc getAutoNameAttribute() {
 		return autoNameAttribute;
 	}
 	

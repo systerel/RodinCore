@@ -66,8 +66,8 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	private static final String ATTR_ELEMENT_PRETTYPRINTER = "prettyPrinter";
 	private static final String ATTR_ELEMENT_IMPLICIT_CHILD_PROVIDER = "implicitChildProvider";
 
-	static final IElementDesc nullElement = new NullElementDesc();
-	static final IAttributeDesc nullAttribute = new NullAttributeDesc();
+	static final ElementDesc nullElement = new NullElementDesc();
+	static final AttributeDesc nullAttribute = new NullAttributeDesc();
 	private static final String defaultAttributeValue = "";
 
 	private static final int LOWEST_PRIORITY = 1;
@@ -88,7 +88,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	 * @return the descriptor for the given element type
 	 */
 	@Override
-	public IElementDesc getElementDesc(IElementType<?> type) {
+	public ElementDesc getElementDesc(IElementType<?> type) {
 		return elementDescs.get(type);
 	}
 
@@ -101,16 +101,16 @@ public class ElementDescRegistry implements IElementDescRegistry {
 	 * @return the descriptor for the given element
 	 */
 	@Override
-	public IElementDesc getElementDesc(IRodinElement element) {
+	public ElementDesc getElementDesc(IRodinElement element) {
 		return getElementDesc(element.getElementType());
 	}
 
 	@Override
 	public String getValueAtColumn(IRodinElement element, Column column) {
-		final IElementDesc desc = getElementDesc(element);
+		final ElementDesc desc = getElementDesc(element);
 		if (desc == null)
 			return defaultAttributeValue;
-		final IAttributeDesc attrDesc = desc.atColumn(column.getId());
+		final AttributeDesc attrDesc = desc.atColumn(column.getId());
 		if (attrDesc == null)
 			return defaultAttributeValue;
 		try {
@@ -124,13 +124,13 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 	}
 
-	private IAttributeDesc[] getAttributes(IElementType<?> type) {
-		final IElementDesc desc = getElementDesc(type);
+	private AttributeDesc[] getAttributes(IElementType<?> type) {
+		final ElementDesc desc = getElementDesc(type);
 		return desc.getAttributeDescription();
 	}
 
-	public IAttributeDesc getAttribute(IElementType<?> type, int pos) {
-		final IAttributeDesc[] attrDesc = getAttributes(type);
+	public AttributeDesc getAttribute(IElementType<?> type, int pos) {
+		final AttributeDesc[] attrDesc = getAttributes(type);
 		if (pos < 0 || attrDesc.length <= pos)
 			return null;
 		return attrDesc[pos];
@@ -142,7 +142,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 	public String getChildrenSuffix(IElementType<?> parentType,
 			IElementType<?> childType) {
-		final IElementDesc parentDesc = getElementDesc(parentType);
+		final ElementDesc parentDesc = getElementDesc(parentType);
 		if (!isLastChild(parentDesc, childType))
 			return "";
 		return parentDesc.getChildrenSuffix();
@@ -156,7 +156,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		return getElementDesc(type).getChildRelationships();
 	}
 
-	private boolean isLastChild(IElementDesc parent, IElementType<?> child) {
+	private boolean isLastChild(ElementDesc parent, IElementType<?> child) {
 		final IElementRelationship[] relationship = parent
 				.getChildRelationships();
 		final int len = relationship.length;
@@ -168,7 +168,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			return HIGHEST_PRIORITY;
 
 		final IInternalElement element = (IInternalElement) object;
-		final IElementDesc parentDesc = getElementDesc(element.getParent());
+		final ElementDesc parentDesc = getElementDesc(element.getParent());
 
 		int count = LOWEST_PRIORITY;
 		for (IElementRelationship type : parentDesc.getChildRelationships()) {
@@ -185,8 +185,8 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			final IInternalElementType<T> type, final IInternalElement sibling)
 			throws RodinDBException {
 		final T newElement = parent.createChild(type, sibling, null);
-		final IAttributeDesc[] attrDesc = getAttributes(type);
-		for (IAttributeDesc desc : attrDesc) {
+		final AttributeDesc[] attrDesc = getAttributes(type);
+		for (AttributeDesc desc : attrDesc) {
 			desc.getManipulation().setDefaultValue(newElement, null);
 		}
 		return newElement;
@@ -470,7 +470,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 		}
 
-		public IAttributeDesc get(String key) {
+		public AttributeDesc get(String key) {
 			AttributeDesc desc = map.get(key);
 			if (desc == null)
 				return nullAttribute;
@@ -531,16 +531,16 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 			final IElementRelationship[] childrenRelationships = retrieveElementChildRelationships(elementType);
 
-			final List<IAttributeDesc> attributesList = new ArrayList<IAttributeDesc>();
-			final List<IAttributeDesc> atColumnList = new ArrayList<IAttributeDesc>();
+			final List<AttributeDesc> attributesList = new ArrayList<AttributeDesc>();
+			final List<AttributeDesc> atColumnList = new ArrayList<AttributeDesc>();
 			getAttributes(elementType, attributesList, atColumnList);
-			final IAttributeDesc[] attributeDesc = getArray(attributesList);
-			final IAttributeDesc[] atColumn = getArray(atColumnList);
+			final AttributeDesc[] attributeDesc = getArray(attributesList);
+			final AttributeDesc[] atColumn = getArray(atColumnList);
 
 			final IConfigurationElement autoNamingConfig = autoNamingMap
 					.get(elementType);
 			final String autoNamePrefix = getAutoNamingPrefix(autoNamingConfig);
-			final IAttributeDesc autoNameAttribute = getAutoNamingAttribute(autoNamingConfig);
+			final AttributeDesc autoNameAttribute = getAutoNamingAttribute(autoNamingConfig);
 			final IElementPrettyPrinter prettyPrinter;
 			try {
 				prettyPrinter = getPrettyPrinter(element);
@@ -599,8 +599,8 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			}
 		}
 		
-		private IAttributeDesc[] getArray(List<IAttributeDesc> list) {
-			return list.toArray(new IAttributeDesc[list.size()]);
+		private AttributeDesc[] getArray(List<AttributeDesc> list) {
+			return list.toArray(new AttributeDesc[list.size()]);
 		}
 
 		private int getDefaultColumn(IConfigurationElement element) {
@@ -616,14 +616,14 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 
 		private void getAttributes(IElementType<?> type,
-				List<IAttributeDesc> attributes, List<IAttributeDesc> atColumn) {
+				List<AttributeDesc> attributes, List<AttributeDesc> atColumn) {
 			final IConfigurationElement[] children = attributeRelationMap
 					.get(type);
 			initAtColumn(atColumn, children.length);
-			final List<IAttributeDesc> descs = new ArrayList<IAttributeDesc>(children.length);
+			final List<AttributeDesc> descs = new ArrayList<AttributeDesc>(children.length);
 			
 			for (IConfigurationElement element : children) {
-				IAttributeDesc desc = attributeMap.get(getStringAttribute(
+				AttributeDesc desc = attributeMap.get(getStringAttribute(
 						element, "descriptionId"));
 				// taking care of possible override in atColumn
 				descs.add(desc);
@@ -637,11 +637,11 @@ public class ElementDescRegistry implements IElementDescRegistry {
 		}
 
 		private static void sortColumnAttributes(
-				List<IAttributeDesc> attributes, List<IAttributeDesc> atColumn,
-				List<IAttributeDesc> descs) {
+				List<AttributeDesc> attributes, List<AttributeDesc> atColumn,
+				List<AttributeDesc> descs) {
 			descs.removeAll(atColumn);
 			int descIndex = 0;
-			for (IAttributeDesc colAttribute : atColumn) {
+			for (AttributeDesc colAttribute : atColumn) {
 				if (!colAttribute.equals(nullAttribute)) {
 					attributes.add(colAttribute);
 				} else {
@@ -651,7 +651,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			}
 		}
 
-		private static void initAtColumn(List<IAttributeDesc> atColumn, int length) {
+		private static void initAtColumn(List<AttributeDesc> atColumn, int length) {
 			for (int i = 0; i < length; i++)
 				atColumn.add(nullAttribute);
 		}
@@ -660,7 +660,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 			return getStringAttribute(element, ATTR_AUTONAMING_NAME_PREFIX);
 		}
 
-		private IAttributeDesc getAutoNamingAttribute(
+		private AttributeDesc getAutoNamingAttribute(
 				IConfigurationElement element) {
 			if (element == null)
 				return nullAttribute;
@@ -668,7 +668,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 					ATTR_AUTONAMING_ATTRIBUTE_TYPE));
 		}
 
-		public IElementDesc get(IElementType<?> key) {
+		public ElementDesc get(IElementType<?> key) {
 			final ElementDesc desc = elementMap.get(key);
 			if (desc == null)
 				return nullElement;

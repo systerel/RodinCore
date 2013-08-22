@@ -24,6 +24,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ICommentedElement;
 import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementRelationship;
@@ -93,7 +94,7 @@ public abstract class AstConverter {
 	}
 
 	private void traverseRoot(IProgressMonitor monitor, IInternalElement e) {
-		final IElementDesc desc = ElementDescRegistry.getInstance()
+		final ElementDesc desc = ElementDescRegistry.getInstance()
 				.getElementDesc(e);
 		stream.appendKeyword(desc.getPrefix());
 		final IElementPrettyPrinter pp = desc.getPrettyPrinter();
@@ -107,7 +108,7 @@ public abstract class AstConverter {
 		for (IElementRelationship rel : desc.getChildRelationships()) {
 			final List<IInternalElement> children;
 			children = retrieveChildrenToProcess(rel, e);
-			final IElementDesc childDesc = getElementDesc(rel.getChildType());
+			final ElementDesc childDesc = getElementDesc(rel.getChildType());
 			final IElementPrettyPrinter pp = childDesc.getPrettyPrinter();
 			if (childDesc == null || pp == null)
 				continue;
@@ -195,12 +196,12 @@ public abstract class AstConverter {
 	}
 
 	// Retrieves the element desc from the registry for the given element e
-	private static IElementDesc getElementDesc(IInternalElement e) {
+	private static ElementDesc getElementDesc(IInternalElement e) {
 		return ElementDescRegistry.getInstance().getElementDesc(e);
 	}
 
 	// Retrieves the element desc from the registry for a given element type
-	private static IElementDesc getElementDesc(IElementType<?> e) {
+	private static ElementDesc getElementDesc(IElementType<?> e) {
 		return ElementDescRegistry.getInstance().getElementDesc(e);
 	}
 

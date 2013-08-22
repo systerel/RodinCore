@@ -13,8 +13,8 @@ package org.eventb.internal.ui.eventbeditor.htmlpage;
 
 import org.eventb.core.IDerivedPredicateElement;
 import org.eventb.core.IEvent;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.ui.prettyprint.IElementPrettyPrinter;
 import org.eventb.ui.prettyprint.PrettyPrintUtils;
 import org.rodinp.core.IInternalElement;
@@ -58,7 +58,7 @@ public class CorePrettyPrintUtils {
 	 * @return the pretty printer or <code>null</code> if any
 	 */
 	public static IElementPrettyPrinter getPrettyPrinter(IInternalElement e) {
-		final IElementDesc desc = ElementDescRegistry.getInstance()
+		final ElementDesc desc = ElementDescRegistry.getInstance()
 				.getElementDesc(e);
 		return desc.getPrettyPrinter();
 	}

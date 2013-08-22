@@ -91,8 +91,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.seqprover.IConfidence;
 import org.eventb.core.seqprover.IProofTreeNode;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.ui.EventBUIPlugin;
 import org.rodinp.core.IRodinElement;
 import org.rodinp.core.RodinDBException;
@@ -454,7 +454,7 @@ public class EventBImage {
 	}
 
 	public static ImageDescriptor getImageDescriptor(IRodinElement element) {
-		final IElementDesc elementDesc = ElementDescRegistry.getInstance()
+		final ElementDesc elementDesc = ElementDescRegistry.getInstance()
 				.getElementDesc(element.getElementType());
 		return elementDesc.getImageProvider().getImageDescriptor(element);
 	}

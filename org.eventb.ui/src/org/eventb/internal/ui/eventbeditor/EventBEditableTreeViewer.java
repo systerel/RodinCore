@@ -48,9 +48,9 @@ import org.eclipse.ui.swt.IFocusService;
 import org.eventb.internal.ui.EventBMath;
 import org.eventb.internal.ui.EventBSharedColor;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
-import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
 import org.eventb.ui.EventBUIPlugin;
 import org.eventb.ui.eventbeditor.IEventBEditor;
 import org.rodinp.core.ElementChangedEvent;
@@ -105,7 +105,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	 *         column
 	 */
 	protected final boolean isSelectable(Object object, int column) {
-		final IElementDesc desc = getElementDesc(object);
+		final ElementDesc desc = getElementDesc(object);
 		if(desc == null)
 			return false;
 		return desc.isSelectable(column);
@@ -115,7 +115,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	 * If the given object is an internal element, the method return an element
 	 * description. Else the method return <code>null</code>
 	 */
-	private IElementDesc getElementDesc(Object o) {
+	private ElementDesc getElementDesc(Object o) {
 		if (!(o instanceof IRodinElement))
 			return null;
 		final IRodinElement element = (IRodinElement) o;
@@ -123,7 +123,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	}
 	
 	private IAttributeDesc getAttributeDesc(IRodinElement element, int col) {
-		final IElementDesc desc = getElementDesc(element);
+		final ElementDesc desc = getElementDesc(element);
 		if (desc == null)
 			return null;
 		final IAttributeDesc attrDesc = desc.atColumn(col);
@@ -168,7 +168,7 @@ public abstract class EventBEditableTreeViewer extends TreeViewer implements
 	 */
 	protected final void edit(IRodinElement element) {
 		this.reveal(element);
-		final IElementDesc desc = getElementDesc(element);
+		final ElementDesc desc = getElementDesc(element);
 		if (desc == null)
 			return;
  		final int column = desc.getDefaultColumn();

@@ -45,6 +45,7 @@ import org.eventb.core.IVariant;
 import org.eventb.core.IWitness;
 import org.eventb.internal.ui.eventbeditor.elementdesc.AttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ComboDesc;
+import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IElementDesc;
@@ -411,6 +412,7 @@ public class TestElementDescRegistry {
 			String childrenSuffix, Class<? extends IImageProvider> imageProvider,
 			String autoNamingPrefix, IAttributeDesc autoNamingAttribute,
 			int defaultColumn) {
+		final ElementDesc iActualDesc = (ElementDesc) actualDesc;
 		assertNotNull("ElementDesc should not be null", actualDesc);
 		assertAttributeDesc(autoNamingAttribute, actualDesc
 				.getAutoNameAttribute());
@@ -419,10 +421,10 @@ public class TestElementDescRegistry {
 				.getChildrenSuffix());
 		assertEquals("Unexpected prefix for auto naming", autoNamingPrefix,
 				actualDesc.getAutoNamePrefix());
-		assertEquals("Unexpected default column", defaultColumn, actualDesc
-				.getDefaultColumn());
-		assertEquals("Unexpected image provider class", imageProvider, actualDesc
-				.getImageProvider().getClass());
+		assertEquals("Unexpected default column", defaultColumn,
+				iActualDesc.getDefaultColumn());
+		assertEquals("Unexpected image provider class", imageProvider,
+				iActualDesc.getImageProvider().getClass());
 	}
 
 	private void assertChildrens(String msg, IElementType<?>[] actual,
