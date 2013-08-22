@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.core.tests.util.Util;
 
 /*
@@ -113,7 +114,18 @@ public abstract class ModifyingResourceTests extends AbstractRodinDBTests {
 		assertNotExists("Element to create should not exist", element);
 		element.create(nextSibling, null);
 		assertExists("Created element should exist", element);
-		return (NamedElement) element;
+		return element;
+	}
+
+	protected static NamedElement2 createNE2Positive(IInternalElement parent, String name,
+			IInternalElement nextSibling) throws RodinDBException {
+
+		NamedElement2 element = getNamedElement2(parent, name);
+		assertExists("Parent should exist", parent);
+		assertNotExists("Element to create should not exist", element);
+		element.create(nextSibling, null);
+		assertExists("Created element should exist", element);
+		return element;
 	}
 
 	protected static NamedElement createNewNEPositive(IInternalElement parent,

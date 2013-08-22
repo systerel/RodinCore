@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 import org.rodinp.core.basis.RodinElement;
 import org.rodinp.core.tests.basis.NamedElement;
+import org.rodinp.core.tests.basis.NamedElement2;
 import org.rodinp.core.tests.util.Util;
 import org.rodinp.internal.core.debug.DebugHelpers;
 
@@ -794,7 +795,11 @@ public abstract class AbstractRodinDBTests extends TestCase {
 	}
 	
 	protected static NamedElement getNamedElement(IInternalElement parent, String name) {
-		return (NamedElement) parent.getInternalElement(NamedElement.ELEMENT_TYPE, name);
+		return parent.getInternalElement(NamedElement.ELEMENT_TYPE, name);
+	}
+
+	protected static NamedElement2 getNamedElement2(IInternalElement parent, String name) {
+		return parent.getInternalElement(NamedElement2.ELEMENT_TYPE, name);
 	}
 
 	/**
