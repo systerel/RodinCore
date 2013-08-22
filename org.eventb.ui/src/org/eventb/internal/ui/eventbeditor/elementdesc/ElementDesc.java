@@ -79,7 +79,7 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 	 */
 	@Override
 	public IAttributeDesc[] getAttributeDescription() {
-		return attributeDesc;
+		return attributeDesc.clone();
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class ElementDesc extends ItemDesc implements IElementDesc {
 
 	@Override
 	public IElementRelationship[] getChildRelationships() {
-		return childRelationships;
+		return childRelationships.clone();
 	}
 
 	@Override
