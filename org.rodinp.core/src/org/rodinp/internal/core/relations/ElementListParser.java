@@ -25,7 +25,7 @@ public class ElementListParser {
 	private final ElementParser[] subParsers;
 
 	public ElementListParser(ItemRelationParser parent,
-			ElementParser[] subParsers) {
+			ElementParser... subParsers) {
 		this.parent = parent;
 		this.subParsers = subParsers;
 	}

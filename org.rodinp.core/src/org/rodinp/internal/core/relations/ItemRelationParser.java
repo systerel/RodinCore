@@ -57,8 +57,7 @@ public class ItemRelationParser {
 	 */
 	public boolean parse(IConfigurationElement[] elems) {
 		final RelationshipParser parser = new RelationshipParser(this);
-		final ElementListParser listParser = new ElementListParser(this,
-				new ElementParser[] { parser });
+		final ElementListParser listParser = new ElementListParser(this, parser);
 		try {
 			listParser.parse(elems);
 		} catch (InvalidRegistryObjectException e) {

@@ -55,11 +55,10 @@ public abstract class ElementParser {
 				return;
 			}
 			final ItemRelation relation = new ItemRelation(parentType);
-			final ElementParser[] childParsers = new ElementParser[] {
-					new ChildTypeParser(parent, relation),
-					new AttributeTypeParser(parent, relation), };
 			final ElementListParser childrenParser = new ElementListParser(
-					parent, childParsers);
+					parent, //
+					new ChildTypeParser(parent, relation),
+					new AttributeTypeParser(parent, relation));
 			childrenParser.parse(element.getChildren());
 			if (relation.isValid()) {
 				parent.addRelation(relation);
