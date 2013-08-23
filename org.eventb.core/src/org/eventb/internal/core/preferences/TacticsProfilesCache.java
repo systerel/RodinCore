@@ -11,8 +11,6 @@
 package org.eventb.internal.core.preferences;
 
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
-import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticRefMaker;
-import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticXMLSerializer;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eventb.core.preferences.autotactics.ITacticProfileCache;
@@ -22,8 +20,8 @@ public class TacticsProfilesCache extends
 		StorablePreferenceMap<ITacticDescriptor> implements ITacticProfileCache {
 
 	public TacticsProfilesCache(IEclipsePreferences preferenceNode) {
-		super(preferenceNode, P_TACTICSPROFILES, makeTacticXMLSerializer(),
-				makeTacticRefMaker());
+		super(preferenceNode, P_TACTICSPROFILES, new PrefUnitTranslator(),
+				TacticReferenceMaker.getInstance());
 	}
 
 }
