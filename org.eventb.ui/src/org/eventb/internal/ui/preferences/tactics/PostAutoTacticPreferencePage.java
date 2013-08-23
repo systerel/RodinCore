@@ -411,7 +411,7 @@ public class PostAutoTacticPreferencePage extends
 
 	protected void exportTactics() {
 		final ListSelectionDialog select = ProfileImportExport
-				.makeProfileSelectionDialog(getShell(), cache,
+				.makeProfileSelectionDialog(getShell(), cache.getEntries(),
 						"Export profiles", getSelectedProfiles());
 		select.open();
 		final Object[] result = select.getResult();
@@ -446,7 +446,7 @@ public class PostAutoTacticPreferencePage extends
 	}
 
 	protected void importTactics() {
-		final ITacticProfileCache loaded = ProfileImportExport
+		final CachedPreferenceMap<ITacticDescriptor> loaded = ProfileImportExport
 				.loadImported(getShell());
 		if (loaded == null) {
 			return;
@@ -467,11 +467,11 @@ public class PostAutoTacticPreferencePage extends
 	}
 
 	private List<IPrefMapEntry<ITacticDescriptor>> selectImport(
-			ITacticProfileCache available,
+			CachedPreferenceMap<ITacticDescriptor> available,
 			List<IPrefMapEntry<ITacticDescriptor>> initSelected) {
 
 		final ListSelectionDialog select = ProfileImportExport
-				.makeProfileSelectionDialog(getShell(), available,
+				.makeProfileSelectionDialog(getShell(), available.getEntries(),
 						"Import profiles", initSelected);
 
 		select.open();

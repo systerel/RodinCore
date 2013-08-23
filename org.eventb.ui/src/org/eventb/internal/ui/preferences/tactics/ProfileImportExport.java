@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
-import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticProfileCache;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
-import org.eventb.core.preferences.autotactics.ITacticProfileCache;
 import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.internal.ui.UIUtils;
 
@@ -63,13 +62,11 @@ public class ProfileImportExport {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (!(inputElement instanceof CachedPreferenceMap)) {
+			if (!(inputElement instanceof List<?>)) {
 				return null;
 			}
 			@SuppressWarnings("unchecked")
-			final CachedPreferenceMap<ITacticDescriptor> cache = (CachedPreferenceMap<ITacticDescriptor>) inputElement;
-			final List<IPrefMapEntry<ITacticDescriptor>> entries = cache
-					.getEntries();
+			final List<IPrefMapEntry<ITacticDescriptor>> entries = (List<IPrefMapEntry<ITacticDescriptor>>) inputElement;
 
 			return entries.toArray(new Object[entries.size()]);
 		}
@@ -93,10 +90,10 @@ public class ProfileImportExport {
 	}
 
 	public static ListSelectionDialog makeProfileSelectionDialog(
-			Shell parentShell, ITacticProfileCache input,
+			Shell parentShell, List<IPrefMapEntry<ITacticDescriptor>> entries,
 			String message, List<IPrefMapEntry<ITacticDescriptor>> initSelected) {
 		final ListSelectionDialog dialog = new ListSelectionDialog(parentShell,
-				input, new ProfileContentProvider(),
+				entries, new ProfileContentProvider(),
 				new ProfileLabelProvider(), message);
 		dialog.setInitialElementSelections(initSelected);
 		return dialog;
@@ -124,7 +121,7 @@ public class ProfileImportExport {
 	 *            the parent shell
 	 * @return a tactic profile
 	 */
-	public static ITacticProfileCache loadImported(
+	public static CachedPreferenceMap<ITacticDescriptor> loadImported(
 			Shell parentShell) {
 		final FileDialog fileDialog = new FileDialog(parentShell, SWT.OPEN);
 		final String path = fileDialog.open();
@@ -138,7 +135,7 @@ public class ProfileImportExport {
 		}
 
 		// not storeable cache
-		final ITacticProfileCache newCache = makeTacticProfileCache(null);
+		final CachedPreferenceMap<ITacticDescriptor> newCache = makeTacticPreferenceMap();
 		final String prefStr = readFile(file);
 		if (prefStr == null) {
 			showImportError(parentShell, path);
