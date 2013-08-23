@@ -128,10 +128,7 @@ public interface ITacticProfileCache {
 	/**
 	 * Loads the cache with elements created from the given string parameter.
 	 * <p>
-	 * If inject fails, an IllegalArgumentException is thrown. Possible reason
-	 * could be that the given preference has been serialized using old format.
-	 * If so, use {@link TacticPreferenceFactory#recoverOldPreference(String)}
-	 * to try to recover.
+	 * If inject fails, an IllegalArgumentException is thrown.
 	 * </p>
 	 * 
 	 * @param pref

@@ -16,9 +16,8 @@ import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_AUTOTACTIC_ENABLE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_CHOICE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticProfileCache;
-import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticRefMaker;
-import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticXMLSerializer;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_pomtactic_enablementdescription;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_pomtactic_selectedtacticprofiledescription;
 import static org.eventb.internal.ui.utils.Messages.preferencepage_postautotactic_description;
@@ -419,8 +418,7 @@ public class PostAutoTacticPreferencePage extends
 			return;
 		}
 		final List<IPrefMapEntry<ITacticDescriptor>> exported = toMapEntries(result);
-		final CachedPreferenceMap<ITacticDescriptor> exportCache = new CachedPreferenceMap<ITacticDescriptor>(
-				makeTacticXMLSerializer(), makeTacticRefMaker());
+		final CachedPreferenceMap<ITacticDescriptor> exportCache = makeTacticPreferenceMap();
 		try {
 			exportCache.addAll(exported);
 			ProfileImportExport.saveExported(getShell(), exportCache);

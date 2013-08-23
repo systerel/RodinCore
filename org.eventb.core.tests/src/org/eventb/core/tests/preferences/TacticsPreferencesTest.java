@@ -55,6 +55,7 @@ import org.eventb.core.seqprover.autoTacticPreference.AutoTacticPreference;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 import org.eventb.core.seqprover.eventbExtensions.TacticCombinators.LoopOnAllPending;
 import org.eventb.core.tests.BuilderTest;
+import org.eventb.internal.core.preferences.TacticPrefElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.service.prefs.BackingStoreException;
@@ -270,8 +271,7 @@ public class TacticsPreferencesTest extends BuilderTest {
 				.getCombinedTactics();
 
 		final CachedPreferenceMap<List<ITacticDescriptor>> oldMap = new CachedPreferenceMap<List<ITacticDescriptor>>(
-				new ListPreference<ITacticDescriptor>(
-						TacticPreferenceFactory.getTacticPrefElement()));
+				new ListPreference<ITacticDescriptor>(new TacticPrefElement()));
 
 		oldMap.add(dftAutoProfileName, defaultDescriptors);
 

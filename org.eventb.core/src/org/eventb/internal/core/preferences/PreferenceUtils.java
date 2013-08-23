@@ -19,7 +19,7 @@ import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_POSTTACTIC_ENABLE;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_SIMPLIFY_PROOFS;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.P_TACTICSPROFILES;
-import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.recoverOldPreference;
+import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
 import static org.eventb.internal.core.preferences.PreferenceInitializer.DEFAULT_AUTO_ENABLE;
 import static org.eventb.internal.core.preferences.PreferenceInitializer.DEFAULT_POST_ENABLE;
 
@@ -58,7 +58,9 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.preferences.CachedPreferenceMap;
+import org.eventb.core.preferences.IPrefElementTranslator;
 import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.preferences.ListPreference;
 import org.eventb.core.preferences.autotactics.IAutoPostTacticManager;
 import org.eventb.core.preferences.autotactics.TacticPreferenceFactory;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
@@ -440,6 +442,43 @@ public class PreferenceUtils {
 		registerProjectTacticPrefRestorer();
 	}
 
+	/**
+	 * Recovers a preference stored using old format into a preference map using
+	 * new format.
+	 * 
+	 * @param oldPref
+	 *            a serialized preference
+	 * @return a new preference map, or <code>null</code> if recover failed.
+	 * @since 2.3
+	 */
+	@SuppressWarnings("deprecation")
+	public static CachedPreferenceMap<ITacticDescriptor> recoverOldPreference(
+			String oldPref) {
+		final IPrefElementTranslator<List<ITacticDescriptor>> oldPreference = new ListPreference<ITacticDescriptor>(
+				new TacticPrefElement());
+		final CachedPreferenceMap<List<ITacticDescriptor>> oldCache = new CachedPreferenceMap<List<ITacticDescriptor>>(
+				oldPreference);
+		try {
+			oldCache.inject(oldPref);
+		} catch (PreferenceException x) {
+			Util.log(x, "while trying to recover tactic preference");
+			// give up
+			return null;
+		}
+
+		final CachedPreferenceMap<ITacticDescriptor> newPrefMap = makeTacticPreferenceMap();
+		// adapt old cache to new cache
+
+		for (IPrefMapEntry<List<ITacticDescriptor>> entry : oldCache
+				.getEntries()) {
+			final String id = entry.getKey();
+			final List<ITacticDescriptor> value = entry.getValue();
+			final ITacticDescriptor tac = loopOnAllPending(value, id);
+			newPrefMap.add(id, tac);
+		}
+		return newPrefMap;
+	}
+	
 	private static final List<String> MOVED_PREFERENCES = asList(
 			P_AUTOTACTIC_ENABLE, P_AUTOTACTIC_CHOICE, P_POSTTACTIC_ENABLE,
 			P_POSTTACTIC_CHOICE, P_TACTICSPROFILES);

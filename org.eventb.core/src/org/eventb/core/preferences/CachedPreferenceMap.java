@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eventb.core.preferences.autotactics.TacticPreferenceFactory;
 import org.eventb.internal.core.preferences.PrefEntryGraph;
 import org.eventb.internal.core.preferences.PreferenceCheckResult;
 import org.eventb.internal.core.preferences.PreferenceMapper;
@@ -93,10 +92,7 @@ public class CachedPreferenceMap<T> {
 	/**
 	 * Loads the cache with elements created from the given string parameter.
 	 * <p>
-	 * If inject fails, an IllegalArgumentException is thrown. Possible reason
-	 * could be that the given preference has been serialized using old format.
-	 * If so, use {@link TacticPreferenceFactory#recoverOldPreference(String)}
-	 * to try to recover.
+	 * If inject fails, an IllegalArgumentException is thrown.
 	 * </p>
 	 * 
 	 * @param pref
