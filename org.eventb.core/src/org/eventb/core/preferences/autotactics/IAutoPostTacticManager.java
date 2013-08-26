@@ -10,13 +10,20 @@
  *******************************************************************************/
 package org.eventb.core.preferences.autotactics;
 
+import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
 import org.eventb.core.seqprover.ITactic;
 import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
 
 /**
- * Facade for the managment of auto and post tactics management.
+ * Facade for the management of auto and post tactics.
+ * <p>
+ * An instance can be obtained by calling
+ * {@link EventBPlugin#getAutoPostTacticManager()}.
+ * </p>
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * @since 2.1
  */
 public interface IAutoPostTacticManager {
