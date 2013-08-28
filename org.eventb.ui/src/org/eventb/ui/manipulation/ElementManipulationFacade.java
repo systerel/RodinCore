@@ -20,6 +20,7 @@ import org.eventb.core.IEventBRoot;
 import org.eventb.internal.ui.EventBUtils;
 import org.eventb.internal.ui.RodinHandleTransfer;
 import org.eventb.internal.ui.UIUtils;
+import org.eventb.internal.ui.eventbeditor.EventBEditorUtils;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.elementdesc.IAttributeDesc;
 import org.eventb.internal.ui.eventbeditor.handlers.CopyHandler;
@@ -226,6 +227,20 @@ public class ElementManipulationFacade {
 	 */
 	public static boolean isReadOnly(IInternalElement element) {
 		return EventBUtils.isReadOnly(element);
+	}
+
+	/**
+	 * Returns whether the given element is read only. Additionally, if the
+	 * given element is read only, this method informs the user through an info
+	 * window.
+	 * 
+	 * @param element
+	 *            an element to check
+	 * @return <code>true</code> iff the given element is read only
+	 * @since 3.0
+	 */
+	public static boolean checkAndShowReadOnly(IRodinElement element) {
+		return EventBEditorUtils.checkAndShowReadOnly(element);
 	}
 
 }

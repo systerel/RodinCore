@@ -10,16 +10,12 @@
  *******************************************************************************/
 package fr.systerel.editor.internal.actions.operations;
 
-import static fr.systerel.editor.internal.editors.RodinEditorUtils.showInfo;
-import static org.eventb.internal.ui.utils.Messages.dialogs_readOnlyElement;
+import static org.eventb.ui.manipulation.ElementManipulationFacade.checkAndShowReadOnly;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eventb.core.IEventBRoot;
-import org.eventb.core.IIdentifierElement;
-import org.eventb.core.ILabeledElement;
 import org.eventb.internal.ui.eventbeditor.elementdesc.ElementDescRegistry;
 import org.eventb.internal.ui.eventbeditor.manipulation.IAttributeManipulation;
 import org.eventb.ui.manipulation.ElementManipulationFacade;
@@ -68,42 +64,6 @@ public class RodinOperationUtils {
 		}
 		if (EditorPlugin.DEBUG)
 			RodinEditorUtils.debug("PASTE SUCCESSFULLY");
-	}
-
-	/**
-	 * Returns whether the given element is read only. Additionally, if the
-	 * given element is read only, this method informs the user through an info
-	 * window.
-	 * 
-	 * @param element
-	 *            an element to check
-	 * @return true iff the given element is read only
-	 */
-	public static boolean checkAndShowReadOnly(IRodinElement element) {
-		if (!(element instanceof IInternalElement)) {
-			return false;
-		}
-		final boolean readOnly = ElementManipulationFacade
-				.isReadOnly((IInternalElement) element);
-		if (readOnly) {
-			showInfo(dialogs_readOnlyElement(getDisplayName(element)));
-		}
-		return readOnly;
-	}
-
-	private static String getDisplayName(IRodinElement element) {
-		try {
-			if (element instanceof ILabeledElement) {
-				return ((ILabeledElement) element).getLabel();
-			} else if (element instanceof IIdentifierElement) {
-				return ((IIdentifierElement) element).getIdentifierString();
-			} else if (element instanceof IEventBRoot) {
-				return element.getElementName();
-			}
-		} catch (RodinDBException e) {
-			RodinEditorUtils.log(e, "when checking for read-only element");
-		}
-		return "";
 	}
 
 	/**
