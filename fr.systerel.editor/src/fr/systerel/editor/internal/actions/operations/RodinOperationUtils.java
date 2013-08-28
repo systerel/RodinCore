@@ -115,9 +115,8 @@ public class RodinOperationUtils {
 				ElementManipulationFacade.changeAttribute(element, newValue);
 			}
 		} catch (RodinDBException e) {
-			System.err
-					.println("Problems occured when updating the database after attribute edition"
-							+ e.getMessage());
+			System.err.println("Problems occured when updating"
+					+ " the database after attribute edition" + e.getMessage());
 		}
 	}
 
@@ -136,9 +135,8 @@ public class RodinOperationUtils {
 			}
 			ElementManipulationFacade.changeAttribute(ielement, manip, value);
 		} catch (RodinDBException e) {
-			System.err.println("Problems occured when updating the dat" + ""
-					+ "" + "" + "abase after attribute edition"
-					+ e.getMessage());
+			System.err.println("Problems occured when updating the database"
+					+ " after attribute edition" + e.getMessage());
 		}
 	}
 
