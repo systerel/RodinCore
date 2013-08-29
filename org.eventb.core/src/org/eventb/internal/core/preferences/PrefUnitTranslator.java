@@ -35,6 +35,7 @@ import java.util.List;
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
 import org.eventb.core.preferences.IXMLPrefSerializer;
+import org.eventb.core.preferences.autotactics.IInjectLog;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.ICombinatorDescriptor;
 import org.eventb.core.seqprover.ICombinedTacticDescriptor;
@@ -56,15 +57,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * @author Nicolas Beauger
+ * Tactic profile preference serializer and deserializer.
  * 
+ * @author Nicolas Beauger
  */
 public class PrefUnitTranslator implements
 		IXMLPrefSerializer<ITacticDescriptor> {
 
 	static PreferenceException handlePrefError(String message) {
 		Util.log(null, message);
-		return PreferenceException.getInstance();
+		return new PreferenceException(message);
 	}
 	
 	private static interface IInternalXMLSerializer<T> {
@@ -83,13 +85,21 @@ public class PrefUnitTranslator implements
 
 		/**
 		 * Deserializes the given node.
+		 * <p>
+		 * Irrecoverable deserialization errors shall not be logged directly,
+		 * but instead a {@link PreferenceException} shall be thrown, with a
+		 * message explaining what happened.
+		 * </p>
 		 * 
 		 * @param n
 		 *            a node
+		 * @param log
+		 *            a log to record warnings about partially loaded nodes (for
+		 *            instance when a placeholder is used)
 		 * @return the deserialization result, or <code>null</code> if
 		 *         deserialization failed
 		 */
-		T get(Node n);
+		T get(Node n, InjectLog log);
 
 		/**
 		 * Replaces the reference placeholders, contained in the given
@@ -100,7 +110,7 @@ public class PrefUnitTranslator implements
 		 * @param map
 		 *            a preference map
 		 */
-		T resolveReferences(T pref, CachedPreferenceMap<ITacticDescriptor> map);
+		T resolveReferences(T pref, CachedPreferenceMap<ITacticDescriptor> map, InjectLog log);
 
 	}
 	
@@ -136,31 +146,31 @@ public class PrefUnitTranslator implements
 
 		@Override
 		public ITacticDescriptor resolveReferences(ITacticDescriptor desc,
-				CachedPreferenceMap<ITacticDescriptor> map) {
+				CachedPreferenceMap<ITacticDescriptor> map, InjectLog log) {
 			if (desc instanceof ITacticDescriptorRef) {
 				return TacticRef.getDefault().resolveReferences(
-						(ITacticDescriptorRef) desc, map);
+						(ITacticDescriptorRef) desc, map, log);
 			} else if (desc instanceof ICombinedTacticDescriptor) {
 				return CombinedTacticTranslator.getDefault().resolveReferences(
-						(ICombinedTacticDescriptor) desc, map);
+						(ICombinedTacticDescriptor) desc, map, log);
 			}
 			// else nothing to do
 			return desc;
 		}
 
 		@Override
-		public ITacticDescriptor get(Node e) {
+		public ITacticDescriptor get(Node e, InjectLog log) {
 			if (hasName(e, SIMPLE)) {
-				return SimpleTactic.getDefault().get(e);
+				return SimpleTactic.getDefault().get(e, log);
 			}
 			if (hasName(e, PARAMETERIZED)) {
-				return ParamTacticTranslator.getDefault().get(e);
+				return ParamTacticTranslator.getDefault().get(e, log);
 			}
 			if (hasName(e, PREF_REF)) {
-				return TacticRef.getDefault().get(e);
+				return TacticRef.getDefault().get(e, log);
 			}
 			if (hasName(e, COMBINED)) {
-				return CombinedTacticTranslator.getDefault().get(e);
+				return CombinedTacticTranslator.getDefault().get(e, log);
 			}
 			throw handlePrefError("unreadable node: " + e);
 		}
@@ -193,17 +203,21 @@ public class PrefUnitTranslator implements
 		}
 
 		@Override
-		public ITacticDescriptor get(Node e) {
+		public ITacticDescriptor get(Node e, InjectLog log) {
 			assertName(e, SIMPLE);
 			final IAutoTacticRegistry reg = SequentProver
 					.getAutoTacticRegistry();
 			final String tacticId = getAttribute(e, TACTIC_ID);
+			if (!reg.isRegistered(tacticId)) {
+				log.addWarning("Unregistered tactic: " + tacticId
+						+ ", replaced by a placeholder");
+			}
 			return reg.getTacticDescriptor(tacticId);
 		}
 
 		@Override
 		public ITacticDescriptor resolveReferences(ITacticDescriptor pref,
-				CachedPreferenceMap<ITacticDescriptor> map) {
+				CachedPreferenceMap<ITacticDescriptor> map, InjectLog log) {
 			return pref;
 		}
 
@@ -260,13 +274,17 @@ public class PrefUnitTranslator implements
 		}
 
 		@Override
-		public IParamTacticDescriptor get(Node e) {
+		public IParamTacticDescriptor get(Node e, InjectLog log) {
 			assertName(e, PARAMETERIZED);
 			final String tacticId = getAttribute(e, TACTIC_ID);
 			final String parameterizerId = getAttribute(e, PARAMETERIZER_ID);
 
 			final IAutoTacticRegistry reg = SequentProver
 					.getAutoTacticRegistry();
+			if (!reg.isRegisteredParameterizer(parameterizerId)) {
+				log.addWarning("Unregistered tactic parameterizer: "
+						+ parameterizerId + ", replaced by a placeholder");
+			}
 			final IParameterizerDescriptor parameterizer = reg
 					.getParameterizerDescriptor(parameterizerId);
 			final IParameterSetting paramSetting = parameterizer
@@ -291,7 +309,7 @@ public class PrefUnitTranslator implements
 		@Override
 		public IParamTacticDescriptor resolveReferences(
 				IParamTacticDescriptor pref,
-				CachedPreferenceMap<ITacticDescriptor> map) {
+				CachedPreferenceMap<ITacticDescriptor> map, InjectLog log) {
 			return pref;
 		}
 
@@ -318,7 +336,7 @@ public class PrefUnitTranslator implements
 		}
 
 		@Override
-		public ITacticDescriptorRef get(Node e) {
+		public ITacticDescriptorRef get(Node e, InjectLog log) {
 			assertName(e, PREF_REF);
 			final String key = getAttribute(e, PREF_KEY);
 			final IPrefMapEntry<ITacticDescriptor> entry = new UnresolvedPrefMapEntry<ITacticDescriptor>(
@@ -328,13 +346,14 @@ public class PrefUnitTranslator implements
 
 		@Override
 		public ITacticDescriptorRef resolveReferences(ITacticDescriptorRef pref,
-				CachedPreferenceMap<ITacticDescriptor> map) {
+				CachedPreferenceMap<ITacticDescriptor> map, InjectLog log) {
 			// prefEntry is an UnresolvedPrefMapEntry: contains only a key
 			final IPrefMapEntry<ITacticDescriptor> unresEntry = pref.getPrefEntry();
 			final String key = unresEntry.getKey();
 			final IPrefMapEntry<ITacticDescriptor> entry = map.getEntry(key);
 			if (entry == null) {
 				// remains unresolved
+				log.addWarning("Unresolved profile reference: " + key);
 				return pref;
 			}
 			return new TacticDescriptorRef(entry);
@@ -370,7 +389,7 @@ public class PrefUnitTranslator implements
 		}
 
 		@Override
-		public ICombinedTacticDescriptor get(Node combined) {
+		public ICombinedTacticDescriptor get(Node combined, InjectLog log) {
 			assertName(combined, COMBINED);
 			final String tacticId = getAttribute(combined, TACTIC_ID);
 			String combinatorId = getAttribute(combined, COMBINATOR_ID);
@@ -382,6 +401,10 @@ public class PrefUnitTranslator implements
 			}
 			final IAutoTacticRegistry reg = SequentProver
 					.getAutoTacticRegistry();
+			if (!reg.isRegisteredCombinator(combinatorId)) {
+				log.addWarning("Unregistered combinator: " + combinatorId
+						+ ", replaced by a placeholder");
+			}
 			final ICombinatorDescriptor combinator = reg
 					.getCombinatorDescriptor(combinatorId);
 			final NodeList childNodes = combined.getChildNodes();
@@ -392,7 +415,7 @@ public class PrefUnitTranslator implements
 				final Node comb = childNodes.item(i);
 				if (!(comb instanceof Element))
 					continue;
-				final ITacticDescriptor combDesc = Selector.getInstance().get(comb);
+				final ITacticDescriptor combDesc = Selector.getInstance().get(comb, log);
 				if (combDesc == null)
 					continue;
 				combs.add(combDesc);
@@ -413,13 +436,13 @@ public class PrefUnitTranslator implements
 		@Override
 		public ICombinedTacticDescriptor resolveReferences(
 				ICombinedTacticDescriptor desc,
-				CachedPreferenceMap<ITacticDescriptor> map) {
+				CachedPreferenceMap<ITacticDescriptor> map, InjectLog log) {
 			final List<ITacticDescriptor> combined = desc.getCombinedTactics();
 			final List<ITacticDescriptor> newCombs = new ArrayList<ITacticDescriptor>(combined.size());
 			boolean changed = false;
 			for (ITacticDescriptor comb : combined) {
 				final ITacticDescriptor newComb = Selector.getInstance()
-						.resolveReferences(comb, map);
+						.resolveReferences(comb, map, log);
 				newCombs.add(newComb);
 				changed |= newComb != comb;
 			}
@@ -457,22 +480,22 @@ public class PrefUnitTranslator implements
 	}
 
 	@Override
-	public IPrefMapEntry<ITacticDescriptor> get(Node unitElem) {
+	public IPrefMapEntry<ITacticDescriptor> get(Node unitElem, IInjectLog log) {
 		assertName(unitElem, PREF_UNIT);
 		final String unitName = getAttribute(unitElem, PREF_KEY);
 		final Node child = getUniqueChild(unitElem);
 			
-		final ITacticDescriptor desc = Selector.getInstance().get(child);
+		final ITacticDescriptor desc = Selector.getInstance().get(child,
+				(InjectLog) log);
 		return new ReadPrefMapEntry<ITacticDescriptor>(unitName, desc);
 	}
 
 	@Override
-	public void resolveReferences(
-			IPrefMapEntry<ITacticDescriptor> entry,
-			CachedPreferenceMap<ITacticDescriptor> map) {
+	public void resolveReferences(IPrefMapEntry<ITacticDescriptor> entry,
+			CachedPreferenceMap<ITacticDescriptor> map, IInjectLog log) {
 		final ITacticDescriptor desc = entry.getValue();
 		final ITacticDescriptor newDesc = Selector.getInstance()
-				.resolveReferences(desc, map);
+				.resolveReferences(desc, map, (InjectLog) log);
 		if (newDesc == desc) {
 			return;
 		}

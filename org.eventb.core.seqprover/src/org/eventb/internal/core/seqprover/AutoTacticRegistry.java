@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -319,6 +319,11 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 	}
 
 	@Override
+	public boolean isRegisteredParameterizer(String id) {
+		return parameterizers.containsKey(id);
+	}
+
+	@Override
 	public IParameterizerDescriptor[] getParameterizerDescriptors() {
 		if (registry == null) {
 			loadRegistry();
@@ -338,6 +343,11 @@ public class AutoTacticRegistry implements IAutoTacticRegistry {
 			return new ParameterizerPlaceholder(id);
 		}
 		return parameterizer;
+	}
+
+	@Override
+	public boolean isRegisteredCombinator(String id) {
+		return combinators.containsKey(id);
 	}
 
 	@Override

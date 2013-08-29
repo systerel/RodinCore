@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.preferences;
 
+import org.eventb.core.preferences.autotactics.IInjectLog;
+
 /**
  * Common protocol for preference references solvers.
  * <p>
@@ -33,7 +35,10 @@ public interface IMapRefSolver<T> {
 	 * 
 	 * @param map
 	 *            a preference map
+	 * @param log
+	 *            a log to add warnings about unresolved references
+	 * @since 3.0
 	 */
-	void resolveReferences(CachedPreferenceMap<T> map);
+	void resolveReferences(CachedPreferenceMap<T> map, IInjectLog log);
 
 }

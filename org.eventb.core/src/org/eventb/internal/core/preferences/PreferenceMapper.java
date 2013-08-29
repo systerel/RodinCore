@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.internal.core.preferences;
 
-import static org.eventb.internal.core.Util.log;
 import static org.eventb.internal.core.preferences.PreferenceUtils.getDocument;
 import static org.eventb.internal.core.preferences.PreferenceUtils.serializeDocument;
 import static org.eventb.internal.core.preferences.PreferenceUtils.XMLElementTypes.PREF_UNIT;
@@ -26,10 +25,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eventb.core.preferences.CachedPreferenceMap;
+import org.eventb.core.preferences.IMapRefSolver;
 import org.eventb.core.preferences.IPrefElementTranslator;
 import org.eventb.core.preferences.IPrefMapEntry;
-import org.eventb.core.preferences.IMapRefSolver;
 import org.eventb.core.preferences.IXMLPrefSerializer;
+import org.eventb.core.preferences.autotactics.IInjectLog;
 import org.eventb.internal.core.Util;
 import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
 import org.eventb.internal.core.preferences.PreferenceUtils.ReadPrefMapEntry;
@@ -52,8 +52,6 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 
 	private final IXMLPrefSerializer<T> xmlTranslator;
 	
-	private int unitErrorCount = 0;
-	
 	public PreferenceMapper(IPrefElementTranslator<T> translator) {
 		this(translator, null);
 	}
@@ -69,26 +67,17 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 	}
 
 	/**
-	 * Returns the number of units that could not be loaded through a call to
-	 * {@link #inject(String)} because an error occurred.
-	 * 
-	 * @return 0 iff all units have been successfully loaded, else the number of
-	 *         units for which errors occurred (positive integer).
-	 * @since 2.4
-	 */
-	public int getUnitErrorCount() {
-		return unitErrorCount;
-	}
-	
-	/**
 	 * Returns a map of objects corresponding to the preference.
 	 * 
 	 * @param pref
 	 *            the string of the preference representing the map
+	 * @param log
+	 *            a log to collect injection errors and warnings
 	 * @return a object map corresponding to the preference
 	 */
 	@Override
-	public Map<String, T> inject(String pref) {
+	public Map<String, T> inject(String pref, IInjectLog log) {
+		final InjectLog ilog = (InjectLog) log;
 		if (pref == null) {
 			return null;
 		}
@@ -102,16 +91,18 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 				final NodeList units = getElementsByTagName(tacticPref,
 						PREF_UNIT);
 				for (int i = 0; i < units.getLength(); i++) {
-					final IPrefMapEntry<T> unit = loadUnit(units, i, pref);
-					if (unit == null) {
-						unitErrorCount++;
-					} else {
+					final IPrefMapEntry<T> unit = loadUnit(units, i, pref, ilog);
+					if (unit != null) {
 						map.put(unit.getKey(), unit.getValue());
 					}
 				}
 			} catch (Exception e) {
+				final String message = e.getMessage();
+				if (message != null) {
+					ilog.addError(message);
+				}
 				Util.log(e, "error while loading tactic preference");
-				throw PreferenceException.getInstance();
+				throw new PreferenceException(message);
 			}
 		} else {
 
@@ -121,15 +112,13 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 				final String[] entry = PreferenceUtils.parseString(elt,
 						SEPARATOR_MAP_ELEMENT);
 				if (entry.length != 2) {
-					log(null, "Invalid entry for the preference element: "
+					ilog.addWarning("Invalid entry for the preference element: "
 							+ elt);
 				} else {
 					final String key = entry[0];
-					final T value = translator.inject(entry[1]);
+					final T value = translator.inject(entry[1], ilog);
 					if (value == null) {
-						// FIXME may be due to missing plug-in (combinator or
-						// parameterizer contribution)
-						throw PreferenceException.getInstance();
+						throw new PreferenceException("Preference loading failed");
 					}
 					map.put(key, value);
 				}
@@ -138,19 +127,18 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 		return map;
 	}
 
-	private IPrefMapEntry<T> loadUnit(final NodeList units, int i, String pref) {
+	private IPrefMapEntry<T> loadUnit(final NodeList units, int i, String pref,
+			InjectLog log) {
 		final Node unitElem = units.item(i);
 		try {
-			return xmlTranslator.get(unitElem);
+			return xmlTranslator.get(unitElem, log);
 		} catch (PreferenceException e) {
-			// failed
-			final String message = "error while loading tactic profile";
-			Util.log(e, message);
+			final int unitNumber = i + 1;
+			log.addError("error while loading profile n° " + unitNumber
+					+ ":\n\t" + e.getMessage());
 			return null;
 		}
 	}
-	
-	
 
 	/**
 	 * Extracts the map model to string for serialization.
@@ -175,7 +163,7 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 				return serializeDocument(doc);
 			} catch (Exception e) {
 				Util.log(e, "while storing tactic preference");
-				throw PreferenceException.getInstance();
+				throw new PreferenceException(e.getMessage());
 			}
 		}
 		// old storage
@@ -188,12 +176,12 @@ public class PreferenceMapper<T> implements IPrefElementTranslator<Map<String, T
 	}
 
 	@Override
-	public void resolveReferences(CachedPreferenceMap<T> map) {
+	public void resolveReferences(CachedPreferenceMap<T> map, IInjectLog log) {
 		if (xmlTranslator == null) {
 			return;
 		}
 		for (IPrefMapEntry<T> entry : map.getEntries()) {
-			xmlTranslator.resolveReferences(entry, map);
+			xmlTranslator.resolveReferences(entry, map, log);
 		}
 	}
 

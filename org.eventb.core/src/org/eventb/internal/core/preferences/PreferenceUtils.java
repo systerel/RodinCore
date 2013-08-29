@@ -148,15 +148,10 @@ public class PreferenceUtils {
 
 		private static final long serialVersionUID = -4388540765121161963L;
 
-		private static final PreferenceException INSTANCE = new PreferenceException();
-
-		private PreferenceException() {
-			// singleton
+		public PreferenceException(String message) {
+			super(message);
 		}
 
-		public static PreferenceException getInstance() {
-			return INSTANCE;
-		}
 	}
 
 	public static class ReadPrefMapEntry<T> implements IPrefMapEntry<T> {
@@ -300,7 +295,9 @@ public class PreferenceUtils {
 		public static void assertName(Node node, XMLElementTypes name)
 				throws PreferenceException {
 			if (!hasName(node, name)) {
-				throw PreferenceException.getInstance();
+				final String actualName = node.getNodeName();
+				throw new PreferenceException("expected node name: " + name
+						+ ", but was: " + actualName);
 			}
 		}
 	}
@@ -316,9 +313,12 @@ public class PreferenceUtils {
 		public static String getAttribute(Node node,
 				XMLAttributeTypes attributeType) throws PreferenceException {
 			final NamedNodeMap attributes = node.getAttributes();
-			final Node att = attributes.getNamedItem(attributeType.toString());
+			final String attName = attributeType.toString();
+			final Node att = attributes.getNamedItem(attName);
 			if (att == null) {
-				throw PreferenceException.getInstance();
+				final String nodeName = node.getNodeName();
+				throw new PreferenceException("Missing attribute " + attName
+						+ " for node " + nodeName);
 			}
 			return att.getNodeValue();
 		}
@@ -392,14 +392,23 @@ public class PreferenceUtils {
 	}
 
 	public static Node getUniqueChild(Node node) {
+		final String nodeName = node.getNodeName();
 		final NodeList unitChildren = node.getChildNodes();
+		Node uniqueChild = null;
 		for (int j = 0; j < unitChildren.getLength(); j++) {
 			final Node child = unitChildren.item(j);
 			if (child instanceof Element) {
-				return child;
+				if (uniqueChild != null) {
+					throw new PreferenceException(
+							"More than one child element in node " + nodeName);
+				}
+				uniqueChild = child;
 			}
 		}
-		throw PreferenceException.getInstance();
+		if (uniqueChild == null) {
+			throw new PreferenceException("No child element in node " + nodeName);
+		}
+		return uniqueChild;
 	}
 
 	public static boolean getSimplifyProofPref() {

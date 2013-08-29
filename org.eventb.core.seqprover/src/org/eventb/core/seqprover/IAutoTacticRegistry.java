@@ -88,6 +88,17 @@ public interface IAutoTacticRegistry {
 			throws IllegalArgumentException;
 
 	/**
+	 * Returns whether the given id corresponds to a registered tactic
+	 * parameterizer.
+	 * 
+	 * @param id
+	 *            a parameterizer id
+	 * @return <code>true</code> if registered, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	boolean isRegisteredParameterizer(String id);
+
+	/**
 	 * Returns descriptors for all registered tactic parameterizers.
 	 * <p>
 	 * The order of the returned array is of no significance and may change
@@ -110,6 +121,17 @@ public interface IAutoTacticRegistry {
 	 * @since 2.3
 	 */
 	IParameterizerDescriptor getParameterizerDescriptor(String id);
+
+	/**
+	 * Returns whether the given id corresponds to a registered tactic
+	 * combinator.
+	 * 
+	 * @param id
+	 *            a combinator id
+	 * @return <code>true</code> if registered, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	boolean isRegisteredCombinator(String id);
 
 	/**
 	 * Returns descriptors for all registered tactic combinators.

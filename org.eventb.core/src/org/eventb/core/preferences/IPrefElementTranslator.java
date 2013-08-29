@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.preferences;
 
+import org.eventb.core.preferences.autotactics.IInjectLog;
+
 /**
  * This interface is used to translate elements of a complex string preference
  * such as:
@@ -41,8 +43,11 @@ public interface IPrefElementTranslator<U> {
 	 * 
 	 * @param s
 	 *            the information to create the element
+	 * @param log
+	 *            a log of injection problems
 	 * @return the element created from the given information
+	 * @since 3.0
 	 */
-	U inject(String s);
+	U inject(String s, IInjectLog log);
 
 }

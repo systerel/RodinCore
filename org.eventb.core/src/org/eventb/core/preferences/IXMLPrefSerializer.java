@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eventb.core.preferences;
 
+import org.eventb.core.preferences.autotactics.IInjectLog;
+import org.eventb.internal.core.preferences.PreferenceUtils.PreferenceException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -41,10 +43,14 @@ public interface IXMLPrefSerializer<T> {
 	 * 
 	 * @param n
 	 *            a node
-	 * @return the deserialization result, or <code>null</code> if
-	 *         deserialization failed
+	 * @param log
+	 *            a log to record warnings about partially loaded nodes
+	 * @return the deserialized preference
+	 * @throws PreferenceException
+	 *             if deserialization failed
+	 * @since 3.0
 	 */
-	IPrefMapEntry<T> get(Node n);
+	IPrefMapEntry<T> get(Node n, IInjectLog log) throws PreferenceException;
 
 	/**
 	 * Replaces the reference placeholders, contained in the given preference,
@@ -54,6 +60,9 @@ public interface IXMLPrefSerializer<T> {
 	 *            a preference
 	 * @param map
 	 *            a preference map
+	 * @param log
+	 *            a log to record warnings about unresolved references
+	 * @since 3.0
 	 */
-	void resolveReferences(IPrefMapEntry<T> pref, CachedPreferenceMap<T> map);
+	void resolveReferences(IPrefMapEntry<T> pref, CachedPreferenceMap<T> map, IInjectLog log);
 }

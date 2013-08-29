@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eventb.core.preferences.autotactics.IInjectLog;
+import org.eventb.internal.core.preferences.InjectLog;
 import org.eventb.internal.core.preferences.PrefEntryGraph;
 import org.eventb.internal.core.preferences.PreferenceCheckResult;
 import org.eventb.internal.core.preferences.PreferenceMapper;
@@ -78,18 +80,6 @@ public class CachedPreferenceMap<T> {
 	}
 
 	/**
-	 * Returns the number of units that could not be loaded through a call to
-	 * {@link #inject(String)} because an error occurred.
-	 * 
-	 * @return 0 iff all units have been successfully loaded, else the number of
-	 *         units for which errors occurred (positive integer).
-	 * @since 2.4
-	 */
-	public int getUnitErrorCount() {
-		return prefMap.getUnitErrorCount();
-	}
-	
-	/**
 	 * Loads the cache with elements created from the given string parameter.
 	 * <p>
 	 * If inject fails, an IllegalArgumentException is thrown.
@@ -97,21 +87,24 @@ public class CachedPreferenceMap<T> {
 	 * 
 	 * @param pref
 	 *            the information to load the cache with
+	 * @return a log with errors and warnings about encountered problems
 	 * @throws IllegalArgumentException
 	 *             in case of failure
-	 * @since 2.3
+	 * @since 3.0
 	 */
-	public void inject(String pref) throws IllegalArgumentException {
+	public IInjectLog inject(String pref) throws IllegalArgumentException {
+		final IInjectLog log = new InjectLog();
 		// to do before resolving references
 		accessedEntries.clear();
 		try {
-			cache = prefMap.inject(pref);
+			cache = prefMap.inject(pref, log);
 		} catch (PreferenceException e) {
 			// failed
 			throw new IllegalArgumentException(e);
 		}
-		prefMap.resolveReferences(this);
+		prefMap.resolveReferences(this, log);
 		notifyListeners();
+		return log;
 	}
 
 	/**

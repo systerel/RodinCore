@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eventb.internal.core.preferences;
 
 import org.eventb.core.preferences.IPrefElementTranslator;
+import org.eventb.core.preferences.autotactics.IInjectLog;
 import org.eventb.core.seqprover.IAutoTacticRegistry;
 import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.core.seqprover.SequentProver;
@@ -29,7 +30,7 @@ public class TacticPrefElement implements
 	}
 
 	@Override
-	public ITacticDescriptor inject(String str) {
+	public ITacticDescriptor inject(String str, IInjectLog log) {
 		final IAutoTacticRegistry tacticRegistry = SequentProver
 				.getAutoTacticRegistry();
 		final ITacticDescriptor tacticDescriptor = tacticRegistry

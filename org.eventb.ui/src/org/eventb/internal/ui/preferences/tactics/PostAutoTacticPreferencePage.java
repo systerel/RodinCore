@@ -425,9 +425,8 @@ public class PostAutoTacticPreferencePage extends
 		} catch (IllegalArgumentException e) {
 			UIUtils.log(e, "error while exporting profiles");
 			MessageDialog.openError(getShell(), "Export error",
-					"An error occurred while exporting selected profiles.\n"
-							+ "Check that they do not reference unselected profiles.\n"
-							+ "See error log for details.");
+					"An error occurred while exporting selected profiles:\n"
+							+ e.getMessage() + "\nSee error log for details.");
 		}
 	}
 
@@ -459,8 +458,8 @@ public class PostAutoTacticPreferencePage extends
 		} catch (IllegalArgumentException e) {
 			UIUtils.log(e, "error while importing profiles");
 			MessageDialog.openError(getShell(), "Import error",
-					"An error occurred while importing selected profiles.\n"
-							+ "See error log for details.");
+					"An error occurred while importing selected profiles:\n"
+							+ e.getMessage() + "\nSee error log for details.");
 		}
 	}
 

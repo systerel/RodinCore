@@ -20,7 +20,13 @@ import org.eventb.core.seqprover.ITacticDescriptor;
 
 /**
  * Common protocol for tactics profile caches.
+ * <p>
+ * Instances can be obtained by calling
+ * {@link TacticPreferenceFactory#makeTacticProfileCache(org.eclipse.core.runtime.preferences.IEclipsePreferences)}
+ * </p>
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * @since 3.0
  */
 public interface ITacticProfileCache {
@@ -116,16 +122,6 @@ public interface ITacticProfileCache {
 	void store();
 
 	/**
-	 * Returns the number of units that could not be loaded through a call to
-	 * {@link #inject(String)} because an error occurred.
-	 * 
-	 * @return 0 iff all units have been successfully loaded, else the number of
-	 *         units for which errors occurred (positive integer).
-	 */
-	// TODO 3.0: change mechanism, return a comprehensive error report instead
-	int getUnitErrorCount();
-
-	/**
 	 * Loads the cache with elements created from the given string parameter.
 	 * <p>
 	 * If inject fails, an IllegalArgumentException is thrown.
@@ -136,7 +132,7 @@ public interface ITacticProfileCache {
 	 * @throws IllegalArgumentException
 	 *             in case of failure
 	 */
-	void inject(String pref) throws IllegalArgumentException;
+	IInjectLog inject(String pref) throws IllegalArgumentException;
 
 	/**
 	 * Checks whether adding given key with given value into given map

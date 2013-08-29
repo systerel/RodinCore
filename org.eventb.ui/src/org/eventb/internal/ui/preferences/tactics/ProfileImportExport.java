@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.ui.preferences.tactics;
 
+import static org.eclipse.jface.dialogs.MessageDialog.openConfirm;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceFactory.makeTacticPreferenceMap;
 
 import java.io.BufferedReader;
@@ -29,6 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eventb.core.preferences.CachedPreferenceMap;
 import org.eventb.core.preferences.IPrefMapEntry;
+import org.eventb.core.preferences.autotactics.IInjectLog;
 import org.eventb.core.seqprover.ITacticDescriptor;
 import org.eventb.internal.ui.UIUtils;
 
@@ -142,22 +144,44 @@ public class ProfileImportExport {
 			return null;
 		}
 		try {
-			newCache.inject(prefStr);
-			final int unitErrorCount = newCache.getUnitErrorCount();
-			if (unitErrorCount > 0) {
-				final String message = "Problems occurred for "
-						+ unitErrorCount
-						+ " tactic profiles.\n" +
-						"These profiles cannot be imported and will not be displayed.\n" +
-						"See error log for details.";
-				MessageDialog.openWarning(parentShell, "Import warning",
-						message);
+			final IInjectLog injectLog = newCache.inject(prefStr);
+			boolean importAccepted = true;
+			if (injectLog.hasErrors() || injectLog.hasWarnings()) {
+				final String message = makeLogMessage(injectLog);
+				importAccepted = openConfirm(parentShell, "Import problems", message);
 			}
-			return newCache;
+			if (importAccepted) {
+				return newCache;
+			} else {
+				return null;
+			}
 		} catch (IllegalArgumentException e) {
 			// error already logged
 			showImportError(parentShell, path);
 			return null;
+		}
+	}
+
+	private static String makeLogMessage(IInjectLog log) {
+		final StringBuilder message = new StringBuilder();
+		if (log.hasErrors()) {
+			message.append("Errors:\n");
+			appendList(message, log.getErrors());
+			message.append("Concerned profiles cannot be imported and will not be displayed.");
+		}
+		if (log.hasWarnings()) {
+			message.append("Warnings:\n");
+			appendList(message, log.getWarnings());
+			message.append("Concerned profiles may not behave as expected.");
+		}
+		return message.toString();
+	}
+
+	private static void appendList(final StringBuilder message,
+			final List<String> items) {
+		for (String item : items) {
+			message.append(item);
+			message.append('\n');
 		}
 	}
 
