@@ -50,8 +50,8 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S",
 				factory);
-		assertEquals("Type environments differ",
-				typenv, scCtxFile.getTypeEnvironment(factory));
+		assertEquals("Type environments differ", typenv,
+				scCtxFile.getTypeEnvironment());
 	}
 	
 	/**
@@ -77,8 +77,8 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final ISCContextRoot scCtxFile = cctx.getSCContextRoot();
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; T=ℙ(T); t=T",
 				factory);
-		assertEquals("Type environments differ",
-				typenv, scCtxFile.getTypeEnvironment(factory));
+		assertEquals("Type environments differ", typenv,
+				scCtxFile.getTypeEnvironment());
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("v=BOOL",
 				factory);
 		assertEquals("Type environments differ",
-				typenv, scMchFile.getTypeEnvironment(factory));
+				typenv, scMchFile.getTypeEnvironment());
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; v=S",
 				factory);
 		assertEquals("Type environments differ",
-				typenv, scMchFile.getTypeEnvironment(factory));
+				typenv, scMchFile.getTypeEnvironment());
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; T=ℙ(T); t=T; v=T",
 				factory);
 		assertEquals("Type environments differ",
-				typenv, scMchFile.getTypeEnvironment(factory));
+				typenv, scMchFile.getTypeEnvironment());
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment(
 				"v=BOOL; w=BOOL", factory);
 		assertEquals("Type environments differ",
-				typenv, scMchFile.getTypeEnvironment(factory));
+				typenv, scMchFile.getTypeEnvironment());
 	}
 
 	/**
@@ -233,7 +233,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		final ITypeEnvironmentBuilder typenv = mTypeEnvironment("S=ℙ(S); s=S; v=S; T=ℙ(T); t=T; w=T",
 				factory);
 		assertEquals("Type environments differ",
-				typenv, scMchFile.getTypeEnvironment(factory));
+				typenv, scMchFile.getTypeEnvironment());
 	}
 
 	/**
@@ -252,7 +252,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
-		final ITypeEnvironmentBuilder mchTypenv = scMchFile.getTypeEnvironment(factory);
+		final ITypeEnvironmentBuilder mchTypenv = scMchFile.getTypeEnvironment();
 
 		final ISCEvent scEvent = getSCEvent(scMchFile, "evt");
 		final ITypeEnvironmentBuilder evtTypenv =
@@ -282,7 +282,7 @@ public class TypeEnvironmentTest extends BasicSCTestWithFwdConfig {
 		runBuilder();
 
 		final ISCMachineRoot scMchFile = mch.getSCMachineRoot();
-		final ITypeEnvironmentBuilder mchTypenv = scMchFile.getTypeEnvironment(factory);
+		final ITypeEnvironmentBuilder mchTypenv = scMchFile.getTypeEnvironment();
 
 		final ISCEvent scEvent = getSCEvent(scMchFile, "evt");
 		final ITypeEnvironmentBuilder evtTypenv =

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.rodinp.core.IInternalElement;
 import org.rodinp.core.RodinDBException;
@@ -51,7 +50,7 @@ public interface ISCExpressionElement extends IInternalElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 * 
-	 * @see ISCMachineRoot#getTypeEnvironment(FormulaFactory)
+	 * @see ISCMachineRoot#getTypeEnvironment()
 	 * @since 3.0
 	 */
 	Expression getExpression(ITypeEnvironment typenv) throws RodinDBException;

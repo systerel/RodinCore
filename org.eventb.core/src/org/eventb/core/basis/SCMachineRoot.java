@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,9 +138,9 @@ public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 	 * @since 3.0
 	 */
 	@Override
-	public ITypeEnvironmentBuilder getTypeEnvironment(FormulaFactory factory)
+	public ITypeEnvironmentBuilder getTypeEnvironment()
 			throws RodinDBException {
-
+		final FormulaFactory factory = getFormulaFactory();
 		ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		for (ISCInternalContext ictx : getSCSeenContexts()) {
 			SCContextUtil.augmentTypeEnvironment(ictx, typenv, factory);

@@ -105,9 +105,9 @@ public class SCContextRoot extends EventBRoot implements ISCContextRoot{
 	 * @since 3.0
 	 */
 	@Override
-	public ITypeEnvironmentBuilder getTypeEnvironment(FormulaFactory factory)
+	public ITypeEnvironmentBuilder getTypeEnvironment()
 			throws RodinDBException {
-		
+		final FormulaFactory factory = getFormulaFactory();
 		ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
 		for (ISCInternalContext ictx: getAbstractSCContexts()) {
 			SCContextUtil.augmentTypeEnvironment(ictx, typenv, factory);

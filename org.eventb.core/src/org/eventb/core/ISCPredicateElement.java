@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eventb.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.Predicate;
 import org.rodinp.core.RodinDBException;
@@ -56,8 +55,8 @@ public interface ISCPredicateElement extends IPredicateElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 * 
-	 * @see ISCContextRoot#getTypeEnvironment(FormulaFactory)
-	 * @see ISCMachineRoot#getTypeEnvironment(FormulaFactory)
+	 * @see ISCContextRoot#getTypeEnvironment()
+	 * @see ISCMachineRoot#getTypeEnvironment()
 	 * @see ISCEvent#getTypeEnvironment(ITypeEnvironment)
 	 * @since 3.0
 	 */
@@ -74,7 +73,6 @@ public interface ISCPredicateElement extends IPredicateElement {
 	 * @throws RodinDBException
 	 *             if there was a problem accessing the database
 	 */
-	
 	void setPredicate(Predicate predicate, IProgressMonitor monitor) throws RodinDBException;
 
 }
