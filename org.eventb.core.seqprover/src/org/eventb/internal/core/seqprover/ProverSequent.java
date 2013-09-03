@@ -514,146 +514,144 @@ public final class ProverSequent implements IInternalProverSequent{
 		return origin;
 	}
 	
-}
-
-
-/**
- * An implementation for an iterator that is the combination of
- * two (a first and a second) iterators.
- * 
- * <p>
- * This iterator first returns the elements contained in the first iterator, followed
- * by the elements contained in the second iterator.
- * </p>
- * <p>
- * Removal of elements is unsupported for this iterator.
- * </p>
- * 
- * @author Farhad Mehta
- *
- * @param <T> 
- * 		The base type for the elements returnded by the iterator.
- */
-class CompositeIterator<T> implements Iterator<T>{
-
-	private Iterator<T> fst;
-	private Iterator<T> snd;
-	
-	public CompositeIterator(Iterator<T> fst, Iterator<T> snd) {
-		this.fst = fst;
-		this.snd = snd;
-	}
-	
-	public boolean hasNext() {
-		return fst.hasNext() || snd.hasNext();
-	}
-
-	public T next() {
-		if (fst.hasNext()) return fst.next();
-		if (snd.hasNext()) return snd.next();
-		throw new NoSuchElementException();
-	}
-
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}	
-}
-
-/**
- * An implementation for an iterator that returns the elements of an 'original'
- * iterator, without the elements in a 'removed' collection.
- * 
- * <p>
- * This iterator is implemented by doing a pre-emptive lookup to check if the resulting
- * iterator still has more elements.
- * </p>
- * <p>
- * Removal of elements is unsupported for this iterator.
- * </p>
- * 
- * @author Farhad Mehta
- *
- * @param <T> 
- * 		The base type for the elements returnded by the iterator.
- */
-class DifferenceIterator<T> implements Iterator<T>{
-
-	private Iterator<T> iterator;
-	private Collection<T> removed;
-	
 	/**
-	 * This local variable contains the result of the pre-emptive lookup.
-	 * If it is null, the iterator has no further elements, otherwise its
-	 * value is the next next element for this iterator. 
+	 * An implementation for an iterator that is the combination of
+	 * two (a first and a second) iterators.
+	 * 
+	 * <p>
+	 * This iterator first returns the elements contained in the first iterator, followed
+	 * by the elements contained in the second iterator.
+	 * </p>
+	 * <p>
+	 * Removal of elements is unsupported for this iterator.
+	 * </p>
+	 * 
+	 * @author Farhad Mehta
+	 *
+	 * @param <T> 
+	 * 		The base type for the elements returnded by the iterator.
 	 */
-	private T nextNext;
-	
-	
-	public DifferenceIterator(Iterator<T> iterator, Collection<T> removed) {
-		this.iterator = iterator;
-		this.removed = removed;
-		this.nextNext = nextNextLookup();
-	}
-	
-	private T nextNextLookup(){
-		while (iterator.hasNext()) {
-			T next = (T) iterator.next();
-			if (! removed.contains(next)) return next;
+	static class CompositeIterator<T> implements Iterator<T>{
+
+		private Iterator<T> fst;
+		private Iterator<T> snd;
+
+		public CompositeIterator(Iterator<T> fst, Iterator<T> snd) {
+			this.fst = fst;
+			this.snd = snd;
 		}
-		return null; 
-	}
-	
-	public boolean hasNext() {
-		return (nextNext != null);
-	}
 
-	public T next() {
-		if (nextNext != null) {
-			T next = nextNext;
-			nextNext = nextNextLookup();
-			return next;
+		public boolean hasNext() {
+			return fst.hasNext() || snd.hasNext();
 		}
-		throw new NoSuchElementException();
+
+		public T next() {
+			if (fst.hasNext()) return fst.next();
+			if (snd.hasNext()) return snd.next();
+			throw new NoSuchElementException();
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}	
 	}
 
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}	
-}
+	/**
+	 * An implementation for an iterator that returns the elements of an 'original'
+	 * iterator, without the elements in a 'removed' collection.
+	 * 
+	 * <p>
+	 * This iterator is implemented by doing a pre-emptive lookup to check if the resulting
+	 * iterator still has more elements.
+	 * </p>
+	 * <p>
+	 * Removal of elements is unsupported for this iterator.
+	 * </p>
+	 * 
+	 * @author Farhad Mehta
+	 *
+	 * @param <T> 
+	 * 		The base type for the elements returnded by the iterator.
+	 */
+	static class DifferenceIterator<T> implements Iterator<T>{
 
-/**
- * An implementation for an iterator that provides an immutable version of a 
- * given iterator. 
- * <p>
- * Removal of elements is unsupported for this iterator.
- * </p>
- * 
- * @author Farhad Mehta
- *
- * @param <T> 
- * 		The base type for the elements returnded by the iterator.
- */
-class ImmutableIterator<T> implements Iterator<T>{
+		private Iterator<T> iterator;
+		private Collection<T> removed;
 
-	private Iterator<T> iterator;	
-	
-	public ImmutableIterator(Iterator<T> iterator) {
-		this.iterator = iterator;
-	}
-	
-	public ImmutableIterator(Iterable<T> iterable) {
-		this.iterator = iterable.iterator();
-	}
-		
-	public boolean hasNext() {
-		return iterator.hasNext();
+		/**
+		 * This local variable contains the result of the pre-emptive lookup.
+		 * If it is null, the iterator has no further elements, otherwise its
+		 * value is the next next element for this iterator. 
+		 */
+		private T nextNext;
+
+
+		public DifferenceIterator(Iterator<T> iterator, Collection<T> removed) {
+			this.iterator = iterator;
+			this.removed = removed;
+			this.nextNext = nextNextLookup();
+		}
+
+		private T nextNextLookup(){
+			while (iterator.hasNext()) {
+				T next = (T) iterator.next();
+				if (! removed.contains(next)) return next;
+			}
+			return null; 
+		}
+
+		public boolean hasNext() {
+			return (nextNext != null);
+		}
+
+		public T next() {
+			if (nextNext != null) {
+				T next = nextNext;
+				nextNext = nextNextLookup();
+				return next;
+			}
+			throw new NoSuchElementException();
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}	
 	}
 
-	public T next() {
-		return iterator.next();
-	}
+	/**
+	 * An implementation for an iterator that provides an immutable version of a 
+	 * given iterator. 
+	 * <p>
+	 * Removal of elements is unsupported for this iterator.
+	 * </p>
+	 * 
+	 * @author Farhad Mehta
+	 *
+	 * @param <T> 
+	 * 		The base type for the elements returnded by the iterator.
+	 */
+	static class ImmutableIterator<T> implements Iterator<T>{
 
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}		
+		private Iterator<T> iterator;	
+
+		public ImmutableIterator(Iterator<T> iterator) {
+			this.iterator = iterator;
+		}
+
+		public ImmutableIterator(Iterable<T> iterable) {
+			this.iterator = iterable.iterator();
+		}
+
+		public boolean hasNext() {
+			return iterator.hasNext();
+		}
+
+		public T next() {
+			return iterator.next();
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}		
+	}
 }
