@@ -89,6 +89,7 @@ import org.junit.runners.Suite;
 	TestConstructor.class,
 	TestTypeInstantiation.class,
 	TestSetInstantiation.class,
+	TestFactoryCreation.class,
 	// $JUnit-END$
 })
 public class AllTests {
