@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eventb.core.ast.QuantifiedExpression.Form;
+import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.datatype.IDatatypeBuilder;
 import org.eventb.core.ast.extension.IExpressionExtension;
 import org.eventb.core.ast.extension.IExtensionKind;
@@ -129,15 +131,22 @@ public class FormulaFactory {
 	/**
 	 * Returns an instance of a formula factory supporting the given extensions
 	 * (and only them) in addition to the regular event-B mathematical language.
+	 * The given set of extensions must contain all extensions of any datatype
+	 * present, including the datatype dependencies (i.e., other datatypes
+	 * directly or indirectly referenced in the datatype definitions).
 	 * 
 	 * @param extensions
 	 *            set of mathematical extensions to support
 	 * @return a formula factory supporting the given extensions
+	 * @throws IllegalArgumentException
+	 *             if the given set of extensions is not datatype complete
 	 * @since 2.0
+	 * @since 3.0
 	 */
 	public static FormulaFactory getInstance(Set<IFormulaExtension> extensions) {
 		final Set<IFormulaExtension> actualExtns = new LinkedHashSet<IFormulaExtension>();
 		actualExtns.addAll(extensions);
+		checkDatatypeComplete(actualExtns);
 
 		synchronized (ALL_EXTENSIONS) {
 			final FormulaFactory cached = INSTANCE_CACHE.get(actualExtns);
@@ -165,15 +174,46 @@ public class FormulaFactory {
 	/**
 	 * Returns an instance of a formula factory supporting the given extensions
 	 * (and only them) in addition to the regular event-B mathematical language.
+	 * The given set of extensions must contain all extensions of any datatype
+	 * present, including the datatype dependencies (i.e., other datatypes
+	 * directly or indirectly referenced in the datatype definitions).
 	 * 
 	 * @param extensions
 	 *            the mathematical extensions to support
 	 * @return a formula factory supporting the given extensions
+	 * @throws IllegalArgumentException
+	 *             if the given set of extensions is not datatype complete
 	 * @since 2.3
+	 * @since 3.0
 	 */
 	public static FormulaFactory getInstance(IFormulaExtension... extensions) {
 		return getInstance(new LinkedHashSet<IFormulaExtension>(
 				Arrays.asList(extensions)));
+	}
+
+	private static void checkDatatypeComplete(Set<IFormulaExtension> extns) {
+		final Set<IDatatype> datatypes = getDatatypes(extns);
+		for (final IDatatype datatype : datatypes) {
+			if (!extns.containsAll(datatype.getExtensions())) {
+				throw new IllegalArgumentException("Incomplete datatype "
+						+ datatype);
+			}
+			if (!extns.containsAll(datatype.getBaseFactory().getExtensions())) {
+				throw new IllegalArgumentException(
+						"Missing dependencies for datatype " + datatype);
+			}
+		}
+	}
+
+	private static Set<IDatatype> getDatatypes(Set<IFormulaExtension> extns) {
+		final Set<IDatatype> result = new HashSet<IDatatype>();
+		for (final IFormulaExtension extn : extns) {
+			final Object origin = extn.getOrigin();
+			if (origin instanceof IDatatype) {
+				result.add((IDatatype) origin);
+			}
+		}
+		return result;
 	}
 
 	private static void checkSymbols(Set<IFormulaExtension> actualExtns) {
@@ -211,11 +251,19 @@ public class FormulaFactory {
 	 * supported extensions are a union of known extensions and given
 	 * extensions.
 	 * </p>
+	 * <p>
+	 * The resulting set of extensions must contain all extensions of any
+	 * datatype present, including the datatype dependencies (i.e., other
+	 * datatypes directly or indirectly referenced in the datatype definitions).
+	 * </p>
 	 * 
 	 * @param addedExtns
 	 *            a set of extensions to add
 	 * @return a new factory supporting additional extensions
+	 * @throws IllegalArgumentException
+	 *             if the resulting set of extensions is not datatype complete
 	 * @since 2.0
+	 * @since 3.0
 	 */
 	public FormulaFactory withExtensions(Set<IFormulaExtension> addedExtns) {
 		final Set<IFormulaExtension> newExtns = new LinkedHashSet<IFormulaExtension>(
