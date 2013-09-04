@@ -21,7 +21,9 @@ import static org.eventb.core.ast.Formula.UPTO;
 import static org.eventb.core.ast.ProblemKind.InvalidGenericType;
 import static org.eventb.core.ast.ProblemKind.InvalidTypeExpression;
 import static org.eventb.core.ast.ProblemSeverities.Error;
+import static org.eventb.core.ast.tests.DatatypeParser.parse;
 import static org.eventb.core.ast.tests.FastFactory.ff_extns;
+import static org.eventb.core.ast.tests.FastFactory.mDatatypeFactory;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -935,6 +937,67 @@ public class TestDatatypes extends AbstractTests {
 	public void testDatatypeToString() {
 		assertEquals("List[S] ::= nil || cons[head: S; tail: List]",
 				LIST_DT.toString());
+	}
+
+	/**
+	 * Ensures that the base factory of a datatype can be the default factory if
+	 * no extension is needed.
+	 */
+	@Test
+	public void baseFactoryNominal() {
+		final IDatatype dt = parse(ff, "Foo ::= foo");
+		assertSame(ff, dt.getBaseFactory());
+	}
+
+	/**
+	 * Ensures that the base factory of a datatype can be the default factory if
+	 * no extension is needed, even if the datatype was built with a more
+	 * complete factory.
+	 */
+	@Test
+	public void baseFactorySimpler() {
+		final FormulaFactory dtFF = mDatatypeFactory(ff, "Foo ::= foo");
+		final IDatatype dt = parse(dtFF, "Bar ::= bar");
+		assertSame(ff, dt.getBaseFactory());
+	}
+
+	/**
+	 * Ensures that the base factory of a datatype contains all datatype used in
+	 * the datatype definition.
+	 */
+	@Test
+	public void baseFactoryDependent() {
+		final FormulaFactory dtFF = mDatatypeFactory(ff, "Foo ::= foo");
+		final IDatatype dt = parse(dtFF, "Bar ::= bar[Foo]");
+		assertSame(dtFF, dt.getBaseFactory());
+	}
+
+	/**
+	 * Ensures that the base factory of a datatype contains all datatype used in
+	 * the datatype definition and all datatypes used by the latter.
+	 */
+	@Test
+	public void baseFactoryTransitive() {
+		final FormulaFactory dtFF = mDatatypeFactory(ff, //
+				"Foo ::= foo", //
+				"Bar ::= bar[Foo]");
+		final IDatatype dt = parse(dtFF, "Baz ::= baz[Bar]");
+		assertSame(dtFF, dt.getBaseFactory());
+	}
+
+	/**
+	 * Ensures that the base factory of a datatype contains all datatype used in
+	 * the datatype definition and all datatypes used by the latter (double
+	 * indirection).
+	 */
+	@Test
+	public void baseFactoryDeeplyTransitive() {
+		final FormulaFactory dtFF = mDatatypeFactory(ff, //
+				"Foo ::= foo", //
+				"Bar ::= bar[Foo]", //
+				"Baz ::= baz[Bar]");
+		final IDatatype dt = parse(dtFF, "Quux ::= quuz[Baz]");
+		assertSame(dtFF, dt.getBaseFactory());
 	}
 
 }

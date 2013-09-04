@@ -253,7 +253,9 @@ public final class DatatypeBuilder implements IDatatypeBuilder {
 		for (final IFormulaExtension extn : extns) {
 			final Object origin = extn.getOrigin();
 			if (origin instanceof IDatatype) {
-				newExtns.addAll(((IDatatype) origin).getExtensions());
+				final IDatatype dt = (IDatatype) origin;
+				newExtns.addAll(dt.getBaseFactory().getExtensions());
+				newExtns.addAll(dt.getExtensions());
 			}
 		}
 		extns.addAll(newExtns);
