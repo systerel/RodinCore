@@ -505,7 +505,7 @@ public class ExtendedExpression extends Expression implements IExtendedFormula {
 		for (Expression child : childExpressions) {
 			typeParams.add(child.toType());
 		}
-		return getFactory().makeParametricType(typeParams, extension);
+		return getFactory().makeParametricType(extension, typeParams);
 	}
 	
 	@Override

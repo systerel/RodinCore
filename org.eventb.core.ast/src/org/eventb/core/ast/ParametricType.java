@@ -57,8 +57,8 @@ public class ParametricType extends Type {
 	/**
 	 * Must never be called directly: use the factory method instead.
 	 * 
-	 * @see FormulaFactory#makeParametricType(Type[], IExpressionExtension)
-	 * @see FormulaFactory#makeParametricType(java.util.List, IExpressionExtension)
+	 * @see FormulaFactory#makeParametricType(IExpressionExtension, Type...)
+	 * @see FormulaFactory#makeParametricType(IExpressionExtension, java.util.List)
 	 * @since 3.0
 	 */
 	// The array of type parameters must have been built by a formula factory

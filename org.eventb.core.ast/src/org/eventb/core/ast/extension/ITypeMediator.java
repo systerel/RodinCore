@@ -14,9 +14,9 @@ import java.util.List;
 
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.FormulaFactory;
-import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IntegerType;
+import org.eventb.core.ast.ParametricType;
 import org.eventb.core.ast.PowerSetType;
 import org.eventb.core.ast.ProductType;
 import org.eventb.core.ast.Type;
@@ -52,11 +52,13 @@ public interface ITypeMediator {
 	 * This is a short-hand method fully equivalent to
 	 * 
 	 * <pre>
-	 * getFactory().makeParametricType(typePrms, typeConstr)
+	 * getFactory().makeParametricType(typeConstr, typePrms)
 	 * </pre>
+	 * 
+	 * @since 3.0
 	 */
-	ParametricType makeParametricType(List<Type> typePrms,
-			IExpressionExtension typeConstr);
+	ParametricType makeParametricType(IExpressionExtension typeConstr,
+			List<Type> typePrms);
 
 	/**
 	 * This is a short-hand method fully equivalent to

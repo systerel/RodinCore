@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static java.util.Collections.singletonList;
 import static org.eventb.core.ast.Formula.BTRUE;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.FORALL;
@@ -101,7 +100,6 @@ public class FastFactory {
 
 	public static final Predicate[] NO_PREDICATE = new Predicate[0];
 	public static final Expression[] NO_EXPRESSION = new Expression[0];
-	public static final Type[] NO_TYPES = new Type[0];
 
 	private static final Set<IFormulaExtension> EXTNS = new HashSet<IFormulaExtension>(
 			Arrays.asList(EXT_PRIME, MONEY));
@@ -500,8 +498,8 @@ public class FastFactory {
 		if (eType == null) {
 			listType = null;
 		} else {
-			listType = ff_extns.makeParametricType(singletonList(eType),
-					LIST_DT.getTypeConstructor());
+			listType = ff_extns.makeParametricType(
+					LIST_DT.getTypeConstructor(), eType);
 		}
 		ExtendedExpression result = ff_extns.makeExtendedExpression(
 				LIST_DT.getConstructor("nil"), NO_EXPRESSION, NO_PREDICATE,

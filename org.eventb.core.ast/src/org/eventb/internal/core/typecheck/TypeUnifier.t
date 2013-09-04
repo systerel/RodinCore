@@ -117,7 +117,7 @@ public class TypeUnifier {
 				if (all2) {
 					return right;
 				}
-				return result.makeParametricType(newParams, ext);
+				return result.makeParametricType(ext, newParams);
 			}
 			Int(), Int() -> {
 				return left;
@@ -215,7 +215,7 @@ public class TypeUnifier {
 					return intype;
 				}
 				final IExpressionExtension exprExt = ((ParametricType) intype).getExprExtension();
-				return result.makeParametricType(newParams, exprExt);
+				return result.makeParametricType(exprExt, newParams);
 			}
 		}
 		return intype;

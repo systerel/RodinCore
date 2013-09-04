@@ -2635,16 +2635,15 @@ public class TestGenParser extends AbstractTests {
 						Collections.<Predicate> emptySet(), null);
 
 		final ParametricType moultIntBoolType = listMoultFac
-				.makeParametricType(Arrays.<Type> asList(
-						listMoultFac.makeIntegerType(),
-						listMoultFac.makeBooleanType()), EXT_MOULT);
+				.makeParametricType(EXT_MOULT, listMoultFac.makeIntegerType(),
+						listMoultFac.makeBooleanType());
 
 		final Expression listMoult = listMoultFac.makeExtendedExpression(
 				EXT_LIST, Collections.<Expression> singleton(moultIntBool),
 				Collections.<Predicate> emptyList(), null);
 		
 		final ParametricType listMoultType = listMoultFac.makeParametricType(
-				Collections.<Type> singletonList(moultIntBoolType), EXT_LIST);
+				EXT_LIST, moultIntBoolType);
 		
 		final Type powListMoultType = listMoultFac.makePowerSetType(listMoultType);
 		

@@ -1913,11 +1913,11 @@ public class FormulaFactory {
 	/**
 	 * Returns the instance of the parametric type of the given constructor with
 	 * the given type parameters.
-	 * 
-	 * @param typePrms
-	 *            the parameters of the parametric type
 	 * @param typeConstructor
 	 *            the constructor of the parametric type
+	 * @param typePrms
+	 *            the parameters of the parametric type
+	 * 
 	 * @return a new parametric type
 	 * @throws IllegalArgumentException
 	 *             if the given extension is not supported by this factory or is
@@ -1928,23 +1928,22 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if some type parameter has been built with a different
 	 *             formula factory
-	 * @since 2.0
+	 * @since 3.0
 	 */
-	public ParametricType makeParametricType(List<Type> typePrms,
-			IExpressionExtension typeConstructor) {
+	public ParametricType makeParametricType(
+			IExpressionExtension typeConstructor, List<Type> typePrms) {
 		getCheckedExtensionTag(typeConstructor);
-		return new ParametricType(this, typeConstructor,
-				toTypeArray(typePrms));
+		return new ParametricType(this, typeConstructor, toTypeArray(typePrms));
 	}
 
 	/**
 	 * Returns the instance of the parametric type of the given constructor with
 	 * the given type parameters.
-	 * 
-	 * @param typePrms
-	 *            the parameters of the parametric type
 	 * @param typeConstructor
 	 *            the constructor of the parametric type
+	 * @param typePrms
+	 *            the parameters of the parametric type
+	 * 
 	 * @return a new parametric type
 	 * @throws IllegalArgumentException
 	 *             if the given extension is not supported by this factory or is
@@ -1955,10 +1954,10 @@ public class FormulaFactory {
 	 * @throws IllegalArgumentException
 	 *             if some type parameter has been built with a different
 	 *             formula factory
-	 * @since 2.1
+	 * @since 3.0
 	 */
-	public ParametricType makeParametricType(Type[] typePrms,
-			IExpressionExtension typeConstructor) {
+	public ParametricType makeParametricType(
+			IExpressionExtension typeConstructor, Type... typePrms) {
 		getCheckedExtensionTag(typeConstructor);
 		return new ParametricType(this, typeConstructor, typePrms.clone());
 	}

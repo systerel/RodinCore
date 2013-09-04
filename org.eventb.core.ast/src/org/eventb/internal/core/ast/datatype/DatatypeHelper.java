@@ -104,7 +104,7 @@ public class DatatypeHelper {
 			instantiations[i] = result.newFreshVariable(null);
 		}
 
-		Type resultType = result.makeParametricType(instantiations, typeCons);
+		Type resultType = result.makeParametricType(typeCons, instantiations);
 		result.unify(givenDTType, resultType, givenDTType.toExpression());
 		result.solveTypeVariables();
 

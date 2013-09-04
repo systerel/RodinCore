@@ -94,7 +94,7 @@ public class TypeRewriter implements ITypeVisitor {
 		}
 		final IExpressionExtension constructor = type.getExprExtension();
 		if (changed)
-			result = ff.makeParametricType(newTypeParameters, constructor);
+			result = ff.makeParametricType(constructor, newTypeParameters);
 		else
 			result = type;
 	}

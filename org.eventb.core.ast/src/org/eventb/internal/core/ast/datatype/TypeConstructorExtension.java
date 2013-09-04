@@ -130,7 +130,7 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 			prmTypes.add(alpha);
 		}
 		return tcMediator.makePowerSetType(tcMediator.makeParametricType(
-				prmTypes, this));
+				this, prmTypes));
 	}
 
 	@Override
@@ -148,8 +148,8 @@ public class TypeConstructorExtension implements ITypeConstructorExtension {
 			}
 			prmTypes.add(baseType);
 		}
-		return mediator.makePowerSetType(mediator.makeParametricType(prmTypes,
-				this));
+		return mediator.makePowerSetType(mediator.makeParametricType(this,
+				prmTypes));
 	}
 
 	@Override

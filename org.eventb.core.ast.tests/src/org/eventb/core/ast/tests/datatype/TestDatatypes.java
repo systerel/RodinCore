@@ -206,7 +206,7 @@ public class TestDatatypes extends AbstractTests {
 		doTypeTest("List(ℤ)", LIST_INT_TYPE, LIST_FAC);
 
 		final ParametricType listBoolType = LIST_FAC.makeParametricType(
-				Collections.<Type> singletonList(BOOL_TYPE_ffLIST), EXT_LIST);
+				EXT_LIST, BOOL_TYPE_ffLIST);
 		assertFalse(listBoolType.equals(LIST_INT_TYPE));
 	}
 
@@ -244,8 +244,8 @@ public class TestDatatypes extends AbstractTests {
 				false);
 
 		final ParametricType listBoolBoolType = LIST_FAC.makeParametricType(
-				Collections.<Type> singletonList(LIST_FAC.makeProductType(
-						BOOL_TYPE_ffLIST, BOOL_TYPE_ffLIST)), EXT_LIST);
+				EXT_LIST,
+				LIST_FAC.makeProductType(BOOL_TYPE_ffLIST, BOOL_TYPE_ffLIST));
 		final ExtendedExpression nilBoolBool = LIST_FAC.makeExtendedExpression(
 				EXT_NIL, NO_EXPR, NO_PRED, null, listBoolBoolType);
 
@@ -436,7 +436,7 @@ public class TestDatatypes extends AbstractTests {
 						Collections.<Predicate> emptyList(), null);
 
 		final ParametricType NLIST_LIST_INT_TYPE = LIST_FAC.makeParametricType(
-				Arrays.<Type> asList(LIST_INT_TYPE), EXT_LIST);
+				EXT_LIST, LIST_INT_TYPE);
 
 		doExpressionTest("tail(cons(cons(1, nil), nil))", tailConsCons1,
 				NLIST_LIST_INT_TYPE, LIST_FAC, true);
@@ -468,9 +468,8 @@ public class TestDatatypes extends AbstractTests {
 	public static final IExpressionExtension EXT_MOULT = MOULT_DT
 			.getTypeConstructor();
 	private static final ParametricType MOULT_INT_BOOL_TYPE = MOULT_FAC
-			.makeParametricType(
-					Arrays.<Type> asList(MOULT_FAC.makeIntegerType(),
-							MOULT_FAC.makeBooleanType()), EXT_MOULT);
+			.makeParametricType(EXT_MOULT, MOULT_FAC.makeIntegerType(),
+					MOULT_FAC.makeBooleanType());
 	private static final IExpressionExtension EXT_MAKE_MOULT = MOULT_DT
 			.getConstructor("makeMoult");
 
@@ -517,9 +516,8 @@ public class TestDatatypes extends AbstractTests {
 	private static final IExpressionExtension EXT_NO_INDUC = NO_INDUC_EXTNS
 			.getTypeConstructor();
 	private static final ParametricType NO_INDUC_INT_BOOL_TYPE = NO_INDUC_FAC
-			.makeParametricType(Arrays.<Type> asList(
-					NO_INDUC_FAC.makeIntegerType(),
-					NO_INDUC_FAC.makeBooleanType()), EXT_NO_INDUC);
+			.makeParametricType(EXT_NO_INDUC, NO_INDUC_FAC.makeIntegerType(),
+					NO_INDUC_FAC.makeBooleanType());
 	private static final IntegerLiteral ONE_ffNO_INDUC = NO_INDUC_FAC
 			.makeIntegerLiteral(BigInteger.ONE, null);
 	private static final IntegerLiteral ZERO_ffNO_INDUC = NO_INDUC_FAC

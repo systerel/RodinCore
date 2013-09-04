@@ -52,8 +52,8 @@ public class TypeSubstitution extends TypeRewriter implements
 		for (int i = 0; i < nbParams; i++) {
 			actuals.add(tcMediator.newTypeVariable());
 		}
-		final ParametricType instance = tcMediator.makeParametricType(actuals,
-				tcons);
+		final ParametricType instance = tcMediator.makeParametricType(tcons,
+				actuals);
 		return new TypeSubstitution(instance);
 	}
 

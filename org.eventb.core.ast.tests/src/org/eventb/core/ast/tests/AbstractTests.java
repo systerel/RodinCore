@@ -14,8 +14,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Collections;
-
 import org.eventb.core.ast.Assignment;
 import org.eventb.core.ast.BooleanType;
 import org.eventb.core.ast.BoundIdentDecl;
@@ -88,8 +86,7 @@ public abstract class AbstractTests {
 			.getTypeConstructor();
 
 	protected static final ParametricType LIST_INT_TYPE = LIST_FAC
-			.makeParametricType(Collections.<Type> singletonList(LIST_FAC
-					.makeIntegerType()), EXT_LIST);
+			.makeParametricType(EXT_LIST, LIST_FAC.makeIntegerType());
 	protected static final PowerSetType POW_LIST_INT_TYPE = LIST_FAC
 			.makePowerSetType(LIST_INT_TYPE);
 	protected static final IConstructorExtension EXT_NIL = LIST_DT

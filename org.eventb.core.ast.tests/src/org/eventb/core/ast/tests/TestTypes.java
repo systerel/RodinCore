@@ -14,10 +14,8 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
-import static org.eventb.core.ast.tests.FastFactory.NO_TYPES;
 import static org.eventb.core.ast.tests.FastFactory.ff_extns;
 import static org.eventb.core.ast.tests.FastFactory.mDatatypeFactory;
-import static org.eventb.core.ast.tests.FastFactory.mList;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -66,8 +64,8 @@ public class TestTypes extends AbstractTests {
 		final GivenType ty_T = tf.makeGivenType("T");
 		final GivenType ty_U = tf.makeGivenType("U");
 		final IExpressionExtension enum_ext = findExtension(tf, "Enum");
-		final Type list_S = tf.makeParametricType(mList(ty_S), EXT_LIST);
-		final Type list_List_S = tf.makeParametricType(mList(list_S), EXT_LIST);
+		final Type list_S = tf.makeParametricType(EXT_LIST, ty_S);
+		final Type list_List_S = tf.makeParametricType(EXT_LIST, list_S);
 
 		checkType(tf.makeBooleanType(), "BOOL");
 		checkType(tf.makeIntegerType(), "ℤ");
@@ -79,7 +77,7 @@ public class TestTypes extends AbstractTests {
 				"S×T×U");
 		checkType(tf.makeProductType(ty_S, tf.makeProductType(ty_T, ty_U)),
 				"S×(T×U)");
-		checkType(tf.makeParametricType(NO_TYPES, enum_ext), "Enum");
+		checkType(tf.makeParametricType(enum_ext), "Enum");
 		checkType(list_S, "List(S)");
 		checkType(list_List_S, "List(List(S))");
 	}

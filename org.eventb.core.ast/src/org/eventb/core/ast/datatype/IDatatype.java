@@ -53,7 +53,7 @@ public interface IDatatype {
 	 * Returns the type constructor of this datatype.
 	 * <p>
 	 * Returned extension can be used as parameter in
-	 * {@link FormulaFactory#makeParametricType(List, IExpressionExtension)} as
+	 * {@link FormulaFactory#makeParametricType(IExpressionExtension, List)} as
 	 * well as makeExtendedExpression(IExpressionExtension, ...) methods.
 	 * </p>
 	 * 

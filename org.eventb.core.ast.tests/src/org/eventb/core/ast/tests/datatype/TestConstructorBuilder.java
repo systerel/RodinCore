@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests.datatype;
 
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -32,7 +31,7 @@ public class TestConstructorBuilder extends AbstractTests {
 	private static final GivenType tyDT = LIST_FAC.makeGivenType("DT");
 
 	private static final Type LIST(Type base) {
-		return LIST_FAC.makeParametricType(singletonList(base), EXT_LIST);
+		return LIST_FAC.makeParametricType(EXT_LIST, base);
 	}
 
 	private final IDatatypeBuilder builder = LIST_FAC.makeDatatypeBuilder("DT",

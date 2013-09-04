@@ -251,46 +251,46 @@ public class TestFormulaFactory extends AbstractTests {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void parametricType_UnknownExtension() {
-		ff.makeParametricType(mList(tS), new UnknownExtension());
+		ff.makeParametricType(new UnknownExtension(), tS);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void parametricType_InvalidExtension() {
-		ff.makeParametricType(mList(tS), EXT_LIST);
+		ff.makeParametricType(EXT_LIST, tS);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void parametricType_NotATypeConstructor() {
-		final Type[] noParams = new Type[0];
-		LIST_FAC.makeParametricType(noParams, EXT_NIL);
+		LIST_FAC.makeParametricType(EXT_NIL);
 	}
 
 	@Ignore("Known bug")
 	@Test(expected = IllegalArgumentException.class)
 	public void parametricType_WrongNumberOfParameter() {
-		LIST_FAC.makeParametricType(mList(tS_LIST, tT_LIST), EXT_LIST);
+		LIST_FAC.makeParametricType(EXT_LIST, tS_LIST, tT_LIST);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void parametricType_DifferentFactory() {
-		LIST_FAC.makeParametricType(mList(tS), EXT_LIST);
+		LIST_FAC.makeParametricType(EXT_LIST, tS);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void parametricType_NullParameters() {
 		final Type[] typeParams = null;
-		LIST_FAC.makeParametricType(typeParams, EXT_LIST);
+		LIST_FAC.makeParametricType(EXT_LIST, typeParams);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void parametricType_NullInParameter() {
-		LIST_FAC.makeParametricType(new Type[] { null }, EXT_LIST);
+		final Type[] typeParams = { null };
+		LIST_FAC.makeParametricType(EXT_LIST, typeParams);
 	}
 
 	@Test
 	public void parametricType_ArrayParameter() {
 		final Type[] typeParams = { tS_LIST };
-		assertArrayProtected(LIST_FAC.makeParametricType(typeParams, EXT_LIST),
+		assertArrayProtected(LIST_FAC.makeParametricType(EXT_LIST, typeParams),
 				typeParams);
 	}
 

@@ -50,7 +50,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -90,8 +89,7 @@ public class TestGivenTypes extends AbstractTests {
 	private static final Expression prj2ST = mPrj2(REL(CPROD(tS, tT), tT));
 
 	private static final ParametricType LIST_S_TYPE = LIST_FAC
-	.makeParametricType(Collections.<Type> singletonList(LIST_FAC.makeGivenType("S")),
-			EXT_LIST);
+	.makeParametricType(EXT_LIST, LIST_FAC.makeGivenType("S"));
 	private static Expression[] NO_EXPR = new Expression[0];
 	private static Predicate[] NO_PRED = new Predicate[0];
 	private static final Expression nilListS = LIST_FAC.makeExtendedExpression(
