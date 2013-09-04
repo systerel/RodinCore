@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Systerel and others.
+ * Copyright (c) 2012, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eventb.core.seqprover.transformer.tests;
 
 import static java.util.Arrays.copyOf;
-import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.core.seqprover.tests.TestLib.mTypeEnvironment;
 import static org.eventb.core.seqprover.transformer.SimpleSequents.translateDatatypes;
 import static org.junit.Assert.assertEquals;
@@ -99,7 +98,7 @@ public class DatatypeTranslationTests extends AbstractTransformerTests {
 	private void testSequentTranslation(String typeEnvStr, String sequentImage,
 			String expectedImage) {
 		final IDatatype datatype = DatatypeParser.parse(ff, msgDatatypeSpec);
-		final FormulaFactory srcFac = getInstance(datatype.getExtensions());
+		final FormulaFactory srcFac = datatype.getFactory();
 		final ITypeEnvironmentBuilder srcTypenv = mTypeEnvironment(typeEnvStr, srcFac);
 		final ISimpleSequent srcSequent = getSimpleSequent(srcTypenv,
 				sequentImage);

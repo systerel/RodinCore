@@ -125,9 +125,7 @@ public class FastFactory {
 	public static FormulaFactory mDatatypeFactory(FormulaFactory initial,
 			String datatypeImage) {
 		final IDatatype datatype = parse(initial, datatypeImage);
-		final Set<IFormulaExtension> exts = initial.getExtensions();
-		exts.addAll(datatype.getExtensions());
-		return FormulaFactory.getInstance(exts);
+		return initial.withExtensions(datatype.getExtensions());
 	}
 
 	public static AssociativeExpression mAssociativeExpression(

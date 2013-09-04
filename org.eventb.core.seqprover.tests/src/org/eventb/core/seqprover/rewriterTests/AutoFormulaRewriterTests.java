@@ -13,15 +13,13 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.rewriterTests;
 
-import java.util.HashSet;
-import java.util.Set;
+import static org.eventb.core.ast.FormulaFactory.getCond;
 
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IConstructorBuilder;
 import org.eventb.core.ast.datatype.IDatatype;
 import org.eventb.core.ast.datatype.IDatatypeBuilder;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewriterImpl;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites.Level;
 import org.junit.Test;
@@ -49,13 +47,8 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		DT = dtBuilder.finalizeDatatype();
 	}
 
-	protected static final FormulaFactory DT_FAC;
-	static {
-		final Set<IFormulaExtension> extns = new HashSet<IFormulaExtension>();
-		extns.addAll(DT.getExtensions());
-		extns.add(FormulaFactory.getCond());
-		DT_FAC = FormulaFactory.getInstance(extns);
-	}
+	protected static final FormulaFactory DT_FAC = FormulaFactory.getInstance(
+			getCond()).withExtensions(DT.getExtensions());
 	
 	protected final boolean level2AndHigher;
 	protected final boolean level3AndHigher;

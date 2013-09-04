@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eventb.pp.sequent;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.eventb.pp.TestSequent.makeSequent;
 
 import java.util.List;
@@ -48,7 +47,7 @@ public class TestPPTranslator extends AbstractRodinTest {
 		DT = DT_BUILDER.finalizeDatatype();
 	}
 	
-	private static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
+	private static final FormulaFactory DT_FF = DT.getFactory();
 
 	private static ISimpleSequent makeInputSequent(ITypeEnvironment typenv,
 			List<String> hyps, String goal) {

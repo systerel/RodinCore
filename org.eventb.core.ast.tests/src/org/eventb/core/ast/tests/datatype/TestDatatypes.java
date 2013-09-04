@@ -460,7 +460,7 @@ public class TestDatatypes extends AbstractTests {
 		cons.addArgument(tyS);
 		cons.addArgument(tyT);
 		MOULT_DT = bldr.finalizeDatatype();
-		MOULT_FAC = FormulaFactory.getInstance(MOULT_DT.getExtensions());
+		MOULT_FAC = MOULT_DT.getFactory();
 	}
 
 	public static final IExpressionExtension EXT_MOULT = MOULT_DT
@@ -511,8 +511,7 @@ public class TestDatatypes extends AbstractTests {
 	private static final IDatatype NO_INDUC_EXTNS = NO_INDUC_BUILDER
 			.finalizeDatatype();
 
-	private static final FormulaFactory NO_INDUC_FAC = FormulaFactory
-			.getInstance(NO_INDUC_EXTNS.getExtensions());
+	private static final FormulaFactory NO_INDUC_FAC = NO_INDUC_EXTNS.getFactory();
 	private static final IExpressionExtension EXT_NO_INDUC = NO_INDUC_EXTNS
 			.getTypeConstructor();
 	private static final ParametricType NO_INDUC_INT_BOOL_TYPE = NO_INDUC_FAC

@@ -12,7 +12,6 @@
 package org.eventb.pptrans.tests;
 
 import static java.util.Collections.emptyList;
-import static org.eventb.core.ast.FormulaFactory.getInstance;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -52,7 +51,7 @@ public abstract class AbstractTranslationTests {
 		DT = DT_BUILDER.finalizeDatatype();
 	}
 
-	protected static final FormulaFactory DT_FF = getInstance(DT.getExtensions());
+	protected static final FormulaFactory DT_FF = DT.getFactory();
 
 	protected static final List<Predicate> NONE = emptyList();
 

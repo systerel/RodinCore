@@ -80,7 +80,7 @@ public abstract class AbstractTests {
 		cons.addArgument("head", tyS);
 		cons.addArgument("tail", tyList);
 		LIST_DT = dtBuilder.finalizeDatatype();
-		LIST_FAC = FormulaFactory.getInstance(LIST_DT.getExtensions());
+		LIST_FAC = LIST_DT.getFactory();
 	}
 
 

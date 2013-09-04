@@ -41,8 +41,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Set;
-
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Formula;
@@ -52,7 +50,6 @@ import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.SetExtension;
 import org.eventb.core.ast.Type;
-import org.eventb.core.ast.extension.IFormulaExtension;
 import org.junit.Test;
 
 /**
@@ -409,13 +406,8 @@ public class TestFactoryTranslation extends AbstractTests {
 	/*----------------------------------------------------------------
 	 *  TRANSLATION OF EXTENSION OBJECTS
 	 *----------------------------------------------------------------*/
-	private static final FormulaFactory EFFPlus;
-
-	static {
-		final Set<IFormulaExtension> extns = EFF.getExtensions();
-		extns.addAll(ff_extns.getExtensions());
-		EFFPlus = FormulaFactory.getInstance(extns);
-	}
+	private static final FormulaFactory EFFPlus = EFF.withExtensions(ff_extns
+			.getExtensions());
 
 	@Test
 	public void extendedPredicate() {
