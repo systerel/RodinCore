@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtensionKind;
 
 /**
  * Implementation of an instance of a parametric type contributed by a math
@@ -70,9 +71,18 @@ public class ParametricType extends Type {
 			throw new IllegalArgumentException("Invalid type constructor "
 					+ typeConstructor.getId());
 		}
-		this.typeParameters = typeParameters;
 		this.typeConstructor = typeConstructor;
-		ensureSameFactory(this.typeParameters);
+		this.typeParameters = typeParameters;
+		ensureSameFactory(typeParameters);
+		checkNumberOfParameters();
+	}
+
+	private void checkNumberOfParameters() {
+		final IExtensionKind kind = typeConstructor.getKind();
+		if (!kind.checkTypePreconditions(typeParameters)) {
+			throw new IllegalArgumentException(
+					"Wrong number of parameters for " + typeConstructor.getId());
+		}
 	}
 
 	@Override

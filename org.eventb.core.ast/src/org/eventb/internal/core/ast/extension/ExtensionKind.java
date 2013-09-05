@@ -14,11 +14,12 @@ import static org.eventb.internal.core.ast.extension.OperatorProperties.makeOper
 
 import org.eventb.core.ast.Expression;
 import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.extension.ITypeDistribution;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IOperatorProperties.FormulaType;
 import org.eventb.core.ast.extension.IOperatorProperties.Notation;
+import org.eventb.core.ast.extension.ITypeDistribution;
 
 public class ExtensionKind implements IExtensionKind {
 
@@ -41,6 +42,13 @@ public class ExtensionKind implements IExtensionKind {
 		final ITypeDistribution childTypes = operProps.getChildTypes();
 		return childTypes.getExprArity().check(childExprs.length)
 				&& childTypes.getPredArity().check(childPreds.length);
+	}
+
+	@Override
+	public boolean checkTypePreconditions(Type[] typeParameters) {
+		final ITypeDistribution childTypes = operProps.getChildTypes();
+		// Predicate arity has been checked at factory creation
+		return childTypes.getExprArity().check(typeParameters.length);
 	}
 
 	@Override

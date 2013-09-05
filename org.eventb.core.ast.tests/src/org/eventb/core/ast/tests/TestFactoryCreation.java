@@ -10,16 +10,33 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static org.eventb.core.ast.extension.ExtensionFactory.makeAllPred;
+import static org.eventb.core.ast.extension.ExtensionFactory.makeFixedArity;
+import static org.eventb.core.ast.extension.IOperatorProperties.FormulaType.EXPRESSION;
 import static org.eventb.core.ast.tests.DatatypeParser.parse;
 import static org.eventb.core.ast.tests.FastFactory.mDatatypeFactory;
 import static org.eventb.core.ast.tests.TestGenParser.EXT_PRIME;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 
+import org.eventb.core.ast.Expression;
+import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.FormulaFactory;
+import org.eventb.core.ast.Predicate;
+import org.eventb.core.ast.Type;
 import org.eventb.core.ast.datatype.IDatatype;
+import org.eventb.core.ast.extension.ExtensionFactory;
+import org.eventb.core.ast.extension.IArity;
+import org.eventb.core.ast.extension.ICompatibilityMediator;
 import org.eventb.core.ast.extension.IExpressionExtension;
+import org.eventb.core.ast.extension.IExtendedFormula;
+import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
+import org.eventb.core.ast.extension.IPriorityMediator;
+import org.eventb.core.ast.extension.ITypeCheckMediator;
+import org.eventb.core.ast.extension.ITypeDistribution;
+import org.eventb.core.ast.extension.ITypeMediator;
+import org.eventb.core.ast.extension.IWDMediator;
 import org.junit.Test;
 
 /**
@@ -115,6 +132,98 @@ public class TestFactoryCreation extends AbstractTests {
 				"Bar ::= bar[Foo]");
 		final IDatatype dt = parse(dtFF, "Baz ::= baz[Bar]");
 		FormulaFactory.getInstance(dt.getExtensions());
+	}
+
+	/**
+	 * Ensures that a factory cannot be created with a type constructor that
+	 * takes a predicate parameter.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void typeConstructorWithPredicateChild() {
+		FormulaFactory.getInstance(new StrangeTypeConstructor());
+	}
+
+	/**
+	 * This is a type constructor that takes a predicate parameter. This is
+	 * meaningless.
+	 */
+	private static class StrangeTypeConstructor implements IExpressionExtension {
+
+		public StrangeTypeConstructor() {
+			// Nothing to do
+		}
+
+		@Override
+		public String getSyntaxSymbol() {
+			return "foo";
+		}
+
+		@Override
+		public Predicate getWDPredicate(IExtendedFormula formula,
+				IWDMediator wdMediator) {
+			return null;
+		}
+
+		@Override
+		public boolean conjoinChildrenWD() {
+			return false;
+		}
+
+		@Override
+		public String getId() {
+			return "foo";
+		}
+
+		@Override
+		public String getGroupId() {
+			return "foo";
+		}
+
+		@Override
+		public IExtensionKind getKind() {
+			final IArity arity = makeFixedArity(1);
+			final ITypeDistribution distr = makeAllPred(arity);
+			return ExtensionFactory.makePrefixKind(EXPRESSION, distr);
+		}
+
+		@Override
+		public Object getOrigin() {
+			return null;
+		}
+
+		@Override
+		public void addCompatibilities(ICompatibilityMediator mediator) {
+			// Nothing to add
+		}
+
+		@Override
+		public void addPriorities(IPriorityMediator mediator) {
+			// Nothing to add
+		}
+
+		@Override
+		public Type synthesizeType(Expression[] childExprs,
+				Predicate[] childPreds, ITypeMediator mediator) {
+			return null;
+		}
+
+		@Override
+		public boolean verifyType(Type proposedType, Expression[] childExprs,
+				Predicate[] childPreds) {
+			return false;
+		}
+
+		@Override
+		public Type typeCheck(ExtendedExpression expression,
+				ITypeCheckMediator tcMediator) {
+			return null;
+		}
+
+		@Override
+		public boolean isATypeConstructor() {
+			return true;
+		}
+
 	}
 
 }

@@ -78,6 +78,11 @@ public interface IExpressionExtension extends IFormulaExtension {
 	 * returns a powerset of the parametric type instantiated with this
 	 * extension and the base type of its children if any.
 	 * </p>
+	 * <p>
+	 * Moreover, a type constructor must not take any predicate child. This
+	 * restriction will be enforced when creating a parametric type with this
+	 * extension.
+	 * </p>
 	 * 
 	 * @return <code>true</code> iff this extension is a type constructor
 	 */

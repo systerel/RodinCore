@@ -46,6 +46,7 @@ import org.eventb.core.ast.extension.IExtensionKind;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.ast.extension.IGrammar;
 import org.eventb.core.ast.extension.IOperatorGroup;
+import org.eventb.core.ast.extension.IOperatorProperties;
 import org.eventb.core.ast.extension.IPredicateExtension;
 import org.eventb.internal.core.ast.Position;
 import org.eventb.internal.core.ast.Specialization;
@@ -140,13 +141,16 @@ public class FormulaFactory {
 	 * @return a formula factory supporting the given extensions
 	 * @throws IllegalArgumentException
 	 *             if the given set of extensions is not datatype complete
+	 * @throws IllegalArgumentException
+	 *             if one of the given extensions is a type constructor that
+	 *             does not fulfill its contract
 	 * @since 2.0
 	 * @since 3.0
+	 * @see IExpressionExtension#isATypeConstructor()
 	 */
 	public static FormulaFactory getInstance(Set<IFormulaExtension> extensions) {
-		final Set<IFormulaExtension> actualExtns = new LinkedHashSet<IFormulaExtension>();
-		actualExtns.addAll(extensions);
-		checkDatatypeComplete(actualExtns);
+		final Set<IFormulaExtension> actualExtns;
+		actualExtns = new LinkedHashSet<IFormulaExtension>(extensions);
 
 		synchronized (ALL_EXTENSIONS) {
 			final FormulaFactory cached = INSTANCE_CACHE.get(actualExtns);
@@ -154,6 +158,8 @@ public class FormulaFactory {
 				return cached;
 			}
 			checkSymbols(actualExtns);
+			checkDatatypeComplete(actualExtns);
+			checkTypeConstructorArity(actualExtns);
 			EXTN_UNICITY_CHECKER.checkUnicity(actualExtns);
 			final Map<Integer, IFormulaExtension> extMap = new LinkedHashMap<Integer, IFormulaExtension>();
 			for (IFormulaExtension extension : actualExtns) {
@@ -183,8 +189,12 @@ public class FormulaFactory {
 	 * @return a formula factory supporting the given extensions
 	 * @throws IllegalArgumentException
 	 *             if the given set of extensions is not datatype complete
+	 * @throws IllegalArgumentException
+	 *             if one of the given extensions is a type constructor that
+	 *             does not fulfill its contract
 	 * @since 2.3
 	 * @since 3.0
+	 * @see IExpressionExtension#isATypeConstructor()
 	 */
 	public static FormulaFactory getInstance(IFormulaExtension... extensions) {
 		return getInstance(new LinkedHashSet<IFormulaExtension>(
@@ -214,6 +224,25 @@ public class FormulaFactory {
 			}
 		}
 		return result;
+	}
+
+	private static void checkTypeConstructorArity(Set<IFormulaExtension> extns) {
+		for (final IFormulaExtension extn : extns) {
+			if (!(extn instanceof IExpressionExtension)) {
+				continue;
+			}
+			final IExpressionExtension exprExtn = (IExpressionExtension) extn;
+			if (!exprExtn.isATypeConstructor()) {
+				continue;
+			}
+			final IExtensionKind kind = exprExtn.getKind();
+			final IOperatorProperties props = kind.getProperties();
+			if (props.getChildTypes().getPredArity().getMax() != 0) {
+				throw new IllegalArgumentException(
+						"Type constructor takes predicate parameters "
+								+ exprExtn.getId());
+			}
+		}
 	}
 
 	private static void checkSymbols(Set<IFormulaExtension> actualExtns) {
@@ -1929,6 +1958,8 @@ public class FormulaFactory {
 	 *             if some type parameter has been built with a different
 	 *             formula factory
 	 * @since 3.0
+	 * @see IExpressionExtension#isATypeConstructor()
+	 * @see IExtensionKind#checkTypePreconditions(Type[])
 	 */
 	public ParametricType makeParametricType(
 			IExpressionExtension typeConstructor, List<Type> typePrms) {
@@ -1955,6 +1986,8 @@ public class FormulaFactory {
 	 *             if some type parameter has been built with a different
 	 *             formula factory
 	 * @since 3.0
+	 * @see IExpressionExtension#isATypeConstructor()
+	 * @see IExtensionKind#checkTypePreconditions(Type[])
 	 */
 	public ParametricType makeParametricType(
 			IExpressionExtension typeConstructor, Type... typePrms) {

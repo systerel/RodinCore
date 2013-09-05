@@ -67,7 +67,6 @@ import org.eventb.core.ast.extension.ITypeCheckMediator;
 import org.eventb.core.ast.extension.ITypeMediator;
 import org.eventb.core.ast.extension.IWDMediator;
 import org.eventb.core.ast.tests.ExtendedFormulas.PredicateExtension;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -264,10 +263,14 @@ public class TestFormulaFactory extends AbstractTests {
 		LIST_FAC.makeParametricType(EXT_NIL);
 	}
 
-	@Ignore("Known bug")
 	@Test(expected = IllegalArgumentException.class)
-	public void parametricType_WrongNumberOfParameter() {
-		LIST_FAC.makeParametricType(EXT_LIST, tS_LIST, tT_LIST);
+	public void parametricType_TooFewParameter() {
+		LIST_FAC.makeParametricType(EXT_LIST);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void parametricType_TooManyParameter() {
+		LIST_FAC.makeParametricType(EXT_LIST, tS_LIST, tS_LIST);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
