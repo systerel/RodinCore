@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,9 @@
  *******************************************************************************/
 package org.eventb.pp;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
 import org.eventb.internal.pp.CancellationChecker;
@@ -110,27 +108,6 @@ public class PPProof {
 	
 	public Collection<Clause> getClauses() {
 		return clauses;
-	}
-	
-	@Deprecated
-	public List<Predicate> getTranslatedHypotheses() {
-		final List<Predicate> result = new ArrayList<Predicate>();
-		for (ITrackedPredicate predicate : sequent.getPredicates()) {
-			if (predicate.isHypothesis()) {
-				result.add(predicate.getPredicate());
-			}
-		}
-		return result;
-	}
-	
-	@Deprecated
-	public Predicate getTranslatedGoal() {
-		for (ITrackedPredicate predicate : sequent.getPredicates()) {
-			if (!predicate.isHypothesis()) {
-				return predicate.getPredicate();
-			}
-		}
-		return null;
 	}
 	
 	/**
