@@ -113,12 +113,6 @@ public abstract class AttributeType<V> implements IAttributeType,
 			return makeValue(parseValue(rawValue));
 		}
 
-		@Override
-		@Deprecated
-		public boolean getBoolValue(java.lang.String rawValue) {
-			return parseValue(rawValue);
-		}
-
 		public boolean parseValue(java.lang.String rawValue) {
 			return java.lang.Boolean.parseBoolean(rawValue);
 		}
@@ -149,13 +143,6 @@ public abstract class AttributeType<V> implements IAttributeType,
 		public AttributeValue.Handle makeValueFromRaw(
 				java.lang.String rawValue) throws RodinDBException {
 			return makeValue(parseValue(rawValue));
-		}
-
-		@Override
-		@Deprecated
-		public IRodinElement getHandleValue(java.lang.String rawValue)
-				throws RodinDBException {
-			return parseValue(rawValue);
 		}
 
 		public IRodinElement parseValue(java.lang.String rawValue)
@@ -193,13 +180,6 @@ public abstract class AttributeType<V> implements IAttributeType,
 			return makeValue(parseValue(rawValue));
 		}
 
-		@Override
-		@Deprecated
-		public int getIntValue(java.lang.String rawValue)
-				throws RodinDBException {
-			return parseValue(rawValue);
-		}
-
 		public int parseValue(java.lang.String rawValue)
 				throws RodinDBException {
 			try {
@@ -233,13 +213,6 @@ public abstract class AttributeType<V> implements IAttributeType,
 		public AttributeValue.Long makeValueFromRaw(java.lang.String rawValue)
 		throws RodinDBException {
 			return makeValue(parseValue(rawValue));
-		}
-		
-		@Override
-		@Deprecated
-		public long getLongValue(java.lang.String rawValue)
-				throws RodinDBException {
-			return parseValue(rawValue);
 		}
 
 		public long parseValue(java.lang.String rawValue)
@@ -278,12 +251,6 @@ public abstract class AttributeType<V> implements IAttributeType,
 		public AttributeValue.String makeValueFromRaw(
 				java.lang.String rawValue) {
 			return makeValue(parseValue(rawValue));
-		}
-		
-		@Override
-		@Deprecated
-		public java.lang.String getStringValue(java.lang.String rawValue) {
-			return parseValue(rawValue);
 		}
 
 		public java.lang.String parseValue(java.lang.String rawValue) {
@@ -371,46 +338,18 @@ public abstract class AttributeType<V> implements IAttributeType,
 		this.name = name;
 	}
 
-	@Deprecated
-	public boolean getBoolValue(java.lang.String rawValue)
-			throws RodinDBException {
-		throw newInvalidKindException();
-	}
-
-	@Deprecated
-	public IRodinElement getHandleValue(java.lang.String rawValue)
-			throws RodinDBException {
-		throw newInvalidKindException();
-	}
-
 	@Override
 	public final java.lang.String getId() {
 		return id;
-	}
-
-	@Deprecated
-	public int getIntValue(java.lang.String rawValue) throws RodinDBException {
-		throw newInvalidKindException();
 	}
 
 	public Kind getKind() {
 		return kind;
 	}
 
-	@Deprecated
-	public long getLongValue(java.lang.String rawValue) throws RodinDBException {
-		throw newInvalidKindException();
-	}
-
 	@Override
 	public final java.lang.String getName() {
 		return name;
-	}
-
-	@Deprecated
-	public java.lang.String getStringValue(java.lang.String rawValue)
-			throws RodinDBException {
-		throw newInvalidKindException();
 	}
 
 	@Override
@@ -427,12 +366,6 @@ public abstract class AttributeType<V> implements IAttributeType,
 	protected RodinDBException newInvalidValueException() {
 		return new RodinDBException(new RodinDBStatus(
 				IRodinDBStatusConstants.INVALID_ATTRIBUTE_VALUE, id));
-	}
-
-	@Deprecated
-	private RodinDBException newInvalidKindException() {
-		return new RodinDBException(new RodinDBStatus(
-				IRodinDBStatusConstants.INVALID_ATTRIBUTE_KIND, id));
 	}
 	
 	public abstract AttributeValue<?, ?> makeValueFromRaw(
