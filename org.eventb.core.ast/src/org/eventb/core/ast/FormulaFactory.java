@@ -1169,21 +1169,6 @@ public class FormulaFactory {
 	}
 
 	/**
-	 * Creates a new node representing a declaration of a bound identifier,
-	 * using as model a free occurrence of the same identifier. Its tag will be
-	 * {@link Formula#BOUND_IDENT_DECL}.
-	 * 
-	 * @param ident
-	 *            a free identifier occurrence
-	 * @return a bound identifier declaration
-	 */
-	@Deprecated
-	public BoundIdentDecl makeBoundIdentDecl(FreeIdentifier ident) {
-		return new BoundIdentDecl(ident.getName(), ident.getSourceLocation(),
-				ident.getType(), this);
-	}
-
-	/**
 	 * Creates a new node representing a declaration of a bound identifier. Its
 	 * tag will be {@link Formula#BOUND_IDENT_DECL}.
 	 * 
@@ -1319,27 +1304,6 @@ public class FormulaFactory {
 	public FreeIdentifier makeFreeIdentifier(String name,
 			SourceLocation location, Type type) {
 		return new FreeIdentifier(name, location, type, this);
-	}
-	
-	/**
-	 * Creates a node that contains a primed free identifier.
-	 * 
-	 * @param identifier An unprimed identifier that is the template for the primed one.
-	 * An exception is thrown if it is already primed.
-	 * @return The identifier passed as parameter with a prime appended.
-	 */
-	@Deprecated
-	public FreeIdentifier makePrimedFreeIdentifier(FreeIdentifier identifier) {
-		
-		String name = identifier.getName();
-		assert name.charAt(name.length()-1) != '\'';
-		
-		FreeIdentifier primedIdentifier = makeFreeIdentifier(
-				name + "'",
-				identifier.getSourceLocation(),
-				identifier.getType());
-		
-		return primedIdentifier;
 	}
 
 	/**
