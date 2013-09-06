@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ public class ProofRebuilderTests extends EventBPOTest {
 		final IPSStatus status = getOnlyStatus();
 		final IUserSupportManager usm = EventBPlugin.getUserSupportManager();
 		final IUserSupport us = usm.newUserSupport();
-		us.setInput(status.getRodinFile());
+		us.setInput((IPSRoot) status.getRoot());
 		us.setCurrentPO(status, null);
 		final IProofState po = us.getCurrentPO();
 		assertNotNull(po);

@@ -41,7 +41,6 @@ import org.eventb.internal.core.ProofMonitor;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
 import org.rodinp.core.IRodinElementDelta;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -98,9 +97,8 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 
 	@Override
-	public void setInput(final IRodinFile psFile) {
-		IPSRoot root = (IPSRoot) psFile.getRoot();
-		pc = EventBPlugin.getProofManager().getProofComponent(root);
+	public void setInput(IPSRoot psRoot) {
+		pc = EventBPlugin.getProofManager().getProofComponent(psRoot);
 	}
 
 	private void loadProofStatesIfNeeded() throws RodinDBException {
@@ -129,9 +127,9 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		}
 	}
 	@Override
-	public IRodinFile getInput() {
+	public IPSRoot getInput() {
 		if (pc != null)
-			return pc.getPSRoot().getRodinFile();
+			return pc.getPSRoot();
 		return null;
 	}
 
@@ -619,12 +617,12 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer();
-		final IRodinFile input = this.getInput();
+		final IPSRoot input = this.getInput();
 		if (input == null) {
 			buffer.append("****** User Support with no proof component");
 		} else {
 			buffer.append("****** User Support for: ");
-			buffer.append(input.getBareName());
+			buffer.append(input.getComponentName());
 		}
 		buffer.append(" ******\n");
 		buffer.append("** Proof States **\n");

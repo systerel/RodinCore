@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ public class UserSupportDeltaProcessor {
 	public void processDelta(IRodinElementDelta elementChangedDelta,
 			IProgressMonitor monitor) {
 		IRodinElement element = elementChangedDelta.getElement();
-		IRodinFile input = userSupport.getInput();
+		IPSRoot input = userSupport.getInput();
 		
 		// Root DB
 		if (element instanceof IRodinDB) {
@@ -115,8 +115,7 @@ public class UserSupportDeltaProcessor {
 
 		// IRodinProject
 		if (element instanceof IRodinProject) {
-			IRodinElement parent = input.getParent();
-			if (parent.equals(element)) {
+			if (input.getRodinProject().equals(element)) {
 				for (IRodinElementDelta d : elementChangedDelta
 						.getAffectedChildren()) {
 					processDelta(d, monitor);
@@ -127,7 +126,7 @@ public class UserSupportDeltaProcessor {
 
 		// IRodinFile
 		if (element instanceof IRodinFile) {
-			if (input.equals(element)) {
+			if (input.getRodinFile().equals(element)) {
 				for (IRodinElementDelta d : elementChangedDelta
 						.getAffectedChildren()) {
 					processDelta(d, monitor);
@@ -138,7 +137,7 @@ public class UserSupportDeltaProcessor {
 
 		// IPSRoot
 		if (element instanceof IPSRoot) {
-			if (input.getRoot().equals(element)) {
+			if (input.equals(element)) {
 				for (IRodinElementDelta d : elementChangedDelta
 						.getAffectedChildren()) {
 					processDelta(d, monitor);

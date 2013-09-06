@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class TestUserSupportDeltas extends TestPMDelta {
 		userSupport = EventBPlugin.getUserSupportManager().newUserSupport();
 		
 		startDeltas();
-		userSupport.setInput(psRoot.getRodinFile());
+		userSupport.setInput(psRoot);
 		assertDeltas("No deltas should have been produced", "");
 		
 		// The proof states has been created but not initialized for all POs.

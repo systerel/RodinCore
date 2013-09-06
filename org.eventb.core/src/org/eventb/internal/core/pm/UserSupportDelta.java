@@ -13,6 +13,7 @@ package org.eventb.internal.core.pm;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eventb.core.IPSRoot;
 import org.eventb.core.pm.IProofStateDelta;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportDelta;
@@ -304,7 +305,8 @@ public class UserSupportDelta implements IUserSupportDelta {
 		else if (kind == CHANGED)
 			builder.append("[*] ");
 
-		builder.append(userSupport.getInput()); // Can be null
+		final IPSRoot input = userSupport.getInput(); // Can be null
+		builder.append(input == null ? "null" : input.getRodinFile());
 		builder.append(" [");
 		boolean sep = false;
 		sep = toStringFlag(builder, F_CURRENT, "CURRENT", sep);

@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.IPSStatus;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
@@ -22,14 +23,13 @@ import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.core.seqprover.IProofTreeNodeFilter;
 import org.eventb.core.seqprover.ITactic;
 import org.rodinp.core.IElementChangedListener;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
  * Common protocol for manipulating the state of a proof and its proof tree.
  * <p>
  * A user support instance is associated with a Proof Status file, which is set
- * with the {@link #setInput(IRodinFile)} method. This method
+ * with the {@link #setInput(IPSRoot)} method. This method
  * should be called only once, and prior to any other method call (except for
  * {@link #dispose()} which can be called at any time).
  * </p>
@@ -58,12 +58,13 @@ import org.rodinp.core.RodinDBException;
 public interface IUserSupport extends IElementChangedListener {
 
 	/**
-	 * Sets the input file to associate with this user support.
+	 * Sets the input file root to associate with this user support.
 	 * 
-	 * @param psFile
-	 *            a proof state file (IPSFile)
+	 * @param psRoot
+	 *            a proof status file root
+	 * @since 3.0
 	 */
-	void setInput(IRodinFile psFile);
+	void setInput(IPSRoot psRoot);
 
 	/**
 	 * Disconnects this user support from the Rodin Database and the user
@@ -72,11 +73,13 @@ public interface IUserSupport extends IElementChangedListener {
 	void dispose();
 
 	/**
-	 * Returns the current input of the User Support which is a psFile.
+	 * Returns the current input of the User Support which is a proof status
+	 * file root.
 	 * 
-	 * @return the input psFile of this User Support
+	 * @return the input proof status file root of this User Support
+	 * @since 3.0
 	 */
-	IRodinFile getInput();
+	IPSRoot getInput();
 	
 	/**
 	 * Loads the proof statuses from the proof status file.

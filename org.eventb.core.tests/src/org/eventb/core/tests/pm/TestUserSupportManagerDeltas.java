@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,10 @@ package org.eventb.core.tests.pm;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPORoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.junit.Test;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -30,10 +30,10 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 	public void testUserSupportManagerDeltas() throws RodinDBException,
 			CoreException {
 		IPORoot poRoot1 = createPOFileWithContents("x");
-		IRodinFile psFile1 = poRoot1.getPSRoot().getRodinFile();
+		IPSRoot psRoot1 = poRoot1.getPSRoot();
 
 		IPORoot poRoot2 = createPOFileWithContents("y");
-		IRodinFile psFile2 = poRoot2.getPSRoot().getRodinFile();
+		IPSRoot psRoot2 = poRoot2.getPSRoot();
 
 		enableTestAutoProver();
 		runBuilder();
@@ -43,7 +43,7 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 		assertDeltas("Creating first user support", "[+] null []");
 
 		clearDeltas();
-		userSupport1.setInput(psFile1);
+		userSupport1.setInput(psRoot1);
 		assertDeltas("No deltas should have been produced", "");
 
 		clearDeltas();
@@ -64,7 +64,7 @@ public class TestUserSupportManagerDeltas extends TestPMDelta {
 		assertDeltas("Creating the second user support", "[+] null []");
 
 		clearDeltas();
-		userSupport2.setInput(psFile2);
+		userSupport2.setInput(psRoot2);
 		assertDeltas("No deltas should have been produced", "");
 
 		clearDeltas();

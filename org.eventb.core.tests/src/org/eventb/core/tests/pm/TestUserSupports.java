@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rodinp.core.ElementChangedEvent;
 import org.rodinp.core.IElementChangedListener;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinCore;
 import org.rodinp.core.RodinDBException;
 
@@ -103,11 +102,11 @@ public class TestUserSupports extends TestPM {
 	@Test
 	public void testGetInput() throws CoreException {
 		final IUserSupport fresh = new UserSupport();
-		assertNull("Input for user support has not been set ", fresh.getInput());
+		assertNull("Input for user support should not have been set ", fresh.getInput());
 		fresh.dispose();
 
-		final IRodinFile input = userSupport.getInput();
-		assertEquals("Input for user support has been set ", psRoot, input.getRoot());
+		final IPSRoot input = userSupport.getInput();
+		assertEquals("Input for user support has been set ", psRoot, input);
 	}
 
 	@Test

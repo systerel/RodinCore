@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,22 +12,22 @@
  *******************************************************************************/
 package org.eventb.core.tests.pm;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
 
 import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eventb.core.IPORoot;
+import org.eventb.core.IPSRoot;
 import org.eventb.core.pm.IUserSupport;
 import org.eventb.core.pm.IUserSupportManager;
 import org.junit.Before;
 import org.junit.Test;
-import org.rodinp.core.IRodinFile;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -37,16 +37,16 @@ import org.rodinp.core.RodinDBException;
  */
 public class TestUserSupportManagers extends TestPM {
 
-	private IRodinFile psFile1;
-	private IRodinFile psFile2;
+	private IPSRoot psRoot1;
+	private IPSRoot psRoot2;
 
 	@Before
 	public void createPSFiles() throws Exception {
 		final IPORoot poRoot1 = createPOFileWithContents("x");
-		psFile1 = poRoot1.getPSRoot().getRodinFile();
+		psRoot1 = poRoot1.getPSRoot();
 
 		final IPORoot poRoot2 = createPOFile("y");
-		psFile2 = poRoot2.getPSRoot().getRodinFile();
+		psRoot2 = poRoot2.getPSRoot();
 
 		runBuilder();
 	}
@@ -67,11 +67,11 @@ public class TestUserSupportManagers extends TestPM {
 		assertTrue("The first user support is stored ", userSupports
 				.contains(userSupport1));
 
-		userSupport1.setInput(psFile1);
+		userSupport1.setInput(psRoot1);
 
 		assertEquals(
 				"The input for first user support has been set correctly ",
-				psFile1, userSupport1.getInput());
+				psRoot1, userSupport1.getInput());
 
 		IUserSupport userSupport2 = manager.newUserSupport();
 
@@ -87,11 +87,11 @@ public class TestUserSupportManagers extends TestPM {
 		assertTrue("The second user support is stored ", userSupports
 				.contains(userSupport2));
 
-		userSupport2.setInput(psFile2);
+		userSupport2.setInput(psRoot2);
 
 		assertEquals(
 				"The input for second user support has been set correctly ",
-				psFile2, userSupport2.getInput());
+				psRoot2, userSupport2.getInput());
 
 		userSupport1.dispose();
 		userSupports = manager.getUserSupports();
