@@ -56,18 +56,6 @@ public class PreferenceConstants {
 	public static final String AUTO_POST_TACTIC_PREFERENCE_PAGE_ID = "org.eventb.ui.preferences.autoPostTactic";
 
 	/**
-	 * Unique identifier of the preference page for the auto tactic.
-	 */
-	@Deprecated
-	public static final String AUTO_TACTIC_PAGE_ID = "org.eventb.ui.preferences.autoTactic";
-
-	/**
-	 * Unique identifier of the preference page for the post tactic.
-	 */
-	@Deprecated
-	public static final String POST_TACTIC_PAGE_ID = "org.eventb.ui.preferences.postTactic";
-
-	/**
 	 * Unique identifier of the preference page for the modeling GUI.
 	 */
 	public static final String MODELLING_UI_PAGE_ID = "org.eventb.ui.preferences.modellingUI";

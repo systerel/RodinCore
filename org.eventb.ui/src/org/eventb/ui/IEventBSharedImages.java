@@ -68,8 +68,6 @@ public interface IEventBSharedImages {
 	
 	public static final String IMG_REVIEWED_BROKEN = "Reviewed Broken";
 
-	public static final String IMG_APPLIED = "Applied";
-
 	public static final String IMG_DEFAULT = "Default";
 
 	public static final String IMG_REFINES = "Refines";
@@ -187,12 +185,6 @@ public interface IEventBSharedImages {
 	public static final String IMG_REVIEWED_OVERLAY_PATH = "icons/full/ovr16/reviewed_ovr.gif";
 	
 	public static final String IMG_DISCHARGED_OVERLAY_PATH = "icons/full/ovr16/discharged_ovr.gif";
-
-	/**
-	 * @deprecated used IMG_PENDING_PALE_PATH instead.
-	 */
-	@Deprecated
-	public static final String IMG_APPLIED_PATH = "icons/applied.gif";
 
 	public static final String IMG_REVIEWED_PATH = "icons/reviewed.gif";
 

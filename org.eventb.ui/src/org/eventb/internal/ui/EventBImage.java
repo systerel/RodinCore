@@ -15,7 +15,6 @@ package org.eventb.internal.ui;
 import static org.eventb.ui.IEventBSharedImages.IMG_ACTION;
 import static org.eventb.ui.IEventBSharedImages.IMG_ACTION_PATH;
 import static org.eventb.ui.IEventBSharedImages.IMG_ADD;
-import static org.eventb.ui.IEventBSharedImages.IMG_APPLIED;
 import static org.eventb.ui.IEventBSharedImages.IMG_AXIOM;
 import static org.eventb.ui.IEventBSharedImages.IMG_AXIOMS;
 import static org.eventb.ui.IEventBSharedImages.IMG_AXIOM_PATH;
@@ -184,7 +183,6 @@ public class EventBImage {
 		registerImage(registry, IMG_PENDING, IMG_PENDING_PATH);
 		registerImage(registry, IMG_PENDING_PALE, IMG_PENDING_PALE_PATH);
 		registerImage(registry, IMG_PENDING_BROKEN, IMG_PENDING_BROKEN_PATH);
-		registerImage(registry, IMG_APPLIED, "icons/applied.gif");
 		registerImage(registry, IMG_DISCHARGED, IMG_DISCHARGED_PATH);
 		registerImage(registry, IMG_DISCHARGED_PALE, IMG_DISCHARGED_PALE_PATH);
 		registerImage(registry, IMG_DISCHARGED_BROKEN,
