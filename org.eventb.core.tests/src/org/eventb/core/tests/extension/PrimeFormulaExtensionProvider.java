@@ -41,13 +41,7 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 	}
 
 	@Override
-	public Set<IRodinFile> getCommonFiles(IEventBRoot root) {
-		// Not tested here
-		return Collections.emptySet();
-	}
-
-	@Override
-	public Set<IRodinFile> getProjectFiles(IEventBRoot root) {
+	public Set<IRodinFile> getFactoryFiles(IEventBRoot root) {
 		// Not tested here
 		return Collections.emptySet();
 	}

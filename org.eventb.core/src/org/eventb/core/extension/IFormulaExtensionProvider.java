@@ -46,8 +46,8 @@ public interface IFormulaExtensionProvider {
 	Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root);
 
 	/**
-	 * Returns common files used for the computation of the factory for the
-	 * given file root.
+	 * Returns files used for the computation of the factory for the given file
+	 * root.
 	 * 
 	 * <p>
 	 * Subsequently, the builder (SC, POG and POM) will consider that there is a
@@ -57,21 +57,7 @@ public interface IFormulaExtensionProvider {
 	 * @param root
 	 *            an event-b root
 	 * @return a set of rodin files
+	 * @since 3.0
 	 */
-	Set<IRodinFile> getCommonFiles(IEventBRoot root);
-
-	/**
-	 * Returns project specific files used for the computation of the factory
-	 * for the given file root.
-	 * 
-	 * <p>
-	 * Subsequently, the builder (SC, POG and POM) will consider that there is a
-	 * dependency from returned files to the given one.
-	 * </p>
-	 * 
-	 * @param root
-	 *            an event-b root
-	 * @return a set of rodin files
-	 */
-	Set<IRodinFile> getProjectFiles(IEventBRoot root);
+	Set<IRodinFile> getFactoryFiles(IEventBRoot root);
 }

@@ -122,8 +122,7 @@ public class FormulaExtensionProviderRegistry {
 			return Collections.emptySet();
 
 		final Set<IRodinFile> extFiles = new HashSet<IRodinFile>();
-		extFiles.addAll(provider.getCommonFiles(root));
-		extFiles.addAll(provider.getProjectFiles(root));
+		extFiles.addAll(provider.getFactoryFiles(root));
 
 		return extFiles;
 	}
