@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -369,15 +369,6 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 		return unsaved.toArray(new IProofState[unsaved.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eventb.core.pm.IUserSupport#getInformation()
-	 */
-	@Override
-	@Deprecated
-	public Object[] getInformation() {
-		return new Object[0];
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -457,24 +448,11 @@ public class UserSupport implements IElementChangedListener, IUserSupport {
 	}
 
 	@Override
-	@Deprecated
-	public void applyTactic(final ITactic t, final IProgressMonitor monitor) {
-		applyTactic(t, true, monitor);
-	}
-
-	@Override
 	public void applyTactic(ITactic t, boolean applyPostTactic,
 			IProgressMonitor monitor) {
 		checkCurrentPS();
 		IProofTreeNode node = currentPS.getCurrentNode();
 		currentPS.applyTactic(t, node, applyPostTactic, monitor);
-	}
-	
-	@Override
-	@Deprecated
-	public void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
-			IProgressMonitor monitor) {
-		applyTacticToHypotheses(t, hyps, true, monitor);
 	}
 
 	@Override

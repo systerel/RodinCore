@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -595,22 +595,6 @@ public class ProofState implements IProofState {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eventb.core.pm.IProofState#reloadProofTree()
-	 */
-	@Override
-	@Deprecated
-	public void reloadProofTree() throws RodinDBException {
-		createFreshProofAttempt(null);
-		pt.addChangeListener(this);
-		selectInitialSubgoal();
-		// if the proof tree was previously broken then the rebuild would
-		// fix the proof, making it dirty.
-		dirty = status.isBroken();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eventb.core.pm.IProofState#unloadProofTree()
 	 */
 	@Override
@@ -649,14 +633,6 @@ public class ProofState implements IProofState {
 		return buffer.toString();
 	}
 
-	@Override
-	@Deprecated
-	public void applyTactic(ITactic t, IProofTreeNode node,
-			IProgressMonitor monitor) {
-		applyTactic(t, node, true, monitor);
-	}
-
-
 	public void applyTactic(final ITactic t, final IProofTreeNode node,
 			final boolean applyPostTactic, final IProgressMonitor monitor) {
 		usm.run(new Runnable() {
@@ -671,13 +647,6 @@ public class ProofState implements IProofState {
 
 		});
 
-	}
-
-	@Override
-	@Deprecated
-	public void applyTacticToHypotheses(ITactic t, IProofTreeNode node,
-			Set<Predicate> hyps, IProgressMonitor monitor) {
-		applyTacticToHypotheses(t, node, hyps, true, monitor);
 	}
 
 	public void applyTacticToHypotheses(final ITactic t,

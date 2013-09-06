@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eventb.core.pm;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eventb.core.IPSStatus;
@@ -21,7 +20,6 @@ import org.eventb.core.seqprover.IProofMonitor;
 import org.eventb.core.seqprover.IProofTree;
 import org.eventb.core.seqprover.IProofTreeChangedListener;
 import org.eventb.core.seqprover.IProofTreeNode;
-import org.eventb.core.seqprover.ITactic;
 import org.rodinp.core.RodinDBException;
 
 /**
@@ -241,7 +239,6 @@ public interface IProofState extends IProofTreeChangedListener {
 	 * @throws RodinDBException
 	 *             if some problems occurred
 	 */
-	// TODO: Check if this method is really needed.
 	public abstract void proofReuse(IProofMonitor monitor)
 			throws RodinDBException;
 
@@ -291,68 +288,10 @@ public interface IProofState extends IProofTreeChangedListener {
 	public abstract boolean isProofReusable() throws RodinDBException;
 
 	/**
-	 * Load the corresponding proof tree from the disk. The current proof tree
-	 * will be discarded. The current post-tactic will be applied at the root of
-	 * the new proof tree. The current node will be set to the first pending
-	 * sub-goal or the root if there is no pending subgoals. Finally, both the
-	 * cached and searched hypotheses are set to empty.
-	 * <p>
-	 * 
-	 * @throws RodinDBException
-	 *             if some problems occurred during the loading of the proof
-	 *             tree.
-	 * @deprecated use {@link #loadProofTree(IProgressMonitor)} instead.
-	 */
-	@Deprecated
-	public abstract void reloadProofTree() throws RodinDBException;
-
-	/**
 	 * Unload the current proof tree, i.e. the proof state will become
 	 * uninitialised.
 	 */
 	public abstract void unloadProofTree();
-
-	/**
-	 * Apply a tactic at a given proof tree node.
-	 * <p>
-	 * 
-	 * @param t
-	 *            a tactic
-	 * @param node
-	 *            a proof tree node
-	 * @param monitor
-	 *            a proof monitor
-	 * @throws RodinDBException
-	 *             when there are some problem in applying the tactic.
-	 * @deprecated use method {@link IUserSupport#applyTactic(ITactic, boolean, IProgressMonitor)} instead
-	 */
-	@Deprecated
-	public abstract void applyTactic(ITactic t, IProofTreeNode node,
-			IProgressMonitor monitor) throws RodinDBException;
-
-
-	/**
-	 * Apply a tactic to a set of hypotheses at a given proof tree node.
-	 * <p>
-	 * 
-	 * @param t
-	 *            a tactic
-	 * @param node
-	 *            a proof tree node
-	 * @param hyps
-	 *            a set of predicates (hypotheses)
-	 * @param monitor
-	 *            a proof monitor
-	 * @throws RodinDBException
-	 *             when there are some problem in applying the tactic.
-	 * @deprecated use method
-	 *             {@link IUserSupport#applyTacticToHypotheses(ITactic, Set, boolean, IProgressMonitor)}
-	 *             instead
-	 */
-	@Deprecated
-	public abstract void applyTacticToHypotheses(ITactic t,
-			IProofTreeNode node, Set<Predicate> hyps, IProgressMonitor monitor)
-			throws RodinDBException;
 
 	/**
 	 * Backtrack from the given node. This is equivalent to pruning at the parent

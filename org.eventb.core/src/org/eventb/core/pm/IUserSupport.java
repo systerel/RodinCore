@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -184,18 +184,6 @@ public interface IUserSupport extends IElementChangedListener {
 	IProofState[] getUnsavedPOs();
 
 	/**
-	 * Getting the list of information stored in the user support (including the
-	 * output of the applied tactics, messages about the last action in the user
-	 * support, etc.)
-	 * 
-	 * @return a list of objects
-	 * 
-	 * @deprecated Use #IUserSupportDelta.getInformation() instead
-	 */
-	@Deprecated
-	Object[] getInformation();
-
-	/**
 	 * Remove a collection of hypotheses from the cache.
 	 * <p>
 	 * 
@@ -241,24 +229,6 @@ public interface IUserSupport extends IElementChangedListener {
 	 *            a proof tactic
 	 * @param hyps
 	 *            a set of hypothesis
-	 * @param monitor
-	 *            a progress monitor
-	 * @deprecated use
-	 *             {@link #applyTacticToHypotheses(ITactic, Set, boolean, IProgressMonitor)}
-	 *             instead
-	 */
-	@Deprecated
-	void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
-			IProgressMonitor monitor);
-
-	/**
-	 * Apply a tactic to the current proof obligation to a set of hypothesis
-	 * <p>
-	 * 
-	 * @param t
-	 *            a proof tactic
-	 * @param hyps
-	 *            a set of hypothesis
 	 * @param applyPostTactic
 	 *            indicating if post tactic should be applied or not
 	 * @param monitor
@@ -266,21 +236,6 @@ public interface IUserSupport extends IElementChangedListener {
 	 */
 	void applyTacticToHypotheses(ITactic t, Set<Predicate> hyps,
 			boolean applyPostTactic, IProgressMonitor monitor);
-
-	/**
-	 * Apply a tactic to the current proof obligation at the current proof tree
-	 * node.
-	 * <p>
-	 * 
-	 * @param t
-	 *            a proof tactic
-	 * @param monitor
-	 *            a progress monitor
-	 * @deprecated use {@link #applyTactic(ITactic, boolean, IProgressMonitor)}
-	 *             instead
-	 */
-	@Deprecated
-	void applyTactic(ITactic t, IProgressMonitor monitor);
 
 	/**
 	 * Apply a tactic to the current proof obligation at the current proof tree
