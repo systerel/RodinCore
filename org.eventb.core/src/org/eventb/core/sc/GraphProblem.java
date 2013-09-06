@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,12 +61,6 @@ public enum GraphProblem implements IRodinProblem {
 	 */
 	AbstractEventNotRefinedWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AbstractEventNotRefined),
 	AbstractEventLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AbstractEventLabelConflict),
-	@SuppressWarnings("deprecation")
-	EventMergeSplitError(IMarker.SEVERITY_ERROR, Messages.scuser_EventMergeSplitConflict),
-	@SuppressWarnings("deprecation")
-	EventMergeMergeError(IMarker.SEVERITY_ERROR, Messages.scuser_EventMergeMergeConflict),
-	@SuppressWarnings("deprecation")
-	EventInheritedMergeSplitError(IMarker.SEVERITY_ERROR, Messages.scuser_EventInheritedMergeSplitConflict),
 	EventExtendedUnrefinedError(IMarker.SEVERITY_ERROR, Messages.scuser_EventExtendedUnrefined),
 	EventExtendedMergeError(IMarker.SEVERITY_ERROR, Messages.scuser_EventExtendedMerge),
 	EventMergeVariableTypeError(IMarker.SEVERITY_ERROR, Messages.scuser_EventMergeParameterTypeConflict),
@@ -105,8 +99,6 @@ public enum GraphProblem implements IRodinProblem {
 	FreeIdentifierFaultyDeclError(IMarker.SEVERITY_ERROR, Messages.scuser_FreeIdentifierFaultyDeclError),
 	VariantFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_VariantFreeIdentifierError),
 	AxiomFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_AxiomFreeIdentifierError),
-	@Deprecated
-	TheoremFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoremFreeIdentifierError),
 	InvariantFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_InvariantFreeIdentifierError),
 	GuardFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_GuardFreeIdentifierError),
 	ActionFreeIdentifierError(IMarker.SEVERITY_ERROR, Messages.scuser_ActionFreeIdentifierError),
@@ -126,10 +118,6 @@ public enum GraphProblem implements IRodinProblem {
 	InitialisationNotOrdinaryWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InitialisationNotOrdinary),
 	AxiomLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_AxiomLabelConflict),
 	AxiomLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_AxiomLabelConflict),
-	@Deprecated
-	TheoremLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_TheoremLabelConflict),
-	@Deprecated
-	TheoremLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_TheoremLabelConflict),
 	InvariantLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_InvariantLabelConflict),
 	InvariantLabelConflictWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InvariantLabelConflict),
 	EventLabelConflictError(IMarker.SEVERITY_ERROR, Messages.scuser_EventLabelConflict),
@@ -143,7 +131,6 @@ public enum GraphProblem implements IRodinProblem {
 	WitnessLabelMissingWarning(IMarker.SEVERITY_WARNING, Messages.scuser_WitnessLabelMissing),
 	WitnessLabelNeedLessError(IMarker.SEVERITY_ERROR, Messages.scuser_WitnessLabelNeedLess),
 	WitnessLabelNotPermissible(IMarker.SEVERITY_ERROR, Messages.scuser_WitnessLabelNotPermissible),
-	@SuppressWarnings("deprecation")
 	ContextOnlyInAbstractMachineWarning(IMarker.SEVERITY_WARNING, Messages.scuser_ContextOnlyPresentInAbstractMachine),
 	WasAbstractEventLabelWarning(IMarker.SEVERITY_WARNING, Messages.scuser_WasAbstractEventLabelProblem),
 	InconsistentEventLabelWarning(IMarker.SEVERITY_WARNING, Messages.scuser_InconsistentEventLabelProblem),

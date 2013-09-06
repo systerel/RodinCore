@@ -77,23 +77,9 @@ public class ConcreteEventInfo extends AccuracyInfo implements IConcreteEventInf
 		return abstractInfos.size() == 0 && refEvents.size() == 0;
 	}
 
-	@Deprecated
-	public void addAbstractEventInfo(IAbstractEventInfo info)
-			throws CoreException {
-		assertMutable();
-		abstractInfos.add(info);
-	}
-
 	@Override
 	public List<IRefinesEvent> getRefinesClauses() throws CoreException {
 		return refEvents;
-	}
-
-	@Deprecated
-	public void addRefinesEvent(IRefinesEvent refinesEvent)
-			throws CoreException {
-		assertMutable();
-		refEvents.add(refinesEvent);
 	}
 
 	@Override

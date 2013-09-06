@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,7 +70,6 @@ public class GraphProblemTest {
 		return new Spec(problem, arity);
 	}
 	
-	@SuppressWarnings("deprecation")
 	private static Spec[] specs = new Spec[] {
 			spec(GraphProblem.LoadingRootModuleError, 1),
 			spec(GraphProblem.ConfigurationMissingError, 1),
@@ -103,9 +102,6 @@ public class GraphProblemTest {
 			spec(GraphProblem.AbstractEventNotFoundError, 1),
 			spec(GraphProblem.AbstractEventNotRefinedWarning, 1),
 			spec(GraphProblem.AbstractEventLabelConflictWarning, 1),
-			spec(GraphProblem.EventMergeSplitError, 1),
-			spec(GraphProblem.EventMergeMergeError, 1),
-			spec(GraphProblem.EventInheritedMergeSplitError, 1),
 			spec(GraphProblem.EventExtendedUnrefinedError, 1),
 			spec(GraphProblem.EventExtendedMergeError, 1),
 			spec(GraphProblem.EventMergeVariableTypeError, 1),
@@ -144,7 +140,6 @@ public class GraphProblemTest {
 			spec(GraphProblem.FreeIdentifierFaultyDeclError, 1),
 			spec(GraphProblem.VariantFreeIdentifierError, 1),
 			spec(GraphProblem.AxiomFreeIdentifierError, 1),
-			spec(GraphProblem.TheoremFreeIdentifierError, 1),
 			spec(GraphProblem.InvariantFreeIdentifierError, 1),
 			spec(GraphProblem.GuardFreeIdentifierError, 1),
 			spec(GraphProblem.ActionFreeIdentifierError, 1),
@@ -164,8 +159,6 @@ public class GraphProblemTest {
 			spec(GraphProblem.InitialisationNotOrdinaryWarning, 0),
 			spec(GraphProblem.AxiomLabelConflictError, 1),			
 			spec(GraphProblem.AxiomLabelConflictWarning, 1),
-			spec(GraphProblem.TheoremLabelConflictError, 1),
-			spec(GraphProblem.TheoremLabelConflictWarning, 1),
 			spec(GraphProblem.InvariantLabelConflictError, 1),
 			spec(GraphProblem.InvariantLabelConflictWarning, 1),
 			spec(GraphProblem.EventLabelConflictError, 1),

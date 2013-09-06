@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,12 +78,6 @@ public final class Messages {
     public static String scuser_AbstractEventNotFound;
     public static String scuser_AbstractEventNotRefined;
     public static String scuser_AbstractEventLabelConflict;
-    @Deprecated
-    public static String scuser_EventMergeSplitConflict;
-    @Deprecated
-    public static String scuser_EventMergeMergeConflict;
-    @Deprecated
-    public static String scuser_EventInheritedMergeSplitConflict;
 	public static String scuser_EventExtendedUnrefined;
 	public static String scuser_EventExtendedMerge;
     public static String scuser_EventMergeParameterTypeConflict;
@@ -115,8 +109,6 @@ public final class Messages {
     public static String scuser_FreeIdentifierFaultyDeclError;
     public static String scuser_VariantFreeIdentifierError;
     public static String scuser_AxiomFreeIdentifierError;
-    @Deprecated
-    public static String scuser_TheoremFreeIdentifierError;
     public static String scuser_InvariantFreeIdentifierError;
     public static String scuser_GuardFreeIdentifierError;
     public static String scuser_ActionFreeIdentifierError;
@@ -135,8 +127,6 @@ public final class Messages {
     public static String scuser_InitialisationNotOrdinary;
 
     public static String scuser_AxiomLabelConflict;
-    @Deprecated
-    public static String scuser_TheoremLabelConflict;
     public static String scuser_InvariantLabelConflict;
     public static String scuser_EventLabelConflict;
     public static String scuser_GuardLabelConflict;
@@ -146,7 +136,7 @@ public final class Messages {
     public static String scuser_WitnessLabelMissing;
     public static String scuser_WitnessLabelNeedLess;
     public static String scuser_WitnessLabelNotPermissible;
-    @Deprecated
+
     public static String scuser_ContextOnlyPresentInAbstractMachine;
     
     public static String scuser_WasAbstractEventLabelProblem;
