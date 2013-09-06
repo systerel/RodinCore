@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,52 +58,6 @@ public abstract class POGProcessorModule extends POGModule implements IPOGProces
 
 	private static final String SEQ_HYP_NAME = "SEQHYP";
 	
-	/**
-	 * Create a proof obligation in the specified file.
-	 * 
-	 * @param target
-	 *            the target file
-	 * @param name
-	 *            the name of the proof obligation
-	 * @param desc
-	 *            a description of the proof obligation
-	 * @param globalHypotheses
-	 *            the global hypotheses (shared between proof obligations)
-	 * @param localHypotheses
-	 *            the local hypotheses (<b>not</b> shared between proof
-	 *            obligations)
-	 * @param goal
-	 *            the goal to be proved
-	 * @param sources
-	 *            references to source elements from which the proof obligation
-	 *            was derived
-	 * @param hints
-	 *            hints for a theorem prover
-	 * @param accurate
-	 *            the accuracy of the PO sequent
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress reporting
-	 *            is not desired
-	 * @throws CoreException
-	 *             if there has been any problem creating the proof obligation
-	 * @deprecated use the method with a IPOGNature instead
-	 */
-	@Deprecated
-	protected final void createPO(
-			IPORoot target, 
-			String name,
-			String desc,
-			IPOPredicateSet globalHypotheses,
-			List<IPOGPredicate> localHypotheses,
-			IPOGPredicate goal,
-			IPOGSource[] sources,
-			IPOGHint[] hints,
-			boolean accurate,
-			IProgressMonitor monitor) throws CoreException {
-		createPO(target, name, makeNature(desc), globalHypotheses,
-				localHypotheses, goal, sources, hints, accurate, monitor);
-	}
-
 	/**
 	 * Creates a proof obligation in the specified file, if the goal is not
 	 * trivial.
