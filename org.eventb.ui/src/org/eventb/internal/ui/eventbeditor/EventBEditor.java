@@ -40,7 +40,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
@@ -587,19 +586,6 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#edit(java.lang.Object)
-	 */
-	@Override
-	@Deprecated
-	public void edit(Object ssel) {
-		this.getSite().getSelectionProvider().setSelection(
-				new StructuredSelection(ssel));
-		return;
-	}
-
 	@Override
 	public IRodinFile getRodinInputFile() {
 		if (rodinFile == null)
@@ -689,22 +675,6 @@ public abstract class EventBEditor<R extends IInternalElement> extends
 		IFormPage page = getActivePageInstance();
 		if (page != null)
 			lastActivePageID = page.getId();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eventb.internal.ui.eventbeditor.IEventBEditor#setSelection(org.rodinp.core.IInternalElement)
-	 */
-	@Override
-	@Deprecated
-	public void setSelection(IInternalElement element) {
-		this.setActivePage(EditPage.PAGE_ID);
-		// select the element within the page
-		IFormPage page = this.getActivePageInstance();
-		if (page instanceof EditPage) {
-			((EditPage) page).select(element, true);
-		}
 	}
 
 	/*

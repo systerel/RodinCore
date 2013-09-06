@@ -92,27 +92,6 @@ public interface IEventBEditor<R extends IInternalElement> extends IEditorPart,
 			IElementChangedListener listener);
 
 	/**
-	 * Set the selection in the editor.
-	 * <p>
-	 * 
-	 * @param ssel
-	 *            the current selecting element. It can be an IRodinElement.
-	 * @deprecated use {@link #setSelection(IInternalElement)} instead.
-	 */
-	@Deprecated
-	public abstract void edit(Object ssel);
-
-	/**
-	 * Select an internal element in the editor.
-	 * <p>
-	 * 
-	 * @param element
-	 *            the internal element which will be selected.
-	 */
-	@Deprecated
-	public abstract void setSelection(IInternalElement element);
-
-	/**
 	 * Returns the Rodin file associated with this editor. Can return
 	 * <code>null</code> if the the editor has NOT been initialized.
 	 * 
