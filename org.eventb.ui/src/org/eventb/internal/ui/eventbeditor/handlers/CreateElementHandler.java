@@ -59,32 +59,29 @@ public class CreateElementHandler extends AbstractHandler {
 			return null;
 		}
 
-		final IInternalElement insertionPoint;
 
-		if (selection instanceof IInternalElement) {
-			insertionPoint = (IInternalElement) selection;
-		} else if (selection instanceof IStructuredSelection) {
-
-			final IStructuredSelection ssel = (IStructuredSelection) selection;
-
-			if (ssel.size() > 0) {
-				Object last = ssel.toArray()[ssel.size() - 1];
-
-				insertionPoint = last instanceof IInternalElement ? (IInternalElement) last
-						: null;
-			} else {
-				return null;
-			}
-		} else {
+		final Object last = getLastSelected(selection);
+		if (!(last instanceof IInternalElement)) {
 			return null;
 		}
 
+		final IInternalElement insertionPoint = (IInternalElement) last;
 		// parent must be an internal element
 		if (!(insertionPoint.getParent() != null && insertionPoint.getParent() instanceof IInternalElement)) {
 			return null;
 		}
 
 		return insertionPoint;
+	}
+
+	private static Object getLastSelected(ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			final IStructuredSelection ssel = (IStructuredSelection) selection;
+			if (ssel.size() > 0) {
+				return ssel.toList().get(ssel.size() - 1);
+			}
+		}
+		return null;
 	}
 
 	/**
