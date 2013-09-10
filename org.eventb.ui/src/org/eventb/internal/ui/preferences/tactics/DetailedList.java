@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -235,11 +235,13 @@ public class DetailedList {
 	 * Set the details of selected item.
 	 */
 	public void updateDetails() {
-		if (provider != null && list.getSelectionCount() == 1) {
-			saveCurrentIfChanges(true);
-			provider.putDetails(getSelectedItem());
-		} else {
-			provider.clear();
+		if (provider != null) {
+			if (list.getSelectionCount() == 1) {
+				saveCurrentIfChanges(true);
+				provider.putDetails(getSelectedItem());
+			} else {
+				provider.clear();
+			}
 		}
 		details.redraw();
 	}
