@@ -51,8 +51,8 @@ public class TestUIUtils extends EventBUITest {
 	private static final String constantIdentifierPrefix = "cst";
 	private static final String guardLabelPrefix = "grd";
 
-	protected static IContextRoot c0;
-	protected static IMachineRoot m0;
+	protected IContextRoot c0;
+	protected IMachineRoot m0;
 
 	@Before
 	@Override
