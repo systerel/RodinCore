@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eventb.internal.core.seqprover.eventbExtensions.mbGoal;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.BINTER;
 import static org.eventb.core.ast.Formula.BUNION;
 import static org.eventb.core.ast.Formula.CONVERSE;
@@ -3271,7 +3272,7 @@ public class Rule<T extends Predicate> {
 				}
 			}
 			if (!isContained) {
-				throw new IllegalArgumentException(expressions.toString()
+				throw new IllegalArgumentException(asList(expressions)
 						+ " should be contain in " + exp.toString());
 			}
 		}
@@ -3301,7 +3302,7 @@ public class Rule<T extends Predicate> {
 				}
 			}
 			if (!isContained) {
-				throw new IllegalArgumentException(expressions.toString()
+				throw new IllegalArgumentException(asList(expressions)
 						+ " should be contain in " + exp.toString());
 			}
 		}
