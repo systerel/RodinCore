@@ -269,7 +269,7 @@ public class RodinConfiguration extends SourceViewerConfiguration {
 			return FORMULA_TYPE;
 		if (name.equals(IMPLICIT_FORMULA_TYPE.getName()))
 			return IMPLICIT_FORMULA_TYPE;
-		if (name.equals(IMPLICIT_ATTRIBUTE_TYPE)) {
+		if (name.equals(IMPLICIT_ATTRIBUTE_TYPE.getName())) {
 			return IMPLICIT_ATTRIBUTE_TYPE;
 		}
 		return ATTRIBUTE_TYPE;
