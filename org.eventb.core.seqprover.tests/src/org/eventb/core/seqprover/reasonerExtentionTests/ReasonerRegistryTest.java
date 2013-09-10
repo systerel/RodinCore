@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,14 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.reasonerExtentionTests;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.seqprover.tests.Util.TEST_PLUGIN_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.eventb.core.seqprover.IReasoner;
 import org.eventb.core.seqprover.IReasonerDesc;
@@ -57,8 +58,9 @@ public class ReasonerRegistryTest {
 		assertTrue(registry.isRegistered(id));
 		
 		final String[] ids = registry.getRegisteredIDs();
-		assertTrue("Missing id " + id + " in list " + ids,
-				Arrays.asList(ids).contains(id));
+		final List<String> idList = asList(ids);
+		assertTrue("Missing id " + id + " in list " + idList,
+				idList.contains(id));
 	}
 	
 	/**
@@ -74,8 +76,9 @@ public class ReasonerRegistryTest {
 		assertFalse(registry.isRegistered(id));
 		
 		final String[] ids = registry.getRegisteredIDs();
-		assertFalse("Id " + id + " occurs in list " + ids,
-				Arrays.asList(ids).contains(id));
+		final List<String> idList = asList(ids);
+		assertFalse("Id " + id + " occurs in list " + idList,
+				idList.contains(id));
 	}
 	
 	/**
