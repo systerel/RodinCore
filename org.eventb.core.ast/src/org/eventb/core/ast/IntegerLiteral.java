@@ -66,7 +66,6 @@ public class IntegerLiteral extends Expression {
 	protected IntegerLiteral(BigInteger literal, SourceLocation location,
 			FormulaFactory ff) {
 		super(INTLIT, ff, location, literal.hashCode());
-		assert literal != null;
 		this.literal = literal;
 		
 		setPredicateVariableCache();
