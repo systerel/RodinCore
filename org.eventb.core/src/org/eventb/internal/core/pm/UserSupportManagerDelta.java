@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ public class UserSupportManagerDelta implements IUserSupportManagerDelta {
 	/**
 	 * Empty array of IUserSupportDelta
 	 */
-	protected static IUserSupportDelta[] emptyUserSupports = new IUserSupportDelta[] {};
+	protected static final IUserSupportDelta[] emptyUserSupports = new IUserSupportDelta[] {};
 
 	@Override
 	public IUserSupportDelta[] getAddedUserSupports() {
@@ -80,14 +80,12 @@ public class UserSupportManagerDelta implements IUserSupportManagerDelta {
 
 		IUserSupportDelta existingUserSupport = null;
 		int existingUserSupportIndex = -1;
-		if (affectedUserSupports != null) {
-			for (int i = 0; i < affectedUserSupports.length; i++) {
-				if (affectedUserSupports[i].getUserSupport() == affectedUserSupport
-						.getUserSupport()) {
-					existingUserSupport = affectedUserSupports[i];
-					existingUserSupportIndex = i;
-					break;
-				}
+		for (int i = 0; i < affectedUserSupports.length; i++) {
+			if (affectedUserSupports[i].getUserSupport() == affectedUserSupport
+					.getUserSupport()) {
+				existingUserSupport = affectedUserSupports[i];
+				existingUserSupportIndex = i;
+				break;
 			}
 		}
 
