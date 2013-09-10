@@ -91,10 +91,9 @@ public class TestElement {
 		return sees;
 	}
 
-	@SuppressWarnings("unused")
 	private void assertNotEquals(Element expected, Element actual) {
-		final String message = "element :\n " + expected.toString()
-				+ "\nand element :\n" + actual.toString() + "\nshould differ.";
+		final String message = "element :\n " + expected
+				+ "\nand element :\n" + actual + "\nshould differ.";
 		if (expected == null && actual == null)
 			fail(message);
 		if (expected != null && expected.equals(actual))
