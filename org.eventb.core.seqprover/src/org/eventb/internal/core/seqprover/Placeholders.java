@@ -147,9 +147,9 @@ public class Placeholders {
 			} else if (value instanceof String) {
 				setString(label, (String) value);
 			} else {
-				throw new IllegalArgumentException(String.format(
-						"Unsupported value setting: {0} of type {1}",
-						value.toString(), value.getClass().getName()));
+				throw new IllegalArgumentException(
+						"Unsupported value setting: " + value + " of type "
+								+ value.getClass().getName());
 			}
 		}
 	}
