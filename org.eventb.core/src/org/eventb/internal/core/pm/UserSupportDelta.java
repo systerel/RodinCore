@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class UserSupportDelta implements IUserSupportDelta {
 	/**
 	 * Empty array of IProofStateDelta
 	 */
-	private static IProofStateDelta[] emptyStates = new IProofStateDelta[] {};
+	private static final IProofStateDelta[] emptyStates = new IProofStateDelta[] {};
 
 	public UserSupportDelta(IUserSupport userSupport) {
 		this.userSupport = userSupport;
@@ -161,14 +161,12 @@ public class UserSupportDelta implements IUserSupportDelta {
 		}
 		IProofStateDelta existingState = null;
 		int existingStateIndex = -1;
-		if (affectedStates != null) {
-			for (int i = 0; i < affectedStates.length; i++) {
-				if (affectedStates[i].getProofState() == affectedState
-						.getProofState()) {
-					existingState = affectedStates[i];
-					existingStateIndex = i;
-					break;
-				}
+		for (int i = 0; i < affectedStates.length; i++) {
+			if (affectedStates[i].getProofState() == affectedState
+					.getProofState()) {
+				existingState = affectedStates[i];
+				existingStateIndex = i;
+				break;
 			}
 		}
 		if (existingState == null) { // new affected proof state
