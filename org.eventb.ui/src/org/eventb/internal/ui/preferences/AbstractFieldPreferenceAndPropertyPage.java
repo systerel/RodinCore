@@ -24,7 +24,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -60,9 +59,6 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 
 	// Stores the project properties owner
 	private IProject project;
-
-	// The image descriptor of this pages title image
-	private ImageDescriptor image;
 
 	// Cache for page id
 	private final String prefPageId;
@@ -209,7 +205,7 @@ public abstract class AbstractFieldPreferenceAndPropertyPage extends
 			page.project = handled;
 			page.workspacePreferencePage = this;
 			page.setTitle(getTitle());
-			page.setImageDescriptor(image);
+			page.setImageDescriptor(null);
 			// and show it
 			page.setDescription(this.getDescription());
 			showPropertiesPage(prefPageId, page, page.project);
