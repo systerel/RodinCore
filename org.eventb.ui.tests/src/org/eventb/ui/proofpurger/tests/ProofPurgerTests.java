@@ -287,21 +287,21 @@ public class ProofPurgerTests extends EventBUITest {
 	}
 
 	// variables for testing with several projects
-	private static IRodinProject rp1;
-	private static IRodinProject rp2;
-	private static IRodinProject rp3;
+	private IRodinProject rp1;
+	private IRodinProject rp2;
+	private IRodinProject rp3;
 
-	private static IPORoot spPOFile1;
-	private static IPORoot spPOFile2;
-	private static IPORoot spPOFile3;
-	private static IPORoot spPOFile4;
-	private static IPORoot spPOFile5;
+	private IPORoot spPOFile1;
+	private IPORoot spPOFile2;
+	private IPORoot spPOFile3;
+	private IPORoot spPOFile4;
+	private IPORoot spPOFile5;
 
-	private static IPRRoot spPRFile1;
-	private static IPRRoot spPRFile2;
-	private static IPRRoot spPRFile3;
-	private static IPRRoot spPRFile4;
-	private static IPRRoot spPRFile5;
+	private IPRRoot spPRFile1;
+	private IPRRoot spPRFile2;
+	private IPRRoot spPRFile3;
+	private IPRRoot spPRFile4;
+	private IPRRoot spPRFile5;
 
 	private void initSeveralProjects() throws CoreException {
 		rp1 = createRodinProject("RP1");
