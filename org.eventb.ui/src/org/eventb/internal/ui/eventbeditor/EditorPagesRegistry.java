@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 			+ ".editorPages";
 
 	// Singleton instance of the class
-	private static IEditorPagesRegistry instance;
+	private static final IEditorPagesRegistry instance = new EditorPagesRegistry();
 
 	// Registry information: Mapping from editor id to related information.
 	private Map<String, EditorInfo> registry;
@@ -327,8 +327,6 @@ public class EditorPagesRegistry implements IEditorPagesRegistry {
 	 * @return the unique singleton instance of this class.
 	 */
 	public static IEditorPagesRegistry getDefault() {
-		if (instance == null)
-			instance = new EditorPagesRegistry();
 		return instance;
 	}
 
