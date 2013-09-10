@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.ast.tests;
 
+import static java.util.Arrays.asList;
 import static org.eventb.core.ast.Formula.DIV;
 import static org.eventb.core.ast.Formula.EQUAL;
 import static org.eventb.core.ast.Formula.EXISTS;
@@ -134,7 +135,7 @@ public class TestSubstituteFormula extends AbstractTests {
 					formula.getBoundIdentDecls(), iresult, null);
 
 			assertTrue(formula.toString(), result.isTypeChecked());
-			assertEquals(formula + "\n" + sbs + "\n" , expected, result);
+			assertEquals(formula + "\n" + asList(sbs) + "\n" , expected, result);
 		}
 
 		private Map<FreeIdentifier, Expression> makeSBS(Predicate[] predicates) {
