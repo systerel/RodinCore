@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eventb.core.seqprover.autoTacticExtentionTests;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -73,8 +74,9 @@ public class AutoTacticRegistryTest {
 		assertTrue(registry.isRegistered(id));
 		
 		final String[] ids = registry.getRegisteredIDs();
-		assertTrue("Missing id " + id + " in list " + ids,
-				Arrays.asList(ids).contains(id));
+		final List<String> idList = asList(ids);
+		assertTrue("Missing id " + id + " in list " + idList,
+				idList.contains(id));
 	}
 	
 	/**
@@ -90,8 +92,9 @@ public class AutoTacticRegistryTest {
 		assertFalse(registry.isRegistered(id));
 		
 		final String[] ids = registry.getRegisteredIDs();
-		assertFalse("Id " + id + " occurs in list " + ids,
-				Arrays.asList(ids).contains(id));
+		final List<String> idList = asList(ids);
+		assertFalse("Id " + id + " occurs in list " + idList,
+				idList.contains(id));
 		assertTrue(registry.getTacticDescriptor(id) instanceof TacticPlaceholder);
 		
 		assertTrue(registry.getCombinatorDescriptor(id) instanceof CombinatorDescriptorPlaceholder);
