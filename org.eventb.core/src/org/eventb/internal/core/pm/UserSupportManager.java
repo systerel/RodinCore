@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class UserSupportManager implements IUserSupportManager {
 
 	private Collection<IUserSupport> userSupports = new ArrayList<IUserSupport>();
 
-	private static UserSupportManager instance;
+	private static final UserSupportManager instance = new UserSupportManager();
 
 	private DeltaProcessor deltaProcessor;
 
@@ -42,8 +42,6 @@ public class UserSupportManager implements IUserSupportManager {
 	}
 
 	public static UserSupportManager getDefault() {
-		if (instance == null)
-			instance = new UserSupportManager();
 		return instance;
 	}
 
