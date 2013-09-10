@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,16 +101,14 @@ public class RodinElementDelta extends SimpleDelta implements
 		}
 		RodinElementDelta existingChild = null;
 		int existingChildIndex = -1;
-		if (fAffectedChildren != null) {
-			for (int i = 0; i < fAffectedChildren.length; i++) {
-				if (this.equalsAndSameParent(fAffectedChildren[i].getElement(),
-						child.getElement())) { // handle case of two jars that
-												// can be equals but not in the
-												// same project
-					existingChild = fAffectedChildren[i];
-					existingChildIndex = i;
-					break;
-				}
+		for (int i = 0; i < fAffectedChildren.length; i++) {
+			if (this.equalsAndSameParent(fAffectedChildren[i].getElement(),
+					child.getElement())) { // handle case of two jars that
+											// can be equals but not in the
+											// same project
+				existingChild = fAffectedChildren[i];
+				existingChildIndex = i;
+				break;
 			}
 		}
 		if (existingChild == null) { // new affected child
