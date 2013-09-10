@@ -216,7 +216,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 		int count = LOWEST_PRIORITY;
 		for (IElementRelationship type : parentDesc.getChildRelationships()) {
-			if (type == element.getElementType()) {
+			if (type.getChildType() == element.getElementType()) {
 				return count;
 			}
 			count++;
@@ -664,7 +664,7 @@ public class ElementDescRegistry implements IElementDescRegistry {
 
 		private int getDefaultColumn(IConfigurationElement element) {
 			final String value = getStringAttribute(element, "defaultColumn");
-			if (value == "")
+			if (value.isEmpty())
 				return 0;
 			return Integer.parseInt(value);
 		}
