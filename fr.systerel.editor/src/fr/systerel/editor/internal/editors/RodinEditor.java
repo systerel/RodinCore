@@ -45,7 +45,6 @@ import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
-import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eventb.core.IContextRoot;
@@ -82,7 +81,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	private DocumentMapper mapper;
 	private RodinConfiguration rodinViewerConfiguration;
 	
-	private IElementStateListener stateListener;
 	private DNDManager dndManager;
 	private IUndoContext  undoContext;
 	
@@ -208,9 +206,6 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		}
 		if (markerAnnotationsUpdater != null){
 			markerAnnotationsUpdater.dispose();			
-		}
-		if (stateListener != null) {
-			documentProvider.removeElementStateListener(stateListener);
 		}
 		if (overlayUpdater != null)
 			getDocument().removeDocumentListener(overlayUpdater);
