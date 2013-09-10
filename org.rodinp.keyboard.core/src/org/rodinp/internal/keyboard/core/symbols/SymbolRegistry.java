@@ -40,15 +40,13 @@ public class SymbolRegistry implements ISymbolRegistry {
 	
 	private static final String SYMBOL_PROVIDER_EXTENSION = "symbolProvider";
 	
-	private static ISymbolRegistry instance;
+	private static final ISymbolRegistry instance = new SymbolRegistry();
 	
 	private SymbolRegistry() {
 		// Hide the constructor.
 	}
 	
 	public static ISymbolRegistry getDefault() {
-		if (instance == null)
-			instance = new SymbolRegistry();
 		return instance;
 	}
 	
