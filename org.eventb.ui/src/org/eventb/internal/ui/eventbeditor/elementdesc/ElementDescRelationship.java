@@ -64,12 +64,24 @@ public class ElementDescRelationship implements IElementRelationship, Comparable
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + childType.hashCode();
+		result = prime * result + parentType.hashCode();
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof IElementRelationship))
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || this.getClass() != obj.getClass()) {
 			return false;
-		IElementRelationship rel = (IElementRelationship) obj;
-		return parentType == rel.getParentType()
-				&& childType == rel.getChildType();
+		}
+		final ElementDescRelationship other = (ElementDescRelationship) obj;
+		return childType == other.childType && parentType == other.parentType;
 	}
 
 	@Override
