@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -266,7 +266,9 @@ public class RuleDetailsProvider {
 
 	private boolean printSequent(int level, List<String> hypotheses,
 			List<String> goal) {
-		printHypotheses(level, hypotheses);
+		if (hypotheses != null) {
+			printHypotheses(level, hypotheses);
+		}
 		if (goal != null) {
 			appendTurnstile(level + 1);
 			printGoalNotNull(level, goal);
