@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,16 +31,6 @@ public class Link implements Serializable {
 	protected final Node origin; // this is the nonderived resource to which error messages must be directed
                                  // if this link is part of a cycle
 	
-	@Override
-	public boolean equals(Object o) {
-		Link link = (Link) o;
-		return 
-			prov.equals(link.prov) && 
-			prio.equals(link.prio) && 
-			id.equals(link.id) && 
-			source.equals(link.source) && 
-			origin == link.origin;
-	}
 	
 	public Link(Provider prov, Priority prio, String id, Node source, Node origin) {
 		this.prov = prov;

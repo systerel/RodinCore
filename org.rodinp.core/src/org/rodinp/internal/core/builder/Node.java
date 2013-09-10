@@ -36,11 +36,6 @@ public class Node implements Serializable, Comparable<Node> {
 	
 	private static final long serialVersionUID = -710145997192071089L;
 
-	@Override
-	public int hashCode() {
-		return getTarget().getName().hashCode();
-	}
-
 	public static class File implements Serializable {
 
 		private static final long serialVersionUID = -5374536727511878483L;
@@ -70,6 +65,36 @@ public class Node implements Serializable, Comparable<Node> {
 		protected void setPath(IPath path) {
 			this.path = path;
 			name = path.toString();
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			File other = (File) obj;
+			if (name == null) {
+				if (other.name != null) {
+					return false;
+				}
+			} else if (!name.equals(other.name)) {
+				return false;
+			}
+			return true;
 		}
 				
 	}
@@ -110,11 +135,6 @@ public class Node implements Serializable, Comparable<Node> {
 	@Override
 	public String toString() {
 		return printNode();
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		return target.getName().equals(((Node) o).target.getName());
 	}
 	
 	@Override
