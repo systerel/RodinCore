@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,7 +106,7 @@ public class Refinement {
 			for (String succId : entry.getValue()) {
 				final IRefinementParticipant succ = participants.get(succId);
 				succs.add(succ);
-				List<IRefinementParticipant> preds = predMap.get(succId);
+				List<IRefinementParticipant> preds = predMap.get(succ);
 				if (preds == null) {
 					preds = new ArrayList<IRefinementParticipant>();
 					predMap.put(succ, preds);
