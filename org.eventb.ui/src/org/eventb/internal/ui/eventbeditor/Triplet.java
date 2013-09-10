@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,8 +32,20 @@ public class Triplet<X extends Object, Y extends Object, Z extends Object> {
 	}
 
 	@Override
+	public int hashCode() {
+		return obj.hashCode();
+	}
+
+	@Override
 	public boolean equals(Object o) {
-		return obj.equals(o);
+		if (this == o) {
+			return true;
+		}
+		if (o == null || this.getClass() != o.getClass()) {
+			return false;
+		}
+		final Triplet<?, ?, ?> other = (Triplet<?, ?, ?>) o;
+		return this.obj.equals(other.obj);
 	}
 
 	@Override
