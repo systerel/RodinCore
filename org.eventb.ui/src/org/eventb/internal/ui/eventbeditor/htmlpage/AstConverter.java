@@ -110,7 +110,7 @@ public abstract class AstConverter {
 			children = retrieveChildrenToProcess(rel, e);
 			final ElementDesc childDesc = getElementDesc(rel.getChildType());
 			final IElementPrettyPrinter pp = childDesc.getPrettyPrinter();
-			if (childDesc == null || pp == null)
+			if (pp == null)
 				continue;
 
 			final boolean noChildren = children.size() == 0;
