@@ -41,7 +41,7 @@ public abstract class AbstractAddElementHandler extends AbstractEditionHandler {
 				.getDocumentMapper().getRoot().getElement() : childParent
 				.getRoot().getElement();
 		final IInternalElement localParent;
-		if (childParent.getElement().equals(rootElement)) {
+		if (childParent == null || childParent.getElement().equals(rootElement)) {
 			localParent = rootElement;
 		} else {
 			localParent = childParent.getElement();
