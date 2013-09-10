@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eventb.core.tests.preferences;
 
-import static java.lang.Math.abs;
 import static java.util.Arrays.asList;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.DEFAULT_AUTO_TACTIC;
 import static org.eventb.core.preferences.autotactics.TacticPreferenceConstants.DEFAULT_POST_TACTIC;
@@ -23,7 +22,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +67,8 @@ import org.junit.Test;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class TacticsPreferencesTest extends BuilderTest {
+
+	private static final Random RANDOM = new Random();
 
 	private static ITacticProfileCache makeTacticProfileCache() {
 		return TacticPreferenceFactory
@@ -401,9 +401,7 @@ public class TacticsPreferencesTest extends BuilderTest {
 		list.addAll(available);
 		Collections.shuffle(list);
 		// random integer in 2 .. length of the list
-		int index = abs(new Random(new Date().getTime()).nextInt()
-				% list.size());
-		index = Math.max(index, 2);
+		final int index = 2 + RANDOM.nextInt(list.size() - 2);
 		final List<ITacticDescriptor> subList = list.subList(0, index);
 
 		return loopOnAllPending(subList);
