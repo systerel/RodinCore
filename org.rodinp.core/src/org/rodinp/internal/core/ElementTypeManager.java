@@ -50,7 +50,10 @@ public class ElementTypeManager {
 	/**
 	 * The singleton manager
 	 */
-	private static ElementTypeManager INSTANCE;
+	private static final ElementTypeManager INSTANCE = new ElementTypeManager();
+	static {
+		INSTANCE.initialize();		
+	}
 	
 	//The registry of element types
 	private final ElementTypeRegistry typeRegistry;
@@ -68,10 +71,6 @@ public class ElementTypeManager {
 	 * Returns the singleton ElementTypeManager
 	 */
 	public final static ElementTypeManager getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new ElementTypeManager();
-			INSTANCE.initialize();		
-		}
 		return INSTANCE;
 	}
 
