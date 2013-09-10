@@ -47,7 +47,7 @@ public class RodinOperationUtils {
 		final IAttributeValue.String newValue = type.makeValue(textValue);
 		try {
 			if (!element.hasAttribute(type)
-					|| !element.getAttributeValue(type).equals(newValue)) {
+					|| !element.getAttributeValue(type).equals(newValue.getValue())) {
 				ElementManipulationFacade.changeAttribute(element, newValue);
 			}
 		} catch (RodinDBException e) {
