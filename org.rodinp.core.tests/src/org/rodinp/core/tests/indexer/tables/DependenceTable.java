@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.rodinp.core.tests.indexer.tables;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,11 +63,12 @@ public class DependenceTable {
 	}
 
 	private void assertDependencies(IRodinFile depends, IRodinFile[] files) {
-		Set<IRodinFile> filesSet = new HashSet<IRodinFile>(Arrays.asList(files));
+		final List<IRodinFile> fileList = Arrays.asList(files);
+		Set<IRodinFile> filesSet = new HashSet<IRodinFile>(fileList);
 
 		if (filesSet.size() != files.length) {
 			throw new IllegalArgumentException(
-					"Redundancy in dependence files: " + files);
+					"Redundancy in dependence files: " + fileList);
 		}
 		if (filesSet.contains(depends)) {
 			throw new IllegalArgumentException(
