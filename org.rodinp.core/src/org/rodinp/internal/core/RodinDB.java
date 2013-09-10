@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,7 +108,7 @@ public class RodinDB extends Openable implements IRodinDB {
 			IRodinElement[] siblings, String[] renamings, boolean force,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		if (elements != null && elements.length > 0 && elements[0] != null
+		if (elements != null && elements.length > 0
 				&& elements[0] instanceof IOpenable) {
 			runOperation(new CopyResourceElementsOperation(elements,
 					containers, force), elements, siblings, renamings, monitor);
@@ -369,7 +369,7 @@ public class RodinDB extends Openable implements IRodinDB {
 			IRodinElement[] siblings, String[] renamings, boolean force,
 			IProgressMonitor monitor) throws RodinDBException {
 		
-		if (elements != null && elements.length > 0 && elements[0] != null
+		if (elements != null && elements.length > 0
 				&& elements[0] instanceof IOpenable) {
 			runOperation(new MoveResourceElementsOperation(elements,
 					containers, force), elements, siblings, renamings, monitor);
@@ -386,7 +386,7 @@ public class RodinDB extends Openable implements IRodinDB {
 	@Override
 	public void rename(IRodinElement[] elements, String[] names, boolean replace, IProgressMonitor monitor) throws RodinDBException {
 		MultiOperation op;
-		if (elements != null && elements.length > 0 && elements[0] != null
+		if (elements != null && elements.length > 0
 				&& elements[0] instanceof IOpenable) {
 			op = new RenameResourceElementsOperation(elements, names, replace);
 		} else {
