@@ -75,8 +75,10 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 	}
 
 	/**
-	 * Checks that the rewrite method correctly applies for a BoudIdentDecl
-	 * (i.e. it rewrites the type of the BoundIdentDecl).
+	 * Checks that the rewrite method correctly applies for a BoundIdentDecl
+	 * (i.e. it rewrites the type of the BoundIdentDecl). Also show that no harm
+	 * is caused by having the declaration having the same name as a fresh name
+	 * introduced by the translation.
 	 */
 	@Test 
 	public void testBoundIdentDeclRewrite() {
@@ -84,6 +86,7 @@ public class TestDatatypeRewriter extends AbstractTranslatorTests {
 		s.setExpectedTypeEnvironment("List_Type=ℙ(List_Type); List_Type0=ℙ(List_Type0)");
 		s.assertPredTranslation("∀ x ⦂ List(ℤ) · ⊤", "∀ x ⦂ List_Type · ⊤");
 		s.assertPredTranslation("∀ x ⦂ List(BOOL) · ⊤", "∀ x ⦂ List_Type0 · ⊤");
+		s.assertPredTranslation("∀ List_Type ⦂ List(ℤ) · ⊤", "∀ List_Type ⦂ List_Type · ⊤");
 	}
 
 	/**

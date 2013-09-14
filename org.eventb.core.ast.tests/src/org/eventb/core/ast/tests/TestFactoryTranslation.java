@@ -180,6 +180,7 @@ public class TestFactoryTranslation extends AbstractTests {
 		assertTrue(decl.isTranslatable(ff_extns));
 		final BoundIdentDecl actual = decl.translate(ff_extns);
 		assertEquals(ff_extns, actual.getFactory());
+		assertEquals("prime0", actual.getName());
 		assertEquals(decl.getSourceLocation(), actual.getSourceLocation());
 		assertEquals(decl.getType(), actual.getType());
 	}
