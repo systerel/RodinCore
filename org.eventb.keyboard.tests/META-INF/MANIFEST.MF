@@ -9,4 +9,6 @@ Require-Bundle: org.eclipse.ui,
  org.junit,
  org.rodinp.keyboard.ui,
  org.rodinp.keyboard.core.tests,
- org.rodinp.keyboard.ui.tests
+ org.rodinp.keyboard.ui.tests,
+ org.eventb.keyboard,
+ ch.ethz.eventb.keyboard.latex
