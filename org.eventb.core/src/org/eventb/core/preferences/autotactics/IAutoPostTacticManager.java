@@ -21,10 +21,9 @@ import org.eventb.core.seqprover.autoTacticPreference.IAutoTacticPreference;
  * An instance can be obtained by calling
  * {@link EventBPlugin#getAutoPostTacticManager()}.
  * </p>
- * 
- * @noimplement This interface is not intended to be implemented by clients.
- * @noextend This interface is not intended to be extended by clients.
  * @since 2.1
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IAutoPostTacticManager {
 
