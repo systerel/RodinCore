@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,10 @@ package org.eventb.core.preferences.autotactics;
 
 /**
  * Constants used to retrieve eclipse preferences for tactics.
- * 
+ *
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class TacticPreferenceConstants {
 
@@ -44,21 +46,19 @@ public class TacticPreferenceConstants {
 
 	/**
 	 * Preference key enabling/disabling proof simplification
-	 * 
 	 * @since 2.4
 	 */
 	public static final String P_SIMPLIFY_PROOFS = "Simplify Proofs";
 
 	/**
 	 * Preference key for considering hidden hypotheses in search
-	 * 
 	 * @since 3.0
 	 */
 	public static final String P_CONSIDER_HIDDEN_HYPOTHESES = "Consider hidden hypotheses in search";
 
 	/**
 	 * Profile name for default auto tactic.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String DEFAULT_AUTO_TACTIC = "Default Auto Tactic Profile";
@@ -69,5 +69,9 @@ public class TacticPreferenceConstants {
 	 * @since 3.0
 	 */
 	public static final String DEFAULT_POST_TACTIC = "Default Post Tactic Profile";
+
+	private TacticPreferenceConstants() {
+		// no instance
+	}
 
 }

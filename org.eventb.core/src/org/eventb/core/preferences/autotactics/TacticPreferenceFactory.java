@@ -24,6 +24,8 @@ import org.eventb.internal.core.preferences.TacticsProfilesCache;
  * API for making tactic preference related instances.
  * 
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class TacticPreferenceFactory {
 
@@ -46,8 +48,7 @@ public class TacticPreferenceFactory {
 	 *            the preference node to load from and store to.
 	 * @since 3.0
 	 */
-	public static ITacticProfileCache makeTacticProfileCache(
-			IEclipsePreferences preferenceNode) {
+	public static ITacticProfileCache makeTacticProfileCache(IEclipsePreferences preferenceNode) {
 		return new TacticsProfilesCache(preferenceNode);
 	}
 
@@ -64,4 +65,9 @@ public class TacticPreferenceFactory {
 				profileName);
 		return new TacticDescriptorRef(entry);
 	}
+	
+	private TacticPreferenceFactory() {
+		// no instance
+	}
+
 }
