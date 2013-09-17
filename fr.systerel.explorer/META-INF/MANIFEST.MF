@@ -18,7 +18,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Export-Package: fr.systerel.explorer,
  fr.systerel.internal.explorer.model;x-friends:="fr.systerel.explorer.tests",
- fr.systerel.internal.explorer.navigator,
+ fr.systerel.internal.explorer.navigator;x-friends:="fr.systerel.explorer.tests",
  fr.systerel.internal.explorer.navigator.actionProviders;x-friends:="fr.systerel.explorer.tests",
  fr.systerel.internal.explorer.navigator.contentProviders;x-friends:="fr.systerel.explorer.tests",
  fr.systerel.internal.explorer.navigator.contentProviders.complex;x-friends:="fr.systerel.explorer.tests",
