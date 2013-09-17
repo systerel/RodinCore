@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.rodinp.core.basis.InternalElement;
 /**
  * @author Nicolas Beauger
  * @since 2.2
- * 
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class PRReasoner extends InternalElement implements IPRReasoner {
 

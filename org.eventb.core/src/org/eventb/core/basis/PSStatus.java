@@ -41,6 +41,7 @@ import org.rodinp.core.RodinDBException;
  * @author Farhad Mehta
  *
  * @since 1.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class PSStatus extends EventBProofElement implements IPSStatus {
 

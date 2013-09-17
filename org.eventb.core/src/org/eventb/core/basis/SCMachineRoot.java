@@ -38,6 +38,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Laurent Voisin
  * @since 1.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class SCMachineRoot extends EventBRoot implements ISCMachineRoot {
 
