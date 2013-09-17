@@ -64,8 +64,6 @@ import org.rodinp.core.RodinDBException;
  * Clients should use the Proof Manager API rather than direct access to this
  * Rodin database API.
  * </p>
- * @noimplement This interface is not intended to be implemented by clients.
- * @noextend This interface is not intended to be extended by clients.
  * 
  * @see IProofTree
  * @see IProofDependencies
@@ -74,6 +72,7 @@ import org.rodinp.core.RodinDBException;
  * 
  * @author Farhad Mehta
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPRProof extends IInternalElement, IPRProofInfoElement {
 

@@ -22,16 +22,14 @@ import org.rodinp.core.RodinCore;
  * {@link IIdentifierElement}. This interface itself does not
  * contribute any method.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
+ *
  * @see IIdentifierElement#getIdentifierString()
  * @see IIdentifierElement#setIdentifierString(String,IProgressMonitor)
  * 
  * @author Laurent Voisin
  * @author Stefan Hallerstede
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICarrierSet extends ICommentedElement, IIdentifierElement {
 

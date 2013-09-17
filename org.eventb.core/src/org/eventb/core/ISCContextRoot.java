@@ -41,14 +41,12 @@ import org.rodinp.core.RodinDBException;
  * context. They are manipulated by means of {@link org.eventb.core.ISCContext}.
  * In addition, access methods for related file handles are provided.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
+ *
  * @see org.rodinp.core.IRodinElement#getElementName()
  * 
  * @author Stefan Hallerstede
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISCContextRoot extends ISCContext, IEventBRoot, IAccuracyElement, IConfigurationElement {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,6 @@ import org.rodinp.core.RodinCore;
 /**
  * Common protocol for carrier sets in Event-B statically checked (SC) contexts.
  * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * <p>
  * An SC carrier set is a carrier set that has been statically checked. An SC
  * carrier set has a name that is returned by
  * {@link org.rodinp.core.IRodinElement#getElementName()} and contains a type
@@ -36,6 +33,7 @@ import org.rodinp.core.RodinCore;
  * 
  * @author Stefan Hallerstede
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISCCarrierSet extends ITraceableElement, ISCIdentifierElement {
 

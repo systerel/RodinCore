@@ -34,15 +34,13 @@ import org.rodinp.core.RodinDBException;
  * <li>actions (<code>ISCAction</code>)</li>
  * </ul>
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
+ *
  * @see ILabeledElement#getLabel()
  * @see ILabeledElement#setLabel(String, IProgressMonitor)
  * 
  * @author Stefan Hallerstede
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISCEvent 
 extends ITraceableElement, ILabeledElement, IConvergenceElement, IAccuracyElement {

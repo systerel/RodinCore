@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,15 +37,13 @@ import org.rodinp.core.RodinDBException;
  * The attribute storing whether teh event is inherited is <i>optional</i>. This means if the attribute
  * is not present, the value should be interpreted as <i>undefined</i>.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
+ *
  * @see IRodinElement#getElementName()
  * 
  * @author Laurent Voisin
  * @author Stefan Hallerstede
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEvent extends ICommentedElement, ILabeledElement, IConvergenceElement {
 

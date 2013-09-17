@@ -22,12 +22,10 @@ import org.rodinp.core.RodinDBException;
  * As this element has been statically checked, the contained predicate parses
  * and type-checks. Thus, it can be manipulated directly as an AST.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
  * @author Stefan Hallerstede
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISCPredicateElement extends IPredicateElement {
 

@@ -40,16 +40,13 @@ import org.rodinp.core.RodinDBException;
  * which ensures that proof obligations, proofs and proof statuses are kept in
  * synch.
  * </p>
- * 
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
+ *
  * @see #getElementName() , IPOSequent, IPRProof, IProofManager
  * 
  * @author Farhad Mehta
  * 
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPSStatus extends IInternalElement, IPRProofInfoElement,
 		IPOStampedElement {

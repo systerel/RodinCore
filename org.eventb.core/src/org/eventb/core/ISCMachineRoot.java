@@ -43,14 +43,12 @@ import org.rodinp.core.RodinDBException;
  * machine.
  * In addition, access methods for related file handles are provided.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
+ *
  * @see IRodinElement#getElementName()
  * 
  * @author Stefan Hallerstede
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISCMachineRoot extends IEventBRoot, IAccuracyElement, IConfigurationElement {
 

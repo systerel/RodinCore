@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,7 @@ import org.rodinp.core.RodinDBException;
 
 /**
  * Common protocol for predicate sets in Event-B Proof Obligation (PO) files.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
+ *
  * <p>
  * A predicate set consists of predicates <code>getPredicates()</code> and
  * perhaps a predicate set <code>getParentPredicateSet()</code>. Predicate
@@ -35,6 +33,7 @@ import org.rodinp.core.RodinDBException;
  * @author Stefan Hallerstede
  * 
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPOPredicateSet extends IInternalElement, IPOStampedElement {
 	
