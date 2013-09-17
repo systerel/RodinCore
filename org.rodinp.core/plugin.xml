@@ -7,9 +7,6 @@
    <extension-point id="attributeTypes" name="%attributeTypesName" schema="schema/attributeTypes.exsd"/>
    <extension-point id="conversions" name="%conversionsName" schema="schema/conversions.exsd"/>
    <extension-point id="fileElementVersions" name="%fileElementVersionsName" schema="schema/fileElementVersions.exsd"/>
-<!--   <extension-point id="elementSpecs" name="%elementSpecsName" schema="schema/elementSpecs.exsd"/>
-   <extension-point id="elementRules" name="%elementRulesName" schema="schema/elementRules.exsd"/>
--->
    <extension-point id="indexers" name="%indexersName" schema="schema/indexers.exsd"/>
    <extension-point id="occurrenceKinds" name="%occurrenceKindsName" schema="schema/occurrenceKinds.exsd"/>
    <extension-point id="refinements" name="%refinementsName" schema="schema/refinements.exsd"/>
