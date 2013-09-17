@@ -21,6 +21,7 @@ import org.rodinp.core.RodinCore;
  * @author Stefan Hallerstede
  * @author Farhad Mehta
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public final class EventBAttributes {
 
