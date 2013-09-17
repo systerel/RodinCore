@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,13 +27,10 @@ import org.rodinp.core.IRodinFile;
  * a context. Conflicts are caused whenever an identifier, carrier set or
  * constant, is declared in two <b>different</b> contexts that are
  * (transitively) referenced by a context or machine.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
+ *
  * @author Stefan Hallerstede
- * 
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IContextPointerArray extends ISCState {
 

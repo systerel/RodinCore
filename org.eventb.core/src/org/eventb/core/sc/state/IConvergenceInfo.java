@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,15 +15,11 @@ import org.eventb.core.IConvergenceElement;
 
 /**
  * A convergence info provides information about the convergence of an event.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
  * @see IAbstractEventInfo
- * 
  * @author Stefan Hallerstede
- *
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IConvergenceInfo extends ISCState {
 	

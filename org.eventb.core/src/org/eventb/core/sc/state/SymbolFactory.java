@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 University of Southampton and others.
+ * Copyright (c) 2008, 2013 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,12 +38,10 @@ import org.rodinp.core.RodinDBException;
 /**
  * This class is the factory class for symbol informations used by static
  * checker modules.
- * <p>
- * It is intended to be used to instantiate all types of symbol informations.
- * </p>
- * 
+ *
  * @author Stefan Hallerstede
  * @since 1.3
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class SymbolFactory {
 

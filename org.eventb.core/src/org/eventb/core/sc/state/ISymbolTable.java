@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 University of Southampton and others.
+ * Copyright (c) 2008, 2013 University of Southampton and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,15 +16,12 @@ import org.rodinp.core.IInternalElementType;
 
 /**
  * Symbol table template used in various forms in the static checker.
- * 
+ *
  * @see ILabelSymbolTable
- * @see IIdentifierSymbolTable <p>
- *      This interface is not intended to be implemented by clients.
- *      </p>
- * 
+ * @see IIdentifierSymbolTable
  * @author Stefan Hallerstede
- * 
  * @since 1.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISymbolTable<E extends IInternalElement, T extends IInternalElementType<? extends E>, I extends ISymbolInfo<E, T>> {
 
