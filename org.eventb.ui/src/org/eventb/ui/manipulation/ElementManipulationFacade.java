@@ -40,6 +40,8 @@ import org.rodinp.core.IRodinElement;
  * 
  * @author Thomas Muller
  * @since 2.4
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ElementManipulationFacade {
 

@@ -16,6 +16,7 @@ import org.rodinp.core.IInternalElementType;
  * Common protocol for accessing the UI description registry.
  * 
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IElementDescRegistry {
 

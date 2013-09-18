@@ -16,9 +16,9 @@ import org.rodinp.core.IAttributeType;
 /**
  * Common protocol for describing how to render attributes in the Event-B UI.
  * 
- * @noimplement This interface is not intended to be implemented by clients.
- * @noextend This interface is not intended to be extended by clients.
  * @since 3.0
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IAttributeDesc {
 
