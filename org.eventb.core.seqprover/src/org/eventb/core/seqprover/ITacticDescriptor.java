@@ -21,10 +21,10 @@ package org.eventb.core.seqprover;
  * {@link IAutoTacticRegistry#getTacticDescriptor(String)} method.
  * </p>
  * 
- * @noimplement This interface is not intended to be implemented by clients.
- * @noextend This interface is not intended to be extended by clients.
  * @author Farhad Mehta
  * @since 3.0
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  * 
  */
 public interface ITacticDescriptor {

@@ -18,7 +18,6 @@ import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.Predicate;
 
-
 /**
  * Common protocol for a proof rule for the sequent prover.
  * <p>
@@ -46,8 +45,8 @@ import org.eventb.core.ast.Predicate;
  * </p>
  * 
  * <p>
- * This interface is not intended to be implemented by clients. Objects of this type 
- * are typically generated inside reasoners by calling a factory method in {@link ProverFactory}.
+ * Objects of this type are typically generated inside reasoners by calling 
+ * a factory method in {@link ProverFactory}.
  * </p>
  * @see IAntecedent
  * @see org.eventb.core.seqprover.IReasoner
@@ -55,6 +54,7 @@ import org.eventb.core.ast.Predicate;
  * 
  * @author Farhad Mehta
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProofRule extends IReasonerOutput {
 

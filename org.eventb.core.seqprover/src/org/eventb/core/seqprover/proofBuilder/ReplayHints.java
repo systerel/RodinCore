@@ -26,9 +26,6 @@ import org.eventb.core.seqprover.IReasonerInput;
  * of free identifier names in proofs.
  * 
  * @author Farhad Mehta
- * 
- * @author Farhad Mehta
- *
  * @since 1.0
  */
 public class ReplayHints {

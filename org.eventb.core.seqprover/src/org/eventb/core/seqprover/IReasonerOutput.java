@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,8 @@ package org.eventb.core.seqprover;
  * Common interface for the output of a reasoner.
  * 
  * <p>
- * This interface is not intended to be implemented by clients. Objects of this
- * type should be generated using the factor methods provided for their subclasses.
+ * Objects of this type should be generated using the factory methods provided
+ * for their subclasses.
  * </p>
  * 
  * @see ProverFactory
@@ -25,8 +25,8 @@ package org.eventb.core.seqprover;
  * @see IProofRule
  * 
  * @author Farhad Mehta
- *
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IReasonerOutput {
 

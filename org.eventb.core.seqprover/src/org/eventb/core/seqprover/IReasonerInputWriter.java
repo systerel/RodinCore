@@ -22,8 +22,8 @@ import org.eventb.core.ast.Predicate;
  * </p>
  * 
  * @author Farhad Mehta
- * @noextend This interface is not intended to be extended by clients.
  * @since 1.0
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IReasonerInputWriter {
 

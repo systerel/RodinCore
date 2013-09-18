@@ -63,8 +63,9 @@ import org.eventb.internal.core.seqprover.proofBuilder.ProofSkeletonWithDependen
  * @see BasicTactics
  * 
  * @author Farhad Mehta
- * 
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ProofBuilder {
 
@@ -90,6 +91,7 @@ public class ProofBuilder {
 	 * Singleton class; Should not be instantiated.
 	 */
 	private ProofBuilder() {
+		// no instance
 	}
 
 	/**

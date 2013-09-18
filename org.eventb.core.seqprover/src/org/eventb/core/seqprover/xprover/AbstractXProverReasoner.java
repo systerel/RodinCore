@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 ETH Zurich and others.
+ * Copyright (c) 2007, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,10 +40,12 @@ import org.eventb.internal.core.seqprover.Util;
  * prover contributors should subclass one of its subclasses.
  * </p>
  * 
+ * @see XProverReasoner2
  * @author François Terrier
  * @author Laurent Voisin
  * @author Nicolas Beauger
  * @since 2.4
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class AbstractXProverReasoner implements IReasoner {
 

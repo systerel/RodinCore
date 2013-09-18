@@ -51,8 +51,9 @@ import org.eventb.core.ast.Type;
  * 
  * 
  * @author Farhad Mehta, htson
- * 
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class DLib {
 	

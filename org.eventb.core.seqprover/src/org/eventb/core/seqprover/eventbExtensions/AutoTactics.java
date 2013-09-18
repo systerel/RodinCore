@@ -86,8 +86,9 @@ import org.eventb.internal.core.seqprover.eventbExtensions.tactics.TDomToCprod.T
  * </p>
  * 
  * @author Farhad Mehta
- * 
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class AutoTactics {
 
@@ -97,9 +98,8 @@ public class AutoTactics {
 	/**
 	 * This class is not meant to be instantiated
 	 */
-	private AutoTactics()
-	{
-		
+	private AutoTactics() {
+		// no instance
 	}
 	
 	

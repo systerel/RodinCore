@@ -44,8 +44,9 @@ import org.eventb.internal.core.seqprover.SelectionHypAction;
  * No predicate variables are allowed in any of these methods.
  * 
  * @author Farhad Mehta
- *
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class ProverFactory {
 

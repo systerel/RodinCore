@@ -71,6 +71,7 @@ import org.eventb.core.ast.UnaryPredicate;
  * @author Farhad Mehta, htson
  * 
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class Lib {

@@ -56,8 +56,9 @@ import org.eventb.internal.core.seqprover.proofSimplifier2.ProofSawyer.CancelExc
  * 
  *
  * @author Farhad Mehta
- *
  * @since 1.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ProverLib {
 
@@ -66,6 +67,7 @@ public class ProverLib {
 	 * This class is not meant to be instantiated
 	 */
 	private ProverLib() {
+		// no instance
 	}
 	
 	public static boolean deepEquals(IProofTree pt1,IProofTree pt2){

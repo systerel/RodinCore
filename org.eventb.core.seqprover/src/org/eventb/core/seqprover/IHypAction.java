@@ -38,8 +38,8 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
  * </p>
  *
  * <p>
- * This interface is not intended to be implemented by clients. Objects of this type 
- * are typically generated inside reasoners by calling a factory method.
+ * Objects of this type are typically generated inside reasoners by calling 
+ * a factory method.
  * </p>
  * 
  * @see IAntecedent
@@ -48,6 +48,7 @@ import org.eventb.internal.core.seqprover.IInternalProverSequent;
  * @author Farhad Mehta
  *
  * @since 1.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IHypAction {
 	
