@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,9 +44,12 @@ import org.eventb.core.seqprover.ITactic;
  * @author htson
  *         <p>
  *         This class provides a default implementation for
- *         {@link org.eventb.ui.prover.ITacticProvider}. Plug-in writers should
- *         extends this class in order to provide their own tactic to the
- *         Proving User Interface.
+ *         {@link org.eventb.ui.prover.ITacticProvider}.
+ *         </p>
+ *         <p>
+ *         Plug-in writers should extends this class in order to provide their
+ *         own tactic to the Proving User Interface.
+ *         </p>
  * @since 1.0
  */
 public class DefaultTacticProvider implements ITacticProvider {
