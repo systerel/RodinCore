@@ -25,6 +25,8 @@ import org.rodinp.keyboard.core.RodinKeyboardCore;
 
 /**
  * The activator class controls the plug-in life cycle
+ *
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class RodinKeyboardUIPlugin extends AbstractUIPlugin {
 
