@@ -61,7 +61,7 @@ import org.eventb.internal.core.seqprover.eventbExtensions.HypOr;
 import org.eventb.internal.core.seqprover.eventbExtensions.IsFunGoal;
 import org.eventb.internal.core.seqprover.eventbExtensions.NegEnum;
 import org.eventb.internal.core.seqprover.eventbExtensions.TrueGoal;
-import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonensL1;
+import org.eventb.internal.core.seqprover.eventbExtensions.genmp.GeneralizedModusPonensL2;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.AutoRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.rewriters.TypeRewrites;
 import org.eventb.internal.core.seqprover.eventbExtensions.tactics.FunAppInDomGoalTac;
@@ -1364,7 +1364,7 @@ public class AutoTactics {
 
 		@Override
 		protected ITactic getSingInstance() {
-			return BasicTactics.reasonerTac(new GeneralizedModusPonensL1(),
+			return BasicTactics.reasonerTac(new GeneralizedModusPonensL2(),
 					EMPTY_INPUT);
 		}
 	}
