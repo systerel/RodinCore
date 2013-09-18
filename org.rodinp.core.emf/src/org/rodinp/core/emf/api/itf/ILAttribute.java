@@ -19,6 +19,7 @@ package org.rodinp.core.emf.api.itf;
  * @see org.rodinp.core.emf.api.ApiPackage#getILAttribute()
  * @model interface="true" abstract="true"
  * @generated
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILAttribute {
 

@@ -28,6 +28,7 @@ import org.rodinp.core.IRodinElement;
  * @see org.rodinp.core.emf.api.ApiPackage#getILElement()
  * @model interface="true" abstract="true"
  * @generated
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILElement {
 	/**

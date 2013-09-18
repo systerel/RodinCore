@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Systerel and others.
+ * Copyright (c) 2011, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,16 @@ import org.rodinp.core.emf.lightcore.childproviders.ImplicitProvidingAssociation
  * a given parent type.
  * 
  * @author Thomas Muller
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ImplicitChildProviderManager {
 
 	private final static Map<IInternalElementType<? extends IInternalElement>, List<IImplicitProvidingAssociation>> relationships = new HashMap<IInternalElementType<? extends IInternalElement>, List<IImplicitProvidingAssociation>>();
+
+	private ImplicitChildProviderManager(){
+		//no instance
+	}
 
 	/**
 	 * Adds an implicit providing association made from the given childType and
