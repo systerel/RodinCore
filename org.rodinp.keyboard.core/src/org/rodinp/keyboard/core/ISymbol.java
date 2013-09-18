@@ -14,6 +14,8 @@ package org.rodinp.keyboard.core;
 
 /**
  * Public interface for keyboard symbols.
+ *
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISymbol {
 

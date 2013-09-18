@@ -12,9 +12,16 @@ package org.rodinp.keyboard.core;
 
 /**
  * Symbol translation utilities.
+ *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class KeyboardUtils {
 
+	private KeyboardUtils() {
+		// no instance
+	}
+	
 	/**
 	 * Log the given message.
 	 * 

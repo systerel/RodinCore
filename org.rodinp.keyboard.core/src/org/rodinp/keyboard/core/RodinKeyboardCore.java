@@ -17,8 +17,14 @@ import org.rodinp.internal.keyboard.core.translators.Text2MathTranslator;
  * Facade to core translation methods.
  * 
  * @author Thomas Muller
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class RodinKeyboardCore {
+	
+	private RodinKeyboardCore() {
+		// no instance
+	}
 
 	/**
 	 * Returns the default symbol registry.
