@@ -44,6 +44,7 @@ public interface IInternalElementType<T extends IInternalElement> extends
 	 * 
 	 * @return the types of the internal elements that can parent an element of
 	 *         this type
+	 * @since 1.7
 	 */
 	IInternalElementType<?>[] getParentTypes();
 
@@ -53,6 +54,7 @@ public interface IInternalElementType<T extends IInternalElement> extends
 	 * 
 	 * @return the types of the internal elements that can occur as children of
 	 *         an internal element of this type
+	 * @since 1.7
 	 */
 	IInternalElementType<?>[] getChildTypes();
 
@@ -62,6 +64,7 @@ public interface IInternalElementType<T extends IInternalElement> extends
 	 * 
 	 * @return the types of the attributes that internal elements of this type
 	 *         can carry
+	 * @since 1.7
 	 */
 	IAttributeType[] getAttributeTypes();
 
@@ -73,6 +76,7 @@ public interface IInternalElementType<T extends IInternalElement> extends
 	 *            an internal element type
 	 * @return <code>true</code> iff an internal element of this type can parent
 	 *         an internal element of the given type
+	 * @since 1.7
 	 */
 	boolean canParent(IInternalElementType<?> childType);
 
@@ -84,6 +88,7 @@ public interface IInternalElementType<T extends IInternalElement> extends
 	 *            an attribute type
 	 * @return <code>true</code> iff an internal element of this type can carry
 	 *         an attribute of the given type
+	 * @since 1.7
 	 */
 	boolean canCarry(IAttributeType attributeType);
 
