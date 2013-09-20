@@ -26,5 +26,7 @@ instructions.configure=\
   addRepository(type:0,location:http${#58}//download.scala-ide.org/releases-29/stable/site,name:Scala);\
   addRepository(type:1,location:http${#58}//download.scala-ide.org/releases-29/stable/site,name:Scala);\
   addRepository(type:0,location:http${#58}//handbook.event-b.org/updatesite,name:Rodin Handbook);\
-  addRepository(type:1,location:http${#58}//handbook.event-b.org/updatesite,name:Rodin Handbook);
+  addRepository(type:1,location:http${#58}//handbook.event-b.org/updatesite,name:Rodin Handbook);\
+  addRepository(type:0,location:http${#58}//idir.aitsadoune.free.fr/tools/updatesite,name:BPEL2B);\
+  addRepository(type:1,location:http${#58}//idir.aitsadoune.free.fr/tools/updatesite,name:BPEL2B);
 # BEWARE ! THE PREVIOUS LINE MUST NOT END WITH A BACKSLASH
