@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: User Documentation
 Bundle-SymbolicName: org.eventb.doc.user;singleton:=true
-Bundle-Version: 0.1
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Systerel
