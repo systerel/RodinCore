@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eventb.core.IAction;
+import org.eventb.core.IEvent;
 import org.eventb.core.IInvariant;
 import org.eventb.core.IMachineRoot;
 import org.eventb.core.IVariable;
@@ -46,15 +47,13 @@ import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.eventbeditor.wizards.AbstractEventBCreationWizard;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.rodinp.core.IAttributeType;
-import org.rodinp.core.IInternalElementType;
+import org.rodinp.core.IInternalElement;
 
 /**
+ * This class extends the Dialog class and provides an input dialog for creating
+ * a new variable along with its type invariant and initilisation.
+ * 
  * @author htson
- *         <p>
- *         This class extends the Dialog class and provides an input dialog for
- *         creating a new variable along with its type invariant and
- *         initilisation.
- *         </p>
  */
 public class NewVariableDialog extends EventBDialog {
 
@@ -137,16 +136,19 @@ public class NewVariableDialog extends EventBDialog {
 		
 		createLabel(getBody(), "Identifier");
 		identifierText = createBText(getBody(), EMPTY, 200, true, 3);
-		addIdentifierAdapter(identifierText, IVariable.ELEMENT_TYPE,
-				LABEL_ATTRIBUTE);
-		
+		final IVariable variable = root.getInternalElement(
+				IVariable.ELEMENT_TYPE, "tmp");
+		addProposalAdapter(variable, LABEL_ATTRIBUTE, identifierText);
+
 		createLabel(getBody(), "Initialisation");
+		final IEvent event = root
+				.getInternalElement(IEvent.ELEMENT_TYPE, "TMP");
+		final IAction action = event.getInternalElement(IAction.ELEMENT_TYPE, "tmp");
 		initLabelText = createNameInputText(getBody(),
 				getFreeInitialisationActionName());
-		addContentAdapter(initLabelText, IAction.ELEMENT_TYPE, LABEL_ATTRIBUTE);
+		addProposalAdapter(action, LABEL_ATTRIBUTE, initLabelText);
 		initSubstitutionText = createContentInputText(getBody(), 2);
-		addContentAdapter(initSubstitutionText, IAction.ELEMENT_TYPE,
-				ASSIGNMENT_ATTRIBUTE);
+		addProposalAdapter(action, ASSIGNMENT_ATTRIBUTE, initSubstitutionText);
 		identifierText.getTextWidget().addModifyListener(
 				new ActionListener(initSubstitutionText.getTextWidget()));
 
@@ -162,11 +164,11 @@ public class NewVariableDialog extends EventBDialog {
 		final IEventBInputText invariantNameText = createNameInputText(
 				getBody(),
 				getNewInvariantName(invIndex, invariantsTexts.size()));
-		addContentAdapter(initLabelText, IInvariant.ELEMENT_TYPE,
-				LABEL_ATTRIBUTE);
+		final IInvariant invariant = root.getInternalElement(
+				IInvariant.ELEMENT_TYPE, DEFAULT_NAME);
+		addProposalAdapter(invariant, LABEL_ATTRIBUTE, initLabelText);
 		final IEventBInputText invariantPredicateText = createContentInputText(getBody());
-		addContentAdapter(initLabelText, IInvariant.ELEMENT_TYPE,
-				PREDICATE_ATTRIBUTE);
+		addProposalAdapter(invariant, PREDICATE_ATTRIBUTE, initLabelText);
 		final Button button = createIsTheoremToogle(getBody());
 		final Triplet<IEventBInputText, IEventBInputText, Button> p = newWidgetTriplet(
 				invariantNameText, invariantPredicateText, button);
@@ -309,18 +311,13 @@ public class NewVariableDialog extends EventBDialog {
 		return super.close();
 	}
 	
-	private void addContentAdapter(IEventBInputText input,
-			IInternalElementType<?> elementType, IAttributeType attributeType) {
+	@Override
+	protected void addProposalAdapter(IInternalElement element,
+			IAttributeType attributeType, IEventBInputText input) {
 		final WizardProposalProvider providerPar = getProposalProviderWithIdent(
-				elementType, attributeType);
+				element, attributeType);
 		addProposalAdapter(providerPar, input);
 		providerListener.addProvider(providerPar);
-	}
-
-	private void addIdentifierAdapter(IEventBInputText input,
-			IInternalElementType<?> elementType, IAttributeType attributeType) {
-		providerListener.addInputText(input);
-		addProposalAdapter(elementType, attributeType, input);
 	}
 
 }

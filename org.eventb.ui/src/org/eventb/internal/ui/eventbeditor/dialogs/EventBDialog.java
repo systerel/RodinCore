@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,12 +64,15 @@ import org.rodinp.core.location.IAttributeLocation;
 import org.rodinp.keyboard.ui.RodinKeyboardUIPlugin;
 
 /**
+ * This class extends the Dialog class and provides an input dialog for new
+ * event with some local varialbes, guards and actSubstitutions.
+ * 
  * @author htson
- *         <p>
- *         This class extends the Dialog class and provides an input dialog for
- *         new event with some local varialbes, guards and actSubstitutions.
  */
 public abstract class EventBDialog extends Dialog {
+	
+	protected static final String DEFAULT_NAME = "tmp";
+
 	protected Collection<Text> dirtyTexts;
 
 	protected FormToolkit toolkit;
@@ -614,7 +617,7 @@ public abstract class EventBDialog extends Dialog {
 			IInternalElementType<?> elementType, IAttributeType attributeType,
 			IEventBInputText input) {
 		final IInternalElement element = root.getInternalElement(elementType,
-				"tmp");
+				DEFAULT_NAME);
 		final FormulaFactory ff = getFormulaFactory(root);
 		final IAttributeLocation location = RodinCore.getInternalLocation(
 				element, attributeType);
@@ -639,19 +642,16 @@ public abstract class EventBDialog extends Dialog {
 	 * Construct a content proposal adapter that can assist the user with
 	 * choosing content for a Event-B Input Text.
 	 * 
-	 * @param elementType
+	 * @param element
 	 *            type of element associated to the input
 	 * @param attributeType
 	 *            type of attribute associated to the input
 	 */
 	protected WizardProposalProvider getProposalProviderWithIdent(
-			IInternalElementType<?> elementType, IAttributeType attributeType) {
-		final IInternalElement element = root.getInternalElement(elementType,
-				"tmp");
-		final FormulaFactory ff = getFormulaFactory(root);
+			IInternalElement element, IAttributeType attributeType) {
 		final IAttributeLocation location = RodinCore.getInternalLocation(
 				element, attributeType);
-		return new WizardProposalProvider(location, ff);
+		return new WizardProposalProvider(location, getFormulaFactory(root));
 	}
 	
 	public IEventBRoot getRoot() {

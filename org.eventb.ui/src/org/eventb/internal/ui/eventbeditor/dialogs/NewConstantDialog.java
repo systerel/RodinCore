@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,13 +43,14 @@ import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.eventbeditor.wizards.EventBCreationWizards.NewConstantsWizard;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
 import org.rodinp.core.IAttributeType;
+import org.rodinp.core.IInternalElement;
 import org.rodinp.core.IInternalElementType;
 
 /**
+ * This class extends the Dialog class and provides an input dialog for creating
+ * a new variable along with its type axiom
+ * 
  * @author htson
- *         <p>
- *         This class extends the Dialog class and provides an input dialog for
- *         creating a new variable along with its type axiom
  */
 public class NewConstantDialog extends EventBDialog {
 
@@ -173,10 +174,11 @@ public class NewConstantDialog extends EventBDialog {
 		createLabel(composite, "Axiom");
 		final IEventBInputText axiomNameText = createNameInputText(composite,
 				getNewAxiomName());
-		addContentAdapter(axiomNameText, IAxiom.ELEMENT_TYPE, LABEL_ATTRIBUTE);
+		final IAxiom axiom = root
+				.getInternalElement(IAxiom.ELEMENT_TYPE, DEFAULT_NAME);
+		addContentAdapter(axiom, LABEL_ATTRIBUTE, axiomNameText);
 		final IEventBInputText axiomPredicateText = createContentInputText(composite);
-		addContentAdapter(axiomPredicateText, IAxiom.ELEMENT_TYPE,
-				PREDICATE_ATTRIBUTE);
+		addContentAdapter(axiom, PREDICATE_ATTRIBUTE, axiomPredicateText);
 		final Button button = createIsTheoremToogle(composite);
 		final Triplet<IEventBInputText, IEventBInputText, Button> p = newWidgetTriplet(
 				axiomNameText, axiomPredicateText, button);
@@ -243,10 +245,10 @@ public class NewConstantDialog extends EventBDialog {
 		return getThirdTriplet(axmResults);
 	}
 	
-	private void addContentAdapter(IEventBInputText input,
-			IInternalElementType<?> elementType, IAttributeType attributeType) {
+	private void addContentAdapter(IInternalElement element,
+			IAttributeType attributeType, IEventBInputText input) {
 		final WizardProposalProvider providerPar = getProposalProviderWithIdent(
-				elementType, attributeType);
+				element, attributeType);
 		addProposalAdapter(providerPar, input);
 		providerListener.addProvider(providerPar);
 	}

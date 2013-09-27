@@ -61,8 +61,6 @@ import org.rodinp.core.IInternalElementType;
  */
 public class NewEventDialog extends EventBDialog {
 
-	private static final String TMP_ELEM_NAME = "tmp";
-
 	private static final int DEFAULT_ITEM_NUMBER = 3;
 
 	protected String labelResult;
@@ -260,7 +258,7 @@ public class NewEventDialog extends EventBDialog {
 		final IEventBInputText parLabel = createBText(parComposite, EMPTY);
 		providerListener.addInputText(parLabel);
 		final IParameter param = event.getInternalElement(
-				IParameter.ELEMENT_TYPE, TMP_ELEM_NAME);
+				IParameter.ELEMENT_TYPE, DEFAULT_NAME);
 		addProposalAdapter(param, LABEL_ATTRIBUTE, parLabel);
 		parTexts.add(parLabel);
 		return parLabel;
@@ -323,7 +321,7 @@ public class NewEventDialog extends EventBDialog {
 		final IEventBInputText actionLabel = createNameText(actPrefix
 				+ actCount);
 		final IAction action = event.getInternalElement(IAction.ELEMENT_TYPE,
-				TMP_ELEM_NAME);
+				DEFAULT_NAME);
 		addProposalAdapter(action, LABEL_ATTRIBUTE, actionLabel);
 		createSpace();
 		final IEventBInputText actionSub = createContentText(composite);
@@ -335,7 +333,7 @@ public class NewEventDialog extends EventBDialog {
 		grdCount++;
 		final IEventBInputText grdLabel = createNameText(guardPrefix + grdCount);
 		final IGuard guard = event.getInternalElement(IGuard.ELEMENT_TYPE,
-				TMP_ELEM_NAME);
+				DEFAULT_NAME);
 		addProposalAdapter(guard, LABEL_ATTRIBUTE, grdLabel);
 		final Composite separator = createSpace();
 		final Composite parent = createContainer(2);
