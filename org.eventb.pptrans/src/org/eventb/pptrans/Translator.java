@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ import org.eventb.internal.pptrans.translator.SequentTranslator;
  * follows
  * <ol>
  * <li>{@link #decomposeIdentifiers(ISimpleSequent)}</li>
- * <li>{@link #reduceToPredicateCalulus(ISimpleSequent, Option...)}</li>
+ * <li>{@link #reduceToPredicateCalculus(ISimpleSequent, Option...)}</li>
  * <li>{@link SimpleSequents#simplify(ISimpleSequent, SimplificationOption...)}</li>
  * </ol>
  * <p>
@@ -127,7 +127,7 @@ public class Translator {
 	 *            the formula factory to use
 	 * @return a reduced predicate equivalent to the input predicate
 	 * @deprecated Use
-	 *             {@link #reduceToPredicateCalulus(ISimpleSequent, Option...)}
+	 *             {@link #reduceToPredicateCalculus(ISimpleSequent, Option...)}
 	 *             instead.
 	 */
 	@Deprecated
@@ -157,7 +157,7 @@ public class Translator {
 	 * @since 0.5
 	 * @see #decomposeIdentifiers(ISimpleSequent)
 	 */
-	public static ISimpleSequent reduceToPredicateCalulus(ISimpleSequent sequent,
+	public static ISimpleSequent reduceToPredicateCalculus(ISimpleSequent sequent,
 			Option... options) {
 		return sequent.apply(new SequentTranslator(sequent, options));
 	}

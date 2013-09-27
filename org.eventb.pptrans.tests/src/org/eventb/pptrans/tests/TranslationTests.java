@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.pptrans.Translator.isInGoal;
-import static org.eventb.pptrans.Translator.reduceToPredicateCalulus;
+import static org.eventb.pptrans.Translator.reduceToPredicateCalculus;
 import static org.eventb.pptrans.Translator.Option.expandSetEquality;
 
 import org.eventb.core.ast.FormulaFactory;
@@ -67,7 +67,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	private static Predicate translate(Predicate goal, FormulaFactory factory,
 			Option[] options) {
 		final ISimpleSequent sequent = SimpleSequents.make(NONE, goal, factory);
-		final ISimpleSequent result = reduceToPredicateCalulus(sequent, options);
+		final ISimpleSequent result = reduceToPredicateCalculus(sequent, options);
 		final ITrackedPredicate[] tpreds = result.getPredicates();
 		if (tpreds.length > 0) {
 			return tpreds[0].getPredicate();
@@ -1923,7 +1923,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	public void testMathExtension() {
 		final ISimpleSequent sequent = make(DT_FF, "p = dt");
 		final ISimpleSequent expected = make(DT_FF, null);
-		assertEquals(expected, reduceToPredicateCalulus(sequent));
+		assertEquals(expected, reduceToPredicateCalculus(sequent));
 	}
 
 	/**
@@ -1933,7 +1933,7 @@ public class TranslationTests extends AbstractTranslationTests {
 	public void testSequent() {
 		final ISimpleSequent sequent = make("1↦2 ∈ succ", "1↦3 ∈ succ");
 		final ISimpleSequent expected = make("2 = 1 + 1", "3 = 1 + 1");
-		assertEquals(expected, reduceToPredicateCalulus(sequent));
+		assertEquals(expected, reduceToPredicateCalculus(sequent));
 	}
 	
 }
