@@ -618,11 +618,7 @@ public abstract class EventBDialog extends Dialog {
 			IEventBInputText input) {
 		final IInternalElement element = root.getInternalElement(elementType,
 				DEFAULT_NAME);
-		final FormulaFactory ff = getFormulaFactory(root);
-		final IAttributeLocation location = RodinCore.getInternalLocation(
-				element, attributeType);
-		ContentProposalFactory.makeContentProposal(location,
-				input.getTextWidget(), ff);
+		addProposalAdapter(element, attributeType, input);
 	}
 	
 	/**
