@@ -55,10 +55,14 @@ public class CachedPreferenceMap<T> {
 	private final Set<ICacheListener<T>> listeners = new HashSet<ICacheListener<T>>();
 
 	/**
-	 * Old serialization format.
+	 * Creates a cache for the old serialization format.  Do not use anymore,
+	 * except in code for backward compatibility.
 	 * 
-	 * @param translator a preference translator
-	 * @deprecated use {@link #CachedPreferenceMap(IXMLPrefSerializer, IReferenceMaker)}
+	 * @param translator
+	 *            a preference translator
+	 * @deprecated use
+	 *             {@link #CachedPreferenceMap(IXMLPrefSerializer, IReferenceMaker)}
+	 *             instead
 	 */
 	@Deprecated
 	public CachedPreferenceMap(IPrefElementTranslator<T> translator) {

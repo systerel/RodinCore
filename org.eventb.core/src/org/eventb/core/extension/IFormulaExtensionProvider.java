@@ -13,7 +13,6 @@ package org.eventb.core.extension;
 import java.util.Set;
 
 import org.eventb.core.IEventBRoot;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.rodinp.core.IRodinFile;
 
@@ -45,15 +44,6 @@ public interface IFormulaExtensionProvider {
 	 * @return a set of extensions
 	 */
 	Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root);
-
-	/**
-	 * This method is never called by the Event-B Core plug-in and will
-	 * disappear in Rodin 3.0.
-	 * 
-	 * @deprecated Not used anymore
-	 */
-	@Deprecated
-	void setFormulaFactory(IEventBRoot root, FormulaFactory ff);
 
 	/**
 	 * Returns common files used for the computation of the factory for the

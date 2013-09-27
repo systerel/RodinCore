@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Systerel and others.
+ * Copyright (c) 2010, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.eventb.core.EventBPlugin;
 import org.eventb.core.IEventBRoot;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.extension.IFormulaExtension;
 import org.eventb.core.extension.IFormulaExtensionProvider;
 import org.rodinp.core.IRodinFile;
@@ -39,11 +38,6 @@ public class PrimeFormulaExtensionProvider implements IFormulaExtensionProvider 
 	@Override
 	public Set<IFormulaExtension> getFormulaExtensions(IEventBRoot root) {
 		return Collections.singleton(Prime.getPrime());
-	}
-
-	@Override
-	public void setFormulaFactory(IEventBRoot root, FormulaFactory ff) {
-		// Not tested here
 	}
 
 	@Override

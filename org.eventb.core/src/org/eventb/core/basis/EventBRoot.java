@@ -109,16 +109,6 @@ public abstract class EventBRoot extends EventBElement implements IEventBRoot,
 	public void setConfiguration(String configuration, IProgressMonitor monitor) throws RodinDBException {
 		setAttributeValue(EventBAttributes.CONFIGURATION_ATTRIBUTE, configuration, monitor);
 	}
-	
-	/**
-	 * @since 2.0
-	 * @deprecated Do not use this method anymore
-	 */
-	@Override
-	@Deprecated
-	public void setFormulaFactory(FormulaFactory ff) {
-		// Do nothing
-	}
 
 	public String getConfiguration() throws RodinDBException {
 		return getAttributeValue(EventBAttributes.CONFIGURATION_ATTRIBUTE);
