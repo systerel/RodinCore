@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,53 +10,39 @@
  *     Systerel - added test2648946
  *     Systerel - added test2962503
  *     Systerel - added test for SMT solvers
+ *     Systerel - test with simple sequents
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
+import static org.eventb.pptrans.tests.IdentifierDecompositionTests.doDecompTest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.pptrans.Translator;
 import org.junit.Test;
 
 public class DocTests extends AbstractTranslationTests {
 	
-	@SuppressWarnings("deprecation")
 	private static void doTransTest(String input, String expected, boolean transformExpected, ITypeEnvironmentBuilder te) {
-		Predicate pinput = parse(input, te);
-		Predicate pexpected = parse(expected, te);
+		final ISimpleSequent sinput = make(te, input);
+		ISimpleSequent sexpected = make(te, expected);
 		if(transformExpected) {
-			pexpected = Translator.reduceToPredicateCalulus(pexpected, ff);
-			pexpected = Translator.simplifyPredicate(pexpected, ff);
+			sexpected = Translator.reduceToPredicateCalculus(sexpected);
+			sexpected = SimpleSequents.simplify(sexpected);
 		}
-		doTransTest(pinput, pexpected);
+		doTransTest(sinput, sexpected);
 	}
 	
-	@SuppressWarnings("deprecation")
-	private static void doTransTest(Predicate input, Predicate expected) {
-		assertTypeChecked(input);
-		assertTypeChecked(expected);
-
-		Predicate actual = Translator.reduceToPredicateCalulus(input, ff);
-		actual = Translator.simplifyPredicate(actual, ff);
-
-		assertTypeChecked(actual);
+	private static void doTransTest(ISimpleSequent input, ISimpleSequent expected) {
+		ISimpleSequent actual = Translator.reduceToPredicateCalculus(input);
+		actual = SimpleSequents.simplify(actual);
 		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
-	
-	@SuppressWarnings("deprecation")
-	private void doDecompTest(String inputString, String expectedString, ITypeEnvironmentBuilder te) {
-		final Predicate input = parse(inputString, te);
-		final Predicate expected = parse(expectedString, te);
-		final Predicate actual = Translator.decomposeIdentifiers(input, ff);
-		assertTypeChecked(actual);
-		assertEquals("Wrong identifier decomposition", expected, actual);
-	}
-
 	
 	@Test
 	public void testDoc1() {
@@ -71,8 +57,8 @@ public class DocTests extends AbstractTranslationTests {
 		
 		doDecompTest(
 				"a=b ∧ a ∈ S",
-				"∀x0,x1,x2,x3·(a=x0↦x1 ∧ b = x2 ↦x3)⇒(x0↦x1=x2↦x3 ∧ x0↦x1 ∈ S)",
-				mTypeEnvironment("a=ℤ×ℤ; b=ℤ×ℤ; S=ℤ↔ℤ", ff));
+				"a_1 ↦ a_2 = b_1 ↦ b_2 ∧ a_1 ↦ a_2 ∈ S",
+				mTypeEnvironment("S=ℤ↔ℤ", ff));
 	}
 	
 	@Test

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,27 +11,21 @@
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
-import org.eventb.core.ast.AssociativePredicate;
-import org.eventb.core.ast.BinaryExpression;
-import org.eventb.core.ast.BinaryPredicate;
 import org.eventb.core.ast.BoundIdentDecl;
 import org.eventb.core.ast.BoundIdentifier;
 import org.eventb.core.ast.DefaultVisitor;
-import org.eventb.core.ast.Expression;
-import org.eventb.core.ast.Formula;
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.FreeIdentifier;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
 import org.eventb.core.ast.Identifier;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.ProductType;
-import org.eventb.core.ast.QuantifiedPredicate;
-import org.eventb.core.ast.RelationalPredicate;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.ITrackedPredicate;
+import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.pptrans.Translator;
 import org.junit.Test;
 
@@ -39,110 +33,20 @@ import org.junit.Test;
  * Ensures that identifier decomposition behaves properly.
  * 
  * @author Laurent Voisin
- * @see org.eventb.pptrans.Translator#decomposeIdentifiers(Predicate, FormulaFactory)
+ * @see org.eventb.pptrans.Translator#decomposeIdentifiers(ISimpleSequent)
  */
-@SuppressWarnings({ "deprecation", "javadoc" })
 public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	
 	protected final ITypeEnvironmentBuilder te = mTypeEnvironment(
 			"S=ℙ(S); T=ℙ(T); U=ℙ(U); V=ℙ(V)", ff);
 
-	private static void assertDecomposed(Predicate pred) {
-		if (needsFreeIdentDecomposition(pred)) {
-			assertEquals("Free identifiers haven't been decomposed",
-					pred.getTag(), Formula.FORALL);
-			final QuantifiedPredicate qPred = (QuantifiedPredicate) pred;
-			final Predicate subPred = qPred.getPredicate();
-			assertEquals("Invalid free identifier decomposition",
-					subPred.getTag(), Formula.LIMP);
-			final BinaryPredicate binPred = (BinaryPredicate) subPred;
-			final Predicate lhs = binPred.getLeft();
-			final Predicate rhs = binPred.getRight();
-			assertFreeIdentsDecomposition(
-					qPred.getBoundIdentDecls(), 
-					lhs);
-			rhs.accept(new DecompositionChecker());
-		} else {
-			pred.accept(new DecompositionChecker());
+	private static void assertDecomposed(ISimpleSequent sequent) {
+		final DecompositionChecker checker = new DecompositionChecker();
+		for (final ITrackedPredicate tpred : sequent.getPredicates()) {
+			tpred.getPredicate().accept(checker);
 		}
 	}
 	
-	private static boolean needsFreeIdentDecomposition(Predicate pred) {
-		final FreeIdentifier[] freeIdents = pred.getFreeIdentifiers();
-		for (FreeIdentifier ident : freeIdents) {
-			if (ident.getType() instanceof ProductType) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private static void assertFreeIdentsDecomposition(BoundIdentDecl[] bids,
-			Predicate pred) {
-
-		// Ensure declarations are not composite
-		for (BoundIdentDecl bid : bids) {
-			assertNotComposite(bid);
-		}
-		
-		// Then, ensures the left-hand side is a conjunction of equalities
-		final int length = bids.length;
-		final boolean[] bidUsed = new boolean[length];
-		if (pred.getTag() == Formula.LAND) {
-			AssociativePredicate assocPred = (AssociativePredicate) pred;
-			for (Predicate child : assocPred.getChildren()) {
-				assertFreeIdentDecomposition(bidUsed, child);
-			}
-		} else {
-			assertFreeIdentDecomposition(bidUsed, pred);
-		}
-		
-		final int end = length - 1;
-		for (int i = 0; i < length; i++) {
-			assertTrue(
-					"Unused bound identifier declaration" + bids[end - i],
-					bidUsed[i]
-			);
-		}
-	}
-
-	private static void assertFreeIdentDecomposition(boolean[] bidUsed,
-			Predicate pred) {
-		
-		assertEquals("Invalid free identifier decomposition" + pred,
-				pred.getTag(), Formula.EQUAL);
-		final RelationalPredicate relPred = (RelationalPredicate) pred;
-		final Expression lhs = relPred.getLeft();
-		final Expression rhs = relPred.getRight();
-		
-		// Ensure left-hand side is a free identifier of a composite type
-		assertEquals(lhs.getTag(), Formula.FREE_IDENT);
-		assertTrue(lhs.getType() instanceof ProductType);
-		
-		// Ensure right-hand side is a maplet of unused bound identifiers
-		assertUnusedBoundMaplet(bidUsed, rhs);
-	}
-
-	private static void assertUnusedBoundMaplet(boolean[] bidUsed,
-			Expression expr) {
-		
-		final int tag = expr.getTag();
-		if (tag == Formula.BOUND_IDENT) {
-			final BoundIdentifier ident = (BoundIdentifier) expr;
-			assertNotComposite(ident);
-			final int index = ident.getBoundIndex();
-			assertFalse("Bound identifier " + index + "is used twice",
-					bidUsed[index]);
-			bidUsed[index] = true;
-		} else {
-			assertEquals("Invalid maplet decomposition" + expr,
-					tag, Formula.MAPSTO);
-			final BinaryExpression binExpr = (BinaryExpression) expr;
-			assertUnusedBoundMaplet(bidUsed, binExpr.getLeft());
-			assertUnusedBoundMaplet(bidUsed, binExpr.getRight());
-		}
-	}
-
 	static void assertNotComposite(BoundIdentDecl ident) {
 		assertFalse(
 				"Bound Identifier declaration has a composite type: " + ident,
@@ -180,12 +84,21 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	}
 	
 	private void dotest(String inputString, String expectedString) {
-		final Predicate input = parse(inputString, te);
-		final Predicate expected = parse(expectedString, te);
-		final Predicate actual = Translator.decomposeIdentifiers(input, ff);
-		assertTypeChecked(actual);
-		assertEquals("Wrong identifier decomposition", expected, actual);
-		assertDecomposed(actual);
+		doDecompTest(inputString, expectedString, te);
+	}
+
+	public static void doDecompTest(String inputString, String expectedString,
+			ITypeEnvironmentBuilder inputEnv) {
+		final Predicate input = parse(inputString, inputEnv);
+		final ISimpleSequent inputSeq = SimpleSequents.make(NONE, input, ff);
+		final ITypeEnvironmentBuilder expectedEnv = inputEnv.makeBuilder();
+		final Predicate expected = parse(expectedString, expectedEnv);
+		final ISimpleSequent expectedSeq = SimpleSequents.make(NONE, expected,
+				ff);
+		final ISimpleSequent actualSeq = Translator
+				.decomposeIdentifiers(inputSeq);
+		assertEquals("Wrong identifier decomposition", expectedSeq, actualSeq);
+		assertDecomposed(actualSeq);
 	}
 
 	/**
@@ -194,7 +107,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public final void testDecomposeFreeOutside1() {
-		dotest("x ∈ S×T", "∀x1,x2 · x = x1↦x2 ⇒ x1↦x2 ∈ S×T");
+		dotest("x ∈ S×T", "x_1↦x_2 ∈ S×T");
 	}
 
 	/**
@@ -203,8 +116,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public final void testDecomposeFreeOutside2() {
-		dotest("x ∈ S×(T×U)",
-				"∀x1,x2,x3 · x = x1↦(x2↦x3) ⇒ x1↦(x2↦x3) ∈ S×(T×U)");
+		dotest("x ∈ S×(T×U)", "x_1↦(x_2↦x_3) ∈ S×(T×U)");
 	}
 
 	/**
@@ -213,9 +125,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public final void testDecomposeFreeOutside3() {
-		dotest("x ∈ S×T ∧ y ∈ U×V",
-				"∀x1,x2,y1,y2 · x=x1↦x2 ∧ y=y1↦y2 ⇒ "
-				+ "x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V");
+		dotest("x ∈ S×T ∧ y ∈ U×V", "x_1↦x_2 ∈ S×T ∧ y_1↦y_2 ∈ U×V");
 	}
 
 	/**
@@ -224,8 +134,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public final void testDecomposeFreeInQPred() {
-		dotest("∀z · z ∈ BOOL ⇒ x ∈ S×T",
-				"∀x1,x2 · x = x1↦x2 ⇒ (∀z · z ∈ BOOL ⇒ x1↦x2 ∈ S×T)");
+		dotest("∀z · z ∈ BOOL ⇒ x ∈ S×T", "∀z · z ∈ BOOL ⇒ x_1↦x_2 ∈ S×T");
 	}
 
 	/**
@@ -235,7 +144,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	@Test
 	public final void testDecomposeFreeInQExpr() {
 		dotest("finite({z ∣ z ∈ BOOL ∧ x ∈ S×T})",
-				"∀x1,x2 · x = x1↦x2 ⇒ finite({z ∣ z ∈ BOOL ∧ x1↦x2 ∈ S×T})");
+				"finite({z ∣ z ∈ BOOL ∧ x_1↦x_2 ∈ S×T})");
 	}
 
 	/**
@@ -319,7 +228,7 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 	@Test
 	public final void testDecomposeFreeBound() {
 		dotest("∃x·x ∈ S×T ∧ y ∈ U×V",
-				"∀y1,y2·y = y1↦y2 ⇒ (∃x1,x2·x1↦x2 ∈ S×T ∧ y1↦y2 ∈ U×V)");
+				"∃x1,x2·x1↦x2 ∈ S×T ∧ y_1↦y_2 ∈ U×V");
 	}
 
 	/**
@@ -331,10 +240,9 @@ public class IdentifierDecompositionTests extends AbstractTranslationTests {
 		dotest("∃a,x·a∈ℤ ∧ x∈S×T ∧ X∈S×T ∧ Y∈T×U" +
 				" ∧ (∀y,b·y∈T×U ∧ Y∈T×U ∧ b∈BOOL ∧ X=x" +
 				" ⇒ (∃z·z=x ∧ Y=y ∧ X∈S×T))",
-				"∀X1,X2,Y1,Y2·X=X1↦X2 ∧ Y=Y1↦Y2 ⇒ " +
-				"(∃a,x1,x2·a∈ℤ ∧ x1↦x2∈S×T ∧ X1↦X2∈S×T ∧ Y1↦Y2∈T×U" +
-				" ∧ (∀y1,y2,b·y1↦y2∈T×U ∧ Y1↦Y2∈T×U ∧ b∈BOOL ∧ X1↦X2=x1↦x2" +
-				" ⇒ (∃z1,z2·z1↦z2=x1↦x2 ∧ Y1↦Y2=y1↦y2 ∧ X1↦X2∈S×T)))");
+				"∃a,x1,x2·a∈ℤ ∧ x1↦x2∈S×T ∧ X_1↦X_2∈S×T ∧ Y_1↦Y_2∈T×U" +
+				" ∧ (∀y1,y2,b·y1↦y2∈T×U ∧ Y_1↦Y_2∈T×U ∧ b∈BOOL ∧ X_1↦X_2=x1↦x2" +
+				" ⇒ (∃z1,z2·z1↦z2=x1↦x2 ∧ Y_1↦Y_2=y1↦y2 ∧ X_1↦X_2∈S×T))");
 	}
 	
 	@Test

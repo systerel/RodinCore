@@ -8,6 +8,7 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - mathematical language V2
+ *     Systerel - test with simple sequents
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
@@ -17,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.GivenType;
 import org.eventb.core.ast.IParseResult;
@@ -89,13 +89,19 @@ public abstract class AbstractTranslationTests {
 		return parse(string, ff.makeTypeEnvironment());
 	}
 
-	public static void assertTypeChecked(Formula<?> formula) {
-		assertTrue("Formula is not typed: " + formula, formula.isTypeChecked());
+	protected static ISimpleSequent make(FormulaFactory factory,
+			String goalImage, String... hypImages) {
+		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
+		return make(typenv, goalImage, hypImages);
 	}
 
-	protected ISimpleSequent make(FormulaFactory factory, String goalImage,
-			String... hypImages) {
-		final ITypeEnvironmentBuilder typenv = factory.makeTypeEnvironment();
+	protected static ISimpleSequent make(String goalImage, String... hypImages) {
+		return make(ff, goalImage, hypImages);
+	}
+
+	protected static ISimpleSequent make(ITypeEnvironmentBuilder typenv,
+			String goalImage, String... hypImages) {
+		final FormulaFactory factory = typenv.getFormulaFactory();
 		final Predicate[] hyps = new Predicate[hypImages.length];
 		for (int i = 0; i < hyps.length; i++) {
 			hyps[i] = parse(hypImages[i], typenv);
@@ -103,10 +109,6 @@ public abstract class AbstractTranslationTests {
 		final Predicate goal = goalImage == null ? null : parse(goalImage,
 				typenv);
 		return SimpleSequents.make(hyps, goal, factory);
-	}
-
-	protected ISimpleSequent make(String goalImage, String... hypImages) {
-		return make(ff, goalImage, hypImages);
 	}
 
 }

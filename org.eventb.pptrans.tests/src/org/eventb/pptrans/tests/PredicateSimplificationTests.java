@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 ETH Zurich and others.
+ * Copyright (c) 2006, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,17 @@
  *
  * Contributors:
  *     ETH Zurich - initial API and implementation
+ *     Systerel - test with simple sequents
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.eventb.core.ast.tests.FastFactory.mList;
 
-import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.tests.FastFactory;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
+import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.pptrans.Translator;
 import org.junit.Test;
 
@@ -28,19 +28,13 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 	}
 
 	public static void doTest(String input, String expected, boolean transformExpected, ITypeEnvironmentBuilder te) {
-		Predicate pinput = parse(input, te);
-		Predicate pexpected = parse(expected, te);
-		doTest(pinput, pexpected);
+		final ISimpleSequent sinput = make(te, input);
+		final ISimpleSequent sexpected = make(te, expected);
+		doTest(sinput, sexpected);
 	}
 	
-	@SuppressWarnings("deprecation")
-	private static void doTest(Predicate input, Predicate expected) {
-		assertTypeChecked(input);
-		assertTypeChecked(expected);
-
-		Predicate actual = Translator.simplifyPredicate(input, ff);
-		
-		assertTypeChecked(actual);
+	private static void doTest(ISimpleSequent input, ISimpleSequent expected) {
+		final ISimpleSequent actual = SimpleSequents.simplify(input);
 		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}
@@ -240,24 +234,14 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testPR15_simple() {
-		doTest( FastFactory.mQuantifiedPredicate(
-					Formula.FORALL, 
-					mList(
-							FastFactory.mBoundIdentDecl("x0", INT),
-							FastFactory.mBoundIdentDecl("x1", INT)),
-					FastFactory.mLiteralPredicate(Formula.BTRUE)),
-				FastFactory.mLiteralPredicate(Formula.BTRUE));
+		doTest( "∀ x0⦂ℤ, x1⦂ℤ · ⊤",
+			    "⊤", false);
 	}
 	
 	@Test
 	public void testPR15_simple2() {
-		doTest( FastFactory.mQuantifiedPredicate(
-				Formula.EXISTS, 
-				mList(
-						FastFactory.mBoundIdentDecl("x0", INT),
-						FastFactory.mBoundIdentDecl("x1", INT)),
-				FastFactory.mLiteralPredicate(Formula.BTRUE)),
-			FastFactory.mLiteralPredicate(Formula.BTRUE));
+		doTest( "∃ x0⦂ℤ, x1⦂ℤ · ⊤",
+			    "⊤", false);
 	}
 	
 	/**
@@ -265,23 +249,13 @@ public class PredicateSimplificationTests extends AbstractTranslationTests {
 	 */
 	@Test
 	public void testPR16_simple() {
-		doTest( FastFactory.mQuantifiedPredicate(
-				Formula.FORALL, 
-				mList(
-						FastFactory.mBoundIdentDecl("x0", INT),
-						FastFactory.mBoundIdentDecl("x1", INT)),
-				FastFactory.mLiteralPredicate(Formula.BFALSE)),
-			FastFactory.mLiteralPredicate(Formula.BFALSE));
+		doTest( "∀ x0⦂ℤ, x1⦂ℤ · ⊥",
+				"⊥", false);
 	}
 	
 	@Test
 	public void testPR16_simple2() {
-		doTest( FastFactory.mQuantifiedPredicate(
-				Formula.EXISTS, 
-				mList(
-						FastFactory.mBoundIdentDecl("x0", INT),
-						FastFactory.mBoundIdentDecl("x1", INT)),
-				FastFactory.mLiteralPredicate(Formula.BFALSE)),
-			FastFactory.mLiteralPredicate(Formula.BFALSE));
+		doTest( "∃ x0⦂ℤ, x1⦂ℤ · ⊥",
+				"⊥", false);
 	}
 }

@@ -12,25 +12,20 @@
  *     Systerel - added sequent translation
  *     Systerel - added test for IR3' and bug #3489973
  *     Systerel - adapted tests after ER10 rule fixing (see bug #3495675)
+ *     Systerel - test with simple sequents
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.eventb.core.ast.Formula.BFALSE;
 import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.eventb.pptrans.Translator.isInGoal;
 import static org.eventb.pptrans.Translator.reduceToPredicateCalculus;
 import static org.eventb.pptrans.Translator.Option.expandSetEquality;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.ITypeEnvironment;
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.Predicate;
-import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
-import org.eventb.core.seqprover.transformer.ITrackedPredicate;
-import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.pptrans.Translator.Option;
 import org.junit.Test;
 
@@ -45,58 +40,32 @@ import org.junit.Test;
 
 public class TranslationTests extends AbstractTranslationTests {
 
-	protected static final Type S = ff.makeGivenType("S");
-	protected static final Type T = ff.makeGivenType("T");
-	protected static final Type U = ff.makeGivenType("U");
-	protected static final Type V = ff.makeGivenType("V");
-	protected static final Type X = ff.makeGivenType("X");
-	protected static final Type Y = ff.makeGivenType("Y");
-	protected static final ITypeEnvironmentBuilder defaultTe;
-	static {
-		defaultTe = ff.makeTypeEnvironment();
-		defaultTe.addGivenSet("S");
-		defaultTe.addGivenSet("T");
-		defaultTe.addGivenSet("U");
-		defaultTe.addGivenSet("V");
-	}
+	protected static final ITypeEnvironmentBuilder defaultTe = mTypeEnvironment(
+			"S=ℙ(S); T=ℙ(T); U=ℙ(U); V=ℙ(V)", ff);
 
 	private static void doTest(String input, String expected, boolean transformExpected) {
 		doTest(input, expected, transformExpected, defaultTe);
 	}
 
-	private static Predicate translate(Predicate goal, FormulaFactory factory,
-			Option[] options) {
-		final ISimpleSequent sequent = SimpleSequents.make(NONE, goal, factory);
-		final ISimpleSequent result = reduceToPredicateCalculus(sequent, options);
-		final ITrackedPredicate[] tpreds = result.getPredicates();
-		if (tpreds.length > 0) {
-			return tpreds[0].getPredicate();
-		} else {
-			return factory.makeLiteralPredicate(BFALSE, null);
-		}
+	private static ISimpleSequent translate(ISimpleSequent sequent, Option[] options) {
+		return reduceToPredicateCalculus(sequent, options);
 	}
 
 	private static void doTest(String input, String expected,
 			boolean transformExpected, ITypeEnvironment inputTypenv,
 			Option... options) {
 		final ITypeEnvironmentBuilder te = inputTypenv.makeBuilder();
-		final Predicate pinput = parse(input, te);
-		Predicate pexpected = parse(expected, te);
+		final ISimpleSequent sinput = make(te, input);
+		ISimpleSequent sexpected = make(te, expected);
 		if (transformExpected) {
-			pexpected = translate(pexpected, ff, options);
+			sexpected = translate(sexpected, options);
 		}
-		doTest(pinput, pexpected, options);
+		doTest(sinput, sexpected, options);
 	}
 	
-	@SuppressWarnings("deprecation")
-	private static void doTest(Predicate input, Predicate expected,
+	private static void doTest(ISimpleSequent input, ISimpleSequent expected,
 			Option... options) {
-		assertTypeChecked(input);
-		assertTypeChecked(expected);
-
-		final Predicate actual = translate(input, ff, options);
-
-		assertTypeChecked(actual);
+		final ISimpleSequent actual = translate(input,options);
 		assertTrue("Result not in goal: " + actual, isInGoal(actual));
 		assertEquals("Unexpected result of translation", expected, actual);
 	}

@@ -12,16 +12,11 @@
  *******************************************************************************/
 package org.eventb.pptrans;
 
-import static org.eventb.core.seqprover.transformer.PredicateTransformers.makeSimplifier;
-
-import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.core.seqprover.transformer.ITrackedPredicate;
-import org.eventb.core.seqprover.transformer.PredicateTransformers;
 import org.eventb.core.seqprover.transformer.SimpleSequents;
 import org.eventb.core.seqprover.transformer.SimpleSequents.SimplificationOption;
-import org.eventb.internal.pptrans.translator.BoundIdentifierDecomposition;
 import org.eventb.internal.pptrans.translator.GoalChecker;
 import org.eventb.internal.pptrans.translator.IdentifierDecomposer;
 import org.eventb.internal.pptrans.translator.SequentTranslator;
@@ -51,8 +46,6 @@ import org.eventb.internal.pptrans.translator.SequentTranslator;
  * @since 0.2
  */
 public class Translator {
-
-	private static final Option[] NO_OPTIONS = new Option[0];
 
 	/**
 	 * Defines translation options that can be passed to the predicate
@@ -95,49 +88,6 @@ public class Translator {
 	}
 
 	/**
-	 * Decomposes every free or bound identifier of Cartesian product type in
-	 * the given predicate.
-	 * 
-	 * @param predicate
-	 *            the predicate whose identifiers are to be decomposed
-	 * @param ff
-	 *            the formula factory to use
-	 * @return an equivalent predicate that contains no identifier of Cartesian
-	 *         product type, except for the quantification of the free
-	 *         identifiers
-	 * @deprecated Use {@link #decomposeIdentifiers(ISimpleSequent)} instead
-	 */
-	@Deprecated
-	public static Predicate decomposeIdentifiers(Predicate predicate,
-			FormulaFactory ff) {
-		predicate = org.eventb.internal.pptrans.translator.FreeIdentifierDecomposition
-				.decomposeIdentifiers(predicate, ff);
-		return BoundIdentifierDecomposition.decomposeBoundIdentifiers(
-				predicate, ff);
-	}
-
-	/**
-	 * Transforms a predicate from Set-Theory to Predicate Calculus. The
-	 * translation scheme used is the default one, without any option enabled.
-	 * 
-	 * @param predicate
-	 *            the predicate to reduce. This predicate must be in a
-	 *            decomposed form
-	 * @param ff
-	 *            the formula factory to use
-	 * @return a reduced predicate equivalent to the input predicate
-	 * @deprecated Use
-	 *             {@link #reduceToPredicateCalculus(ISimpleSequent, Option...)}
-	 *             instead.
-	 */
-	@Deprecated
-	public static Predicate reduceToPredicateCalulus(Predicate predicate,
-			FormulaFactory ff) {
-		return org.eventb.internal.pptrans.translator.Translator
-				.reduceToPredCalc(predicate, ff, NO_OPTIONS);
-	}
-
-	/**
 	 * Transforms a sequent from Set-Theory to Predicate Calculus. The
 	 * translation scheme can be tailored to specific needs by providing one or
 	 * several options.
@@ -160,45 +110,6 @@ public class Translator {
 	public static ISimpleSequent reduceToPredicateCalculus(ISimpleSequent sequent,
 			Option... options) {
 		return sequent.apply(new SequentTranslator(sequent, options));
-	}
-
-	/**
-	 * Simplifies the given predicate using some basic simplification rules.
-	 * 
-	 * @param predicate
-	 *            the predicate to simplify
-	 * @param ff
-	 *            the formula factory to use
-	 * @return a simplified predicate equivalent to the input predicate
-	 * @see SimpleSequents#simplify(ISimpleSequent, SimplificationOption...)
-	 * @see PredicateTransformers#makeSimplifier(SimplificationOption...)
-	 * @deprecated Use
-	 *             {@link SimpleSequents#simplify(ISimpleSequent, SimplificationOption...)}
-	 *             or
-	 *             <code>predicate.rewrite(PredicateTransformers.makeSimplifier(ff))</code>
-	 *             instead.
-	 */
-	@Deprecated
-	public static Predicate simplifyPredicate(Predicate predicate,
-			FormulaFactory ff) {
-		return predicate.rewrite(makeSimplifier());
-	}
-
-	/**
-	 * Tells whether the given predicate is in the target sub-language of the PP
-	 * translator. The predicate returned by method
-	 * {@link #reduceToPredicateCalulus(Predicate, FormulaFactory)} is
-	 * guaranteed to pass this test.
-	 * 
-	 * @param predicate
-	 *            a predicate to test
-	 * @return <code>true</code> iff the given predicate is in the target
-	 *         sub-language of the PP translator
-	 * @deprecated Use {@link #isInGoal(ISimpleSequent)} instead.
-	 */
-	@Deprecated
-	public static boolean isInGoal(Predicate predicate) {
-		return GoalChecker.isInGoal(predicate);
 	}
 
 	/**

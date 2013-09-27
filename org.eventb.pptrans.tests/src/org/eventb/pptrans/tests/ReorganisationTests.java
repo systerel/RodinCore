@@ -8,19 +8,20 @@
  * Contributors:
  *     ETH Zurich - initial API and implementation
  *     Systerel - adapted tests after ER10 rule fixing (see bug #3495675)
+ *     Systerel - test with simple sequents
  *******************************************************************************/
 package org.eventb.pptrans.tests;
 
+import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.eventb.core.ast.tests.FastFactory.mTypeEnvironment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.eventb.core.ast.ITypeEnvironmentBuilder;
-import org.eventb.core.ast.Predicate;
+import org.eventb.core.seqprover.transformer.ISimpleSequent;
 import org.eventb.pptrans.Translator;
 import org.junit.Test;
 
@@ -35,8 +36,7 @@ public class ReorganisationTests extends AbstractTranslationTests {
 			"S=ℙ(S); T=ℙ(T); U=ℙ(U); V=ℙ(V); a=ℤ; b=S; A=ℙ(ℤ); B=ℙ(S)", ff);
 
 	private static void doTest(String input, String expected) {
-		ITypeEnvironmentBuilder te = defaultTe.makeBuilder();
-		doTest(input, expected, false, te);
+		doTest(input, expected, false);
 	}
 	
 	private static void doTest(String input, String expected,
@@ -45,31 +45,20 @@ public class ReorganisationTests extends AbstractTranslationTests {
 		doTest(input, expected, transformExpected, te);
 	}
 	
-	@SuppressWarnings("deprecation")
 	private static void doTest(String input, String expected,
 			boolean transformExpected, ITypeEnvironmentBuilder te) {
 
-		Predicate pinput = parse(input, te);
-		Predicate pexpected = parse(expected, te);
+		ISimpleSequent sinput = make(te, input);
+		ISimpleSequent sexpected = make(te, expected);
 		if (transformExpected) {
-			pexpected = Translator.reduceToPredicateCalulus(pexpected, ff);
+			sexpected = Translator.reduceToPredicateCalculus(sexpected);
 		}
-		doTest(pinput, pexpected);
+		doTest(sinput, sexpected);
 	}
 	
-	@SuppressWarnings("deprecation")
-	private static void doTest(Predicate input, Predicate expected) {
-		assertTypeChecked(input);
-		assertTypeChecked(expected);
-
-		Predicate actual = Translator.reduceToPredicateCalulus(input, ff);
-
-		assertTypeChecked(actual);
+	private static void doTest(ISimpleSequent input, ISimpleSequent expected) {
+		ISimpleSequent actual = Translator.reduceToPredicateCalculus(input);
 		assertTrue("Result not in goal: " + actual, Translator.isInGoal(actual));
-		
-		// System.out.println(expected.getSyntaxTree());
-		// System.out.println(actual.getSyntaxTree());
-		
 		assertEquals("Unexpected result for " + input, expected, actual);
 	}
 
