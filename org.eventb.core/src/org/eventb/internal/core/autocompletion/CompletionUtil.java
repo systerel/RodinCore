@@ -61,7 +61,7 @@ public class CompletionUtil {
 		final IIndexQuery query = RodinCore.makeIndexQuery();
 		final Set<IDeclaration> declarations = query.getDeclarations(event.getRodinFile());
 		new ParameterFilter(event).apply(declarations);
-		if (isExtended(event)) {
+		if (event.exists() && isExtended(event)) {
 			declarations.addAll(getParameters(getAbstractEvents(event)));
 		}
 		return declarations;
