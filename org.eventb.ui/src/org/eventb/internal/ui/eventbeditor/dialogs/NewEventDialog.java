@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 ETH Zurich and others.
+ * Copyright (c) 2005, 2013 ETH Zurich and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,20 +48,22 @@ import org.eventb.internal.ui.IEventBInputText;
 import org.eventb.internal.ui.Pair;
 import org.eventb.internal.ui.UIUtils;
 import org.eventb.internal.ui.autocompletion.ProviderModifyListener;
-import org.eventb.internal.ui.autocompletion.WizardProposalProvider;
 import org.eventb.internal.ui.eventbeditor.Triplet;
 import org.eventb.internal.ui.eventbeditor.wizards.AbstractEventBCreationWizard;
 import org.eventb.internal.ui.preferences.PreferenceUtils;
-import org.rodinp.core.IAttributeType;
 import org.rodinp.core.IInternalElementType;
 
 /**
+ * This class extends the Dialog class and provides an input dialog for new
+ * event with some parameters, guards and actSubstitutions.
+ * 
  * @author htson
- *         <p>
- *         This class extends the Dialog class and provides an input dialog for
- *         new event with some parameters, guards and actSubstitutions.
  */
 public class NewEventDialog extends EventBDialog {
+
+	private static final String TMP_ELEM_NAME = "tmp";
+
+	private static final int DEFAULT_ITEM_NUMBER = 3;
 
 	protected String labelResult;
 
@@ -98,6 +100,8 @@ public class NewEventDialog extends EventBDialog {
 	private ProviderModifyListener providerListener;
 
 	private final AbstractEventBCreationWizard wizard;
+
+	private IEvent event;
 	
 	/**
 	 * Constructor.
@@ -224,7 +228,9 @@ public class NewEventDialog extends EventBDialog {
 		createLabels("Label", "Parameter identifier(s)");
 
 		labelText = createBText(createContainer(1), getFreeEventLabel());
-		addProposalAdapter(IEvent.ELEMENT_TYPE, LABEL_ATTRIBUTE, labelText);
+		
+		event = root.getInternalElement(IEvent.ELEMENT_TYPE, "tmpEvent");
+		addProposalAdapter(event, LABEL_ATTRIBUTE, labelText);
 
 		createSpace();
 		parComposite = createContainer(1);
@@ -232,50 +238,32 @@ public class NewEventDialog extends EventBDialog {
 		createSeparator();
 
 		createLabels("Guard label(s)", "Guard predicate(s)");
-		
-		for (int i = 1; i <= 3; i++) {
-			final IEventBInputText parText = createBText(parComposite, EMPTY);
-			addIdentifierAdapter(parText, IParameter.ELEMENT_TYPE,
-					LABEL_ATTRIBUTE);
-			final IEventBInputText grdLabel = createNameText(guardPrefix + i);
-			addContentAdapter(grdLabel, IGuard.ELEMENT_TYPE, LABEL_ATTRIBUTE);
-			createSpace();
-			final Composite predContainer = createContainer(2);
-			final IEventBInputText grdPredicate = createContentText(predContainer);
-			addContentAdapter(grdPredicate, IGuard.ELEMENT_TYPE,
-					PREDICATE_ATTRIBUTE);
-			addGuardListener(parText, grdPredicate);
-			final Button button = createIsTheoremToogle(predContainer);
 
-			parTexts.add(parText);
-			grdTexts.add(newWidgetTriplet(grdLabel, grdPredicate, button));
+		for (int i = 1; i <= DEFAULT_ITEM_NUMBER; i++) {
+			createParameter();
+			createGuard();
 		}
-		grdCount = 3;
-		parCount = 3;
 
 		changeColumn(parComposite, parCount);
 
 		actionSeparator = createSeparator();
 		actCount = 0;
 		createLabels("Action label(s)", "Action substitution(s)");
-		for (int i = 1; i <= 3; i++) {
+		for (int i = 1; i <= DEFAULT_ITEM_NUMBER; i++) {
 			createAction();
 		}
 		select(labelText);
 	}
 
-	private void addContentAdapter(IEventBInputText input,
-			IInternalElementType<?> elementType, IAttributeType attributeType) {
-		final WizardProposalProvider provider = getProposalProviderWithIdent(
-				elementType, attributeType);
-		addProposalAdapter(provider, input);
-		providerListener.addProvider(provider);
-	}
-	
-	private void addIdentifierAdapter(IEventBInputText input,
-			IInternalElementType<?> elementType, IAttributeType attributeType) {
-		providerListener.addInputText(input);
-		addProposalAdapter(elementType, attributeType, input);
+	private IEventBInputText createParameter() {
+		parCount += 1;
+		final IEventBInputText parLabel = createBText(parComposite, EMPTY);
+		providerListener.addInputText(parLabel);
+		final IParameter param = event.getInternalElement(
+				IParameter.ELEMENT_TYPE, TMP_ELEM_NAME);
+		addProposalAdapter(param, LABEL_ATTRIBUTE, parLabel);
+		parTexts.add(parLabel);
+		return parLabel;
 	}
 	
 	private void changeColumn(Composite comp, int numColumn) {
@@ -294,9 +282,7 @@ public class NewEventDialog extends EventBDialog {
 		if (buttonId == CANCEL_ID) {
 			initValue();
 		} else if (buttonId == MORE_PARAMETER_ID) {
-			final IEventBInputText parLabel = createBText(parComposite, EMPTY);
-			addIdentifierAdapter(parLabel, IParameter.ELEMENT_TYPE,
-					LABEL_ATTRIBUTE);
+			final IEventBInputText parLabel = createParameter();
 			final IEventBInputText grdPred = createGuard();
 			addGuardListener(parLabel, grdPred);
 
@@ -336,24 +322,31 @@ public class NewEventDialog extends EventBDialog {
 		actCount++;
 		final IEventBInputText actionLabel = createNameText(actPrefix
 				+ actCount);
-		addContentAdapter(actionLabel, IAction.ELEMENT_TYPE, LABEL_ATTRIBUTE);
+		final IAction action = event.getInternalElement(IAction.ELEMENT_TYPE,
+				TMP_ELEM_NAME);
+		addProposalAdapter(action, LABEL_ATTRIBUTE, actionLabel);
 		createSpace();
 		final IEventBInputText actionSub = createContentText(composite);
-		addContentAdapter(actionSub, IAction.ELEMENT_TYPE, ASSIGNMENT_ATTRIBUTE);
+		addProposalAdapter(action, ASSIGNMENT_ATTRIBUTE, actionSub);
 		actTexts.add(newWidgetPair(actionLabel, actionSub));
 	}
 	
 	private IEventBInputText createGuard() {
-		final IEventBInputText grdLabel = createNameText(guardPrefix + ++grdCount);
-		moveAbove(grdLabel, actionSeparator);
-		addContentAdapter(grdLabel, IGuard.ELEMENT_TYPE, LABEL_ATTRIBUTE);
+		grdCount++;
+		final IEventBInputText grdLabel = createNameText(guardPrefix + grdCount);
+		final IGuard guard = event.getInternalElement(IGuard.ELEMENT_TYPE,
+				TMP_ELEM_NAME);
+		addProposalAdapter(guard, LABEL_ATTRIBUTE, grdLabel);
 		final Composite separator = createSpace();
-		separator.moveAbove(actionSeparator);
 		final Composite parent = createContainer(2);
 		final IEventBInputText grdPred = createContentText(parent);
-		parent.moveAbove(actionSeparator);
-		addContentAdapter(grdPred, IGuard.ELEMENT_TYPE, PREDICATE_ATTRIBUTE);
+		addProposalAdapter(guard, PREDICATE_ATTRIBUTE, grdPred);
 		final Button button = createIsTheoremToogle(parent);
+		if (actionSeparator != null) {
+			moveAbove(grdLabel, actionSeparator);
+			separator.moveAbove(actionSeparator);
+			parent.moveAbove(actionSeparator);
+		}
 		grdTexts.add(newWidgetTriplet(grdLabel, grdPred, button));
 		return grdPred;
 	}

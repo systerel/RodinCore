@@ -584,6 +584,25 @@ public abstract class EventBDialog extends Dialog {
 	 * Construct a content proposal adapter that can assist the user with
 	 * choosing content for a Event-B Input Text.
 	 * 
+	 * @param element
+	 *            element associated to the input
+	 * @param attributeType
+	 *            type of attribute associated to the input
+	 * @param input
+	 *            a Event-B Input Text
+	 */
+	protected void addProposalAdapter(IInternalElement element,
+			IAttributeType attributeType, IEventBInputText input) {
+		final IAttributeLocation location = RodinCore.getInternalLocation(
+				element, attributeType);
+		ContentProposalFactory.makeContentProposal(location,
+				input.getTextWidget(), getFormulaFactory(root));
+	}
+	
+	/**
+	 * Construct a content proposal adapter that can assist the user with
+	 * choosing content for a Event-B Input Text.
+	 * 
 	 * @param elementType
 	 *            type of element associated to the input
 	 * @param attributeType
