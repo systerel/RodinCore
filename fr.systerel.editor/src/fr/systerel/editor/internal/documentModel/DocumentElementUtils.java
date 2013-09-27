@@ -109,6 +109,9 @@ public class DocumentElementUtils {
 	public static IAttributeManipulation getManipulation(
 			ILElement element, IAttributeType attributeType) {
 		final IAttributeDesc attributeDesc = getAttributeDesc(element, attributeType);
+		if (attributeDesc == null) {
+			return null;
+		}
 		return attributeDesc.getManipulation();
 	}
 	

@@ -206,6 +206,9 @@ public class RodinTextGenerator {
 		final String attribute = elem.getAttribute(attrType);
 		final String value = (attribute != null) ? attribute : "";
 		final IAttributeManipulation manip = getManipulation(elem, attrType);
+		if (manip == null) {
+			return;
+		}
 		stream.addElementRegion(value, elem, ct, manip, multiLine, alignStr);
 	}
 
