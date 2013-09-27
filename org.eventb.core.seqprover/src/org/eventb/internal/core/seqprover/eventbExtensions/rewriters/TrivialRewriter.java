@@ -33,6 +33,12 @@ import org.eventb.core.ast.Type;
 import org.eventb.core.seqprover.eventbExtensions.DLib;
 
 /**
+ * Deprecated implementation for trivial rewrites.
+ * <p>
+ * This class must not be used in new code but is kept to ensure backward
+ * compatibility of proof trees.
+ * </p>
+ * 
  * @author fmehta
  * @deprecated use {@link AutoRewrites} instead
  */
