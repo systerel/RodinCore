@@ -48,6 +48,9 @@ public abstract class AbstractProofTreeCommandHandler extends AbstractHandler {
 			return false;
 		}
 		final ProofTreeUI ui = getActiveProofTreeUI(ww);
+		if (ui == null) {
+			return false;
+		}
 		final IUserSupport us = getUserSupport(ui);
 		if (us == null) {
 			return false;
