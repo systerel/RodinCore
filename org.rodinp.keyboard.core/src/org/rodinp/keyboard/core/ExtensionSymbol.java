@@ -18,7 +18,7 @@ import org.rodinp.internal.keyboard.core.symbols.Symbol;
 /**
  * Class defining a extension symbol programmatically. This class emulates
  * symbol elements of the symbols extension point. See
- * org.rodinp.keyboard.schema/symbols.exsd
+ * org.rodinp.keyboard.core.schema/symbols.exsd
  * 
  * @author Thomas Muller
  * @since 1.1
