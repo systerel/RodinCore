@@ -43,7 +43,7 @@
          </description>
       </fontDefinition>
       <fontDefinition
-            id="org.rodinp.keyboard.braveSansMono"
+            id="org.rodinp.keyboard.ui.braveSansMono"
             isEditable="false"
             label="%rodinKeyboardBraveSansMono.label"
             value="Brave Sans Mono-regular-10">
