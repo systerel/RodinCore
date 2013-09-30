@@ -12,26 +12,22 @@
  *******************************************************************************/
 package org.eventb.internal.ui.prooftreeui.handlers;
 
+import static org.eventb.internal.ui.prooftreeui.handlers.Messages.commandError;
 import static org.eventb.internal.ui.prooftreeui.handlers.Messages.copySuccessMessage;
-import static org.eventb.internal.ui.prooftreeui.handlers.Messages.proofTreeHandler_invalidSelectionError;
-import static org.eventb.internal.ui.prooftreeui.handlers.Messages.proofTreeHandler_selectionNotProofTreeNodeError;
+
+import java.util.Collection;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ITreeSelection;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.core.expressions.EvaluationContext;
 import org.eventb.core.seqprover.IProofTreeNode;
 import org.eventb.internal.ui.prooftreeui.ProofTreeUI;
-
 
 /**
  * Handler for the <code>org.eventb.ui.proofTreeUi.copy</code> ProofTreeNode
  * command.
  */
 public class CopyHandler extends AbstractProofTreeCommandHandler {
-
 
 	private static final String COMMAND_ID = "org.eventb.ui.proofTreeUi.copy";
 
@@ -41,28 +37,43 @@ public class CopyHandler extends AbstractProofTreeCommandHandler {
 	}
 
 	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final IWorkbenchWindow ww = getActiveIWorkbenchWindow();
-		final ProofTreeUI ui = getActiveProofTreeUI(ww);
-		final ISelection selection = ui.getSelection();
-		final Shell shell = ww.getShell();
-		if (!(selection instanceof ITreeSelection)) {
-			logAndInformCommandNotExecuted(shell,
-					proofTreeHandler_invalidSelectionError);
+		final Object appContext = event.getApplicationContext();
+		if (!(appContext instanceof EvaluationContext)) {
+			log(commandError(COMMAND_ID, "invalid context"));
 			return null;
 		}
-		final ITreeSelection ts = ((ITreeSelection) selection);
-		final Object selectedNode = ts.getFirstElement();
-		if (!(selectedNode instanceof IProofTreeNode)) {
-			logAndInformCommandNotExecuted(shell,
-					proofTreeHandler_selectionNotProofTreeNodeError);
+		final EvaluationContext context = (EvaluationContext) appContext;
+
+		// default variable is the selection as a collection
+		final Object var = context.getDefaultVariable();
+		if (!(var instanceof Collection)) {
+			log(commandError(COMMAND_ID,
+					"invalid context variable: collection expected"));
 			return null;
 		}
-		ProofTreeUI.buffer = ((IProofTreeNode) selectedNode)
-				.copyProofSkeleton();
+		final Collection<?> selection = (Collection<?>) var;
+		if (selection.size() != 1) {
+			log(commandError(COMMAND_ID, "invalid selection size: 1 expected"));
+			return null;
+		}
+
+		final Object selected = selection.iterator().next();
+		if (!(selected instanceof IProofTreeNode)) {
+			log(commandError(COMMAND_ID,
+					"invalid selection: proof tree node expected"));
+			return null;
+		}
+		final IProofTreeNode selectedNode = (IProofTreeNode) selected;
+
+		ProofTreeUI.buffer = selectedNode.copyProofSkeleton();
 		log(copySuccessMessage(ProofTreeUI.buffer));
 		return null;
 	}
-
 
 }

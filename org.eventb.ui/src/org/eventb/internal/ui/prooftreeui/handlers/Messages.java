@@ -28,8 +28,6 @@ public class Messages extends NLS {
 	public static String proofTreeHandler_commandError;
 	public static String proofTreeHandler_noActiveProofTreeUIError;
 	public static String proofTreeHandler_noActiveUserSupportError;
-	public static String proofTreeHandler_invalidSelectionError;
-	public static String proofTreeHandler_selectionNotProofTreeNodeError;
 	
 	public static String proofTreeHandler_pruneSuccessMessage;
 	public static String proofTreeHandler_pasteSuccessMessage;
