@@ -3203,31 +3203,41 @@
         point="org.eclipse.core.expressions.definitions">
      <definition
            id="org.eventb.ui.definition.isIEventBRoot">
-        <iterate
-              ifEmpty="false"
-              operator="or">
-           <instanceof
-                 value="org.eventb.core.IEventBRoot">
-           </instanceof>
-        </iterate>
+       <and>
+          <count
+                value="1">
+          </count>
+          <iterate
+                ifEmpty="false"
+                operator="or">
+             <instanceof
+                   value="org.eventb.core.IEventBRoot">
+             </instanceof>
+          </iterate>
+       </and>
      </definition>
      <definition
-           id="org.eventb.ui.definition.isProofTreeNode">
-        <iterate>
-           <instanceof
-                 value="org.eventb.core.seqprover.IProofTreeNode">
-           </instanceof>
-        </iterate>
+       id="org.eventb.ui.definition.isProofTreeNode">
+       <and>
+          <count
+                value="1">
+          </count>
+          <iterate
+                ifEmpty="false"
+                operator="or">
+             <instanceof
+                   value="org.eventb.core.seqprover.IProofTreeNode">
+             </instanceof>
+          </iterate>
+       </and>
      </definition>
      <definition
            id="org.eventb.ui.definition.isEventBRootOrRodinProject">
         <or>
-           <iterate>
+           <iterate operator="or" ifEmpty="false">
               <instanceof
                     value="org.eventb.core.IEventBRoot">
               </instanceof>
-           </iterate>
-           <iterate>
               <adapt
                     type="org.eclipse.core.resources.IResource">
                  <test
