@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.handlers.CollapseAllHandler;
+import org.eclipse.ui.handlers.ExpandAllHandler;
+import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * Master part of the MasterDetailsBlock for the proof skeleton viewer.
@@ -46,6 +49,8 @@ public class PrfSklMasterPart implements IFormPart {
 		}
 
 	};
+	private CollapseAllHandler collapseHandler;
+	private ExpandAllHandler expandHandler;
 
 	void fireSelectionChanged(SelectionChangedEvent event) {
 		managedForm.fireSelectionChanged(PrfSklMasterPart.this, event
@@ -124,6 +129,8 @@ public class PrfSklMasterPart implements IFormPart {
 
 	@Override
 	public void dispose() {
+		collapseHandler.dispose();
+		expandHandler.dispose();
 		viewer.removeSelectionChangedListener(treeListener);
 		viewer.getTree().dispose();
 		viewer.getControl().dispose();
@@ -141,5 +148,21 @@ public class PrfSklMasterPart implements IFormPart {
 	 */
 	public TreeViewer getViewer() {
 		return viewer;
+	}
+
+	/**
+	 * Activates the handlers using the given handler service.
+	 * 
+	 * @param handlerService
+	 *            the handler service to use for handler activation
+	 */
+	public void activateHandlers(IHandlerService handlerService) {
+		collapseHandler = new CollapseAllHandler(viewer);
+		handlerService.activateHandler(CollapseAllHandler.COMMAND_ID,
+				collapseHandler);
+		
+		expandHandler = new ExpandAllHandler(viewer);
+		handlerService.activateHandler(ExpandAllHandler.COMMAND_ID,
+				expandHandler);
 	}
 }

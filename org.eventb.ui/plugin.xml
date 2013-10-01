@@ -737,18 +737,6 @@
             id="org.eventb.ui.proofTreeUi.editComment"
             name="%commands.proofTreeNode.editComment.name">
       </command>
-      <command
-            categoryId="org.eventb.ui.category.prove"
-            description="%commands.proofTreeUI.collapseAll.description"
-            id="org.eventb.ui.proofTreeUi.collaspeAll"
-            name="%commands.proofTreeUI.collapseAll.name">
-      </command>
-            <command
-            categoryId="org.eventb.ui.category.prove"
-            description="%commands.proofTreeUI.expandAll.description"
-            id="org.eventb.ui.proofTreeUi.expandAll"
-            name="%commands.proofTreeUI.expandAll.name">
-      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -846,14 +834,14 @@
             allPopups="false"
             locationURI="toolbar:org.eventb.ui.views.ProofTreeUI">
          <command
-               commandId="org.eventb.ui.proofTreeUi.collaspeAll"
+               commandId="org.eclipse.ui.navigate.collapseAll"
                icon="$nl$/icons/full/elcl16/collapseall.gif"
                mnemonic="%commands.proofTreeUI.collapseAll.mnemonic"
                style="push"
                tooltip="%commands.proofTreeUI.collapseAll.tooltip">
          </command>
          <command
-               commandId="org.eventb.ui.proofTreeUi.expandAll"
+               commandId="org.eclipse.ui.navigate.expandAll"
                icon="$nl$/icons/full/elcl16/expandall.gif"
                mnemonic="%commands.proofTreeUI.expandAll.mnemonic"
                style="push"
@@ -879,29 +867,9 @@
             class="org.eventb.internal.ui.prooftreeui.handlers.EditCommentHandler"
             commandId="org.eventb.ui.proofTreeUi.editComment">
       </handler>
-      <handler
-            class="org.eventb.internal.ui.prooftreeui.handlers.CollaspeAllHandler"
-            commandId="org.eventb.ui.proofTreeUi.collaspeAll">
-      </handler>
-      <handler
-            class="org.eventb.internal.ui.prooftreeui.handlers.ExpandAllHandler"
-            commandId="org.eventb.ui.proofTreeUi.expandAll">
-      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
-      <command
-            categoryId="org.eventb.ui.category.prove"
-            description="%commands.proofSkeleton.collapseAll.description"
-            id="org.eventb.ui.proofSkeleton.collaspeAll"
-            name="%commands.proofSkeleton.collapseAll.name">
-      </command>
-      <command
-            categoryId="org.eventb.ui.category.prove"
-            description="%commands.proofSkeleton.expandAll.description"
-            id="org.eventb.ui.proofSkeleton.expandAll"
-            name="%commands.proofSkeleton.expandAll.name">
-      </command>
       <command
             categoryId="org.eventb.ui.category.prove"
             description="%commands.proofSkeleton.switchOrientation.description"
@@ -915,14 +883,14 @@
             allPopups="false"
             locationURI="toolbar:org.eventb.ui.views.ProofSkeleton">
          <command
-               commandId="org.eventb.ui.proofSkeleton.collaspeAll"
+               commandId="org.eclipse.ui.navigate.collapseAll"
                icon="$nl$/icons/full/elcl16/collapseall.gif"
                mnemonic="%commands.proofSkeleton.collapseAll.mnemonic"
                style="push"
                tooltip="%commands.proofSkeleton.collapseAll.tooltip">
          </command>
          <command
-               commandId="org.eventb.ui.proofSkeleton.expandAll"
+               commandId="org.eclipse.ui.navigate.expandAll"
                icon="$nl$/icons/full/elcl16/expandall.gif"
                mnemonic="%commands.proofSkeleton.expandAll.mnemonic"
                style="push"
@@ -939,14 +907,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
-      <handler
-            class="org.eventb.internal.ui.proofSkeletonView.handlers.CollaspeAllHandler"
-            commandId="org.eventb.ui.proofSkeleton.collaspeAll">
-      </handler>
-      <handler
-            class="org.eventb.internal.ui.proofSkeletonView.handlers.ExpandAllHandler"
-            commandId="org.eventb.ui.proofSkeleton.expandAll">
-      </handler>
       <handler
             class="org.eventb.internal.ui.proofSkeletonView.handlers.SwitchOrientationHandler"
             commandId="org.eventb.ui.proofSkeleton.switchOrientation">

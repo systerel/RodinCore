@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -46,6 +47,8 @@ public class ProofSkeletonView extends ViewPart implements IPropertyChangeListen
 		managedForm = new ManagedForm(parent);
 		masterDetailsBlock = new PrfSklMasterDetailsBlock();
 		masterDetailsBlock.createContent(managedForm);
+		masterDetailsBlock.activateHandlers((IHandlerService) getSite()
+				.getService(IHandlerService.class));
 
 		selManager = new InputManager(this);
 		selManager.register();

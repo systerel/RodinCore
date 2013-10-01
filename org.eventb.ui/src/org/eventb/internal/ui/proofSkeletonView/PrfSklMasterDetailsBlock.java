@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Systerel and others.
+ * Copyright (c) 2008, 2013 Systerel and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.DetailsPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.MasterDetailsBlock;
+import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * MasterDetailsBlock for the proof skeleton viewer.
@@ -71,6 +72,16 @@ public class PrfSklMasterDetailsBlock extends MasterDetailsBlock {
 	public void setFont(Font font) {
 		masterPart.setFont(font);
 		SequentDetailsPage.getDefault().setFont(font);
+	}
+
+	/**
+	 * Activates the handlers using the given handler service.
+	 * 
+	 * @param handlerService
+	 *            the handler service to use for handler activation
+	 */
+	public void activateHandlers(IHandlerService handlerService) {
+		masterPart.activateHandlers(handlerService);
 	}
 	
 }
