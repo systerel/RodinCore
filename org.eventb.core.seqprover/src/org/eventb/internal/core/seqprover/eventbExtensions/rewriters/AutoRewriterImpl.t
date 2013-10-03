@@ -39,6 +39,7 @@ import static org.eventb.core.ast.Formula.KDOM;
 import static org.eventb.core.ast.Formula.KFINITE;
 import static org.eventb.core.ast.Formula.KMAX;
 import static org.eventb.core.ast.Formula.KMIN;
+import static org.eventb.core.ast.Formula.KPARTITION;
 import static org.eventb.core.ast.Formula.KRAN;
 import static org.eventb.core.ast.Formula.KSUCC;
 import static org.eventb.core.ast.Formula.LAND;
@@ -89,6 +90,7 @@ import org.eventb.core.ast.ExtendedExpression;
 import org.eventb.core.ast.Formula;
 import org.eventb.core.ast.FormulaFactory;
 import org.eventb.core.ast.IntegerLiteral;
+import org.eventb.core.ast.MultiplePredicate;
 import org.eventb.core.ast.Predicate;
 import org.eventb.core.ast.QuantifiedExpression;
 import org.eventb.core.ast.QuantifiedExpression.Form;
@@ -627,6 +629,30 @@ public class AutoRewriterImpl extends PredicateSimplifier {
 
 	    }
 	    return predicate;
+	}
+
+    @ProverRule( { "SIMP_EMPTY_PARTITION", "SIMP_SINGLE_PARTITION" } )
+	@Override
+	public Predicate rewrite(MultiplePredicate predicate) {
+		if (!level4) {
+			return predicate;
+		}
+		assert predicate.getTag() == KPARTITION;
+		final Expression[] children = predicate.getChildren();
+		final Predicate result;
+		switch (children.length) {
+			case 1:
+    			result = makeIsEmpty(children[0]);
+    			trace(predicate, result, "SIMP_EMPTY_PARTITION");
+    			return result;
+			case 2:
+    			result = makeRelationalPredicate(EQUAL,
+    					children[0], children[1]);
+    			trace(predicate, result, "SIMP_SINGLE_PARTITION");
+    			return result;
+			default:
+				return predicate;
+		}
 	}
 
     @ProverRule( { "SIMP_NOT_LE", "SIMP_NOT_GE", "SIMP_NOT_GT",

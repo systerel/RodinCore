@@ -978,4 +978,15 @@ public abstract class AutoFormulaRewriterTests extends PredicateSimplifierTests 
 		noRewritePred("∃y·y∗y<0∧y=1 ÷ 0");
 	}
 
+	/**
+	 * Ensures that rules SIMP_EMPTY_PARTITION and SIMP_SINGLE_PARTITION are
+	 * implemented correctly.
+	 */
+	@Test
+	public void fr294() {
+		rewritePred("partition(S)", "S = ∅", "S=ℙ(T)", level4AndHigher);
+		rewritePred("partition(S1, S2)", "S1 = S2", "S1=ℙ(T)", level4AndHigher);
+		noRewritePred("partition(S1, S2, S3)", "S1=ℙ(T)");
+	}
+
 }
