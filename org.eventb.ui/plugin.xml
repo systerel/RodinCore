@@ -727,12 +727,6 @@
       </command>
       <command
             categoryId="org.eventb.ui.category.prove"
-            description="%commands.proofTreeNode.copy.description"
-            id="org.eventb.ui.proofTreeUi.copy"
-            name="%commands.proofTreeNode.copy.name">
-      </command>
-      <command
-            categoryId="org.eventb.ui.category.prove"
             description="%commands.proofTreeNode.editComment.description"
             id="org.eventb.ui.proofTreeUi.editComment"
             name="%commands.proofTreeNode.editComment.name">
@@ -757,7 +751,7 @@
             </visibleWhen>
          </command>
          <command
-               commandId="org.eventb.ui.proofTreeUi.copy"
+               commandId="org.eclipse.ui.edit.copy"
                icon="icons/full/elcl16/copy.gif"
                mnemonic="%commands.proofTreeNode.copy.mnemonic"
                style="push"
@@ -861,7 +855,12 @@
       </handler>
       <handler
             class="org.eventb.internal.ui.prooftreeui.handlers.CopyHandler"
-            commandId="org.eventb.ui.proofTreeUi.copy">
+            commandId="org.eclipse.ui.edit.copy">
+            <activeWhen>
+            	<reference
+                   definitionId="org.eventb.ui.definition.isProofTreeNode">
+            	</reference>
+            </activeWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.prooftreeui.handlers.EditCommentHandler"
@@ -2062,7 +2061,7 @@
             description="%commands.moveDownDescription"
             id="org.eventb.ui.edit.moveDown"
             name="%commands.moveDownName"/>
-      <command
+       <command
             categoryId="org.eventb.ui.categories.edit"
             description="%commands.edit.copyDescription"
             id="org.eventb.ui.edit.copy"
