@@ -721,12 +721,6 @@
       </command>
       <command
             categoryId="org.eventb.ui.category.prove"
-            description="%commands.proofTreeNode.paste.description"
-            id="org.eventb.ui.proofTreeUi.paste"
-            name="%commands.proofTreeNode.paste.name">
-      </command>
-      <command
-            categoryId="org.eventb.ui.category.prove"
             description="%commands.proofTreeNode.editComment.description"
             id="org.eventb.ui.proofTreeUi.editComment"
             name="%commands.proofTreeNode.editComment.name">
@@ -764,7 +758,7 @@
             </visibleWhen>
          </command>
          <command
-               commandId="org.eventb.ui.proofTreeUi.paste"
+               commandId="org.eclipse.ui.edit.paste"
                icon="icons/full/elcl16/paste.gif"
                mnemonic="%commands.proofTreeNode.paste.mnemonic"
                style="push"
@@ -851,7 +845,12 @@
       </handler>
       <handler
             class="org.eventb.internal.ui.prooftreeui.handlers.PasteHandler"
-            commandId="org.eventb.ui.proofTreeUi.paste">
+            commandId="org.eclipse.ui.edit.paste">
+            <activeWhen>
+            	<reference
+                   definitionId="org.eventb.ui.definition.isProofTreeNode">
+            	</reference>
+            </activeWhen>
       </handler>
       <handler
             class="org.eventb.internal.ui.prooftreeui.handlers.CopyHandler"
