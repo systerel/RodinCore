@@ -2060,18 +2060,6 @@
             description="%commands.moveDownDescription"
             id="org.eventb.ui.edit.moveDown"
             name="%commands.moveDownName"/>
-       <command
-            categoryId="org.eventb.ui.categories.edit"
-            description="%commands.edit.copyDescription"
-            id="org.eventb.ui.edit.copy"
-            name="%commands.edit.copyName">
-      </command>
-      <command
-            categoryId="org.eventb.ui.categories.edit"
-            description="%commands.edit.pasteDescription"
-            id="org.eventb.ui.edit.paste"
-            name="%commands.edit.pasteName">
-      </command>
       <command
             categoryId="org.eclipse.ui.category.project"
             description="%commands.project.autoTacticDescription"
