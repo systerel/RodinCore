@@ -58,12 +58,10 @@ public class EditorActionTarget implements ITextOperationTarget {
 
 	@Override
 	public boolean canDoOperation(int operation) {
-		if (operation == ITextOperationTarget.SELECT_ALL) {
-			return true;
-		}
 		final OverlayEditor overlayEditor = editor.getOverlayEditor();
 		if (overlayEditor != null && overlayEditor.isActive()) {
 			switch (operation) {
+			case SELECT_ALL:
 			case UNDO:
 			case REDO:
 				return editor.getTextOperationTarget()
