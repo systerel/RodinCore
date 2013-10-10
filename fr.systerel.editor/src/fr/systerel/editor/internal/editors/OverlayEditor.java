@@ -360,12 +360,39 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 		}
 		originalText = text;
 		textViewer.setDocument(createDocument(text));
-		editorText.setCaretOffset(pos);
+		setCaretPosition(pos);
 		resizeAndPositionOverlay(editorText, parent, inter);
 		editorText.setVisible(true);
 		editorText.setFocus();
 	}
 
+	private void setCaretPosition(int pos) {
+		if (isLineDelimiter(pos)) {
+			return;
+		} else if (pos >= 0 && pos <= editorText.getCharCount())
+			editorText.setCaretOffset(pos);
+	}
+
+	/**
+	 * Code pulled down from org.eclipse.swt.custom.StyledText.
+	 *
+	 * Returns whether the given offset is inside a multi byte line delimiter.
+	 * Example:
+	 * "Line1\r\n" isLineDelimiter(5) == false but isLineDelimiter(6) == true
+	 *
+	 * @return true if the given offset is inside a multi byte line delimiter.
+	 * false if the given offset is before or after a line delimiter.
+	 */
+	public boolean isLineDelimiter(int offset) {
+		int line = editorText.getLineAtOffset(offset);
+		int lineOffset = editorText.getOffsetAtLine(line);
+		int offsetInLine = offset - lineOffset;
+		// offsetInLine will be greater than line length if the line
+		// delimiter is longer than one character and the offset is set
+		// in between parts of the line delimiter.
+		return offsetInLine > editorText.getLine(line).length();
+	}
+	
 	private void showTipMenu(final Interval inter) {
 		final String[] possibleValues = inter.getPossibleValues();
 		if (possibleValues == null) {
@@ -558,9 +585,9 @@ public class OverlayEditor implements IAnnotationModelListenerExtension,
 			editorText.setText(event.getText());
 			final int edTextLength = editorText.getText().length();
 			if (carPosBckp < edTextLength)
-				editorText.setCaretOffset(carPosBckp);
+				setCaretPosition(carPosBckp);
 			else
-				editorText.setCaretOffset(edTextLength);
+				setCaretPosition(edTextLength);
 		}
 	}
 	
