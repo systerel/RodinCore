@@ -172,7 +172,7 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 		// has focus and the editor is not in overlay mode.
 		final IFocusService focusService = (IFocusService) getSite()
 				.getService(IFocusService.class);
-		focusService.addFocusTracker(styledText, "fr.systerel.editor.editors.RodinEditor");
+		focusService.addFocusTracker(styledText, EDITOR_ID);
 		viewer.setEditable(false);
 		styledText.setEditable(false);
 	}
@@ -181,6 +181,8 @@ public class RodinEditor extends TextEditor implements IPropertyChangeListener {
 	protected void createActions() {
 		super.createActions();
 		// Deactivate unused actions
+		setAction(ITextEditorActionConstants.SMART_ENTER, null);
+		setAction(ITextEditorActionConstants.SMART_ENTER_INVERSE, null);
 		setAction(ITextEditorActionConstants.MOVE_LINE_UP, null);
 		setAction(ITextEditorActionConstants.MOVE_LINE_DOWN, null);
 		setAction(ITextEditorActionConstants.SHIFT_LEFT, null);
